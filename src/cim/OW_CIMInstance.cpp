@@ -48,8 +48,6 @@ using std::istream;
 struct OW_CIMInstance::INSTData
 {
 	OW_String m_owningClassName;
-	//OW_String m_name; // TODO: Do we need a name and an aliasName?
-	OW_String m_aliasName;
 	OW_CIMPropertyArray m_keys;
 	OW_CIMPropertyArray m_properties;
 	OW_CIMQualifierArray m_qualifiers;
@@ -62,8 +60,6 @@ bool operator<(const OW_CIMInstance::INSTData& x, const OW_CIMInstance::INSTData
 	return OW_StrictWeakOrdering(
 		x.m_owningClassName, y.m_owningClassName,
 		x.m_properties, y.m_properties,
-//		x.m_name, y.m_name,
-		x.m_aliasName, y.m_aliasName,
 		x.m_keys, y.m_keys,
 		x.m_qualifiers, y.m_qualifiers);
 }
@@ -84,7 +80,6 @@ OW_CIMInstance::OW_CIMInstance(OW_CIMNULL_t) :
 OW_CIMInstance::OW_CIMInstance(const char* name) :
 	OW_CIMElement(), m_pdata(new INSTData)
 {
-//	m_pdata->m_name = name;
 	m_pdata->m_owningClassName = name;
 }
 
@@ -92,7 +87,6 @@ OW_CIMInstance::OW_CIMInstance(const char* name) :
 OW_CIMInstance::OW_CIMInstance(const OW_String& name) :
 	OW_CIMElement(), m_pdata(new INSTData)
 {
-//	m_pdata->m_name = name;
 	m_pdata->m_owningClassName = name;
 }
 
@@ -291,21 +285,6 @@ OW_CIMInstance::getPropertyT(const OW_String& propertyName) const
 		OW_THROW(OW_NoSuchPropertyException, propertyName.c_str());
 	}
 	return p;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMInstance::getAlias() const
-{
-	return m_pdata->m_aliasName;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance&
-OW_CIMInstance::setAlias(const OW_String& aliasName)
-{
-	m_pdata->m_aliasName = aliasName;
-	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -522,8 +501,6 @@ OW_CIMInstance::clone(OW_Bool localOnly, OW_Bool includeQualifiers,
 	OW_Bool noProps) const
 {
 	OW_CIMInstance ci;
-//	ci.m_pdata->m_name = m_pdata->m_name;
-	ci.m_pdata->m_aliasName = m_pdata->m_aliasName;
 	ci.m_pdata->m_owningClassName = m_pdata->m_owningClassName;
 	ci.m_pdata->m_keys = m_pdata->m_keys;
 
@@ -661,7 +638,7 @@ OW_CIMInstance::filterProperties(const OW_StringArray& propertyList,
 OW_String
 OW_CIMInstance::getName() const
 {
-	return ""; // m_pdata->m_name;
+	return m_pdata->m_owningClassName;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -830,25 +807,20 @@ OW_CIMInstance::createModifiedInstance(
 void
 OW_CIMInstance::setName(const OW_String& name)
 {
-	(void)name;
-	//m_pdata->m_name = name;
+	m_pdata->m_owningClassName = name;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMInstance::readObject(istream &istrm)
 {
-	//OW_String name;
 	OW_String owningClassName;
-	OW_String aliasName;
 	OW_CIMPropertyArray properties;
 	OW_CIMPropertyArray keys;
 	OW_CIMQualifierArray qualifiers;
 
 	OW_CIMBase::readSig(istrm, OW_CIMINSTANCESIG);
-	//name.readObject(istrm);
 	owningClassName.readObject(istrm);
-	aliasName.readObject(istrm);
 	OW_BinIfcIO::readArray(istrm, keys);
 	OW_BinIfcIO::readArray(istrm, properties);
 	OW_BinIfcIO::readArray(istrm, qualifiers);
@@ -858,9 +830,7 @@ OW_CIMInstance::readObject(istream &istrm)
 		m_pdata = new INSTData;
 	}
 
-	//m_pdata->m_name = name;
 	m_pdata->m_owningClassName = owningClassName;
-	m_pdata->m_aliasName = aliasName;
 	m_pdata->m_keys = keys;
 	m_pdata->m_properties = properties;
 	m_pdata->m_qualifiers = qualifiers;
@@ -871,9 +841,7 @@ void
 OW_CIMInstance::writeObject(std::ostream &ostrm) const
 {
 	OW_CIMBase::writeSig( ostrm, OW_CIMINSTANCESIG );
-	//m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_owningClassName.writeObject(ostrm);
-	m_pdata->m_aliasName.writeObject(ostrm);
 	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_keys);
     OW_BinIfcIO::writeArray(ostrm, m_pdata->m_properties);
 	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_qualifiers);
@@ -904,12 +872,6 @@ OW_CIMInstance::toMOF() const
 
 	rv += "INSTANCE OF ";
 	rv += m_pdata->m_owningClassName;
-
-	if(!m_pdata->m_aliasName.empty())
-	{
-		rv += "AS";
-		rv += m_pdata->m_aliasName;
-	}
 
 	rv += "\n{\n";
 

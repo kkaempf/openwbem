@@ -35,7 +35,7 @@ static CMPIInstance* mbEncNewInstance(CMPIBroker* mb, CMPIObjectPath* eCop, CMPI
 
    OW_CIMObjectPath * cop = static_cast<OW_CIMObjectPath *>(eCop->hdl);
    std::cout<<"--- mbEncNewInstance() of name " << cop->getObjectName() << std::endl;
-   OW_CIMInstance * ci = new OW_CIMInstance(cop->getObjectName());
+   OW_CIMInstance * ci = new OW_CIMInstance();
    ci->setClassName(cop->getObjectName());
    std::cout<<"--- mbEncNewInstance() with name " << ci->getClassName() << std::endl;
 

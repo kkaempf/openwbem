@@ -81,14 +81,14 @@ public:
 	OW_CIMInstance(const OW_CIMInstance& arg);
 
 	/**
-	 * Create an OW_CIMInstance with a name.
-	 * @param name	The name of this OW_CIMInstance as an OW_String. NOT the Class name.
+	 * Create an OW_CIMInstance.
+	 * @param name	The class name of this OW_CIMInstance.
 	 */
 	explicit OW_CIMInstance(const OW_String& name);
 
 	/**
-	 * Create an OW_CIMInstance with a name.
-	 * @param name	The name of this OW_CIMInstance as a NULL terminated string.
+	 * Create an OW_CIMInstance.
+	 * @param name	The class name of this OW_CIMInstance as a NULL terminated string.
 	 */
 	explicit OW_CIMInstance(const char* name);
 
@@ -208,20 +208,6 @@ public:
 	 * @throws an OW_NoSuchPropertyException if the property is not found or NULL.
 	 */
 	OW_CIMProperty getPropertyT(const OW_String& name) const;
-
-	/**
-	 * Get the alias name associated with this instance.
-	 * @return The alias name for this instance if it has one. Otherwise return
-	 * an empty string.
-	 */
-	OW_String getAlias() const;
-
-	/**
-	 * Set the alias name for this instance.
-	 * @param aliasName The new alias name for this instance.
-	 * @return a reference to *this
-	 */
-	OW_CIMInstance& setAlias(const OW_String& aliasName);
 
 	/**
 	 * @return An OW_CIMPropertyArray that contains all of the keys for this
@@ -397,15 +383,14 @@ public:
 		const OW_CIMClass& theClass) const;
 
 	/**
-	 * Gets the name of this instance.
-	 * The name is made by concating all key properties and their values
-	 * @return The name of this instance.
+	 * @return The name of the class for this instance.
 	 */
 	virtual OW_String getName() const;
 
 	/**
-	 * Set the name of this instance.
-	 * @param name The new name of the class for this instance.
+	 * Sets the class name for this instance.
+	 * @param name	The new class name for this instance.
+	 * @return a reference to *this
 	 */
 	virtual void setName(const OW_String& name);
 

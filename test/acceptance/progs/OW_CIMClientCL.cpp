@@ -596,7 +596,6 @@ createInstance(OW_CIMClient& hdl, const OW_String& fromClass, const OW_String& n
 
 		OW_CIMInstance newInst = cimClass.newInstance();
 
-		newInst.setName(newInstance);
 		newInst.setProperty(OW_CIMProperty::NAME_PROPERTY,
 								  OW_CIMValue(newInstance));
 		newInst.setProperty("CreationClassName",

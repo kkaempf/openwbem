@@ -195,7 +195,6 @@ void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 
 	OW_CIMInstance newInst = cimClass.newInstance();
 
-	newInst.setName(newInstance);
 	newInst.setProperty(OW_CIMProperty::NAME_PROPERTY,
 							  OW_CIMValue(newInstance));
 	newInst.setProperty("CreationClassName",
