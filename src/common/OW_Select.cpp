@@ -46,7 +46,7 @@ extern "C"
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_Select::select(const OW_SelectTypeArray& selarray, OW_UInt32 ms = ~0U)
+OW_Select::select(const OW_SelectTypeArray& selarray, OW_UInt32 ms)
 {
    fd_set rfds;
    struct timeval tv;

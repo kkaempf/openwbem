@@ -615,7 +615,7 @@ private:
 /**
  *  * Inserter operator for OW_CIMValue
  *   */
-ostream& operator<<(std::ostream& ostr, const OW_CIMValue& cv);
+std::ostream& operator<<(std::ostream& ostr, const OW_CIMValue& cv);
 
 
 

@@ -39,10 +39,10 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_LocalCIMOMHandle.hpp"
+#include "OW_StringStream.hpp"
 
 #include <fstream>
 #include <unistd.h>
-#include <strstream>
 
 using std::ifstream;
 using std::ofstream;
@@ -229,11 +229,10 @@ OW_LaptopBattery::createLaptopBatInst(const OW_CIMClass& cc)
 	// or 
 	// 1.16 1.2 0x03 0x01 0x03 0x09 93% -1 ?
 	ifstream infile("/proc/apm", std::ios::in);
-	ostrstream oss;
-	oss << infile.rdbuf() << std::ends;
+    OW_StringStream oss;
+	oss << infile.rdbuf();
 	infile.close();
-	OW_String fileContents = oss.str();
-	oss.freeze(false);
+	OW_String fileContents = oss.toString();
 	OW_StringArray toks = fileContents.tokenize();
 	OW_Int32 minutes = toks[7].toInt32();
 	OW_UInt16 percent = toks[6].toUInt16();

@@ -256,7 +256,7 @@ OW_CIMValue
 
 	  if(pid != 0)
 	  {
-		 cerr << "Calling kill with pid " << pid << " and sig " << sig << endl;
+          std::cerr << "Calling kill with pid " << pid << " and sig " << sig << std::endl;
 		 if(kill(pid, sig) == 0)
 		 {
 			return OW_CIMValue(OW_String("Success"));

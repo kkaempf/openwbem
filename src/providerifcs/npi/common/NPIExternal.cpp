@@ -72,7 +72,8 @@ NPI_getmyClass(NPIHandle* npiHandle, const OW_String& nameSpace,
         }
         catch(...)
         {
-            cerr << "Class or Namespace do not exist\n";
+            // cerr << "Class or Namespace do not exist\n";
+            // TODO: log this, and catch the correct exception.
         }
 
 	return cc;
@@ -97,7 +98,8 @@ NPI_enumeratemyInstanceNames(NPIHandle* npiHandle,
         }
         catch(...)
         {
-            cerr << "Class or Namespace do not exist\n";
+            // cerr << "Class or Namespace do not exist\n";
+            // TODO: log this, and catch the correct exception.
         }
 	return crefs;
 }
@@ -123,7 +125,8 @@ NPI_enumeratemyInstances(NPIHandle* npiHandle, const OW_String& nameSpace,
         }
         catch(...)
         {
-            cerr << "Class or Namespace do not exist\n";
+            // cerr << "Class or Namespace do not exist\n";
+            // TODO: log this, and catch the correct exception.
         }
 
 	return cinsts;
@@ -146,7 +149,8 @@ NPI_getmyInstance(NPIHandle* npiHandle, const OW_CIMObjectPath& owcop,
         }
         catch(...)
         {
-            cerr << "Instance does not exist\n";
+            // cerr << "Instance does not exist\n";
+            // TODO: log this, and catch the correct exception.
         }
 
 	return ci;

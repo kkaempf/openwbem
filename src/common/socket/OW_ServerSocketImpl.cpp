@@ -33,6 +33,7 @@
 #include "OW_NwIface.hpp"
 #include "OW_Format.hpp"
 #include "OW_ByteSwap.hpp"
+#include "OW_FileSystem.hpp"
 
 extern "C"
 {
@@ -158,12 +159,15 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
 	::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
 //#endif
 
-	if (::unlink(filename.c_str()) != 0)
-	{
-		OW_THROW(OW_SocketException, 
-			format("Unable to unlink Unix Domain Socket: %1, errno: %2", 
-				filename, errno).c_str());
-	}
+    if (OW_FileSystem::exists(filename))
+    {
+        if (::unlink(filename.c_str()) != 0)
+        {
+            OW_THROW(OW_SocketException, 
+                format("Unable to unlink Unix Domain Socket: %1, errno: %2", 
+                    filename, errno).c_str());
+        }
+    }
 		
 	if(bind(m_sockfd, m_localAddress.getNativeForm(), 
 		m_localAddress.getNativeFormSize()) == -1)

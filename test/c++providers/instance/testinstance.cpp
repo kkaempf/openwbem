@@ -42,7 +42,6 @@
 
 #include <fstream>
 #include <unistd.h>
-#include <strstream>
 
 using std::ifstream;
 using std::ofstream;

@@ -136,7 +136,7 @@ private:
 	void execQuery(std::ostream& ostr, OW_XMLNode& qualNode,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 
-	typedef void (OW_XMLExecute::*execFuncPtr_t)(ostream& ostr,
+	typedef void (OW_XMLExecute::*execFuncPtr_t)(std::ostream& ostr,
 		OW_XMLNode& qualNode, OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 
 	struct FuncEntry

@@ -58,24 +58,24 @@ public:
 		return keyLess(lhs.first, rhs.first);
 	}
 	
-	bool operator()(const Data& lhs, const Data::first_type& k) const
+	bool operator()(const Data& lhs, const typename Data::first_type& k) const
 	{
 		return keyLess(lhs.first, k);
 	}
 	
-	bool operator()(const Data::first_type& k, const Data& rhs) const
+	bool operator()(const typename Data::first_type& k, const Data& rhs) const
 	{
 		return keyLess(k, rhs.first);
 	}
 
-	bool operator()(const Data::first_type& k, const Data::first_type& rhs) const
+	bool operator()(const typename Data::first_type& k, const typename Data::first_type& rhs) const
 	{
 		return keyLess(k, rhs);
 	}
 
 private:
-	bool keyLess(const Data::first_type& k1,
-		const Data::first_type& k2) const
+	bool keyLess(const typename Data::first_type& k1,
+		const typename Data::first_type& k2) const
 	{
 		return Compare()(k1, k2);
 	}

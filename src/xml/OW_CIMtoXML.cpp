@@ -457,7 +457,7 @@ void OW_CIMtoXML(OW_CIMInstance const& ci, ostream& ostr,
 	OW_CIMtoXMLFlags::include_qualifiers_flag const& includeQualifiers,
 	OW_CIMtoXMLFlags::include_class_origin_flag const& includeClassOrigin,
 	OW_StringArray const& propertyList,
-	bool noProps = false)
+	bool noProps)
 {
 	if(cop)
 	{

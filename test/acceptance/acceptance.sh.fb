@@ -232,7 +232,7 @@ TestInstalledHeaders()
 int main()
 {
 	OW_String toPrint = "Executing Installed Headers Test main()";
-	cout << toPrint << endl;
+	std::cout << toPrint << std::endl;
 	return 0;
 }
 EOS
@@ -269,7 +269,7 @@ TestInstalledHeadersOneByOne()
 int main(int argc, char* argv[])
 {
         char* execName = argv[0] + 2;
-        cout << execName << " Passed!" << endl;
+        std::cout << execName << " Passed!" << std::endl;
 	return 0;
 }
 EOS

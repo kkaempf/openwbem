@@ -46,7 +46,7 @@ void OW_HTTPChunkerTestCases::testChunking()
 {
 	OW_StringStream chunkedTarget;
 	OW_HTTPChunkedOStream ostr(chunkedTarget);
-	ostr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << flush;
+	ostr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << std::flush;
 	unitAssert( chunkedTarget.toString() ==
 			"40\r\n"
 			"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\r\n"
@@ -60,7 +60,7 @@ void OW_HTTPChunkerTestCases::testBigChunking()
 	lotsOfAs[9999] = 0;
 	OW_StringStream chunkedTarget;
 	OW_HTTPChunkedOStream ostr(chunkedTarget);
-	ostr << lotsOfAs << flush;
+	ostr << lotsOfAs << std::flush;
 	unitAssert( chunkedTarget.toString().length() == 10022 );
 	unitAssert( chunkedTarget.toString()[0] == '1' );
 	unitAssert( chunkedTarget.toString().substring(4096 + 8, 4) == "1000" );

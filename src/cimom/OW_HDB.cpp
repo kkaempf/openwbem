@@ -49,7 +49,7 @@ OW_HDB::~OW_HDB()
 {
 	if(m_hdlCount > 0)
 	{
-		cerr << "*** OW_HDB::~OW_HDB - STILL OUTSTANDING HANDLES ***" << endl;
+		// cerr << "*** OW_HDB::~OW_HDB - STILL OUTSTANDING HANDLES ***" << endl;
 	}
 	close();
 }

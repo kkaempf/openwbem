@@ -41,12 +41,12 @@
 #include "OW_Array.hpp"
 #include "OW_AutoPtr.hpp"
 
-#ifdef HAVE_OSTREAM
+#ifdef OW_HAVE_OSTREAM
 #include <ostream>
 #elif defined(OW_HAVE_OSTREAM_H)
 #include <ostream.h>
 #else
-#include <iostream.h>
+#include <iostream>
 #endif
 
 class OW_HTTPChunkedOStreamBuffer : public OW_BaseStreamBuffer

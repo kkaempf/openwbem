@@ -547,7 +547,7 @@ OW_CIMOMEnvironment::_loadConfigItemsFromFile(const OW_String& filename)
 	}
 
 	// We don't have a logger at this point
-	cout << "CIMOM reading config file: " << filename << endl;
+    std::cout << "CIMOM reading config file: " << filename << std::endl;
 
 	OW_String line;
 	int lineNum = 0;
@@ -948,7 +948,7 @@ OW_CIMOMEnvironment::logCustInfo(const OW_String& s) const
 	}
 	else
 	{
-		cout << s << endl;
+        std::cout << s << std::endl;
 	}
 }
 
@@ -962,7 +962,7 @@ OW_CIMOMEnvironment::logDebug(const OW_String& s) const
 	}
 	else
 	{
-		cout << s << endl;
+        std::cout << s << std::endl;
 	}
 }
 
@@ -976,7 +976,7 @@ OW_CIMOMEnvironment::logError(const OW_String& s) const
 	}
 	else
 	{
-		cerr << s << endl;
+        std::cerr << s << std::endl;
 	}
 }
 

@@ -40,7 +40,7 @@
 static OW_Bool processCommandLine(int argc, char* argv[],
 	OW_CIMOMEnvironmentRef env);
 
-static void printUsage(ostream& ostrm);
+static void printUsage(std::ostream& ostrm);
 
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
@@ -158,9 +158,9 @@ processCommandLine(int argc, char* argv[], OW_CIMOMEnvironmentRef env)
 	{
 		if (opts.error)
 		{
-			cout << "Unknown command line argument for CIMOM" << endl;
+            std::cout << "Unknown command line argument for CIMOM" << std::endl;
 		}
-		printUsage(cout);
+		printUsage(std::cout);
 		exit(0);
 	}
 
@@ -181,13 +181,13 @@ processCommandLine(int argc, char* argv[], OW_CIMOMEnvironmentRef env)
 
 //////////////////////////////////////////////////////////////////////////////
 static void
-printUsage(ostream& ostrm)
+printUsage(std::ostream& ostrm)
 {
-	ostrm << OW_DAEMON_NAME << " [OPTIONS]..." << endl;
-	ostrm << "Available options:" << endl;
-	ostrm << "\t-d, --debug  Set debug on (does not detach from terminal"<< endl;
-	ostrm << "\t-c, --config Specifiy an alternate config file" << endl;
-	ostrm << "\t-h, --help   Print this help information" << endl;
+	ostrm << OW_DAEMON_NAME << " [OPTIONS]..." << std::endl;
+	ostrm << "Available options:" << std::endl;
+	ostrm << "\t-d, --debug  Set debug on (does not detach from terminal"<< std::endl;
+	ostrm << "\t-c, --config Specifiy an alternate config file" << std::endl;
+	ostrm << "\t-h, --help   Print this help information" << std::endl;
 }
 
 

@@ -55,8 +55,8 @@ OW_XMLListener::OW_XMLListener(OW_CIMListenerCallback* callback)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLListener::doProcess(istream* istr, ostream* ostrEntity,
-	ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars)
+OW_XMLListener::doProcess(std::istream* istr, std::ostream* ostrEntity,
+        std::ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars)
 {
 
 	OW_ASSERT(ostrEntity);

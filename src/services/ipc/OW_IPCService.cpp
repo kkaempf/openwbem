@@ -329,7 +329,7 @@ OW_IPCConnectionHandler::run()
 						handler->process(&istrm, &ostrm, &tfs, handlerVars);
 						if(handler->hasError())
 						{
-							ostrm << tfs.rdbuf() << flush;
+							ostrm << tfs.rdbuf() << std::flush;
 						}
 					}
 					break;
