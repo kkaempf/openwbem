@@ -486,6 +486,12 @@ CIMOMEnvironment::_loadRequestHandlers()
 		{
 			continue;
 		}
+#ifdef OW_DARWIN
+                if(dirEntries[i].indexOf(OW_VERSION) != String::npos)
+                {
+                        continue;
+                }
+#endif // OW_DARWIN
 		String libName = libPath;
 		libName += dirEntries[i];
 		RequestHandlerIFCRef rh =
@@ -536,7 +542,7 @@ CIMOMEnvironment::_loadServices()
 	StringArray dirEntries;
 	if(!FileSystem::getDirectoryContents(libPath, dirEntries))
 	{
-		logFatalError(Format("CIMOM failed geeting the contents of the"
+		logFatalError(Format("CIMOM failed getting the contents of the"
 			" services directory: %1", libPath));
 		OW_THROW(CIMOMEnvironmentException, "No Services");
 	}
@@ -546,6 +552,12 @@ CIMOMEnvironment::_loadServices()
 		{
 			continue;
 		}
+#ifdef OW_DARWIN
+                if(dirEntries[i].indexOf(OW_VERSION) != String::npos)
+                {
+                        continue;
+                }
+#endif // OW_DARWIN
 		String libName = libPath;
 		libName += dirEntries[i];
 		ServiceIFCRef srv =

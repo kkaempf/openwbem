@@ -91,6 +91,12 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 		{
 			continue;
 		}
+#ifdef OW_DARWIN
+                if(libs[i].indexOf(OW_VERSION) != String::npos)
+                {
+                        continue;
+                }
+#endif // OW_DARWIN
 		try
 		{
 			ProviderIFCBaseIFCRef rval;
