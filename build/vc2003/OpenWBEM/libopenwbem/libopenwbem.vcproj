@@ -288,13 +288,7 @@
 				RelativePath="..\..\..\..\src\common\OW_Exception.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\common\OW_Exec.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\..\src\common\OW_Format.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\common\utf8CodeGenerators\OW_GenCaseFoldingCompare.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\socket\OW_GetPass.cpp">
@@ -490,9 +484,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_TmpFile.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\common\utf8CodeGenerators\OW_to_UTF8.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_UnnamedPipe.cpp">

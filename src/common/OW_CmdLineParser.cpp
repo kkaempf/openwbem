@@ -87,8 +87,8 @@ CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Opt
 	OW_ASSERT(argc > 0); // have to get at least the name
 	OW_ASSERT(argv_ != 0);
 	OW_ASSERT(options != 0);
-	char const* const* argv(argv_);
-	char const* const* argvEnd(argv + argc);
+	char const* const* argv = argv_;
+	char const* const* argvEnd = argv + argc;
 	const Option* optionsEnd;
 
 	// m_options is an array terminated by a final entry that has a '\0' shortopt && 0 longopt.
