@@ -35,6 +35,10 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Array.hpp"
 
+#ifdef __APPLE__
+#include <sys/wait.h>
+#endif
+
 using namespace OpenWBEM;
 
 void OW_ExecTestCases::setUp()
