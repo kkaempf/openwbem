@@ -75,7 +75,7 @@ NonRecursiveMutex g_guard;
 
 #ifdef OW_WIN32
 
-/* FILETIME of Jan 1 1970 00:00:00. */
+// FILETIME of Jan 1 1970 00:00:00.
 static const unsigned __int64 epoch = 116444736000000000L;
 
 int gettimeofday(struct timeval * tp, int bogusParm)

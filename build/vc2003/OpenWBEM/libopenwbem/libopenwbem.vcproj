@@ -244,6 +244,12 @@
 				RelativePath="..\..\..\..\src\common\OW_DateTime.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_DLLSharedLibrary.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_DLLSharedLibraryLoader.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_dlSharedLibrary.cpp">
 			</File>
 			<File
@@ -433,9 +439,6 @@
 				RelativePath="..\..\..\..\src\common\OW_TmpFile.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\common\utf8CodeGenerators\OW_to_UTF8.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\..\src\common\OW_UnnamedPipe.cpp">
 			</File>
 			<File
@@ -622,6 +625,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_DateTime.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_DLLSharedLibrary.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_DLLSharedLibraryLoader.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_dlSharedLibrary.hpp">

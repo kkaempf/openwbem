@@ -49,10 +49,28 @@ extern "C"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+#if defined(OW_WIN32)
+#include <io.h>
+#endif
 }
 
 namespace OpenWBEM
 {
+
+namespace {
+
+inline int
+closeFile(int fd)
+{
+#if defined(OW_WIN32)
+	return ::_close(fd);
+#else
+	return ::close(fd);
+#endif
+}
+
+}	// end of unnamed namespace
 
 //////////////////////////////////////////////////////////////////////////////
 TmpFileImpl::TmpFileImpl()
@@ -68,15 +86,19 @@ TmpFileImpl::TmpFileImpl(String const& filename)
 {
 	size_t len = filename.length();
 	m_filename = new char[len + 1];
-	strncpy(m_filename, filename.c_str(), len);
+	::strncpy(m_filename, filename.c_str(), len);
 	m_filename[len] = '\0';
+#if defined(OW_WIN32)
+	m_hdl = ::_open(m_filename, _O_RDWR);
+#else
 	m_hdl = ::open(m_filename, O_RDWR);
+#endif
 	if(m_hdl == -1)
 	{
 		delete[] m_filename;
 		m_filename = NULL;
 		OW_THROW(IOException, Format("Error opening file %1: %2", filename,
-			strerror(errno)).c_str());
+			::strerror(errno)).c_str());
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -95,6 +117,34 @@ TmpFileImpl::getSize()
 	return rv;
 }
 //////////////////////////////////////////////////////////////////////////////
+#if defined(OW_WIN32)
+void
+TmpFileImpl::open()
+{
+	close();
+	char* p = ::_tempnam(NULL, "owtempfile");
+	if(p == NULL)
+	{
+		OW_THROW(IOException, "Error generating file with _tempnam");
+	}
+
+	size_t len = ::strlen(p);
+	m_filename = new char[len + 1];
+	::strncpy(m_filename, p, len);
+	m_filename[len] = '\0';
+	::free(p);					// Free memory allocated by _tempnam
+	static Mutex tmpfileMutex;
+	MutexLock tmpfileML(tmpfileMutex);
+	m_hdl = ::_open(m_filename, _O_WRONLY | _O_CREAT, _S_IREAD | _S_IWRITE );
+	if(m_hdl == -1)
+	{
+		delete[] m_filename;
+		m_filename = NULL;
+		OW_THROW(IOException, Format("Error opening file from _tempnam: %1", 
+			::strerror(errno)).c_str());
+	}
+}
+#else
 void
 TmpFileImpl::open()
 {
@@ -123,6 +173,8 @@ TmpFileImpl::open()
 			strerror(errno)).c_str());
 	}
 }
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 int
 TmpFileImpl::close()
@@ -130,8 +182,12 @@ TmpFileImpl::close()
 	int rv = -1;
 	if(m_hdl != -1)
 	{
-		rv = ::close(m_hdl);
+		rv = closeFile(m_hdl);
+#if defined(OW_WIN32)
+		_unlink(m_filename);
+#else
 		remove(m_filename);
+#endif
 		delete [] m_filename;
 		m_filename = NULL;
 		m_hdl = -1;
@@ -144,13 +200,17 @@ TmpFileImpl::read(void* bfr, size_t numberOfBytes, long offset)
 {
 	if(offset == -1L)
 	{
-		::lseek(m_hdl, 0L, SEEK_CUR);
+		seek(0L, SEEK_CUR);
 	}
 	else
 	{
-		::lseek(m_hdl, offset, SEEK_SET);
+		seek(offset, SEEK_SET);
 	}
+#if defined(OW_WIN32)
+	return ::_read(m_hdl, bfr, numberOfBytes);
+#else
 	return ::read(m_hdl, bfr, numberOfBytes);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 size_t
@@ -158,13 +218,17 @@ TmpFileImpl::write(const void* bfr, size_t numberOfBytes, long offset)
 {
 	if(offset == -1L)
 	{
-		::lseek(m_hdl, 0L, SEEK_CUR);
+		seek(0L, SEEK_CUR);
 	}
 	else
 	{
-		::lseek(m_hdl, offset, SEEK_SET);
+		seek(offset, SEEK_SET);
 	}
+#if defined(OW_WIN32)
+	int rv = ::_write(m_hdl, bfr, numberOfBytes);
+#else
 	int rv = ::write(m_hdl, bfr, numberOfBytes);
+#endif
 	if (rv == -1)
 	{
 		perror("TmpFile::write()");
@@ -178,9 +242,9 @@ TmpFileImpl::releaseFile()
 	String rval(m_filename);
 	if(m_hdl != -1)
 	{
-		if( ::close(m_hdl) == -1)
+		if(closeFile(m_hdl) == -1)
 			OW_THROW(IOException, "Unable to close file");
-		// work like close, but don't delete the file, it will be give to the
+		// work like close, but don't delete the file, it will be given to the
 		// caller
 		delete [] m_filename;
 		m_filename = NULL;

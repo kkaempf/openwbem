@@ -535,6 +535,7 @@
 #endif // #ifdef OW_PRINT_FUNC_DEBUG
 
 #define _WIN32_WINNT 0x0400
+#define OW_USE_DLL 1
  
 /* __SRC_COMMON_OW_CONFIG_H */
 #endif
