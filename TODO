@@ -26,7 +26,6 @@ Testing:
       - Do all this while running under valgrind to detect memory leaks, etc.
 
 Fix problems:
-    - Man pages aren't getting included in the rpm.
     - Update the *.HOWTO files.
     - To avoid permanent deadlocks, change most locks to use a timeout.
       - If a timeout happens, certain places can retry the operation.
@@ -72,6 +71,7 @@ New features:
     - create static CIMQualifiers for standard qualifiers.
     - Create a repository debugger so you can easily inspect what's in a repository.
     - Pass language down to providers
+    - Add an option to the CIM Listener to run in single threaded mode.
 
 Post 3.0
     - associators and references can't return an objectpath, only an instance.

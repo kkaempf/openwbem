@@ -83,6 +83,7 @@ ln -s %{prefix}/lib/openwbem/services/libowservicehttp.so $RPM_BUILD_ROOT/%{pref
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/
 mv $RPM_BUILD_ROOT/%{prefix}/man/* $RPM_BUILD_ROOT/%{_mandir}/
 
+rm -f $RPM_BUILD_ROOT/%{prefix}/lib/perl5/*/*/perllocal.pod
 
 %Clean
 %{__rm} -rf $RPM_BUILD_ROOT
@@ -200,7 +201,7 @@ fi
 %Files perlNPI
 %{prefix}/lib/perl5/site_perl
 %defattr(-,root,root)
-%{prefix}/share/man/man3
+%{_mandir}/man3/*
 
 %ChangeLog
 
