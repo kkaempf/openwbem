@@ -50,7 +50,7 @@ typedef OW_SharedLibraryReference<OW_RequestHandlerIFC> OW_RequestHandlerIFCRef;
 class OW_ServiceEnvironmentIFC
 {
 public:
-	virtual ~OW_ServiceEnvironmentIFC() {}
+	virtual ~OW_ServiceEnvironmentIFC();
 
 	virtual OW_String getConfigItem(const OW_String& name) const = 0;
 

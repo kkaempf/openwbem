@@ -37,13 +37,9 @@
 
 struct OW_InstClassInfo
 {
-	explicit OW_InstClassInfo(OW_String const& className_)
-		: className(className_)
-	{}
-	OW_InstClassInfo(OW_String const& className_, OW_StringArray const& namespaces_)
-		: className(className_)
-		, namespaces(namespaces_)
-	{}
+	explicit OW_InstClassInfo(OW_String const& className_);
+	OW_InstClassInfo(OW_String const& className_, OW_StringArray const& namespaces_);
+	~OW_InstClassInfo();
 	OW_String className;
 	OW_StringArray namespaces;
 };
@@ -56,7 +52,7 @@ public:
 	typedef ClassInfoT ClassInfo;
 	typedef OW_Array<ClassInfoT> ClassInfoArray;
 
-	virtual ~OW_ProviderInfoBase() {}
+	virtual ~OW_ProviderInfoBase();
 
 	/**
 	 * Add a class name to the list of instrumented classes for the provider.
@@ -64,36 +60,17 @@ public:
 	 * associated to all namespaces.
 	 * @param className The class name.
 	 */
-	void addInstrumentedClass(OW_String const& className)
-	{
-		m_instrumentedClasses.push_back(ClassInfoT(className));
-	}
-	void addInstrumentedClass(ClassInfoT const& classInfo)
-	{
-		m_instrumentedClasses.push_back(classInfo);
-	}
-	
-	const ClassInfoArray& getClassInfo() const
-	{
-		return m_instrumentedClasses;
-	}
-
-	void setProviderName(OW_String const& name)
-	{
-		m_name = name;
-	}
-
-	OW_String getProviderName() const
-	{
-		return m_name;
-	}
+	void addInstrumentedClass(OW_String const& className);
+	void addInstrumentedClass(ClassInfoT const& classInfo);
+	const ClassInfoArray& getClassInfo() const;
+	void setProviderName(OW_String const& name);
+	OW_String getProviderName() const;
 
 private:
 	ClassInfoArray m_instrumentedClasses;
 	OW_String m_name;
 
 };
-
 
 
 #endif

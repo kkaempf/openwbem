@@ -40,6 +40,11 @@ OW_ListenerAuthenticator::OW_ListenerAuthenticator()
 
 
 //////////////////////////////////////////////////////////////////////////////
+OW_ListenerAuthenticator::~OW_ListenerAuthenticator() 
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_Bool
 OW_ListenerAuthenticator::doAuthenticate(OW_String& userName,
 		const OW_String& info, OW_String& details)

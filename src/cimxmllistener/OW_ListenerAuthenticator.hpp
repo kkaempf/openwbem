@@ -44,7 +44,7 @@ public:
 	 * used by a CIM Listener product)
 	 */
 	OW_ListenerAuthenticator();
-	virtual ~OW_ListenerAuthenticator() {}
+	virtual ~OW_ListenerAuthenticator();
 
 	/**
 	 * generate a new random name/password in the form

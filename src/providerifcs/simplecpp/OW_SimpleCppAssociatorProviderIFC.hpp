@@ -45,7 +45,7 @@
 class OW_SimpleCppAssociatorProviderIFC: public virtual OW_SimpleCppProviderBaseIFC
 {
 	public:
-		virtual ~OW_SimpleCppAssociatorProviderIFC(){}
+		virtual ~OW_SimpleCppAssociatorProviderIFC();
 		
 		/**
 		 * This method is invoked in order to do the Associators operation as

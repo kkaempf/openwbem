@@ -37,6 +37,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_CppProxyProvider.hpp"
+#include "OW_NoSuchProviderException.hpp"
 //#include <setjmp.h>
 
 typedef OW_CppProviderBaseIFC* (*ProviderCreationFunc)();

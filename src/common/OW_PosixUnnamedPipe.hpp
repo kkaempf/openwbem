@@ -39,8 +39,8 @@ class OW_PosixUnnamedPipe : public OW_UnnamedPipe
 public:
 	OW_PosixUnnamedPipe(OW_Bool doOpen=true);
 	virtual ~OW_PosixUnnamedPipe();
-	virtual int write(const void* data, int dataLen, OW_Bool errorAsException=false);
-	virtual int read(void* buffer, int bufferLen, OW_Bool errorAsException=false);
+	virtual int write(const void* data, int dataLen, bool errorAsException=false);
+	virtual int read(void* buffer, int bufferLen, bool errorAsException=false);
 	int getInputHandle() { return m_fds[0]; }
 	int getOutputHandle() { return m_fds[1]; }
 	virtual void open();

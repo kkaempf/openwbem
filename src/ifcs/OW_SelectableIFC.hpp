@@ -38,7 +38,7 @@
 class OW_SelectableIFC
 {
 public:
-   virtual ~OW_SelectableIFC() {}
+   virtual ~OW_SelectableIFC();
    virtual OW_Select_t getSelectObj() const = 0;
 };
 

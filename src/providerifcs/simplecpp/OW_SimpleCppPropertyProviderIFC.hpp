@@ -45,7 +45,7 @@
 class OW_SimpleCppPropertyProviderIFC: public virtual OW_SimpleCppProviderBaseIFC
 {
 public:
-	virtual ~OW_SimpleCppPropertyProviderIFC() {}
+	virtual ~OW_SimpleCppPropertyProviderIFC();
 
 	/**
 	 * This method retrieves the value of the property specified by the

@@ -42,11 +42,16 @@ public:
 	{
 		doHandle(x);
 	}
-	virtual ~OW_ResultHandlerIFC() {}
+	virtual ~OW_ResultHandlerIFC();
 
 protected:
 	virtual void doHandle(const T& x) = 0;
 };
+
+template <typename T>
+OW_ResultHandlerIFC<T>::~OW_ResultHandlerIFC()
+{
+}
 
 typedef OW_ResultHandlerIFC<OW_CIMClass> OW_CIMClassResultHandlerIFC;
 typedef OW_ResultHandlerIFC<OW_CIMInstance> OW_CIMInstanceResultHandlerIFC;

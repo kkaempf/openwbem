@@ -44,7 +44,7 @@ public:
 	{
 	}
 
-	virtual ~OW_NPIInstanceProviderProxy() {}
+	virtual ~OW_NPIInstanceProviderProxy();
 
 
 	/**

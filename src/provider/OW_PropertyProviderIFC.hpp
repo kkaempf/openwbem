@@ -46,7 +46,7 @@
 class OW_PropertyProviderIFC: public OW_ProviderBaseIFC
 {
 public:
-	virtual ~OW_PropertyProviderIFC() {}
+	virtual ~OW_PropertyProviderIFC();
 
 	/**
 	 * This method retrieves the value of the property specified by the

@@ -34,6 +34,11 @@
 #include "OW_CIMValue.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
+OW_SimpleCppPropertyProviderIFC::~OW_SimpleCppPropertyProviderIFC() 
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMValue OW_SimpleCppPropertyProviderIFC::getPropertyValue(
 	const OW_ProviderEnvironmentIFCRef&,
 	const OW_CIMObjectPath&,

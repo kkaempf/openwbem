@@ -372,7 +372,7 @@ static OW_Mutex guard;
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, OW_Bool errorAsException)
+OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException)
 	/*throw (OW_SocketException)*/
 {
 	int rc = 0;
@@ -424,7 +424,7 @@ OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, OW_Bool errorAsExc
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_SocketBaseImpl::read(void* dataIn, int dataInLen, OW_Bool errorAsException) 	
+OW_SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException) 	
 	/*throw (OW_SocketException)*/
 {
 	int rc = 0;

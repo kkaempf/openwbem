@@ -50,7 +50,7 @@ class OW_CIMOMLocator
 {
 public:
 
-	virtual ~OW_CIMOMLocator() {}
+	virtual ~OW_CIMOMLocator();
 
 	/**
 	 * Find available CIMOMs.  

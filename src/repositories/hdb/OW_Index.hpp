@@ -55,7 +55,7 @@ public:
 	 * Destroy this OW_Index object. This will close the index file if it
 	 * is open.
 	 */
-	virtual ~OW_Index() {}
+	virtual ~OW_Index();
 
 	/**
 	 * Open the given index file.
@@ -149,7 +149,7 @@ public:
 	/**
 	 * Flush all changes to the underlying index file.
 	 */
-	virtual void flush() {}
+	virtual void flush();
 
 	/**
 	 * Create dynamically allocated instances of a sub-class of OW_Indexer.

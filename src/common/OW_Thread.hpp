@@ -234,7 +234,7 @@ private:
 class OW_ThreadDoneCallback
 {
 public:
-	virtual ~OW_ThreadDoneCallback() {}
+	virtual ~OW_ThreadDoneCallback();
 
 	void notifyThreadDone(OW_Thread* t)
 	{

@@ -41,7 +41,7 @@
 class OW_dlSharedLibraryLoader : public OW_SharedLibraryLoader
 {
 	public:
-		virtual ~OW_dlSharedLibraryLoader(){}
+		virtual ~OW_dlSharedLibraryLoader();
 
 		/**
 		 * Load a shared library specified by filename.  If the operation fails,

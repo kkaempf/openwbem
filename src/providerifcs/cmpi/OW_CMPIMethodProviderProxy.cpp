@@ -39,6 +39,11 @@
 #include "OW_CIMParamValue.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
+OW_CMPIMethodProviderProxy::~OW_CMPIMethodProviderProxy() 
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
 OW_CMPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
 	const OW_String& ns,

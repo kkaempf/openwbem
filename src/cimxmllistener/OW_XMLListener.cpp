@@ -52,6 +52,11 @@ OW_XMLListener::OW_XMLListener(OW_CIMListenerCallback* callback)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_XMLListener::~OW_XMLListener() 
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
 int
 OW_XMLListener::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 	ostream* ostrError, const OW_String& /*userName*/)

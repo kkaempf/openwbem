@@ -34,6 +34,7 @@ mofparser.yy \
 moflexer.ll \
 CIMOMVisitor.cpp \
 MofCompiler.cpp \
+OW_MofParserErrorHandlerIFC.cpp \
 OW_MofParseFatalErrorException.cpp
 
 pkginclude_HEADERS = \

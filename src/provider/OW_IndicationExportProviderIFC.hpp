@@ -40,6 +40,8 @@ class OW_IndicationExportProviderIFC : public OW_ProviderBaseIFC
 {
 public:
 
+	virtual ~OW_IndicationExportProviderIFC();
+
 	/**
 	 * @return The class names of all the CIM_IndicationHandler sub-classes
 	 * this OW_IndicationExportProviderIFC handles.

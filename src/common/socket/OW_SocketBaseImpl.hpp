@@ -80,9 +80,9 @@ public:
 	OW_Bool receiveTimeOutExpired() { return m_recvTimeoutExprd; }
 
 	int write(const void* dataOut, int dataOutLen,
-			OW_Bool errorAsException=false);
+			bool errorAsException=false);
 	int read(void* dataIn, int dataInLen,
-			OW_Bool errorAsException=false);
+			bool errorAsException=false);
 
 	OW_Bool waitForInput(int timeOutSecs=-1);
 	OW_Bool waitForOutput(int timeOutSecs=-1);

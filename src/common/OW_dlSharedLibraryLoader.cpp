@@ -34,6 +34,7 @@
 #include "OW_Format.hpp"
 #include <dlfcn.h>
 
+///////////////////////////////////////////////////////////////////////////////
 OW_SharedLibraryRef 
 OW_dlSharedLibraryLoader::loadSharedLibrary(const OW_String& filename,
 	OW_LoggerRef logger) const
@@ -52,9 +53,15 @@ OW_dlSharedLibraryLoader::loadSharedLibrary(const OW_String& filename,
 	}
 }
 
+///////////////////////////////////////////////////////////////////////////////
 OW_SharedLibraryLoaderRef 
 OW_SharedLibraryLoader::createSharedLibraryLoader()
 {
 	return OW_SharedLibraryLoaderRef(new OW_dlSharedLibraryLoader);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+OW_dlSharedLibraryLoader::~OW_dlSharedLibraryLoader()
+{
 }
 

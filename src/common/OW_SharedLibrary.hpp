@@ -41,7 +41,7 @@
 class OW_SharedLibrary
 {
 	public:
-		virtual ~OW_SharedLibrary(){}
+		virtual ~OW_SharedLibrary();
 
 		/**
 		 * given a symbol name, getFunctionPointer will store a pointer to the

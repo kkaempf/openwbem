@@ -46,8 +46,8 @@ DECLARE_EXCEPTION(CIMProtocol);
 class OW_CIMProtocolIFC
 {
 public:
-	OW_CIMProtocolIFC() : m_loginCB(), m_contentType() {};
-	virtual ~OW_CIMProtocolIFC() {};
+
+	virtual ~OW_CIMProtocolIFC();
 
 	virtual OW_Reference<std::iostream> beginRequest(
 			const OW_String& methodName, const OW_String& nameSpace) = 0;

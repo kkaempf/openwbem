@@ -41,6 +41,7 @@ class OW_PolledProviderIFC : public OW_ProviderBaseIFC
 {
 public:
 
+	virtual ~OW_PolledProviderIFC();
 	/**
 	 * Called by the CIMOM to give this OW_PolledProviderIFC to
 	 * opportunity to export indications if needed.

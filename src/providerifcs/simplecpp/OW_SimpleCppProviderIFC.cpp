@@ -37,6 +37,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_SimpleCppProxyProvider.hpp"
+#include "OW_NoSuchProviderException.hpp"
 
 typedef OW_SimpleCppProviderBaseIFC* (*ProviderCreationFunc)();
 typedef const char* (*versionFunc_t)();

@@ -4,7 +4,7 @@ else
 PERLDIR=
 endif
 
-SUBDIRS = cpp npi simplecpp ${PERLDIR}
+SUBDIRS = cpp npi simplecpp ${PERLDIR} cmpi
 
 #Add this back when it doesn't crash the cimom 
 #cmpi

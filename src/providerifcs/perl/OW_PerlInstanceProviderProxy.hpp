@@ -44,7 +44,7 @@ public:
 	{
 	}
 
-	virtual ~OW_PerlInstanceProviderProxy() {}
+	virtual ~OW_PerlInstanceProviderProxy();
 
 
 	/**

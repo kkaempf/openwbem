@@ -41,7 +41,7 @@
 class OW_ClientOperation
 {
 public:
-	virtual ~OW_ClientOperation() {}
+	virtual ~OW_ClientOperation();
 	virtual void operator()(OW_CIMXMLParser& parser) = 0;
 };
 

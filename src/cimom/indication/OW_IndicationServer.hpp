@@ -46,7 +46,7 @@ public:
 		: OW_Thread(true)
 	{}
 
-	virtual ~OW_IndicationServer() {}
+	virtual ~OW_IndicationServer();
 
 	virtual void init(OW_CIMOMEnvironmentRef env) = 0;
 

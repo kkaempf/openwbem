@@ -32,7 +32,7 @@
 #include "OW_HTTPSvrConnection.hpp"
 #include "OW_IOException.hpp"
 #include "OW_HTTPStatusCodes.hpp"
-#include "OW_DataBlockStream.hpp"
+#include "OW_TempFileStream.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_HTTPChunkedOStream.hpp"
 #include "OW_HTTPDeflateIStream.hpp"
@@ -387,7 +387,7 @@ OW_HTTPSvrConnection::initRespStream(ostream*& ostrEntity)
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
-	OW_DataBlockStream& ostrError)
+	OW_TempFileStream& ostrError)
 {
 	int clen = -1;
 	OW_Int32 errCode = 0;
@@ -402,15 +402,10 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 
 		addHeader(m_respHeaderPrefix + "CIMOperation", "MethodResponse");
 
-		OW_DataBlockStream* ss = NULL;
 		OW_TempFileStream* tfs = NULL;
 		if ((tfs = dynamic_cast<OW_TempFileStream*>(ostrToSend)))
 		{
 			clen = tfs->getSize();
-		}
-		else if ((ss = dynamic_cast<OW_DataBlockStream*>(ostrToSend)))
-		{
-			clen = ss->size();
 		}
 
 		if (m_deflateCompressionOut && tfs)
@@ -450,17 +445,10 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 				else
 				{
 					m_ostr << tfs->rdbuf();
-				}
-			}
-		}
-		else if (ss)
-		{
-			if (clen > 0)
-			{
-				// c_str() may contain NULL bytes which we DO want to write
-				if (!m_ostr.write(ss->data(), clen))
-				{
-					OW_THROW(OW_IOException, "Failed writing");
+					if (!m_ostr)
+					{
+						OW_THROW(OW_IOException, "Failed writing");
+					}
 				}
 			}
 		}
@@ -1031,7 +1019,7 @@ void
 OW_HTTPSvrConnection::post(istream& istr)
 {
 	ostream* ostrEntity = NULL;
-	OW_DataBlockStream ostrError(400);
+	OW_TempFileStream ostrError(400);
 
 	initRespStream(ostrEntity);
 	OW_ASSERT(ostrEntity);

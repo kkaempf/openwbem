@@ -37,7 +37,7 @@
 class OW_SelectableCallbackIFC
 {
 public:
-	virtual ~OW_SelectableCallbackIFC() {}
+	virtual ~OW_SelectableCallbackIFC();
 
 	void selected(OW_SelectableIFCRef& selectedObject)
 	{

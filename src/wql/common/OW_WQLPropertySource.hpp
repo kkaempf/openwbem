@@ -46,7 +46,7 @@ public:
 
 	/** Virtual destructor.
 	*/
-	virtual ~OW_WQLPropertySource() {}
+	virtual ~OW_WQLPropertySource();
 
 	/** Returns the value whose property has the given name. The output
 		parameter value is populated with the value of that parameter.

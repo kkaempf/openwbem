@@ -43,7 +43,7 @@
 class OW_MethodProviderIFC: public OW_ProviderBaseIFC
 {
 public:
-	virtual ~OW_MethodProviderIFC() {}
+	virtual ~OW_MethodProviderIFC();
 
 	/**
 	 * The CIMOM calls this method when the method specified in the parameters

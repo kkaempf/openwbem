@@ -33,4 +33,15 @@
 
 DEFINE_EXCEPTION(IO)
 
+OW_BadCIMSignatureException::OW_BadCIMSignatureException() : OW_IOException() {}
+
+OW_BadCIMSignatureException::OW_BadCIMSignatureException(const char* file, int line, const char* msg)
+		: OW_IOException(file, line, msg) {}
+
+OW_BadCIMSignatureException::OW_BadCIMSignatureException(const char* msg) : OW_IOException(msg) {}
+
+OW_BadCIMSignatureException::~OW_BadCIMSignatureException() throw() { }
+
+const char* 
+OW_BadCIMSignatureException::type() const { return "OW_BadCIMSignatureException"; }
 

@@ -159,7 +159,7 @@ OW_PosixUnnamedPipe::closeOutputHandle()
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_PosixUnnamedPipe::write(const void* data, int dataLen, OW_Bool errorAsException)
+OW_PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 {
 	int rc = -1;
 
@@ -180,7 +180,7 @@ OW_PosixUnnamedPipe::write(const void* data, int dataLen, OW_Bool errorAsExcepti
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_PosixUnnamedPipe::read(void* buffer, int bufferLen, OW_Bool errorAsException)
+OW_PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 {
 	int rc = -1;
 

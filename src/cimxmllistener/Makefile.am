@@ -22,6 +22,7 @@ clean-local:
 	done
 
 libowhttpxmllistener_a_SOURCES = \
+OW_CIMListenerCallback.cpp \
 OW_XMLListener.cpp \
 OW_ListenerAuthenticator.cpp \
 OW_HTTPXMLCIMListener.cpp

@@ -52,7 +52,7 @@ typedef OW_Reference<OW_CIMProtocolIStreamIFC> OW_CIMProtocolIStreamIFCRef;
 class OW_CIMProtocolIStreamIFC : public std::istream
 {
 public:
-	OW_CIMProtocolIStreamIFC(std::streambuf* strbuf) : std::istream(strbuf) {}
+	OW_CIMProtocolIStreamIFC(std::streambuf* strbuf);
 
 	/**
 	 * This function should be called after the end of the stream has 
@@ -60,8 +60,8 @@ public:
 	 * an appropriate CIMException (constructed from the info from the 
 	 * trailers).
 	 */
-	virtual void checkForError() const { }
-	virtual ~OW_CIMProtocolIStreamIFC() {}
+	virtual void checkForError() const;
+	virtual ~OW_CIMProtocolIStreamIFC();
 };
 
 #endif

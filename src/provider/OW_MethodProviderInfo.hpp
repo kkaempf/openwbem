@@ -40,14 +40,9 @@ class OW_MethodProviderInfo
 public:
 	struct ClassInfo
 	{
-		explicit ClassInfo(OW_String const& className_)
-			: className(className_)
-		{}
-		ClassInfo(OW_String const& className_, OW_StringArray const& namespaces_, OW_StringArray const& methods_)
-			: className(className_)
-			, namespaces(namespaces_)
-			, methods(methods_)
-		{}
+		explicit ClassInfo(OW_String const& className_);
+		ClassInfo(OW_String const& className_, OW_StringArray const& namespaces_, OW_StringArray const& methods_);
+
 		OW_String className;
 		OW_StringArray namespaces;
 		OW_StringArray methods;
@@ -63,30 +58,15 @@ public:
 	 * the provider handles all the methods in the class
 	 * @param className The class name.
 	 */
-	void addInstrumentedClass(OW_String const& className)
-	{
-		m_instrumentedClasses.push_back(ClassInfo(className));
-	}
+	void addInstrumentedClass(OW_String const& className);
 
-	void addInstrumentedClass(ClassInfo const& classInfo)
-	{
-		m_instrumentedClasses.push_back(classInfo);
-	}
+	void addInstrumentedClass(ClassInfo const& classInfo);
 	
-	const ClassInfoArray& getClassInfo() const
-	{
-		return m_instrumentedClasses;
-	}
+	const ClassInfoArray& getClassInfo() const;
 
-	void setProviderName(OW_String const& name)
-	{
-		m_name = name;
-	}
+	void setProviderName(OW_String const& name);
 
-	OW_String getProviderName() const
-	{
-		return m_name;
-	}
+	OW_String getProviderName() const;
 
 private:
 	ClassInfoArray m_instrumentedClasses;

@@ -95,14 +95,9 @@ public:
 	static const OW_Bool NOT_LOCAL_ONLY;
 
 	/**
-	 * Create a new OW_CIMOMHandleIFC object.
-	 */
-	OW_CIMOMHandleIFC() {}
-
-	/**
 	 * Destroy this OW_CIMOMHandleIFC object.
 	 */
-	virtual ~OW_CIMOMHandleIFC() {}
+	virtual ~OW_CIMOMHandleIFC();
 
 	/**
 	 * Close the connetion to the CIMOM. This will free resources used for the

@@ -39,6 +39,7 @@
 #include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMValue.hpp"
 
+//////////////////////////////////////////////////////////////////////////////
 const OW_Bool OW_CIMOMHandleIFC::DEEP(true);
 const OW_Bool OW_CIMOMHandleIFC::SHALLOW(false);
 const OW_Bool OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS(true);
@@ -48,12 +49,19 @@ const OW_Bool OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN(false);
 const OW_Bool OW_CIMOMHandleIFC::LOCAL_ONLY(true);
 const OW_Bool OW_CIMOMHandleIFC::NOT_LOCAL_ONLY(false);
 
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMOMHandleIFC::~OW_CIMOMHandleIFC() 
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMFeatures
 OW_CIMOMHandleIFC::getServerFeatures()
 {
 	return OW_CIMFeatures();
 }
 
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMOMHandleIFC::exportIndication(const OW_CIMInstance& instance,
 		const OW_String& instNS)

@@ -41,6 +41,11 @@
 #include "OW_CIMParamValue.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
+OW_PerlPolledProviderProxy::~OW_PerlPolledProviderProxy() 
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
 OW_Int32
 OW_PerlPolledProviderProxy::getInitialPollingInterval(
       const OW_ProviderEnvironmentIFCRef& env)

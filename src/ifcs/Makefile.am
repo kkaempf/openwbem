@@ -1,9 +1,18 @@
 noinst_LIBRARIES = libOW_ifcs.a
 
 libOW_ifcs_a_SOURCES = \
-OW_CIMOMHandleIFC.cpp \
-OW_RequestHandlerIFC.cpp \
 OW_AuthenticationException.cpp \
+OW_AuthenticatorIFC.cpp \
+OW_CIMOMHandleIFC.cpp \
+OW_CIMProtocolIFC.cpp \
+OW_CIMProtocolIStreamIFC.cpp \
+OW_IOIFC.cpp \
+OW_RepositoryIFC.cpp \
+OW_RequestHandlerIFC.cpp \
+OW_SelectableCallbackIFC.cpp \
+OW_SelectableIFC.cpp \
+OW_ServiceIFC.cpp \
+OW_ServiceEnvironmentIFC.cpp \
 OW_CIMProtocolException.cpp
 
 pkginclude_HEADERS = \
@@ -14,7 +23,6 @@ OW_CIMProtocolIStreamIFC.hpp \
 OW_IOIFC.hpp \
 OW_RepositoryIFC.hpp \
 OW_RequestHandlerIFC.hpp \
-OW_RepositoryIFC.hpp \
 OW_ResultHandlerIFC.hpp \
 OW_SelectableCallbackIFC.hpp \
 OW_SelectableIFC.hpp \

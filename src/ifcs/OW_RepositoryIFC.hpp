@@ -42,7 +42,7 @@ class OW_RepositoryIFC
 {
 public:
 
-	virtual ~OW_RepositoryIFC() {}
+	virtual ~OW_RepositoryIFC();
 
 	/**
 	 * Open this OW_RepositoryIFC.
@@ -477,7 +477,7 @@ public:
 		const OW_UserInfo& aclInfo) = 0;
 
 	virtual void exportIndication(const OW_CIMInstance&,
-		const OW_String&) {}
+		const OW_String&);
 
 	virtual void getSchemaReadLock() = 0;
 	virtual void getSchemaWriteLock() = 0;

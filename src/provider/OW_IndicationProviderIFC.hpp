@@ -44,7 +44,7 @@ class OW_WQLSelectStatement;
 class OW_IndicationProviderIFC: public OW_ProviderBaseIFC
 {
 public:
-	virtual ~OW_IndicationProviderIFC() {}
+	virtual ~OW_IndicationProviderIFC();
 
     // TODO: Add docs for these functions.
 	virtual void activateFilter(

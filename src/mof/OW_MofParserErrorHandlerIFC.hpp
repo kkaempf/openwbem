@@ -40,8 +40,8 @@ DECLARE_EXCEPTION(MofParseFatalError);
 class OW_MofParserErrorHandlerIFC
 {
 public:
-	OW_MofParserErrorHandlerIFC() : m_errorCount(0) {}
-	virtual ~OW_MofParserErrorHandlerIFC(){}
+	OW_MofParserErrorHandlerIFC();
+	virtual ~OW_MofParserErrorHandlerIFC();
 
 	void fatalError( const char* error, const lineInfo& li );
 
@@ -55,7 +55,7 @@ public:
 
 	void progressMessage( const char* message, const lineInfo& li );
 
-	long errorCount() { return m_errorCount; }
+	long errorCount();
 
 protected:
 	virtual void doFatalError( const char* error, const lineInfo& li ) = 0;
@@ -67,25 +67,6 @@ private:
 	long m_errorCount;
 
 };
-
-inline void OW_MofParserErrorHandlerIFC::fatalError( const char* error, const lineInfo& li )
-{
-	++m_errorCount;
-	doFatalError(error,li);
-	OW_THROW(OW_MofParseFatalErrorException, "");
-}
-
-inline void OW_MofParserErrorHandlerIFC::recoverableError( const char* error, const lineInfo& li )
-{
-	++m_errorCount;
-	if ( doRecoverableError(error,li) == Abort )
-		OW_THROW(OW_MofParseFatalErrorException, "");
-}
-
-inline void OW_MofParserErrorHandlerIFC::progressMessage( const char* message, const lineInfo& li )
-{
-	doProgressMessage( message, li );
-}
 
 
 #endif //MOF_PARSER_ERROR_HANDLER_HPP

@@ -50,7 +50,7 @@ public:
 	 *
 	 */
 	OW_XMLListener(OW_CIMListenerCallback* callback);
-	virtual ~OW_XMLListener() {}
+	virtual ~OW_XMLListener();
 
 	virtual OW_RequestHandlerIFC* clone() const
 	{

@@ -43,7 +43,7 @@ public:
 	{
 	}
 
-	virtual ~OW_PerlPolledProviderProxy() {}
+	virtual ~OW_PerlPolledProviderProxy();
 
 	/**
 	 * The CIMOM calls this method when the method specified in the parameters

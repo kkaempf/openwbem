@@ -34,6 +34,7 @@
 #include "OW_config.h"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_String.hpp"
+
 #include "OW_MethodProviderIFC.hpp"
 #include "OW_PropertyProviderIFC.hpp"
 #include "OW_InstanceProviderIFC.hpp"
@@ -41,14 +42,14 @@
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
+
 #include "OW_ProviderEnvironmentIFC.hpp"
-#include "OW_Exception.hpp"
+
 #include "OW_InstanceProviderInfo.hpp"
 #include "OW_AssociatorProviderInfo.hpp"
 #include "OW_MethodProviderInfo.hpp"
 #include "OW_PropertyProviderInfo.hpp"
 #include "OW_IndicationProviderInfo.hpp"
-#include "OW_NoSuchProviderException.hpp"
 
 /**
  * This class implements a bridge from the CIMOM's OW_ProviderManager to the
@@ -70,12 +71,9 @@
 class OW_ProviderIFCBaseIFC
 {
 public:
-	OW_ProviderIFCBaseIFC()
-	: signature(0xABCDEFA0)
-	{
-	}
+	OW_ProviderIFCBaseIFC();
 
-	virtual ~OW_ProviderIFCBaseIFC() {}
+	virtual ~OW_ProviderIFCBaseIFC();
 
 	/**
 	 * Return the provider's name. The name will be used to identify this
@@ -100,10 +98,8 @@ public:
 		OW_AssociatorProviderInfoArray& a,
 		OW_MethodProviderInfoArray& m,
 		OW_PropertyProviderInfoArray& p,
-		OW_IndicationProviderInfoArray& ind)
-	{
-		doInit(env, i, a, m, p, ind);
-	}
+		OW_IndicationProviderInfoArray& ind);
+
 	/**
 	 * Locate an Instance provider.
 	 *
@@ -115,10 +111,7 @@ public:
 	 * then an OW_NoSuchProviderException is thrown.
 	 */
 	OW_InstanceProviderIFCRef getInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString)
-	{
-		return doGetInstanceProvider(env, provIdString);
-	}
+		const char* provIdString);
 
 	/**
 	 * Locate a Method provider.
@@ -131,10 +124,7 @@ public:
 	 * then an OW_NoSuchProviderException is thrown.
 	 */
 	OW_MethodProviderIFCRef getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString)
-	{
-		return doGetMethodProvider(env, provIdString);
-	}
+		const char* provIdString);
 
 	/**
 	 * Locate a Property provider.
@@ -147,10 +137,7 @@ public:
 	 * then an OW_NoSuchProviderException is thrown.
 	 */
 	OW_PropertyProviderIFCRef getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString)
-	{
-		return doGetPropertyProvider(env, provIdString);
-	}
+		const char* provIdString);
 
 	/**
 	 * Locate an Associator provider.
@@ -163,39 +150,25 @@ public:
 	 * found, then an OW_NoSuchProviderException is thrown.
 	 */
 	OW_AssociatorProviderIFCRef getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString)
-	{
-		return  doGetAssociatorProvider(env, provIdString);
-	}
+		const char* provIdString);
 
 	/**
 	 * @return all available indication export providers from the available
 	 * provider interfaces.
 	 */
 	OW_IndicationExportProviderIFCRefArray getIndicationExportProviders(
-		const OW_ProviderEnvironmentIFCRef& env
-		)
-	{
-		return doGetIndicationExportProviders(env);
-	}
+		const OW_ProviderEnvironmentIFCRef& env);
 
 	/**
 	 * @return all available indication trigger providers from the available
 	 * provider interfaces.
 	 */
-	OW_PolledProviderIFCRefArray getPolledProviders(const OW_ProviderEnvironmentIFCRef& env
-		)
-	{
-		return doGetPolledProviders(env);
-	}
+	OW_PolledProviderIFCRefArray getPolledProviders(const OW_ProviderEnvironmentIFCRef& env);
 
 	/**
 	 * Unload providers in memory that haven't been used for a while
 	 */
-	void unloadProviders(const OW_ProviderEnvironmentIFCRef& env)
-	{
-		doUnloadProviders(env);
-	}
+	void unloadProviders(const OW_ProviderEnvironmentIFCRef& env);
 
 	/**
 	 * Locate an Indication provider.
@@ -208,10 +181,7 @@ public:
 	 * found, then an OW_NoSuchProviderException is thrown.
 	 */
 	OW_IndicationProviderIFCRef getIndicationProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString)
-	{
-		return  doGetIndicationProvider(env, provIdString);
-	}
+		const char* provIdString);
 
 protected:
 	/**

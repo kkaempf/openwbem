@@ -88,7 +88,7 @@ class OW_Logger
 		static OW_Reference<OW_Logger> createLogger( const OW_String& type,
 			const OW_Bool& debug );
 
-		virtual ~OW_Logger(){  }
+		virtual ~OW_Logger();
 
 	protected:
 		OW_Logger() : m_level(ErrorLevel) { }

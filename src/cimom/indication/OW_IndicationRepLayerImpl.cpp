@@ -44,6 +44,12 @@
 #include "OW_IndicationRepLayerMediator.hpp"
 
 
+//////////////////////////////////////////////////////////////////////////////
+OW_IndicationRepLayer::~OW_IndicationRepLayer() 
+{
+}
+
+
 // TODO: Should we really do a getClass for all the intrinsic indication classes?
 // or should we just create an instance and set the class name?
 // - by using getClass we will only export the indication if the schema is loaded

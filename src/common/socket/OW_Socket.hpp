@@ -150,7 +150,7 @@ public:
 	 * @param errorAsException true if errors should throw exceptions.
 	 * @return the number of bytes written.
 	 */
-	int write(const void* dataOut, int dataOutLen, OW_Bool errorAsException=false) /*throw (OW_SocketException)*/
+	int write(const void* dataOut, int dataOutLen, bool errorAsException=false) /*throw (OW_SocketException)*/
 		{ return m_impl->write(dataOut, dataOutLen, errorAsException); }
 
 	/**
@@ -160,7 +160,7 @@ public:
 	 * @param errorAsException true if errors should throw exceptions.
 	 * @return the number of bytes read.
 	 */
-	int read(void* dataIn, int dataInLen, OW_Bool errorAsException=false) /*throw (OW_SocketException)*/
+	int read(void* dataIn, int dataInLen, bool errorAsException=false) /*throw (OW_SocketException)*/
 		{ return m_impl->read(dataIn, dataInLen, errorAsException); }
 
 	/**

@@ -31,14 +31,12 @@
 #define OW_IOIFC_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Types.h"
-#include "OW_Bool.hpp"
 
 class OW_IOIFC
 {
 public:
 
-	virtual ~OW_IOIFC() {}
+	virtual ~OW_IOIFC();
 
 	/**
 	 * Read a specified number of bytes from the device that is exposing the
@@ -53,7 +51,7 @@ public:
 	 *		error.
 	 */
 	virtual int read(void* dataIn, int dataInLen,
-			OW_Bool errorAsException=false) = 0;
+			bool errorAsException=false) = 0;
 			
 	/**
 	 * Write a specified number of bytes to the device that is exposing the
@@ -68,7 +66,7 @@ public:
 	 *		error
 	 */
 	virtual int write(const void* dataOut, int dataOutLen,
-			OW_Bool errorAsException=false) = 0;
+			bool errorAsException=false) = 0;
 };
 
 #endif

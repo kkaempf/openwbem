@@ -61,6 +61,8 @@ public:
 
 typedef OW_Array<OW_IndicationProviderInfo> OW_IndicationProviderInfoArray;
 
+extern template class OW_ProviderInfoBase<OW_IndicationProviderInfoEntry>;
+
 #endif
 
 

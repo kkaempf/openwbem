@@ -45,7 +45,7 @@
 class OW_InstanceProviderIFC: public OW_ProviderBaseIFC
 {
 public:
-	virtual ~OW_InstanceProviderIFC() {}
+	virtual ~OW_InstanceProviderIFC();
 
 	/**
 	 * This method enumerates all names of instances of the class which is

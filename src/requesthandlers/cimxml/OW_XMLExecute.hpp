@@ -46,10 +46,9 @@ class OW_XMLExecute : public OW_RequestHandlerIFCXML, OW_XMLQualifier
 {
 public:
 	OW_XMLExecute();
-	virtual ~OW_XMLExecute() {}
+	virtual ~OW_XMLExecute();
 	int executeXML(OW_CIMXMLParser& parser, std::ostream* ostrEntity,
-
-	std::ostream* ostrError, const OW_String& userName);
+		std::ostream* ostrError, const OW_String& userName);
 
 	virtual OW_RequestHandlerIFC* clone() const;
 

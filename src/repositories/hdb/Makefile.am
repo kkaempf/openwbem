@@ -1,8 +1,6 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libowrepositoryhdb.so
-#SHAREDLIBADD = $(top_builddir)/src/xml/libowxml.a
-SHAREDLIBADD = -L$(top_builddir)/src/xml -lowxml
 
 noinst_LIBRARIES = \
 libowrepositoryhdb.a
@@ -36,6 +34,7 @@ OW_HDB.hpp \
 OW_HDBNode.cpp \
 OW_HDBNode.hpp \
 OW_Index.hpp \
+OW_Index.cpp \
 OW_IndexImpl.cpp \
 OW_InstanceRepository.cpp \
 OW_InstanceRepository.hpp \

@@ -35,6 +35,11 @@
 #include "OW_CIMObjectPath.hpp"
 
 //////////////////////////////////////////////////////////////////////////////										
+OW_SimpleCppAssociatorProviderIFC::~OW_SimpleCppAssociatorProviderIFC()
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////										
 void
 OW_SimpleCppAssociatorProviderIFC::associators(
 		const OW_ProviderEnvironmentIFCRef&,

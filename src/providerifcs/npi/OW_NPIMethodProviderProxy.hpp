@@ -43,7 +43,7 @@ public:
 	{
 	}
 
-	virtual ~OW_NPIMethodProviderProxy() {}
+	virtual ~OW_NPIMethodProviderProxy();
 
 	/**
 	 * The CIMOM calls this method when the method specified in the parameters

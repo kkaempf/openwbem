@@ -41,6 +41,11 @@
 #include "OW_CIMParamValue.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
+OW_PerlMethodProviderProxy::~OW_PerlMethodProviderProxy() 
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
 OW_PerlMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
 	const OW_String& ns,

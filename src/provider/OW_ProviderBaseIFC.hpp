@@ -41,7 +41,7 @@
 class OW_ProviderBaseIFC
 {
 	public:
-		virtual ~OW_ProviderBaseIFC() {}
+		virtual ~OW_ProviderBaseIFC();
 };
 
 typedef OW_Reference<OW_ProviderBaseIFC> OW_ProviderBaseIFCRef;

@@ -47,6 +47,9 @@ public:
 
 typedef OW_Array<OW_InstanceProviderInfo> OW_InstanceProviderInfoArray;
 
+extern template class OW_ProviderInfoBase<OW_InstClassInfo>;
+
+
 #endif
 
 

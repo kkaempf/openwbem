@@ -267,3 +267,8 @@ zeroThread()
 	return zthr;
 }
 
+//////////////////////////////////////////////////////////////////////
+OW_ThreadDoneCallback::~OW_ThreadDoneCallback() 
+{
+}
+

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2003 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,82 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-#ifndef OW_DATABLOCKSTREAM_HPP_
-#define OW_DATABLOCKSTREAM_HPP_
-
 #include "OW_config.h"
-#include "OW_BaseStreamBuffer.hpp"
-
-#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
-#include <istream>
-#include <ostream>
-#else
-#include <iostream>
-#endif
-
-#ifdef OW_HAVE_STREAMBUF
-#include <streambuf>
-#else
-#include <streambuf.h>
-#endif
-
-#include <vector>
-
-class OW_DataBlockStreamBuf : public OW_BaseStreamBuffer
-{
-public:
-	OW_DataBlockStreamBuf(size_t size)
-		: OW_BaseStreamBuffer(size, "out"), m_buf() {m_buf.reserve(size);}
-	virtual ~OW_DataBlockStreamBuf() {}
-	size_t size() const { return m_buf.size(); }
-	void reset() { m_buf.clear(); }
-	const char* data() const
-	{
-		return &m_buf[0];
-	}
-
-protected:
-	virtual int buffer_to_device(const char *c, int n)
-	{
-		m_buf.insert(m_buf.end(), c, c + n);
-		return 0;
-	}
-
-private:
-	std::vector<char> m_buf;
-
-	friend class OW_DataBlockStream;
-};
+#include "OW_ServiceIFC.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
-class OW_DataBlockStreamBase
+OW_ServiceIFC::~OW_ServiceIFC() 
 {
-public:
-	OW_DataBlockStreamBase(size_t sz) : m_buf(sz) {}
-
-	mutable OW_DataBlockStreamBuf m_buf;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-class OW_DataBlockStream : private OW_DataBlockStreamBase, public std::ostream
-{
-public:
-	OW_DataBlockStream(size_t size = 256)
-		: OW_DataBlockStreamBase(size), std::ostream(&m_buf)
-	{}
-	
-	size_t size() const { m_buf.sync(); return m_buf.size(); }
-	const char* data() const { m_buf.sync(); return m_buf.data(); }
-	void reset() { m_buf.reset(); }
-
-private:
-
-	// not implemented
-	OW_DataBlockStream(const OW_DataBlockStream&);
-	OW_DataBlockStream& operator=(const OW_DataBlockStream&);
-};
-
-
-#endif
+}
 

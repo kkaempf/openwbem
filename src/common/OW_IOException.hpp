@@ -40,13 +40,12 @@ DECLARE_EXCEPTION(IO);
 class OW_BadCIMSignatureException : public OW_IOException
 {
 public:
-	OW_BadCIMSignatureException() : OW_IOException() {}
-	OW_BadCIMSignatureException(const char* file, int line, const char* msg)
-		: OW_IOException(file, line, msg) {}
-	OW_BadCIMSignatureException(const char* msg) : OW_IOException(msg) {}
-	virtual ~OW_BadCIMSignatureException() throw() { }
+	OW_BadCIMSignatureException();
+	OW_BadCIMSignatureException(const char* file, int line, const char* msg);
+	OW_BadCIMSignatureException(const char* msg);
+	virtual ~OW_BadCIMSignatureException() throw();
 
-	virtual const char* type() const { return "OW_BadCIMSignatureException"; }
+	virtual const char* type() const;
 };
 
 

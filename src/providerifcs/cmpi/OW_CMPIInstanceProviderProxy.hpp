@@ -44,7 +44,7 @@ public:
 	{
 	}
 
-	virtual ~OW_CMPIInstanceProviderProxy() {}
+	virtual ~OW_CMPIInstanceProviderProxy();
 
 
 	/**

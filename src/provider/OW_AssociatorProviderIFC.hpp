@@ -46,7 +46,7 @@
 class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 {
 	public:
-		virtual ~OW_AssociatorProviderIFC(){}
+		virtual ~OW_AssociatorProviderIFC();
 		
 		/**
 		 * This method is invoked in order to do the Associators operation as

@@ -26,6 +26,7 @@ INCLUDES = \
 libowwqlcommon_a_SOURCES = \
 OW_WQLCompile.cpp \
 OW_WQLOperand.cpp \
+OW_WQLPropertySource.cpp \
 OW_WQLSelectStatement.cpp
 
 pkginclude_HEADERS = \

@@ -40,7 +40,7 @@
 class OW_ProviderEnvironmentIFC
 {
 public:
-	virtual ~OW_ProviderEnvironmentIFC(){}
+	virtual ~OW_ProviderEnvironmentIFC();
 
 	// This function returns a regular cimom handle that does access checking and may call providers.
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const = 0;

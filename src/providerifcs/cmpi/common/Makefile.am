@@ -21,18 +21,6 @@ clean-local:
 	done
 
 libcmpisupport_a_SOURCES = \
-cmpidt.h \
-cmpift.h \
-cmpimacs.h \
-CmpiBroker.h \
-CmpiContext.h \
-CmpiData.h \
-CmpiInstance.h \
-CmpiInstanceMI.h \
-CmpiObjectPath.h \
-CmpiResult.h \
-CmpiString.h \
-cmpisrv.h \
 cmpiArray.cpp \
 cmpiBrokerEnc.cpp \
 cmpiContextArgs.cpp \

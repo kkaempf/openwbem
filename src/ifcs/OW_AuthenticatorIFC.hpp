@@ -47,7 +47,7 @@ public:
 		: signature(0xCA1DE8A1)
 		, m_mutex() {}
 
-	virtual ~OW_AuthenticatorIFC() {};
+	virtual ~OW_AuthenticatorIFC();
 
 	/**
 	 * Called when authenticator is loaded

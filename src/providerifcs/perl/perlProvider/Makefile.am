@@ -1,3 +1,4 @@
+if HAVE_PERL_EMBED
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 noinst_LIBRARIES = libperlProvider.a
@@ -47,3 +48,4 @@ INCLUDES = -I$(top_srcdir)/src/providerifcs/perl \
 -I$(top_srcdir)/src/providerifcs/npi/common \
 -I$(top_srcdir)/src/providerifcs/npi \
 -I$(perl_embed_ccflags)
+endif

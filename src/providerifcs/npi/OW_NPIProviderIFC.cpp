@@ -36,6 +36,7 @@
 #include "OW_SignalScope.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_FileSystem.hpp"
+#include "OW_NoSuchProviderException.hpp"
 #include "OW_NPIInstanceProviderProxy.hpp"
 #include "OW_NPIMethodProviderProxy.hpp"
 #include "OW_NPIAssociatorProviderProxy.hpp"

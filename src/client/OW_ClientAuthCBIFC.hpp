@@ -63,7 +63,7 @@ public:
 	 */
 	virtual OW_Bool getCredentials(const OW_String& realm, OW_String& name,
 			OW_String& passwd, const OW_String& details) = 0;
-	virtual ~OW_ClientAuthCBIFC() {}
+	virtual ~OW_ClientAuthCBIFC();
 };
 
 typedef OW_Reference<OW_ClientAuthCBIFC> OW_ClientAuthCBIFCRef;

@@ -56,14 +56,14 @@ class OW_SimpleCppPolledProviderIFC;
 class OW_SimpleCppProviderBaseIFC
 {
 public:
-	virtual ~OW_SimpleCppProviderBaseIFC() {}
+	virtual ~OW_SimpleCppProviderBaseIFC();
 
 	/**
 	 * Called by the CIMOM when the provider is initialized
 	 * @param hdl The handle to the cimom
 	 * @throws OW_CIMException
 	 */
-	virtual void initialize(const OW_ProviderEnvironmentIFCRef&) {}
+	virtual void initialize(const OW_ProviderEnvironmentIFCRef&);
 
 	/**
 	 * Called by the CIMOM when the provider is removed.
@@ -72,7 +72,7 @@ public:
 	 * perform any CIM operations.
 	 * @throws OW_CIMException
 	 */
-	virtual void cleanup() {}
+	virtual void cleanup();
 
 	/**
 	 * We do the following because gcc seems to have a problem with
@@ -81,13 +81,13 @@ public:
 	 * when it should return NULL.
 	 */
 
-	virtual OW_SimpleCppInstanceProviderIFC* getInstanceProvider() { return 0; }
-	virtual OW_SimpleCppAssociatorProviderIFC* getAssociatorProvider() { return 0; }
-	virtual OW_SimpleCppPropertyProviderIFC* getPropertyProvider() { return 0; }
+	virtual OW_SimpleCppInstanceProviderIFC* getInstanceProvider();
+	virtual OW_SimpleCppAssociatorProviderIFC* getAssociatorProvider();
+	virtual OW_SimpleCppPropertyProviderIFC* getPropertyProvider();
 
-	OW_DateTime getLastAccessTime() const  { return m_dt; }
+	OW_DateTime getLastAccessTime() const;
 
-	void updateAccessTime() { m_dt.setToCurrent(); }
+	void updateAccessTime();
 protected:
 
 private:

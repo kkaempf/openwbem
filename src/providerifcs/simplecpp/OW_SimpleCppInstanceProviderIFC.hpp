@@ -44,7 +44,7 @@
 class OW_SimpleCppInstanceProviderIFC: public virtual OW_SimpleCppProviderBaseIFC
 {
 public:
-	virtual ~OW_SimpleCppInstanceProviderIFC() {}
+	virtual ~OW_SimpleCppInstanceProviderIFC();
 
 	/**
 	 * This method enumerates all names of instances of the class which is

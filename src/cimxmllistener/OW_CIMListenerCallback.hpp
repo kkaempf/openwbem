@@ -43,7 +43,7 @@ class OW_String;
 class OW_CIMListenerCallback
 {
 public:
-	virtual ~OW_CIMListenerCallback(){}
+	virtual ~OW_CIMListenerCallback();
 
 	/**
 	 * This gets called when the CIM Listener receives an indication.

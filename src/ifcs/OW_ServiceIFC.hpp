@@ -39,7 +39,7 @@
 class OW_ServiceIFC
 {
 public:
-	virtual ~OW_ServiceIFC() {}
+	virtual ~OW_ServiceIFC();
 
 	virtual void setServiceEnvironment(OW_ServiceEnvironmentIFCRef env) = 0;
 	virtual void startService() = 0;
