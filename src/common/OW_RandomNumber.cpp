@@ -36,8 +36,9 @@
 #include "OW_config.h"
 #include "OW_RandomNumber.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_ThreadOnce.hpp"
+#include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
-#include "OW_ThreadImpl.hpp"
 #include <fstream>
 #include <sys/types.h>
 
@@ -56,6 +57,13 @@ namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
+namespace
+{
+OnceFlag guard;
+unsigned int seed = 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 RandomNumber::RandomNumber(Int32 lowVal, Int32 highVal)
 : m_lowVal(lowVal), m_highVal(highVal)
 {
@@ -64,55 +72,42 @@ RandomNumber::RandomNumber(Int32 lowVal, Int32 highVal)
 		m_lowVal = highVal;
 		m_highVal = lowVal;
 	}
-	RandomNumber::initRandomness();
+	callOnce(guard, &initRandomness);
 }
 	
-/////////////////////////////////////////////////////////////////////////////
-static Mutex guard;
-static unsigned int seed = 0;
-
 /////////////////////////////////////////////////////////////////////////////
 void
 RandomNumber::initRandomness()
 {
-	// double-checked locking pattern. See Pattern-Oriented Software Architecture Vol. 2, pp. 353-363
-	ThreadImpl::memoryBarrier();
-	if (seed == 0)
-	{
-		MutexLock lock(guard);
-		if (seed == 0)
-		{
 #ifdef OW_WIN32
-			time_t timeval = ::time(NULL);
-			seed = timeval;
+	time_t timeval = ::time(NULL);
+	seed = timeval;
 #else
-			// use the time as part of the seed
-			struct timeval tv;
-			gettimeofday(&tv, 0);
-			// try to get something from the kernel
-			std::ifstream infile("/dev/urandom", std::ios::in);
-			if (!infile)
-			{
-				infile.open("/dev/random", std::ios::in);
-			}
-			// don't initialize this, we may get random stack
-			// junk in case infile isn't usable.
-			unsigned int dev_rand_input;
-			if (infile)
-			{
-				infile.read(reinterpret_cast<char*>(&dev_rand_input), sizeof(dev_rand_input));
-				infile.close();
-			}
-			// Build the seed. Take into account our pid and uid.
-			seed = dev_rand_input ^ (getpid() << 16) ^ getuid() ^ tv.tv_sec ^ tv.tv_usec;
+	// use the time as part of the seed
+	struct timeval tv;
+	gettimeofday(&tv, 0);
+	// try to get something from the kernel
+	std::ifstream infile("/dev/urandom", std::ios::in);
+	if (!infile)
+	{
+		infile.open("/dev/random", std::ios::in);
+	}
+	// don't initialize this, we may get random stack
+	// junk in case infile isn't usable.
+	unsigned int dev_rand_input;
+	if (infile)
+	{
+		infile.read(reinterpret_cast<char*>(&dev_rand_input), sizeof(dev_rand_input));
+		infile.close();
+	}
+	// Build the seed. Take into account our pid and uid.
+	seed = dev_rand_input ^ (getpid() << 16) ^ getuid() ^ tv.tv_sec ^ tv.tv_usec;
 #endif
 #ifdef OW_HAVE_SRANDOM
-			srandom(seed);
+	srandom(seed);
 #else
-			srand(seed);
+	srand(seed);
 #endif
-		}
-	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -122,11 +117,15 @@ RandomNumber::saveRandomState()
 	// Do nothing. This function is so that RandomNumber has the same interface as CryptographicRandomNumber
 }
 
+namespace
+{
+Mutex g_guard;
+}
 /////////////////////////////////////////////////////////////////////////////
 Int32
 RandomNumber::getNextNumber()
 {
-	MutexLock lock(guard);
+	MutexLock lock(g_guard);
 #ifdef OW_HAVE_RANDOM
 	return m_lowVal + (random() % (m_highVal - m_lowVal + 1));
 #else

@@ -47,6 +47,7 @@ OW_DEFINE_EXCEPTION_WITH_ID(CryptographicRandomNumber);
 #include "OW_Exec.hpp"
 #include "OW_Thread.hpp"
 #include "OW_FileSystem.hpp"
+#include "OW_ThreadOnce.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_String.hpp"
@@ -115,6 +116,10 @@ int getNumBits(Int32 num)
 	return sizeof(num) * CHAR_BIT;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+OnceFlag guard;
+unsigned int seed = 0;
+
 } // end unnamed namespace
 
 /////////////////////////////////////////////////////////////////////////////
@@ -125,6 +130,7 @@ CryptographicRandomNumber::CryptographicRandomNumber(Int32 lowVal, Int32 highVal
 	, m_numBits(getNumBits(m_range))
 {
 	OW_ASSERT(lowVal < highVal);
+	callOnce(guard, &initRandomness);
 }
 
 /////////////////////////////////////////////////////////////////////////////

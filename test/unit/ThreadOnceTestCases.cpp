@@ -47,7 +47,7 @@ void ThreadOnceTestCases::tearDown()
 }
 
 int g_value = 0;
-onceFlag once = OW_ONCE_INIT;
+OnceFlag once = OW_ONCE_INIT;
 
 
 void initOnceValue()

@@ -43,7 +43,7 @@
 namespace OW_NAMESPACE
 {
 
-void callOnce(onceFlag& flag, void (*func)())
+void callOnce(OnceFlag& flag, void (*func)())
 {
 	// this is the double-checked locking pattern, but with a bit more strength than normally implemented :-)
     if (InterlockedCompareExchange(&flag, 1, 1) == 0)

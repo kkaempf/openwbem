@@ -80,6 +80,7 @@ void AtomicDec(Atomic_t &v)
 #elif defined(OW_USE_OW_DEFAULT_ATOMIC_OPS)
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_ThreadOnce.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -88,34 +89,32 @@ namespace OW_NAMESPACE
 // It shouldn't ever be deleted b/c it may be referenced by a destructor of a 
 // static variable that is being deleted.
 static Mutex* guard = 0;
+static OnceFlag g_once = OW_ONCE_INIT;
 static void initGuard()
 {
-	if (guard == 0)
-	{
-		guard = new Mutex();
-	}
+	guard = new Mutex();
 }
 void AtomicInc(Atomic_t &v)
 {
-	initGuard();
+	callOnce(g_once, initGuard);
 	MutexLock lock(*guard);
 	++v.val;
 }
 bool AtomicDecAndTest(Atomic_t &v)
 {
-	initGuard();
+	callOnce(g_once, initGuard);
 	MutexLock lock(*guard);
 	return --v.val == 0;
 }
 int AtomicGet(Atomic_t const &v)
 {
-	initGuard();
+	callOnce(g_once, initGuard);
 	MutexLock lock(*guard);
 	return v.val;
 }
 void AtomicDec(Atomic_t &v)
 {
-	initGuard();
+	callOnce(g_once, initGuard);
 	MutexLock lock(*guard);
 	--v.val;
 }

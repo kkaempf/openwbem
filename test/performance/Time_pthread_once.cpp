@@ -156,7 +156,7 @@ private:
 	int m_x;
 
 	static OWTOFoo* volatile ptr;
-	static onceFlag onceCtl;
+	static OnceFlag onceCtl;
 
 	static void onceInit()
 	{
@@ -166,7 +166,7 @@ private:
 };
 
 OWTOFoo* volatile OWTOFoo::ptr = 0;
-onceFlag OWTOFoo::onceCtl = OW_ONCE_INIT;
+OnceFlag OWTOFoo::onceCtl = OW_ONCE_INIT;
 
 /////////////////////////////////////////////////////////////////////////////
 struct Nothing

@@ -35,7 +35,6 @@
 
 #include "OW_config.h"
 #include "OW_NonRecursiveMutex.hpp"
-#include "OW_ThreadImpl.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Exception.hpp"
 #include "OW_Format.hpp"

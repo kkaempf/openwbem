@@ -45,12 +45,12 @@ namespace OW_NAMESPACE
 
 #if defined(OW_USE_PTHREAD)
 
-typedef pthread_once_t onceFlag;
+typedef pthread_once_t OnceFlag;
 #define OW_ONCE_INIT PTHREAD_ONCE_INIT
 
 #elif defined(OW_WIN32)
 
-typedef long onceFlag;
+typedef long OnceFlag;
 #define OW_ONCE_INIT 0
 
 #else
@@ -61,13 +61,13 @@ typedef long onceFlag;
  * The first time callOnce is called with a given onceFlag argument, it calls func with no argument and changes the value of flag to indicate
  * that func has been run.  Subsequent calls with the same onceFlag do nothing.
  */
-void OW_COMMON_API callOnce(onceFlag& flag, void (*func)());
+void OW_COMMON_API callOnce(OnceFlag& flag, void (*func)());
 
 
 
 #if defined(OW_USE_PTHREAD)
 
-inline void callOnce(onceFlag& flag, void (*func)())
+inline void callOnce(OnceFlag& flag, void (*func)())
 {
 	pthread_once(&flag, func);
 }

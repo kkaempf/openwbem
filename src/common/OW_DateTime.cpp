@@ -38,7 +38,6 @@
 #include "OW_String.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_Format.hpp"
-#include "OW_ThreadImpl.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_ExceptionIds.hpp"
