@@ -39,7 +39,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_ResultHandlerIFC.hpp"
-#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
 
 namespace OpenWBEM
 {
@@ -725,7 +725,7 @@ public:
 	
 private:
 	String m_namespace;
-	CIMOMHandleIFCRef m_ch;
+	ClientCIMOMHandleRef m_ch;
 	
 };
 

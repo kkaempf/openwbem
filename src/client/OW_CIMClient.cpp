@@ -36,8 +36,7 @@
 #include "OW_config.h"
 #include "OW_CIMClient.hpp"
 #include "OW_HTTPClient.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
-#include "OW_BinaryCIMOMHandle.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMClassEnumeration.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMValue.hpp"
@@ -45,6 +44,7 @@
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_CIMProtocolIFC.hpp"
 
 namespace OpenWBEM
 {
@@ -54,12 +54,12 @@ using namespace WBEMFlags;
 CIMClient::CIMClient(const String& url, const String& ns,
 	const ClientAuthCBIFCRef& authCB)
 {
-	URL owurl(url);
-	CIMProtocolIFCRef client(new HTTPClient(url));
+	//URL owurl(url);
+	//CIMProtocolIFCRef client(new HTTPClient(url));
 	/**********************************************************************
 	 * Assign our callback to the HTTP Client.
 	 **********************************************************************/
-	client->setLoginCallBack(authCB);
+	//client->setLoginCallBack(authCB);
 	/**********************************************************************
 	 * Here we create a CIMXMLCIMOMHandle and have it use the
 	 * HTTPClient we've created.  CIMXMLCIMOMHandle takes
@@ -69,15 +69,19 @@ CIMClient::CIMClient(const String& url, const String& ns,
 	 * HTTPClient.  Reference will delete it for us when the
 	 * last copy goes out of scope (reference count goes to zero).
 	 **********************************************************************/
-	if (owurl.scheme.startsWith(URL::OWBINARY) 
-		|| owurl.namespaceName.equals(URL::OWBINARY)) // the /owbinary is deprecated and may be removed!
-	{
-		m_ch = new BinaryCIMOMHandle(client);
-	}
-	else
-	{
-		m_ch = new CIMXMLCIMOMHandle(client);
-	}
+	//if (owurl.scheme.startsWith(URL::OWBINARY) 
+	//	|| owurl.namespaceName.equals(URL::OWBINARY)) // the /owbinary is deprecated and may be removed!
+	//{
+	//	m_ch = new BinaryCIMOMHandle(client);
+	//}
+	//else
+	//{
+	//	m_ch = new CIMXMLCIMOMHandle(client);
+	//}
+	
+	m_ch = ClientCIMOMHandle::createFromURL(url);
+	m_ch->getWBEMProtocolHandler()->setLoginCallBack(authCB);
+
 	m_namespace = ns;
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
