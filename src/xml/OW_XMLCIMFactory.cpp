@@ -237,6 +237,12 @@ OW_XMLCIMFactory::createObjectPath(OW_CIMXMLParser& parser)
 
 	switch(token)
 	{
+		case OW_CIMXMLParser::E_OBJECTPATH:
+			parser.mustGetChild();
+			rval = createObjectPath(parser);
+			parser.mustGetEndTag(); // pass </OBJECTPATH>
+			return rval;
+
 		case OW_CIMXMLParser::E_LOCALCLASSPATH:
 			parser.mustGetChild(OW_CIMXMLParser::E_LOCALNAMESPACEPATH);
 			getLocalNameSpacePathAndSet(rval, parser);
