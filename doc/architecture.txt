@@ -1,0 +1,27 @@
+The cimom can be thought of as a manager of a big pipeline.  Each request comes in, goes through processing, and is returned to the client.
+
+Here's some of the stages:
+
+Socket
+std::istream
+Service listening on socket gets control, currently only valid one is HTTPServer.  It launches HTTPSrvConnection in a new thread. It handles headers, authorization, and configures portions of the pipeline based on content-encoding & chunking
+[ http chunking - istream ]
+[ zlib compression content encoding - istream ]
+Request Handler, either CIM/XML or OW Binary, decodes the request, and creates native objects.
+LocalCIMOMHandle - starts the request
+[ Authorizer - checks that the request is allowed by ACLs ]
+[ IndicationRepLayer - forwards on request to CIMServer ]
+CIMServer - Dispatches requests to providers and/or the repository
+ProviderProxy - Translates from the internal provider interface to a concrete provider interface
+Provider - Does it's work and returns results.
+ProviderProxy - Translates results from the concrete provider interface to a internal provider interface
+CIMServer - Returns responses from providers and/or the repository
+[ IndicationRepLayer - sends appropriate lifecycle indications if the request was sucessful ]
+LocalCIMOMHandle - ends the request
+Request Handler, either CIM/XML or OW Binary, encodes the response.
+[ zlib compression content encoding - ostream ]
+[ http chunking - ostream ]
+Service (HTTPSvrConnection) adds headers on the response.
+std::ostream
+Socket
+
