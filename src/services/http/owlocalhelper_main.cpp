@@ -285,7 +285,8 @@ int main(int argc, char* argv[])
 		}
 #endif
 	
-		// only owcimomd user can run me
+		// only owcimomd user can run me, but we still have to be careful in case owcimomd gets compromised, 
+		// we don't want the attacker to be able to wreak havoc on the system as root.
 		if (!checkRealUser())
 		{
 			return INVALID_USER;
