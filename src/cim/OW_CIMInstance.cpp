@@ -361,7 +361,7 @@ OW_CIMInstance::updatePropertyValue(const OW_CIMProperty& prop)
 			if(rname.equalsIgnoreCase(name))
 			{
 				m_pdata->m_properties[i].setValue(prop.getValue());
-				if(cp.isKey())
+				if(cp.isKey() || prop.isKey())
 				{
 					//
 					// If keys are not null and this is a key
