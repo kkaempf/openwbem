@@ -32,6 +32,14 @@ Fix problems:
     - To prevent DNS attacks, set a limit on incoming data.
     - Audit classes in src/{cim,common}, especially comparison operators and 
       operator<<
+    - Fix all exceptions to use error codes.
+    - Fix cim exception to not embed the symbolic name in the message.
+    - Only throw cim exceptions from providers/repository/cimomhandleifc
+    - Throw appropriate exceptions, use chained exceptions. Log chained 
+      exceptions correctly (maybe just fix operator<< ?)
+    - Create a impl namespace and move internal classes into it.
+    - Document public/internal classes.
+    - Create forwarding headers, 1 for each library.
     - Indication server should not require that subscriptions have indication 
       providers.
 
