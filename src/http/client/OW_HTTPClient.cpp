@@ -71,7 +71,23 @@ HTTPClient::HTTPClient( const String &sURL, SSLClientCtxRef sslCtx)
 	 m_url(sURL)
 	, m_pIstrReturn(0)
 	, m_sslCtx(sslCtx)
-	, m_socket(m_url.scheme.endsWith('s')? (m_sslCtx? m_sslCtx: m_sslCtx = SSLClientCtxRef(new SSLClientCtx())): 0)
+	, m_socket(
+		m_url.scheme.endsWith('s') ? 
+		(
+			m_sslCtx ? 
+			(
+				m_sslCtx
+			)
+			:
+			(
+				m_sslCtx = SSLClientCtxRef(new SSLClientCtx()), m_sslCtx
+			)
+		)
+		: 
+		(
+			SSLClientCtxRef()
+		)
+	)
 	, m_requestMethod("M-POST"), m_authRequired(false)
 	, m_istr(m_socket.getInputStream()), m_ostr(m_socket.getOutputStream())
 	, m_doDeflateOut(false)
