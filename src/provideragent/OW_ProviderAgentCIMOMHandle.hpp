@@ -61,9 +61,7 @@ public:
 		SINGLE_THREADED
 	}; 
 	ProviderAgentCIMOMHandle(Reference<CppProviderBaseIFC> provider, 
-							 ProviderEnvironmentIFCRef env, 
-							 LockingType lt = NONE, 
-							 UInt32 LockingTimeoutSeconds = 300); 
+							 ProviderEnvironmentIFCRef env); 
 	/**
 	 * Gets the CIM instance for the specified CIM object path.
 	 *

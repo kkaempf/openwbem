@@ -49,7 +49,9 @@
 #include "OW_CppAssociatorProviderIFC.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_RWLocker.hpp"
+#include "OW_ProviderAgent.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_ConfigException.hpp"
 
 namespace OpenWBEM
 {
@@ -57,12 +59,42 @@ namespace OpenWBEM
 //using namespace WBEMFlags;
 
 ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(Reference<CppProviderBaseIFC> provider, 
-												   ProviderEnvironmentIFCRef env, 
-												   LockingType lt, UInt32 lockingTimeoutSeconds)
+												   ProviderEnvironmentIFCRef env)
 	: m_prov(provider)
 	, m_PAEnv(env)
-	, m_locker(new PALocker(lt, lockingTimeoutSeconds))
+	, m_locker(0)
 {
+	String confItem = m_PAEnv->getConfigItem(ProviderAgent::LockingType_opt, "none"); 
+	confItem.toLowerCase(); 
+	LockingType lt = NONE; 
+	if (confItem == "none")
+	{
+		lt = NONE; 
+	}
+	else if (confItem == "swmr")
+	{
+		lt = SWMR; 
+	}
+	else if (confItem == "single_threaded")
+	{
+		lt = SINGLE_THREADED;  
+	}
+	else
+	{
+		OW_THROW(ConfigException, "unknown locking type"); 
+	}
+	confItem = m_PAEnv->getConfigItem(ProviderAgent::LockingTimeout_opt, "300"); 
+	UInt32 timeout = 300; 
+	try
+	{
+		timeout = confItem.toUInt32(); 
+	}
+	catch (StringConversionException&)
+	{
+		OW_THROW(ConfigException, "invalid locking timeout"); 
+	}
+
+	m_locker = PALockerRef(new PALocker(lt, timeout)); 
 }
 /**
  * Gets the CIM instance for the specified CIM object path.

@@ -58,6 +58,8 @@ class Thread;
 class ProviderAgent
 {
 public:
+	static const char* const LockingType_opt;  
+	static const char* const LockingTimeout_opt; 
 	/**
 	 * @param logger If a logger specified then it will receive log messages, otherwise
 	 *  all log messages will be discarded.

@@ -124,6 +124,10 @@ private:
 
 
 } // end anonymous namespace
+
+
+const char* const ProviderAgent::LockingType_opt = "provider_agent.locking_type"; 
+const char* const ProviderAgent::LockingTimeout_opt = "provider_agent.locking_timeout";
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgent::ProviderAgent(ConfigFile::ConfigMap configMap, 
 							 Reference<CppProviderBaseIFC> provider, 
