@@ -329,6 +329,7 @@ When you create a new class, make sure you design and document the following:
    responsibilities." (Kent Beck, Ward Cunningham)
 
 - Thread safety: (this is for all member functions of the class)
+   none (need a mutex protecting it, and no callback functionality provided).
    non-reentrant (need a mutex protecting it & the class cannot call back into
     itself.)
    reentrant (need a mutex protecting it)
