@@ -504,6 +504,7 @@ DateTime::set(int year, int month, int day, int hour, int minute, int second,
 	UInt32 microseconds, ETimeOffset timeOffset)
 {
 	tm tmarg;
+	memset(&tmarg, 0, sizeof(tmarg));
 	tmarg.tm_year = (year >= 1900) ? year - 1900 : year;
 	tmarg.tm_mon = month-1;
 	tmarg.tm_mday = day;

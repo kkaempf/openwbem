@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -160,10 +160,12 @@ public:
 	explicit CIMDateTime(const String& arg);
 	/**
 	 * Create an CIMDateTime object from a regular DateTime object.
+	 * This constructor is *not* explicit so that a DateTime can be used
+	 * where a CIMDateTime may be required.
 	 * @param arg The DateTime object to use in determining the value of
 	 *		this CIMDateTime object.
 	 */
-	explicit CIMDateTime(const DateTime& arg);
+	CIMDateTime(const DateTime& arg);
 	/**
 	 * Create an CIMDateTime object that represents an interval.
 	 * @param microSeconds The number of micro seconds that this interval
@@ -306,6 +308,10 @@ public:
 	 * description of string format in documentation of class CIMDateTime)
 	 */
 	String toString() const;
+	/**
+	 * @return a DateTime object that corresponds to this CIMDateTime.
+	 */
+	DateTime toDateTime() const;
 	/**
 	 * @return true If this CIMDateTime is not comprised of zero values.
 	 */

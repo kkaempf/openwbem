@@ -35,6 +35,7 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "OW_CIMDateTimeTestCases.hpp"
 #include "OW_DateTimeTestCases.hpp"
 #include "OW_UTF8UtilsTestCases.hpp"
 #include "OW_RandomNumberTestCases.hpp"
@@ -85,6 +86,7 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "OW_CIMDateTime", OW_CIMDateTimeTestCases::suite());
 	runner.addTest( "OW_DateTime", OW_DateTimeTestCases::suite());
 	runner.addTest( "OW_UTF8Utils", OW_UTF8UtilsTestCases::suite());
 	runner.addTest( "OW_RandomNumber", OW_RandomNumberTestCases::suite());
