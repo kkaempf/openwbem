@@ -135,6 +135,7 @@ public:
 	const char* getLine(std::istream& is, bool resetBuffer=true);
 
 	bool endsWith(char ch) const;
+	bool startsWith(char ch) const;
 	void chop();
 	void trim();
 
