@@ -1,0 +1,92 @@
+#!/bin/sh
+#
+# ownightly - test openwbem
+#
+# 
+
+DESTDIR=$HOME/public_html/owNightlyTest/$OSTYPE
+ADIR="$HOME/scripts"
+if [ "$HOSTNAME" = "sparcwbem.calderalabs.com" ]; then
+	TESTDIR=/export/home/bart/owNightlyTest
+else
+	TESTDIR=/tmp/owNightlyTest
+fi
+LOGFILE=$TESTDIR/log.txt
+MAILTO="bart@ns.calderalabs.com, dnuffer@ns.calderalabs.com"
+THIS="$ADIR/ownightly"
+
+##############################################################################
+doTest()
+{
+	cd $TESTDIR/openwbem20
+	CONFIGOPTS="--enable-debug-mode"
+
+	./cvsbootstrap.sh > $LOGFILE 2>&1
+	./configure $CONFIGOPTS >> $LOGFILE 2>&1
+	if [ "$OSTYPE" = "linux-gnu" ]; then
+		killall -9 owcimomd
+	fi
+	make -j3 >> $LOGFILE 2>&1 \
+		&& make -j3 check >> $LOGFILE 2>&1 \
+		&& OWLONGTEST=1 make -j3 check >> $LOGFILE 2>&1 \
+		&& make clean >> $LOGFILE 2>&1 \
+		&& make -j3 distcheck >> $LOGFILE 2>&1 \
+		&& make distclean >> $LOGFILE 2>&1
+
+	RVAL=$?
+
+	if [ "$RVAL" = "0" ]; then 
+		# now try with optimizations
+		CONFIGOPTS=""
+		./cvsbootstrap.sh > $LOGFILE 2>&1
+		./configure $CONFIGOPTS >> $LOGFILE 2>&1
+		if [ "$OSTYPE" = "linux-gnu" ]; then
+			killall -9 owcimomd
+		fi
+		make -j3 >> $LOGFILE 2>&1 \
+			&& make -j3 check >> $LOGFILE 2>&1 \
+			&& OWLONGTEST=1 make -j3 check >> $LOGFILE 2>&1 \
+			&& make clean >> $LOGFILE 2>&1 \
+			&& make -j3 distcheck >> $LOGFILE 2>&1 \
+			&& make distclean >> $LOGFILE 2>&1
+
+		RVAL=$?
+	fi
+
+	if [ "$RVAL" = "0" ]; then 
+		BUILDRESULT="Success"
+	else
+		BUILDRESULT="Fail"
+		if [ "$OSTYPE" = "linux-gnu" ]; then
+			cp -a $TESTDIR $DESTDIR
+		else
+			cp -p -R $TESTDIR $DESTDIR
+		fi
+		echo "" >> $LOGFILE
+		echo "Go to http://intranet.calderalabs.com/~bart/owNightlyTest/ to see the build" >> $LOGFILE
+
+
+	fi
+
+
+	tail -50 $LOGFILE | mail -s \
+		"OpenWBEM nightly distcheck: $BUILDRESULT ($OSTYPE)" $MAILTO
+}
+
+##############################################################################
+
+## MAIN ######################################################################
+
+rm -rf $TESTDIR
+rm -rf $DESTDIR
+mkdir $TESTDIR
+cd $TESTDIR
+cvs -z3 -d :ext:bartw@cvs.openwbem.sourceforge.net:/cvsroot/openwbem co openwbem20
+
+
+doTest
+
+
+# set the next reminder
+at -f $THIS -m 3am tomorrow 
+
