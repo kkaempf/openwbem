@@ -537,7 +537,8 @@ String base64Encode(const UInt8* src, size_t len)
 		sprintf(dst, "%c%c%c=",Base64[a],Base64[b],Base64[c]);
 		dst+=4;
 	}
-	String rval(String::E_TAKE_OWNERSHIP, dest.release(), dst-dest.get());
+	String rval(String::E_TAKE_OWNERSHIP, dest.get(), dst-dest.get());
+	dest.release();
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
