@@ -446,8 +446,6 @@ TestIndications()
 
 	RestartDaemon
 
-	echo "Importing mof file for indication test"
-
 	echo "Executing indication test suite, saving output in " $RESULTDIR/indicationTest.out
 	$BUILDDIR/test/acceptance/progs/cimlistener http://test1:pass1@localhost:30926 \
 		2>&1 > $RESULTDIR/indicationTest.out || \
