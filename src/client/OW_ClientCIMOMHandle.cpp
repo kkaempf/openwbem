@@ -42,6 +42,7 @@
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_Enumeration.hpp"
+#include "OW_HTTPDeflateIStream.hpp"
 
 namespace OpenWBEM
 {
@@ -78,7 +79,7 @@ ClientCIMOMHandle::createFromURL(const String& url, const ClientAuthCBIFCRef& au
 	CIMProtocolIFCRef client(new HTTPClient(url));
 	client->setLoginCallBack(authCb);
 
-	if (owurl.scheme.startsWith(URL::OWBINARY) 
+	if (owurl.scheme.startsWith(URL::OWBINARY)
 		|| owurl.namespaceName.equals(URL::OWBINARY)) // the /owbinary is deprecated in 3.0.0 and may be removed!
 	{
 		return ClientCIMOMHandleRef(new BinaryCIMOMHandle(client));
@@ -94,11 +95,18 @@ void
 ClientCIMOMHandle::getHTTPTrailers(const CIMProtocolIStreamIFCRef& istr_)
 {
 	m_trailers.clear();
-	IntrusiveReference<HTTPChunkedIStream> istr = 
-		istr_.cast_to<HTTPChunkedIStream>();
-	if (istr)
+	CIMProtocolIStreamIFCRef istr(istr_);
+#ifdef OW_HAVE_ZLIB_H
+	IntrusiveReference<HTTPDeflateIStream> defistr = istr_.cast_to<HTTPDeflateIStream>();
+	if (defistr)
 	{
-		m_trailers = istr->getTrailers();
+		istr = defistr->getInputStreamOrig();
+	}
+#endif
+	IntrusiveReference<HTTPChunkedIStream> chunkistr = istr.cast_to<HTTPChunkedIStream>();
+	if (chunkistr)
+	{
+		m_trailers = chunkistr->getTrailers();
 	}
 }
 
