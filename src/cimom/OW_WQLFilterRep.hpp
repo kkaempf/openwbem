@@ -71,7 +71,7 @@ public:
 	 */
 	virtual OW_CIMQualifierType getQualifierType(
 		const OW_String& ns,
-		const OW_String& qualifierName, const OW_ACLInfo& aclInfo);
+		const OW_String& qualifierName, const OW_UserInfo& aclInfo);
 
 	/**
 	 * Gets a list of the namespaces.
@@ -81,7 +81,7 @@ public:
 	 *					cannot be found in the specified namespace.
 	 */
 	virtual void enumNameSpace(OW_StringResultHandlerIFC& result,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	/**
 	 * Create a cim namespace.
@@ -89,7 +89,7 @@ public:
 	 * @exception OW_CIMException If the namespace already exists.
 	 */
 	virtual void createNameSpace(const OW_String& ns,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	/**
 	 * Delete a specified namespace.
@@ -98,7 +98,7 @@ public:
 	 * @exception OW_CIMException If the namespace does not exist.
 	 */
 	virtual void deleteNameSpace(const OW_String& ns,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace.
@@ -110,7 +110,7 @@ public:
 	 *										namespace.
 	 */
 	virtual void setQualifierType(const OW_String& ns,
-		const OW_CIMQualifierType &qt, const OW_ACLInfo& aclInfo);
+		const OW_CIMQualifierType &qt, const OW_UserInfo& aclInfo);
 
 	/**
 	 * Enumerate the qualifier types in a name space.
@@ -121,7 +121,7 @@ public:
 	 */
 	virtual void enumQualifierTypes(
 		const OW_String& ns,
-		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_ACLInfo& aclInfo);
+		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_UserInfo& aclInfo);
 
 	/**
 	 * Delete an existing qualifier type from the repository
@@ -130,7 +130,7 @@ public:
 	 * @exception OW_CIMException
 	 */
 	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	/**
 	 * creates a class in the store
@@ -144,7 +144,7 @@ public:
 	 * @exception OW_IOException Couldn't write class object to file.
 	 */
 	virtual void createClass(const OW_String& ns, const OW_CIMClass &cimClass,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	/**
 	 * set a class in the store - note children are not affected
@@ -158,7 +158,7 @@ public:
 	 * @exception CIMException if the class already exists
 	 */
 	virtual OW_CIMClass modifyClass(const OW_String &ns,
-		const OW_CIMClass &cc, const OW_ACLInfo& aclInfo);
+		const OW_CIMClass &cc, const OW_UserInfo& aclInfo);
 
 	/**
 	 * Gets an existing class from a store
@@ -185,7 +185,7 @@ public:
 		const OW_String& className,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	/**
 	 * Delete an existing class from the store
@@ -198,7 +198,7 @@ public:
 	 * @exception CIMException if class does not exist
 	 */
 	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	/**
 	 * Retrieve a specific instance
@@ -224,7 +224,7 @@ public:
 		const OW_CIMObjectPath& instanceName,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	/**
 	 * Delete an existing instance from the store
@@ -238,7 +238,7 @@ public:
 	 *		This is likely usefull only for creating CIM_InstDeletion indications;
 	 */
 	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &cop,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
@@ -261,7 +261,7 @@ public:
 		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo);
+		OW_Bool includeClassOrigin, const OW_UserInfo& aclInfo);
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
@@ -280,7 +280,7 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep, const OW_ACLInfo& aclInfo);
+		OW_Bool deep, const OW_UserInfo& aclInfo);
 
 	/**
 	 * Retrieve an enumeration of instances (OW_CIMInstance) for a particular
@@ -314,7 +314,7 @@ public:
 		OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList, OW_Bool enumSubClasses, 
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	/**
 	 * Retrieve an enumeration of instances (OW_CIMInstance) for a particular
@@ -336,7 +336,7 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep, const OW_ACLInfo& aclInfo);
+		OW_Bool deep, const OW_UserInfo& aclInfo);
 
 	/**
 	 * Creates a instance in the store
@@ -350,7 +350,7 @@ public:
 	 */
 	virtual OW_CIMObjectPath createInstance(const OW_String& ns,
 		const OW_CIMInstance &ci,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	/**
 	 * Update an instance
@@ -370,7 +370,7 @@ public:
 		const OW_CIMInstance& modifiedInstance,
 		OW_Bool includeQualifiers,
 		const OW_StringArray* propertyList,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	virtual void associators(
 		const OW_String& ns,
@@ -379,7 +379,7 @@ public:
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_ACLInfo& aclInfo);
+		const OW_StringArray *propertyList, const OW_UserInfo& aclInfo);
 
 	virtual void associatorsClasses(
 		const OW_String& ns,
@@ -388,7 +388,7 @@ public:
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_ACLInfo& aclInfo);
+		const OW_StringArray *propertyList, const OW_UserInfo& aclInfo);
 
 	/**
 	 * Set a property value on an OW_CIMInstance.
@@ -402,14 +402,14 @@ public:
 		const OW_String& ns,
 		const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_CIMValue &cv,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	virtual void referenceNames(
 		const OW_String& ns,
 		const OW_CIMObjectPath &path,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &resultClass,
-		const OW_String &role, const OW_ACLInfo& aclInfo);
+		const OW_String &role, const OW_UserInfo& aclInfo);
 
 	/**
 	 * Get the specified CIM instance property.
@@ -423,7 +423,7 @@ public:
 	virtual OW_CIMValue getProperty(
 		const OW_String& ns,
 		const OW_CIMObjectPath &name,
-		const OW_String &propertyName, const OW_ACLInfo& aclInfo);
+		const OW_String &propertyName, const OW_UserInfo& aclInfo);
 
 	/**
 	 * Invokes a method
@@ -442,7 +442,7 @@ public:
 		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
-		OW_CIMParamValueArray &outParams, const OW_ACLInfo& aclInfo);
+		OW_CIMParamValueArray &outParams, const OW_UserInfo& aclInfo);
 
 	virtual void associatorNames(
 		const OW_String& ns,
@@ -450,7 +450,7 @@ public:
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &assocClass,
 		const OW_String &resultClass, const OW_String &role,
-		const OW_String &resultRole, const OW_ACLInfo& aclInfo);
+		const OW_String &resultRole, const OW_UserInfo& aclInfo);
 
 	virtual void references(
 		const OW_String& ns,
@@ -458,7 +458,7 @@ public:
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_ACLInfo& aclInfo);
+		const OW_StringArray *propertyList, const OW_UserInfo& aclInfo);
 
 	virtual void referencesClasses(
 		const OW_String& ns,
@@ -466,13 +466,13 @@ public:
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_ACLInfo& aclInfo);
+		const OW_StringArray *propertyList, const OW_UserInfo& aclInfo);
 
 	virtual void execQuery(
 		const OW_String& ns,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &query, const OW_String &queryLanguage,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	virtual void getSchemaReadLock();
 	virtual void getSchemaWriteLock();

@@ -17,6 +17,7 @@ Testing:
 Fix problems:
     - Man pages aren't getting included in the rpm.
     - Fix the error message to be more descriptive when doing SSL, and the cert file isn't there.
+    - EmbeddedObjects have to be MOF.
 
 New features:
     - Modifying existing filters will affect the indication server, and
@@ -42,6 +43,7 @@ Post 3.0
       fork/exec/pipes for communication?
     - Internationalization.
     - Deal with locale on WBEM requests. (at least reject those that won't work)
+      Look at unicode.org http://www.unicode.org/Public/ALPHA/CVTUTF-1-1/ConvertUTF.{c,h}
     - Add better error handling/messages to the MOF compiler.
     - Binary Indications (Possibly re-factor and use CIMXMLListener)
     - CMPI

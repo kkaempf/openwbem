@@ -112,7 +112,7 @@ namespace
 		OW_StringArray rval;
 		StringArrayBuilder arrayBuilder(rval);
 		namespaceFilterer handler(ns, true, arrayBuilder);
-		rep->enumNameSpace(handler, OW_ACLInfo(env->getUserName()));
+		rep->enumNameSpace(handler, OW_UserInfo(env->getUserName()));
 		return rval;
 	}
 
@@ -120,7 +120,7 @@ namespace
 	{
 		OW_RepositoryIFCRef rep = env->getRepository();
 		namespaceFilterer handler(ns, deep, result);
-		rep->enumNameSpace(handler, OW_ACLInfo(env->getUserName()));
+		rep->enumNameSpace(handler, OW_UserInfo(env->getUserName()));
 	}
 
 }
@@ -165,7 +165,7 @@ OW_NameSpaceProvider::deleteInstance(
 
     // now deleteNameSpace doesn't automatically delete subnamespaces, so we need to do it.
     OW_StringArray nstodel = enumNameSpaceE(env, newns);
-	OW_ACLInfo acl(env->getUserName());
+	OW_UserInfo acl(env->getUserName());
     for (size_t i = 0; i < nstodel.size(); ++i)
     {
 		env->getRepository()->deleteNameSpace(nstodel[i], acl);
@@ -350,7 +350,7 @@ OW_NameSpaceProvider::createInstance(
 	env->getLogger()->logDebug(format("OW_NameSpaceProvider::createInstance calling"
 			" createNameSpace with %1", newNameSpace));
 
-	env->getRepository()->createNameSpace(newNameSpace, OW_ACLInfo(env->getUserName()));
+	env->getRepository()->createNameSpace(newNameSpace, OW_UserInfo(env->getUserName()));
 
 	return OW_CIMObjectPath(ns, cimInstance);
 }

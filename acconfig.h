@@ -85,6 +85,8 @@
 #undef HAVE_PTHREAD_SPIN_LOCK
 #undef HAVE_PAM
 
+#undef DISABLE_ACLS
+
 @BOTTOM@
 
 // end of autoconf set vars

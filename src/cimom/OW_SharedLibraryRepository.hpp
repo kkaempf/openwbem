@@ -49,7 +49,7 @@ public:
 
 	virtual OW_CIMQualifierType getQualifierType(
 		const OW_String& ns,
-		const OW_String& qualifierName, const OW_ACLInfo &aclInfo)
+		const OW_String& qualifierName, const OW_UserInfo &aclInfo)
 	{
 		return m_ref->getQualifierType(ns, qualifierName, aclInfo);
 	}
@@ -60,38 +60,38 @@ public:
 	}
 
 	virtual void createNameSpace(const OW_String& ns,
-		const OW_ACLInfo &aclInfo)
+		const OW_UserInfo &aclInfo)
 	{
 		m_ref->createNameSpace(ns, aclInfo);
 	}
 
 	virtual void deleteNameSpace(const OW_String& ns,
-		const OW_ACLInfo &aclInfo)
+		const OW_UserInfo &aclInfo)
 	{
 		m_ref->deleteNameSpace(ns, aclInfo);
 	}
 
 	virtual void enumNameSpace(OW_StringResultHandlerIFC& result,
-		const OW_ACLInfo &aclInfo)
+		const OW_UserInfo &aclInfo)
 	{
 		return m_ref->enumNameSpace(result, aclInfo);
 	}
 
 	virtual void enumQualifierTypes(
 		const OW_String& ns,
-		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_ACLInfo &aclInfo)
+		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_UserInfo &aclInfo)
 	{
 		return m_ref->enumQualifierTypes(ns, result, aclInfo);
 	}
 
 	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName,
-		const OW_ACLInfo &aclInfo)
+		const OW_UserInfo &aclInfo)
 	{
 		m_ref->deleteQualifierType(ns, qualName, aclInfo);
 	}
 
 	virtual void setQualifierType(const OW_String& ns,
-		const OW_CIMQualifierType &qt, const OW_ACLInfo &aclInfo)
+		const OW_CIMQualifierType &qt, const OW_UserInfo &aclInfo)
 	{
 		m_ref->setQualifierType(ns, qt, aclInfo);
 	}
@@ -101,20 +101,20 @@ public:
 		const OW_String& className,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray *propertyList,
-		const OW_ACLInfo &aclInfo)
+		const OW_UserInfo &aclInfo)
 	{
 		return m_ref->getClass(ns, className, localOnly, includeQualifiers,
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
 	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
-		const OW_ACLInfo &aclInfo)
+		const OW_UserInfo &aclInfo)
 	{
 		return m_ref->deleteClass(ns, className, aclInfo);
 	}
 
 	virtual OW_CIMObjectPath createInstance(const OW_String& ns, const OW_CIMInstance &ci,
-		const OW_ACLInfo &aclInfo)
+		const OW_UserInfo &aclInfo)
 	{
 		return m_ref->createInstance(ns, ci, aclInfo);
 	}
@@ -126,20 +126,20 @@ public:
 		OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, OW_Bool enumSubClasses, 
-		const OW_ACLInfo &aclInfo)
+		const OW_UserInfo &aclInfo)
 	{
 		return m_ref->enumInstances(ns, className, result, deep, localOnly,includeQualifiers,
 			includeClassOrigin, propertyList, enumSubClasses, aclInfo);
 	}
 
 	virtual void createClass(const OW_String& ns,
-		const OW_CIMClass &cimClass, const OW_ACLInfo &aclInfo)
+		const OW_CIMClass &cimClass, const OW_UserInfo &aclInfo)
 	{
 		m_ref->createClass(ns, cimClass, aclInfo);
 	}
 
 	virtual OW_CIMClass modifyClass(const OW_String &ns,
-		const OW_CIMClass &cc, const OW_ACLInfo &aclInfo)
+		const OW_CIMClass &cc, const OW_UserInfo &aclInfo)
 	{
 		return m_ref->modifyClass(ns, cc, aclInfo);
 	}
@@ -148,7 +148,7 @@ public:
 		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_ACLInfo &aclInfo)
+		OW_Bool includeClassOrigin, const OW_UserInfo &aclInfo)
 	{
 		return m_ref->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
 			includeClassOrigin, aclInfo);
@@ -158,7 +158,7 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep, const OW_ACLInfo &aclInfo)
+		OW_Bool deep, const OW_UserInfo &aclInfo)
 	{
 		m_ref->enumClassNames(ns, className, result, deep, aclInfo);
 	}
@@ -167,7 +167,7 @@ public:
 		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
-		OW_CIMParamValueArray &outParams, const OW_ACLInfo &aclInfo)
+		OW_CIMParamValueArray &outParams, const OW_UserInfo &aclInfo)
 	{
 		return m_ref->invokeMethod(ns, path, methodName, inParams,
 			outParams, aclInfo);
@@ -177,7 +177,7 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep, const OW_ACLInfo &aclInfo)
+		OW_Bool deep, const OW_UserInfo &aclInfo)
 	{
 		return m_ref->enumInstanceNames(ns, className, result, deep, aclInfo);
 	}
@@ -187,14 +187,14 @@ public:
 		const OW_CIMObjectPath& instanceName,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray *propertyList,
-		const OW_ACLInfo &aclInfo)
+		const OW_UserInfo &aclInfo)
 	{
 		return m_ref->getInstance(ns, instanceName, localOnly, includeQualifiers,
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
 	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &cop,
-		const OW_ACLInfo &aclInfo)
+		const OW_UserInfo &aclInfo)
 	{
 		return m_ref->deleteInstance(ns, cop, aclInfo);
 	}
@@ -205,7 +205,7 @@ public:
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
+		const OW_StringArray *propertyList, const OW_UserInfo &aclInfo)
 	{
 		m_ref->references(ns, path, result, resultClass, role, includeQualifiers,
 			includeClassOrigin, propertyList, aclInfo);
@@ -217,7 +217,7 @@ public:
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
+		const OW_StringArray *propertyList, const OW_UserInfo &aclInfo)
 	{
 		m_ref->referencesClasses(ns, path, result, resultClass, role, includeQualifiers,
 			includeClassOrigin, propertyList, aclInfo);
@@ -228,7 +228,7 @@ public:
 		const OW_CIMInstance& modifiedInstance,
 		OW_Bool includeQualifiers,
 		const OW_StringArray* propertyList,
-		const OW_ACLInfo &aclInfo)
+		const OW_UserInfo &aclInfo)
 	{
 		return m_ref->modifyInstance(ns, modifiedInstance, includeQualifiers,
 			propertyList, aclInfo);
@@ -238,7 +238,7 @@ public:
 		const OW_String& ns,
 		const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_CIMValue &cv,
-		const OW_ACLInfo &aclInfo)
+		const OW_UserInfo &aclInfo)
 	{
 		m_ref->setProperty(ns, name, propertyName, cv, aclInfo);
 	}
@@ -246,7 +246,7 @@ public:
 	virtual OW_CIMValue getProperty(
 		const OW_String& ns,
 		const OW_CIMObjectPath &name,
-		const OW_String &propertyName, const OW_ACLInfo &aclInfo)
+		const OW_String &propertyName, const OW_UserInfo &aclInfo)
 	{
 		return m_ref->getProperty(ns, name, propertyName, aclInfo);
 	}
@@ -257,7 +257,7 @@ public:
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &assocClass,
 		const OW_String &resultClass, const OW_String &role,
-		const OW_String &resultRole, const OW_ACLInfo &aclInfo)
+		const OW_String &resultRole, const OW_UserInfo &aclInfo)
 	{
 		m_ref->associatorNames(ns, path, result, assocClass, resultClass, role,
 			resultRole, aclInfo);
@@ -270,7 +270,7 @@ public:
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
+		const OW_StringArray *propertyList, const OW_UserInfo &aclInfo)
 	{
 		m_ref->associators(ns, path, result, assocClass, resultClass, role,
 			resultRole, includeQualifiers, includeClassOrigin, propertyList,
@@ -284,7 +284,7 @@ public:
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
+		const OW_StringArray *propertyList, const OW_UserInfo &aclInfo)
 	{
 		m_ref->associatorsClasses(ns, path, result, assocClass, resultClass, role,
 			resultRole, includeQualifiers, includeClassOrigin, propertyList,
@@ -296,7 +296,7 @@ public:
 		const OW_CIMObjectPath &path,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &resultClass,
-		const OW_String &role, const OW_ACLInfo &aclInfo)
+		const OW_String &role, const OW_UserInfo &aclInfo)
 	{
 		m_ref->referenceNames(ns, path, result, resultClass, role, aclInfo);
 	}
@@ -305,7 +305,7 @@ public:
 		const OW_String& ns,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &query, const OW_String &queryLanguage,
-		const OW_ACLInfo &aclInfo)
+		const OW_UserInfo &aclInfo)
 	{
 		m_ref->execQuery(ns, result, query, queryLanguage, aclInfo);
 	}

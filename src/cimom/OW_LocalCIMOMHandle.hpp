@@ -62,7 +62,7 @@ public:
 	 *		this OW_LocalCIMOMHandle.
 	 */
 	OW_LocalCIMOMHandle(OW_CIMOMEnvironmentRef env, OW_RepositoryIFCRef pRepos,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	/**
 	 * Copy constructor
@@ -627,7 +627,7 @@ public:
 	 *		read/write lock on the OW_CIMServer.
 	 */
 	OW_LocalCIMOMHandle(OW_CIMOMEnvironmentRef env, OW_RepositoryIFCRef pRepos,
-		const OW_ACLInfo& aclInfo, OW_Bool noLock);
+		const OW_UserInfo& aclInfo, OW_Bool noLock);
 
 	void getSchemaReadLock();
 	void getSchemaWriteLock();
@@ -651,7 +651,7 @@ private:
 	 * The user access control information that is associated with this
 	 * OW_LocalCIMOMHandle
 	 */
-	OW_ACLInfo m_aclInfo;
+	OW_UserInfo m_aclInfo;
 
 	/**
 	 * If m_noLock is true, then this OW_LocalCIMOMHandle will never attempt

@@ -772,7 +772,7 @@ OW_CIMOMEnvironment::getConfigItem(const OW_String &name) const
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
-        const OW_ACLInfo& aclInfo)
+        const OW_UserInfo& aclInfo)
 {
 	{
 		OW_MutexLock l(m_runningGuard);
@@ -791,7 +791,7 @@ OW_CIMOMEnvironment::getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
-OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
+OW_CIMOMEnvironment::getCIMOMHandle(const OW_UserInfo& aclInfo,
 	const OW_Bool doIndications, const OW_Bool bypassProviders, const OW_Bool noLocking)
 {
 	{
@@ -839,21 +839,21 @@ OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle(const OW_String &username,
 	const OW_Bool doIndications, const OW_Bool bypassProviders)
 {
-	return getCIMOMHandle(OW_ACLInfo(username), doIndications, bypassProviders);
+	return getCIMOMHandle(OW_UserInfo(username), doIndications, bypassProviders);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle()
 {
-	return getCIMOMHandle(OW_ACLInfo(), false, false);
+	return getCIMOMHandle(OW_UserInfo(), false, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getRepositoryCIMOMHandle()
 {
-	return getCIMOMHandle(OW_ACLInfo(), false, true);
+	return getCIMOMHandle(OW_UserInfo(), false, true);
 }
 
 //////////////////////////////////////////////////////////////////////////////

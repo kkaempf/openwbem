@@ -52,13 +52,13 @@
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
 OW_IndicationRepLayerImpl::deleteClass(const OW_String& ns, const OW_String& className,
-	const OW_ACLInfo& aclInfo)
+	const OW_UserInfo& aclInfo)
 {
 	OW_CIMClass cc = m_pServer->deleteClass(ns, className, aclInfo);
 
 	if (m_pEnv->getIndicationRepLayerMediator()->getClassDeletionSubscriptionCount() > 0)
 	{
-		OW_ACLInfo intAclInfo;
+		OW_UserInfo intAclInfo;
 
 		try
 		{
@@ -82,13 +82,13 @@ OW_IndicationRepLayerImpl::deleteClass(const OW_String& ns, const OW_String& cla
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_IndicationRepLayerImpl::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path,
-	const OW_ACLInfo& aclInfo)
+	const OW_UserInfo& aclInfo)
 {
 	OW_CIMInstance instOrig = m_pServer->deleteInstance(ns, path, aclInfo);
 
 	if (m_pEnv->getIndicationRepLayerMediator()->getInstDeletionSubscriptionCount() > 0)
 	{
-		OW_ACLInfo intAclInfo;
+		OW_UserInfo intAclInfo;
 	
 		try
 		{
@@ -114,14 +114,14 @@ OW_IndicationRepLayerImpl::getInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	OW_CIMInstance theInst = m_pServer->getInstance(ns, instanceName, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 	
 	if (m_pEnv->getIndicationRepLayerMediator()->getInstReadSubscriptionCount() > 0)
 	{
-		OW_ACLInfo intAclInfo;
+		OW_UserInfo intAclInfo;
 	
 		try
 		{
@@ -147,7 +147,7 @@ OW_IndicationRepLayerImpl::invokeMethod(
 	const OW_String& ns,
 	const OW_CIMObjectPath& path,
 	const OW_String& methodName, const OW_CIMParamValueArray& inParams,
-	OW_CIMParamValueArray& outParams, const OW_ACLInfo& aclInfo)
+	OW_CIMParamValueArray& outParams, const OW_UserInfo& aclInfo)
 {
 	OW_CIMValue rval = m_pServer->invokeMethod(ns, path, methodName, inParams,
 		outParams, aclInfo);
@@ -156,7 +156,7 @@ OW_IndicationRepLayerImpl::invokeMethod(
 	{
 		if (path.getKeys().size() > 0) // process the indication only if instance.
 		{
-			OW_ACLInfo intAclInfo;
+			OW_UserInfo intAclInfo;
 			try
 			{
 				OW_CIMClass expCC = m_pServer->getClass(ns,
@@ -209,13 +209,13 @@ OW_IndicationRepLayerImpl::invokeMethod(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
 OW_IndicationRepLayerImpl::modifyClass(const OW_String &ns,
-	const OW_CIMClass& cc, const OW_ACLInfo& aclInfo)
+	const OW_CIMClass& cc, const OW_UserInfo& aclInfo)
 {
 	OW_CIMClass CCOrig = m_pServer->modifyClass(ns, cc, aclInfo);
 	
 	if (m_pEnv->getIndicationRepLayerMediator()->getClassModificationSubscriptionCount() > 0)
 	{
-		OW_ACLInfo intAclInfo;
+		OW_UserInfo intAclInfo;
 	
 		try
 		{
@@ -239,13 +239,13 @@ OW_IndicationRepLayerImpl::modifyClass(const OW_String &ns,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_IndicationRepLayerImpl::createClass(const OW_String& ns,
-	const OW_CIMClass& cc, const OW_ACLInfo& aclInfo)
+	const OW_CIMClass& cc, const OW_UserInfo& aclInfo)
 {
 	m_pServer->createClass(ns, cc, aclInfo);
 
 	if (m_pEnv->getIndicationRepLayerMediator()->getClassCreationSubscriptionCount() > 0)
 	{
-		OW_ACLInfo intAclInfo;
+		OW_UserInfo intAclInfo;
 	
 		try
 		{
@@ -271,14 +271,14 @@ OW_IndicationRepLayerImpl::modifyInstance(
 	const OW_CIMInstance& modifiedInstance,
 	OW_Bool includeQualifiers,
 	const OW_StringArray* propertyList,
-	const OW_ACLInfo& aclInfo)
+	const OW_UserInfo& aclInfo)
 {
 	OW_CIMInstance ciOrig = m_pServer->modifyInstance(ns, modifiedInstance,
 		includeQualifiers, propertyList, aclInfo);
 
 	if (m_pEnv->getIndicationRepLayerMediator()->getInstModificationSubscriptionCount() > 0)
 	{
-		OW_ACLInfo intAclInfo;
+		OW_UserInfo intAclInfo;
 	
 		try
 		{
@@ -303,7 +303,7 @@ OW_IndicationRepLayerImpl::modifyInstance(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
 OW_IndicationRepLayerImpl::createInstance(const OW_String& ns,
-	const OW_CIMInstance& ci, const OW_ACLInfo& aclInfo)
+	const OW_CIMInstance& ci, const OW_UserInfo& aclInfo)
 {
 	OW_CIMObjectPath rval = m_pServer->createInstance(ns, ci, aclInfo);
 
@@ -311,7 +311,7 @@ OW_IndicationRepLayerImpl::createInstance(const OW_String& ns,
 	{
 		try
 		{
-			OW_ACLInfo intAclInfo;
+			OW_UserInfo intAclInfo;
 			OW_CIMClass expCC = m_pServer->getClass(ns,
 				"CIM_InstCreation", false, true, true, NULL,
 				intAclInfo);

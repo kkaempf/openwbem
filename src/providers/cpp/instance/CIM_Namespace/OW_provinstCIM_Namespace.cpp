@@ -212,7 +212,7 @@ public:
 		
 		NSHandler nshandler(result, className, ns, sccn, sn, omccn, omn);
 		OW_RepositoryIFCRef rep = env->getRepository();
-		rep->enumNameSpace(nshandler, OW_ACLInfo(env->getUserName()));
+		rep->enumNameSpace(nshandler, OW_UserInfo(env->getUserName()));
 
 	}
 
@@ -250,7 +250,7 @@ public:
 		NSHandlerInst nshandler(result, cimClass, sccn, sn, omccn, omn,
 			localOnly, deep, includeQualifiers, includeClassOrigin, propertyList, requestedClass);
 		OW_RepositoryIFCRef rep = env->getRepository();
-		rep->enumNameSpace(nshandler, OW_ACLInfo(env->getUserName()));
+		rep->enumNameSpace(nshandler, OW_UserInfo(env->getUserName()));
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -296,7 +296,7 @@ public:
 			// now check the name.  We have to enumerate the namespaces to do this.
 			NSHandlerGet nshandler(name);
 			OW_RepositoryIFCRef rep = env->getRepository();
-			rep->enumNameSpace(nshandler, OW_ACLInfo(env->getUserName()));
+			rep->enumNameSpace(nshandler, OW_UserInfo(env->getUserName()));
 
 			if (!nshandler.foundName())
 			{
@@ -340,7 +340,7 @@ public:
 		{
 			OW_String name = cimInstance.getPropertyT("Name").getValueT().toString();
 			OW_RepositoryIFCRef rep = env->getRepository();
-			rep->createNameSpace(name, OW_ACLInfo(env->getUserName()));
+			rep->createNameSpace(name, OW_UserInfo(env->getUserName()));
 		}
 		catch (const OW_CIMException& e)
 		{
@@ -390,9 +390,9 @@ public:
 
 			// The client can't delete a non-empty namespace.  If we find any class names, we'll throw an exception
 			DeleteHandler handler;
-			rep->enumClassNames(name,"", handler, false, OW_ACLInfo(env->getUserName()));
+			rep->enumClassNames(name,"", handler, false, OW_UserInfo(env->getUserName()));
 
-			rep->deleteNameSpace(name, OW_ACLInfo(env->getUserName()));
+			rep->deleteNameSpace(name, OW_UserInfo(env->getUserName()));
 		}
 		catch (const OW_CIMException& e)
 		{

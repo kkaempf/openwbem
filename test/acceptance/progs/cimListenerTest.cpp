@@ -30,7 +30,6 @@
 
 #include "OW_config.h"
 #include "OW_HTTPXMLCIMListener.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_Semaphore.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"

@@ -50,7 +50,7 @@ class OW_ServiceIFC;
 class OW_CIMInstance;
 class OW_ProviderManager;
 class OW_WQLIFC;
-class OW_ACLInfo;
+class OW_UserInfo;
 class OW_CIMNameSpace;
 class OW_HTTPServer;
 class OW_AuthManager;
@@ -101,7 +101,7 @@ public:
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username,
 		const OW_Bool doIndications=false, const OW_Bool bypassProviders = false);
 
-	OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_ACLInfo& aclinfo,
+	OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_UserInfo& aclinfo,
 		const OW_Bool doIndications=false, const OW_Bool bypassProviders = false,
 		const OW_Bool noLocking = false);
 
@@ -110,7 +110,7 @@ public:
 	OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle();
 
 	OW_CIMOMHandleIFCRef getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	OW_WQLIFCRef getWQLRef();
 

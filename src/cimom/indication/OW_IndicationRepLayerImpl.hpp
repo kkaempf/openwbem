@@ -45,7 +45,7 @@ public:
 	OW_IndicationRepLayerImpl() : OW_IndicationRepLayer(), m_pServer(0) {}
 
 	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	virtual void open(const OW_String&) {}
 
@@ -57,7 +57,7 @@ public:
 	}
 
 	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName,
-		const OW_ACLInfo& aclInfo)
+		const OW_UserInfo& aclInfo)
 	{
 		m_pServer->deleteQualifierType(ns, qualName, aclInfo);
 	}
@@ -67,7 +67,7 @@ public:
 		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo)
+		OW_Bool includeClassOrigin, const OW_UserInfo& aclInfo)
 	{
 		m_pServer->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
 			includeClassOrigin, aclInfo);
@@ -78,18 +78,18 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep, const OW_ACLInfo& aclInfo)
+		OW_Bool deep, const OW_UserInfo& aclInfo)
 	{
 		m_pServer->enumClassNames(ns, className, result, deep, aclInfo);
 	}
 
 
 	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &path,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	virtual void enumQualifierTypes(
 		const OW_String& ns,
-		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_ACLInfo& aclInfo)
+		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_UserInfo& aclInfo)
 	{
 		m_pServer->enumQualifierTypes(ns, result, aclInfo);
 	}
@@ -100,7 +100,7 @@ public:
 		const OW_CIMObjectPath& instanceName,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	virtual void enumInstances(
 		const OW_String& ns,
@@ -109,7 +109,7 @@ public:
 		OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList, OW_Bool enumSubClasses, 
-		const OW_ACLInfo& aclInfo)
+		const OW_UserInfo& aclInfo)
 	{
 		m_pServer->enumInstances(ns, className, result, deep, localOnly, includeQualifiers,
 			includeClassOrigin, propertyList, enumSubClasses, aclInfo);
@@ -120,7 +120,7 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep, const OW_ACLInfo& aclInfo)
+		OW_Bool deep, const OW_UserInfo& aclInfo)
 	{
 		return m_pServer->enumInstanceNames(ns, className, result, deep, aclInfo);
 	}
@@ -128,7 +128,7 @@ public:
 
 	virtual OW_CIMQualifierType getQualifierType(
 		const OW_String& ns,
-		const OW_String& qualifierName, const OW_ACLInfo& aclInfo)
+		const OW_String& qualifierName, const OW_UserInfo& aclInfo)
 	{
 		return m_pServer->getQualifierType(ns, qualifierName, aclInfo);
 	}
@@ -139,7 +139,7 @@ public:
 		const OW_String& className,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
-		const OW_ACLInfo& aclInfo)
+		const OW_UserInfo& aclInfo)
 	{
 		return m_pServer->getClass(ns, className, localOnly, includeQualifiers,
 			includeClassOrigin, propertyList, aclInfo);
@@ -150,29 +150,29 @@ public:
 		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
-		OW_CIMParamValueArray &outParams, const OW_ACLInfo& aclInfo);
+		OW_CIMParamValueArray &outParams, const OW_UserInfo& aclInfo);
 
 	virtual void createClass(const OW_String& ns,
-		const OW_CIMClass &cc, const OW_ACLInfo& aclInfo);
+		const OW_CIMClass &cc, const OW_UserInfo& aclInfo);
 
 	virtual void setQualifierType(const OW_String& ns,
-		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo)
+		const OW_CIMQualifierType& qt, const OW_UserInfo& aclInfo)
 	{
 		m_pServer->setQualifierType(ns, qt, aclInfo);
 	}
 
 
 	virtual OW_CIMObjectPath createInstance(const OW_String& ns,
-		const OW_CIMInstance &ci, const OW_ACLInfo& aclInfo);
+		const OW_CIMInstance &ci, const OW_UserInfo& aclInfo);
 
 	virtual OW_CIMClass modifyClass(const OW_String &ns,
-		const OW_CIMClass& cc, const OW_ACLInfo& aclInfo);
+		const OW_CIMClass& cc, const OW_UserInfo& aclInfo);
 
 	virtual void setProperty(
 		const OW_String& ns,
 		const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_CIMValue &cv,
-		const OW_ACLInfo& aclInfo)
+		const OW_UserInfo& aclInfo)
 	{
 		m_pServer->setProperty(ns, name, propertyName, cv, aclInfo);
 	}
@@ -183,7 +183,7 @@ public:
 		const OW_CIMInstance& modifiedInstance,
 		OW_Bool includeQualifiers,
 		const OW_StringArray* propertyList,
-		const OW_ACLInfo& aclInfo);
+		const OW_UserInfo& aclInfo);
 
 	virtual void associators(
 		const OW_String& ns,
@@ -192,7 +192,7 @@ public:
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+		const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 	{
 		m_pServer->associators(ns, path, result, assocClass, resultClass, role,
 			resultRole, includeQualifiers, includeClassOrigin, propertyList, aclInfo);
@@ -206,7 +206,7 @@ public:
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+		const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 	{
 		m_pServer->associatorsClasses(ns, path, result, assocClass, resultClass, role,
 			resultRole, includeQualifiers, includeClassOrigin, propertyList, aclInfo);
@@ -216,7 +216,7 @@ public:
 	virtual OW_CIMValue getProperty(
 		const OW_String& ns,
 		const OW_CIMObjectPath &name,
-		const OW_String &propertyName, const OW_ACLInfo& aclInfo)
+		const OW_String &propertyName, const OW_UserInfo& aclInfo)
 	{
 		return m_pServer->getProperty(ns, name, propertyName, aclInfo);
 	}
@@ -228,7 +228,7 @@ public:
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+		const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 	{
 		m_pServer->references(ns, path, result, resultClass, role,
 			includeQualifiers, includeClassOrigin, propertyList, aclInfo);
@@ -241,7 +241,7 @@ public:
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+		const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 	{
 		m_pServer->referencesClasses(ns, path, result, resultClass, role,
 			includeQualifiers, includeClassOrigin, propertyList, aclInfo);
@@ -254,7 +254,7 @@ public:
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &assocClass,
 		const OW_String &resultClass, const OW_String &role,
-		const OW_String &resultRole, const OW_ACLInfo& aclInfo)
+		const OW_String &resultRole, const OW_UserInfo& aclInfo)
 	{
 		m_pServer->associatorNames(ns, path, result, assocClass, resultClass, role,
 			resultRole, aclInfo);
@@ -266,7 +266,7 @@ public:
 		const OW_CIMObjectPath &path,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &resultClass,
-		const OW_String &role, const OW_ACLInfo& aclInfo)
+		const OW_String &role, const OW_UserInfo& aclInfo)
 	{
 		m_pServer->referenceNames(ns, path, result, resultClass, role, aclInfo);
 	}
@@ -276,7 +276,7 @@ public:
 		const OW_String& ns,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &query, const OW_String& queryLanguage,
-		const OW_ACLInfo& aclInfo)
+		const OW_UserInfo& aclInfo)
 	{
 		m_pServer->execQuery(ns, result, query, queryLanguage, aclInfo);
 	}
@@ -287,7 +287,7 @@ public:
 	 * @param ns	The namespace to delete.
 	 * @exception OW_CIMException If the namespace does not exist.
 	 */
-	void deleteNameSpace(const OW_String &ns, const OW_ACLInfo& aclInfo)
+	void deleteNameSpace(const OW_String &ns, const OW_UserInfo& aclInfo)
 	{
 		m_pServer->deleteNameSpace(ns, aclInfo);
 	}
@@ -298,7 +298,7 @@ public:
 	 * @param ns 	The namespace to be created.
 	 * @exception OW_CIMException If the namespace already exists.
 	 */
-	void createNameSpace(const OW_String& ns, const OW_ACLInfo& aclInfo)
+	void createNameSpace(const OW_String& ns, const OW_UserInfo& aclInfo)
 	{
 		m_pServer->createNameSpace(ns, aclInfo);
 	}
@@ -311,7 +311,7 @@ public:
 	 *					cannot be found in the specified namespace.
 	 */
 	void enumNameSpace(OW_StringResultHandlerIFC& result,
-		const OW_ACLInfo& aclInfo)
+		const OW_UserInfo& aclInfo)
 	{
 		m_pServer->enumNameSpace(result, aclInfo);
 	}

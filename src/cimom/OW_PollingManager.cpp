@@ -37,7 +37,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_ProviderManager.hpp"
-#include "OW_ACLInfo.hpp"
+#include "OW_UserInfo.hpp"
 #include "OW_Platform.hpp"
 
 #include <climits>
@@ -64,7 +64,7 @@ namespace
 	{
 	public:
 
-		PollingManagerProviderEnvironment(const OW_ACLInfo& acl,
+		PollingManagerProviderEnvironment(const OW_UserInfo& acl,
 			OW_CIMOMEnvironmentRef env)
 			: m_acl(acl)
 			, m_env(env)
@@ -101,11 +101,11 @@ namespace
         }
 
 	private:
-		OW_ACLInfo m_acl;
+		OW_UserInfo m_acl;
 		OW_CIMOMEnvironmentRef m_env;
 	};
 
-	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_ACLInfo& acl,
+	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_UserInfo& acl,
 		OW_CIMOMEnvironmentRef env)
 	{
 		return OW_ProviderEnvironmentIFCRef(new PollingManagerProviderEnvironment(
@@ -126,7 +126,7 @@ OW_PollingManager::run()
 	OW_ProviderManagerRef pm = m_env->getProviderManager();
 	
 	OW_PolledProviderIFCRefArray itpra =
-			pm->getPolledProviders(createProvEnvRef(OW_ACLInfo(), m_env));
+			pm->getPolledProviders(createProvEnvRef(OW_UserInfo(), m_env));
 
 	m_env->logDebug(format("OW_PollingManager found %1 polled providers",
 		itpra.size()));
@@ -137,10 +137,10 @@ OW_PollingManager::run()
 
 		for (size_t i = 0; i < itpra.size(); ++i)
 		{
-			TriggerRunner tr(this, OW_ACLInfo(), m_env);
+			TriggerRunner tr(this, OW_UserInfo(), m_env);
 
 			tr.m_pollInterval = itpra[i]->getInitialPollingInterval(
-				createProvEnvRef(OW_ACLInfo(), m_env));
+				createProvEnvRef(OW_UserInfo(), m_env));
 
 			m_env->logDebug(format("OW_PollingManager poll interval for provider"
 				" %1: %2", i, tr.m_pollInterval));
@@ -274,10 +274,10 @@ OW_PollingManager::addPolledProvider(const OW_PolledProviderIFCRef& p)
 	if (m_shuttingDown)
 		return;
 
-	TriggerRunner tr(this, OW_ACLInfo(), m_env);
+	TriggerRunner tr(this, OW_UserInfo(), m_env);
 
 	tr.m_pollInterval = p->getInitialPollingInterval(
-		createProvEnvRef(OW_ACLInfo(), m_env));
+		createProvEnvRef(OW_UserInfo(), m_env));
 
 	m_env->logDebug(format("OW_PollingManager poll interval for provider"
 		" %1", tr.m_pollInterval));
@@ -300,7 +300,7 @@ OW_PollingManager::addPolledProvider(const OW_PolledProviderIFCRef& p)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PollingManager::TriggerRunner::TriggerRunner(OW_PollingManager* svr,
-	OW_ACLInfo acl, OW_CIMOMEnvironmentRef env)
+	OW_UserInfo acl, OW_CIMOMEnvironmentRef env)
 	: OW_Runnable()
 	, m_itp(0)
 	, m_nextPoll(0)

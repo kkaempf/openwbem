@@ -76,12 +76,12 @@ OW_ThreadCounter.cpp \
 OW_ThreadImpl.cpp \
 OW_TmpFile.cpp \
 OW_URL.cpp \
+OW_UserInfo.cpp \
 OW_dlSharedLibrary.cpp \
 OW_dlSharedLibraryLoader.cpp \
 OW_UnnamedPipe.cpp
 
 pkginclude_HEADERS =	\
-OW_ACLInfo.hpp \
 OW_Array.hpp \
 OW_ArrayImpl.hpp \
 OW_ArrayFwd.hpp \
@@ -154,6 +154,7 @@ OW_TmpFile.hpp \
 OW_Types.h \
 OW_URL.hpp \
 OW_UnnamedPipe.hpp \
+OW_UserInfo.hpp \
 OW_SafeLibCreate.hpp \
 OW_SharedLibrary.hpp \
 OW_SharedLibraryException.hpp \

@@ -36,7 +36,7 @@
 #include "OW_ProviderManager.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_WQLIFC.hpp"
-#include "OW_ACLInfo.hpp"
+#include "OW_UserInfo.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_SortedVectorSet.hpp"
@@ -71,7 +71,7 @@ namespace
 class OW_Notifier : public OW_Runnable
 {
 public:
-	OW_Notifier(OW_IndicationServerImpl* pmgr, OW_NotifyTrans& ntrans, OW_ACLInfo const& aclInfo) :
+	OW_Notifier(OW_IndicationServerImpl* pmgr, OW_NotifyTrans& ntrans, OW_UserInfo const& aclInfo) :
 		m_pmgr(pmgr), m_trans(ntrans), m_aclInfo(aclInfo) {}
 
 	void start();
@@ -81,7 +81,7 @@ public:
 private:
 	OW_IndicationServerImpl* m_pmgr;
 	OW_NotifyTrans m_trans;
-	OW_ACLInfo m_aclInfo;
+	OW_UserInfo m_aclInfo;
 };
 
 class IndicationServerProviderEnvironment : public OW_ProviderEnvironmentIFC
@@ -265,7 +265,7 @@ void
 OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
 {
 	m_env = env;
-	OW_ACLInfo aclInfo;
+	OW_UserInfo aclInfo;
 
 	//-----------------
 	// Load map with available indication export providers
@@ -786,7 +786,7 @@ OW_IndicationServerImpl::_processIndicationRange(
 	const OW_CIMInstance& instanceArg, const OW_String instNS,
 	std::vector<subscriptions_t::value_type>::iterator first, std::vector<subscriptions_t::value_type>::iterator last)
 {
-	OW_ACLInfo aclInfo;
+	OW_UserInfo aclInfo;
 	OW_CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(aclInfo, false);
 
 	for( ;first != last; ++first)
@@ -864,7 +864,7 @@ OW_IndicationServerImpl::addTrans(
 	OW_NotifyTrans trans(ns, indication, handler, provider);
 	if(m_threadCounter->getThreadCount() < MAX_NOTIFIERS)
 	{
-		OW_Notifier* pnotifier = new OW_Notifier(this, trans, OW_ACLInfo());
+		OW_Notifier* pnotifier = new OW_Notifier(this, trans, OW_UserInfo());
 		m_threadCounter->incThreadCount();
 		pnotifier->start();
 	}

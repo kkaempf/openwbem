@@ -677,6 +677,12 @@ TestACL()
 		return
 	fi
 
+	grep "define OW_DISABLE_ACLS" $TOPSRCDIR/src/common/OW_config.h > /dev/null 2>&1
+	if [ "$?" = "0" ]; then
+		echo "** OpenWBEM was not built with ACL support **"
+		return
+	fi
+
 	echo "Setting up ACL test..."
 	EditConfig "s!;owcimomd.ACL_superuser =.*!owcimomd.ACL_superuser = test1!g" 
 
