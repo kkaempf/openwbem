@@ -165,7 +165,6 @@ daemonize(bool dbgFlg, const String& daemonName)
 				_exit(0); 
 		}
 		chdir("/");
-		umask(0);
 		close(0);
 		close(1);
 		close(2);
@@ -177,13 +176,10 @@ daemonize(bool dbgFlg, const String& daemonName)
 	{
 		pid = getpid();
 	}
+	umask(0077); // ensure all files we create are only accessible by us.
 	PidFile::writePid(pidFile.c_str());
-	//String msg;
-	//msg.Format(DAEMON_NAME " is now running [PID=%d]", getpid());
-	//Environment::logInfo(msg);
 	initSig();
 	setupSigHandler(dbgFlg);
-	umask(0077); // ensure all files we create are only accessible by us.
 }
 //////////////////////////////////////////////////////////////////////////////
 int
