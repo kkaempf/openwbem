@@ -425,6 +425,7 @@ String getCurrentUserName()
 void initSig()
 {
 	plat_upipe = UnnamedPipe::createUnnamedPipe();
+	plat_upipe->setBlocking(UnnamedPipe::E_NONBLOCKING);
 }
 //////////////////////////////////////////////////////////////////////////////
 void pushSig(int sig)
