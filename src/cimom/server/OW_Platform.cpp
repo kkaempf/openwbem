@@ -275,8 +275,9 @@ void rerunDaemon()
 
 	// reset the signal mask, since that is inherited by an exec()'d process, and if
 	// this was called from a signal handler, the signal being handled (e.g. SIGSEGV) will be blocked.
+	// some platforms make macros for sigemptyset, so we can't use ::
 	sigset_t emptymask;
-	::sigemptyset(&emptymask);
+	sigemptyset(&emptymask);
 	::sigprocmask(SIG_SETMASK, &emptymask, 0);
 
 	// This doesn't return. execv() will replace the current process with a
