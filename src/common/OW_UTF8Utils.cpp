@@ -162,7 +162,7 @@ String UCS2toUTF8(UInt16 ucs2char)
 		rval[0] = static_cast<char>(static_cast<UInt8>(0xc0u | (ucs2char >> 6)));
 		rval[1] = static_cast<char>(static_cast<UInt8>(0x80u | (ucs2char & 0x3fu)));
 	}
-	else if(ucs2char < 0x10000u)
+	else // if(ucs2char < 0x10000u) - always true
 	{
 		rval[0] = static_cast<char>(static_cast<UInt8>(0xe0u | (ucs2char >> 12)));
 		rval[1] = static_cast<char>(static_cast<UInt8>(0x80u | ((ucs2char >> 6) & 0x3fu)));
