@@ -5,7 +5,7 @@
 # Required-Start: $network
 # Required-Stop: $network
 # Default-Start: 2 3 4 5
-# Default-Stop: 0 1 6 
+# Default-Stop: 0 1 6
 # Description: @PACKAGE_PREFIX@owcimomd
 #       Start/Stop the OpenWBEM CIMOM Daemon
 ### END INIT INFO
@@ -48,13 +48,70 @@ lockfile=${SVIlock:-/var/lock/subsys/$NAME}
 
 [ -x $DAEMON ] || exit 0
 
+ow_fatal_error()
+{
+  echo "$@" >&2
+  exit 1
+}
+
+# This function exists because some linux platforms have added broken
+# shells which cannot properly handle SIGnnnn names for signals.  This
+# will try various forms of the named signal, trying to make one work.
+ow_send_signal()
+{
+  if [ $# -ne 2 ]; then
+    echo "Incorrect number of arguments ($#).  Need a signal name and a PID"
+    return 1
+  fi
+
+  signal=$1
+  pid_to_signal=$2
+
+  signal_replacement_list=""
+
+  case $signal in
+    SIGTERM | TERM)
+      signal_replacement_list="SIGTERM TERM 15"
+      ;;
+    SIGKILL | KILL)
+      signal_replacement_list="SIGKILL KILL 9"
+      ;;
+    SIGHUP  | HUP)
+      signal_replacement_list="SUGHUP HUP 1"
+      ;;
+    [0-9] | [0-9][0-9])
+      signal_replacement_list="$signal"
+      ;;
+    *)
+      ow_fatal_error "Invalid signal: $signal" 
+      ;;
+  esac
+  for new_signal in $signal_replacement_list; do
+    if kill -$new_signal $pid_to_signal >/dev/null 2>&1; then
+      return 0
+    elif kill -s $new_signal $pid_to_signal >/dev/null 2>&1; then
+      return 0
+    fi
+  done
+  echo "Failed to send signal $signal to PID $pid_to_signal."
+  return 1
+}
+
+ow_test_running()
+{
+  if kill -0 $@ >/dev/null 2>&1; then
+    return 0
+  fi
+  return 1
+}
+
 # See how we were called.
 case "$1" in
  start)
   if [ -s $PIDFILE ]; then
     PID=`cat $PIDFILE`
 
-    if kill -0 $PID >/dev/null 2>&1; then
+    if ow_test_running $PID; then
       echo "$NAME ($PID) is already running."
       exit 1
     else
@@ -62,12 +119,11 @@ case "$1" in
       rm -f $PIDFILE
     fi
   fi
-		  
-			
+
+
   # Start daemons.
   echo -n "Starting the $DESCRIPTIVE"
-  #ssd -S -n $NAME -x $DAEMON -- $OPTIONS 
-  $DAEMON $OPTIONS 
+  $DAEMON $OPTIONS
   ret=$?
   touch $lockfile
   echo "."
@@ -81,17 +137,15 @@ case "$1" in
 
   # Stop daemons.
   echo -n "Shutting down $DESCRIPTIVE"
-  #$DAEMON -k
 
   PID=`cat $PIDFILE`
-  
-  # ssd -K -p $PIDFILE
-  kill -s SIGTERM $PID
+
+  ow_send_signal TERM $PID || ow_fatal_error "Could not stop $DESCRIPTIVE"
   echo -n "."
 
   for num in 1 2 3 4 5 6 7
   do
-    if kill -0 $PID >/dev/null 2>&1
+    if ow_test_running $PID
     then
       echo -n "."
     else
@@ -102,11 +156,11 @@ case "$1" in
     fi
     sleep 2
   done
-  if kill -0 $PID >/dev/null 2>&1
+  if ow_test_running $PID
   then
-    kill -s SIGKILL $PID
+    ow_send_signal KILL $PID || ow_fatal_error "Could not forcefully kill $DESCRIPTIVE"
     sleep 2
-    if [ -e $PIDFILE ] 
+    if [ -e $PIDFILE ]
     then
       rm -f $PIDFILE 2> /dev/null
     fi
@@ -125,11 +179,11 @@ case "$1" in
   $0 start
 
   ;;
- 
+
  reload)
   echo -n "Reloading $DESCRIPTIVE"
   PID=`cat $PIDFILE`
-  kill -s SIGHUP $PID
+  ow_send_signal HUP $PID || ow_fatal_error "Unable to reload $DESCRIPTIVE"
   echo "."
   ret=0
  ;;
@@ -137,7 +191,7 @@ case "$1" in
  status)
   if [ -f $PIDFILE ]; then
     PID=`cat $PIDFILE`
-    if kill -0 $PID >/dev/null 2>&1; then
+    if ow_test_running $PID ; then
       echo "$NAME ($PID) is running."
       exit 0
     else
