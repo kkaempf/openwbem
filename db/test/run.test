@@ -112,12 +112,12 @@ test3()
 {
 	echo "Test 3: btree: small key, big data pairs"
 	rm -f $TMP1
-	(find /bin -type f -print | xargs cat) > $TMP1
+	(find /bin -type f -perm +0040 -print | xargs cat) > $TMP1
 	for psize in 512 16384 65536; do
 		echo "    page size $psize"
 		for type in btree; do
 			rm -f $TMP2 $TMP3
-			for i in `find /bin -type f -print`; do
+			for i in `find /bin -type f -perm +0040 -print`; do
 				echo p
 				echo k$i
 				echo D$i
