@@ -41,17 +41,29 @@
 #include "OW_CIMClass.hpp"
 
 #include "OW_CppProviderBaseIFC.hpp"
+#include "OW_IntrusiveReference.hpp"
 
 namespace OpenWBEM
 {
+
+class RWLocker; 
+class Mutex; 
 
 using namespace WBEMFlags;
 
 class ProviderAgentCIMOMHandle : public CIMOMHandleIFC
 {
 public:
+	enum LockingType
+	{
+		NONE, 
+		SWMR, 
+		SINGLE_THREADED
+	}; 
 	ProviderAgentCIMOMHandle(Reference<CppProviderBaseIFC> provider, 
-							 ProviderEnvironmentIFCRef env); 
+							 ProviderEnvironmentIFCRef env, 
+							 LockingType lt = NONE, 
+							 UInt32 LockingTimeoutSeconds = 300); 
 	/**
 	 * Gets the CIM instance for the specified CIM object path.
 	 *
@@ -671,9 +683,44 @@ public:
 						   const String &query, const String &queryLanguage); 
 
 private: 
+	class PALocker : public IntrusiveCountableBase
+	{
+	public: 
+		PALocker(LockingType lt, UInt32 timeout); 
+		~PALocker(); 
+		void getReadLock(); 
+		void getWriteLock(); 
+		void releaseReadLock();
+		void releaseWriteLock();
+	private: 
+		LockingType m_lt; 
+		Mutex* m_mutex; 
+		RWLocker* m_rwlocker; 
+		UInt32 m_timeout; 
+	}; 
+
+	typedef IntrusiveReference<PALocker> PALockerRef; 
+
+	class PAReadLock
+	{
+	public: 
+		PAReadLock(PALockerRef pl); 
+		~PAReadLock(); 
+	private: 
+		PALocker* m_locker; 
+	}; 
+	class PAWriteLock
+	{
+	public: 
+		PAWriteLock(PALockerRef pl); 
+		~PAWriteLock(); 
+	private: 
+		PALocker* m_locker; 
+	}; 
 	Reference<CppProviderBaseIFC> m_prov; 
 	ProviderEnvironmentIFCRef m_PAEnv; 
 	CIMClass m_cimclass;  // TODO assign. 
+	PALockerRef m_locker; 
 };
 
 

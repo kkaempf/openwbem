@@ -47,6 +47,9 @@
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_CppMethodProviderIFC.hpp"
 #include "OW_CppAssociatorProviderIFC.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_RWLocker.hpp"
+#include "OW_Assertion.hpp"
 
 namespace OpenWBEM
 {
@@ -54,9 +57,11 @@ namespace OpenWBEM
 //using namespace WBEMFlags;
 
 ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(Reference<CppProviderBaseIFC> provider, 
-												   ProviderEnvironmentIFCRef env)
+												   ProviderEnvironmentIFCRef env, 
+												   LockingType lt, UInt32 lockingTimeoutSeconds)
 	: m_prov(provider)
 	, m_PAEnv(env)
+	, m_locker(new PALocker(lt, lockingTimeoutSeconds))
 {
 }
 /**
@@ -100,9 +105,12 @@ ProviderAgentCIMOMHandle::getInstance(const String &ns,
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
-	return pInstProv->getInstance(m_PAEnv,ns ,instanceName ,localOnly ,
-			includeQualifiers ,includeClassOrigin ,
-			propertyList , m_cimclass); 
+	{
+		PAReadLock rl(m_locker); 
+		return pInstProv->getInstance(m_PAEnv,ns ,instanceName ,localOnly ,
+				includeQualifiers ,includeClassOrigin ,
+				propertyList , m_cimclass); 
+	}
 }
 /**
  * Enumerates the qualifiers defined in a namespace.
@@ -142,8 +150,11 @@ ProviderAgentCIMOMHandle::invokeMethod(const String &ns,
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
-	return pMethodProv->invokeMethod(m_PAEnv,ns ,path ,methodName , 
-			inParams, outParams); 
+	{
+		PAWriteLock wl(m_locker); 
+		return pMethodProv->invokeMethod(m_PAEnv,ns ,path ,methodName , 
+				inParams, outParams); 
+	}
 }
 /**
  * Gets the CIM qualifier type specified in the CIM object path.
@@ -228,7 +239,10 @@ ProviderAgentCIMOMHandle::deleteInstance(const String &ns, const CIMObjectPath &
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
-	pInstProv->deleteInstance(m_PAEnv,ns , path); 
+	{
+		PAWriteLock wl(m_locker); 
+		pInstProv->deleteInstance(m_PAEnv,ns , path); 
+	}
 }
 /**
  * Set the specified CIM instance property.
@@ -266,10 +280,13 @@ ProviderAgentCIMOMHandle::modifyInstance(const String &ns,
 		{
 			OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 		}
-		pInstProv->modifyInstance(m_PAEnv,ns ,modifiedInstance , 
-				CIMInstance(CIMNULL),	// previousInstance unavailable
-				includeQualifiers ,
-				propertyList , m_cimclass); 
+		{
+			PAWriteLock wl(m_locker); 
+			pInstProv->modifyInstance(m_PAEnv,ns ,modifiedInstance , 
+					CIMInstance(CIMNULL),	// previousInstance unavailable
+					includeQualifiers ,
+					propertyList , m_cimclass); 
+		}
 	}
 /**
  * Add the specified CIM instance to the specified namespace.
@@ -287,7 +304,10 @@ ProviderAgentCIMOMHandle::createInstance(const String &ns, const CIMInstance &in
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
-	return pInstProv->createInstance(m_PAEnv,ns , instance); 
+	{
+		PAWriteLock wl(m_locker); 
+		return pInstProv->createInstance(m_PAEnv,ns , instance); 
+	}
 }
 /**
  * Get the specified CIM instance property.
@@ -357,8 +377,11 @@ ProviderAgentCIMOMHandle::associatorNames(const String &ns,
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
-	pAssocProv->associatorNames(m_PAEnv,result ,ns ,objectName ,
-			assocClass ,resultClass ,role ,resultRole); 
+	{
+		PAReadLock rl(m_locker); 
+		pAssocProv->associatorNames(m_PAEnv,result ,ns ,objectName ,
+				assocClass ,resultClass ,role ,resultRole); 
+	}
 }
 /**
  * This operation is used to enumerate CIMClasses that are associated
@@ -550,10 +573,13 @@ ProviderAgentCIMOMHandle::associators(const String &ns, const CIMObjectPath &pat
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
-	pAssocProv->associators(m_PAEnv,result ,ns , path,assocClass ,
-			resultClass ,role ,resultRole ,
-			includeQualifiers ,includeClassOrigin ,
-			propertyList); 
+	{
+		PAReadLock rl(m_locker); 
+		pAssocProv->associators(m_PAEnv,result ,ns , path,assocClass ,
+				resultClass ,role ,resultRole ,
+				includeQualifiers ,includeClassOrigin ,
+				propertyList); 
+	}
 }
 /**
  * This operation is used to enumerate the association objects that
@@ -592,7 +618,10 @@ ProviderAgentCIMOMHandle::referenceNames(const String &ns,
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
-	pAssocProv->referenceNames(m_PAEnv,result ,ns , path,resultClass ,role); 
+	{
+		PAReadLock rl(m_locker); 
+		pAssocProv->referenceNames(m_PAEnv,result ,ns , path,resultClass ,role); 
+	}
 }
 /**
  * This operation is used to enumerate the association objects that
@@ -643,10 +672,13 @@ ProviderAgentCIMOMHandle::references(const String &ns,
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
-	pAssocProv->references(m_PAEnv,result ,ns , path,resultClass ,role ,
-			includeQualifiers ,
-			includeClassOrigin ,
-			propertyList); 
+	{
+		PAReadLock rl(m_locker); 
+		pAssocProv->references(m_PAEnv,result ,ns , path,resultClass ,role ,
+				includeQualifiers ,
+				includeClassOrigin ,
+				propertyList); 
+	}
 }
 /**
  * This operation is used to enumerate the association objects that
@@ -779,11 +811,14 @@ ProviderAgentCIMOMHandle::enumInstances(const String &ns,
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
-	pInstProv->enumInstances(m_PAEnv,ns ,className ,result ,localOnly ,
-			deep ,includeQualifiers ,includeClassOrigin,
-			propertyList, 
-			CIMClass(CIMNULL),	// requestedClass is unavailable
-			m_cimclass); 
+	{
+		PAReadLock rl(m_locker); 
+		pInstProv->enumInstances(m_PAEnv,ns ,className ,result ,localOnly ,
+				deep ,includeQualifiers ,includeClassOrigin,
+				propertyList, 
+				CIMClass(CIMNULL),	// requestedClass is unavailable
+				m_cimclass); 
+	}
 }
 /**
  * Gathers all instance names belonging to the class specified in the
@@ -807,7 +842,10 @@ ProviderAgentCIMOMHandle::enumInstanceNames(const String &ns,
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
-	pInstProv->enumInstanceNames(m_PAEnv,ns ,className ,result , m_cimclass); 
+	{
+		PAReadLock rl(m_locker); 
+		pInstProv->enumInstanceNames(m_PAEnv,ns ,className ,result , m_cimclass); 
+	}
 }
 /**
  * Gets the CIM class for the specified CIM object path.
@@ -867,6 +905,140 @@ ProviderAgentCIMOMHandle::execQuery(const String &ns,
 {
 	OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+ProviderAgentCIMOMHandle::PALocker::PALocker(ProviderAgentCIMOMHandle::LockingType lt, 
+											 UInt32 timeout)
+	: m_lt(lt)
+	, m_mutex(0)
+	, m_rwlocker(0)
+	, m_timeout(timeout)
+{
+	switch (m_lt)
+	{
+	case NONE:
+		break; 
+	case SWMR:
+		m_rwlocker = new RWLocker; 
+		break; 
+	case SINGLE_THREADED:
+		m_mutex = new Mutex; 
+		break; 
+	default: 
+		OW_ASSERT("shouldn't happen" == 0); 
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+ProviderAgentCIMOMHandle::PALocker::~PALocker()
+{
+	if (m_mutex)
+	{
+		delete m_mutex; 
+	}
+	if (m_rwlocker)
+	{
+		delete m_rwlocker; 
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+ProviderAgentCIMOMHandle::PAReadLock::PAReadLock(PALockerRef locker)
+	: m_locker(locker.get())
+{
+	m_locker->getReadLock(); 
+}
+//////////////////////////////////////////////////////////////////////////////
+ProviderAgentCIMOMHandle::PAReadLock::~PAReadLock()
+{
+	m_locker->releaseReadLock(); 
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+ProviderAgentCIMOMHandle::PALocker::releaseReadLock()
+{
+	switch (m_lt)
+	{
+	case NONE:
+		break; 
+	case SWMR:
+		m_rwlocker->releaseReadLock(); 
+		break; 
+	case SINGLE_THREADED:
+		m_mutex->release(); 
+		break; 
+	default: 
+		OW_ASSERT("shouldn't happen" == 0); 
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+ProviderAgentCIMOMHandle::PALocker::getReadLock()
+{
+	switch (m_lt)
+	{
+	case NONE:
+		break; 
+	case SWMR:
+		m_rwlocker->getReadLock(m_timeout); 
+		break; 
+	case SINGLE_THREADED:
+		m_mutex->acquire(); 
+		break; 
+	default: 
+		OW_ASSERT("shouldn't happen" == 0); 
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+ProviderAgentCIMOMHandle::PALocker::releaseWriteLock()
+{
+	switch (m_lt)
+	{
+	case NONE:
+		break; 
+	case SWMR:
+		m_rwlocker->releaseWriteLock(); 
+		break; 
+	case SINGLE_THREADED:
+		m_mutex->release(); 
+		break; 
+	default: 
+		OW_ASSERT("shouldn't happen" == 0); 
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+ProviderAgentCIMOMHandle::PALocker::getWriteLock()
+{
+	switch (m_lt)
+	{
+	case NONE:
+		break; 
+	case SWMR:
+		m_rwlocker->getWriteLock(m_timeout); 
+		break; 
+	case SINGLE_THREADED:
+		m_mutex->acquire(); 
+		break; 
+	default: 
+		OW_ASSERT("shouldn't happen" == 0); 
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+ProviderAgentCIMOMHandle::PAWriteLock::PAWriteLock(PALockerRef locker)
+	: m_locker(locker.get())
+{
+	m_locker->getWriteLock(); 
+}
+//////////////////////////////////////////////////////////////////////////////
+ProviderAgentCIMOMHandle::PAWriteLock::~PAWriteLock()
+{
+	m_locker->releaseWriteLock(); 
+}
+//////////////////////////////////////////////////////////////////////////////
 
 
 } // end namespace OpenWBEM
