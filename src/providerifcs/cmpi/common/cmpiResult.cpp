@@ -24,24 +24,30 @@
 #include "OW_CIMException.hpp"
 #include "CmpiProviderBase.h"
 
-static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data, CMPIType type) {
-   CMPIrc rc;
-   OpenWBEM::CIMValue v=value2CIMValue(data,type,&rc);
-   if (eRes->ft==CMPI_ResultMethOnStack_Ftab) {
-	  CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
-	  if (((CMPI_Result*)eRes)->flags & RESULT_set==0) {
-		 ((CMPI_Result*)eRes)->flags|=RESULT_set;
-	  }
-	  res->handle(v);
-   }
-   else {
-	  CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
-	  if (((CMPI_Result*)eRes)->flags & RESULT_set==0) {
-		 ((CMPI_Result*)eRes)->flags|=RESULT_set;
-	  }
-	  res->handle(v);
-   }
-   CMReturn(CMPI_RC_OK);
+static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data,
+	CMPIType type)
+{
+	CMPIrc rc;
+	OpenWBEM::CIMValue v=value2CIMValue(data,type,&rc);
+	if(eRes->ft==CMPI_ResultMethOnStack_Ftab)
+	{
+		CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
+		if(((CMPI_Result*)eRes)->flags & RESULT_set==0)
+		{
+			((CMPI_Result*)eRes)->flags|=RESULT_set;
+		}
+		res->handle(v);
+	}
+	else
+	{
+		CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
+		if(((CMPI_Result*)eRes)->flags & RESULT_set==0)
+		{
+			((CMPI_Result*)eRes)->flags|=RESULT_set;
+		}
+		res->handle(v);
+	}
+	CMReturn(CMPI_RC_OK);
 }
 
 static CMPIStatus resultReturnInstance(CMPIResult* eRes, CMPIInstance* eInst)
@@ -49,18 +55,19 @@ static CMPIStatus resultReturnInstance(CMPIResult* eRes, CMPIInstance* eInst)
 	OpenWBEM::CIMInstanceResultHandlerIFC * res =
 		static_cast<OpenWBEM::CIMInstanceResultHandlerIFC *> (eRes->hdl);
 	const OpenWBEM::CIMInstance& inst =
-		 * (static_cast<OpenWBEM::CIMInstance *>(eInst->hdl));
-	try {
+		* (static_cast<OpenWBEM::CIMInstance *>(eInst->hdl));
+	try
+	{
 		//std::cout << "inst to handle " << inst.toMOF() << std::endl;
 		res->handle(inst);
 	}
-	catch (const OpenWBEM::CIMException& e)
+	catch(const OpenWBEM::CIMException& e)
 	{
 		//CMReturnWithChars(CmpiProviderBase::getBroker(),
 		//		  (_CMPIrc)e.getErrNo(), e.getMessage());
 		CMReturn((_CMPIrc)e.getErrNo());
 	}
-	catch (...)
+	catch(...)
 	{
 		CMReturn(CMPI_RC_ERROR);
 	}
@@ -74,17 +81,18 @@ static CMPIStatus resultReturnObject(CMPIResult* eRes, CMPIInstance* eInst)
 	const OpenWBEM::CIMInstance& inst =
 		* (static_cast<OpenWBEM::CIMInstance *>(eInst->hdl));
 
-	try {
+	try
+	{
 		//std::cout << "inst to handle " << inst.toMOF() << std::endl;
 		// TODO - turn instance into object
 		res->handle(inst);
 
 	}
-	catch (const OpenWBEM::CIMException& e)
+	catch(const OpenWBEM::CIMException& e)
 	{
 		CMReturn((_CMPIrc)e.getErrNo());
 	}
-	catch (...)
+	catch(...)
 	{
 		CMReturn(CMPI_RC_ERROR);
 	}
@@ -92,23 +100,24 @@ static CMPIStatus resultReturnObject(CMPIResult* eRes, CMPIInstance* eInst)
 }
 
 static CMPIStatus resultReturnObjectPath(CMPIResult* eRes,
-			 CMPIObjectPath* eRef)
+	CMPIObjectPath* eRef)
 {
 	OpenWBEM::CIMObjectPathResultHandlerIFC * res =
 		static_cast<OpenWBEM::CIMObjectPathResultHandlerIFC *>(eRes->hdl);
-   
+
 	const OpenWBEM::CIMObjectPath& cop =
 		* (static_cast<OpenWBEM::CIMObjectPath *>(eRef->hdl));
 
-	try {
+	try
+	{
 		//std::cout << "cop to handle " << cop.toMOF() << std::endl;
 		res->handle(cop);
 	}
-	catch (const OpenWBEM::CIMException& e)
+	catch(const OpenWBEM::CIMException& e)
 	{
 		CMReturn((_CMPIrc)e.getErrNo());
 	}
-	catch (...)
+	catch(...)
 	{
 		CMReturn(CMPI_RC_ERROR);
 	}
@@ -147,7 +156,7 @@ static CMPIStatus resultReturnObjDone(CMPIResult* eRes)
 
 
 static CMPIStatus resultBadReturnData(CMPIResult* eRes,
-					CMPIValue* data, CMPIType type)
+	CMPIValue* data, CMPIType type)
 {
 	(void) eRes;
 	(void) data;
@@ -156,7 +165,7 @@ static CMPIStatus resultBadReturnData(CMPIResult* eRes,
 }
 
 static CMPIStatus resultBadReturnInstance(CMPIResult* eRes,
-						 CMPIInstance* eInst)
+	CMPIInstance* eInst)
 {
 	(void) eRes;
 	(void) eInst;
@@ -164,7 +173,7 @@ static CMPIStatus resultBadReturnInstance(CMPIResult* eRes,
 }
 
 static CMPIStatus resultBadReturnObjectPath(CMPIResult* eRes,
-						 CMPIObjectPath* eRef)
+	CMPIObjectPath* eRef)
 {
 	(void) eRes;
 	(void) eRef;
@@ -172,66 +181,65 @@ static CMPIStatus resultBadReturnObjectPath(CMPIResult* eRes,
 }
 
 static CMPIResultFT resultMethOnStack_FT={
-	 CMPICurrentVersion,
-	 NULL,
-	 NULL,
-	 resultReturnData,
-	 resultBadReturnInstance,
-	 resultBadReturnObjectPath,
-	 resultReturnMethDone,
+	CMPICurrentVersion,
+	NULL,
+	NULL,
+	resultReturnData,
+	resultBadReturnInstance,
+	resultBadReturnObjectPath,
+	resultReturnMethDone,
 };
 
 static CMPIResultFT resultObjOnStack_FT={
-	 CMPICurrentVersion,
-	 NULL,
-	 NULL,
-	 resultBadReturnData,
-	 resultReturnObject,
-	 resultBadReturnObjectPath,
-	 resultReturnObjDone,
+	CMPICurrentVersion,
+	NULL,
+	NULL,
+	resultBadReturnData,
+	resultReturnObject,
+	resultBadReturnObjectPath,
+	resultReturnObjDone,
 };
 
 static CMPIResultFT resultData_FT={
-	 CMPICurrentVersion,
-	 NULL,
-	 NULL,
-	 resultReturnData,
-	 resultBadReturnInstance,
-	 resultBadReturnObjectPath,
-	 resultReturnDataDone,
+	CMPICurrentVersion,
+	NULL,
+	NULL,
+	resultReturnData,
+	resultBadReturnInstance,
+	resultBadReturnObjectPath,
+	resultReturnDataDone,
 };
 
 static CMPIResultFT resultInstOnStack_FT={
-	 CMPICurrentVersion,
-	 NULL,
-	 NULL,
-	 resultBadReturnData,
-	 resultReturnInstance,
-	 resultBadReturnObjectPath,
-	 resultReturnInstDone,
-};
-																				
-static CMPIResultFT resultRefOnStack_FT={
-	 CMPICurrentVersion,
-	 NULL,
-	 NULL,
-	 resultBadReturnData,
-	 resultBadReturnInstance,
-	 resultReturnObjectPath,
-	 resultReturnRefDone,
+	CMPICurrentVersion,
+	NULL,
+	NULL,
+	resultBadReturnData,
+	resultReturnInstance,
+	resultBadReturnObjectPath,
+	resultReturnInstDone,
 };
 
 static CMPIResultFT resultResponseOnStack_FT={
-	 CMPICurrentVersion,
-	 NULL,
-	 NULL,
-	 resultBadReturnData,
-	 resultBadReturnInstance,
-	 resultBadReturnObjectPath,
-	 resultReturnDataDone,
+	CMPICurrentVersion,
+	NULL,
+	NULL,
+	resultReturnData,
+	resultBadReturnInstance,
+	resultBadReturnObjectPath,
+	resultReturnDataDone,
 };
-																				
-//
+
+static CMPIResultFT resultRefOnStack_FT={
+	CMPICurrentVersion,
+	NULL,
+	NULL,
+	resultBadReturnData,
+	resultBadReturnInstance,
+	resultReturnObjectPath,
+	resultReturnRefDone,
+};
+
 
 CMPIResultFT *CMPI_ResultMeth_Ftab=&resultMethOnStack_FT;
 CMPIResultFT *CMPI_ResultData_Ftab=&resultData_FT;
@@ -261,22 +269,24 @@ CMPI_ResultOnStack::CMPI_ResultOnStack(
 #if 0
 // ObjectResponseHandler
 CMPI_ResultOnStack::CMPI_ResultOnStack(
-	const OpenWBEM::CIMInstanceResultHandlerIFC & handler) {
-	  hdl= (void *)(&handler);
-	  ft=CMPI_ResultInstOnStack_Ftab;
-	  flags=RESULT_Instance;
-   }
+	const OpenWBEM::CIMInstanceResultHandlerIFC & handler)
+{
+	hdl= (void *)(&handler);
+	ft=CMPI_ResultInstOnStack_Ftab;
+	flags=RESULT_Instance;
+}
 
 CMPI_ResultOnStack::CMPI_ResultOnStack(
-	const OpenWBEM::MethodResultResultHandlerIFC & handler) {
-	  hdl= (void *)(&handler);
-	  ft=CMPI_ResultMethOnStack_Ftab;
-	  flags=RESULT_Method;
-   }
+	const OpenWBEM::MethodResultResultHandlerIFC & handler)
+{
+	hdl= (void *)(&handler);
+	ft=CMPI_ResultMethOnStack_Ftab;
+	flags=RESULT_Method;
+}
 #endif
 
 CMPI_ResultOnStack::CMPI_ResultOnStack(const
-				CMPIObjectPathValueResultHandler& handler)
+	CMPIObjectPathValueResultHandler& handler)
 {
 	hdl = (void *)&handler;
 	ft = CMPI_ResultResponseOnStack_Ftab;
@@ -284,22 +294,24 @@ CMPI_ResultOnStack::CMPI_ResultOnStack(const
 }
 
 CMPI_ResultOnStack::CMPI_ResultOnStack(
-				const CMPIValueValueResultHandler& handler)
+	const CMPIValueValueResultHandler& handler)
 {
 	hdl = (void *)&handler;
 	ft = CMPI_ResultResponseOnStack_Ftab;
 	flags = RESULT_Response;
 }
 
-CMPI_ResultOnStack::CMPI_ResultOnStack() {
-	  //hdl= static_cast<void* >(&handler);
-	  ft=CMPI_ResultResponseOnStack_Ftab;
-	  flags=RESULT_Response;
+CMPI_ResultOnStack::CMPI_ResultOnStack()
+{
+	//hdl= static_cast<void* >(&handler);
+	ft=CMPI_ResultResponseOnStack_Ftab;
+	flags=RESULT_Response;
 }
 
-CMPI_ResultOnStack::~CMPI_ResultOnStack() {
+CMPI_ResultOnStack::~CMPI_ResultOnStack()
+{
 	//std::cout << "--- ~CMPI_ResultOnStack()" << std::endl;
-	  //if (flags & RESULT_set==0)  ((ResponseHandler*)hdl)->processing();
-	  //if (flags & RESULT_done==0) ((ResponseHandler*)hdl)->complete();
-  }
+	//if (flags & RESULT_set==0)  ((ResponseHandler*)hdl)->processing();
+	//if (flags & RESULT_done==0) ((ResponseHandler*)hdl)->complete();
+}
 

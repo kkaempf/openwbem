@@ -61,7 +61,7 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 	const CIMParamValueArray &in, CIMParamValueArray &out)
 {
 	env->getLogger()->
-		logDebug("CMPIInstanceProviderProxy::invokeMethod()");
+		logDebug("CMPIMethodProviderProxy::invokeMethod()");
 
 	if (m_ftable->miVector.methMI->ft->invokeMethod != NULL)
 	{
@@ -81,11 +81,11 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 		CMPI_ResultOnStack eRes(handler);
 		char* mName = const_cast<char*>(methodName.c_str());
 		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags, (CMPIValue*)&flgs,
+		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags, (CMPIValue*)&flgs,
 			CMPI_uint32);
 
 		rc=m_ftable->miVector.methMI->ft->invokeMethod(
-			m_ftable->miVector.methMI,&eCtx,&eRes,&eRef, mName,&eArgsIn,
+			m_ftable->miVector.methMI, &eCtx, &eRes, &eRef, mName, &eArgsIn,
 			&eArgsOut);
 
 		if (rc.rc == CMPI_RC_OK)

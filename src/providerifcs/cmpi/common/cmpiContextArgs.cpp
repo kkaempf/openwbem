@@ -55,26 +55,33 @@ static CMPIArgs* argsClone(CMPIArgs* eArg, CMPIStatus* rc)
 
 static long locateArg(const OpenWBEM::CIMParamValueArray &a, const OpenWBEM::String &eName)
 {
-	for (long i=0,s=a.size(); i<s; i++)
+	for (long i = 0, s = a.size(); i < s; i++)
 	{
-		const OpenWBEM::String &n=a[i].getName();
-		if (n.compareToIgnoreCase(eName)) return i;
+		const OpenWBEM::String &n = a[i].getName();
+		if (n.compareToIgnoreCase(eName) == 0)
+		{
+			return i;
+		}
 	}
+
 	return -1;
 }
 
 static CMPIStatus argsAddArg(CMPIArgs* eArg, char* name,
 				 CMPIValue* data, CMPIType type)
 {
-	OpenWBEM::CIMParamValueArray * arg=(OpenWBEM::CIMParamValueArray *)eArg->hdl;
+	OpenWBEM::CIMParamValueArray* arg = (OpenWBEM::CIMParamValueArray *)eArg->hdl;
 	CMPIrc rc;
-	OpenWBEM::CIMValue v = value2CIMValue(data,type,&rc);
+	OpenWBEM::CIMValue v = value2CIMValue(data, type, &rc);
 	OpenWBEM::String sName(name);
 
-	long i=locateArg(*arg,sName);
-	if (i>=0) arg->remove(i);
+	long i = locateArg(*arg, sName);
+	if (i >= 0)
+	{
+		arg->remove(i);
+	}
 
-	arg->append(OpenWBEM::CIMParamValue(sName,v));
+	arg->append(OpenWBEM::CIMParamValue(sName, v));
 	CMReturn(CMPI_RC_OK);
 }
 
@@ -108,11 +115,14 @@ static CMPIData argsGetArgAt(CMPIArgs* eArg, CMPICount pos, CMPIString** name,
 
 static CMPIData argsGetArg(CMPIArgs* eArg, char* name, CMPIStatus* rc)
 {
-	OpenWBEM::CIMParamValueArray * arg=(OpenWBEM::CIMParamValueArray *)eArg->hdl;
+	OpenWBEM::CIMParamValueArray *arg = (OpenWBEM::CIMParamValueArray *)eArg->hdl;
 	OpenWBEM::String eName(name);
+	long i = locateArg(*arg, eName);
 
-	long i=locateArg(*arg,eName);
-	if (i>=0) return argsGetArgAt(eArg,i,NULL,rc);
+	if (i >= 0)
+	{
+		return argsGetArgAt(eArg, i, NULL, rc);
+	}
 
 	CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue() };
 	CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);

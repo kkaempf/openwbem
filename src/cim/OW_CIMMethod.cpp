@@ -190,12 +190,18 @@ CIMMethod::getINParameters() const
 	CIMParameterArray rval;
 	for (size_t i = 0; i < m_pdata->m_parameters.size(); ++i)
 	{
+		// TODO
+		// Note: The following code assumes the default value for the
+		// CIM_QUAL_IN qualifier is true. The is per the CIM 2.2 spec.
+		// THE SPEC ALSO STATES THAT THE DEFAULT VALUE FOR QUALIFIERS CAN
+		// BE CHANGED.
 		CIMQualifier q = m_pdata->m_parameters[i].getQualifier(CIMQualifier::CIM_QUAL_IN);
 		if (!q || q.getValue() == CIMValue(true))
 		{
 			rval.push_back(m_pdata->m_parameters[i]);
 		}
 	}
+
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////													
@@ -210,6 +216,7 @@ CIMMethod::getOUTParameters() const
 			rval.push_back(m_pdata->m_parameters[i]);
 		}
 	}
+
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////													
