@@ -408,7 +408,7 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 			addHeader("Content-Encoding", "deflate");
 			sendHeaders(m_resCode, -1);
 		}
-		if (!m_requestHandler->getCIMError().empty())
+		else if (!m_requestHandler->getCIMError().empty())
 		{
 			addHeader(m_respHeaderPrefix + "CIMError",
 				m_requestHandler->getCIMError());
