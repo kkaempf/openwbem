@@ -113,7 +113,7 @@ public:
 	void swap(OW_CIMException& x);
 
 	OW_CIMException(const OW_CIMException& x);
-	OW_CIMException& operator=(const OW_CIMException& x);
+	OW_CIMException& operator=(OW_CIMException x);
 	
 	ErrNoType getErrNo() const {  return m_errno; }
 	void setErrNo(ErrNoType e) { m_errno = e; }

@@ -92,9 +92,9 @@ OW_StringBuffer::operator= (const char* str)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_StringBuffer&
-OW_StringBuffer::operator =(const OW_StringBuffer& arg)
+OW_StringBuffer::operator =(OW_StringBuffer arg)
 {
-	OW_StringBuffer(arg).swap(*this);
+	arg.swap(*this);
 	return *this;
 }
 

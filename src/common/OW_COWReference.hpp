@@ -58,7 +58,7 @@ class OW_COWReference
 
 		~OW_COWReference();
 
-		OW_COWReference<T>& operator= (const OW_COWReference<T>& arg);
+		OW_COWReference<T>& operator= (OW_COWReference<T> arg);
 		OW_COWReference<T>& operator= (T* newObj);
         void swap(OW_COWReference<T>& arg);
 
@@ -197,9 +197,9 @@ inline void OW_COWReference<T>::getWriteLock()
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline OW_COWReference<T>& OW_COWReference<T>::operator= (const OW_COWReference<T>& arg)
+inline OW_COWReference<T>& OW_COWReference<T>::operator= (OW_COWReference<T> arg)
 {
-    OW_COWReference<T>(arg).swap(*this);
+    arg.swap(*this);
 	return *this;
 }
 
@@ -299,8 +299,6 @@ inline void OW_COWReference<T>::checkNull() const
 		assert(0); // segfault so we can get a core
 #endif
 		OW_THROW(OW_Exception, "NULL OW_COWReference dereferenced");
-		//throw OW_Exception(__FILE__, __LINE__,
-			//"NULL OW_COWReference dereferenced");
 	}
 }
 #endif

@@ -83,7 +83,7 @@ public:
 	typedef typename V::const_reverse_iterator const_reverse_iterator;
 
 	OW_Array() : m_impl(new V) {}
-	OW_Array(const OW_Array<T>& arg) : m_impl(arg.m_impl) {}
+	//OW_Array(const OW_Array<T>& arg) : m_impl(arg.m_impl) {}
 	~OW_Array() {}
 	explicit OW_Array(V* toWrap) : m_impl(toWrap) {}
 	OW_Array(size_type n, const T& value) : m_impl(new V(n, value)) {}
@@ -91,11 +91,11 @@ public:
 	OW_Array(long n, const T& value) : m_impl(new V(n, value)) {}
 	explicit OW_Array(size_type n) : m_impl(new V(n)) {}
 
-	OW_Array<T>& operator= (const OW_Array<T>& arg)
-	{
-		m_impl = arg.m_impl;
-		return *this;
-	}
+	//OW_Array<T>& operator= (const OW_Array<T>& arg)
+	//{
+		//m_impl = arg.m_impl;
+		//return *this;
+	//}
 
 	template<class InputIterator>
 	OW_Array(InputIterator first, InputIterator last) : m_impl(new V(first, last)) { }
@@ -143,7 +143,7 @@ public:
 	const_reference back() const { return m_impl->back(); }
 	void push_back(const T& x) { m_impl->push_back(x); }
 	void append(const T& x) { push_back(x); }
-	void swap(OW_Array<T>& x) { m_impl->swap(*x.m_impl); }
+	void swap(OW_Array<T>& x) { m_impl.swap(x.m_impl); }
 	iterator insert(iterator position, const T& x)
 		{ return m_impl->insert(position, x); }
 

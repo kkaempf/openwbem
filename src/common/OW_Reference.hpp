@@ -58,7 +58,7 @@ class OW_Reference
 		OW_Reference(const OW_Reference<U>& arg);
 
 		~OW_Reference();
-		OW_Reference<T>& operator= (const OW_Reference<T>& arg);
+		OW_Reference<T>& operator= (OW_Reference<T> arg);
 		OW_Reference<T>& operator= (T* newObj);
         void swap(OW_Reference<T>& arg);
 
@@ -195,19 +195,9 @@ inline void OW_Reference<T>::decRef()
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline OW_Reference<T>& OW_Reference<T>::operator= (const OW_Reference<T>& arg)
+inline OW_Reference<T>& OW_Reference<T>::operator= (OW_Reference<T> arg)
 {
-    OW_Reference<T>(arg).swap(*this);
-    /*
-	if(arg.m_pRefCount != m_pRefCount
-			|| (arg.m_pRefCount == 0 && m_pRefCount == 0))
-	{
-		decRef();
-		m_pObj = arg.m_pObj;
-		m_pRefCount = arg.m_pRefCount;
-		incRef();
-	}
-    */
+    arg.swap(*this);
 	return *this;
 }
 
@@ -216,14 +206,6 @@ template<class T>
 inline OW_Reference<T>& OW_Reference<T>::operator= (T* newObj)
 {
     OW_Reference<T>(newObj).swap(*this);
-    /*
-	if(newObj != m_pObj)
-	{
-		decRef();
-		m_pObj = newObj;
-		m_pRefCount = new OW_RefCount;
-	}
-    */
 	return *this;
 }
 
@@ -291,8 +273,6 @@ inline void OW_Reference<T>::checkNull() const
 		assert(0); // segfault so we can get a core
 #endif
 		OW_THROW(OW_Exception, "NULL OW_Reference dereferenced");
-		//throw OW_Exception(__FILE__, __LINE__,
-			//"NULL OW_Reference dereferenced");
 	}
 }
 #endif

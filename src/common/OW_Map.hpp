@@ -56,7 +56,7 @@ public:
 	typedef typename M::key_type key_type;
 	typedef typename M::mapped_type mapped_type;
 	typedef typename M::value_type value_type;
-	typedef typename M::key_compare key_compare;    
+	typedef typename M::key_compare key_compare;
 	typedef typename M::value_compare value_compare;
 	typedef typename M::pointer pointer;
 	typedef typename M::const_pointer const_pointer;
@@ -70,15 +70,11 @@ public:
 	typedef typename M::difference_type difference_type;
 
 	OW_Map() /*throw (std::exception)*/ : m_impl(new M) {  }
-	OW_Map(const OW_Map<Key, T, Compare>& arg) : m_impl(arg.m_impl) 
+
+	explicit OW_Map(M* toWrap) /*throw (std::exception)*/ : m_impl(toWrap)
 		{ }
 
-	~OW_Map() /*throw ()*/ {  }
-
-	explicit OW_Map(M* toWrap) /*throw (std::exception)*/ : m_impl(toWrap) 
-		{ }
-
-	explicit OW_Map(const Compare& comp) /*throw (std::exception)*/ 
+	explicit OW_Map(const Compare& comp) /*throw (std::exception)*/
 		: m_impl(new M(comp)) {  }
 
 	template <class InputIterator>
@@ -170,7 +166,7 @@ public:
 
 	void swap(OW_Map<Key, T, Compare>& x) /*throw (std::exception)*/
 	{
-		m_impl->swap(*x.m_impl);
+		m_impl.swap(x.m_impl);
 	}
 
 	std::pair<iterator, bool> insert(const value_type& x) /*throw (std::exception)*/
@@ -255,10 +251,10 @@ public:
 		return m_impl->equal_range(x);
 	}
 
-	friend bool operator== <>(const OW_Map<Key, T, Compare>& x, 
+	friend bool operator== <>(const OW_Map<Key, T, Compare>& x,
 		const OW_Map<Key, T, Compare>& y);
 
-	friend bool operator< <>(const OW_Map<Key, T, Compare>& x, 
+	friend bool operator< <>(const OW_Map<Key, T, Compare>& x,
 		const OW_Map<Key, T, Compare>& y);
 };
 

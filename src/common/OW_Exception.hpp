@@ -44,7 +44,7 @@ public:
 	OW_Exception(const char* file, int line, const char* msg);
 	OW_Exception(const char* msg);
 	OW_Exception(const OW_Exception& e);
-	OW_Exception& operator= (const OW_Exception& rhs);
+	OW_Exception& operator= (OW_Exception rhs);
 	void swap(OW_Exception& x);
 	virtual ~OW_Exception() throw();
 	virtual const char* type() const {  return "OW_Exception"; }

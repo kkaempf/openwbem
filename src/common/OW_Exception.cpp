@@ -136,9 +136,9 @@ OW_Exception::~OW_Exception() throw()
 
 //////////////////////////////////////////////////////////////////////////////					
 OW_Exception&
-OW_Exception::operator=( const OW_Exception& rhs )
+OW_Exception::operator=(OW_Exception rhs)
 {
-	OW_Exception(rhs).swap(*this);
+	rhs.swap(*this);
 	return *this;
 }
 

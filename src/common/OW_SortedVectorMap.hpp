@@ -107,10 +107,6 @@ public:
 	typedef typename container_t::difference_type difference_type;
 
 	OW_SortedVectorMap() : m_impl(new container_t) {  }
-	OW_SortedVectorMap(const OW_SortedVectorMap<Key, T, Compare>& arg) : m_impl(arg.m_impl)
-		{ }
-
-	~OW_SortedVectorMap() {  }
 
 	explicit OW_SortedVectorMap(container_t* toWrap) : m_impl(toWrap)
 		{ }
@@ -179,7 +175,7 @@ public:
 
 	void swap(OW_SortedVectorMap<Key, T, Compare>& x) /*throw (std::exception)*/
 	{
-		m_impl->swap(*x.m_impl);
+		m_impl.swap(x.m_impl);
 	}
 
 	std::pair<iterator, bool> insert(const value_type& x) /*throw (std::exception)*/

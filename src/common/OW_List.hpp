@@ -66,11 +66,8 @@ public:
 	typedef typename L::const_reverse_iterator const_reverse_iterator;
 
 	OW_List() /*throw (std::exception)*/ : m_impl(new L) {}
-	OW_List(const OW_List<T>& arg) : m_impl(arg.m_impl) 
-		{  }
-	~OW_List() /*throw ()*/ {}
 
-	explicit OW_List(L* toWrap) /*throw (std::exception)*/ : m_impl(toWrap) 
+	explicit OW_List(L* toWrap) /*throw (std::exception)*/ : m_impl(toWrap)
 	{  }
 
 	template<class InputIterator>
@@ -176,7 +173,7 @@ public:
 
 	void swap(OW_List<T>& x) /*throw (std::exception)*/
 	{
-		m_impl->swap(*x.m_impl);
+		m_impl.swap(x.m_impl);
 	}
 
 	iterator insert(iterator position, const T& x) /*throw (std::exception)*/

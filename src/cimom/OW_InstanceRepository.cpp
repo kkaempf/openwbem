@@ -289,7 +289,8 @@ OW_InstanceRepository::getCIMInstances(
 		if(pServer && pACLInfo)
 		{
 			OW_CIMObjectPath lcop(ci);
-			pServer->_getProviderProperties(ns, lcop, ci, theClass, *pACLInfo);
+			pServer->_getProviderProperties(ns, lcop, ci, theClass, *pACLInfo,
+				propertyList);
 		}
 
 		result.handle(ci.clone(false, includeQualifiers,

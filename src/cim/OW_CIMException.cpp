@@ -70,9 +70,9 @@ OW_CIMException::OW_CIMException(const OW_CIMException& x)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMException&
-OW_CIMException::operator=(const OW_CIMException& x)
+OW_CIMException::operator=(OW_CIMException x)
 {
-	OW_CIMException(x).swap(*this);
+	x.swap(*this);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
