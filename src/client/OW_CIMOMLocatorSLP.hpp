@@ -40,8 +40,6 @@
 #define OW_CIMOM_SLP_SERVICE_TYPE "CIM-Object-Manager"
 #define OW_CIMOM_SLP_URL_PREFIX "service:"OW_CIMOM_SLP_SERVICE_TYPE":"
 
-
-
 class OW_CIMOMLocatorSLP : public OW_CIMOMLocator
 {
 public:

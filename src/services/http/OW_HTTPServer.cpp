@@ -34,7 +34,6 @@
 #include "OW_InetServerSocket.hpp"
 #include "OW_IOException.hpp"
 #include "OW_InetSocket.hpp"
-#include "OW_Thread.hpp"
 #include "OW_Format.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_SelectableIFC.hpp"
@@ -47,6 +46,33 @@
 #include "OW_DigestAuthentication.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 
+#ifdef OW_HAVE_SLP_H
+#ifdef OW_GNU_LINUX
+#define OW_STRPLATFORM "Linux"
+#endif
+
+#ifdef OW_OPENUNIX
+#define OW_STRPLATFORM "OpenUnix"
+#endif
+
+#ifdef OW_SOLARIS
+#define OW_STRPLATFORM "Solaris"
+#endif
+
+#ifdef OW_OPENSERVER
+#define OW_STRPLATFORM "OpenServer"
+#endif
+
+#ifndef OW_STRPLATFORM
+#error "OW_STRPLATFORM is undefined"
+#endif
+
+static const long POLLING_INTERVAL = 60 * 5;
+static const long INITIAL_POLLING_INTERVAL = 5;
+
+#endif	// OW_HAVE_SLP_H
+
+
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPServer::OW_HTTPServer()
 	: m_options()
@@ -57,6 +83,7 @@ OW_HTTPServer::OW_HTTPServer()
 	, m_pHttpsServerSocket(0)
 	, m_digestAuth(0)
 	, m_authGuard()
+	, m_slpRegistrator(this)
 {
 }
 
@@ -257,7 +284,6 @@ public:
 				"Unknown exception in HTTPServer.");
 			throw;
 		}
-
 	}
 
 private:
@@ -352,6 +378,9 @@ OW_HTTPServer::startService()
 
 	OW_InetSocket::createShutDownMechanism();
 
+	// Start SLP Registration thread
+	m_slpRegistrator.start();
+
 	lgr->logDebug("HTTP Service has started");
 }
 
@@ -418,6 +447,8 @@ OW_HTTPServer::shutdown()
 {
 	m_options.env->getLogger()->logDebug("HTTP Service is shutting down...");
 
+	m_slpRegistrator.shutdown();
+
 	OW_InetSocket::shutdownAllSockets();
 	m_upipe->write("shutdown");
 	while (m_threadCountSemaphore->getCount() < m_options.maxConnections)
@@ -431,6 +462,141 @@ OW_HTTPServer::shutdown()
 
 	m_options.env->getLogger()->logDebug("HTTP Service has shut down");
 }
+
+#ifdef OW_HAVE_SLP_H
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_HTTPServer::doSlpRegister()
+{
+	OW_LoggerRef logger = m_options.env->getLogger();
+	SLPError err;
+	SLPHandle slpHandle;
+
+	OW_String attributes(
+		"(namespace=root),(implementation=OpenWbem),(version="OW_VERSION"),"
+		"(query-language=WBEMSQL2),(host-os="OW_STRPLATFORM")");
+
+	if((err = SLPOpen("en", SLP_FALSE, &slpHandle)) != SLP_OK)
+	{
+
+		logger->logError(format("SLP open operation failed: %1", err));
+		return;
+	}
+
+	OW_String urlString;
+	OW_String addrString;
+
+	for(size_t i = 0; i < m_urls.size(); i++)
+	{
+		addrString = m_urls[i].toString();
+		urlString = OW_CIMOM_SLP_URL_PREFIX;
+		urlString += addrString;
+
+		// Register URL with SLP
+		err = SLPReg(slpHandle,		// SLP Handle from open
+			urlString.c_str(),		// Service URL
+			POLLING_INTERVAL+60,	// Length of time registration last
+			0,						// Service type (not used)
+			attributes.c_str(),		// Attributes string
+			SLP_TRUE,				// Fresh registration (Always true for OpenSLP)
+			slpRegReport,			// Call back for registration error reporting
+			(void*)&logger);		// Give logger to callback
+
+		if(err != SLP_OK)
+		{
+			logger->logError(format("CIMOM failed to registered url with SLP:"
+				" %1", addrString).c_str());
+		}
+		else
+		{
+			logger->logDebug(format("CIMOM registered service url with SLP: %1",
+				urlString).c_str());
+		}
+	}
+
+	SLPClose(slpHandle);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+void
+OW_HTTPServer::slpRegReport(SLPHandle /*hdl*/, SLPError errArg, void* cookie)
+{
+	if(errArg < SLP_OK)
+	{
+		const OW_LoggerRef* logger = (const OW_LoggerRef*)cookie;
+		(*logger)->logError(format("CIMOM received error during SLP"
+			" registration: %1", (int)errArg));
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+HTTPSlpRegistrator::start()
+{
+	if(!m_isRunning)
+	{
+		OW_Thread::run(OW_RunnableRef(this, true));
+		OW_Thread::yield();
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+HTTPSlpRegistrator::shutdown()
+{
+	if(m_isRunning)
+	{
+		OW_LoggerRef logger = m_pServer->getEnvironment()->getLogger();
+		logger->logDebug("CIMOM SLP registration process shutting down...");
+
+		m_shuttingDown = true;
+		m_threadEvent.signal();
+		while(m_isRunning)
+		{
+			OW_Thread::yield();
+		}
+
+		logger->logDebug("CIMOM SLP registration process has shutdown");
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+HTTPSlpRegistrator::run()
+{
+	OW_ServiceEnvironmentIFCRef env = m_pServer->getEnvironment();
+	OW_LoggerRef logger = env->getLogger();
+	m_shuttingDown = false;
+	m_isRunning = true;
+
+	logger->logCustInfo("CIMOM SLP registration process running...");
+	m_pServer->doSlpRegister();
+
+	m_threadEvent.reset();
+	while(!m_shuttingDown)
+	{
+		m_threadEvent.waitForSignal(POLLING_INTERVAL * 1000);
+		m_threadEvent.reset();
+		if(m_shuttingDown)
+		{
+			break;
+		}
+
+		m_pServer->doSlpRegister();
+		if(m_shuttingDown)
+		{
+			break;
+		}
+	}
+
+	m_isRunning = false;
+
+	logger->logCustInfo("CIMOM SLP registration process exiting");
+}
+
+#endif	// OW_HAVE_SLP_H
 
 //////////////////////////////////////////////////////////////////////////////
 // This allow the http server to be dynamically loaded
