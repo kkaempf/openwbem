@@ -58,6 +58,7 @@ Fix problems:
       Use fcntl locking (if available, else try flock) to check.
     - OW_File needs to be more C++ish with a destructor, reasonable copy
       semantics, etc.
+    - Use kill(pid, 0) to detect a stale pid file.
 
 New features:
     - Providers/Provider interfaces in a different process. Implement with 
