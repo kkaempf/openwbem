@@ -36,6 +36,7 @@
 #include "OW_SignalScope.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_FileSystem.hpp"
+#include "OW_NoSuchProviderException.hpp"
 #include "OW_PerlInstanceProviderProxy.hpp"
 #include "OW_PerlMethodProviderProxy.hpp"
 #include "OW_PerlAssociatorProviderProxy.hpp"

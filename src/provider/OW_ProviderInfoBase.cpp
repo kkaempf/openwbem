@@ -70,7 +70,7 @@ OW_ProviderInfoBase<ClassInfoT>::addInstrumentedClass(ClassInfoT const& classInf
 
 ///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
-const OW_ProviderInfoBase<ClassInfoT>::ClassInfoArray& 
+const typename OW_ProviderInfoBase<ClassInfoT>::ClassInfoArray& 
 OW_ProviderInfoBase<ClassInfoT>::getClassInfo() const
 {
 	return m_instrumentedClasses;
