@@ -92,6 +92,7 @@ typedef off_t	off_t;
 #define OW_PATHNAME_SEPARATOR ";"
 // OW_Select_t is the type of object that can be used in
 // synchronous I/O multiplexing (i.e. select).
+#ifdef __cplusplus
 struct Select_t
 {
 	Select_t() 
@@ -109,6 +110,7 @@ struct Select_t
 	HANDLE event;
 	SOCKET sockfd;
 };
+#endif
 
 //typedef HANDLE Select_t;
 #else

@@ -51,10 +51,6 @@ LIBPATH = \
 /LIBPATH:$(ZLIBBASE)\lib \
 /LIBPATH:$(TARGETDIR)
 
-#CIMLISTENEREXE = $(TARGETDIR)\owcimindicationlistener.exe
-#CREATENSEXE = $(TARGETDIR)\owcreatenamespace.exe
-#DELETENSEXE = $(TARGETDIR)\owdeletenamespace.exe
-#ENUMCLSEXE = $(TARGETDIR)\owenumclasses.exe
 #ENUMCLSNAMESEXE = $(TARGETDIR)\owenumclassnames.exe
 #ENUMNSEXE = $(TARGETDIR)\owenumnamespace.exe
 #ENUMQUALSEXE = $(TARGETDIR)\owenumqualifiers.exe

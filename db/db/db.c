@@ -35,6 +35,8 @@
 static char sccsid[] = "@(#)db.c	8.4 (Berkeley) 2/21/94";
 #endif /* LIBC_SCCS and not lint */
 
+#include "OW_config.h"
+
 #include <sys/types.h>
 
 #include <errno.h>
@@ -46,7 +48,7 @@ static char sccsid[] = "@(#)db.c	8.4 (Berkeley) 2/21/94";
 #define __DBINTERFACE_PRIVATE
 #include "db.h"
 
-DB *
+OW_DB_API DB *
 dbopen(fname, flags, mode, type, openinfo)
 	const char *fname;
 	int flags, mode;

@@ -100,9 +100,15 @@ typedef off_t	OW_off_t;
  * this is a HANDLE. The intention is to call
  * WaitForMultipleObjects on arrays of this type.
  */
+#ifdef __cplusplus
 struct OW_Select_t
 {
-	OW_Select_t() : event(NULL), sockfd(INVALID_SOCKET) {}
+	OW_Select_t() 
+		: event(NULL)
+		, sockfd(INVALID_SOCKET)
+	{
+	}
+
 	OW_Select_t(const OW_Select_t& arg)
 		: event(arg.event)
 		, sockfd(arg.sockfd)
@@ -112,6 +118,7 @@ struct OW_Select_t
 	HANDLE event;
 	SOCKET sockfd;
 };
+#endif
 
 //typedef HANDLE OW_Select_t;
 #else

@@ -244,7 +244,7 @@ typedef struct {
 #endif
 
 __BEGIN_DECLS
-DB *dbopen __P((const char *, int, int, DBTYPE, const void *));
+OW_DB_API DB *dbopen __P((const char *, int, int, DBTYPE, const void *));
 
 #ifdef __DBINTERFACE_PRIVATE
 DB	*__bt_open __P((const char *, int, int, const BTREEINFO *, int));

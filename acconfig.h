@@ -213,6 +213,12 @@
 #define CLIENT_API OW_IMPORT
 #endif
 
+#ifdef OW_DB_BUILD
+#define DB_API OW_EXPORT
+#else
+#define DB_API OW_IMPORT
+#endif
+
 #ifdef OW_DEBUG_MEMORY
 #include "OW_MemTracer.hpp"
 #endif
