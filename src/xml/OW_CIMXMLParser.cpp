@@ -44,13 +44,13 @@
 void
 OW_CIMXMLParser::prime()
 {
-	if (!m_parser.next(m_curTok))
+	if (!(m_good = m_parser.next(m_curTok)))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Empty XML");
 	}
 	if (m_curTok.type == OW_XMLToken::XML_DECLARATION)
 	{
-		if (!m_parser.next(m_curTok))
+		if (!(m_good = m_parser.next(m_curTok)))
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Empty XML");
 		}
@@ -58,7 +58,7 @@ OW_CIMXMLParser::prime()
 	}
 	if (m_curTok.type == OW_XMLToken::DOCTYPE)
 	{
-		if (!m_parser.next(m_curTok))
+		if (!(m_good = m_parser.next(m_curTok)))
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Empty XML");
 		}
@@ -71,6 +71,7 @@ OW_CIMXMLParser::OW_CIMXMLParser(const OW_String& str)
 	: m_ptfs(new OW_TempFileStream())
 	, m_parser()
 	, m_curTok()
+	, m_good(true)
 {
 	*m_ptfs << str;
 	m_parser.setInput(*m_ptfs);
@@ -82,6 +83,7 @@ OW_CIMXMLParser::OW_CIMXMLParser(std::istream& istr)
 	: m_ptfs()
 	, m_parser(istr)
 	, m_curTok()
+	, m_good(true)
 {
 	prime();
 }
@@ -97,7 +99,8 @@ OW_CIMXMLParser::OW_CIMXMLParser()
 
 
 // It would appear that this needs to be sorted alphabetically,
-// although dan didn't put any such comment here.  :)
+// although Dan didn't put any such comment here.  :)
+// Also, if you add an entry, make sure and update g_elemsEnd.
 OW_CIMXMLParser::ElemEntry OW_CIMXMLParser::g_elems[62] =
 {
 	{ "CIM", OW_CIMXMLParser::E_CIM },

@@ -44,6 +44,8 @@
 #include <iostream>
 #endif
 
+// TODO: Inline some of these funcs.
+
 class OW_CIMXMLParser
 {
 
