@@ -5,10 +5,10 @@ class EXP_BartComputerSystem : CIM_ComputerSystem
    string GetState(
 		[in] string s,
 		[in] uint8 uint8array[],
-		[out] boolean b,
-		[out] real64 r64,
+		[in(false), out] boolean b,
+		[in(false), out] real64 r64,
 		[in, out] sint16 io16,
-		[out] string msg,
+		[in(false), out] string msg,
 		[in, out] CIM_ComputerSystem REF paths[],
 		[in, out] datetime nullParam);
 
