@@ -86,6 +86,20 @@ slpRegReport(SLPHandle hdl, SLPError errArg, void* cookie)
 	}
 }
 }
+
+namespace
+{
+
+struct slpHandleCloser
+{
+	slpHandleCloser(SLPHandle& hdl) : m_hdl(hdl) {}
+	~slpHandleCloser() { SLPClose(m_hdl); }
+
+	SLPHandle& m_hdl;
+};
+
+}
+
 class SLPProvider : public CppPolledProviderIFC
 {
 public:
@@ -190,6 +204,7 @@ private:
 				err).c_str());
 			return;
 		}
+		slpHandleCloser closer(slpHandle);
 
 		/*
 		String attributes(
@@ -342,7 +357,6 @@ private:
 					urlString).c_str());
 			}
 		}
-		SLPClose(slpHandle);
 	}
 };
 
