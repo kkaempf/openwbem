@@ -40,6 +40,9 @@ namespace OpenWBEM
 {
 
 class HTTPChunkedIStream;
+class HTTPChunkedOStream;
+class HTTPDeflateIStream;
+class HTTPDeflateOStream;
 
 } // end namespace OpenWBEM
 
