@@ -188,7 +188,8 @@ Documentation:
 Optimizations:
     - Use KCacheGrind to find any hot spots
     - See if using OW_StringBuffer as the OW_String internal representation is 
-      faster than ByteBuf.
+      faster than ByteBuf. Probably remove COWReference completely and just
+      store a ByteBuf/OW_StringBuffer?
     - Redo WQL to only process one instance at a time for better scalability.
     - Use OW_HashMap class where appropriate.
     - Change instance/associator provider interface to pass in a list of
