@@ -33,6 +33,13 @@
 #include "OW_ThreadTestCases.hpp"
 #include "OW_Thread.hpp"
 
+#include <sys/types.h>
+#include <unistd.h>
+
+
+#include <iostream> 
+
+using namespace std; 
 using namespace OpenWBEM;
 
 void OW_ThreadTestCases::setUp()
@@ -270,10 +277,64 @@ void OW_ThreadTestCases::testDefinitiveCancellation()
 
 }
 
+namespace {
+
+
+class SetUIDThread : public Thread
+{
+private: 
+	int _threadNum; 
+	uid_t _uids[2]; 
+public:
+	SetUIDThread(int arg)
+		: _threadNum(arg)
+	{
+		_uids[0] = 500;  // change to a real UID 
+		_uids[1] = 501;  // change to a real UID
+	}
+	Int32 run()
+	{
+		setuid(_uids[_threadNum]); 
+		if (_threadNum == 0)
+		{
+			Thread::sleep(1000); 
+		}
+		else
+		{
+			Thread::sleep(2000); 
+		}
+		for (int i = 0; i < 3; ++i)
+		{
+			cout << "Thread" << _threadNum << ": " << getuid() << endl;
+			Thread::sleep(3000); 
+		}
+		return 0; 
+	}
+
+};
+} // end anonymous namespace
+
+void OW_ThreadTestCases::testSetUID()
+{
+	SetUIDThread t0(0); 
+	SetUIDThread t1(1); 
+	t0.start(); 
+	t1.start(); 
+	for (int i = 0; i < 4; ++i)
+	{
+		Thread::sleep(3000); 
+		cout << "Parent: " << getuid() << endl;
+	}
+}
+
 Test* OW_ThreadTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_Thread");
 
+	// Leave this one out by default, since the class 
+	// has to be configured above with real UIDs on the
+	// system, and run as root
+	//ADD_TEST_TO_SUITE(OW_ThreadTestCases, testSetUID);
 	ADD_TEST_TO_SUITE(OW_ThreadTestCases, testReturn);
 	ADD_TEST_TO_SUITE(OW_ThreadTestCases, testCooperativeCancellation);
 	ADD_TEST_TO_SUITE(OW_ThreadTestCases, testDefinitiveCancellation);

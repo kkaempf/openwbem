@@ -48,6 +48,8 @@ private:
 	void testReturn();
 	void testCooperativeCancellation();
 	void testDefinitiveCancellation();
+	void testSetUID(); 
+
 };
 
 #endif
