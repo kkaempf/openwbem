@@ -137,20 +137,20 @@ OW_PollingManager::run()
 
 		for (size_t i = 0; i < itpra.size(); ++i)
 		{
-			TriggerRunner tr(this, OW_UserInfo(), m_env);
+			TriggerRunnerRef tr(new TriggerRunner(this, OW_UserInfo(), m_env));
 
-			tr.m_pollInterval = itpra[i]->getInitialPollingInterval(
+			tr->m_pollInterval = itpra[i]->getInitialPollingInterval(
 				createProvEnvRef(OW_UserInfo(), m_env));
 
 			m_env->logDebug(format("OW_PollingManager poll interval for provider"
-				" %1: %2", i, tr.m_pollInterval));
+				" %1: %2", i, tr->m_pollInterval));
 
-			if(!tr.m_pollInterval)
+			if(!tr->m_pollInterval)
 			{
 				continue;
 			}
 
-			tr.m_itp = itpra[i];
+			tr->m_itp = itpra[i];
 			m_triggerRunners.append(tr);
 		}
 	}
@@ -196,25 +196,25 @@ OW_PollingManager::calcSleepTime(OW_Bool& rightNow, OW_Bool doInit)
 
 	for(size_t i = 0; i < m_triggerRunners.size(); i++)
 	{
-		if(m_triggerRunners[i].m_isRunning
-			|| m_triggerRunners[i].m_pollInterval == 0)
+		if(m_triggerRunners[i]->m_isRunning
+			|| m_triggerRunners[i]->m_pollInterval == 0)
 		{
 			continue;
 		}
 
 		if(doInit)
 		{
-			m_triggerRunners[i].m_nextPoll =
-				tm + m_triggerRunners[i].m_pollInterval;
+			m_triggerRunners[i]->m_nextPoll =
+				tm + m_triggerRunners[i]->m_pollInterval;
 		}
-		else if(m_triggerRunners[i].m_nextPoll <= tm)
+		else if(m_triggerRunners[i]->m_nextPoll <= tm)
 		{
 			rightNow = true;
 			return 0;
 		}
 
 		checkedCount++;
-		time_t diff = m_triggerRunners[i].m_nextPoll - tm;
+		time_t diff = m_triggerRunners[i]->m_nextPoll - tm;
 		if(diff < leastTime)
 		{
 			leastTime = diff;
@@ -234,21 +234,21 @@ OW_PollingManager::processTriggers()
 
 	for (size_t i = 0; i < m_triggerRunners.size(); i++)
 	{
-		if (m_triggerRunners[i].m_isRunning)
+		if (m_triggerRunners[i]->m_isRunning)
 		{
 			continue;
 		}
-		if (m_triggerRunners[i].m_pollInterval == 0)
+		if (m_triggerRunners[i]->m_pollInterval == 0)
 		{
 			// Stopped running - remove it
 			m_triggerRunners.remove(i--);
 			continue;
 		}
 
-		if (tm >= m_triggerRunners[i].m_nextPoll)
+		if (tm >= m_triggerRunners[i]->m_nextPoll)
 		{
 			m_threadCount->incThreadCount();
-			m_triggerRunners[i].start();
+			m_triggerRunners[i]->start(m_triggerRunners[i]);
 		}
 	}
 }
@@ -274,15 +274,15 @@ OW_PollingManager::addPolledProvider(const OW_PolledProviderIFCRef& p)
 	if (m_shuttingDown)
 		return;
 
-	TriggerRunner tr(this, OW_UserInfo(), m_env);
+	TriggerRunnerRef tr(new TriggerRunner(this, OW_UserInfo(), m_env));
 
-	tr.m_pollInterval = p->getInitialPollingInterval(
+	tr->m_pollInterval = p->getInitialPollingInterval(
 		createProvEnvRef(OW_UserInfo(), m_env));
 
 	m_env->logDebug(format("OW_PollingManager poll interval for provider"
-		" %1", tr.m_pollInterval));
+		" %1", tr->m_pollInterval));
 
-	if(!tr.m_pollInterval)
+	if(!tr->m_pollInterval)
 	{
 		return;
 	}
@@ -290,9 +290,9 @@ OW_PollingManager::addPolledProvider(const OW_PolledProviderIFCRef& p)
 	OW_DateTime dtm;
 	dtm.setToCurrent();
 	time_t tm = dtm.get();
-	tr.m_nextPoll = tm + tr.m_pollInterval;
+	tr->m_nextPoll = tm + tr->m_pollInterval;
 
-	tr.m_itp = p;
+	tr->m_itp = p;
 	m_triggerRunners.append(tr);
 
     m_triggerCondition.notifyAll();
@@ -314,13 +314,12 @@ OW_PollingManager::TriggerRunner::TriggerRunner(OW_PollingManager* svr,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_PollingManager::TriggerRunner::start()
+OW_PollingManager::TriggerRunner::start(const OW_RunnableRef& tr)
 {
 	m_isRunning = true;
-	OW_RunnableRef rref(this, true);
 	OW_Bool isSepThread = !m_env->getConfigItem(
 		OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true");
-	OW_Thread::run(rref, isSepThread, OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(m_pollMan->m_threadCount)));
+	OW_Thread::run(tr, isSepThread, OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(m_pollMan->m_threadCount)));
 }
 
 //////////////////////////////////////////////////////////////////////////////

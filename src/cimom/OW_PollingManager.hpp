@@ -72,7 +72,7 @@ private:
 	public:
 		TriggerRunner(OW_PollingManager* svr, OW_UserInfo acl,
 			OW_CIMOMEnvironmentRef env);
-		void start();
+		void start(const OW_RunnableRef& tr);
 		virtual void run();
 
 		OW_PolledProviderIFCRef m_itp;
@@ -83,8 +83,9 @@ private:
 		OW_UserInfo m_acl;
 		OW_CIMOMEnvironmentRef m_env;
 	};
+	typedef OW_Reference<TriggerRunner> TriggerRunnerRef;
 
-	OW_Array<TriggerRunner> m_triggerRunners;
+	OW_Array<TriggerRunnerRef> m_triggerRunners;
 	OW_Bool m_shuttingDown;
 	OW_NonRecursiveMutex m_triggerGuard;
 	OW_Condition m_triggerCondition;
