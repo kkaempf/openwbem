@@ -103,6 +103,7 @@
 // end of autoconf set vars
 
 
+#ifdef __cplusplus
 #ifdef OW_DEBUG_MEMORY
 #include "OW_MemTracer.hpp"
 #endif
@@ -136,5 +137,7 @@
 #define OW_PRINT_FUNC_NAME_ARGS10(a, b, c, d, e, f, g, h, i, j)
 #define OW_PRINT_FUNC_NAME
 #endif // #ifdef OW_PRINT_FUNC_DEBUG
+
+#endif // #ifdef __cplusplus
 
 
