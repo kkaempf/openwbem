@@ -83,6 +83,7 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 				e.getMessage()));
 
 			m_authenticator.setNull();
+			OW_THROW(OW_Exception, "No Authentication Mechanism Available");
 		}
 		catch(...)
 		{
@@ -91,6 +92,7 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 				" [No Authentication Mechanism Available!]", authLib));
 
 			m_authenticator.setNull();
+			OW_THROW(OW_Exception, "No Authentication Mechanism Available");
 		}
 	}
 	else
@@ -98,6 +100,7 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 		env->getLogger()->logError(format("Authentication Module %1 failed"
 			" to produce authentication module"
 			" [No Authentication Mechanism Available!]", authLib));
+		OW_THROW(OW_Exception, "No Authentication Mechanism Available");
 	}
 }
 
