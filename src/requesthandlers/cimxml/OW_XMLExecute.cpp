@@ -782,7 +782,6 @@ OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_XMLNode& node,
 	while (enu.hasMoreElements())
 	{
 		OW_CIMtoXML(enu.nextElement(), ostr, OW_CIMtoXMLFlags::isInstanceName);
-		//enu.nextElement().toXML(ostr, true);
 	}
 }
 
@@ -815,9 +814,12 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
 		OW_Bool(false));
 
 	path.setObjectName(className);
-	OW_CIMClass cimClass = hdl.getClass(path, false);
+	//OW_CIMClass cimClass = hdl.getClass(path, false);
 
-	OW_CIMInstanceEnumeration enu = hdl.enumInstances(path, deep, localOnly);
+	OW_StringArray* pPropList = (isPropertyList) ? &propertyList : NULL;
+
+	OW_CIMInstanceEnumeration enu = hdl.enumInstances(path, deep, localOnly,
+		includeQualifiers, includeClassOrigin, pPropList);
 
 	//
 	// Build result
@@ -831,6 +833,7 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
 
 		cop.setNameSpace(path.getNameSpace());
 
+		/*
 		if(!cc.getName().equalsIgnoreCase(cimInstance.getClassName()))
 		{
 			cc = hdl.getClass(cop, false);
@@ -841,6 +844,7 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
 		}
 
 		cimInstance.syncWithClass(cc, includeQualifiers);
+		*/
 
 		OW_CIMtoXML(cimInstance, ostr, cop,
 			localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
@@ -848,9 +852,6 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
 			includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 			propertyList,
 			(isPropertyList && propertyList.size() == 0));
-		//cimInstance.toXML(ostr, cop, localOnly, includeQualifiers,
-		//	includeClassOrigin, propertyList,
-		//	(isPropertyList && propertyList.size() == 0));
 	}
 }
 

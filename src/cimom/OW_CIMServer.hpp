@@ -632,6 +632,7 @@ private:
 		const OW_ACLInfo& aclInfo);
 
 	void checkGetClassRvalAndThrow(OW_CIMException::ErrNoType rval, const OW_CIMObjectPath& path);
+	void checkGetClassRvalAndThrowInst(OW_CIMException::ErrNoType rval, const OW_CIMObjectPath& path);
 
 	OW_GenericHDBRepository m_nStore;
 	OW_InstanceRepository m_iStore;

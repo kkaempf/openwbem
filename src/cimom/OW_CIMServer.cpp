@@ -648,11 +648,12 @@ OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 		// undo so as to not leave things in a weird state?
 
 		// delete the class and any subclasses
+		OW_ACLInfo intAcl;
 		OW_CIMClassEnumeration children = this->enumClasses(path,
 			OW_CIMOMHandleIFC::DEEP, OW_CIMOMHandleIFC::LOCAL_ONLY,
 			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
-            aclInfo);
+            intAcl);
 		children.addElement(cc);
 		while (children.hasMoreElements())
 		{
@@ -972,6 +973,7 @@ OW_CIMServer::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 	// Check to see if user has rights to enumerate instances
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEINSTANCES, path, aclInfo);
 
+	cout << "1" << endl;
 	try
 	{
 		OW_ACLInfo intAclInfo;
@@ -980,15 +982,15 @@ OW_CIMServer::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 		OW_CIMClass theClass = _getNameSpaceClass(path.getObjectName());
 		if(!theClass)
 		{
+			cout << "2" << endl;
 			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop, theClass);
-			if(rval != OW_CIMException::SUCCESS)
-			{
-				OW_THROWCIMMSG(rval, lcop.getObjectName().c_str());
-			}
+			checkGetClassRvalAndThrowInst(rval, lcop);
+			cout << "3" << endl;
 		}
 
 		OW_Bool deepHonored = _getCIMInstances(lcop, theClass, en, deep, localOnly,
 			includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+		cout << "4" << endl;
 		// DEBUG
 		//OW_ASSERT(en.numberOfElements() == 1);
 		//OW_CIMInstance debugInst = en.nextElement();
@@ -1141,6 +1143,7 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 
 	try
 	{
+		// TODO: Switch this to use m_mStore
 		cc = getClass(cop, OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
@@ -1304,24 +1307,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 		if(!theClass)
 		{
 			OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(), theClass);
-
-			if(rc != OW_CIMException::SUCCESS)
-			{
-				// check whether the namespace was invalid or not
-				if (rc == OW_CIMException::NOT_FOUND)
-				{
-					if (!m_nStore.nameSpaceExists(cop.getNameSpace()))
-					{
-						rc = OW_CIMException::INVALID_NAMESPACE;
-					}
-					else
-					{
-						rc = OW_CIMException::INVALID_CLASS;
-					}
-				}
-
-				OW_THROWCIMMSG(rc, cop.getObjectName().c_str());
-			}
+			checkGetClassRvalAndThrowInst(rc, cop);
 		}
 
 		OW_CIMQualifier acq = theClass.getQualifier(
@@ -1463,23 +1449,7 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(),
 			theClass);
 
-		if(rc != OW_CIMException::SUCCESS)
-		{
-			// check whether the namespace was invalid or not
-			if (rc == OW_CIMException::NOT_FOUND)
-			{
-				if (!m_nStore.nameSpaceExists(cop.getNameSpace()))
-				{
-					rc = OW_CIMException::INVALID_NAMESPACE;
-				}
-				else
-				{
-					rc = OW_CIMException::INVALID_CLASS;
-				}
-			}
-
-			OW_THROWCIMMSG(rc, cop.getObjectName().c_str());
-		}
+		checkGetClassRvalAndThrowInst(rc, cop);
 
 		OW_CIMQualifier cq = theClass.getQualifier(
 			OW_CIMQualifier::CIM_QUAL_PROVIDER);
@@ -2711,7 +2681,29 @@ OW_CIMServer::checkGetClassRvalAndThrow(OW_CIMException::ErrNoType rval, const O
 		{
 			if (!m_nStore.nameSpaceExists(path.getNameSpace()))
 			{
-				rval = OW_CIMException::INVALID_NAMESPACE;
+				OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, path.getNameSpace().c_str());
+			}
+		}
+
+		OW_THROWCIMMSG(rval, path.getObjectName().c_str());
+	}
+}
+
+void
+OW_CIMServer::checkGetClassRvalAndThrowInst(OW_CIMException::ErrNoType rval, const OW_CIMObjectPath& path)
+{
+	if (rval != OW_CIMException::SUCCESS)
+	{
+		// check whether the namespace was invalid or not
+		if (rval == OW_CIMException::NOT_FOUND)
+		{
+			if (!m_nStore.nameSpaceExists(path.getNameSpace()))
+			{
+				OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, path.getNameSpace().c_str());
+			}
+			else
+			{
+				rval = OW_CIMException::INVALID_CLASS;
 			}
 		}
 

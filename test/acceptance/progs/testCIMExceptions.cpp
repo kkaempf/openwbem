@@ -614,8 +614,15 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	ci.setProperty(theKeyProp);
 	try
 	{
-		OW_CIMObjectPath cop("foo", "badNamespace");
+		OW_CIMObjectPath cop(baseClass.getName(), "root");
 		cop.setKeys(ci);
+		try
+		{
+			hdl->deleteInstance(cop);
+		}
+		catch (const OW_CIMException& e)
+		{
+		}
 		hdl->createInstance(cop, ci);
 	}
 	catch (const OW_CIMException& e)
@@ -639,28 +646,121 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 
 	// CIM_ERR_INVALID_PARAMETER
 	// CIM_ERR_INVALID_CLASS
+	try
+	{
+		OW_CIMInstance ci2(ci);
+		ci2.setClassName("fooBad");
+		OW_CIMObjectPath cop("fooBad", "root");
+		cop.setKeys(ci2);
+		hdl->modifyInstance(cop, ci2);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+	}
+
 	// CIM_ERR_NOT_FOUND
+	try
+	{
+		OW_CIMInstance ci2(ci);
+		ci2.setProperty("theKeyProp", OW_CIMValue(false));
+		OW_CIMObjectPath cop(ci2.getClassName(), "root");
+		cop.setKeys(ci2);
+		hdl->modifyInstance(cop, ci2);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+	}
+
 
 
 	// EnumerateClasses
 	
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		hdl->enumClass(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+
 	// CIM_ERR_INVALID_PARAMETER
 	// CIM_ERR_INVALID_CLASS
+	try
+	{
+		OW_CIMObjectPath cop("badClass", "root");
+		hdl->enumClass(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+	}
+
 
 
 	// EnumerateClassNames
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		hdl->enumClassNames(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+
 	// CIM_ERR_INVALID_PARAMETER
 	// CIM_ERR_INVALID_CLASS
+	try
+	{
+		OW_CIMObjectPath cop("badClass", "root");
+		hdl->enumClassNames(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+	}
+
 
 
 	// EnumerateInstances
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		hdl->enumInstances(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+
 	// CIM_ERR_INVALID_PARAMETER
 	// CIM_ERR_INVALID_CLASS
+	try
+	{
+		OW_CIMObjectPath cop("badClass", "root");
+		hdl->enumInstances(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+	}
 
 
 	// EnumerateInstanceNames

@@ -963,7 +963,15 @@ OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 		pnode = hdl->getNode(ckey);
 		if(!pnode)
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS, className.c_str());
+			pnode = getNameSpaceNode(hdl, ns);
+			if(!pnode)
+			{
+				OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns.c_str());
+			}
+			else
+			{
+				OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS, className.c_str());
+			}
 		}
 	}
 	else
