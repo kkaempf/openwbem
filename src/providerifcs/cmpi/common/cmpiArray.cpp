@@ -82,7 +82,7 @@ static CMPIData arrayGetElementAt(CMPIArray* eArray, CMPICount pos,
 	CMSetStatus(rc, CMPI_RC_OK);
 	if (pos<dta->value.uint32) return dta[pos+1];
 
-	CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue() };
+	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
 	CMSetStatus(rc, CMPI_RC_ERR_NOT_FOUND);
 	return data;
 }

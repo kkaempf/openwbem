@@ -89,7 +89,7 @@ static CMPIData argsGetArgAt(CMPIArgs* eArg, CMPICount pos, CMPIString** name,
 			CMPIStatus* rc)
 {
 	OpenWBEM::CIMParamValueArray * arg=(OpenWBEM::CIMParamValueArray *)eArg->hdl;
-	CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue() };
+	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
 
 	if (pos > arg->size())
 	{
@@ -124,7 +124,7 @@ static CMPIData argsGetArg(CMPIArgs* eArg, char* name, CMPIStatus* rc)
 		return argsGetArgAt(eArg, i, NULL, rc);
 	}
 
-	CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue() };
+	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
 	CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
 	return data;
 }

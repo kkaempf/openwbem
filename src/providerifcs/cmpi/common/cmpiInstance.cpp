@@ -61,7 +61,7 @@ static CMPIData instGetPropertyAt(CMPIInstance* eInst, CMPICount pos, CMPIString
 	CMPIStatus* rc)
 {
 	OpenWBEM::CIMInstance* inst=(OpenWBEM::CIMInstance*)eInst->hdl;
-	CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue()};
+	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
 
 	const OpenWBEM::CIMPropertyArray& p=inst->getProperties();
 
@@ -91,7 +91,7 @@ static CMPIData instGetPropertyAt(CMPIInstance* eInst, CMPICount pos, CMPIString
 static CMPIData instGetProperty(CMPIInstance* eInst, char* name, CMPIStatus* rc)
 {
 	OpenWBEM::CIMInstance* inst=(OpenWBEM::CIMInstance*)eInst->hdl;
-	CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue()};
+	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
 
 	const OpenWBEM::CIMProperty& p = inst->getProperty(OpenWBEM::String(name));
 

@@ -34,6 +34,7 @@
 #include "OW_String.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_CIMNULL.hpp"
 #include <list>
 
 namespace OpenWBEM

@@ -37,6 +37,7 @@
 
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 
 #include <assert.h>
 #include <cctype>
@@ -504,7 +505,6 @@ CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandl
 	CIMInstanceArray cia = hdl->getInstances();
 	return cia;
 }
-
 
 } // end namespace MOF
 } // end namespace OpenWBEM

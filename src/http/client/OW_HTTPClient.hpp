@@ -133,7 +133,7 @@ class HTTPClient : public CIMProtocolIFC
 		String m_sDigestSessionKey;
 		String m_sDigestResponse;
 #endif
-		typedef enum Resp_t
+		enum Resp_t
 		{
 			FATAL,
 			RETRY,

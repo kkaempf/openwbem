@@ -610,7 +610,7 @@ static CMPIData mbInvokeMethod(CMPIBroker *mb, CMPIContext *ctx,
 	(void) out;
 
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbInvokeMethod()");
-	CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue()};
+	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
 	CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
 	return data;
 }
@@ -661,7 +661,7 @@ static CMPIData mbGetProperty(CMPIBroker *mb, CMPIContext *ctx,
 
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbGetProperty()");
 
-	CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue()};
+	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
 	try
 	{
 		OpenWBEM::CIMValue v = CM_CIMOM(mb)->getProperty(

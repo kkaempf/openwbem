@@ -127,7 +127,7 @@ static CMPIData refGetKey(CMPIObjectPath* eRef, char* name, CMPIStatus* rc)
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
 	const OpenWBEM::String eName(name);
 	OpenWBEM::CIMProperty cpr = ref->getKey(eName);
-	CMPIData data = {(CMPIType) 0, CMPI_nullValue, CMPIValue()};
+	CMPIData data = {(CMPIType) 0, CMPI_nullValue, {0} };
 
 	CMSetStatus(rc,CMPI_RC_OK);
 
@@ -147,7 +147,7 @@ static CMPIData refGetKeyAt(CMPIObjectPath* eRef, unsigned pos, CMPIString** nam
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
 	const OpenWBEM::CIMPropertyArray &akb=ref->getKeys();
-	CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue()};
+	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
 	CMSetStatus(rc,CMPI_RC_OK);
 
 	if(pos >= akb.size())

@@ -109,7 +109,9 @@ ProviderInfoBase<ClassInfoT>::getProviderName() const
 	return m_name;
 }
 
+#if defined(__GNUC__)
 extern template class ProviderInfoBase<InstClassInfo>;
+#endif
 
 } // end namespace OpenWBEM
 

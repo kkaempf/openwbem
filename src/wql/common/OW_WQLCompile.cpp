@@ -59,6 +59,10 @@ bool operator==(const WQLCompile::term_el& x, const WQLCompile::term_el& y)
 {
 	return x.op == y.op && x.opn1 == y.opn1 && x.opn2 == y.opn2;
 }
+bool operator!=(const WQLCompile::term_el& x, const WQLCompile::term_el& y)
+{
+	return !(x == y);
+}
 //
 // Evaluation heap element methods 
 //

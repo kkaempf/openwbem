@@ -147,7 +147,7 @@ public:
 	template <class InputIterator>
 	void insert(InputIterator first, InputIterator last)
 	{
-		return m_impl->insert(first, last);
+		m_impl->insert(first, last);
 	}
 	void erase(iterator position)
 	{
@@ -159,11 +159,11 @@ public:
 	}
 	void erase(iterator first, iterator last)
 	{
-		return m_impl->erase(first, last);
+		m_impl->erase(first, last);
 	}
 	void clear()
 	{
-		return m_impl->clear();
+		m_impl->clear();
 	}
 	iterator find(const key_type& x)
 	{

@@ -120,7 +120,7 @@ public:
 	String getHostName();
 protected:
 private:
-	typedef enum requestMethod_t
+	enum requestMethod_t
 	{
 		BAD = 0,
 		POST,
@@ -128,7 +128,7 @@ private:
 		TRACE,
 		OPTIONS
 	};
-	typedef enum httpVerFlag_t
+	enum httpVerFlag_t
 	{
 		HTTP_VER_BAD = 0,
 		HTTP_VER_10,

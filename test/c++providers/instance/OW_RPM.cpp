@@ -117,7 +117,7 @@ public:
 
 		StringArray lines = pos.out()->readAll().tokenize("\n");
 
-		sort(lines.begin(), lines.end());
+		std::sort(lines.begin(), lines.end());
 
 		if (pos.getExitStatus() != 0)
 		{
@@ -175,7 +175,7 @@ public:
 
 		StringArray lines = pos.out()->readAll().tokenize("\n");
 
-		sort(lines.begin(), lines.end());
+		std::sort(lines.begin(), lines.end());
 
 		if (pos.getExitStatus() != 0)
 		{

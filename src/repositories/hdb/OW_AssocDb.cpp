@@ -43,6 +43,7 @@
 #include "OW_Logger.hpp"
 
 #include <cstdio> // for SEEK_END
+#include <algorithm> // for std::find
 
 namespace OpenWBEM
 {
@@ -596,7 +597,7 @@ AssocDb::deleteEntry(const CIMObjectPath& objectName,
 		e.m_resultClass = resultClass;
 		e.m_associatedObject = associatedObject;
 		e.m_associationPath = assocClassPath;
-		Array<AssocDbEntry::entry>::iterator iter = find(dbentry.m_entries.begin(), dbentry.m_entries.end(), e);
+		Array<AssocDbEntry::entry>::iterator iter = std::find(dbentry.m_entries.begin(), dbentry.m_entries.end(), e);
 		OW_ASSERT(iter != dbentry.m_entries.end());
 		if (iter != dbentry.m_entries.end())
 		{

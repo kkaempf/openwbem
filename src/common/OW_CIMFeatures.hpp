@@ -52,7 +52,7 @@ struct CIMFeatures
 	 * The CIMProduct_t enumeration contains values for all known products
 	 * in OpenWBEM.
 	 */
-	typedef enum CIMProduct_t
+	enum CIMProduct_t
 	{
 		SERVER,			// The CIMOM
 		CLIENT,			// The client library

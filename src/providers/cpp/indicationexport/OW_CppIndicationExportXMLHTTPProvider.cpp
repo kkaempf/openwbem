@@ -40,14 +40,6 @@
 namespace OpenWBEM
 {
 
-// AIX xlC does not like the implementation being in a different namespace than
-// the declaration. 
-#if !defined(OW_AIX)
-namespace
-{
-#endif // OW_AIX
-	// anonymous namespace is to prevent possible linkage problems or identifier
-	// conflict whens the library is dynamically loaded
 ///////////////////////////////////////////////////////////////////////////////
 CppIndicationExportXMLHTTPProvider::~CppIndicationExportXMLHTTPProvider()
 {
@@ -113,9 +105,6 @@ CppIndicationExportXMLHTTPProvider::getHandlerClassNames()
 
 	return rv;
 }
-#if !defined(OW_AIX)
-} // end anonymous namespace
-#endif // OW_AIX
 } // end namespace OpenWBEM
 
 //////////////////////////////////////////////////////////////////////////////

@@ -45,9 +45,9 @@ public:
 	typedef typename Array<T>::const_reference const_reference;
 	Stack() : Array<T>() {  }
 	bool empty() const {   return (size() == 0); }
-	reference top() {   return back(); }
-	const_reference top() const {   return back(); }
-	void pop() { pop_back(); }
+	reference top() {   return this->back(); }
+	const_reference top() const {   return this->back(); }
+	void pop() { this->pop_back(); }
 	void push(const T& x) {   push_back(x); }
 	int search(const T& x) const
 	{

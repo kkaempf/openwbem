@@ -171,6 +171,7 @@ protected:
 	Array<eval_el> eval_heap;
 };
 bool operator==(const WQLCompile::term_el& x, const WQLCompile::term_el& y);
+bool operator!=(const WQLCompile::term_el& x, const WQLCompile::term_el& y);
 
 } // end namespace OpenWBEM
 

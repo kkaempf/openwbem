@@ -36,6 +36,8 @@
 #include "OW_Reference.hpp"
 #include "OW_Exception.hpp"
 #include "OW_Array.hpp"
+#include "OW_MOFLineInfo.hpp"
+#include "OW_MOFGrammar.hpp"
 
 // these 2 need to be at global scope because flex also declares them.
 struct owmof_buffer_state;
@@ -50,8 +52,6 @@ class CIMInstance;
 
 namespace MOF
 {
-
-class MOFSpecification;
 
 class Compiler
 {
@@ -98,7 +98,6 @@ public:
 
 	Compiler( Reference<CIMOMHandleIFC> ch, const Options& opts, Reference<ParserErrorHandlerIFC> mpeh );
 	~Compiler();
-
 	long compile( const String& filename );
 	long compileString( const String& mof );
 	static String fixParsedString(const String& s);
@@ -130,6 +129,10 @@ public:
 private:
 	Reference<CIMOMHandleIFC> m_ch;
 	Options m_opts;
+	// unimplemented
+	Compiler(const Compiler& x);
+	Compiler& operator=(const Compiler& x);
+	
 };
 
 

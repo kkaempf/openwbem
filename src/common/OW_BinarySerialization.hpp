@@ -202,6 +202,7 @@ namespace BinarySerialization
 		BinarySerialization::write(ostrm, BINSIG_STR);
 		str.writeObject(ostrm);
 	}
+	void readLen(std::istream& istrm, UInt32& len);
 	/////////////////////////////////////////////////////////////////////////////
 	template <typename T>
 	inline void
@@ -258,7 +259,6 @@ namespace BinarySerialization
 		BinarySerialization::read(istrm, &val, sizeof(val));
 		val = ntoh32(val);
 	}
-	void readLen(std::istream& istrm, UInt32& len);
 	inline void read(std::istream& istrm, UInt16& val)
 	{
 		BinarySerialization::read(istrm, &val, sizeof(val));
