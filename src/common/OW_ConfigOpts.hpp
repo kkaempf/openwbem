@@ -160,7 +160,9 @@
 #ifndef OW_DEFAULT_UDS_FILENAME
 #define OW_DEFAULT_UDS_FILENAME "/tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q"OW_PACKAGE_PREFIX
 #endif
-
+#ifndef OW_DEFAULT_ALLOW_LOCAL_AUTHENTICATION
+#define OW_DEFAULT_ALLOW_LOCAL_AUTHENTICATION "false"
+#endif
 
 namespace OpenWBEM
 {
@@ -218,6 +220,7 @@ namespace ConfigOpts
 	static const char* const LISTEN_ADDRESSES_opt = "http_server.listen_addresses";
 	static const char* const INTEROP_SCHEMA_NAMESPACE_opt = "owcimomd.interop_schema_namespace";
 	static const char* const UDS_FILENAME_opt = "http_server.uds_filename";
+	static const char* const HTTP_ALLOW_LOCAL_AUTHENTICATION_opt = "http_server.allow_local_authentication";
 
 } // end namespace ConfigOpts
 } // end namespace OpenWBEM
