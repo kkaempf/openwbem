@@ -162,6 +162,7 @@ private:
 	friend class IPCConnectionHandler;
 	friend class HTTPServerSelectableCallback;
 };
+OW_EXPORT_TEMPLATE(OW_HTTPSVC_API, IntrusiveReference, HTTPServer);
 
 } // end namespace OW_NAMESPACE
 

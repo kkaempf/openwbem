@@ -155,9 +155,9 @@ private:
 	String m_contentLanguage;
 	String m_acceptLanguageString;
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, SessionLanguage);
 
-
-}	// end namespace OW_NAMESPACE
+}	// End of namespace OW_NAMESPACE
 
 #endif
 

@@ -66,6 +66,11 @@ template <typename T>
 ResultHandlerIFC<T>::~ResultHandlerIFC()
 {
 }
+OW_EXPORT_TEMPLATE(OW_COMMON_API, ResultHandlerIFC, CIMInstance);
+OW_EXPORT_TEMPLATE(OW_COMMON_API, ResultHandlerIFC, CIMClass);
+OW_EXPORT_TEMPLATE(OW_COMMON_API, ResultHandlerIFC, CIMQualifierType);
+OW_EXPORT_TEMPLATE(OW_COMMON_API, ResultHandlerIFC, String);
+OW_EXPORT_TEMPLATE(OW_COMMON_API, ResultHandlerIFC, CIMObjectPath);
 
 } // end namespace OW_NAMESPACE
 

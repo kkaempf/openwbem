@@ -93,6 +93,7 @@ private:
 	ThreadCountDecrementer(ThreadCountDecrementer const&);
 	ThreadCountDecrementer& operator=(ThreadCountDecrementer const&);
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, ThreadCounter);
 
 } // end namespace OW_NAMESPACE
 

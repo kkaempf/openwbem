@@ -44,7 +44,7 @@ namespace OW_NAMESPACE
 class OW_PROVIDER_API MethodProviderInfo
 {
 public:
-	struct ClassInfo
+	struct OW_PROVIDER_API ClassInfo
 	{
 		explicit ClassInfo(String const& className_);
 		ClassInfo(String const& className_, StringArray const& namespaces_, StringArray const& methods_);

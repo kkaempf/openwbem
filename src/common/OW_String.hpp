@@ -758,6 +758,9 @@ private:
 #endif
 
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, Array, String);
+OW_EXPORT_TEMPLATE(OW_COMMON_API, Enumeration, String);
+
 OW_COMMON_API std::ostream& operator<< (std::ostream& ostr, const String& arg);
 OW_COMMON_API String operator + (const String& s1, const String& s2);
 OW_COMMON_API String operator + (const char* p, const String& s);

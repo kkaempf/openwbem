@@ -50,6 +50,7 @@ public:
 protected:
 	virtual void doNotifyThreadDone(Thread* t) = 0;
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, ThreadDoneCallback);
 
 } // end namespace OW_NAMESPACE
 

@@ -127,6 +127,7 @@ private:
 	static String m_traceFileOut;
 	static String m_traceFileIn;
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, SocketBaseImpl);
 
 } // end namespace OW_NAMESPACE
 

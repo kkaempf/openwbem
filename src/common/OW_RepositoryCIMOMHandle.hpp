@@ -251,6 +251,7 @@ private:
 	ELockingFlag m_lock;
 	OperationContext& m_context;
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, RepositoryCIMOMHandle);
 
 } // end namespace OW_NAMESPACE
 

@@ -79,7 +79,8 @@ private:
 
 }; 
 
-typedef IntrusiveReference<ProviderAgentLockerIFC> ProviderAgentLockerIFCRef; 
+typedef IntrusiveReference<ProviderAgentLockerIFC> ProviderAgentLockerIFCRef;
+OW_EXPORT_TEMPLATE(OW_PROVIDERAGENT_API, IntrusiveReference, ProviderAgentLockerIFC);
 
 
 } // end namespace OW_NAMESPACE

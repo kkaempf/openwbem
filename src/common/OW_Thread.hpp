@@ -283,6 +283,7 @@ private:
 	Thread& operator=(const Thread&);
 	
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, Thread);
 
 } // end namespace OW_NAMESPACE
 

@@ -77,6 +77,7 @@ public:
 	 */
 	static SharedLibraryLoaderRef createSharedLibraryLoader();
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, SharedLibraryLoader);
 
 } // end namespace OW_NAMESPACE
 

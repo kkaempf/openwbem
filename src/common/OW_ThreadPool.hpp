@@ -157,6 +157,7 @@ private:
 #endif
 
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, ThreadPool);
 
 } // end namespace OW_NAMESPACE
 

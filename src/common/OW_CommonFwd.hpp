@@ -56,10 +56,10 @@ namespace OW_NAMESPACE
 
 struct LogMessage;
 
-class Logger;
+class OW_COMMON_API Logger;
 typedef IntrusiveReference<Logger> LoggerRef;
 
-class LogAppender;
+class OW_COMMON_API LogAppender;
 typedef IntrusiveReference<LogAppender> LogAppenderRef;
 
 class String;

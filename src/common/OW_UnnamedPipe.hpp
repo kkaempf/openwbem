@@ -190,6 +190,7 @@ protected:
 	int m_readTimeout;
 	int m_writeTimeout;
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, UnnamedPipe);
 
 } // end namespace OW_NAMESPACE
 

@@ -84,6 +84,7 @@ public:
 	 */
 	virtual void doDefinitiveCancel();
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, Runnable);
 
 } // end namespace OW_NAMESPACE
 

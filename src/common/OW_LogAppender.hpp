@@ -130,6 +130,7 @@ private: // data
 	LogMessagePatternFormatter m_formatter;
 
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, LogAppender);
 
 } // end namespace OW_NAMESPACE
 

@@ -43,6 +43,11 @@
 
 #include <iostream>
 
+namespace
+{
+typedef void (__stdcall *DllEntry_t)(void);
+}
+
 namespace OW_NAMESPACE
 {
 
@@ -52,10 +57,19 @@ Mutex DLLSharedLibrary_guard;
 DLLSharedLibrary::DLLSharedLibrary(HINSTANCE libhandle, const String& libName)
 	: SharedLibrary(), m_libhandle(libhandle), m_libName(libName)
 {
+	DllEntry_t ensureInit;
+
+	if( getFunctionPointer("DllEnsureInit", ensureInit) )
+		ensureInit();
 }
 //////////////////////////////////////////////////////////////////////////////
 DLLSharedLibrary::~DLLSharedLibrary()
 {
+	DllEntry_t forceTerm;
+
+	if( getFunctionPointer("DllForceTerm", forceTerm) )
+		forceTerm();
+
 	::FreeLibrary(m_libhandle);
 }
 //////////////////////////////////////////////////////////////////////////////

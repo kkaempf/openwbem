@@ -270,6 +270,8 @@ public:
 private:
 	UInt16 m_value;
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, Array, Char16);
+
 inline bool operator== (char c, const Char16& arg)
 {
 	return Char16(c) == arg;

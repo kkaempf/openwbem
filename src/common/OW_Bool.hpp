@@ -149,6 +149,7 @@ private:
 	Bool(volatile void*);
 	bool m_val;
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, Array, Bool);
 OW_COMMON_API std::ostream& operator << (std::ostream& ostrm, const Bool& arg);
 
 } // end namespace OW_NAMESPACE

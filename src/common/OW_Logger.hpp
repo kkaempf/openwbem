@@ -301,6 +301,7 @@ private: // data
 	ELogLevel m_logLevel;
 	String m_defaultComponent;
 };
+OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, Logger);
 
 } // end namespace OW_NAMESPACE
 
