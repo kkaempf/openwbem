@@ -57,6 +57,17 @@ do
 	shift
 done
 
+cleanup_archive_dirs()
+{
+	# clean up each archive dir
+	for i in $ARCHIVES;
+	do
+		name=`basename $i .a`
+		ar_dir=".${name}_dir"
+		rm -rf $ar_dir
+	done
+}
+
 # extract each archive into it's own directory so that we
 # can safely handle name collisions, i.e. if files are named the
 # same, also rename each *.o to be prefixed by it's archive name
@@ -67,23 +78,27 @@ do
 	name=`basename $i .a`
 	ar_dir=".${name}_dir"
 	rm -rf $ar_dir
-	mkdir $ar_dir
-	cd $ar_dir
-	$AR x ../$i
-	for j in *.o; do
-		mv $j ${name}_$j
-	done
-	cd ..
-	NEWOBJS="$NEWOBJS $ar_dir/*.o"
+	full_archive_path=$i
+	if [ -e "./$i" ]; then
+		full_archive_path=`pwd`/$i
+	fi
+	if [ -e $full_archive_path ]; then
+		mkdir $ar_dir
+		cd $ar_dir
+		$AR x $full_archive_path
+		for j in *.o; do
+			mv $j ${name}_$j
+		done
+		cd ..
+		NEWOBJS="$NEWOBJS $ar_dir/*.o"
+	else
+		echo "ERROR: archive $i does not exist."
+		cleanup_archive_dirs
+		exit 1
+	fi		
 done
 
 $AR cru $TARGET $NEWOBJS $OBJECTS
 
-# clean up each archive dir
-for i in $ARCHIVES;
-do
-	name=`basename $i .a`
-	ar_dir=".${name}_dir"
-	rm -rf $ar_dir
-done
+cleanup_archive_dirs
 
