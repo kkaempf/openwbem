@@ -1,2 +1,2 @@
 #SUBDIRS = cpp c
-SUBDIRS = cpp
+SUBDIRS = cpp npi
