@@ -45,7 +45,8 @@
       <div>
         <p class="sideBarTitle">Navigate this page</p>
         <ul>
-          <li><a href="#About" title="About">&rsaquo; About</a></li>
+          <li><a href="#WBEM" title="WBEM">&rsaquo; What is WBEM?</a></li>
+          <li><a href="#About" title="About">&rsaquo; About OpenWBEM</a></li>
           <li><a href="#News" title="News">&rsaquo; News</a></li>
           <li><a href="#Products" title="Products">&rsaquo; Products</a></li>
           <li><a href="#Features" title="Features">&rsaquo; Features</a></li>
@@ -64,12 +65,58 @@
     
     <div id="main-copy">
     
+
+      <!-- ##### WBEM ##### -->
+      
+      <h1 id="WBEM">What is <acronym title="Web Based Enterprise Management">WBEM</acronym>?</h1>
+      <p><a href="http://www.dmtf.org/standards/wbem/">Web Based Enterprise Management</a> is an 
+      Industry initiative to
+      provide a set of management and Internet standard technologies developed to unify the 
+      management of systems, networks, users and applications
+      across multiple vendor environments.
+      </p>
+      <!-- This stuff is good, but too much for the front page.  Put it onto it's own page eventually.
+      
+      <p>WBEM provides the ability for the industry to deliver a well-integrated set of 
+        standard-based management tools leveraging the emerging Web technologies. The DMTF 
+        has developed a core set of standards that make up WBEM, which includes a data model, 
+        the Common Information Model (CIM) standard; an encoding specification, xmlCIM 
+        Encoding Specification; and a transport mechanism, CIM Operations over HTTP.</p>
+
+      <p>The CIM specification is the language and methodology for describing management 
+        data. The CIM schema includes models for Systems, Applications, Networks (LAN) and 
+        Devices. The CIM schema will enable applications from different developers on 
+        different platforms to describe management data in a standard format so that it 
+        can be shared among a variety of management applications. The xmlCIM Encoding 
+        Specification defines XML elements, written in Document Type Definition (DTD), which 
+        can be used to represent CIM classes and instances. The CIM Operations over 
+        HTTP specification defines a mapping of CIM operations onto HTTP that allows 
+        implementations of CIM to interoperate in an open, standardized manner and 
+        completes the technologies that support WBEM.</p>
+        
+      <p>WBEM simplifies system
+        management, providing better access to both software and hardware
+        data that is readable by WBEM compliant applications.
+        WBEM has been designed to be compatible with all the major
+        existing management protocols, including SNMP, DMI, and CMIP. WBEM is
+        a <a href="http://www.dmtf.org/">DMTF</a> standard. Industry
+        standards used in the WBEM initiative include:</p>
+        
+      <ul>
+        <li><a href="http://www.dmtf.org/standards/cim_spec_v22/">Common Information Model</a> (CIM)</li>
+        <li><a href="http://www.dmtf.org/standards/cim">CIM Schema</a></li>
+        <li><a href="http://www.dmtf.org/standards/wbem">CIM Operations over HTTP, v1.1, DSP0200</a></li>
+        <li><a href="http://www.dmtf.org/standards/wbem">Representation of CIM in XML, v2.1,
+          DSP0201</a></li>
+      </ul>
+      -->
+
       <!-- ##### About ##### -->
       
-      <h1 id="About">Enterprise-grade, open-source implementation of 
-        <acronym title="Web Based Enterprise Management">WBEM</acronym></h1>
+      <h1 id="About">About OpenWBEM</h1>
       <p>OpenWBEM is an enterprise-grade open-source implementation
-        of Web Based Enterprise Management (WBEM), written in C++, suitable for commercial and
+        of <acronym title="Web Based Enterprise Management">WBEM</acronym>, written in C++, 
+        suitable for commercial and
         non-commercial applications. It provides a foundation for development of management
         frameworks that overcome cross-platform barriers and empower true interoperability.
         Developers can use OpenWBEM as a management agent and 
@@ -82,13 +129,13 @@
       
       <h1 id="News">News</h1>
       <ul>
-        <li>Sat Sep 11 2004: The upcoming 3.1 release is getting close. New features will include
+        <li>Sat Sep 11 2004: We are almost ready for the 3.1 release. New features will include
           a remote provider interface, password-less local authentication and some speed and memory
           optimizations.
         </li>
         <li>Sat Sep 11 2004: Dan and Bart will be manning the OpenWBEM booth at 
           <a href="http://www.emwusa.com/">Enterprise Management World</a> on Sep. 13 &amp; 14.
-          Stop by and say hi if you can.
+          Stop by and say &quot;Hi&quot; if you can.
         </li>
         <li>Mon May 31 2004: OpenWBEM 3.0.2 has been released. 
           <a href="http://sourceforge.net/project/shownotes.php?group_id=16214&amp;release_id=242230">Release 
@@ -134,21 +181,23 @@
             <li>HTTPS (Requires OpenSSL)</li>
             
             <li>Extensible Authentication through authentication plug-in
-              modules. Provided modules:
+              modules. Provided authentication methods:
               <ul>
                 <li>PAM (Uses the native system authentication)</li>
-                <li>Simple (Uses a password file. A good sample of how to write
-                  an Authentication Module)</li>
                 <li>HTTP Digest (Useful because it doesn't send passwords in
                   clear text)</li>
+                <li>Local (No password required, it relies on the filesystem permissions and
+                  trusts the operating system correctly authenticated the user. New as of release
+                  3.1.0)</li>
+                <li>Simple (Uses a password file. A good sample of how to write
+                  an Authentication Module)</li>
               </ul>
             </li>
             
             <li>Fast scalable CIM repository with indexing based on
               Berkely DB library.</li>
               
-            <li>Extensible Provider Interface through Provider Interface
-              plug-ins
+            <li>Supported Provider Interface Types:
               <ul>
                 <li>C++</li>
                 <li><a href="http://wbemsource.org/">CMPI</a>. Thanks to Jon
@@ -163,7 +212,7 @@
             
             <li>CIM Providers Support:
               <ul>
-                <li>Writing providers is easy. Base class adapters are provided
+                <li>Writing providers is simple. Base class adapters are provided
                   for the most common situations which reduces development time and
                   provider size. Helper functions are available that make it easy to
                   correctly write providers.</li>
@@ -188,20 +237,24 @@
                 <li>Authentication</li>
                 <li>Authorization</li>
                 <li>CIM Repository</li>
-                <li>WQL</li>
+                <li><acronym title="WBEM Query Language">WQL</acronym></li>
               </ul>
             </li>
             
-            <li>Indications and CIM Listener support.&nbsp; Both lifecycle
+            <li>Indications and CIM Listener support. Both lifecycle
               and alert indications are supported.</li>
-            <li>WQL Level 2 support for server and client</li>
+            <li><acronym title="WBEM Query Language">WQL</acronym> Level 2 support for server 
+              and client</li>
             <li>Access Control Lists</li>
-            <li>Discovery via SLP Integration on the CIMOM and client side
-              using any RFC 2614 compliant SLP implementation (e.g. OpenSLP)</li>
+            <li>Discovery via <acronym title="Service Location Protocol">SLP</acronym> Integration 
+              on the <acronym title="CIM Object Manager">CIMOM</acronym> and client side
+              using any RFC 2614 compliant <acronym title="Service Location Protocol">SLP</acronym>
+              implementation (e.g. <a href="http://openslp.org">OpenSLP</a>)</li>
             <li>Support for a binary protocol that is much more efficient
               than CIM/XML</li>
-            <li>HTTP deflate compression with zlib. (Using the binary
-              protocol and compression is very bandwidth efficient.)</li>
+            <li>HTTP deflate compression with <a href="http://www.gzip.org/zlib/">zlib</a>. 
+              (Using the binary
+              protocol together with compression is very bandwidth efficient.)</li>
             <li>HTTP chunking &amp; trailers allows OpenWBEM to transfer
               large transactions (e.g. enumClasses on the entire schema) with no
               buffering. Memory usage stays constant. Even if the client doesn't
@@ -216,7 +269,7 @@
             <li>The code has been run through a memory debugger and there are
               no known memory leaks or unconstrained growth.</li>
             <li>The build system automatically configures itself to the
-              platform and available headers &amp; libraries.</li>
+              platform headers &amp; libraries.</li>
             <li>The owcimomd daemon has been designed to be non-intrusive and
               have a small footprint. Many features are loaded as shared libraries so
               you can pick and choose what features you really need and not waste
@@ -225,8 +278,7 @@
                 <li>Indication support</li>
                 <li>WQL library</li>
                 <li>Authentication modules</li>
-                <li>Authorization modules<br>
-                </li>
+                <li>Authorization modules</li>
                 <li>Provider interfaces</li>
                 <li>Providers are unloaded from memory if they are not used for
                   a configurable amount of time</li>
@@ -243,20 +295,19 @@
             
             <li>Available Providers:
               <ul>
-                <li>__Namespace - Allows manipulation of namespaces for legacy
-                  CIM Clients using the deprecated __Namespace class.</li>
                 <li>CIM_Namespace - Allows manipulation of namespaces.</li>
                 <li>OpenWBEM_ObjectManager : CIM_ObjectManager - Represents
                   owcimomd.</li>
                 <li>CIM_NamespaceInManager - Association between CIM_Namespace
                   and CIM_ObjectManager.</li>
-                <li>CIM_ObjectManagerCommunicationMechanism</li>
+                <!-- <li>CIM_ObjectManagerCommunicationMechanism</li>
                 <li>CIM_IndicationSubscription - For indication support.</li>
-                <li>CIM_IndicationFilter - For indication support.</li>
+                <li>CIM_IndicationFilter - For indication support.</li> -->
                 <li>SLP advertisement</li>
+                <li>__Namespace - Allows manipulation of namespaces for legacy
+                  CIM Clients using the deprecated __Namespace class.</li>
                 <li>IBM has a lot of system level providers available via the
                   SBLIM project. All these NPI &amp; CMPI providers work with OpenWBEM.</li>
-                <li>Test providers, used by the OpenWBEM acceptance test suite.</li>
                 <li>Example providers show how to implement providers. These
                   providers implement processes, RPMs, and laptop batteries. These make
                   for good demos as well.</li>
@@ -268,19 +319,16 @@
         
         <li>Additional Software
           <ul>
-            <li>C++ CIM model &amp; WBEM Client API library</li>
-            <li>MOF Compiler w/embeddable library
-              <ul>
-                <li>Includes support for aliases.</li>
-                <li>Public API &amp; library can be utilized from any
-                  application. This also has an API to convert mof text into a C++ CIM
+            <li>C++ CIM model API</li>
+            <li>WBEM Client API</li>
+            <li>MOF Compiler</li>
+            <li>MOF API &amp; library can be utilized from any application.
+              Includes an API to convert mof text into a C++ CIM
                   class/instance without talking to a cimom.</li>
-              </ul>
-            </li>
             
-          <li>WQL command-line utility</li>
-          <li>WQL client library. Use WQL with servers which don't support
-            it or don't support your particular queries.</li>
+            <li>WQL command-line utility</li>
+            <li>WQL client library. Use WQL with servers which don't support
+              it or don't support your particular queries.</li>
           </ul>
         </li>
       </ul>
@@ -341,12 +389,12 @@
             goal is to provide OpenWBEM providers and utilities for the instumentation of devices,
             services.
           </blockquote>
-          LIFE has the following providers:
-            <ul>
-              <li>A</li>
-              <li>B</li>
-            </ul>
-          <br/>
+          <!-- LIFE has the following providers:
+          <ul>
+            <li>A</li>
+            <li>B</li>
+          </ul>
+          <br/> -->
         </li>
         
         <li>
@@ -354,8 +402,7 @@
             <a href="http://jason.long.name/owperl/">Owperlprovider</a>
           </span>
           <blockquote cite="http://jason.long.name/owperl/">
-            a new Perl provider interface
-            for OpenWBEM.
+            a new Perl provider interface for OpenWBEM.
             This lets you write OpenWBEM providers in Perl.
           </blockquote>
         </li>
@@ -371,6 +418,7 @@
             class hierarchies as well as instance and association
             structures.
           </blockquote>
+          <p>The KDE CIM Browser uses the OpenWBEM client API.</p>
         </li>
         
         <li>
@@ -421,19 +469,20 @@
     
       <!-- ##### Development ##### -->
       
-      <h1 id="Development">Development</h1>
+      <h1 id="Development">OpenWBEM Development</h1>
       <p>OpenWBEM is a complete implementation of WBEM maintained
         by <a href="http://www.vintela.com/">Vintela</a>, <a
-        href="http://www.novell.com/">Novell</a>, and other volunteers. The
-        current version is completely stable and usable. There are many
+        href="http://www.novell.com/">Novell</a>, and other volunteers. Dan Nuffer leads
+        the OpenWBEM engineering efforts. While the
+        current version is completely stable and usable, there are many
         interesting features and optimizations that can
         still be implemented.
-        OpenWBEM is an open-source project, and participation is open to anyone
-        willing to help out and contribute.
+        As an open-source project, development and participation for OpenWBEM is open to anyone
+        willing to assist and contribute.
         Any contribution is welcome, from bug reports, to patches, to new
         features.&nbsp; If you want to join the project, post a note to the
-        openwbem-devel list.&nbsp; If you are interested in working on
-        OpenWBEM, follow the links below for more information.</p>
+        openwbem-devel list. Follow the links below for more information
+        about working on OpenWBEM.</p>
         
       <ul>
         <li>
