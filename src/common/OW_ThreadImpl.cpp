@@ -101,7 +101,7 @@ OW_ThreadImpl::sleep(OW_UInt32 milliSeconds)
 #elif defined(OW_HAVE_NANOSLEEP)
 	struct timespec wait;
 	wait.tv_sec = milliSeconds / 1000;
-	wait.tv_nsec = (milliSeconds & 1000) * 1000000;
+	wait.tv_nsec = (milliSeconds % 1000) * 1000000;
 	while (nanosleep(&wait, &wait) == -1 && errno == EINTR);
 #else
 	timeval now, end;
