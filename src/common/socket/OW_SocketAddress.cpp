@@ -188,7 +188,7 @@ OW_SocketAddress::getAnyLocalHost(OW_UInt16 port)
 #else
         hostent* hent = 0;
         {
-            OW_MutexLock mlock(gethostbynameMutex);
+            OW_MutexLock mlock(OW_gethostbynameMutex);
             hent = gethostbyname(buf);
         }
 #endif
