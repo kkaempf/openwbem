@@ -421,6 +421,7 @@ void OW_WQLProcessor::visit_selectStmt(
 		for (size_t i = 0; i < instances.size(); ++i)
 		{
 			// TODO: Use the filterInstance function from OW_IndicationServerImpl
+			// TODO: Handle __Path here
 			instances[i] = instances[i].filterProperties(m_propertyArray, true, true);
 		}
 	}
