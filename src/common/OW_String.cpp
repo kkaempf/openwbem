@@ -160,7 +160,7 @@ String::String(Bool parm) :
 }
 //////////////////////////////////////////////////////////////////////////////
 String::String(const Char16& parm) :
-	m_buf(parm.toUTF8().m_buf)
+	m_buf(parm.toString().m_buf)
 {
 }
 #if defined(OW_WIN32)
@@ -272,7 +272,7 @@ String::String(const Char16Array& ra) :
 		StringBuffer buf(sz * 2);
 		for(size_t i = 0; i < sz; i++)
 		{
-			buf += ra[i].toUTF8();
+			buf += ra[i].toString();
 		}
 		m_buf = buf.releaseString().m_buf;
 	}

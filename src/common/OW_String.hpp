@@ -117,35 +117,40 @@ public:
 	 */
 	String(const char* str);
 	/**
+	 * DEPRECATED in 3.1.0.
 	 * Create a new String object that will contain a single byte character
 	 * representation of the Char16Array.
 	 * @param ra	The Char16Array to use to construct the string
 	 */
-	explicit String(const Char16Array& ra);
+	explicit String(const Char16Array& ra) OW_DEPRECATED;
 	/**
+	 * DEPRECATED in favor of Bool::toString() in 3.1.0.
 	 * Create a new String object that will contain the representation of
 	 * a Bool value ("TRUE" "FALSE").
 	 * @param parm	The Bool value this string will represent.
 	 */
-	explicit String(Bool parm);
+	explicit String(Bool parm) OW_DEPRECATED;
 	/**
+	 * DEPRECATED in favor of Char16::toString() in 3.1.0.
 	 * Create a new String object that will contain the representation of
 	 * an Char16 object
 	 * @param parm	The Char16 object this string will represent.
 	 */
-	explicit String(const Char16& parm);
+	explicit String(const Char16& parm) OW_DEPRECATED;
 	/**
+	 * DEPRECATED in favor of CIMDateTime::toString() in 3.1.0.
 	 * Create a new String object that will contain the representation of
 	 * an CIMDateTime object
 	 * @param parm the CIMDateTime object this string will represent.
 	 */
-	explicit String(const CIMDateTime& parm);
+	explicit String(const CIMDateTime& parm) OW_DEPRECATED;
 	/**
+	 * DEPRECATED in favor of CIMObjectPath::toString() in 3.1.0.
 	 * Create a new String object that will contain the representation of
 	 * an CIMObjectPath object.
 	 * @param parm the CIMObject path object this string will represent.
 	 */
-	explicit String(const CIMObjectPath& parm);
+	explicit String(const CIMObjectPath& parm) OW_DEPRECATED;
 	enum ETakeOwnershipFlag
 	{
 		E_TAKE_OWNERSHIP
@@ -218,8 +223,8 @@ public:
 	int format(const char* fmt, ...);
 	enum EReturnDelimitersFlag
 	{
-		E_DISCARD_TOKENS, // deprecated
-		E_RETURN_TOKENS, // deprecated
+		E_DISCARD_TOKENS, // deprecated in 3.1.0
+		E_RETURN_TOKENS, // deprecated in 3.1.0
 		E_DISCARD_DELIMITERS,
 		E_RETURN_DELIMITERS
 	};
@@ -250,9 +255,10 @@ public:
 	 */
 	const char* c_str() const;
 	/**
+	 * DEPRECATED in favor of c_str() in 3.1.0.
 	 * @return A pointer to the underlying character buffer. Identical to c_str.
 	 */
-	const char* getBytes() const {  return c_str(); }
+	OW_DEPRECATED const char* getBytes() const  {  return c_str(); }
 	/**
 	 * Get the character at a specified index.
 	 * @param ndx	The index of the character to return within the char array.
@@ -593,10 +599,11 @@ public:
 	 */
 	String toString() const;
 	/**
+	 * DEPRECATED in favor of Char16::Char16(const String&) in 3.1.0.
 	 * @return the Char16 value for this String object.
 	 * @throws StringConversionException if the conversion is impossible.
 	 */
-	Char16 toChar16() const;
+	Char16 toChar16() const OW_DEPRECATED;
 	/**
 	 * @return The Real32 value of this String object.
 	 * @throws StringConversionException if the conversion is impossible.
@@ -654,10 +661,11 @@ public:
 	 */
 	Int64 toInt64(int base=10) const;
 	/**
+	 * DEPRECATED in favor of CIMDateTime::CIMDateTime(const String&) in 3.1.0.
 	 * @return The CIMDateTime value of this String object.
 	 * @throws CIMDateTimeException if the string is not a valid CIMDateTime.
 	 */
-	CIMDateTime toDateTime() const;
+	CIMDateTime toDateTime() const OW_DEPRECATED;
 	/**
 	 * Convert a null terminated string to an unsigned 64 bit value.
 	 * @param nptr A pointer to beginning of string to convert.
@@ -808,8 +816,8 @@ operator >= (const char* p, const String& s)
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::StringArray OW_StringArray OW_DEPRECATED;
-typedef OpenWBEM::StringConversionException OW_StringConversionException OW_DEPRECATED;
-typedef OpenWBEM::String OW_String OW_DEPRECATED;
+typedef OpenWBEM::StringArray OW_StringArray OW_DEPRECATED; // in 3.0.0
+typedef OpenWBEM::StringConversionException OW_StringConversionException OW_DEPRECATED; // in 3.0.0
+typedef OpenWBEM::String OW_String OW_DEPRECATED; // in 3.0.0
 
 #endif

@@ -955,10 +955,10 @@ CIMValue::CIMValueImpl::createSimpleValue(CIMDataType::Type type,
 			cimValue = CIMValueImpl(value.toReal64());
 			break;
 		case CIMDataType::CHAR16:
-			cimValue = CIMValueImpl(value.toChar16());
+			cimValue = CIMValueImpl(Char16(value));
 			break;
 		case CIMDataType::DATETIME:
-			cimValue = CIMValueImpl(value.toDateTime());
+			cimValue = CIMValueImpl(CIMDateTime(value));
 			break;
 		case CIMDataType::STRING:
 			cimValue = CIMValueImpl(value);
@@ -2114,7 +2114,32 @@ CIMValue::CIMValueImpl::get(CIMInstanceArray& arg) const
 }
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-String raToString(const T& ra, bool forMOF=false)
+static inline String toString(const T& x)
+{
+	return String(x);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+static inline String toString(const CIMObjectPath& x)
+{
+	return x.toString();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+static inline String toString(const Char16& x)
+{
+	return x.toString();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+static inline String toString(const CIMDateTime& x)
+{
+	return x.toString();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+template<class T>
+static String raToString(const T& ra, bool forMOF=false)
 {
 	StringBuffer out;
 	for(size_t i = 0; i < ra.size(); i++)
@@ -2124,12 +2149,12 @@ String raToString(const T& ra, bool forMOF=false)
 		if (forMOF)
 		{
 			out += '"';
-			out += ra[i];
+			out += toString(ra[i]);
 			out += '"';
 		}
 		else
 		{
-			out += ra[i];
+			out += toString(ra[i]);
 		}
 	}
 	return out.releaseString();

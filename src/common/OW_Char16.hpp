@@ -249,9 +249,13 @@ public:
 	bool operator!() const
 		{  return !m_value; }
 	/**
+	 * Deprecated in favor of toString()
+	 */
+	String toUTF8() const OW_DEPRECATED;
+	/**
 	 * Convert this to UTF8
 	 */
-	String toUTF8() const;
+	String toString() const;
 	/**
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.

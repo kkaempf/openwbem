@@ -542,7 +542,7 @@ static void raToXmlChar16(ostream& out, const Array<Char16>& ra)
 	for(size_t i = 0; i < ra.size(); i++)
 	{
 		out << "<VALUE>";
-		out << XMLEscape(ra[i].toUTF8());
+		out << XMLEscape(ra[i].toString());
 		out << "</VALUE>";
 	}
 	out << "</VALUE.ARRAY>";
@@ -765,7 +765,7 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 			{
 				Char16 a;
 				cv.get(a);
-				out << XMLEscape(a.toUTF8());
+				out << XMLEscape(a.toString());
 				break;
 			}
 			case CIMDataType::UINT16:

@@ -410,7 +410,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 			CIMDateTimeArray ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
-				ra[i] = strArray[i].toDateTime();
+				ra[i] = CIMDateTime(strArray[i]);
 			}
 			rcv = CIMValue(ra);
 			break;
@@ -420,7 +420,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 			Char16Array ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
-				ra[i] = strArray[i].toChar16();
+				ra[i] = Char16(strArray[i]);
 			}
 			rcv = CIMValue(ra);
 			break;
@@ -584,7 +584,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
-				rvra[i] = String(ra[i]);
+				rvra[i] = ra[i].toString();
 			}
 			break;
 		}

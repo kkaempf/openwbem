@@ -426,11 +426,11 @@ inline void StringToType(const String& s, Real64& b)
 }
 inline void StringToType(const String& s, Char16& b)
 {
-	b = s.toChar16();
+	b = Char16(s);
 }
 inline void StringToType(const String& s, CIMDateTime& b)
 {
-	b = s.toDateTime();
+	b = CIMDateTime(s);
 }
 } /* end anonymous namespace */
 

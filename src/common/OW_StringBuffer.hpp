@@ -89,7 +89,7 @@ public:
 	StringBuffer& operator += (char c)
 		{ return append(c); }
 	StringBuffer& operator += (Char16 c)
-		{ return append(c.toUTF8()); }
+		{ return append(c.toString()); }
 	StringBuffer& operator += (const char* str)
 		{ return append(str); }
 	StringBuffer& operator += (const String& arg)
@@ -105,8 +105,14 @@ public:
 	StringBuffer& operator += (Int64 v);
 	StringBuffer& operator += (Real32 v);
 	StringBuffer& operator += (Real64 v);
-	StringBuffer& operator += (const CIMDateTime& arg);
-	StringBuffer& operator += (const CIMObjectPath& arg);
+	/**
+	 * DEPRECATED in favor of CIMDateTime::toString() in 3.1.0.
+	 */
+	StringBuffer& operator += (const CIMDateTime& arg) OW_DEPRECATED;
+	/**
+	 * DEPRECATED in favor of CIMObjectPath::toString() in 3.1.0.
+	 */
+	StringBuffer& operator += (const CIMObjectPath& arg) OW_DEPRECATED;
 	StringBuffer& operator += (const StringBuffer& arg)
 	{
 		return append(arg);
@@ -172,6 +178,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::StringBuffer OW_StringBuffer OW_DEPRECATED;
+typedef OpenWBEM::StringBuffer OW_StringBuffer OW_DEPRECATED; // in 3.0.0
 
 #endif
