@@ -700,6 +700,8 @@ CIMClass::readObject(istream &istrm)
 void
 CIMClass::writeObject(ostream &ostrm) const
 {
+	// ATTENTION: There is a bad hack in MetaRepository::_getClassNameFromNode which relies on the format of a CIMClass.
+	// If you update/change this function, make sure you update it too!
 	CIMBase::writeSig(ostrm, OW_CIMCLASSSIG_V, VERSION);
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_parentClassName.writeObject(ostrm);

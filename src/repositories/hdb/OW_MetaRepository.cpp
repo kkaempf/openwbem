@@ -387,7 +387,7 @@ MetaRepository::_getClassNameFromNode(HDBNode& node)
 	DataIStream istrm(node.getDataLen(), node.getData());
 	// Not going to do this, it's too slow! cimObj.readObject(istrm);
 	// This is breaking abstraction, and may bite us later if CIMClass::readObject() ever changes..., but in some cases efficiency wins out.
-	CIMBase::readSig( istrm, OW_CIMCLASSSIG );
+	CIMBase::readSig( istrm, OW_CIMCLASSSIG, OW_CIMCLASSSIG_V );
 	name.readObject(istrm);
 	return name;
 }

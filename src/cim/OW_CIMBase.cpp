@@ -71,11 +71,10 @@ CIMBase::readSig(std::istream& istr, const char* const sig,
 	const char* const verSig)
 {
 	UInt32 version = 0;
-	char expected, ch;
+	char ch;
 	OW_ASSERT( strlen(sig) == 1);
 	OW_ASSERT( strlen(verSig) == 1);
 
-	expected = sig[0];
 	BinarySerialization::read(istr, &ch, sizeof(ch));
 	if(sig[0] != ch)
 	{
