@@ -319,7 +319,9 @@ namespace
 	protected:
 		virtual void doHandle(const OW_CIMObjectPath &cop)
 		{
+			ostr << "<OBJECTPATH>";
 			OW_CIMInstancePathtoXML(cop, ostr);
+			ostr << "</OBJECTPATH>";
 			checkStream(ostr);
 		}
 	private:
@@ -537,6 +539,7 @@ namespace
 						break;
 
 					case param::STRING:
+					case param::CLASSNAME:
 						params[i].val = OW_CIMValue("");
 						break;
 					
