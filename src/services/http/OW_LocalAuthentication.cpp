@@ -167,17 +167,6 @@ LocalAuthentication::authenticate(String& userName,
 			htcon->setErrorDetails("Invalid uid");
 			return false;
 		}
-		long pwnbufsize = -1;
-#ifdef _SC_GETPW_R_SIZE_MAX
-		pwnbufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
-#endif
-		if (pwnbufsize == -1)
-		{
-			pwnbufsize = 10000; // just a guess
-		}
-		AutoPtr<char> buf(new char[pwnbufsize]);
-		struct passwd pw;
-		struct passwd* ppw = 0;
 		
 		bool ok;
 		String uname(UserUtils::getUserName(uid, ok));
@@ -291,31 +280,31 @@ LocalAuthentication::generateNewCookieFile(const String& uid, String& cookieFile
 	authfd = ::mkstemp(tfname);
 	if (authfd == -1)
 	{
-		OW_THROW(LocalAuthenticationException,
-			Format("mkstemp failed: %1",
-				::strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(LocalAuthenticationException, "mkstemp failed");
 	}
 	cookieFileName = tfname;
 
 	//-- Change file permission on temp file to read/write for user only
 	if (::fchmod(authfd, 0400) == -1)
 	{
+		int lerrno = errno;
 		::close(authfd);
 		::unlink(tfname);
-		OW_THROW(LocalAuthenticationException,
+		errno = lerrno;
+		OW_THROW_ERRNO_MSG(LocalAuthenticationException,
 			Format("OWLocal Authenticate: Failed changing permissions on temp "
-				"file %1  error: %2", tfname, ::strerror(errno)).c_str());
+				"file %1", tfname).c_str());
 	}
 
 	//-- Change file so the user connecting is the owner
 	if (::fchown(authfd, userid, static_cast<gid_t>(-1)) == -1)
 	{
+		int lerrno = errno;
 		::close(authfd);
 		::unlink(tfname);
-		OW_THROW(LocalAuthenticationException,
-			Format("OWLocal Authenticate: Failed changing ownership on file "
-			"%1 to userid %2. Error = %3", tfname, userid,
-			::strerror(errno)).c_str());
+		errno = lerrno;
+		OW_THROW_ERRNO_MSG(LocalAuthenticationException,
+			Format("OWLocal Authenticate: Failed changing ownership on file %1 to userid %2", tfname, userid).c_str());
 	}
 
 	// Generate random number to put in file for client to read
@@ -334,9 +323,9 @@ LocalAuthentication::generateNewCookieFile(const String& uid, String& cookieFile
 		int lerrno = errno;
 		::close(authfd);
 		::unlink(tfname);
-		OW_THROW(LocalAuthenticationException,
-			Format("OWLocal Authenticate: Failed writing to temp file %1  "
-				"error: %2", tfname, ::strerror(lerrno)).c_str());
+		errno = lerrno;
+		OW_THROW_ERRNO_MSG(LocalAuthenticationException,
+			Format("OWLocal Authenticate: Failed writing to temp file %1", tfname).c_str());
 	}
 
 	::close(authfd);
