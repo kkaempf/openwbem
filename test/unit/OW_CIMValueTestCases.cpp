@@ -34,6 +34,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
+#include "OW_Format.hpp"
 
 void OW_CIMValueTestCases::setUp()
 {
@@ -72,6 +73,13 @@ void OW_CIMValueTestCases::testGetArraySize()
     unitAssert(v3 != v4);
 }
 
+void OW_CIMValueTestCases::testInserterOp()
+{
+	OW_CIMValue cv = OW_CIMValue(OW_String("String One"));
+	OW_String str = OW_Format("%1", cv);
+	unitAssert(str.equals("String One"));
+}
+
 Test* OW_CIMValueTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_CIMValue");
@@ -79,6 +87,9 @@ Test* OW_CIMValueTestCases::suite()
 	testSuite->addTest (new TestCaller <OW_CIMValueTestCases> 
 			("testGetArraySize", 
 			&OW_CIMValueTestCases::testGetArraySize));
+	testSuite->addTest (new TestCaller <OW_CIMValueTestCases> 
+			("testInserterOp", 
+			&OW_CIMValueTestCases::testInserterOp));
 
 	return testSuite;
 }

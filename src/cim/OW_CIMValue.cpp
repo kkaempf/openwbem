@@ -3022,10 +3022,12 @@ OW_CIMValue::~OW_CIMValue()
 /**
  *  * Inserter operator for OW_CIMValue
  *   */
+
 ostream& operator<<(std::ostream& ostr, const OW_CIMValue& cv)
 {
 	ostr << cv.toString();
 	return ostr;
 }
+
 
 

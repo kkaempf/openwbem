@@ -1,6 +1,8 @@
 noinst_LIBRARIES = libOW_cim.a
 
 libOW_cim_a_SOURCES = \
+OW_CIMValue.cpp \
+OW_CIMValueCast.cpp \
 OW_CIMBase.cpp \
 OW_CIMClass.cpp \
 OW_CIMDataType.cpp \
@@ -17,9 +19,7 @@ OW_CIMProperty.cpp \
 OW_CIMQualifier.cpp \
 OW_CIMQualifierType.cpp \
 OW_CIMScope.cpp \
-OW_CIMUrl.cpp \
-OW_CIMValue.cpp \
-OW_CIMValueCast.cpp
+OW_CIMUrl.cpp 
 
 pkginclude_HEADERS = \
 OW_CIM.hpp \
