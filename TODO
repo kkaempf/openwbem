@@ -37,6 +37,7 @@ Fix problems:
     - To prevent DNS attacks, set a limit on incoming data.
     - Fix uri handling to be consistent with the new spec (once it's done.  
       company review version has problems.)
+    - Add the version to the PACKAGE_PREFIX (for install paths, etc.)
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
