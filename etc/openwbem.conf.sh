@@ -75,10 +75,23 @@ owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthenti
 ;owcimomd.max_class_cache_size = 128
 
 ################################################################################
-# A space delimited list of system users who are allowed to acces the CIMOM
+# A space delimited list of system users who are allowed to access the CIMOM.
+# This option is only enforced by the pam authentication module, and has no
+# effect if you are not using http Basic authentication together with the
+# pam authentication module.
 # Set this value to * to allow all users to authenticate (for instance, if 
 # you choose to control access with ACLs instead). 
-pam.allowed_users = root
+# This option is DEPRICATED.  Use owcimomd.allowed_users instead.
+;pam.allowed_users = root
+
+################################################################################
+# A space delimited list of system users who are allowed to acces the CIMOM
+# The special value * to allow all users to authenticate (for instance, if 
+# you choose to control access with ACLs instead). 
+# This option is enforced for all authentication methods. If 
+# owcimomd.allow_anonymous = true, it is not enforced.
+# The default is *
+owcimomd.allowed_users = root
 
 ################################################################################
 # If the simple authentication module is used, this needs to be the path to
@@ -135,7 +148,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # (SIGSEGV, SIGBUS, SIGILL, SIGFPE or SIGABRT) which may be caused by faulty
 # code, then it will restart itself.  Note that this feature is disabled if
 # the cimom is built in debug mode (OW_DEBUG is defined).
-# This feature help to keep the cimom running in the case a buggy provider
+# This feature helps to keep the cimom running in the case a buggy provider
 # (or the cimom itself) causes a fatal signal.
 # The default is true
 ;owcimomd.restart_on_error = true

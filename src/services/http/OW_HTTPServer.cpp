@@ -66,6 +66,7 @@ OW_DEFINE_EXCEPTION_WITH_ID(HTTPServer)
 //////////////////////////////////////////////////////////////////////////////
 HTTPServer::HTTPServer()
 	: m_upipe(UnnamedPipe::createUnnamedPipe())
+	, m_allowAllUsers(false)
 {
 	m_upipe->setBlocking(UnnamedPipe::E_NONBLOCKING);
 }
@@ -73,6 +74,14 @@ HTTPServer::HTTPServer()
 HTTPServer::~HTTPServer()
 {
 }
+
+
+//////////////////////////////////////////////////////////////////////////////
+bool HTTPServer::isAllowedUser(const String& user) const
+{
+	return m_allowedUsers.count(user) != 0 || m_allowAllUsers;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 bool
 HTTPServer::authenticate(HTTPSvrConnection* pconn,
@@ -84,7 +93,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	if (m_options.allowLocalAuthentication && info.startsWith("OWLocal"))
 	{
 		getEnvironment()->getLogger()->logDebug("HTTPServer::authenticate: processing OWLocal");
-		bool rv = m_localAuthentication->authenticate(userName, info, pconn);
+		bool rv = m_localAuthentication->authenticate(userName, info, pconn) && isAllowedUser(userName);
 		if (rv)
 		{
 			getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
@@ -99,7 +108,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	{
 #ifndef OW_DISABLE_DIGEST
 		getEnvironment()->getLogger()->logDebug("HTTPServer::authenticate: processing Digest");
-		bool rv = m_digestAuthentication->authenticate(userName, info, pconn);
+		bool rv = m_digestAuthentication->authenticate(userName, info, pconn) && isAllowedUser(userName);
 		if (rv)
 		{
 			getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
@@ -130,18 +139,18 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			return false;
 		}
 		String details;
-		if (!m_options.env->authenticate(userName, password, details, context))
+		bool rv = m_options.env->authenticate(userName, password, details, context) && isAllowedUser(userName);
+		if (!rv)
 		{
 			pconn->setErrorDetails(details);
 			pconn->addHeader("WWW-Authenticate", authChallenge); 
 			getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: failed: %1", details));
-			return false;
 		}
 		else
 		{
 			getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
-			return true;
 		}
+		return rv;
 	}
 
 	// We don't handle whatever they sent, so send the default challenge
@@ -245,6 +254,18 @@ HTTPServer::setServiceEnvironment(ServiceEnvironmentIFCRef env)
 		
 		item = env->getConfigItem(ConfigOpts::HTTP_TIMEOUT_opt, OW_DEFAULT_HTTP_TIMEOUT);
 		m_options.timeout = item.toInt32();
+
+		item = env->getConfigItem(ConfigOpts::ALLOWED_USERS_opt, OW_DEFAULT_ALLOWED_USERS);
+		if (item == "*")
+		{
+			m_allowAllUsers = true;
+		}
+		else
+		{
+			m_allowAllUsers = false;
+			StringArray users = item.tokenize();
+			m_allowedUsers.insert(users.begin(), users.end());
+		}
 	}
 	catch (const StringConversionException& e)
 	{

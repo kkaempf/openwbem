@@ -42,6 +42,8 @@
 #include "OW_URL.hpp"
 #include "OW_ThreadPool.hpp"
 #include "OW_Exception.hpp"
+#include "OW_SortedVectorSet.hpp"
+
 #include <ctime>
 
 namespace OpenWBEM
@@ -114,6 +116,8 @@ public:
 private:
 	bool authenticate(HTTPSvrConnection* pconn,
 		String& userName, const String& info, OperationContext& context);
+	bool isAllowedUser(const String& user) const;
+
 	Mutex m_guard;
 	Options m_options;
 	Reference<UnnamedPipe> m_upipe;
@@ -127,6 +131,9 @@ private:
 	Reference<LocalAuthentication> m_localAuthentication;
 	Mutex m_authGuard;
 	ThreadPoolRef m_threadPool;
+	SortedVectorSet<String> m_allowedUsers;
+	bool m_allowAllUsers;
+
 	friend class HTTPSvrConnection;
 	friend class HTTPListener;
 	friend class IPCConnectionHandler;

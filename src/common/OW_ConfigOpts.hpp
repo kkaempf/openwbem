@@ -166,11 +166,16 @@
 #ifndef OW_DEFAULT_REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL
 #define OW_DEFAULT_REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL "5"
 #endif
+#ifndef OW_DEFAULT_ALLOWED_USERS
+#define OW_DEFAULT_ALLOWED_USERS "*"
+#endif
 
 namespace OpenWBEM
 {
 namespace ConfigOpts
 {
+	// naming rule: if the option begins with owcimomd, name is just all caps w/out owcimomd and _opt.
+	// If the options begins with something else, it must be part of the all caps name.
 	static const char* const DEBUG_opt = "owcimomd.debugflag";
 	static const char* const CONFIG_FILE_opt = "owcimomd.config_file";
 	static const char* const LOG_LOCATION_opt = "owcimomd.log_location";
@@ -195,8 +200,6 @@ namespace ConfigOpts
 	static const char* const SLP_ENABLE_ADVERTISEMENT_opt = "slp.enable_advertisement";
 	static const char* const USE_UDS_opt = "http_server.use_UDS";
 	static const char* const NPIIFC_PROV_LOC_opt = "npiprovifc.prov_location";
-	static const char* const SERVICE_LIB_PATH_opt = "daemon.service_lib_path";
-	static const char* const REQUEST_HANDLER_LIB_PATH_opt = "daemon.request_handler_lib_path";
 	static const char* const SINGLE_THREAD_opt = "http_server.single_thread";
 	static const char* const HTTP_PORT_opt = "http_server.http_port";
 	static const char* const HTTPS_PORT_opt = "http_server.https_port";
@@ -226,6 +229,7 @@ namespace ConfigOpts
 	static const char* const UDS_FILENAME_opt = "http_server.uds_filename";
 	static const char* const HTTP_ALLOW_LOCAL_AUTHENTICATION_opt = "http_server.allow_local_authentication";
 	static const char* const REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL_opt = "remoteprovifc.max_connections_per_url";
+	static const char* const ALLOWED_USERS_opt = "owcimomd.allowed_users";
 
 } // end namespace ConfigOpts
 } // end namespace OpenWBEM
