@@ -1106,7 +1106,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		hdl->enumQualifierTypes(OW_CIMObjectPath("foo", "badNamespace"));
+		hdl->enumQualifierTypesE(OW_CIMObjectPath("foo", "badNamespace"));
 		assert(0);
 	}
 	catch (const OW_CIMException& e)

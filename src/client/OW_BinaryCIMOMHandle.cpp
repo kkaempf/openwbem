@@ -153,9 +153,9 @@ readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMQualifierType& arg)
 	arg = OW_BinIfcIO::readQual(*istr);
 }
 static inline void
-readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMQualifierTypeEnumeration& arg)
+readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMQualifierTypeResultHandlerIFC& result)
 {
-	arg = OW_BinIfcIO::readQualifierTypeEnum(*istr);
+	OW_BinIfcIO::readQualifierTypeEnum(*istr, result);
 }
 
 template<class T>
@@ -344,8 +344,9 @@ OW_BinaryCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierTypeEnumeration
-OW_BinaryCIMOMHandle::enumQualifierTypes(const OW_CIMObjectPath& path)
+void
+OW_BinaryCIMOMHandle::enumQualifierTypes(const OW_CIMObjectPath& path,
+	OW_CIMQualifierTypeResultHandlerIFC& result)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateQualifiers", path.getNameSpace());;
@@ -355,7 +356,7 @@ OW_BinaryCIMOMHandle::enumQualifierTypes(const OW_CIMObjectPath& path)
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "EnumerateQualifiers", path.getNameSpace());
 
-	return readCIMObject<OW_CIMQualifierTypeEnumeration>(in);
+	readAndDeliver(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -549,14 +549,14 @@ OW_CIMXMLCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierTypeEnumeration
-OW_CIMXMLCIMOMHandle::enumQualifierTypes(const OW_CIMObjectPath& path)
+void
+OW_CIMXMLCIMOMHandle::enumQualifierTypes(const OW_CIMObjectPath& path,
+		OW_CIMQualifierTypeResultHandlerIFC& result)
 {
 	static const char* const commandName = "EnumerateQualifiers";
 	OW_String qualName = path.getObjectName();
 
 	OW_XMLNode node = intrinsicMethod(path, commandName);
-	OW_CIMQualifierTypeEnumeration retVal;
 
 	node = node.getChild();
 	while (node)
@@ -567,9 +567,8 @@ OW_CIMXMLCIMOMHandle::enumQualifierTypes(const OW_CIMObjectPath& path)
 		}
 		OW_CIMQualifierType cqt(OW_Bool(true));
 		node = processQualifierDecl(node, cqt);
-		retVal.addElement(cqt);
+		result.handleQualifierType(cqt);
 	}
-	return retVal;
 }
 
 //////////////////////////////////////////////////////////////////////////////

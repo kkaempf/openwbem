@@ -101,9 +101,10 @@ OW_WQLFilterRep::setQualifierType(const OW_CIMObjectPath &/*name*/,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierTypeEnumeration
+void
 OW_WQLFilterRep::enumQualifierTypes(
-	const OW_CIMObjectPath &/*path*/, const OW_ACLInfo& /*aclInfo*/)
+	const OW_CIMObjectPath &/*path*/,
+	OW_CIMQualifierTypeResultHandlerIFC&, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");

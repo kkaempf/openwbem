@@ -86,5 +86,18 @@ protected:
 
 };
 
+class OW_CIMQualifierTypeResultHandlerIFC
+{
+public:
+	void handleQualifierType(const OW_CIMQualifierType& s)
+	{
+		doHandleQualifierType(s);
+	}
+
+protected:
+	virtual void doHandleQualifierType(const OW_CIMQualifierType& qt) = 0;
+
+};
+
 #endif
 

@@ -163,8 +163,9 @@ public:
 	 * @return 	An Enumeration of OW_CIMQualifierTypes
 	 *				(OW_CIMQualifierEnumeration)
 	 */
-	virtual OW_CIMQualifierTypeEnumeration enumQualifierTypes(
-		const OW_CIMObjectPath& path);
+	virtual void enumQualifierTypes(
+		const OW_CIMObjectPath& path,
+		OW_CIMQualifierTypeResultHandlerIFC& result);
 
 	/**
 	 * Gets the CIM instance for the specified CIM object path.

@@ -76,10 +76,11 @@ public:
 		return m_ref->enumNameSpace(ns, result, deep, aclInfo);
 	}
 
-	virtual OW_CIMQualifierTypeEnumeration enumQualifierTypes(
-		const OW_CIMObjectPath &path, const OW_ACLInfo &aclInfo)
+	virtual void enumQualifierTypes(
+		const OW_CIMObjectPath &path,
+		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->enumQualifierTypes(path, aclInfo);
+		return m_ref->enumQualifierTypes(path, result, aclInfo);
 	}
 
 	virtual void deleteQualifierType(const OW_CIMObjectPath &objPath,

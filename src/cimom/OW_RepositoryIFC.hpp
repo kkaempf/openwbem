@@ -116,8 +116,10 @@ public:
 	 * @return An enumeration of OW_CIMQualifierTypes
 	 * @exception	OW_CIMException
 	 */
-	virtual OW_CIMQualifierTypeEnumeration enumQualifierTypes(
-		const OW_CIMObjectPath& path, const OW_ACLInfo& aclInfo) = 0;
+	virtual void enumQualifierTypes(
+		const OW_CIMObjectPath& path,
+		OW_CIMQualifierTypeResultHandlerIFC& result,
+		const OW_ACLInfo& aclInfo) = 0;
 
 	/**
 	 * Delete an existing qualifier type from the repository

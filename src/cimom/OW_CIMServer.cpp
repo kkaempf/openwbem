@@ -479,14 +479,15 @@ OW_CIMServer::getQualifierType(const OW_CIMObjectPath& objPath,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierTypeEnumeration
+void
 OW_CIMServer::enumQualifierTypes(const OW_CIMObjectPath& path,
+	OW_CIMQualifierTypeResultHandlerIFC& result,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get a qualifier
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEQUALIFIERS, path, aclInfo);
 
-	return m_mStore.enumQualifierTypes(path.getNameSpace());
+	m_mStore.enumQualifierTypes(path.getNameSpace(), result);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -184,11 +184,12 @@ OW_LocalCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierTypeEnumeration
-OW_LocalCIMOMHandle::enumQualifierTypes(const OW_CIMObjectPath& path)
+void
+OW_LocalCIMOMHandle::enumQualifierTypes(const OW_CIMObjectPath& path,
+	OW_CIMQualifierTypeResultHandlerIFC& result)
 {
 	OW_ReadLock rl = getReadLock();
-	return m_pServer->enumQualifierTypes(path, m_aclInfo);
+	m_pServer->enumQualifierTypes(path, result, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -140,8 +140,9 @@ public:
 	 * @exception OW_CIMException	If the specified OW_CIMObjectPath cannot be
 	 *										found
 	 */
-	virtual OW_CIMQualifierTypeEnumeration enumQualifierTypes(const
-		OW_CIMObjectPath &path);
+	virtual void enumQualifierTypes(const
+		OW_CIMObjectPath &path,
+		OW_CIMQualifierTypeResultHandlerIFC& result);
 
 	/**
 	 * Gets the CIM instance for the specified CIM object path.

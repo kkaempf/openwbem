@@ -36,6 +36,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMClassEnumeration.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
+#include "OW_CIMQualifierEnumeration.hpp"
 
 const OW_Bool OW_CIMOMHandleIFC::DEEP(true);
 const OW_Bool OW_CIMOMHandleIFC::SHALLOW(false);
@@ -115,6 +116,20 @@ namespace
 	private:
 		OW_CIMInstanceEnumeration& m_e;
 	};
+	
+	class CIMQualifierTypeEnumBuilder : public OW_CIMQualifierTypeResultHandlerIFC
+	{
+	public:
+		CIMQualifierTypeEnumBuilder(OW_CIMQualifierTypeEnumeration& e) : m_e(e) {}
+	protected:
+		virtual void doHandleQualifierType(const OW_CIMQualifierType &qt)
+		{
+			m_e.addElement(qt);
+		}
+	private:
+		OW_CIMQualifierTypeEnumeration& m_e;
+	};
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -175,6 +190,17 @@ OW_CIMOMHandleIFC::enumInstanceNamesE(
 	OW_CIMObjectPathEnumeration rval;
 	CIMObjectPathEnumBuilder handler(rval);
 	enumInstanceNames(path, handler, deep);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMQualifierTypeEnumeration
+OW_CIMOMHandleIFC::enumQualifierTypesE(
+		const OW_CIMObjectPath& path)
+{
+	OW_CIMQualifierTypeEnumeration rval;
+	CIMQualifierTypeEnumBuilder handler(rval);
+	enumQualifierTypes(path, handler);
 	return rval;
 }
 

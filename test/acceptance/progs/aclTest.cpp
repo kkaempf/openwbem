@@ -413,7 +413,7 @@ void enumerateQualifiers(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_String theClass = "EXP_BionicComputerSystem";
 		OW_CIMObjectPath cop(theClass, "/root/acltest");
-		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypes(cop);
+		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypesE(cop);
 		if (mode != "r" && mode != "rw")
 			assert(0);
 	}

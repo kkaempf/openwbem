@@ -254,12 +254,12 @@ OW_MetaRepository::_makeClassPath(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierTypeEnumeration
-OW_MetaRepository::enumQualifierTypes(const OW_String& ns)
+void
+OW_MetaRepository::enumQualifierTypes(const OW_String& ns,
+	OW_CIMQualifierTypeResultHandlerIFC& result)
 {
 	throwIfNotOpen();
 
-	OW_CIMQualifierTypeEnumeration qen;
 	OW_String nskey = _makeQualPath(ns, OW_String());
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node = hdl->getNode(nskey);
@@ -281,11 +281,10 @@ OW_MetaRepository::enumQualifierTypes(const OW_String& ns)
 		{
 			OW_CIMQualifierType qual;
 			nodeToCIMObject(qual, node);
-			qen.addElement(qual);
+			result.handleQualifierType(qual);
 		}
 		node = hdl->getNextSibling(node);
 	}
-	return qen;
 }
 
 //////////////////////////////////////////////////////////////////////////////

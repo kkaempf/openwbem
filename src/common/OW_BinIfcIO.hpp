@@ -114,7 +114,7 @@ public:
 	static OW_CIMInstanceEnumeration readInstanceEnum(std::istream& istrm); // TODO: remove me
 	static void readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result);
 
-	static OW_CIMQualifierTypeEnumeration readQualifierTypeEnum(std::istream& istrm);
+	static void readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResultHandlerIFC& result);
 
 
 };
@@ -174,6 +174,7 @@ const OW_Int32 OW_BINSIG_INSTARRAY =	0xa000000f;
 const OW_Int32 OW_END_CLSENUM =			0x00001001;
 const OW_Int32 OW_END_OPENUM =			0x00001002;
 const OW_Int32 OW_END_INSTENUM =		0x00001003;
+const OW_Int32 OW_END_QUALENUM =		0x00001004;
 
 #endif	// OW_BINIFCIO_HPP_
 

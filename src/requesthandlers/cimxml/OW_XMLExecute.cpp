@@ -905,18 +905,31 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class CIMQualifierTypeXMLOutputter : public OW_CIMQualifierTypeResultHandlerIFC
+	{
+	public:
+		CIMQualifierTypeXMLOutputter(
+			std::ostream& ostr_)
+		: ostr(ostr_)
+		{}
+	protected:
+		virtual void doHandleQualifierType(const OW_CIMQualifierType &i)
+		{
+			OW_CIMtoXML(i, ostr);
+		}
+		std::ostream& ostr;
+	};
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_XMLNode& /*node*/,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypes(path);
-	while (enu.hasMoreElements())
-	{
-		OW_CIMQualifierType qual = enu.nextElement();
-		OW_CIMtoXML(qual, ostr);
-
-	}
-	return;
+	CIMQualifierTypeXMLOutputter handler(ostr);
+	hdl.enumQualifierTypes(path, handler);
 }
 
 

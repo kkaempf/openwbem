@@ -617,7 +617,7 @@ enumerateQualifiers(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMObjectPath cop("", "root");
-		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypes(cop);
+		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypesE(cop);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMQualifierType cqt = enu.nextElement();

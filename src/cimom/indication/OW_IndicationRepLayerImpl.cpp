@@ -203,11 +203,12 @@ OW_IndicationRepLayerImpl::enumInstanceNames(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierTypeEnumeration
+void
 OW_IndicationRepLayerImpl::enumQualifierTypes(const OW_CIMObjectPath& path,
+	OW_CIMQualifierTypeResultHandlerIFC& result,
 	const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->enumQualifierTypes(path, aclInfo);
+	m_pServer->enumQualifierTypes(path, result, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -434,6 +434,22 @@ namespace
 	private:
 		std::ostream& ostrm;
 	};
+
+	class BinaryCIMQualifierTypeWriter : public OW_CIMQualifierTypeResultHandlerIFC
+	{
+	public:
+		BinaryCIMQualifierTypeWriter(std::ostream& ostrm_)
+		: ostrm(ostrm_)
+		{}
+	protected:
+		virtual void doHandleQualifierType(const OW_CIMQualifierType &cqt)
+		{
+			OW_BinIfcIO::writeQual(ostrm, cqt);
+		}
+	private:
+		std::ostream& ostrm;
+	};
+
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -699,29 +715,14 @@ OW_BinaryRequestHandler::enumQualifiers(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
-	OW_CIMQualifierTypeEnumeration en = chdl->enumQualifierTypes(op);
+
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 	OW_BinIfcIO::write(ostrm, OW_BINSIG_QUALENUM);
+	BinaryCIMQualifierTypeWriter handler(ostrm);
+	chdl->enumQualifierTypes(op, handler);
 
-	OW_Bool enumWritten = false;
-	if(en.usingTempFile() && m_userId != OW_UserId(-1))
-	{
-		OW_String tfileName = en.releaseFile();
-		if(!(enumWritten = writeFileName(ostrm, tfileName)))
-		{
-			en = OW_CIMQualifierTypeEnumeration(tfileName);
-		}
-	}
-
-	if(!enumWritten)
-	{
-		OW_BinIfcIO::write(ostrm, OW_Int32(en.numberOfElements()));
-
-		while(en.hasMoreElements())
-		{
-			OW_BinIfcIO::writeQual(ostrm, en.nextElement());
-		}
-	}
+	OW_BinIfcIO::write(ostrm, OW_END_QUALENUM);
+	OW_BinIfcIO::write(ostrm, OW_END_QUALENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -75,8 +75,9 @@ public:
 	virtual OW_CIMInstance deleteInstance(const OW_CIMObjectPath &path,
 		const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMQualifierTypeEnumeration enumQualifierTypes(const
-		OW_CIMObjectPath &path, const OW_ACLInfo& aclInfo);
+	virtual void enumQualifierTypes(const
+		OW_CIMObjectPath &path,
+		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_ACLInfo& aclInfo);
 
 	virtual OW_CIMInstance getInstance(const OW_CIMObjectPath& cop,
 		OW_Bool localOnly, OW_Bool includeQualifiers,

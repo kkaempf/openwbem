@@ -170,7 +170,8 @@ public:
 	 * @param ns	The namespace to get the qualifiers from
 	 * @return An enumeration of the qualifier types in the namespace.
 	 */
-	OW_CIMQualifierTypeEnumeration enumQualifierTypes(const OW_String& ns);
+	void enumQualifierTypes(const OW_String& ns,
+		OW_CIMQualifierTypeResultHandlerIFC& result);
 
 	/**
 	 * Gets the children of a class
