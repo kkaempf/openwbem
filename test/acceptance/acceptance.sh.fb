@@ -978,6 +978,12 @@ TestMof()
 	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:owipc/ -e owbinary -n /root/testsuite \
 		$TOPSRCDIR/test/acceptance/testfiles/wqlTest.mof || \
 		ExitWithFail "MOF compiler test: MOF compiler exited with error"
+	mkdir $STAGEDIR/owmofc_test
+	$STAGEDIR/$OWBINDIR/owmofc -d $STAGEDIR/owmofc_test \
+		-c -n /root/testsuite \
+		$TOPSRCDIR/schemas/cim28/CIM_Core28.mof || \
+		ExitWithFail "MOF compiler test: owmofc -d exited with error."
+	rm -r $STAGEDIR/owmofc_test
 }
 
 #############################################################################
