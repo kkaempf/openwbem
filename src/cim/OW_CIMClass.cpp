@@ -81,6 +81,15 @@ bool operator<(const CIMClass::CLSData& x, const CIMClass::CLSData& y)
 		x.m_methods, y.m_methods);
 }
 //////////////////////////////////////////////////////////////////////////////
+bool operator==(const CIMClass::CLSData& x, const CIMClass::CLSData& y)
+{
+	return x.m_name == y.m_name && 
+		x.m_parentClassName == y.m_parentClassName &&
+		x.m_qualifiers == y.m_qualifiers &&
+		x.m_properties == y.m_properties &&
+		x.m_methods == y.m_methods;
+}
+//////////////////////////////////////////////////////////////////////////////
 CIMClass::CIMClass() :
 	m_pdata(new CLSData)
 {
@@ -828,6 +837,11 @@ CIMClass::getName() const
 bool operator<(const CIMClass& x, const CIMClass& y)
 {
 	return *x.m_pdata < *y.m_pdata;
+}
+//////////////////////////////////////////////////////////////////////////////
+bool operator==(const CIMClass& x, const CIMClass& y)
+{
+	return *x.m_pdata == *y.m_pdata;
 }
 //////////////////////////////////////////////////////////////////////////////
 const char* const CIMClass::NAMESPACECLASS = "__Namespace";

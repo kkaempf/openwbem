@@ -426,6 +426,7 @@ private:
 #endif
 
 	friend bool operator<(const CIMClass& x, const CIMClass& y);
+	friend bool operator==(const CIMClass& x, const CIMClass& y);
 };
 
 } // end namespace OpenWBEM
