@@ -49,6 +49,7 @@
 #include "OW_ExceptionIds.hpp"
 
 #include <string.h> // for strlen
+#include <algorithm> // for std::lower_bound
 
 namespace OW_NAMESPACE
 {
