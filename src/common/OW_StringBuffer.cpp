@@ -250,7 +250,7 @@ StringBuffer::operator += (Real32 v)
 	::snprintf(bfr, sizeof(bfr), "%.*g", DBL_MANT_DIG * 3 / 10 + 1, v);
 #endif
 #else
-#error "The formula for computer the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"
+#error "The formula for computing the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"
 #endif
 	return append(bfr);
 }
@@ -266,7 +266,7 @@ StringBuffer::operator += (Real64 v)
 	::snprintf(bfr, sizeof(bfr), "%.*Lg", LDBL_MANT_DIG * 3 / 10 + 1, v);
 #endif
 #else
-#error "The formula for computer the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"
+#error "The formula for computing the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"
 #endif
 	return append(bfr);
 }

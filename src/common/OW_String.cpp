@@ -249,7 +249,7 @@ String::String(Real32 val) :
 	::snprintf(tmpbuf, sizeof(tmpbuf), "%.*g", DBL_MANT_DIG * 3 / 10 + 1, val);
 #endif
 #else
-#error "The formula for computer the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"
+#error "The formula for computing the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"
 #endif
 	m_buf = new ByteBuf(tmpbuf);
 }
@@ -265,7 +265,7 @@ String::String(Real64 val) :
 	::snprintf(tmpbuf, sizeof(tmpbuf), "%.*Lg", LDBL_MANT_DIG * 3 / 10 + 1, val);
 #endif
 #else
-#error "The formula for computer the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"
+#error "The formula for computing the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"
 #endif
 	m_buf = new ByteBuf(tmpbuf);
 }
