@@ -32,6 +32,8 @@ else
 
 clean-local:
 
+EXTRA_DIST = OW_SLPProvider.cpp
+
 endif
 
 
