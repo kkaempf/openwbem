@@ -17,7 +17,8 @@ wqlTest1 \
 wqlTest2 \
 CIMOMLocator \
 fakeclient \
-infiniteClient
+infiniteClient \
+hammerClient
 
 
 
@@ -204,6 +205,21 @@ $(CXXBINLINKFLAGS) \
 testMisc_SOURCES = \
 testMisc.cpp
 
+#hammerClient
+hammerClient_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/xml -lowxml
+
+hammerClient_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o hammerClient
+
+hammerClient_SOURCES = \
+hammerClient.cpp
+
 INCLUDES = \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/common \
@@ -218,4 +234,3 @@ INCLUDES = \
 -I$(top_srcdir)/src/wql \
 -I$(top_srcdir)/src/wql/common
 
-AM_CXXFLAGS=-ftemplate-depth-25
