@@ -108,7 +108,7 @@ private:
 		IndicationProviderInfoArray& ind);
 	ProviderMap m_provs;
 	Mutex m_guard;
-	LoadedProviderArray m_noidProviders;
+	LoadedProviderArray m_noUnloadProviders;
 	bool m_loadDone;
 };
 typedef SharedLibraryReference< Reference<CppProviderIFC> > CppProviderIFCRef;

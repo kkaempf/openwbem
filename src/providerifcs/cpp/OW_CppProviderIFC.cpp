@@ -50,7 +50,7 @@ CppProviderIFC::CppProviderIFC()
 	: ProviderIFCBaseIFC()
 	, m_provs()
 	, m_guard()
-	, m_noidProviders()
+	, m_noUnloadProviders()
 	, m_loadDone(false)
 {
 }
@@ -68,12 +68,12 @@ CppProviderIFC::~CppProviderIFC()
 	
 		m_provs.clear();
 	
-		for(size_t i = 0; i < m_noidProviders.size(); i++)
+		for(size_t i = 0; i < m_noUnloadProviders.size(); i++)
 		{
-			m_noidProviders[i].setNull();
+			m_noUnloadProviders[i].setNull();
 		}
 	
-		m_noidProviders.clear();
+		m_noUnloadProviders.clear();
 	}
 	catch (...)
 	{
@@ -124,9 +124,9 @@ IndicationExportProviderIFCRefArray
 CppProviderIFC::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef&)
 {
 	IndicationExportProviderIFCRefArray rvra;
-	for(size_t i = 0; i < m_noidProviders.size(); i++)
+	for(size_t i = 0; i < m_noUnloadProviders.size(); i++)
 	{
-		CppProviderBaseIFCRef pProv = m_noidProviders[i];
+		CppProviderBaseIFCRef pProv = m_noUnloadProviders[i];
 		CppIndicationExportProviderIFC* pIEP =
 			pProv->getIndicationExportProvider();
 		if(pIEP)
@@ -145,9 +145,9 @@ PolledProviderIFCRefArray
 CppProviderIFC::doGetPolledProviders(const ProviderEnvironmentIFCRef&)
 {
 	PolledProviderIFCRefArray rvra;
-	for(size_t i = 0; i < m_noidProviders.size(); i++)
+	for(size_t i = 0; i < m_noUnloadProviders.size(); i++)
 	{
-		CppProviderBaseIFCRef pProv = m_noidProviders[i];
+		CppProviderBaseIFCRef pProv = m_noUnloadProviders[i];
 		CppPolledProviderIFC* pPP = pProv->getPolledProvider();
 		if(pPP)
 		{
@@ -304,14 +304,49 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			// try and load it as an id provider
 			String providerid = dirEntries[i];
 			// chop off lib and .so
-			providerid = providerid.substring(3, providerid.length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
-			CppProviderBaseIFCRef p = getProvider(env,providerid.c_str(),
+			providerid = providerid.substring(3,
+				providerid.length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
+
+			CppProviderBaseIFCRef p = getProvider(env, providerid.c_str(),
 				dontStoreProvider, dontInitializeProvider);
+
 			if (!p)
 			{
-				env->getLogger()->logDebug(format("C++ provider ifc: Libary %1 does not load", libName));
+				env->getLogger()->logDebug(format("C++ provider ifc: Libary %1"
+					" does not load", libName));
 				continue;
 			}
+
+			// The named provider may also be an indication export or a
+			// polled provider. If so, we'll store a reference to it in
+			// the m_noUnloadProviders and we'll skip unload processing on
+			// it when doUnloadProviders is called. We'll skip this
+			// processing by checking the persist flag on the provider.
+			CppPolledProviderIFC* p_polledProv = p->getPolledProvider();
+			CppIndicationExportProviderIFC* p_indExpProv =
+				p->getIndicationExportProvider();
+			if(p_polledProv || p_indExpProv)
+			{
+				if(p_indExpProv)
+				{
+					env->getLogger()->logDebug(format("C++ provider ifc loaded"
+						" indication export provider from lib: %1 -"
+						" initializing", libName));
+				}
+
+				if(p_polledProv)
+				{
+					env->getLogger()->logDebug(format("C++ provider ifc loaded"
+						" polled provider from lib: %1 - initializing",
+						libName));
+				}
+				
+				p->initialize(env);
+				p->setPersist(true);
+				m_noUnloadProviders.append(p);
+				m_provs[providerid] = p;
+			}
+
 			CppInstanceProviderIFC* p_ip = p->getInstanceProvider();
 			if (p_ip)
 			{
@@ -346,8 +381,13 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				p_indp->getIndicationProviderInfo(info);
 				indicationProviderInfo.push_back(info);
 			}
+
 			continue;
 		}
+
+		// If we reach this point, the NO_ID provider factory was used. This
+		// means that the provider doesn't have an identifier (i.e. doesn't
+		// do instance, methods, associators and such.
 		CppProviderBaseIFC* pProv = (*createProvider)();
 		if(!pProv)
 		{
@@ -373,7 +413,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 					"lib: %1 - initializing", libName));
 			}
 			pProv->initialize(env);
-			m_noidProviders.append(CppProviderBaseIFCRef(theLib, pProv));
+			m_noUnloadProviders.append(CppProviderBaseIFCRef(theLib, pProv));
 		}
 		else
 		{
@@ -486,18 +526,21 @@ CppProviderIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 	for (ProviderMap::iterator iter = m_provs.begin();
 		  iter != m_provs.end();)
 	{
-		DateTime provDt = iter->second->getLastAccessTime();
-		provDt.addMinutes(iTimeWindow);
-		if (provDt < dt && iter->second->canUnload())
+		// If this is not a persistent provider, see if we can unload it.
+		if(!iter->second->getPersist())
 		{
-			env->getLogger()->logInfo(format("Unloading Provider %1", iter->first));
-			iter->second.setNull();
-			m_provs.erase(iter++);
+			DateTime provDt = iter->second->getLastAccessTime();
+			provDt.addMinutes(iTimeWindow);
+			if (provDt < dt && iter->second->canUnload())
+			{
+				env->getLogger()->logInfo(format("Unloading Provider %1",
+					iter->first));
+				iter->second.setNull();
+				m_provs.erase(iter);
+			}
 		}
-		else
-		{
-			++iter;
-		}
+
+		++iter;
 	}
 }
 // TODO: Move these into their own files.

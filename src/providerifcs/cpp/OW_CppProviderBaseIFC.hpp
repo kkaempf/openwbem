@@ -57,6 +57,12 @@ class CppIndicationProviderIFC;
 class CppProviderBaseIFC
 {
 public:
+
+	CppProviderBaseIFC() : m_dt(0), m_persist(false) {}
+
+	CppProviderBaseIFC(const CppProviderBaseIFC& arg)
+		: m_dt(arg.m_dt), m_persist(arg.m_persist) {}
+
 	virtual ~CppProviderBaseIFC();
 	/**
 	 * Called by the CIMOM when the provider is initialized
@@ -82,9 +88,14 @@ public:
 	void updateAccessTime();
 	
 	virtual bool canUnload() { return true; }
+
+	bool getPersist() const { return m_persist; }
+	void setPersist(bool persist=true) { m_persist = persist; }
+
 protected:
 private:
 	DateTime m_dt;
+	bool m_persist;
 };
 
 typedef SharedLibraryReference< Reference<CppProviderBaseIFC> > CppProviderBaseIFCRef;
