@@ -343,13 +343,13 @@ OW_AssocDbHandle::addOrDeleteEntries(const OW_String& ns, const OW_CIMClass& ass
 					if (add)
 					{
 						addEntry(entry1);
-						cout << "adding entry : " << entry1 << endl;
+						std::cout << "adding entry : " << entry1 << endl;
 						addEntry(entry2);
-						cout << "adding entry : " << entry2 << endl;
+						std::cout << "adding entry : " << entry2 << endl;
 						addEntry(entry3);
-						cout << "adding entry : " << entry3 << endl;
+						std::cout << "adding entry : " << entry3 << endl;
 						addEntry(entry4);
-						cout << "adding entry : " << entry4 << endl;
+						std::cout << "adding entry : " << entry4 << endl;
 					}
 					else
 					{
