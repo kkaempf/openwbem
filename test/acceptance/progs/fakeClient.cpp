@@ -137,23 +137,23 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
-			exit(2);
+			exit(2); // probably "No login/password to send"
 		}
 	}
 	catch(AssertionException& a)
 	{
 		cerr << "Caught assertion in main(): " << a.getMessage() << endl;
-		exit(2);
+		exit(3);
 	}
 	catch(Exception& e)
 	{
 		cerr << e << endl;
-		exit(2);
+		exit(4);
 	}
 	catch(...)
 	{
 		cerr << "Caught Unknown exception in main()" << endl;
-		exit(2);
+		exit(5);
 	}
 
 	return 0;
