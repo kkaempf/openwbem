@@ -30,27 +30,37 @@
 
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "Generic.hpp"
+#include "OW_CIMPropertyTestCases.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_CIMValue.hpp"
+#include "OW_CIMQualifier.hpp"
 
-void GenericTestCases::setUp()
+void OW_CIMPropertyTestCases::setUp()
 {
 }
 
-void GenericTestCases::tearDown()
+void OW_CIMPropertyTestCases::tearDown()
 {
 }
 
-void GenericTestCases::testSomething()
+void OW_CIMPropertyTestCases::testEmbeddedClass()
 {
-	unitAssert( something( ) );
+	OW_CIMClass c1(true);
+	c1.setName("test");
+	c1.addQualifier(OW_CIMQualifier("Description"));
+
+	OW_CIMProperty p1("testprop", OW_CIMValue(c1));
+	OW_CIMClass c2;
+	p1.getValue().get(c2);
+	unitAssert( c1 == c2 );
 }
 
-Test* GenericTestCases::suite()
+Test* OW_CIMPropertyTestCases::suite()
 {
-	TestSuite *testSuite = new TestSuite ("Generic");
+	TestSuite *testSuite = new TestSuite ("OW_CIMProperty");
 
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
+	ADD_TEST_TO_SUITE(OW_CIMPropertyTestCases, testEmbeddedClass);
 
 	return testSuite;
 }

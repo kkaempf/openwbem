@@ -28,30 +28,25 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "Generic.hpp"
+#ifndef OW_OW_CIMProperty_TEST_CASES_HPP_
+#define OW_OW_CIMProperty_TEST_CASES_HPP_
 
-void GenericTestCases::setUp()
+#include "TestCase.hpp"
+
+class OW_CIMPropertyTestCases : public TestCase
 {
-}
+public:
+	OW_CIMPropertyTestCases( const char* name )
+		: TestCase( name ) {}
 
-void GenericTestCases::tearDown()
-{
-}
+	void setUp();
+	void tearDown();
+	static Test *suite();
 
-void GenericTestCases::testSomething()
-{
-	unitAssert( something( ) );
-}
+private:
+	// test methods
+	void testEmbeddedClass();
+};
 
-Test* GenericTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("Generic");
-
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
-
-	return testSuite;
-}
+#endif
 
