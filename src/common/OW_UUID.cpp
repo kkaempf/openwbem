@@ -278,7 +278,8 @@ UUID::toString() const
 {
 	// This will return a string like this: 
 	// 6ba7b810-9dad-11d1-80b4-00c04fd430c8
-	char buf[37];
+	const size_t uuidlen = 37;
+	char* buf = new char[uuidlen];
 	buf[0] = toHexHi(m_uuid[0]); buf[1] = toHexLow(m_uuid[0]);
 	buf[2] = toHexHi(m_uuid[1]); buf[3] = toHexLow(m_uuid[1]);
 	buf[4] = toHexHi(m_uuid[2]); buf[5] = toHexLow(m_uuid[2]);
@@ -300,7 +301,8 @@ UUID::toString() const
 	buf[32] = toHexHi(m_uuid[14]); buf[33] = toHexLow(m_uuid[14]);
 	buf[34] = toHexHi(m_uuid[15]); buf[35] = toHexLow(m_uuid[15]);
 	buf[36] = '\0';
-	return String(buf);
+
+	return String(String::E_TAKE_OWNERSHIP, buf, uuidlen-1);
 }
 /////////////////////////////////////////////////////////////////////////////
 bool operator==(const UUID& x, const UUID& y)
