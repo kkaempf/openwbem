@@ -206,7 +206,7 @@ public:
 	 * @param fmt	The format to use during the operation
 	 * @param ...	A variable argument list to be applied to the format
 	 * @return The length of the string after the operation on success.
-	 * -1 on error.
+	 * npos on error.
 	 */
 	int format(const char* fmt, ...);
 	enum EReturnTokensFlag
@@ -363,7 +363,7 @@ public:
 	 * underlying array if it was found. npos if this String object does not
 	 * contain the character before the given fromIndex.
 	 */
-	size_t lastIndexOf(char ch, size_t fromIndex=static_cast<size_t>(-1)) const;
+	size_t lastIndexOf(char ch, size_t fromIndex=npos) const;
 	/**
 	 * Find the last occurence of a string in this String object.
 	 * @param arg			The string to search for.
@@ -372,7 +372,7 @@ public:
 	 * array if it was found. npos if the this String does not contain the
 	 * given substring before the fromIndex.
 	 */
-	size_t lastIndexOf(const String& arg, size_t fromIndex=static_cast<size_t>(-1)) const;
+	size_t lastIndexOf(const String& arg, size_t fromIndex=npos) const;
 	/**
 	 * Determine if this String object starts with a given substring.
 	 * @param arg The String object to search the beginning of this String
@@ -440,7 +440,7 @@ public:
 	 * if len == npos, erase to the end of the string.
 	 * @return A referernce to this object.
 	 */
-	String& erase( size_t idx, size_t len = size_t(-1) );
+	String& erase( size_t idx, size_t len = npos );
 	/**
 	 * Assignment operator.
 	 * @param arg		The String object to assign to this String.

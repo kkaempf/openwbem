@@ -60,7 +60,9 @@ void OW_StringTestCases::testSubstring()
 	unitAssert( s.substring(0, 0).length() == 0 );
 	unitAssert( s.substring(static_cast<UInt32>(-1)) == "" );
 	unitAssert( s.substring(static_cast<UInt32>(-1)).length() == 0 );
-        unitAssert( s.substring(1) == "bc"); 
+	unitAssert( s.substring(1) == "bc" );
+	unitAssert( s.substring(1, 1) == "b" );
+	unitAssert( s.substring(2, 3) == "c" );
 }
 
 void OW_StringTestCases::testNumbers()
