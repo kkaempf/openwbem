@@ -40,7 +40,7 @@
 #include "OW_COWReference.hpp"
 #include "OW_Types.hpp"
 #include "OW_Exception.hpp"
-#include <vector>
+#include "OW_vector.hpp"
 
 namespace OpenWBEM
 {
@@ -150,9 +150,6 @@ inline bool operator > (const Array<T>& x, const Array<T>& y)
 	return y < x;
 }
   
-template <class T>
-inline std::vector<T>* COWReferenceClone(std::vector<T>* obj);
-
 typedef Array<UInt8>      UInt8Array;
 typedef Array<Int8>       Int8Array;
 typedef Array<UInt16>     UInt16Array;

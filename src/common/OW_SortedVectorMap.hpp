@@ -36,7 +36,7 @@
 #define OW_SORTED_VECTOR_MAP_HPP_
 #include "OW_config.h"
 #include "OW_COWReference.hpp"
-#include <vector>
+#include "OW_vector.hpp"
 #include <utility> // for std::pair
 #include <functional> // for std::less
 #include <algorithm>

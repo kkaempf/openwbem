@@ -195,6 +195,7 @@ OW_UnnamedPipe.hpp \
 OW_UserInfo.hpp \
 OW_UserUtils.hpp \
 OW_UUID.hpp \
+OW_vector.hpp \
 OW_WBEMFlags.hpp \
 OW_SafeLibCreate.hpp \
 OW_SharedLibrary.hpp \
