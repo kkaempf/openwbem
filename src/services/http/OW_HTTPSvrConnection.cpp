@@ -350,14 +350,14 @@ HTTPSvrConnection::beginPostResponse()
 	{
 		addHeader( "Transfer-Encoding", "chunked");
 		addHeader(m_respHeaderPrefix + "CIMOperation", "MethodResponse");
-		if (m_clientIsOpenWBEM2) // it uses different trailer names
+		if (m_clientIsOpenWBEM2) // it uses different pre-standard trailer names
 		{
 			addHeader("Trailers",
 				m_respHeaderPrefix + "CIMError, "
 				+ m_respHeaderPrefix + "CIMErrorCode, "
 				+ m_respHeaderPrefix + "CIMErrorDescription");
 		}
-		else // talking to someone who can understand 1.2 trailers
+		else // talking to someone who can understand new WBEM Ops 1.2 trailers
 		{
 			addHeader("Trailers",
 				m_respHeaderPrefix + "CIMError, "
@@ -627,7 +627,7 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 			m_errDetails = "Your browser sent a request that this server could"
 				"not understand.  "
 				"Client sent HTTP/1.1 request without hostname "
-				"(see RFC2068 section 9, and 14.23";
+				"(see RFC2068 section 9, and 14.23)";
 			return SC_BAD_REQUEST;
 		}
 	}
@@ -854,23 +854,6 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 			return SC_NOT_ACCEPTABLE;
 		}
 	}
-	/*
-	// set the path for the handler
-	if (m_requestLine[1].equalsIgnoreCase("/" BINARY_ID))
-	{
-		m_options.env->getLogger()->logDebug("Using binary request handler");
-		m_requestHandler = m_options.env->getRequestHandler(BINARY_ID);
-	}
-	else
-	{
-		m_options.env->getLogger()->logDebug("Using CIM/XML request handler");
-		m_requestHandler = m_options.env->getRequestHandler(CIMXML_ID);
-	}
-	if (!m_requestHandler)
-	{
-		HTTP_OW_THROW(HTTPException, "Invalid Path", SC_NOT_FOUND);
-	}
-	*/
 //
 // Check for "Man: " header and get ns value.
 //
