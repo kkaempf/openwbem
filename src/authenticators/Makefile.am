@@ -1,4 +1,5 @@
 SUBDIRS = \
 simple \
 pam \
-pamcl
+pamcl \
+aix

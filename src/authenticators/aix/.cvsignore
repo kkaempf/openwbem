@@ -1,0 +1,9 @@
+Makefile.in
+Makefile
+.deps
+.*.libs
+*.lo
+*.la
+lib*so*
+OW_config.h
+lib*dylib*

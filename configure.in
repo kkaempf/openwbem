@@ -324,6 +324,7 @@ else
 fi
 AC_SUBST(platform_pamdir)
 
+AM_CONDITIONAL(USE_AIX_AUTHENTICATE, test x$AIX = x1)
 
 AC_ARG_ENABLE(zlib,
 OW_HELP_STRING(--disable-zlib,disable zlib integration))
@@ -1060,6 +1061,7 @@ src/authenticators/Makefile
 src/authenticators/simple/Makefile
 src/authenticators/pam/Makefile
 src/authenticators/pamcl/Makefile
+src/authenticators/aix/Makefile
 src/authorizers/Makefile
 src/authorizers/simple/Makefile
 src/cim/Makefile

@@ -69,10 +69,20 @@ STATIC_CLIENT_FILES= \
 $(top_builddir)/src/client/libowclient.a \
 $(top_builddir)/src/mof/libowmofc.a
 
+if USE_PAM
+PAM_FILES= \
+$(top_builddir)/src/authenticators/pam/libpamauthentication.a \
+$(top_builddir)/src/authenticators/pamcl/libpamclauthentication.a
+endif
+
+if USE_AIX_AUTHENTICATE
+AIX_AUTH_FILES=$(top_builddir)/src/authenticators/aix/libaixauthentication.a
+endif
+
 STATIC_SERVICE_FILES= \
 $(top_builddir)/src/authorizers/simple/libowsimpleauthorizer.a \
-$(top_builddir)/src/authenticators/pam/libpamauthentication.a \
-$(top_builddir)/src/authenticators/pamcl/libpamclauthentication.a \
+$(PAM_FILES) \
+$(AIX_AUTH_FILES) \
 $(top_builddir)/src/authenticators/simple/libsimpleauthentication.a \
 \
 $(top_builddir)/src/cimom/indication/libowindicationserver.a \
