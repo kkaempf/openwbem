@@ -349,11 +349,12 @@ OW_InstanceRepository::deleteInstance(const OW_String& ns, const OW_CIMObjectPat
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_InstanceRepository::createInstance(const OW_String& ns,
-	const OW_CIMClass& theClass, const OW_CIMInstance& ci)
+	const OW_CIMClass& theClass, const OW_CIMInstance& ci_)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
 
+	OW_CIMInstance ci(ci_);
 	OW_String ckey = makeClassKey(ns, ci.getClassName());
 	OW_HDBNode clsNode = getNameSpaceNode(hdl, ckey);
 	if(!clsNode)
@@ -371,7 +372,7 @@ OW_InstanceRepository::createInstance(const OW_String& ns,
 		OW_THROWCIMMSG(OW_CIMException::ALREADY_EXISTS, instanceKey.c_str());
 	}
 
-	// TODO: Remove qualifiers duplicated from the class to save space
+	_removeDuplicatedQualifiers(ci, theClass);
 
 	OW_RepositoryOStream ostrm;
 	ci.writeObject(ostrm);
@@ -412,21 +413,6 @@ OW_InstanceRepository::modifyInstance(const OW_String& ns,
 	OW_HDBHandleLock hdl(this, getHandle());
 
 	OW_CIMInstance ci(ci_);
-	// Now move properties from the old instance that are missing in the
-	// new instance
-	/* We don't want to do this!
-	OW_CIMPropertyArray pra = oldInst.getProperties();
-	OW_CIMPropertyArray npra = ci.getProperties();
-	for(size_t i = 0; i < pra.size(); i++)
-	{
-		if(!ci.getProperty(pra[i].getName()))
-		{
-			npra.append(pra[i]);
-		}
-	}
-
-	ci.setProperties(npra);
-	*/
 
 	// Now sync the new instance with the class. This will remove any properties
 	// that shouldn't be on the instance and add properties that should be
@@ -476,9 +462,10 @@ OW_InstanceRepository::modifyInstance(const OW_String& ns,
 		}
 	}
 
-	OW_RepositoryOStream ostrm;
 
-	// TODO: Remove qualifiers duplicated from the class to save space
+	_removeDuplicatedQualifiers(ci, theClass);
+
+	OW_RepositoryOStream ostrm;
 	ci.writeObject(ostrm);
 	OW_String instanceKey = makeInstanceKey(ns, cop, theClass);
 	OW_HDBNode node = hdl->getNode(instanceKey);
@@ -580,6 +567,30 @@ OW_InstanceRepository::deleteClass(const OW_String& ns,
 	hdl->removeNode(ckey);
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+void OW_InstanceRepository::_removeDuplicatedQualifiers(OW_CIMInstance& inst,
+	const OW_CIMClass& theClass)
+{
+	OW_CIMQualifierArray quals(inst.getQualifiers());
+	OW_CIMQualifierArray newQuals;
+	for (size_t i = 0; i < quals.size(); ++i)
+	{
+		OW_CIMQualifier iq = quals[i];
+		OW_CIMQualifier cq = theClass.getQualifier(iq.getName());
+		if (!cq)
+		{
+			newQuals.push_back(iq);
+			continue;
+		}
+		if (iq.getValue() != cq.getValue())
+		{
+			newQuals.push_back(iq);
+			continue;
+		}
+	}
+	inst.setQualifiers(newQuals);
+}
 
 
 

@@ -173,6 +173,8 @@ private:
 	OW_String makeInstanceKey(const OW_String& ns, const OW_CIMObjectPath& cop,
 		const OW_CIMClass& theClass);
 
+	void _removeDuplicatedQualifiers(OW_CIMInstance& inst, const OW_CIMClass& theClass);
+
 	friend class OW_CIMServer;
 };
 
