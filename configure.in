@@ -155,7 +155,7 @@ fi
 
 AC_CHECK_HEADERS(fcntl.h limits.h sys/file.h unistd.h byteswap.h pthread.h \
 sys/cdefs.h sys/queue.h sys/int_types.h \
-inttypes.h getopt.h)
+inttypes.h getopt.h sys/sockio.h)
 
 # check for C++ headers
 AC_LANG_CPLUSPLUS
@@ -178,6 +178,7 @@ AC_CHECK_SIZEOF(long long int, 8)
 AC_CHECK_SIZEOF(float, 4)
 AC_CHECK_SIZEOF(double, 8)
 AC_CHECK_SIZEOF(long double, 8)
+AC_CHECK_SIZEOF(char *, 4)
 
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
@@ -217,6 +218,16 @@ case "$host" in
 *-*-hpux10*)
 	;;
 *-*-hpux11*)
+	PLATFORMDIR="posix"
+	AC_DEFINE(HPUX)
+	LIBS="$LIBS -lxnet"
+	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1 -pipe"
+	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1 -pipe"
+	CXXCOMMONLINKFLAGS=""
+	CXXBINLINKFLAGS="$LDFLAGS"
+	CXXSHAREDLIBLINKFLAGS='-shared -fPIC'
+	PLAT_OPTFLAGS="-O3"
+	PIDFILEDIR="/var/run"
 	;;
 *-*-irix5*)
 	;;
