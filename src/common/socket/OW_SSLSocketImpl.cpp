@@ -214,20 +214,13 @@ SSLSocketImpl::SSLSocketImpl(const SocketAddress& addr)
 //////////////////////////////////////////////////////////////////////////////
 SSLSocketImpl::~SSLSocketImpl()
 {
-#if defined(OW_WIN32)
-	if (m_sockfd != INVALID_SOCKET && m_isConnected)
-#else
-	if (m_sockfd != -1 && m_isConnected)
-#endif
+	disconnect(); 
+	if (m_ssl)
 	{
-		disconnect(); 
-		if (m_ssl)
-		{
-			SSL_free(m_ssl);
-			m_ssl = 0; 
-		}
-		ERR_remove_state(0); // cleanup memory SSL may have allocated
+	    SSL_free(m_ssl);
+	    m_ssl = 0; 
 	}
+	ERR_remove_state(0); // cleanup memory SSL may have allocated
 }
 //////////////////////////////////////////////////////////////////////////////
 Select_t
