@@ -1540,7 +1540,7 @@ String::getLine(istream& is)
 {
 	StringBuffer rv(80);
 	rv.getLine(is);
-	return rv.toString();
+	return rv.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
