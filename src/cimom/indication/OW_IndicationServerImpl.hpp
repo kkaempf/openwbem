@@ -135,6 +135,7 @@ private:
 	poller_map_t m_pollers;
 	ThreadPoolRef m_notifierThreadPool;
 	ThreadPoolRef m_subscriptionPool;
+	WQLIFCRef m_wqlRef;
 };
 
 } // end namespace OpenWBEM
