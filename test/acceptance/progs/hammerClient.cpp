@@ -156,6 +156,12 @@ void reportError(const Exception& e, const String& operation, const String& para
 	handleErrorMessage(errorMsg);
 }
 
+void reportError(const std::exception& e, const String& operation, const String& param="")
+{
+	String errorMsg = format("%1(%2): std::exception(%3):%4", operation, param, typeid(e).name(), e.what());
+	handleErrorMessage(errorMsg);
+}
+
 void reportError(const Exception& e)
 {
 	String errorMsg = format("%1", e);
@@ -242,6 +248,10 @@ public:
 			doRun();
 		}
 		catch (const Exception& e)
+		{
+			reportError(e, m_operation, m_param);
+		}
+		catch (const std::exception& e)
 		{
 			reportError(e, m_operation, m_param);
 		}
