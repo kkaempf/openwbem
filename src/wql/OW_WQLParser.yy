@@ -15,6 +15,7 @@
  *-------------------------------------------------------------------------*/
 /*******************************************************************************
 * Portions Copyright (C) 2001 Caldera International, Inc All rights reserved.
+	;
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -298,6 +299,7 @@ stmt:
 	  { $$ = OW_WQLImpl::statement = new stmt_insertStmt_optSemicolon($1, $2); }
 	| deleteStmt optSemicolon
 	  { $$ = OW_WQLImpl::statement = new stmt_deleteStmt_optSemicolon($1, $2); }
+	;
 
 
 optSemicolon:
@@ -305,11 +307,13 @@ optSemicolon:
 	  { $$ = 0; }
 	| SEMICOLON
 	  { $$ = new optSemicolon_SEMICOLON($1); }
+	;
 
 
 insertStmt:
 	INSERT INTO strRelationName insertRest
 	  { $$ = new insertStmt($1, $2, $3, $4); }
+	;
 
 
 targetList:
@@ -317,6 +321,7 @@ targetList:
 	  { $$ = new OW_List<targetEl*>(1, $1); }
 	| targetList COMMA targetEl
 	  { $1->push_back($3); delete $2; $$ = $1; }
+	;
 
 
 columnList:
@@ -324,6 +329,7 @@ columnList:
 	  { $$ = new OW_List<OW_String*>(1, $1); }
 	| columnList COMMA strColumnElem
 	  { $1->push_back($3); delete $2; $$ = $1; }
+	;
 
 
 insertRest:
@@ -333,16 +339,19 @@ insertRest:
 	  { $$ = new insertRest_DEFAULT_VALUES($1, $2); }
 	| LEFTPAREN columnList RIGHTPAREN VALUES LEFTPAREN targetList RIGHTPAREN
 	  { $$ = new insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN($1, $2, $3, $4, $5, $6, $7); }
+	;
 
 
 strColumnElem:
 	strColId
 	  { $$ = $1; }
+	;
 
 
 deleteStmt:
 	DELETE FROM strRelationName optWhereClause
 	  { $$ = new deleteStmt($1, $2, $3, $4); }
+	;
 
 
 updateTargetList:
@@ -350,16 +359,19 @@ updateTargetList:
 	  { $$ = new OW_List<updateTargetEl*>(1, $1); }
 	| updateTargetList COMMA updateTargetEl
 	  { $1->push_back($3); delete $2; $$ = $1; }
+	;
 
 
 updateStmt:
 	UPDATE strRelationName SET updateTargetList optWhereClause
 	  { $$ = new updateStmt($1, $2, $3, $4, $5); }
+	;
 
 
 selectStmt:
 	SELECT optDistinct targetList optFromClause optWhereClause optGroupClause optHavingClause optSortClause
 	  { $$ = new selectStmt($1, $2, $3, $4, $5, $6, $7, $8); }
+	;
 
 
 exprSeq:
@@ -369,6 +381,7 @@ exprSeq:
 	  { $$ = new exprSeq_exprSeq_COMMA_aExpr($1, $2, $3); }
 	| exprSeq USING aExpr
 	  { $$ = new exprSeq_exprSeq_USING_aExpr($1, $2, $3); }
+	;
 
 
 optDistinct:
@@ -380,6 +393,7 @@ optDistinct:
 	  { $$ = new optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN($1, $2, $3, $4, $5); }
 	| ALL
 	  { $$ = new optDistinct_ALL($1); }
+	;
 
 
 sortbyList:
@@ -387,11 +401,13 @@ sortbyList:
 	  { $$ = new OW_List<sortby*>(1, $1); }
 	| sortbyList COMMA sortby
 	  { $1->push_back($3); delete $2; $$ = $1; }
+	;
 
 
 sortClause:
 	ORDER BY sortbyList
 	  { $$ = new sortClause($1, $2, $3); }
+	;
 
 
 optSortClause:
@@ -399,11 +415,13 @@ optSortClause:
 	  { $$ = 0; }
 	| sortClause
 	  { $$ = new optSortClause_sortClause($1); }
+	;
 
 
 sortby:
 	aExpr strOptOrderSpecification
 	  { $$ = new sortby($1, $2); }
+	;
 
 
 strOptOrderSpecification:
@@ -413,6 +431,7 @@ strOptOrderSpecification:
 	  { $$ = $1; }
 	| DESC
 	  { $$ = $1; }
+	;
 
 
 nameList:
@@ -420,6 +439,7 @@ nameList:
 	  { $$ = new OW_List<OW_String*>(1, $1); }
 	| nameList COMMA strName
 	  { $1->push_back($3); delete $2; $$ = $1; }
+	;
 
 
 optGroupClause:
@@ -427,6 +447,7 @@ optGroupClause:
 	  { $$ = 0; }
 	| GROUP BY exprSeq
 	  { $$ = new optGroupClause_GROUP_BY_exprSeq($1, $2, $3); }
+	;
 
 
 optHavingClause:
@@ -434,6 +455,7 @@ optHavingClause:
 	  { $$ = 0; }
 	| HAVING aExpr
 	  { $$ = new optHavingClause_HAVING_aExpr($1, $2); }
+	;
 
 
 fromList:
@@ -441,6 +463,7 @@ fromList:
 	  { $$ = new OW_List<tableRef*>(1, $1); }
 	| fromList COMMA tableRef
 	  { $1->push_back($3); delete $2; $$ = $1; }
+	;
 
 
 optFromClause:
@@ -448,6 +471,7 @@ optFromClause:
 	  { $$ = 0; }
 	| FROM fromList
 	  { $$ = new optFromClause_FROM_fromList($1, $2); }
+	;
 
 
 tableRef:
@@ -459,6 +483,7 @@ tableRef:
 	  { $$ = new tableRef_joinedTable($1); }
 	| LEFTPAREN joinedTable RIGHTPAREN aliasClause
 	  { $$ = new tableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause($1, $2, $3, $4); }
+	;
 
 
 joinedTable:
@@ -476,6 +501,7 @@ joinedTable:
 	  { $$ = new joinedTable_tableRef_NATURAL_joinType_JOIN_tableRef($1, $2, $3, $4, $5); }
 	| tableRef NATURAL JOIN tableRef
 	  { $$ = new joinedTable_tableRef_NATURAL_JOIN_tableRef($1, $2, $3, $4); }
+	;
 
 
 aliasClause:
@@ -487,6 +513,7 @@ aliasClause:
 	  { $$ = new aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN($1, $2, $3, $4); }
 	| strColId
 	  { $$ = new aliasClause_strColId($1); }
+	;
 
 
 joinType:
@@ -498,6 +525,7 @@ joinType:
 	  { $$ = new joinType_RIGHT_strOptJoinOuter($1, $2); }
 	| INNERP
 	  { $$ = new joinType_INNERP($1); }
+	;
 
 
 strOptJoinOuter:
@@ -505,6 +533,7 @@ strOptJoinOuter:
 	  { $$ = 0; }
 	| OUTERP
 	  { $$ = $1; }
+	;
 
 
 joinQual:
@@ -512,6 +541,7 @@ joinQual:
 	  { $$ = new joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN($1, $2, $3, $4); }
 	| ON aExpr
 	  { $$ = new joinQual_ON_aExpr($1, $2); }
+	;
 
 
 relationExpr:
@@ -521,6 +551,7 @@ relationExpr:
 	  { $$ = new relationExpr_strRelationName_ASTERISK($1, $2); }
 	| ONLY strRelationName
 	  { $$ = new relationExpr_ONLY_strRelationName($1, $2); }
+	;
 
 
 optWhereClause:
@@ -528,6 +559,7 @@ optWhereClause:
 	  { $$ = 0; }
 	| WHERE aExpr
 	  { $$ = new optWhereClause_WHERE_aExpr($1, $2); }
+	;
 
 
 strDatetime:
@@ -543,11 +575,13 @@ strDatetime:
 	  { $$ = $1; }
 	| SECONDP
 	  { $$ = $1; }
+	;
 
 
 rowExpr:
 	LEFTPAREN rowDescriptor RIGHTPAREN strAllOp LEFTPAREN rowDescriptor RIGHTPAREN
 	  { $$ = new rowExpr($1, $2, $3, $4, $5, $6, $7); }
+	;
 
 
 rowList:
@@ -555,11 +589,13 @@ rowList:
 	  { $$ = new OW_List<aExpr*>(1, $1); }
 	| rowList COMMA aExpr
 	  { $1->push_back($3); delete $2; $$ = $1; }
+	;
 
 
 rowDescriptor:
 	rowList COMMA aExpr
 	  { $$ = new rowDescriptor($1, $2, $3); }
+	;
 
 
 strAllOp:
@@ -595,6 +631,7 @@ strAllOp:
 	  { $$ = $1; }
 	| BITSHIFTRIGHT
 	  { $$ = $1; }
+	;
 
 
 aExpr:
@@ -674,6 +711,7 @@ aExpr:
 	  { $$ = new aExpr_aExpr_ISA_aExpr($1, $2, $3); }
 	| rowExpr
 	  { $$ = new aExpr_rowExpr($1); }
+	;
 
 
 bExpr:
@@ -717,6 +755,7 @@ bExpr:
 	  { $$ = new bExpr_bExpr_NOTEQUALS_bExpr($1, $2, $3); }
 	| bExpr CONCATENATION bExpr
 	  { $$ = new bExpr_bExpr_CONCATENATION_bExpr($1, $2, $3); }
+	;
 
 
 cExpr:
@@ -766,6 +805,7 @@ cExpr:
 	  { $$ = new cExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN($1, $2, $3, $4, $5); }
 	| TRIM LEFTPAREN trimExpr RIGHTPAREN
 	  { $$ = new cExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN($1, $2, $3, $4); }
+	;
 
 
 optIndirection:
@@ -775,6 +815,7 @@ optIndirection:
 	  { $$ = new optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET($1, $2, $3, $4); }
 	| optIndirection LEFTBRACKET aExpr COLON aExpr RIGHTBRACKET
 	  { $$ = new optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET($1, $2, $3, $4, $5, $6); }
+	;
 
 
 optExtract:
@@ -782,6 +823,7 @@ optExtract:
 	  { $$ = 0; }
 	| strExtractArg FROM aExpr
 	  { $$ = new optExtract_strExtractArg_FROM_aExpr($1, $2, $3); }
+	;
 
 
 strExtractArg:
@@ -795,6 +837,7 @@ strExtractArg:
 	  { $$ = $1; }
 	| TIMEZONEMINUTE
 	  { $$ = $1; }
+	;
 
 
 positionExpr:
@@ -802,6 +845,7 @@ positionExpr:
 	  { $$ = new positionExpr_bExpr_IN_bExpr($1, $2, $3); }
 	| /* EMPTY */
 	  { $$ = 0; }
+	;
 
 
 optSubstrExpr:
@@ -817,16 +861,19 @@ optSubstrExpr:
 	  { $$ = new optSubstrExpr_aExpr_substrFor($1, $2); }
 	| exprSeq
 	  { $$ = new optSubstrExpr_exprSeq($1); }
+	;
 
 
 substrFrom:
 	FROM aExpr
 	  { $$ = new substrFrom($1, $2); }
+	;
 
 
 substrFor:
 	FOR aExpr
 	  { $$ = new substrFor($1, $2); }
+	;
 
 
 trimExpr:
@@ -836,11 +883,13 @@ trimExpr:
 	  { $$ = new trimExpr_FROM_exprSeq($1, $2); }
 	| exprSeq
 	  { $$ = new trimExpr_exprSeq($1); }
+	;
 
 
 attr:
 	strRelationName PERIOD attrs optIndirection
 	  { $$ = new attr($1, $2, $3, $4); }
+	;
 
 
 attrs:
@@ -850,6 +899,7 @@ attrs:
 	  { $$ = new attrs_attrs_PERIOD_strAttrName($1, $2, $3); }
 	| attrs PERIOD ASTERISK
 	  { $$ = new attrs_attrs_PERIOD_ASTERISK($1, $2, $3); }
+	;
 
 
 targetEl:
@@ -861,26 +911,31 @@ targetEl:
 	  { $$ = new targetEl_strRelationName_PERIOD_ASTERISK($1, $2, $3); }
 	| ASTERISK
 	  { $$ = new targetEl_ASTERISK($1); }
+	;
 
 
 updateTargetEl:
 	strColId optIndirection EQUALS aExpr
 	  { $$ = new updateTargetEl($1, $2, $3, $4); }
+	;
 
 
 strRelationName:
 	strColId
 	  { $$ = $1; }
+	;
 
 
 strName:
 	strColId
 	  { $$ = $1; }
+	;
 
 
 strAttrName:
 	strColId
 	  { $$ = $1; }
+	;
 
 
 strFuncName:
@@ -896,6 +951,7 @@ strFuncName:
 	  { $$ = $1; }
 	| NOTNULL
 	  { $$ = $1; }
+	;
 
 
 aExprConst:
@@ -915,6 +971,7 @@ aExprConst:
 	  { $$ = new aExprConst_FALSEP($1); }
 	| NULLP
 	  { $$ = new aExprConst_NULLP($1); }
+	;
 
 
 strColId:
@@ -952,6 +1009,7 @@ strColId:
 	  { $$ = $1; }
 	| TIMESTAMP
 	  { $$ = $1; }
+	;
 
 
 strColLabel:
@@ -1055,6 +1113,7 @@ strColLabel:
 	  { $$ = $1; }
 	| WHERE
 	  { $$ = $1; }
+	;
 
 %%
 
