@@ -721,7 +721,7 @@ safePopen(const Array<String>& command, const char* const envp[])
 		else
 		{
 			errno = childErrorCode;
-			OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::safePopen: child process failed running exec()");
+			OW_THROW_ERRNO_MSG(ExecErrorException, Format("Exec::safePopen: child process failed running exec() process = %1", command[0]));
 		}
 	}
 
