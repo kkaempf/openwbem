@@ -351,7 +351,7 @@ private:
 #endif
 
 	HDBHeaderBlock m_hdrBlock;
-    File m_lockFile;
+	File m_lockFile;
 	String m_fileName;
 	Int32 m_version;
 	int m_hdlCount;

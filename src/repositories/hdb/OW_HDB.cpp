@@ -80,8 +80,8 @@ HDB::close()
 		m_pindex->close();
 		m_pindex = 0;
 		m_opened = false;
-        m_lockFile.unlock();
-        m_lockFile.close();
+		m_lockFile.unlock();
+		m_lockFile.close();
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
