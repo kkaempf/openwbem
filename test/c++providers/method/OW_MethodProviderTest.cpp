@@ -43,6 +43,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_Logger.hpp"
+#include "OW_Thread.hpp"
 
 #include <fstream>
 
@@ -209,6 +210,12 @@ MethodProviderTest::invokeMethod(
 	{
 		toggleState();
 		return CIMValue(getState());
+	}
+	else if (methodName.equalsIgnoreCase("Sleep"))
+	{
+		UInt32 duration = in[0].getValue().toUInt32();
+		Thread::sleep(duration * 1000);
+		return CIMValue(duration);
 	}
 	else
 	{
