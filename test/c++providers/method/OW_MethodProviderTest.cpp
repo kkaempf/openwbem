@@ -43,6 +43,9 @@ using std::ifstream;
 using std::ofstream;
 using std::endl;
 
+namespace
+{
+
 class OW_MethodProviderTest: public OW_CppMethodProviderIFC
 {
 public:
@@ -205,5 +208,7 @@ OW_MethodProviderTest::invokeMethod(
 	}
 	(void)out;
 }
+
+} // end anonymous namespace
 
 OW_PROVIDERFACTORY(OW_MethodProviderTest, methodtest)
