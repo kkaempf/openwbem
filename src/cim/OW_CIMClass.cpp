@@ -40,6 +40,7 @@
 #include "OW_CIMUrl.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_BinIfcIO.hpp"
+#include "OW_StrictWeakOrdering.hpp"
 
 using std::istream;
 using std::ostream;
@@ -66,31 +67,13 @@ struct OW_CIMClass::CLSData
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const OW_CIMClass::CLSData& x, const OW_CIMClass::CLSData& y)
 {
-	if (x.m_name == y.m_name)
-	{
-		if (x.m_parentClassName == y.m_parentClassName)
-		{
-			if (x.m_qualifiers == y.m_qualifiers)
-			{
-				if (x.m_properties == y.m_properties)
-				{
-					if (x.m_methods == y.m_methods)
-					{
-						if (x.m_associationFlag == y.m_associationFlag)
-						{
-							return x.m_isKeyed < y.m_isKeyed;
-						}
-						return x.m_associationFlag < y.m_associationFlag;
-					}
-					return x.m_methods < y.m_methods;
-				}
-				return x.m_properties < y.m_properties;
-			}
-			return x.m_qualifiers < y.m_qualifiers;
-		}
-		return x.m_parentClassName < y.m_parentClassName;
-	}
-	return x.m_name < y.m_name;
+	return OW_StrictWeakOrdering(x.m_name, y.m_name, 
+		x.m_parentClassName, y.m_parentClassName,
+        x.m_qualifiers, y.m_qualifiers,
+        x.m_properties, y.m_properties,
+        x.m_methods, y.m_methods,
+        x.m_associationFlag, y.m_associationFlag,
+        x.m_isKeyed, y.m_isKeyed);
 }
 
 

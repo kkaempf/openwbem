@@ -41,6 +41,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_BinIfcIO.hpp"
 #include "OW_NoSuchPropertyException.hpp"
+#include "OW_StrictWeakOrdering.hpp"
 
 #include <cstring>
 #include <cctype>
@@ -57,6 +58,15 @@ struct OW_CIMObjectPath::OPData
 
     OPData* clone() const { return new OPData(*this); }
 };
+
+bool operator<(const OW_CIMObjectPath::OPData& x, const OW_CIMObjectPath::OPData& y)
+{
+	return OW_StrictWeakOrdering(
+		x.m_nameSpace, y.m_nameSpace,
+		x.m_objectName, y.m_objectName,
+		x.m_keys, y.m_keys);
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath::OW_CIMObjectPath() :
@@ -374,9 +384,9 @@ OW_CIMObjectPath::toString() const
 			str = "localhost";
 		}
 
-		str += ":";
-		str += OW_String(m_pdata->m_nameSpace.getPortNumber());
 		rv += str;
+		rv += ":";
+		rv += m_pdata->m_nameSpace.getPortNumber();
 	}
 
 	rv += '/';
@@ -729,6 +739,7 @@ OW_CIMObjectPath::unEscape(const OW_String& inString)
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const OW_CIMObjectPath& lhs, const OW_CIMObjectPath& rhs)
 {
-	return lhs.toString() < rhs.toString();
+	return *lhs.m_pdata < *rhs.m_pdata;
+	//return lhs.toString() < rhs.toString();
 }
 

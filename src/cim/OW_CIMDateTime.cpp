@@ -36,6 +36,7 @@
 #include "OW_String.hpp"
 #include "OW_ByteSwap.hpp"
 #include "OW_BinIfcIO.hpp"
+#include "OW_StrictWeakOrdering.hpp"
 
 #include <cstdlib>
 #include <cstring>
@@ -66,35 +67,15 @@ OW_CIMDateTime::OW_DateTimeData::compare(const OW_CIMDateTime::OW_DateTimeData& 
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const OW_CIMDateTime::OW_DateTimeData& x, const OW_CIMDateTime::OW_DateTimeData& y)
 {
-	if (x.m_year == y.m_year)
-	{
-		if (x.m_month == y.m_month)
-		{
-			if (x.m_days == y.m_days)
-			{
-				if (x.m_hours == y.m_hours)
-				{
-					if (x.m_minutes == y.m_minutes)
-					{
-						if (x.m_seconds == y.m_seconds)
-						{
-							if (x.m_utc == y.m_utc)
-							{
-								return x.m_isInterval < y.m_isInterval;
-							}
-							return x.m_utc < y.m_utc;
-						}
-						return x.m_seconds < y.m_seconds;
-					}
-					return x.m_minutes < y.m_minutes;
-				}
-				return x.m_hours < y.m_hours;
-			}
-			return x.m_days < y.m_days;
-		}
-		return x.m_month < y.m_month;
-	}
-	return x.m_year < y.m_year;
+	return OW_StrictWeakOrdering(
+		x.m_year, y.m_year,
+		x.m_month, y.m_month,
+		x.m_days, y.m_days,
+		x.m_hours, y.m_hours,
+		x.m_minutes, y.m_minutes,
+		x.m_seconds, y.m_seconds,
+		x.m_utc, y.m_utc,
+		x.m_isInterval, y.m_isInterval);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -31,6 +31,8 @@
 #include "OW_config.h"
 #include "OW_CIMUrl.hpp"
 #include "OW_String.hpp"
+#include "OW_StrictWeakOrdering.hpp"
+
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -60,6 +62,12 @@ struct OW_CIMUrl::URLData
 
     URLData* clone() { return new URLData(*this); }
 };
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMUrl::URLData& x, const OW_CIMUrl::URLData& y)
+{
+	return x.m_spec < y.m_spec;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // PUBLIC
@@ -394,4 +402,9 @@ OW_CIMUrl::writeObject(ostream &ostrm) const
 OW_String
 OW_CIMUrl::toMOF() const {  return "UNIMPLEMENTED"; }
 
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMUrl& lhs, const OW_CIMUrl& rhs)
+{
+	return *lhs.m_pdata < *rhs.m_pdata;
+}
 

@@ -587,11 +587,11 @@ namespace
 	public:
 		AssocCIMInstanceXMLOutputter(
 			std::ostream& ostr_,
-			OW_CIMObjectPath& path_,
+			const OW_String& ns_,
 			bool includeQualifiers_, bool includeClassOrigin_, bool isPropertyList_,
 			OW_StringArray& propertyList_)
 		: ostr(ostr_)
-		, path(path_)
+		, ns(ns_)
 		, includeQualifiers(includeQualifiers_)
 		, includeClassOrigin(includeClassOrigin_)
 		, isPropertyList(isPropertyList_)
@@ -603,7 +603,7 @@ namespace
 			ostr <<  "<VALUE.OBJECTWITHPATH>";
 
 			OW_CIMObjectPath cop( ci );
-			cop.setNameSpace( path.getNameSpace() );
+			cop.setNameSpace( ns );
 
 			OW_CIMtoXML(ci, ostr, cop,
 				OW_CIMtoXMLFlags::isNotInstanceName,
@@ -617,7 +617,7 @@ namespace
 		
 		}
 		std::ostream& ostr;
-		OW_CIMObjectPath& path;
+		OW_String ns;
 		bool includeQualifiers, includeClassOrigin, isPropertyList;
 		OW_StringArray& propertyList;
 
@@ -627,12 +627,10 @@ namespace
 	public:
 		AssocCIMClassXMLOutputter(
 			std::ostream& ostr_,
-			OW_CIMObjectPath& path_,
 			bool includeQualifiers_, bool includeClassOrigin_, bool isPropertyList_,
 			OW_StringArray& propertyList_,
 			const OW_String& ns_)
 		: ostr(ostr_)
-		, path(path_)
 		, includeQualifiers(includeQualifiers_)
 		, includeClassOrigin(includeClassOrigin_)
 		, isPropertyList(isPropertyList_)
@@ -656,7 +654,6 @@ namespace
 		
 		}
 		std::ostream& ostr;
-		OW_CIMObjectPath& path;
 		bool includeQualifiers, includeClassOrigin, isPropertyList;
 		OW_StringArray& propertyList;
 		const OW_String& ns;
@@ -714,7 +711,7 @@ void OW_XMLExecute::associators(ostream& ostr,
 	if (objectName.getKeys().size() == 0)
 	{
 		// class path
-		AssocCIMClassXMLOutputter handler(ostr, objectName, includeQualifiers,
+		AssocCIMClassXMLOutputter handler(ostr, includeQualifiers,
 			includeClassOrigin, isPropertyList, propertyList, ns);
 
 		hdl.associatorsClasses(ns, objectName, handler,
@@ -724,7 +721,7 @@ void OW_XMLExecute::associators(ostream& ostr,
 	else
 	{
 		// instance path
-		AssocCIMInstanceXMLOutputter handler(ostr, objectName, includeQualifiers,
+		AssocCIMInstanceXMLOutputter handler(ostr, ns, includeQualifiers,
 			includeClassOrigin, isPropertyList, propertyList);
 
 		hdl.associators(ns, objectName, handler,
@@ -1314,7 +1311,7 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 	if (path.getKeys().size() == 0)
 	{
 		// It's a class
-		AssocCIMClassXMLOutputter handler(ostr, path, includeQualifiers,
+		AssocCIMClassXMLOutputter handler(ostr, includeQualifiers,
 			includeClassOrigin, isPropertyList, propertyList, ns);
 
 		hdl.referencesClasses(ns, path, handler, resultClass,
@@ -1322,7 +1319,7 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 	}
 	else
 	{
-		AssocCIMInstanceXMLOutputter handler(ostr, path, includeQualifiers,
+		AssocCIMInstanceXMLOutputter handler(ostr, ns, includeQualifiers,
 			includeClassOrigin, isPropertyList, propertyList);
 
 		hdl.references(ns, path, handler, resultClass,

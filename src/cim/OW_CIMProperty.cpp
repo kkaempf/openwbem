@@ -34,6 +34,7 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_BinIfcIO.hpp"
 #include "OW_NULLValueException.hpp"
+#include "OW_StrictWeakOrdering.hpp"
 
 using std::istream;
 using std::ostream;
@@ -75,35 +76,15 @@ OW_CIMProperty::PROPData::PROPData() :
 
 bool operator<(const OW_CIMProperty::PROPData& x, const OW_CIMProperty::PROPData& y)
 {
-	if (x.m_name == y.m_name)
-	{
-		if (x.m_qualifiers == y.m_qualifiers)
-		{
-			if (x.m_propertyDataType == y.m_propertyDataType)
-			{
-				if (x.m_sizeDataType == y.m_sizeDataType)
-				{
-					if (x.m_override == y.m_override)
-					{
-						if (x.m_originClass == y.m_originClass)
-						{
-							if (x.m_cimValue == y.m_cimValue)
-							{
-								return x.m_propagated < y.m_propagated;
-							}
-							return x.m_cimValue < y.m_cimValue;
-						}
-						return x.m_originClass < y.m_originClass;
-					}
-					return x.m_override < y.m_override;
-				}
-				return x.m_sizeDataType < y.m_sizeDataType;
-			}
-			return x.m_propertyDataType < y.m_propertyDataType;
-		}
-		return x.m_qualifiers < y.m_qualifiers;
-	}
-	return x.m_name < y.m_name;
+	return OW_StrictWeakOrdering(
+		x.m_name, y.m_name,
+		x.m_cimValue, y.m_cimValue,
+		x.m_qualifiers, y.m_qualifiers,
+		x.m_propertyDataType, y.m_propertyDataType,
+		x.m_sizeDataType, y.m_sizeDataType,
+		x.m_override, y.m_override,
+		x.m_originClass, y.m_originClass,
+		x.m_propagated, y.m_propagated);
 }
 
 //////////////////////////////////////////////////////////////////////////////

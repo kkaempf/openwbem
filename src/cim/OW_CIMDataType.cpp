@@ -34,6 +34,7 @@
 #include "OW_CIM.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_BinIfcIO.hpp"
+#include "OW_StrictWeakOrdering.hpp"
 
 using std::istream;
 using std::ostream;
@@ -56,19 +57,11 @@ struct OW_CIMDataType::DTData
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const OW_CIMDataType::DTData& x, const OW_CIMDataType::DTData& y)
 {
-	if (x.m_type == y.m_type)
-	{
-		if (x.m_numberOfElements == y.m_numberOfElements)
-		{
-			if (x.m_sizeRange == y.m_sizeRange)
-			{
-				return x.m_reference < y.m_reference;
-			}
-			return x.m_sizeRange == y.m_sizeRange;
-		}
-		return x.m_numberOfElements < y.m_numberOfElements;
-	}
-	return x.m_type < y.m_type;
+	return OW_StrictWeakOrdering(
+		x.m_type, y.m_type,
+		x.m_numberOfElements, y.m_numberOfElements,
+		x.m_sizeRange, y.m_sizeRange,
+		x.m_reference, y.m_reference);
 }
 
 

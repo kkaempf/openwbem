@@ -33,6 +33,7 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_BinIfcIO.hpp"
+#include "OW_StrictWeakOrdering.hpp"
 
 using std::istream;
 using std::ostream;
@@ -57,23 +58,12 @@ struct OW_CIMQualifier::QUALData
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const OW_CIMQualifier::QUALData& x, const OW_CIMQualifier::QUALData& y)
 {
-	if (x.m_name == y.m_name)
-	{
-		if (x.m_qualifierValue == y.m_qualifierValue)
-		{
-			if (x.m_qualifierType == y.m_qualifierType)
-			{
-				if (x.m_propagated == y.m_propagated)
-				{
-					return x.m_flavors < y.m_flavors;
-				}
-				return x.m_propagated < y.m_propagated;
-			}
-			return x.m_qualifierType < y.m_qualifierType;
-		}
-		return x.m_qualifierValue < y.m_qualifierValue;
-	}
-	return x.m_name < y.m_name;
+	return OW_StrictWeakOrdering(
+		x.m_name, y.m_name,
+		x.m_qualifierValue, y.m_qualifierValue,
+		x.m_qualifierType, y.m_qualifierType,
+		x.m_propagated, y.m_propagated,
+		x.m_flavors, y.m_flavors);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -166,6 +166,8 @@ Refactorings:
     - Remove *E functions from the CIMOMHandle.  Create 2 wrapper cimom
       handles that return OW_Enumeration<T> and OW_Array<T>.
     - Put common request handlers into a header (e.g. InstanceArrayBuilder)
+	- Clean up naming. Create a CIM class/instance path, local object path,
+	  etc. and use them where appropriate.
 
 Documentation:
     - Enhance developer documentation (similar to "SNIA CIM Object Manager 

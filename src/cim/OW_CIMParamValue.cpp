@@ -32,6 +32,7 @@
 #include "OW_CIMParamValue.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_BinIfcIO.hpp"
+#include "OW_StrictWeakOrdering.hpp"
 
 using std::istream;
 using std::ostream;
@@ -52,11 +53,9 @@ struct OW_CIMParamValue::Data
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const OW_CIMParamValue::Data& x, const OW_CIMParamValue::Data& y)
 {
-	if (x.m_name == y.m_name)
-	{
-		return x.m_val < y.m_val;
-	}
-	return x.m_name < y.m_name;
+	return OW_StrictWeakOrdering(
+		x.m_name, y.m_name,
+		x.m_val, y.m_val);
 }
 
 //////////////////////////////////////////////////////////////////////////////

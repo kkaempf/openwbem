@@ -33,6 +33,7 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_BinIfcIO.hpp"
+#include "OW_StrictWeakOrdering.hpp"
 
 #include <algorithm> // for std::sort
 
@@ -57,23 +58,12 @@ struct OW_CIMQualifierType::QUALTData
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const OW_CIMQualifierType::QUALTData& x, const OW_CIMQualifierType::QUALTData& y)
 {
-	if (x.m_name == y.m_name)
-	{
-		if (x.m_dataType == y.m_dataType)
-		{
-			if (x.m_scope == y.m_scope)
-			{
-				if (x.m_flavor == y.m_flavor)
-				{
-					return x.m_defaultValue < y.m_defaultValue;
-				}
-				return x.m_flavor < y.m_flavor;
-			}
-			return x.m_scope < y.m_scope;
-		}
-		return x.m_dataType < y.m_dataType;
-	}
-	return x.m_name < y.m_name;
+	return OW_StrictWeakOrdering(
+		x.m_name, y.m_name,
+		x.m_dataType, y.m_dataType,
+		x.m_scope, y.m_scope,
+		x.m_flavor, y.m_flavor,
+		x.m_defaultValue, y.m_defaultValue);
 }
 
 //////////////////////////////////////////////////////////////////////////////

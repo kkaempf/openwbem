@@ -314,8 +314,9 @@ public:
 private:
 
 	OW_COWReference<OPData> m_pdata;
+
+	friend bool operator<(const OW_CIMObjectPath& lhs, const OW_CIMObjectPath& rhs);
 };
 
-bool operator<(const OW_CIMObjectPath& lhs, const OW_CIMObjectPath& rhs);
 
 #endif

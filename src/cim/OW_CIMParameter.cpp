@@ -32,6 +32,7 @@
 #include "OW_CIM.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_BinIfcIO.hpp"
+#include "OW_StrictWeakOrdering.hpp"
 
 using std::istream;
 using std::ostream;
@@ -49,15 +50,10 @@ struct OW_CIMParameter::PARMData
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const OW_CIMParameter::PARMData& x, const OW_CIMParameter::PARMData& y)
 {
-	if (x.m_name == y.m_name)
-	{
-		if (x.m_dataType == y.m_dataType)
-		{
-			return x.m_qualifiers < y.m_qualifiers;
-		}
-		return x.m_dataType < y.m_dataType;
-	}
-	return x.m_name < y.m_name;
+	return OW_StrictWeakOrdering(
+		x.m_name, y.m_name,
+		x.m_dataType, y.m_dataType,
+		x.m_qualifiers, y.m_qualifiers);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -131,6 +131,7 @@ OW_SortedVectorMap.hpp \
 OW_SortedVectorSet.hpp \
 OW_Stack.hpp \
 OW_StackTrace.hpp \
+OW_StrictWeakOrdering.hpp \
 OW_String.hpp \
 OW_StringBuffer.hpp \
 OW_StringEnumeration.hpp \

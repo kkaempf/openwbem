@@ -36,6 +36,7 @@
 #include "OW_CIMParameter.hpp"
 #include "OW_Array.hpp"
 #include "OW_BinIfcIO.hpp"
+#include "OW_StrictWeakOrdering.hpp"
 
 using std::ostream;
 using std::istream;
@@ -62,31 +63,14 @@ struct OW_CIMMethod::METHData
 //////////////////////////////////////////////////////////////////////////////													
 bool operator<(const OW_CIMMethod::METHData& x, const OW_CIMMethod::METHData& y)
 {
-	if (x.m_name == y.m_name)
-	{
-		if (x.m_returnDatatype == y.m_returnDatatype)
-		{
-			if (x.m_qualifiers == y.m_qualifiers)
-			{
-				if (x.m_parameters == y.m_parameters)
-				{
-					if (x.m_originClass == y.m_originClass)
-					{
-						if (x.m_override == y.m_override)
-						{
-							return x.m_propagated < y.m_propagated;
-						}
-						return x.m_override < y.m_override;
-					}
-					return x.m_originClass < y.m_originClass;
-				}
-				return x.m_parameters < y.m_parameters;
-			}
-			return x.m_qualifiers < y.m_qualifiers;
-		}
-		return x.m_returnDatatype == y.m_returnDatatype;
-	}
-	return x.m_name < y.m_name;
+	return OW_StrictWeakOrdering(
+		x.m_name, y.m_name,
+		x.m_returnDatatype, y.m_returnDatatype,
+		x.m_qualifiers, y.m_qualifiers,
+		x.m_parameters, y.m_parameters,
+		x.m_originClass, y.m_originClass,
+		x.m_override, y.m_override,
+		x.m_propagated, y.m_propagated);
 }
 
 //////////////////////////////////////////////////////////////////////////////													

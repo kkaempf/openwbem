@@ -36,6 +36,7 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_BinIfcIO.hpp"
 #include "OW_NoSuchPropertyException.hpp"
+#include "OW_StrictWeakOrdering.hpp"
 
 #include <algorithm> // for std::sort
 
@@ -57,27 +58,13 @@ struct OW_CIMInstance::INSTData
 
 bool operator<(const OW_CIMInstance::INSTData& x, const OW_CIMInstance::INSTData& y)
 {
-	if (x.m_owningClassName == y.m_owningClassName)
-	{
-		if (x.m_name == y.m_name)
-		{
-			if (x.m_aliasName == y.m_aliasName)
-			{
-				if (x.m_keys == y.m_keys)
-				{
-					if (x.m_properties == y.m_properties)
-					{
-						return x.m_qualifiers < y.m_qualifiers;
-					}
-					return x.m_properties < y.m_properties;
-				}
-				return x.m_keys < y.m_keys;
-			}
-			return x.m_aliasName < y.m_aliasName;
-		}
-		return x.m_name < y.m_name;
-	}
-	return x.m_owningClassName < y.m_owningClassName;
+	return OW_StrictWeakOrdering(
+		x.m_owningClassName, y.m_owningClassName,
+		x.m_properties, y.m_properties,
+		x.m_name, y.m_name,
+		x.m_aliasName, y.m_aliasName,
+		x.m_keys, y.m_keys,
+		x.m_qualifiers, y.m_qualifiers);
 }
 
 //////////////////////////////////////////////////////////////////////////////

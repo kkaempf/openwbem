@@ -242,6 +242,8 @@ private:
 	void setDefaultValues();
 
 	OW_COWReference<URLData> m_pdata;
+
+	friend bool operator<(const OW_CIMUrl& lhs, const OW_CIMUrl& rhs);
 };
 
 #endif
