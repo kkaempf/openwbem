@@ -98,6 +98,7 @@ public:
 	virtual void run();
 private:
 	virtual void doCooperativeCancel();
+	virtual void doDefinitiveCancel();
 	IndicationServerImpl* m_pmgr;
 	NotifyTrans m_trans;
 };
@@ -186,6 +187,13 @@ Notifier::doCooperativeCancel()
 {
 	m_trans.m_provider->doCooperativeCancel();
 }
+//////////////////////////////////////////////////////////////////////////////
+void
+Notifier::doDefinitiveCancel()
+{
+	m_trans.m_provider->doDefinitiveCancel();
+}
+
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 IndicationServerImpl::IndicationServerImpl()

@@ -355,6 +355,13 @@ PollingManager::TriggerRunner::doCooperativeCancel()
 
 //////////////////////////////////////////////////////////////////////////////
 void
+PollingManager::TriggerRunner::doDefinitiveCancel()
+{
+	m_itp->doDefinitiveCancel();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 PollingManager::doCooperativeCancel()
 {
 	NonRecursiveMutexLock l(m_triggerGuard);

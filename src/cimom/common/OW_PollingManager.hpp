@@ -81,6 +81,7 @@ private:
 		CIMOMEnvironmentRef m_env;
 	private:
 		void doCooperativeCancel();
+		void doDefinitiveCancel();
 	};
 	typedef IntrusiveReference<TriggerRunner> TriggerRunnerRef;
 	Array<TriggerRunnerRef> m_triggerRunners;
