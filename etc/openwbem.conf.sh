@@ -160,25 +160,11 @@ owcimomd.authorization_lib = @libdir@/openwbem/libowsimpleauthorizer.@lib_ext@
 ;cppprovifc.prov_TTL = 5
 
 ################################################################################
-# One of the provider interfaces provided with owcimomd is the NPI provider
-# interface. The npiprovifc.prov_location option specifies where the NPI
-# provider interface will load it's providers from. The default for this option
-# is "@libdir@/openwbem/npiproviders"
-npiprovifc.prov_location = @libdir@/openwbem/npiproviders
-
-################################################################################
-# One of the provider interfaces provided with owcimomd is the CMPI provider
-# interface. The cmpiprovifc.prov_location option specifies where the CMPI
-# provider interface will load it's providers from. The default for this option
-# is "@libdir@/openwbem/cmpiproviders"
-cmpiprovifc.prov_location = @libdir@/openwbem/cmpiproviders
-
-################################################################################
-# One of the provider interfaces provided with owcimomd is the perl provider
-# interface. The perlprovifc.prov_location option specifies where the perl
-# provider interface will load it's providers from. The default for this option
-# is "@libdir@/openwbem/perlproviders"
-perlprovifc.prov_location = @libdir@/openwbem/perlproviders
+# The remote provider interface uses a connection pool to re-use remote 
+# connections. remoteprovifc.max_connections_per_url specifies the maximum
+# number of connections per url that will be pooled.  The value must be a
+# non-negative integer.  The default value is 5.
+;remoteprovifc.max_connections_per_url = 5
 
 ################################################################################
 # If OpenWBEM is built with zlib, it can use deflate compression in the HTTP
@@ -348,4 +334,26 @@ cppprovifc.prov_location = @libdir@/openwbem/c++providers
 # You probably don't need to modify this option.
 # The default value is /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
 ;http_server.uds_filename = /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
+
+################################################################################
+# One of the provider interfaces provided with owcimomd is the NPI provider
+# interface. The npiprovifc.prov_location option specifies where the NPI
+# provider interface will load it's providers from. The default for this option
+# is "@libdir@/openwbem/npiproviders"
+npiprovifc.prov_location = @libdir@/openwbem/npiproviders
+
+################################################################################
+# One of the provider interfaces provided with owcimomd is the CMPI provider
+# interface. The cmpiprovifc.prov_location option specifies where the CMPI
+# provider interface will load it's providers from. The default for this option
+# is "@libdir@/openwbem/cmpiproviders"
+cmpiprovifc.prov_location = @libdir@/openwbem/cmpiproviders
+
+################################################################################
+# One of the provider interfaces provided with owcimomd is the perl provider
+# interface. The perlprovifc.prov_location option specifies where the perl
+# provider interface will load it's providers from. The default for this option
+# is "@libdir@/openwbem/perlproviders"
+perlprovifc.prov_location = @libdir@/openwbem/perlproviders
+
 
