@@ -30,16 +30,20 @@
 
 #include "CppUnitException.hpp"
 #include <cstring>
+#include <cstdlib>
 
-CppUnitException::CppUnitException (const char* message, long lineNumber, 
+CppUnitException::CppUnitException (const char* message, long lineNumber,
 		const char* fileName)
-: m_message (message), m_lineNumber (lineNumber), m_fileName (fileName)
+: m_message (std::strdup(message)), m_lineNumber (lineNumber), m_fileName (std::strdup(fileName))
 {}
 
 
 // Destruct the exception
 CppUnitException::~CppUnitException () throw()
-{}
+{
+    std::free(m_message);
+    std::free(m_fileName);
+}
 
 
 // Return descriptive message

@@ -61,9 +61,9 @@ public:
     const char*         fileName ();
 
 private:
-    const char*               m_message;
+    char*               m_message;
     long                m_lineNumber;
-    const char*               m_fileName;
+    char*               m_fileName;
 
 };
 
