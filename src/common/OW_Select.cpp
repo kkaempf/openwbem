@@ -62,6 +62,7 @@ extern "C"
 #include <errno.h>
 }
 
+
 namespace OpenWBEM
 {
 
@@ -133,11 +134,17 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 int
 select(const SelectTypeArray& selarray, UInt32 ms)
 {
-	int rc;
+	int rc = 0;
 	fd_set rfds;
 	// here we spin checking for thread cancellation every so often.
-	UInt32 remainingWait = ms;
-	do
+	timeval now, end;
+	const UInt32 loopMicroSeconds = 100 * 1000; // 1/10 of a second
+	gettimeofday(&now, NULL);
+	end = now;
+	end.tv_sec  += ms / 1000;
+	end.tv_usec += (ms % 1000) * 1000;
+	while ((rc == 0) && ((ms == INFINITE_TIMEOUT) || (now.tv_sec < end.tv_sec)
+		 || ((now.tv_sec == end.tv_sec) && (now.tv_usec < end.tv_usec))))
 	{
 		int maxfd = 0;
 		FD_ZERO(&rfds);
@@ -151,19 +158,30 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 			FD_SET(selarray[i], &rfds);
 		}
 
-		const UInt32 waitMs = 100; // 1/10 of a second
-		struct timeval tv;
-		tv.tv_sec = 0;
-		tv.tv_usec = std::min((waitMs % 1000), remainingWait) * 1000;
+		timeval tv;
+		tv.tv_sec = end.tv_sec - now.tv_sec;
+		if (end.tv_usec >= now.tv_usec)
+		{
+			tv.tv_usec = end.tv_usec - now.tv_usec;
+		}
+		else
+		{
+			tv.tv_sec--;
+			tv.tv_usec = 1000000 + end.tv_usec - now.tv_usec;
+		}
 
-		rc = ::select(maxfd+1, &rfds, NULL, NULL, &tv);
+		if ((tv.tv_sec > 0) || (tv.tv_usec > loopMicroSeconds) || (ms == INFINITE_TIMEOUT))
+		{
+			tv.tv_sec = 0;
+			tv.tv_usec = loopMicroSeconds;
+		}
 
 		Thread::testCancel();
-		if (ms != ~0U)
-		{
-			remainingWait -= std::min(waitMs, remainingWait);
-		}
-	} while (rc == 0 && remainingWait > 0);
+		rc = ::select(maxfd+1, &rfds, NULL, NULL, &tv);
+		Thread::testCancel();
+
+		gettimeofday(&now, NULL);
+	}
 	
 	if (rc < 0)
 	{
