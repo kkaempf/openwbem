@@ -53,6 +53,7 @@ class OpenWBEM_ClassSupportForNamespace : CIM_ClassSupportForNamespace
 
 */
 
+/* not implemented
 class OpenWBEM_ProtocolAdapter : CIM_ProtocolAdapter
 {
 };
@@ -76,6 +77,7 @@ class OpenWBEM_IdentificationOfManagedSystem : CIM_IdentificationOfManagedSystem
 class OpenWBEM_CIMOMStatisticalData : CIM_CIMOMStatisticalData
 {
 };
+*/
 
 
 class OpenWBEM_RemoteProviderRegistration
