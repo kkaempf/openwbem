@@ -46,6 +46,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
+#include "OW_CIMQualifierType.hpp"
 
 #include <iostream>
 #include <iterator>
@@ -59,16 +60,15 @@
 // EnumerateClassNames - Done
 // EnumerateInstances - Done
 // EnumerateInstanceNames - Done
-// ExecQuery
-// Associators
-// AssociatorNames
-// AssociatorsClasses
-// References
-// ReferenceNames
-// ReferencesClasses
+// Associators - Done
+// AssociatorNames - Done
+// AssociatorsClasses - Done
+// References - Done
+// ReferenceNames - Done
+// ReferencesClasses - Done
 // GetProperty
-// GetQualifier
-// EnumerateQualifiers
+// GetQualifier - Done
+// EnumerateQualifiers - Done
 
 // possible modifying operations:
 // DeleteClass
@@ -80,6 +80,7 @@
 // SetProperty
 // SetQualifier
 // DeleteQualifier
+// ExecQuery - this will get a write-lock and serialize access to the cimom.
 
 // As we're traversing instances, we need to do association traversal and
 // check referential integrity.  When we find an association instance, we
@@ -96,30 +97,65 @@ using std::cin;
 using std::cout;
 using std::endl;
 
+//////////////////////////////////////////////////////////////////////////////
+enum RepeatMode
+{
+	ONCE,
+	FOREVER
+};
+
+RepeatMode repeatMode = ONCE;
+
+//////////////////////////////////////////////////////////////////
+enum ReportMode
+{
+	ABORT,
+	COLLECT,
+	IGNORE
+};
+
+ReportMode reportMode;
+
 //////////////////////////////////////////////////////////////////
 // Error reporting globals
 OW_NonRecursiveMutex errorGuard;
 OW_StringArray errors;
 
+void handleErrorMessage(const OW_String& errorMsg)
+{
+	OW_NonRecursiveMutexLock l(errorGuard);
+	switch (reportMode)
+	{
+		case ABORT:
+			cerr << errorMsg << endl;
+			exit(1); // just bail and kill any threads that may be running.
+			break;
+		case COLLECT:
+			errors.push_back(errorMsg);
+			break;
+		case IGNORE:
+			cerr << errorMsg << endl;
+			break;
+	}
+
+}
+
 void reportError(const OW_String& operation, const OW_String& param="")
 {
 	OW_String errorMsg = format("%1(%2)", operation, param);
-	OW_NonRecursiveMutexLock l(errorGuard);
-	errors.push_back(errorMsg);
+	handleErrorMessage(errorMsg);
 }
 
 void reportError(const OW_Exception& e, const OW_String& operation, const OW_String& param="")
 {
 	OW_String errorMsg = format("%1(%2): %3", operation, param, e);
-	OW_NonRecursiveMutexLock l(errorGuard);
-	errors.push_back(errorMsg);
+	handleErrorMessage(errorMsg);
 }
 
 void reportError(const OW_Exception& e)
 {
 	OW_String errorMsg = format("%1", e);
-	OW_NonRecursiveMutexLock l(errorGuard);
-	errors.push_back(errorMsg);
+	handleErrorMessage(errorMsg);
 }
 
 int checkAndReportErrors()
@@ -143,7 +179,7 @@ ThreadMode threadMode = SINGLE;
 
 OW_String url;
 
-OW_ThreadCounterRef threadCount(new OW_ThreadCounter(400)); // more than 400 threads will break on Linux.
+OW_ThreadCounterRef threadCount(new OW_ThreadCounter(400)); // more than ~400 threads will break on Linux.
 
 void doWork(const OW_RunnableRef& work)
 {
@@ -183,7 +219,17 @@ void doWork(const OW_RunnableRef& work)
 void
 usage(const char* name)
 {
-	cerr << "Usage: " << name << " <url> <single|pool=<size>|thread>" << endl;
+	cerr << "Usage: " << name << " <url> <single|pool=<size>|thread> <once|forever> <abort|collect|ignore>\n";
+	cerr << " single - runs all operations single-threaded serially.  This may fail if the http connection timeout on the server is to low.\n";
+	cerr << " pool - creates a thread pool of size number of threads.  Each request is run on it's own thread.\n";
+	cerr << " thread - creates a thread for each request.  The maximum number of threads is 400, but this can still overload a system.\n";
+	cerr << " once - the test will run once\n";
+	cerr << " forever - the test will continue to loop forever\n";
+	cerr << " abort - the test ends once an error has occurred\n";
+	cerr << " collect - all errors will be collected and reported when the test finishes.  If you use this with \"forever\", you won't see any errors\n";
+	cerr << " ignore - errors are printed to stderr, but won't cause the test to end\n";
+
+	cerr << endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -356,6 +402,126 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////////////
+class NoopObjectPathResultHandler : public OW_CIMObjectPathResultHandlerIFC
+{
+public:
+	NoopObjectPathResultHandler(const OW_String& ns)
+		: m_ns(ns)
+	{}
+
+	void doHandle(const OW_CIMObjectPath& cop)
+	{
+		(void)cop;
+	}
+private:
+	OW_String m_ns;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class NoopInstanceResultHandler : public OW_CIMInstanceResultHandlerIFC
+{
+public:
+	NoopInstanceResultHandler(const OW_String& ns)
+		: m_ns(ns)
+	{}
+
+	void doHandle(const OW_CIMInstance& inst)
+	{
+		(void)inst;
+	}
+private:
+	OW_String m_ns;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class InstanceAssociatorNames : public OW_ErrorReportRunnable
+{
+public:
+	InstanceAssociatorNames(const OW_String& ns, const OW_CIMObjectPath& name)
+		: OW_ErrorReportRunnable("associatorNames", ns + ":" + name.toString())
+		, m_ns(ns)
+		, m_name(name)
+		{}
+
+	void doRun()
+	{
+		OW_CIMClient rch(url, m_ns);
+		NoopObjectPathResultHandler objectPathResultHandler(m_ns);
+		rch.associatorNames(m_name, objectPathResultHandler);
+	}
+
+private:
+	OW_String m_ns;
+	OW_CIMObjectPath m_name;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class InstanceReferenceNames : public OW_ErrorReportRunnable
+{
+public:
+	InstanceReferenceNames(const OW_String& ns, const OW_CIMObjectPath& name)
+		: OW_ErrorReportRunnable("referenceNames", ns + ":" + name.toString())
+		, m_ns(ns)
+		, m_name(name)
+		{}
+
+	void doRun()
+	{
+		OW_CIMClient rch(url, m_ns);
+		NoopObjectPathResultHandler objectPathResultHandler(m_ns);
+		rch.referenceNames(m_name, objectPathResultHandler);
+	}
+
+private:
+	OW_String m_ns;
+	OW_CIMObjectPath m_name;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class InstanceAssociators : public OW_ErrorReportRunnable
+{
+public:
+	InstanceAssociators(const OW_String& ns, const OW_CIMObjectPath& name)
+		: OW_ErrorReportRunnable("associators", ns + ":" + name.toString())
+		, m_ns(ns)
+		, m_name(name)
+		{}
+
+	void doRun()
+	{
+		OW_CIMClient rch(url, m_ns);
+		NoopInstanceResultHandler instanceResultHandler(m_ns);
+		rch.associators(m_name, instanceResultHandler);
+	}
+
+private:
+	OW_String m_ns;
+	OW_CIMObjectPath m_name;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class InstanceReferences : public OW_ErrorReportRunnable
+{
+public:
+	InstanceReferences(const OW_String& ns, const OW_CIMObjectPath& name)
+		: OW_ErrorReportRunnable("references", ns + ":" + name.toString())
+		, m_ns(ns)
+		, m_name(name)
+		{}
+
+	void doRun()
+	{
+		OW_CIMClient rch(url, m_ns);
+		NoopInstanceResultHandler instanceResultHandler(m_ns);
+		rch.references(m_name, instanceResultHandler);
+	}
+
+private:
+	OW_String m_ns;
+	OW_CIMObjectPath m_name;
+};
+
+//////////////////////////////////////////////////////////////////////////////
 class InstanceGetter : public OW_ErrorReportRunnable
 {
 public:
@@ -408,7 +574,17 @@ public:
 			}
 		}
 
-		// TODO: call assoc* things on it.
+		OW_RunnableRef worker6(new InstanceAssociators(m_ns, m_instPath));
+		doWork(worker6);
+
+		OW_RunnableRef worker7(new InstanceReferences(m_ns, m_instPath));
+		doWork(worker7);
+
+		OW_RunnableRef worker8(new InstanceAssociatorNames(m_ns, m_instPath));
+		doWork(worker8);
+
+		OW_RunnableRef worker9(new InstanceReferenceNames(m_ns, m_instPath));
+		doWork(worker9);
 	}
 
 private:
@@ -511,7 +687,7 @@ public:
 	{
 		OW_CIMClient rch(url, m_ns);
 		OW_CIMClassEnumeration e = rch.referencesClassesE(OW_CIMObjectPath(m_clsName));
-/* disabled until it can be fixed
+/* disabled until it can be fixed, and it takes a LONG time.
 		while (e.hasMoreElements())
 		{
 			OW_CIMClass c = e.nextElement();
@@ -635,15 +811,77 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////////////
+class QualifierTypeGetter : public OW_ErrorReportRunnable
+{
+public:
+	QualifierTypeGetter(const OW_String& ns, const OW_String& qtName)
+		: OW_ErrorReportRunnable("getQualifierType", qtName)
+		, m_ns(ns)
+		, m_qtName(qtName)
+	{}
+
+	void doRun()
+	{
+		OW_CIMClient rch(url, m_ns);
+		OW_CIMQualifierType c = rch.getQualifierType(m_qtName);
+	}
+
+private:
+	OW_String m_ns;
+	OW_String m_qtName;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class QualifierTypeResultHandler : public OW_CIMQualifierTypeResultHandlerIFC
+{
+public:
+	QualifierTypeResultHandler(const OW_String& ns)
+		: m_ns(ns)
+	{}
+
+	void doHandle(const OW_CIMQualifierType& qt)
+	{
+		OW_RunnableRef worker(new QualifierTypeGetter(m_ns, qt.getName()));
+		doWork(worker);
+	}
+
+
+private:
+	OW_String m_ns;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class QualifierEnumerator : public OW_ErrorReportRunnable
+{
+public:
+	QualifierEnumerator(const OW_String& ns)
+		: OW_ErrorReportRunnable("enumQualifierTypes", ns)
+		, m_ns(ns) {}
+
+	void doRun()
+	{
+		OW_CIMClient rch(url, m_ns);
+		QualifierTypeResultHandler qualifierTypeResultHandler(m_ns);
+		rch.enumQualifierTypes(qualifierTypeResultHandler);
+	}
+
+private:
+	OW_String m_ns;
+};
+
+//////////////////////////////////////////////////////////////////////////////
 class NamespaceResultHandler : public OW_StringResultHandlerIFC
 {
 	void doHandle(const OW_String& ns)
 	{
-		OW_RunnableRef worker(new ClassEnumerator(ns));
-		doWork(worker);
+		OW_RunnableRef worker1(new ClassEnumerator(ns));
+		doWork(worker1);
 
 		OW_RunnableRef worker2(new ClassNameEnumerator(ns));
 		doWork(worker2);
+
+		OW_RunnableRef worker3(new QualifierEnumerator(ns));
+		doWork(worker3);
 	}
 };
 
@@ -655,7 +893,7 @@ main(int argc, char* argv[])
 {
 	try
 	{
-		if (argc < 3)
+		if (argc < 5)
 		{
 			usage(argv[0]);
 			return 1;
@@ -669,12 +907,51 @@ main(int argc, char* argv[])
 		else if (threadModeArg.startsWith("pool"))
 		{
 			OW_UInt32 poolSize = threadModeArg.substring(threadModeArg.indexOf('=') + 1).toUInt32();
-			pool = new OW_ThreadPool(poolSize, 10000); // large queue since we don't want to be too restrictive and cause a deadlock
+			pool = new OW_ThreadPool(poolSize, 0); // unlimited queue since we don't want to be too restrictive and cause a deadlock
 			threadMode = POOL;
 		}
 		else if (threadModeArg == "thread")
 		{
 			threadMode = THREAD;
+		}
+		else
+		{
+			usage(argv[0]);
+			return 1;
+		}
+
+		OW_String repeatModeArg(argv[3]);
+		if (repeatModeArg == "once")
+		{
+			repeatMode = ONCE;
+		}
+		else if (repeatModeArg == "forever")
+		{
+			repeatMode = FOREVER;
+		}
+		else
+		{
+			usage(argv[0]);
+			return 1;
+		}
+
+		OW_String reportModeArg(argv[4]);
+		if (reportModeArg == "abort")
+		{
+			reportMode = ABORT;
+		}
+		else if (reportModeArg == "collect")
+		{
+			reportMode = COLLECT;
+		}
+		else if (reportModeArg == "ignore")
+		{
+			reportMode = IGNORE;
+		}
+		else
+		{
+			usage(argv[0]);
+			return 1;
 		}
 			
 
@@ -685,6 +962,30 @@ main(int argc, char* argv[])
 		// start this all off by enumerating namespaces
 		NamespaceResultHandler namespaceResultHandler;
 		rch.enumNameSpace(namespaceResultHandler);
+
+		if (repeatMode == FOREVER)
+		{
+			while (true) 
+			{
+				// Need to wait to avoid causing a deadlock
+				// because all our threads are doing an
+				// enumNameSpace and we can't launch any new
+				// ones.
+				switch (threadMode)
+				{
+					case SINGLE:
+					break; // no need to delay anything.
+					case POOL:
+						pool->waitForEmptyQueue();
+					break;
+					case THREAD:
+						// wait 10 sec. before launching another round.
+						OW_ThreadImpl::sleep(10000);
+					break;
+				}
+				rch.enumNameSpace(namespaceResultHandler);
+			}
+		}
 
 		// wait for everything to finish
 		switch (threadMode)
