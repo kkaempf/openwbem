@@ -11,7 +11,8 @@ noinst_LIBRARIES = libowmofc.a
 thelibdir = $(libdir)
 
 OW_SHARED_LIBS = libowmofc.so
-SHAREDLIBADD =
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

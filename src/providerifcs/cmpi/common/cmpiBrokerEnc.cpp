@@ -19,14 +19,11 @@
  *
  */
 
-#include <iostream>
 #include "cmpisrv.h"
 #include "OW_CIMException.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_CIMOMEnvironment.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
-#include "OW_LocalCIMOMHandle.hpp"
 
 #define CM_LOGGER(mb) \
 (* static_cast<OpenWBEM::ProviderEnvironmentIFCRef *>(mb->hdl))->getLogger()

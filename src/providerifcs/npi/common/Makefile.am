@@ -9,7 +9,10 @@ uninstall-local : uninstall-ow-shared-libs
 
 noinst_LIBRARIES = libnpisupport.a
 OW_SHARED_LIBS = libnpisupport.so
-SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem -L$(top_builddir)/src/wql/common -lowwqlcommon
+SHAREDLIBADD =  \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/wql/common -lowwqlcommon
 
 thelibdir = $(libdir)
 
@@ -33,9 +36,8 @@ INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/cimom \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/providerifcs/npi \
--I$(top_srcdir)/src/server  \
--I$(top_srcdir)/src/wql/common 
+-I$(top_srcdir)/src/wql/common
+
 

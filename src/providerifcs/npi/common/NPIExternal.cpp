@@ -5,8 +5,6 @@
 #include "OW_Format.hpp"
 #include "OW_FTABLERef.hpp"
 #include "OW_NPIProviderIFCUtils.hpp"
-#include "OW_CIMOMEnvironment.hpp"
-#include "OW_LocalCIMOMHandle.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_WQLSelectStatement.hpp"

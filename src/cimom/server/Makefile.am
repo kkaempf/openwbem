@@ -8,13 +8,16 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 noinst_LIBRARIES = libowserver.a
-SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/provider -lowprovider
 
 OW_SHARED_LIBS = libowserver.so
 thelibdir = $(libdir)
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/ifcs
 
 libowserver_a_SOURCES =	\
@@ -24,5 +27,6 @@ OW_LoggerImpls.cpp \
 OW_PidFile.cpp \
 OW_PidFile.hpp \
 OW_Platform.cpp \
-OW_Platform.hpp
-
+OW_Platform.hpp \
+OW_IndicationRepLayer.hpp \
+OW_IndicationServer.hpp

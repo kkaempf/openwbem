@@ -17,6 +17,11 @@ libowprovinstOW_NameSpace_a_SOURCES = \
 OW_NameSpaceProvider.hpp \
 OW_NameSpaceProvider.cpp
 
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
+
 INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/cim \

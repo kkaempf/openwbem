@@ -31,6 +31,7 @@ OW_CppSimpleInstanceProviderIFC.cpp \
 OW_CppInstanceProviderIFC.cpp \
 OW_CppReadOnlyInstanceProviderIFC.cpp
 
+
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_H=
 else
@@ -58,5 +59,5 @@ INCLUDES = \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/provider \
--I$(top_srcdir)/src/server
+-I$(top_srcdir)/src/cimom/server
 

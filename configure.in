@@ -290,11 +290,11 @@ case "$host" in
 	LIBS="$LIBS -lxnet"
 	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -pipe -mcpu=common"
 	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -pipe -mcpu=common"
-	CXXCOMMONLINKFLAGS=""
-	CXXBINLINKFLAGS="$LDFLAGS -Wl,-brtl -Wl,-E"
-	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -pthread -Wl,-G -Wl,-E'
+	CXXCOMMONLINKFLAGS="-L/usr/lib/threads -pthread -Wl,-E"
+	CXXBINLINKFLAGS="$LDFLAGS -Wl,-brtl"
+	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-G'
 	PLAT_OPTFLAGS="-O0"
-#	PIDFILEDIR="/var/run"
+	PIDFILEDIR="/var/opt/vintela/vmx"
 	;;
 *-*-cygwin*)
 	;;
@@ -952,6 +952,8 @@ src/authenticators/pam/Makefile
 src/authenticators/pamcl/Makefile
 src/cim/Makefile
 src/cimom/Makefile
+src/cimom/common/Makefile
+src/cimom/server/Makefile
 src/cimom/indication/Makefile
 src/cimxmllistener/Makefile
 src/client/Makefile
@@ -996,7 +998,6 @@ src/repositories/hdb/Makefile
 src/requesthandlers/Makefile
 src/requesthandlers/binary/Makefile
 src/requesthandlers/cimxml/Makefile
-src/server/Makefile
 src/services/Makefile
 src/services/http/Makefile
 src/tools/Makefile

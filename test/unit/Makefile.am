@@ -24,27 +24,20 @@ INCLUDES = \
 -I$(top_srcdir)/src/common/socket \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/providerifcs/cpp \
--I$(top_srcdir)/src/cimom \
+-I$(top_srcdir)/src/cimom/server \
+-I$(top_srcdir)/src/cimom/common \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/ifcs \
--I$(top_srcdir)/src/server \
 -I$(top_srcdir)/src/xml \
 -I$(top_srcdir)/src/cimxmllistener \
 -I$(top_srcdir)/src/client \
 -I$(top_srcdir)/src/mof
 
 unitMain_LDADD = \
-$(top_builddir)/src/cimom/OW_LocalCIMOMHandle.o \
-$(top_builddir)/src/cimom/OW_CIMOMEnvironment.o \
-$(top_builddir)/src/cimom/OW_ProviderManager.o \
-$(top_builddir)/src/cimom/OW_PollingManager.o \
-$(top_builddir)/src/cimom/OW_ProviderIFCLoader.o \
-$(top_builddir)/src/cimom/OW_CIMServer.o \
-$(top_builddir)/src/cimom/OW_WQLFilterRep.o \
-$(top_builddir)/src/cimom/OW_SharedLibraryRepository.o \
 $(top_builddir)/test/CppUnit/libCppUnit.a \
 -L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/src/server -lowserver \
+-L$(top_builddir)/src/cimom/server -lowserver \
+-L$(top_builddir)/src/cimom/common -lowcimomcommon \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/client -lowclient \
@@ -52,14 +45,15 @@ $(top_builddir)/test/CppUnit/libCppUnit.a \
 -L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
--L$(top_builddir)/db/db -lowdb -ldl \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
+-L$(top_builddir)/db/db -lowdb -ldl \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/mof -lowmofc
 
+
 unitMain_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--rdynamic -o unitMain
+-o unitMain
 
 check_SCRIPTS = run_make_check.sh
 EXTRA_DIST = $(check_SCRIPTS)

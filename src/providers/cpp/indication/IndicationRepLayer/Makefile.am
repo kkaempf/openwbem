@@ -8,7 +8,6 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 noinst_LIBRARIES = libowprovindIndicationRepLayer.a 
-SHAREDLIBADD =
 
 thelibdir = $(pkglibdir)/c++providers
 
@@ -17,6 +16,15 @@ OW_SHARED_LIBS = libowprovindIndicationRepLayer.so
 libowprovindIndicationRepLayer_a_SOURCES = \
 OW_provindIndicationRepLayer.cpp
 
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/cimom/server -lowserver \
+-L$(top_builddir)/src/cimom/common -lowcimomcommon \
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
+-L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
+-L$(top_builddir)/db/db -lowdb
+
 INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/ifcs \
@@ -24,7 +32,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/cpp \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/wql/common \
--I$(top_srcdir)/src/cimom
+-I$(top_srcdir)/src/cimom/common
 
 
 

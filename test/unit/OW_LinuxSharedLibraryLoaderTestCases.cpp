@@ -57,7 +57,7 @@ void OW_LinuxSharedLibraryLoaderTestCases::testGetFunctionPointer()
 {
 	SharedLibraryLoaderRef sll = SharedLibraryLoader::createSharedLibraryLoader();
 	SharedLibraryRef lib = sll->loadSharedLibrary(
-			"../../src/server/libowserver"OW_SHAREDLIB_EXTENSION, g_testEnvironment->getLogger());
+			"../../src/cimom/server/libowserver"OW_SHAREDLIB_EXTENSION, g_testEnvironment->getLogger());
 	unitAssert( !lib.isNull() );
 /*
 	SharedLibraryLoaderRef (*createFunc)();

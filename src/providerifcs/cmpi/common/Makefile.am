@@ -10,7 +10,8 @@ uninstall-local : uninstall-ow-shared-libs
 noinst_LIBRARIES = libcmpisupport.a
 OW_SHARED_LIBS = libcmpisupport.so
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/provider -lowprovider 
 
 thelibdir = $(libdir)
 
@@ -64,8 +65,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/cimom \
 -I$(top_srcdir)/src/provider \
--I$(top_srcdir)/src/providerifcs/npi \
--I$(top_srcdir)/src/server 
+-I$(top_srcdir)/src/providerifcs/npi 
 

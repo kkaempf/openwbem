@@ -16,6 +16,11 @@ OW_SHARED_LIBS = libowprovinstOpenWBEM_ObjectManager.so
 libowprovinstOpenWBEM_ObjectManager_a_SOURCES = \
 OW_provinstOpenWBEM_ObjectManager.cpp
 
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
+
 INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/common/socket \

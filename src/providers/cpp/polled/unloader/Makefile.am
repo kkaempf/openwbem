@@ -15,7 +15,12 @@ OW_SHARED_LIBS = libowprovpollUnloader.so
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \
--L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc 
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
+-L$(top_builddir)/src/cimom/server -lowserver \
+-L$(top_builddir)/src/cimom/common -lowcimomcommon \
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
+-L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
+-L$(top_builddir)/db/db -lowdb
 
 libowprovpollUnloader_a_SOURCES = \
 OW_UnloaderProvider.hpp \
@@ -27,5 +32,5 @@ INCLUDES = \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/providerifcs/cpp \
--I$(top_srcdir)/src/cimom
+-I$(top_srcdir)/src/cimom/common
 

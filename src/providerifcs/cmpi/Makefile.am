@@ -52,6 +52,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/cimom \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/providerifcs/cmpi/common \
--I$(top_srcdir)/src/server \
+-I$(top_srcdir)/src/cimom/server \
 -I$(top_srcdir)/src/wql/common
 

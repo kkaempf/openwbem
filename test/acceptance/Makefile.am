@@ -36,7 +36,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/cimom \
 -I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/server \
+-I$(top_srcdir)/src/cimom/server \
 -I$(top_srcdir)/src/cimom \
 -I$(top_srcdir)/src/xml \
 -I$(top_srcdir)/src/client

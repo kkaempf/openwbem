@@ -34,13 +34,12 @@ $(CIMXMLLISTENERDIR) \
  \
  \
 provider \
-server \
  \
 wql \
 authenticators \
 requesthandlers \
-providerifcs \
 repositories \
+providerifcs \
 cimom \
 providers \
  \

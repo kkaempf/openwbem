@@ -4,8 +4,6 @@ clean-local : clean-ow-shared-libs
 
 
 noinst_LIBRARIES = libindicationtest1.a libindicationtest2.a libindicationtest3.a
-SHAREDLIBADD =
-
 
 OW_SHARED_LIBS = libindicationtest1.so libindicationtest2.so libindicationtest3.so
 
@@ -26,7 +24,16 @@ INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/cpp \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/wql/common \
--I$(top_srcdir)/src/cimom
+-I$(top_srcdir)/src/cimom/common
 
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
+-L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/wql/common -lowwqlcommon \
+-L$(top_builddir)/src/cimom/common -lowcimomcommon \
+-L$(top_builddir)/src/cimom/server -lowserver \
+-L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
+-L$(top_builddir)/db/db -lowdb
 
 

@@ -27,3 +27,7 @@ SampleProvider.c
 INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/npi/common 
 
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/wql/common -lowwqlcommon \
+-L$(top_builddir)/src/providerifcs/npi/common -lnpisupport

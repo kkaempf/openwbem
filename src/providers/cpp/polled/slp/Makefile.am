@@ -23,7 +23,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/thread \
--I$(top_srcdir)/src/server \
+-I$(top_srcdir)/src/cimom/server \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/providerifcs/cpp \
 -I$(top_srcdir)/src/client
