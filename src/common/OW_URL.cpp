@@ -117,7 +117,7 @@ OW_URL::OW_URL(const OW_String& sUrl): port(0)
 			}
 			catch (const OW_StringConversionException&)
 			{
-				OW_THROW(OW_Exception, "Invalid URL");
+				OW_THROW(OW_Exception, OW_String("Invalid URL: " + sUrl).c_str());
 			}
 		}
 	}
@@ -125,7 +125,7 @@ OW_URL::OW_URL(const OW_String& sUrl): port(0)
 		host = sURL;
 	else
 	{
-		OW_THROW(OW_Exception, "Invalid URL");
+		OW_THROW(OW_Exception, OW_String("Invalid URL: " + sUrl).c_str());
 	}
 }
 
