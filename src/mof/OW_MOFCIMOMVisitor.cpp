@@ -875,29 +875,36 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 				{
 					tempProp.setQualifier(newQuals[i]);
 				}
-				CIMValue castValue = CIMValueCast::castValueToDataType(
-						m_curProperty.getValue(),
-						CIMDataType(tempProp.getDataType()));
-				if (castValue.getType() == CIMDataType::REFERENCE)
+				if (m_curProperty.getValue())
 				{
-					CIMObjectPath cop(CIMNULL);
-					castValue.get(cop);
-					if (cop)
+					CIMValue castValue(CIMNULL);
+					try
 					{
-						// If the object path doesn't have a : character, then we need to set the namespace on it.
-						if (m_curProperty.getValue().toString().indexOf(':') == String::npos)
+						castValue = CIMValueCast::castValueToDataType(
+							m_curProperty.getValue(),
+							CIMDataType(tempProp.getDataType()));
+					}
+					catch (ValueCastException&)
+					{
+						theErrorHandler->recoverableError(
+								format("Value is not the correct type: %1.  The type should be: %2", m_curProperty.getValue().toString(), tempProp.getDataType().toString()).c_str(), pInstanceDeclaration->theLineInfo);
+					}
+					if (castValue && castValue.getType() == CIMDataType::REFERENCE)
+					{
+						CIMObjectPath cop(CIMNULL);
+						castValue.get(cop);
+						if (cop)
 						{
-							cop.setNameSpace(m_namespace);
-							castValue = CIMValue(cop);
+							// If the object path doesn't have a : character, then we need to set the namespace on it.
+							if (m_curProperty.getValue().toString().indexOf(':') == String::npos)
+							{
+								cop.setNameSpace(m_namespace);
+								castValue = CIMValue(cop);
+							}
 						}
 					}
+					tempProp.setValue(castValue);
 				}
-				if (!castValue)
-				{
-					theErrorHandler->recoverableError(
-							format("Value is not the correct type: %1.  The type should be: %2", m_curProperty.getValue().toString(), tempProp.getDataType().toString()).c_str(), pInstanceDeclaration->theLineInfo);
-				}
-				tempProp.setValue(castValue);
 				m_curInstance.setProperty(tempProp);
 			}
 			else
