@@ -442,12 +442,21 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 				strerror(errno)).c_str());
 	}
 	// give anybody access to the socket
-	if (::fchmod(m_sockfd, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) == -1)
+#if defined(OW_HPUX) // on hpux fchmod() doesn't work on a UDS
+	if (::chmod(filename.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) == -1)
 	{
 		close();
 		OW_THROW(SocketException, Format("ServerSocketImpl: chmod failed: %1",
 				strerror(errno)).c_str());
 	}
+#else
+	if (::fchmod(m_sockfd, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) == -1)
+	{
+		close();
+		OW_THROW(SocketException, Format("ServerSocketImpl: fchmod failed: %1",
+				strerror(errno)).c_str());
+	}
+#endif
 	if (::listen(m_sockfd, queueSize) == -1)
 	{
 		close();
