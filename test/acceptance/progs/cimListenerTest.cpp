@@ -379,78 +379,92 @@ int main(int argc, char* argv[])
 			cout << e.getMessage() << endl;
 		}
 
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassIndication", "wql1", "root/testsuite", mcb);
-		registrationHandles.append(handle);
-		sleep(1);
-
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassCreation", "wql1", "root/testsuite", mcb);
-		registrationHandles.append(handle);
-		sleep(1);
-
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassDeletion", "wql1", "root/testsuite", mcb);
-		registrationHandles.append(handle);
-		sleep(1);
-
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassModification", "wql1", "root/testsuite", mcb);
-		registrationHandles.append(handle);
-		sleep(1);
-
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstModification", "wql1", "root/testsuite", mcb);
-		registrationHandles.append(handle);
-		sleep(1);
-
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstDeletion", "wql1", "root/testsuite", mcb);
-		registrationHandles.append(handle);
-		sleep(1);
-
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstRead", "wql1", "root/testsuite", mcb);
-		registrationHandles.append(handle);
-		sleep(1);
-
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstCreation", "wql1", "root/testsuite", mcb);
-		registrationHandles.append(handle);
-		sleep(1);
-
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstIndication", "wql1", "root/testsuite", mcb);
-		registrationHandles.append(handle);
-		sleep(1);
-
-
-		//handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstMethodCall", "wql1", "root/testsuite", mcb);
-		//registrationHandles.append(handle);
-
-
-		//cout << "Executing createClass()" << endl;
-		createClass(rch);
-		//cout << "Executing createInstance()" << endl;
-		createInstance(rch, "MyInstance");
-		//cout << "Executing modifyInstance()" << endl;
-		modifyInstance(rch, "MyInstance");
-		//cout << "Executing getInstance()" << endl;
-		getInstance(rch, "MyInstance");
-		//cout << "Executing deleteInstance()" << endl;
-		deleteInstance(rch, "MyInstance");
-		//cout << "Executing modifyClass()" << endl;
-		modifyClass(rch);
-		//cout << "Executing deleteClass()" << endl;
-		deleteClass(rch);
-		//cout << "Done running intrinsic methods." << endl;
-		//invokeMethod(rch, 2); // TODO
-
-		//cout << "Now waiting for intrinsic method indications" << endl;
-		for (size_t i = 0; i < 13; ++i)
+		for (size_t i = 0; i < 3; ++i)
 		{
-			if (!sem.timedWait(25))
+			registrationHandles.clear();
+
+			handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassIndication", "wql1", "root/testsuite", mcb);
+			registrationHandles.append(handle);
+			sleep(1);
+
+			handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassCreation", "wql1", "root/testsuite", mcb);
+			registrationHandles.append(handle);
+			sleep(1);
+
+			handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassDeletion", "wql1", "root/testsuite", mcb);
+			registrationHandles.append(handle);
+			sleep(1);
+
+			handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassModification", "wql1", "root/testsuite", mcb);
+			registrationHandles.append(handle);
+			sleep(1);
+
+			handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstModification", "wql1", "root/testsuite", mcb);
+			registrationHandles.append(handle);
+			sleep(1);
+
+			handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstDeletion", "wql1", "root/testsuite", mcb);
+			registrationHandles.append(handle);
+			sleep(1);
+
+			handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstRead", "wql1", "root/testsuite", mcb);
+			registrationHandles.append(handle);
+			sleep(1);
+
+			handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstCreation", "wql1", "root/testsuite", mcb);
+			registrationHandles.append(handle);
+			sleep(1);
+
+			handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstIndication", "wql1", "root/testsuite", mcb);
+			registrationHandles.append(handle);
+			sleep(1);
+
+
+			//handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstMethodCall", "wql1", "root/testsuite", mcb);
+			//registrationHandles.append(handle);
+
+
+			//cout << "Executing createClass()" << endl;
+			createClass(rch);
+			//cout << "Executing createInstance()" << endl;
+			createInstance(rch, "MyInstance");
+			//cout << "Executing modifyInstance()" << endl;
+			modifyInstance(rch, "MyInstance");
+			//cout << "Executing getInstance()" << endl;
+			getInstance(rch, "MyInstance");
+			//cout << "Executing deleteInstance()" << endl;
+			deleteInstance(rch, "MyInstance");
+			//cout << "Executing modifyClass()" << endl;
+			modifyClass(rch);
+			//cout << "Executing deleteClass()" << endl;
+			deleteClass(rch);
+			//cout << "Done running intrinsic methods." << endl;
+			//invokeMethod(rch, 2); // TODO
+
+			//cout << "Now waiting for intrinsic method indications" << endl;
+			for (size_t i = 0; i < 10; ++i)
 			{
-				OW_THROW(ListenerTestException, "timeout on semaphore");
+				if (!sem.timedWait(25))
+				{
+					OW_THROW(ListenerTestException, "timeout on semaphore");
+				}
+				MutexLock guard4(coutMutex);
+				cout << i << endl;
 			}
-			MutexLock guard4(coutMutex);
-			cout << i << endl;
+
+			MutexLock guard5(coutMutex);
+			cout << "Now deregistering..." << endl;
+			guard5.release();
+
+			for (size_t i = 0; i < registrationHandles.size() - 1; ++i)
+			{
+				hxcl.deregisterForIndication(registrationHandles[i]);
+			}
 		}
 
-		MutexLock guard5(coutMutex);
-		cout << "Now deregistering and shutting down..." << endl;
-		guard5.release();
+		MutexLock guard6(coutMutex);
+		cout << "Now shutting down..." << endl;
+		guard6.release();
 
 		hxcl.shutdownHttpServer();
 		for (size_t i = 0; i < registrationHandles.size(); ++i)
