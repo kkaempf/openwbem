@@ -337,6 +337,12 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		{
 			 continue;
 		}
+#ifdef OW_DARWIN
+                if(dirEntries[i].indexOf(OW_VERSION) != String::npos)
+                {
+                        continue;
+                }
+#endif // OW_DARWIN
 		String libName = libPath;
 		libName += OW_FILENAME_SEPARATOR;
 		libName += dirEntries[i];
