@@ -552,19 +552,21 @@ CIMObjectPath::parse(const String& instanceNameArg)
 	const char* values = instanceName.c_str();
 	String keyvalue;
 	bool inquote = false;
-	int i, keystart;
 	int equalspos = 0;
 	CIMPropertyArray tmpkeys;
+	
 	//
 	// Now extract keys
 	//
-	for(i = 0, keystart = 0; i < valuesLen; i++)
+	int i = 0;
+	int keystart = 0;
+	while (i < valuesLen)
 	{
 		char ch = values[i];
 		// Skip escaped characters
 		if(i < valuesLen-1 && ch == '\\')
 		{
-			i++;
+			i += 2;
 			continue;
 		}
 		// Check for quotes
@@ -574,6 +576,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 		}
 		if(inquote)
 		{
+			++i;
 			continue;
 		}
 		if(ch == '=')
@@ -637,6 +640,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 			tmpkeys.append(cp);
 			singleKey = false;
 		}
+		++i;
 	}
 	//
 	// Now assign the values to this instance
