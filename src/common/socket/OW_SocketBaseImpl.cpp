@@ -38,6 +38,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_PosixUnnamedPipe.hpp"
 #include "OW_Socket.hpp"
+#include "OW_Thread.hpp"
 
 extern "C"
 {
@@ -254,13 +255,15 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 		}
 
 		int maxfd = m_sockfd > pipefd ? m_sockfd : pipefd;
-#ifdef OW_USE_GNU_PTH
-		if((n = ::pth_select(maxfd+1, &rset, &wset, NULL, ptval)) == 0)
-#else
 		if((n = ::select(maxfd+1, &rset, &wset, NULL, ptval)) == 0)
-#endif
 		{
 			::close(m_sockfd);
+
+			if (errno == EINTR)
+			{
+				OW_Thread::testCancel();
+			}
+
 			OW_THROW(OW_SocketException, "OW_SocketBaseImpl::connect");
 		}
 
@@ -342,19 +345,26 @@ OW_SocketBaseImpl::fillInetAddrParms() /*throw (OW_SocketException)*/
 	len = sizeof(addr);
 	if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
-		OW_THROW(OW_SocketException,
-				format("OW_SocketBaseImpl::fillInetAddrParms: getsockname: %1(%2)", errno, strerror(errno)).c_str());
+// Don't error out here, we can still operate without working DNS.
+//		OW_THROW(OW_SocketException,
+//				format("OW_SocketBaseImpl::fillInetAddrParms: getsockname: %1(%2)", errno, strerror(errno)).c_str());
 	}
-	m_localAddress.assignFromNativeForm(&addr, len);
+	else
+	{
+		m_localAddress.assignFromNativeForm(&addr, len);
+	}
 
 	len = sizeof(addr);
 	if(getpeername(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
-		OW_THROW(OW_SocketException,
-				format("OW_SocketBaseImpl::fillInetAddrParms: getpeername: %1(%2)", errno, strerror(errno)).c_str());
+// Don't error out here, we can still operate without working DNS.
+//		OW_THROW(OW_SocketException,
+//				format("OW_SocketBaseImpl::fillInetAddrParms: getpeername: %1(%2)", errno, strerror(errno)).c_str());
 	}
-
-	m_peerAddress.assignFromNativeForm(&addr, len);
+	else
+	{
+		m_peerAddress.assignFromNativeForm(&addr, len);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

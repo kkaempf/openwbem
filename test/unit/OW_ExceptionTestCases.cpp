@@ -31,9 +31,9 @@
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_ExceptionTestCases.hpp"
-#include "OW_Thread.hpp"
 #include "OW_Semaphore.hpp"
 #include "OW_Exception.hpp"
+#include "OW_Runnable.hpp"
 
 DECLARE_EXCEPTION(Test);
 DEFINE_EXCEPTION(Test);
@@ -79,14 +79,12 @@ void OW_ExceptionTestCases::testSomething()
 	}
 	unitAssert(g_caught);
 
-	/* TODO: uncomment this test and fix it.
 	g_caught = false;
 	OW_RunnableRef rref(new ExTestRunnable);
-	OW_Thread::run(rref);
+	OW_Runnable::run(rref);
 	unitAssert(g_sem.timedWait(30));
 
 	unitAssert(g_caught);
-	*/
 }
 
 Test* OW_ExceptionTestCases::suite()

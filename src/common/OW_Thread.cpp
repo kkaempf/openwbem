@@ -34,41 +34,17 @@
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
 #include "OW_ThreadBarrier.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
 
 #include <cstring>
 #include <cstdio>
 #include <cerrno>
 #include <iostream>
-
-DEFINE_EXCEPTION(Thread);
+#include <csignal>
 
 //////////////////////////////////////////////////////////////////////////////
-class OW_RunnableThread : public OW_Thread
-{
-public:
-	OW_RunnableThread(OW_RunnableRef theRunnable) :
-		OW_Thread(false), m_runnable(theRunnable)
-	{
-		setSelfDelete(true);
-	}
-
-	virtual OW_Int32 run()
-	{
-		try
-		{
-			m_runnable->run();
-		}
-		catch(...)
-		{
-			// Ignore?
-		}
-		return 0; // Return code just gets dropped, but we have to return something...
-	}
-
-private:
-	OW_RunnableRef m_runnable;
-};
-
+DEFINE_EXCEPTION(Thread);
+DEFINE_EXCEPTION(CancellationDenied);
 
 //////////////////////////////////////////////////////////////////////
 // this is what's really passed to threadRunner
@@ -90,7 +66,7 @@ static OW_Thread_t zeroThread();
 static OW_Thread_t NULLTHREAD = zeroThread();
 
 //////////////////////////////////////////////////////////////////////
-static inline OW_Bool
+static inline bool
 sameId(const OW_Thread_t& t1, const OW_Thread_t& t2)
 {
 	return OW_ThreadImpl::sameThreads(t1, t2);
@@ -98,9 +74,14 @@ sameId(const OW_Thread_t& t1, const OW_Thread_t& t2)
 
 //////////////////////////////////////////////////////////////////////////////
 // Constructor
-OW_Thread::OW_Thread(OW_Bool isjoinable) :
-	m_id(NULLTHREAD), m_isJoinable(isjoinable), m_deleteSelf(false),
-	m_isRunning(false), m_isStarting(false)
+OW_Thread::OW_Thread(bool isjoinable) 
+	: m_id(NULLTHREAD)
+	, m_isJoinable(isjoinable)
+	, m_deleteSelf(false)
+	, m_isRunning(false)
+	, m_isStarting(false)
+	, m_cancelRequested(false)
+	, m_cancelled(false)
 {
 }
 
@@ -175,30 +156,11 @@ OW_Thread::join() /*throw (OW_ThreadException)*/
 			format("OW_Thread::join - OW_ThreadImpl::joinThread: %1(%2)", 
 				   errno, strerror(errno)).c_str());
 	}
-	return rval;
-}
 
-//////////////////////////////////////////////////////////////////////////////
-// STATIC
-void
-OW_Thread::run(OW_RunnableRef theRunnable, OW_Bool separateThread, OW_Reference<OW_ThreadDoneCallback> cb)
-{
-	if(separateThread)
-	{
-		OW_RunnableThread* prt = new OW_RunnableThread(theRunnable);
-		prt->start(cb);
-	}
-	else
-	{
-		try
-		{
-			theRunnable->run();
-		}
-		catch(...)
-		{
-			// Ignore?
-		}
-	}
+	// need to set this to false, since the thread may have been cancelled, in which case the m_isRunning flag will be wrong.
+	m_isRunning = false;
+
+	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -216,6 +178,7 @@ OW_Thread::threadRunner(void* paramPtr)
 
 		OW_ThreadParam* pParam = static_cast<OW_ThreadParam*>(paramPtr);
 		OW_Thread* pTheThread = pParam->thread;
+		OW_ThreadImpl::saveThreadInTLS(pTheThread);
 		theThreadID = pTheThread->m_id;
 		OW_Reference<OW_ThreadDoneCallback> cb = pParam->cb;
 		OW_ThreadBarrier barrier = pParam->barrier;
@@ -224,7 +187,16 @@ OW_Thread::threadRunner(void* paramPtr)
 
 		pTheThread->m_isRunning = true;
 
-		rval = pTheThread->run();
+		try
+		{
+			rval = pTheThread->run();
+		}
+		catch (OW_ThreadCancelledException&)
+		{
+			OW_NonRecursiveMutexLock l(pTheThread->m_cancelLock);
+			pTheThread->m_cancelled = true;
+			pTheThread->m_cancelCond.notifyAll();
+		}
 
 		pTheThread->m_isRunning = pTheThread->m_isStarting = false;
 
@@ -254,14 +226,14 @@ OW_Thread::threadRunner(void* paramPtr)
 		}
 
 	}
-	catch(OW_Exception& ex)
+	catch (OW_Exception& ex)
 	{
 #ifdef OW_DEBUG		
 		std::cerr << "!!! Exception: " << ex.type() << " caught in OW_Thread class\n";
 		std::cerr << ex << std::endl;
 #endif
 	}
-	catch(...)
+	catch (...)
 	{
 #ifdef OW_DEBUG		
 		std::cerr << "!!! Unknown Exception caught in OW_Thread class" << std::endl;
@@ -281,4 +253,75 @@ zeroThread()
 	::memset(&zthr, 0, sizeof(zthr));
 	return zthr;
 }
+
+//////////////////////////////////////////////////////////////////////
+void
+OW_Thread::cooperativeCancel()
+{
+	// give the thread a chance to clean up a bit or abort the cancellation.
+	doCooperativeCancel();
+
+	OW_NonRecursiveMutexLock l(m_cancelLock);
+	m_cancelRequested = true;
+
+	// send a SIGUSR1 to the thread to break it out of any blocking syscall.
+	// SIGUSR1 is ignored.  It's set to SIG_IGN in OW_ThreadImpl.cpp
+	OW_ThreadImpl::sendSignalToThread(m_id, SIGUSR1);
+}
+
+//////////////////////////////////////////////////////////////////////
+bool
+OW_Thread::definitiveCancel(OW_UInt32 waitForCooperativeSecs)
+{
+	// give the thread a chance to clean up a bit or abort the cancellation.
+	doCooperativeCancel();
+
+	OW_NonRecursiveMutexLock l(m_cancelLock);
+	m_cancelRequested = true;
+
+	// send a SIGUSR1 to the thread to break it out of any blocking syscall.
+	// SIGUSR1 is ignored.  It's set to SIG_IGN in OW_ThreadImpl.cpp
+	OW_ThreadImpl::sendSignalToThread(m_id, SIGUSR1);
+	while (!m_cancelled)
+	{
+		if (!m_cancelCond.timedWait(l, waitForCooperativeSecs, 0))
+		{
+			// give the thread a chance to clean up a bit or abort the cancellation.
+			doDefinitiveCancel();
+
+			// thread didn't (or won't) exit by itself, we'll have to really kill it.
+			this->cancel();
+			return false;
+		}
+	}
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+void
+OW_Thread::cancel()
+{
+	OW_ThreadImpl::cancel(m_id);
+}
+
+//////////////////////////////////////////////////////////////////////
+void
+OW_Thread::testCancel()
+{
+	OW_ThreadImpl::testCancel();
+}
+
+
+//////////////////////////////////////////////////////////////////////
+void 
+OW_Thread::doCooperativeCancel()
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+void 
+OW_Thread::doDefinitiveCancel()
+{
+}
+
 

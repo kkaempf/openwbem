@@ -33,6 +33,10 @@
 
 #include "OW_config.h"
 #include "OW_Reference.hpp"
+#include "OW_ThreadDoneCallback.hpp"
+
+class OW_Runnable;
+typedef OW_Reference<OW_Runnable> OW_RunnableRef;
 
 /**
  * There are two methods for creating a thread of execution in the OW systems.
@@ -69,9 +73,17 @@ class OW_Runnable
 public:
 	virtual ~OW_Runnable();
 	virtual void run() = 0;
+
+	/**
+	 * Start a thread and run the run method of a given OW_Runnable object.
+	 * @param theRunnable	A reference to an OW_Runnable object as an
+	 *								OW_RunnableRef to run.
+	 */
+	static void run(OW_RunnableRef theRunnable, bool separateThread = true,
+		OW_ThreadDoneCallbackRef cb = OW_ThreadDoneCallbackRef(0));
+
 };
 
-typedef OW_Reference<OW_Runnable> OW_RunnableRef;
 
 
 #endif

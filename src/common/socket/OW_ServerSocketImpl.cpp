@@ -35,6 +35,7 @@
 #include "OW_ByteSwap.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_File.hpp"
+#include "OW_Thread.hpp"
 
 extern "C"
 {
@@ -280,12 +281,13 @@ OW_ServerSocketImpl::waitForIO(int fd, int timeOutSecs, OW_Bool forInput)
 		pwritefds = &thefds;
 	}
 
-#ifdef OW_USE_GNU_PTH
-	if((rc = ::pth_select(fd+1, preadfds, pwritefds, NULL, ptimeval)) == -1)
-#else
-	if((rc = ::select(fd+1, preadfds, pwritefds, NULL, ptimeval)) == -1)
-#endif
+	if ((rc = ::select(fd+1, preadfds, pwritefds, NULL, ptimeval)) == -1)
 	{
+		if (errno == EINTR)
+		{
+			OW_Thread::testCancel();
+		}
+
 		OW_THROW(OW_SocketException, "waitForIO: select");
 	}
 
@@ -350,6 +352,11 @@ OW_ServerSocketImpl::accept(int timeoutSecs)
 					"between select() and accept()");
 			}
 		
+			if (errno == EINTR)
+			{
+				OW_Thread::testCancel();
+			}
+
 			OW_THROW(OW_SocketException, "OW_ServerSocketImpl::accept");
 		}
 

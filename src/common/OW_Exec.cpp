@@ -110,6 +110,7 @@ OW_Exec::safeSystem(const OW_Array<OW_String>& command)
 
 	do
 	{
+		OW_Thread::testCancel();
 #ifdef OW_USE_GNUPTH
 		if (pth_waitpid(pid, &status, 0) == -1)
 #else
@@ -227,6 +228,7 @@ waitpidNoINTR(pid_t pid, int* status, int options)
 	pid_t waitpidrv;
 	do
 	{
+		OW_Thread::testCancel();
 		waitpidrv = lwaitpid(pid, status, options);
 	} while (waitpidrv == -1 && errno == EINTR);
 	return waitpidrv;

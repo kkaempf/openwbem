@@ -47,6 +47,7 @@
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMQualifierType.hpp"
+#include "OW_Runnable.hpp"
 
 #include <iostream>
 #include <iterator>
@@ -209,7 +210,7 @@ void doWork(const OW_RunnableRef& work)
 		case THREAD:
 		{
 			threadCount->incThreadCount(600, 0); // 10 min timeout.
-			OW_Thread::run(work, true, OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(threadCount)));
+			OW_Runnable::run(work, true, OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(threadCount)));
 		}
 		break;
 	}

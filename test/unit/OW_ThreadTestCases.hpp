@@ -46,6 +46,8 @@ public:
 private:
 	// test methods
 	void testReturn();
+	void testCooperativeCancellation();
+	void testDefinitiveCancellation();
 };
 
 #endif

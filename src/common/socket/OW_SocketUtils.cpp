@@ -35,6 +35,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_Socket.hpp"
 #include "OW_Format.hpp"
+#include "OW_Thread.hpp"
 
 extern "C"
 {
@@ -121,13 +122,8 @@ waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput)
 		FD_SET(fd, &writefds);
 	}
 
-#ifdef OW_USE_GNU_PTH
-	rc = ::pth_select(maxfd + 1, &readfds, &writefds,
-					  NULL, ptimeval);
-#else
 	rc = ::select(maxfd + 1, &readfds, &writefds,
 					  NULL, ptimeval);
-#endif
 
 	switch (rc)
 	{
@@ -136,6 +132,11 @@ waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput)
 			break;
 
 		case -1:
+			if (errno == EINTR)
+			{
+				OW_Thread::testCancel();
+			}
+
 			OW_THROW(OW_SocketException, format("OW_SocketUtils::waitForIO: select failed: %1(%2)", errno, strerror(errno)).c_str());
 			break;
 

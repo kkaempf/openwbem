@@ -49,7 +49,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_SocketBaseImpl.hpp" // for setDumpFiles()
 #include "OW_ThreadDoneCallback.hpp"
-#include "OW_Thread.hpp"
+#include "OW_Runnable.hpp"
 #include "OW_TimeoutException.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
@@ -250,7 +250,7 @@ public:
 			OW_RunnableRef rref(new OW_HTTPSvrConnection(socket,
 				 m_HTTPServer, m_HTTPServer->m_upipe, newOpts));
 
-			OW_Thread::run(rref, m_HTTPServer->m_options. isSepThread,
+			OW_Runnable::run(rref, m_HTTPServer->m_options. isSepThread,
 				OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(m_HTTPServer->m_threadCount)));
 		}
 		catch (OW_SSLException& se)

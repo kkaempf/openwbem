@@ -38,14 +38,41 @@
 #include "OW_ThreadImpl.hpp"
 #include "OW_Reference.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_Runnable.hpp"
+#include "OW_Condition.hpp"
+#include "OW_NonRecursiveMutex.hpp"
 #include "OW_ThreadDoneCallback.hpp"
 
 
+/**
+ * In the event a thread has been cancelled, a 
+ * OW_ThreadCancelledException will be thrown.  DO NOT catch this exception.
+ * OW_ThreadCancelledException is not derived from anything.
+ * Do not write code like this:
+ * try {
+ *  //...
+ * } catch (...) {
+ *  // swallow all exceptions
+ * }
+ *
+ * Instead do this:
+ * try {
+ *  //...
+ * } catch (OW_ThreadCancelledException&) {
+ *  throw;
+ * } catch (std::exception& e) {
+ *  // handle the exception
+ * }
+ * The only place OW_ThreadCancelledException should be caught is in 
+ * OW_Thread::threadRunner(). main() shouldn't need to catch it, as the main
+ * thread of an application should never be cancelled.  The main thread
+ * shouldn't need to ever call testCancel.
+ */
+struct OW_ThreadCancelledException {};
+
+
+//////////////////////////////////////////////////////////////////////////////
+DECLARE_EXCEPTION(CancellationDenied);
 DECLARE_EXCEPTION(Thread);
-
-
-
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_Thread
@@ -60,7 +87,7 @@ public:
 	 * If a thread is created as joinable, then join must be called on this
 	 * thread to release the resources associated with this thread.
 	 */
-	OW_Thread(OW_Bool isjoinable=false);
+	OW_Thread(bool isjoinable=false);
 
 	/**
 	 * Destroy this OW_Thread object.
@@ -74,18 +101,178 @@ public:
 	virtual void start(OW_ThreadDoneCallbackRef cb = OW_ThreadDoneCallbackRef(0));
 
 	/**
-	 * Cancel this OW_Threads execution.
+	 * Attempt to cooperatively cancel this OW_Threads execution.  
+	 * You must still call join() in order to clean up resources allocated
+	 * for this thread.  
+	 * This function will set a flag that the thread has been 
+	 * cancelled, which can be checked by testCancel().  If the thread does
+	 * not call testCancel(), it may keep running.
+	 * The thread may (probably) still be running after this function returns,
+	 * and it will exit as soon as it calls testCancel().
+	 *
+	 * This function cannot be called on a non-joinable self-deleting thread
+	 * after it has started.
+	 *
+	 * It is also possible for an individual thread to override the cancellation
+	 * request, if it knows that cancellation at this time may crash the system
+	 * or cause a deadlock.  If this happens, an OW_CancellationDeniedException
+	 * will be thrown.
+	 *
+	 * @exception OW_CancellationDeniedException may be thrown if the thread
+	 * cannot be safely cancelled at this time.
+	 */
+	void cooperativeCancel();
+
+	/**
+	 * Attempt to cooperatively and then definitively cancel this OW_Threads 
+	 * execution.  You must still call join() in order to clean up resources 
+	 * allocated for this thread.  
+	 * This function will set a flag that the thread has been 
+	 * cancelled, which can be checked by testCancel().  
+	 * definitiveCancel() wil first try to stop the thread in a cooperative
+	 * manner to avoid leaks or corruption. If the thread has not
+	 * exited after waitForCoopeartiveSecs seconds, this it will be cancelled 
+	 * (pthread_cancel will
+	 * be called)  Note that this will not clean up any objects on the stack,
+	 * (except for on some Linux systems newer than Nov. 2003.  Right now,
+	 * the only system I know of that does C++ stack unwinding on thread 
+	 * cancellation is Fedora Core 1.)
+	 * so it may cause memory leaks or inconsistent state or even memory corruption.
+	 * Also note that this still may not stop the thread, since a thread can
+	 * make itself non-cancellable, or it may not every call any cancellation
+	 * points.
+	 * By default all OW_Thread objects are asynchronously cancellable, and
+	 * so may be immediately cancelled.
+	 * The thread may (unlikely) still be running after this function returns.
+	 *
+	 * This function cannot be called on a non-joinable self-deleting thread
+	 * after it has started.
+	 *
+	 * It is also possible for an individual thread to override the cancellation
+	 * request, if it knows that cancellation at this time may crash the system
+	 * or cause a deadlock.  If this happens, an OW_CancellationDeniedException
+	 * will be thrown.
+	 *
+	 * @param waitForCooperativeSecs The number of seconds to wait for
+	 * cooperative cancellation to succeed before attempting to forcibly
+	 * cancel the thread.
+	 *
+	 * @return true if the thread exited cleanly.  false if the thread was
+	 * forcibly cancelled.
+	 *
+	 * @exception OW_CancellationDeniedException may be thrown if the thread
+	 * cannot be safely cancelled at this time.
+	 */
+	bool definitiveCancel(OW_UInt32 waitForCooperativeSecs = 60);
+
+	/**
+	 * Definitively cancel this OW_Threads execution. The thread is *NOT*
+	 * given a chance to clean up or override the cancellation.
+	 * DO NOT call this function without first trying definitiveCancel().
+	 *
+	 * You must still call join() in order to clean up resources 
+	 * allocated for this thread.  
+	 *
+	 * pthread_cancel will be called.
+	 * Note that using this function will not clean up any objects on the 
+	 * thread's stack,
+	 * (except for on some Linux systems newer than Nov. 2003.  Right now,
+	 * the only system I know of that does C++ stack unwinding on thread 
+	 * cancellation is Fedora Core 1.)
+	 * so it may cause memory leaks or inconsistent state or even memory corruption.
+	 * Also note that this still may not stop the thread, since a thread can
+	 * make itself non-cancellable, or it may not every call any cancellation
+	 * points.
+	 * By default all OW_Thread objects are asynchronously cancellable, and
+	 * so may be immediately cancelled.
+	 * The thread may (unlikely) still be running after this function returns.
+	 *
+	 * This function cannot be called on a non-joinable self-deleting thread
+	 * after it has started.
 	 */
 	void cancel();
 
 	/**
+	 * Test if this thread has been cancelled.  If so, a 
+	 * OW_ThreadCancelledException will be thrown.  DO NOT catch this exception.
+	 * OW_ThreadCancelledException is not derived from anything.
+	 * Do not write code like this:
+	 * try {
+	 *  //...
+	 * } catch (...) {
+	 *  // swallow all exceptions
+	 * }
+	 *
+	 * Instead do this:
+	 * try {
+	 *  //...
+	 * } catch (OW_ThreadCancelledException&) {
+	 *  throw;
+	 * } catch (std::exception& e) {
+	 *  // handle the exception
+	 * }
+	 * The only place OW_ThreadCancelledException should be caught is in 
+	 * OW_Thread::threadRunner(). main() shouldn't need to catch it, as the main
+	 * thread of an application should never be cancelled.  The main thread
+	 * shouldn't need to ever call testCancel.
+	 * Note that this method is staic, and it will check the the current running
+	 * thread has been cacelled.  Thus, you can't call it on an object that doesn't
+	 * represent the current running thread and expect it to work.
+	 *
+	 * This function cannot be called on a non-joinable self-deleting thread
+	 * after it has started.
+	 *
+	 */
+	static void testCancel();
+
+private:
+	/**
+	 * This function is available for subclasses of OW_Thread to override if they
+	 * wish to be notified when a cooperative cancel is being invoked on the
+	 * instance.  Note that this function will be invoked in a separate thread.
+	 * For instance, a thread may use this function to write to a pipe or socket,
+	 * if OW_Thread::run() is blocked in select(), it can be unblocked and
+	 * instructed to exit.
+	 *
+	 * It is also possible for an individual thread to override the cancellation
+	 * request, if it knows that cancellation at this time may crash the system
+	 * or cause a deadlock.  To do this, the thread should throw an 
+	 * OW_CancellationDeniedException.  Note that threads are usually only
+	 * cancelled in the event of a system shutdown or restart, so a thread
+	 * should make a best effort to actually shutdown.
+	 *
+	 * @throws OW_CancellationDeniedException
+	 */
+	virtual void doCooperativeCancel();
+
+	/**
+	 * See the documentation for doCooperativeCancel().  When definitiveCancel()
+	 * is called on a thread, first doCooperativeCancel() will be called, and 
+	 * then doDefinitiveCancel() will be called.
+	 *
+	 * @throws OW_CancellationDeniedException
+	 */
+	virtual void doDefinitiveCancel();
+
+public:
+	/**
 	 * Set the self delete flag on this OW_Thread object. If the self delete
 	 * flag is set on this OW_Thread, it is assumed that this OW_Thread was
 	 * dynamically allocated and the thread will be deleted when it completes
-	 * its execution.
-	 * @param selfDelete	If true this thread will self destruct on exit.
+	 * its execution.  The thread cannot be joinable, it must be detached.
+	 * A long-running thread should not use the self delete feature, as this
+	 * makes thread management impossible.  It should only be used for quick
+	 * running tasks.  Also, no member functions may be called on an instance
+	 * of a self deleting thread after it has been started, since the thread 
+	 * may have already run and deleted itself before the starting thread has 
+	 * even returned from start().
+	 *
+	 * This function cannot be called on a non-joinable self-deleting thread
+	 * after it has started.
+	 *
+	 * @param selfDelete	If true this thread will execute "delete this" on exit.
 	 */
-	void setSelfDelete(OW_Bool selfDelete=true)
+	void setSelfDelete(bool selfDelete=true)
 	{
 		OW_ASSERT(!m_isJoinable); // a joinable thread can't be set to self-delete.
 		m_deleteSelf = selfDelete;
@@ -93,19 +280,26 @@ public:
 
 	/**
 	 * Get the value of the self delete flag.
+	 *
+	 * This function cannot be called on a non-joinable self-deleting thread
+	 * after it has started.
+	 *
 	 * @return true if this thread will self destruct. Otherwise false.
 	 */
-	OW_Bool getSelfDelete()
+	bool getSelfDelete()
 	{
 		return m_deleteSelf;
 	}
 
 	/**
+	 * This function cannot be called on a non-joinable self-deleting thread
+	 * after it has started.
+	 *
 	 * @return true if this thread is currently running. Otherwise false.
 	 */
-	OW_Bool isRunning()
+	bool isRunning()
 	{
-		return OW_Bool(m_isRunning == true);
+		return m_isRunning == true;
 	}
 
 
@@ -116,6 +310,10 @@ public:
 	 * will block until this OW_Thread's run method returns.
 	 * join() should not be called until after start() has returned.  It may
 	 * be called by a different thread.
+	 *
+	 * This function cannot be called on a non-joinable self-deleting thread
+	 * after it has started.
+	 *
 	 * @exception OW_ThreadException
 	 * @return The return value from the thread's run()
 	 */
@@ -123,6 +321,10 @@ public:
 
 	/**
 	 * Get this OW_Thread object's id.
+	 *
+	 * This function cannot be called on a non-joinable self-deleting thread
+	 * after it has started.
+	 *
 	 * @return The id of this OW_Thread if it is currently running. Otherwise
 	 * return a NULL thread id.
 	 */
@@ -132,10 +334,13 @@ public:
 	}
 
 	/**
+	 * This function cannot be called on a non-joinable self-deleting thread
+	 * after it has started.
+	 *
 	 * @return true if this OW_Thread object is a joinable thread. Otherwise
 	 * return false.
 	 */
-	OW_Bool isJoinable()
+	bool isJoinable()
 	{
 		return m_isJoinable;
 	}
@@ -160,27 +365,28 @@ public:
 		OW_ThreadImpl::yield();
 	}
 
-	/**
-	 * Start a thread and run the run method of a given OW_Runnable object.
-	 * @param theRunnable	A reference to an OW_Runnable object as an
-	 *								OW_RunnableRef to run.
-	 */
-	static void run(OW_RunnableRef theRunnable, OW_Bool separateThread = true,
-		OW_ThreadDoneCallbackRef cb = OW_ThreadDoneCallbackRef(0));
-
 protected:
 
 	/**
-	 * The method that will be run when the start method is called on this
-	 * OW_Thread object.
+	 * The method that will be run when the start method is called.
 	 */
 	virtual OW_Int32 run() = 0;
 
+	// thread state
 	OW_Thread_t m_id;
-	OW_Bool m_isJoinable;
-	OW_Bool m_deleteSelf;
-	OW_Bool m_isRunning;
-	OW_Bool m_isStarting;
+	bool m_isJoinable;
+	bool m_deleteSelf;
+	bool m_isRunning;
+	bool m_isStarting;
+
+
+	// used to implement cancellation.
+	friend void OW_ThreadImpl::testCancel();
+
+	OW_NonRecursiveMutex m_cancelLock;
+	OW_Condition m_cancelCond;
+	bool m_cancelRequested;
+	bool m_cancelled;
 
 private:
 

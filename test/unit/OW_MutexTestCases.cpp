@@ -32,6 +32,7 @@
 #include "TestCaller.hpp"
 #include "OW_MutexTestCases.hpp"
 #include "OW_Mutex.hpp"
+#include "OW_Runnable.hpp"
 #include "OW_Thread.hpp"
 #include <iostream>
 
@@ -104,7 +105,7 @@ void OW_MutexTestCases::testAcquireRelease()
 		g_int = 1;
 		g_mutex.acquire();
 		OW_RunnableRef rref(new myRunnable);
-		OW_Thread::run(rref);
+		OW_Runnable::run(rref);
 		//OW_Thread::sleep(1000 * 60 * 10);
 		OW_Thread::sleep(100);
 		unitAssert(g_int == 1);

@@ -32,6 +32,9 @@
 #include "OW_ThreadImpl.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_Thread.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
+#include "OW_Format.hpp"
 #include <cassert>
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
@@ -59,54 +62,20 @@ extern "C"
 #endif
 }
 
-#ifdef OW_USE_PTHREAD
-struct LocalThreadParm
-{
-	OW_ThreadFunction m_func;
-	void* m_funcParm;
-};
-
-extern "C" {
-static void* threadStarter(void* arg);
-}
-
-#endif
-
-#ifdef OW_USE_GNU_PTH
-static pth_attr_t g_joinable_attr;
-static pth_attr_t g_nonjoinable_attr;
-bool g_initialized = false;
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_ThreadImpl::initThreads()
-{
-    if(!g_initialized)
-    {
-        g_initialized = true;
-        pth_init();
-
-        g_joinable_attr = pth_attr_new();
-        pth_attr_set(g_joinable_attr, PTH_ATTR_JOINABLE, true);
-        g_nonjoinable_attr = pth_attr_new();
-        pth_attr_set(g_nonjoinable_attr, PTH_ATTR_JOINABLE, false);
-    }
-}
-#endif
+namespace OW_ThreadImpl {
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_ThreadImpl::sleep(OW_UInt32 milliSeconds)
+sleep(OW_UInt32 milliSeconds)
 {
-#ifdef OW_USE_GNU_PTH
-    initThreads();
-    pth_usleep(milliSeconds * 1000);
-#elif defined(OW_HAVE_NANOSLEEP)
+	OW_ThreadImpl::testCancel();
+#if defined(OW_HAVE_NANOSLEEP)
 	struct timespec wait;
 	wait.tv_sec = milliSeconds / 1000;
 	wait.tv_nsec = (milliSeconds % 1000) * 1000000;
-	while (nanosleep(&wait, &wait) == -1 && errno == EINTR);
+	while (nanosleep(&wait, &wait) == -1 && errno == EINTR)
+		OW_ThreadImpl::testCancel();
 #elif OW_WIN32
 	Sleep(milliSeconds);
 #else
@@ -134,14 +103,55 @@ OW_ThreadImpl::sleep(OW_UInt32 milliSeconds)
 			tv.tv_usec = 1000000 + end.tv_usec - now.tv_usec;
 		}
 
+		OW_ThreadImpl::testCancel();
 		select(0, NULL, NULL, NULL, &tv);
 		gettimeofday(&now, NULL);
 	}
 #endif
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+void
+yield()
+{
+#if defined(OW_HAVE_SCHED_YIELD)
+	sched_yield();
+#elif defined(OW_WIN32)
+	Sleep(0);
+#else
+	OW_ThreadImpl::sleep(1);
+#endif
+}
+
 #ifdef OW_USE_PTHREAD
 namespace {
+
+struct LocalThreadParm
+{
+	OW_ThreadFunction m_func;
+	void* m_funcParm;
+};
+
+extern "C" {
+static void*
+threadStarter(void* arg)
+{
+	// set our cancellation state to asynchronous, so we can actually be killed if need be.
+	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+
+	LocalThreadParm* parg = (LocalThreadParm*)arg;
+	OW_ThreadFunction func = parg->m_func;
+	void* funcParm = parg->m_funcParm;
+	delete parg;
+
+	OW_Int32 rval = (*func)(funcParm);
+	void* prval = reinterpret_cast<void*>(rval);
+	pthread_exit(prval);
+	return prval;
+}
+}
 
 // The purpose of this class is to retrieve the default stack size only once at library load time and re-use it thereafter.
 struct default_stack_size
@@ -162,34 +172,48 @@ struct default_stack_size
 size_t default_stack_size::val = 0;
 
 default_stack_size g_theDefaultStackSize;
+
+//////////////////////////////////////////////////////////////////////
+pthread_once_t once_control = PTHREAD_ONCE_INIT;
+
+const pthread_key_t NOKEY = PTHREAD_KEYS_MAX+1;
+pthread_key_t theKey=NOKEY;
+
+extern "C" {
+//////////////////////////////////////////////////////////////////////
+static void initializeTheKey()
+{
+	pthread_key_create(&theKey,NULL);
+
+	// set SIGUSR1 to SIG_IGN so we can safely send it to threads when we want to cancel them.
+	struct sigaction temp;
+	memset(&temp, '\0', sizeof(temp));
+	sigaction(SIGUSR1, 0, &temp);
+	if(temp.sa_handler != SIG_IGN)
+	{
+		temp.sa_handler = SIG_IGN;
+		sigemptyset(&temp.sa_mask);
+		temp.sa_flags = 0;
+		sigaction(SIGUSR1, &temp, NULL);
+	}
+
+}
+
+} // end extern "C"
+
 } // end unnamed namespace
-#endif
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 int
-OW_ThreadImpl::createThread(OW_Thread_t& handle, OW_ThreadFunction func,
+createThread(OW_Thread_t& handle, OW_ThreadFunction func,
 	void* funcParm, OW_UInt32 threadFlags)
 {
-#ifdef OW_USE_GNU_PTH
-    initThreads();
-    int cc = 0;
-    if((threadFlags & OW_THREAD_FLG_JOINABLE))
-    {
-        handle = pth_spawn(g_joinable_attr, func, funcParm);
-    }
-    else
-    {
-        handle = pth_spawn(g_nonjoinable_attr, func, funcParm);
-    }
-    if(!handle)
-    {
-        cc = -1;
-    }
-    return cc;
-#elif OW_WIN32
-	return 0;
-#elif OW_USE_PTHREAD
+	// set up our TLS which will be used to store the OW_Thread* in.
+	pthread_once(&once_control, &initializeTheKey);
+
+
+	
 	int cc = 0;
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
@@ -236,83 +260,31 @@ OW_ThreadImpl::createThread(OW_Thread_t& handle, OW_ThreadFunction func,
 
 	pthread_attr_destroy(&attr);
 	return cc;
-#elif
-#error "port me!"
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_ThreadImpl::destroyThread(OW_Thread_t& )
+exitThread(OW_Thread_t&, OW_Int32 rval)
 {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-#ifdef OW_USE_PTHREAD
-extern "C"
-{
-static void*
-threadStarter(void* arg)
-{
-	sigset_t sigset;
-	sigprocmask(SIG_BLOCK, NULL, &sigset);
-	sigaddset(&sigset, SIGINT);
-	sigprocmask(SIG_BLOCK, &sigset, NULL);
-
-	LocalThreadParm* parg = (LocalThreadParm*)arg;
-	OW_ThreadFunction func = parg->m_func;
-	void* funcParm = parg->m_funcParm;
-	delete parg;
-
-	OW_Int32 rval = (*func)(funcParm);
 	void* prval = reinterpret_cast<void*>(rval);
 	pthread_exit(prval);
-	return prval;
 }
-
-} // extern "C"
-#endif
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_ThreadImpl::exitThread(OW_Thread_t&, OW_Int32 rval)
+destroyThread(OW_Thread_t& )
 {
-#ifdef OW_USE_GNU_PTH
-	void* prval = reinterpret_cast<void*>(rval);
-	pth_exit(prval);
-#elif defined(OW_USE_PTHREAD)
-	void* prval = reinterpret_cast<void*>(rval);
-	pthread_exit(prval);
-#elif defined(OW_USE_WIN32_THREADS)
-#else
-#error "port me!"
-#endif
 }
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 int
-OW_ThreadImpl::setThreadDetached(OW_Thread_t& handle)
+setThreadDetached(OW_Thread_t& handle)
 {
-#ifdef OW_USE_GNU_PTH
-    pth_t tid = handle;
-    if(!handle)
-    {
-         OW_THROW(OW_Exception, "OW_ThreadImpl::setThreadDetached was passed an "
-                 "invalid thread handle");
-    }
-    pth_attr_t attr = pth_attr_of(tid);
-    if(!attr)
-    {
-        OW_THROW(OW_Exception, "OW_ThreadImpl::setThreadDetached failed getting "
-                "thread attribute");
-    }
-    int cc = pth_attr_set(attr, PTH_ATTR_JOINABLE, false);
-    pth_attr_destroy(attr);
-    return cc;
-#elif defined(OW_USE_PTHREAD)
 	int cc = pthread_detach(handle);
 
 	if (cc != 0)
@@ -324,21 +296,13 @@ OW_ThreadImpl::setThreadDetached(OW_Thread_t& handle)
 	}
 
 	return cc;
-#elif defined (OW_USE_WIN32_THREADS)
-	return 0;
-#else
-#error "port me!"
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 int
-OW_ThreadImpl::joinThread(OW_Thread_t& handle, OW_Int32& rval)
+joinThread(OW_Thread_t& handle, OW_Int32& rval)
 {
-#ifdef OW_USE_GNU_PTH
-    return ((pth_join(handle, NULL)) != -1 ? 0 : -1);
-#elif defined(OW_USE_PTHREAD)
 	void* prval;
 	if ((errno = pthread_join(handle, &prval)) == 0)
 	{
@@ -349,28 +313,124 @@ OW_ThreadImpl::joinThread(OW_Thread_t& handle, OW_Int32& rval)
 	{
 		return 1;
 	}
-#elif defined(OW_USE_WIN32_THREADS)
+}
+
+//////////////////////////////////////////////////////////////////////
+void
+testCancel()
+{
+	OW_Thread* theThread = reinterpret_cast<OW_Thread*>(pthread_getspecific(theKey));
+	if (theThread == 0)
+	{
+		return;
+	}
+
+	OW_NonRecursiveMutexLock l(theThread->m_cancelLock);
+	if (theThread->m_cancelRequested)
+	{
+		throw OW_ThreadCancelledException();
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+void saveThreadInTLS(void* pTheThread)
+{
+	int rc;
+	if ((rc = pthread_setspecific(theKey, pTheThread)) != 0)
+	{
+		OW_THROW(OW_ThreadException, format("pthread_setspecific failed.  error = %1(%2)", rc, strerror(rc)).c_str());
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+void sendSignalToThread(OW_Thread_t threadID, int signo)
+{
+	int rc;
+	if ((rc = pthread_kill(threadID, signo)) != 0)
+	{
+		OW_THROW(OW_ThreadException, format("pthread_kill failed.  error = %1(%2)", rc, strerror(rc)).c_str());
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+void cancel(OW_Thread_t threadID)
+{
+	int rc;
+	if ((rc = pthread_cancel(threadID)) != 0)
+	{
+		OW_THROW(OW_ThreadException, format("pthread_cancel failed.  error = %1(%2)", rc, strerror(rc)).c_str());
+	}
+}
+
+#endif // #ifdef OW_USE_PTHREAD
+
+#ifdef OW_WIN32
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+int
+createThread(OW_Thread_t& handle, OW_ThreadFunction func,
+	void* funcParm, OW_UInt32 threadFlags)
+{
 	return 0;
-#else
-#error "port me!"
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_ThreadImpl::yield()
+exitThread(OW_Thread_t&, OW_Int32 rval)
 {
-#ifdef OW_USE_GNU_PTH
-    pth_yield(NULL);
-#elif defined(OW_HAVE_SCHED_YIELD)
-    sched_yield();
-#elif defined(OW_WIN32)
-	Sleep(0);
-#else
-	OW_ThreadImpl::sleep(1);
-#endif
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+void
+destroyThread(OW_Thread_t& )
+{
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+int
+setThreadDetached(OW_Thread_t& handle)
+{
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+int
+joinThread(OW_Thread_t& handle, OW_Int32& rval)
+{
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+void
+testCancel()
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+void saveThreadInTLS(void* pTheThread)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+void sendSignalToThread(OW_Thread_t threadID, int signo)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+void cancel(OW_Thread_t threadID)
+{
+}
+
+#endif // #ifdef OW_WIN32
+
+} // end namespace OW_ThreadImpl
 
 
 

@@ -43,17 +43,13 @@
 typedef OW_Int32 (*OW_ThreadFunction)(void*);
 
 /**
- * The OW_ThreadImpl class represents the functionality needed by the
+ * The OW_ThreadImpl namespace represents the functionality needed by the
  * OpenWbem Thread class (OW_Thread). It also contains other misellaneous 
  * functions which are useful for synchronization and threads.
- * The implementation for this class
- * must be provided on all platforms that OpenWbem runs on. It is essentially
- * an abstraction layer over another thread implementation.
+ * It is essentially an abstraction layer over a thread implementation.
  */
-class OW_ThreadImpl
+namespace OW_ThreadImpl
 {
-public:
-
 	/**
 	 * Starts a thread running the given function.
 	 * @param handle	A platform specific thread handle
@@ -65,7 +61,7 @@ public:
 	 *			
 	 * @return 0 on success. Otherwise -1
 	 */
-	static int createThread(OW_Thread_t& handle, OW_ThreadFunction func,
+	int createThread(OW_Thread_t& handle, OW_ThreadFunction func,
 		void* funcParm, OW_UInt32 threadFlags);
 
 	/**
@@ -73,7 +69,7 @@ public:
 	 * the createThread method.
 	 * @param handle	A platform specific thread handle
 	 */
-	static void destroyThread(OW_Thread_t& handle);
+	void destroyThread(OW_Thread_t& handle);
 
 	/**
 	 * Check two platform dependant thread types for equality.
@@ -81,7 +77,7 @@ public:
 	 * @param handle2	The 2nd thread type for the comparison.
 	 * @return true if the thread types are equal. Otherwise false
 	 */
-	static bool sameThreads(const volatile OW_Thread_t& handle1,
+	inline bool sameThreads(const volatile OW_Thread_t& handle1,
 		const volatile OW_Thread_t& handle2)
 	{
 	#if defined(OW_USE_GNU_PTH) || defined(OW_WIN32)
@@ -99,16 +95,12 @@ public:
 	 * @param handle The thread handle of the calling thread.
 	 * @param rval The thread's return value. This can get picked up by joinThread.
 	 */
-	static void exitThread(OW_Thread_t& handle, OW_Int32 rval);
-
-	#ifdef OW_USE_GNU_PTH
-	static void initThreads();
-	#endif
+	void exitThread(OW_Thread_t& handle, OW_Int32 rval);
 
 	/**
 	 * @return The thread handle for the current running thread.
 	 */
-	static OW_Thread_t currentThread()
+	inline OW_Thread_t currentThread()
 	{
 	#ifdef OW_USE_GNU_PTH
 		initThreads();
@@ -129,7 +121,7 @@ public:
 	 * @param handle		The thread to set to the detached state.
 	 * @return 0 on success. Otherwise -1
 	 */
-	static int setThreadDetached(OW_Thread_t& handle);
+	int setThreadDetached(OW_Thread_t& handle);
 
 	/**
 	 * Join a thread that has been previously set to joinable. It is
@@ -139,20 +131,20 @@ public:
 	 * @param rval An out parameter of the thread's return code.
 	 * @return 0 on success. Otherwise -1
 	 */
-	static int joinThread(OW_Thread_t& handle, OW_Int32& rval);
+	int joinThread(OW_Thread_t& handle, OW_Int32& rval);
 
 	/**
 	 * Voluntarily yield to the processor giving the next thread in the chain
 	 * the opportunity to run.
 	 */
-	static void yield();
+	void yield();
 
 	/**
 	 * Suspend execution of the current thread until the given number
 	 * of milliSeconds have elapsed.
 	 * @param milliSeconds	The number of milliseconds to suspend execution for.
 	 */
-	static void sleep(OW_UInt32 milliSeconds);
+	void sleep(OW_UInt32 milliSeconds);
 
 	/**
 	 * "Multi-processor cache coherency.  Certain multi-processor platforms,
@@ -168,7 +160,7 @@ public:
 	 * This function executes a memory barrier if necessary for the platform,
 	 * else it is a noop.
 	 */
-	static void memoryBarrier()
+	inline void memoryBarrier()
 	{
 		// DEC/COMPAQ/HP Alpha
 		#if defined(__alpha)
@@ -181,6 +173,41 @@ public:
 		#endif
 
 	}
+
+	/**
+	 * Test if this thread has been cancelled.  If so, a 
+	 * OW_ThreadCancelledException will be thrown.  DO NOT catch this exception.
+	 * OW_ThreadCancelledException is not derived from anything.
+	 * Do not write code like this:
+	 * try {
+	 *  //...
+	 * } catch (...) {
+	 *  // swallow all exceptions
+	 * }
+	 *
+	 * Instead do this:
+	 * try {
+	 *  //...
+	 * } catch (OW_ThreadCancelledException&) {
+	 *  throw;
+	 * } catch (std::exception& e) {
+	 *  // handle the exception
+	 * }
+	 * The only place OW_ThreadCancelledException should be caught is in 
+	 * OW_Thread::threadRunner(). main() shouldn't need to catch it, as the main
+	 * thread of an application should never be cancelled.  The main thread
+	 * shouldn't need to ever call testCancel.
+	 * Note that this method is staic, and it will check the the current running
+	 * thread has been cacelled.  Thus, you can't call it on an object that doesn't
+	 * represent the current running thread and expect it to work.
+	 */
+	void testCancel();
+
+	void saveThreadInTLS(void* pTheThread);
+
+	void sendSignalToThread(OW_Thread_t threadID, int signo);
+
+	void cancel(OW_Thread_t threadID);
 };
 
 #endif

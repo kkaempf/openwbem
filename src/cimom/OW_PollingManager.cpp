@@ -346,7 +346,7 @@ OW_PollingManager::TriggerRunner::start(const OW_RunnableRef& tr)
 	m_isRunning = true;
 	OW_Bool isSepThread = !m_env->getConfigItem(
 		OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true");
-	OW_Thread::run(tr, isSepThread, OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(m_pollMan->m_threadCount)));
+	OW_Runnable::run(tr, isSepThread, OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(m_pollMan->m_threadCount)));
 }
 
 //////////////////////////////////////////////////////////////////////////////

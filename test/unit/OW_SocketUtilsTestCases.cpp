@@ -32,6 +32,7 @@
 #include "TestCaller.hpp"
 #include "OW_SocketUtilsTestCases.hpp"
 #include "OW_SocketUtils.hpp"
+#include "OW_SocketException.hpp"
 #include "OW_String.hpp"
 
 void OW_SocketUtilsTestCases::setUp()
@@ -44,9 +45,16 @@ void OW_SocketUtilsTestCases::tearDown()
 
 void OW_SocketUtilsTestCases::testGetFullyQualifiedHostName()
 {
-	OW_String hn = OW_SocketUtils::getFullyQualifiedHostName();
-	unitAssert(!hn.empty());
-	unitAssert(hn.indexOf('.') != OW_String::npos);
+	// If this doesn't throw, then make sure it worked.
+	try
+	{
+		OW_String hn = OW_SocketUtils::getFullyQualifiedHostName();
+		unitAssert(!hn.empty());
+		unitAssert(hn.indexOf('.') != OW_String::npos);
+	}
+	catch (const OW_SocketException& e)
+	{
+	}
 }
 
 Test* OW_SocketUtilsTestCases::suite()

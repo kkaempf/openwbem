@@ -34,6 +34,7 @@
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_Thread.hpp"
+#include "OW_Runnable.hpp"
 #include "OW_List.hpp"
 #include "OW_Array.hpp"
 #include "OW_CIMInstance.hpp"

@@ -158,7 +158,7 @@ OW_Notifier::start()
 	OW_Bool singleThread = eref->getConfigItem(
 		OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true");
 
-	OW_Thread::run(OW_RunnableRef(this), !singleThread,
+	OW_Runnable::run(OW_RunnableRef(this), !singleThread,
 		OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(m_pmgr->m_threadCounter)));
 }
 
