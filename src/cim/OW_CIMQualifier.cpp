@@ -41,7 +41,7 @@
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_NULLValueException.hpp"
 #include "OW_CIMValue.hpp"
-#include "OW_CIMQualifier.hpp"
+#include "OW_CIMQualifierType.hpp"
 #include "OW_CIMFlavor.hpp"
 #include "OW_COWIntrusiveCountableBase.hpp"
 

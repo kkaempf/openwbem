@@ -34,6 +34,7 @@
  */
 
 #include "OW_config.h"
+#include "OW_CIMInstance.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_String.hpp"
