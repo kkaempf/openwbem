@@ -10,6 +10,9 @@ include $(top_srcdir)/Makefile-shared-lib-inst.inc
 install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
+SHAREDLIBADD = \
+$(SLP_LIB)
+
 noinst_LIBRARIES = libowslpprovider.a
 
 thelibdir = $(pkglibdir)/c++providers
