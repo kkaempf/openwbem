@@ -152,6 +152,10 @@
  *
  * class OW_DEPRECATED DeprecatedClass { };
  * struct OW_DEPRECATED DeprecatedStruct { };
+ * 
+ * However, deprecating a struct/class doesn't create a warning for gcc 
+ * versions <= 3.3 (haven't tried 3.4 yet).  If you want to deprecate a class,
+ * also deprecate all member functions as well (which will cause warnings).
  *
  */
 #if __GNUC__ - 0 > 3 || (__GNUC__ - 0 == 3 && __GNUC_MINOR__ - 0 >= 2)
