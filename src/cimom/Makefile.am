@@ -30,5 +30,11 @@ INCLUDES = \
 -I$(top_srcdir)/src/cimom/common
 
 #use this rule to create the data dir
-install-exec-local:
+install-exec-local: install-static-cimom-main
 	${INSTALL} -d ${DESTDIR}/@localstatedir@/openwbem
+
+install-static-cimom-main : $(owcimomd_OBJECTS)
+	if test "x$(STATIC_SERVICES)" != "x"; then \
+		ar cru libowcimomd_main.a $^; \
+		$(INSTALL_PROGRAM) libowcimomd_main.a $(DESTDIR)$(libdir); \
+	fi
