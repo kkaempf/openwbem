@@ -47,6 +47,7 @@
 	#endif
 #endif
 
+
 namespace OpenWBEM
 {
 #ifdef OW_WIN32
@@ -62,13 +63,15 @@ doLock(HANDLE hFile, bool doWait)
 		return -1;
 	}
 
-	DWORD flags = (doWait) ? LOCKFILE_EXCLUSIVE_LOCK
-		: LOCKFILE_FAIL_IMMEDIATELY;
+	DWORD flags = LOCKFILE_EXCLUSIVE_LOCK;
+	if (!doWait)
+	{
+		flags |= LOCKFILE_FAIL_IMMEDIATELY;
+	}
 
 	if (!LockFileEx(hFile, flags, 0, 0xffffffff,
 		0xffffffff, NULL))
 	{
-		//cout << "LockFileEx Failed: " << getLastErrorMsg() << endl;
 		return -1;
 	}
 

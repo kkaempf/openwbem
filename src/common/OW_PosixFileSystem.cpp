@@ -60,10 +60,6 @@ extern "C"
 #define _MKDIR(a,b)	_mkdir((a))
 #define _RMDIR _rmdir
 #define _UNLINK _unlink
-#define _LSEEK ::_lseek
-#define _READ ::_read
-#define _WRITE ::_write
-#define _CLOSEFILE ::_close
 
 #else
 
@@ -79,10 +75,6 @@ extern "C"
 #define _MKDIR(a,b) mkdir((a),(b))
 #define _RMDIR rmdir
 #define _UNLINK unlink
-#define _LSEEK ::lseek
-#define _READ ::read
-#define _WRITE ::write
-#define _CLOSEFILE ::close
 
 #endif
 
@@ -336,9 +328,9 @@ read(const FileHandle& hdl, void* bfr, size_t numberOfBytes,
 #else
 	if (offset != -1L)
 	{
-		_LSEEK(hdl, offset, SEEK_SET);
+		::lseek(hdl, offset, SEEK_SET);
 	}
-	return _READ(hdl, bfr, numberOfBytes);
+	return ::read(hdl, bfr, numberOfBytes);
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -363,9 +355,9 @@ write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 
 	if (offset != -1L)
 	{
-		_LSEEK(hdl, offset, SEEK_SET);
+		::lseek(hdl, offset, SEEK_SET);
 	}
-	return _WRITE(hdl, bfr, numberOfBytes);
+	return ::write(hdl, bfr, numberOfBytes);
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -382,7 +374,7 @@ seek(const FileHandle& hdl, off_t offset, int whence)
 	}
 	return (off_t) SetFilePointer(hdl, (LONG)offset, NULL, moveMethod);
 #else
-	return _LSEEK(hdl, offset, whence);
+	return ::lseek(hdl, offset, whence);
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -392,7 +384,7 @@ tell(const FileHandle& hdl)
 #ifdef OW_WIN32
 	return (off_t) SetFilePointer(hdl, 0L, NULL, FILE_CURRENT);
 #else
-	return _LSEEK(hdl, 0, SEEK_CUR);
+	return ::lseek(hdl, 0, SEEK_CUR);
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -402,7 +394,7 @@ rewind(const FileHandle& hdl)
 #ifdef OW_WIN32
 	SetFilePointer(hdl, 0L, NULL, FILE_BEGIN);
 #else
-	_LSEEK(hdl, 0, SEEK_SET);
+	::lseek(hdl, 0, SEEK_SET);
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -412,7 +404,7 @@ close(const FileHandle& hdl)
 #ifdef OW_WIN32
 	return (CloseHandle(hdl)) ? 0 : -1;
 #else
-	return _CLOSEFILE(hdl);
+	return ::close(hdl);
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -468,9 +460,9 @@ initRandomFile(const String& filename)
 	for (size_t i = 0; i < 1024; ++i)
 	{
 		char c = rnum.getNextNumber();
-		_WRITE(hdl, &c, 1);
+		::write(hdl, &c, 1);
 	}
-	_CLOSEFILE(hdl);
+	::close(hdl);
 #endif
 }
 
