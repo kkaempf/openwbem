@@ -83,19 +83,12 @@ public:
 	typedef typename V::const_reverse_iterator const_reverse_iterator;
 
 	OW_Array() : m_impl(new V) {}
-	//OW_Array(const OW_Array<T>& arg) : m_impl(arg.m_impl) {}
 	~OW_Array() {}
 	explicit OW_Array(V* toWrap) : m_impl(toWrap) {}
 	OW_Array(size_type n, const T& value) : m_impl(new V(n, value)) {}
 	OW_Array(int n, const T& value) : m_impl(new V(n, value)) {}
 	OW_Array(long n, const T& value) : m_impl(new V(n, value)) {}
 	explicit OW_Array(size_type n) : m_impl(new V(n)) {}
-
-	//OW_Array<T>& operator= (const OW_Array<T>& arg)
-	//{
-		//m_impl = arg.m_impl;
-		//return *this;
-	//}
 
 	template<class InputIterator>
 	OW_Array(InputIterator first, InputIterator last) : m_impl(new V(first, last)) { }
@@ -124,11 +117,6 @@ public:
 		return m_impl->operator[](n);
 	}
 
-	OW_Array<T>& operator+= (const T& x)
-	{
-		m_impl->push_back(x);
-	}
-
 	const_reference operator[](size_type n) const
 	{
 #ifdef OW_CHECK_ARRAY_INDEXING
@@ -136,6 +124,12 @@ public:
 #endif
 		return m_impl->operator[](n);
 	}
+
+	OW_Array<T>& operator+= (const T& x)
+	{
+		m_impl->push_back(x);
+	}
+
 	void reserve(size_type n) { m_impl->reserve(n); }
 	reference front() { return m_impl->front(); }
 	const_reference front() const { return m_impl->front(); }
