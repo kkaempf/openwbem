@@ -42,6 +42,7 @@ using std::iostream;
 OW_IndicationExporter::OW_IndicationExporter( OW_CIMProtocolIFCRef prot )
 	: m_protocol(prot), m_iMessageID(0)
 {
+	m_protocol->setContentType("application/xml");
 }
 
 void
