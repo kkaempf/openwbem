@@ -12,6 +12,7 @@ WriteMakefile(
 
 sub MY::postamble {
    return << 'MAKE_FRAG';
+PREFIX = $(DESTDIR)/usr
 UNINSTALL = $(PERLRUN) "-MExtUtils::Install" \
 -e 'uninstall($$ARGV[0],1,0);'
 uninstall :: uninstall_from_$(INSTALLDIRS)dirs
