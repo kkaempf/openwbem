@@ -1,3 +1,32 @@
+2003-11-29 20:22  nuffer
+
+        * configure.in: Removed the ./ from the Makefile names in AC_OUTPUT
+          macro because it was messing up the config.status script when the
+          configure.in script changed causing configure to re-run.
+
+2003-11-21 08:16  nuffer
+
+        * src/http/client/OW_HTTPClient.cpp: Fixed a bug.  An extra CRLF
+          was being sent at the end of the request, which is invalid.
+          Also, if the request was deflated, then the Content-Length header
+          was being sent incorrectly.
+
+2003-11-19 17:54  nuffer
+
+        * src/cimom/OW_IndexImpl.cpp: Changed to close the index after any
+          modifying operation.  This prevents the database from being
+          corrupted after the cimom crashes without closing the database.
+
+2003-11-16 19:15  nuffer
+
+        * src/http/client/OW_HTTPClient.cpp: Removed code that added an
+          extra CRLF at the beginning of a POST since that is illegal and
+          caused Pegasus to just ignore the request.
+
+2003-11-05 00:10  nuffer
+
+        * configure.in, openwbem.spec: Updated version to 2.0.13
+
 2003-11-04 23:50  nuffer
 
 	* test/acceptance/progs/aclTest.cpp: Replaced assert with
