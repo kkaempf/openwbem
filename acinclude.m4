@@ -3,7 +3,7 @@ dnl AC_AS_DIRNAME (PATH)
 dnl this is the macro AS_DIRNAME from autoconf 2.4x
 dnl defined here for use in autoconf 2.1x, remove the AC_ when you use 2.4x 
 dnl
-dnl @version $Id: acinclude.m4,v 1.10 2004-01-24 23:06:22 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.11 2004-03-04 19:08:16 nuffer Exp $
 dnl @author complain to <guidod@gmx.de>
 
 AC_DEFUN([AC_ECHO_MKFILE],
@@ -123,7 +123,7 @@ dnl   library (that has some headers) where some functionality is
 dnl   dependent on the OS-features detected at compile-time. No
 dnl   need to invent some "testpkg-confdefs.h.in" manually. :-)
 dnl
-dnl @version $Id: acinclude.m4,v 1.10 2004-01-24 23:06:22 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.11 2004-03-04 19:08:16 nuffer Exp $
 dnl @author Guido Draheim <guidod@gmx.de>
 
 AC_DEFUN([AC_CREATE_PREFIX_CONFIG_H],
@@ -196,14 +196,15 @@ dnl Check whether sys/socket.h defines type socklen_t. Please note
 dnl that some systems require sys/types.h to be included before
 dnl sys/socket.h can be compiled.
 dnl
-dnl @version $Id: acinclude.m4,v 1.10 2004-01-24 23:06:22 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.11 2004-03-04 19:08:16 nuffer Exp $
 dnl @author Lars Brinkhoff <lars@nocrew.org>
 dnl
 AC_DEFUN([TYPE_SOCKLEN_T],
 [AC_CACHE_CHECK([for socklen_t], ac_cv_type_socklen_t,
 [
   AC_TRY_COMPILE(
-  [#include <sys/types.h>
+  [#include <stdlib.h>
+   #include <sys/types.h>
    #include <sys/socket.h>],
   [socklen_t len = 42; return 0;],
   ac_cv_type_socklen_t=yes,
