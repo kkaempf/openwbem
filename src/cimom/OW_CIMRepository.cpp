@@ -450,11 +450,14 @@ OW_CIMRepository::deleteClass(const OW_String& ns, const OW_String& className,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMRepository::createClass(const OW_String& ns, const OW_CIMClass& cimClass,
+OW_CIMRepository::createClass(const OW_String& ns, const OW_CIMClass& cimClass_,
 	const OW_ACLInfo&)
 {
 	try
 	{
+		// m_mStore.createClass modified cimClass to be consistent with base 
+		// classes, etc.
+		OW_CIMClass cimClass(cimClass_);
 		m_mStore.createClass(ns, cimClass);
 		m_iStore.createClass(ns, cimClass);
 		if (cimClass.isAssociation())
@@ -1206,9 +1209,9 @@ namespace
 		: result(result_)
 		{}
 	protected:
-		virtual void doHandle(const OW_AssocDbEntry &e)
+		virtual void doHandle(const OW_AssocDbEntry::entry &e)
 		{
-			result.handle(e.getAssociationPath());
+			result.handle(e.m_associationPath);
 		}
 	private:
 		OW_CIMObjectPathResultHandlerIFC& result;
@@ -1235,16 +1238,13 @@ namespace
 		, aclInfo(aclInfo_)
 		{}
 	protected:
-		virtual void doHandle(const OW_AssocDbEntry &e)
+		virtual void doHandle(const OW_AssocDbEntry::entry &e)
 		{
-			OW_CIMObjectPath cop = e.getAssociationPath();
-			/* I don't think we need to do this, since a namespace should
-			   never be empty, it defaults to "root"
+			OW_CIMObjectPath cop = e.m_associationPath;
 			if (cop.getNameSpace().empty())
 			{
 				cop.setNameSpace(ns);
 			}
-			*/
 			OW_CIMClass cc = server.getClass(cop.getNameSpace(),
 				cop.getObjectName(), false, includeQualifiers,
 				includeClassOrigin, propList, aclInfo);
@@ -1276,9 +1276,9 @@ namespace
 		, propertyList(propertyList_)
 		{}
 	protected:
-		virtual void doHandle(const OW_AssocDbEntry &e)
+		virtual void doHandle(const OW_AssocDbEntry::entry &e)
 		{
-			OW_CIMObjectPath op = e.getAssociatedObject();
+			OW_CIMObjectPath op = e.m_associatedObject;
 			OW_CIMInstance ci = server.getInstance(op.getNameSpace(), op, false,
 				includeQualifiers,includeClassOrigin,propertyList,intAclInfo);
 			result.handle(ci);
@@ -1308,9 +1308,9 @@ namespace
 		, propertyList(propertyList_)
 		{}
 	protected:
-		virtual void doHandle(const OW_AssocDbEntry &e)
+		virtual void doHandle(const OW_AssocDbEntry::entry &e)
 		{
-			OW_CIMObjectPath op = e.getAssociationPath();
+			OW_CIMObjectPath op = e.m_associationPath;
 
 			OW_CIMInstance ci = server.getInstance(op.getNameSpace(), op, false,
 				includeQualifiers,includeClassOrigin,propertyList,intAclInfo);
@@ -1463,9 +1463,9 @@ namespace
 		: result(result_)
 		{}
 	protected:
-		virtual void doHandle(const OW_AssocDbEntry &e)
+		virtual void doHandle(const OW_AssocDbEntry::entry &e)
 		{
-			result.handle(e.getAssociatedObject());
+			result.handle(e.m_associatedObject);
 		}
 	private:
 		OW_CIMObjectPathResultHandlerIFC& result;
@@ -1492,16 +1492,13 @@ namespace
 		, aclInfo(aclInfo_)
 		{}
 	protected:
-		virtual void doHandle(const OW_AssocDbEntry &e)
+		virtual void doHandle(const OW_AssocDbEntry::entry &e)
 		{
-			OW_CIMObjectPath cop = e.getAssociatedObject();
-			/* I don't think we need to do this, since a namespace should
-			   never be empty, it defaults to "root"
+			OW_CIMObjectPath cop = e.m_associatedObject;
 			if (cop.getNameSpace().empty())
 			{
 				cop.setNameSpace(ns);
 			}
-			*/
 			OW_CIMClass cc = server.getClass(cop.getNameSpace(),
 				cop.getObjectName(), false, includeQualifiers,
 				includeClassOrigin, propList, aclInfo);

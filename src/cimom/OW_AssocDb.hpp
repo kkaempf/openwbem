@@ -54,62 +54,30 @@ public:
 
 	OW_AssocDbEntry() 
 		: m_objectName(OW_CIMNULL)
-		, m_associatedObject(OW_CIMNULL)
-		, m_associationPath(OW_CIMNULL)
 		, m_offset(-1L)
 	{}
 
 	OW_AssocDbEntry(const OW_CIMObjectPath& objectName,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
 		const OW_String& role,
-		const OW_String& resultRole,
-		const OW_CIMObjectPath& associatedObject,
-		const OW_CIMObjectPath& associationPath);
+		const OW_String& resultRole);
 
-	OW_Bool operator == (const OW_AssocDbEntry& arg) const;
+	//OW_Bool operator == (const OW_AssocDbEntry& arg) const;
 
-	OW_CIMObjectPath getObjectName() const { return m_objectName; }
-	void setObjectName(const OW_CIMObjectPath& objectName)
+	struct entry
 	{
-		m_objectName = objectName;
-	}
+		entry ()
+			: m_associatedObject(OW_CIMNULL)
+			, m_associationPath(OW_CIMNULL)
+		{}
 
-	OW_String getAssocClass() const { return m_assocClass; }
-	void setAssocClass(const OW_String& assocClass)
-	{
-		m_assocClass = assocClass;
-	}
-
-	OW_String getResultClass() const { return m_resultClass; }
-	void setResultClass(const OW_String& resultClass)
-	{
-		m_resultClass = resultClass;
-	}
-
-	OW_String getRole() const { return m_role; }
-	void setRole(const OW_String& role)
-	{
-		m_role = role;
-	}
-
-	OW_String getResultRole() const { return m_resultRole; }
-	void setResultRole(const OW_String& resultRole)
-	{
-		m_resultRole = resultRole;
-	}
-
-	OW_CIMObjectPath getAssociatedObject() const { return m_associatedObject; }
-	void setAssociatedObject(const OW_CIMObjectPath& associatedObject)
-	{
-		m_associatedObject = associatedObject;
-	}
-
-	OW_CIMObjectPath getAssociationPath() const { return m_associationPath; }
-	void setAssociationPath(const OW_CIMObjectPath& associationPath)
-	{
-		m_associationPath = associationPath;
-	}
+		OW_String m_assocClass;
+		OW_String m_resultClass;
+		OW_CIMObjectPath m_associatedObject; // value for associtor(Name)s
+		OW_CIMObjectPath m_associationPath;  // value for reference(Name)s
+		
+		void writeObject(std::ostream& ostrm) const;
+		void readObject(std::istream& istrm);
+	};
 
 	void writeObject(std::ostream& ostrm) const;
 	void readObject(std::istream& istrm);
@@ -136,15 +104,13 @@ public:
 	safe_bool operator!() const
 		{  return (m_objectName) ? 0: &dummy::nonnull; }
 
-private:
+public:
 
 	OW_CIMObjectPath m_objectName; // part 1 of key
-	OW_String m_assocClass;
-	OW_String m_resultClass;
 	OW_String m_role; // part 2 of key
 	OW_String m_resultRole; // part 3 of key
-	OW_CIMObjectPath m_associatedObject; // value for associtor(Name)s
-	OW_CIMObjectPath m_associationPath;  // value for reference(Name)s
+
+	OW_Array<entry> m_entries;
 
 	OW_Int32 m_offset;
 };
@@ -153,12 +119,14 @@ std::ostream& operator << (std::ostream& ostrm, const OW_AssocDbEntry& arg);
 
 typedef OW_Array<OW_AssocDbEntry> OW_AssocDbEntryArray;
 
+bool operator==(const OW_AssocDbEntry::entry& lhs, const OW_AssocDbEntry::entry& rhs);
+
 //////////////////////////////////////////////////////////////////////////////
 
 class OW_AssocDb;
 
 //////////////////////////////////////////////////////////////////////////////
-typedef OW_ResultHandlerIFC<OW_AssocDbEntry> OW_AssocDbEntryResultHandlerIFC;
+typedef OW_ResultHandlerIFC<OW_AssocDbEntry::entry> OW_AssocDbEntryResultHandlerIFC;
 
 
 class OW_AssocDbHandle
@@ -199,7 +167,12 @@ public:
 	 * Add an OW_AssocDbEntry& to the database.
 	 * @param newEntry	The OW_AssocDbEntry to add to the database.
 	 */
-	void addEntry(const OW_AssocDbEntry& newEntry);
+	//void addEntry(const OW_AssocDbEntry& newEntry);
+	void addEntry(const OW_CIMObjectPath& objectName, 
+		const OW_String& assocClassName, const OW_String& resultClass,
+		const OW_String& role, const OW_String& resultRole, 
+		const OW_CIMObjectPath& associatedObject, 
+		const OW_CIMObjectPath& assocClassPath);
 
 	/**
 	 * Add all entries to the database that are reference by the
@@ -215,7 +188,12 @@ public:
 	 * Remove an OW_AssocDbEntry& from the database.
 	 * @param entryToDelete	The OW_AssocDbEntry to delete from the database.
 	 */
-	void deleteEntry(const OW_AssocDbEntry& entryToDelete);
+	//void deleteEntry(const OW_AssocDbEntry& entryToDelete);
+	void deleteEntry(const OW_CIMObjectPath& objectName, 
+		const OW_String& assocClassName, const OW_String& resultClass,
+		const OW_String& role, const OW_String& resultRole, 
+		const OW_CIMObjectPath& associatedObject, 
+		const OW_CIMObjectPath& assocClassPath);
 
 	/**
 	 * Remove all OW_AssocDbEntry objects specified in an array.
@@ -379,7 +357,19 @@ private:
 		OW_AssocDbHandle& hdl);
 	OW_AssocDbEntry nextEntry(OW_AssocDbHandle& hdl);
 	void deleteEntry(const OW_AssocDbEntry& entry, OW_AssocDbHandle& hdl);
+	void deleteEntry(const OW_CIMObjectPath& objectName, 
+		const OW_String& assocClassName, const OW_String& resultClass,
+		const OW_String& role, const OW_String& resultRole, 
+		const OW_CIMObjectPath& associatedObject, 
+		const OW_CIMObjectPath& assocClassPath, OW_AssocDbHandle& hdl);
+
 	void addEntry(const OW_AssocDbEntry& entry, OW_AssocDbHandle& hdl);
+	void addEntry(const OW_CIMObjectPath& objectName, 
+		const OW_String& assocClassName, const OW_String& resultClass,
+		const OW_String& role, const OW_String& resultRole, 
+		const OW_CIMObjectPath& associatedObject, 
+		const OW_CIMObjectPath& assocClassPath, OW_AssocDbHandle& hdl);
+
 	void decHandleCount();
 	OW_MutexLock getDbLock() { return OW_MutexLock(m_guard); }
 
