@@ -141,12 +141,18 @@ namespace
 		UIDManager(NetwareIdentityRef nwi)
 			: m_nwi(nwi)
 		{
-			m_nwi->setContextToUser(); 
+			if(m_nwi)
+			{
+				m_nwi->setContextToUser(); 
+			}
 		}
 
 		~UIDManager()
 		{
-			m_nwi->setContextToAdmin(); 
+			if(m_nwi)
+			{
+				m_nwi->setContextToAdmin(); 
+			}
 		}
 		
 	private:
@@ -159,12 +165,18 @@ namespace
 		RUIDManager(NetwareIdentityRef nwi)
 			: m_nwi(nwi)
 		{
-			m_nwi->setContextToAdmin(); 
+			if (m_nwi)
+			{
+				m_nwi->setContextToAdmin(); 
+			}
 		}
 
 		~RUIDManager()
 		{
-			m_nwi->setContextToUser(); 
+			if (m_nwi)
+			{
+				m_nwi->setContextToUser(); 
+			}
 		}
 		
 	private:
