@@ -629,6 +629,10 @@ HTTPClient::processHeaders(String& statusLine)
 			m_needsConnect = true;
 			switch (isc)
 			{
+				case SC_REQUEST_TIMEOUT: 
+					rt = RETRY; 
+					++m_retryCount; 
+					break; 
 				case SC_UNAUTHORIZED:
 					// add authentication info, if available
 					if (!m_authRequired)
