@@ -143,7 +143,15 @@ void PopenStreamsImpl::pid(pid_t newPid)
 //////////////////////////////////////////////////////////////////////
 static inline pid_t lwaitpid(pid_t pid, int* status, int options)
 {
-	return ::waitpid(pid, status, options);
+	// The status is not passed directly to waitpid because some implementations
+	// store a value there even when the function returns <= 0.
+	int localReturnValue = -1;
+	pid_t returnedPID = ::waitpid(pid, &localReturnValue, options);
+	if( returnedPID > 0 )
+	{
+		*status = localReturnValue;
+	}	
+	return returnedPID;
 }
 //////////////////////////////////////////////////////////////////////
 static pid_t
