@@ -138,9 +138,9 @@
 #
 #   XML output conforming to log4j.dtd 1.2 which can be processed by Chainsaw.
 #   If used, this has to be on one line, it's split up here for readability.
-#   "<log4j:event logger="%c" timestamp="%d" level="%p" thread="%t">
+#   "<log4j:event logger="%c" timestamp="%d{%s%Q}" level="%p" thread="%t">
 #    <log4j:message>%e</log4j:message>
-#    <log4j:locationInfo file="%F" line="%L"/>
+#    <log4j:locationInfo class="" method="" file="%F" line="%L"/>
 #    </log4j:event>" 
 #
 # The default is "[%t]%m"
