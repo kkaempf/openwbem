@@ -38,11 +38,30 @@
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 
-
+/**
+ * This class is a convenience wrapper to make it easier to use all the client
+ * pieces together.  All operations will be sent to the cimom identified in
+ * the url passed to the constructor.  The namespace passed to the constructor
+ * will be used for all calls.  If the path in the url is "/owbinary" then the
+ * openwbem binary protocol will be used, otherwise CIM/XML is the default.
+ */
 class OW_CIMClient
 {
 public:
 
+	/**
+	 * Constructor
+	 * @param url The url identifying the cimom to talk to.  If the path portion
+	 *   of the url is "/owbinary" 
+	 *   (e.g. http://test1:pass1@localhost:30926/owbinary), then the openwbem
+	 *   binary protocol will be used.  Otherwise CIM/XML is the default.
+	 * @param ns The namespace to be used for all CIM operations performed by
+	 *   this object.
+	 * @param authCB The callback to be used to obtain username & password
+	 *   credentials as needed.  The default will simply cause an exception
+	 *   to be thrown if authentication fails.  Note that the credentials can
+	 *   be specified in the url.
+	 */
 	OW_CIMClient(const OW_String& url, const OW_String& ns,
 			const OW_ClientAuthCBIFCRef& authCB = OW_ClientAuthCBIFCRef());
 
