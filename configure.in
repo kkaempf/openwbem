@@ -87,6 +87,15 @@ AC_PATH_PROG(MV, mv, mv)
 AC_PATH_PROG(RM, rm, rm)
 AC_PATH_PROG(SED, sed, sed)
 
+dnl BMMU check for perl
+if test "$with_perl" = yes; then
+  PGAC_CHECK_PERL_CONFIGS([archlibexp,privlibexp,useshrplib])
+  PGAC_CHECK_PERL_EMBED_CCFLAGS
+  PGAC_CHECK_PERL_EMBED_LDFLAGS
+  AC_DEFINE(PERLIFC)
+fi
+
+
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADER(pthread.h, have_pthread=1)
@@ -643,12 +652,12 @@ AC_OUTPUT(./Makefile
 ./src/providerifcs/Makefile
 ./src/providerifcs/cpp/Makefile
 ./src/providerifcs/simplecpp/Makefile
-./src/providerifcs/npi/Makefile
-./src/providerifcs/npi/common/Makefile
 ./src/providerifcs/cmpi/Makefile
 ./src/providerifcs/cmpi/common/Makefile
+./src/providerifcs/npi/Makefile
+./src/providerifcs/npi/common/Makefile
 ./src/providerifcs/perl/Makefile
-./src/providerifcs/perl/common/Makefile
+./src/providerifcs/perl/perlProvider/Makefile
 ./src/providers/Makefile
 ./src/providers/cpp/Makefile
 ./src/providers/cpp/indicationexport/Makefile
@@ -684,4 +693,3 @@ AC_OUTPUT(./Makefile
 ./test/unit/Makefile)
 
 AC_CREATE_PREFIX_CONFIG_H([${srcdir}/src/common/OW_config.h], OW, [config.h])
-
