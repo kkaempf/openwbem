@@ -356,7 +356,16 @@ safeSystem(const Array<String>& command)
 		rlimit rl;
 		int i = sysconf(_SC_OPEN_MAX);
 		if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
-			i = rl.rlim_max;
+		{
+		  if( i < 0 )
+		  {
+		    i = rl.rlim_max;
+		  }
+		  else
+		  {
+		    i = std::min<int>(rl.rlim_max, i);
+		  }
+		}
 		while (i > 2)
 		{
 			close(i);
@@ -439,14 +448,23 @@ safePopen(const Array<String>& command,
 		
 		OW_ASSERT(in); OW_ASSERT(out); OW_ASSERT(err);
 		// connect stdin, stdout, and stderr to the return pipes.
-		dup(in->getInputHandle());
-		dup(out->getOutputHandle());
-		dup(err->getOutputHandle());
+		dup2(in->getInputHandle(), 0);
+		dup2(out->getOutputHandle(), 1);
+		dup2(err->getOutputHandle(), 2);
 		// Close all other file handle from parent process
 		rlimit rl;
 		int i = sysconf(_SC_OPEN_MAX);
 		if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
-			i = rl.rlim_max;
+		{
+		  if( i < 0 )
+		  {
+		    i = rl.rlim_max;
+		  }
+		  else
+		  {
+		    i = std::min<int>(rl.rlim_max, i);
+		  }
+		}
 		while (i > 2)
 		{
 			close(i);
