@@ -63,7 +63,7 @@ private:
 	class TriggerRunner : public OW_Runnable
 	{
 	public:
-		TriggerRunner(OW_PollingManager* svr, OW_CIMOMHandleRef lch,
+		TriggerRunner(OW_PollingManager* svr, OW_CIMOMHandleIFCRef lch,
 			OW_CIMOMEnvironmentRef env);
 		TriggerRunner(const TriggerRunner& arg);
 		void start();
@@ -74,7 +74,7 @@ private:
 		OW_Bool m_isRunning;
 		long m_pollInterval;
 		OW_PollingManager* m_indServer;
-		OW_CIMOMHandleRef m_lch;
+		OW_CIMOMHandleIFCRef m_lch;
 		OW_CIMOMEnvironmentRef m_env;
 	};
 

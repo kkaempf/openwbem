@@ -126,7 +126,7 @@ public:
 		return m_XMLListener;
 	}
 
-	virtual OW_CIMOMHandleRef getCIMOMHandle(const OW_String& /*username*/,
+	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String& /*username*/,
 		const OW_Bool /*doIndications*/)
 	{
 		OW_THROW(OW_Exception, "Not implemented");

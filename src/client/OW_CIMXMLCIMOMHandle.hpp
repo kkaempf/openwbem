@@ -33,13 +33,13 @@
 
 #include "OW_config.h"
 #include "OW_Types.h"
-#include "OW_CIMOMHandle.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMProtocol.hpp"
 #include "OW_XMLQualifier.hpp"
 #include "OW_Param.hpp"
 
 
-class OW_CIMXMLCIMOMHandle : public OW_CIMOMHandle, OW_XMLQualifier
+class OW_CIMXMLCIMOMHandle : public OW_CIMOMHandleIFC, OW_XMLQualifier
 {
 public:
 	/**
@@ -133,9 +133,9 @@ public:
 	virtual OW_CIMClassEnumeration enumClass(
 		const OW_CIMObjectPath& path,
 		OW_Bool deep,
-		OW_Bool localOnly = OW_CIMOMHandle::NOT_LOCAL_ONLY,
-		OW_Bool includeQualifiers = OW_CIMOMHandle::INCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin = OW_CIMOMHandle::INCLUDE_CLASS_ORIGIN);
+		OW_Bool localOnly = OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+		OW_Bool includeQualifiers = OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin = OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN);
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
@@ -290,9 +290,9 @@ public:
 	 */
 	virtual OW_CIMClass getClass(
 		const OW_CIMObjectPath& name,
-		OW_Bool localOnly = OW_CIMOMHandle::NOT_LOCAL_ONLY,
-		OW_Bool includeQualifiers = OW_CIMOMHandle::INCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin = OW_CIMOMHandle::INCLUDE_CLASS_ORIGIN,
+		OW_Bool localOnly = OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+		OW_Bool includeQualifiers = OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin = OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=NULL);
 
 	/**

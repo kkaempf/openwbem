@@ -45,7 +45,7 @@
 #include "OW_MD5.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_DigestAuthentication.hpp"
-#include "OW_CIMOMHandle.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 
 #define OW_LOGDEBUG(x) m_options.env->getLogger()->logDebug(x)
 
@@ -152,7 +152,7 @@ public:
 		m_wrapped = toWrap;
 	}
 	
-	virtual OW_CIMOMHandleRef getCIMOMHandle(const OW_String &username, const OW_Bool doIndications)
+	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username, const OW_Bool doIndications)
 	{
 		return m_wrapped->getCIMOMHandle(username, doIndications);
 	}

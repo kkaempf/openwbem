@@ -34,7 +34,7 @@
 #include "OW_WQLVisitor.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_Reference.hpp"
-#include "OW_CIMOMHandle.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
@@ -43,7 +43,7 @@
 class OW_WQLProcessor : public OW_WQLVisitor
 {
 public:
-	OW_WQLProcessor(const OW_Reference<OW_CIMOMHandle>& hdl, const OW_CIMNameSpace& ns);
+	OW_WQLProcessor(const OW_Reference<OW_CIMOMHandleIFC>& hdl, const OW_CIMNameSpace& ns);
 	virtual ~OW_WQLProcessor()
 	{
 	}
@@ -918,7 +918,7 @@ public:
 private:
 	DataType m_exprValue;
 	OW_Array<DataType> m_valueArray;
-	OW_Reference<OW_CIMOMHandle> m_hdl;
+	OW_Reference<OW_CIMOMHandleIFC> m_hdl;
 	OW_CIMNameSpace m_ns;
 	OW_CIMObjectPath m_tableRef;
 	bool m_doingSelect;

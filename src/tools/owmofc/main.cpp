@@ -99,21 +99,21 @@ int main(int argc, char** argv)
 		}
 
 		OW_URL url(argv[1]);
-		OW_Reference<OW_CIMOMHandle> handle;
+		OW_Reference<OW_CIMOMHandleIFC> handle;
 		OW_Reference<OW_MofParserErrorHandlerIFC> theErrorHandler(new TheErrorHandler);
 		
 		if(url.protocol.equalsIgnoreCase("IPC"))
 		{
 			OW_IPCCIMOMHandle *ipchdl = new OW_IPCCIMOMHandle(argv[1]);
 			ipchdl->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
-			handle = OW_Reference<OW_CIMOMHandle>(ipchdl);
+			handle = OW_Reference<OW_CIMOMHandleIFC>(ipchdl);
 		}
 		else
 		{
 			OW_HTTPClient* pHttpClient = new OW_HTTPClient(argv[1]);
 			pHttpClient->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
 			OW_Reference<OW_CIMProtocol> httpClient(pHttpClient);
-			handle = OW_Reference<OW_CIMOMHandle>(new OW_CIMXMLCIMOMHandle(
+			handle = OW_Reference<OW_CIMOMHandleIFC>(new OW_CIMXMLCIMOMHandle(
 				httpClient));
 		}
 

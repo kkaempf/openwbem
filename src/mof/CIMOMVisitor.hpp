@@ -51,7 +51,7 @@ struct lineInfo;
 class CIMOMVisitor : public Visitor
 {
 public:
-	CIMOMVisitor( OW_Reference<OW_CIMOMHandle> hdl, OW_CIMNameSpace& ns );
+	CIMOMVisitor( OW_Reference<OW_CIMOMHandleIFC> hdl, OW_CIMNameSpace& ns );
 	~CIMOMVisitor();
 
 	void VisitMOFSpecification( const MOFSpecification * );
@@ -142,7 +142,7 @@ private:
    OW_CIMProperty m_curProperty;
    OW_CIMMethod m_curMethod;
    OW_CIMParameter m_curParameter;
-	OW_Reference<OW_CIMOMHandle> m_hdl;
+	OW_Reference<OW_CIMOMHandleIFC> m_hdl;
 	OW_Map<OW_String, OW_String> m_aliasMap;
    OW_CIMNameSpace m_namespace;
 

@@ -57,7 +57,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * This operation is used to enumerate CIM
 		 * Instances that are associated to a particular source CIM Object.
 		 *
-		 * @param hdl The OW_CIMOMHandle object that should be used to
+		 * @param hdl The OW_CIMOMHandleIFC object that should be used to
 		 *		perform CIM operations during the associators call.
 		 *
 		 * @param assocName Defines the association that the objectName
@@ -155,7 +155,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * Instances that are associated to a particular source CIM
 		 * Instance.
 		 *
-		 * @param hdl The OW_CIMOMHandle object that should be used for
+		 * @param hdl The OW_CIMOMHandleIFC object that should be used for
 		 *		CIMOM access during the associatorNames call.
 		 *
 		 * @param assocName see associator parameter assocName
@@ -187,7 +187,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * This operation is used to enumerate the association objects
 		 * that refer to a particular target CIM Instance.
 		 *
-		 * @param hdl The OW_CIMOMHandle that should be used during the call
+		 * @param hdl The OW_CIMOMHandleIFC that should be used during the call
 		 *		to references.
 		 *
 		 * @param assocName Defines the association that the objectName object
@@ -231,7 +231,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * This operation is used to enumerate the association objects
 		 * that refer to a particular target CIM Instance.
 		 *
-		 * @param hdl The OW_CIMOMHandle that should be used during the call
+		 * @param hdl The OW_CIMOMHandleIFC that should be used during the call
 		 *		to referencenames.
 		 *
 		 * @param assocName see the reference method.

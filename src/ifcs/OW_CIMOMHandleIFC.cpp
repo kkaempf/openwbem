@@ -29,29 +29,29 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_CIMOMHandle.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMFeatures.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMException.hpp"
 
-const OW_Bool OW_CIMOMHandle::DEEP(true);
-const OW_Bool OW_CIMOMHandle::SHALLOW(false);
-const OW_Bool OW_CIMOMHandle::INCLUDE_QUALIFIERS(true);
-const OW_Bool OW_CIMOMHandle::EXCLUDE_QUALIFIERS(false);
-const OW_Bool OW_CIMOMHandle::INCLUDE_CLASS_ORIGIN(true);
-const OW_Bool OW_CIMOMHandle::EXCLUDE_CLASS_ORIGIN(false);
-const OW_Bool OW_CIMOMHandle::LOCAL_ONLY(true);
-const OW_Bool OW_CIMOMHandle::NOT_LOCAL_ONLY(false);
+const OW_Bool OW_CIMOMHandleIFC::DEEP(true);
+const OW_Bool OW_CIMOMHandleIFC::SHALLOW(false);
+const OW_Bool OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS(true);
+const OW_Bool OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS(false);
+const OW_Bool OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN(true);
+const OW_Bool OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN(false);
+const OW_Bool OW_CIMOMHandleIFC::LOCAL_ONLY(true);
+const OW_Bool OW_CIMOMHandleIFC::NOT_LOCAL_ONLY(false);
 
 OW_CIMFeatures
-OW_CIMOMHandle::getServerFeatures()
+OW_CIMOMHandleIFC::getServerFeatures()
 {
 	return OW_CIMFeatures();
 }
 
 void
-OW_CIMOMHandle::exportIndication(const OW_CIMInstance& instance,
+OW_CIMOMHandleIFC::exportIndication(const OW_CIMInstance& instance,
 		const OW_CIMNameSpace& instNS)
 {
 	OW_THROWCIM(OW_CIMException::FAILED);

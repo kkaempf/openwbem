@@ -792,7 +792,7 @@ namespace
 				getConfigItem(name);
 		}
 
-		virtual OW_CIMOMHandleRef getCIMOMHandle() const
+		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
 		{
 			return m_ch;
 		}
@@ -804,7 +804,7 @@ namespace
 		}
 
 	private:
-		OW_CIMOMHandleRef m_ch;
+		OW_CIMOMHandleIFCRef m_ch;
 	};
 
 	OW_ProviderEnvironmentRef createProvEnvRef(const OW_LocalCIMOMHandle& ch)
@@ -1746,7 +1746,7 @@ OW_CIMServer::execQuery(const OW_CIMNameSpace& ns, const OW_String &query,
 	OW_WQLIFCRef wql = m_env->getWQLRef();
 	if (wql && wql->supportsQueryLanguage(queryLanguage))
 	{
-		OW_CIMOMHandleRef lch(new OW_LocalCIMOMHandle(m_env,
+		OW_CIMOMHandleIFCRef lch(new OW_LocalCIMOMHandle(m_env,
 			OW_RepositoryIFCRef(this, true), aclInfo, true));
 
 		OW_CIMInstanceArray rval = wql->evaluate(ns, query, queryLanguage,

@@ -37,8 +37,8 @@
 #include "OW_SelectableCallbackIFC.hpp"
 #include "OW_Logger.hpp"
 
-class OW_CIMOMHandle;
-typedef OW_Reference<OW_CIMOMHandle> OW_CIMOMHandleRef;
+class OW_CIMOMHandleIFC;
+typedef OW_Reference<OW_CIMOMHandleIFC> OW_CIMOMHandleIFCRef;
 
 class OW_ServiceEnvironmentIFC;
 typedef OW_Reference<OW_ServiceEnvironmentIFC> OW_ServiceEnvironmentIFCRef;
@@ -70,7 +70,7 @@ public:
 	virtual OW_Bool authenticate(OW_String& userName,
 		const OW_String& info, OW_String& details) = 0;
 
-	virtual OW_CIMOMHandleRef getCIMOMHandle(const OW_String& username,
+	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String& username,
 		const OW_Bool doIndications) = 0;
 };
 

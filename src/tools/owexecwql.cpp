@@ -76,20 +76,20 @@ int main(int argc, char* argv[])
 		OW_String ns = argv[2];
 		OW_String query = argv[3];
 
-		OW_CIMOMHandleRef rch;
+		OW_CIMOMHandleIFCRef rch;
 
 		if(OW_URL(url).protocol.equalsIgnoreCase("IPC"))
 		{
 			OW_IPCCIMOMHandle *ipchdl = new OW_IPCCIMOMHandle(url);
 			ipchdl->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
-			rch = OW_Reference<OW_CIMOMHandle>(ipchdl);
+			rch = OW_Reference<OW_CIMOMHandleIFC>(ipchdl);
 		}
 		else
 		{
 			OW_HTTPClient* pHttpClient = new OW_HTTPClient(url);
 			pHttpClient->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
 			OW_Reference<OW_CIMProtocol> httpClient(pHttpClient);
-			rch = OW_CIMOMHandleRef(new OW_CIMXMLCIMOMHandle(httpClient));
+			rch = OW_CIMOMHandleIFCRef(new OW_CIMXMLCIMOMHandle(httpClient));
 		}
 
 		cout << "Executing query (" << query << ") on server" << endl;

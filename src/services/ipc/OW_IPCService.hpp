@@ -35,7 +35,7 @@
 #include "OW_IPCServer.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Reference.hpp"
-#include "OW_CIMOMHandle.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 #include "OW_ServiceIFC.hpp"
 
 //////////////////////////////////////////////////////////////////////////////

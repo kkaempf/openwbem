@@ -120,13 +120,13 @@ OW_DaemonEnv::shutdown()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMOMHandleRef
+OW_CIMOMHandleIFCRef
 OW_DaemonEnv::getCIMOMHandle(const OW_String& username, OW_Bool doIndications)
 {
 	(void)username;
 	(void)doIndications;
 	// TODO: come up with a decent URL for the IPCCIMOMHandle
-	return OW_CIMOMHandleRef(new OW_IPCCIMOMHandle("localhost"));
+	return OW_CIMOMHandleIFCRef(new OW_IPCCIMOMHandle("localhost"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -54,7 +54,7 @@ using std::istream;
 
 //////////////////////////////////////////////////////////////////////////////
 OW_BinaryCIMOMHandle::OW_BinaryCIMOMHandle(OW_Reference<OW_CIMProtocol> prot)
-: OW_CIMOMHandle(), m_protocol(prot)
+: OW_CIMOMHandleIFC(), m_protocol(prot)
 {
 }
 

@@ -110,7 +110,7 @@ protected:
 
 
 
-void createClass(OW_CIMOMHandle& hdl)
+void createClass(OW_CIMOMHandleIFC& hdl)
 {
 	OW_CIMObjectPath parentPath("EXP_IndicationTestComputerSystem");
 	OW_CIMQualifier cimQualifierKey("Key");
@@ -170,7 +170,7 @@ void createClass(OW_CIMOMHandle& hdl)
 }
 
 
-void modifyClass(OW_CIMOMHandle& hdl)
+void modifyClass(OW_CIMOMHandleIFC& hdl)
 {
 	OW_CIMObjectPath cop("EXP_IndicationTestComputerSystem");
 	OW_CIMClass cimClass = hdl.getClass(cop, false);
@@ -182,7 +182,7 @@ void modifyClass(OW_CIMOMHandle& hdl)
 }
 
 
-void createInstance(OW_CIMOMHandle& hdl, const OW_String& newInstance)
+void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 {
 	OW_String fromClass = "EXP_IndicationTestComputerSystem";
 
@@ -227,7 +227,7 @@ void createInstance(OW_CIMOMHandle& hdl, const OW_String& newInstance)
 }
 
 
-void getInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
+void getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 {
 	OW_String ofClass = "EXP_IndicationTestComputerSystem";
 	OW_CIMObjectPath cop(ofClass);
@@ -238,7 +238,7 @@ void getInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
 	//cout << in.toMOF();
 }
 
-void modifyInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
+void modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 {
 	OW_String ofClass = "EXP_IndicationTestComputerSystem";
 	OW_CIMObjectPath cop(ofClass);
@@ -253,7 +253,7 @@ void modifyInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
 	hdl.setInstance(cop, in);
 }
 
-void deleteInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
+void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 {
 	OW_String ofClass = "EXP_IndicationTestComputerSystem";
 	OW_CIMObjectPath cop(ofClass);
@@ -264,7 +264,7 @@ void deleteInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
 
 
 
-void deleteClass(OW_CIMOMHandle& hdl)
+void deleteClass(OW_CIMOMHandleIFC& hdl)
 {
 	OW_String delClass = "EXP_IndicationTestComputerSystem";
 	OW_CIMObjectPath pa(delClass);
@@ -272,7 +272,7 @@ void deleteClass(OW_CIMOMHandle& hdl)
 	hdl.deleteClass(pa);
 }
 
-void invokeMethod(OW_CIMOMHandle& hdl, int num)
+void invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 {
 	OW_CIMObjectPath cop("EXP_BartComputerSystem", "/root");
 

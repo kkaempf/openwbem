@@ -36,7 +36,7 @@
 #include "OW_Format.hpp"
 #include "OW_CIM.hpp"
 #include "OW_IOException.hpp"
-#include "OW_CIMOMHandle.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMClassEnumeration.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
@@ -117,7 +117,7 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 
 	try
 	{
-		OW_CIMOMHandleRef chdl = getEnvironment()->getCIMOMHandle(userName, doIndications);
+		OW_CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(userName, doIndications);
 		OW_BinIfcIO::read(*istrm, funcNo, OW_Bool(true));
 
 		try
@@ -318,7 +318,7 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::createClass(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::createClass(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -329,7 +329,7 @@ OW_BinaryRequestHandler::createClass(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::createInstance(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::createInstance(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath path(OW_BinIfcIO::readObjectPath(istrm));
@@ -391,7 +391,7 @@ OW_BinaryRequestHandler::createInstance(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::enumClasses(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::enumClasses(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -430,7 +430,7 @@ OW_BinaryRequestHandler::enumClasses(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::deleteClass(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::deleteClass(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -440,7 +440,7 @@ OW_BinaryRequestHandler::deleteClass(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::deleteInstance(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::deleteInstance(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -450,7 +450,7 @@ OW_BinaryRequestHandler::deleteInstance(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::deleteQual(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::deleteQual(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -460,7 +460,7 @@ OW_BinaryRequestHandler::deleteQual(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::getClass(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::getClass(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_StringArray propList;
@@ -492,7 +492,7 @@ OW_BinaryRequestHandler::getClass(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::getInstance(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::getInstance(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_StringArray propList;
@@ -524,7 +524,7 @@ OW_BinaryRequestHandler::getInstance(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::getQual(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::getQual(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -541,7 +541,7 @@ OW_BinaryRequestHandler::getQual(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::setQual(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::setQual(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -552,7 +552,7 @@ OW_BinaryRequestHandler::setQual(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::setClass(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::setClass(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -563,7 +563,7 @@ OW_BinaryRequestHandler::setClass(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::setInstance(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::setInstance(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -574,7 +574,7 @@ OW_BinaryRequestHandler::setInstance(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::setProperty(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::setProperty(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -592,7 +592,7 @@ OW_BinaryRequestHandler::setProperty(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::getProperty(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::getProperty(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -610,7 +610,7 @@ OW_BinaryRequestHandler::getProperty(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::enumClassNames(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::enumClassNames(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -623,7 +623,7 @@ OW_BinaryRequestHandler::enumClassNames(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::enumInstances(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::enumInstances(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_StringArray propList;
@@ -650,7 +650,7 @@ OW_BinaryRequestHandler::enumInstances(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::enumInstanceNames(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::enumInstanceNames(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -662,7 +662,7 @@ OW_BinaryRequestHandler::enumInstanceNames(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::enumQualifiers(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::enumQualifiers(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -694,7 +694,7 @@ OW_BinaryRequestHandler::enumQualifiers(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::invokeMethod(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::invokeMethod(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -735,7 +735,7 @@ OW_BinaryRequestHandler::invokeMethod(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::execQuery(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::execQuery(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMNameSpace path(OW_BinIfcIO::readNameSpace(istrm));
@@ -755,7 +755,7 @@ OW_BinaryRequestHandler::execQuery(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::associators(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::associators(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_StringArray propList;
@@ -784,7 +784,7 @@ OW_BinaryRequestHandler::associators(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::associatorNames(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::associatorNames(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -802,7 +802,7 @@ OW_BinaryRequestHandler::associatorNames(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::references(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::references(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_StringArray propList;
@@ -829,7 +829,7 @@ OW_BinaryRequestHandler::references(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::referenceNames(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::referenceNames(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
@@ -843,7 +843,7 @@ OW_BinaryRequestHandler::referenceNames(OW_CIMOMHandleRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::getServerFeatures(OW_CIMOMHandleRef chdl,
+OW_BinaryRequestHandler::getServerFeatures(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& /*istrm*/)
 {
 	OW_CIMFeatures f = chdl->getServerFeatures();

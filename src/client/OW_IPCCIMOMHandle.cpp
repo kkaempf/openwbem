@@ -51,7 +51,7 @@ using std::istream;
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IPCCIMOMHandle::OW_IPCCIMOMHandle(const OW_String& url)
-	: OW_CIMOMHandle()
+	: OW_CIMOMHandleIFC()
 	, m_conn()
 	, m_url(url)
 	, m_authenticated(false)

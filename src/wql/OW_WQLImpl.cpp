@@ -39,7 +39,7 @@ const char* OW_WQLImpl::parserInput;
 stmt* OW_WQLImpl::statement;
 
 OW_CIMInstanceArray OW_WQLImpl::evaluate(const OW_CIMNameSpace& nameSpace, const OW_String& query, const OW_String& queryLanguage,
-	OW_Reference<OW_CIMOMHandle> hdl)
+	OW_Reference<OW_CIMOMHandleIFC> hdl)
 {
 	(void)queryLanguage;
 	OW_MutexLock lock(classLock);

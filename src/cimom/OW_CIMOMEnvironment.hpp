@@ -52,7 +52,7 @@
 //#include "OW_RequestHandlerIFC.hpp"
 
 class OW_CIMServer;
-class OW_CIMOMHandle;
+class OW_CIMOMHandleIFC;
 class OW_RequestHandlerIFC;
 class OW_ServiceIFC;
 class OW_CIMInstance;
@@ -76,7 +76,7 @@ class OW_IndicationServer;
 typedef OW_Reference<OW_SelectableIFC> OW_SelectableIFCRef;
 typedef OW_Reference<OW_SelectableCallbackIFC> OW_SelectableCallbackIFCRef;
 typedef OW_Reference<OW_Logger> OW_LoggerRef;
-typedef OW_Reference<OW_CIMOMHandle> OW_CIMOMHandleRef;
+typedef OW_Reference<OW_CIMOMHandleIFC> OW_CIMOMHandleIFCRef;
 typedef OW_Reference<OW_WQLIFC> OW_WQLIFCRef;
 typedef OW_Reference<OW_ProviderManager> OW_ProviderManagerRef;
 typedef OW_Reference<OW_IndicationRepLayer> OW_IndicationRepLayerRef;
@@ -126,13 +126,13 @@ public:
 
 	virtual OW_String getConfigItem(const OW_String &name) const;
 
-	virtual OW_CIMOMHandleRef getCIMOMHandle(const OW_String &username,
+	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username,
 		const OW_Bool doIndications=false);
 
-	OW_CIMOMHandleRef getCIMOMHandle(const OW_ACLInfo& aclinfo,
+	OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_ACLInfo& aclinfo,
 		OW_Bool doIndications=false);
 
-	OW_CIMOMHandleRef getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
+	OW_CIMOMHandleIFCRef getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
 		const OW_ACLInfo& aclInfo);
 
 	OW_WQLIFCRef getWQLRef();

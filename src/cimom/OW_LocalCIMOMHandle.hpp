@@ -33,16 +33,16 @@
 
 #include "OW_config.h"
 #include "OW_Types.h"
-#include "OW_CIMOMHandle.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_RWLocker.hpp"
 #include "OW_CIMOMEnvironment.hpp"
 
 /**
- * The OW_LocalCIMOMHandle class is a derivitive of the OW_CIMOMHandle that
+ * The OW_LocalCIMOMHandle class is a derivitive of the OW_CIMOMHandleIFC that
  * is used by all components that need access to CIM Services.
  */
-class OW_LocalCIMOMHandle : public OW_CIMOMHandle
+class OW_LocalCIMOMHandle : public OW_CIMOMHandleIFC
 {
 public:
 
@@ -50,7 +50,7 @@ public:
 	 * Default constructor. This will create an invalid OW_LocalCIMOMHandle that
 	 * is not suitable for any operations.
 	 */
-	OW_LocalCIMOMHandle() : OW_CIMOMHandle(), m_pServer(0), m_aclInfo("") {}
+	OW_LocalCIMOMHandle() : OW_CIMOMHandleIFC(), m_pServer(0), m_aclInfo("") {}
 
 	/**
 	 * Create a new OW_LocalCIMOMHandle with a given repository interface
@@ -124,9 +124,9 @@ public:
 	virtual OW_CIMClassEnumeration enumClass(
 		const OW_CIMObjectPath& path,
 		OW_Bool deep,
-		OW_Bool localOnly = OW_CIMOMHandle::NOT_LOCAL_ONLY,
-		OW_Bool includeQualifiers = OW_CIMOMHandle::INCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin = OW_CIMOMHandle::INCLUDE_CLASS_ORIGIN);
+		OW_Bool localOnly = OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+		OW_Bool includeQualifiers = OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin = OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN);
 
 
 	/**
@@ -272,9 +272,9 @@ public:
 	 */
 	virtual OW_CIMClass getClass(
 		const OW_CIMObjectPath& name,
-		OW_Bool localOnly = OW_CIMOMHandle::NOT_LOCAL_ONLY,
-		OW_Bool includeQualifiers = OW_CIMOMHandle::INCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin = OW_CIMOMHandle::INCLUDE_CLASS_ORIGIN,
+		OW_Bool localOnly = OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+		OW_Bool includeQualifiers = OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin = OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=NULL);
 
 
@@ -574,7 +574,7 @@ public:
 	OW_StringArray enumNameSpace(const OW_CIMNameSpace& ns, OW_Bool deep);
 	
 	/**
-	 * @return The features of the CIMOM this OW_CIMOMHandle is connected to as
+	 * @return The features of the CIMOM this OW_CIMOMHandleIFC is connected to as
 	 * an OW_CIMFeatures object.
 	 */
 	virtual OW_CIMFeatures getServerFeatures();

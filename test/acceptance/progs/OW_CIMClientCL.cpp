@@ -83,7 +83,7 @@ usage(const char* name)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-createClass(OW_CIMOMHandle& hdl, const OW_String& name)
+createClass(OW_CIMOMHandleIFC& hdl, const OW_String& name)
 {
 	testStart("createClass");
 
@@ -155,7 +155,7 @@ createClass(OW_CIMOMHandle& hdl, const OW_String& name)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumClassNames(OW_CIMOMHandle& hdl)
+enumClassNames(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("enumClassNames");
 
@@ -194,7 +194,7 @@ enumClassNames(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumClasses(OW_CIMOMHandle& hdl)
+enumClasses(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("enumClasses");
 
@@ -267,7 +267,7 @@ enumClasses(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-modifyClass(OW_CIMOMHandle& hdl)
+modifyClass(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("modifyClass");
 
@@ -291,7 +291,7 @@ modifyClass(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-getClass(OW_CIMOMHandle& hdl)
+getClass(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("getClass");
 
@@ -324,7 +324,7 @@ getClass(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-createInstance(OW_CIMOMHandle& hdl, const OW_String& fromClass, const OW_String& newInstance)
+createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& fromClass, const OW_String& newInstance)
 {
 	testStart("createInstance");
 
@@ -355,7 +355,7 @@ createInstance(OW_CIMOMHandle& hdl, const OW_String& fromClass, const OW_String&
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumerateInstanceNames(OW_CIMOMHandle& hdl)
+enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("enumInstanceNames");
 
@@ -396,7 +396,7 @@ enumerateInstanceNames(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumerateInstances(OW_CIMOMHandle& hdl, OW_Bool deep, OW_Bool localOnly,
+enumerateInstances(OW_CIMOMHandleIFC& hdl, OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
@@ -433,7 +433,7 @@ enumerateInstances(OW_CIMOMHandle& hdl, OW_Bool deep, OW_Bool localOnly,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-getInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance,
+getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance,
 		OW_Bool localOnly=false,
 		OW_Bool includeQualifiers=false,
 		OW_Bool includeClassOrigin=false,
@@ -470,7 +470,7 @@ getInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-modifyInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
+modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 {
 	testStart("modifyInstance");
 
@@ -498,7 +498,7 @@ modifyInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-deleteInstance(OW_CIMOMHandle& hdl, const OW_String& ofClass, const OW_String& theInstance)
+deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& ofClass, const OW_String& theInstance)
 {
 	testStart("deleteInstance");
 
@@ -519,7 +519,7 @@ deleteInstance(OW_CIMOMHandle& hdl, const OW_String& ofClass, const OW_String& t
 
 //////////////////////////////////////////////////////////////////////////////
 void
-deleteAssociations(OW_CIMOMHandle& hdl)
+deleteAssociations(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("deleteAssociations");
 
@@ -539,7 +539,7 @@ deleteAssociations(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-setQualifier(OW_CIMOMHandle& hdl)
+setQualifier(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("setQualifier");
 
@@ -571,7 +571,7 @@ setQualifier(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumerateQualifiers(OW_CIMOMHandle& hdl)
+enumerateQualifiers(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("enumerateQualifiers");
 
@@ -595,7 +595,7 @@ enumerateQualifiers(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-getQualifier(OW_CIMOMHandle& hdl)
+getQualifier(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("getQualifier");
 
@@ -614,7 +614,7 @@ getQualifier(OW_CIMOMHandle& hdl)
 	testDone();
 }
 
-void createAssociation(OW_CIMOMHandle& hdl, const OW_String& assocName,
+void createAssociation(OW_CIMOMHandleIFC& hdl, const OW_String& assocName,
 		const OW_String& propName1, const OW_CIMObjectPath& cop1,
 		const OW_String& propName2, const OW_CIMObjectPath& cop2)
 {
@@ -633,7 +633,7 @@ void createAssociation(OW_CIMOMHandle& hdl, const OW_String& assocName,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-setupAssociations(OW_CIMOMHandle& hdl)
+setupAssociations(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("setupAssociations");
 
@@ -674,7 +674,7 @@ setupAssociations(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-associatorNames(OW_CIMOMHandle& hdl, const OW_String& assocClass,
+associatorNames(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 		const OW_String& resultClass, const OW_String& role,
 		const OW_String& resultRole)
 {
@@ -709,7 +709,7 @@ associatorNames(OW_CIMOMHandle& hdl, const OW_String& assocClass,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-associators(OW_CIMOMHandle& hdl, const OW_String& assocClass,
+associators(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 		const OW_String& resultClass, const OW_String& role,
 		const OW_String& resultRole, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList)
@@ -762,7 +762,7 @@ associators(OW_CIMOMHandle& hdl, const OW_String& assocClass,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-referenceNames(OW_CIMOMHandle& hdl,
+referenceNames(OW_CIMOMHandleIFC& hdl,
 		const OW_String& resultClass, const OW_String& role)
 {
 	OW_String pstr;
@@ -796,7 +796,7 @@ referenceNames(OW_CIMOMHandle& hdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-references(OW_CIMOMHandle& hdl,
+references(OW_CIMOMHandleIFC& hdl,
 		const OW_String& resultClass, const OW_String& role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList)
@@ -847,7 +847,7 @@ references(OW_CIMOMHandle& hdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-execQuery(OW_CIMOMHandle& hdl)
+execQuery(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("execQuery");
 
@@ -871,7 +871,7 @@ execQuery(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-deleteQualifier(OW_CIMOMHandle& hdl)
+deleteQualifier(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("deleteQualifier");
 
@@ -891,7 +891,7 @@ deleteQualifier(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-deleteClass(OW_CIMOMHandle& hdl, const OW_String& delClass)
+deleteClass(OW_CIMOMHandleIFC& hdl, const OW_String& delClass)
 {
 	testStart("deleteClass");
 
@@ -911,7 +911,7 @@ deleteClass(OW_CIMOMHandle& hdl, const OW_String& delClass)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-invokeMethod(OW_CIMOMHandle& hdl, int num)
+invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 {
 	testStart("invokeMethod");
 
@@ -967,7 +967,7 @@ invokeMethod(OW_CIMOMHandle& hdl, int num)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-createNameSpace(OW_CIMOMHandle& hdl)
+createNameSpace(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("createNameSpace");
 
@@ -990,7 +990,7 @@ createNameSpace(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumNameSpace(OW_CIMOMHandle& hdl)
+enumNameSpace(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("enumNamespace");
 
@@ -1021,7 +1021,7 @@ enumNameSpace(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-deleteNameSpace(OW_CIMOMHandle& hdl)
+deleteNameSpace(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("deleteNameSpace");
 
@@ -1041,7 +1041,7 @@ deleteNameSpace(OW_CIMOMHandle& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-getProperty(OW_CIMOMHandle& hdl, const OW_String& instName)
+getProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 {
 	testStart("getProperty");
 
@@ -1065,7 +1065,7 @@ getProperty(OW_CIMOMHandle& hdl, const OW_String& instName)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-setProperty(OW_CIMOMHandle& hdl, const OW_String& instName)
+setProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 {
 	testStart("setProperty");
 

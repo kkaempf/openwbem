@@ -62,7 +62,7 @@ using std::istream;
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMXMLCIMOMHandle::OW_CIMXMLCIMOMHandle(OW_Reference<OW_CIMProtocol> prot)
-: OW_CIMOMHandle(), m_protocol(prot)
+: OW_CIMOMHandleIFC(), m_protocol(prot)
 {
 	m_iMessageID = 0;
 }

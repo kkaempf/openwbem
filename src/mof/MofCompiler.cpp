@@ -37,7 +37,7 @@
 #include <assert.h>
 #include <cctype>
 
-MofCompiler::MofCompiler( OW_Reference<OW_CIMOMHandle> ch, const OW_String& nameSpace, OW_Reference<OW_MofParserErrorHandlerIFC> mpeh )
+MofCompiler::MofCompiler( OW_Reference<OW_CIMOMHandleIFC> ch, const OW_String& nameSpace, OW_Reference<OW_MofParserErrorHandlerIFC> mpeh )
 	: m_ch(ch)
 	, m_nameSpace(nameSpace)
 {

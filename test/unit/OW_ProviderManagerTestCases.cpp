@@ -61,7 +61,7 @@ namespace
 		: m_ch(new OW_LocalCIMOMHandle(ch)), m_logger(l)
 		{}
 
-		virtual OW_CIMOMHandleRef getCIMOMHandle()
+		virtual OW_CIMOMHandleIFCRef getCIMOMHandle()
 		{
 			return m_ch;
 		}
@@ -72,7 +72,7 @@ namespace
 		}
 
 	private:
-		OW_CIMOMHandleRef m_ch;
+		OW_CIMOMHandleIFCRef m_ch;
 		OW_LoggerRef m_logger;
 	};
 

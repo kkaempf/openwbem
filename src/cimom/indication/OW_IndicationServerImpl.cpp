@@ -56,14 +56,14 @@ namespace
 	{
 	public:
 
-		IndicationServerProviderEnvironment(const OW_CIMOMHandleRef& ch,
+		IndicationServerProviderEnvironment(const OW_CIMOMHandleIFCRef& ch,
 			OW_CIMOMEnvironmentRef env)
 			: OW_ProviderEnvironment()
 			, m_ch(ch)
 			, m_env(env)
 		{}
 
-		virtual OW_CIMOMHandleRef getCIMOMHandle() const
+		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
 		{
 			return m_ch;
 		}
@@ -79,12 +79,12 @@ namespace
 		}
 
 	private:
-		OW_CIMOMHandleRef m_ch;
+		OW_CIMOMHandleIFCRef m_ch;
 		OW_CIMOMEnvironmentRef m_env;
 	};
 
 	OW_ProviderEnvironmentRef createProvEnvRef(OW_CIMOMEnvironmentRef env,
-		const OW_CIMOMHandleRef& ch)
+		const OW_CIMOMHandleIFCRef& ch)
 	{
 		return OW_ProviderEnvironmentRef(
 			new IndicationServerProviderEnvironment(ch, env));
@@ -98,7 +98,7 @@ OW_Notifier::run()
 {
 	OW_ACLInfo aclInfo;
 	OW_CIMOMEnvironmentRef env = m_pmgr->getEnvironment();
-	OW_CIMOMHandleRef lch = env->getCIMOMHandle(aclInfo, false);
+	OW_CIMOMHandleIFCRef lch = env->getCIMOMHandle(aclInfo, false);
 
 	while(true)
 	{
@@ -155,7 +155,7 @@ OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
 	//-----------------
 	OW_ProviderManagerRef pProvMgr = m_env->getProviderManager();
 
-	OW_CIMOMHandleRef lch = m_env->getCIMOMHandle(aclInfo, false);
+	OW_CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(aclInfo, false);
 
 	OW_IndicationExportProviderIFCRefArray pra =
 		pProvMgr->getIndicationExportProviders(createProvEnvRef(m_env, lch));
@@ -271,7 +271,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 	OW_CIMDateTime cdt(dtm);
 
 	instance.setProperty("IndicationTime", OW_CIMValue(cdt));
-	OW_CIMOMHandleRef hdl = m_env->getCIMOMHandle(aclInfo, false);
+	OW_CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(aclInfo, false);
 
 	OW_CIMInstanceEnumeration subscriptions;
 	try
@@ -288,7 +288,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 		return;
 	}
 
-	OW_CIMOMHandleRef wqllch = m_env->getWQLFilterCIMOMHandle(instance,
+	OW_CIMOMHandleIFCRef wqllch = m_env->getWQLFilterCIMOMHandle(instance,
 		aclInfo);
 	OW_WQLIFCRef wqlRef = m_env->getWQLRef();
 

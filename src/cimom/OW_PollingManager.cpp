@@ -33,7 +33,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_DateTime.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_CIMOMHandle.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Format.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_PolledProviderIFC.hpp"
@@ -69,13 +69,13 @@ namespace
 	{
 	public:
 
-		PollingManagerProviderEnvironment(const OW_CIMOMHandleRef& ch,
+		PollingManagerProviderEnvironment(const OW_CIMOMHandleIFCRef& ch,
 			OW_CIMOMEnvironmentRef env)
 			: m_ch(ch)
 			, m_env(env)
 		{}
 
-		virtual OW_CIMOMHandleRef getCIMOMHandle() const
+		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
 		{
 			return m_ch;
 		}
@@ -91,11 +91,11 @@ namespace
 		}
 
 	private:
-		OW_CIMOMHandleRef m_ch;
+		OW_CIMOMHandleIFCRef m_ch;
 		OW_CIMOMEnvironmentRef m_env;
 	};
 
-	OW_ProviderEnvironmentRef createProvEnvRef(const OW_CIMOMHandleRef& ch,
+	OW_ProviderEnvironmentRef createProvEnvRef(const OW_CIMOMHandleIFCRef& ch,
 		OW_CIMOMEnvironmentRef env)
 	{
 		return OW_ProviderEnvironmentRef(new PollingManagerProviderEnvironment(
@@ -110,7 +110,7 @@ OW_PollingManager::run()
 	m_running = true;
 	OW_Bool doInit = true;
 
-	OW_CIMOMHandleRef lch = m_env->getCIMOMHandle(OW_ACLInfo());
+	OW_CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(OW_ACLInfo());
 
 	// Get all of the indication trigger providers
 	OW_ProviderManagerRef pm = m_env->getProviderManager();
@@ -264,7 +264,7 @@ OW_PollingManager::shutdown()
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PollingManager::TriggerRunner::TriggerRunner(OW_PollingManager* svr,
-	OW_CIMOMHandleRef lch, OW_CIMOMEnvironmentRef env)
+	OW_CIMOMHandleIFCRef lch, OW_CIMOMEnvironmentRef env)
 	: OW_Runnable()
 	, m_itp(0)
 	, m_nextPoll(0)

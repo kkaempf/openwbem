@@ -34,7 +34,7 @@
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_Reference.hpp"
-#include "OW_CIMOMHandle.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 
 
 class OW_WQLIFC
@@ -46,7 +46,7 @@ public:
 
 	virtual OW_CIMInstanceArray evaluate(const OW_CIMNameSpace& nameSpace,
 		const OW_String& query, const OW_String& queryLanguage,
-                OW_Reference<OW_CIMOMHandle> hdl) = 0;
+                OW_Reference<OW_CIMOMHandleIFC> hdl) = 0;
 
 	virtual OW_Bool supportsQueryLanguage(const OW_String& lang) = 0;
 

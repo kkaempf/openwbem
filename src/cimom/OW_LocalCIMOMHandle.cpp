@@ -46,7 +46,7 @@
 //////////////////////////////////////////////////////////////////////////////
 OW_LocalCIMOMHandle::OW_LocalCIMOMHandle(OW_CIMOMEnvironmentRef env,
 	OW_RepositoryIFCRef pRepos, const OW_ACLInfo& aclInfo)
-	: OW_CIMOMHandle()
+	: OW_CIMOMHandleIFC()
 	, m_pServer(pRepos)
 	, m_aclInfo(aclInfo)
 	, m_noLock(false)
@@ -56,7 +56,7 @@ OW_LocalCIMOMHandle::OW_LocalCIMOMHandle(OW_CIMOMEnvironmentRef env,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_LocalCIMOMHandle::OW_LocalCIMOMHandle(const OW_LocalCIMOMHandle& arg)
-	: OW_CIMOMHandle()
+	: OW_CIMOMHandleIFC()
 	, m_pServer(arg.m_pServer)
 	, m_aclInfo(arg.m_aclInfo)
 	, m_noLock(arg.m_noLock)
@@ -67,7 +67,7 @@ OW_LocalCIMOMHandle::OW_LocalCIMOMHandle(const OW_LocalCIMOMHandle& arg)
 //////////////////////////////////////////////////////////////////////////////
 OW_LocalCIMOMHandle::OW_LocalCIMOMHandle(OW_CIMOMEnvironmentRef env, 
 	OW_RepositoryIFCRef pRepos, const OW_ACLInfo& aclInfo, OW_Bool noLock)
-	: OW_CIMOMHandle()
+	: OW_CIMOMHandleIFC()
 	, m_pServer(pRepos)
 	, m_aclInfo(aclInfo)
 	, m_noLock(noLock)

@@ -32,7 +32,7 @@
 
 #include "OW_config.h"
 #include "OW_Logger.hpp"
-#include "OW_CIMOMHandle.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Reference.hpp"
 
 class OW_ProviderEnvironment
@@ -40,7 +40,7 @@ class OW_ProviderEnvironment
 public:
 	virtual ~OW_ProviderEnvironment(){}
 
-	virtual OW_CIMOMHandleRef getCIMOMHandle() const = 0;
+	virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const = 0;
 	virtual OW_LoggerRef getLogger() const = 0;
 	virtual OW_String getConfigItem(const OW_String &name) const = 0;
 };

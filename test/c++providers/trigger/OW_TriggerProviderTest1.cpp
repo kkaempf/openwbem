@@ -128,7 +128,7 @@ OW_TriggerProviderTest1::poll(const OW_ProviderEnvironmentRef& env)
 	
 	static int count = 1;
 	
-	OW_CIMOMHandleRef lch = env->getCIMOMHandle();
+	OW_CIMOMHandleIFCRef lch = env->getCIMOMHandle();
 
 	OW_CIMClass cc = lch->getClass(OW_CIMObjectPath("OW_TestIndication1", "root"));
 	if (cc)

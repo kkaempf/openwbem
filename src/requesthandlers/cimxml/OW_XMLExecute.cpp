@@ -59,7 +59,7 @@ using std::ostream;
 #define OW_LOGERROR(msg) this->getEnvironment()->getLogger()->logError(msg)
 
 typedef void (OW_XMLExecute::*execFuncPtr_t)(ostream& ostr,
-	OW_XMLNode& qualNode, OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+	OW_XMLNode& qualNode, OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 
 typedef  OW_Map<OW_String, execFuncPtr_t> funcMap_t;
 
@@ -206,7 +206,7 @@ OW_XMLExecute::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::executeIntrinsic(ostream& ostr,
-	OW_XMLNode node, OW_CIMOMHandle& hdl,
+	OW_XMLNode node, OW_CIMOMHandleIFC& hdl,
 	OW_CIMObjectPath& path)
 {
 
@@ -237,7 +237,7 @@ OW_XMLExecute::executeIntrinsic(ostream& ostr,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::executeExtrinsic(ostream& ostr, OW_XMLNode node,
-	OW_CIMOMHandle& lch)
+	OW_CIMOMHandleIFC& lch)
 // throws OW_IOException					
 {
 	ostr << "<METHODRESPONSE NAME=\"" << m_functionName <<
@@ -251,7 +251,7 @@ OW_XMLExecute::executeExtrinsic(ostream& ostr, OW_XMLNode node,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::doInvokeMethod(ostream& ostr, OW_XMLNode& node,
-	const OW_String& methodName, OW_CIMOMHandle& hdl)
+	const OW_String& methodName, OW_CIMOMHandleIFC& hdl)
 {
 	OW_CIMValueArray inParams;
 	OW_CIMValueArray outParams;
@@ -418,7 +418,7 @@ OW_XMLExecute::outputError(const OW_CIMException& ce, ostream& ostr)
 // STATIC
 void
 OW_XMLExecute::associatorNames(ostream& ostr, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String className;
 	OW_CIMObjectPathEnumeration assocNames;
@@ -482,7 +482,7 @@ OW_XMLExecute::associatorNames(ostream& ostr, OW_XMLNode& node,
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void OW_XMLExecute::associators(ostream& ostr,
-	OW_XMLNode& node, OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_XMLNode& node, OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	// Look for ObjectName
 	OW_XMLNode tmpNode = node;
@@ -558,7 +558,7 @@ void OW_XMLExecute::associators(ostream& ostr,
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void OW_XMLExecute::createClass(ostream& /*ostr*/, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	node = node.getChild();
 	if (!node)
@@ -570,7 +570,7 @@ void OW_XMLExecute::createClass(ostream& /*ostr*/, OW_XMLNode& node,
 
 //////////////////////////////////////////////////////////////////////////////
 void OW_XMLExecute::createInstance(ostream& ostr, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	node = node.getChild();		// Point node to <INSTANCE> tag
 
@@ -638,7 +638,7 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_XMLNode& node,
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String className = node.extractParameterValueAttr(XMLP_CLASSNAME,
 		OW_XMLNode::XML_ELEMENT_CLASSNAME, paramName );
@@ -654,7 +654,7 @@ void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::deleteInstance(ostream&	/*ostr*/, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String name = node.getAttribute( paramName );
 	if ( !name.equalsIgnoreCase( "InstanceName" ) )
@@ -675,7 +675,7 @@ OW_XMLExecute::deleteInstance(ostream&	/*ostr*/, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::deleteQualifier(ostream& /*ostr*/, OW_XMLNode& qualNode,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String qname = getQualifierName(qualNode);
 	path.setObjectName(qname);
@@ -686,7 +686,7 @@ OW_XMLExecute::deleteQualifier(ostream& /*ostr*/, OW_XMLNode& qualNode,
 // STATIC
 void
 OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String className;
 	OW_Bool deepInheritance;
@@ -714,7 +714,7 @@ OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::enumerateClasses( ostream& ostr, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String className;
 	OW_Bool localOnly;
@@ -755,7 +755,7 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String className = node.extractParameterValueAttr(XMLP_CLASSNAME,
 		OW_XMLNode::XML_ELEMENT_CLASSNAME, paramName);
@@ -783,7 +783,7 @@ OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_Bool isPropertyList(false);
 
@@ -852,7 +852,7 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_XMLNode& /*node*/,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypes(path);
 	while (enu.hasMoreElements())
@@ -870,7 +870,7 @@ OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_XMLNode& /*node*/,
 // STATIC
 void
 OW_XMLExecute::getClass(ostream& ostr, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	if (!node)
 	{
@@ -924,7 +924,7 @@ OW_XMLExecute::getClass(ostream& ostr, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::getInstance(ostream& ostr, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_Bool isPropertyList;
 	OW_Array<OW_String> propertyList;
@@ -993,7 +993,7 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::getProperty(ostream& ostr, OW_XMLNode& propNode,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String propertyName=propNode.mustExtractParameterValue(XMLP_PROPERTYNAME);
 
@@ -1019,7 +1019,7 @@ OW_XMLExecute::getProperty(ostream& ostr, OW_XMLNode& propNode,
 // STATIC
 void
 OW_XMLExecute::getQualifier(ostream& ostr, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 
 	path.setObjectName(getQualifierName(node));
@@ -1036,7 +1036,7 @@ OW_XMLExecute::getQualifier(ostream& ostr, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String name=node.mustGetAttribute(paramName);
 	if (!name.equalsIgnoreCase(XMLP_MODIFIED_CLASS))
@@ -1061,7 +1061,7 @@ OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	//
 	// Check parameter name is "ModifiedInstance"
@@ -1094,7 +1094,7 @@ OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::referenceNames(ostream& ostr, OW_XMLNode& node,
-	OW_CIMObjectPath& path,OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path,OW_CIMOMHandleIFC& hdl)
 {
 	OW_String className;
 
@@ -1143,10 +1143,10 @@ OW_XMLExecute::referenceNames(ostream& ostr, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::references(ostream& ostr, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String className;
-	// OW_CIMOMHandle::Enumeration enumerate; // TODO not impl
+	// OW_CIMOMHandleIFC::Enumeration enumerate; // TODO not impl
 	OW_Bool isPropertyList;
 	OW_Array<OW_String> propertyList;
 	OW_Bool includeQualifiers;
@@ -1217,7 +1217,7 @@ OW_XMLExecute::references(ostream& ostr, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_XMLNode& propNode,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String instanceName;
 	OW_CIMInstance cimInstance;
@@ -1259,7 +1259,7 @@ OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_XMLNode& propNode,
 // STATIC
 void
 OW_XMLExecute::execQuery(ostream& ostr, OW_XMLNode& node,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String queryLanguage =
 		node.extractParameterValue(XMLP_QUERYLANGUAGE, OW_String(""));
@@ -1299,7 +1299,7 @@ OW_XMLExecute::execQuery(ostream& ostr, OW_XMLNode& node,
 // STATIC
 void
 OW_XMLExecute::setQualifier(ostream& /*ostr*/, OW_XMLNode& qualNode,
-	OW_CIMObjectPath& path, OW_CIMOMHandle& hdl)
+	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String argName = qualNode.mustGetAttribute(paramName);
 
@@ -1364,8 +1364,8 @@ OW_XMLExecute::processSimpleReq(OW_XMLNode& node, ostream& ostrEntity,
 		}
 
 		//OW_ACLInfo acl(userName);
-		//OW_CIMOMHandle hdl = OW_Environment::getCIMOMHandle(acl, true);
-		OW_CIMOMHandleRef hdl = this->getEnvironment()->getCIMOMHandle(userName, true);
+		//OW_CIMOMHandleIFC hdl = OW_Environment::getCIMOMHandle(acl, true);
+		OW_CIMOMHandleIFCRef hdl = this->getEnvironment()->getCIMOMHandle(userName, true);
 
 		if (m_isIntrinsic)
 		{

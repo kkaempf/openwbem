@@ -42,7 +42,7 @@ using std::ostream;
 
 void
 OW_XMLOperationGeneric::extrinsicMethod(ostream& ostr, OW_XMLNode& node,
-	OW_String& method, OW_CIMOMHandle& hdl)
+	OW_String& method, OW_CIMOMHandleIFC& hdl)
 {
 	(void)ostr;
 	(void)node;

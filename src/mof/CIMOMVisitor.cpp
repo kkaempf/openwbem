@@ -39,7 +39,7 @@
 
 #include <assert.h>
 
-CIMOMVisitor::CIMOMVisitor(OW_Reference<OW_CIMOMHandle> handle, OW_CIMNameSpace& ns)
+CIMOMVisitor::CIMOMVisitor(OW_Reference<OW_CIMOMHandleIFC> handle, OW_CIMNameSpace& ns)
 : m_curClass(OW_Bool(true))
 , m_curInstance(OW_Bool(true))
 , m_curValue(OW_Bool(true))

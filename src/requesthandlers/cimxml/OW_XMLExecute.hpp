@@ -32,7 +32,7 @@
 #define _OW_XMLEXECUTE_HPP__
 
 #include "OW_config.h"
-#include "OW_CIMOMHandle.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 #include "OW_String.hpp"
 #include "OW_Map.hpp"
 #include "OW_XMLQualifier.hpp"
@@ -40,7 +40,7 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include <iosfwd>
 
-class OW_CIMOMHandle;
+class OW_CIMOMHandleIFC;
 
 class OW_XMLExecute : public OW_RequestHandlerIFCXML, OW_XMLQualifier
 {
@@ -77,14 +77,14 @@ private:
 	void outputError(const OW_CIMException& ce, std::ostream& ostr);
 
 
-	void executeIntrinsic(std::ostream& osrt, OW_XMLNode node, OW_CIMOMHandle& hdl,
+	void executeIntrinsic(std::ostream& osrt, OW_XMLNode node, OW_CIMOMHandleIFC& hdl,
 			OW_CIMObjectPath& path);
 		/*throw (OW_IOException); */
 	void executeExtrinsic(std::ostream& ostr, OW_XMLNode node,
-		OW_CIMOMHandle& lch);
+		OW_CIMOMHandleIFC& lch);
 
 	void doInvokeMethod(std::ostream& ostr, OW_XMLNode& node,
-		const OW_String& methodName, OW_CIMOMHandle& lch);
+		const OW_String& methodName, OW_CIMOMHandleIFC& lch);
 
 	void processSimpleReq(OW_XMLNode& node, std::ostream& ostrEntity,
 		std::ostream& ostrError, const OW_String& userName);
@@ -93,51 +93,51 @@ private:
 		const OW_Array<OW_CIMParameter>& paramlist, OW_Array<OW_CIMValue>& params);
 
 	void associatorNames(std::ostream& ostr, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void associators(std::ostream& ostr, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void createClass(std::ostream& /*ostr*/, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void createInstance(std::ostream& ostr, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void deleteClass(std::ostream& /*ostr*/, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void deleteInstance(std::ostream& /*ostr*/, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void deleteQualifier(std::ostream& /*ostr*/, OW_XMLNode& qualNode,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void enumerateClassNames(std::ostream& ostr, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void enumerateClasses( std::ostream& ostr, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl) ;
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl) ;
 	void enumerateInstanceNames(std::ostream& ostr, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void enumerateInstances(std::ostream& ostr, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl) ;
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl) ;
 	void enumerateQualifiers(std::ostream& ostr, OW_XMLNode& /*node*/,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void getClass(std::ostream& ostr, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl) ;
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl) ;
 	void getInstance(std::ostream& ostr, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void getProperty(std::ostream& ostr, OW_XMLNode& propNode,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void getQualifier(std::ostream& ostr, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void modifyClass(std::ostream& /*ostr*/, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void modifyInstance(std::ostream& /*ostr*/, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void referenceNames(std::ostream& ostr, OW_XMLNode& node,
-		OW_CIMObjectPath& path,OW_CIMOMHandle& hdl) ;
+		OW_CIMObjectPath& path,OW_CIMOMHandleIFC& hdl) ;
 	void references(std::ostream& ostr, OW_XMLNode& node,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl) ;
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl) ;
 	void setProperty(std::ostream& /*ostr*/, OW_XMLNode& propNode,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void setQualifier(std::ostream& /*ostr*/, OW_XMLNode& qualNode,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void execQuery(std::ostream& ostr, OW_XMLNode& qualNode,
-		OW_CIMObjectPath& path, OW_CIMOMHandle& hdl);
+		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 
 };
 

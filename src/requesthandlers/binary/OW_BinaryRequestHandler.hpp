@@ -56,79 +56,79 @@ public:
 
 private:
 
-	void createClass(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void createClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void createInstance(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void createInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void enumClasses(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void enumClasses(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void deleteClass(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void deleteClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void deleteInstance(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void deleteInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void deleteQual(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void deleteQual(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void getClass(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void getClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void getInstance(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void getInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void getQual(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void getQual(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void setQual(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void setQual(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void setClass(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void setClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void setInstance(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void setInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void setProperty(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void setProperty(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void getProperty(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void getProperty(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void enumClassNames(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void enumClassNames(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void enumInstances(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void enumInstances(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void enumInstanceNames(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void enumInstanceNames(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
             std::istream& istrm);
 
-	void enumQualifiers(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void enumQualifiers(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void invokeMethod(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void invokeMethod(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void execQuery(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void execQuery(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void associators(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void associators(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void associatorNames(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void associatorNames(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
         std::istream& istrm);
 
-	void references(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void references(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void referenceNames(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void referenceNames(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void getServerFeatures(OW_CIMOMHandleRef chdl, std::ostream& ostrm,
+	void getServerFeatures(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
 	void writeError(std::ostream& ostrm, const char* msg);

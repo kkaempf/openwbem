@@ -61,7 +61,7 @@ OW_String mode;
 OW_CIMClass bionicClass;
 OW_CIMInstance bionicInstance;
 
-void createClass(OW_CIMOMHandle& hdl)
+void createClass(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing createClass() *******\n" << endl;
 	try
@@ -134,7 +134,7 @@ void createClass(OW_CIMOMHandle& hdl)
 	}
 }
 
-void enumClassNames(OW_CIMOMHandle& hdl)
+void enumClassNames(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing enumClassNames() *******\n" << endl;
 	try
@@ -153,7 +153,7 @@ void enumClassNames(OW_CIMOMHandle& hdl)
 	}
 }
 
-void enumClasses(OW_CIMOMHandle& hdl)
+void enumClasses(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing enumClasses() *******\n" << endl;
 	try
@@ -173,7 +173,7 @@ void enumClasses(OW_CIMOMHandle& hdl)
 	}
 }
 
-void modifyClass(OW_CIMOMHandle& hdl)
+void modifyClass(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing modifyClass() *******\n" << endl;
 	try
@@ -198,7 +198,7 @@ void modifyClass(OW_CIMOMHandle& hdl)
 	}
 }
 
-void getClass(OW_CIMOMHandle& hdl)
+void getClass(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing getClass() *******\n" << endl;
 	try
@@ -217,7 +217,7 @@ void getClass(OW_CIMOMHandle& hdl)
 	}
 }
 
-void createInstance(OW_CIMOMHandle& hdl, const OW_String& newInstance)
+void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 {
 	cout << "\n\n******* Doing createInstance() *******\n" << endl;
 	try
@@ -252,7 +252,7 @@ void createInstance(OW_CIMOMHandle& hdl, const OW_String& newInstance)
 	}
 }
 
-void enumerateInstanceNames(OW_CIMOMHandle& hdl)
+void enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing enumInstanceNames() *******\n" << endl;
 	try
@@ -272,7 +272,7 @@ void enumerateInstanceNames(OW_CIMOMHandle& hdl)
 	}
 }
 
-void enumerateInstances(OW_CIMOMHandle& hdl)
+void enumerateInstances(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing enumInstances() *******\n" << endl;
 	try
@@ -292,7 +292,7 @@ void enumerateInstances(OW_CIMOMHandle& hdl)
 	}
 }
 
-void getInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
+void getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 {
 	cout << "\n\n******* Doing getInstance() *******\n" << endl;
 	try
@@ -315,7 +315,7 @@ void getInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
 	}
 }
 
-void modifyInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
+void modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 {
 	cout << "\n\n******* Doing modifyInstance() *******\n" << endl;
 	try
@@ -345,7 +345,7 @@ void modifyInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
 	}
 }
 
-void deleteInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
+void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 {
 	cout << "\n\n******* Doing deleteInstance() *******\n" << endl;
 	try
@@ -367,7 +367,7 @@ void deleteInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
 	}
 }
 
-void setQualifier(OW_CIMOMHandle& hdl)
+void setQualifier(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing setQualifier() *******\n" << endl;
 	try
@@ -399,7 +399,7 @@ void setQualifier(OW_CIMOMHandle& hdl)
 	}
 }
 
-void enumerateQualifiers(OW_CIMOMHandle& hdl)
+void enumerateQualifiers(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing enumerateQualifier() *******\n" << endl;
 	try
@@ -419,7 +419,7 @@ void enumerateQualifiers(OW_CIMOMHandle& hdl)
 	}
 }
 
-void getQualifier(OW_CIMOMHandle& hdl)
+void getQualifier(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing getQualifier() *******\n" << endl;
 	try
@@ -439,7 +439,7 @@ void getQualifier(OW_CIMOMHandle& hdl)
 	}
 }
 
-void associatorNames(OW_CIMOMHandle& hdl)
+void associatorNames(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n ***** Doing associatorNames() ****** " << endl;
 	try
@@ -464,7 +464,7 @@ void associatorNames(OW_CIMOMHandle& hdl)
 	}
 }
 
-void associators(OW_CIMOMHandle& hdl)
+void associators(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n ***** Doing associators() ****** " << endl;
 	try
@@ -490,7 +490,7 @@ void associators(OW_CIMOMHandle& hdl)
 	}
 }
 
-void referenceNames(OW_CIMOMHandle& hdl)
+void referenceNames(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n ***** Doing referenceNames() ****** " << endl;
 	try
@@ -516,7 +516,7 @@ void referenceNames(OW_CIMOMHandle& hdl)
 	}
 }
 
-void references(OW_CIMOMHandle& hdl)
+void references(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n ***** Doing references() ****** " << endl;
 	try
@@ -541,7 +541,7 @@ void references(OW_CIMOMHandle& hdl)
 	}
 }
 
-void execReadQuery(OW_CIMOMHandle& hdl)
+void execReadQuery(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n ***** Doing execQuery() (read) ****** " << endl;
 	try
@@ -561,7 +561,7 @@ void execReadQuery(OW_CIMOMHandle& hdl)
 	}
 }
 
-void execWriteQuery(OW_CIMOMHandle& hdl)
+void execWriteQuery(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n ***** Doing execQuery() (write) ****** " << endl;
 	try
@@ -581,7 +581,7 @@ void execWriteQuery(OW_CIMOMHandle& hdl)
 	}
 }
 
-void deleteQualifier(OW_CIMOMHandle& hdl)
+void deleteQualifier(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing deleteQualifier() *******\n" << endl;
 	try
@@ -601,7 +601,7 @@ void deleteQualifier(OW_CIMOMHandle& hdl)
 	}
 }
 
-void deleteClass(OW_CIMOMHandle& hdl)
+void deleteClass(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing deleteClass() *******\n" << endl;
 	try
@@ -622,7 +622,7 @@ void deleteClass(OW_CIMOMHandle& hdl)
 	}
 }
 
-void invokeMethod(OW_CIMOMHandle& hdl, int num)
+void invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 {
 	cout << "\n\n******* Doing invokeMethod() *******\n" << endl;
 	try
@@ -653,7 +653,7 @@ void invokeMethod(OW_CIMOMHandle& hdl, int num)
 	}
 }
 
-void createNameSpace(OW_CIMOMHandle& hdl)
+void createNameSpace(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing createNameSpace() *******\n" << endl;
 	try
@@ -673,7 +673,7 @@ void createNameSpace(OW_CIMOMHandle& hdl)
 	}
 }
 
-void enumNameSpace(OW_CIMOMHandle& hdl)
+void enumNameSpace(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing enumNameSpace() *******\n" << endl;
 	try
@@ -692,7 +692,7 @@ void enumNameSpace(OW_CIMOMHandle& hdl)
 	}
 }
 
-void deleteNameSpace(OW_CIMOMHandle& hdl)
+void deleteNameSpace(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing deleteNameSpace() *******\n" << endl;
 	try
@@ -712,7 +712,7 @@ void deleteNameSpace(OW_CIMOMHandle& hdl)
 	}
 }
 
-void getProperty(OW_CIMOMHandle& hdl)
+void getProperty(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing getProperty() *******\n" << endl;
 	try
@@ -735,7 +735,7 @@ void getProperty(OW_CIMOMHandle& hdl)
 	}
 }
 
-void setProperty(OW_CIMOMHandle& hdl)
+void setProperty(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing setProperty() *******\n" << endl;
 	try

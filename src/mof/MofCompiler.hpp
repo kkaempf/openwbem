@@ -32,7 +32,7 @@
 #define MOF_COMPILER_HPP_
 
 #include "OW_config.h"
-#include "OW_CIMOMHandle.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 #include "OW_String.hpp"
 #include "OW_MofParserErrorHandlerIFC.hpp"
 #include "OW_Reference.hpp"
@@ -41,7 +41,7 @@
 class MofCompiler
 {
 public:
-	MofCompiler( OW_Reference<OW_CIMOMHandle> ch, const OW_String& nameSpace, OW_Reference<OW_MofParserErrorHandlerIFC> mpeh );
+	MofCompiler( OW_Reference<OW_CIMOMHandleIFC> ch, const OW_String& nameSpace, OW_Reference<OW_MofParserErrorHandlerIFC> mpeh );
 	~MofCompiler();
 
 	long compile( const OW_String& filename );
@@ -57,7 +57,7 @@ public:
 	static lineInfo theLineInfo;
 
 private:
-	OW_Reference<OW_CIMOMHandle> m_ch;
+	OW_Reference<OW_CIMOMHandleIFC> m_ch;
 	OW_String m_nameSpace;
 
 };

@@ -41,7 +41,7 @@
 #include	"OW_config.h"
 #include	"OW_String.hpp"
 #include	"OW_XMLNode.hpp"
-#include	"OW_CIMOMHandle.hpp"
+#include	"OW_CIMOMHandleIFC.hpp"
 #include	"OW_Param.hpp"
 #include "OW_CIMFwd.hpp"
 #include	"OW_XMLParameters.hpp"
@@ -60,7 +60,7 @@ class OW_XMLOperationGeneric : public OW_XMLParameters
 		static void extrinsicMethod(std::ostream& ostr,
 				OW_XMLNode& node,
 				OW_String& method,
-				OW_CIMOMHandle& hdl) /*throw (OW_CIMException, OW_CIMMalformedUrlException)*/;
+				OW_CIMOMHandleIFC& hdl) /*throw (OW_CIMException, OW_CIMMalformedUrlException)*/;
 
 		static OW_XMLNode XMLGetCIMElement(OW_XMLNode& node) /*throw (OW_CIMException)*/;
 

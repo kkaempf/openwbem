@@ -535,20 +535,20 @@ OW_CIMOMEnvironment::getConfigItem(const OW_String &name) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMOMHandleRef
+OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
         const OW_ACLInfo& aclInfo)
 {
 	OW_MutexLock ml(m_monitor);
 	OW_ASSERT(m_cimServer);
 	OW_CIMServer* psvr = (OW_CIMServer*)m_cimServer.getPtr();
-	return OW_CIMOMHandleRef(new OW_LocalCIMOMHandle(
+	return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(
 		OW_CIMOMEnvironmentRef(this, true),
 		OW_RepositoryIFCRef(new OW_WQLFilterRep(inst, psvr)), aclInfo));
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMOMHandleRef
+OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 	OW_Bool doIndications)
 {
@@ -565,17 +565,17 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 		if(irl)
 		{
 			irl->setCIMServer(m_cimServer.getPtr());
-			return OW_CIMOMHandleRef(new OW_LocalCIMOMHandle(eref, irl,
+			return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, irl,
 				aclInfo));
 		}
 	}
 
-	return OW_CIMOMHandleRef(new OW_LocalCIMOMHandle(eref, m_cimServer,
+	return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, m_cimServer,
 		aclInfo));
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMOMHandleRef
+OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle(const OW_String &username,
 	const OW_Bool doIndications)
 {

@@ -134,7 +134,7 @@ OW_CIMInstanceEnumeration OW_AssociatorTest::associators(
 				resultClass, role, resultRole, includeQualifiers,
 				includeClassOrigin, propertyList));
 	
-	OW_CIMOMHandleRef hdl = env->getCIMOMHandle();
+	OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 
 	OW_CIMInstance ci = hdl->getInstance(objectName, false);
 	if (!ci)
@@ -166,7 +166,7 @@ OW_CIMObjectPathEnumeration OW_AssociatorTest::associatorNames(
 				role, resultRole));
 
 	OW_CIMObjectPathEnumeration retval;
-	OW_CIMOMHandleRef hdl = env->getCIMOMHandle();
+	OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 	OW_CIMInstance ci = hdl->getInstance(objectName, false);
 	if (!ci)
 	{
@@ -210,7 +210,7 @@ OW_CIMInstanceEnumeration OW_AssociatorTest::references(
 
 	OW_CIMInstanceEnumeration retval;
 
-	OW_CIMOMHandleRef hdl = env->getCIMOMHandle();
+	OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 	OW_CIMInstance ci = hdl->getInstance(objectName, false);
 	if (!ci)
 		return retval;
@@ -253,7 +253,7 @@ OW_CIMObjectPathEnumeration OW_AssociatorTest::referenceNames(
 
 	OW_CIMObjectPathEnumeration retval;
 	
-	OW_CIMOMHandleRef hdl = env->getCIMOMHandle();
+	OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 	OW_CIMInstance ci = hdl->getInstance(objectName, false);
 	if (!ci)
 		return retval;

@@ -37,10 +37,10 @@
 #include "OW_Reference.hpp"
 
 /**
- * The OW_CIMOMHandle class is an abstract class used as an interface
+ * The OW_CIMOMHandleIFC class is an abstract class used as an interface
  * definition for classes that provide access to a CIMOM.
  */
-class OW_CIMOMHandle
+class OW_CIMOMHandleIFC
 {
 public:
 
@@ -93,14 +93,14 @@ public:
 	static const OW_Bool NOT_LOCAL_ONLY;
 
 	/**
-	 * Create a new OW_CIMOMHandle object.
+	 * Create a new OW_CIMOMHandleIFC object.
 	 */
-	OW_CIMOMHandle() {}
+	OW_CIMOMHandleIFC() {}
 
 	/**
-	 * Destroy this OW_CIMOMHandle object.
+	 * Destroy this OW_CIMOMHandleIFC object.
 	 */
-	virtual ~OW_CIMOMHandle() {}
+	virtual ~OW_CIMOMHandleIFC() {}
 
 	/**
 	 * Close the connetion to the CIMOM. This will free resources used for the
@@ -652,7 +652,7 @@ public:
 		const OW_String& queryLanguage) = 0;
 
 	/**
-	 * @return The features of the CIMOM this OW_CIMOMHandle is connected to as
+	 * @return The features of the CIMOM this OW_CIMOMHandleIFC is connected to as
 	 * an OW_CIMFeatures object.
 	 */
 	virtual OW_CIMFeatures getServerFeatures();
@@ -669,7 +669,7 @@ public:
 	
 };
 
-typedef OW_Reference<OW_CIMOMHandle> OW_CIMOMHandleRef;
+typedef OW_Reference<OW_CIMOMHandleIFC> OW_CIMOMHandleIFCRef;
 
 #endif
 

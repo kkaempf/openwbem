@@ -60,7 +60,7 @@ const char * typeStrings[] =
 };
 
 OW_WQLProcessor::OW_WQLProcessor(
-	const OW_Reference<OW_CIMOMHandle>& hdl,
+	const OW_Reference<OW_CIMOMHandleIFC>& hdl,
 	const OW_CIMNameSpace& ns)
 	: m_hdl(hdl)
 	, m_ns(ns)

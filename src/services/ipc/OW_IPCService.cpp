@@ -86,7 +86,7 @@ public:
 		return m_env->getRequestHandler(id);
 	}
 
-	virtual OW_CIMOMHandleRef getCIMOMHandle(const OW_String &username,
+	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username,
 		const OW_Bool doIndications)
 	{
 		return m_env->getCIMOMHandle(username, doIndications);
