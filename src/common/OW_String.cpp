@@ -438,6 +438,13 @@ OW_String::concat(const OW_String& arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_String&
+OW_String::concat(char arg)
+{
+    return concat(OW_String(arg));
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_Bool
 OW_String::endsWith(const OW_String& arg, OW_Bool ignoreCase) const
 {
@@ -914,12 +921,33 @@ OW_String::c_str() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-char
+static const char cnullChar = '\0';
+const char&
 OW_String::operator[] (size_t ndx) const
 {
+#ifdef OW_DEBUG
+    OW_ASSERT(ndx <= length());
+#endif
 	// Don't need to check m_buf for NULL, because if length() == 0,
 	// m_buf->data() won't be executed.
-	return (ndx < length()) ? m_buf->data()[ndx] : 0;
+	//return (ndx <= length()) ? *(m_buf->data() + ndx) : cnullChar;
+	if (ndx <= length()) 
+        return *(m_buf->data() + ndx);
+    else
+        return cnullChar;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+static char nullChar = '\0';
+char&
+OW_String::operator[] (size_t ndx)
+{
+#ifdef OW_DEBUG
+    OW_ASSERT(ndx <= length());
+#endif
+	// Don't need to check m_buf for NULL, because if length() == 0,
+	// m_buf->data() won't be executed.
+	return (ndx <= length()) ? m_buf->data()[ndx] : nullChar;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -277,6 +277,13 @@ public:
 	OW_String& concat(const OW_String& arg);
 
 	/**
+	 * Append a char to this OW_String object.
+	 * @param arg	The char to append to this OW_String object.
+	 * @return A reference to this OW_String object.
+	 */
+	OW_String& concat(char arg);
+
+	/**
 	 * Determine if this OW_String object ends with the same string
 	 * represented by another OW_String object.
 	 * @param arg	The OW_String object to search the end of this OW_String
@@ -442,7 +449,8 @@ public:
 	 * @return The character at the given index within the underlying character
 	 * array. If ndx is out of bounds, 0 is returned.
 	 */
-	char operator[] (size_t ndx) const;
+	const char& operator[] (size_t ndx) const;
+	char& operator[] (size_t ndx);
 
 	/**
 	 * Concatination operator.
