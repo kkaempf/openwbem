@@ -24,19 +24,21 @@ clean-local:
 
 
 libowcppprovifc_a_SOURCES = \
+OW_CppProviderIFC.cpp \
+OW_CppProxyProvider.cpp \
+OW_CppProxyProvider.hpp \
+OW_CppProviderIFC.hpp \
+OW_CppIndicationProviderIFC.cpp
+
+pkginclude_HEADERS = \
+OW_CppProviderBaseIFC.hpp \
 OW_CppAssociatorProviderIFC.hpp \
 OW_CppIndicationExportProviderIFC.hpp \
 OW_CppInstanceProviderIFC.hpp \
 OW_CppMethodProviderIFC.hpp \
 OW_CppPolledProviderIFC.hpp \
 OW_CppPropertyProviderIFC.hpp \
-OW_CppProviderBaseIFC.hpp \
-OW_CppProviderIFC.cpp \
-OW_CppProviderIFC.hpp \
-OW_CppProxyProvider.cpp \
-OW_CppProxyProvider.hpp \
-OW_CppIndicationProviderIFC.hpp \
-OW_CppIndicationProviderIFC.cpp
+OW_CppIndicationProviderIFC.hpp
 
 #libOW_CppIFC_a_LDFLAGS = -L$(top_builddir)/src/common/
 #libOW_CppIFC_a_LIBADD = -lOpenWBEM
