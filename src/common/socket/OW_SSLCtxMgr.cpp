@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -34,6 +34,8 @@
 #include "OW_Format.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_RandomNumber.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_ThreadImpl.hpp"
 
 #ifdef OW_HAVE_OPENSSL
 
@@ -47,6 +49,56 @@ SSL_CTX* OW_SSLCtxMgr::m_ctxServer = 0;
 certVerifyFuncPtr_t OW_SSLCtxMgr::m_clientCertVerifyCB = 0;
 certVerifyFuncPtr_t OW_SSLCtxMgr::m_serverCertVerifyCB = 0;
 
+static OW_Mutex* mutex_buf = 0;
+
+
+extern "C"
+{
+
+struct CRYPTO_dynlock_value
+{
+	OW_Mutex mutex;
+};
+
+static struct CRYPTO_dynlock_value * dyn_create_function(const char *,int)
+{
+	return new CRYPTO_dynlock_value;
+}
+
+static void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l,
+			      const char *, int)
+{
+	if (mode & CRYPTO_LOCK)
+		l->mutex.acquire();
+	else
+		l->mutex.release();
+}
+
+static void dyn_destroy_function(struct CRYPTO_dynlock_value *l,
+				 const char *, int)
+{
+	delete l;
+}
+
+static unsigned long id_function()
+{
+	return (unsigned long)OW_ThreadImpl::currentThread();
+}
+
+static void locking_function(int mode, int n, const char*, int)
+{
+	if (mode & CRYPTO_LOCK)
+	{
+		mutex_buf[n].acquire();
+	}
+	else
+	{
+		mutex_buf[n].release();
+	}
+}
+
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 SSL_CTX*
@@ -59,6 +111,19 @@ OW_SSLCtxMgr::initCtx(const OW_String& keyfile)
 		SSL_load_error_strings();
 		m_bio_err = BIO_new_fp(stderr, BIO_NOCLOSE); // TODO fix this
 	}
+
+	if (!mutex_buf)
+	{
+		mutex_buf = new OW_Mutex[CRYPTO_num_locks()];
+	}
+
+	CRYPTO_set_id_callback(id_function);
+	CRYPTO_set_locking_callback(locking_function);
+	  /* The following three CRYPTO_... functions are the OpenSSL functions
+		 for registering the callbacks we implemented above */
+	CRYPTO_set_dynlock_create_callback(dyn_create_function);
+	CRYPTO_set_dynlock_lock_callback(dyn_lock_function);
+	CRYPTO_set_dynlock_destroy_callback(dyn_destroy_function);
 
 	SSL_CTX* ctx = SSL_CTX_new(SSLv23_method());
 
@@ -392,6 +457,7 @@ OW_SSLCtxMgr::uninitServer()
 		m_ctxServer = NULL;
 	}
 }
+
 
 #endif // #ifdef OW_HAVE_OPENSSL
 
