@@ -306,6 +306,7 @@ SessionLanguage::SessionLanguage()
 	: OperationContext::Data()
 	, m_langTags()
 	, m_contentLanguage()
+	, m_acceptLanguageString()
 {
 }
 
@@ -314,6 +315,7 @@ SessionLanguage::SessionLanguage(const char* acceptLangHdrValue)
 	: OperationContext::Data()
 	, m_langTags()
 	, m_contentLanguage()
+	, m_acceptLanguageString()
 {
     assign(acceptLangHdrValue);
 }
@@ -323,6 +325,7 @@ SessionLanguage::SessionLanguage(const SessionLanguage& arg)
 	: OperationContext::Data()
 	, m_langTags(arg.m_langTags)
 	, m_contentLanguage(arg.m_contentLanguage)
+	, m_acceptLanguageString(arg.m_acceptLanguageString)
 {
 }
 
@@ -332,6 +335,7 @@ SessionLanguage::operator=(const SessionLanguage& arg)
 {
 	m_langTags = arg.m_langTags;
 	m_contentLanguage = arg.m_contentLanguage;
+	m_acceptLanguageString = arg.m_acceptLanguageString;
 	return *this;
 }
 
@@ -347,6 +351,7 @@ SessionLanguage::assign(const char* acceptLangHdrValue)
 void 
 SessionLanguage::buildLangTags(const char* acceptLangHdrValue)
 {
+	m_acceptLanguageString = acceptLangHdrValue;
 	m_langTags.clear();
 	const char* p = skipWhite(acceptLangHdrValue);
 	if(!(*p))

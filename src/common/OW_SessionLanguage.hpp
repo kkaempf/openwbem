@@ -120,6 +120,7 @@ public:
 	SessionLanguage& operator=(const SessionLanguage& arg);
 	
 	int langCount() const { return m_langTags.size(); }
+	String getAcceptLanguageString() const { return m_acceptLanguageString; }
 	SessionLanguage& assign(const char* acceptLangHdrValue);
 	String getBestLanguage(const StringArray& languages) const;
 	void addContentLanguage(const String& contentLanguage);
@@ -132,6 +133,7 @@ private:
 
     LanguageTagArray m_langTags;
 	String m_contentLanguage;
+	String m_acceptLanguageString;
 };
 
 typedef IntrusiveReference<SessionLanguage> SessionLanguageRef;

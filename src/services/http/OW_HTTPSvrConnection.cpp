@@ -505,6 +505,9 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 			clientSpecified);
 		if(setByProvider || clientSpecified)
 		{
+			OW_LOGDEBUG(format("HTTPSvrConnection::sendPostResponse (chunk)"
+				" setting Content-Language to %1", clang).c_str());
+
 			ostrChunk->addTrailer("Content-Language", clang);
 		}
 
@@ -1227,7 +1230,7 @@ HTTPSvrConnection::getContentLanguage(OperationContext& context,
 
 	if(slref->langCount() > 0)
 	{
-		clientSpecified = true;
+		clientSpecified = true;	// Client specified accept-language
 	}
 	String pcl = slref->getContentLanguage();
 	if(pcl.length())

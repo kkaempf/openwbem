@@ -159,6 +159,15 @@ class HTTPClient : public CIMProtocolIFC
 		 */ 
 		void addCustomHeader(const String& name, const String& value); 
 
+		/**
+		 * Retrieve a given header value from the server response.
+		 * @param The name of the header to retrieve the value of
+		 * 		(e.g. "Content-Language")
+		 * @param Output param that will contain the value of the header.
+		 * @return true if the header exists. Otherwise false.
+		 */
+		bool getResponseHeader(const String& hdrName, String& valueOut) const;
+
 	private:
 		/*
 		 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.

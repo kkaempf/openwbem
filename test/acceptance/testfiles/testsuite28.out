@@ -17398,6 +17398,11 @@ In MOF: INSTANCE OF EXP_BionicComputerSystem
         one
       </VALUE>
     </PROPERTY>
+    <PROPERTY NAME="AcceptLanguage" TYPE="string">
+      <VALUE>
+        x-owtest
+      </VALUE>
+    </PROPERTY>
     <PROPERTY.ARRAY NAME="Params" TYPE="string">
       <VALUE.ARRAY>
         <VALUE>
@@ -17437,6 +17442,11 @@ In MOF: INSTANCE OF EXP_BionicComputerSystem
     <PROPERTY NAME="Name" TYPE="string">
       <VALUE>
         two
+      </VALUE>
+    </PROPERTY>
+    <PROPERTY NAME="AcceptLanguage" TYPE="string">
+      <VALUE>
+        x-owtest
       </VALUE>
     </PROPERTY>
     <PROPERTY.ARRAY NAME="Params" TYPE="string">
@@ -17481,6 +17491,11 @@ In MOF: INSTANCE OF EXP_BionicComputerSystem
     <PROPERTY NAME="Name" TYPE="string">
       <VALUE>
         one
+      </VALUE>
+    </PROPERTY>
+    <PROPERTY NAME="AcceptLanguage" TYPE="string">
+      <VALUE>
+        x-owtest
       </VALUE>
     </PROPERTY>
     <PROPERTY.ARRAY NAME="Params" TYPE="string">

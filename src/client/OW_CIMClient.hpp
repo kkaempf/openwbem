@@ -722,6 +722,28 @@ public:
 	CIMInstanceEnumeration execQueryE(
 		const String& query,
 		const String& queryLanguage);
+
+	/**
+	 * Set/Add an HTTP header and its associated value. This header will be
+	 * sent to the CIMOM on every request.
+	 * @param hdrName The name of the HTTP Header (e.g. "Accept-Language")
+	 * @param hdrValue The value of the HTTP Header (e.g. "en-US, en")
+	 * @return true if successful. Otherwise false.
+	 */
+	bool setHTTPRequestHeader(const String& hdrName,
+		const String& hdrValue);
+
+	/**
+	 * Get the value of an HTTP header that was returned in the CIMOM's
+	 * response.
+	 * @param hdrName The of the HTTP Header value to retrieve.
+	 * 		(e.g. "Content-Language")
+	 * @param valueOut An output param that will hold the value of the header
+	 * 		on return.
+	 * @return true if the header exists. Otherwise false.
+	 */
+	bool getHTTPResponseHeader(const String& hdrName,
+		String& valueOut) const;
 	
 private:
 	String m_namespace;

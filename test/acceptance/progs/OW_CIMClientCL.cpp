@@ -410,6 +410,12 @@ testDynInstances(CIMClient& hdl)
 		ci.setProperty("params", CIMValue(params));
 		CIMObjectPath cop1 = hdl.createInstance( ci);
 		ci = hdl.getInstance(cop1);
+
+		// Check Content-Language
+		String cl;
+		TEST_ASSERT(hdl.getHTTPResponseHeader("Content-Language", cl));
+		TEST_ASSERT(cl == "x-testinst");
+		
 		TempFileStream tfs;
 		tfs << "<CIM>";
 		CIMInstancePathAndInstancetoXML(ci, tfs, cop1);
@@ -1754,7 +1760,7 @@ main(int argc, char* argv[])
 
 		CIMClient rch(url, "root/testsuite", getLoginInfo);
 
-
+		TEST_ASSERT(rch.setHTTPRequestHeader("Accept-Language", "x-owtest"));
 
 		/**********************************************************************
 		 * Now we have essentially established a "connection" to the CIM

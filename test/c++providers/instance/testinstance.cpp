@@ -45,6 +45,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_LocalCIMOMHandle.hpp"
+#include "OW_SessionLanguage.hpp"
 
 #include <fstream>
 #include <unistd.h>
@@ -112,12 +113,14 @@ public:
 		(void)ns;
 		(void)className;
 		(void)env;
+		String al = procAcceptLanguage(env);
 		for (Array<TestInstanceData>::const_iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
 		{
 			CIMInstance inst = cimClass.newInstance();
 			inst.setProperty("Name", CIMValue(iter->name));
 			inst.setProperty("Params", CIMValue(iter->params));
+			inst.setProperty("AcceptLanguage", CIMValue(al));
 			result.handle(inst.clone(localOnly,deep,includeQualifiers,includeClassOrigin,propertyList,requestedClass,cimClass));
 		}
 	}
@@ -137,6 +140,7 @@ public:
 	{
 		(void)ns;
 		(void)env;
+		String al = procAcceptLanguage(env);
 		CIMInstance rval = cimClass.newInstance();
 		String name;
 		instanceName.getKeys()[0].getValue().get(name);
@@ -147,6 +151,7 @@ public:
 			{
 				rval.setProperty("Name", CIMValue(name));
 				rval.setProperty("Params", CIMValue(iter->params));
+				rval.setProperty("AcceptLanguage", CIMValue(al));
 				break;
 			}
 		}
@@ -246,8 +251,47 @@ public:
 		}
 	}
 
+//////////////////////////////////////////////////////////////////////////////
+	String 
+	procAcceptLanguage(const ProviderEnvironmentIFCRef& env)
+	{
+		env->getLogger()->logDebug("TestInstance::procAcceptLanguage");
 
+		String al;
+		OperationContext::DataRef dataRef = 
+			env->getOperationContext().getData(SESSION_LANGUAGE_KEY);
+
+		if(dataRef)
+		{
+			SessionLanguageRef slref = dataRef.cast_to<SessionLanguage>();
+			if(slref)
+			{
+				al = slref->getAcceptLanguageString();
+				slref->addContentLanguage("x-testinst");
+				env->getLogger()->logDebug("TestInstance::procAcceptLanguage"
+					" setting content-language in SessionLanguage object");
+				String cl = slref->getContentLanguage();
+				env->getLogger()->logDebug(format(
+					"TestInstance::procAcceptLanguage content-language"
+					" now is %1", cl).c_str());
+			}
+			else
+			{
+				env->getLogger()->logDebug("TestInstance::procAcceptLanguage"
+					" didn't find SessionLanguage object in opctx");
+			}
+		}
+		else
+		{
+			env->getLogger()->logDebug("TestInstance::procAcceptLanguage"
+				" didn't find SESSION_LANGUAGE_KEY in opctx");
+		}
+
+		return al;
+	}
 };
+
+
 
 
 
@@ -257,4 +301,4 @@ public:
 OW_PROVIDERFACTORY(TestInstance, testinstance)
 
 
-	
+

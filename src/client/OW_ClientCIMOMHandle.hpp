@@ -38,6 +38,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
+#include "OW_Map.hpp"
 
 namespace OpenWBEM
 {
@@ -48,11 +49,16 @@ typedef IntrusiveReference<CIMProtocolIFC> CIMProtocolIFCRef;
 class ClientCIMOMHandle;
 typedef IntrusiveReference<ClientCIMOMHandle> ClientCIMOMHandleRef;
 
+class CIMProtocolIStreamIFC;
+typedef IntrusiveReference<CIMProtocolIStreamIFC> CIMProtocolIStreamIFCRef;
+
 // This class is meant to hold common functionality in the client-side CIMOM
 // handles	
 class ClientCIMOMHandle : public CIMOMHandleIFC
 {
 public:
+	ClientCIMOMHandle() : CIMOMHandleIFC(), m_trailers() {}
+
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
 	virtual void createNameSpace(const String& ns) OW_DEPRECATED;
@@ -67,6 +73,28 @@ public:
 	 * Get a Reference to the WBEM protocol handler (HTTPClient)
 	 */
 	virtual CIMProtocolIFCRef getWBEMProtocolHandler() const = 0;
+
+	/**
+	 * Set/Add an HTTP header and its associated value. This header will be
+	 * sent to the CIMOM on every request.
+	 * @param hdrName The name of the HTTP Header (e.g. "Accept-Language")
+	 * @param hdrValue The value of the HTTP Header (e.g. "en-US, en")
+	 * @return true if successful. Otherwise false.
+	 */
+	virtual bool setHTTPRequestHeader(const String& hdrName,
+		const String& hdrValue) = 0;
+
+	/**
+	 * Get the value of an HTTP header that was returned in the CIMOM's
+	 * response.
+	 * @param hdrName The of the HTTP Header value to retrieve.
+	 * 		(e.g. "Content-Language")
+	 * @param valueOut An output param that will hold the value of the header
+	 * 		on return.
+	 * @return true if the header exists. Otherwise false.
+	 */
+	virtual bool getHTTPResponseHeader(const String& hdrName,
+		String& valueOut) const = 0;
 
 	/**
 	 * Factory function.  Parses url and creates either a CIMXMLCIMOMHandle or
@@ -93,6 +121,11 @@ public:
 	 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
 	 */
 	static ClientCIMOMHandleRef createFromURL(const String& url, const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef());
+
+protected:
+	void getHTTPTrailers(CIMProtocolIStreamIFCRef istr);
+
+	Map<String, String> m_trailers;
 };
 
 } // end namespace OpenWBEM

@@ -40,6 +40,7 @@
 #include "OW_HTTPClient.hpp"
 #include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
+#include "OW_HTTPChunkedIStream.hpp"
 
 namespace OpenWBEM
 {
@@ -86,6 +87,20 @@ ClientCIMOMHandle::createFromURL(const String& url, const ClientAuthCBIFCRef& au
 		return ClientCIMOMHandleRef(new CIMXMLCIMOMHandle(client));
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+ClientCIMOMHandle::getHTTPTrailers(CIMProtocolIStreamIFCRef istr_)
+{
+	m_trailers.clear();
+	IntrusiveReference<HTTPChunkedIStream> istr = 
+		istr_.cast_to<HTTPChunkedIStream>();
+	if(istr)
+	{
+		m_trailers = istr->getTrailers();
+	}
+}
+
 
 } // end namespace OpenWBEM
 

@@ -51,6 +51,7 @@
 #include "OW_CIMtoXML.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMClass.hpp"
+#include "OW_HTTPClient.hpp"
 
 #include <iostream>
 
@@ -122,7 +123,7 @@ main(int argc, char* argv[])
 		String url(argv[1]);
 
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
-		CIMOMHandleIFCRef chRef = ClientCIMOMHandle::createFromURL(url, getLoginInfo);
+		ClientCIMOMHandleRef chRef = ClientCIMOMHandle::createFromURL(url, getLoginInfo);
 
 		CIMOMHandleIFC& rch = *chRef;
 
@@ -134,6 +135,9 @@ main(int argc, char* argv[])
 		 * authentication, compression, SSL, chunking, etc.
 		 **********************************************************************/
 
+		// Test the accept-language header processing on the CIMOM.
+		TEST_ASSERT(chRef->setHTTPRequestHeader("Accept-Language",
+			"x-owtest"));
 
 		cout << "** Enumerating instances (0 instances)" << endl;
 		CIMObjectPathEnumeration copEnu = rch.enumInstanceNamesE("root", "TestInstance");
@@ -170,6 +174,10 @@ main(int argc, char* argv[])
 		TEST_ASSERT(sa.size() == 2);
 		TEST_ASSERT(sa[0] == "One");
 		TEST_ASSERT(sa[1] == "Two");
+		// Accept-Language check
+		String al;
+		inst.getProperty("AcceptLanguage").getValue().get(al);
+		TEST_ASSERT(al == "x-owtest");
 
 		cout << "** Modifying array property on instance" << endl;
 		sa.push_back(String("Three"));
@@ -192,6 +200,9 @@ main(int argc, char* argv[])
 		TEST_ASSERT(sa[0] == "One");
 		TEST_ASSERT(sa[1] == "Two");
 		TEST_ASSERT(sa[2] == "Three");
+		// Accept-Language check
+		inst.getProperty("AcceptLanguage").getValue().get(al);
+		TEST_ASSERT(al == "x-owtest");
 
 		return 0;
 	}

@@ -58,6 +58,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_XMLParseException.hpp"
+#include "OW_HTTPClient.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
@@ -209,11 +210,13 @@ CIMXMLCIMOMHandle::doSendRequest(
 		parser.mustGetEndTag(); // pass </MESSAGE>
 		parser.mustGetEndTag(); // pass </CIM>
 		HTTPUtils::eatEntity(*istr);
+		getHTTPTrailers(istr);
 		istr->checkForError();
 	}
 	catch (XMLParseException& xmlE)
 	{
 		HTTPUtils::eatEntity(*istr);
+		getHTTPTrailers(istr);
 		istr->checkForError();
 		throw xmlE;
 	}
@@ -1466,6 +1469,44 @@ CIMXMLCIMOMHandle::intrinsicMethod(
 	}
 	sendXMLTrailer(iostr);
 	doSendRequest(iostrRef, operation, ns, true, op);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool 
+CIMXMLCIMOMHandle::setHTTPRequestHeader(const String& hdrName,
+	const String& hdrValue)
+{
+	bool cc = false;
+	IntrusiveReference<HTTPClient> httpClient = 
+		m_protocol.cast_to<HTTPClient>();
+	if(httpClient)
+	{
+		httpClient->addCustomHeader(hdrName, hdrValue);
+		cc = true;
+	}
+	return cc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool 
+CIMXMLCIMOMHandle::getHTTPResponseHeader(const String& hdrName,
+	String& valueOut) const
+{
+	bool cc = false;
+	IntrusiveReference<HTTPClient> httpClient = 
+		m_protocol.cast_to<HTTPClient>();
+	if(httpClient)
+	{
+		if(!(cc = httpClient->getResponseHeader(hdrName, valueOut)))
+		{
+			if(HTTPUtils::headerHasKey(m_trailers, hdrName))
+			{
+				cc = true;
+				valueOut = HTTPUtils::getHeaderValue(m_trailers, hdrName);
+			}
+		}
+	}
+	return cc;
 }
 
 } // end namespace OpenWBEM

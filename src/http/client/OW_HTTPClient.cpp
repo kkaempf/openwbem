@@ -312,6 +312,20 @@ void HTTPClient::addCustomHeader(const String& name, const String& value)
 {
 	this->addHeaderPersistent(name, value); 
 }
+
+//////////////////////////////////////////////////////////////////////////////
+bool HTTPClient::getResponseHeader(const String& hdrName,
+	String& valueOut) const
+{
+	bool cc = false;
+	if(HTTPUtils::headerHasKey(m_responseHeaders, hdrName))
+	{
+		cc = true;
+		valueOut = HTTPUtils::getHeaderValue(m_responseHeaders, hdrName);
+	}
+	return cc;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void HTTPClient::sendAuthorization()
 {

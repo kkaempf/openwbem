@@ -49,6 +49,8 @@
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_HTTPClient.hpp"
+#include "OW_HTTPChunkedIStream.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
@@ -66,6 +68,23 @@ using std::istream;
 using namespace WBEMFlags;
 namespace // anonymous
 {
+void
+_getHTTPTrailers(CIMProtocolIStreamIFCRef istr_, Map<String,String>& trailers)
+{
+	IntrusiveReference<HTTPChunkedIStream> istr = 
+		istr_.cast_to<HTTPChunkedIStream>();
+	if(istr)
+	{
+		Map<String,String> itrailers = istr->getTrailers();
+		Map<String,String>::iterator it = itrailers.begin();
+		while(it != itrailers.end())
+		{
+			trailers[it->first] = it->second;
+			it++;
+		}
+	}
+}
+
 inline void
 checkError(std::istream& istrm)
 {
@@ -96,7 +115,7 @@ checkError(std::istream& istrm)
 	}
 }
 inline void
-checkError(CIMProtocolIStreamIFCRef istr)
+checkError(CIMProtocolIStreamIFCRef istr, Map<String,String>& trailers)
 {
 	try
 	{
@@ -105,6 +124,7 @@ checkError(CIMProtocolIStreamIFCRef istr)
 	catch (IOException& e)
 	{
 		while(*istr) istr->get();
+		_getHTTPTrailers(istr, trailers);
 		istr->checkForError();
 		throw e;
 	}
@@ -156,40 +176,46 @@ readCIMObject(CIMProtocolIStreamIFCRef& istr, StringResultHandlerIFC& result)
 }
 template<class T>
 inline T
-readCIMObject(CIMProtocolIStreamIFCRef& istr)
+readCIMObject(CIMProtocolIStreamIFCRef& istr, Map<String,String>& trailers)
 {
 	T rval;
 	try
 	{
-		checkError(istr);
+		checkError(istr, trailers);
 		readCIMObject(istr, rval);
 	}
 	catch (IOException& e)
 	{
 		while(*istr) istr->get();
+		_getHTTPTrailers(istr, trailers);
 		istr->checkForError();
 		throw e;
 	}
 	while(*istr) istr->get();
+	_getHTTPTrailers(istr, trailers);
 	istr->checkForError();
 	return rval;
 }
+
 template<class T>
 inline void
-readAndDeliver(CIMProtocolIStreamIFCRef& istr, T& result)
+readAndDeliver(CIMProtocolIStreamIFCRef& istr, T& result,
+	Map<String,String>& trailers)
 {
 	try
 	{
-		checkError(istr);
+		checkError(istr, trailers);
 		readCIMObject(istr,result);
 	}
 	catch (IOException& e)
 	{
 		while(*istr) istr->get();
+		_getHTTPTrailers(istr, trailers);
 		istr->checkForError();
 		throw e;
 	}
 	while(*istr) istr->get();
+	_getHTTPTrailers(istr, trailers);
 	istr->checkForError();
 }
 } // end anonymous namespace
@@ -221,6 +247,7 @@ BinaryCIMOMHandle::enumClassNames(
 	StringResultHandlerIFC& result,
 	EDeepFlag deep)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateClassNames", ns);
@@ -232,7 +259,7 @@ BinaryCIMOMHandle::enumClassNames(
 	BinarySerialization::writeBool(strm, deep);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"EnumerateClassNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	readAndDeliver(in, result);
+	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -242,6 +269,7 @@ BinaryCIMOMHandle::enumClass(const String& ns_,
 	EDeepFlag deep,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateClasses", ns);
@@ -256,7 +284,7 @@ BinaryCIMOMHandle::enumClass(const String& ns_,
 	BinarySerialization::writeBool(strm, includeClassOrigin);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"EnumerateClasses", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	readAndDeliver(in, result);
+	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -265,6 +293,7 @@ BinaryCIMOMHandle::enumInstanceNames(
 	const String& className,
 	CIMObjectPathResultHandlerIFC& result)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateInstanceNames", ns);
@@ -275,7 +304,7 @@ BinaryCIMOMHandle::enumInstanceNames(
 	BinarySerialization::writeString(strm, className);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"EnumerateInstanceNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	readAndDeliver(in, result);
+	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -286,6 +315,7 @@ BinaryCIMOMHandle::enumInstances(
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateInstances", ns);
@@ -301,7 +331,7 @@ BinaryCIMOMHandle::enumInstances(
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"EnumerateInstances", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	readAndDeliver(in, result);
+	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMClass
@@ -312,6 +342,7 @@ BinaryCIMOMHandle::getClass(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetClass", ns);
@@ -326,7 +357,7 @@ BinaryCIMOMHandle::getClass(
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"GetClass", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	return readCIMObject<CIMClass>(in);
+	return readCIMObject<CIMClass>(in, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance
@@ -336,6 +367,7 @@ BinaryCIMOMHandle::getInstance(
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetInstance", ns);
@@ -350,7 +382,7 @@ BinaryCIMOMHandle::getInstance(
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"GetInstance", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	return readCIMObject<CIMInstance>(in);
+	return readCIMObject<CIMInstance>(in, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
@@ -361,6 +393,7 @@ BinaryCIMOMHandle::invokeMethod(
 	const CIMParamValueArray& inParams,
 	CIMParamValueArray& outParams)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		methodName, ns);
@@ -374,7 +407,7 @@ BinaryCIMOMHandle::invokeMethod(
 	BinarySerialization::writeArray(strm, inParams);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		methodName, ns + ":" + path.modelPath(), CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	checkError(in);
+	checkError(in, m_trailers);
 	CIMValue cv(CIMNULL);
 	try
 	{
@@ -389,9 +422,11 @@ BinaryCIMOMHandle::invokeMethod(
 	catch(IOException& e)
 	{
 		while(*in) in->get();
+		_getHTTPTrailers(in, m_trailers);
 		in->checkForError();
 		throw e;
 	}
+	_getHTTPTrailers(in, m_trailers);
 	return cv;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -399,6 +434,7 @@ CIMQualifierType
 BinaryCIMOMHandle::getQualifierType(const String& ns_,
 		const String& qualifierName)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetQualifier", ns);
@@ -410,7 +446,7 @@ BinaryCIMOMHandle::getQualifierType(const String& ns_,
 	
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"GetQualifier", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	return readCIMObject<CIMQualifierType>(in);
+	return readCIMObject<CIMQualifierType>(in, m_trailers);
 }
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
@@ -418,6 +454,7 @@ void
 BinaryCIMOMHandle::setQualifierType(const String& ns_,
 		const CIMQualifierType& qt)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"SetQualifier", ns);
@@ -428,7 +465,8 @@ BinaryCIMOMHandle::setQualifierType(const String& ns_,
 	BinarySerialization::writeQualType(strm, qt);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"SetQualifier", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	checkError(in);
+	checkError(in, m_trailers);
+	_getHTTPTrailers(in, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -436,6 +474,7 @@ BinaryCIMOMHandle::enumQualifierTypes(
 	const String& ns_,
 	CIMQualifierTypeResultHandlerIFC& result)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateQualifiers", ns);
@@ -445,12 +484,13 @@ BinaryCIMOMHandle::enumQualifierTypes(
 	BinarySerialization::writeString(strm, ns);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"EnumerateQualifiers", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	readAndDeliver(in, result);
+	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 BinaryCIMOMHandle::deleteQualifierType(const String& ns_, const String& qualName)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteQualifier", ns);
@@ -459,7 +499,8 @@ BinaryCIMOMHandle::deleteQualifierType(const String& ns_, const String& qualName
 	BinarySerialization::write(strm, BIN_DELETEQUAL);
 	BinarySerialization::writeString(strm, ns);
 	BinarySerialization::writeString(strm, qualName);
-	checkError(m_protocol->endRequest(strmRef, "DeleteQualifier", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST));
+	checkError(m_protocol->endRequest(strmRef, "DeleteQualifier", ns,
+		CIMProtocolIFC::E_CIM_OPERATION_REQUEST), m_trailers);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
@@ -468,6 +509,7 @@ void
 BinaryCIMOMHandle::modifyClass(const String &ns_,
 		const CIMClass& cc)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ModifyClass", ns);
@@ -478,13 +520,15 @@ BinaryCIMOMHandle::modifyClass(const String &ns_,
 	BinarySerialization::writeClass(strm, cc);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"ModifyClass", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	checkError(in);
+	checkError(in, m_trailers);
+	_getHTTPTrailers(in, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 BinaryCIMOMHandle::createClass(const String& ns_,
 		const CIMClass& cc)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"CreateClass", ns);
@@ -495,12 +539,14 @@ BinaryCIMOMHandle::createClass(const String& ns_,
 	BinarySerialization::writeClass(strm, cc);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"CreateClass", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	checkError(in);
+	checkError(in, m_trailers);
+	_getHTTPTrailers(in, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 BinaryCIMOMHandle::deleteClass(const String& ns_, const String& className)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteClass", ns);
@@ -509,8 +555,10 @@ BinaryCIMOMHandle::deleteClass(const String& ns_, const String& className)
 	BinarySerialization::write(strm, BIN_DELETECLS);
 	BinarySerialization::writeString(strm, ns);
 	BinarySerialization::writeString(strm, className);
-	
-	checkError(m_protocol->endRequest(strmRef, "DeleteClass", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST));
+	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
+		"DeleteClass", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+	checkError(in, m_trailers);
+	_getHTTPTrailers(in, m_trailers);
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -522,6 +570,7 @@ BinaryCIMOMHandle::modifyInstance(
 	EIncludeQualifiersFlag includeQualifiers,
 	const StringArray* propertyList)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ModifyInstance", ns);
@@ -535,13 +584,15 @@ BinaryCIMOMHandle::modifyInstance(
 	
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"ModifyInstance", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	checkError(in);
+	checkError(in, m_trailers);
+	_getHTTPTrailers(in, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath
 BinaryCIMOMHandle::createInstance(const String& ns_,
 	const CIMInstance& ci)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"CreateInstance", ns);
@@ -553,7 +604,7 @@ BinaryCIMOMHandle::createInstance(const String& ns_,
 	
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"CreateInstance", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	CIMObjectPath rval = readCIMObject<CIMObjectPath>(in);
+	CIMObjectPath rval = readCIMObject<CIMObjectPath>(in, m_trailers);
 	rval.setNameSpace(ns);
 	return rval;
 }
@@ -561,6 +612,7 @@ BinaryCIMOMHandle::createInstance(const String& ns_,
 void
 BinaryCIMOMHandle::deleteInstance(const String& ns_, const CIMObjectPath& inst)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteInstance", ns);;
@@ -569,7 +621,10 @@ BinaryCIMOMHandle::deleteInstance(const String& ns_, const CIMObjectPath& inst)
 	BinarySerialization::write(strm, BIN_DELETEINST);
 	BinarySerialization::writeString(strm, ns);
 	BinarySerialization::writeObjectPath(strm, inst);
-	checkError(m_protocol->endRequest(strmRef, "DeleteInstance", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST));
+	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef, "DeleteInstance", ns,
+		CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+	checkError(in, m_trailers);
+	_getHTTPTrailers(in, m_trailers);
 }
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
@@ -580,6 +635,7 @@ BinaryCIMOMHandle::setProperty(
 	const String& propName,
 	const CIMValue& cv)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"SetProperty", ns);
@@ -597,7 +653,8 @@ BinaryCIMOMHandle::setProperty(
 	}
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"SetProperty", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	checkError(in);
+	checkError(in, m_trailers);
+	_getHTTPTrailers(in, m_trailers);
 }
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -609,6 +666,7 @@ BinaryCIMOMHandle::getProperty(
 	const CIMObjectPath& path,
 	const String& propName)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetProperty", ns);
@@ -620,7 +678,7 @@ BinaryCIMOMHandle::getProperty(
 	BinarySerialization::writeString(strm, propName);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"GetProperty", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	checkError(in);
+	checkError(in, m_trailers);
 	CIMValue cv(CIMNULL);
 	try
 	{
@@ -633,9 +691,11 @@ BinaryCIMOMHandle::getProperty(
 	catch (IOException& e)
 	{
 		while(*in) in->get();
+		_getHTTPTrailers(in, m_trailers);
 		in->checkForError();
 		throw e;
 	}
+	_getHTTPTrailers(in, m_trailers);
 	return cv;
 }
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
@@ -649,6 +709,7 @@ BinaryCIMOMHandle::associatorNames(
 	const String& assocClass, const String& resultClass,
 	const String& role, const String& resultRole)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"AssociatorNames", ns);
@@ -663,7 +724,7 @@ BinaryCIMOMHandle::associatorNames(
 	BinarySerialization::writeString(strm, resultRole);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"AssociatorNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	readAndDeliver(in, result);
+	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -676,6 +737,7 @@ BinaryCIMOMHandle::associators(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	if (!path.isInstancePath())
 	{
@@ -698,7 +760,7 @@ BinaryCIMOMHandle::associators(
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"Associators", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	readAndDeliver(in, result);
+	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -711,6 +773,7 @@ BinaryCIMOMHandle::associatorsClasses(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	if (!path.isClassPath())
 	{
@@ -733,7 +796,7 @@ BinaryCIMOMHandle::associatorsClasses(
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"Associators", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	readAndDeliver(in, result);
+	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -744,6 +807,7 @@ BinaryCIMOMHandle::referenceNames(
 	const String& resultClass,
 	const String& role)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ReferenceNames", ns);
@@ -757,7 +821,7 @@ BinaryCIMOMHandle::referenceNames(
 	
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"ReferenceNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	readAndDeliver(in, result);
+	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -769,6 +833,7 @@ BinaryCIMOMHandle::references(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	if (!path.isInstancePath())
 	{
@@ -789,8 +854,7 @@ BinaryCIMOMHandle::references(
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"ReferenceNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	
-	readAndDeliver(in, result);
+	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -802,6 +866,7 @@ BinaryCIMOMHandle::referencesClasses(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	if (!path.isClassPath())
 	{
@@ -822,8 +887,7 @@ BinaryCIMOMHandle::referencesClasses(
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"ReferenceNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	
-	readAndDeliver(in, result);
+	readAndDeliver(in, result, m_trailers);
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
@@ -832,6 +896,10 @@ BinaryCIMOMHandle::execQuery(
 	const String& ns,
 	const String& query, int wqlLevel)
 {
+	m_trailers.clear();
+
+	// Not sure what to do with trailers here ????
+
 	return CIMOMHandleIFC::execQueryE(ns, query,
 		String("WQL") + String(wqlLevel));
 }
@@ -842,6 +910,7 @@ BinaryCIMOMHandle::execQuery(
 	CIMInstanceResultHandlerIFC& result,
 	const String& query, const String& queryLanguage)
 {
+	m_trailers.clear();
 	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ExecQuery", ns);
@@ -853,8 +922,47 @@ BinaryCIMOMHandle::execQuery(
 	BinarySerialization::writeString(strm, queryLanguage);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"ExecQuery", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
-	readAndDeliver(in, result);
+	readAndDeliver(in, result, m_trailers);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+bool 
+BinaryCIMOMHandle::setHTTPRequestHeader(const String& hdrName,
+	const String& hdrValue)
+{
+	bool cc = false;
+	IntrusiveReference<HTTPClient> httpClient = 
+		m_protocol.cast_to<HTTPClient>();
+	if(httpClient)
+	{
+		httpClient->addCustomHeader(hdrName, hdrValue);
+		cc = true;
+	}
+	return cc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool 
+BinaryCIMOMHandle::getHTTPResponseHeader(const String& hdrName,
+	String& valueOut) const
+{
+	bool cc = false;
+	IntrusiveReference<HTTPClient> httpClient = 
+		m_protocol.cast_to<HTTPClient>();
+	if(httpClient)
+	{
+		if(!(cc = httpClient->getResponseHeader(hdrName, valueOut)))
+		{
+			if(HTTPUtils::headerHasKey(m_trailers, hdrName))
+			{
+				cc = true;
+				valueOut = HTTPUtils::getHeaderValue(m_trailers, hdrName);
+			}
+		}
+	}
+	return cc;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 CIMFeatures
 BinaryCIMOMHandle::getServerFeatures()

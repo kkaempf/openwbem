@@ -496,6 +496,18 @@ CIMClient::execQueryE(
 {
 	return m_ch->execQueryE(m_namespace, query, queryLanguage);
 }
+///////////////////////////////////////////////////////////////////////////////
+bool 
+CIMClient::setHTTPRequestHeader(const String& hdrName, const String& hdrValue)
+{
+	return m_ch->setHTTPRequestHeader(hdrName, hdrValue);
+}
+///////////////////////////////////////////////////////////////////////////////
+bool 
+CIMClient::getHTTPResponseHeader(const String& hdrName, String& valueOut) const
+{
+	return m_ch->getHTTPResponseHeader(hdrName, valueOut);
+}
 
 } // end namespace OpenWBEM
 
