@@ -4,7 +4,7 @@
 %define startnum 36
 %define killnum 64
 %define daemonname owcimomd
-%define owversion 1.3.3
+%define owversion 2.0.0
 
 Name        	: openwbem
 Version     	: %{owversion}
@@ -14,7 +14,7 @@ Group       	: Administration/System
 Summary     	: The OpenWBEM CIMOM
 
 Copyright   	: BSD
-Packager    	: Bart Whiteley <bart@caldera.com>
+Packager    	: Bart Whiteley <bartw AT users DOT sourceforge DOT net>
 URL         	: http://www.openwbem.org/
 BuildRoot   	: %{_tmppath}/%{name}-%{version}
 
