@@ -31,6 +31,8 @@
 #include "OW_PosixUnnamedPipe.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_IOException.hpp"
+#include "OW_Format.hpp"
+
 extern "C"
 {
 #ifdef OW_HAVE_UNISTD_H
@@ -179,7 +181,7 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 	}
 	if (errorAsException && rc == -1)
 	{
-		OW_THROW(Exception, "pipe write failed");
+		OW_THROW(Exception, Format("pipe write failed. errno = %1(%2)", errno, strerror(errno)).c_str());
 	}
 	return rc;
 }
@@ -198,7 +200,7 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 	}
 	if (errorAsException && rc == -1)
 	{
-		OW_THROW(Exception, "pipe read failed");
+		OW_THROW(Exception, Format("pipe read failed. errno = %1(%2)", errno, strerror(errno)).c_str());
 	}
 	return rc;
 }
