@@ -1,0 +1,114 @@
+// ===================================================================
+// Process
+// ===================================================================
+   [Description (
+       "Each instance of the CIM_Process class represents a single "
+       "instance of a running program. A user of the OperatingSystem "
+       "will typically see a Process as an application or task. Within "
+       "an OperatingSystem, a Process is defined by a workspace of "
+       "memory resources and environmental settings that are allocated "
+       "to it. On a multitasking System, this workspace prevents "
+       "intrusion of resources by other Processes. Additionally, a "
+       "Process can execute as multiple Threads, all which run within "
+       "the same workspace.")
+   ] 
+class CIM_Process : CIM_LogicalElement
+{
+      [Propagated("CIM_OperatingSystem.CSCreationClassName"),
+       Key,
+       Description ("The scoping ComputerSystem's CreationClassName."),
+       MaxLen (256)
+      ]
+   string CSCreationClassName;
+      [Propagated("CIM_OperatingSystem.CSName"),
+       Key,
+       Description ("The scoping ComputerSystem's Name."),
+       MaxLen (256)
+      ]
+   string CSName;
+      [Propagated("CIM_OperatingSystem.CreationClassName"),
+       Key,
+       Description ("The scoping OperatingSystem's CreationClassName."),
+       MaxLen (256)
+      ]
+   string OSCreationClassName;
+      [Propagated("CIM_OperatingSystem.Name"),
+       Key,
+       Description ("The scoping OperatingSystem's Name."),
+       MaxLen (256)
+      ]
+   string OSName;
+      [Key,
+       Description (
+	  "CreationClassName indicates the name of the class or the "
+	  "subclass used in the creation of an instance. When used "
+	  "with the other key properties of this class, this property "
+	  "allows all instances of this class and its subclasses to "
+	  "be uniquely identified."),
+       MaxLen (256)
+      ]
+   string CreationClassName;
+      [Key,
+       Description (
+	  "A string used to identify the Process. A Process ID is a "
+	  "kind of Process Handle."),
+       MaxLen (256), 
+       MappingStrings {"MIF.DMTF|Process Information|001.1"}
+      ]
+   string Handle;
+	[Override ("Name"),
+	 MappingStrings {"MIF.DMTF|Process Information|001.6"}
+	]
+   string Name;
+      [Description (
+	  "Priority indicates the urgency or importance of execution "
+	  "of a Process. If a priority is not defined for a Process, "
+	  "a value of 0 should be used."), 
+       MappingStrings {"MIF.DMTF|Process Information|001.10"}
+      ]
+   uint32 Priority;
+      [Description (
+	  "Indicates the current operating condition of the Process. "
+	  "Values include ready (2), running (3), and blocked (4), "
+	  "among others."),
+       Values {"Unknown", "Other", "Ready", "Running", 
+	       "Blocked", "Suspended Blocked", "Suspended Ready", 
+             "Terminated", "Stopped", "Growing"}, 
+       MappingStrings {"MIF.DMTF|Process Information|001.9"}
+      ]
+   uint16 ExecutionState;
+      [Description ("Time that the Process began executing.")]
+   datetime CreationDate;
+      [Description (
+	  "Time that the Process was stopped or terminated.")
+      ]
+   datetime TerminationDate;
+      [Description (
+	  "Time in user mode, in milliseconds. If this information is "
+	  "not available, a value of 0 should be used."), 
+       Units("MilliSeconds"), 
+       MappingStrings {"MIF.DMTF|Process Information|001.14"}
+      ]
+   uint64 UserModeTime;
+      [Description (
+	  "Time in kernel mode, in milliseconds. If this information "
+	  "is not available, a value of 0 should be used."),
+       Units("MilliSeconds"), 
+       MappingStrings {"MIF.DMTF|Process Information|001.13"}
+      ]
+   uint64 KernelModeTime;
+      [Gauge, Description (
+	  "The amount of memory in bytes that a Process needs to execute "
+	  "efficiently, for an OperatingSystem that uses page-based "
+	  "memory management. If an insufficient amount of memory "
+	  "is available (< working set size), thrashing will occur. "
+	  "If this information is not known, NULL or 0 should be "
+	  "entered.  If this data is provided, it could be monitored "
+	  "to understand a Process' changing memory requirements as "
+	  "execution proceeds."),
+       Units ("Bytes")
+	]
+   uint64 WorkingSetSize;
+};
+
+
