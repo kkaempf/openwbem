@@ -75,18 +75,33 @@ int main(int argc, char* argv[])
 		env->startServices();
 		env->logInfo("CIMOM is now running!");
 
-		// only do this in production mode. During development we want it to crash!
-#if !defined(OW_DEBUG)
 		// Do this after initialization to prevent an infinite loop.
 		std::unexpected_handler oldUnexpectedHandler = 0;
 		std::terminate_handler oldTerminateHandler = 0;
 		if (env->getConfigItem(ConfigOpts::RESTART_ON_ERROR_opt, OW_DEFAULT_RESTART_ON_ERROR).equalsIgnoreCase("true"))
 		{
-			Platform::installFatalSignalHandlers();
-			std::unexpected_handler oldUnexpectedHandler = std::set_unexpected(Platform::restartDaemon);
-			std::terminate_handler oldTerminateHandler = std::set_terminate(Platform::restartDaemon);
-		}
+			const char* const restartDisabledMessage = 
+				"WARNING: even though the owcimomd.restart_on_error config option = true, it\n"
+				"is not enabled. Possible reasons are that OpenWBEM is built in debug mode,\n"
+				"owcimomd is running in debug mode (-d), or owcimomd was not run using an\n"
+				"absolute path (argv[0][0] != '/')";
+
+			// only do this in production mode. During development we want it to crash!
+#if !defined(OW_DEBUG)
+			if ((debugMode == false) && argv[0][0] == '/') // if argv[0][0] != '/' the restart will not be predictable
+			{
+				Platform::installFatalSignalHandlers();
+				std::unexpected_handler oldUnexpectedHandler = std::set_unexpected(Platform::restartDaemon);
+				std::terminate_handler oldTerminateHandler = std::set_terminate(Platform::restartDaemon);
+			}
+			else
+			{
+				env->logInfo(restartDisabledMessage);
+			}
+#else
+			env->logInfo(restartDisabledMessage);
 #endif
+		}
 
 		int sig;
 		bool shuttingDown(false);
