@@ -24,6 +24,7 @@ Fix problems:
     - use DIST_SUBDIRS
     - enumClassNames is way too slow.
     - Fix assocName parameter in associator providers.  Change to OW_String and put it in the same order as in the spec.
+    - Write a cooperative thread cancellation mechanism.
     - Verify that classes maintain their invariant.
 
 New features:
