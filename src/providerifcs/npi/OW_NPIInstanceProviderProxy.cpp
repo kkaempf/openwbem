@@ -125,9 +125,9 @@ OW_NPIInstanceProviderProxy::enumInstances(
 			//  may the arguments must be copied verbatim
 			//  to avoid locking problems
 
-			CIMClass _cc = { static_cast<void *> (&cimClass)};
+			CIMClass _cc = { static_cast<void *> (&cimClass) };
 
-			CIMObjectPath _cop = { static_cast<void *> (&cop)};
+			CIMObjectPath _cop = { static_cast<void *> (&cop) };
 
 			int de = deep;
 			int lo = localOnly;

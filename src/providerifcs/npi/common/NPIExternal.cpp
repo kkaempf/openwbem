@@ -443,15 +443,17 @@ extern "C" CIMInstance
 CIMClassNewInstance(NPIHandle* npiHandle, CIMClass cc)
 {
 	(void)npiHandle;
-        OW_CIMClass * owcc = static_cast<OW_CIMClass *>(cc.ptr);
+	OW_CIMClass * owcc = static_cast<OW_CIMClass *>(cc.ptr);
 
-        OW_CIMInstance * owci = new OW_CIMInstance(owcc->getName());
+	OW_CIMInstance * owci = new OW_CIMInstance(owcc->newInstance());
 
-        owci->setKeys(owcc->getKeys());
+	// stuff below doesn't work.  
+	//OW_CIMInstance * owci = new OW_CIMInstance(owcc->getName());
+	//owci->setKeys(owcc->getKeys());
 
-        CIMInstance ci = {static_cast<void *>(owci)};
+	CIMInstance ci = {static_cast<void *>(owci)};
         
-        return ci;
+	return ci;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -500,12 +502,11 @@ CIMInstanceSetIntegerProperty(NPIHandle* npiHandle, CIMInstance ci,
 	if(name == NULL) return;
 	if(strlen(name) == 0) return;
 
-        OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
+	OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
 
-	OW_String Key(name);
 
-	OW_CIMValue Value(value);
-        owci->setProperty(Key,Value);
+	owci->setProperty(OW_String(name),OW_CIMValue(value));
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

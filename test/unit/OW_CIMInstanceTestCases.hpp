@@ -28,46 +28,25 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_NPI_PROFIDER_IFC_UTILS_HPP_
-#define OW_NPI_PROFIDER_IFC_UTILS_HPP_
+#ifndef OW_OW_CIMInstance_TEST_CASES_HPP_
+#define OW_OW_CIMInstance_TEST_CASES_HPP_
 
-#include "OW_config.h"
-#include "OW_Blob.hpp"
-#include "NPIExternal.hpp"
+#include "TestCase.hpp"
 
-class OW_BlobFreer
+class OW_CIMInstanceTestCases : public TestCase
 {
 public:
-	OW_BlobFreer(OW_Blob* b) : m_blob(b)
-	{
-	}
-	~OW_BlobFreer()
-	{
-		free(static_cast<void*>(m_blob));
-	}
+	OW_CIMInstanceTestCases( const char* name )
+		: TestCase( name ) {}
+
+	void setUp();
+	void tearDown();
+	static Test *suite();
+
 private:
-	OW_Blob* m_blob;
+	// test methods
+	void testSomething();
 };
-
-
-class OW_NPIVectorFreer
-{
-public:
-	OW_NPIVectorFreer(::Vector v) : m_vector(v)
-	{
-	}
-	~OW_NPIVectorFreer()
-	{
-		int n = ::VectorSize(0,m_vector);
-		for (int i=0; i < n; i++)
-		{
-			void * p = ::_VectorGet(0, m_vector, i);
-			free (p);
-		}
-	}
-private:
-	::Vector m_vector;
-};
-
 
 #endif
+

@@ -31,8 +31,6 @@
 #include "OW_config.h"
 #include "OW_CIM.hpp"
 #include "OW_StringBuffer.hpp"
-//#include "OW_XMLNode.hpp"
-//#include "OW_XMLAttribute.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_String.hpp"
 #include "OW_MutexLock.hpp"

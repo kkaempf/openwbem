@@ -28,46 +28,40 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_NPI_PROFIDER_IFC_UTILS_HPP_
-#define OW_NPI_PROFIDER_IFC_UTILS_HPP_
+#include "TestSuite.hpp"
+#include "TestCaller.hpp"
+#include "OW_CIMInstanceTestCases.hpp"
+#include "OW_CIMInstance.hpp"
 
-#include "OW_config.h"
-#include "OW_Blob.hpp"
-#include "NPIExternal.hpp"
-
-class OW_BlobFreer
+void OW_CIMInstanceTestCases::setUp()
 {
-public:
-	OW_BlobFreer(OW_Blob* b) : m_blob(b)
-	{
-	}
-	~OW_BlobFreer()
-	{
-		free(static_cast<void*>(m_blob));
-	}
-private:
-	OW_Blob* m_blob;
-};
+}
 
-
-class OW_NPIVectorFreer
+void OW_CIMInstanceTestCases::tearDown()
 {
-public:
-	OW_NPIVectorFreer(::Vector v) : m_vector(v)
-	{
-	}
-	~OW_NPIVectorFreer()
-	{
-		int n = ::VectorSize(0,m_vector);
-		for (int i=0; i < n; i++)
-		{
-			void * p = ::_VectorGet(0, m_vector, i);
-			free (p);
-		}
-	}
-private:
-	::Vector m_vector;
-};
+}
 
+void OW_CIMInstanceTestCases::testSomething()
+{
+	/*
+	OW_CIMClass cc("ClassName");
+	OW_CIMProperty prop("PropOne");
+	OW_CIMQualifierType cqt("KEY");
+	OW_CIMQualifier cq(
+	prop.addQualifier(
+	cc.setP
+	*/
+	//unitAssert( something( ) );
+}
 
-#endif
+Test* OW_CIMInstanceTestCases::suite()
+{
+	TestSuite *testSuite = new TestSuite ("OW_CIMInstance");
+
+	testSuite->addTest (new TestCaller <OW_CIMInstanceTestCases> 
+			("testSomething", 
+			&OW_CIMInstanceTestCases::testSomething));
+
+	return testSuite;
+}
+
