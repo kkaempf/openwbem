@@ -49,9 +49,10 @@ using namespace WBEMFlags;
 CMPIInstanceProviderProxy::~CMPIInstanceProviderProxy() 
 {
 }
+
 /////////////////////////////////////////////////////////////////////////////
 void
-	CMPIInstanceProviderProxy::enumInstanceNames(
+CMPIInstanceProviderProxy::enumInstanceNames(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
 	const String& className,
@@ -97,7 +98,7 @@ void
 }
 /////////////////////////////////////////////////////////////////////////////
 void
-	CMPIInstanceProviderProxy::enumInstances(
+CMPIInstanceProviderProxy::enumInstances(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
 	const String& className,
@@ -114,8 +115,10 @@ void
 	(void) deep;
 	(void) requestedClass;
 	(void) cimClass;
+
 	env->getLogger()->
 		logDebug("CMPIInstanceProviderProxy::enumInstances()");
+
 	if (m_ftable->miVector.instMI->ft->enumInstances!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -129,31 +132,36 @@ void
 		CIMObjectPath cop(className, ns);
 		CMPI_ObjectPathOnStack eRef(cop);
 		CMPI_ResultOnStack eRes(result);
+
 		if (propertyList)
 		{
 			if (propertyList->size()>0)
 			{
 				pCount = propertyList->size();
-				props = (const char **)
-				alloca(1+pCount*sizeof(char *));
-				for (int i=0;i<pCount;i++)
-					props[i]=
-						(*propertyList)[i].allocateCString();
+				props = (const char **) alloca(1+pCount*sizeof(char *));
+
+				for (int i = 0; i < pCount; i++)
+					props[i]= (*propertyList)[i].c_str();
+
 				props[pCount]=NULL;
 			}
 		}
-		CMPIFlags flgs=0;
-		if (includeQualifiers) flgs|=CMPI_FLAG_IncludeQualifiers;
-		if (includeClassOrigin)	flgs|=CMPI_FLAG_IncludeClassOrigin;
-		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
-			(CMPIValue*)&flgs,CMPI_uint32);
+		CMPIFlags flgs = 0;
+
+		if (includeQualifiers)
+			flgs |= CMPI_FLAG_IncludeQualifiers;
+
+		if (includeClassOrigin)
+			flgs |= CMPI_FLAG_IncludeClassOrigin;
+
+		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags, (CMPIValue*)&flgs,
+			CMPI_uint32);
+
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 		rc = m_ftable->miVector.instMI->ft->enumInstances(
 			mi, &eCtx, &eRes, &eRef, (char **)props);
-		if (props && pCount)
-			for (int i=0;i<pCount;i++) free((char *)props[i]);
-		if (rc.rc == CMPI_RC_OK) return;
-		else
+
+		if (rc.rc != CMPI_RC_OK)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
@@ -165,7 +173,7 @@ void
 }
 /////////////////////////////////////////////////////////////////////////////
 CIMInstance
-	CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
+CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 	const String& ns,
 	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
@@ -200,22 +208,30 @@ CIMInstance
 			if (propertyList->size()>0)
 			{
 				pCount = propertyList->size();
-				props = (const char **)
-				alloca(1+pCount*sizeof(char *));
-				for (int i=0;i<pCount;i++)
-					props[i]=
-						(*propertyList)[i].allocateCString();
-				props[pCount]=NULL;
+				props = (const char **) alloca(1+pCount*sizeof(char *));
+
+				for (int i = 0; i < pCount; i++)
+					props[i] = (*propertyList)[i].c_str();
+
+				props[pCount] = NULL;
 			}
 		}
 		CMPIFlags flgs=0;
-		if (includeQualifiers) flgs|=CMPI_FLAG_IncludeQualifiers;
-		if (includeClassOrigin)	flgs|=CMPI_FLAG_IncludeClassOrigin;
-		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
-			(CMPIValue*)&flgs,CMPI_uint32);
+
+		if (includeQualifiers)
+			flgs |= CMPI_FLAG_IncludeQualifiers;
+
+		if (includeClassOrigin)
+			flgs |= CMPI_FLAG_IncludeClassOrigin;
+
+		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags, (CMPIValue*)&flgs,
+			CMPI_uint32);
+
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
+
 		rc = m_ftable->miVector.instMI->ft->getInstance(
 			mi, &eCtx, &eRes, &eRef, (char **)props);
+
 		if (rc.rc == CMPI_RC_OK)
 		{
 			return instrh.getValue();
@@ -231,10 +247,11 @@ CIMInstance
 	}
 	return rval;
 }
+
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 /////////////////////////////////////////////////////////////////////////////
 void
-	CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
+CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 	const String& ns, const CIMObjectPath& cop)
 {
 	env->getLogger()->
@@ -255,12 +272,14 @@ void
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
+
 		rc = m_ftable->miVector.instMI->ft->deleteInstance(
 			mi, &eCtx, &eRes, &eRef);
-		if (rc.rc == CMPI_RC_OK) return;
-		else
+
+		if (rc.rc != CMPI_RC_OK)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");
+			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ?
+				CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else

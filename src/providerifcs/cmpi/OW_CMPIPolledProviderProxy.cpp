@@ -78,6 +78,7 @@ CMPIPolledProviderProxy::poll(const ProviderEnvironmentIFCRef &env)
 	}
 	return 0;
 }
+
 void CMPIPolledProviderProxy::activateFilter(
 	const ProviderEnvironmentIFCRef& env, const String& query,
 	const String& Type)
@@ -85,17 +86,16 @@ void CMPIPolledProviderProxy::activateFilter(
 	env->getLogger()->logDebug("activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{
-			env->getLogger()->logDebug("activateFilter2");
-			::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
-			CMPIHandleFreer nhf(_npiHandle);
-			_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
-		char * expo = query.allocateCString();
-		char * _type = Type.allocateCString();
+		env->getLogger()->logDebug("activateFilter2");
+		::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		CMPIHandleFreer nhf(_npiHandle);
+		_npiHandle.thisObject = static_cast<void *>(&env);
+		char *expo = const_cast<char*>(query.c_str());
+		char *_type = const_cast<char*>(Type.c_str());
 		SelectExp exp = {expo};
 		CIMObjectPath cop = {NULL};
-			m_ftable->fp_activateFilter( &_npiHandle, exp, _type, cop, 0);
-		free(expo);
-		free(_type);
+		m_ftable->fp_activateFilter(&_npiHandle, exp, _type, cop, 0);
+
 		if (_npiHandle.errorOccurred)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
@@ -103,6 +103,7 @@ void CMPIPolledProviderProxy::activateFilter(
 		}
 	}
 }
+
 void CMPIPolledProviderProxy::deactivateFilter(
 	const ProviderEnvironmentIFCRef& env, const String& query,
 	const String& Type)
@@ -110,18 +111,17 @@ void CMPIPolledProviderProxy::deactivateFilter(
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
-			::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
-			CMPIHandleFreer nhf(_npiHandle);
-			env->getLogger()->logDebug("deactivateFilter2");
-			_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
-		char * expo = query.allocateCString();
-		char * _type = Type.allocateCString();
+		::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		CMPIHandleFreer nhf(_npiHandle);
+		env->getLogger()->logDebug("deactivateFilter2");
+		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		char *expo = const_cast<char*>(query.c_str());
+		char *_type = const_cast<char*>(Type.c_str());
 		SelectExp exp = {expo};
 		CIMObjectPath cop = {NULL};
-		char * type = NULL;
-			m_ftable->fp_deActivateFilter( &_npiHandle, exp, _type, cop, 0);
-		free(type);
-		free(expo);
+		char *type = NULL;
+		m_ftable->fp_deActivateFilter( &_npiHandle, exp, _type, cop, 0);
+
 		if (_npiHandle.errorOccurred)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
@@ -129,6 +129,7 @@ void CMPIPolledProviderProxy::deactivateFilter(
 		}
 	}
 }
+
 #if 0
 			//  may the arguments must be copied verbatim
 			//  to avoid locking problems

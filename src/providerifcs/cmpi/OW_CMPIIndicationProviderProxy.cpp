@@ -38,6 +38,8 @@
 #include "OW_WQLSelectStatement.hpp"
 #include "cmpisrv.h"
 
+#define CMPI_POLLING_INTERVAL (5*60)
+
 namespace OpenWBEM
 {
 
@@ -64,20 +66,19 @@ CMPIIndicationProviderProxy::deActivateFilter(
 		WQLSelectStatement mutableFilter(filter);
 		CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
+
 		if (!classes.empty())
 			mutablePath.setObjectName(classes[0]);
+
 		CMPI_ObjectPathOnStack eRef(mutablePath);
 		CMPISelectExp exp; // = {&mutableFilter};
 		//CMPIFlags flgs = 0;
-		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
-		char * _eventType = eventType.allocateCString();
-		rc = m_ftable->miVector.indMI->ft->deActivateFilter(
-			mi, &eCtx, &eRes,
-			&exp, 
-			_eventType, &eRef, lastActivation);
-		if (_eventType) delete _eventType;
-		if (rc.rc == CMPI_RC_OK) return;
-		else
+		::CMPIIndicationMI *mi = m_ftable->miVector.indMI;
+		char* _eventType = const_cast<char*>(eventType.c_str());
+		rc = m_ftable->miVector.indMI->ft->deActivateFilter(mi, &eCtx, &eRes,
+			&exp, _eventType, &eRef, lastActivation);
+
+		if (rc.rc != CMPI_RC_OK)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
 				 rc.msg ? CMGetCharPtr(rc.msg) : "");
@@ -112,20 +113,20 @@ CMPIIndicationProviderProxy::activateFilter(
 		WQLSelectStatement mutableFilter(filter);
 		CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
+
 		if (!classes.empty())
 			mutablePath.setObjectName(classes[0]);
+
 		CMPI_ObjectPathOnStack eRef(mutablePath);
 		CMPISelectExp exp; // = {&mutableFilter};
 		//CMPIFlags flgs = 0;
 		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
-		char * _eventType = eventType.allocateCString();
-		rc = m_ftable->miVector.indMI->ft->activateFilter(
-			mi, &eCtx, &eRes,
-			&exp, 
-			_eventType, &eRef, firstActivation);
-		if (_eventType) delete _eventType;
-		if (rc.rc == CMPI_RC_OK) return;
-		else
+		char* _eventType = const_cast<char*>(eventType.c_str());
+
+		rc = m_ftable->miVector.indMI->ft->activateFilter(mi, &eCtx, &eRes,
+			&exp, _eventType, &eRef, firstActivation);
+
+		if (rc.rc != CMPI_RC_OK)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
 				 rc.msg ? CMGetCharPtr(rc.msg) : "");
@@ -160,21 +161,19 @@ CMPIIndicationProviderProxy::authorizeFilter(
 		WQLSelectStatement mutableFilter(filter);
 		CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
+
 		if (!classes.empty())
 			mutablePath.setObjectName(classes[0]);
+
 		CMPI_ObjectPathOnStack eRef(mutablePath);
 		CMPISelectExp exp; // = {&mutableFilter};
 		//CMPIFlags flgs = 0;
 		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
-		char * _eventType = eventType.allocateCString();
-		char * _owner = owner.allocateCString();
-		rc = m_ftable->miVector.indMI->ft->authorizeFilter(
-			mi, &eCtx, &eRes,
+		char* _eventType = const_cast<char*>(eventType.c_str());
+		char* _owner = const_cast<char*>(owner.c_str());
+		rc = m_ftable->miVector.indMI->ft->authorizeFilter(mi, &eCtx, &eRes,
 			&exp, _eventType, &eRef, _owner);
-		if (_eventType) delete _eventType;
-		if (_owner) delete _owner;
-		if (rc.rc == CMPI_RC_OK) return;
-		else
+		if (rc.rc != CMPI_RC_OK)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
 				 rc.msg ? CMGetCharPtr(rc.msg) : "");
@@ -214,13 +213,11 @@ CMPIIndicationProviderProxy::mustPoll(
 		CMPISelectExp exp; // = {&mutableFilter};
 		//CMPIFlags flgs = 0;
 		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
-		char * _eventType = eventType.allocateCString();
-		rc = m_ftable->miVector.indMI->ft->mustPoll(
-			mi, &eCtx, &eRes,
+		char* _eventType = const_cast<char*>(eventType.c_str());
+		rc = m_ftable->miVector.indMI->ft->mustPoll(mi, &eCtx, &eRes,
 			&exp, _eventType, &eRef);
-		if (_eventType) delete _eventType;
-		if (rc.rc == CMPI_RC_OK) return 5*60;
-		else
+
+		if (rc.rc != CMPI_RC_OK)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
 				 rc.msg ? CMGetCharPtr(rc.msg) : "");
@@ -231,6 +228,8 @@ CMPIIndicationProviderProxy::mustPoll(
 		OW_THROWCIMMSG(CIMException::FAILED,
 			"Provider does not support mustPoll");
 	}
+
+	return CMPI_POLLING_INTERVAL;
 }
 
 } // end namespace OpenWBEM

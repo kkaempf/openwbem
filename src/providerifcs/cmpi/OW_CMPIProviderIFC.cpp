@@ -484,7 +484,7 @@ CMPIProviderIFC::getProvider(
 
 	if (miVector.genericMode)
 	{
-		char * mName = provId.allocateCString();
+		const char *mName = provId.c_str();
 		if (miVector.miTypes & CMPI_MIType_Instance)
 		{
 			miVector.instMI = miVector.createGenInstMI(&_broker,&eCtx,mName);
@@ -515,8 +515,6 @@ CMPIProviderIFC::getProvider(
 			miVector.indMI =
 				miVector.createGenIndMI(&_broker, &eCtx, mName);
 		}
-
-		free(mName);
 	}
 	else
 	{

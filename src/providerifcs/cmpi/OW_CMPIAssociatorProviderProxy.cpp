@@ -65,21 +65,23 @@ void CMPIAssociatorProviderProxy::associatorNames(
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+
 		// initialize path
 		CIMObjectPath objectNameWithNS(objectName);
 		objectNameWithNS.setNameSpace(ns);
 		CMPI_ObjectPathOnStack eRef(objectNameWithNS);
 		CMPI_ResultOnStack eRes(result);
-		char * aClass = assocClass.allocateCString();
+
+		char *aClass = const_cast<char*>(assocClass.c_str());
 
 		CMPIFlags flgs = 0;
-		char * _resultClass = resultClass.empty() ? 0 :
-			resultClass.allocateCString();
+		char *_resultClass = const_cast<char*>(resultClass.empty() ? 0 :
+			resultClass.c_str());
 
-		char * _role = role.empty() ? 0 : role.allocateCString();
+		char *_role = const_cast<char*>(role.empty() ? 0 : role.c_str());
 
-		char * _resultRole = resultRole.empty() ? 0 :
-			resultRole.allocateCString();
+		char *_resultRole = const_cast<char*>(resultRole.empty() ? 0 :
+			resultRole.c_str());
 
 		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags,
 			(CMPIValue *)&flgs, CMPI_uint32);
@@ -88,11 +90,6 @@ void CMPIAssociatorProviderProxy::associatorNames(
 
 		rc = m_ftable->miVector.assocMI->ft->associatorNames(mi, &eCtx, &eRes,
 			&eRef, aClass, _resultClass, _role, _resultRole);
-
-		delete aClass;
-		delete _role;
-		delete _resultClass;
-		delete _resultRole;
 
 		if(rc.rc != CMPI_RC_OK)
 		{
@@ -125,9 +122,10 @@ void CMPIAssociatorProviderProxy::associators(
 
 	if(m_ftable->miVector.assocMI->ft->associators != NULL)
 	{
-		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		char **props = NULL;
 		int pCount = 0;
+
+		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		::OperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
@@ -138,66 +136,53 @@ void CMPIAssociatorProviderProxy::associators(
 		objectNameWithNS.setNameSpace(ns);
 		CMPI_ObjectPathOnStack eRef(objectNameWithNS);
 		CMPI_ResultOnStack eRes(result);
-		char * aClass = assocClass.allocateCString();
-
+	
+		char* aClass = const_cast<char*>(assocClass.c_str());
+	
 		if(propertyList && propertyList->size() > 0)
 		{
 			pCount = propertyList->size();
-			props = (char **)alloca(1+pCount*sizeof(char *));
-
+			props = reinterpret_cast<char **>
+				(alloca(1+pCount*sizeof(char *)));
+	
 			for(int i = 0; i < pCount; i++)
 			{
-				props[i]= (*propertyList)[i].allocateCString();
+				props[i]= const_cast<char*>((*propertyList)[i].c_str());
 			}
-
+	
 			props[pCount]=NULL;
 		}
-
+	
 		CMPIFlags flgs = 0;
-
+	
 		if(includeQualifiers)
 		{
 			flgs |= CMPI_FLAG_IncludeQualifiers;
 		}
-
+	
 		if(includeClassOrigin)
 		{
 			flgs |= CMPI_FLAG_IncludeClassOrigin;
 		}
-
-		char * _resultClass = resultClass.empty() ? 0 :
-			resultClass.allocateCString();
-
-		char * _role = role.empty() ? 0 : role.allocateCString();
-
-		char * _resultRole = resultRole.empty() ? 0 :
-			resultRole.allocateCString();
-
+	
+		char *_resultClass = const_cast<char*>(resultClass.empty() ? 0 :
+			resultClass.c_str());
+	
+		char *_role = const_cast<char*>(role.empty() ? 0 : role.c_str());
+	
+		char * _resultRole = const_cast<char*>(resultRole.empty() ? 0 :
+			resultRole.c_str());
+	
 		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags,
 			(CMPIValue *)&flgs, CMPI_uint32);
-
+	
 		::CMPIAssociationMI * mi = m_ftable->miVector.assocMI;
-
+	
 		rc=m_ftable->miVector.assocMI->ft->associators(
 			mi,&eCtx,&eRes,&eRef, aClass,
 			_resultClass, _role, _resultRole, props);
-
-		delete aClass;
-		delete _role;
-		delete _resultClass;
-		delete _resultRole;
-
-		if(props && pCount)
-		{
-			for(int i=0;i<pCount;i++)
-				free((char *)props[i]);
-		}
-
-		if(rc.rc == CMPI_RC_OK)
-		{
-			return;
-		}
-		else
+	
+		if(rc.rc != CMPI_RC_OK)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
 				String(rc.rc).c_str());
@@ -226,9 +211,10 @@ void CMPIAssociatorProviderProxy::references(
 
 	if(m_ftable->miVector.assocMI->ft->references != NULL)
 	{
-		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		char **props = NULL;
 		int pCount = 0;
+
+		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		::OperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 
@@ -241,18 +227,19 @@ void CMPIAssociatorProviderProxy::references(
 		objectNameWithNS.setNameSpace(ns);
 		CMPI_ObjectPathOnStack eRef(objectNameWithNS);
 		CMPI_ResultOnStack eRes(result);
-		char * aClass = resultClass.allocateCString();
+		char *aClass = const_cast<char*>(resultClass.c_str());
 
 		if(propertyList)
 		{
 			if(propertyList->size() > 0)
 			{
 				pCount = propertyList->size();
-				props = (char **) alloca(1+pCount*sizeof(char *));
+				props = reinterpret_cast<char **>
+					(alloca(1+pCount*sizeof(char *)));
 
 				for(int i = 0; i < pCount; i++)
 				{
-					props[i] = (*propertyList)[i].allocateCString();
+					props[i] = const_cast<char*>((*propertyList)[i].c_str());
 				}
 
 				props[pCount] = NULL;
@@ -271,7 +258,7 @@ void CMPIAssociatorProviderProxy::references(
 			flgs |= CMPI_FLAG_IncludeClassOrigin;
 		}
 
-		char * _role = role.empty() ? 0 : role.allocateCString();
+		char* _role = const_cast<char*>(role.empty() ? 0 : role.c_str());
 		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags,
 			(CMPIValue *)&flgs, CMPI_uint32);
 
@@ -279,22 +266,7 @@ void CMPIAssociatorProviderProxy::references(
 		rc=m_ftable->miVector.assocMI->ft->references(
 			mi,&eCtx,&eRes,&eRef, aClass, _role, props);
 
-		delete aClass;
-		delete _role;
-
-		if(props && pCount)
-		{
-			for(int i = 0; i < pCount; i++)
-			{
-				free((char *)props[i]);
-			}
-		}
-
-		if(rc.rc == CMPI_RC_OK)
-		{
-			return;
-		}
-		else
+		if(rc.rc != CMPI_RC_OK)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
 				String(rc.rc).c_str());
@@ -335,9 +307,9 @@ void CMPIAssociatorProviderProxy::referenceNames(
 
 		CMPI_ObjectPathOnStack eRef(objectNameWithNS);
 		CMPI_ResultOnStack eRes(result);
-		char * aClass = resultClass.allocateCString();
+		char* aClass = const_cast<char*>(resultClass.c_str());
 		CMPIFlags flgs = 0;
-		char * _role = role.empty() ? 0 : role.allocateCString();
+		char* _role = const_cast<char*>(role.empty() ? 0 : role.c_str());
 		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags,
 			(CMPIValue *)&flgs, CMPI_uint32);
 
@@ -345,14 +317,7 @@ void CMPIAssociatorProviderProxy::referenceNames(
 		rc = m_ftable->miVector.assocMI->ft->referenceNames(
 			mi, &eCtx, &eRes, &eRef, aClass, _role);
 
-		delete aClass;
-		delete _role;
-
-		if(rc.rc == CMPI_RC_OK)
-		{
-			return;
-		}
-		else
+		if(rc.rc != CMPI_RC_OK)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED, String(rc.rc).c_str());
 		}

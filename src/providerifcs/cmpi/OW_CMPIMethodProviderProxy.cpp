@@ -62,6 +62,7 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 {
 	env->getLogger()->
 		logDebug("CMPIInstanceProviderProxy::invokeMethod()");
+
 	if (m_ftable->miVector.methMI->ft->invokeMethod != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -78,18 +79,26 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 		CMPI_ArgsOnStack eArgsOut(out);
 		CMPIValueValueResultHandler handler;
 		CMPI_ResultOnStack eRes(handler);
-		char* mName=methodName.allocateCString();
+		char* mName = const_cast<char*>(methodName.c_str());
 		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
-			(CMPIValue*)&flgs,CMPI_uint32);
+		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags, (CMPIValue*)&flgs,
+			CMPI_uint32);
+
 		rc=m_ftable->miVector.methMI->ft->invokeMethod(
-			m_ftable->miVector.methMI,&eCtx,&eRes,&eRef,
-			mName,&eArgsIn,&eArgsOut);
+			m_ftable->miVector.methMI,&eCtx,&eRes,&eRef, mName,&eArgsIn,
+			&eArgsOut);
+
 		if (rc.rc == CMPI_RC_OK)
+		{
 			return handler.getValue();
+		}
 		else
-			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : ""); 
+		{
+			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? 
+				CMGetCharPtr(rc.msg) : ""); 
+		}
 	}
+
 	return CIMValue(CIMNULL);
 }
 
