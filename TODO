@@ -77,7 +77,7 @@ Refactorings:
 Documentation:
     - Enhance developer documentation (similar to "SNIA CIM Object Manager 
       Architecture and Developers Guide" found at 
-      http://www.opengroup.org/snia-cimom/)
+      http://www.opengroup.org/snia-cimom/) Also see: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/wmisdk/wmi/supporting_features_for_wmi.asp
 
 Optimizations:
     - OW_IndicationServerImpl::_processIndication() rewrite (see comment)
