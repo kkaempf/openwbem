@@ -41,17 +41,13 @@ using namespace std;
 namespace
 {
 
+// This class is responsible for coordinating with OW_IndicationRepLayer when
+// subscriptions are created.  IndicationReplayer creates lifecycle indications
+// for any changes caused by intrinsic method calls.
 class OW_provindIndicationRepLayer : public OW_CppIndicationProviderIFC
 {
 public:
 	// Indication provider methods
-	virtual int mustPoll(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&) 
-	{
-		return 0;
-	}
-	virtual void authorizeFilter(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&, const OW_String &) 
-	{
-	}
 	virtual void activateFilter(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String & eventType, const OW_String&, const OW_StringArray&, bool) 
 	{
 		OW_CIMOMEnvironmentRef ce(OW_CIMOMEnvironment::g_cimomEnvironment);
