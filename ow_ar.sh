@@ -79,10 +79,10 @@ do
 	ar_dir=".${name}_dir"
 	rm -rf $ar_dir
 	full_archive_path=$i
-	if [ -e "./$i" ]; then
+	if [ -f "./$i" ]; then
 		full_archive_path=`pwd`/$i
 	fi
-	if [ -e $full_archive_path ]; then
+	if [ -f $full_archive_path ]; then
 		mkdir $ar_dir
 		cd $ar_dir
 		$AR x $full_archive_path
