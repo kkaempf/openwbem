@@ -51,6 +51,16 @@
 #include <iterator>
 #include <algorithm>
 
+// TODO list:
+// cover *all* read operations
+//  wql queries
+//  assoc*
+//  reference*
+//  enum*Names
+
+
+
+
 #define TEST_ASSERT(CON) if(!(CON)) throw OW_AssertionException(__FILE__, __LINE__, #CON)
 
 using std::cerr;
@@ -370,7 +380,7 @@ public:
 			}
 		}
 
-		// call assoc* things on it.
+		// TODO: call assoc* things on it.
 	}
 
 private:
@@ -429,7 +439,7 @@ public:
 	{
 		OW_RunnableRef worker(new InstanceEnumerator(m_ns, cls.getName()));
 		doWork(worker);
-		// call assoc* things on it.
+		// TODO: call assoc* things on it.
 	}
 private:
 	OW_String m_ns;
@@ -462,6 +472,7 @@ class NamespaceResultHandler : public OW_StringResultHandlerIFC
 		OW_RunnableRef worker(new ClassEnumerator(ns));
 		doWork(worker);
 
+		// TODO
 		//ClassNameEnumerator worker(ns);
 		//doWork(worker);
 	}
