@@ -364,5 +364,17 @@ inline bool operator!=(const OW_Reference<T>& a, const OW_Reference<U>& b)
 	return a.getPtr() != b.getPtr();
 }
 
+template <class T>
+inline bool operator!=(const OW_Reference<T>& a, const OW_Reference<T>& b)
+{
+	return a.getPtr() != b.getPtr();
+}
+
+template <class T, class U>
+inline bool operator<(const OW_Reference<T>& a, const OW_Reference<U>& b)
+{
+	return a.getPtr() < b.getPtr();
+}
+
 #endif	// OW_REFERENCE_HPP_
 
