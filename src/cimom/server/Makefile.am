@@ -30,5 +30,7 @@ OW_CimomServerFwd.hpp \
 OW_PidFile.cpp \
 OW_PidFile.hpp \
 OW_Platform.cpp \
-OW_Platform.hpp
+OW_Platform.hpp \
+OW_PlatformSignal.cpp \
+OW_PlatformSignal.hpp 
 

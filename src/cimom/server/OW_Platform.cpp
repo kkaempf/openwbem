@@ -42,6 +42,8 @@
 #include "OW_PidFile.hpp"
 #include "OW_ExceptionIds.hpp"
 
+#include "OW_PlatformSignal.hpp"
+
 #ifdef OW_NETWARE
 #include "OW_Condition.hpp"
 #include "OW_NonRecursiveMutex.hpp"
@@ -99,7 +101,7 @@ namespace Platform
 {
 
 extern "C" {
-static void theSigHandler(int sig);
+static void theSigHandler(int sig, siginfo_t* info, void* context);
 }
 
 static const int DAEMONIZE_PIPE_TIMEOUT = 25; 
@@ -399,29 +401,65 @@ handleSignalAux(int sig, sighandler_t handler)
 {
 	struct sigaction temp;
 	memset(&temp, '\0', sizeof(temp));
-	// TODO: Figure out why we don't set it if it's set to SIG_IGN already.
 	sigaction(sig, 0, &temp);
-	if (temp.sa_handler != SIG_IGN)
-	{
-		temp.sa_handler = handler;
-		sigemptyset(&temp.sa_mask);
-		/* Here's a note from the glibc documentation:
-		 * When you don't specify with `sigaction' or `siginterrupt' what a
-		 * particular handler should do, it uses a default choice.  The default
-		 * choice in the GNU library depends on the feature test macros you have
-		 * defined.  If you define `_BSD_SOURCE' or `_GNU_SOURCE' before calling
-		 * `signal', the default is to resume primitives; otherwise, the default
-		 * is to make them fail with `EINTR'.  (The library contains alternate
-		 * versions of the `signal' function, and the feature test macros
-		 * determine which one you really call.)
-		 *
-		 * We want the EINTR behavior, so we can cancel threads and shutdown
-		 * or restart if the occasion arises, so we set flags to 0.
-		 */
-		temp.sa_flags = 0;
-		sigaction(sig, &temp, NULL);
-	}
+	temp.sa_handler = handler;
+	sigemptyset(&temp.sa_mask);
+	/* Here's a note from the glibc documentation:
+	 * When you don't specify with `sigaction' or `siginterrupt' what a
+	 * particular handler should do, it uses a default choice.  The default
+	 * choice in the GNU library depends on the feature test macros you have
+	 * defined.  If you define `_BSD_SOURCE' or `_GNU_SOURCE' before calling
+	 * `signal', the default is to resume primitives; otherwise, the default
+	 * is to make them fail with `EINTR'.  (The library contains alternate
+	 * versions of the `signal' function, and the feature test macros
+	 * determine which one you really call.)
+	 *
+	 * We want the EINTR behavior, so we can cancel threads and shutdown
+	 * or restart if the occasion arises, so we set flags to 0.
+	 *
+	 * This also clears the SA_SIGINFO flag so that the sa_handler member
+	 * may be safely used.
+	 */
+	temp.sa_flags = 0;
+	sigaction(sig, &temp, NULL);
 }
+
+// This typedef is not required to be defined anywhere in the header files,
+// but POSIX does show the signature of the function.
+// See http://www.opengroup.org/onlinepubs/009695399/functions/sigaction.html
+typedef void (*full_sighandler_t)(int,siginfo_t*,void*);
+
+// A signal handler installer for a full sigaction handler.  This is
+// different from the normal sighandler type only by the flags in the
+// handler and the field used in the sigaction struct
+// (sa_sigaction/sa_handler).
+static void
+handleSignalAux(int sig, full_sighandler_t handler)
+{
+	struct sigaction temp;
+	memset(&temp, '\0', sizeof(temp));
+	sigaction(sig, 0, &temp);
+	temp.sa_sigaction = handler;
+	sigemptyset(&temp.sa_mask);
+	/* Here's a note from the glibc documentation:
+	 * When you don't specify with `sigaction' or `siginterrupt' what a
+	 * particular handler should do, it uses a default choice.  The default
+	 * choice in the GNU library depends on the feature test macros you have
+	 * defined.  If you define `_BSD_SOURCE' or `_GNU_SOURCE' before calling
+	 * `signal', the default is to resume primitives; otherwise, the default
+	 * is to make them fail with `EINTR'.  (The library contains alternate
+	 * versions of the `signal' function, and the feature test macros
+	 * determine which one you really call.)
+	 *
+	 * We want the EINTR behavior, so we can cancel threads and shutdown
+	 * or restart if the occasion arises, so we set flags to 0.
+	 *
+	 * We also want to use the sa_sigaction field, so we set SA_SIGINFO flag.
+	 */
+	temp.sa_flags = SA_SIGINFO;
+	sigaction(sig, &temp, NULL);
+}
+
 static void
 handleSignal(int sig)
 {
@@ -438,10 +476,16 @@ ignoreSignal(int sig)
 //////////////////////////////////////////////////////////////////////////////
 extern "C" {
 static void
-theSigHandler(int sig)
+theSigHandler(int sig, siginfo_t* info, void* context)
 {
 	try
 	{
+		Signal::SignalInformation extractedSignal;
+		if( info )
+		{
+			Signal::extractSignalInformation( *info, extractedSignal );
+		}
+
 		switch (sig)
 		{
 			case SIGTERM:
@@ -449,11 +493,13 @@ theSigHandler(int sig)
 #if defined(OW_NETWARE)
 			case SIGABRT: 
 #endif
-				pushSig(SHUTDOWN);
+				extractedSignal.signalAction = SHUTDOWN;
+				pushSig(extractedSignal);
 				break;
 #ifndef OW_WIN32
 			case SIGHUP:
-				pushSig(REINIT);
+				extractedSignal.signalAction = REINIT;
+				pushSig(extractedSignal);
 				break;
 #endif
 		}
@@ -466,14 +512,34 @@ theSigHandler(int sig)
 #ifndef WIN32
 
 static void 
-abortHandler(int sig)
+abortHandler(int sig, siginfo_t* info, void* context)
 {
+	// TODO: Fix this so that it will allow proper logging in
+	// owcimomd_main.cpp.  Currently, it immediately restarts without
+	// allowing the signal information to be printed.
+	Signal::SignalInformation extractedSignal;
+	if( info )
+	{
+		Signal::extractSignalInformation( *info, extractedSignal );
+	}
+	extractedSignal.signalAction = REINIT;
+	pushSig(extractedSignal);
 	Platform::rerunDaemon();
 }
 
 static void
-fatalSigHandler(int sig)
+fatalSigHandler(int sig, siginfo_t* info, void* context)
 {
+	// TODO: Fix this so that it will allow proper logging in
+	// owcimomd_main.cpp.  Currently, it immediately restarts without
+	// allowing the signal information to be printed.
+	Signal::SignalInformation extractedSignal;
+	if( info )
+	{
+		Signal::extractSignalInformation( *info, extractedSignal );
+	}
+	extractedSignal.signalAction = REINIT;
+	pushSig(extractedSignal);
 	Platform::rerunDaemon();
 }
 
@@ -673,22 +739,25 @@ void initSig()
 	plat_upipe->setBlocking(UnnamedPipe::E_NONBLOCKING);
 }
 //////////////////////////////////////////////////////////////////////////////
-void pushSig(int sig)
+void pushSig(const Signal::SignalInformation& sig)
 {
 	if (plat_upipe)
 	{
-		plat_upipe->writeInt(sig);
+		Signal::flattenSignalInformation(sig, plat_upipe);
 	}
 	// don't throw from this function, it may cause a segfault or deadlock.
 }
 //////////////////////////////////////////////////////////////////////////////
-int popSig()
+int popSig(Signal::SignalInformation& sig)
 {
 	int tmp = -2;
 	if (plat_upipe)
 	{
-		if (plat_upipe->readInt(&tmp) < 0)
+		if( !Signal::unflattenSignalInformation(sig, plat_upipe) )
+		{
 			return -1;
+		}
+		tmp = sig.signalAction;
 	}
 	return tmp;
 }

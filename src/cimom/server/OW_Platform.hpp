@@ -74,6 +74,13 @@ namespace Platform
 		bool help;
 		bool error;
 	};
+
+	// Forward declaration of SignalInformation
+	namespace Signal
+	{
+		struct SignalInformation;
+	}
+
 	OW_CIMOMSERVER_API Options daemonInit( int argc, char* argv[] );
 	/**
 	 * @throws DaemonException on error
@@ -83,8 +90,8 @@ namespace Platform
 	OW_CIMOMSERVER_API void initDaemonizePipe();
 	OW_CIMOMSERVER_API void sendDaemonizeStatus(int status);
 	OW_CIMOMSERVER_API void initSig();
-	OW_CIMOMSERVER_API void pushSig(int sig);
-	OW_CIMOMSERVER_API int popSig();
+	OW_CIMOMSERVER_API void pushSig(const Signal::SignalInformation& sig);
+	OW_CIMOMSERVER_API int popSig(Signal::SignalInformation& sig);
 	OW_CIMOMSERVER_API void shutdownSig();
 	OW_CIMOMSERVER_API SelectableIFCRef getSigSelectable();
 	using UserUtils::getCurrentUserName;

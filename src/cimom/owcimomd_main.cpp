@@ -38,6 +38,7 @@
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Platform.hpp"
+#include "OW_PlatformSignal.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
 #include "OW_Logger.hpp"
@@ -139,11 +140,18 @@ int main(int argc, char* argv[])
 			// runSelectEngine will only return once something has been put into
 			// the signal pipe or an error has happened
 			env->runSelectEngine();
-			sig = Platform::popSig();
+			Platform::Signal::SignalInformation signalInfo;
+
+			sig = Platform::popSig(signalInfo);
 			switch (sig)
 			{
 				case Platform::SHUTDOWN:
+
+					OW_LOG_INFO(logger, "owcimomd received shutdown notification."
+						" Initiating shutdown");
+					OW_LOG_INFO(logger, Format("signal details:\n%1", signalInfo));
 					shuttingDown = true;
+
 
 #if !defined(OW_DEBUG)
 					// need to remove them so we don't restart while shutting down.
@@ -158,13 +166,12 @@ int main(int argc, char* argv[])
 					}
 #endif
 
-					OW_LOG_INFO(logger, "owcimomd received shutdown notification."
-						" Initiating shutdown");
 					env->shutdown();
 					break;
 				case Platform::REINIT:
 					OW_LOG_INFO(logger, "owcimomd received restart notification."
 						" Initiating restart");
+					OW_LOG_INFO(logger, Format("signal details: %1", signalInfo));
 					env->shutdown();
 					env->clearConfigItems();
 					env = CIMOMEnvironment::instance() = 0;
@@ -179,6 +186,7 @@ int main(int argc, char* argv[])
 					env->startServices();
 					break;
 				default:
+					OW_LOG_INFO(logger, Format("Ignoring signal. Details: %1", signalInfo));
 					break;
 			}
 		}
