@@ -58,7 +58,7 @@ public:
 	 */
 	CIMParamValue(const String& name, const CIMValue& val);
 	/**
-	 * Create a new CIMParamValue object.
+	 * Create a new CIMParamValue object.  The value portion will be null.
 	 * @param name		The name of the parameter.
 	 */
 	explicit CIMParamValue(const String& name);
