@@ -29,6 +29,7 @@
 #include "OW_WQLOperation.hpp"
 #include "OW_WQLOperand.hpp"
 #include "OW_WQLCompile.hpp"
+#include "OW_Format.hpp"
 
 #ifdef OW_HAVE_OSTREAM
 #include <ostream>
@@ -279,21 +280,38 @@ bool OW_WQLCompile::evaluate(const OW_WQLPropertySource& source) const
 		TableauRow tr = _tableau[i];
 		for (OW_UInt32 j=0,m = tr.size(); j < m; j++)
 		{
-			lhs = tr[j].opn1;
-			OW_WQLCompile::_ResolveProperty(lhs,source);
-			rhs = tr[j].opn2;
-			OW_WQLCompile::_ResolveProperty(rhs,source);
+            if (tr[j].op == WQL_ISA)
+            {
+                OW_String propertyName = tr[j].opn1.getPropertyName();
+                OW_String className;
+                if (tr[j].opn2.getType() == OW_WQLOperand::PROPERTY_NAME)
+                {
+                    className = tr[j].opn2.getPropertyName();
+                }
+                else
+                {
+                    className = tr[j].opn2.getStringValue(); // this will throw if it's not a string
+                }
+                b = source.evaluateISA(propertyName, className);
+            }
+            else
+            {
+                lhs = tr[j].opn1;
+                OW_WQLCompile::_ResolveProperty(lhs,source);
+                rhs = tr[j].opn2;
+                OW_WQLCompile::_ResolveProperty(rhs,source);
 
-			if (rhs.getType() != lhs.getType())
-				OW_THROW(OW_TypeMismatchException, "Type mismatch");
+                if (rhs.getType() != lhs.getType())
+                    OW_THROW(OW_TypeMismatchException, format("Type mismatch: lhs: %1 rhs: %2", lhs.toString(), rhs.toString()).c_str());
 
-			if (!_Evaluate(lhs, rhs, tr[j].op))
-			{
-				b = false;
-				break;
-			}
-			else
-				b = true;
+                if (!_Evaluate(lhs, rhs, tr[j].op))
+                {
+                    b = false;
+                    break;
+                }
+                else
+                    b = true;
+            }
 		}
 		if (b) return true;
 	}
