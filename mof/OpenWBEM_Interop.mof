@@ -1,0 +1,86 @@
+[Description("This class represents the OpenWBEM CIM object manager.")]
+class OpenWBEM_ObjectManager : CIM_ObjectManager
+{
+    [Description("Version of this object manager.")]
+    string Version;
+};
+
+[Description("This class specializes ObjectManagerCommunicationMechanism, "
+    "adding properties specific to the OpenWBEM binary protocol.")]
+class OpenWBEM_BinaryCommunicationMechanism : CIM_ObjectManagerCommunicationMechanism
+{
+	[Description("The version of the binary protocol supported by the Object "
+	"manager.")]
+	uint16 BinaryProtocolVersion;
+};
+
+class OpenWBEM_CommMechanismForManager : CIM_CommMechanismForManager
+{
+};
+
+class OpenWBEM_Provider : CIM_Provider
+{
+};
+
+class OpenWBEM_ProviderCapabilities : CIM_ProviderCapabilities
+{
+};
+
+class OpenWBEM_ProviderModule : CIM_ProviderModule
+{
+};
+
+class OpenWBEM_ProviderInModule : CIM_ProviderInModule
+{
+};
+
+class OpenWBEM_ProviderElementCapabilities : CIM_ProviderElementCapabilities
+{
+};
+
+class OpenWBEM_ObjectManagerIsProvider : CIM_ObjectManagerIsProvider
+{
+};
+
+class OpenWBEM_FiltersSupported : CIM_FiltersSupported
+{
+};
+
+class OpenWBEM_ProtocolAdapter : CIM_ProtocolAdapter
+{
+};
+
+class OpenWBEM_CommMechanismForAdapter : CIM_CommMechanismForAdapter
+{
+};
+
+class OpenWBEM_Namespace : CIM_Namespace
+{
+};
+
+class OpenWBEM_SystemIdentification : CIM_SystemIdentification
+{
+};
+
+class OpenWBEM_ClassSupportForNamespace : CIM_ClassSupportForNamespace
+{
+};
+
+class OpenWBEM_NamespaceInManager : CIM_NamespaceInManager
+{
+};
+
+class OpenWBEM_SystemInNamespace : CIM_SystemInNamespace
+{
+};
+
+class OpenWBEM_IdentificationOfManagedSystem : CIM_IdentificationOfManagedSystem
+{
+};
+
+class OpenWBEM_CIMOMStatisticalData : CIM_CIMOMStatisticalData
+{
+};
+
+
+
