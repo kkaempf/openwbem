@@ -763,20 +763,10 @@ fi
 TestMof
 
 TestSuite "http://test1:pass1@localhost:30926" "testsuiteTCPXML.out" "testsuite.out"
-
-if [ "$OWLONGTEST" = "1" ]; then
-  TestSuite "ipc://test1:pass1@localhost/owbinary" "testsuiteUDSBIN.out" "testsuite.out"
-  TestSuite "ipc://test1:pass1@localhost/cimom" "testsuiteUDSXML.out" "testsuite.out"
-  TestSuite "http://test1:pass1@localhost:30926/owbinary" "testsuiteTCPBIN.out" "testsuite.out"
-fi
+TestSuite "ipc://test1:pass1@localhost/owbinary" "testsuiteUDSBIN.out" "testsuite.out"
 
 TestCIMExceptions "http://test1:pass1@localhost:30926"
-
-if [ "$OWLONGTEST" = "1" ]; then
-  TestCIMExceptions "ipc://test1:pass1@localhost/owbinary"
-  TestCIMExceptions "ipc://test1:pass1@localhost/cimom"
-  TestCIMExceptions "http://test1:pass1@localhost:30926/owbinary"
-fi
+TestCIMExceptions "ipc://test1:pass1@localhost/owbinary"
 
 TestIndications
 

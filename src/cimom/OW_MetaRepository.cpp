@@ -946,10 +946,15 @@ OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 	}
 	else
 	{
-		pnode = getNameSpaceNode(hdl, ns);
+		OW_String ns2(ns);
+		while (!ns2.empty() && ns2[0] == '/')
+		{
+			ns2 = ns2.substring(1);
+		}
+		pnode = getNameSpaceNode(hdl, ns2);
 		if(!pnode)
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns.c_str());
+			OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns2.c_str());
 		}
 	}
 

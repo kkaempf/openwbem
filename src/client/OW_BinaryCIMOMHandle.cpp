@@ -235,17 +235,21 @@ OW_BinaryCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& 
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::enumClassNames(const OW_CIMObjectPath& path,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep)
+OW_BinaryCIMOMHandle::enumClassNames(
+	const OW_String& ns,
+	const OW_String& className,
+	OW_CIMObjectPathResultHandlerIFC& result,
+	OW_Bool deep)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"EnumerateClassNames", path.getNameSpace());
+		"EnumerateClassNames", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_ENUMCLSNAMES);
-	OW_BinIfcIO::writeObjectPath(strm, path);
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeString(strm, className);
 	OW_BinIfcIO::writeBool(strm, deep);
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "EnumerateClassNames", path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"EnumerateClassNames", ns);
 
 	readAndDeliver(in, result);
 }

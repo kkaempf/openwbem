@@ -653,13 +653,14 @@ void
 OW_BinaryRequestHandler::enumClassNames(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
+	OW_String ns(OW_BinIfcIO::readString(istrm));
+	OW_String className(OW_BinIfcIO::readString(istrm));
 	OW_Bool deep(OW_BinIfcIO::readBool(istrm));
 
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 	OW_BinIfcIO::write(ostrm, OW_BINSIG_OPENUM);
 	BinaryCIMObjectPathWriter handler(ostrm);
-	chdl->enumClassNames(op, handler, deep);
+	chdl->enumClassNames(ns, className, handler, deep);
 
 	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
 	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);

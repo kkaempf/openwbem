@@ -187,7 +187,9 @@ OW_WQLFilterRep::enumClasses(const OW_String&,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::enumClassNames(const OW_CIMObjectPath &/*path*/,
+OW_WQLFilterRep::enumClassNames(
+	const OW_String&,
+	const OW_String&,
 	OW_CIMObjectPathResultHandlerIFC&,
 	OW_Bool /*deep*/, const OW_ACLInfo& /*aclInfo*/)
 {

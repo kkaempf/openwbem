@@ -204,7 +204,8 @@ public:
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
-	 * @param path The OW_CIMObjectPath identifying the class to be enumerated.
+	 * @param ns The namespace.
+	 * @param className The class to be enumerated.
 	 * @param deep If set to DEEP, the enumeration returned will
 	 *		contain the names of all classes derived from the enumerated class.
 	 *		If set to SHALLOW the enumermation will return only
@@ -215,12 +216,14 @@ public:
 	 *											cannot be found
 	 */
 	virtual void enumClassNames(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep=DEEP) = 0;
 
 	virtual OW_CIMObjectPathEnumeration enumClassNamesE(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_Bool deep=DEEP);
 
 	/**

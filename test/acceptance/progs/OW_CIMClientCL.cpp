@@ -181,8 +181,7 @@ enumClassNames(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMObjectPath cop("", "root/testsuite");
-		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE(cop, true);
+		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE("root/testsuite", "", true);
 		while (enu.hasMoreElements())
 		{
 			cout << "CIMClass: " << enu.nextElement().getObjectName() << endl;
@@ -197,8 +196,7 @@ enumClassNames(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMObjectPath cop("", "root/testsuite");
-		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE(cop, false);
+		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE("root/testsuite", "", false);
 		while (enu.hasMoreElements())
 		{
 			cout << "CIMClass: " << enu.nextElement().getObjectName() << endl;

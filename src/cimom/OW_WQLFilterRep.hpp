@@ -282,7 +282,8 @@ public:
 	 *											cannot be foundl
 	 */
 	virtual void enumClassNames(
-		const OW_CIMObjectPath &path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep, const OW_ACLInfo& aclInfo);
 

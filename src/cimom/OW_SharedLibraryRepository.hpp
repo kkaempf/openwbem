@@ -150,11 +150,12 @@ public:
 	}
 
 	virtual void enumClassNames(
-		const OW_CIMObjectPath &path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep, const OW_ACLInfo &aclInfo)
 	{
-		m_ref->enumClassNames(path, result, deep, aclInfo);
+		m_ref->enumClassNames(ns, className, result, deep, aclInfo);
 	}
 
 	virtual OW_CIMValue invokeMethod(const OW_CIMObjectPath &name,

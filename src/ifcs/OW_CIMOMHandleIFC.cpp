@@ -158,11 +158,14 @@ OW_CIMOMHandleIFC::enumNameSpaceE(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
-OW_CIMOMHandleIFC::enumClassNamesE(const OW_CIMObjectPath& path, OW_Bool deep)
+OW_CIMOMHandleIFC::enumClassNamesE(
+	const OW_String& ns,
+	const OW_String& className,
+	OW_Bool deep)
 {
 	OW_CIMObjectPathEnumeration rval;
 	CIMObjectPathEnumBuilder handler(rval);
-	enumClassNames(path, handler, deep);
+	enumClassNames(ns, className, handler, deep);
 	return rval;
 }
 

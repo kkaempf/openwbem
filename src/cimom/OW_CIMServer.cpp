@@ -858,19 +858,20 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumClassNames(const OW_CIMObjectPath& path,
+OW_CIMServer::enumClassNames(
+	const OW_String& ns,
+	const OW_String& className,
 	OW_CIMObjectPathResultHandlerIFC& result,
 	OW_Bool deep, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to enumerate classes
-	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATECLASSNAMES, path, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATECLASSNAMES, ns, aclInfo);
 
 	try
 	{
-		OW_CIMObjectPath lcop(path);
-		lcop.setKeys(OW_CIMPropertyArray());
+		OW_CIMObjectPath lcop(className, ns);
 		CIMClassToCIMObjectPathHandler handler(result,lcop);
-		m_mStore.enumClass(path.getNameSpace(), path.getObjectName(), handler,
+		m_mStore.enumClass(ns, className, handler,
 			deep, false, true, true);
 	}
 	catch (OW_HDBException&)

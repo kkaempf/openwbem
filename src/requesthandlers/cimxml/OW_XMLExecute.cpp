@@ -852,10 +852,8 @@ OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_String className = params[0].val.toString();
 	OW_Bool deepInheritance = params[1].val.toBool();
 
-	path.setObjectName(className);
-
 	ClassNameXMLWriter handler(ostr);
-	hdl.enumClassNames(path, handler, deepInheritance);
+	hdl.enumClassNames(path.getNameSpace(), className, handler, deepInheritance);
 }
 
 //////////////////////////////////////////////////////////////////////////////

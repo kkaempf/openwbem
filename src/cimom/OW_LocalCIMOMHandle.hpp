@@ -140,7 +140,8 @@ public:
 	 * 			(OW_CIMObjectPathEnumeration)
 	 */
 	virtual void enumClassNames(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep=true);
 

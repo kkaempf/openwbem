@@ -404,13 +404,14 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::enumClassNames(const OW_CIMObjectPath& path,
+OW_CIMXMLCIMOMHandle::enumClassNames(
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep)
 {
 	static const char* const commandName = "EnumerateClassNames";
 
-	OW_String className = path.getObjectName();
 	OW_Array<OW_Param> params;
 	if (!className.empty())
 	{
@@ -420,7 +421,7 @@ OW_CIMXMLCIMOMHandle::enumClassNames(const OW_CIMObjectPath& path,
 	params.push_back(OW_Param(XMLP_DEEP,deep));
 
 	enumClassNamesOp op(result);
-	intrinsicMethod(path.getNameSpace(), commandName, op, params);
+	intrinsicMethod(ns, commandName, op, params);
 }
 
 //////////////////////////////////////////////////////////////////////////////

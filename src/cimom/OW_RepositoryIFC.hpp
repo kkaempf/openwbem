@@ -245,7 +245,8 @@ public:
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
-	virtual void enumClassNames(const OW_CIMObjectPath& path,
+	virtual void enumClassNames(const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep, const OW_ACLInfo& aclInfo) = 0;
 
