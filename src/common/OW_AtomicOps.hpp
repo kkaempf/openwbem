@@ -36,6 +36,13 @@
 #define OW_ATOMIC_OPS_HPP_
 #include "OW_config.h"
 
+#if defined(OW_AIX)
+extern "C"
+{
+#include <sys/atomic_op.h>
+}
+#endif
+
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
@@ -77,6 +84,49 @@ inline void AtomicDec(Atomic_t &v)
 		"lock ; " "decl %0"
 		:"=m" (v.val)
 		:"m" (v.val));
+}
+
+} // end namespace OpenWBEM
+
+#elif defined(OW_AIX)
+namespace OpenWBEM
+{
+// This comment was stolen from the libstdc++ implementation of atomicity.h
+// (and modified). 
+// We cannot use the inline assembly for powerpc, since definitions for
+// these operations since they depend on operations that are not available on
+// the original POWER architecture.  AIX still runs on the POWER architecture,
+// so it would be incorrect to assume the existence of these instructions. 
+//
+// The definition of Atomic_t.val must match the type pointed to by atomic_p in
+// <sys/atomic_op.h>. 
+struct Atomic_t
+{ 
+	Atomic_t() : val(0) {}
+	Atomic_t(int i) : val(i) {}
+	volatile int val; 
+};
+
+inline void AtomicInc(Atomic_t &v)
+{
+	::fetch_and_add(const_cast<atomic_p>(&v.val), 1);
+}
+inline bool AtomicDecAndTest(Atomic_t &v)
+{
+	// fetch_and_add returns the original value before the add operation.  Thus,
+	// we must subtract one from the returned value before comparing.
+	int c = ::fetch_and_add(const_cast<atomic_p>(&v.val), -1);
+	--c;
+	return c == 0;
+}
+inline int AtomicGet(Atomic_t const &v)
+{
+	int c = ::fetch_and_add(const_cast<atomic_p>(&v.val), 0);
+	return c;
+}
+inline void AtomicDec(Atomic_t &v)
+{
+	::fetch_and_add(const_cast<atomic_p>(&v.val), -1);
 }
 
 } // end namespace OpenWBEM
