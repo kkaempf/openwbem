@@ -89,11 +89,16 @@ AC_PATH_PROG(SED, sed, sed)
 
 dnl BMMU check for perl
 if test "$with_perl" = yes; then
-  PGAC_CHECK_PERL_CONFIGS([archlibexp,privlibexp,useshrplib])
+  #PGAC_CHECK_PERL_CONFIGS([archlibexp,privlibexp,useshrplib])
+  PGAC_CHECK_PERL_CONFIG(archlibexp)
+  PGAC_CHECK_PERL_CONFIG(privlibexp)
+  PGAC_CHECK_PERL_CONFIG(useshrplib)
   PGAC_CHECK_PERL_EMBED_CCFLAGS
   PGAC_CHECK_PERL_EMBED_LDFLAGS
   AC_DEFINE(PERLIFC)
+  HAVE_PERL=yes
 fi
+AM_CONDITIONAL(HAVE_PERL_EMBED, test x$HAVE_PERL = xyes)
 
 
 dnl Checks for header files.
