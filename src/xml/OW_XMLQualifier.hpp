@@ -37,8 +37,9 @@
 #define _OW_XMLQWALIFIER_HPP__
 
 #include "OW_config.h"
-#include "OW_XMLNode.hpp"
 #include "OW_XMLClass.hpp"
+
+class OW_CIMXMLParser;
 
 class OW_XMLQualifier : public OW_XMLClass
 {
@@ -47,25 +48,25 @@ public:
 	static const char* const XMLP_QUALIFIERDECL;
 	static const char* const paramISARRAY;
 	static const char* const paramQualifierFlavor;
-	static const char* const paramArraySize; 
+	static const char* const paramArraySize;
+
+	static void processQualifierDecl(OW_CIMXMLParser& result,
+		OW_CIMQualifierType& cimQualifier);
 
 protected:
-	static OW_XMLNode processQualifierDecl(const OW_XMLNode& result, 
-		OW_CIMQualifierType& cimQualifier)
-		/*throw (OW_CIMException)*/;
 
-	static OW_String getQualifierName(const OW_XMLNode& node)
+	static OW_String getQualifierName(OW_CIMXMLParser& node)
 		/*throw (OW_CIMException)*/;
 
 
 
 private:
 
-	static void processScope(const OW_XMLNode& result,
-		OW_CIMQualifierType& cqt, const OW_String& attrName, 
+	static void processScope(OW_CIMXMLParser& result,
+		OW_CIMQualifierType& cqt, const OW_String& attrName,
 		int scopeValue)
 		/*throw (OW_CIMException)*/;
 
-};  
+};
 
 #endif // _OW_XMLQWALIFIER_HPP__

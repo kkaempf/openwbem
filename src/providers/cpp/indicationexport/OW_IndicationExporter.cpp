@@ -29,7 +29,6 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_IndicationExporter.hpp"
-#include "OW_XMLParser.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_TempFileStream.hpp"

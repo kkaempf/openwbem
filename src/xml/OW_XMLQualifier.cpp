@@ -42,8 +42,8 @@
 #include "OW_XMLCIMFactory.hpp"
 
 // Static
-OW_XMLNode
-OW_XMLQualifier::processQualifierDecl(const OW_XMLNode& result,
+void
+OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 	OW_CIMQualifierType& cimQualifier)
 /*throw (OW_CIMException)*/
 {

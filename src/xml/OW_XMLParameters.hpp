@@ -38,7 +38,6 @@
 #define __OW_XMLPARAMETERS_HPP__
 
 #include	"OW_config.h"
-#include	"OW_String.hpp"
 
 class OW_XMLParameters
 {

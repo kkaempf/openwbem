@@ -33,20 +33,20 @@
 
 #include "OW_config.h"
 #include "OW_XMLOperationGeneric.hpp"
-#include "OW_XMLNode.hpp"
-#include "OW_CIMObjectPath.hpp"
-#include "OW_String.hpp"
+#include "OW_CIMFwd.hpp"
+
+class OW_CIMXMLParser;
 
 class OW_XMLClass : public OW_XMLOperationGeneric
 {
 public:
-	static OW_String getNameSpace(const OW_XMLNode& localNameNode);
-	static OW_CIMObjectPath getObjectWithPath(OW_XMLNode& node,
+	static OW_String getNameSpace(OW_CIMXMLParser& parser);
+	static OW_CIMObjectPath getObjectWithPath(OW_CIMXMLParser& parser,
 			OW_CIMClassArray& cArray, OW_CIMInstanceArray& iArray);
-	static OW_CIMClass readClass(OW_XMLNode& childNode, OW_CIMObjectPath& path);
-	static OW_CIMInstance readInstance(OW_XMLNode& childNode,
+	static OW_CIMClass readClass(OW_CIMXMLParser& parser, OW_CIMObjectPath& path);
+	static OW_CIMInstance readInstance(OW_CIMXMLParser& parser,
 			OW_CIMObjectPath& path);
-	static void getInstanceName(OW_XMLNode& result, OW_CIMObjectPath& cimPath);
+	static void getInstanceName(OW_CIMXMLParser& parser, OW_CIMObjectPath& cimPath);
 
 };
 

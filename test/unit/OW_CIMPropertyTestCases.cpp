@@ -38,9 +38,8 @@
 #include "OW_CIMtoXML.hpp"
 #include "OW_TempFileStream.hpp"
 #include "OW_CIMtoXML.hpp"
-#include "OW_XMLNode.hpp"
 #include "OW_XMLCIMFactory.hpp"
-#include "OW_XMLParser.hpp"
+#include "OW_CIMXMLParser.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
 

@@ -38,6 +38,12 @@
 #include "OW_XMLQualifier.hpp"
 #include "OW_Param.hpp"
 
+class OW_ClientOperation
+{
+public:
+	virtual ~OW_ClientOperation() {}
+	virtual void operator()(OW_CIMXMLParser& parser) = 0;
+};
 
 class OW_CIMXMLCIMOMHandle : public OW_ClientCIMOMHandle, OW_XMLQualifier
 {
@@ -610,13 +616,20 @@ public:
 private:
 	void sendXMLHeader( const OW_String &, const OW_CIMObjectPath &,
 		std::ostream& ostr, bool intrinsic = true);
+
 	void sendXMLTrailer(std::ostream& ostr, bool intrinsic = true);
-	OW_XMLNode doSendRequest(OW_Reference<std::iostream> ostr,
-		const OW_String& methodName, const OW_CIMObjectPath& path);
-	OW_XMLNode checkNodeForCIMError(OW_XMLNode reply,
-		const OW_String& operation); // throws a CIMException
-	OW_XMLNode intrinsicMethod(
+
+	void doSendRequest(OW_Reference<std::iostream> ostr,
+		const OW_String& methodName, const OW_CIMObjectPath& path,
+		bool isIntrinsic,
+		OW_ClientOperation& op);
+
+	void checkNodeForCIMError(OW_CIMXMLParser& reply,
+		const OW_String& operation, bool isIntrinsic); // throws a CIMException
+
+	void intrinsicMethod(
 		const OW_CIMObjectPath& path, const OW_String& operation,
+		OW_ClientOperation& op,
 		const OW_Array<OW_Param>& params = OW_Array<OW_Param>(),
 		const OW_String& extra = OW_String());
 	

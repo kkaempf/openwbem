@@ -33,18 +33,18 @@
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 
-class OW_XMLNode;
+class OW_CIMXMLParser;
 
-struct OW_XMLCIMFactory
+namespace OW_XMLCIMFactory
 {
-	static OW_CIMObjectPath createObjectPath(OW_XMLNode const& node);
-	static OW_CIMClass createClass(OW_XMLNode const& node);
+	static OW_CIMObjectPath createObjectPath(OW_CIMXMLParser& node);
+	static OW_CIMClass createClass(OW_CIMXMLParser& node);
 	static OW_CIMInstance createInstance(OW_CIMXMLParser& node);
-	static OW_CIMValue createValue(OW_XMLNode const& node, OW_String const& type);
-	static OW_CIMQualifier createQualifier(OW_XMLNode const& node);
-	static OW_CIMMethod createMethod(OW_XMLNode const& node);
-	static OW_CIMProperty createProperty(OW_XMLNode const& node);
-	static OW_CIMParameter createParameter(OW_XMLNode const& node);
+	static OW_CIMValue createValue(OW_CIMXMLParser& node, OW_String const& type);
+	static OW_CIMQualifier createQualifier(OW_CIMXMLParser& node);
+	static OW_CIMMethod createMethod(OW_CIMXMLParser& node);
+	static OW_CIMProperty createProperty(OW_CIMXMLParser& node);
+	static OW_CIMParameter createParameter(OW_CIMXMLParser& node);
 };
 
 #endif

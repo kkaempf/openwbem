@@ -41,14 +41,14 @@
 
 //////////////////////////////////////////////////////////////////////////////		
 OW_String
-OW_XMLClass::getNameSpace(const OW_XMLNode& localNameNodeArg)
+OW_XMLClass::getNameSpace(const OW_CIMXMLParser& localNameNodeArg)
 {
 	OW_String nameSpace;
 	OW_Bool firstTime = true;
-	OW_XMLNode localNameNode = localNameNodeArg;
+	OW_CIMXMLParser localNameNode = localNameNodeArg;
 	for(; localNameNode; localNameNode = localNameNode.getNext())
 	{
-		if (localNameNode.getToken() == OW_XMLNode::XML_ELEMENT_NAMESPACE)
+		if (localNameNode.getToken() == OW_CIMXMLParser::XML_ELEMENT_NAMESPACE)
 		{
 			OW_String pname = localNameNode.getAttribute(OW_XMLAttribute::NAME);
 			if(pname.length())
@@ -70,31 +70,28 @@ OW_XMLClass::getNameSpace(const OW_XMLNode& localNameNodeArg)
 
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMObjectPath
-OW_XMLClass::getObjectWithPath(OW_XMLNode& node, OW_CIMClassArray& cArray,
+OW_XMLClass::getObjectWithPath(OW_CIMXMLParser& parser, OW_CIMClassArray& cArray,
 	OW_CIMInstanceArray& iArray)
 {
-	int token=node.getToken();
+	OW_CIMXMLParser::tokenId token = parser.getToken();
 
-	OW_XMLNode nextNode = node.getChild();
+	parser.mustGetChild();
 	
-	if(!nextNode)
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Missing element in object with path declaration");
-	
-	if (token == OW_XMLNode::XML_ELEMENT_VALUE_OBJECTWITHPATH)
+	if (token == OW_CIMXMLParser::XML_ELEMENT_VALUE_OBJECTWITHPATH)
 	{
-		OW_CIMObjectPath tmpcop = OW_XMLCIMFactory::createObjectPath(nextNode);
+		OW_CIMObjectPath tmpcop = OW_XMLCIMFactory::createObjectPath(parser);
 			
 		token = nextNode.getToken();
 		
-		if (token == OW_XMLNode::XML_ELEMENT_CLASSPATH)
+		if (token == OW_CIMXMLParser::XML_ELEMENT_CLASSPATH)
 		{
-		    nextNode = nextNode.mustNextElement(OW_XMLNode::XML_ELEMENT_CLASS);
-		    cArray.append(readClass(nextNode,tmpcop));
+			parser.mustGetNext(OW_CIMXMLParser::XML_ELEMENT_CLASS);
+		    cArray.append(readClass(parser,tmpcop));
 		}
-		else if (token==OW_XMLNode::XML_ELEMENT_INSTANCEPATH)
+		else if (token==OW_CIMXMLParser::XML_ELEMENT_INSTANCEPATH)
 		{
-		    nextNode=nextNode.mustNextElement(OW_XMLNode::XML_ELEMENT_INSTANCE);
-		    iArray.append(readInstance(nextNode,tmpcop));
+			parser.mustGetNext(OW_CIMXMLParser::XML_ELEMENT_INSTANCE);
+		    iArray.append(readInstance(parser,tmpcop));
 		}
 		else
 		{
@@ -103,19 +100,19 @@ OW_XMLClass::getObjectWithPath(OW_XMLNode& node, OW_CIMClassArray& cArray,
 		
 		return(tmpcop);
 	}
-	else if (token==OW_XMLNode::XML_ELEMENT_VALUE_OBJECTWITHLOCALPATH)
+	else if (token==OW_CIMXMLParser::XML_ELEMENT_VALUE_OBJECTWITHLOCALPATH)
 	{
-	    OW_CIMObjectPath tmpcop = OW_XMLCIMFactory::createObjectPath(nextNode);
+	    OW_CIMObjectPath tmpcop = OW_XMLCIMFactory::createObjectPath(parser);
 			
 	    token = nextNode.getToken();
-	    if (token == OW_XMLNode::XML_ELEMENT_LOCALCLASSPATH)
+	    if (token == OW_CIMXMLParser::XML_ELEMENT_LOCALCLASSPATH)
 		{
-			nextNode = nextNode.mustNextElement(OW_XMLNode::XML_ELEMENT_CLASS);
+			nextNode = nextNode.mustNextElement(OW_CIMXMLParser::XML_ELEMENT_CLASS);
 		    cArray.append(readClass(nextNode,tmpcop));
 	    }
-		else if (token == OW_XMLNode::XML_ELEMENT_LOCALINSTANCEPATH)
+		else if (token == OW_CIMXMLParser::XML_ELEMENT_LOCALINSTANCEPATH)
 		{
-			nextNode = nextNode.mustNextElement(OW_XMLNode::XML_ELEMENT_INSTANCE);
+			nextNode = nextNode.mustNextElement(OW_CIMXMLParser::XML_ELEMENT_INSTANCE);
 		    iArray.append(readInstance(nextNode,tmpcop));
 	    }
 		else
@@ -130,9 +127,9 @@ OW_XMLClass::getObjectWithPath(OW_XMLNode& node, OW_CIMClassArray& cArray,
 
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMClass
-OW_XMLClass::readClass(OW_XMLNode& childNode, OW_CIMObjectPath& path)
+OW_XMLClass::readClass(OW_CIMXMLParser& childNode, OW_CIMObjectPath& path)
 {
-	if(childNode.getToken() == OW_XMLNode::XML_ELEMENT_CLASS)
+	if(childNode.getToken() == OW_CIMXMLParser::XML_ELEMENT_CLASS)
 	{
 		OW_CIMClass cimClass = OW_XMLCIMFactory::createClass(childNode);
 	
@@ -145,10 +142,10 @@ OW_XMLClass::readClass(OW_XMLNode& childNode, OW_CIMObjectPath& path)
 
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMInstance
-OW_XMLClass::readInstance(OW_XMLNode& childNode, OW_CIMObjectPath& path)
+OW_XMLClass::readInstance(OW_CIMXMLParser& childNode, OW_CIMObjectPath& path)
 {
 	(void)path;
-	if (childNode.getToken() == OW_XMLNode::XML_ELEMENT_INSTANCE)
+	if (childNode.getToken() == OW_CIMXMLParser::XML_ELEMENT_INSTANCE)
 	{
 		OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(childNode);
 	    return(cimInstance);
@@ -159,28 +156,28 @@ OW_XMLClass::readInstance(OW_XMLNode& childNode, OW_CIMObjectPath& path)
 
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_XMLClass::getInstanceName(OW_XMLNode& result,
+OW_XMLClass::getInstanceName(OW_CIMXMLParser& result,
 								OW_CIMObjectPath& cimPath)
 {
 	OW_CIMPropertyArray propertyArray;
 	OW_CIMProperty cp;
-	result = result.mustFindElement(OW_XMLNode::XML_ELEMENT_INSTANCENAME);
+	result = result.mustFindElement(OW_CIMXMLParser::XML_ELEMENT_INSTANCENAME);
 
 	OW_String thisClassName = result.getAttribute(OW_XMLAttribute::CLASS_NAME);
 	cimPath.setObjectName(thisClassName);
 
-	OW_XMLNode sub = result.getChild();
+	OW_CIMXMLParser sub = result.getChild();
 	int token = sub.getToken();
 
-	if (token == OW_XMLNode::XML_ELEMENT_KEYBINDING)
+	if (token == OW_CIMXMLParser::XML_ELEMENT_KEYBINDING)
 	{
 		for(; sub; sub = sub.getNext())
 		{
 			OW_CIMValue value;
 			OW_String name;
-			OW_XMLNode keyval;
+			OW_CIMXMLParser keyval;
 		
-			sub.mustElement(OW_XMLNode::XML_ELEMENT_KEYBINDING);
+			sub.mustElement(OW_CIMXMLParser::XML_ELEMENT_KEYBINDING);
 			name = sub.getAttribute(OW_XMLAttribute::NAME);
 
 			keyval = sub.mustGetChild();
@@ -188,10 +185,10 @@ OW_XMLClass::getInstanceName(OW_XMLNode& result,
 
 			switch(token)
 			{
-				case OW_XMLNode::XML_ELEMENT_KEYVALUE:
+				case OW_CIMXMLParser::XML_ELEMENT_KEYVALUE:
 					value = OW_CIMValue(keyval.getText());
 					break;
-				case OW_XMLNode::XML_ELEMENT_VALUE_REFERENCE:
+				case OW_CIMXMLParser::XML_ELEMENT_VALUE_REFERENCE:
 					value = OW_CIMValue(OW_XMLCIMFactory::createObjectPath(keyval.getChild()));
 					break;
 				default:
@@ -203,7 +200,7 @@ OW_XMLClass::getInstanceName(OW_XMLNode& result,
 			propertyArray.push_back(cp);
 		}
 	}
-	else if (token == OW_XMLNode::XML_ELEMENT_KEYVALUE)
+	else if (token == OW_CIMXMLParser::XML_ELEMENT_KEYVALUE)
 	{
 		//-------------------------------------
 		// HOW DO WE GET THE PROPERTY NAME?
@@ -214,7 +211,7 @@ OW_XMLClass::getInstanceName(OW_XMLNode& result,
 		cp.setValue(value);
 		propertyArray.push_back(cp);
 	}
-	else if (token == OW_XMLNode::XML_ELEMENT_VALUE_REFERENCE)
+	else if (token == OW_CIMXMLParser::XML_ELEMENT_VALUE_REFERENCE)
 	{
 		//-------------------------------------
 		// HOW DO WE GET THE PROPERTY NAME?

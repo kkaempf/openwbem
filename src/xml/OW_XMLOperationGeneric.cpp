@@ -34,7 +34,6 @@
 
 #include "OW_config.h"
 #include "OW_Param.hpp"
-#include "OW_XMLNode.hpp"
 #include "OW_XMLOperationGeneric.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMErrorException.hpp"
@@ -53,39 +52,39 @@ OW_XMLOperationGeneric::extrinsicMethod(ostream& ostr, OW_XMLNode& node,
 	OW_ASSERT(0);
 }
 
-OW_XMLNode
-OW_XMLOperationGeneric::XMLGetCIMElement(OW_XMLNode& node)
-{
-	if(node.getToken() != OW_XMLNode::XML_ELEMENT_CIM)
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Could not find <CIM> element");
-	}
-	
-	OW_String str = node.mustGetAttribute(CIMVERSION);
-
-	if(!str.equals(CIMVERSION_VALUE))
-	{
-		OW_THROW(OW_CIMErrorException,
-			OW_CIMErrorException::unsupported_cim_version);
-	}
-	
-	str = node.mustGetAttribute(DTDVERSION);
-	if(!str.equals(DTDVERSION_VALUE))
-	{
-		OW_THROW(OW_CIMErrorException,
-			OW_CIMErrorException::unsupported_dtd_version);
-	}
-	
-	node = node.getChild();
-	if(!node)
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "No child for <CIM> element");
-	}
-	
-	return(node);
-}
-
-
+// OW_XMLNode
+// OW_XMLOperationGeneric::XMLGetCIMElement(OW_XMLNode& node)
+// {
+//     if(node.getToken() != OW_XMLNode::XML_ELEMENT_CIM)
+//     {
+//         OW_THROWCIMMSG(OW_CIMException::FAILED, "Could not find <CIM> element");
+//     }
+//
+//     OW_String str = node.mustGetAttribute(CIMVERSION);
+//
+//     if(!str.equals(CIMVERSION_VALUE))
+//     {
+//         OW_THROW(OW_CIMErrorException,
+//             OW_CIMErrorException::unsupported_cim_version);
+//     }
+//
+//     str = node.mustGetAttribute(DTDVERSION);
+//     if(!str.equals(DTDVERSION_VALUE))
+//     {
+//         OW_THROW(OW_CIMErrorException,
+//             OW_CIMErrorException::unsupported_dtd_version);
+//     }
+//
+//     node = node.getChild();
+//     if(!node)
+//     {
+//         OW_THROWCIMMSG(OW_CIMException::FAILED, "No child for <CIM> element");
+//     }
+//
+//     return(node);
+// }
+//
+//
 const char* const OW_XMLOperationGeneric::CIMVERSION = "CIMVERSION";
 const char* const OW_XMLOperationGeneric::DTDVERSION = "DTDVERSION";
 const char* const OW_XMLOperationGeneric::MSG_ID = "ID";

@@ -29,7 +29,6 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_XMLCIMFactory.hpp"
-#include "OW_XMLNode.hpp"
 #include "OW_String.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_XMLClass.hpp"
@@ -46,7 +45,6 @@
 #include "OW_CIMFlavor.hpp"
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMValueCast.hpp"
-#include "OW_XMLParser.hpp"
 #include "OW_XMLException.hpp"
 #include "OW_TempFileStream.hpp"
 
@@ -629,7 +627,7 @@ OW_XMLCIMFactory::createQualifier(OW_CIMXMLParser& parser)
 	parser.mustGetNext();
 
 	OW_XMLNode valueNode;
-	if(parser.tokenIs(OW_XMLNode::XML_ELEMENT_VALUE_ARRAY) 
+	if(parser.tokenIs(OW_XMLNode::XML_ELEMENT_VALUE_ARRAY)
 		|| parser.tokenIs(OW_XMLNode::XML_ELEMENT_VALUE))
 	{
 		rval.setValue(createValue(parser, cimType));
