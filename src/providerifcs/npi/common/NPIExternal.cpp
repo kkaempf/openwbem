@@ -730,7 +730,7 @@ CIMObjectPathGetStringKeyValue(NPIHandle* npiHandle,
 	for (int i = 0, n = props.size(); i < n; i++)
 	{
 		OW_CIMProperty cp = props[i];
-		if (cp.getName() == Key)
+		if (cp.getName().equalsIgnoreCase(Key))
 		{
 			OW_CIMValue cv = cp.getValue();
 			if (cv.getType() != OW_CIMDataType::STRING)	return NULL;
@@ -781,7 +781,7 @@ CIMObjectPathGetIntegerKeyValue(NPIHandle* npiHandle,
 	for (int i = 0, n = props.size(); i < n; i++)
 	{
 		OW_CIMProperty cp = props[i];
-		if (cp.getName() == Key)
+		if (cp.getName().equalsIgnoreCase(Key))
 		{
 			OW_CIMValue cv = cp.getValue();
 
@@ -852,7 +852,7 @@ CIMObjectPathGetRefKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 	for (int i = 0, n = props.size(); i < n; i++)
 	{
 		OW_CIMProperty cp = props[i];
-		if (cp.getName() == Key)
+		if (cp.getName().equalsIgnoreCase(Key))
 		{
 			OW_CIMValue cv = cp.getValue();
 
