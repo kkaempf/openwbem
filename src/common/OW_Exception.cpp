@@ -65,7 +65,7 @@ static void freeBuf(char** ptr)
 	*ptr = NULL;
 }
 //////////////////////////////////////////////////////////////////////////////					
-static char* dupString(const char* str)
+char* Exception::dupString(const char* str)
 {
 	if (!str)
 	{
@@ -82,9 +82,9 @@ static char* dupString(const char* str)
 //////////////////////////////////////////////////////////////////////////////					
 Exception::Exception(const char* file, int line, const char* msg)
 	: std::exception()
-	, m_file(0)
+	, m_file(dupString(file))
 	, m_line(line)
-	, m_msg(0)
+	, m_msg(dupString(msg))
 	, m_subClassId(UNKNOWN_SUBCLASS_ID)
 	, m_subException(0)
 	, m_errorCode(UNKNOWN_ERROR_CODE)
@@ -95,15 +95,13 @@ Exception::Exception(const char* file, int line, const char* msg)
 #if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
 	m_mutex->acquire();
 #endif
-	m_file = dupString(file);
-	m_msg = dupString(msg);
 }
 //////////////////////////////////////////////////////////////////////////////					
 Exception::Exception(int subClassId, const char* file, int line, const char* msg, int errorCode, const Exception* subException)
 	: std::exception()
-	, m_file(0)
+	, m_file(dupString(file))
 	, m_line(line)
-	, m_msg(0)
+	, m_msg(dupString(msg))
 	, m_subClassId(subClassId)
 	, m_subException(subException ? subException->clone() : 0)
 	, m_errorCode(errorCode)
@@ -114,15 +112,13 @@ Exception::Exception(int subClassId, const char* file, int line, const char* msg
 #if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
 	m_mutex->acquire();
 #endif
-	m_file = dupString(file);
-	m_msg = dupString(msg);
 }
 //////////////////////////////////////////////////////////////////////////////					
 Exception::Exception(const char* file, int line, const char* msg, int errorCode, const Exception* subException, int subClassId)
 	: std::exception()
-	, m_file(0)
+	, m_file(dupString(file))
 	, m_line(line)
-	, m_msg(0)
+	, m_msg(dupString(msg))
 	, m_subClassId(subClassId)
 	, m_subException(subException ? subException->clone() : 0)
 	, m_errorCode(errorCode)
@@ -133,8 +129,6 @@ Exception::Exception(const char* file, int line, const char* msg, int errorCode,
 #if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
 	m_mutex->acquire();
 #endif
-	m_file = dupString(file);
-	m_msg = dupString(msg);
 }
 //////////////////////////////////////////////////////////////////////////////					
 Exception::Exception( const Exception& e )

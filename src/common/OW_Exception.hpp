@@ -152,6 +152,14 @@ public:
 	 */
 	virtual Exception* clone() const;
 
+	/**
+	 * Utility function to copy a string. This function will not throw--if allocation fails, 0 is returned.
+	 * The result must be free[]'d.
+	 * if str == 0, 0 is returned.
+	 * TODO: This function doesn't really belong on this class, but so far only this class and subclasses have a use for it.
+	 */
+	char* dupString(const char* str);
+
 private:
 	char* m_file;
 	int m_line;
