@@ -41,9 +41,9 @@ perlNPI.marker:
 	touch perlNPI.marker
 	if test -e $(top_builddir)/src/providerifcs/perl/perlProvider/perlNPI; then true; else cp -a $(top_srcdir)/src/providerifcs/perl/perlProvider/perlNPI $(top_builddir)/src/providerifcs/perl/perlProvider; fi
 	chmod -R +w perlNPI
-	if test -e perlNPI/Makefile; then make -C perlNPI clean;fi
+	if test -e perlNPI/Makefile; then $(MAKE) -C perlNPI clean;fi
 	cd perlNPI;$(PERL) Makefile.PL;cd ..
-	make -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI
+	$(MAKE) -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI
 
 perlxsi.c:
 	$(PERL) -MExtUtils::Embed -e xsinit -- -o $(top_srcdir)/src/providerifcs/perl/perlProvider/perlxsi.c
@@ -56,24 +56,24 @@ install-exec-local:
 		ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
 	done
 	cd perlNPI;$(PERL) Makefile.PL PREFIX=$(DESTDIR)/$(prefix) INSTALLDIRS=vendor;cd ..
-	make -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI install
+	$(MAKE) -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI install
 
 uninstall-local:
 	for i in $(OW_SHARED_LIBS); do \
 		rm -f $(DESTDIR)$(thelibdir)/$$i.$(SO_EXT); \
 		rm -f $(DESTDIR)$(thelibdir)/$$i; \
 	done
-	make -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI uninstall
+	$(MAKE) -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI uninstall
 
 clean-local:
 	for i in $(OW_SHARED_LIBS); do \
 		rm -rf $$i* .$$i.libs; \
 	done
-	-make -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI clean
+	-$(MAKE) -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI clean
 	if [ "$(top_srcdir)" != "$(top_builddir)" ]; then rm -rf perlNPI perlNPI.marker; fi
 
 distclean-local:
-	-make -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI distclean
+	-$(MAKE) -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI distclean
 
 libperlProvider_a_SOURCES = \
 perlProvider.c \
