@@ -36,7 +36,7 @@
 #include "OW_WQLIFC.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMParamValue.hpp"
-#include "OW_CIMRepository2.hpp"
+#include "OW_CIMRepository.hpp"
 #include "OW_NoSuchProviderException.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
@@ -342,7 +342,7 @@ CIMServer::CIMServer(CIMOMEnvironmentRef env,
 	, m_nsClass_Namespace(CIMNULL)
 	, m_env(env)
 	, m_cimRepository(cimRepository)
-	, m_realRepository(dynamic_pointer_cast<CIMRepository2>(m_cimRepository))
+	, m_realRepository(dynamic_pointer_cast<CIMRepository>(m_cimRepository))
 {
 }
 //////////////////////////////////////////////////////////////////////////////

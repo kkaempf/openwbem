@@ -36,7 +36,7 @@
 #include "OW_SafeLibCreate.hpp"
 #include "OW_SelectEngine.hpp"
 #include "OW_CIMServer.hpp"
-#include "OW_CIMRepository2.hpp"
+#include "OW_CIMRepository.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_ServiceIFC.hpp"
@@ -260,7 +260,7 @@ CIMOMEnvironment::startServices()
 		m_providerManager = ProviderManagerRef(new ProviderManager);
 		m_providerManager->load(ProviderIFCLoader::createProviderIFCLoader(
 			g_cimomEnvironment));
-		m_cimRepository = RepositoryIFCRef(new CIMRepository2(g_cimomEnvironment));
+		m_cimRepository = RepositoryIFCRef(new CIMRepository(g_cimomEnvironment));
 		m_cimRepository->open(getConfigItem(ConfigOpts::DATA_DIR_opt));
 		m_cimServer = RepositoryIFCRef(new CIMServer(g_cimomEnvironment,
 			m_providerManager, m_cimRepository));
