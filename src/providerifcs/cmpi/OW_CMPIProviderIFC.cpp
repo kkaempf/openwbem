@@ -44,7 +44,6 @@
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_CMPIAssociatorProviderProxy.hpp"
 #endif
-#include "OW_CMPIPolledProviderProxy.hpp"
 #include "OW_CMPIIndicationProviderProxy.hpp"
 
 #include <algorithm>
