@@ -17,9 +17,10 @@ Testing:
 Fix problems:
     - Man pages aren't getting included in the rpm.
     - Fix std::exception (basic_ios::clear(iostate) caused exception in OW_HTTPSvrConnection::run()
-	- Update the *.HOWTO files.
-	- To avoid permanent deadlocks, change most locks to use a timeout.
-	  - If a timeout happens, certain places can retry the operation.
+    - Update the *.HOWTO files.
+    - To avoid permanent deadlocks, change most locks to use a timeout.
+      - If a timeout happens, certain places can retry the operation.
+    - use DIST_SUBDIRS
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
@@ -147,7 +148,7 @@ Documentation:
     - Make a web page that has a list of projects/products that are using 
       OpenWBEM.
     - Update javadoc on header files in ifcs, common, client, and provider.
-	- Document how to create an SSL key+cert
+    - Document how to create an SSL key+cert
 
 Optimizations:
     - Use KCacheGrind to find any hot spots
