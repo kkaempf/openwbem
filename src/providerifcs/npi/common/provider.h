@@ -39,8 +39,7 @@ static void cleanup ( NPIHandle * );
 #ifdef INSTANCE_PROVIDER
 #define _INCLUDE_INSTANCE_PROVIDER_METHODS \
             enumInstanceNames, enumInstances, \
-            getInstance, createInstance, setInstance, deleteInstance, 0,
-//            getInstance, createInstance, setInstance, deleteInstance, execQuery,
+            getInstance, createInstance, setInstance, deleteInstance, execQuery,
 #else
 #define _INCLUDE_INSTANCE_PROVIDER_METHODS \
             0, 0, 0, 0, 0, 0, 0,
@@ -53,8 +52,8 @@ static CIMObjectPath createInstance ( NPIHandle *, CIMObjectPath,
 				      CIMInstance );
 static void setInstance ( NPIHandle *, CIMObjectPath, CIMInstance );
 static void deleteInstance ( NPIHandle *, CIMObjectPath );
-/*static Vector execQuery ( NPIHandle *, CIMObjectPath, const char *, int, 
-			  CIMClass );*/
+static Vector execQuery ( NPIHandle *, CIMObjectPath, const char *, int, 
+			  CIMClass );
 
 /* 
  * This part defines the AssociatorProvider methods and their function 
@@ -91,6 +90,27 @@ static CIMValue invokeMethod ( NPIHandle *, CIMObjectPath,
 #endif
 
 
+/*
+ * This part defines the EventProvider interface
+ */
+#ifdef EVENT_PROVIDER
+
+static void authorizeFilter(NPIHandle*,SelectExp,const char*,
+       CIMObjectPath, const char*);
+static int mustPoll(NPIHandle*,SelectExp,const char*,
+       CIMObjectPath);
+static void activateFilter(NPIHandle*,SelectExp,const char*,
+       CIMObjectPath,int);
+static void deActivateFilter(NPIHandle*,SelectExp,const char*,
+       CIMObjectPath,int);
+
+#define _INCLUDE_EVENT_PROVIDER_METHODS \
+            authorizeFilter,mustPoll,activateFilter,deActivateFilter,
+#else
+#define _INCLUDE_EVENT_PROVIDER_METHODS \
+            0,0,0,0,
+#endif
+
 
 /* the macro to generate the exported <LIBNAME>_initFunctionTable() */
 #define PROVIDER_NAME(n) EXTERN_C \
@@ -101,6 +121,7 @@ static CIMValue invokeMethod ( NPIHandle *, CIMObjectPath,
              _INCLUDE_INSTANCE_PROVIDER_METHODS \
              _INCLUDE_ASSOCIATOR_PROVIDER_METHODS \
              _INCLUDE_METHOD_PROVIDER_METHODS \
+             _INCLUDE_EVENT_PROVIDER_METHODS \
              }; \
       return fTable; \
     }

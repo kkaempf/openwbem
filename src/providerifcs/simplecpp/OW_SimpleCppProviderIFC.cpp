@@ -75,7 +75,8 @@ OW_SimpleCppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& i,
 	OW_AssociatorProviderInfoArray& a,
 	OW_MethodProviderInfoArray& m,
-	OW_PropertyProviderInfoArray& p)
+	OW_PropertyProviderInfoArray& p,
+	OW_IndicationProviderInfoArray& ind)
 {
 	// TOOD: modify this and the providers to get the InstanceProviderInfo
 	(void)env;
@@ -83,6 +84,7 @@ OW_SimpleCppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	(void)a;
 	(void)m;
 	(void)p;
+	(void)ind;
 	return;
 }
 
@@ -188,6 +190,14 @@ OW_SimpleCppProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFC
 			provIdString));
 	}
 
+	OW_THROW(OW_NoSuchProviderException, provIdString);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_IndicationProviderIFCRef
+OW_SimpleCppProviderIFC::doGetIndicationProvider(const OW_ProviderEnvironmentIFCRef&,
+	const char* provIdString)
+{
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 

@@ -52,6 +52,7 @@ $(top_builddir)/src/cimom/OW_NameSpaceProvider.o \
 $(top_builddir)/src/cimom/OW_WQLFilterRep.o \
 $(top_builddir)/src/cimom/OW_HDBNode.o \
 $(top_builddir)/src/cimom/OW_InternalProviderIFC.o \
+$(top_builddir)/src/cimom/OW_CIMRepository.o \
 $(top_builddir)/test/CppUnit/libCppUnit.a \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/server -lowserver \

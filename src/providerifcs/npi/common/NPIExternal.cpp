@@ -2,6 +2,11 @@
 #include "NPIProvider.hpp"
 #include "NPIExternal.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_Format.hpp"
+
+#include "OW_CIMOMEnvironment.hpp"
+#include "OW_LocalCIMOMHandle.hpp"
+
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 
@@ -898,6 +903,18 @@ CIMObjectPathAddRefKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 	ref->addKey(Key,Value);
 }
 
+// SelectExp functions
+
+//////////////////////////////////////////////////////////////////////////////
+extern "C" char * 
+SelectExpGetSelectString(NPIHandle* npiHandle, SelectExp sxp)
+{
+	(void)npiHandle;
+
+	char * query = static_cast<char *>(sxp.ptr);
+	return query;
+}
+
 // CIMOM functions
 
 //////////////////////////////////////////////////////////////////////////////
@@ -996,6 +1013,104 @@ CIMOMGetInstance(NPIHandle* npiHandle, CIMObjectPath cop, int i)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+extern "C" void
+CIMOMDeliverProcessEvent(NPIHandle* npiHandle, char * ns,
+		CIMInstance indication)
+{
+	(void)ns;
+	OW_ProviderEnvironmentIFCRef * provenv =
+		static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
+
+	OW_CIMInstance * ow_indication =
+           static_cast<OW_CIMInstance *>(indication.ptr);
+
+	try
+	{
+		(*provenv)->getCIMOMHandle()->exportIndication(
+			* ow_indication, OW_String("root/cimv2"));
+	}
+	catch (...)
+	{
+		// cerr << "Whatever the cause it went wrong\n";
+		// TODO: log this, and catch the correct exception.
+		npiHandle->errorOccurred = 1;
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+extern "C" void
+CIMOMDeliverInstanceEvent(NPIHandle* npiHandle, char * ns,
+			CIMInstance indication, 
+                          CIMInstance source, CIMInstance previous)
+{
+	(void)ns;
+	OW_ProviderEnvironmentIFCRef * provenv =
+		static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
+	OW_CIMInstance * ow_indication =
+           static_cast<OW_CIMInstance *>(indication.ptr);
+	OW_CIMInstance * ow_source = static_cast<OW_CIMInstance *>(source.ptr);
+	OW_CIMInstance * ow_previous =
+           static_cast<OW_CIMInstance *>(previous.ptr);
+
+        OW_CIMValue src_val(* ow_source);
+        OW_CIMValue prev_val(* ow_previous);
+
+	ow_indication->setProperty(OW_String("SourceInstance"), src_val);
+           
+	ow_indication->setProperty(OW_String("PreviousInstance"), prev_val);
+
+	try
+	{
+		(*provenv)->getCIMOMHandle()->exportIndication(
+			* ow_indication, OW_String("root/cimv2"));
+	}
+	catch (...)
+	{
+		// cerr << "Whatever the cause it went wrong\n";
+		// TODO: log this, and catch the correct exception.
+		npiHandle->errorOccurred = 1;
+	}
+	(*provenv)->getLogger()->logDebug(format("NPIExternal: Deliver %1", npiHandle->errorOccurred));
+}
+//////////////////////////////////////////////////////////////////////////////
+extern "C" NPIHandle *
+CIMOMPrepareAttach(NPIHandle* npiHandle)
+{
+    ::NPIHandle * nh = new ::NPIHandle(*npiHandle);
+        // clone the providerenvironment
+    OW_ProviderEnvironmentIFCRef * provenv =
+        static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
+    nh->thisObject = new OW_ProviderEnvironmentIFCRef(*provenv);
+    // need to worry about errorOccurred and providerError???   
+    return nh;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+extern "C" void
+CIMOMCancelAttach(NPIHandle* npiHandle)
+{
+    delete static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
+    if (npiHandle->providerError != NULL)
+        free((void *)(npiHandle->providerError));
+    free(npiHandle);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+extern "C" void
+CIMOMAttachThread(NPIHandle* npiHandle)
+{
+	if (npiHandle == NULL) return;
+	npiHandle->errorOccurred = 0;
+}
+//////////////////////////////////////////////////////////////////////////////
+extern "C" void
+CIMOMDetachThread(NPIHandle* npiHandle)
+{
+	if (npiHandle == NULL) return;
+	npiHandle->errorOccurred = 0;
+}
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 extern "C" char*
 _ObjectToString(NPIHandle* npiHandle, void* co)
 {
@@ -1012,6 +1127,13 @@ extern "C" int
 errorCheck(NPIHandle* npiHandle )
 {
 	return npiHandle->errorOccurred;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+extern "C" void
+errorReset(NPIHandle* npiHandle )
+{
+	npiHandle->errorOccurred = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

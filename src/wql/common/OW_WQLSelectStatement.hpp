@@ -159,6 +159,7 @@ public:
 	*/
 	void print(std::ostream& ostr) const;
 
+
 	void compileWhereClause(const OW_WQLPropertySource* source, OW_WQLCompile& wcl);
 
 private:

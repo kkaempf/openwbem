@@ -149,10 +149,18 @@ OW_CppInstanceProviderProxy::enumInstances(
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
+		OW_Bool localOnly, 
+		OW_Bool deep, 
+		OW_Bool includeQualifiers, 
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& requestedClass,
 		const OW_CIMClass& cimClass)
 {
 	m_pProv->updateAccessTime();
-	m_pProv->enumInstances(env, ns, className, result, cimClass);
+	m_pProv->enumInstances(env, ns, className, result, localOnly, deep, 
+		includeQualifiers, includeClassOrigin, propertyList, requestedClass, 
+		cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

@@ -62,7 +62,8 @@ protected:
 		OW_InstanceProviderInfoArray& i,
 		OW_AssociatorProviderInfoArray& a,
 		OW_MethodProviderInfoArray& m,
-		OW_PropertyProviderInfoArray& p);
+		OW_PropertyProviderInfoArray& p,
+		OW_IndicationProviderInfoArray& ind);
 
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
 		const OW_ProviderEnvironmentIFCRef& env,
@@ -77,6 +78,10 @@ protected:
 		const char* provIdString);
 
 	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const char* provIdString);
+
+	virtual OW_IndicationProviderIFCRef doGetIndicationProvider(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 

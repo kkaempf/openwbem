@@ -39,14 +39,23 @@
 #include "OW_NPIInstanceProviderProxy.hpp"
 #include "OW_NPIMethodProviderProxy.hpp"
 #include "OW_NPIAssociatorProviderProxy.hpp"
-//#include <setjmp.h>
+#include "OW_NPIPolledProviderProxy.hpp"
+#include "OW_NPIIndicationProviderProxy.hpp"
+
+//typedef OW_NPIProviderBaseIFC* (*ProviderCreationFunc)();
+// the closest approximation of NPIProviderBaseIFCRef is ::FTABLE
+
+typedef OW_FTABLERef* (*ProviderCreationFunc)();
+typedef const char* (*versionFunc_t)();
+
+const char* const OW_NPIProviderIFC::CREATIONFUNC = "createProvider";
 
 //////////////////////////////////////////////////////////////////////////////
 OW_NPIProviderIFC::OW_NPIProviderIFC()
 	: OW_ProviderIFCBaseIFC()
 	, m_provs()
 	, m_guard()
-	//, m_noidProviders()
+	, m_noidProviders()
 	, m_loadDone(false)
 {
 }
@@ -67,13 +76,13 @@ OW_NPIProviderIFC::~OW_NPIProviderIFC()
 	
 		m_provs.clear();
 	
-		//for(size_t i = 0; i < m_noidProviders.size(); i++)
-		//{
-		//	m_noidProviders[i]->cleanup();
-		//	m_noidProviders[i].setNull();
-		//}
+		for(size_t i = 0; i < m_noidProviders.size(); i++)
+		{
+			m_noidProviders[i]->fp_cleanup(0);
+			m_noidProviders[i].setNull();
+		}
 	
-		//m_noidProviders.clear();
+		m_noidProviders.clear();
 	}
 	catch (...)
 	{
@@ -87,7 +96,8 @@ OW_NPIProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef&,
 	OW_InstanceProviderInfoArray&,
 	OW_AssociatorProviderInfoArray&,
 	OW_MethodProviderInfoArray&,
-	OW_PropertyProviderInfoArray&)
+	OW_PropertyProviderInfoArray&,
+	OW_IndicationProviderInfoArray&)
 {
 	return;
 }
@@ -145,18 +155,21 @@ OW_PolledProviderIFCRefArray
 OW_NPIProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env)
 {
 	(void)env;
-	//loadNoIdProviders(env);
+	loadNoIdProviders(env);
 	OW_PolledProviderIFCRefArray rvra;
-	//for(size_t i = 0; i < m_noidProviders.size(); i++)
-	//{
-	//	OW_CppProviderBaseIFCRef pProv = m_noidProviders[i];
-	//	if(pProv->isPolledProvider())
-	//	{
-	//		rvra.append(
-	//			OW_PolledProviderIFCRef(new
-	//				OW_CppPolledProviderProxy(pProv.cast_to<OW_CppPolledProviderIFC>())));
-	//	}
-	//}
+	for(size_t i = 0; i < m_noidProviders.size(); i++)
+	{
+		//OW_NPIProviderBaseIFCRef pProv = m_noidProviders[i];
+		OW_FTABLERef pProv = m_noidProviders[i];
+
+		//  if (pProv->isPolledProvider())
+		if(pProv->fp_activateFilter)
+		{
+			rvra.append(
+				OW_PolledProviderIFCRef(new
+					OW_NPIPolledProviderProxy(pProv)));
+		}
+	}
 
 	return rvra;
 }
@@ -242,132 +255,158 @@ OW_NPIProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& e
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// void
-// OW_NPIProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
-// {
-//     OW_MutexLock ml(m_guard);
-//
-//     if(m_loadDone)
-//     {
-//         return;
-//     }
-//
-//     m_loadDone = true;
-//
-//     OW_String libPath = env->getConfigItem(OW_ConfigOpts::CPPIFC_PROV_LOC_opt);
-//
-//     if(libPath.empty())
-//     {
-//         libPath = DEFAULT_CPP_PROVIDER_LOCATION;
-//     }
-//
-//     OW_SharedLibraryLoaderRef ldr =
-//         OW_SharedLibraryLoader::createSharedLibraryLoader();
-//
-//     if(ldr.isNull())
-//     {
-//         env->getLogger()->logError("C++ provider ifc failed to get shared lib loader");
-//         return;
-//     }
-//
-//     OW_StringArray dirEntries;
-//     if(!OW_FileSystem::getDirectoryContents(libPath, dirEntries))
-//     {
-//         env->getLogger()->logError(format("C++ provider ifc failed getting contents of "
-//             "directory: %1", libPath));
-//         return;
-//     }
-//
-//     for(size_t i = 0; i < dirEntries.size(); i++)
-//     {
-//         if(!dirEntries[i].endsWith(".so"))
-//         {
-//             continue;
-//         }
-//
-//         OW_String libName = libPath;
-//         libName += OW_FILENAME_SEPARATOR;
-//         libName += dirEntries[i];
-//         OW_SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
-//             env->getLogger());
-//
-//         if(theLib.isNull())
-//         {
-//             env->getLogger()->logError(format("C++ provider ifc failed to load"
-//                 " library: %1", libName));
-//             continue;
-//         }
-//
-//         versionFunc_t versFunc;
-//         if(!OW_SharedLibrary::getFunctionPointer(theLib, "getOWVersion",
-//             versFunc))
-//         {
-//             env->getLogger()->logError(format("C++ provider ifc failed getting"
-//                 " function pointer to \"getOWVersion\" from library: %1",
-//                 libName));
-//             continue;
-//         }
-//
-//         const char* strVer = (*versFunc)();
-//         if(strcmp(strVer, OW_VERSION))
-//         {
-//             env->getLogger()->logError(format("C++ provider ifc got invalid version from "
-//                 "provider: %1", strVer));
-//             continue;
-//         }
-//
-//         ProviderCreationFunc createProvider;
-//         if(!OW_SharedLibrary::getFunctionPointer(theLib, OW_String(CREATIONFUNC),
-//             createProvider))
-//         {
-//             env->getLogger()->logError(format("C++ provider ifc: Libary %1 does not contain"
-//                 " %2 function", libName, CREATIONFUNC));
-//             continue;
-//         }
-//
-//         OW_CppProviderBaseIFC* pProv = (*createProvider)();
-//         if(!pProv)
-//         {
-//             env->getLogger()->logError(format("C++ provider ifc: Libary %1 - %2 returned null"
-//                 " provider", libName, CREATIONFUNC));
-//             continue;
-//         }
-//
-//
-//         OW_CppPolledProviderIFC* p_itp = (pProv->isPolledProvider())
-//             ? static_cast<OW_CppPolledProviderIFC*>(pProv) : 0;
-//
-//         OW_CppIndicationExportProviderIFC* p_iep = 0;
-//
-//         if (!p_itp)
-//         {
-//             p_iep = (pProv->isIndicationExportProvider())
-//                 ? static_cast<OW_CppIndicationExportProviderIFC*>(pProv) : 0;
-//         }
-//
-//         if (p_itp || p_iep)
-//         {
-//             if(p_iep)
-//             {
-//                 env->getLogger()->logDebug(format("C++ provider ifc loaded indication export"
-//                     " provider from lib: %1 - initializing", libName));
-//             }
-//             else
-//             {
-//                 env->getLogger()->logDebug(format("C++ provider ifc loaded polled provider from "
-//                     "lib: %1 - initializing", libName));
-//             }
-//
-//             pProv->initialize(env);
-//
-//             m_noidProviders.append(OW_CppProviderBaseIFCRef(theLib, pProv));
-//         }
-//         else
-//         {
-//             delete pProv;
-//         }
-//     }
-// }
+OW_IndicationProviderIFCRef
+OW_NPIProviderIFC::doGetIndicationProvider(const OW_ProviderEnvironmentIFCRef& env,
+	const char* provIdString)
+{
+	OW_FTABLERef pProv = getProvider(env, provIdString);
+	if(pProv)
+	{
+		// if the indicationNames function pointer is not 0, we know it's an
+		// indication provider
+		if(pProv->fp_activateFilter)
+		{
+			env->getLogger()->logDebug(format("OW_NPIProviderIFC found indication provider %1",
+				provIdString));
+
+			return OW_IndicationProviderIFCRef(new
+				OW_NPIIndicationProviderProxy(pProv));
+		}
+
+		env->getLogger()->logError(format("Provider %1 is not an indication provider",
+			provIdString));
+	}
+
+	OW_THROW(OW_NoSuchProviderException, provIdString);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_NPIProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
+{
+   
+   env->getLogger()->logError("LoadNoIDproviders");
+   OW_MutexLock ml(m_guard);
+
+   if(m_loadDone)
+   {
+      return;
+   }
+
+   m_loadDone = true;
+
+   OW_String libPath = env->getConfigItem(OW_ConfigOpts::NPIIFC_PROV_LOC_opt);
+
+   if(libPath.empty())
+   {
+      libPath = DEFAULT_NPI_PROVIDER_LOCATION;
+   }
+
+   env->getLogger()->logError("LoadNoIDproviders 2");
+   OW_SharedLibraryLoaderRef ldr =
+      OW_SharedLibraryLoader::createSharedLibraryLoader();
+
+   if(ldr.isNull())
+   {
+      env->getLogger()->logError("NPI provider ifc failed to get shared lib loader");
+      return;
+   }
+
+   OW_StringArray dirEntries;
+   if(!OW_FileSystem::getDirectoryContents(libPath, dirEntries))
+   {
+      env->getLogger()->logError(format("NPI provider ifc failed getting contents of "
+         "directory: %1", libPath));
+      return;
+   }
+
+   env->getLogger()->logError("LoadNoIDproviders 3");
+   for(size_t i = 0; i < dirEntries.size(); i++)
+   {
+      if(!dirEntries[i].endsWith(".so"))
+      {
+         continue;
+      }
+
+      OW_String libName = libPath;
+      libName += OW_FILENAME_SEPARATOR;
+      libName += dirEntries[i];
+      OW_SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
+            env->getLogger());
+
+      OW_String guessProvId = dirEntries[i].substring(3,dirEntries[i].length()-6);
+
+      if(theLib.isNull())
+      {
+         env->getLogger()->logError(format("NPI provider %1 ifc failed to load"
+                   " library: %2", guessProvId, libName));
+         continue;
+      }
+
+#if 0
+      versionFunc_t versFunc;
+      if(!OW_SharedLibrary::getFunctionPointer(theLib, "getOWVersion",
+             versFunc))
+      {
+         env->getLogger()->logError(format("NPI provider ifc failed getting"
+                 " function pointer to \"getOWVersion\" from library: %1",
+                 libName));
+         continue;
+      }
+
+      const char* strVer = (*versFunc)();
+      if(strcmp(strVer, OW_VERSION))
+      {
+         env->getLogger()->logError(format("NPI provider ifc got invalid version from "
+                 "provider: %1", strVer));
+         continue;
+      }
+#endif
+
+	::FP_INIT_FT createProvider;
+	OW_String creationFuncName = guessProvId + "_initFunctionTable";
+   env->getLogger()->logError(format("LoadNoIDproviders 4b : %1", creationFuncName));
+
+	if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
+	{
+		env->getLogger()->logError(format("NPI provider ifc: Libary %1 does not contain"
+			" %2 function", libName, creationFuncName));
+		continue;
+	}
+
+   env->getLogger()->logError("LoadNoIDproviders 5");
+	::FTABLE fTable = (*createProvider)();
+
+	if(!fTable.fp_initialize)
+	{
+		env->getLogger()->logError(format("NPI provider ifc: Libary %1 - %2 returned null"
+			" initialize function pointer in function table", libName, creationFuncName));
+		continue;
+	}
+
+        // only initialize polled and indicationexport providers
+	// since NPI doesn't support indicationexport providers ....
+
+   env->getLogger()->logError("LoadNoIDproviders 6");
+        if (!fTable.fp_activateFilter) continue;
+
+        // else it must be a polled provider - initialize it 
+
+	env->getLogger()->logDebug(format("NPI provider ifc loaded library %1. Calling initialize"
+		" for provider %2", libName, guessProvId));
+
+	::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
+	// nothing the provider can do with it, so we'll just pass in 0
+
+	//OW_Reference<NPIEnv> npiHandle(); // TODO: createEnv(...);
+	fTable.fp_initialize(0/*npiHandle.getPtr()*/, ch );	// Let provider initialize itself
+
+	env->getLogger()->logDebug(format("NPI provider ifc: provider %1 loaded and initialized",
+		guessProvId));
+
+        m_noidProviders.append(OW_FTABLERef(theLib, new ::FTABLE(fTable)));
+    }
+}
 
 //////////////////////////////////////////////////////////////////////////////
 OW_FTABLERef

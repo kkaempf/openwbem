@@ -13,6 +13,8 @@
  *
  * Description: Functions to report the location of fatal NPI provider errors.
  */
+#ifndef _NPICRASH_H_
+#define _NPICRASH_H_
 
 #ifdef __cplusplus 
 extern "C" {
@@ -24,3 +26,5 @@ void  restoreCrashHandler(void*);
 #ifdef __cplusplus 
 }
 #endif
+
+#endif //_NPICRASH_H_

@@ -185,6 +185,14 @@ extern "C"
 extern "C"
     ::CIMInstance CIMOMGetInstance(NPIHandle* npiHandle,
                               ::CIMObjectPath cop, int i);
+extern "C" void
+CIMOMDeliverProcessEvent(NPIHandle* npiHandle, char* ns,
+                ::CIMInstance indication);
+
+extern "C" void
+CIMOMDeliverInstanceEvent(NPIHandle* npiHandle, char* ns,
+                ::CIMInstance indication,
+                ::CIMInstance source, ::CIMInstance previous);
 
 // Error handling classes
 

@@ -357,6 +357,44 @@ void OW_WQLSelectStatement::print(std::ostream& ostr) const
 	ostr << "}" << std::endl;
 }
 
+/*
+OW_String OW_WQLSelectStatement::toString() const
+{
+	OW_StringBuffer buf("select ");
+	if (_selectPropertyNames.size())
+	{
+		for (size_t i = 0; i < _selectPropertyNames.size(); i++)
+		{
+			if (i != 0)
+			{
+				buf += ", ";
+			}
+			buf += _selectPropertyNames[i];
+		}
+	}
+	else
+	{
+		// can this happen?
+		buf += " *";
+	}
+
+	buf += " from ";
+	buf += _className;
+
+	// Print the operations/operands
+	for (size_t i = 0; i < _operStack.size(); i++)
+	{
+		if (i == 0)
+			ostr << '\n';
+
+		ostr << "	_operStack[" << i << "]: ";
+		ostr << '"' << _operStack[i].toString() << '"' << '\n';
+	}
+
+	ostr << "}" << std::endl;
+}
+*/
+
 void OW_WQLSelectStatement::compileWhereClause(
 		const OW_WQLPropertySource* /*source*/, OW_WQLCompile& wcl)
 {

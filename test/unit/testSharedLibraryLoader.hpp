@@ -130,6 +130,24 @@ public:
 	}
 };
 
+class TestIndicationProvider : public OW_IndicationProviderIFC
+{
+public:
+	virtual void deActivateFilter(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &, bool ) 
+	{
+	}
+	virtual void activateFilter(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &, bool ) 
+	{
+	}
+	virtual void authorizeFilter(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &, const OW_String &) 
+	{
+	}
+	virtual int mustPoll(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &)
+	{
+		return 0;
+	}
+};
+
 class testProviderMux: public OW_ProviderIFCBaseIFC
 {
 	public:
@@ -140,7 +158,8 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 			OW_InstanceProviderInfoArray& ia,
 			OW_AssociatorProviderInfoArray& aa,
 			OW_MethodProviderInfoArray& ma,
-			OW_PropertyProviderInfoArray& pa)
+			OW_PropertyProviderInfoArray& pa,
+			OW_IndicationProviderInfoArray& inda)
 		{
 			if (m_name == "lib1")
 			{
@@ -261,6 +280,23 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 					ppi.addInstrumentedClass(ci);
 					pa.push_back(ppi);
 				}
+				// indication provider registration
+				{
+					OW_IndicationProviderInfo indi;
+					indi.setProviderName("TestIndicationProvider");
+					indi.addInstrumentedClass("SelfReg");
+					inda.push_back(indi);
+				}
+				{
+					OW_IndicationProviderInfo indi;
+					indi.setProviderName("TestIndicationProvider");
+					OW_StringArray namespaces;
+					namespaces.push_back("root");
+					namespaces.push_back("root/good");
+					OW_IndicationProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces);
+					indi.addInstrumentedClass(ci);
+					inda.push_back(indi);
+				}
 
 			}
 		}
@@ -301,6 +337,16 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 			if (OW_String(provIdString) == "TestAssociatorProvider")
 			{
 				return OW_AssociatorProviderIFCRef(new TestAssociatorProvider);
+			}
+			OW_THROW(OW_NoSuchProviderException, provIdString);
+		}
+
+		virtual OW_IndicationProviderIFCRef doGetIndicationProvider(
+			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)
+		{
+			if (OW_String(provIdString) == "TestIndicationProvider")
+			{
+				return OW_IndicationProviderIFCRef(new TestIndicationProvider);
 			}
 			OW_THROW(OW_NoSuchProviderException, provIdString);
 		}

@@ -28,10 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_CPPPROVIDERIFC_HPP_
-#define OW_CPPPROVIDERIFC_HPP_
+#ifndef OW_NPIPROVIDERIFC_HPP_
+#define OW_NPIPROVIDERIFC_HPP_
 
 #include "OW_config.h"
+#include "OW_SharedLibrary.hpp"
 #include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_Map.hpp"
 #include "OW_MutexLock.hpp"
@@ -45,6 +46,7 @@
 class OW_NPIProviderIFC : public OW_ProviderIFCBaseIFC
 {
 public:
+	static const char * const CREATIONFUNC;
 
 	OW_NPIProviderIFC();
 	~OW_NPIProviderIFC();
@@ -57,7 +59,8 @@ protected:
 		OW_InstanceProviderInfoArray& i,
 		OW_AssociatorProviderInfoArray& a,
 		OW_MethodProviderInfoArray& m,
-		OW_PropertyProviderInfoArray& p);
+		OW_PropertyProviderInfoArray& p,
+		OW_IndicationProviderInfoArray& ind);
 
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
 		const OW_ProviderEnvironmentIFCRef& env,
@@ -72,6 +75,10 @@ protected:
 		const char* provIdString);
 
 	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const char* provIdString);
+
+	virtual OW_IndicationProviderIFCRef doGetIndicationProvider(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 
@@ -93,14 +100,15 @@ private:
 
 	typedef OW_Map<OW_String, OW_FTABLERef> ProviderMap;
 	//typedef OW_Array<OW_SharedLibraryObject<OW_FTABLERef> > LoadedProviderArray;
+	typedef OW_Array<OW_FTABLERef > LoadedProviderArray;
 
 	OW_FTABLERef getProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-	//void loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env);
+	void loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env);
 
 	ProviderMap m_provs;
 	OW_Mutex m_guard;
-	//LoadedProviderArray m_noidProviders;
+	LoadedProviderArray m_noidProviders;
 	OW_Bool m_loadDone;
 };
 

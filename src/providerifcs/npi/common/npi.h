@@ -44,6 +44,7 @@ typedef struct {
   int             errorOccurred;
   const char *    providerError;
   void *          thisObject;
+  void *          context;
 } NPIHandle;
 
 typedef struct {
@@ -65,6 +66,7 @@ typedef struct { void * ptr; } CIMClass;
 typedef struct { void * ptr; } CIMParameter;
 typedef struct { void * ptr; } CIMValue;
 typedef struct { void * ptr; } Vector;
+typedef struct { void * ptr; } SelectExp;
   
 /* typedefs for CIMProvider function pointers for the linked libraries */
 typedef void (*FP_INITIALIZE) ( NPIHandle *, CIMOMHandle );
@@ -97,6 +99,16 @@ typedef Vector (*FP_REFERENCENAMES) ( NPIHandle *, CIMObjectPath,
 				      CIMObjectPath, const char * );
 typedef CIMValue (*FP_INVOKEMETHOD) ( NPIHandle *, CIMObjectPath, 
 				      const char *, Vector, Vector );
+
+/* typedefs for EventProvider function pointers for the linked libraries */
+typedef void (*FP_AUTHORIZEFILTER)(NPIHandle*,SelectExp,const char*,
+       CIMObjectPath, const char*);
+typedef int (*FP_MUSTPOLL)(NPIHandle*,SelectExp,const char*,
+       CIMObjectPath);
+typedef void (*FP_ACTIVATEFILTER)(NPIHandle*,SelectExp,const char*,
+       CIMObjectPath,int);
+typedef void (*FP_DEACTIVATEFILTER)(NPIHandle*,SelectExp,const char*,
+       CIMObjectPath,int);
   
 
 /* the function pointer table returned by <LIBNAME>_initFunctionTable() */  
@@ -119,6 +131,11 @@ typedef struct {
   FP_REFERENCENAMES     fp_referenceNames;
   //MethodProvider
   FP_INVOKEMETHOD       fp_invokeMethod;
+  //EventProvider
+  FP_AUTHORIZEFILTER    fp_authorizeFilter;
+  FP_MUSTPOLL           fp_mustPoll;
+  FP_ACTIVATEFILTER     fp_activateFilter;
+  FP_DEACTIVATEFILTER   fp_deActivateFilter;
 }FTABLE;
 
 /* the <LIBNAME>_initFunctionTable() pointer */

@@ -85,6 +85,9 @@ extern "C" {
 					 const char *, int);
   void CIMObjectPathAddRefKeyValue ( NPIHandle *, CIMObjectPath, 
 				     const char *, CIMObjectPath);
+
+  /* SelectExp functions */
+  char * SelectExpGetSelectString ( NPIHandle *, SelectExp );
   
   /* CIMOM functions */
   CIMClass CIMOMGetClass ( NPIHandle *, CIMObjectPath, int );
@@ -92,8 +95,16 @@ extern "C" {
   Vector CIMOMEnumInstances ( NPIHandle * , CIMObjectPath , int, int );
   CIMInstance CIMOMGetInstance( NPIHandle *, CIMObjectPath, int );
 
+  void CIMOMDeliverProcessEvent(NPIHandle*,char*,CIMInstance);
+  void CIMOMDeliverInstanceEvent(NPIHandle*,char*,CIMInstance,CIMInstance,CIMInstance);
+  NPIHandle* CIMOMPrepareAttach(NPIHandle*);
+  void CIMOMCancelAttach(NPIHandle*);
+  void CIMOMAttachThread(NPIHandle*);
+  void CIMOMDetachThread(NPIHandle*);
+
   /* Error handling functions */
   int errorCheck ( NPIHandle * );
+  int errorReset ( NPIHandle * );
   void raiseError ( NPIHandle *, const char * );
   
   /* General functions */

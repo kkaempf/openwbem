@@ -97,7 +97,6 @@ static void deleteInstance ( NPIHandle *npiHandle, CIMObjectPath cop)
 }
 
 
-/*
 static Vector execQuery ( NPIHandle *npiHandle, CIMObjectPath cop, 
 			  const char * str, int i, CIMClass cc) 
 {
@@ -109,6 +108,7 @@ static Vector execQuery ( NPIHandle *npiHandle, CIMObjectPath cop,
   return VectorNew( npiHandle );
 }
 
+/*
 
 static Vector associators ( NPIHandle *npiHandle, CIMObjectPath cop1, 
 	CIMObjectPath cop2, const char *str1, const char *str2, const char *str3,

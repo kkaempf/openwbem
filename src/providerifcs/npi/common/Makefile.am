@@ -41,6 +41,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/cim \
+-I$(top_srcdir)/src/cimom \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/providerifcs/npi \
 -I$(top_srcdir)/src/server 
