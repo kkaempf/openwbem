@@ -45,6 +45,7 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_AuthenticatorIFC.hpp"
+#include "OW_ProviderAgentLockerIFC.hpp"
 
 namespace OpenWBEM
 {
@@ -57,8 +58,28 @@ typedef IntrusiveReference<Thread> ThreadRef;
 class ProviderAgent
 {
 public:
-	static const char* const LockingType_opt;  
-	static const char* const LockingTimeout_opt; 
+	// option which specifies the locking strategy.
+	// Valid values are LockingTypeNone ("none"), LockingTypeSWMR ("swmr"), or LockingTypeSingleThreaded ("single_threaded")
+	// If not specified the default of LockingTypeNone is assumed.
+	static const char* const LockingType_opt;
+
+	// option value which specifies that no locking will be done.
+	static const char* const LockingTypeNone;
+
+	// option value which specifies that single-writer, multiple-reader locking will be done.
+	static const char* const LockingTypeSWMR;
+
+	// option value which specifies that full locking will be done. All requests will be serialized.
+	static const char* const LockingTypeSingleThreaded;
+
+	// option which specifies the timeout to use if the LockingType option specifies SWMR locking (LockingTypeSWMR).
+	// valid values are positive integers.
+	// If not specified the default of 300 is assumed.
+	static const char* const LockingTimeout_opt;
+
+	// option which specifies whether classes will be retrieved using the callbackURL.
+	// valid values are "true" or "false". 
+	// If not specified the default of "false" is assumed.
 	static const char* const DynamicClassRetrieval_opt; 
 
 	/**
@@ -113,14 +134,19 @@ public:
 	 *        the authentication credentials must be in the URL.  If no 
 	 *        callbackURL is provided, providers will be unable to callback
 	 *        to the CIMOM. 
+	 * @param locker If non-null, this locker will be called to provide
+	 *        seralization for the agent operations. If null, then the config
+	 *        items LockingType_opt and LockingTimeout_opt will be used to
+	 *        control the locking.
 	 */
 	ProviderAgent(const ConfigFile::ConfigMap& configMap, 
 				  const Array<CppProviderBaseIFCRef>& providers, 
 				  const Array<CIMClass>& classes, 
 				  const Array<RequestHandlerIFCRef>& requestHandlers, 
 				  const AuthenticatorIFCRef& authenticator,
-				  const LoggerRef& logger = LoggerRef(0), 
-				  const String& callbackURL = String("")); 
+				  const LoggerRef& logger = LoggerRef(), 
+				  const String& callbackURL = String(""),
+				  const ProviderAgentLockerIFCRef& locker = ProviderAgentLockerIFCRef()); 
 	~ProviderAgent();
 	/**
 	 * Shut down the http server embedded within the ProviderAgent. 

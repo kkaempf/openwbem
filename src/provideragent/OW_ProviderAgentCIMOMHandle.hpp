@@ -49,9 +49,6 @@
 namespace OpenWBEM
 {
 
-class RWLocker; 
-class Mutex; 
-
 using namespace WBEMFlags;
 
 class ProviderAgentCIMOMHandle : public CIMOMHandleIFC
@@ -63,9 +60,8 @@ public:
 							 const Map<String, CppProviderBaseIFCRef>& methodProvs, 
 							 Cache<CIMClass>& cimClasses, 
 							 const ProviderEnvironmentIFCRef& env,
-							 ProviderAgentEnvironment::LockingType lt, 
 							 ProviderAgentEnvironment::ClassRetrievalFlag classRetrieval, 
-							 UInt32 lockingTimeout); 
+							 const ProviderAgentLockerIFCRef& locker); 
 	/**
 	 * Gets the CIM instance for the specified CIM object path.
 	 *
@@ -689,25 +685,6 @@ public:
 						   const String &query, const String &queryLanguage); 
 
 private: 
-	class PALocker : public ProviderAgentLockerIFC
-	{
-	public: 
-		PALocker(ProviderAgentEnvironment::LockingType lt, UInt32 timeout); 
-		~PALocker(); 
-		virtual void doGetReadLock(); 
-		virtual void doGetWriteLock(); 
-		virtual void doReleaseReadLock();
-		virtual void doReleaseWriteLock();
-	private: 
-		//non-copyable
-		PALocker(const PALocker&);
-		PALocker& operator=(const PALocker&);
-
-		ProviderAgentEnvironment::LockingType m_lt; 
-		Mutex* m_mutex; 
-		RWLocker* m_rwlocker; 
-		UInt32 m_timeout; 
-	}; 
 
 	class PAReadLock
 	{

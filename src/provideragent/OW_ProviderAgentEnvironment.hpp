@@ -46,9 +46,13 @@
 #include "OW_Cache.hpp"
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_Reference.hpp"
+#include "OW_ProviderAgentLockerIFC.hpp"
 
 namespace OpenWBEM
 {
+
+class RWLocker; 
+class Mutex; 
 
 typedef std::pair<SelectableIFCRef, SelectableCallbackIFCRef> SelectablePair_t;
 
@@ -73,7 +77,8 @@ public:
 		const Array<RequestHandlerIFCRef>& requestHandlers, 
 		const LoggerRef& logger,
         const String& callbackURL, 
-		const Reference<Array<SelectablePair_t> >& selectables); 
+		const Reference<Array<SelectablePair_t> >& selectables,
+		const ProviderAgentLockerIFCRef& locker); 
 	virtual ~ProviderAgentEnvironment(); 
 	virtual bool authenticate(String &userName,
 		const String &info, String &details, OperationContext& context); 
@@ -118,11 +123,29 @@ private:
 	// TODO Refactor me.  ProviderAgentCIMOMHandles get a reference
 	// (&, not Reference) to m_cimClasses, and modify it. 
 	Cache<CIMClass> m_cimClasses; 
-	LockingType m_lockingType; 
-	UInt32 m_lockingTimeout; 
+	ProviderAgentLockerIFCRef m_locker;
 	ClassRetrievalFlag m_classRetrieval; 
 	ClientCIMOMHandleConnectionPool m_connectionPool; 
 
+	class PALocker : public ProviderAgentLockerIFC
+	{
+	public: 
+		PALocker(ProviderAgentEnvironment::LockingType lt, UInt32 timeout); 
+		~PALocker(); 
+		virtual void doGetReadLock(); 
+		virtual void doGetWriteLock(); 
+		virtual void doReleaseReadLock();
+		virtual void doReleaseWriteLock();
+	private: 
+		//non-copyable
+		PALocker(const PALocker&);
+		PALocker& operator=(const PALocker&);
+
+		ProviderAgentEnvironment::LockingType m_lt; 
+		Reference<Mutex> m_mutex; 
+		Reference<RWLocker> m_rwlocker; 
+		UInt32 m_timeout; 
+	}; 
 };
 
 } // end namespace OpenWBEM

@@ -35,6 +35,7 @@
  */
 
 #include "OW_config.h"
+#include "OW_ProviderAgentCIMOMHandle.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMValue.hpp"
@@ -42,16 +43,11 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMObjectPath.hpp"
-
-#include "OW_ProviderAgentCIMOMHandle.hpp"
-
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_CppSecondaryInstanceProviderIFC.hpp"
 #include "OW_CppMethodProviderIFC.hpp"
 #include "OW_CppAssociatorProviderIFC.hpp"
-#include "OW_Mutex.hpp"
-#include "OW_RWLocker.hpp"
 #include "OW_ProviderAgent.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ConfigException.hpp"
@@ -61,22 +57,22 @@ namespace OpenWBEM
 
 //using namespace WBEMFlags;
 
-ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(const Map<String, CppProviderBaseIFCRef>& assocProvs, 
-												   const Map<String, CppProviderBaseIFCRef>& instProvs, 
-												   const Map<String, CppProviderBaseIFCRef>& secondaryInstProvs, 
-												   const Map<String, CppProviderBaseIFCRef>& methodProvs, 
-												   Cache<CIMClass>& cimClasses, 
-												   const ProviderEnvironmentIFCRef& env, 
-												   ProviderAgentEnvironment::LockingType lt, 
-												   ProviderAgentEnvironment::ClassRetrievalFlag classRetrieval, 
-												   UInt32 lockingTimeout)
+ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(
+	const Map<String, CppProviderBaseIFCRef>& assocProvs, 
+	const Map<String, CppProviderBaseIFCRef>& instProvs, 
+	const Map<String, CppProviderBaseIFCRef>& secondaryInstProvs, 
+	const Map<String, CppProviderBaseIFCRef>& methodProvs, 
+	Cache<CIMClass>& cimClasses, 
+	const ProviderEnvironmentIFCRef& env, 
+	ProviderAgentEnvironment::ClassRetrievalFlag classRetrieval, 
+	const ProviderAgentLockerIFCRef& locker)
 	: m_assocProvs(assocProvs)
 	, m_instProvs(instProvs)
 	, m_secondaryInstProvs(secondaryInstProvs)
 	, m_methodProvs(methodProvs)
 	, m_cimClasses(cimClasses)
 	, m_PAEnv(env)
-	, m_locker(new PALocker(lt, lockingTimeout))
+	, m_locker(locker)
 	, m_classRetrieval(classRetrieval)
 {
 }
@@ -524,41 +520,6 @@ ProviderAgentCIMOMHandle::execQuery(const String &ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-ProviderAgentCIMOMHandle::PALocker::PALocker(ProviderAgentEnvironment::LockingType lt, 
-											 UInt32 timeout)
-	: m_lt(lt)
-	, m_mutex(0)
-	, m_rwlocker(0)
-	, m_timeout(timeout)
-{
-	switch (m_lt)
-	{
-	case ProviderAgentEnvironment::NONE:
-		break; 
-	case ProviderAgentEnvironment::SWMR:
-		m_rwlocker = new RWLocker; 
-		break; 
-	case ProviderAgentEnvironment::SINGLE_THREADED:
-		m_mutex = new Mutex; 
-		break; 
-	default: 
-		OW_ASSERT("shouldn't happen" == 0); 
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-ProviderAgentCIMOMHandle::PALocker::~PALocker()
-{
-	if (m_mutex)
-	{
-		delete m_mutex; 
-	}
-	if (m_rwlocker)
-	{
-		delete m_rwlocker; 
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
 ProviderAgentCIMOMHandle::PAReadLock::PAReadLock(const ProviderAgentLockerIFCRef& locker)
 	: m_locker(locker)
 {
@@ -568,78 +529,6 @@ ProviderAgentCIMOMHandle::PAReadLock::PAReadLock(const ProviderAgentLockerIFCRef
 ProviderAgentCIMOMHandle::PAReadLock::~PAReadLock()
 {
 	m_locker->releaseReadLock(); 
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-ProviderAgentCIMOMHandle::PALocker::doReleaseReadLock()
-{
-	switch (m_lt)
-	{
-	case ProviderAgentEnvironment::NONE:
-		break; 
-	case ProviderAgentEnvironment::SWMR:
-		m_rwlocker->releaseReadLock(); 
-		break; 
-	case ProviderAgentEnvironment::SINGLE_THREADED:
-		m_mutex->release(); 
-		break; 
-	default: 
-		OW_ASSERT("shouldn't happen" == 0); 
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-ProviderAgentCIMOMHandle::PALocker::doGetReadLock()
-{
-	switch (m_lt)
-	{
-	case ProviderAgentEnvironment::NONE:
-		break; 
-	case ProviderAgentEnvironment::SWMR:
-		m_rwlocker->getReadLock(m_timeout); 
-		break; 
-	case ProviderAgentEnvironment::SINGLE_THREADED:
-		m_mutex->acquire(); 
-		break; 
-	default: 
-		OW_ASSERT("shouldn't happen" == 0); 
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-ProviderAgentCIMOMHandle::PALocker::doReleaseWriteLock()
-{
-	switch (m_lt)
-	{
-	case ProviderAgentEnvironment::NONE:
-		break; 
-	case ProviderAgentEnvironment::SWMR:
-		m_rwlocker->releaseWriteLock(); 
-		break; 
-	case ProviderAgentEnvironment::SINGLE_THREADED:
-		m_mutex->release(); 
-		break; 
-	default: 
-		OW_ASSERT("shouldn't happen" == 0); 
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-ProviderAgentCIMOMHandle::PALocker::doGetWriteLock()
-{
-	switch (m_lt)
-	{
-	case ProviderAgentEnvironment::NONE:
-		break; 
-	case ProviderAgentEnvironment::SWMR:
-		m_rwlocker->getWriteLock(m_timeout); 
-		break; 
-	case ProviderAgentEnvironment::SINGLE_THREADED:
-		m_mutex->acquire(); 
-		break; 
-	default: 
-		OW_ASSERT("shouldn't happen" == 0); 
-	}
 }
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgentCIMOMHandle::PAWriteLock::PAWriteLock(const ProviderAgentLockerIFCRef& locker)

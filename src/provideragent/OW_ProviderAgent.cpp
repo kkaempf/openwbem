@@ -103,24 +103,30 @@ private:
 } // end anonymous namespace
 
 
-const char* const ProviderAgent::LockingType_opt = "provider_agent.locking_type"; 
+const char* const ProviderAgent::LockingType_opt = "provider_agent.locking_type";
+const char* const ProviderAgent::LockingTypeNone = "none";
+const char* const ProviderAgent::LockingTypeSWMR = "swmr";
+const char* const ProviderAgent::LockingTypeSingleThreaded = "single_threaded";
+
 const char* const ProviderAgent::LockingTimeout_opt = "provider_agent.locking_timeout";
 const char* const ProviderAgent::DynamicClassRetrieval_opt = "provider_agent.dynamic_class_retrieval"; 
 //////////////////////////////////////////////////////////////////////////////
-ProviderAgent::ProviderAgent(const ConfigFile::ConfigMap& configMap, 
-							 const Array<CppProviderBaseIFCRef>& providers, 
-							 const Array<CIMClass>& cimClasses, 
-							 const Array<RequestHandlerIFCRef>& requestHandlers, 
-							 const AuthenticatorIFCRef& authenticator,
-							 const LoggerRef& logger, 
-							 const String& callbackURL)
+ProviderAgent::ProviderAgent(
+	const ConfigFile::ConfigMap& configMap, 
+	const Array<CppProviderBaseIFCRef>& providers, 
+	const Array<CIMClass>& cimClasses, 
+	const Array<RequestHandlerIFCRef>& requestHandlers, 
+	const AuthenticatorIFCRef& authenticator,
+	const LoggerRef& logger, 
+	const String& callbackURL,
+	const ProviderAgentLockerIFCRef& locker)
 	: m_httpServer(new HTTPServer)
 {
 	Reference<Array<SelectablePair_t> > 
 			selectables(new Array<SelectablePair_t>);
 	ServiceEnvironmentIFCRef env(new ProviderAgentEnvironment(configMap,
 			providers, cimClasses, authenticator, requestHandlers, 
-			logger, callbackURL, selectables));
+			logger, callbackURL, selectables, locker));
 	m_httpServer->setServiceEnvironment(env);
 	m_httpServer->startService();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really
