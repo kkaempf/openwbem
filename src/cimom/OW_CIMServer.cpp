@@ -1881,12 +1881,14 @@ namespace
 			OW_CIMClassArray& dynamicAssocs_,
 			OW_CIMServer& server_,
 			const OW_UserInfo& aclInfo_,
-			const OW_String& ns_)
+			const OW_String& ns_,
+			const OW_LoggerRef& lgr)
 		: staticAssocs(staticAssocs_)
 		, dynamicAssocs(dynamicAssocs_)
 		, server(server_)
 		, aclInfo(aclInfo_)
 		, ns(ns_)
+		, logger(lgr)
 		{}
 	protected:
 		virtual void doHandle(const OW_CIMClass &cc)
@@ -1901,10 +1903,12 @@ namespace
 			if (server._isDynamicAssoc(ns, cc))
 			{
 				dynamicAssocs.push_back(cc);
+				logger->logDebug("Found dynamic assoc class: " + cc.getName());
 			}
 			else if (staticAssocs)
 			{
 				staticAssocs->push_back(cc.getName());
+				logger->logDebug("Found static assoc class: " + cc.getName());
 			}
 		}
 	private:
@@ -1913,6 +1917,7 @@ namespace
 		OW_CIMServer& server;
 		const OW_UserInfo& aclInfo;
 		OW_String ns;
+		OW_LoggerRef logger;
 	};
 }
 
@@ -1940,7 +1945,7 @@ OW_CIMServer::_commonReferences(
 	OW_CIMClassArray dynamicAssocs;
 	OW_StringArray resultClassNames;
 
-	assocClassSeparator assocClassResult(!m_realRepository || resultClass.empty() ? 0 : &resultClassNames, dynamicAssocs, *this, aclInfo, ns);
+	assocClassSeparator assocClassResult(!m_realRepository || resultClass.empty() ? 0 : &resultClassNames, dynamicAssocs, *this, aclInfo, ns, m_env->getLogger());
 	_getAssociationClasses(ns, resultClass, path.getObjectName(), assocClassResult, role);
 
 	if (path.getKeys().size() == 0)
@@ -2133,7 +2138,7 @@ OW_CIMServer::_commonAssociators(
 	// Get association classes from the association repository
 	OW_CIMClassArray dynamicAssocs;
 	OW_StringArray assocClassNames;
-	assocClassSeparator assocClassResult(!m_realRepository || assocClassName.empty() ? 0 : &assocClassNames, dynamicAssocs, *this, aclInfo, ns);
+	assocClassSeparator assocClassResult(!m_realRepository || assocClassName.empty() ? 0 : &assocClassNames, dynamicAssocs, *this, aclInfo, ns, m_env->getLogger());
 	_getAssociationClasses(ns, assocClassName, path.getObjectName(), assocClassResult, role);
 
 	// If the result class was specified, get a list of all the classes the
@@ -2249,6 +2254,7 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 		OW_AssociatorProviderIFCRef assocP = _getAssociatorProvider(path.getNameSpace(), cc);
 		if(!assocP)
 		{
+			m_env->getLogger()->logError("Failed to get associator provider for class: " + cc.getName());
 			continue;
 		}
 
@@ -2257,12 +2263,14 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 
 		if(piresult != 0)
 		{
+			m_env->getLogger()->logDebug("Calling associators on associator provider for class: " + cc.getName());
 			assocP->associators(createProvEnvRef(aclInfo, m_env), path.getNameSpace(),
 				assocClassPath, path, *piresult, resultClass, role, resultRole,
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
 		else if (popresult != 0)
 		{
+			m_env->getLogger()->logDebug("Calling associatorNames on associator provider for class: " + cc.getName());
 			assocP->associatorNames(createProvEnvRef(aclInfo, m_env),
 				path.getNameSpace(),
 				assocClassPath, path, *popresult, resultClass, role, resultRole);
