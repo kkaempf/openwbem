@@ -346,7 +346,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 			{
 				OW_CIMInstanceArray cia =
 					wqlRef->evaluate(instNS, query,
-					queryLanguage, wqllch);  // TODO fix namespace?
+					queryLanguage, wqllch);
 
 				if(cia.size() != 1)
 				{

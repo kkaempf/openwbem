@@ -170,9 +170,8 @@ OW_XMLQualifier::processScope(const OW_XMLNode& result,
 //////////////////////////////////////////////////////////////////////////////
 OW_String
 OW_XMLQualifier::getQualifierName(const OW_XMLNode& node_arg)
-	/*throw (OW_CIMException)*/
 {
-	OW_XMLNode node = node_arg; // TODO is this better? not changing param?
+	OW_XMLNode node = node_arg;
 	OW_String qualifierName;
 	if(node.getToken() != OW_XMLNode::XML_ELEMENT_IPARAMVALUE)
 	{

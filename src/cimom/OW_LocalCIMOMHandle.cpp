@@ -65,7 +65,7 @@ OW_LocalCIMOMHandle::OW_LocalCIMOMHandle(const OW_LocalCIMOMHandle& arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_LocalCIMOMHandle::OW_LocalCIMOMHandle(OW_CIMOMEnvironmentRef env, 
+OW_LocalCIMOMHandle::OW_LocalCIMOMHandle(OW_CIMOMEnvironmentRef env,
 	OW_RepositoryIFCRef pRepos, const OW_ACLInfo& aclInfo, OW_Bool noLock)
 	: OW_CIMOMHandleIFC()
 	, m_pServer(pRepos)
@@ -97,7 +97,6 @@ OW_LocalCIMOMHandle::createNameSpace(const OW_CIMNameSpace& ns)
 void
 OW_LocalCIMOMHandle::close()
 {
-	// TODO: Unregister with repository?
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -243,7 +242,7 @@ OW_LocalCIMOMHandle::setQualifierType(const OW_CIMObjectPath& name,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::setClass(const OW_CIMObjectPath& name,
+OW_LocalCIMOMHandle::modifyClass(const OW_CIMObjectPath& name,
 	const OW_CIMClass& cc)
 {
 	OW_WriteLock wl = getWriteLock();
@@ -263,7 +262,7 @@ OW_LocalCIMOMHandle::createClass(const OW_CIMObjectPath& name,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::setInstance(const OW_CIMObjectPath& name,
+OW_LocalCIMOMHandle::modifyInstance(const OW_CIMObjectPath& name,
 	const OW_CIMInstance& ci)
 {
 	OW_WriteLock wl = getWriteLock();

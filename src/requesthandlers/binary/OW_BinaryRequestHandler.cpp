@@ -155,10 +155,10 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 					getClass(chdl, *ostrm, *istrm);
 					break;
 
-				case OW_BIN_SETCLS:
-					lgr->logDebug("OW_BinaryRequestHandler set class"
+				case OW_BIN_MODIFYCLS:
+					lgr->logDebug("OW_BinaryRequestHandler modify class"
 						" request");
-					setClass(chdl, *ostrm, *istrm);
+					modifyClass(chdl, *ostrm, *istrm);
 					break;
 
 				case OW_BIN_DELETECLS:
@@ -185,10 +185,10 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 					getInstance(chdl, *ostrm, *istrm);
 					break;
 
-				case OW_BIN_SETINST:
+				case OW_BIN_MODIFYINST:
 					lgr->logDebug("OW_BinaryRequestHandler get instance"
 						" request");
-					setInstance(chdl, *ostrm, *istrm);
+					modifyInstance(chdl, *ostrm, *istrm);
 					break;
 
 				case OW_BIN_DELETEINST:
@@ -543,23 +543,23 @@ OW_BinaryRequestHandler::setQual(OW_CIMOMHandleIFCRef chdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::setClass(OW_CIMOMHandleIFCRef chdl,
+OW_BinaryRequestHandler::modifyClass(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
 	OW_CIMClass cc(OW_BinIfcIO::readClass(istrm));
-	chdl->setClass(op, cc);
+	chdl->modifyClass(op, cc);
 	OW_BinIfcIO::write(ostrm, (OW_Int32)OW_BIN_OK, OW_Bool(true));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::setInstance(OW_CIMOMHandleIFCRef chdl,
+OW_BinaryRequestHandler::modifyInstance(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
 	OW_CIMInstance ci(OW_BinIfcIO::readInstance(istrm));
-	chdl->setInstance(op, ci);
+	chdl->modifyInstance(op, ci);
 	OW_BinIfcIO::write(ostrm, (OW_Int32)OW_BIN_OK, OW_Bool(true));
 }
 

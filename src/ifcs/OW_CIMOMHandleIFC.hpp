@@ -376,7 +376,7 @@ public:
 	 * @param cimClass The OW_CIMClass to be updated
 	 * @exception OW_CIMException If the class does not exists
 	 */
-	virtual void setClass(
+	virtual void modifyClass(
 		const OW_CIMObjectPath& className,
 		const OW_CIMClass& cimClass) = 0;
 
@@ -393,14 +393,14 @@ public:
 		const OW_CIMClass& cimClass) = 0;
 
 	/**
-	 * Update or add the specified CIM instance associated with the specified
+	 * Update the specified CIM instance associated with the specified
 	 * namespace.
 	 * @param instanceName An OW_CIMObjectPath that identifies the CIM instance
 	 *		to be updated.
 	 * @param instance The OW_CIMInstance to be updated.
 	 * @exception OW_CIMException
 	 */
-	virtual void setInstance(
+	virtual void modifyInstance(
 		const OW_CIMObjectPath& name,
 		const OW_CIMInstance& instance) = 0;
 

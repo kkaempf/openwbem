@@ -41,8 +41,6 @@
 #include "OW_CIM.hpp"
 #include "OW_Assertion.hpp"
 
-OW_Reference<OW_AccessMgr> m_accessMgr;
-
 class OW_AccessMgr
 {
 public:
@@ -583,19 +581,7 @@ OW_CIMServer::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
 			// Check to see if user has rights to get the class
 			m_accessMgr->checkAccess(OW_AccessMgr::GETCLASS, path, aclInfo);
 			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(path, theClass);
-			if (rval != OW_CIMException::SUCCESS)
-			{
-				// check whether the namespace was invalid or not
-				if (rval == OW_CIMException::NOT_FOUND)
-				{
-					if (!m_nStore.nameSpaceExists(path.getNameSpace()))
-					{
-						rval = OW_CIMException::INVALID_NAMESPACE;
-					}
-				}
-
-				OW_THROWCIM(rval);
-			}
+			checkGetClassRvalAndThrow(rval, path);
 		}
 
 		if (!theClass)
@@ -651,17 +637,7 @@ OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 
 		OW_CIMClass cc;
 		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(path, cc);
-		if (rc != OW_CIMException::SUCCESS)
-		{
-			if (rc == OW_CIMException::NOT_FOUND)
-			{
-				if (!m_nStore.nameSpaceExists(path.getNameSpace()))
-				{
-					rc = OW_CIMException::INVALID_NAMESPACE;
-				}
-			}
-			OW_THROWCIM(rc);
-		}
+		checkGetClassRvalAndThrow(rc, path);
 
 		OW_String ns = path.getNameSpace();
 		OW_String cname = path.getObjectName();
@@ -673,28 +649,26 @@ OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 
 		// delete the class and any subclasses
 		OW_CIMClassEnumeration children = this->enumClasses(path,
-			OW_CIMOMHandleIFC::SHALLOW, OW_CIMOMHandleIFC::LOCAL_ONLY,
+			OW_CIMOMHandleIFC::DEEP, OW_CIMOMHandleIFC::LOCAL_ONLY,
 			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
             aclInfo);
+		children.addElement(cc);
 		while (children.hasMoreElements())
 		{
 			OW_CIMClass toDelete;
 			children.nextElement(toDelete);
-			OW_CIMObjectPath p(path);
-			p.setObjectName(toDelete.getName());
-			deleteClass(p, aclInfo); // recursively delete subclasses - this could probably be optimized
+
+			cname = toDelete.getName();
+			if(!m_mStore.deleteClass(ns, cname))
+			{
+				OW_THROWCIM(OW_CIMException::NOT_FOUND);
+			}
+
+			// delete any instances of the class
+			m_iStore.deleteClass(ns, cname);
+
 		}
-
-
-		if(!m_mStore.deleteClass(ns, cname))
-		{
-			OW_THROWCIM(OW_CIMException::NOT_FOUND);
-		}
-
-		// delete any instances of the class
-		m_iStore.deleteClass(ns, cname);
-
 
 		OW_ASSERT(cc);
 		return cc;
@@ -757,11 +731,15 @@ OW_CIMServer::modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
 	{
 		OW_CIMClass origClass;
 		OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(name, origClass);
+		checkGetClassRvalAndThrow(rval, name);
 
-		if (rval != OW_CIMException::SUCCESS)
-		{
-			OW_THROWCIM(rval);
-		}
+		// TODO: this needs to update the subclasses of the modified class.
+		//			If that's not possible, then we need to throw a
+		//			CLASS_HAS_CHILDREN CIMException.
+
+		// TODO: Need to update the instances of the class and any subclasses.
+		//			If that's not possible, then we need to throw a
+		//			CLASS_HAS_INSTANCES CIMException.
 
 		m_mStore.modifyClass(name.getNameSpace(), cc);
 		OW_ASSERT(origClass);
@@ -1494,6 +1472,10 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 				{
 					rc = OW_CIMException::INVALID_NAMESPACE;
 				}
+				else
+				{
+					rc = OW_CIMException::INVALID_CLASS;
+				}
 			}
 
 			OW_THROWCIMMSG(rc, cop.getObjectName().c_str());
@@ -1518,7 +1500,7 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 			// Look for dynamic instances
 			OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
 				aclInfo, true);
-			instancep->setInstance(createProvEnvRef(real_ch), cop, ci);
+			instancep->modifyInstance(createProvEnvRef(real_ch), cop, ci);
 		}
 
 		if(theClass.isAssociation())
@@ -1616,19 +1598,7 @@ OW_CIMServer::getProperty(const OW_CIMObjectPath& name,
 
 	OW_CIMClass theClass;
 	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, theClass);
-	if(rc != OW_CIMException::SUCCESS)
-	{
-		// check whether the namespace was invalid or not
-		if (rc == OW_CIMException::NOT_FOUND)
-		{
-			if (!m_nStore.nameSpaceExists(name.getNameSpace()))
-			{
-				rc = OW_CIMException::INVALID_NAMESPACE;
-			}
-		}
-
-		OW_THROWCIMMSG(rc, name.getObjectName().c_str());
-	}
+	checkGetClassRvalAndThrow(rc, name);
 
 	OW_CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
@@ -1678,19 +1648,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 	OW_ACLInfo intAclInfo;
 	OW_CIMClass theClass;
 	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, theClass);
-	if(rc != OW_CIMException::SUCCESS)
-	{
-		// check whether the namespace was invalid or not
-		if (rc == OW_CIMException::NOT_FOUND)
-		{
-			if (!m_nStore.nameSpaceExists(name.getNameSpace()))
-			{
-				rc = OW_CIMException::INVALID_NAMESPACE;
-			}
-		}
-
-		OW_THROWCIMMSG(rc, name.getObjectName().c_str());
-	}
+	checkGetClassRvalAndThrow(rc, name);
 
 	OW_CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
@@ -1772,19 +1730,7 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 	OW_CIMMethod method;
 	OW_CIMClass cc;
 	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, cc);
-	if(rc != OW_CIMException::SUCCESS)
-	{
-		// check whether the namespace was invalid or not
-		if (rc == OW_CIMException::NOT_FOUND)
-		{
-			if (!m_nStore.nameSpaceExists(name.getNameSpace()))
-			{
-				rc = OW_CIMException::INVALID_NAMESPACE;
-			}
-		}
-
-		OW_THROWCIMMSG(rc, name.toString().c_str());
-	}
+	checkGetClassRvalAndThrow(rc, name);
 
 	OW_CIMPropertyArray keys = name.getKeys();
 
@@ -2752,6 +2698,24 @@ OW_CIMServer::_getProviderProperties(const OW_CIMObjectPath& cop,
 				ci.setProperty(clsProp);
 			}
 		}
+	}
+}
+
+void
+OW_CIMServer::checkGetClassRvalAndThrow(OW_CIMException::ErrNoType rval, const OW_CIMObjectPath& path)
+{
+	if (rval != OW_CIMException::SUCCESS)
+	{
+		// check whether the namespace was invalid or not
+		if (rval == OW_CIMException::NOT_FOUND)
+		{
+			if (!m_nStore.nameSpaceExists(path.getNameSpace()))
+			{
+				rval = OW_CIMException::INVALID_NAMESPACE;
+			}
+		}
+
+		OW_THROWCIMMSG(rval, path.getObjectName().c_str());
 	}
 }
 

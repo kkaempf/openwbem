@@ -159,12 +159,12 @@ OW_InstanceProviderProxy::createInstance(
 
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_InstanceProviderProxy::setInstance(
+OW_InstanceProviderProxy::modifyInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
 		const OW_CIMInstance& cimInstance)
 {
-	m_pProv->setInstance(env, cop, cimInstance);
+	m_pProv->modifyInstance(env, cop, cimInstance);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

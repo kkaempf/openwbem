@@ -716,7 +716,9 @@ OW_MetaRepository::_resolveQualifiers(const OW_String& ns,
 			logError(format("Unable to find qualifier: %1",
 				quals[i].getName()));
 
-			// TODO: Throw a CIM_ERR_INVALID_PARAMETER ?
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+				format("Unable to find qualifier: %1",
+				quals[i].getName()).c_str());
 		}
 	}
 }

@@ -127,9 +127,8 @@ OW_DaemonEnv::getCIMOMHandle(const OW_String& username, OW_Bool doIndications)
 {
 	(void)username;
 	(void)doIndications;
-	// TODO: come up with a decent URL for the IPCCIMOMHandle
 	OW_CIMProtocolIFCRef client;
-	client = new OW_HTTPClient("ipc://localhost");
+	client = new OW_HTTPClient("ipc://localhost/owbinary");
 
 	OW_CIMOMHandleIFCRef chRef;
 	chRef = new OW_BinaryCIMOMHandle(client);
@@ -412,7 +411,7 @@ OW_DaemonEnv::createRequestHandler()
 	OW_ASSERT( m_requestHandler == 0 );
 
 	OW_String libname = getConfigItem(OW_ConfigOpts::REQUEST_HANDLER_LIB_PATH_opt);
-	m_requestHandler = 
+	m_requestHandler =
 		OW_SafeLibCreate<OW_RequestHandlerIFC>::loadAndCreateObject(libname,
 			"createRequestHandler", getLogger());
 	if(!m_requestHandler)

@@ -77,7 +77,6 @@ OW_IndicationRepLayerImpl::createNameSpace(const OW_CIMNameSpace& ns,
 void
 OW_IndicationRepLayerImpl::close()
 {
-	// TODO: Unregister with repository?
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -368,7 +367,7 @@ OW_IndicationRepLayerImpl::modifyClass(const OW_CIMObjectPath& name,
 	}
 	catch (OW_CIMException&)
 	{
-		getEnvironment()->logError("Unable to export indication for setClass"
+		getEnvironment()->logError("Unable to export indication for modifyClass"
 			" because CIM_ClassModification does not exist");
 	}
 	return CCOrig;

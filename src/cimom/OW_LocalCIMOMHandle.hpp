@@ -325,7 +325,7 @@ public:
 	 *					updated.
 	 * @param cc	The OW_CIMClass to be updated
 	 */
-	virtual void setClass(const OW_CIMObjectPath &name, const OW_CIMClass &cc);
+	virtual void modifyClass(const OW_CIMObjectPath &name, const OW_CIMClass &cc);
 
 	/**
 	 * Set the specified CIM instance property.
@@ -344,7 +344,7 @@ public:
 	 *		updated.
 	 * @param ci The OW_CIMInstance to be updated.
 	 */
-	virtual void setInstance(const OW_CIMObjectPath &name,
+	virtual void modifyInstance(const OW_CIMObjectPath &name,
 		const OW_CIMInstance &ci);
 
 	/**

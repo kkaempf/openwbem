@@ -344,14 +344,6 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 
 	try
 	{
-//         try
-//         {
-//             // shouldn't need to do this, but there seems to be a bug in OpenWBEM
-//             hdl->deleteClass(OW_CIMObjectPath("invalidTestSub", "root"));
-//         }
-//         catch (const OW_CIMException&)
-//         {
-//         }
 		try
 		{
 			hdl->deleteClass(OW_CIMObjectPath(baseClass.getName(), "root"));
@@ -514,16 +506,137 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// ModifyClass
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		hdl->modifyClass(cop, cc);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+
 	// CIM_ERR_INVALID_PARAMETER
+	// first create a class to modify
+	try
+	{
+		OW_CIMClass cc2("invalidTestSub");
+		cc2.setSuperClass("invalidTestBase");
+		OW_CIMObjectPath cop(cc2.getName(), "root");
+		hdl->createClass(cop, cc2);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(0);
+	}
+	
+	try
+	{
+		// test overriding an DISABLEOVERRIDE qualifier
+		OW_CIMClass cc2("invalidTestSub");
+		cc2.setSuperClass("invalidTestBase");
+		OW_CIMQualifier assocQual2(assocQual);
+		assocQual2.setValue(OW_CIMValue(false));
+		cc2.addQualifier(assocQual2);
+		OW_CIMObjectPath cop(cc2.getName(), "root");
+		hdl->modifyClass(cop, cc2);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+	}
+
+	try
+	{
+		// test adding an key to a subclass when the parent already has keys.
+		OW_CIMClass cc2("invalidTestSub");
+		cc2.setSuperClass("invalidTestBase");
+		OW_CIMProperty theKeyProp2("theKeyProp2", OW_CIMDataType(OW_CIMDataType::BOOLEAN));
+		theKeyProp2.addQualifier(keyQual);
+		cc2.addProperty(theKeyProp2);
+		OW_CIMObjectPath cop(cc2.getName(), "root");
+		hdl->modifyClass(cop, cc2);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+	}
+
+	try
+	{
+		// test adding a class with no keys
+		OW_CIMClass cc2("invalidTestSub");
+		OW_CIMObjectPath cop(cc2.getName(), "root");
+		hdl->modifyClass(cop, cc2);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+	}
+
 	// CIM_ERR_NOT_FOUND
+	try
+	{
+		OW_CIMClass cc2("invalidTestSub2");
+		OW_CIMObjectPath cop(cc2.getName(), "root");
+		hdl->modifyClass(cop, cc2);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+	}
+
 	// CIM_ERR_INVALID_SUPERCLASS
-	// CIM_ERR_CLASS_HAS_CHILDREN
-	// CIM_ERR_CLASS_HAS_INSTANCES
+	try
+	{
+		OW_CIMClass cc2(baseClass);
+		cc2.setSuperClass("invalid");
+		OW_CIMObjectPath cop(cc2.getName(), "root");
+		hdl->modifyClass(cop, cc2);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_SUPERCLASS);
+	}
+
+	// CIM_ERR_CLASS_HAS_CHILDREN - Can't get OpenWBEM to produce this as of July 30, 2002
+	// CIM_ERR_CLASS_HAS_INSTANCES - Can't get OpenWBEM to produce this as of July 30, 2002
 
 
 	// ModifyInstance
+	OW_CIMInstance ci = baseClass.newInstance();
+	ci.setProperty(theKeyProp);
+	try
+	{
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		cop.setKeys(ci);
+		hdl->createInstance(cop, ci);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(0);
+	}
+
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		cop.setKeys(ci);
+		hdl->modifyInstance(cop, ci);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+
 	// CIM_ERR_INVALID_PARAMETER
 	// CIM_ERR_INVALID_CLASS
 	// CIM_ERR_NOT_FOUND

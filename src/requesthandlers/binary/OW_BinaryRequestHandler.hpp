@@ -88,10 +88,10 @@ private:
 	void setQual(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void setClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void modifyClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void setInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void modifyInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
 	void setProperty(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,

@@ -182,7 +182,7 @@ void modifyClass(OW_CIMOMHandleIFC& hdl)
 	cimProp.setDataType(OW_CIMDataType::STRING);
 	cimProp.setName("BrandNewProperty");
 	cimClass.addProperty(cimProp);
-	hdl.setClass(cop, cimClass);
+	hdl.modifyClass(cop, cimClass);
 }
 
 
@@ -254,7 +254,7 @@ void modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	in.setProperty(OW_CIMProperty("BrandNewProperty",
 											OW_CIMValue(OW_Bool(true))));
 
-	hdl.setInstance(cop, in);
+	hdl.modifyInstance(cop, in);
 }
 
 void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)

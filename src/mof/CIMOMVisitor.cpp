@@ -1149,7 +1149,7 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 		{
 			try
 			{
-				m_hdl->setClass(OW_CIMObjectPath(m_curClass.getName(), m_namespace.getNameSpace()), m_curClass);
+				m_hdl->modifyClass(OW_CIMObjectPath(m_curClass.getName(), m_namespace.getNameSpace()), m_curClass);
 				MofCompiler::theErrorHandler->progressMessage(format("Updated class: %1", m_curClass.getName()).c_str(), li);
 			}
 			catch (const OW_CIMException& ce)
@@ -1199,7 +1199,7 @@ void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 		{
 			try
 			{
-				m_hdl->setInstance(cop, m_curInstance);
+				m_hdl->modifyInstance(cop, m_curInstance);
 				MofCompiler::theErrorHandler->progressMessage(format("Updated Instance: %1", cop.modelPath()).c_str(), li);
 			}
 			catch (const OW_CIMException& ce)

@@ -915,7 +915,7 @@ OW_CIMXMLCIMOMHandle::setQualifierType(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::setClass(const OW_CIMObjectPath& path,
+OW_CIMXMLCIMOMHandle::modifyClass(const OW_CIMObjectPath& path,
 										 const OW_CIMClass& cc)
 {
 	static const char* const commandName = "ModifyClass";
@@ -951,7 +951,7 @@ OW_CIMXMLCIMOMHandle::createClass(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::setInstance(const OW_CIMObjectPath& path,
+OW_CIMXMLCIMOMHandle::modifyInstance(const OW_CIMObjectPath& path,
 											 const OW_CIMInstance& ci)
 {
 	static const char* const commandName = "ModifyInstance";

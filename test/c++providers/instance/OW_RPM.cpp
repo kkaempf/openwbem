@@ -227,7 +227,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 	void
-		setInstance(
+		modifyInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
 		const OW_CIMInstance& cimInstance)

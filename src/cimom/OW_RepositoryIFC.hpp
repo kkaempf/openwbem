@@ -126,19 +126,6 @@ public:
 	virtual void deleteQualifierType(const OW_CIMObjectPath& objPath,
 		const OW_ACLInfo& aclInfo) = 0;
 
-	// TODO remove
-	/**
-	 * Add a qualifier type to the repository
-	 * @param name	The OW_CIMObjectPath that identifies the CIM qualifier type.
-	 * @param qt	The CIM qualifier type to be added
-	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_CIMException
-	 */
-	/*
-	virtual void addQualifierType(const OW_CIMObjectPath& name,
-		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo) = 0;
-	*/
-
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace.
 	 * @param name	Am OW_CIMObjectPath that identifies the CIM qualifier type.
@@ -208,12 +195,12 @@ public:
 	 * @param path The path for the class to create
 	 * @param cimClass The class to create
 	 * @param aclInfo ACL object describing user making request.
-	 * @return an OW_CIMClass representing the state of the class prior to 
-	 * 	the update.  This is likely usefull only for creating 
+	 * @return an OW_CIMClass representing the state of the class prior to
+	 * 	the update.  This is likely usefull only for creating
 	 *		CIM_ClassModification indications.
 	 * @exception CIMException if the class already exists
 	 */
-	virtual OW_CIMClass modifyClass(const OW_CIMObjectPath& name, 
+	virtual OW_CIMClass modifyClass(const OW_CIMObjectPath& name,
 		OW_CIMClass& cc, const OW_ACLInfo& aclInfo) = 0;
 
 	/**
@@ -248,7 +235,7 @@ public:
 	 *						enumermation will return only the names of the first level
 	 *						children of the enumerated class.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return An enumeration of OW_CIMObjectPath objects 
+	 * @return An enumeration of OW_CIMObjectPath objects
 	 * 		(OW_CIMObjectPathEnumeration)
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
@@ -288,7 +275,7 @@ public:
 		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo) = 0;
 
 	/**
-	 * Retrieve an enumeration of instance object paths (OW_CIMInstance) 
+	 * Retrieve an enumeration of instance object paths (OW_CIMInstance)
 	 * for a particular class
 	 *
 	 * @param path			The OW_CIMObjectPath identifying the class whose
@@ -366,7 +353,7 @@ public:
 	 * @param ci	The instance with the new values
 	 * @param aclInfo ACL object describing user making request.
 	 * @return a OW_CIMInstance representing the state of the instance prior
-	 * 	to the update.  This is likely usefull only for creating 
+	 * 	to the update.  This is likely usefull only for creating
 	 *		CIM_InstModification indications.
 	 * @exception OW_HDBException
 	 * @exception OW_CIMException

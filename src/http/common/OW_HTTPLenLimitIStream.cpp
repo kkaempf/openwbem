@@ -69,7 +69,6 @@ OW_HTTPLengthLimitStreamBuffer::buffer_from_device(char* c, int n)
 	m_pos += lastRead;
 	if (m_pos == m_length)
 	{
-		//c[lastRead] = EOF; TODO remove it you see this and make check works.  :)
 		m_isEnd = true;
 	}
 	return lastRead;

@@ -227,7 +227,7 @@ OW_NameSpaceProvider::createInstance(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_NameSpaceProvider::setInstance(
+OW_NameSpaceProvider::modifyInstance(
 		const OW_ProviderEnvironmentIFCRef& /*env*/,
 		const OW_CIMObjectPath& /*cop*/,
 		const OW_CIMInstance& /*cimInstance*/)

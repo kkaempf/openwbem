@@ -121,58 +121,51 @@ OW_XMLListener::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 {
 	m_hasError = false;
 
-	try
+	OW_String messageId = node.mustGetAttribute(OW_XMLOperationGeneric::MSG_ID);
+
+	node = node.getChild();
+
+	if (!node)
 	{
-		OW_String messageId = node.mustGetAttribute(OW_XMLOperationGeneric::MSG_ID);
+		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+	}
 
+	makeXMLHeader(messageId, *ostrEntity);
+
+	if (node.getToken() == OW_XMLNode::XML_ELEMENT_MULTIEXPREQ)
+	{
 		node = node.getChild();
-
 		if (!node)
 		{
 			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 		}
-
-		makeXMLHeader(messageId, *ostrEntity);
-
-		if (node.getToken() == OW_XMLNode::XML_ELEMENT_MULTIEXPREQ)
+		while(node)
 		{
-			node = node.getChild();
-			if (!node)
+			OW_TempFileStream ostrEnt, ostrErr;
+			processSimpleExpReq(node, ostrEnt, ostrErr, messageId);
+			if (m_hasError)
 			{
-				OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+				(*ostrEntity) << ostrErr.rdbuf();
+				m_hasError = false;
 			}
-			while(node)
+			else
 			{
-				OW_TempFileStream ostrEnt, ostrErr;
-				processSimpleExpReq(node, ostrEnt, ostrErr, messageId);
-				if (m_hasError)
-				{
-					(*ostrEntity) << ostrErr.rdbuf();
-					m_hasError = false;
-				}
-				else
-				{
-					(*ostrEntity) << ostrEnt.rdbuf();
-				}
-
-				node = node.getNext();
+				(*ostrEntity) << ostrEnt.rdbuf();
 			}
-		}
-		else if (node.getToken() == OW_XMLNode::XML_ELEMENT_SIMPLEEXPREQ)
-		{
-			processSimpleExpReq(node, *ostrEntity, *ostrError, messageId);
-		}
-		else
-		{
-			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
-		}
 
-
+			node = node.getNext();
+		}
 	}
-	catch (OW_CIMException& e)
+	else if (node.getToken() == OW_XMLNode::XML_ELEMENT_SIMPLEEXPREQ)
 	{
-		//TODO
+		processSimpleExpReq(node, *ostrEntity, *ostrError, messageId);
 	}
+	else
+	{
+		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+	}
+
+
 	(void)ostrError;
 
 	(*ostrEntity) << "</MESSAGE></CIM>\r\n";

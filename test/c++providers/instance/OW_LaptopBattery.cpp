@@ -74,7 +74,7 @@ namespace
 		virtual OW_CIMObjectPathEnumeration enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
-			const OW_Bool& deep, 
+			const OW_Bool& deep,
 			const OW_CIMClass& cimClass )
 		{
 			(void)env;
@@ -85,7 +85,7 @@ namespace
 			char hostbuf[256];
 			gethostname(hostbuf, 256);
 			OW_String hostname(hostbuf);
-			instCop.addKey("SystemCreationClassName", 
+			instCop.addKey("SystemCreationClassName",
 				OW_CIMValue(OW_String("CIM_System")));
 			instCop.addKey("SystemName", OW_CIMValue(hostname));
 			instCop.addKey("CreationClassName", OW_CIMValue(cop.getObjectName()));
@@ -98,8 +98,8 @@ namespace
 		virtual OW_CIMInstanceEnumeration enumInstances(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
-			const OW_Bool& deep, 
-			const OW_CIMClass& cimClass, 
+			const OW_Bool& deep,
+			const OW_CIMClass& cimClass,
 			const OW_Bool& localOnly )
 		{
 			(void)cop;
@@ -116,7 +116,7 @@ namespace
 		virtual OW_CIMInstance getInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
-			const OW_CIMClass& cimClass, 
+			const OW_CIMClass& cimClass,
 			const OW_Bool& localOnly )
 		{
 			(void)cop;
@@ -140,7 +140,7 @@ namespace
 		}
 
 		/////////////////////////////////////////////////////////////////////////
-		virtual void setInstance(
+		virtual void modifyInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
 			const OW_CIMInstance& cimInstance)
@@ -162,7 +162,7 @@ namespace
 			OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
 		}
 
-		/** 
+		/**
 		 * Fill in the params for a laptop battery instance
 		 *
 		 * @param cc a LaptopBattery CIMClass
@@ -181,7 +181,7 @@ namespace
 		OW_LaptopBattery::createLaptopBatInst(const OW_CIMClass& cc)
 	{
 		OW_CIMInstance rval = cc.newInstance();
-		rval.setProperty("SystemCreationClassName", 
+		rval.setProperty("SystemCreationClassName",
 			OW_CIMValue(OW_String("CIM_System")));
 		char hostbuf[256];
 		gethostname(hostbuf, 256);
@@ -192,7 +192,7 @@ namespace
 
 		// /proc/apm typically looks like:
 		// 1.16 1.2 0x03 0x00 0x00 0x01 72% 183 min
-		// or 
+		// or
 		// 1.16 1.2 0x03 0x01 0x03 0x09 93% -1 ?
 		ifstream infile("/proc/apm", std::ios::in);
 		OW_StringStream oss;

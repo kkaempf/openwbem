@@ -51,7 +51,7 @@ public:
 	 * 	otherwise.
 	 */
 	static int waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput);
-	static OW_String inetAddrToString(OW_UInt64 addr); // TODO OS abstract this?
+	static OW_String inetAddrToString(OW_UInt64 addr);
 private:
 	OW_SocketUtils();	// don't allow instantiation.
 };

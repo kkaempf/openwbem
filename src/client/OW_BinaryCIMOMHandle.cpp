@@ -584,13 +584,13 @@ OW_BinaryCIMOMHandle::setQualifierType(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::setClass(const OW_CIMObjectPath& path,
+OW_BinaryCIMOMHandle::modifyClass(const OW_CIMObjectPath& path,
 										 const OW_CIMClass& cc)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ModifyClass", path.getNameSpace());;
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, (OW_Int32)OW_BIN_SETCLS, OW_Bool(true));
+	OW_BinIfcIO::write(strm, (OW_Int32)OW_BIN_MODIFYCLS, OW_Bool(true));
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeClass(strm, cc);
 
@@ -618,13 +618,13 @@ OW_BinaryCIMOMHandle::createClass(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::setInstance(const OW_CIMObjectPath& path,
+OW_BinaryCIMOMHandle::modifyInstance(const OW_CIMObjectPath& path,
 											 const OW_CIMInstance& ci)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ModifyInstance", path.getNameSpace());;
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, (OW_Int32)OW_BIN_SETINST, OW_Bool(true));
+	OW_BinIfcIO::write(strm, (OW_Int32)OW_BIN_MODIFYINST, OW_Bool(true));
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeInstance(strm, ci);
 	

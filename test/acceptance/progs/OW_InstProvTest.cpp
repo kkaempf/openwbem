@@ -250,7 +250,7 @@ main(int argc, char* argv[])
 		inst.setProperty(OW_CIMProperty(OW_String("Params"), OW_CIMValue(sa)));
 #endif
 
-		rch.setInstance(icop, inst);
+		rch.modifyInstance(icop, inst);
 
 		cout << "** Getting new instance" << endl;
 		inst = rch.getInstance(icop);

@@ -149,7 +149,7 @@ public:
 	 *
 	 * @throws OW_CIMException
 	 */
-	virtual void setInstance(
+	virtual void modifyInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
 			const OW_CIMInstance& cimInstance) = 0;

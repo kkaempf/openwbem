@@ -827,11 +827,11 @@ OW_CIMOMEnvironment::getRequestHandler(const OW_String &id)
 void
 OW_CIMOMEnvironment::unloadReqHandlers()
 {
-	logDebug("Running unloadReqHandlers()");
+	//logDebug("Running unloadReqHandlers()");
 	OW_Int32 ttl = getConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt).toInt32();
 	if (ttl < 0)
 	{
-		logDebug("Non-Positive TTL for Request Handlers: unloadReqHandlers() returning.");
+		logDebug("Non-Positive TTL for Request Handlers: OpenWBEM will not unload request handlers.");
 		return;
 	}
 	OW_DateTime dt;
@@ -847,7 +847,7 @@ OW_CIMOMEnvironment::unloadReqHandlers()
 			if (rqDT < dt)
 			{
 				iter->second.rqIFCRef.setNull();
-				logDebug(format("Unloading request handler lib %1 for content type %2",
+				logDebug(format("Unloaded request handler lib %1 for content type %2",
 					iter->second.filename, iter->first));
 			}
 		}

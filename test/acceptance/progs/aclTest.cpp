@@ -192,7 +192,7 @@ void modifyClass(OW_CIMOMHandleIFC& hdl)
 		cimProp.setName("BrandNewProperty");
 		cimClass.addProperty(cimProp);
 		bionicClass = cimClass;
-		hdl.setClass(cop, cimClass);
+		hdl.modifyClass(cop, cimClass);
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}
@@ -339,7 +339,7 @@ void modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 
 		cop = OW_CIMObjectPath(ofClass, in.getKeyValuePairs());
 		cop.setNameSpace("/root/acltest");
-		hdl.setInstance(cop, in);
+		hdl.modifyInstance(cop, in);
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}

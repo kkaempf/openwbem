@@ -220,7 +220,7 @@ OW_XMLExecute::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 	(*m_ostrEntity) << "</MESSAGE></CIM>\r\n";
 
 
-	return 0; // TODO should we keep previous value instead?
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1042,7 +1042,7 @@ OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_XMLNode& node,
 	OW_CIMClass cimClass = OW_XMLCIMFactory::createClass(node);
 	path.setObjectName(cimClass.getName());
 
-	hdl.setClass(path,cimClass);
+	hdl.modifyClass(path,cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1071,9 +1071,9 @@ OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_XMLNode& node,
 
 	OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(node);
 	//
-	// Much more validation needs to be performed!
+	// TODO: Much more validation needs to be performed!
 	//
-	hdl.setInstance(path,cimInstance);
+	hdl.modifyInstance(path,cimInstance);
 }
 
 

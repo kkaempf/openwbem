@@ -122,7 +122,7 @@ public:
 			const OW_CIMObjectPath& cop,
 			const OW_CIMInstance& cimInstance);
 
-	virtual void setInstance(
+	virtual void modifyInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
 			const OW_CIMInstance& cimInstance);
@@ -197,7 +197,7 @@ public:
 	OW_CppPolledProviderProxy(OW_CppPolledProviderIFCRef pProv) :
 		m_pProv(pProv) {}
 
-	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef& env ) 
+	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef& env )
 			{ return m_pProv->poll(env); }
 
 	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env )

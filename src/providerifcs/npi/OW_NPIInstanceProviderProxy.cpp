@@ -117,7 +117,7 @@ OW_NPIInstanceProviderProxy::enumInstances(
 		  {
 			  OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
 		  }
-	 
+	
 			::NPIHandle _npiHandle = { 0,0,0,0};
 
 			_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
@@ -228,7 +228,7 @@ OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env
             OW_CIMInstance ow_inst(*
                 static_cast<OW_CIMInstance *>(my_inst.ptr));
 
-// FIXME: 
+// FIXME:
             ow_inst.setClassName(cimClass.getName());
 
             rval = ow_inst;
@@ -286,11 +286,11 @@ OW_NPIInstanceProviderProxy::createInstance(
 
 /////////////////////////////////////////////////////////////////////////////
 void
-OW_NPIInstanceProviderProxy::setInstance(const OW_ProviderEnvironmentIFCRef &env,
+OW_NPIInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef &env,
     const OW_CIMObjectPath& cop, const OW_CIMInstance& cimInstance)
 {
         env->getLogger()->
-            logDebug("OW_NPIInstanceProviderProxy::setInstance()");
+            logDebug("OW_NPIInstanceProviderProxy::modifyInstance()");
 
         if (m_ftable->fp_setInstance != NULL)
         {

@@ -328,11 +328,6 @@ void OW_CIMtoXML(OW_CIMObjectPath const& cop, ostream& ostr,
 
 	if(cop.getKeys().size() == 0)
 	{
-		//
-		// TODO
-		// This only supports writing instance paths.
-		// Do we need to support writing class paths?
-		//
 		OW_THROWCIMMSG(OW_CIMException::FAILED,
 			"No keys available in object path");
 	}

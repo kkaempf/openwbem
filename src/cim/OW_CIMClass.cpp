@@ -626,15 +626,6 @@ OW_CIMClass::newInstance() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/*
-void
-OW_CIMClass::toXML(ostream& ostr, OW_Bool includeQualifiers) const
-{
-	toXML(ostr, false, includeQualifiers, true, OW_StringArray());
-}
-*/
-
-//////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
 OW_CIMClass::filterProperties(const OW_StringArray& propertyList,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin) const
@@ -642,78 +633,6 @@ OW_CIMClass::filterProperties(const OW_StringArray& propertyList,
 	return clone(false, includeQualifiers, includeClassOrigin, propertyList,
 		false);
 }
-
-//////////////////////////////////////////////////////////////////////////////
-/*
-void
-OW_CIMClass::toXML(ostream& ostr, OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, const OW_StringArray& propertyList,
-	OW_Bool noProps) const
-{
-	if(m_pdata->m_name.length() == 0)
-	{
-		OW_THROW(OW_CIMMalformedUrlException, "class must have name");
-	}
-
-	ostr << "<CLASS NAME=\"";
-	ostr << m_pdata->m_name;
-	if(m_pdata->m_parentClassName.length() != 0)
-	{
-		ostr << "\" SUPERCLASS=\"";
-		ostr << m_pdata->m_parentClassName;
-	}
-	ostr << "\">";
-
-	//
-	// Process qualifiers
-	//
-	if(includeQualifiers)
-	{
-		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
-		{
-			m_pdata->m_qualifiers[i].toXML(ostr, localOnly);
-		}
-	}
-
-	if(!noProps)
-	{
-		for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
-		{
-			OW_CIMProperty prop = m_pdata->m_properties[i];
-
-			// If the given property list has any elements, then ensure this
-			// property name is in the property list before including it's xml
-			if(propertyList.size() > 0)
-			{
-				OW_String pName = prop.getName();
-				for(size_t j = 0; j < propertyList.size(); j++)
-				{
-					if(pName.equalsIgnoreCase(propertyList[j]))
-					{
-						prop.toXML(ostr, localOnly, includeQualifiers,
-							includeClassOrigin);
-						break;
-					}
-				}
-			}
-			else
-			{
-				prop.toXML(ostr, localOnly, includeQualifiers,
-					includeClassOrigin);
-			}
-		}
-	}
-
-	// Process methods
-	for(size_t i = 0; i < m_pdata->m_methods.size(); i++)
-	{
-		m_pdata->m_methods[i].toXML(ostr, localOnly, includeQualifiers,
-			includeClassOrigin);
-	}
-
-	ostr << "</CLASS>";
-}
-*/
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass

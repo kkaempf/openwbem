@@ -63,11 +63,11 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMObjectPathEnumeration 
+	OW_CIMObjectPathEnumeration
 		enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		const OW_Bool& deep, 
+		const OW_Bool& deep,
 		const OW_CIMClass& cimClass )
 	{
 		(void)env;
@@ -85,12 +85,12 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMInstanceEnumeration 
+	OW_CIMInstanceEnumeration
 		enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		const OW_Bool& deep, 
-		const OW_CIMClass& cimClass, 
+		const OW_Bool& deep,
+		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly )
 	{
 		(void)cop;
@@ -111,11 +111,11 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 
-	OW_CIMInstance 
+	OW_CIMInstance
 		getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		const OW_CIMClass& cimClass, 
+		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly )
 	{
 		(void)cop;
@@ -138,7 +138,7 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMObjectPath 
+	OW_CIMObjectPath
 		createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
@@ -170,8 +170,8 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	void 
-		setInstance(
+	void
+		modifyInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
 		const OW_CIMInstance& cimInstance)
@@ -200,7 +200,7 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 		deleteInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop)
@@ -213,7 +213,7 @@ public:
 		{
 			if (iter->name == name)
 			{
-				g_saa.erase(iter);   
+				g_saa.erase(iter);
 				break;
 			}
 		}

@@ -139,9 +139,9 @@ public:
 #define OW_BIN_INVMETH				140		// Invoke method
 #define OW_BIN_GETQUAL				150		// Get qualifier type
 #define OW_BIN_SETQUAL				160		// Set qualifier type
-#define OW_BIN_SETCLS				170		// Set class
+#define OW_BIN_MODIFYCLS			170		// Modify class
 #define OW_BIN_CREATECLS			180		// Create class
-#define OW_BIN_SETINST				190		// Set instances
+#define OW_BIN_MODIFYINST			190		// Modify instances
 #define OW_BIN_CREATEINST			200		// Create instance
 #define OW_BIN_GETPROP				210		// Get property
 #define OW_BIN_SETPROP				220		// Set property

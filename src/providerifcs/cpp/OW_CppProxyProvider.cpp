@@ -168,13 +168,13 @@ OW_CppInstanceProviderProxy::createInstance(
 
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_CppInstanceProviderProxy::setInstance(
+OW_CppInstanceProviderProxy::modifyInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
 		const OW_CIMInstance& cimInstance)
 {
 	m_pProv->updateAccessTime();
-	m_pProv->setInstance(env, cop, cimInstance);
+	m_pProv->modifyInstance(env, cop, cimInstance);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

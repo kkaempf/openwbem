@@ -110,7 +110,7 @@ public:
 	 */
 	
 	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &env,
-		const OW_CIMObjectPath& cop, const OW_CIMClass& cimClass, 
+		const OW_CIMObjectPath& cop, const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly);
 
 	/**
@@ -144,7 +144,7 @@ public:
 	 *
 	 * @throws OW_CIMException
 	 */
-	virtual void setInstance(const OW_ProviderEnvironmentIFCRef &env,
+	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &env,
 		const OW_CIMObjectPath& cop, const OW_CIMInstance& cimInstance);
 
 private:

@@ -172,7 +172,7 @@ public:
 	 *		properties will be returned.
 	 * @param aclInfo ACL object describing user making request.
 	 * @return A valid OW_CIMClass object on success.  A NULL OW_CIMClass
-	 *    will never be returned.  An exception will be thrown instead. 
+	 *    will never be returned.  An exception will be thrown instead.
 	 * OW_CIMClass object.
 	 * @exception OW_CIMException
 	 *		CIM_ERR_FAILED
@@ -192,7 +192,7 @@ public:
 	 * @param path The path for the class to delete
 	 * @param aclInfo ACL object describing user making request.
 	 * @return an OW_CIMClass representing the class which was deleted.
-	 * @exception CIMException 
+	 * @exception CIMException
 	 *		CIM_ERR_CLASS_HAS_CHILDREN
 	 *		CIM_ERR_CLASS_HAS_INSTANCES
 	 *		CIM_ERR_ACCESS_DENIED
@@ -211,7 +211,7 @@ public:
 	 * @param path The path for the class to create
 	 * @param cimClass The class to create
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception 	CIMException 
+	 * @exception 	CIMException
 	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
 	 *		CIM_ERR_INVALID_NAMESPACE
@@ -232,7 +232,7 @@ public:
 	 * @return an OW_CIMClass representing the state of the class prior to
 	 * 	the update.  This is likely usefull only for creating
 	 *		CIM_ClassModification indications.
-	 * @exception CIMException 
+	 * @exception CIMException
 	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
 	 *		CIM_ERR_INVALID_NAMESPACE
@@ -630,6 +630,8 @@ private:
 	void _getProviderProperties(const OW_CIMObjectPath& cop,
 		OW_CIMInstance& ci, const OW_CIMClass& theClass,
 		const OW_ACLInfo& aclInfo);
+
+	void checkGetClassRvalAndThrow(OW_CIMException::ErrNoType rval, const OW_CIMObjectPath& path);
 
 	OW_GenericHDBRepository m_nStore;
 	OW_InstanceRepository m_iStore;
