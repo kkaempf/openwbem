@@ -20,4 +20,5 @@ TestCaller.hpp \
 TestRunner.hpp
 
 INCLUDES = \
--I$(top_srcdir)/src/common
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/cim
