@@ -57,10 +57,9 @@ public:
 	virtual ~dyldSharedLibrary();
 
 protected:
-	virtual bool doGetFunctionPointer( const String& functionName,
-											  void** fp ) const;
+	virtual bool doGetFunctionPointer( const String& functionName, void** fp ) const;
 private:
-	void* m_libhandle;
+	NSModule m_libhandle;
 	String m_libName;
 };
 
