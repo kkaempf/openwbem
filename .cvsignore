@@ -25,3 +25,4 @@ config.guess
 config.sub
 depcomp
 autom4te-2.53.cache
+*-openwbem.spec
