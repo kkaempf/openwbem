@@ -552,7 +552,7 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 			}
 			else if (waitpidrv != 0)
 			{
-				got_child_return_code = 1;
+				got_child_return_code = true;
 				streams.pid(-1);
 				streams.setProcessStatus(processstatus);
 			}
@@ -577,6 +577,7 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 					// and select timed out.
 					outIsOpen = false;
 					errIsOpen = false;
+					break;
 				}
 				else
 				{
