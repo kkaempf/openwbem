@@ -37,12 +37,37 @@ Fix problems:
 New features:
     - Create intrinsic providers for
       CIM_IndicationSubscription that interfaces with the providers.
-      - Create a polling class/thread, so if the provider is lazy, the
+      X Create a polling class, so if the provider is lazy, the
         cimom will check for differences (by calling enumInstances) and send 
 		out the appropriate lifecycle indications.  This will be used if the 
 		provider responds true to the mustPoll() call.
+        X Polling manager needs capability to add/remove or start/stop a polled 
+          provider
       - Indication providers must also indicate what class they are 
         instrumenting if they are a lifecycle type.
+      X Add tests for provider manager getIndicationProvider
+      - Add example of types of indication providers: 
+        X indication (mustPoll = true) OW_IndicationProviderTest1
+        - indication (mustPoll = false) w/ extra thread
+        - indication/polled (mustPoll = false) and no extra thread.
+        - Modify OW_TriggerProviderTest* to be indication providers.
+      - Add a command line event listener.
+      - OW_IndicationServerImpl::deleteSubscription
+      - OW_IndicationServerImpl::createSubscription
+        - Only allow subscriptions if a) There is a provider capable of
+          generating the requested Indication in the filter. And
+          b) There is a provider that can handle the requested 
+             IndicationHandler.
+      X polled providers need a way to indicate they provide indications.
+        I decided that the way for them to do that is to implement the
+        OW_CppIndicationProviderIFC.  A "pure" polled provider should not
+        deliver indications.
+      - Indication/polled providers need a way to stop/restart polling.
+      - OW_IndicationServerImpl::modifySubscription
+      - OW_IndicationServerImpl::_processIndication
+        - Create a wql filter property source.
+      - OW_IndicationRepLayer needs an indication provider to interface with
+        it to indicate whether it should generate intrinsic indications.
     - Add an option to the mof compiler to output provider skeleton code for
       a MOF class.
     - Add an option to the mof compiler to output a client class that wraps
@@ -99,6 +124,8 @@ New features:
       them disabled by default.  Maybe remove the code in 2.2 (3.0?)
     - Make OW_Cpp*ProviderIFC method virtual (non-pure), so providers don't
       have to override non-implemented methods.
+    - Create an indication export provider to the logger (cimom logger,
+      syslog, etc.)
 
 Refactorings:
     - Create a base class for all the common code in the provider interfaces.
@@ -115,6 +142,9 @@ Refactorings:
       responsible for storage and indexing.
     - Rename OW_Types.h to OW_Types.hpp
     - Make OW_Exception constructor protected and fix appropriate code.
+    - Remove *E functions from the CIMOMHandle.  Create 2 wrapper cimom
+      handles that return OW_Enumeration<T> and OW_Array<T>.
+    - Put common request handlers into a header (e.g. InstanceArrayBuilder)
 
 Documentation:
     - Enhance developer documentation (similar to "SNIA CIM Object Manager 
