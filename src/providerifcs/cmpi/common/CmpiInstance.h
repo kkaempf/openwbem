@@ -29,10 +29,9 @@
 //#include "CmpiImpl.h"
 
 #include "CmpiObject.h"
-#include "CmpiStatus.h"
 #include "CmpiObjectPath.h"
-#include "CmpiBroker.h"
 #include "CmpiData.h"
+#include "CmpiProviderBase.h"
 
 class CmpiObjectPath;
 

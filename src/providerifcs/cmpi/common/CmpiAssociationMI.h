@@ -22,6 +22,8 @@
 #ifndef _CmpiAssociationMI_h_
 #define _CmpiAssociationMI_h_
 
+#include "OW_config.h"
+
 #include <iostream>
 
 #include "cmpidt.h"
@@ -29,10 +31,10 @@
 
 #include "CmpiBaseMI.h"
 #include "CmpiStatus.h"
-#include "CmpiObjectPath.h"
-#include "CmpiResult.h"
-#include "CmpiContext.h"
 
+class CmpiObjectPath;
+class CmpiResult;
+class CmpiContext;
 
 class CmpiAssociationMI : public CmpiBaseMI {
   protected:

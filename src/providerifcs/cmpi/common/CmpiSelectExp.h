@@ -22,18 +22,15 @@
 #ifndef _CmpiSelectExp_h_
 #define _CmpiSelectExp_h_
 
+#include "OW_config.h"
+
 #include "cmpidt.h"
 #include "cmpift.h"
 
 //#include "CmpiImpl.h"
 
 #include "CmpiObject.h"
-#include "CmpiStatus.h"
-#include "CmpiObjectPath.h"
-#include "CmpiBroker.h"
-#include "CmpiData.h"
 
-class CmpiObjectPath;
 
 /** This class represents the SelectExp of a CIM class. It is used manipulate
     SelectExps and their parts.

@@ -27,9 +27,6 @@
 #include "cmpift.h"
 
 #include "CmpiObject.h"
-#include "CmpiStatus.h"
-#include "CmpiObjectPath.h"
-#include "CmpiBroker.h"
 
 class CmpiObjectPath;
 

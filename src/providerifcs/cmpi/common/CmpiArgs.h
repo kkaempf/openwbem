@@ -26,12 +26,8 @@
 #include "cmpidt.h"
 #include "cmpift.h"
 
-#include "CmpiBaseMI.h"
 #include "CmpiObject.h"
-#include "CmpiStatus.h"
-#include "CmpiObjectPath.h"
-#include "CmpiBroker.h"
-#include "CmpiBaseMI.h"
+#include "CmpiProviderBase.h"
 
 /** This class wraps a CIMOM specific input and output arguments
     passed to methodInvocation functions.

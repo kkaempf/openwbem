@@ -30,8 +30,6 @@
 
 #include "CmpiBaseMI.h"
 #include "CmpiStatus.h"
-#include "CmpiString.h"
-#include "CmpiData.h"
 #include "CmpiObjectPath.h"
 #include "CmpiInstance.h"
 #include "CmpiResult.h"

@@ -25,7 +25,7 @@
 #include "cmpidt.h"
 #include "cmpift.h"
 
-#include "CmpiBaseMI.h"
+#include "CmpiProviderBase.h"
 
 /** This class represents the status of a provider function invocation.
 */

@@ -31,11 +31,10 @@
 #define CmpiRc      CMPIrc
 #endif
 
-#include "CmpiBaseMI.h"
 #include "CmpiString.h"
+#include "CmpiProviderBase.h"
 
 class CmpiBroker;
-//class CmpiString;
 
 /** Abstract base class for all Cmpi classes.
 */

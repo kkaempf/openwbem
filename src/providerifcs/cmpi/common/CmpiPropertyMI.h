@@ -22,6 +22,8 @@
 #ifndef _CmpiPropertyMI_h_
 #define _CmpiPropertyMI_h_
 
+#include "OW_config.h"
+
 #include <iostream>
 
 #include "cmpidt.h"
@@ -32,7 +34,6 @@
 #include "CmpiObjectPath.h"
 #include "CmpiResult.h"
 #include "CmpiContext.h"
-#include "CmpiArgs.h"
 
 
 class CmpiPropertyMI : public CmpiBaseMI {

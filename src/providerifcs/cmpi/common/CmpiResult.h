@@ -27,7 +27,6 @@
 #include "cmpift.h"
 
 #include "CmpiObject.h"
-#include "CmpiStatus.h"
 #include "CmpiData.h"
 #include "CmpiInstance.h"
 #include "CmpiObjectPath.h"

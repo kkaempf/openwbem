@@ -31,9 +31,6 @@
 #define CmpiRc      CMPIrc
 #endif
 
-//#include "CmpiObject.h"
-#include "CmpiStatus.h"
-
 /** This class wraps a CIMOM specific string representation.
 */
 

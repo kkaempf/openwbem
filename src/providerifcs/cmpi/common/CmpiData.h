@@ -26,12 +26,9 @@
 #include "cmpidt.h"
 #include "CmpiString.h"
 
+class CmpiArray;
 class CmpiInstance;
 class CmpiObjectPath;
-
-#include "CmpiObjectPath.h"
-#include "CmpiInstance.h"
-#include "CmpiArray.h"
 
 /** This class wraps a CMPIData value item. Data extraction uses the >> operator.
       Extraction operations can be appended to a property type retrieval statement

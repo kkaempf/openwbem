@@ -33,7 +33,6 @@
 #include "CmpiObjectPath.h"
 #include "CmpiResult.h"
 #include "CmpiContext.h"
-#include "CmpiBroker.h"
 #include "CmpiArgs.h"
 
 

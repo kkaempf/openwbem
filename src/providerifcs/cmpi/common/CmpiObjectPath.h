@@ -27,10 +27,8 @@
 #include "cmpift.h"
 
 #include "CmpiObject.h"
-#include "CmpiBroker.h"
-#include "CmpiStatus.h"
 #include "CmpiData.h"
-#include "CmpiBaseMI.h"
+#include "CmpiProviderBase.h"
 
 
 /** The ObjectPath class represents the value of a Instance reference. It constains

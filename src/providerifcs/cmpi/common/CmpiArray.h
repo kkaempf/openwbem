@@ -24,12 +24,10 @@
 
 #include "OW_config.h"
 #include "cmpidt.h"
-#include "CmpiString.h"
-#include "CmpiObjectPath.h"
-#include "CmpiInstance.h"
-#include "CmpiBaseMI.h"
-#include "CmpiData.h"
+#include "CmpiProviderBase.h"
+#include "CmpiObject.h"
 
+class CmpiString;
 
 class CmpiArrayIdx {
   friend class CmpiArray;

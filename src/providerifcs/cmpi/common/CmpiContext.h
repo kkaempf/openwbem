@@ -27,7 +27,6 @@
 #include "cmpift.h"
 
 #include "CmpiObject.h"
-#include "CmpiStatus.h"
 #include "CmpiData.h"
 
 /** This class acts as a container to holding provider functions context information.

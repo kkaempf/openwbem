@@ -31,11 +31,9 @@ class CmpiEnumeration;
 class CmpiArgs;
 
 #include "CmpiObject.h"
-#include "CmpiString.h"
 #include "CmpiInstance.h"
 #include "CmpiContext.h"
 #include "CmpiObjectPath.h"
-#include "CmpiBaseMI.h"
 #include "CmpiEnumeration.h"
 
 /** This class encapsulates services provided by the CIM Object Manager

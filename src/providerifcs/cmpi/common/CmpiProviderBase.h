@@ -27,6 +27,12 @@
 #ifndef _CmpiProviderBase_h_
 #define _CmpiProviderBase_h_
 
+#include "OW_config.h"
+
+#include "cmpidt.h"
+
+class CmpiProviderBase;
+
 class CmpiProviderBase {
    static CmpiProviderBase *base;
    CMPIBroker *broker;

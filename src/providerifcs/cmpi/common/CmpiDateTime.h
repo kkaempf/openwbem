@@ -27,8 +27,6 @@
 #include "cmpift.h"
 
 #include "CmpiObject.h"
-#include "CmpiStatus.h"
-#include "CmpiBaseMI.h"
 
 
 /** This class represents the instance of a CIM DateTime artifact.
