@@ -904,7 +904,6 @@ TestAuth()
 	# This test can only work if we're root or owlocalhelper is setuid root.
 	# Also, because of the security sensitive nature of owlocalhelper, it has to be installed in it's final location.
 	# owcimomd will only run it from there.
-#	if IAmRoot || [ -u $OWLIBEXECDIR/openwbem/owlocalhelper ]; then
 	if CanRunLocalAuthTest; then
 		EditConfig "s!;http_server.allow_local_authentication = false!http_server.allow_local_authentication = true!g" 
 		
@@ -912,7 +911,7 @@ TestAuth()
 		RestartDaemon
 		echo "fakeclient http://localhost:30926"
 		$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
-			>> $RESULTDIR/AuthTest.out 2>&1
+			> $RESULTDIR/AuthTest.local.out 2>$RESULTDIR/AuthTest.local.err
 		[ "$?" = "0" ] || ExitWithFail "11. Local Authentication Failed"
 
 		# disable http_server.allow_local_authentication
