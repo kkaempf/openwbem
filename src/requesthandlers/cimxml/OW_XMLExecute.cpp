@@ -311,7 +311,17 @@ namespace
 	protected:
 		virtual void doHandle(const OW_CIMObjectPath &cop)
 		{
-			OW_CIMtoXML(cop, ostr);
+			ostr << "<OBJECTPATH>";
+
+			if (cop.getKeys().size() == 0)
+			{
+				OW_CIMClassPathtoXML(cop, ostr);
+			}
+			else
+			{
+				OW_CIMtoXML(cop, ostr);
+			}
+			ostr << "</OBJECTPATH>";
 			checkStream(ostr);
 		}
 	private:
