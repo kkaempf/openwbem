@@ -583,16 +583,25 @@ OW_CIMServer::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
 			// Check to see if user has rights to get the class
 			m_accessMgr->checkAccess(OW_AccessMgr::GETCLASS, path, aclInfo);
 			int rval = m_mStore.getCIMClass(path, theClass);
-			if (rval != 0)
+			if (rval != OW_CIMException::SUCCESS)
 			{
+				// check whether the namespace was invalid or not
+				if (rval == OW_CIMException::NOT_FOUND)
+				{
+					if (!m_nStore.nameSpaceExists(path.getNameSpace()))
+					{
+						rval = OW_CIMException::INVALID_NAMESPACE;
+					}
+				}
+
 				OW_THROWCIM(rval);
 			}
 		}
 
 		if (!theClass)
 		{
-			// safety measure.  m_mStore should have thrown for a more 
-			// specific reason, but we nab it here if not. 
+			// safety measure.  m_mStore should have thrown for a more
+			// specific reason, but we nab it here if not.
 			OW_THROWCIM(OW_CIMException::FAILED);
 		}
 
@@ -1126,7 +1135,7 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 		true);
 
 	cc = getClass(cop, OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
-		OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS, 
+		OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
 		OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
 		0, aclInfo);
 
@@ -1340,7 +1349,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 						continue;
 					}
 
-					OW_CIMClass rcc; 
+					OW_CIMClass rcc;
 					int rc = m_mStore.getCIMClass(op, rcc);
 
 					if(rc == 0)
@@ -1417,7 +1426,7 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 			NULL, intAclInfo);
 
 		OW_CIMClass theClass;
-		int rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(), 
+		int rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(),
 			theClass);
 
 		if(rc != 0)
@@ -1494,7 +1503,7 @@ OW_CIMServer::_instanceExists(const OW_CIMObjectPath& icop,
 	try
 	{
 		cc = getClass(icop, OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
-			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS, 
+			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
 			0, aclInfo);
 	}
@@ -1593,7 +1602,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 	m_accessMgr->checkAccess(OW_AccessMgr::SETPROPERTY, name, aclInfo);
 
 	OW_ACLInfo intAclInfo;
-	OW_CIMClass theClass; 
+	OW_CIMClass theClass;
 	int rc = m_mStore.getCIMClass(name, theClass);
 	if(rc != 0)
 	{
@@ -1824,7 +1833,7 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns,
 			if(cc.isAssociation())
 			{
 				break;
-			}																	  
+			}																	
 
 			OW_CIMQualifier cq = cc.getQualifier(
 				OW_CIMQualifier::CIM_QUAL_PROVIDER);
