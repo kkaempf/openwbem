@@ -208,6 +208,9 @@ public:
 	File(FileHandle hdl) : m_hdl(hdl)
 	{
 	}
+
+private:
+
 	FileHandle	m_hdl;
 };
 
