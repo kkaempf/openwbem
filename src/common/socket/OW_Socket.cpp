@@ -44,7 +44,7 @@
 #include "OW_IOException.hpp"
 
 DEFINE_EXCEPTION(Socket)
-DEFINE_EXCEPTION(TimeOut)
+DEFINE_EXCEPTION(SocketTimeout)
 
 OW_UnnamedPipeRef OW_Socket::m_pUpipe;
 

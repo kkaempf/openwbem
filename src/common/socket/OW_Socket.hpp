@@ -42,7 +42,7 @@
 
 #define OW_DOMAIN_SOCKET_NAME "/tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q"
 
-DECLARE_EXCEPTION(TimeOut)
+DECLARE_EXCEPTION(SocketTimeout)
 
 class OW_Socket : public OW_SelectableIFC, public OW_IOIFC
 {

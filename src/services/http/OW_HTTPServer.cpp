@@ -50,6 +50,7 @@
 #include "OW_SocketBaseImpl.hpp" // for setDumpFiles()
 #include "OW_ThreadDoneCallback.hpp"
 #include "OW_Thread.hpp"
+#include "OW_TimeoutException.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPServer::OW_HTTPServer()
@@ -257,7 +258,7 @@ public:
 			m_HTTPServer->m_options.env->getLogger()->logError(
 				"SSL Handshake failed");
 		}
-		catch (OW_TimeOutException &e)
+		catch (OW_SocketTimeoutException &e)
 		{
 			m_HTTPServer->m_options.env->getLogger()->logError(format(
 				"Socket TimeOut in HTTPServer: %1", e));
@@ -271,6 +272,11 @@ public:
 		{
 			m_HTTPServer->m_options.env->getLogger()->logError(format(
 				"IO Exception in HTTPServer: %1", e));
+		}
+		catch (OW_TimeoutException& e)
+		{
+			m_HTTPServer->m_options.env->getLogger()->logError(format(
+				"Reached maximum server threads. Timeout Exception in HTTPServer: %1", e));
 		}
 		catch (OW_Exception& e)
 		{

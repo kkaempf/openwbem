@@ -304,7 +304,7 @@ OW_ServerSocketImpl::addrString()
 //////////////////////////////////////////////////////////////////////////////
 OW_Socket
 OW_ServerSocketImpl::accept(int timeoutSecs)
-	/*throw (OW_SocketException, OW_TimeOutException)*/
+	/*throw (OW_SocketException, OW_SocketTimeoutException)*/
 {
 	if(!m_isActive)
 	{
@@ -367,7 +367,7 @@ OW_ServerSocketImpl::accept(int timeoutSecs)
 	else
 	{
 		// The timeout expired.
-		OW_THROW(OW_TimeOutException,"Timed out waiting for a connection");
+		OW_THROW(OW_SocketTimeoutException,"Timed out waiting for a connection");
 	}
 }
 
