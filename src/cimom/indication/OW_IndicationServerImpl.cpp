@@ -314,7 +314,6 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 	OW_CIMInstanceEnumeration subscriptions;
 	try
 	{
-		cout << "OW_IndicationServerImple::_processIndication instNS = " << instNS << endl;
 		subscriptions = hdl->enumInstancesE(
 			OW_CIMObjectPath("CIM_IndicationSubscription", instNS), true);
 	}
