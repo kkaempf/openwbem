@@ -99,7 +99,7 @@ public:
 	std::pair<iterator, bool> insert(const value_type& x)
 	{
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		if (i != m_impl->end() && *i == x)
+		if (i != m_impl->end() && equivalent(*i, x))
 		{
 			return std::pair<iterator, bool>(i, false);
 		}
@@ -130,7 +130,7 @@ public:
 	size_type erase(const key_type& x)
 	{
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		if (i != m_impl->end() && *i == x)
+		if (i != m_impl->end() && equivalent(*i, x))
 		{
 			m_impl->erase(i);
 			return 1;
@@ -151,7 +151,7 @@ public:
 	iterator find(const key_type& x) const
 	{
 		iterator pos = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		if (pos != m_impl->end() && *pos == x)
+		if (pos != m_impl->end() && equivalent(*pos, x)) 
 		{
 			return pos;
 		}
@@ -188,6 +188,13 @@ public:
 		const SortedVectorSet<T, Compare>& y);
 	friend bool operator< <>(const SortedVectorSet<T, Compare>& x,
 		const SortedVectorSet<T, Compare>& y);
+
+private:
+	bool equivalent(const key_type& x, const key_type& y) const
+	{
+		// Strict weak ordering: Two objects x and y are equivalent if both f(x, y) and f(y, x) are false.
+		return (!Compare()(x, y) && !Compare()(y, x)); 
+	}
 };
 template<class T, class Compare>
 inline bool operator==(const SortedVectorSet<T, Compare>& x,

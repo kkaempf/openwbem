@@ -162,7 +162,7 @@ public:
 	data_type& operator[](const key_type& k)
 	{
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), k, Compare());
-		if (i != m_impl->end() && i->first == k)
+		if (i != m_impl->end() && equivalent(i->first, k))
 		{
 			return i->second;
 		}
@@ -175,7 +175,7 @@ public:
 	std::pair<iterator, bool> insert(const value_type& x)
 	{
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		if (i != m_impl->end() && i->first == x.first)
+		if (i != m_impl->end() && equivalent(i->first, x.first))
 		{
 			return std::pair<iterator, bool>(i, false);
 		}
@@ -206,7 +206,7 @@ public:
 	size_type erase(const key_type& x)
 	{
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		if (i != m_impl->end() && i->first == x)
+		if (i != m_impl->end() && equivalent(i->first, x))
 		{
 			m_impl->erase(i);
 			return 1;
@@ -227,7 +227,7 @@ public:
 	const_iterator find(const key_type& x) const
 	{
 		const_iterator pos = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		if (pos != m_impl->end() && pos->first == x)
+		if (pos != m_impl->end() && equivalent(pos->first, x))
 		{
 			return pos;
 		}
@@ -239,7 +239,7 @@ public:
 	iterator find(const key_type& x)
 	{
 		iterator pos = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		if (pos != m_impl->end() && pos->first == x)
+		if (pos != m_impl->end() && equivalent(pos->first, x))
 		{
 			return pos;
 		}
@@ -276,6 +276,12 @@ public:
 		const SortedVectorMap<Key, T, Compare>& y);
 	friend bool operator< <>(const SortedVectorMap<Key, T, Compare>& x,
 		const SortedVectorMap<Key, T, Compare>& y);
+private:
+	bool equivalent(const key_type& x, const key_type& y) const
+	{
+		// Strict weak ordering: Two objects x and y are equivalent if both f(x, y) and f(y, x) are false.
+		return (!Compare()(x, y) && !Compare()(y, x)); 
+	}
 };
 template<class Key, class T, class Compare>
 inline bool operator==(const SortedVectorMap<Key, T, Compare>& x,
