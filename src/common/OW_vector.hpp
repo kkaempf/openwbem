@@ -40,7 +40,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -54,7 +54,7 @@ inline std::vector<T>* COWReferenceClone(std::vector<T>* obj)
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 #endif

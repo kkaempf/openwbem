@@ -51,7 +51,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_DEPRECATED NwIface
@@ -84,7 +84,7 @@ private:
 	String m_name;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif	// #if !defined(OW_WIN32) && !defined(OW_NETWARE)
 

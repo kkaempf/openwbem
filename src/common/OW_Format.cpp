@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_Format.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -179,5 +179,5 @@ Format::Format(const char* ca, const String& a, const String& b, const String& c
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

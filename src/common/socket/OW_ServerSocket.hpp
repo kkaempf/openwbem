@@ -43,7 +43,7 @@
 #include "OW_Types.hpp"
 #include "OW_SocketFlags.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API ServerSocket : public SelectableIFC
@@ -133,6 +133,6 @@ private:
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

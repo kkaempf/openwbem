@@ -44,7 +44,7 @@
 
 #include <map>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**

@@ -52,7 +52,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 static Mutex guard;
@@ -116,5 +116,5 @@ RandomNumber::getNextNumber()
 #endif
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

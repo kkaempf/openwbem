@@ -42,7 +42,7 @@
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(UnknownHost, OW_COMMON_API);
@@ -172,6 +172,6 @@ private:
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

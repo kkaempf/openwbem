@@ -41,7 +41,7 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_CIMProtocolIStreamIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_HTTP_API HTTPLengthLimitStreamBuffer : public BaseStreamBuffer
@@ -106,6 +106,6 @@ private:
 	HTTPLenLimitIStream& operator=(const HTTPLenLimitIStream& arg);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -37,7 +37,7 @@
 #include "OW_LogAppender.hpp"
 #include "OW_String.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 
@@ -59,6 +59,6 @@ NullAppender::doProcessLogMessage(const String& formattedMessage, const LogMessa
 
 const String NullAppender::STR_DEFAULT_MESSAGE_PATTERN("");
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

@@ -38,7 +38,7 @@
 #include "OW_String.hpp"
 #include "OW_BinarySerialization.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -125,5 +125,5 @@ CIMScope::setNull()
 	m_val = BAD;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

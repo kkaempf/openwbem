@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_Index.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -49,5 +49,5 @@ Index::flush()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -35,14 +35,14 @@
 #include "OW_config.h"
 #include "OW_IntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 IntrusiveCountableBase::~IntrusiveCountableBase()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

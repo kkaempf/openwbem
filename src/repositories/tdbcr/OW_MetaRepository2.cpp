@@ -44,7 +44,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_Logger.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -538,5 +538,5 @@ MetaRepository2::MetaRepository2(const ServiceEnvironmentIFCRef& env)
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

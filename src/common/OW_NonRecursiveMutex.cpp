@@ -44,7 +44,7 @@
 
 #include <cstring>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(Deadlock);
@@ -100,5 +100,5 @@ NonRecursiveMutex::conditionPostWait(NonRecursiveMutexLockState& state)
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

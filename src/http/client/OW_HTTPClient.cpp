@@ -56,7 +56,7 @@
 
 using namespace std;
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::flush;
@@ -1101,5 +1101,5 @@ HTTPClient::setTimeouts(int seconds)
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -38,7 +38,7 @@
 #include "OW_Select.hpp"
 #include "OW_ExceptionIds.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(Select);
@@ -99,5 +99,5 @@ SelectEngineStopper::doSelected(SelectableIFCRef& selectedObject)
 	m_engine.stop();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

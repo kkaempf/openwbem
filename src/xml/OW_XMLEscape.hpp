@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -52,6 +52,6 @@ inline String XMLEscape(const String& str)
 	return XMLEscape(str.c_str(), str.length());
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // OW_XMLESCAPE_HPP_

@@ -39,7 +39,7 @@
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(MalformedURL, OW_COMMON_API);
@@ -103,6 +103,6 @@ struct OW_COMMON_API URL
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -34,7 +34,7 @@
 #define OW_CMPI_PROFIDER_IFC_UTILS_HPP_
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //#include "CMPIExternal.hpp"
@@ -75,6 +75,6 @@ private:
 };
 #endif
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

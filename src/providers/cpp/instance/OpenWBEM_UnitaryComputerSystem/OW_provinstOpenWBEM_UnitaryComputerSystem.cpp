@@ -37,7 +37,7 @@
 #include "OW_CppProviderIncludes.hpp"
 #include "OW_SocketAddress.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 	using namespace WBEMFlags;

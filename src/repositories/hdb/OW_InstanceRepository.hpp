@@ -41,7 +41,7 @@
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_WBEMFlags.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_HDB_API InstanceRepository : public GenericHDBRepository
@@ -165,6 +165,6 @@ private:
 #endif
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -39,7 +39,7 @@
 #include "OW_IOIFC.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API IOIFCStreamBuffer : public BaseStreamBuffer
@@ -58,6 +58,6 @@ private:
 	IOIFC* m_dev;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

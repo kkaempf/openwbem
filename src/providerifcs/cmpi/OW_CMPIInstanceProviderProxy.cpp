@@ -43,7 +43,7 @@
 #endif
 #include <stdlib.h> // for alloca() on FreeBSD
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // debugging
@@ -380,5 +380,5 @@ void
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

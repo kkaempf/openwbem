@@ -45,7 +45,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -137,7 +137,7 @@ private:
 	bool indicationsEnabled;
 };
 } // end anonymous namespace
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_PROVIDERFACTORY(OpenWBEM::provinstCIM_IndicationFilter, owprovinstCIM_IndicationFilter);
 

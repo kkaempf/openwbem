@@ -64,7 +64,7 @@ extern "C"
 }
 #include <cstring>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 #ifdef OW_NETWARE
@@ -583,5 +583,5 @@ PosixUnnamedPipe::getSelectObj() const
 #endif
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -38,7 +38,7 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_ProviderFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -50,6 +50,6 @@ class OW_PROVIDER_API ProviderBaseIFC : public virtual IntrusiveCountableBase
 		virtual ~ProviderBaseIFC();
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

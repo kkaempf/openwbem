@@ -38,7 +38,7 @@
 #include "OW_CommonFwd.hpp"
 #include "OW_LogAppender.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -57,6 +57,6 @@ protected:
 	virtual void doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -37,7 +37,7 @@
 // dumb aCC requires these to build
 #include "OW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////

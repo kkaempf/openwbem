@@ -40,7 +40,7 @@
 #include "OW_Exception.hpp"
 #include <cstring>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(HDB, OW_HDB_API)
@@ -103,6 +103,6 @@ struct OW_HDB_API HDBBlock
 };
 #define OW_HDBLKSZ sizeof(HDBBlock);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

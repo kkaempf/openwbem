@@ -58,7 +58,7 @@ using namespace OpenWBEM::MOF;
 #define RETURN_VAL(x) owmoflval->pString = 0; return(x);
 #define RETURN_STR(x) owmoflval->pString = new String(owmoftext); return(x);
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 OW_DECLARE_EXCEPTION(MOFLexer)
 OW_DEFINE_EXCEPTION(MOFLexer)

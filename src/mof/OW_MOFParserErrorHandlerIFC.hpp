@@ -40,7 +40,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace MOF
@@ -76,6 +76,6 @@ private:
 typedef IntrusiveReference<ParserErrorHandlerIFC> ParserErrorHandlerIFCRef;
 
 } // end namespace MOF
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif //MOF_PARSER_ERROR_HANDLER_HPP

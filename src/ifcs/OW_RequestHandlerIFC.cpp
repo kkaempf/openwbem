@@ -41,7 +41,7 @@
 // dumb aCC requires these to build
 #include "OW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -116,5 +116,5 @@ RequestHandlerIFC::getHost()
 	return m_cachedHost;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

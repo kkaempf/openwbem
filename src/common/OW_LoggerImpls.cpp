@@ -54,7 +54,7 @@
 #ifndef OW_WIN32
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::ofstream;
@@ -67,5 +67,5 @@ using std::endl;
 
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -44,7 +44,7 @@
 #include "OW_Param.hpp"
 #include "OW_Map.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -729,6 +729,6 @@ private:
 	CIMXMLCIMOMHandle& operator=(const CIMXMLCIMOMHandle&);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

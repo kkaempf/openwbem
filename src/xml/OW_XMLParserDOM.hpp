@@ -43,7 +43,7 @@
 
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(DOM, OW_XML_API)
@@ -72,7 +72,7 @@ namespace XMLParserDOM
 	
 
 } // end namespace XMLParserDOM
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 #endif

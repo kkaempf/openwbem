@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_ProviderInfoBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 struct OW_PROVIDER_API IndicationProviderInfoEntry
@@ -70,6 +70,6 @@ typedef Array<IndicationProviderInfo> IndicationProviderInfoArray;
 extern template class ProviderInfoBase<IndicationProviderInfoEntry>;
 #endif // defined(__GNUC__) || defined(__GNUG__)
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -36,7 +36,7 @@
 #include "OW_ProviderInfoBase.hpp"
 #include "OW_IndicationProviderInfo.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -58,5 +58,5 @@ InstClassInfo::~InstClassInfo()
 template class ProviderInfoBase<InstClassInfo>;
 template class ProviderInfoBase<IndicationProviderInfoEntry>;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -42,7 +42,7 @@
 
 #ifdef OW_HAVE_SLP_H
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 struct CBData
@@ -178,7 +178,7 @@ CIMOMLocatorSLP::~CIMOMLocatorSLP()
 	SLPClose(m_hslp);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // OW_HAVE_SLP_H
 

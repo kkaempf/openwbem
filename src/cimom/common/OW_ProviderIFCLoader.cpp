@@ -41,7 +41,7 @@
 #include "OW_FileSystem.hpp"
 #include "OW_SafeLibCreate.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -144,5 +144,5 @@ ProviderIFCLoader::~ProviderIFCLoader()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

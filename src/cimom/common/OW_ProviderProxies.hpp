@@ -48,7 +48,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_CIMOMCOMMON_API InstanceProviderProxy : public InstanceProviderIFC
@@ -226,7 +226,7 @@ private:
 };
 #endif	// OW_DISABLE_ASSOCIATION_TRAVERSAL
 
-}	// namespace OpenWBEM
+}	// end namespace OW_NAMESPACE
 
 #endif // OW_THREADS_RUN_AS_USER
 

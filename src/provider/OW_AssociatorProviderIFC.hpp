@@ -41,7 +41,7 @@
 #include "OW_IfcsFwd.hpp"
 #include "OW_WBEMFlags.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -262,6 +262,6 @@ class OW_PROVIDER_API AssociatorProviderIFC: public ProviderBaseIFC
 				const String& role ) = 0;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

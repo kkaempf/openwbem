@@ -40,7 +40,7 @@
 #include "OW_Exception.hpp"
 #include "OW_ExceptionIds.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_HTTP_API HTTPException : public Exception
@@ -56,7 +56,7 @@ public:
 private:
 	int m_response;
 };
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #define OW_HTTP_THROW(exType, msg, code) throw exType(__FILE__, __LINE__, msg, code)
 

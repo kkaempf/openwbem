@@ -42,7 +42,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /*----------------------------------
@@ -211,7 +211,7 @@ namespace ThreadImpl
 	OW_COMMON_API void cancel(Thread_t threadID);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 namespace OW_ThreadImpl = OpenWBEM::ThreadImpl;
 

@@ -52,7 +52,7 @@ extern "C"
 
 #include "OW_Format.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
   /**
@@ -169,7 +169,7 @@ void AIXAuthentication::doInit(ServiceEnvironmentIFCRef env)
 	m_allowedUsers = env->getConfigItem(ConfigOpts::PAM_ALLOWED_USERS_opt);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_AUTHENTICATOR_FACTORY(OpenWBEM::AIXAuthentication,aix);
 

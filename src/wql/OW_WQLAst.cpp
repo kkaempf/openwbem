@@ -34,7 +34,7 @@
 
 #include "OW_WQLAst.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 stmt_selectStmt_optSemicolon::~stmt_selectStmt_optSemicolon()
@@ -1068,4 +1068,4 @@ aExprConst_NULLP::~aExprConst_NULLP()
 {
 	delete m_pNULLP1;
 }
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE

@@ -52,7 +52,7 @@
 #include "OW_ServiceIFCNames.hpp"
 #include "OW_CIMDateTime.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -531,7 +531,7 @@ void IndicationRepLayerImpl::exportIndication(const CIMInstance& instance,
 	m_pEnv->exportIndication(instance, instNS);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
 extern "C" OW_EXPORT OpenWBEM::IndicationRepLayer*

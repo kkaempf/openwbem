@@ -37,7 +37,7 @@
 #include "OW_Logger.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -303,5 +303,5 @@ NPIAssociatorProviderProxy::referenceNames(
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

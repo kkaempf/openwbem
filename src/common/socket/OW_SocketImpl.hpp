@@ -46,7 +46,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API SocketImpl : public SocketBaseImpl
@@ -62,6 +62,6 @@ protected:
 	virtual int writeAux(const void* dataOut, int dataOutLen);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

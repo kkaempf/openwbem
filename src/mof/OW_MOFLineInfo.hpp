@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace MOF
@@ -56,6 +56,6 @@ struct OW_MOF_API LineInfo
 typedef LineInfo lineInfo OW_DEPRECATED;
 
 } // end namespace MOF
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

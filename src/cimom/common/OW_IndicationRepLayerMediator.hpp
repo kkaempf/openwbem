@@ -39,7 +39,7 @@
 #include "OW_AtomicOps.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -73,6 +73,6 @@ private:
 	Atomic_t m_indicationCount;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

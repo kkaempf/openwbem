@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_WQLPropertySource.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,5 +43,5 @@ WQLPropertySource::~WQLPropertySource()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

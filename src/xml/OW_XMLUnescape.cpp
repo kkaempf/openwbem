@@ -43,7 +43,7 @@
 #include <limits.h> // for CHAR_MAX
 #include <stdlib.h> // for strtol
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 String XMLUnescape(const char* escapedText, unsigned len)
@@ -271,5 +271,5 @@ yy40:	yych = *++YYCURSOR;
 	return rval.releaseString();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

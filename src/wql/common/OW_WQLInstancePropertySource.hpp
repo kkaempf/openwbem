@@ -40,7 +40,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_String.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_WQLCOMMON_API WQLInstancePropertySource : public WQLPropertySource
@@ -80,6 +80,6 @@ private:
 	String m_ns;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -44,7 +44,7 @@
 
 	#include <pthread.h>
 
-	namespace OpenWBEM
+	namespace OW_NAMESPACE
 	{
 
 		// Platform specific thread type
@@ -84,11 +84,11 @@
 			NativeMutex_t* pmutex;
 		};
 
-	} // end namespace OpenWBEM
+	} // end namespace OW_NAMESPACE
 
 #elif defined(OW_WIN32)
 
-	namespace OpenWBEM
+	namespace OW_NAMESPACE
 	{
 		// Platform specific thread type
 		typedef DWORD Thread_t;
@@ -122,7 +122,7 @@
 			NativeMutex_t* pmutex;
 		};
 
-	} // end namespace OpenWBEM
+	} // end namespace OW_NAMESPACE
 
 #endif
 

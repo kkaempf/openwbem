@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_MethodProviderInfo.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -79,5 +79,5 @@ MethodProviderInfo::getProviderName() const
 	return m_name;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

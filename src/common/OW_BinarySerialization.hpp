@@ -60,7 +60,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // Values for local API calls
@@ -359,6 +359,6 @@ namespace BinarySerialization
 	OW_COMMON_API void readStringEnum(std::istream& istrm, StringResultHandlerIFC& result);
 } // end namespace BinarySerialization
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif	// OW_BinarySerialization_HPP_

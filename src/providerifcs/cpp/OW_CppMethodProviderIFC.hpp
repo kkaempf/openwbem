@@ -39,7 +39,7 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_MethodProviderInfo.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -96,7 +96,7 @@ public:
 };
 typedef SharedLibraryReference< IntrusiveReference<CppMethodProviderIFC> > CppMethodProviderIFCRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 								

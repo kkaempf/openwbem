@@ -38,7 +38,7 @@
 #include "OW_dyldSharedLibrary.hpp"
 #include "OW_Format.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 std::ostream& operator<<(std::ostream& o, NSObjectFileImageReturnCode code)
@@ -134,6 +134,6 @@ dyldSharedLibraryLoader::~dyldSharedLibraryLoader()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // #if defined(OW_USE_DYLD)

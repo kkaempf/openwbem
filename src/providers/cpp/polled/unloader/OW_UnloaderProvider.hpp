@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_CppPolledProviderIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class UnloaderProvider : public CppPolledProviderIFC
@@ -63,6 +63,6 @@ public:
 		ProviderEnvironmentIFCRef &env);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

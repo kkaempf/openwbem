@@ -40,7 +40,7 @@
 
 #include <iterator> // for the iterator tags
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 template <class T>
@@ -247,6 +247,6 @@ inline Enumeration_insert_iterator<Container> Enumeration_inserter(Enumeration<C
 	return Enumeration_insert_iterator<Container>(x);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

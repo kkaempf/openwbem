@@ -36,7 +36,7 @@
 #include "OW_AssociatorProviderIFC.hpp"
 #include "OW_FTABLERef.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class CMPIAssociatorProviderProxy : public AssociatorProviderIFC
@@ -94,6 +94,6 @@ private:
 	CMPIFTABLERef m_ftable;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

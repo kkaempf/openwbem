@@ -35,7 +35,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "NPIExternal.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class NPIVectorFreer
@@ -116,6 +116,6 @@ private:
 	::NPIHandle& m_handle;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

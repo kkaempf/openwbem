@@ -69,7 +69,7 @@
 #endif
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // We always send the lowest possible version. If 1.0 and 1.1 are the same, we send 1.0 so that 1.0 only clients will accept the request.
@@ -1518,5 +1518,5 @@ CIMXMLCIMOMHandle::getHTTPResponseHeader(const String& hdrName,
 	return cc;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

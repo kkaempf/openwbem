@@ -40,7 +40,7 @@ extern "C" {
 static int recCompare(const DBT* key1, const DBT* key2);
 }
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -121,7 +121,7 @@ void dbDatabase::put(const String& key, const std::vector<unsigned char>& data, 
 	dbUtils::checkReturn(ret, "m_db->put");
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////	
 extern "C" {

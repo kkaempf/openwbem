@@ -44,7 +44,7 @@
 
 #include <db.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -197,6 +197,6 @@ private:
 	dbDatabase m_db;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

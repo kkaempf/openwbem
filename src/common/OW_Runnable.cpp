@@ -37,7 +37,7 @@
 #include "OW_Runnable.hpp"
 #include "OW_Thread.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -57,5 +57,5 @@ Runnable::doDefinitiveCancel()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

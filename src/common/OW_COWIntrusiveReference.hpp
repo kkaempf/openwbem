@@ -47,7 +47,7 @@
 
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 #ifdef OW_CHECK_NULL_REFERENCES
@@ -245,7 +245,7 @@ template<class T> void swap(COWIntrusiveReference<T> & lhs, COWIntrusiveReferenc
 	lhs.swap(rhs);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

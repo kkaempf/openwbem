@@ -42,7 +42,7 @@
 #include "OW_Logger.hpp"
 #include "OW_CommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -78,6 +78,6 @@ public:
 	static SharedLibraryLoaderRef createSharedLibraryLoader();
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

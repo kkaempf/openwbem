@@ -42,7 +42,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class RemoteAssociatorProvider : public AssociatorProviderIFC
@@ -64,7 +64,7 @@ private:
 };
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 

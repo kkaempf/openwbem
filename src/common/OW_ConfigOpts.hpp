@@ -210,7 +210,7 @@
 #endif
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 namespace ConfigOpts
 {
@@ -302,6 +302,6 @@ namespace ConfigOpts
 	extern NameAndDefault* g_defaultsEnd;
 
 } // end namespace ConfigOpts
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

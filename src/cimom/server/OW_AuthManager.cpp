@@ -45,7 +45,7 @@
 // dumb aCC requires these to build
 #include "OW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(AuthManager)
@@ -140,5 +140,5 @@ AuthManager::shutdown()
 	m_authenticator.setNull();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

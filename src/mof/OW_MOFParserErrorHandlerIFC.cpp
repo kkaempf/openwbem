@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_MOFParserErrorHandlerIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace MOF
@@ -77,5 +77,5 @@ void ParserErrorHandlerIFC::progressMessage( const char* message, const LineInfo
 }
 
 } // end namespace MOF
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

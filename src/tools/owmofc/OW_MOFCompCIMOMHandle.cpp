@@ -43,7 +43,7 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_Enumeration.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -53,5 +53,5 @@ MOFCompCIMOMHandle::MOFCompCIMOMHandle(RepositoryIFCRef pRepos, OperationContext
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

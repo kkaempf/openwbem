@@ -3,7 +3,7 @@ dnl AC_AS_DIRNAME (PATH)
 dnl this is the macro AS_DIRNAME from autoconf 2.4x
 dnl defined here for use in autoconf 2.1x, remove the AC_ when you use 2.4x 
 dnl
-dnl @version $Id: acinclude.m4,v 1.13 2004-09-11 05:16:27 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.14 2005-02-03 00:52:39 nuffer Exp $
 dnl @author complain to <guidod@gmx.de>
 
 AC_DEFUN([AC_ECHO_MKFILE],
@@ -123,7 +123,7 @@ dnl   library (that has some headers) where some functionality is
 dnl   dependent on the OS-features detected at compile-time. No
 dnl   need to invent some "testpkg-confdefs.h.in" manually. :-)
 dnl
-dnl @version $Id: acinclude.m4,v 1.13 2004-09-11 05:16:27 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.14 2005-02-03 00:52:39 nuffer Exp $
 dnl @author Guido Draheim <guidod@gmx.de>
 
 AC_DEFUN([AC_CREATE_PREFIX_CONFIG_H],
@@ -162,10 +162,10 @@ changequote({, })dnl
     echo 's/#undef  *\([A-Z_]\)/#undef '$ac_prefix_conf_UPP'_\1/' >conftest.sed
 #    echo 's/#undef  *\([a-z]\)/#undef '$ac_prefix_conf_LOW'_\1/' >>conftest.sed
     echo 's/#define  *\([A-Z_][A-Z0-9_]*\)\(.*\)/#ifndef '$ac_prefix_conf_UPP"_\\1 \\" >>conftest.sed
-    echo '#define '$ac_prefix_conf_UPP"_\\1 \\2 \\" >>conftest.sed
+    echo '#define '$ac_prefix_conf_UPP"_\\1\\2 \\" >>conftest.sed
     echo '#endif/' >>conftest.sed
 #    echo 's/#define  *\([A-Z0-9_]*\)\(.*\)/#ifndef '$ac_prefix_conf_LOW"_\\1 \\" >>conftest.sed
-    echo '#define '$ac_prefix_conf_LOW"_\\1 \\2 \\" >>conftest.sed
+    echo '#define '$ac_prefix_conf_LOW"_\\1\\2 \\" >>conftest.sed
     echo '#endif/' >>conftest.sed
     sed -f conftest.sed $ac_prefix_conf_INP >>$ac_prefix_conf_OUTTMP
     echo ' ' >>$ac_prefix_conf_OUTTMP
@@ -196,7 +196,7 @@ dnl Check whether sys/socket.h defines type socklen_t. Please note
 dnl that some systems require sys/types.h to be included before
 dnl sys/socket.h can be compiled.
 dnl
-dnl @version $Id: acinclude.m4,v 1.13 2004-09-11 05:16:27 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.14 2005-02-03 00:52:39 nuffer Exp $
 dnl @author Lars Brinkhoff <lars@nocrew.org>
 dnl
 AC_DEFUN([TYPE_SOCKLEN_T],

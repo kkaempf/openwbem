@@ -36,7 +36,7 @@
 #define OW_STRICT_WEAK_ORDERING_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 template<class T1>
@@ -193,6 +193,6 @@ bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 			lhs10, rhs10);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

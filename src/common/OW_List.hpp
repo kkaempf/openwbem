@@ -39,7 +39,7 @@
 #include "OW_COWReference.hpp"
 #include <list>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // forward declarations are necessary for template friends.
@@ -295,6 +295,6 @@ std::list<T>* COWReferenceClone(std::list<T>* obj)
 	return new std::list<T>(*obj);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

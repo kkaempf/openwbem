@@ -38,7 +38,7 @@
 #include "OW_Logger.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // debugging
@@ -301,5 +301,5 @@ NPIInstanceProviderProxy::deleteInstance(
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

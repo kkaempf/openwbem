@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_HTTPChunkException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -55,6 +55,6 @@ HTTPChunkException::type() const
 	return "HTTPChunkException"; 
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

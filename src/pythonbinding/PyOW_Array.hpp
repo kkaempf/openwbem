@@ -44,7 +44,7 @@
 #undef ANY
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace {
@@ -353,6 +353,6 @@ void registerArrayImpl(const char* className)
 }
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // #ifndef PYOW_ARRAY_HPP_

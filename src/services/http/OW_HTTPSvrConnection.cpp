@@ -63,7 +63,7 @@
 #undef BAD
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::ios;
@@ -1280,5 +1280,5 @@ HTTPSvrConnection::doCooperativeCancel()
 	m_socket.disconnect();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_CppInstanceProviderIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -68,6 +68,6 @@ class OW_CPPPROVIFC_API CppReadOnlyInstanceProviderIFC : public virtual CppInsta
 		const CIMClass& theClass);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -38,7 +38,7 @@
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_NPIProviderIFCUtils.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // debugging
@@ -303,5 +303,5 @@ PerlInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -33,7 +33,7 @@
 #include "OW_IndicationProviderIFC.hpp"
 #include "OW_FTABLERef.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class NPIIndicationProviderProxy : public IndicationProviderIFC
@@ -78,6 +78,6 @@ private:
 	unsigned int m_activationCount;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

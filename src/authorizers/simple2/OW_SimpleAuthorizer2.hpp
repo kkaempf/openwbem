@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_Authorizer2IFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // This class is responsible for Access control.
@@ -203,6 +203,6 @@ private:
 		OperationContext& context);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

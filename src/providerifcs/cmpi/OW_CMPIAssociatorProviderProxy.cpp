@@ -44,7 +44,7 @@
 #endif
 #include <stdlib.h> // for alloca() on FreeBSD
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -336,5 +336,5 @@ void CMPIAssociatorProviderProxy::referenceNames(
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

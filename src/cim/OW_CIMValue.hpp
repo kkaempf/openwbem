@@ -43,7 +43,7 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMNULL.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -567,6 +567,6 @@ private:
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -45,7 +45,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /** This class encapsulates the functionality of a cache. */
@@ -194,6 +194,6 @@ Cache<T>::setMaxCacheSize(UInt32 max)
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

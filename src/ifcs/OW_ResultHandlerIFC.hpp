@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_IfcsFwd.hpp" // for the *ResultHandler typedefs
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /*
@@ -67,6 +67,6 @@ ResultHandlerIFC<T>::~ResultHandlerIFC()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -47,7 +47,7 @@
 #include "OW_Format.hpp"
 #include "OW_CIMException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace XMLClass
@@ -158,5 +158,5 @@ readInstance(CIMXMLParser& childNode, CIMObjectPath& path)
 }
 
 } // end namespace XMLClass
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

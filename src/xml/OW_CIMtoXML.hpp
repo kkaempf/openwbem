@@ -39,7 +39,7 @@
 #include "OW_CIMFwd.hpp"
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////
@@ -87,6 +87,6 @@ OW_XML_API void CIMtoXML(CIMParameter const& cp, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
 OW_XML_API void CIMParamValueToXML(CIMParamValue const& pv, std::ostream& ostr);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif				

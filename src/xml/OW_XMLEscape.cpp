@@ -39,7 +39,7 @@
 #include "OW_XMLEscape.hpp"
 #include "OW_StringBuffer.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 String XMLEscape(const char* escapedText, unsigned len)
@@ -105,5 +105,5 @@ yy20:
 	return rval.releaseString();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -47,7 +47,7 @@
 
 #include <algorithm> // for std::sort
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -441,5 +441,5 @@ CIMQualifierType::toMOF() const
 	return rv.releaseString();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

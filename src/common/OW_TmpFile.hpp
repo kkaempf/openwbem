@@ -46,7 +46,7 @@
 #include <io.h>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API TmpFileImpl : public IntrusiveCountableBase
@@ -134,6 +134,6 @@ private:
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

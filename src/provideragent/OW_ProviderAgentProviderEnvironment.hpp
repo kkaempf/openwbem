@@ -46,7 +46,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_PROVIDERAGENT_API ProviderAgentProviderEnvironment: public ProviderEnvironmentIFC
@@ -85,6 +85,6 @@ private:
 	ProviderAgentEnvironment::EConnectionCredentialsUsageFlag m_useConnectionCredentials;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // #ifndef OW_PROVIDERAGENTPROVIDERENVIRONMENT_HPP_INCLUDE_GUARD_

@@ -36,7 +36,7 @@
 #define OW_LOGLEVEL_HPP_
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 enum ELogLevel
@@ -49,6 +49,6 @@ enum ELogLevel
 	E_ALL_LEVEL
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // OW_LOGLEVEL_HPP_

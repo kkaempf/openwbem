@@ -42,7 +42,7 @@
 #include "OW_AssociatorProviderInfo.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -259,7 +259,7 @@ class OW_CPPPROVIFC_API CppAssociatorProviderIFC: public virtual CppInstanceProv
 };
 typedef SharedLibraryReference< IntrusiveReference<CppAssociatorProviderIFC> > CppAssociatorProviderIFCRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif //#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 

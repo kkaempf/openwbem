@@ -42,7 +42,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class CppInstanceProviderIFC;
@@ -128,7 +128,7 @@ private:
 
 typedef SharedLibraryReference< IntrusiveReference<CppProviderBaseIFC> > CppProviderBaseIFCRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 // This is here to prevent existing code from breaking.  New code should use OW_PROVIDERFACTORY.

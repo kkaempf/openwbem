@@ -65,7 +65,7 @@
 	#endif
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;

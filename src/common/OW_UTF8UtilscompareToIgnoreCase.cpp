@@ -33,7 +33,7 @@
 #include "OW_config.h"
 #include "OW_UTF8Utils.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 namespace UTF8Utils
 {
@@ -4796,5 +4796,5 @@ state230:
 }
 
 } // end namespace UTF8Utils
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -52,7 +52,7 @@
 #define OW_LOGERROR(msg) OW_LOG_ERROR(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
 #define OW_LOGFATALERROR(msg) OW_LOG_FATAL_ERROR(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -181,5 +181,5 @@ RequestHandlerIFCXML::setPath(const String& arg)
 	m_path = arg;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

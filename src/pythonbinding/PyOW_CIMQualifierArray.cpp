@@ -35,7 +35,7 @@
 #include "OW_CIMQualifier.hpp"
 #include "PyOW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 void registerArrayImpl_CIMQualifier(const char* name)
@@ -43,5 +43,5 @@ void registerArrayImpl_CIMQualifier(const char* name)
 	registerArrayImpl<CIMQualifier>(name);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

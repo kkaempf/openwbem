@@ -38,11 +38,11 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_Enumeration.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 typedef Enumeration<CIMInstance> CIMInstanceEnumeration;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -62,7 +62,7 @@
 #endif
 #include <algorithm>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::ostream;
@@ -1239,5 +1239,5 @@ CIMParamValueToXML(CIMParamValue const& pv, std::ostream& ostr)
 	ostr << "</PARAMVALUE>";
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

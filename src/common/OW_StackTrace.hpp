@@ -41,7 +41,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace StackTrace
@@ -49,6 +49,6 @@ namespace StackTrace
 	OW_COMMON_API void printStackTrace();
 } // end namespace StackTrace
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

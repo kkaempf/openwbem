@@ -39,7 +39,7 @@
 #include "OW_Array.hpp"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(LogMessagePatternFormatter, OW_COMMON_API);
@@ -87,7 +87,7 @@ private:
 	LogMessagePatternFormatter& operator=(const LogMessagePatternFormatter&);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

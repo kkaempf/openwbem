@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_COWReferenceBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -277,6 +277,6 @@ inline T* COWReferenceClone(T* obj)
 	return obj->clone();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif	// OW_COWREFERENCE_HPP_

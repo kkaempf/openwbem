@@ -37,7 +37,7 @@
 
 #ifdef OW_WIN32
 #include <iostream>	// for cerr
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 using std::cerr;
 using std::endl;
@@ -70,7 +70,7 @@ extern "C"
 }
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::ifstream;
@@ -164,6 +164,6 @@ void StackTrace::printStackTrace()
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif	// ifdef OW_WIN32

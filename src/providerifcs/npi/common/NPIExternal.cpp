@@ -10,7 +10,7 @@
 #include "OW_WQLSelectStatement.hpp"
 #include "OW_Logger.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -127,7 +127,7 @@ NPI_getmyInstance(NPIHandle* npiHandle, const CIMObjectPath& owcop,
 	return ci;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 using namespace OpenWBEM;
 

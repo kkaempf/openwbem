@@ -48,7 +48,7 @@
 #include <fcntl.h>
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace PidFile
@@ -144,5 +144,5 @@ removePid(const char *pidfile)
 }
 
 } // end namespace PidFile
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -50,7 +50,7 @@
 #include "OW_NULLValueException.hpp"
 #include "OW_Logger.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -299,7 +299,7 @@ RemoteProviderInterface::doGetAssociatorProvider(const ProviderEnvironmentIFCRef
 #endif
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_PROVIDERIFCFACTORY(OpenWBEM::RemoteProviderInterface, remote)
 

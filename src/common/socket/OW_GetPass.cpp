@@ -52,7 +52,7 @@ extern "C"
 #include <screen.h>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 #if defined(OW_WIN32)
@@ -95,5 +95,5 @@ GetPass::getPass(const String& prompt)
 }
 #endif
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

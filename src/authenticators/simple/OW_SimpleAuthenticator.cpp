@@ -43,7 +43,7 @@
 #include <fstream>
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -173,7 +173,7 @@ SimpleAuthenticator::loadPasswordFile(const ServiceEnvironmentIFCRef& env)
 		
 } // end anonymous namespace
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AUTHENTICATOR_FACTORY(OpenWBEM::SimpleAuthenticator, simple)

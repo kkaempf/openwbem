@@ -41,7 +41,7 @@
 #include "OW_IfcsFwd.hpp"
 #include "OW_WBEMFlags.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -80,6 +80,6 @@ public:
 
 typedef IntrusiveReference< MethodProviderIFC > MethodProviderIFCRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

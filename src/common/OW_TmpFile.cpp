@@ -56,7 +56,7 @@ extern "C"
 #endif
 }
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace {
@@ -322,5 +322,5 @@ TmpFileImpl::releaseFile()
 	return rval;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

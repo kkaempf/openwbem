@@ -51,7 +51,7 @@
 
 #include <cstring>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -365,7 +365,7 @@ SimpleAuthorizer2::doAllowMethodInvocation(
 	return checkAccess(ACCESS_READWRITE, ns, env, context);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 OW_AUTHORIZER2_FACTORY(OpenWBEM::SimpleAuthorizer2, simple);

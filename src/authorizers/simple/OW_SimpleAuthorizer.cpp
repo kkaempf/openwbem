@@ -50,7 +50,7 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_ServiceIFCNames.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -772,7 +772,7 @@ SimpleAuthorizer::endOperation(WBEMFlags::EOperationFlag op, OperationContext& c
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 OW_AUTHORIZER_FACTORY(OpenWBEM::SimpleAuthorizer, simple);

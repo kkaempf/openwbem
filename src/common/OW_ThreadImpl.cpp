@@ -71,7 +71,7 @@ extern "C"
 #endif
 }
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace ThreadImpl {
@@ -609,5 +609,5 @@ void cancel(Thread_t threadId)
 #endif // #ifdef OW_WIN32
 } // end namespace OW_ThreadImpl
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

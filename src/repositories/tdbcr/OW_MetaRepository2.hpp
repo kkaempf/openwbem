@@ -40,7 +40,7 @@
 
 #include <db.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class MetaRepository2
@@ -253,6 +253,6 @@ private:
 	ServiceEnvironmentIFCRef m_env;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

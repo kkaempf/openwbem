@@ -47,7 +47,7 @@
 #include "OW_MutexLock.hpp"
 #include <cstdio>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class HDB;
@@ -369,6 +369,6 @@ private:
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

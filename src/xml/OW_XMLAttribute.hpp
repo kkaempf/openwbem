@@ -41,7 +41,7 @@
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_XML_API XMLAttribute
@@ -78,6 +78,6 @@ private:
 
 typedef Array<XMLAttribute> XMLAttributeArray;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

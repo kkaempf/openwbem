@@ -48,7 +48,7 @@ extern "C"
 
 #if (defined(OW_ARCH_X86) || defined(__i386__)) && defined(__GNUC__)
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // use fast inline assembly versions
@@ -86,10 +86,10 @@ inline void AtomicDec(Atomic_t &v)
 		:"m" (v.val));
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #elif defined(OW_AIX)
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 // This comment was stolen from the libstdc++ implementation of atomicity.h
 // (and modified). 
@@ -129,11 +129,11 @@ inline void AtomicDec(Atomic_t &v)
 	::fetch_and_add(const_cast<atomic_p>(&v.val), -1);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #elif (defined(OW_ARCH_PPC) || defined(__ppc__)) && defined(__GNUC__)
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // use fast inline assembly versions
@@ -187,11 +187,11 @@ inline void AtomicDec(Atomic_t &v)
 		: "cc");
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #elif defined(OW_WIN32)
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // use fast inline assembly versions
@@ -218,14 +218,14 @@ inline void AtomicDec(Atomic_t &v)
 	InterlockedDecrement(&v.val);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #elif defined(OW_HAVE_PTHREAD_SPIN_LOCK)
 #include <pthread.h>
 
 #define OW_USE_PTHREAD_SPIN_LOCK_ATOMIC_OPS // used in OW_AtomicOps.cpp
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 struct Atomic_t
@@ -240,13 +240,13 @@ bool AtomicDecAndTest(Atomic_t &v);
 int AtomicGet(Atomic_t const &v);
 void AtomicDec(Atomic_t &v);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #else
 // use slow mutex protected versions
 #define OW_USE_OW_DEFAULT_ATOMIC_OPS // used in OW_AtomicOps.cpp
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 struct Atomic_t
@@ -260,7 +260,7 @@ bool AtomicDecAndTest(Atomic_t &v);
 int AtomicGet(Atomic_t const &v);
 void AtomicDec(Atomic_t &v);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 #endif

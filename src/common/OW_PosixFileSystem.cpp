@@ -92,7 +92,7 @@ extern "C"
 #include <fstream>
 #include <cerrno>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(FileSystem);
@@ -729,5 +729,5 @@ String getCurrentWorkingDirectory()
 
 } // end namespace Path
 } // end namespace FileSystem
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

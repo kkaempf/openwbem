@@ -63,7 +63,7 @@
 #include <iterator>
 #include <set>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_EXCEPTION(IndicationServer);
@@ -1440,7 +1440,7 @@ IndicationServerImplThread::doCooperativeCancel()
 	m_mainLoopCondition.notifyAll();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
 extern "C" OW_EXPORT OpenWBEM::IndicationServer*

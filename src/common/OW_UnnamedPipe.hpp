@@ -41,7 +41,7 @@
 #include "OW_IOIFC.hpp"
 #include "OW_CommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 
@@ -191,6 +191,6 @@ protected:
 	int m_writeTimeout;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif	// OW_UNNAMEDPIPE_HPP_

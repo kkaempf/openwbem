@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_RepositoryIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class /*OW_INDICATIONREPLAYER_API*/ IndicationRepLayer : public RepositoryIFC
@@ -47,6 +47,6 @@ public:
 	virtual void setCIMServer(const RepositoryIFCRef& src) = 0;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -41,7 +41,7 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_IfcsFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -72,6 +72,6 @@ public:
 	virtual ~ClientAuthCBIFC();
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

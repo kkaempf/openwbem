@@ -38,7 +38,7 @@
 #include "OW_CommonFwd.hpp"
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API SerializableIFC
@@ -61,7 +61,7 @@ public:
 	virtual void writeObject(std::ostream& ostrm) const = 0;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

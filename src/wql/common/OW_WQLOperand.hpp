@@ -33,7 +33,7 @@
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(TypeMismatch, OW_WQLCOMMON_API)
@@ -256,6 +256,6 @@ private:
 };
 OW_WQLCOMMON_API bool operator==(const WQLOperand& x, const WQLOperand& y);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

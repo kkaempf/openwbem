@@ -39,7 +39,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -84,6 +84,6 @@ protected:
 };
 typedef IntrusiveReference<SharedLibrary> SharedLibraryRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_HTTPChunkedOStream.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::ostream;
@@ -134,5 +134,5 @@ HTTPChunkedOStream::addTrailer(const String& key, const String& value)
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -39,7 +39,7 @@
 #include "OW_Types.hpp"
 #include <stdlib.h> // for RAND_MAX
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API RandomNumber
@@ -54,6 +54,6 @@ private:
 	Int32 m_highVal;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

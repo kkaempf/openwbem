@@ -40,7 +40,7 @@
 #include "OW_Array.hpp"
 #include "OW_ConfigOpts.hpp" // for OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace CIMNameSpaceUtils
@@ -189,6 +189,6 @@ namespace CIMNameSpaceUtils
 	OW_COMMON_API String prepareNamespace(const String& ns);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

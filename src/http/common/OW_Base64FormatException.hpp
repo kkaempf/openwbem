@@ -38,11 +38,11 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(Base64Format, OW_HTTP_API);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

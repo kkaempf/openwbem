@@ -10,7 +10,7 @@
 #include "OW_Array.hpp"
 #include "OW_ServiceIFCNames.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace

@@ -41,7 +41,7 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(CIMOMLocator, OW_CLIENT_API);
@@ -64,6 +64,6 @@ public:
 	static CIMOMLocatorRef createCIMOMLocator(const String& locatorType);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -49,7 +49,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace MOF
@@ -1162,7 +1162,7 @@ public:
 };
 
 } // end namespace MOF
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #ifdef OW_WIN32
 #pragma warning (pop)

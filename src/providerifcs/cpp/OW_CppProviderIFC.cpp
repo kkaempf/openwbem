@@ -50,7 +50,7 @@
 #include "OW_Condition.hpp"
 #include "OW_ExceptionIds.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_EXCEPTION(CppProviderIFC);
@@ -831,5 +831,5 @@ void CppProviderIFC::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

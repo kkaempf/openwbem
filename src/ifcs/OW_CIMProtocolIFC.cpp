@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_CIMProtocolIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -44,5 +44,5 @@ CIMProtocolIFC::~CIMProtocolIFC()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

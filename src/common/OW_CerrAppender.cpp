@@ -40,7 +40,7 @@
 
 #include <iostream>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ CerrAppender::doProcessLogMessage(const String& formattedMessage, const LogMessa
 const String CerrAppender::STR_DEFAULT_MESSAGE_PATTERN("[%-.6t] %m");
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

@@ -41,7 +41,7 @@
 #include <functional> // for std::less
 #include <algorithm>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 template<class T, class Compare >
@@ -250,6 +250,6 @@ inline void swap(SortedVectorSet<T, Compare>& x,
 	x.swap(y);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -45,7 +45,7 @@
 #pragma warning (disable: 4355)
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 const int MD5HASHHEXLEN = 32;
@@ -427,7 +427,7 @@ static void Decode (UInt32* output, const unsigned char* input, UInt32 len)
 	//	((char *)output)[i] = (char)value;
 //}
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 #ifdef OW_WIN32

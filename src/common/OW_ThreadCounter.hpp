@@ -42,7 +42,7 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_ThreadDoneCallback.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // Note: Do not inline any functions in these classes, the code must
@@ -94,6 +94,6 @@ private:
 	ThreadCountDecrementer& operator=(ThreadCountDecrementer const&);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -34,7 +34,7 @@
 #include "OW_WQLSelectStatement.hpp"
 #include "OW_NoSuchPropertyException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_WQLCOMMON_API WQLCompile
@@ -182,6 +182,6 @@ private:
 OW_WQLCOMMON_API bool operator==(const WQLCompile::term_el& x, const WQLCompile::term_el& y);
 OW_WQLCOMMON_API bool operator!=(const WQLCompile::term_el& x, const WQLCompile::term_el& y);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

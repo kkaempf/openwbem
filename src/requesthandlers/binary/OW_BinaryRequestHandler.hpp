@@ -41,7 +41,7 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_CIMFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class BinaryRequestHandler : public RequestHandlerIFC
@@ -128,6 +128,6 @@ private:
 	UserId m_userId;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

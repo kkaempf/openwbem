@@ -60,7 +60,7 @@ do																														\
 }while(0)
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -2378,5 +2378,5 @@ void WQLProcessor::populateInstances()
 	m_hdl->enumInstances(m_ns, m_tableRef, handler, E_DEEP);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -48,7 +48,7 @@
 #include <iostream>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -381,5 +381,5 @@ bool operator<(const CIMUrl& lhs, const CIMUrl& rhs)
 	return *lhs.m_pdata < *rhs.m_pdata;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -39,7 +39,7 @@
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_COWIntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -199,5 +199,5 @@ getParamValue(const String& paramName, const CIMParamValueArray& params)
 	return CIMValue(CIMNULL);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -44,7 +44,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_Logger.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -145,7 +145,7 @@ CppIndicationExportXMLHTTPProvider::doCooperativeCancel()
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PROVIDERFACTORY(OpenWBEM::CppIndicationExportXMLHTTPProvider, cppindicationexportxmlhttpprovider);

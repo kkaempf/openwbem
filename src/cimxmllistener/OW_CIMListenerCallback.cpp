@@ -35,12 +35,12 @@
 #include "OW_config.h"
 #include "OW_CIMListenerCallback.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 CIMListenerCallback::~CIMListenerCallback()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

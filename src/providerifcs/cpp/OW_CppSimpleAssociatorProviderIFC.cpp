@@ -45,7 +45,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 namespace
 {

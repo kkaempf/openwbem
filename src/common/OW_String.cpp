@@ -70,7 +70,7 @@
 #define SNPRINTF snprintf
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -1561,5 +1561,5 @@ String::strchr(const char* theStr, int c)
 	return ((*tmpChar) == c ? tmpChar : 0);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

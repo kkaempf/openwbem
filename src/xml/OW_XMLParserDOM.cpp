@@ -42,7 +42,7 @@
 #include "OW_Format.hpp"
 #include "OW_ExceptionIds.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(DOM);
@@ -184,6 +184,6 @@ parse(istream& data)
 }
 
 } // end namespace XMLParserDOM
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

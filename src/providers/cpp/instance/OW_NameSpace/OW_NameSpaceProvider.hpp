@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_CppInstanceProviderIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class NameSpaceProvider : public CppInstanceProviderIFC
@@ -96,6 +96,6 @@ public:
 	virtual void getInstanceProviderInfo(InstanceProviderInfo& info);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

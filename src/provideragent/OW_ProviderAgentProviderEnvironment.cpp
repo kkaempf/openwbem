@@ -42,7 +42,7 @@
 #include "OW_Logger.hpp"
 #include "OW_RepositoryIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -176,5 +176,5 @@ ProviderAgentProviderEnvironment::getOperationContext()
 
 //////////////////////////////////////////////////////////////////////////////
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -37,11 +37,11 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(Socket, OW_COMMON_API);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

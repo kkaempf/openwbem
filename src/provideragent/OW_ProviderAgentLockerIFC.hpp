@@ -41,7 +41,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_PROVIDERAGENT_API ProviderAgentLockerIFC : public IntrusiveCountableBase
@@ -82,7 +82,7 @@ private:
 typedef IntrusiveReference<ProviderAgentLockerIFC> ProviderAgentLockerIFCRef; 
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

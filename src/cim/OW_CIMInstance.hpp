@@ -45,7 +45,7 @@
 #include "OW_String.hpp" // for default parameter StringArray()
 #include "OW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -476,6 +476,6 @@ protected:
 	friend OW_COMMON_API bool operator<(const CIMInstance& x, const CIMInstance& y);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

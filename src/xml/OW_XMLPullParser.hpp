@@ -46,7 +46,7 @@
 #include <iostream>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_XML_API XMLPullParser
@@ -112,6 +112,6 @@ private:
 	friend OW_XML_API std::ostream& operator<<(std::ostream& ostr, const XMLPullParser& p);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

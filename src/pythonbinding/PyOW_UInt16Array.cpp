@@ -35,7 +35,7 @@
 #include "OW_Types.hpp"
 #include "PyOW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 void registerArrayImpl_UInt16(const char* name)
@@ -43,5 +43,5 @@ void registerArrayImpl_UInt16(const char* name)
 	registerArrayImpl<UInt16>(name);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

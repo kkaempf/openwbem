@@ -40,7 +40,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMXMLListenerFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -75,6 +75,6 @@ protected:
 		const String& listenerPath ) = 0;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -39,7 +39,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMClass.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -69,5 +69,5 @@ CppReadOnlyInstanceProviderIFC::modifyInstance(
 	OW_THROWCIMMSG(CIMException::FAILED, "DeleteInstance not supported by provider");
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

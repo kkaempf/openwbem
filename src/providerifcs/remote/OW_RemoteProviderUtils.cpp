@@ -46,7 +46,7 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace RemoteProviderUtils
@@ -106,7 +106,7 @@ ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl,
 
 } // end namespace RemoteProviderUtils
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

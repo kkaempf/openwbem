@@ -52,7 +52,7 @@
 #include <iosfwd>
 #include <fstream>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_HTTPSVC_API HTTPSvrConnection: public Runnable
@@ -229,6 +229,6 @@ private:
 	void doCooperativeCancel();
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

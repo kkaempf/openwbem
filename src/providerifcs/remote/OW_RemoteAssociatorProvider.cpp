@@ -43,7 +43,7 @@
 #include "OW_Logger.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -232,7 +232,7 @@ RemoteAssociatorProvider::referenceNames(const ProviderEnvironmentIFCRef &env, C
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL

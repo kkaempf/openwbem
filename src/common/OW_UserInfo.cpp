@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_UserInfo.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -62,5 +62,5 @@ bool UserInfo::getInternal() const { return m_internal; }
 //////////////////////////////////////////////////////////////////////////////
 void UserInfo::setInternal() { m_internal = true; }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -57,7 +57,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -230,7 +230,7 @@ protected:
 
 typedef SharedLibraryReference< IntrusiveReference<ProviderIFCBaseIFC> > ProviderIFCBaseIFCRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #if !defined(OW_STATIC_SERVICES)
 #define OW_PROVIDERIFCFACTORY(prov, name) \

@@ -44,7 +44,7 @@
 #include "OW_CIMProtocolIStreamIFC.hpp"
 #include "OW_HttpCommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_HTTP_API HTTPChunkedIStreamBuffer : public BaseStreamBuffer
@@ -129,6 +129,6 @@ class OW_HTTP_API HTTPChunkedIStream : private HTTPChunkedIStreamBase,
 		friend class HTTPChunkedIStreamBuffer;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

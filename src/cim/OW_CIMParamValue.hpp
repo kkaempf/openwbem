@@ -42,7 +42,7 @@
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API CIMParamValue : public CIMBase
@@ -145,6 +145,6 @@ CIMValue getParamValue(const String& paramName, const CIMParamValueArray& params
 
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

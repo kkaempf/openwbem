@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -152,6 +152,6 @@ void CppProviderBaseIFC::shuttingDown(const ProviderEnvironmentIFCRef& env)
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

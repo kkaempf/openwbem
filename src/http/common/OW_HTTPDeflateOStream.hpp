@@ -51,7 +51,7 @@
 
 #include <zlib.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_HTTP_API HTTPDeflateOStreamBuffer : public BaseStreamBuffer
@@ -111,7 +111,7 @@ private:
 	HTTPDeflateOStream& operator=(const HTTPDeflateOStream&);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

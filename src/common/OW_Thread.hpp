@@ -47,7 +47,7 @@
 #include "OW_ThreadDoneCallback.hpp"
 #include "OW_ThreadCancelledException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -284,7 +284,7 @@ private:
 	
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

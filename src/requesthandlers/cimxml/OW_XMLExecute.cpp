@@ -72,7 +72,7 @@
 #define OW_LOGERROR(msg) OW_LOG_ERROR(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
 #define OW_LOGFATALERROR(msg) OW_LOG_FATAL_ERROR(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -1661,7 +1661,7 @@ XMLExecute::shutdown()
 	setEnvironment(ServiceEnvironmentIFCRef());
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
 OW_REQUEST_HANDLER_FACTORY(OpenWBEM::XMLExecute,XMLExecute);

@@ -46,7 +46,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 const size_t BASE_BUF_SIZE = 256;
@@ -106,6 +106,6 @@ private:
 	BaseStreamBuffer& operator=(const BaseStreamBuffer& arg);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

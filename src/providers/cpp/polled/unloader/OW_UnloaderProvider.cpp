@@ -41,7 +41,7 @@
 
 #define OW_POLLING_INTERVAL 60 // 1 min is the smallest interval for unloading
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -85,7 +85,7 @@ UnloaderProvider::getInitialPollingInterval(const
 		OW_POLLING_INTERVAL));
 	return OW_POLLING_INTERVAL;
 }
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_PROVIDERFACTORY(OpenWBEM::UnloaderProvider,owprovpollUnloader)
 

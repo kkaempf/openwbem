@@ -41,7 +41,7 @@
 
 #include <db.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_EXCEPTION(CIMRepository2);
@@ -635,6 +635,6 @@ private:
 	friend class CIMServer;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

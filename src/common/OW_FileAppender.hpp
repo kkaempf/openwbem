@@ -41,7 +41,7 @@
 
 #include <fstream>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -71,7 +71,7 @@ private:
 	mutable std::ofstream m_log;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

@@ -37,7 +37,7 @@
 #define OW_AUTOPTR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // TODO: Rename this
@@ -190,6 +190,6 @@ void AutoPtrVec<X>::reset(X* p)
 	_ptr = p;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

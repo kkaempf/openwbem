@@ -32,7 +32,7 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /** Represents SQL where clause operators.
@@ -132,6 +132,6 @@ inline String WQLOperationToString(WQLOperation op)
 	return "Unknown";
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

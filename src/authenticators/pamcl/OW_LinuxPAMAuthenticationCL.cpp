@@ -42,7 +42,7 @@
 
 #include <string.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class LinuxPAMAuthenticationCL : public AuthenticatorIFC
@@ -114,7 +114,7 @@ LinuxPAMAuthenticationCL::doInit(ServiceEnvironmentIFCRef env)
 	m_libexecdir = env->getConfigItem(ConfigOpts::LIBEXEC_DIR_opt);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AUTHENTICATOR_FACTORY(OpenWBEM::LinuxPAMAuthenticationCL,pamcl);

@@ -35,7 +35,7 @@
 
 #include "OW_CIMErrorException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 CIMErrorException::CIMErrorException(const char* file, int line, const char* msg)
@@ -73,5 +73,5 @@ const char* const CIMErrorException::header_mismatch =
 const char* const CIMErrorException::unsupported_operation =
 	"unsupported-operation";
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

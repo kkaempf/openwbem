@@ -46,7 +46,7 @@
 using namespace OpenWBEM;
 using namespace OpenWBEM::MOF;
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 OW_DEFINE_EXCEPTION(MOFParser)
 }

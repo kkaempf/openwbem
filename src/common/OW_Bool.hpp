@@ -39,7 +39,7 @@
 #include "OW_CommonFwd.hpp"
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -151,6 +151,6 @@ private:
 };
 OW_COMMON_API std::ostream& operator << (std::ostream& ostrm, const Bool& arg);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

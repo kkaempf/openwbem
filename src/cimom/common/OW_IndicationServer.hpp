@@ -40,7 +40,7 @@
 #include "OW_ServiceIFC.hpp"
 #include "OW_CimomCommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,6 +60,6 @@ public:
 	virtual void modifyFilter(const String& ns, const CIMInstance& filterInst, const String& userName) = 0;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

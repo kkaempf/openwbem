@@ -44,7 +44,7 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_Logger.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class HDBHandleLock;
@@ -205,6 +205,6 @@ static const UInt32 HDBNSNODE_FLAG = 0x40000000;
 static const UInt32 HDBCLSNODE_FLAG = 0x20000000;
 static const UInt32 HDBCLSASSOCNODE_FLAG = 0x08000000;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -44,7 +44,7 @@
 #include "OW_Enumeration.hpp"
 #include "OW_HTTPDeflateIStream.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -111,5 +111,5 @@ ClientCIMOMHandle::getHTTPTrailers(const CIMProtocolIStreamIFCRef& istr_)
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

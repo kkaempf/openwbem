@@ -68,7 +68,7 @@ extern "C"
 #include <slp.h>
 }
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 static const Int32 POLLING_INTERVAL = 60 * 5;
@@ -363,7 +363,7 @@ private:
 	}
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_PROVIDERFACTORY(OpenWBEM::SLPProvider, owslpprovider)
 

@@ -40,7 +40,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -89,6 +89,6 @@ namespace NonRecursiveMutexImpl
 	OW_COMMON_API int conditionPostWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state);
 } // end namespace NonRecursiveMutexImpl
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -45,7 +45,7 @@
 
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -254,6 +254,6 @@ bool operator>(const CIMDataType& x, const CIMDataType& y);
 bool operator>=(const CIMDataType& x, const CIMDataType& y);
 bool operator!=(const CIMDataType& x, const CIMDataType& y);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

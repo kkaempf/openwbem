@@ -57,7 +57,7 @@
 
 #include <exception>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -979,7 +979,7 @@ BinaryRequestHandler::shutdown()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
 OW_REQUEST_HANDLER_FACTORY(OpenWBEM::BinaryRequestHandler,BinaryRequest);

@@ -42,7 +42,7 @@
 #include "OW_Map.hpp"
 #include "OW_ClientFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // This class is meant to hold common functionality in the client-side CIMOM
@@ -132,7 +132,7 @@ protected:
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 	

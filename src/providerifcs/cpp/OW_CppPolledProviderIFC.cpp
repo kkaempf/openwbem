@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_CppPolledProviderIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -62,6 +62,6 @@ CppPolledProviderIFC::getPolledProvider()
 	return this; 
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

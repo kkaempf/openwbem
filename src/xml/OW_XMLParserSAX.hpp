@@ -43,7 +43,7 @@
 #include <iosfwd>
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace XMLParserSAX
@@ -96,7 +96,7 @@ OW_XML_API void parse(std::istream& data, SAXDocumentHandler& docHandler, SAXErr
 	
 
 } // end namespace XMLParserSAX
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 #endif

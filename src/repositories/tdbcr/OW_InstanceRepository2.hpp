@@ -38,7 +38,7 @@
 
 #include <db.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class InstanceRepository2
@@ -142,6 +142,6 @@ private:
 	dbDatabase m_instances;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

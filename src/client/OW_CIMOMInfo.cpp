@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_CIMOMInfo.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 const String
@@ -59,5 +59,5 @@ CIMOMInfo::operator[](const String& key)
 	return m_attributes[key];
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

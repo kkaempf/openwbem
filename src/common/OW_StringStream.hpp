@@ -50,7 +50,7 @@
 #include <streambuf.h>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -135,6 +135,6 @@ public:
 	void reset();
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

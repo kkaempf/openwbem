@@ -41,7 +41,7 @@
 #include "OW_IOException.hpp"
 #include "OW_Format.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 static const int HDL_NOTINUSE = -1;
@@ -307,5 +307,5 @@ GenericHDBRepository::addCIMObject(const CIMBase& cimObj,
 	hdl.addRootNode(node);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

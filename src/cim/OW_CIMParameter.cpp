@@ -43,7 +43,7 @@
 #include "OW_CIMName.hpp"
 #include "OW_COWIntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -262,5 +262,5 @@ CIMParameter::hasTrueQualifier(const CIMName& name) const
 	return b;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

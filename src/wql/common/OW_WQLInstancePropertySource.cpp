@@ -40,7 +40,7 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_Bool.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////	
@@ -198,5 +198,5 @@ bool WQLInstancePropertySource::getValueAux(const CIMInstance& ci, const StringA
 	return true;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

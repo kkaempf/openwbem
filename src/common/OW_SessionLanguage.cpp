@@ -40,7 +40,7 @@
 #include <cerrno>
 #include <algorithm>	// for sort
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -476,5 +476,5 @@ SessionLanguage::getContentLanguage() const
 	return m_contentLanguage;
 }
 
-}	// End of namespace OpenWBEM
+}	// end namespace OW_NAMESPACE
 

@@ -60,7 +60,7 @@
 
 #include <algorithm> // for std::remove
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -528,5 +528,5 @@ HTTPXMLCIMListener::deleteRegistrationObjects( const registrationInfo& reg )
 	hdl->deleteInstance(reg.ns, reg.handler);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

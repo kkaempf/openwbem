@@ -44,7 +44,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // This class is a base interface for any services for Openwbem.
@@ -127,7 +127,7 @@ public:
 	virtual void shutdown() = 0;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #if !defined(OW_STATIC_SERVICES)
 #define OW_SERVICE_FACTORY(derived, serviceName) \

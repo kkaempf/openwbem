@@ -36,7 +36,7 @@
 #define OW_PIDFILE_HPP_
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace PidFile
@@ -47,6 +47,6 @@ namespace PidFile
 	int removePid(const char *pidfile);
 } // end namespace PidFile
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif	// OW_PIDFILE_HPP_

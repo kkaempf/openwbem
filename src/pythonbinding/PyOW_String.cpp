@@ -45,7 +45,7 @@
 #undef ANY
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace boost::python;
@@ -317,5 +317,5 @@ void registerString()
 //    implicitly_convertible<std::string, String>();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

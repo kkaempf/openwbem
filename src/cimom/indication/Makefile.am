@@ -22,7 +22,7 @@ SHAREDLIBADD = \
 OW_SHARED_LIBS = libowindicationserver.$(LIB_EXT) libowindicationreplayer.$(LIB_EXT)
 thelibdir = $(libdir)/openwbem
 # increment this number every time a release breaks binary compatibility
-LIBRARY_BINARY_VERSION = 4
+LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 EXPORT_PREFIX = createIndicationServer
 

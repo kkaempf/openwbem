@@ -49,7 +49,7 @@
 #include <algorithm>
 using std::fill_n;
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -632,7 +632,7 @@ CMPIProviderIFC::getProvider(
 	return m_provs[provId];
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_PROVIDERIFCFACTORY(OpenWBEM::CMPIProviderIFC, cmpi)
 

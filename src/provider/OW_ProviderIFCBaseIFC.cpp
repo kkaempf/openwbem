@@ -36,7 +36,7 @@
 #include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_NoSuchProviderException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -197,5 +197,5 @@ void ProviderIFCBaseIFC::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

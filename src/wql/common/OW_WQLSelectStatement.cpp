@@ -40,7 +40,7 @@
 #include <iostream>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // TODO: Merge this code with WQLCompile.cpp, it's all duplicated.
@@ -356,5 +356,5 @@ void WQLSelectStatement::compileWhereClause(
 	wcl.compile(this);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

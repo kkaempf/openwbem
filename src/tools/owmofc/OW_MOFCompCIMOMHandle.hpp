@@ -38,7 +38,7 @@
 #include "OW_RepositoryCIMOMHandle.hpp"
 #include "OW_IntrusiveReference.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -62,6 +62,6 @@ public:
 
 typedef IntrusiveReference<MOFCompCIMOMHandle> MOFCompCIMOMHandleRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -41,7 +41,7 @@
 #include <dl.h>
 #include <errno.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -81,6 +81,6 @@ shlSharedLibraryLoader::~shlSharedLibraryLoader()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // #if defined(OW_USE_SHL)

@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_IntrusiveReference.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class HTTPServer;
@@ -51,7 +51,7 @@ class LocalAuthentication;
 #endif
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

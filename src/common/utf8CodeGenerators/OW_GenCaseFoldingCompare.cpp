@@ -416,7 +416,7 @@ void outputCode()
 	}
 	cout << "}\n\n";
 	cout << "} // end namespace UTF8Utils\n";
-	cout << "} // end namespace OpenWBEM\n\n";
+	cout << "} // end namespace OW_NAMESPACE\n\n";
 }
 
 bool findDuplicateStates(int& state1, int& state2)

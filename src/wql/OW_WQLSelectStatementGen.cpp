@@ -38,7 +38,7 @@
 #include "OW_WQLScanUtils.hpp"
 #include "OW_CIMException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 WQLSelectStatementGen::~WQLSelectStatementGen()
@@ -1242,5 +1242,5 @@ void WQLSelectStatementGen::visit_aExprConst_NULLP(
 	m_stmt.appendOperand(WQLOperand());  // WQLOperand defaults to NULL
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

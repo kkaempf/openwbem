@@ -38,7 +38,7 @@
 #include <cerrno>
 #include <cassert>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace MutexImpl
@@ -232,5 +232,5 @@ releaseMutex(Mutex_t& handle)
 }
 
 } // end namespace MutexImpl
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -50,7 +50,7 @@
 #include "OW_Logger.hpp"
 #include "OW_dbUtils.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION(CIMRepository2);
@@ -1749,5 +1749,5 @@ CIMRepository2::endOperation(WBEMFlags::EOperationFlag op, OperationContext& con
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

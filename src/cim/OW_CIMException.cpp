@@ -44,7 +44,7 @@
 #include <cstdlib>
 #include <algorithm> // for std::swap
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -173,5 +173,5 @@ CIMException::clone() const throw()
 	return new(std::nothrow) CIMException(*this);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -47,7 +47,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -222,7 +222,7 @@ public:
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_PROVIDERFACTORY(OpenWBEM::CIM_NamespaceInstProv, owprovinstCIM_Namespace)
 

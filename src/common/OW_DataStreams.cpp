@@ -38,7 +38,7 @@
 #include "OW_DataStreams.hpp"
 #include <cstring>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -62,5 +62,5 @@ DataOStreamBuf::xsputn(const char* s, std::streamsize n)
 	return n;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -45,7 +45,7 @@ extern "C"
 #include <time.h>
 }
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(DateTime, OW_COMMON_API)
@@ -550,6 +550,6 @@ private:
 	static Int16 localTimeAndOffset(time_t t, struct tm & tt);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

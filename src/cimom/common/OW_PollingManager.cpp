@@ -50,7 +50,7 @@
 
 #include <climits>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -450,5 +450,5 @@ PollingManagerThread::doCooperativeCancel()
 	m_triggerCondition.notifyAll();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

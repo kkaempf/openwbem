@@ -41,7 +41,7 @@
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_COWIntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -922,5 +922,5 @@ bool operator!=(const CIMDataType& x, const CIMDataType& y)
 	return !(x == y);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

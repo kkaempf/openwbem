@@ -36,10 +36,10 @@
 #include "OW_ConfigException.hpp"
 #include "OW_ExceptionIds.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(Config);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

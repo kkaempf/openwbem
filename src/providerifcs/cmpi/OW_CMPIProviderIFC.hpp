@@ -42,7 +42,7 @@
 #include "cmpidt.h"
 #include "cmpift.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -109,6 +109,6 @@ private:
 };
 typedef SharedLibraryReference<Reference<CMPIProviderIFC> > CMPIProviderIFCRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

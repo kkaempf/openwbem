@@ -43,7 +43,7 @@
 #include "OW_String.hpp"
 #include "OW_StringBuffer.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 String
@@ -116,5 +116,5 @@ WQLRemoveStringEscapes(const String& s)
 	return newStr.releaseString();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

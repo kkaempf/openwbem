@@ -47,7 +47,7 @@
 #include "OW_Reference.hpp"
 #include "npi.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 typedef Array<char *> charVect;
@@ -112,6 +112,6 @@ typedef ::FTABLE (*FP_INIT_FT) ();
 typedef NPIFTABLE (*NPIFP_INIT_FT) ();
 typedef SharedLibraryReference< Reference<NPIFTABLE> > FTABLERef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

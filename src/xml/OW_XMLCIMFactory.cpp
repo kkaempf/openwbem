@@ -57,7 +57,7 @@
 #include "OW_XMLParseException.hpp"
 #include <algorithm> // for find_if
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace XMLCIMFactory
@@ -1158,5 +1158,5 @@ createParameter(CIMXMLParser& parser)
 }
 
 } // end namespace XMLCIMFactory
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -47,7 +47,7 @@
 #define OW_CIMOM_SLP_SERVICE_TYPE "wbem"
 #define OW_CIMOM_SLP_URL_PREFIX "service:"OW_CIMOM_SLP_SERVICE_TYPE":"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_CLIENT_API CIMOMLocatorSLP : public CIMOMLocator
@@ -63,7 +63,7 @@ private:
 	static void processAttributes(const String& attrs, CIMOMInfo& info);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // OW_HAVE_SLP_H
 

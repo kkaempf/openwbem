@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_XML_API XMLParseException : public Exception
@@ -87,7 +87,7 @@ class OW_XML_API XMLParseException : public Exception
 
 #define OW_THROWXMLLINEMSG(code, line, message) throw XMLParseException(__FILE__, __LINE__, (code), (message), (line));
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 #endif

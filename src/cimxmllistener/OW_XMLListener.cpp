@@ -48,7 +48,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_ServiceIFCNames.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::ostream;
@@ -228,5 +228,5 @@ XMLListener::shutdown()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_ThreadTypes.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API Mutex
@@ -72,6 +72,6 @@ private:
 	Mutex& operator = (const Mutex&);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -45,7 +45,7 @@
 #include "OW_CIMFlavor.hpp"
 #include "OW_COWIntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -488,5 +488,5 @@ const char* const CIMQualifier::CIM_QUAL_VERSION 		= "Version";
 const char* const CIMQualifier::CIM_QUAL_WEAK 			= "Weak";
 const char* const CIMQualifier::CIM_QUAL_WRITE 			= "Write";
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -39,7 +39,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -59,6 +59,6 @@ namespace CIMValueCast
 
 } // end namespace CIMValueCast
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

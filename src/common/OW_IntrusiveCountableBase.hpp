@@ -47,7 +47,7 @@
 #include "OW_config.h"
 #include "OW_RefCount.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -92,7 +92,7 @@ public:
 	}
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

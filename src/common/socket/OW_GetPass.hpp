@@ -40,7 +40,7 @@
 
 // TODO: Move this into src/common.  It doesn't belong under src/common/socket.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace GetPass
@@ -65,7 +65,7 @@ namespace GetPass
 
 } // end namespace GetPass
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 namespace OW_GetPass = OpenWBEM::GetPass;
 

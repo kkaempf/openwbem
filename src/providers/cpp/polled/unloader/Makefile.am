@@ -25,7 +25,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/db/db -lowdb
 
 # increment this number every time a release breaks binary compatibility
-LIBRARY_BINARY_VERSION = 4
+LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 libowprovpollUnloader_a_SOURCES = \
 OW_UnloaderProvider.hpp \

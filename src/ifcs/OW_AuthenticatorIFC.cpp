@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_AuthenticatorIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -50,5 +50,5 @@ AuthenticatorIFC::doInit(ServiceEnvironmentIFCRef)
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

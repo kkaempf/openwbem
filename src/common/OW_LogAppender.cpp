@@ -50,7 +50,7 @@
 #include "OW_ConfigFile.hpp"
 #include "OW_ConfigOpts.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 
@@ -206,6 +206,6 @@ LogAppender::createLogAppender(
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

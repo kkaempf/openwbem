@@ -38,7 +38,7 @@
 #include "OW_HTTPDeflateIStream.hpp"
 #include "OW_HTTPException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -146,7 +146,7 @@ HTTPDeflateIStream::getInputStreamOrig()
 	return m_istr;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // #ifdef OW_HAVE_ZLIB_H
 

@@ -49,7 +49,7 @@
 #include <pwd.h>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace UserUtils
@@ -174,6 +174,6 @@ getUserId(const String& userName, bool& validUserName)
 #endif
 }
 } // end namespace UserUtils
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

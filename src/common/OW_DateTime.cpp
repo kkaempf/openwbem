@@ -96,7 +96,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *result)
 }
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -1300,5 +1300,5 @@ DateTime::getCurrent()
 	return current;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

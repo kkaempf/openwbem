@@ -33,7 +33,7 @@
 #include "OW_String.hpp"
 #include "OW_WQLOperand.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /** This class must be implemented to provide a source of properties for the
@@ -86,6 +86,6 @@ public:
 		const String& className) const = 0;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

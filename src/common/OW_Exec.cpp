@@ -63,7 +63,7 @@ extern "C"
 #include <iostream>	// for cerr
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::cerr;
@@ -854,5 +854,5 @@ gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<Process
 
 } // end namespace Exec
 #endif
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

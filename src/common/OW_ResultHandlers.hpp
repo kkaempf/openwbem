@@ -38,7 +38,7 @@
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_StringEnumeration.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ private:
 	CIMQualifierTypeArray& m_a;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

@@ -39,7 +39,7 @@
 #include "OW_Format.hpp"
 #include <dlfcn.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -108,6 +108,6 @@ dlSharedLibraryLoader::~dlSharedLibraryLoader()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // OW_USE_DL

@@ -54,7 +54,7 @@
 struct owmof_buffer_state;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(MOFCompiler, OW_MOF_API);
@@ -154,7 +154,7 @@ OW_MOF_API CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const
 
 
 } // end namespace MOF
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #ifdef OW_WIN32
 #pragma warning (pop)

@@ -40,7 +40,7 @@
 
 #include <fstream>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 namespace ConfigFile
 {
@@ -124,5 +124,5 @@ setConfigItem(ConfigMap& configItems, const String& itemName,
 
 
 } // end namespace ConfigFile
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

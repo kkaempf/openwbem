@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_ClientAuthCBIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,5 +44,5 @@ ClientAuthCBIFC::~ClientAuthCBIFC()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

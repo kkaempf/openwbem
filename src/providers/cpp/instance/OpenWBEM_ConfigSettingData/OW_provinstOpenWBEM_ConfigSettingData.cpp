@@ -53,7 +53,7 @@
 #include <unistd.h>
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OpenWBEM_ConfigSettingDataInstProv : public virtual CppInstanceProviderIFC

@@ -37,7 +37,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
     class _RHEnumInstances : public CIMObjectPathResultHandlerIFC
@@ -119,9 +119,14 @@ namespace OpenWBEM
 	}
 
 ///////////////////////////////////////////////////////////////////////////////
+	CppInstanceProviderIFC::CppInstanceProviderIFC()
+	{
+	}
+
+///////////////////////////////////////////////////////////////////////////////
 	CppInstanceProviderIFC::~CppInstanceProviderIFC()
 	{
 	}
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -43,7 +43,7 @@
 #include "OW_IOException.hpp"
 #include "OW_UserUtils.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_EXCEPTION(Daemon);
@@ -112,6 +112,6 @@ namespace Platform
 }; // end namespace Platform
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -41,7 +41,7 @@
 #include "OW_ArrayFwd.hpp"
 #include "OW_CommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(ExecTimeout, OW_COMMON_API);
@@ -350,6 +350,6 @@ namespace Exec
 	
 } // end namespace Exec
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

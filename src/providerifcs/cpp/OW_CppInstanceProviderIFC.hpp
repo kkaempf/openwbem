@@ -41,7 +41,7 @@
 #include "OW_WBEMFlags.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -51,6 +51,7 @@ namespace OpenWBEM
 class OW_CPPPROVIFC_API CppInstanceProviderIFC: public virtual CppProviderBaseIFC
 {
 public:
+	CppInstanceProviderIFC();
 	virtual ~CppInstanceProviderIFC();
 	/**
 	 * A provider should override this method to report which classes in
@@ -199,6 +200,6 @@ public:
 };
 typedef SharedLibraryReference< IntrusiveReference<CppInstanceProviderIFC> > CppInstanceProviderIFCRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

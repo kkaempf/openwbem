@@ -34,7 +34,7 @@
 
 #include "PyOW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 void registerArrayImpl_String(const char*);
@@ -97,5 +97,5 @@ void registerArray()
 	registerArrayImpl_CIMOMInfo("CIMOMInfoArray");
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_IntrusiveReference.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class CIMServer;
@@ -62,7 +62,7 @@ typedef IntrusiveReference<ProviderIFCLoaderBase> ProviderIFCLoaderRef;
 
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

@@ -39,7 +39,7 @@
 #include "OW_StringStream.hpp"
 #include "OW_String.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //  Format class declaration  -----------------------------------------------//
@@ -246,7 +246,7 @@ Format::Format(const char* ca, const A& a, const B& b, const C& c, const D& d, c
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

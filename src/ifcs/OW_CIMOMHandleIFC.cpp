@@ -46,7 +46,7 @@
 #include "OW_Array.hpp"
 #include "OW_ResultHandlers.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -422,5 +422,5 @@ CIMOMHandleIFC::execQueryA(
 	return rval;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -42,7 +42,7 @@
 #include "OW_BinarySerialization.hpp"
 #include <cstring>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -129,5 +129,5 @@ CIMBase::~CIMBase()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

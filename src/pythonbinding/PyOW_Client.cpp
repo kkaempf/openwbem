@@ -37,7 +37,7 @@
 #undef ANY
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 void registerString();
@@ -113,5 +113,5 @@ BOOST_PYTHON_MODULE(owclient)
 	//    MofCompiler
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

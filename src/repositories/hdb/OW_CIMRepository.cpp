@@ -56,7 +56,7 @@
 #include "OW_OperationContext.hpp"
 #include "OW_ServiceIFCNames.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -1962,5 +1962,5 @@ const char* const CIMRepository::CLASS_ASSOC_REPOS_NAME = "classassociation";
 const char* const CIMRepository::INST_ASSOC_REPOS_NAME = "instassociation";
 #endif
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -39,7 +39,7 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_IndicationProviderInfo.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class WQLSelectStatement;
@@ -126,7 +126,7 @@ public:
 };
 typedef SharedLibraryReference< IntrusiveReference<CppIndicationProviderIFC> > CppIndicationProviderIFCRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 								

@@ -52,7 +52,7 @@
 #endif
 #include <algorithm> // for std::swap
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 #if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
@@ -392,5 +392,5 @@ namespace ExceptionDetail
 
 } // namespace ExceptionDetail
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -39,7 +39,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_XMLFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace XMLCIMFactory
@@ -54,7 +54,7 @@ namespace XMLCIMFactory
 	OW_XML_API CIMParameter createParameter(CIMXMLParser& parser);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 namespace OW_XMLCIMFactory = OpenWBEM::XMLCIMFactory;
 

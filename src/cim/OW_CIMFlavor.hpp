@@ -40,7 +40,7 @@
 #include "OW_Types.hpp"
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -210,6 +210,6 @@ private:
 	}
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

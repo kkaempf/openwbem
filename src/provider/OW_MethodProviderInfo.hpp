@@ -38,7 +38,7 @@
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_PROVIDER_API MethodProviderInfo
@@ -73,6 +73,6 @@ private:
 };
 typedef Array<MethodProviderInfo> MethodProviderInfoArray;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

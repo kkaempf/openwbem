@@ -43,7 +43,7 @@
 #include "OW_Exception.hpp"
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(StringConversion, OW_COMMON_API);
@@ -855,6 +855,6 @@ operator >= (const char* p, const String& s)
 	return (String(p).compareTo(s) >= 0);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

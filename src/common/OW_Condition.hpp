@@ -40,7 +40,7 @@
 #include "OW_Types.hpp"
 #include "OW_CommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(ConditionLock, OW_COMMON_API);
@@ -85,6 +85,6 @@ private:
 	ConditionVar_t m_condition;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -36,7 +36,7 @@
 #include "OW_WQLSelectStatement.hpp"
 #include "OW_Logger.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -187,5 +187,5 @@ NPIIndicationProviderProxy::mustPoll(
 	return 0;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

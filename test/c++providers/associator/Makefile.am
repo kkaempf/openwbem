@@ -14,7 +14,7 @@ SHAREDLIBADD = \
 OW_SHARED_LIBS = libassociatortest.$(LIB_EXT)
 
 # increment this number every time a release breaks binary compatibility
-LIBRARY_BINARY_VERSION = 4
+LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 libassociatortest_a_SOURCES = \
 OW_AssociatorTest.cpp

@@ -44,7 +44,7 @@
 #include "OW_Assertion.hpp"
 #include <cstring>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::iostream;
@@ -361,5 +361,5 @@ TempFileStream::usingTempFile() const
 	return m_buffer->usingTempFile();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

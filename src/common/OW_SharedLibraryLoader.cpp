@@ -35,13 +35,13 @@
 #include "OW_config.h"
 #include "OW_SharedLibraryLoader.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 SharedLibraryLoader::~SharedLibraryLoader()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

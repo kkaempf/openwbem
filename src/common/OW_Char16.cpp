@@ -48,7 +48,7 @@
 #include <iostream>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -102,5 +102,5 @@ operator<< (std::ostream& ostrm, const Char16& arg)
 	return ostrm;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -41,7 +41,7 @@
 #undef ANY
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace boost::python;
@@ -67,5 +67,5 @@ void registerClientAuthCBIFC()
 	;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

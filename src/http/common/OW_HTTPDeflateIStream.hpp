@@ -43,7 +43,7 @@
 #include "OW_IfcsFwd.hpp"
 #include <zlib.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_HTTP_API HTTPDeflateIStreamBuffer : public BaseStreamBuffer
@@ -108,7 +108,7 @@ private:
 	HTTPDeflateIStream& operator=(HTTPDeflateIStream&);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 #endif // #ifdef OW_HAVE_ZLIB_H

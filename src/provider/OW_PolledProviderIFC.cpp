@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_PolledProviderIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,5 +43,5 @@ PolledProviderIFC::~PolledProviderIFC()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

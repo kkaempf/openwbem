@@ -55,7 +55,7 @@
 #include <cstring>
 #include <cctype>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -797,5 +797,5 @@ CIMObjectPath::syncWithClass(const CIMClass& theClass)
 	return *this;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

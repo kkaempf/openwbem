@@ -41,7 +41,7 @@
 
 using namespace std;
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 namespace Tools
 {

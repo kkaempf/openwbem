@@ -38,7 +38,7 @@
 #include "OW_File.hpp"
 #include "OW_FileSystem.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -179,7 +179,7 @@ TempFileEnumerationImplBase::throwIfEmpty() const
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

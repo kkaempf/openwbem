@@ -36,7 +36,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_FTABLERef.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -104,6 +104,6 @@ private:
 };
 typedef SharedLibraryReference< Reference<PerlProviderIFC> > PerlProviderIFCRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

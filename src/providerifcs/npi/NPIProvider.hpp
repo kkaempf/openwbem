@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include "npi.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 typedef struct {
@@ -47,6 +47,6 @@ deleteEnv((NPIenv *)_npiHandle->thisObject); \
 handler.complete();
 typedef Array<char *> charVect;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif /* PegasusProvider_NPIProvider_h */

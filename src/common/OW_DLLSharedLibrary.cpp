@@ -43,7 +43,7 @@
 
 #include <iostream>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 Mutex DLLSharedLibrary_guard;
@@ -75,7 +75,7 @@ DLLSharedLibrary::doGetFunctionPointer(const String& functionName,
 	return true;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

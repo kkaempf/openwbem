@@ -43,7 +43,7 @@
 #include <iosfwd>
 #include <cstring>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API StringBuffer
@@ -183,6 +183,6 @@ bool operator!=(const StringBuffer& x, const String& y);
 bool operator==(const String& x, const StringBuffer& y);
 bool operator!=(const String& x, const StringBuffer& y);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -51,7 +51,7 @@
 #define OW_MEM_SIG 0xaaaaaaaa
 #define OW_FREE_MEM_SIG 0xbbbbbbbb
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // need to use our own allocator to avoid a deadlock with the standard allocator locking with a non-recursive mutex.
@@ -534,7 +534,7 @@ doDelete(void* p)
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
 void*

@@ -35,7 +35,7 @@
 #include "OW_Bool.hpp"
 #include "PyOW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 void registerArrayImpl_Bool(const char* name)
@@ -43,5 +43,5 @@ void registerArrayImpl_Bool(const char* name)
 	registerArrayImpl<Bool>(name);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -38,7 +38,7 @@
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_Map.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class NonAuthenticatingAuthenticator : public AuthenticatorIFC
@@ -61,6 +61,6 @@ protected:
 	virtual void doInit(ServiceEnvironmentIFCRef);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

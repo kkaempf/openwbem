@@ -75,7 +75,7 @@ extern "C" const char* getOWVersion()
 
 #include <iostream>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // static
@@ -201,7 +201,7 @@ void dlSharedLibrary::initializeSymbolMap()
 }
 #endif /* defined(OW_USE_FAKE_LIBS) */
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

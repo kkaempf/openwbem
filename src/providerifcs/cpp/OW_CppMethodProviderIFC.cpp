@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_CppMethodProviderIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -58,6 +58,6 @@ CppMethodProviderIFC::getMethodProvider()
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

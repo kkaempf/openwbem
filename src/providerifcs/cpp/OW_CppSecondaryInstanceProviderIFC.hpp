@@ -40,7 +40,7 @@
 #include "OW_SecondaryInstanceProviderInfo.hpp"
 #include "OW_WBEMFlags.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_CPPPROVIFC_API CppSecondaryInstanceProviderIFC: public virtual CppProviderBaseIFC
@@ -156,6 +156,6 @@ public:
 typedef SharedLibraryReference< IntrusiveReference<CppSecondaryInstanceProviderIFC> > CppSecondaryInstanceProviderIFCRef;
 typedef Array<CppSecondaryInstanceProviderIFCRef> CppSeconaryInstanceProviderIFCRefArray;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

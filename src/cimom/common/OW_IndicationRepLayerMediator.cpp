@@ -36,7 +36,7 @@
 #include "OW_IndicationRepLayerMediator.hpp"
 #include "OW_MutexLock.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -190,5 +190,5 @@ IndicationRepLayerMediator::deleteSubscription(const String& subName)
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -381,7 +381,7 @@ inline void swap(Array<T>& x, Array<T>& y)
 	x.swap(y);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 	

@@ -49,7 +49,7 @@
 #endif
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 #ifdef OW_WIN32
 namespace
@@ -165,5 +165,5 @@ File::unlock()
 }
 #endif
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

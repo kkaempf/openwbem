@@ -45,7 +45,7 @@
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_COWIntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::ostream;
@@ -406,5 +406,5 @@ bool operator<(const CIMMethod& x, const CIMMethod& y)
 	return *x.m_pdata < *y.m_pdata;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

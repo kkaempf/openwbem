@@ -39,7 +39,7 @@
 #include "OW_Array.hpp"
 #include "OW_ExceptionIds.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(ContextDataNotFound);
@@ -155,7 +155,7 @@ const char* const OperationContext::HTTP_ACCEPT_LANGUAGE_KEY = "HTTP_ACCEPT_LANG
 const char* const OperationContext::CLIENT_IPADDR = "CLIENT_IPADDR"; 
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

@@ -33,7 +33,7 @@
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_FTABLERef.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class NPIPolledProviderProxy: public PolledProviderIFC
@@ -73,6 +73,6 @@ private:
 };
 //typedef SharedLibraryReference<NPIPolledProviderIFC> NPIPolledProviderIFCRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -44,7 +44,7 @@
 #include "OW_CIMQualifier.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -276,5 +276,5 @@ enum__Namespace(CIMOMHandleIFC& hdl, const String& ns_,
 }
 } // end namespace OW_CIMNameSpaceUtils
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

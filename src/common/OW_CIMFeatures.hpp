@@ -45,7 +45,7 @@
 #include "OW_Array.hpp"
 #include "OW_Bool.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -74,6 +74,6 @@ struct CIMFeatures
 	String protocolVersion;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -45,7 +45,7 @@ extern int owmofdebug;
 extern int owmofparse(void *context);
 extern FILE* owmofin;
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 OW_DECLARE_APIEXCEPTION(MOFParser, OW_MOF_API);
 }

@@ -47,7 +47,7 @@ extern "C"
 #include <nks/dirio.h>
 }
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_CIMOMCOMMON_API NetwareIdentity : public OperationContext::Data

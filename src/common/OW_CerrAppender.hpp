@@ -38,7 +38,7 @@
 #include "OW_CommonFwd.hpp"
 #include "OW_LogAppender.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -58,7 +58,7 @@ protected:
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

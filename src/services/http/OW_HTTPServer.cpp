@@ -67,7 +67,7 @@
 #include "OW_ServiceIFCNames.hpp"
 #include "OW_Thread.hpp" // for ThreadException
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(HTTPServer)
@@ -750,7 +750,7 @@ HTTPServer::shutdown()
 	m_options.env = 0;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
 // This allows the http server to be dynamically loaded

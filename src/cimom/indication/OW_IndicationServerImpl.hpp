@@ -53,7 +53,7 @@
 #include "OW_Mutex.hpp"
 #include "OW_Thread.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class NotifyTrans;
@@ -196,6 +196,6 @@ private:
 	LoggerRef m_logger;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -40,7 +40,7 @@
 #include "OW_FileSystem.hpp"
 #include <algorithm> // for std::swap
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -214,6 +214,6 @@ private:
 	FileHandle	m_hdl;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

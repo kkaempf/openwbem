@@ -41,7 +41,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_WQL_API WQLSelectStatementGen : public WQLVisitor
@@ -584,6 +584,6 @@ private:
 	String m_attrName;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

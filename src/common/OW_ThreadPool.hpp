@@ -42,7 +42,7 @@
 #include "OW_Exception.hpp"
 #include "OW_Logger.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class ThreadPoolImpl;
@@ -158,6 +158,6 @@ private:
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

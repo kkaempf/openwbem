@@ -48,7 +48,7 @@
 #undef GOOD
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // TODO: Rewrite this class. It's way too big and convoluted. 
@@ -354,6 +354,6 @@ private:
 
 typedef IntrusiveReference<HTTPClient> HTTPClientRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

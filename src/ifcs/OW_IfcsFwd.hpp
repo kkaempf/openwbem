@@ -40,7 +40,7 @@
 #include "OW_CommonFwd.hpp"
 #include "OW_CIMFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class CIMOMHandleIFC;
@@ -94,7 +94,7 @@ class ClientAuthCBIFC;
 typedef IntrusiveReference<ClientAuthCBIFC> ClientAuthCBIFCRef;
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

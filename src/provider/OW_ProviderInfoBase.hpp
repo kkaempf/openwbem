@@ -41,7 +41,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -121,6 +121,6 @@ ProviderInfoBase<ClassInfoT>::getProviderName() const
 extern template class ProviderInfoBase<InstClassInfo>;
 #endif
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

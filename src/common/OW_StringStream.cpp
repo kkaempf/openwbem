@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_StringStream.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -148,5 +148,5 @@ void OStringStream::reset()
 	m_buf.reset();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

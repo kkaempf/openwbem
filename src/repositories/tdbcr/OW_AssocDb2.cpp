@@ -45,7 +45,7 @@
 #include <cstdio> // for SEEK_END
 #include <db.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -498,5 +498,5 @@ bool operator==(const AssocDbEntry2::entry& lhs, const AssocDbEntry2::entry& rhs
 		lhs.m_associationPath.equals(rhs.m_associationPath);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

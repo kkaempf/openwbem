@@ -44,7 +44,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 const char *const CIM_PROTOCOL_VERSION = "1.0";
@@ -91,6 +91,6 @@ protected:
 	String m_path;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -37,7 +37,7 @@
 #include <cstring>
 #include <cerrno>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 namespace System
 {

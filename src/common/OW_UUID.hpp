@@ -38,7 +38,7 @@
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(UUID, OW_COMMON_API);
@@ -102,6 +102,6 @@ private:
 };
 OW_COMMON_API bool operator!=(const UUID& x, const UUID& y);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -42,7 +42,7 @@
 #include "OW_String.hpp"
 #include "OW_CIMNULL.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -202,6 +202,6 @@ private:
 	friend OW_COMMON_API bool operator<(const CIMNameSpace& lhs, const CIMNameSpace& rhs);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_CppIndicationExportProviderIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -63,6 +63,6 @@ CppIndicationExportProviderIFC::getIndicationExportProvider()
 	return this; 
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

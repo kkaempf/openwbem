@@ -45,7 +45,7 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_CimomCommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -140,6 +140,6 @@ public:
 		ServiceEnvironmentIFCRef env);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

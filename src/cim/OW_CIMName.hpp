@@ -40,7 +40,7 @@
 
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -70,6 +70,8 @@ public:
 	 *		string.
 	 */
 	CIMName(const char* name);
+
+	~CIMName();
 	
 	CIMName& operator=(const String& name);
 	CIMName& operator=(const char* name);
@@ -117,7 +119,7 @@ OW_COMMON_API bool operator!=(const CIMName& x, const CIMName& y);
 
 OW_COMMON_API std::ostream& operator<<(std::ostream& ostr, const CIMName& name);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

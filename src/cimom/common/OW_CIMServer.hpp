@@ -45,7 +45,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_Mutex.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class CIMRepository;
@@ -680,6 +680,6 @@ private:
 	LoggerRef m_logger;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

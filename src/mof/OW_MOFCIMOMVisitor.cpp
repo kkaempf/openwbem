@@ -45,7 +45,7 @@
 #include "OW_CIMNameSpaceUtils.hpp"
 #include <assert.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace MOF
@@ -1354,5 +1354,5 @@ void CIMOMVisitor::CIMOMcreateNamespace(const LineInfo& li)
 }
 
 } // end namespace MOF
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

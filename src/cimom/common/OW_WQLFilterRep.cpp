@@ -43,7 +43,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ServiceIFCNames.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -408,5 +408,5 @@ WQLFilterRep::endOperation(WBEMFlags::EOperationFlag, OperationContext&, WBEMFla
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -45,7 +45,7 @@
 #include "OW_WBEMFlags.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -436,6 +436,6 @@ OW_COMMON_API bool operator>(const CIMClass& x, const CIMClass& y);
 OW_COMMON_API bool operator>=(const CIMClass& x, const CIMClass& y);
 OW_COMMON_API bool operator!=(const CIMClass& x, const CIMClass& y);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -43,7 +43,7 @@
 #include "OW_String.hpp"
 #include "OW_CommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(CIMDateTime, OW_COMMON_API);
@@ -342,6 +342,6 @@ bool operator>=(const CIMDateTime& x, const CIMDateTime& y);
 
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

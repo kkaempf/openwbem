@@ -42,7 +42,7 @@
 // use, they are internal implementation details.  They may change at any time.
 
 // TODO: Get rid of this file.  Move the function into XMLCIMFactory
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace XMLOperationGeneric
@@ -53,6 +53,6 @@ namespace XMLOperationGeneric
 	OW_XML_API void XMLGetCIMElement(CIMXMLParser& node);
 } // end namespace XMLOperationGeneric
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -53,7 +53,7 @@
 // Note that using setjmp/longjmp will fail to reset the blocked signal mask after the first time this fails.
 // using sigsetjmp/siglongjmp fixes this problem.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -207,7 +207,7 @@ private:
 template <typename T>
 jmp_buf SafeLibCreate<T>::theLoaderBuf;
 	
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

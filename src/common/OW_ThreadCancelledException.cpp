@@ -35,9 +35,9 @@
 #include "OW_config.h"
 #include "OW_ThreadCancelledException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

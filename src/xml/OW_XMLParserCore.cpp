@@ -39,7 +39,7 @@
 
 #include <cctype>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // Note that we don't use the OW_THROW macro in this file to throw
@@ -474,5 +474,5 @@ void XMLParserCore::getElement(XMLToken& entry)
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

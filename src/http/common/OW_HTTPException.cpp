@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_HTTPException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -78,6 +78,6 @@ HTTPException::clone() const throw()
 	return new (std::nothrow)HTTPException(*this);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

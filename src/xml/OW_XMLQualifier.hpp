@@ -44,7 +44,7 @@
 // use, they are internal implementation details.  They may change at any time.
 
 // TODO: Get rid of this file.  Move the function into XMLCIMFactory
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace XMLQualifier
@@ -65,6 +65,6 @@ namespace XMLQualifier
 		CIMScope::Scope scopeValue);
 } // end namespace XMLQualifiers
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

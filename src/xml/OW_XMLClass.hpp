@@ -44,7 +44,7 @@
 // use, they are internal implementation details.  They may change at any time.
 
 // TODO: Get rid of this file.  Move the function into XMLCIMFactory
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace XMLClass
@@ -57,6 +57,6 @@ namespace XMLClass
 			CIMObjectPath& path);
 } // end namespace XMLClass
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif  // OW_XMLClass_HPP_

@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_MOFVisitor.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace MOF
@@ -49,5 +49,5 @@ Visitor::~Visitor()
 }
 
 } // end namespace MOF
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

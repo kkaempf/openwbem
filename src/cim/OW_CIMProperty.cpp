@@ -46,7 +46,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_COWIntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -621,5 +621,5 @@ CIMProperty::hasTrueQualifier(const CIMName& name) const
 	return b;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

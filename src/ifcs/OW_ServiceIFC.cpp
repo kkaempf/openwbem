@@ -37,7 +37,7 @@
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -91,5 +91,5 @@ ServiceIFC::shuttingDown()
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

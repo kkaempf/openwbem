@@ -38,7 +38,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_ArrayFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class ProviderEnvironmentIFC;
@@ -62,7 +62,7 @@ typedef IntrusiveReference<IndicationExportProviderIFC> IndicationExportProvider
 typedef Array<IndicationExportProviderIFCRef> IndicationExportProviderIFCRefArray;
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

@@ -10,7 +10,9 @@ uninstall-local : uninstall-ow-shared-libs
 
 owstatlib_LIBRARIES = libowdb.a 
 OW_SHARED_LIBS = libowdb.$(LIB_EXT)
-LIBRARY_BINARY_VERSION = 4
+
+# increment this number every time a release breaks binary compatibility, which has yet to happen for libdb since we never change it.
+LIBRARY_BINARY_VERSION = 0
 
 
 thelibdir = $(libdir)

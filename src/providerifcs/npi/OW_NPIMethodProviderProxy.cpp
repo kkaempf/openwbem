@@ -39,7 +39,7 @@
 #include "OW_CIMParamValue.hpp"
 #include "OW_Logger.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -108,5 +108,5 @@ NPIMethodProviderProxy::invokeMethod(
 		return rval;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

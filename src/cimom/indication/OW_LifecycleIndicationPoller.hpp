@@ -40,7 +40,7 @@
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_Mutex.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class LifecycleIndicationPoller : public CppPolledProviderIFC
@@ -83,6 +83,6 @@ private:
 	bool m_initializedInstances;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

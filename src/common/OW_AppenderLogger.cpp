@@ -41,7 +41,7 @@
 #include <algorithm>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -129,7 +129,7 @@ AppenderLogger::getLevel(const Array<LogAppenderRef>& appenders)
 	return rv;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

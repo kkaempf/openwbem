@@ -38,11 +38,11 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Enumeration.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 typedef Enumeration<CIMObjectPath> CIMObjectPathEnumeration;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

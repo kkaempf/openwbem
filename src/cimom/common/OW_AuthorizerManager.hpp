@@ -40,7 +40,7 @@
 #include "OW_Authorizer2IFC.hpp"
 #include "OW_CimomCommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_CIMOMCOMMON_API AuthorizerManager : public ServiceIFC

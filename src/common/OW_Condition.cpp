@@ -42,7 +42,7 @@
 #include <sys/time.h>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(ConditionLock);
@@ -265,5 +265,5 @@ Condition::timedWait(NonRecursiveMutexLock& lock, UInt32 sTimeout, UInt32 usTime
 	return doTimedWait(*(lock.m_mutex), sTimeout, usTimeout);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

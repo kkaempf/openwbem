@@ -52,7 +52,7 @@
 #include "OW_CIMXMLListenerFwd.hpp"
 #include "OW_ServicesHttpFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_LISTENER_API HTTPXMLCIMListener : public CIMListenerCallback
@@ -147,6 +147,6 @@ private:
 #endif
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

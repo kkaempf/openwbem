@@ -39,7 +39,7 @@
 #include "OW_XMLQualifier.hpp"
 #include "OW_Param.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class IndicationExporter
@@ -67,6 +67,6 @@ private:
 	Int32 m_iMessageID;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -44,7 +44,7 @@
 #include "OW_NPIPolledProviderProxy.hpp"
 #include "OW_NPIIndicationProviderProxy.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //typedef NPIProviderBaseIFC* (*ProviderCreationFunc)();
@@ -401,7 +401,7 @@ NPIProviderIFC::getProvider(
 	m_provs[provId] = FTABLERef(theLib, new NPIFTABLE(fTable));
 	return m_provs[provId];
 }
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_PROVIDERIFCFACTORY(OpenWBEM::NPIProviderIFC, npi)
 

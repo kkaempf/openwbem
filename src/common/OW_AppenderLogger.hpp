@@ -40,7 +40,7 @@
 #include "OW_Logger.hpp"
 #include "OW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -74,7 +74,7 @@ private:
 #endif
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

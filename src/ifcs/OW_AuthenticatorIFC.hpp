@@ -46,7 +46,7 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_IfcsFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API AuthenticatorIFC : public IntrusiveCountableBase
@@ -137,6 +137,6 @@ createAuthenticator_##authenticatorName() \
 }
 #endif /* !defined(OW_STATIC_SERVICES) */
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -41,7 +41,7 @@
 #include <iostream> // for cerr
 #include <cstring> // for memcpy
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 BaseStreamBuffer::BaseStreamBuffer(size_t bufSize,
@@ -239,5 +239,5 @@ BaseStreamBuffer::buffer_from_device(char* c, int n)
 	return -1; // make the compiler happy
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

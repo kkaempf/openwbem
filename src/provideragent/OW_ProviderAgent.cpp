@@ -45,7 +45,7 @@
 #include "OW_ProviderAgentEnvironment.hpp"
 #include "OW_CppProviderBaseIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -172,5 +172,5 @@ ProviderAgent::shutdownHttpServer()
 }
 //////////////////////////////////////////////////////////////////////////////
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -38,12 +38,12 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(IO, OW_COMMON_API)
 OW_DECLARE_APIEXCEPTION2(BadCIMSignature, IOException, OW_COMMON_API)
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -39,7 +39,7 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_Assertion.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 static void addIndent(StringBuffer& sb, int indent)
@@ -132,5 +132,5 @@ String XMLPrettyPrint(const String& s)
 	return XMLPrettyPrint(tfs);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

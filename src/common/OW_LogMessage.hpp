@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 struct OW_COMMON_API LogMessage
@@ -61,7 +61,7 @@ struct OW_COMMON_API LogMessage
 };
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

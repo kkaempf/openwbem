@@ -34,7 +34,7 @@
 
 #include "PyOW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 void registerArrayImpl_String(const char* name)
@@ -42,5 +42,5 @@ void registerArrayImpl_String(const char* name)
 	registerArrayImpl<String>(name);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_ProviderAgentLockerIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -51,6 +51,6 @@ ProviderAgentLockerIFC::~ProviderAgentLockerIFC()
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

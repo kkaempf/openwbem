@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_SharedLibrary.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 template <class T>
@@ -133,6 +133,6 @@ private:
 	T m_obj;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

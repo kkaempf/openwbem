@@ -42,7 +42,7 @@
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_ServiceIFCNames.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 Mutex WQLImpl::s_classLock;
@@ -170,7 +170,7 @@ WQLImpl::shutdown()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_WQLFACTORY(OpenWBEM::WQLImpl,wqlimpl);
 

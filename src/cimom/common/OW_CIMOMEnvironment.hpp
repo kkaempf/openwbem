@@ -57,7 +57,7 @@
 #include "OW_CimomServerFwd.hpp"
 #include "OW_CIMFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_CIMOMCOMMON_API CIMOMEnvironment : public ServiceEnvironmentIFC
@@ -196,6 +196,6 @@ private:
 	static String COMPONENT_NAME;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -39,7 +39,7 @@
 #include "OW_Array.hpp"
 #include "OW_ProviderInfoBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_PROVIDER_API SecondaryInstanceProviderInfo : public ProviderInfoBase<InstClassInfo>
@@ -52,7 +52,7 @@ public:
 
 typedef Array<SecondaryInstanceProviderInfo> SecondaryInstanceProviderInfoArray;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

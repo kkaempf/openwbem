@@ -45,7 +45,7 @@
 // BMMU
 #include <iostream>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //typedef PerlProviderBaseIFC* (*ProviderCreationFunc)();
@@ -546,7 +546,7 @@ PerlProviderIFC::getProvider(
 	return m_provs[provId];
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_PROVIDERIFCFACTORY(OpenWBEM::PerlProviderIFC, perl)
 

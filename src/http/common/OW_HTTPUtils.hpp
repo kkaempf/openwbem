@@ -42,7 +42,7 @@
 #include "OW_Base64FormatException.hpp"
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 typedef Map<String, String> HTTPHeaderMap;
@@ -218,7 +218,7 @@ namespace HTTPUtils
 	OW_HTTP_API String unescapeForURL(const String& input);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 namespace OW_HTTPUtils = OpenWBEM::HTTPUtils;
 

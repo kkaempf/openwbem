@@ -51,7 +51,7 @@
 #include <iostream>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::ostream;
@@ -517,5 +517,5 @@ bool operator>=(const CIMDateTime& x, const CIMDateTime& y)
 	return !(x < y);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

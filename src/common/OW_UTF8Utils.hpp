@@ -40,7 +40,7 @@
 #include "OW_Exception.hpp"
 #include "OW_CommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(InvalidUTF8, OW_COMMON_API);
@@ -130,6 +130,6 @@ OW_COMMON_API String UCS2ToString(const void* input, size_t inputLength);
 
 } // end namespace UTF8Utils
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

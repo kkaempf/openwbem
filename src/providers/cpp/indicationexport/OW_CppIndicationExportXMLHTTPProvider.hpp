@@ -39,7 +39,7 @@
 #include "OW_HTTPClient.hpp"
 #include "OW_Mutex.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class CppIndicationExportXMLHTTPProvider : public CppIndicationExportProviderIFC
@@ -76,6 +76,6 @@ private:
 	bool m_cancelled;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

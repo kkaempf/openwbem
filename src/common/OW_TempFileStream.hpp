@@ -63,7 +63,7 @@
 #include <iostream>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API TempFileBuffer : public std::streambuf
@@ -130,6 +130,6 @@ private:
 	TempFileStream& operator=(const TempFileStream&);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

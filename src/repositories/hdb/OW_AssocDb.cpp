@@ -52,7 +52,7 @@
 #include <cstdio> // for SEEK_END
 #include <algorithm> // for std::find and sort
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -909,5 +909,5 @@ bool operator==(const AssocDbEntry::entry& lhs, const AssocDbEntry::entry& rhs)
 		lhs.m_associationPath.equals(rhs.m_associationPath);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

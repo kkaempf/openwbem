@@ -47,7 +47,7 @@
 #include "OW_COWIntrusiveCountableBase.hpp"
 #include <algorithm> // for std::sort
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::ostream;
@@ -973,5 +973,5 @@ bool CIMInstance::propertiesAreEqualTo(const CIMInstance& other) const
 	return true;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

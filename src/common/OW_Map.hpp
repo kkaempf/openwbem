@@ -41,7 +41,7 @@
 #include <functional>
 
 // This class is a wrapper around std::map<> and adds COW capabilities.
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 
@@ -251,6 +251,6 @@ inline void swap(Map<Key, T, Compare>& x,
 	x.swap(y);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

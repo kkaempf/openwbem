@@ -56,7 +56,7 @@
 #include <iostream>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(Base64Format);
@@ -801,5 +801,5 @@ String unescapeForURL(const String& input)
 	
 
 } // end namespace HTTPUtils
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -43,7 +43,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 typedef Array<Select_t> SelectTypeArray;
@@ -81,6 +81,6 @@ namespace Select
 	OW_COMMON_API int select(const SelectTypeArray& selarray, UInt32 ms = INFINITE_TIMEOUT);
 } // end namespace Select
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // OW_SELECT_HPP_

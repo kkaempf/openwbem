@@ -44,7 +44,8 @@ CMPI_ThreadContext* CMPI_ThreadContext::getThreadContext()
 	return (CMPI_ThreadContext*)pthread_getspecific(theKey);
 }
 
-namespace OpenWBEM {
+namespace OW_NAMESPACE
+{
 OW_DECLARE_EXCEPTION(CMPI_ThreadContext)
 OW_DEFINE_EXCEPTION(CMPI_ThreadContext)
 }

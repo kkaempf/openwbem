@@ -41,7 +41,7 @@
 #include "OW_OperationContext.hpp"
 #include "OW_CommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -157,7 +157,7 @@ private:
 };
 
 
-}	// End of namespace OpenWBEM
+}	// end namespace OW_NAMESPACE
 
 #endif
 

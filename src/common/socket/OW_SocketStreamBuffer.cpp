@@ -37,7 +37,7 @@
 #include "OW_SocketStreamBuffer.hpp"
 #include "OW_SocketBaseImpl.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 SocketStreamBuffer::SocketStreamBuffer(SocketBaseImpl* sock)
@@ -47,5 +47,5 @@ SocketStreamBuffer::SocketStreamBuffer(SocketBaseImpl* sock)
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

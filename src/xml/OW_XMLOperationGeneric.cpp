@@ -40,7 +40,7 @@
 #include "OW_CIMErrorException.hpp"
 #include "OW_CIMXMLParser.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -75,5 +75,5 @@ XMLOperationGeneric::XMLGetCIMElement(CIMXMLParser& parser)
 	return;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

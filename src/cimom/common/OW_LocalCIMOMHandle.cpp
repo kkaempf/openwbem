@@ -44,7 +44,7 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_Enumeration.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -90,5 +90,5 @@ LocalCIMOMHandle::exportIndication(const CIMInstance& instance,
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

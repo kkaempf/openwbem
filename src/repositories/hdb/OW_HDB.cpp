@@ -50,7 +50,7 @@ extern "C"
 #include <errno.h>
 }
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 static UInt32 calcCheckSum(unsigned char* src, Int32 len);
@@ -897,5 +897,5 @@ HDBHandle::updateIndexEntry(const char* key, Int32 newOffset)
 	return m_pdata->m_pdb->updateIndexEntry(key, newOffset);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

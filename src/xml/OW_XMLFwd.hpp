@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_ArrayFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class CIMXMLParser;
@@ -47,7 +47,7 @@ struct XMLToken;
 class XMLParseException;
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

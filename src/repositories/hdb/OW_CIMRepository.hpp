@@ -45,7 +45,7 @@
 #endif
 #include "OW_RWLocker.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace CIMRepositoryImpl
@@ -667,6 +667,6 @@ private:
 	friend class CIMRepositoryImpl::instEnumerator;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

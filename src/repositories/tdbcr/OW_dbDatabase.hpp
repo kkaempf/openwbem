@@ -37,7 +37,7 @@
 
 #include <vector>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_EXCEPTION(dbDatabase);
@@ -93,6 +93,6 @@ private:
 };
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -37,7 +37,7 @@
 #include "OW_ListenerAuthenticator.hpp"
 #include "OW_RandomNumber.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -129,5 +129,5 @@ ListenerAuthenticator::removeCredentials(const String& creds)
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

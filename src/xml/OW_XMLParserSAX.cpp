@@ -48,7 +48,7 @@
 
 using std::istream;
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 namespace XMLParserSAX
 {
@@ -126,7 +126,7 @@ parse(const String& xmlData, SAXDocumentHandler& docHandler, SAXErrorHandler& er
 
 } // end namespace XMLParser
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

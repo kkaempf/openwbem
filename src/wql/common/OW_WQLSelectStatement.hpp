@@ -36,7 +36,7 @@
 #include "OW_WQLOperand.hpp"
 #include "OW_WQLPropertySource.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /** This class represents a compiled WQL select statement. 
@@ -241,6 +241,6 @@ private:
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

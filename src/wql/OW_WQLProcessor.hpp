@@ -49,7 +49,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_WQL_API WQLProcessor : public WQLVisitor
@@ -774,6 +774,6 @@ private:
 
 OW_WQL_API bool CIMInstanceSortCriterion( const CIMInstance& lhs, const CIMInstance& rhs);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

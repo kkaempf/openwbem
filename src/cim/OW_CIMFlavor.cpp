@@ -44,7 +44,7 @@
 #include <iostream>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::ostream;
@@ -107,5 +107,5 @@ CIMFlavor::setNull()
 	m_flavor = INVALID;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

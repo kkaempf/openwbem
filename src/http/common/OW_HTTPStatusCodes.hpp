@@ -37,7 +37,7 @@
 #define OW_HTTPSTATUSCODES_H_INCLUDE_GUARD_
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // Status codes.
@@ -80,6 +80,6 @@ const int SC_GATEWAY_TIMEOUT = 504;
 const int SC_HTTP_VERSION_NOT_SUPPORTED = 505;
 const int SC_NOT_EXTENDED = 510;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

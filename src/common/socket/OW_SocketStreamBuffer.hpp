@@ -39,7 +39,7 @@
 #include "OW_IOIFCStreamBuffer.hpp"
 #include "OW_CommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API SocketStreamBuffer : public IOIFCStreamBuffer
@@ -53,6 +53,6 @@ private:
 	SocketStreamBuffer& operator=(const SocketStreamBuffer& arg);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

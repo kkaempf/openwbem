@@ -49,7 +49,7 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_IOException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -586,5 +586,5 @@ void InstanceRepository::_removeDuplicatedQualifiers(CIMInstance& inst,
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_SocketException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_HTTP_API HTTPChunkException : public SocketException
@@ -49,6 +49,6 @@ public:
 	virtual const char* type() const;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

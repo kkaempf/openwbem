@@ -37,7 +37,7 @@
 #include "OW_CIMElement.hpp"
 #include "OW_String.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////				
@@ -51,5 +51,5 @@ String CIMElement::toString() const
 	return getName();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

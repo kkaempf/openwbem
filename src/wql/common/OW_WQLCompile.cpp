@@ -36,7 +36,7 @@
 #endif
 #include <algorithm> // for std::unique
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //
@@ -756,5 +756,5 @@ void WQLCompile::_sortTableau()
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

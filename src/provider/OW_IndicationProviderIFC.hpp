@@ -41,7 +41,7 @@
 #include "OW_IfcsFwd.hpp"
 #include "OW_WBEMFlags.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class WQLSelectStatement;
@@ -83,6 +83,6 @@ public:
 		) = 0;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

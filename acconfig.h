@@ -159,14 +159,12 @@
  *
  */
 #if __GNUC__ - 0 > 3 || (__GNUC__ - 0 == 3 && __GNUC_MINOR__ - 0 >= 2)
-# define OW_DEPRECATED __attribute__ ((deprecated))
+#define DEPRECATED __attribute__ ((deprecated))
 #else
-# define OW_DEPRECATED
+#define DEPRECATED
 #endif
 
 
-
-#ifdef __cplusplus
 
 #ifdef OW_WIN32
 #define EXPORT __declspec(dllexport)
@@ -285,6 +283,21 @@
 #define PROVIDERAGENT_API OW_IMPORT
 #endif
 
+/* C++ specific stuff here */
+#ifdef __cplusplus
+
+/* Need this first macro because ## doesn't expand vars, and we need an intermediate step */
+#define NAMESPACE_CAT(ow, ver) ow ## ver
+#define NAMESPACE_AUX(ver) OW_NAMESPACE_CAT(OpenWBEM, ver)
+#define NAMESPACE OW_NAMESPACE_AUX(OW_OPENWBEM_LIBRARY_VERSION)
+
+/* need this to set up an alias. */
+namespace OW_NAMESPACE
+{
+}
+
+namespace OpenWBEM = OW_NAMESPACE;
+
 #ifdef OW_DEBUG_MEMORY
 #include "OW_MemTracer.hpp"
 #endif
@@ -293,30 +306,30 @@
 #ifdef OW_PRINT_FUNC_DEBUG
 #include "OW_FuncNamePrinter.hpp"
 
-#define OW_PRINT_FUNC_NAME OW_FuncNamePrinter fnp##__LINE__ (__PRETTY_FUNCTION__)
+#define PRINT_FUNC_NAME OW_FuncNamePrinter fnp##__LINE__ (__PRETTY_FUNCTION__)
 
-#define OW_PRINT_FUNC_NAME_ARGS1(a) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a)
-#define OW_PRINT_FUNC_NAME_ARGS2(a, b) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b)
-#define OW_PRINT_FUNC_NAME_ARGS3(a, b, c) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c)
-#define OW_PRINT_FUNC_NAME_ARGS4(a, b, c, d) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d)
-#define OW_PRINT_FUNC_NAME_ARGS5(a, b, c, d, e) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e)
-#define OW_PRINT_FUNC_NAME_ARGS6(a, b, c, d, e, f) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f)
-#define OW_PRINT_FUNC_NAME_ARGS7(a, b, c, d, e, f, g) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f, g)
-#define OW_PRINT_FUNC_NAME_ARGS8(a, b, c, d, e, f, g, h) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f, g, h)
-#define OW_PRINT_FUNC_NAME_ARGS9(a, b, c, d, e, f, g, h, i) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f, g, h, i)
-#define OW_PRINT_FUNC_NAME_ARGS10(a, b, c, d, e, f, g, h, i, j) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f, g, h, i, j)
+#define PRINT_FUNC_NAME_ARGS1(a) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a)
+#define PRINT_FUNC_NAME_ARGS2(a, b) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b)
+#define PRINT_FUNC_NAME_ARGS3(a, b, c) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c)
+#define PRINT_FUNC_NAME_ARGS4(a, b, c, d) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d)
+#define PRINT_FUNC_NAME_ARGS5(a, b, c, d, e) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e)
+#define PRINT_FUNC_NAME_ARGS6(a, b, c, d, e, f) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f)
+#define PRINT_FUNC_NAME_ARGS7(a, b, c, d, e, f, g) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f, g)
+#define PRINT_FUNC_NAME_ARGS8(a, b, c, d, e, f, g, h) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f, g, h)
+#define PRINT_FUNC_NAME_ARGS9(a, b, c, d, e, f, g, h, i) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f, g, h, i)
+#define PRINT_FUNC_NAME_ARGS10(a, b, c, d, e, f, g, h, i, j) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f, g, h, i, j)
 #else
-#define OW_PRINT_FUNC_NAME_ARGS1(a)
-#define OW_PRINT_FUNC_NAME_ARGS2(a, b)
-#define OW_PRINT_FUNC_NAME_ARGS3(a, b, c)
-#define OW_PRINT_FUNC_NAME_ARGS4(a, b, c, d)
-#define OW_PRINT_FUNC_NAME_ARGS5(a, b, c, d, e)
-#define OW_PRINT_FUNC_NAME_ARGS6(a, b, c, d, e, f)
-#define OW_PRINT_FUNC_NAME_ARGS7(a, b, c, d, e, f, g)
-#define OW_PRINT_FUNC_NAME_ARGS8(a, b, c, d, e, f, g, h)
-#define OW_PRINT_FUNC_NAME_ARGS9(a, b, c, d, e, f, g, h, i)
-#define OW_PRINT_FUNC_NAME_ARGS10(a, b, c, d, e, f, g, h, i, j)
-#define OW_PRINT_FUNC_NAME
+#define PRINT_FUNC_NAME_ARGS1(a)
+#define PRINT_FUNC_NAME_ARGS2(a, b)
+#define PRINT_FUNC_NAME_ARGS3(a, b, c)
+#define PRINT_FUNC_NAME_ARGS4(a, b, c, d)
+#define PRINT_FUNC_NAME_ARGS5(a, b, c, d, e)
+#define PRINT_FUNC_NAME_ARGS6(a, b, c, d, e, f)
+#define PRINT_FUNC_NAME_ARGS7(a, b, c, d, e, f, g)
+#define PRINT_FUNC_NAME_ARGS8(a, b, c, d, e, f, g, h)
+#define PRINT_FUNC_NAME_ARGS9(a, b, c, d, e, f, g, h, i)
+#define PRINT_FUNC_NAME_ARGS10(a, b, c, d, e, f, g, h, i, j)
+#define PRINT_FUNC_NAME
 #endif /* #ifdef OW_PRINT_FUNC_DEBUG */
 
 #endif /* #ifdef __cplusplus */

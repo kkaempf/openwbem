@@ -52,7 +52,7 @@
 #include "OW_Logger.hpp"
 #include "OW_CimomCommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -229,6 +229,6 @@ private:
 	ServiceEnvironmentIFCRef m_env;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

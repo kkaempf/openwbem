@@ -51,7 +51,7 @@
 
 #include <algorithm>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -941,5 +941,5 @@ CIMClass::getCloneProps(ELocalOnlyFlag localOnly,
 	return props;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

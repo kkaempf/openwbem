@@ -37,7 +37,7 @@
 
 #include <iostream>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ NullLogger::doClone() const
 	return LoggerRef(new NullLogger(*this));
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

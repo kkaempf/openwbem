@@ -40,7 +40,7 @@
 #include "OW_MutexLock.hpp"
 #include <syslog.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -102,7 +102,7 @@ bool SyslogAppender::calledOpenLog = false;
 const String SyslogAppender::STR_DEFAULT_MESSAGE_PATTERN("[%t]%m");
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

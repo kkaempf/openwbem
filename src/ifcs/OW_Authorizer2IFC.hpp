@@ -43,7 +43,7 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_IfcsFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API Authorizer2IFC : public IntrusiveCountableBase

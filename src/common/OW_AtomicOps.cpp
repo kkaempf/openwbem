@@ -37,7 +37,7 @@
 
 #if defined(OW_USE_PTHREAD_SPIN_LOCK_ATOMIC_OPS)
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 Atomic_t::Atomic_t()
@@ -75,13 +75,13 @@ void AtomicDec(Atomic_t &v)
 	pthread_spin_unlock(&v.spinlock);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #elif defined(OW_USE_OW_DEFAULT_ATOMIC_OPS)
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // this needs to be a pointer because of static initialization order conflicts.  
@@ -120,7 +120,7 @@ void AtomicDec(Atomic_t &v)
 	--v.val;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

@@ -69,7 +69,7 @@ extern "C"
 #include <cerrno>
 #include <cstdio>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -544,7 +544,7 @@ SocketBaseImpl::setDumpFiles(const String& in, const String& out)
 	m_traceFileIn = in;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif	// #if !defined(OW_WIN32)
 

@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_COWIntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 COWIntrusiveCountableBase::~COWIntrusiveCountableBase()
@@ -43,7 +43,7 @@ COWIntrusiveCountableBase::~COWIntrusiveCountableBase()
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

@@ -39,7 +39,7 @@
 #include "OW_Mutex.hpp"
 #include <cassert>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -95,6 +95,6 @@ private:
 	friend class Condition;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -48,7 +48,7 @@
 #include <iostream>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_HTTP_API HTTPChunkedOStreamBuffer : public BaseStreamBuffer
@@ -131,6 +131,6 @@ private:
 	HTTPChunkedOStream& operator=(const HTTPChunkedOStream&);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -51,7 +51,7 @@
 #include "OW_CimomCommonFwd.hpp"
 #include "OW_ServiceIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 class PollingManagerThread;
 
@@ -124,6 +124,6 @@ private:
 	virtual void doCooperativeCancel();
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -44,7 +44,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // this class is part of the wqlcommon library, which is not in libopenwbem
@@ -84,6 +84,6 @@ createWQL_##wqlname() \
 }
 #endif /* !defined(OW_STATIC_SERVICES) */
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

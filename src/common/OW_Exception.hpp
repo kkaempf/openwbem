@@ -44,7 +44,7 @@
 #include <exception>
 #include <new>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -440,6 +440,6 @@ const char* NAME##Exception::type() const { return #NAME "Exception"; }
  */
 #define OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID(NAME, BASE) OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, BASE, ::OpenWBEM::ExceptionIds::NAME##ExceptionId)
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

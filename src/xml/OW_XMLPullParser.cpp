@@ -41,7 +41,7 @@
 #include "OW_XMLParseException.hpp"
 #include <algorithm> // for std::lower_bound
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -287,5 +287,5 @@ std::ostream& operator<<(std::ostream& ostr, const XMLPullParser& p)
 	return ostr;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

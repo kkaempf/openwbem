@@ -39,7 +39,7 @@
 #include "OW_ByteSwap.hpp"
 #include "OW_CIMBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace BinarySerialization
@@ -225,5 +225,5 @@ read(std::istream& istrm, void* dataIn, int dataInLen)
 }
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

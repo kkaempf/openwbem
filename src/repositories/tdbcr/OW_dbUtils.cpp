@@ -35,7 +35,7 @@
 #include <db.h>
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION(db);
@@ -53,5 +53,5 @@ void checkReturn(int retval, const char* funcname)
 }
 
 } // end namespace dbUtils
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

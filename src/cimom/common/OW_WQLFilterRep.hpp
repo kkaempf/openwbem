@@ -40,7 +40,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CimomCommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_CIMOMCOMMON_API WQLFilterRep : public RepositoryIFC
@@ -471,6 +471,6 @@ private:
 	RepositoryIFCRef m_pCIMServer;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

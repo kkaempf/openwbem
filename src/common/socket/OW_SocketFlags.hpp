@@ -36,7 +36,7 @@
 #define OW_SOCKET_FLAGS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace SocketFlags
@@ -61,6 +61,6 @@ enum EWaitDirectionFlag
 };
 } // end namespace SocketFlags
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

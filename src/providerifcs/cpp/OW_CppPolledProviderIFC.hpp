@@ -38,7 +38,7 @@
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_CPPPROVIFC_API CppPolledProviderIFC : public virtual CppProviderBaseIFC
@@ -91,6 +91,6 @@ public:
 };
 typedef SharedLibraryReference< IntrusiveReference<CppPolledProviderIFC> > CppPolledProviderIFCRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

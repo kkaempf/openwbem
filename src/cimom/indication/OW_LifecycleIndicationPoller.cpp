@@ -46,7 +46,7 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_CIMDateTime.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -285,5 +285,5 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 	return getPollInterval();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

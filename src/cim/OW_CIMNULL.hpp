@@ -36,7 +36,7 @@
 #define OW_CIMNULL_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // This is used to create NULL CIM objects.
@@ -46,6 +46,6 @@ enum CIMNULL_t
 };
 					
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

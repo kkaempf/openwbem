@@ -43,7 +43,7 @@
 
 #include <fstream>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -130,7 +130,7 @@ FileAppender::doProcessLogMessage(const String& formattedMessage, const LogMessa
 /////////////////////////////////////////////////////////////////////////////
 const String FileAppender::STR_DEFAULT_MESSAGE_PATTERN("%d{%a %b %d %H:%M:%S %Y} [%t]: %m");
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

@@ -35,7 +35,7 @@
 #include "OW_CIMFlavor.hpp"
 #include "PyOW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 void registerArrayImpl_CIMFlavor(const char* name)
@@ -43,5 +43,5 @@ void registerArrayImpl_CIMFlavor(const char* name)
 	registerArrayImpl<CIMFlavor>(name);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

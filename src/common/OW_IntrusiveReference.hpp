@@ -48,7 +48,7 @@
 
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //
@@ -200,6 +200,6 @@ template<class T, class U> IntrusiveReference<T> dynamic_pointer_cast(IntrusiveR
 	return dynamic_cast<T *>(p.getPtr());
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -43,7 +43,7 @@
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_RepositoryCIMOMHandle.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -91,6 +91,6 @@ private:
 	CIMOMEnvironmentRef m_env;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

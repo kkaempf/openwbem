@@ -43,7 +43,7 @@
 #include "OW_Cache.hpp"
 #include "OW_WBEMFlags.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_HDB_API MetaRepository : public GenericHDBRepository
@@ -274,6 +274,6 @@ private:
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

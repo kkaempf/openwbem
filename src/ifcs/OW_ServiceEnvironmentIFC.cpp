@@ -43,7 +43,7 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_WQLIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -145,5 +145,5 @@ ServiceEnvironmentIFC::getWQLRef() const
 	return WQLIFCRef();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -36,7 +36,7 @@
 #include "OW_CimomServerFwd.hpp"
 #include "OW_CommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_EXCEPTION(AuthManager)
@@ -55,6 +55,6 @@ private:
 	AuthenticatorIFCRef m_authenticator;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

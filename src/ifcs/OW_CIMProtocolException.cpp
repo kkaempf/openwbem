@@ -37,10 +37,10 @@
 #include "OW_CIMProtocolIFC.hpp"
 #include "OW_ExceptionIds.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(CIMProtocol);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

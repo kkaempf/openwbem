@@ -39,7 +39,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class ThreadBarrierImpl;
@@ -83,6 +83,6 @@ private:
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

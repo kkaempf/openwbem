@@ -41,7 +41,7 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(Logger, OW_COMMON_API)
@@ -302,7 +302,7 @@ private: // data
 	String m_defaultComponent;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 #if defined(OW_HAVE_UUPRETTY_FUNCTIONUU)

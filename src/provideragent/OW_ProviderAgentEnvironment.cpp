@@ -55,7 +55,7 @@
 
 #include <algorithm> // for std::find
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 namespace
 {
@@ -448,5 +448,5 @@ ProviderAgentEnvironment::getLogger(const String& componentName) const
 	return rv;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

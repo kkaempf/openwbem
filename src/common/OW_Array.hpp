@@ -42,7 +42,7 @@
 #include "OW_Exception.hpp"
 #include "OW_vector.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(OutOfBounds, OW_COMMON_API);
@@ -172,7 +172,7 @@ typedef Array<Int64>      Int64Array;
 typedef Array<Real64>     Real64Array;
 typedef Array<Real32>     Real32Array;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #include "OW_ArrayImpl.hpp"
 

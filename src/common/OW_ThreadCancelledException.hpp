@@ -36,7 +36,7 @@
 #define OW_THREAD_CANCELLED_EXCEPTION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -65,6 +65,6 @@ namespace OpenWBEM
  */
 struct ThreadCancelledException {};
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

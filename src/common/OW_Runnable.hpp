@@ -41,7 +41,7 @@
 #include "OW_ThreadDoneCallback.hpp"
 #include "OW_CommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -85,6 +85,6 @@ public:
 	virtual void doDefinitiveCancel();
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -52,7 +52,7 @@
 #endif
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(FileSystem, OW_COMMON_API)
@@ -290,6 +290,6 @@ namespace FileSystem
 
 } // end namespace FileSystem
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

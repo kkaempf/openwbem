@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_HTTPLenLimitIStream.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -96,5 +96,5 @@ HTTPLenLimitIStream::HTTPLenLimitIStream(istream& istr, Int64 len)
 }
 //////////////////////////////////////////////////////////////////////////////
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

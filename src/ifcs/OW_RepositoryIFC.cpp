@@ -37,7 +37,7 @@
 // dumb aCC requires these to build
 #include "OW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,5 +59,5 @@ RepositoryIFC::exportIndication(const CIMInstance&, const String&)
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

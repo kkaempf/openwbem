@@ -39,7 +39,7 @@
 #include "OW_Types.hpp"
 #include "OW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 template<class T>
@@ -66,6 +66,6 @@ public:
 	}
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

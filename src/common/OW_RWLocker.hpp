@@ -41,7 +41,7 @@
 #include "OW_Exception.hpp"
 #include "OW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(RWLocker, OW_COMMON_API);
@@ -158,6 +158,6 @@ private:
 	WriteLock& operator=(const WriteLock&);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

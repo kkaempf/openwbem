@@ -45,7 +45,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMProtocolIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -533,5 +533,5 @@ CIMClient::getHTTPResponseHeader(const String& hdrName, String& valueOut) const
 	return m_ch->getHTTPResponseHeader(hdrName, valueOut);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

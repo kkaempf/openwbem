@@ -46,7 +46,7 @@
 
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class XMLNodeImpl;
@@ -485,7 +485,7 @@ protected:
 #pragma warning (pop)
 #endif
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

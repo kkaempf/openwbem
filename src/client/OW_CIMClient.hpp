@@ -41,7 +41,7 @@
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -782,6 +782,6 @@ private:
 	
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

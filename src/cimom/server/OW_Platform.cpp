@@ -87,7 +87,7 @@ extern "C"
 
 using namespace std; 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::ostream;
@@ -708,5 +708,5 @@ SelectableIFCRef getSigSelectable()
 //////////////////////////////////////////////////////////////////////////////
 
 } // end namespace Platform
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -42,7 +42,7 @@
 #include "OW_CommonFwd.hpp"
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class String;
@@ -328,6 +328,6 @@ inline Char16 operator/ (const Char16& arg1, const Char16& arg2)
 }
 OW_COMMON_API std::ostream& operator<< (std::ostream& ostrm, const Char16& arg);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

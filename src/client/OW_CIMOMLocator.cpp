@@ -40,7 +40,7 @@
 #include "OW_ExceptionIds.hpp"
 #include "OW_String.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(CIMOMLocator);
@@ -68,5 +68,5 @@ CIMOMLocator::createCIMOMLocator(const String& locatorType)
 	return CIMOMLocatorRef();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -38,7 +38,7 @@
 
 #include <mach-o/dyld.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 dyldSharedLibrary::~dyldSharedLibrary()
@@ -65,6 +65,6 @@ bool dyldSharedLibrary::doGetFunctionPointer(const String& functionName,
 	return true;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // OW_USE_DYLD

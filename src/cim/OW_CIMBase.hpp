@@ -41,7 +41,7 @@
 #include "OW_CommonFwd.hpp"
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -183,6 +183,6 @@ OW_COMMON_API std::ostream& operator<<(std::ostream& ostr, const CIMBase& cb);
 #define OW_CIMPARAMVALUESIG_V			"l"	// OW_CIMParamValue
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif	// OW_CIMBASE_HPP_

@@ -40,7 +40,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 struct IndexEntry;
@@ -196,6 +196,6 @@ struct OW_HDB_API IndexEntry
 	Int32 offset;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

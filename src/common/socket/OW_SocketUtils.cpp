@@ -73,7 +73,7 @@ extern "C"
 #include <cstdio>
 #include <cerrno>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace SocketUtils 
@@ -414,5 +414,5 @@ String getFullyQualifiedHostName()
 
 } // end namespace SocketUtils
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

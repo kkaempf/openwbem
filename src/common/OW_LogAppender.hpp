@@ -42,7 +42,7 @@
 #include "OW_LogMessagePatternFormatter.hpp"
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 #ifdef OW_WIN32
@@ -131,7 +131,7 @@ private: // data
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

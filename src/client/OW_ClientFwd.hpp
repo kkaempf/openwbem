@@ -38,7 +38,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_ArrayFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class BinaryCIMOMHandle;
@@ -53,7 +53,7 @@ typedef IntrusiveReference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleCon
 class ClientCIMOMHandle;
 typedef IntrusiveReference<ClientCIMOMHandle> ClientCIMOMHandleRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

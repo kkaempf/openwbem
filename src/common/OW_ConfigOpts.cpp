@@ -36,7 +36,7 @@
 #include "OW_ConfigOpts.hpp"
 #include <cstring>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 namespace ConfigOpts
 {

@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_ServerSocket.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -110,5 +110,5 @@ ServerSocket::getSelectObj() const
 	return m_impl->getSelectObj(); 
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

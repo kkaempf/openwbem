@@ -40,7 +40,7 @@
 
 #include <iostream>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ CerrLogger::doClone() const
 	return LoggerRef(new CerrLogger(*this));
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

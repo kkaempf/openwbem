@@ -40,7 +40,7 @@
 #include "OW_IfcsFwd.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API SelectableIFC : public IntrusiveCountableBase
@@ -50,6 +50,6 @@ public:
    virtual Select_t getSelectObj() const = 0;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

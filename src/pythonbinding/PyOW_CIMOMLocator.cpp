@@ -41,7 +41,7 @@
 #undef ANY
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace boost::python;
@@ -53,5 +53,5 @@ void registerCIMOMLocator()
 	def("createCIMOMLocator", &CIMOMLocator::createCIMOMLocator);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_ProviderInfoBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_PROVIDER_API AssociatorProviderInfo : public ProviderInfoBase<InstClassInfo>
@@ -49,6 +49,6 @@ public:
 };
 typedef Array<AssociatorProviderInfo> AssociatorProviderInfoArray;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

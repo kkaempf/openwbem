@@ -50,7 +50,7 @@
 
 #include <string.h> // for strlen
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(InvalidUTF8);
@@ -330,5 +330,5 @@ String UCS2ToString(const Array<char>& input)
 
 } // end namespace OW_UTF8Utils
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -41,7 +41,7 @@
 #include "OW_WBEMFlags.hpp"
 #include "OW_IfcsFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -1240,6 +1240,6 @@ public:
 		const String& instNS);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -45,7 +45,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_Format.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(Logger);
@@ -319,5 +319,5 @@ Logger::swap(Logger& x)
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

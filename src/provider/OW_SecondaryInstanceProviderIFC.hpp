@@ -41,7 +41,7 @@
 #include "OW_IfcsFwd.hpp"
 #include "OW_WBEMFlags.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_PROVIDER_API SecondaryInstanceProviderIFC: public ProviderBaseIFC
@@ -143,6 +143,6 @@ public:
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -66,7 +66,7 @@ extern "C"
 #undef shutdown // On OpenUnix, sys/socket.h defines shutdown to be
 				// _shutdown.  (which breaks HTTPServer, etc.)
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // Platform specific socket address type
@@ -90,7 +90,7 @@ typedef SOCKET			SocketHandle_t;
 typedef int 			SocketHandle_t;
 #endif
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #if defined(OW_WIN32)
 	typedef int socklen_t;

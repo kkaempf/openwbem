@@ -42,7 +42,7 @@
 #include "OW_CIMNULL.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -186,6 +186,6 @@ private:
 	friend OW_COMMON_API bool operator<(const CIMParameter& x, const CIMParameter& y);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

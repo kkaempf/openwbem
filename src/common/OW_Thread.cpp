@@ -48,7 +48,7 @@
 #include <csignal>
 #include <cassert>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -355,5 +355,5 @@ Thread::doDefinitiveCancel()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

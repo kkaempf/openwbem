@@ -39,7 +39,7 @@
 #include "OW_String.hpp"
 #include "OW_Map.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -90,6 +90,6 @@ inline bool operator!=(const CIMOMInfo& x, const CIMOMInfo& y)
 	return !(x == y);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_CppAssociatorProviderIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -59,6 +59,6 @@ CppAssociatorProviderIFC::getAssociatorProvider()
 
 #endif
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_CppInstanceProviderIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -90,6 +90,6 @@ public:
 		EPropertiesFlag propertiesFlag) = 0;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

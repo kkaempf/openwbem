@@ -87,7 +87,7 @@ struct CRYPTO_dynlock_value
 };
 }
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -98,7 +98,7 @@ OpenWBEM::Mutex* mutex_buf = 0;
 extern "C"
 {
 
-struct CRYPTO_dynlock_value * dyn_create_function(const char *,int)
+static struct CRYPTO_dynlock_value * dyn_create_function(const char *,int)
 {
 	return new CRYPTO_dynlock_value;
 }
@@ -1349,7 +1349,7 @@ OWSSLContext::~OWSSLContext()
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // #ifdef OW_HAVE_OPENSSL
 

@@ -36,7 +36,7 @@
 #include "OW_MethodProviderIFC.hpp"
 #include "OW_FTABLERef.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class CMPIMethodProviderProxy : public MethodProviderIFC
@@ -71,6 +71,6 @@ private:
 };
 										
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

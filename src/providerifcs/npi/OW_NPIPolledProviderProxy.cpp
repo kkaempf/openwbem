@@ -39,7 +39,7 @@
 #include "OW_CIMParamValue.hpp"
 #include "OW_Logger.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -136,5 +136,5 @@ void NPIPolledProviderProxy::deactivateFilter(
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

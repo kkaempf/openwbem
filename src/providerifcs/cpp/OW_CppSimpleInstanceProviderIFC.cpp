@@ -39,7 +39,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -187,5 +187,5 @@ CppSimpleInstanceProviderIFC::enumInstances(
 	this->doSimpleEnumInstances(env,ns,cimClass,handler, E_ALL_PROPERTIES);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

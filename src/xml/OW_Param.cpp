@@ -39,7 +39,7 @@
 #include	<OW_config.h>
 #include	"OW_Param.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 Param::Param(const String& argname, Param::ParamValues mode, const String& value) : m_argName(argname), m_argValue(value), m_argMode(mode)
@@ -82,5 +82,5 @@ Param::getArgValue() const
 	return String();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

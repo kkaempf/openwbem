@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_HTTPCounter.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 #if defined(OW_AIX)
@@ -62,5 +62,5 @@ HTTPCounter::getNextCounter()
 	return m_counter;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

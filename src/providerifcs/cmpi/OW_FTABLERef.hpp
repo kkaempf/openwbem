@@ -50,7 +50,7 @@
 #include "cmpift.h"
 #include "cmpisrv.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 typedef struct {
@@ -60,6 +60,6 @@ typedef struct {
 
 typedef SharedLibraryReference< Reference<CompleteMI> > CMPIFTABLERef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -41,7 +41,7 @@
 #include <byteswap.h>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // this will be defined by the configure script.
@@ -106,6 +106,6 @@ inline UInt32 ntoh32(UInt32 v) { return v; }
 inline UInt64 ntoh64(UInt64 v) { return v; }
 #endif
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

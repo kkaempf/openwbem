@@ -51,7 +51,7 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -243,6 +243,6 @@ RemoteSecondaryInstanceProvider::createInstance(const ProviderEnvironmentIFCRef 
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

@@ -38,7 +38,7 @@
 #include "OW_UUID.hpp"
 #include "OW_Thread.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -320,7 +320,7 @@ public:
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_PROVIDERFACTORY(OpenWBEM::OpenWBEM_ObjectManagerInstProv, owprovinstOpenWBEM_ObjectManager)
 

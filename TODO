@@ -26,6 +26,8 @@ Testing:
         while hammerClient is running.
       - Do all this while running under valgrind to detect memory leaks, etc.
     - Test suite doesn't error on timeout while waiting for log output
+    - Validate no "stray" symbols in libraries: nm -Bpg src/common/libopenwbem.so.4 | egrep '^[0-9a-z ]{8} [^Uwt] .*OpenWBEM[^4].*'
+       for x in `find . -name lib\*4`; do nm -Bpg $x | egrep '^[0-9a-z ]{8} [^Uwt] [^._].*' | less; done
 
 Fix problems:
     - All non-provider libs should be installed in $(libdir) and links created in 

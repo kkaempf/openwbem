@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_IOIFCStreamBuffer.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -81,5 +81,5 @@ IOIFCStreamBuffer::reset()
 	initBuffers(); 
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

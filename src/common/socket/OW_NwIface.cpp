@@ -99,7 +99,7 @@ extern "C"
 #include "OW_Exception.hpp"
 #include "OW_SocketUtils.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -300,7 +300,7 @@ NwIface::getInterfaceName(SocketHandle_t sockfd)
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif	// #if !defined(OW_WIN32) && !defined(OW_NETWARE)
 

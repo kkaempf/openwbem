@@ -43,7 +43,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class FuncNamePrinter
@@ -124,6 +124,6 @@ public:
 		{ fprintf(stderr, "%d Leaving:  %s\n", getpid(), m_funcName); }
 }; // class FuncNamePrinter
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif //#define OW_FUNC_NAME_PRINTER_HPP

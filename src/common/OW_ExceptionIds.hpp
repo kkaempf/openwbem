@@ -36,7 +36,7 @@
 #define OW_EXCEPTION_IDS_HPP_INCLUDE_GUARD
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 	namespace ExceptionIds
 	{

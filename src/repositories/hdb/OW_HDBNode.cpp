@@ -40,7 +40,7 @@
 #include <cstring>
 #include <cerrno>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -662,5 +662,5 @@ HDBNode::removeBlock(HDBHandle& hdl, HDBBlock& fblk, Int32 offset)
 	hdl.getHDB()->addBlockToFreeList(file, fblk, offset);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -38,7 +38,7 @@
 #include <cerrno>
 #include <cassert>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace NonRecursiveMutexImpl
@@ -174,5 +174,5 @@ conditionPostWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state
 }
 
 } // end namespace NonRecursiveMutexImpl
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

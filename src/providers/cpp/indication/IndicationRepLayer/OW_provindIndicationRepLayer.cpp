@@ -37,7 +37,7 @@
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_IndicationRepLayerMediator.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // This class is responsible for coordinating with IndicationRepLayer when
@@ -78,7 +78,7 @@ public:
 		info.addInstrumentedClass("CIM_Indication");
 	}
 };
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_PROVIDERFACTORY(OpenWBEM::provindIndicationRepLayer, owprovindIndicationRepLayer)
 

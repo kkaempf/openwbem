@@ -45,7 +45,7 @@
 #include <new>
 #include <cassert>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -3063,5 +3063,5 @@ CIMValue::~CIMValue()
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

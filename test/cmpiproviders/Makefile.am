@@ -11,7 +11,7 @@ OW_SHARED_LIBS = \
 libcmpiTestProvider.$(LIB_EXT) 
 
 # increment this number every time a release breaks binary compatibility
-LIBRARY_BINARY_VERSION = 4
+LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 thelibdir = $(pkglibdir)/cmpiproviders
 

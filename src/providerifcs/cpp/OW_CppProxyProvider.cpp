@@ -39,7 +39,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -272,5 +272,5 @@ CppMethodProviderProxy::invokeMethod(
 	return m_pProv->invokeMethod(env, ns, path, methodName, in, out);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

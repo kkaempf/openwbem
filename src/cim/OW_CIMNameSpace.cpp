@@ -40,7 +40,7 @@
 #include "OW_COWIntrusiveCountableBase.hpp"
 #include <cctype>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::ostream;
@@ -255,5 +255,5 @@ CIMNameSpace::toMOF() const
 	return "UMIMPLEMENTED"; 
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

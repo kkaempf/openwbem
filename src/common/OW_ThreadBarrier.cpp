@@ -49,7 +49,7 @@
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(ThreadBarrier);
@@ -184,5 +184,5 @@ ThreadBarrier& ThreadBarrier::operator=(const ThreadBarrier& x)
 	return *this;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

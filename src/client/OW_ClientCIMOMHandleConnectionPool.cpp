@@ -38,7 +38,7 @@
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_String.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ ClientCIMOMHandleConnectionPool::addConnectionToPool(const ClientCIMOMHandleRef&
 	// else don't add the handle to the pool
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

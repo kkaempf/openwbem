@@ -37,7 +37,7 @@
 #include "OW_shlSharedLibrary.hpp"
 #include <dl.h>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 shlSharedLibrary::~shlSharedLibrary()
@@ -57,6 +57,6 @@ bool shlSharedLibrary::doGetFunctionPointer(const String& functionName,
 	return true;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // #if defined(OW_USE_SHL)

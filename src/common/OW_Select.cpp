@@ -63,7 +63,7 @@ extern "C"
 }
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace Select
@@ -219,5 +219,5 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 
 } // end namespace Select
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

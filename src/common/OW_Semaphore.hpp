@@ -40,7 +40,7 @@
 #include "OW_Condition.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 // TODO: uninline this class.
 class Semaphore
@@ -95,6 +95,6 @@ private:
 	Semaphore& operator=(const Semaphore&);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

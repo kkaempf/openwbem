@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_RepositoryIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API AuthorizerIFC : public RepositoryIFC

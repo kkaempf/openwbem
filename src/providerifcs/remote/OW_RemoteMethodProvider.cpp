@@ -43,7 +43,7 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -110,6 +110,6 @@ CIMValue RemoteMethodProvider::invokeMethod(
 
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

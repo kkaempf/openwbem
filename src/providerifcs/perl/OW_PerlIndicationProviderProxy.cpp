@@ -36,7 +36,7 @@
 #include "OW_NPIProviderIFCUtils.hpp"
 #include "OW_WQLSelectStatement.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -182,5 +182,5 @@ PerlIndicationProviderProxy::mustPoll(
 	return 0;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

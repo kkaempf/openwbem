@@ -60,7 +60,7 @@ extern "C"
 
 #include <cerrno>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 //////////////////////////////////////////////////////////////////////////////
 ServerSocketImpl::ServerSocketImpl(SSLServerCtxRef sslCtx)
@@ -645,5 +645,5 @@ ServerSocketImpl::fillAddrParms()
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

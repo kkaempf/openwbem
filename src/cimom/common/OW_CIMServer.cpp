@@ -62,7 +62,7 @@
 
 #include <iterator>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -2457,5 +2457,5 @@ const char* const CIMServer::INST_ASSOC_REPOS_NAME = "instassociation";
 
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

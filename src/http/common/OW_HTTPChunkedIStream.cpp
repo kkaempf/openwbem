@@ -40,7 +40,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMErrorException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::istream;
@@ -203,5 +203,5 @@ void HTTPChunkedIStream::checkForError() const
 }
 //////////////////////////////////////////////////////////////////////////////
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

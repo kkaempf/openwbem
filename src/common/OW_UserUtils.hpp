@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
     /// Facade encapsulating OS specific user functionality.
 	namespace UserUtils
@@ -72,7 +72,7 @@ namespace OpenWBEM
 		OW_COMMON_API UserID getUserId(const String& userName, bool& validUserName);
 
 	} // end namespace UserUtils
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

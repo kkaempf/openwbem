@@ -46,7 +46,7 @@ extern "C"
 #include <sys/types.h>
 }
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 typedef unsigned char      			UInt8;
@@ -163,6 +163,6 @@ typedef uid_t UserId;
 typedef pid_t ProcId;
 #endif
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

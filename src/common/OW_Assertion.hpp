@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(Assertion, OW_COMMON_API);
@@ -69,6 +69,6 @@ OW_DECLARE_APIEXCEPTION(Assertion, OW_COMMON_API);
 #define OW_ASSERTMSG(CON, MSG)
 #endif
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

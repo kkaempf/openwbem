@@ -59,7 +59,7 @@
 #include <iostream>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::ostream;
@@ -998,5 +998,5 @@ BinaryCIMOMHandle::getServerFeatures()
 }
 //////////////////////////////////////////////////////////////////////////////
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -32,7 +32,7 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_EXCEPTION(db);
@@ -44,7 +44,7 @@ namespace dbUtils
 void checkReturn(int retval, const char* funcname);
 
 } // end namespace dbUtils
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

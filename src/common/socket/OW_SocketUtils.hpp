@@ -44,7 +44,7 @@
 #define ETIMEDOUT 110
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace SocketUtils
@@ -86,7 +86,7 @@ namespace SocketUtils
 	OW_COMMON_API String getFullyQualifiedHostName();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 namespace OW_SocketUtils = OpenWBEM::SocketUtils;
 

@@ -50,7 +50,7 @@
 #include <iostream> // for cerr
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION(ThreadPool);
@@ -681,5 +681,5 @@ ThreadPool& ThreadPool::operator=(const ThreadPool& x)
 	return *this;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

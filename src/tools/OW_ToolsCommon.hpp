@@ -38,7 +38,7 @@
 #include "OW_CommonFwd.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 namespace Tools
 {

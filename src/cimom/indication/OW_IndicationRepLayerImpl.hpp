@@ -38,7 +38,7 @@
 #include "OW_IndicationRepLayer.hpp"
 #include "OW_CimomCommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_INDICATIONREPLAYER_API IndicationRepLayerImpl : public IndicationRepLayer
@@ -208,6 +208,6 @@ private:
 	CIMOMEnvironmentRef m_pEnv;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

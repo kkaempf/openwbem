@@ -43,7 +43,7 @@
 
 #include <vector>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_HTTP_API LocalAuthentication : public IntrusiveCountableBase
@@ -78,6 +78,6 @@ private:
 	LocalAuthentication& operator=(const LocalAuthentication&);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

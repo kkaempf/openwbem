@@ -39,7 +39,7 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_CommonFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API ThreadDoneCallback : public IntrusiveCountableBase
@@ -51,6 +51,6 @@ protected:
 	virtual void doNotifyThreadDone(Thread* t) = 0;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

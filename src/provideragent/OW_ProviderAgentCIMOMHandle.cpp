@@ -53,7 +53,7 @@
 #include "OW_ConfigException.hpp"
 #include "OW_Enumeration.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //using namespace WBEMFlags;
@@ -721,5 +721,5 @@ ProviderAgentCIMOMHandle::helperGetClass(const String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

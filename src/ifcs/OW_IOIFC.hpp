@@ -37,7 +37,7 @@
 #define OW_IOIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API IOIFC
@@ -81,6 +81,6 @@ public:
 			bool errorAsException=false) = 0;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

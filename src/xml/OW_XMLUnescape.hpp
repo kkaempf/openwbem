@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -47,6 +47,6 @@ namespace OpenWBEM
  */
 OW_XML_API String XMLUnescape(const char* escapedText, unsigned len);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif // OW_XMLUNESCAPE_HPP_

@@ -41,7 +41,7 @@
 
 #define CMPI_POLLING_INTERVAL (5*60)
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -238,5 +238,5 @@ CMPIIndicationProviderProxy::mustPoll(
 	return CMPI_POLLING_INTERVAL;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

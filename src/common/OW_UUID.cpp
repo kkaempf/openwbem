@@ -49,7 +49,7 @@
 #include <stdlib.h> // for rand
 #include <ctype.h> // for isxdigit
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(UUID);
@@ -319,5 +319,5 @@ bool operator!=(const UUID& x, const UUID& y)
 	return !(x == y);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

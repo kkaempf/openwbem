@@ -39,7 +39,7 @@
 #include "OW_ArrayFwd.hpp"
 #include "OW_CommonFwd.hpp"	// for Enumeration<> and because this file used to contain forward declarations for some stuff in common.
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class CIMDateTime;
@@ -87,6 +87,6 @@ typedef Array<CIMInstance> 		CIMInstanceArray;
 typedef Array<CIMValue> 			CIMValueArray;
 typedef Array<CIMName> 				CIMNameArray;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

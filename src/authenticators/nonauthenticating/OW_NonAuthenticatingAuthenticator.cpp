@@ -37,7 +37,7 @@
 #include "OW_NonAuthenticatingAuthenticator.hpp"
 #include "OW_RandomNumber.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -65,6 +65,6 @@ NonAuthenticatingAuthenticator::doInit(ServiceEnvironmentIFCRef)
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_AUTHENTICATOR_FACTORY(OpenWBEM::NonAuthenticatingAuthenticator, nonauthenticating)

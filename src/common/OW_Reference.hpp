@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_ReferenceBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -236,6 +236,6 @@ inline bool operator<(const Reference<T>& a, const Reference<U>& b)
 	return a.getPtr() < b.getPtr();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif	// OW_REFERENCE_HPP_

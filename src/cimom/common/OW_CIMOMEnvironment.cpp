@@ -75,7 +75,7 @@
 #include <map>
 #include <set>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_EXCEPTION(CIMOMEnvironment)
@@ -1475,5 +1475,5 @@ CIMOMEnvironment::_sortServicesForDependencies()
 	m_services = sortedServices;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

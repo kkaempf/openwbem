@@ -37,7 +37,7 @@
 #include "OW_ExceptionIds.hpp"
 #include "OW_Format.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,5 +97,5 @@ XMLParseException::type() const
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

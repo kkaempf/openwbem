@@ -35,7 +35,7 @@
 #include "OW_CIMProperty.hpp"
 #include "PyOW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 void registerArrayImpl_CIMProperty(const char* name)
@@ -43,5 +43,5 @@ void registerArrayImpl_CIMProperty(const char* name)
 	registerArrayImpl<CIMProperty>(name);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

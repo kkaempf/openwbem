@@ -30,7 +30,7 @@
 #include "OW_config.h"
 #include "OW_Authorizer2IFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -44,5 +44,5 @@ Authorizer2IFC::init(ServiceEnvironmentIFCRef&)
 {
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

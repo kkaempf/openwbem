@@ -14,7 +14,7 @@ SHAREDLIBADD = -L$(top_builddir)/src/common/ -lopenwbem $(Z_LIBS)
 OW_SHARED_LIBS = libowhttpcommon.$(LIB_EXT)
 
 # increment this number every time a release breaks binary compatibility
-LIBRARY_BINARY_VERSION = 4
+LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)

@@ -52,7 +52,7 @@
 #include <algorithm> // for std::swap
 #include <cfloat> // for DBL_MANT_DIG
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 #if defined(OW_AIX)
@@ -438,5 +438,5 @@ bool operator!=(const String& x, const StringBuffer& y)
 	return !(x == y);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -56,7 +56,7 @@
 void owmof_delete_buffer(YY_BUFFER_STATE b);
 YY_BUFFER_STATE owmof_scan_bytes( const char *bytes, int len );
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(MOFCompiler)
@@ -533,5 +533,5 @@ CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandl
 }
 
 } // end namespace MOF
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -38,7 +38,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_TimeoutException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ThreadCounter::ThreadCounter(Int32 maxThreads)
@@ -104,5 +104,5 @@ ThreadCountDecrementer::doNotifyThreadDone(Thread *)
 	m_counter->decThreadCount();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

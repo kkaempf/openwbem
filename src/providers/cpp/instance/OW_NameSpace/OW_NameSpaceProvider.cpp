@@ -49,7 +49,7 @@
 #include "OW_RepositoryIFC.hpp"
 #include "OW_Logger.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -373,7 +373,7 @@ NameSpaceProvider::getInstanceProviderInfo(InstanceProviderInfo& info)
 	info.addInstrumentedClass("__Namespace");
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_PROVIDERFACTORY(OpenWBEM::NameSpaceProvider, owprovinstOW_NameSpace);
 

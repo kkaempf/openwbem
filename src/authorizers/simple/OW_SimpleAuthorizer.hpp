@@ -38,7 +38,7 @@
 #include "OW_AuthorizerIFC.hpp"
 #include "OW_IntrusiveReference.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 // defined in the .cpp
@@ -560,6 +560,6 @@ private:
 	RepositoryIFCRef m_cimRepository;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -42,7 +42,7 @@
 #include <algorithm>
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(CmdLineParser)
@@ -378,7 +378,7 @@ CmdLineParser::getNonOptionArgs() const
 
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

@@ -7,6 +7,8 @@ clean-local : clean-ow-shared-libs
 EXPORT_PREFIX=createRequestHandler
 
 include $(top_srcdir)/Makefile-shared-lib-inst.inc
+
+#TODO: does this extra junk need to be here?
 install-exec-local : install-ow-shared-libs
 	if [ "$(LIB_EXT)" = "dylib" ]; then \
 		if [ -f $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT).bundle ]; then \
@@ -23,7 +25,7 @@ OW_SHARED_LIBS = libowrequesthandlerbinary.$(LIB_EXT)
 SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem
 
 # increment this number every time a release breaks binary compatibility
-LIBRARY_BINARY_VERSION = 4
+LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 noinst_LIBRARIES = \
 libowrequesthandlerbinary.a

@@ -39,7 +39,7 @@
 #include <cstdlib> // for abort
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 #ifdef OW_CHECK_ARRAY_INDEXING
@@ -53,5 +53,5 @@ void throwArrayOutOfBoundsException(size_t size, size_t idx)
 }
 #endif
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

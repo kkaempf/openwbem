@@ -42,7 +42,7 @@
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -323,5 +323,5 @@ void SharedLibraryRepository::endOperation(WBEMFlags::EOperationFlag op, Operati
 	m_ref->endOperation(op, context, result);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_ThreadDoneCallback.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////
@@ -48,5 +48,5 @@ void ThreadDoneCallback::notifyThreadDone(Thread* t)
 	doNotifyThreadDone(t);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

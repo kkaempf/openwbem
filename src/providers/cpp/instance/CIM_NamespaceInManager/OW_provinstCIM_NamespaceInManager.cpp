@@ -49,7 +49,7 @@
 #include "OW_Logger.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -431,7 +431,7 @@ public:
 	}
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 };
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 OW_PROVIDERFACTORY(OpenWBEM::CIM_NamespaceInManagerInstProv, owprovinstCIM_NamespaceInManager)
 

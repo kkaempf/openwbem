@@ -14,7 +14,7 @@ libsecondaryinstancetest1.$(LIB_EXT) \
 libsecondaryinstancetest2.$(LIB_EXT)
 
 # increment this number every time a release breaks binary compatibility
-LIBRARY_BINARY_VERSION = 4
+LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 libsecondaryinstancetest1_a_SOURCES = \
 SecondaryInstanceTest1.cpp

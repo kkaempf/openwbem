@@ -36,7 +36,7 @@
 #define OW_ARRAYFWD_HPP_
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 template <class T>
@@ -51,6 +51,6 @@ inline bool operator<(const Array<T>& x, const Array<T>& y);
 template<class T>
 inline void swap(Array<T>& x, Array<T>& y);
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

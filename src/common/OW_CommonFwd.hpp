@@ -51,7 +51,7 @@ namespace std
 }
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 struct LogMessage;
@@ -145,7 +145,7 @@ typedef IntrusiveReference<ThreadDoneCallback> ThreadDoneCallbackRef;
 class CmdLineParser;
 class CmdLineParserException;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

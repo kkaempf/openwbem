@@ -48,7 +48,7 @@
 #include <iostream>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -687,5 +687,5 @@ std::ostream& operator<<(std::ostream& ostr, const XMLNode& node)
 }
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

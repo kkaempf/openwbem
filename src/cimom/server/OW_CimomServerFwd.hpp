@@ -37,13 +37,13 @@
 #include "OW_config.h"
 #include "OW_IntrusiveReference.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class AuthManager;
 typedef IntrusiveReference<AuthManager> AuthManagerRef;
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

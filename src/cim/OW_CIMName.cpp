@@ -41,7 +41,7 @@
 #endif
 /* #endif defined(OW_HAVE_OSTREAM)*/
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////
@@ -61,6 +61,11 @@ CIMName::CIMName(const char* name)
 {
 }
 	
+///////////////////////////////////////////////////////////////////////////
+CIMName::~CIMName()
+{
+}
+
 ///////////////////////////////////////////////////////////////////////////
 CIMName&
 CIMName::operator=(const String& name)
@@ -160,7 +165,7 @@ std::ostream& operator<<(std::ostream& ostr, const CIMName& name)
 	return ostr;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

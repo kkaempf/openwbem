@@ -38,7 +38,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_MutexImpl.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 Mutex::Mutex()
@@ -76,5 +76,5 @@ Mutex::release()
 	return true;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

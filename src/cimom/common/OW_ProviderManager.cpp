@@ -52,7 +52,7 @@
 #include "OW_ServiceIFCNames.hpp"
 #include "OW_ConfigOpts.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 String ProviderManager::COMPONENT_NAME("ow.owcimomd.ProviderManager");
@@ -900,5 +900,5 @@ ProviderManager::getProviderIFC(const ProviderEnvironmentIFCRef& env,
 	return rref;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

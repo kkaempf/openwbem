@@ -36,7 +36,7 @@
 #define OW_HTTP_COMMON_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_HTTP_API HTTPChunkedIStream;
@@ -46,7 +46,7 @@ class OW_HTTP_API HTTPDeflateIStream;
 class OW_HTTP_API HTTPDeflateOStream;
 #endif
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif
 

@@ -35,7 +35,7 @@
 #include "OW_CIMMethod.hpp"
 #include "PyOW_Array.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 void registerArrayImpl_CIMMethod(const char* name)
@@ -43,5 +43,5 @@ void registerArrayImpl_CIMMethod(const char* name)
 	registerArrayImpl<CIMMethod>(name);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

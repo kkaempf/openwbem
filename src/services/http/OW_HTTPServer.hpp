@@ -48,7 +48,7 @@
 #include "OW_CommonFwd.hpp"
 #include "OW_ServicesHttpFwd.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_EXCEPTION(HTTPServer)
@@ -163,6 +163,6 @@ private:
 	friend class HTTPServerSelectableCallback;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -41,7 +41,7 @@
 #include "OW_HTTPSvrConnection.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class DigestAuthentication : public IntrusiveCountableBase
@@ -60,6 +60,6 @@ private:
 	Map<String, String> m_passwdMap;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

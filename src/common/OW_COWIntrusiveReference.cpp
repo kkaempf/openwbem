@@ -42,7 +42,7 @@
 #include <cstdlib> // for abort
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 #ifdef OW_CHECK_NULL_REFERENCES
@@ -66,7 +66,7 @@ void throwNULLException()
 #endif
 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 

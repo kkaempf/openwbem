@@ -57,7 +57,7 @@ extern "C" {
 static int recCompare(const DBT* key1, const DBT* key2);
 }
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_EXCEPTION(Index);
@@ -385,7 +385,7 @@ IndexImpl::findPrev()
 	return IndexEntry();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////	
 extern "C" {

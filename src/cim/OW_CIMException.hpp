@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API CIMException : public Exception
@@ -162,6 +162,6 @@ private:
 #define OW_THROWCIMMSG_SUBEX(errval, msg, subex) \
 	throw CIMException(__FILE__, __LINE__, (errval), (msg), &(subex))
 	
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_CppSecondaryInstanceProviderIFC.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -101,6 +101,6 @@ CppSecondaryInstanceProviderIFC::getSecondaryInstanceProvider()
 	return this; 
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 

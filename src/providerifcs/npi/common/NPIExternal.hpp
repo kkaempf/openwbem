@@ -18,7 +18,7 @@
 #define NPIExternal_h
 #include "OW_FTABLERef.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 extern "C" 

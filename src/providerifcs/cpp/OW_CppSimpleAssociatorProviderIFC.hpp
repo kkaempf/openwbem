@@ -42,7 +42,7 @@
 #include "OW_CppAssociatorProviderIFC.hpp"
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 /**
  * class CppSimpleAssociatorProviderIFC
@@ -169,7 +169,7 @@ namespace OpenWBEM
                                     const String &resultClass, 
                                     const String &role); 
     };
-} // end namespace OpenWBEM. 
+} // end namespace OW_NAMESPACE. 
 
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 

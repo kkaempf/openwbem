@@ -41,7 +41,7 @@
 #include "OW_XMLUnescape.hpp"
 #include <algorithm> // for std::lower_bound
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -272,5 +272,5 @@ CIMXMLParser::getNextId(CIMXMLParser::tokenId beginTok, bool throwIfError)
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

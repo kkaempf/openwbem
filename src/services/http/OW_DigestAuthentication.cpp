@@ -47,7 +47,7 @@
 #include "OW_RandomNumber.hpp"
 #include <fstream>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using std::endl;
@@ -271,5 +271,5 @@ DigestAuthentication::getChallenge(const String& hostname)
 			"qop=\"auth\", nonce=\"" + generateNewNonce() + "\"");
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

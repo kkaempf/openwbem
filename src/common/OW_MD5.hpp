@@ -72,7 +72,7 @@ documentation and/or software.
 #include <iostream>
 #endif
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(MD5, OW_COMMON_API)
@@ -137,6 +137,6 @@ private:
 	friend class MD5StreamBuffer;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

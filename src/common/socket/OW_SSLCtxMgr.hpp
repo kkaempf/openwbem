@@ -49,7 +49,7 @@
 #define OW_SSLCTX_MAX_CN_LEN 256
 #define OW_SSL_RETRY_LIMIT 20
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -289,7 +289,7 @@ struct OW_COMMON_API OWSSLContext
 
 #else // ifdef OW_HAVE_OPENSSL
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API SSLServerCtx : public IntrusiveCountableBase
@@ -305,7 +305,7 @@ class OW_COMMON_API SSLClientCtx : public IntrusiveCountableBase
 typedef IntrusiveReference<SSLServerCtx> SSLServerCtxRef; 
 typedef IntrusiveReference<SSLClientCtx> SSLClientCtxRef; 
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 
 #endif

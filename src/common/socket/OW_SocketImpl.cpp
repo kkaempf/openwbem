@@ -40,7 +40,7 @@
 #include "OW_config.h"
 #include "OW_SocketImpl.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -98,5 +98,5 @@ int SocketImpl::writeAux(const void* dataOut, int dataOutLen)
 
 //////////////////////////////////////////////////////////////////////////////
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

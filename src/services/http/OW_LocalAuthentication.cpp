@@ -58,7 +58,7 @@
 #endif
 #include <cerrno>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_EXCEPTION(LocalAuthentication);
@@ -359,5 +359,5 @@ LocalAuthentication::cleanupStaleEntries()
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

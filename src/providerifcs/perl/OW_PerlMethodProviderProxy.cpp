@@ -40,7 +40,7 @@
 #include "OW_Logger.hpp"
 #include "OW_CIMParamValue.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
@@ -108,5 +108,5 @@ PerlMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 		return rval;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

@@ -38,7 +38,7 @@
 #include "OW_ThreadTypes.hpp"
 #include "OW_Exception.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(Deadlock, OW_COMMON_API)
@@ -78,6 +78,6 @@ private:
 	void conditionPostWait(NonRecursiveMutexLockState& state);
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

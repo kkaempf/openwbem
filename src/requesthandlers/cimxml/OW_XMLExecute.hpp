@@ -47,7 +47,7 @@
 
 #include <iosfwd>
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class XMLExecute : public RequestHandlerIFCXML
@@ -167,6 +167,6 @@ private:
 	CIMObjectPath m_commMechForManager;
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

@@ -45,7 +45,7 @@
 #include "OW_CIMXMLParser.hpp"
 #include "OW_CIMName.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace XMLQualifier
@@ -210,5 +210,5 @@ getQualifierName(CIMXMLParser& parser)
 }
 
 } // end namespace XMLQualifier
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

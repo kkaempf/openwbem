@@ -42,7 +42,7 @@
 #endif
 
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 /**
@@ -120,6 +120,6 @@ inline bool operator!=(const IstreamBufIterator& lhs, const IstreamBufIterator& 
 	return !lhs.equal(rhs);
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

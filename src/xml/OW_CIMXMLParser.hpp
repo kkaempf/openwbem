@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_XMLPullParser.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_XML_API CIMXMLParser : public XMLPullParser
@@ -221,6 +221,6 @@ private:
 
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

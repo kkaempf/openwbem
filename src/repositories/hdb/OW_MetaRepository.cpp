@@ -49,7 +49,7 @@
 #include "OW_Array.hpp"
 #include "OW_ConfigOpts.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
@@ -1048,5 +1048,5 @@ MetaRepository::init(const ServiceEnvironmentIFCRef& env)
 	}
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

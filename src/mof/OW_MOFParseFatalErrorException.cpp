@@ -36,7 +36,7 @@
 #include "OW_MOFParserErrorHandlerIFC.hpp"
 #include "OW_ExceptionIds.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace MOF
@@ -45,5 +45,5 @@ namespace MOF
 OW_DEFINE_EXCEPTION_WITH_ID(ParseFatalError)
 
 } // end namespace MOF
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

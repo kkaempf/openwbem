@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_SocketException.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 class OW_COMMON_API SSLException : public SocketException
@@ -50,6 +50,6 @@ public:
 	virtual const char* type() const { return "SSLException"; }
 };
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 
 #endif

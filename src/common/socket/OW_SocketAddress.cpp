@@ -55,7 +55,7 @@ extern "C"
 #include <errno.h>
 }
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(UnknownHost);
@@ -382,5 +382,5 @@ SocketAddress::toString() const
 	return rval;
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

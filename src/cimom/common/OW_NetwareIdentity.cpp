@@ -44,7 +44,7 @@ extern "C"
 #include <fsio.h>
 }
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
 namespace
