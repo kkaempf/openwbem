@@ -25,9 +25,6 @@ TMPLIBDIR = .$@.libs
 	ln -s $(SOFILENAME) $@
 	chmod +x $(SOFILENAME)
 
-all-local: $(OW_SHARED_LIBS)
-
-
 noinst_LIBRARIES = libperlProvider.a
 OW_SHARED_LIBS = libperlProvider.so
 SHAREDLIBADD = $(perl_embed_ldflags)
