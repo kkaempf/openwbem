@@ -337,74 +337,9 @@ public:
 	{
 		info.addInstrumentedClass("OpenWBEM_ConfigSettingData");
 	}
-/**
- * This method is invoked in order to do the Associators, AssociatorNames, 
- * References, and ReferenceNames operation as
- * defined by the CIM operations over HTTP spec at
- * http://www.dmtf.org/download/spec/xmls/CIM_HTTP_Mapping10.htm#SecAssociators
- * This operation is used to enumerate CIM Instances of a particular 
- * Association class
- *
- * @param assocClass Defines the association that the objectName
- * 	object should be associated to. The provider uses this
- * 	information to identify which association must be
- * 	traversed in case it supports more than one
- * 	association.
- *
- * @param objectName Defines the source CIM Object whose associated
- * 	Objects are to be returned.  This is an instance name.
- * 	Instance name (modelpath).
- *
- * @param resultClass The resultClass input parameter, if not empty (""),
- * 	MUST be a valid CIM Class name.  It acts as a filter on the
- * 	returned set of Objects by mandating that the resultRole of each 
- *      returned Object MUST be an ObjectPath to either an Instance of this 
- *      Class (or one of its subclasses) or be this Class (or one of its 
- *      subclasses).
- *
- * @param role The role input parameter, if not empty (""), MUST be a
- * 	valid Property name.  It acts as a filter on the returned set of
- * 	Objects by mandating that each returned Object MUST be associated
- * 	to the source Object via an Association in which the source Object
- * 	plays the specified role (i.e. the name of the Property in the
- * 	Association Class that refers to the source Object MUST match the
- * 	value of this parameter).
- *
- * @param resultRole The resultRole input parameter if not empty (""),
- * 	MUST be a valid Property name.  It acts as a filter on the returned
- * 	set of Objects by mandating that each returned Object MUST contain
- *      a reference (ObjectPath) to an Instance or Class which is 
- * 	associated to the source Object via an Association in which the
- * 	Associated Object plays the specified role (i.e. the name of the
- * 	Property in the Association Class that refers to the Associated
- * 	Object MUST match the value of this parameter).
- *
- * @returns If successful, the method returns zero or more CIM Instances
- * 	meeting the requested criteria.
- *
- * @throws CIMException. - The following IDs can be expected.
- * 	CIM_ERR_ACCESS_DENIED
- * 	CIM_ERR_NOT_SUPPORTED
- * 	CIM_ERR_INVALID_NAMESPACE
- * 	CIM_ERR_INVALID_PARAMETER (including missing, duplicate,
- * 	unrecognized or otherwise incorrect parameters)
- * 	CIM_ERR_FAILED (some other unspecifed error occurred)
- * 
- * 
- * 
- *  +------------------+                               +-----------------+
- *  | ObjectNameClass  |                               |  ResultClass    |
- *  | ~~~~~~~~~~~~~~~  |                               |  ~~~~~~~~~~~    |
- *  +------------------+                               +-----------------+
- *     |                +----------------------------+                 |
- *     |                |  [Association] AssocClass  |                 |
- *     |   ObjectName   |  ~~~~~~~~~~~~~~~~~~~~~~~~  |                 |
- *     +----------------+ ObjectNameClass REF Role   |                 |
- *      (CIMObjectPath) | ResultClass REF ResultRole +-----------------+
- *                      |                            |  (CIMObjectPath)
- *                      +----------------------------+
- */
-        virtual void doReferences(const ProviderEnvironmentIFCRef &env, 
+
+	////////////////////////////////////////////////////////////////////////////
+    virtual void doReferences(const ProviderEnvironmentIFCRef &env, 
                                   CIMInstanceResultHandlerIFC &result, 
                                   const String &ns, 
                                   const CIMObjectPath &objectName, 
