@@ -30,7 +30,6 @@
 *******************************************************************************/
 
 /**
-/**
  * @author Bart Whiteley
  * @author Dan Nuffer
  */
@@ -409,7 +408,9 @@ int main(int argc, char* argv[])
 
 		if (!provider->getInstanceProvider() 
 			&& !provider->getSecondaryInstanceProvider()
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			&& !provider->getAssociatorProvider()
+#endif
 			&& !provider->getMethodProvider())
 		{
 			cerr << "Error: Provider " << libName << " is not a supported type" << endl;

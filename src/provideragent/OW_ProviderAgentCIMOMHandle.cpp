@@ -416,6 +416,8 @@ ProviderAgentCIMOMHandle::getProperty(const String &ns,
 	OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	// CIMOM will never demand this of us.  
 }
+
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 /**
  * This method is used to enumerate the names of CIM Objects (Classes
  * or Instances) that are associated to a particular CIM Object.
@@ -790,6 +792,7 @@ ProviderAgentCIMOMHandle::referencesClasses(const String &ns,
 {
 	OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 /**
  * Close the connetion to the CIMOM. This will free resources used for the
  * client session. The destructor will call close().

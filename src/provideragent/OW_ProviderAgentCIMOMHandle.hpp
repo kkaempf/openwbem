@@ -220,6 +220,7 @@ public:
 	virtual CIMValue getProperty(const String &ns, 
 								 const CIMObjectPath &instanceName, 
 								 const String &propertyName); 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * This method is used to enumerate the names of CIM Objects (Classes
 	 * or Instances) that are associated to a particular CIM Object.
@@ -527,6 +528,7 @@ public:
 								   WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS, 
 								   WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN, 
 								   const StringArray *propertyList=0); 
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * Close the connetion to the CIMOM. This will free resources used for the
 	 * client session. The destructor will call close().
