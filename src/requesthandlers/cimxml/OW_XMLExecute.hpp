@@ -43,6 +43,8 @@
 #include "OW_RequestHandlerIFCXML.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_IfcsFwd.hpp"
+#include "OW_CIMObjectPath.hpp"
+
 #include <iosfwd>
 
 namespace OpenWBEM
@@ -62,6 +64,7 @@ protected:
 		const String& msg, std::ostream& ostr);
 	
 	virtual String getName() const;
+	virtual StringArray getDependencies() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void shutdown();
 private:
@@ -155,6 +158,9 @@ private:
 	static FuncEntry g_funcs[];
 	static bool funcEntryCompare(const FuncEntry& f1, const FuncEntry& f2);
 	static FuncEntry* g_funcsEnd;
+
+	// this is the path to the interop instance of CIMXML_CommunicationMechanism this class manages.
+	CIMObjectPath m_commMechPath;
 };
 
 } // end namespace OpenWBEM

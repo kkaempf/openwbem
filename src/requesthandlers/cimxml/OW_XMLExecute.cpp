@@ -63,6 +63,7 @@
 #include "OW_ExceptionIds.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_ServiceIFCNames.hpp"
+#include "OW_ConfigOpts.hpp"
 
 #include <algorithm>
 
@@ -175,6 +176,15 @@ XMLExecute::getName() const
 {
 	return ServiceIFCNames::XMLExecute;
 }
+//////////////////////////////////////////////////////////////////////////////
+StringArray
+XMLExecute::getDependencies() const
+{
+	StringArray rv;
+	rv.push_back(ServiceIFCNames::CIMServer);
+	return rv;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 // Private
 int
@@ -1416,12 +1426,145 @@ XMLExecute::outputError(CIMException::ErrNoType errorCode,
 void
 XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 {
+	setEnvironment(env);
+	LoggerRef logger(env->getLogger(COMPONENT_NAME));
+	// Create the interop instance of CIM_CIMXMLCommunicationMechanism.
+	// There are no properties in it which are dynamic, just it's existence is.
+	// So we just create/delete it and let the repository do all the work :-)
+	try
+	{
+		String interopNS = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
+		OperationContext context;
+		CIMOMHandleIFCRef hdl(env->getCIMOMHandle(context));
+		
+		CIMClass CIM_CIMXMLCommunicationMechanism(hdl->getClass(interopNS, "CIM_CIMXMLCommunicationMechanism"));
+		CIMInstance theInst(CIM_CIMXMLCommunicationMechanism.newInstance());
+
+		// CIM_ServiceAccessPoint properties -- all the keys
+		// since we are weakly associated to the same system the ObjectManager is, we'll get it and use it's keys.
+		CIMObjectPathArray objectManagers(hdl->enumInstanceNamesA(interopNS, "CIM_ObjectManager"));
+		if (objectManagers.size() != 1)
+		{
+			OW_THROWCIMMSG(CIMException::FAILED, Format("Expected 1 instance of CIM_ObjectManager, got %1", objectManagers.size()).c_str());
+		}
+
+		CIMObjectPath& objectManager(objectManagers[0]);
+		theInst.updatePropertyValue("SystemCreationClassName", objectManager.getKeyValue("SystemCreationClassName"));
+		theInst.updatePropertyValue("SystemName", objectManager.getKeyValue("SystemName"));
+		theInst.updatePropertyValue("CreationClassName", CIMValue("CIM_CIMXMLCommunicationMechanism"));
+		theInst.updatePropertyValue("Name", CIMValue("cim-xml"));
+
+		// CIM_CIMXMLCommunicationMechanism properties
+		theInst.updatePropertyValue("CIMValidated", CIMValue(true));
+		theInst.updatePropertyValue("CIMXMLProtocolVersion", CIMValue(UInt16(1))); // 1 means 1.0
+		theInst.updatePropertyValue("Version", CIMValue("1.1"));
+		
+		// CIM_ObjectManagerCommunicationMechanism properties
+		enum
+		{
+			E_FP_Unknown = 0,
+			E_FP_Other = 1,
+			E_FP_Basic_Read = 2,
+			E_FP_Basic_Write = 3,
+			E_FP_Schema_Manipulation = 4,
+			E_FP_Instance_Manipulation = 5,
+			E_FP_Association_Traversal = 6,
+			E_FP_Query_Execution = 7,
+			E_FP_Qualifier_Declaration = 8,
+			E_FP_Indications = 9
+		};
+
+		UInt16Array functionalProfilesSupported;
+		functionalProfilesSupported.push_back(E_FP_Basic_Read);
+		functionalProfilesSupported.push_back(E_FP_Basic_Write);
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
+		functionalProfilesSupported.push_back(E_FP_Schema_Manipulation);
+#endif
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+		functionalProfilesSupported.push_back(E_FP_Instance_Manipulation);
+#endif
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+		functionalProfilesSupported.push_back(E_FP_Association_Traversal);
+#endif
+		functionalProfilesSupported.push_back(E_FP_Query_Execution);
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
+		functionalProfilesSupported.push_back(E_FP_Qualifier_Declaration);
+#endif
+		if (!env->getConfigItem(ConfigOpts::DISABLE_INDICATIONS_opt, OW_DEFAULT_DISABLE_INDICATIONS).equalsIgnoreCase("true"))
+		{
+			functionalProfilesSupported.push_back(E_FP_Indications);
+		}
+
+		theInst.updatePropertyValue("FunctionalProfilesSupported", CIMValue(functionalProfilesSupported));
+		theInst.updatePropertyValue("MultipleOperationsSupported", CIMValue(true));
+
+		enum
+		{
+			E_AM_Unknown = 0,
+			E_AM_Other = 1,
+			E_AM_None = 2,
+			E_AM_Basic = 3,
+			E_AM_Digest = 4
+		};
+
+		UInt16Array authenticationMechanismsSupported;
+		authenticationMechanismsSupported.push_back(E_AM_Other); // for OWLocal
+		authenticationMechanismsSupported.push_back(E_AM_Basic);
+#ifndef OW_DISABLE_DIGEST
+		authenticationMechanismsSupported.push_back(E_AM_Digest);
+#endif
+		theInst.updatePropertyValue("AuthenticationMechanismsSupported", CIMValue(authenticationMechanismsSupported));
+
+		StringArray authenticationMechanismDescriptions(1, "OWLocal");
+		theInst.updatePropertyValue("AuthenticationMechanismDescriptions", CIMValue(authenticationMechanismDescriptions));
+
+		// create it and save the path so we can delete it at shutdown time.
+		try
+		{
+			// if one was hanging around from before, get rid of it.
+			hdl->deleteInstance(interopNS, CIMObjectPath(interopNS, theInst));
+		}
+		catch (CIMException&)
+		{
+			// just ignore this.
+		}
+		m_commMechPath = hdl->createInstance(interopNS, theInst);
+		m_commMechPath.setNameSpace(interopNS);
+		OW_LOG_DEBUG(logger, Format("Sucessfully created instance of CIM_CIMXMLCommunicationMechanism. Saving path: %1", m_commMechPath.toString()));
+
+	}
+	catch (CIMException& e)
+	{
+		// Something's not set up right. oh well, just log it. It's not even an error, maybe they don't have or want the interop schema.
+		OW_LOG_DEBUG(logger, Format("Failed creating CIM_CIMXMLCommunicationMechanism: %1", e));
+	}
+	
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 XMLExecute::shutdown()
 {
+	ServiceEnvironmentIFCRef env(getEnvironment());
+	LoggerRef logger(env->getLogger(COMPONENT_NAME));
+	OW_LOG_DEBUG(logger, "XMLExecute::shutdown() cleaning up CIM_CIMXMLCommunicationMechanism instance");
+	// clean up the instance of CIM_CIMXMLCommunicationMechanism we created in init()
+	try
+	{
+		String interopNS(m_commMechPath.getNameSpace());
+		OperationContext context;
+		CIMOMHandleIFCRef hdl(env->getCIMOMHandle(context));
+		hdl->deleteInstance(interopNS, m_commMechPath);
+
+	}
+	catch (CIMException& e)
+	{
+		// Something's not set up right. oh well, just log it. It's not even an error, maybe they don't have or want the interop schema.
+		OW_LOG_DEBUG(logger, Format("Failed deleting CIM_CIMXMLCommunicationMechanism: %1", e));
+	}
+
+	// clear the reference to the environment
+	setEnvironment(ServiceEnvironmentIFCRef());
 }
 
 } // end namespace OpenWBEM

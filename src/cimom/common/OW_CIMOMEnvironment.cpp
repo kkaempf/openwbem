@@ -187,6 +187,10 @@ CIMOMEnvironment::~CIMOMEnvironment()
 		m_configItems = 0;
 		m_state = E_STATE_INVALID; // just for the heck of it.
 	}
+	catch (Exception& e)
+	{
+		OW_LOG_ERROR(m_Logger, Format("Caught exception in CIMOMEnvironment::~CIMOMEnvironment(): %1", e));
+	}
 	catch (...)
 	{
 		// don't let exceptions escape!
@@ -361,6 +365,10 @@ CIMOMEnvironment::shutdown()
 			OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment notifying service: %1", m_services[i]->getName()));
 			m_services[i]->shuttingDown();
 		}
+		catch (Exception& e)
+		{
+			OW_LOG_ERROR(m_Logger, Format("Caught exception while calling shuttingDown(): %1", e));
+		}
 		catch (...)
 		{
 		}
@@ -380,6 +388,10 @@ CIMOMEnvironment::shutdown()
 			OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment shutting down service: %1", m_services[i]->getName()));
 			m_services[i]->shutdown();
 		}
+		catch (Exception& e)
+		{
+			OW_LOG_ERROR(m_Logger, Format("Caught exception while calling shutdown(): %1", e));
+		}
 		catch (...)
 		{
 		}
@@ -396,8 +408,17 @@ CIMOMEnvironment::shutdown()
 	{
 		_clearSelectables();
 	}
+	catch (Exception& e)
+	{
+		OW_LOG_ERROR(m_Logger, Format("Caught exception while calling _clearSelectables(): %1", e));
+	}
 	catch(...)
 	{
+	}
+
+	{
+		MutexLock l(m_stateGuard);
+		m_state = E_STATE_SHUTDOWN;
 	}
 
 	// We need to unload these in the opposite order that
@@ -431,7 +452,7 @@ CIMOMEnvironment::shutdown()
 
 	{
 		MutexLock l(m_stateGuard);
-		m_state = E_STATE_SHUTDOWN;
+		m_state = E_STATE_UNLOADED;
 	}
 
 	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment has shut down");
@@ -538,11 +559,14 @@ CIMOMEnvironment::_loadRequestHandlers()
 			StringArray supportedContentTypes = rh->getSupportedContentTypes();
 			OW_LOG_INFO(m_Logger, Format("CIMOM loaded request handler from file: %1",
 				libName));
+
+			ReqHandlerDataRef rqData(new ReqHandlerData);
+			rqData->filename = libName;
+			rqData->rqIFCRef = rh;
+			rqData->dt.setToCurrent();
 			for (StringArray::const_iterator iter = supportedContentTypes.begin();
 				  iter != supportedContentTypes.end(); iter++)
 			{
-				ReqHandlerData rqData;
-				rqData.filename = libName;
 				MutexLock ml(m_reqHandlersLock);
 				m_reqHandlers[(*iter)] = rqData;
 				ml.release();
@@ -779,7 +803,7 @@ CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
 {
 	{
 		MutexLock l(m_stateGuard);
-		if (!isInitialized(m_state))
+		if (!isLoaded(m_state))
 		{
 			OW_THROW(CIMOMEnvironmentException, "CIMOMEnvironment::getWQLFilterCIMOMHandle() called when state is not initialized");
 		}
@@ -847,12 +871,6 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 	return CIMOMHandleIFCRef(new LocalCIMOMHandle(const_cast<CIMOMEnvironment*>(this), rref,
 		context, locking == E_LOCKING ? LocalCIMOMHandle::E_LOCKING : LocalCIMOMHandle::E_NO_LOCKING));
 }
-// //////////////////////////////////////////////////////////////////////////////
-// CIMOMHandleIFCRef
-// CIMOMEnvironment::getRepositoryCIMOMHandle(OperationContext& context) const
-// {
-//     return getCIMOMHandle(context, E_DONT_SEND_INDICATIONS, E_BYPASS_PROVIDERS, E_LOCKING);
-// }
 //////////////////////////////////////////////////////////////////////////////
 WQLIFCRef
 CIMOMEnvironment::getWQLRef() const
@@ -1046,26 +1064,30 @@ CIMOMEnvironment::getRequestHandler(const String &id) const
 			m_reqHandlers.find(id);
 	if (iter != m_reqHandlers.end())
 	{
-		if (!iter->second.rqIFCRef)
+		if (!iter->second->rqIFCRef)
 		{
-			iter->second.rqIFCRef =
+			iter->second->rqIFCRef =
 				SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(
-					iter->second.filename, "createRequestHandler", getLogger(COMPONENT_NAME));
+					iter->second->filename, "createRequestHandler", getLogger(COMPONENT_NAME));
+			
+			// re-add it to m_services and resort them.
+			m_services.push_back(iter->second->rqIFCRef);
+			const_cast<CIMOMEnvironment*>(this)->_sortServicesForDependencies();
 		}
-		if (iter->second.rqIFCRef)
+		if (iter->second->rqIFCRef)
 		{
-			ref = RequestHandlerIFCRef(iter->second.rqIFCRef.getLibRef(),
-				iter->second.rqIFCRef->clone());
-			iter->second.dt.setToCurrent();
+			ref = RequestHandlerIFCRef(iter->second->rqIFCRef.getLibRef(),
+				iter->second->rqIFCRef->clone());
+			iter->second->dt.setToCurrent();
 			ref->setEnvironment(const_cast<CIMOMEnvironment*>(this));
 			OW_LOG_DEBUG(m_Logger, Format("Request Handler %1 handling request for content type %2",
-				iter->second.filename, id));
+				iter->second->filename, id));
 		}
 		else
 		{
 			OW_LOG_ERROR(m_Logger, Format(
 				"Error loading request handler library %1 for content type %2",
-				iter->second.filename, id));
+				iter->second->filename, id));
 		}
 	}
 	return ref;
@@ -1098,15 +1120,24 @@ CIMOMEnvironment::unloadReqHandlers()
 	for (ReqHandlerMap::iterator iter = m_reqHandlers.begin();
 		  iter != m_reqHandlers.end(); ++iter)
 	{
-		if (iter->second.rqIFCRef)
+		if (iter->second->rqIFCRef)
 		{
-			DateTime rqDT = iter->second.dt;
+			DateTime rqDT = iter->second->dt;
 			rqDT.addMinutes(ttl);
 			if (rqDT < dt)
 			{
-				iter->second.rqIFCRef.setNull();
+				// remove it from m_services
+				for (size_t i = 0; i < m_services.size(); ++i)
+				{
+					if (m_services[i].get() == iter->second->rqIFCRef.get())
+					{
+						m_services.remove(i);
+						break;
+					}
+				}
+				iter->second->rqIFCRef.setNull();
 				OW_LOG_DEBUG(m_Logger, Format("Unloaded request handler lib %1 for content type %2",
-					iter->second.filename, iter->first));
+					iter->second->filename, iter->first));
 			}
 		}
 	}

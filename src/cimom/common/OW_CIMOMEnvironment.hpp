@@ -133,15 +133,16 @@ private:
 	void _sortServicesForDependencies();
 
 	// Types
-	struct ReqHandlerData
+	typedef ConfigFile::ConfigMap ConfigMap;
+	typedef Reference<ConfigMap> ConfigMapRef;
+	struct ReqHandlerData : public IntrusiveCountableBase
 	{
 		DateTime dt;
 		RequestHandlerIFCRef rqIFCRef;
 		String filename;
 	};
-	typedef ConfigFile::ConfigMap ConfigMap;
-	typedef Reference<ConfigMap> ConfigMapRef;
-	typedef SortedVectorMap<String, ReqHandlerData> ReqHandlerMap;
+	typedef IntrusiveReference<ReqHandlerData> ReqHandlerDataRef;
+	typedef SortedVectorMap<String, ReqHandlerDataRef> ReqHandlerMap;
 	mutable Mutex m_monitor;
 	RepositoryIFCRef m_cimRepository;
 	RepositoryIFCRef m_cimServer;
@@ -161,7 +162,7 @@ private:
 	bool m_indicationsDisabled;
 	Array<SelectableIFCRef> m_selectables;
 	Array<SelectableCallbackIFCRef> m_selectableCallbacks;
-	Array<ServiceIFCRef> m_services;
+	mutable Array<ServiceIFCRef> m_services;
 	mutable ReqHandlerMap m_reqHandlers;
 	mutable Mutex m_reqHandlersLock;
 	mutable Mutex m_indicationLock;
@@ -176,12 +177,13 @@ private:
 		E_STATE_STARTING,
 		E_STATE_STARTED,
 		E_STATE_SHUTTING_DOWN,
-		E_STATE_SHUTDOWN
+		E_STATE_SHUTDOWN,
+		E_STATE_UNLOADED
 	};
 
 	static bool isLoaded(EEnvState s)
 	{
-		return s >= E_STATE_INITIALIZING && s <= E_STATE_STARTED;
+		return s >= E_STATE_INITIALIZING && s <= E_STATE_SHUTDOWN;
 	}
 	static bool isInitialized(EEnvState s)
 	{
