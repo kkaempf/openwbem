@@ -282,8 +282,8 @@ static CMPIInstanceMIFT instMIFT={
 CMPIInstanceMI* cmpiTestProvider_Create_InstanceMI(CMPIBroker* brkr, CMPIContext *ctx) {
    static CMPIInstanceMI mi={
       NULL,
-      &instMIFT,
-      NULL
+      &instMIFT
+      //,NULL
    };
    (void) ctx;
    broker=brkr;
