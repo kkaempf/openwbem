@@ -34,6 +34,7 @@
 
 #include "OW_config.h"
 #include "OW_RemoteMethodProvider.hpp"
+#include "OW_RemoteProviderUtils.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_Format.hpp"
 #include "OW_CIMException.hpp"
@@ -43,9 +44,12 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-RemoteMethodProvider::RemoteMethodProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool)
+RemoteMethodProvider::RemoteMethodProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
+	bool alwaysSendCredentials, bool useConnectionCredentials)
 	: m_pool(pool)
 	, m_url(url)
+	, m_alwaysSendCredentials(alwaysSendCredentials)
+	, m_useConnectionCredentials(useConnectionCredentials)
 {
 }
 
@@ -65,29 +69,25 @@ CIMValue RemoteMethodProvider::invokeMethod(
 {
 	LoggerRef lgr = env->getLogger();
 	lgr->logDebug(Format("RemoteMethodProvider::invokeMethod ns = %1, path = %2, methodName = %3", ns, path, methodName));
-	lgr->logDebug(Format("RemoteMethodProvider::invokeMethod getting ClientCIMOMHandleRef for url: %1", m_url));
-	ClientCIMOMHandleRef hdl;
-	try
-	{
-		hdl = m_pool->getConnection(m_url);
-	}
-	catch (const Exception& e)
-	{
-		String msg = Format("RemoteMethodProvider::invokeMethod failed to get a connection: %1", e);
-		lgr->logError(msg);
-		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
-	}
-	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, m_url);
+	String lUrl(m_url);
+	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
+	lgr->logDebug(Format("RemoteMethodProvider::invokeMethod got ClientCIMOMHandleRef for url: %1", lUrl));
+
+	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
 	lgr->logDebug("RemoteMethodProvider::invokeMethod calling remote WBEM server");
-	CIMValue rval(CIMNULL);
 
+	CIMValue rval(CIMNULL);
 	try
 	{
 		rval = hdl->invokeMethod(ns, path, methodName, in, out);
 	}
-	catch (const CIMException& e)
+	catch (CIMException& e)
 	{
+		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
+		{
+			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
+		}
 		lgr->logInfo(Format("RemoteMethodProvider::invokeMethod remote WBEM server threw: %1", e));
 		throw;
 	}
@@ -97,8 +97,6 @@ CIMValue RemoteMethodProvider::invokeMethod(
 		lgr->logError(msg);
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
-
-	lgr->logDebug(Format("RemoteMethodProvider::invokeMethod success. Returning: %1", rval));
 	return rval;
 }
 

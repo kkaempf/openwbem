@@ -37,6 +37,7 @@
 #include "OW_config.h"
 #include "OW_MethodProviderIFC.hpp"
 #include "OW_ClientCIMOMHandleConnectionPool.hpp"
+#include "OW_String.hpp"
 
 namespace OpenWBEM
 {
@@ -44,7 +45,8 @@ namespace OpenWBEM
 class RemoteMethodProvider : public MethodProviderIFC
 {
 public:
-	RemoteMethodProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool);
+	RemoteMethodProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
+		bool alwaysSendCredentials, bool useConnectionCredentials);
 	virtual ~RemoteMethodProvider();
 	virtual CIMValue invokeMethod(
 			const ProviderEnvironmentIFCRef& env,
@@ -58,6 +60,8 @@ public:
 private:
 	ClientCIMOMHandleConnectionPoolRef m_pool;
 	String m_url;
+	bool m_alwaysSendCredentials;
+	bool m_useConnectionCredentials;
 };
 
 

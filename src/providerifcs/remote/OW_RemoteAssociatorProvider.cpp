@@ -34,14 +34,23 @@
 
 #include "OW_config.h"
 #include "OW_RemoteAssociatorProvider.hpp"
+#include "OW_RemoteProviderUtils.hpp"
+#include "OW_Format.hpp"
+#include "OW_CIMException.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 namespace OpenWBEM
 {
 
+using namespace WBEMFlags;
+
 //////////////////////////////////////////////////////////////////////////////
-RemoteAssociatorProvider::RemoteAssociatorProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool)
+RemoteAssociatorProvider::RemoteAssociatorProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
+	bool alwaysSendCredentials, bool useConnectionCredentials)
 	: m_pool(pool)
 	, m_url(url)
+	, m_alwaysSendCredentials(alwaysSendCredentials)
+	, m_useConnectionCredentials(useConnectionCredentials)
 {
 }
 
@@ -52,26 +61,165 @@ RemoteAssociatorProvider::~RemoteAssociatorProvider()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-RemoteAssociatorProvider::references(const ProviderEnvironmentIFCRef &env, CIMInstanceResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, const String &resultClass, const String &role, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList)
+RemoteAssociatorProvider::references(
+	const ProviderEnvironmentIFCRef &env, 
+	CIMInstanceResultHandlerIFC &result, 
+	const String &ns, 
+	const CIMObjectPath &objectName, 
+	const String &resultClass, 
+	const String &role, 
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin, 
+	const StringArray *propertyList)
 {
+	LoggerRef lgr = env->getLogger();
+	lgr->logDebug(Format("RemoteAssociatorProvider::references ns = %1, objectName = %2, resultClass = %3, role = %4", ns, objectName, resultClass, role));
+	String lUrl(m_url);
+	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
+	lgr->logDebug(Format("RemoteAssociatorProvider::references got ClientCIMOMHandleRef for url: %1", lUrl));
+
+	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
+
+	lgr->logDebug("RemoteAssociatorProvider::references calling remote WBEM server");
+
+	try
+	{
+		hdl->references(ns, objectName, result, resultClass, role,
+			includeQualifiers, includeClassOrigin, propertyList);
+
+	}
+	catch (CIMException& e)
+	{
+		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
+		{
+			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
+		}
+		lgr->logInfo(Format("RemoteAssociatorProvider::references remote WBEM server threw: %1", e));
+		throw;
+	}
+	catch (const Exception& e)
+	{
+		String msg = Format("RemoteAssociatorProvider::references failed calling remote WBEM server: %1", e);
+		lgr->logError(msg);
+		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-RemoteAssociatorProvider::associators(const ProviderEnvironmentIFCRef &env, CIMInstanceResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, const String &assocClass, const String &resultClass, const String &role, const String &resultRole, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList)
+RemoteAssociatorProvider::associators(const ProviderEnvironmentIFCRef &env, CIMInstanceResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, 
+	const String &assocClass, const String &resultClass, const String &role, const String &resultRole, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, 
+	WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList)
 {
+	LoggerRef lgr = env->getLogger();
+	lgr->logDebug(Format("RemoteAssociatorProvider::associators ns = %1, objectName = %2, assocClass = %3, resultClass = %4, role = %5, resultRole = %6", 
+		ns, objectName, assocClass, resultClass, role, resultRole));
+	String lUrl(m_url);
+	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
+	lgr->logDebug(Format("RemoteAssociatorProvider::associators got ClientCIMOMHandleRef for url: %1", lUrl));
+
+	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
+
+	lgr->logDebug("RemoteAssociatorProvider::associators calling remote WBEM server");
+
+	try
+	{
+		hdl->associators(ns, objectName, result, assocClass, resultClass, role, resultRole,
+			includeQualifiers, includeClassOrigin, propertyList);
+
+	}
+	catch (CIMException& e)
+	{
+		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
+		{
+			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
+		}
+		lgr->logInfo(Format("RemoteAssociatorProvider::associators remote WBEM server threw: %1", e));
+		throw;
+	}
+	catch (const Exception& e)
+	{
+		String msg = Format("RemoteAssociatorProvider::associators failed calling remote WBEM server: %1", e);
+		lgr->logError(msg);
+		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-RemoteAssociatorProvider::associatorNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, const String &assocClass, const String &resultClass, const String &role, const String &resultRole)
+RemoteAssociatorProvider::associatorNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, 
+	const String &assocClass, const String &resultClass, const String &role, const String &resultRole)
 {
+	LoggerRef lgr = env->getLogger();
+	lgr->logDebug(Format("RemoteAssociatorProvider::associatorNames ns = %1, objectName = %2, assocClass = %3, resultClass = %4, role = %5, resultRole = %6", 
+		ns, objectName, assocClass, resultClass, role, resultRole));
+	String lUrl(m_url);
+	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
+	lgr->logDebug(Format("RemoteAssociatorProvider::associatorNames got ClientCIMOMHandleRef for url: %1", lUrl));
+
+	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
+
+	lgr->logDebug("RemoteAssociatorProvider::associatorNames calling remote WBEM server");
+
+	try
+	{
+		hdl->associatorNames(ns, objectName, result, assocClass, resultClass, role, resultRole);
+
+	}
+	catch (CIMException& e)
+	{
+		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
+		{
+			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
+		}
+		lgr->logInfo(Format("RemoteAssociatorProvider::associatorNames remote WBEM server threw: %1", e));
+		throw;
+	}
+	catch (const Exception& e)
+	{
+		String msg = Format("RemoteAssociatorProvider::associatorNames failed calling remote WBEM server: %1", e);
+		lgr->logError(msg);
+		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-RemoteAssociatorProvider::referenceNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, const String &resultClass, const String &role)
+RemoteAssociatorProvider::referenceNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, 
+	const String &resultClass, const String &role)
 {
+	LoggerRef lgr = env->getLogger();
+	lgr->logDebug(Format("RemoteAssociatorProvider::referenceNames ns = %1, objectName = %2, resultClass = %3, role = %4", ns, objectName, resultClass, role));
+	String lUrl(m_url);
+	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
+	lgr->logDebug(Format("RemoteAssociatorProvider::referenceNames got ClientCIMOMHandleRef for url: %1", lUrl));
+
+	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
+
+	lgr->logDebug("RemoteAssociatorProvider::referenceNames calling remote WBEM server");
+
+	try
+	{
+		hdl->referenceNames(ns, objectName, result, resultClass, role);
+
+	}
+	catch (CIMException& e)
+	{
+		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
+		{
+			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
+		}
+		lgr->logInfo(Format("RemoteAssociatorProvider::referenceNames remote WBEM server threw: %1", e));
+		throw;
+	}
+	catch (const Exception& e)
+	{
+		String msg = Format("RemoteAssociatorProvider::referenceNames failed calling remote WBEM server: %1", e);
+		lgr->logError(msg);
+		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+	}
+
 }
 
 

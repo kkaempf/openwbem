@@ -44,7 +44,8 @@ namespace OpenWBEM
 class RemoteSecondaryInstanceProvider : public SecondaryInstanceProviderIFC
 {
 public:
-	RemoteSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool);
+	RemoteSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
+		bool alwaysSendCredentials, bool useConnectionCredentials);
 	virtual ~RemoteSecondaryInstanceProvider();
 
 	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass);
@@ -55,6 +56,8 @@ public:
 private:
 	ClientCIMOMHandleConnectionPoolRef m_pool;
 	String m_url;
+	bool m_alwaysSendCredentials;
+	bool m_useConnectionCredentials;
 };
 
 
