@@ -38,7 +38,7 @@ class OW_CIMException : public OW_Exception
 {
 public:
 
-	enum
+	enum ErrNoType
 	{
 		/** No error */
 		SUCCESS = 0,
@@ -108,23 +108,32 @@ public:
 	OW_CIMException();
 	OW_CIMException(const char* file, int line, const char* msg);
 	OW_CIMException(const char* msg);
-	OW_CIMException(int errval);
-	OW_CIMException(const char* file, int line, int errval,
+	OW_CIMException(ErrNoType errval);
+	OW_CIMException(const char* file, int line, ErrNoType errval,
 		const char* msg=0);
+	~OW_CIMException();
+
+	void swap(OW_CIMException& x);
+
+	OW_CIMException(const OW_CIMException& x);
+	OW_CIMException& operator=(const OW_CIMException& x);
 	
-	int getErrNo() const {  return m_errno; }
+	ErrNoType getErrNo() const {  return m_errno; }
+	void setErrNo(ErrNoType e) { m_errno = e; }
 	virtual const char* type() const {  return "OW_CIMException"; }
+	virtual const char* getMessage() const;
 
 private:
 
-	int m_errno;
+	ErrNoType m_errno;
+	mutable const char* m_longmsg;
 };
 
 #define OW_THROWCIM(errval) \
-	throw OW_CIMException(__FILE__, __LINE__, int(errval))
+	throw OW_CIMException(__FILE__, __LINE__, errval)
 	
 #define OW_THROWCIMMSG(errval, msg) \
-	throw OW_CIMException(__FILE__, __LINE__, int(errval), msg)
+	throw OW_CIMException(__FILE__, __LINE__, errval, msg)
 
 #endif	// __OW_CIMEXCEPTION_HPP__
 

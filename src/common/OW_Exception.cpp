@@ -35,22 +35,24 @@
 #include <cstring>
 #include <cstdlib>
 #include <iostream>
+#include <algorithm> // for std::swap
 
 OW_Mutex OW_Exception::m_mutex;
 
 //////////////////////////////////////////////////////////////////////////////					
 static void freeBuf(char** ptr)
 {
-	if(*ptr)
-	{
-		delete [] *ptr;
-		*ptr = NULL;
-	}
+	delete [] *ptr;
+	*ptr = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////					
 static char* dupString(const char* str)
 {
+	if (!str)
+	{
+		return 0;
+	}
 	char* rv = new char[strlen(str)+1];
 	strcpy(rv, str);
 	return rv;
@@ -80,15 +82,8 @@ OW_Exception::OW_Exception(const char* file, int line, const char* msg)
 	OW_StackTrace::getStackTrace();
 #endif
 	m_mutex.acquire();
-	if(file)
-	{
-		m_file = dupString(file);
-	}
-
-	if(msg)
-	{
-		m_msg = dupString(msg);
-	}
+	m_file = dupString(file);
+	m_msg = dupString(msg);
 }
 
 //////////////////////////////////////////////////////////////////////////////					
@@ -102,10 +97,7 @@ OW_Exception::OW_Exception(const char* msg)
 	OW_StackTrace::getStackTrace();
 #endif
 	m_mutex.acquire();
-	if(msg)
-	{
-		m_msg = dupString(msg);
-	}
+	m_msg = dupString(msg);
 }
 
 //////////////////////////////////////////////////////////////////////////////					
@@ -116,16 +108,8 @@ OW_Exception::OW_Exception( const OW_Exception& e )
 	, m_msg(0)
 {
 	m_mutex.acquire();
-	if(e.m_file)
-	{
-		m_file = dupString(e.m_file);
-	}
-
-	if(e.m_msg)
-	{
-		m_msg = dupString(e.m_msg);
-	}
-
+	m_file = dupString(e.m_file);
+	m_msg = dupString(e.m_msg);
 }
 
 //////////////////////////////////////////////////////////////////////////////					
@@ -140,6 +124,8 @@ OW_Exception::~OW_Exception() throw()
 OW_Exception&
 OW_Exception::operator=( const OW_Exception& rhs )
 {
+	OW_Exception(rhs).swap(*this);
+	/*
 	if (this != &rhs)
 	{
 		freeBuf(&m_file);
@@ -158,8 +144,17 @@ OW_Exception::operator=( const OW_Exception& rhs )
 		}
 
 	}
-
+	*/
 	return *this;
+}
+
+//////////////////////////////////////////////////////////////////////////////					
+void
+OW_Exception::swap(OW_Exception& rhs)
+{
+	std::swap(m_file, rhs.m_file);
+	std::swap(m_line, rhs.m_line);
+	std::swap(m_msg, rhs.m_msg);
 }
 		
 //////////////////////////////////////////////////////////////////////////////					

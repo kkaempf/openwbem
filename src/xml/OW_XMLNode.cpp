@@ -42,7 +42,7 @@
 #include "OW_Format.hpp"
 #include <algorithm> // for std::lower_bound
 
-// It would appear that this needs to be sorted alphabetically, 
+// It would appear that this needs to be sorted alphabetically,
 // although dan didn't put any such comment here.  :)
 OW_XMLNode::ElemEntry OW_XMLNode::g_elems[63] =
 {
@@ -232,9 +232,9 @@ OW_XMLNodeImpl::getAttribute(const OW_String& name, OW_Bool throwException)
 	}
 	if (throwException)
 	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-				format("OW_XMLNodeImpl::getAttribute failed to find a matching "
-					"attribute for name: %1", name).c_str() );
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+				format("Failed to find "
+					"attribute: %1 in node: %2", name, m_strName).c_str() );
 	}
 
 	return OW_String();
@@ -560,7 +560,7 @@ OW_XMLNodeImpl::extractParameterValueAttr(const OW_String& iparamName,
 
 		if(!tmpNode)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 				"Needed a child for <IPARAMVALUE>");
 		}
 
@@ -659,7 +659,7 @@ OW_XMLNodeImpl::findElementAndParameter(const OW_String& nameOfParameter)
 				return(node.getChild().m_impl);
 		}
 	}
-	return OW_XMLNodeImplRef(); // TODO will this work? (instead of null)
+	return OW_XMLNodeImplRef();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -933,7 +933,6 @@ OW_XMLNode::setNodeType(OW_String nodeName)
 OW_StringArray
 OW_XMLNode::extractParameterStringArray(const OW_String& value, OW_Bool& found)
 {
-	found = false;
 	return m_impl->extractParameterStringArray(value, found);
 }
 

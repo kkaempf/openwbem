@@ -334,7 +334,7 @@ OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_XMLNode reply,
 			OW_XMLParameters::paramErrorCode);
 		OW_String description=errorNode.mustGetAttribute(
 			OW_XMLParameters::paramErrorDescription);
-		OW_THROWCIMMSG(errCode.toInt32(), description.c_str());
+		OW_THROWCIMMSG(OW_CIMException::ErrNoType(errCode.toInt32()), description.c_str());
 	}
 
 	return reply;

@@ -35,6 +35,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMClassEnumeration.hpp"
 #include "OW_CIMQualifierEnumeration.hpp"
+#include "OW_CIMException.hpp"
 
 class OW_MetaRepository : public OW_GenericHDBRepository
 {
@@ -63,7 +64,7 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	OW_CIMQualifierType getQualifierType(const OW_String& ns, 
+	OW_CIMQualifierType getQualifierType(const OW_String& ns,
 		const OW_String& qualName, OW_HDBHandle* hdl=0);
 
 	/**
@@ -89,25 +90,25 @@ public:
 	 * Gets an existing class from the store
 	 * @param ns	The namespace for the class
 	 * @param className	The name of the class to retrieve
-	 * @param cc the class to be retrieved. 
+	 * @param cc the class to be retrieved.
 	 * @return 0 on success.  Otherwise a value from OW_CIMException.
 	 * @exception OW_CIMException
 	 * @exception OW_HDBException An error occurred in the database.
 	 * @exception OW_IOException Couldn't read class object from file.
 	 */
-	int getCIMClass(const OW_String& ns, const OW_String& className, 
+	OW_CIMException::ErrNoType getCIMClass(const OW_String& ns, const OW_String& className,
 		OW_CIMClass& cc);
 
 	/**
 	 * Gets an existing class from the store
 	 * @param op The object path that contains the namespace and class name
-	 * @param cc the class to be retrieved. 
+	 * @param cc the class to be retrieved.
 	 * @return 0 on success.  Otherwise a value from OW_CIMException.
 	 * @exception OW_CIMException
 	 * @exception OW_HDBException An error occurred in the database.
 	 * @exception OW_IOException Couldn't read class object from file.
 	 */
-	int getCIMClass(const OW_CIMObjectPath& op, OW_CIMClass& cc);
+	OW_CIMException::ErrNoType getCIMClass(const OW_CIMObjectPath& op, OW_CIMClass& cc);
 
 	/**
 	 * Delete an existing class from the store
@@ -120,7 +121,7 @@ public:
 
 	/**
 	 * creates a class in the store
-	 * 
+	 *
 	 * @param ns			The namespace for the class
 	 * @param cimClass 	The class to create
 	 * @exception 	CIMException if the class already exists, or parent class
@@ -132,7 +133,7 @@ public:
 
 	/**
 	 * set a class in the store - note children are not affected
-	 * 
+	 *
 	 * @param ns		 The namespace for the class
 	 * @param cimClass The class to update
 	 * @exception CIMException if the class already exists
@@ -143,7 +144,7 @@ public:
 	 * Enumerates the class specified by the OW_CIMObjectPath.
 	 * @param ns The namespace of the class
 	 * @param className	The name of the class to enumerate
-	 * @param deep If set to OW_CIMClient::DEEP, the enumeration returned will 
+	 * @param deep If set to OW_CIMClient::DEEP, the enumeration returned will
 	 *		contain the names of all classes derived from the enumerated class.
 	 *		If set to OW_CIMClient::SHALLOW the enumermation will return only
 	 *		the names of the first level children of the enumerated class.
@@ -154,10 +155,10 @@ public:
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 *		be returned on all appropriate components.
 	 * @return An enumeration of OW_CIMClass objects (OW_CIMClassEnumeration)
-	 * @exception OW_CIMException  	If the specified CIMObjectPath object 
+	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
-	OW_CIMClassEnumeration enumClass(const OW_String& ns, 
+	OW_CIMClassEnumeration enumClass(const OW_String& ns,
 		const OW_String& className, OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		OW_CIMClassEnumeration* penum=NULL);
@@ -171,7 +172,7 @@ public:
 
 	/**
 	 * Gets the children of a class
-	 * 
+	 *
 	 * @param ns		 The namespace for the class
 	 * @param className The class for whose children are to be retrieved
 	 * @return An array of the class names of the children
@@ -201,7 +202,7 @@ public:
 	 * @return 0 on success. Otherwise -1 if the bottom most container already
 	 * exists.
 	 */
-	virtual int createNameSpace(const OW_StringArray& nameComps, 
+	virtual int createNameSpace(const OW_StringArray& nameComps,
 		OW_Bool rootCheck);
 
 private:
@@ -244,13 +245,13 @@ private:
 		OW_HDBHandle hdl, OW_Bool deep, OW_Bool localOnly=false,
 		OW_Bool includeQualifiers=true, OW_Bool includeClassOrigin=true);
 
-	void _getClassChildNames(OW_StringArray& ra, OW_HDBNode node, 
+	void _getClassChildNames(OW_StringArray& ra, OW_HDBNode node,
 		OW_HDBHandle hdl);
 
 	void _resolveClass(OW_CIMClass& cls, OW_HDBNode& node, OW_HDBHandle& hdl,
 		const OW_String& ns);
 
-	OW_HDBNode adjustClass(const OW_String& ns, OW_CIMClass& childClass, 
+	OW_HDBNode adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 		OW_HDBHandle hdl);
 
 	OW_CIMClass _getClassFromNode(OW_HDBNode& node, OW_HDBHandle hdl,

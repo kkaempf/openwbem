@@ -33,49 +33,96 @@
 #include "OW_String.hpp"
 
 #include <cstring>
+#include <cstdlib>
+#include <algorithm> // for std::swap
 
-static OW_String getMsg(int errval, const char* msg = 0);
+static OW_String getMsg(OW_CIMException::ErrNoType errval, const char* msg = 0);
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMException::OW_CIMException() : 
-	OW_Exception(getMsg(FAILED).c_str()), m_errno(FAILED) 
+OW_CIMException::OW_CIMException() :
+	OW_Exception(), m_errno(FAILED), m_longmsg(0)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMException::OW_CIMException(const char* file, int line, 
+OW_CIMException::OW_CIMException(const char* file, int line,
 	const char* msg) :
-	OW_Exception(file, line, getMsg(FAILED, msg).c_str()), m_errno(FAILED) 
+	OW_Exception(file, line, msg), m_errno(FAILED), m_longmsg(0)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMException::OW_CIMException(const char* msg) : 
-	OW_Exception(getMsg(FAILED, msg).c_str()), m_errno(FAILED) 
+OW_CIMException::OW_CIMException(const char* msg) :
+	OW_Exception(msg), m_errno(FAILED), m_longmsg(0)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMException::OW_CIMException(int errval) : 
-	OW_Exception(getMsg(errval).c_str()), m_errno(errval) 
+OW_CIMException::OW_CIMException(OW_CIMException::ErrNoType errval) :
+	OW_Exception(), m_errno(errval), m_longmsg(0)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMException::OW_CIMException(const char* file, int line, int errval, 
+OW_CIMException::OW_CIMException(const char* file, int line, OW_CIMException::ErrNoType errval,
 	const char* msg) :
-	OW_Exception(file, line, getMsg(errval, msg).c_str()), m_errno(errval) 
+	OW_Exception(file, line, msg), m_errno(errval), m_longmsg(0)
 {
 }
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMException::~OW_CIMException()
+{
+	if (m_longmsg)
+	{
+		free((void*)m_longmsg);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMException::OW_CIMException(const OW_CIMException& x)
+	: OW_Exception(x)
+	, m_errno(x.m_errno)
+	, m_longmsg(x.m_longmsg ? strdup(x.m_longmsg) : 0)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMException&
+OW_CIMException::operator=(const OW_CIMException& x)
+{
+	OW_CIMException(x).swap(*this);
+	return *this;
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMException::swap(OW_CIMException& x)
+{
+	OW_Exception::swap(x);
+	std::swap(m_longmsg, x.m_longmsg);
+	std::swap(m_errno, x.m_errno);
+}
+
+//////////////////////////////////////////////////////////////////////////////					
+const char*
+OW_CIMException::getMessage() const
+{
+	if (!m_longmsg)
+	{
+		m_longmsg = strdup(getMsg(m_errno, OW_Exception::getMessage()).c_str());
+	}
+	return m_longmsg;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 struct MsgRec
 {
-	int errval;
+	OW_CIMException::ErrNoType errval;
 	const char* msg;
 };
 
-static MsgRec _pmsgs[] = 
+static MsgRec _pmsgs[] =
 {
 	{ OW_CIMException::SUCCESS, "no error" },
 	{ OW_CIMException::FAILED, "general error" },
@@ -95,11 +142,11 @@ static MsgRec _pmsgs[] =
 	{ OW_CIMException::INVALID_QUERY, "query is not valid for the specified query language" },
 	{ OW_CIMException::METHOD_NOT_AVAILABLE, "extrinsic method could not be executed" },
 	{ OW_CIMException::METHOD_NOT_FOUND, "extrinsic method does not exist" },
-	{ 0, 0 }
+	{ OW_CIMException::SUCCESS, 0 }
 };
 
 static OW_String
-getMsg(int err, const char* msg)
+getMsg(OW_CIMException::ErrNoType err, const char* msg)
 {
 	const char* p = "unknown error";
 	for(int i = 0; _pmsgs[i].msg != NULL; i++)
@@ -112,7 +159,12 @@ getMsg(int err, const char* msg)
 	}
 
 	OW_String rstr(p);
-	if(msg != NULL && strlen(msg) > 0)
+	// avoid multiple appendings of the exception message
+	if (rstr == OW_String(msg).substring(0, rstr.length()))
+	{
+		rstr = msg;
+	}
+	else if(msg != NULL && strlen(msg) > 0)
 	{
 		rstr += " (";
 		rstr += msg;

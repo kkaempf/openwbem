@@ -887,7 +887,8 @@ OW_XMLExecute::getClass(ostream& ostr, OW_XMLNode& node,
 	if (!node)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			"NULL node given to OW_XMLGetClass::execute");
+			"No parameters specified for GetClass method call. "
+			"ClassName must be given.");
 	}
 
 	OW_Bool isPropertyList;
@@ -903,7 +904,7 @@ OW_XMLExecute::getClass(ostream& ostr, OW_XMLNode& node,
 
 	if (className.length() == 0)
 	{
-		OW_THROWCIM(OW_CIMException::INVALID_CLASS);
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Invalid ClassName");
 	}
 
 	propertyList = node.extractParameterStringArray(XMLP_PROPERTYLIST,
@@ -1350,18 +1351,17 @@ OW_XMLExecute::processSimpleReq(OW_XMLNode& node, ostream& ostrEntity,
 		m_functionName = newnode.mustGetAttribute("NAME");
 
 		newnode = newnode.getChild();
-		if (!newnode)
-		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
-				"No element in <METHODCALL> or <IMETHODCALL>");
-		}
 
-		//OW_ACLInfo acl(userName);
-		//OW_CIMOMHandleIFC hdl = OW_Environment::getCIMOMHandle(acl, true);
 		OW_CIMOMHandleIFCRef hdl = this->getEnvironment()->getCIMOMHandle(userName, true);
 
 		if (m_isIntrinsic)
 		{
+			if (!newnode)
+			{
+				OW_THROWCIMMSG(OW_CIMException::FAILED,
+					"Missing <LOCALNAMESPACEPATH> in <IMETHODCALL>");
+			}
+
 			OW_String nameSpace = OW_XMLClass::getNameSpace(newnode.mustElementChild(
 				OW_XMLNode::XML_ELEMENT_LOCALNAMESPACEPATH));
 
@@ -1374,6 +1374,12 @@ OW_XMLExecute::processSimpleReq(OW_XMLNode& node, ostream& ostrEntity,
 		}
 		else
 		{
+			if (!newnode)
+			{
+				OW_THROWCIMMSG(OW_CIMException::FAILED,
+					"Missing <LOCALINSTANCEPATH> or <LOCALCLASSPATH> in <METHODCALL>");
+			}
+
 			executeExtrinsic(ostrEntity, newnode, *hdl);
 		}
 		ostrEntity << "</SIMPLERSP>\r\n";

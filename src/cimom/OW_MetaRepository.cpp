@@ -30,7 +30,6 @@
 #include "OW_config.h"
 #include "OW_MetaRepository.hpp"
 #include "OW_RepositoryStreams.hpp"
-#include "OW_CIMException.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMFlavor.hpp"
@@ -428,14 +427,14 @@ OW_MetaRepository::setQualiferType(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+OW_CIMException::ErrNoType
 OW_MetaRepository::getCIMClass(const OW_CIMObjectPath& op, OW_CIMClass& cc)
 {
 	return getCIMClass(op.getNameSpace(), op.getObjectName(), cc);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+OW_CIMException::ErrNoType
 OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className,
 	OW_CIMClass& cc)
 {

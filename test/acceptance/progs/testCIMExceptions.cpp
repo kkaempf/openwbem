@@ -145,7 +145,7 @@ main(int argc, char* argv[])
 
 void runTests(const OW_CIMOMHandleIFCRef& hdl)
 {
-    // getClass
+    // GetClass
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
@@ -169,5 +169,38 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
 	}
+
+
+	// GetInstance
+	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		cop.addKey("fooKey", OW_CIMValue(OW_String("fooKeyValue")));
+		hdl->getInstance(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+
+	// CIM_ERR_INVALID_PARAMETER - Can't do without doing straight XML.  Handle it in a separate test.
+
+	// CIM_ERR_INVALID_CLASS
+	try
+	{
+		OW_CIMObjectPath cop("fooXXX", "root");
+		cop.addKey("fooKey", OW_CIMValue(OW_String("fooKeyValue")));
+		hdl->getInstance(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+	}
+
+	// CIM_ERR_NOT_FOUND
+
 }
 

@@ -725,7 +725,7 @@ OW_BinaryCIMOMHandle::checkError(std::istream& istrm)
 				OW_String cimMsg;
 				OW_BinIfcIO::read(istrm, cimerrno, OW_Bool(true));
 				OW_BinIfcIO::read(istrm, cimMsg, OW_Bool(true));
-				OW_THROWCIMMSG(cimerrno, cimMsg.c_str());
+				OW_THROWCIMMSG(OW_CIMException::ErrNoType(cimerrno), cimMsg.c_str());
 			}
 			default:
 				OW_THROW(OW_IOException,

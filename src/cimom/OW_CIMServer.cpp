@@ -582,7 +582,7 @@ OW_CIMServer::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
 		{
 			// Check to see if user has rights to get the class
 			m_accessMgr->checkAccess(OW_AccessMgr::GETCLASS, path, aclInfo);
-			int rval = m_mStore.getCIMClass(path, theClass);
+			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(path, theClass);
 			if (rval != OW_CIMException::SUCCESS)
 			{
 				// check whether the namespace was invalid or not
@@ -650,8 +650,8 @@ OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 		m_accessMgr->checkAccess(OW_AccessMgr::DELETECLASS, path, aclInfo);
 
 		OW_CIMClass cc;
-		int rc = m_mStore.getCIMClass(path, cc);
-		if (rc != 0)
+		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(path, cc);
+		if (rc != OW_CIMException::SUCCESS)
 		{
 			OW_THROWCIM(rc);
 		}
@@ -729,9 +729,9 @@ OW_CIMServer::modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
 	try
 	{
 		OW_CIMClass origClass;
-		int rval = m_mStore.getCIMClass(name, origClass);
+		OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(name, origClass);
 
-		if (rval != 0)
+		if (rval != OW_CIMException::SUCCESS)
 		{
 			OW_THROWCIM(rval);
 		}
@@ -826,9 +826,9 @@ OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path, OW_Bool deep,
 		OW_CIMClass theClass = _getNameSpaceClass(path.getObjectName());
 		if(!theClass)
 		{
-			int rval = m_mStore.getCIMClass(lcop, theClass);
+			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop, theClass);
 
-			if(rval != 0)
+			if(rval != OW_CIMException::SUCCESS)
 			{
 				OW_THROWCIM(rval);
 			}
@@ -849,9 +849,9 @@ OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path, OW_Bool deep,
 		for(size_t i = 0; i < classNames.size(); i++)
 		{
 			lcop.setObjectName(classNames[i]);
-			int rval = m_mStore.getCIMClass(lcop, theClass);
+			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop, theClass);
 
-			if(rval != 0)
+			if(rval != OW_CIMException::SUCCESS)
 			{
 				OW_String msg("Invalid class in repository: ");
 				msg += classNames[i];
@@ -975,8 +975,8 @@ OW_CIMServer::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 		OW_CIMClass theClass = _getNameSpaceClass(path.getObjectName());
 		if(!theClass)
 		{
-			int rval = m_mStore.getCIMClass(lcop, theClass);
-			if(rval != 0)
+			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop, theClass);
+			if(rval != OW_CIMException::SUCCESS)
 			{
 				OW_THROWCIMMSG(rval, lcop.getObjectName().c_str());
 			}
@@ -1014,8 +1014,8 @@ OW_CIMServer::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 		for(size_t i = 0; i < classNames.size(); i++)
 		{
 			lcop.setObjectName(classNames[i]);
-			int rc = m_mStore.getCIMClass(lcop, theClass);
-			if(rc != 0)
+			OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(lcop, theClass);
+			if(rc != OW_CIMException::SUCCESS)
 			{
 				OW_String msg("Invalid class in repository: ");
 				msg += classNames[i];
@@ -1134,15 +1134,25 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true), aclInfo,
 		true);
 
-	cc = getClass(cop, OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
-		OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
-		OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
-		0, aclInfo);
+	try
+	{
+		cc = getClass(cop, OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
+			OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
+			0, aclInfo);
+	}
+	catch (OW_CIMException& ce)
+	{
+		if (ce.getErrNo() == OW_CIMException::NOT_FOUND)
+		{
+			ce.setErrNo(OW_CIMException::INVALID_CLASS);
+		}
+		throw ce;
+	}
 
 
 	OW_ASSERT(cc);
 	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(cop, aclInfo);
-	OW_ASSERT(cc);
 
 	if(instancep)
 	{
@@ -1282,9 +1292,9 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 		OW_CIMClass theClass = _getNameSpaceClass(cop.getObjectName());
 		if(!theClass)
 		{
-			int rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(), theClass);
+			OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(), theClass);
 
-			if(rc != 0)
+			if(rc != OW_CIMException::SUCCESS)
 			{
 				OW_THROWCIMMSG(rc, cop.getObjectName().c_str());
 			}
@@ -1426,10 +1436,10 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 			NULL, intAclInfo);
 
 		OW_CIMClass theClass;
-		int rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(),
+		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(),
 			theClass);
 
-		if(rc != 0)
+		if(rc != OW_CIMException::SUCCESS)
 		{
 			OW_THROWCIMMSG(rc, cop.getObjectName().c_str());
 		}
@@ -1550,8 +1560,8 @@ OW_CIMServer::getProperty(const OW_CIMObjectPath& name,
 		aclInfo, true);
 
 	OW_CIMClass theClass;
-	int rc = m_mStore.getCIMClass(name, theClass);
-	if(rc != 0)
+	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, theClass);
+	if(rc != OW_CIMException::SUCCESS)
 	{
 		OW_THROWCIMMSG(rc, name.getObjectName().c_str());
 	}
@@ -1603,8 +1613,8 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 
 	OW_ACLInfo intAclInfo;
 	OW_CIMClass theClass;
-	int rc = m_mStore.getCIMClass(name, theClass);
-	if(rc != 0)
+	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, theClass);
+	if(rc != OW_CIMException::SUCCESS)
 	{
 		OW_THROWCIMMSG(rc, name.getObjectName().c_str());
 	}
@@ -1688,8 +1698,8 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 	OW_ACLInfo intAclInfo;
 	OW_CIMMethod method;
 	OW_CIMClass cc;
-	int rc = m_mStore.getCIMClass(name, cc);
-	if(rc != 0)
+	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, cc);
+	if(rc != OW_CIMException::SUCCESS)
 	{
 		OW_THROWCIMMSG(rc, name.toString().c_str());
 	}
@@ -2411,8 +2421,8 @@ OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 	{
 		renum = m_mStore.enumClass(ns, className, true, false, true, true);
 		OW_CIMClass cc;
-		int rc = m_mStore.getCIMClass(ns, className, cc);
-		if (rc != 0)
+		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, className, cc);
+		if (rc != OW_CIMException::SUCCESS)
 		{
 			OW_THROWCIM(rc);
 		}
