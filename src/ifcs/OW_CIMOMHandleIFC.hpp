@@ -713,6 +713,7 @@ public:
 	 * error occurred)
 	 */
 	virtual void associatorsClasses(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String& assocClass=OW_String(),
@@ -724,6 +725,7 @@ public:
 		const OW_StringArray* propertyList=0) = 0;
 
 	virtual OW_CIMClassEnumeration associatorsClassesE(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String& assocClass=OW_String(),
 		const OW_String& resultClass=OW_String(),

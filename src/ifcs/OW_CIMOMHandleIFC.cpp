@@ -250,6 +250,7 @@ OW_CIMOMHandleIFC::associatorsE(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClassEnumeration
 OW_CIMOMHandleIFC::associatorsClassesE(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String& assocClass,
 		const OW_String& resultClass,
@@ -261,7 +262,7 @@ OW_CIMOMHandleIFC::associatorsClassesE(
 {
 	OW_CIMClassEnumeration rval;
 	CIMClassEnumBuilder handler(rval);
-	associatorsClasses(path, handler, assocClass, resultClass, role, resultRole,
+	associatorsClasses(ns, path, handler, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList);	
 	return rval;
 }

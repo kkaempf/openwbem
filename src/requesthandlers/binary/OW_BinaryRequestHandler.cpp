@@ -823,7 +823,7 @@ OW_BinaryRequestHandler::associators(OW_CIMOMHandleIFCRef chdl,
 		OW_BinIfcIO::write(ostrm, OW_BINSIG_CLSENUM);
 		BinaryCIMClassWriter handler(ostrm);
 		op.setNameSpace(ns);
-		chdl->associatorsClasses(op, handler, assocClass, resultClass,
+		chdl->associatorsClasses(ns, op, handler, assocClass, resultClass,
 			role, resultRole, includeQualifiers, includeClassOrigin, propListPtr);
 		OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
 		OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);

@@ -449,6 +449,7 @@ public:
 		const OW_ACLInfo& aclInfo) = 0;
 
 	virtual void associatorsClasses(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String& assocClass,

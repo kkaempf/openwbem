@@ -350,7 +350,9 @@ OW_LocalCIMOMHandle::associators(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::associatorsClasses(const OW_CIMObjectPath& path,
+OW_LocalCIMOMHandle::associatorsClasses(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
@@ -358,7 +360,7 @@ OW_LocalCIMOMHandle::associatorsClasses(const OW_CIMObjectPath& path,
 	const OW_StringArray* propertyList)
 {
 	OW_ReadLock rl = getReadLock();
-	m_pServer->associatorsClasses(path, result, assocClass, resultClass, role,
+	m_pServer->associatorsClasses(ns, path, result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList,
 		m_aclInfo);
 }

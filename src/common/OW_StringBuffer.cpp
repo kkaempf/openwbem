@@ -309,6 +309,7 @@ OW_StringBuffer::checkAvail(int len)
 	if(len > freeSpace)
 	{
 		int nlen = len - freeSpace;
+		m_incSize <<= 1;
 		int neededBlocks = nlen / m_incSize;
 		if(nlen % m_incSize)
 			neededBlocks++;

@@ -281,7 +281,9 @@ OW_WQLFilterRep::associators(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::associatorsClasses(const OW_CIMObjectPath &/*path*/,
+OW_WQLFilterRep::associatorsClasses(
+	const OW_String&,
+	const OW_CIMObjectPath &/*path*/,
 	OW_CIMClassResultHandlerIFC&,
 	const OW_String &/*assocClass*/, const OW_String &/*resultClass*/,
 	const OW_String &/*role*/, const OW_String &/*resultRole*/,

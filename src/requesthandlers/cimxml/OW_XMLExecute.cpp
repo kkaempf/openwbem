@@ -179,7 +179,7 @@ OW_XMLExecute::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 void
 OW_XMLExecute::executeIntrinsic(ostream& ostr,
 	OW_CIMXMLParser& parser, OW_CIMOMHandleIFC& hdl,
-	OW_CIMObjectPath& path)
+	const OW_String& ns)
 {
 
 	OW_String functionNameLC = m_functionName;
@@ -203,7 +203,7 @@ OW_XMLExecute::executeIntrinsic(ostream& ostr,
 			"\"><IRETURNVALUE>";
 
 		// call the member function that was found
-		(this->*((*i).func))(ostr, parser, path, hdl);
+		(this->*((*i).func))(ostr, parser, ns, hdl);
 		ostr << "</IRETURNVALUE></IMETHODRESPONSE>";
 	}
 }
@@ -544,10 +544,8 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::associatorNames(ostream& ostr, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String ns = path.getNameSpace();
-
 	OW_Array<param> params;
 	params.push_back(param(XMLP_OBJECTNAME, false, param::OBJECTNAME));
 	params.push_back(param(XMLP_ASSOCCLASS, true, param::CLASSNAME));
@@ -627,7 +625,7 @@ namespace
 			OW_CIMObjectPath& path_,
 			bool includeQualifiers_, bool includeClassOrigin_, bool isPropertyList_,
 			OW_StringArray& propertyList_,
-			OW_String& ns_)
+			const OW_String& ns_)
 		: ostr(ostr_)
 		, path(path_)
 		, includeQualifiers(includeQualifiers_)
@@ -656,17 +654,15 @@ namespace
 		OW_CIMObjectPath& path;
 		bool includeQualifiers, includeClassOrigin, isPropertyList;
 		OW_StringArray& propertyList;
-		OW_String& ns;
+		const OW_String& ns;
 
 	};
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void OW_XMLExecute::associators(ostream& ostr,
-	OW_CIMXMLParser& parser, OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	OW_CIMXMLParser& parser, const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String ns = path.getNameSpace();
-
 	OW_Array<param> params;
 	params.push_back(param(XMLP_OBJECTNAME, false, param::OBJECTNAME));
 	params.push_back(param(XMLP_ASSOCCLASS, true, param::CLASSNAME));
@@ -709,21 +705,20 @@ void OW_XMLExecute::associators(ostream& ostr,
 	OW_String role = params[3].val.toString();
 	OW_String resultRole = params[4].val.toString();
 
-	if (path.getKeys().size() == 0)
+	if (objectName.getKeys().size() == 0)
 	{
 		// class path
-		AssocCIMClassXMLOutputter handler(ostr, path, includeQualifiers,
+		AssocCIMClassXMLOutputter handler(ostr, objectName, includeQualifiers,
 			includeClassOrigin, isPropertyList, propertyList, ns);
 
-		objectName.setNameSpace(ns);
-		hdl.associatorsClasses(objectName, handler,
+		hdl.associatorsClasses(ns, objectName, handler,
 			assocClass, resultClass, role, resultRole, includeQualifiers,
 			includeClassOrigin, pPropList);
 	}
 	else
 	{
 		// instance path
-		AssocCIMInstanceXMLOutputter handler(ostr, path, includeQualifiers,
+		AssocCIMInstanceXMLOutputter handler(ostr, objectName, includeQualifiers,
 			includeClassOrigin, isPropertyList, propertyList);
 
 		hdl.associators(ns, objectName, handler,
@@ -734,19 +729,16 @@ void OW_XMLExecute::associators(ostream& ostr,
 
 //////////////////////////////////////////////////////////////////////////////
 void OW_XMLExecute::createClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String ns = path.getNameSpace();
 	parser.mustGetChild();
 	hdl.createClass( ns, OW_XMLCIMFactory::createClass(parser) );
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String ns = path.getNameSpace();
-
 	parser.mustGetChild();		// Point parser to <INSTANCE> tag
 
 	OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(parser);
@@ -804,7 +796,7 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
 
 //////////////////////////////////////////////////////////////////////////////
 void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& ns, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
 	OW_Array<param> params;
 	params.push_back(param(XMLP_CLASSNAME, false, param::CLASSNAME));
@@ -813,13 +805,13 @@ void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 
 	OW_String className = params[0].val.toString();
 
-	hdl.deleteClass(ns.getNameSpace(), className);
+	hdl.deleteClass(ns, className);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::deleteInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String name = parser.getAttribute( paramName );
 	if ( !name.equalsIgnoreCase( "InstanceName" ) )
@@ -829,16 +821,16 @@ OW_XMLExecute::deleteInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	parser.mustGetChild();
 
 	OW_CIMObjectPath instPath = OW_XMLCIMFactory::createObjectPath(parser);
-	hdl.deleteInstance( path.getNameSpace(), instPath );
+	hdl.deleteInstance( ns, instPath );
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::deleteQualifier(ostream& /*ostr*/, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String qualName = getQualifierName(parser);
-	hdl.deleteQualifierType(path.getNameSpace(), qualName);
+	hdl.deleteQualifierType(ns, qualName);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -862,7 +854,7 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
 	OW_Array<param> params;
 	params.push_back(param(XMLP_CLASSNAME, true, param::CLASSNAME, OW_CIMValue("")));
@@ -874,7 +866,7 @@ OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_Bool deepInheritance = params[1].val.toBool();
 
 	ClassNameXMLWriter handler(ostr);
-	hdl.enumClassNames(path.getNameSpace(), className, handler, deepInheritance);
+	hdl.enumClassNames(ns, className, handler, deepInheritance);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -909,7 +901,7 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::enumerateClasses( ostream& ostr, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
 	OW_Array<param> params;
 	params.push_back(param(XMLP_CLASSNAME, true, param::CLASSNAME));
@@ -928,7 +920,6 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_CIMXMLParser& parser,
 
 	CIMClassXMLOutputter handler(ostr, params[2].val.toBool(), params[3].val.toBool(),
 		params[4].val.toBool());
-	OW_String ns = path.getNameSpace();
 	hdl.enumClass(ns, className, handler, params[1].val.toBool(), false);
 
 	// TODO: Switch to this.  It doesn't seem to work though (long make check fails.)
@@ -960,14 +951,13 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
 	OW_Array<param> params;
 	params.push_back(param(XMLP_CLASSNAME, false, param::CLASSNAME));
 
 	getParameterValues(parser, params);
 	OW_String className = params[0].val.toString();
-	OW_String ns = path.getNameSpace();
 	
 	CIMInstanceNameXMLOutputter handler(ostr);
 	hdl.enumInstanceNames(ns, className, handler);
@@ -1021,7 +1011,7 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::enumerateInstances(ostream& ostr, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
 	OW_Array<param> params;
 	params.push_back(param(XMLP_CLASSNAME, false, param::CLASSNAME));
@@ -1050,9 +1040,9 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_CIMXMLParser& parser,
 	bool includeClassOrigin = params[4].val.toBool();
 
 	// TODO: remove as many of these flags from handler as possible
-	CIMInstanceXMLOutputter handler(ostr, path.getNameSpace(), localOnly, includeQualifiers,
+	CIMInstanceXMLOutputter handler(ostr, ns, localOnly, includeQualifiers,
 		includeClassOrigin, params[5].isSet, propertyList);
-	hdl.enumInstances(path.getNameSpace(), className, handler, deep, localOnly,
+	hdl.enumInstances(ns, className, handler, deep, localOnly,
 		includeQualifiers, includeClassOrigin, pPropList);
 }
 
@@ -1079,10 +1069,9 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_CIMXMLParser& /*parser*/,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
 	CIMQualifierTypeXMLOutputter handler(ostr);
-	OW_String ns = path.getNameSpace();
 	hdl.enumQualifierTypes(ns, handler);
 }
 
@@ -1090,7 +1079,7 @@ OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_CIMXMLParser& /*parser*/,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::getClass(ostream& ostr, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
 	OW_Array<param> params;
 	params.push_back(param(XMLP_CLASSNAME, false, param::CLASSNAME));
@@ -1101,7 +1090,6 @@ OW_XMLExecute::getClass(ostream& ostr, OW_CIMXMLParser& parser,
 
 	getParameterValues(parser, params);
 
-	OW_String ns = path.getNameSpace();
 	OW_String className = params[0].val.toString();
 
 	OW_StringArray propertyList;
@@ -1133,7 +1121,7 @@ OW_XMLExecute::getClass(ostream& ostr, OW_CIMXMLParser& parser,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::getInstance(ostream& ostr, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
 	OW_Array<param> params;
 	params.push_back(param(XMLP_INSTANCENAME, false, param::INSTANCENAME));
@@ -1144,9 +1132,7 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_CIMXMLParser& parser,
 
 	getParameterValues(parser, params);
 
-	OW_String ns = path.getNameSpace();
-	path = params[0].val.toCIMObjectPath();
-	path.setNameSpace(ns);
+	OW_CIMObjectPath instancePath = params[0].val.toCIMObjectPath();
 
 	OW_StringArray propertyList;
 	OW_StringArray* pPropList = 0;
@@ -1161,7 +1147,7 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_CIMXMLParser& parser,
 	bool includeQualifiers = params[2].val.toBool();
 	bool includeClassOrigin = params[3].val.toBool();
 
-	OW_CIMInstance cimInstance = hdl.getInstance(ns, path, localOnly,
+	OW_CIMInstance cimInstance = hdl.getInstance(ns, instancePath, localOnly,
 		includeQualifiers, includeClassOrigin,
 		pPropList);
 
@@ -1177,9 +1163,8 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_CIMXMLParser& parser,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::getProperty(ostream& ostr, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String ns = path.getNameSpace();
 	OW_Array<param> params;
 	params.push_back(param(XMLP_INSTANCENAME, false, param::INSTANCENAME));
 	params.push_back(param(XMLP_PROPERTYNAME, false, param::STRING, OW_CIMValue("")));
@@ -1197,9 +1182,8 @@ OW_XMLExecute::getProperty(ostream& ostr, OW_CIMXMLParser& parser,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::getQualifier(ostream& ostr, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String ns = path.getNameSpace();
 	OW_String qualifierName = getQualifierName(parser);
 
 	OW_CIMQualifierType qual = hdl.getQualifierType(ns, qualifierName);
@@ -1212,9 +1196,8 @@ OW_XMLExecute::getQualifier(ostream& ostr, OW_CIMXMLParser& parser,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String ns = path.getNameSpace();
 	OW_String name = parser.mustGetAttribute(paramName);
 	if (!name.equalsIgnoreCase(XMLP_MODIFIED_CLASS))
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -1233,10 +1216,8 @@ OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String ns = path.getNameSpace();
-
 	OW_Array<param> params;
 	params.push_back(param(XMLP_MODIFIED_INSTANCE, false, param::NAMEDINSTANCE));
 	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, OW_CIMValue(true)));
@@ -1264,7 +1245,7 @@ OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::referenceNames(ostream& ostr, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path,OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns,OW_CIMOMHandleIFC& hdl)
 {
 	OW_Array<param> params;
 	params.push_back(param(XMLP_OBJECTNAME, false, param::OBJECTNAME));
@@ -1273,9 +1254,7 @@ OW_XMLExecute::referenceNames(ostream& ostr, OW_CIMXMLParser& parser,
 
 	getParameterValues(parser, params);
 
-	OW_String ns = path.getNameSpace();
-
-	path = params[0].val.toCIMObjectPath();
+	OW_CIMObjectPath path = params[0].val.toCIMObjectPath();
 	path.setNameSpace(ns);
 
 	OW_String resultClass;
@@ -1291,7 +1270,7 @@ OW_XMLExecute::referenceNames(ostream& ostr, OW_CIMXMLParser& parser,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
 	OW_Array<param> params;
 	params.push_back(param(XMLP_OBJECTNAME, false, param::OBJECTNAME));
@@ -1303,9 +1282,7 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 
 	getParameterValues(parser, params);
 
-	OW_String ns = path.getNameSpace();
-
-	path = params[0].val.toCIMObjectPath();
+	OW_CIMObjectPath path = params[0].val.toCIMObjectPath();
 	path.setNameSpace(ns);
 
 	OW_String resultClass;
@@ -1350,9 +1327,8 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String ns = path.getNameSpace();
 	OW_Array<param> params;
 	params.push_back(param(XMLP_INSTANCENAME, false, param::INSTANCENAME));
 	params.push_back(param(XMLP_PROPERTYNAME, false, param::STRING, OW_CIMValue("")));
@@ -1400,7 +1376,7 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::execQuery(ostream& ostr, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
 	OW_Array<param> params;
 	params.push_back(param(XMLP_QUERYLANGUAGE, false, param::STRING));
@@ -1408,17 +1384,15 @@ OW_XMLExecute::execQuery(ostream& ostr, OW_CIMXMLParser& parser,
 
 	getParameterValues(parser, params);
 
-	OW_String nameSpace = path.getNameSpace();
-	execQueryXMLOutputter handler(ostr, nameSpace);
-	hdl.execQuery(path.getFullNameSpace(), handler, params[1].val.toString(), params[0].val.toString());
+	execQueryXMLOutputter handler(ostr, ns);
+	hdl.execQuery(OW_CIMNameSpace(ns), handler, params[1].val.toString(), params[0].val.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::setQualifier(ostream& /*ostr*/, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String ns = path.getNameSpace();
 	OW_String argName = parser.mustGetAttribute(paramName);
 
 	if (!argName.equalsIgnoreCase(XMLP_QUALIFIERDECL))
@@ -1433,7 +1407,6 @@ OW_XMLExecute::setQualifier(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMQualifierType cimQualifier(OW_Bool(true));
 	OW_XMLQualifier::processQualifierDecl(parser, cimQualifier);
 
-	path.setObjectName(cimQualifier.getName());
 	hdl.setQualifierType(ns, cimQualifier);
 }
 
@@ -1487,11 +1460,7 @@ OW_XMLExecute::processSimpleReq(OW_CIMXMLParser& parser, ostream& ostrEntity,
 			// move past LOCALNAMESPACEPATH to IPARAMVALUE*
 			parser.mustGetEndTag();
 
-			OW_CIMNameSpace ns(OW_Bool(true));
-			ns.setNameSpace(nameSpace);
-			OW_CIMObjectPath path = OW_CIMObjectPath(OW_String(), nameSpace);
-
-			executeIntrinsic(ostrEntity, parser, *hdl, path);
+			executeIntrinsic(ostrEntity, parser, *hdl, nameSpace);
 		}
 		else
 		{

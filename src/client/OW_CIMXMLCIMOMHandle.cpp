@@ -1213,7 +1213,9 @@ OW_CIMXMLCIMOMHandle::associators(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::associatorsClasses(const OW_CIMObjectPath& path,
+OW_CIMXMLCIMOMHandle::associatorsClasses(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
@@ -1226,7 +1228,7 @@ OW_CIMXMLCIMOMHandle::associatorsClasses(const OW_CIMObjectPath& path,
 			"associatorsClasses requires a class path not an instance path");
 	}
 
-	associatorsCommon(path.getNameSpace(), path, 0, &result, assocClass, resultClass, role,
+	associatorsCommon(ns, path, 0, &result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList);
 }
 

@@ -677,7 +677,9 @@ OW_BinaryCIMOMHandle::associators(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::associatorsClasses(const OW_CIMObjectPath& path,
+OW_BinaryCIMOMHandle::associatorsClasses(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
@@ -690,9 +692,10 @@ OW_BinaryCIMOMHandle::associatorsClasses(const OW_CIMObjectPath& path,
 			"associatorsClasses requires a class path not an instance path");
 	}
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"Associators", path.getNameSpace());;
+		"Associators", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_ASSOCIATORS);
+	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeString(strm, assocClass);
 	OW_BinIfcIO::writeString(strm, resultClass);
@@ -702,7 +705,8 @@ OW_BinaryCIMOMHandle::associatorsClasses(const OW_CIMObjectPath& path,
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
 	OW_BinIfcIO::writeStringArray(strm, propertyList);
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "Associators", path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"Associators", ns);
 
 	readAndDeliver(in, result);
 }

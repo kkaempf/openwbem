@@ -2271,7 +2271,13 @@ OW_CIMServer::associators(
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, path.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, ns, aclInfo);
+
+	m_env->logDebug(format("OW_CIMServer associators. ns = %1, path = %2, assocClass ="
+		" %3, resultClass = %4, role = %5, resultRole = %6, includeQualifiers ="
+		" %7, includeClassOrigin = %8",
+		ns, path, assocClass, resultClass, role, resultRole, includeQualifiers,
+		includeClassOrigin));
 
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList, &result, 0, 0,
@@ -2280,7 +2286,9 @@ OW_CIMServer::associators(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::associatorsClasses(const OW_CIMObjectPath& path,
+OW_CIMServer::associatorsClasses(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
@@ -2288,9 +2296,9 @@ OW_CIMServer::associatorsClasses(const OW_CIMObjectPath& path,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, path.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, ns, aclInfo);
 
-	_commonAssociators(path.getNameSpace(), path, assocClass, resultClass, role, resultRole,
+	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList, 0, 0, &result,
 		aclInfo);
 }
@@ -2306,7 +2314,7 @@ OW_CIMServer::associatorNames(
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORNAMES, path.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORNAMES, ns, aclInfo);
 
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		false, false, 0, 0, &result, 0, aclInfo);
@@ -2718,7 +2726,6 @@ OW_CIMServer::_commonAssociators(
 	OW_CIMClassResultHandlerIFC* pcresult,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_CIMClass assocClass;
 	OW_CIMObjectPath path(path_);
 	path.setNameSpace(ns);
 	if (!m_nStore.nameSpaceExists(ns))

@@ -272,14 +272,16 @@ public:
 			aclInfo);
 	}
 
-	virtual void associatorsClasses(const OW_CIMObjectPath &path,
+	virtual void associatorsClasses(
+		const OW_String& ns,
+		const OW_CIMObjectPath &path,
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
 	{
-		m_ref->associatorsClasses(path, result, assocClass, resultClass, role,
+		m_ref->associatorsClasses(ns, path, result, assocClass, resultClass, role,
 			resultRole, includeQualifiers, includeClassOrigin, propertyList,
 			aclInfo);
 	}

@@ -887,8 +887,8 @@ associatorsClasses(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
-		OW_CIMClassEnumeration enu = hdl.associatorsClassesE(cop,
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMClassEnumeration enu = hdl.associatorsClassesE("root/testsuite", cop,
 			assocClass, resultClass, role, resultRole, includeQualifiers,
 			includeClassOrigin, propertyList);
 
