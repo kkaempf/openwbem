@@ -1001,7 +1001,7 @@ T convertToRealType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char
 	}
 	else
 	{
-		throwStringConversion(m_buf ? m_buf->data() : "", type);
+		throwStringConversion("", type);
 	}
 	return T(); // to make compiler happy
 }
@@ -1058,7 +1058,7 @@ T doConvertToIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const cha
 	}
 	else
 	{
-		throwStringConversion(m_buf ? m_buf->data() : "", type);
+		throwStringConversion("", type);
 	}
 	return T(); // to make compiler happy
 }
