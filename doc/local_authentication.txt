@@ -1,0 +1,226 @@
+Dan Nuffer
+2004
+
+HTTP OWLocal Authentication Scheme
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (1999).  All Rights Reserved.
+   Copyright (C) Vintela, Inc (2004).  All Rights Reserved.
+
+
+Abstract
+
+   This document includes the specification for the OWLocal Access
+   Authentication scheme.
+
+   Unlike Basic or Digest, OWLocal access authentication relies upon
+   filesystem permissions to authenticate a user without requiring
+   knowledge of a shared secret (a password). The scheme allows the
+   Server to trust the hosting operating system to validate the
+   client's credentials.
+
+   The "OWLocal" authentication scheme is based on the model that the
+   client must authenticate itself by reading data from a file on the 
+   filesystem.
+
+   There are no optional authentication parameters.
+
+Introduction
+
+Purpose
+
+   The OWLocal Access Authentication scheme is intended to be used
+   to allow local users who have already authenticated to the operating
+   system to be trusted by a server without having to provide a
+   password.
+
+Overall Operation
+
+   The OWLocal scheme is based on a double challenge-response paradigm. 
+   First the OWLocal scheme challenges without any parameters. This 
+   first step is optional. A client can initiate the process at the 
+   second step. In response to the initial challenge, the client sends 
+   the user id. The server then replies with the second challenge and 
+   provides a nonce value and a cookie file name. A valid response 
+   contains the nonce value and the cookie contained in the cookie file.
+   The file is created in a manner that only the user identified by the
+   initial userid can read the contents.
+
+Specification of OWLocal Headers
+
+   The OWLocal Access Authentication scheme is conceptually similar to
+   the Basic scheme. The formats of the modified WWW-Authenticate header
+   line and the Authorization header line are specified below.
+
+For OWLocal, the HTTP authentication framework is utilized as follows:
+
+  challenge1   = "OWLocal"
+  credentials1 = "OWLocal" userid
+
+  challenge2   = "OWLocal" owlocal-response
+  credentials2 = "OWLocal" auth-info
+
+  userid            = "uid" "=" userid-value
+  userid-value      = quoted-string
+
+  owlocal-response  = nonce cookie-file
+  nonce             = "nonce" "=" nonce-value
+  nonce-value       = quoted-string
+  cookie-file       = "cookiefile" "=" cookie-file-value
+  cookie-file-value = quoted-string
+
+  auth-info         = nonce cookie
+  cookie            = "cookie" "=" cookie-value
+  cookie-value      = quote-string
+
+The meanings of the values of the directives used above are as
+follows:
+   userid
+     A client-specified string which identifies the client's user id.
+     On POSIX platforms this is represented as a integer decimal value.
+
+   nonce
+     A server-specified data string which should be uniquely generated
+     each time a 401 response is made. It is recommended that this
+     string be base64 or hexadecimal data. Specifically, since the
+     string is passed in the header lines as a quoted string, the
+     double-quote character is not allowed.
+
+     The contents of the nonce are implementation dependent. The quality
+     of the implementation depends on a good choice. A nonce might, for
+     example, be constructed as the base 64 encoding of
+
+         time-stamp H(time-stamp ":" ETag ":" private-key)
+
+     where time-stamp is a server-generated time or other non-repeating
+     value, ETag is the value of the HTTP ETag header associated with
+     the requested entity, and private-key is data known only to the
+     server.  With a nonce of this form a server would recalculate the
+     hash portion after receiving the client authentication header and
+     reject the request if it did not match the nonce from that header
+     or if the time-stamp value is not recent enough. In this way the
+     server can limit the time of the nonce's validity. The inclusion of
+     the ETag prevents a replay request for an updated version of the
+     resource.  (Note: including the IP address of the client in the
+     nonce would appear to offer the server the ability to limit the
+     reuse of the nonce to the same client that originally got it.
+     However, that would break proxy farms, where requests from a single
+     user often go through different proxies in the farm. Also, IP
+     address spoofing is not that hard.)
+
+     An implementation might choose not to accept a previously used
+     nonce or a previously used digest, in order to protect against a
+     replay attack. Or, an implementation might choose to use one-time
+     nonces or digests for POST or PUT requests and a time-stamp for GET
+     requests.
+
+     The nonce is opaque to the client.
+
+   cookie-file
+     A server-specified absolute path to a file name which should be
+     uniquely generated each time a 401 request is made. The file contains
+     the cookie the client will supply to the server for authentication.
+     The permissions on the file will be set such that only the user
+     identified by the initial uid provided by the client can read the 
+     contents of the file.
+
+   cookie
+     A client-specified string. This is the value that the server stored
+     in the cookie-file. It is recommended that the server create a high 
+     quality random string of data at least 16 bytes long.
+
+
+Upon receipt of an unauthorized request for a URI within the
+protection space, the origin server MAY respond with a challenge like
+the following:
+
+  WWW-Authenticate: OWLocal
+
+To receive the challenge2, the client sends the userid.
+
+If the user agent wishes to send the userid "0" it would use the 
+following header field:
+
+  Authorization: OWLocal uid="0"
+
+Upon receipt of a credentials1 request for a URI within the protection
+space, the origin server MAY respond with a challenge like the
+following:
+
+  WWW-Authenticate: OWLocal nonce="3428e648-e802-11d8-8000-e4bbf246f2c1", cookiefile="/tmp/OwAuThTmpFile1hfS8J"
+
+To authenticate, the client reads the contents of cookiefile, and
+then repeats the request including the following header field:
+
+  Authorization: OWLocal nonce="3428e648-e802-11d8-8000-e4bbf246f2c1", cookie="2769822098123944353093379351999261354"
+
+A client SHOULD assume that all paths at or deeper than the depth of
+the last symbolic element in the path field of the Request-URI also
+are within the protection space specified by the OWLocal realm value of
+the current challenge. A client MAY preemptively send the
+corresponding Authorization header with requests for resources in
+that space without receipt of another challenge from the server.
+Similarly, when a client sends a request to a proxy, it may reuse a
+userid and password in the Proxy-Authorization header field without
+receiving another challenge from the proxy server. See section 4 for
+security considerations associated with OWLocal authentication.
+
+
+Limited Use Nonce Values
+
+   The OWLocal scheme uses a server-specified nonce to associate cookie
+   files with cookies.  As shown in the example nonce in section ???, the
+   server is free to construct the nonce such that it may only be used
+   from a particular client, for a particular resource, for a limited
+   period of time or number of uses, or any other restrictions.  Doing
+   so strengthens the protection provided against, for example, replay
+   attacks (see ???).  However, it should be noted that the method
+   chosen for generating and checking the nonce also has performance and
+   resource implications.  For example, a server may choose to allow
+   each nonce value to be used only once by maintaining a record of
+   whether or not each recently issued nonce has been returned and
+   sending a next-nonce directive in the Authentication-Info header
+   field of every response. This protects against even an immediate
+   replay attack, but has a high cost checking nonce values, and perhaps
+   more important will cause authentication failures for any pipelined
+   requests (presumably returning a stale nonce indication).  Similarly,
+   incorporating a request-specific element such as the Etag value for a
+   resource limits the use of the nonce to that version of the resource
+   and also defeats pipelining. Thus it may be useful to do so for
+   methods with side effects but have unacceptable performance for those
+   that do not.
+
+
+
+
+Full Copyright Statement
+
+   Copyright (C) The Internet Society (1999).  All Rights Reserved.
+   Copyright (C) Vintela, Inc (2004).  All Rights Reserved.
+
+   This document and translations of it may be copied and furnished to
+   others, and derivative works that comment on or otherwise explain it
+   or assist in its implementation may be prepared, copied, published
+   and distributed, in whole or in part, without restriction of any
+   kind, provided that the above copyright notice and this paragraph are
+   included on all such copies and derivative works.  However, this
+   document itself may not be modified in any way, such as by removing
+   the copyright notice or references to the Internet Society or other
+   Internet organizations, except as needed for the purpose of
+   developing Internet standards in which case the procedures for
+   copyrights defined in the Internet Standards process must be
+   followed, or as required to translate it into languages other than
+   English.
+
+   The limited permissions granted above are perpetual and will not be
+   revoked by the Internet Society or its successors or assigns.
+
+   This document and the information contained herein is provided on an
+   "AS IS" basis and THE INTERNET SOCIETY AND THE INTERNET ENGINEERING
+   TASK FORCE DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING
+   BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION
+   HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
+   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
