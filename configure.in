@@ -686,24 +686,15 @@ AC_CHECK_FUNC(gethostbyname_r,
 ] )
 dnl end of gethostbyname_r checks.
 
-dnl Check for the sighandler_t typedef
-AC_MSG_CHECKING(for sighandler_t)
-AC_TRY_COMPILE(
-[
-#include <signal.h>
-],
-[ 
-	sighandler_t s;
-],
-dnl Yes, it exists
-[
-AC_MSG_RESULT(yes)
-AC_DEFINE(HAVE_SIGHANDLER_T, 1, Have sighandler_t)
-],
-dnl else don't have it
-[
-AC_MSG_RESULT(no)
-])
+dnl Check for the sighandler_t, sigval, and sigval_t typedefs
+AC_CHECK_TYPES([sighandler_t], , ,[#include <signal.h>])
+AC_CHECK_TYPES([sigval, sigval_t],AC_DEFINE(HAVE_SIGVAL_TYPE, 1, Have a known form of sigval_t), ,[#include <signal.h>])
+
+dnl Check the existance of strsignal.
+AC_CHECK_FUNCS(strsignal)
+
+dnl Check the availability siginfo_t and sigval_t members.
+AC_CHECK_MEMBERS([siginfo_t.si_fd, sigval_t.sival_int, sigval_t.sigval_int], , ,[#include <signal.h>])
 
 
 dnl Checks for typedefs, structures, and compiler characteristics.
