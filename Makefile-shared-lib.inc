@@ -33,21 +33,25 @@ CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
 
 # Rules for NetWare
 
+#	Look only for symbols in the text "T" section because that is all the 
+#	fake library stuff needs to be concerned with.
 CREATE_IMPORTS=nm -Bpg $(TMPLIBDIR)/*.o | \
-			$(AWK) '{ if((($$2 == "T") || \
-				   ($$2 == "D") || \
-				   ($$2 == "B")) && \
-				  (substr($$3,1,1) != ".")) \
-				{ print $$3 } }' | \
-			sort -u | $(SED) '$$!s/$$/,/' > $(@:%.nlm=%.imp)
+			$(AWK) '{ if( ($$2 == "T") && \
+				      (substr($$3,1,1) != ".") && \
+				      (substr($$3,1,1) != "_") ) \
+				{ print $$3 } }' > $(@:%.nlm=%.imp)
 
+#	Removed the following line
+#	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $@ $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
+#	and changed it to a 'touch' command because we no longer need dynamic
+#	libraries.  The 'touch' command speeds up the compile significantly
 %.nlm : %.a
 	rm -rf $(TMPLIBDIR)
 	mkdir $(TMPLIBDIR)
 	cd $(TMPLIBDIR) && \
 	$(AR) x ../$<
 	$(CREATE_IMPORTS)
-	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $@ $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
+	touch $@
 	cp $@ $(SOFILENAME)
 	rm -rf $(TMPLIBDIR)
 
