@@ -35,44 +35,93 @@
 #include "OW_config.h"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_GetPass.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_CIMNameSpace.hpp"
+#include "OW_CmdLineParser.hpp"
+#include "OW_ToolsCommon.hpp"
+#include "OW_URL.hpp"
+
 #include <iostream>
 
 using namespace OpenWBEM;
+using namespace OpenWBEM::Tools;
 
 using std::cout;
 using std::cin;
 using std::endl;
 using std::cerr;
-class GetLoginInfo : public ClientAuthCBIFC
+
+namespace
 {
-	public:
-		bool getCredentials(const String& realm, String& name,
-				String& passwd, const String& details)
-		{
-			cout << "Authentication required for " << realm << endl;
-			cout << "Enter the user name: ";
-			name = String::getLine(cin);
-			passwd = GetPass::getPass("Enter the password for " +
-				name + ": ");
-			return true;
-		}
+
+enum
+{
+	HELP_OPT,
+	VERSION_OPT,
+	URL_OPT,
+	WQL_STATEMENT_OPT
 };
+
+CmdLineParser::Option g_options[] =
+{
+	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
+	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
+	{URL_OPT, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0,
+		"The url identifying the cimom and namespace. Default is http://localhost/root/cimv2 if not specified."},
+	{WQL_STATEMENT_OPT, 'w', "wql_statement", CmdLineParser::E_REQUIRED_ARG, 0, "The WQL statement to execute"},
+	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
+};
+
+void Usage()
+{
+	cerr << "Usage: owexecwql [options]\n\n";
+	cerr << CmdLineParser::getUsage(g_options) << endl;
+}
+}
+
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-	if (argc != 4)
-	{
-		cout << "Usage: <URL> <namespace> <WQL statement>" << endl;
-		return 1;
-	}
 	try
 	{
-		String url = argv[1];
-		String ns = argv[2];
-		String query = argv[3];
+		String url;
+		String ns;
+		String query;
+		// handle backwards compatible options, which was <URL> <namespace> <WQL statement>
+		// TODO: This is deprecated in 3.1.0, remove it post 3.1
+		if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
+		{
+			url = argv[1];
+			ns = argv[2];
+			query = argv[3];
+			cerr << "This cmd line usage is deprecated!\n";
+		}
+		else
+		{
+			CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
+	
+			if (parser.isSet(HELP_OPT))
+			{
+				Usage();
+				return 0;
+			}
+			else if (parser.isSet(VERSION_OPT))
+			{
+				cout << "owexecwql (OpenWBEM) " << OW_VERSION << '\n';
+				cout << "Written by Dan Nuffer.\n";
+				return 0;
+			}
+	
+			url = parser.getOptionValue(URL_OPT, "http://localhost/root/cimv2");
+			ns = URL(url).namespaceName;
+			if (ns.empty())
+			{
+				cerr << "No namespace given as part of the url." << endl;
+				Usage();
+				return 1;
+			}
+			query = parser.mustGetOptionValue(WQL_STATEMENT_OPT, "-w, --wql_statement");
+		}
+
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		ClientCIMOMHandleRef rch = ClientCIMOMHandle::createFromURL(url, getLoginInfo);
 		CIMInstanceEnumeration cie = rch->execQueryE(ns, query, "wql2");
@@ -83,6 +132,11 @@ int main(int argc, char* argv[])
 			cout << cie.nextElement().toMOF() << '\n';
 		}
 		return 0;
+	}
+	catch (CmdLineParserException& e)
+	{
+		printCmdLineParserExceptionMessage(e);
+		Usage();
 	}
 	catch(const Exception& e)
 	{

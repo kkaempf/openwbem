@@ -67,7 +67,10 @@ $(CXXBINLINKFLAGS) \
 -o owdigestgenpass$(EXEEXT)
 
 ### owexecwql
-owexecwql_SOURCES = owexecwql.cpp
+owexecwql_SOURCES = \
+owexecwql.cpp \
+OW_ToolsCommon.cpp \
+OW_ToolsCommon.hpp
 
 owexecwql_LDADD = \
 -L$(top_builddir)/src/client -lowclient \
@@ -140,7 +143,10 @@ $(CXXBINLINKFLAGS) \
 -o owenumnamespace$(EXEEXT)
 
 ### owenumqualifiers
-owenumqualifiers_SOURCES = owenumqualifiers.cpp
+owenumqualifiers_SOURCES = \
+owenumqualifiers.cpp \
+OW_ToolsCommon.cpp \
+OW_ToolsCommon.hpp
 
 owenumqualifiers_LDADD = \
 -L$(top_builddir)/src/client -lowclient \
@@ -156,7 +162,10 @@ $(CXXBINLINKFLAGS) \
 -o owenumqualifiers$(EXEEXT)
 
 ### owenumclassnames
-owenumclassnames_SOURCES = owenumclassnames.cpp
+owenumclassnames_SOURCES = \
+owenumclassnames.cpp \
+OW_ToolsCommon.cpp \
+OW_ToolsCommon.hpp
 
 owenumclassnames_LDADD = \
 -L$(top_builddir)/src/client -lowclient \

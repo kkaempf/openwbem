@@ -35,33 +35,27 @@
 #include "OW_config.h"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_GetPass.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_ResultHandlerIFC.hpp"
+#include "OW_CmdLineParser.hpp"
+#include "OW_ToolsCommon.hpp"
+#include "OW_URL.hpp"
+
 #include <iostream>
 #include <algorithm>
 #include <iterator>
 
 using namespace OpenWBEM;
+using namespace OpenWBEM::Tools;
 
 using std::cout;
 using std::cin;
 using std::endl;
 using std::cerr;
-class GetLoginInfo : public ClientAuthCBIFC
+
+namespace
 {
-	public:
-		bool getCredentials(const String& realm, String& name,
-				String& passwd, const String& details)
-		{
-			cout << "Authentication required for " << realm << endl;
-			cout << "Enter the user name: ";
-			name = String::getLine(cin);
-			passwd = GetPass::getPass("Enter the password for " +
-					name + ": ");
-			return true;
-		}
-};
+
 class qualPrinter : public CIMQualifierTypeResultHandlerIFC
 {
 	public:
@@ -70,6 +64,31 @@ class qualPrinter : public CIMQualifierTypeResultHandlerIFC
 			cout << t.toMOF() << endl;
 		}
 };	
+
+enum
+{
+	HELP_OPT,
+	VERSION_OPT,
+	URL_OPT
+};
+
+CmdLineParser::Option g_options[] =
+{
+	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
+	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
+	{URL_OPT, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0,
+		"The url identifying the cimom and namespace. Default is http://localhost/root/cimv2 if not specified."},
+	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
+};
+
+void Usage()
+{
+	cerr << "Usage: owenumqualifiers [options]\n\n";
+	cerr << CmdLineParser::getUsage(g_options) << endl;
+}
+
+}
+
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
@@ -80,13 +99,52 @@ int main(int argc, char* argv[])
 	}
 	try
 	{
-		String url = argv[1];
-		String ns = argv[2];
+		String url;
+		String ns;
+		// handle backwards compatible options, which was <URL> <namespace>
+		// TODO: This is deprecated in 3.1.0, remove it post 3.1
+		if (argc == 3 && argv[1][0] != '-' && argv[2][0] != '-')
+		{
+			url = argv[1];
+			ns = argv[2];
+			cerr << "This cmd line usage is deprecated!\n";
+		}
+		else
+		{
+			CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
+	
+			if (parser.isSet(HELP_OPT))
+			{
+				Usage();
+				return 0;
+			}
+			else if (parser.isSet(VERSION_OPT))
+			{
+				cout << "owenumqualifiers (OpenWBEM) " << OW_VERSION << '\n';
+				cout << "Written by Dan Nuffer.\n";
+				return 0;
+			}
+	
+			url = parser.getOptionValue(URL_OPT, "http://localhost/root/cimv2");
+			ns = URL(url).namespaceName;
+			if (ns.empty())
+			{
+				cerr << "No namespace given as part of the url." << endl;
+				Usage();
+				return 1;
+			}
+		}
+
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		ClientCIMOMHandleRef rch = ClientCIMOMHandle::createFromURL(url, getLoginInfo);
 		qualPrinter handler;
 		rch->enumQualifierTypes(ns, handler);
 		return 0;
+	}
+	catch (CmdLineParserException& e)
+	{
+		printCmdLineParserExceptionMessage(e);
+		Usage();
 	}
 	catch(const Exception& e)
 	{
