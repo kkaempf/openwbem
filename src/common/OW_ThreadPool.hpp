@@ -109,7 +109,8 @@ public:
 	 *  their work (and possibly the work in the queue) before attempting to
 	 *  cancel the threads.  If timeoutSecs < 0, the timeout will be unlimited,
 	 *  the threads will not be cancelled, and shutdown() will return once
-	 *  all the threads have exited.
+	 *  all the threads have exited (which may never happen if one or more
+	 *  of the threads are deadlocked).
 	 */
 	void shutdown(EShutdownQueueFlag finishWorkInQueue = E_FINISH_WORK_IN_QUEUE, int timeoutSecs=-1);
 	/**
