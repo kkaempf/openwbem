@@ -52,7 +52,6 @@ using std::flush;
 // static
 void OW_StackTrace::getStackTrace()
 {
-	OW_StackTrace* retval = 0;
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 	if (getenv("OW_STACKTRACE"))
 	{
