@@ -62,6 +62,8 @@ OW_WQLSelectStatement
 Terminal expression 0: PROPERTY_NAME: name = STRING_VALUE: test1
 Tableau 0
 PROPERTY_NAME: name = STRING_VALUE: test1
+stmt.evaluateWhereClause(&source): passed
+comp.evaluate(&source): passed
 
 Executing query 8 local: select * from wqlTestClass where "test1" = name
 OW_WQLSelectStatement
@@ -77,6 +79,8 @@ OW_WQLSelectStatement
 Terminal expression 0: STRING_VALUE: test1 = PROPERTY_NAME: name
 Tableau 0
 PROPERTY_NAME: name = STRING_VALUE: test1
+stmt.evaluateWhereClause(&source): passed
+comp.evaluate(&source): passed
 
 Executing query 9 local: select * from wqlTestClass where sint32Data = 0
 OW_WQLSelectStatement
@@ -92,6 +96,8 @@ OW_WQLSelectStatement
 Terminal expression 0: PROPERTY_NAME: sint32Data = INTEGER_VALUE: 0
 Tableau 0
 PROPERTY_NAME: sint32Data = INTEGER_VALUE: 0
+stmt.evaluateWhereClause(&source): passed
+comp.evaluate(&source): passed
 
 Executing query 10 local: select * from wqlTestClass where 0 = sint32Data
 OW_WQLSelectStatement
@@ -107,6 +113,8 @@ OW_WQLSelectStatement
 Terminal expression 0: INTEGER_VALUE: 0 = PROPERTY_NAME: sint32Data
 Tableau 0
 PROPERTY_NAME: sint32Data = INTEGER_VALUE: 0
+stmt.evaluateWhereClause(&source): passed
+comp.evaluate(&source): passed
 
 Executing query 11 local: select * from wqlTestClass where sint32Data = b'1010'
 OW_WQLSelectStatement
@@ -122,6 +130,8 @@ OW_WQLSelectStatement
 Terminal expression 0: PROPERTY_NAME: sint32Data = INTEGER_VALUE: 10
 Tableau 0
 PROPERTY_NAME: sint32Data = INTEGER_VALUE: 10
+stmt.evaluateWhereClause(&source): passed
+comp.evaluate(&source): passed
 
 Executing query 12 local: select * from wqlTestClass where sint32Data = x'A'
 OW_WQLSelectStatement
@@ -137,6 +147,8 @@ OW_WQLSelectStatement
 Terminal expression 0: PROPERTY_NAME: sint32Data = INTEGER_VALUE: 10
 Tableau 0
 PROPERTY_NAME: sint32Data = INTEGER_VALUE: 10
+stmt.evaluateWhereClause(&source): passed
+comp.evaluate(&source): passed
 
 Executing query 13 local: select * from wqlTestClass where booleanData = TRUE
 OW_WQLSelectStatement
