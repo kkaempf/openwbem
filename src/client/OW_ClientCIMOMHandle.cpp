@@ -35,6 +35,11 @@
 #include "OW_config.h"										
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
+#include "OW_URL.hpp"
+#include "OW_CIMProtocolIFC.hpp"
+#include "OW_HTTPClient.hpp"
+#include "OW_BinaryCIMOMHandle.hpp"
+#include "OW_CIMXMLCIMOMHandle.hpp"
 
 namespace OpenWBEM
 {
@@ -60,6 +65,25 @@ ClientCIMOMHandle::enumNameSpace(const String& ns_,
 	StringResultHandlerIFC &result, EDeepFlag deep)
 {
 	CIMNameSpaceUtils::enum__Namespace(*this, ns_, result, deep);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// static
+ClientCIMOMHandleRef
+ClientCIMOMHandle::createFromURL(const String& url)
+{
+	URL owurl(url);
+	CIMProtocolIFCRef client(new HTTPClient(url));
+
+	if (owurl.scheme.startsWith(URL::OWBINARY) 
+		|| owurl.namespaceName.equals(URL::OWBINARY)) // the /owbinary is deprecated and may be removed!
+	{
+		return ClientCIMOMHandleRef(new BinaryCIMOMHandle(client));
+	}
+	else
+	{
+		return ClientCIMOMHandleRef(new CIMXMLCIMOMHandle(client));
+	}
 }
 
 } // end namespace OpenWBEM

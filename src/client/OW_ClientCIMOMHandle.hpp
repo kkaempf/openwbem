@@ -36,11 +36,18 @@
 #define OW_CLIENTCIMOMHANDLE_HPP_
 #include "OW_config.h"										
 #include "OW_CIMOMHandleIFC.hpp"
+#include "OW_Reference.hpp"
 
 namespace OpenWBEM
 {
 
-// This class is mean to hold common functionality in the client-side CIMOM
+class CIMProtocolIFC;
+typedef Reference<CIMProtocolIFC> CIMProtocolIFCRef;
+
+class ClientCIMOMHandle;
+typedef Reference<ClientCIMOMHandle> ClientCIMOMHandleRef;
+
+// This class is meant to hold common functionality in the client-side CIMOM
 // handles	
 class ClientCIMOMHandle : public CIMOMHandleIFC
 {
@@ -54,6 +61,32 @@ public:
 	/** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
 	virtual void enumNameSpace(const String& ns,
 		StringResultHandlerIFC &result, WBEMFlags::EDeepFlag deep) OW_DEPRECATED;
+
+	/**
+	 * Get a Reference to the WBEM protocol handler (HTTPClient)
+	 */
+	virtual CIMProtocolIFCRef getWBEMProtocolHandler() const = 0;
+
+	/**
+	 * Factory function.  Parses url and creates either a CIMXMLCIMOMHandle or
+	 * a BinaryCIMOMHandle along with a HTTPClient.
+	 * 
+	 * @param url If the url begins with "owbinary" 
+	 * (e.g. owbinary.wbem://test1:pass1@localhost:30926/), then the openwbem
+	 * binary protocol will be used.  Otherwise CIM/XML is the default.
+	 * If the url's port is an integer, TCP will be used.  If the url's port is
+	 * owipc, then a local ipc connection will be attempted to the predefined
+	 * (OW_DOMAIN_SOCKET_NAME) domain socket.  If the port is anything else,
+	 * it will be used as the identifier for the ipc mechanism.  On Unix this
+	 * is the filename of the domain socket.  Note that to represent a filename
+	 * in the port, the url escape mechanism must be used, since a / (among 
+	 * other chars) isn't allowed in the port.
+	 * 
+	 * @return a ClientCIMOMHandleRef suitable for connecting to the given url.
+	 * @throws MalformedURLException If the url is bad
+	 * @throws std::bad_alloc
+	 */
+	static ClientCIMOMHandleRef createFromURL(const String& url);
 };
 
 } // end namespace OpenWBEM
