@@ -43,7 +43,7 @@ public:
 	/**
 	 * Create a new OW_InstanceRepository object.
 	 */
-	OW_InstanceRepository(OW_CIMOMEnvironmentRef env)
+	OW_InstanceRepository(OW_ServiceEnvironmentIFCRef env)
 		: OW_GenericHDBRepository(env) {}
 
 	void getCIMInstances(

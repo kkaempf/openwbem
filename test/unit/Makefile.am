@@ -40,19 +40,10 @@ $(top_builddir)/src/cimom/OW_PollingManager.o \
 $(top_builddir)/src/cimom/OW_ProviderIFCLoader.o \
 $(top_builddir)/src/cimom/OW_CIMServer.o \
 $(top_builddir)/src/cimom/OW_UnloaderProvider.o \
-$(top_builddir)/src/cimom/OW_MetaRepository.o \
-$(top_builddir)/src/cimom/OW_AssocDb.o \
-$(top_builddir)/src/cimom/OW_IndexImpl.o \
-$(top_builddir)/src/cimom/OW_InstanceRepository.o \
 $(top_builddir)/src/cimom/OW_ProxyProvider.o \
-$(top_builddir)/src/cimom/OW_GenericHDBRepository.o \
-$(top_builddir)/src/cimom/OW_RepositoryStreams.o \
-$(top_builddir)/src/cimom/OW_HDB.o \
 $(top_builddir)/src/cimom/OW_NameSpaceProvider.o \
 $(top_builddir)/src/cimom/OW_WQLFilterRep.o \
-$(top_builddir)/src/cimom/OW_HDBNode.o \
 $(top_builddir)/src/cimom/OW_InternalProviderIFC.o \
-$(top_builddir)/src/cimom/OW_CIMRepository.o \
 $(top_builddir)/test/CppUnit/libCppUnit.a \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/server -lowserver \
@@ -63,7 +54,8 @@ $(top_builddir)/test/CppUnit/libCppUnit.a \
 -L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
--L$(top_builddir)/db/db -lowdb -ldl
+-L$(top_builddir)/db/db -lowdb -ldl \
+-L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb
 
 unitMain_LDFLAGS = \
 $(CXXBINLINKFLAGS) \

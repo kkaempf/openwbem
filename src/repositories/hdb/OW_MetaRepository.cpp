@@ -1109,8 +1109,7 @@ OW_MetaRepository::createNameSpace(OW_String ns)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-OW_MetaRepository::OW_MetaRepository(OW_CIMOMEnvironmentRef env)
+OW_MetaRepository::OW_MetaRepository(OW_ServiceEnvironmentIFCRef env)
 	: OW_GenericHDBRepository(env)
 {
 	OW_String maxCacheSizeOpt = env->getConfigItem(OW_ConfigOpts::MAX_CLASS_CACHE_SIZE_opt);

@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_RepositoryIFC.hpp"
-#include "OW_CIMOMEnvironment.hpp"
+#include "OW_ServiceEnvironmentIFC.hpp"
 
 #include "OW_MetaRepository.hpp"
 #include "OW_InstanceRepository.hpp"
@@ -53,7 +53,7 @@ public:
 	/**
 	 * Create a new OW_CIMRepository object.
 	 */
-	OW_CIMRepository(OW_CIMOMEnvironmentRef env);
+	OW_CIMRepository(OW_ServiceEnvironmentIFCRef env);
 
 	/**
 	 * Destroy this OW_CIMRepository object.
@@ -658,7 +658,7 @@ private:
 	OW_MetaRepository m_mStore;
 	OW_AssocDb m_classAssocDb;
 	OW_AssocDb m_instAssocDb;
-	OW_CIMOMEnvironmentRef m_env;
+	OW_ServiceEnvironmentIFCRef m_env;
 
     bool m_checkReferentialIntegrity;
 

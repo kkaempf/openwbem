@@ -45,7 +45,7 @@ public:
 	/**
 	 * Create a new OW_MetaRepository object.
 	 */
-	OW_MetaRepository(OW_CIMOMEnvironmentRef env);
+	OW_MetaRepository(OW_ServiceEnvironmentIFCRef env);
 
 	~OW_MetaRepository();
 

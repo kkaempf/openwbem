@@ -39,7 +39,7 @@
 #include "OW_File.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_CIMOMEnvironment.hpp"
+#include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_SortedVectorSet.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ResultHandlerIFC.hpp"
@@ -297,7 +297,7 @@ public:
 	/**
 	 * Create a new OW_AssocDb object.
 	 */
-	OW_AssocDb(OW_CIMOMEnvironmentRef env);
+	OW_AssocDb(OW_ServiceEnvironmentIFCRef env);
 
 	/**
 	 * Destroy this OW_AssocDb object.
@@ -387,7 +387,7 @@ private:
 	int m_hdlCount;
 	OW_Bool m_opened;
 	OW_Mutex m_guard;
-	OW_CIMOMEnvironmentRef m_env;
+	OW_ServiceEnvironmentIFCRef m_env;
 
 	friend class OW_AssocDbHandle;
 	friend struct OW_AssocDbHandle::AssocDbHandleData;

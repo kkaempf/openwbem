@@ -427,7 +427,7 @@ OW_AssocDbHandle::getAllEntries(const OW_CIMObjectPath& objectName,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_AssocDb::OW_AssocDb(OW_CIMOMEnvironmentRef env)
+OW_AssocDb::OW_AssocDb(OW_ServiceEnvironmentIFCRef env)
 	: m_hdrBlock()
 	, m_pIndex(NULL)
 	, m_fileName()
@@ -445,7 +445,7 @@ OW_AssocDb::~OW_AssocDb()
 	{
 		if(m_hdlCount > 0)
 		{
-			m_env->logDebug("*** OW_AssocDb::~OW_AssocDb - STILL OUTSTANDING"
+			m_env->getLogger()->logDebug("*** OW_AssocDb::~OW_AssocDb - STILL OUTSTANDING"
 				" HANDLES ***");
 		}
 		close();
@@ -735,7 +735,7 @@ OW_AssocDb::addEntry(const OW_AssocDbEntry& nentry, OW_AssocDbHandle& hdl)
 	
 	if(!m_pIndex->add(nentry.makeKey().c_str(), offset))
 	{
-		m_env->logError(format("OW_AssocDb::addEntry failed to add entry to"
+		m_env->getLogger()->logError(format("OW_AssocDb::addEntry failed to add entry to"
 			" association index: ", nentry.makeKey()));
 	}
 }

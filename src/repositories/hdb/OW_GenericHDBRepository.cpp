@@ -40,7 +40,7 @@ static const int HDL_NOTINUSE = -1;
 static const int HDL_NOTCACHED = -2;
 
 //////////////////////////////////////////////////////////////////////////////
-OW_GenericHDBRepository::OW_GenericHDBRepository(OW_CIMOMEnvironmentRef env)
+OW_GenericHDBRepository::OW_GenericHDBRepository(OW_ServiceEnvironmentIFCRef env)
 	: m_hdb()
 	, m_opened(false)
 	, m_guard()

@@ -37,7 +37,7 @@
 #include "OW_Array.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_CIMBase.hpp"
-#include "OW_CIMOMEnvironment.hpp"
+#include "OW_ServiceEnvironmentIFC.hpp"
 
 class OW_HDBHandleLock;
 
@@ -51,7 +51,7 @@ public:
 	 *					located.
 	 * @exception OW_HDBException
 	 */
-	OW_GenericHDBRepository(OW_CIMOMEnvironmentRef env);
+	OW_GenericHDBRepository(OW_ServiceEnvironmentIFCRef env);
 
 	/**
 	 * Destroy this OW_GenericHDBRepository object
@@ -142,9 +142,9 @@ public:
 	 */
 	OW_HDBNode getNameSpaceNode(OW_HDBHandleLock& hdl, OW_String key);
 
-	void logError(const OW_String& s) { m_env->logError(s); }
-	void logCustInfo(const OW_String& s) { m_env->logCustInfo(s); }
-	void logDebug(const OW_String& s) { m_env->logDebug(s); }
+	void logError(const OW_String& s) { m_env->getLogger()->logError(s); }
+	void logCustInfo(const OW_String& s) { m_env->getLogger()->logCustInfo(s); }
+	void logDebug(const OW_String& s) { m_env->getLogger()->logDebug(s); }
 
 protected:
 
@@ -162,7 +162,7 @@ protected:
 	OW_Bool m_opened;
 	OW_Mutex m_guard;
 	OW_Array<OW_HDBHandle> m_handles;
-	OW_CIMOMEnvironmentRef m_env;
+	OW_ServiceEnvironmentIFCRef m_env;
 
 	enum { MAXHANDLES = 10 };
 

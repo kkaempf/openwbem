@@ -20,6 +20,7 @@ services \
 requesthandlers \
 providerifcs \
 providers \
+repositories \
 cimom \
  \
 mof \

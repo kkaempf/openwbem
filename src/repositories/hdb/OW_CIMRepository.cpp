@@ -29,12 +29,11 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-// TODO: Filter these down.
 #include "OW_CIMRepository.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_RepositoryStreams.hpp"
 #include "OW_CIMValueCast.hpp"
-#include "OW_LocalCIMOMHandle.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Format.hpp"
 #include "OW_WQLIFC.hpp"
@@ -43,9 +42,10 @@
 #include "OW_IOException.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_ConfigOpts.hpp"
+#include "OW_Map.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMRepository::OW_CIMRepository(OW_CIMOMEnvironmentRef env)
+OW_CIMRepository::OW_CIMRepository(OW_ServiceEnvironmentIFCRef env)
 	: OW_RepositoryIFC()
 	, m_nStore(env)
 	, m_iStore(env)
@@ -146,7 +146,7 @@ OW_CIMRepository::createNameSpace(const OW_String& ns,
 
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
-		m_env->logDebug(format("OW_CIMRepository created namespace: %1", ns));
+		m_env->getLogger()->logDebug(format("OW_CIMRepository created namespace: %1", ns));
 	}
 }
 
@@ -167,7 +167,7 @@ OW_CIMRepository::deleteNameSpace(const OW_String& ns,
 	
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
-		m_env->logDebug(format("OW_CIMRepository deleted namespace: %1", ns));
+		m_env->getLogger()->logDebug(format("OW_CIMRepository deleted namespace: %1", ns));
 	}
 }
 
@@ -179,7 +179,7 @@ OW_CIMRepository::getQualifierType(const OW_String& ns,
 {
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
-		m_env->logDebug(format("OW_CIMRepository getting qualifier type: %1",
+		m_env->getLogger()->logDebug(format("OW_CIMRepository getting qualifier type: %1",
 			OW_CIMObjectPath(qualifierName,ns).toString()));
 	}
 
@@ -197,7 +197,7 @@ OW_CIMRepository::enumQualifierTypes(
 
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
-		m_env->logDebug(format("OW_CIMRepository enumerated qualifiers in namespace: %1", ns));
+		m_env->getLogger()->logDebug(format("OW_CIMRepository enumerated qualifiers in namespace: %1", ns));
 	}
 }
 
@@ -226,7 +226,7 @@ OW_CIMRepository::enumNameSpace(OW_StringResultHandlerIFC& result,
 
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
-		m_env->logDebug("OW_CIMRepository enumerated namespaces");
+		m_env->getLogger()->logDebug("OW_CIMRepository enumerated namespaces");
 	}
 }
 
@@ -252,7 +252,7 @@ OW_CIMRepository::deleteQualifierType(const OW_String& ns, const OW_String& qual
 	
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
-		m_env->logDebug(format("OW_CIMRepository deleted qualifier type: %1 in namespace: %2", qualName, ns));
+		m_env->getLogger()->logDebug(format("OW_CIMRepository deleted qualifier type: %1 in namespace: %2", qualName, ns));
 	}
 }
 
@@ -265,7 +265,7 @@ OW_CIMRepository::setQualifierType(
 	m_mStore.setQualifierType(ns, qt);
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
-		m_env->logDebug(format("OW_CIMRepository set qualifier type: %1 in "
+		m_env->getLogger()->logDebug(format("OW_CIMRepository set qualifier type: %1 in "
 			"namespace: %2", qt.toString(), ns));
 	}
 }
@@ -288,7 +288,7 @@ OW_CIMRepository::getClass(
 
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("OW_CIMRepository got class: %1 from "
+			m_env->getLogger()->logDebug(format("OW_CIMRepository got class: %1 from "
 				"namespace: %2", theClass.getName(), ns));
 		}
 
@@ -402,7 +402,7 @@ OW_CIMRepository::deleteClass(const OW_String& ns, const OW_String& className,
 
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("OW_CIMRepository deleted class: %1 in "
+			m_env->getLogger()->logDebug(format("OW_CIMRepository deleted class: %1 in "
 				"namespace: %2", className, ns));
 		}
 
@@ -443,7 +443,7 @@ OW_CIMRepository::createClass(const OW_String& ns, const OW_CIMClass& cimClass_,
 
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("Created class: %1:%2", ns, cimClass.toMOF()));
+			m_env->getLogger()->logDebug(format("Created class: %1:%2", ns, cimClass.toMOF()));
 		}
 	}
 	catch (OW_HDBException&)
@@ -480,7 +480,7 @@ OW_CIMRepository::modifyClass(
 		OW_ASSERT(origClass);
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("Modified class: %1:%2 from %3 to %4", ns,
+			m_env->getLogger()->logDebug(format("Modified class: %1:%2 from %3 to %4", ns,
 				cc.getName(), origClass.toMOF(), cc.toMOF()));
 		}
 		return origClass;
@@ -510,7 +510,7 @@ OW_CIMRepository::enumClasses(const OW_String& ns,
 			localOnly, includeQualifiers, includeClassOrigin);
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("OW_CIMRepository enumerated classes: %1:%2", ns,
+			m_env->getLogger()->logDebug(format("OW_CIMRepository enumerated classes: %1:%2", ns,
 				className));
 		}
 	}
@@ -565,7 +565,7 @@ OW_CIMRepository::enumClassNames(
 			deep, false, true, true);
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("OW_CIMRepository enumerated class names: %1:%2", ns,
+			m_env->getLogger()->logDebug(format("OW_CIMRepository enumerated class names: %1:%2", ns,
 				className));
 		}
 	}
@@ -596,7 +596,7 @@ OW_CIMRepository::enumInstanceNames(
 
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("OW_CIMRepository enumerated instance names: %1:%2", ns,
+			m_env->getLogger()->logDebug(format("OW_CIMRepository enumerated instance names: %1:%2", ns,
 				className));
 		}
 		if(!deep)
@@ -618,7 +618,7 @@ OW_CIMRepository::enumInstanceNames(
 			m_iStore.getInstanceNames(ns, theClass, result);
 			if (m_env->getLogger()->getLogLevel() == DebugLevel)
 			{
-				m_env->logDebug(format("OW_CIMRepository enumerated derived instance names: %1:%2", ns,
+				m_env->getLogger()->logDebug(format("OW_CIMRepository enumerated derived instance names: %1:%2", ns,
 					classNames[i]));
 			}
 		}
@@ -652,7 +652,7 @@ OW_CIMRepository::enumInstances(
 		
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("OW_CIMRepository Enumerated instances: %1:%2", ns,
+			m_env->getLogger()->logDebug(format("OW_CIMRepository Enumerated instances: %1:%2", ns,
 				className));
 		}
 
@@ -670,7 +670,7 @@ OW_CIMRepository::enumInstances(
 					deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 				if (m_env->getLogger()->getLogLevel() == DebugLevel)
 				{
-					m_env->logDebug(format("OW_CIMRepository Enumerated derived instances: %1:%2", ns,
+					m_env->getLogger()->logDebug(format("OW_CIMRepository Enumerated derived instances: %1:%2", ns,
 						classNames[i]));
 				}
 			}
@@ -748,7 +748,7 @@ OW_CIMRepository::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& co
 
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
-		m_env->logDebug(format("OW_CIMRepository::deleteInstance.  cop = %1",
+		m_env->getLogger()->logDebug(format("OW_CIMRepository::deleteInstance.  cop = %1",
 			cop.toString()));
 	}
 
@@ -809,7 +809,7 @@ OW_CIMRepository::createInstance(
 	{
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("OW_CIMRepository::createInstance.  ns = %1, "
+			m_env->getLogger()->logDebug(format("OW_CIMRepository::createInstance.  ns = %1, "
 				"instance = %2", ns, ci.toMOF()));
 		}
 
