@@ -741,25 +741,6 @@ OW_CIMRepository::getInstance(
 	OW_CIMInstance ci;
 
 	cc = _instGetClass(ns, instanceName.getObjectName());
-	/*
-	try
-	{
-		// this doesn't use m_mStore because of __Namespace
-		cc = getClass(ns, instanceName.getObjectName(),
-			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
-			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
-			OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
-			0, aclInfo);
-	}
-	catch (OW_CIMException& ce)
-	{
-		if (ce.getErrNo() == OW_CIMException::NOT_FOUND)
-		{
-			ce.setErrNo(OW_CIMException::INVALID_CLASS);
-		}
-		throw ce;
-	}
-	*/
 
 	try
 	{

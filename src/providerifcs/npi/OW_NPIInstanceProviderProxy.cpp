@@ -54,7 +54,7 @@ OW_NPIInstanceProviderProxy::enumInstanceNames(
 
         if (m_ftable->fp_enumInstanceNames!= NULL)
         {
-            ::NPIHandle _npiHandle = { 0,0,0,0};
+            ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 			OW_NPIHandleFreer nhf(_npiHandle);
 
             _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
@@ -114,7 +114,7 @@ OW_NPIInstanceProviderProxy::enumInstances(
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support enumInstances");
 		  }
 	
-			::NPIHandle _npiHandle = { 0,0,0,0};
+            		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 			OW_NPIHandleFreer nhf(_npiHandle);
 
 			_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
@@ -164,7 +164,7 @@ OW_NPIInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &
 
         if (m_ftable->fp_deleteInstance!= NULL)
         {
-            ::NPIHandle _npiHandle = { 0,0,0,0};
+            ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 			OW_NPIHandleFreer nhf(_npiHandle);
 
             _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
@@ -204,7 +204,7 @@ OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env
 
         if (m_ftable->fp_getInstance != NULL)
         {
-            ::NPIHandle _npiHandle = { 0,0,0,0};
+            ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 			OW_NPIHandleFreer nhf(_npiHandle);
 
             _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
@@ -258,7 +258,7 @@ OW_NPIInstanceProviderProxy::createInstance(
 
         if (m_ftable->fp_createInstance != NULL)
         {
-            ::NPIHandle _npiHandle = { 0,0,0,0};
+            ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 			OW_NPIHandleFreer nhf(_npiHandle);
 
             _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
@@ -302,7 +302,7 @@ OW_NPIInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef &
 
 	if (m_ftable->fp_setInstance != NULL)
 	{
-		::NPIHandle _npiHandle = { 0,0,0,0};
+            	::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);

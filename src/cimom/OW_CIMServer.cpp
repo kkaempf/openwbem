@@ -620,12 +620,15 @@ OW_CIMServer::enumInstanceNames(
 	InstNameEnumerator ie(ns, result, aclInfo, m_env, this);
 
 	OW_ACLInfo intAclInfo;
+
+	OW_CIMClass theClass = _instGetClass(ns, className,false,true,true,0,intAclInfo);
+	ie.handle(theClass);
+
 	// If this is the namespace class then just return now
 	if(className.equalsIgnoreCase(OW_CIMClass::NAMESPACECLASS)
 		|| !deep)
 	{
-		OW_CIMClass theClass = _instGetClass(ns, className,false,true,true,0,intAclInfo);
-		ie.handle(theClass);
+		return;
 	}
 	else
 	{
@@ -734,7 +737,7 @@ namespace
 					cc.getName()));
 			}
 			server->_getCIMInstances(ns, cc.getName(), theTopClass, cc, 
-				result, deep, localOnly, includeQualifiers, 
+				result, localOnly, deep, includeQualifiers, 
 				includeClassOrigin, propertyList, aclInfo);
 		}
 	private:
@@ -786,6 +789,7 @@ OW_CIMServer::enumInstances(
 
 namespace
 {
+	/* not going to use this -- the providers are now responsible for their own behavior
 	class HandleProviderInstance : public OW_CIMInstanceResultHandlerIFC
 	{
 	public:
@@ -809,6 +813,7 @@ namespace
 		const OW_StringArray* propList;
 		OW_CIMInstanceResultHandlerIFC& result;
 	};
+	*/
 
 	class HandleLocalOnlyAndDeep : public OW_CIMInstanceResultHandlerIFC
 	{
@@ -888,8 +893,8 @@ OW_CIMServer::_getCIMInstances(
 	const OW_String& ns,
 	const OW_String& className,
 	const OW_CIMClass& theTopClass,
-	const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
-	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result, 
+	OW_Bool localOnly, OW_Bool deep, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
 
@@ -903,10 +908,14 @@ OW_CIMServer::_getCIMInstances(
 		}
 
 		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true), aclInfo, true);
-		HandleLocalOnlyAndDeep handler1(result,theClass,localOnly,deep);
-		HandleProviderInstance handler2(includeQualifiers, includeClassOrigin, propertyList, handler1);
+
+		// not going to use these, the provider ifc/providers are now responsible for it.
+		//HandleLocalOnlyAndDeep handler1(result,theTopClass,localOnly,deep);
+		//HandleProviderInstance handler2(includeQualifiers, includeClassOrigin, propertyList, handler1);
 		instancep->enumInstances(
-			createProvEnvRef(real_ch), ns, className, handler2, theClass);
+			createProvEnvRef(real_ch), ns, className, result, localOnly, 
+			deep, includeQualifiers, includeClassOrigin, propertyList, 
+			theTopClass, theClass);
 	}
 	else
 	{

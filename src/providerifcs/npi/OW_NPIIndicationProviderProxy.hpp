@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+* Copyright (C) 2002 Caldera International, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -28,30 +28,56 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_FTABLE_REF_HPP_
-#define OW_FTABLE_REF_HPP_
+#ifndef OW_NPI_INDICATION_PROVIDER_PROXY_HPP_
+#define OW_NPI_INDICATION_PROVIDER_PROXY_HPP_
 
 #include "OW_config.h"
+#include "OW_IndicationProviderIFC.hpp"
+#include "OW_FTABLERef.hpp"
 
-#include "OW_SharedLibraryReference.hpp"
-#include "npi.h"
+class OW_NPIIndicationProviderProxy : public OW_IndicationProviderIFC
+{
+public:
+	OW_NPIIndicationProviderProxy(const OW_FTABLERef& f)
+	: m_ftable(f)
+	{
+	}
 
-typedef OW_SharedLibraryReference< ::FTABLE> OW_FTABLERef;
+	virtual ~OW_NPIIndicationProviderProxy()
+	{
+	}
 
-#define OW_NOIDPROVIDERFACTORY(prov) OW_PROVIDERFACTORY(prov, NO_ID)
+	virtual void deActivateFilter(
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_WQLSelectStatement &filter, 
+		const OW_String &eventType, 
+		const OW_CIMObjectPath &classPath, 
+		bool lastActivation); 
 
-#define OW_PROVIDERFACTORY(prov, name) \
-extern "C" const char* \
-getOWVersion() \
-{ \
-        return OW_VERSION; \
-} \
-extern "C" OW_FTABLERef* \
-createProvider##name() \
-{ \
-        return new prov; \
-}
+	virtual void activateFilter(
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_WQLSelectStatement &filter, 
+		const OW_String &eventType, 
+		const OW_CIMObjectPath &classPath, 
+		bool firstActivation);
 
+	virtual void authorizeFilter(
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_WQLSelectStatement &filter, 
+		const OW_String &eventType, 
+		const OW_CIMObjectPath &classPath, 
+		const OW_String &owner);
+
+	virtual int mustPoll(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_WQLSelectStatement& filter, 
+		const OW_String& eventType, 
+		const OW_CIMObjectPath& classPath
+		);
+
+private:
+	OW_FTABLERef m_ftable;
+};
 
 #endif
 

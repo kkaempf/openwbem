@@ -52,7 +52,7 @@ OW_NPIAssociatorProviderProxy::associatorNames(
 
     if (m_ftable->fp_associatorNames != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0 };
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 		OW_NPIHandleFreer nhf(_npiHandle);
 
         _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
@@ -116,7 +116,7 @@ OW_NPIAssociatorProviderProxy::associators(
 
     if (m_ftable->fp_associators != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0 };
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 		OW_NPIHandleFreer nhf(_npiHandle);
 
         _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
@@ -202,7 +202,7 @@ OW_NPIAssociatorProviderProxy::references(
 
     if (m_ftable->fp_references != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0 };
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 		OW_NPIHandleFreer nhf(_npiHandle);
 
         _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
@@ -284,7 +284,7 @@ OW_NPIAssociatorProviderProxy::referenceNames(
 
     if (m_ftable->fp_referenceNames != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0 };
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 		OW_NPIHandleFreer nhf(_npiHandle);
 
         _npiHandle.thisObject = (void *) static_cast<const void *>(&env);

@@ -609,7 +609,7 @@ public:
 		const OW_String& className,
 		const OW_CIMClass& theTopClass,
 		const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result,
-		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
+		OW_Bool localOnly, OW_Bool deep, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo);
 

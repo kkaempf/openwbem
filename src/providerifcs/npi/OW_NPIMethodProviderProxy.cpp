@@ -55,7 +55,7 @@ OW_NPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
 
         if (m_ftable->fp_invokeMethod != NULL)
         {
-            ::NPIHandle _npiHandle = { 0,0,0,0};
+            ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 			OW_NPIHandleFreer nhf(_npiHandle);
 
             _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
