@@ -27,6 +27,8 @@ Fix problems:
     - use DIST_SUBDIRS
     - Add an option to run as a different user and drop privelidges on startup.
     - Fix problems with OW_DateTime and OW_CIMDateTime
+    - Fix OW_CIMServer so that assoc calls work with just an instance provider
+      for an association class.
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and

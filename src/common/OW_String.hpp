@@ -217,6 +217,8 @@ public:
 	size_t length() const;
 
 	/**
+	 * If the string is not valid UTF-8, then the result of this function
+	 * is undefined.
 	 * @return The number of UTF-8 chars in this OW_String.
 	 */
 	size_t UTF8Length() const;

@@ -35,6 +35,7 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "OW_UTF8UtilsTestCases.hpp"
 #include "OW_RandomNumberTestCases.hpp"
 #include "OW_UUIDTestCases.hpp"
 #include "OW_ThreadPoolTestCases.hpp"
@@ -83,6 +84,7 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "OW_UTF8Utils", OW_UTF8UtilsTestCases::suite());
 	runner.addTest( "OW_RandomNumber", OW_RandomNumberTestCases::suite());
 	runner.addTest( "OW_UUID", OW_UUIDTestCases::suite());
 	runner.addTest( "OW_ThreadPool", OW_ThreadPoolTestCases::suite());

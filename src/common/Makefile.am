@@ -79,7 +79,8 @@ OW_UserInfo.cpp \
 OW_UUID.cpp \
 OW_dlSharedLibrary.cpp \
 OW_dlSharedLibraryLoader.cpp \
-OW_UnnamedPipe.cpp
+OW_UnnamedPipe.cpp \
+OW_UTF8Utils.cpp
 
 pkginclude_HEADERS =	\
 OW_Array.hpp \
@@ -174,7 +175,8 @@ OW_NoSuchPropertyException.hpp \
 OW_NoSuchProviderException.hpp \
 OW_NoSuchQualifierException.hpp \
 OW_NULLValueException.hpp \
-OW_config.h
+OW_config.h \
+OW_UTF8Utils.cpp
 
 libopenwbem_a_LIBADD = \
 ../cim/libOW_cim.a \

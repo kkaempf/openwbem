@@ -11,7 +11,7 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Center 7 nor the names of its
+*  - Neither the name of Center 7, Inc nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
@@ -28,74 +28,27 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include "OW_config.h"
-#include "OW_Char16.hpp"
-#include "OW_String.hpp"
-#include "OW_ByteSwap.hpp"
-#include "OW_BinarySerialization.hpp"
-#include "OW_UTF8Utils.hpp"
+#ifndef OW_OW_UTF8Utils_TEST_CASES_HPP_
+#define OW_OW_UTF8Utils_TEST_CASES_HPP_
 
-#include <cstdio>
-#include <cstring>
-#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
-#include <istream>
-#include <ostream>
-#else
-#include <iostream>
+#include "TestCase.hpp"
+
+class OW_UTF8UtilsTestCases : public TestCase
+{
+public:
+	OW_UTF8UtilsTestCases( const char* name )
+		: TestCase( name ) {}
+
+	void setUp();
+	void tearDown();
+	static Test *suite();
+
+private:
+	// test methods
+	void testCharCount();
+	void testUTF8toUCS2();
+	void testUCS2toUTF8();
+};
+
 #endif
-
-
-using std::istream;
-using std::ostream;
-
-//////////////////////////////////////////////////////////////////////////////
-OW_Char16::OW_Char16(const OW_String& x) :
-	m_value(0)
-{
-	m_value = OW_UTF8Utils::UTF8toUCS2(x.c_str());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_Char16::toUTF8() const
-{
-	return OW_UTF8Utils::UCS2toUTF8(m_value);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_Char16::writeObject(ostream& ostrm) const
-{
-	OW_UInt16 v = OW_hton16(m_value);
-	OW_BinarySerialization::write(ostrm, &v, sizeof(v));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_Char16::readObject(istream& istrm)
-{
-	OW_BinarySerialization::read(istrm, &m_value, sizeof(m_value));
-	m_value = OW_ntoh16(m_value);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-std::ostream&
-operator<< (std::ostream& ostrm, const OW_Char16& arg)
-{
-	OW_UInt16 val = arg.getValue();
-
-	if(val > 0 && val <= 127)
-	{
-		ostrm << char(val);
-	}
-	else
-	{
-		// Print in hex format:
-		char bfr[8];
-		sprintf(bfr, "\\x%04X", val);
-		ostrm << bfr;
-	}
-
-	return ostrm;
-}
 

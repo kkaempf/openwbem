@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2003 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,75 +27,46 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+#ifndef OW_UTF8_UTILS_HPP_INCLUDE_GUARD_
+#define OW_UTF8_UTILS_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Char16.hpp"
-#include "OW_String.hpp"
-#include "OW_ByteSwap.hpp"
-#include "OW_BinarySerialization.hpp"
-#include "OW_UTF8Utils.hpp"
+#include "OW_Types.h"
 
-#include <cstdio>
-#include <cstring>
-#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
-#include <istream>
-#include <ostream>
-#else
-#include <iostream>
+class OW_String;
+
+namespace OW_UTF8Utils
+{
+
+/**
+ * Count the number of UTF-8 chars in the string.  This may be different than
+ * the number of bytes (as would be returned by strlen()).
+ * If utf8str is not a valid UTF-8 string, then the result is undefined.
+ * @param utf8str string in UTF-8 encoding.
+ * @return Number of chars in the string.
+ */
+size_t charCount(const char* utf8str);
+
+/**
+ * Convert one UTF-8 char (possibly multiple bytes) into a UCS2 16-bit char
+ * @param utc8char pointer to the UTF-8 char to convert
+ * @return The corresponding UCS2 char.  Undefined if utf8char points to an
+ *  invalid UTF-8 sequence.  Not all UTF-8 chars are handled. UTF-8 chars 
+ *  outside the range of a UCS2 char will produce undefined results.
+ */
+OW_UInt16 UTF8toUCS2(const char* utf8char);
+
+/**
+ * Convert one UCS2 16-bit char into a UTF-8 char (possibly multiple bytes)
+ * @param ucs2char UCS2 char to convert.
+ * @return The corresponding UTF-8 char.
+ */
+OW_String UCS2toUTF8(OW_UInt16 ucs2char);
+
+} // end namespace OW_UTF8Utils
+
+
+
 #endif
 
-
-using std::istream;
-using std::ostream;
-
-//////////////////////////////////////////////////////////////////////////////
-OW_Char16::OW_Char16(const OW_String& x) :
-	m_value(0)
-{
-	m_value = OW_UTF8Utils::UTF8toUCS2(x.c_str());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_Char16::toUTF8() const
-{
-	return OW_UTF8Utils::UCS2toUTF8(m_value);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_Char16::writeObject(ostream& ostrm) const
-{
-	OW_UInt16 v = OW_hton16(m_value);
-	OW_BinarySerialization::write(ostrm, &v, sizeof(v));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_Char16::readObject(istream& istrm)
-{
-	OW_BinarySerialization::read(istrm, &m_value, sizeof(m_value));
-	m_value = OW_ntoh16(m_value);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-std::ostream&
-operator<< (std::ostream& ostrm, const OW_Char16& arg)
-{
-	OW_UInt16 val = arg.getValue();
-
-	if(val > 0 && val <= 127)
-	{
-		ostrm << char(val);
-	}
-	else
-	{
-		// Print in hex format:
-		char bfr[8];
-		sprintf(bfr, "\\x%04X", val);
-		ostrm << bfr;
-	}
-
-	return ostrm;
-}
 

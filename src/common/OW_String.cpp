@@ -40,6 +40,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_Bool.hpp"
+#include "OW_UTF8Utils.hpp"
 
 #include <cstdio>
 #include <cstdlib>
@@ -142,9 +143,8 @@ OW_String::OW_String(OW_Bool parm) :
 
 //////////////////////////////////////////////////////////////////////////////
 OW_String::OW_String(const OW_Char16& parm) :
-	m_buf(NULL)
+	m_buf(parm.toUTF8().m_buf)
 {
-	this->m_buf = parm.toUTF8().m_buf;
 }
 
 #if defined(OW_WIN32)
@@ -336,9 +336,7 @@ OW_String::length() const
 size_t
 OW_String::UTF8Length() const
 {
-// ATTN: UTF8 ?
-// TODO: FIXME this is broken wrt i18n
-	return length();
+	return OW_UTF8Utils::charCount(c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
