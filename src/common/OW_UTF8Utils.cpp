@@ -172,34 +172,41 @@ UInt32 UTF8toUCS4(const char* utf8char)
 	}
 	return bad;
 }
+
 /////////////////////////////////////////////////////////////////////////////
 String UCS4toUTF8(UInt32 ucs4char)
 {
-	char rval[5] = {0,0,0,0,0};
+	StringBuffer sb(5); // max 4 chars + null
+	UCS4toUTF8(ucs4char, sb);
+	return sb.releaseString();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void UCS4toUTF8(UInt32 ucs4char, StringBuffer& sb)
+{
 	if(ucs4char < 0x80u)
 	{
 		// one byte
-		rval[0] = static_cast<char>(static_cast<UInt8>(ucs4char));
+		sb += static_cast<char>(static_cast<UInt8>(ucs4char));
 	}
 	else if(ucs4char < 0x800u)
 	{
-		rval[0] = static_cast<char>(static_cast<UInt8>(0xc0u | (ucs4char >> 6)));
-		rval[1] = static_cast<char>(static_cast<UInt8>(0x80u | (ucs4char & 0x3fu)));
+		sb += static_cast<char>(static_cast<UInt8>(0xc0u | (ucs4char >> 6)));
+		sb += static_cast<char>(static_cast<UInt8>(0x80u | (ucs4char & 0x3fu)));
 	}
 	else if(ucs4char < 0x10000u)
 	{
-		rval[0] = static_cast<char>(static_cast<UInt8>(0xe0u | (ucs4char >> 12)));
-		rval[1] = static_cast<char>(static_cast<UInt8>(0x80u | ((ucs4char >> 6) & 0x3fu)));
-		rval[2] = static_cast<char>(static_cast<UInt8>(0x80u | (ucs4char & 0x3fu)));
+		sb += static_cast<char>(static_cast<UInt8>(0xe0u | (ucs4char >> 12)));
+		sb += static_cast<char>(static_cast<UInt8>(0x80u | ((ucs4char >> 6) & 0x3fu)));
+		sb += static_cast<char>(static_cast<UInt8>(0x80u | (ucs4char & 0x3fu)));
 	}
 	else
 	{
-		rval[0] = static_cast<char>(static_cast<UInt8>(0xf0u | (ucs4char >> 18)));
-		rval[1] = static_cast<char>(static_cast<UInt8>(0x80u | ((ucs4char >> 12) & 0x3fu)));
-		rval[2] = static_cast<char>(static_cast<UInt8>(0x80u | ((ucs4char >> 6) & 0x3fu)));
-		rval[3] = static_cast<char>(static_cast<UInt8>(0x80u | (ucs4char & 0x3fu)));
+		sb += static_cast<char>(static_cast<UInt8>(0xf0u | (ucs4char >> 18)));
+		sb += static_cast<char>(static_cast<UInt8>(0x80u | ((ucs4char >> 12) & 0x3fu)));
+		sb += static_cast<char>(static_cast<UInt8>(0x80u | ((ucs4char >> 6) & 0x3fu)));
+		sb += static_cast<char>(static_cast<UInt8>(0x80u | (ucs4char & 0x3fu)));
 	}
-	return rval;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -267,6 +274,20 @@ Array<UInt16> StringToUCS2(const String& input)
 		}
 	}
 	return rval;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+String UCS2ToString(const Array<UInt16>& input)
+{
+	// start out with 1 byte/char in input, this is just big enough for a
+	// standard ASCII string.  If any chars are bigger, we'll only incur 1 or
+	// 2 (worse case) reallocations of the buffer.
+	StringBuffer sb(input.size() + 1);
+	for (size_t i = 0; i < input.size(); ++i)
+	{
+		UCS4toUTF8(input[i], sb);
+	}
+	return sb.releaseString();
 }
 
 } // end namespace OW_UTF8Utils

@@ -38,6 +38,7 @@ namespace OpenWBEM
 {
 
 class String;
+class StringBuffer;
 
 OW_DECLARE_EXCEPTION(InvalidUTF8);
 
@@ -79,6 +80,15 @@ UInt32 UTF8toUCS4(const char* utf8char);
  */
 String UCS4toUTF8(UInt32 ucs4char);
 /**
+ * Convert one UCS4 32-bit char into a UTF-8 char (possibly multiple bytes)
+ * This version is faster to use in a loop than the version which returns a
+ * String.
+ * @param ucs4char UCS4 char to convert.
+ * @param sb The corresponding UTF-8 char will be appended to the end of sb.
+ */
+void UCS4toUTF8(UInt32 ucs4char, StringBuffer& sb);
+
+/**
  * Compares 2 UTF-8 strings, ignoring any case differences as defined by the
  * Unicode spec CaseFolding.txt file.
  * @param str1 first string
@@ -94,6 +104,13 @@ int compareToIgnoreCase(const char* str1, const char* str2);
  * @throws InvalidUTF8Exception if input contains invalid UTF-8 characters.
  */
 Array<UInt16> StringToUCS2(const String& input);
+
+/**
+ * Convert a UCS2 string into a UTF-8 (or ASCII) string
+ * @param input An Array of UCS2 characters
+ * @return The UTF-8 string
+ */
+String UCS2ToString(const Array<UInt16>& input);
 
 } // end namespace UTF8Utils
 
