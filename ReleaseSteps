@@ -2,8 +2,9 @@
 start: Make sure all important changes are committed.
 
 update changelog (http://www.red-bean.com/cvs2cl/) & TODO
-  cvs2cl.pl -F BRANCH_2_0_MAINT --accum --delta RELEASE_2_0_6:BRANCH_2_0_MAINT
+  cvs2cl.pl -F BRANCH_2_0_MAINT --stdout --delta RELEASE_2_0_6:BRANCH_2_0_MAINT
 get a new cvs checkout.
+./cvsbootstrap; ./configure (don't use --enable-debug-mode)
 run make check (with OWLONGTEST=1)
 run make distcheck.  
 	If passes:
@@ -12,8 +13,10 @@ run make distcheck.
 		if errors occur, goto start.
 		build RPM without docs.
 		test rpms.
+		run a diff -Naur openwbem-oldver/ openwbem-newver/ to sanity check it.
 		freeze code.
 		update version to even in configure.in and openwbem.spec.
+		./cvsbootstrap; ./configure
 		commit
 		tag cvs (cvs tag RELEASE_x_x_x)
 		make dist.
