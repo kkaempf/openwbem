@@ -45,6 +45,7 @@ namespace OpenWBEM
 namespace ConfigFile
 {
 
+/////////////////////////////////////////////////////////////////////////////
 void loadConfigFile(const String& filename, ConfigMap& rval)
 {
 	std::ifstream file(filename.c_str());
@@ -93,6 +94,34 @@ void loadConfigFile(const String& filename, ConfigMap& rval)
 		}
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////
+String
+getConfigItem(const ConfigMap& configItems, const String &itemName, const String& defRetVal)
+{
+	ConfigMap::const_iterator i = configItems.find(itemName);
+	if(i != configItems.end())
+	{
+		return i->second;
+	}
+	else
+	{
+		return defRetVal;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+setConfigItem(ConfigMap& configItems, const String& itemName,
+	const String& value, EOverwritePreviousFlag overwritePrevious)
+{
+	ConfigMap::iterator it = configItems.find(itemName);
+	if(it == configItems.end() || overwritePrevious)
+	{
+		configItems[itemName] = value;
+	}
+}
+
 
 } // end namespace ConfigFile
 } // end namespace OpenWBEM

@@ -635,15 +635,7 @@ CIMOMEnvironment::authenticate(String &userName, const String &info,
 String
 CIMOMEnvironment::getConfigItem(const String &name, const String& defRetVal) const
 {
-	ConfigMap::const_iterator i = m_configItems->find(name);
-	if(i != m_configItems->end())
-	{
-		return i->second;
-	}
-	else
-	{
-		return defRetVal;
-	}
+	return ConfigFile::getConfigItem(*m_configItems, name, defRetVal);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
@@ -1012,11 +1004,7 @@ void
 CIMOMEnvironment::setConfigItem(const String &item,
 	const String &value, EOverwritePreviousFlag overwritePrevious)
 {
-	ConfigMap::iterator it = m_configItems->find(item);
-	if(it == m_configItems->end() || overwritePrevious)
-	{
-		(*m_configItems)[item] = value;
-	}
+	ConfigFile::setConfigItem(*m_configItems, item, value, ConfigFile::EOverwritePreviousFlag(overwritePrevious));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
