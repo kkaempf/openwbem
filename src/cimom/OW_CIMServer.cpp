@@ -3047,6 +3047,10 @@ OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 		// need to get all the assoc classes with dynamic providers
 		OW_CIMObjectPath cop(className, ns);
 		_staticReferencesClass(cop,0,role,true,false,0,0,&result);
+
+		// TODO: test if this is faster
+		//assocHelper helper(result, m_mStore, ns);
+		//m_mStore.getTopLevelAssociations(ns, helper);
 	}
 }
 
