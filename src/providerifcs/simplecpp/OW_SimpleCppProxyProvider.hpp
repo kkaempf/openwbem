@@ -36,16 +36,10 @@
 #include "OW_AssociatorProviderIFC.hpp"
 #endif
 #include "OW_InstanceProviderIFC.hpp"
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-#include "OW_PropertyProviderIFC.hpp"
-#endif
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_SimpleCppAssociatorProviderIFC.hpp"
 #endif
 #include "OW_SimpleCppInstanceProviderIFC.hpp"
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-#include "OW_SimpleCppPropertyProviderIFC.hpp"
-#endif
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 class OW_SimpleCppAssociatorProviderProxy : public OW_AssociatorProviderIFC
@@ -161,31 +155,6 @@ public:
 private:
 	OW_SimpleCppInstanceProviderIFCRef m_pProv;
 };
-
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-class OW_SimpleCppPropertyProviderProxy : public OW_PropertyProviderIFC
-{
-public:
-	OW_SimpleCppPropertyProviderProxy(OW_SimpleCppPropertyProviderIFCRef pProv);
-	virtual OW_CIMValue getPropertyValue(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& cop,
-			const OW_String& originClass,
-			const OW_String& propertyName);
-
-	virtual void setPropertyValue(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& cop,
-			const OW_String& originClass,
-			const OW_String& propertyName, 	
-			const OW_CIMValue& val);
-
-private:
-	OW_SimpleCppPropertyProviderIFCRef m_pProv;
-};
-#endif
 
 #endif
 

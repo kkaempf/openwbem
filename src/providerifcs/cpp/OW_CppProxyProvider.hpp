@@ -37,9 +37,6 @@
 #endif
 #include "OW_InstanceProviderIFC.hpp"
 #include "OW_MethodProviderIFC.hpp"
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-#include "OW_PropertyProviderIFC.hpp"
-#endif
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
@@ -48,9 +45,6 @@
 #endif
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_CppMethodProviderIFC.hpp"
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-#include "OW_CppPropertyProviderIFC.hpp"
-#endif
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_CppIndicationExportProviderIFC.hpp"
 #include "OW_CppIndicationProviderIFC.hpp"
@@ -187,31 +181,6 @@ private:
 
 	OW_CppMethodProviderIFCRef m_pProv;
 };
-
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-class OW_CppPropertyProviderProxy : public OW_PropertyProviderIFC
-{
-public:
-	OW_CppPropertyProviderProxy(OW_CppPropertyProviderIFCRef pProv);
-	virtual OW_CIMValue getPropertyValue(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& cop,
-			const OW_String& originClass,
-			const OW_String& propertyName);
-
-	virtual void setPropertyValue(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& cop,
-			const OW_String& originClass,
-			const OW_String& propertyName, 	
-			const OW_CIMValue& val);
-
-private:
-	OW_CppPropertyProviderIFCRef m_pProv;
-};
-#endif
 
 class OW_CppIndicationExportProviderProxy : public OW_IndicationExportProviderIFC
 {

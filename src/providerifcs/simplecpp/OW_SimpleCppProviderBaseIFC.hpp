@@ -43,9 +43,6 @@ class OW_SimpleCppMethodProviderIFC;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 class OW_SimpleCppAssociatorProviderIFC;
 #endif
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-class OW_SimpleCppPropertyProviderIFC;
-#endif
 class OW_SimpleCppIndicationExportProviderIFC;
 class OW_SimpleCppPolledProviderIFC;
 
@@ -79,9 +76,6 @@ public:
 	virtual OW_SimpleCppInstanceProviderIFC* getInstanceProvider();
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual OW_SimpleCppAssociatorProviderIFC* getAssociatorProvider();
-#endif
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	virtual OW_SimpleCppPropertyProviderIFC* getPropertyProvider();
 #endif
 
 	OW_DateTime getLastAccessTime() const;

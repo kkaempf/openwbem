@@ -30,13 +30,6 @@ OW_CppProxyProvider.hpp \
 OW_CppProviderIFC.hpp \
 OW_CppIndicationProviderIFC.cpp
 
-if ENABLE_PROPERTY_PROVIDERS
-PROPERTY_PROVIDER_H= \
-OW_CppPropertyProviderIFC.hpp
-else
-PROPERTY_PROVIDER_H=
-endif
-
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_H=
 else
@@ -51,8 +44,7 @@ OW_CppIndicationExportProviderIFC.hpp \
 OW_CppInstanceProviderIFC.hpp \
 OW_CppMethodProviderIFC.hpp \
 OW_CppPolledProviderIFC.hpp \
-OW_CppIndicationProviderIFC.hpp \
-$(PROPERTY_PROVIDER_H)
+OW_CppIndicationProviderIFC.hpp
 
 #libOW_CppIFC_a_LDFLAGS = -L$(top_builddir)/src/common/
 #libOW_CppIFC_a_LIBADD = -lOpenWBEM

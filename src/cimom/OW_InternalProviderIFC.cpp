@@ -109,9 +109,6 @@ OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_AssociatorProviderInfoArray& assocInfos,
 #endif
 	OW_MethodProviderInfoArray& methInfos,
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	OW_PropertyProviderInfoArray& propInfos,
-#endif
 	OW_IndicationProviderInfoArray& indInfos)
 {
 	OW_MutexLock l(m_guard);
@@ -157,17 +154,6 @@ OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 			pMP->getProviderInfo(provInfo);
 			methInfos.push_back(provInfo);
 		}
-
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-		OW_CppPropertyProviderIFC* pPP = it->second.m_pProv->getPropertyProvider();
-		if (pPP)
-		{
-			OW_PropertyProviderInfo provInfo;
-			provInfo.setProviderName(it->first);
-			pPP->getProviderInfo(provInfo);
-			propInfos.push_back(provInfo);
-		}
-#endif
 
 		OW_CppIndicationProviderIFC* pIndP = it->second.m_pProv->getIndicationProvider();
 		if (pIndP)
@@ -313,42 +299,6 @@ OW_InternalProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& 
 
 	return OW_MethodProviderIFCRef(new OW_MethodProviderProxy(mpRef));
 }
-
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-//////////////////////////////////////////////////////////////////////////////
-OW_PropertyProviderIFCRef
-OW_InternalProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
-	const char *provIdString)
-{
-	OW_MutexLock ml(m_guard);
-
-	ProviderMap::iterator it = m_cimomProviders.find(OW_String(provIdString));
-
-	if(it == m_cimomProviders.end())
-	{
-		OW_THROW(OW_NoSuchProviderException, provIdString);
-	}
-
-	OW_CppPropertyProviderIFC* pPP = it->second.m_pProv->getPropertyProvider();
-	if(!pPP)
-	{
-		env->getLogger()->logError(format(
-			"Provider Manager - not a property provider: %1", provIdString));
-		OW_THROW(OW_NoSuchProviderException, provIdString);
-	}
-
-	if(!it->second.m_initDone)
-	{
-		it->second.m_pProv->initialize(env);
-		it->second.m_initDone = true;
-	}
-
-	OW_CppPropertyProviderIFCRef ppRef(it->second.m_pProv.getLibRef(), pPP);
-	ppRef.useRefCountOf(it->second.m_pProv);
-
-	return OW_PropertyProviderIFCRef(new OW_PropertyProviderProxy(ppRef));
-}
-#endif
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////

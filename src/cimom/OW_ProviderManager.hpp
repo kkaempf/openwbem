@@ -34,9 +34,6 @@
 #include "OW_config.h"
 #include "OW_InstanceProviderIFC.hpp"
 #include "OW_MethodProviderIFC.hpp"
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-#include "OW_PropertyProviderIFC.hpp"
-#endif
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderIFC.hpp"
 #endif
@@ -123,25 +120,6 @@ public:
 	 */
 	OW_MethodProviderIFCRef getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns, const OW_CIMClass& cc, const OW_CIMMethod& method) const;
-
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	/**
-	 * Locate a Property provider.
-	 *
-	 * @param qual A qualifier describing the property provider. This qualifier
-	 * must be a "provider" qualifer with a OW_CIMValue that contains a
-	 * string with the format: "provider interface id::provider string".
-	 * The "provider interface string" is used to identify the provider
-	 * interface. The "provider string" is provider interface specific. It is
-	 * assumed that the provider interface will use this string to identify the
-	 * provider.
-	 *
-	 * @returns A ref counted OW_PropertyProvider. If no provider is found then
-	 *	null is returned.
-	 */
-	OW_PropertyProviderIFCRef getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns, const OW_CIMClass& cc, const OW_CIMProperty& property) const;
-#endif
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**

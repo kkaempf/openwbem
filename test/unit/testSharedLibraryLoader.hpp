@@ -138,20 +138,6 @@ public:
 };
 #endif
 
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-class TestPropertyProvider : public OW_PropertyProviderIFC
-{
-public:
-	virtual OW_CIMValue getPropertyValue(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_String &, const OW_String &)
-	{
-		return OW_CIMValue(OW_CIMNULL);
-	}
-	virtual void setPropertyValue(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_String &, const OW_String &, const OW_CIMValue &)
-	{
-	}
-};
-#endif
-
 class TestIndicationProvider : public OW_IndicationProviderIFC
 {
 public:
@@ -182,9 +168,6 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 			OW_AssociatorProviderInfoArray& aa,
 #endif
 			OW_MethodProviderInfoArray& ma,
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-			OW_PropertyProviderInfoArray& pa,
-#endif
 			OW_IndicationProviderInfoArray& inda)
 		{
 			if (m_name == "lib1")
@@ -262,52 +245,6 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 					OW_AssociatorProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces);
 					api.addInstrumentedClass(ci);
 					aa.push_back(api);
-				}
-#endif
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-				// property provider registration
-				{
-					OW_PropertyProviderInfo ppi;
-					ppi.setProviderName("TestPropertyProvider");
-					OW_StringArray namespaces;
-					OW_StringArray properties;
-					properties.push_back("TestProperty");
-					OW_PropertyProviderInfo::ClassInfo ci("SelfReg", namespaces, properties);
-					ppi.addInstrumentedClass(ci);
-					pa.push_back(ppi);
-				}
-				{
-					OW_PropertyProviderInfo ppi;
-					ppi.setProviderName("TestPropertyProvider");
-					OW_StringArray namespaces;
-					namespaces.push_back("root");
-					namespaces.push_back("root/good");
-					OW_StringArray properties;
-					properties.push_back("TestProperty");
-					OW_PropertyProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces, properties);
-					ppi.addInstrumentedClass(ci);
-					pa.push_back(ppi);
-				}
-				{
-					OW_PropertyProviderInfo ppi;
-					ppi.setProviderName("TestPropertyProvider");
-					OW_StringArray namespaces;
-					OW_StringArray properties;
-					properties.push_back("TestProperty");
-					OW_PropertyProviderInfo::ClassInfo ci("SelfRegOneProperty", namespaces, properties);
-					ppi.addInstrumentedClass(ci);
-					pa.push_back(ppi);
-				}
-				{
-					OW_PropertyProviderInfo ppi;
-					ppi.setProviderName("TestPropertyProvider");
-					OW_StringArray namespaces;
-					namespaces.push_back("root");
-					OW_StringArray properties;
-					properties.push_back("TestProperty");
-					OW_PropertyProviderInfo::ClassInfo ci("SelfRegOneNamespaceOneProperty", namespaces, properties);
-					ppi.addInstrumentedClass(ci);
-					pa.push_back(ppi);
 				}
 #endif
 				// indication provider registration
@@ -393,18 +330,6 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 			}
 			OW_THROW(OW_NoSuchProviderException, provIdString);
 		}
-
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-		virtual OW_PropertyProviderIFCRef doGetPropertyProvider(
-			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)
-		{
-			if (OW_String(provIdString) == "TestPropertyProvider")
-			{
-				return OW_PropertyProviderIFCRef(new TestPropertyProvider);
-			}
-			OW_THROW(OW_NoSuchProviderException, provIdString);
-		}
-#endif
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(

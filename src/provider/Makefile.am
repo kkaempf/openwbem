@@ -1,12 +1,5 @@
 noinst_LIBRARIES = libowprovider.a
 
-if ENABLE_PROPERTY_PROVIDERS
-PROPERTY_PROVIDER_S= \
-OW_PropertyProviderIFC.cpp
-else
-PROPERTY_PROVIDER_S=
-endif
-
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_PROVIDER_S=
 else
@@ -20,21 +13,12 @@ OW_IndicationExportProviderIFC.cpp \
 OW_InstanceProviderIFC.cpp \
 OW_MethodProviderIFC.cpp \
 OW_PolledProviderIFC.cpp \
-$(PROPERTY_PROVIDER_S) \
 OW_ProviderBaseIFC.cpp \
 OW_ProviderEnvironmentIFC.cpp \
 OW_ProviderIFCBaseIFC.cpp \
 OW_MethodProviderInfo.cpp \
 OW_IndicationProviderIFC.cpp \
 OW_ProviderInfoBase.cpp
-
-if ENABLE_PROPERTY_PROVIDERS
-PROPERTY_PROVIDER_H= \
-OW_PropertyProviderIFC.hpp \
-OW_PropertyProviderInfo.hpp
-else
-PROPERTY_PROVIDER_H=
-endif
 
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_PROVIDER_H=
@@ -50,7 +34,6 @@ OW_IndicationExportProviderIFC.hpp \
 OW_InstanceProviderIFC.hpp \
 OW_MethodProviderIFC.hpp \
 OW_PolledProviderIFC.hpp \
-$(PROPERTY_PROVIDER_H) \
 OW_ProviderBaseIFC.hpp \
 OW_ProviderEnvironmentIFC.hpp \
 OW_ProviderIFCBaseIFC.hpp \

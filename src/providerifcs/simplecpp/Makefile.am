@@ -21,14 +21,6 @@ clean-local:
 	done
 
 
-if ENABLE_PROPERTY_PROVIDERS
-PROPERTY_PROVIDER_S= \
-OW_SimpleCppPropertyProviderIFC.hpp \
-OW_SimpleCppPropertyProviderIFC.cpp
-else
-PROPERTY_PROVIDER_S=
-endif
-
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_S=
 else
@@ -41,7 +33,6 @@ libsimplecppprovifc_a_SOURCES = \
 $(ASSOCIATION_S) \
 OW_SimpleCppInstanceProviderIFC.hpp \
 OW_SimpleCppInstanceProviderIFC.cpp \
-$(PROPERTY_PROVIDER_S) \
 OW_SimpleCppProviderBaseIFC.hpp \
 OW_SimpleCppProviderBaseIFC.cpp \
 OW_SimpleCppProviderIFC.cpp \

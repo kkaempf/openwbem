@@ -49,9 +49,6 @@ OW_ProviderIFCBaseIFC::init(const OW_ProviderEnvironmentIFCRef& env,
 	OW_AssociatorProviderInfoArray& a,
 #endif
 	OW_MethodProviderInfoArray& m,
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	OW_PropertyProviderInfoArray& p,
-#endif
 	OW_IndicationProviderInfoArray& ind)
 {
 	doInit(env, i, 
@@ -59,9 +56,6 @@ OW_ProviderIFCBaseIFC::init(const OW_ProviderEnvironmentIFCRef& env,
 		a, 
 #endif
 		m, 
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-		p, 
-#endif
 		ind);
 }
 
@@ -80,16 +74,6 @@ OW_ProviderIFCBaseIFC::getMethodProvider(const OW_ProviderEnvironmentIFCRef& env
 {
 	return doGetMethodProvider(env, provIdString);
 }
-
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-///////////////////////////////////////////////////////////////////////////////
-OW_PropertyProviderIFCRef 
-OW_ProviderIFCBaseIFC::getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
-	const char* provIdString)
-{
-	return doGetPropertyProvider(env, provIdString);
-}
-#endif
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 ///////////////////////////////////////////////////////////////////////////////

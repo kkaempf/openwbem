@@ -108,9 +108,6 @@ OW_CMPIProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef&,
 	OW_AssociatorProviderInfoArray&,
 #endif
 	OW_MethodProviderInfoArray&,
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	OW_PropertyProviderInfoArray&,
-#endif
 	OW_IndicationProviderInfoArray&)
 {
 	return;
@@ -218,38 +215,6 @@ OW_CMPIProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
-
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-//////////////////////////////////////////////////////////////////////////////
-OW_PropertyProviderIFCRef
-OW_CMPIProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
-	const char* provIdString)
-{
-	(void)env;
-	(void)provIdString;
-	/* not supported yet
-	OW_CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
-	if(pProv)
-	{
-#if 0
-		if(pProv->isPropertyProvider())
-		{
-			env->getLogger()->logDebug(format("OW_CMPIProviderIFC found property provider %1",
-				provIdString));
-
-			return OW_PropertyProviderIFCRef(new OW_CMPIPropertyProviderProxy(
-				pProv));
-		}
-
-		env->getLogger()->logError(format("Provider %1 is not a property provider",
-			provIdString));
-#endif
-	}
-	*/
-
-	OW_THROW(OW_NoSuchProviderException, provIdString);
-}
-#endif
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////

@@ -104,15 +104,9 @@ OW_PerlProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_AssociatorProviderInfoArray& a,
 #endif
 	OW_MethodProviderInfoArray& m,
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	OW_PropertyProviderInfoArray& p,
-#endif
 	OW_IndicationProviderInfoArray& ind)
 {
 	loadProviders(env, i, a, m, 
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-		p, 
-#endif
 		ind);
 }
 
@@ -212,36 +206,6 @@ OW_PerlProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-//////////////////////////////////////////////////////////////////////////////
-OW_PropertyProviderIFCRef
-OW_PerlProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
-	const char* provIdString)
-{
-	(void)env;
-	(void)provIdString;
-	/* not supported yet
-	OW_CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
-	if(pProv)
-	{
-		if(pProv->isPropertyProvider())
-		{
-			env->getLogger()->logDebug(format("OW_PerlProviderIFC found property provider %1",
-				provIdString));
-
-			return OW_PropertyProviderIFCRef(new OW_PerlPropertyProviderProxy(
-				pProv));
-		}
-
-		env->getLogger()->logError(format("Provider %1 is not a property provider",
-			provIdString));
-	}
-	*/
-
-	OW_THROW(OW_NoSuchProviderException, provIdString);
-}
-#endif
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
@@ -306,15 +270,8 @@ OW_PerlProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 	OW_AssociatorProviderInfoArray& associatorProviderInfo,
 #endif
 	OW_MethodProviderInfoArray& methodProviderInfo,
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	OW_PropertyProviderInfoArray& propertyProviderInfo,
-#endif
 	OW_IndicationProviderInfoArray& indicationProviderInfo)
 {
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	(void) propertyProviderInfo;
-#endif
-
 	OW_MutexLock ml(m_guard);
 
 	if(m_loadDone)

@@ -90,9 +90,6 @@ OW_CppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_AssociatorProviderInfoArray& a,
 #endif
 	OW_MethodProviderInfoArray& m,
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	OW_PropertyProviderInfoArray& p,
-#endif
 	OW_IndicationProviderInfoArray& ind)
 {
 	loadProviders(env, i, 
@@ -100,9 +97,6 @@ OW_CppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 		a, 
 #endif
 		m, 
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-		p, 
-#endif
 		ind);
 }
 
@@ -206,35 +200,6 @@ OW_CppProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-//////////////////////////////////////////////////////////////////////////////
-OW_PropertyProviderIFCRef
-OW_CppProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
-	const char* provIdString)
-{
-	OW_CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
-	if(pProv)
-	{
-		OW_CppPropertyProviderIFC* pPP = pProv->getPropertyProvider();
-		if(pPP)
-		{
-			env->getLogger()->logDebug(format("OW_CPPProviderIFC found property provider %1",
-				provIdString));
-			OW_CppPropertyProviderIFCRef ppRef(pProv.getLibRef(), pPP);
-			ppRef.useRefCountOf(pProv);
-
-
-			return OW_PropertyProviderIFCRef(new OW_CppPropertyProviderProxy(ppRef));
-		}
-
-		env->getLogger()->logError(format("Provider %1 is not a property provider",
-			provIdString));
-	}
-
-	OW_THROW(OW_NoSuchProviderException, provIdString);
-}
-#endif
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
@@ -299,9 +264,6 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 	OW_AssociatorProviderInfoArray& associatorProviderInfo,
 #endif
 	OW_MethodProviderInfoArray& methodProviderInfo,
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	OW_PropertyProviderInfoArray& propertyProviderInfo,
-#endif
 	OW_IndicationProviderInfoArray& indicationProviderInfo)
 {
 	OW_MutexLock ml(m_guard);
@@ -413,16 +375,6 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 				p_mp->getProviderInfo(info);
 				methodProviderInfo.push_back(info);
 			}
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-			OW_CppPropertyProviderIFC* p_pp = p->getPropertyProvider();
-			if (p_pp)
-			{
-				OW_PropertyProviderInfo info;
-				info.setProviderName(providerid);
-				p_pp->getProviderInfo(info);
-				propertyProviderInfo.push_back(info);
-			}
-#endif
 			OW_CppIndicationProviderIFC* p_indp = p->getIndicationProvider();
 			if (p_indp)
 			{
@@ -624,9 +576,6 @@ OW_CppAssociatorProviderIFC::~OW_CppAssociatorProviderIFC(){}
 OW_CppIndicationExportProviderIFC::~OW_CppIndicationExportProviderIFC(){}
 OW_CppMethodProviderIFC::~OW_CppMethodProviderIFC() {}
 OW_CppPolledProviderIFC::~OW_CppPolledProviderIFC() {}
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-OW_CppPropertyProviderIFC::~OW_CppPropertyProviderIFC() {}
-#endif
 
 //OW_PROVIDERIFCFACTORY(OW_CppProviderIFC)
 

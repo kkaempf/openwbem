@@ -318,18 +318,12 @@ void OW_ProviderManager::init(const OW_ProviderEnvironmentIFCRef& env)
 		OW_AssociatorProviderInfoArray associatorProviderInfo;
 #endif
 		OW_MethodProviderInfoArray methodProviderInfo;
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-		OW_PropertyProviderInfoArray propertyProviderInfo;
-#endif
 		OW_IndicationProviderInfoArray indicationProviderInfo;
 		m_IFCArray[i]->init(env, instanceProviderInfo, 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			associatorProviderInfo,
 #endif
 			methodProviderInfo, 
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-			propertyProviderInfo, 
-#endif
 			indicationProviderInfo);
 
 		processProviderInfo(env, instanceProviderInfo, m_IFCArray[i], m_registeredInstProvs);
@@ -337,9 +331,6 @@ void OW_ProviderManager::init(const OW_ProviderEnvironmentIFCRef& env)
 		processProviderInfo(env, associatorProviderInfo, m_IFCArray[i], m_registeredAssocProvs);
 #endif
 		processProviderInfo(env, methodProviderInfo, m_IFCArray[i], m_registeredMethProvs);
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-		processProviderInfo(env, propertyProviderInfo, m_IFCArray[i], m_registeredPropProvs);
-#endif
 		processProviderInfo(env, indicationProviderInfo, m_IFCArray[i], m_registeredIndProvs);
 	}
 }
@@ -472,51 +463,6 @@ OW_ProviderManager::getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 
 	return OW_MethodProviderIFCRef(0);
 }
-
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-//////////////////////////////////////////////////////////////////////////////
-OW_PropertyProviderIFCRef
-OW_ProviderManager::getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
-	const OW_String& ns, const OW_CIMClass& cc, const OW_CIMProperty& property) const
-{
-	OW_String propertyName = property.getName();
-
-	// next lookup classname/propertyname to see if we've got one for the
-	// specific class/property for any namespace
-	OW_String classAndPropertyName = cc.getName() + '/' + propertyName;
-	classAndPropertyName.toLowerCase();
-	ProvRegMap_t::const_iterator ci = m_registeredPropProvs.find(classAndPropertyName);
-	if (ci != m_registeredPropProvs.end())
-	{
-		return ci->second.ifc->getPropertyProvider(env, ci->second.provName.c_str());
-	}
-
-	// next lookup namespace:classname/propertyname to see if we've got one for the
-	// specific namespace/class/property
-	OW_String name = ns + ':' + cc.getName() + '/' + propertyName;
-	name.toLowerCase();
-	ci = m_registeredPropProvs.find(name);
-	if (ci != m_registeredPropProvs.end())
-	{
-		return ci->second.ifc->getPropertyProvider(env, ci->second.provName.c_str());
-	}
-
-	// didn't find it, so try the old way by looking at the provider qualifier.
-	OW_CIMQualifier qual = property.getQualifier(
-		OW_CIMQualifier::CIM_QUAL_PROVIDER);
-	if (qual)
-	{
-		OW_String provStr;
-		OW_ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
-		if(theIFC)
-		{
-			return theIFC->getPropertyProvider(env, provStr.c_str());
-		}
-	}
-
-	return OW_PropertyProviderIFCRef(0);
-}
-#endif
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////

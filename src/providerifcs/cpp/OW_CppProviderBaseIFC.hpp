@@ -43,9 +43,6 @@ class OW_CppMethodProviderIFC;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 class OW_CppAssociatorProviderIFC;
 #endif
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-class OW_CppPropertyProviderIFC;
-#endif
 class OW_CppIndicationExportProviderIFC;
 class OW_CppPolledProviderIFC;
 class OW_CppIndicationProviderIFC;
@@ -81,9 +78,6 @@ public:
 	virtual OW_CppMethodProviderIFC* getMethodProvider() { return 0; }
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual OW_CppAssociatorProviderIFC* getAssociatorProvider() { return 0; }
-#endif
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	virtual OW_CppPropertyProviderIFC* getPropertyProvider() { return 0; }
 #endif
 	virtual OW_CppIndicationExportProviderIFC* getIndicationExportProvider() { return 0; }
 	virtual OW_CppPolledProviderIFC* getPolledProvider() { return 0; }

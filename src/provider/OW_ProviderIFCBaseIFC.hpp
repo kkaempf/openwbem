@@ -36,9 +36,6 @@
 #include "OW_String.hpp"
 
 #include "OW_MethodProviderIFC.hpp"
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-#include "OW_PropertyProviderIFC.hpp"
-#endif
 #include "OW_InstanceProviderIFC.hpp"
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderIFC.hpp"
@@ -54,9 +51,6 @@
 #include "OW_AssociatorProviderInfo.hpp"
 #endif
 #include "OW_MethodProviderInfo.hpp"
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-#include "OW_PropertyProviderInfo.hpp"
-#endif
 #include "OW_IndicationProviderInfo.hpp"
 
 /**
@@ -107,9 +101,6 @@ public:
 		OW_AssociatorProviderInfoArray& a,
 #endif
 		OW_MethodProviderInfoArray& m,
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-		OW_PropertyProviderInfoArray& p,
-#endif
 		OW_IndicationProviderInfoArray& ind);
 
 	/**
@@ -137,21 +128,6 @@ public:
 	 */
 	OW_MethodProviderIFCRef getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	/**
-	 * Locate a Property provider.
-	 *
-	 * @param provIdString	The provider interface specific string. The provider
-	 *								interface will use this to identify the provider
-	 *								being requested.
-	 *
-	 * @returns A ref counted OW_PropertyProvider. If the provider is not found,
-	 * then an OW_NoSuchProviderException is thrown.
-	 */
-	OW_PropertyProviderIFCRef getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString);
-#endif
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
@@ -210,9 +186,6 @@ protected:
 		OW_AssociatorProviderInfoArray& a,
 #endif
 		OW_MethodProviderInfoArray& m,
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-		OW_PropertyProviderInfoArray& p,
-#endif
 		OW_IndicationProviderInfoArray& ind) = 0;
 
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -220,11 +193,6 @@ protected:
 
 	virtual OW_MethodProviderIFCRef doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
-
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	virtual OW_PropertyProviderIFCRef doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString) = 0;
-#endif
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(

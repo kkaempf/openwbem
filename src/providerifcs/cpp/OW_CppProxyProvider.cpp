@@ -231,40 +231,4 @@ OW_CppMethodProviderProxy::invokeMethod(
 	return m_pProv->invokeMethod(env, ns, path, methodName, in, out);
 }
 
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-//////////////////////////////////////////////////////////////////////////////		
-OW_CppPropertyProviderProxy::OW_CppPropertyProviderProxy(
-		OW_CppPropertyProviderIFCRef pProv) :
-	OW_PropertyProviderIFC(), m_pProv(pProv)
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////		
-OW_CIMValue
-OW_CppPropertyProviderProxy::getPropertyValue(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop,
-		const OW_String& originClass,
-		const OW_String& propertyName)
-{
-	m_pProv->updateAccessTime();
-	return m_pProv->getPropertyValue(env, ns, cop, originClass, propertyName);
-
-}
-
-//////////////////////////////////////////////////////////////////////////////		
-void
-OW_CppPropertyProviderProxy::setPropertyValue(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop,
-		const OW_String& originClass,
-		const OW_String& propertyName,
-		const OW_CIMValue& val)
-{
-	m_pProv->updateAccessTime();
-	m_pProv->setPropertyValue(env, ns, cop, originClass, propertyName, val);
-}
-#endif
 

@@ -67,9 +67,6 @@ private:
 		OW_AssociatorProviderInfoArray& a,
 #endif
 		OW_MethodProviderInfoArray& m,
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-		OW_PropertyProviderInfoArray& p,
-#endif
 		OW_IndicationProviderInfoArray& ind);
 
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -77,11 +74,6 @@ private:
 
 	virtual OW_MethodProviderIFCRef doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char *provIdString);
-
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	virtual OW_PropertyProviderIFCRef doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char *provIdString);
-#endif
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(

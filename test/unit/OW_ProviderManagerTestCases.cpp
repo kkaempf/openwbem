@@ -229,110 +229,6 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 	
 }
 
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-void OW_ProviderManagerTestCases::testGetPropertyProvider()
-{
-	OW_ProviderManager mgr;
-	mgr.load(testCreateMuxLoader());
-	OW_LocalCIMOMHandle hdl;
-	mgr.init(createProvEnvRef(hdl));
-
-	// test qualifier on property
-	OW_CIMClass c1("TestClass");
-	OW_CIMProperty pwq("TestProperty");
-	OW_CIMQualifier provQual(OW_CIMQualifier::CIM_QUAL_PROVIDER);
-	provQual.setValue(OW_CIMValue("lib1::TestPropertyProvider"));
-	pwq.addQualifier(provQual);
-	c1.addProperty(pwq);
-	OW_PropertyProviderIFCRef provRef;
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root", c1, pwq));
-	unitAssert(provRef);
-
-	// bad qualifier
-	OW_CIMClass c2("TestClass");
-	OW_CIMProperty p2("TestProperty");
-	provQual.setValue(OW_CIMValue("lib1::BAD"));
-	p2.addQualifier(provQual);
-	c2.addProperty(p2);
-	unitAssertThrows(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root", c1, p2));
-
-	// self-registering provider all namespaces
-	OW_CIMProperty p("TestProperty");
-	OW_CIMClass c3("SelfReg");
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root", c3, p));
-	unitAssert(provRef);
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root/foo", c3, p));
-	unitAssert(provRef);
-	
-	// self-registering provider two namespaces
-	OW_CIMClass c4("SelfRegTwoNamespaces");
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root", c4, p));
-	unitAssert(provRef);
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root/foo", c4, p));
-	unitAssert(!provRef);
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "ROOT/FOO", c4, p));
-	unitAssert(!provRef);
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root/good", c4, p));
-	unitAssert(provRef);
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "ROOT/GOOD", c4, p));
-	unitAssert(provRef);
-	
-	// nothing
-	OW_CIMClass c5("Nothing");
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root", c5, p));
-	unitAssert(!provRef);
-
-	// self-registering provider all namespaces - case insensitivity
-	OW_CIMClass c6("selFreG");
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "Root", c6, p));
-	unitAssert(provRef);
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "rooT/fOo", c6, p));
-	unitAssert(provRef);
-	
-	// self-registering provider all namespaces - one Property
-	OW_CIMClass c7("SelfRegOneProperty");
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root", c7, p));
-	unitAssert(provRef);
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root/foo", c7, p));
-	unitAssert(provRef);
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root/foo", c7, OW_CIMProperty("BadProperty")));
-	unitAssert(!provRef);
-	
-	// self-registering provider one namespaces - one Property
-	OW_CIMClass c8("SelfRegOneNamespaceOneProperty");
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root", c8, p));
-	unitAssert(provRef);
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "Root", c8, OW_CIMProperty("testProperty")));
-	unitAssert(provRef);
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root/foo", c8, p));
-	unitAssert(!provRef);
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root", c8, OW_CIMProperty("BadProperty")));
-	unitAssert(!provRef);
-	unitAssertNoThrow(provRef = mgr.getPropertyProvider(
-		createProvEnvRef(hdl), "root/foo", c8, OW_CIMProperty("BadProperty")));
-	unitAssert(!provRef);
-}
-#endif
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 {
@@ -470,11 +366,6 @@ Test* OW_ProviderManagerTestCases::suite()
 	testSuite->addTest (new TestCaller <OW_ProviderManagerTestCases>
 			("testGetMethodProvider",
 			&OW_ProviderManagerTestCases::testGetMethodProvider));
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	testSuite->addTest (new TestCaller <OW_ProviderManagerTestCases>
-			("testGetPropertyProvider",
-			&OW_ProviderManagerTestCases::testGetPropertyProvider));
-#endif
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	testSuite->addTest (new TestCaller <OW_ProviderManagerTestCases>
 			("testGetAssociatorProvider",

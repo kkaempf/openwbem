@@ -31,6 +31,7 @@ New features:
       - config item for interop namespace
     - Don't load the authentication provider if allow_anonymous is turned on.
     - client batch support
+    - Add support for running under inetd
 
 Post 3.0
     - associators and references can't return an objectpath, only an instance.

@@ -77,9 +77,6 @@ OW_SimpleCppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_AssociatorProviderInfoArray& a,
 #endif
 	OW_MethodProviderInfoArray& m,
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	OW_PropertyProviderInfoArray& p,
-#endif
 	OW_IndicationProviderInfoArray& ind)
 {
 	// TOOD: modify this and the providers to get the InstanceProviderInfo
@@ -89,9 +86,6 @@ OW_SimpleCppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	(void)a;
 #endif
 	(void)m;
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-	(void)p;
-#endif
 	(void)ind;
 	return;
 }
@@ -146,35 +140,6 @@ OW_SimpleCppProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef&
 {
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
-
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-//////////////////////////////////////////////////////////////////////////////
-OW_PropertyProviderIFCRef
-OW_SimpleCppProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
-	const char* provIdString)
-{
-	OW_SimpleCppProviderBaseIFCRef pProv = getProvider(env, provIdString);
-	if(pProv)
-	{
-		OW_SimpleCppPropertyProviderIFC* pPP = pProv->getPropertyProvider();
-		if(pPP)
-		{
-			env->getLogger()->logDebug(format("OW_CPPProviderIFC found property provider %1",
-				provIdString));
-			OW_SimpleCppPropertyProviderIFCRef ppRef(pProv.getLibRef(), pPP);
-			ppRef.useRefCountOf(pProv);
-
-
-			return OW_PropertyProviderIFCRef(new OW_SimpleCppPropertyProviderProxy(ppRef));
-		}
-
-		env->getLogger()->logError(format("Provider %1 is not a property provider",
-			provIdString));
-	}
-
-	OW_THROW(OW_NoSuchProviderException, provIdString);
-}
-#endif
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////

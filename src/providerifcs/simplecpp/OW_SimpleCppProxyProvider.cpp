@@ -266,44 +266,4 @@ OW_SimpleCppInstanceProviderProxy::deleteInstance(
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
-#ifdef OW_ENABLE_PROPERTY_PROVIDERS
-//////////////////////////////////////////////////////////////////////////////		
-OW_SimpleCppPropertyProviderProxy::OW_SimpleCppPropertyProviderProxy(
-		OW_SimpleCppPropertyProviderIFCRef pProv) :
-	OW_PropertyProviderIFC(), m_pProv(pProv)
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////		
-OW_CIMValue
-OW_SimpleCppPropertyProviderProxy::getPropertyValue(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop,
-		const OW_String& originClass,
-		const OW_String& propertyName)
-{
-	m_pProv->updateAccessTime();
-	(void)originClass;
-	(void)ns;
-	return m_pProv->getPropertyValue(env, cop, propertyName);
-
-}
-
-//////////////////////////////////////////////////////////////////////////////		
-void
-OW_SimpleCppPropertyProviderProxy::setPropertyValue(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop,
-		const OW_String& originClass,
-		const OW_String& propertyName,
-		const OW_CIMValue& val)
-{
-	m_pProv->updateAccessTime();
-	(void)originClass;
-	(void)ns;
-	m_pProv->setPropertyValue(env, cop, propertyName, val);
-}
-#endif
 
