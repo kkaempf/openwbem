@@ -341,7 +341,7 @@ CIMParameterGetName(NPIHandle* npiHandle, CIMParameter cp)
 
 //////////////////////////////////////////////////////////////////////////////
 extern "C" CIMParameter
-CIMParameterNewString(NPIHandle* npiHandle, const char* name, char* value)
+CIMParameterNewString(NPIHandle* npiHandle, const char* name, const char* value)
 {
 	(void)npiHandle;
 	CIMParameter mycp = { NULL };

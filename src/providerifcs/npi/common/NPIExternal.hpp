@@ -106,7 +106,7 @@ extern "C"
     char* CIMParameterGetName( NPIHandle* npiHandle, ::CIMParameter cp);
 extern "C"
     ::CIMParameter CIMParameterNewString (NPIHandle* npiHandle,
-            const char* name, char* value);
+            const char* name, const char* value);
 extern "C"
     ::CIMParameter CIMParameterNewInteger ( NPIHandle* npiHandle,
             const char* name, int value);

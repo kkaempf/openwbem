@@ -29,10 +29,10 @@ clean-local:
 #NPIBaseProvider.hpp 
 #NPIInstanceProvider.cpp 
 #NPIInstanceProvider.hpp 
-#NPIProvider.hpp 
 
 
 libnpiprovifc_a_SOURCES = \
+NPIProvider.hpp \
 OW_FTABLERef.hpp \
 OW_NPIAssociatorProviderProxy.cpp \
 OW_NPIAssociatorProviderProxy.hpp \
@@ -62,9 +62,5 @@ OW_NPIInstanceProviderProxy.hpp \
 OW_NPIMethodProviderProxy.hpp \
 OW_NPIProviderIFC.hpp \
 OW_NPIProviderIFCUtils.hpp \
-NPIAssociationProvider.hpp \
-NPIBaseProvider.hpp \
-NPIExternal.hpp \
-NPIInstanceProvider.hpp \
-NPIProvider.hpp
+NPIProvider.hpp 
 

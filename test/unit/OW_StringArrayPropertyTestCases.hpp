@@ -27,51 +27,26 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __NPIBASEPROVIDER_HPP__
-#define __NPIBASEPROVIDER_HPP__
 
-#include "OW_config.h"
-#include "NPIExternal.hpp"
-#include <Pegasus/Provider2/CIMInstanceProvider.h>
+#ifndef OW_OW_StringArrayProperty_TEST_CASES_HPP_
+#define OW_OW_StringArrayProperty_TEST_CASES_HPP_
 
+#include "TestCase.hpp"
 
-PEGASUS_NAMESPACE_BEGIN
-
-class PEGASUS_PROVIDER_LINKAGE NPIBaseProvider : public virtual CIMBaseProvider
+class OW_StringArrayPropertyTestCases : public TestCase
 {
 public:
+	OW_StringArrayPropertyTestCases( const char* name )
+		: TestCase( name ) {}
 
-    NPIBaseProvider();
-    //virtual ~NPIBaseProvider();
-    ~NPIBaseProvider();
+	void setUp();
+	void tearDown();
+	static Test *suite();
 
-    //CIMBaseProvider Interface
-    virtual void initialize(CIMOMHandle & cimom) {}
-    virtual void terminate() {}
-    void NPI_initialize(CIMOMHandle & cimom, char * libraryName);
-    void NPI_terminate();
-
-    // this function is introduced to be overloaded if necessary
-
-    char * getOperationContext();
-    void setOperationContext(char * oc);
-
-protected:
-
-    NPIHandle * _npiHandle;
-    CIMOMHandle _cimomHandle;
-    CIMRepository * _repository;
-    // necessary to construct cimomhandle with synchronous message queue
-    //MessageQueue * _NPIoutputQueue;
-    NPIenv * _env;
-    int _libraryCount;
-    void * _libraryHandle;
-    FTABLE _functionTable;
-
-    char * _operationContext; // needed for perl
+private:
+	// test methods
+	void testSomething();
 };
 
-PEGASUS_NAMESPACE_END
-
-#endif // __NPIBASEPROVIDER_HPP__
+#endif
 
