@@ -283,54 +283,6 @@ OW_ThreadImpl::yield()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
-int
-OW_MutexImpl::createMutex(OW_Mutex_t& handle)
-{
-#ifdef OW_USE_GNU_PTH
-    initThreads();
-    int cc = 0;
-    if(!pth_mutex_init(&handle))
-    {
-        cc = -1;
-    }
-    return cc;
-#else
-	pthread_mutex_init(&handle, NULL);
-	return 0;
-#endif
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// STATIC
-int
-OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
-{
-#ifdef OW_USE_GNU_PTH
-    (void)handle;
-    return 0;
-#else
-	int cc = pthread_mutex_destroy(&handle);
-	switch (cc)
-	{
-		case 0:
-			break;
-
-		case EBUSY:
-			//cerr << "OW_MutexImpl::destroyMutex - got EBUSY on destroy" << endl;
-			cc = -1;
-			break;
-
-		default:
-			//cerr << "OW_MutexImpl::destroyMutex - Error on destroy: "
-			//	<< cc << endl;
-			cc = -2;
-	}
-	return cc;
-#endif
-}
-
-//////////////////////////////////////////////////////////////////////////////
 // EVENT IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////////////
 struct OW_PlatformThreadEvent

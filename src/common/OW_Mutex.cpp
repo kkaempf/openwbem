@@ -42,26 +42,6 @@ OW_Thread_t OW_Mutex::NULLTHREAD = zeroThread();
 
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Mutex::OW_Mutex(OW_Bool recursive) :
-	m_owner(NULLTHREAD), m_refCount(0), m_isRecursive(recursive)
-{
-	if(OW_MutexImpl::createMutex(m_mutex) != 0)
-	{
-		OW_THROW(OW_Assertion, "OW_MutexImpl::createMutex failed");
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_Mutex::~OW_Mutex()
-{
-	if(OW_MutexImpl::destroyMutex(m_mutex) == -1)
-	{
-		OW_MutexImpl::releaseMutex(m_mutex);
-		OW_MutexImpl::destroyMutex(m_mutex);
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
 OW_Thread_t
 OW_Mutex::zeroThread()
 {

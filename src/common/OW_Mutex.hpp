@@ -37,6 +37,8 @@
 #include "OW_Bool.hpp"
 #include "OW_Assertion.hpp"
 
+#include <cerrno>
+
 
 /**
  * The OW_MutexImpl class represents the functionality needed by the
@@ -53,7 +55,22 @@ public:
 	 * @param handle	The mutex handle that should be initialized by this method
 	 * @return 0 on success. Otherwise -1.
 	 */
-	static int createMutex(OW_Mutex_t& handle);
+	static int createMutex(OW_Mutex_t& handle)
+	{
+	#ifdef OW_USE_GNU_PTH
+		initThreads();
+		int cc = 0;
+		if(!pth_mutex_init(&handle))
+		{
+			cc = -1;
+		}
+		return cc;
+	#else
+		pthread_mutex_init(&handle, NULL);
+		return 0;
+	#endif
+	}
+
 
 	/**
 	 * Destroy a mutex previously created with createMutex.
@@ -64,7 +81,32 @@ public:
 	 *				locked.
 	 *		-2:	All other error conditions
 	 */
-	static int destroyMutex(OW_Mutex_t& handle);
+	static int destroyMutex(OW_Mutex_t& handle)
+	{
+	#ifdef OW_USE_GNU_PTH
+		(void)handle;
+		return 0;
+	#else
+		int cc = pthread_mutex_destroy(&handle);
+		switch (cc)
+		{
+			case 0:
+				break;
+	
+			case EBUSY:
+				//cerr << "OW_MutexImpl::destroyMutex - got EBUSY on destroy" << endl;
+				cc = -1;
+				break;
+	
+			default:
+				//cerr << "OW_MutexImpl::destroyMutex - Error on destroy: "
+				//	<< cc << endl;
+				cc = -2;
+		}
+		return cc;
+	#endif
+	}
+
 
 	/**
 	 * Acquire the mutex specified by a given mutex handle. This method should
@@ -123,16 +165,45 @@ class OW_Mutex
 public:
 
 	/**
+	 * Create a new recursive OW_Mutex object.
+	 */
+	OW_Mutex()
+		: m_owner(NULLTHREAD), m_refCount(0), m_isRecursive(true)
+	{
+		if(OW_MutexImpl::createMutex(m_mutex) != 0)
+		{
+			OW_THROW(OW_Assertion, "OW_MutexImpl::createMutex failed");
+		}
+	}
+
+
+	/**
 	 * Create a new OW_Mutex object.
 	 * @param recursive	If true then this is a recursive mutext. Otherwise
 	 * a thread will block indefinately if it calls acquire more than once.
 	 */
-	OW_Mutex(OW_Bool recursive=true);
+	OW_Mutex(bool recursive)
+		: m_owner(NULLTHREAD), m_refCount(0), m_isRecursive(recursive)
+	{
+		if(OW_MutexImpl::createMutex(m_mutex) != 0)
+		{
+			OW_THROW(OW_Assertion, "OW_MutexImpl::createMutex failed");
+		}
+	}
+
 
 	/**
 	 * Destroy this OW_Mutex object.
 	 */
-	~OW_Mutex();
+	~OW_Mutex()
+	{
+		if(OW_MutexImpl::destroyMutex(m_mutex) == -1)
+		{
+			OW_MutexImpl::releaseMutex(m_mutex);
+			OW_MutexImpl::destroyMutex(m_mutex);
+		}
+	}
+
 
 	/**
 	 * Acquire ownership of this OW_Mutex object.
