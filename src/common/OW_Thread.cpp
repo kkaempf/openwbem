@@ -52,11 +52,11 @@ struct ThreadParam
 	ThreadParam(Thread* t, const Reference<ThreadDoneCallback>& c, const ThreadBarrier& b)
 		: thread(t)
 		, cb(c)
-		, barrier(b)
+		, thread_barrier(b)
 	{}
 	Thread* thread;
 	Reference<ThreadDoneCallback> cb;
-	ThreadBarrier barrier;
+	ThreadBarrier thread_barrier;
 };
 static Thread_t zeroThread();
 static Thread_t NULLTHREAD = zeroThread();
@@ -115,15 +115,15 @@ Thread::start(Reference<ThreadDoneCallback> cb)
 	}
 	m_isStarting = true;
 	UInt32 flgs = OW_THREAD_FLG_JOINABLE;
-	ThreadBarrier barrier(2);
+	ThreadBarrier thread_barrier(2);
 	// p will be delted by threadRunner
-	ThreadParam* p = new ThreadParam(this, cb, barrier);
+	ThreadParam* p = new ThreadParam(this, cb, thread_barrier);
 	if(ThreadImpl::createThread(m_id, threadRunner, p, flgs) != 0)
 	{
 		OW_THROW(Assertion, "ThreadImpl::createThread failed");
 	}
 	m_isStarting = false;
-	barrier.wait();
+	thread_barrier.wait();
 }
 //////////////////////////////////////////////////////////////////////////////
 // Wait for this object's thread execution (if any) to complete.
@@ -160,10 +160,10 @@ Thread::threadRunner(void* paramPtr)
 		ThreadImpl::saveThreadInTLS(pTheThread);
 		theThreadID = pTheThread->m_id;
 		Reference<ThreadDoneCallback> cb = pParam->cb;
-		ThreadBarrier barrier = pParam->barrier;
+		ThreadBarrier thread_barrier = pParam->thread_barrier;
 		delete pParam;
 		pTheThread->m_isRunning = true;
-		barrier.wait();
+		thread_barrier.wait();
 
 		try
 		{

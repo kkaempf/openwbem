@@ -98,13 +98,13 @@ enum EOperationFlag
 	E_REFERENCES,
 	E_REFERENCES_CLASSES,
 	E_EXEC_QUERY,
-	E_EXPORT_INDICATION,
+	E_EXPORT_INDICATION
 };
 /////////////////////////////////////////////////////////////////////////////
 enum EOperationResultFlag
 {
 	E_FAILED,
-	E_SUCCESS,
+	E_SUCCESS
 };
 
 }
