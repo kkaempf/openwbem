@@ -37,6 +37,7 @@
 #include "OW_NPIProviderIFCUtils.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_Logger.hpp"
 #include "OW_CIMParamValue.hpp"
 
 namespace OpenWBEM
