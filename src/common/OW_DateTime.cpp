@@ -237,17 +237,102 @@ inline int decodeMonth(const char* str)
 DateTime::DateTime(const String& str)
 {
 	// CIM DateTimes are 25 chars long, and ctime dates are 24 or 25 long
-	if (str.length() < 24 || str.length() > 25)
+	if (str.length() >= 24 && str.length() <= 25)
 	{
-		badDateTime(str);
-	}
-	if (str[3] == ' ') // it's a ctime date
-	{
-		// validate required characters
-		if (str[7] != ' ' || str[10] != ' ' || str[13] != ':' || str[16] != ':' || str[19] != ' ')
+		if (str[3] == ' ') // it's a ctime date
 		{
-			badDateTime(str);
+			// validate required characters
+			if (str[7] != ' ' || str[10] != ' ' || str[13] != ':' || str[16] != ':' || str[19] != ' ')
+			{
+				badDateTime(str);
+			}
+			if (!isDOWValid(str.c_str()))
+			{
+				badDateTime(str);
+			}
+			int month = decodeMonth(str.c_str() + 4);
+			if (month == -1)
+			{
+				badDateTime(str);
+			}
+			try
+			{
+				Int32 day = str.substring(8, 2).toInt32();
+				Int32 hour = str.substring(11, 2).toInt32();
+				Int32 minute = str.substring(14, 2).toInt32();
+				Int32 second = str.substring(17, 2).toInt32();
+				Int32 year = str.substring(20, 4).toInt32();
+				UInt32 microseconds = 0;
+				validateRanges(year, month, day, hour, minute, second, microseconds, str);
+				set(year, month, day, hour, minute, second, 
+				    microseconds, E_LOCAL_TIME);
+			}
+			catch (StringConversionException&)
+			{
+				badDateTime(str);
+			}
 		}
+		else // it's a CIM DateTime string
+		{
+			// validate required characters
+			if (str[14] != '.' || (str[21] != '+' && str[21] != '-'))
+			{
+				badDateTime(str);
+			}
+
+			try
+			{
+				// in CIM, "Fields which are not significant must be 
+				// replaced with asterisk characters."  We'll convert
+				// asterisks to 0s so we can process them.
+				String strNoAsterisks(str);
+				for (size_t i = 0; i < strNoAsterisks.length(); ++i)
+				{
+					if (strNoAsterisks[i] == '*')
+						strNoAsterisks[i] = '0';
+				}
+				Int32 year = strNoAsterisks.substring(0, 4).toInt32();
+				Int32 month = strNoAsterisks.substring(4, 2).toInt32();
+				Int32 day = strNoAsterisks.substring(6, 2).toInt32();
+				Int32 hour = strNoAsterisks.substring(8, 2).toInt32();
+				Int32 minute = strNoAsterisks.substring(10, 2).toInt32();
+				Int32 second = strNoAsterisks.substring(12, 2).toInt32();
+				Int32 microseconds = strNoAsterisks.substring(15, 6).toInt32();
+
+				validateRanges(year, month, day, hour, minute, second, microseconds, str);
+
+				Int32 utc = strNoAsterisks.substring(22, 3).toInt32();
+				// adjust the time to utc.  According to the CIM spec:
+				// "utc is the offset from UTC in minutes"
+				if (str[21] == '+')
+				{
+					utc = 0 - utc;
+				}
+				minute += utc;
+
+				set(year, month, day, hour, minute, second, 
+				    microseconds, E_UTC_TIME);
+				return;
+			}
+			catch (StringConversionException&)
+			{
+				badDateTime(str);
+			}
+		}
+	}
+	else if (str.length() >= 26 && str.length() <= 28)
+	{
+		// Other acceptable time formats are of the form:
+		// Thu Jan 29 11:02:42 MST 2004
+		// Wed Oct 3 17:52:56 EDT 1998
+		// Sat Aug 15 5:41:26 PDT 1984          
+		// Tue Nov 7 13:35:03 GMT 2003
+		// Mon May 1 8:27:39 UTC 2003
+
+		// Note the variable field width.
+
+
+		// Before doing any work, verify the day of week and month.
 		if (!isDOWValid(str.c_str()))
 		{
 			badDateTime(str);
@@ -257,69 +342,99 @@ DateTime::DateTime(const String& str)
 		{
 			badDateTime(str);
 		}
+
+		const size_t max_num_spaces = 5;
+		const size_t max_num_colons = 2;
+
+		// The default locations for spaces and colons.
+		size_t spaces[max_num_spaces] = {3, 7, 10, 19, 23};
+		size_t colons[max_num_colons] = {13, 16};
+
+		// The space fields that are variable in position.
+		const size_t vspace1 = 2;
+		const size_t vspace2 = 3;
+
+
+		// Adjust the spaces (and trailing colons), for variable widths
+		if( str[spaces[vspace1] - 1] == ' ' )
+		{
+			for( size_t i = vspace1; i < max_num_spaces; ++i )
+			{
+				--spaces[i];
+			}
+			for( size_t j = 0; j < max_num_colons; ++j )
+			{
+				--colons[j];
+			}
+		}
+		if( str[spaces[vspace2] - 1] == ' ' )
+		{
+			for( size_t i = vspace2; i < max_num_spaces; ++i )
+			{
+				--spaces[i];
+			}
+			for( size_t j = 0; j < max_num_colons; ++j )
+			{
+				--colons[j];
+			}
+		}
+
+		// Verify there are spaces in the correct locations.
+		for( size_t i = 0; i < max_num_spaces; ++i )
+		{
+			if( str[spaces[i]] != ' ' )
+			{
+				badDateTime(str);
+			}
+		}
+		// Verify there are colons in the correct locations.
+		for( size_t j = 0; j < max_num_colons; ++j )
+		{
+			if( str[colons[j]] != ':' )
+			{
+				badDateTime(str);
+			}
+		}
+
+		// We now know the locations of the spaces and colons.
 		try
 		{
-			Int32 day = str.substring(8, 2).toInt32();
-			Int32 hour = str.substring(11, 2).toInt32();
-			Int32 minute = str.substring(14, 2).toInt32();
-			Int32 second = str.substring(17, 2).toInt32();
-			Int32 year = str.substring(20, 4).toInt32();
+			String day_string = str.substring(spaces[1] + 1, spaces[2]-spaces[1]-1);
+			String hour_string = str.substring(spaces[2] + 1, colons[0]-spaces[2]-1);
+			String minute_string = str.substring(colons[0] + 1, 2);
+			String second_string = str.substring(colons[1] + 1, 2);
+			String year_string = str.substring(spaces[4] + 1, 4);
+
+			// Day is variable length
+			Int32 day = day_string.toInt32();
+			// Hour is variable length
+			Int32 hour = hour_string.toInt32();
+			// Everything else is fixed length.
+			Int32 minute = minute_string.toInt32();
+			Int32 second = second_string.toInt32();
+			Int32 year = year_string.toInt32();
 			UInt32 microseconds = 0;
 			validateRanges(year, month, day, hour, minute, second, microseconds, str);
-			set(year, month, day, hour, minute, second, 
-				microseconds, E_LOCAL_TIME);
+			String timezone = str.substring(spaces[3] + 1, 3);
+
+			if( (timezone == "UTC") || (timezone == "GMT") )
+			{
+				set(year, month, day, hour, minute, second, microseconds, E_UTC_TIME);
+			}
+			else
+			{
+				// FIXME! This assumes it is local, even though it could be something else.
+				set(year, month, day, hour, minute, second, microseconds, E_LOCAL_TIME);
+			}
 		}
 		catch (StringConversionException&)
 		{
 			badDateTime(str);
 		}
 	}
-	else // it's a CIM DateTime string
+	else
 	{
-		// validate required characters
-		if (str[14] != '.' || (str[21] != '+' && str[21] != '-'))
-		{
-			badDateTime(str);
-		}
-
-		try
-		{
-			// in CIM, "Fields which are not significant must be 
-			// replaced with asterisk characters."  We'll convert
-			// asterisks to 0s so we can process them.
-			String strNoAsterisks(str);
-			for (size_t i = 0; i < strNoAsterisks.length(); ++i)
-			{
-				if (strNoAsterisks[i] == '*')
-					strNoAsterisks[i] = '0';
-			}
-			Int32 year = strNoAsterisks.substring(0, 4).toInt32();
-			Int32 month = strNoAsterisks.substring(4, 2).toInt32();
-			Int32 day = strNoAsterisks.substring(6, 2).toInt32();
-			Int32 hour = strNoAsterisks.substring(8, 2).toInt32();
-			Int32 minute = strNoAsterisks.substring(10, 2).toInt32();
-			Int32 second = strNoAsterisks.substring(12, 2).toInt32();
-			Int32 microseconds = strNoAsterisks.substring(15, 6).toInt32();
-
-			validateRanges(year, month, day, hour, minute, second, microseconds, str);
-
-			Int32 utc = strNoAsterisks.substring(22, 3).toInt32();
-			// adjust the time to utc.  According to the CIM spec:
-			// "utc is the offset from UTC in minutes"
-			if (str[21] == '+')
-			{
-				utc = 0 - utc;
-			}
-			minute += utc;
-
-			set(year, month, day, hour, minute, second, 
-				microseconds, E_UTC_TIME);
-			return;
-		}
-		catch (StringConversionException&)
-		{
-			badDateTime(str);
-		}
+		badDateTime(str);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////									

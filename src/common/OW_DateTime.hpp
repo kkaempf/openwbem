@@ -87,9 +87,19 @@ public:
 	 */
 	DateTime();
 	/**
-	 * Create a new DateTime object from a string that contains either a
-	 * CIM DateTime formated string (e.g. "19980525133015.000000-300")
-	 * or a ctime() formatted string (e.g. "Wed Jun 30 21:49:08 1993")
+	 * Create a new DateTime object from a string that contains one of:
+	 * (1) a CIM DateTime formated string (e.g. "19980525133015.000000-300")
+	 * (2) a ctime() formatted string (e.g. "Wed Jun 30 21:49:08 1993")
+	 *     The current local timezone is assumed.
+	 * (3) a string in the format:
+	 *     Thu Jan 29 11:02:42 MST 2004
+	 *     Wed Oct 3 17:52:56 EDT 1998
+	 *     Sat Aug 15 5:41:26 PDT 1984	  
+	 *     Tue Nov 7 13:35:03 GMT 2003
+	 *     Mon May 1 8:27:39 UTC 2003	 
+	 *     If the timezone is not UTC or GMT, then it is assumed to be the local
+	 *     timezone.  This is a defect which may be fixed in the future.
+	 *
 	 * Note that DateTime cannot hold an interval, so you cannot construct
 	 * one from an CIM DateTime interval.
 	 * If str is a CIM DateTime, the timezone is part of the string and

@@ -139,6 +139,35 @@ void OW_DateTimeTestCases::testCreation()
 	unitAssertThrows(DateTime d(String("FXi Jun 30 21:49:08 1993")));
 	unitAssertThrows(DateTime d(String("Xri Jun 30 21:49:08 1993")));
 
+	// some more incorrect time patterns
+	unitAssertThrows(DateTime d(String("WXd Jun 30 21:49:08 FOO 1993")));
+	unitAssertThrows(DateTime d(String("Wed JXn 30 21:49:08 FOO 1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun X0 21:49:08 FOO 1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 30 X1:49:08 FOO 1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 30 21:X9:08 FOO 1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 30 21:49:X8 FOO 1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 30 21:49:08 FOO X993")));
+	unitAssertThrows(DateTime d(String("Wed-Jun-30-21:49:08-FOO-1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun-30-21:49:08-FOO-1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun-30-21:49:08-FOO-1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 30-21:49:08-FOO-1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 30 21:49:08-FOO-1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 30 21:49:08 FOO-1993")));
+	
+	unitAssertThrows(DateTime d(String("Wed Jun 30 21-49-08 FOO 1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 30 21:49-08 FOO 1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 30 21-49:08 FOO 1993")));
+	
+	unitAssertThrows(DateTime d(String("Wed Jun 3 211:49:08 FOO 1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 300 2:49:08 FOO 1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 3 2:49:08 VERYLONGERROR 1993")));	
+
+	unitAssertThrows(DateTime d(String("Wed Jun 30 21:99:08 FOO 1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 3 211:49:08 FOO 1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 3 2:49:99 FOO 1993")));
+	unitAssertThrows(DateTime d(String("Wed Jun 30 21:49:08 FOO 14-3")));	
+	
+	
 	// now test a valid CIM DateTime
 	{
 		DateTime d("19980525133015.012345-300");
@@ -344,6 +373,130 @@ void OW_DateTimeTestCases::testCreation()
 		unitAssert(d.getMicrosecond() == 0);
 		unitAssert(d.get() == calcTimeTLocal(1993, 12, 15, 12, 49, 8));
 	}
+
+	// Dates of a different form.
+	{
+		DateTime d(String("Wed Dec 2 12:49:08 UTC 1993"));
+		unitAssert(d.getYear(DateTime::E_UTC_TIME) == 1993);
+		unitAssert(d.getMonth(DateTime::E_UTC_TIME) == 12);
+		unitAssert(d.getDay(DateTime::E_UTC_TIME) == 2);
+		unitAssert(d.getHour(DateTime::E_UTC_TIME) == 12);
+		unitAssert(d.getMinute(DateTime::E_UTC_TIME) == 49);
+		unitAssert(d.getSecond(DateTime::E_UTC_TIME) == 8);
+		unitAssert(d.getMicrosecond() == 0);
+		//unitAssert(d.get() == calcTimeTLocal(1993, 12, 2, 12, 49, 8));
+	}
+	{
+		DateTime d(String("Wed Dec 15 7:49:08 UTC 1993"));
+		unitAssert(d.getYear(DateTime::E_UTC_TIME) == 1993);
+		unitAssert(d.getMonth(DateTime::E_UTC_TIME) == 12);
+		unitAssert(d.getDay(DateTime::E_UTC_TIME) == 15);
+		unitAssert(d.getHour(DateTime::E_UTC_TIME) == 7);
+		unitAssert(d.getMinute(DateTime::E_UTC_TIME) == 49);
+		unitAssert(d.getSecond(DateTime::E_UTC_TIME) == 8);
+		unitAssert(d.getMicrosecond() == 0);
+		// unitAssert(d.get() == calcTimeTLocal(1993, 12, 15, 7, 49, 8));
+	}
+	{
+		DateTime d(String("Wed Dec 2 7:49:08 UTC 1993"));
+		unitAssert(d.getYear(DateTime::E_UTC_TIME) == 1993);
+		unitAssert(d.getMonth(DateTime::E_UTC_TIME) == 12);
+		unitAssert(d.getDay(DateTime::E_UTC_TIME) == 2);
+		unitAssert(d.getHour(DateTime::E_UTC_TIME) == 7);
+		unitAssert(d.getMinute(DateTime::E_UTC_TIME) == 49);
+		unitAssert(d.getSecond(DateTime::E_UTC_TIME) == 8);
+		unitAssert(d.getMicrosecond() == 0);
+		//unitAssert(d.get() == calcTimeTLocal(1993, 12, 2, 7, 49, 8));
+	}
+	{
+		DateTime d(String("Wed Dec 20 7:49:08 GMT 1993"));
+		unitAssert(d.getYear(DateTime::E_UTC_TIME) == 1993);
+		unitAssert(d.getMonth(DateTime::E_UTC_TIME) == 12);
+		unitAssert(d.getDay(DateTime::E_UTC_TIME) == 20);
+		unitAssert(d.getHour(DateTime::E_UTC_TIME) == 7);
+		unitAssert(d.getMinute(DateTime::E_UTC_TIME) == 49);
+		unitAssert(d.getSecond(DateTime::E_UTC_TIME) == 8);
+		unitAssert(d.getMicrosecond() == 0);
+		//unitAssert(d.get() == calcTimeTLocal(1993, 12, 20, 7, 49, 8));
+	}
+	{
+		DateTime d(String("Wed Dec 2 7:49:08 GMT 1993"));
+		unitAssert(d.getYear(DateTime::E_UTC_TIME) == 1993);
+		unitAssert(d.getMonth(DateTime::E_UTC_TIME) == 12);
+		unitAssert(d.getDay(DateTime::E_UTC_TIME) == 2);
+		unitAssert(d.getHour(DateTime::E_UTC_TIME) == 7);
+		unitAssert(d.getMinute(DateTime::E_UTC_TIME) == 49);
+		unitAssert(d.getSecond(DateTime::E_UTC_TIME) == 8);
+		unitAssert(d.getMicrosecond() == 0);
+		//unitAssert(d.get() == calcTimeTLocal(1993, 12, 15, 12, 49, 8));
+	}
+	// Local timezones.
+	{
+		DateTime d(String("Wed Dec 15 12:49:08 MST 1993"));
+		unitAssert(d.getYear(DateTime::E_UTC_TIME) == 1993);
+		unitAssert(d.getMonth(DateTime::E_UTC_TIME) == 12);
+		// unless we do some nice calculations to account for our local
+		// timezone, we can't check the day or hour.
+		//unitAssert(d.getDay(DateTime::E_UTC_TIME) == 15);
+		//unitAssert(d.getHour(DateTime::E_UTC_TIME) == 12);
+		unitAssert(d.getMinute(DateTime::E_UTC_TIME) == 49);
+		unitAssert(d.getSecond(DateTime::E_UTC_TIME) == 8);
+		unitAssert(d.getMicrosecond() == 0);
+		unitAssert(d.get() == calcTimeTLocal(1993, 12, 15, 12, 49, 8));
+	}
+	{
+		DateTime d(String("Wed Dec 7 12:49:08 PST 1993"));
+		unitAssert(d.getYear(DateTime::E_UTC_TIME) == 1993);
+		unitAssert(d.getMonth(DateTime::E_UTC_TIME) == 12);
+		// unless we do some nice calculations to account for our local
+		// timezone, we can't check the day or hour.
+		//unitAssert(d.getDay(DateTime::E_UTC_TIME) == 15);
+		//unitAssert(d.getHour(DateTime::E_UTC_TIME) == 12);
+		unitAssert(d.getMinute(DateTime::E_UTC_TIME) == 49);
+		unitAssert(d.getSecond(DateTime::E_UTC_TIME) == 8);
+		unitAssert(d.getMicrosecond() == 0);
+		unitAssert(d.get() == calcTimeTLocal(1993, 12, 7, 12, 49, 8));
+	}
+	{
+		DateTime d(String("Wed Dec 15 5:49:08 EST 1993"));
+		unitAssert(d.getYear(DateTime::E_UTC_TIME) == 1993);
+		unitAssert(d.getMonth(DateTime::E_UTC_TIME) == 12);
+		// unless we do some nice calculations to account for our local
+		// timezone, we can't check the day or hour.
+		//unitAssert(d.getDay(DateTime::E_UTC_TIME) == 15);
+		//unitAssert(d.getHour(DateTime::E_UTC_TIME) == 12);
+		unitAssert(d.getMinute(DateTime::E_UTC_TIME) == 49);
+		unitAssert(d.getSecond(DateTime::E_UTC_TIME) == 8);
+		unitAssert(d.getMicrosecond() == 0);
+		unitAssert(d.get() == calcTimeTLocal(1993, 12, 15, 5, 49, 8));
+	}
+	{
+		DateTime d(String("Wed Dec 3 5:49:08 CST 1993"));
+		unitAssert(d.getYear(DateTime::E_UTC_TIME) == 1993);
+		unitAssert(d.getMonth(DateTime::E_UTC_TIME) == 12);
+		// unless we do some nice calculations to account for our local
+		// timezone, we can't check the day or hour.
+		//unitAssert(d.getDay(DateTime::E_UTC_TIME) == 15);
+		//unitAssert(d.getHour(DateTime::E_UTC_TIME) == 12);
+		unitAssert(d.getMinute(DateTime::E_UTC_TIME) == 49);
+		unitAssert(d.getSecond(DateTime::E_UTC_TIME) == 8);
+		unitAssert(d.getMicrosecond() == 0);
+		unitAssert(d.get() == calcTimeTLocal(1993, 12, 3, 5, 49, 8));
+	}
+	// FIXME! If things get corrected to detect proper timezones, then this case should fail.
+	{
+		DateTime d(String("Wed Dec 15 12:49:08 XXX 1993"));
+		unitAssert(d.getYear(DateTime::E_UTC_TIME) == 1993);
+		unitAssert(d.getMonth(DateTime::E_UTC_TIME) == 12);
+		// unless we do some nice calculations to account for our local
+		// timezone, we can't check the day or hour.
+		//unitAssert(d.getDay(DateTime::E_UTC_TIME) == 15);
+		//unitAssert(d.getHour(DateTime::E_UTC_TIME) == 12);
+		unitAssert(d.getMinute(DateTime::E_UTC_TIME) == 49);
+		unitAssert(d.getSecond(DateTime::E_UTC_TIME) == 8);
+		unitAssert(d.getMicrosecond() == 0);
+		unitAssert(d.get() == calcTimeTLocal(1993, 12, 15, 12, 49, 8));
+	}	
 }
 
 void OW_DateTimeTestCases::testSetToCurrent()
