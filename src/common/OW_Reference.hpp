@@ -46,9 +46,9 @@
 template<class T>
 inline void OW_RefSwap(T& x, T&y)
 {
-    T t = x;
-    x = y;
-    y = t;
+	T t = x;
+	x = y;
+	y = t;
 }
 
 
@@ -59,74 +59,78 @@ inline void OW_RefSwap(T& x, T&y)
 class OW_ReferenceBase
 {
 protected:
-    OW_ReferenceBase()
-        : m_pRefCount(0) {}
+	OW_ReferenceBase()
+		: m_pRefCount(0) {}
 
-    OW_ReferenceBase(const void* ptr)
-        : m_pRefCount((ptr != 0) ? new OW_RefCount : 0) {}
+	OW_ReferenceBase(const void* ptr)
+		: m_pRefCount((ptr != 0) ? new OW_RefCount : 0) {}
 
-    OW_ReferenceBase(const void* ptr, bool noDelete)
-        : m_pRefCount(0) 
-    {
-        if(ptr != 0 && !noDelete)
-        {
-            m_pRefCount = new OW_RefCount;
-        }
-    }
+	OW_ReferenceBase(const void* ptr, bool noDelete)
+		: m_pRefCount(0) 
+	{
+		if(ptr != 0 && !noDelete)
+		{
+			m_pRefCount = new OW_RefCount;
+		}
+	}
 
-    OW_ReferenceBase(const OW_ReferenceBase& arg)
-        : m_pRefCount(0)
-    {
-    	if(arg.m_pRefCount)
-    	{
-    		m_pRefCount = arg.m_pRefCount;
-            m_pRefCount->inc();
-    	}
-    }
+	OW_ReferenceBase(const OW_ReferenceBase& arg)
+		: m_pRefCount(0)
+	{
+		if(arg.m_pRefCount)
+		{
+			m_pRefCount = arg.m_pRefCount;
+			m_pRefCount->inc();
+		}
+	}
 
-    void incRef()
-    {
-    	if(m_pRefCount)
-    	{
-            m_pRefCount->inc();
-    	}
-    }
+	void incRef()
+	{
+		if(m_pRefCount)
+		{
+			m_pRefCount->inc();
+		}
+	}
 	
-    bool decRef()
-    {
-    	if(m_pRefCount)
-    	{
-            if (m_pRefCount->decAndTest())
-    		{
-    			delete m_pRefCount;
-    			m_pRefCount = 0;
-                return true;
-    		}
-    	}
-        return false;
-    }
+	bool decRef()
+	{
+		if(m_pRefCount)
+		{
+			if (m_pRefCount->decAndTest())
+			{
+				delete m_pRefCount;
+				// TODO: Measure how much of a performance impact the following line has.
+				m_pRefCount = 0;
+				return true;
+			}
+		}
+		return false;
+	}
 
-    void swap(OW_ReferenceBase& arg)
-    {
-        OW_RefSwap(m_pRefCount, arg.m_pRefCount);
-    }
+	void swap(OW_ReferenceBase& arg)
+	{
+		OW_RefSwap(m_pRefCount, arg.m_pRefCount);
+	}
 
-    void useRefCountOf(const OW_ReferenceBase& arg)
-    {
-    	if(m_pRefCount)
-    	{
-            if (m_pRefCount->decAndTest())
-    		{
-    			delete m_pRefCount;
-    			m_pRefCount = 0;
-    		}
-    	}
-    	m_pRefCount = arg.m_pRefCount;
-    	incRef();
-    }
+	void useRefCountOf(const OW_ReferenceBase& arg)
+	{
+		/*
+		if(m_pRefCount)
+		{
+			if (m_pRefCount->decAndTest())
+			{
+				delete m_pRefCount;
+				m_pRefCount = 0;
+			}
+		}
+		*/
+		decRef();
+		m_pRefCount = arg.m_pRefCount;
+		incRef();
+	}
 
 protected:
-    OW_RefCount* volatile m_pRefCount;
+	OW_RefCount* volatile m_pRefCount;
 
 };
 
@@ -150,7 +154,7 @@ class OW_Reference : private OW_ReferenceBase
 		~OW_Reference();
 		OW_Reference<T>& operator= (OW_Reference<T> arg);
 		OW_Reference<T>& operator= (T* newObj);
-        void swap(OW_Reference<T>& arg);
+		void swap(OW_Reference<T>& arg);
 
 		T* operator->() const;
 		T& operator*() const;
@@ -245,18 +249,19 @@ template<class T>
 inline void OW_Reference<T>::decRef()
 {
 	typedef char type_must_be_complete[sizeof(T)];
-    if (OW_ReferenceBase::decRef())
-    {
-        delete m_pObj;
-        m_pObj = 0;
-    }
+	if (OW_ReferenceBase::decRef())
+	{
+		delete m_pObj;
+		// TODO: Measure how much of a performance hit the following line has.
+		m_pObj = 0;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline OW_Reference<T>& OW_Reference<T>::operator= (OW_Reference<T> arg)
 {
-    arg.swap(*this);
+	arg.swap(*this);
 	return *this;
 }
 
@@ -264,7 +269,7 @@ inline OW_Reference<T>& OW_Reference<T>::operator= (OW_Reference<T> arg)
 template<class T>
 inline OW_Reference<T>& OW_Reference<T>::operator= (T* newObj)
 {
-    OW_Reference<T>(newObj).swap(*this);
+	OW_Reference<T>(newObj).swap(*this);
 	return *this;
 }
 
@@ -272,8 +277,8 @@ inline OW_Reference<T>& OW_Reference<T>::operator= (T* newObj)
 template <class T>
 inline void OW_Reference<T>::swap(OW_Reference<T>& arg)
 {
-    OW_ReferenceBase::swap(arg);
-    OW_RefSwap(m_pObj, arg.m_pObj);
+	OW_ReferenceBase::swap(arg);
+	OW_RefSwap(m_pObj, arg.m_pObj);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -347,7 +352,7 @@ template <class U>
 inline void
 OW_Reference<T>::useRefCountOf(const OW_Reference<U>& arg)
 {
-    OW_ReferenceBase::useRefCountOf(arg);
+	OW_ReferenceBase::useRefCountOf(arg);
 }
 
 //////////////////////////////////////////////////////////////////////////////
