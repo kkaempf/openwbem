@@ -182,30 +182,21 @@ int main(int argc, char* argv[])
 	}
 	catch (Exception& e)
 	{
-		OW_LOG_FATAL_ERROR(logger, "**************************************************");
 		OW_LOG_FATAL_ERROR(logger, "* EXCEPTION CAUGHT IN CIMOM MAIN!");
-		OW_LOG_FATAL_ERROR(logger, Format("* Type: %1", e.type()));
-		OW_LOG_FATAL_ERROR(logger, Format("* Msg: %1", e.getMessage()));
-		OW_LOG_FATAL_ERROR(logger, Format("* File: %1", e.getFile()));
-		OW_LOG_FATAL_ERROR(logger, Format("* Line: %1", e.getLine()));
-		OW_LOG_FATAL_ERROR(logger, "**************************************************");
+		OW_LOG_FATAL_ERROR(logger, Format("* %1", e));
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
 	catch (std::exception& se)
 	{
-		OW_LOG_FATAL_ERROR(logger, "**************************************************");
-		OW_LOG_FATAL_ERROR(logger, "* Standard EXCEPTION CAUGHT IN CIMOM MAIN!");
-		OW_LOG_FATAL_ERROR(logger, Format("* Type: %1", se.what()));
-		OW_LOG_FATAL_ERROR(logger, "**************************************************");
+		OW_LOG_FATAL_ERROR(logger, "* std::exception CAUGHT IN CIMOM MAIN!");
+		OW_LOG_FATAL_ERROR(logger, Format("* Message: %1", se.what()));
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
 	catch(...)
 	{
-		OW_LOG_FATAL_ERROR(logger, "**************************************************");
 		OW_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT CIMOM MAIN!");
-		OW_LOG_FATAL_ERROR(logger, "**************************************************");
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
