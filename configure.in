@@ -240,7 +240,7 @@ case "$host" in
 	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
 	CXXCOMMONLINKFLAGS=""
 	CXXBINLINKFLAGS="-Wl,-Bdynamic $LDFLAGS"
-	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@'
+	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@ -lpthread'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
 	;;
