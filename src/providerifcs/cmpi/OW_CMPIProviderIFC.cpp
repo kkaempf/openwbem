@@ -75,18 +75,51 @@ CMPIProviderIFC::~CMPIProviderIFC()
 	try
 	{
 		ProviderMap::iterator it = m_provs.begin();
-// BMMU: have to cleanup non instance providers, too
 		while(it != m_provs.end())
 		{
 			//CMPIInstanceMI * mi = it->second->instMI;
 			MIs miVector = it->second->miVector;
+
+			// If instance provider, allow instance prov cleanup to run
 			if (miVector.instMI)
 			{
 				OperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				miVector.instMI->ft->cleanup(miVector.instMI,
-						 &eCtx);
+				miVector.instMI->ft->cleanup(miVector.instMI, &eCtx);
 			}
+
+			// If associator provider, allow associator prov cleanup to run
+			if(miVector.assocMI)
+			{
+				OperationContext context;
+				CMPI_ContextOnStack eCtx(context);
+				miVector.assocMI->ft->cleanup(miVector.assocMI, &eCtx);
+			}
+
+			// If method provider, allow method prov cleanup to run
+			if(miVector.methMI)
+			{
+				OperationContext context;
+				CMPI_ContextOnStack eCtx(context);
+				miVector.methMI->ft->cleanup(miVector.methMI, &eCtx);
+			}
+
+			// If property provider, allow property prov cleanup to run
+			if(miVector.propMI)
+			{
+				OperationContext context;
+				CMPI_ContextOnStack eCtx(context);
+				miVector.propMI->ft->cleanup(miVector.propMI, &eCtx);
+			}
+
+			// If indication provider, allow indication prov cleanup to run
+			if(miVector.indMI)
+			{
+				OperationContext context;
+				CMPI_ContextOnStack eCtx(context);
+				miVector.indMI->ft->cleanup(miVector.indMI, &eCtx);
+			}
+
 			it->second.setNull();
 			it++;
 		}
