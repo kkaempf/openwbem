@@ -165,6 +165,20 @@ namespace HTTPUtils
 		String& password);
 	
 	bool buildMap(HTTPHeaderMap& map, std::istream& istr);
+	/**
+	 * Apply the standard URI [16, section 2] escaping mechanism to 
+	 * the char c, using the ""%" HEX HEX" convention)
+	 * @param c The char to escape
+	 * @return The escaped char
+	 */
+	String escapeCharForUrl(char c);
+	/**
+	 * Apply the standard URI [16, section 2] escaping mechanism to 
+	 * the string input, using the ""%" HEX HEX" convention)
+	 * @param input The string to escape
+	 * @return The escaped string
+	 */
+	String escapeForURL(const String& input);
 };
 
 } // end namespace OpenWBEM

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,10 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-/**
- *
- *
- */
 #include "OW_config.h"
 #include "OW_HTTPUtils.hpp"
 #include "OW_DateTime.hpp"
@@ -52,11 +48,15 @@
 namespace OpenWBEM
 {
 
-using std::istream;
 OW_DEFINE_EXCEPTION(Base64Format);
+
+namespace HTTPUtils
+{
+
+using std::istream;
 ///////////////////////////////////////////////////////////////////////////////
 bool
-HTTPUtils::parseHeader(HTTPHeaderMap& map,
+parseHeader(HTTPHeaderMap& map,
 								  Array<String>& array, istream& istr)
 {
 	String line;
@@ -74,13 +74,13 @@ HTTPUtils::parseHeader(HTTPHeaderMap& map,
 //////////////////////////////////////////////////////////////////////////////
 // static
 bool
-HTTPUtils::parseHeader(HTTPHeaderMap& map, istream& istr)
+parseHeader(HTTPHeaderMap& map, istream& istr)
 {
 	return buildMap(map, istr);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-HTTPUtils::buildMap(HTTPHeaderMap& map, istream& istr)
+buildMap(HTTPHeaderMap& map, istream& istr)
 {
 	String line;
 	String key;
@@ -129,7 +129,7 @@ HTTPUtils::buildMap(HTTPHeaderMap& map, istream& istr)
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////////
-String HTTPUtils::date( void )
+String date( void )
 {
 	DateTime DateTime;
 	DateTime.setToCurrent();
@@ -144,7 +144,7 @@ String HTTPUtils::date( void )
 }
 //////////////////////////////////////////////////////////////////////////////
 String
-HTTPUtils::status2String(int code)
+status2String(int code)
 {
 	switch ( code )
 	{
@@ -232,7 +232,7 @@ HTTPUtils::status2String(int code)
 static HTTPCounter theCounter;
 //////////////////////////////////////////////////////////////////////////////
 String
-HTTPUtils::getCounterStr()
+getCounterStr()
 {
 	int count = theCounter.getNextCounter();
 	// string should always be two digits.
@@ -251,7 +251,7 @@ static const char* const Base64 =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static const char Pad64 = '=';
 //////////////////////////////////////////////////////////////////////////////
-String HTTPUtils::base64Decode(const String& arg)
+String base64Decode(const String& arg)
 {
 	char* buf = new char[arg.length() + 1];
 	strcpy(buf, arg.c_str());
@@ -331,7 +331,7 @@ static int char2val(char c)
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-String HTTPUtils::base64Decode(const char* src)
+String base64Decode(const char* src)
 {
 	int szdest = strlen(src) * 2;
 	// TODO this is likely too big, but safe.  figure out correct minimal size.
@@ -443,7 +443,7 @@ String HTTPUtils::base64Decode(const char* src)
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
-String HTTPUtils::base64Encode(const String& arg)
+String base64Encode(const String& arg)
 {
 	char* buf = new char[arg.length() + 1];
 	strcpy(buf, arg.c_str());
@@ -452,7 +452,7 @@ String HTTPUtils::base64Encode(const String& arg)
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
-String HTTPUtils::base64Encode(const char* src)
+String base64Encode(const char* src)
 {
 	int szdest = strlen(src) * 3 + 4;
 	// TODO this is likely too big, but safe.  figure out correct minimal size.
@@ -511,7 +511,7 @@ String HTTPUtils::base64Encode(const char* src)
 //////////////////////////////////////////////////////////////////////////////
 #ifndef OW_DISABLE_DIGEST
 /* calculate H(A1) as per spec */
-void HTTPUtils::DigestCalcHA1(
+void DigestCalcHA1(
 	const String &sAlg,
 	const String &sUserName,
 	const String &sRealm,
@@ -542,7 +542,7 @@ void HTTPUtils::DigestCalcHA1(
 	};
 };
 /* calculate request-digest/response-digest as per HTTP Digest spec */
-void HTTPUtils::DigestCalcResponse(
+void DigestCalcResponse(
 	 const String& sHA1,			 /* H(A1) */
 	 const String& sNonce,		 /* nonce from server */
 	 const String& sNonceCount, /* 8 hex digits */
@@ -588,7 +588,7 @@ void HTTPUtils::DigestCalcResponse(
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 bool
-HTTPUtils::headerHasKey(const HTTPHeaderMap& headers,
+headerHasKey(const HTTPHeaderMap& headers,
 									const String& key)
 {
 	HTTPHeaderMap::const_iterator i =
@@ -605,7 +605,7 @@ HTTPUtils::headerHasKey(const HTTPHeaderMap& headers,
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 String
-HTTPUtils::getHeaderValue(const HTTPHeaderMap& headers,
+getHeaderValue(const HTTPHeaderMap& headers,
 									  const String& key)
 {
 	HTTPHeaderMap::const_iterator i =
@@ -622,7 +622,7 @@ HTTPUtils::getHeaderValue(const HTTPHeaderMap& headers,
 //////////////////////////////////////////////////////////////////////////////
 //STATIC
 void
-HTTPUtils::addHeader(Array<String>& headers,
+addHeader(Array<String>& headers,
 								const String& key, const String& value)
 {
 	String tmpKey = key;
@@ -639,12 +639,12 @@ HTTPUtils::addHeader(Array<String>& headers,
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-HTTPUtils::eatEntity(istream& istr)
+eatEntity(istream& istr)
 {
 	while ( istr )	istr.get();
 }
 void
-HTTPUtils::decodeBasicCreds(const String& info, String& name,
+decodeBasicCreds(const String& info, String& name,
 		String& password)
 {
 	String decoded = info;
@@ -657,7 +657,7 @@ HTTPUtils::decodeBasicCreds(const String& info, String& name,
 	decoded = decoded.substring(idx + 6);
 	try
 	{
-		decoded = HTTPUtils::base64Decode(decoded);
+		decoded = base64Decode(decoded);
 	}
 	catch (Base64FormatException &e)
 	{
@@ -676,5 +676,39 @@ HTTPUtils::decodeBasicCreds(const String& info, String& name,
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////
+String escapeCharForUrl(char c)
+{
+	char rval[4];
+	rval[0] = '%';
+	char hi = c >> 4;
+	rval[1] = hi >= 10 ? hi - 10 + 'A' : hi + '0';
+	char low = c & 0xF;
+	rval[2] = low >= 10 ? low - 10 + 'A' : low + '0';
+	rval[3] = '\0';
+	return String(rval);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+String escapeForURL(const String& input)
+{
+	StringBuffer rval;
+	for (size_t i = 0; i < input.length(); ++i)
+	{
+		if (isalnum(input[i]) || input[i] == '$' || input[i] == '-' || input[i] == '_' || input[i] == '.' || input[i] == '+' || input[i] == '!' 
+				|| input[i] == '*' || input[i] == '\'' || input[i] == '(' || input[i] == ')' || input[i] == ',')
+		{
+			rval += input[i];
+		}
+		else
+		{
+			rval += escapeCharForUrl(input[i]);
+		}
+	}
+	return rval.releaseString();
+}
+	
+
+} // end namespace HTTPUtils
 } // end namespace OpenWBEM
 
