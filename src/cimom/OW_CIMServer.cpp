@@ -389,10 +389,7 @@ void
 OW_CIMServer::createNameSpace(const OW_String& ns,
 	const OW_UserInfo& aclInfo)
 {
-#if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::CREATENAMESPACE, ns, aclInfo);
-#endif
-
+	// Don't need to check ACLs, since this is a result of calling createInstance.
 	m_cimRepository->createNameSpace(ns,aclInfo);
 
 }
@@ -402,10 +399,7 @@ void
 OW_CIMServer::deleteNameSpace(const OW_String& ns,
 	const OW_UserInfo& aclInfo)
 {
-#if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::DELETENAMESPACE, ns, aclInfo);
-#endif
-
+	// Don't need to check ACLs, since this is a result of calling deleteInstance.
 	m_cimRepository->deleteNameSpace(ns,aclInfo);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -415,9 +409,7 @@ void
 OW_CIMServer::enumNameSpace(OW_StringResultHandlerIFC& result,
 	const OW_UserInfo& aclInfo)
 {
-    // TODO: Do we check access for enumerate namespace, now that they're not hierarchial?
-	//m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATENAMESPACE, nsName,
-	//	aclInfo);
+	// Don't need to check ACLs, since this is a result of calling enumInstances.
 	m_cimRepository->enumNameSpace(result,aclInfo);
 }
 
@@ -728,10 +720,10 @@ namespace
 			return m_env->getLogger();
 		}
 
-        virtual OW_String getUserName() const
-        {
-            return m_acl.getUserName();
-        }
+		virtual OW_String getUserName() const
+		{
+			return m_acl.getUserName();
+		}
 
 	private:
 		OW_UserInfo m_acl;
@@ -1455,16 +1447,16 @@ OW_CIMServer::invokeMethod(
 			{
 				if (methodInParams[i].getType().getType() != v.getType())
 				{
-                    try
-                    {
-                        orderedParams[i].setValue(OW_CIMValueCast::castValueToDataType(
-                            v, methodInParams[i].getType()));
-                    }
-                    catch (OW_CIMException& ce)
-                    {
-                        ce.setErrNo(OW_CIMException::INVALID_PARAMETER);
-                        throw;
-                    }
+					try
+					{
+						orderedParams[i].setValue(OW_CIMValueCast::castValueToDataType(
+							v, methodInParams[i].getType()));
+					}
+					catch (OW_CIMException& ce)
+					{
+						ce.setErrNo(OW_CIMException::INVALID_PARAMETER);
+						throw;
+					}
 				}
 			}
 
@@ -1535,8 +1527,8 @@ OW_CIMServer::invokeMethod(
 			{
 				if (methodOutParams[i].getType().getType() != v.getType())
 				{
-                    outParams[i].setValue(OW_CIMValueCast::castValueToDataType(
-                        v, methodOutParams[i].getType()));
+					outParams[i].setValue(OW_CIMValueCast::castValueToDataType(
+						v, methodOutParams[i].getType()));
 				}
 			}
 		}
