@@ -40,9 +40,9 @@
 #ifndef __OW_INETSSLSOCKETIMPL_HPP__
 #define __OW_INETSSLSOCKETIMPL_HPP__
 
-#ifndef OW_NO_SSL
-
 #include "OW_config.h"
+
+#ifndef OW_NO_SSL
 
 #include "OW_SocketBaseImpl.hpp"
 #include "OW_SSLCtxMgr.hpp"

@@ -51,7 +51,9 @@
 #include "OW_CIMParamValue.hpp"
 #include "OW_Socket.hpp"
 #include "OW_URL.hpp"
+#ifdef OW_HAVE_OPENSSL
 #include <openssl/ssl.h>
+#endif
 
 #include <iostream>
 #include <algorithm> // for sort
