@@ -60,21 +60,27 @@ public:
 	SignalScope( int sig, sighandler_t handler )
 			: m_sig( sig )
 	{
+#ifndef OW_WIN32
 		struct sigaction saNew;
 		saNew.sa_handler = handler;
 		sigemptyset(&saNew.sa_mask);
 		saNew.sa_flags = 0;
 		sigaction(m_sig, &saNew, &m_oldHandler);
+#endif
 	}
 	~SignalScope()
 	{
+#ifndef OW_WIN32
 		sigaction(m_sig, &m_oldHandler, 0);
+#endif
 	}
 private:
 	SignalScope(const SignalScope&);
 	const SignalScope& operator=(const SignalScope&);
 	int m_sig;
+#ifndef OW_WIN32
 	struct sigaction m_oldHandler;
+#endif
 };
 
 } // end namespace OW_NAMESPACE
