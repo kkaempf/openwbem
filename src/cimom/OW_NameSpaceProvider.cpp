@@ -146,7 +146,6 @@ OW_NameSpaceProvider::getInstance(
 		const OW_CIMClass& cimClass,
 		const OW_Bool& /*localOnly*/)
 {
-	OW_CIMInstance ci;
 	OW_CIMProperty cp = cop.getKey(OW_CIMProperty::NAME_PROPERTY);
 	OW_CIMValue nsVal;
 	if (cp)
@@ -156,19 +155,11 @@ OW_NameSpaceProvider::getInstance(
 
 	if (nsVal && nsVal.getType() == OW_CIMDataType::STRING)
 	{
-		OW_CIMInstanceEnumeration cie;
-		try
-		{
-			cie = enumInstances(env,cop,false,cimClass,false);
-		}
-		catch (const OW_CIMException& e)
-		{
-			return ci;
-		}
+		OW_CIMInstanceEnumeration cie = enumInstances(env,cop,false,cimClass,false);
 		
 		while (cie.hasMoreElements())
 		{
-			ci = cie.nextElement();
+			OW_CIMInstance ci = cie.nextElement();
 			if (ci)
 			{
 				OW_CIMProperty cp = ci.getProperty(OW_CIMProperty::NAME_PROPERTY);
@@ -191,7 +182,7 @@ OW_NameSpaceProvider::getInstance(
 		}
 	}
 
-	return OW_CIMInstance();
+	OW_THROWCIM(OW_CIMException::NOT_FOUND);
 }
 
 //////////////////////////////////////////////////////////////////////////////
