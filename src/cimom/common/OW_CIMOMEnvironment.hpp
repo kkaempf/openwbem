@@ -169,8 +169,28 @@ private:
 	mutable bool m_indicationRepLayerDisabled;
 	mutable Mutex m_selectableLock;
 	
-	bool m_running;
-	mutable Mutex m_runningGuard;
+	enum EEnvState
+	{
+		E_STATE_INVALID,
+		E_STATE_INITIALIZING,
+		E_STATE_INITIALIZED,
+		E_STATE_STARTING,
+		E_STATE_STARTED,
+		E_STATE_SHUTTING_DOWN,
+		E_STATE_SHUTDOWN
+	};
+
+	static bool isLoaded(EEnvState s)
+	{
+		return s >= E_STATE_INITIALIZING && s <= E_STATE_STARTED;
+	}
+	static bool isInitialized(EEnvState s)
+	{
+		return s >= E_STATE_INITIALIZED && s <= E_STATE_STARTED;
+	}
+
+	EEnvState m_state;
+	mutable Mutex m_stateGuard;
 	IndicationRepLayerMediatorRef m_indicationRepLayerMediatorRef;
 
 	mutable Mutex m_interopInstancesLock;

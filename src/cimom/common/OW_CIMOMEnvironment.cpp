@@ -162,7 +162,7 @@ CIMOMEnvironment::CIMOMEnvironment()
 	, m_configItems(new ConfigMap)
 	, m_indicationsDisabled(true)
 	, m_indicationRepLayerDisabled(false)
-	, m_running(false)
+	, m_state(E_STATE_INVALID)
 	, m_indicationRepLayerMediatorRef(new IndicationRepLayerMediator)
 {
 }
@@ -173,13 +173,17 @@ CIMOMEnvironment::~CIMOMEnvironment()
 	{
 		try
 		{
-			shutdown();
+			if (m_state != E_STATE_SHUTDOWN)
+			{
+				shutdown();
+			}
 		}
 		catch(Exception& e)
 		{
 			cerr << e << endl;
 		}
 		m_configItems = 0;
+		m_state = E_STATE_INVALID; // just for the heck of it.
 	}
 	catch (...)
 	{
@@ -192,6 +196,8 @@ CIMOMEnvironment::init()
 {
 	// init() is called from a single-threaded state
 	_clearSelectables();
+
+	// The config file config item may be set before init() is called.
 	setConfigItem(ConfigOpts::CONFIG_FILE_opt, OW_DEFAULT_CONFIG_FILE, E_PRESERVE_PREVIOUS);
 	_loadConfigItemsFromFile(getConfigItem(ConfigOpts::CONFIG_FILE_opt));
 
@@ -281,8 +287,8 @@ CIMOMEnvironment::startServices()
 	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment initializing services");
 
 	{
-		MutexLock l(m_runningGuard);
-		m_running = true;
+		MutexLock l(m_stateGuard);
+		m_state = E_STATE_INITIALIZING;
 	}
 
 	for (size_t i = 0; i < m_services.size(); i++)
@@ -290,7 +296,11 @@ CIMOMEnvironment::startServices()
 		//OW_LOG_DEBUG(m_Logger, Format("CIMOM initializing service: %1", m_services[i]->getName()));
 		m_services[i]->init(this);
 	}
-
+	{
+		MutexLock l(m_stateGuard);
+		m_state = E_STATE_INITIALIZED;
+	}
+	
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
 		//OW_LOG_DEBUG(m_Logger, Format("CIMOM calling initialized() for service: %1", m_services[i]->getName()));
@@ -301,12 +311,21 @@ CIMOMEnvironment::startServices()
 
 	// start
 	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment starting services");
+	{
+		MutexLock l(m_stateGuard);
+		m_state = E_STATE_STARTING;
+	}
 
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
 		//OW_LOG_DEBUG(m_Logger, Format("CIMOM starting service: %1", m_services[i]->getName()));
 		m_services[i]->start();
 	}
+	{
+		MutexLock l(m_stateGuard);
+		m_state = E_STATE_STARTED;
+	}
+
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
 		//OW_LOG_DEBUG(m_Logger, Format("CIMOM calling started() for service: %1", m_services[i]->getName()));
@@ -321,8 +340,8 @@ CIMOMEnvironment::shutdown()
 {
 	OW_LOG_DEBUG(m_Logger, "CIMOM Environment shutting down...");
 	{
-		MutexLock l(m_runningGuard);
-		m_running = false;
+		MutexLock l(m_stateGuard);
+		m_state = E_STATE_SHUTTING_DOWN;
 	}
 	MutexLock ml(m_monitor);
 
@@ -431,10 +450,15 @@ CIMOMEnvironment::shutdown()
 	m_cimServer = 0;
 	// Delete the cim repository
 	m_cimRepository = 0;
-	// Delete the authorization managerw
+	// Delete the authorization manager
 	m_authorizerManager = 0;
 	// Delete the provider manager
 	m_providerManager = 0;
+
+	{
+		MutexLock l(m_stateGuard);
+		m_state = E_STATE_SHUTDOWN;
+	}
 
 	OW_LOG_DEBUG(m_Logger, "CIMOM Environment has shut down");
 }
@@ -443,13 +467,12 @@ ProviderManagerRef
 CIMOMEnvironment::getProviderManager() const
 {
 	{
-		MutexLock l(m_runningGuard);
-		if (!m_running)
+		MutexLock l(m_stateGuard);
+		if (!isLoaded(m_state))
 		{
-			OW_THROW(CIMOMEnvironmentException, "CIMOMEnvironment is shutting down");
+			OW_THROW(CIMOMEnvironmentException, "CIMOMEnvironment::getProviderManager() called when state is not constructed");
 		}
 	}
-	MutexLock ml(m_monitor);
 	OW_ASSERT(m_providerManager);
 	return m_providerManager;
 }
@@ -759,8 +782,8 @@ CIMOMEnvironment::authenticate(String &userName, const String &info,
 	String &details, OperationContext& context) const
 {
 	{
-		MutexLock l(m_runningGuard);
-		if (!m_running)
+		MutexLock l(m_stateGuard);
+		if (!isInitialized(m_state))
 		{
 			return false;
 		}
@@ -781,13 +804,12 @@ CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
 		OperationContext& context) const
 {
 	{
-		MutexLock l(m_runningGuard);
-		if (!m_running)
+		MutexLock l(m_stateGuard);
+		if (!isInitialized(m_state))
 		{
-			OW_THROW(CIMOMEnvironmentException, "CIMOMEnvironment is shutting down");
+			OW_THROW(CIMOMEnvironmentException, "CIMOMEnvironment::getWQLFilterCIMOMHandle() called when state is not initialized");
 		}
 	}
-	MutexLock ml(m_monitor);
 	OW_ASSERT(m_cimServer);
 	return CIMOMHandleIFCRef(new LocalCIMOMHandle(
 		const_cast<CIMOMEnvironment *>(this),
@@ -809,10 +831,10 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 	ELockingFlag locking) const
 {
 	{
-		MutexLock l(m_runningGuard);
-		if (!m_running)
+		MutexLock l(m_stateGuard);
+		if (!isLoaded(m_state))
 		{
-			OW_THROW(CIMOMEnvironmentException, "CIMOMEnvironment is shutting down");
+			OW_THROW(CIMOMEnvironmentException, "CIMOMEnvironment::getCIMOMHandle() called when state is not loaded.");
 		}
 	}
 	MutexLock ml(m_monitor);
@@ -862,10 +884,10 @@ WQLIFCRef
 CIMOMEnvironment::getWQLRef() const
 {
 	{
-		MutexLock l(m_runningGuard);
-		if (!m_running)
+		MutexLock l(m_stateGuard);
+		if (!isLoaded(m_state))
 		{
-			OW_THROW(CIMOMEnvironmentException, "CIMOMEnvironment is shutting down");
+			OW_THROW(CIMOMEnvironmentException, "CIMOMEnvironment::getWQLRef() called when state is not loaded");
 		}
 	}
 	MutexLock ml(m_monitor);
@@ -1040,8 +1062,8 @@ CIMOMEnvironment::getRequestHandler(const String &id) const
 {
 	RequestHandlerIFCRef ref;
 	{
-		MutexLock l(m_runningGuard);
-		if (!m_running)
+		MutexLock l(m_stateGuard);
+		if (!isInitialized(m_state))
 		{
 			return ref;
 		}
