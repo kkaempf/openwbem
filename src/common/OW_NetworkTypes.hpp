@@ -35,8 +35,6 @@
 #include "OW_Types.h"
 
 
-#if defined(OW_GNU_LINUX) || defined(OW_OPENUNIX) || defined(OW_SOLARIS) || defined(OW_OPENSERVER)
-
 extern "C"
 {
 #include <unistd.h>
@@ -75,7 +73,5 @@ typedef unsigned socklen_t;
 #endif
 #endif
 
-
-#endif //  #if defined(OW_GNU_LINUX) || defined(OW_OPENUNIX)
 
 #endif
