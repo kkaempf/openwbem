@@ -57,10 +57,11 @@ do																														\
 	OW_THROWCIMMSG((type),(message));														\
 }while(0)
 
-using namespace WBEMFlags;
 
 namespace OpenWBEM
 {
+
+using namespace WBEMFlags;
 
 namespace
 {
