@@ -332,7 +332,8 @@ public:
 	 *		CIM_ERR_FAILED
 	 */
 	virtual void enumInstances(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
@@ -668,7 +669,9 @@ private:
 	 */
 	OW_CIMClass _getNameSpaceClass(const OW_String& className);
 
-	void _getCIMInstances(const OW_CIMObjectPath& cop,
+	void _getCIMInstances(
+		const OW_String& ns,
+		const OW_String& className,
 		const OW_CIMClass& theTopClass,
 		const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
@@ -692,13 +695,13 @@ private:
 		const OW_ACLInfo& aclInfo);
 
 public:
-	void _getProviderProperties(const OW_CIMObjectPath& cop,
+	void _getProviderProperties(const OW_String& ns, const OW_CIMObjectPath& cop,
 		OW_CIMInstance& ci, const OW_CIMClass& theClass,
 		const OW_ACLInfo& aclInfo);
 
 private:
-	void checkGetClassRvalAndThrow(OW_CIMException::ErrNoType rval, const OW_CIMObjectPath& path);
-	void checkGetClassRvalAndThrowInst(OW_CIMException::ErrNoType rval, const OW_CIMObjectPath& path);
+	void checkGetClassRvalAndThrow(OW_CIMException::ErrNoType rval, const OW_String& ns, const OW_String& className);
+	void checkGetClassRvalAndThrowInst(OW_CIMException::ErrNoType rval, const OW_String& ns, const OW_String& className);
 
 	OW_GenericHDBRepository m_nStore;
 	OW_InstanceRepository m_iStore;

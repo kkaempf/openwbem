@@ -550,19 +550,20 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
+OW_CIMXMLCIMOMHandle::enumInstances(
+	const OW_String& ns,
+	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	static const char* const commandName = "EnumerateInstances";
 	OW_StringStream extra(1000);
-	OW_String className = path.getObjectName();
 	OW_Array<OW_Param> params;
 
 	if(className.empty())
 	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, "Class was empty in "
+		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, "Class Name was empty in "
 			"EnumerateInstances");
 	}
 
@@ -586,7 +587,7 @@ OW_CIMXMLCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
 	}
 
 	enumInstancesOp op(result);
-	intrinsicMethod(path.getNameSpace(), commandName, op, params, extra.toString());
+	intrinsicMethod(ns, commandName, op, params, extra.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////

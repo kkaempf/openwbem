@@ -160,13 +160,15 @@ OW_LocalCIMOMHandle::enumClassNames(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
+OW_LocalCIMOMHandle::enumInstances(
+	const OW_String& ns,
+	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_ReadLock rl = getReadLock();
-	m_pServer->enumInstances(path, result, deep, localOnly, includeQualifiers,
+	m_pServer->enumInstances(ns, className, result, deep, localOnly, includeQualifiers,
 		includeClassOrigin, propertyList, m_aclInfo);
 }
 

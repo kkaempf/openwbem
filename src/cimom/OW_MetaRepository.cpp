@@ -389,13 +389,6 @@ OW_MetaRepository::setQualiferType(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMException::ErrNoType
-OW_MetaRepository::getCIMClass(const OW_CIMObjectPath& op, OW_CIMClass& cc)
-{
-	return getCIMClass(op.getNameSpace(), op.getObjectName(), cc);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMException::ErrNoType
 OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className,
 	OW_CIMClass& cc)
 {

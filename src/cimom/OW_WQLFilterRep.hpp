@@ -314,7 +314,8 @@ public:
 	 * @exception OW_IOException
 	 */
 	virtual void enumInstances(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,

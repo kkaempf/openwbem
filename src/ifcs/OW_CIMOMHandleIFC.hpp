@@ -231,7 +231,9 @@ public:
 	 * belonging to the class specified in the path. This could include
 	 * instances of all the classes in the specified class' hierarchy.
 	 *
-	 * @param path The OW_CIMObjectPath identifying the class whose instances
+	 * @param ns The namespace.
+	 *
+	 * @param className The class whose instances
 	 * 	are to be enumerated.
 	 *
 	 * @param deep Return properties defined on subclasses of the class in path
@@ -257,7 +259,8 @@ public:
 	 * @exception OW_CIMException 	If the object cannot be found
 	 */
 	virtual void enumInstances(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool deep = DEEP,
 		OW_Bool localOnly = NOT_LOCAL_ONLY,
@@ -266,7 +269,8 @@ public:
 		const OW_StringArray* propertyList=0) = 0;
 
 	virtual OW_CIMInstanceEnumeration enumInstancesE(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_Bool deep = DEEP,
 		OW_Bool localOnly = NOT_LOCAL_ONLY,
 		OW_Bool includeQualifiers = EXCLUDE_QUALIFIERS,

@@ -117,13 +117,14 @@ public:
 	}
 
 	virtual void enumInstances(
-		const OW_CIMObjectPath &path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->enumInstances(path, result, deep, localOnly,includeQualifiers,
+		return m_ref->enumInstances(ns, className, result, deep, localOnly,includeQualifiers,
 			includeClassOrigin, propertyList, aclInfo);
 	}
 

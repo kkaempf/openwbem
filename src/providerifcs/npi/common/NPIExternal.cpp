@@ -79,8 +79,6 @@ extern "C" OW_CIMInstanceEnumeration
 NPI_enumeratemyInstances(NPIHandle* npiHandle, const OW_String& nameSpace,
 	const OW_String& className)
 {
-	OW_CIMObjectPath op(className, nameSpace);
-
 	OW_ProviderEnvironmentIFCRef * provenv =
 		static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 
@@ -88,7 +86,7 @@ NPI_enumeratemyInstances(NPIHandle* npiHandle, const OW_String& nameSpace,
 	try
 	{
 		cinsts = provenv->getPtr()->getCIMOMHandle()->enumInstancesE(
-			op, OW_CIMOMHandleIFC::DEEP,
+			nameSpace, className, OW_CIMOMHandleIFC::DEEP,
 			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN, NULL);

@@ -69,14 +69,15 @@ OW_SimpleCppInstanceProviderIFC::enumInstanceNames(
 	const OW_CIMClass& cimClass )
 {
 	instanceToObjectPathFilter handler(result,cop.getNameSpace());
-	enumInstances(env, cop, handler, cimClass);
+	enumInstances(env, cop.getNameSpace(), cop.getObjectName(), handler, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_SimpleCppInstanceProviderIFC::enumInstances(
 	const OW_ProviderEnvironmentIFCRef&,
-	const OW_CIMObjectPath&,
+	const OW_String&,
+	const OW_String&,
 	OW_CIMInstanceResultHandlerIFC&,
 	const OW_CIMClass&)
 {

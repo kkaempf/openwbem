@@ -122,7 +122,7 @@ void OW_WQLProcessor::visit_insertStmt(
 	const insertStmt* pinsertStmt
 	)
 {
-	m_tableRef = OW_CIMObjectPath(*pinsertStmt->m_pstrRelationName3, m_ns);
+	m_tableRef = *pinsertStmt->m_pstrRelationName3;
 	pinsertStmt->m_pinsertRest4->accept(this);
 }
 
@@ -130,13 +130,8 @@ void OW_WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	const insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN* pinsertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN
 	)
 {
-	OW_CIMClass cc = m_hdl->getClass(m_tableRef, false, true, true, 0);
+	OW_CIMClass cc = m_hdl->getClass(OW_CIMObjectPath(m_tableRef, m_ns), false, true, true, 0);
 
-	if (!cc)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS, format("Class specified in query (%1) does not exist", m_tableRef.toString()).c_str());
-	}
-	
 	OW_CIMInstance ci = cc.newInstance();
 	OW_CIMPropertyArray cpa = ci.getProperties();
 
@@ -209,11 +204,7 @@ void OW_WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LE
 	const insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN* pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN
 	)
 {
-	OW_CIMClass cc = m_hdl->getClass(m_tableRef, false, true, true, 0);
-	if (!cc)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS, format("Class specified in query (%1) does not exist", m_tableRef.toString()).c_str());
-	}
+	OW_CIMClass cc = m_hdl->getClass(OW_CIMObjectPath(m_tableRef, m_ns), false, true, true, 0);
 	if (pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN->m_pcolumnList2->size() !=
 		pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN->m_ptargetList6->size())
 	{
@@ -781,7 +772,7 @@ void OW_WQLProcessor::visit_relationExpr_strRelationName(
 	const relationExpr_strRelationName* prelationExpr_strRelationName
 	)
 {
-	m_tableRef = OW_CIMObjectPath(*prelationExpr_strRelationName->m_pstrRelationName1, m_ns);
+	m_tableRef = *prelationExpr_strRelationName->m_pstrRelationName1;
 	//OW_LOGDEBUG(format("Setting m_tableRef to: %1", m_tableRef.toString()));
 }
 
@@ -2379,7 +2370,7 @@ bool OW_WQLProcessor::LessThan::operator()(const OW_CIMValue& lhs, const OW_CIMV
 
 void OW_WQLProcessor::populateInstances(const OW_String& className)
 {
-	m_tableRef = OW_CIMObjectPath(className, m_ns);
+	m_tableRef = className;
 	populateInstances();
 }
 
@@ -2403,6 +2394,6 @@ namespace
 void OW_WQLProcessor::populateInstances()
 {
 	InstanceArrayBuilder handler(instances);
-	m_hdl->enumInstances(m_tableRef, handler, true);
+	m_hdl->enumInstances(m_ns, m_tableRef, handler, true);
 }
 

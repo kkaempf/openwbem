@@ -112,8 +112,8 @@ class InfiniteInstancesRH: public OW_CIMInstanceResultHandlerIFC
 protected:
 	virtual void doHandle(const OW_CIMInstance& ci)
 	{
-		cout 
-			<< "Instance Number " 
+		cout
+			<< "Instance Number "
 			<< ci.getProperty("InstanceNumber").getValue() << endl;
 	}
 };
@@ -225,8 +225,7 @@ main(int argc, char* argv[])
 		//foobar(rch);
 		InfiniteInstancesRH irh;
 
-		OW_CIMObjectPath cop("InfiniteInstances");
-		rch.enumInstances(cop, irh);
+		rch.enumInstances("root", "InfiniteInstances", irh);
 		return 0;
 
 	}

@@ -501,6 +501,10 @@ OW_CIMServer::enumNameSpace(const OW_String& nsName_,
 	// TODO: Do we need this toLowerCase?
 	OW_String nsName(nsName_);
 	nsName.toLowerCase();
+	while (!nsName.empty() && nsName[0] == '/')
+	{
+		nsName = nsName.substring(1);
+	}
 
 	// Check to see if user has rights to enumerate the namespace
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATENAMESPACE, nsName,
@@ -593,8 +597,8 @@ OW_CIMServer::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
 		{
 			// Check to see if user has rights to get the class
 			m_accessMgr->checkAccess(OW_AccessMgr::GETCLASS, path, aclInfo);
-			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(path, theClass);
-			checkGetClassRvalAndThrow(rval, path);
+			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(path.getNameSpace(), path.getObjectName(), theClass);
+			checkGetClassRvalAndThrow(rval, path.getNameSpace(), path.getObjectName());
 		}
 
 		OW_StringArray lpropList;
@@ -683,7 +687,7 @@ OW_CIMServer::deleteClass(const OW_String& ns, const OW_String& className,
 
 		OW_CIMClass cc;
 		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, className, cc);
-		checkGetClassRvalAndThrow(rc, OW_CIMObjectPath(className, ns));
+		checkGetClassRvalAndThrow(rc, ns, className);
 		OW_ASSERT(cc);
 
 		// TODO: this doesn't work quite right.  what about associations to
@@ -766,8 +770,8 @@ OW_CIMServer::modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
 	try
 	{
 		OW_CIMClass origClass;
-		OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(name, origClass);
-		checkGetClassRvalAndThrow(rval, name);
+		OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(name.getNameSpace(), name.getObjectName(), origClass);
+		checkGetClassRvalAndThrow(rval, name.getNameSpace(), name.getObjectName());
 
 		// TODO: this needs to update the subclasses of the modified class.
 		//			If that's not possible, then we need to throw a
@@ -902,8 +906,8 @@ OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path,
 		OW_CIMClass theClass = _getNameSpaceClass(path.getObjectName());
 		if(!theClass)
 		{
-			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop, theClass);
-			checkGetClassRvalAndThrowInst(rval, lcop);
+			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop.getNameSpace(), lcop.getObjectName(), theClass);
+			checkGetClassRvalAndThrowInst(rval, lcop.getNameSpace(), lcop.getObjectName());
 		}
 
 		_getCIMInstanceNames(lcop, theClass, result, deep, aclInfo);
@@ -921,8 +925,8 @@ OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path,
 		for(size_t i = 0; i < classNames.size(); i++)
 		{
 			lcop.setObjectName(classNames[i]);
-			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop, theClass);
-			checkGetClassRvalAndThrowInst(rval, lcop);
+			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop.getNameSpace(), lcop.getObjectName(), theClass);
+			checkGetClassRvalAndThrowInst(rval, lcop.getNameSpace(), lcop.getObjectName());
 
 			_getCIMInstanceNames(lcop, theClass, result, deep, aclInfo);
 		}
@@ -1020,27 +1024,28 @@ OW_CIMServer::_getCIMInstanceNames(const OW_CIMObjectPath cop,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumInstances(const OW_CIMObjectPath& path,
+OW_CIMServer::enumInstances(
+	const OW_String& ns,
+	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to enumerate instances
-	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEINSTANCES, path, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEINSTANCES, ns, aclInfo);
 
 	try
 	{
 		OW_ACLInfo intAclInfo;
-		OW_CIMObjectPath lcop(path);
-		OW_CIMClass theTopClass = _getNameSpaceClass(path.getObjectName());
+		OW_CIMClass theTopClass = _getNameSpaceClass(className);
 		if(!theTopClass)
 		{
-			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop,
+			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className,
 				theTopClass);
-			checkGetClassRvalAndThrowInst(rval, lcop);
+			checkGetClassRvalAndThrowInst(rval, ns, className);
 		}
 
-		_getCIMInstances(lcop, theTopClass, theTopClass, result, deep, localOnly,
+		_getCIMInstances(ns, className, theTopClass, theTopClass, result, deep, localOnly,
 			includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 		
 		// If this is the namespace class then we're done.
@@ -1049,17 +1054,16 @@ OW_CIMServer::enumInstances(const OW_CIMObjectPath& path,
 			return;
 		}
 
-		OW_StringArray classNames = m_mStore.getClassChildren(lcop.getNameSpace(),
-			theTopClass.getName());
+		OW_StringArray classNames = m_mStore.getClassChildren(ns,
+			className);
 
 		for(size_t i = 0; i < classNames.size(); i++)
 		{
-			lcop.setObjectName(classNames[i]);
 			OW_CIMClass theClass;
-			OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(lcop, theClass);
-			checkGetClassRvalAndThrowInst(rc, lcop);
+			OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, classNames[i], theClass);
+			checkGetClassRvalAndThrowInst(rc, ns, classNames[i]);
 
-			_getCIMInstances(lcop, theTopClass, theClass, result, deep, localOnly,
+			_getCIMInstances(ns, classNames[i], theTopClass, theClass, result, deep, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 		}
 	}
@@ -1081,14 +1085,14 @@ namespace
 		HandleProviderInstance(const OW_CIMClass& theClass_,
 			const OW_ACLInfo& aclInfo_,
 			bool includeQualifiers_, bool includeClassOrigin_,
-			OW_StringArray& lpropList_, const OW_CIMObjectPath& cop_,
+			OW_StringArray& lpropList_, const OW_String& ns_,
 			OW_CIMServer& server_, OW_CIMInstanceResultHandlerIFC& result_)
 		: theClass(theClass_)
 		, aclInfo(aclInfo_)
 		, includeQualifiers(includeQualifiers_)
 		, includeClassOrigin(includeClassOrigin_)
 		, lpropList(lpropList_)
-		, cop(cop_)
+		, ns(ns_)
 		, server(server_)
 		, result(result_)
 		{}
@@ -1096,11 +1100,9 @@ namespace
 		virtual void doHandle(const OW_CIMInstance &c)
 		{
 			OW_CIMInstance ci(c);
-			OW_CIMObjectPath lcop(cop);
-			lcop.setObjectName(ci.getClassName());
-			lcop.setKeys(ci.getKeyValuePairs());
+			OW_CIMObjectPath lcop(ci.getClassName(), ci.getKeyValuePairs());
 
-			server._getProviderProperties(lcop, ci, theClass, aclInfo);
+			server._getProviderProperties(ns, lcop, ci, theClass, aclInfo);
 			result.handle(ci.clone(false, includeQualifiers,
 				includeClassOrigin, lpropList));
 		}
@@ -1109,7 +1111,7 @@ namespace
 		const OW_ACLInfo& aclInfo;
 		bool includeQualifiers, includeClassOrigin;
 		OW_StringArray& lpropList;
-		const OW_CIMObjectPath& cop;
+		const OW_String& ns;
 		OW_CIMServer& server;
 		OW_CIMInstanceResultHandlerIFC& result;
 	};
@@ -1188,7 +1190,9 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
 void
-OW_CIMServer::_getCIMInstances(const OW_CIMObjectPath& cop,
+OW_CIMServer::_getCIMInstances(
+	const OW_String& ns,
+	const OW_String& className,
 	const OW_CIMClass& theTopClass,
 	const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
@@ -1223,14 +1227,14 @@ OW_CIMServer::_getCIMInstances(const OW_CIMObjectPath& cop,
 
 		HandleLocalOnlyAndDeep handler1(result,theClass,localOnly,deep);
 		HandleProviderInstance handler2(theClass,aclInfo,
-			includeQualifiers,includeClassOrigin,lpropList, cop, *this, handler1);
+			includeQualifiers,includeClassOrigin,lpropList, ns, *this, handler1);
 		instancep->enumInstances(
-			createProvEnvRef(real_ch), cop, handler2, deep, theClass, localOnly);
+			createProvEnvRef(real_ch), ns, className, handler2, deep, theClass, localOnly);
 	}
 	else
 	{
 		HandleLocalOnlyAndDeep handler(result, theTopClass, localOnly, deep);
-		m_iStore.getCIMInstances(cop, theClass, handler,
+		m_iStore.getCIMInstances(ns, className, theClass, handler,
 			includeQualifiers, includeClassOrigin, propertyList, this,
 			&aclInfo);
 	}
@@ -1318,7 +1322,7 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 	}
 
 	ci.syncWithClass(cc, true);
-	_getProviderProperties(cop, ci, cc, aclInfo);
+	_getProviderProperties(cop.getNameSpace(), cop, ci, cc, aclInfo);
 	ci = ci.clone(localOnly, includeQualifiers, includeClassOrigin,
 		propertyList);
 
@@ -1441,7 +1445,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 		if(!theClass)
 		{
 			OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(), theClass);
-			checkGetClassRvalAndThrowInst(rc, cop);
+			checkGetClassRvalAndThrowInst(rc, cop.getNameSpace(), ci.getClassName());
 		}
 
 		OW_CIMQualifier acq = theClass.getQualifier(
@@ -1505,7 +1509,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 					}
 
 					OW_CIMClass rcc;
-					OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(op, rcc);
+					OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(op.getNameSpace(), op.getObjectName(), rcc);
 
 					if(rc == OW_CIMException::SUCCESS)
 					{
@@ -1583,7 +1587,7 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(),
 			theClass);
 
-		checkGetClassRvalAndThrowInst(rc, cop);
+		checkGetClassRvalAndThrowInst(rc, cop.getNameSpace(), cop.getObjectName());
 
 		OW_CIMQualifier cq = theClass.getQualifier(
 			OW_CIMQualifier::CIM_QUAL_PROVIDER);
@@ -1676,7 +1680,7 @@ OW_CIMServer::_instanceExists(const OW_CIMObjectPath& icop,
 	}
 	else
 	{
-		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(icop, cc);
+		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(icop.getNameSpace(), icop.getObjectName(), cc);
 		if (rc != OW_CIMException::SUCCESS)
 		{
 			return false;
@@ -1701,8 +1705,8 @@ OW_CIMServer::getProperty(const OW_CIMObjectPath& name,
 		aclInfo, true);
 
 	OW_CIMClass theClass;
-	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, theClass);
-	checkGetClassRvalAndThrowInst(rc, name);
+	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name.getNameSpace(), name.getObjectName(), theClass);
+	checkGetClassRvalAndThrowInst(rc, name.getNameSpace(), name.getObjectName());
 
 	OW_CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
@@ -1751,8 +1755,8 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 
 	OW_ACLInfo intAclInfo;
 	OW_CIMClass theClass;
-	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, theClass);
-	checkGetClassRvalAndThrowInst(rc, name);
+	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name.getNameSpace(), name.getObjectName(), theClass);
+	checkGetClassRvalAndThrowInst(rc, name.getNameSpace(), name.getObjectName());
 
 	OW_CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
@@ -1846,8 +1850,8 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 	OW_ACLInfo intAclInfo;
 	OW_CIMMethod method;
 	OW_CIMClass cc;
-	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, cc);
-	checkGetClassRvalAndThrow(rc, name);
+	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name.getNameSpace(), name.getObjectName(), cc);
+	checkGetClassRvalAndThrow(rc, name.getNameSpace(), name.getObjectName());
 
 	OW_CIMPropertyArray keys = name.getKeys();
 
@@ -2950,8 +2954,8 @@ OW_CIMServer::_staticAssociatorsClass(const OW_CIMObjectPath& path,
 
 		// get the current class so we can get the name of the superclass
 		OW_CIMClass theClass;
-		OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(curPath, theClass);
-		checkGetClassRvalAndThrow(rval, curPath);
+		OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(curPath.getNameSpace(), curPath.getObjectName(), theClass);
+		checkGetClassRvalAndThrow(rval, curPath.getNameSpace(), curPath.getObjectName());
 		curClsName = theClass.getSuperClass();
 		curPath.setObjectName(curClsName);
 	}
@@ -2999,8 +3003,8 @@ OW_CIMServer::_staticReferencesClass(const OW_CIMObjectPath& path,
 
 		// get the current class so we can get the name of the superclass
 		OW_CIMClass theClass;
-		OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(curPath, theClass);
-		checkGetClassRvalAndThrow(rval, curPath);
+		OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(curPath.getNameSpace(), curPath.getObjectName(), theClass);
+		checkGetClassRvalAndThrow(rval, curPath.getNameSpace(), curPath.getObjectName());
 		curClsName = theClass.getSuperClass();
 		curPath.setObjectName(curClsName);
 	}
@@ -3256,7 +3260,7 @@ OW_CIMServer::_setProviderProperties(const OW_CIMObjectPath& cop,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::_getProviderProperties(const OW_CIMObjectPath& cop,
+OW_CIMServer::_getProviderProperties(const OW_String& ns, const OW_CIMObjectPath& cop,
 	OW_CIMInstance& ci, const OW_CIMClass& theClass, const OW_ACLInfo& aclInfo)
 {
 	OW_ACLInfo intAclInfo;
@@ -3286,8 +3290,10 @@ OW_CIMServer::_getProviderProperties(const OW_CIMObjectPath& cop,
 			// If we found a provider, ask it for the value of this property
 			if(propp)
 			{
+				OW_CIMObjectPath copWithNS(cop);
+				copWithNS.setNameSpace(ns);
 				clsProp.setValue(propp->getPropertyValue(
-					createProvEnvRef(real_ch), cop,
+					createProvEnvRef(real_ch), copWithNS,
 					clsProp.getOriginClass(), clsProp.getName()));
 				ci.setProperty(clsProp);
 			}
@@ -3296,34 +3302,36 @@ OW_CIMServer::_getProviderProperties(const OW_CIMObjectPath& cop,
 }
 
 void
-OW_CIMServer::checkGetClassRvalAndThrow(OW_CIMException::ErrNoType rval, const OW_CIMObjectPath& path)
+OW_CIMServer::checkGetClassRvalAndThrow(OW_CIMException::ErrNoType rval,
+	const OW_String& ns, const OW_String& className)
 {
 	if (rval != OW_CIMException::SUCCESS)
 	{
 		// check whether the namespace was invalid or not
 		if (rval == OW_CIMException::NOT_FOUND)
 		{
-			if (!m_nStore.nameSpaceExists(path.getNameSpace()))
+			if (!m_nStore.nameSpaceExists(ns))
 			{
-				OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, path.getNameSpace().c_str());
+				OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns.c_str());
 			}
 		}
 
-		OW_THROWCIMMSG(rval, path.toString().c_str());
+		OW_THROWCIMMSG(rval, OW_CIMObjectPath(className, ns).toString().c_str());
 	}
 }
 
 void
-OW_CIMServer::checkGetClassRvalAndThrowInst(OW_CIMException::ErrNoType rval, const OW_CIMObjectPath& path)
+OW_CIMServer::checkGetClassRvalAndThrowInst(OW_CIMException::ErrNoType rval,
+	const OW_String& ns, const OW_String& className)
 {
 	if (rval != OW_CIMException::SUCCESS)
 	{
 		// check whether the namespace was invalid or not
 		if (rval == OW_CIMException::NOT_FOUND)
 		{
-			if (!m_nStore.nameSpaceExists(path.getNameSpace()))
+			if (!m_nStore.nameSpaceExists(ns))
 			{
-				OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, path.getNameSpace().c_str());
+				OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns.c_str());
 			}
 			else
 			{
@@ -3331,7 +3339,7 @@ OW_CIMServer::checkGetClassRvalAndThrowInst(OW_CIMException::ErrNoType rval, con
 			}
 		}
 
-		OW_THROWCIMMSG(rval, path.toString().c_str());
+		OW_THROWCIMMSG(rval, OW_CIMObjectPath(className, ns).toString().c_str());
 	}
 }
 

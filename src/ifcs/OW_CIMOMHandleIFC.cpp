@@ -172,7 +172,8 @@ OW_CIMOMHandleIFC::enumClassNamesE(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration
 OW_CIMOMHandleIFC::enumInstancesE(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_Bool deep,
 		OW_Bool localOnly,
 		OW_Bool includeQualifiers,
@@ -181,7 +182,7 @@ OW_CIMOMHandleIFC::enumInstancesE(
 {
 	OW_CIMInstanceEnumeration rval;
 	CIMInstanceEnumBuilder handler(rval);
-	enumInstances(path,handler,deep,localOnly,includeQualifiers,
+	enumInstances(ns, className, handler,deep,localOnly,includeQualifiers,
 		includeClassOrigin,propertyList);
 	return rval;
 }

@@ -209,7 +209,8 @@ namespace
 void
 OW_SimpleCppInstanceProviderProxy::enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass,
@@ -218,7 +219,7 @@ OW_SimpleCppInstanceProviderProxy::enumInstances(
 	m_pProv->updateAccessTime();
 	(void)deep;
 	localOnlyFilter filter(result,localOnly);
-	m_pProv->enumInstances(env, cop, filter, cimClass);
+	m_pProv->enumInstances(env, ns, className, filter, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

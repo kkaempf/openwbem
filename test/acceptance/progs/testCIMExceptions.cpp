@@ -738,8 +738,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		OW_CIMObjectPath cop("foo", "badNamespace");
-		hdl->enumInstancesE(cop);
+		hdl->enumInstancesE("badNamespace", "foo");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -751,8 +750,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_CLASS
 	try
 	{
-		OW_CIMObjectPath cop("badClass", "root/testsuite");
-		hdl->enumInstancesE(cop);
+		hdl->enumInstancesE("root/testsuite", "badClass");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)

@@ -71,14 +71,15 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 	virtual void enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly )
 	{
 		(void)env;
-		(void)cop;
+		(void)ns;
 		(void)deep;
 		(void)localOnly;
 
@@ -97,7 +98,7 @@ public:
 			OW_StringArray proc = iter->tokenize();
 			OW_CIMInstance newInst = cimClass.newInstance();
 			newInst.setProperty(OW_String("CreationClassName"),
-				OW_CIMValue(cop.getObjectName()));
+				OW_CIMValue(className));
 			newInst.setProperty(OW_String("Handle"), OW_CIMValue(proc[0]));
 			newInst.setProperty(OW_String("OSName"), OW_CIMValue(OW_String("Linux")));
 			newInst.setProperty(OW_String("OSCreationClassName"),

@@ -199,7 +199,9 @@ OW_WQLFilterRep::enumClassNames(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::enumInstances(const OW_CIMObjectPath& path,
+OW_WQLFilterRep::enumInstances(
+	const OW_String& ns,
+	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result,
 	OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
@@ -209,7 +211,7 @@ OW_WQLFilterRep::enumInstances(const OW_CIMObjectPath& path,
 
 	while (!superClassName.empty())
 	{
-		if (superClassName.equalsIgnoreCase(path.getObjectName()))
+		if (superClassName.equalsIgnoreCase(className))
 		{
 			// Don't need to do correct localOnly & deep processing.
 			//result.handleInstance(m_inst.clone(localOnly, includeQualifiers,
@@ -222,7 +224,7 @@ OW_WQLFilterRep::enumInstances(const OW_CIMObjectPath& path,
 		}
 		
 		superClassName = m_pCIMServer->getClass(OW_CIMObjectPath(
-			superClassName, path.getNameSpace()), false, true, true,
+			superClassName, ns), false, true, true,
 			NULL, aclInfo).getSuperClass();
 	}
 }

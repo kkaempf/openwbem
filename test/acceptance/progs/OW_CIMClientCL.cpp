@@ -473,8 +473,7 @@ enumerateInstances(OW_CIMOMHandleIFC& hdl, OW_String ofClass, OW_Bool deep, OW_B
 
 	try
 	{
-		OW_CIMObjectPath cop(ofClass, "root/testsuite");
-		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE(cop, deep, localOnly,
+		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE("root/testsuite", ofClass, deep, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList);
 
 		while (enu.hasMoreElements())

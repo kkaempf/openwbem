@@ -295,16 +295,19 @@ OW_BinaryCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
+OW_BinaryCIMOMHandle::enumInstances(
+	const OW_String& ns,
+	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"EnumerateInstances", path.getNameSpace());;
+		"EnumerateInstances", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_ENUMINSTS);
-	OW_BinIfcIO::writeObjectPath(strm, path);
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeString(strm, className);
 	OW_BinIfcIO::writeBool(strm, deep);
 	OW_BinIfcIO::writeBool(strm, localOnly);
 	OW_BinIfcIO::writeBool(strm, includeQualifiers);
@@ -316,7 +319,8 @@ OW_BinaryCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
 		OW_BinIfcIO::writeStringArray(strm, *propertyList);
 	}
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "EnumerateInstances", path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"EnumerateInstances", ns);
 	readAndDeliver(in, result);
 }
 

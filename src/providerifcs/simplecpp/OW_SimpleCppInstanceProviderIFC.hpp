@@ -82,7 +82,8 @@ public:
 	 */
 	virtual void enumInstances(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
+			const OW_String& ns,
+			const OW_String& className,
 			OW_CIMInstanceResultHandlerIFC& result,
 			const OW_CIMClass& cimClass);
 

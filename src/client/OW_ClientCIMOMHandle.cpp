@@ -103,13 +103,15 @@ OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns)
 
 //////////////////////////////////////////////////////////////////////////////
 static void
-enumNameSpaceAux(OW_CIMOMHandleIFC* hdl, const OW_CIMObjectPath& path,
+enumNameSpaceAux(OW_CIMOMHandleIFC* hdl,
+	const OW_String& ns,
 	OW_StringResultHandlerIFC& result, OW_Bool deep)
 {
 	// can't use the callback version of enumInstances, because the recursion
 	// throws a wrench in the works.  Each CIM Method call has to finish
 	// before another one can begin.
-	OW_CIMInstanceEnumeration en = hdl->enumInstancesE(path, false, true);
+	OW_CIMInstanceEnumeration en = hdl->enumInstancesE(ns,
+		OW_CIMClass::NAMESPACECLASS, false, true);
 	while (en.hasMoreElements())
 	{
 		OW_CIMInstance i = en.nextElement();
@@ -137,12 +139,10 @@ enumNameSpaceAux(OW_CIMOMHandleIFC* hdl, const OW_CIMObjectPath& path,
 
 		OW_String tmp;
 		nameProp.getValue().get(tmp);
-		result.handle(path.getNameSpace() + "/" + tmp);
+		result.handle(ns + "/" + tmp);
 		if(deep)
 		{
-			OW_CIMObjectPath newObjPath(OW_CIMClass::NAMESPACECLASS,
-				path.getNameSpace()+ "/" + tmp);
-			enumNameSpaceAux(hdl, newObjPath, result, deep);
+			enumNameSpaceAux(hdl, ns + "/" + tmp, result, deep);
 		}
 	}
 }
@@ -152,8 +152,7 @@ void
 OW_ClientCIMOMHandle::enumNameSpace(const OW_String& ns,
 	OW_StringResultHandlerIFC &result, OW_Bool deep)
 {
-	OW_CIMObjectPath cop(OW_CIMClass::NAMESPACECLASS, ns);
 	result.handle(ns);
-	enumNameSpaceAux(this, cop, result, deep);
+	enumNameSpaceAux(this, ns, result, deep);
 }
 				

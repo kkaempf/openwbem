@@ -958,11 +958,11 @@ namespace
 	public:
 		CIMInstanceXMLOutputter(
 			std::ostream& ostr_,
-			OW_CIMObjectPath& path_,
+			const OW_String& ns_,
 			bool localOnly_, bool includeQualifiers_, bool includeClassOrigin_, bool isPropertyList_,
 			OW_StringArray& propertyList_)
 		: ostr(ostr_)
-		, path(path_)
+		, ns(ns_)
 		, localOnly(localOnly_)
 		, includeQualifiers(includeQualifiers_)
 		, includeClassOrigin(includeClassOrigin_)
@@ -976,7 +976,7 @@ namespace
 			OW_CIMObjectPath cop(cimInstance.getClassName(),
 				cimInstance.getKeyValuePairs());
 
-			cop.setNameSpace(path.getNameSpace());
+			cop.setNameSpace(ns);
 
 			ostr << "<VALUE.NAMEDINSTANCE>";
 			OW_CIMtoXML(cimInstance, ostr, cop,
@@ -990,7 +990,7 @@ namespace
 			checkStream(ostr);
 		}
 		std::ostream& ostr;
-		OW_CIMObjectPath& path;
+		OW_String ns;
 		bool localOnly, includeQualifiers, includeClassOrigin, isPropertyList;
 		OW_StringArray& propertyList;
 
@@ -1011,7 +1011,7 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_CIMXMLParser& parser,
 
 	getParameterValues(parser, params);
 
-	path.setObjectName(params[0].val.toCIMObjectPath().getObjectName());
+	OW_String className = params[0].val.toCIMObjectPath().getObjectName();
 
 	OW_StringArray propertyList;
 	OW_StringArray* pPropList = 0;
@@ -1028,9 +1028,9 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_CIMXMLParser& parser,
 	bool includeClassOrigin = params[4].val.toBool();
 
 	// TODO: remove as many of these flags from handler as possible
-	CIMInstanceXMLOutputter handler(ostr, path, localOnly, includeQualifiers,
+	CIMInstanceXMLOutputter handler(ostr, path.getNameSpace(), localOnly, includeQualifiers,
 		includeClassOrigin, params[5].isSet, propertyList);
-	hdl.enumInstances(path, handler, deep, localOnly,
+	hdl.enumInstances(path.getNameSpace(), className, handler, deep, localOnly,
 		includeQualifiers, includeClassOrigin, pPropList);
 }
 

@@ -127,18 +127,6 @@ public:
 		OW_CIMClass& cc);
 
 	/**
-	 * Gets an existing class from the store
-	 * @param op The object path that contains the namespace and class name
-	 * @param cc the class to be retrieved.
-	 * @return 0 on success.  Otherwise a value from OW_CIMException.
-	 * @exception OW_CIMException
-	 * @exception OW_HDBException An error occurred in the database.
-	 * @exception OW_IOException Couldn't read class object from file.
-	 */
-	// TODO: Remove this function
-	OW_CIMException::ErrNoType getCIMClass(const OW_CIMObjectPath& op, OW_CIMClass& cc);
-
-	/**
 	 * Delete an existing class from the store
 	 * @param ns			The namespace for the class
 	 * @param className	The name of the class to retrieve

@@ -924,7 +924,7 @@ private:
 	OW_Array<DataType> m_valueArray;
 	OW_Reference<OW_CIMOMHandleIFC> m_hdl;
 	OW_String m_ns;
-	OW_CIMObjectPath m_tableRef;
+	OW_String m_tableRef;
 	bool m_doingSelect;
 	OW_StringArray m_propertyArray;
 

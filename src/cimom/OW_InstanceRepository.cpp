@@ -213,7 +213,7 @@ OW_InstanceRepository::makeClassKey(const OW_String& ns,
 	const OW_String& className)
 {
 	OW_String rv(ns);
-	while (rv.length() > 0 && rv[0] == '/')
+	while (!rv.empty() && rv[0] == '/')
 	{
 		rv = rv.substring(1);
 	}
@@ -257,7 +257,9 @@ OW_InstanceRepository::getInstanceNames(const OW_CIMObjectPath& cop,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InstanceRepository::getCIMInstances(const OW_CIMObjectPath& cop,
+OW_InstanceRepository::getCIMInstances(
+	const OW_String& ns,
+	const OW_String& className,
 	const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result,
 	OW_Bool includeQualifiers,
 	OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
@@ -265,8 +267,6 @@ OW_InstanceRepository::getCIMInstances(const OW_CIMObjectPath& cop,
 {
 	throwIfNotOpen();
 
-	OW_String ns = cop.getNameSpace();
-	OW_String className = theClass.getName();
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_String ckey = makeClassKey(ns, className);
 	OW_HDBNode clsNode = hdl->getNode(ckey);
@@ -289,11 +289,8 @@ OW_InstanceRepository::getCIMInstances(const OW_CIMObjectPath& cop,
 
 		if(pServer && pACLInfo)
 		{
-			OW_CIMObjectPath lcop(cop);
-			lcop.setObjectName(ci.getClassName());
-			lcop.setKeys(ci.getKeyValuePairs());
-
-			pServer->_getProviderProperties(lcop, ci, theClass, *pACLInfo);
+			OW_CIMObjectPath lcop(ci.getClassName(), ci.getKeyValuePairs());
+			pServer->_getProviderProperties(ns, lcop, ci, theClass, *pACLInfo);
 		}
 
 		result.handle(ci.clone(false, includeQualifiers,

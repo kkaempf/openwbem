@@ -49,7 +49,9 @@ public:
 	OW_InstanceRepository(OW_CIMOMEnvironmentRef env)
 		: OW_GenericHDBRepository(env) {}
 
-	void getCIMInstances(const OW_CIMObjectPath& cop, const OW_CIMClass& theClass,
+	void getCIMInstances(
+		const OW_String& ns,
+		const OW_String& className, const OW_CIMClass& theClass,
 		OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList=NULL, OW_CIMServer* pServer = NULL,
