@@ -34,6 +34,8 @@
 
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_CIMName.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
@@ -43,6 +45,7 @@
 #include "OW_Bool.hpp"
 
 #include <iostream>
+#include <sstream>
 
 using std::cout;
 using std::endl;
@@ -118,6 +121,134 @@ CIMInstanceArray testQuery(CIMOMHandleIFCRef& rch, const char* query, int expect
 	++queryCount;
 	testQueryLocal(rch,query,expectedSize);
 	return testQueryRemote(rch,query,expectedSize);
+}
+
+namespace testSchemaQuery
+{
+	void mkChildren(CIMClassArray& result, char const* parentName, size_t children= 3)
+	{
+		for(size_t current= 0; current < children ; ++current)
+		{
+			std::ostringstream childName;
+			childName << "Child" << current << "Of" << parentName;
+			CIMClass child(childName.str().c_str());
+			child.setSuperClass(CIMName(parentName));
+			result.push_back(child);
+		}
+	}
+	void mkChildren(CIMOMHandleIFCRef& rch, char const* ns, char const* parentName, size_t children= 3)
+	{
+		CIMClassArray ch;
+		mkChildren(ch, parentName, children);
+		for(size_t current= 0; current < children; ++current)
+		{
+			rch->createClass(ns, ch[current]);
+		}
+	}
+	void mkChildren2Level(CIMOMHandleIFCRef& rch, char const* ns, char const* parentName, size_t children= 3)
+	{
+		CIMClassArray ch;
+		mkChildren(ch, parentName, children);
+		for(size_t current= 0; current < children; ++current)
+		{
+			rch->createClass(ns, ch[current]);
+			CIMClassArray ch2;
+			mkChildren(ch2, ch[current].getName().c_str());
+			for(size_t current2= 0; current2 < children; ++current2)
+			{
+				rch->createClass(ns, ch[current2]);
+			}
+		}
+	}
+	void addTestClasses(CIMOMHandleIFCRef& rch)
+	{
+		String ns("");
+		rch->createClass(ns, CIMClass("ClassWithNoChildren"));
+		rch->createClass(ns, CIMClass("ClassWithManyChildren"));
+		mkChildren(rch, ns.c_str(), "ClassWithManyChildren");
+		mkChildren2Level(rch, ns.c_str(), "ClassWithManyChildren2Level");
+	}
+	
+	namespace thisTests
+	{
+		void doesNotExist(CIMOMHandleIFCRef& rch, String thisName= String("__this"))
+		{
+			std::ostringstream query;
+			query << "SELECT \"*\" FROM meta_class WHERE " << thisName << " ISA \"ClassWhichDoesNotExist\" ";
+			testQuery(rch, query.str().c_str(), 0);
+		}
+		
+		void caseInsensitive(CIMOMHandleIFCRef& rch)
+		{
+			size_t const sz= 3;
+			String thisCase[sz]=
+				{String("__this"), String("__This"), String("__THIS")};
+
+			for(size_t i= 0; i < sz ; ++i)
+			{
+				doesNotExist(rch, thisCase[i]);
+			}
+		}
+
+		void withoutISA(CIMOMHandleIFCRef& rch)
+		{
+			try
+			{
+				testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this = \"ClassWhichDoesNotExist\" ", 0);
+			}
+			catch(CIMException const& ex)
+			{
+				//This query is supposed to throw an exception.
+				return;
+			}
+			TEST_ASSERT(0);
+		}
+
+		void noChildren(CIMOMHandleIFCRef& rch)
+		{
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"ClassWithNoChildren\" ", 1);
+		}
+
+		void manyChildren(CIMOMHandleIFCRef& rch)
+		{
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"ClassWithManyChildren\" ", 4);
+		}
+		
+		void manyLevelsOfChildren(CIMOMHandleIFCRef& rch)
+		{
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"ClassWithManyChildren2Level\" ", 13);
+		}
+
+		void root(CIMOMHandleIFCRef& rch)
+		{
+			//FIXME: differentiate this from manyLevelsOfChildren somehow.
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"ClassWithManyChildren2Level\" ", 13);
+		}
+		
+		void notRoot(CIMOMHandleIFCRef& rch)
+		{
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"Child1OfClassWithManyChildren2Level\" ", 4);
+		}
+		
+	}
+	void testThis(CIMOMHandleIFCRef& rch)
+	{
+		thisTests::caseInsensitive(rch);
+		thisTests::doesNotExist(rch);
+		thisTests::withoutISA(rch);
+		//thisTests::withoutMetaClass(rch);
+		thisTests::noChildren(rch);
+		thisTests::manyChildren(rch);
+		thisTests::manyLevelsOfChildren(rch);
+		thisTests::notRoot(rch);
+	}
+}
+
+void testSchemaQueries(CIMOMHandleIFCRef& rch)
+{
+	testSchemaQuery::testThis(rch);
+	//testSchemaQuery::testClass(rch);
+	//testSchemaQuery::testDynasty(rch);
 }
 
 } // end anonymous namespace
@@ -321,6 +452,10 @@ int main(int argc, char* argv[])
 		testQuery(rch, "select * from wqlTestClass where name = \"test11\"", 0);
 		testQueryLocal(rch, "DELETE FROM wqlTestClass WHERE name=\"test12\"", 1);
 		testQuery(rch, "select * from wqlTestClass where name = \"test12\"", 0);
+
+
+		// test some simple schema queries.
+		testSchemaQueries(rch);
 
 		return 0;
 	}
