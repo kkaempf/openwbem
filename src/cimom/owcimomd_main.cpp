@@ -31,6 +31,7 @@
 /**
  * @author Jon Carey
  * @author Dan Nuffer
+ * @author Bart Whiteley
  */
 
 #include "OW_config.h"
@@ -52,6 +53,7 @@ static void printUsage(std::ostream& ostrm);
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
+    int rval = 0; 
 	CIMOMEnvironmentRef env = CIMOMEnvironment::g_cimomEnvironment = new CIMOMEnvironment;
 	try
 	{
@@ -88,6 +90,8 @@ int main(int argc, char* argv[])
 
 		int sig;
 		bool shuttingDown(false);
+
+		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_SUCCESS); 
 		while(!shuttingDown)
 		{
 			// runSelectEngine will only return once something has been put into
@@ -141,6 +145,8 @@ int main(int argc, char* argv[])
 		env->logFatalError(Format("* File: %1", e.getFile()));
 		env->logFatalError(Format("* Line: %1", e.getLine()));
 		env->logFatalError("**************************************************");
+		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL); 
+		rval = 1; 
 	}
 	catch (std::exception& se)
 	{
@@ -148,16 +154,20 @@ int main(int argc, char* argv[])
 		env->logFatalError("* Standard EXCEPTION CAUGHT IN CIMOM MAIN!");
 		env->logFatalError(Format("* Type: %1", se.what()));
 		env->logFatalError("**************************************************");
+		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL); 
+		rval = 1; 
 	}
 	catch(...)
 	{
 		env->logFatalError("**************************************************");
 		env->logFatalError("* UNKNOWN EXCEPTION CAUGHT CIMOM MAIN!");
 		env->logFatalError("**************************************************");
+		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL); 
+		rval = 1; 
 	}
 	CIMOMEnvironment::g_cimomEnvironment = 0;
 	env->logInfo("CIMOM has shutdown");
-	return 0;
+	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
 static bool

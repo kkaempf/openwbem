@@ -31,6 +31,7 @@
 /**
  * @author Jon Carey
  * @author Dan Nuffer
+ * @author Bart Whiteley
  */
 
 #include "OW_config.h"
@@ -59,6 +60,9 @@ extern "C"
 }
 #include <cstring>
 #include <cstdio>
+#include <iostream>
+
+using namespace std; 
 
 namespace OpenWBEM
 {
@@ -75,12 +79,15 @@ extern "C" {
 static void theSigHandler(int sig);
 }
 
+static int DAEMONIZE_PIPE_TIMEOUT = 25; 
 
 static Options processCommandLineOptions(int argc, char** argv);
 static void handleSignal(int sig);
 static void setupSigHandler(bool dbgFlg);
 
 static Reference<UnnamedPipe> plat_upipe;
+
+static Reference<UnnamedPipe> daemonize_upipe; 
 
 static char** g_argv = 0;
 
@@ -98,6 +105,7 @@ daemonInit( int argc, char* argv[] )
 void
 daemonize(bool dbgFlg, const String& daemonName)
 {
+	initDaemonizePipe(); 
 	if(!dbgFlg)
 	{
 		if(getuid() != 0)
@@ -128,8 +136,15 @@ daemonize(bool dbgFlg, const String& daemonName)
 			case -1:
 				OW_THROW_ERRNO_MSG(DaemonException,
 					"FAILED TO DETACH FROM THE TERMINAL - First fork");
-			default:
-				_exit(0);			 // exit the original process
+			default: 
+				int status = DAEMONIZE_FAIL; 
+				if (daemonize_upipe->readInt(&status) < 1 
+						|| status != DAEMONIZE_SUCCESS)
+				{
+					cerr << "Error starting CIMOM.  Check the log files." << endl;
+					_exit(1); 
+				}
+				_exit(0); // exit the original process
 		}
 		if (setsid() < 0)					  // shoudn't fail on linux
 		{
@@ -142,11 +157,12 @@ daemonize(bool dbgFlg, const String& daemonName)
 			case 0:
 				break;
 			case -1:
+				sendDaemonizeStatus(DAEMONIZE_FAIL); 
 				OW_THROW_ERRNO_MSG(DaemonException,
 					"FAILED TO DETACH FROM THE TERMINAL - Second fork");
-				exit(0);
+				exit(1);
 			default:
-				_exit(0);
+				_exit(0); 
 		}
 		chdir("/");
 		umask(0);
@@ -449,6 +465,19 @@ String getCurrentUserName()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void initDaemonizePipe()
+{
+	daemonize_upipe = UnnamedPipe::createUnnamedPipe();
+	daemonize_upipe->setTimeouts(DAEMONIZE_PIPE_TIMEOUT); 
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void sendDaemonizeStatus(int status)
+{
+	daemonize_upipe->writeInt(status);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void initSig()
 {
 	plat_upipe = UnnamedPipe::createUnnamedPipe();
@@ -479,6 +508,9 @@ SelectableIFCRef getSigSelectable()
 {
 	return plat_upipe;
 }
+
+
+//////////////////////////////////////////////////////////////////////////////
 
 } // end namespace Platform
 } // end namespace OpenWBEM

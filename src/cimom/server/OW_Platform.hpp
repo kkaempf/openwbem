@@ -31,6 +31,7 @@
 /**
  * @author Jon Carey
  * @author Dan Nuffer
+ * @author Bart Whiteley
  */
 
 #ifndef OW_PLATFORM_HPP_INCLUDE_GUARD_
@@ -47,6 +48,11 @@ namespace OpenWBEM
 OW_DECLARE_EXCEPTION(Daemon);
 namespace Platform
 {
+	enum
+	{
+		DAEMONIZE_SUCCESS, 
+		DAEMONIZE_FAIL 
+	}; 
 	enum
 	{
 		SHUTDOWN,
@@ -73,6 +79,8 @@ namespace Platform
 	 */
 	void daemonize(bool dbgFlg, const String& daemonName);
 	int daemonShutdown(const String& daemonName);
+	void initDaemonizePipe();
+	void sendDaemonizeStatus(int status);
 	void initSig();
 	void pushSig(int sig);
 	int popSig();
@@ -90,7 +98,10 @@ namespace Platform
 	void restartDaemon();
 	void installFatalSignalHandlers();
 	void removeFatalSignalHandlers();
-};
+
+
+}; // end namespace Platform
+
 
 } // end namespace OpenWBEM
 
