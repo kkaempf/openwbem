@@ -41,7 +41,11 @@ OWPKGLIBDIR=@pkglibdir@
 TOPSRCDIR=../@top_srcdir@
 TESTMOFDONE=0
 
-DIFF="diff -u"
+if diff -u /dev/null /dev/null > /dev/null 2>&1; then
+	DIFF="diff -u"
+else
+	DIFF="diff"
+fi
 
 #############################################################################
 Install()
@@ -62,7 +66,6 @@ Install()
 	make DESTDIR=$STAGEDIR install || ExitWithFail "make install didn't work"
 
 	cd $STAGEDIR/$OWSYSCONFDIR/openwbem
-
 	sed \
 			-e "s!= /!= $STAGEDIR/!g" \
 			-e 's!;http_server.http_port = \(.*\)!http_server.http_port = 30926!g' \
@@ -70,14 +73,20 @@ Install()
 			-e "s!;owcimomd.log_location = \(.*\)!owcimomd.log_location = $RESULTDIR/logfile!g" \
 			-e "s!;owcimomd.dump_socket_io = \(.*\)!owcimomd.dump_socket_io = $RESULTDIR!g" \
 			-e "s!owcimomd.authentication_module\(.*\)pam\(.*\)!owcimomd.authentication_module\1simple\2!g" \
-			-e "s!owcimomd.wql_lib = \(.*\)!owcimomd.wql_lib = $STAGEDIR$OWLIBDIR/libowwql.so!g" \
+			-e "s!owcimomd.wql_lib = \(.*\)!owcimomd.wql_lib = $STAGEDIR$OWLIBDIR/libowwql.@lib_ext@!g" \
 			-e "s!;http_server.enable_deflate = .*!http_server.enable_deflate = false!g" \
 			-e "s!;owcimomd.disable_indications = .*!owcimomd.disable_indications = true!g" \
 			-e "s!;http_server.timeout = .*!http_server.timeout = 3000!g" \
 			-e "s!;owcimomd.restart_on_error = .*!owcimomd.restart_on_error = false!g" \
 		openwbem.conf > openwbem.conf-t
-
 	cd $STAGEDIR
+
+	grep "define OW_NO_SSL" $TOPSRCDIR/src/common/OW_config.h > /dev/null 2>&1
+	if [ "$?" = "0" ]; then
+		EditConfig 's!http_server.https_port = \(.*\)!http_server.https_port = -1!g'
+	fi
+
+
 	# create some users for digest authentication.
 	DIGPASSFILE=$STAGEDIR/$OWSYSCONFDIR/openwbem/digest_auth.passwd
 	$STAGEDIR/$OWSBINDIR/owdigestgenpass -l test1 -f $DIGPASSFILE -p pass1
@@ -95,13 +104,13 @@ Install()
 		$STAGEDIR/$OWSYSCONFDIR/openwbem
 	
 	# for client driver and acl test.
-	ln -sf $BUILDDIR/test/c++providers/method/libmethodtest.so  \
+	ln -sf $BUILDDIR/test/c++providers/method/libmethodtest.@lib_ext@  \
 		$STAGEDIR/$OWPKGLIBDIR/c++providers/
 
-	ln -sf $BUILDDIR/test/c++providers/instance/libtestinstance.so  \
+	ln -sf $BUILDDIR/test/c++providers/instance/libtestinstance.@lib_ext@  \
 		$STAGEDIR/$OWPKGLIBDIR/c++providers/
 		
-	ln -sf $BUILDDIR/test/c++providers/associator/libassociatortest.so  \
+	ln -sf $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@  \
 		$STAGEDIR/$OWPKGLIBDIR/c++providers/
 		
 	
@@ -587,11 +596,11 @@ TestIndications()
 
 	#create links to the test indication providers so they will be loaded
 
-	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest1.so  \
+	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest1.@lib_ext@  \
 		$STAGEDIR/$OWPKGLIBDIR/c++providers/
-#	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest2.so  \
+#	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest2.@lib_ext@  \
 #		$STAGEDIR/$OWPKGLIBDIR/c++providers/
-	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest3.so  \
+	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest3.@lib_ext@  \
 		$STAGEDIR/$OWPKGLIBDIR/c++providers/
 
 	# turn on indications
@@ -618,9 +627,9 @@ TestIndications()
 	# TODO: delete the mof
 
 	# turn off indications
-	rm -f $STAGEDIR/$OWPKGLIBDIR/c++providers/libindicationtest1.so 
-	rm -f $STAGEDIR/$OWPKGLIBDIR/c++providers/libindicationtest2.so 
-	rm -f $STAGEDIR/$OWPKGLIBDIR/c++providers/libindicationtest3.so 
+	rm -f $STAGEDIR/$OWPKGLIBDIR/c++providers/libindicationtest1.@lib_ext@ 
+	rm -f $STAGEDIR/$OWPKGLIBDIR/c++providers/libindicationtest2.@lib_ext@ 
+	rm -f $STAGEDIR/$OWPKGLIBDIR/c++providers/libindicationtest3.@lib_ext@ 
 
 	EditConfig "s!owcimomd.disable_indications = .*!owcimomd.disable_indications = true!g"
 
@@ -986,8 +995,8 @@ TestHammer()
 #############################################################################
 TestSecondaryInstanceProvider()
 {
-	InstallProvider $BUILDDIR/test/c++providers/secondary_instance/libsecondaryinstancetest1.so
-	InstallProvider $BUILDDIR/test/c++providers/secondary_instance/libsecondaryinstancetest2.so
+	InstallProvider $BUILDDIR/test/c++providers/secondary_instance/libsecondaryinstancetest1.@lib_ext@
+	InstallProvider $BUILDDIR/test/c++providers/secondary_instance/libsecondaryinstancetest2.@lib_ext@
 	RestartDaemon
 	ImportMOF $TOPSRCDIR/test/c++providers/secondary_instance/SecondaryInstanceTest.mof
 	RunATest testSecondaryInstanceProviders "http://test1:pass1@localhost:30926"
