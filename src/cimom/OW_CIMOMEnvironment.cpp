@@ -604,8 +604,10 @@ OW_CIMOMEnvironment::_loadServices()
 
 		if(srv)
 		{
-			srv->setServiceEnvironment(OW_ServiceEnvironmentIFCRef(this, true));
+			// save it first so if setServiceEnvironment throws it won't get
+			// unloaded until later.
 			m_services.append(srv);
+			srv->setServiceEnvironment(OW_ServiceEnvironmentIFCRef(this, true));
 			logCustInfo(format("CIMOM loaded service from file: %1", libName));
 		}
 		else
