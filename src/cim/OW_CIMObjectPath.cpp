@@ -311,7 +311,6 @@ OW_String
 OW_CIMObjectPath::modelPath() const
 {
 	OW_String lowerObjectName(m_pdata->m_objectName);
-	lowerObjectName.toLowerCase();
 	OW_StringBuffer rv(lowerObjectName);
 
 	if(m_pdata->m_keys.size() > 0)
@@ -328,7 +327,7 @@ OW_CIMObjectPath::modelPath() const
 				rv += '.';
 			}
 
-			rv += cp.getName().toLowerCase();
+			rv += cp.getName();
 			rv += "=\"";
 			rv += (cp.getValue()
 				   ? escape(cp.getValue().toString())

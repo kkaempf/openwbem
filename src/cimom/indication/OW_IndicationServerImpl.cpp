@@ -184,7 +184,9 @@ OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
 		OW_StringArray clsNames = pra[i]->getHandlerClassNames();
 		for(size_t j = 0; j < clsNames.size(); j++)
 		{
-			m_providers[clsNames[j].toLowerCase()] = pra[i];
+			OW_String lowerClsName = clsNames[j];
+			lowerClsName.toLowerCase();
+			m_providers[lowerClsName] = pra[i];
 			m_env->logDebug(format("OW_IndicationServerImpl: Handling"
 				" indication type %1", clsNames[j]));
 		}

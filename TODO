@@ -46,6 +46,7 @@ Testing:
     - review CIM operations over HTTP v1.1 and see where we deviate.
       specifically, the indication delivery is known to be different. 
     - Add an instance, property, and associator provider to the test suite.
+    - Test case insensitivity (eg. try to add a disk and DISK class)
 
 Fix problems:
     - Fix CIM Server so that an instance provider can provide associations.

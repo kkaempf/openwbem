@@ -1119,7 +1119,7 @@ string BrandNewProperty;
 *** Doing createInstance() ***
 *** Doing createInstance() ***
 *** Doing enumInstanceNames() ***
-/root/testsuite:exp_bartcomputersystem.creationclassname="EXP_BartComputerSystem",name="test"
+/root/testsuite:EXP_BartComputerSystem.CreationClassName="EXP_BartComputerSystem",Name="test"
 <INSTANCEPATH>
   <NAMESPACEPATH>
     <HOST>
@@ -1145,7 +1145,7 @@ string BrandNewProperty;
     </KEYBINDING>
   </INSTANCENAME>
 </INSTANCEPATH>
-/root/testsuite:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SixMillion"
+/root/testsuite:EXP_BionicComputerSystem.CreationClassName="EXP_BionicComputerSystem",Name="SixMillion"
 <INSTANCEPATH>
   <NAMESPACEPATH>
     <HOST>
@@ -1171,7 +1171,7 @@ string BrandNewProperty;
     </KEYBINDING>
   </INSTANCENAME>
 </INSTANCEPATH>
-/root/testsuite:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SevenMillion"
+/root/testsuite:EXP_BionicComputerSystem.CreationClassName="EXP_BionicComputerSystem",Name="SevenMillion"
 <INSTANCEPATH>
   <NAMESPACEPATH>
     <HOST>
@@ -1197,7 +1197,7 @@ string BrandNewProperty;
     </KEYBINDING>
   </INSTANCENAME>
 </INSTANCEPATH>
-/root/testsuite:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SixMillion"
+/root/testsuite:EXP_BionicComputerSystem2.CreationClassName="EXP_BionicComputerSystem2",Name="SixMillion"
 <INSTANCEPATH>
   <NAMESPACEPATH>
     <HOST>
@@ -1223,7 +1223,7 @@ string BrandNewProperty;
     </KEYBINDING>
   </INSTANCENAME>
 </INSTANCEPATH>
-/root/testsuite:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SevenMillion"
+/root/testsuite:EXP_BionicComputerSystem2.CreationClassName="EXP_BionicComputerSystem2",Name="SevenMillion"
 <INSTANCEPATH>
   <NAMESPACEPATH>
     <HOST>
@@ -6475,8 +6475,8 @@ invokeMethod: getstate(): off
 param 0: OW_CIMParamValue(b): true
 param 1: OW_CIMParamValue(r64): 9.87654e+32
 param 2: OW_CIMParamValue(io16): 555
-param 3: OW_CIMParamValue(msg): OW_MethodProviderTest::invokeMethod.  in[0] = OW_CIMParamValue(s): input string, in[1] = OW_CIMParamValue(uint8array): 1,255,0,128,0, in[2] = OW_CIMParamValue(io16): 16, in[3] = OW_CIMParamValue(paths): /root/testsuite:exp_bartcomputersystem,/root/testsuite:exp_bartcomputersystem.name="foo", in[4] = OW_CIMParamValue(nullParam): (null), out[0] = OW_CIMParamValue(b): true, out[1] = OW_CIMParamValue(r64): 9.87654e+32, out[2] = OW_CIMParamValue(io16): 555, out[4] = OW_CIMParamValue(paths): /root/testsuite:exp_bartcomputersystem,/root/testsuite:exp_bartcomputersystem.name="foo"
-param 4: OW_CIMParamValue(paths): /root/testsuite:exp_bartcomputersystem,/root/testsuite:exp_bartcomputersystem.name="foo"
+param 3: OW_CIMParamValue(msg): OW_MethodProviderTest::invokeMethod.  in[0] = OW_CIMParamValue(s): input string, in[1] = OW_CIMParamValue(uint8array): 1,255,0,128,0, in[2] = OW_CIMParamValue(io16): 16, in[3] = OW_CIMParamValue(paths): /root/testsuite:EXP_BartComputerSystem,/root/testsuite:EXP_BartComputerSystem.name="foo", in[4] = OW_CIMParamValue(nullParam): (null), out[0] = OW_CIMParamValue(b): true, out[1] = OW_CIMParamValue(r64): 9.87654e+32, out[2] = OW_CIMParamValue(io16): 555, out[4] = OW_CIMParamValue(paths): /root/testsuite:EXP_BartComputerSystem,/root/testsuite:EXP_BartComputerSystem.name="foo"
+param 4: OW_CIMParamValue(paths): /root/testsuite:EXP_BartComputerSystem,/root/testsuite:EXP_BartComputerSystem.name="foo"
 param 5: OW_CIMParamValue(nullParam): (null)
 *** Doing invokeMethod() ***
 invokeMethod: togglestate()

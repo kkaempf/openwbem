@@ -148,7 +148,6 @@ void
 OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 	const OW_ACLInfo& aclInfo)
 {
-	// TODO: This function plays fast and loose with NULL Properties and Values.  FIXME!!!
 	if (aclInfo.m_internal)
 	{
 		return;
@@ -160,6 +159,12 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 		aclInfo.getUserName(), op));
 
 	OW_String lns(ns);
+	while (!lns.empty() && lns[0] == '/')
+	{
+		lns = lns.substring(1);
+	}
+	lns.toLowerCase();
+
 	for(;;)
 	{
 		if (!aclInfo.getUserName().empty())
@@ -202,10 +207,14 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 			if (ci)
 			{
 				OW_String capability;
-				OW_CIMValue cv = ci.getProperty("capability").getValue();
-				if (cv)
+				OW_CIMProperty capabilityProp = ci.getProperty("capability");
+				if (capabilityProp)
 				{
-					cv.get(capability);
+					OW_CIMValue cv = capabilityProp.getValue();
+					if (cv)
+					{
+						capability = cv.toString();
+					}
 				}
 				OW_String opType = getMethodType(op);
 				capability.toLowerCase();
@@ -266,9 +275,18 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 		if (ci)
 		{
 			OW_String capability;
-			ci.getProperty("capability").getValue().get(capability);
-			OW_String opType = getMethodType(op);
+			OW_CIMProperty capabilityProp = ci.getProperty("capability");
+			if (capabilityProp)
+			{
+				OW_CIMValue v = capabilityProp.getValue();
+				if (v)
+				{
+					capability = v.toString();
+				}
+			}
 			capability.toLowerCase();
+
+			OW_String opType = getMethodType(op);
 
 			if (opType.length() == 1)
 			{
@@ -413,7 +431,7 @@ OW_CIMServer::createNameSpace(const OW_String& ns,
 			parns += "/";
 		}
 
-		parns += nameComps[i].toString().toLowerCase();
+		parns += nameComps[i].toString();
 	}
 
 	// Check to see if user has rights to create the namespace
@@ -479,18 +497,10 @@ OW_CIMServer::enumQualifierTypes(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumNameSpace(const OW_String& nsName_,
+OW_CIMServer::enumNameSpace(const OW_String& nsName,
 	OW_StringResultHandlerIFC& result, OW_Bool deep,
 	const OW_ACLInfo& aclInfo)
 {
-	// TODO: Do we need this toLowerCase?
-	OW_String nsName(nsName_);
-	nsName.toLowerCase();
-	while (!nsName.empty() && nsName[0] == '/')
-	{
-		nsName = nsName.substring(1);
-	}
-
 	// Check to see if user has rights to enumerate the namespace
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATENAMESPACE, nsName,
 		aclInfo);

@@ -21,7 +21,7 @@ namespace.  First, the CIMOM tries to obtain an instance of
 OpenWBEM_UserACL using "nspace" and "username" as keys.  If an instance
 exists, the value of "capability" is checked to see if the user is able
 to perform the operation.  "capability" can currently be "r", "w", "rw",
-or "" (no capabilities).
+or "" (no capabilities).  The nspace property value must be lowercase.
 
 If no instance of OpenWBEM_UserACL is found, the CIMOM looks for an instance
 of OpenWBEM_NamespaceACL using "nspace" as the key.  If an instance is

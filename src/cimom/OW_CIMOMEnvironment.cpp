@@ -242,17 +242,19 @@ OW_CIMOMEnvironment::startServices()
 		m_services[i]->startService();
 	}
 
-	// TODO: Don't start these threads if we are running in single thread mode
-	// Start up the polling manager
-	m_Logger->logDebug("CIMOM starting Polling Manager");
-	m_pollingManager->start();
-	OW_Thread::yield();
+	if (!getConfigItem(OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true"))
+	{
+		// Start up the polling manager
+		m_Logger->logDebug("CIMOM starting Polling Manager");
+		m_pollingManager->start();
+		OW_Thread::yield();
 
-	// Start up the indication server
-	m_Logger->logDebug("CIMOM starting IndicationServer");
-	m_indicationServer->init(OW_CIMOMEnvironmentRef(this, true));
-	m_indicationServer->start();
-	OW_Thread::yield();
+		// Start up the indication server
+		m_Logger->logDebug("CIMOM starting IndicationServer");
+		m_indicationServer->init(OW_CIMOMEnvironmentRef(this, true));
+		m_indicationServer->start();
+		OW_Thread::yield();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
