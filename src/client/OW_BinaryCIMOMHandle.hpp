@@ -68,7 +68,7 @@ public:
 	 * Close the connetion to the CIMOM. This will free resources used for the
 	 * client session.
 	 */
-	virtual void close() {}
+	virtual void close();
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Deletes the CIM qualfier for the object specified by the CIM object path.

@@ -81,7 +81,8 @@ public:
 	 * Close the connetion to the CIMOM. This will free resources used for the
 	 * client session.
 	 */
-	virtual void close() {}
+	virtual void close();
+
 	/**
 	 * Enumerates the class specified by the CIMObjectPath.
 	 * @param path The CIMObjectPath identifying the class to be enumerated.
