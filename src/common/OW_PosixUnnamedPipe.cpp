@@ -194,7 +194,7 @@ OW_PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 	}
 	if (errorAsException && rc == -1)
 	{
-		OW_THROW(OW_Exception, "pipe write failed");
+		OW_THROW(OW_Exception, "pipe read failed");
 	}
 	return rc;
 }
