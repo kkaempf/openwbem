@@ -550,7 +550,7 @@ Int32 TestProviderThread::run()
 	while (!m_shuttingDown)
 	{
 		OperationContext context;
-		m_pProv->updateInstancesAndSendIndications(CIMOMEnvironment::g_cimomEnvironment->getCIMOMHandle(context), m_creationFilterCount, m_modificationFilterCount, m_deletionFilterCount);
+		m_pProv->updateInstancesAndSendIndications(CIMOMEnvironment::instance()->getCIMOMHandle(context), m_creationFilterCount, m_modificationFilterCount, m_deletionFilterCount);
 		// wait one second.  If this were a real provider we would wait on some IPC mechanism.  This has to be done carefully so that we don't block forever.  The provider needs
 		// to be able to stop the thread when the cimom shuts down or restarts.
 		m_cond.timedWait(l, 1);

@@ -53,33 +53,34 @@ class ProviderAgentProviderEnvironment: public ProviderEnvironmentIFC
 {
 public:
 	ProviderAgentProviderEnvironment(
-		const LoggerRef& logger, 
+		const LoggerRef& logger,
 		const ConfigFile::ConfigMap& configMap,
-		OperationContext& operationContext, 
-		const String& callbackURL, 
+		OperationContext& operationContext,
+		const String& callbackURL,
 		ClientCIMOMHandleConnectionPool& pool,
-		ProviderAgentEnvironment::EConnectionCredentialsUsageFlag useConnectionCredentials); 
-	~ProviderAgentProviderEnvironment(); 
+		ProviderAgentEnvironment::EConnectionCredentialsUsageFlag useConnectionCredentials);
+
+	~ProviderAgentProviderEnvironment();
 		// This function returns a regular cimom handle that does access checking and may call providers.
-	virtual CIMOMHandleIFCRef getCIMOMHandle() const; 
-	virtual String getConfigItem(const String &name, const String &defRetVal="") const; 
+	virtual CIMOMHandleIFCRef getCIMOMHandle() const;
+	virtual String getConfigItem(const String &name, const String &defRetVal="") const;
 	// This function returns a cimom handle that directly accesses the repository (CIMServer is bypassed).
 	// no providers will be called.  This function should only be called if getCIMOMHandle()
 	// is insufficent.
-	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const; 
+	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const;
 	// This function returns a reference to the repository.  This function should only
 	// be called if getCIMOMHandle() and getRepositoryCIMOMHandle() are insufficient.
-	virtual RepositoryIFCRef getRepository() const; 
-	virtual LoggerRef getLogger() const; 
+	virtual RepositoryIFCRef getRepository() const;
+	virtual LoggerRef getLogger() const;
 	virtual LoggerRef getLogger(const String& componentName) const;
-	virtual String getUserName() const; 
-	virtual OperationContext& getOperationContext(); 
-private: 
-	LoggerRef m_logger; 
-	ConfigFile::ConfigMap m_configMap; 
-	OperationContext& m_operationContext; 
-	String m_callbackURL; 
-	ClientCIMOMHandleConnectionPool& m_connectionPool; 
+	virtual String getUserName() const;
+	virtual OperationContext& getOperationContext();
+private:
+	LoggerRef m_logger;
+	ConfigFile::ConfigMap m_configMap;
+	OperationContext& m_operationContext;
+	String m_callbackURL;
+	ClientCIMOMHandleConnectionPool& m_connectionPool;
 	mutable Array<ClientCIMOMHandleRef>  m_CIMOMHandleRA;
 	ProviderAgentEnvironment::EConnectionCredentialsUsageFlag m_useConnectionCredentials;
 };

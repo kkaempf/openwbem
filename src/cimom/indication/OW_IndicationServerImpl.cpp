@@ -113,7 +113,7 @@ class IndicationServerProviderEnvironment : public ProviderEnvironmentIFC
 {
 public:
 	IndicationServerProviderEnvironment(
-		CIMOMEnvironmentRef env)
+		const CIMOMEnvironmentRef& env)
 		: ProviderEnvironmentIFC()
 		, m_opctx()
 		, m_ch()
@@ -121,7 +121,7 @@ public:
 		, m_repch()
 	{
 		m_ch = m_env->getCIMOMHandle(m_opctx);
-		m_repch = m_env->getRepositoryCIMOMHandle(m_opctx);
+		m_repch = m_env->getCIMOMHandle(m_opctx, ServiceEnvironmentIFC::E_SEND_INDICATIONS, ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
 	}
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const
 	{
@@ -160,7 +160,7 @@ public:
 private:
 	OperationContext m_opctx;
 	CIMOMHandleIFCRef m_ch;
-	CIMOMEnvironmentRef m_env;
+	ServiceEnvironmentIFCRef m_env;
 	CIMOMHandleIFCRef m_repch;
 };
 ProviderEnvironmentIFCRef createProvEnvRef(CIMOMEnvironmentRef env)
@@ -301,7 +301,6 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 	//-----------------
 	ProviderManagerRef pProvMgr = m_env->getProviderManager();
 	OperationContext context;
-	CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
 	IndicationExportProviderIFCRefArray pra =
 		pProvMgr->getIndicationExportProviders(createProvEnvRef(m_env));
 	OW_LOG_DEBUG(m_logger, Format("IndicationServerImpl: %1 export providers found",
@@ -331,6 +330,7 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 	// This calls createSubscription for every instance of
 	// CIM_IndicationSubscription in all namespaces.
 	// TODO: If the provider rejects the subscription, we need to disable it!
+	CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
 	namespaceEnumerator nsHandler(lch, this);
 	env->getRepository()->enumNameSpace(nsHandler, context);
 }

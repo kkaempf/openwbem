@@ -34,13 +34,43 @@
 
 #include "OW_config.h"
 #include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_Assertion.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_RepositoryIFC.hpp"
 
 namespace OpenWBEM
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-ServiceEnvironmentIFC::~ServiceEnvironmentIFC() 
+ServiceEnvironmentIFC::~ServiceEnvironmentIFC()
 {
+}
+
+///////////////////////////////////////////////////////////////////////////////
+RepositoryIFCRef
+ServiceEnvironmentIFC::getRepository() const
+{
+	OW_ASSERTMSG(0, "Not Implemented");
+	return RepositoryIFCRef();
+}
+
+CIMOMHandleIFCRef ServiceEnvironmentIFC::getRepositoryCIMOMHandle(OperationContext& context) const
+{
+	return getCIMOMHandle(context, E_SEND_INDICATIONS, E_BYPASS_PROVIDERS);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+ServiceEnvironmentIFC::addSelectable(const SelectableIFCRef& obj, const SelectableCallbackIFCRef& cb)
+{
+	OW_ASSERTMSG(0, "Not Implemented");
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+ServiceEnvironmentIFC::removeSelectable(const SelectableIFCRef& obj)
+{
+	OW_ASSERTMSG(0, "Not Implemented");
 }
 
 } // end namespace OpenWBEM

@@ -64,12 +64,6 @@ namespace {
 		virtual void setConfigItem(const String &item, const String &value, EOverwritePreviousFlag overwritePrevious=E_OVERWRITE_PREVIOUS)
 		{
 		}
-		virtual void addSelectable(const SelectableIFCRef& obj, const SelectableCallbackIFCRef& cb)
-		{
-		}
-		virtual void removeSelectable(const SelectableIFCRef& obj)
-		{
-		}
 		virtual RequestHandlerIFCRef getRequestHandler(const String &id)
 		{
 			return RequestHandlerIFCRef();

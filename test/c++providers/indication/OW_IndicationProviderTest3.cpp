@@ -139,7 +139,7 @@ public:
 		if (firstActivation)
 		{
 			// TODO: Make a better way to do this that doesn't bypass the provider manager or use a no-delete reference or use g_cimomEnvironment.
-			PollingManagerRef pm = CIMOMEnvironment::g_cimomEnvironment->getPollingManager();
+			PollingManagerRef pm = CIMOMEnvironment::instance()->getPollingManager();
 //			pm->addPolledProvider(PolledProviderIFCRef(new CppPolledProviderProxy(CppPolledProviderIFCRef(SharedLibraryRef(), Reference<CppPolledProviderIFC>(this, true)))));
 		}
 	}

@@ -1,5 +1,4 @@
 #include "OW_config.h"
-#include "OW_CIMOMEnvironment.hpp"
 #include "OW_AuthorizerManager.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_CIMObjectPath.hpp"
@@ -7,7 +6,8 @@
 #include "OW_Logger.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
-
+#include "OW_CIMInstance.hpp"
+#include "OW_Array.hpp"
 
 namespace OpenWBEM
 {
@@ -23,7 +23,7 @@ class AuthorizerEnvironment : public ServiceEnvironmentIFC
 {
 public:
 
-	AuthorizerEnvironment(const CIMOMEnvironmentRef& env,
+	AuthorizerEnvironment(const ServiceEnvironmentIFCRef& env,
 		OperationContext& context)
 		: ServiceEnvironmentIFC()
 		, m_env(env)
@@ -40,7 +40,7 @@ public:
 	{
 		m_env->setConfigItem(item, value, overwritePrevious);
 	}
-	virtual RequestHandlerIFCRef getRequestHandler(const String &id)
+	virtual RequestHandlerIFCRef getRequestHandler(const String &id) const
 	{
 		return m_env->getRequestHandler(id);
 	}
@@ -65,10 +65,12 @@ public:
 
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext &context,
 		ESendIndicationsFlag doIndications,
-		EBypassProvidersFlag bypassProviders)
+		EBypassProvidersFlag bypassProviders,
+		ELockingFlag locking) const
 	{
+		// specifically ignore the locking flag, since we know we'll only be invoked in the context of an operation.
 		return m_env->getCIMOMHandle(m_context, doIndications, bypassProviders,
-			CIMOMEnvironment::E_NO_LOCKING);
+			ServiceEnvironmentIFC::E_NO_LOCKING);
 	}
 
 	virtual LoggerRef getLogger() const
@@ -82,7 +84,7 @@ public:
 	}
 
 	virtual bool authenticate(String &userName, const String &info,
-		String &details, OperationContext &context)
+		String &details, OperationContext &context) const
 	{
 		return m_env->authenticate(userName, info, details, context);
 	}
@@ -92,12 +94,12 @@ public:
 		return m_context;
 	}
 private:
-	CIMOMEnvironmentRef m_env;
+	ServiceEnvironmentIFCRef m_env;
 	OperationContext& m_context;
 };
 
 inline ServiceEnvironmentIFCRef createAuthEnvRef(OperationContext& context,
-	const CIMOMEnvironmentRef& env)
+	const ServiceEnvironmentIFCRef& env)
 {
 	return ServiceEnvironmentIFCRef(new AuthorizerEnvironment(env, context));
 }
@@ -173,7 +175,7 @@ AuthorizerManager::~AuthorizerManager()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-AuthorizerManager::init(CIMOMEnvironmentRef& env)
+AuthorizerManager::init(const ServiceEnvironmentIFCRef& env)
 {
 	if (!m_initialized)
 	{
@@ -183,8 +185,6 @@ AuthorizerManager::init(CIMOMEnvironmentRef& env)
 			ServiceEnvironmentIFCRef envref = createAuthEnvRef(oc, env);
 			m_authorizer->init(envref);
 
-			//virtual void init(ServiceEnvironmentIFCRef&) {}
-
 		}
 		m_initialized = true;
 	}
@@ -193,7 +193,7 @@ AuthorizerManager::init(CIMOMEnvironmentRef& env)
 //////////////////////////////////////////////////////////////////////////////
 bool
 AuthorizerManager::allowReadInstance(
-	const CIMOMEnvironmentRef& env,
+	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
 	const String& className,
 	const StringArray* clientPropertyList,
@@ -220,7 +220,7 @@ AuthorizerManager::allowReadInstance(
 //////////////////////////////////////////////////////////////////////////////
 bool
 AuthorizerManager::allowWriteInstance(
-	const CIMOMEnvironmentRef& env,
+	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
 	const CIMObjectPath& op,
 	Authorizer2IFC::EDynamicFlag dynamic,
@@ -247,7 +247,7 @@ AuthorizerManager::allowWriteInstance(
 //////////////////////////////////////////////////////////////////////////////
 bool
 AuthorizerManager::allowReadSchema(
-	const CIMOMEnvironmentRef& env,
+	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
 	OperationContext& context)
 {
@@ -270,7 +270,7 @@ AuthorizerManager::allowReadSchema(
 //////////////////////////////////////////////////////////////////////////////
 bool
 AuthorizerManager::allowWriteSchema(
-	const CIMOMEnvironmentRef& env,
+	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
 	Authorizer2IFC::EWriteFlag flag,
 	OperationContext& context)
@@ -294,7 +294,7 @@ AuthorizerManager::allowWriteSchema(
 //////////////////////////////////////////////////////////////////////////////
 bool
 AuthorizerManager::allowAccessToNameSpace(
-	const CIMOMEnvironmentRef& env,
+	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
 	Authorizer2IFC::EAccessType accessType,
 	OperationContext& context)
@@ -318,7 +318,7 @@ AuthorizerManager::allowAccessToNameSpace(
 //////////////////////////////////////////////////////////////////////////////
 bool
 AuthorizerManager::allowCreateNameSpace(
-	const CIMOMEnvironmentRef& env,
+	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
 	OperationContext& context)
 {
@@ -340,7 +340,7 @@ AuthorizerManager::allowCreateNameSpace(
 //////////////////////////////////////////////////////////////////////////////
 bool
 AuthorizerManager::allowDeleteNameSpace(
-	const CIMOMEnvironmentRef& env,
+	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
 	OperationContext& context)
 {
@@ -363,7 +363,7 @@ AuthorizerManager::allowDeleteNameSpace(
 //////////////////////////////////////////////////////////////////////////////
 bool
 AuthorizerManager::allowEnumNameSpace(
-	const CIMOMEnvironmentRef& env,
+	const ServiceEnvironmentIFCRef& env,
 	OperationContext& context)
 {
 	// If the CIMServer is calling into the AuthorizerManager from the
@@ -385,7 +385,7 @@ AuthorizerManager::allowEnumNameSpace(
 //////////////////////////////////////////////////////////////////////////////
 bool
 AuthorizerManager::allowMethodInvocation(
-	const CIMOMEnvironmentRef& env,
+	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
 	const CIMObjectPath& path,
 	const String& methodName,
@@ -408,5 +408,11 @@ AuthorizerManager::allowMethodInvocation(
 		context);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void
+AuthorizerManager::shutdown()
+{
+	m_authorizer.setNull();
+}
 
-}	// wEnd of OpenWBEM namespace
+}	// end of OpenWBEM namespace

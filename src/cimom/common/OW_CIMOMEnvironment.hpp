@@ -67,44 +67,32 @@ public:
 	~CIMOMEnvironment();
 	void init();
 	virtual bool authenticate(String &userName, const String &info,
-		String &details, OperationContext& context);
+		String &details, OperationContext& context) const;
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const;
-	enum ELockingFlag
-	{
-		E_NO_LOCKING,
-		E_LOCKING
-	};
 	
 	// from ServiceEnvironmentIFC
 	/**
 	 * WARNING: The return value is valid only for the lifetime of context.
 	 */
-	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
-		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS,
-		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS);
-
-	/**
-	 * WARNING: The return value is valid only for the lifetime of context.
-	 */
 	CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
-		ESendIndicationsFlag doIndications,
-		EBypassProvidersFlag bypassProviders,
-		ELockingFlag locking);
+		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS,
+		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS,
+		ELockingFlag locking = E_LOCKING) const;
 
 	/**
 	 * WARNING: The return value is valid only for the lifetime of context.
 	 */
-	CIMOMHandleIFCRef getRepositoryCIMOMHandle(OperationContext& context);
+	//virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle(OperationContext& context) const;
 
 	/**
 	 * WARNING: The return value is valid only for the lifetime of context.
 	 */
 	CIMOMHandleIFCRef getWQLFilterCIMOMHandle(const CIMInstance& inst,
-		OperationContext& context);
+		OperationContext& context) const;
 
-	WQLIFCRef getWQLRef();
+	WQLIFCRef getWQLRef() const;
 	virtual RequestHandlerIFCRef getRequestHandler(
-		const String &id);
+		const String &id) const;
 	virtual LoggerRef getLogger() const OW_DEPRECATED;
 	virtual LoggerRef getLogger(const String& componentName) const;
 	IndicationServerRef getIndicationServer() const;
@@ -118,8 +106,8 @@ public:
 	void unloadProviders();
 	void startServices();
 	void shutdown();
-	ProviderManagerRef getProviderManager();
-	void runSelectEngine();
+	ProviderManagerRef getProviderManager() const;
+	void runSelectEngine() const;
 	void exportIndication(const CIMInstance& instance,
 		const String& instNS);
 	void unloadReqHandlers();
@@ -141,7 +129,7 @@ private:
 	void _createAuthManager();
 	void _createPollingManager();
 	void _createIndicationServer();
-	SharedLibraryRepositoryIFCRef _getIndicationRepLayer(const RepositoryIFCRef& rref);
+	SharedLibraryRepositoryIFCRef _getIndicationRepLayer(const RepositoryIFCRef& rref) const;
 	void _clearSelectables();
 	void _loadAuthorizer();
 	void _createAuthorizerManager();
@@ -168,22 +156,22 @@ private:
 	LoggerRef m_Logger;
 	ConfigMapRef m_configItems;
 	ProviderManagerRef m_providerManager;
-	SharedLibraryRef m_wqlLib;
-	SharedLibraryRef m_indicationRepLayerLib;
+	mutable SharedLibraryRef m_wqlLib;
+	mutable SharedLibraryRef m_indicationRepLayerLib;
 	PollingManagerRef m_pollingManager;
 	IndicationServerRef m_indicationServer;
 	bool m_indicationsDisabled;
 	Array<SelectableIFCRef> m_selectables;
 	Array<SelectableCallbackIFCRef> m_selectableCallbacks;
 	Array<ServiceIFCRef> m_services;
-	ReqHandlerMap m_reqHandlers;
+	mutable ReqHandlerMap m_reqHandlers;
 	mutable Mutex m_reqHandlersLock;
 	mutable Mutex m_indicationLock;
-	bool m_indicationRepLayerDisabled;
+	mutable bool m_indicationRepLayerDisabled;
 	mutable Mutex m_selectableLock;
 	
 	bool m_running;
-	Mutex m_runningGuard;
+	mutable Mutex m_runningGuard;
 	IndicationRepLayerMediatorRef m_indicationRepLayerMediatorRef;
 
 	mutable Mutex m_interopInstancesLock;

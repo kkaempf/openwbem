@@ -356,7 +356,7 @@ ProviderAgentEnvironment::~ProviderAgentEnvironment() {}
 //////////////////////////////////////////////////////////////////////////////
 bool
 ProviderAgentEnvironment::authenticate(String &userName,
-		const String &info, String &details, OperationContext& context)
+		const String &info, String &details, OperationContext& context) const
 {
 	return m_authenticator->authenticate(userName, info, details, context);
 }
@@ -404,7 +404,7 @@ ProviderAgentEnvironment::setConfigItem(const String& item, const String& value,
 	
 //////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFCRef
-ProviderAgentEnvironment::getRequestHandler(const String& ct)
+ProviderAgentEnvironment::getRequestHandler(const String& ct) const
 {
 	for (Array<RequestHandlerIFCRef>::const_iterator iter = m_requestHandlers.begin();
 		  iter != m_requestHandlers.end(); ++iter)
@@ -414,7 +414,7 @@ ProviderAgentEnvironment::getRequestHandler(const String& ct)
 		{
 			RequestHandlerIFCRef ref = RequestHandlerIFCRef(iter->getLibRef(),
 				(*iter)->clone());
-			ref->setEnvironment(ServiceEnvironmentIFCRef(this));
+			ref->setEnvironment(ServiceEnvironmentIFCRef(const_cast<ProviderAgentEnvironment *>(this)));
 			return ref;
 		}
 	}
@@ -423,8 +423,9 @@ ProviderAgentEnvironment::getRequestHandler(const String& ct)
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 ProviderAgentEnvironment::getCIMOMHandle(OperationContext& context,
-		ESendIndicationsFlag /*doIndications*/,
-		EBypassProvidersFlag /*bypassProviders*/)
+		ESendIndicationsFlag doIndications,
+		EBypassProvidersFlag bypassProviders,
+		ELockingFlag locking) const
 {
 	ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(
 		m_logger, m_configItems, context, m_callbackURL, m_connectionPool, m_useConnectionCredentials));

@@ -73,24 +73,16 @@ public:
 	virtual void setConfigItem(const String &, const String &, EOverwritePreviousFlag)
 	{
 	}
-	virtual bool authenticate(String &, const String &, String &, OperationContext& context)
+	virtual bool authenticate(String &, const String &, String &, OperationContext& context) const
 	{
 		return true;
 	}
-	virtual void addSelectable(const SelectableIFCRef& , const SelectableCallbackIFCRef&)
-	{
-		OW_ASSERT("Unsupported" == 0);
-	}
-	virtual void removeSelectable(const SelectableIFCRef&)
-	{
-		OW_ASSERT("Unsupported" == 0);
-	}
-	virtual RequestHandlerIFCRef getRequestHandler(const String &)
+	virtual RequestHandlerIFCRef getRequestHandler(const String &) const
 	{
 		OW_ASSERT("Unsupported" == 0);
 		return RequestHandlerIFCRef();
 	}
-	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&, ESendIndicationsFlag, EBypassProvidersFlag)
+	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&, ESendIndicationsFlag, EBypassProvidersFlag, ELockingFlag) const
 	{
 		OW_ASSERT("Unsupported" == 0);
 		return CIMOMHandleIFCRef();

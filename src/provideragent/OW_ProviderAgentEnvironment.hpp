@@ -83,7 +83,7 @@ public:
 		const ProviderAgentLockerIFCRef& locker);
 	virtual ~ProviderAgentEnvironment();
 	virtual bool authenticate(String &userName,
-		const String &info, String &details, OperationContext& context);
+		const String &info, String &details, OperationContext& context) const;
 	virtual void addSelectable(const SelectableIFCRef& obj,
 		const SelectableCallbackIFCRef& cb);
 
@@ -105,10 +105,11 @@ public:
 	virtual CIMInstanceArray getInteropInstances(const String& className)const ;
 	virtual void setInteropInstance(const CIMInstance& inst);
 	
-	virtual RequestHandlerIFCRef getRequestHandler(const String& ct);
+	virtual RequestHandlerIFCRef getRequestHandler(const String& ct) const;
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&,
-		ESendIndicationsFlag /*doIndications*/,
-		EBypassProvidersFlag /*bypassProviders*/);
+		ESendIndicationsFlag doIndications,
+		EBypassProvidersFlag bypassProviders,
+		ELockingFlag locking) const;
 	virtual LoggerRef getLogger() const;
 	virtual LoggerRef getLogger(const String& componentName) const;
 
@@ -125,10 +126,10 @@ private:
 	Map<String, CppProviderBaseIFCRef> m_methodProvs;
 	// TODO Refactor me.  ProviderAgentCIMOMHandles get a reference
 	// (&, not Reference) to m_cimClasses, and modify it.
-	Cache<CIMClass> m_cimClasses;
+	mutable Cache<CIMClass> m_cimClasses;
 	ProviderAgentLockerIFCRef m_locker;
 	EClassRetrievalFlag m_classRetrieval;
-	ClientCIMOMHandleConnectionPool m_connectionPool;
+	mutable ClientCIMOMHandleConnectionPool m_connectionPool;
 	ProviderAgentEnvironment::EConnectionCredentialsUsageFlag m_useConnectionCredentials;
 
 };

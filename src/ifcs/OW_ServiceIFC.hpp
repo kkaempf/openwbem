@@ -75,7 +75,7 @@ public:
 	 * that works hould be done in started()
 	 * start() should not return until the service is actually started, but it must return.
 	 */
-	virtual void start() = 0;
+	virtual void start();
 
 	/**
 	 * started() will be called on all services after start() has been called on all services.

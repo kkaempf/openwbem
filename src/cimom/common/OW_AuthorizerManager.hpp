@@ -36,14 +36,14 @@
 #define OW_AUTHORIZERMANAGER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
+#include "OW_ServiceIFC.hpp"
 #include "OW_Authorizer2IFC.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "OW_CimomCommonFwd.hpp"
 
 namespace OpenWBEM
 {
 
-class AuthorizerManager : public IntrusiveCountableBase
+class AuthorizerManager : public ServiceIFC
 {
 public:
 
@@ -85,7 +85,7 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	bool allowReadInstance(
-		const CIMOMEnvironmentRef& env,
+		const ServiceEnvironmentIFCRef& env,
         const String& ns,
 		const String& className,
 		const StringArray* clientPropertyList,
@@ -105,7 +105,7 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	bool allowWriteInstance(
-		const CIMOMEnvironmentRef& env,
+		const ServiceEnvironmentIFCRef& env,
 		const String& ns,
 		const CIMObjectPath& op,
 		Authorizer2IFC::EDynamicFlag dynamic,
@@ -120,7 +120,7 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	bool allowReadSchema(
-		const CIMOMEnvironmentRef& env,
+		const ServiceEnvironmentIFCRef& env,
 		const String& ns,
 		OperationContext& context);
 
@@ -133,8 +133,8 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	bool allowWriteSchema(
-		const CIMOMEnvironmentRef& env,
-		const String& ns, 
+		const ServiceEnvironmentIFCRef& env,
+		const String& ns,
 		Authorizer2IFC::EWriteFlag flag,
 		OperationContext& context);
 #endif
@@ -146,7 +146,7 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	bool allowAccessToNameSpace(
-		const CIMOMEnvironmentRef& env,
+		const ServiceEnvironmentIFCRef& env,
 		const String& ns,
 		Authorizer2IFC::EAccessType accessType,
 		OperationContext& context);
@@ -159,7 +159,7 @@ public:
 	 * @return true if the creation is authorized. Otherwise false.
 	 */
 	bool allowCreateNameSpace(
-		const CIMOMEnvironmentRef& env,
+		const ServiceEnvironmentIFCRef& env,
 		const String& ns,
 		OperationContext& context);
 
@@ -170,7 +170,7 @@ public:
 	 * @return true if the deletion is authorized. Otherwise false.
 	 */
 	bool allowDeleteNameSpace(
-		const CIMOMEnvironmentRef& env,
+		const ServiceEnvironmentIFCRef& env,
 		const String& ns,
 		OperationContext& context);
 #endif
@@ -181,22 +181,22 @@ public:
 	 * @return true if the enumerate is allowed. Otherwise false.
 	 */
 	bool allowEnumNameSpace(
-		const CIMOMEnvironmentRef& env,
+		const ServiceEnvironmentIFCRef& env,
 		OperationContext& context);
 
 	/**
-	 * Determine if a method may be invoked. 
+	 * Determine if a method may be invoked.
 	 * @param env A reference to a provider environment.
-	 * @param ns The namespace containing the instance or class. 
+	 * @param ns The namespace containing the instance or class.
 	 * @param path The name of the instance or class containing
-	 * 		the method. 
-	 * @param methodName The name of the method. 
+	 * 		the method.
+	 * @param methodName The name of the method.
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	bool allowMethodInvocation(
-		const CIMOMEnvironmentRef& env, 
-		const String& ns, 
-		const CIMObjectPath& path, 
+		const ServiceEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& path,
 		const String& methodName,
 		OperationContext& context);
 
@@ -204,15 +204,14 @@ public:
 	 * Called by the CIMOMEnvironment after the CIMServer has be loaded and
 	 * initialized.
 	 */
-	void init(CIMOMEnvironmentRef& env);
+	virtual void init(const ServiceEnvironmentIFCRef& env);
+	virtual void shutdown();
 
 private:
 
 	Authorizer2IFCRef m_authorizer;
 	bool m_initialized;
 };
-
-typedef IntrusiveReference<AuthorizerManager> AuthorizerManagerRef;
 
 }
 

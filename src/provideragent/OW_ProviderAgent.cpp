@@ -132,7 +132,7 @@ ProviderAgent::ProviderAgent(
 	m_httpServer->init(env);
 	m_httpServer->start();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really
-	// the selectabls defined above.  We'll give these to the select engine
+	// the selectables defined above.  We'll give these to the select engine
 	// thread below which will use them to run the select engine.
 	
 	// start a thread to run the http server

@@ -150,7 +150,7 @@ public:
 	}
 	virtual ~HTTPXMLCIMListenerServiceEnvironment() {}
 	virtual bool authenticate(String &userName,
-		const String &info, String &details, OperationContext& context)
+		const String &info, String &details, OperationContext& context) const
 	{
 		return m_pLAuthenticator->authenticate(userName, info, details, context);
 	}
@@ -197,18 +197,19 @@ public:
 		}
 	}
 	
-	virtual RequestHandlerIFCRef getRequestHandler(const String&)
+	virtual RequestHandlerIFCRef getRequestHandler(const String&) const
 	{
 		RequestHandlerIFCRef ref(m_XMLListener.getLibRef(),
 				m_XMLListener->clone());
-		ref->setEnvironment(ServiceEnvironmentIFCRef(this));
+		ref->setEnvironment(ServiceEnvironmentIFCRef(const_cast<HTTPXMLCIMListenerServiceEnvironment*>(this)));
 		return ref;
 	}
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&,
-		ESendIndicationsFlag /*doIndications*/,
-		EBypassProvidersFlag /*bypassProviders*/)
+		ESendIndicationsFlag doIndications,
+		EBypassProvidersFlag bypassProviders,
+		ELockingFlag locking) const
 	{
-		OW_ASSERT("Not implemented" == 0);
+		OW_ASSERTMSG(0, "Not implemented");
 		return CIMOMHandleIFCRef();
 	}
 	virtual LoggerRef getLogger() const

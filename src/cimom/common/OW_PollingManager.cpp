@@ -99,7 +99,7 @@ namespace
 		}
 		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
-			return m_env->getRepositoryCIMOMHandle(m_context);
+			return m_env->getCIMOMHandle(m_context, ServiceEnvironmentIFC::E_SEND_INDICATIONS, ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
 		}
 		virtual RepositoryIFCRef getRepository() const
 		{
@@ -128,7 +128,7 @@ namespace
 		}
 	private:
 		mutable OperationContext m_context;
-		CIMOMEnvironmentRef m_env;
+		ServiceEnvironmentIFCRef m_env;
 	};
 	ProviderEnvironmentIFCRef createProvEnvRef(CIMOMEnvironmentRef env)
 	{

@@ -85,17 +85,17 @@ using std::endl;
 namespace
 {
 // the one and only
-CIMOMEnvironmentRef g_cimomEnvironment;
+CIMOMEnvironmentRef theCimomEnvironment;
 }
 
 CIMOMEnvironmentRef&
 CIMOMEnvironment::instance()
 {
-	if (!g_cimomEnvironment)
+	if (!theCimomEnvironment)
 	{
-		g_cimomEnvironment = CIMOMEnvironmentRef(new CIMOMEnvironment);
+		theCimomEnvironment = CIMOMEnvironmentRef(new CIMOMEnvironment);
 	}
-	return g_cimomEnvironment;
+	return theCimomEnvironment;
 }
 
 String CIMOMEnvironment::COMPONENT_NAME("ow.owcimomd");
@@ -105,7 +105,7 @@ namespace
 	class CIMOMProviderEnvironment : public ProviderEnvironmentIFC
 	{
 	public:
-		CIMOMProviderEnvironment(const CIMOMEnvironment* pCenv)
+		CIMOMProviderEnvironment(CIMOMEnvironmentRef pCenv)
 			: m_pCenv(pCenv)
 			, m_context()
 		{}
@@ -146,36 +146,22 @@ namespace
 			return m_context;
 		}
 	private:
-		const CIMOMEnvironment* m_pCenv;
+		CIMOMEnvironmentRef m_pCenv;
 		OperationContext m_context;
 	};
-	ProviderEnvironmentIFCRef createProvEnvRef(const CIMOMEnvironment* pcenv)
+	ProviderEnvironmentIFCRef createProvEnvRef(const CIMOMEnvironmentRef& pcenv)
 	{
 		return ProviderEnvironmentIFCRef(new CIMOMProviderEnvironment(pcenv));
 	}
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
+// We don't initialize everything here, since startServices() and shutdown() manage the lifecycle.
+// We start off with a dumb logger and an empty config map.
 CIMOMEnvironment::CIMOMEnvironment()
-	: ServiceEnvironmentIFC()
-	, m_monitor()
-	, m_cimRepository(0)
-	, m_cimServer(0)
-	, m_authManager(0)
-	, m_Logger(new CerrLogger())
+	: m_Logger(new CerrLogger)
 	, m_configItems(new ConfigMap)
-	, m_providerManager(0)
-	, m_wqlLib()
-	, m_indicationRepLayerLib(0)
-	, m_pollingManager(0)
-	, m_indicationServer()
 	, m_indicationsDisabled(true)
-	, m_selectables()
-	, m_selectableCallbacks()
-	, m_services()
-	, m_reqHandlers()
-	, m_indicationLock()
 	, m_indicationRepLayerDisabled(false)
-	, m_selectableLock()
 	, m_running(false)
 	, m_indicationRepLayerMediatorRef(new IndicationRepLayerMediator)
 {
@@ -204,7 +190,7 @@ CIMOMEnvironment::~CIMOMEnvironment()
 void
 CIMOMEnvironment::init()
 {
-	MutexLock ml(m_monitor);
+	// init() is called from a single-threaded state
 	_clearSelectables();
 	setConfigItem(ConfigOpts::CONFIG_FILE_opt, OW_DEFAULT_CONFIG_FILE, E_PRESERVE_PREVIOUS);
 	_loadConfigItemsFromFile(getConfigItem(ConfigOpts::CONFIG_FILE_opt));
@@ -246,17 +232,11 @@ CIMOMEnvironment::init()
 	_createLogger();
 }
 //////////////////////////////////////////////////////////////////////////////
-void
-CIMOMEnvironment::unloadProviders()
-{
-	m_providerManager->unloadProviders(createProvEnvRef(this));
-}
-//////////////////////////////////////////////////////////////////////////////
 namespace {
 class ProviderEnvironmentServiceEnvironmentWrapper : public ProviderEnvironmentIFC
 {
 public:
-	ProviderEnvironmentServiceEnvironmentWrapper(CIMOMEnvironment* env_)
+	ProviderEnvironmentServiceEnvironmentWrapper(ServiceEnvironmentIFCRef env_)
 		: env(env_)
 		, m_context()
 	{}
@@ -267,7 +247,8 @@ public:
 	
 	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 	{
-		return env->getRepositoryCIMOMHandle(m_context);
+		return env->getCIMOMHandle(m_context, ServiceEnvironmentIFC::E_SEND_INDICATIONS,
+			ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
 	}
 	
 	virtual RepositoryIFCRef getRepository() const
@@ -295,7 +276,7 @@ public:
 		return m_context;
 	}
 private:
-	CIMOMEnvironment* env;
+	ServiceEnvironmentIFCRef env;
 	mutable OperationContext m_context;
 };
 }
@@ -303,32 +284,38 @@ private:
 void
 CIMOMEnvironment::startServices()
 {
-	// TODO: Split this up into 3 sections: load, init, initialized, start, started
-	{
-		MutexLock ml(m_monitor);
+	// Split up into 3 sections:
+	// 1. load
+	// 2. init, initialized
+	// 3. start, started
 
-		// This is a global thing, so handle it here.
-		Socket::createShutDownMechanism();
+	// We start out single-threaded.  The start phase is when threads enter the picture.
 
-		// Create NOP authorizer manager so CIMServer can use it if it needs to.
-		// This will have an authorizer loaded into it later
-		m_authorizerManager = AuthorizerManagerRef(new AuthorizerManager);
+	// This is a global thing, so handle it here.
+	Socket::createShutDownMechanism();
 
-		m_providerManager = ProviderManagerRef(new ProviderManager);
-		m_providerManager->load(ProviderIFCLoader::createProviderIFCLoader(
-			g_cimomEnvironment));
-		m_cimRepository = RepositoryIFCRef(new CIMRepository(g_cimomEnvironment));
-		m_cimRepository->open(getConfigItem(ConfigOpts::DATA_DIR_opt));
-		m_cimServer = RepositoryIFCRef(new CIMServer(g_cimomEnvironment,
-			m_providerManager, m_cimRepository, m_authorizerManager));
-		_loadAuthorizer();  // old stuff
-		_createAuthorizerManager();  // new stuff
-		_createAuthManager();
-		_loadRequestHandlers();
-		_loadServices();
-		_createPollingManager();
-		_createIndicationServer();
-	}
+	// load
+	m_authorizerManager = new AuthorizerManager;
+	m_providerManager = new ProviderManager;
+	m_providerManager->load(ProviderIFCLoader::createProviderIFCLoader(
+		this));
+	m_cimRepository = new CIMRepository(this);
+	m_cimServer = RepositoryIFCRef(new CIMServer(this,
+		m_providerManager, m_cimRepository, m_authorizerManager));
+
+
+	// 2. init
+
+	m_cimRepository->open(getConfigItem(ConfigOpts::DATA_DIR_opt));
+	_loadAuthorizer();  // old stuff
+	_createAuthorizerManager();  // new stuff
+	_createAuthManager();
+	_loadRequestHandlers();
+	_loadServices();
+	_createPollingManager();
+	_createIndicationServer();
+
+
 	{
 		MutexLock l(m_runningGuard);
 		m_running = true;
@@ -338,8 +325,9 @@ CIMOMEnvironment::startServices()
 		new ProviderEnvironmentServiceEnvironmentWrapper(this));
 
 	m_providerManager->init(penvRef);
-	m_authorizerManager->init(g_cimomEnvironment);
+	m_authorizerManager->init(this);
 
+	// 3. start
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
 		m_services[i]->start();
@@ -357,7 +345,7 @@ CIMOMEnvironment::startServices()
 		{
 			// Start up the indication server
 			OW_LOG_DEBUG(m_Logger, "CIMOM starting IndicationServer");
-			m_indicationServer->init(g_cimomEnvironment);
+			m_indicationServer->init(this);
 			m_indicationServer->start();
 			m_indicationServer->waitUntilReady();
 		}
@@ -487,7 +475,7 @@ CIMOMEnvironment::shutdown()
 }
 //////////////////////////////////////////////////////////////////////////////
 ProviderManagerRef
-CIMOMEnvironment::getProviderManager()
+CIMOMEnvironment::getProviderManager() const
 {
 	{
 		MutexLock l(m_runningGuard);
@@ -505,14 +493,14 @@ void
 CIMOMEnvironment::_createAuthManager()
 {
 	m_authManager = AuthManagerRef(new AuthManager);
-	m_authManager->init(g_cimomEnvironment);
+	m_authManager->init(this);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMOMEnvironment::_createPollingManager()
 {
 	m_pollingManager = PollingManagerRef(new PollingManager(
-		g_cimomEnvironment));
+		this));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -585,7 +573,7 @@ CIMOMEnvironment::_loadRequestHandlers()
 		if (rh)
 		{
 			++reqHandlerCount;
-			rh->setEnvironment(g_cimomEnvironment);
+			rh->setEnvironment(this);
 			StringArray supportedContentTypes = rh->getSupportedContentTypes();
 			OW_LOG_INFO(m_Logger, Format("CIMOM loaded request handler from file: %1",
 				libName));
@@ -653,7 +641,7 @@ CIMOMEnvironment::_loadServices()
 			// save it first so if init throws it won't get
 			// unloaded until later.
 			m_services.append(srv);
-			srv->init(g_cimomEnvironment);
+			srv->init(this);
 			OW_LOG_INFO(m_Logger, Format("CIMOM loaded service from file: %1", libName));
 		}
 		else
@@ -807,7 +795,7 @@ CIMOMEnvironment::_loadConfigItemsFromFile(const String& filename)
 //////////////////////////////////////////////////////////////////////////////
 bool
 CIMOMEnvironment::authenticate(String &userName, const String &info,
-	String &details, OperationContext& context)
+	String &details, OperationContext& context) const
 {
 	{
 		MutexLock l(m_runningGuard);
@@ -829,7 +817,7 @@ CIMOMEnvironment::getConfigItem(const String &name, const String& defRetVal) con
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
-		OperationContext& context)
+		OperationContext& context) const
 {
 	{
 		MutexLock l(m_runningGuard);
@@ -841,23 +829,23 @@ CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
 	MutexLock ml(m_monitor);
 	OW_ASSERT(m_cimServer);
 	return CIMOMHandleIFCRef(new LocalCIMOMHandle(
-		g_cimomEnvironment,
+		const_cast<CIMOMEnvironment *>(this),
 		RepositoryIFCRef(new WQLFilterRep(inst, m_cimServer)), context));
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMOMHandleIFCRef
-CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
-	ESendIndicationsFlag doIndications,
-	EBypassProvidersFlag bypassProviders)
-{
-	return getCIMOMHandle(context,doIndications,bypassProviders,E_LOCKING);
-}
+// CIMOMHandleIFCRef
+// CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
+//     ESendIndicationsFlag doIndications,
+//     EBypassProvidersFlag bypassProviders)
+// {
+//     return getCIMOMHandle(context,doIndications,bypassProviders,E_LOCKING);
+// }
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 	ESendIndicationsFlag doIndications,
 	EBypassProvidersFlag bypassProviders,
-	ELockingFlag locking)
+	ELockingFlag locking) const
 {
 	{
 		MutexLock l(m_runningGuard);
@@ -899,18 +887,18 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 		rref = RepositoryIFCRef(new SharedLibraryRepository(SharedLibraryRepositoryIFCRef(m_authorizer.getLibRef(), RepositoryIFCRef(p))));
 	}
 
-	return CIMOMHandleIFCRef(new LocalCIMOMHandle(g_cimomEnvironment, rref,
+	return CIMOMHandleIFCRef(new LocalCIMOMHandle(const_cast<CIMOMEnvironment*>(this), rref,
 		context, locking == E_LOCKING ? LocalCIMOMHandle::E_LOCKING : LocalCIMOMHandle::E_NO_LOCKING));
 }
-//////////////////////////////////////////////////////////////////////////////
-CIMOMHandleIFCRef
-CIMOMEnvironment::getRepositoryCIMOMHandle(OperationContext& context)
-{
-	return getCIMOMHandle(context, E_DONT_SEND_INDICATIONS, E_BYPASS_PROVIDERS);
-}
+// //////////////////////////////////////////////////////////////////////////////
+// CIMOMHandleIFCRef
+// CIMOMEnvironment::getRepositoryCIMOMHandle(OperationContext& context) const
+// {
+//     return getCIMOMHandle(context, E_DONT_SEND_INDICATIONS, E_BYPASS_PROVIDERS, E_LOCKING);
+// }
 //////////////////////////////////////////////////////////////////////////////
 WQLIFCRef
-CIMOMEnvironment::getWQLRef()
+CIMOMEnvironment::getWQLRef() const
 {
 	{
 		MutexLock l(m_runningGuard);
@@ -938,7 +926,7 @@ CIMOMEnvironment::getWQLRef()
 }
 //////////////////////////////////////////////////////////////////////////////
 SharedLibraryRepositoryIFCRef
-CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
+CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref) const
 {
 	SharedLibraryRepositoryIFCRef retref;
 	if (!m_indicationRepLayerDisabled)
@@ -1083,7 +1071,7 @@ CIMOMEnvironment::_createAuthorizerManager()
 }
 //////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFCRef
-CIMOMEnvironment::getRequestHandler(const String &id)
+CIMOMEnvironment::getRequestHandler(const String &id) const
 {
 	RequestHandlerIFCRef ref;
 	{
@@ -1109,7 +1097,7 @@ CIMOMEnvironment::getRequestHandler(const String &id)
 			ref = RequestHandlerIFCRef(iter->second.rqIFCRef.getLibRef(),
 				iter->second.rqIFCRef->clone());
 			iter->second.dt.setToCurrent();
-			ref->setEnvironment(g_cimomEnvironment);
+			ref->setEnvironment(const_cast<CIMOMEnvironment*>(this));
 			OW_LOG_DEBUG(m_Logger, Format("Request Handler %1 handling request for content type %2",
 				iter->second.filename, id));
 		}
@@ -1206,7 +1194,7 @@ CIMOMEnvironment::setConfigItem(const String &item,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMOMEnvironment::runSelectEngine()
+CIMOMEnvironment::runSelectEngine() const
 {
 	OW_ASSERT(m_selectables.size() == m_selectableCallbacks.size());
 	SelectEngine engine;
@@ -1326,6 +1314,13 @@ CIMOMEnvironment::setInteropInstance(const CIMInstance& inst)
 
 		iter->second.insert(inst);
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+CIMOMEnvironment::unloadProviders()
+{
+	m_providerManager->unloadProviders(createProvEnvRef(this));
 }
 
 } // end namespace OpenWBEM
