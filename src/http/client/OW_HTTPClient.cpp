@@ -46,6 +46,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_RandomNumber.hpp"
 #include "OW_HTTPException.hpp"
+#include "OW_UserUtils.hpp"
 
 #include <fstream>
 
@@ -227,6 +228,7 @@ HTTPClient::receiveAuthentication()
 	{
 		String authInfo = getHeaderValue("authentication-info");
 		m_sDigestNonce = getAuthParam("nextnonce", authInfo);
+		getCredentialsIfNecessary();
 		HTTPUtils::DigestCalcHA1( "md5", m_url.principal, m_sRealm,
 			m_url.credential, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
 		m_iDigestNonceCount = 1;
@@ -236,6 +238,7 @@ HTTPClient::receiveAuthentication()
 		m_sAuthorization = "Digest";
 		m_uselocalAuthentication = false;
 		m_sDigestNonce = getAuthParam("nonce", authInfo);
+		getCredentialsIfNecessary();
 		HTTPUtils::DigestCalcHA1( "md5", m_url.principal, m_sRealm,
 			m_url.credential, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
 	}
@@ -261,8 +264,13 @@ HTTPClient::receiveAuthentication()
 		OW_THROW(HTTPException, "No known authentication schemes");
 	}
 
-	// do this after processing the headers so that m_uselocalAuthentication will be set
-	if (m_url.principal.empty() && !m_uselocalAuthentication) // local authentication doesn't use a principal/credential
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void HTTPClient::getCredentialsIfNecessary()
+{
+	if (m_url.principal.empty())
 	{
 		if (!m_loginCB)
 		{
@@ -280,7 +288,7 @@ HTTPClient::receiveAuthentication()
 				realm = m_sRealm;
 			}
 			String name, passwd;
-			if (m_loginCB->getCredentials(realm, name, passwd, ""))
+			if (m_loginCB->getCredentials(realm, name, passwd, "") && !name.empty())
 			{
 				m_url.principal = name;
 				m_url.credential = passwd;
@@ -292,9 +300,8 @@ HTTPClient::receiveAuthentication()
 		}
 	}
 
-
 }
-				
+
 //////////////////////////////////////////////////////////////////////////////
 void HTTPClient::sendAuthorization()
 {
@@ -304,6 +311,7 @@ void HTTPClient::sendAuthorization()
 		ostr << m_sAuthorization << " ";
 		if( m_sAuthorization == "Basic" )
 		{
+			getCredentialsIfNecessary();
 			ostr << HTTPUtils::base64Encode( m_url.principal + ":" +
 				m_url.credential );
 		}
@@ -330,7 +338,8 @@ void HTTPClient::sendAuthorization()
 			if (m_localNonce.empty())
 			{
 				// first round - we just send our euid
-				ostr << "uid=" << ::geteuid();
+
+				ostr << "uid=" << UserUtils::getEffectiveUserId();
 			}
 			else
 			{

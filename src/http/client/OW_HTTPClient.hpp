@@ -78,6 +78,9 @@ class HTTPClient : public CIMProtocolIFC
 		 * 
 		 * example: "https://jdd:test@myhost.com:5989/interop/:CIM_Namespace.Name=unknown,CreationClassName=CIM_ComputerSystem"
 		 * 
+		 * If (principal == "" && (host == "localhost" || host == "127.0.0.1")) then HTTPClient will attempt to use OWLocal 
+		 * authentication.
+		 * 
 		 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
 		 */
 		HTTPClient(const String& url);
@@ -221,6 +224,14 @@ class HTTPClient : public CIMProtocolIFC
 		String checkResponse(Resp_t& rt);
 		void prepareHeaders();
 		void sendDataToServer( Reference<TempFileStream> tfs, const String& methodName, const String& cimObject, ERequestType requestType );
+		/**
+		 * If no credentials were provided in the url to the constructor, but an authentication callback was given, then call the callback to get credentials.
+		 * @postcondition m_url.principal != ""
+		 * @throws HTTPException if the postcondition cannot be satisfied.
+		 */
+		void getCredentialsIfNecessary();
+
+		// unimplemented
 		HTTPClient(const HTTPClient&);
 		HTTPClient& operator=(const HTTPClient&);
 };
