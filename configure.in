@@ -165,7 +165,7 @@ ostream.h istream istream.h hash_map ext/hash_map)
 
 AC_LANG_C
 
-AC_CHECK_FUNCS(getopt_long gethostbyname_r sched_yield backtrace)
+AC_CHECK_FUNCS(getopt_long gethostbyname_r sched_yield backtrace nanosleep)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
