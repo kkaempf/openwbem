@@ -42,7 +42,9 @@ namespace OpenWBEM
 
 const int OW_SIGSEGV = SIGSEGV;
 const int OW_SIGABRT = SIGABRT;
+#ifdef SIGBUS // NetWare doesn't have this signal
 const int OW_SIGBUS = SIGBUS;
+#endif
 const int OW_SIGFPE = SIGFPE;
 
 extern "C" {
