@@ -74,7 +74,7 @@ OW_NonRecursiveMutex::acquire()
 bool
 OW_NonRecursiveMutex::release()
 {
-    int rc = OW_NonRecursiveMutexImpl::releaseMutex(m_mutex);
+	int rc = OW_NonRecursiveMutexImpl::releaseMutex(m_mutex);
 	if (rc != 0)
 	{
 		OW_THROW(OW_Assertion, format("OW_NonRecursiveMutexImpl::releaseMutex returned with error %1", rc).c_str());

@@ -54,17 +54,16 @@ OW_NonRecursiveMutexImpl::createMutex(OW_NonRecursiveMutex_t& handle)
 	return cc;
 #elif defined OW_USE_PTHREAD
 
-    pthread_mutexattr_t attr;
-    int res = pthread_mutexattr_init(&attr);
-    assert(res == 0);
-    if (res != 0)
-        return -1;
+	pthread_mutexattr_t attr;
+	int res = pthread_mutexattr_init(&attr);
+	assert(res == 0);
+	if (res != 0)
+		return -1;
  
-    res = pthread_mutex_init(&handle.mutex, &attr);
-    if (res != 0)
-        return -1;
+	res = pthread_mutex_init(&handle.mutex, &attr);
+	if (res != 0)
+		return -1;
  
-    handle.valid_id = false;
 	return 0;
 #elif OW_USE_WIN32_THREADS
 	return 0;
@@ -133,15 +132,8 @@ OW_NonRecursiveMutexImpl::acquireMutex(OW_NonRecursiveMutex_t& handle)
 	return 0;
 #elif defined (OW_USE_PTHREAD)
 
-    pthread_t tid = pthread_self();
-    if (handle.valid_id && pthread_equal(handle.thread_id, tid))
-        return -1;
-
-    int res = pthread_mutex_lock(&handle.mutex);
-    assert(res == 0);
-
-    handle.valid_id = true;
-    handle.thread_id = tid;
+	int res = pthread_mutex_lock(&handle.mutex);
+	assert(res == 0);
 
 	return res;
 #elif defined (OW_USE_WIN32_THREADS)
@@ -167,19 +159,6 @@ OW_NonRecursiveMutexImpl::releaseMutex(OW_NonRecursiveMutex_t& handle)
 	(void)handle;
 	return 0;
 #elif defined (OW_USE_PTHREAD)
-    pthread_t tid = pthread_self();
-    if (!handle.valid_id)
-    {
-        return -3;
-    }
-
-    if (!pthread_equal(handle.thread_id, tid))
-    {
-        return -2;
-    }
-
-    handle.valid_id = false;
-
 	int res = pthread_mutex_unlock(&handle.mutex);
 	assert(res == 0);
 
@@ -197,10 +176,7 @@ OW_NonRecursiveMutexImpl::releaseMutex(OW_NonRecursiveMutex_t& handle)
 int
 OW_NonRecursiveMutexImpl::conditionPreWait(OW_NonRecursiveMutex_t& handle, OW_NonRecursiveMutexLockState& state)
 {
-    state.pmutex = &handle.mutex;
-    state.thread_id = handle.thread_id;
-    assert(handle.valid_id); // must have been locked
-    handle.valid_id = false;
+	state.pmutex = &handle.mutex;
 	return 0;
 }
 
@@ -208,8 +184,7 @@ OW_NonRecursiveMutexImpl::conditionPreWait(OW_NonRecursiveMutex_t& handle, OW_No
 int
 OW_NonRecursiveMutexImpl::conditionPostWait(OW_NonRecursiveMutex_t& handle, OW_NonRecursiveMutexLockState& state)
 {
-    handle.thread_id = state.thread_id;
-	handle.valid_id = true;
+	(void)handle; (void)state;
 	return 0;
 }
 

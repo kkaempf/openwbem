@@ -65,8 +65,6 @@ typedef pthread_mutex_t OW_NativeMutex_t;
 struct OW_NonRecursiveMutex_t
 {
     pthread_mutex_t mutex;
-    pthread_t thread_id;
-    bool valid_id;
 };
 
 #if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
@@ -94,7 +92,7 @@ typedef pthread_cond_t 			OW_ConditionVar_t;
 
 struct OW_NonRecursiveMutexLockState
 {
-    pthread_t thread_id;
+	pthread_t thread_id;
 	OW_NativeMutex_t* pmutex;
 };
 
