@@ -466,7 +466,7 @@ SessionLanguage::addContentLanguage(const String& contentLanguage)
 		m_contentLanguage += ", ";
 	}
 
-	StringArray currentLangs = contentLanguage.tokenize(", ");
+	StringArray currentLangs = m_contentLanguage.tokenize(", ");
 	if (std::find(currentLangs.begin(), currentLangs.end(), contentLanguage) == currentLangs.end())
 	{
 		m_contentLanguage += contentLanguage;
