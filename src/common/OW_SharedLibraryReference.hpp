@@ -46,10 +46,10 @@ class SharedLibraryReference
 public:
 	typedef T element_type;
 
-	SharedLibraryReference(SharedLibraryRef lib, T obj)
+	SharedLibraryReference(const SharedLibraryRef& lib, const T& obj)
 	: m_sharedLib(lib), m_obj(obj)
 	{}
-	SharedLibraryReference(SharedLibraryRef lib, typename T::element_type* obj)
+	SharedLibraryReference(const SharedLibraryRef& lib, typename T::element_type* obj)
 	: m_sharedLib(lib), m_obj(T(obj))
 	{}
 	SharedLibraryReference(const SharedLibraryReference<T>& arg)
@@ -108,24 +108,23 @@ public:
 	SharedLibraryReference<U> cast_to() const
 	{
 		SharedLibraryReference<U> rval;
-		rval.m_obj = m_obj.cast_to<U>();
 		rval.m_sharedLib = m_sharedLib;
+		rval.m_obj = m_obj.cast_to<U>();
 		return rval;
 	}
-//     template <class U>
-//     void useRefCountOf(const SharedLibraryReference<U>& arg)
-//     {
-//         m_obj.useRefCountOf(arg.m_obj);
-//     }
+
 	OW_DEPRECATED bool isNull() const // in 3.1.0
 	{
 		return !m_obj;
 	}
+
 #if !defined(__GNUC__) || __GNUC__ > 2 // causes gcc 2.95 to ICE
 	/* This is so cast_to will work */
 	template <class U> friend class SharedLibraryReference;
+
 private:
 #endif
+
 	SharedLibraryRef m_sharedLib;
 	T m_obj;
 };
