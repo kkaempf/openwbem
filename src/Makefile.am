@@ -131,7 +131,8 @@ $(top_builddir)/src/providers/cpp/instance/CIM_NamespaceInManager/libowprovinstC
 $(top_builddir)/src/providers/cpp/instance/OW_NameSpace/libowprovinstOW_NameSpace.a \
 $(top_builddir)/src/providers/cpp/instance/OpenWBEM_ObjectManager/libowprovinstOpenWBEM_ObjectManager.a \
 $(top_builddir)/src/providers/cpp/instance/OpenWBEM_UnitaryComputerSystem/libowprovinstOpenWBEM_UnitaryComputerSystem.a \
-$(top_builddir)/src/providers/cpp/polled/unloader/libowprovpollUnloader.a 
+$(top_builddir)/src/providers/cpp/polled/unloader/libowprovpollUnloader.a \
+$(top_builddir)/src/providers/cpp/instance/OpenWBEM_ConfigSettingData/libowprovinstOpenWBEM_ConfigSettingData.a
 
 STATIC_SERVICE_FLAGS= \
 $(PAM_LIB) $(Z_LIBS) $(DYNAMIC_LINK_FLAGS) $(DL_LIB) $(CURRENT_LINK_MODE_FLAGS)
