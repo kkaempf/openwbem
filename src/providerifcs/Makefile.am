@@ -1,1 +1,1 @@
-SUBDIRS = cpp npi simplecpp
+SUBDIRS = cpp npi simplecpp cmpi

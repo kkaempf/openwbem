@@ -645,6 +645,8 @@ AC_OUTPUT(./Makefile
 ./src/providerifcs/simplecpp/Makefile
 ./src/providerifcs/npi/Makefile
 ./src/providerifcs/npi/common/Makefile
+./src/providerifcs/cmpi/Makefile
+./src/providerifcs/cmpi/common/Makefile
 ./src/providers/Makefile
 ./src/providers/cpp/Makefile
 ./src/providers/cpp/indicationexport/Makefile

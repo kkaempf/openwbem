@@ -168,6 +168,13 @@ simplecppprovifc.prov_location = @libdir@/openwbem/simplec++providers
 npiprovifc.prov_location = @libdir@/openwbem/npiproviders
 
 ################################################################################
+# One of the provider interfaces provided with owcimomd is the CMPI provider
+# interface. The cmpiprovifc.prov_location option specifies where the CMPI
+# provider interface will load it's providers from. The default for this option
+# is "@libdir@/openwbem/cmpiproviders"
+cmpiprovifc.prov_location = @libdir@/openwbem/cmpiproviders
+
+################################################################################
 # If OpenWBEM is built with zlib, it can use deflate compression in the HTTP
 # responses.  This option controls whether it will acutally use it or not.
 # The default is true.
