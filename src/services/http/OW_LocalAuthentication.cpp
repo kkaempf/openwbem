@@ -86,6 +86,7 @@ namespace
 			
 			// purposely ignore this return code
 			helper.in()->write(input.c_str(), input.length());
+			helper.in()->close();
 
 			const int TIMEOUT = 10;
 			const int OUTPUT_LIMIT = 1024;
