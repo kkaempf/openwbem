@@ -136,10 +136,13 @@ $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@ \
 
 	# Fix the symlinks to point into $STAGEDIR
 	for link in $STAGEDIR/$OWLIBDIR/openwbem/services/* \
+			$STAGEDIR/$OWLIBDIR/openwbem/provifcs/* \
 			$STAGEDIR/$OWLIBDIR/openwbem/requesthandlers/* \
 			$STAGEDIR/$OWLIBDIR/openwbem/authentication/*; do
-		rm -f $link
-		ln -sf $STAGEDIR/$OWLIBDIR/`basename $link` $link
+		if [ -f $STAGEDIR/$OWLIBDIR/`basename $link` ]; then
+			rm -f $link
+			ln -sf $STAGEDIR/$OWLIBDIR/`basename $link` $link
+		fi
 	done
 		
 }
