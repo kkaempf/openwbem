@@ -90,6 +90,9 @@ $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@ \
 			-e "s!;owcimomd.restart_on_error = .*!owcimomd.restart_on_error = false!g" \
 		openwbem.conf > openwbem.conf-t
 	cd $STAGEDIR
+	# undo the change for the UDS, since the client won't know to use the
+	# right one.
+	EditConfig 's!http_server.uds_filename = \(.*\)!;http_server.uds_filename = \1!g'
 
 	grep "define OW_NO_SSL" $TOPSRCDIR/src/common/OW_config.h > /dev/null 2>&1
 	if [ "$?" = "0" ]; then

@@ -49,6 +49,12 @@
 #ifndef OW_DEFAULT_LOG_FILE
 #define OW_DEFAULT_LOG_FILE "syslog"
 #endif
+#ifndef OW_DEFAULT_LOG_LOCATION
+#define OW_DEFAULT_LOG_LOCATION "syslog"
+#endif
+#ifndef OW_DEFAULT_LOG_LEVEL
+#define OW_DEFAULT_LOG_LEVEL "error"
+#endif
 #ifndef OW_DEFAULT_OWLIB_DIR
 #define OW_DEFAULT_OWLIB_DIR OW_DEFAULT_LIB_DIR"/openwbem"
 #endif

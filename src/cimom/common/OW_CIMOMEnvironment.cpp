@@ -574,8 +574,8 @@ CIMOMEnvironment::_createLogger()
 	bool debugFlag = getConfigItem(
 		ConfigOpts::DEBUG_opt).equalsIgnoreCase("true");
 	m_Logger = LoggerRef(Logger::createLogger(getConfigItem(
-		ConfigOpts::LOG_LOCATION_opt), debugFlag));
-	m_Logger->setLogLevel(getConfigItem(ConfigOpts::LOG_LEVEL_opt));
+		ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_LOCATION), debugFlag));
+	m_Logger->setLogLevel(getConfigItem(ConfigOpts::LOG_LEVEL_opt, OW_DEFAULT_LOG_LEVEL));
 }
 //////////////////////////////////////////////////////////////////////////////
 void

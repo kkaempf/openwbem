@@ -14,38 +14,10 @@
 ###############################################################################
 
 ################################################################################
-# owcimomd.services_path Specifies the directory where all services
-# will be loaded by the CIMOM
-owcimomd.services_path = @libdir@/openwbem/services
-
-################################################################################
-# owcimomd.request_handler_path Specifies the location where all request
-# handlers will be loaded by the CIMOM
-owcimomd.request_handler_path = @libdir@/openwbem/requesthandlers
-
-################################################################################
-# owcimomd.libexecdir specifies the locaction of the libexec directory.
-# Binaries that owcimomd relies on are expected to be in this directory
-# the default for is option is "@libexecdir@/openwbem"
-owcimomd.libexecdir = @libexecdir@/openwbem
-
-################################################################################
-# owcimomd.owlibdir specifies the locaction of the lib directory.
-# Dynamicall loaded Libraries that owcimomd relies on are expected to be in
-# this directory.
-# The default for is option is "@libdir@/openwbem"
-owcimomd.owlibdir = @libdir@/openwbem
-
-################################################################################
-# owcimomd.datadir specifies the directory where owcimomd will place its data
-# file (repositories). The default for this option is 
-# "@localstatedir@/openwbem"
-owcimomd.datadir = @localstatedir@/openwbem
-
-################################################################################
 # If owcimomd.allow_anonymous is set to true anonymous logins are allowed by
 # owcimomd (i.e. No user name or password is required).
-;owcimomd.allow_anonymous = true
+# The default for this option is false
+;owcimomd.allow_anonymous = false
 
 ################################################################################
 # owcimomd.log_location specifies the location of the log file that is
@@ -67,16 +39,9 @@ owcimomd.datadir = @localstatedir@/openwbem
 ;owcimomd.log_level = error
 
 ################################################################################
-# owcimomd.provider_ifc_libs specifies the location where all the provider
-# interfaces will be loaded from. owcimomd assumes all shared libraries in
-# this directory are provider interfaces. If a shared library in this directory
-# does not support the provider interface api, it will be rejected. The default
-# for this option is "@libdir@/openwbem/provifcs"
-owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
-
-################################################################################
 # owcimomd.wql_lib specifies the location where the wql processor library
 # will be loaded from.
+# To disable WQL, either set this option to empty or comment it out.
 # The default for this option is "@libdir@/libowwql.@lib_ext@"
 owcimomd.wql_lib = @libdir@/libowwql.@lib_ext@
 
@@ -95,20 +60,21 @@ owcimomd.wql_lib = @libdir@/libowwql.@lib_ext@
 # terminal and will send all logging to the terminal. While in this mode
 # owcimomd can be properly terminated by simply hitting Ctrl-C or sending it
 # a SIGTERM signal (SIGTERM also works if owcimomd.debugflag is false)
+# Also using the command line parameter -d turns on debug mode.
 ;owcimomd.debugflag = false
 
 ################################################################################
-# the authentication module to be used by owcimomd.  This should be a
+# The authentication module to be used by owcimomd.  This should be a
 # an absolute path to the shared library containing the authentication module.
 owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthentication.@lib_ext@
 
 ################################################################################
-# the maximum number of classes that will be cached by the cimom.
+# The maximum number of classes that will be cached by the cimom.
 # The default is 128
 ;owcimomd.max_class_cache_size = 128
 
 ################################################################################
-# a space delimited list of system users who are allowed to acces the CIMOM
+# A space delimited list of system users who are allowed to acces the CIMOM
 # Set this value to * to allow all users to authenticate (for instance, if 
 # you choose to control access with ACLs instead). 
 pam.allowed_users = root
@@ -184,13 +150,6 @@ owcimomd.authorization_lib = @libdir@/openwbem/libowsimpleauthorizer.@lib_ext@
 # owcimomd.interop_schema_namespace specifies the namespace which contains the
 # CIM Interop schema. The default is root.
 ;owcimomd.interop_schema_namespace = root
-
-################################################################################
-# One of the provider interfaces provided with owcimomd is the C++ provider
-# interface. The cppprovifc.prov_location option specifies where the C++
-# provider interface will load it's providers from. The default for this option
-# is "@libdir@/openwbem/c++providers"
-cppprovifc.prov_location = @libdir@/openwbem/c++providers
 
 ################################################################################
 # cppprovifc.prov_TTL specifies how many minutes the C++ provider manager
@@ -287,15 +246,17 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 
 ################################################################################
 # http_server.reuse_addr specifies whether the http server will set the 
-# SO_REUSEADDR when it listens on a socket.  This is provided because some
+# SO_REUSEADDR flag when it listens on a socket.  This is provided because some
 # Unix kernels have security problems when this option is set.
 # If this option is not turned on, you may not be able to immediately restart
 # the daemon because it can't listen on the port until the kernel releases it.
 # It's OK to use on current linux versions.  Definitely not on
-# OLD (kernel < 1.3.60) ones.  Who knows about on other OS's like UnixWare or
-# OpenServer?
+# OLD (kernel < 1.3.60) ones. 
 # See http://monkey.org/openbsd/archive/misc/9601/msg00031.html
 # or just google for "bind() Security Problems"
+# If you specify interfaces to listen on other than 0.0.0.0 using the 
+# http_server.listen_addresses option, then there is no security problem with
+# enabling this option.
 # The default value is true.
 ;http_server.reuse_addr = true
 
@@ -310,4 +271,69 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # The default is true.
 ;slp.enable_advertisement = true
 
+
+################################################################################
+# The following options will probably not need to be modified.
+################################################################################
+
+
+################################################################################
+# owcimomd.services_path Specifies the directory containing the services
+# shared libraries to be loaded by the CIMOM.
+# You probably don't need to modify this option.
+# The default for is option is "@libdir@/openwbem/services"
+owcimomd.services_path = @libdir@/openwbem/services
+
+################################################################################
+# owcimomd.request_handler_path Specifies the directory containing the
+# request handler shared libraries to be loaded by the CIMOM.
+# You probably don't need to modify this option.
+# The default for is option is "@libdir@/openwbem/requesthandlers"
+owcimomd.request_handler_path = @libdir@/openwbem/requesthandlers
+
+################################################################################
+# owcimomd.libexecdir specifies the locaction of the libexec directory.
+# Binaries that owcimomd relies on are expected to be in this directory.
+# You probably don't need to modify this option.
+# The default for is option is "@libexecdir@/openwbem"
+owcimomd.libexecdir = @libexecdir@/openwbem
+
+################################################################################
+# owcimomd.owlibdir specifies the locaction of the lib directory.
+# Dynamically loaded libraries that owcimomd relies on are expected to be in
+# this directory.
+# You probably don't need to modify this option.
+# The default for is option is "@libdir@/openwbem"
+owcimomd.owlibdir = @libdir@/openwbem
+
+################################################################################
+# owcimomd.datadir specifies the directory where owcimomd will place its data
+# file (repositories). 
+# You probably don't need to modify this option.
+# The default for this option is "@localstatedir@/openwbem"
+owcimomd.datadir = @localstatedir@/openwbem
+
+################################################################################
+# owcimomd.provider_ifc_libs specifies the location where all the provider
+# interfaces will be loaded from. owcimomd assumes all shared libraries in
+# this directory are provider interfaces. If a shared library in this directory
+# does not support the provider interface api, it will be rejected. The default
+# for this option is "@libdir@/openwbem/provifcs"
+# You probably don't need to modify this option.
+owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
+
+################################################################################
+# One of the provider interfaces provided with owcimomd is the C++ provider
+# interface. The cppprovifc.prov_location option specifies where the C++
+# provider interface will load it's providers from. The default for this option
+# is "@libdir@/openwbem/c++providers"
+# You probably don't need to modify this option.
+cppprovifc.prov_location = @libdir@/openwbem/c++providers
+
+################################################################################
+# http_server.uds_filename specifies the name of the unix domain socket the
+# http server will listen on.
+# You probably don't need to modify this option.
+# The default value is /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q
+http_server.uds_filename = /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q
 
