@@ -401,10 +401,10 @@ OW_CIMObjectPath::toString() const
 
 	OW_String strns = m_pdata->m_nameSpace.getNameSpace();
 
-	if(strns.empty())
-	{
-		strns = "root";
-	}
+//	if(strns.empty())
+//	{
+//		strns = "root";
+//	}
 
 	rv += strns;
 	rv += ':';
