@@ -733,9 +733,13 @@ public:
 		CompareImplRef m_ref;
 	};
 public:
-	CIMInstanceArray instances; // return value after processing is done.
+	CIMInstanceArray getInstances() const
+	{
+		return m_instances;
+	}
 	
 private:
+	CIMInstanceArray m_instances; // return value after processing is done.
 	DataType m_exprValue;
 	Array<DataType> m_valueArray;
 	CIMOMHandleIFCRef m_hdl;

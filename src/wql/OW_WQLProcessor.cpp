@@ -187,8 +187,8 @@ void WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	// create the instance
 	//LOGDEBUG(Format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
 	m_hdl->createInstance(m_ns, ci);
-	instances.clear();
-	instances.push_back(ci);
+	m_instances.clear();
+	m_instances.push_back(ci);
 #else
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -266,8 +266,8 @@ void WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTP
 	// create the instance
 	//LOGDEBUG(Format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
 	m_hdl->createInstance(m_ns, ci);
-	instances.clear();
-	instances.push_back(ci);
+	m_instances.clear();
+	m_instances.push_back(ci);
 #else
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -283,9 +283,9 @@ void WQLProcessor::visit_deleteStmt(
 		pdeleteStmt->m_poptWhereClause4->accept(this);
 	}
 
-	// Delete all the instances
-	for (CIMInstanceArray::const_iterator i = instances.begin();
-		 i != instances.end();
+	// Delete all the m_instances
+	for (CIMInstanceArray::const_iterator i = m_instances.begin();
+		 i != m_instances.end();
 		 ++i)
 	{
 		CIMObjectPath cop(m_ns, *i);
@@ -302,7 +302,7 @@ void WQLProcessor::visit_updateStmt(
 {
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	populateInstances(*pupdateStmt->m_pstrRelationName2);
-	// Filter out the instances
+	// Filter out the m_instances
 	if (pupdateStmt->m_poptWhereClause5)
 	{
 		pupdateStmt->m_poptWhereClause5->accept(this);
@@ -315,9 +315,9 @@ void WQLProcessor::visit_updateStmt(
 		(*i)->accept(this);
 	}
 	
-	// loop through the instances
-	for (CIMInstanceArray::iterator curInstance = instances.begin();
-		 curInstance != instances.end();
+	// loop through the m_instances
+	for (CIMInstanceArray::iterator curInstance = m_instances.begin();
+		 curInstance != m_instances.end();
 		 ++curInstance)
 	{
 		CIMInstance& ci = *curInstance;
@@ -393,7 +393,7 @@ void WQLProcessor::visit_selectStmt(
 	{
 		pselectStmt->m_poptDistinct2->accept(this);
 	}
-	// FROM clause will populate the instances array
+	// FROM clause will populate the m_instances array
 	if (pselectStmt->m_poptFromClause4)
 	{
 		pselectStmt->m_poptFromClause4->accept(this);
@@ -415,7 +415,7 @@ void WQLProcessor::visit_selectStmt(
 	{
 		pselectStmt->m_poptSortClause8->accept(this);
 	}
-	// Now filter the properties on the instances
+	// Now filter the properties on the m_instances
 	for (List<targetEl*>::const_iterator i = pselectStmt->m_ptargetList3->begin();
 		i != pselectStmt->m_ptargetList3->end();
 		++i )
@@ -434,11 +434,11 @@ void WQLProcessor::visit_selectStmt(
 	}
 	if (m_propertyArray.size() > 1 || m_propertyArray[0] != "*")
 	{
-		for (size_t i = 0; i < instances.size(); ++i)
+		for (size_t i = 0; i < m_instances.size(); ++i)
 		{
 			// TODO: Use the filterInstance function from IndicationServerImpl
 			// TODO: Handle __Path here
-			instances[i] = instances[i].filterProperties(m_propertyArray, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN);
+			m_instances[i] = m_instances[i].filterProperties(m_propertyArray, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN);
 		}
 	}
 }
@@ -757,11 +757,11 @@ void WQLProcessor::visit_optWhereClause_WHERE_aExpr(
 	poptWhereClause_WHERE_aExpr->m_paExpr2->accept(this);
 	if (m_exprValue.type == DataType::CIMInstanceArrayType)
 	{
-		instances = m_exprValue.cia;
+		m_instances = m_exprValue.cia;
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::INVALID_QUERY, "WHERE clause did not evalue to instances");
+		OW_THROWCIMMSG(CIMException::INVALID_QUERY, "WHERE clause did not evalue to m_instances");
 	}
 }
 void WQLProcessor::visit_rowExpr(
@@ -1323,9 +1323,9 @@ void WQLProcessor::visit_aExpr_aExpr_ISA_aExpr(
 	}
 	String className = rhs.str;
 	CIMInstanceArray newInstances;
-	for (size_t i = 0; i < instances.size(); ++i)
+	for (size_t i = 0; i < m_instances.size(); ++i)
 	{
-		CIMInstance ci = instances[i];
+		CIMInstance ci = m_instances[i];
 		if (ci)
 		{
 			CIMProperty cp = ci.getProperty(propName);
@@ -1983,11 +1983,11 @@ CIMInstanceArray
 WQLProcessor::filterInstancesOnPropertyValue(const String& propName, const CIMValue& val, const Compare& compare)
 {
 	//LOGDEBUG(Format("WQLProcessor::filterInstancesOnPropertyValue\n"
-	//	"\tFiltering instances on property: %1 %2 %3", propName, compare.c_str(), val ? val.toString() : "NULL" ));
+	//	"\tFiltering m_instances on property: %1 %2 %3", propName, compare.c_str(), val ? val.toString() : "NULL" ));
 	CIMInstanceArray rval;
-	for (size_t i = 0; i < instances.size(); ++i)
+	for (size_t i = 0; i < m_instances.size(); ++i)
 	{
-		CIMInstance ci = instances[i];
+		CIMInstance ci = m_instances[i];
 		if (ci)
 		{
 			if (propName.equalsIgnoreCase("__Path"))
@@ -2076,7 +2076,7 @@ WQLProcessor::filterInstancesOnPropertyValue(const String& propName, const CIMVa
 		}
 	}
 	//LOGDEBUG(Format("WQLProcessor::filterInstancesOnPropertyValue\n"
-	//	"\treturning %1 instances", rval.size()));
+	//	"\treturning %1 m_instances", rval.size()));
 	return rval;
 }
 bool WQLProcessor::Equals::operator()(const CIMValue& lhs, const CIMValue& rhs) const
@@ -2177,7 +2177,7 @@ namespace
 }
 void WQLProcessor::populateInstances()
 {
-	InstanceArrayBuilder handler(instances);
+	InstanceArrayBuilder handler(m_instances);
 	m_hdl->enumInstances(m_ns, m_tableRef, handler, E_DEEP);
 }
 

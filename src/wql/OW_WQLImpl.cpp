@@ -79,9 +79,10 @@ void WQLImpl::evaluate(const String& nameSpace,
 	{
 		//LOGDEBUG("pAST was NULL!");
 	}
-	for (size_t i = 0; i < p.instances.size(); ++i)
+	CIMInstanceArray instances = p.getInstances();
+	for (size_t i = 0; i < instances.size(); ++i)
 	{
-		result.handle(p.instances[i]);
+		result.handle(instances[i]);
 	}
 
 	s_parserInput = 0;
