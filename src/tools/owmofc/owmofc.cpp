@@ -119,17 +119,17 @@ static struct option   long_options[] =
 	{ "dump-xml", required_argument, NULL, 'x' },
 	{ "remove", 0, NULL, 'r' },
 	{ "preserve", 0, NULL, 'p' },
+	{ "upgrade", 0, NULL, 'g' },
 	{ "suppress-warnings", 0, NULL, 'w' },
 	{ "quiet", 0, NULL, 'q' },
 	{ "include", required_argument, NULL, 'I' },
 	{ "ignore-double-includes", 0, NULL, 'i' },
-	{ "use-openwbem-binary", 0, NULL, 'b' },
     { "help", 0, NULL, 'h' },
     { 0, 0, 0, 0 }
 };
 #endif
 
-static const char* const short_options = "d:u:n:ce:sx:rpwqI:ih";
+static const char* const short_options = "d:u:n:ce:sx:rpgwqI:ih";
 
 //////////////////////////////////////////////////////////////////////////////
 static int
@@ -243,7 +243,22 @@ int main(int argc, char** argv)
 	{
 		if (processCommandLineOptions(argc, argv) == -1)
 		{
-			cout << "Usage: owmofc [OPTION] <FILE>..." << endl;
+			cout << "Usage: owmofc [OPTION] <FILE>...\n";
+			cout << "  -d,--direct <DIR>: create a repository in the specified directory without connecting to a cimom\n";
+			cout << "  -u,--url <URL>: the url of the cimom. Default is " << url_arg << " if not specified\n";
+			cout << "  -n,--namespace <NAMESPACE>: The initial namespace to use. Default is " << namespace_arg << " if not specified\n";
+			cout << "  -c,--create-namespaces: If the namespace doesn't exist, create it <UNIMPLEMENTED>\n";
+			cout << "  -e,--encoding <ENCODING>: Specify the encoding, valid values are cimxml and owbinary. Default is " << encoding_arg << " if not specified\n";
+			cout << "  -s,--check-syntax: Only parse the mof, don't actually do anything <UNIMPLEMENTED>\n";
+			cout << "  -x,--dump-xml <FILE>: Write the xml to FILE <UNIMPLEMENTED>\n";
+			cout << "  -r,--remove: Instead of creating classes and instances, remove them <UNIMPLEMENTED>\n";
+			cout << "  -p,--preserve: If a class or instance already exists, don't overwrite it with the one in the mof <UNIMPLEMENTED>\n";
+			cout << "  -g,--upgrade: Overwrite a class only if it has a larger Version qualifier <UNIMPLEMENTED>\n";
+			cout << "  -w,--suppress-warnings: Only print errors <UNIMPLEMENTED>\n";
+			cout << "  -q,--quiet: Don't print anything <UNIMPLEMENTED>\n";
+			cout << "  -I,--include <DIR>: Add a directory to the include search path <UNIMPLEMENTED>\n";
+			cout << "  -i,--ignore-double-includes: If a mof file has already been included, don't parse it again <UNIMPLEMENTED>\n";
+			cout << "  -h,--help: Print this help message\n";
 			return 1;
 		}
 
