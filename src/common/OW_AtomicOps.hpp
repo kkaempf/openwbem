@@ -68,7 +68,7 @@ inline void OW_AtomicInc(OW_Atomic_t &v)
 	int t;
 
 	__asm__ __volatile__(
-		"1:	lwarx   %0,0,%2         # OW_AtomicInc\n"
+		"1:	lwarx   %0,0,%2\n"
 		"	addic   %0,%0,1\n"
 		"	stwcx.  %0,0,%2\n"
 		"	bne-    1b"
@@ -83,7 +83,7 @@ inline bool OW_AtomicDecAndTest(OW_Atomic_t &v)
 	int c;
 
 	__asm__ __volatile__(
-		"1:	lwarx   %0,0,%1         # OW_AtomicDecAndTest\n"
+		"1:	lwarx   %0,0,%1\n"
 		"	addic   %0,%0,-1\n"
 		"	stwcx.  %0,0,%1\n"
 		"	bne-    1b\n"
