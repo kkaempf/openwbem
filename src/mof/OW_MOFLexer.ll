@@ -42,6 +42,8 @@
 #include "OW_MOFCompiler.hpp"
 #include "OW_Format.hpp"
 #include "OW_Exception.hpp"
+#include <errno.h>
+#include <string.h>
 
 // since OW_MOFParser.h is generated we can't control it.  We need to do something
 // bad, but we don't have a choice.  These using statements have to be before
@@ -275,7 +277,7 @@ void lexIncludeFile( void* context, const String& filename )
 		if ( !newfile )
 		{
 			MOF_COMPILER->theErrorHandler->fatalError(
-				Format("Could not open include file %1", filename).c_str(), MOF_COMPILER->theLineInfo);
+				Format("Could not open include file %1: %2(%3)", filename, errno, strerror(errno)).c_str(), MOF_COMPILER->theLineInfo);
 			return;
 		}
 		filenameWithPath = filename;
