@@ -274,7 +274,17 @@ outputKEYVALUE(ostream& ostr, const OW_CIMProperty& cp)
 
 	if(dtype.isReferenceType())
 	{
-		OW_CIMtoXML(cp.getValue(),ostr);
+		OW_CIMProperty lcp(cp);
+
+		// This is sort of a bad thing to do, basically we are taking advantage 
+		// of a side effect of setDataType.  If the type isn't correct then
+		// the value will be cast to the correct type.	This is to work around
+		// a problem that may happen if a provider writer sets the value of a
+		// reference property to a OW_String instead of an OW_CIMObjectPath.
+		// If the value is a string, the xml that is output will be malformed,
+		// and the client will throw an exception.
+		lcp.setDataType(lcp.getDataType()); 
+		OW_CIMtoXML(lcp.getValue(), ostr);
 		return;
 	}
 
