@@ -46,6 +46,7 @@
 #include "OW_PosixUnnamedPipe.hpp"
 #include "OW_Socket.hpp"
 #include "OW_Thread.hpp"
+#include "OW_DateTime.hpp"
 extern "C"
 {
 #ifdef OW_HAVE_SYS_SELECT_H
@@ -212,7 +213,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 				Format("Failed to connect to: %1: %2(%3)", addr.toString(), errno, strerror(errno)).c_str());
 		}
 	}
-	if (n == -1) 
+	if (n == -1)
 	{
 		// because of the above check for EINPROGRESS
 		// not connected yet, need to select and wait for connection to complete.
@@ -417,7 +418,10 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 				{
 					OW_THROW(IOException, "Failed opening socket dump file");
 				}
-				comboTraceFile << "\n--->Out " << rc << " bytes<---\n";
+				DateTime curDateTime;
+				curDateTime.setToCurrent();
+				comboTraceFile << "\n--->Out " << rc << " bytes at " << curDateTime.toString("%X") <<
+					'.' << curDateTime.getMicrosecond() << "<---\n";
 				if (!comboTraceFile.write(static_cast<const char*>(dataOut), rc))
 				{
 					OW_THROW(IOException, "Failed writing to socket dump");
@@ -469,7 +473,10 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 				{
 					OW_THROW(IOException, "Failed opening socket dump file");
 				}
-				comboTraceFile << "\n--->In " << rc << " bytes<---\n";
+				DateTime curDateTime;
+				curDateTime.setToCurrent();
+				comboTraceFile << "\n--->In " << rc << " bytes at " << curDateTime.toString("%X") <<
+					'.' << curDateTime.getMicrosecond() << "<---\n";
 				if (!comboTraceFile.write(reinterpret_cast<const char*>(dataIn), rc))
 				{
 					OW_THROW(IOException, "Failed writing to socket dump");
