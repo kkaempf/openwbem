@@ -22,6 +22,8 @@ SHAREDLIBADD = \
 OW_SHARED_LIBS = libowindicationserver.$(LIB_EXT) libowindicationreplayer.$(LIB_EXT)
 thelibdir = $(libdir)/openwbem
 
+EXPORT_PREFIX = createIndicationServer
+
 libowindicationserver_a_SOURCES = \
 OW_IndicationServerImpl.hpp \
 OW_IndicationServerImpl.cpp \
