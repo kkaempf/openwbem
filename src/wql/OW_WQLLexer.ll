@@ -90,7 +90,8 @@ static int		xcdepth = 0;	/* depth of nesting in slash-star comments */
 
 static OW_StringBuffer strbuffer;
 
-#define RETURN_VAL(x) yylval.pstring = new OW_String(yytext); return(x);
+#define RETURN_VAL(x) yylval.pstring = 0; return(x);
+#define RETURN_STR(x) yylval.pstring = new OW_String(yytext); return(x);
 #define RETURN_BUFF_VAL(x) yylval.pstring = new OW_String(strbuffer.c_str()); return(x);
 
 %}
@@ -464,17 +465,17 @@ ZONE { RETURN_VAL(ZONE); }
 					if (*endptr != '\0' || errno == ERANGE)
 					{
 						/* integer too large, treat it as a float */
-						RETURN_VAL(FCONST);
+						RETURN_STR(FCONST);
 					}
-					RETURN_VAL(ICONST);
+					RETURN_STR(ICONST);
 				}
 				
 {decimal}			{
-					RETURN_VAL(FCONST);
+					RETURN_STR(FCONST);
 				}
 				
 {real}				{
-					RETURN_VAL(FCONST);
+					RETURN_STR(FCONST);
 				}
 
 {identifier}			{
@@ -486,7 +487,7 @@ ZONE { RETURN_VAL(ZONE); }
 						if (isupper((unsigned char) yytext[i]))
 							yytext[i] = tolower((unsigned char) yytext[i]);
 					}
-					RETURN_VAL(IDENT);
+					RETURN_STR(IDENT);
 				}
 
 {other}				{ return yytext[0]; }
