@@ -50,10 +50,8 @@
 #include "OW_CIMParamValue.hpp"
 
 #include <iostream>
-#if defined OW_DARWIN
-#include <assert.h>
-#endif
 
+#define TEST_ASSERT(CON) if(!(CON)) throw OW_AssertionException(__FILE__, __LINE__, #CON)
 
 using std::cerr;
 using std::endl;
@@ -135,12 +133,12 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 
 		hdl.createClass("/root/acltest", cimClass);
 		if (mode != "w" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
@@ -153,12 +151,12 @@ void enumClassNames(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE("/root/acltest", "", true);
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -171,12 +169,12 @@ void enumClasses(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_CIMClassEnumeration enu = hdl.enumClassE("root/acltest", "", true, false);
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -195,12 +193,12 @@ void modifyClass(OW_CIMOMHandleIFC& hdl)
 		bionicClass = cimClass;
 		hdl.modifyClass("/root/acltest", cimClass);
 		if (mode != "w" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
@@ -214,12 +212,12 @@ void getClass(OW_CIMOMHandleIFC& hdl)
 		OW_CIMClass cimClass = hdl.getClass("/root/acltest",
 			"EXP_BionicComputerSystem", false);
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -246,12 +244,12 @@ void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 		bionicInstance = newInst;
 		hdl.createInstance("/root/acltest", newInst);
 		if (mode != "w" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
@@ -265,12 +263,12 @@ void enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 		OW_String ofClass = "EXP_BionicComputerSystem";
 		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE("/root/acltest", ofClass);
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -284,12 +282,12 @@ void enumerateInstances(OW_CIMOMHandleIFC& hdl)
 		OW_String ofClass = "EXP_BionicComputerSystem";
 		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE("/root/acltest", ofClass, true);
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -307,12 +305,12 @@ void getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 
 		OW_CIMInstance in = hdl.getInstance("/root/acltest", cop, false);
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -329,12 +327,12 @@ void modifyInstance(OW_CIMOMHandleIFC& hdl)
 
 		hdl.modifyInstance("/root/acltest", in);
 		if (mode != "w" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
@@ -351,12 +349,12 @@ void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 		cop.addKey("Name", OW_CIMValue(theInstance));
 		hdl.deleteInstance("/root/acltest", cop);
 		if (mode != "w" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
@@ -382,12 +380,12 @@ void setQualifier(OW_CIMOMHandleIFC& hdl)
 
 		hdl.setQualifierType("/root/acltest", qt);
 		if (mode != "w" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
@@ -400,12 +398,12 @@ void enumerateQualifiers(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypesE("/root/acltest");
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -418,12 +416,12 @@ void getQualifier(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_CIMQualifierType qt = hdl.getQualifierType("/root/acltest", "description");
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -443,12 +441,12 @@ void associatorNames(OW_CIMOMHandleIFC& hdl)
 			"/root/acltest", cop, "CIM_Component", "", "", "");
 
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -469,12 +467,12 @@ void associators(OW_CIMOMHandleIFC& hdl)
 									"CIM_Component", "", "", "", true, true, NULL);
 
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -495,12 +493,12 @@ void referenceNames(OW_CIMOMHandleIFC& hdl)
 			"CIM_Component", "");
 
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -520,12 +518,12 @@ void references(OW_CIMOMHandleIFC& hdl)
 									"CIM_Component", "", true, true, NULL);
 
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -539,12 +537,12 @@ void execReadQuery(OW_CIMOMHandleIFC& hdl)
 		hdl.execQueryE("/root/acltest",
 			"select * from EXP_BionicComputerSystem", "wql1");
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -558,12 +556,12 @@ void execWriteQuery(OW_CIMOMHandleIFC& hdl)
 		hdl.execQueryE("/root/acltest",
 			"UPDATE EXP_BionicComputerSystem2 SET OptionalArg=false", "wql2");
 		if (mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		//assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		//TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "rw")
 			throw;
 	}
@@ -576,12 +574,12 @@ void deleteQualifier(OW_CIMOMHandleIFC& hdl)
 	{
 		hdl.deleteQualifierType("/root/acltest", "borgishness");
 		if (mode != "w" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
@@ -595,12 +593,12 @@ void deleteClass(OW_CIMOMHandleIFC& hdl)
 		OW_String delClass = "EXP_BionicComputerSystem2";
 		hdl.deleteClass("/root/acltest", delClass);
 		if (mode != "w" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
@@ -626,12 +624,12 @@ void invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 				break;
 		}
 		if (mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "rw")
 			throw;
 	}
@@ -644,12 +642,12 @@ void createNameSpace(OW_CIMOMHandleIFC& hdl)
 	{
 		hdl.createNameSpace("/root/acltest/Caldera");
 		if (mode != "w" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
@@ -662,12 +660,12 @@ void enumNameSpace(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_StringArray rval = hdl.enumNameSpaceE("/root/acltest", OW_Bool(true));
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -680,12 +678,12 @@ void deleteNameSpace(OW_CIMOMHandleIFC& hdl)
 	{
 		hdl.deleteNameSpace("/root/acltest/Caldera");
 		if (mode != "w" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
@@ -703,12 +701,12 @@ void getProperty(OW_CIMOMHandleIFC& hdl)
 
 		OW_CIMValue v = hdl.getProperty("/root/acltest", cop, "OptionalArg");
 		if (mode != "r" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
@@ -726,12 +724,12 @@ void setProperty(OW_CIMOMHandleIFC& hdl)
 
 		hdl.setProperty("/root/acltest", cop, "OptionalArg", OW_CIMValue(OW_Bool(true)));
 		if (mode != "w" && mode != "rw")
-			assert(0);
+			TEST_ASSERT(0);
 	}
 	catch (OW_CIMException& e)
 	{
 		cerr << e << endl;
-		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
