@@ -61,7 +61,7 @@ extract_creation_name_from_lib()
     CREATION_FUNCTION_NAME=`nm -Bpg $DEMANGLE_PREVENTION_FLAGS $1 |
 	grep "$EXPORT_PREFIX" |
 	awk '{ 
-		if( ($2 != "U") && (substr($3,1,1) != ".") &&  (substr($3,1,1) != "_") )
+		if ( ($2 != "U") && (substr($3,1,1) != ".") &&  (substr($3,1,1) != "_") )
 		{ print $3 } 
 	}' | 
 	sort -u`

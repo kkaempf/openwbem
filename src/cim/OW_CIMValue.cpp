@@ -227,7 +227,7 @@ private:
 	template<class T>
 	bool castDefaultNumeric(T& arg) const
 	{
-		if(isDefaultNumeric())
+		if (isDefaultNumeric())
 		{
 			arg = static_cast<T>(m_obj.m_sint64Value);
 			return true;
@@ -250,7 +250,7 @@ CIMValue::createSimpleValue(const String& cimtype,
 	const String& value)
 {
 	CIMDataType::Type type = CIMDataType::strToSimpleType(cimtype);
-	if(type == CIMDataType::INVALID)
+	if (type == CIMDataType::INVALID)
 	{
 		return CIMValue(CIMNULL);
 	}
@@ -263,7 +263,7 @@ CIMValue::createSimpleValue(const String& cimtype,
 void				
 CIMValue::readObject(istream &istrm)
 {
-	if(!m_impl)
+	if (!m_impl)
 	{
 		m_impl = new CIMValueImpl;
 	}
@@ -810,11 +810,11 @@ CIMValue& CIMValue::operator= (const CIMValue& x)
 //////////////////////////////////////////////////////////////////////////////
 bool CIMValue::equal(const CIMValue& x) const
 {
-	if(x.m_impl == m_impl)
+	if (x.m_impl == m_impl)
 	{
 		return true;
 	}
-	if(x.m_impl == NULL || m_impl == NULL)
+	if (x.m_impl == NULL || m_impl == NULL)
 	{
 		return false;
 	}
@@ -843,15 +843,15 @@ bool CIMValue::operator>= (const CIMValue& x) const
 //////////////////////////////////////////////////////////////////////////////
 bool CIMValue::operator< (const CIMValue& x) const
 {
-	if(x.m_impl == m_impl)
+	if (x.m_impl == m_impl)
 	{
 		return false;
 	}
-	if(m_impl == NULL)
+	if (m_impl == NULL)
 	{
 		return true;
 	}
-	if(x.m_impl == NULL)
+	if (x.m_impl == NULL)
 	{
 		return false;
 	}
@@ -908,7 +908,7 @@ CIMValue::CIMValueImpl::createSimpleValue(CIMDataType::Type type,
 	const String& value)
 {
 	CIMValueImpl cimValue;
-	switch(type)
+	switch (type)
 	{
 		case CIMDataType::UINT8:
 			cimValue = CIMValueImpl(value.toUInt8());
@@ -1229,16 +1229,16 @@ CIMValue::CIMValueImpl::~CIMValueImpl()
 UInt32
 CIMValue::CIMValueImpl::getArraySize() const
 {
-	if(m_type == CIMDataType::CIMNULL)
+	if (m_type == CIMDataType::CIMNULL)
 	{
 		return 0;
 	}
-	if(!m_isArray)
+	if (!m_isArray)
 	{
 		return 1;
 	}
 	UInt32 sz = 0;
-	switch(m_type)
+	switch (m_type)
 	{
 		case CIMDataType::UINT8:
 			sz = (reinterpret_cast<const UInt8Array*>(&m_obj))->size(); 
@@ -1304,9 +1304,9 @@ CIMValue::CIMValueImpl::setupObject(const CIMValueData& odata, CIMDataType::Type
 	m_objDestroyed = false;
 	m_type = type;
 	m_isArray = isArray;
-	if(isArray)
+	if (isArray)
 	{
-		switch(m_type)
+		switch (m_type)
 		{
 			case CIMDataType::UINT8:
 				new(&m_obj) UInt8Array(*(reinterpret_cast<const UInt8Array*>(&odata))); 
@@ -1367,7 +1367,7 @@ CIMValue::CIMValueImpl::setupObject(const CIMValueData& odata, CIMDataType::Type
 	}
 	else
 	{
-		switch(m_type)
+		switch (m_type)
 		{
 			case CIMDataType::UINT8:
 			case CIMDataType::SINT8:
@@ -1411,14 +1411,14 @@ CIMValue::CIMValueImpl::setupObject(const CIMValueData& odata, CIMDataType::Type
 void
 CIMValue::CIMValueImpl::destroyObject()
 {
-	if(m_objDestroyed)
+	if (m_objDestroyed)
 	{
 		return;
 	}
 	m_objDestroyed = true;
-	if(m_isArray)
+	if (m_isArray)
 	{
-		switch(m_type)
+		switch (m_type)
 		{
 			case CIMDataType::UINT8:
 				(reinterpret_cast<UInt8Array*>(&m_obj))->~UInt8Array(); 
@@ -1477,7 +1477,7 @@ CIMValue::CIMValueImpl::destroyObject()
 	}
 	else
 	{
-		switch(m_type)
+		switch (m_type)
 		{
 			case CIMDataType::UINT8:
 			case CIMDataType::SINT8:
@@ -1534,11 +1534,11 @@ bool
 CIMValue::CIMValueImpl::equal(const CIMValueImpl& arg) const
 {
 	bool cc = false;
-	if(sameType(arg))
+	if (sameType(arg))
 	{
-		if(m_isArray)
+		if (m_isArray)
 		{
-			switch(m_type)
+			switch (m_type)
 			{
 				case CIMDataType::CHAR16:
 					cc = *(reinterpret_cast<const Char16Array*>(&m_obj)) ==
@@ -1612,7 +1612,7 @@ CIMValue::CIMValueImpl::equal(const CIMValueImpl& arg) const
 		}
 		else
 		{
-			switch(m_type)
+			switch (m_type)
 			{
 				case CIMDataType::UINT8:
 					cc = m_obj.m_uint8Value == arg.m_obj.m_uint8Value;
@@ -1681,11 +1681,11 @@ bool
 CIMValue::CIMValueImpl::operator<(const CIMValueImpl& arg) const
 {
 	bool cc = false;
-	if(sameType(arg))
+	if (sameType(arg))
 	{
-		if(m_isArray)
+		if (m_isArray)
 		{
-			switch(m_type)
+			switch (m_type)
 			{
 				case CIMDataType::CHAR16:
 					cc = *(reinterpret_cast<const Char16Array*>(&m_obj)) <
@@ -1759,7 +1759,7 @@ CIMValue::CIMValueImpl::operator<(const CIMValueImpl& arg) const
 		}
 		else
 		{
-			switch(m_type)
+			switch (m_type)
 			{
 				case CIMDataType::UINT8:
 					cc = m_obj.m_uint8Value < arg.m_obj.m_uint8Value;
@@ -1827,7 +1827,7 @@ CIMValue::CIMValueImpl::operator<(const CIMValueImpl& arg) const
 void
 CIMValue::CIMValueImpl::get(Bool& arg) const
 {
-	if(m_type != CIMDataType::BOOLEAN || isArray())
+	if (m_type != CIMDataType::BOOLEAN || isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a BOOLEAN");
@@ -1838,7 +1838,7 @@ CIMValue::CIMValueImpl::get(Bool& arg) const
 void
 CIMValue::CIMValueImpl::get(Char16& arg) const
 {
-	if(m_type != CIMDataType::CHAR16 || isArray())
+	if (m_type != CIMDataType::CHAR16 || isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a CHAR16");
@@ -1849,9 +1849,9 @@ CIMValue::CIMValueImpl::get(Char16& arg) const
 void
 CIMValue::CIMValueImpl::get(UInt8& arg) const
 {
-	if(!castDefaultNumeric(arg))
+	if (!castDefaultNumeric(arg))
 	{
-		if(m_type != CIMDataType::UINT8 || isArray())
+		if (m_type != CIMDataType::UINT8 || isArray())
 		{
 			OW_THROW(ValueCastException,
 				"CIMValue::CIMValueImpl::get - Value is not a UINT8");
@@ -1863,9 +1863,9 @@ CIMValue::CIMValueImpl::get(UInt8& arg) const
 void
 CIMValue::CIMValueImpl::get(Int8& arg) const
 {
-	if(!castDefaultNumeric(arg))
+	if (!castDefaultNumeric(arg))
 	{
-		if(m_type != CIMDataType::SINT8 || isArray())
+		if (m_type != CIMDataType::SINT8 || isArray())
 		{
 			OW_THROW(ValueCastException,
 				"CIMValue::CIMValueImpl::get - Value is not a SINT8");
@@ -1877,9 +1877,9 @@ CIMValue::CIMValueImpl::get(Int8& arg) const
 void
 CIMValue::CIMValueImpl::get(UInt16& arg) const
 {
-	if(!castDefaultNumeric(arg))
+	if (!castDefaultNumeric(arg))
 	{
-		if(m_type != CIMDataType::UINT16 || isArray())
+		if (m_type != CIMDataType::UINT16 || isArray())
 		{
 			OW_THROW(ValueCastException,
 				"CIMValue::CIMValueImpl::get - Value is not a UINT16");
@@ -1891,9 +1891,9 @@ CIMValue::CIMValueImpl::get(UInt16& arg) const
 void
 CIMValue::CIMValueImpl::get(Int16& arg) const
 {
-	if(!castDefaultNumeric(arg))
+	if (!castDefaultNumeric(arg))
 	{
-		if(m_type != CIMDataType::SINT16 || isArray())
+		if (m_type != CIMDataType::SINT16 || isArray())
 		{
 			OW_THROW(ValueCastException,
 				"CIMValue::CIMValueImpl::get - Value is not a SINT16");
@@ -1905,9 +1905,9 @@ CIMValue::CIMValueImpl::get(Int16& arg) const
 void
 CIMValue::CIMValueImpl::get(UInt32& arg) const
 {
-	if(!castDefaultNumeric(arg))
+	if (!castDefaultNumeric(arg))
 	{
-		if(m_type != CIMDataType::UINT32 || isArray())
+		if (m_type != CIMDataType::UINT32 || isArray())
 		{
 			OW_THROW(ValueCastException,
 				"CIMValue::CIMValueImpl::get - Value is not a UINT32");
@@ -1919,9 +1919,9 @@ CIMValue::CIMValueImpl::get(UInt32& arg) const
 void
 CIMValue::CIMValueImpl::get(Int32& arg) const
 {
-	if(!castDefaultNumeric(arg))
+	if (!castDefaultNumeric(arg))
 	{
-		if(m_type != CIMDataType::SINT32 || isArray())
+		if (m_type != CIMDataType::SINT32 || isArray())
 		{
 			OW_THROW(ValueCastException,
 				"CIMValue::CIMValueImpl::get - Value is not a SINT32");
@@ -1933,9 +1933,9 @@ CIMValue::CIMValueImpl::get(Int32& arg) const
 void
 CIMValue::CIMValueImpl::get(UInt64& arg) const
 {
-	if(!castDefaultNumeric(arg))
+	if (!castDefaultNumeric(arg))
 	{
-		if(m_type != CIMDataType::UINT64 || isArray())
+		if (m_type != CIMDataType::UINT64 || isArray())
 		{
 			OW_THROW(ValueCastException,
 				"CIMValue::CIMValueImpl::get - Value is not a UINT64");
@@ -1947,9 +1947,9 @@ CIMValue::CIMValueImpl::get(UInt64& arg) const
 void
 CIMValue::CIMValueImpl::get(Int64& arg) const
 {
-	if(!castDefaultNumeric(arg))
+	if (!castDefaultNumeric(arg))
 	{
-		if(m_type != CIMDataType::SINT64 || isArray())
+		if (m_type != CIMDataType::SINT64 || isArray())
 		{
 			OW_THROW(ValueCastException,
 				"CIMValue::CIMValueImpl::get - Value is not a SINT64");
@@ -1961,9 +1961,9 @@ CIMValue::CIMValueImpl::get(Int64& arg) const
 void
 CIMValue::CIMValueImpl::get(Real32& arg) const
 {
-	if(!castDefaultNumeric(arg))
+	if (!castDefaultNumeric(arg))
 	{
-		if(m_type != CIMDataType::REAL32 || isArray())
+		if (m_type != CIMDataType::REAL32 || isArray())
 		{
 			OW_THROW(ValueCastException,
 				"CIMValue::CIMValueImpl::get - Value is not a REAL32");
@@ -1975,9 +1975,9 @@ CIMValue::CIMValueImpl::get(Real32& arg) const
 void
 CIMValue::CIMValueImpl::get(Real64& arg) const
 {
-	if(!castDefaultNumeric(arg))
+	if (!castDefaultNumeric(arg))
 	{
-		if(m_type != CIMDataType::REAL64 || isArray())
+		if (m_type != CIMDataType::REAL64 || isArray())
 		{
 			OW_THROW(ValueCastException,
 				"CIMValue::CIMValueImpl::get - Value is not a REAL64");
@@ -1989,7 +1989,7 @@ CIMValue::CIMValueImpl::get(Real64& arg) const
 void
 CIMValue::CIMValueImpl::get(String& arg) const
 {
-	if(m_type != CIMDataType::STRING || isArray())
+	if (m_type != CIMDataType::STRING || isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a STRING");
@@ -2000,7 +2000,7 @@ CIMValue::CIMValueImpl::get(String& arg) const
 void
 CIMValue::CIMValueImpl::get(CIMDateTime& arg) const
 {
-	if(m_type != CIMDataType::DATETIME || isArray())
+	if (m_type != CIMDataType::DATETIME || isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a DATETIME");
@@ -2011,7 +2011,7 @@ CIMValue::CIMValueImpl::get(CIMDateTime& arg) const
 void
 CIMValue::CIMValueImpl::get(CIMObjectPath& arg) const
 {
-	if(m_type != CIMDataType::REFERENCE || isArray())
+	if (m_type != CIMDataType::REFERENCE || isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a REFERENCE");
@@ -2022,7 +2022,7 @@ CIMValue::CIMValueImpl::get(CIMObjectPath& arg) const
 void
 CIMValue::CIMValueImpl::get(CIMClass& arg) const
 {
-	if(m_type != CIMDataType::EMBEDDEDCLASS || isArray())
+	if (m_type != CIMDataType::EMBEDDEDCLASS || isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a EMBEDDEDCLASS");
@@ -2033,7 +2033,7 @@ CIMValue::CIMValueImpl::get(CIMClass& arg) const
 void
 CIMValue::CIMValueImpl::get(CIMInstance& arg) const
 {
-	if(m_type != CIMDataType::EMBEDDEDINSTANCE || isArray())
+	if (m_type != CIMDataType::EMBEDDEDINSTANCE || isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a EMBEDDEDINSTANCE");
@@ -2044,7 +2044,7 @@ CIMValue::CIMValueImpl::get(CIMInstance& arg) const
 void
 CIMValue::CIMValueImpl::get(Char16Array& arg) const
 {
-	if(m_type != CIMDataType::CHAR16 || !isArray())
+	if (m_type != CIMDataType::CHAR16 || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a CHAR16 ARRAY");
@@ -2055,7 +2055,7 @@ CIMValue::CIMValueImpl::get(Char16Array& arg) const
 void
 CIMValue::CIMValueImpl::get(UInt8Array& arg) const
 {
-	if(m_type != CIMDataType::UINT8 || !isArray())
+	if (m_type != CIMDataType::UINT8 || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a UINT8 ARRAY");
@@ -2066,7 +2066,7 @@ CIMValue::CIMValueImpl::get(UInt8Array& arg) const
 void
 CIMValue::CIMValueImpl::get(Int8Array& arg) const
 {
-	if(m_type != CIMDataType::SINT8 || !isArray())
+	if (m_type != CIMDataType::SINT8 || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a SINT8 ARRAY");
@@ -2077,7 +2077,7 @@ CIMValue::CIMValueImpl::get(Int8Array& arg) const
 void
 CIMValue::CIMValueImpl::get(UInt16Array& arg) const
 {
-	if(m_type != CIMDataType::UINT16 || !isArray())
+	if (m_type != CIMDataType::UINT16 || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a UINT16 ARRAY");
@@ -2088,7 +2088,7 @@ CIMValue::CIMValueImpl::get(UInt16Array& arg) const
 void
 CIMValue::CIMValueImpl::get(Int16Array& arg) const
 {
-	if(m_type != CIMDataType::SINT16 || !isArray())
+	if (m_type != CIMDataType::SINT16 || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a SINT16 ARRAY");
@@ -2099,7 +2099,7 @@ CIMValue::CIMValueImpl::get(Int16Array& arg) const
 void
 CIMValue::CIMValueImpl::get(UInt32Array& arg) const
 {
-	if(m_type != CIMDataType::UINT32 || !isArray())
+	if (m_type != CIMDataType::UINT32 || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a UINT32 ARRAY");
@@ -2110,7 +2110,7 @@ CIMValue::CIMValueImpl::get(UInt32Array& arg) const
 void
 CIMValue::CIMValueImpl::get(Int32Array& arg) const
 {
-	if(m_type != CIMDataType::SINT32 || !isArray())
+	if (m_type != CIMDataType::SINT32 || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a SINT32 ARRAY");
@@ -2121,7 +2121,7 @@ CIMValue::CIMValueImpl::get(Int32Array& arg) const
 void
 CIMValue::CIMValueImpl::get(UInt64Array& arg) const
 {
-	if(m_type != CIMDataType::UINT64 || !isArray())
+	if (m_type != CIMDataType::UINT64 || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a UINT64 ARRAY");
@@ -2132,7 +2132,7 @@ CIMValue::CIMValueImpl::get(UInt64Array& arg) const
 void
 CIMValue::CIMValueImpl::get(Int64Array& arg) const
 {
-	if(m_type != CIMDataType::SINT64 || !isArray())
+	if (m_type != CIMDataType::SINT64 || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a SINT64 ARRAY");
@@ -2143,7 +2143,7 @@ CIMValue::CIMValueImpl::get(Int64Array& arg) const
 void
 CIMValue::CIMValueImpl::get(Real64Array& arg) const
 {
-	if(m_type != CIMDataType::REAL64 || !isArray())
+	if (m_type != CIMDataType::REAL64 || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a REAL64 ARRAY");
@@ -2154,7 +2154,7 @@ CIMValue::CIMValueImpl::get(Real64Array& arg) const
 void
 CIMValue::CIMValueImpl::get(Real32Array& arg) const
 {
-	if(m_type != CIMDataType::REAL32 || !isArray())
+	if (m_type != CIMDataType::REAL32 || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a REAL32 ARRAY");
@@ -2165,7 +2165,7 @@ CIMValue::CIMValueImpl::get(Real32Array& arg) const
 void
 CIMValue::CIMValueImpl::get(StringArray& arg) const
 {
-	if(m_type != CIMDataType::STRING || !isArray())
+	if (m_type != CIMDataType::STRING || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a STRING ARRAY");
@@ -2176,7 +2176,7 @@ CIMValue::CIMValueImpl::get(StringArray& arg) const
 void
 CIMValue::CIMValueImpl::get(BoolArray& arg) const
 {
-	if(m_type != CIMDataType::BOOLEAN || !isArray())
+	if (m_type != CIMDataType::BOOLEAN || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a BOOLEAN ARRAY");
@@ -2187,7 +2187,7 @@ CIMValue::CIMValueImpl::get(BoolArray& arg) const
 void
 CIMValue::CIMValueImpl::get(CIMDateTimeArray& arg) const
 {
-	if(m_type != CIMDataType::DATETIME || !isArray())
+	if (m_type != CIMDataType::DATETIME || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a DATETIME ARRAY");
@@ -2198,7 +2198,7 @@ CIMValue::CIMValueImpl::get(CIMDateTimeArray& arg) const
 void
 CIMValue::CIMValueImpl::get(CIMObjectPathArray& arg) const
 {
-	if(m_type != CIMDataType::REFERENCE || !isArray())
+	if (m_type != CIMDataType::REFERENCE || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a OBJECTPATH ARRAY");
@@ -2209,7 +2209,7 @@ CIMValue::CIMValueImpl::get(CIMObjectPathArray& arg) const
 void
 CIMValue::CIMValueImpl::get(CIMClassArray& arg) const
 {
-	if(m_type != CIMDataType::EMBEDDEDCLASS || !isArray())
+	if (m_type != CIMDataType::EMBEDDEDCLASS || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a EMBEDDEDCLASS ARRAY");
@@ -2220,7 +2220,7 @@ CIMValue::CIMValueImpl::get(CIMClassArray& arg) const
 void
 CIMValue::CIMValueImpl::get(CIMInstanceArray& arg) const
 {
-	if(m_type != CIMDataType::EMBEDDEDINSTANCE || !isArray())
+	if (m_type != CIMDataType::EMBEDDEDINSTANCE || !isArray())
 	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a EMBEDDEDINSTANCE ARRAY");
@@ -2257,9 +2257,9 @@ template<class T>
 static String raToString(const T& ra, bool forMOF=false)
 {
 	StringBuffer out;
-	for(size_t i = 0; i < ra.size(); i++)
+	for (size_t i = 0; i < ra.size(); i++)
 	{
-		if(i > 0)
+		if (i > 0)
 		{
 			out += ',';
 		}
@@ -2281,9 +2281,9 @@ static String
 raToString(const Array<String>& ra, bool forMOF=false)
 {
 	StringBuffer out;
-	for(size_t i = 0; i < ra.size(); i++)
+	for (size_t i = 0; i < ra.size(); i++)
 	{
-		if(i > 0)
+		if (i > 0)
 		{
 			out += ',';
 		}
@@ -2305,9 +2305,9 @@ static String
 raToString(const Array<CIMClass>& ra, bool forMOF=false)
 {
 	StringBuffer out;
-	for(size_t i = 0; i < ra.size(); i++)
+	for (size_t i = 0; i < ra.size(); i++)
 	{
-		if(i > 0)
+		if (i > 0)
 		{
 			out += ',';
 		}
@@ -2329,9 +2329,9 @@ static String
 raToString(const Array<CIMInstance>& ra, bool forMOF=false)
 {
 	StringBuffer out;
-	for(size_t i = 0; i < ra.size(); i++)
+	for (size_t i = 0; i < ra.size(); i++)
 	{
-		if(i > 0)
+		if (i > 0)
 		{
 			out += ',';
 		}
@@ -2352,18 +2352,18 @@ static String
 raToString(const Array<Bool>& ra, bool isString=false)
 {
 	StringBuffer out;
-	for(size_t i = 0; i < ra.size(); i++)
+	for (size_t i = 0; i < ra.size(); i++)
 	{
-		if(i > 0)
+		if (i > 0)
 		{
 			out += ',';
 		}
-		if(isString)
+		if (isString)
 		{
 			out += '"';
 		}
 		out += ra[i].toString();
-		if(isString)
+		if (isString)
 		{
 			out += '"';
 		}
@@ -2375,9 +2375,9 @@ String
 CIMValue::CIMValueImpl::toString(bool forMOF) const
 {
 	StringBuffer out;
-	if(m_isArray)
+	if (m_isArray)
 	{
-		switch(m_type)
+		switch (m_type)
 		{
 			case CIMDataType::BOOLEAN:
 				out = raToString(*(reinterpret_cast<const BoolArray*>(&m_obj)));
@@ -2439,7 +2439,7 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 	}
 	else
 	{
-		switch(m_type)
+		switch (m_type)
 		{
 			case CIMDataType::BOOLEAN:
 				out = Bool(m_obj.m_booleanValue != 0).toString();
@@ -2478,7 +2478,7 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 				out = String(m_obj.m_real64Value);
 				break;
 			case CIMDataType::STRING:
-				if(forMOF)
+				if (forMOF)
 				{
 					out = "\"";
 					out += CIMObjectPath::escape(*(reinterpret_cast<const String*>(&m_obj)));
@@ -2512,7 +2512,7 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 				break;
 			
 			case CIMDataType::EMBEDDEDCLASS:
-				if(forMOF)
+				if (forMOF)
 				{
 					out = "\"";
 					out += CIMObjectPath::escape((reinterpret_cast<const CIMClass*>(&m_obj))->toString());
@@ -2524,7 +2524,7 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 				}
 				break;
 			case CIMDataType::EMBEDDEDINSTANCE:
-				if(forMOF)
+				if (forMOF)
 				{
 					out = "\"";
 					out += CIMObjectPath::escape((reinterpret_cast<const CIMInstance*>(&m_obj))->toString());
@@ -2546,17 +2546,17 @@ String
 CIMValue::CIMValueImpl::toMOF() const
 {
 	StringBuffer rv;
-	if(m_type == CIMDataType::CIMNULL
+	if (m_type == CIMDataType::CIMNULL
 		|| m_type == CIMDataType::INVALID)
 	{
 		return String();
 	}
-	if(m_isArray)
+	if (m_isArray)
 	{
 		rv += '{';
 	}
 	rv += toString(true);
-	if(m_isArray)
+	if (m_isArray)
 	{
 		rv += '}';
 	}
@@ -2572,7 +2572,7 @@ void
 readValue(istream& istrm, T& val, int convType)
 {
 	BinarySerialization::read(istrm, &val, sizeof(val));
-	switch(convType)
+	switch (convType)
 	{
 		case 3: 
 		val = static_cast<T>(ntoh64(val)); 
@@ -2615,11 +2615,11 @@ readArray(istream& istrm, T& ra, int convType)
 	ra.clear();
 	UInt32 sz;
 	BinarySerialization::readLen(istrm, sz);
-	for(UInt32 i = 0; i < sz; i++)
+	for (UInt32 i = 0; i < sz; i++)
 	{
 		typename T::value_type v;
 		BinarySerialization::read(istrm, &v, sizeof(v));
-		switch(convType)
+		switch (convType)
 		{
 			case 3: 
 			v = static_cast<typename T::value_type>(ntoh64(v)); 
@@ -2642,7 +2642,7 @@ readReal32Array(istream& istrm, Array<Real32>& ra)
 	ra.clear();
 	UInt32 sz;
 	BinarySerialization::readLen(istrm, sz);
-	for(UInt32 i = 0; i < sz; i++)
+	for (UInt32 i = 0; i < sz; i++)
 	{
 		Real32 v = readReal32Value(istrm);
 		ra.push_back(v);
@@ -2654,7 +2654,7 @@ readReal64Array(istream& istrm, Array<Real64>& ra)
 	ra.clear();
 	UInt32 sz;
 	BinarySerialization::readLen(istrm, sz);
-	for(UInt32 i = 0; i < sz; i++)
+	for (UInt32 i = 0; i < sz; i++)
 	{
 		Real64 v = readReal64Value(istrm);
 		ra.push_back(v);
@@ -2669,7 +2669,7 @@ readObjectArray(istream& istrm, T& ra)
 //	ra.clear();
 //	Int32 sz;
 //	readValue(istrm, sz, 2);
-//	for(Int32 i = 0; i < sz; i++)
+//	for (Int32 i = 0; i < sz; i++)
 //	{
 //		typename T::value_type v;
 //		v.readObject(istrm);
@@ -2687,9 +2687,9 @@ CIMValue::CIMValueImpl::readObject(istream &istrm)
 	BinarySerialization::readLen(istrm, tmp);
 	m_type = CIMDataType::Type(tmp);
 	m_isArray.readObject(istrm);
-	if(m_isArray)
+	if (m_isArray)
 	{
-		switch(m_type)
+		switch (m_type)
 		{
 			case CIMDataType::BOOLEAN:
 				new(&m_obj) BoolArray;
@@ -2765,7 +2765,7 @@ CIMValue::CIMValueImpl::readObject(istream &istrm)
 	}
 	else
 	{
-		switch(m_type)
+		switch (m_type)
 		{
 			case CIMDataType::BOOLEAN:
 				readValue(istrm, m_obj.m_booleanValue, 0);
@@ -2839,7 +2839,7 @@ void
 writeValue(ostream& ostrm, T val, int convType)
 {
 	T v;
-	switch(convType)
+	switch (convType)
 	{
 		case 3:
 		v = static_cast<T>(hton64(val)); 
@@ -2876,10 +2876,10 @@ writeArray(ostream& ostrm, const T& ra, int convType)
 {
 	UInt32 sz = ra.size();
 	BinarySerialization::writeLen(ostrm, sz);
-	for(UInt32 i = 0; i < sz; i++)
+	for (UInt32 i = 0; i < sz; i++)
 	{
 		typename T::value_type v;
-		switch(convType)
+		switch (convType)
 		{
 			case 3: 
 			v = static_cast<typename T::value_type>(hton64(ra[i])); 
@@ -2905,7 +2905,7 @@ writeArray(ostream& ostrm, const Array<Real32>& ra)
 {
 	UInt32 sz = ra.size();
 	BinarySerialization::writeLen(ostrm, sz);
-	for(UInt32 i = 0; i < sz; i++)
+	for (UInt32 i = 0; i < sz; i++)
 	{
 		writeRealValue(ostrm, static_cast<Real64>(ra[i]));
 	}
@@ -2915,7 +2915,7 @@ writeArray(ostream& ostrm, const Array<Real64>& ra)
 {
 	UInt32 sz = ra.size();
 	BinarySerialization::writeLen(ostrm, sz);
-	for(UInt32 i = 0; i < sz; i++)
+	for (UInt32 i = 0; i < sz; i++)
 	{
 		writeRealValue(ostrm, ra[i]);
 	}
@@ -2928,7 +2928,7 @@ writeObjectArray(ostream& ostrm, const T& ra)
 	BinarySerialization::writeArray(ostrm, ra);
 //	Int32 sz = ra.size();
 //	writeValue(ostrm, sz, 2);
-//	for(Int32 i = 0; i < sz; i++)
+//	for (Int32 i = 0; i < sz; i++)
 //	{
 //		ra[i].writeObject(ostrm);
 //	}
@@ -2940,9 +2940,9 @@ CIMValue::CIMValueImpl::writeObject(ostream &ostrm) const
 	CIMBase::writeSig(ostrm, OW_CIMVALUESIG);
 	BinarySerialization::writeLen(ostrm, m_type);
 	m_isArray.writeObject(ostrm);
-	if(m_isArray)
+	if (m_isArray)
 	{
-		switch(m_type)
+		switch (m_type)
 		{
 			case CIMDataType::BOOLEAN:
 				writeArray(ostrm, *(reinterpret_cast<const BoolArray*>(&m_obj)), 0);
@@ -3001,7 +3001,7 @@ CIMValue::CIMValueImpl::writeObject(ostream &ostrm) const
 	}
 	else
 	{
-		switch(m_type)
+		switch (m_type)
 		{
 			case CIMDataType::BOOLEAN:
 				writeValue(ostrm, m_obj.m_booleanValue, 0);

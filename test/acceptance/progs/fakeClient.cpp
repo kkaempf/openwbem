@@ -214,10 +214,10 @@ void display_cert(X509* cert)
 	X509_digest(cert,EVP_md5(),digest,&i);
 	printf("   fingerprint:\n");
 	printf("      ");
-	for(i=0;i<16;i++)
+	for (i=0;i<16;i++)
 	{
 		printf("%02X",digest[i]);
-		if(i != 15)
+		if (i != 15)
 		{
 			printf(":");
 		}
@@ -230,7 +230,7 @@ int ssl_verifycert_callback(X509* cert)
 {
 	static bool     bPrompted = false;
 
-	if(!bPrompted)
+	if (!bPrompted)
 	{
 		X509   *pX509Cert = cert;
 
@@ -242,7 +242,7 @@ int ssl_verifycert_callback(X509* cert)
 
 		cout << "\nDo you want to accept this+Certificate (Y/N)? ";
 		String response = String::getLine(cin);
-		if(response.compareToIgnoreCase("Y") != 0)
+		if (response.compareToIgnoreCase("Y") != 0)
 			return 0;
 	}
 	return 1;

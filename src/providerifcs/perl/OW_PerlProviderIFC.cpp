@@ -72,7 +72,7 @@ PerlProviderIFC::~PerlProviderIFC()
 		ProviderMap::iterator it = m_provs.begin();
 		//Reference<Perlenv> npiHandle(); // TODO: createEnv(...);
 
-		while(it != m_provs.end())
+		while (it != m_provs.end())
 		{
 			::NPIHandle _npiHandle = { 0, 0, 0, 0,
 				it->second->npicontext};
@@ -83,7 +83,7 @@ PerlProviderIFC::~PerlProviderIFC()
 	
 		m_provs.clear();
 	
-		for(size_t i = 0; i < m_noidProviders.size(); i++)
+		for (size_t i = 0; i < m_noidProviders.size(); i++)
 		{
 			::NPIHandle _npiHandle = { 0, 0, 0, 0,
 				 m_noidProviders[i]->npicontext};
@@ -118,11 +118,11 @@ PerlProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	FTABLERef pProv = getProvider(env, provIdString);
-	if(pProv)
+	if (pProv)
 	{
 		// if the createInstance pointer is set, then assume it's an instance
 		// provider
-		if(pProv->fp_createInstance)
+		if (pProv->fp_createInstance)
 		{
 			env->getLogger()->logDebug(Format("PerlProviderIFC found instance"
 				" provider %1", provIdString));
@@ -140,10 +140,10 @@ PerlProviderIFC::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef&
 {
 	//loadNoIdProviders(env);
 	IndicationExportProviderIFCRefArray rvra;
-	//for(size_t i = 0; i < m_noidProviders.size(); i++)
+	//for (size_t i = 0; i < m_noidProviders.size(); i++)
 	//{
 	//	CppProviderBaseIFCRef pProv = m_noidProviders[i];
-	//	if(pProv->isIndicationExportProvider())
+	//	if (pProv->isIndicationExportProvider())
 	//	{
 	//		rvra.append(
 	//			IndicationExportProviderIFCRef(new
@@ -159,11 +159,11 @@ PerlProviderIFC::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 {
 	//loadNoIdProviders(env);
 	PolledProviderIFCRefArray rvra;
-	//for(size_t i = 0; i < m_noidProviders.size(); i++)
+	//for (size_t i = 0; i < m_noidProviders.size(); i++)
 	//{
 	//	FTABLERef pProv = m_noidProviders[i];
 	//
-	//	if(pProv->fp_activateFilter)
+	//	if (pProv->fp_activateFilter)
 	//	{
 	//		rvra.append(
 	//			PolledProviderIFCRef(new
@@ -178,11 +178,11 @@ PerlProviderIFC::doGetMethodProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	FTABLERef pProv = getProvider(env, provIdString);
-	if(pProv)
+	if (pProv)
 	{
 		// it's a method provider if the invokeMethod function pointer is not
 		// NULL
-		if(pProv->fp_invokeMethod)
+		if (pProv->fp_invokeMethod)
 		{
 			env->getLogger()->logDebug(Format("PerlProviderIFC found method provider %1",
 				provIdString));
@@ -201,11 +201,11 @@ PerlProviderIFC::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	FTABLERef pProv = getProvider(env, provIdString);
-	if(pProv)
+	if (pProv)
 	{
 		// if the associatorNames function pointer is not 0, we know it's an
 		// associator provider
-		if(pProv->fp_associatorNames)
+		if (pProv->fp_associatorNames)
 		{
 			env->getLogger()->logDebug(Format("PerlProviderIFC found associator provider %1",
 				provIdString));
@@ -226,11 +226,11 @@ PerlProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 // BMMU
 	//std::cout << "Get IndicationProvider for Id " << provIdString << std::endl;
 	FTABLERef pProv = getProvider(env, provIdString);
-	if(pProv)
+	if (pProv)
 	{
 		// if the indicationNames function pointer is not 0, we know it's an
 		// indication provider
-		if(pProv->fp_activateFilter)
+		if (pProv->fp_activateFilter)
 		{
 			env->getLogger()->logDebug(Format("PerlProviderIFC found indication provider %1",
 				provIdString));
@@ -253,7 +253,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 	IndicationProviderInfoArray& indicationProviderInfo)
 {
 	MutexLock ml(m_guard);
-	if(m_loadDone)
+	if (m_loadDone)
 	{
 		return;
 	}
@@ -262,21 +262,21 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		ConfigOpts::PERLIFC_PROV_LOC_opt, OW_DEFAULT_PERL_PROVIDER_LOCATION);
 	SharedLibraryLoaderRef ldr =
 		 SharedLibraryLoader::createSharedLibraryLoader();
-	if(ldr.isNull())
+	if (ldr.isNull())
 	{
 		env->getLogger()->logError("Perl provider ifc failed to get shared lib loader");
 		return;
 	}
 	StringArray dirEntries;
-	if(!FileSystem::getDirectoryContents(libPath, dirEntries))
+	if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 	{
 		env->getLogger()->logError(Format("Perl provider ifc "
 			"failed getting contents of directory: %1", libPath));
 		return;
 	}
-	for(size_t i = 0; i < dirEntries.size(); i++)
+	for (size_t i = 0; i < dirEntries.size(); i++)
 	{
-		if(!dirEntries[i].endsWith(".pl"))
+		if (!dirEntries[i].endsWith(".pl"))
 		{
 			continue;
 		}
@@ -286,7 +286,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 			env->getLogger());
 		String guessProvId = dirEntries[i];
-		if(theLib.isNull())
+		if (theLib.isNull())
 		{
 			env->getLogger()->logError(Format("Perl provider %1 "
 				"failed to load library: %2",
@@ -295,7 +295,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		}
 		NPIFP_INIT_FT createProvider;
 		String creationFuncName = "perlProvider_initFunctionTable";
-		if(!theLib->getFunctionPointer(creationFuncName, createProvider))
+		if (!theLib->getFunctionPointer(creationFuncName, createProvider))
 		{
 			env->getLogger()->logError(Format("Perl provider ifc: "
 				"Library %1 does not contain %2 function",
@@ -364,7 +364,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 {
 
    MutexLock ml(m_guard);
-   if(m_loadDone)
+   if (m_loadDone)
    {
 	  return;
    }
@@ -372,21 +372,21 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
    String libPath = env->getConfigItem(ConfigOpts::PERLIFC_PROV_LOC_opt, OW_DEFAULT_PERL_PROVIDER_LOCATION);
    SharedLibraryLoaderRef ldr =
 	  SharedLibraryLoader::createSharedLibraryLoader();
-   if(ldr.isNull())
+   if (ldr.isNull())
    {
 	  env->getLogger()->logError("Perl provider ifc failed to get shared lib loader");
 	  return;
    }
    StringArray dirEntries;
-   if(!FileSystem::getDirectoryContents(libPath, dirEntries))
+   if (!FileSystem::getDirectoryContents(libPath, dirEntries))
    {
 	  env->getLogger()->logError(Format("Perl provider ifc failed getting contents of "
 		 "directory: %1", libPath));
 	  return;
    }
-   for(size_t i = 0; i < dirEntries.size(); i++)
+   for (size_t i = 0; i < dirEntries.size(); i++)
    {
-	  if(!dirEntries[i].endsWith(".pl"))
+	  if (!dirEntries[i].endsWith(".pl"))
 	  {
 		 continue;
 	  }
@@ -397,7 +397,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 			env->getLogger());
 	  String guessProvId = dirEntries[i];
-	  if(theLib.isNull())
+	  if (theLib.isNull())
 	  {
 		 env->getLogger()->logError(Format("Perl provider %1 ifc failed to load"
 				   " library: %2", guessProvId, libName));
@@ -405,7 +405,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  }
 #if 0
 	  versionFunc_t versFunc;
-	  if(!theLib->getFunctionPointer("getOWVersion",
+	  if (!theLib->getFunctionPointer("getOWVersion",
 			 versFunc))
 	  {
 		 env->getLogger()->logError(Format("Perl provider ifc failed getting"
@@ -414,7 +414,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		 continue;
 	  }
 	  const char* strVer = (*versFunc)();
-	  if(strcmp(strVer, VERSION))
+	  if (strcmp(strVer, VERSION))
 	  {
 		 env->getLogger()->logError(Format("Perl provider ifc got invalid version from "
 				 "provider: %1", strVer));
@@ -424,7 +424,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	NPIFP_INIT_FT createProvider;
 	//String creationFuncName = guessProvId + "_initFunctionTable";
 	String creationFuncName = "perlProvider_initFunctionTable";
-	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
+	if (!theLib->getFunctionPointer(creationFuncName, createProvider))
 	{
 		env->getLogger()->logError(Format("Perl provider ifc: Libary %1 does not contain"
 			" %2 function", libName, creationFuncName));
@@ -474,7 +474,7 @@ PerlProviderIFC::getProvider(
 	MutexLock ml(m_guard);
 	String provId(provIdString);
 	ProviderMap::iterator it = m_provs.find(provId);
-	if(it != m_provs.end())
+	if (it != m_provs.end())
 	{
 		return it->second;
 	}
@@ -482,7 +482,7 @@ PerlProviderIFC::getProvider(
 		ConfigOpts::PERLIFC_PROV_LOC_opt, OW_DEFAULT_PERL_PROVIDER_LOCATION);
 	SharedLibraryLoaderRef ldr =
 		SharedLibraryLoader::createSharedLibraryLoader();
-	if(ldr.isNull())
+	if (ldr.isNull())
 	{
 		env->getLogger()->logError("Perl: provider ifc failed to get shared lib loader");
 		return FTABLERef();
@@ -494,7 +494,7 @@ PerlProviderIFC::getProvider(
 		libName));
 	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 		env->getLogger());
-	if(theLib.isNull())
+	if (theLib.isNull())
 	{
 		env->getLogger()->logError(Format("Perl provider ifc failed to load library: %1 "
 			"for provider id %2", libName, provId));
@@ -502,7 +502,7 @@ PerlProviderIFC::getProvider(
 	}
 	NPIFP_INIT_FT createProvider;
 	String creationFuncName = "perlProvider_initFunctionTable";
-	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
+	if (!theLib->getFunctionPointer(creationFuncName, createProvider))
 	{
 		env->getLogger()->logError(Format("Perl provider ifc: Libary %1 does not contain"
 			" %2 function", libName, creationFuncName));
@@ -512,7 +512,7 @@ PerlProviderIFC::getProvider(
 	fTable.npicontext = new NPIContext;
 	
 	fTable.npicontext->scriptName = provId.allocateCString();
-	if(!fTable.fp_initialize)
+	if (!fTable.fp_initialize)
 	{
 		env->getLogger()->logError(Format("Perl provider ifc: Libary %1 - %2 returned null"
 			" initialize function pointer in function table", libName, creationFuncName));

@@ -306,7 +306,7 @@ SSLCtxMgr::checkCert(SSL* ssl, const String& hostName,
 {
 	X509 *peer;
 	/* TODO this isn't working.
-	if(SSL_get_verify_result(ssl)!=X509_V_OK)
+	if (SSL_get_verify_result(ssl)!=X509_V_OK)
 	{
 		cout << "SSL_get_verify_results failed." << endl;
 		return false;
@@ -357,10 +357,10 @@ SSLCtxMgr::sslWrite(SSL* ssl, const char* buf, int len)
 	int r;
 	int myLen = len;
 	int offset = 0;
-	while(myLen > 0)
+	while (myLen > 0)
 	{
 		r = SSL_write(ssl, buf + offset, myLen);
-		switch(SSL_get_error(ssl, r))
+		switch (SSL_get_error(ssl, r))
 		{
 			case SSL_ERROR_NONE:
 				myLen -= r;

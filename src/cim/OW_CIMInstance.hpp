@@ -54,7 +54,7 @@ namespace OpenWBEM
  * to check for this condition is as follows:
  *
  *		CIMInstance ci = ch.getInstance(...);
- *		if(!ci)
+ *		if (!ci)
  *		{
  *			// Null instance
  *		}

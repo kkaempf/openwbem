@@ -93,7 +93,7 @@ TmpFileImpl::TmpFileImpl(String const& filename)
 #else
 	m_hdl = ::open(m_filename, O_RDWR);
 #endif
-	if(m_hdl == -1)
+	if (m_hdl == -1)
 	{
 		delete[] m_filename;
 		m_filename = NULL;
@@ -123,7 +123,7 @@ TmpFileImpl::open()
 {
 	close();
 	char* p = ::_tempnam(NULL, "owtempfile");
-	if(p == NULL)
+	if (p == NULL)
 	{
 		OW_THROW(IOException, "Error generating file with _tempnam");
 	}
@@ -136,7 +136,7 @@ TmpFileImpl::open()
 	static Mutex tmpfileMutex;
 	MutexLock tmpfileML(tmpfileMutex);
 	m_hdl = ::_open(m_filename, _O_WRONLY | _O_CREAT, _S_IREAD | _S_IWRITE );
-	if(m_hdl == -1)
+	if (m_hdl == -1)
 	{
 		delete[] m_filename;
 		m_filename = NULL;
@@ -165,7 +165,7 @@ TmpFileImpl::open()
 #else
 	m_hdl = mkstemp(m_filename);
 #endif
-	if(m_hdl == -1)
+	if (m_hdl == -1)
 	{
 		delete[] m_filename;
 		m_filename = NULL;
@@ -180,7 +180,7 @@ int
 TmpFileImpl::close()
 {
 	int rv = -1;
-	if(m_hdl != -1)
+	if (m_hdl != -1)
 	{
 		rv = closeFile(m_hdl);
 #if defined(OW_WIN32)
@@ -198,7 +198,7 @@ TmpFileImpl::close()
 size_t
 TmpFileImpl::read(void* bfr, size_t numberOfBytes, long offset)
 {
-	if(offset == -1L)
+	if (offset == -1L)
 	{
 		seek(0L, SEEK_CUR);
 	}
@@ -216,7 +216,7 @@ TmpFileImpl::read(void* bfr, size_t numberOfBytes, long offset)
 size_t
 TmpFileImpl::write(const void* bfr, size_t numberOfBytes, long offset)
 {
-	if(offset == -1L)
+	if (offset == -1L)
 	{
 		seek(0L, SEEK_CUR);
 	}
@@ -240,9 +240,9 @@ String
 TmpFileImpl::releaseFile()
 {
 	String rval(m_filename);
-	if(m_hdl != -1)
+	if (m_hdl != -1)
 	{
-		if(closeFile(m_hdl) == -1)
+		if (closeFile(m_hdl) == -1)
 		{
 			OW_THROW(IOException, "Unable to close file");
 		}

@@ -162,7 +162,7 @@ CIMDateTime::operator= (const CIMDateTime& arg)
 //////////////////////////////////////////////////////////////////////////////
 CIMDateTime::operator CIMDateTime::safe_bool() const
 {
-	if(m_dptr)
+	if (m_dptr)
 	{
 		return (m_dptr->m_days != 0
 			|| m_dptr->m_year != 0
@@ -179,7 +179,7 @@ CIMDateTime::operator CIMDateTime::safe_bool() const
 bool
 CIMDateTime::operator !() const
 {
-	if(m_dptr)
+	if (m_dptr)
 	{
 		return (m_dptr->m_days == 0
 			&& m_dptr->m_year == 0
@@ -286,7 +286,7 @@ CIMDateTime::readObject(istream &istrm)
 	BinarySerialization::read(istrm, dtdata.m_utc);
 	BinarySerialization::read(istrm, dtdata.m_isInterval);
 
-	if(!m_dptr)
+	if (!m_dptr)
 	{
 		m_dptr = new DateTimeData;
 	}
@@ -312,7 +312,7 @@ String
 CIMDateTime::toString() const
 {
 	char bfr[30];
-	if(isInterval())
+	if (isInterval())
 	{
 		// Interval format
 		::sprintf(bfr, "%08u%02u%02u%02u.%06u:000", m_dptr->m_days,
@@ -338,14 +338,14 @@ CIMDateTime::toDateTime() const
 static void
 fillDateTimeData(CIMDateTime::DateTimeData& data, const char* str)
 {
-	if(str == NULL || *str == '\0')
+	if (str == NULL || *str == '\0')
 	{
 		return;
 	}
 	char bfr[35];
 	::strncpy(bfr, str, sizeof(bfr));
 	bfr[34] = '\0';
-	if(bfr[21] == ':')	// Is this an interval
+	if (bfr[21] == ':')	// Is this an interval
 	{
 		// ddddddddhhmmss.mmmmmm:000
 		data.m_isInterval = 1;
@@ -360,7 +360,7 @@ fillDateTimeData(CIMDateTime::DateTimeData& data, const char* str)
 		bfr[8] = 0;
 		data.m_days = atoi(bfr);
 	}
-	else if(bfr[21] == '+' || bfr[21] == '-')
+	else if (bfr[21] == '+' || bfr[21] == '-')
 	{
 		// yyyymmddhhmmss.mmmmmmsutc
 		data.m_isInterval = 0;

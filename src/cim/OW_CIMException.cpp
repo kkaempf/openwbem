@@ -127,9 +127,9 @@ static String
 getMsg(CIMException::ErrNoType err, const char* msg)
 {
 	const char* p = "unknown error";
-	for(int i = 0; _pmsgs[i].msg != NULL; i++)
+	for (int i = 0; _pmsgs[i].msg != NULL; i++)
 	{
-		if(err == _pmsgs[i].errval)
+		if (err == _pmsgs[i].errval)
 		{
 			p = _pmsgs[i].msg;
 			break;
@@ -141,7 +141,7 @@ getMsg(CIMException::ErrNoType err, const char* msg)
 	{
 		rstr = msg;
 	}
-	else if(msg != NULL && strlen(msg) > 0)
+	else if (msg != NULL && strlen(msg) > 0)
 	{
 		rstr += " (";
 		rstr += msg;

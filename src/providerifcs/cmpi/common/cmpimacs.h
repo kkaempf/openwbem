@@ -83,7 +83,7 @@ noReturn CMReturnWithChars(CMPIBroker *mb, CMPIrc rc, char *msg);
   */
 inline static  void CMSetStatus(CMPIStatus* st, CMPIrc rcp)
 {
-	if(st)
+	if (st)
 	{
 		st->rc = rcp;
 		st->msg = NULL;
@@ -92,7 +92,7 @@ inline static  void CMSetStatus(CMPIStatus* st, CMPIrc rcp)
 
 #else
 #define CMSetStatus(st,rcp) \
-if((st)) { \
+if ((st)) { \
 	(st)->rc=(rcp); \
 	(st)->msg=NULL; \
 }
@@ -109,7 +109,7 @@ if((st)) { \
 inline static void CMSetStatusWithString(CMPIBroker *mb, CMPIStatus *st,
 	CMPIrc rcp, CMPIString *str)
 {
-	if(st)
+	if (st)
 	{
 		st->rc = rcp;
 		st->msg = str;
@@ -117,7 +117,7 @@ inline static void CMSetStatusWithString(CMPIBroker *mb, CMPIStatus *st,
 }
 #else
 #define CMSetStatusWithString(st,rcp,string) \
-if((st)) { \
+if ((st)) { \
 	(st)->rc=(rcp); \
 	(st)->msg=(string); \
 }
@@ -134,7 +134,7 @@ if((st)) { \
 inline static void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st,
 	CMPIrc rcp, char* chars)
 {
-	if(st)
+	if (st)
 	{
 		st->rc = rcp;
 		st->msg= mb->eft->newString(mb,(chars),NULL);
@@ -142,7 +142,7 @@ inline static void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st,
 }
 #else
 #define CMSetStatusWithChars(mb,st,rcp,chars) \
-if((st)) { \
+if ((st)) { \
 	(st)->rc=(rcp); \
     (st)->msg=(mb)->eft->newString((mb),(chars),NULL); \
 }

@@ -71,7 +71,7 @@ public:
 	}
 	virtual void setConfigItem(const String &item, const String &value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS) {
 		Map<String, String>::iterator it = config.find(item);
-		if(it == config.end() || overwritePrevious)
+		if (it == config.end() || overwritePrevious)
 		{
 			config[item] = value;
 		}

@@ -92,7 +92,7 @@ public:
 
 	inline friend void COWIntrusiveReferenceRelease(COWIntrusiveCountableBase * p)
 	{
-		if(p->m_usecount.decAndTest())
+		if (p->m_usecount.decAndTest())
 			delete p;
 	}
 	

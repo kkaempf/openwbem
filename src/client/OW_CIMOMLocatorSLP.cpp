@@ -78,7 +78,7 @@ SLPBoolean MySLPAttrCallback(SLPHandle /*hslp*/,
 							SLPError errcode, 
 							void* cookie ) 
 { 
-	if(errcode == SLP_OK) 
+	if (errcode == SLP_OK) 
 	{ 
 		(*(String*)cookie) = attrlist;
 	} 
@@ -125,7 +125,7 @@ CIMOMLocatorSLP::findCIMOMs()
 	CBData data;
 	CIMOMInfoArray rval;
 	err = SLPFindSrvs(m_hslp, OW_CIMOM_SLP_SERVICE_TYPE, 0, 0, MySLPSrvURLCallback, &data);
-	if((err != SLP_OK) || (data.errcode != SLP_OK)) 
+	if ((err != SLP_OK) || (data.errcode != SLP_OK)) 
 	{ 
 		OW_THROW(CIMOMLocatorException, 
 			Format("Error finding service: %1.  SLP Error code: %2",

@@ -230,7 +230,7 @@ XMLExecute::executeIntrinsic(ostream& ostr,
 	FuncEntry fe = { 0, 0 };
 	fe.name = functionNameLC.c_str();
 	FuncEntry* i = std::lower_bound(g_funcs, g_funcsEnd, fe, funcEntryCompare);
-	if(i == g_funcsEnd || strcmp((*i).name, fe.name) != 0)
+	if (i == g_funcsEnd || strcmp((*i).name, fe.name) != 0)
 	{
 		// they sent over an intrinsic method call we don't know about
 		OW_THROWCIM(CIMException::NOT_SUPPORTED);
@@ -266,7 +266,7 @@ XMLExecute::doInvokeMethod(ostream& ostr, CIMXMLParser& parser,
 	getParameters(parser, inParams);
 	CIMValue cv = hdl.invokeMethod(path.getNameSpace(), path, methodName,
 		inParams, outParams);
-	if(cv)
+	if (cv)
 	{
 		ostr << "<RETURNVALUE PARAMTYPE=\"";
 		CIMtoXML(cv.getCIMDataType(), ostr);
@@ -420,7 +420,7 @@ namespace
 		while (parser.tokenIsId(CIMXMLParser::E_IPARAMVALUE))
 		{
 			String name = parser.mustGetAttribute(CIMXMLParser::A_NAME);
-			Array<param>::iterator i = std::find_if(params.begin(), params.end(),
+			Array<param>::iterator i = std::find_if (params.begin(), params.end(),
 				name_comparer(name));
 			if (i == params.end())
 			{
@@ -764,7 +764,7 @@ void XMLExecute::createInstance(ostream& ostr, CIMXMLParser& parser,
 	String className = cimInstance.getClassName();
 	//CIMObjectPath realPath = CIMObjectPath(className, path.getNameSpace());
 	// Special treatment for __Namespace class
-	if(className.equalsIgnoreCase(CIMClass::NAMESPACECLASS))
+	if (className.equalsIgnoreCase(CIMClass::NAMESPACECLASS))
 	{
 		CIMProperty prop = cimInstance.getProperty(
 			CIMProperty::NAME_PROPERTY);

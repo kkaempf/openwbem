@@ -272,7 +272,7 @@ ProviderAgentEnvironment::addSelectable(const SelectableIFCRef& obj,
 void 
 ProviderAgentEnvironment::removeSelectable(const SelectableIFCRef& obj)
 {
-	m_selectables->erase(std::remove_if(m_selectables->begin(), m_selectables->end(),
+	m_selectables->erase(std::remove_if (m_selectables->begin(), m_selectables->end(),
 		selectableFinder(obj)), m_selectables->end());
 }
 //////////////////////////////////////////////////////////////////////////////

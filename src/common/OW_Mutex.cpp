@@ -43,14 +43,14 @@ namespace OpenWBEM
 
 Mutex::Mutex()
 {
-	if(MutexImpl::createMutex(m_mutex) != 0)
+	if (MutexImpl::createMutex(m_mutex) != 0)
 	{
 		OW_THROW(Assertion, "MutexImpl::createMutex failed");
 	}
 }
 Mutex::~Mutex()
 {
-	if(MutexImpl::destroyMutex(m_mutex) == -1)
+	if (MutexImpl::destroyMutex(m_mutex) == -1)
 	{
 		MutexImpl::releaseMutex(m_mutex);
 		MutexImpl::destroyMutex(m_mutex);

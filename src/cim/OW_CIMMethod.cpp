@@ -147,10 +147,10 @@ CIMQualifier
 CIMMethod::getQualifier(const String& name) const
 {
 	int tsize = m_pdata->m_qualifiers.size();
-	for(int i = 0; i < tsize; i++)
+	for (int i = 0; i < tsize; i++)
 	{
 		CIMQualifier nq = m_pdata->m_qualifiers[i];
-		if(nq.getName().equalsIgnoreCase(name))
+		if (nq.getName().equalsIgnoreCase(name))
 		{
 			return nq;
 		}
@@ -263,7 +263,7 @@ CIMMethod
 CIMMethod::clone(EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin) const
 {
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		return CIMMethod(CIMNULL);
 	}
@@ -273,11 +273,11 @@ CIMMethod::clone(EIncludeQualifiersFlag includeQualifiers,
 	theMethod.m_pdata->m_parameters = m_pdata->m_parameters;
 	theMethod.m_pdata->m_override = m_pdata->m_override;
 	theMethod.m_pdata->m_propagated = m_pdata->m_propagated;
-	if(includeQualifiers)
+	if (includeQualifiers)
 	{
 		theMethod.m_pdata->m_qualifiers = m_pdata->m_qualifiers;
 	}
-	if(includeClassOrigin)
+	if (includeClassOrigin)
 	{
 		theMethod.m_pdata->m_originClass = m_pdata->m_originClass;
 	}
@@ -327,7 +327,7 @@ CIMMethod::readObject(istream &istrm)
 	originClass.readObject(istrm);
 	override.readObject(istrm);
 	propagated.readObject(istrm);
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		m_pdata = new METHData;
 	}
@@ -358,13 +358,13 @@ CIMMethod::toMOF() const
 {
 	StringBuffer rv;
 	size_t i;
-	if(m_pdata->m_qualifiers.size() > 0)
+	if (m_pdata->m_qualifiers.size() > 0)
 	{
 		rv += '[';
-		for(i = 0; i < m_pdata->m_qualifiers.size(); i++)
+		for (i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
 			CIMQualifier nq = m_pdata->m_qualifiers[i];
-			if(i > 0)
+			if (i > 0)
 			{
 				rv += ',';
 			}
@@ -376,12 +376,12 @@ CIMMethod::toMOF() const
 	rv += ' ';
 	rv += m_pdata->m_name;
 	rv += '(';
-	if(m_pdata->m_parameters.size() > 0)
+	if (m_pdata->m_parameters.size() > 0)
 	{
-		for(i = 0; i < m_pdata->m_parameters.size(); i++)
+		for (i = 0; i < m_pdata->m_parameters.size(); i++)
 		{
 			CIMParameter nq = m_pdata->m_parameters[i];
-			if(i > 0)
+			if (i > 0)
 			{
 				rv += ',';
 			}

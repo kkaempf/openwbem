@@ -231,7 +231,7 @@ String::String(ETakeOwnershipFlag, char* allocatedMemory, size_t len) :
 String::String(const char* str, size_t len) :
 	m_buf(NULL)
 {
-	if(NULL == str)
+	if (NULL == str)
 	{
 		m_buf = 0;
 	}
@@ -267,10 +267,10 @@ String::String(const Char16Array& ra) :
 	m_buf(NULL)
 {
 	size_t sz = ra.size();
-	if(sz > 0)
+	if (sz > 0)
 	{
 		StringBuffer buf(sz * 2);
-		for(size_t i = 0; i < sz; i++)
+		for (size_t i = 0; i < sz; i++)
 		{
 			buf += ra[i].toString();
 		}
@@ -285,7 +285,7 @@ String::String(const Char16Array& ra) :
 String::String(char c) :
 	m_buf(NULL)
 {
-	if(c != '\0')
+	if (c != '\0')
 	{
 		char bfr[2];
 		bfr[0] = c;
@@ -335,12 +335,12 @@ String::format(const char* fmt, ...)
 	va_list ap;
 	
 	// Try to print in the allocated space
-	while(true)
+	while (true)
 	{
 		va_start(ap, fmt);
 		n = vsnprintf(p.get(), size, fmt, ap);
 		va_end(ap);                // If that worked, return the string.
-		if(n > -1 && n < size)
+		if (n > -1 && n < size)
 		{
 			m_buf = new ByteBuf(p, n);
 			return static_cast<int>(length());
@@ -400,12 +400,12 @@ String::compareToIgnoreCase(const String& arg) const
 String&
 String::concat(const char* arg)
 {
-	if(arg && *arg)
+	if (arg && *arg)
 	{
 		size_t len = length() + ::strlen(arg);
 		AutoPtrVec<char> bfr(new char[len+1]);
 		bfr[0] = 0;
-		if(m_buf)
+		if (m_buf)
 		{
 			::strcpy(bfr.get(), m_buf->data());
 		}
@@ -422,7 +422,7 @@ String::concat(char arg)
 	size_t newlen = length() + 1;
 	AutoPtrVec<char> bfr(new char[newlen+1]);
 	bfr[0] = 0;
-	if(m_buf)
+	if (m_buf)
 	{
 		::strcpy(bfr.get(), m_buf->data());
 	}
@@ -445,18 +445,18 @@ String::endsWith(char arg) const
 bool
 String::endsWith(const char* arg, EIgnoreCaseFlag ignoreCase) const
 {
-	if(!arg || !*arg)
+	if (!arg || !*arg)
 	{
 		return (length() == 0);
 	}
 
-	if(!m_buf)
+	if (!m_buf)
 	{
 		return false;
 	}
 
 	int ndx = static_cast<int>(length() - ::strlen(arg));
-	if(ndx < 0)
+	if (ndx < 0)
 	{
 		return false;
 	}
@@ -495,14 +495,14 @@ String::hashCode() const
 {
 	UInt32 hash = 0;
 	size_t len = length();
-	for(size_t i = 0; i < len; i++)
+	for (size_t i = 0; i < len; i++)
 	{
 		// Don't need to check if m_buf is null, because if it is, len == 0,
 		// and this loop won't be executed.
 		const char temp = m_buf->data()[i];
 		hash = (hash << 4) + (temp * 13);
 		UInt32 g = hash & 0xf0000000;
-		if(g)
+		if (g)
 		{
 			hash ^= (g >> 24);
 			hash ^= g;
@@ -514,17 +514,17 @@ String::hashCode() const
 size_t
 String::indexOf(char ch, size_t fromIndex) const
 {
-	//if(fromIndex < 0)
+	//if (fromIndex < 0)
 	//{
 	//	fromIndex = 0;
 	//}
 	size_t cc = npos;
-	if(fromIndex < length())
+	if (fromIndex < length())
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed.
 		const char* p = String::strchr(m_buf->data()+fromIndex, ch);
-		if(p)
+		if (p)
 		{
 			cc = p - m_buf->data();
 		}
@@ -536,7 +536,7 @@ size_t
 String::indexOf(const char* arg, size_t fromIndex) const
 {
 	int cc = npos;
-	if(fromIndex < length())
+	if (fromIndex < length())
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed, but we do need to check arg.m_buf
@@ -550,7 +550,7 @@ String::indexOf(const char* arg, size_t fromIndex) const
 			p = m_buf->data()+fromIndex;
 		}
 
-		if(p != NULL)
+		if (p != NULL)
 		{
 			cc = static_cast<int>(p - m_buf->data());
 		}
@@ -561,21 +561,21 @@ String::indexOf(const char* arg, size_t fromIndex) const
 size_t
 String::lastIndexOf(char ch, size_t fromIndex) const
 {
-	if(fromIndex == npos)
+	if (fromIndex == npos)
 	{
-		if((fromIndex = length()-1) == npos)
+		if ((fromIndex = length()-1) == npos)
 		{
 			return npos;
 		}
 	}
 	size_t cc = npos;
-	if(fromIndex < length())
+	if (fromIndex < length())
 	{
-		for(size_t i = fromIndex; i != npos; i--)
+		for (size_t i = fromIndex; i != npos; i--)
 		{
 			// Don't need to check m_buf for NULL, because if length() == 0,
 			// this code won't be executed.
-			if(m_buf->data()[i] == ch)
+			if (m_buf->data()[i] == ch)
 			{
 				cc = i;
 				break;
@@ -588,16 +588,16 @@ String::lastIndexOf(char ch, size_t fromIndex) const
 size_t
 String::lastIndexOf(const char* arg, size_t fromIndex) const
 {
-	if(fromIndex == npos || fromIndex >= length())
+	if (fromIndex == npos || fromIndex >= length())
 	{
-		if(static_cast<int>(fromIndex = length()-1) < 0)
+		if (static_cast<int>(fromIndex = length()-1) < 0)
 		{
 			return npos;
 		}
 	}
 
 	int arglen = (arg) ? ::strlen(arg) : 0;
-	if(static_cast<int>(fromIndex -= arglen - 1) < 0)
+	if (static_cast<int>(fromIndex -= arglen - 1) < 0)
 	{
 		return npos;
 	}
@@ -605,11 +605,11 @@ String::lastIndexOf(const char* arg, size_t fromIndex) const
 	{
 		return length() - 1;
 	}
-	while(fromIndex != npos)
+	while (fromIndex != npos)
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed.
-		if(::strncmp(m_buf->data()+fromIndex, arg, arglen) == 0)
+		if (::strncmp(m_buf->data()+fromIndex, arg, arglen) == 0)
 		{
 			break;
 		}
@@ -631,21 +631,21 @@ bool
 String::startsWith(const char* arg, EIgnoreCaseFlag ignoreCase) const
 {
 	bool cc = false;
-	if(!arg && !m_buf)
+	if (!arg && !m_buf)
 	{
 		return true;
 	}
-	if(!*arg)
+	if (!*arg)
 	{
 		return (length() == 0);
 	}
 
 	size_t arglen = ::strlen(arg);
-	if(arglen <= length())
+	if (arglen <= length())
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed.
-		if(ignoreCase)
+		if (ignoreCase)
 		{
 			cc = (strncmpi(m_buf->data(), arg, arglen) == 0);
 		}
@@ -663,19 +663,19 @@ String::substring(size_t beginIndex, size_t len) const
 	String nil;
 	size_t count = len;
 	size_t l = length();
-	if(0 == l)
+	if (0 == l)
 	{
 		return nil;
 	}
-	if(beginIndex >= l)
+	if (beginIndex >= l)
 	{
 		return nil;
 	}
-	else if(0 == len)
+	else if (0 == len)
 	{
 		return nil;
 	}
-	else if(len == npos)
+	else if (len == npos)
 	{
 		count = l - beginIndex;
 	}
@@ -696,7 +696,7 @@ String::isSpaces() const
 		return true;
 	}
 	char* p = m_buf->data();
-	while(isspace(*p) && *p != '\0')
+	while (isspace(*p) && *p != '\0')
 	{
 		p++;
 	}
@@ -711,11 +711,11 @@ String::ltrim()
 		return *this;
 	}
 	char* s1 = m_buf->data();
-	while(isspace(*s1) && *s1 != '\0')
+	while (isspace(*s1) && *s1 != '\0')
 	{
 		s1++;
 	}
-	if(s1 == m_buf->data())
+	if (s1 == m_buf->data())
 	{
 		return *this;
 	}
@@ -726,20 +726,20 @@ String::ltrim()
 String&
 String::rtrim()
 {
-	if(length() == 0)
+	if (length() == 0)
 	{
 		return *this;
 	}
 	char* s1 = m_buf->data() + (length()-1);
-	while(isspace(*s1) && s1 >= m_buf->data())
+	while (isspace(*s1) && s1 >= m_buf->data())
 	{
 		s1--;
 	}
-	if(s1 == (m_buf->data() + (length()-1)))
+	if (s1 == (m_buf->data() + (length()-1)))
 	{
 		return *this;
 	}
-	if(s1 < m_buf->data())
+	if (s1 < m_buf->data())
 	{
 		*this = String();
 		return *this;
@@ -752,16 +752,16 @@ String::rtrim()
 String&
 String::trim()
 {
-	if(length() == 0)
+	if (length() == 0)
 	{
 		return *this;
 	}
 	char* s1 = m_buf->data();
-	while(isspace(*s1) && *s1 != '\0')
+	while (isspace(*s1) && *s1 != '\0')
 	{
 		s1++;
 	}
-	if(*s1 == '\0')
+	if (*s1 == '\0')
 	{
 		// String is all spaces
 		*this = String();
@@ -769,11 +769,11 @@ String::trim()
 	}
 	const char* p2 = String::strchr(s1, '\0');
 	const char* s2 = p2 - 1;
-	while(isspace(*s2))
+	while (isspace(*s2))
 	{
 		s2--;
 	}
-	if(s1 == m_buf->data() && s2 == p2)
+	if (s1 == m_buf->data() && s2 == p2)
 	{
 		// String has no leading or trailing spaces
 		return *this;
@@ -793,7 +793,7 @@ String::erase()
 String&
 String::erase(size_t idx, size_t len)
 {
-	if( idx >= length() )
+	if ( idx >= length() )
 	{
 		return *this;
 	}
@@ -814,7 +814,7 @@ String&
 String::toLowerCase()
 {
 	size_t len = length();
-	for(size_t i = 0; i < len; i++)
+	for (size_t i = 0; i < len; i++)
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed.
@@ -829,7 +829,7 @@ String&
 String::toUpperCase()
 {
 	size_t len = length();
-	for(size_t i = 0; i < len; i++)
+	for (size_t i = 0; i < len; i++)
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed.
@@ -933,7 +933,7 @@ throwStringConversion(const char* str, const char* type)
 Char16
 String::toChar16() const
 {
-	if(UTF8Length() != 1)
+	if (UTF8Length() != 1)
 	{
 		throwStringConversion(c_str(), "Char16");
 	}
@@ -1100,11 +1100,11 @@ StringArray
 String::tokenize(const char* delims, EReturnDelimitersFlag returnDelimitersAsTokens, EEmptyTokenReturnFlag returnEmptyTokens) const
 {
 	StringArray ra;
-	if(empty())
+	if (empty())
 	{
 		return ra;
 	}
-	if(delims == 0)
+	if (delims == 0)
 	{
 		ra.append(*this);
 		return ra;
@@ -1116,20 +1116,20 @@ String::tokenize(const char* delims, EReturnDelimitersFlag returnDelimitersAsTok
 	data[0] = 0;
 	int i = 0;
   	bool last_was_delim = false;
-	while(*pstr)
+	while (*pstr)
 	{
-		if(String::strchr(delims, *pstr))
+		if (String::strchr(delims, *pstr))
 		{
-			if(data[0] != 0)
+			if (data[0] != 0)
 			{
 				ra.append(String(data.get()));
 				data[0] = 0;
 			}
-			if( (returnEmptyTokens == E_RETURN_EMPTY_TOKENS) && last_was_delim )
+			if ( (returnEmptyTokens == E_RETURN_EMPTY_TOKENS) && last_was_delim )
 			{
 				ra.append(String());
 			}
-			if( returnDelimitersAsTokens == E_RETURN_DELIMITERS || returnDelimitersAsTokens == E_RETURN_TOKENS )
+			if ( returnDelimitersAsTokens == E_RETURN_DELIMITERS || returnDelimitersAsTokens == E_RETURN_TOKENS )
 			{
 				ra.append(String(*pstr));
 			}			
@@ -1144,7 +1144,7 @@ String::tokenize(const char* delims, EReturnDelimitersFlag returnDelimitersAsTok
 		}
 		pstr++;
 	}
-	if(data[0] != 0)
+	if (data[0] != 0)
 	{
 		ra.append(String(data.get()));
 	}
@@ -1181,8 +1181,8 @@ String::strtoll(const char* nptr, char** endptr, int base)
 	do
 	{
 		c = (unsigned char) *s++;
-	} while(isspace(c));
-	if(c == '-')
+	} while (isspace(c));
+	if (c == '-')
 	{
 		neg = 1;
 		c = *s++;
@@ -1190,12 +1190,12 @@ String::strtoll(const char* nptr, char** endptr, int base)
 	else
 	{
 		neg = 0;
-		if(c == '+')
+		if (c == '+')
 		{
 			c = *s++;
 		}
 	}
-	if((base == 0 || base == 16)
+	if ((base == 0 || base == 16)
 		&& c == '0'
 		&& (*s == 'x' || *s == 'X'))
 	{
@@ -1203,7 +1203,7 @@ String::strtoll(const char* nptr, char** endptr, int base)
 		s += 2;
 		base = 16;
 	}
-	if(base == 0)
+	if (base == 0)
 	{
 		base = c == '0' ? 8 : 10;
 	}
@@ -1225,22 +1225,22 @@ String::strtoll(const char* nptr, char** endptr, int base)
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
 	cutlim = static_cast<int>(cutoff % base);
 	cutoff /= base;
-	if(neg)
+	if (neg)
 	{
-		if(cutlim > 0)
+		if (cutlim > 0)
 		{
 			cutlim -= base;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for(acc = 0, any = 0;; c = (unsigned char) *s++)
+	for (acc = 0, any = 0;; c = (unsigned char) *s++)
 	{
-		if(isdigit(c))
+		if (isdigit(c))
 		{
 			c -= '0';
 		}
-		else if(isalpha(c))
+		else if (isalpha(c))
 		{
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
 		}
@@ -1248,17 +1248,17 @@ String::strtoll(const char* nptr, char** endptr, int base)
 		{
 			break;
 		}
-		if(c >= base)
+		if (c >= base)
 		{
 			break;
 		}
-		if(any < 0)
+		if (any < 0)
 		{
 			continue;
 		}
-		if(neg)
+		if (neg)
 		{
-			if(acc < cutoff || acc == cutoff && c > cutlim)
+			if (acc < cutoff || acc == cutoff && c > cutlim)
 			{
 				any = -1;
 				acc = LLONG_MIN;
@@ -1273,7 +1273,7 @@ String::strtoll(const char* nptr, char** endptr, int base)
 		}
 		else
 		{
-			if(acc > cutoff || acc == cutoff && c > cutlim)
+			if (acc > cutoff || acc == cutoff && c > cutlim)
 			{
 				any = -1;
 				acc = LLONG_MAX;
@@ -1287,7 +1287,7 @@ String::strtoll(const char* nptr, char** endptr, int base)
 			}
 		}
 	}
-	if(endptr != 0)
+	if (endptr != 0)
 	{
 		*endptr = (char *) (any ? s - 1 : nptr);
 	}
@@ -1321,8 +1321,8 @@ String::strtoull(const char* nptr, char** endptr, int base)
 	do
 	{
 		c = (unsigned char) *s++;
-	} while(isspace(c));
-	if(c == '-')
+	} while (isspace(c));
+	if (c == '-')
 	{
 		neg = 1;
 		c = *s++;
@@ -1330,12 +1330,12 @@ String::strtoull(const char* nptr, char** endptr, int base)
 	else
 	{
 		neg = 0;
-		if(c == '+')
+		if (c == '+')
 		{
 			c = *s++;
 		}
 	}
-	if((base == 0 || base == 16)
+	if ((base == 0 || base == 16)
 		&& c == '0'
 		&& (*s == 'x' || *s == 'X'))
 	{
@@ -1343,19 +1343,19 @@ String::strtoull(const char* nptr, char** endptr, int base)
 		s += 2;
 		base = 16;
 	}
-	if(base == 0)
+	if (base == 0)
 	{
 		base = c == '0' ? 8 : 10;
 	}
 	cutoff = ULLONG_MAX / (unsigned long long)base;
 	cutlim = ULLONG_MAX % (unsigned long long)base;
-	for(acc = 0, any = 0;; c = (unsigned char) *s++)
+	for (acc = 0, any = 0;; c = (unsigned char) *s++)
 	{
-		if(isdigit(c))
+		if (isdigit(c))
 		{
 			c -= '0';
 		}
-		else if(isalpha(c))
+		else if (isalpha(c))
 		{
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
 		}
@@ -1363,15 +1363,15 @@ String::strtoull(const char* nptr, char** endptr, int base)
 		{
 			break;
 		}
-		if(c >= (unsigned int)base)
+		if (c >= (unsigned int)base)
 		{
 			break;
 		}
-		if(any < 0)
+		if (any < 0)
 		{
 			continue;
 		}
-		if(acc > cutoff || acc == cutoff && c > cutlim)
+		if (acc > cutoff || acc == cutoff && c > cutlim)
 		{
 			any = -1;
 			acc = ULLONG_MAX;
@@ -1384,11 +1384,11 @@ String::strtoull(const char* nptr, char** endptr, int base)
 			acc += c;
 		}
 	}
-	if(neg && any > 0)
+	if (neg && any > 0)
 	{
 		acc = -acc;
 	}
-	if(endptr != 0)
+	if (endptr != 0)
 	{
 		*endptr = (char *) (any ? s - 1 : nptr);
 	}

@@ -145,7 +145,7 @@ protected:
 	 */
 	void throwIfNotOpen()
 	{
-		if(!isOpen())
+		if (!isOpen())
 			OW_THROW(HDBException, "Database is not open");
 	}
 	HDB m_hdb;
@@ -173,7 +173,7 @@ public:
 	{
 		try
 		{
-			if(m_pr) m_pr->freeHandle(m_hdl);
+			if (m_pr) m_pr->freeHandle(m_hdl);
 		}
 		catch (...)
 		{

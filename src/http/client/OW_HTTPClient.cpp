@@ -152,7 +152,7 @@ namespace
 		if (authInfo[pos] == '"')
 		{
 			size_t endPos = authInfo.indexOf('"', pos + 1);
-			if(endPos != String::npos)
+			if (endPos != String::npos)
 			{
 				rval = authInfo.substring(pos + 1, endPos - pos - 1); // don't get the quotes.
 			}
@@ -160,7 +160,7 @@ namespace
 		else
 		{
 			size_t endPos = authInfo.indexOf(',', pos);
-			if(endPos != String::npos)
+			if (endPos != String::npos)
 			{
 				rval = authInfo.substring(pos, endPos - pos);
 			}
@@ -181,7 +181,7 @@ void HTTPClient::setUrl()
 	}
 	if (m_url.port.empty())
 	{
-		if( m_url.scheme.endsWith('s') ) // https, cimxml.wbems, owbinary.wbems
+		if ( m_url.scheme.endsWith('s') ) // https, cimxml.wbems, owbinary.wbems
 		{
 			m_url.port = "5989";
 		}
@@ -229,7 +229,7 @@ HTTPClient::receiveAuthentication()
 	RandomNumber rn(0, 0x7FFFFFFF);
 	m_sDigestCNonce.format( "%08x", rn.getNextNumber() );
 	
-	if(headerHasKey("authentication-info") && m_sAuthorization=="Digest" )
+	if (headerHasKey("authentication-info") && m_sAuthorization=="Digest" )
 	{
 		String authInfo = getHeaderValue("authentication-info");
 		m_sDigestNonce = getAuthParam("nextnonce", authInfo);
@@ -238,7 +238,7 @@ HTTPClient::receiveAuthentication()
 			m_url.credential, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
 		m_iDigestNonceCount = 1;
 	}
-	else if( authInfo.indexOf( "Digest" ) != String::npos )
+	else if ( authInfo.indexOf( "Digest" ) != String::npos )
 	{
 		m_sAuthorization = "Digest";
 		m_uselocalAuthentication = false;
@@ -249,12 +249,12 @@ HTTPClient::receiveAuthentication()
 	}
 	else
 #endif
-	if( authInfo.indexOf( "Basic" ) != String::npos )
+	if ( authInfo.indexOf( "Basic" ) != String::npos )
 	{
 		m_sAuthorization = "Basic";
 		m_uselocalAuthentication = false;
 	}
-	else if( authInfo.indexOf( "OWLocal" ) != String::npos || m_uselocalAuthentication)
+	else if ( authInfo.indexOf( "OWLocal" ) != String::npos || m_uselocalAuthentication)
 	{
 		m_sAuthorization = "OWLocal";
 		m_uselocalAuthentication = true;
@@ -318,7 +318,7 @@ bool HTTPClient::getResponseHeader(const String& hdrName,
 	String& valueOut) const
 {
 	bool cc = false;
-	if(HTTPUtils::headerHasKey(m_responseHeaders, hdrName))
+	if (HTTPUtils::headerHasKey(m_responseHeaders, hdrName))
 	{
 		cc = true;
 		valueOut = HTTPUtils::getHeaderValue(m_responseHeaders, hdrName);
@@ -329,18 +329,18 @@ bool HTTPClient::getResponseHeader(const String& hdrName,
 //////////////////////////////////////////////////////////////////////////////
 void HTTPClient::sendAuthorization()
 {
-	if( !m_sAuthorization.empty())
+	if ( !m_sAuthorization.empty())
 	{
 		OStringStream ostr;
 		ostr << m_sAuthorization << " ";
-		if( m_sAuthorization == "Basic" )
+		if ( m_sAuthorization == "Basic" )
 		{
 			getCredentialsIfNecessary();
 			ostr << HTTPUtils::base64Encode( m_url.principal + ":" +
 				m_url.credential );
 		}
 #ifndef OW_DISABLE_DIGEST
-		else if( m_sAuthorization == "Digest" )
+		else if ( m_sAuthorization == "Digest" )
 		{
 			String sNonceCount;
 			sNonceCount.format( "%08x", m_iDigestNonceCount );
@@ -507,7 +507,7 @@ HTTPClient::endRequest(Reference<std::iostream> request, const String& methodNam
 	{
 		sendDataToServer(tfs, methodName, cimObject, requestType);
 		statusLine = checkResponse(rt);
-	} while(rt == RETRY);
+	} while (rt == RETRY);
 	if (rt == FATAL)
 	{
 		String CIMError = getHeaderValue("CIMError");
@@ -547,7 +547,7 @@ HTTPClient::getFeatures()
 		m_requestHeadersNew.clear();
 		m_responseHeaders.clear();
 		statusLine = checkResponse(rt);
-	} while(rt == RETRY);
+	} while (rt == RETRY);
 	m_requestMethod = methodOrig;
 	if (rt == FATAL)
 	{

@@ -77,7 +77,7 @@ static
 void
 slpRegReport(SLPHandle hdl, SLPError errArg, void* cookie)
 {
-	if(errArg < SLP_OK)
+	if (errArg < SLP_OK)
 	{
 		LoggerRef* pLogger = (LoggerRef*)cookie;
 		(*pLogger)->logError(Format("cimom received error durring SLP registration: %1",
@@ -197,7 +197,7 @@ private:
 	{
 		SLPError err;
 		SLPHandle slpHandle;
-		if((err = SLPOpen("en", SLP_FALSE, &slpHandle)) != SLP_OK)
+		if ((err = SLPOpen("en", SLP_FALSE, &slpHandle)) != SLP_OK)
 		{
 			env->getLogger()->logError(Format("SLPProvider::doSlpRegister - SLPOpenFailed: %1",
 				err).c_str());
@@ -330,7 +330,7 @@ private:
 		catch (const StringConversionException&)
 		{
 		}
-		for(size_t i = 0; i < urls.size(); i++)
+		for (size_t i = 0; i < urls.size(); i++)
 		{
 			String urlString;
 			urlString = OW_CIMOM_SLP_URL_PREFIX;
@@ -345,7 +345,7 @@ private:
 				SLP_TRUE,					// Fresh registration (Always true for OpenSLP)
 				slpRegReport,				// Call back for registration error reporting
 				&lgr);						// Give cimom handle to callback
-			if(err != SLP_OK)
+			if (err != SLP_OK)
 			{
 				env->getLogger()->logError(Format("cimom failed to register url with SLP: %1",
 					urlString).c_str());

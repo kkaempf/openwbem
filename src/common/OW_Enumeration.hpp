@@ -169,7 +169,7 @@ private:
 		
 		// Check that the correct signature is on the file
 		UInt32 fileSig;
-		if(f.read(reinterpret_cast<char*>(&fileSig), sizeof(fileSig)) != sizeof(fileSig))
+		if (f.read(reinterpret_cast<char*>(&fileSig), sizeof(fileSig)) != sizeof(fileSig))
 		{
 			OW_THROW(EnumerationException, "Failure to read enumeration "
 				"signature");
@@ -186,7 +186,7 @@ private:
 		{
 			OW_THROW(EnumerationException, "Failure to seek");
 		}
-		if(f.read(reinterpret_cast<char*>(&size), sizeof(size), whence) != sizeof(size))
+		if (f.read(reinterpret_cast<char*>(&size), sizeof(size), whence) != sizeof(size))
 		{
 			OW_THROW(EnumerationException, "Failure to read enumeration "
 				"size");

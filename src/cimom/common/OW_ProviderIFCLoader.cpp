@@ -78,7 +78,7 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 		" interfaces from: %1", libdir));
 	StringArray libs;
 	FileSystem::getDirectoryContents(libdir, libs);
-	if(libs.size() == 0)
+	if (libs.size() == 0)
 	{
 		env->getLogger()->logDebug("ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any"
 			" provider interfaces");
@@ -87,12 +87,12 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 	int ifcCount = 0;
 	for (StringArray::size_type i = 0; i < libs.size(); ++i)
 	{
-		if(!libs[i].endsWith(OW_SHAREDLIB_EXTENSION))
+		if (!libs[i].endsWith(OW_SHAREDLIB_EXTENSION))
 		{
 			continue;
 		}
 #ifdef OW_DARWIN
-		if(libs[i].indexOf(OW_VERSION) != String::npos)
+		if (libs[i].indexOf(OW_VERSION) != String::npos)
 		{
 				continue;
 		}
@@ -102,7 +102,7 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 			ProviderIFCBaseIFCRef rval;
 			ProviderIFCBaseIFCRef pmr;
 			rval = createProviderIFCFromLib(libdir + OW_FILENAME_SEPARATOR + libs[i]);
-			if(rval)
+			if (rval)
 			{
 				ifcCount++;
 				ifcs.push_back(rval);

@@ -690,7 +690,7 @@ public:
 		};
 		Compare( const CompareTypes type )
 		{
-			switch(type)
+			switch (type)
 			{
 				case EqualsType:
 					m_ref = CompareImplRef(new Equals);

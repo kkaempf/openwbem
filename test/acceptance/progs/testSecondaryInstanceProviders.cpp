@@ -54,7 +54,7 @@ using namespace WBEMFlags;
 
 // create our own TEST_ASSERT, because assert and ASSERT will be turned off
 // in non-debug mode.
-#define TEST_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
+#define TEST_ASSERT(CON) if (!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
 
 //////////////////////////////////////////////////////////////////////////////
 void

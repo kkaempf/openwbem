@@ -61,7 +61,7 @@ UnnamedPipe::writeString(const String& strData)
 {
 	int rc;
 	int len = static_cast<int>(strData.length()+1);
-	if((rc = this->writeInt(len)) != -1)
+	if ((rc = this->writeInt(len)) != -1)
 	{
 		rc = this->write(strData.c_str(), len);
 	}
@@ -80,12 +80,12 @@ UnnamedPipe::readString(String& strData)
 	int len;
 	int rc;
 	
-	if((rc = this->readInt(&len)) != -1)
+	if ((rc = this->readInt(&len)) != -1)
 	{
 		AutoPtrVec<char> p(new char[len+1]);
 
 		// writeString() writes the '\0' terminator, so we don't worry about it here.
-		if((rc = this->read(p.get(), len)) != -1)
+		if ((rc = this->read(p.get(), len)) != -1)
 		{	
 			strData = String(String::E_TAKE_OWNERSHIP, p.release(), len);
 		}

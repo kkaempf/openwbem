@@ -59,7 +59,7 @@ public:
 	explicit AutoPtr(X* p = 0) : _ptr(p) {}
 	AutoPtr& operator= (X* p)
 	{
-		if(p != _ptr)
+		if (p != _ptr)
 		{
 			reset();
 			_ptr = p;
@@ -104,7 +104,7 @@ public:
 	explicit AutoPtrVec(X* p = 0) : _ptr(p) {}
 	AutoPtrVec& operator= (X* p)
 	{
-		if(p != _ptr)
+		if (p != _ptr)
 		{
 			reset();
 			_ptr = p;

@@ -60,7 +60,7 @@ static unsigned int seed = 0;
 RandomNumber::RandomNumber(Int32 lowVal, Int32 highVal)
 : m_lowVal(lowVal), m_highVal(highVal)
 {
-	if(lowVal > highVal)
+	if (lowVal > highVal)
 	{
 		m_lowVal = highVal;
 		m_highVal = lowVal;

@@ -67,26 +67,26 @@ castValueToDataType(const CIMValue& value,
 	try
 	{
 		// If NULL data type, then return NULL value.
-		if(!dataType || !value)
+		if (!dataType || !value)
 		{
 			return CIMValue(CIMNULL);
 		}
 		// If the CIMValue is already what it needs to be, then just return it.
-		if(value.getType() == dataType.getType()
+		if (value.getType() == dataType.getType()
 			&& value.isArray() == dataType.isArrayType())
 		{
 			return value;
 		}
 		// If we can't convert to the data type specified in the dataType argument,
 		// then throw an exception
-		if(!isCompatible(value.getType(), dataType.getType()))
+		if (!isCompatible(value.getType(), dataType.getType()))
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
 				Format("Failed to convert \"%1\" to %2", value.toString(),
 					dataType.toString()).c_str());
 		}
 		// If value is an array, then do special array processing
-		if(value.isArray())
+		if (value.isArray())
 		{
 			return convertArray(value, dataType);
 		}
@@ -94,7 +94,7 @@ castValueToDataType(const CIMValue& value,
 		String strValue = value.toString();
 		CIMValue cv(CIMNULL);
 		cv = convertString(strValue, dataType);
-		if(dataType.isArrayType())
+		if (dataType.isArrayType())
 		{
 			makeValueArray(cv);
 		}
@@ -111,11 +111,11 @@ castValueToDataType(const CIMValue& value,
 void
 makeValueArray(CIMValue& theValue)
 {
-	if(theValue.isArray())
+	if (theValue.isArray())
 	{
 		return;
 	}
-	switch(theValue.getType())
+	switch (theValue.getType())
 	{
 		case CIMDataType::UINT8:
 		{
@@ -231,13 +231,13 @@ makeValueArray(CIMValue& theValue)
 bool
 isCompatible(CIMDataType::Type from, CIMDataType::Type to)
 {
-	if(from == to									// Same data types
+	if (from == to									// Same data types
 		|| from == CIMDataType::STRING	// String can convert to anything
 		|| to == CIMDataType::STRING)		// Anything can convert to string
 	{
 		return true;
 	}
-	if(to == CIMDataType::DATETIME
+	if (to == CIMDataType::DATETIME
 		|| to == CIMDataType::REFERENCE
 		|| from == CIMDataType::DATETIME
 		|| from == CIMDataType::REFERENCE)
@@ -253,11 +253,11 @@ isCompatible(CIMDataType::Type from, CIMDataType::Type to)
 	bool fromNumeric = CIMDataType::isNumericType(from);
 	bool toNumeric = CIMDataType::isNumericType(to);
 	// If we're converting to any numeric data type
-	if(toNumeric
+	if (toNumeric
 		|| to == CIMDataType::CHAR16
 		|| to == CIMDataType::BOOLEAN)
 	{
-		if(fromNumeric
+		if (fromNumeric
 			|| from == CIMDataType::BOOLEAN
 			|| from == CIMDataType::CHAR16)
 		{
@@ -282,20 +282,20 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 	bool onlyOne = !dataType.isArrayType();
 	StringArray strArray = convertToStringArray(value, onlyOne);
 	size_t sz = strArray.size();
-	if(onlyOne)
+	if (onlyOne)
 	{
-		if(sz)
+		if (sz)
 		{
 			rcv = convertString(strArray[0], dataType);
 		}
 		return rcv;
 	}
-	switch(dataType.getType())
+	switch (dataType.getType())
 	{
 		case CIMDataType::UINT8:
 		{
 			UInt8Array ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toUInt8();
 			}
@@ -305,7 +305,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 		case CIMDataType::SINT8:
 		{
 			Int8Array ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toInt8();
 			}
@@ -315,7 +315,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 		case CIMDataType::UINT16:
 		{
 			UInt16Array ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toUInt16();
 			}
@@ -325,7 +325,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 		case CIMDataType::SINT16:
 		{
 			Int16Array ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toInt16();
 			}
@@ -335,7 +335,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 		case CIMDataType::UINT32:
 		{
 			UInt32Array ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toUInt32();
 			}
@@ -345,7 +345,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 		case CIMDataType::SINT32:
 		{
 			Int32Array ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toInt32();
 			}
@@ -355,7 +355,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 		case CIMDataType::UINT64:
 		{
 			UInt64Array ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toUInt64();
 			}
@@ -365,7 +365,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 		case CIMDataType::SINT64:
 		{
 			Int64Array ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toInt64();
 			}
@@ -378,7 +378,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 		case CIMDataType::BOOLEAN:
 		{
 			BoolArray ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toBool();
 			}
@@ -388,7 +388,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 		case CIMDataType::REAL32:
 		{
 			Real32Array ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toReal32();
 			}
@@ -398,7 +398,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 		case CIMDataType::REAL64:
 		{
 			Real64Array ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toReal64();
 			}
@@ -408,7 +408,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 		case CIMDataType::DATETIME:
 		{
 			CIMDateTimeArray ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = CIMDateTime(strArray[i]);
 			}
@@ -418,7 +418,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 		case CIMDataType::CHAR16:
 		{
 			Char16Array ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = Char16(strArray[i]);
 			}
@@ -428,7 +428,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 		case CIMDataType::REFERENCE:
 		{
 			CIMObjectPathArray ra(sz);
-			for(size_t i = 0; i < sz; i++)
+			for (size_t i = 0; i < sz; i++)
 			{
 				ra[i] = CIMObjectPath::parse(strArray[i]);
 			}
@@ -446,13 +446,13 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 {
 	size_t rasize = (onlyOne) ? 1 : value.getArraySize();
 	StringArray rvra(rasize);
-	switch(value.getType())
+	switch (value.getType())
 	{
 		case CIMDataType::UINT8:
 		{
 			UInt8Array ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = String(UInt32(ra[i]));
 			}
@@ -462,7 +462,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			Int8Array ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = String(Int32(ra[i]));
 			}
@@ -472,7 +472,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			UInt16Array ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = String(UInt32(ra[i]));
 			}
@@ -482,7 +482,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			Int16Array ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = String(Int32(ra[i]));
 			}
@@ -492,7 +492,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			UInt32Array ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = String(ra[i]);
 			}
@@ -502,7 +502,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			Int32Array ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = String(ra[i]);
 			}
@@ -512,7 +512,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			UInt64Array ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = String(ra[i]);
 			}
@@ -522,7 +522,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			Int64Array ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = String(ra[i]);
 			}
@@ -532,7 +532,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			StringArray ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = ra[i];
 			}
@@ -542,7 +542,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			BoolArray ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = ra[i].toString();
 			}
@@ -552,7 +552,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			Real32Array ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = String(Real64(ra[i]));
 			}
@@ -562,7 +562,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			Real64Array ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = String(ra[i]);
 			}
@@ -572,7 +572,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			CIMDateTimeArray ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = ra[i].toString();
 			}
@@ -582,7 +582,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			Char16Array ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = ra[i].toString();
 			}
@@ -592,7 +592,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 		{
 			CIMObjectPathArray ra;
 			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
+			for (size_t i = 0; i < rasize; i++)
 			{
 				rvra[i] = ra[i].toString();
 			}

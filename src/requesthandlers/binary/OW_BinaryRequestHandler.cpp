@@ -107,7 +107,7 @@ getUserId(const String& userName, UserId& userId)
 	bool rv = false;
 	struct passwd* pwd;
 	pwd = ::getpwnam(userName.c_str());
-	if(pwd)
+	if (pwd)
 	{
 		userId = pwd->pw_uid;
 		rv = true;
@@ -120,9 +120,9 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	std::ostream* ostrError, OperationContext& context)
 {
 	String userName = context.getStringDataWithDefault(OperationContext::USER_NAME);
-	if(!userName.empty())
+	if (!userName.empty())
 	{
-		if(!getUserId(userName, m_userId))
+		if (!getUserId(userName, m_userId))
 		{
 			m_userId = UserId(-1);
 		}
@@ -141,7 +141,7 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		BinarySerialization::read(*istrm, funcNo);
 		try
 		{
-			switch(funcNo)
+			switch (funcNo)
 			{
 				case BIN_GETQUAL:
 					lgr->logDebug("BinaryRequestHandler get qualifier"
@@ -517,7 +517,7 @@ BinaryRequestHandler::getClass(CIMOMHandleIFCRef chdl,
 	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
 	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
 	Bool nullPropertyList(BinarySerialization::readBool(istrm));
-	if(!nullPropertyList)
+	if (!nullPropertyList)
 	{
 		propList = BinarySerialization::readStringArray(istrm);
 		propListPtr = &propList;
@@ -540,7 +540,7 @@ BinaryRequestHandler::getInstance(CIMOMHandleIFCRef chdl,
 	StringArray propList;
 	StringArray* propListPtr = 0;
 	Bool nullPropertyList(BinarySerialization::readBool(istrm));
-	if(!nullPropertyList)
+	if (!nullPropertyList)
 	{
 		propList = BinarySerialization::readStringArray(istrm);
 		propListPtr = &propList;
@@ -572,7 +572,7 @@ BinaryRequestHandler::createInstance(CIMOMHandleIFCRef chdl,
 	String className = cimInstance.getClassName();
 	//CIMObjectPath realPath(className, path.getNameSpace());
 	// Special treatment for __Namespace class
-	if(className.equals(CIMClass::NAMESPACECLASS))
+	if (className.equals(CIMClass::NAMESPACECLASS))
 	{
 		CIMProperty prop = cimInstance.getProperty(
 			CIMProperty::NAME_PROPERTY);
@@ -585,7 +585,7 @@ BinaryRequestHandler::createInstance(CIMOMHandleIFCRef chdl,
 		}
 		// If the name property didn't come acrossed as a key, then
 		// set the name property as the key
-		if(!prop.isKey())
+		if (!prop.isKey())
 		{
 			prop.addQualifier(CIMQualifier::createKeyQualifier());
 		}
@@ -634,7 +634,7 @@ BinaryRequestHandler::modifyInstance(CIMOMHandleIFCRef chdl,
 	StringArray propList;
 	StringArray* propListPtr = 0;
 	Bool nullPropertyList(BinarySerialization::readBool(istrm));
-	if(!nullPropertyList)
+	if (!nullPropertyList)
 	{
 		propList = BinarySerialization::readStringArray(istrm);
 		propListPtr = &propList;
@@ -653,7 +653,7 @@ BinaryRequestHandler::setProperty(CIMOMHandleIFCRef chdl,
 	String propName(BinarySerialization::readString(istrm));
 	Bool isValue(BinarySerialization::readBool(istrm));
 	CIMValue cv(CIMNULL);
-	if(isValue)
+	if (isValue)
 	{
 		cv = BinarySerialization::readValue(istrm);
 	}
@@ -676,7 +676,7 @@ BinaryRequestHandler::getProperty(CIMOMHandleIFCRef chdl,
 	BinarySerialization::write(ostrm, BIN_OK);
 	Bool isValue = (cv) ? true : false;
 	BinarySerialization::writeBool(ostrm, isValue);
-	if(isValue)
+	if (isValue)
 	{
 		BinarySerialization::writeValue(ostrm, cv);
 	}
@@ -711,7 +711,7 @@ BinaryRequestHandler::enumInstances(CIMOMHandleIFCRef chdl,
 	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
 	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
 	Bool nullPropertyList(BinarySerialization::readBool(istrm));
-	if(!nullPropertyList)
+	if (!nullPropertyList)
 	{
 		propList = BinarySerialization::readStringArray(istrm);
 		propListPtr = &propList;
@@ -754,7 +754,7 @@ BinaryRequestHandler::invokeMethod(CIMOMHandleIFCRef chdl,
 	BinarySerialization::readArray(istrm, inparms);
 	CIMValue cv = chdl->invokeMethod(ns, path, methodName, inparms, outparms);
 	BinarySerialization::write(ostrm, BIN_OK);
-	if(cv)
+	if (cv)
 	{
 		BinarySerialization::writeBool(ostrm, Bool(true));
 		BinarySerialization::writeValue(ostrm, cv);
@@ -798,7 +798,7 @@ BinaryRequestHandler::associators(CIMOMHandleIFCRef chdl,
 	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
 	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
 	Bool nullPropertyList(BinarySerialization::readBool(istrm));
-	if(!nullPropertyList)
+	if (!nullPropertyList)
 	{
 		propList = BinarySerialization::readStringArray(istrm);
 		propListPtr = &propList;
@@ -859,7 +859,7 @@ BinaryRequestHandler::references(CIMOMHandleIFCRef chdl,
 	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
 	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
 	Bool nullPropertyList(BinarySerialization::readBool(istrm));
-	if(!nullPropertyList)
+	if (!nullPropertyList)
 	{
 		propList = BinarySerialization::readStringArray(istrm);
 		propListPtr = &propList;
@@ -932,7 +932,7 @@ BinaryRequestHandler::writeFileName(std::ostream& ostrm,
 	const String& fname)
 {
 	LoggerRef lgr = getEnvironment()->getLogger();
-	if(m_userId == UserId(-1))
+	if (m_userId == UserId(-1))
 	{
 		lgr->logError("Binary request handler cannot change file ownership:"
 			" Owner unknown");
@@ -940,7 +940,7 @@ BinaryRequestHandler::writeFileName(std::ostream& ostrm,
 	}
 	try
 	{
-		if(FileSystem::changeFileOwner(fname, m_userId) != 0)
+		if (FileSystem::changeFileOwner(fname, m_userId) != 0)
 		{
 			lgr->logError(Format("Binary request handler failed changing"
 				" ownership on file %1", fname));

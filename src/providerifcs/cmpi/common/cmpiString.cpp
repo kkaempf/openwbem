@@ -33,7 +33,7 @@ static CMPIStatus stringRelease(CMPIString *eStr)
 {
 	//std::cout << "****** stringRelease()" << std::endl;
 
-	if(eStr->hdl)
+	if (eStr->hdl)
 	{
 		::free(eStr->hdl);
 		((CMPI_Object*)eStr)->unlinkAndDelete();

@@ -213,7 +213,7 @@ static void initializeTheKey()
 	struct sigaction temp;
 	memset(&temp, '\0', sizeof(temp));
 	sigaction(SIGUSR1, 0, &temp);
-	if(temp.sa_handler != SIG_IGN)
+	if (temp.sa_handler != SIG_IGN)
 	{
 		temp.sa_handler = SIG_IGN;
 		sigemptyset(&temp.sa_mask);
@@ -406,7 +406,7 @@ getThreadHandle(DWORD threadId)
 	MutexLock ml(g_threadsGuard);
 	HANDLE chdl = 0;
 	Win32ThreadMap::iterator it = g_threads.find(threadId);
-	if(it != g_threads.end())
+	if (it != g_threads.end())
 	{
 		chdl = it->second.handle;
 	}
@@ -419,7 +419,7 @@ setThreadPointer(DWORD threadId, Thread* pTheThread)
 {
 	MutexLock ml(g_threadsGuard);
 	Win32ThreadMap::iterator it = g_threads.find(threadId);
-	if(it != g_threads.end())
+	if (it != g_threads.end())
 	{
 		it->second.pTheThread = pTheThread;
 	}
@@ -432,7 +432,7 @@ removeThreadFromMap(DWORD threadId)
 	MutexLock ml(g_threadsGuard);
 	HANDLE chdl = 0;
 	Win32ThreadMap::iterator it = g_threads.find(threadId);
-	if(it != g_threads.end())
+	if (it != g_threads.end())
 	{
 		chdl = it->second.handle;
 		g_threads.erase(it);
@@ -447,7 +447,7 @@ getThreadObject(DWORD threadId)
 	Thread* pTheThread = 0;
 	MutexLock ml(g_threadsGuard);
 	Win32ThreadMap::iterator it = g_threads.find(threadId);
-	if(it != g_threads.end())
+	if (it != g_threads.end())
 	{
 		pTheThread = it->second.pTheThread;
 	}
@@ -471,7 +471,7 @@ createThread(Thread_t& handle, ThreadFunction func,
 	parg->m_funcParm = funcParm;
 	hThread = reinterpret_cast<HANDLE>(::_beginthreadex(NULL, 0, threadStarter,
 		parg, 0, &threadId));
-	if(hThread != 0)
+	if (hThread != 0)
 	{
 		addThreadToMap(threadId, hThread);
 	}
@@ -491,7 +491,7 @@ void
 destroyThread(Thread_t& threadId)
 {
 	HANDLE thdl = removeThreadFromMap(threadId);
-	if(thdl != 0)
+	if (thdl != 0)
 	{
 		::CloseHandle(thdl);
 	}
@@ -512,11 +512,11 @@ joinThread(Thread_t& threadId, Int32& rvalArg)
 	int cc = -1;
 	DWORD rval;
 	HANDLE thdl = getThreadHandle(threadId);
-	if(thdl != 0)
+	if (thdl != 0)
 	{
-		if(::WaitForSingleObject(thdl, INFINITE) != WAIT_FAILED)
+		if (::WaitForSingleObject(thdl, INFINITE) != WAIT_FAILED)
 		{
-			if(::GetExitCodeThread(thdl, &rval) != 0)
+			if (::GetExitCodeThread(thdl, &rval) != 0)
 			{
 				rvalArg = static_cast<Int32>(rval);
 				cc = 0;
@@ -532,7 +532,7 @@ testCancel()
 {
 	DWORD threadId = ThreadImpl::currentThread();
 	Thread* pTheThread = getThreadObject(threadId);
-	if(pTheThread)
+	if (pTheThread)
 	{
 		NonRecursiveMutexLock l(pTheThread->m_cancelLock);
 		if (pTheThread->m_cancelRequested)
@@ -561,7 +561,7 @@ void sendSignalToThread(Thread_t threadID, int signo)
 void cancel(Thread_t threadId)
 {
 	HANDLE thdl = getThreadHandle(threadId);
-	if(thdl != 0)
+	if (thdl != 0)
 	{
 		::TerminateThread(thdl, -1);
 	}

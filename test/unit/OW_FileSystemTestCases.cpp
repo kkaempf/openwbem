@@ -77,7 +77,7 @@ void OW_FileSystemTestCases::testtryLock()
 			unitAssert(0);
 			break;
 		case 0: // child
-			if( f.tryLock() == -1 && (errno == EAGAIN || errno == EACCES) )
+			if ( f.tryLock() == -1 && (errno == EAGAIN || errno == EACCES) )
 				_exit(0);
 			else
 				_exit(1);
@@ -113,7 +113,7 @@ void OW_FileSystemTestCases::testunlock()
 			unitAssert(0);
 			break;
 		case 0: // child
-			if( f.tryLock() == 0 )
+			if ( f.tryLock() == 0 )
 				_exit(0);
 			else
 				_exit(1);

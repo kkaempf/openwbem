@@ -49,6 +49,6 @@ int main(int argc, char* argv[])
 	
 	HTTPServer htin(port1, port2);
 	htin.process();
-	for(;;);
+	for (;;);
 }
 

@@ -364,7 +364,7 @@ XMLNodeArray
 XMLNodeImpl::getChildren() const
 {
 	XMLNodeArray ar;
-	if( !m_childNode )
+	if ( !m_childNode )
 	{
 		return ar;
 	}
@@ -373,7 +373,7 @@ XMLNodeImpl::getChildren() const
 	{
 		ar.push_back(r);
 		r = r->m_nextNode;
-	} while( r );
+	} while ( r );
 
 	return ar;
 }
@@ -386,7 +386,7 @@ XMLNodeImpl::printNode( std::ostream& ostr ) const
 	XMLAttributeArray aa = getAttrs();
 
 	ostr << "<" << name;
-	for( XMLAttributeArray::const_iterator aiter = aa.begin();
+	for ( XMLAttributeArray::const_iterator aiter = aa.begin();
 			aiter != aa.end(); ++aiter )
 	{
 		ostr << " " << aiter->getName() << "=\"" << XMLEscape(aiter->getValue()) << '"';

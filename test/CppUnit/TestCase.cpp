@@ -143,7 +143,7 @@ void handleSignal(int sigtype, const char* where, TestResult* result, TestCase* 
 {
 	string report = std::string("Failure in ") + where + tc->name();
 
-	switch(sigtype)
+	switch (sigtype)
 	{
 	case SIGTRAP:
 		report += " - SIGTRAP (perhaps integer divide by zero)";

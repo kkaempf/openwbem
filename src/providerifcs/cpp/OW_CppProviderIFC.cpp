@@ -66,7 +66,7 @@ CppProviderIFC::~CppProviderIFC()
 	try
 	{
 		ProviderMap::iterator it = m_provs.begin();
-		while(it != m_provs.end())
+		while (it != m_provs.end())
 		{
 			it->second.setNull();
 			it++;
@@ -74,7 +74,7 @@ CppProviderIFC::~CppProviderIFC()
 	
 		m_provs.clear();
 	
-		for(size_t i = 0; i < m_noUnloadProviders.size(); i++)
+		for (size_t i = 0; i < m_noUnloadProviders.size(); i++)
 		{
 			m_noUnloadProviders[i].setNull();
 		}
@@ -111,10 +111,10 @@ CppProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
-	if(pProv)
+	if (pProv)
 	{
 		CppInstanceProviderIFC* pIP = pProv->getInstanceProvider();
-		if(pIP)
+		if (pIP)
 		{
 			env->getLogger()->logDebug(Format("CPPProviderIFC found instance"
 				" provider %1", provIdString));
@@ -133,10 +133,10 @@ CppProviderIFC::doGetSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& 
 	const char* provIdString)
 {
 	CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
-	if(pProv)
+	if (pProv)
 	{
 		CppSecondaryInstanceProviderIFC* pIP = pProv->getSecondaryInstanceProvider();
-		if(pIP)
+		if (pIP)
 		{
 			env->getLogger()->logDebug(Format("CPPProviderIFC found secondary instance"
 				" provider %1", provIdString));
@@ -154,12 +154,12 @@ IndicationExportProviderIFCRefArray
 CppProviderIFC::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef&)
 {
 	IndicationExportProviderIFCRefArray rvra;
-	for(size_t i = 0; i < m_noUnloadProviders.size(); i++)
+	for (size_t i = 0; i < m_noUnloadProviders.size(); i++)
 	{
 		CppProviderBaseIFCRef pProv = m_noUnloadProviders[i];
 		CppIndicationExportProviderIFC* pIEP =
 			pProv->getIndicationExportProvider();
-		if(pIEP)
+		if (pIEP)
 		{
 			CppIndicationExportProviderIFCRef iepRef(pProv.getLibRef(), pIEP);
 //			iepRef.useRefCountOf(pProv);
@@ -175,11 +175,11 @@ PolledProviderIFCRefArray
 CppProviderIFC::doGetPolledProviders(const ProviderEnvironmentIFCRef&)
 {
 	PolledProviderIFCRefArray rvra;
-	for(size_t i = 0; i < m_noUnloadProviders.size(); i++)
+	for (size_t i = 0; i < m_noUnloadProviders.size(); i++)
 	{
 		CppProviderBaseIFCRef pProv = m_noUnloadProviders[i];
 		CppPolledProviderIFC* pPP = pProv->getPolledProvider();
-		if(pPP)
+		if (pPP)
 		{
 			CppPolledProviderIFCRef ppRef(pProv.getLibRef(), pPP);
 //			ppRef.useRefCountOf(pProv);
@@ -196,10 +196,10 @@ CppProviderIFC::doGetMethodProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
-	if(pProv)
+	if (pProv)
 	{
 		CppMethodProviderIFC* pMP = pProv->getMethodProvider();
-		if(pMP)
+		if (pMP)
 		{
 			env->getLogger()->logDebug(Format("CPPProviderIFC found method provider %1",
 				provIdString));
@@ -220,10 +220,10 @@ CppProviderIFC::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
-	if(pProv)
+	if (pProv)
 	{
 		CppAssociatorProviderIFC* pAP = pProv->getAssociatorProvider();
-		if(pAP)
+		if (pAP)
 		{
 			env->getLogger()->logDebug(Format("CPPProviderIFC found associator provider %1",
 				provIdString));
@@ -244,10 +244,10 @@ CppProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
-	if(pProv)
+	if (pProv)
 	{
 		CppIndicationProviderIFC* pAP = pProv->getIndicationProvider();
-		if(pAP)
+		if (pAP)
 		{
 			env->getLogger()->logDebug(Format("CPPProviderIFC found indication provider %1",
 				provIdString));
@@ -284,7 +284,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 	IndicationProviderInfoArray& indicationProviderInfo)
 {
 	MutexLock ml(m_guard);
-	if(m_loadDone)
+	if (m_loadDone)
 	{
 		return;
 	}
@@ -294,7 +294,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 
 	SharedLibraryLoaderRef ldr =
 		SharedLibraryLoader::createSharedLibraryLoader();
-	if(!ldr)
+	if (!ldr)
 	{
 		env->getLogger()->logError("C++ provider ifc failed to get shared lib"
 			" loader");
@@ -304,18 +304,18 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 	String libPathsStr = env->getConfigItem(
 		ConfigOpts::CPPIFC_PROV_LOC_opt, OW_DEFAULT_CPP_PROVIDER_LOCATION);
 	StringArray paths = libPathsStr.tokenize(";:");
-	for(StringArray::size_type i1 = 0; i1 < paths.size(); i1++)
+	for (StringArray::size_type i1 = 0; i1 < paths.size(); i1++)
 	{
 		StringArray dirEntries;
-		if(!FileSystem::getDirectoryContents(paths[i1], dirEntries))
+		if (!FileSystem::getDirectoryContents(paths[i1], dirEntries))
 		{
 			env->getLogger()->logError(Format("C++ provider ifc failed getting"
 				" contents of directory: %1", paths[i1]));
 			continue;
 		}
-		for(size_t i = 0; i < dirEntries.size(); i++)
+		for (size_t i = 0; i < dirEntries.size(); i++)
 		{
-			if(!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
+			if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
 			{
 				continue;
 			}
@@ -324,7 +324,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			libName += dirEntries[i];
 
 	#ifdef OW_DARWIN
-			if(!FileSystem::isLink(libName))
+			if (!FileSystem::isLink(libName))
 			{
 				continue;
 			}
@@ -332,7 +332,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 	
 			SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 				env->getLogger());
-			if(!theLib)
+			if (!theLib)
 			{
 				env->getLogger()->logError("****************************************");
 				env->getLogger()->logError(Format("C++ provider ifc failed to load library: %1", libName));
@@ -340,7 +340,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				continue;
 			}
 			versionFunc_t versFunc;
-			if(!theLib->getFunctionPointer("getOWVersion",
+			if (!theLib->getFunctionPointer("getOWVersion",
 				versFunc))
 			{
 				env->getLogger()->logError("****************************************");
@@ -350,7 +350,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				continue;
 			}
 			const char* strVer = (*versFunc)();
-			if(strcmp(strVer, OW_VERSION))
+			if (strcmp(strVer, OW_VERSION))
 			{
 				env->getLogger()->logError("****************************************");
 				env->getLogger()->logError(Format("C++ provider ifc got invalid version from provider: %1", strVer));
@@ -359,7 +359,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			}
 			ProviderCreationFunc createProvider;
 			String creationFuncName = String(CREATIONFUNC) + "NO_ID";
-			if(!theLib->getFunctionPointer(creationFuncName,
+			if (!theLib->getFunctionPointer(creationFuncName,
 				createProvider))
 			{
 				// it's not a no-id provider
@@ -388,16 +388,16 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				CppPolledProviderIFC* p_polledProv = p->getPolledProvider();
 				CppIndicationExportProviderIFC* p_indExpProv =
 					p->getIndicationExportProvider();
-				if(p_polledProv || p_indExpProv)
+				if (p_polledProv || p_indExpProv)
 				{
-					if(p_indExpProv)
+					if (p_indExpProv)
 					{
 						env->getLogger()->logDebug(Format("C++ provider ifc"
 							" loaded indication export provider from lib: %1 -"
 							" initializing", libName));
 					}
 
-					if(p_polledProv)
+					if (p_polledProv)
 					{
 						env->getLogger()->logDebug(Format("C++ provider ifc"
 							" loaded polled provider from lib: %1 -"
@@ -463,7 +463,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			// means that the provider doesn't have an identifier (i.e. doesn't
 			// do instance, methods, associators and such.
 			AutoPtr<CppProviderBaseIFC> pProv((*createProvider)());
-			if(!pProv.get())
+			if (!pProv.get())
 			{
 				env->getLogger()->logError("****************************************");
 				env->getLogger()->logError(Format("C++ provider ifc: Libary %1 - %2 returned null provider", libName, creationFuncName));
@@ -475,13 +475,13 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				pProv->getIndicationExportProvider();
 			if (p_itp || p_iep)
 			{
-				if(p_iep)
+				if (p_iep)
 				{
 					env->getLogger()->logDebug(Format("C++ provider ifc loaded"
 						" indication export provider from lib: %1 -"
 						" initializing", libName));
 				}
-				if(p_itp)
+				if (p_itp)
 				{
 					env->getLogger()->logDebug(Format("C++ provider ifc loaded"
 						" polled provider from lib: %1 - initializing",
@@ -506,7 +506,7 @@ CppProviderIFC::loadProvider(const String& libName, LoggerRef logger)
 	provId = provId.substring(3, provId.length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
 
 	SharedLibraryLoaderRef ldr = SharedLibraryLoader::createSharedLibraryLoader();
-	if(!ldr)
+	if (!ldr)
 	{
 		logger->logError("C++ provider ifc FAILED to get shared lib loader");
 		return CppProviderBaseIFCRef();
@@ -524,7 +524,7 @@ CppProviderIFC::loadProvider(const String& libName, LoggerRef logger)
 		return CppProviderBaseIFCRef();
 	}
 	const char* strVer = (*versFunc)();
-	if(strcmp(strVer, OW_VERSION))
+	if (strcmp(strVer, OW_VERSION))
 	{
 		logger->logError(Format("C++ provider ifc got invalid version from provider: %1.", libName));
 		return CppProviderBaseIFCRef();
@@ -532,7 +532,7 @@ CppProviderIFC::loadProvider(const String& libName, LoggerRef logger)
 
 	ProviderCreationFunc createProvider;
 	String creationFuncName = String(CREATIONFUNC) + provId;
-	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
+	if (!theLib->getFunctionPointer(creationFuncName, createProvider))
 	{
 		logger->logError(Format("C++ provider ifc: Libary %1 does not contain %2 function.",
 			libName, creationFuncName));
@@ -541,7 +541,7 @@ CppProviderIFC::loadProvider(const String& libName, LoggerRef logger)
 
 	CppProviderBaseIFC* pProv = (*createProvider)();
 
-	if(!pProv)
+	if (!pProv)
 	{
 		logger->logError(Format("C++ provider ifc: Libary %1 -"
 			" %2 returned null provider. Not loaded.", libName, creationFuncName));
@@ -566,7 +566,7 @@ CppProviderIFC::getProvider(
 
 	String provId(provIdString);
 	ProviderMap::iterator it = m_provs.find(provId);
-	if(it != m_provs.end())
+	if (it != m_provs.end())
 	{
 		return it->second;
 	}
@@ -577,7 +577,7 @@ CppProviderIFC::getProvider(
 	String libPathsStr = env->getConfigItem(
 		ConfigOpts::CPPIFC_PROV_LOC_opt, OW_DEFAULT_CPP_PROVIDER_LOCATION);
 	StringArray paths = libPathsStr.tokenize(";:");
-	for(StringArray::size_type i = 0; i < paths.size(); i++)
+	for (StringArray::size_type i = 0; i < paths.size(); i++)
 	{
 		libName = paths[i];
 		libName += OW_FILENAME_SEPARATOR;
@@ -585,7 +585,7 @@ CppProviderIFC::getProvider(
 		libName += provId;
 		libName += OW_SHAREDLIB_EXTENSION;
 
-		if(!FileSystem::exists(libName))
+		if (!FileSystem::exists(libName))
 		{
 			continue;
 		}
@@ -595,7 +595,7 @@ CppProviderIFC::getProvider(
 
 		rval = loadProvider(libName, env->getLogger());
 
-		if(rval)
+		if (rval)
 		{
 			break;
 		}
@@ -659,7 +659,7 @@ CppProviderIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 		  iter != m_provs.end();)
 	{
 		// If this is not a persistent provider, see if we can unload it.
-		if(!iter->second->getPersist())
+		if (!iter->second->getPersist())
 		{
 			DateTime provDt = iter->second->getLastAccessTime();
 			provDt.addMinutes(iTimeWindow);

@@ -78,7 +78,7 @@ void
 ThreadCounter::waitForAll(UInt32 sTimeout, UInt32 usTimeout)
 {
 	NonRecursiveMutexLock runCountLock(m_runCountGuard);
-	while(m_runCount > 0)
+	while (m_runCount > 0)
 	{
 		if (!m_runCountCondition.timedWait(runCountLock, sTimeout, usTimeout))
 		{

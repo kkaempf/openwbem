@@ -72,16 +72,16 @@ HDBHandle
 GenericHDBRepository::getHandle()
 {
 	MutexLock ml(m_guard);
-	for(int i = 0; i < int(m_handles.size()); i++)
+	for (int i = 0; i < int(m_handles.size()); i++)
 	{
-		if(m_handles[i].getUserValue() == HDL_NOTINUSE)
+		if (m_handles[i].getUserValue() == HDL_NOTINUSE)
 		{
 			m_handles[i].setUserValue(i);		// Set user value to index
 			return m_handles[i];
 		}
 	}
 	HDBHandle hdl = m_hdb.getHandle();
-	if(m_handles.size() < MAXHANDLES)
+	if (m_handles.size() < MAXHANDLES)
 	{
 		hdl.setUserValue(m_handles.size());
 		m_handles.append(hdl);
@@ -98,7 +98,7 @@ GenericHDBRepository::freeHandle(HDBHandle& hdl)
 {
 	MutexLock ml(m_guard);
 	Int32 uv = hdl.getUserValue();
-	if(uv > HDL_NOTINUSE && uv < Int32(m_handles.size()))
+	if (uv > HDL_NOTINUSE && uv < Int32(m_handles.size()))
 	{
 		// Handle is from the cache, so flag it as not in use.
 		hdl.flush();
@@ -121,7 +121,7 @@ GenericHDBRepository::open(const String& path)
 	//String contk("root");
 	//contk.toLowerCase();
 	//HDBNode node = hdl->getNode(contk);
-	//if(!node)
+	//if (!node)
 	//{
 	//	node = HDBNode(contk, contk.length()+1,
 	//		reinterpret_cast<const unsigned char*>(contk.c_str()));
@@ -134,14 +134,14 @@ void
 GenericHDBRepository::close()
 {
 	MutexLock ml(m_guard);
-	if(!m_opened)
+	if (!m_opened)
 	{
 		return;
 	}
 	m_opened = false;
-	for(int i = 0; i < int(m_handles.size()); i++)
+	for (int i = 0; i < int(m_handles.size()); i++)
 	{
-		if(m_handles[i].getUserValue() > HDL_NOTINUSE)
+		if (m_handles[i].getUserValue() > HDL_NOTINUSE)
 		{
 			//cerr << "GenericHDBRepository::close HANDLES ARE STILL IN USE!!!!"
 			//	<< endl;
@@ -156,14 +156,14 @@ HDBNode
 GenericHDBRepository::getNameSpaceNode(HDBHandleLock& hdl,
 	String ck)
 {
-	if(ck.empty())
+	if (ck.empty())
 	{
 		return HDBNode();
 	}
 	HDBNode node = hdl->getNode(ck);
-	if(node)
+	if (node)
 	{
-		if(!node.areAllFlagsOn(HDBNSNODE_FLAG))
+		if (!node.areAllFlagsOn(HDBNSNODE_FLAG))
 		{
 			OW_THROW(IOException, "logic error. Expected namespace node");
 		}
@@ -178,12 +178,12 @@ GenericHDBRepository::createNameSpace(String ns)
 	throwIfNotOpen();
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode node;
-	if(ns.empty())
+	if (ns.empty())
 	{
 		return -1;
 	}
 	node = hdl->getNode(ns);
-	if(!node)
+	if (!node)
 	{
 		// create the namespace
 		node = HDBNode(ns, ns.length()+1,
@@ -195,7 +195,7 @@ GenericHDBRepository::createNameSpace(String ns)
 	else
 	{
 		// it already exists, return -1.
-		if(!node.areAllFlagsOn(HDBNSNODE_FLAG))
+		if (!node.areAllFlagsOn(HDBNSNODE_FLAG))
 		{
 			OW_THROW(IOException,
 				"logic error. read namespace node that is not a namespace");
@@ -209,16 +209,16 @@ void
 GenericHDBRepository::deleteNameSpace(String key)
 {
 	throwIfNotOpen();
-	if(key.equals("root"))
+	if (key.equals("root"))
 	{
 		OW_THROWCIMMSG(CIMException::FAILED,
 			"cannot delete root namespace");
 	}
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode node = hdl->getNode(key);
-	if(node)
+	if (node)
 	{
-		if(!node.areAllFlagsOn(HDBNSNODE_FLAG))
+		if (!node.areAllFlagsOn(HDBNSNODE_FLAG))
 		{
 			OW_THROW(IOException, "logic error. deleting non-namespace node");
 		}
@@ -237,9 +237,9 @@ GenericHDBRepository::nameSpaceExists(String key)
 	throwIfNotOpen();
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode node = hdl->getNode(key);
-	if(node)
+	if (node)
 	{
-		if(!node.areAllFlagsOn(HDBNSNODE_FLAG))
+		if (!node.areAllFlagsOn(HDBNSNODE_FLAG))
 		{
 			return false;
 		}
@@ -252,7 +252,7 @@ void
 GenericHDBRepository::nodeToCIMObject(CIMBase& cimObj,
 	const HDBNode& node)
 {
-	if(node)
+	if (node)
 	{
 		DataIStream istrm(node.getDataLen(), node.getData());
 		cimObj.readObject(istrm);

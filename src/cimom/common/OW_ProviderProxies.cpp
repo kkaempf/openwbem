@@ -768,12 +768,12 @@ namespace
 		String wk = env->getOperationContext().getStringDataWithDefault(
 			OperationContext::CIMOM_UIDKEY);
 
-		if(!wk.empty())
+		if (!wk.empty())
 		{
 			cimomuid = wk.toUInt32();
 			wk = env->getOperationContext().getStringDataWithDefault(
 				OperationContext::CURUSER_UIDKEY);
-			if(!wk.empty())
+			if (!wk.empty())
 			{
 				useruid = wk.toUInt32();
 			}

@@ -167,7 +167,7 @@ static CMPIString* mbEncToString(CMPIBroker *, void * o, CMPIStatus * rc)
 	{
 		str = ((OpenWBEM::CIMObjectPath*)obj->hdl)->toString();
 	}
-	else if(obj->ftab == (void*) CMPI_String_Ftab)
+	else if (obj->ftab == (void*) CMPI_String_Ftab)
 	{
 		str = *((OpenWBEM::String*) obj->hdl);
 	}

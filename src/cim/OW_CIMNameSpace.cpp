@@ -76,7 +76,7 @@ CIMNameSpace::CIMNameSpace(const CIMUrl& hostUrl,
 	CIMBase(), m_pdata(new NSData)
 {
 	m_pdata->m_url = hostUrl;
-	if(nameSpace.empty())
+	if (nameSpace.empty())
 	{
 		//m_pdata->m_nameSpace = String(CIM_OW_DEFAULT_NS);
 	}
@@ -89,7 +89,7 @@ CIMNameSpace::CIMNameSpace(const CIMUrl& hostUrl,
 CIMNameSpace::CIMNameSpace(const String& nameSpace) :
 	CIMBase(), m_pdata(new NSData)
 {
-	if(nameSpace.empty())
+	if (nameSpace.empty())
 	{
 		//m_pdata->m_nameSpace = String(CIM_OW_DEFAULT_NS);
 	}
@@ -102,7 +102,7 @@ CIMNameSpace::CIMNameSpace(const String& nameSpace) :
 CIMNameSpace::CIMNameSpace(const char* nameSpace) :
 	CIMBase(), m_pdata(new NSData)
 {
-	if(nameSpace == 0 || nameSpace[0] == '\0')
+	if (nameSpace == 0 || nameSpace[0] == '\0')
 	{
 		//m_pdata->m_nameSpace = String(CIM_OW_DEFAULT_NS);
 	}
@@ -189,7 +189,7 @@ CIMNameSpace::setNameSpace(const String& nameSpace)
 	String tns(nameSpace);
 	tns.trim();
 	const char* p = tns.c_str();
-	while(*p && *p == '/')
+	while (*p && *p == '/')
 	{
 		p++;
 	}
@@ -227,7 +227,7 @@ CIMNameSpace::readObject(istream &istrm)
 	CIMUrl url(CIMNULL);
 	url.readObject(istrm);
 	// Assign here in case exception gets thrown on preceeding readObjects
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		m_pdata = new NSData;
 	}

@@ -182,12 +182,12 @@ CIMQualifier::getDefaults() const
 bool
 CIMQualifier::hasFlavor(const CIMFlavor& flavor) const
 {
-	if(flavor)
+	if (flavor)
 	{
 		size_t tsize = m_pdata->m_flavors.size();
-		for(size_t i = 0; i < tsize; i++)
+		for (size_t i = 0; i < tsize; i++)
 		{
-			if(m_pdata->m_flavors[i].getFlavor() == flavor.getFlavor())
+			if (m_pdata->m_flavors[i].getFlavor() == flavor.getFlavor())
 			{
 				return true;
 			}
@@ -199,21 +199,21 @@ CIMQualifier::hasFlavor(const CIMFlavor& flavor) const
 CIMQualifier&
 CIMQualifier::addFlavor(const CIMFlavor& flavor)
 {
-	if(flavor)
+	if (flavor)
 	{
 		Int32 flavorValue = flavor.getFlavor();
 		//
 		// Don't add it if its already present
 		//
 		size_t tsize = m_pdata->m_flavors.size();
-		for(size_t i = 0; i < tsize; i++)
+		for (size_t i = 0; i < tsize; i++)
 		{
-			if(m_pdata->m_flavors[i].getFlavor() == flavorValue)
+			if (m_pdata->m_flavors[i].getFlavor() == flavorValue)
 			{
 				return *this;
 			}
 		}
-		switch(flavorValue)
+		switch (flavorValue)
 		{
 			case CIMFlavor::ENABLEOVERRIDE:
 				removeFlavor(CIMFlavor::DISABLEOVERRIDE);
@@ -239,7 +239,7 @@ CIMQualifier::removeFlavor(Int32 flavor)
 	size_t i = 0;
 	while (i < m_pdata->m_flavors.size())
 	{
-		if(m_pdata->m_flavors[i].getFlavor() == flavor)
+		if (m_pdata->m_flavors[i].getFlavor() == flavor)
 		{
 			m_pdata->m_flavors.remove(i);
 		}
@@ -323,7 +323,7 @@ CIMQualifier::readObject(istream &istrm)
 
 	name.readObject(istrm);
 	isValue.readObject(istrm);
-	if(isValue)
+	if (isValue)
 	{
 		qualifierValue.readObject(istrm);
 	}
@@ -337,7 +337,7 @@ CIMQualifier::readObject(istream &istrm)
 		language.readObject(istrm);
 	}
 
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		m_pdata = new QUALData;
 	}
@@ -356,11 +356,11 @@ CIMQualifier::writeObject(ostream &ostrm) const
 
 	m_pdata->m_name.writeObject(ostrm);
 	CIMValue qv = m_pdata->m_qualifierValue;
-	if(!qv && m_pdata->m_qualifierType)
+	if (!qv && m_pdata->m_qualifierType)
 	{
 		qv = m_pdata->m_qualifierType.getDefaultValue();
 	}
-	if(m_pdata->m_qualifierValue)
+	if (m_pdata->m_qualifierValue)
 	{
 		Bool(true).writeObject(ostrm);
 		qv.writeObject(ostrm);
@@ -387,7 +387,7 @@ CIMQualifier::toMOF() const
 		rv += m_pdata->m_language;
 	}
 
-	if(m_pdata->m_qualifierValue)
+	if (m_pdata->m_qualifierValue)
 	{
 		rv += '(';
 		rv += m_pdata->m_qualifierValue.toMOF();

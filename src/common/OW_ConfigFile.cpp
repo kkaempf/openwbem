@@ -57,7 +57,7 @@ void loadConfigFile(const String& filename, ConfigMap& rval)
 	
 	String line;
 	int lineNum = 0;
-	while(file)
+	while (file)
 	{
 		lineNum++;
 		line = String::getLine(file);
@@ -71,14 +71,14 @@ void loadConfigFile(const String& filename, ConfigMap& rval)
 			size_t idx = line.indexOf('=');
 			if (idx != String::npos)
 			{
-				if(idx + 1 < line.length())
+				if (idx + 1 < line.length())
 				{
 					String itemValue = line.substring(idx + 1).trim();
-					if(!itemValue.empty())
+					if (!itemValue.empty())
 					{
 						String item = line.substring(0, idx).trim();
 						ConfigMap::iterator it = rval.find(item);
-						if(it == rval.end())
+						if (it == rval.end())
 						{
 							rval.insert(std::make_pair(item, itemValue));
 						}
@@ -100,7 +100,7 @@ String
 getConfigItem(const ConfigMap& configItems, const String &itemName, const String& defRetVal)
 {
 	ConfigMap::const_iterator i = configItems.find(itemName);
-	if(i != configItems.end())
+	if (i != configItems.end())
 	{
 		return i->second;
 	}
@@ -116,7 +116,7 @@ setConfigItem(ConfigMap& configItems, const String& itemName,
 	const String& value, EOverwritePreviousFlag overwritePrevious)
 {
 	ConfigMap::iterator it = configItems.find(itemName);
-	if(it == configItems.end() || overwritePrevious)
+	if (it == configItems.end() || overwritePrevious)
 	{
 		configItems[itemName] = value;
 	}

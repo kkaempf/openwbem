@@ -166,10 +166,10 @@ AssocDb2::addOrDeleteEntries(const String& ns, const CIMInstance& assocInstance,
 	assocPath.setKeys(assocInstance);
 	// search for references
 	CIMPropertyArray propRa = assocInstance.getProperties();
-	for(size_t i = 0; i < propRa.size(); i++)
+	for (size_t i = 0; i < propRa.size(); i++)
 	{
 		CIMValue propValue1 = propRa[i].getValue();
-		if(propValue1 && propValue1.getType() == CIMDataType::REFERENCE)
+		if (propValue1 && propValue1.getType() == CIMDataType::REFERENCE)
 		{
 			// found first reference, search for second
 			for (size_t j = 0; j < propRa.size(); ++j)
@@ -179,7 +179,7 @@ AssocDb2::addOrDeleteEntries(const String& ns, const CIMInstance& assocInstance,
 					continue; // don't bother with same ones.
 				}
 				CIMValue propValue2 = propRa[j].getValue();
-				if(propValue2 && propValue2.getType() == CIMDataType::REFERENCE)
+				if (propValue2 && propValue2.getType() == CIMDataType::REFERENCE)
 				{
 					// found a second reference, now set up the vars we need
 					// and create index entries.
@@ -245,10 +245,10 @@ AssocDb2::addOrDeleteEntries(const String& ns, const CIMClass& assocClass, bool 
 	CIMObjectPath assocClassPath(assocClassName, ns);
 	// search for references
 	CIMPropertyArray propRa = assocClass.getAllProperties();
-	for(size_t i = 0; i < propRa.size(); i++)
+	for (size_t i = 0; i < propRa.size(); i++)
 	{
 		CIMProperty p1 = propRa[i];
-		if(p1.getDataType().getType() == CIMDataType::REFERENCE)
+		if (p1.getDataType().getType() == CIMDataType::REFERENCE)
 		{
 			// found first reference, search for others
 			for (size_t j = 0; j < propRa.size(); ++j)
@@ -258,7 +258,7 @@ AssocDb2::addOrDeleteEntries(const String& ns, const CIMClass& assocClass, bool 
 					continue; // don't bother with same ones.
 				}
 				CIMProperty p2 = propRa[j];
-				if(p2.getDataType().getType() == CIMDataType::REFERENCE)
+				if (p2.getDataType().getType() == CIMDataType::REFERENCE)
 				{
 					// found another reference, now set up the vars we need
 					// and create index entries.
@@ -315,7 +315,7 @@ AssocDb2::getAllEntries(const CIMObjectPath& objectName,
 		for (size_t i = 0; i < dbentry.m_entries.size(); ++i)
 		{
 			AssocDbEntry2::entry& e = dbentry.m_entries[i];
-			if(((passocClasses == 0) || (passocClasses->count(e.m_assocClass) > 0))
+			if (((passocClasses == 0) || (passocClasses->count(e.m_assocClass) > 0))
 			   && ((presultClasses == 0) || (presultClasses->count(e.m_resultClass) > 0)))
 			{
 				result.handle(e);
@@ -359,7 +359,7 @@ AssocDb2::findEntry(const String& objectKey)
 {
 	AssocDbEntry2 dbentry;
 //     IndexEntry ie = m_pIndex->findFirst(objectKey.c_str());
-//     if(ie && ie.key.equals(objectKey))
+//     if (ie && ie.key.equals(objectKey))
 //     {
 //         dbentry = readEntry(ie.offset, hdl);
 //     }
@@ -377,7 +377,7 @@ AssocDb2::deleteEntry(const CIMObjectPath& objectName,
 //     AssocDbEntry2 dbentry;
 //     MutexLock l = getDbLock();
 //     IndexEntry ie = m_pIndex->findFirst(key.c_str());
-//     if(ie)
+//     if (ie)
 //     {
 //         dbentry = readEntry(ie.offset, hdl);
 //
@@ -394,7 +394,7 @@ AssocDb2::deleteEntry(const CIMObjectPath& objectName,
 //             dbentry.m_entries.erase(iter);
 //         }
 //
-//         if(dbentry.m_entries.size() == 0)
+//         if (dbentry.m_entries.size() == 0)
 //         {
 //             m_pIndex->remove(key.c_str(), dbentry.getOffset());
 //             addToFreeList(dbentry.getOffset(), hdl);
@@ -419,14 +419,14 @@ AssocDb2::deleteEntry(const AssocDbEntry2& entry)
 //     String key = entry.makeKey();
 //     AssocDbEntry2 dbentry;
 //     IndexEntry ie = m_pIndex->findFirst(key.c_str());
-//     while(ie)
+//     while (ie)
 //     {
 //         dbentry = readEntry(ie.offset, hdl);
-//         if(!dbentry.makeKey().equals(key))
+//         if (!dbentry.makeKey().equals(key))
 //         {
 //             break;
 //         }
-//         if(dbentry == entry)
+//         if (dbentry == entry)
 //         {
 //             m_pIndex->remove(key.c_str(), dbentry.getOffset());
 //             addToFreeList(dbentry.getOffset(), hdl);
@@ -449,13 +449,13 @@ AssocDb2::addEntry(const AssocDbEntry2& nentry)
 //     rh.dataSize = ostrm.length();
 //     writeRecHeader(rh, offset, hdl.getFile());
 //
-//     if(hdl.getFile().write(ostrm.getData(), ostrm.length()) !=
+//     if (hdl.getFile().write(ostrm.getData(), ostrm.length()) !=
 //         size_t(ostrm.length()))
 //     {
 //         OW_THROW(IOException, "Failed to write data assoc db");
 //     }
 //
-//     if(!m_pIndex->add(nentry.makeKey().c_str(), offset))
+//     if (!m_pIndex->add(nentry.makeKey().c_str(), offset))
 //     {
 //         m_env->getLogger()->logError(format("AssocDb2::addEntry failed to add entry to"
 //             " association index: ", nentry.makeKey()));

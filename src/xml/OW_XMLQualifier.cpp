@@ -65,10 +65,10 @@ processQualifierDecl(CIMXMLParser& parser,
 	String qualType = parser.mustGetAttribute(CIMXMLParser::A_TYPE);
 	CIMDataType dt = CIMDataType::getDataType(qualType);
 	String qualISARRAY = parser.getAttribute(CIMXMLParser::A_ISARRAY);
-	if(qualISARRAY.equalsIgnoreCase("true"))
+	if (qualISARRAY.equalsIgnoreCase("true"))
 	{
 		String qualArraySize = parser.getAttribute(CIMXMLParser::A_ARRAYSIZE);
-		if(!qualArraySize.empty())
+		if (!qualArraySize.empty())
 		{
 			try
 			{
@@ -87,7 +87,7 @@ processQualifierDecl(CIMXMLParser& parser,
 	}
 	cimQualifier.setDataType(dt);
 	String qualFlavor = parser.getAttribute("OVERRIDABLE");
-	if(qualFlavor.equalsIgnoreCase("false"))
+	if (qualFlavor.equalsIgnoreCase("false"))
 	{
 		cimQualifier.addFlavor(CIMFlavor(CIMFlavor::DISABLEOVERRIDE));
 	}
@@ -96,7 +96,7 @@ processQualifierDecl(CIMXMLParser& parser,
 		cimQualifier.addFlavor(CIMFlavor(CIMFlavor::ENABLEOVERRIDE));
 	}
 	qualFlavor = parser.getAttribute("TOSUBCLASS");
-	if(qualFlavor.equalsIgnoreCase("false"))
+	if (qualFlavor.equalsIgnoreCase("false"))
 	{
 		cimQualifier.addFlavor(CIMFlavor(CIMFlavor::RESTRICTED));
 	}
@@ -105,17 +105,17 @@ processQualifierDecl(CIMXMLParser& parser,
 		cimQualifier.addFlavor(CIMFlavor(CIMFlavor::TOSUBCLASS));
 	}
 	//qualFlavor = parser.getAttribute("TOINSTANCE");
-	//if(qualFlavor.equalsIgnoreCase("true"))
+	//if (qualFlavor.equalsIgnoreCase("true"))
 	//{
 	//	cimQualifier.addFlavor(CIMFlavor(CIMFlavor::TOINSTANCE));
 	//}
 	qualFlavor = parser.getAttribute("TRANSLATABLE");
-	if(qualFlavor.equalsIgnoreCase("true"))
+	if (qualFlavor.equalsIgnoreCase("true"))
 	{
 		cimQualifier.addFlavor(CIMFlavor(CIMFlavor::TRANSLATE));
 	}
 	parser.getNextTag();
-	if(parser.tokenIsId(CIMXMLParser::E_SCOPE))
+	if (parser.tokenIsId(CIMXMLParser::E_SCOPE))
 	{
 		// process optional scope child
 		processScope(parser,cimQualifier,"CLASS",CIMScope::CLASS);
@@ -161,16 +161,16 @@ processScope(CIMXMLParser& parser,
 		CIMScope::Scope scopeValue)
 {
 	String scope = parser.getAttribute(attrName);
-	if(scope.empty())
+	if (scope.empty())
 	{
 		return;
 	}
 
-	if(scope.equalsIgnoreCase("true"))
+	if (scope.equalsIgnoreCase("true"))
 	{
 		cqt.addScope(CIMScope(scopeValue));
 	}
-	else if(!scope.equalsIgnoreCase("false"))
+	else if (!scope.equalsIgnoreCase("false"))
 	{
 		OW_THROWCIM(CIMException::FAILED);
 	}
@@ -179,13 +179,13 @@ processScope(CIMXMLParser& parser,
 String
 getQualifierName(CIMXMLParser& parser)
 {
-	if(!parser.tokenIsId(CIMXMLParser::E_IPARAMVALUE))
+	if (!parser.tokenIsId(CIMXMLParser::E_IPARAMVALUE))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"Expected IPARAMVALUE to lead into QualifierName");
 	}
 	String propertyName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
-	if(!propertyName.equalsIgnoreCase(CIMXMLParser::P_QualifierName))
+	if (!propertyName.equalsIgnoreCase(CIMXMLParser::P_QualifierName))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				"Cannot find qualifier name");

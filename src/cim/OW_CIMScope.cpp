@@ -53,7 +53,7 @@ CIMScope::toString() const
 String
 CIMScope::toMOF() const
 {
-	switch(m_val)
+	switch (m_val)
 	{
 		case SCHEMA: 
 		return "schema"; 

@@ -75,7 +75,7 @@ insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN::~insertRest_VALUES_LEFTPAREN_
 {
 	delete m_pVALUES1;
 	delete m_pLEFTPAREN2;
-	while(!m_ptargetList3->empty())
+	while (!m_ptargetList3->empty())
 	{
 		delete m_ptargetList3->front();
 		m_ptargetList3->pop_front();
@@ -91,7 +91,7 @@ insertRest_DEFAULT_VALUES::~insertRest_DEFAULT_VALUES()
 insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN::~insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN()
 {
 	delete m_pLEFTPAREN1;
-	while(!m_pcolumnList2->empty())
+	while (!m_pcolumnList2->empty())
 	{
 		delete m_pcolumnList2->front();
 		m_pcolumnList2->pop_front();
@@ -100,7 +100,7 @@ insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPARE
 	delete m_pRIGHTPAREN3;
 	delete m_pVALUES4;
 	delete m_pLEFTPAREN5;
-	while(!m_ptargetList6->empty())
+	while (!m_ptargetList6->empty())
 	{
 		delete m_ptargetList6->front();
 		m_ptargetList6->pop_front();
@@ -120,7 +120,7 @@ updateStmt::~updateStmt()
 	delete m_pUPDATE1;
 	delete m_pstrRelationName2;
 	delete m_pSET3;
-	while(!m_pupdateTargetList4->empty())
+	while (!m_pupdateTargetList4->empty())
 	{
 		delete m_pupdateTargetList4->front();
 		m_pupdateTargetList4->pop_front();
@@ -132,7 +132,7 @@ selectStmt::~selectStmt()
 {
 	delete m_pSELECT1;
 	delete m_poptDistinct2;
-	while(!m_ptargetList3->empty())
+	while (!m_ptargetList3->empty())
 	{
 		delete m_ptargetList3->front();
 		m_ptargetList3->pop_front();
@@ -183,7 +183,7 @@ sortClause::~sortClause()
 {
 	delete m_pORDER1;
 	delete m_pBY2;
-	while(!m_psortbyList3->empty())
+	while (!m_psortbyList3->empty())
 	{
 		delete m_psortbyList3->front();
 		m_psortbyList3->pop_front();
@@ -225,7 +225,7 @@ optFromClause_empty::~optFromClause_empty()
 optFromClause_FROM_fromList::~optFromClause_FROM_fromList()
 {
 	delete m_pFROM1;
-	while(!m_pfromList2->empty())
+	while (!m_pfromList2->empty())
 	{
 		delete m_pfromList2->front();
 		m_pfromList2->pop_front();
@@ -306,7 +306,7 @@ aliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPAREN::~aliasClause_AS_strColId_
 	delete m_pAS1;
 	delete m_pstrColId2;
 	delete m_pLEFTPAREN3;
-	while(!m_pnameList4->empty())
+	while (!m_pnameList4->empty())
 	{
 		delete m_pnameList4->front();
 		m_pnameList4->pop_front();
@@ -323,7 +323,7 @@ aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN::~aliasClause_strColId_LEFTPA
 {
 	delete m_pstrColId1;
 	delete m_pLEFTPAREN2;
-	while(!m_pnameList3->empty())
+	while (!m_pnameList3->empty())
 	{
 		delete m_pnameList3->front();
 		m_pnameList3->pop_front();
@@ -358,7 +358,7 @@ joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN::~joinQual_USING_LEFTPAREN_nameList
 {
 	delete m_pUSING1;
 	delete m_pLEFTPAREN2;
-	while(!m_pnameList3->empty())
+	while (!m_pnameList3->empty())
 	{
 		delete m_pnameList3->front();
 		m_pnameList3->pop_front();
@@ -405,7 +405,7 @@ rowExpr::~rowExpr()
 }
 rowDescriptor::~rowDescriptor()
 {
-	while(!m_prowList1->empty())
+	while (!m_prowList1->empty())
 	{
 		delete m_prowList1->front();
 		m_prowList1->pop_front();

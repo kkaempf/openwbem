@@ -127,7 +127,7 @@ HTTPDeflateOStreamBuffer::flushOutBuf(int flush)
 					return -1;
 				}
 				rval += bytesToWrite;
-			} while(rv == Z_OK);
+			} while (rv == Z_OK);
 			break;
 		default:
 			if (deflate(&m_zstr, flush) != Z_OK)

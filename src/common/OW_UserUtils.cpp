@@ -92,7 +92,7 @@ namespace OpenWBEM
 			char name[256];
 			unsigned long size = sizeof(name);
 			size = sizeof(name);
-			if(!::GetUserName(name, &size))
+			if (!::GetUserName(name, &size))
 			{
 				return String();
 			}
@@ -113,7 +113,7 @@ namespace OpenWBEM
 			MutexLock lock(getpwuid_mutex);
 			passwd* result = ::getpwuid(uid);
 #endif  
-			if(result)
+			if (result)
 			{
 				ok = true;
 				return result->pw_name;

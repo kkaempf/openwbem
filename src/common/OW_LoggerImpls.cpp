@@ -101,7 +101,7 @@ class SyslogLogger : public Logger
 		virtual void doLogMessage( const String& s, const ELogLevel level ) const
 		{
 			int syslogPriority;
-			switch( level )
+			switch ( level )
 			{
 				case E_FATAL_ERROR_LEVEL:
 					syslogPriority = LOG_CRIT;

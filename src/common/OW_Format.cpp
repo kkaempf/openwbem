@@ -61,13 +61,13 @@ char Format::process(String& str, char numArgs)
 	bool err = false;
 	for (i=0; i<len && c == ' ' && !err; ++i)
 	{
-		switch(str[i])
+		switch (str[i])
 		{
 			case '%':
 				if (i + 1 < len)
 				{
 					++i;
-					switch(str[i])
+					switch (str[i])
 					{
 						case '1': case '2': case '3': case '4': case '5': 
 						case '6': case '7': case '8': case '9':

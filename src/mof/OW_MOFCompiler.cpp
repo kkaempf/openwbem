@@ -217,7 +217,7 @@ String Compiler::fixParsedString(const String& s)
 		}
 	}
 	StringBuffer unescaped;
-	for(size_t i = 0; i < retval.length(); ++i)
+	for (size_t i = 0; i < retval.length(); ++i)
 	{
 		if (retval[i] == '\\')
 		{
@@ -227,7 +227,7 @@ String Compiler::fixParsedString(const String& s)
 				OW_THROW(Exception, "String cannot end with '\\'");
 			}*/
 			++i;
-			switch(retval[i])
+			switch (retval[i])
 			{
 				case 'b':
 					unescaped += '\b';

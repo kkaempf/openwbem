@@ -128,7 +128,7 @@ StringBuffer::reset()
 void
 StringBuffer::truncate(size_t index)
 {
-	if(index < m_len)
+	if (index < m_len)
 	{
 		m_bfr[index] = '\0';
 		m_len = index;
@@ -289,7 +289,7 @@ StringBuffer::startsWith(char ch) const
 void
 StringBuffer::chop()
 {
-	if(m_len)
+	if (m_len)
 	{
 		truncate(m_len-1);
 	}
@@ -299,22 +299,22 @@ StringBuffer::chop()
 void
 StringBuffer::trim()
 {
-	if(m_len)
+	if (m_len)
 	{
-		while(m_len && isspace(m_bfr[m_len-1]))
+		while (m_len && isspace(m_bfr[m_len-1]))
 		{
 			m_bfr[--m_len] = 0;
 		}
 
-		if(m_len)
+		if (m_len)
 		{
 			char *p;
-			for(p = m_bfr; *p && isspace(*p); p++)
+			for (p = m_bfr; *p && isspace(*p); p++)
 			{
 				// Empty
 			}
 
-			if(*p && p > m_bfr)
+			if (*p && p > m_bfr)
 			{
 				m_len -= (p - m_bfr);
 				memmove(m_bfr, p, m_len+1);
@@ -329,20 +329,20 @@ StringBuffer::trim()
 const char*
 StringBuffer::getLine(std::istream& is, bool resetBuffer)
 {
-	if(resetBuffer)
+	if (resetBuffer)
 	{
 		reset();
 	}
 
-	if(is)
+	if (is)
 	{
 		size_t count = 0;
 		std::streambuf *sb = is.rdbuf();
 		
-		while(1)
+		while (1)
 		{
 			int ch = sb->sbumpc();
-			if(ch == EOF)
+			if (ch == EOF)
 			{
 				is.setstate(count == 0
 					? (std::ios::failbit | std::ios::eofbit) : std::ios::eofbit);
@@ -351,7 +351,7 @@ StringBuffer::getLine(std::istream& is, bool resetBuffer)
 			
 			++count;
 			
-			if(ch == '\n')
+			if (ch == '\n')
 			{
 				break;
 			}
@@ -361,7 +361,7 @@ StringBuffer::getLine(std::istream& is, bool resetBuffer)
 	}
 
 	const char* p = ::strchr(m_bfr, '\r');
-	if(p)
+	if (p)
 	{
 		truncate(size_t(p-m_bfr));
 	}

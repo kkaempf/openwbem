@@ -166,7 +166,7 @@ void
 CIMRepository2::open(const String& path)
 {
 	FileSystem::makeDirectory(path, 0700);
-	if(!FileSystem::exists(path))
+	if (!FileSystem::exists(path))
 	{
 		String msg("failed to create directory: " );
 		msg += path;
@@ -174,7 +174,7 @@ CIMRepository2::open(const String& path)
 	}
 	else
 	{
-		if(!FileSystem::canWrite(path))
+		if (!FileSystem::canWrite(path))
 		{
 			String msg("don't have write access to directory: ");
 			msg += path;
@@ -182,7 +182,7 @@ CIMRepository2::open(const String& path)
 		}
 	}
 	String fname = path;
-	if(!fname.endsWith(String(OW_FILENAME_SEPARATOR)))
+	if (!fname.endsWith(String(OW_FILENAME_SEPARATOR)))
 	{
 		fname += OW_FILENAME_SEPARATOR;
 	}
@@ -326,7 +326,7 @@ CIMRepository2::deleteQualifierType(const String& ns, const String& qualName,
 	OperationContext&)
 {
 	// TODO: What happens if the qualifier is being used???
-	if(!m_mStore.deleteQualifierType(ns, qualName))
+	if (!m_mStore.deleteQualifierType(ns, qualName))
 	{
 		if (m_mStore.nameSpaceExists(ns))
 		{
@@ -433,7 +433,7 @@ namespace
 				m_assocDb.deleteEntries(ns,c);
 			}
 #endif
-			if(!m_mStore.deleteClass(ns, cname))
+			if (!m_mStore.deleteClass(ns, cname))
 			{
 				OW_THROWCIM(CIMException::NOT_FOUND);
 			}
@@ -593,7 +593,7 @@ CIMRepository2::enumInstanceNames(
 		m_env->getLogger()->logDebug(format("CIMRepository2 enumerated instance names: %1:%2", ns,
 			className));
 	}
-	if(!deep)
+	if (!deep)
 	{
 		return;
 	}
@@ -606,7 +606,7 @@ CIMRepository2::enumInstanceNames(
 	/*
 	StringArray classNames = m_mStore.getClassChildren(ns,
 		theClass.getName());
-	for(size_t i = 0; i < classNames.size(); i++)
+	for (size_t i = 0; i < classNames.size(); i++)
 	{
 		theClass = _instGetClass(ns, classNames[i]);
 		m_iStore.getInstanceNames(ns, theClass, result);
@@ -716,7 +716,7 @@ CIMRepository2::getInstance(
 	OperationContext&)
 {
 	StringArray lpropList;
-	if(propertyList)
+	if (propertyList)
 	{
 		lpropList = *propertyList;
 	}
@@ -725,7 +725,7 @@ CIMRepository2::getInstance(
 	ci = m_iStore.getCIMInstance(ns, instanceName, cc, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList);
 	OW_ASSERT(ci);
-	if(pOutClass)
+	if (pOutClass)
 	{
 		*pOutClass = cc;
 	}
@@ -750,7 +750,7 @@ CIMRepository2::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 		&theClass, acl);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	// Ensure no associations exist for this instance
-	if(m_instAssocDb.hasAssocEntries(ns, cop))
+	if (m_instAssocDb.hasAssocEntries(ns, cop))
 	{
 		// TODO: Revisit this.  Instead of throwing, it is allowed in the
 		// spec to to delete the associations that reference the instance.
@@ -764,7 +764,7 @@ CIMRepository2::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 	
 	// If we're deleting an association instance, then remove all
 	// traces of it in the association database.
-	if(theClass.isAssociation())
+	if (theClass.isAssociation())
 	{
 		m_instAssocDb.deleteEntries(ns, oldInst);
 	}
@@ -790,21 +790,21 @@ CIMRepository2::createInstance(
 	CIMClass theClass = _instGetClass(ns, ci.getClassName());
 	if (m_checkReferentialIntegrity)
 	{
-		if(theClass.isAssociation())
+		if (theClass.isAssociation())
 		{
 			CIMPropertyArray pra = ci.getProperties(
 				CIMDataType::REFERENCE);
-			for(size_t j = 0; j < pra.size(); j++)
+			for (size_t j = 0; j < pra.size(); j++)
 			{
 				CIMValue cv = pra[j].getValue();
-				if(!cv)
+				if (!cv)
 				{
 					OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 						"Association has a NULL reference");
 				}
 				CIMObjectPath op(CIMNULL);
 				cv.get(op);
-				if(!op)
+				if (!op)
 				{
 					OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 						"Association has a NULL reference");
@@ -828,7 +828,7 @@ CIMRepository2::createInstance(
 	//TODO: _checkRequiredProperties(theClass, ci);
 	m_iStore.createInstance(ns, theClass, ci);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	if(theClass.isAssociation())
+	if (theClass.isAssociation())
 	{
 		m_instAssocDb.addEntries(ns, ci);
 	}
@@ -865,14 +865,14 @@ CIMRepository2::setProperty(
 {
 	CIMClass theClass = _instGetClass(ns, name.getClassName());
 	CIMProperty cp = theClass.getProperty(propertyName);
-	if(!cp)
+	if (!cp)
 	{
 		OW_THROWCIMMSG(CIMException::NO_SUCH_PROPERTY,
 			propertyName.c_str());
 	}
 	// Ensure value passed in is right data type
 	CIMValue cv(valueArg);
-	if(cv && (cp.getDataType().getType() != cv.getType()))
+	if (cv && (cp.getDataType().getType() != cv.getType()))
 	{
 		try
 		{
@@ -891,12 +891,12 @@ CIMRepository2::setProperty(
 	}
 	CIMInstance ci = getInstance(ns, name, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
 		NULL, context);
-	if(!ci)
+	if (!ci)
 	{
 		OW_THROWCIMMSG(CIMException::NOT_FOUND, name.toString().c_str());
 	}
 	CIMProperty tcp = ci.getProperty(propertyName);
-	if(cp.isKey() && tcp.getValue() && !tcp.getValue().equal(cv))
+	if (cp.isKey() && tcp.getValue() && !tcp.getValue().equal(cv))
 	{
 		String msg("Cannot modify key property: ");
 		msg += cp.getName();
@@ -918,7 +918,7 @@ CIMRepository2::getProperty(
 {
 	CIMClass theClass = _instGetClass(ns,name.getClassName());
 	CIMProperty cp = theClass.getProperty(propertyName);
-	if(!cp)
+	if (!cp)
 	{
 		OW_THROWCIMMSG(CIMException::NO_SUCH_PROPERTY,
 			propertyName.c_str());
@@ -926,7 +926,7 @@ CIMRepository2::getProperty(
 	CIMInstance ci = getInstance(ns, name, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
 		NULL, context);
 	CIMProperty prop = ci.getProperty(propertyName);
-	if(!prop)
+	if (!prop)
 	{
 		OW_THROWCIMMSG(CIMException::NO_SUCH_PROPERTY,
 			propertyName.c_str());
@@ -1083,7 +1083,7 @@ CIMRepository2::_commonReferences(
 	assocClassBuilder assocClassResult(Assocs);
 	_getAssociationClasses(ns, resultClass, path.getClassName(), assocClassResult, role, context);
 	StringArray resultClassNames;
-	for(size_t i = 0; i < Assocs.size(); i++)
+	for (size_t i = 0; i < Assocs.size(); i++)
 	{
 		resultClassNames.append(Assocs[i].getName());
 	}
@@ -1298,13 +1298,13 @@ CIMRepository2::_commonAssociators(
 	// If the result class was specified, get a list of all the classes the
 	// objects must be instances of.
 	StringArray resultClassNames;
-	if(!resultClass.empty())
+	if (!resultClass.empty())
 	{
 		resultClassNames = getClassChildren(m_mStore, ns, resultClass);
 		resultClassNames.append(resultClass);
 	}
 	StringArray assocClassNames;
-	for(size_t i = 0; i < Assocs.size(); i++)
+	for (size_t i = 0; i < Assocs.size(); i++)
 	{
 		assocClassNames.append(Assocs[i].getName());
 	}
@@ -1550,7 +1550,7 @@ CIMRepository2::_getAssociationClasses(const String& ns,
 		CIMClassResultHandlerIFC& result, const String& role,
 		OperationContext& context)
 {
-	if(!assocClassName.empty())
+	if (!assocClassName.empty())
 	{
 		// they gave us a class name so we can use the class association index
 		// to only look at the ones that could provide associations
@@ -1637,30 +1637,30 @@ CIMRepository2::_validatePropagatedKeys(const String& ns,
 {
 	CIMObjectPathArray rv;
 	CIMPropertyArray kprops = theClass.getKeys();
-	if(kprops.size() == 0)
+	if (kprops.size() == 0)
 	{
 		return;
 	}
 	Map<String, CIMPropertyArray> theMap;
 	Bool hasPropagatedKeys = false;
 	// Look at all propagated key properties
-	for(size_t i = 0; i < kprops.size(); i++)
+	for (size_t i = 0; i < kprops.size(); i++)
 	{
 		CIMQualifier cq = kprops[i].getQualifier(
 			CIMQualifier::CIM_QUAL_PROPAGATED);
-		if(!cq)
+		if (!cq)
 		{
 			continue;
 		}
 		hasPropagatedKeys = true;
 		CIMValue cv = cq.getValue();
-		if(!cv)
+		if (!cv)
 		{
 			continue;
 		}
 		String cls;
 		cv.get(cls);
-		if(cls.empty())
+		if (cls.empty())
 		{
 			continue;
 		}
@@ -1672,7 +1672,7 @@ CIMRepository2::_validatePropagatedKeys(const String& ns,
 			cls = cls.substring(0,idx);
 		}
 		CIMProperty cp = ci.getProperty(kprops[i].getName());
-		if(!cp || !cp.getValue())
+		if (!cp || !cp.getValue())
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				format("Cannot create instance. Propagated key field missing:"
@@ -1689,18 +1689,18 @@ CIMRepository2::_validatePropagatedKeys(const String& ns,
 		}
 		theMap[cls].append(cp);
 	}
-	if(!hasPropagatedKeys)
+	if (!hasPropagatedKeys)
 	{
 		return;
 	}
-	if(theMap.size() == 0)
+	if (theMap.size() == 0)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"Cannot create instance. Propagated key properties missing");
 	}
 	CIMObjectPath op(ns, ci);
 	Map<String, CIMPropertyArray>::iterator it = theMap.begin();
-	while(it != theMap.end())
+	while (it != theMap.end())
 	{
 		String clsname = it->first;
 		

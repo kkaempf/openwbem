@@ -66,7 +66,7 @@
 #include <iostream>
 #include <algorithm> // for sort
 
-#define TEST_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
+#define TEST_ASSERT(CON) if (!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
 
 using std::cerr;
 using std::cin;
@@ -80,7 +80,7 @@ void
 testStart(const char* funcName, const char* parm=NULL)
 {
 	cout << "*** Doing " << funcName << '(';
-	if(parm)
+	if (parm)
 	{
 		cout << parm;
 	}
@@ -2062,10 +2062,10 @@ void display_cert(X509* cert)
 	X509_digest(cert,EVP_md5(),digest,&i);
 	printf("   fingerprint:\n");
 	printf("	  ");
-	for(i=0;i<16;i++)
+	for (i=0;i<16;i++)
 	{
 		printf("%02X",digest[i]);
-		if(i != 15)
+		if (i != 15)
 		{
 			printf(":");
 		}
@@ -2078,7 +2078,7 @@ int ssl_verifycert_callback(X509* cert)
 {
 	static bool	 bPrompted = false;
 
-	if(!bPrompted)
+	if (!bPrompted)
 	{
 		X509   *pX509Cert = cert;
 
@@ -2090,7 +2090,7 @@ int ssl_verifycert_callback(X509* cert)
 
 		cout << "\nDo you want to accept this Certificate (Y/N)? ";
 		String response = String::getLine(cin);
-		if(response.compareToIgnoreCase("Y") != 0)
+		if (response.compareToIgnoreCase("Y") != 0)
 			return 0;
 	}
 	return 1;

@@ -177,7 +177,7 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info,
 	}
 
 #ifdef OW_GNU_LINUX
-	if(retval)
+	if (retval)
 	{
 		uid_t cimomuid = ::getuid();	// Get CIMOM user id
 		uid_t useruid = cimomuid;
@@ -192,7 +192,7 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info,
 			useruid = pw.pw_uid;
 		}
 
-		if(useruid != cimomuid)
+		if (useruid != cimomuid)
 		{
 			context.setStringData(OperationContext::CIMOM_UIDKEY, String(UInt32(cimomuid)));
 			context.setStringData(OperationContext::CURUSER_UIDKEY, String(UInt32(useruid)));

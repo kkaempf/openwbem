@@ -59,7 +59,7 @@ HTTPChunkedIStreamBuffer::~HTTPChunkedIStreamBuffer()
 int
 HTTPChunkedIStreamBuffer::buffer_from_device(char* c, int n)
 {
-	if(m_isEOF)
+	if (m_isEOF)
 	{
 		return -1;
 	}

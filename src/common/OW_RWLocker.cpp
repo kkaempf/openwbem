@@ -88,7 +88,7 @@ RWLocker::getReadLock(UInt32 sTimeout, UInt32 usTimeout)
 			OW_THROW(DeadlockException, "A thread that has a write lock is trying to acquire a read lock.");
 		}
 	}
-	while(m_state < 0)
+	while (m_state < 0)
 	{
 		++m_num_waiting_readers;
 		//m_waiting_readers.wait(l);
@@ -126,7 +126,7 @@ RWLocker::getWriteLock(UInt32 sTimeout, UInt32 usTimeout)
 			}
 		}
 	}
-	while(m_state != 0)
+	while (m_state != 0)
 	{
 		++m_num_waiting_writers;
 		if (!m_waiting_writers.timedWait(l, sTimeout, usTimeout))
@@ -144,11 +144,11 @@ void
 RWLocker::releaseReadLock()
 {
 	NonRecursiveMutexLock l(m_guard);
-	if(m_state > 0)        // Release a reader.
+	if (m_state > 0)        // Release a reader.
 		--m_state;
 	else
 		OW_THROW(RWLockerException, "A writer is releasing a read lock");
-	if(m_state == 0)
+	if (m_state == 0)
 	{
 		doWakeups();
 	}
@@ -167,7 +167,7 @@ void
 RWLocker::releaseWriteLock()
 {
 	NonRecursiveMutexLock l(m_guard);
-	if(m_state == -1)
+	if (m_state == -1)
 	{
 		m_state = 0;
 	}
@@ -183,10 +183,10 @@ RWLocker::releaseWriteLock()
 void
 RWLocker::doWakeups()
 {
-	if( m_num_waiting_writers > 0 && 
+	if ( m_num_waiting_writers > 0 && 
 		m_num_waiting_readers > 0)
 	{
-		if(m_readers_next == 1)
+		if (m_readers_next == 1)
 		{
 			m_readers_next = 0;
 			m_waiting_readers.notifyAll();
@@ -197,12 +197,12 @@ RWLocker::doWakeups()
 			m_readers_next = 1;
 		}
 	}
-	else if(m_num_waiting_writers > 0)
+	else if (m_num_waiting_writers > 0)
 	{
 		// Only writers - scheduling doesn't matter
 		m_waiting_writers.notifyOne();
 	}
-	else if(m_num_waiting_readers > 0)
+	else if (m_num_waiting_readers > 0)
 	{
 		// Only readers - scheduling doesn't matter
 		m_waiting_readers.notifyAll();

@@ -94,7 +94,7 @@ main(int argc, char* argv[])
 		cout << "~~BODY~~" << endl;
 		try
 		{
-			while((*istrm) >> recievedChunk)
+			while ((*istrm) >> recievedChunk)
 			{
 				cout << recievedChunk;
 			}

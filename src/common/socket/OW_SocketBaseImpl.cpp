@@ -174,7 +174,7 @@ SocketBaseImpl::getSelectObj() const
 void
 SocketBaseImpl::connect(const SocketAddress& addr)
 {
-	if(m_isConnected)
+	if (m_isConnected)
 	{
 		disconnect();
 	}
@@ -184,7 +184,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 	m_inout.clear();
 	OW_ASSERT(addr.getType() == SocketAddress::INET
 			|| addr.getType() == SocketAddress::UDS);
-	if((m_sockfd = ::socket(addr.getType() == SocketAddress::INET ?
+	if ((m_sockfd = ::socket(addr.getType() == SocketAddress::INET ?
 		AF_INET : PF_UNIX, SOCK_STREAM, 0)) == -1)
 	{
 		OW_THROW(SocketException,
@@ -201,17 +201,17 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 	int n;
 	int flags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, flags | O_NONBLOCK);
-	if((n = ::connect(m_sockfd, addr.getNativeForm(),
+	if ((n = ::connect(m_sockfd, addr.getNativeForm(),
 					addr.getNativeFormSize())) < 0)
 	{
-		if(errno != EINPROGRESS)
+		if (errno != EINPROGRESS)
 		{
 			::close(m_sockfd);
 			OW_THROW(SocketException,
 				Format("Failed to connect to: %1: %2(%3)", addr.toString(), errno, strerror(errno)).c_str());
 		}
 	}
-	if(n == -1) 
+	if (n == -1) 
 	{
 		// because of the above check for EINPROGRESS
 		// not connected yet, need to select and wait for connection to complete.
@@ -242,7 +242,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			ptval = &tval;
 		}
 		int maxfd = m_sockfd > pipefd ? m_sockfd : pipefd;
-		if((n = ::select(maxfd+1, &rset, &wset, NULL, ptval)) == 0)
+		if ((n = ::select(maxfd+1, &rset, &wset, NULL, ptval)) == 0)
 		{
 			::close(m_sockfd);
 			OW_THROW(SocketException, "SocketBaseImpl::connect() select timedout");
@@ -256,16 +256,16 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			}
 			OW_THROW(SocketException, Format("SocketBaseImpl::connect() select failed: %1(%2)", errno, strerror(errno)).c_str());
 		}
-		if(pipefd != -1 && FD_ISSET(pipefd, &rset))
+		if (pipefd != -1 && FD_ISSET(pipefd, &rset))
 		{
 			::close(m_sockfd);
 			OW_THROW(SocketException, "Sockets have been shutdown");
 		}
-		else if(FD_ISSET(m_sockfd, &rset) || FD_ISSET(m_sockfd, &wset))
+		else if (FD_ISSET(m_sockfd, &rset) || FD_ISSET(m_sockfd, &wset))
 		{
 			int error;
 			socklen_t len = sizeof(error);
-			if(::getsockopt(m_sockfd, SOL_SOCKET, SO_ERROR, &error,
+			if (::getsockopt(m_sockfd, SOL_SOCKET, SO_ERROR, &error,
 						&len) < 0)
 			{
 				::close(m_sockfd);
@@ -316,7 +316,7 @@ SocketBaseImpl::disconnect()
 	{
 		m_inout.clear(ios::eofbit);
 	}
-	if(m_sockfd != -1 && m_isConnected)
+	if (m_sockfd != -1 && m_isConnected)
 	{
 		::close(m_sockfd);
 		m_isConnected = false;
@@ -332,7 +332,7 @@ SocketBaseImpl::fillInetAddrParms()
 	InetSocketAddress_t addr;
 	memset(&addr, 0, sizeof(addr));
 	len = sizeof(addr);
-	if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
+	if (getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
 // Don't error out here, we can still operate without working DNS.
 //		OW_THROW(SocketException,
@@ -343,7 +343,7 @@ SocketBaseImpl::fillInetAddrParms()
 		m_localAddress.assignFromNativeForm(&addr, len);
 	}
 	len = sizeof(addr);
-	if(getpeername(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
+	if (getpeername(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
 // Don't error out here, we can still operate without working DNS.
 //		OW_THROW(SocketException,
@@ -362,7 +362,7 @@ SocketBaseImpl::fillUnixAddrParms()
 	UnixSocketAddress_t addr;
 	memset(&addr, 0, sizeof(addr));
 	len = sizeof(addr);
-	if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
+	if (getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
 		OW_THROW(SocketException,
 				"SocketBaseImpl::fillUnixAddrParms: getsockname");
@@ -377,17 +377,17 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 {
 	int rc = 0;
 	bool isError = false;
-	if(m_isConnected)
+	if (m_isConnected)
 	{
 		isError = waitForOutput(m_sendTimeout);
-		if(isError)
+		if (isError)
 		{
 			rc = -1;
 		}
 		else
 		{
 			rc = writeAux(dataOut, dataOutLen);
-			if(!m_traceFileOut.empty() && rc > 0)
+			if (!m_traceFileOut.empty() && rc > 0)
 			{
 				MutexLock ml(guard);
 				ofstream traceFile(m_traceFileOut.c_str(), std::ios::app);
@@ -417,7 +417,7 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 	{
 		rc = -1;
 	}
-	if(rc < 0 && errorAsException)
+	if (rc < 0 && errorAsException)
 	{
 		OW_THROW(SocketException, "SocketBaseImpl::write");
 	}
@@ -429,17 +429,17 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 {
 	int rc = 0;
 	bool isError = false;
-	if(m_isConnected)
+	if (m_isConnected)
 	{
 		isError = waitForInput(m_recvTimeout);
-		if(isError)
+		if (isError)
 		{
 			rc = -1;
 		}
 		else
 		{
 			rc = readAux(dataIn, dataInLen);
-			if(!m_traceFileIn.empty() && rc > 0)
+			if (!m_traceFileIn.empty() && rc > 0)
 			{
 				MutexLock ml(guard);
 				ofstream traceFile(m_traceFileIn.c_str(), std::ios::app);
@@ -469,9 +469,9 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 	{
 		rc = -1;
 	}
-	if(rc < 0)
+	if (rc < 0)
 	{
-		if(errorAsException)
+		if (errorAsException)
 		{
 			OW_THROW(SocketException, "SocketBaseImpl::read");
 		}

@@ -105,12 +105,12 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 	}
 
 	String lns(ns);
-	while(lns.startsWith('/'))
+	while (lns.startsWith('/'))
 	{
 		lns = lns.substring(1);
 	}
 	lns.toLowerCase();
-	for(;;)
+	for (;;)
 	{
 		if (!userInfo.getUserName().empty())
 		{
@@ -148,7 +148,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 				if (capabilityProp)
 				{
 					CIMValue cv = capabilityProp.getValue();
-					if(cv)
+					if (cv)
 					{
 						capability = cv.toString();
 					}
@@ -219,7 +219,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 			}
 
 			capability.toLowerCase();
-			if(opType.length() == 1)
+			if (opType.length() == 1)
 			{
 				if (capability.indexOf(opType) == String::npos)
 				{
@@ -308,7 +308,7 @@ SimpleAuthorizer2::doAllowAccessToNameSpace(
 	OperationContext& context)
 {
 	String actype;
-	switch(accessType)
+	switch (accessType)
 	{
 		case Authorizer2IFC::E_READ:
 			actype = ACCESS_READ;

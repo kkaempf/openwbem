@@ -300,7 +300,7 @@ public:
 			{
 				pServerSocket = m_HTTPServer->m_pUDSServerSocket;
 			}
-			else if(m_isHTTPS)
+			else if (m_isHTTPS)
 			{
 				pServerSocket = m_HTTPServer->m_pHttpsServerSocket;
 			}

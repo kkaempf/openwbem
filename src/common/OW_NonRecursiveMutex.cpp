@@ -50,14 +50,14 @@ namespace OpenWBEM
 OW_DEFINE_EXCEPTION_WITH_ID(Deadlock);
 NonRecursiveMutex::NonRecursiveMutex()
 {
-	if(NonRecursiveMutexImpl::createMutex(m_mutex) != 0)
+	if (NonRecursiveMutexImpl::createMutex(m_mutex) != 0)
 	{
 		OW_THROW(Assertion, "NonRecursiveMutexImpl::createMutex failed");
 	}
 }
 NonRecursiveMutex::~NonRecursiveMutex()
 {
-	if(NonRecursiveMutexImpl::destroyMutex(m_mutex) == -1)
+	if (NonRecursiveMutexImpl::destroyMutex(m_mutex) == -1)
 	{
 		NonRecursiveMutexImpl::releaseMutex(m_mutex);
 		NonRecursiveMutexImpl::destroyMutex(m_mutex);

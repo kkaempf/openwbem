@@ -199,7 +199,7 @@ int main(int argc, char* argv[])
 		cerr << "Usage: " << argv[0] << " <username> <password> <count>" << endl;
 		return 1;
 	}
-	for(int i = 0; i < atoi(argv[3]); i++)
+	for (int i = 0; i < atoi(argv[3]); i++)
 	{
 		if (authenticate(argv[1], argv[2]))
 		{

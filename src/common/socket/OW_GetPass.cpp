@@ -65,13 +65,13 @@ GetPass::getPass(const String& prompt)
 	do
 	{
 		ch = _getch();
-		if(ch != '\r' && len < MAXPASSWORD)
+		if (ch != '\r' && len < MAXPASSWORD)
 		{
 			bfr[len++] = ch;
 			bfr[len] = 0;
 			_putch('*');
 		}
-	} while(ch != '\r');
+	} while (ch != '\r');
 	printf("\n");
 	return String(bfr);
 }

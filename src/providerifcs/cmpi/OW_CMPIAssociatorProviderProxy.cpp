@@ -60,7 +60,7 @@ void CMPIAssociatorProviderProxy::associatorNames(
 	env->getLogger()->
 		logDebug("CMPIAssociatorProviderProxy::associatorNames()");
 
-	if(m_ftable->miVector.assocMI->ft->associatorNames != NULL)
+	if (m_ftable->miVector.assocMI->ft->associatorNames != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		::CMPIOperationContext context;
@@ -95,7 +95,7 @@ void CMPIAssociatorProviderProxy::associatorNames(
 		rc = m_ftable->miVector.assocMI->ft->associatorNames(mi, &eCtx, &eRes,
 			&eRef, aClass, _resultClass, _role, _resultRole);
 
-		if(rc.rc != CMPI_RC_OK)
+		if (rc.rc != CMPI_RC_OK)
 		{
 			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
@@ -123,7 +123,7 @@ void CMPIAssociatorProviderProxy::associators(
 	env->getLogger()->
 		logDebug("CMPIAssociatorProviderProxy::associators()");
 
-	if(m_ftable->miVector.assocMI->ft->associators != NULL)
+	if (m_ftable->miVector.assocMI->ft->associators != NULL)
 	{
 		char **props = NULL;
 		int pCount = 0;
@@ -143,13 +143,13 @@ void CMPIAssociatorProviderProxy::associators(
 	
 		char* aClass = const_cast<char*>(assocClass.c_str());
 	
-		if(propertyList && propertyList->size() > 0)
+		if (propertyList && propertyList->size() > 0)
 		{
 			pCount = propertyList->size();
 			props = reinterpret_cast<char **>
 				(alloca(1+pCount*sizeof(char *)));
 	
-			for(int i = 0; i < pCount; i++)
+			for (int i = 0; i < pCount; i++)
 			{
 				props[i]= const_cast<char*>((*propertyList)[i].c_str());
 			}
@@ -159,12 +159,12 @@ void CMPIAssociatorProviderProxy::associators(
 	
 		CMPIFlags flgs = 0;
 	
-		if(includeQualifiers)
+		if (includeQualifiers)
 		{
 			flgs |= CMPI_FLAG_IncludeQualifiers;
 		}
 	
-		if(includeClassOrigin)
+		if (includeClassOrigin)
 		{
 			flgs |= CMPI_FLAG_IncludeClassOrigin;
 		}
@@ -186,7 +186,7 @@ void CMPIAssociatorProviderProxy::associators(
 			mi,&eCtx,&eRes,&eRef, aClass,
 			_resultClass, _role, _resultRole, props);
 	
-		if(rc.rc != CMPI_RC_OK)
+		if (rc.rc != CMPI_RC_OK)
 		{
 			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
@@ -212,7 +212,7 @@ void CMPIAssociatorProviderProxy::references(
 	env->getLogger()->
 		logDebug("CMPIAssociatorProviderProxy::references()");
 
-	if(m_ftable->miVector.assocMI->ft->references != NULL)
+	if (m_ftable->miVector.assocMI->ft->references != NULL)
 	{
 		char **props = NULL;
 		int pCount = 0;
@@ -233,15 +233,15 @@ void CMPIAssociatorProviderProxy::references(
 		CMPI_ResultOnStack eRes(result);
 		char *aClass = const_cast<char*>(resultClass.c_str());
 
-		if(propertyList)
+		if (propertyList)
 		{
-			if(propertyList->size() > 0)
+			if (propertyList->size() > 0)
 			{
 				pCount = propertyList->size();
 				props = reinterpret_cast<char **>
 					(alloca(1+pCount*sizeof(char *)));
 
-				for(int i = 0; i < pCount; i++)
+				for (int i = 0; i < pCount; i++)
 				{
 					props[i] = const_cast<char*>((*propertyList)[i].c_str());
 				}
@@ -252,12 +252,12 @@ void CMPIAssociatorProviderProxy::references(
 
 		CMPIFlags flgs = 0;
 
-		if(includeQualifiers)
+		if (includeQualifiers)
 		{
 			flgs |= CMPI_FLAG_IncludeQualifiers;
 		}
 
-		if(includeClassOrigin)
+		if (includeClassOrigin)
 		{
 			flgs |= CMPI_FLAG_IncludeClassOrigin;
 		}
@@ -270,7 +270,7 @@ void CMPIAssociatorProviderProxy::references(
 		rc=m_ftable->miVector.assocMI->ft->references(mi, &eCtx, &eRes, &eRef,
 			aClass, _role, props);
 
-		if(rc.rc != CMPI_RC_OK)
+		if (rc.rc != CMPI_RC_OK)
 		{
 			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
@@ -293,7 +293,7 @@ void CMPIAssociatorProviderProxy::referenceNames(
 	env->getLogger()->
 		logDebug("CMPIAssociatorProviderProxy::referenceNames()");
 
-	if(m_ftable->miVector.assocMI->ft->referenceNames != NULL)
+	if (m_ftable->miVector.assocMI->ft->referenceNames != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		::CMPIOperationContext context;
@@ -321,7 +321,7 @@ void CMPIAssociatorProviderProxy::referenceNames(
 		rc = m_ftable->miVector.assocMI->ft->referenceNames(
 			mi, &eCtx, &eRes, &eRef, aClass, _role);
 
-		if(rc.rc != CMPI_RC_OK)
+		if (rc.rc != CMPI_RC_OK)
 		{
 			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}

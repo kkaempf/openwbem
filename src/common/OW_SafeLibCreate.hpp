@@ -136,10 +136,10 @@ public:
 				//Do we get a signal if we try to look at this pointer?
 				//note, this still doesn't work.
 				char c= *strVer;
-				if(! segfault)
+				if (! segfault)
 				{
 #endif 
-					if(!strVer || strncmp(strVer, OW_VERSION,strlen(OW_VERSION)) != 0)
+					if (!strVer || strncmp(strVer, OW_VERSION,strlen(OW_VERSION)) != 0)
 					{
 						logger->logError("safeLibCreate::create -"
 							" Invalid version returned from \"getOWVersion\"");
@@ -177,7 +177,7 @@ public:
 #ifndef OW_FREEBSD			
 			else
 #else
-			if(segfault)
+			if (segfault)
 #endif
 			{
 				logger->logError(Format("safeLibCreate::create setjmp call"

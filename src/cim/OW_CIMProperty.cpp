@@ -159,11 +159,11 @@ CIMProperty::clone(EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin) const
 {
 	CIMProperty cp;
-	if(includeQualifiers)
+	if (includeQualifiers)
 	{
 		cp.m_pdata->m_qualifiers = m_pdata->m_qualifiers;
 	}
-	if(includeClassOrigin)
+	if (includeClassOrigin)
 	{
 		cp.m_pdata->m_originClass = m_pdata->m_originClass;
 	}
@@ -236,9 +236,9 @@ CIMProperty&
 CIMProperty::setDataType(const CIMDataType& type)
 {
 	m_pdata->m_propertyDataType = type;
-	if(m_pdata->m_cimValue)
+	if (m_pdata->m_cimValue)
 	{
-		if(m_pdata->m_propertyDataType.getType() != m_pdata->m_cimValue.getType()
+		if (m_pdata->m_propertyDataType.getType() != m_pdata->m_cimValue.getType()
 			|| m_pdata->m_propertyDataType.isArrayType() !=
 			m_pdata->m_cimValue.isArray())
 		{
@@ -297,10 +297,10 @@ CIMQualifier
 CIMProperty::getQualifier(const String& name) const
 {
 	size_t tsize = m_pdata->m_qualifiers.size();
-	for(size_t i = 0; i < tsize; i++)
+	for (size_t i = 0; i < tsize; i++)
 	{
 		CIMQualifier nq = m_pdata->m_qualifiers[i];
-		if(nq.getName().equalsIgnoreCase(name))
+		if (nq.getName().equalsIgnoreCase(name))
 		{
 			return nq;
 		}
@@ -322,12 +322,12 @@ CIMProperty::getQualifierT(const String& name) const
 CIMProperty&
 CIMProperty::setQualifier(const CIMQualifier& qual)
 {
-	if(qual)
+	if (qual)
 	{
 		String qualName = qual.getName();
-		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
+		for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
-			if(m_pdata->m_qualifiers[i].getName().equalsIgnoreCase(qualName))
+			if (m_pdata->m_qualifiers[i].getName().equalsIgnoreCase(qualName))
 			{
 				m_pdata->m_qualifiers[i] = qual;
 				return *this;
@@ -342,10 +342,10 @@ CIMProperty&
 CIMProperty::addQualifier(const CIMQualifier& qual)
 {
 	size_t tsize = m_pdata->m_qualifiers.size();
-	for(size_t i = 0; i < tsize; i++)
+	for (size_t i = 0; i < tsize; i++)
 	{
 		CIMQualifier nq = m_pdata->m_qualifiers[i];
-		if(nq.getName().equalsIgnoreCase(qual.getName()))
+		if (nq.getName().equalsIgnoreCase(qual.getName()))
 		{
 			String msg("Qualifier ");
 			msg += qual.getName();
@@ -361,10 +361,10 @@ bool
 CIMProperty::removeQualifier(const String& name)
 {
 	size_t tsize = m_pdata->m_qualifiers.size();
-	for(size_t i = 0; i < tsize; i++)
+	for (size_t i = 0; i < tsize; i++)
 	{
 		CIMQualifier nq = m_pdata->m_qualifiers[i];
-		if(nq.getName().equalsIgnoreCase(name))
+		if (nq.getName().equalsIgnoreCase(name))
 		{
 			m_pdata->m_qualifiers.remove(i);
 			return true;
@@ -377,7 +377,7 @@ bool
 CIMProperty::isKey() const
 {
 	// TODO: Evaluate this.  It's not necessarily true that a REF is a key.  That's just the DMTF CIM Schema convention.
-	if(getDataType().isReferenceType()
+	if (getDataType().isReferenceType()
 	   || hasTrueQualifier(CIMQualifier::CIM_QUAL_KEY))
 	{
 		return true;
@@ -392,7 +392,7 @@ CIMProperty::filter(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQual
 	// If only local definitions are required and this is a propagated
 	// property then nothing to return
 	//
-	if(localOnly && m_pdata->m_propagated)
+	if (localOnly && m_pdata->m_propagated)
 	{
 		return CIMProperty(CIMNULL);
 	}
@@ -404,7 +404,7 @@ CIMProperty::filter(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQual
 	cp.m_pdata->m_originClass = m_pdata->m_originClass;
 	cp.m_pdata->m_cimValue = m_pdata->m_cimValue;
 	cp.m_pdata->m_propagated = m_pdata->m_propagated;
-	if(includeQualifiers)
+	if (includeQualifiers)
 	{
 		cp.m_pdata->m_qualifiers = m_pdata->m_qualifiers;
 	}
@@ -471,7 +471,7 @@ CIMProperty::writeObject(ostream &ostrm, EIncludeQualifiersFlag includeQualifier
 	m_pdata->m_propertyDataType.writeObject(ostrm);
 	BinarySerialization::writeLen(ostrm, m_pdata->m_sizeDataType);
 	m_pdata->m_propagated.writeObject(ostrm);
-	if(includeQualifiers)
+	if (includeQualifiers)
 	{
 		BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
 	}
@@ -479,7 +479,7 @@ CIMProperty::writeObject(ostream &ostrm, EIncludeQualifiersFlag includeQualifier
 	{
 		BinarySerialization::writeArray(ostrm, CIMQualifierArray());
 	}
-	if(m_pdata->m_cimValue)
+	if (m_pdata->m_cimValue)
 	{
 		Bool(true).writeObject(ostrm);
 		m_pdata->m_cimValue.writeObject(ostrm);
@@ -511,11 +511,11 @@ CIMProperty::readObject(istream &istrm)
 	BinarySerialization::readArray(istrm, qualifiers);
 	Bool isValue;
 	isValue.readObject(istrm);
-	if(isValue)
+	if (isValue)
 	{
 		cimValue.readObject(istrm);
 	}
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		m_pdata = new PROPData;
 	}
@@ -534,7 +534,7 @@ CIMProperty::toString() const
 {
 	StringBuffer rv = m_pdata->m_propertyDataType.toString() + ":"
 		+ m_pdata->m_name + "=";
-	if(m_pdata->m_cimValue)
+	if (m_pdata->m_cimValue)
 	{
 		rv += m_pdata->m_cimValue.toString();
 	}
@@ -550,13 +550,13 @@ CIMProperty::toMOF() const
 {
 	// this outputs a property suitable for a CIM class.
 	StringBuffer rv;
-	if(m_pdata->m_qualifiers.size() > 0)
+	if (m_pdata->m_qualifiers.size() > 0)
 	{
 		rv += "  [";
-		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
+		for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
 			CIMQualifier nq = m_pdata->m_qualifiers[i];
-			if(i > 0)
+			if (i > 0)
 			{
 				rv += ',';
 			}
@@ -570,7 +570,7 @@ CIMProperty::toMOF() const
 	rv += m_pdata->m_name;
 	// If it is an array, show it.
 	rv += m_pdata->m_propertyDataType.getArrayMOF();
-	if(m_pdata->m_cimValue)
+	if (m_pdata->m_cimValue)
 	{
 		rv += '=';
 		rv += m_pdata->m_cimValue.toMOF();

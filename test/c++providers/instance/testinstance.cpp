@@ -247,10 +247,10 @@ public:
 		OperationContext::DataRef dataRef = 
 			env->getOperationContext().getData(SESSION_LANGUAGE_KEY);
 
-		if(dataRef)
+		if (dataRef)
 		{
 			SessionLanguageRef slref = dataRef.cast_to<SessionLanguage>();
-			if(slref)
+			if (slref)
 			{
 				al = slref->getAcceptLanguageString();
 				slref->addContentLanguage("x-testinst");

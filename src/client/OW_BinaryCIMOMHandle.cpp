@@ -73,11 +73,11 @@ _getHTTPTrailers(CIMProtocolIStreamIFCRef istr_, Map<String,String>& trailers)
 {
 	IntrusiveReference<HTTPChunkedIStream> istr = 
 		istr_.cast_to<HTTPChunkedIStream>();
-	if(istr)
+	if (istr)
 	{
 		Map<String,String> itrailers = istr->getTrailers();
 		Map<String,String>::iterator it = itrailers.begin();
-		while(it != itrailers.end())
+		while (it != itrailers.end())
 		{
 			trailers[it->first] = it->second;
 			it++;
@@ -90,9 +90,9 @@ checkError(std::istream& istrm)
 {
 	UInt8 rc;
 	BinarySerialization::read(istrm, rc);
-	if(rc != BIN_OK)
+	if (rc != BIN_OK)
 	{
-		switch(rc)
+		switch (rc)
 		{
 			case BIN_ERROR:
 			{
@@ -123,7 +123,7 @@ checkError(CIMProtocolIStreamIFCRef istr, Map<String,String>& trailers)
 	}
 	catch (IOException& e)
 	{
-		while(*istr) 
+		while (*istr) 
 		{
 			istr->get();
 		}
@@ -189,7 +189,7 @@ readCIMObject(CIMProtocolIStreamIFCRef& istr, Map<String,String>& trailers)
 	}
 	catch (IOException& e)
 	{
-		while(*istr) 
+		while (*istr) 
 		{
 			istr->get();
 		}
@@ -197,7 +197,7 @@ readCIMObject(CIMProtocolIStreamIFCRef& istr, Map<String,String>& trailers)
 		istr->checkForError();
 		throw e;
 	}
-	while(*istr) 
+	while (*istr) 
 	{
 		istr->get();
 	}
@@ -218,7 +218,7 @@ readAndDeliver(CIMProtocolIStreamIFCRef& istr, T& result,
 	}
 	catch (IOException& e)
 	{
-		while(*istr) 
+		while (*istr) 
 		{
 			istr->get();
 		}
@@ -226,7 +226,7 @@ readAndDeliver(CIMProtocolIStreamIFCRef& istr, T& result,
 		istr->checkForError();
 		throw e;
 	}
-	while(*istr) 
+	while (*istr) 
 	{
 		istr->get();
 	}
@@ -427,7 +427,7 @@ BinaryCIMOMHandle::invokeMethod(
 	try
 	{
 		Bool isrv(BinarySerialization::readBool(*in));
-		if(isrv)
+		if (isrv)
 		{
 			cv = BinarySerialization::readValue(*in);
 		}
@@ -436,7 +436,7 @@ BinaryCIMOMHandle::invokeMethod(
 	}
 	catch(IOException& e)
 	{
-		while(*in) 
+		while (*in) 
 		{
 			in->get();
 		}
@@ -665,7 +665,7 @@ BinaryCIMOMHandle::setProperty(
 	BinarySerialization::writeString(strm, propName);
 	Bool isValue = (cv) ? true : false;
 	BinarySerialization::writeBool(strm, isValue);
-	if(isValue)
+	if (isValue)
 	{
 		BinarySerialization::writeValue(strm, cv);
 	}
@@ -701,14 +701,14 @@ BinaryCIMOMHandle::getProperty(
 	try
 	{
 		Bool isValue(BinarySerialization::readBool(*in));
-		if(isValue)
+		if (isValue)
 		{
 			cv = BinarySerialization::readValue(*in);
 		}
 	}
 	catch (IOException& e)
 	{
-		while(*in) 
+		while (*in) 
 		{
 			in->get();
 		}
@@ -954,7 +954,7 @@ BinaryCIMOMHandle::setHTTPRequestHeader(const String& hdrName,
 	bool cc = false;
 	IntrusiveReference<HTTPClient> httpClient = 
 		m_protocol.cast_to<HTTPClient>();
-	if(httpClient)
+	if (httpClient)
 	{
 		httpClient->addCustomHeader(hdrName, hdrValue);
 		cc = true;
@@ -970,11 +970,11 @@ BinaryCIMOMHandle::getHTTPResponseHeader(const String& hdrName,
 	bool cc = false;
 	IntrusiveReference<HTTPClient> httpClient = 
 		m_protocol.cast_to<HTTPClient>();
-	if(httpClient)
+	if (httpClient)
 	{
-		if(!(cc = httpClient->getResponseHeader(hdrName, valueOut)))
+		if (!(cc = httpClient->getResponseHeader(hdrName, valueOut)))
 		{
-			if(HTTPUtils::headerHasKey(m_trailers, hdrName))
+			if (HTTPUtils::headerHasKey(m_trailers, hdrName))
 			{
 				cc = true;
 				valueOut = HTTPUtils::getHeaderValue(m_trailers, hdrName);

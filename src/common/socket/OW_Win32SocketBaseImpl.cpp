@@ -79,7 +79,7 @@ SockInitializer _sockInitializer;
 void
 _closeSocket(SOCKET& sockfd)
 {
-	if(sockfd != INVALID_SOCKET)
+	if (sockfd != INVALID_SOCKET)
 	{
 		::closesocket(sockfd);
 		sockfd = INVALID_SOCKET;
@@ -99,7 +99,7 @@ getAddrFromIface(OpenWBEM::InetSocketAddress_t& addr)
 	int cc = -1;
     INTERFACE_INFO interfaceList[20];
     unsigned long nBytesReturned;
-	if(::WSAIoctl(sd, SIO_GET_INTERFACE_LIST, 0, 0, &interfaceList,
+	if (::WSAIoctl(sd, SIO_GET_INTERFACE_LIST, 0, 0, &interfaceList,
 			sizeof(interfaceList), &nBytesReturned, 0, 0) != SOCKET_ERROR)
 	{
 		int nNumInterfaces = nBytesReturned / sizeof(INTERFACE_INFO);
@@ -160,7 +160,7 @@ SocketBaseImpl::waitForEvent(HANDLE eventArg, int secsToTimeout)
 
 	int cc;
 
-	switch(index)
+	switch (index)
 	{
 		case WAIT_FAILED:
 			cc = -2;
@@ -171,7 +171,7 @@ SocketBaseImpl::waitForEvent(HANDLE eventArg, int secsToTimeout)
 		default:
 			index -= WAIT_OBJECT_0;
 			// If not shutdown event, then reset
-			if(index != 0)
+			if (index != 0)
 			{
 				::ResetEvent(eventArg);
 			}
@@ -279,7 +279,7 @@ SocketBaseImpl::getSelectObj() const
 void
 SocketBaseImpl::connect(const SocketAddress& addr)
 {
-	if(m_isConnected)
+	if (m_isConnected)
 	{
 		disconnect();
 	}
@@ -290,7 +290,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 	OW_ASSERT(addr.getType() == SocketAddress::INET);
 
 	m_sockfd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if(m_sockfd == INVALID_SOCKET)
+	if (m_sockfd == INVALID_SOCKET)
 	{
 		OW_THROW(SocketException, 
 			Format("Failed to create a socket: %1",
@@ -303,11 +303,11 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 	// Connect non-blocking
 	::WSAEventSelect(m_sockfd, m_event, FD_CONNECT);
 
-	if(::connect(m_sockfd, addr.getNativeForm(), addr.getNativeFormSize())
+	if (::connect(m_sockfd, addr.getNativeForm(), addr.getNativeFormSize())
 		== SOCKET_ERROR)
 	{
 		int lastError = ::WSAGetLastError();
-        if(lastError != WSAEWOULDBLOCK && lastError != WSAEINPROGRESS)
+        if (lastError != WSAEWOULDBLOCK && lastError != WSAEINPROGRESS)
 		{
 			_closeSocket(m_sockfd);
 			OW_THROW(SocketException,
@@ -316,13 +316,13 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		}
 
 		// Wait for connection event to come through
-		while(true)
+		while (true)
 		{
 			// Wait for the socket's event to get signaled
-			if((cc = waitForEvent(m_event, m_connectTimeout)) < 1)
+			if ((cc = waitForEvent(m_event, m_connectTimeout)) < 1)
 			{
 				_closeSocket(m_sockfd);
-				switch(cc)
+				switch (cc)
 				{
 					case 0:		// Shutdown event
 						OW_THROW(SocketException,
@@ -339,7 +339,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			}
 
 			// Find out what network event took place
-			if(::WSAEnumNetworkEvents(m_sockfd, m_event, &networkEvents)
+			if (::WSAEnumNetworkEvents(m_sockfd, m_event, &networkEvents)
 				== SOCKET_ERROR)
 			{
 				_closeSocket(m_sockfd);
@@ -351,10 +351,10 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			}
 
 			// Was it a connect event?
-			if(networkEvents.lNetworkEvents & FD_CONNECT)
+			if (networkEvents.lNetworkEvents & FD_CONNECT)
 			{
 				// Did connect fail?
-				if(networkEvents.iErrorCode[FD_CONNECT_BIT])
+				if (networkEvents.iErrorCode[FD_CONNECT_BIT])
 				{
 					::WSASetLastError(networkEvents.iErrorCode[FD_CONNECT_BIT]);
 					_closeSocket(m_sockfd);
@@ -365,7 +365,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 				}
 				break;
 			}
-		}	// while(true) - waiting for connection event
+		}	// while (true) - waiting for connection event
 	}	// if SOCKET_ERROR on connect
 
 	m_isConnected = true;
@@ -400,28 +400,28 @@ SocketBaseImpl::fillInetAddrParms()
 	len = sizeof(addr);
 	bool gotAddr = false;
 
-	if(m_sockfd != INVALID_SOCKET)
+	if (m_sockfd != INVALID_SOCKET)
 	{
 		len = sizeof(addr);
-		if(::getsockname(m_sockfd,
+		if (::getsockname(m_sockfd,
 			reinterpret_cast<struct sockaddr*>(&addr), &len) != SOCKET_ERROR)
 		{
 			m_localAddress.assignFromNativeForm(&addr, len);
 		}
-		else if(getAddrFromIface(addr) == 0)
+		else if (getAddrFromIface(addr) == 0)
 		{
 			len = sizeof(addr);
 			m_localAddress.assignFromNativeForm(&addr, len);
 		}
 
 		len = sizeof(addr);
-		if(::getpeername(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr),
+		if (::getpeername(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr),
 			&len) != SOCKET_ERROR)
 		{
 			m_peerAddress.assignFromNativeForm(&addr, len);
 		}
 	}
-	else if(getAddrFromIface(addr) == 0)
+	else if (getAddrFromIface(addr) == 0)
 	{
 		m_localAddress.assignFromNativeForm(&addr, len);
 	}
@@ -434,17 +434,17 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 {
 	int rc = 0;
 	bool isError = false;
-	if(m_isConnected)
+	if (m_isConnected)
 	{
 		isError = waitForOutput(m_sendTimeout);
-		if(isError)
+		if (isError)
 		{
 			rc = -1;
 		}
 		else
 		{
 			rc = writeAux(dataOut, dataOutLen);
-			if(!m_traceFileOut.empty() && rc > 0)
+			if (!m_traceFileOut.empty() && rc > 0)
 			{
 				MutexLock ml(guard);
 				ofstream traceFile(m_traceFileOut.c_str(), std::ios::app);
@@ -474,7 +474,7 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 	{
 		rc = -1;
 	}
-	if(rc < 0 && errorAsException)
+	if (rc < 0 && errorAsException)
 	{
 		OW_THROW(SocketException, "SocketBaseImpl::write");
 	}
@@ -486,17 +486,17 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 {
 	int rc = 0;
 	bool isError = false;
-	if(m_isConnected)
+	if (m_isConnected)
 	{
 		isError = waitForInput(m_recvTimeout);
-		if(isError)
+		if (isError)
 		{
 			rc = -1;
 		}
 		else
 		{
 			rc = readAux(dataIn, dataInLen);
-			if(!m_traceFileIn.empty() && rc > 0)
+			if (!m_traceFileIn.empty() && rc > 0)
 			{
 				MutexLock ml(guard);
 				ofstream traceFile(m_traceFileIn.c_str(), std::ios::app);
@@ -526,9 +526,9 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 	{
 		rc = -1;
 	}
-	if(rc < 0)
+	if (rc < 0)
 	{
-		if(errorAsException)
+		if (errorAsException)
 			OW_THROW(SocketException, "SocketBaseImpl::read");
 	}
 	return rc;

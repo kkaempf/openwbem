@@ -169,7 +169,7 @@ AssocDbHandle::AssocDbHandleData::~AssocDbHandleData()
 {
 	try
 	{
-		if(m_pdb)
+		if (m_pdb)
 		{
 			m_pdb->decHandleCount();
 			m_file.close();
@@ -232,10 +232,10 @@ AssocDbHandle::addOrDeleteEntries(const String& ns, const CIMInstance& assocInst
 	assocPath.setKeys(assocInstance);
 	// search for references
 	CIMPropertyArray propRa = assocInstance.getProperties();
-	for(size_t i = 0; i < propRa.size(); i++)
+	for (size_t i = 0; i < propRa.size(); i++)
 	{
 		CIMValue propValue1 = propRa[i].getValue();
-		if(propValue1 && propValue1.getType() == CIMDataType::REFERENCE)
+		if (propValue1 && propValue1.getType() == CIMDataType::REFERENCE)
 		{
 			// found first reference, search for second
 			for (size_t j = 0; j < propRa.size(); ++j)
@@ -245,7 +245,7 @@ AssocDbHandle::addOrDeleteEntries(const String& ns, const CIMInstance& assocInst
 					continue; // don't bother with same ones.
 				}
 				CIMValue propValue2 = propRa[j].getValue();
-				if(propValue2 && propValue2.getType() == CIMDataType::REFERENCE)
+				if (propValue2 && propValue2.getType() == CIMDataType::REFERENCE)
 				{
 					// found a second reference, now set up the vars we need
 					// and create index entries.
@@ -311,10 +311,10 @@ AssocDbHandle::addOrDeleteEntries(const String& ns, const CIMClass& assocClass, 
 	CIMObjectPath assocClassPath(assocClassName, ns);
 	// search for references
 	CIMPropertyArray propRa = assocClass.getAllProperties();
-	for(size_t i = 0; i < propRa.size(); i++)
+	for (size_t i = 0; i < propRa.size(); i++)
 	{
 		CIMProperty p1 = propRa[i];
-		if(p1.getDataType().getType() == CIMDataType::REFERENCE)
+		if (p1.getDataType().getType() == CIMDataType::REFERENCE)
 		{
 			// found first reference, search for others
 			for (size_t j = 0; j < propRa.size(); ++j)
@@ -324,7 +324,7 @@ AssocDbHandle::addOrDeleteEntries(const String& ns, const CIMClass& assocClass, 
 					continue; // don't bother with same ones.
 				}
 				CIMProperty p2 = propRa[j];
-				if(p2.getDataType().getType() == CIMDataType::REFERENCE)
+				if (p2.getDataType().getType() == CIMDataType::REFERENCE)
 				{
 					// found another reference, now set up the vars we need
 					// and create index entries.
@@ -396,7 +396,7 @@ AssocDbHandle::getAllEntries(const CIMObjectPath& objectName,
 		for (size_t i = 0; i < dbentry.m_entries.size(); ++i)
 		{
 			AssocDbEntry::entry& e = dbentry.m_entries[i];
-			if(((passocClasses == 0) || (passocClasses->count(e.m_assocClass) > 0))
+			if (((passocClasses == 0) || (passocClasses->count(e.m_assocClass) > 0))
 			   && ((presultClasses == 0) || (presultClasses->count(e.m_resultClass) > 0)))
 			{
 				result.handle(e);
@@ -420,7 +420,7 @@ AssocDb::~AssocDb()
 {
 	try
 	{
-		if(m_hdlCount > 0)
+		if (m_hdlCount > 0)
 		{
 			m_env->getLogger()->logDebug("*** AssocDb::~AssocDb - STILL OUTSTANDING"
 				" HANDLES ***");
@@ -437,7 +437,7 @@ void
 AssocDb::open(const String& fileName)
 {
 	MutexLock l = getDbLock();
-	if(m_opened)
+	if (m_opened)
 	{
 		return;
 	}
@@ -445,7 +445,7 @@ AssocDb::open(const String& fileName)
 	m_fileName = fileName;
 	String fname = m_fileName + ".dat";
 	createFile();
-	if(!checkFile())
+	if (!checkFile())
 	{
 		OW_THROW(IOException,
 			Format("Failed to open file: %1", fname).c_str());
@@ -459,11 +459,11 @@ AssocDb::createFile()
 	AssocDbHeader b = { OW_ASSOCSIGNATURE, -1L };
 	m_hdrBlock = b;
 	File f = FileSystem::createFile(m_fileName + ".dat");
-	if(!f)
+	if (!f)
 	{
 		return false;
 	}
-	if(f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0) != sizeof(m_hdrBlock))
+	if (f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0) != sizeof(m_hdrBlock))
 	{
 		f.close();
 		OW_THROW(IOException, "Failed to write header of HDB");
@@ -478,20 +478,20 @@ bool
 AssocDb::checkFile()
 {
 	File f = FileSystem::openFile(m_fileName + ".dat");
-	if(!f)
+	if (!f)
 	{
 		OW_THROW(IOException,
 			Format("Failed to open file: %1", m_fileName).c_str());
 	}
 	size_t sizeRead = f.read(&m_hdrBlock, sizeof(m_hdrBlock), 0);
 	f.close();
-	if(sizeRead != sizeof(m_hdrBlock))
+	if (sizeRead != sizeof(m_hdrBlock))
 	{
 		OW_THROW(IOException,
 			Format("Failed to read Assoc DB header from file: %1",
 				m_fileName).c_str());
 	}
-	if(::strncmp(m_hdrBlock.signature, OW_ASSOCSIGNATURE, OW_ASSOCSIGLEN))
+	if (::strncmp(m_hdrBlock.signature, OW_ASSOCSIGNATURE, OW_ASSOCSIGLEN))
 	{
 		OW_THROW(IOException,
 			Format("Invalid Format for Assoc db file: %1", m_fileName).c_str());
@@ -505,7 +505,7 @@ void
 AssocDb::close()
 {
 	MutexLock l = getDbLock();
-	if(m_opened)
+	if (m_opened)
 	{
 		m_pIndex->close();
 		m_pIndex = NULL;
@@ -518,7 +518,7 @@ AssocDb::getHandle()
 {
 	MutexLock l = getDbLock();
 	File file = FileSystem::openFile(m_fileName + ".dat");
-	if(!file)
+	if (!file)
 	{
 		OW_THROW(IOException,
 			Format("Failed to open file while creating handle: %1",
@@ -542,7 +542,7 @@ AssocDb::findEntry(const String& objectKey, AssocDbHandle& hdl)
 	MutexLock l = getDbLock();
 	AssocDbEntry dbentry;
 	IndexEntry ie = m_pIndex->findFirst(objectKey.c_str());
-	if(ie && ie.key.equals(objectKey))
+	if (ie && ie.key.equals(objectKey))
 	{
 		dbentry = readEntry(ie.offset, hdl);
 	}
@@ -556,7 +556,7 @@ AssocDb::nextEntry(AssocDbHandle& hdl)
 	MutexLock l = getDbLock();
 	AssocDbEntry dbentry;
 	IndexEntry ie = m_pIndex->findNext();
-	if(!ie)
+	if (!ie)
 	{
 		return dbentry;
 	}
@@ -571,7 +571,7 @@ AssocDb::readEntry(Int32 offset, AssocDbHandle& hdl)
 	AssocDbRecHeader rh;
 	readRecHeader(rh, offset, hdl.getFile());
 	AutoPtrVec<unsigned char> bfr(new unsigned char[rh.dataSize]);
-	if(hdl.getFile().read(bfr.get(), rh.dataSize) != rh.dataSize)
+	if (hdl.getFile().read(bfr.get(), rh.dataSize) != rh.dataSize)
 	{
 		OW_THROW(IOException, "Failed to read data for rec on assoc db");
 	}
@@ -593,7 +593,7 @@ AssocDb::deleteEntry(const CIMObjectPath& objectName,
 	AssocDbEntry dbentry;
 	MutexLock l = getDbLock();
 	IndexEntry ie = m_pIndex->findFirst(key.c_str());
-	if(ie)
+	if (ie)
 	{
 		dbentry = readEntry(ie.offset, hdl);
 		
@@ -610,7 +610,7 @@ AssocDb::deleteEntry(const CIMObjectPath& objectName,
 			dbentry.m_entries.erase(iter);
 		}
 		
-		if(dbentry.m_entries.size() == 0)
+		if (dbentry.m_entries.size() == 0)
 		{
 			m_pIndex->remove(key.c_str(), dbentry.getOffset());
 			addToFreeList(dbentry.getOffset(), hdl);
@@ -635,14 +635,14 @@ AssocDb::deleteEntry(const AssocDbEntry& entry, AssocDbHandle& hdl)
 	String key = entry.makeKey();
 	AssocDbEntry dbentry;
 	IndexEntry ie = m_pIndex->findFirst(key.c_str());
-	while(ie)
+	while (ie)
 	{
 		dbentry = readEntry(ie.offset, hdl);
-		if(!dbentry.makeKey().equals(key))
+		if (!dbentry.makeKey().equals(key))
 		{
 			break;
 		}
-		if(dbentry == entry)
+		if (dbentry == entry)
 		{
 			m_pIndex->remove(key.c_str(), dbentry.getOffset());
 			addToFreeList(dbentry.getOffset(), hdl);
@@ -665,13 +665,13 @@ AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 	rh.dataSize = ostrm.length();
 	writeRecHeader(rh, offset, hdl.getFile());
 	
-	if(hdl.getFile().write(ostrm.getData(), ostrm.length()) !=
+	if (hdl.getFile().write(ostrm.getData(), ostrm.length()) !=
 		size_t(ostrm.length()))
 	{
 		OW_THROW(IOException, "Failed to write data assoc db");
 	}
 	
-	if(!m_pIndex->add(nentry.makeKey().c_str(), offset))
+	if (!m_pIndex->add(nentry.makeKey().c_str(), offset))
 	{
 		m_env->getLogger()->logError(Format("AssocDb::addEntry failed to add entry to"
 			" association index: ", nentry.makeKey()));
@@ -716,7 +716,7 @@ AssocDb::addToFreeList(Int32 offset, AssocDbHandle& hdl)
 	rh.nextFree = m_hdrBlock.firstFree;
 	writeRecHeader(rh, offset, hdl.getFile());
 	m_hdrBlock.firstFree = offset;
-	if(hdl.getFile().write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) !=
+	if (hdl.getFile().write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) !=
 		sizeof(m_hdrBlock))
 	{
 		OW_THROW(IOException, "Failed write file header on deletion");
@@ -732,20 +732,20 @@ AssocDb::getNewBlock(Int32& offset, UInt32 blkSize,
 	AssocDbRecHeader lh;
 	Int32 lastOffset = -1L;
 	Int32 coffset = m_hdrBlock.firstFree;
-	while(coffset != -1)
+	while (coffset != -1)
 	{
 		readRecHeader(rh, coffset, hdl.getFile());
-		if(rh.blkSize >= blkSize)
+		if (rh.blkSize >= blkSize)
 		{
-			if(lastOffset != -1L)
+			if (lastOffset != -1L)
 			{
 				lh.nextFree = rh.nextFree;
 				writeRecHeader(lh, lastOffset, hdl.getFile());
 			}
-			if(m_hdrBlock.firstFree == coffset)
+			if (m_hdrBlock.firstFree == coffset)
 			{
 				m_hdrBlock.firstFree = rh.nextFree;
-				if(hdl.getFile().write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) !=
+				if (hdl.getFile().write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) !=
 					sizeof(m_hdrBlock))
 				{
 					OW_THROW(IOException,
@@ -773,7 +773,7 @@ writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File file)
 {
 	rh.chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&rh.nextFree),
 		sizeof(rh) - sizeof(rh.chkSum));
-	if(file.write(&rh, sizeof(rh), offset) != sizeof(rh))
+	if (file.write(&rh, sizeof(rh), offset) != sizeof(rh))
 	{
 		OW_THROW(IOException, "Failed to write record to assoc db");
 	}
@@ -782,13 +782,13 @@ writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File file)
 static void
 readRecHeader(AssocDbRecHeader& rh, Int32 offset, File file)
 {
-	if(file.read(&rh, sizeof(rh), offset) != sizeof(rh))
+	if (file.read(&rh, sizeof(rh), offset) != sizeof(rh))
 	{
 		OW_THROW(IOException, "Failed to read record from assoc db");
 	}
 	UInt32 chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&rh.nextFree),
 		 sizeof(rh) - sizeof(rh.chkSum));
-	if(chkSum != rh.chkSum)
+	if (chkSum != rh.chkSum)
 	{
 		OW_THROW(IOException, "Check sum failed reading rec from assoc db");
 	}
@@ -799,7 +799,7 @@ calcCheckSum(unsigned char* src, Int32 len)
 {
 	register UInt32 cksum = 0;
 	register Int32 i;
-	for(i = 0; i < len; i++)
+	for (i = 0; i < len; i++)
 	{
 		cksum += static_cast<UInt32>(src[i]);
 	}

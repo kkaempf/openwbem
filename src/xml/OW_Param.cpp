@@ -50,7 +50,7 @@ Param::Param(String argname, String value) : m_argName(argname), m_argValue(valu
 }
 Param::Param(String argname, bool value) : m_argName(argname), m_argValue(), m_argMode(VALUENOTSET)
 {
-	if(value)
+	if (value)
 	{
 		m_argValue = "TRUE";
 	}
@@ -68,7 +68,7 @@ Param::getArgName() const
 String
 Param::getArgValue() const 
 {
-	if(!m_argValue.empty())
+	if (!m_argValue.empty())
 	{
 		if (m_argMode==VALUENOTSET)
 		{

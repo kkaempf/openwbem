@@ -303,7 +303,7 @@ public:
 			logDebug("Queue is full. Not adding work and returning false");
 			return false;
 		}
-		while( queueIsFull() && !queueClosed() )
+		while ( queueIsFull() && !queueClosed() )
 		{
 			logDebug("Queue is full. Waiting until a spot opens up so we can add some work");
 			m_queueNotFull.wait(l);
@@ -434,7 +434,7 @@ public:
 			logDebug("Queue is full. Not adding work and returning false");
 			return false;
 		}
-		while( queueIsFull() && !queueClosed() )
+		while ( queueIsFull() && !queueClosed() )
 		{
 			logDebug("Queue is full. Waiting until a spot opens up so we can add some work");
 			m_queueNotFull.wait(l);

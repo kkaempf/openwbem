@@ -135,7 +135,7 @@ NameSpaceProvider::deleteInstance(
 		const CIMObjectPath& cop)
 {
 	CIMPropertyArray pra = cop.getKeys();
-	if(pra.size() == 0)
+	if (pra.size() == 0)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE,
 			"root namespace cannot be deleted");
@@ -148,14 +148,14 @@ NameSpaceProvider::deleteInstance(
 	}
 	
 	CIMValue cv = nameProp.getValue();
-	if(!cv)
+	if (!cv)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED,
 			"Name property doesn't have a value");
 	}
 	String nsName;
 	cv.get(nsName);
-	if(nsName.empty())
+	if (nsName.empty())
 	{
 		OW_THROWCIMMSG(CIMException::FAILED,
 			"Name property contains an empty value");
@@ -217,7 +217,7 @@ namespace
 		{
 			String nameSpaceName = s;
 			size_t ndx = nameSpaceName.lastIndexOf('/');
-			if(ndx != String::npos)
+			if (ndx != String::npos)
 			{
 				nameSpaceName = nameSpaceName.substring(ndx+1);
 			}
@@ -321,7 +321,7 @@ NameSpaceProvider::createInstance(
 		const CIMInstance& cimInstance)
 {
 	CIMProperty cp = cimInstance.getProperty(CIMProperty::NAME_PROPERTY);
-	if(!cp)
+	if (!cp)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE,
 			"Instance \"Name\" property is not set");

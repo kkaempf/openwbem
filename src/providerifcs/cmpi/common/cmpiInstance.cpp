@@ -34,7 +34,7 @@ static CMPIStatus instRelease(CMPIInstance* eInst)
 {
 	//cout<<"--- instRelease()"<<endl;
 	OpenWBEM::CIMInstance* inst=(OpenWBEM::CIMInstance*)eInst->hdl;
-	if(inst)
+	if (inst)
 	{
 		delete inst;
 		((CMPI_Object*)eInst)->unlinkAndDelete();
@@ -64,7 +64,7 @@ static CMPIData instGetPropertyAt(CMPIInstance* eInst, CMPICount pos, CMPIString
 
 	const OpenWBEM::CIMPropertyArray& p=inst->getProperties();
 
-	if(pos >= p.size())
+	if (pos >= p.size())
 	{
 		CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
 		return data;
@@ -77,7 +77,7 @@ static CMPIData instGetPropertyAt(CMPIInstance* eInst, CMPICount pos, CMPIString
 
 	CMPIrc rrc = value2CMPIData(v,t,&data);
 
-	if(name)
+	if (name)
 	{
 		OpenWBEM::String str=p[pos].getName();
 		*name=string2CMPIString(str);
@@ -94,10 +94,10 @@ static CMPIData instGetProperty(CMPIInstance* eInst, char* name, CMPIStatus* rc)
 
 	const OpenWBEM::CIMProperty& p = inst->getProperty(OpenWBEM::String(name));
 
-	if(p)
+	if (p)
 	{
 		const OpenWBEM::CIMValue& v=p.getValue();
-		if(v)
+		if (v)
 		{
 			OpenWBEM::CIMDataType pType=v.getType();
 			CMPIType t=type2CMPIType(pType,v.isArray());
@@ -127,11 +127,11 @@ static CMPIStatus instSetProperty(CMPIInstance* eInst, char* name,
 	char **list = (char**)((CMPI_Object*)eInst)->priv;
 	CMPIrc rc;
 
-	if(list)
+	if (list)
 	{
-		while(*list)
+		while (*list)
 		{
-			if(strcasecmp(name,*list) == 0)
+			if (strcasecmp(name,*list) == 0)
 			{
 				goto ok;
 			}
@@ -166,9 +166,9 @@ static CMPIStatus instSetPropertyFilter(CMPIInstance* eInst,
 	char **list=(char**)inst->priv;	   // Thank you Warren !
 	int i,s;
 
-	if(inst->priv)
+	if (inst->priv)
 	{
-		while(*list)
+		while (*list)
 		{
 			free (*list);
 			list++;
@@ -177,27 +177,27 @@ static CMPIStatus instSetPropertyFilter(CMPIInstance* eInst,
 	}
 	inst->priv=NULL;
 
-	if(propertyList == NULL)
+	if (propertyList == NULL)
 	{
 		CMReturn(CMPI_RC_OK);
 	}
 
-	if(keys == NULL)
+	if (keys == NULL)
 	{
 		CMReturn(CMPI_RC_ERR_FAILED);
 	}
 
-	for(s = 0, i = 0; propertyList[i]; i++, s++);
-	for(i = 0; keys[i]; i++, s++);
+	for (s = 0, i = 0; propertyList[i]; i++, s++);
+	for (i = 0; keys[i]; i++, s++);
 
 	list = (char**) malloc( (s+2) * sizeof(char*));
 
-	for(s = 0, i = 0; propertyList[i]; i++,s++)
+	for (s = 0, i = 0; propertyList[i]; i++,s++)
 	{
 		list[s] = strdup(propertyList[i]);
 	}
 
-	for(i = 0; keys[i]; i++,s++)
+	for (i = 0; keys[i]; i++,s++)
 	{
 		list[s] = strdup(keys[i]);
 	}

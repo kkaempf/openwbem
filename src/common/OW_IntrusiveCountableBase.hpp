@@ -87,7 +87,7 @@ public:
 
 	inline friend void IntrusiveReferenceRelease(IntrusiveCountableBase * p)
 	{
-		if(p->m_useCount.decAndTest())
+		if (p->m_useCount.decAndTest())
 			delete p;
 	}
 };

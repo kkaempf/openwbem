@@ -90,7 +90,7 @@ dlSharedLibrary::dlSharedLibrary(void * libhandle, const String& libName)
 	// Find out if it is a fake library.
 	m_fakeLibrary = dlSharedLibrary::isFakeLibrary(libName);
 
-	if( m_fakeLibrary )
+	if ( m_fakeLibrary )
 	{
 		initializeSymbolMap();
 	}
@@ -114,10 +114,10 @@ bool dlSharedLibrary::doGetFunctionPointer(const String& functionName,
 	String realFunctionName = functionName;
 	// If this is a fake library, extract convert the requested function
 	// name into the proper function name for the main executable.
-	if( m_fakeLibrary )
+	if ( m_fakeLibrary )
 	{
 		Map<String,String>::const_iterator symIter = m_symbolMap.find(functionName);
-		if( symIter == m_symbolMap.end() )
+		if ( symIter == m_symbolMap.end() )
 		{
 			return false;
 		}
@@ -140,21 +140,21 @@ bool dlSharedLibrary::doGetFunctionPointer(const String& functionName,
 bool dlSharedLibrary::isFakeLibrary(const String& library_path)
 {
 #if defined(OW_USE_FAKE_LIBS)
-  if( FileSystem::canRead(library_path) )
+  if ( FileSystem::canRead(library_path) )
   {
     // Read the beginning of the file and see if it
     // contains the fake library heading.
     File libfile = FileSystem::openFile(library_path);
 
-    if( libfile )
+    if ( libfile )
     {
       char buffer[(OW_FAKELIB_HEADING_LENGTH) + 1];
       size_t num_read = libfile.read(buffer,(OW_FAKELIB_HEADING_LENGTH));
-      if( num_read == (OW_FAKELIB_HEADING_LENGTH) )
+      if ( num_read == (OW_FAKELIB_HEADING_LENGTH) )
       {
 	// Null terminate it.
 	buffer[OW_FAKELIB_HEADING_LENGTH] = '\0';
-	if( String(OW_FAKELIB_HEADING) == buffer )
+	if ( String(OW_FAKELIB_HEADING) == buffer )
 	{
 	  // Yes, it's a fake library.
 	  return true;
@@ -169,7 +169,7 @@ bool dlSharedLibrary::isFakeLibrary(const String& library_path)
 #if defined(OW_USE_FAKE_LIBS)
 void dlSharedLibrary::initializeSymbolMap()
 {
-	if( ! m_fakeLibrary )
+	if ( ! m_fakeLibrary )
 	{
 		return;
 	}
@@ -178,18 +178,18 @@ void dlSharedLibrary::initializeSymbolMap()
 	// program. 
 	StringArray lines = FileSystem::getFileLines(m_libName);
 
-	for( StringArray::const_iterator iter = lines.begin();
+	for ( StringArray::const_iterator iter = lines.begin();
 		iter != lines.end();
 		++iter )
 	{
 		// Skip commented lines.  
-		if( iter->startsWith('#') )
+		if ( iter->startsWith('#') )
 		{
 			continue;
 		}
 		StringArray current_line = iter->tokenize("=");
 		// Skip invalid lines.
-		if( current_line.size() != 2 )
+		if ( current_line.size() != 2 )
 		{
 			continue;
 		}

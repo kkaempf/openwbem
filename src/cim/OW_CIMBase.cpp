@@ -56,7 +56,7 @@ CIMBase::readSig( istream& istr, const char* const sig )
 	OW_ASSERT( strlen(sig) == 1 );
 	expected = sig[0];
 	BinarySerialization::read(istr, &read, sizeof(read));
-	if(expected != read)
+	if (expected != read)
 	{
 		OW_THROW(BadCIMSignatureException,
 			Format("Signature does not match. In CIMBase::readSig. "
@@ -76,9 +76,9 @@ CIMBase::readSig(std::istream& istr, const char* const sig,
 	OW_ASSERT( strlen(verSig) == 1);
 
 	BinarySerialization::read(istr, &ch, sizeof(ch));
-	if(sig[0] != ch)
+	if (sig[0] != ch)
 	{
-		if(verSig[0] != ch)
+		if (verSig[0] != ch)
 		{
 			OW_THROW(BadCIMSignatureException,
 				Format("Signature does not match. In CIMBase::readSig. "

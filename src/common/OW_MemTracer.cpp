@@ -158,7 +158,7 @@ void
 myAtExitFunction()
 {
 	_shuttingDown = true;
-	if(MemoryTracer != 0)
+	if (MemoryTracer != 0)
 	{
 		fprintf(stderr, "*******************************************************************************\n");
 		fprintf(stderr, "*   D U M P I N G   M E M O R Y\n");
@@ -209,7 +209,7 @@ allocMemTracer()
 			memguard = new Mutex;
 			memguard->acquire();
 		}
-		if(MemoryTracer == 0)
+		if (MemoryTracer == 0)
 		{
 			atexit(myAtExitFunction);
 			MemoryTracer = new MemTracer;
@@ -220,7 +220,7 @@ allocMemTracer()
 //////////////////////////////////////////////////////////////////////////////
 void DumpMemory()
 {
-	if(MemoryTracer != 0)
+	if (MemoryTracer != 0)
 	{
 		MemoryTracer->dump();
 	}
@@ -253,7 +253,7 @@ checkSigs(void* p, size_t sz)
 	assert(sz);
 	assert(p);
 	unsigned long* plong = (unsigned long*)((char*)p - 4);
-	if(*plong != OW_MEM_SIG)
+	if (*plong != OW_MEM_SIG)
 	{
 		fprintf(stderr, "UNDERRUN: Beginning boundary problem.  "
 			"Sig is %x\n", (unsigned int)*plong);
@@ -261,7 +261,7 @@ checkSigs(void* p, size_t sz)
 		assert(0);
 	}
 	plong = (unsigned long*)((char*)p + sz);
-	if(*plong != OW_MEM_SIG)
+	if (*plong != OW_MEM_SIG)
 	{
 		fprintf(stderr, "OVERRUN: Ending boundary problem.  "
 			"Sig is %x\n", (unsigned int)*plong);
@@ -278,7 +278,7 @@ checkAndSwitchSigs(void* p, size_t sz)
 	assert(sz);
 	assert(p);
 	unsigned long* plong = (unsigned long*)((char*)p - 4);
-	if(*plong != OW_MEM_SIG)
+	if (*plong != OW_MEM_SIG)
 	{
 		fprintf(stderr, "UNDERRUN: Beginning boundary problem.  "
 			"Sig is %x\n", (unsigned int)*plong);
@@ -286,7 +286,7 @@ checkAndSwitchSigs(void* p, size_t sz)
 	}
 	*plong = OW_FREE_MEM_SIG;
 	plong = (unsigned long*)((char*)p + sz);
-	if(*plong != OW_MEM_SIG)
+	if (*plong != OW_MEM_SIG)
 	{
 		fprintf(stderr, "OVERRUN: Ending boundary problem.  "
 			"Sig is %x\n", (unsigned int)*plong);
@@ -323,7 +323,7 @@ void*
 MemTracer::remove(void* p)
 {
 	iterator it = m_map.find(p);
-	if(it != m_map.end())
+	if (it != m_map.end())
 	{
 		if (noFree)
 		{
@@ -355,12 +355,12 @@ MemTracer::remove(void* p)
 	{
 		fprintf(stderr, "Trying to check beginning signature...\n");
 		unsigned long* plong = (unsigned long*)((char*)p - 4);
-		if(*plong == OW_MEM_SIG)
+		if (*plong == OW_MEM_SIG)
 		{
 			fprintf(stderr, "MemTracer is broken\n");
 			assert(0);
 		}
-		if(*plong == OW_FREE_MEM_SIG)
+		if (*plong == OW_FREE_MEM_SIG)
 		{
 			fprintf(stderr, "DOUBLE DELETE: This memory was previously freed by MemTracer, "
 				"probably double delete\n");
@@ -389,7 +389,7 @@ MemTracer::getEntry(void* idx)
 	memguard->acquire();
 	iterator it = m_map.find(idx);
 	MemTracer::Entry rval;
-	if(it != m_map.end())
+	if (it != m_map.end())
 	{
 		rval = it->second;
 	}
@@ -401,11 +401,11 @@ void
 MemTracer::dump()
 {
 	memguard->acquire();
-	if(m_map.size() != 0)
+	if (m_map.size() != 0)
 	{
 		fprintf(stderr, "**** %d MEMORY LEAK(S) DETECTED\n", m_map.size());
 		size_t total = 0;
-		for(iterator it = m_map.begin(); it != m_map.end (); ++it)
+		for (iterator it = m_map.begin(); it != m_map.end (); ++it)
 		{
 			if (!it->second.isDeleted())
 			{
@@ -484,7 +484,7 @@ doNew(size_t size, char const* file, int line)
 static void
 doDelete(void* p)
 {
-	if(p)
+	if (p)
 	{
 		if (memguard)
 		{
@@ -508,7 +508,7 @@ doDelete(void* p)
 			MemoryTracer->checkMap();
 		}
 		owInternal = true;
-		if(MemoryTracer != 0)
+		if (MemoryTracer != 0)
 		{
 			p = MemoryTracer->remove((void*)((char*)p));
 		}
@@ -523,7 +523,7 @@ doDelete(void* p)
 		owInternal = false;
 		memguard->release();
 	}
-	if(_shuttingDown)
+	if (_shuttingDown)
 	{
 		memguard->release();
 		fprintf(stderr, "delete called\n");

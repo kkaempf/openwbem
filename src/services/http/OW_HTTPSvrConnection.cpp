@@ -156,22 +156,22 @@ HTTPSvrConnection::run()
 			addHeader("Server",
 				OW_PACKAGE "/" OW_VERSION " (CIMOM)");
 			int selType = Select::select(selArray, m_options.timeout * 1000); // *1000 to convert seconds to milliseconds
-			if(selType == Select::SELECT_ERROR)
+			if (selType == Select::SELECT_ERROR)
 			{
 			   OW_THROW(SocketException, "Error occurred during select()");
 			}
-			if(selType == Select::SELECT_INTERRUPTED)
+			if (selType == Select::SELECT_INTERRUPTED)
 			{
 			   OW_THROW(SocketException, "select() was interrupted.");
 			}
-			if(selType == Select::SELECT_TIMEOUT)
+			if (selType == Select::SELECT_TIMEOUT)
 			{
 			   m_resCode = SC_REQUEST_TIMEOUT;
 			   m_errDetails = "Timeout waiting for request.";
 			   sendError(m_resCode);
 			   return;
 			}
-			if(selType == 0)	// Unnamped pipe selected
+			if (selType == 0)	// Unnamped pipe selected
 			{
 			   m_resCode = SC_SERVICE_UNAVAILABLE;
 			   m_errDetails = "Server is shutting down."
@@ -179,7 +179,7 @@ HTTPSvrConnection::run()
 			   sendError(m_resCode);
 			   return;
 			}
-			if(selType != 1)	// If this isn't the socket - something is wrong
+			if (selType != 1)	// If this isn't the socket - something is wrong
 			{
 			   OW_THROW(Assertion, "Unexpected return code from select");
 			}
@@ -255,11 +255,11 @@ HTTPSvrConnection::run()
 			} // switch (m_method)
 			m_ostr.flush();
 			cleanUpIStreams(istrToReadFrom);
-			if(m_isClose)
+			if (m_isClose)
 			{
 				break;
 			}
-		} // while(m_istr.good())
+		} // while (m_istr.good())
 	} // try
 	catch (CIMErrorException& cee)
 	{
@@ -414,7 +414,7 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		bool clientSpecified, setByProvider;
 		String clang = getContentLanguage(context, setByProvider,
 			clientSpecified);
-		if(setByProvider || clientSpecified)
+		if (setByProvider || clientSpecified)
 		{
 			addHeader("Content-Language", clang);
 		}
@@ -503,7 +503,7 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		bool clientSpecified, setByProvider;
 		String clang = getContentLanguage(context, setByProvider,
 			clientSpecified);
-		if(setByProvider || clientSpecified)
+		if (setByProvider || clientSpecified)
 		{
 			OW_LOGDEBUG(format("HTTPSvrConnection::sendPostResponse (chunk)"
 				" setting Content-Language to %1", clang).c_str());
@@ -849,7 +849,7 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 	if (headerHasKey("Accept-Language"))
 	{
 		String al = getHeaderValue("Accept-Language");
-		if(al.length())
+		if (al.length())
 		{
 			psl->assign(al.c_str());
 		}
@@ -1149,7 +1149,7 @@ HTTPSvrConnection::sendError(int resCode)
 int
 HTTPSvrConnection::performAuthentication(const String& info, OperationContext& context)
 {
-	if(m_pHTTPServer->authenticate(this, m_userName, info, context))
+	if (m_pHTTPServer->authenticate(this, m_userName, info, context))
 	{
 		return SC_OK;
 	}
@@ -1232,12 +1232,12 @@ HTTPSvrConnection::getContentLanguage(OperationContext& context,
 		return contentLang;
 	}
 
-	if(slref->langCount() > 0)
+	if (slref->langCount() > 0)
 	{
 		clientSpecified = true;	// Client specified accept-language
 	}
 	String pcl = slref->getContentLanguage();
-	if(pcl.length())
+	if (pcl.length())
 	{
 		contentLang = pcl;
 		setByProvider = true;

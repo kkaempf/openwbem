@@ -165,9 +165,9 @@ processCommandLineOptions(int argc, char** argv)
 	optind = 1;
 	int c = getopt(argc, argv, short_options);
 #endif
-	while(c != -1)
+	while (c != -1)
 	{
-		switch(c)
+		switch (c)
 		{
 			case 'd':
 				g_useCimRepository = true;
@@ -321,7 +321,7 @@ int main(int argc, char** argv)
 		{
 			URL url(g_url);
 			// override what was in the url - TODO: deprecated in 3.0.0. Remove this post 3.1.x
-			if(g_encoding == URL::OWBINARY)
+			if (g_encoding == URL::OWBINARY)
 			{
 				if (url.scheme.endsWith('s'))
 				{

@@ -70,15 +70,15 @@ void
 UtilKeyArray::addElement(const CIMProperty& prop)
 {
 	String propName = prop.getName().toLowerCase();
-	for(size_t i = 0; i < m_names.size(); i++)
+	for (size_t i = 0; i < m_names.size(); i++)
 	{
 		int cc = m_names[i].compareTo(propName);
-		if(cc == 0)
+		if (cc == 0)
 		{
 			m_properties[i] = prop.getValue().toString();
 			return;
 		}
-		else if(cc > 0)
+		else if (cc > 0)
 		{
 			m_names.insert(i, propName);
 			m_properties.insert(i, prop.getValue().toString());
@@ -93,7 +93,7 @@ String
 UtilKeyArray::toString(const String& className)
 {
 	StringBuffer rv(className.toString().toLowerCase());
-	for(size_t i = 0; i < m_names.size(); i++)
+	for (size_t i = 0; i < m_names.size(); i++)
 	{
 		char c = (i == 0) ? '.' : ',';
 		rv += c;
@@ -108,7 +108,7 @@ String
 InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 	const CIMClass& theClass)
 {
-	if(!cop)
+	if (!cop)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "no object path");
 	}
@@ -116,7 +116,7 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 	StringBuffer rv(makeClassKey(ns, cop.getClassName()));
 	rv += '/';
 	CIMPropertyArray kprops = theClass.getKeys();
-	if(kprops.size() == 0)
+	if (kprops.size() == 0)
 	{
 		rv += cop.getClassName();
 		return rv.releaseString();
@@ -125,7 +125,7 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 		//	Format("No key properties for class: %1", theClass.getName()).c_str());
 	}
 	String oclass = kprops[0].getOriginClass().toLowerCase();
-	if(oclass.empty())
+	if (oclass.empty())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			Format("No orgin class for key property on class: %1",
@@ -134,32 +134,32 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 	rv += oclass;
 	// Get keys from object path
 	CIMPropertyArray pra = cop.getKeys();
-	if(pra.size() == 0)
+	if (pra.size() == 0)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"object path has no keys");
 	}
-	for(size_t i = 0; i < pra.size(); i++)
+	for (size_t i = 0; i < pra.size(); i++)
 	{
-		if(!pra[i].getValue())
+		if (!pra[i].getValue())
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				Format("object path (%1) has key (%2) with NULL value", cop, pra[i].getName()).c_str());
 		}
 	}
 	// If not all the key properties were specified, throw an exception
-	if(pra.size() < kprops.size())
+	if (pra.size() < kprops.size())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			Format("Model path is missing keys: %1", cop.toString()).c_str());
 	}
 	// TODO: Is this necessary?
-	if(pra.size() == 1)
+	if (pra.size() == 1)
 	{
 		// If only one key property in object path, ensure it is
 		// a key property in the class
 		String pname = pra[0].getName().toLowerCase();
-		if(!pname.empty() && !pname.equalsIgnoreCase(kprops[0].getName()))
+		if (!pname.empty() && !pname.equalsIgnoreCase(kprops[0].getName()))
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				Format("Property in model path is not a key: %1", pname).c_str());
@@ -183,13 +183,13 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 	}
 	// TODO: Is this necessary?
 	// Ensure no non-key properties were specified in the path
-	for(size_t i = 0; i < pra.size(); i++)
+	for (size_t i = 0; i < pra.size(); i++)
 	{
 		String pname = pra[i].getName();
 		size_t j = 0;
-		for(; j < kprops.size(); j++)
+		for (; j < kprops.size(); j++)
 		{
-			if(pname.equalsIgnoreCase(kprops[j].getName()))
+			if (pname.equalsIgnoreCase(kprops[j].getName()))
 			{
 				CIMValue cv = CIMValueCast::castValueToDataType(
 					pra[i].getValue(), kprops[j].getDataType());
@@ -206,14 +206,14 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 				break;
 			}
 		}
-		if(j == kprops.size())
+		if (j == kprops.size())
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				Format("Property in model path is not a key: %1", pname).c_str());
 		}
 	}
 	UtilKeyArray kra;
-	for(size_t i = 0; i < pra.size(); i++)
+	for (size_t i = 0; i < pra.size(); i++)
 	{
 		kra.addElement(pra[i]);
 	}
@@ -243,16 +243,16 @@ InstanceRepository::getInstanceNames(const String& ns,
 	HDBHandleLock hdl(this, getHandle());
 	String ckey = makeClassKey(ns, className);
 	HDBNode clsNode = hdl->getNode(ckey);
-	if(!clsNode)
+	if (!clsNode)
 	{
 		OW_THROWCIM(CIMException::INVALID_CLASS);
 	}
-	if(!clsNode.areAllFlagsOn(HDBCLSNODE_FLAG))
+	if (!clsNode.areAllFlagsOn(HDBCLSNODE_FLAG))
 	{
 		OW_THROW(IOException, "Expected class name node for instances");
 	}
 	HDBNode node = hdl->getFirstChild(clsNode);
-	while(node)
+	while (node)
 	{
 		CIMInstance ci(CIMNULL);
 		nodeToCIMObject(ci, node);
@@ -278,16 +278,16 @@ InstanceRepository::getCIMInstances(
 	HDBHandleLock hdl(this, getHandle());
 	String ckey = makeClassKey(ns, className);
 	HDBNode clsNode = hdl->getNode(ckey);
-	if(!clsNode)
+	if (!clsNode)
 	{
 		OW_THROWCIM(CIMException::INVALID_CLASS);
 	}
-	if(!clsNode.areAllFlagsOn(HDBCLSNODE_FLAG))
+	if (!clsNode.areAllFlagsOn(HDBCLSNODE_FLAG))
 	{
 		OW_THROW(IOException, "Expected class name node for instances");
 	}
 	HDBNode node = hdl->getFirstChild(clsNode);
-	while(node)
+	while (node)
 	{
 		CIMInstance ci(CIMNULL);
 		nodeToCIMObject(ci, node);
@@ -309,7 +309,7 @@ InstanceRepository::getCIMInstance(
 	String instanceKey = makeInstanceKey(ns, instanceName, theClass);
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode node = hdl->getNode(instanceKey);
-	if(!node)
+	if (!node)
 	{
 		CIMObjectPath cop(instanceName);
 		cop.setNameSpace(ns);
@@ -338,7 +338,7 @@ InstanceRepository::deleteInstance(const String& ns, const CIMObjectPath& cop,
 	String instanceKey = makeInstanceKey(ns, cop, theClass);
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode node = hdl->getNode(instanceKey);
-	if(!node)
+	if (!node)
 	{
 		CIMObjectPath cop2(cop);
 		cop2.setNameSpace(ns);
@@ -360,7 +360,7 @@ InstanceRepository::createInstance(const String& ns,
 	CIMInstance ci(ci_);
 	String ckey = makeClassKey(ns, ci.getClassName());
 	HDBNode clsNode = getNameSpaceNode(hdl, ckey);
-	if(!clsNode)
+	if (!clsNode)
 	{
 		// Theoretically this should never happen, but just in case...
 		OW_THROWCIMMSG(CIMException::INVALID_CLASS, ci.getClassName().c_str());
@@ -369,7 +369,7 @@ InstanceRepository::createInstance(const String& ns,
 	CIMObjectPath icop(ns, ci);
 	String instanceKey = makeInstanceKey(ns, icop, theClass);
 	HDBNode node = hdl->getNode(instanceKey);
-	if(node)
+	if (node)
 	{
 		OW_THROWCIMMSG(CIMException::ALREADY_EXISTS, instanceKey.c_str());
 	}
@@ -390,9 +390,9 @@ InstanceRepository::classHasInstances(const CIMObjectPath& classPath)
 	String ckey = makeClassKey(classPath.getNameSpace(),
 		classPath.getClassName());
 	HDBNode node = hdl->getNode(ckey);
-	if(node)
+	if (node)
 	{
-		if(!node.areAllFlagsOn(HDBCLSNODE_FLAG))
+		if (!node.areAllFlagsOn(HDBCLSNODE_FLAG))
 		{
 			OW_THROW(IOException, "Expected class name node for instances");
 		}
@@ -418,36 +418,36 @@ InstanceRepository::modifyInstance(const String& ns,
 	ci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS);
 	// Ensure key values haven't changed
 	CIMPropertyArray oldKeys = oldInst.getKeyValuePairs();
-	for(size_t i = 0; i < oldKeys.size(); i++)
+	for (size_t i = 0; i < oldKeys.size(); i++)
 	{
 		CIMProperty kprop = ci.getProperty(oldKeys[i].getName());
-		if(!kprop)
+		if (!kprop)
 		{
 			String msg("Missing key value: ");
 			msg += oldKeys[i].getName();
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, msg.c_str());
 		}
 		CIMValue cv1 = kprop.getValue();
-		if(!cv1)
+		if (!cv1)
 		{
 			String msg("Missing key value: ");
 			msg += kprop.getName();
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, msg.c_str());
 		}
 		CIMValue cv2 = oldKeys[i].getValue();
-		if(!cv2)
+		if (!cv2)
 		{
 			String msg("Missing key value in object path: ");
 			msg += oldKeys[i].getName();
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, msg.c_str());
 		}
-		if(!cv1.sameType(cv2))
+		if (!cv1.sameType(cv2))
 		{
 			String msg("Data type for key property changed! property: ");
 			msg += kprop.getName();
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, msg.c_str());
 		}
-		if(!cv1.equal(cv2))
+		if (!cv1.equal(cv2))
 		{
 			String msg("key value for instance changed: ");
 			msg += kprop.getName();
@@ -493,14 +493,14 @@ InstanceRepository::createClass(const String& ns,
 	throwIfNotOpen();
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode pnode = getNameSpaceNode(hdl, ns);
-	if(!pnode)
+	if (!pnode)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE,
 			ns.c_str());
 	}
 	String ckey = makeClassKey(ns, cimClass.getName());
 	HDBNode node = hdl->getNode(ckey);
-	if(node)
+	if (node)
 	{
 		OW_THROWCIMMSG(CIMException::ALREADY_EXISTS, ckey.c_str());
 	}
@@ -518,9 +518,9 @@ InstanceRepository::deleteClass(const String& ns,
 	HDBHandleLock hdl(this, getHandle());
 	String ckey = makeClassKey(ns, className);
 	HDBNode node = hdl->getNode(ckey);
-	if(node)
+	if (node)
 	{
-		if(!node.areAllFlagsOn(HDBCLSNODE_FLAG))
+		if (!node.areAllFlagsOn(HDBCLSNODE_FLAG))
 		{
 			OW_THROW(IOException, "Expected class name node for instances");
 		}

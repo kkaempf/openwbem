@@ -21,7 +21,7 @@ void _NPIGarbageCan(NPIHandle * nh, void * object, NPIGarbageType type)
 }
 void _NPIGarbageRetrieve(NPIHandle * nh, void * object)
 {
-   for(int i = ((NPIContext *)(nh->context))->garbage.size()-1;i >=0;i--)
+   for (int i = ((NPIContext *)(nh->context))->garbage.size()-1;i >=0;i--)
    {
 	  if ( ((NPIContext *)(nh->context))->garbage[i] == object)
 		 ((NPIContext *)(nh->context))->garbageType[i] = NOTHING;
@@ -268,7 +268,7 @@ CIMParameterGetType(NPIHandle* npiHandle, ::CIMParameter cp)
 		raiseError(npiHandle, "Error getting parameter type");
 	}
 
-	//switch(dt.getType())
+	//switch (dt.getType())
 	switch (dt)
 	{
 		case CIMDataType::BOOLEAN :
@@ -834,7 +834,7 @@ static void _CIMObjectPathAddKey(OpenWBEM::CIMObjectPath * ref,
    {
 	  bool b = false;
 	  CIMPropertyArray cprops = ref->getKeys();
-	  for(Int32 i=cprops.size()-1; i >= 0; i--)
+	  for (Int32 i=cprops.size()-1; i >= 0; i--)
 	  {
 	   if (cprops[i].getName().equalsIgnoreCase(Key))
 		{

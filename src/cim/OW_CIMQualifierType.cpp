@@ -159,7 +159,7 @@ CIMQualifierType&
 CIMQualifierType::setDataType(const CIMDataType& dataType)
 {
 	m_pdata->m_dataType = dataType;
-	if(m_pdata->m_defaultValue)
+	if (m_pdata->m_defaultValue)
 	{
 		m_pdata->m_defaultValue = CIMValueCast::castValueToDataType(
 			m_pdata->m_defaultValue, m_pdata->m_dataType);
@@ -177,7 +177,7 @@ CIMQualifierType&
 CIMQualifierType::setDefaultValue(const CIMValue& defValue)
 {
 	m_pdata->m_defaultValue = defValue;
-	if(m_pdata->m_defaultValue)
+	if (m_pdata->m_defaultValue)
 	{
 		m_pdata->m_defaultValue = CIMValueCast::castValueToDataType(
 			m_pdata->m_defaultValue, m_pdata->m_dataType);
@@ -188,9 +188,9 @@ CIMQualifierType::setDefaultValue(const CIMValue& defValue)
 CIMQualifierType&
 CIMQualifierType::addScope(const CIMScope& newScope)
 {
-	if(newScope)
+	if (newScope)
 	{
-		if(!hasScope(newScope))
+		if (!hasScope(newScope))
 		{
 			if (newScope == CIMScope::ANY)
 			{
@@ -205,12 +205,12 @@ CIMQualifierType::addScope(const CIMScope& newScope)
 bool
 CIMQualifierType::hasScope(const CIMScope& scopeArg) const
 {
-	if(scopeArg)
+	if (scopeArg)
 	{
 		size_t tsize = m_pdata->m_scope.size();
-		for(size_t i = 0; i < tsize; i++)
+		for (size_t i = 0; i < tsize; i++)
 		{
-			if(m_pdata->m_scope[i].getScope() == scopeArg.getScope())
+			if (m_pdata->m_scope[i].getScope() == scopeArg.getScope())
 			{
 				return true;
 			}
@@ -222,12 +222,12 @@ CIMQualifierType::hasScope(const CIMScope& scopeArg) const
 bool
 CIMQualifierType::hasFlavor(const CIMFlavor& flavorArg) const
 {
-	if(flavorArg)
+	if (flavorArg)
 	{
 		size_t tsize = m_pdata->m_flavor.size();
-		for(size_t i = 0; i < tsize; i++)
+		for (size_t i = 0; i < tsize; i++)
 		{
-			if(m_pdata->m_flavor[i].getFlavor() == flavorArg.getFlavor())
+			if (m_pdata->m_flavor[i].getFlavor() == flavorArg.getFlavor())
 			{
 				return true;
 			}
@@ -240,11 +240,11 @@ CIMQualifierType&
 CIMQualifierType::addFlavor(const CIMFlavor& newFlavor)
 {
 	Int32 flavor = newFlavor.getFlavor();
-	if(newFlavor)
+	if (newFlavor)
 	{
-		if(!hasFlavor(newFlavor))
+		if (!hasFlavor(newFlavor))
 		{
-			switch(flavor)
+			switch (flavor)
 			{
 				case CIMFlavor::ENABLEOVERRIDE:
 					removeFlavor(CIMFlavor::DISABLEOVERRIDE);
@@ -271,7 +271,7 @@ CIMQualifierType::removeFlavor(const Int32 flavor)
 	size_t i = 0;
 	while (i < m_pdata->m_flavor.size())
 	{
-		if(m_pdata->m_flavor[i].getFlavor() == flavor)
+		if (m_pdata->m_flavor[i].getFlavor() == flavor)
 		{
 			m_pdata->m_flavor.remove(i);
 		}
@@ -299,7 +299,7 @@ bool
 CIMQualifierType::isDefaultValueArray() const
 {
 	bool isra = false;
-	if(m_pdata->m_defaultValue)
+	if (m_pdata->m_defaultValue)
 	{
 		isra = m_pdata->m_defaultValue.isArray();
 	}
@@ -326,7 +326,7 @@ CIMQualifierType::writeObject(ostream &ostrm) const
 	m_pdata->m_dataType.writeObject(ostrm);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_scope);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_flavor);
-	if(m_pdata->m_defaultValue)
+	if (m_pdata->m_defaultValue)
 	{
 		Bool(true).writeObject(ostrm);
 		m_pdata->m_defaultValue.writeObject(ostrm);
@@ -352,11 +352,11 @@ CIMQualifierType::readObject(istream &istrm)
 	BinarySerialization::readArray(istrm, flavor);
 	Bool isValue;
 	isValue.readObject(istrm);
-	if(isValue)
+	if (isValue)
 	{
 		defaultValue.readObject(istrm);
 	}
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		m_pdata = new QUALTData;
 	}
@@ -382,7 +382,7 @@ CIMQualifierType::toMOF() const
 	rv += m_pdata->m_name;
 	rv += " : ";
 	rv += m_pdata->m_dataType.toMOF();
-	if(m_pdata->m_dataType.isArrayType())
+	if (m_pdata->m_dataType.isArrayType())
 	{
 		rv += '[';
 		if (m_pdata->m_dataType.getSize() != -1) // -1 means unlimited
@@ -391,19 +391,19 @@ CIMQualifierType::toMOF() const
 		}
 		rv += ']';
 	}
-	if(m_pdata->m_defaultValue)
+	if (m_pdata->m_defaultValue)
 	{
 		rv += " = ";
 		rv += m_pdata->m_defaultValue.toMOF();
 	}
-	if(m_pdata->m_scope.size() > 0)
+	if (m_pdata->m_scope.size() > 0)
 	{
 		rv += ", Scope(";
 		CIMScopeArray scopes(m_pdata->m_scope);
 		std::sort(scopes.begin(), scopes.end());
-		for(i = 0; i < scopes.size(); i++)
+		for (i = 0; i < scopes.size(); i++)
 		{
-			if(i > 0)
+			if (i > 0)
 			{
 				rv += ',';
 			}
@@ -411,11 +411,11 @@ CIMQualifierType::toMOF() const
 		}
 		rv += ')';
 	}
-	if(m_pdata->m_flavor.size() > 0)
+	if (m_pdata->m_flavor.size() > 0)
 	{
 		CIMFlavorArray toPrint;
 		// first filter out the default flavors.
-		for(i = 0; i < m_pdata->m_flavor.size(); i++)
+		for (i = 0; i < m_pdata->m_flavor.size(); i++)
 		{
 			if (m_pdata->m_flavor[i].getFlavor() != CIMFlavor::ENABLEOVERRIDE
 				&& m_pdata->m_flavor[i].getFlavor() != CIMFlavor::TOSUBCLASS)
@@ -426,9 +426,9 @@ CIMQualifierType::toMOF() const
 		if (toPrint.size() > 0)
 		{
 			rv += ", Flavor(";
-			for(i = 0; i < toPrint.size(); i++)
+			for (i = 0; i < toPrint.size(); i++)
 			{
-				if(i > 0)
+				if (i > 0)
 				{
 					rv += ',';
 				}

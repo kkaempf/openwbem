@@ -58,13 +58,13 @@ dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	// to the main executable).  This handle can be used just like any
 	// other, assuming that the main executable was linked with the proper
 	// export flags (--export-dynamic on linux, -bexpall on AIX, etc.).  
-	if( !libhandle )
+	if ( !libhandle )
 	{
-	  if( dlSharedLibrary::isFakeLibrary(filename) )
+	  if ( dlSharedLibrary::isFakeLibrary(filename) )
 	  {
 	    libhandle = dlopen(NULL, RTLD_NOW | RTLD_GLOBAL);
 	    
-	    if( !libhandle )
+	    if ( !libhandle )
 	    {
 	      second_error = dlerror();
 	    }
@@ -80,7 +80,7 @@ dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	{
 		logger->logError(Format("dlSharedLibraryLoader::loadSharedLibrary "
 			"dlopen returned NULL.  Error is: %1", first_error));
-		if( !second_error.empty() )
+		if ( !second_error.empty() )
 		{
 			logger->logError(Format("dlSharedLibraryLoader::loadSharedLibrary (fakelib) "
 				"dlopen returned NULL.  Error is: %1", second_error));		  

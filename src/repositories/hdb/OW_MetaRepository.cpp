@@ -64,7 +64,7 @@ static void createRootNode(String& qcontk, HDBHandleLock& hdl)
 {
 	qcontk.toLowerCase();
 	HDBNode rnode = hdl->getNode(qcontk);
-	if(!rnode)
+	if (!rnode)
 	{
 		rnode = HDBNode(qcontk, qcontk.length()+1,
 			reinterpret_cast<const unsigned char*>(qcontk.c_str()));
@@ -100,7 +100,7 @@ MetaRepository::_getQualContainer(HDBHandleLock& hdl, const String& ns_)
 	//{
 	//	ns = ns.substring(1);
 	//}
-	if(!ns.empty())
+	if (!ns.empty())
 	{
 		qcontk += "/";
 		qcontk += ns;
@@ -156,7 +156,7 @@ MetaRepository::getQualifierType(const String& ns,
 	}
 	GenericHDBRepository* prep;
 	HDBHandle lhdl;
-	if(phdl)
+	if (phdl)
 	{
 		prep = NULL;
 		lhdl = *phdl;
@@ -195,19 +195,19 @@ MetaRepository::enumQualifierTypes(const String& ns,
 	String nskey = _makeQualPath(ns, String());
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode node = hdl->getNode(nskey);
-	if(!node)
+	if (!node)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns.c_str());
 	}
-	if(!node.areAllFlagsOn(HDBNSNODE_FLAG))
+	if (!node.areAllFlagsOn(HDBNSNODE_FLAG))
 	{
 		OW_THROW(HDBException, "Expected namespace node");
 	}
 	node = hdl->getFirstChild(node);
-	while(node)
+	while (node)
 	{
 		// If this is not a namespace node, assume it's a qualifier
-		if(!node.areAllFlagsOn(HDBNSNODE_FLAG))
+		if (!node.areAllFlagsOn(HDBNSNODE_FLAG))
 		{
 			CIMQualifierType qual(CIMNULL);
 			nodeToCIMObject(qual, node);
@@ -225,7 +225,7 @@ MetaRepository::deleteQualifierType(const String& ns,
 	String qkey = _makeQualPath(ns, qualName);
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode node = hdl->getNode(qkey);
-	if(!node)
+	if (!node)
 	{
 		// Didn't find a node associated with the key
 		return false;
@@ -246,13 +246,13 @@ MetaRepository::_addQualifierType(const String& ns,
 	const CIMQualifierType& qt, HDBHandle* phdl)
 {
 	throwIfNotOpen();
-	if(!qt)
+	if (!qt)
 	{
 		OW_THROWCIM(CIMException::INVALID_PARAMETER);
 	}
 	GenericHDBRepository* prep;
 	HDBHandle lhdl;
-	if(phdl)
+	if (phdl)
 	{
 		prep = 0;
 		lhdl = *phdl;
@@ -265,10 +265,10 @@ MetaRepository::_addQualifierType(const String& ns,
 	HDBHandleLock hdl(prep, lhdl);
 	String qkey = _makeQualPath(ns, qt.getName());
 	HDBNode node = hdl->getNode(qkey);
-	if(node)
+	if (node)
 	{
 		String msg(ns);
-		if(!ns.empty())
+		if (!ns.empty())
 		{
 			msg += "/";
 		}
@@ -276,7 +276,7 @@ MetaRepository::_addQualifierType(const String& ns,
 		OW_THROWCIMMSG(CIMException::ALREADY_EXISTS, msg.c_str());
 	}
 	HDBNode pnode = _getQualContainer(hdl, ns);
-	if(!pnode)
+	if (!pnode)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns.c_str());
 	}
@@ -292,7 +292,7 @@ MetaRepository::setQualifierType(const String& ns,
 	String qkey = _makeQualPath(ns, qt.getName());
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode node = hdl->getNode(qkey);
-	if(!node)
+	if (!node)
 	{
 		HDBHandle lhdl = hdl.getHandle();
 		_addQualifierType(ns, qt, &lhdl);
@@ -321,11 +321,11 @@ MetaRepository::getCIMClass(const String& ns, const String& className,
 	throwIfNotOpen();
 	String ckey = _makeClassPath(ns, className);
 	cc = m_classCache.getFromCache(ckey);
-	if(!cc)
+	if (!cc)
 	{
 		HDBHandleLock hdl(this, getHandle());
 		HDBNode node = hdl->getNode(ckey);
-		if(node)
+		if (node)
 		{
 			// _getClassFromNode throws if unable to get class.
 			cc = _getClassFromNode(node, hdl.getHandle(), ns);
@@ -345,9 +345,9 @@ MetaRepository::getCIMClass(const String& ns, const String& className,
 	{ // only clone if we have to
 		StringArray lpropList;
 		bool noProps = false;
-		if(propertyList)
+		if (propertyList)
 		{
-			if(propertyList->size() == 0)
+			if (propertyList->size() == 0)
 			{
 				noProps = true;
 			}
@@ -399,7 +399,7 @@ MetaRepository::_resolveClass(CIMClass& child, HDBNode& node,
 	// If this class has an association qualifier, then ensure
 	// the association flag is on
 //     CIMQualifier childAssocQual = child.getQualifier(CIMQualifier::CIM_QUAL_ASSOCIATION);
-//     if(childAssocQual)
+//     if (childAssocQual)
 //     {
 //         if (!childAssocQual.getValue()
 //             || childAssocQual.getValue() != CIMValue(false))
@@ -409,9 +409,9 @@ MetaRepository::_resolveClass(CIMClass& child, HDBNode& node,
 //     }
 	// Determine if any properties are keys
 	CIMPropertyArray propArray = child.getAllProperties();
-	for(size_t i = 0; i < propArray.size(); i++)
+	for (size_t i = 0; i < propArray.size(); i++)
 	{
-		if(propArray[i].isKey())
+		if (propArray[i].isKey())
 		{
 			child.setIsKeyed(true);
 			break;
@@ -422,18 +422,18 @@ MetaRepository::_resolveClass(CIMClass& child, HDBNode& node,
 	String superID = child.getSuperClass();
 	// If class doesn't have a super class - don't propagate anything
 	// Should always have a parent because of namespaces
-	if(superID.empty())
+	if (superID.empty())
 	{
 		return;
 	}
 	String pkey = _makeClassPath(ns, superID);
 	parentClass = m_classCache.getFromCache(pkey);
-	if(!parentClass)
+	if (!parentClass)
 	{
 		// If there is no node or the parent node is a namespace
 		// then we have a base class and there is nothing to propagate.
 		pnode = hdl.getParent(node);
-		if(!pnode || pnode.areAllFlagsOn(HDBNSNODE_FLAG))
+		if (!pnode || pnode.areAllFlagsOn(HDBNSNODE_FLAG))
 		{
 			return;
 		}
@@ -441,23 +441,23 @@ MetaRepository::_resolveClass(CIMClass& child, HDBNode& node,
 		_resolveClass(parentClass, pnode, hdl, ns);
 		m_classCache.addToCache(parentClass, pkey);
 	}
-	//if(parentClass.isAssociation())
+	//if (parentClass.isAssociation())
 	//{
 	//	child.setIsAssociation(true);
 	//}
-	if(parentClass.isKeyed())
+	if (parentClass.isKeyed())
 	{
 		child.setIsKeyed(true);
 	}
 	// Propagate appropriate class qualifiers
 	CIMQualifierArray qualArray = parentClass.getQualifiers();
-	for(size_t i = 0; i < qualArray.size(); i++)
+	for (size_t i = 0; i < qualArray.size(); i++)
 	{
 		CIMQualifier qual = qualArray[i];
-		if(!qual.hasFlavor(CIMFlavor::RESTRICTED))
-		//if(qual.hasFlavor(CIMFlavor::TOSUBCLASS))
+		if (!qual.hasFlavor(CIMFlavor::RESTRICTED))
+		//if (qual.hasFlavor(CIMFlavor::TOSUBCLASS))
 		{
-			if(!child.hasQualifier(qual))
+			if (!child.hasQualifier(qual))
 			{
 				qual.setPropagated(true);
 				child.addQualifier(qual);
@@ -471,11 +471,11 @@ MetaRepository::_resolveClass(CIMClass& child, HDBNode& node,
 	// need to add validation code...
 	//
 	propArray = parentClass.getAllProperties();
-	for(size_t i = 0; i < propArray.size(); i++)
+	for (size_t i = 0; i < propArray.size(); i++)
 	{
 		CIMProperty parentProp = propArray[i];
 		CIMProperty childProp = child.getProperty(parentProp.getName());
-		if(!childProp)
+		if (!childProp)
 		{
 			parentProp.setPropagated(true);
 			child.addProperty(parentProp);
@@ -487,10 +487,10 @@ MetaRepository::_resolveClass(CIMClass& child, HDBNode& node,
 			// re-defined
 			//
 			qualArray = parentProp.getQualifiers();
-			for(size_t qi = 0; qi < qualArray.size(); qi++)
+			for (size_t qi = 0; qi < qualArray.size(); qi++)
 			{
 				CIMQualifier parentQual = qualArray[qi];
-				if(!childProp.getQualifier(parentQual.getName()))
+				if (!childProp.getQualifier(parentQual.getName()))
 				{
 					//
 					// Qualifier not defined on child property
@@ -505,11 +505,11 @@ MetaRepository::_resolveClass(CIMClass& child, HDBNode& node,
 	}
 	// Propagate methods from parent class
 	CIMMethodArray methods = parentClass.getAllMethods();
-	for(size_t i = 0; i < methods.size(); i++)
+	for (size_t i = 0; i < methods.size(); i++)
 	{
 		CIMMethod cm = methods[i];
 		CIMMethod childMethod = child.getMethod(methods[i].getName());
-		if(!childMethod)
+		if (!childMethod)
 		{
 			cm.setPropagated(true);
 			child.addMethod(cm);
@@ -521,10 +521,10 @@ MetaRepository::_resolveClass(CIMClass& child, HDBNode& node,
 			// re-defined by the method declaration
 			//
 			qualArray = cm.getQualifiers();
-			for(size_t mi = 0; mi < qualArray.size(); mi++)
+			for (size_t mi = 0; mi < qualArray.size(); mi++)
 			{
 				CIMQualifier methQual = qualArray[mi];
-				if(!childMethod.getQualifier(methQual.getName()))
+				if (!childMethod.getQualifier(methQual.getName()))
 				{
 					methQual.setPropagated(true);
 					childMethod.addQualifier(methQual);
@@ -543,7 +543,7 @@ MetaRepository::deleteClass(const String& ns, const String& className)
 	String ckey = _makeClassPath(ns, className);
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode node = hdl->getNode(ckey);
-	if(!node)
+	if (!node)
 	{
 		return false;
 	}
@@ -567,9 +567,9 @@ MetaRepository::createClass(const String& ns, CIMClass& cimClass)
 	// Ensure integrity with any super classes
 	HDBNode pnode = adjustClass(ns, cimClass, hdl.getHandle());
 	// pnode is null if there is no parent class, so get namespace node
-	if(!pnode)
+	if (!pnode)
 	{
-		if(!(pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns)))
+		if (!(pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns)))
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE,
 				ns.c_str());
@@ -577,7 +577,7 @@ MetaRepository::createClass(const String& ns, CIMClass& cimClass)
 	}
 	String ckey = _makeClassPath(ns, cimClass.getName());
 	HDBNode node = hdl->getNode(ckey);
-	if(node)
+	if (node)
 	{
 		OW_THROWCIMMSG(CIMException::ALREADY_EXISTS, ckey.c_str());
 	}
@@ -596,7 +596,7 @@ MetaRepository::modifyClass(const String& ns,
 	adjustClass(ns, cimClass, hdl.getHandle());
 	String ckey = _makeClassPath(ns, cimClass.getName());
 	HDBNode node = hdl->getNode(ckey);
-	if(!node)
+	if (!node)
 	{
 		OW_THROWCIMMSG(CIMException::NOT_FOUND, ckey.c_str());
 	}
@@ -617,7 +617,7 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 	String parentName = childClass.getSuperClass();
 	CIMClass parentClass(CIMNULL);
 	HDBNode parentNode;
-	if(!parentName.empty())
+	if (!parentName.empty())
 	{
 		// Get the parent class
 		String superID = _makeClassPath(ns, parentName);
@@ -625,36 +625,36 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 		if (!parentClass)
 		{
 			parentNode = hdl.getNode(superID);
-			if(!parentNode)
+			if (!parentNode)
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_SUPERCLASS,
 						parentName.c_str());
 			}
 			parentClass = _getClassFromNode(parentNode, hdl, ns);
-			if(!parentClass)
+			if (!parentClass)
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_SUPERCLASS,
 						parentName.c_str());
 			}
 		}
 	}
-	if(!parentClass)
+	if (!parentClass)
 	{
 		// No parent class. Must be a base class
 		CIMQualifierArray qualArray = childClass.getQualifiers();
-		for(size_t i = 0; i < qualArray.size(); i++)
+		for (size_t i = 0; i < qualArray.size(); i++)
 		{
 			qualArray[i].setPropagated(false);
 		}
 		CIMPropertyArray propArray = childClass.getAllProperties();
-		for(size_t i = 0; i < propArray.size(); i++)
+		for (size_t i = 0; i < propArray.size(); i++)
 		{
 			propArray[i].setPropagated(false);
 			propArray[i].setOriginClass(childName);
 		}
 		childClass.setProperties(propArray);
 		CIMMethodArray methArray = childClass.getAllMethods();
-		for(size_t i = 0; i < methArray.size(); i++)
+		for (size_t i = 0; i < methArray.size(); i++)
 		{
 			methArray[i].setPropagated(false);
 			methArray[i].setOriginClass(childName);
@@ -667,7 +667,7 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 	// At this point we know we have a parent class
 	CIMQualifierArray newQuals;
 	CIMQualifierArray qualArray = childClass.getQualifiers();
-	for(size_t i = 0; i < qualArray.size(); i++)
+	for (size_t i = 0; i < qualArray.size(); i++)
 	{
 		CIMQualifier qual = qualArray[i];
 		CIMQualifier pqual = parentClass.getQualifier(qual.getName());
@@ -699,10 +699,10 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 	}
 	childClass.setQualifiers(newQuals);
 	CIMPropertyArray propArray = childClass.getAllProperties();
-	for(size_t i = 0; i < propArray.size(); i++)
+	for (size_t i = 0; i < propArray.size(); i++)
 	{
 		CIMProperty parentProp = parentClass.getProperty(propArray[i].getName());
-		if(parentProp)
+		if (parentProp)
 		{
 			if (propArray[i].getQualifier(CIMQualifier::CIM_QUAL_OVERRIDE))
 			{
@@ -761,11 +761,11 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 		{
 			// According to the 2.2 spec. If the parent class has key properties,
 			// the child class cannot declare additional key properties.
-			if(propArray[i].isKey())
+			if (propArray[i].isKey())
 			{
 				// This is a key property, so the parent class better not be a
 				// keyed class.
-				if(parentClass.isKeyed())
+				if (parentClass.isKeyed())
 				{
 					OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 							Format("Parent class has keys. Child cannot have additional"
@@ -778,9 +778,9 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 	}
 	childClass.setProperties(propArray);
 	CIMMethodArray methArray = childClass.getAllMethods();
-	for(size_t i = 0; i < methArray.size(); i++)
+	for (size_t i = 0; i < methArray.size(); i++)
 	{
-		if(parentClass.getMethod(methArray[i].getName()) &&
+		if (parentClass.getMethod(methArray[i].getName()) &&
 				!methArray[i].getQualifier(CIMQualifier::CIM_QUAL_OVERRIDE))
 		{
 			methArray[i].setOriginClass(parentName);
@@ -793,14 +793,14 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 		}
 	}
 	childClass.setMethods(methArray);
-	if(parentClass.isKeyed())
+	if (parentClass.isKeyed())
 	{
 		childClass.setIsKeyed();
 	}
 	// Don't allow the child class to be an association if the parent class isn't.
 	// This shouldn't normally happen, because the association qualifier has
 	// a DISABLEOVERRIDE flavor, so it will be caught in an earlier test.
-	if(childClass.isAssociation() && !parentClass.isAssociation())
+	if (childClass.isAssociation() && !parentClass.isAssociation())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				Format("Association class is derived from non-association class: %1",
@@ -814,13 +814,13 @@ void
 MetaRepository::_resolveQualifiers(const String& ns,
 	CIMQualifierArray& quals, HDBHandle hdl)
 {
-	for(size_t i = 0; i < quals.size(); i++)
+	for (size_t i = 0; i < quals.size(); i++)
 	{
 		CIMQualifierType qt = getQualifierType(ns, quals[i].getName(), &hdl);
-		if(qt)
+		if (qt)
 		{
 			CIMFlavorArray fra = qt.getFlavors();
-			for(size_t j = 0; j < fra.size(); j++)
+			for (size_t j = 0; j < fra.size(); j++)
 			{
 				quals[i].addFlavor(fra[j]);
 			}
@@ -845,14 +845,14 @@ MetaRepository::getTopLevelAssociations(const String& ns,
 	throwIfNotOpen();
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode node = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns);
-	if(!node)
+	if (!node)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns.c_str());
 	}
 	node = hdl->getFirstChild(node);
-	while(node)
+	while (node)
 	{
-		if(!node.areAllFlagsOn(HDBNSNODE_FLAG)
+		if (!node.areAllFlagsOn(HDBNSNODE_FLAG)
 			&& node.areAllFlagsOn(HDBCLSASSOCNODE_FLAG))
 		{
 			CIMClass cc(CIMNULL);
@@ -874,14 +874,14 @@ MetaRepository::enumClass(const String& ns, const String& className,
 	throwIfNotOpen();
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode pnode;
-	if(!className.empty())
+	if (!className.empty())
 	{
 		String ckey = _makeClassPath(ns, className);
 		pnode = hdl->getNode(ckey);
-		if(!pnode)
+		if (!pnode)
 		{
 			pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns);
-			if(!pnode)
+			if (!pnode)
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns.c_str());
 			}
@@ -899,15 +899,15 @@ MetaRepository::enumClass(const String& ns, const String& className,
 			ns2 = ns2.substring(1);
 		}
 		pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns2);
-		if(!pnode)
+		if (!pnode)
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns2.c_str());
 		}
 	}
 	pnode = hdl->getFirstChild(pnode);
-	while(pnode)
+	while (pnode)
 	{
-		if(!pnode.areAllFlagsOn(HDBNSNODE_FLAG))
+		if (!pnode.areAllFlagsOn(HDBNSNODE_FLAG))
 		{
 			_getClassNodes(ns, result, pnode, hdl.getHandle(), deep, localOnly,
 				includeQualifiers, includeClassOrigin);
@@ -925,10 +925,10 @@ MetaRepository::_getClassNodes(const String& ns, CIMClassResultHandlerIFC& resul
 	// TODO: Check cimCls for NULL?
 	result.handle(cimCls.clone(localOnly, includeQualifiers,
 		includeClassOrigin));
-	if(deep)
+	if (deep)
 	{
 		node = hdl.getFirstChild(node);
-		while(node)
+		while (node)
 		{
 			_getClassNodes(ns, result, node, hdl, deep, localOnly, includeQualifiers,
 				includeClassOrigin);
@@ -945,14 +945,14 @@ MetaRepository::enumClassNames(const String& ns, const String& className,
 	throwIfNotOpen();
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode pnode;
-	if(!className.empty())
+	if (!className.empty())
 	{
 		String ckey = _makeClassPath(ns, className);
 		pnode = hdl->getNode(ckey);
-		if(!pnode)
+		if (!pnode)
 		{
 			pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns);
-			if(!pnode)
+			if (!pnode)
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns.c_str());
 			}
@@ -970,15 +970,15 @@ MetaRepository::enumClassNames(const String& ns, const String& className,
 			ns2 = ns2.substring(1);
 		}
 		pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns2);
-		if(!pnode)
+		if (!pnode)
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns2.c_str());
 		}
 	}
 	pnode = hdl->getFirstChild(pnode);
-	while(pnode)
+	while (pnode)
 	{
-		if(!pnode.areAllFlagsOn(HDBNSNODE_FLAG))
+		if (!pnode.areAllFlagsOn(HDBNSNODE_FLAG))
 		{
 			_getClassNameNodes(result, pnode, hdl.getHandle(), deep);
 		}
@@ -992,10 +992,10 @@ MetaRepository::_getClassNameNodes(StringResultHandlerIFC& result, HDBNode node,
 {
 	String cimClsName = _getClassNameFromNode(node);
 	result.handle(cimClsName);
-	if(deep)
+	if (deep)
 	{
 		node = hdl.getFirstChild(node);
-		while(node)
+		while (node)
 		{
 			_getClassNameNodes(result, node, hdl, deep);
 			node = hdl.getNextSibling(node);
@@ -1014,7 +1014,7 @@ MetaRepository::deleteNameSpace(const String& nsName)
 	/*
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode node = _getQualContainer(hdl, nsName);
-	if(node)
+	if (node)
 	{
 		hdl->removeNode(node);
 	}
@@ -1026,7 +1026,7 @@ int
 MetaRepository::createNameSpace(String ns)
 {
 	// First create the name space in the class container.
-	if(GenericHDBRepository::createNameSpace(CLASS_CONTAINER + "/" + ns) == -1)
+	if (GenericHDBRepository::createNameSpace(CLASS_CONTAINER + "/" + ns) == -1)
 	{
 		return -1;
 	}

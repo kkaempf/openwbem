@@ -67,7 +67,7 @@ main(int argc, char* argv[])
 		ofstream outfile(argv[3], ios::out);
 		try
 		{
-			while(istrm)
+			while (istrm)
 			{
 				istrm.read(buf, sizeof(buf));
 				outfile.write(buf, istrm.gcount());
@@ -76,7 +76,7 @@ main(int argc, char* argv[])
 			{
 				istrm.resetInput();
 				ofstream outfile2(argv[4], ios::out);
-				while(istrm)
+				while (istrm)
 				{
 					istrm.read(buf, sizeof(buf));
 					outfile2.write(buf, istrm.gcount());

@@ -97,7 +97,7 @@
 
 
 
-#define TEST_ASSERT(CON) if(!(CON)) throw OW_AssertionException(__FILE__, __LINE__, #CON)
+#define TEST_ASSERT(CON) if (!(CON)) throw OW_AssertionException(__FILE__, __LINE__, #CON)
 
 using std::cerr;
 using std::cin;

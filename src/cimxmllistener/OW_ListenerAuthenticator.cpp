@@ -90,10 +90,10 @@ ListenerAuthenticator::getNewCredentials()
 	do
 	{
 		name.erase();
-		for(size_t i = 0; i < 8;)
+		for (size_t i = 0; i < 8;)
 		{
 			int x = rn.getNextNumber();
-			if((x > '9' && x < 'A') || (x > 'Z' && x < 'a'))
+			if ((x > '9' && x < 'A') || (x > 'Z' && x < 'a'))
 			{ // only allow alpha-numeric
 				continue;
 			}
@@ -101,10 +101,10 @@ ListenerAuthenticator::getNewCredentials()
 			++i;
 		}
 	} while (m_passwdMap.find(name) != m_passwdMap.end());
-	for(size_t i = 0; i < 8;)
+	for (size_t i = 0; i < 8;)
 	{
 		int x = rn.getNextNumber();
-		if((x > '9' && x < 'A') || (x > 'Z' && x < 'a'))
+		if ((x > '9' && x < 'A') || (x > 'Z' && x < 'a'))
 		{ // only allow alpha-numeric
 			continue;
 		}

@@ -118,12 +118,12 @@ IndexImpl::open(const char* fileName, EDuplicateKeysFlag allowDuplicates)
 	::memset(&dbinfo, 0, sizeof(dbinfo));
 	dbinfo.flags = (allowDuplicates == E_ALLDUPLICATES) ? R_DUP : 0;
 	dbinfo.compare = recCompare;
-	if(FileSystem::canRead(m_dbFileName)
+	if (FileSystem::canRead(m_dbFileName)
 		&& FileSystem::canWrite(m_dbFileName))
 	{
 		m_pDB = dbopen(m_dbFileName.c_str(), O_RDWR, S_IRUSR | S_IWUSR,
 			DB_BTREE, &dbinfo);
-		if(m_pDB == NULL)
+		if (m_pDB == NULL)
 		{
 			OW_THROW(IndexException, Format("Failed to open index file: %1, errno =%2(%3)", m_dbFileName, errno, strerror(errno)).c_str());
 		}
@@ -132,7 +132,7 @@ IndexImpl::open(const char* fileName, EDuplicateKeysFlag allowDuplicates)
 	{
 		m_pDB = dbopen(m_dbFileName.c_str(), O_TRUNC | O_RDWR | O_CREAT,
 			S_IRUSR | S_IWUSR,  DB_BTREE, &dbinfo);
-		if(m_pDB == NULL)
+		if (m_pDB == NULL)
 		{
 			OW_THROW(IndexException, Format("Failed to create index file: %1, errno =%2(%3)", m_dbFileName, errno, strerror(errno)).c_str());
 		}
@@ -148,7 +148,7 @@ IndexImpl::reopen()
 	dbinfo.compare = recCompare;
 	m_pDB = dbopen(m_dbFileName.c_str(), O_RDWR, S_IRUSR | S_IWUSR,
 		DB_BTREE, &dbinfo);
-	if(m_pDB == NULL)
+	if (m_pDB == NULL)
 	{
 		String msg = "Failed to re-open index file: ";
 		msg += m_dbFileName;
@@ -166,7 +166,7 @@ IndexImpl::openIfClosed()
 		dbinfo.compare = recCompare;
 		m_pDB = dbopen(m_dbFileName.c_str(), O_RDWR, S_IRUSR | S_IWUSR,
 			DB_BTREE, &dbinfo);
-		if(m_pDB == NULL)
+		if (m_pDB == NULL)
 		{
 			String msg = "Failed to re-open index file: ";
 			msg += m_dbFileName;
@@ -178,7 +178,7 @@ IndexImpl::openIfClosed()
 void
 IndexImpl::close()
 {
-	if(m_pDB != NULL)
+	if (m_pDB != NULL)
 	{
 		m_pDB->close(m_pDB);
 		m_pDB = NULL;
@@ -188,7 +188,7 @@ IndexImpl::close()
 void
 IndexImpl::flush()
 {
-	if(m_pDB != NULL)
+	if (m_pDB != NULL)
 	{
 		reopen();
 		//m_pDB->sync(m_pDB, 0);
@@ -217,16 +217,16 @@ IndexEntry
 IndexImpl::find(const char* key)
 {
 	openIfClosed();
-	if(m_pDB == NULL)
+	if (m_pDB == NULL)
 	{
 		OW_THROW(IndexException, "Index file hasn't been opened");
 	}
 	DBT theKey, theRec;
 	theKey.data = const_cast<void*>(static_cast<const void*>(key));
 	theKey.size = ::strlen(key+1);
-	if(m_pDB->seq(m_pDB, &theKey, &theRec, R_CURSOR) == 0)
+	if (m_pDB->seq(m_pDB, &theKey, &theRec, R_CURSOR) == 0)
 	{
-		if(!::strcmp(reinterpret_cast<const char*>(theKey.data), key))
+		if (!::strcmp(reinterpret_cast<const char*>(theKey.data), key))
 		{
 			Int32 tmp;
 			memcpy(&tmp, theRec.data, sizeof(tmp));
@@ -240,7 +240,7 @@ bool
 IndexImpl::add(const char* key, Int32 offset)
 {
 	OpenCloser oc(this);
-	if(m_pDB == NULL)
+	if (m_pDB == NULL)
 	{
 		OW_THROW(IndexException, "Index file hasn't been opened");
 	}
@@ -256,7 +256,7 @@ bool
 IndexImpl::remove(const char* key, Int32 offset)
 {
 	OpenCloser oc(this);
-	if(m_pDB == NULL)
+	if (m_pDB == NULL)
 	{
 		OW_THROW(IndexException, "Index file hasn't been opened");
 	}
@@ -264,13 +264,13 @@ IndexImpl::remove(const char* key, Int32 offset)
 	theKey.data = const_cast<void*>(static_cast<const void*>(key));
 	theKey.size = ::strlen(key)+1;
 	IndexEntry ientry = findFirst(key);
-	while(ientry)
+	while (ientry)
 	{
-		if(!ientry.key.equals(key))
+		if (!ientry.key.equals(key))
 		{
 			break;
 		}
-		if(offset == -1L || ientry.offset == offset)
+		if (offset == -1L || ientry.offset == offset)
 		{
 			return (m_pDB->del(m_pDB, &theKey, R_CURSOR) == 0);
 		}
@@ -283,11 +283,11 @@ bool
 IndexImpl::update(const char* key, Int32 newOffset)
 {
 	OpenCloser oc(this);
-	if(m_pDB == NULL)
+	if (m_pDB == NULL)
 	{
 		OW_THROW(IndexException, "Index file hasn't been opened");
 	}
-	if(!find(key))
+	if (!find(key))
 	{
 		return false;
 	}
@@ -303,7 +303,7 @@ IndexEntry
 IndexImpl::findFirst(const char* key)
 {
 	openIfClosed();
-	if(m_pDB == NULL)
+	if (m_pDB == NULL)
 	{
 		OW_THROW(IndexException, "Index file hasn't been opened");
 	}
@@ -311,14 +311,14 @@ IndexImpl::findFirst(const char* key)
 	memset(&theKey, 0, sizeof(theKey));
 	memset(&theRec, 0, sizeof(theRec));
 	int op = R_FIRST;
-	if(key != NULL)
+	if (key != NULL)
 	{
 		op = R_CURSOR;
 		theKey.data = const_cast<void*>(static_cast<const void*>(key));
 		theKey.size = ::strlen(key)+1;
 	}
 	int cc = m_pDB->seq(m_pDB, &theKey, &theRec, op);
-	if(cc == 0)
+	if (cc == 0)
 	{
 		Int32 tmp;
 		memcpy(&tmp, theRec.data, sizeof(tmp));
@@ -331,12 +331,12 @@ IndexEntry
 IndexImpl::findNext()
 {
 	openIfClosed();
-	if(m_pDB == NULL)
+	if (m_pDB == NULL)
 	{
 		OW_THROW(IndexException, "Index file hasn't been opened");
 	}
 	DBT theRec, theKey;
-	if(m_pDB->seq(m_pDB, &theKey, &theRec, R_NEXT) == 0)
+	if (m_pDB->seq(m_pDB, &theKey, &theRec, R_NEXT) == 0)
 	{
 		Int32 tmp;
 		memcpy(&tmp, theRec.data, sizeof(tmp));
@@ -349,12 +349,12 @@ IndexEntry
 IndexImpl::findPrev()
 {
 	openIfClosed();
-	if(m_pDB == NULL)
+	if (m_pDB == NULL)
 	{
 		OW_THROW(IndexException, "Index file hasn't been opened");
 	}
 	DBT theRec, theKey;
-	if(m_pDB->seq(m_pDB, &theKey, &theRec, R_PREV) == 0)
+	if (m_pDB->seq(m_pDB, &theKey, &theRec, R_PREV) == 0)
 	{
 		Int32 tmp;
 		memcpy(&tmp, theRec.data, sizeof(tmp));

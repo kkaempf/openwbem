@@ -61,7 +61,7 @@ readPid(const char *pidfile)
 {
 	FILE *f;
 	int pid = -1;
-	if(!(f = fopen(pidfile,"r")))
+	if (!(f = fopen(pidfile,"r")))
 		return -1;
 	fscanf(f,"%d", &pid);
 	fclose(f);
@@ -77,10 +77,10 @@ checkPid(const char *pidfile)
 {
 	int pid = readPid(pidfile);
 	// Amazing ! _I_ am already holding the pid file...
-	if((!pid) || (pid == getpid()))
+	if ((!pid) || (pid == getpid()))
 		return -1;
 	// Check if the process exists
-	if(kill(pid, 0) && errno == ESRCH)
+	if (kill(pid, 0) && errno == ESRCH)
 		return -1;
 	return pid;
 }
@@ -97,11 +97,11 @@ writePid(const char *pidfile)
 	int fd;
 	int pid;
 	int lerrno;
-	if((fd = open(pidfile, O_RDWR|O_CREAT, 0644)) == -1)
+	if ((fd = open(pidfile, O_RDWR|O_CREAT, 0644)) == -1)
 	{
 		return -1;
 	}
-	if((f = fdopen(fd, "r+")) == NULL)
+	if ((f = fdopen(fd, "r+")) == NULL)
 	{
 		lerrno = errno;
 		close(fd);
@@ -110,11 +110,11 @@ writePid(const char *pidfile)
 	}
 	// TODO: replace this with the locking code in OW_File
 #if defined (OW_GNU_LINUX) || defined (OW_DARWIN)
-	if(flock(fd, LOCK_EX|LOCK_NB) == -1)
+	if (flock(fd, LOCK_EX|LOCK_NB) == -1)
 #elif defined(OW_OPENSERVER)
-	if(lockf(fd, F_TLOCK, 0) == -1)
+	if (lockf(fd, F_TLOCK, 0) == -1)
 #else
-	if(ftrylockfile(f) != 0)
+	if (ftrylockfile(f) != 0)
 #endif
 	{
 		lerrno = errno;
@@ -124,7 +124,7 @@ writePid(const char *pidfile)
 		return -1;
 	}
 	pid = getpid();
-	if(!fprintf(f,"%d\n", pid))
+	if (!fprintf(f,"%d\n", pid))
 	{
 		lerrno = errno;
 		fclose(f);
@@ -133,7 +133,7 @@ writePid(const char *pidfile)
 	}
 	fflush(f);
 #if defined (OW_GNU_LINUX) || defined (OW_DARWIN)
-	if(flock(fd, LOCK_UN) == -1)
+	if (flock(fd, LOCK_UN) == -1)
 	{
 		lerrno = errno;
 		fclose(f);
@@ -141,7 +141,7 @@ writePid(const char *pidfile)
 		return -1;
 	}
 #elif defined (OW_OPENSERVER)
-	if(lockf(fd, F_ULOCK, 0) == -1)
+	if (lockf(fd, F_ULOCK, 0) == -1)
 	{
 		lerrno = errno;
 		fclose(f);

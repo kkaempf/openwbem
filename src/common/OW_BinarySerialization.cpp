@@ -167,7 +167,7 @@ readLen(std::istream& istrm, UInt32& len)
 		UInt8 netlen[sizeof(len)];
 		read(istrm, static_cast<void *>(netlen), noctets);
 		len = 0;
-		for(int i = 0; i < noctets; i++ ) {
+		for (int i = 0; i < noctets; i++ ) {
 			len <<= 8;
 			len |= netlen[i];
 		}
@@ -181,7 +181,7 @@ void
 write(std::ostream& ostrm, const void* dataOut,
 	int dataOutLen)
 {
-	if(!ostrm.write(reinterpret_cast<const char*>(dataOut), dataOutLen))
+	if (!ostrm.write(reinterpret_cast<const char*>(dataOut), dataOutLen))
 	{
 		OW_THROW(IOException, "Failed writing data");
 	}
@@ -193,7 +193,7 @@ verifySignature(std::istream& istrm, UInt8 validSig)
 {
 	UInt8 val;
 	read(istrm, val);
-	if(val != validSig)
+	if (val != validSig)
 	{
 		OW_THROW(BadCIMSignatureException,
 			Format("Received invalid signature. Got: %1 Expected: %2", Int32(val),
@@ -208,7 +208,7 @@ writeStringArray(std::ostream& ostrm,
 {
 	bool nullPropertyList = (propertyList == 0);
 	writeBool(ostrm, nullPropertyList);
-	if(!nullPropertyList)
+	if (!nullPropertyList)
 	{
 		writeStringArray(ostrm, *propertyList);
 	}
@@ -218,7 +218,7 @@ writeStringArray(std::ostream& ostrm,
 void
 read(std::istream& istrm, void* dataIn, int dataInLen)
 {
-	if(!istrm.read(reinterpret_cast<char*>(dataIn), dataInLen))
+	if (!istrm.read(reinterpret_cast<char*>(dataIn), dataInLen))
 	{
 		OW_THROW(IOException, "Failed reading data");
 	}

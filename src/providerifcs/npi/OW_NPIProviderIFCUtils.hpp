@@ -74,7 +74,7 @@ public:
 			 ((NPIContext *)(m_handle.context))->garbageType[i];
 //printf("Delete Entry %x, Type %x\n", i, pgt);
 		  void * obj_ptr = ((NPIContext *)(m_handle.context))->garbage[i];
-		  switch(pgt)
+		  switch (pgt)
 		  {
 			 case VECTOR:
 				delete(static_cast<charVect *>(obj_ptr));

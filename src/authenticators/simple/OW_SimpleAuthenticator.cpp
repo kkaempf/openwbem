@@ -92,7 +92,7 @@ SimpleAuthenticator::doAuthenticate(String& userName,
 		details = "You must authenticate to access this resource";
 		return rval;
 	}
-	if(!(rval = doAuthenticate(userName, info)))
+	if (!(rval = doAuthenticate(userName, info)))
 	{
 		details = "Invalid username or password";
 	}

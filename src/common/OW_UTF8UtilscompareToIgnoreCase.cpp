@@ -56,7 +56,7 @@ no_match:
 zero:
 	return 0 - *str2;
 state0:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x0: goto zero;
 		case 0x1: goto state1;
 		case 0x2: goto state3;
@@ -316,558 +316,558 @@ state0:
 		default: goto no_match;
 	}
 state1:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x1: goto state2;
 		default: goto no_match;
 	}
 state2:
 	goto state0;
 state3:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x2: goto state2;
 		default: goto no_match;
 	}
 state4:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x3: goto state2;
 		default: goto no_match;
 	}
 state5:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x4: goto state2;
 		default: goto no_match;
 	}
 state6:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x5: goto state2;
 		default: goto no_match;
 	}
 state7:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x6: goto state2;
 		default: goto no_match;
 	}
 state8:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x7: goto state2;
 		default: goto no_match;
 	}
 state9:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x8: goto state2;
 		default: goto no_match;
 	}
 statea:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x9: goto state2;
 		default: goto no_match;
 	}
 stateb:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa: goto state2;
 		default: goto no_match;
 	}
 statec:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb: goto state2;
 		default: goto no_match;
 	}
 stated:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xc: goto state2;
 		default: goto no_match;
 	}
 statee:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd: goto state2;
 		default: goto no_match;
 	}
 statef:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xe: goto state2;
 		default: goto no_match;
 	}
 state10:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xf: goto state2;
 		default: goto no_match;
 	}
 state11:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x10: goto state2;
 		default: goto no_match;
 	}
 state12:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x11: goto state2;
 		default: goto no_match;
 	}
 state13:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x12: goto state2;
 		default: goto no_match;
 	}
 state14:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x13: goto state2;
 		default: goto no_match;
 	}
 state15:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x14: goto state2;
 		default: goto no_match;
 	}
 state16:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x15: goto state2;
 		default: goto no_match;
 	}
 state17:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x16: goto state2;
 		default: goto no_match;
 	}
 state18:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x17: goto state2;
 		default: goto no_match;
 	}
 state19:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x18: goto state2;
 		default: goto no_match;
 	}
 state1a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x19: goto state2;
 		default: goto no_match;
 	}
 state1b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x1a: goto state2;
 		default: goto no_match;
 	}
 state1c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x1b: goto state2;
 		default: goto no_match;
 	}
 state1d:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x1c: goto state2;
 		default: goto no_match;
 	}
 state1e:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x1d: goto state2;
 		default: goto no_match;
 	}
 state1f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x1e: goto state2;
 		default: goto no_match;
 	}
 state20:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x1f: goto state2;
 		default: goto no_match;
 	}
 state21:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x20: goto state2;
 		default: goto no_match;
 	}
 state22:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x21: goto state2;
 		default: goto no_match;
 	}
 state23:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x22: goto state2;
 		default: goto no_match;
 	}
 state24:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x23: goto state2;
 		default: goto no_match;
 	}
 state25:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x24: goto state2;
 		default: goto no_match;
 	}
 state26:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x25: goto state2;
 		default: goto no_match;
 	}
 state27:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x26: goto state2;
 		default: goto no_match;
 	}
 state28:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x27: goto state2;
 		default: goto no_match;
 	}
 state29:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x28: goto state2;
 		default: goto no_match;
 	}
 state2a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x29: goto state2;
 		default: goto no_match;
 	}
 state2b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x2a: goto state2;
 		default: goto no_match;
 	}
 state2c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x2b: goto state2;
 		default: goto no_match;
 	}
 state2d:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x2c: goto state2;
 		default: goto no_match;
 	}
 state2e:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x2d: goto state2;
 		default: goto no_match;
 	}
 state2f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x2e: goto state2;
 		default: goto no_match;
 	}
 state30:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x2f: goto state2;
 		default: goto no_match;
 	}
 state31:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x30: goto state2;
 		default: goto no_match;
 	}
 state32:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x31: goto state2;
 		default: goto no_match;
 	}
 state33:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x32: goto state2;
 		default: goto no_match;
 	}
 state34:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x33: goto state2;
 		default: goto no_match;
 	}
 state35:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x34: goto state2;
 		default: goto no_match;
 	}
 state36:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x35: goto state2;
 		default: goto no_match;
 	}
 state37:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x36: goto state2;
 		default: goto no_match;
 	}
 state38:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x37: goto state2;
 		default: goto no_match;
 	}
 state39:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x38: goto state2;
 		default: goto no_match;
 	}
 state3a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x39: goto state2;
 		default: goto no_match;
 	}
 state3b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x3a: goto state2;
 		default: goto no_match;
 	}
 state3c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x3b: goto state2;
 		default: goto no_match;
 	}
 state3d:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x3c: goto state2;
 		default: goto no_match;
 	}
 state3e:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x3d: goto state2;
 		default: goto no_match;
 	}
 state3f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x3e: goto state2;
 		default: goto no_match;
 	}
 state40:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x3f: goto state2;
 		default: goto no_match;
 	}
 state41:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x40: goto state2;
 		default: goto no_match;
 	}
 state42:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x41: goto state2;
 		case 0x61: goto state2;
 		default: goto no_match;
 	}
 state43:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x42: goto state2;
 		case 0x62: goto state2;
 		default: goto no_match;
 	}
 state44:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x43: goto state2;
 		case 0x63: goto state2;
 		default: goto no_match;
 	}
 state45:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x44: goto state2;
 		case 0x64: goto state2;
 		default: goto no_match;
 	}
 state46:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x45: goto state2;
 		case 0x65: goto state2;
 		default: goto no_match;
 	}
 state47:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x46: goto state2;
 		case 0x66: goto state2;
 		default: goto no_match;
 	}
 state48:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x47: goto state2;
 		case 0x67: goto state2;
 		default: goto no_match;
 	}
 state49:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x48: goto state2;
 		case 0x68: goto state2;
 		default: goto no_match;
 	}
 state4a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x49: goto state2;
 		case 0x69: goto state2;
 		case 0xc4: goto statea2;
 		default: goto no_match;
 	}
 state4b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x4a: goto state2;
 		case 0x6a: goto state2;
 		default: goto no_match;
 	}
 state4c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x4b: goto state2;
 		case 0x6b: goto state2;
 		default: goto no_match;
 	}
 state4d:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x4c: goto state2;
 		case 0x6c: goto state2;
 		default: goto no_match;
 	}
 state4e:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x4d: goto state2;
 		case 0x6d: goto state2;
 		default: goto no_match;
 	}
 state4f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x4e: goto state2;
 		case 0x6e: goto state2;
 		default: goto no_match;
 	}
 state50:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x4f: goto state2;
 		case 0x6f: goto state2;
 		default: goto no_match;
 	}
 state51:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x50: goto state2;
 		case 0x70: goto state2;
 		default: goto no_match;
 	}
 state52:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x51: goto state2;
 		case 0x71: goto state2;
 		default: goto no_match;
 	}
 state53:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x52: goto state2;
 		case 0x72: goto state2;
 		default: goto no_match;
 	}
 state54:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x53: goto state2;
 		case 0x73: goto state2;
 		default: goto no_match;
 	}
 state55:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x54: goto state2;
 		case 0x74: goto state2;
 		default: goto no_match;
 	}
 state56:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x55: goto state2;
 		case 0x75: goto state2;
 		default: goto no_match;
 	}
 state57:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x56: goto state2;
 		case 0x76: goto state2;
 		default: goto no_match;
 	}
 state58:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x57: goto state2;
 		case 0x77: goto state2;
 		default: goto no_match;
 	}
 state59:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x58: goto state2;
 		case 0x78: goto state2;
 		default: goto no_match;
 	}
 state5a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x59: goto state2;
 		case 0x79: goto state2;
 		default: goto no_match;
 	}
 state5b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x5a: goto state2;
 		case 0x7a: goto state2;
 		default: goto no_match;
 	}
 state5c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x5b: goto state2;
 		default: goto no_match;
 	}
 state5d:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x5c: goto state2;
 		default: goto no_match;
 	}
 state5e:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x5d: goto state2;
 		default: goto no_match;
 	}
 state5f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x5e: goto state2;
 		default: goto no_match;
 	}
 state60:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x5f: goto state2;
 		default: goto no_match;
 	}
 state61:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x60: goto state2;
 		default: goto no_match;
 	}
 state62:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x41: goto state2;
 		case 0x61: goto state2;
 		case 0xe1: goto state165;
 		default: goto no_match;
 	}
 state63:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x46: goto state2;
 		case 0x66: goto state2;
 		case 0xef: goto state207;
 		default: goto no_match;
 	}
 state64:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x48: goto state2;
 		case 0x68: goto state2;
 		case 0xe1: goto state14d;
 		default: goto no_match;
 	}
 state65:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x49: goto state2;
 		case 0x69: goto state2;
 		case 0xc4: goto state10b;
 		default: goto no_match;
 	}
 state66:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x4a: goto state2;
 		case 0x6a: goto state2;
 		case 0xc7: goto state124;
 		default: goto no_match;
 	}
 state67:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x4b: goto state2;
 		case 0x6b: goto state2;
 		case 0xe2: goto state1f7;
 		default: goto no_match;
 	}
 state68:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x53: goto state2;
 		case 0x73: goto state2;
 		case 0xc3: goto state108;
@@ -876,389 +876,389 @@ state68:
 		default: goto no_match;
 	}
 state69:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x54: goto state2;
 		case 0x74: goto state2;
 		case 0xe1: goto state153;
 		default: goto no_match;
 	}
 state6a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x57: goto state2;
 		case 0x77: goto state2;
 		case 0xe1: goto state159;
 		default: goto no_match;
 	}
 state6b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x59: goto state2;
 		case 0x79: goto state2;
 		case 0xe1: goto state15f;
 		default: goto no_match;
 	}
 state6c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x7b: goto state2;
 		default: goto no_match;
 	}
 state6d:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x7c: goto state2;
 		default: goto no_match;
 	}
 state6e:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x7d: goto state2;
 		default: goto no_match;
 	}
 state6f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x7e: goto state2;
 		default: goto no_match;
 	}
 state70:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x7f: goto state2;
 		default: goto no_match;
 	}
 state71:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x80: goto state2;
 		default: goto no_match;
 	}
 state72:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x81: goto state2;
 		default: goto no_match;
 	}
 state73:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x82: goto state2;
 		default: goto no_match;
 	}
 state74:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x83: goto state2;
 		default: goto no_match;
 	}
 state75:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x84: goto state2;
 		default: goto no_match;
 	}
 state76:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x85: goto state2;
 		default: goto no_match;
 	}
 state77:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x86: goto state2;
 		default: goto no_match;
 	}
 state78:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x87: goto state2;
 		default: goto no_match;
 	}
 state79:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x88: goto state2;
 		default: goto no_match;
 	}
 state7a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x89: goto state2;
 		default: goto no_match;
 	}
 state7b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x8a: goto state2;
 		default: goto no_match;
 	}
 state7c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x8b: goto state2;
 		default: goto no_match;
 	}
 state7d:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x8c: goto state2;
 		default: goto no_match;
 	}
 state7e:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x8d: goto state2;
 		default: goto no_match;
 	}
 state7f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x8e: goto state2;
 		default: goto no_match;
 	}
 state80:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x8f: goto state2;
 		default: goto no_match;
 	}
 state81:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x90: goto state2;
 		default: goto no_match;
 	}
 state82:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x91: goto state2;
 		default: goto no_match;
 	}
 state83:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x92: goto state2;
 		default: goto no_match;
 	}
 state84:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x93: goto state2;
 		default: goto no_match;
 	}
 state85:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x94: goto state2;
 		default: goto no_match;
 	}
 state86:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x95: goto state2;
 		default: goto no_match;
 	}
 state87:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x96: goto state2;
 		default: goto no_match;
 	}
 state88:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x97: goto state2;
 		default: goto no_match;
 	}
 state89:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x98: goto state2;
 		default: goto no_match;
 	}
 state8a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x99: goto state2;
 		default: goto no_match;
 	}
 state8b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x9a: goto state2;
 		default: goto no_match;
 	}
 state8c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x9b: goto state2;
 		default: goto no_match;
 	}
 state8d:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x9c: goto state2;
 		default: goto no_match;
 	}
 state8e:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x9d: goto state2;
 		default: goto no_match;
 	}
 state8f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x9e: goto state2;
 		default: goto no_match;
 	}
 state90:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x9f: goto state2;
 		default: goto no_match;
 	}
 state91:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa0: goto state2;
 		default: goto no_match;
 	}
 state92:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa1: goto state2;
 		default: goto no_match;
 	}
 state93:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa2: goto state2;
 		default: goto no_match;
 	}
 state94:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa3: goto state2;
 		default: goto no_match;
 	}
 state95:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa4: goto state2;
 		default: goto no_match;
 	}
 state96:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa5: goto state2;
 		default: goto no_match;
 	}
 state97:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa6: goto state2;
 		default: goto no_match;
 	}
 state98:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa7: goto state2;
 		default: goto no_match;
 	}
 state99:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa8: goto state2;
 		default: goto no_match;
 	}
 state9a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa9: goto state2;
 		default: goto no_match;
 	}
 state9b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xaa: goto state2;
 		default: goto no_match;
 	}
 state9c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xab: goto state2;
 		default: goto no_match;
 	}
 state9d:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xac: goto state2;
 		default: goto no_match;
 	}
 state9e:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xad: goto state2;
 		default: goto no_match;
 	}
 state9f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xae: goto state2;
 		default: goto no_match;
 	}
 statea0:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xaf: goto state2;
 		default: goto no_match;
 	}
 statea1:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb0: goto state2;
 		default: goto no_match;
 	}
 statea2:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb1: goto state2;
 		default: goto no_match;
 	}
 statea3:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb2: goto state2;
 		default: goto no_match;
 	}
 statea4:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb3: goto state2;
 		default: goto no_match;
 	}
 statea5:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb4: goto state2;
 		default: goto no_match;
 	}
 statea6:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb5: goto state2;
 		default: goto no_match;
 	}
 statea7:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb6: goto state2;
 		default: goto no_match;
 	}
 statea8:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb7: goto state2;
 		default: goto no_match;
 	}
 statea9:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb8: goto state2;
 		default: goto no_match;
 	}
 stateaa:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb9: goto state2;
 		default: goto no_match;
 	}
 stateab:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xba: goto state2;
 		default: goto no_match;
 	}
 stateac:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbb: goto state2;
 		default: goto no_match;
 	}
 statead:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbc: goto state2;
 		default: goto no_match;
 	}
 stateae:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbd: goto state2;
 		default: goto no_match;
 	}
 stateaf:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbe: goto state2;
 		default: goto no_match;
 	}
 stateb0:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbf: goto state2;
 		default: goto no_match;
 	}
 stateb1:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xc0: goto state2;
 		default: goto no_match;
 	}
 stateb2:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xc1: goto state2;
 		default: goto no_match;
 	}
 stateb3:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xc2: goto state2;
 		case 0xce: goto state104;
 		default: goto no_match;
 	}
 stateb4:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x73: goto state106;
 		case 0xc3: goto stateb5;
 		case 0xc5: goto state117;
@@ -1268,7 +1268,7 @@ stateb4:
 stateb5:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state91;
 		case 0x81: goto state92;
 		case 0x82: goto state93;
@@ -1332,7 +1332,7 @@ stateb5:
 		default: goto no_match;
 	}
 stateb6:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x49: goto state103;
 		case 0x69: goto state109;
 		case 0xc4: goto stateb7;
@@ -1342,7 +1342,7 @@ stateb6:
 stateb7:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state72;
 		case 0x81: goto state71;
 		case 0x82: goto state74;
@@ -1406,7 +1406,7 @@ stateb7:
 		default: goto no_match;
 	}
 stateb8:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x73: goto state118;
 		case 0xc3: goto state116;
 		case 0xc4: goto state10f;
@@ -1417,7 +1417,7 @@ stateb8:
 stateb9:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x81: goto state73;
 		case 0x82: goto state72;
 		case 0x83: goto state75;
@@ -1481,7 +1481,7 @@ stateb9:
 		default: goto no_match;
 	}
 stateba:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xc6: goto statebb;
 		case 0xc7: goto state11b;
 		case 0xc8: goto state129;
@@ -1492,7 +1492,7 @@ stateba:
 statebb:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x82: goto state74;
 		case 0x83: goto state73;
 		case 0x84: goto state76;
@@ -1528,7 +1528,7 @@ statebb:
 		default: goto no_match;
 	}
 statebc:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x6a: goto state122;
 		case 0xc6: goto state11c;
 		case 0xc7: goto statebd;
@@ -1537,7 +1537,7 @@ statebc:
 statebd:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x84: goto state77;
 		case 0x85: goto state77;
 		case 0x86: goto state11f;
@@ -1597,7 +1597,7 @@ statebd:
 		default: goto no_match;
 	}
 statebe:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xc6: goto state128;
 		case 0xc8: goto statebf;
 		default: goto no_match;
@@ -1605,7 +1605,7 @@ statebe:
 statebf:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state72;
 		case 0x81: goto state71;
 		case 0x82: goto state74;
@@ -1659,36 +1659,36 @@ statebf:
 		default: goto no_match;
 	}
 statec0:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xc6: goto state11a;
 		case 0xc9: goto state2;
 		default: goto no_match;
 	}
 statec1:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xc5: goto state113;
 		case 0xc6: goto state11e;
 		case 0xca: goto state2;
 		default: goto no_match;
 	}
 statec2:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcb: goto state2;
 		default: goto no_match;
 	}
 statec3:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state2;
 		default: goto no_match;
 	}
 statec4:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcd: goto state2;
 		case 0xce: goto state12a;
 		default: goto no_match;
 	}
 statec5:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xc2: goto state105;
 		case 0xcd: goto state12b;
 		case 0xce: goto statec6;
@@ -1699,7 +1699,7 @@ statec5:
 statec6:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x86: goto state9d;
 		case 0x88: goto state9e;
 		case 0x89: goto state9f;
@@ -1742,7 +1742,7 @@ statec6:
 		default: goto no_match;
 	}
 statec7:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xce: goto state12d;
 		case 0xcf: goto statec8;
 		case 0xe1: goto state174;
@@ -1752,7 +1752,7 @@ statec7:
 statec8:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state87;
 		case 0x81: goto statea2;
 		case 0x82: goto state74;
@@ -1794,7 +1794,7 @@ statec8:
 		default: goto no_match;
 	}
 statec9:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd0: goto stateca;
 		case 0xd1: goto state13a;
 		default: goto no_match;
@@ -1802,7 +1802,7 @@ statec9:
 stateca:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x90: goto statea1;
 		case 0x91: goto statea2;
 		case 0x92: goto statea3;
@@ -1838,7 +1838,7 @@ stateca:
 		default: goto no_match;
 	}
 statecb:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd0: goto state13b;
 		case 0xd1: goto statecc;
 		default: goto no_match;
@@ -1846,7 +1846,7 @@ statecb:
 statecc:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa0: goto state92;
 		case 0xa1: goto state91;
 		case 0xa2: goto state94;
@@ -1882,14 +1882,14 @@ statecc:
 		default: goto no_match;
 	}
 statecd:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd2: goto statece;
 		default: goto no_match;
 	}
 statece:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state72;
 		case 0x81: goto state71;
 		case 0x8a: goto state7c;
@@ -1949,14 +1949,14 @@ statece:
 		default: goto no_match;
 	}
 statecf:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd3: goto stated0;
 		default: goto no_match;
 	}
 stated0:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x81: goto state73;
 		case 0x82: goto state72;
 		case 0x83: goto state75;
@@ -2014,7 +2014,7 @@ stated0:
 		default: goto no_match;
 	}
 stated1:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd4: goto stated2;
 		case 0xd5: goto state13c;
 		default: goto no_match;
@@ -2022,7 +2022,7 @@ stated1:
 stated2:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state72;
 		case 0x81: goto state71;
 		case 0x82: goto state74;
@@ -2042,7 +2042,7 @@ stated2:
 		default: goto no_match;
 	}
 stated3:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd4: goto state13d;
 		case 0xd5: goto stated4;
 		case 0xd6: goto state13e;
@@ -2052,7 +2052,7 @@ stated3:
 stated4:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto statea1;
 		case 0x81: goto statea2;
 		case 0x82: goto statea3;
@@ -2088,63 +2088,63 @@ stated4:
 		default: goto no_match;
 	}
 stated5:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd5: goto state13f;
 		case 0xd6: goto state2;
 		default: goto no_match;
 	}
 stated6:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd7: goto state2;
 		default: goto no_match;
 	}
 stated7:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd8: goto state2;
 		default: goto no_match;
 	}
 stated8:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd9: goto state2;
 		default: goto no_match;
 	}
 stated9:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xda: goto state2;
 		default: goto no_match;
 	}
 stateda:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xdb: goto state2;
 		default: goto no_match;
 	}
 statedb:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xdc: goto state2;
 		default: goto no_match;
 	}
 statedc:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xdd: goto state2;
 		default: goto no_match;
 	}
 statedd:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xde: goto state2;
 		default: goto no_match;
 	}
 statede:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xdf: goto state2;
 		default: goto no_match;
 	}
 statedf:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xe0: goto state2;
 		default: goto no_match;
 	}
 statee0:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x61: goto state162;
 		case 0x68: goto state14a;
 		case 0x74: goto state150;
@@ -2158,7 +2158,7 @@ statee0:
 statee1:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb8: goto state145;
 		case 0xb9: goto state147;
 		case 0xba: goto state148;
@@ -2170,7 +2170,7 @@ statee1:
 		default: goto no_match;
 	}
 statee2:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x6b: goto state1f5;
 		case 0xc3: goto state1f8;
 		case 0xcf: goto state1f0;
@@ -2180,74 +2180,74 @@ statee2:
 statee3:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x85: goto state1fd;
 		case 0x92: goto state1ff;
 		case 0x93: goto state201;
 		default: goto no_match;
 	}
 statee4:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xe3: goto state2;
 		default: goto no_match;
 	}
 statee5:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xe4: goto state2;
 		default: goto no_match;
 	}
 statee6:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xe5: goto state2;
 		default: goto no_match;
 	}
 statee7:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xe6: goto state2;
 		default: goto no_match;
 	}
 statee8:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xe7: goto state2;
 		default: goto no_match;
 	}
 statee9:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xe8: goto state2;
 		default: goto no_match;
 	}
 stateea:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xe9: goto state2;
 		default: goto no_match;
 	}
 stateeb:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xea: goto state2;
 		default: goto no_match;
 	}
 stateec:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xeb: goto state2;
 		default: goto no_match;
 	}
 stateed:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xec: goto state2;
 		default: goto no_match;
 	}
 stateee:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xed: goto state2;
 		default: goto no_match;
 	}
 stateef:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xee: goto state2;
 		default: goto no_match;
 	}
 statef0:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x66: goto state204;
 		case 0x73: goto state20e;
 		case 0xd5: goto state214;
@@ -2257,216 +2257,216 @@ statef0:
 statef1:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xbc: goto state226;
 		case 0xbd: goto state228;
 		default: goto no_match;
 	}
 statef2:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xf0: goto statef3;
 		default: goto no_match;
 	}
 statef3:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x90: goto state22a;
 		default: goto no_match;
 	}
 statef4:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xf1: goto state2;
 		default: goto no_match;
 	}
 statef5:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xf2: goto state2;
 		default: goto no_match;
 	}
 statef6:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xf3: goto state2;
 		default: goto no_match;
 	}
 statef7:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xf4: goto state2;
 		default: goto no_match;
 	}
 statef8:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xf5: goto state2;
 		default: goto no_match;
 	}
 statef9:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xf6: goto state2;
 		default: goto no_match;
 	}
 statefa:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xf7: goto state2;
 		default: goto no_match;
 	}
 statefb:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xf8: goto state2;
 		default: goto no_match;
 	}
 statefc:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xf9: goto state2;
 		default: goto no_match;
 	}
 statefd:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xfa: goto state2;
 		default: goto no_match;
 	}
 statefe:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xfb: goto state2;
 		default: goto no_match;
 	}
 stateff:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xfc: goto state2;
 		default: goto no_match;
 	}
 state100:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xfd: goto state2;
 		default: goto no_match;
 	}
 state101:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xfe: goto state2;
 		default: goto no_match;
 	}
 state102:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xff: goto state2;
 		default: goto no_match;
 	}
 state103:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb1: goto state2;
 		default: goto no_match;
 	}
 state104:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb5: goto statead;
 		default: goto no_match;
 	}
 state105:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xbc: goto statea6;
 		default: goto no_match;
 	}
 state106:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x9f: goto state107;
 		default: goto no_match;
 	}
 state107:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x73: goto state2;
 		default: goto no_match;
 	}
 state108:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x73: goto state90;
 		default: goto no_match;
 	}
 state109:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb0: goto state10a;
 		default: goto no_match;
 	}
 state10a:
 	str1marker = str1;
 	str2marker = str2;
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state78;
 		default: goto no_match;
 	}
 state10b:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcc: goto state10c;
 	}
 	--str1;
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb0: goto state2;
 		default: goto no_match;
 	}
 state10c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb0: goto state10d;
 		default: goto no_match;
 	}
 state10d:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x87: goto state2;
 		default: goto no_match;
 	}
 state10e:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xbf: goto state71;
 		default: goto no_match;
 	}
 state10f:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto stateb0;
 		default: goto no_match;
 	}
 state110:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x89: goto state111;
 		default: goto no_match;
 	}
 state111:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbc: goto state112;
 		default: goto no_match;
 	}
 state112:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x6e: goto state2;
 		default: goto no_match;
 	}
 state113:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xbc: goto state114;
 		default: goto no_match;
 	}
 state114:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x89: goto state115;
 		default: goto no_match;
 	}
 state115:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x6e: goto state2;
 		default: goto no_match;
 	}
 state116:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb8: goto stateb0;
 		default: goto no_match;
 	}
 state117:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xbf: goto statea9;
 		default: goto no_match;
 	}
 state118:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xbf: goto state2;
 		default: goto no_match;
 	}
 state119:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x81: goto state84;
 		case 0x86: goto state85;
 		case 0x89: goto state87;
@@ -2483,7 +2483,7 @@ state119:
 		default: goto no_match;
 	}
 state11a:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x93: goto state72;
 		case 0x94: goto state77;
 		case 0x96: goto state7a;
@@ -2500,21 +2500,21 @@ state11a:
 		default: goto no_match;
 	}
 state11b:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x8e: goto state8e;
 		case 0x95: goto statea7;
 		case 0xbf: goto statea8;
 		default: goto no_match;
 	}
 state11c:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x9d: goto state7f;
 		case 0xb6: goto state86;
 		case 0xb7: goto stateb0;
 		default: goto no_match;
 	}
 state11d:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa6: goto state71;
 		case 0xa9: goto state74;
 		case 0xae: goto state79;
@@ -2524,7 +2524,7 @@ state11d:
 		default: goto no_match;
 	}
 state11e:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state97;
 		case 0x83: goto state9a;
 		case 0x88: goto state9f;
@@ -2534,76 +2534,76 @@ state11e:
 		default: goto no_match;
 	}
 state11f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x84: goto state2;
 		case 0x85: goto state2;
 		default: goto no_match;
 	}
 state120:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x87: goto state2;
 		case 0x88: goto state2;
 		default: goto no_match;
 	}
 state121:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x8a: goto state2;
 		case 0x8b: goto state2;
 		default: goto no_match;
 	}
 state122:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb0: goto state123;
 		default: goto no_match;
 	}
 state123:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state7d;
 		default: goto no_match;
 	}
 state124:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcc: goto state125;
 		default: goto no_match;
 	}
 state125:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb0: goto state126;
 		default: goto no_match;
 	}
 state126:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x8c: goto state2;
 		default: goto no_match;
 	}
 state127:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb1: goto state2;
 		case 0xb2: goto state2;
 		default: goto no_match;
 	}
 state128:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa0: goto state8f;
 		default: goto no_match;
 	}
 state129:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x9e: goto state91;
 		default: goto no_match;
 	}
 state12a:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x85: goto stateaa;
 		default: goto no_match;
 	}
 state12b:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb9: goto state76;
 		default: goto no_match;
 	}
 state12c:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x8c: goto state7d;
 		case 0x8e: goto state7e;
 		case 0x8f: goto state7f;
@@ -2626,7 +2626,7 @@ state12c:
 		default: goto no_match;
 	}
 state12d:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state91;
 		case 0x81: goto state92;
 		case 0x83: goto state94;
@@ -2649,70 +2649,70 @@ state12d:
 		default: goto no_match;
 	}
 state12e:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb9: goto state12f;
 		default: goto no_match;
 	}
 state12f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state130;
 		default: goto no_match;
 	}
 state130:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x88: goto state131;
 		default: goto no_match;
 	}
 state131:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state72;
 		default: goto no_match;
 	}
 state132:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x90: goto state133;
 		case 0x99: goto state2;
 		default: goto no_match;
 	}
 state133:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcc: goto state134;
 		default: goto no_match;
 	}
 state134:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x88: goto state135;
 		default: goto no_match;
 	}
 state135:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcc: goto state136;
 		default: goto no_match;
 	}
 state136:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x81: goto state2;
 		default: goto no_match;
 	}
 state137:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa5: goto state2;
 		case 0xb0: goto state133;
 		default: goto no_match;
 	}
 state138:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x85: goto state12f;
 		default: goto no_match;
 	}
 state139:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x91: goto state2;
 		case 0xb4: goto state2;
 		default: goto no_match;
 	}
 state13a:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state81;
 		case 0x81: goto state82;
 		case 0x82: goto state83;
@@ -2748,7 +2748,7 @@ state13a:
 		default: goto no_match;
 	}
 state13b:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state91;
 		case 0x81: goto state92;
 		case 0x82: goto state93;
@@ -2784,7 +2784,7 @@ state13b:
 		default: goto no_match;
 	}
 state13c:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb1: goto state92;
 		case 0xb2: goto state93;
 		case 0xb3: goto state94;
@@ -2803,7 +2803,7 @@ state13c:
 		default: goto no_match;
 	}
 state13d:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa1: goto statea2;
 		case 0xa2: goto statea3;
 		case 0xa3: goto statea4;
@@ -2822,7 +2822,7 @@ state13d:
 		default: goto no_match;
 	}
 state13e:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x90: goto state71;
 		case 0x91: goto state72;
 		case 0x92: goto state73;
@@ -2834,7 +2834,7 @@ state13e:
 		default: goto no_match;
 	}
 state13f:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state81;
 		case 0x81: goto state82;
 		case 0x82: goto state83;
@@ -2846,37 +2846,37 @@ state13f:
 		default: goto no_match;
 	}
 state140:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa5: goto state141;
 		default: goto no_match;
 	}
 state141:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd6: goto state73;
 		default: goto no_match;
 	}
 state142:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x87: goto state143;
 		default: goto no_match;
 	}
 state143:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xd6: goto state144;
 		default: goto no_match;
 	}
 state144:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x82: goto state2;
 		default: goto no_match;
 	}
 state145:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb8: goto state146;
 		default: goto no_match;
 	}
 state146:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state72;
 		case 0x81: goto state71;
 		case 0x82: goto state74;
@@ -2944,19 +2944,19 @@ state146:
 		default: goto no_match;
 	}
 state147:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb9: goto state146;
 		case 0xba: goto state169;
 		default: goto no_match;
 	}
 state148:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb9: goto state168;
 		case 0xba: goto state149;
 		default: goto no_match;
 	}
 state149:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state72;
 		case 0x81: goto state71;
 		case 0x82: goto state74;
@@ -3014,172 +3014,172 @@ state149:
 		default: goto no_match;
 	}
 state14a:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xba: goto state14b;
 		default: goto no_match;
 	}
 state14b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state14c;
 		default: goto no_match;
 	}
 state14c:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x96: goto statea2;
 		default: goto no_match;
 	}
 state14d:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcc: goto state14e;
 		default: goto no_match;
 	}
 state14e:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xba: goto state14f;
 		default: goto no_match;
 	}
 state14f:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb1: goto state87;
 		default: goto no_match;
 	}
 state150:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xba: goto state151;
 		default: goto no_match;
 	}
 state151:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state152;
 		default: goto no_match;
 	}
 state152:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x97: goto state79;
 		default: goto no_match;
 	}
 state153:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcc: goto state154;
 		default: goto no_match;
 	}
 state154:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xba: goto state155;
 		default: goto no_match;
 	}
 state155:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x88: goto state88;
 		default: goto no_match;
 	}
 state156:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xba: goto state157;
 		default: goto no_match;
 	}
 state157:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state158;
 		default: goto no_match;
 	}
 state158:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x98: goto state7b;
 		default: goto no_match;
 	}
 state159:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcc: goto state15a;
 		default: goto no_match;
 	}
 state15a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xba: goto state15b;
 		default: goto no_match;
 	}
 state15b:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x8a: goto state89;
 		default: goto no_match;
 	}
 state15c:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xba: goto state15d;
 		default: goto no_match;
 	}
 state15d:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state15e;
 		default: goto no_match;
 	}
 state15e:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x99: goto state7b;
 		default: goto no_match;
 	}
 state15f:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcc: goto state160;
 		default: goto no_match;
 	}
 state160:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xba: goto state161;
 		default: goto no_match;
 	}
 state161:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x8a: goto state8a;
 		default: goto no_match;
 	}
 state162:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xba: goto state163;
 		default: goto no_match;
 	}
 state163:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xca: goto state164;
 		default: goto no_match;
 	}
 state164:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x9a: goto stateaf;
 		default: goto no_match;
 	}
 state165:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xca: goto state166;
 		default: goto no_match;
 	}
 state166:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xba: goto state167;
 		default: goto no_match;
 	}
 state167:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xbe: goto state8b;
 		default: goto no_match;
 	}
 state168:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x9b: goto state92;
 		default: goto no_match;
 	}
 state169:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa1: goto state8c;
 		default: goto no_match;
 	}
 state16a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbb: goto state16b;
 		default: goto no_match;
 	}
 state16b:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state72;
 		case 0x81: goto state71;
 		case 0x82: goto state74;
@@ -3241,13 +3241,13 @@ state16b:
 		default: goto no_match;
 	}
 state16c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbc: goto state16d;
 		case 0xbe: goto state18b;
 		default: goto no_match;
 	}
 state16d:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state79;
 		case 0x81: goto state7a;
 		case 0x82: goto state7b;
@@ -3311,14 +3311,14 @@ state16d:
 		default: goto no_match;
 	}
 state16e:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbd: goto state16f;
 		case 0xbe: goto state1af;
 		case 0xbf: goto state1cd;
 		default: goto no_match;
 	}
 state16f:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state79;
 		case 0x81: goto state7a;
 		case 0x82: goto state7b;
@@ -3358,18 +3358,18 @@ state16f:
 		default: goto no_match;
 	}
 state170:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xbd: goto state171;
 		case 0xbf: goto state1e4;
 		default: goto no_match;
 	}
 state171:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x85: goto state172;
 		default: goto no_match;
 	}
 state172:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x90: goto state173;
 		case 0x92: goto state179;
 		case 0x94: goto state17f;
@@ -3377,12 +3377,12 @@ state172:
 		default: goto no_match;
 	}
 state173:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state84;
 		default: goto no_match;
 	}
 state174:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x81: goto state1e9;
 		case 0x85: goto state175;
 		case 0x89: goto state1ee;
@@ -3390,18 +3390,18 @@ state174:
 		default: goto no_match;
 	}
 state175:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbd: goto state176;
 		case 0xbf: goto state1e6;
 		default: goto no_match;
 	}
 state176:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcc: goto state177;
 		default: goto no_match;
 	}
 state177:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x90: goto state178;
 		case 0x92: goto state17c;
 		case 0x94: goto state181;
@@ -3409,89 +3409,89 @@ state177:
 		default: goto no_match;
 	}
 state178:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x93: goto state2;
 		default: goto no_match;
 	}
 state179:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state17a;
 		default: goto no_match;
 	}
 state17a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x93: goto state17b;
 		default: goto no_match;
 	}
 state17b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state71;
 		default: goto no_match;
 	}
 state17c:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x93: goto state17d;
 		default: goto no_match;
 	}
 state17d:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcc: goto state17e;
 		default: goto no_match;
 	}
 state17e:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state2;
 		default: goto no_match;
 	}
 state17f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state180;
 		default: goto no_match;
 	}
 state180:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x93: goto state131;
 		default: goto no_match;
 	}
 state181:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x93: goto state135;
 		default: goto no_match;
 	}
 state182:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state183;
 		default: goto no_match;
 	}
 state183:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x93: goto state184;
 		default: goto no_match;
 	}
 state184:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcd: goto state73;
 		default: goto no_match;
 	}
 state185:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x93: goto state186;
 		default: goto no_match;
 	}
 state186:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcd: goto state144;
 		default: goto no_match;
 	}
 state187:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbc: goto state188;
 		case 0xbd: goto state1ae;
 		case 0xbe: goto state19d;
 		default: goto no_match;
 	}
 state188:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state189;
 		case 0x81: goto state18f;
 		case 0x82: goto state191;
@@ -3527,17 +3527,17 @@ state188:
 		default: goto no_match;
 	}
 state189:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x80: goto state18a;
 		default: goto no_match;
 	}
 state18a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xce: goto stateaa;
 		default: goto no_match;
 	}
 state18b:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state18c;
 		case 0x81: goto state190;
 		case 0x82: goto state192;
@@ -3557,100 +3557,100 @@ state18b:
 		default: goto no_match;
 	}
 state18c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x80: goto state18d;
 		case 0x88: goto state18d;
 		default: goto no_match;
 	}
 state18d:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xce: goto state18e;
 		default: goto no_match;
 	}
 state18e:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb9: goto state2;
 		default: goto no_match;
 	}
 state18f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x81: goto state18a;
 		default: goto no_match;
 	}
 state190:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x81: goto state18d;
 		case 0x89: goto state18d;
 		default: goto no_match;
 	}
 state191:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x82: goto state18a;
 		default: goto no_match;
 	}
 state192:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x82: goto state18d;
 		case 0x8a: goto state18d;
 		default: goto no_match;
 	}
 state193:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x83: goto state18a;
 		default: goto no_match;
 	}
 state194:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x83: goto state18d;
 		case 0x8b: goto state18d;
 		default: goto no_match;
 	}
 state195:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x84: goto state18a;
 		default: goto no_match;
 	}
 state196:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x84: goto state18d;
 		case 0x8c: goto state18d;
 		default: goto no_match;
 	}
 state197:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x85: goto state18a;
 		default: goto no_match;
 	}
 state198:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x85: goto state18d;
 		case 0x8d: goto state18d;
 		default: goto no_match;
 	}
 state199:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x86: goto state18a;
 		default: goto no_match;
 	}
 state19a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x86: goto state18d;
 		case 0x8e: goto state18d;
 		default: goto no_match;
 	}
 state19b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x87: goto state18a;
 		default: goto no_match;
 	}
 state19c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x87: goto state18d;
 		case 0x8f: goto state18d;
 		default: goto no_match;
 	}
 state19d:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state79;
 		case 0x81: goto state7a;
 		case 0x82: goto state7b;
@@ -3708,95 +3708,95 @@ state19d:
 		default: goto no_match;
 	}
 state19e:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa0: goto state18a;
 		default: goto no_match;
 	}
 state19f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x90: goto state18d;
 		case 0x98: goto state18d;
 		default: goto no_match;
 	}
 state1a0:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa1: goto state18a;
 		default: goto no_match;
 	}
 state1a1:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x91: goto state18d;
 		case 0x99: goto state18d;
 		default: goto no_match;
 	}
 state1a2:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa2: goto state18a;
 		default: goto no_match;
 	}
 state1a3:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x92: goto state18d;
 		case 0x9a: goto state18d;
 		default: goto no_match;
 	}
 state1a4:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa3: goto state18a;
 		default: goto no_match;
 	}
 state1a5:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x93: goto state18d;
 		case 0x9b: goto state18d;
 		default: goto no_match;
 	}
 state1a6:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa4: goto state18a;
 		default: goto no_match;
 	}
 state1a7:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x94: goto state18d;
 		case 0x9c: goto state18d;
 		default: goto no_match;
 	}
 state1a8:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa5: goto state18a;
 		default: goto no_match;
 	}
 state1a9:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x95: goto state18d;
 		case 0x9d: goto state18d;
 		default: goto no_match;
 	}
 state1aa:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa6: goto state18a;
 		default: goto no_match;
 	}
 state1ab:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x96: goto state18d;
 		case 0x9e: goto state18d;
 		default: goto no_match;
 	}
 state1ac:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa7: goto state18a;
 		default: goto no_match;
 	}
 state1ad:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x97: goto state18d;
 		case 0x9f: goto state18d;
 		default: goto no_match;
 	}
 state1ae:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa0: goto state19e;
 		case 0xa1: goto state1a0;
 		case 0xa2: goto state1a2;
@@ -3819,7 +3819,7 @@ state1ae:
 		default: goto no_match;
 	}
 state1af:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa0: goto state1b0;
 		case 0xa1: goto state1b1;
 		case 0xa2: goto state1b2;
@@ -3833,79 +3833,79 @@ state1af:
 		default: goto no_match;
 	}
 state1b0:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa0: goto state18d;
 		case 0xa8: goto state18d;
 		default: goto no_match;
 	}
 state1b1:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa1: goto state18d;
 		case 0xa9: goto state18d;
 		default: goto no_match;
 	}
 state1b2:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa2: goto state18d;
 		case 0xaa: goto state18d;
 		default: goto no_match;
 	}
 state1b3:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa3: goto state18d;
 		case 0xab: goto state18d;
 		default: goto no_match;
 	}
 state1b4:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa4: goto state18d;
 		case 0xac: goto state18d;
 		default: goto no_match;
 	}
 state1b5:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa5: goto state18d;
 		case 0xad: goto state18d;
 		default: goto no_match;
 	}
 state1b6:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa6: goto state18d;
 		case 0xae: goto state18d;
 		default: goto no_match;
 	}
 state1b7:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa7: goto state18d;
 		case 0xaf: goto state18d;
 		default: goto no_match;
 	}
 state1b8:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb0: goto state18a;
 		default: goto no_match;
 	}
 state1b9:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb2: goto state18d;
 		case 0xba: goto state2;
 		default: goto no_match;
 	}
 state1ba:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xbe: goto state1bb;
 		case 0xbf: goto state1cf;
 		default: goto no_match;
 	}
 state1bb:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xac: goto state1c1;
 		case 0xb1: goto state1bc;
 		case 0xb9: goto state1c8;
 		default: goto no_match;
 	}
 state1bc:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb3: goto state18a;
 		case 0xb6: goto state184;
 		case 0xb7: goto state1c6;
@@ -3913,7 +3913,7 @@ state1bc:
 		default: goto no_match;
 	}
 state1bd:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xac: goto state1c2;
 		case 0xae: goto state1d5;
 		case 0xb1: goto state1be;
@@ -3922,77 +3922,77 @@ state1bd:
 		default: goto no_match;
 	}
 state1be:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbe: goto state1bf;
 		default: goto no_match;
 	}
 state1bf:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcd: goto state1c5;
 		case 0xce: goto state1c0;
 		default: goto no_match;
 	}
 state1c0:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb3: goto state18e;
 		case 0xbc: goto state18e;
 		default: goto no_match;
 	}
 state1c1:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb4: goto state18a;
 		default: goto no_match;
 	}
 state1c2:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbe: goto state1c3;
 		default: goto no_match;
 	}
 state1c3:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xce: goto state1c4;
 		default: goto no_match;
 	}
 state1c4:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb4: goto state18e;
 		default: goto no_match;
 	}
 state1c5:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb6: goto state144;
 		case 0xb7: goto state1c7;
 		default: goto no_match;
 	}
 state1c6:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcd: goto state191;
 		default: goto no_match;
 	}
 state1c7:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x82: goto state18d;
 		default: goto no_match;
 	}
 state1c8:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xbe: goto state2;
 		default: goto no_match;
 	}
 state1c9:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbe: goto stateaf;
 		case 0xbf: goto state1dd;
 		default: goto no_match;
 	}
 state1ca:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbd: goto state1cb;
 		case 0xbf: goto state1d9;
 		default: goto no_match;
 	}
 state1cb:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x82: goto state1cc;
 		case 0x88: goto statea3;
 		case 0x89: goto statea4;
@@ -4010,12 +4010,12 @@ state1cb:
 		default: goto no_match;
 	}
 state1cc:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb4: goto state18a;
 		default: goto no_match;
 	}
 state1cd:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb2: goto state79;
 		case 0xb3: goto state7a;
 		case 0xb4: goto state1ce;
@@ -4031,20 +4031,20 @@ state1cd:
 		default: goto no_match;
 	}
 state1ce:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x82: goto state18d;
 		case 0x8a: goto state2;
 		default: goto no_match;
 	}
 state1cf:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xae: goto state1d4;
 		case 0xb7: goto state1d0;
 		case 0xb9: goto state1da;
 		default: goto no_match;
 	}
 state1d0:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x83: goto state18a;
 		case 0x86: goto state184;
 		case 0x87: goto state1c6;
@@ -4052,50 +4052,50 @@ state1d0:
 		default: goto no_match;
 	}
 state1d1:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbf: goto state1d2;
 		default: goto no_match;
 	}
 state1d2:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcd: goto state1d8;
 		case 0xce: goto state1d3;
 		default: goto no_match;
 	}
 state1d3:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x83: goto state18e;
 		case 0x8c: goto state18e;
 		default: goto no_match;
 	}
 state1d4:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x84: goto state18a;
 		default: goto no_match;
 	}
 state1d5:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbf: goto state1d6;
 		default: goto no_match;
 	}
 state1d6:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xce: goto state1d7;
 		default: goto no_match;
 	}
 state1d7:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x84: goto state18e;
 		default: goto no_match;
 	}
 state1d8:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x86: goto state144;
 		case 0x87: goto state1c7;
 		default: goto no_match;
 	}
 state1d9:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x83: goto state7d;
 		case 0x8c: goto state74;
 		case 0x90: goto state89;
@@ -4113,7 +4113,7 @@ state1d9:
 		default: goto no_match;
 	}
 state1da:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x92: goto state1db;
 		case 0x93: goto state12f;
 		case 0x96: goto state184;
@@ -4121,55 +4121,55 @@ state1da:
 		default: goto no_match;
 	}
 state1db:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state1dc;
 		default: goto no_match;
 	}
 state1dc:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x88: goto state17b;
 		default: goto no_match;
 	}
 state1dd:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcc: goto state1de;
 		case 0xcd: goto state1e0;
 		default: goto no_match;
 	}
 state1de:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x92: goto state1df;
 		case 0x93: goto state134;
 		case 0x97: goto state1e3;
 		default: goto no_match;
 	}
 state1df:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x88: goto state17d;
 		default: goto no_match;
 	}
 state1e0:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x96: goto state144;
 		default: goto no_match;
 	}
 state1e1:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xcc: goto state1e2;
 		default: goto no_match;
 	}
 state1e2:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x88: goto state184;
 		default: goto no_match;
 	}
 state1e3:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x88: goto state186;
 		default: goto no_match;
 	}
 state1e4:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x81: goto state1e8;
 		case 0x85: goto state1e5;
 		case 0x89: goto state1bc;
@@ -4177,7 +4177,7 @@ state1e4:
 		default: goto no_match;
 	}
 state1e5:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa2: goto state1db;
 		case 0xa3: goto state12f;
 		case 0xa6: goto state184;
@@ -4185,130 +4185,130 @@ state1e5:
 		default: goto no_match;
 	}
 state1e6:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcc: goto state1e7;
 		case 0xcd: goto state1ec;
 		default: goto no_match;
 	}
 state1e7:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa2: goto state1df;
 		case 0xa3: goto state134;
 		case 0xa7: goto state1e3;
 		default: goto no_match;
 	}
 state1e8:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa4: goto state173;
 		default: goto no_match;
 	}
 state1e9:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbf: goto state1ea;
 		default: goto no_match;
 	}
 state1ea:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xcc: goto state1eb;
 		default: goto no_match;
 	}
 state1eb:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa4: goto state178;
 		default: goto no_match;
 	}
 state1ec:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa6: goto state144;
 		default: goto no_match;
 	}
 state1ed:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbc: goto state18a;
 		default: goto no_match;
 	}
 state1ee:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbf: goto state1bf;
 		default: goto no_match;
 	}
 state1ef:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbf: goto state1c3;
 		default: goto no_match;
 	}
 state1f0:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x84: goto state1f1;
 		default: goto no_match;
 	}
 state1f1:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x89: goto state1f2;
 		default: goto no_match;
 	}
 state1f2:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa6: goto state2;
 		default: goto no_match;
 	}
 state1f3:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x89: goto state1f4;
 		default: goto no_match;
 	}
 state1f4:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x84: goto state97;
 		default: goto no_match;
 	}
 state1f5:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x84: goto state1f6;
 		default: goto no_match;
 	}
 state1f6:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xaa: goto state2;
 		default: goto no_match;
 	}
 state1f7:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x84: goto state9b;
 		default: goto no_match;
 	}
 state1f8:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x84: goto state1f9;
 		default: goto no_match;
 	}
 state1f9:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xa5: goto state1fa;
 		default: goto no_match;
 	}
 state1fa:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xab: goto state2;
 		default: goto no_match;
 	}
 state1fb:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa5: goto state1fc;
 		default: goto no_match;
 	}
 state1fc:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x84: goto state9c;
 		default: goto no_match;
 	}
 state1fd:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x85: goto state1fe;
 		default: goto no_match;
 	}
 state1fe:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa0: goto statea1;
 		case 0xa1: goto statea2;
 		case 0xa2: goto statea3;
@@ -4344,12 +4344,12 @@ state1fe:
 		default: goto no_match;
 	}
 state1ff:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x93: goto state200;
 		default: goto no_match;
 	}
 state200:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb6: goto state81;
 		case 0xb7: goto state82;
 		case 0xb8: goto state83;
@@ -4363,13 +4363,13 @@ state200:
 		default: goto no_match;
 	}
 state201:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x92: goto state202;
 		case 0x93: goto state203;
 		default: goto no_match;
 	}
 state202:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x90: goto statea7;
 		case 0x91: goto statea8;
 		case 0x92: goto statea9;
@@ -4383,7 +4383,7 @@ state202:
 		default: goto no_match;
 	}
 state203:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state8b;
 		case 0x81: goto state8c;
 		case 0x82: goto state8d;
@@ -4419,111 +4419,111 @@ state203:
 		default: goto no_match;
 	}
 state204:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xac: goto state205;
 		default: goto no_match;
 	}
 state205:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x66: goto state206;
 		case 0x69: goto state136;
 		case 0x6c: goto state144;
 		default: goto no_match;
 	}
 state206:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state2;
 		case 0x83: goto state20c;
 		case 0x84: goto state20d;
 		default: goto no_match;
 	}
 state207:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x66: goto state208;
 		case 0x69: goto state20a;
 		case 0x6c: goto state20b;
 		default: goto no_match;
 	}
 state208:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xac: goto state209;
 		default: goto no_match;
 	}
 state209:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x69: goto state74;
 		case 0x6c: goto state75;
 	}
 	--str1;
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x80: goto state2;
 		default: goto no_match;
 	}
 state20a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xac: goto state72;
 		default: goto no_match;
 	}
 state20b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xac: goto state73;
 		default: goto no_match;
 	}
 state20c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x69: goto state2;
 		default: goto no_match;
 	}
 state20d:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x6c: goto state2;
 		default: goto no_match;
 	}
 state20e:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xac: goto state20f;
 		default: goto no_match;
 	}
 state20f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x74: goto state210;
 		default: goto no_match;
 	}
 state210:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x85: goto state2;
 		case 0x86: goto state2;
 		default: goto no_match;
 	}
 state211:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x74: goto state212;
 		default: goto no_match;
 	}
 state212:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xac: goto state213;
 		default: goto no_match;
 	}
 state213:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x85: goto state2;
 		case 0x86: goto state2;
 		default: goto no_match;
 	}
 state214:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xac: goto state215;
 		default: goto no_match;
 	}
 state215:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xb4: goto state216;
 		case 0xbe: goto state220;
 		default: goto no_match;
 	}
 state216:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x93: goto state217;
 		case 0x94: goto state21d;
 		case 0x95: goto state21f;
@@ -4531,28 +4531,28 @@ state216:
 		default: goto no_match;
 	}
 state217:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd5: goto statea7;
 		default: goto no_match;
 	}
 state218:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb4: goto state219;
 		case 0xbe: goto state221;
 		default: goto no_match;
 	}
 state219:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xac: goto state21a;
 		default: goto no_match;
 	}
 state21a:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xd5: goto state21b;
 		default: goto no_match;
 	}
 state21b:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x93: goto state21c;
 		case 0x94: goto state21e;
 		case 0x95: goto state1fa;
@@ -4560,62 +4560,62 @@ state21b:
 		default: goto no_match;
 	}
 state21c:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xb6: goto state2;
 		default: goto no_match;
 	}
 state21d:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd5: goto state96;
 		default: goto no_match;
 	}
 state21e:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa5: goto state2;
 		default: goto no_match;
 	}
 state21f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd5: goto state9c;
 		default: goto no_match;
 	}
 state220:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x96: goto state217;
 		default: goto no_match;
 	}
 state221:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xac: goto state222;
 		default: goto no_match;
 	}
 state222:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xd5: goto state223;
 		default: goto no_match;
 	}
 state223:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x96: goto state21c;
 		default: goto no_match;
 	}
 state224:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xd5: goto state9e;
 		default: goto no_match;
 	}
 state225:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xad: goto state2;
 		default: goto no_match;
 	}
 state226:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbd: goto state227;
 		default: goto no_match;
 	}
 state227:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0xa1: goto state72;
 		case 0xa2: goto state73;
 		case 0xa3: goto state74;
@@ -4645,12 +4645,12 @@ state227:
 		default: goto no_match;
 	}
 state228:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0xbc: goto state229;
 		default: goto no_match;
 	}
 state229:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x81: goto state92;
 		case 0x82: goto state93;
 		case 0x83: goto state94;
@@ -4680,24 +4680,24 @@ state229:
 		default: goto no_match;
 	}
 state22a:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x90: goto state22b;
 		default: goto no_match;
 	}
 state22b:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x90: goto state22c;
 		case 0x91: goto state22f;
 		default: goto no_match;
 	}
 state22c:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x90: goto state22d;
 		case 0x91: goto state22e;
 		default: goto no_match;
 	}
 state22d:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state99;
 		case 0x81: goto state9a;
 		case 0x82: goto state9b;
@@ -4749,7 +4749,7 @@ state22d:
 		default: goto no_match;
 	}
 state22e:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x98: goto state71;
 		case 0x99: goto state72;
 		case 0x9a: goto state73;
@@ -4769,12 +4769,12 @@ state22e:
 		default: goto no_match;
 	}
 state22f:
-	switch(*(str2++)){
+	switch (*(str2++)){
 		case 0x90: goto state230;
 		default: goto no_match;
 	}
 state230:
-	switch(*(str1++)){
+	switch (*(str1++)){
 		case 0x80: goto state89;
 		case 0x81: goto state8a;
 		case 0x82: goto state8b;

@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
 		bool shuttingDown(false);
 
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_SUCCESS); 
-		while(!shuttingDown)
+		while (!shuttingDown)
 		{
 			// runSelectEngine will only return once something has been put into
 			// the signal pipe or an error has happened
@@ -213,7 +213,7 @@ processCommandLine(int argc, char* argv[], CIMOMEnvironmentRef env)
 	Platform::Options opts = Platform::daemonInit(argc, argv);
 	// If the user only specified the help option on the command
 	// line then get out
-	if(opts.help)
+	if (opts.help)
 	{
 		if (opts.error)
 		{
@@ -222,7 +222,7 @@ processCommandLine(int argc, char* argv[], CIMOMEnvironmentRef env)
 		printUsage(std::cout);
 		exit(0);
 	}
-	if(opts.debug)
+	if (opts.debug)
 	{
 		env->setConfigItem(ConfigOpts::DEBUG_opt, "true", ServiceEnvironmentIFC::E_PRESERVE_PREVIOUS);
 		env->setConfigItem(ConfigOpts::LOG_LEVEL_opt, "debug");

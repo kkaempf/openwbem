@@ -538,7 +538,7 @@ CIMXMLCIMOMHandle::enumInstances(
 	static const char* const commandName = "EnumerateInstances";
 	OStringStream extra(1000);
 	Array<Param> params;
-	if(className.empty())
+	if (className.empty())
 	{
 		OW_THROWCIMMSG(CIMException::NOT_FOUND, "Class Name was empty in "
 			"EnumerateInstances");
@@ -1478,7 +1478,7 @@ CIMXMLCIMOMHandle::setHTTPRequestHeader(const String& hdrName,
 	bool cc = false;
 	IntrusiveReference<HTTPClient> httpClient = 
 		m_protocol.cast_to<HTTPClient>();
-	if(httpClient)
+	if (httpClient)
 	{
 		httpClient->addCustomHeader(hdrName, hdrValue);
 		cc = true;
@@ -1494,11 +1494,11 @@ CIMXMLCIMOMHandle::getHTTPResponseHeader(const String& hdrName,
 	bool cc = false;
 	IntrusiveReference<HTTPClient> httpClient = 
 		m_protocol.cast_to<HTTPClient>();
-	if(httpClient)
+	if (httpClient)
 	{
-		if(!(cc = httpClient->getResponseHeader(hdrName, valueOut)))
+		if (!(cc = httpClient->getResponseHeader(hdrName, valueOut)))
 		{
-			if(HTTPUtils::headerHasKey(m_trailers, hdrName))
+			if (HTTPUtils::headerHasKey(m_trailers, hdrName))
 			{
 				cc = true;
 				valueOut = HTTPUtils::getHeaderValue(m_trailers, hdrName);

@@ -112,7 +112,7 @@ void
 Cache<T>::addToCache(const T& cc, const String& key)
 {
 	MutexLock l(cacheGuard);
-	if(theCacheIndex.size() >= maxCacheSize)
+	if (theCacheIndex.size() >= maxCacheSize)
 	{
 		if (!theCache.empty())
 		{
@@ -179,7 +179,7 @@ Cache<T>::setMaxCacheSize(UInt32 max)
 	maxCacheSize = max;
 	if (max != 0)
 	{
-		while(theCacheIndex.size() >= maxCacheSize)
+		while (theCacheIndex.size() >= maxCacheSize)
 		{
 			if (!theCache.empty())
 			{

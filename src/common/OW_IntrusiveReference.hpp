@@ -77,19 +77,19 @@ public:
 	}
 	IntrusiveReference(T * p, bool add_ref = true): m_pObj(p)
 	{
-		if(m_pObj != 0 && add_ref) IntrusiveReferenceAddRef(m_pObj);
+		if (m_pObj != 0 && add_ref) IntrusiveReferenceAddRef(m_pObj);
 	}
 	template<class U> IntrusiveReference(IntrusiveReference<U> const & rhs): m_pObj(rhs.getPtr())
 	{
-		if(m_pObj != 0) IntrusiveReferenceAddRef(m_pObj);
+		if (m_pObj != 0) IntrusiveReferenceAddRef(m_pObj);
 	}
 	IntrusiveReference(IntrusiveReference const & rhs): m_pObj(rhs.m_pObj)
 	{
-		if(m_pObj != 0) IntrusiveReferenceAddRef(m_pObj);
+		if (m_pObj != 0) IntrusiveReferenceAddRef(m_pObj);
 	}
 	~IntrusiveReference()
 	{
-		if(m_pObj != 0) IntrusiveReferenceRelease(m_pObj);
+		if (m_pObj != 0) IntrusiveReferenceRelease(m_pObj);
 	}
 	template<class U> IntrusiveReference & operator=(IntrusiveReference<U> const & rhs)
 	{

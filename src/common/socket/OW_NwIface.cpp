@@ -108,7 +108,7 @@ NwIface::NwIface()
 	int s, lerrno;
 	struct ifreq ifr;
 	struct sockaddr_in *sin;
-	if((s = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+	if ((s = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
 	{
 		OW_THROW(SocketException, "socket");
 	}
@@ -117,7 +117,7 @@ NwIface::NwIface()
 	strncpy(ifr.ifr_name, m_name.c_str(), sizeof(ifr.ifr_name));
 	////////////////////
 	// Get IP address
-	if(ioctl(s, SIOCGIFADDR, &ifr) < 0)
+	if (ioctl(s, SIOCGIFADDR, &ifr) < 0)
 	{
 		lerrno = errno;
 		close(s);
@@ -128,7 +128,7 @@ NwIface::NwIface()
 	////////////////////
 	// Get the broadcast address
 	// Testing
-	if(ioctl(s, SIOCGIFBRDADDR, &ifr) < 0)
+	if (ioctl(s, SIOCGIFBRDADDR, &ifr) < 0)
 	{
 		lerrno = errno;
 		close(s);
@@ -138,7 +138,7 @@ NwIface::NwIface()
 	m_bcastAddr = sin->sin_addr.s_addr;
 	////////////////////
 	// Get net mask
-	if(ioctl(s, SIOCGIFNETMASK, &ifr) < 0)
+	if (ioctl(s, SIOCGIFNETMASK, &ifr) < 0)
 	{
 		lerrno = errno;
 		close(s);
@@ -233,10 +233,10 @@ NwIface::getInterfaceName(SocketHandle_t sockfd)
 	int lerrno = 0;
 	const char* appliesTo;
 	ifc.ifc_buf = NULL;
-	for(;;)
+	for (;;)
 	{
 		ifc.ifc_len = sizeof(struct ifreq) * numreqs;
-		if(ifc.ifc_buf == NULL)
+		if (ifc.ifc_buf == NULL)
 		{
 			ifc.ifc_buf = new char[ifc.ifc_len];
 		}
@@ -248,13 +248,13 @@ NwIface::getInterfaceName(SocketHandle_t sockfd)
 			ifc.ifc_buf = p;
 		}
 		oldlen = ifc.ifc_len;
-		if(ioctl(sockfd, SIOCGIFCONF, &ifc) < 0)
+		if (ioctl(sockfd, SIOCGIFCONF, &ifc) < 0)
 		{
 			lerrno = errno;
 			appliesTo = "ioctl:SIOCGIFCONF";
 			break;
 		}
-		if(ifc.ifc_len == static_cast<int>(sizeof(struct ifreq) * numreqs))
+		if (ifc.ifc_len == static_cast<int>(sizeof(struct ifreq) * numreqs))
 		{
 			/* assume it overflowed and try again */
 			numreqs += 10;
@@ -262,24 +262,24 @@ NwIface::getInterfaceName(SocketHandle_t sockfd)
 		}
 		break;
 	}
-	if(lerrno == 0)
+	if (lerrno == 0)
 	{
 		lerrno = ENODEV;
 		appliesTo = "No interfaces found";
 		ifr = ifc.ifc_req;
-		for(n = 0; n < ifc.ifc_len; n += sizeof(struct ifreq))
+		for (n = 0; n < ifc.ifc_len; n += sizeof(struct ifreq))
 		{
 			ifrcopy = *ifr;
-			if(ioctl(sockfd, SIOCGIFFLAGS, &ifrcopy) < 0)
+			if (ioctl(sockfd, SIOCGIFFLAGS, &ifrcopy) < 0)
 			{
 				lerrno = errno;
 				appliesTo = "ioctl:SIOCGIFFLAGS";
 				break;
 			}
 #ifdef OW_GNU_LINUX
-			if((ifrcopy.ifr_flags & IFF_UP) && !(ifrcopy.ifr_flags & (IFF_LOOPBACK | IFF_DYNAMIC)))
+			if ((ifrcopy.ifr_flags & IFF_UP) && !(ifrcopy.ifr_flags & (IFF_LOOPBACK | IFF_DYNAMIC)))
 #else
-			if((ifrcopy.ifr_flags & IFF_UP))
+			if ((ifrcopy.ifr_flags & IFF_UP))
 #endif
 			{
 				m_name = ifr->ifr_name;
@@ -289,11 +289,11 @@ NwIface::getInterfaceName(SocketHandle_t sockfd)
 			ifr++;
 		}
 	}
-	if(ifc.ifc_buf != NULL)
+	if (ifc.ifc_buf != NULL)
 	{
 		delete [] ifc.ifc_buf;
 	}
-	if(lerrno != 0)
+	if (lerrno != 0)
 	{
 		OW_THROW(SocketException, "NwIface::getInterfaceName");
 	}

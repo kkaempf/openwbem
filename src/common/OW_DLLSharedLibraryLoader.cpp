@@ -72,7 +72,7 @@ DLLSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	LoggerRef logger) const
 {
 	HINSTANCE libhandle = ::LoadLibrary(filename.c_str());
-	if(libhandle)
+	if (libhandle)
 	{
 		return SharedLibraryRef(new DLLSharedLibrary(libhandle,
 			filename));

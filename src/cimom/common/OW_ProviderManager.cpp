@@ -437,7 +437,7 @@ ProviderManager::getInstanceProvider(const ProviderEnvironmentIFCRef& env,
 	{
 		String provStr;
 		ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
-		if(theIFC)
+		if (theIFC)
 		{
 			return wrapProvider(theIFC->getInstanceProvider(env,
 				provStr.c_str()), env);
@@ -535,7 +535,7 @@ ProviderManager::getMethodProvider(const ProviderEnvironmentIFCRef& env,
 	{
 		String provStr;
 		ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
-		if(theIFC)
+		if (theIFC)
 		{
 			return wrapProvider(theIFC->getMethodProvider(env,
 				provStr.c_str()), env);
@@ -549,7 +549,7 @@ ProviderManager::getMethodProvider(const ProviderEnvironmentIFCRef& env,
 	{
 		String provStr;
 		ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
-		if(theIFC)
+		if (theIFC)
 		{
 			return wrapProvider(theIFC->getMethodProvider(env,
 				provStr.c_str()), env);
@@ -589,7 +589,7 @@ ProviderManager::getAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 	{
 		String provStr;
 		ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
-		if(theIFC)
+		if (theIFC)
 		{
 			return wrapProvider(theIFC->getAssociatorProvider(env,
 				provStr.c_str()), env);
@@ -604,11 +604,11 @@ ProviderManager::getIndicationExportProviders(
 	const ProviderEnvironmentIFCRef& env) const
 {
 	IndicationExportProviderIFCRefArray rv;
-	for(size_t i = 0; i < m_IFCArray.size(); i++)
+	for (size_t i = 0; i < m_IFCArray.size(); i++)
 	{
 		IndicationExportProviderIFCRefArray pra =
 				m_IFCArray[i]->getIndicationExportProviders(env);
-		if(pra.size() > 0)
+		if (pra.size() > 0)
 		{
 			rv.appendArray(pra);
 		}
@@ -621,11 +621,11 @@ ProviderManager::getPolledProviders(
 	const ProviderEnvironmentIFCRef& env) const
 {
 	PolledProviderIFCRefArray rv;
-	for(size_t i = 0; i < m_IFCArray.size(); i++)
+	for (size_t i = 0; i < m_IFCArray.size(); i++)
 	{
 		PolledProviderIFCRefArray pra =
 				m_IFCArray[i]->getPolledProviders(env);
-		if(pra.size() > 0)
+		if (pra.size() > 0)
 		{
 			rv.appendArray(pra);
 		}
@@ -698,7 +698,7 @@ ProviderManager::getIndicationProviders(const ProviderEnvironmentIFCRef& env,
 void
 ProviderManager::unloadProviders(const ProviderEnvironmentIFCRef& env)
 {
-	for(size_t i = 0; i < m_IFCArray.size(); i++)
+	for (size_t i = 0; i < m_IFCArray.size(); i++)
 	{
 		try
 		{
@@ -718,17 +718,17 @@ ProviderManager::getProviderIFC(const ProviderEnvironmentIFCRef& env,
 {
 	ProviderIFCBaseIFCRef rref;
 	provStr = String();
-	if(!qual.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_PROVIDER))
+	if (!qual.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_PROVIDER))
 	{
 		env->getLogger()->logError(Format("Provider Manager - invalid provider qualifier: %1",
 			qual.getName()));
 		return rref;
 	}
 	CIMValue cv = qual.getValue();
-	if(cv.getType() != CIMDataType::STRING || cv.isArray())
+	if (cv.getType() != CIMDataType::STRING || cv.isArray())
 	{
 		CIMDataType dt(cv.getType());
-		if(cv.isArray())
+		if (cv.isArray())
 		{
 			dt.setToArrayType(cv.getArraySize());
 		}
@@ -741,7 +741,7 @@ ProviderManager::getProviderIFC(const ProviderEnvironmentIFCRef& env,
 	cv.get(qvstr);
 	size_t ndxoffset = 2;
 	size_t ndx = qvstr.indexOf("::");
-	if(ndx == String::npos)
+	if (ndx == String::npos)
 	{
 		ndx = qvstr.indexOf(":");
 		if (ndx == String::npos)
@@ -756,13 +756,13 @@ ProviderManager::getProviderIFC(const ProviderEnvironmentIFCRef& env,
 	provStr = qvstr.substring(ndx+ndxoffset);
 	for (size_t i = 0; i < m_IFCArray.size(); i++)
 	{
-		if(ifcStr.equalsIgnoreCase(m_IFCArray[i]->getName()))
+		if (ifcStr.equalsIgnoreCase(m_IFCArray[i]->getName()))
 		{
 			rref = m_IFCArray[i];
 			break;
 		}
 	}
-	if(!rref)
+	if (!rref)
 	{
 		env->getLogger()->logError(Format(
 			"Provider Manager - Invalid provider interface identifier: %1",

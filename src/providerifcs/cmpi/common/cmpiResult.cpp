@@ -29,10 +29,10 @@ static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data,
 {
 	CMPIrc rc;
 	OpenWBEM::CIMValue v=value2CIMValue(data,type,&rc);
-	if(eRes->ft==CMPI_ResultMethOnStack_Ftab)
+	if (eRes->ft==CMPI_ResultMethOnStack_Ftab)
 	{
 		CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
-		if(((CMPI_Result*)eRes)->flags & RESULT_set==0)
+		if (((CMPI_Result*)eRes)->flags & RESULT_set==0)
 		{
 			((CMPI_Result*)eRes)->flags|=RESULT_set;
 		}
@@ -41,7 +41,7 @@ static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data,
 	else
 	{
 		CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
-		if(((CMPI_Result*)eRes)->flags & RESULT_set==0)
+		if (((CMPI_Result*)eRes)->flags & RESULT_set==0)
 		{
 			((CMPI_Result*)eRes)->flags|=RESULT_set;
 		}

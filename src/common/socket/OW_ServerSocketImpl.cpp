@@ -117,7 +117,7 @@ ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
 	m_localAddress = SocketAddress::allocEmptyAddress(SocketAddress::INET);
 	m_isSSL = isSSL;
 	close();
-	if((m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
+	if ((m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
 	{
 		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
 			SocketUtils::getLastErrorMsg()).c_str());
@@ -125,7 +125,7 @@ ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
 
 	// Set listen socket to nonblocking
 	unsigned long cmdArg = 1;
-	if(::ioctlsocket(m_sockfd, FIONBIO, &cmdArg) == SOCKET_ERROR)
+	if (::ioctlsocket(m_sockfd, FIONBIO, &cmdArg) == SOCKET_ERROR)
 	{
 		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
 			SocketUtils::getLastErrorMsg()).c_str());
@@ -140,7 +140,7 @@ ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
 		
 	InetSocketAddress_t inetAddr;
 	inetAddr.sin_family = AF_INET;
-	if(listenAddr == SocketAddress::ALL_LOCAL_ADDRESSES)
+	if (listenAddr == SocketAddress::ALL_LOCAL_ADDRESSES)
 	{
 		inetAddr.sin_addr.s_addr = hton32(INADDR_ANY);
 	}
@@ -150,13 +150,13 @@ ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
 		inetAddr.sin_addr.s_addr = addr.getInetAddress()->sin_addr.s_addr;
 	}
 	inetAddr.sin_port = hton16(port);
-	if(::bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)
+	if (::bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)
 	{
 		close();
 		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
 			SocketUtils::getLastErrorMsg()).c_str());
 	}
-	if(::listen(m_sockfd, queueSize) == -1)
+	if (::listen(m_sockfd, queueSize) == -1)
 	{
 		close();
 		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
@@ -171,7 +171,7 @@ ServerSocketImpl::accept(int timeoutSecs)
 {
 	OW_ASSERT(m_localAddress.getType() == SocketAddress::INET);
 
-	if(!m_isActive)
+	if (!m_isActive)
 	{
 		OW_THROW(SocketException, "ServerSocketImpl::accept: NONE");
 	}
@@ -185,18 +185,18 @@ ServerSocketImpl::accept(int timeoutSecs)
 	HANDLE events[2];
 	int cc;
 
-	while(true)
+	while (true)
 	{
 		clntlen = sizeof(clntInetAddr);
 		clntfd = ::accept(m_sockfd,
 			reinterpret_cast<struct sockaddr*>(&clntInetAddr), &clntlen);
-		if(clntfd != INVALID_SOCKET)
+		if (clntfd != INVALID_SOCKET)
 		{
 			// Got immediate connection
 			break;
 		}
 
-		if(::WSAGetLastError() != WSAEWOULDBLOCK)
+		if (::WSAGetLastError() != WSAEWOULDBLOCK)
 		{
 			OW_THROW(SocketException, Format("ServerSocketImpl: %1",
 				SocketUtils::getLastErrorMsg()).c_str());
@@ -204,7 +204,7 @@ ServerSocketImpl::accept(int timeoutSecs)
 
 
 		cc = SocketUtils::waitForIO(m_sockfd, m_event, FD_ACCEPT);
-		switch(cc)
+		switch (cc)
 		{
 			case -1:
 				OW_THROW(SocketException, "Error while waiting for network events");
@@ -229,7 +229,7 @@ ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
 	m_localAddress = SocketAddress::allocEmptyAddress(SocketAddress::INET);
 	m_isSSL = isSSL;
 	close();
-	if((m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1)
+	if ((m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1)
 	{
 		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
 			strerror(errno)).c_str());
@@ -262,7 +262,7 @@ ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
 		
 	InetSocketAddress_t inetAddr;
 	inetAddr.sin_family = AF_INET;
-	if(listenAddr == SocketAddress::ALL_LOCAL_ADDRESSES)
+	if (listenAddr == SocketAddress::ALL_LOCAL_ADDRESSES)
 	{
 		inetAddr.sin_addr.s_addr = hton32(INADDR_ANY);
 	}
@@ -272,13 +272,13 @@ ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
 		inetAddr.sin_addr.s_addr = addr.getInetAddress()->sin_addr.s_addr;
 	}
 	inetAddr.sin_port = hton16(port);
-	if(bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)
+	if (bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)
 	{
 		close();
 		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
 				strerror(errno)).c_str());
 	}
-	if(listen(m_sockfd, queueSize) == -1)
+	if (listen(m_sockfd, queueSize) == -1)
 	{
 		close();
 		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
@@ -293,7 +293,7 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 {
 	m_localAddress = SocketAddress::getUDS(filename);
 	close();
-	if((m_sockfd = ::socket(PF_UNIX,SOCK_STREAM, 0)) == -1)
+	if ((m_sockfd = ::socket(PF_UNIX,SOCK_STREAM, 0)) == -1)
 	{
 		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
 			strerror(errno)).c_str());
@@ -346,7 +346,7 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 		}
 	}
 		
-	if(::bind(m_sockfd, m_localAddress.getNativeForm(),
+	if (::bind(m_sockfd, m_localAddress.getNativeForm(),
 		m_localAddress.getNativeFormSize()) == -1)
 	{
 		close();
@@ -354,13 +354,13 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 				strerror(errno)).c_str());
 	}
 	// give anybody access to the socket
-	if(::chmod(filename.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) == -1)
+	if (::chmod(filename.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) == -1)
 	{
 		close();
 		OW_THROW(SocketException, Format("ServerSocketImpl: chmod failed: %1",
 				strerror(errno)).c_str());
 	}
-	if(::listen(m_sockfd, queueSize) == -1)
+	if (::listen(m_sockfd, queueSize) == -1)
 	{
 		close();
 		OW_THROW(SocketException, Format("ServerSocketImpl: listen failed: %1",
@@ -388,11 +388,11 @@ ServerSocketImpl::addrString()
 Socket
 ServerSocketImpl::accept(int timeoutSecs)
 {
-	if(!m_isActive)
+	if (!m_isActive)
 	{
 		OW_THROW(SocketException, "ServerSocketImpl::accept: NONE");
 	}
-	if(SocketUtils::waitForIO(m_sockfd, timeoutSecs, SocketFlags::E_WAIT_FOR_INPUT) == 0)
+	if (SocketUtils::waitForIO(m_sockfd, timeoutSecs, SocketFlags::E_WAIT_FOR_INPUT) == 0)
 	{
 		int clntfd;
 		socklen_t clntlen;
@@ -415,7 +415,7 @@ ServerSocketImpl::accept(int timeoutSecs)
 		}
 		
 		clntfd = ::accept(m_sockfd, pSA, &clntlen);
-		if(clntfd < 0)
+		if (clntfd < 0)
 		{
 			// check to see if client aborts connection between select and accept.
 			// see Unix Network Programming pages 422-424.
@@ -459,7 +459,7 @@ ServerSocketImpl::accept(int timeoutSecs)
 void
 ServerSocketImpl::close()
 {
-	if(m_isActive)
+	if (m_isActive)
 	{
 #if defined(OW_WIN32)
 		::closesocket(m_sockfd);
@@ -507,7 +507,7 @@ ServerSocketImpl::fillAddrParms()
 		struct sockaddr_in addr;
 		memset(&addr, 0, sizeof(addr));
 		len = sizeof(addr);
-		if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
+		if (getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 		{
 			OW_THROW(SocketException, "SocketImpl::fillAddrParms: "
 				"getsockname");
@@ -520,7 +520,7 @@ ServerSocketImpl::fillAddrParms()
 		struct sockaddr_un addr;
 		memset(&addr, 0, sizeof(addr));
 		len = sizeof(addr);
-		if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
+		if (getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 		{
 			OW_THROW(SocketException, "SocketImpl::fillAddrParms: "
 				"getsockname");

@@ -195,7 +195,7 @@ Exception::getFile() const
 std::ostream&
 operator<<(std::ostream& os, const Exception& e)
 {
-	if(*e.getFile() == '\0')
+	if (*e.getFile() == '\0')
 	{
 		os << "[no file]: ";
 	}
@@ -203,7 +203,7 @@ operator<<(std::ostream& os, const Exception& e)
 	{
 		os << e.getFile() << ": ";
 	}
-	if(e.getLine() == 0)
+	if (e.getLine() == 0)
 	{
 		os << "[no line] ";
 	}
@@ -212,7 +212,7 @@ operator<<(std::ostream& os, const Exception& e)
 		os << e.getLine() << ' ';
 	}
 	os << e.type() << ": ";
-	if(*e.getMessage() == '\0')
+	if (*e.getMessage() == '\0')
 	{
 		os << "[no message]";
 	}

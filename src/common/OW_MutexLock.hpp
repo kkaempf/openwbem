@@ -49,7 +49,7 @@ public:
 	explicit MutexLock(Mutex& mutex, bool initially_locked=true)
 		: m_mutex(&mutex), m_locked(false)
 	{
-		if(initially_locked)
+		if (initially_locked)
 		{
 			lock();
 		}

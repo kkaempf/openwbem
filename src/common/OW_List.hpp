@@ -250,9 +250,9 @@ public:
 	{
 		m_impl->sort();
 	}
-	template<class Predicate> void remove_if(Predicate p)
+	template<class Predicate> void remove_if (Predicate p)
 	{
-		m_impl->remove_if(p);
+		m_impl->remove_if (p);
 	}
 	template<class BinaryPredicate> void unique(BinaryPredicate bp)
 	{

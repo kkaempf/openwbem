@@ -81,7 +81,7 @@ void CIMNameSpacetoXML(CIMNameSpace const& ns, ostream& ostr)
 void LocalCIMNameSpacetoXML(CIMNameSpace const& ns, ostream& ostr)
 {
 	String name = ns.getNameSpace();
-	if(name.empty())
+	if (name.empty())
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "Namespace not set");
 	}
@@ -93,7 +93,7 @@ void LocalCIMNameSpacetoXML(CIMNameSpace const& ns, ostream& ostr)
 		{
 			break;
 		}
-		if(index != 0)
+		if (index != 0)
 		{
 			ostr
 				<< "<NAMESPACE NAME=\""
@@ -113,7 +113,7 @@ void LocalCIMNameSpacetoXML(CIMNameSpace const& ns, ostream& ostr)
 void CIMtoXML(CIMQualifierType const& cqt, ostream& ostr)
 {
 	CIMFlavor fv;
-	if(cqt.getName().empty())
+	if (cqt.getName().empty())
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "qualifierType must have a name");
 	}
@@ -121,7 +121,7 @@ void CIMtoXML(CIMQualifierType const& cqt, ostream& ostr)
 	// If type isn't set then the CIMOM has stored a qualifier
 	// thats bad and an exception is generated
 	//
-	if(!cqt.getDataType())
+	if (!cqt.getDataType())
 	{
 		String msg("QualifierType (");
 		msg += cqt.getName();
@@ -134,7 +134,7 @@ void CIMtoXML(CIMQualifierType const& cqt, ostream& ostr)
 		<< "\" TYPE=\"";
 	CIMtoXML(cqt.getDataType(), ostr);
 	ostr << "\" ";
-	if(cqt.getDataType().isArrayType())
+	if (cqt.getDataType().isArrayType())
 	{
 		ostr << "ISARRAY=\"true\" ";
 	}
@@ -143,35 +143,35 @@ void CIMtoXML(CIMQualifierType const& cqt, ostream& ostr)
 		ostr << "ISARRAY=\"false\" ";
 	}
 	fv = CIMFlavor(CIMFlavor::ENABLEOVERRIDE);
-	if(cqt.hasFlavor(fv))
+	if (cqt.hasFlavor(fv))
 	{
 		// NOT NECESSARY, default is TRUE
 	}
 	else
 	{
 		fv = CIMFlavor(CIMFlavor::DISABLEOVERRIDE);
-		if(cqt.hasFlavor(fv))
+		if (cqt.hasFlavor(fv))
 		{
 			CIMtoXML(fv, ostr);
 			ostr << "=\"false\" ";
 		}
 	}
 	fv = CIMFlavor(CIMFlavor::TOSUBCLASS);
-	if(cqt.hasFlavor(fv))
+	if (cqt.hasFlavor(fv))
 	{
 		// NOT NECESSARY, default is TRUE
 	}
 	else
 	{
 		fv = CIMFlavor(CIMFlavor::RESTRICTED);
-		if(cqt.hasFlavor(fv))
+		if (cqt.hasFlavor(fv))
 		{
 			CIMtoXML(fv, ostr);
 			ostr << "=\"false\" ";
 		}
 	}
 	fv = CIMFlavor(CIMFlavor::TRANSLATE);
-	if(cqt.hasFlavor(fv))
+	if (cqt.hasFlavor(fv))
 	{
 		CIMtoXML(fv, ostr);
 		ostr << "=\"true\" ";
@@ -186,49 +186,49 @@ void CIMtoXML(CIMQualifierType const& cqt, ostream& ostr)
 	String scope;
 	bool scopeWritten = false;
 	bool any = cqt.hasScope(CIMScope(CIMScope::ANY));
-	if(any || cqt.hasScope(CIMScope(CIMScope::CLASS)))
+	if (any || cqt.hasScope(CIMScope(CIMScope::CLASS)))
 	{
 		ostr << "CLASS=\"true\" ";
 		scopeWritten = true;
 	}
-	if(any || cqt.hasScope(CIMScope(CIMScope::ASSOCIATION)))
+	if (any || cqt.hasScope(CIMScope(CIMScope::ASSOCIATION)))
 	{
 		ostr << "ASSOCIATION=\"true\" ";
 		scopeWritten = true;
 	}
-	if(any || cqt.hasScope(CIMScope(CIMScope::REFERENCE)))
+	if (any || cqt.hasScope(CIMScope(CIMScope::REFERENCE)))
 	{
 		ostr << "REFERENCE=\"true\" ";
 		scopeWritten = true;
 	}
-	if(any || cqt.hasScope(CIMScope(CIMScope::PROPERTY)))
+	if (any || cqt.hasScope(CIMScope(CIMScope::PROPERTY)))
 	{
 		ostr << "PROPERTY=\"true\" ";
 		scopeWritten = true;
 	}
-	if(any || cqt.hasScope(CIMScope(CIMScope::METHOD)))
+	if (any || cqt.hasScope(CIMScope(CIMScope::METHOD)))
 	{
 		ostr << "METHOD=\"true\" ";
 		scopeWritten = true;
 	}
-	if(any || cqt.hasScope(CIMScope(CIMScope::PARAMETER)))
+	if (any || cqt.hasScope(CIMScope(CIMScope::PARAMETER)))
 	{
 		ostr << "PARAMETER=\"true\" ";
 		scopeWritten = true;
 	}
-	if(any || cqt.hasScope(CIMScope(CIMScope::INDICATION)))
+	if (any || cqt.hasScope(CIMScope(CIMScope::INDICATION)))
 	{
 		ostr << "INDICATION=\"true\" ";
 		scopeWritten = true;
 	}
-	if(!scopeWritten)
+	if (!scopeWritten)
 	{
 		String msg("Scope not set on qaulifier type: ");
 		msg += cqt.getName();
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 	ostr << "></SCOPE>";
-	if(cqt.getDefaultValue())
+	if (cqt.getDefaultValue())
 	{
 		CIMtoXML(cqt.getDefaultValue(), ostr);
 	}
@@ -239,12 +239,12 @@ outputKEYVALUE(ostream& ostr, const CIMProperty& cp)
 {
 	CIMDataType dtype = cp.getDataType();
 	String type;
-	if(dtype.isArrayType())
+	if (dtype.isArrayType())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"An array cannot be a KEY");
 	}
-	if(dtype.isReferenceType())
+	if (dtype.isReferenceType())
 	{
 		CIMProperty lcp(cp);
 		// This is sort of a bad thing to do, basically we are taking advantage
@@ -260,7 +260,7 @@ outputKEYVALUE(ostream& ostr, const CIMProperty& cp)
 	}
 	//
 	// Regular key value
-	switch(dtype.getType())
+	switch (dtype.getType())
 	{
 		case CIMDataType::CHAR16:
 		case CIMDataType::DATETIME:
@@ -274,7 +274,7 @@ outputKEYVALUE(ostream& ostr, const CIMProperty& cp)
 			type = "numeric";
 	}
 	CIMValue keyValue = cp.getValue();
-	if(!keyValue)
+	if (!keyValue)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "No key value");
 	}
@@ -385,10 +385,10 @@ void CIMInstanceNametoXML(CIMObjectPath const& cop, ostream& ostr)
 	// the key == 1 case - most implementations can't cope with
 	// a single KEYVALUE without a KEYBINDING element
 	//
-	if(cop.isInstancePath())
+	if (cop.isInstancePath())
 	{
 		size_t numkeys = cop.getKeys().size();
-		for(size_t i = 0; i < numkeys; i++)
+		for (size_t i = 0; i < numkeys; i++)
 		{
 			CIMProperty cp = cop.getKeys()[i];
 			ostr << "<KEYBINDING NAME=\"";
@@ -406,13 +406,13 @@ void CIMInstanceNametoXML(CIMObjectPath const& cop, ostream& ostr)
 //////////////////////////////////////////////////////////////////////////////
 void CIMtoXML(CIMClass const& cc, ostream& ostr)
 {
-	if(cc.getName().empty())
+	if (cc.getName().empty())
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "class must have name");
 	}
 	ostr << "<CLASS NAME=\"";
 	ostr << cc.getName();
-	if(!cc.getSuperClass().empty())
+	if (!cc.getSuperClass().empty())
 	{
 		ostr << "\" SUPERCLASS=\"";
 		ostr << cc.getSuperClass();
@@ -420,17 +420,17 @@ void CIMtoXML(CIMClass const& cc, ostream& ostr)
 
 	ostr << "\">";
 	const CIMQualifierArray& ccquals = cc.getQualifiers();
-	for(size_t i = 0; i < ccquals.size(); i++)
+	for (size_t i = 0; i < ccquals.size(); i++)
 	{
 		CIMtoXML(ccquals[i], ostr);
 	}
 	const CIMPropertyArray& props = cc.getAllProperties();
-	for(size_t i = 0; i < props.size(); i++)
+	for (size_t i = 0; i < props.size(); i++)
 	{
 		CIMtoXML(props[i], ostr);
 	}
 	const CIMMethodArray& meths = cc.getAllMethods();
-	for(size_t i = 0; i < meths.size(); i++)
+	for (size_t i = 0; i < meths.size(); i++)
 	{
 		CIMtoXML(meths[i], ostr);
 	}
@@ -439,7 +439,7 @@ void CIMtoXML(CIMClass const& cc, ostream& ostr)
 //////////////////////////////////////////////////////////////////////////////
 void CIMInstancetoXML(CIMInstance const& ci, ostream& ostr)
 {
-	if(ci.getClassName().empty())
+	if (ci.getClassName().empty())
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "instance has no class name");
 	}
@@ -447,7 +447,7 @@ void CIMInstancetoXML(CIMInstance const& ci, ostream& ostr)
 	ostr << ci.getClassName();
 
 	String lang = ci.getLanguage();
-	if(!lang.empty())
+	if (!lang.empty())
 	{
 		ostr << "\" xml:lang=\"";
 		ostr << lang;
@@ -457,12 +457,12 @@ void CIMInstancetoXML(CIMInstance const& ci, ostream& ostr)
 	//
 	// Process qualifiers
 	//
-	for(size_t i = 0; i < ci.getQualifiers().size(); i++)
+	for (size_t i = 0; i < ci.getQualifiers().size(); i++)
 	{
 		CIMtoXML(ci.getQualifiers()[i], ostr);
 	}
 	CIMPropertyArray pra = ci.getProperties();
-	for(size_t i = 0; i < pra.size(); i++)
+	for (size_t i = 0; i < pra.size(); i++)
 	{
 		CIMtoXML(pra[i],ostr);
 	}
@@ -487,7 +487,7 @@ template<class T>
 void raToXml(ostream& out, const Array<T>& ra)
 {
 	out << "<VALUE.ARRAY>";
-	for(size_t i = 0; i < ra.size(); i++)
+	for (size_t i = 0; i < ra.size(); i++)
 	{
 		out << "<VALUE>";
 		out << ra[i];
@@ -514,7 +514,7 @@ static void valueToXML(CIMObjectPath const& x, ostream& out)
 static void raToXmlCOP(ostream& out, const Array<CIMObjectPath>& ra)
 {
 	out << "<VALUE.REFARRAY>";
-	for(size_t i = 0; i < ra.size(); i++)
+	for (size_t i = 0; i < ra.size(); i++)
 	{
 		out << "<VALUE.REFERENCE>";
 		valueToXML(ra[i], out);
@@ -525,7 +525,7 @@ static void raToXmlCOP(ostream& out, const Array<CIMObjectPath>& ra)
 static void raToXmlSA(ostream& out, const Array<String>& ra)
 {
 	out << "<VALUE.ARRAY>";
-	for(size_t i = 0; i < ra.size(); i++)
+	for (size_t i = 0; i < ra.size(); i++)
 	{
 		out << "<VALUE>";
 		out << XMLEscape(ra[i]);
@@ -536,7 +536,7 @@ static void raToXmlSA(ostream& out, const Array<String>& ra)
 static void raToXmlChar16(ostream& out, const Array<Char16>& ra)
 {
 	out << "<VALUE.ARRAY>";
-	for(size_t i = 0; i < ra.size(); i++)
+	for (size_t i = 0; i < ra.size(); i++)
 	{
 		out << "<VALUE>";
 		out << XMLEscape(ra[i].toString());
@@ -547,7 +547,7 @@ static void raToXmlChar16(ostream& out, const Array<Char16>& ra)
 void raToXmlNumeric(ostream& out, const Array<Int8>& ra)
 {
 	out << "<VALUE.ARRAY>";
-	for(size_t i = 0; i < ra.size(); i++)
+	for (size_t i = 0; i < ra.size(); i++)
 	{
 		out << "<VALUE>";
 		out << Int32(ra[i]);
@@ -558,7 +558,7 @@ void raToXmlNumeric(ostream& out, const Array<Int8>& ra)
 void raToXmlNumeric(ostream& out, const Array<UInt8>& ra)
 {
 	out << "<VALUE.ARRAY>";
-	for(size_t i = 0; i < ra.size(); i++)
+	for (size_t i = 0; i < ra.size(); i++)
 	{
 		out << "<VALUE>";
 		out << UInt32(ra[i]);
@@ -573,9 +573,9 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "CIM value is NULL");
 	}
-	if(cv.isArray())
+	if (cv.isArray())
 	{
-		switch(cv.getType())
+		switch (cv.getType())
 		{
 			case CIMDataType::BOOLEAN:
 			{
@@ -717,7 +717,7 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 				OW_ASSERT(0);
 		}
 	}
-	else if(cv.getType() == CIMDataType::REFERENCE)
+	else if (cv.getType() == CIMDataType::REFERENCE)
 	{
 		out << "<VALUE.REFERENCE>";
 		CIMObjectPath a(CIMNULL);
@@ -735,7 +735,7 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 	else
 	{
 		out << "<VALUE>";
-		switch(cv.getType())
+		switch (cv.getType())
 		{
 			case CIMDataType::BOOLEAN:
 			{
@@ -887,7 +887,7 @@ void
 CIMtoXML(CIMFlavor const& cf, ostream& ostr)
 {
 	const char* strf;
-	switch(cf.getFlavor())
+	switch (cf.getFlavor())
 	{
 		case CIMFlavor::ENABLEOVERRIDE: strf = "OVERRIDABLE"; break;
 		case CIMFlavor::DISABLEOVERRIDE: strf = "OVERRIDABLE"; break;
@@ -904,20 +904,20 @@ CIMtoXML(CIMQualifier const& cq, ostream& ostr)
 {
 	CIMFlavor fv;
 	
-	if(cq.getName().empty())
+	if (cq.getName().empty())
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "qualifier must have a name");
 	}
 	CIMValue dv = cq.getDefaults().getDefaultValue();
 	CIMDataType dt = cq.getDefaults().getDataType();
 	CIMValue cv = cq.getValue();
-	if(!cv)
+	if (!cv)
 	{
 		cv = dv;
 	}
-	if(cv)
+	if (cv)
 	{
-		if(cv.isArray())
+		if (cv.isArray())
 		{
 			dt = CIMDataType(cv.getType(),cv.getArraySize());
 		}
@@ -933,7 +933,7 @@ CIMtoXML(CIMQualifier const& cq, ostream& ostr)
 		<< "\" TYPE=\"";
 	CIMtoXML(dt,ostr);
 	ostr << "\" ";
-	if(cq.getPropagated())
+	if (cq.getPropagated())
 	{
 		ostr << "PROPAGATED=\"true\" ";
 	}
@@ -941,7 +941,7 @@ CIMtoXML(CIMQualifier const& cq, ostream& ostr)
 	// Create flavors
 	//
 	fv = CIMFlavor(CIMFlavor::ENABLEOVERRIDE);
-	if(cq.hasFlavor(fv))
+	if (cq.hasFlavor(fv))
 	{
 		//
 		// Not needed, because OVERRIDABLE defaults to true!
@@ -956,7 +956,7 @@ CIMtoXML(CIMQualifier const& cq, ostream& ostr)
 		}
 	}
 	fv = CIMFlavor(CIMFlavor::TOSUBCLASS);
-	if(cq.hasFlavor(fv))
+	if (cq.hasFlavor(fv))
 	{
 		//
 		// Not needed, because TOSUBCLASS defaults to true!
@@ -972,7 +972,7 @@ CIMtoXML(CIMQualifier const& cq, ostream& ostr)
 	}
 	// This is a bug in the spec, but we still support it for backward compatibility.
 	//fv = CIMFlavor(CIMFlavor::TOINSTANCE);
-	//if(cq.hasFlavor(fv))
+	//if (cq.hasFlavor(fv))
 	//{
 	//	CIMtoXML(fv, ostr);
 	//	ostr << "=\"true\" ";
@@ -983,7 +983,7 @@ CIMtoXML(CIMQualifier const& cq, ostream& ostr)
 		// Not needed, because TOINSTANCE defaults to false!
 	//}
 	fv = CIMFlavor(CIMFlavor::TRANSLATE);
-	if(cq.hasFlavor(fv))
+	if (cq.hasFlavor(fv))
 	{
 		CIMtoXML(fv, ostr);
 		ostr << "=\"true\" ";
@@ -995,7 +995,7 @@ CIMtoXML(CIMQualifier const& cq, ostream& ostr)
 	}
 
 	String lang = cq.getLanguage();
-	if(!lang.empty())
+	if (!lang.empty())
 	{
 		ostr << " xml:lang=\"";
 		ostr << lang;
@@ -1003,7 +1003,7 @@ CIMtoXML(CIMQualifier const& cq, ostream& ostr)
 	}
 
 	ostr << '>';
-	if(cv)
+	if (cv)
 	{
 		CIMtoXML(cv, ostr);
 	}
@@ -1015,15 +1015,15 @@ CIMtoXML(CIMProperty const& cp, ostream& ostr)
 {
 	bool isArray = false;
 	bool isRef = false;
-	if(cp.getName().empty())
+	if (cp.getName().empty())
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "property must have a name");
 	}
-	if(cp.getDataType())
+	if (cp.getDataType())
 	{
 		isArray = cp.getDataType().isArrayType();
 		isRef = cp.getDataType().isReferenceType();
-		if(isArray)
+		if (isArray)
 		{
 			ostr
 				<<  "<PROPERTY.ARRAY NAME=\""
@@ -1031,7 +1031,7 @@ CIMtoXML(CIMProperty const& cp, ostream& ostr)
 				<< "\" TYPE=\"";
 			CIMtoXML(cp.getDataType(), ostr);
 			ostr << "\" ";
-			if(cp.getDataType().getSize() != -1)
+			if (cp.getDataType().getSize() != -1)
 			{
 				ostr
 					<< "ARRAYSIZE=\""
@@ -1039,7 +1039,7 @@ CIMtoXML(CIMProperty const& cp, ostream& ostr)
 					<< "\" ";
 			}
 		}
-		else if(isRef)
+		else if (isRef)
 		{
 			ostr
 				<< "<PROPERTY.REFERENCE NAME=\""
@@ -1065,24 +1065,24 @@ CIMtoXML(CIMProperty const& cp, ostream& ostr)
 		msg += " has no type defined";
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
-	if(!cp.getOriginClass().empty())
+	if (!cp.getOriginClass().empty())
 	{
 		ostr
 			<< "CLASSORIGIN=\""
 			<< cp.getOriginClass()
 			<< "\" ";
 	}
-	if(cp.getPropagated())
+	if (cp.getPropagated())
 	{
 		ostr << "PROPAGATED=\"true\" ";
 	}
 	ostr << '>';
-	for(size_t i = 0; i < cp.getQualifiers().size(); i++)
+	for (size_t i = 0; i < cp.getQualifiers().size(); i++)
 	{
 		CIMtoXML(cp.getQualifiers()[i], ostr);
 	}
 	CIMValue val = cp.getValue();
-	if(val)
+	if (val)
 	{
 		// if there isn't an EmbeddedObject qualifier on an embedded object, then output one.
 		if (val.getType() == CIMDataType::EMBEDDEDINSTANCE || val.getType() == CIMDataType::EMBEDDEDCLASS)
@@ -1097,11 +1097,11 @@ CIMtoXML(CIMProperty const& cp, ostream& ostr)
 
 		CIMtoXML(val, ostr);
 	}
-	if(isArray)
+	if (isArray)
 	{
 		ostr << "</PROPERTY.ARRAY>";
 	}
-	else if(isRef)
+	else if (isRef)
 	{
 		ostr << "</PROPERTY.REFERENCE>";
 	}
@@ -1116,7 +1116,7 @@ void
 CIMtoXML(CIMMethod const& cm, ostream& ostr)
 {
 	ostr << "<METHOD ";
-	if(cm.getName().empty())
+	if (cm.getName().empty())
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "method must have a name");
 	}
@@ -1124,29 +1124,29 @@ CIMtoXML(CIMMethod const& cm, ostream& ostr)
 		<< "NAME=\""
 		<< cm.getName()
 		<< "\" ";
-	if(cm.getReturnType())
+	if (cm.getReturnType())
 	{
 		ostr << "TYPE=\"";
 		CIMtoXML(cm.getReturnType(),ostr);
 		ostr << "\" ";
 	}
-	if(!cm.getOriginClass().empty())
+	if (!cm.getOriginClass().empty())
 	{
 		ostr
 			<< "CLASSORIGIN=\""
 			<< cm.getOriginClass()
 			<< "\" ";
 	}
-	if(cm.getPropagated())
+	if (cm.getPropagated())
 	{
 		ostr << "PROPAGATED=\"true\" ";
 	}
 	ostr << '>';
-	for(size_t i = 0; i < cm.getQualifiers().size(); i++)
+	for (size_t i = 0; i < cm.getQualifiers().size(); i++)
 	{
 		CIMtoXML(cm.getQualifiers()[i], ostr);
 	}
-	for(size_t i = 0; i < cm.getParameters().size(); i++)
+	for (size_t i = 0; i < cm.getParameters().size(); i++)
 	{
 		CIMtoXML(cm.getParameters()[i], ostr);
 	}
@@ -1157,10 +1157,10 @@ CIMtoXML(CIMMethod const& cm, ostream& ostr)
 static void
 qualifierXML(CIMParameter const& cp, ostream& ostr)
 {
-	if(cp.getQualifiers().size() > 0)
+	if (cp.getQualifiers().size() > 0)
 	{
 		int sz = cp.getQualifiers().size();
-		for(int i = 0; i < sz; i++)
+		for (int i = 0; i < sz; i++)
 		{
 			CIMtoXML(cp.getQualifiers()[i], ostr);
 		}
@@ -1170,30 +1170,30 @@ qualifierXML(CIMParameter const& cp, ostream& ostr)
 void
 CIMtoXML(CIMParameter const& cp, ostream& ostr)
 {
-	if(cp.getName().empty())
+	if (cp.getName().empty())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"parameter must have a name");
 	}
-	if(!cp.getType())
+	if (!cp.getType())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"parameter must have a valid data type");
 	}
 	bool isArray = cp.getType().isArrayType();
-	if(cp.getType().isReferenceType())
+	if (cp.getType().isReferenceType())
 	{
 		//
 		// Data type is a reference
 		//
 		String classref = cp.getType().getRefClassName();
-		if(!classref.empty())
+		if (!classref.empty())
 		{
 			classref = "REFERENCECLASS=\"" + classref + "\"";
 		}
-		if(isArray)
+		if (isArray)
 		{
-			if(cp.getType().getSize() == -1)
+			if (cp.getType().getSize() == -1)
 			{
 				ostr
 					<< "<PARAMETER.REFARRAY "
@@ -1234,12 +1234,12 @@ CIMtoXML(CIMParameter const& cp, ostream& ostr)
 	else
 	{
 		// Data type is not a ref
-		if(isArray)
+		if (isArray)
 		{
 			ostr << "<PARAMETER.ARRAY TYPE=\"";
 			CIMtoXML(cp.getType(), ostr);
 			ostr << "\" NAME=\"" << cp.getName();
-			if(cp.getType().getSize() != -1)
+			if (cp.getType().getSize() != -1)
 			{
 				ostr
 					<< "\" ARRAYSIZE=\""

@@ -358,7 +358,7 @@ safeSystem(const Array<String>& command)
 		int i = sysconf(_SC_OPEN_MAX);
 		if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
 		{
-		  if( i < 0 )
+		  if ( i < 0 )
 		  {
 		    i = rl.rlim_max;
 		  }
@@ -453,7 +453,7 @@ safePopen(const Array<String>& command,
 		int i = sysconf(_SC_OPEN_MAX);
 		if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
 		{
-		  if( i < 0 )
+		  if ( i < 0 )
 		  {
 		    i = rl.rlim_max;
 		  }
@@ -517,7 +517,7 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 	bool errIsOpen = true;
 	bool got_child_return_code = false;
 	int cumulative_timeout = 0;
-	while(outIsOpen || errIsOpen)
+	while (outIsOpen || errIsOpen)
 	{
 		SelectTypeArray fdset;
 		if (outIsOpen)

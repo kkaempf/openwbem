@@ -227,7 +227,7 @@ namespace BinarySerialization
 		BinarySerialization::readLen(istr, len);
 		
 		a.reserve(len);
-		for(UInt32 i = 0; i < len; i++)
+		for (UInt32 i = 0; i < len; i++)
 		{
 			T x;
 			x.readObject(istr);
@@ -243,7 +243,7 @@ namespace BinarySerialization
 	{
 		UInt32 len = static_cast<UInt32>(a.size());
 		BinarySerialization::writeLen(ostrm, len);
-		for(UInt32 i = 0; i < len; i++)
+		for (UInt32 i = 0; i < len; i++)
 		{
 			a.operator[](i).writeObject(ostrm);
 		}

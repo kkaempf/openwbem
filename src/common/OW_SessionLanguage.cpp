@@ -49,7 +49,7 @@ namespace
 inline const char* 
 skipWhite(const char* arg)
 {
-	while(*arg && isspace(*arg)) { arg++; }
+	while (*arg && isspace(*arg)) { arg++; }
 	return arg;
 }
 
@@ -57,7 +57,7 @@ bool
 subtagsMatch(const char* arg1, const char* arg2)
 {
 	// If either arg is a wildcard, return match
-	if(*arg1 == '*' || *arg2 == '*')
+	if (*arg1 == '*' || *arg2 == '*')
 	{
 		return true;
 	}
@@ -131,9 +131,9 @@ int
 LanguageTag::compareWeight(const LanguageTag& arg) const
 {
 	int v = m_weight - arg.m_weight;
-	if(v == 0)
+	if (v == 0)
 	{
-		if(m_explicitQualityValue != arg.m_explicitQualityValue)
+		if (m_explicitQualityValue != arg.m_explicitQualityValue)
 		{
 			v = (arg.m_explicitQualityValue) ? -1 : 1;
 		}
@@ -148,14 +148,14 @@ LanguageTag::toString() const
 {
 	char tmpBuf[sizeof(m_subtag1)+sizeof(m_subtag2)+sizeof(m_subtag3)+10];
 	tmpBuf[0] = 0;
-	if(!invalid())
+	if (!invalid())
 	{
 		::strcpy(tmpBuf, m_subtag1);
-		if(m_subtag2[0])
+		if (m_subtag2[0])
 		{
 			::strcat(tmpBuf, "-");
 			::strcat(tmpBuf, m_subtag2);
-			if(m_subtag3[0])
+			if (m_subtag3[0])
 			{
 				::strcat(tmpBuf, "-");
 				::strcat(tmpBuf, m_subtag3);
@@ -180,26 +180,26 @@ LanguageTag::setSubTags(const char* languageTag)
 
 	const char* p = skipWhite(languageTag); // point to start of language tag
 
-	if(!(p = parseSubTag(p, m_subtag1)))	// Get subtag1
+	if (!(p = parseSubTag(p, m_subtag1)))	// Get subtag1
 		return 0;	// Invalid
 
 	p = skipWhite(p);
-	if(*p == ';') // Start of quality value for language tag?
+	if (*p == ';') // Start of quality value for language tag?
 		return setWeight(p); // End of this language tag
 
-	if(*p != '-') // Start of subtag2?
+	if (*p != '-') // Start of subtag2?
 		return p;	// Must be the end of the entire language tag
 
 	// Must be starting subtag2
 	++p;	// Skip the '-' character
-	if(!(p = parseSubTag(p, m_subtag2)))	// Get subtag2
+	if (!(p = parseSubTag(p, m_subtag2)))	// Get subtag2
 		return p;	// Invalid
 
 	p = skipWhite(p);
-	if(*p == ';') // Start of quality value for language tag?
+	if (*p == ';') // Start of quality value for language tag?
 		return setWeight(p); // End of this language tag
 
-	if(*p != '-') // Start of subtag3?
+	if (*p != '-') // Start of subtag3?
 		return p;	// Must be the end of the entire language tag
 
 	++p;	// Skip the '-' character
@@ -211,11 +211,11 @@ const char*
 LanguageTag::parseSubTag(const char* arg, char* tagField)
 {
 	int i = 0;
-	while(true)
+	while (true)
 	{
-		if(!isalpha(*arg) && *arg != '*')
+		if (!isalpha(*arg) && *arg != '*')
 		{
-			if(*arg != '-'			// Start of next subtag?
+			if (*arg != '-'			// Start of next subtag?
 			   && *arg != ';'		// Start of quality value?
 			   && *arg != ','		// End of language tag
 			   && !isspace(*arg)	// End of tag?
@@ -228,7 +228,7 @@ LanguageTag::parseSubTag(const char* arg, char* tagField)
 			break;
 		}
 
-		if(i == 8)
+		if (i == 8)
 		{
 			// subtag to long
 			m_subtag1[0] = 0;
@@ -252,20 +252,20 @@ LanguageTag::setWeight(const char* arg)
 
 	m_weight = 0;
 	// Skip white space and the ';' character
-	while(*arg && (*arg == ';' || isspace(*arg)))
+	while (*arg && (*arg == ';' || isspace(*arg)))
 	{
 		++arg;
 	}
 
 	// If we didn't encounter a 'q' or 'Q' then its invalid
-	if(*arg != 'q' && *arg != 'Q')
+	if (*arg != 'q' && *arg != 'Q')
 	{
 		m_subtag1[0] = 0;
 		return 0;
 	}
 	arg++;		// Skip the 'q'/'Q'
 	arg = skipWhite(arg);	// Eat the white space up to the '='
-	if(*arg != '=')
+	if (*arg != '=')
 	{
 		m_subtag1[0] = 0;
 		return 0;
@@ -274,26 +274,26 @@ LanguageTag::setWeight(const char* arg)
 	arg = skipWhite(arg);	// Eat any white space after '='
 	const char* p = arg;	// Save start of numeric value
 
-	if(!isdigit(*arg) && *arg != '.')
+	if (!isdigit(*arg) && *arg != '.')
 	{
 		m_subtag1[0] = 0;
 		return 0;
 	}
 
-	while(isdigit(*arg))	// Look for decimal point or end of number
+	while (isdigit(*arg))	// Look for decimal point or end of number
 		++arg;
 
-	if(*arg == '.')		// If we hit the decimal then keep going
+	if (*arg == '.')		// If we hit the decimal then keep going
 	{
 		do
 		{
 			++arg;
-		} while(isdigit(*arg));
+		} while (isdigit(*arg));
 	}
 
 	errno = 0;
 	double fv = strtod(p, 0);
-	if(errno == ERANGE)
+	if (errno == ERANGE)
 	{
 		m_subtag1[0] = 0;
 		arg = 0;
@@ -360,28 +360,28 @@ SessionLanguage::buildLangTags(const char* acceptLangHdrValue)
 	m_acceptLanguageString = acceptLangHdrValue;
 	m_langTags.clear();
 	const char* p = skipWhite(acceptLangHdrValue);
-	if(!(*p))
+	if (!(*p))
 	{
 		return;
 	}
 
 	LanguageTag ltag;
-	while(*p)
+	while (*p)
 	{
 		p = ltag.assign(p);
-		if(!p)
+		if (!p)
 		{
 			break;
 		}
 		m_langTags.append(ltag);
-		if(!*p)
+		if (!*p)
 		{
 			break;
 		}
 		++p;
 	}
 
-	if(!p)
+	if (!p)
 	{
 		m_langTags.clear();
 	}
@@ -399,11 +399,11 @@ SessionLanguage::langsMatch(const LanguageTag& t1, const LanguageTag& t2,
 	int level)
 {
 	bool matches = subtagsMatch(t1.m_subtag1, t2.m_subtag1);
-	if(level > 1 && matches)
+	if (level > 1 && matches)
 	{
 		matches = subtagsMatch(t1.m_subtag2, t2.m_subtag2);
 	}
-	if(level > 2 && matches)
+	if (level > 2 && matches)
 	{
 		matches = subtagsMatch(t1.m_subtag3, t2.m_subtag3);
 	}
@@ -414,12 +414,12 @@ SessionLanguage::langsMatch(const LanguageTag& t1, const LanguageTag& t2,
 String 
 SessionLanguage::getBestLanguage(const StringArray& languages) const
 {
-	if(languages.size() == 0)
+	if (languages.size() == 0)
 	{
 		return String();
 	}
 
-	if(m_langTags.size() == 0)
+	if (m_langTags.size() == 0)
 	{
 		return languages[0];	// Return default content language?
 	}
@@ -427,22 +427,22 @@ SessionLanguage::getBestLanguage(const StringArray& languages) const
 	int bestIndex = 0;
 	int bestWeight = -1;
 
-	for(int level = 3; level > 0; level--)
+	for (int level = 3; level > 0; level--)
 	{
 		// Try to find fully qualified match first (all subtags match)
-		for(StringArray::size_type i = 0; i < languages.size(); i++)
+		for (StringArray::size_type i = 0; i < languages.size(); i++)
 		{
 			LanguageTag lt(languages[i].c_str());
-			for(LanguageTagArray::size_type j = 0; j < m_langTags.size(); j++)
+			for (LanguageTagArray::size_type j = 0; j < m_langTags.size(); j++)
 			{
-				if(langsMatch(m_langTags[j], lt, level))
+				if (langsMatch(m_langTags[j], lt, level))
 				{
-					if(m_langTags[j].getWeight() > 0)
+					if (m_langTags[j].getWeight() > 0)
 					{
 						// If the quality value for this language is better
 						// than the one found previously, then save it for the
 						// return value
-						if(m_langTags[j].getWeight() > bestWeight)
+						if (m_langTags[j].getWeight() > bestWeight)
 						{
 							bestWeight = m_langTags[j].getWeight();
 							bestIndex = i;	// Index of languages parm
@@ -461,7 +461,7 @@ SessionLanguage::getBestLanguage(const StringArray& languages) const
 void
 SessionLanguage::addContentLanguage(const String& contentLanguage)
 {
-	if(m_contentLanguage.length())
+	if (m_contentLanguage.length())
 	{
 		m_contentLanguage += ", ";
 	}

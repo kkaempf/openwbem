@@ -74,7 +74,7 @@ void parse(istream& istr, SAXDocumentHandler& docHandler, SAXErrorHandler& errHa
 	{
 		while (parser.next(entry))
 		{
-			switch(entry.type)
+			switch (entry.type)
 			{
 				case XMLToken::INVALID:
 					break;

@@ -96,9 +96,9 @@ SSLSocketImpl::SSLSocketImpl(const SocketAddress& addr)
 SSLSocketImpl::~SSLSocketImpl()
 {
 #if defined(OW_WIN32)
-	if(m_sockfd != INVALID_SOCKET && m_isConnected)
+	if (m_sockfd != INVALID_SOCKET && m_isConnected)
 #else
-	if(m_sockfd != -1 && m_isConnected)
+	if (m_sockfd != -1 && m_isConnected)
 #endif
 	{
 		if (m_ssl)
@@ -158,9 +158,9 @@ void
 SSLSocketImpl::disconnect()
 {
 #if defined(OW_WIN32)
-	if(m_sockfd != INVALID_SOCKET && m_isConnected)
+	if (m_sockfd != INVALID_SOCKET && m_isConnected)
 #else
-	if(m_sockfd != -1 && m_isConnected)
+	if (m_sockfd != -1 && m_isConnected)
 #endif
 	{
 		if (m_ssl)

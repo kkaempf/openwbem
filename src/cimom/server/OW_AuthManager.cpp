@@ -67,7 +67,7 @@ AuthManager::init(ServiceEnvironmentIFCRef env)
 	m_authenticator =
 		SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib,
 			"createAuthenticator", env->getLogger());
-	if(m_authenticator)
+	if (m_authenticator)
 	{
 		try
 		{
@@ -109,7 +109,7 @@ bool
 AuthManager::authenticate(String& userName,
 	const String& info, String& details, OperationContext& context)
 {
-	if(m_authenticator)
+	if (m_authenticator)
 	{
 		return m_authenticator->authenticate(userName, info, details, context);
 	}

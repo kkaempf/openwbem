@@ -58,9 +58,9 @@ OpenWBEM::StringArray* getList(char** l, OpenWBEM::StringArray& sra)
 {
 	OpenWBEM::StringArray *pRa = NULL;
 	sra.clear();
-	if(l)
+	if (l)
 	{
-		for(int i = 0; l[i]; i++)
+		for (int i = 0; l[i]; i++)
 		{
 			sra.append(l[i]);
 		}

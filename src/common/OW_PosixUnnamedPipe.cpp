@@ -98,7 +98,7 @@ AcceptThread::acceptConnection()
 		(char*) &tmp, sizeof(int));
 	
 	val = sizeof(struct sockaddr_in);
-	if((m_serverconn = ::accept(m_serversock, (struct sockaddr*)&sin, &val))
+	if ((m_serverconn = ::accept(m_serversock, (struct sockaddr*)&sin, &val))
 	   == -1)
 	{
 		return;
@@ -139,7 +139,7 @@ _pipe(int *fds)
 		fprintf(stderr, "CreateSocket(): Failed to bind on socket" );
 		return -1;
 	}
-	if(listen(svrfd, 1) == -1) 
+	if (listen(svrfd, 1) == -1) 
 	{
 		int lerrno = errno;
 		::close(svrfd);
@@ -161,7 +161,7 @@ _pipe(int *fds)
 	pthread_create(&athread, NULL, runConnClass, pat);
 
 	int clientfd = socket(AF_INET, SOCK_STREAM, 0);
-	if(clientfd == -1)
+	if (clientfd == -1)
 	{
 		delete pat;
 		return -1;
@@ -172,7 +172,7 @@ _pipe(int *fds)
 	csin.sin_family = AF_INET;
 	csin.sin_addr.s_addr = htonl(0x7f000001); // loopback
 	csin.sin_port = sin.sin_port;
-	if(::connect(clientfd, (struct sockaddr*)&csin, sizeof(csin)) == -1)
+	if (::connect(clientfd, (struct sockaddr*)&csin, sizeof(csin)) == -1)
 	{
 		delete pat;
 		return -1;
@@ -212,7 +212,7 @@ PosixUnnamedPipe::PosixUnnamedPipe(EOpen doOpen)
 	: m_blocking(E_BLOCKING)
 {
 	m_fds[0] = m_fds[1] = -1;
-	if(doOpen)
+	if (doOpen)
 	{
 		open();
 	}
@@ -250,7 +250,7 @@ PosixUnnamedPipe::setBlocking(EBlockingMode outputIsBlocking)
 		{
 			OW_THROW(IOException, "Failed to set pipe to non-blocking");
 		}
-		if(outputIsBlocking == E_BLOCKING)
+		if (outputIsBlocking == E_BLOCKING)
 		{
 			fdflags &= !O_NONBLOCK;
 		}
@@ -288,7 +288,7 @@ PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
 	{
 		OW_THROW(IOException, "Failed to set pipe to non-blocking");
 	}
-	if(outputIsBlocking)
+	if (outputIsBlocking)
 	{
 		fdflags ^= O_NONBLOCK;
 	}
@@ -306,16 +306,16 @@ PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
 void
 PosixUnnamedPipe::open()
 {
-	if(m_fds[0] != -1)
+	if (m_fds[0] != -1)
 	{
 		close();
 	}
 #if defined(OW_WIN32)
-	if(::_pipe(m_fds, 2560, _O_BINARY) == -1)
+	if (::_pipe(m_fds, 2560, _O_BINARY) == -1)
 #elif defined(OW_NETWARE)
-	if(_pipe(m_fds) == -1)
+	if (_pipe(m_fds) == -1)
 #else
-	if(::pipe(m_fds) == -1)
+	if (::pipe(m_fds) == -1)
 #endif
 	{
 		m_fds[0] = m_fds[1] = -1;
@@ -327,12 +327,12 @@ int
 PosixUnnamedPipe::close()
 {
 	int rc = -1;
-	if(m_fds[0] != -1)
+	if (m_fds[0] != -1)
 	{
 		rc = _CLOSE(m_fds[0]);
 		m_fds[0] = -1;
 	}
-	if(m_fds[1] != -1)
+	if (m_fds[1] != -1)
 	{
 		rc = _CLOSE(m_fds[1]);
 		m_fds[1] = -1;
@@ -344,7 +344,7 @@ int
 PosixUnnamedPipe::closeInputHandle()
 {
 	int rc = -1;
-	if(m_fds[0] != -1)
+	if (m_fds[0] != -1)
 	{
 		rc = _CLOSE(m_fds[0]);
 		m_fds[0] = -1;
@@ -356,7 +356,7 @@ int
 PosixUnnamedPipe::closeOutputHandle()
 {
 	int rc = -1;
-	if(m_fds[1] != -1)
+	if (m_fds[1] != -1)
 	{
 		rc = _CLOSE(m_fds[1]);
 		m_fds[1] = -1;
@@ -368,7 +368,7 @@ int
 PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 {
 	int rc = -1;
-	if(m_fds[1] != -1)
+	if (m_fds[1] != -1)
 	{
 #ifndef OW_WIN32
 		if (m_blocking == E_BLOCKING)
@@ -400,7 +400,7 @@ int
 PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 {
 	int rc = -1;
-	if(m_fds[0] != -1)
+	if (m_fds[0] != -1)
 	{
 #ifndef OW_WIN32
 		if (m_blocking == E_BLOCKING)

@@ -150,7 +150,7 @@ XMLPullParser::getChild()
 	{
 		return;
 	}
-	for(;;)
+	for (;;)
 	{
 		nextToken();
 		if (!m_good)

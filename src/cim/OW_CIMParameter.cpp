@@ -143,10 +143,10 @@ CIMParameter::getDataSize() const
 CIMQualifier
 CIMParameter::getQualifier(const String& name) const
 {
-	for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
+	for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 	{
 		CIMQualifier nq = m_pdata->m_qualifiers[i];
-		if(nq.getName().equalsIgnoreCase(name))
+		if (nq.getName().equalsIgnoreCase(name))
 		{
 			return nq;
 		}
@@ -185,7 +185,7 @@ CIMParameter::readObject(istream &istrm)
 	name.readObject(istrm);
 	dataType.readObject(istrm);
 	BinarySerialization::readArray(istrm, qualifiers);
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		m_pdata = new PARMData;
 	}
@@ -204,13 +204,13 @@ String
 CIMParameter::toMOF() const
 {
 	StringBuffer rv;
-	if(m_pdata->m_qualifiers.size() > 0)
+	if (m_pdata->m_qualifiers.size() > 0)
 	{
 		rv += '[';
-		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
+		for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
 			CIMQualifier nq = m_pdata->m_qualifiers[i];
-			if(i > 0)
+			if (i > 0)
 			{
 				rv += ',';
 			}

@@ -179,7 +179,7 @@ LocalAuthentication::authenticate(String& userName,
 		
 		bool ok;
 		String uname(UserUtils::getUserName(uid, ok));
-		if(ok)
+		if (ok)
 		{
 			userName = uname;
 		}
@@ -287,7 +287,7 @@ LocalAuthentication::generateNewCookieFile(const String& uid, String& cookieFile
 	int authfd;
 	::strcpy(tfname, "/tmp/OwAuThTmpFileXXXXXX");
 	authfd = ::mkstemp(tfname);
-	if(authfd == -1)
+	if (authfd == -1)
 	{
 		OW_THROW(LocalAuthenticationException,
 			Format("mkstemp failed: %1",
@@ -296,7 +296,7 @@ LocalAuthentication::generateNewCookieFile(const String& uid, String& cookieFile
 	cookieFileName = tfname;
 
 	//-- Change file permission on temp file to read/write for user only
-	if(::fchmod(authfd, 0400) == -1)
+	if (::fchmod(authfd, 0400) == -1)
 	{
 		::close(authfd);
 		::unlink(tfname);
@@ -306,7 +306,7 @@ LocalAuthentication::generateNewCookieFile(const String& uid, String& cookieFile
 	}
 
 	//-- Change file so the user connecting is the owner
-	if(::fchown(authfd, userid, static_cast<gid_t>(-1)) == -1)
+	if (::fchown(authfd, userid, static_cast<gid_t>(-1)) == -1)
 	{
 		::close(authfd);
 		::unlink(tfname);
@@ -326,7 +326,7 @@ LocalAuthentication::generateNewCookieFile(const String& uid, String& cookieFile
 
 		
 	// Write the servers random number to the temp file
-	if(::write(authfd, cookie.c_str(), cookie.length()) != static_cast<ssize_t>(cookie.length()))
+	if (::write(authfd, cookie.c_str(), cookie.length()) != static_cast<ssize_t>(cookie.length()))
 	{
 		int lerrno = errno;
 		::close(authfd);

@@ -106,9 +106,9 @@ void
 daemonize(bool dbgFlg, const String& daemonName)
 {
 	initDaemonizePipe(); 
-	if(!dbgFlg)
+	if (!dbgFlg)
 	{
-		if(getuid() != 0)
+		if (getuid() != 0)
 		{
 			OW_THROW(DaemonException, Format("%1 must run as root. aborting...", daemonName).c_str());
 		}
@@ -120,16 +120,16 @@ daemonize(bool dbgFlg, const String& daemonName)
 	pidFile += ".pid";
 	int pid = PidFile::checkPid(pidFile.c_str());
 	// Is there already another instance of the cimom running?
-	if(pid != -1)
+	if (pid != -1)
 	{
 		OW_THROW(DaemonException,
 			Format("Another instance of %1 is already running [%2]",
 				daemonName, pid).c_str());
 	}
-	if(!dbgFlg)
+	if (!dbgFlg)
 	{
 		pid = fork();
-		switch(pid)
+		switch (pid)
 		{
 			case 0:
 				break;
@@ -152,7 +152,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 				"FAILED TO DETACH FROM THE TERMINAL - setsid failed");
 		}
 		pid = fork();
-		switch(pid)
+		switch (pid)
 		{
 			case 0:
 				break;
@@ -218,9 +218,9 @@ processCommandLineOptions(int argc, char** argv)
 	optind = 1;
 	int c = getopt(argc, argv, short_options);
 #endif
-	while(c != -1)
+	while (c != -1)
 	{
-		switch(c)
+		switch (c)
 		{
 			case 'd':
 				rval.debug = true;
@@ -264,7 +264,7 @@ void rerunDaemon()
 	int i = sysconf(_SC_OPEN_MAX);
 	if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
 	{
-	  if( i < 0 )
+	  if ( i < 0 )
 	  {
 		i = rl.rlim_max;
 	  }
@@ -306,7 +306,7 @@ handleSignalAux(int sig, sighandler_t handler)
 	memset(&temp, '\0', sizeof(temp));
 	// TODO: Figure out why we don't set it if it's set to SIG_IGN already.
 	sigaction(sig, 0, &temp);
-	if(temp.sa_handler != SIG_IGN)
+	if (temp.sa_handler != SIG_IGN)
 	{
 		temp.sa_handler = handler;
 		sigemptyset(&temp.sa_mask);
@@ -344,7 +344,7 @@ theSigHandler(int sig)
 {
 	try
 	{
-		switch(sig)
+		switch (sig)
 		{
 			case SIGTERM:
 			case SIGINT:
@@ -390,7 +390,7 @@ setupSigHandler(bool dbgFlg)
 	 more reliable.
 	 We avoid using signal and use sigaction instead.
 	 */
-	if(dbgFlg)
+	if (dbgFlg)
 	{
 		handleSignal(SIGINT);
 	}

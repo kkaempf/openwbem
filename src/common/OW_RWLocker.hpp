@@ -87,7 +87,7 @@ public:
 	}
 	void lock(UInt32 sTimeout, UInt32 usTimeout=0)
 	{
-		if(m_released)
+		if (m_released)
 		{
 			m_locker->getReadLock(sTimeout, usTimeout);
 			m_released = false;
@@ -95,7 +95,7 @@ public:
 	}
 	void release()
 	{
-		if(!m_released)
+		if (!m_released)
 		{
 			m_locker->releaseReadLock();
 			m_released = true;
@@ -124,7 +124,7 @@ public:
 	}
 	void lock(UInt32 sTimeout, UInt32 usTimeout=0)
 	{
-		if(m_released)
+		if (m_released)
 		{
 			m_locker->getWriteLock(sTimeout, usTimeout);
 			m_released = false;
@@ -132,7 +132,7 @@ public:
 	}
 	void release()
 	{
-		if(!m_released)
+		if (!m_released)
 		{
 			m_locker->releaseWriteLock();
 			m_released = true;

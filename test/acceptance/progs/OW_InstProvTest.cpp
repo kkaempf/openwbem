@@ -62,7 +62,7 @@ using std::cout;
 using std::endl;
 using namespace OpenWBEM;
 
-#define TEST_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
+#define TEST_ASSERT(CON) if (!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
 //////////////////////////////////////////////////////////////////////////////
 
 void

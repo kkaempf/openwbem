@@ -113,7 +113,7 @@ AccessMgr::AccessMgr(const RepositoryIFCRef& pServer)
 String
 AccessMgr::getMethodType(int op)
 {
-	switch(op)
+	switch (op)
 	{
 		case GETCLASS:
 		case GETINSTANCE:
@@ -201,7 +201,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 		lns = lns.substring(1);
 	}
 	lns.toLowerCase();
-	for(;;)
+	for (;;)
 	{
 		if (!userInfo.getUserName().empty())
 		{

@@ -155,10 +155,10 @@ CIMInstance::getQualifiers() const
 CIMQualifier
 CIMInstance::getQualifier(const String& qualName) const
 {
-	for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
+	for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 	{
 		CIMQualifier qual = m_pdata->m_qualifiers[i];
-		if(qual.getName().equalsIgnoreCase(qualName))
+		if (qual.getName().equalsIgnoreCase(qualName))
 		{
 			return qual;
 		}
@@ -169,9 +169,9 @@ CIMInstance::getQualifier(const String& qualName) const
 CIMInstance&
 CIMInstance::removeQualifier(const String& qualName)
 {
-	for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
+	for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 	{
-		if(m_pdata->m_qualifiers[i].getName().equalsIgnoreCase(qualName))
+		if (m_pdata->m_qualifiers[i].getName().equalsIgnoreCase(qualName))
 		{
 			m_pdata->m_qualifiers.remove(i);
 			break;
@@ -183,12 +183,12 @@ CIMInstance::removeQualifier(const String& qualName)
 CIMInstance&
 CIMInstance::setQualifier(const CIMQualifier& qual)
 {
-	if(qual)
+	if (qual)
 	{
 		String qualName = qual.getName();
-		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
+		for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
-			if(m_pdata->m_qualifiers[i].getName().equalsIgnoreCase(qualName))
+			if (m_pdata->m_qualifiers[i].getName().equalsIgnoreCase(qualName))
 			{
 				m_pdata->m_qualifiers[i] = qual;
 				return *this;
@@ -209,15 +209,15 @@ CIMInstance::setQualifiers(const CIMQualifierArray& quals)
 CIMPropertyArray
 CIMInstance::getProperties(Int32 valueDataType) const
 {
-	if(valueDataType == CIMDataType::INVALID)
+	if (valueDataType == CIMDataType::INVALID)
 	{
 		return m_pdata->m_properties;
 	}
 	CIMPropertyArray pra;
-	for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
+	for (size_t i = 0; i < m_pdata->m_properties.size(); i++)
 	{
 		CIMProperty prop = m_pdata->m_properties[i];
-		if(prop.getDataType().getType() == valueDataType)
+		if (prop.getDataType().getType() == valueDataType)
 		{
 			pra.append(prop);
 		}
@@ -238,10 +238,10 @@ CIMInstance::getProperty(const String& name,
 	const String& originClass) const
 {
 	int tsize = m_pdata->m_properties.size();
-	for(int i = 0; i < tsize; i++)
+	for (int i = 0; i < tsize; i++)
 	{
 		CIMProperty cp = m_pdata->m_properties[i];
-		if(originClass.equalsIgnoreCase(cp.getOriginClass())
+		if (originClass.equalsIgnoreCase(cp.getOriginClass())
 			&& name.equalsIgnoreCase(cp.getName()))
 		{
 			return(cp);
@@ -253,15 +253,15 @@ CIMInstance::getProperty(const String& name,
 CIMProperty
 CIMInstance::getProperty(const String& propertyName) const
 {
-	if(propertyName.empty())
+	if (propertyName.empty())
 	{
 		return CIMProperty(CIMNULL);
 	}
 	int tsize = m_pdata->m_properties.size();
-	for(int i = 0; i < tsize; i++)
+	for (int i = 0; i < tsize; i++)
 	{
 		CIMProperty cp = m_pdata->m_properties[i];
-		if(propertyName.equalsIgnoreCase(cp.getName()))
+		if (propertyName.equalsIgnoreCase(cp.getName()))
 		{
 			return(cp);
 		}
@@ -316,10 +316,10 @@ CIMInstance::_buildKeys()
 {
 	m_pdata->m_keys.clear();
 	int tsize = m_pdata->m_properties.size();
-	for(int i = 0; i < tsize; i++)
+	for (int i = 0; i < tsize; i++)
 	{
 		CIMProperty cp = m_pdata->m_properties[i];
-		if(cp.isKey())
+		if (cp.isKey())
 		{
 			m_pdata->m_keys.append(cp);
 		}
@@ -336,7 +336,7 @@ CIMInstance&
 CIMInstance::updatePropertyValues(const CIMPropertyArray& props)
 {
 	int tsize = props.size();
-	for(int i = 0; i < tsize; i++)
+	for (int i = 0; i < tsize; i++)
 	{
 		updatePropertyValue(props[i]);
 	}
@@ -347,18 +347,18 @@ CIMInstance&
 CIMInstance::updatePropertyValue(const CIMProperty& prop)
 {
 	bool buildTheKeys = false;
-	if(prop)
+	if (prop)
 	{
 		String name = prop.getName();
 		int tsize = m_pdata->m_properties.size();
-		for(int i = 0; i < tsize; i++)
+		for (int i = 0; i < tsize; i++)
 		{
 			CIMProperty cp = m_pdata->m_properties[i];
 			String rname = cp.getName();
-			if(rname.equalsIgnoreCase(name))
+			if (rname.equalsIgnoreCase(name))
 			{
 				m_pdata->m_properties[i].setValue(prop.getValue());
-				if(cp.isKey() || prop.isKey())
+				if (cp.isKey() || prop.isKey())
 				{
 					//
 					// If keys are not null and this is a key
@@ -369,7 +369,7 @@ CIMInstance::updatePropertyValue(const CIMProperty& prop)
 				break;
 			}
 		}
-		if(buildTheKeys)
+		if (buildTheKeys)
 		{
 			_buildKeys();
 		}
@@ -381,14 +381,14 @@ CIMInstance&
 CIMInstance::setProperty(const String& name, const CIMValue& cv)
 {
 	int tsize = m_pdata->m_properties.size();
-	for(int i = 0; i < tsize; i++)
+	for (int i = 0; i < tsize; i++)
 	{
 		CIMProperty cp = m_pdata->m_properties[i];
 		String rname = cp.getName();
-		if(rname.equalsIgnoreCase(name))
+		if (rname.equalsIgnoreCase(name))
 		{
 			m_pdata->m_properties[i].setValue(cv);
-			if(cp.isKey())
+			if (cp.isKey())
 			{
 				_buildKeys();
 			}
@@ -400,7 +400,7 @@ CIMInstance::setProperty(const String& name, const CIMValue& cv)
 	//
 	CIMProperty cp(name);
 	cp.setValue(cv);
-	if(cv)
+	if (cv)
 	{
 		cp.setDataType(cv.getCIMDataType());
 	}
@@ -419,20 +419,20 @@ CIMInstance::setProperty(const String& name, const CIMValue& cv)
 CIMInstance&
 CIMInstance::setProperty(const CIMProperty& prop)
 {
-	if(prop)
+	if (prop)
 	{
 		String propName = prop.getName();
 		int tsize = m_pdata->m_properties.size();
-		for(int i = 0; i < tsize; i++)
+		for (int i = 0; i < tsize; i++)
 		{
 			CIMProperty cp = m_pdata->m_properties[i];
 			String rname = cp.getName();
-			if(rname.equalsIgnoreCase(propName))
+			if (rname.equalsIgnoreCase(propName))
 			{
 				m_pdata->m_properties[i] = prop;
 				// If property was a key or is a key, then rebuild the
 				// key values
-				if(cp.isKey() || prop.isKey())
+				if (cp.isKey() || prop.isKey())
 				{
 					_buildKeys();
 				}
@@ -443,7 +443,7 @@ CIMInstance::setProperty(const CIMProperty& prop)
 		// Not found so add it
 		//
 		m_pdata->m_properties.append(prop);
-		if(prop.isKey())
+		if (prop.isKey())
 		{
 			_buildKeys();
 		}
@@ -455,14 +455,14 @@ CIMInstance&
 CIMInstance::removeProperty(const String& propName)
 {
 	int tsize = m_pdata->m_properties.size();
-	for(int i = 0; i < tsize; i++)
+	for (int i = 0; i < tsize; i++)
 	{
 		CIMProperty cp = m_pdata->m_properties[i];
-		if(cp.getName().equalsIgnoreCase(propName))
+		if (cp.getName().equalsIgnoreCase(propName))
 		{
 			m_pdata->m_properties.remove(i);
 			// If this property was a key, then rebuild the key values
-			if(cp.isKey())
+			if (cp.isKey())
 			{
 				_buildKeys();
 			}
@@ -478,9 +478,9 @@ CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQuali
 {
 	StringArray lproplist;
 	bool noprops = false;
-	if(propertyList)
+	if (propertyList)
 	{
-		if(propertyList->size() == 0)
+		if (propertyList->size() == 0)
 		{
 			noprops = true;
 		}
@@ -505,13 +505,13 @@ CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQuali
 	//
 	// Process qualifiers
 	//
-	if(includeQualifiers)
+	if (includeQualifiers)
 	{
 		CIMQualifierArray qra;
-		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
+		for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
 			CIMQualifier cq = m_pdata->m_qualifiers[i];
-			if(localOnly && cq.getPropagated())
+			if (localOnly && cq.getPropagated())
 			{
 				continue;
 			}
@@ -519,25 +519,25 @@ CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQuali
 		}
 		ci.m_pdata->m_qualifiers = qra;
 	}
-	if(!noProps)
+	if (!noProps)
 	{
 		CIMPropertyArray props;
-		for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
+		for (size_t i = 0; i < m_pdata->m_properties.size(); i++)
 		{
 			CIMProperty prop = m_pdata->m_properties[i];
-			if(localOnly && prop.getPropagated())
+			if (localOnly && prop.getPropagated())
 			{
 				continue;
 			}
 			//
 			// If propertyList is not NULL then check this is a request property
 			//
-			if(propertyList.size() != 0)
+			if (propertyList.size() != 0)
 			{
 				String pName = prop.getName();
-				for(size_t j = 0; j < propertyList.size(); j++)
+				for (size_t j = 0; j < propertyList.size(); j++)
 				{
-					if(pName.equalsIgnoreCase(propertyList[j]))
+					if (pName.equalsIgnoreCase(propertyList[j]))
 					{
 						props.append(prop.clone(includeQualifiers,
 							includeClassOrigin));
@@ -632,22 +632,22 @@ CIMInstance&
 CIMInstance::syncWithClass(const CIMClass& theClass,
 	EIncludeQualifiersFlag includeQualifiers)
 {
-	if(!theClass)
+	if (!theClass)
 	{
 		return *this;
 	}
 /*
-	if(includeQualifiers)
+	if (includeQualifiers)
 	{
 		// Ensure all class qualifiers are on the instance
 		CIMQualifierArray classQuals = theClass.getQualifiers();
-		for(size_t i = 0; i < classQuals.size(); i++)
+		for (size_t i = 0; i < classQuals.size(); i++)
 		{
 			CIMQualifier qual = classQuals[i];
 			String clsQualName = qual.getName();
-			if(!getQualifier(clsQualName))
+			if (!getQualifier(clsQualName))
 			{
-				if(qual.hasFlavor(CIMFlavor::TOINSTANCE))
+				if (qual.hasFlavor(CIMFlavor::TOINSTANCE))
 				{
 					// Qualifier is to be propagated to instances
 					setQualifier(qual);
@@ -655,14 +655,14 @@ CIMInstance::syncWithClass(const CIMClass& theClass,
 			}
 			else
 			{
-				if(!qual.hasFlavor(CIMFlavor::TOINSTANCE))
+				if (!qual.hasFlavor(CIMFlavor::TOINSTANCE))
 				{
 					// Qualifier is not to be propagated to instances
 					removeQualifier(clsQualName);
 				}
 				else
 				{
-					if(!qual.hasFlavor(CIMFlavor::ENABLEOVERRIDE))
+					if (!qual.hasFlavor(CIMFlavor::ENABLEOVERRIDE))
 					{
 						// Override not allowed. Sync with class qualifier
 						setQualifier(qual);
@@ -681,7 +681,7 @@ CIMInstance::syncWithClass(const CIMClass& theClass,
 	while (i < instProps.size())
 	{
 		propName = instProps[i].getName();
-		if(!theClass.getProperty(propName))
+		if (!theClass.getProperty(propName))
 		{
 			instProps.remove(i);
 		}
@@ -693,21 +693,21 @@ CIMInstance::syncWithClass(const CIMClass& theClass,
 
 	// Add missing properties and ensure existing have right class origin,
 	// and qualifiers
-	for(size_t i = 0; i < classProps.size(); i++)
+	for (size_t i = 0; i < classProps.size(); i++)
 	{
 		bool found = false;
 		CIMProperty cprop = classProps[i];
 		propName = cprop.getName();
-		for(size_t j = 0; j < instProps.size(); j++)
+		for (size_t j = 0; j < instProps.size(); j++)
 		{
 			CIMProperty iprop = instProps[j];
-			if(iprop.getName().equalsIgnoreCase(propName))
+			if (iprop.getName().equalsIgnoreCase(propName))
 			{
 				CIMValue cv = iprop.getValue();
 				iprop = cprop;
-				if(cv)
+				if (cv)
 				{
-					if(cv.getType() != iprop.getDataType().getType())
+					if (cv.getType() != iprop.getDataType().getType())
 					{
 						cv = CIMValueCast::castValueToDataType(cv,
 							iprop.getDataType());
@@ -719,15 +719,15 @@ CIMInstance::syncWithClass(const CIMClass& theClass,
 				break;
 			}
 		}
-		if(!found)
+		if (!found)
 		{
 			instProps.append(classProps[i]);
 		}
 	}
 	setProperties(instProps);
-	if(!includeQualifiers)
+	if (!includeQualifiers)
 	{
-		for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
+		for (size_t i = 0; i < m_pdata->m_properties.size(); i++)
 		{
 			m_pdata->m_properties[i].clearNonKeyQualifiers();
 		}
@@ -806,11 +806,11 @@ CIMInstance::readObject(istream &istrm)
 	BinarySerialization::readArray(istrm, properties);
 	BinarySerialization::readArray(istrm, qualifiers);
 	// If dealing with versioned format, then read language
-	if(version > 0)
+	if (version > 0)
 	{
 		language.readObject(istrm);
 	}
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		m_pdata = new INSTData;
 	}
@@ -837,12 +837,12 @@ CIMInstance::toMOF() const
 {
 	size_t i;
 	StringBuffer rv;
-	if(m_pdata->m_qualifiers.size() > 0)
+	if (m_pdata->m_qualifiers.size() > 0)
 	{
 		rv += "[\n";
-		for(i = 0; i < m_pdata->m_qualifiers.size(); i++)
+		for (i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
-			if(i > 0)
+			if (i > 0)
 			{
 				rv += ',';
 			}
@@ -853,23 +853,23 @@ CIMInstance::toMOF() const
 	rv += "INSTANCE OF ";
 	rv += m_pdata->m_owningClassName;
 	rv += "\n{\n";
-	for(i = 0; i < m_pdata->m_properties.size(); i++)
+	for (i = 0; i < m_pdata->m_properties.size(); i++)
 	{
 		// note that we can't use CIMProperty::toMOF() since it prints out
 		// the data type.
 		const CIMProperty& p = m_pdata->m_properties[i];
 		CIMValue v = p.getValue();
-		if(v)
+		if (v)
 		{
 			// do qualifiers
 			CIMQualifierArray qualifiers = p.getQualifiers();
-			if(qualifiers.size() > 0)
+			if (qualifiers.size() > 0)
 			{
 				rv += "  [";
-				for(size_t i = 0; i < qualifiers.size(); i++)
+				for (size_t i = 0; i < qualifiers.size(); i++)
 				{
 					const CIMQualifier& nq = qualifiers[i];
-					if(i > 0)
+					if (i > 0)
 					{
 						rv += ',';
 					}
@@ -902,11 +902,11 @@ CIMInstance::toString() const
 	String outVal;
 	temp += "instance of ";
 	temp += m_pdata->m_owningClassName + " {\n";
-	for(i = 0; i < m_pdata->m_properties.size(); i++)
+	for (i = 0; i < m_pdata->m_properties.size(); i++)
 	{
 		CIMProperty cp = m_pdata->m_properties[i];
 		CIMValue val = cp.getValue();
-		if(!val)
+		if (!val)
 		{
 			outVal = "null";
 		}

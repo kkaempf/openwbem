@@ -60,7 +60,7 @@ HDB::~HDB()
 {
 	try
 	{
-		if(m_hdlCount > 0)
+		if (m_hdlCount > 0)
 		{
 			// cerr << "*** HDB::~HDB - STILL OUTSTANDING HANDLES ***" << endl;
 		}
@@ -75,7 +75,7 @@ HDB::~HDB()
 void
 HDB::close()
 {
-	if(m_opened)
+	if (m_opened)
 	{
 		m_pindex->close();
 		m_pindex = 0;
@@ -87,7 +87,7 @@ void
 HDB::open(const char* fileName)
 {
 	MutexLock l(m_guard);
-	if(m_opened)
+	if (m_opened)
 	{
 		return;
 	}
@@ -96,7 +96,7 @@ HDB::open(const char* fileName)
 	m_fileName = fileName;
 	String fname = m_fileName + ".dat";
 	createFile();
-	if(!checkFile())
+	if (!checkFile())
 	{
 		String msg("Failed to open file: ");
 		msg += fname;
@@ -112,11 +112,11 @@ HDB::createFile()
 	HDBHeaderBlock b = { OW_HDBSIGNATURE, HDBVERSION, -1L, -1L, -1L };
 	m_hdrBlock = b;
 	File f = FileSystem::createFile(m_fileName + ".dat");
-	if(!f)
+	if (!f)
 	{
 		return false;
 	}
-	if(f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0) != sizeof(m_hdrBlock))
+	if (f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0) != sizeof(m_hdrBlock))
 	{
 		f.close();
 		OW_THROW(HDBException, "Failed to write header of HDB");
@@ -131,13 +131,13 @@ bool
 HDB::checkFile()
 {
 	File f = FileSystem::openFile(m_fileName + ".dat");
-	if(!f)
+	if (!f)
 	{
 		String msg("Failed to open file: ");
 		msg += m_fileName;
 		OW_THROW(HDBException, msg.c_str());
 	}
-	if(f.read(&m_hdrBlock, sizeof(m_hdrBlock), 0) != sizeof(m_hdrBlock))
+	if (f.read(&m_hdrBlock, sizeof(m_hdrBlock), 0) != sizeof(m_hdrBlock))
 	{
 		f.close();
 		String msg("Failed to read HDB header from file: ");
@@ -145,7 +145,7 @@ HDB::checkFile()
 		OW_THROW(HDBException, msg.c_str());
 	}
 	f.close();
-	if(::strncmp(m_hdrBlock.signature, OW_HDBSIGNATURE, HDBSIGLEN))
+	if (::strncmp(m_hdrBlock.signature, OW_HDBSIGNATURE, HDBSIGLEN))
 	{
 		String msg("Invalid Format for HDB file: ");
 		msg += m_fileName;
@@ -172,12 +172,12 @@ HDBHandle
 HDB::getHandle()
 {
 	MutexLock l(m_guard);
-	if(!m_opened)
+	if (!m_opened)
 	{
 		OW_THROW(HDBException, "Can't get handle from closed HDB");
 	}
 	File file = FileSystem::openFile(m_fileName);
-	if(!file)
+	if (!file)
 	{
 		return HDBHandle();
 	}
@@ -200,7 +200,7 @@ HDB::setOffsets(File file, Int32 firstRootOffset, Int32 lastRootOffset,
 	m_hdrBlock.firstRoot = firstRootOffset;
 	m_hdrBlock.lastRoot = lastRootOffset;
 	m_hdrBlock.firstFree = firstFreeOffset;
-	if(file.write(&m_hdrBlock, sizeof(m_hdrBlock), 0) != sizeof(m_hdrBlock))
+	if (file.write(&m_hdrBlock, sizeof(m_hdrBlock), 0) != sizeof(m_hdrBlock))
 	{
 		OW_THROW(HDBException, "Failed to update offset on HDB");
 	}
@@ -235,21 +235,21 @@ HDB::findBlock(File file, Int32 size)
 	HDBBlock fblk;
 	// If the free list is not empty, then search it for a block
 	// big enough to hold the given size
-	if(m_hdrBlock.firstFree != -1)
+	if (m_hdrBlock.firstFree != -1)
 	{
 		Int32 coffset = m_hdrBlock.firstFree;
-		while(true)
+		while (true)
 		{
 			readBlock(fblk, file, coffset);
 			// If the current block size is greater than or equal to the
 			// size being requested, then we found a block in the file
 			// we can use.
-			if(fblk.size >= static_cast<UInt32>(size))
+			if (fblk.size >= static_cast<UInt32>(size))
 			{
 				offset = coffset;
 				break;
 			}
-			if((coffset = fblk.nextSib) == -1L)
+			if ((coffset = fblk.nextSib) == -1L)
 			{
 				break;
 			}
@@ -257,7 +257,7 @@ HDB::findBlock(File file, Int32 size)
 	}
 	// If offset is no longer -1, then we must have found a block
 	// of adequate size.
-	if(offset != -1)
+	if (offset != -1)
 	{
 		// Remove the block from the free list
 		removeBlockFromFreeList(file, fblk);
@@ -266,11 +266,11 @@ HDB::findBlock(File file, Int32 size)
 	{
 		// We didn't find a block that was big enough, so let's just allocate
 		// a chunk at the end of the file.
-		if(file.seek(0L, SEEK_END) == -1L)
+		if (file.seek(0L, SEEK_END) == -1L)
 		{
 			OW_THROW(HDBException, "Failed to seek to end of file");
 		}
-		if((offset = file.tell()) == -1L)
+		if ((offset = file.tell()) == -1L)
 		{
 			OW_THROW(HDBException, "Failed to get offset in file");
 		}
@@ -285,7 +285,7 @@ HDB::removeBlockFromFreeList(File file, HDBBlock& fblk)
 	HDBBlock cblk;
 	// If block has a next sibling, then set it's previous sibling pointer
 	// to the given blocks previous pointer
-	if(fblk.nextSib != -1)
+	if (fblk.nextSib != -1)
 	{
 		readBlock(cblk, file, fblk.nextSib);
 		cblk.prevSib = fblk.prevSib;
@@ -293,7 +293,7 @@ HDB::removeBlockFromFreeList(File file, HDBBlock& fblk)
 	}
 	// If block has a previous sibling, then set it's next sibling pointer
 	// to the given blocks next pointer
-	if(fblk.prevSib != -1)
+	if (fblk.prevSib != -1)
 	{
 		readBlock(cblk, file, fblk.prevSib);
 		cblk.nextSib = fblk.nextSib;
@@ -303,7 +303,7 @@ HDB::removeBlockFromFreeList(File file, HDBBlock& fblk)
 	{
 		// If no previous sibling, assume this was the 1st in the
 		// free list, so set the head pointer
-		if(m_hdrBlock.firstFree != -1)
+		if (m_hdrBlock.firstFree != -1)
 		{
 			setFirstFreeOffSet(file, fblk.nextSib);
 		}
@@ -319,7 +319,7 @@ HDB::addBlockToFreeList(File file, const HDBBlock& parmblk,
 	HDBBlock fblk = parmblk;
 	fblk.isFree = true;
 	// If the free list is empty, set the free list head pointer only
-	if(m_hdrBlock.firstFree == -1)
+	if (m_hdrBlock.firstFree == -1)
 	{
 		fblk.nextSib = -1;
 		fblk.prevSib = -1;
@@ -332,17 +332,17 @@ HDB::addBlockToFreeList(File file, const HDBBlock& parmblk,
 	Int32 coffset = m_hdrBlock.firstFree;
 	Int32 loffset = 0;
 	// Find insertion point in free list
-	while(coffset != -1)
+	while (coffset != -1)
 	{
 		loffset = coffset;
 		readBlock(cblk, file, coffset);
-		if(fblk.size <= cblk.size)
+		if (fblk.size <= cblk.size)
 		{
 			break;
 		}
 		coffset = cblk.nextSib;
 	}
-	if(coffset == -1)		// Append to end of free list?
+	if (coffset == -1)		// Append to end of free list?
 	{
 		cblk.nextSib = offset;
 		writeBlock(cblk, file, loffset);
@@ -352,7 +352,7 @@ HDB::addBlockToFreeList(File file, const HDBBlock& parmblk,
 	}
 	else						// Insert before last node read
 	{
-		if(cblk.prevSib == -1)			// If this Was the 1st on the list
+		if (cblk.prevSib == -1)			// If this Was the 1st on the list
 		{											// Set the free list head pointer
 			setFirstFreeOffSet(file, offset);		
 		}
@@ -383,7 +383,7 @@ HDB::addRootNode(File file, HDBBlock& fblk, Int32 offset)
 	MutexLock l(m_guard);
 	fblk.parent = -1;
 	fblk.nextSib = -1;
-	if(m_hdrBlock.firstRoot == -1)
+	if (m_hdrBlock.firstRoot == -1)
 	{
 		setOffsets(file, offset, offset, m_hdrBlock.firstFree);
 		fblk.prevSib = -1;
@@ -408,7 +408,7 @@ HDB::writeBlock(HDBBlock& fblk, File file, Int32 offset)
 	UInt32 chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&fblk), sizeof(fblk));
 	fblk.chkSum = chkSum;
 	int cc = file.write(&fblk, sizeof(fblk), offset);
-	if(cc != sizeof(fblk))
+	if (cc != sizeof(fblk))
 	{
 		OW_THROW(HDBException, "Failed to write block");
 	}
@@ -419,14 +419,14 @@ void
 HDB::readBlock(HDBBlock& fblk, File file, Int32 offset)
 {
 	int cc = file.read(&fblk, sizeof(fblk), offset);
-	if(cc != sizeof(fblk))
+	if (cc != sizeof(fblk))
 	{
 		OW_THROW(HDBException, "Failed to read block");
 	}
 	UInt32 chkSum = fblk.chkSum;
 	fblk.chkSum = 0;
 	fblk.chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&fblk), sizeof(fblk));
-	if(chkSum != fblk.chkSum)
+	if (chkSum != fblk.chkSum)
 	{
 		OW_THROW(HDBException, "CORRUPT DATA? Invalid check sum in node");
 	}
@@ -435,7 +435,7 @@ HDB::readBlock(HDBBlock& fblk, File file, Int32 offset)
 IndexEntry
 HDB::findFirstIndexEntry(const char* key)
 {
-	if(!m_opened)
+	if (!m_opened)
 	{
 		OW_THROW(HDBException, "HDB is not opened");
 	}
@@ -446,7 +446,7 @@ HDB::findFirstIndexEntry(const char* key)
 IndexEntry
 HDB::findNextIndexEntry()
 {
-	if(!m_opened)
+	if (!m_opened)
 	{
 		OW_THROW(HDBException, "HDB is not opened");
 	}
@@ -457,7 +457,7 @@ HDB::findNextIndexEntry()
 IndexEntry
 HDB::findPrevIndexEntry()
 {
-	if(!m_opened)
+	if (!m_opened)
 	{
 		OW_THROW(HDBException, "HDB is not opened");
 	}
@@ -468,7 +468,7 @@ HDB::findPrevIndexEntry()
 IndexEntry
 HDB::findIndexEntry(const char* key)
 {
-	if(!m_opened)
+	if (!m_opened)
 	{
 		OW_THROW(HDBException, "HDB is not opened");
 	}
@@ -479,7 +479,7 @@ HDB::findIndexEntry(const char* key)
 bool
 HDB::addIndexEntry(const char* key, Int32 offset)
 {
-	if(!m_opened)
+	if (!m_opened)
 	{
 		OW_THROW(HDBException, "HDB is not opened");
 	}
@@ -490,7 +490,7 @@ HDB::addIndexEntry(const char* key, Int32 offset)
 bool
 HDB::removeIndexEntry(const char* key)
 {
-	if(!m_opened)
+	if (!m_opened)
 	{
 		OW_THROW(HDBException, "HDB is not opened");
 	}
@@ -501,7 +501,7 @@ HDB::removeIndexEntry(const char* key)
 bool
 HDB::updateIndexEntry(const char* key, Int32 newOffset)
 {
-	if(!m_opened)
+	if (!m_opened)
 	{
 		OW_THROW(HDBException, "HDB is not opened");
 	}
@@ -512,7 +512,7 @@ HDB::updateIndexEntry(const char* key, Int32 newOffset)
 void
 HDB::flushIndex()
 {
-	if(m_opened)
+	if (m_opened)
 	{
 		MutexLock il(m_indexGuard);
 		m_pindex->flush();
@@ -524,7 +524,7 @@ calcCheckSum(unsigned char* src, Int32 len)
 {
 	UInt32 cksum = 0;
 	Int32 i;
-	for(i = 0; i < len; i++)
+	for (i = 0; i < len; i++)
 	{
 		cksum += src[i];
 	}
@@ -565,7 +565,7 @@ HDBHandle::registerWrite()
 void
 HDBHandle::flush()
 {
-	if(m_pdata->m_writeDone)
+	if (m_pdata->m_writeDone)
 	{
 		m_pdata->m_pdb->flushIndex();
 		m_pdata->m_file.flush();
@@ -576,7 +576,7 @@ HDBHandle::flush()
 HDBNode
 HDBHandle::getFirstRoot()
 {
-	if(m_pdata->m_pdb->getFirstRootOffSet() > 0)
+	if (m_pdata->m_pdb->getFirstRootOffSet() > 0)
 	{
 		return HDBNode(m_pdata->m_pdb->getFirstRootOffSet(), *this);
 	}
@@ -586,7 +586,7 @@ HDBHandle::getFirstRoot()
 HDBNode
 HDBHandle::getNode(const String& key)
 {
-	if(!key.empty())
+	if (!key.empty())
 	{
 		return HDBNode(key.c_str(), *this);
 	}
@@ -596,11 +596,11 @@ HDBHandle::getNode(const String& key)
 HDBNode
 HDBHandle::getParent(HDBNode& node)
 {
-	if(node)
+	if (node)
 	{
-		if(node.reload(*this))
+		if (node.reload(*this))
 		{
-			if(node.getParentOffset() > 0)
+			if (node.getParentOffset() > 0)
 			{
 				return HDBNode(node.getParentOffset(), *this);
 			}
@@ -612,11 +612,11 @@ HDBHandle::getParent(HDBNode& node)
 HDBNode
 HDBHandle::getFirstChild(HDBNode& node)
 {
-	if(node)
+	if (node)
 	{
-		if(node.reload(*this))
+		if (node.reload(*this))
 		{
-			if(node.getFirstChildOffset() > 0)
+			if (node.getFirstChildOffset() > 0)
 			{
 				return HDBNode(node.getFirstChildOffset(), *this);
 			}
@@ -628,11 +628,11 @@ HDBHandle::getFirstChild(HDBNode& node)
 HDBNode
 HDBHandle::getLastChild(HDBNode& node)
 {
-	if(node)
+	if (node)
 	{
-		if(node.reload(*this))
+		if (node.reload(*this))
 		{
-			if(node.getLastChildOffset() > 0)
+			if (node.getLastChildOffset() > 0)
 			{
 				return HDBNode(node.getLastChildOffset(), *this);
 			}
@@ -644,11 +644,11 @@ HDBHandle::getLastChild(HDBNode& node)
 HDBNode
 HDBHandle::getNextSibling(HDBNode& node)
 {
-	if(node)
+	if (node)
 	{
-		if(node.reload(*this))
+		if (node.reload(*this))
 		{
-			if(node.getNextSiblingOffset() > 0)
+			if (node.getNextSiblingOffset() > 0)
 			{
 				return HDBNode(node.getNextSiblingOffset(), *this);
 			}
@@ -660,11 +660,11 @@ HDBHandle::getNextSibling(HDBNode& node)
 HDBNode
 HDBHandle::getPrevSibling(HDBNode& node)
 {
-	if(node)
+	if (node)
 	{
-		if(node.reload(*this))
+		if (node.reload(*this))
 		{
-			if(node.getPrevSiblingOffset() > 0)
+			if (node.getPrevSiblingOffset() > 0)
 			{
 				return HDBNode(node.getPrevSiblingOffset(), *this);
 			}
@@ -677,13 +677,13 @@ bool
 HDBHandle::addRootNode(HDBNode& node)
 {
 	bool cc = false;
-	if(node)
+	if (node)
 	{
-		if(node.getOffset() > 0)
+		if (node.getOffset() > 0)
 		{
 			OW_THROW(HDBException, "node is already on file");
 		}
-		if(m_pdata->m_pdb->findIndexEntry(node.getKey().c_str()))
+		if (m_pdata->m_pdb->findIndexEntry(node.getKey().c_str()))
 		{
 			OW_THROW(HDBException, "key for node is already in index");
 		}
@@ -697,21 +697,21 @@ bool
 HDBHandle::addChild(HDBNode& parentNode, HDBNode& childNode)
 {
 	bool cc = false;
-	if(parentNode && childNode)
+	if (parentNode && childNode)
 	{
-		if(childNode.getOffset() > 0)
+		if (childNode.getOffset() > 0)
 		{
 			OW_THROW(HDBException, "child node already has a parent");
 		}
-		if(parentNode.getOffset() <= 0)
+		if (parentNode.getOffset() <= 0)
 		{
 			OW_THROW(HDBException, "parent node is not on file");
 		}
-		if(m_pdata->m_pdb->findIndexEntry(childNode.getKey().c_str()))
+		if (m_pdata->m_pdb->findIndexEntry(childNode.getKey().c_str()))
 		{
 			OW_THROW(HDBException, "key for node is already in index");
 		}
-		if(parentNode.reload(*this))
+		if (parentNode.reload(*this))
 		{
 			parentNode.addChild(*this, childNode);
 			cc = true;
@@ -723,12 +723,12 @@ HDBHandle::addChild(HDBNode& parentNode, HDBNode& childNode)
 bool
 HDBHandle::addChild(const String& parentKey, HDBNode& childNode)
 {
-	if(parentKey.empty())
+	if (parentKey.empty())
 	{
 		return false;
 	}
 	HDBNode pnode = HDBNode(parentKey.c_str(), *this);
-	if(pnode)
+	if (pnode)
 	{
 		return addChild(pnode, childNode);
 	}
@@ -739,9 +739,9 @@ bool
 HDBHandle::removeNode(HDBNode& node)
 {
 	bool cc = false;
-	if(node && node.getOffset() > 0)
+	if (node && node.getOffset() > 0)
 	{
-		if(node.reload(*this))
+		if (node.reload(*this))
 		{
 			node.remove(*this);
 			cc = true;
@@ -754,10 +754,10 @@ bool
 HDBHandle::removeNode(const String& key)
 {
 	bool cc = false;
-	if(!key.empty())
+	if (!key.empty())
 	{
 		HDBNode node(key.c_str(), *this);
-		if(node)
+		if (node)
 		{
 			node.remove(*this);
 		}
@@ -770,12 +770,12 @@ bool
 HDBHandle::updateNode(HDBNode& node, Int32 dataLen, const unsigned char* data)
 {
 	bool cc = false;
-	if(node)
+	if (node)
 	{
 		// If node is already on file, then get a writelock on db
-		if(node.getOffset() > 0)
+		if (node.getOffset() > 0)
 		{
-			if(node.reload(*this))
+			if (node.reload(*this))
 			{
 				node.updateData(*this, dataLen, data);
 				cc = true;
@@ -794,11 +794,11 @@ HDBHandle::updateNode(HDBNode& node, Int32 dataLen, const unsigned char* data)
 void
 HDBHandle::turnFlagsOn(HDBNode& node, UInt32 flags)
 {
-	if(node)
+	if (node)
 	{
-		if(node.getOffset() > 0)
+		if (node.getOffset() > 0)
 		{
-			if(node.reload(*this))
+			if (node.reload(*this))
 			{
 			node.turnFlagsOn(*this, flags);
 			}
@@ -813,11 +813,11 @@ HDBHandle::turnFlagsOn(HDBNode& node, UInt32 flags)
 void
 HDBHandle::turnFlagsOff(HDBNode& node, UInt32 flags)
 {
-	if(node)
+	if (node)
 	{
-		if(node.getOffset() > 0)
+		if (node.getOffset() > 0)
 		{
-			if(node.reload(*this))
+			if (node.reload(*this))
 			{
 				node.turnFlagsOff(*this, flags);
 			}

@@ -95,7 +95,7 @@ ClientCIMOMHandle::getHTTPTrailers(CIMProtocolIStreamIFCRef istr_)
 	m_trailers.clear();
 	IntrusiveReference<HTTPChunkedIStream> istr = 
 		istr_.cast_to<HTTPChunkedIStream>();
-	if(istr)
+	if (istr)
 	{
 		m_trailers = istr->getTrailers();
 	}

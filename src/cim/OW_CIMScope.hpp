@@ -78,7 +78,7 @@ public:
 	 */
 	CIMScope(Scope scopeVal) : CIMBase(), m_val(scopeVal)
 	{
-		if(!validScope(scopeVal))
+		if (!validScope(scopeVal))
 			m_val = BAD;
 	}
 	/**

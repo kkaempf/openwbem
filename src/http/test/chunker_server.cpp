@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 		ifstream filestr(argv[2], ios::in);
 		char bfr[1024];
 		int count = 0;
-		while(filestr)
+		while (filestr)
 		{
 			filestr.read(bfr, sizeof(bfr));
 			ostrm.write(bfr, filestr.gcount());
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 		{
 			ifstream filestr2(argv[3], ios::in);
 			count = 0;
-			while(filestr2)
+			while (filestr2)
 			{
 				filestr2.read(bfr, sizeof(bfr));
 				ostrm.write(bfr, filestr2.gcount());

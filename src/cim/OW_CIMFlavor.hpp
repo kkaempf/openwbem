@@ -91,7 +91,7 @@ public:
 	CIMFlavor(Flavor iflavor) :
 		CIMBase(), m_flavor(iflavor)
 	{
-		if(!validFlavor(iflavor))
+		if (!validFlavor(iflavor))
 		{
 			m_flavor = INVALID;
 		}

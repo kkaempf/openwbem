@@ -138,7 +138,7 @@ createFile(const String& path)
 	int fd = ::open(path.c_str(), O_CREAT | O_EXCL | O_TRUNC | O_RDWR, 0660);
 #endif
 
-	if(fd != -1)
+	if (fd != -1)
 	{
 		return File(fd);
 	}
@@ -184,7 +184,7 @@ isLink(const String& path)
 	return false;
 /* This stuff does not compile (_S_IFLNK?) 
 	struct _stat st;
-	if(_stat(path.c_str(), &st) !=0)
+	if (_stat(path.c_str(), &st) !=0)
 	{
 		return false;
 	}
@@ -205,14 +205,14 @@ isDirectory(const String& path)
 {
 #ifdef OW_WIN32
 	struct _stat st;
-	if(_stat(path.c_str(), &st) != 0)
+	if (_stat(path.c_str(), &st) != 0)
 	{
 		return false;
 	}
 	return ((st.st_mode & _S_IFDIR) != 0);
 #else
 	struct stat st;
-	if(stat(path.c_str(), &st) != 0)
+	if (stat(path.c_str(), &st) != 0)
 	{
 		return false;
 	}
@@ -237,13 +237,13 @@ getFileSize(const String& path, off_t& size)
 {
 #ifdef OW_WIN32
 	struct _stat st;
-	if(_stat(path.c_str(), &st) != 0)
+	if (_stat(path.c_str(), &st) != 0)
 	{
 		return false;
 	}
 #else
 	struct stat st;
-	if(stat(path.c_str(), &st) != 0)
+	if (stat(path.c_str(), &st) != 0)
 	{
 		return false;
 	}
@@ -275,12 +275,12 @@ getDirectoryContents(const String& path,
     struct _finddata_t dentry;
     long hFile;
     // Find first directory entry
-    if((hFile = _findfirst( "*", &dentry)) == -1L)
+    if ((hFile = _findfirst( "*", &dentry)) == -1L)
 	{
 		return false;
 	}
 	dirEntries.clear();
-	while(_findnext(hFile, &dentry) == 0)
+	while (_findnext(hFile, &dentry) == 0)
 	{
 		dirEntries.append(String(dentry.name));
 	}
@@ -288,12 +288,12 @@ getDirectoryContents(const String& path,
 #else
 	DIR* dp;
 	struct dirent* dentry;
-	if((dp = opendir(path.c_str())) == NULL)
+	if ((dp = opendir(path.c_str())) == NULL)
 	{
 		return false;
 	}
 	dirEntries.clear();
-	while((dentry = readdir(dp)) != NULL)
+	while ((dentry = readdir(dp)) != NULL)
 	{
 		dirEntries.append(String(dentry->d_name));
 	}
@@ -313,7 +313,7 @@ size_t
 read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
 	off_t offset)
 {
-	if(offset != -1L)
+	if (offset != -1L)
 	{
 		_LSEEK(hdl, offset, SEEK_SET);
 	}
@@ -324,7 +324,7 @@ size_t
 write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 	off_t offset)
 {
-	if(offset != -1L)
+	if (offset != -1L)
 	{
 		_LSEEK(hdl, offset, SEEK_SET);
 	}

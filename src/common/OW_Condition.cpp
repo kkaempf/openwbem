@@ -138,7 +138,7 @@ Condition::notifyOne()
 	::LeaveCriticalSection(&m_condition->waitersCountLock);
 
 	// If no threads waiting, then this is a no-op
-	if(haveWaiters)
+	if (haveWaiters)
 	{
 		::ReleaseSemaphore(m_condition->queue, 1, 0);
 	}
@@ -149,13 +149,13 @@ Condition::notifyAll()
 {
 	::EnterCriticalSection(&m_condition->waitersCountLock);
 	bool haveWaiters = false;
-	if(m_condition->waitersCount > 0)
+	if (m_condition->waitersCount > 0)
 	{
 		// It's gonna be a broadcast, even if there's only one waiting thread.
 		haveWaiters = m_condition->wasBroadcast = true;
 	}
 
-	if(haveWaiters)
+	if (haveWaiters)
 	{
 		// Wake up all the waiting threads atomically
 		::ReleaseSemaphore(m_condition->queue, m_condition->waitersCount, 0);
@@ -189,7 +189,7 @@ Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeo
 	::LeaveCriticalSection(&m_condition->waitersCountLock);
 
 	// Calc timeout if specified
-	if(sTimeout != INFINITE)
+	if (sTimeout != INFINITE)
 	{
 		sTimeout *= 1000;		// Convert to ms
 		sTimeout += usTimeout / 1000;		// Convert micro seconds to ms and add
@@ -197,7 +197,7 @@ Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeo
 
 	// Atomically release the mutex and wait on the 
 	// queue until signal/broadcast.
-	if(::SignalObjectAndWait(mutex.m_mutex, m_condition->queue, sTimeout,
+	if (::SignalObjectAndWait(mutex.m_mutex, m_condition->queue, sTimeout,
 		false) == WAIT_TIMEOUT)
 	{
 		cc = false;
@@ -214,7 +214,7 @@ Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeo
 
 	// If this is the last thread waiting for this broadcast, then let all the
 	// other threads proceed.
-	if(isLastWaiter)
+	if (isLastWaiter)
 	{
 		// Atomically signal the waitersDone event and wait to acquire
 		// the external mutex. Enusres fairness

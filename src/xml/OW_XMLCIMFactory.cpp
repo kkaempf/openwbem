@@ -75,12 +75,12 @@ getLocalNameSpacePathAndSet(CIMObjectPath& cop, CIMXMLParser& parser)
 	// <!ELEMENT NAMESPACE EMPTY>
 	// <!ATTLIST NAMESPACE %CIMName;>
 	String ns;
-	while(parser.tokenIsId(CIMXMLParser::E_NAMESPACE))	
+	while (parser.tokenIsId(CIMXMLParser::E_NAMESPACE))	
 	{
 		String nscomp = parser.mustGetAttribute(CIMXMLParser::A_NAME);
-		if(!nscomp.empty())
+		if (!nscomp.empty())
 		{
-			if(!ns.empty() )
+			if (!ns.empty() )
 			{
 				ns += "/";
 			}
@@ -89,7 +89,7 @@ getLocalNameSpacePathAndSet(CIMObjectPath& cop, CIMXMLParser& parser)
 		parser.mustGetNextTag();
 		parser.mustGetEndTag(); // pass </NAMESPACE>
 	}
-	if(ns.empty())
+	if (ns.empty())
 	{
 		ns = "root";
 	}
@@ -172,7 +172,7 @@ static void getInstanceName(CIMXMLParser& parser, CIMObjectPath& cimPath)
 			CIMXMLParser keyval;
 			name = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 			parser.mustGetChild();
-			switch(parser.getToken())
+			switch (parser.getToken())
 			{
 				case CIMXMLParser::E_KEYVALUE:
 					getKeyValue(parser,value);
@@ -222,7 +222,7 @@ createObjectPath(CIMXMLParser& parser)
 {
 	CIMObjectPath rval;
 	int token = parser.getToken();
-	switch(token)
+	switch (token)
 	{
 		case CIMXMLParser::E_OBJECTPATH:
 			parser.mustGetChild();
@@ -289,7 +289,7 @@ createClass(CIMXMLParser& parser)
 	String inClassName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 	rval.setName(inClassName);
 	superClassName = parser.getAttribute(CIMXMLParser::A_SUPERCLASS);
-	if(!superClassName.empty())
+	if (!superClassName.empty())
 	{
 		rval.setSuperClass(superClassName);
 	}
@@ -301,7 +301,7 @@ createClass(CIMXMLParser& parser)
 	while (parser.tokenIsId(CIMXMLParser::E_QUALIFIER))
 	{
 		CIMQualifier cq = createQualifier(parser);
-//         if(cq.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_ASSOCIATION))
+//         if (cq.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_ASSOCIATION))
 //         {
 //             if (!cq.getValue()
 //                 || cq.getValue() != CIMValue(false))
@@ -343,7 +343,7 @@ createInstance(CIMXMLParser& parser)
 	rval.setClassName(parser.mustGetAttribute(CIMXMLParser::A_CLASSNAME));
 
 	String language = parser.getAttribute(CIMXMLParser::A_XML_LANG, false);
-	if(!language.empty())
+	if (!language.empty())
 	{
 		rval.setLanguage(language);
 	}
@@ -434,7 +434,7 @@ static inline void
 convertCimType(Array<T>& ra, CIMXMLParser& parser)
 {
 	// start out possibly pointing at <VALUE>
-	while(parser.tokenIsId(CIMXMLParser::E_VALUE))
+	while (parser.tokenIsId(CIMXMLParser::E_VALUE))
 	{
 		parser.mustGetNext();
 		if (parser.isData())
@@ -465,7 +465,7 @@ createValue(CIMXMLParser& parser,
 	
 		int token = parser.getToken();
 	
-		switch(token)
+		switch (token)
 		{
 			// <VALUE> elements
 			case CIMXMLParser::E_VALUE:
@@ -489,14 +489,14 @@ createValue(CIMXMLParser& parser,
 			case CIMXMLParser::E_VALUE_ARRAY:
 				{
 					int type = CIMDataType::strToSimpleType(valueType);
-					if(type == CIMDataType::INVALID)
+					if (type == CIMDataType::INVALID)
 					{
 						OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 							"Invalid data type on node");
 					}
 					parser.mustGetNextTag();
 	
-					switch(type)
+					switch (type)
 					{
 						case CIMDataType::UINT8:
 						{
@@ -567,7 +567,7 @@ createValue(CIMXMLParser& parser,
 								BoolArray ra;
 								StringArray sra;
 								convertCimType(sra, parser);
-								for(size_t i = 0; i < sra.size(); i++)
+								for (size_t i = 0; i < sra.size(); i++)
 								{
 									Bool bv = sra[i].equalsIgnoreCase("TRUE");
 									ra.append(bv);
@@ -631,7 +631,7 @@ createValue(CIMXMLParser& parser,
 					CIMObjectPathArray opArray;
 					parser.getNextTag();
 	
-					while(parser.tokenIsId(CIMXMLParser::E_VALUE_REFERENCE))
+					while (parser.tokenIsId(CIMXMLParser::E_VALUE_REFERENCE))
 					{
 						CIMObjectPath cop(CIMNULL);
 						CIMValue v = createValue(parser, valueType);
@@ -709,11 +709,11 @@ createQualifier(CIMXMLParser& parser)
 	//
 	// Build qualifier
 	//
-	if(!cimType.empty())
+	if (!cimType.empty())
 	{
 		dt = CIMDataType::getDataType(cimType);
 	}
-	if(!dt)
+	if (!dt)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			Format("Qualifier not assigned a data type: %1", name).c_str());
@@ -723,7 +723,7 @@ createQualifier(CIMXMLParser& parser)
 	cqt.setName(name);
 	
 	CIMQualifier rval(cqt);
-	if(overridable.equalsIgnoreCase("false"))
+	if (overridable.equalsIgnoreCase("false"))
 	{
 		rval.addFlavor(CIMFlavor(CIMFlavor::DISABLEOVERRIDE));
 	}
@@ -731,7 +731,7 @@ createQualifier(CIMXMLParser& parser)
 	{
 		rval.addFlavor(CIMFlavor(CIMFlavor::ENABLEOVERRIDE));
 	}
-	if(tosubclass.equalsIgnoreCase("false"))
+	if (tosubclass.equalsIgnoreCase("false"))
 	{
 		rval.addFlavor(CIMFlavor(CIMFlavor::RESTRICTED));
 	}
@@ -739,23 +739,23 @@ createQualifier(CIMXMLParser& parser)
 	{
 		rval.addFlavor(CIMFlavor(CIMFlavor::TOSUBCLASS));
 	}
-	//if(toinstance.equalsIgnoreCase("true"))
+	//if (toinstance.equalsIgnoreCase("true"))
 	//{
 	//	rval.addFlavor(CIMFlavor(CIMFlavor::TOINSTANCE));
 	//}
-	if(translatable.equalsIgnoreCase("true"))
+	if (translatable.equalsIgnoreCase("true"))
 	{
 		rval.addFlavor(CIMFlavor(CIMFlavor::TRANSLATE));
 	}
 	rval.setPropagated(propagate.equalsIgnoreCase("true"));
 	
-	if(!language.empty())
+	if (!language.empty())
 	{
 		rval.setLanguage(language);
 	}
 
 	parser.mustGetNextTag();
-	if(parser.tokenIsId(CIMXMLParser::E_VALUE_ARRAY)
+	if (parser.tokenIsId(CIMXMLParser::E_VALUE_ARRAY)
 		|| parser.tokenIsId(CIMXMLParser::E_VALUE))
 	{
 		rval.setValue(createValue(parser, cimType));
@@ -767,7 +767,7 @@ createQualifier(CIMXMLParser& parser)
 CIMMethod
 createMethod(CIMXMLParser& parser)
 {
-	if(!parser.tokenIsId(CIMXMLParser::E_METHOD))
+	if (!parser.tokenIsId(CIMXMLParser::E_METHOD))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Not method XML");
 	}
@@ -779,7 +779,7 @@ createMethod(CIMXMLParser& parser)
 	//
 	// A method name must be given
 	//
-	if(methodName.empty())
+	if (methodName.empty())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"No method name in XML");
@@ -788,12 +788,12 @@ createMethod(CIMXMLParser& parser)
 	//
 	// If no return data type, then method returns nothing (void)
 	//
-	if(!cimType.empty())
+	if (!cimType.empty())
 	{
 		rval.setReturnType(CIMDataType::getDataType(cimType));
 	}
 	rval.setName(methodName);
-	if(!classOrigin.empty())
+	if (!classOrigin.empty())
 	{
 		rval.setOriginClass(classOrigin);
 	}
@@ -894,7 +894,7 @@ CIMProperty
 createProperty(CIMXMLParser& parser)
 {
 	int token = parser.getToken();
-	if(token != CIMXMLParser::E_PROPERTY
+	if (token != CIMXMLParser::E_PROPERTY
 		&& token != CIMXMLParser::E_PROPERTY_ARRAY
 		&& token != CIMXMLParser::E_PROPERTY_REFERENCE)
 	{
@@ -911,12 +911,12 @@ createProperty(CIMXMLParser& parser)
 	//
 	// If no return data type, then property isn't properly defined
 	//
-	if(token == CIMXMLParser::E_PROPERTY_REFERENCE)
+	if (token == CIMXMLParser::E_PROPERTY_REFERENCE)
 	{
 		rval.setDataType(CIMDataType(parser.getAttribute(
 			CIMXMLParser::A_REFERENCECLASS)));
 	}
-	else if(!cimType.empty())
+	else if (!cimType.empty())
 	{
 		rval.setDataType(CIMDataType::getDataType(cimType));
 	}
@@ -928,7 +928,7 @@ createProperty(CIMXMLParser& parser)
 	//
 	// Array type property
 	//
-	if(token == CIMXMLParser::E_PROPERTY_ARRAY)
+	if (token == CIMXMLParser::E_PROPERTY_ARRAY)
 	{
 		String arraySize = parser.getAttribute(
 			CIMXMLParser::A_ARRAYSIZE);
@@ -970,7 +970,7 @@ createProperty(CIMXMLParser& parser)
 		rval.setValue(createValue(parser,cimType));
 		
 // Shouldn't need to cast this.
-//         if(rval.getDataType().getType() != rval.getValue().getType()
+//         if (rval.getDataType().getType() != rval.getValue().getType()
 //             || rval.getDataType().isArrayType() !=
 //             rval.getValue().isArray())
 //         {
@@ -1009,7 +1009,7 @@ createProperty(CIMXMLParser& parser)
 			}
 			if (values.size() == xmlstrings.size() && values.size() > 0)
 			{
-				if (std::find_if(values.begin(), values.end(), valueIsEmbeddedInstance()) == values.end())
+				if (std::find_if (values.begin(), values.end(), valueIsEmbeddedInstance()) == values.end())
 				{
 					// no instances, so they all must be classes
 					CIMClassArray classes;
@@ -1023,7 +1023,7 @@ createProperty(CIMXMLParser& parser)
 					CIMDataType dt(CIMDataType::EMBEDDEDCLASS, rval.getDataType().getSize());
 					rval.setDataType(dt);
 				}
-				else if (std::find_if(values.begin(), values.end(), valueIsEmbeddedClass()) == values.end())
+				else if (std::find_if (values.begin(), values.end(), valueIsEmbeddedClass()) == values.end())
 				{
 					// no classes, the all must be instances
 					CIMInstanceArray instances;
@@ -1063,7 +1063,7 @@ createParameter(CIMXMLParser& parser)
 {
 	int paramToken = parser.getToken();
 	
-	if(paramToken != CIMXMLParser::E_PARAMETER
+	if (paramToken != CIMXMLParser::E_PARAMETER
 		&& paramToken != CIMXMLParser::E_PARAMETER_REFERENCE
 		&& paramToken != CIMXMLParser::E_PARAMETER_ARRAY
 		&& paramToken != CIMXMLParser::E_PARAMETER_REFARRAY)
@@ -1079,7 +1079,7 @@ createParameter(CIMXMLParser& parser)
 	//
 	// Get parameter type
 	//
-	switch(paramToken)
+	switch (paramToken)
 	{
 		case CIMXMLParser::E_PARAMETER:
 		{
@@ -1100,7 +1100,7 @@ createParameter(CIMXMLParser& parser)
 			CIMDataType dt = CIMDataType::getDataType(
 				parser.mustGetAttribute(CIMXMLParser::A_TYPE));
 	
-			if(!dt)
+			if (!dt)
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 					"invalid parameter data type");

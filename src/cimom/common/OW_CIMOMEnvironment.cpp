@@ -306,7 +306,7 @@ CIMOMEnvironment::startServices()
 	m_providerManager->init(penvRef);
 	m_authorizerManager->init(g_cimomEnvironment);
 
-	for(size_t i = 0; i < m_services.size(); i++)
+	for (size_t i = 0; i < m_services.size(); i++)
 	{
 		m_services[i]->startService();
 	}
@@ -340,7 +340,7 @@ CIMOMEnvironment::shutdown()
 	}
 	MutexLock ml(m_monitor);
 	// Shutdown the polling manager
-	if(m_pollingManager)
+	if (m_pollingManager)
 	{
 		try
 		{
@@ -363,7 +363,7 @@ CIMOMEnvironment::shutdown()
 	// Shutdown any loaded services
 	// For now. We need to unload these in the opposite order that
 	// they were loaded.
-	for(int i = int(m_services.size())-1; i >= 0; i--)
+	for (int i = int(m_services.size())-1; i >= 0; i--)
 	{
 		try
 		{
@@ -380,7 +380,7 @@ CIMOMEnvironment::shutdown()
 	// Unload the wql library if loaded
 	m_wqlLib = 0;
 	// Shutdown indication processing
-	if(m_indicationServer)
+	if (m_indicationServer)
 	{
 		try
 		{
@@ -395,13 +395,13 @@ CIMOMEnvironment::shutdown()
 	// Delete the authentication manager
 	m_authManager = 0;
 	// Shutdown the cim server and delete it
-	if(m_cimServer)
+	if (m_cimServer)
 	{
 		m_cimServer->shutdown();
 		m_cimServer = 0;
 	}
 	// Shutdown the cim repository and delete it
-	if(m_cimRepository)
+	if (m_cimRepository)
 	{
 		try
 		{
@@ -463,7 +463,7 @@ CIMOMEnvironment::_createIndicationServer()
 	{
 		// load the indication server library
 		String indicationLib = getConfigItem(ConfigOpts::OWLIB_DIR_opt);
-		if(!indicationLib.endsWith(OW_FILENAME_SEPARATOR))
+		if (!indicationLib.endsWith(OW_FILENAME_SEPARATOR))
 		{
 			indicationLib += OW_FILENAME_SEPARATOR;
 		}
@@ -489,28 +489,28 @@ CIMOMEnvironment::_loadRequestHandlers()
 	m_reqHandlers.clear();
 	String libPath = getConfigItem(
 		ConfigOpts::CIMOM_REQUEST_HANDLER_LOCATION_opt, OW_DEFAULT_CIMOM_REQHANDLER_LOCATION);
-	if(!libPath.endsWith(OW_FILENAME_SEPARATOR))
+	if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
 	{
 		libPath += OW_FILENAME_SEPARATOR;
 	}
 	logInfo(Format("CIMOM loading request handlers from"
 		" directory %1", libPath));
 	StringArray dirEntries;
-	if(!FileSystem::getDirectoryContents(libPath, dirEntries))
+	if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 	{
 		logFatalError(Format("CIMOM failed geeting the contents of the"
 			" request handler directory: %1", libPath));
 		OW_THROW(CIMOMEnvironmentException, "No RequestHandlers");
 	}
 	int reqHandlerCount = 0;
-	for(size_t i = 0; i < dirEntries.size(); i++)
+	for (size_t i = 0; i < dirEntries.size(); i++)
 	{
-		if(!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
+		if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
 		{
 			continue;
 		}
 #ifdef OW_DARWIN
-                if(dirEntries[i].indexOf(OW_VERSION) != String::npos)
+                if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
                 {
                         continue;
                 }
@@ -520,7 +520,7 @@ CIMOMEnvironment::_loadRequestHandlers()
 		RequestHandlerIFCRef rh =
 			SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(
 				libName, "createRequestHandler", getLogger());
-		if(rh)
+		if (rh)
 		{
 			++reqHandlerCount;
 			rh->setEnvironment(g_cimomEnvironment);
@@ -556,27 +556,27 @@ CIMOMEnvironment::_loadServices()
 	m_services.clear();
 	String libPath = getConfigItem(
 		ConfigOpts::CIMOM_SERVICES_LOCATION_opt, OW_DEFAULT_CIMOM_SERVICES_LOCATION);
-	if(!libPath.endsWith(OW_FILENAME_SEPARATOR))
+	if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
 	{
 		libPath += OW_FILENAME_SEPARATOR;
 	}
 	logInfo(Format("CIMOM loading services from directory %1",
 		libPath));
 	StringArray dirEntries;
-	if(!FileSystem::getDirectoryContents(libPath, dirEntries))
+	if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 	{
 		logFatalError(Format("CIMOM failed getting the contents of the"
 			" services directory: %1", libPath));
 		OW_THROW(CIMOMEnvironmentException, "No Services");
 	}
-	for(size_t i = 0; i < dirEntries.size(); i++)
+	for (size_t i = 0; i < dirEntries.size(); i++)
 	{
-		if(!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
+		if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
 		{
 			continue;
 		}
 #ifdef OW_DARWIN
-                if(dirEntries[i].indexOf(OW_VERSION) != String::npos)
+                if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
                 {
                         continue;
                 }
@@ -586,7 +586,7 @@ CIMOMEnvironment::_loadServices()
 		ServiceIFCRef srv =
 			SafeLibCreate<ServiceIFC>::loadAndCreateObject(libName,
 				"createService", getLogger());
-		if(srv)
+		if (srv)
 		{
 			// save it first so if setServiceEnvironment throws it won't get
 			// unloaded until later.
@@ -699,12 +699,12 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 		rref = m_cimServer;
 	}
 
-	if(doIndications
+	if (doIndications
 	   && m_indicationServer
 	   && !m_indicationsDisabled)
 	{
 		SharedLibraryRepositoryIFCRef irl = _getIndicationRepLayer(rref);
-		if(irl)
+		if (irl)
 		{
 			rref = RepositoryIFCRef(new SharedLibraryRepository(irl));
 		}
@@ -744,7 +744,7 @@ CIMOMEnvironment::getWQLRef()
 		SharedLibraryLoaderRef sll =
 			SharedLibraryLoader::createSharedLibraryLoader();
 		m_wqlLib = sll->loadSharedLibrary(libname, m_Logger);
-		if(!m_wqlLib)
+		if (!m_wqlLib)
 		{
 			logError(Format("CIMOM Failed to load WQL Libary: %1", libname));
 			return WQLIFCRef();
@@ -758,7 +758,7 @@ SharedLibraryRepositoryIFCRef
 CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
 {
 	SharedLibraryRepositoryIFCRef retref;
-	if(!m_indicationRepLayerDisabled)
+	if (!m_indicationRepLayerDisabled)
 	{
 		MutexLock ml(m_indicationLock);
 		if (!m_indicationRepLayerLib)
@@ -771,7 +771,7 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
 			SharedLibraryLoaderRef sll =
 				SharedLibraryLoader::createSharedLibraryLoader();
 
-			if(!sll)
+			if (!sll)
 			{
 				m_indicationRepLayerDisabled = true;
 				logFatalError(Format("CIMOM failed to create SharedLibraryLoader"
@@ -779,7 +779,7 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
 				return retref;
 			}
 			m_indicationRepLayerLib = sll->loadSharedLibrary(libname, m_Logger);
-			if(!m_indicationRepLayerLib)
+			if (!m_indicationRepLayerLib)
 			{
 				m_indicationRepLayerDisabled = true;
 				logFatalError(Format("CIMOM failed to load indication rep layer"
@@ -790,7 +790,7 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
 		IndicationRepLayer* pirep =
 			SafeLibCreate<IndicationRepLayer>::create(
 				m_indicationRepLayerLib, "createIndicationRepLayer", m_Logger);
-		if(pirep)
+		if (pirep)
 		{
 			retref = SharedLibraryRepositoryIFCRef(m_indicationRepLayerLib,
 				RepositoryIFCRef(pirep));
@@ -822,7 +822,7 @@ CIMOMEnvironment::_loadAuthorizer()
 					libname));
 	SharedLibraryLoaderRef sll =
 		SharedLibraryLoader::createSharedLibraryLoader();
-	if(!sll)
+	if (!sll)
 	{
 		String msg = Format("CIMOM failed to create SharedLibraryLoader."
 							" library %1", libname);
@@ -830,7 +830,7 @@ CIMOMEnvironment::_loadAuthorizer()
 		OW_THROW(CIMOMEnvironmentException, msg.c_str());
 	}
 	SharedLibraryRef authorizerLib = sll->loadSharedLibrary(libname, m_Logger);
-	if(!authorizerLib)
+	if (!authorizerLib)
 	{
 		String msg = Format("CIMOM failed to load authorization"
 							" library %1", libname);
@@ -840,7 +840,7 @@ CIMOMEnvironment::_loadAuthorizer()
 	AuthorizerIFC* p =
 		SafeLibCreate<AuthorizerIFC>::create(
 			authorizerLib, "createAuthorizer", m_Logger);
-	if(!p)
+	if (!p)
 	{
 		String msg = Format("CIMOM failed to load authorization"
 							" library %1", libname);
@@ -869,7 +869,7 @@ CIMOMEnvironment::_createAuthorizerManager()
 
 	SharedLibraryLoaderRef sll =
 		SharedLibraryLoader::createSharedLibraryLoader();
-	if(!sll)
+	if (!sll)
 	{
 		String msg = Format("CIMOM failed to create SharedLibraryLoader."
 			" library %1", libname);
@@ -877,7 +877,7 @@ CIMOMEnvironment::_createAuthorizerManager()
 		OW_THROW(CIMOMEnvironmentException, msg.c_str());
 	}
 	SharedLibraryRef authorizerLib = sll->loadSharedLibrary(libname, m_Logger);
-	if(!authorizerLib)
+	if (!authorizerLib)
 	{
 		String msg = Format("CIMOM failed to load authorization"
 			" library %1", libname);
@@ -887,7 +887,7 @@ CIMOMEnvironment::_createAuthorizerManager()
 	Authorizer2IFC* p =
 		SafeLibCreate<Authorizer2IFC>::create(
 			authorizerLib, "createAuthorizer2", m_Logger);
-	if(!p)
+	if (!p)
 	{
 		String msg = Format("CIMOM failed to load authorization"
 			" library %1", libname);
@@ -1022,7 +1022,7 @@ CIMOMEnvironment::runSelectEngine()
 	engine.addSelectableObject(Platform::getSigSelectable(),
 		SelectableCallbackIFCRef(new SelectEngineStopper(engine)));
 	
-	for(size_t i = 0; i < m_selectables.size(); ++i)
+	for (size_t i = 0; i < m_selectables.size(); ++i)
 	{
 		engine.addSelectableObject(m_selectables[i], m_selectableCallbacks[i]);
 	}
@@ -1050,9 +1050,9 @@ void
 CIMOMEnvironment::removeSelectable(const SelectableIFCRef& obj)
 {
 	MutexLock ml(m_selectableLock);
-    for(size_t i = 0; i < m_selectables.size(); i++)
+    for (size_t i = 0; i < m_selectables.size(); i++)
     {
-        if(obj == m_selectables[i])
+        if (obj == m_selectables[i])
         {
             m_selectables.remove(i);
             m_selectableCallbacks.remove(i);
@@ -1067,7 +1067,7 @@ CIMOMEnvironment::exportIndication(const CIMInstance& instance,
 	const String& instNS)
 {
 	logDebug("CIMOMEnvironment::exportIndication");
-	if(m_indicationServer && !m_indicationsDisabled)
+	if (m_indicationServer && !m_indicationsDisabled)
 	{
 		logDebug("CIMOMEnvironment::exportIndication - calling indication"
 			" server");

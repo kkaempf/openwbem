@@ -53,7 +53,7 @@ HDBNode::HDBNodeData::HDBNodeData(const HDBNodeData& x) :
 	IntrusiveCountableBase(x), m_blk(x.m_blk), m_key(x.m_key), m_bfrLen(x.m_bfrLen), m_bfr(NULL),
 	m_offset(x.m_offset), m_version(0)
 {
-	if(m_bfrLen > 0)
+	if (m_bfrLen > 0)
 	{
 		m_bfr = new unsigned char[m_bfrLen];
 		::memcpy(m_bfr, x.m_bfr, m_bfrLen);
@@ -74,7 +74,7 @@ HDBNode::HDBNodeData::operator= (const HDBNode::HDBNodeData& x)
 	delete [] m_bfr;
 	m_bfr = NULL;
 	m_bfrLen = x.m_bfrLen;
-	if(m_bfrLen > 0)
+	if (m_bfrLen > 0)
 	{
 		m_bfr = new unsigned char[m_bfrLen];
 		::memcpy(m_bfr, x.m_bfr, m_bfrLen);
@@ -86,12 +86,12 @@ HDBNode::HDBNodeData::operator= (const HDBNode::HDBNodeData& x)
 HDBNode::HDBNode(const char* key, HDBHandle& hdl) :
 	m_pdata(NULL)
 {
-	if(!key || !hdl)
+	if (!key || !hdl)
 	{
 		return;
 	}
 	IndexEntry ientry = hdl.findIndexEntry(key);
-	if(!ientry)
+	if (!ientry)
 	{
 		return;
 	}
@@ -101,7 +101,7 @@ HDBNode::HDBNode(const char* key, HDBHandle& hdl) :
 HDBNode::HDBNode(Int32 offset, HDBHandle& hdl) :
 	m_pdata(NULL)
 {
-	if(!hdl || offset <= 0)
+	if (!hdl || offset <= 0)
 	{
 		return;
 	}
@@ -112,7 +112,7 @@ HDBNode::HDBNode(const String& key, int dataLen,
 	const unsigned char* data) :
 	m_pdata(NULL)
 {
-	if(key.empty())
+	if (key.empty())
 	{
 		return;
 	}
@@ -120,7 +120,7 @@ HDBNode::HDBNode(const String& key, int dataLen,
 	m_pdata->m_offset = -1;
 	m_pdata->m_version = 0;
 	m_pdata->m_key = key;
-	if(dataLen && data != NULL)
+	if (dataLen && data != NULL)
 	{
 		m_pdata->m_bfr = new unsigned char[dataLen];
 		::memcpy(m_pdata->m_bfr, data, dataLen);
@@ -144,7 +144,7 @@ HDBNode::HDBNode(const String& key, int dataLen,
 void
 HDBNode::read(Int32 offset, HDBHandle& hdl)
 {
-	if(offset <= 0 || !hdl)
+	if (offset <= 0 || !hdl)
 	{
 		OW_THROW(HDBException, "Invalid offset to read node from");
 	}
@@ -155,12 +155,12 @@ HDBNode::read(Int32 offset, HDBHandle& hdl)
 	
 	HDB::readBlock(fblk, file, offset);
 	// If previously deleted, don't do anything
-	if(fblk.isFree)
+	if (fblk.isFree)
 	{
 		return;
 	}
 	char* kbfr = new char[fblk.keyLength];
-	if(file.read(kbfr, fblk.keyLength) != size_t(fblk.keyLength))
+	if (file.read(kbfr, fblk.keyLength) != size_t(fblk.keyLength))
 	{
 		delete [] kbfr;
 		OW_THROW(HDBException, "Failed to read key for node");
@@ -170,10 +170,10 @@ HDBNode::read(Int32 offset, HDBHandle& hdl)
 	String key(String::E_TAKE_OWNERSHIP, kbfr, fblk.keyLength - 1);
 	unsigned char* bfr = NULL;
 	int dataLen = fblk.dataLength - fblk.keyLength;
-	if(dataLen > 0)
+	if (dataLen > 0)
 	{
 		bfr = new unsigned char[dataLen];
-		if(file.read(bfr, dataLen) != size_t(dataLen))
+		if (file.read(bfr, dataLen) != size_t(dataLen))
 		{
 			delete [] bfr;
 			OW_THROW(HDBException, "Failed to data for node");
@@ -192,18 +192,18 @@ bool
 HDBNode::reload(HDBHandle& hdl)
 {
 	// If this is a null node, don't attempt to re-load
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		return false;
 	}
 	// If this node has never been written, don't attempt to re-load
-	if(m_pdata->m_offset <= 0)
+	if (m_pdata->m_offset <= 0)
 	{
 		return true;
 	}
 	// If no writes were done to the database before the last
 	// read, don't re-load
-	if(hdl.getHDB()->getVersion() == m_pdata->m_version)
+	if (hdl.getHDB()->getVersion() == m_pdata->m_version)
 	{
 		return true;
 	}
@@ -220,17 +220,17 @@ HDBNode::reload(HDBHandle& hdl)
 		return false;
 	}
 	// If previously deleted, don't do anything
-	if(fblk.isFree)
+	if (fblk.isFree)
 	{
 		setNull();
 		return false;
 	}
 	AutoPtrVec<char> kbfr(new char[fblk.keyLength]);
-	if(file.read(kbfr.get(), fblk.keyLength) != size_t(fblk.keyLength))
+	if (file.read(kbfr.get(), fblk.keyLength) != size_t(fblk.keyLength))
 	{
 		return false;
 	}
-	if(!m_pdata->m_key.equals(kbfr.get()))
+	if (!m_pdata->m_key.equals(kbfr.get()))
 	{
 		// If the key has changed, assume this node was deleted and the
 		// space is now occupied by a different node.
@@ -238,7 +238,7 @@ HDBNode::reload(HDBHandle& hdl)
 		return false;
 	}
 	int dataLen = fblk.dataLength - fblk.keyLength;
-	if(fblk.dataLength != m_pdata->m_blk.dataLength)
+	if (fblk.dataLength != m_pdata->m_blk.dataLength)
 	{
 		// Length of data for node has changed, so delete the old
 		// data buffer
@@ -248,13 +248,13 @@ HDBNode::reload(HDBHandle& hdl)
 	
 	// If there is data for the node, then allocate the buffer for it
 	// and read the data
-	if(dataLen > 0)
+	if (dataLen > 0)
 	{
-		if(m_pdata->m_bfr == NULL)
+		if (m_pdata->m_bfr == NULL)
 		{
 			m_pdata->m_bfr = new unsigned char[dataLen];
 		}
-		if(file.read(m_pdata->m_bfr, dataLen) != size_t(dataLen))
+		if (file.read(m_pdata->m_bfr, dataLen) != size_t(dataLen))
 		{
 			setNull();		// this will delete m_pdata->m_bfr;
 			return false;
@@ -269,16 +269,16 @@ HDBNode::reload(HDBHandle& hdl)
 bool
 HDBNode::turnFlagsOn(HDBHandle& hdl, UInt32 flags)
 {
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		return false;
 	}
 	bool cc = false;
 	flags |= m_pdata->m_blk.flags;
-	if(flags != m_pdata->m_blk.flags)
+	if (flags != m_pdata->m_blk.flags)
 	{
 		m_pdata->m_blk.flags = flags;
-		if(m_pdata->m_offset > 0)
+		if (m_pdata->m_offset > 0)
 		{
 			write(hdl);
 		}
@@ -290,16 +290,16 @@ HDBNode::turnFlagsOn(HDBHandle& hdl, UInt32 flags)
 bool
 HDBNode::turnFlagsOff(HDBHandle& hdl, UInt32 flags)
 {
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		return false;
 	}
 	bool cc = false;
 	flags = m_pdata->m_blk.flags & (~flags);
-	if(flags != m_pdata->m_blk.flags)
+	if (flags != m_pdata->m_blk.flags)
 	{
 		m_pdata->m_blk.flags = flags;
-		if(m_pdata->m_offset > 0)
+		if (m_pdata->m_offset > 0)
 		{
 			write(hdl);
 		}
@@ -312,13 +312,13 @@ bool
 HDBNode::updateData(HDBHandle& hdl, int dataLen, const unsigned char* data)
 {
 	bool cc = false;
-	if(m_pdata)
+	if (m_pdata)
 	{
 		// If this node was read from file, make sure we are dealing with
 		// an up to date version.
-		if(m_pdata->m_offset > 0)
+		if (m_pdata->m_offset > 0)
 		{
-			if(!reload(hdl))
+			if (!reload(hdl))
 			{
 				// Node is no longer on file
 				return false;
@@ -326,15 +326,15 @@ HDBNode::updateData(HDBHandle& hdl, int dataLen, const unsigned char* data)
 		}
 		cc = true;
 		// If the data len has changed - we'll be using a different buffer
-		if(dataLen != m_pdata->m_bfrLen)
+		if (dataLen != m_pdata->m_bfrLen)
 		{
 			delete [] m_pdata->m_bfr;
 			m_pdata->m_bfr = NULL;
 			m_pdata->m_bfrLen = 0;
 		}
-		if(dataLen > 0 && data != NULL)
+		if (dataLen > 0 && data != NULL)
 		{
-			if(m_pdata->m_bfr == NULL)
+			if (m_pdata->m_bfr == NULL)
 			{
 				m_pdata->m_bfr = new unsigned char[dataLen];
 			}
@@ -342,7 +342,7 @@ HDBNode::updateData(HDBHandle& hdl, int dataLen, const unsigned char* data)
 			::memcpy(m_pdata->m_bfr, data, dataLen);
 		}
 		// If this node is already on file, then write changes to file
-		if(m_pdata->m_offset > 0)
+		if (m_pdata->m_offset > 0)
 		{
 			write(hdl);
 		}
@@ -353,7 +353,7 @@ HDBNode::updateData(HDBHandle& hdl, int dataLen, const unsigned char* data)
 Int32
 HDBNode::write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader)
 {
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		OW_THROW(HDBException, "Cannot write null node");
 	}
@@ -364,12 +364,12 @@ HDBNode::write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader)
 	HDB* phdb = hdl.getHDB();
 	int totalSize = m_pdata->m_blk.dataLength + sizeof(m_pdata->m_blk);
 	m_pdata->m_blk.isFree = false;
-	if(m_pdata->m_offset <= 0)	// Is this a new node?
+	if (m_pdata->m_offset <= 0)	// Is this a new node?
 	{
 		newRecord = true;
 		m_pdata->m_blk.size = totalSize;
 		m_pdata->m_offset = phdb->findBlock(file, totalSize);
-		if(m_pdata->m_blk.parent <= 0)
+		if (m_pdata->m_blk.parent <= 0)
 		{
 			phdb->addRootNode(file, m_pdata->m_blk, m_pdata->m_offset);
 		}
@@ -387,7 +387,7 @@ HDBNode::write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader)
 	{
 		// If the size required to hold this node has increased,
 		// then delete the old block and add a new one.
-		if(totalSize > int(m_pdata->m_blk.size))
+		if (totalSize > int(m_pdata->m_blk.size))
 		{
 			HDBBlock node = m_pdata->m_blk;
 			phdb->addBlockToFreeList(file, node, m_pdata->m_offset); // delete old
@@ -396,15 +396,15 @@ HDBNode::write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader)
 		}
 		HDB::writeBlock(m_pdata->m_blk, file, m_pdata->m_offset);
 	}
-	if(onlyHeader == false || newRecord == true)
+	if (onlyHeader == false || newRecord == true)
 	{
 		// Now write key and data for node
-		if(file.write(m_pdata->m_key.c_str(), m_pdata->m_key.length()+1)
+		if (file.write(m_pdata->m_key.c_str(), m_pdata->m_key.length()+1)
 			!= m_pdata->m_key.length()+1)
 		{
 			OW_THROW(HDBException, "Failed to write node key");
 		}
-		if(file.write(m_pdata->m_bfr, m_pdata->m_bfrLen)
+		if (file.write(m_pdata->m_bfr, m_pdata->m_bfrLen)
 			!= size_t(m_pdata->m_bfrLen))
 		{
 			OW_THROW(HDBException, "Failed to write node data");
@@ -417,58 +417,58 @@ HDBNode::write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader)
 void
 HDBNode::updateOffsets(HDBHandle& hdl, Int32 offset)
 {
-	if(offset <= 0L || !m_pdata || !hdl)
+	if (offset <= 0L || !m_pdata || !hdl)
 	{
 		return;
 	}
 	HDB* pdb = hdl.getHDB();
 	File file = hdl.getFile();
 	HDBBlock fblk;
-	if(m_pdata->m_blk.prevSib > 0)
+	if (m_pdata->m_blk.prevSib > 0)
 	{
 		HDB::readBlock(fblk, file, m_pdata->m_blk.prevSib);
 		fblk.nextSib = offset;
 		HDB::writeBlock(fblk, file, m_pdata->m_blk.prevSib);
 	}
-	if(m_pdata->m_blk.nextSib > 0)
+	if (m_pdata->m_blk.nextSib > 0)
 	{
 		HDB::readBlock(fblk, file, m_pdata->m_blk.nextSib);
 		fblk.prevSib = offset;
 		HDB::writeBlock(fblk, file, m_pdata->m_blk.nextSib);
 	}
-	if(m_pdata->m_blk.parent > 0)
+	if (m_pdata->m_blk.parent > 0)
 	{
 		HDB::readBlock(fblk, file, m_pdata->m_blk.parent);
 		bool doUpdate = false;
-		if(fblk.firstChild == m_pdata->m_offset)
+		if (fblk.firstChild == m_pdata->m_offset)
 		{
 			fblk.firstChild = offset;
 			doUpdate = true;
 		}
-		if(fblk.lastChild == m_pdata->m_offset)
+		if (fblk.lastChild == m_pdata->m_offset)
 		{
 			fblk.lastChild = offset;
 			doUpdate = true;
 		}
-		if(doUpdate)
+		if (doUpdate)
 		{
 			HDB::writeBlock(fblk, file, m_pdata->m_blk.parent);
 		}
 	}
 	else	// No parent. Must be a root node
 	{
-		if(pdb->getFirstRootOffSet() == m_pdata->m_offset)
+		if (pdb->getFirstRootOffSet() == m_pdata->m_offset)
 		{
 			pdb->setFirstRootOffSet(file, offset);
 		}
-		if(pdb->getLastRootOffset() == m_pdata->m_offset)
+		if (pdb->getLastRootOffset() == m_pdata->m_offset)
 		{
 			pdb->setLastRootOffset(file, offset);
 		}
 	}
 	// Now update the parent offset on all children
 	Int32 coffset = m_pdata->m_blk.firstChild;
-	while(coffset > 0)
+	while (coffset > 0)
 	{
 		HDB::readBlock(fblk, file, coffset);
 		fblk.parent = offset;
@@ -483,14 +483,14 @@ HDBNode::updateOffsets(HDBHandle& hdl, Int32 offset)
 void
 HDBNode::addChild(HDBHandle& hdl, HDBNode& arg)
 {
-	if(!arg)
+	if (!arg)
 	{
 		return;
 	}
 	// If this node has never been written, then write it before
 	// we create a child. If we don't do this, we don't have
 	// a parent offset to put in the child node
-	if(m_pdata->m_offset <= 0)
+	if (m_pdata->m_offset <= 0)
 	{
 		write(hdl);
 	}
@@ -498,11 +498,11 @@ HDBNode::addChild(HDBHandle& hdl, HDBNode& arg)
 	// child of another parent, throw and exception.
 	// If it is already a child of this node, then just write it out
 	// and return.
-	if(arg.m_pdata->m_offset > 0)
+	if (arg.m_pdata->m_offset > 0)
 	{
 		// If this node is already the parent, then just
 		// write the child node and return
-		if(arg.m_pdata->m_blk.parent == m_pdata->m_offset)
+		if (arg.m_pdata->m_blk.parent == m_pdata->m_offset)
 		{
 			arg.write(hdl);
 			return;
@@ -516,7 +516,7 @@ HDBNode::addChild(HDBHandle& hdl, HDBNode& arg)
 	File file = hdl.getFile();
 	// If this node already had children, then update the last node in the
 	// child list to point to the new node.
-	if(m_pdata->m_blk.lastChild > 0)
+	if (m_pdata->m_blk.lastChild > 0)
 	{
 		HDBBlock node;
 		HDB::readBlock(node, file, m_pdata->m_blk.lastChild);
@@ -526,7 +526,7 @@ HDBNode::addChild(HDBHandle& hdl, HDBNode& arg)
 		HDB::writeBlock(node, file, m_pdata->m_blk.lastChild);
 	}
 	m_pdata->m_blk.lastChild = arg.m_pdata->m_offset;
-	if(m_pdata->m_blk.firstChild <= 0)
+	if (m_pdata->m_blk.firstChild <= 0)
 	{
 		m_pdata->m_blk.firstChild = m_pdata->m_blk.lastChild;
 	}
@@ -537,7 +537,7 @@ bool
 HDBNode::remove(HDBHandle& hdl)
 {
 	// If node hasn't been written yet, don't do anything.
-	if(m_pdata->m_offset <= 0)
+	if (m_pdata->m_offset <= 0)
 	{
 		return false;
 	}
@@ -547,7 +547,7 @@ HDBNode::remove(HDBHandle& hdl)
 	// Remove all children
 	Int32 coffset = m_pdata->m_blk.lastChild;
 	Int32 toffset;
-	while(coffset > 0)
+	while (coffset > 0)
 	{
 		HDB::readBlock(fblk, file, coffset);
 		toffset = coffset;			// Save offset for deletion class
@@ -556,41 +556,41 @@ HDBNode::remove(HDBHandle& hdl)
 		removeBlock(hdl, fblk, toffset);
 	}
 	// Set pointer on next sibling if it exists
-	if(m_pdata->m_blk.nextSib > 0)
+	if (m_pdata->m_blk.nextSib > 0)
 	{
 		HDB::readBlock(fblk, file, m_pdata->m_blk.nextSib);
 		fblk.prevSib = m_pdata->m_blk.prevSib;
 		HDB::writeBlock(fblk, file, m_pdata->m_blk.nextSib);
 	}
 	// Set pointer on prev sibling if it exists
-	if(m_pdata->m_blk.prevSib > 0)
+	if (m_pdata->m_blk.prevSib > 0)
 	{
 		HDB::readBlock(fblk, file, m_pdata->m_blk.prevSib);
 		fblk.nextSib = m_pdata->m_blk.nextSib;
 		HDB::writeBlock(fblk, file, m_pdata->m_blk.prevSib);
 	}
 	// If it has a parent, insure parent doesn't contain it's offset
-	if(m_pdata->m_blk.parent > 0)
+	if (m_pdata->m_blk.parent > 0)
 	{
 		// Read parent block
 		HDB::readBlock(fblk, file, m_pdata->m_blk.parent);
 		bool changed = false;
 		// If this was the first child in the list, then update the
 		// first child pointer in the parent block
-		if(fblk.firstChild == m_pdata->m_offset)
+		if (fblk.firstChild == m_pdata->m_offset)
 		{
 			changed = true;
 			fblk.firstChild = m_pdata->m_blk.nextSib;
 		}
 		// If this was the last child in the list, then update the
 		// last child pointer in the parent block
-		if(fblk.lastChild == m_pdata->m_offset)
+		if (fblk.lastChild == m_pdata->m_offset)
 		{
 			changed = true;
 			fblk.lastChild = m_pdata->m_blk.prevSib;
 		}
 		// If any offsets changed in the parent block, then update the parent
-		if(changed)
+		if (changed)
 		{
 			HDB::writeBlock(fblk, file, m_pdata->m_blk.parent);
 		}
@@ -598,11 +598,11 @@ HDBNode::remove(HDBHandle& hdl)
 	else
 	{
 		// Must be a root node
-		if(pdb->getFirstRootOffSet() == m_pdata->m_offset)
+		if (pdb->getFirstRootOffSet() == m_pdata->m_offset)
 		{
 			pdb->setFirstRootOffSet(file, m_pdata->m_blk.nextSib);
 		}
-		if(pdb->getLastRootOffset() == m_pdata->m_offset)
+		if (pdb->getLastRootOffset() == m_pdata->m_offset)
 		{
 			pdb->setLastRootOffset(file, m_pdata->m_blk.prevSib);
 		}
@@ -636,9 +636,9 @@ HDBNode::removeBlock(HDBHandle& hdl, HDBBlock& fblk, Int32 offset)
 		pbfr(new unsigned char[LMAX(sizeof(fblk), fblk.keyLength)]);
 	File file = hdl.getFile();
 	Int32 coffset = fblk.lastChild;
-	if(coffset > 0)
+	if (coffset > 0)
 	{
-		while(coffset > 0)
+		while (coffset > 0)
 		{
 			HDB::readBlock(*(reinterpret_cast<HDBBlock*>(pbfr.get())), file, coffset);
 			// Save current offset for call to removeBlock
@@ -650,7 +650,7 @@ HDBNode::removeBlock(HDBHandle& hdl, HDBBlock& fblk, Int32 offset)
 		}
 	}
 	// Need to read the key for this block to update the index
-	if(file.read(pbfr.get(), fblk.keyLength, offset + sizeof(fblk))
+	if (file.read(pbfr.get(), fblk.keyLength, offset + sizeof(fblk))
 		!= size_t(fblk.keyLength))
 	{
 		OW_THROW(HDBException, "Failed to read node's key for removal");

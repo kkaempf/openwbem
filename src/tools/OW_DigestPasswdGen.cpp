@@ -96,20 +96,20 @@ int main(int argc, char* argv[])
 		hostname = iaddr.getName();
 	}
 	ofstream outfile(filename.c_str(), std::ios::app);
-	if(!outfile)
+	if (!outfile)
 	{
 		cerr << "Unable to open password file " << filename << endl;
 		exit(1);
 	}
 	if (passwd.empty())
 	{
-		for(;;)
+		for (;;)
 		{
 			passwd = GetPass::getPass("Please enter the password for " +
 				name + ": ");
 			String rePasswd = GetPass::getPass("Please retype the password for " +
 				name + ": ");
-			if(passwd.equals(rePasswd))
+			if (passwd.equals(rePasswd))
 			{
 				break;
 			}

@@ -48,8 +48,8 @@ template<class T1, class T2>
 bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T2& lhs2, const T2& rhs2)
 {
-	if(lhs1 < rhs1) return true;
-	else if(rhs1 < lhs1) return false;
+	if (lhs1 < rhs1) return true;
+	else if (rhs1 < lhs1) return false;
 	else return StrictWeakOrdering(lhs2, rhs2);
 }
 template<class T1, class T2, class T3>
@@ -57,8 +57,8 @@ bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T2& lhs2, const T2& rhs2,
 		const T3& lhs3, const T3& rhs3)
 {
-	if(lhs1 < rhs1) return true;
-	else if(rhs1 < lhs1) return false;
+	if (lhs1 < rhs1) return true;
+	else if (rhs1 < lhs1) return false;
 	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3);
 }
@@ -68,8 +68,8 @@ bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T3& lhs3, const T3& rhs3,
 		const T4& lhs4, const T4& rhs4)
 {
-	if(lhs1 < rhs1) return true;
-	else if(rhs1 < lhs1) return false;
+	if (lhs1 < rhs1) return true;
+	else if (rhs1 < lhs1) return false;
 	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4);
@@ -81,8 +81,8 @@ bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T4& lhs4, const T4& rhs4,
 		const T5& lhs5, const T5& rhs5)
 {
-	if(lhs1 < rhs1) return true;
-	else if(rhs1 < lhs1) return false;
+	if (lhs1 < rhs1) return true;
+	else if (rhs1 < lhs1) return false;
 	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4,
@@ -96,8 +96,8 @@ bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T5& lhs5, const T5& rhs5,
 		const T6& lhs6, const T6& rhs6)
 {
-	if(lhs1 < rhs1) return true;
-	else if(rhs1 < lhs1) return false;
+	if (lhs1 < rhs1) return true;
+	else if (rhs1 < lhs1) return false;
 	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4,
@@ -114,8 +114,8 @@ bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T6& lhs6, const T6& rhs6,
 		const T7& lhs7, const T7& rhs7)
 {
-	if(lhs1 < rhs1) return true;
-	else if(rhs1 < lhs1) return false;
+	if (lhs1 < rhs1) return true;
+	else if (rhs1 < lhs1) return false;
 	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4,
@@ -134,8 +134,8 @@ bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T7& lhs7, const T7& rhs7,
 		const T8& lhs8, const T8& rhs8)
 {
-	if(lhs1 < rhs1) return true;
-	else if(rhs1 < lhs1) return false;
+	if (lhs1 < rhs1) return true;
+	else if (rhs1 < lhs1) return false;
 	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4,
@@ -156,8 +156,8 @@ bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T8& lhs8, const T8& rhs8,
 		const T9& lhs9, const T9& rhs9)
 {
-	if(lhs1 < rhs1) return true;
-	else if(rhs1 < lhs1) return false;
+	if (lhs1 < rhs1) return true;
+	else if (rhs1 < lhs1) return false;
 	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4,
@@ -180,8 +180,8 @@ bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T9& lhs9, const T9& rhs9,
 		const T10& lhs10, const T10& rhs10)
 {
-	if(lhs1 < rhs1) return true;
-	else if(rhs1 < lhs1) return false;
+	if (lhs1 < rhs1) return true;
+	else if (rhs1 < lhs1) return false;
 	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4,

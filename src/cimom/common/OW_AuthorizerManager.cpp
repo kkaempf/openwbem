@@ -167,9 +167,9 @@ AuthorizerManager::~AuthorizerManager()
 void 
 AuthorizerManager::init(CIMOMEnvironmentRef& env)
 {
-	if(!m_initialized)
+	if (!m_initialized)
 	{
-		if(m_authorizer)
+		if (m_authorizer)
 		{
 			OperationContext oc;
 			ServiceEnvironmentIFCRef envref = createAuthEnvRef(oc, env);
@@ -195,7 +195,7 @@ AuthorizerManager::allowReadInstance(
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(context)
+	if (AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
 	   || !isOn(context))
@@ -222,7 +222,7 @@ AuthorizerManager::allowWriteInstance(
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(context)
+	if (AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
 	   || !isOn(context))
@@ -246,7 +246,7 @@ AuthorizerManager::allowReadSchema(
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(context)
+	if (AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
 	   || !isOn(context))
@@ -270,7 +270,7 @@ AuthorizerManager::allowWriteSchema(
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(context)
+	if (AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
 	   || !isOn(context))
@@ -294,7 +294,7 @@ AuthorizerManager::allowAccessToNameSpace(
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(context)
+	if (AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
 	   || !isOn(context))
@@ -317,7 +317,7 @@ AuthorizerManager::allowCreateNameSpace(
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(context)
+	if (AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
 	   || !isOn(context))
@@ -339,7 +339,7 @@ AuthorizerManager::allowDeleteNameSpace(
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(context)
+	if (AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
 	   || !isOn(context))
@@ -361,7 +361,7 @@ AuthorizerManager::allowEnumNameSpace(
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(context)
+	if (AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
 	   || !isOn(context))
@@ -386,7 +386,7 @@ AuthorizerManager::allowMethodInvocation(
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(context)
+	if (AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
 	   || !isOn(context))

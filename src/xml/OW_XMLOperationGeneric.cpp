@@ -48,12 +48,12 @@ using std::ostream;
 void
 XMLOperationGeneric::XMLGetCIMElement(CIMXMLParser& parser)
 {
-	if(!parser.tokenIsId(CIMXMLParser::E_CIM))
+	if (!parser.tokenIsId(CIMXMLParser::E_CIM))
 	{
 		OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 	}
 	String str = parser.mustGetAttribute(CIMXMLParser::A_CIMVERSION);
-	if(!str.equals(CIMXMLParser::AV_CIMVERSION20_VALUE) &&
+	if (!str.equals(CIMXMLParser::AV_CIMVERSION20_VALUE) &&
 		!str.equals(CIMXMLParser::AV_CIMVERSION21_VALUE) &&
 	!str.equals(CIMXMLParser::AV_CIMVERSION22_VALUE))
 	{
@@ -61,14 +61,14 @@ XMLOperationGeneric::XMLGetCIMElement(CIMXMLParser& parser)
 			CIMErrorException::unsupported_cim_version);
 	}
 	str = parser.mustGetAttribute(CIMXMLParser::A_DTDVERSION);
-	if(!str.equals(CIMXMLParser::AV_DTDVERSION20_VALUE) &&
+	if (!str.equals(CIMXMLParser::AV_DTDVERSION20_VALUE) &&
 		!str.equals(CIMXMLParser::AV_DTDVERSION21_VALUE))
 	{
 		OW_THROW(CIMErrorException,
 			CIMErrorException::unsupported_dtd_version);
 	}
 	parser.getChild();
-	if(!parser)
+	if (!parser)
 	{
 		OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 	}

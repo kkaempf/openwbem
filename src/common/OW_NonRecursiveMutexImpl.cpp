@@ -72,7 +72,7 @@ createMutex(NonRecursiveMutex_t& handle)
 	int cc = -1;
 	__try
 	{
-		if((handle = CreateMutex(NULL, FALSE, NULL)))
+		if ((handle = CreateMutex(NULL, FALSE, NULL)))
 		{
 			cc = 0;
 		}
@@ -144,7 +144,7 @@ acquireMutex(NonRecursiveMutex_t& handle)
 	int cc = -1;
 	__try
 	{
-		if(WaitForSingleObject(handle, INFINITE) != WAIT_FAILED)
+		if (WaitForSingleObject(handle, INFINITE) != WAIT_FAILED)
 		{
 			cc = 0;
 		}
@@ -175,7 +175,7 @@ releaseMutex(NonRecursiveMutex_t& handle)
 	int cc = -1;
 	__try
 	{
-		if(ReleaseMutex(handle))
+		if (ReleaseMutex(handle))
 		{
 			cc = 0;
 		}

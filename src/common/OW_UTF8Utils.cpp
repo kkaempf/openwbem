@@ -202,17 +202,17 @@ String UCS4toUTF8(UInt32 ucs4char)
 /////////////////////////////////////////////////////////////////////////////
 void UCS4toUTF8(UInt32 ucs4char, StringBuffer& sb)
 {
-	if(ucs4char < 0x80u)
+	if (ucs4char < 0x80u)
 	{
 		// one byte
 		sb += static_cast<char>(static_cast<UInt8>(ucs4char));
 	}
-	else if(ucs4char < 0x800u)
+	else if (ucs4char < 0x800u)
 	{
 		sb += static_cast<char>(static_cast<UInt8>(0xc0u | (ucs4char >> 6)));
 		sb += static_cast<char>(static_cast<UInt8>(0x80u | (ucs4char & 0x3fu)));
 	}
-	else if(ucs4char < 0x10000u)
+	else if (ucs4char < 0x10000u)
 	{
 		sb += static_cast<char>(static_cast<UInt8>(0xe0u | (ucs4char >> 12)));
 		sb += static_cast<char>(static_cast<UInt8>(0x80u | ((ucs4char >> 6) & 0x3fu)));

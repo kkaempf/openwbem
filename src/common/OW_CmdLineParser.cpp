@@ -114,13 +114,13 @@ CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Opt
 				// long option
 				longOpt = true;
 				arg = arg.substring(2); // erase the --
-				theOpt = std::find_if(options,  optionsEnd, longOptIs(arg));
+				theOpt = std::find_if (options,  optionsEnd, longOptIs(arg));
 			}
 			else // short option
 			{
 				longOpt = false;
 				arg = arg.substring(1); // erase the -
-				theOpt = std::find_if(options,  optionsEnd, shortOptIs(arg[0]));
+				theOpt = std::find_if (options,  optionsEnd, shortOptIs(arg[0]));
 			}
 
 			if (theOpt == optionsEnd)

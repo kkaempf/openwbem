@@ -49,7 +49,7 @@ using std::endl;
 using std::cerr;
 using namespace OpenWBEM;
 
-#define TEST_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
+#define TEST_ASSERT(CON) if (!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
 
 namespace
 {

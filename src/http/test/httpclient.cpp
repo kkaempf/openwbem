@@ -37,14 +37,14 @@ int main( int iArgC, char *asArgV[] )
 {
 	try
 	{
-		if( iArgC != 2 )
+		if ( iArgC != 2 )
 		{
 			cout << "Usage: " << asArgV[ 0 ] << " <URL>" << endl;
 			cout << "Example: " << asArgV[ 0 ] << " https://Login:Password@cimom.example.com:5989/cimom" << endl;
 			return 1;
 		}
 		String sURL( asArgV[ 1 ] );
-		if( sURL.startsWith( "https://" ) )
+		if ( sURL.startsWith( "https://" ) )
 			SSLCtxMgr::initClient("/etc/ssl/private/hostkey+cert.pem");
 	
 		AutoPtrNoVec<HTTPClient> pClient;

@@ -62,7 +62,7 @@ int
 doLock(int hdl, bool doWait)
 {
 	HANDLE hFile = (HANDLE) _get_osfhandle(hdl);
-	if(hFile == INVALID_HANDLE_VALUE)
+	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		return -1;
 	}
@@ -70,7 +70,7 @@ doLock(int hdl, bool doWait)
 	DWORD flags = (doWait) ? LOCKFILE_EXCLUSIVE_LOCK
 		: LOCKFILE_FAIL_IMMEDIATELY;
 
-	if(!LockFileEx(hFile, flags, 0, 0xffffffff,
+	if (!LockFileEx(hFile, flags, 0, 0xffffffff,
 		0xffffffff, NULL))
 	{
 		return -1;
@@ -96,12 +96,12 @@ int
 File::unlock()
 {
 	HANDLE hFile = (HANDLE) _get_osfhandle(m_hdl);
-	if(hFile == INVALID_HANDLE_VALUE)
+	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		return -1;
 	}
 
-	if(!UnlockFileEx(hFile, 0, 0xffffffff, 0xffffffff, NULL))
+	if (!UnlockFileEx(hFile, 0, 0xffffffff, 0xffffffff, NULL))
 	{
 		return -1;
 	}

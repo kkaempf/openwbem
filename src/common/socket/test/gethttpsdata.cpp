@@ -66,7 +66,7 @@ main(int argc, char* argv[])
 		istream& istrm = sock.getInputStream();
 		string recievedChunk;
 		cout << "Receiving...\n";
-		while(istrm >> recievedChunk)
+		while (istrm >> recievedChunk)
 		{
 			cout << recievedChunk;
 		}

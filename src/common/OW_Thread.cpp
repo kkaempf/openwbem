@@ -96,7 +96,7 @@ Thread::~Thread()
 			join();
 		}
 		OW_ASSERT(m_isRunning == false);
-		if(!sameId(m_id, NULLTHREAD))
+		if (!sameId(m_id, NULLTHREAD))
 		{
 			ThreadImpl::destroyThread(m_id);
 		}
@@ -111,12 +111,12 @@ Thread::~Thread()
 void
 Thread::start(ThreadDoneCallbackRef cb)
 {
-	if(isRunning())
+	if (isRunning())
 	{
 		OW_THROW(ThreadException,
 			"Thread::start - thread is already running");
 	}
-	if(!sameId(m_id, NULLTHREAD))
+	if (!sameId(m_id, NULLTHREAD))
 	{
 		OW_THROW(ThreadException,
 			"Thread::start - cannot start previously run thread");
@@ -126,7 +126,7 @@ Thread::start(ThreadDoneCallbackRef cb)
 	ThreadBarrier thread_barrier(2);
 	// p will be delted by threadRunner
 	ThreadParam* p = new ThreadParam(this, cb, thread_barrier);
-	if(ThreadImpl::createThread(m_id, threadRunner, p, flgs) != 0)
+	if (ThreadImpl::createThread(m_id, threadRunner, p, flgs) != 0)
 	{
 		OW_THROW(Assertion, "ThreadImpl::createThread failed");
 	}
@@ -140,7 +140,7 @@ Thread::join()
 {
 	OW_ASSERT(!sameId(m_id, NULLTHREAD));
 	Int32 rval;
-	if(ThreadImpl::joinThread(m_id, rval) != 0)
+	if (ThreadImpl::joinThread(m_id, rval) != 0)
 	{
 		OW_THROW(ThreadException,
 			Format("Thread::join - ThreadImpl::joinThread: %1(%2)", 

@@ -112,13 +112,13 @@ CIMUrl::CIMUrl(const CIMUrl& context, const String& spec) :
 {
 	m_pdata->m_spec = spec;
 	setComponents();
-	if(m_pdata->m_protocol.empty())
+	if (m_pdata->m_protocol.empty())
 	{
 		m_pdata->m_protocol = context.getProtocol();
 	}
 	else
 	{
-		if(m_pdata->m_protocol == context.m_pdata->m_protocol)
+		if (m_pdata->m_protocol == context.m_pdata->m_protocol)
 		{
 			m_pdata->m_host = context.m_pdata->m_host;
 			m_pdata->m_port = context.m_pdata->m_port;
@@ -180,7 +180,7 @@ CIMUrl::setLocalHost()
 {
 	m_pdata->m_localHost = false;
 	m_pdata->m_host.trim();
-	if(m_pdata->m_host.empty()
+	if (m_pdata->m_host.empty()
 		|| m_pdata->m_host.equals("127.0.0.1")
 		|| m_pdata->m_host.equalsIgnoreCase("localhost"))
 	{
@@ -194,17 +194,17 @@ void
 CIMUrl::setDefaultValues()
 {
 	m_pdata->m_protocol.trim();
-	if(m_pdata->m_protocol.empty())
+	if (m_pdata->m_protocol.empty())
 	{
 		m_pdata->m_protocol = "http";
 	}
 	setLocalHost();
-	if(m_pdata->m_port <= 0)
+	if (m_pdata->m_port <= 0)
 	{
 		m_pdata->m_port = 5988;
 	}
 	m_pdata->m_file.trim();
-	if(m_pdata->m_file.empty())
+	if (m_pdata->m_file.empty())
 	{
 		m_pdata->m_file = "cimom";
 		m_pdata->m_ref = String();
@@ -255,7 +255,7 @@ CIMUrl::sameFile(const CIMUrl& arg) const
 void
 CIMUrl::setComponents()
 {
-	if(m_pdata->m_spec.empty())
+	if (m_pdata->m_spec.empty())
 	{
 		return;
 	}
@@ -267,7 +267,7 @@ CIMUrl::setComponents()
 	m_pdata->m_ref = String();
 	m_pdata->m_localHost = true;
 	size_t ndx = spec.indexOf("://");
-	if(ndx != String::npos)
+	if (ndx != String::npos)
 	{
 		m_pdata->m_protocol = spec.substring(0, ndx);
 		spec = spec.substring(ndx+3);
@@ -279,7 +279,7 @@ CIMUrl::setComponents()
 		spec = spec.substring(ndx + 1);
 	}
 	ndx = spec.indexOf('/');
-	if(ndx != String::npos)
+	if (ndx != String::npos)
 	{
 		m_pdata->m_host = spec.substring(0, ndx);
 		m_pdata->m_file = spec.substring(ndx+1);
@@ -290,7 +290,7 @@ CIMUrl::setComponents()
 		m_pdata->m_host = spec.substring(0);
 	}
 	ndx = m_pdata->m_host.indexOf(':');
-	if(ndx != String::npos)
+	if (ndx != String::npos)
 	{
 		String sport = m_pdata->m_host.substring(ndx+1);
 		try
@@ -311,10 +311,10 @@ CIMUrl::setComponents()
 void
 CIMUrl::checkRef()
 {
-	if(!m_pdata->m_file.empty())
+	if (!m_pdata->m_file.empty())
 	{
 		size_t ndx = m_pdata->m_file.indexOf('#');
-		if(ndx != String::npos)
+		if (ndx != String::npos)
 		{
 			m_pdata->m_ref = m_pdata->m_file.substring(ndx+1);
 			m_pdata->m_file = m_pdata->m_file.substring(0, ndx);
@@ -327,15 +327,15 @@ void
 CIMUrl::buildSpec()
 {
 	m_pdata->m_spec = m_pdata->m_protocol + "://" + m_pdata->m_host;
-	if(m_pdata->m_port > 0)
+	if (m_pdata->m_port > 0)
 	{
 		m_pdata->m_spec += ":" + String(m_pdata->m_port);
 	}
-	if(!m_pdata->m_file.empty())
+	if (!m_pdata->m_file.empty())
 	{
 		m_pdata->m_spec += "/" + m_pdata->m_file;
 	}
-	if(!m_pdata->m_ref.empty())
+	if (!m_pdata->m_ref.empty())
 	{
 		m_pdata->m_spec += "#" + m_pdata->m_ref;
 	}
@@ -349,7 +349,7 @@ CIMUrl::readObject(istream &istrm)
 	String spec;
 	spec.readObject(istrm);
 	
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		m_pdata = new URLData;
 	}

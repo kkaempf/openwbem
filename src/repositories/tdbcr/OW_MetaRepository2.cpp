@@ -147,7 +147,7 @@ MetaRepository2::getQualifierType(const String& ns,
 //     }
 //     GenericHDBRepository* prep;
 //     HDBHandle lhdl;
-//     if(phdl)
+//     if (phdl)
 //     {
 //         prep = NULL;
 //         lhdl = *phdl;
@@ -186,19 +186,19 @@ MetaRepository2::enumQualifierTypes(const String& ns,
 //     String nskey = _makeQualPath(ns, String());
 //     HDBHandleLock hdl(this, getHandle());
 //     HDBNode node = hdl->getNode(nskey);
-//     if(!node)
+//     if (!node)
 //     {
 //         OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns.c_str());
 //     }
-//     if(!node.areAllFlagsOn(HDBNSNODE_FLAG))
+//     if (!node.areAllFlagsOn(HDBNSNODE_FLAG))
 //     {
 //         OW_THROW(HDBException, "Expected namespace node");
 //     }
 //     node = hdl->getFirstChild(node);
-//     while(node)
+//     while (node)
 //     {
 //         // If this is not a namespace node, assume it's a qualifier
-//         if(!node.areAllFlagsOn(HDBNSNODE_FLAG))
+//         if (!node.areAllFlagsOn(HDBNSNODE_FLAG))
 //         {
 //             CIMQualifierType qual(CIMNULL);
 //             nodeToCIMObject(qual, node);
@@ -216,7 +216,7 @@ MetaRepository2::deleteQualifierType(const String& ns,
 //     String qkey = _makeQualPath(ns, qualName);
 //     HDBHandleLock hdl(this, getHandle());
 //     HDBNode node = hdl->getNode(qkey);
-//     if(!node)
+//     if (!node)
 //     {
 //         // Didn't find a node associated with the key
 //         return false;
@@ -237,13 +237,13 @@ MetaRepository2::_addQualifierType(const String& ns,
 	const CIMQualifierType& qt)
 {
 //     throwIfNotOpen();
-//     if(!qt)
+//     if (!qt)
 //     {
 //         OW_THROWCIM(CIMException::INVALID_PARAMETER);
 //     }
 //     GenericHDBRepository* prep;
 //     HDBHandle lhdl;
-//     if(phdl)
+//     if (phdl)
 //     {
 //         prep = 0;
 //         lhdl = *phdl;
@@ -256,10 +256,10 @@ MetaRepository2::_addQualifierType(const String& ns,
 //     HDBHandleLock hdl(prep, lhdl);
 //     String qkey = _makeQualPath(ns, qt.getName());
 //     HDBNode node = hdl->getNode(qkey);
-//     if(node)
+//     if (node)
 //     {
 //         String msg(ns);
-//         if(!ns.empty())
+//         if (!ns.empty())
 //         {
 //             msg += "/";
 //         }
@@ -267,7 +267,7 @@ MetaRepository2::_addQualifierType(const String& ns,
 //         OW_THROWCIMMSG(CIMException::ALREADY_EXISTS, msg.c_str());
 //     }
 //     HDBNode pnode = _getQualContainer(hdl, ns);
-//     if(!pnode)
+//     if (!pnode)
 //     {
 //         OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns.c_str());
 //     }
@@ -283,7 +283,7 @@ MetaRepository2::setQualifierType(const String& ns,
 //     String qkey = _makeQualPath(ns, qt.getName());
 //     HDBHandleLock hdl(this, getHandle());
 //     HDBNode node = hdl->getNode(qkey);
-//     if(!node)
+//     if (!node)
 //     {
 //         HDBHandle lhdl = hdl.getHandle();
 //         _addQualifierType(ns, qt, &lhdl);
@@ -312,11 +312,11 @@ MetaRepository2::getCIMClass(const String& ns, const String& className,
 //     throwIfNotOpen();
 //     String ckey = _makeClassPath(ns, className);
 //     cc = m_classCache.getFromCache(ckey);
-//     if(!cc)
+//     if (!cc)
 //     {
 //         HDBHandleLock hdl(this, getHandle());
 //         HDBNode node = hdl->getNode(ckey);
-//         if(node)
+//         if (node)
 //         {
 //             // _getClassFromNode throws if unable to get class.
 //             cc = _getClassFromNode(node, hdl.getHandle());
@@ -336,9 +336,9 @@ MetaRepository2::getCIMClass(const String& ns, const String& className,
 //     { // only clone if we have to
 //         StringArray lpropList;
 //         bool noProps = false;
-//         if(propertyList)
+//         if (propertyList)
 //         {
-//             if(propertyList->size() == 0)
+//             if (propertyList->size() == 0)
 //             {
 //                 noProps = true;
 //             }
@@ -365,7 +365,7 @@ MetaRepository2::deleteClass(const String& ns, const String& className)
 //     String ckey = _makeClassPath(ns, className);
 //     HDBHandleLock hdl(this, getHandle());
 //     HDBNode node = hdl->getNode(ckey);
-//     if(!node)
+//     if (!node)
 //     {
 //         return false;
 //     }
@@ -390,9 +390,9 @@ MetaRepository2::createClass(const String& ns, CIMClass& cimClass)
 //     // Ensure integrity with any super classes
 //     HDBNode pnode = adjustClass(ns, cimClass, hdl.getHandle());
 //     // pnode is null if there is no parent class, so get namespace node
-//     if(!pnode)
+//     if (!pnode)
 //     {
-//         if(!(pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns)))
+//         if (!(pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns)))
 //         {
 //             OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE,
 //                 ns.c_str());
@@ -400,7 +400,7 @@ MetaRepository2::createClass(const String& ns, CIMClass& cimClass)
 //     }
 //     String ckey = _makeClassPath(ns, cimClass.getName());
 //     HDBNode node = hdl->getNode(ckey);
-//     if(node)
+//     if (node)
 //     {
 //         OW_THROWCIMMSG(CIMException::ALREADY_EXISTS, ckey.c_str());
 //     }
@@ -419,7 +419,7 @@ MetaRepository2::modifyClass(const String& ns,
 //     adjustClass(ns, cimClass, hdl.getHandle());
 //     String ckey = _makeClassPath(ns, cimClass.getName());
 //     HDBNode node = hdl->getNode(ckey);
-//     if(!node)
+//     if (!node)
 //     {
 //         OW_THROWCIMMSG(CIMException::NOT_FOUND, ckey.c_str());
 //     }
@@ -442,14 +442,14 @@ MetaRepository2::enumClass(const String& ns, const String& className,
 //     throwIfNotOpen();
 //     HDBHandleLock hdl(this, getHandle());
 //     HDBNode pnode;
-//     if(!className.empty())
+//     if (!className.empty())
 //     {
 //         String ckey = _makeClassPath(ns, className);
 //         pnode = hdl->getNode(ckey);
-//         if(!pnode)
+//         if (!pnode)
 //         {
 //             pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns);
-//             if(!pnode)
+//             if (!pnode)
 //             {
 //                 OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns.c_str());
 //             }
@@ -467,15 +467,15 @@ MetaRepository2::enumClass(const String& ns, const String& className,
 //             ns2 = ns2.substring(1);
 //         }
 //         pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns2);
-//         if(!pnode)
+//         if (!pnode)
 //         {
 //             OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns2.c_str());
 //         }
 //     }
 //     pnode = hdl->getFirstChild(pnode);
-//     while(pnode)
+//     while (pnode)
 //     {
-//         if(!pnode.areAllFlagsOn(HDBNSNODE_FLAG))
+//         if (!pnode.areAllFlagsOn(HDBNSNODE_FLAG))
 //         {
 //             _getClassNodes(result, pnode, hdl.getHandle(), deep, localOnly,
 //                 includeQualifiers, includeClassOrigin);
@@ -505,7 +505,7 @@ MetaRepository2::deleteNameSpace(const String& nsName, OperationContext& context
 void
 MetaRepository2::createNameSpace(String ns, OperationContext& context)
 {
-	if(ns.empty())
+	if (ns.empty())
 	{
 		OW_THROWCIM(CIMException::INVALID_PARAMETER);
 	}

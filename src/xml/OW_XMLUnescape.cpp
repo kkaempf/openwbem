@@ -64,16 +64,16 @@ start:
 	goto yy0;
 	++YYCURSOR;
 yy0:
-	if((YYLIMIT - YYCURSOR) < 6) YYFILL(6);
+	if ((YYLIMIT - YYCURSOR) < 6) YYFILL(6);
 	yych = *YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '\000':	goto yy5;
 	case '&':	goto yy2;
 	default:	goto yy4;
 	}
 yy2:	yyaccept = 0;
 	yych = *(YYMARKER = ++YYCURSOR);
-	switch(yych){
+	switch (yych){
 	case '#':	goto yy7;
 	case 'a':	goto yy9;
 	case 'g':	goto yy12;
@@ -90,7 +90,7 @@ yy5:
 #line 91
 	{ return rval.releaseString(); }
 yy7:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '0':
 	case '1':
 	case '2':
@@ -105,32 +105,32 @@ yy7:	yych = *++YYCURSOR;
 	default:	goto yy8;
 	}
 yy8:	YYCURSOR = YYMARKER;
-	switch(yyaccept){
+	switch (yyaccept){
 	case 0:	goto yy3;
 	}
 yy9:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'm':	goto yy24;
 	case 'p':	goto yy25;
 	default:	goto yy8;
 	}
 yy10:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'u':	goto yy19;
 	default:	goto yy8;
 	}
 yy11:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 't':	goto yy16;
 	default:	goto yy8;
 	}
 yy12:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 't':	goto yy13;
 	default:	goto yy8;
 	}
 yy13:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case ';':	goto yy14;
 	default:	goto yy8;
 	}
@@ -138,7 +138,7 @@ yy14:	yych = *++YYCURSOR;
 #line 63
 	{ rval += ">"; thisTokStart = YYCURSOR; goto start; }
 yy16:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case ';':	goto yy17;
 	default:	goto yy8;
 	}
@@ -146,17 +146,17 @@ yy17:	yych = *++YYCURSOR;
 #line 64
 	{ rval += "<"; thisTokStart = YYCURSOR; goto start; }
 yy19:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'o':	goto yy20;
 	default:	goto yy8;
 	}
 yy20:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 't':	goto yy21;
 	default:	goto yy8;
 	}
 yy21:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case ';':	goto yy22;
 	default:	goto yy8;
 	}
@@ -164,22 +164,22 @@ yy22:	yych = *++YYCURSOR;
 #line 66
 	{ rval += "\""; thisTokStart = YYCURSOR; goto start; }
 yy24:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'p':	goto yy30;
 	default:	goto yy8;
 	}
 yy25:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'o':	goto yy26;
 	default:	goto yy8;
 	}
 yy26:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 's':	goto yy27;
 	default:	goto yy8;
 	}
 yy27:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case ';':	goto yy28;
 	default:	goto yy8;
 	}
@@ -187,7 +187,7 @@ yy28:	yych = *++YYCURSOR;
 #line 67
 	{ rval += "'"; thisTokStart = YYCURSOR; goto start; }
 yy30:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case ';':	goto yy31;
 	default:	goto yy8;
 	}
@@ -195,7 +195,7 @@ yy31:	yych = *++YYCURSOR;
 #line 65
 	{ rval += "&"; thisTokStart = YYCURSOR; goto start; }
 yy33:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '0':
 	case '1':
 	case '2':
@@ -209,9 +209,9 @@ yy33:	yych = *++YYCURSOR;
 	default:	goto yy8;
 	}
 yy34:	++YYCURSOR;
-	if(YYLIMIT == YYCURSOR) YYFILL(1);
+	if (YYLIMIT == YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '0':
 	case '1':
 	case '2':
@@ -238,9 +238,9 @@ yy36:	yych = *++YYCURSOR;
 		thisTokStart = YYCURSOR; goto start;
 	}
 yy38:	++YYCURSOR;
-	if(YYLIMIT == YYCURSOR) YYFILL(1);
+	if (YYLIMIT == YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '0':
 	case '1':
 	case '2':

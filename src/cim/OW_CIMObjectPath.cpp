@@ -150,7 +150,7 @@ CIMObjectPath::operator= (const CIMObjectPath& x)
 CIMObjectPath&
 CIMObjectPath::addKey(const String& keyname, const CIMValue& value)
 {
-    if(value)
+    if (value)
     {
         CIMProperty cp(keyname, value);
         cp.setDataType(value.getCIMDataType());
@@ -321,44 +321,44 @@ CIMObjectPath::setClassName(const String& className)
 bool
 CIMObjectPath::equals(const CIMObjectPath& cop) const
 {
-	if(!m_pdata && !cop.m_pdata)
+	if (!m_pdata && !cop.m_pdata)
 	{
 		return true;
 	}
-	if(!m_pdata->m_nameSpace.getNameSpace().equalsIgnoreCase(
+	if (!m_pdata->m_nameSpace.getNameSpace().equalsIgnoreCase(
 		cop.m_pdata->m_nameSpace.getNameSpace()))
 	{
 		return false;
 	}
-	if(!m_pdata->m_objectName.equalsIgnoreCase(cop.m_pdata->m_objectName))
+	if (!m_pdata->m_objectName.equalsIgnoreCase(cop.m_pdata->m_objectName))
 	{
 		return false;
 	}
 	//
 	// An instance path
 	//
-	if(m_pdata->m_keys.size() != cop.m_pdata->m_keys.size())
+	if (m_pdata->m_keys.size() != cop.m_pdata->m_keys.size())
 	{
 		return false;
 	}
 	int maxNoKeys = m_pdata->m_keys.size();
-	for(int i = 0; i < maxNoKeys; i++)
+	for (int i = 0; i < maxNoKeys; i++)
 	{
 		CIMProperty cp1 = m_pdata->m_keys[i];
 		bool found = false;
-		for(int j = 0; j < maxNoKeys; j++)
+		for (int j = 0; j < maxNoKeys; j++)
 		{
 			CIMProperty cp2 = cop.m_pdata->m_keys[j];
-			if(cp1.getName().equalsIgnoreCase(cp2.getName()))
+			if (cp1.getName().equalsIgnoreCase(cp2.getName()))
 			{
-				if(cp1.getValue().equal(cp2.getValue()))
+				if (cp1.getValue().equal(cp2.getValue()))
 				{
 					found = true;
 					break;
 				}
 			}
 		}
-		if(!found)
+		if (!found)
 		{
 			return false;
 		}
@@ -376,12 +376,12 @@ String
 CIMObjectPath::modelPath() const
 {
 	StringBuffer rv(m_pdata->m_objectName);
-	if(m_pdata->m_keys.size() > 0)
+	if (m_pdata->m_keys.size() > 0)
 	{
-		for(size_t i = 0; i < m_pdata->m_keys.size(); i++)
+		for (size_t i = 0; i < m_pdata->m_keys.size(); i++)
 		{
 			CIMProperty cp = m_pdata->m_keys[i];
-			if(i > 0)
+			if (i > 0)
 			{
 				rv += ',';
 			}
@@ -404,16 +404,16 @@ CIMObjectPath::toString() const
 {
 	StringBuffer rv;
 	CIMUrl url = getNameSpaceUrl();
-	if(!url.isLocal())
+	if (!url.isLocal())
 	{
 		rv += m_pdata->m_nameSpace.getProtocol();
-		if(rv.length() == 0)
+		if (rv.length() == 0)
 		{
 			rv += "HTTP";
 		}
 		rv += "://";
 		String str = m_pdata->m_nameSpace.getHost();
-		if(str.empty())
+		if (str.empty())
 		{
 			str = "localhost";
 		}
@@ -426,7 +426,7 @@ CIMObjectPath::toString() const
 	}
 	rv += '/';
 	String strns = m_pdata->m_nameSpace.getNameSpace();
-//	if(strns.empty())
+//	if (strns.empty())
 //	{
 //		strns = "root";
 //	}
@@ -452,7 +452,7 @@ CIMObjectPath::readObject(istream& istrm)
 	nameSpace.readObject(istrm);
 	objectName.readObject(istrm);
 	BinarySerialization::readArray(istrm, keys);
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		m_pdata = new OPData;
 	}
@@ -475,7 +475,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 {
 	String instanceName(instanceNameArg);
 	instanceName.trim();
-	if(instanceName.empty())
+	if (instanceName.empty())
 	{
 		return CIMObjectPath(CIMNULL);
 	}
@@ -483,12 +483,12 @@ CIMObjectPath::parse(const String& instanceNameArg)
 	String host = "localhost";
 	Int32 port = 5988;
 	size_t ndx = instanceName.indexOf("://");
-	if(ndx != String::npos)
+	if (ndx != String::npos)
 	{
 		protocol = instanceName.substring(0, ndx);
 		instanceName.erase(0, ndx+3);
 		ndx = instanceName.indexOf('/');
-		if(ndx == String::npos)
+		if (ndx == String::npos)
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				Format("Invalid instance name: ", instanceNameArg).c_str());
@@ -496,7 +496,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 		host = instanceName.substring(0, ndx);
 		instanceName.erase(0, ndx+1);
 		ndx = host.indexOf(':');
-		if(ndx != String::npos)
+		if (ndx != String::npos)
 		{
 			try
 			{
@@ -512,21 +512,21 @@ CIMObjectPath::parse(const String& instanceNameArg)
 	}
 	else
 	{
-		if(instanceName.charAt(0) == '/')
+		if (instanceName.charAt(0) == '/')
 		{
 			instanceName.erase(0, 1);
 		}
 	}
 	String nameSpace = "root";
 	ndx = instanceName.indexOf(':');
-	if(ndx != String::npos)
+	if (ndx != String::npos)
 	{
 		nameSpace = instanceName.substring(0, ndx);
 		instanceName.erase(0, ndx+1);
 	}
 	String className;
 	ndx = instanceName.indexOf('.');
-	if(ndx == String::npos)
+	if (ndx == String::npos)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			Format("class name not found in instance name:: ",
@@ -540,7 +540,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 	op.m_pdata->m_nameSpace = ns;
 	//op.m_pdata->m_objectName = className;
 	int valuesLen = instanceName.length();
-	if(valuesLen == 0)
+	if (valuesLen == 0)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			Format("No key values found in instance name: ",
@@ -564,28 +564,28 @@ CIMObjectPath::parse(const String& instanceNameArg)
 	{
 		char ch = values[i];
 		// Skip escaped characters
-		if(i < valuesLen-1 && ch == '\\')
+		if (i < valuesLen-1 && ch == '\\')
 		{
 			i += 2;
 			continue;
 		}
 		// Check for quotes
-		if(ch == '\"')
+		if (ch == '\"')
 		{
 			inquote = !inquote;
 		}
-		if(inquote)
+		if (inquote)
 		{
 			++i;
 			continue;
 		}
-		if(ch == '=')
+		if (ch == '=')
 		{
 			equalspos = i+1;
 		}
-		if(ch == ',' || (i+1 == valuesLen))
+		if (ch == ',' || (i+1 == valuesLen))
 		{
-			if((i+1 == valuesLen) && equalspos == 0 && singleKey)
+			if ((i+1 == valuesLen) && equalspos == 0 && singleKey)
 			{
 				// This is the special case of when its classname.value
 				CIMProperty cp("test it");
@@ -593,7 +593,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 				// Generally there will be quotes but for integer values
 				// they are not strictly necessary so check for them
 				//
-				if(values[keystart] != '\"')
+				if (values[keystart] != '\"')
 				{
 					keyvalue = unEscape(String(&values[keystart],
 						i-keystart+1));
@@ -608,11 +608,11 @@ CIMObjectPath::parse(const String& instanceNameArg)
 				tmpkeys.append(cp);
 				break;
 			}
-			if(i+1 == valuesLen)
+			if (i+1 == valuesLen)
 			{
 				i++;
 			}
-			if(equalspos == 0)
+			if (equalspos == 0)
 			{
 				OW_THROWCIMMSG(CIMException::NOT_FOUND,
 					Format("Bad key in string (%1)", instanceName).c_str());
@@ -622,7 +622,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 			// Generally there will be quotes but for integer values
 			// they are not strictly necessary so check for them
 			//
-			if(values[equalspos] != '\"')
+			if (values[equalspos] != '\"')
 			{
 				keyvalue = unEscape(String(&values[equalspos], i-equalspos));
 			}
@@ -660,26 +660,26 @@ String
 CIMObjectPath::escape(const String& inString)
 {
 	int valuesLen = int(inString.length());
-	if(valuesLen == 0)
+	if (valuesLen == 0)
 	{
 		return inString;
 	}
 	StringBuffer rv(valuesLen);
 	const char* values = inString.c_str();
-	for(int i = 0; i < valuesLen; i++)
+	for (int i = 0; i < valuesLen; i++)
 	{
 		char ch = values[i];
-		if(ch == '\\')
+		if (ch == '\\')
 		{
 			rv += '\\';
 			rv += ch;
 		}
-		else if(ch == '"')
+		else if (ch == '"')
 		{
 			rv += '\\';
 			rv += '"';
 		}
-		else if(ch == '\n')
+		else if (ch == '\n')
 		{
 			rv += "\\n";
 		}
@@ -696,18 +696,18 @@ String
 CIMObjectPath::unEscape(const String& inString)
 {
 	int valuesLen = int(inString.length());
-	if(valuesLen == 0)
+	if (valuesLen == 0)
 	{
 		return inString;
 	}
 	StringBuffer rv(valuesLen);
 	const char* values = inString.c_str();
-	for(int i = 0; i < valuesLen; i++)
+	for (int i = 0; i < valuesLen; i++)
 	{
 		char ch = values[i];
-		if(ch == '\\')
+		if (ch == '\\')
 		{
-			if(i+1 < valuesLen)
+			if (i+1 < valuesLen)
 			{
 				i++;
 				rv += values[i];
@@ -740,7 +740,7 @@ bool CIMObjectPath::isInstancePath() const
 CIMObjectPath&
 CIMObjectPath::syncWithClass(const CIMClass& theClass)
 {
-	if(!theClass || isClassPath())
+	if (!theClass || isClassPath())
 	{
 		return *this;
 	}
@@ -748,31 +748,31 @@ CIMObjectPath::syncWithClass(const CIMClass& theClass)
 	CIMPropertyArray classProps = theClass.getKeys();
 	CIMPropertyArray copProps = getKeys();
 	// Remove properties that are not defined in the class
-	for(size_t i = 0; i < copProps.size(); i++)
+	for (size_t i = 0; i < copProps.size(); i++)
 	{
 		propName = copProps[i].getName();
-		if(!theClass.getProperty(propName))
+		if (!theClass.getProperty(propName))
 		{
 			copProps.remove(i);
 			i--;
 		}
 	}
 	// Ensure existing properties have the right type
-	for(size_t i = 0; i < classProps.size(); i++)
+	for (size_t i = 0; i < classProps.size(); i++)
 	{
 		bool found = false;
 		const CIMProperty& cprop = classProps[i];
 		propName = cprop.getName();
-		for(size_t j = 0; j < copProps.size(); j++)
+		for (size_t j = 0; j < copProps.size(); j++)
 		{
 			CIMProperty iprop = copProps[j];
-			if(iprop.getName().equalsIgnoreCase(propName))
+			if (iprop.getName().equalsIgnoreCase(propName))
 			{
 				CIMValue cv = iprop.getValue();
 				iprop = cprop;
-				if(cv)
+				if (cv)
 				{
-					if(cv.getType() != iprop.getDataType().getType())
+					if (cv.getType() != iprop.getDataType().getType())
 					{
 						cv = CIMValueCast::castValueToDataType(cv,
 							iprop.getDataType());
@@ -784,7 +784,7 @@ CIMObjectPath::syncWithClass(const CIMClass& theClass)
 				break;
 			}
 		}
-		if(!found)
+		if (!found)
 		{
 			copProps.append(classProps[i]);
 		}

@@ -98,19 +98,19 @@ public:
 	}
 	COWIntrusiveReference(T * p, bool addRef = true): m_pObj(p)
 	{
-		if(m_pObj != 0 && addRef) COWIntrusiveReferenceAddRef(m_pObj);
+		if (m_pObj != 0 && addRef) COWIntrusiveReferenceAddRef(m_pObj);
 	}
 	template<class U> COWIntrusiveReference(COWIntrusiveReference<U> const & rhs): m_pObj(rhs.m_pObj)
 	{
-		if(m_pObj != 0) COWIntrusiveReferenceAddRef(m_pObj);
+		if (m_pObj != 0) COWIntrusiveReferenceAddRef(m_pObj);
 	}
 	COWIntrusiveReference(COWIntrusiveReference const & rhs): m_pObj(rhs.m_pObj)
 	{
-		if(m_pObj != 0) COWIntrusiveReferenceAddRef(m_pObj);
+		if (m_pObj != 0) COWIntrusiveReferenceAddRef(m_pObj);
 	}
 	~COWIntrusiveReference()
 	{
-		if(m_pObj != 0) COWIntrusiveReferenceRelease(m_pObj);
+		if (m_pObj != 0) COWIntrusiveReferenceRelease(m_pObj);
 	}
 	template<class U> COWIntrusiveReference & operator=(COWIntrusiveReference<U> const & rhs)
 	{

@@ -80,7 +80,7 @@ XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 		{
 			OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 		}
-		while(parser)
+		while (parser)
 		{
 			TempFileStream ostrEnt, ostrErr;
 			processSimpleExpReq(parser, ostrEnt, ostrErr, messageId, context);

@@ -52,7 +52,7 @@ namespace OpenWBEM
  * to check for this condition is as follows:
  *
  *		CIMMethod ch = cc.getMethod(...);
- *		if(!ch)
+ *		if (!ch)
  *		{
  *			// Null method
  *		}

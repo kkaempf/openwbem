@@ -328,7 +328,7 @@ void outputTransitions(const StateMachine::state_t& state, int inputSelection, b
 
 void outputFirstState(const StateMachine::state_t& state)
 {
-	cout << "\tswitch(*(str1++)){\n";
+	cout << "\tswitch (*(str1++)){\n";
 	// first state has to handle 0
 	cout << "\t\tcase 0x0: goto zero;\n";
 	outputTransitions(state, 1, true);
@@ -336,7 +336,7 @@ void outputFirstState(const StateMachine::state_t& state)
 
 void outputSwitch(const StateMachine::state_t& state, int inputSelection, bool outputDefault)
 {
-	cout << "\tswitch(*(str" << inputSelection << "++)){\n";
+	cout << "\tswitch (*(str" << inputSelection << "++)){\n";
 	outputTransitions(state, inputSelection, outputDefault);
 }
 
@@ -371,8 +371,8 @@ void outputCode()
 	{
 
 		cout << "state" << i << ":\n";
-		int c1 = count_if(stateMachine.m_states[i].transitions.begin(), stateMachine.m_states[i].transitions.end(), isForInput(1));
-		int c2 = count_if(stateMachine.m_states[i].transitions.begin(), stateMachine.m_states[i].transitions.end(), isForInput(2));
+		int c1 = count_if (stateMachine.m_states[i].transitions.begin(), stateMachine.m_states[i].transitions.end(), isForInput(1));
+		int c2 = count_if (stateMachine.m_states[i].transitions.begin(), stateMachine.m_states[i].transitions.end(), isForInput(2));
 
 		if (i == 0)
 		{

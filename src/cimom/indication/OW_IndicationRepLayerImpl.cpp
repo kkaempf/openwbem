@@ -117,13 +117,13 @@ IndicationRepLayerImpl::invokeMethod(
 				CIMInstance ParamsEmbed;
 				ParamsEmbed.setClassName("__MethodParameters");
 	
-				for(size_t i = 0; i < inParams.size(); i++)
+				for (size_t i = 0; i < inParams.size(); i++)
 				{
 					CIMProperty prop(inParams[i].getName(), inParams[i].getValue());
 					ParamsEmbed.setProperty(prop);
 				}
 	
-				for(size_t i = 0; i < outParams.size(); i++)
+				for (size_t i = 0; i < outParams.size(); i++)
 				{
 					CIMProperty prop(outParams[i].getName(), outParams[i].getValue());
 					ParamsEmbed.setProperty(prop);

@@ -135,7 +135,7 @@ CIMDataType::isNumericType() const
 bool
 CIMDataType::isNumericType(CIMDataType::Type type)
 {
-	switch(type)
+	switch (type)
 	{
 		case UINT8:
 		case SINT8:
@@ -181,7 +181,7 @@ CIMDataType::getRefClassName() const
 CIMDataType::operator CIMDataType::safe_bool () const
 {
 	safe_bool cc = 0;
-	if(m_pdata)
+	if (m_pdata)
 	{
 		cc = (m_pdata->m_type != CIMNULL && m_pdata->m_type != INVALID)
 			? &CIMDataType::m_pdata : 0;
@@ -193,7 +193,7 @@ bool
 CIMDataType::operator!() const
 {
 	bool cc = true;
-	if(m_pdata)
+	if (m_pdata)
 	{
 		cc = m_pdata->m_type == CIMNULL || m_pdata->m_type == INVALID;
 	}
@@ -212,17 +212,17 @@ CIMDataType::setToArrayType(Int32 size)
 bool
 CIMDataType::syncWithValue(const CIMValue& value)
 {
-	if(!value && !(*this))
+	if (!value && !(*this))
 	{
 		return false;
 	}
 	bool rv(false);
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		m_pdata = new DTData;
 		m_pdata->m_type = CIMNULL;
 	}
-	if(!value)
+	if (!value)
 	{
 		m_pdata->m_type = CIMNULL;
 		m_pdata->m_numberOfElements = 0;
@@ -231,7 +231,7 @@ CIMDataType::syncWithValue(const CIMValue& value)
 	}
 	else
 	{
-		if((m_pdata->m_type != value.getType())
+		if ((m_pdata->m_type != value.getType())
 			|| (isArrayType() != value.isArray()))
 		{
 			m_pdata->m_type = value.getType();
@@ -272,7 +272,7 @@ CIMDataType::readObject(istream &istrm)
 	BinarySerialization::readLen(istrm, numberOfElements);
 	BinarySerialization::readLen(istrm, sizeRange);
 	ref.readObject(istrm);
-	if(!m_pdata)
+	if (!m_pdata)
 	{
 		m_pdata = new DTData;
 	}
@@ -295,7 +295,7 @@ CIMDataType::writeObject(ostream &ostrm) const
 String
 CIMDataType::toString() const
 {
-	switch(m_pdata->m_type)
+	switch (m_pdata->m_type)
 	{
 		case UINT8: 
 		return "uint8"; 
@@ -405,73 +405,73 @@ CIMDataType::strToSimpleType(const String& strType)
 // If you want to know what this function does, here's the old slow way it
 // used to be written.
 #if 0
-	if(strType_.empty())
+	if (strType_.empty())
 	{
 		return INVALID;
 	}
 	OW_String strType(strType_);
 	strType.toLowerCase();
-	if(strType == "uint8")
+	if (strType == "uint8")
 	{
 		return UINT8;
 	}
-	else if(strType == "sint8")
+	else if (strType == "sint8")
 	{
 		return SINT8;
 	}
-	else if(strType == "uint16")
+	else if (strType == "uint16")
 	{
 		return UINT16;
 	}
-	else if(strType == "sint16")
+	else if (strType == "sint16")
 	{
 		return SINT16;
 	}
-	else if(strType == "uint32")
+	else if (strType == "uint32")
 	{
 		return UINT32;
 	}
-	else if(strType == "sint32")
+	else if (strType == "sint32")
 	{
 		return SINT32;
 	}
-	else if(strType == "uint64")
+	else if (strType == "uint64")
 	{
 		return UINT64;
 	}
-	else if(strType == "sint64")
+	else if (strType == "sint64")
 	{
 		return SINT64;
 	}
-	else if(strType == "real64")
+	else if (strType == "real64")
 	{
 		return REAL64;
 	}
-	else if(strType == "real32")
+	else if (strType == "real32")
 	{
 		return REAL32;
 	}
-	else if(strType == "char16")
+	else if (strType == "char16")
 	{
 		return CHAR16;
 	}
-	else if(strType == "string")
+	else if (strType == "string")
 	{
 		return STRING;
 	}
-	else if(strType == "boolean")
+	else if (strType == "boolean")
 	{
 		return BOOLEAN;
 	}
-	else if(strType == "datetime")
+	else if (strType == "datetime")
 	{
 		return DATETIME;
 	}
-	else if(strType == "ref")
+	else if (strType == "ref")
 	{
 		return REFERENCE;
 	}
-	else if(strType == "reference")
+	else if (strType == "reference")
 	{
 		return REFERENCE;
 	}
@@ -532,9 +532,9 @@ start:
 	goto yy0;
 	++YYCURSOR;
 yy0:
-	if((YYLIMIT - YYCURSOR) < 10) YYFILL(10);
+	if ((YYLIMIT - YYCURSOR) < 10) YYFILL(10);
 	yych = *YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'B':	case 'b':	goto yy7;
 	case 'C':	case 'c':	goto yy6;
 	case 'D':	case 'd':	goto yy8;
@@ -545,7 +545,7 @@ yy0:
 	}
 yy2:	yyaccept = 0;
 	yych = *(YYMARKER = ++YYCURSOR);
-	switch(yych){
+	switch (yych){
 	case 'I':	case 'i':	goto yy82;
 	default:	goto yy3;
 	}
@@ -553,211 +553,211 @@ yy3:
 	{ return INVALID; }
 yy4:	yyaccept = 0;
 	yych = *(YYMARKER = ++YYCURSOR);
-	switch(yych){
+	switch (yych){
 	case 'I':	case 'i':	goto yy58;
 	case 'T':	case 't':	goto yy57;
 	default:	goto yy3;
 	}
 yy5:	yyaccept = 0;
 	yych = *(YYMARKER = ++YYCURSOR);
-	switch(yych){
+	switch (yych){
 	case 'E':	case 'e':	goto yy35;
 	default:	goto yy3;
 	}
 yy6:	yyaccept = 0;
 	yych = *(YYMARKER = ++YYCURSOR);
-	switch(yych){
+	switch (yych){
 	case 'H':	case 'h':	goto yy28;
 	default:	goto yy3;
 	}
 yy7:	yyaccept = 0;
 	yych = *(YYMARKER = ++YYCURSOR);
-	switch(yych){
+	switch (yych){
 	case 'O':	case 'o':	goto yy20;
 	default:	goto yy3;
 	}
 yy8:	yyaccept = 0;
 	yych = *(YYMARKER = ++YYCURSOR);
-	switch(yych){
+	switch (yych){
 	case 'A':	case 'a':	goto yy10;
 	default:	goto yy3;
 	}
 yy9:	//yych = *++YYCURSOR;
 	goto yy3;
 yy10:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'T':	case 't':	goto yy12;
 	default:	goto yy11;
 	}
 yy11:	YYCURSOR = YYMARKER;
-	switch(yyaccept){
+	switch (yyaccept){
 	case 0:	goto yy3;
 	}
 yy12:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'E':	case 'e':	goto yy13;
 	default:	goto yy11;
 	}
 yy13:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'T':	case 't':	goto yy14;
 	default:	goto yy11;
 	}
 yy14:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'I':	case 'i':	goto yy15;
 	default:	goto yy11;
 	}
 yy15:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'M':	case 'm':	goto yy16;
 	default:	goto yy11;
 	}
 yy16:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'E':	case 'e':	goto yy17;
 	default:	goto yy11;
 	}
 yy17:	yych = *++YYCURSOR;
-	if(yych >= '\001')	goto yy11;
+	if (yych >= '\001')	goto yy11;
 	{ return DATETIME; }
 yy20:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'O':	case 'o':	goto yy21;
 	default:	goto yy11;
 	}
 yy21:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'L':	case 'l':	goto yy22;
 	default:	goto yy11;
 	}
 yy22:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'E':	case 'e':	goto yy23;
 	default:	goto yy11;
 	}
 yy23:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'A':	case 'a':	goto yy24;
 	default:	goto yy11;
 	}
 yy24:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'N':	case 'n':	goto yy25;
 	default:	goto yy11;
 	}
 yy25:	yych = *++YYCURSOR;
-	if(yych >= '\001')	goto yy11;
+	if (yych >= '\001')	goto yy11;
 	{ return BOOLEAN; }
 yy28:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'A':	case 'a':	goto yy29;
 	default:	goto yy11;
 	}
 yy29:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'R':	case 'r':	goto yy30;
 	default:	goto yy11;
 	}
 yy30:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '1':	goto yy31;
 	default:	goto yy11;
 	}
 yy31:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '6':	goto yy32;
 	default:	goto yy11;
 	}
 yy32:	yych = *++YYCURSOR;
-	if(yych >= '\001')	goto yy11;
+	if (yych >= '\001')	goto yy11;
 	{ return CHAR16; }
 yy35:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'A':	case 'a':	goto yy36;
 	case 'F':	case 'f':	goto yy37;
 	default:	goto yy11;
 	}
 yy36:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'L':	case 'l':	goto yy48;
 	default:	goto yy11;
 	}
 yy37:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '\000':	goto yy39;
 	case 'E':	case 'e':	goto yy38;
 	default:	goto yy11;
 	}
 yy38:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'R':	case 'r':	goto yy41;
 	default:	goto yy11;
 	}
 yy39:	//yych = *++YYCURSOR;
 	{ return REFERENCE; }
 yy41:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'E':	case 'e':	goto yy42;
 	default:	goto yy11;
 	}
 yy42:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'N':	case 'n':	goto yy43;
 	default:	goto yy11;
 	}
 yy43:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'C':	case 'c':	goto yy44;
 	default:	goto yy11;
 	}
 yy44:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'E':	case 'e':	goto yy45;
 	default:	goto yy11;
 	}
 yy45:	yych = *++YYCURSOR;
-	if(yych >= '\001')	goto yy11;
+	if (yych >= '\001')	goto yy11;
 	{ return REFERENCE; }
 yy48:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '3':	goto yy49;
 	case '6':	goto yy50;
 	default:	goto yy11;
 	}
 yy49:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '2':	goto yy54;
 	default:	goto yy11;
 	}
 yy50:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '4':	goto yy51;
 	default:	goto yy11;
 	}
 yy51:	yych = *++YYCURSOR;
-	if(yych >= '\001')	goto yy11;
+	if (yych >= '\001')	goto yy11;
 	{ return REAL64; }
 yy54:	yych = *++YYCURSOR;
-	if(yych >= '\001')	goto yy11;
+	if (yych >= '\001')	goto yy11;
 	{ return REAL32; }
 yy57:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'R':	case 'r':	goto yy76;
 	default:	goto yy11;
 	}
 yy58:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'N':	case 'n':	goto yy59;
 	default:	goto yy11;
 	}
 yy59:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'T':	case 't':	goto yy60;
 	default:	goto yy11;
 	}
 yy60:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '1':	goto yy62;
 	case '3':	goto yy63;
 	case '6':	goto yy64;
@@ -765,64 +765,64 @@ yy60:	yych = *++YYCURSOR;
 	default:	goto yy11;
 	}
 yy61:	yych = *++YYCURSOR;
-	if(yych <= '\000')	goto yy74;
+	if (yych <= '\000')	goto yy74;
 	goto yy11;
 yy62:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '6':	goto yy71;
 	default:	goto yy11;
 	}
 yy63:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '2':	goto yy68;
 	default:	goto yy11;
 	}
 yy64:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '4':	goto yy65;
 	default:	goto yy11;
 	}
 yy65:	yych = *++YYCURSOR;
-	if(yych >= '\001')	goto yy11;
+	if (yych >= '\001')	goto yy11;
 	{ return SINT64; }
 yy68:	yych = *++YYCURSOR;
-	if(yych >= '\001')	goto yy11;
+	if (yych >= '\001')	goto yy11;
 	{ return SINT32; }
 yy71:	yych = *++YYCURSOR;
-	if(yych >= '\001')	goto yy11;
+	if (yych >= '\001')	goto yy11;
 	{ return SINT16; }
 yy74:	//yych = *++YYCURSOR;
 	{ return SINT8; }
 yy76:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'I':	case 'i':	goto yy77;
 	default:	goto yy11;
 	}
 yy77:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'N':	case 'n':	goto yy78;
 	default:	goto yy11;
 	}
 yy78:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'G':	case 'g':	goto yy79;
 	default:	goto yy11;
 	}
 yy79:	yych = *++YYCURSOR;
-	if(yych >= '\001')	goto yy11;
+	if (yych >= '\001')	goto yy11;
 	{ return STRING; }
 yy82:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'N':	case 'n':	goto yy83;
 	default:	goto yy11;
 	}
 yy83:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case 'T':	case 't':	goto yy84;
 	default:	goto yy11;
 	}
 yy84:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '1':	goto yy86;
 	case '3':	goto yy87;
 	case '6':	goto yy88;
@@ -830,31 +830,31 @@ yy84:	yych = *++YYCURSOR;
 	default:	goto yy11;
 	}
 yy85:	yych = *++YYCURSOR;
-	if(yych <= '\000')	goto yy98;
+	if (yych <= '\000')	goto yy98;
 	goto yy11;
 yy86:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '6':	goto yy95;
 	default:	goto yy11;
 	}
 yy87:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '2':	goto yy92;
 	default:	goto yy11;
 	}
 yy88:	yych = *++YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '4':	goto yy89;
 	default:	goto yy11;
 	}
 yy89:	yych = *++YYCURSOR;
-	if(yych >= '\001')	goto yy11;
+	if (yych >= '\001')	goto yy11;
 	{ return UINT64; }
 yy92:	yych = *++YYCURSOR;
-	if(yych >= '\001')	goto yy11;
+	if (yych >= '\001')	goto yy11;
 	{ return UINT32; }
 yy95:	yych = *++YYCURSOR;
-	if(yych >= '\001')	goto yy11;
+	if (yych >= '\001')	goto yy11;
 	{ return UINT16; }
 yy98:	//yych = *++YYCURSOR;
 	{ return UINT8; }
@@ -865,12 +865,12 @@ yy98:	//yych = *++YYCURSOR;
 CIMDataType
 CIMDataType::getDataType(const String& strType)
 {
-	if(strType.empty())
+	if (strType.empty())
 	{
 		return CIMDataType();
 	}
 	Type type = strToSimpleType(strType);
-	if(type != INVALID)
+	if (type != INVALID)
 	{
 		return CIMDataType(type);
 	}

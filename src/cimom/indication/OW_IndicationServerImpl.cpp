@@ -275,10 +275,10 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 		pProvMgr->getIndicationExportProviders(createProvEnvRef(m_env));
 	m_env->logDebug(Format("IndicationServerImpl: %1 export providers found",
 		pra.size()));
-	for(size_t i = 0; i < pra.size(); i++)
+	for (size_t i = 0; i < pra.size(); i++)
 	{
 		StringArray clsNames = pra[i]->getHandlerClassNames();
-		for(size_t j = 0; j < clsNames.size(); j++)
+		for (size_t j = 0; j < clsNames.size(); j++)
 		{
 			String lowerClsName = clsNames[j];
 			lowerClsName.toLowerCase();
@@ -331,13 +331,13 @@ IndicationServerImpl::run()
 	m_startedBarrier.wait();
 	{
 		NonRecursiveMutexLock l(m_mainLoopGuard);
-		while(!m_shuttingDown)
+		while (!m_shuttingDown)
 		{
 			m_mainLoopCondition.wait(l);
 			
 			try
 			{
-				while(!m_procTrans.empty() && !m_shuttingDown)
+				while (!m_procTrans.empty() && !m_shuttingDown)
 				{
 					ProcIndicationTrans trans = m_procTrans.front();
 					m_procTrans.pop_front();
@@ -597,7 +597,7 @@ IndicationServerImpl::_processIndicationRange(
 {
 	OperationContext context;
 	CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
-	for( ;first != last; ++first)
+	for ( ;first != last; ++first)
 	{
 		try
 		{
@@ -632,7 +632,7 @@ IndicationServerImpl::_processIndicationRange(
 
 			CIMInstance handler = hdl->getInstance(handlerNS,
 				handlerCOP);
-			if(!handler)
+			if (!handler)
 			{
 				m_env->logError(Format("Handler does not exist: %1",
 					handlerCOP.toString()));
@@ -642,7 +642,7 @@ IndicationServerImpl::_processIndicationRange(
 			IndicationExportProviderIFCRef pref = getProvider(
 				handler.getClassName());
 			
-			if(!pref)
+			if (!pref)
 			{
 				m_env->logError(Format("No indication handler for class name:"
 					" %1", handler.getClassName()));
@@ -682,7 +682,7 @@ IndicationServerImpl::getProvider(const String& className)
 	lowerClassName.toLowerCase();
 	provider_map_t::iterator it =
 		m_providers.find(lowerClassName);
-	if(it != m_providers.end())
+	if (it != m_providers.end())
 	{
 		pref = it->second;
 	}

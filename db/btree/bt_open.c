@@ -408,7 +408,7 @@ tmp()
 	int fd;
 	char *filename;
 	
-	if((filename = _tempnam(NULL, "owtempfile")) == NULL)
+	if ((filename = _tempnam(NULL, "owtempfile")) == NULL)
 		return -1;
 
 	fd = open(filename, _O_WRONLY | _O_CREAT, _S_IREAD | _S_IWRITE);

@@ -147,7 +147,7 @@ PollingManager::run()
 				createProvEnvRef(m_env));
 			m_env->logDebug(Format("PollingManager poll interval for provider"
 				" %1: %2", i, tr->m_pollInterval));
-			if(!tr->m_pollInterval)
+			if (!tr->m_pollInterval)
 			{
 				continue;
 			}
@@ -162,7 +162,7 @@ PollingManager::run()
 			bool rightNow;
 			UInt32 sleepTime = calcSleepTime(rightNow, doInit);
 			doInit = false;
-			if(!rightNow)
+			if (!rightNow)
 			{
 				if (sleepTime == 0)
 				{
@@ -195,26 +195,26 @@ PollingManager::calcSleepTime(bool& rightNow, bool doInit)
 	time_t tm = dtm.get();
 	time_t leastTime = LONG_MAX;
 	int checkedCount = 0;
-	for(size_t i = 0; i < m_triggerRunners.size(); i++)
+	for (size_t i = 0; i < m_triggerRunners.size(); i++)
 	{
-		if(m_triggerRunners[i]->m_isRunning
+		if (m_triggerRunners[i]->m_isRunning
 			|| m_triggerRunners[i]->m_pollInterval == 0)
 		{
 			continue;
 		}
-		if(doInit)
+		if (doInit)
 		{
 			m_triggerRunners[i]->m_nextPoll =
 				tm + m_triggerRunners[i]->m_pollInterval;
 		}
-		else if(m_triggerRunners[i]->m_nextPoll <= tm)
+		else if (m_triggerRunners[i]->m_nextPoll <= tm)
 		{
 			rightNow = true;
 			return 0;
 		}
 		checkedCount++;
 		time_t diff = m_triggerRunners[i]->m_nextPoll - tm;
-		if(diff < leastTime)
+		if (diff < leastTime)
 		{
 			leastTime = diff;
 		}
@@ -280,7 +280,7 @@ PollingManager::addPolledProvider(const PolledProviderIFCRef& p)
 		createProvEnvRef(m_env));
 	m_env->logDebug(Format("PollingManager poll interval for provider"
 		" %1", tr->m_pollInterval));
-	if(!tr->m_pollInterval)
+	if (!tr->m_pollInterval)
 	{
 		return;
 	}
@@ -327,14 +327,14 @@ PollingManager::TriggerRunner::run()
 		m_env->logError("Caught Unknown Exception while running poll");
 	}
 	NonRecursiveMutexLock l(m_pollMan->m_triggerGuard);
-	if(nextInterval == 0 || m_pollInterval == 0) // m_pollInterval == 0 means this poller has been instructed to stop
+	if (nextInterval == 0 || m_pollInterval == 0) // m_pollInterval == 0 means this poller has been instructed to stop
 	{
 		m_pollInterval = 0;
 		m_nextPoll = 0;
 	}
 	else
 	{
-		if(nextInterval > 0)
+		if (nextInterval > 0)
 		{
 			m_pollInterval = nextInterval;
 		}

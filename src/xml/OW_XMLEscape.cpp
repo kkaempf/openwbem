@@ -56,9 +56,9 @@ start:
 	goto yy0;
 	++YYCURSOR;
 yy0:
-	if(YYLIMIT == YYCURSOR) YYFILL(1);
+	if (YYLIMIT == YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
-	switch(yych){
+	switch (yych){
 	case '\000':	goto yy20;
 	case '\t':	goto yy16;
 	case '\n':	goto yy14;

@@ -73,15 +73,15 @@ public:
 	
 		XMLNode newNode(entry.text.toString(), newAttrArray);
 	
-		if(newNode)
+		if (newNode)
 		{
-			if(!m_topNode)
+			if (!m_topNode)
 			{
 				m_topNode = newNode;
 			}
 	
 			// If there is anything in the array, this is the child of that last guy
-			if(m_nodeArray.size() > 0)
+			if (m_nodeArray.size() > 0)
 			{
 				XMLNode parent = m_nodeArray[m_nodeArray.size() - 1];
 				parent.addChild(newNode);
@@ -101,10 +101,10 @@ public:
 	// chars is not unescaped (implementation has to do it if necessary)
 	virtual void characters(const StringBuffer &chars)
 	{
-		if(m_nodeArray.size() > 0)
+		if (m_nodeArray.size() > 0)
 		{
 			XMLNode curNode = m_nodeArray[m_nodeArray.size() - 1];
-			if(curNode != 0)
+			if (curNode != 0)
 			{
 				String utxt = chars.toString();
 				curNode.appendText(utxt);

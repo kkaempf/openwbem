@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 		Socket sock(addr);
 		HTTPSvrConnection svr(sock, &htIn);
 		int sc;
-		for(int i = 0; i < 10; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			sc = svr.performBasicAuthentication(info);
 			if ( sc < 300 )

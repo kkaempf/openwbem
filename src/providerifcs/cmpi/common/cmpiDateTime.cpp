@@ -35,7 +35,7 @@ static OpenWBEM::CIMDateTime * makeCIMDateTime(
 	unsigned long usec, 
 	CMPIBoolean interval)
 {
-	if(interval)
+	if (interval)
 	{
 		OpenWBEM::UInt64 microsecs = inTime * 1000000;
 		microsecs += usec;

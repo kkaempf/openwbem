@@ -58,18 +58,18 @@ DigestAuthentication::DigestAuthentication(const String& passwdFile)
 	, m_aDateTimes()
 	, m_passwdMap()
 {
-	if(passwdFile.empty())
+	if (passwdFile.empty())
 	{
 		OW_THROW(AuthenticationException, "No password file given for "
 			"digest authentication.");
 	}
 	ifstream infile(passwdFile.c_str());
-	if(!infile)
+	if (!infile)
 	{
 		OW_THROW(AuthenticationException, Format("Unable to open password file %1",
 			passwdFile).c_str());
 	}
-	while(infile)
+	while (infile)
 	{
 		String line;
 		line = String::getLine(infile);

@@ -29,7 +29,7 @@ left(const string& sarg, int count)
 string
 right(const string& sarg, int count)
 {
-	if(count >= sarg.length())
+	if (count >= sarg.length())
 	{
 		return string(sarg);
 	}
@@ -49,10 +49,10 @@ bool
 endsWith(const string& arg1, const string arg2)
 {
 	bool cc = false;
-	if(arg1.length() >= arg2.length())
+	if (arg1.length() >= arg2.length())
 	{
 		int ndx = arg1.find(arg2);
-		if(ndx != string::npos)
+		if (ndx != string::npos)
 		{
 			cc = ((arg1.length() - ndx) == arg2.length());
 		}
@@ -70,7 +70,7 @@ int convertFile(const string& filename, const string& outfilename)
 {
 	ifstream inputFile(filename.c_str());
 
-	if(!inputFile)
+	if (!inputFile)
 	{
 		cerr << "Can't open " << filename << endl;
 		return -1;
@@ -104,7 +104,7 @@ int convertFile(const string& filename, const string& outfilename)
 	int ndx = outfilename.find('.');
 	string libraryName = (ndx != string::npos) ? outfilename.substr(0, ndx) : outfilename;
 	ndx = libraryName.find_last_of('\\');
-	if(ndx != string::npos)
+	if (ndx != string::npos)
 	{
 		libraryName = libraryName.substr(ndx+1);
 	}
@@ -127,7 +127,7 @@ int convertFile(const string& filename, const string& outfilename)
 	libraryLine += wkbfr;
 
 	ofstream defFile(outfilename.c_str());
-	if(!defFile)
+	if (!defFile)
 	{
 		cerr << "Can't open output file " << outfilename << endl;
 		inputFile.close();
@@ -140,9 +140,9 @@ int convertFile(const string& filename, const string& outfilename)
 	defFile << libraryLine;
 	defFile << "EXPORTS\n" << endl;
 
-	while(getline(inputFile, stringFromFile))
+	while (getline(inputFile, stringFromFile))
 	{
-		if(stringFromFile.length() <= 22)
+		if (stringFromFile.length() <= 22)
 		{
 			if ( ( stringFromFile.length() >= staticSymbols.length() ) &&
 				(staticSymbols.compare(left(stringFromFile, staticSymbols.length())) == 0))
@@ -152,17 +152,17 @@ int convertFile(const string& filename, const string& outfilename)
 			continue;
 		}
 
-		if(stringFromFile[5] != ':')
+		if (stringFromFile[5] != ':')
 			continue;
 
-		if(stringFromFile[21] != '?' && stringFromFile[21] != '_')
+		if (stringFromFile[21] != '?' && stringFromFile[21] != '_')
 			continue;
 
 		// We may have one here...
 		stringFromFile = right(stringFromFile, stringFromFile.length()-21);
 		int locationOfSpace = stringFromFile.find(' ');
 		
-		if(locationOfSpace == string::npos)
+		if (locationOfSpace == string::npos)
 			continue;
 
 		string outputLine;
@@ -171,16 +171,16 @@ int convertFile(const string& filename, const string& outfilename)
 
 		// Now see if this is an import
 		locationOfSpace = stringFromFile.find(':');
-		if(locationOfSpace != string::npos)
+		if (locationOfSpace != string::npos)
 			continue;
 
 		// Didn't find a colon, let's do one last check for <common>
 		locationOfSpace = stringFromFile.find('<');
-		if(locationOfSpace != string::npos)
+		if (locationOfSpace != string::npos)
 			continue;
 
 		// If this is a scalar/vector deleting dtor, skip it
-		if(endsWith(decoratedName, delDTOREnding) 
+		if (endsWith(decoratedName, delDTOREnding) 
 			&& (startsWith(decoratedName, scalarDelDTORStart)
 				|| startsWith(decoratedName, vectorDelDTORStart)))
 		{
@@ -188,7 +188,7 @@ int convertFile(const string& filename, const string& outfilename)
 		}
 
 		// If this is a special name, skip it
-		if(_strcmpi(decoratedName.c_str(), "__pRawDllMain") == 0
+		if (_strcmpi(decoratedName.c_str(), "__pRawDllMain") == 0
 			|| _strcmpi(decoratedName.c_str(), "__afxForceEXTDLL") == 0
 			|| _strcmpi(decoratedName.c_str(), newOperator.c_str()) == 0)
 		{
@@ -202,7 +202,7 @@ int convertFile(const string& filename, const string& outfilename)
 
 		// It is unclear if the third parameter should be the size of the buffer or
 		// the number of characters undecorated_name can hold. Documentation is shoddy
-		if(UnDecorateSymbolName(decoratedName.c_str(), undecoratedNameBuf,
+		if (UnDecorateSymbolName(decoratedName.c_str(), undecoratedNameBuf,
 			sizeof(undecoratedNameBuf), UNDNAME_COMPLETE ) > 0)
 		{
 			outputLine += " ; ";
@@ -212,7 +212,7 @@ int convertFile(const string& filename, const string& outfilename)
 		ordinalNumber++;
 
 		// Don't export symbols from anonymous namespace
-		if(outputLine.find("`anonymous namespace'") == string::npos)
+		if (outputLine.find("`anonymous namespace'") == string::npos)
 		{
 			defFile << outputLine;
 		}
@@ -229,13 +229,13 @@ int main(int argc, char** argv)
 {
 	srand((unsigned) time(NULL));
 
-	if(argc != 3)
+	if (argc != 3)
 	{
 		cout << "Usage: owmap2def <.map file name> <.def file name>" << endl;
 		return 1;
 	}
 
-	if(_access(argv[1], 4) != 0)
+	if (_access(argv[1], 4) != 0)
 	{
 		cout << "Map file " << argv[1] << " does not exist. Aborting" << endl;
 		return 1;
@@ -243,7 +243,7 @@ int main(int argc, char** argv)
 
 	return (convertFile(argv[1], argv[2]) != 0) ? 1 : 0;
 /*
-	if(argc < 2)
+	if (argc < 2)
 	{
 		cout << "Usage: Map2Def file [file [file [file [...]]]]" << endl;
 		return 1;
@@ -253,16 +253,16 @@ int main(int argc, char** argv)
 	WIN32_FIND_DATA findData;
 	int index = 1;
 
-	while(index < argc)
+	while (index < argc)
 	{
 		memset(&findData, 0, sizeof(findData));
 
 		findFileHandle = FindFirstFile(argv[index], &findData);
 
-		if(findFileHandle != INVALID_HANDLE_VALUE )
+		if (findFileHandle != INVALID_HANDLE_VALUE )
 		{
 			convertFile(findData.cFileName);
-			while(FindNextFile(findFileHandle, &findData ) != FALSE )
+			while (FindNextFile(findFileHandle, &findData ) != FALSE )
 			{
 				convertFile(findData.cFileName);
 			}

@@ -61,7 +61,7 @@ getNameSpace(CIMXMLParser& parser)
 	while (parser.tokenIsId(CIMXMLParser::E_NAMESPACE))
 	{
 		String pname = parser.mustGetAttribute(CIMXMLParser::A_NAME);
-		if(pname.empty())
+		if (pname.empty())
 		{
 			//OW_THROWCIM(CIMException::INVALID_PARAMETER);
 			// can't do this, because some clients send invalid xml, and

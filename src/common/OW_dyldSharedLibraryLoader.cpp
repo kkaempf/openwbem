@@ -44,7 +44,7 @@ namespace OpenWBEM
 std::ostream& operator<<(std::ostream& o, NSObjectFileImageReturnCode code)
 {
 #define SIMPLE_NSOBJ_CASE(X) case X: o << ""#X
-	switch(code)
+	switch (code)
 	{
 		SIMPLE_NSOBJ_CASE(NSObjectFileImageFailure); break;
 		SIMPLE_NSOBJ_CASE(NSObjectFileImageSuccess); break;

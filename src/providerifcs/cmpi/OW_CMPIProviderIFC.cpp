@@ -74,7 +74,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 	try
 	{
 		ProviderMap::iterator it = m_provs.begin();
-		while(it != m_provs.end())
+		while (it != m_provs.end())
 		{
 			//CMPIInstanceMI * mi = it->second->instMI;
 			MIs miVector = it->second->miVector;
@@ -88,7 +88,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			}
 
 			// If associator provider, allow associator prov cleanup to run
-			if(miVector.assocMI)
+			if (miVector.assocMI)
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
@@ -96,7 +96,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			}
 
 			// If method provider, allow method prov cleanup to run
-			if(miVector.methMI)
+			if (miVector.methMI)
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
@@ -104,7 +104,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			}
 
 			// If property provider, allow property prov cleanup to run
-			if(miVector.propMI)
+			if (miVector.propMI)
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
@@ -112,7 +112,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			}
 
 			// If indication provider, allow indication prov cleanup to run
-			if(miVector.indMI)
+			if (miVector.indMI)
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
@@ -126,7 +126,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 		m_provs.clear();
 	
 // BMMU: have to cleanup polled providers
-		for(size_t i = 0; i < m_noidProviders.size(); i++)
+		for (size_t i = 0; i < m_noidProviders.size(); i++)
 		{
 #if 0
 			CMPIInstanceMI * mi = m_noidProviders[i]->instMI;
@@ -165,11 +165,11 @@ CMPIProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	CMPIFTABLERef pProv = getProvider(env, provIdString);
-	if(pProv)
+	if (pProv)
 	{
 		// if the createInstance pointer is set, then assume it's an instance
 		// provider
-		if(pProv->miVector.instMI)
+		if (pProv->miVector.instMI)
 		{
 			env->getLogger()->logDebug(Format("CMPIProviderIFC found instance"
 				" provider %1", provIdString));
@@ -187,10 +187,10 @@ CMPIProviderIFC::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef&
 {
 	//loadNoIdProviders(env);
 	IndicationExportProviderIFCRefArray rvra;
-	//for(size_t i = 0; i < m_noidProviders.size(); i++)
+	//for (size_t i = 0; i < m_noidProviders.size(); i++)
 	//{
 	//	CppProviderBaseIFCRef pProv = m_noidProviders[i];
-	//	if(pProv->isIndicationExportProvider())
+	//	if (pProv->isIndicationExportProvider())
 	//	{
 	//		rvra.append(
 	//			IndicationExportProviderIFCRef(new
@@ -209,11 +209,11 @@ CMPIProviderIFC::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 	PolledProviderIFCRefArray rvra;
 
 #if 0
-	for(size_t i = 0; i < m_noidProviders.size(); i++)
+	for (size_t i = 0; i < m_noidProviders.size(); i++)
 	{
 		CMPIFTABLERef pProv = m_noidProviders[i];
 		//  if (pProv->isPolledProvider())
-		if(pProv->miVector.indMI)
+		if (pProv->miVector.indMI)
 		{
 			rvra.append(PolledProviderIFCRef(
 				new CMPIPolledProviderProxy(pProv)));
@@ -229,11 +229,11 @@ CMPIProviderIFC::doGetMethodProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	CMPIFTABLERef pProv = getProvider(env, provIdString);
-	if(pProv)
+	if (pProv)
 	{
 		// it's a method provider if the invokeMethod function pointer is not
 		// NULL
-		if(pProv->miVector.methMI)
+		if (pProv->miVector.methMI)
 		{
 			env->getLogger()->logDebug(Format("CMPIProviderIFC found method provider %1",
 				provIdString));
@@ -252,11 +252,11 @@ CMPIProviderIFC::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	CMPIFTABLERef pProv = getProvider(env, provIdString);
-	if(pProv)
+	if (pProv)
 	{
 		// if the associatorNames function pointer is not 0, we know it's an
 		// associator provider
-		if(pProv->miVector.assocMI)
+		if (pProv->miVector.assocMI)
 		{
 			env->getLogger()->logDebug(Format("CMPIProviderIFC found associator provider %1",
 				provIdString));
@@ -277,11 +277,11 @@ CMPIProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 {
 #if 0
 	CMPIFTABLERef pProv = getProvider(env, provIdString);
-	if(pProv)
+	if (pProv)
 	{
 		// if the indicationNames function pointer is not 0, we know it's an
 		// indication provider
-		if(pProv->miVector.indMI)
+		if (pProv->miVector.indMI)
 		{
 			env->getLogger()->logDebug(Format("CMPIProviderIFC found indication provider %1",
 				provIdString));
@@ -302,7 +302,7 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 {
    MutexLock ml(m_guard);
 
-   if(m_loadDone)
+   if (m_loadDone)
    {
        return;
    }
@@ -312,28 +312,28 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
    SharedLibraryLoaderRef ldr =
        SharedLibraryLoader::createSharedLibraryLoader();
 
-   if(!ldr)
+   if (!ldr)
    {
 	  env->getLogger()->logError("CMPI provider ifc failed to get shared lib loader");
 	  return;
    }
 
    StringArray dirEntries;
-   if(!FileSystem::getDirectoryContents(libPath, dirEntries))
+   if (!FileSystem::getDirectoryContents(libPath, dirEntries))
    {
 	  env->getLogger()->logError(Format("CMPI provider ifc failed getting contents of "
 		 "directory: %1", libPath));
 	  return;
    }
 
-   for(size_t i = 0; i < dirEntries.size(); i++)
+   for (size_t i = 0; i < dirEntries.size(); i++)
    {
-		if(!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
+		if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
 		{
 			 continue;
 		}
 #ifdef OW_DARWIN
-                if(dirEntries[i].indexOf(OW_VERSION) != String::npos)
+                if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
                 {
                         continue;
                 }
@@ -345,7 +345,7 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 			env->getLogger());
 		String guessProvId = dirEntries[i].substring(3,dirEntries[i].length()-6);
 		
-		if(!theLib)
+		if (!theLib)
 		{
 			 env->getLogger()->logError(Format("CMPI provider %1 ifc failed to load"
 					   " library: %2", guessProvId, libName));
@@ -363,7 +363,7 @@ CMPIProviderIFC::getProvider(
 	String provId(provIdString);
 	ProviderMap::iterator it = m_provs.find(provId);
 
-	if(it != m_provs.end())
+	if (it != m_provs.end())
 	{
 		return it->second;
 	}
@@ -373,7 +373,7 @@ CMPIProviderIFC::getProvider(
 	SharedLibraryLoaderRef ldr =
 		SharedLibraryLoader::createSharedLibraryLoader();
 
-	if(!ldr)
+	if (!ldr)
 	{
 		env->getLogger()->logError("CMPI: provider ifc failed to get shared lib loader");
 		return CMPIFTABLERef();
@@ -389,7 +389,7 @@ CMPIProviderIFC::getProvider(
 
 	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName, env->getLogger());
 
-	if(!theLib)
+	if (!theLib)
 	{
 		env->getLogger()->logError(Format("CMPI provider ifc failed to load library: %1 "
 			"for provider id %2", libName, provId));

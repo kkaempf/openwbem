@@ -115,7 +115,7 @@ public:
 
 	virtual void removeSelectable(const SelectableIFCRef& obj)
 	{
-		m_selectables->erase(std::remove_if(m_selectables->begin(), m_selectables->end(),
+		m_selectables->erase(std::remove_if (m_selectables->begin(), m_selectables->end(),
 			selectableFinder(obj)), m_selectables->end());
 	}
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const

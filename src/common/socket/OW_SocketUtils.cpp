@@ -129,7 +129,7 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 		? static_cast<DWORD>(timeOutSecs * 1000)
 		: INFINITE;
 
-	if(networkEvents != -1L)
+	if (networkEvents != -1L)
 	{
 		::WSAEventSelect(fd, eventArg, networkEvents);
 	}
@@ -146,7 +146,7 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 
 	int cc;
 
-	switch(index)
+	switch (index)
 	{
 		case WAIT_FAILED:
 			cc = -1;
@@ -157,7 +157,7 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 		default:
 			index -= WAIT_OBJECT_0;
 			// If not shutdown event, then reset
-			if(index != 0)
+			if (index != 0)
 			{
 				::ResetEvent(eventArg);
 				cc = 0;

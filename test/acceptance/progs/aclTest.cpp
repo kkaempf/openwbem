@@ -58,7 +58,7 @@
 
 #include <iostream>
 
-#define TEST_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
+#define TEST_ASSERT(CON) if (!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
 
 using std::cerr;
 using std::endl;

@@ -28,7 +28,7 @@ static CMPIStatus refRelease(CMPIObjectPath* eRef)
 {
 
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
-	if(ref)
+	if (ref)
 	{
 		delete ref;
 		((CMPI_Object*)eRef)->unlinkAndDelete();
@@ -90,10 +90,10 @@ static CMPIString* refGetClassName(CMPIObjectPath* eRef, CMPIStatus* rc)
 
 static long locateKey(const OpenWBEM::CIMPropertyArray &kb, const OpenWBEM::String& eName)
 {
-	for(unsigned long i=0,s=kb.size(); i<s; i++)
+	for (unsigned long i=0,s=kb.size(); i<s; i++)
 	{
 		const OpenWBEM::String &n=kb[i].getName();
-		if(n.equalsIgnoreCase(eName))
+		if (n.equalsIgnoreCase(eName))
 		{
 			return i;
 		}
@@ -110,7 +110,7 @@ static CMPIStatus refAddKey(CMPIObjectPath* eRef, char* name,
 	CMPIrc rc;
 
 	long i = locateKey(keyBindings, key);
-	if(i >= 0)
+	if (i >= 0)
 	{
 		keyBindings.remove(i);
 		ref->setKeys(keyBindings);
@@ -130,7 +130,7 @@ static CMPIData refGetKey(CMPIObjectPath* eRef, char* name, CMPIStatus* rc)
 
 	CMSetStatus(rc,CMPI_RC_OK);
 
-	if(cpr)
+	if (cpr)
 	{
 		OpenWBEM::CIMValue cv = cpr.getValue();
 		value2CMPIData(cv, type2CMPIType(cv.getType(), cv.isArray()), &data);
@@ -149,7 +149,7 @@ static CMPIData refGetKeyAt(CMPIObjectPath* eRef, unsigned pos, CMPIString** nam
 	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
 	CMSetStatus(rc,CMPI_RC_OK);
 
-	if(pos >= akb.size())
+	if (pos >= akb.size())
 	{
 		CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
 		return data;
@@ -158,7 +158,7 @@ static CMPIData refGetKeyAt(CMPIObjectPath* eRef, unsigned pos, CMPIString** nam
 	OpenWBEM::CIMValue cv = akb[pos].getValue();
 	value2CMPIData(cv, type2CMPIType(cv.getType(),cv.isArray()) ,&data);
 
-	if(name)
+	if (name)
 	{
 		const OpenWBEM::String &n=akb[pos].getName();
 		*name=string2CMPIString(n);

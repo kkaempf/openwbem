@@ -1186,7 +1186,7 @@ Int16
 DateTime::getGMTOffset()
 {
 	ThreadImpl::memoryBarrier();
-	if(!offsetComputed)
+	if (!offsetComputed)
 	{
 		// double-checked locking
 		MutexLock ml(tzmutex);

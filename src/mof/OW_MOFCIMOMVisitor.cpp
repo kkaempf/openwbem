@@ -640,7 +640,7 @@ void CIMOMVisitor::VisitArrayInitializer( const ArrayInitializer *pArrayInitiali
 	CIMValueArray values;
 	if (pArrayInitializer->pConstantValue.get() != 0)
 	{
-		for( List<ConstantValue *>::const_iterator i = pArrayInitializer->pConstantValue->begin();
+		for ( List<ConstantValue *>::const_iterator i = pArrayInitializer->pConstantValue->begin();
 			 i != pArrayInitializer->pConstantValue->end(); ++i )
 		{
 			(*i)->Accept( this );

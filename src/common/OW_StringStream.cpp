@@ -107,7 +107,7 @@ OStringStream::OStringStream(const OStringStream& ostr)
 ///////////////////////////////////////////////////////////////////////////////
 OStringStream& OStringStream::operator=(const OStringStream& ostr)
 {
-	if( &ostr != this )
+	if ( &ostr != this )
 	{
 		this->reset();
 		*this << ostr.toString();

@@ -128,19 +128,19 @@ bool AIXAuthentication::doAuthenticate(String &userName, const String &info,
 		result = ::authenticate(pUserName, pPasswd, &reenter, &message);
 		--attempts_left;
 	}
-	while( (attempts_left > 0) && reenter );
+	while ( (attempts_left > 0) && reenter );
 
 	free(pUserName);
 	free(pPasswd);
 	
 	// Both should be 0 if the above loop was successful.
-	if( reenter || result )
+	if ( reenter || result )
 	{
-		if( message )
+		if ( message )
 		{
 			details = message;
 		}
-		else if( attempts_left <= 0 )
+		else if ( attempts_left <= 0 )
 		{
 			details = "Maximum authorization attempts made.";
 		}
@@ -149,7 +149,7 @@ bool AIXAuthentication::doAuthenticate(String &userName, const String &info,
 			details = "Unknown authentication failure.";
 		}
 	}
-	if( message )
+	if ( message )
 	{
 		free(message);
 	}

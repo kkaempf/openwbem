@@ -61,7 +61,7 @@ CIMFlavor::toString() const
 String
 CIMFlavor::toMOF() const
 {
-	switch(m_flavor)
+	switch (m_flavor)
 	{
 		case ENABLEOVERRIDE: 
 		return "EnableOverride"; 

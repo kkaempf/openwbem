@@ -161,7 +161,7 @@ private:
 	{
 		size_t freeSpace = m_allocated - (m_len+1);
 	
-		if(len > freeSpace)
+		if (len > freeSpace)
 		{
 			size_t toalloc = m_allocated * 2 + len;
 			char* bfr = new char[toalloc];
