@@ -375,11 +375,11 @@ void generateRandomDataFromTime(double entropy)
 struct cmd
 {
 	const char* command;
-	const double usefulness; // estimated number of bytes of entropy per 1K of output
+	double usefulness; // estimated number of bytes of entropy per 1K of output
 };
 
 // This list of sources comes from gnupg, prngd and egd.
-cmd randomSourceCommands[] =
+const cmd randomSourceCommands[] =
 {
 	{ "advfsstat -b usr_domain", 0.01 },
 	{ "advfsstat -l 2 usr_domain", 0.5 },
