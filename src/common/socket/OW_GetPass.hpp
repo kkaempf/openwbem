@@ -67,7 +67,7 @@ namespace GetPass
 
 } // end namespace OW_NAMESPACE
 
-namespace OW_GetPass = OpenWBEM::GetPass;
+namespace OW_GetPass = OW_NAMESPACE::GetPass;
 
 #endif
 	

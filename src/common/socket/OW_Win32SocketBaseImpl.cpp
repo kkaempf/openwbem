@@ -89,7 +89,7 @@ _closeSocket(SOCKET& sockfd)
 
 //////////////////////////////////////////////////////////////////////////////
 int
-getAddrFromIface(OpenWBEM::InetSocketAddress_t& addr)
+getAddrFromIface(OW_NAMESPACE::InetSocketAddress_t& addr)
 {
 	SOCKET sd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sd == SOCKET_ERROR)

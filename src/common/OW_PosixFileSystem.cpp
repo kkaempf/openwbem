@@ -509,7 +509,7 @@ StringArray getFileLines(const String& filename)
 String readSymbolicLink(const String& path)
 {
 #ifdef OW_WIN32
-	return realPath(path);
+	return Path::realPath(path);
 #else
 	std::vector<char> buf(MAXPATHLEN);
 	int rc;

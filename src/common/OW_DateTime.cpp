@@ -61,11 +61,11 @@
 #ifndef OW_HAVE_LOCALTIME_R
 namespace
 {
-	OpenWBEM::Mutex localtimeMutex;
+	OW_NAMESPACE::Mutex localtimeMutex;
 }
 struct tm *localtime_r(const time_t *timep, struct tm *result)
 {
-	OpenWBEM::MutexLock lock(localtimeMutex);
+	OW_NAMESPACE::MutexLock lock(localtimeMutex);
 	struct tm *p = localtime(timep);
 	
 	if (p)
@@ -80,11 +80,11 @@ struct tm *localtime_r(const time_t *timep, struct tm *result)
 #ifndef OW_HAVE_GMTIME_R
 namespace
 {
-	OpenWBEM::Mutex gmtimeMutex;
+	OW_NAMESPACE::Mutex gmtimeMutex;
 }
 struct tm *gmtime_r(const time_t *timep, struct tm *result)
 {
-	OpenWBEM::MutexLock lock(gmtimeMutex);
+	OW_NAMESPACE::MutexLock lock(gmtimeMutex);
 	struct tm *p = gmtime(timep);
 	
 	if (p)

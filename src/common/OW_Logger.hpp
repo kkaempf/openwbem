@@ -322,9 +322,9 @@ private: // data
 #define OW_LOG_DEBUG(logger, message) \
 do \
 { \
-	if ((logger)->getLogLevel() >= ::OpenWBEM::E_DEBUG_LEVEL) \
+	if ((logger)->getLogLevel() >= ::OW_NAMESPACE::E_DEBUG_LEVEL) \
 	{ \
-		(logger)->logMessage(::OpenWBEM::Logger::STR_DEBUG_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
+		(logger)->logMessage(::OW_NAMESPACE::Logger::STR_DEBUG_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 
@@ -337,9 +337,9 @@ do \
 #define OW_LOG_INFO(logger, message) \
 do \
 { \
-	if ((logger)->getLogLevel() >= ::OpenWBEM::E_INFO_LEVEL) \
+	if ((logger)->getLogLevel() >= ::OW_NAMESPACE::E_INFO_LEVEL) \
 	{ \
-		(logger)->logMessage(::OpenWBEM::Logger::STR_INFO_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
+		(logger)->logMessage(::OW_NAMESPACE::Logger::STR_INFO_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 
@@ -352,9 +352,9 @@ do \
 #define OW_LOG_ERROR(logger, message) \
 do \
 { \
-	if ((logger)->getLogLevel() >= ::OpenWBEM::E_ERROR_LEVEL) \
+	if ((logger)->getLogLevel() >= ::OW_NAMESPACE::E_ERROR_LEVEL) \
 	{ \
-		(logger)->logMessage(::OpenWBEM::Logger::STR_ERROR_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
+		(logger)->logMessage(::OW_NAMESPACE::Logger::STR_ERROR_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 
@@ -367,9 +367,9 @@ do \
 #define OW_LOG_FATAL_ERROR(logger, message) \
 do \
 { \
-	if ((logger)->getLogLevel() >= ::OpenWBEM::E_FATAL_ERROR_LEVEL) \
+	if ((logger)->getLogLevel() >= ::OW_NAMESPACE::E_FATAL_ERROR_LEVEL) \
 	{ \
-		(logger)->logMessage(::OpenWBEM::Logger::STR_FATAL_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
+		(logger)->logMessage(::OW_NAMESPACE::Logger::STR_FATAL_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 

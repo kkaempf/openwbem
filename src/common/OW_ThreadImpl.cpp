@@ -388,7 +388,7 @@ namespace {
 struct WThreadInfo
 {
 	HANDLE	handle;
-	OpenWBEM::Thread* pTheThread;
+	OW_NAMESPACE::Thread* pTheThread;
 };
 
 typedef Map<DWORD, WThreadInfo> Win32ThreadMap;

@@ -213,6 +213,6 @@ namespace ThreadImpl
 
 } // end namespace OW_NAMESPACE
 
-namespace OW_ThreadImpl = OpenWBEM::ThreadImpl;
+namespace OW_ThreadImpl = OW_NAMESPACE::ThreadImpl;
 
 #endif

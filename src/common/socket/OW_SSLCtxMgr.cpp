@@ -83,7 +83,7 @@ extern "C"
 {
 struct CRYPTO_dynlock_value
 {
-	OpenWBEM::Mutex mutex;
+	OW_NAMESPACE::Mutex mutex;
 };
 }
 
@@ -93,7 +93,7 @@ namespace OW_NAMESPACE
 namespace
 {
 
-OpenWBEM::Mutex* mutex_buf = 0;
+OW_NAMESPACE::Mutex* mutex_buf = 0;
 
 extern "C"
 {
@@ -125,7 +125,7 @@ static void dyn_destroy_function(struct CRYPTO_dynlock_value *l,
 
 static unsigned long id_function()
 {
-	return (unsigned long)OpenWBEM::ThreadImpl::thread_t_ToUInt64(OpenWBEM::ThreadImpl::currentThread());
+	return (unsigned long)OW_NAMESPACE::ThreadImpl::thread_t_ToUInt64(OW_NAMESPACE::ThreadImpl::currentThread());
 }
 
 static void locking_function(int mode, int n, const char*, int)
@@ -1116,7 +1116,7 @@ SSLCtxBase::SSLCtxBase(const SSLOpts& opts)
 
 	if (opts.verifyMode != SSLOpts::MODE_DISABLED && !opts.trustStore.empty())
 	{
-		if (!OpenWBEM::FileSystem::exists(opts.trustStore) )
+		if (!OW_NAMESPACE::FileSystem::exists(opts.trustStore) )
 		{
 			OW_THROW(SSLException, Format("Error loading truststore %1",
 										  opts.trustStore).c_str());

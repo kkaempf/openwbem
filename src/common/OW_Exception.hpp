@@ -265,7 +265,7 @@ OW_COMMON_API std::ostream& operator<< (std::ostream& os, const Exception& e);
  */
 #define OW_THROW_SUBEX(exType, msg, subex) \
 throw exType(__FILE__, __LINE__, (msg), \
-             ::OpenWBEM::Exception::UNKNOWN_ERROR_CODE, &(subex))
+             ::OW_NAMESPACE::Exception::UNKNOWN_ERROR_CODE, &(subex))
 
 /**
  * Throw an exception using __FILE__ and __LINE__.
@@ -330,7 +330,7 @@ throw exType(__FILE__, __LINE__, (msg), (err), &(subex))
 class NAME##Exception : public BASE \
 { \
 public: \
-	NAME##Exception(const char* file, int line, const char* msg, int errorCode = ::OpenWBEM::Exception::UNKNOWN_ERROR_CODE, const Exception* otherException = 0, int subClassId = ::OpenWBEM::Exception::UNKNOWN_SUBCLASS_ID); \
+	NAME##Exception(const char* file, int line, const char* msg, int errorCode = ::OW_NAMESPACE::Exception::UNKNOWN_ERROR_CODE, const Exception* otherException = 0, int subClassId = ::OW_NAMESPACE::Exception::UNKNOWN_SUBCLASS_ID); \
 	virtual ~NAME##Exception() throw(); \
 	virtual const char* type() const; \
 	virtual NAME##Exception* clone() const; \
@@ -351,7 +351,7 @@ public: \
 class LINKAGE_SPEC NAME##Exception : public BASE \
 { \
 public: \
-	NAME##Exception(const char* file, int line, const char* msg, int errorCode = ::OpenWBEM::Exception::UNKNOWN_ERROR_CODE, const Exception* otherException = 0, int subClassId = ::OpenWBEM::Exception::UNKNOWN_SUBCLASS_ID); \
+	NAME##Exception(const char* file, int line, const char* msg, int errorCode = ::OW_NAMESPACE::Exception::UNKNOWN_ERROR_CODE, const Exception* otherException = 0, int subClassId = ::OW_NAMESPACE::Exception::UNKNOWN_SUBCLASS_ID); \
 	virtual ~NAME##Exception() throw(); \
 	virtual const char* type() const; \
 	virtual NAME##Exception* clone() const; \
@@ -366,7 +366,7 @@ public: \
  *
  * @param NAME The name of the new class (Exception will be postfixed)
  */
-#define OW_DECLARE_EXCEPTION(NAME) OW_DECLARE_EXCEPTION2(NAME, ::OpenWBEM::Exception)
+#define OW_DECLARE_EXCEPTION(NAME) OW_DECLARE_EXCEPTION2(NAME, ::OW_NAMESPACE::Exception)
 
 /**
  * Declare a new exception class named <NAME>Exception that derives from Exception
@@ -376,7 +376,7 @@ public: \
  * @param LINKAGE_SPEC the linkage specifier. If the OW_DEFINE_EXCEPTION is part
  *		of libopenwbem this would OW_COMMON_API...
  */
-#define OW_DECLARE_APIEXCEPTION(NAME, LINKAGE_SPEC) OW_DECLARE_APIEXCEPTION2(NAME, ::OpenWBEM::Exception, LINKAGE_SPEC)
+#define OW_DECLARE_APIEXCEPTION(NAME, LINKAGE_SPEC) OW_DECLARE_APIEXCEPTION2(NAME, ::OW_NAMESPACE::Exception, LINKAGE_SPEC)
 
 /**
  * Define a new exception class named <NAME>Exception that derives from <BASE>.
@@ -387,7 +387,7 @@ public: \
  * @param BASE The base class.
  */
 #define OW_DEFINE_EXCEPTION2(NAME, BASE) \
-NAME##Exception::NAME##Exception(const char* file, int line, const char* msg, int errorCode, const ::OpenWBEM::Exception* otherException, int subClassId) \
+NAME##Exception::NAME##Exception(const char* file, int line, const char* msg, int errorCode, const ::OW_NAMESPACE::Exception* otherException, int subClassId) \
 	: BASE(file, line, msg, errorCode, otherException, subClassId) {} \
 NAME##Exception::~NAME##Exception() throw() { } \
 NAME##Exception* NAME##Exception::clone() const { return new(std::nothrow) NAME##Exception(*this); } \
@@ -403,8 +403,8 @@ const char* NAME##Exception::type() const { return #NAME "Exception"; }
  * @param SUB_CLASS_ID The subclass id.
  */
 #define OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, BASE, SUB_CLASS_ID) \
-NAME##Exception::NAME##Exception(const char* file, int line, const char* msg, int errorCode, const ::OpenWBEM::Exception* otherException, int subClassId) \
-	: BASE(file, line, msg, errorCode, otherException, subClassId == ::OpenWBEM::Exception::UNKNOWN_SUBCLASS_ID ? (SUB_CLASS_ID) : subClassId) {} \
+NAME##Exception::NAME##Exception(const char* file, int line, const char* msg, int errorCode, const ::OW_NAMESPACE::Exception* otherException, int subClassId) \
+	: BASE(file, line, msg, errorCode, otherException, subClassId == ::OW_NAMESPACE::Exception::UNKNOWN_SUBCLASS_ID ? (SUB_CLASS_ID) : subClassId) {} \
 NAME##Exception::~NAME##Exception() throw() { } \
 NAME##Exception* NAME##Exception::clone() const { return new(std::nothrow) NAME##Exception(*this); } \
 const char* NAME##Exception::type() const { return #NAME "Exception"; }
@@ -417,7 +417,7 @@ const char* NAME##Exception::type() const { return #NAME "Exception"; }
  *
  * @param NAME The name of the new class (Exception will be postfixed)
  */
-#define OW_DEFINE_EXCEPTION(NAME) OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, ::OpenWBEM::Exception, ::OpenWBEM::Exception::UNKNOWN_SUBCLASS_ID)
+#define OW_DEFINE_EXCEPTION(NAME) OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, ::OW_NAMESPACE::Exception, ::OW_NAMESPACE::Exception::UNKNOWN_SUBCLASS_ID)
 
 /**
  * Define a new exception class named <NAME>Exception that derives from Exception.
@@ -427,18 +427,18 @@ const char* NAME##Exception::type() const { return #NAME "Exception"; }
  *
  * @param NAME The name of the new class (Exception will be postfixed)
  */
-#define OW_DEFINE_EXCEPTION_WITH_ID(NAME) OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, ::OpenWBEM::Exception, ::OpenWBEM::ExceptionIds::NAME##ExceptionId)
+#define OW_DEFINE_EXCEPTION_WITH_ID(NAME) OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, ::OW_NAMESPACE::Exception, ::OW_NAMESPACE::ExceptionIds::NAME##ExceptionId)
 
 /**
  * Define a new exception class named <NAME>Exception that derives from <BASE>.
  * The new class will use ExceptionIds::<NAME>ExceptionId for the subclass id.
- * Use this macro to create public exceptions that have an id in the OpenWBEM::ExceptionIds namespace that will derive from BASE
+ * Use this macro to create public exceptions that have an id in the OW_NAMESPACE::ExceptionIds namespace that will derive from BASE
  * This macro is typically used in a cpp file.
  *
  * @param NAME The name of the new class (Exception will be postfixed)
  * @param BASE The base class.
  */
-#define OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID(NAME, BASE) OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, BASE, ::OpenWBEM::ExceptionIds::NAME##ExceptionId)
+#define OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID(NAME, BASE) OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, BASE, ::OW_NAMESPACE::ExceptionIds::NAME##ExceptionId)
 
 } // end namespace OW_NAMESPACE
 

@@ -88,6 +88,6 @@ namespace SocketUtils
 
 } // end namespace OW_NAMESPACE
 
-namespace OW_SocketUtils = OpenWBEM::SocketUtils;
+namespace OW_SocketUtils = OW_NAMESPACE::SocketUtils;
 
 #endif
