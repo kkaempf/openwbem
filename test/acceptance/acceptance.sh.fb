@@ -778,11 +778,12 @@ TestWQL
 
 TestMultiReq
 
+StopDaemon
+
 TestInstalledHeaders
 
 CoreCheck
 
-StopDaemon
 Exit 0
 
 #############################################################################
