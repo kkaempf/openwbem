@@ -33,19 +33,19 @@
 #include "OW_XMLEscape.hpp"
 #include "OW_StringBuffer.hpp"
 
-
-
-OW_String OW_XMLEscape(const OW_String& escapedText)
+namespace OpenWBEM
 {
-	OW_StringBuffer rval(escapedText.length());
+
+String XMLEscape(const String& escapedText)
+{
+	StringBuffer rval(escapedText.length());
 
 	const char* begin = escapedText.c_str();
-	const char* end = escapedText.c_str() + escapedText.length();
 	const char* q;
 
 	#define YYCTYPE char
 	#define YYCURSOR        begin
-	#define YYLIMIT         end
+	#define YYLIMIT         begin
 	#define YYMARKER        q
 	#define YYFILL(n)
 
@@ -68,3 +68,6 @@ start:
 
 	return rval.toString();
 }
+
+} // end namespace OpenWBEM
+

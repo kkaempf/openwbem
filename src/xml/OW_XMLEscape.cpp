@@ -41,10 +41,9 @@ String XMLEscape(const char* escapedText, unsigned len)
 {
 	StringBuffer rval(len * 2);
 	const char* begin = escapedText;
-	const char* end = escapedText + len;
 	#define YYCTYPE char
 	#define YYCURSOR        begin
-	#define YYLIMIT         end
+	#define YYLIMIT         begin
 	#define YYFILL(n)
 start:
 	{
