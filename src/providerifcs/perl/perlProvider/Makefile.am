@@ -29,6 +29,7 @@ install-exec-local:
 		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
 		ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
 	done
+	cd perlNPI;$(PERL) Makefile.PL PREFIX=$(DESTDIR)/$(prefix) INSTALLDIRS=vendor;cd ..
 	make -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI install
 
 clean-local:
