@@ -157,6 +157,10 @@ OW_HTTPSvrConnection::run()
 			{
 			   OW_THROW(OW_SocketException, "Error occurred during select()");
 			}
+			if(selType == OW_Select::OW_SELECT_INTERRUPTED)
+			{
+			   OW_THROW(OW_SocketException, "select() was interrupted.");
+			}
 
 			if(selType == OW_Select::OW_SELECT_TIMEOUT)
 			{
