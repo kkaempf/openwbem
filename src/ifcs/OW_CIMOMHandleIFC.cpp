@@ -185,7 +185,7 @@ OW_CIMOMHandleIFC::enumInstancesE(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
 OW_CIMOMHandleIFC::enumInstanceNamesE(
-		const OW_CIMObjectPath& path, OW_Bool deep=DEEP)
+		const OW_CIMObjectPath& path, OW_Bool deep)
 {
 	OW_CIMObjectPathEnumeration rval;
 	CIMObjectPathEnumBuilder handler(rval);
