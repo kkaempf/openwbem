@@ -16,13 +16,10 @@ Testing:
 
 Fix problems:
     - Man pages aren't getting included in the rpm.
-    - Rewrite the provider manager lookup so it's simpler/less code.
     - assoc problems:
       - Demo_OSProcess
-      - snmp ip info assoc
-      - namespace assoc
+    - Rewrite the provider manager lookup so it's simpler/less code.
     - simplify the provider manager lookup structure
-    - snmp indication provider started twice
     - 127.0.0.1 in xml
     - rename cimom to wbem server
     - remove internal provider ifc
@@ -31,6 +28,7 @@ Fix problems:
       and/or remember what auth is needed instead of repeatedly sending the
       request twice
     - Fix std::exception (basic_ios::clear(iostate) caused exception in OW_HTTPSvrConnection::run()
+	- Update the *.HOWTO files.
 
 New features:
     - Modifying existing filters will affect the indication server, and
