@@ -25,19 +25,19 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
-#define CM_LOGGER(mb) \
-(* static_cast<OpenWBEM::ProviderEnvironmentIFCRef *>(mb->hdl))->getLogger()
+#define CM_LOGGER() \
+(* static_cast<OpenWBEM::ProviderEnvironmentIFCRef *>(CMPI_ThreadContext::getBroker()->hdl))->getLogger()
 
 // Factory section
 
-static CMPIInstance* mbEncNewInstance(CMPIBroker* mb, CMPIObjectPath* eCop,
+static CMPIInstance* mbEncNewInstance(CMPIBroker*, CMPIObjectPath* eCop,
 						 CMPIStatus *rc)
 {
-	CM_LOGGER(mb)->logDebug("CMPIBrokerEnc: mbEncNewInstance()");
+	CM_LOGGER()->logDebug("CMPIBrokerEnc: mbEncNewInstance()");
 
 	OpenWBEM::CIMObjectPath * cop = static_cast<OpenWBEM::CIMObjectPath *>(eCop->hdl);
 
-	OpenWBEM::AutoPtr<OpenWBEM::CIMClass> cls(mbGetClass(mb,*cop));
+	OpenWBEM::AutoPtr<OpenWBEM::CIMClass> cls(mbGetClass(0,*cop));
 
 	OpenWBEM::CIMInstance ci;
 
@@ -63,12 +63,10 @@ static CMPIInstance* mbEncNewInstance(CMPIBroker* mb, CMPIObjectPath* eCop,
 	return neInst;
 }
 
-static CMPIObjectPath* mbEncNewObjectPath(CMPIBroker* mb, char *ns, char *cls,
+static CMPIObjectPath* mbEncNewObjectPath(CMPIBroker*, char *ns, char *cls,
 				  CMPIStatus *rc)
 {
-	(void) mb;
-
-	CM_LOGGER(mb)->logDebug("CMPIBrokerEnc: mbEncNewObjectPath()");
+	CM_LOGGER()->logDebug("CMPIBrokerEnc: mbEncNewObjectPath()");
 	OpenWBEM::String className(cls);
 	OpenWBEM::String nameSpace(ns);
 	OpenWBEM::CIMObjectPath * cop = new OpenWBEM::CIMObjectPath(className,nameSpace);
@@ -78,18 +76,14 @@ static CMPIObjectPath* mbEncNewObjectPath(CMPIBroker* mb, char *ns, char *cls,
 	return nePath;
 }
 
-static CMPIArgs* mbEncNewArgs(CMPIBroker* mb, CMPIStatus *rc)
+static CMPIArgs* mbEncNewArgs(CMPIBroker*, CMPIStatus *rc)
 {
-	(void) mb;
-
 	CMSetStatus(rc,CMPI_RC_OK);
 	return (CMPIArgs*)new CMPI_Object(new OpenWBEM::Array<OpenWBEM::CIMParamValue>());
 }
 
-static CMPIString* mbEncNewString(CMPIBroker* mb, char *cStr, CMPIStatus *rc)
+static CMPIString* mbEncNewString(CMPIBroker*, char *cStr, CMPIStatus *rc)
 {
-	(void) mb;
-
 	CMSetStatus(rc,CMPI_RC_OK);
 	return (CMPIString*)new CMPI_Object(cStr);
 }
@@ -98,12 +92,10 @@ CMPIString* mbIntNewString(char *s) {
 	return mbEncNewString(NULL,s,NULL);
 }
 
-static CMPIArray* mbEncNewArray(CMPIBroker* mb, CMPICount count, CMPIType type,
+static CMPIArray* mbEncNewArray(CMPIBroker*, CMPICount count, CMPIType type,
 								CMPIStatus *rc)
 {
-	(void) mb;
-
-	CM_LOGGER(mb)->logDebug("CMPIBrokerEnc: mbEncNewArray()");
+	CM_LOGGER()->logDebug("CMPIBrokerEnc: mbEncNewArray()");
 	CMSetStatus(rc,CMPI_RC_OK);
 	CMPIData * dta = new CMPIData[count+1];
 	dta->type = type;
@@ -120,39 +112,32 @@ static CMPIArray* mbEncNewArray(CMPIBroker* mb, CMPICount count, CMPIType type,
 
 extern CMPIDateTime *newDateTime();
 
-static CMPIDateTime* mbEncNewDateTime(CMPIBroker* mb, CMPIStatus *rc)
+static CMPIDateTime* mbEncNewDateTime(CMPIBroker*, CMPIStatus *rc)
 {
-	(void) mb;
-
 	CMSetStatus(rc,CMPI_RC_OK);
 	return newDateTime();
 }
 
 extern CMPIDateTime *newDateTime(CMPIUint64,CMPIBoolean);
 
-static CMPIDateTime* mbEncNewDateTimeFromBinary(CMPIBroker* mb,
+static CMPIDateTime* mbEncNewDateTimeFromBinary(CMPIBroker*,
 	 CMPIUint64 time, CMPIBoolean interval ,CMPIStatus *rc)
 {
-	(void) mb;
-
 	CMSetStatus(rc,CMPI_RC_OK);
 	return newDateTime(time,interval);
 }
 
 extern CMPIDateTime *newDateTime(char*);
 
-static CMPIDateTime* mbEncNewDateTimeFromString(CMPIBroker* mb,
+static CMPIDateTime* mbEncNewDateTimeFromString(CMPIBroker*,
 		 char *t ,CMPIStatus *rc)
 {
-	(void) mb;
-
 	CMSetStatus(rc,CMPI_RC_OK);
 	return newDateTime(t);
 }
 
-static CMPIString* mbEncToString(CMPIBroker * mb, void * o, CMPIStatus * rc)
+static CMPIString* mbEncToString(CMPIBroker *, void * o, CMPIStatus * rc)
 {
-	(void) mb;
 	CMPI_Object *obj = (CMPI_Object*)o;
 	OpenWBEM::String str;
 
@@ -208,7 +193,7 @@ static CMPIString* mbEncToString(CMPIBroker * mb, void * o, CMPIStatus * rc)
 	return (CMPIString*) new CMPI_Object(str);
 }
 
-static CMPIBoolean mbEncClassPathIsA(CMPIBroker *mb, CMPIObjectPath *eCp,
+static CMPIBoolean mbEncClassPathIsA(CMPIBroker *, CMPIObjectPath *eCp,
 					char *type, CMPIStatus *rc)
 {
 	(void) rc;
@@ -219,13 +204,13 @@ static CMPIBoolean mbEncClassPathIsA(CMPIBroker *mb, CMPIObjectPath *eCp,
  
 	if (tcn == cop->getClassName()) return 1;
  
-	OpenWBEM::AutoPtr<OpenWBEM::CIMClass> cc(mbGetClass(mb,*cop));
+	OpenWBEM::AutoPtr<OpenWBEM::CIMClass> cc(mbGetClass(0,*cop));
 	OpenWBEM::CIMObjectPath  scp(*cop);
 	scp.setClassName(cc->getSuperClass());
 																				
 	for (; !scp.getClassName().empty(); )
 	{
-		cc=mbGetClass(mb,scp);
+		cc=mbGetClass(0,scp);
 		if (cc->getName()==tcn) return 1;
 		scp.setClassName(cc->getSuperClass());
 	};
@@ -342,7 +327,7 @@ static Formatter::Arg formatValue(va_list *argptr, CMPIStatus *rc) {
    return Formatter::Arg((Boolean)0);
 }
  
-CMPIString* mbEncGetMessage(CMPIBroker *mb, char *msgId, char *defMsg,
+CMPIString* mbEncGetMessage(CMPIBroker *, char *msgId, char *defMsg,
 			CMPIStatus* rc, unsigned int count, ...) {
    MessageLoaderParms parms(msgId,defMsg);
    //cout<<"::: mbEncGetMessage() count: "<<count<<endl;
