@@ -73,6 +73,9 @@ extern "C"
 #if defined (OW_HAVE_SYS_RESOURCE_H)
 #include <sys/resource.h>
 #endif
+#if defined(OW_HAVE_GRP_H)
+#include <grp.h>
+#endif
 
 #ifdef OW_NETWARE
 #include <nks/vm.h>
@@ -146,7 +149,32 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 		g_shutDown = false; 
 	}
 #endif
-	initDaemonizePipe(); 
+	initDaemonizePipe();
+
+	// If we're running as root and owcimomd.drop_root_privileges != "false", then try to switch users/groups to owcimomd/owcimomd
+	if (geteuid() == 0 && !env->getConfigItem(ConfigOpts::DROP_ROOT_PRIVILEGES_opt, OW_DEFAULT_DROP_ROOT_PRIVILEGES).equalsIgnoreCase("false"))
+	{
+		const char OWCIMOMD_USER[] = "owcimomd";
+		// dont need to worry about thread safety here, the threads won't start until later.
+		struct passwd* owcimomdInfo = ::getpwnam(OWCIMOMD_USER);
+		if (!owcimomdInfo)
+		{
+			OW_THROW_ERRNO_MSG(DaemonException, "Platform::daemonize(): getpwnam(\"owcimomd\")");
+		}
+		if (::setgid(owcimomdInfo->pw_gid) != 0)
+		{
+			OW_THROW_ERRNO_MSG(DaemonException, "Platform::daemonize(): setgid");
+		}
+		if (::initgroups(owcimomdInfo->pw_name, owcimomdInfo->pw_gid) != 0)
+		{
+			OW_THROW_ERRNO_MSG(DaemonException, "Platform::daemonize(): initgroups");
+		}
+		if (::setuid(owcimomdInfo->pw_uid) != 0)
+		{
+			OW_THROW_ERRNO_MSG(DaemonException, "Platform::daemonize(): setuid");
+		}
+	}
+
 
 	int pid = -1; 
 #if !defined(OW_NETWARE)
