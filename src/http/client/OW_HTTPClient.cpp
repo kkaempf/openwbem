@@ -899,10 +899,8 @@ void HTTPClient::assumeBasicAuth()
 {
 	m_needsConnect = true;
 	m_authRequired = true;
-	// This simulates that the server returned www-authenticate: Basic in 
-	// the previous request which will cause HTTPClient to respond with the
-	// credentials on the next request.
-	m_responseHeaders["www-authenticate"] = "Basic"; 
+	m_sAuthorization = "Basic";
+	m_uselocalAuthentication = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
