@@ -134,7 +134,7 @@ CIMClass::getKeys() const
 	CIMPropertyArray v;
 	for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
 	{
-		CIMProperty p = m_pdata->m_properties[i];
+		const CIMProperty& p = m_pdata->m_properties[i];
 		if(p.isKey())
 		{
 			v.append(p);

@@ -690,12 +690,13 @@ CIMServer::getInstance(
 CIMInstance
 CIMServer::getInstance(
 	const String& ns,
-	const CIMObjectPath& instanceName,
+	const CIMObjectPath& instanceName_,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, CIMClass* pOutClass,
 	OperationContext& context)
 {
+	CIMObjectPath instanceName(instanceName_);
 	String className = instanceName.getClassName();
 	CIMClass cc = _instGetClass(ns, className,
 		E_NOT_LOCAL_ONLY,
@@ -706,6 +707,7 @@ CIMServer::getInstance(
 	{
 		*pOutClass = cc;
 	}
+	instanceName.syncWithClass(cc);
 	InstanceProviderIFCRef instancep = _getInstanceProvider(ns, cc, context);
 	CIMInstance ci(CIMNULL);
 	if(instancep)
@@ -766,6 +768,7 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 	CIMClass theClass(CIMNULL);
 	CIMInstance oldInst = getInstance(ns, cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
 		&theClass, context);
+	cop.syncWithClass(theClass);
 	InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass, context);
 	if(instancep)	// If there is an instance provider, let it do the delete.
 	{
@@ -977,18 +980,22 @@ CIMServer::setProperty(
 	}
 	cp.setValue(cv);
 	ci.setProperty(cp);
-	modifyInstance(ns, ci, E_INCLUDE_QUALIFIERS, 0, context);
+	StringArray propertyList;
+	propertyList.push_back(propertyName);
+	modifyInstance(ns, ci, E_INCLUDE_QUALIFIERS, &propertyList, context);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 CIMServer::invokeMethod(
 	const String& ns,
-	const CIMObjectPath& path,
+	const CIMObjectPath& path_,
 	const String& methodName, const CIMParamValueArray& inParams,
 	CIMParamValueArray& outParams, OperationContext& context)
 {
+	CIMObjectPath path(path_);
 	CIMClass cc = getClass(ns, path.getClassName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
+	path.syncWithClass(cc);
 	CIMPropertyArray keys = path.getKeys();
 	// If this is an instance, ensure it exists.
 	if(keys.size() > 0)
@@ -1462,6 +1469,7 @@ CIMServer::_commonReferences(
 {
 	CIMObjectPath path(path_);
 	path.setNameSpace(ns);
+	path.syncWithClass(getClass(ns, path.getClassName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context));
 	// Get all association classes from the repository
 	// If the result class was specified, only children of it will be
 	// returned.
@@ -1644,6 +1652,7 @@ CIMServer::_commonAssociators(
 {
 	CIMObjectPath path(path_);
 	path.setNameSpace(ns);
+	path.syncWithClass(getClass(ns, path.getClassName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context));
 	// Get association classes from the association repository
 	CIMClassArray dynamicAssocs;
 	StringArray assocClassNames;

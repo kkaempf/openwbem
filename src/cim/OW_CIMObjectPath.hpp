@@ -317,6 +317,17 @@ public:
 	 * @param ostrm The output stream to write this object to.
 	 */
 	virtual void writeObject(std::ostream& ostrm) const;
+
+	/**
+	 * Synchronize this object path with the given class. This will ensure that
+	 * all keys found on the class exist.  All CIMValue types will be cast to
+	 * the proper type, this is helpful because CIM-XML does not preserve the
+	 * detailed type information of key-value pairs.
+	 * @param cc	The class to synchronize with.
+	 * @return a reference to *this
+	 */
+	CIMObjectPath& syncWithClass(const CIMClass& theClass);
+
 private:
 	COWReference<OPData> m_pdata;
 	friend bool operator<(const CIMObjectPath& lhs, const CIMObjectPath& rhs);

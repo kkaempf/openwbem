@@ -43,6 +43,8 @@
 #include "OW_NoSuchPropertyException.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_CIMValueCast.hpp"
+
 #include <cstring>
 #include <cctype>
 
@@ -718,6 +720,62 @@ bool CIMObjectPath::isClassPath() const
 bool CIMObjectPath::isInstancePath() const
 {
 	return getKeys().size() != 0;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMObjectPath&
+CIMObjectPath::syncWithClass(const CIMClass& theClass)
+{
+	if(!theClass || isClassPath())
+	{
+		return *this;
+	}
+	String propName;
+	CIMPropertyArray classProps = theClass.getKeys();
+	CIMPropertyArray copProps = getKeys();
+	// Remove properties that are not defined in the class
+	for(size_t i = 0; i < copProps.size(); i++)
+	{
+		propName = copProps[i].getName();
+		if(!theClass.getProperty(propName))
+		{
+			copProps.remove(i);
+			i--;
+		}
+	}
+	// Ensure existing properties have the right type
+	for(size_t i = 0; i < classProps.size(); i++)
+	{
+		bool found = false;
+		const CIMProperty& cprop = classProps[i];
+		propName = cprop.getName();
+		for(size_t j = 0; j < copProps.size(); j++)
+		{
+			CIMProperty iprop = copProps[j];
+			if(iprop.getName().equalsIgnoreCase(propName))
+			{
+				CIMValue cv = iprop.getValue();
+				iprop = cprop;
+				if(cv)
+				{
+					if(cv.getType() != iprop.getDataType().getType())
+					{
+						cv = CIMValueCast::castValueToDataType(cv,
+							iprop.getDataType());
+					}
+					iprop.setValue(cv);
+				}
+				copProps[j] = iprop;
+				found = true;
+				break;
+			}
+		}
+		if(!found)
+		{
+			copProps.append(classProps[i]);
+		}
+	}
+	setKeys(copProps);
+	return *this;
 }
 
 } // end namespace OpenWBEM

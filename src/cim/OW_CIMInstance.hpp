@@ -328,7 +328,7 @@ public:
 		const CIMClass& requestedClass, const CIMClass& cimClass) const;
 	/**
 	 * Synchronize this instance with the given class. This will ensure that
-	 * all properties found on the class exist on thist instance. It will also
+	 * all properties found on the class exist on this instance. It will also
 	 * optionally move all qualifiers from the class to the instance.
 	 * @param cc	The class to synchronize this instance with.
 	 * @param includeQualifiers If E_EXCLUDE_QUALIFIERS, the instance will not contain any
