@@ -45,7 +45,10 @@
 
 #include <fstream>
 #include <iostream> // for cerr
+
+#ifndef OW_WIN32
 #include <syslog.h>
+#endif
 
 namespace OpenWBEM
 {
@@ -76,6 +79,9 @@ class FileLogger : public Logger
 	private:
 		mutable ofstream log;
 };
+
+#ifndef OW_WIN32
+// TODO WIN32 - User the EventLog
 class SyslogLogger : public Logger
 {
 	public:
@@ -121,6 +127,7 @@ class SyslogLogger : public Logger
 		static bool calledOpenLog;
 };
 bool SyslogLogger::calledOpenLog = false;
+#endif
 
 class TeeLogger : public Logger
 {
@@ -194,7 +201,12 @@ LoggerRef Logger::createLogger( const String& type, bool debug )
 	}
 	else if ( type == "syslog" )
 	{
+#ifdef OW_WIN32
+		// TODO - EventLog
+		retval = new NullLogger;
+#else
 		retval = new SyslogLogger;
+#endif
 	}
 	else if (type == "stderr")
 	{

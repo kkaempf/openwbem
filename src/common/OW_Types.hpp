@@ -113,6 +113,7 @@ typedef int Select_t;
 typedef int		FileHandle;
 #ifdef OW_WIN32
 typedef int UserId;
+typedef int uid_t;
 typedef DWORD ProcId;
 #else
 typedef uid_t UserId;

@@ -181,10 +181,13 @@ bool
 isLink(const String& path)
 {
 #ifdef OW_WIN32
+	return false;
+/* This stuff does not compile (_S_IFLNK?) 
   struct _stat st;
   if(_stat(path.c_str(), &st) !=0)
     return false;
   return ((st.st_mode & _S_IFLNK) != 0);
+*/
 #else
   struct stat st;
   if(lstat(path.c_str(), &st) != 0)

@@ -234,6 +234,9 @@
 				RelativePath="..\..\..\..\src\ifcs\OW_ClientAuthCBIFC.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_CmdLineParser.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_Condition.cpp">
 			</File>
 			<File
@@ -241,6 +244,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_ConfigFile.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_COWIntrusiveCountableBase.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_COWIntrusiveReference.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_COWReferenceBase.cpp">
@@ -279,10 +288,19 @@
 				RelativePath="..\..\..\..\src\common\OW_Exception.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_Exec.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_Format.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\utf8CodeGenerators\OW_GenCaseFoldingCompare.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\socket\OW_GetPass.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_IntrusiveCountableBase.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_IOException.cpp">
@@ -295,6 +313,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_Logger.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_LoggerImpls.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_MemTracer.cpp">
@@ -390,6 +411,9 @@
 				RelativePath="..\..\..\..\src\ifcs\OW_ServiceIFC.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_SessionLanguage.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_SharedLibrary.cpp">
 			</File>
 			<File
@@ -468,6 +492,9 @@
 				RelativePath="..\..\..\..\src\common\OW_TmpFile.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\utf8CodeGenerators\OW_to_UTF8.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_UnnamedPipe.cpp">
 			</File>
 			<File
@@ -475,6 +502,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_UserInfo.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_UserUtils.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_UTF8Utils.cpp">
@@ -635,6 +665,9 @@
 				RelativePath="..\..\..\..\src\ifcs\OW_ClientAuthCBIFC.hpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_CmdLineParser.hpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_Condition.hpp">
 			</File>
 			<File
@@ -648,6 +681,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_ConfigOpts.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_COWIntrusiveCountableBase.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_COWIntrusiveReference.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_COWReference.hpp">
@@ -683,6 +722,12 @@
 				RelativePath="..\..\..\..\src\common\OW_Exception.hpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_ExceptionIds.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_Exec.hpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_File.hpp">
 			</File>
 			<File
@@ -702,6 +747,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_HashMultiMap.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_IntrusiveCountableBase.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_IntrusiveReference.hpp">
@@ -848,6 +896,9 @@
 				RelativePath="..\..\..\..\src\ifcs\OW_ServiceIFC.hpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_SessionLanguage.hpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_SharedLibrary.hpp">
 			</File>
 			<File
@@ -977,10 +1028,16 @@
 				RelativePath="..\..\..\..\src\common\OW_UserInfo.hpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_UserUtils.hpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_UTF8Utils.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_UUID.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_vector.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_WBEMFlags.hpp">

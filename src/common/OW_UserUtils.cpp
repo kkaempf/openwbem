@@ -59,7 +59,11 @@ namespace OpenWBEM
 		String getEffectiveUserId()
 		{
 		#ifdef OW_WIN32
-		#error "port me!"
+			// TODO
+			// The user ID is represented by a SID on Win32. Going to return 0 for
+			// root user until I get through the Win32 CIMOM. Eventually OW will
+			// deal with userid on Win32 the proper way.
+			return String("0");
 		#else
 			return String(Int64(::geteuid()));
 		#endif
@@ -69,12 +73,31 @@ namespace OpenWBEM
 		String getCurrentUserName()
 		{
 			bool ok;
+#ifdef OW_WIN32
+			return getUserName(0, ok);
+#else
 			return getUserName(getuid(),ok);
+#endif
 		}
 
 		//////////////////////////////////////////////////////////////////////////////
 		String getUserName(uid_t uid,bool& ok)
 		{
+#ifdef OW_WIN32
+			// TODO
+			// Ignore uid for right now. Just return the current User (WRONG!)
+			// Need to come back to this later when the uid_t stuff is worked out.
+			char name[256];
+			unsigned long size = sizeof(name);
+			size = sizeof(name);
+			if(!GetUserName(name, &size))
+			{
+				return String();
+			}
+
+			return String(name);
+#else
+
 #ifdef HAVE_GETPWUID_R
 			passwd pw;
 			//I can't imagine an easy way to calculate the size of the additional buffer
@@ -95,6 +118,7 @@ namespace OpenWBEM
 			}
 			ok = false;
 			return "";
+#endif
 		}
 	} // end namespace UserUtils
 } // end namespace OpenWBEM
