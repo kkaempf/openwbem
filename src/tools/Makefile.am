@@ -53,7 +53,7 @@ owdigestgenpass_SOURCES = OW_DigestPasswdGen.cpp
 owdigestgenpass_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
-$(SSL_LIBS) $(Z_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
 
 owdigestgenpass_LDFLAGS = \
@@ -197,6 +197,7 @@ owrepositorydump_LDADD = \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb \
 -L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
 
 owrepositorydump_LDFLAGS = \
@@ -208,7 +209,7 @@ $(CXXBINLINKFLAGS) \
 
 #owtruststore_LDADD = \
 #-L$(top_builddir)/src/common -lopenwbem \
-#$(SSL_LIBS) \
+#$(Z_LIBS) $(SSL_LIBS)\
 #$(BINLINKAPPENDFLAGS)
 
 #owtruststore_LDFLAGS = \
