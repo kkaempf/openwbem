@@ -636,6 +636,7 @@ void adjustTimeForTimeZone(Int32 timezone_offset, Int32& year, Int32& month,
 //////////////////////////////////////////////////////////////////////////////
 DateTime::DateTime(const String& str)
 {
+	// CIM format
   if( str.length() == 25 )
   {
 	// validate required characters
@@ -1137,8 +1138,12 @@ DateTime::getGMTOffset()
 		if (!offsetComputed)
 		{
 			time_t tm = time(NULL);
-			time_t gmt = mktime(gmtime(&tm));
-			time_t lctm = mktime(localtime(&tm));
+			struct tm* ptmlc = gmtime(&tm);
+			ptmlc->tm_isdst = -1; // have to let the C library adjust for DST
+			time_t gmt = mktime(ptmlc);
+			ptmlc = localtime(&tm);
+			ptmlc->tm_isdst = -1;
+			time_t lctm = mktime(ptmlc);
 			gmtOffset = ((lctm - gmt) / 60) / 60;
 			offsetComputed = true;
 		}
