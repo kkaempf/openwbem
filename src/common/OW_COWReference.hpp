@@ -78,10 +78,12 @@ class COWReference : private COWReferenceBase
 		template <class U>
 		COWReference<U> cast_to() const;
 
-	private:
-		T* volatile m_pObj;
+#if !defined(__GNUC__) || __GNUC__ > 2 // causes gcc 2.95 to ICE
 		/* This is so the templated constructor will work */
 		template <class U> friend class COWReference;
+	private:
+#endif
+		T* volatile m_pObj;
 		void decRef();
 		void getWriteLock();
 };

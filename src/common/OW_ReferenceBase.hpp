@@ -48,7 +48,11 @@ inline void RefSwap(T& x, T&y)
 // minimize code bloat.
 class ReferenceBase
 {
+#if !defined(__GNUC__) || __GNUC__ > 2 // because of a gcc 2.95 ICE
 protected:
+#else
+public:
+#endif
 	ReferenceBase()
 		: m_pRefCount(new RefCount) {}
 	ReferenceBase(const ReferenceBase& arg)
@@ -93,7 +97,11 @@ protected:
 	}
 #endif
 
+#if !defined(__GNUC__) || __GNUC__ > 2 // because of a gcc 2.95 ICE
 protected:
+#else
+public:
+#endif
 	RefCount* volatile m_pRefCount;
 };
 

@@ -120,9 +120,11 @@ public:
 	{
 		return m_obj.isNull();
 	}
+#if !defined(__GNUC__) || __GNUC__ > 2 // causes gcc 2.95 to ICE
 	/* This is so cast_to will work */
 	template <class U> friend class SharedLibraryReference;
 private:
+#endif
 	SharedLibraryRef m_sharedLib;
 	T m_obj;
 };

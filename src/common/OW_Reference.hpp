@@ -37,7 +37,12 @@ namespace OpenWBEM
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-class Reference : private ReferenceBase
+class Reference : 
+#if !defined(__GNUC__) || __GNUC__ > 2 // because of a gcc 2.95 ICE
+	private ReferenceBase
+#else
+	public ReferenceBase
+#endif
 {
 	public:
 		typedef T element_type;
@@ -75,11 +80,13 @@ class Reference : private ReferenceBase
 		Reference<U> cast_to() const;
 		template <class U>
 		void useRefCountOf(const Reference<U>&);
-	private:
-		void decRef();
-		T* volatile m_pObj;
+#if !defined(__GNUC__) || __GNUC__ > 2 // causes gcc 2.95 to ICE
 		/* This is so the templated constructor will work */
 		template <class U> friend class Reference;
+	private:
+#endif
+		void decRef();
+		T* volatile m_pObj;
 };
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
