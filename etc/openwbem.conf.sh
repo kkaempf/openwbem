@@ -323,7 +323,8 @@ owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the C++ provider
 # interface. The cppprovifc.prov_location option specifies where the C++
-# provider interface will load it's providers from. The default for this option
+# provider interface will load it's providers from.  Multiple directories
+# can be specified, separated by ':' or ';'.  The default for this option
 # is "@libdir@/openwbem/c++providers"
 # You probably don't need to modify this option.
 cppprovifc.prov_location = @libdir@/openwbem/c++providers
