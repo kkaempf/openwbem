@@ -59,11 +59,19 @@ void OW_CIMDateTimeTestCases::testToDateTime()
 	unitAssert(DateTime("21111020051022.333333+000") == CIMDateTime("21111020051022.333333+000").toDateTime());
 }
 
+void OW_CIMDateTimeTestCases::testConstructor()
+{
+	String empty = "00000000000000.000000:000";
+	unitAssertNoThrow(CIMDateTime(empty));
+	unitAssert(CIMDateTime(empty).toString() == empty);
+}
+
 Test* OW_CIMDateTimeTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_CIMDateTime");
 
 	ADD_TEST_TO_SUITE(OW_CIMDateTimeTestCases, testToDateTime);
+	ADD_TEST_TO_SUITE(OW_CIMDateTimeTestCases, testConstructor);
 
 	return testSuite;
 }

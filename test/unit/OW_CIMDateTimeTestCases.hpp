@@ -51,6 +51,7 @@ public:
 private:
 	// test methods
 	void testToDateTime();
+	void testConstructor();
 };
 
 #endif
