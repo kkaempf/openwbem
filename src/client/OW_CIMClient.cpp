@@ -50,12 +50,10 @@ namespace OpenWBEM
 
 using namespace WBEMFlags;
 ///////////////////////////////////////////////////////////////////////////////
-CIMClient::CIMClient(const String& url, const String& ns,
-	const ClientAuthCBIFCRef& authCB)
+CIMClient::CIMClient(const String& url, const String& ns, const ClientAuthCBIFCRef& authCB)
+	: m_namespace(ns)
+	, m_ch(ClientCIMOMHandle::createFromURL(url, authCB))
 {
-	m_ch = ClientCIMOMHandle::createFromURL(url, authCB);
-
-	m_namespace = ns;
 }
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 ///////////////////////////////////////////////////////////////////////////////

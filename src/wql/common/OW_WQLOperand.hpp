@@ -127,37 +127,37 @@ public:
 	/** Initializes object as INTEGER_VALUE.
 	 */
 	WQLOperand(Int64 x, WQLIntegerValueTag)
+		: _integerValue(x)
+		, _type(INTEGER_VALUE)
 	{
-		_integerValue = x;
-		_type = INTEGER_VALUE;
 	}
 	/** Initializes object as DOUBLE_VALUE.
 	 */
 	WQLOperand(Real64 x, WQLDoubleValueTag)
+		: _doubleValue(x)
+		, _type(DOUBLE_VALUE)
 	{
-		_doubleValue = x;
-		_type = DOUBLE_VALUE;
 	}
 	/** Initializes object as BOOLEAN_VALUE.
 	 */
 	WQLOperand(bool x, WQLBoolValueTag)
+		: _booleanValue(x)
+		, _type(BOOLEAN_VALUE)
 	{
-		_booleanValue = x;
-		_type = BOOLEAN_VALUE;
 	}
 	/** Initializes object as STRING_VALUE.
 	 */
 	WQLOperand(const String& x, WQLStringValueTag)
+		: _string(x)
+		, _type(STRING_VALUE)
 	{
-		_string = x;
-		_type = STRING_VALUE;
 	}
 	/** Initializes object as PROPERTY_NAME.
 	 */
 	WQLOperand(const String& x, WQLPropertyNameTag)
+		: _string(x)
+		, _type(PROPERTY_NAME)
 	{
-		_string = x;
-		_type = PROPERTY_NAME;
 	}
 	/** Accessor for getting the type of the operand.
 	 */
