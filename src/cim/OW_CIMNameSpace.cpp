@@ -37,6 +37,7 @@
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMUrl.hpp"
 #include "OW_StrictWeakOrdering.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
 #include <cctype>
 
 namespace OpenWBEM
@@ -45,7 +46,7 @@ namespace OpenWBEM
 using std::ostream;
 using std::istream;
 //////////////////////////////////////////////////////////////////////////////
-struct CIMNameSpace::NSData
+struct CIMNameSpace::NSData : public COWIntrusiveCountableBase
 {
 	String m_nameSpace;
 	CIMUrl m_url;
@@ -226,7 +227,7 @@ CIMNameSpace::readObject(istream &istrm)
 	CIMUrl url(CIMNULL);
 	url.readObject(istrm);
 	// Assign here in case exception gets thrown on preceeding readObjects
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		m_pdata = new NSData;
 	}

@@ -36,7 +36,7 @@
 #ifndef OW_CIMOBJECTPATH_HPP_INCLUDE_GUARD_
 #define OW_CIMOBJECTPATH_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_COWReference.hpp"
+#include "OW_COWIntrusiveReference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
@@ -265,9 +265,9 @@ private:
 	typedef void (dummy::*safe_bool)();
 public:
 	operator safe_bool () const
-		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+		{  return (m_pdata) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
-		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
+		{  return (m_pdata) ? 0: &dummy::nonnull; }
 	/**
 	 * Equality operator
 	 * @param op The object path to compare to this one.
@@ -335,7 +335,7 @@ public:
 	CIMObjectPath& syncWithClass(const CIMClass& theClass);
 
 private:
-	COWReference<OPData> m_pdata;
+	COWIntrusiveReference<OPData> m_pdata;
 	friend bool operator<(const CIMObjectPath& lhs, const CIMObjectPath& rhs);
 };
 

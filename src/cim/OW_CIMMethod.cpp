@@ -42,6 +42,7 @@
 #include "OW_Array.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -50,7 +51,7 @@ using std::ostream;
 using std::istream;
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////													
-struct CIMMethod::METHData
+struct CIMMethod::METHData : public COWIntrusiveCountableBase
 {
 	METHData() 
 		: m_propagated(false)
@@ -262,7 +263,7 @@ CIMMethod
 CIMMethod::clone(EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin) const
 {
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		return CIMMethod(CIMNULL);
 	}
@@ -326,7 +327,7 @@ CIMMethod::readObject(istream &istrm)
 	originClass.readObject(istrm);
 	override.readObject(istrm);
 	propagated.readObject(istrm);
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		m_pdata = new METHData;
 	}

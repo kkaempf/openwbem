@@ -37,7 +37,7 @@
 #define OW_CIMVALUE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
-#include "OW_COWReference.hpp"
+#include "OW_COWIntrusiveReference.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_Array.hpp"
 #include "OW_CIMDataType.hpp"
@@ -452,9 +452,9 @@ private:
 	typedef void (dummy::*safe_bool)();
 public:
 	operator safe_bool () const
-		{  return (!m_impl.isNull()) ? &dummy::nonnull : 0; }
+		{  return (m_impl) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
-		{  return (!m_impl.isNull()) ? 0: &dummy::nonnull; }
+		{  return (m_impl) ? 0: &dummy::nonnull; }
 	/**
 	 * Assign another CIMValue to this one.
 	 * @param x The CIMValue to assign to this one.
@@ -558,7 +558,7 @@ public:
 	 */
 	bool isNumericType() const;
 private:
-	COWReference<CIMValueImpl> m_impl;
+	COWIntrusiveReference<CIMValueImpl> m_impl;
 };
 
 } // end namespace OpenWBEM

@@ -50,6 +50,7 @@
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMValueCast.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
 
 #include <cstring>
 #include <cctype>
@@ -60,7 +61,7 @@ namespace OpenWBEM
 using std::istream;
 using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
-struct CIMObjectPath::OPData
+struct CIMObjectPath::OPData : public COWIntrusiveCountableBase
 {
 	CIMNameSpace m_nameSpace;
 	String m_objectName;
@@ -316,7 +317,7 @@ CIMObjectPath::setClassName(const String& className)
 bool
 CIMObjectPath::equals(const CIMObjectPath& cop) const
 {
-	if(m_pdata.isNull() && cop.m_pdata.isNull())
+	if(!m_pdata && !cop.m_pdata)
 	{
 		return true;
 	}
@@ -447,7 +448,7 @@ CIMObjectPath::readObject(istream& istrm)
 	nameSpace.readObject(istrm);
 	objectName.readObject(istrm);
 	BinarySerialization::readArray(istrm, keys);
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		m_pdata = new OPData;
 	}

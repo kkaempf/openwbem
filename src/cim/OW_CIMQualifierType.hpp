@@ -37,7 +37,7 @@
 #define OW_CIMQUALIFIERTYPE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMElement.hpp"
-#include "OW_COWReference.hpp"
+#include "OW_COWIntrusiveReference.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMNULL.hpp"
@@ -208,12 +208,12 @@ private:
 	typedef void (dummy::*safe_bool)();
 public:
 	operator safe_bool () const
-		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+		{  return (m_pdata) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
-		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
+		{  return (m_pdata) ? 0: &dummy::nonnull; }
 	friend bool operator<(const CIMQualifierType& x, const CIMQualifierType& y);
 private:
-	COWReference<QUALTData> m_pdata;
+	COWIntrusiveReference<QUALTData> m_pdata;
 };
 
 } // end namespace OpenWBEM

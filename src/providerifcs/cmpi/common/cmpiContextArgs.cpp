@@ -20,7 +20,6 @@
  */
 
 #include "cmpisrv.h"
-#include "OW_COWReference.hpp"
 #include "OW_CIMFwd.hpp"
 
 // CMPIArgs section

@@ -43,6 +43,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMFlavor.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -50,7 +51,7 @@ namespace OpenWBEM
 using std::istream;
 using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
-struct CIMQualifier::QUALData
+struct CIMQualifier::QUALData : public COWIntrusiveCountableBase
 {
 	QUALData() 
 		: m_qualifierValue(CIMNULL)
@@ -305,7 +306,7 @@ CIMQualifier::readObject(istream &istrm)
 	qualifierType.readObject(istrm);
 	propagated.readObject(istrm);
 	BinarySerialization::readArray(istrm, flavors);
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		m_pdata = new QUALData;
 	}

@@ -40,6 +40,7 @@
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMQualifier.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -47,7 +48,7 @@ namespace OpenWBEM
 using std::istream;
 using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
-struct CIMParameter::PARMData
+struct CIMParameter::PARMData : public COWIntrusiveCountableBase
 {
 	String m_name;
 	CIMDataType m_dataType;
@@ -184,7 +185,7 @@ CIMParameter::readObject(istream &istrm)
 	name.readObject(istrm);
 	dataType.readObject(istrm);
 	BinarySerialization::readArray(istrm, qualifiers);
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		m_pdata = new PARMData;
 	}

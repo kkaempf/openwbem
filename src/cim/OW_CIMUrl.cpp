@@ -38,6 +38,8 @@
 #include "OW_String.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_Bool.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
+
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -50,7 +52,8 @@ namespace OpenWBEM
 
 using std::istream;
 using std::ostream;
-struct CIMUrl::URLData
+
+struct CIMUrl::URLData : public COWIntrusiveCountableBase
 {
 	URLData() :
 		m_port(0),
@@ -344,7 +347,7 @@ CIMUrl::readObject(istream &istrm)
 	String spec;
 	spec.readObject(istrm);
 	
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		m_pdata = new URLData;
 	}

@@ -40,6 +40,8 @@
 #include "OW_BinarySerialization.hpp"
 #include "OW_CIMValueCast.hpp" // for OW_ValueCastException
 #include "OW_CIMDateTime.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
+
 #include <new>
 #include <cassert>
 
@@ -49,7 +51,7 @@ namespace OpenWBEM
 using std::istream;
 using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
-class CIMValue::CIMValueImpl
+class CIMValue::CIMValueImpl : public COWIntrusiveCountableBase
 {
 public:
 	static CIMValueImpl createSimpleValue(CIMDataType::Type cimtype,
@@ -261,7 +263,7 @@ CIMValue::createSimpleValue(const String& cimtype,
 void				
 CIMValue::readObject(istream &istrm)
 {
-	if(m_impl.isNull())
+	if(!m_impl)
 	{
 		m_impl = new CIMValueImpl;
 	}
@@ -977,6 +979,7 @@ CIMValue::CIMValueImpl::CIMValueImpl():
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMValue::CIMValueImpl::CIMValueImpl(const CIMValueImpl& arg) :
+	COWIntrusiveCountableBase(arg),
 	m_type(CIMDataType::CIMNULL), m_isArray(false),
 	m_objDestroyed(true), m_obj()
 {

@@ -44,6 +44,7 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -51,7 +52,7 @@ namespace OpenWBEM
 using std::istream;
 using std::ostream;
 using namespace WBEMFlags;
-struct CIMProperty::PROPData
+struct CIMProperty::PROPData : public COWIntrusiveCountableBase
 {
 	PROPData();
 	String m_name;
@@ -514,7 +515,7 @@ CIMProperty::readObject(istream &istrm)
 	{
 		cimValue.readObject(istrm);
 	}
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		m_pdata = new PROPData;
 	}

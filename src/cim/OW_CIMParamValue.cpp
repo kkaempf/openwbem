@@ -37,6 +37,7 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -44,7 +45,7 @@ namespace OpenWBEM
 using std::istream;
 using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
-struct CIMParamValue::Data
+struct CIMParamValue::Data : public COWIntrusiveCountableBase
 {
 	Data()
 		: m_val(CIMNULL)

@@ -35,7 +35,7 @@
 #ifndef OW_CIMPARAMVALUE_HPP_INCLUDE_GUARD_
 #define OW_CIMPARAMVALUE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_COWReference.hpp"
+#include "OW_COWIntrusiveReference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
@@ -99,11 +99,11 @@ private:
 public:
 	operator safe_bool () const
 	{
-		return (this->m_pdata.isNull()) ? 0 : &dummy::nonnull;
+		return (this->m_pdata) ? &dummy::nonnull : 0;
 	}
 	safe_bool operator!() const
 	{
-		return (this->m_pdata.isNull()) ? &dummy::nonnull : 0;
+		return (this->m_pdata) ? 0 : &dummy::nonnull;
 	}
 	/**
 	 * Read this CIMParamValue from an inputstream.
@@ -125,7 +125,7 @@ public:
 	 */
 	virtual String toMOF() const;
 private:
-	COWReference<Data> m_pdata;
+	COWIntrusiveReference<Data> m_pdata;
 	friend bool operator<(const CIMParamValue& x, const CIMParamValue& y);
 };
 

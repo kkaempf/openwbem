@@ -43,6 +43,8 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMFlavor.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
+
 #include <algorithm> // for std::sort
 
 namespace OpenWBEM
@@ -50,7 +52,8 @@ namespace OpenWBEM
 
 using std::istream;
 using std::ostream;
-struct CIMQualifierType::QUALTData
+
+struct CIMQualifierType::QUALTData : public COWIntrusiveCountableBase
 {
 	QUALTData()
 		: m_defaultValue(CIMNULL)
@@ -344,7 +347,7 @@ CIMQualifierType::readObject(istream &istrm)
 	{
 		defaultValue.readObject(istrm);
 	}
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		m_pdata = new QUALTData;
 	}
