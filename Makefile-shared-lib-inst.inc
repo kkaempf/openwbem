@@ -8,6 +8,7 @@ install-ow-shared-libs:
 			$(SHELL) $(top_srcdir)/fake_library_creator.sh $(EXPORT_PREFIX) $$i; \
 			if [ -e `echo $$i | cut -f1 -d'.'`.fsl ]; then \
 				$(INSTALL_PROGRAM) `echo $$i | cut -f1 -d'.'`.fsl $(DESTDIR)$(thelibdir)/$$i; \
+				rm -f `echo $$i | cut -f1 -d'.'`.fsl; \
 				if [ -e $(DESTDIR)$(libdir)/libopenwbem_all.a ]; then \
 					echo "Adding the static version of $$i to $(DESTDIR)$(libdir)/libopenwbem_all.a"; \
 					ar r $(DESTDIR)$(libdir)/libopenwbem_all.a `echo $$i | cut -f1 -d'.'`.a; \
