@@ -25,7 +25,8 @@ EXPORT_PREFIX=createService
 OW_SHARED_LIBS = libowservicehttp.$(LIB_EXT)
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/src/http/common -lowhttpcommon
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+$(SSL_LIBS)
 
 owstatlib_LIBRARIES = \
 libowservicehttp.a
