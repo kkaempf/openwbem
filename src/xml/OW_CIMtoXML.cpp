@@ -355,6 +355,17 @@ void CIMInstancePathtoXML(CIMObjectPath const& cop, ostream& ostr)
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
+void CIMLocalInstancePathtoXML(CIMObjectPath const& cop, ostream& ostr)
+{
+	//
+	// Local Instance path
+	//
+	ostr << "<LOCALINSTANCEPATH>";
+	LocalCIMNameSpacetoXML(cop.getFullNameSpace(), ostr);
+	CIMInstanceNametoXML(cop, ostr);
+	ostr << "</LOCALINSTANCEPATH>";
+}
+//////////////////////////////////////////////////////////////////////////////
 void CIMInstanceNametoXML(CIMObjectPath const& cop, ostream& ostr)
 {
 	ostr << "<INSTANCENAME CLASSNAME=\"";
@@ -471,7 +482,14 @@ static void valueToXML(T const& x, ostream& out)
 }
 static void valueToXML(CIMObjectPath const& x, ostream& out)
 {
-	CIMInstancePathtoXML(x, out);
+	if (x.getFullNameSpace().isLocal())
+	{
+		CIMLocalInstancePathtoXML(x, out);
+	}
+	else
+	{
+		CIMInstancePathtoXML(x, out);
+	}
 }
 static void raToXmlCOP(ostream& out, const Array<CIMObjectPath>& ra)
 {
@@ -684,7 +702,14 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 		out << "<VALUE.REFERENCE>";
 		CIMObjectPath a(CIMNULL);
 		cv.get(a);
-		CIMInstancePathtoXML(a, out);
+		if (a.getFullNameSpace().isLocal())
+		{
+			CIMLocalInstancePathtoXML(a, out);
+		}
+		else
+		{
+			CIMInstancePathtoXML(a, out);
+		}
 		out << "</VALUE.REFERENCE>";
 	}
 	else
