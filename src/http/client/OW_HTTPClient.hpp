@@ -110,9 +110,9 @@ public:
 	 */
 	virtual CIMProtocolIStreamIFCRef endRequest(
 		const Reference<std::iostream>& request,
-		const String& methodName, 
-		const String& cimObject, 
-		ERequestType requestType, 
+		const String& methodName,
+		const String& cimObject,
+		ERequestType requestType,
 		const String& cimProtocolVersion);
 
 	/**
@@ -270,6 +270,7 @@ private:
 	bool m_uselocalAuthentication;
 	String m_localNonce;
 	String m_localCookieFile;
+	String m_statusLine;
 
 #ifdef OW_WIN32
 #pragma warning (pop)
@@ -312,6 +313,10 @@ private:
 	 */
 	void getCredentialsIfNecessary();
 	void checkForClosedConnection();
+	void copyStreams(std::ostream& ostr, std::istream& istr);
+	String getStatusLine();
+
+
 
 	// unimplemented
 	HTTPClient(const HTTPClient&);

@@ -54,7 +54,7 @@
 #include <cerrno>
 
 
-using namespace std; 
+using namespace std;
 
 namespace OpenWBEM
 {
@@ -72,9 +72,9 @@ HTTPClient::HTTPClient( const String &sURL, SSLClientCtxRef sslCtx)
 	, m_pIstrReturn(0)
 	, m_sslCtx(sslCtx)
 	, m_socket(
-		m_url.scheme.endsWith('s') ? 
+		m_url.scheme.endsWith('s') ?
 		(
-			m_sslCtx ? 
+			m_sslCtx ?
 			(
 				m_sslCtx
 			)
@@ -83,7 +83,7 @@ HTTPClient::HTTPClient( const String &sURL, SSLClientCtxRef sslCtx)
 				m_sslCtx = SSLClientCtxRef(new SSLClientCtx()), m_sslCtx
 			)
 		)
-		: 
+		:
 		(
 			SSLClientCtxRef(0)
 		)
@@ -219,7 +219,7 @@ void HTTPClient::setUrl()
 		OW_THROW(SocketException, "SSL not available");
 #endif // #ifdef OW_NO_SSL
 	}
-	if (m_url.port.equalsIgnoreCase(URL::OWIPC) 
+	if (m_url.port.equalsIgnoreCase(URL::OWIPC)
 		|| m_url.scheme.equals("ipc")) // the ipc:// scheme is deprecated in 3.0.0 and will be removed!
 	{
 #ifdef OW_WIN32
@@ -339,7 +339,7 @@ void HTTPClient::getCredentialsIfNecessary()
 //////////////////////////////////////////////////////////////////////////////
 void HTTPClient::addCustomHeader(const String& name, const String& value)
 {
-	this->addHeaderPersistent(name, value); 
+	this->addHeaderPersistent(name, value);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -412,6 +412,17 @@ void HTTPClient::sendAuthorization()
 		addHeaderNew("Authorization", ostr.toString());
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void HTTPClient::copyStreams(std::ostream& ostr, std::istream& istr)
+{
+	// check for data
+	if (!m_socket.waitForInput(0))
+	{
+		
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 	const String& methodName, const String& cimObject, ERequestType requestType )
@@ -467,6 +478,10 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 		addHeaderNew("Transfer-Encoding", "chunked");
 		addHeaderNew("Content-Encoding", "deflate");
 	}
+	
+	// clear out previous status, this may be set if the server sends us something while we're sending.
+	m_statusLine.erase();
+
 	// send headers
 	sendHeaders(m_requestMethod, "HTTP/1.1");
 
@@ -479,6 +494,7 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 		HTTPChunkedOStream chunkostr(m_ostr);
 		HTTPDeflateOStream deflateostr(chunkostr);
 		deflateostr << tfs->rdbuf();
+		//copyStreams(deflateostr, *tfs);
 		deflateostr.termOutput();
 		chunkostr.termOutput();
 		// end deflate test stuff
@@ -490,6 +506,7 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 	else
 	{
 		m_ostr << tfs->rdbuf() << flush;
+		//copyStreams(m_ostr, *tfs);
 	}
 	m_requestHeadersNew.clear();
 	m_responseHeaders.clear();
@@ -529,7 +546,7 @@ HTTPClient::endRequest(const Reference<std::iostream>& request, const String& me
 #endif
 
 	// default of 1.0 if we leave it out, so don't bother sending it if that's the case.
-	if (!cimProtocolVersion.empty() && cimProtocolVersion != "1.0") 
+	if (!cimProtocolVersion.empty() && cimProtocolVersion != "1.0")
 	{
 		addHeaderCommon("CIMProtocolVersion", cimProtocolVersion);
 	}
@@ -538,7 +555,7 @@ HTTPClient::endRequest(const Reference<std::iostream>& request, const String& me
 	cleanUpIStreams();
 
 	// if the server has disconnected or sent us something since our last request
-	// (remember connections are persistent), we need to process it *before* we 
+	// (remember connections are persistent), we need to process it *before* we
 	// send another request
 	checkForClosedConnection();
 
@@ -692,6 +709,9 @@ HTTPClient::sendHeaders(const String& method,
 		m_ostr << m_requestHeadersNew[i] << "\r\n";
 	}
 	m_ostr << "\r\n";
+
+	// do this so we might avoid sending more than we need to, in the case that we would get a 40x or 50x error back.
+	m_ostr.flush();
 }
 //////////////////////////////////////////////////////////////////////////////
 HTTPClient::Resp_t
@@ -754,10 +774,10 @@ HTTPClient::processHeaders(String& statusLine)
 			close();
 			switch (isc)
 			{
-				case SC_REQUEST_TIMEOUT: 
-					rt = RETRY; 
-					++m_retryCount; 
-					break; 
+				case SC_REQUEST_TIMEOUT:
+					rt = RETRY;
+					++m_retryCount;
+					break;
 				case SC_UNAUTHORIZED:
 					// add authentication info, if available
 					if (!m_authRequired)
@@ -784,7 +804,7 @@ HTTPClient::processHeaders(String& statusLine)
 					break;
 			default:
 					close();
-					rt = RETRY;
+					rt = FATAL;
 					break;
 			} // switch (isc)
 			break;
@@ -807,7 +827,7 @@ HTTPClient::processHeaders(String& statusLine)
 					}
 					break;
 				default:
-					rt = RETRY;
+					rt = FATAL;
 					break;
 			} // switch (isc)
 			break;
@@ -873,35 +893,27 @@ HTTPClient::checkConnection()
 }
 //////////////////////////////////////////////////////////////////////////////
 String
+HTTPClient::getStatusLine()
+{
+	// RFC 2616 says to skip leading blank lines...
+	while (m_statusLine.trim().empty() && m_istr)
+	{
+		m_statusLine = String::getLine(m_istr);
+	}
+	return m_statusLine;
+}
+//////////////////////////////////////////////////////////////////////////////
+String
 HTTPClient::checkResponse(Resp_t& rt)
 {
 	String statusLine;
 	do
 	{
-		// RFC 2616 says to skip leading blank lines...
-		do
-		{
-			statusLine = String::getLine(m_istr);
-		} while (statusLine.trim().empty() && m_istr);
+		statusLine = getStatusLine();
 		
 		if (!m_istr)
 		{
 			close();
-			// ATTN:
-			// used to be RETRY, but this caused problems if
-			// attempting a http connection to a https port
-			// (infinite loop).
-			// not sure why it was retry before, maybe FATAL
-			// will break something else?
-			++m_retryCount;
-			if (m_retryCount > 3)
-			{
-				rt = FATAL;
-			}
-			else
-			{
-				rt = RETRY;
-			}
 			break;
 		}
 		if (!HTTPUtils::parseHeader(m_responseHeaders, m_istr))
@@ -911,12 +923,22 @@ HTTPClient::checkResponse(Resp_t& rt)
 		rt = processHeaders(statusLine);
 		if (rt == CONTINUE)
 		{
+			m_retryCount = 0;
 			prepareForRetry();
 		}
 	} while (rt == CONTINUE);
 	if (rt == RETRY)
 	{
-		prepareForRetry();
+		++m_retryCount;
+		if (m_retryCount > 3)
+		{
+			rt = FATAL;
+		}
+		else
+		{
+			rt = RETRY;
+			prepareForRetry();
+		}
 	}
 	return statusLine;
 }
