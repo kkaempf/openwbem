@@ -267,6 +267,16 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 owcimomd.disable_indications = false
 
 ################################################################################
+# A space-separated list of namespaces where providers won't be registerd
+# for classes if no namespace was specified during provider self-registration.
+# If providers use self-registration, and don't specify a namespace (only 
+# a class name), they are registered for all namespaces in which the class
+# is present by default.  This option allows the specified namespaces to be 
+# excluded from this behavior.  
+# Example: owcimomd.explicit_registration_namespaces = root/private root/cache
+;owcimomd.explicit_registration_namespaces = 
+
+################################################################################
 # owcimomd.ACL_superuser specifies the user name of the user that has access to
 # all CIM data in all namespaces maintained by the CIMOM. This user can be used
 # to administer the /root/security namespace which is where all ACL user rights
