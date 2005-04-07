@@ -320,6 +320,8 @@ namespace ConfigOpts
 	static const char* const DROP_ROOT_PRIVILEGES_opt = "owcimomd.drop_root_privileges";
 	static const char* const ADDITIONAL_CONFIG_FILES_DIRS_opt = "owcimomd.additional_config_files_dirs";
 
+	static const char* const EXPLICIT_REG_NAMESPACES_opt = "owcimomd.explicit_registration_namespaces";
+
 	// Naming rule: if the option begins with owcimomd, name is just all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.
 

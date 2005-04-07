@@ -447,6 +447,43 @@ void ProviderManager::init(const ServiceEnvironmentIFCRef& env)
 		processProviderInfo(penv, methodProviderInfo, m_IFCArray[i], m_registeredMethProvs);
 		processProviderInfo(penv, indicationProviderInfo, m_IFCArray[i], m_registeredIndProvs);
 	}
+
+	m_restrictedNamespaces.clear();
+
+	String wk;
+	String exns = m_env->getConfigItem(ConfigOpts::EXPLICIT_REG_NAMESPACES_opt);
+	if(exns.length())
+	{
+		StringArray exnsra = exns.tokenize();
+		for(size_t i = 0; i < exnsra.size(); i++)
+		{
+			wk.erase();
+			StringArray toks = exnsra[i].tokenize("/\\");
+			for(size_t j = 0; j < toks.size(); j++)
+			{
+				if(wk.empty())
+				{
+					wk = toks[j];
+				}
+				else
+				{
+					wk += '/';
+					wk += toks[j];
+				}
+			}
+
+			m_restrictedNamespaces.insert(wk.toLowerCase());
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+ProviderManager::isRestrictedNamespace(const String& ns) const
+{
+	String lns(ns);
+	lns.toLowerCase();
+	return (m_restrictedNamespaces.find(lns) != m_restrictedNamespaces.end());
 }
 
 namespace
@@ -531,13 +568,17 @@ InstanceProviderIFCRef
 ProviderManager::getInstanceProvider(const ProviderEnvironmentIFCRef& env,
 	const String& ns, const CIMClass& cc) const
 {
-	// lookup just the class name to see if a provider registered for the
-	// class in all namespaces.
-	ProvRegMap_t::const_iterator ci = m_registeredInstProvs.find(cc.getName().toLowerCase());
-	if (ci != m_registeredInstProvs.end())
+	ProvRegMap_t::const_iterator ci;
+	if(!isRestrictedNamespace(ns))
 	{
-		return wrapProvider(ci->second.ifc->getInstanceProvider(env,
-			ci->second.provName.c_str()), env);
+		// lookup just the class name to see if a provider registered for the
+		// class in all namespaces.
+		ci = m_registeredInstProvs.find(cc.getName().toLowerCase());
+		if (ci != m_registeredInstProvs.end())
+		{
+			return wrapProvider(ci->second.ifc->getInstanceProvider(env,
+				ci->second.provName.c_str()), env);
+		}
 	}
 
 	// next lookup namespace:classname to see if we've got one for the
@@ -575,16 +616,23 @@ ProviderManager::getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& 
 	lowerName.toLowerCase();
 	MultiProvRegMap_t::const_iterator lci;
 	MultiProvRegMap_t::const_iterator uci;
-	// lookup just the class name to see if a provider registered for the
-	// class in all namespaces.
-	std::pair<MultiProvRegMap_t::const_iterator, MultiProvRegMap_t::const_iterator>
+
+	std::pair<MultiProvRegMap_t::const_iterator, 
+		MultiProvRegMap_t::const_iterator> range;
+
+	lci =  m_registeredSecInstProvs.end();
+	if(!isRestrictedNamespace(ns))
+	{
+		// lookup just the class name to see if a provider registered for the
+		// class in all namespaces.
 		range = m_registeredSecInstProvs.equal_range(lowerName);
-	lci = range.first;
-	uci = range.second;
+		lci = range.first;
+		uci = range.second;
+	}
+
 	if (lci == m_registeredSecInstProvs.end())
 	{
-		// didn't find any, so
-		// next lookup namespace:classname to see if we've got one for the
+		// lookup namespace:classname to see if we've got one for the
 		// specific namespace
 		String nsAndClassName = ns + ':' + lowerName;
 		nsAndClassName.toLowerCase();
@@ -592,6 +640,7 @@ ProviderManager::getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& 
 		lci = range.first;
 		uci = range.second;
 	}
+
 	SecondaryInstanceProviderIFCRefArray rval;
 	if (lci != m_registeredSecInstProvs.end())
 	{
@@ -609,25 +658,32 @@ MethodProviderIFCRef
 ProviderManager::getMethodProvider(const ProviderEnvironmentIFCRef& env,
 	const String& ns, const CIMClass& cc, const CIMMethod& method) const
 {
+	ProvRegMap_t::const_iterator ci;
 	CIMName methodName = method.getName();
-	// lookup just the class name to see if a provider registered for the
-	// class in all namespaces.
-	ProvRegMap_t::const_iterator ci = m_registeredMethProvs.find(cc.getName().toLowerCase());
-	if (ci != m_registeredMethProvs.end())
+	
+	if(!isRestrictedNamespace(ns))
 	{
-		return wrapProvider(ci->second.ifc->getMethodProvider(env,
-				ci->second.provName.c_str()), env);
+		// lookup just the class name to see if a provider registered for the
+		// class in all namespaces.
+		ci = m_registeredMethProvs.find(cc.getName().toLowerCase());
+		if (ci != m_registeredMethProvs.end())
+		{
+			return wrapProvider(ci->second.ifc->getMethodProvider(env,
+					ci->second.provName.c_str()), env);
+		}
+
+		// next lookup classname/methodname to see if we've got one for the
+		// specific class/method for any namespace
+		String classAndMethodName = cc.getName() + '/' + methodName.toString();
+		classAndMethodName.toLowerCase();
+		ci = m_registeredMethProvs.find(classAndMethodName);
+		if (ci != m_registeredMethProvs.end())
+		{
+			return wrapProvider(ci->second.ifc->getMethodProvider(env,
+					ci->second.provName.c_str()), env);
+		}
 	}
-	// next lookup classname/methodname to see if we've got one for the
-	// specific class/method for any namespace
-	String classAndMethodName = cc.getName() + '/' + methodName.toString();
-	classAndMethodName.toLowerCase();
-	ci = m_registeredMethProvs.find(classAndMethodName);
-	if (ci != m_registeredMethProvs.end())
-	{
-		return wrapProvider(ci->second.ifc->getMethodProvider(env,
-				ci->second.provName.c_str()), env);
-	}
+
 	// next lookup namespace:classname to see if we've got one for the
 	// specific namespace/class & all methods
 	String nsAndClassName = ns + ':' + cc.getName();
@@ -684,14 +740,19 @@ AssociatorProviderIFCRef
 ProviderManager::getAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 	const String& ns, const CIMClass& cc) const
 {
-	// lookup just the class name to see if a provider registered for the
-	// class in all namespaces.
-	ProvRegMap_t::const_iterator ci = m_registeredAssocProvs.find(cc.getName().toLowerCase());
-	if (ci != m_registeredAssocProvs.end())
+	ProvRegMap_t::const_iterator ci;
+	if(!isRestrictedNamespace(ns))
 	{
-		return wrapProvider(ci->second.ifc->getAssociatorProvider(env,
-				ci->second.provName.c_str()), env);
+		// lookup just the class name to see if a provider registered for the
+		// class in all namespaces.
+		ci = m_registeredAssocProvs.find(cc.getName().toLowerCase());
+		if (ci != m_registeredAssocProvs.end())
+		{
+			return wrapProvider(ci->second.ifc->getAssociatorProvider(env,
+					ci->second.provName.c_str()), env);
+		}
 	}
+
 	// next lookup namespace:classname to see if we've got one for the
 	// specific namespace
 	String nsAndClassName = ns + ':' + cc.getName();
@@ -753,42 +814,44 @@ ProviderManager::getPolledProviders(
 	return rv;
 }
 
-namespace
-{
-void findIndicationProviders(const ProviderEnvironmentIFCRef& env,
+//////////////////////////////////////////////////////////////////////////////
+void 
+ProviderManager::findIndicationProviders(
+	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
 	const CIMName& className,
 	const ProviderManager::MultiProvRegMap_t& indProvs,
-	IndicationProviderIFCRefArray& rval)
+	IndicationProviderIFCRefArray& rval) const
 {
-	// lookup just the class className to see if a provider registered for the
-	// class in all classNamespaces.
 	typedef ProviderManager::MultiProvRegMap_t::const_iterator citer_t;
-	std::pair<citer_t, citer_t> range = indProvs.equal_range(className.toString());
-	citer_t lci = range.first;
-	citer_t uci = range.second;
-	if (lci == indProvs.end())
+	std::pair<citer_t, citer_t> range;
+
+	range.first = indProvs.end();
+
+	if(!isRestrictedNamespace(ns))
 	{
-		// didn't find any, so
+		range = indProvs.equal_range(className.toString());
+	}
+
+	if (range.first == indProvs.end())
+	{
+		// didn't find any or restricted namespace, so
 		// next lookup Namespace:className to see if we've got one for the
 		// specific Namespace
 		String nsAndClassName = ns + ':' + className.toString();
 		nsAndClassName.toLowerCase();
 		range = indProvs.equal_range(nsAndClassName);
-		lci = range.first;
-		uci = range.second;
 	}
-	if (lci != indProvs.end())
+
+	if (range.first != indProvs.end())
 	{
 		// loop through the matching range and put them in rval
-		for (citer_t tci = lci; tci != uci; ++tci)
+		for (citer_t tci = range.first; tci != range.second; ++tci)
 		{
 			rval.push_back(tci->second.ifc->getIndicationProvider(env, tci->second.provName.c_str()));
 		}
 	}
 }
-
-} // end anonymous namespace
 
 //////////////////////////////////////////////////////////////////////////////
 IndicationProviderIFCRefArray

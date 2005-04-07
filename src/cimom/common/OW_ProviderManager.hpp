@@ -51,6 +51,7 @@
 #include "OW_ServiceIFC.hpp"
 #include "OW_Logger.hpp"
 #include "OW_CimomCommonFwd.hpp"
+#include "OW_SortedVectorSet.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -191,6 +192,7 @@ private:
 	ProviderIFCBaseIFCRef getProviderIFC(const ProviderEnvironmentIFCRef& env,
 		const CIMQualifier& qual,
 		String& provStr) const;
+	bool isRestrictedNamespace(const String& ns) const;
 	Array<ProviderIFCBaseIFCRef> m_IFCArray;
 	Mutex m_guard;
 public:	// so free functions in cpp file can access them.
@@ -201,10 +203,19 @@ public:	// so free functions in cpp file can access them.
 	};
 	typedef HashMap<String, ProvReg> ProvRegMap_t;
 	typedef HashMultiMap<String, ProvReg> MultiProvRegMap_t;
+	typedef SortedVectorSet<String> NameSpaceSet_t;
 	
 	static String COMPONENT_NAME;
 
 private:
+
+	void findIndicationProviders(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMName& className,
+		const ProviderManager::MultiProvRegMap_t& indProvs,
+		IndicationProviderIFCRefArray& rval) const;
+
 	// The key must be: a classname if the provider supports any namespace,
 	// or namespace:classname for a specific namespace.
 	ProvRegMap_t m_registeredInstProvs;
@@ -227,6 +238,7 @@ private:
 
 	LoggerRef m_logger;
 	ServiceEnvironmentIFCRef m_env;
+	NameSpaceSet_t m_restrictedNamespaces;
 };
 
 } // end namespace OW_NAMESPACE
