@@ -66,6 +66,11 @@ Fix problems:
     - On FreeBSD, Berkely DB is part of libc, and our version of libdb 
       overrides the symbols, but isn't binary compatible and causes problems.
       We need to change all the symbol names to have the OW_ prefix.
+    - http://www.faqs.org/rfcs/rfc2047.html is not handled
+    - Clean up the HTTP authentication so they have the same interface and 
+      are handled generically.  Also fix it to report a difference between 
+      issuing a new challenge and failing authentication so that log messages 
+      don't have false positives.
 
 New features:
     - Providers provide their schema at startup in the for of mof, which the cimom compiles and caches.
