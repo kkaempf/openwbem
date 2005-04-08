@@ -153,20 +153,9 @@ namespace ThreadImpl
 	 */
 	OW_COMMON_API void sleep(UInt32 milliSeconds);
 	/**
-	 * "Multi-processor cache coherency.  Certain multi-processor platforms,
-	 * such as the COMPAQ Alpha and Intel Itanium, perform aggressive memory
-	 * caching optimization in which read and write operation can execute
-	 * 'out of order' across multiple CPU caches.  On these platforms, it may
-	 * not be possible to use the Double-Checked Locking Optimization pattern
-	 * without further modification because CPU cache lines will not be flushed
-	 * properly if shared data is accessed without locks held." 
-	 * (Pattern-Oriented Software Architecture Vol. 2, Schmidt, Stal, Rohnert, 
-	 * Buschmann. p. 361
-	 *
-	 * This function executes a memory barrier if necessary for the platform,
-	 * else it is a noop.
+	 * Deprecated because no code should need to use this, and if some does it should be rewritten to use the other thread primitives.
 	 */
-	inline void memoryBarrier()
+	inline OW_DEPRECATED void memoryBarrier()
 	{
 		// DEC/COMPAQ/HP Alpha
 		#if defined(__alpha)
