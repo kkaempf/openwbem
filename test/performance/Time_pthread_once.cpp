@@ -104,6 +104,24 @@ Foo* volatile Foo::ptr = 0;
 pthread_once_t Foo::onceCtl = PTHREAD_ONCE_INIT;
 #endif
 
+inline void memoryBarrier()
+{
+	// DEC/COMPAQ/HP Alpha
+	#if defined(__alpha)
+	__asm__ __volatile__("mb");
+	#endif
+	
+	// Intel Itanium
+	#if defined(__ia64__) || defined(__ia64)
+	__asm__ __volatile__("mf");
+	#endif
+	
+	// PPC
+	#if defined(OW_PPC)
+	__asm__ __volatile__ ("sync" : : : "memory");
+	#endif
+}
+
 class DCLPFoo
 {
 public:
@@ -111,7 +129,7 @@ public:
 
 	static DCLPFoo* instance()
 	{
-		ThreadImpl::memoryBarrier();
+		memoryBarrier();
 		if (ptr == 0)
 		{
 			MutexLock lock(s_guard);
