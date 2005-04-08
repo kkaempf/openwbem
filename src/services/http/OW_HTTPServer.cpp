@@ -154,27 +154,26 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 #ifndef OW_NO_SSL
 	if (m_sslopts.verifyMode != SSLOpts::MODE_DISABLED)
 	{
-            if (socket.peerCertVerified())
-            {
-
-				SSL* ssl = socket.getSSL();
-				OW_ASSERT(ssl);
-				X509* cert = SSL_get_peer_certificate(ssl);
-				OW_ASSERT(cert);
-				String hash = SSLTrustStore::getCertMD5Fingerprint(cert);
-				String uid;
-				if (!m_trustStore->getUser(hash, userName, uid))
-				{
-					OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authentication failed for: %1.  (Cert verified, but unknown user)", userName));
-					return false;
-				}
-                OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authenticated %1", userName));
-				if (!uid.empty())
-				{
-					context.setStringData(OperationContext::CURUSER_UIDKEY, uid);
-				}
-                return true;
-            }
+		if (socket.peerCertVerified())
+		{
+			SSL* ssl = socket.getSSL();
+			OW_ASSERT(ssl);
+			X509* cert = SSL_get_peer_certificate(ssl);
+			OW_ASSERT(cert);
+			String hash = SSLTrustStore::getCertMD5Fingerprint(cert);
+			String uid;
+			if (!m_trustStore->getUser(hash, userName, uid))
+			{
+				OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authentication failed for: %1.  (Cert verified, but unknown user)", userName));
+				return false;
+			}
+			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authenticated %1", userName));
+			if (!uid.empty())
+			{
+				context.setStringData(OperationContext::CURUSER_UIDKEY, uid);
+			}
+			return true;
+		}
 	}
 #endif
 	bool rv = false;
@@ -254,22 +253,22 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	if (rv && m_sslopts.verifyMode == SSLOpts::MODE_AUTOUPDATE)
 	{
 		SSL* ssl = socket.getSSL();
-                if (ssl)
-                {
-                    X509* cert = SSL_get_peer_certificate(ssl);
-                    if (cert)
-                    {
-                            try
-                            {
-								String uid = context.getStringDataWithDefault(OperationContext::CURUSER_UIDKEY);
-                                m_trustStore->addCertificate(cert, userName, uid);
-                            }
-                            catch (SSLException& e)
-                            {
-                                OW_LOG_ERROR(getEnvironment()->getLogger(COMPONENT_NAME), e.getMessage());
-                            }
-                    }
-                }
+		if (ssl)
+		{
+			X509* cert = SSL_get_peer_certificate(ssl);
+			if (cert)
+			{
+					try
+					{
+						String uid = context.getStringDataWithDefault(OperationContext::CURUSER_UIDKEY);
+						m_trustStore->addCertificate(cert, userName, uid);
+					}
+					catch (SSLException& e)
+					{
+						OW_LOG_ERROR(getEnvironment()->getLogger(COMPONENT_NAME), e.getMessage());
+					}
+			}
+		}
 	}
 #endif
 	return rv;
