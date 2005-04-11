@@ -50,6 +50,8 @@
 
 #include <openssl/rand.h>
 #include <openssl/err.h>
+#include <openssl/engine.h>
+#include <openssl/conf.h>
 #include <cstring>
 #include <csignal>
 #include <cerrno>
@@ -377,10 +379,10 @@ SSLCtxMgr::checkCert(SSL* ssl, const String& hostName,
 	  is automatically checked by OpenSSL when we
 	  set the verify depth in the ctx */
 	/*Check the common name*/
-	X509 *peer = SSL_get_peer_certificate(ssl);
-	X509Freer x509freer(peer);
 	if (certVerifyCB)
 	{
+		X509 *peer = SSL_get_peer_certificate(ssl);
+		X509Freer x509freer(peer);
 		if (peer == 0)
 		{
 			return false;
@@ -624,6 +626,12 @@ SSLCtxBase::~SSLCtxBase()
 	{
 		SSL_CTX_free(m_ctx);
 	}
+	ENGINE_cleanup();
+	ERR_clear_error();
+	ERR_remove_state(0);
+	CONF_modules_free();
+	CONF_modules_finish();
+	CONF_modules_unload(0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
