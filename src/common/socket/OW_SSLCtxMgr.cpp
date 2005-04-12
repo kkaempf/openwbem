@@ -626,12 +626,8 @@ SSLCtxBase::~SSLCtxBase()
 	{
 		SSL_CTX_free(m_ctx);
 	}
-	ENGINE_cleanup();
 	ERR_clear_error();
 	ERR_remove_state(0);
-	CONF_modules_free();
-	CONF_modules_finish();
-	CONF_modules_unload(0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
