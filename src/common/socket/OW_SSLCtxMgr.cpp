@@ -50,8 +50,6 @@
 
 #include <openssl/rand.h>
 #include <openssl/err.h>
-#include <openssl/engine.h>
-#include <openssl/conf.h>
 #include <cstring>
 #include <csignal>
 #include <cerrno>
