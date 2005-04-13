@@ -280,44 +280,44 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 {
 	try
 	{
-		String item = env->getConfigItem(ConfigOpts::HTTP_PORT_opt, OW_DEFAULT_HTTP_PORT);
+		String item = env->getConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, OW_DEFAULT_HTTP_SERVER_HTTP_PORT);
 		m_options.httpPort = item.toInt32();
 		
-		item = env->getConfigItem(ConfigOpts::HTTPS_PORT_opt, OW_DEFAULT_HTTPS_PORT);
+		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, OW_DEFAULT_HTTP_SERVER_HTTPS_PORT);
 		m_options.httpsPort = item.toInt32();
 
 		m_options.defaultContentLanguage = env->getConfigItem(
-			ConfigOpts::HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt, OW_DEFAULT_HTTP_SERVER_CONTENT_LANGUAGE);
+			ConfigOpts::HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt, OW_DEFAULT_HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE);
 	
 #ifndef OW_WIN32
-		m_options.UDSFilename = env->getConfigItem(ConfigOpts::UDS_FILENAME_opt, OW_DEFAULT_UDS_FILENAME);
+		m_options.UDSFilename = env->getConfigItem(ConfigOpts::HTTP_SERVER_UDS_FILENAME_opt, OW_DEFAULT_HTTP_SERVER_UDS_FILENAME);
 #endif
 		
-		item = env->getConfigItem(ConfigOpts::USE_UDS_opt, OW_DEFAULT_USE_UDS);
+		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_USE_UDS_opt, OW_DEFAULT_HTTP_SERVER_USE_UDS);
 		m_options.useUDS = item.equalsIgnoreCase("true");
 		
-		item = env->getConfigItem(ConfigOpts::MAX_CONNECTIONS_opt, OW_DEFAULT_MAX_CONNECTIONS);
+		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_MAX_CONNECTIONS_opt, OW_DEFAULT_HTTP_SERVER_MAX_CONNECTIONS);
 		m_options.maxConnections = item.toInt32();
 		// TODO: Make the type of pool and the size of the queue be separate config options.
 		m_threadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, m_options.maxConnections, m_options.maxConnections * 100, env->getLogger(COMPONENT_NAME), "HTTPServer"));
 		
-		item = env->getConfigItem(ConfigOpts::SINGLE_THREAD_opt, OW_DEFAULT_SINGLE_THREAD);
+		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_SINGLE_THREAD_opt, OW_DEFAULT_HTTP_SERVER_SINGLE_THREAD);
 		m_options.isSepThread = !item.equalsIgnoreCase("true");
 		
-		item = env->getConfigItem(ConfigOpts::ENABLE_DEFLATE_opt, OW_DEFAULT_ENABLE_DEFLATE);
+		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_ENABLE_DEFLATE_opt, OW_DEFAULT_HTTP_SERVER_ENABLE_DEFLATE);
 		m_options.enableDeflate = !item.equalsIgnoreCase("false");
 		
 		item = env->getConfigItem(ConfigOpts::ALLOW_ANONYMOUS_opt, OW_DEFAULT_ALLOW_ANONYMOUS);
 		m_options.allowAnonymous = item.equalsIgnoreCase("true");
 		m_options.env = env;
 		
-		item = env->getConfigItem(ConfigOpts::HTTP_USE_DIGEST_opt, OW_DEFAULT_USE_DIGEST);
+		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_USE_DIGEST_opt, OW_DEFAULT_HTTP_SERVER_USE_DIGEST);
 		m_options.allowDigestAuthentication = !item.equalsIgnoreCase("false");
 		if (m_options.allowDigestAuthentication)
 		{
 #ifndef OW_DISABLE_DIGEST
 			String passwdFile = env->getConfigItem(
-				ConfigOpts::DIGEST_AUTH_FILE_opt, OW_DEFAULT_DIGEST_PASSWD_FILE);
+				ConfigOpts::HTTP_SERVER_DIGEST_PASSWORD_FILE_opt, OW_DEFAULT_HTTP_SERVER_DIGEST_PASSWORD_FILE);
 			m_digestAuthentication = IntrusiveReference<DigestAuthentication>(
 				new DigestAuthentication(passwdFile));
 			m_options.defaultAuthChallenge = E_DIGEST;
@@ -337,7 +337,7 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 		m_options.allowBasicAuthentication = !m_options.allowDigestAuthentication;
 	
 #ifndef OW_WIN32
-		item = env->getConfigItem(ConfigOpts::HTTP_ALLOW_LOCAL_AUTHENTICATION_opt, OW_DEFAULT_ALLOW_LOCAL_AUTHENTICATION);
+		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_ALLOW_LOCAL_AUTHENTICATION_opt, OW_DEFAULT_HTTP_SERVER_ALLOW_LOCAL_AUTHENTICATION);
 		m_options.allowLocalAuthentication = !item.equalsIgnoreCase("false");
 		if (m_options.allowLocalAuthentication)
 		{
@@ -354,10 +354,10 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 				dumpPrefix + "/owHTTPSockDumpOut");
 		}
 		
-		item = env->getConfigItem(ConfigOpts::REUSE_ADDR_opt);
+		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_REUSE_ADDR_opt, OW_DEFAULT_HTTP_SERVER_REUSE_ADDR);
 		m_options.reuseAddr = !item.equalsIgnoreCase("false");
 		
-		item = env->getConfigItem(ConfigOpts::HTTP_TIMEOUT_opt, OW_DEFAULT_HTTP_TIMEOUT);
+		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_TIMEOUT_opt, OW_DEFAULT_HTTP_SERVER_TIMEOUT);
 		m_options.timeout = item.toInt32();
 
 		item = env->getConfigItem(ConfigOpts::ALLOWED_USERS_opt, OW_DEFAULT_ALLOWED_USERS);
@@ -521,7 +521,7 @@ HTTPServer::start()
 		}
 	}
 #endif
-	String listenAddressesOpt = env->getConfigItem(ConfigOpts::LISTEN_ADDRESSES_opt, OW_DEFAULT_LISTEN_ADDRESSES);
+	String listenAddressesOpt = env->getConfigItem(ConfigOpts::HTTP_SERVER_LISTEN_ADDRESSES_opt, OW_DEFAULT_HTTP_SERVER_LISTEN_ADDRESSES);
 	StringArray listenAddresses = listenAddressesOpt.tokenize(" ");
 	if (listenAddresses.empty())
 	{
@@ -575,7 +575,7 @@ HTTPServer::start()
 #else
 			try
 			{
-				m_sslopts.keyfile = env->getConfigItem(ConfigOpts::SSL_CERT_opt);
+				m_sslopts.keyfile = env->getConfigItem(ConfigOpts::HTTP_SERVER_SSL_CERT_opt);
 				m_sslopts.trustStore = env->getConfigItem(ConfigOpts::HTTP_SERVER_SSL_TRUST_STORE,
 													   OW_DEFAULT_HTTP_SERVER_SSL_TRUST_STORE);
 				String verifyMode = env->getConfigItem(ConfigOpts::HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt,

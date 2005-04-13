@@ -236,7 +236,7 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  return;
    }
    m_loadDone = true;
-   String libPath = env->getConfigItem(ConfigOpts::NPIIFC_PROV_LOC_opt, OW_DEFAULT_NPI_PROVIDER_LOCATION);
+   String libPath = env->getConfigItem(ConfigOpts::NPIPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_NPIPROVIFC_PROV_LOCATION);
    SharedLibraryLoaderRef ldr =
 	  SharedLibraryLoader::createSharedLibraryLoader();
    if (!ldr)
@@ -336,7 +336,7 @@ NPIProviderIFC::getProvider(
 		return it->second;
 	}
 	String libPath = env->getConfigItem(
-		ConfigOpts::NPIIFC_PROV_LOC_opt, OW_DEFAULT_NPI_PROVIDER_LOCATION);
+		ConfigOpts::NPIPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_NPIPROVIFC_PROV_LOCATION);
 	SharedLibraryLoaderRef ldr =
 		SharedLibraryLoader::createSharedLibraryLoader();
 	if (!ldr)

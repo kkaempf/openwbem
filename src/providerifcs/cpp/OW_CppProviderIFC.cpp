@@ -371,7 +371,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 	}
 
 	String libPathsStr = env->getConfigItem(
-		ConfigOpts::CPPIFC_PROV_LOC_opt, OW_DEFAULT_CPP_PROVIDER_LOCATION);
+		ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_CPPPROVIFC_PROV_LOCATION);
 #ifndef OW_WIN32
 	StringArray paths = libPathsStr.tokenize(";:");
 #else
@@ -671,7 +671,7 @@ CppProviderIFC::getProvider(
 	CppProviderBaseIFCRef rval;
 
 	String libPathsStr = env->getConfigItem(
-		ConfigOpts::CPPIFC_PROV_LOC_opt, OW_DEFAULT_CPP_PROVIDER_LOCATION);
+		ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_CPPPROVIFC_PROV_LOCATION);
 	StringArray paths = libPathsStr.tokenize(";:");
 	for (StringArray::size_type i = 0; i < paths.size(); i++)
 	{
@@ -742,7 +742,7 @@ CppProviderIFC::getProvider(
 void
 CppProviderIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 {
-	String timeWindow = env->getConfigItem(ConfigOpts::CPPIFC_PROV_TTL_opt, OW_DEFAULT_CPPIFC_PROV_TTL);
+	String timeWindow = env->getConfigItem(ConfigOpts::CPPPROVIFC_PROV_TTL_opt, OW_DEFAULT_CPPPROVIFC_PROV_TTL);
 	Int32 iTimeWindow;
 	try
 	{
@@ -750,7 +750,7 @@ CppProviderIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 	}
 	catch (const StringConversionException&)
 	{
-		iTimeWindow = String(OW_DEFAULT_CPPIFC_PROV_TTL).toInt32();
+		iTimeWindow = String(OW_DEFAULT_CPPPROVIFC_PROV_TTL).toInt32();
 	}
 	if (iTimeWindow < 0)
 	{

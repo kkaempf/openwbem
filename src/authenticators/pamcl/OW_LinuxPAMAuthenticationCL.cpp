@@ -121,7 +121,7 @@ void
 LinuxPAMAuthenticationCL::doInit(ServiceEnvironmentIFCRef env)
 {
 	m_allowedUsers = env->getConfigItem(ConfigOpts::PAM_ALLOWED_USERS_opt);
-	m_libexecdir = env->getConfigItem(ConfigOpts::LIBEXEC_DIR_opt, OW_DEFAULT_OWLIBEXEC_DIR);
+	m_libexecdir = env->getConfigItem(ConfigOpts::LIBEXECDIR_opt, OW_DEFAULT_OWLIBEXECDIR);
 }
 
 } // end namespace OW_NAMESPACE

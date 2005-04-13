@@ -327,7 +327,7 @@ public:
 	virtual String getConfigItem(const String& name, const String& defRetVal) const
 	{
 		// CIMRepository may query for this.
-		if (name == ConfigOpts::DATA_DIR_opt)
+		if (name == ConfigOpts::DATADIR_opt)
 		{
 			return g_repositoryDir;
 		}

@@ -263,7 +263,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 	}
 	m_loadDone = true;
 	String libPath = env->getConfigItem(
-		ConfigOpts::PERLIFC_PROV_LOC_opt, OW_DEFAULT_PERL_PROVIDER_LOCATION);
+		ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_PERLPROVIFC_PROV_LOCATION);
 	SharedLibraryLoaderRef ldr =
 		 SharedLibraryLoader::createSharedLibraryLoader();
 	if (!ldr)
@@ -373,7 +373,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  return;
    }
    m_loadDone = true;
-   String libPath = env->getConfigItem(ConfigOpts::PERLIFC_PROV_LOC_opt, OW_DEFAULT_PERL_PROVIDER_LOCATION);
+   String libPath = env->getConfigItem(ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_PERLPROVIFC_PROV_LOCATION);
    SharedLibraryLoaderRef ldr =
 	  SharedLibraryLoader::createSharedLibraryLoader();
    if (!ldr)
@@ -483,7 +483,7 @@ PerlProviderIFC::getProvider(
 		return it->second;
 	}
 	String libPath = env->getConfigItem(
-		ConfigOpts::PERLIFC_PROV_LOC_opt, OW_DEFAULT_PERL_PROVIDER_LOCATION);
+		ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_PERLPROVIFC_PROV_LOCATION);
 	SharedLibraryLoaderRef ldr =
 		SharedLibraryLoader::createSharedLibraryLoader();
 	if (!ldr)

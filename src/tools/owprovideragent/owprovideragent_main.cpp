@@ -211,7 +211,7 @@ public:
 private:
 	void _loadAuthenticator()
 	{
-		String authLib = getConfigItem(ConfigOpts::AUTH_MOD_opt, ""); // don't use the default, since if this is empty, we don't want to use an authenticator.
+		String authLib = getConfigItem(ConfigOpts::AUTHENTICATION_MODULE_opt, ""); // don't use the default, since if this is empty, we don't want to use an authenticator.
 		if (!authLib.empty())
 		{
 			OW_LOG_INFO(m_logger, Format("Authentication Manager: Loading authentication module %1", authLib));
@@ -233,7 +233,7 @@ private:
 
 	void _loadRequestHandlers()
 	{
-		String libPath = getConfigItem(ConfigOpts::CIMOM_REQUEST_HANDLER_LOCATION_opt, OW_DEFAULT_CIMOM_REQHANDLER_LOCATION);
+		String libPath = getConfigItem(ConfigOpts::REQUEST_HANDLER_PATH_opt, OW_DEFAULT_REQUEST_HANDLER_PATH);
 		if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
 		{
 			libPath += OW_FILENAME_SEPARATOR;
@@ -275,7 +275,7 @@ private:
 	void _loadProviders()
 	{
 		// TODO: Use a different config item.
-		String libPath = getConfigItem(ConfigOpts::CPPIFC_PROV_LOC_opt, OW_DEFAULT_CPP_PROVIDER_LOCATION);
+		String libPath = getConfigItem(ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_CPPPROVIFC_PROV_LOCATION);
 		if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
 		{
 			libPath += OW_FILENAME_SEPARATOR;
@@ -330,7 +330,7 @@ private:
 		
 		StringArray additionalLogs = getConfigItem(ADDITIONAL_LOGS_opt, "").tokenize();
 	
-		bool debugFlag = getConfigItem(DEBUG_opt, OW_DEFAULT_DEBUG).equalsIgnoreCase("true");
+		bool debugFlag = getConfigItem(DEBUGFLAG_opt, OW_DEFAULT_DEBUGFLAG).equalsIgnoreCase("true");
 		if ( debugFlag )
 		{
 			// stick it at the beginning as a possible slight logging performance optimization
@@ -407,7 +407,7 @@ int main(int argc, char* argv[])
 		env->init();
 
 		// debug mode can be activated by -d or by the config file, so check both. The config file is loaded by env->init().
-		debugMode = debugMode || env->getConfigItem(ConfigOpts::DEBUG_opt, OW_DEFAULT_DEBUG).equalsIgnoreCase("true");
+		debugMode = debugMode || env->getConfigItem(ConfigOpts::DEBUGFLAG_opt, OW_DEFAULT_DEBUGFLAG).equalsIgnoreCase("true");
 
 		// logger's not set up according to the config file until after init()
 		logger = env->getLogger(COMPONENT_NAME);
@@ -565,7 +565,7 @@ processCommandLine(int argc, char* argv[], const ServiceEnvironmentIFCRef& env)
 	}
 	if (opts.debug)
 	{
-		env->setConfigItem(ConfigOpts::DEBUG_opt, "true", ServiceEnvironmentIFC::E_PRESERVE_PREVIOUS);
+		env->setConfigItem(ConfigOpts::DEBUGFLAG_opt, "true", ServiceEnvironmentIFC::E_PRESERVE_PREVIOUS);
 		env->setConfigItem(ConfigOpts::LOG_LEVEL_opt, "debug");
 	}
 	if (opts.configFile)

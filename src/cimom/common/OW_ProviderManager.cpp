@@ -448,33 +448,8 @@ void ProviderManager::init(const ServiceEnvironmentIFCRef& env)
 		processProviderInfo(penv, indicationProviderInfo, m_IFCArray[i], m_registeredIndProvs);
 	}
 
-	m_restrictedNamespaces.clear();
-
-	String wk;
-	String exns = m_env->getConfigItem(ConfigOpts::EXPLICIT_REG_NAMESPACES_opt);
-	if(exns.length())
-	{
-		StringArray exnsra = exns.tokenize();
-		for(size_t i = 0; i < exnsra.size(); i++)
-		{
-			wk.erase();
-			StringArray toks = exnsra[i].tokenize("/\\");
-			for(size_t j = 0; j < toks.size(); j++)
-			{
-				if(wk.empty())
-				{
-					wk = toks[j];
-				}
-				else
-				{
-					wk += '/';
-					wk += toks[j];
-				}
-			}
-
-			m_restrictedNamespaces.insert(wk.toLowerCase());
-		}
-	}
+	StringArray restrictedNamespaces = m_env->getConfigItem(ConfigOpts::EXPLICIT_REGISTRATION_NAMESPACES_opt).tokenize();
+	m_restrictedNamespaces.insert(restrictedNamespaces.begin(), restrictedNamespaces.end());
 }
 
 //////////////////////////////////////////////////////////////////////////////

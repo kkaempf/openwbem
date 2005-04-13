@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 		env->init();
 
 		// debug mode can be activated by -d or by the config file, so check both. The config file is loaded by env->init().
-		debugMode = debugMode || env->getConfigItem(ConfigOpts::DEBUG_opt, OW_DEFAULT_DEBUG).equalsIgnoreCase("true");
+		debugMode = debugMode || env->getConfigItem(ConfigOpts::DEBUGFLAG_opt, OW_DEFAULT_DEBUGFLAG).equalsIgnoreCase("true");
 
 		// logger's not set up according to the config file until after init()
 		logger = env->getLogger(COMPONENT_NAME);
@@ -241,7 +241,7 @@ processCommandLine(int argc, char* argv[], CIMOMEnvironmentRef env)
 	}
 	if (opts.debug)
 	{
-		env->setConfigItem(ConfigOpts::DEBUG_opt, "true", ServiceEnvironmentIFC::E_PRESERVE_PREVIOUS);
+		env->setConfigItem(ConfigOpts::DEBUGFLAG_opt, "true", ServiceEnvironmentIFC::E_PRESERVE_PREVIOUS);
 		env->setConfigItem(ConfigOpts::LOG_LEVEL_opt, "debug");
 	}
 	if (opts.configFile)

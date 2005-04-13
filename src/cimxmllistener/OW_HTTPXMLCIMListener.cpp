@@ -144,21 +144,21 @@ public:
 	{
 		if(certFileName.empty())
 		{
-			m_configItems[ConfigOpts::HTTP_PORT_opt] = String(0);
-			m_configItems[ConfigOpts::HTTPS_PORT_opt] = String(-1);
+			m_configItems[ConfigOpts::HTTP_SERVER_HTTP_PORT_opt] = String(0);
+			m_configItems[ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt] = String(-1);
 		}
 		else
 		{
-			m_configItems[ConfigOpts::HTTP_PORT_opt] = String(-1);
-			m_configItems[ConfigOpts::HTTPS_PORT_opt] = String(0);
-			m_configItems[ConfigOpts::SSL_CERT_opt] = certFileName;
+			m_configItems[ConfigOpts::HTTP_SERVER_HTTP_PORT_opt] = String(-1);
+			m_configItems[ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt] = String(0);
+			m_configItems[ConfigOpts::HTTP_SERVER_SSL_CERT_opt] = certFileName;
 		}
 
-		m_configItems[ConfigOpts::MAX_CONNECTIONS_opt] = String(10);
-		m_configItems[ConfigOpts::SINGLE_THREAD_opt] = "false";
-		m_configItems[ConfigOpts::ENABLE_DEFLATE_opt] = "true";
-		m_configItems[ConfigOpts::HTTP_USE_DIGEST_opt] = "false";
-		m_configItems[ConfigOpts::USE_UDS_opt] = "false";
+		m_configItems[ConfigOpts::HTTP_SERVER_MAX_CONNECTIONS_opt] = String(10);
+		m_configItems[ConfigOpts::HTTP_SERVER_SINGLE_THREAD_opt] = "false";
+		m_configItems[ConfigOpts::HTTP_SERVER_ENABLE_DEFLATE_opt] = "true";
+		m_configItems[ConfigOpts::HTTP_SERVER_USE_DIGEST_opt] = "false";
+		m_configItems[ConfigOpts::HTTP_SERVER_USE_UDS_opt] = "false";
 	}
 	virtual ~HTTPXMLCIMListenerServiceEnvironment() {}
 	virtual bool authenticate(String &userName,

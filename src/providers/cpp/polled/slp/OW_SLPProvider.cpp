@@ -121,8 +121,8 @@ public:
 		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format(
 			"SLPProvider::getInitialPollingInterval returning %1",
 			INITIAL_POLLING_INTERVAL).c_str());
-		m_httpsPort = env->getConfigItem(ConfigOpts::HTTPS_PORT_opt, OW_DEFAULT_HTTPS_PORT);
-		m_httpPort = env->getConfigItem(ConfigOpts::HTTP_PORT_opt, OW_DEFAULT_HTTP_PORT);
+		m_httpsPort = env->getConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, OW_DEFAULT_HTTP_SERVER_HTTPS_PORT);
+		m_httpPort = env->getConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, OW_DEFAULT_HTTP_SERVER_HTTP_PORT);
 		Int32 httpsPort = 0, httpPort = 0;
 		try
 		{
@@ -142,7 +142,7 @@ public:
 		{
 			return 0;
 		}
-		m_useDigest = env->getConfigItem(ConfigOpts::HTTP_USE_DIGEST_opt)
+		m_useDigest = env->getConfigItem(ConfigOpts::HTTP_SERVER_USE_DIGEST_opt)
 				.equalsIgnoreCase("true");
 		m_allowAnonymous = env->getConfigItem(ConfigOpts::ALLOW_ANONYMOUS_opt, OW_DEFAULT_ALLOW_ANONYMOUS)
 				.equalsIgnoreCase("true");

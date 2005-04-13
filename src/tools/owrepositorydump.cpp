@@ -86,7 +86,7 @@ CmdLineParser::Option g_options[] =
 {
 	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
 	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
-	{REPOSITORY_DIR_OPT, 'd', "repository-dir", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the repository dir. Default is "OW_DEFAULT_DATA_DIR },
+	{REPOSITORY_DIR_OPT, 'd', "repository-dir", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the repository dir. Default is "OW_DEFAULT_DATADIR },
 	{OUTPUT_OPT, 'o', "output", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the output file. Default is stdout" },
 	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
 };
@@ -142,7 +142,7 @@ int main(int argc, char** argv)
 			return 0;
 		}
 	
-		String repositoryDir = parser.getOptionValue(REPOSITORY_DIR_OPT, OW_DEFAULT_DATA_DIR);
+		String repositoryDir = parser.getOptionValue(REPOSITORY_DIR_OPT, OW_DEFAULT_DATADIR);
 	
 		std::filebuf* fb = 0;
 		FbCleanuper fbCleanuper(fb);

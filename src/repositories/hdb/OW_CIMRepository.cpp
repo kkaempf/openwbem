@@ -160,7 +160,7 @@ CIMRepository::init(const ServiceEnvironmentIFCRef& env)
 		m_checkReferentialIntegrity = true;
 	}
 
-	this->open(m_env->getConfigItem(ConfigOpts::DATA_DIR_opt, OW_DEFAULT_DATA_DIR));
+	this->open(m_env->getConfigItem(ConfigOpts::DATADIR_opt, OW_DEFAULT_DATADIR));
 }
 
 //////////////////////////////////////////////////////////////////////////////

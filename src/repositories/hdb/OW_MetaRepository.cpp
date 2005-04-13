@@ -1037,14 +1037,14 @@ void
 MetaRepository::init(const ServiceEnvironmentIFCRef& env)
 {
 	this->GenericHDBRepository::init(env);
-	String maxCacheSizeOpt = env->getConfigItem(ConfigOpts::MAX_CLASS_CACHE_SIZE_opt, OW_DEFAULT_MAX_CLASS_CACHE_SIZE_S);
+	String maxCacheSizeOpt = env->getConfigItem(ConfigOpts::MAX_CLASS_CACHE_SIZE_opt, OW_DEFAULT_MAX_CLASS_CACHE_SIZE);
 	try
 	{
 		m_classCache.setMaxCacheSize(maxCacheSizeOpt.toUInt32());
 	}
 	catch (const StringConversionException&)
 	{
-		m_classCache.setMaxCacheSize(OW_DEFAULT_MAX_CLASS_CACHE_SIZE);
+		m_classCache.setMaxCacheSize(OW_DEFAULT_MAX_CLASS_CACHE_SIZE_I);
 	}
 }
 

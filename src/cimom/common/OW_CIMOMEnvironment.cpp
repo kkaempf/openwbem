@@ -250,7 +250,7 @@ CIMOMEnvironment::startServices()
 	_createAuthManager();
 	_loadRequestHandlers();
 	_loadServices();
-	if (!getConfigItem(ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true"))
+	if (!getConfigItem(ConfigOpts::HTTP_SERVER_SINGLE_THREAD_opt).equalsIgnoreCase("true"))
 	{
 		_createPollingManager();
 		_createIndicationServer();
@@ -467,7 +467,7 @@ CIMOMEnvironment::_createIndicationServer()
 	if (!m_indicationsDisabled)
 	{
 		// load the indication server library
-		String indicationLib = getConfigItem(ConfigOpts::OWLIB_DIR_opt, OW_DEFAULT_OWLIB_DIR);
+		String indicationLib = getConfigItem(ConfigOpts::OWLIBDIR_opt, OW_DEFAULT_OWLIBDIR);
 		if (!indicationLib.endsWith(OW_FILENAME_SEPARATOR))
 		{
 			indicationLib += OW_FILENAME_SEPARATOR;
@@ -492,7 +492,7 @@ CIMOMEnvironment::_loadRequestHandlers()
 {
 	m_reqHandlers.clear();
 	String libPath = getConfigItem(
-		ConfigOpts::CIMOM_REQUEST_HANDLER_LOCATION_opt, OW_DEFAULT_CIMOM_REQHANDLER_LOCATION);
+		ConfigOpts::REQUEST_HANDLER_PATH_opt, OW_DEFAULT_REQUEST_HANDLER_PATH);
 	if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
 	{
 		libPath += OW_FILENAME_SEPARATOR;
@@ -563,7 +563,7 @@ void
 CIMOMEnvironment::_loadServices()
 {
 	String libPath = getConfigItem(
-		ConfigOpts::CIMOM_SERVICES_LOCATION_opt, OW_DEFAULT_CIMOM_SERVICES_LOCATION);
+		ConfigOpts::SERVICES_PATH_opt, OW_DEFAULT_SERVICES_PATH);
 	if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
 	{
 		libPath += OW_FILENAME_SEPARATOR;
@@ -637,7 +637,7 @@ CIMOMEnvironment::_createLogger()
 	StringArray additionalLogs = getConfigItem(ADDITIONAL_LOGS_opt).tokenize();
 
 	// this also gets set if owcimomd is run with -d
-	bool debugFlag = getConfigItem(DEBUG_opt).equalsIgnoreCase("true");
+	bool debugFlag = getConfigItem(DEBUGFLAG_opt, OW_DEFAULT_DEBUGFLAG).equalsIgnoreCase("true");
 	if ( debugFlag )
 	{
 		// stick it at the beginning as a possible slight logging performance optimization
@@ -691,7 +691,7 @@ CIMOMEnvironment::_createLogger()
 	// map the old log_location onto log.main.type and log.main.location if necessary
 	if (logMainType.empty())
 	{
-		String deprecatedLogLocation = getConfigItem(ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_FILE);
+		String deprecatedLogLocation = getConfigItem(ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_LOCATION);
 		if (deprecatedLogLocation.empty() || deprecatedLogLocation.equalsIgnoreCase("syslog"))
 		{
 			logMainType = "syslog";
@@ -903,7 +903,7 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref) const
 		MutexLock ml(m_indicationLock);
 		if (!m_indicationRepLayerLib)
 		{
-			const String libPath = getConfigItem(ConfigOpts::OWLIB_DIR_opt, OW_DEFAULT_OWLIB_DIR) + OW_FILENAME_SEPARATOR;
+			const String libPath = getConfigItem(ConfigOpts::OWLIBDIR_opt, OW_DEFAULT_OWLIBDIR) + OW_FILENAME_SEPARATOR;
 			const String libBase = "libowindicationreplayer";
 			String libname = libPath + libBase + OW_SHAREDLIB_EXTENSION;
 			OW_LOG_DEBUG(m_Logger, Format("CIMOM loading indication libary %1",
@@ -1094,13 +1094,13 @@ CIMOMEnvironment::unloadReqHandlers()
 	Int32 ttl;
 	try
 	{
-		ttl = getConfigItem(ConfigOpts::REQ_HANDLER_TTL_opt, OW_DEFAULT_REQ_HANDLER_TTL).toInt32();
+		ttl = getConfigItem(ConfigOpts::REQUEST_HANDLER_TTL_opt, OW_DEFAULT_REQUEST_HANDLER_TTL).toInt32();
 	}
 	catch (const StringConversionException&)
 	{
 		OW_LOG_ERROR(m_Logger, Format("Invalid value (%1) for %2 config item.",
-			getConfigItem(ConfigOpts::REQ_HANDLER_TTL_opt, OW_DEFAULT_REQ_HANDLER_TTL),
-			ConfigOpts::REQ_HANDLER_TTL_opt));
+			getConfigItem(ConfigOpts::REQUEST_HANDLER_TTL_opt, OW_DEFAULT_REQUEST_HANDLER_TTL),
+			ConfigOpts::REQUEST_HANDLER_TTL_opt));
 	}
 	if (ttl < 0)
 	{

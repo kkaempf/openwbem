@@ -497,7 +497,7 @@ BI1ProviderIFC::loadProviders(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 	}
 
 	OpenWBEM::String libPathsStr = env->getConfigItem(
-		ConfigOpts::OWBI1IFC_PROV_LOC_opt, OW_DEFAULT_OWBI1IFC_PROV_LOC);
+		ConfigOpts::OWBI1IFC_PROV_LOCATION_opt, OW_DEFAULT_OWBI1IFC_PROV_LOCATION);
 #ifndef OW_WIN32
 	OpenWBEM::StringArray paths = libPathsStr.tokenize(";:");
 #else
@@ -740,7 +740,7 @@ BI1ProviderIFC::getProvider(
 	BI1ProviderBaseIFCRef rval;
 
 	OpenWBEM::String libPathsStr = env->getConfigItem(
-		ConfigOpts::OWBI1IFC_PROV_LOC_opt, OW_DEFAULT_OWBI1IFC_PROV_LOC);
+		ConfigOpts::OWBI1IFC_PROV_LOCATION_opt, OW_DEFAULT_OWBI1IFC_PROV_LOCATION);
 	OpenWBEM::StringArray paths = libPathsStr.tokenize(";:");
 	for (OpenWBEM::StringArray::size_type i = 0; i < paths.size(); i++)
 	{

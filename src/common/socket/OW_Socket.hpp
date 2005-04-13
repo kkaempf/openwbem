@@ -49,8 +49,8 @@
 
 
 // TODO: This is duplicated in OW_ConfigOpts.hpp.  Figure out a way to merge the 2 without drastically increasing header dependencies.
-#ifdef OW_DEFAULT_UDS_FILENAME
-#define OW_DOMAIN_SOCKET_NAME OW_DEFAULT_UDS_FILENAME
+#ifdef OW_DEFAULT_HTTP_SERVER_UDS_FILENAME
+#define OW_DOMAIN_SOCKET_NAME OW_DEFAULT_HTTP_SERVER_UDS_FILENAME
 #endif
 
 #ifndef OW_DOMAIN_SOCKET_NAME

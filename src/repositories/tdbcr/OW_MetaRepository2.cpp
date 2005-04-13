@@ -534,7 +534,7 @@ MetaRepository2::MetaRepository2(const ServiceEnvironmentIFCRef& env)
 	}
 	catch (const StringConversionException&)
 	{
-		m_classCache.setMaxCacheSize(OW_DEFAULT_MAX_CLASS_CACHE_SIZE);
+		m_classCache.setMaxCacheSize(OW_DEFAULT_MAX_CLASS_CACHE_SIZE_I);
 	}
 }
 

@@ -130,7 +130,7 @@ void
 SimpleAuthenticator::loadPasswordFile(const ServiceEnvironmentIFCRef& env)
 {
 	// get path to password file from config file
-	String passwdFile = env->getConfigItem(ConfigOpts::SIMPLE_AUTH_FILE_opt, OW_DEFAULT_SIMPLE_PASSWD_FILE);
+	String passwdFile = env->getConfigItem(ConfigOpts::SIMPLE_AUTH_PASSWORD_FILE_opt, OW_DEFAULT_SIMPLE_AUTH_PASSWORD_FILE);
 	if (passwdFile.empty())
 	{
 		OW_THROW_ERR(AuthenticationException, "No password file given for "

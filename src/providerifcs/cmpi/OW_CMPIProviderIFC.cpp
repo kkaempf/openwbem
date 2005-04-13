@@ -313,7 +313,7 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
    }
 
    m_loadDone = true;
-   String libPath = env->getConfigItem(ConfigOpts::CMPIIFC_PROV_LOC_opt, OW_DEFAULT_CMPI_PROVIDER_LOCATION);
+   String libPath = env->getConfigItem(ConfigOpts::CMPIPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_CMPIPROVIFC_PROV_LOCATION);
    SharedLibraryLoaderRef ldr =
        SharedLibraryLoader::createSharedLibraryLoader();
 
@@ -374,7 +374,7 @@ CMPIProviderIFC::getProvider(
 	}
 
 	String libPath = env->getConfigItem(
-		ConfigOpts::CMPIIFC_PROV_LOC_opt, OW_DEFAULT_CMPI_PROVIDER_LOCATION);
+		ConfigOpts::CMPIPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_CMPIPROVIFC_PROV_LOCATION);
 	SharedLibraryLoaderRef ldr =
 		SharedLibraryLoader::createSharedLibraryLoader();
 
@@ -637,7 +637,7 @@ void
 CMPIProviderIFC::doUnloadProviders(
 	const ProviderEnvironmentIFCRef& env)
 {
-	String timeWindow = env->getConfigItem(ConfigOpts::CMPIIFC_PROV_TTL_opt, OW_DEFAULT_CMPIIFC_PROV_TTL);
+	String timeWindow = env->getConfigItem(ConfigOpts::CMPIPROVIFC_PROV_TTL_opt, OW_DEFAULT_CMPIPROVIFC_PROV_TTL);
 	Int32 iTimeWindow;
 	try
 	{
@@ -645,7 +645,7 @@ CMPIProviderIFC::doUnloadProviders(
 	}
 	catch(const StringConversionException&)
 	{
-		iTimeWindow = String(OW_DEFAULT_CPPIFC_PROV_TTL).toInt32();
+		iTimeWindow = String(OW_DEFAULT_CPPPROVIFC_PROV_TTL).toInt32();
 	}
 
 	if (iTimeWindow < 0)

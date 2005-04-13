@@ -724,7 +724,11 @@ CryptographicRandomNumber::saveRandomState()
 		// we only create this file is there's no chance an attacker could read or write it. see Network Security with OpenSSL p. 101
 		if (randFilePathIsSecure(FileSystem::Path::dirname(randFile)))
 		{
-			RAND_write_file(randFile);
+			if (RAND_write_file(randFile) <= 0)
+			{
+				// in case "the bytes written were generated without appropriate seed.", we don't want to load it up next time.
+				FileSystem::removeFile(randFile);
+			}
 		}
 	}
 }
