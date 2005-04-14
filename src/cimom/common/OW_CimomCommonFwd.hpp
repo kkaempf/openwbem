@@ -52,6 +52,8 @@ class AuthorizerManager;
 typedef IntrusiveReference<AuthorizerManager> AuthorizerManagerRef;
 class IndicationRepLayerMediator;
 typedef IntrusiveReference<IndicationRepLayerMediator> IndicationRepLayerMediatorRef;
+class EmbeddedCIMOMEnvironment;
+typedef IntrusiveReference<EmbeddedCIMOMEnvironment> EmbeddedCIMOMEnvironmentRef;
 class CIMOMEnvironment;
 typedef IntrusiveReference<CIMOMEnvironment> CIMOMEnvironmentRef;
 class LocalCIMOMHandle;

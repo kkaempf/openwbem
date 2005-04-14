@@ -125,6 +125,7 @@ namespace OW_NAMESPACE
 		static const int DaemonExceptionId = 8002;
 		static const int CIMOMEnvironmentExceptionId = 8003;
 		static const int IndicationServerExceptionId = 8004;
+		static const int EmbeddedCIMOMEnvironmentExceptionId = 8005; 
 
 		// mof compiler lib
 		static const int MOFCompilerExceptionId = 9001;
