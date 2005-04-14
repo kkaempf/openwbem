@@ -339,6 +339,9 @@ sparc-*-*)
 hppa2.0*-*-*)
 	AC_DEFINE(ARCH_HPPA20, 1, HP PA-RISC 2.0 architecture)
 	;;
+x86_64-*-*)
+	AC_DEFINE(ARCH_X86_64, 1, x86-64 architecture)
+	;;
 *)
 	AC_DEFINE(ARCH_UNKNOWN, 1, Unknown architecture)
 	;;
