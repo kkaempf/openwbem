@@ -195,6 +195,12 @@ public:
 		return ConfigFile::getConfigItem(m_configItems, name, defRetVal);
 	}
 
+	StringArray getMultiConfigItem(const String &itemName, 
+		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const 
+	{
+		return ConfigFile::getMultiConfigItem(m_configItems, itemName, defRetVal, tokenizeSeparator);
+	}
+
 	LoggerRef getLogger() const
 	{
 		OW_ASSERT(m_logger);
@@ -275,51 +281,53 @@ private:
 	void _loadProviders()
 	{
 		// TODO: Use a different config item.
-		String libPath = getConfigItem(ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_CPPPROVIFC_PROV_LOCATION);
-		if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
+		StringArray paths = getMultiConfigItem(
+			ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt, 
+			String(OW_DEFAULT_CPPPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR), 
+			OW_PATHNAME_SEPARATOR);
+		for (size_t i = 0; i < paths.size(); ++i)
 		{
-			libPath += OW_FILENAME_SEPARATOR;
-		}
-		OW_LOG_INFO(m_logger, Format("owprovideragent loading providers from directory %1", libPath));
-		StringArray dirEntries;
-		if (!FileSystem::getDirectoryContents(libPath, dirEntries))
-		{
-			OW_LOG_FATAL_ERROR(m_logger, Format("owprovideragent failed getting the contents of the provider directory: %1", libPath));
-			OW_THROW(PAException, "No Providers");
-		}
-		for (size_t i = 0; i < dirEntries.size(); i++)
-		{
-			if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
+			const String libPath(paths[i]);
+			OW_LOG_INFO(m_logger, Format("owprovideragent loading providers from directory %1", libPath));
+			StringArray dirEntries;
+			if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 			{
-				continue;
+				OW_LOG_FATAL_ERROR(m_logger, Format("owprovideragent failed getting the contents of the provider directory: %1", libPath));
+				OW_THROW(PAException, "No Providers");
 			}
-#ifdef OW_DARWIN
-			if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
+			for (size_t i = 0; i < dirEntries.size(); i++)
 			{
+				if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
+				{
 					continue;
-			}
+				}
+#ifdef OW_DARWIN
+				if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
+				{
+						continue;
+				}
 #endif // OW_DARWIN
-			String libName = libPath;
-			libName += dirEntries[i];
-			CppProviderBaseIFCRef provider = CppProviderIFC::loadProvider(libName, m_logger);
-			if (!provider)
-			{
-				OW_LOG_FATAL_ERROR(m_logger, Format("provider %1 did not load", libName));
-				OW_THROW(PAException, "Invalid provider");
-			}
-			if (!provider->getInstanceProvider()
-				&& !provider->getSecondaryInstanceProvider()
+				String libName = libPath;
+				libName += dirEntries[i];
+				CppProviderBaseIFCRef provider = CppProviderIFC::loadProvider(libName, m_logger);
+				if (!provider)
+				{
+					OW_LOG_FATAL_ERROR(m_logger, Format("provider %1 did not load", libName));
+					OW_THROW(PAException, "Invalid provider");
+				}
+				if (!provider->getInstanceProvider()
+					&& !provider->getSecondaryInstanceProvider()
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-				&& !provider->getAssociatorProvider()
+					&& !provider->getAssociatorProvider()
 #endif
-				&& !provider->getMethodProvider())
-			{
-				OW_LOG_FATAL_ERROR(m_logger, Format("provider %1 is not a supported (instance, secondary instance, associator, method) type", libName));
-				OW_THROW(PAException, "Invalid provider");
+					&& !provider->getMethodProvider())
+				{
+					OW_LOG_FATAL_ERROR(m_logger, Format("provider %1 is not a supported (instance, secondary instance, associator, method) type", libName));
+					OW_THROW(PAException, "Invalid provider");
+				}
+				m_providers.push_back(provider);
 			}
-			m_providers.push_back(provider);
 		}
-
 
 	}
 
@@ -328,7 +336,7 @@ private:
 		using namespace ConfigOpts;
 		Array<LogAppenderRef> appenders;
 		
-		StringArray additionalLogs = getConfigItem(ADDITIONAL_LOGS_opt, "").tokenize();
+		StringArray additionalLogs = getMultiConfigItem(ADDITIONAL_LOGS_opt, StringArray(), " \t");
 	
 		bool debugFlag = getConfigItem(DEBUGFLAG_opt, OW_DEFAULT_DEBUGFLAG).equalsIgnoreCase("true");
 		if ( debugFlag )

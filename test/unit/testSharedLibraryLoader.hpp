@@ -556,6 +556,11 @@ namespace
 		{
 			return "";
 		}
+		virtual StringArray getMultiConfigItem(const String &itemName, 
+			const StringArray& defRetVal, const char* tokenizeSeparator = 0) const
+		{
+			return StringArray();
+		}
 
 		virtual String getUserName() const
 		{

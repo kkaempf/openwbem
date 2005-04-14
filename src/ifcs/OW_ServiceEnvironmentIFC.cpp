@@ -88,6 +88,13 @@ ServiceEnvironmentIFC::getConfigItem(const String& name, const String& defRetVal
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+StringArray
+ServiceEnvironmentIFC::getMultiConfigItem(const String &itemName, 
+	const StringArray& defRetVal, const char* tokenizeSeparator) const
+{
+	return defRetVal;
+}
+///////////////////////////////////////////////////////////////////////////////
 void
 ServiceEnvironmentIFC::setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious)
 {

@@ -43,6 +43,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CerrLogger.hpp"
+#include "OW_ConfigFile.hpp"
 #include <iostream>
 
 using namespace OpenWBEM;
@@ -50,30 +51,30 @@ using namespace OpenWBEM;
 class TestEnvironment : public ServiceEnvironmentIFC
 {
 public:
-	virtual LoggerRef getLogger() const {
+	virtual LoggerRef getLogger() const 
+	{
 		return LoggerRef(new CerrLogger);
 	}
 	virtual LoggerRef getLogger(const String& componentName) const
 	{
 		return getLogger();
 	}
-	virtual String getConfigItem(const String &name, const String& defRetVal) const {
-		if (config.find(name) != config.end())
-		{
-			return config.find(name)->second;
-		}
-		else
-			return defRetVal;
+	virtual String getConfigItem(const String &name, const String& defRetVal) const 
+	{
+		return ConfigFile::getConfigItem(config, name, defRetVal);
 	}
-	virtual void setConfigItem(const String &item, const String &value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS) {
-		Map<String, String>::iterator it = config.find(item);
-		if (it == config.end() || overwritePrevious)
-		{
-			config[item] = value;
-		}
+	virtual void setConfigItem(const String &item, const String &value, EOverwritePreviousFlag overwritePrevious) 
+	{
+		ConfigFile::setConfigItem(config, item, value, ConfigFile::EOverwritePreviousFlag(overwritePrevious));
 	}
 
-	Map<String, String> config;
+	virtual StringArray getMultiConfigItem(const String &itemName, 
+		const StringArray& defRetVal, const char* tokenizeSeparator) const
+	{
+		return ConfigFile::getMultiConfigItem(config, itemName, defRetVal, tokenizeSeparator);
+	}
+
+	ConfigFile::ConfigMap config;
 };
 
 extern ServiceEnvironmentIFCRef g_testEnvironment;

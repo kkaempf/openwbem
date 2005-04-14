@@ -79,40 +79,45 @@ void
 ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 {
 	ServiceEnvironmentIFCRef env = getEnvironment();
-	String libdir = env->getConfigItem(ConfigOpts::PROVIDER_IFC_LIBS_opt, OW_DEFAULT_PROVIDER_IFC_LIBS);
 	LoggerRef lgr(env->getLogger(COMPONENT_NAME));
-	OW_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider interfaces from: %1", libdir));
-	StringArray libs;
-	FileSystem::getDirectoryContents(libdir, libs);
-	if (libs.size() == 0)
-	{
-		OW_THROW(ProviderIFCLoaderException, "ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any provider interfaces");
-		return;
-	}
 	int ifcCount = 0;
-	for (StringArray::size_type i = 0; i < libs.size(); ++i)
+
+	StringArray libdirs = env->getMultiConfigItem(ConfigOpts::PROVIDER_IFC_LIBS_opt, String(OW_DEFAULT_PROVIDER_IFC_LIBS).tokenize(), OW_PATHNAME_SEPARATOR);
+	for (size_t i = 0; i < libdirs.size(); ++i)
 	{
-		if (!libs[i].endsWith(OW_SHAREDLIB_EXTENSION))
+		const String libdir(libdirs[i]);
+		OW_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider interfaces from: %1", libdir));
+		StringArray libs;
+		FileSystem::getDirectoryContents(libdir, libs);
+		if (libs.size() == 0)
 		{
-			continue;
+			OW_THROW(ProviderIFCLoaderException, "ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any provider interfaces");
+			return;
 		}
-#ifdef OW_DARWIN
-		if (libs[i].indexOf(OW_VERSION) != String::npos)
+		for (StringArray::size_type i = 0; i < libs.size(); ++i)
 		{
+			if (!libs[i].endsWith(OW_SHAREDLIB_EXTENSION))
+			{
 				continue;
-		}
-#endif // OW_DARWIN
-		ProviderIFCBaseIFCRef rval;
-		ProviderIFCBaseIFCRef pmr;
-		rval = createProviderIFCFromLib(libdir + OW_FILENAME_SEPARATOR + libs[i]);
-		if (rval)
-		{
-			ifcCount++;
-			ifcs.push_back(rval);
-		}
-		else
-		{
-			OW_LOG_ERROR(lgr, Format("Unable to load ProviderIFC library %1", libs[i]));
+			}
+	#ifdef OW_DARWIN
+			if (libs[i].indexOf(OW_VERSION) != String::npos)
+			{
+					continue;
+			}
+	#endif // OW_DARWIN
+			ProviderIFCBaseIFCRef rval;
+			ProviderIFCBaseIFCRef pmr;
+			rval = createProviderIFCFromLib(libdir + OW_FILENAME_SEPARATOR + libs[i]);
+			if (rval)
+			{
+				ifcCount++;
+				ifcs.push_back(rval);
+			}
+			else
+			{
+				OW_LOG_ERROR(lgr, Format("Unable to load ProviderIFC library %1", libs[i]));
+			}
 		}
 	}
 	OW_LOG_DEBUG(lgr, Format("Number of provider interfaces loaded: %1",

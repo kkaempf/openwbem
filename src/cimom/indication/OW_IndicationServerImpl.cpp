@@ -243,6 +243,11 @@ public:
 	{
 		return m_env->getConfigItem(name, defRetVal);
 	}
+	virtual StringArray getMultiConfigItem(const String &itemName, 
+		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const
+	{
+		return m_env->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
+	}
 	
 	virtual LoggerRef getLogger() const
 	{

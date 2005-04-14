@@ -69,6 +69,8 @@ public:
 	virtual bool authenticate(String &userName, const String &info,
 		String &details, OperationContext& context) const;
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const;
+	virtual StringArray getMultiConfigItem(const String &itemName, 
+		const StringArray& defRetVal, const char* tokenizeSeparator) const;
 	
 	// from ServiceEnvironmentIFC
 	/**

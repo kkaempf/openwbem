@@ -62,6 +62,13 @@ public:
 
 	virtual String getConfigItem(const String& name, const String& defRetVal="") const;
 	
+	/**
+	 * Retrieve itemName values from configItems. If it's not present, defRetVal will be returned.
+	 * @param tokenizeSeparator If non-null, then each item will be tokenized using the specified separator chars and returned as separate items.
+	 */
+	virtual StringArray getMultiConfigItem(const String &itemName, 
+		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const;
+
 	enum EOverwritePreviousFlag
 	{
 		E_PRESERVE_PREVIOUS,

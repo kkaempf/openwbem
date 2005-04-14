@@ -496,14 +496,11 @@ BI1ProviderIFC::loadProviders(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 		OW_THROW(BI1ProviderIFCException, msg);
 	}
 
-	OpenWBEM::String libPathsStr = env->getConfigItem(
-		ConfigOpts::OWBI1IFC_PROV_LOCATION_opt, OW_DEFAULT_OWBI1IFC_PROV_LOCATION);
-#ifndef OW_WIN32
-	OpenWBEM::StringArray paths = libPathsStr.tokenize(";:");
-#else
-	// On win32, can't use the : separator because that's the drive letter separator
-	OpenWBEM::StringArray paths = libPathsStr.tokenize(";");
-#endif
+	OpenWBEM::StringArray paths = env->getMultiConfigItem(
+		ConfigOpts::OWBI1IFC_PROV_LOCATION_opt, 
+		String(OW_DEFAULT_OWBI1IFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
+		OW_PATHNAME_SEPARATOR);
+
 	for (OpenWBEM::StringArray::size_type i1 = 0; i1 < paths.size(); i1++)
 	{
 		OpenWBEM::StringArray dirEntries;
@@ -739,9 +736,11 @@ BI1ProviderIFC::getProvider(
 	OpenWBEM::String libName;
 	BI1ProviderBaseIFCRef rval;
 
-	OpenWBEM::String libPathsStr = env->getConfigItem(
-		ConfigOpts::OWBI1IFC_PROV_LOCATION_opt, OW_DEFAULT_OWBI1IFC_PROV_LOCATION);
-	OpenWBEM::StringArray paths = libPathsStr.tokenize(";:");
+	OpenWBEM::StringArray paths = env->getMultiConfigItem(
+		ConfigOpts::OWBI1IFC_PROV_LOCATION_opt, 
+		String(OW_DEFAULT_OWBI1IFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
+		OW_PATHNAME_SEPARATOR);
+
 	for (OpenWBEM::StringArray::size_type i = 0; i < paths.size(); i++)
 	{
 		libName = paths[i];

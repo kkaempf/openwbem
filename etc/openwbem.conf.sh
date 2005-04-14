@@ -20,8 +20,7 @@
 ################################################################################
 # For each directory specified, all the files contained in the directory will
 # be loaded and processed as additional config files.
-# Multiple directories can be specified, separated by ':' on Windows or ';' on
-# POSIX platforms.
+# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
 # This option will be evaluated after the main config file is parsed, and so
 # additional directories specified in additional config files will not be 
 # examined.
@@ -209,6 +208,8 @@ log.debug.format = [%t] %m
 # log.<log name>.max_backup_index
 # log.<log name>.flush
 #
+# This is a multi-valued option. Whitespace is the separator.
+#
 ;owcimomd.additional_logs =
 
 ################################################################################
@@ -252,6 +253,7 @@ owcimomd.max_class_cache_size = 128
 # you choose to control access with ACLs instead).
 # This option is enforced for all authentication methods. If
 # owcimomd.allow_anonymous = true, it is not enforced.
+# This is a multi-valued option. Whitespace is the separator.
 # The default is *
 owcimomd.allowed_users = root
 
@@ -273,6 +275,7 @@ owcimomd.disable_indications = false
 # a class name), they are registered for all namespaces in which the class
 # is present by default.  This option allows the specified namespaces to be 
 # excluded from this behavior.  
+# This is a multi-valued option. Whitespace is the separator.
 # Example: owcimomd.explicit_registration_namespaces = root/private root/cache
 ;owcimomd.explicit_registration_namespaces = 
 
@@ -383,6 +386,7 @@ http_server.enable_deflate = false
 # http_server.listen_addresses option specifies the local addresses to listen
 # on.  The option is a space delimited list.  Each item is either a hostname
 # or an IP address.  The value 0.0.0.0 means to listen on all local addresses.
+# This is a multi-valued option. Whitespace is the separator.
 # The default is 0.0.0.0
 http_server.listen_addresses = 0.0.0.0
 
@@ -517,6 +521,7 @@ slp.enable_advertisement = true
 ################################################################################
 # owcimomd.services_path Specifies the directory containing the services
 # shared libraries to be loaded by the CIMOM.
+# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
 # You probably don't need to modify this option.
 # The default is "@libdir@/openwbem/services"
 owcimomd.services_path = @libdir@/openwbem/services
@@ -524,6 +529,7 @@ owcimomd.services_path = @libdir@/openwbem/services
 ################################################################################
 # owcimomd.request_handler_path Specifies the directory containing the
 # request handler shared libraries to be loaded by the CIMOM.
+# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
 # You probably don't need to modify this option.
 # The default is "@libdir@/openwbem/requesthandlers"
 owcimomd.request_handler_path = @libdir@/openwbem/requesthandlers
@@ -551,10 +557,11 @@ owcimomd.owlibdir = @libdir@/openwbem
 owcimomd.datadir = @localstatedir@/openwbem
 
 ################################################################################
-# owcimomd.provider_ifc_libs specifies the location where all the provider
+# owcimomd.provider_ifc_libs specifies the locations where all the provider
 # interfaces will be loaded from. owcimomd assumes all shared libraries in
-# this directory are provider interfaces. If a shared library in this directory
+# these directories are provider interfaces. If a shared library in this directory
 # does not support the provider interface api, it will be rejected.
+# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
 # You probably don't need to modify this option.
 # The default is "@libdir@/openwbem/provifcs"
 owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
@@ -562,8 +569,8 @@ owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the C++ provider
 # interface. The cppprovifc.prov_location option specifies where the C++
-# provider interface will load it's providers from.  Multiple directories
-# can be specified, separated by ':' or ';'.
+# provider interface will load it's providers from.
+# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
 # You probably don't need to modify this option.
 # The default is "@libdir@/openwbem/c++providers"
 cppprovifc.prov_location = @libdir@/openwbem/c++providers
@@ -571,8 +578,8 @@ cppprovifc.prov_location = @libdir@/openwbem/c++providers
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the OWBI1 provider
 # interface. The owbi1provifc.prov_location option specifies where the OWBI1
-# provider interface will load it's providers from.  Multiple directories
-# can be specified, separated by ':' or ';'.
+# provider interface will load it's providers from.
+# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
 # You probably don't need to modify this option.
 # The default is "@libdir@/openwbem/owbi1providers"
 owbi1provifc.prov_location = @libdir@/openwbem/owbi1providers
@@ -597,6 +604,7 @@ http_server.uds_filename = /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAG
 # One of the provider interfaces provided with owcimomd is the NPI provider
 # interface. The npiprovifc.prov_location option specifies where the NPI
 # provider interface will load it's providers from.
+# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
 # The default is "@libdir@/openwbem/npiproviders"
 npiprovifc.prov_location = @libdir@/openwbem/npiproviders
 
@@ -604,6 +612,7 @@ npiprovifc.prov_location = @libdir@/openwbem/npiproviders
 # One of the provider interfaces provided with owcimomd is the CMPI provider
 # interface. The cmpiprovifc.prov_location option specifies where the CMPI
 # provider interface will load it's providers from.
+# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
 # The default is "@libdir@/openwbem/cmpiproviders"
 cmpiprovifc.prov_location = @libdir@/openwbem/cmpiproviders
 
@@ -620,6 +629,7 @@ cmpiprovifc.prov_TTL = -1
 # One of the provider interfaces provided with owcimomd is the perl provider
 # interface. The perlprovifc.prov_location option specifies where the perl
 # provider interface will load it's providers from.
+# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
 # The default is "@libdir@/openwbem/perlproviders"
 perlprovifc.prov_location = @libdir@/openwbem/perlproviders
 

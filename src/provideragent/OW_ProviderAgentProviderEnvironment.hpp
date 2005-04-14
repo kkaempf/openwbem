@@ -64,6 +64,8 @@ public:
 		// This function returns a regular cimom handle that does access checking and may call providers.
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const;
 	virtual String getConfigItem(const String &name, const String &defRetVal="") const;
+	virtual StringArray getMultiConfigItem(const String &itemName, 
+		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const;
 	// This function returns a cimom handle that directly accesses the repository (CIMServer is bypassed).
 	// no providers will be called.  This function should only be called if getCIMOMHandle()
 	// is insufficent.

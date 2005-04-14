@@ -360,15 +360,16 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_TIMEOUT_opt, OW_DEFAULT_HTTP_SERVER_TIMEOUT);
 		m_options.timeout = item.toInt32();
 
-		item = env->getConfigItem(ConfigOpts::ALLOWED_USERS_opt, OW_DEFAULT_ALLOWED_USERS);
-		if (item == "*")
+		StringArray users = env->getMultiConfigItem(ConfigOpts::ALLOWED_USERS_opt, 
+			String(OW_DEFAULT_ALLOWED_USERS).tokenize(" \t"),
+			" \t");
+		if (users.size() == 1 && users[0] == "*")
 		{
 			m_allowAllUsers = true;
 		}
 		else
 		{
 			m_allowAllUsers = false;
-			StringArray users = item.tokenize();
 			m_allowedUsers.insert(users.begin(), users.end());
 		}
 	}
@@ -521,8 +522,11 @@ HTTPServer::start()
 		}
 	}
 #endif
-	String listenAddressesOpt = env->getConfigItem(ConfigOpts::HTTP_SERVER_LISTEN_ADDRESSES_opt, OW_DEFAULT_HTTP_SERVER_LISTEN_ADDRESSES);
-	StringArray listenAddresses = listenAddressesOpt.tokenize(" ");
+	StringArray listenAddresses = env->getMultiConfigItem(
+		ConfigOpts::HTTP_SERVER_LISTEN_ADDRESSES_opt, 
+		String(OW_DEFAULT_HTTP_SERVER_LISTEN_ADDRESSES).tokenize(" \t"),
+		" \t");
+
 	if (listenAddresses.empty())
 	{
 		OW_THROW(HTTPServerException, "http_server.listen_addresses config item malformed");

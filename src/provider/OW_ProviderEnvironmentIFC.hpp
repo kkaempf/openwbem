@@ -82,6 +82,9 @@ public:
 	virtual LoggerRef getLogger() const OW_DEPRECATED = 0; // in 3.1.0
 	virtual LoggerRef getLogger(const String& componentName) const = 0;
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const = 0;
+	virtual StringArray getMultiConfigItem(const String &itemName, 
+		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const = 0;
+
 	virtual String getUserName() const = 0;
 	virtual OperationContext& getOperationContext() = 0;
 

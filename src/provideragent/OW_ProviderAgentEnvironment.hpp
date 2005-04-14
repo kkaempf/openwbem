@@ -99,7 +99,9 @@ public:
 	};
 
 	virtual void removeSelectable(const SelectableIFCRef& obj);
-	virtual String getConfigItem(const String &name, const String& defRetVal="") const;
+	virtual String getConfigItem(const String &name, const String& defRetVal) const;
+	virtual StringArray getMultiConfigItem(const String &itemName, 
+		const StringArray& defRetVal, const char* tokenizeSeparator) const;
 	virtual void setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious);
 
 	virtual RequestHandlerIFCRef getRequestHandler(const String& ct) const;

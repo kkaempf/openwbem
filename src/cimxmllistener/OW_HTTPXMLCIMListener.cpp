@@ -58,6 +58,7 @@
 #include "OW_CIMProtocolIFC.hpp"
 #include "OW_NullLogger.hpp"
 #include "OW_FileSystem.hpp"
+#include "OW_ConfigFile.hpp"
 
 #include <algorithm> // for std::remove
 
@@ -144,21 +145,21 @@ public:
 	{
 		if(certFileName.empty())
 		{
-			m_configItems[ConfigOpts::HTTP_SERVER_HTTP_PORT_opt] = String(0);
-			m_configItems[ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt] = String(-1);
+			setConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, String(0), E_OVERWRITE_PREVIOUS);
+			setConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, String(-1), E_OVERWRITE_PREVIOUS);
 		}
 		else
 		{
-			m_configItems[ConfigOpts::HTTP_SERVER_HTTP_PORT_opt] = String(-1);
-			m_configItems[ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt] = String(0);
-			m_configItems[ConfigOpts::HTTP_SERVER_SSL_CERT_opt] = certFileName;
+			setConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, String(-1), E_OVERWRITE_PREVIOUS);
+			setConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, String(0), E_OVERWRITE_PREVIOUS);
+			setConfigItem(ConfigOpts::HTTP_SERVER_SSL_CERT_opt, certFileName, E_OVERWRITE_PREVIOUS);
 		}
 
-		m_configItems[ConfigOpts::HTTP_SERVER_MAX_CONNECTIONS_opt] = String(10);
-		m_configItems[ConfigOpts::HTTP_SERVER_SINGLE_THREAD_opt] = "false";
-		m_configItems[ConfigOpts::HTTP_SERVER_ENABLE_DEFLATE_opt] = "true";
-		m_configItems[ConfigOpts::HTTP_SERVER_USE_DIGEST_opt] = "false";
-		m_configItems[ConfigOpts::HTTP_SERVER_USE_UDS_opt] = "false";
+		setConfigItem(ConfigOpts::HTTP_SERVER_MAX_CONNECTIONS_opt, String(10), E_OVERWRITE_PREVIOUS);
+		setConfigItem(ConfigOpts::HTTP_SERVER_SINGLE_THREAD_opt, "false", E_OVERWRITE_PREVIOUS);
+		setConfigItem(ConfigOpts::HTTP_SERVER_ENABLE_DEFLATE_opt, "true", E_OVERWRITE_PREVIOUS);
+		setConfigItem(ConfigOpts::HTTP_SERVER_USE_DIGEST_opt, "false", E_OVERWRITE_PREVIOUS);
+		setConfigItem(ConfigOpts::HTTP_SERVER_USE_UDS_opt, "false", E_OVERWRITE_PREVIOUS);
 	}
 	virtual ~HTTPXMLCIMListenerServiceEnvironment() {}
 	virtual bool authenticate(String &userName,
@@ -188,25 +189,19 @@ public:
 		m_selectables->erase(std::remove_if (m_selectables->begin(), m_selectables->end(),
 			selectableFinder(obj)), m_selectables->end());
 	}
-	virtual String getConfigItem(const String &name, const String& defRetVal="") const
+	virtual String getConfigItem(const String &name, const String& defRetVal) const
 	{
-		Map<String, String>::const_iterator i =
-			m_configItems.find(name);
-		if (i != m_configItems.end())
-		{
-			return (*i).second;
-		}
-		else
-		{
-			return defRetVal;
-		}
+		return ConfigFile::getConfigItem(m_configItems, name, defRetVal);
+	}
+	virtual StringArray getMultiConfigItem(const String &itemName, 
+		const StringArray& defRetVal, const char* tokenizeSeparator) const
+	{
+		return ConfigFile::getMultiConfigItem(m_configItems, itemName, defRetVal, tokenizeSeparator);
 	}
 	virtual void setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious)
 	{
-		if (overwritePrevious || getConfigItem(item) == "")
-		{
-			m_configItems[item] = value;
-		}
+		ConfigFile::setConfigItem(m_configItems, item, value, 
+			overwritePrevious == E_OVERWRITE_PREVIOUS ? ConfigFile::E_OVERWRITE_PREVIOUS : ConfigFile::E_PRESERVE_PREVIOUS);
 	}
 	
 	virtual RequestHandlerIFCRef getRequestHandler(const String&) const
@@ -227,7 +222,7 @@ public:
 		return rv;
 	}
 private:
-	Map<String, String> m_configItems;
+	ConfigFile::ConfigMap m_configItems;
 	IntrusiveReference<ListenerAuthenticator> m_pLAuthenticator;
 	RequestHandlerIFCRef m_XMLListener;
 	LoggerRef m_logger;

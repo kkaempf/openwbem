@@ -262,8 +262,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		return;
 	}
 	m_loadDone = true;
-	String libPath = env->getConfigItem(
-		ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_PERLPROVIFC_PROV_LOCATION);
+	
 	SharedLibraryLoaderRef ldr =
 		 SharedLibraryLoader::createSharedLibraryLoader();
 	if (!ldr)
@@ -271,95 +270,105 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "Perl provider ifc failed to get shared lib loader");
 		return;
 	}
-	StringArray dirEntries;
-	if (!FileSystem::getDirectoryContents(libPath, dirEntries))
+
+	const StringArray libPaths = env->getMultiConfigItem(
+		ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt, 
+		String(OW_DEFAULT_PERLPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
+		OW_PATHNAME_SEPARATOR);
+
+	for (size_t libIdx = 0; libIdx < libPaths.size(); ++libIdx)
 	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc "
-			"failed getting contents of directory: %1", libPath));
-		return;
-	}
-	for (size_t i = 0; i < dirEntries.size(); i++)
-	{
-		if (!dirEntries[i].endsWith(".pl"))
+		String libPath(libPaths[libIdx]);
+		StringArray dirEntries;
+		if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 		{
-			continue;
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc "
+				"failed getting contents of directory: %1", libPath));
+			return;
 		}
-		String libName = libPath;
-		libName += OW_FILENAME_SEPARATOR;
-		libName += String("libperlProvider"OW_SHAREDLIB_EXTENSION);
-		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
-			env->getLogger(COMPONENT_NAME));
-		String guessProvId = dirEntries[i];
-		if (!theLib)
+		for (size_t i = 0; i < dirEntries.size(); i++)
 		{
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider %1 "
-				"failed to load library: %2",
-				guessProvId, libName));
-			continue;
-		}
-		NPIFP_INIT_FT createProvider;
-		String creationFuncName = "perlProvider_initFunctionTable";
-		if (!theLib->getFunctionPointer(creationFuncName, createProvider))
-		{
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: "
-				"Library %1 does not contain %2 function",
-				libName, creationFuncName));
-			continue;
-		}
-		NPIFTABLE fTable = (*createProvider)();
-		fTable.npicontext = new NPIContext;
-		fTable.npicontext->scriptName = guessProvId.allocateCString();
-		if (!fTable.fp_initialize)
-		{
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: "
-			"Library %1 - initialize returned null", libName));
-			delete (fTable.npicontext->scriptName);
-			delete ((NPIContext *)fTable.npicontext);
-			continue;
-		}
-
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
-                //NPIHandleFreer nhf(_npiHandle);
-		::CIMOMHandle ch;
-
-		//char * classList = (* (fTable.fp_initialize))(
-		//	&_npiHandle, ch);
-		StringArray classList = String((* (fTable.fp_initialize))(
-		  	&_npiHandle, ch)).tokenize(",");
-
-		// now register the perl script for every type
-		// without trying to call
-		// TODO: implement check for perl subroutines
-		InstanceProviderInfo inst_info;
-		inst_info.setProviderName(guessProvId);
-		instanceProviderInfo.push_back(inst_info);
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		AssociatorProviderInfo assoc_info;
-		assoc_info.setProviderName(guessProvId);
-		associatorProviderInfo.push_back(assoc_info);
-#endif
-		MethodProviderInfo meth_info;
-		meth_info.setProviderName(guessProvId);
-		methodProviderInfo.push_back(meth_info);
-
-		IndicationProviderInfo ind_info;
-		if (! classList.empty())
-		{
-			IndicationProviderInfoEntry e("CIM_InstCreation");
-			for (unsigned int cnt = 0; cnt < classList.size();
-				cnt++)
+			if (!dirEntries[i].endsWith(".pl"))
 			{
-				e.classes.push_back(classList[cnt]);
+				continue;
 			}
-			ind_info.addInstrumentedClass(e);
-			e.indicationName = "CIM_InstModification";
-			ind_info.addInstrumentedClass(e);
-			e.indicationName = "CIM_InstDeletion";
-			ind_info.addInstrumentedClass(e);
-			ind_info.setProviderName(guessProvId);
-			indicationProviderInfo.push_back(ind_info);
+			String libName = libPath;
+			libName += OW_FILENAME_SEPARATOR;
+			libName += String("libperlProvider"OW_SHAREDLIB_EXTENSION);
+			SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
+				env->getLogger(COMPONENT_NAME));
+			String guessProvId = dirEntries[i];
+			if (!theLib)
+			{
+				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider %1 "
+					"failed to load library: %2",
+					guessProvId, libName));
+				continue;
+			}
+			NPIFP_INIT_FT createProvider;
+			String creationFuncName = "perlProvider_initFunctionTable";
+			if (!theLib->getFunctionPointer(creationFuncName, createProvider))
+			{
+				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: "
+					"Library %1 does not contain %2 function",
+					libName, creationFuncName));
+				continue;
+			}
+			NPIFTABLE fTable = (*createProvider)();
+			fTable.npicontext = new NPIContext;
+			fTable.npicontext->scriptName = guessProvId.allocateCString();
+			if (!fTable.fp_initialize)
+			{
+				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: "
+				"Library %1 - initialize returned null", libName));
+				delete (fTable.npicontext->scriptName);
+				delete ((NPIContext *)fTable.npicontext);
+				continue;
+			}
+	
+			::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
+					//NPIHandleFreer nhf(_npiHandle);
+			::CIMOMHandle ch;
+	
+			//char * classList = (* (fTable.fp_initialize))(
+			//	&_npiHandle, ch);
+			StringArray classList = String((* (fTable.fp_initialize))(
+				&_npiHandle, ch)).tokenize(",");
+	
+			// now register the perl script for every type
+			// without trying to call
+			// TODO: implement check for perl subroutines
+			InstanceProviderInfo inst_info;
+			inst_info.setProviderName(guessProvId);
+			instanceProviderInfo.push_back(inst_info);
+	#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+			AssociatorProviderInfo assoc_info;
+			assoc_info.setProviderName(guessProvId);
+			associatorProviderInfo.push_back(assoc_info);
+	#endif
+			MethodProviderInfo meth_info;
+			meth_info.setProviderName(guessProvId);
+			methodProviderInfo.push_back(meth_info);
+	
+			IndicationProviderInfo ind_info;
+			if (! classList.empty())
+			{
+				IndicationProviderInfoEntry e("CIM_InstCreation");
+				for (unsigned int cnt = 0; cnt < classList.size();
+					cnt++)
+				{
+					e.classes.push_back(classList[cnt]);
+				}
+				ind_info.addInstrumentedClass(e);
+				e.indicationName = "CIM_InstModification";
+				ind_info.addInstrumentedClass(e);
+				e.indicationName = "CIM_InstDeletion";
+				ind_info.addInstrumentedClass(e);
+				ind_info.setProviderName(guessProvId);
+				indicationProviderInfo.push_back(ind_info);
+			}
+			continue;
 		}
-		continue;
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -373,7 +382,6 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  return;
    }
    m_loadDone = true;
-   String libPath = env->getConfigItem(ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_PERLPROVIFC_PROV_LOCATION);
    SharedLibraryLoaderRef ldr =
 	  SharedLibraryLoader::createSharedLibraryLoader();
    if (!ldr)
@@ -381,94 +389,104 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "Perl provider ifc failed to get shared lib loader");
 	  return;
    }
-   StringArray dirEntries;
-   if (!FileSystem::getDirectoryContents(libPath, dirEntries))
+
+   const StringArray libPaths = env->getMultiConfigItem(
+	   ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt, 
+	   String(OW_DEFAULT_PERLPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
+	   OW_PATHNAME_SEPARATOR);
+
+   for (size_t libIdx = 0; libIdx < libPaths.size(); ++libIdx)
    {
-	  OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc failed getting contents of "
-		 "directory: %1", libPath));
-	  return;
-   }
-   for (size_t i = 0; i < dirEntries.size(); i++)
-   {
-	  if (!dirEntries[i].endsWith(".pl"))
-	  {
-		 continue;
-	  }
-	  String libName = libPath;
-	  libName += OW_FILENAME_SEPARATOR;
-	  //libName += dirEntries[i];
-	  libName += String("libperlProvider"OW_SHAREDLIB_EXTENSION);
-	  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
-			env->getLogger(COMPONENT_NAME));
-	  String guessProvId = dirEntries[i];
-	  if (!theLib)
-	  {
-		 OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider %1 ifc failed to load"
-				   " library: %2", guessProvId, libName));
-		 continue;
-	  }
-#if 0
-	  versionFunc_t versFunc;
-	  if (!theLib->getFunctionPointer("getOWVersion",
-			 versFunc))
-	  {
-		 OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc failed getting"
-				 " function pointer to \"getOWVersion\" from library: %1",
-				 libName));
-		 continue;
-	  }
-	  const char* strVer = (*versFunc)();
-	  if (strcmp(strVer, VERSION))
-	  {
-		 OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc got invalid version from "
-				 "provider: %1", strVer));
-		 continue;
-	  }
-#endif
-	NPIFP_INIT_FT createProvider;
-	//String creationFuncName = guessProvId + "_initFunctionTable";
-	String creationFuncName = "perlProvider_initFunctionTable";
-	if (!theLib->getFunctionPointer(creationFuncName, createProvider))
-	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: Libary %1 does not contain"
-			" %2 function", libName, creationFuncName));
-		continue;
-	}
-	NPIFTABLE fTable = (*createProvider)();
-	fTable.npicontext = new NPIContext;
-	
-	fTable.npicontext->scriptName = guessProvId.allocateCString();
-	if ((!fTable.fp_initialize)||(!fTable.fp_activateFilter))
-	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: Libary %1 - %2 returned null"
-			" initialize function pointer in function table", libName, creationFuncName));
-		delete (fTable.npicontext->scriptName);
-			delete ((NPIContext *)fTable.npicontext);
-		continue;
-	}
-		// only initialize polled and indicationexport providers
-	// since Perl doesn't support indicationexport providers ....
-		// else it must be a polled provider - initialize it
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc loaded library %1. Calling initialize"
-		" for provider %2", libName, guessProvId));
-	::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
-	// nothing the provider can do with it, so we'll just pass in 0
-	::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
-	fTable.fp_initialize(&_npiHandle, ch );	// Let provider initialize itself
-		// take care of the errorOccurred field
-		// that might indicate a buggy perl script
-		if (_npiHandle.errorOccurred)
+	   String libPath(libPaths[libIdx]);
+	   StringArray dirEntries;
+	   if (!FileSystem::getDirectoryContents(libPath, dirEntries))
+	   {
+		  OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc failed getting contents of "
+			 "directory: %1", libPath));
+		  return;
+	   }
+	   for (size_t i = 0; i < dirEntries.size(); i++)
+	   {
+		  if (!dirEntries[i].endsWith(".pl"))
+		  {
+			 continue;
+		  }
+		  String libName = libPath;
+		  libName += OW_FILENAME_SEPARATOR;
+		  //libName += dirEntries[i];
+		  libName += String("libperlProvider"OW_SHAREDLIB_EXTENSION);
+		  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
+				env->getLogger(COMPONENT_NAME));
+		  String guessProvId = dirEntries[i];
+		  if (!theLib)
+		  {
+			 OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider %1 ifc failed to load"
+					   " library: %2", guessProvId, libName));
+			 continue;
+		  }
+	#if 0
+		  versionFunc_t versFunc;
+		  if (!theLib->getFunctionPointer("getOWVersion",
+				 versFunc))
+		  {
+			 OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc failed getting"
+					 " function pointer to \"getOWVersion\" from library: %1",
+					 libName));
+			 continue;
+		  }
+		  const char* strVer = (*versFunc)();
+		  if (strcmp(strVer, VERSION))
+		  {
+			 OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc got invalid version from "
+					 "provider: %1", strVer));
+			 continue;
+		  }
+	#endif
+		NPIFP_INIT_FT createProvider;
+		//String creationFuncName = guessProvId + "_initFunctionTable";
+		String creationFuncName = "perlProvider_initFunctionTable";
+		if (!theLib->getFunctionPointer(creationFuncName, createProvider))
 		{
-			 OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc loaded library %1. Initialize failed"
-		" for provider %2", libName, guessProvId));
-			delete ((NPIContext *)fTable.npicontext);
-		continue;
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: Libary %1 does not contain"
+				" %2 function", libName, creationFuncName));
+			continue;
 		}
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: provider %1 loaded and initialized",
-		guessProvId));
-		//m_noidProviders.append(FTABLERef(theLib, new ::FTABLE(fTable)));
-		m_noidProviders.append(FTABLERef(theLib, new NPIFTABLE(fTable)));
-	}
+		NPIFTABLE fTable = (*createProvider)();
+		fTable.npicontext = new NPIContext;
+		
+		fTable.npicontext->scriptName = guessProvId.allocateCString();
+		if ((!fTable.fp_initialize)||(!fTable.fp_activateFilter))
+		{
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: Libary %1 - %2 returned null"
+				" initialize function pointer in function table", libName, creationFuncName));
+			delete (fTable.npicontext->scriptName);
+				delete ((NPIContext *)fTable.npicontext);
+			continue;
+		}
+			// only initialize polled and indicationexport providers
+		// since Perl doesn't support indicationexport providers ....
+			// else it must be a polled provider - initialize it
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc loaded library %1. Calling initialize"
+			" for provider %2", libName, guessProvId));
+		::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
+		// nothing the provider can do with it, so we'll just pass in 0
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
+		fTable.fp_initialize(&_npiHandle, ch );	// Let provider initialize itself
+			// take care of the errorOccurred field
+			// that might indicate a buggy perl script
+			if (_npiHandle.errorOccurred)
+			{
+				 OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc loaded library %1. Initialize failed"
+			" for provider %2", libName, guessProvId));
+				delete ((NPIContext *)fTable.npicontext);
+			continue;
+			}
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: provider %1 loaded and initialized",
+			guessProvId));
+			//m_noidProviders.append(FTABLERef(theLib, new ::FTABLE(fTable)));
+			m_noidProviders.append(FTABLERef(theLib, new NPIFTABLE(fTable)));
+		}
+   }
 }
 //////////////////////////////////////////////////////////////////////////////
 FTABLERef
@@ -482,8 +500,6 @@ PerlProviderIFC::getProvider(
 	{
 		return it->second;
 	}
-	String libPath = env->getConfigItem(
-		ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_PERLPROVIFC_PROV_LOCATION);
 	SharedLibraryLoaderRef ldr =
 		SharedLibraryLoader::createSharedLibraryLoader();
 	if (!ldr)
@@ -491,59 +507,75 @@ PerlProviderIFC::getProvider(
 		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "Perl: provider ifc failed to get shared lib loader");
 		return FTABLERef();
 	}
-	String libName(libPath);
-	libName += OW_FILENAME_SEPARATOR;
-	libName += "libperlProvider"OW_SHAREDLIB_EXTENSION;
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("PerlProviderIFC::getProvider loading library: %1",
-		libName));
-	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
-		env->getLogger(COMPONENT_NAME));
-	if (!theLib)
+	const StringArray libPaths = env->getMultiConfigItem(
+		ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt, 
+		String(OW_DEFAULT_PERLPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
+		OW_PATHNAME_SEPARATOR);
+
+	for (size_t libIdx = 0; libIdx < libPaths.size(); ++libIdx)
 	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc failed to load library: %1 "
-			"for provider id %2", libName, provId));
-		return FTABLERef();
-	}
-	NPIFP_INIT_FT createProvider;
-	String creationFuncName = "perlProvider_initFunctionTable";
-	if (!theLib->getFunctionPointer(creationFuncName, createProvider))
-	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: Libary %1 does not contain"
-			" %2 function", libName, creationFuncName));
-		return FTABLERef();
-	}
-	NPIFTABLE fTable = (*createProvider)();
-	fTable.npicontext = new NPIContext;
-	
-	fTable.npicontext->scriptName = provId.allocateCString();
-	if (!fTable.fp_initialize)
-	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: Libary %1 - %2 returned null"
-			" initialize function pointer in function table", libName, creationFuncName));
-			delete ((NPIContext *)fTable.npicontext);
-		return FTABLERef();
-	}
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc loaded library %1. Calling initialize"
-		" for provider %2", libName, provId));
-	::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
-	// nothing the provider can do with it, so we'll just pass in 0
-	//Reference<PerlEnv> npiHandle(); // TODO: createEnv(...);
-	::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
-	fTable.fp_initialize(&_npiHandle, ch );	// Let provider initialize itself
-		// take care of the errorOccurred field
-		// that might indicate a buggy perl script
-		if (_npiHandle.errorOccurred)
+		String libPath(libPaths[libIdx]);
+		String libName(libPath);
+		libName += OW_FILENAME_SEPARATOR;
+		libName += "libperlProvider"OW_SHAREDLIB_EXTENSION;
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("PerlProviderIFC::getProvider loading library: %1",
+			libName));
+
+		if (!FileSystem::exists(libName))
 		{
-			 OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc loaded library %1. Initialize failed"
-		" for provider %2", libName, provId));
-			delete ((NPIContext *)fTable.npicontext);
-		return FTABLERef();
+			continue;
 		}
-	
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: provider %1 loaded and initialized (script %2)",
-		provId, fTable.npicontext->scriptName));
-	m_provs[provId] = FTABLERef(theLib, new NPIFTABLE(fTable));
-	return m_provs[provId];
+
+		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
+			env->getLogger(COMPONENT_NAME));
+		if (!theLib)
+		{
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc failed to load library: %1 "
+				"for provider id %2", libName, provId));
+			return FTABLERef();
+		}
+		NPIFP_INIT_FT createProvider;
+		String creationFuncName = "perlProvider_initFunctionTable";
+		if (!theLib->getFunctionPointer(creationFuncName, createProvider))
+		{
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: Libary %1 does not contain"
+				" %2 function", libName, creationFuncName));
+			return FTABLERef();
+		}
+		NPIFTABLE fTable = (*createProvider)();
+		fTable.npicontext = new NPIContext;
+		
+		fTable.npicontext->scriptName = provId.allocateCString();
+		if (!fTable.fp_initialize)
+		{
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: Libary %1 - %2 returned null"
+				" initialize function pointer in function table", libName, creationFuncName));
+				delete ((NPIContext *)fTable.npicontext);
+			return FTABLERef();
+		}
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc loaded library %1. Calling initialize"
+			" for provider %2", libName, provId));
+		::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
+		// nothing the provider can do with it, so we'll just pass in 0
+		//Reference<PerlEnv> npiHandle(); // TODO: createEnv(...);
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
+		fTable.fp_initialize(&_npiHandle, ch );	// Let provider initialize itself
+			// take care of the errorOccurred field
+			// that might indicate a buggy perl script
+			if (_npiHandle.errorOccurred)
+			{
+				 OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc loaded library %1. Initialize failed"
+			" for provider %2", libName, provId));
+				delete ((NPIContext *)fTable.npicontext);
+			return FTABLERef();
+			}
+		
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: provider %1 loaded and initialized (script %2)",
+			provId, fTable.npicontext->scriptName));
+		m_provs[provId] = FTABLERef(theLib, new NPIFTABLE(fTable));
+		return m_provs[provId];
+	}
+	return FTABLERef();
 }
 
 } // end namespace OW_NAMESPACE

@@ -52,7 +52,7 @@ using namespace OpenWBEM;
 void OW_ProviderManagerTestCases::setUp()
 {
 	g_testEnvironment->setConfigItem(
-		ConfigOpts::CPPIFC_PROV_LOC_opt,
+		ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt,
 		"this is set to a dummy value so that the default won't be used, "
 		"which may break things, if providers are actually installed there." );
 
@@ -83,6 +83,7 @@ class TestServiceEnvironmentIFC : public ServiceEnvironmentIFC
 	{
 		return LoggerRef(new CerrLogger);
 	}
+
 };
 
 ServiceEnvironmentIFCRef createServiceEnvRef()

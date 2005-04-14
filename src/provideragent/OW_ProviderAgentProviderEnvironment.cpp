@@ -120,6 +120,14 @@ ProviderAgentProviderEnvironment::getConfigItem(const String &name, const String
 }
 
 //////////////////////////////////////////////////////////////////////////////
+StringArray
+ProviderAgentProviderEnvironment::getMultiConfigItem(const String &itemName, 
+	const StringArray& defRetVal, const char* tokenizeSeparator) const
+{
+	return ConfigFile::getMultiConfigItem(m_configMap, itemName, defRetVal, tokenizeSeparator);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // This function returns a cimom handle that directly accesses the repository (CIMServer is bypassed).
 // no providers will be called.  This function should only be called if getCIMOMHandle()
 // is insufficent.

@@ -108,7 +108,7 @@ getConfigItem(const ConfigMap& configItems, const String &itemName, const String
 
 /////////////////////////////////////////////////////////////////////////////
 StringArray
-getConfigItems(const ConfigMap& configItems, const String &itemName, const StringArray& defRetVal, const char* tokenizeSeparator)
+getMultiConfigItem(const ConfigMap& configItems, const String &itemName, const StringArray& defRetVal, const char* tokenizeSeparator)
 {
 	ConfigMap::const_iterator item = configItems.find(itemName);
 	if (item != configItems.end())

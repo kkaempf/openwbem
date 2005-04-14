@@ -165,13 +165,13 @@ int main(int argc, char* argv[])
 		}
 
 		// set up some defaults if not in the config file
-		ConfigFile::setConfigItem(cmap, ConfigOpts::HTTP_PORT_opt, String(-1), ConfigFile::E_PRESERVE_PREVIOUS);
-		ConfigFile::setConfigItem(cmap, ConfigOpts::HTTPS_PORT_opt, String(-1), ConfigFile::E_PRESERVE_PREVIOUS);
-		ConfigFile::setConfigItem(cmap, ConfigOpts::MAX_CONNECTIONS_opt, String(10), ConfigFile::E_PRESERVE_PREVIOUS);
-		ConfigFile::setConfigItem(cmap, ConfigOpts::ENABLE_DEFLATE_opt, "true", ConfigFile::E_PRESERVE_PREVIOUS);
-		ConfigFile::setConfigItem(cmap, ConfigOpts::HTTP_USE_DIGEST_opt, "false", ConfigFile::E_PRESERVE_PREVIOUS);
-		ConfigFile::setConfigItem(cmap, ConfigOpts::USE_UDS_opt, "true", ConfigFile::E_PRESERVE_PREVIOUS);
-		ConfigFile::setConfigItem(cmap, ConfigOpts::UDS_FILENAME_opt, String("/tmp/owprovideragent-") + String(UInt32(::getpid())), ConfigFile::E_PRESERVE_PREVIOUS);
+		ConfigFile::setConfigItem(cmap, ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, String(-1), ConfigFile::E_PRESERVE_PREVIOUS);
+		ConfigFile::setConfigItem(cmap, ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, String(-1), ConfigFile::E_PRESERVE_PREVIOUS);
+		ConfigFile::setConfigItem(cmap, ConfigOpts::HTTP_SERVER_MAX_CONNECTIONS_opt, String(10), ConfigFile::E_PRESERVE_PREVIOUS);
+		ConfigFile::setConfigItem(cmap, ConfigOpts::HTTP_SERVER_ENABLE_DEFLATE_opt, "true", ConfigFile::E_PRESERVE_PREVIOUS);
+		ConfigFile::setConfigItem(cmap, ConfigOpts::HTTP_SERVER_USE_DIGEST_opt, "false", ConfigFile::E_PRESERVE_PREVIOUS);
+		ConfigFile::setConfigItem(cmap, ConfigOpts::HTTP_SERVER_USE_UDS_opt, "true", ConfigFile::E_PRESERVE_PREVIOUS);
+		ConfigFile::setConfigItem(cmap, ConfigOpts::HTTP_SERVER_UDS_FILENAME_opt, String("/tmp/owprovideragent-") + String(UInt32(::getpid())), ConfigFile::E_PRESERVE_PREVIOUS);
 
 		String url = parser.getOptionValue(URL_OPT);
 		if (!url.empty())

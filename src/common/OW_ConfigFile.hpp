@@ -76,8 +76,9 @@ namespace ConfigFile
 
 	/**
 	 * Retrieve itemName values from configItems. If it's not present, defRetVal will be returned.
+	 * @param tokenizeSeparator If non-null, then each item will be tokenized using the specified separator chars and returned as separate items.
 	 */
-	OW_COMMON_API StringArray getConfigItems(const ConfigMap& configItems, const String &itemName, 
+	OW_COMMON_API StringArray getMultiConfigItem(const ConfigMap& configItems, const String &itemName, 
 		const StringArray& defRetVal = StringArray(), const char* tokenizeSeparator = 0);
 
 	enum EOverwritePreviousFlag

@@ -115,6 +115,11 @@ namespace
 		{
 			return m_pCenv->getConfigItem(name, defRetVal);
 		}
+		virtual StringArray getMultiConfigItem(const String &itemName, 
+			const StringArray& defRetVal, const char* tokenizeSeparator) const
+		{
+			return m_pCenv->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
+		}
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{
 			OW_ASSERT("Cannot call CIMOMProviderEnvironment::getCIMOMHandle()" == 0);
@@ -491,68 +496,74 @@ void
 CIMOMEnvironment::_loadRequestHandlers()
 {
 	m_reqHandlers.clear();
-	String libPath = getConfigItem(
-		ConfigOpts::REQUEST_HANDLER_PATH_opt, OW_DEFAULT_REQUEST_HANDLER_PATH);
-	if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
-	{
-		libPath += OW_FILENAME_SEPARATOR;
-	}
-	OW_LOG_INFO(m_Logger, Format("CIMOM loading request handlers from"
-		" directory %1", libPath));
-	StringArray dirEntries;
-	if (!FileSystem::getDirectoryContents(libPath, dirEntries))
-	{
-		OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed getting the contents of the"
-			" request handler directory: %1", libPath));
-		OW_THROW(CIMOMEnvironmentException, "No RequestHandlers");
-	}
 	int reqHandlerCount = 0;
-	for (size_t i = 0; i < dirEntries.size(); i++)
+	const StringArray libPaths = getMultiConfigItem(
+		ConfigOpts::REQUEST_HANDLER_PATH_opt, 
+		String(OW_DEFAULT_REQUEST_HANDLER_PATH).tokenize(OW_PATHNAME_SEPARATOR),
+		OW_PATHNAME_SEPARATOR);
+	for (size_t i = 0; i < libPaths.size(); ++i)
 	{
-		if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
+		String libPath(libPaths[i]);
+		if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
 		{
-			continue;
+			libPath += OW_FILENAME_SEPARATOR;
 		}
-#ifdef OW_DARWIN
-                if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
-                {
-                        continue;
-                }
-#endif // OW_DARWIN
-		String libName = libPath;
-		libName += dirEntries[i];
-		RequestHandlerIFCRef rh =
-			SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(
-				libName, "createRequestHandler", getLogger(COMPONENT_NAME));
-		if (rh)
+		OW_LOG_INFO(m_Logger, Format("CIMOM loading request handlers from"
+			" directory %1", libPath));
+		StringArray dirEntries;
+		if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 		{
-			++reqHandlerCount;
-			rh->setEnvironment(this);
-			StringArray supportedContentTypes = rh->getSupportedContentTypes();
-			OW_LOG_INFO(m_Logger, Format("CIMOM loaded request handler from file: %1",
-				libName));
-
-			ReqHandlerDataRef rqData(new ReqHandlerData);
-			rqData->filename = libName;
-			rqData->rqIFCRef = rh;
-			rqData->dt.setToCurrent();
-			for (StringArray::const_iterator iter = supportedContentTypes.begin();
-				  iter != supportedContentTypes.end(); iter++)
+			OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed getting the contents of the"
+				" request handler directory: %1", libPath));
+			OW_THROW(CIMOMEnvironmentException, "No RequestHandlers");
+		}
+		for (size_t i = 0; i < dirEntries.size(); i++)
+		{
+			if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
 			{
-				MutexLock ml(m_reqHandlersLock);
-				m_reqHandlers[(*iter)] = rqData;
-				ml.release();
-				OW_LOG_INFO(m_Logger, Format(
-					"CIMOM associating Content-Type %1 with Request Handler %2",
-					*iter, libName));
+				continue;
 			}
-			m_services.push_back(rh);
-		}
-		else
-		{
-			OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed to load request handler from file:"
-				" %1", libName));
-			OW_THROW(CIMOMEnvironmentException, "Invalid request handler");
+#ifdef OW_DARWIN
+					if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
+					{
+							continue;
+					}
+#endif // OW_DARWIN
+			String libName = libPath;
+			libName += dirEntries[i];
+			RequestHandlerIFCRef rh =
+				SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(
+					libName, "createRequestHandler", getLogger(COMPONENT_NAME));
+			if (rh)
+			{
+				++reqHandlerCount;
+				rh->setEnvironment(this);
+				StringArray supportedContentTypes = rh->getSupportedContentTypes();
+				OW_LOG_INFO(m_Logger, Format("CIMOM loaded request handler from file: %1",
+					libName));
+	
+				ReqHandlerDataRef rqData(new ReqHandlerData);
+				rqData->filename = libName;
+				rqData->rqIFCRef = rh;
+				rqData->dt.setToCurrent();
+				for (StringArray::const_iterator iter = supportedContentTypes.begin();
+					  iter != supportedContentTypes.end(); iter++)
+				{
+					MutexLock ml(m_reqHandlersLock);
+					m_reqHandlers[(*iter)] = rqData;
+					ml.release();
+					OW_LOG_INFO(m_Logger, Format(
+						"CIMOM associating Content-Type %1 with Request Handler %2",
+						*iter, libName));
+				}
+				m_services.push_back(rh);
+			}
+			else
+			{
+				OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed to load request handler from file:"
+					" %1", libName));
+				OW_THROW(CIMOMEnvironmentException, "Invalid request handler");
+			}
 		}
 	}
 	OW_LOG_INFO(m_Logger, Format("CIMOM: Handling %1 Content-Types from %2 Request Handlers",
@@ -562,48 +573,52 @@ CIMOMEnvironment::_loadRequestHandlers()
 void
 CIMOMEnvironment::_loadServices()
 {
-	String libPath = getConfigItem(
-		ConfigOpts::SERVICES_PATH_opt, OW_DEFAULT_SERVICES_PATH);
-	if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
+	const StringArray libPaths = getMultiConfigItem(
+		ConfigOpts::SERVICES_PATH_opt, String(OW_DEFAULT_SERVICES_PATH).tokenize(OW_PATHNAME_SEPARATOR), OW_PATHNAME_SEPARATOR);
+	for (size_t i = 0; i < libPaths.size(); ++i)
 	{
-		libPath += OW_FILENAME_SEPARATOR;
-	}
-	OW_LOG_INFO(m_Logger, Format("CIMOM loading services from directory %1",
-		libPath));
-	StringArray dirEntries;
-	if (!FileSystem::getDirectoryContents(libPath, dirEntries))
-	{
-		OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed getting the contents of the"
-			" services directory: %1", libPath));
-		OW_THROW(CIMOMEnvironmentException, "No Services");
-	}
-	for (size_t i = 0; i < dirEntries.size(); i++)
-	{
-		if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
+		String libPath(libPaths[i]);
+		if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
 		{
-			continue;
+			libPath += OW_FILENAME_SEPARATOR;
 		}
-#ifdef OW_DARWIN
-		if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
+		OW_LOG_INFO(m_Logger, Format("CIMOM loading services from directory %1",
+			libPath));
+		StringArray dirEntries;
+		if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 		{
+			OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed getting the contents of the"
+				" services directory: %1", libPath));
+			OW_THROW(CIMOMEnvironmentException, "No Services");
+		}
+		for (size_t i = 0; i < dirEntries.size(); i++)
+		{
+			if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
+			{
 				continue;
-		}
-#endif // OW_DARWIN
-		String libName = libPath;
-		libName += dirEntries[i];
-		ServiceIFCRef srv =
-			SafeLibCreate<ServiceIFC>::loadAndCreateObject(libName,
-				"createService", getLogger(COMPONENT_NAME));
-		if (srv)
-		{
-			m_services.push_back(srv);
-			OW_LOG_INFO(m_Logger, Format("CIMOM loaded service from file: %1", libName));
-		}
-		else
-		{
-			OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed to load service from library: %1",
-				libName));
-			OW_THROW(CIMOMEnvironmentException, "Invalid service");
+			}
+	#ifdef OW_DARWIN
+			if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
+			{
+					continue;
+			}
+	#endif // OW_DARWIN
+			String libName = libPath;
+			libName += dirEntries[i];
+			ServiceIFCRef srv =
+				SafeLibCreate<ServiceIFC>::loadAndCreateObject(libName,
+					"createService", getLogger(COMPONENT_NAME));
+			if (srv)
+			{
+				m_services.push_back(srv);
+				OW_LOG_INFO(m_Logger, Format("CIMOM loaded service from file: %1", libName));
+			}
+			else
+			{
+				OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed to load service from library: %1",
+					libName));
+				OW_THROW(CIMOMEnvironmentException, "Invalid service");
+			}
 		}
 	}
 	OW_LOG_INFO(m_Logger, Format("CIMOM: Number of services loaded: %1",
@@ -634,7 +649,7 @@ CIMOMEnvironment::_createLogger()
 	using namespace ConfigOpts;
 	Array<LogAppenderRef> appenders;
 	
-	StringArray additionalLogs = getConfigItem(ADDITIONAL_LOGS_opt).tokenize();
+	StringArray additionalLogs = getMultiConfigItem(ADDITIONAL_LOGS_opt, StringArray(), " \t");
 
 	// this also gets set if owcimomd is run with -d
 	bool debugFlag = getConfigItem(DEBUGFLAG_opt, OW_DEFAULT_DEBUGFLAG).equalsIgnoreCase("true");
@@ -765,8 +780,10 @@ CIMOMEnvironment::_loadConfigItemsFromFile(const String& filename)
 {
 	OW_LOG_DEBUG(m_Logger, "\nUsing config file: " + filename);
 	ConfigFile::loadConfigFile(filename, *m_configItems);
-	StringArray configDirs = ConfigFile::getConfigItems(*m_configItems, ConfigOpts::ADDITIONAL_CONFIG_FILES_DIRS_opt, 
-		String(OW_DEFAULT_ADDITIONAL_CONFIG_FILES_DIRS).tokenize(), OW_PATHNAME_SEPARATOR);
+	StringArray configDirs = ConfigFile::getMultiConfigItem(*m_configItems, 
+		ConfigOpts::ADDITIONAL_CONFIG_FILES_DIRS_opt, 
+		String(OW_DEFAULT_ADDITIONAL_CONFIG_FILES_DIRS).tokenize(OW_PATHNAME_SEPARATOR), 
+		OW_PATHNAME_SEPARATOR);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -790,6 +807,15 @@ CIMOMEnvironment::getConfigItem(const String &name, const String& defRetVal) con
 {
 	return ConfigFile::getConfigItem(*m_configItems, name, defRetVal);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+StringArray
+CIMOMEnvironment::getMultiConfigItem(const String &itemName, 
+	const StringArray& defRetVal, const char* tokenizeSeparator) const
+{
+	return ConfigFile::getMultiConfigItem(*m_configItems, itemName, defRetVal, tokenizeSeparator);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,

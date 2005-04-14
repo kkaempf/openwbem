@@ -236,92 +236,98 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  return;
    }
    m_loadDone = true;
-   String libPath = env->getConfigItem(ConfigOpts::NPIPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_NPIPROVIFC_PROV_LOCATION);
-   SharedLibraryLoaderRef ldr =
-	  SharedLibraryLoader::createSharedLibraryLoader();
-   if (!ldr)
+   const StringArray libPaths = env->getMultiConfigItem(ConfigOpts::NPIPROVIFC_PROV_LOCATION_opt, 
+	   String(OW_DEFAULT_NPIPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
+	   OW_PATHNAME_SEPARATOR);
+   for (size_t i = 0; i < libPaths.size(); ++i)
    {
-	  OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "NPI provider ifc failed to get shared lib loader");
-	  return;
+	   String libPath(libPaths[i]);
+	   SharedLibraryLoaderRef ldr =
+		  SharedLibraryLoader::createSharedLibraryLoader();
+	   if (!ldr)
+	   {
+		  OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "NPI provider ifc failed to get shared lib loader");
+		  return;
+	   }
+	   StringArray dirEntries;
+	   if (!FileSystem::getDirectoryContents(libPath, dirEntries))
+	   {
+		  OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc failed getting contents of "
+			 "directory: %1", libPath));
+		  return;
+	   }
+	   for (size_t i = 0; i < dirEntries.size(); i++)
+	   {
+		  if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
+		  {
+			 continue;
+		  }
+	#ifdef OW_DARWIN
+			  if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
+			  {
+					 continue;
+			  }
+	#endif // OW_DARWIN
+		  String libName = libPath;
+		  libName += OW_FILENAME_SEPARATOR;
+		  libName += dirEntries[i];
+		  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
+				env->getLogger(COMPONENT_NAME));
+		  String guessProvId = dirEntries[i].substring(3, dirEntries[i].length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
+		  if (!theLib)
+		  {
+			 OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider %1 ifc failed to load"
+					   " library: %2", guessProvId, libName));
+			 continue;
+		  }
+		::FP_INIT_FT createProvider;
+		String creationFuncName = guessProvId + "_initFunctionTable";
+		if (!theLib->getFunctionPointer(creationFuncName, createProvider))
+		{
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 does not contain"
+				" %2 function", libName, creationFuncName));
+			continue;
+		}
+		::FTABLE fTable_ = (*createProvider)();
+		if (!fTable_.fp_initialize)
+		{
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 - %2 returned null"
+				" initialize function pointer in function table", libName, creationFuncName));
+			continue;
+		}
+			// only initialize polled and indicationexport providers
+		// since NPI doesn't support indicationexport providers ....
+		if (!fTable_.fp_activateFilter) continue;
+		//
+			// else it must be a polled provider - initialize it
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Calling initialize"
+			" for provider %2", libName, guessProvId));
+		::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
+		// nothing the provider can do with it, so we'll just pass in 0
+		//Reference<NPIEnv> npiHandle(); // TODO: createEnv(...);
+			// Garbage Collection support
+		NPIFTABLE fTable;
+			memcpy(&fTable, &fTable_, sizeof(::FTABLE));
+			fTable.npicontext = new NPIContext;
+			fTable.npicontext->scriptName = NULL;
+		::NPIHandle _npiHandle = {0, 0, 0, 0, fTable.npicontext};
+		fTable.fp_initialize(&_npiHandle, ch );	// Let provider initialize itself
+		// take care of the errorOccurred field - buggy provider or perl script
+		if (_npiHandle.errorOccurred)
+		{
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Initialize failed"
+			" for provider %2", libName, guessProvId));
+			delete ((NPIContext *)fTable.npicontext);
+			continue;
+		}
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: provider %1 loaded and initialized",
+			guessProvId));
+		//::NPIFTABLE * nf = new ::NPIFTABLE();
+		//* nf = fTable;
+			m_noidProviders.append(FTABLERef(theLib, new NPIFTABLE(fTable)));
+			//m_noidProviders.append(FTABLERef(theLib, nf));
+		}
    }
-   StringArray dirEntries;
-   if (!FileSystem::getDirectoryContents(libPath, dirEntries))
-   {
-	  OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc failed getting contents of "
-		 "directory: %1", libPath));
-	  return;
-   }
-   for (size_t i = 0; i < dirEntries.size(); i++)
-   {
-	  if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
-	  {
-		 continue;
-	  }
-#ifdef OW_DARWIN
-          if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
-          {
-                 continue;
-          }
-#endif // OW_DARWIN
-	  String libName = libPath;
-	  libName += OW_FILENAME_SEPARATOR;
-	  libName += dirEntries[i];
-	  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
-			env->getLogger(COMPONENT_NAME));
-	  String guessProvId = dirEntries[i].substring(3, dirEntries[i].length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
-	  if (!theLib)
-	  {
-		 OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider %1 ifc failed to load"
-				   " library: %2", guessProvId, libName));
-		 continue;
-	  }
-	::FP_INIT_FT createProvider;
-	String creationFuncName = guessProvId + "_initFunctionTable";
-	if (!theLib->getFunctionPointer(creationFuncName, createProvider))
-	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 does not contain"
-			" %2 function", libName, creationFuncName));
-		continue;
-	}
-	::FTABLE fTable_ = (*createProvider)();
-	if (!fTable_.fp_initialize)
-	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 - %2 returned null"
-			" initialize function pointer in function table", libName, creationFuncName));
-		continue;
-	}
-		// only initialize polled and indicationexport providers
-	// since NPI doesn't support indicationexport providers ....
-	if (!fTable_.fp_activateFilter) continue;
-	//
-		// else it must be a polled provider - initialize it
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Calling initialize"
-		" for provider %2", libName, guessProvId));
-	::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
-	// nothing the provider can do with it, so we'll just pass in 0
-	//Reference<NPIEnv> npiHandle(); // TODO: createEnv(...);
-		// Garbage Collection support
-	NPIFTABLE fTable;
-		memcpy(&fTable, &fTable_, sizeof(::FTABLE));
-		fTable.npicontext = new NPIContext;
-		fTable.npicontext->scriptName = NULL;
-	::NPIHandle _npiHandle = {0, 0, 0, 0, fTable.npicontext};
-	fTable.fp_initialize(&_npiHandle, ch );	// Let provider initialize itself
-	// take care of the errorOccurred field - buggy provider or perl script
-	if (_npiHandle.errorOccurred)
-	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Initialize failed"
-		" for provider %2", libName, guessProvId));
-		delete ((NPIContext *)fTable.npicontext);
-		continue;
-	}
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: provider %1 loaded and initialized",
-		guessProvId));
-	//::NPIFTABLE * nf = new ::NPIFTABLE();
-	//* nf = fTable;
-		m_noidProviders.append(FTABLERef(theLib, new NPIFTABLE(fTable)));
-		//m_noidProviders.append(FTABLERef(theLib, nf));
-	}
 }
 //////////////////////////////////////////////////////////////////////////////
 FTABLERef
@@ -335,71 +341,85 @@ NPIProviderIFC::getProvider(
 	{
 		return it->second;
 	}
-	String libPath = env->getConfigItem(
-		ConfigOpts::NPIPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_NPIPROVIFC_PROV_LOCATION);
-	SharedLibraryLoaderRef ldr =
-		SharedLibraryLoader::createSharedLibraryLoader();
-	if (!ldr)
+	const StringArray libPaths = env->getMultiConfigItem(
+		ConfigOpts::NPIPROVIFC_PROV_LOCATION_opt, 
+		String(OW_DEFAULT_NPIPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
+		OW_PATHNAME_SEPARATOR);
+	for (size_t i = 0; i < libPaths.size(); ++i)
 	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "NPI: provider ifc failed to get shared lib loader");
-		return FTABLERef();
-	}
-	String libName(libPath);
-	libName += OW_FILENAME_SEPARATOR;
-	libName += "lib";
-	libName += provId;
-	libName += OW_SHAREDLIB_EXTENSION;
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC::getProvider loading library: %1",
-		libName));
-	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
-		env->getLogger(COMPONENT_NAME));
-	if (!theLib)
-	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc failed to load library: %1 "
-			"for provider id %2", libName, provId));
-		return FTABLERef();
-	}
-	::FP_INIT_FT createProvider;
-	String creationFuncName = provId + "_initFunctionTable";
-	if (!theLib->getFunctionPointer(creationFuncName, createProvider))
-	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 does not contain"
-			" %2 function", libName, creationFuncName));
-		return FTABLERef();
-	}
-	::FTABLE fTable_ = (*createProvider)();
-	//NPIFTABLE fTable = fTable_;
-	NPIFTABLE fTable;
-	memcpy(&fTable, &fTable_, sizeof(::FTABLE));
-	fTable.npicontext = new NPIContext;
-	fTable.npicontext->scriptName = NULL;
-	if (!fTable.fp_initialize)
-	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 - %2 returned null"
-			" initialize function pointer in function table", libName, creationFuncName));
-		delete ((NPIContext *)fTable.npicontext);
-		return FTABLERef();
-	}
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Calling initialize"
-		" for provider %2", libName, provId));
-	::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
-	// nothing the provider can do with it, so we'll just pass in 0
-	//Reference<NPIEnv> npiHandle(); // TODO: createEnv(...);
-	::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
-	fTable.fp_initialize(&_npiHandle, ch ); // Let provider initialize itself
-	// take care of the errorOccurred field
-	// that might indicate a buggy provider
-	if (_npiHandle.errorOccurred)
-	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Initialize failed"
+		String libPath(libPaths[i]);
+		SharedLibraryLoaderRef ldr =
+			SharedLibraryLoader::createSharedLibraryLoader();
+		if (!ldr)
+		{
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "NPI: provider ifc failed to get shared lib loader");
+			return FTABLERef();
+		}
+		String libName(libPath);
+		libName += OW_FILENAME_SEPARATOR;
+		libName += "lib";
+		libName += provId;
+		libName += OW_SHAREDLIB_EXTENSION;
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC::getProvider loading library: %1",
+			libName));
+
+		if (!FileSystem::exists(libName))
+		{
+			continue;
+		}
+
+		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
+			env->getLogger(COMPONENT_NAME));
+		if (!theLib)
+		{
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc failed to load library: %1 "
+				"for provider id %2", libName, provId));
+			return FTABLERef();
+		}
+		::FP_INIT_FT createProvider;
+		String creationFuncName = provId + "_initFunctionTable";
+		if (!theLib->getFunctionPointer(creationFuncName, createProvider))
+		{
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 does not contain"
+				" %2 function", libName, creationFuncName));
+			return FTABLERef();
+		}
+		::FTABLE fTable_ = (*createProvider)();
+		//NPIFTABLE fTable = fTable_;
+		NPIFTABLE fTable;
+		memcpy(&fTable, &fTable_, sizeof(::FTABLE));
+		fTable.npicontext = new NPIContext;
+		fTable.npicontext->scriptName = NULL;
+		if (!fTable.fp_initialize)
+		{
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 - %2 returned null"
+				" initialize function pointer in function table", libName, creationFuncName));
+			delete ((NPIContext *)fTable.npicontext);
+			return FTABLERef();
+		}
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Calling initialize"
 			" for provider %2", libName, provId));
-		delete ((NPIContext *)fTable.npicontext);
-		return FTABLERef();
+		::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
+		// nothing the provider can do with it, so we'll just pass in 0
+		//Reference<NPIEnv> npiHandle(); // TODO: createEnv(...);
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
+		fTable.fp_initialize(&_npiHandle, ch ); // Let provider initialize itself
+		// take care of the errorOccurred field
+		// that might indicate a buggy provider
+		if (_npiHandle.errorOccurred)
+		{
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Initialize failed"
+				" for provider %2", libName, provId));
+			delete ((NPIContext *)fTable.npicontext);
+			return FTABLERef();
+		}
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: provider %1 loaded and initialized",
+			provId));
+		m_provs[provId] = FTABLERef(theLib, new NPIFTABLE(fTable));
+
+		return m_provs[provId];
 	}
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: provider %1 loaded and initialized",
-		provId));
-	m_provs[provId] = FTABLERef(theLib, new NPIFTABLE(fTable));
-	return m_provs[provId];
+	return FTABLERef();
 }
 } // end namespace OW_NAMESPACE
 

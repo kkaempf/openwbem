@@ -108,6 +108,11 @@ namespace
 		{
 			return m_env->getConfigItem(name, defRetVal);
 		}
+		virtual StringArray getMultiConfigItem(const String &itemName, 
+			const StringArray& defRetVal, const char* tokenizeSeparator = 0) const
+		{
+			return m_env->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
+		}
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{
 			return m_env->getCIMOMHandle(m_context,
@@ -161,6 +166,11 @@ namespace
 			const String& defRetVal="") const
 		{
 			return m_env->getConfigItem(name, defRetVal);
+		}
+		virtual StringArray getMultiConfigItem(const String &itemName, 
+			const StringArray& defRetVal, const char* tokenizeSeparator = 0) const
+		{
+			return m_env->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
 		}
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{

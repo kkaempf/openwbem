@@ -370,14 +370,10 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		OW_THROW(CppProviderIFCException, msg);
 	}
 
-	String libPathsStr = env->getConfigItem(
-		ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_CPPPROVIFC_PROV_LOCATION);
-#ifndef OW_WIN32
-	StringArray paths = libPathsStr.tokenize(";:");
-#else
-	// On win32, can't use the : separator because that's the drive letter separator
-	StringArray paths = libPathsStr.tokenize(";");
-#endif
+	StringArray paths = env->getMultiConfigItem(
+		ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt, 
+		String(OW_DEFAULT_CPPPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR), 
+		OW_PATHNAME_SEPARATOR);
 	for (StringArray::size_type i1 = 0; i1 < paths.size(); i1++)
 	{
 		StringArray dirEntries;
@@ -670,9 +666,10 @@ CppProviderIFC::getProvider(
 	String libName;
 	CppProviderBaseIFCRef rval;
 
-	String libPathsStr = env->getConfigItem(
-		ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt, OW_DEFAULT_CPPPROVIFC_PROV_LOCATION);
-	StringArray paths = libPathsStr.tokenize(";:");
+	StringArray paths = env->getMultiConfigItem(
+		ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt, 
+		String(OW_DEFAULT_CPPPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR), 
+		OW_PATHNAME_SEPARATOR);
 	for (StringArray::size_type i = 0; i < paths.size(); i++)
 	{
 		libName = paths[i];
@@ -698,7 +695,7 @@ CppProviderIFC::getProvider(
 	if (!rval)
 	{
 		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), 
-			Format("C++ provider ifc failed to load library: %1 for provider id %2. Skipping.", libName, provId));
+			Format("C++ provider ifc failed to load library: %1 for provider id %2.", libName, provId));
 		return rval;
 	}
 

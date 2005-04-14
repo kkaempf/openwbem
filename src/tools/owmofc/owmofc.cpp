@@ -333,6 +333,7 @@ public:
 		}
 		return defRetVal;
 	}
+
 };
 
 } // end unnamed namespace

@@ -133,6 +133,11 @@ public:
 	{
 		return env->getConfigItem(name, defRetVal);
 	}
+	virtual StringArray getMultiConfigItem(const String &itemName, 
+		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const
+	{
+		return env->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
+	}
 	virtual String getUserName() const
 	{
 		return Platform::getCurrentUserName();
@@ -448,7 +453,7 @@ void ProviderManager::init(const ServiceEnvironmentIFCRef& env)
 		processProviderInfo(penv, indicationProviderInfo, m_IFCArray[i], m_registeredIndProvs);
 	}
 
-	StringArray restrictedNamespaces = m_env->getConfigItem(ConfigOpts::EXPLICIT_REGISTRATION_NAMESPACES_opt).tokenize();
+	StringArray restrictedNamespaces = m_env->getMultiConfigItem(ConfigOpts::EXPLICIT_REGISTRATION_NAMESPACES_opt, StringArray(), " \t");
 	m_restrictedNamespaces.insert(restrictedNamespaces.begin(), restrictedNamespaces.end());
 }
 

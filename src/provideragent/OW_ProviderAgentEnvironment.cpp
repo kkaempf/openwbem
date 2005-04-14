@@ -385,6 +385,13 @@ ProviderAgentEnvironment::getConfigItem(const String &name, const String& defRet
 	return ConfigFile::getConfigItem(m_configItems, name, defRetVal);
 }
 //////////////////////////////////////////////////////////////////////////////
+StringArray
+ProviderAgentEnvironment::getMultiConfigItem(const String &itemName, 
+	const StringArray& defRetVal, const char* tokenizeSeparator) const
+{
+	return ConfigFile::getMultiConfigItem(m_configItems, itemName, defRetVal, tokenizeSeparator);
+}
+//////////////////////////////////////////////////////////////////////////////
 void
 ProviderAgentEnvironment::setConfigItem(const String& item, const String& value,
 										EOverwritePreviousFlag overwritePrevious)
