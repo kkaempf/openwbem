@@ -44,6 +44,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
+#include "OW_CIMException.hpp"
 #include "OW_Enumeration.hpp"
 
 namespace OW_NAMESPACE
@@ -88,7 +89,7 @@ void
 LocalEmbeddedCIMOMHandle::exportIndication(const CIMInstance& instance,
 	const String& instNS)
 {
-	m_env->exportIndication(instance, instNS);
+	OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 }
 
 

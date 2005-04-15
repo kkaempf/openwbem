@@ -208,9 +208,6 @@ EmbeddedCIMOMEnvironment::~EmbeddedCIMOMEnvironment()
 void
 EmbeddedCIMOMEnvironment::init()
 {
-	// init() is called from a single-threaded state
-	_clearSelectables();
-
 	// The config file config item may be set by main before init() is called.
 	_loadConfigItemsFromFile(getConfigItem(ConfigOpts::CONFIG_FILE_opt, OW_DEFAULT_CONFIG_FILE));
 
@@ -374,19 +371,6 @@ EmbeddedCIMOMEnvironment::shutdown()
 
 	m_pollingManager = 0;
 	
-	// Clear selectable objects
-	try
-	{
-		_clearSelectables();
-	}
-	catch (Exception& e)
-	{
-		OW_LOG_ERROR(m_Logger, Format("Caught exception while calling _clearSelectables(): %1", e));
-	}
-	catch(...)
-	{
-	}
-
 	// We need to unload these in the opposite order that
 	// they were loaded because of bugs in shared library
 	// handling on certain OSes.
@@ -437,175 +421,6 @@ EmbeddedCIMOMEnvironment::getProviderManager() const
 }
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-void
-EmbeddedCIMOMEnvironment::_createPollingManager()
-{
-	m_pollingManager = PollingManagerRef(new PollingManager(m_providerManager));
-	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_pollingManager));
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-EmbeddedCIMOMEnvironment::_createIndicationServer()
-{
-	// Determine if user has disabled indication exportation
-	m_indicationsDisabled = getConfigItem(
-		ConfigOpts::DISABLE_INDICATIONS_opt, OW_DEFAULT_DISABLE_INDICATIONS).equalsIgnoreCase("true");
-	if (!m_indicationsDisabled)
-	{
-		// load the indication server library
-		String indicationLib = getConfigItem(ConfigOpts::OWLIBDIR_opt, OW_DEFAULT_OWLIBDIR);
-		if (!indicationLib.endsWith(OW_FILENAME_SEPARATOR))
-		{
-			indicationLib += OW_FILENAME_SEPARATOR;
-		}
-		indicationLib += "libowindicationserver"OW_SHAREDLIB_EXTENSION;
-		m_indicationServer = SafeLibCreate<IndicationServer>::loadAndCreateObject(
-				indicationLib, "createIndicationServer", getLogger(COMPONENT_NAME));
-		if (!m_indicationServer)
-		{
-
-			OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM Failed to load indication server"
-				" from library %1. Indication are currently DISABLED!",
-				indicationLib));
-			OW_THROW(EmbeddedCIMOMEnvironmentException, "Failed to load indication server");
-		}
-		m_services.push_back(m_indicationServer);
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-EmbeddedCIMOMEnvironment::_loadRequestHandlers()
-{
-	m_reqHandlers.clear();
-	int reqHandlerCount = 0;
-	const StringArray libPaths = getMultiConfigItem(
-		ConfigOpts::REQUEST_HANDLER_PATH_opt, 
-		String(OW_DEFAULT_REQUEST_HANDLER_PATH).tokenize(OW_PATHNAME_SEPARATOR),
-		OW_PATHNAME_SEPARATOR);
-	for (size_t i = 0; i < libPaths.size(); ++i)
-	{
-		String libPath(libPaths[i]);
-		if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
-		{
-			libPath += OW_FILENAME_SEPARATOR;
-		}
-		OW_LOG_INFO(m_Logger, Format("CIMOM loading request handlers from"
-			" directory %1", libPath));
-		StringArray dirEntries;
-		if (!FileSystem::getDirectoryContents(libPath, dirEntries))
-		{
-			OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed getting the contents of the"
-				" request handler directory: %1", libPath));
-			OW_THROW(EmbeddedCIMOMEnvironmentException, "No RequestHandlers");
-		}
-		for (size_t i = 0; i < dirEntries.size(); i++)
-		{
-			if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
-			{
-				continue;
-			}
-#ifdef OW_DARWIN
-					if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
-					{
-							continue;
-					}
-#endif // OW_DARWIN
-			String libName = libPath;
-			libName += dirEntries[i];
-			RequestHandlerIFCRef rh =
-				SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(
-					libName, "createRequestHandler", getLogger(COMPONENT_NAME));
-			if (rh)
-			{
-				++reqHandlerCount;
-				rh->setEnvironment(this);
-				StringArray supportedContentTypes = rh->getSupportedContentTypes();
-				OW_LOG_INFO(m_Logger, Format("CIMOM loaded request handler from file: %1",
-					libName));
-	
-				ReqHandlerDataRef rqData(new ReqHandlerData);
-				rqData->filename = libName;
-				rqData->rqIFCRef = rh;
-				rqData->dt.setToCurrent();
-				for (StringArray::const_iterator iter = supportedContentTypes.begin();
-					  iter != supportedContentTypes.end(); iter++)
-				{
-					MutexLock ml(m_reqHandlersLock);
-					m_reqHandlers[(*iter)] = rqData;
-					ml.release();
-					OW_LOG_INFO(m_Logger, Format(
-						"CIMOM associating Content-Type %1 with Request Handler %2",
-						*iter, libName));
-				}
-				m_services.push_back(rh);
-			}
-			else
-			{
-				OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed to load request handler from file:"
-					" %1", libName));
-				OW_THROW(EmbeddedCIMOMEnvironmentException, "Invalid request handler");
-			}
-		}
-	}
-	OW_LOG_INFO(m_Logger, Format("CIMOM: Handling %1 Content-Types from %2 Request Handlers",
-		m_reqHandlers.size(), reqHandlerCount));
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-EmbeddedCIMOMEnvironment::_loadServices()
-{
-	const StringArray libPaths = getMultiConfigItem(
-		ConfigOpts::SERVICES_PATH_opt, String(OW_DEFAULT_SERVICES_PATH).tokenize(OW_PATHNAME_SEPARATOR), OW_PATHNAME_SEPARATOR);
-	for (size_t i = 0; i < libPaths.size(); ++i)
-	{
-		String libPath(libPaths[i]);
-		if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
-		{
-			libPath += OW_FILENAME_SEPARATOR;
-		}
-		OW_LOG_INFO(m_Logger, Format("CIMOM loading services from directory %1",
-			libPath));
-		StringArray dirEntries;
-		if (!FileSystem::getDirectoryContents(libPath, dirEntries))
-		{
-			OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed getting the contents of the"
-				" services directory: %1", libPath));
-			OW_THROW(EmbeddedCIMOMEnvironmentException, "No Services");
-		}
-		for (size_t i = 0; i < dirEntries.size(); i++)
-		{
-			if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
-			{
-				continue;
-			}
-	#ifdef OW_DARWIN
-			if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
-			{
-					continue;
-			}
-	#endif // OW_DARWIN
-			String libName = libPath;
-			libName += dirEntries[i];
-			ServiceIFCRef srv =
-				SafeLibCreate<ServiceIFC>::loadAndCreateObject(libName,
-					"createService", getLogger(COMPONENT_NAME));
-			if (srv)
-			{
-				m_services.push_back(srv);
-				OW_LOG_INFO(m_Logger, Format("CIMOM loaded service from file: %1", libName));
-			}
-			else
-			{
-				OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed to load service from library: %1",
-					libName));
-				OW_THROW(EmbeddedCIMOMEnvironmentException, "Invalid service");
-			}
-		}
-	}
-	OW_LOG_INFO(m_Logger, Format("CIMOM: Number of services loaded: %1",
-		m_services.size()));
-}
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
@@ -839,20 +654,6 @@ EmbeddedCIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 		rref = m_cimServer;
 	}
 
-	if (sendIndications == E_SEND_INDICATIONS && m_indicationServer && !m_indicationsDisabled)
-	{
-		SharedLibraryRepositoryIFCRef irl = _getIndicationRepLayer(rref);
-		if (irl)
-		{
-			rref = RepositoryIFCRef(new SharedLibraryRepository(irl));
-		}
-	}
-	if (m_authorizer)
-	{
-		AuthorizerIFC* p = m_authorizer->clone();
-		p->setSubRepositoryIFC(rref);
-		rref = RepositoryIFCRef(new SharedLibraryRepository(SharedLibraryRepositoryIFCRef(m_authorizer.getLibRef(), RepositoryIFCRef(p))));
-	}
 
 	return CIMOMHandleIFCRef(new LocalEmbeddedCIMOMHandle(const_cast<EmbeddedCIMOMEnvironment*>(this), rref,
 		context, locking == E_LOCKING ? LocalEmbeddedCIMOMHandle::E_LOCKING : LocalEmbeddedCIMOMHandle::E_NO_LOCKING));
@@ -886,247 +687,9 @@ EmbeddedCIMOMEnvironment::getWQLRef() const
 		m_wqlLib, "createWQL", m_Logger));
 }
 //////////////////////////////////////////////////////////////////////////////
-SharedLibraryRepositoryIFCRef
-EmbeddedCIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref) const
-{
-	SharedLibraryRepositoryIFCRef retref;
-	if (!m_indicationRepLayerDisabled)
-	{
-		MutexLock ml(m_indicationLock);
-		if (!m_indicationRepLayerLib)
-		{
-			const String libPath = getConfigItem(ConfigOpts::OWLIBDIR_opt, OW_DEFAULT_OWLIBDIR) + OW_FILENAME_SEPARATOR;
-			const String libBase = "libowindicationreplayer";
-			String libname = libPath + libBase + OW_SHAREDLIB_EXTENSION;
-			OW_LOG_DEBUG(m_Logger, Format("CIMOM loading indication libary %1",
-				libname));
-			SharedLibraryLoaderRef sll =
-				SharedLibraryLoader::createSharedLibraryLoader();
-
-			if (!sll)
-			{
-				m_indicationRepLayerDisabled = true;
-				OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed to create SharedLibraryLoader"
-					" library %1", libname));
-				return retref;
-			}
-			m_indicationRepLayerLib = sll->loadSharedLibrary(libname, m_Logger);
-			if (!m_indicationRepLayerLib)
-			{
-				m_indicationRepLayerDisabled = true;
-				OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed to load indication rep layer"
-					" library %1", libname));
-				return retref;
-			}
-		}
-		IndicationRepLayer* pirep =
-			SafeLibCreate<IndicationRepLayer>::create(
-				m_indicationRepLayerLib, "createIndicationRepLayer", m_Logger);
-		if (pirep)
-		{
-			retref = SharedLibraryRepositoryIFCRef(m_indicationRepLayerLib,
-				RepositoryIFCRef(pirep));
-			pirep->setCIMServer(rref);
-		}
-		else
-		{
-			m_indicationRepLayerDisabled = true;
-			m_indicationRepLayerLib = 0;
-		}
-	}
-	return retref;
-}
-
 //////////////////////////////////////////////////////////////////////////////
-void
-EmbeddedCIMOMEnvironment::_loadAuthorizer()
-{
-	OW_ASSERT(!m_authorizer);
-	String libname = getConfigItem(ConfigOpts::AUTHORIZATION_LIB_opt);
-
-	// no authorization requested
-	if (libname.empty())
-	{
-		return;
-	}
-
-	OW_LOG_DEBUG(m_Logger, Format("CIMOM loading authorization libary %1",
-					libname));
-	SharedLibraryLoaderRef sll =
-		SharedLibraryLoader::createSharedLibraryLoader();
-	if (!sll)
-	{
-		String msg = Format("CIMOM failed to create SharedLibraryLoader."
-							" library %1", libname);
-		OW_LOG_FATAL_ERROR(m_Logger, msg);
-		OW_THROW(EmbeddedCIMOMEnvironmentException, msg.c_str());
-	}
-	SharedLibraryRef authorizerLib = sll->loadSharedLibrary(libname, m_Logger);
-	if (!authorizerLib)
-	{
-		String msg = Format("CIMOM failed to load authorization"
-							" library %1", libname);
-		OW_LOG_FATAL_ERROR(m_Logger, msg);
-		OW_THROW(EmbeddedCIMOMEnvironmentException, msg.c_str());
-	}
-	AuthorizerIFC* p =
-		SafeLibCreate<AuthorizerIFC>::create(
-			authorizerLib, "createAuthorizer", m_Logger);
-	if (!p)
-	{
-		String msg = Format("CIMOM failed to load authorization"
-							" library %1", libname);
-		OW_LOG_FATAL_ERROR(m_Logger, msg);
-		OW_THROW(EmbeddedCIMOMEnvironmentException, msg.c_str());
-	}
-	m_authorizer = AuthorizerIFCRef(authorizerLib,
-									AuthorizerIFCRef::element_type(p));
-
-	m_services.push_back(m_authorizer);
-}
 //////////////////////////////////////////////////////////////////////////////
-void
-EmbeddedCIMOMEnvironment::_createAuthorizerManager()
-{
-	// m_authorizerManager should actually be a valid AuthorizerManager
-	// already, but it doesn't have a authorizer loaded yet.
-	// It is also already added to the m_services array.
-
-	String libname = getConfigItem(ConfigOpts::AUTHORIZATION2_LIB_opt);
-
-	// no authorization requested
-	if (libname.empty())
-	{
-		return;
-	}
-
-	OW_LOG_DEBUG(m_Logger, Format("CIMOM loading authorization libary %1", libname));
-
-	SharedLibraryLoaderRef sll =
-		SharedLibraryLoader::createSharedLibraryLoader();
-	if (!sll)
-	{
-		String msg = Format("CIMOM failed to create SharedLibraryLoader."
-			" library %1", libname);
-		OW_LOG_FATAL_ERROR(m_Logger, msg);
-		OW_THROW(EmbeddedCIMOMEnvironmentException, msg.c_str());
-	}
-	SharedLibraryRef authorizerLib = sll->loadSharedLibrary(libname, m_Logger);
-	if (!authorizerLib)
-	{
-		String msg = Format("CIMOM failed to load authorization"
-			" library %1", libname);
-		OW_LOG_FATAL_ERROR(m_Logger, msg);
-		OW_THROW(EmbeddedCIMOMEnvironmentException, msg.c_str());
-	}
-	Authorizer2IFC* p =
-		SafeLibCreate<Authorizer2IFC>::create(
-			authorizerLib, "createAuthorizer2", m_Logger);
-	if (!p)
-	{
-		String msg = Format("CIMOM failed to load authorization"
-			" library %1", libname);
-		OW_LOG_FATAL_ERROR(m_Logger, msg);
-		OW_THROW(EmbeddedCIMOMEnvironmentException, msg.c_str());
-	}
-
-	m_authorizerManager->setAuthorizer(
-		Authorizer2IFCRef(authorizerLib,Authorizer2IFCRef::element_type(p)));
-}
 //////////////////////////////////////////////////////////////////////////////
-RequestHandlerIFCRef
-EmbeddedCIMOMEnvironment::getRequestHandler(const String &id) const
-{
-	RequestHandlerIFCRef ref;
-	{
-		MutexLock l(m_stateGuard);
-		if (!isInitialized(m_state))
-		{
-			return ref;
-		}
-	}
-	MutexLock ml(m_reqHandlersLock);
-	ReqHandlerMap::iterator iter =
-			m_reqHandlers.find(id);
-	if (iter != m_reqHandlers.end())
-	{
-		if (!iter->second->rqIFCRef)
-		{
-			iter->second->rqIFCRef =
-				SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(
-					iter->second->filename, "createRequestHandler", getLogger(COMPONENT_NAME));
-			
-			// re-add it to m_services and resort them.
-			m_services.push_back(iter->second->rqIFCRef);
-			const_cast<EmbeddedCIMOMEnvironment*>(this)->_sortServicesForDependencies();
-		}
-		if (iter->second->rqIFCRef)
-		{
-			ref = RequestHandlerIFCRef(iter->second->rqIFCRef.getLibRef(),
-				iter->second->rqIFCRef->clone());
-			iter->second->dt.setToCurrent();
-			ref->setEnvironment(const_cast<EmbeddedCIMOMEnvironment*>(this));
-			OW_LOG_DEBUG(m_Logger, Format("Request Handler %1 handling request for content type %2",
-				iter->second->filename, id));
-		}
-		else
-		{
-			OW_LOG_ERROR(m_Logger, Format(
-				"Error loading request handler library %1 for content type %2",
-				iter->second->filename, id));
-		}
-	}
-	return ref;
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-EmbeddedCIMOMEnvironment::unloadReqHandlers()
-{
-	//OW_LOG_DEBUG(m_Logger, "Running unloadReqHandlers()");
-	Int32 ttl;
-	try
-	{
-		ttl = getConfigItem(ConfigOpts::REQUEST_HANDLER_TTL_opt, OW_DEFAULT_REQUEST_HANDLER_TTL).toInt32();
-	}
-	catch (const StringConversionException&)
-	{
-		OW_LOG_ERROR(m_Logger, Format("Invalid value (%1) for %2 config item.",
-			getConfigItem(ConfigOpts::REQUEST_HANDLER_TTL_opt, OW_DEFAULT_REQUEST_HANDLER_TTL),
-			ConfigOpts::REQUEST_HANDLER_TTL_opt));
-	}
-	if (ttl < 0)
-	{
-		OW_LOG_DEBUG(m_Logger, "Non-Positive TTL for Request Handlers: OpenWBEM will not unload request handlers.");
-		return;
-	}
-	DateTime dt;
-	dt.setToCurrent();
-	MutexLock ml(m_reqHandlersLock);
-	for (ReqHandlerMap::iterator iter = m_reqHandlers.begin();
-		  iter != m_reqHandlers.end(); ++iter)
-	{
-		if (iter->second->rqIFCRef)
-		{
-			DateTime rqDT = iter->second->dt;
-			rqDT.addMinutes(ttl);
-			if (rqDT < dt)
-			{
-				// remove it from m_services
-				for (size_t i = 0; i < m_services.size(); ++i)
-				{
-					if (m_services[i].get() == iter->second->rqIFCRef.get())
-					{
-						m_services.remove(i);
-						break;
-					}
-				}
-				iter->second->rqIFCRef.setNull();
-				OW_LOG_DEBUG(m_Logger, Format("Unloaded request handler lib %1 for content type %2",
-					iter->second->filename, iter->first));
-			}
-		}
-	}
-}
 //////////////////////////////////////////////////////////////////////////////
 LoggerRef
 EmbeddedCIMOMEnvironment::getLogger() const
@@ -1144,18 +707,6 @@ EmbeddedCIMOMEnvironment::getLogger(const String& componentName) const
 	return rv;
 }
 //////////////////////////////////////////////////////////////////////////////
-IndicationServerRef
-EmbeddedCIMOMEnvironment::getIndicationServer() const
-{
-	return m_indicationServer;
-}
-//////////////////////////////////////////////////////////////////////////////
-PollingManagerRef
-EmbeddedCIMOMEnvironment::getPollingManager() const
-{
-	return m_pollingManager;
-}
-//////////////////////////////////////////////////////////////////////////////
 void
 EmbeddedCIMOMEnvironment::clearConfigItems()
 {
@@ -1171,57 +722,7 @@ EmbeddedCIMOMEnvironment::setConfigItem(const String &item,
 }
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-void
-EmbeddedCIMOMEnvironment::_clearSelectables()
-{
-	MutexLock ml(m_selectableLock);
-	m_selectables.clear();
-	m_selectableCallbacks.clear();
-}
 //////////////////////////////////////////////////////////////////////////////
-void
-EmbeddedCIMOMEnvironment::addSelectable(const SelectableIFCRef& obj,
-	const SelectableCallbackIFCRef& cb)
-{
-	MutexLock ml(m_selectableLock);
-	m_selectables.push_back(obj);
-	m_selectableCallbacks.push_back(cb);
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-EmbeddedCIMOMEnvironment::removeSelectable(const SelectableIFCRef& obj)
-{
-	MutexLock ml(m_selectableLock);
-    for (size_t i = 0; i < m_selectables.size(); i++)
-    {
-        if (obj == m_selectables[i])
-        {
-            m_selectables.remove(i);
-            m_selectableCallbacks.remove(i);
-            --i;
-            continue;
-        }
-    }
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-EmbeddedCIMOMEnvironment::exportIndication(const CIMInstance& instance,
-	const String& instNS)
-{
-	OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment::exportIndication");
-	if (m_indicationServer && !m_indicationsDisabled)
-	{
-		OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment::exportIndication - calling indication"
-			" server");
-		m_indicationServer->processIndication(instance, instNS);
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-IndicationRepLayerMediatorRef
-EmbeddedCIMOMEnvironment::getIndicationRepLayerMediator() const
-{
-	return m_indicationRepLayerMediatorRef;
-}
 //////////////////////////////////////////////////////////////////////////////
 RepositoryIFCRef
 EmbeddedCIMOMEnvironment::getRepository() const
@@ -1229,12 +730,6 @@ EmbeddedCIMOMEnvironment::getRepository() const
 	return m_cimRepository;
 }
 //////////////////////////////////////////////////////////////////////////////
-AuthorizerManagerRef
-EmbeddedCIMOMEnvironment::getAuthorizerManager() const
-{
-	return m_authorizerManager;
-}
-
 //////////////////////////////////////////////////////////////////////////////
 void
 EmbeddedCIMOMEnvironment::unloadProviders()

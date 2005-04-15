@@ -106,7 +106,6 @@ public:
 		OperationContext& context) const;
 
 	virtual WQLIFCRef getWQLRef() const;
-	virtual RequestHandlerIFCRef getRequestHandler(const String &id) const;
 	virtual LoggerRef getLogger() const OW_DEPRECATED;
 	virtual LoggerRef getLogger(const String& componentName) const;
 	IndicationServerRef getIndicationServer() const;
@@ -114,15 +113,10 @@ public:
 	void clearConfigItems();
 	virtual void setConfigItem(const String &item, const String &value,
 		EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS);
-	virtual void addSelectable(const SelectableIFCRef& obj,
-		const SelectableCallbackIFCRef& cb);
-	virtual void removeSelectable(const SelectableIFCRef& obj);
 	void unloadProviders();
 	void startServices();
 	void shutdown();
 	ProviderManagerRef getProviderManager() const;
-	void exportIndication(const CIMInstance& instance,
-		const String& instNS);
 	void unloadReqHandlers();
 	IndicationRepLayerMediatorRef getIndicationRepLayerMediator() const;
 	RepositoryIFCRef getRepository() const;
@@ -139,8 +133,6 @@ private:
 	void _loadServices();
 	void _createPollingManager();
 	void _createIndicationServer();
-	SharedLibraryRepositoryIFCRef _getIndicationRepLayer(const RepositoryIFCRef& rref) const;
-	void _clearSelectables();
 	void _loadAuthorizer();
 	void _createAuthorizerManager();
 	void _sortServicesForDependencies();
