@@ -16,6 +16,7 @@ infiniteClient
 testinstprov
 wqlTest2
 testNamespaces
+testEmbeddedCIMOM
 testMisc
 hammerClient
 testSecondaryInstanceProviders

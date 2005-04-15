@@ -27,7 +27,8 @@ testMisc \
 hammerClient \
 testSecondaryInstanceProviders \
 testLargeRequest \
-testClientTimeout
+testClientTimeout \
+testEmbeddedCIMOM
 endif
 endif
 endif
@@ -347,9 +348,30 @@ $(CXXBINLINKFLAGS) \
 testClientTimeout_SOURCES = \
 testClientTimeout.cpp
 
+#testEmbeddedCIMOM
+testEmbeddedCIMOM_SOURCES = \
+testEmbeddedCIMOM.cpp
+
+testEmbeddedCIMOM_LDADD = \
+-L$(top_builddir)/src/cimom/embedded -lowembeddedcimom \
+-L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
+-L$(top_builddir)/src/cimom/server -lowserver \
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
+-L$(top_builddir)/src/cimom/common -lowcimomcommon \
+-L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/db/db -lowdb \
+$(SSL_LIBS) $(BINLINKAPPENDFLAGS)
+
+testEmbeddedCIMOM_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o testEmbeddedCIMOM$(EXEEXT)
 
 INCLUDES = \
 -I$(top_srcdir)/src/ifcs \
+-I$(top_srcdir)/src/cimom/embedded \
+-I$(top_srcdir)/src/cimom/common \
+-I$(top_srcdir)/src/cimom/server \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/common/socket \
 -I$(top_srcdir)/src/cim \
