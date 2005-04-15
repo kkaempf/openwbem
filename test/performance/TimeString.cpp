@@ -35,6 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_String.hpp"
+#include "PerformanceCommon.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -79,36 +80,6 @@ struct CopyCreationDeletion
 		String foo(s);
 	}
 };
-
-template <typename FunctorT>
-void doTiming(const FunctorT& f, size_t reps)
-{
-	struct timeval begin;
-	gettimeofday(&begin, NULL);
-	for (size_t i = 0; i < reps; ++i)
-	{
-		f();
-	}
-
-	struct timeval end;
-	gettimeofday(&end, NULL);
-
-	struct timeval length;
-	timerclear(&length);
-	if (end.tv_usec < begin.tv_usec)
-	{
-		// handle borrow
-		length.tv_sec = (end.tv_sec - 1) - begin.tv_sec;
-		length.tv_usec = end.tv_usec - begin.tv_usec + 1000000;
-	}
-	else
-	{
-		length.tv_sec = end.tv_sec - begin.tv_sec;
-		length.tv_usec = end.tv_usec - begin.tv_usec;
-	}
-	std::cout << f.name() << " x " << reps << '\n';
-	std::cout << std::setw(8) << std::setfill(' ') << length.tv_sec << '.' << std::setw(6) << std::setfill('0') << length.tv_usec << std::endl;
-}
 
 int main(int argc, const char** argv)
 {

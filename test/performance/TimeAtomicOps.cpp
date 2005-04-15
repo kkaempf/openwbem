@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2005 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -33,46 +33,66 @@
  */
 
 
-#ifndef OW_PERFORMANCE_COMMON_HPP_INCLUDE_GUARD_
-#define OW_PERFORMANCE_COMMON_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
+#include "OW_AtomicOps.hpp"
+#include "PerformanceCommon.hpp"
 
 #include <iostream>
 #include <iomanip>
 
 #include <sys/time.h>
 
+using namespace OpenWBEM;
 
-template <typename FunctorT>
-void doTiming(FunctorT f, size_t reps)
+struct Nothing
 {
-	struct timeval begin;
-	gettimeofday(&begin, NULL);
-	for (size_t i = 0; i < reps; ++i)
+	const char* name() const { return "Nothing"; }
+	void operator()() const
 	{
-		f();
 	}
+};
 
-	struct timeval end;
-	gettimeofday(&end, NULL);
+struct Increment
+{
+	const char* name() const { return "Increment"; }
+	void operator()() 
+	{
+		AtomicInc(a);
+	}
+	Atomic_t a;
+};
 
-	struct timeval length;
-	timerclear(&length);
-	if (end.tv_usec < begin.tv_usec)
+struct Decrement
+{
+	Decrement() : a(999999) {}
+	const char* name() const { return "Decrement"; }
+	void operator()() 
 	{
-		// handle borrow
-		length.tv_sec = (end.tv_sec - 1) - begin.tv_sec;
-		length.tv_usec = end.tv_usec - begin.tv_usec + 1000000;
+		AtomicDec(a);
 	}
-	else
+	Atomic_t a;
+};
+
+struct DecAndTest
+{
+	DecAndTest() : a(999999) {}
+	const char* name() const { return "DecAndTest"; }
+	void operator()() 
 	{
-		length.tv_sec = end.tv_sec - begin.tv_sec;
-		length.tv_usec = end.tv_usec - begin.tv_usec;
+		if (AtomicDecAndTest(a))
+		{
+			a = Atomic_t(999999);
+		}
 	}
-	std::cout << f.name() << " x " << reps << '\n';
-	std::cout << std::setw(8) << std::setfill(' ') << length.tv_sec << '.' << std::setw(6) << std::setfill('0') << length.tv_usec << std::endl;
+	Atomic_t a;
+};
+
+int main(int argc, const char** argv)
+{
+	const size_t reps = 10000000;
+	doTiming(Nothing(), reps);
+	doTiming(Increment(), reps);
+	doTiming(Decrement(), reps);
+	doTiming(DecAndTest(), reps);
 }
 
-
-#endif

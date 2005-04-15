@@ -1,7 +1,8 @@
 noinst_PROGRAMS = \
 TimeString \
 TimeFile \
-Time_pthread_once
+Time_pthread_once \
+TimeAtomicOps
 
 # TimeString
 TimeString_LDFLAGS = \
@@ -43,6 +44,20 @@ $(BINLINKAPPENDFLAGS)
 
 Time_pthread_once_SOURCES = \
 Time_pthread_once.cpp \
+PerformanceCommon.hpp
+
+# TimeAtomicOps
+TimeAtomicOps_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o TimeAtomicOps$(EXEEXT)
+
+TimeAtomicOps_LDADD = \
+$(top_builddir)/src/common/libopenwbem.a \
+$(Z_LIBS) $(SSL_LIBS)\
+$(BINLINKAPPENDFLAGS)
+
+TimeAtomicOps_SOURCES = \
+TimeAtomicOps.cpp \
 PerformanceCommon.hpp
 
 

@@ -12,3 +12,4 @@ TimeFile
 *.nlm.*
 Time_pthread_once
 lib*sl*
+TimeAtomicOps

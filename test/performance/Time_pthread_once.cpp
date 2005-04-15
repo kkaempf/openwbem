@@ -220,7 +220,7 @@ struct getPtrDCLP
 	const char* name() const { return "getPtrDCLP"; }
 	void operator()() const
 	{
-		Foo* ptr = Foo::instance();
+		DCLPFoo* ptr = DCLPFoo::instance();
 	}
 };
 
