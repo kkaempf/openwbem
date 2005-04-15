@@ -46,7 +46,8 @@ extern "C"
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-#if (defined(OW_ARCH_X86) || defined(__i386__)) && defined(__GNUC__)
+// x86 and x86-64 asm is identical
+#if (defined(OW_ARCH_X86) || defined(__i386__) || defined(OW_ARCH_X86_64) || defined(__x86_64__)) && defined(__GNUC__)
 
 namespace OW_NAMESPACE
 {
