@@ -89,7 +89,7 @@ Options processCommandLineOptions(int argc, char** argv);
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-    int rval = 0;
+    int rval = 1;
 	EmbeddedCIMOMEnvironmentRef env = EmbeddedCIMOMEnvironment::instance();
 	
 	// until the config file is read and parsed, just use a logger that prints everything to stderr.
@@ -118,20 +118,39 @@ int main(int argc, char* argv[])
 
 		CIMOMHandleIFCRef ch = env->getCIMOMHandle(oc); 
 
-		std::cout << time(0) << std::endl;
-		return 0; 
 		std::cout << "Running!" << std::endl;
-		String foo;
-		foo = String::getLine(std::cin); 
 		CIMClass cc = ch->getClass("root/testsuite", "TestInstance"); 
 		CIMInstance inst = cc.newInstance(); 
 		inst.updatePropertyValue("Name", CIMValue(String("one"))); 
 		StringArray props; 
-		props.push_back(String("one")); 
-		props.push_back(String("two")); 
+		props.push_back(String("one.one")); 
+		props.push_back(String("one.two")); 
 		inst.updatePropertyValue("Params", CIMValue(props)); 
 		ch->createInstance("root/testsuite", inst); 
+
+		inst.updatePropertyValue("Name", CIMValue(String("two"))); 
+		props.clear(); 
+		props.push_back(String("two.one")); 
+		props.push_back(String("two.two")); 
+		inst.updatePropertyValue("Params", CIMValue(props)); 
+		ch->createInstance("root/testsuite", inst); 
+		
 		CIMInstanceArray cia = ch->enumInstancesA("root/testsuite", "TestInstance"); 
+
+		OW_ASSERT(cia.size() == 2); 
+		OW_ASSERT(cia[0].getPropertyValue("Name").toString() == "one"); 
+		OW_ASSERT(cia[1].getPropertyValue("Name").toString() == "two"); 
+		props.clear(); 
+		cia[0].getPropertyValue("Params").get(props); 
+		OW_ASSERT(props.size() == 2); 
+		OW_ASSERT(props[0] == "one.one"); 
+		OW_ASSERT(props[1] == "one.two"); 
+		props.clear(); 
+		cia[1].getPropertyValue("Params").get(props); 
+		OW_ASSERT(props.size() == 2); 
+		OW_ASSERT(props[0] == "two.one"); 
+		OW_ASSERT(props[1] == "two.two"); 
+		
 
 		for (CIMInstanceArray::const_iterator iter = cia.begin(); 
 			  iter != cia.end(); ++iter)
@@ -139,15 +158,21 @@ int main(int argc, char* argv[])
 			std::cout << iter->toMOF() << std::endl;
 		}
 		
-		foo = String::getLine(std::cin); 
 		StringArray classnames = ch->enumClassNamesA("root/testsuite", ""); 
 		for (StringArray::const_iterator iter = classnames.begin(); 
 			  iter != classnames.end(); ++iter)
 		{
 			std::cout << *iter << std::endl;
 		}
-		foo = String::getLine(std::cin); 
 
+		rval = 0; 
+
+	}
+	catch (AssertionException& e)
+	{
+		OW_LOG_FATAL_ERROR(logger, "* ASSERTION EXCEPTION CAUGHT IN owcimomd MAIN!");
+		OW_LOG_FATAL_ERROR(logger, Format("* %1", e));
+		rval = 1;
 	}
 	catch (Exception& e)
 	{

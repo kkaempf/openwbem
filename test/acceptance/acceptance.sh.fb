@@ -1103,6 +1103,16 @@ TestMisc()
 }
 
 #############################################################################
+TestEmbeddedCIMOM()
+{
+	OUT_FILE=testEmbedded.out
+	$BUILDDIR/test/acceptance/progs/testEmbeddedCIMOM \
+			-d -c $STAGEDIR/$OWSYSCONFDIR/openwbem/openwbem.conf-t \
+			> $RESULTDIR/$OUT_FILE 2>&1 \
+			|| ExitWithFail "TestEmbeddedCIMOM: failed with an error."
+}
+
+#############################################################################
 TestHammer()
 {
 	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
@@ -1280,6 +1290,7 @@ fi
 
 StopDaemon
 
+TestEmbeddedCIMOM
 
 if [ "z$OWLONGTEST" = "z1" ]; then
   TestInstalledHeaders $STAGEDIR/$OWINCLUDEDIR/openwbem/
