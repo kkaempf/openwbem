@@ -87,7 +87,7 @@ public:
 
 	virtual String getConfigItem(const String& item, const String& defRetVal) const
 	{
-		if (item == ConfigOpts::DATA_DIR_opt)
+		if (item == ConfigOpts::DATADIR_opt)
 		{
 			return m_repositoryDir;
 		}
