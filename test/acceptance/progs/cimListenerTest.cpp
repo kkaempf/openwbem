@@ -66,6 +66,7 @@ Semaphore sem(0);
 Semaphore test1sem(0);
 Semaphore test2sem(0);
 Mutex coutMutex;
+#define PRINT(arg) do {MutexLock lock(coutMutex); std::cout << arg << std::flush;} while (0)
 
 class myCallBack : public CIMListenerCallback
 {
@@ -82,7 +83,7 @@ protected:
 		MutexLock lock(coutMutex);
 		++m_count;
 		cout << "\nmyCallBack::doIndicationOccurred: Got indication: " << m_count << "\n";
-		cout << ci.toString() << "\n";
+		cout << ci.toString() << "\n" << std::flush;
 		}
 		sem.signal();
 	}
@@ -102,7 +103,7 @@ protected:
 		{
 		MutexLock lock(coutMutex);
 		cout << "\ntest1CallBack::doIndicationOccurred: Got indication:\n";
-		cout << ci.toString() << "\n";
+		cout << ci.toString() << "\n" << std::flush;
 		}
 		test1sem.signal();
 	}
@@ -120,7 +121,7 @@ protected:
 		{
 		MutexLock lock(coutMutex);
 		cout << "\ntest2CallBack::doIndicationOccurred: Got indication:\n";
-		cout << ci.toString() << "\n";
+		cout << ci.toString() << "\n" << std::flush;
 		}
 		test2sem.signal();
 	}
@@ -345,9 +346,7 @@ int main(int argc, char* argv[])
 			}
 
 			// now deregister
-			MutexLock guard1(coutMutex);
-			cout << "Now deregistering" << endl;
-			guard1.release();
+			PRINT("Now deregistering\n");
 
 			for (size_t i = 0; i < registrationHandles.size(); ++i)
 			{
@@ -366,8 +365,7 @@ int main(int argc, char* argv[])
 		}
 		catch(CIMException& e)
 		{
-			MutexLock guard2(coutMutex);
-			cout << e.getMessage() << endl;
+			PRINT(e.getMessage() << endl);
 		}
 		try
 		{
@@ -375,8 +373,7 @@ int main(int argc, char* argv[])
 		}
 		catch(CIMException& e)
 		{
-			MutexLock guard3(coutMutex);
-			cout << e.getMessage() << endl;
+			PRINT(e.getMessage() << endl);
 		}
 
 		for (size_t i = 0; i < 3; ++i)
@@ -424,44 +421,28 @@ int main(int argc, char* argv[])
 			//registrationHandles.append(handle);
 
 
-			MutexLock coutGuard(coutMutex);
-			cout << "Executing createClass()" << endl;
-			coutGuard.release();
+			PRINT("Executing createClass()\n");
 			createClass(rch);
 
-			coutGuard.lock();
-			cout << "Executing createInstance()" << endl;
-			coutGuard.release();
+			PRINT("Executing createInstance()\n");
 			createInstance(rch, "MyInstance");
 
-			coutGuard.lock();
-			cout << "Executing modifyInstance()" << endl;
-			coutGuard.release();
+			PRINT("Executing modifyInstance()\n");
 			modifyInstance(rch, "MyInstance");
 
-			coutGuard.lock();
-			cout << "Executing getInstance()" << endl;
-			coutGuard.release();
+			PRINT("Executing getInstance()\n");
 			getInstance(rch, "MyInstance");
 
-			coutGuard.lock();
-			cout << "Executing deleteInstance()" << endl;
-			coutGuard.release();
+			PRINT("Executing deleteInstance()\n");
 			deleteInstance(rch, "MyInstance");
 
-			coutGuard.lock();
-			cout << "Executing modifyClass()" << endl;
-			coutGuard.release();
+			PRINT("Executing modifyClass()\n");
 			modifyClass(rch);
 
-			coutGuard.lock();
-			cout << "Executing deleteClass()" << endl;
-			coutGuard.release();
+			PRINT("Executing deleteClass()\n");
 			deleteClass(rch);
 
-			coutGuard.lock();
-			cout << "Done running intrinsic methods." << endl;
-			coutGuard.release();
+			PRINT("Done running intrinsic methods.\n");
 			//invokeMethod(rch, 2); // TODO
 
 			//cout << "Now waiting for intrinsic method indications" << endl;
@@ -471,13 +452,10 @@ int main(int argc, char* argv[])
 				{
 					OW_THROW(ListenerTestException, "timeout on semaphore");
 				}
-				MutexLock guard4(coutMutex);
-				cout << i << endl;
+				PRINT(i << endl);
 			}
 
-			MutexLock guard5(coutMutex);
-			cout << "Now deregistering..." << endl;
-			guard5.release();
+			PRINT("Now deregistering...\n");
 
 			for (size_t i = 0; i < registrationHandles.size() - 1; ++i)
 			{
@@ -485,9 +463,7 @@ int main(int argc, char* argv[])
 			}
 		}
 
-		MutexLock guard6(coutMutex);
-		cout << "Now shutting down..." << endl;
-		guard6.release();
+		PRINT("Now shutting down...\n");
 
 		hxcl.shutdownHttpServer();
 		for (size_t i = 0; i < registrationHandles.size(); ++i)
@@ -497,7 +473,7 @@ int main(int argc, char* argv[])
 
 		// The acceptance script greps for "Success" in the output to tell
 		// whether the test worked or not.
-		cout << "Success!" << endl;
+		PRINT("Success!\n");
 		return 0;
 	}
 	catch(Exception& e)
