@@ -1,4 +1,4 @@
-SUBDIRS = server common indication
+SUBDIRS = server common indication embedded 
 
 # This causes automake to prepend $(PACKAGE_PREFIX_D) to the beginning of owcimomd when it's installed
 #transform = s,owcimomd,$(PACKAGE_PREFIX_D)owcimomd,
