@@ -1106,6 +1106,7 @@ TestMisc()
 TestEmbeddedCIMOM()
 {
 	OUT_FILE=testEmbedded.out
+	echo "Executing Embedded CIMOM test, saving output in " $RESULTDIR/$OUT_FILE
 	$BUILDDIR/test/acceptance/progs/testEmbeddedCIMOM \
 			-d -c $STAGEDIR/$OWSYSCONFDIR/openwbem/openwbem.conf-t \
 			> $RESULTDIR/$OUT_FILE 2>&1 \
