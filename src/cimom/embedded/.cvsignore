@@ -1,0 +1,15 @@
+Makefile.in
+Makefile
+.deps
+.*.libs
+*.lo
+*.la
+*.swp
+lib*so*
+OW_config.h
+lib*dylib*
+*.imp
+*.exp
+*.nlm
+*.nlm.*
+lib*sl*
