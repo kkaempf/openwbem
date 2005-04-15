@@ -43,7 +43,10 @@ libtoolscommon_a_SOURCES = \
 OW_ToolsCommon.hpp \
 OW_ToolsCommon.cpp
 
-sbin_PROGRAMS = owdigestgenpass 
+sbin_PROGRAMS = \
+owdigestgenpass \
+owrepositorydump
+
 bin_PROGRAMS = \
 owexecwql \
 owenumnamespace \
@@ -52,9 +55,6 @@ $(ENUMQUALPROG) \
 owenumclassnames \
 owenumclasses
 
-# This isn't done yet
-noinst_PROGRAMS = \
-owrepositorydump
 
 ### owdigestgenpass
 owdigestgenpass_SOURCES = \

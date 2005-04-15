@@ -45,6 +45,11 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_CerrLogger.hpp"
 #include "OW_ToolsCommon.hpp"
+#include "OW_ResultHandlers.hpp"
+#include "OW_RepositoryCIMOMHandle.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_CIMQualifierType.hpp"
+#include "OW_CIMInstance.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -64,14 +69,36 @@ namespace
 class TheServiceEnvironment : public ServiceEnvironmentIFC
 {
 public:
+	TheServiceEnvironment(const String& repositoryDir)
+		: m_repositoryDir(repositoryDir)
+	{
+
+	}
 	virtual LoggerRef getLogger() const
 	{
-		return LoggerRef(new CerrLogger);
+		LoggerRef rv(new CerrLogger);
+		rv->setLogLevel(E_ERROR_LEVEL);
+		return rv;
 	}
 	virtual LoggerRef getLogger(const String& componentName) const
 	{
 		return getLogger();
 	}
+
+	virtual String getConfigItem(const String& item, const String& defRetVal) const
+	{
+		if (item == ConfigOpts::DATA_DIR_opt)
+		{
+			return m_repositoryDir;
+		}
+		else
+		{
+			return defRetVal;
+		}
+	}
+
+private:
+	String m_repositoryDir;
 };
 
 enum
@@ -121,6 +148,72 @@ struct FbCleanuper
 	std::filebuf*& m_fb;
 };
 
+class ClassPrinter : public CIMClassResultHandlerIFC
+{
+	virtual void doHandle(const CIMClass &c)
+	{
+		g_output << c.toMOF() << "\n";
+	}
+};
+
+class QualifierTypePrinter : public CIMQualifierTypeResultHandlerIFC
+{
+	virtual void doHandle(const CIMQualifierType& qt)
+	{
+		g_output << qt.toMOF() << "\n";
+	}
+};
+
+
+class InstancePrinter : public CIMInstanceResultHandlerIFC
+{
+	virtual void doHandle(const CIMInstance& i)
+	{
+		g_output << i.toMOF() << "\n";
+	}
+};
+
+
+void dumpRepository(const RepositoryCIMOMHandleRef& hdl)
+{
+	StringArray namespaces;
+	StringArrayBuilder stringArrayBuilder(namespaces);
+	hdl->enumNameSpace(stringArrayBuilder);
+	for (size_t curNamespace = 0; curNamespace < namespaces.size(); ++curNamespace)
+	{
+		const String ns(namespaces[curNamespace]);
+		g_output << "#pragma namespace(\"" << namespaces[curNamespace] << "\")\n";
+
+		// qualifier types
+		QualifierTypePrinter qtPrinter;
+		hdl->enumQualifierTypes(ns, qtPrinter);
+
+		// classes
+		ClassPrinter classPrinter;
+		hdl->enumClass(ns, "", classPrinter, 		
+			E_DEEP,
+			E_LOCAL_ONLY,
+			E_INCLUDE_QUALIFIERS,
+			E_INCLUDE_CLASS_ORIGIN);
+
+		// instances
+		StringArray classNames;
+		StringArrayBuilder classNamesBuilder(classNames);
+		hdl->enumClassNames(ns, "", classNamesBuilder, E_DEEP);
+
+		InstancePrinter instancePrinter;
+		for (size_t clsNameIdx = 0; clsNameIdx < classNames.size(); ++clsNameIdx)
+		{
+			const String& curClsName(classNames[clsNameIdx]);
+			hdl->enumInstances(ns, curClsName, instancePrinter,
+				E_DEEP,
+				E_NOT_LOCAL_ONLY,
+				E_EXCLUDE_QUALIFIERS,
+				E_EXCLUDE_CLASS_ORIGIN);
+		}
+	}
+}
+
 } // end unnamed namespace
 
 int main(int argc, char** argv)
@@ -143,6 +236,22 @@ int main(int argc, char** argv)
 		}
 	
 		String repositoryDir = parser.getOptionValue(REPOSITORY_DIR_OPT, OW_DEFAULT_DATADIR);
+		if (!FileSystem::exists(repositoryDir))
+		{
+			cerr << "Specified repository dir doesn't exist\n";
+			return 1;
+		}
+		if (!FileSystem::isDirectory(repositoryDir))
+		{
+			cerr << "Specified repository dir isn't a directory\n";
+			return 1;
+		}
+		if (!FileSystem::exists(repositoryDir + OW_FILENAME_SEPARATOR + "schema.dat") || 
+			!FileSystem::exists(repositoryDir + OW_FILENAME_SEPARATOR + "instances.dat"))
+		{
+			cerr << "Specified repository dir doesn't contain an OpenWBEM CIM repository\n";
+			return 1;
+		}
 	
 		std::filebuf* fb = 0;
 		FbCleanuper fbCleanuper(fb);
@@ -158,13 +267,13 @@ int main(int argc, char** argv)
 			}
 			g_output.rdbuf(fb);
 		}
-		g_output << "Hello\n";
 	
 		OperationContext context;
 		RepositoryIFCRef cimRepository = new CIMRepository;
-		cimRepository->init(new TheServiceEnvironment);
-		cimRepository->open(repositoryDir);
-	
+		cimRepository->init(new TheServiceEnvironment(repositoryDir));
+		RepositoryCIMOMHandleRef repositoryCIMOMHandle(new RepositoryCIMOMHandle(cimRepository, context));
+		dumpRepository(repositoryCIMOMHandle);
+
 		return 0;
 	}
 	catch (CmdLineParserException& e)
