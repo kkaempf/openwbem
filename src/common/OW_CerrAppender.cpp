@@ -66,7 +66,7 @@ void
 CerrAppender::doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const
 {
 	MutexLock lock(cerrGuard);
-	std::cerr << formattedMessage << std::endl;
+	std::clog << formattedMessage << std::endl;
 }
 
 /////////////////////////////////////////////////////////////////////////////

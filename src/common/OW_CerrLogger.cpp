@@ -59,7 +59,7 @@ void
 CerrLogger::doProcessLogMessage(const LogMessage& message) const
 {
 	MutexLock l(guard);
-	std::cerr << message.message << std::endl;
+	std::clog << message.message << std::endl;
 }
 
 /////////////////////////////////////////////////////////////////////////////
