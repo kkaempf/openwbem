@@ -252,7 +252,7 @@ case "$host" in
 	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
 	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
 	CXXCOMMONLINKFLAGS=""
-	CXXBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
+	CXXBINLINKFLAGS="-Wl,-Bdynamic -lpthread -Wl,-E $LDFLAGS"
 	CBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(LIBRARY_BINARY_VERSION) -lpthread'
 	PLAT_OPTFLAGS="-O3"
@@ -285,7 +285,7 @@ case "$host" in
 	PLAT_CFLAGS="-fPIC -D_REENTRANT -pipe -pthread"
 	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -pipe -pthread"
 	CXXCOMMONLINKFLAGS="-pthread"
-	CXXBINLINKFLAGS="-Wl,-Bdynamic $LDFLAGS"
+	CXXBINLINKFLAGS="-Wl,-Bdynamic -Wl,-E $LDFLAGS"
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(LIBRARY_BINARY_VERSION)'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILE_DIR="/var/run"
@@ -311,7 +311,7 @@ case "$host" in
 	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
 	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
 	CXXCOMMONLINKFLAGS=""
-	CXXBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
+	CXXBINLINKFLAGS="-Wl,-Bdynamic -lpthread -Wl,-E $LDFLAGS"
 	CBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(LIBRARY_BINARY_VERSION) -lpthread'
 	PLAT_OPTFLAGS="-O3"
