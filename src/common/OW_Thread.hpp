@@ -156,7 +156,7 @@ public:
 	 * Test if this thread has been cancelled.  If so, a
 	 * ThreadCancelledException will be thrown.  DO NOT catch this exception.
 	 * ThreadCancelledException is not derived from anything.
-	 * Do not write code like this:
+	 * Except for in destructors, do not write code like this:
 	 * try {
 	 *  //...
 	 * } catch (...) {
@@ -172,7 +172,7 @@ public:
 	 *  // handle the exception
 	 * }
 	 * The only place ThreadCancelledException should be caught is in
-	 * Thread::threadRunner(). main() shouldn't need to catch it, as the main
+	 * Thread::threadRunner() or a destructor. main() shouldn't need to catch it, as the main
 	 * thread of an application should never be cancelled.  The main thread
 	 * shouldn't need to ever call testCancel.
 	 * Note that this method is staic, and it will check if the current running
