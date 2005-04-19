@@ -41,5 +41,3 @@ OW_EmbeddedCIMOMEnvironment.hpp \
 OW_LocalEmbeddedCIMOMHandle.cpp \
 OW_LocalEmbeddedCIMOMHandle.hpp
 
-pkginclude_HEADERS = \
-OW_EmbeddedCIMOMEnvironment.hpp 
