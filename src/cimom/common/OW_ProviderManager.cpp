@@ -549,7 +549,7 @@ ProviderManager::getInstanceProvider(const ProviderEnvironmentIFCRef& env,
 	const String& ns, const CIMClass& cc) const
 {
 	ProvRegMap_t::const_iterator ci;
-	if(!isRestrictedNamespace(ns))
+	if(!isRestrictedNamespace(ns) || cc.getName().equalsIgnoreCase("__Namespace"))
 	{
 		// lookup just the class name to see if a provider registered for the
 		// class in all namespaces.
