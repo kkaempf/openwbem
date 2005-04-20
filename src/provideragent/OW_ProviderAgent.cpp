@@ -46,6 +46,8 @@
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_Format.hpp"
 
+#include <cerrno>
+
 namespace OW_NAMESPACE
 {
 
@@ -117,7 +119,7 @@ public:
 		// thread will exit
 		if (m_stopObject->writeInt(0) == -1)
 		{
-			OW_THROW(IOException, "Writing to the termination pipe failed");
+			OW_THROW_ERRNO_MSG(IOException, "Writing to the termination pipe failed");
 		}
 	}
 private:

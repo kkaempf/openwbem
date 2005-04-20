@@ -758,7 +758,7 @@ HTTPServer::shutdown()
 #else
 	if (m_upipe->writeString("shutdown") == -1)
 	{
-		OW_THROW(IOException, "Failed writing to HTTPServer shutdown pipe");
+		OW_THROW_ERRNO_MSG(IOException, "Failed writing to HTTPServer shutdown pipe");
 	}
 #endif
 	// not going to finish off what's in the queue, and we'll give the threads 60 seconds to exit before they're clobbered.

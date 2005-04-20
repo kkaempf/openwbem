@@ -84,12 +84,8 @@ SocketAddress::getUDS(const String& filename)
 	rval.m_UDSNativeAddress.sun_len = sizeof(rval.m_UDSNativeAddress);
 	rval.m_nativeSize = ::strlen(rval.m_UDSNativeAddress.sun_path) +
 		offsetof(struct sockaddr_un, sun_path);
-#elif defined OW_AIX
+#elif defined OW_AIX || defined OW_DARWIN
 	// AIX requires the NULL terminator to be included in the sizes.
-	rval.m_UDSNativeAddress.sun_len = filename.length() + 1;
-	rval.m_nativeSize = ::strlen(rval.m_UDSNativeAddress.sun_path) +
-		offsetof(struct sockaddr_un, sun_path) + 1;	
-#elif defined OW_DARWIN
 	rval.m_UDSNativeAddress.sun_len = filename.length() + 1;
 	rval.m_nativeSize = ::strlen(rval.m_UDSNativeAddress.sun_path) +
 		offsetof(struct sockaddr_un, sun_path) + 1;	

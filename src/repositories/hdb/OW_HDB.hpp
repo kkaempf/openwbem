@@ -319,7 +319,7 @@ public:
 	static void readBlock(HDBBlock& fblk, const File& file, Int32 offset);
 private:
 	bool createFile();
-	bool checkFile();
+	void checkFile();
 	void setOffsets(File& file, Int32 firstRootOffset, Int32 lastRootOffset,
 		Int32 firstFreeOffset);
 	void setFirstRootOffSet(File& file, Int32 offset);

@@ -272,7 +272,7 @@ public:
 		// thread will exit
 		if (m_stopObject->writeInt(0) == -1)
 		{
-			OW_THROW(IOException, "Writing to the termination pipe failed");
+			OW_THROW_ERRNO_MSG(IOException, "Writing to the termination pipe failed");
 		}
 #endif
 	}
@@ -300,7 +300,7 @@ HTTPXMLCIMListener::HTTPXMLCIMListener(const LoggerRef& logger,
 	{
 		if(!FileSystem::canRead(certFileName))
 		{
-			OW_THROW(IOException, 
+			OW_THROW_ERRNO_MSG(IOException, 
 				Format("Unable to open certificate file %1",
 					certFileName).c_str());
 		}

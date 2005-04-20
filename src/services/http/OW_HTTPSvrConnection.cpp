@@ -526,7 +526,7 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 					m_ostr << tfs->rdbuf();
 					if (!m_ostr)
 					{
-						OW_THROW(IOException, "Failed writing");
+						OW_THROW_ERRNO_MSG(IOException, "Failed writing");
 					}
 				}
 			}

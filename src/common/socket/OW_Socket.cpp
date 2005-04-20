@@ -164,7 +164,7 @@ Socket::shutdownAllSockets()
 #else
 	if (s_shutDownMechanism->writeString("die!") == -1)
 	{
-		OW_THROW(IOException, "Failed writing to socket shutdown pipe");
+		OW_THROW_ERRNO_MSG(IOException, "Failed writing to socket shutdown pipe");
 	}
 #endif
 }

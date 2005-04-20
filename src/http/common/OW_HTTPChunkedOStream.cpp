@@ -101,9 +101,14 @@ HTTPChunkedOStream::~HTTPChunkedOStream()
 void
 HTTPChunkedOStream::termOutput(ESendLastChunkFlag sendLastChunk)
 {
-	if (sendLastChunk == E_SEND_LAST_CHUNK)
+	if (sendLastChunk == E_DISCARD_LAST_CHUNK)
 	{
-		flush();
+		// this will just erase everything in the stream buffer
+		m_strbuf.initPutBuffer();
+	}
+	else
+	{
+		m_strbuf.BaseStreamBuffer::sync(); // don't call the derived one because it flushes to the stream, which isn't necessary at this point.
 	}
 
 	m_ostr << "0\r\n";

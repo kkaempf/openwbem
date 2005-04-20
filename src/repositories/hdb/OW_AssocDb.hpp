@@ -329,7 +329,7 @@ private:
 	AssocDbRecHeader getNewBlock(Int32& offset, UInt32 blkSize,
 		AssocDbHandle& hdl);
 	bool createFile();
-	bool checkFile();
+	void checkFile();
 
 #ifdef OW_WIN32
 #pragma warning (push)

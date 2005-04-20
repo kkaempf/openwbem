@@ -208,11 +208,7 @@ void
 TmpFileImpl::open()
 {
 	close();
-#ifdef OW_OPENUNIX
-	String sfname("/var/tmp/owtmpfileXXXXXX");
-#else
 	String sfname("/tmp/owtmpfileXXXXXX");
-#endif
 	size_t len = sfname.length();
 	m_filename = new char[len + 1];
 	strncpy(m_filename, sfname.c_str(), len);
@@ -224,8 +220,7 @@ TmpFileImpl::open()
 	{
 		delete[] m_filename;
 		m_filename = NULL;
-		OW_THROW(IOException, Format("Error opening file from mkstemp: %1", 
-			strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(IOException, "mkstemp failed");
 	}
 }
 #endif
@@ -311,7 +306,7 @@ TmpFileImpl::releaseFile()
 	{
 		if (closeFile(m_hdl) == -1)
 		{
-			OW_THROW(IOException, "Unable to close file");
+			OW_THROW_ERRNO_MSG(IOException, "Unable to close file");
 		}
 		// work like close, but don't delete the file, it will be given to the
 		// caller

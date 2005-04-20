@@ -95,7 +95,7 @@ CIMRepository::open(const String& path)
 	{
 		String msg("failed to create directory: " );
 		msg += path;
-		OW_THROW(IOException, msg.c_str());
+		OW_THROW_ERRNO_MSG(IOException, msg.c_str());
 	}
 	else
 	{

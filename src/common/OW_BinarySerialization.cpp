@@ -41,6 +41,7 @@
 #include "OW_IOException.hpp"
 #include "OW_Format.hpp"
 #include "OW_ResultHandlerIFC.hpp"
+#include <cerrno>
 
 namespace OW_NAMESPACE
 {
@@ -165,7 +166,7 @@ readLen(std::istream& istrm, UInt32& len)
 	{
 		UInt8 noctets = lc & 0x7fU;
 		if ( noctets > sizeof(len) ) {
-			OW_THROW(IOException, "Failed reading data: length length is too large");
+			OW_THROW(IOException, Format("Failed reading data: length length (%1) is too large (> %2)", noctets, sizeof(len)).c_str());
 		}
 		UInt8 netlen[sizeof(len)];
 		read(istrm, static_cast<void *>(netlen), noctets);
@@ -186,7 +187,7 @@ write(std::ostream& ostrm, const void* dataOut,
 {
 	if (!ostrm.write(reinterpret_cast<const char*>(dataOut), dataOutLen))
 	{
-		OW_THROW(IOException, "Failed writing data");
+		OW_THROW_ERRNO_MSG(IOException, "Failed writing data");
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -223,7 +224,7 @@ read(std::istream& istrm, void* dataIn, int dataInLen)
 {
 	if (!istrm.read(reinterpret_cast<char*>(dataIn), dataInLen))
 	{
-		OW_THROW(IOException, "Failed reading data");
+		OW_THROW_ERRNO_MSG(IOException, "Failed reading data");
 	}
 }
 }

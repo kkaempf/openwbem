@@ -121,12 +121,7 @@ HDB::open(const char* fileName)
 
 	String fname = m_fileName + ".dat";
 	createFile();
-	if (!checkFile())
-	{
-		String msg("Failed to open file: ");
-		msg += fname;
-		OW_THROW(HDBException, msg.c_str());
-	}
+	checkFile();
 	m_fileName = fname;
 	m_opened = true;
 }
@@ -153,7 +148,7 @@ HDB::createFile()
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////////
-bool
+void
 HDB::checkFile()
 {
 	File f = FileSystem::openFile(m_fileName + ".dat");
@@ -183,7 +178,6 @@ HDB::checkFile()
 	}
 	m_pindex = Index::createIndexObject();
 	m_pindex->open(m_fileName.c_str());
-	return true;
 }
 //////////////////////////////////////////////////////////////////////////////
 Int32

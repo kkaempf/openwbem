@@ -40,7 +40,6 @@
 #include "OW_Format.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_StringStream.hpp"
-#include "OW_IOException.hpp"
 #include "OW_BinarySerialization.hpp"
 #include <cstring>
 

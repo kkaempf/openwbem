@@ -285,6 +285,7 @@ int PopenStreamsImpl::getExitStatus()
 			{
 				// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
 				waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
+				m_pid = -1;
 				OW_THROW_ERRNO_MSG(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: Failed sending SIGTERM to process %1.", m_pid).c_str());
 			}
 		}
@@ -667,6 +668,7 @@ safePopen(const Array<String>& command, const char* const envp[])
 			{
 				if (i != execErrorFd)
 				{
+					// TODO: Fix this to not call close(), but set the close on exec flag instead.  close() may hang or take a long time.
 					close(i);
 				}
 				i--;

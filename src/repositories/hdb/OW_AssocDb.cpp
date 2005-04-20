@@ -532,11 +532,7 @@ AssocDb::open(const String& fileName)
 	m_fileName = fileName;
 	String fname = m_fileName + ".dat";
 	createFile();
-	if (!checkFile())
-	{
-		OW_THROW(IOException,
-			Format("Failed to open file: %1", fname).c_str());
-	}
+	checkFile();
 	m_opened = true;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -552,8 +548,7 @@ AssocDb::createFile()
 	}
 	if (f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0) != sizeof(m_hdrBlock))
 	{
-		f.close();
-		OW_THROW(IOException, "Failed to write header of HDB");
+		OW_THROW_ERRNO_MSG(IOException, "Failed to write header of HDB");
 	}
 	f.close();
 	m_pIndex = Index::createIndexObject();
@@ -561,20 +556,20 @@ AssocDb::createFile()
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////////
-bool
+void
 AssocDb::checkFile()
 {
 	File f = FileSystem::openFile(m_fileName + ".dat");
 	if (!f)
 	{
-		OW_THROW(IOException,
+		OW_THROW_ERRNO_MSG(IOException,
 			Format("Failed to open file: %1", m_fileName).c_str());
 	}
 	size_t sizeRead = f.read(&m_hdrBlock, sizeof(m_hdrBlock), 0);
 	f.close();
 	if (sizeRead != sizeof(m_hdrBlock))
 	{
-		OW_THROW(IOException,
+		OW_THROW_ERRNO_MSG(IOException,
 			Format("Failed to read Assoc DB header from file: %1",
 				m_fileName).c_str());
 	}
@@ -589,7 +584,6 @@ AssocDb::checkFile()
 	}
 	m_pIndex = Index::createIndexObject();
 	m_pIndex->open(m_fileName.c_str(), Index::E_ALLDUPLICATES);
-	return true;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -608,10 +602,10 @@ AssocDbHandle
 AssocDb::getHandle()
 {
 	MutexLock l = getDbLock();
-	const File& file = FileSystem::openFile(m_fileName + ".dat");
+	File file = FileSystem::openFile(m_fileName + ".dat");
 	if (!file)
 	{
-		OW_THROW(IOException,
+		OW_THROW_ERRNO_MSG(IOException,
 			Format("Failed to open file while creating handle: %1",
 				m_fileName).c_str());
 	}
@@ -664,7 +658,7 @@ AssocDb::readEntry(Int32 offset, AssocDbHandle& hdl)
 	AutoPtrVec<unsigned char> bfr(new unsigned char[rh.dataSize]);
 	if (hdl.getFile().read(bfr.get(), rh.dataSize) != rh.dataSize)
 	{
-		OW_THROW(IOException, "Failed to read data for rec on assoc db");
+		OW_THROW_ERRNO_MSG(IOException, "Failed to read data for rec on assoc db");
 	}
 	DataIStream istrm(rh.dataSize, bfr.get());
 	dbentry.readObject(istrm);
@@ -760,14 +754,14 @@ AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 	if (f.write(ostrm.getData(), ostrm.length()) !=
 		size_t(ostrm.length()))
 	{
-		OW_THROW(IOException, "Failed to write data assoc db");
+		OW_THROW_ERRNO_MSG(IOException, "Failed to write data assoc db");
 	}
 	
 	if (!m_pIndex->add(nentry.makeKey().c_str(), offset))
 	{
 		OW_LOG_ERROR(m_env->getLogger(COMPONENT_NAME), Format("AssocDb::addEntry failed to add entry to"
 			" association index: ", nentry.makeKey()));
-		OW_THROW(IOException, "Failed to add entry to association index");
+		OW_THROW_ERRNO_MSG(IOException, "Failed to add entry to association index");
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -812,7 +806,7 @@ AssocDb::addToFreeList(Int32 offset, AssocDbHandle& hdl)
 	if (f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) !=
 		sizeof(m_hdrBlock))
 	{
-		OW_THROW(IOException, "Failed write file header on deletion");
+		OW_THROW_ERRNO_MSG(IOException, "Failed write file header on deletion");
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -842,7 +836,7 @@ AssocDb::getNewBlock(Int32& offset, UInt32 blkSize,
 				if (hdl.getFile().write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) !=
 					sizeof(m_hdrBlock))
 				{
-					OW_THROW(IOException,
+					OW_THROW_ERRNO_MSG(IOException,
 						"failed to write file header while updating free list");
 				}
 			}
@@ -870,7 +864,7 @@ writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File& file)
 		sizeof(rh) - sizeof(rh.chkSum));
 	if (file.write(&rh, sizeof(rh), offset) != sizeof(rh))
 	{
-		OW_THROW(IOException, "Failed to write record to assoc db");
+		OW_THROW_ERRNO_MSG(IOException, "Failed to write record to assoc db");
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -879,7 +873,7 @@ readRecHeader(AssocDbRecHeader& rh, Int32 offset, const File& file)
 {
 	if (file.read(&rh, sizeof(rh), offset) != sizeof(rh))
 	{
-		OW_THROW(IOException, "Failed to read record from assoc db");
+		OW_THROW_ERRNO_MSG(IOException, "Failed to read record from assoc db");
 	}
 	UInt32 chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&rh.nextFree),
 		 sizeof(rh) - sizeof(rh.chkSum));

@@ -51,14 +51,8 @@
 #ifdef OW_GNU_LINUX
 #define OW_STRPLATFORM "Linux"
 #endif
-#ifdef OW_OPENUNIX
-#define OW_STRPLATFORM "OpenUnix"
-#endif
 #ifdef OW_SOLARIS
 #define OW_STRPLATFORM "Solaris"
-#endif
-#ifdef OW_OPENSERVER
-#define OW_STRPLATFORM "OpenServer"
 #endif
 #ifndef OW_STRPLATFORM
 #error "OW_STRPLATFORM is undefined"

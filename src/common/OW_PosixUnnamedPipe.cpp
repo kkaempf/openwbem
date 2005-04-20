@@ -258,7 +258,7 @@ PosixUnnamedPipe::setBlocking(EBlockingMode outputIsBlocking)
 		int fdflags = fcntl(m_fds[i], F_GETFL, 0);
 		if (fdflags == -1)
 		{
-			OW_THROW(IOException, "Failed to set pipe to non-blocking");
+			OW_THROW_ERRNO_MSG(IOException, "Failed to set pipe to non-blocking");
 		}
 		if (outputIsBlocking == E_BLOCKING)
 		{
@@ -270,7 +270,7 @@ PosixUnnamedPipe::setBlocking(EBlockingMode outputIsBlocking)
 		}
 		if (fcntl(m_fds[i], F_SETFL, fdflags) == -1)
 		{
-			OW_THROW(IOException, "Failed to set pipe to non-blocking");
+			OW_THROW_ERRNO_MSG(IOException, "Failed to set pipe to non-blocking");
 		}
 	}
 
@@ -300,7 +300,7 @@ PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
 	int fdflags = fcntl(m_fds[1], F_GETFL, 0);
 	if (fdflags == -1)
 	{
-		OW_THROW(IOException, "Failed to set pipe to non-blocking");
+		OW_THROW_ERRNO_MSG(IOException, "Failed to set pipe to non-blocking");
 	}
 	if (outputIsBlocking)
 	{
@@ -312,7 +312,7 @@ PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
 	}
 	if (fcntl(m_fds[1], F_SETFL, fdflags) == -1)
 	{
-		OW_THROW(IOException, "Failed to set pipe to non-blocking");
+		OW_THROW_ERRNO_MSG(IOException, "Failed to set pipe to non-blocking");
 	}
 #endif
 }
@@ -475,7 +475,7 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 			{
 				if (errorAsException)
 				{
-					OW_THROW(IOException, Format("SocketUtils::waitForIO failed. errno = %1(%2)", errno, strerror(errno)).c_str());
+					OW_THROW_ERRNO_MSG(IOException, "SocketUtils::waitForIO failed.");
 				}
 				else
 				{
@@ -511,7 +511,7 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 	}
 	if (errorAsException && rc == -1)
 	{
-		OW_THROW(IOException, Format("pipe write failed. errno = %1(%2)", errno, strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(IOException, "pipe write failed.");
 	}
 	return rc;
 }
@@ -530,7 +530,7 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 			{
 				if (errorAsException)
 				{
-					OW_THROW(IOException, Format("SocketUtils::waitForIO failed. errno = %1(%2)", errno, strerror(errno)).c_str());
+					OW_THROW_ERRNO_MSG(IOException, "SocketUtils::waitForIO failed.");
 				}
 				else
 				{
@@ -566,7 +566,7 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 	}
 	if (errorAsException && rc == -1)
 	{
-		OW_THROW(IOException, Format("pipe read failed. errno = %1(%2)", errno, strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(IOException, "pipe read failed.");
 	}
 	return rc;
 }
