@@ -95,12 +95,10 @@ $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@ \
 			-e "s!.*http_server.ssl_trust_store =.*!http_server.ssl_trust_store = $STAGEDIR$OWSYSCONFDIR/openwbem/truststore!g" \
 			-e "s!.*owcimomd.check_referential_integrity =.*!owcimomd.check_referential_integrity = true!g" \
 			-e "s!.*owcimomd.pidfile =.*!owcimomd.pidfile = $PIDFILE!g" \
+			-e "s!http_server.uds_filename = \(.*\)!http_server.uds_filename = $STAGEDIR/owcimomduds!g" \
 		openwbem.conf > openwbem.conf-t
 			#-e "s!;http_server.enable_deflate =.*!http_server.enable_deflate = false!g" \
 	cd $STAGEDIR
-	# undo the change for the UDS, since the client won't know to use the
-	# right one.
-	EditConfig 's!http_server.uds_filename = \(.*\)!;http_server.uds_filename = \1!g'
 
 	grep "define OW_NO_SSL" $TOPSRCDIR/src/common/OW_config.h > /dev/null 2>&1
 	if [ "$?" = "0" ]; then
@@ -179,7 +177,7 @@ SwitchToLinks()
 CreateNameSpace() 
 {
 	CREATENS=$STAGEDIR/$OWBINDIR/owcreatenamespace
-	OWURL="owbinary.wbem://test1:pass1@localhost:owipc/root"
+	OWURL="owbinary.wbem://test1:pass1@localhost:$OWIPC/root"
 	$CREATENS -u $OWURL -n root/$1
 }
 
@@ -648,7 +646,7 @@ TestWQL()
 
 	#RestartDaemon
 	echo "Executing wql test suite, saving output in " $RESULTDIR/wqlTest.out
-	$BUILDDIR/test/acceptance/progs/wqlTest1 owbinary.wbem://test1:pass1@localhost:owipc/ \
+	$BUILDDIR/test/acceptance/progs/wqlTest1 owbinary.wbem://test1:pass1@localhost:$OWIPC/ \
 		> $RESULTDIR/wqlTest.out 2>&1 || \
 		ExitWithFail "WQL test exited with error"
 
@@ -683,11 +681,11 @@ TestIndications()
 	RestartDaemon
 
 	# import the mof
-	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:owipc/ -e owbinary -n /root/testsuite \
+	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:$OWIPC/ -e owbinary -n /root/testsuite \
 		$TOPSRCDIR/schemas/cim28/CIM_Event28.mof || \
 		ExitWithFail "indication test: owmofc exited with error."
 
-	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:owipc/ -e owbinary -n /root/testsuite \
+	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:$OWIPC/ -e owbinary -n /root/testsuite \
 		$TOPSRCDIR/test/acceptance/testfiles/indicationTest.mof || \
 		ExitWithFail "indication test: owmofc exited with error."
 
@@ -697,7 +695,7 @@ TestIndications()
 		ExitWithFail "Indication test: cimlistener exited with error"
 
 	echo "Executing indication test suite, saving output in " $RESULTDIR/indicationTest.out
-	$BUILDDIR/test/acceptance/progs/cimlistener owbinary.wbem://test1:pass1@localhost:owipc \
+	$BUILDDIR/test/acceptance/progs/cimlistener owbinary.wbem://test1:pass1@localhost:$OWIPC \
 		> $RESULTDIR/indicationTest.out 2>&1 || \
 		ExitWithFail "Indication test: cimlistener exited with error"
 
@@ -942,7 +940,7 @@ TestACL()
 
 	ACLPROG=$BUILDDIR/test/acceptance/progs/aclTest
 	WQLEXEC=$STAGEDIR/$OWBINDIR/owexecwql
-	SUACLURL="owbinary.wbem://test1:pass1@localhost:owipc/"
+	SUACLURL="owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 	RestartDaemon
 	echo "Importing MOF to enable ACLs..."
 	CreateNameSpace "security"
@@ -1037,10 +1035,10 @@ TestMof()
 	echo "TestMof"
 
 	CreateNameSpace testsuite
-	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:owipc/ -e owbinary -n /root/testsuite \
+	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:$OWIPC/ -e owbinary -n /root/testsuite \
 			$TOPSRCDIR/schemas/cim28/CIM_Core28.mof || \
 			ExitWithFail "MOF compiler test: owmofc exited with error."
-	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:owipc/ -e owbinary -n /root/testsuite \
+	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:$OWIPC/ -e owbinary -n /root/testsuite \
 		$TOPSRCDIR/test/acceptance/testfiles/wqlTest.mof || \
 		ExitWithFail "MOF compiler test: MOF compiler exited with error"
 	mkdir $STAGEDIR/owmofc_test
@@ -1074,10 +1072,10 @@ SetupInteropSchema()
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:30926/ -n root \
                         $TOPSRCDIR/schemas/cim28/System28_SystemElements.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
-	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:owipc/ -e owbinary -n root \
+	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:$OWIPC/ -e owbinary -n root \
 			$TOPSRCDIR/schemas/cim28/CIM_Interop28.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
-	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:owipc/ -n root \
+	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:$OWIPC/ -n root \
 			$TOPSRCDIR/mof/OpenWBEM_Interop.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
 }
@@ -1215,6 +1213,8 @@ BUILDDIR=$STAGEDIR/../../..
 
 PIDFILE=$STAGEDIR/owcimomd.pid
 
+OWIPC=`echo "$STAGEDIR/owcimomduds" | sed -e s'~/~%2F~g'`
+
 # This is how the test method provider knows where to store it's state.
 OW_METHOD_PROVIDER_TEST_FILENAME=$STAGEDIR/ow_MethodProviderTest.txt
 export OW_METHOD_PROVIDER_TEST_FILENAME
@@ -1259,16 +1259,16 @@ SetupInteropSchema
 TestMof
 
 TestSuite "http://test1:pass1@localhost:30926" "testsuiteTCPXML.out" "testsuite28.out"
-TestSuite "owbinary.wbem://test1:pass1@localhost:owipc/ -e owbinary " "testsuiteUDSBIN.out" "testsuite28.out"
+TestSuite "owbinary.wbem://test1:pass1@localhost:$OWIPC/ -e owbinary " "testsuiteUDSBIN.out" "testsuite28.out"
 
 TestCIMExceptions "http://test1:pass1@localhost:30926"
-TestCIMExceptions "owbinary.wbem://test1:pass1@localhost:owipc/"
+TestCIMExceptions "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 
 TestNamespaces "http://test1:pass1@localhost:30926"
-TestNamespaces "owbinary.wbem://test1:pass1@localhost:owipc/"
+TestNamespaces "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 
 TestMisc "http://test1:pass1@localhost:30926"
-TestMisc "owbinary.wbem://test1:pass1@localhost:owipc/"
+TestMisc "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 
 TestIndications
 
@@ -1279,14 +1279,14 @@ TestMultiReq
 TestSecondaryInstanceProvider
 
 RunATest testLargeRequest "http://test1:pass1@localhost:30926"
-RunATest testLargeRequest "owbinary.wbem://test1:pass1@localhost:owipc/"
+RunATest testLargeRequest "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 
 if [ "z$OWLONGTEST" = "z1" ]; then
 	RunATest testClientTimeout "http://test1:pass1@localhost:30926"
-	RunATest testClientTimeout "owbinary.wbem://test1:pass1@localhost:owipc/"
+	RunATest testClientTimeout "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 
 	TestHammer "http://test1:pass1@localhost:30926"
-	TestHammer "owbinary.wbem://test1:pass1@localhost:owipc/"
+	TestHammer "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 fi
 
 StopDaemon
