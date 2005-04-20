@@ -236,7 +236,7 @@ case "$host" in
 	PLAT_CXXFLAGS="-AA +Z -mt +p -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1 -D__HPACC_THREAD_SAFE_RB_TREE"
 	CPPFLAGS="-AA $CPPFLAGS" # need this so the configure tests work right.
 	CXXCOMMONLINKFLAGS="-AA -mt +Z -Wl,+b${libdir}:/usr/lib -Wl,+s -z"
-	CXXBINLINKFLAGS="$LDFLAGS"
+	CXXBINLINKFLAGS="-Wl,-B,immediate -Wl,-E $LDFLAGS"
 	CXXSHAREDLIBLINKFLAGS="-b -Wl,+h,\$@.\$(LIBRARY_BINARY_VERSION)"
 	PLAT_OPTFLAGS="+O2"
 	PIDFILE_DIR="/var/run"
