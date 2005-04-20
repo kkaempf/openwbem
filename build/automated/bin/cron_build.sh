@@ -204,7 +204,7 @@ Main()
 	# determine if the build should be killed.  This is useful to
 	# prevent the checkout from being killed, since the real date
 	# isn't set until it is decided that the build should happen.
-	CUR_DATE=`ssh cvs date -R`
+	CUR_DATE=`ssh $OW_CVS_SERVER date -R`
 	$PATH_TO_BUILD_SYSTEM/bin/date_conversion.sh "$CUR_DATE" > $BUILD_DATE_FILE.seconds
 
 	# Set up a term handler, so if any problems occur, this script will kill all children.
