@@ -74,6 +74,7 @@ namespace
 {
 	const String COMPONENT_NAME("ow.httpserver");
 
+#ifdef OW_HAVE_OPENSSL
 	class X509Freer
 	{
 	public:
@@ -91,6 +92,7 @@ namespace
 	private:
 		X509* m_x509;
 	};
+#endif
 
 }
 
