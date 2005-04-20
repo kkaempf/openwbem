@@ -133,14 +133,14 @@ CheckoutCodeFromCVS()
 {
 	local LOCAL_BRANCH_TAG=$1
 
-	if [ ! -e $SOURCE_DIR -o ! -e $SOURCE_DIR/CVS/Root ]
+	if [ ! -e $OW_SOURCE_DIR -o ! -e $OW_SOURCE_DIR/CVS/Root ]
 	then
-		mkdir -p $SOURCE_PARENT
-		cd $SOURCE_PARENT
-		cvs -d$CVS_ROOT co $CVS_MODULE
+		mkdir -p $OW_SOURCE_PARENT
+		cd $OW_SOURCE_PARENT
+		cvs -d$OW_CVS_ROOT co $OW_CVS_MODULE
 	fi
 
-	cd $SOURCE_DIR
+	cd $OW_SOURCE_DIR
 	cvs -q up $UPDATE_FLAG -dP > /dev/null
 }
 
