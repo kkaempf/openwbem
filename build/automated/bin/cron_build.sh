@@ -224,7 +224,7 @@ Main()
 	for BRANCH in $CVS_BRANCHES_TO_BUILD; do
 		if ShouldBuildBranch $BRANCH
 		then
-			CheckoutCodeFromCVS
+			CheckoutCodeFromCVS $BRANCH
 			echo "=============================="
 			echo "Building branch $BRANCH"
 			echo "=============================="
