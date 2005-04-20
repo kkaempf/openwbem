@@ -52,7 +52,11 @@
 #include <iostream> // for cout
 #include <new> // for new handler stuff
 
+#ifdef OW_HAVE_GETOPT_H
 #include <getopt.h>
+#else
+#include <stdlib.h>
+#endif
 
 using namespace OpenWBEM;
 
