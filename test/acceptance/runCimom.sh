@@ -22,6 +22,7 @@ if [ "$1" = "vg" ]; then
   valgrind \
 	--tool=memcheck \
 	--leak-check=yes \
+	--track-fds=yes \
 	--show-reachable=yes \
 	--error-limit=no \
 	--num-callers=99 \
