@@ -73,6 +73,25 @@ OW_DEFINE_EXCEPTION_WITH_ID(HTTPServer)
 namespace
 {
 	const String COMPONENT_NAME("ow.httpserver");
+
+	class X509Freer
+	{
+	public:
+		X509Freer(X509* x509)
+			: m_x509(x509)
+		{
+		}
+		~X509Freer()
+		{
+			if (m_x509 != 0)
+			{
+				X509_free(m_x509);
+			}
+		}
+	private:
+		X509* m_x509;
+	};
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -160,6 +179,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			OW_ASSERT(ssl);
 			X509* cert = SSL_get_peer_certificate(ssl);
 			OW_ASSERT(cert);
+			X509Freer x509Freer(cert);
 			String hash = SSLTrustStore::getCertMD5Fingerprint(cert);
 			String uid;
 			if (!m_trustStore->getUser(hash, userName, uid))
@@ -258,15 +278,16 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			X509* cert = SSL_get_peer_certificate(ssl);
 			if (cert)
 			{
-					try
-					{
-						String uid = context.getStringDataWithDefault(OperationContext::CURUSER_UIDKEY);
-						m_trustStore->addCertificate(cert, userName, uid);
-					}
-					catch (SSLException& e)
-					{
-						OW_LOG_ERROR(getEnvironment()->getLogger(COMPONENT_NAME), e.getMessage());
-					}
+				X509Freer x509Freer(cert);
+				try
+				{
+					String uid = context.getStringDataWithDefault(OperationContext::CURUSER_UIDKEY);
+					m_trustStore->addCertificate(cert, userName, uid);
+				}
+				catch (SSLException& e)
+				{
+					OW_LOG_ERROR(getEnvironment()->getLogger(COMPONENT_NAME), e.getMessage());
+				}
 			}
 		}
 	}
