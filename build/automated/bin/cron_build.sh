@@ -20,7 +20,7 @@
 PATH_TO_BUILD_SYSTEM=
 BUILD_CONFIG_FILE_ALREADY_SOURCED=0
 LOG_DIRECTORY=/this_is_broken
-CVS_BRANCH_DATE=now
+CVS_BRANCH_DATE="date not set"
 
 # Locate the build system
 LocateBuildSystem()
@@ -237,7 +237,7 @@ Main()
 			echo "=============================="
 
 			# Modify the last build date for the branch
-			sleep 2 || true
+			CVS_BRANCH_DATE=$CUR_DATE
 			ModifyDateFileForBranch $BRANCH
 
 			# Create the log directory, and set the LOG_DIRECTORY env var.
