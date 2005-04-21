@@ -29,6 +29,10 @@ fi
 
 LOG="/tmp/ow_buildlog-$OW_BUILD_ID-$$"
 
+# Variables to control the locations of where to put the packages
+PACKAGE_LOCATION_RELEASE=$OW_WORK_DIRECTORY/release_packages
+PACKAGE_LOCATION_DEBUG=$OW_WORK_DIRECTORY/debug_packages
+
 # Set up a term handler, so if any problems occur, this script will kill all children.
 . term_handler.sh
 . common_functions.sh
@@ -60,30 +64,30 @@ function start_build_on_machine()
 	then
 		BUILD_MACHINE_NAME="$1"
 		BUILD_CONFIG_FILE_NAME="$2"
-		TARGET_ISO_DIR="$3"
+		TARGET_PACKAGE_DIR="$3"
 		BUILD_LOG_FILE=${LOG_DIRECTORY}/${BUILD_MACHINE_NAME}.log
 
-		mkdir -p $ISO_BUILD_LOCATION_RELEASE/$TARGET_ISO_DIR
-		mkdir -p $ISO_BUILD_LOCATION_DEBUG/$TARGET_ISO_DIR
+		mkdir -p $PACKAGE_LOCATION_RELEASE/$TARGET_PACKAGE_DIR
+		mkdir -p $PACKAGE_LOCATION_DEBUG/$TARGET_PACKAGE_DIR
 
 		# EVIL HACK!!! Windows needs to be handled separately, so as to
 		# not cause problems with the current machine, if it is also
 		# the linux build box. 
-		if [ "$TARGET_ISO_DIR" = "win32" ]
+		if [ "$TARGET_PACKAGE_DIR" = "win32" ]
 		then
-			build_release && export OW_ISO_DESTINATION_RELEASE="$HOSTNAME:$ISO_BUILD_LOCATION_RELEASE/$TARGET_ISO_DIR"
-			build_debug && export OW_ISO_DESTINATION_DEBUG="$HOSTNAME:$ISO_BUILD_LOCATION_DEBUG/$TARGET_ISO_DIR"
+			build_release && export OW_PACKAGE_DESTINATION_RELEASE="$HOSTNAME:$PACKAGE_LOCATION_RELEASE/$TARGET_PACKAGE_DIR"
+			build_debug && export OW_PACKAGE_DESTINATION_DEBUG="$HOSTNAME:$PACKAGE_LOCATION_DEBUG/$TARGET_PACKAGE_DIR"
 			WIN_BUILD_MACHINE=${BUILD_MACHINE_NAME}
 			ow_win_builder.sh ${BUILD_MACHINE_NAME} >& ${BUILD_LOG_FILE} &
-			build_release && unset OW_ISO_DESTINATION_RELEASE
-			build_debug && unset OW_ISO_DESTINATION_DEBUG
+			build_release && unset OW_PACKAGE_DESTINATION_RELEASE
+			build_debug && unset OW_PACKAGE_DESTINATION_DEBUG
 		else
 			BUILD_TYPE_VARS=
-			build_release && BUILD_TYPE_VARS="$BUILD_TYPE_VARS OW_ISO_DESTINATION_RELEASE=$HOSTNAME:$ISO_BUILD_LOCATION_RELEASE/$TARGET_ISO_DIR"
-			build_debug && BUILD_TYPE_VARS="$BUILD_TYPE_VARS OW_ISO_DESTINATION_DEBUG=$HOSTNAME:$ISO_BUILD_LOCATION_DEBUG/$TARGET_ISO_DIR"
+			build_release && BUILD_TYPE_VARS="$BUILD_TYPE_VARS OW_PACKAGE_DESTINATION_RELEASE=$HOSTNAME:$PACKAGE_LOCATION_RELEASE/$TARGET_PACKAGE_DIR"
+			build_debug && BUILD_TYPE_VARS="$BUILD_TYPE_VARS OW_PACKAGE_DESTINATION_DEBUG=$HOSTNAME:$PACKAGE_LOCATION_DEBUG/$TARGET_PACKAGE_DIR"
 
 			# Execute the remote building script.
-			# NOTE: The parameters passed to this script in the for
+			# NOTE: The parameters passed to this script in the form
 			# A=B will be used as environment variables. 
 			${REMOTE_BUILD_SCRIPT} ${BUILD_MACHINE_NAME} ${BUILD_CONFIG_FILE_NAME} \
 				$BUILD_TYPE_VARS \
@@ -126,7 +130,7 @@ generate_numbers_for_loop()
 # Make some arrays for use in the remainder of this script.
 declare -a BUILD_MACHINES
 declare -a CONFIG_FILES
-declare -a ISO_OUTPUT_DIRECTORIES
+declare -a PACKAGE_OUTPUT_DIRECTORIES
 FAILED_MACHINES=
 declare -a EXTRA_ERRORS
 declare -a FINAL_RESULT_ARRAY
@@ -208,7 +212,7 @@ function handle_logs_for_error()
 		for index in `generate_numbers_for_loop ${#BUILD_MACHINES[@]}`
 		do
 			machine=${BUILD_MACHINES[$index]}
-			echo "${ISO_OUTPUT_DIRECTORIES[$index]}: $OW_BUILD_ID.$machine.log" >> $LOG-merged
+			echo "${PACKAGE_OUTPUT_DIRECTORIES[$index]}: $OW_BUILD_ID.$machine.log" >> $LOG-merged
 			scp ${LOG_DIRECTORY}/${machine}.log $FINAL_DATA_DESTINATION/$OW_BUILD_ID.$machine.log
 		done
 
@@ -290,7 +294,7 @@ do
 	let local_index=${#BUILD_MACHINES[@]}
 	BUILD_MACHINES[$local_index]=$machine_iter
 	CONFIG_FILES[$local_index]=$temp_config_file
-	ISO_OUTPUT_DIRECTORIES[$local_index]=$temp_iso_directory
+	PACKAGE_OUTPUT_DIRECTORIES[$local_index]=$temp_iso_directory
 	unset config_line temp_config_file temp_iso_directory local_index 
 done
 
@@ -299,7 +303,7 @@ done
 ###########################################################################
 for cur_index in `generate_numbers_for_loop ${#BUILD_MACHINES[@]}`
 do
-  start_build_on_machine "${BUILD_MACHINES[$cur_index]}" "${CONFIG_FILES[$cur_index]}" "${ISO_OUTPUT_DIRECTORIES[$cur_index]}" 
+  start_build_on_machine "${BUILD_MACHINES[$cur_index]}" "${CONFIG_FILES[$cur_index]}" "${PACKAGE_OUTPUT_DIRECTORIES[$cur_index]}" 
 done
 
 ###########################################################################
@@ -442,8 +446,8 @@ function copy_destination_files()
 					if [ "$output_directory" != "none" ]
 					then
 						# Copy the files to the local directory.
-						eval mkdir -p \$ISO_BUILD_LOCATION_${mode}/${ISO_OUTPUT_DIRECTORIES[$local_index]}
-						eval scp -r "$machine_name:$output_directory/*" \$ISO_BUILD_LOCATION_${mode}/${ISO_OUTPUT_DIRECTORIES[$local_index]}
+						eval mkdir -p \$PACKAGE_LOCATION_${mode}/${PACKAGE_OUTPUT_DIRECTORIES[$local_index]}
+						eval scp -r "$machine_name:$output_directory/*" \$PACKAGE_LOCATION_${mode}/${PACKAGE_OUTPUT_DIRECTORIES[$local_index]}
 					fi
 				     	
 				fi
@@ -461,8 +465,8 @@ then
 	# Copy all of the platform-specific files to the CD building directory.
 	#
 	#
-	mkdir -p $ISO_BUILD_LOCATION_RELEASE
-	mkdir -p $ISO_BUILD_LOCATION_DEBUG
+	mkdir -p $PACKAGE_LOCATION_RELEASE
+	mkdir -p $PACKAGE_LOCATION_DEBUG
 
 	for cur_index in `generate_numbers_for_loop ${#BUILD_MACHINES[@]}`
 	do
@@ -478,10 +482,10 @@ fi
 
 if [ "$FINAL_RESULTS" = "0" ]
 then
-	ISO_BUILD_LOCATIONS=
+	PACKAGE_LOCATIONS=
 	
-	build_release && ISO_BUILD_LOCATIONS="$ISO_BUILD_LOCATIONS $ISO_BUILD_LOCATION_RELEASE"
-	build_debug && ISO_BUILD_LOCATIONS="$ISO_BUILD_LOCATIONS $ISO_BUILD_LOCATION_DEBUG"
+	build_release && PACKAGE_LOCATIONS="$PACKAGE_LOCATIONS $PACKAGE_LOCATION_RELEASE"
+	build_debug && PACKAGE_LOCATIONS="$PACKAGE_LOCATIONS $PACKAGE_LOCATION_DEBUG"
 
 fi
 
@@ -503,52 +507,8 @@ if [ "$FINAL_RESULTS" = "0" ]; then
 		fi
 		# End build log copy
 
-		# copy the iso over to jerry
-		TEMP_OLD_DIR=$(pwd)
-		cd $ISO_LOCATION
-		for iso_file in $(ls -1 ow-*.iso); do 
-			md5sum --binary ${iso_file} > ${iso_file}.md5
-			if	scp ${iso_file} ${iso_file}.md5 $FINAL_DATA_DESTINATION/; then
-				:
-			else
-				EXTRA_ERRORS[${#EXTRA_ERRORS[@]}]="Failed copying ISO ${iso_file} to ${FINAL_DATA_DESTINATION}"
-				exit 1
-			fi
-			if echo "$FINAL_DATA_DESTINATION/" | grep ':'; then
-				# It's a remote machine.
-				dest_machine=$(echo "$FINAL_DATA_DESTINATION/" | cut -f1 -d':')
-				dest_directory=$(echo "$FINAL_DATA_DESTINATION/" | cut -f2- -d':')
-				
-				# If I don't put some command at the beginning of this, the cd
-				# $dest_directory won't be executed.  Strange... Any other command
-				# leading here works fine--it's just the leading 'cd' command that
-				# fails.  
-				md5_command="pwd; cd $dest_directory && md5sum --check ${iso_file}.md5"
-				if ssh ${dest_machine} /bin/bash -c "$md5_command"; then
-					:
-				else
-					EXTRA_ERRORS[${#EXTRA_ERRORS[@]}]="MD5 verification failure."
-					exit 2
-				fi
-			else
-				cd $FINAL_DATA_DESTINATION
-				if md5sum --check ${iso_file}.md5; then
-					:
-				else
-					EXTRA_ERRORS[${#EXTRA_ERRORS[@]}]="MD5 verification failure (local)."
-					exit 3
-				fi
+		# TODO: copy the packages somewhere
 
-				# Since ISO_LOCATION may be a relative path, we must change to the
-				# original directory before going back to the ISO location.
-				cd $TEMP_OLD_DIR
-				cd $ISO_LOCATION
-			fi
-		done
-		cd $TEMP_OLD_DIR
-		unset TEMP_OLD_DIR
-		rm $ISO_LOCATION/ow-*.iso
-		# end ISO copy.
 
 		if [ "x$FAILED_MACHINES" != "x" ]
 		then
@@ -571,7 +531,7 @@ if [ "$FINAL_RESULTS" = "0" ]; then
 		for index in `generate_numbers_for_loop ${#BUILD_MACHINES[@]}`
 		do
 			machine=${BUILD_MACHINES[$index]}
-			echo "${ISO_OUTPUT_DIRECTORIES[$index]}: $OW_BUILD_ID.$machine.log" >> $LOG-merged
+			echo "${PACKAGE_OUTPUT_DIRECTORIES[$index]}: $OW_BUILD_ID.$machine.log" >> $LOG-merged
 			scp ${LOG_DIRECTORY}/${machine}.log $FINAL_DATA_DESTINATION/$OW_BUILD_ID.$machine.log
 		done
 
