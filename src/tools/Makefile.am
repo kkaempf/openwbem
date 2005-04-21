@@ -18,8 +18,10 @@ endif
 
 if DISABLE_QUALIFIER_DECLARATION
 ENUMQUALPROG=
+OWREPOSITORYDUMP=
 else
 ENUMQUALPROG= owenumqualifiers
+OWREPOSITORYDUMP=owrepositorydump
 endif
 
 if DISABLE_INSTANCE_MANIPULATION
@@ -44,8 +46,8 @@ OW_ToolsCommon.hpp \
 OW_ToolsCommon.cpp
 
 sbin_PROGRAMS = \
-owdigestgenpass \
-owrepositorydump
+$(OWREPOSITORYDUMP) \
+owdigestgenpass
 
 bin_PROGRAMS = \
 owexecwql \
