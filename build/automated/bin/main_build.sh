@@ -22,9 +22,9 @@ if [ "x$BRANCH" != "xHEAD" ]; then
 fi
 
 if [ "$OFFICIAL_BUILD" != "1" ]; then
-	OW_BUILD_ID=`printf "%s.unofficial.%s%04d" "$OW_VERSION" "$TAG_TEXT" "$OW_BUILD_NUM"`
+	OW_BUILD_ID=`printf "%s.unofficial.%s%s" "$OW_VERSION" "$TAG_TEXT" "$OW_BUILD_NUM"`
 else
-	OW_BUILD_ID=`printf "%s.%04d" "$OW_VERSION" "$OW_BUILD_NUM"`
+	OW_BUILD_ID=`printf "%s.%s" "$OW_VERSION" "$OW_BUILD_NUM"`
 fi
 
 LOG="/tmp/ow_buildlog-$OW_BUILD_ID-$$"
