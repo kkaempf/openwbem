@@ -170,7 +170,7 @@ ModifyDateFileForBranch()
 CreateLogDirectory()
 {
 	# Create a directory for log files.
-	export LOG_DIRECTORY="/tmp/${LOG_PREFIX}buildlog-${BUILD_ID}"
+	export LOG_DIRECTORY="/tmp/${LOG_PREFIX}buildlog-$$"
 	if [ -e ${LOG_DIRECTORY} -o -d ${LOG_DIRECTORY} ]
 	then
 		rm -rf ${LOG_DIRECTORY}
