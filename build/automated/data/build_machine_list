@@ -1,0 +1,13 @@
+# This is formatted like:              
+# MACHINE CONFIG_FILE DIRECTORY_ON_ISO 
+# NOTE: These are separated by spaces. 
+aix51-64b aix/vmx-aix-64b.config aix
+buzz linux/vmx-linux-buzz.config linux
+flik solaris/solaris_build.config sunos
+nemo osx/vmx-osx.config osx
+potato linux/vmx-linux-potato.config linux
+woody linux/vmx-linux-woody.config linux
+hamm linux/vmx-linux-sles8.config linux
+andy NONE win32
+vmx-hpux11 hpux/vmx-hpux11.config hpux
+bo freebsd/vmx-i386-freebsd4.9.config freebsd
