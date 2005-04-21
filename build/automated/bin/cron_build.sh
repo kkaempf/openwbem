@@ -141,6 +141,13 @@ CheckoutCodeFromCVS()
 	fi
 
 	cd $OW_SOURCE_DIR
+
+	if [ "$BRANCH" != "HEAD" ]; then
+		UPDATE_FLAG="-r $BRANCH"
+	else
+		UPDATE_FLAG="-A"
+	fi
+
 	cvs -q up $UPDATE_FLAG -dP > /dev/null
 }
 
