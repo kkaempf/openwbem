@@ -46,8 +46,8 @@ shift 2
 SAVED_COMMAND_LINE="$@"
 
 # Execute the term handler, so if any problems occur, this script will kill all children.
-. ${OW_SOURCE_DIR}/build/bin/term_handler.sh
-. ${OW_SOURCE_DIR}/build/bin/common_functions.sh
+. term_handler.sh
+. common_functions.sh
 
 ############################################################################
 #
