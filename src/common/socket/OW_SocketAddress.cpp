@@ -152,7 +152,7 @@ SocketAddress::getByName(const String& hostName, UInt16 port)
 
 	if (!host)
 	{
-		OW_THROW(UnknownHostException, hostName.c_str());
+		OW_THROW(UnknownHostException, String("Unknown host: ").concat(hostName).c_str());
 	}
 	in_addr addr;
 	memcpy(&addr, host->h_addr_list[0], sizeof(addr));
