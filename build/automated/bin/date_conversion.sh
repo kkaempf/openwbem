@@ -122,3 +122,4 @@ if [ ! -z "$SECONDS" ]; then
   TOTAL_SECONDS=`echo "$TOTAL_SECONDS+$SECONDS" | bc`
 fi
 echo $TOTAL_SECONDS
+
