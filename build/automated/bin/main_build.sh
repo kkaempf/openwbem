@@ -10,7 +10,23 @@ set +e
 # Initialize the build variables.
 RVAL=0
 
-OW_BUILD_ID="need to set the build id"
+OW_BUILD_NUM=`date '+%y%m%d%H%M%S'`
+
+OW_MAJOR_VERSION=`sed -n -e 's/OPENWBEM_MAJOR_VERSION=\(.*\)/\1/p' < $OW_SOURCE_DIR/configure.in`
+OW_MINOR_VERSION=`sed -n -e 's/OPENWBEM_MINOR_VERSION=\(.*\)/\1/p' < $OW_SOURCE_DIR/configure.in`
+OW_MICRO_VERSION=`sed -n -e 's/OPENWBEM_MICRO_VERSION=\(.*\)/\1/p' < $OW_SOURCE_DIR/configure.in`
+OW_VERSION="$OW_MAJOR_VERSION.$OW_MINOR_VERSION.$OW_MICRO_VERSION"
+
+if [ "x$BRANCH" != "xHEAD" ]; then
+	TAG_TEXT="$BRANCH."
+fi
+
+if [ "$OFFICIAL_BUILD" != "1" ]; then
+	OW_BUILD_ID=`printf "%s.unofficial.%s%04d" "$OW_VERSION" "$TAG_TEXT" "$OW_BUILD_NUM"`
+else
+	OW_BUILD_ID=`printf "%s.%04d" "$OW_VERSION" "$OW_BUILD_NUM"`
+fi
+
 LOG="/tmp/ow_buildlog-$OW_BUILD_ID-$$"
 
 # Set up a term handler, so if any problems occur, this script will kill all children.
