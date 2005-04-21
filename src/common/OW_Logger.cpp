@@ -44,6 +44,10 @@
 #include "OW_LogAppender.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Format.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
+#include "OW_ThreadOnce.hpp"
+#include "OW_NullLogger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -318,6 +322,117 @@ Logger::swap(Logger& x)
 	m_defaultComponent.swap(x.m_defaultComponent);
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// we're passing a pointer to this to pthreads, it has to have C linkage.
+extern "C" 
+{
+static void freeThreadLogger(void *ptr)
+{
+	delete static_cast<LoggerRef *>(ptr);
+}
+} // end extern "C"
+
+/////////////////////////////////////////////////////////////////////////////
+namespace
+{
+
+OnceFlag         g_onceGuard  = OW_ONCE_INIT;
+Mutex           *g_mutexGuard = NULL;
+pthread_key_t    g_loggerKey; // FIXME: port me :)
+LoggerRef        g_defaultLogger;
+
+
+/////////////////////////////////////////////////////////////////////////////
+void initGuardAndKey()
+{
+	g_mutexGuard = new Mutex();
+	int ret = pthread_key_create(&g_loggerKey, freeThreadLogger);
+	OW_ASSERTMSG(ret == 0, "failed create a thread specific key");
+}
+
+
+} // end unnamed namespace
+
+/////////////////////////////////////////////////////////////////////////////
+// STATIC
+bool
+Logger::setDefaultLogger(const LoggerRef &ref)
+{
+	if (ref)
+	{
+		callOnce(g_onceGuard, initGuardAndKey);
+		MutexLock lock(*g_mutexGuard);
+
+		g_defaultLogger = ref;
+		return true;
+	}
+	return false;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// STATIC
+bool
+Logger::setThreadLogger(const LoggerRef &ref)
+{
+
+	if (ref)
+	{
+		callOnce(g_onceGuard, initGuardAndKey);
+		LoggerRef *ptr = new LoggerRef(ref);
+
+		freeThreadLogger(pthread_getspecific(g_loggerKey));
+
+		int ret = pthread_setspecific(g_loggerKey, ptr);
+		if (ret)
+		{
+			delete ptr;
+		}
+		OW_ASSERTMSG(ret == 0, "failed to set a thread specific logger");
+		return true;
+	}
+	return false;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// STATIC
+LoggerRef
+Logger::getDefaultLogger()
+{
+	callOnce(g_onceGuard, initGuardAndKey);
+	MutexLock lock(*g_mutexGuard);
+	if (!g_defaultLogger)
+	{
+		g_defaultLogger = LoggerRef(new NullLogger());
+	}
+	return g_defaultLogger;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// STATIC
+LoggerRef
+Logger::getCurrentLogger()
+{
+	callOnce(g_onceGuard, initGuardAndKey);
+	LoggerRef *ptr = static_cast<LoggerRef *>(pthread_getspecific(g_loggerKey));
+	if(ptr)
+	{
+		return *ptr;
+	}
+	else
+	{
+		return getDefaultLogger();
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+bool
+Logger::levelIsEnabled(const ELogLevel level)
+{
+	return (getLogLevel() >= level);
+}
 
 } // end namespace OW_NAMESPACE
 

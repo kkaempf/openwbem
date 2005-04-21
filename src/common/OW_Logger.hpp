@@ -91,6 +91,32 @@ public:
 	};
 
 	/**
+	 * Get a copy of the per thread LoggerRef or if
+	 * not set, the default one.
+	 * If neither setDefaultLogger() or setThreadLogger() has been called, 
+	 * the default logger will be set to a NullLogger, and then returned.
+	 */
+	static LoggerRef getCurrentLogger();
+
+	/**
+	 * Returns a copy of default LoggerRef.
+	 * If you want to log messages, you shouldn't call this function.  Use getCurrentLogger() instead.
+	 * If setDefaultLogger() hasn't been called, 
+	 * the default logger will be set to a NullLogger, and then returned.
+	 */
+	static LoggerRef getDefaultLogger();
+
+	/**
+	 * Set the default global logger.
+	 */
+	static bool setDefaultLogger(const LoggerRef &ref);
+
+	/**
+	 * Set a per thread Logger that overrides the default one.
+	 */
+	static bool setThreadLogger(const LoggerRef &ref);
+
+	/**
 	 * Log message with a fatal error category and the default component.
 	 * @param message The string to log.
 	 * @param filename The file where the log statement was written.
@@ -214,6 +240,11 @@ public:
 	 * Determine if the log category is enabled.
 	 */
 	bool categoryIsEnabled(const String& category) const;
+
+	/**
+	 * Check if the logger is enabled for given level.
+	 */
+	bool levelIsEnabled(const ELogLevel level);
 
 	/**
 	 * Determine if the component and category are both enabled.
