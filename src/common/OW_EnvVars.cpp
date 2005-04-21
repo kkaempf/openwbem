@@ -38,12 +38,27 @@
 #include <algorithm>
 #include <cstring>
 
+#if defined(OW_DARWIN)
+// On MacOSX, environ is not defined in shared libraries.  It is only provided
+// for executables.  Since the linker must resolve all symbols at link time,
+// the normal extern declaration of environ won't work.  As a substitute, we
+// need to use this:
+#include <crt_externs.h>
+#define environ (*_NSGetEnviron())
+
+// For more details on the subject, follow one of these links:
+// http://lists.gnu.org/archive/html/bug-guile/2004-01/msg00013.html
+// http://lists.apple.com/archives/darwin-dev/2005/Mar/msg00132.html
+// http://www.metapkg.org/wiki/15 (under the linking problems)
+
+#else /* !DARWIN */
 // according to man environ:
 // This variable must be declared in the user program, but is
 // declared in the header file unistd.h in case the header files came from
 // libc4 or libc5, and in case they came from glibc and _GNU_SOURCE was
 // defined.
 extern char** environ;
+#endif
 
 namespace OW_NAMESPACE
 {
