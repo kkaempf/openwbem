@@ -10,7 +10,7 @@ set +e
 # Initialize the build variables.
 RVAL=0
 
-OW_BUILD_NUM=`date '+%y%m%d%H%M%S'`
+OW_BUILD_NUM=`date '+%y%m%d%H%M'`
 
 OW_MAJOR_VERSION=`sed -n -e 's/OPENWBEM_MAJOR_VERSION=\(.*\)/\1/p' < $OW_SOURCE_DIR/configure.in`
 OW_MINOR_VERSION=`sed -n -e 's/OPENWBEM_MINOR_VERSION=\(.*\)/\1/p' < $OW_SOURCE_DIR/configure.in`
