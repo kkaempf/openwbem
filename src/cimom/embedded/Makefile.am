@@ -15,6 +15,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb \
+-L$(top_builddir)/src/cimom/common -lowcimomcommon \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
 
 
