@@ -77,7 +77,7 @@ trap remove_pid_file EXIT
 
 # Execute the config file so that some settings can be obtained before the remote execution.
 # Note: This will change the OW_SOURCE_DIR, so it can't be used after this line.
-. ${OW_SOURCE_DIR}/build/data/${CONFIG_FILE_NAME}
+. ${OW_SOURCE_DIR}/build/automated/data/${CONFIG_FILE_NAME}
 
 ############################################################################
 #
@@ -179,9 +179,9 @@ function execute_build()
 	# want to have real results from both builds.
 	set +e
 	echo "Command line to execute on remote:"
-	echo "ssh ${OW_BUILD_USER}@${MACHINE_NAME} bash -x ${OW_BUILD_SCRIPT} ${OW_SOURCE_DIR}/build/data/${CONFIG_FILE_NAME} ${BUILD_METHOD} $SAVED_COMMAND_LINE"
+	echo "ssh ${OW_BUILD_USER}@${MACHINE_NAME} bash -x ${OW_BUILD_SCRIPT} ${OW_SOURCE_DIR}/build/automated/data/${CONFIG_FILE_NAME} ${BUILD_METHOD} $SAVED_COMMAND_LINE"
 	# We're safe to execute their chosen build script now.
-	ssh ${OW_BUILD_USER}@${MACHINE_NAME} ${USABLE_SHELL} -x ${OW_BUILD_SCRIPT} ${OW_SOURCE_DIR}/build/data/${CONFIG_FILE_NAME} ${BUILD_METHOD} $SAVED_COMMAND_LINE &
+	ssh ${OW_BUILD_USER}@${MACHINE_NAME} ${USABLE_SHELL} -x ${OW_BUILD_SCRIPT} ${OW_SOURCE_DIR}/build/automated/data/${CONFIG_FILE_NAME} ${BUILD_METHOD} $SAVED_COMMAND_LINE &
 	local killed=0
 
 	while ps $! 2>/dev/null >/dev/null
