@@ -98,6 +98,7 @@ public:
 	pid_t pid();
 	void pid(pid_t newPid);
 	int getExitStatus();
+	int getExitStatus(UInt32 wait_initial, UInt32 wait_close, UInt32 wait_term);
 	void setProcessStatus(int ps)
 	{
 		m_processstatus = ps;
@@ -167,7 +168,7 @@ void PopenStreamsImpl::pid(pid_t newPid)
 	m_pid = newPid;
 }
 //////////////////////////////////////////////////////////////////////
-static inline pid_t lwaitpid(pid_t pid, int* status, int options)
+static inline ProcId safeWaitPid(ProcId pid, int* status, int options)
 {
 	// The status is not passed directly to waitpid because some implementations
 	// store a value there even when the function returns <= 0.
@@ -179,18 +180,19 @@ static inline pid_t lwaitpid(pid_t pid, int* status, int options)
 	}	
 	return returnedPID;
 }
+
 //////////////////////////////////////////////////////////////////////
-static pid_t
-waitpidNoINTR(pid_t pid, int* status, int options)
+static ProcId noIntrWaitPid(ProcId pid, int* status, int options)
 {
 	pid_t waitpidrv;
 	do
 	{
 		Thread::testCancel();
-		waitpidrv = lwaitpid(pid, status, options);
+		waitpidrv = safeWaitPid(pid, status, options);
 	} while (waitpidrv == -1 && errno == EINTR);
 	return waitpidrv;
 }
+
 //////////////////////////////////////////////////////////////////////////////
 static inline void
 milliSleep(UInt32 milliSeconds)
@@ -204,100 +206,123 @@ secSleep(UInt32 seconds)
 	Thread::sleep(seconds * 1000);
 }
 //////////////////////////////////////////////////////////////////////////////
+static bool
+timedWaitPid(ProcId pid, int * pstatus, UInt32 wait_time)
+{
+	UInt32 const N = 154;
+	UInt32 const M = 128;  // N/M is about 1.20
+	UInt32 const MAXPERIOD = 5000;
+	UInt32 period = 100;
+	UInt32 t = 0;
+	ProcId waitpidrv = noIntrWaitPid(pid, pstatus, WNOHANG);
+	while (t < wait_time && waitpidrv == 0) {
+		milliSleep(period);
+		t += period;
+		period *= N;
+		period /= M; 
+		if (period > MAXPERIOD)
+		{
+			period = MAXPERIOD;
+		}
+		waitpidrv = noIntrWaitPid(pid, pstatus, WNOHANG);
+	}
+	if (waitpidrv < 0) {
+		OW_THROW_ERRNO_MSG(ExecErrorException, "waitpid() failed.");
+	}
+	return waitpidrv != 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Send signal sig to the process, then wait at most wait_time milliseconds.
+// for the process to terminate.  Return true if termination detected.
+//
+static bool killWait(
+	ProcId pid, int * pstatus, UInt32 wait_time, int sig, char const * signame
+)
+{
+	if (::kill(pid, sig) == -1) {
+		// don't trust waitpid, Format ctor, etc. to leave errno alone
+		int errnum = errno;
+		// maybe kill() failed because child terminated first
+		if (noIntrWaitPid(pid, pstatus, WNOHANG) > 0) {
+			return true;
+		}
+		else {
+			Format fmt("Failed sending %1 to process %2.", signame, pid);
+			char const * msg = fmt.c_str();
+			errno = errnum;
+			OW_THROW_ERRNO_MSG(ExecErrorException, msg);
+		}
+	}
+	return timedWaitPid(pid, pstatus, wait_time);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 int PopenStreamsImpl::getExitStatus()
 {
-	// Close the streams. If the child process is blocked waiting to output,
-	// then this will cause it to get a SIGPIPE, and it may be able to clean
-	// up after itself.
-	UnnamedPipeRef upr;
-	if (upr = in())
+	return this->getExitStatus(0, 10 *1000, 10 * 1000);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+int PopenStreamsImpl::getExitStatus(
+	UInt32 wait_initial, UInt32 wait_close, UInt32 wait_term)
+{
+	if (m_pid < 0)
 	{
-		upr->close();
+		return m_processstatus;
 	}
-	if (upr = out())
+	if (m_pid == ::getpid())
 	{
-		upr->close();
+		OW_THROW(ExecErrorException, "PopenStreamsImpl::getExitStatus: m_pid == getpid()");
 	}
-	if (upr = err())
+
+	ProcId pid = m_pid;
+	m_pid = -1;
+	int * pstatus = &m_processstatus;
+
+	// Convert times to milliseconds
+	wait_initial *= 1000;
+	wait_close *= 1000;
+	wait_term *= 1000;
+
+	if (wait_initial > 0 &&	timedWaitPid(pid, pstatus, wait_initial))
 	{
-		upr->close();
+		return m_processstatus;
 	}
-	// Now make sure the process has exited. We do everything possible to make
-	// sure the sub-process dies.
-	if (m_pid > 0 && m_pid != ::getpid()) // it's set to -1 if we already sucessfully waited for it.
+
+	if (wait_close > 0)
 	{
-		pid_t waitpidrv;
-		
-		// give it up to 10 seconds to quit
-		waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-		for (int i = 0; i < 100 && waitpidrv == 0; ++i)
+		// Close the streams. If the child process is blocked waiting to output,
+		// then this will cause it to get a SIGPIPE, and it may be able to clean
+		// up after itself.  Likewise, if the child process is blocked waiting
+		// for input, it will now detect EOF.
+		UnnamedPipeRef upr;
+		if (upr = in())
 		{
-			milliSleep(100); // 1/10 of a second
-			waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
+			upr->close();
 		}
-		if (waitpidrv == 0)
+		if (upr = out())
 		{
-			if (kill(m_pid, SIGTERM) != -1)
-			{
-				// give it up to 10 seconds to quit
-				waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-				for (int i = 0; i < 100 && waitpidrv == 0; ++i)
-				{
-					milliSleep(100); // 1/10 of a second
-					waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-				}
-	
-				if (waitpidrv == 0)
-				{
-					/* process still didn't terminate after a SIGTERM, so we'll
-					   try sending it SIGKILL */
-					if (kill(m_pid, SIGKILL) == -1)
-					{
-						// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
-						waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-						m_pid = -1;
-						OW_THROW_ERRNO_MSG(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: Failed sending SIGKILL to process %1", m_pid).c_str());
-					}
-					// give the kernel 1 sec to clean it up, otherwise we bail.
-					waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-					for (int i = 0; i < 100 && waitpidrv == 0; ++i)
-					{
-						milliSleep(10); // 1/100 of a second
-						waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-					}
-					m_pid = -1;
-					if (waitpidrv == 0)
-					{
-						OW_THROW_ERRNO_MSG(ExecErrorException, "PopenStreamsImpl::getExitStatus: Child process has not exited after sending it a SIGKILL.");
-					}
-				}
-				else if (waitpidrv > 0)
-				{
-					m_pid = -1;
-				}
-				else
-				{
-					m_pid = -1;
-					OW_THROW_ERRNO_MSG(ExecErrorException, "PopenStreamsImpl::getExitStatus: second waitpid() failed.");
-				}
-			}
-			else
-			{
-				// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
-				waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-				m_pid = -1;
-				OW_THROW_ERRNO_MSG(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: Failed sending SIGTERM to process %1.", m_pid).c_str());
-			}
+			upr->close();
 		}
-		else if (waitpidrv > 0)
+		if (upr = err())
 		{
-			m_pid = -1;
+			upr->close();
 		}
-		else
+		if (timedWaitPid(pid, pstatus, wait_close))
 		{
-			m_pid = -1;
-			OW_THROW_ERRNO_MSG(ExecErrorException, "PopenStreamsImpl::getExitStatus: first waitpid() failed.");
+			return m_processstatus;
 		}
+	}
+
+	if (wait_term > 0 && killWait(pid, pstatus, wait_term, SIGTERM, "SIGTERM"))
+	{
+		return m_processstatus;
+	}
+	if (!killWait(pid, pstatus, 5000, SIGKILL, "SIGKILL")) {
+		OW_THROW(
+			ExecErrorException, "PopenStreamsImpl::getExitStatus: Child process has not exited after sending it a SIGKILL."
+		);
 	}
 	return m_processstatus;
 }
@@ -377,6 +402,11 @@ void PopenStreams::pid(pid_t newPid)
 int PopenStreams::getExitStatus()
 {
 	return m_impl->getExitStatus();
+}
+/////////////////////////////////////////////////////////////////////////////
+int PopenStreams::getExitStatus(UInt32 wait0, UInt32 wait1, UInt32 wait2)
+{
+	return m_impl->getExitStatus(wait0, wait1, wait2);
 }
 /////////////////////////////////////////////////////////////////////////////
 void PopenStreams::setProcessStatus(int ps)
@@ -986,7 +1016,7 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 			{
 				pid_t waitpidrv;
 				int processStatus(-1);
-				waitpidrv = waitpidNoINTR(streams[i].pid(), &processStatus, WNOHANG);
+				waitpidrv = noIntrWaitPid(streams[i].pid(), &processStatus, WNOHANG);
 				if (waitpidrv == -1)
 				{
 					streams[i].pid(-1);

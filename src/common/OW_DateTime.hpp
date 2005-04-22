@@ -566,6 +566,13 @@ private:
 	static Int16 localTimeAndOffset(time_t t, struct tm & tt);
 };
 
+/**
+* Returns the difference of x and y.  If z is the result, this represents a
+* time difference of z.get() + z.getMicrosecond() * 1.0e-6.  Note that
+* z.getMicrosecond() >= 0 is guaranteed.
+**/
+DateTime operator-(DateTime const & x, DateTime const & y);
+
 } // end namespace OW_NAMESPACE
 
 #endif

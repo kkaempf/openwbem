@@ -1299,5 +1299,18 @@ DateTime::getCurrent()
 	return current;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+DateTime operator-(DateTime const & x, DateTime const & y)
+{
+	time_t diff = x.get() - y.get();
+	Int32 microdiff = (Int32)x.getMicrosecond() - (Int32)y.getMicrosecond();
+	if (microdiff < 0)
+	{
+		--diff;
+		microdiff += 1000000;
+	}
+	return DateTime(diff, (UInt32)microdiff);
+}
+
 } // end namespace OW_NAMESPACE
 

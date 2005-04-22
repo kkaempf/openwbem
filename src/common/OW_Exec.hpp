@@ -106,24 +106,45 @@ public:
 	 * Set the process's pid.
 	 */
 	void pid(ProcId newPid);
+
 	/**
-	 * Get the process's exit status.
-	 * If the child process is still running, this function will do everything
-	 * possible to terminate it.
-	 * The following steps will be taken to attempt to terminate the child
-	 * process.
-	 * 1. The input and output pipes will be closed.  This may cause the
-	 *    child to get a SIGPIPE which may terminate it.
-	 * 2. If the child still hasn't terminated after 10 seconds, a SIGTERM
-	 *    is sent.
-	 * 3. If the child still hasn't terminated after 10 seconds, a SIGKILL
-	 *    is sent.
-	 * After calling this function, the pipes to will be closed, and this object
-	 * is basically useless.
+	 * Waits for the process to terminate and returns its exit status.
+	 * Takes increasingly severe measures to ensure that the process dies --
+	 * the following steps are taken in order until termination is detected:
+	 * 
+	 * 1. If wait_initial > 0, waits wait_initial seconds for the process to
+	 * die on its own.
+	 *
+	 * 2. If wait_close > 0, closes the input and output pipes and then waits
+	 * wait_close seconds for the process to die.
+	 *
+	 * 3. If wait_term > 0, sends process a SIGTERM signal and waits
+	 * wait_term seconds for it to die.
+	 *
+	 * 4. Sends the process a SIGKILL signal.
+	 * 
+	 * In steps 1-3 the function returns as soon as termination is detected.
+	 * After calling this function the object is basically useless, except
+	 * that if the function is called again it will return the same exit status
+	 * without going through the above steps.
+	 * 
+	 * Note to maintainers: it is important that if wait_close == 0 then the
+	 * pipes are NOT closed.
+	 *
+	 * @require Wait times are no larger than 4294967 seconds.
+	 *
 	 * @return The exit status of the process.  This should be evaluated using
 	 * the family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
+	 *
+	 * @throw ExecErrorException, ThreadCancelledException
 	 */
+	int getExitStatus(UInt32 wait_initial, UInt32 wait_close, UInt32 wait_term);
+
+	/**
+	 * Same as getExitStatus(0, 10*1000, 10*1000);
+	**/
 	int getExitStatus();
+
 	/**
 	 * Sets the process's exit status.
 	 * This function is used by Exec::gatherOutput()
