@@ -45,6 +45,7 @@
 #include "OW_ExceptionIds.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_DateTime.hpp"
+#include "OW_AutoPtr.hpp"
 
 #include <map>
 
@@ -453,7 +454,16 @@ safeSystem(const Array<String>& command, const char* const envp[])
 	{
 		return 1;
 	}
-	pid = fork();
+
+	// This has to be done before fork().  In a multi-threaded app, calling new after fork() can cause a deadlock.
+	AutoPtrVec<const char*> argv(new const char*[command.size() + 1]);
+	for (size_t i = 0; i < command.size(); i++)
+	{
+		argv[i] = command[i].c_str();
+	}
+	argv[command.size()] = 0;
+
+	pid = ::fork();
 	if (pid == -1)
 	{
 		return -1;
@@ -508,26 +518,19 @@ safeSystem(const Array<String>& command, const char* const envp[])
 			}
 			while (i > 2)
 			{
-				close(i);
+				// set it for close on exec
+				::fcntl(i, F_SETFD, FD_CLOEXEC);
 				i--;
 			}
-
-
-			char** argv = new char*[command.size() + 1];
-			for (size_t i = 0; i < command.size(); i++)
-			{
-				argv[i] = strdup(command[i].c_str());
-			}
-			argv[command.size()] = 0;
 
 			int rval; 
 			if (envp)
 			{
-				rval = execve(argv[0], argv, const_cast<char* const*>(envp));
+				rval = execve(argv[0], const_cast<char* const*>(argv.get()), const_cast<char* const*>(envp));
 			}
 			else
 			{
-				rval = execv(argv[0], argv);
+				rval = execv(argv[0], const_cast<char* const*>(argv.get()));
 			}
 			cerr << Format( "Exec::safeSystem: execv failed for program "
 					"%1, rval is %2", argv[0], rval);
@@ -604,6 +607,14 @@ safePopen(const Array<String>& command, const char* const envp[])
 
 	UnnamedPipeRef execErrorPipe = UnnamedPipe::createUnnamedPipe();
 
+	// This has to be done before fork().  In a multi-threaded app, calling new after fork() can cause a deadlock.
+	AutoPtrVec<const char*> argv(new const char*[command.size() + 1]);
+	for (size_t i = 0; i < command.size(); i++)
+	{
+		argv[i] = command[i].c_str();
+	}
+	argv[command.size()] = 0;
+
 	pid_t forkrv = ::fork();
 	if (forkrv == -1)
 	{
@@ -676,8 +687,6 @@ safePopen(const Array<String>& command, const char* const envp[])
 			PosixUnnamedPipeRef execError = execErrorPipe.cast_to<PosixUnnamedPipe>();
 			OW_ASSERT(execError);
 			execErrorFd = execError->getOutputHandle();
-			// set it to close on exec so the parent can detect a close when exec() works.
-			::fcntl(execErrorFd, F_SETFD, FD_CLOEXEC);
 
 
 			// Close all other file handle from parent process
@@ -696,28 +705,19 @@ safePopen(const Array<String>& command, const char* const envp[])
 			}
 			while (i > 2)
 			{
-				if (i != execErrorFd)
-				{
-					// TODO: Fix this to not call close(), but set the close on exec flag instead.  close() may hang or take a long time.
-					close(i);
-				}
+				// set it for close on exec
+				::fcntl(i, F_SETFD, FD_CLOEXEC);
 				i--;
 			}
 	
-			char** argv = new char*[command.size() + 1];
-			for (size_t i = 0; i < command.size(); i++)
-			{
-				argv[i] = strdup(command[i].c_str());
-			}
-			argv[command.size()] = 0;
 			int rval = 0;
 			if (envp)
 			{
-				rval = execve(argv[0], argv, const_cast<char* const*>(envp));
+				rval = execve(argv[0], const_cast<char* const*>(argv.get()), const_cast<char* const*>(envp));
 			}
 			else
 			{
-				rval = execv(argv[0], argv);
+				rval = execv(argv[0], const_cast<char* const*>(argv.get()));
 			}
 			// send errno over the pipe
 			int lerrno = errno;
