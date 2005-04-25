@@ -102,7 +102,7 @@ echo "mkdir -p $LOCAL_BUILD_DIR" >> $TEMP_SCRIPT_NAME
 echo "cd $LOCAL_BUILD_DIR" >> $TEMP_SCRIPT_NAME
 echo "export CVS_RSH=ssh" >> $TEMP_SCRIPT_NAME
 echo "if [ -e openwbem ]; then rm -rf openwbem; fi" >> $TEMP_SCRIPT_NAME
-echo "scp -r $OW_MAIN_SOURCE_DIR ." >> $TEMP_SCRIPT_NAME
+echo "scp -r $HOSTNAME:$OW_SOURCE_DIR ." >> $TEMP_SCRIPT_NAME
 echo "rm \$0" >> $TEMP_SCRIPT_NAME
 chmod a+x $TEMP_SCRIPT_NAME
 
