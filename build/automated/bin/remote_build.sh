@@ -75,6 +75,7 @@ function remove_pid_file()
 }
 trap remove_pid_file EXIT
 
+SAVED_OW_SOURCE_DIR="$OW_SOURCE_DIR"
 # Execute the config file so that some settings can be obtained before the remote execution.
 # Note: This will change the OW_SOURCE_DIR, so it can't be used after this line.
 . ${OW_SOURCE_DIR}/build/automated/data/${CONFIG_FILE_NAME}
@@ -102,7 +103,7 @@ echo "mkdir -p $LOCAL_BUILD_DIR" >> $TEMP_SCRIPT_NAME
 echo "cd $LOCAL_BUILD_DIR" >> $TEMP_SCRIPT_NAME
 echo "export CVS_RSH=ssh" >> $TEMP_SCRIPT_NAME
 echo "if [ -e openwbem ]; then rm -rf openwbem; fi" >> $TEMP_SCRIPT_NAME
-echo "scp -r $HOSTNAME:$OW_SOURCE_DIR ." >> $TEMP_SCRIPT_NAME
+echo "scp -r $HOSTNAME:$SAVED_OW_SOURCE_DIR ." >> $TEMP_SCRIPT_NAME
 echo "rm \$0" >> $TEMP_SCRIPT_NAME
 chmod a+x $TEMP_SCRIPT_NAME
 
