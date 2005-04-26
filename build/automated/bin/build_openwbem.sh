@@ -96,7 +96,7 @@ make check
 OWLONGTEST=1 make check
 
 # install OW
-OW_STAGE_DIR=$LOCAL_BUILD_DIR/owstage-openwbem
+OW_STAGE_DIR=$LOCAL_BUILD_DIR/owstage
 # rm -rf OW_STAGE_DIR
 make DESTDIR=$OW_STAGE_DIR install
 
