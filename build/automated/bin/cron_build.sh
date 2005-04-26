@@ -169,7 +169,7 @@ ModifyDateFileForBranch()
 CreateLogDirectory()
 {
 	# Create a directory for log files.
-	export LOG_DIRECTORY="/tmp/${LOG_PREFIX}buildlog-$$"
+	export LOG_DIRECTORY="/tmp/owcron_buildlog-$$"
 	if [ -e ${LOG_DIRECTORY} -o -d ${LOG_DIRECTORY} ]
 	then
 		rm -rf ${LOG_DIRECTORY}
@@ -220,9 +220,6 @@ Main()
 	. term_handler.sh
 	# Prevent the script from being exited until the email has been sent.
 	disable_exit_on_signals
-
-	# Set a variable for a log prefix.
-	var_is_set LOG_PREFIX || LOG_PREFIX=""
 
 	BRANCHES_BUILT=
 
