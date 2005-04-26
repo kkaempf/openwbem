@@ -78,10 +78,7 @@ $SHELL ./configure \
 	--prefix=$OW_PREFIX \
 	--sysconfdir=/etc$OW_PREFIX \
 	--localstatedir=/var$OW_PREFIX \
-	--with-package-prefix=vintela \
 	--with-runtime-link-path=$OW_PREFIX/lib \
-	--disable-openslp \
-	--disable-cmpi \
 	$STATIC_SERVICE_FLAGS $OW_CONFIGURE_FLAGS 
 
 make $NUM_PROCS_MAKE_FLAG clean
