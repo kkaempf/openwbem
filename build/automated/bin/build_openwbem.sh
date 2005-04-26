@@ -117,7 +117,7 @@ EditConfig()
 
 EditConfig 's/http_server.http_port.*/http_server.http_port = -1/g'
 EditConfig 's/\(owcimomd.authorization2_lib.*\)/;\1/g'
-EditConfig 's/;http_server.allow_local_authentication = false/http_server.allow_local_authentication = true/g'
+EditConfig 's/http_server.allow_local_authentication = false/http_server.allow_local_authentication = true/g'
 
 # On AIX, the aix authentication should be used by default instead of the pam.  
 # NOTE: PAM will work, but most AIX users won't have it installed (they have to
