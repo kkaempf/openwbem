@@ -37,6 +37,6 @@ if [ "$OW_BUILD_CONFIG_FILE_ALREADY_SOURCED" = "0" ]; then
 	
 fi
 
-. ${OW_SOURCE_DIR}/build/bin/term_handler.sh
+. term_handler.sh
 
-. ${OW_SOURCE_DIR}/build/bin/common_functions.sh
+. common_functions.sh

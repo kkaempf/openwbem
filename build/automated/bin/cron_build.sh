@@ -116,8 +116,7 @@ ShouldBuildBranch()
 	# inputs to has_cvs_chaged_since_last_build are BRANCH and BUILD_DATE_FILE (set in the config file)
 	export BRANCH=$LOCAL_BRANCH_TAG
 	local old_path=$PATH
-	export PATH=$PATH_TO_BUILD_SYSTEM/bin:$PATH
-	if bash -x $PATH_TO_BUILD_SYSTEM/bin/has_cvs_changed_since_last_build.sh; then
+	if has_cvs_changed_since_last_build.sh; then
 		echo "cvs has changed.  initiating build."
 		DO_BUILD=true
 	fi
@@ -164,7 +163,7 @@ ModifyDateFileForBranch()
 		fi
 	fi
 	echo "$BRANCH: $CVS_BRANCH_DATE" >> $BUILD_DATE_FILE
-	$PATH_TO_BUILD_SYSTEM/bin/date_conversion.sh "$CVS_BRANCH_DATE" > $BUILD_DATE_FILE.seconds
+	date_conversion.sh "$CVS_BRANCH_DATE" > $BUILD_DATE_FILE.seconds
 }
 
 CreateLogDirectory()
@@ -203,6 +202,9 @@ Main()
 	# Run the config file.
 	var_is_set BUILD_CONFIG_FILE_ALREADY_SOURCE && [ "$BUILD_CONFIG_FILE_ALREADY_SOURCE" = "1" ] || SourceConfigFile
 
+	# Add the build bin directory to the path.
+	AddBuildBinToPath
+
 	# Create a lock file, and make sure that it is removed upon exit.
 	CreateLockFile
 	trap RemoveLockFile EXIT
@@ -212,18 +214,15 @@ Main()
 	# prevent the checkout from being killed, since the real date
 	# isn't set until it is decided that the build should happen.
 	CUR_DATE=`ssh $OW_CVS_SERVER date -R`
-	$PATH_TO_BUILD_SYSTEM/bin/date_conversion.sh "$CUR_DATE" > $BUILD_DATE_FILE.seconds
+	date_conversion.sh "$CUR_DATE" > $BUILD_DATE_FILE.seconds
 
 	# Set up a term handler, so if any problems occur, this script will kill all children.
-	. $PATH_TO_BUILD_SYSTEM/bin/term_handler.sh
+	. term_handler.sh
 	# Prevent the script from being exited until the email has been sent.
 	disable_exit_on_signals
 
 	# Set a variable for a log prefix.
 	var_is_set LOG_PREFIX || LOG_PREFIX=""
-
-	# Add the build bin directory to the path.
-	AddBuildBinToPath
 
 	BRANCHES_BUILT=
 
