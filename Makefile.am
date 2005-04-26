@@ -12,8 +12,10 @@ Makefile-shared-lib.inc \
 LICENSE \
 ow_ar.sh \
 Makefile-shared-lib-inst.inc \
+Makefile-replacement.inc \
 openwbem.spec \
 fake_library_creator.sh \
+create_replacement_script.sh \
 generic-company-openwbem.spec.in \
 $(m4_DATA)
 

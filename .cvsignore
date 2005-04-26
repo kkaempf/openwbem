@@ -34,3 +34,4 @@ autom4te-2.53.cache
 *.exp
 *.def
 lib*sl*
+replacement_script.sed
