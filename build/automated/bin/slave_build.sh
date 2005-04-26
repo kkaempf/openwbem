@@ -127,14 +127,12 @@ if [ -d $OW_PREFIX/lib ]; then
 fi
 
 
-# clean up old build
+# clean up old build install
 rm -rf $LOCAL_BUILD_DIR/owstage
 
-# get cvs - TODO: put this into it's own script later
-mkdir -p $LOCAL_BUILD_DIR
 cd $LOCAL_BUILD_DIR
 
-safe_execute_noexit $USABLE_SHELL build_openwbem_for_vmx.sh
+safe_execute_noexit $USABLE_SHELL build_openwbem.sh
 
 ow_results=$?
 if [ $ow_results -ne 0 ]
