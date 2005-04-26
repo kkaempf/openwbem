@@ -92,8 +92,8 @@ LD_RUN_PATH=$OW_PREFIX/lib
 export LD_RUN_PATH
 
 make $NUM_PROCS_MAKE_FLAG
-make check
-OWLONGTEST=1 make check
+#make check
+#OWLONGTEST=1 make check
 
 # install OW
 OW_STAGE_DIR=$LOCAL_BUILD_DIR/owstage
