@@ -6,7 +6,7 @@ else
   . common.sh
 fi
 
-cd $LOCAL_BUILD_DIR/$OW_CVS_MODULE/openwbem20
+cd $LOCAL_BUILD_DIR/$OW_CVS_MODULE
 ./cvsbootstrap.sh
 
 CONFIGURE_DEBUG_FLAGS=
