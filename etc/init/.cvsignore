@@ -1,6 +1,7 @@
 Makefile.in
 Makefile
 owcimomd
+owcimomd.in
 .deps
 .libs
 *.lo
