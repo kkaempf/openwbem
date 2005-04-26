@@ -125,9 +125,7 @@ fi
 
 rm -rf $RPM_BUILD_DIR/RPMS/{ppc,i386,i486,i586,i686}
 
-for spec_file in $RPM_SPEC_FILES; do
-	$RPMBUILD -ba $spec_file
-done
+$RPMBUILD -bb $PATH_TO_BUILD_SYSTEM/data/openwbem.spec
 
 ARCH_DIR=
 for arch_type in ppc i386 i486 i586 i686
