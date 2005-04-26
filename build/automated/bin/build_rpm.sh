@@ -112,9 +112,6 @@ do
 	mkdir -p $RPM_BUILD_DIR/$x
 done
 
-# Create a spec file (if needed)
-$OW_SOURCE_DIR/build/data/linux/build_spec_file.sh
-
 GetPlatformInformation
 export OW_RELEASE_TEXT=$RELEASE_TEXT
 
