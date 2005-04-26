@@ -94,7 +94,7 @@ echo -e "\n<a name=\"BOOTSTRAP\">\n"
 # NOTE: This is a self-destructive script, it will remove itself after use.
 echo "#!/bin/bash" > $TEMP_SCRIPT_NAME
 if [ ! -z "$OW_REMOTE_PATH" ]; then
-	echo "export PATH=$OW_REMOTE_PATH" >> $TEMP_SCRIPT_NAME
+	echo "export PATH=$OW_REMOTE_PATH:"'$PATH' >> $TEMP_SCRIPT_NAME
 fi
 echo "set -e" >> $TEMP_SCRIPT_NAME
 echo "if [ -e $OW_WORK_DIRECTORY ]; then rm -rf $OW_WORK_DIRECTORY; fi" >> $TEMP_SCRIPT_NAME
