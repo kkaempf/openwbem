@@ -49,7 +49,7 @@ GetSourceDirectory()
 		echo "I can't locate myself!  PWD=" `pwd` ", \$0=$0"
 		exit 1
 	fi
-	OW_SOURCE_DIR=$MY_DIR/../..
+	OW_SOURCE_DIR=$MY_DIR/../../..
 	set -$LBS_FLAGS
 	unset LBS_FLAGS
 }
