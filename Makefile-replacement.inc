@@ -14,12 +14,12 @@
 
 # Note: Additional substitutions beyond those defined by the configure process
 # can be included by defining one of two things:
-# (1) NAME_extra_substitutions
+# (1) <NAME>_extra_substitutions
 # (2) global_substitutions
 #
 # Example:
-# To add replace 'trash' with 'garbage' in the file 'foo', which is created
-# from 'foo.in', define something like:
+# To add a replacement of 'trash' with 'garbage' in the file 'foo', which is
+# created from 'foo.in', define something like:
 #   foo_extra_substitions=-e 's~trash~garbage~g'
 # or
 #   global_subtitutions=-e 's~trash~garbage~g'
