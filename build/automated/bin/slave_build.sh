@@ -104,7 +104,7 @@ trap exit_handler EXIT
 
 if [ ! -z "$OW_REMOTE_PATH" ]; then
 	echo "Setting up the path, as was specified in the config file:"
-	eval "PATH=$OW_REMOTE_PATH"
+	eval "PATH=$OW_REMOTE_PATH:$PATH"
 	export PATH
 	echo "$PATH"
 fi
