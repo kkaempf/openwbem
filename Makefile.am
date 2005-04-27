@@ -19,7 +19,9 @@ create_replacement_script.sh \
 generic-company-openwbem.spec.in \
 $(m4_DATA)
 
-CLEANFILES = Doxyfile
+BUILT_SOURCES = replacement_script.sed
+
+CLEANFILES = Doxyfile replacement_script.sed
 
 clean-local:
 	if [ -n "$(PACKAGE_PREFIX_D)" ]; then \
@@ -60,3 +62,7 @@ rpm: dist
 	rpmbuild --define="_topdir `pwd`/rpmbuild" -ta $(distdir).tar.gz
 
 
+# Since the replacement script is listed in BUILT_SOURCES, if we include this,
+# the replacement sed script will be generated before anything else (even
+# subdirectories).
+include ${top_srcdir}/Makefile-replacement.inc

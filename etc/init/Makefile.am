@@ -3,7 +3,8 @@ noinst_DATA = $(PACKAGE_PREFIX_D)owcimomd
 
 EXTRA_DIST = owcimomd.sh
 
-CLEANFILES = $(PACKAGE_PREFIX_D)owcimomd
+BUILT_SOURCES = ${PACKAGE_PREFIX_D}owcimomd.in
+CLEANFILES = $(PACKAGE_PREFIX_D)owcimomd $(PACKAGE_PREFIX_D)owcimomd.in
 
 include ${top_srcdir}/Makefile-replacement.inc
 
