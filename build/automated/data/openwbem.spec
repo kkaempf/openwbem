@@ -14,7 +14,7 @@ URL: http://www.vintela.com
 AutoReqProv: yes
 # This is necessary to build the RPM as a non-root user.
 BuildRoot: %{_tmppath}/%{name}-%{version}
-Source0: openwbem.tar.gz
+Source0: openwbem.tgz
 %description
 The full collection of OpenWBEM packages
 
