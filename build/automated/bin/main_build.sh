@@ -553,14 +553,12 @@ if [ "$FINAL_RESULTS" = "0" ]; then
 			EMAIL_SUBJECT="ow build $OW_BUILD_ID completed with errors (ignored)"
 		fi
 
-		cat $RELEASE_NOTES_FILE >> $LOG-merged
 		mail -s"$EMAIL_SUBJECT" $RESULTS_EMAIL_ADDRESS < $LOG-merged
 		rm $LOG-merged
 
 		rm -rf ${LOG_DIRECTORY}
 	fi
 
-	rm -f $RELEASE_NOTES_FILE
 	BUILD_ERROR_BEFORE_END=0
 	trap - EXIT
 else
