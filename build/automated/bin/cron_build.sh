@@ -104,7 +104,7 @@ RemoveLockFile()
 AddBuildBinToPath()
 {
 	if echo "$PATH" | grep -v $OW_BUILD_BIN_DIR >/dev/null; then
-		export PATH="$OW_BUILD_BIN_DIR:$PATH"
+		export PATH="$PATH_TO_BUILD_SYSTEM/bin:$PATH"
 	fi
 }
 
@@ -187,6 +187,9 @@ Main()
 	LocateBuildSystem
 	UpdateBuildSystem || echo "Failed to update build system"
 
+	# Add the build bin directory to the path.
+	AddBuildBinToPath
+
 	# Exit immediately if a simple command exits with a non-zero status.
 	set -e
 	# Treat unset variables as an error when performing parameter expansion
@@ -201,9 +204,6 @@ Main()
 
 	# Run the config file.
 	var_is_set BUILD_CONFIG_FILE_ALREADY_SOURCE && [ "$BUILD_CONFIG_FILE_ALREADY_SOURCE" = "1" ] || SourceConfigFile
-
-	# Add the build bin directory to the path.
-	AddBuildBinToPath
 
 	# Create a lock file, and make sure that it is removed upon exit.
 	CreateLockFile
