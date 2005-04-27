@@ -115,6 +115,10 @@ done
 GetPlatformInformation
 export OW_RELEASE_TEXT=$RELEASE_TEXT
 
+# rpm requires a source even if it's not used, so create one.
+tar czvf $RPM_BUILD_DIR/SOURCES/openwbem.tgz $OW_SOURCE_DIR
+
+
 RPMBUILD=
 if rpmbuild --version 2>/dev/null >/dev/null
 then
