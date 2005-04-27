@@ -68,6 +68,12 @@ public:
 		info.addInstrumentedClass("TestInstance");
 	}
 
+	// we store stuff in memory, if we get unloaded the test suite will fail.
+	virtual bool canUnload()
+	{
+		return false;
+	}
+
 //////////////////////////////////////////////////////////////////////////////
 	void
 		enumInstanceNames(
