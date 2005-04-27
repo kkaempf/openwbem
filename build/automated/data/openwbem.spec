@@ -105,7 +105,6 @@ OpenWBEM development header files
 %{__rm} -rf $RPM_BUILD_ROOT
 %{__mkdir} -p $RPM_BUILD_ROOT
 
-cd stage-openwbem
 cp -r * $RPM_BUILD_ROOT
 
 %Clean
