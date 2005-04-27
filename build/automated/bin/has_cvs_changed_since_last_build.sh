@@ -15,6 +15,7 @@
 #  $BUILD_DATE_FILE - the filename of a file which contains the date the last 
 #   build was run. The date should be in rfc 822 format (date -R)
 #  $BRANCH - The branch to examine.  If not set, then HEAD will be used.
+#  $COMMIT_DATE_FILE - the filename containing the last commit dates
 #
 # The current working directory must be the root of the cvs repository 
 #  checkout.
@@ -94,7 +95,9 @@ old_check_method()
 # older than the minimum commit age, a build will happen.  
 # Otherwise, no build will happen.
 
-scp cvs:`basename "$COMMIT_DATE_FILE"` "$COMMIT_DATE_FILE"
+CVS_SERVER=`cat CVS/Root | sed 's/.*@\([^:]*\):.*/\1/'`
+CVS_DIR=`cat CVS/Root | sed 's/.*:\(.*\)$/\1/'`
+scp $CVS_SERVER:CVS_DIR/CVSROOT/`basename "$COMMIT_DATE_FILE"` "$COMMIT_DATE_FILE"
 
 CVS_HAS_CHANGED=0
 
