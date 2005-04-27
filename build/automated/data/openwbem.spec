@@ -155,6 +155,12 @@ cp -r * $RPM_BUILD_ROOT
 %dir /etc/pam.d
 %defattr(0644,root,root)
 /etc/pam.d/openwbem
+/etc/init.d/owcimomd
+/etc/opt/openwbem/openwbem/owgencert
+/etc/opt/openwbem/openwbem/ssleay.cnf
+/opt/openwbem/libexec/openwbem/OW_PAMAuth
+
+
 # End files for ow-cimomd from /tmp/file_list.ow-cimomd.23164.25638.880.0.3082
 ####################
 
@@ -281,6 +287,10 @@ cp -r * $RPM_BUILD_ROOT
 /opt/openwbem/lib/libowembeddedcimom.*
 %defattr(0755,root,root)
 /opt/openwbem/lib/libpamauthentication.*
+/opt/openwbem/lib/libcmpisupport.a
+/opt/openwbem/lib/libcmpisupport.so.4
+/opt/openwbem/lib/openwbem/provifcs/libcmpiprovifc.so.4
+
 # End files for ow-libs4 from /tmp/file_list.ow-libs4.13245.3217.18515.0.3082
 ####################
 
@@ -945,6 +955,32 @@ cp -r * $RPM_BUILD_ROOT
 /opt/openwbem/include/openwbem/OW_shlSharedLibraryLoader.hpp
 %defattr(0644,root,root)
 /opt/openwbem/include/openwbem/OW_vector.hpp
+/opt/openwbem/include/openwbem/CmpiArgs.h
+/opt/openwbem/include/openwbem/CmpiArray.h
+/opt/openwbem/include/openwbem/CmpiAssociationMI.h
+/opt/openwbem/include/openwbem/CmpiBaseMI.h
+/opt/openwbem/include/openwbem/CmpiBroker.h
+/opt/openwbem/include/openwbem/CmpiContext.h
+/opt/openwbem/include/openwbem/CmpiData.h
+/opt/openwbem/include/openwbem/CmpiDateTime.h
+/opt/openwbem/include/openwbem/CmpiEnumeration.h
+/opt/openwbem/include/openwbem/CmpiIndicationMI.h
+/opt/openwbem/include/openwbem/CmpiInstance.h
+/opt/openwbem/include/openwbem/CmpiInstanceMI.h
+/opt/openwbem/include/openwbem/CmpiMethodMI.h
+/opt/openwbem/include/openwbem/CmpiObject.h
+/opt/openwbem/include/openwbem/CmpiObjectPath.h
+/opt/openwbem/include/openwbem/CmpiPropertyMI.h
+/opt/openwbem/include/openwbem/CmpiProviderBase.h
+/opt/openwbem/include/openwbem/CmpiResult.h
+/opt/openwbem/include/openwbem/CmpiSelectExp.h
+/opt/openwbem/include/openwbem/CmpiStatus.h
+/opt/openwbem/include/openwbem/CmpiString.h
+/opt/openwbem/include/openwbem/cmpiThreadContext.h
+/opt/openwbem/include/openwbem/cmpidt.h
+/opt/openwbem/include/openwbem/cmpift.h
+/opt/openwbem/include/openwbem/cmpimacs.h
+/opt/openwbem/include/openwbem/cmpisrv.h
 # End files for ow-devel from /tmp/file_list.ow-devel.30827.13471.8082.0.3082
 ####################
 
