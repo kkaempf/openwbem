@@ -131,42 +131,17 @@ rm -rf $RPM_BUILD_DIR/RPMS/{ppc,i386,i486,i586,i686}
 
 $RPMBUILD -bb --define "_topdir ${RPM_BUILD_DIR}" $OW_BUILD_DATA_DIR/openwbem.spec
 
-ARCH_DIR=
-for arch_type in ppc i386 i486 i586 i686
-do
-	if [ -e $RPM_BUILD_DIR/RPMS/$arch_type/$OW_BUILD_ID-1$OW_RELEASE_TEXT.$arch_type.rpm ]
-	then
-		ARCH_DIR=$RPM_BUILD_DIR/RPMS/$arch_type
-	fi
-done
-
-
-if [ "x$ARCH_DIR" = "x" ]
-then
-	echo "Unable to locate the output rpm."
-	exit 1
-fi
-
 # Copy the generated rpms into a directory that won't be hosed, which must be
 # distinct between debug and release.
-if [ $# -gt 0 ]
+BUILD_MODE=$1
+if [ "x$BUILD_MODE" = "xdebug" -o "x$BUILD_MODE" = "xDEBUG" ]
 then
-	BUILD_MODE=$1
-	if [ "x$BUILD_MODE" = "xdebug" -o "x$BUILD_MODE" = "xDEBUG" ]
-	then
-		scp $ARCH_DIR/*rpm $OW_ISO_DESTINATION_DEBUG
-		echo "OW_OUTPUT_DIRECTORY_DEBUG=none"
-	else
-		scp $ARCH_DIR/*rpm $OW_ISO_DESTINATION_RELEASE
-		echo "OW_OUTPUT_DIRECTORY_RELEASE=none"
-		
-	fi
+	scp $RPM_BUILD_DIR/RPMS/*/*rpm $OW_ISO_DESTINATION_DEBUG
+	echo "OW_OUTPUT_DIRECTORY_DEBUG=none"
 else
-	if [ "x$BUILD_MODE" = "xdebug" -o "x$BUILD_MODE" = "xDEBUG" ]
-	then
-		echo "OW_OUTPUT_DIRECTORY_DEBUG=$ARCH_DIR"
-	else
-		echo "OW_OUTPUT_DIRECTORY_RELEASE=$ARCH_DIR"
-	fi
-
+	scp $RPM_BUILD_DIR/RPMS/*/*rpm $OW_ISO_DESTINATION_RELEASE
+	echo "OW_OUTPUT_DIRECTORY_RELEASE=none"
+	
 fi
+
+
