@@ -103,7 +103,7 @@ RemoveLockFile()
 # Add the build bin directory to the path.
 AddBuildBinToPath()
 {
-	if echo "$PATH" | grep -v $OW_BUILD_BIN_DIR >/dev/null; then
+	if echo "$PATH" | grep -v "$PATH_TO_BUILD_SYSTEM/bin" >/dev/null; then
 		export PATH="$PATH_TO_BUILD_SYSTEM/bin:$PATH"
 	fi
 }
