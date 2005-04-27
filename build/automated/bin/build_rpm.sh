@@ -116,7 +116,7 @@ GetPlatformInformation
 export OW_RELEASE_TEXT=$RELEASE_TEXT
 
 # rpm requires a source even if it's not used, so create one.
-tar czvf $RPM_BUILD_DIR/SOURCES/openwbem.tgz -C $OW_SOURCE_DIR .
+tar czvf $RPM_BUILD_DIR/SOURCES/openwbem.tgz -C $OW_STAGE_DIR .
 
 
 RPMBUILD=
