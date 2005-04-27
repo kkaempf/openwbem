@@ -7,8 +7,8 @@ Release: rh3WS
 Group: Applications/System
 Summary: OpenWBEM
 Copyright: Copyright (C) 2005 Vintela, Inc.
-Packager: support@vintela.com
-URL: http://www.vintela.com
+Packager: openwbem-public@lists.sourceforge.net
+URL: http://www.openwbem.org
 # "yes" is the default, but we put it here explicitly to avoid someone
 # setting it to "no"
 AutoReqProv: yes
@@ -154,7 +154,7 @@ cp -r * $RPM_BUILD_ROOT
 %defattr(0755,root,root)
 %dir /etc/pam.d
 %defattr(0644,root,root)
-/etc/pam.d/vintelaopenwbem
+/etc/pam.d/openwbem
 # End files for ow-cimomd from /tmp/file_list.ow-cimomd.23164.25638.880.0.3082
 ####################
 
