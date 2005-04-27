@@ -131,6 +131,7 @@ rm -rf $RPM_BUILD_DIR/RPMS/{ppc,i386,i486,i586,i686}
 
 $RPMBUILD -bb --define "_topdir ${RPM_BUILD_DIR}" $OW_BUILD_DATA_DIR/openwbem.spec
 
+rm -rf $LOCAL_BUILD_DIR/packages
 mkdir $LOCAL_BUILD_DIR/packages
 cp $RPM_BUILD_DIR/RPMS/*/*rpm $LOCAL_BUILD_DIR/packages
 echo "OW_OUTPUT_DIRECTORY_RELEASE=$LOCAL_BUILD_DIR/packages"
