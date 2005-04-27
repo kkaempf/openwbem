@@ -134,5 +134,6 @@ $RPMBUILD -bb --define "_topdir ${RPM_BUILD_DIR}" $OW_BUILD_DATA_DIR/openwbem.sp
 mkdir $LOCAL_BUILD_DIR/packages
 cp $RPM_BUILD_DIR/RPMS/*/*rpm $LOCAL_BUILD_DIR/packages
 echo "OW_OUTPUT_DIRECTORY_RELEASE=$LOCAL_BUILD_DIR/packages"
+echo "OW_OUTPUT_DIRECTORY_DEBUG=$LOCAL_BUILD_DIR/packages"
 
 
