@@ -131,17 +131,8 @@ rm -rf $RPM_BUILD_DIR/RPMS/{ppc,i386,i486,i586,i686}
 
 $RPMBUILD -bb --define "_topdir ${RPM_BUILD_DIR}" $OW_BUILD_DATA_DIR/openwbem.spec
 
-# Copy the generated rpms into a directory that won't be hosed, which must be
-# distinct between debug and release.
-BUILD_MODE=$1
-if [ "x$BUILD_MODE" = "xdebug" -o "x$BUILD_MODE" = "xDEBUG" ]
-then
-	scp $RPM_BUILD_DIR/RPMS/*/*rpm $OW_ISO_DESTINATION_DEBUG
-	echo "OW_OUTPUT_DIRECTORY_DEBUG=none"
-else
-	scp $RPM_BUILD_DIR/RPMS/*/*rpm $OW_ISO_DESTINATION_RELEASE
-	echo "OW_OUTPUT_DIRECTORY_RELEASE=none"
-	
-fi
+mkdir $LOCAL_BUILD_DIR/packages
+cp $RPM_BUILD_DIR/RPMS/*/*rpm $LOCAL_BUILD_DIR/packages
+echo "OW_OUTPUT_DIRECTORY_RELEASE=$LOCAL_BUILD_DIR/packages"
 
 
