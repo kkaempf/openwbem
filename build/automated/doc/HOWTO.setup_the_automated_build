@@ -1,0 +1,535 @@
+---------------------------------------------------------------------------
+
+Setup instructions for the owbuild user. This has to be done on 
+cvs.openwbem.org as well as on each build machine.
+
+ -login as owbuild
+ -$ ssh-keygen -b1024 -tdsa
+  Accept the default for the file and don't enter a passphrase
+ -$ cp ~/.ssh/id_dsa.pub ~/.ssh/authorized_keys
+ -edit ~/.ssh/config and set 
+   ForwardX11=no
+   BatchMode=yes
+   PasswordAuthentication=no
+ -$ echo "export CVS_RSH=ssh" >> ~/.bashrc
+ -$ echo "%_topdir $HOME/build/rpm" > ~/.rpmmacros
+
+The public key from the owcimomd user on the build master should be
+distributed to the .ssh/authorized_keys files on each slave as well as 
+cvs.openwbem.org.
+
+---------------------------------------------------------------------------
+
+Setup instructions for CVS and cvs.openwbem.org:
+$ cvs -d:ext:nuffer@cvs.openwbem.org:/cvsroot/openwbem co CVSROOT
+Add update_last_checkin.sh to CVSROOT, make sure it's executable.
+insert the following line in CVSROOT/checkoutlist:
+update_last_checkin.sh	unable to checkout/update update_last_checkin.sh in CVSROOT
+Update CVSROOT/loginfo to call update_last_checkin.sh:
+ALL ${CVSROOT}/CVSROOT/update_last_checkin.sh ${CVSROOT}/CVSROOT/last_commit_dates.txt /usr/local/bin/syncmail --fromhost=users.sourceforge.net %{sVv} openwbem-cvscommits@lists.sourceforge.net
+Login to cvs.openwbem.org and 
+$ touch /cvsroot/openwbem/CVSROOT/last_commit_dates.txt
+$ chmod g+w /cvsroot/openwbem/CVSROOT/last_commit_dates.txt
+
+Add the owbuild user, but don't put it into the owcvs group, because we
+don't want owbuild to be able to modify the repository, just look at
+last_commit_dates.txt and do checkouts. In order to do checkouts, it
+has to be a member of the owcvsread group.
+
+cvs has to be configured to write the lock files outside the repository. 
+To do this:
+Make /cvsroot/openwbemlocks owned by the owcvsread group and group writable.
+Edit CVSROOT/config and add a "LockDir=/cvsroot/openwbemlocks" line.
+
+Disable the owbuild user's password and add the appropriate ssh key to
+/home/owbuild/.ssh/authorized_keys
+
+
+---------------------------------------------------------------------------
+
+Setup instructions for the main build controller:
+(Commands with # prompt should be run as root, with $ prompt as owbuild.)
+ -Install your favorite linux distro.
+ -create a user called owbuild
+Set up a local build space for cron
+ Check out the openwbem/build/automated directory:
+  $ mkdir cvs_for_cron
+  $ cd cvs_for_cron
+  $ export CVSROOT=:ext:owbuild@cvs:/opt/cvs
+  $ cvs co openwbem/build/automated
+ Add a crontab entry for the main build (pointing to the proper directory):
+  $ crontab -e
+    # run the build script every 5 minutes
+    */5 * * * *     $HOME/cvs_for_cron/openwbem/build/automated/bin/cron_build.sh
+ Note: None of the other sources are required until the first build begins,
+ at which point the cron_build.sh script will create/checkout everything needed.
+
+As owbuild, ssh to each slave build machine so that the ssh host key gets imported into known_hosts
+
+---------------------------------------------------------------------------
+Setup instructions for a linux build machine (the main build controller can also serve as a build slave)
+ -$ ccache -M 5G
+
+---------------------------------------------------------------------------
+
+Setup instructions for additional build machines
+  * Create a local user called owbuild with home
+    directory /home/owbuild.  NOTE: The UID is unimportant, as nothing will be
+    done over NFS.
+
+  NOTE: The permissions of the home directory MUST be 700, or at least not
+  world or group writable.  If the permissions are set wrong, then ssh will ask
+  for a password (even if the keys are good).
+
+  * bash must be in a standard search path. (eg. /bin, /usr/bin, or
+    /usr/local/bin) 
+  
+  - As the owbuild user (su owbuild), get the SSH keys from buzz.  This is
+    done by issuing the following command your machine (using the password
+    described above when prompted): 
+      $ scp -r buzz:.ssh $HOME
+
+  - Verify that your build machine has the proper keys by running a secure
+    shell on buzz (log off afterwards): 
+      $ ssh buzz
+    If it prompts for a password, or gives other authentication errors, then
+    there is a problem with the keys.   
+
+  - Add any path requirements into your .bashrc, as well as setting CVS_RSH:
+    $ echo CVS_RSH=ssh >> ~/.bashrc
+    $ echo PATH=\$PATH:YOUR_PATH_ADDITIONS >> ~/.bashrc
+
+  - Create a config file in openwbem/build/automated/data (or a subdirectory therein) in
+    cvs.  See the Linux/AIX config files for examples (the AIX config file is
+    probably closer to your system than the Linux config).
+
+  - Create a packaging script (in CVS), and place its path in your config script.
+    NOTE: Your packaging script MUST report the
+          location of your files by displaying: 
+              VMX_OUTPUT_DIRECTORY_{DEBUG,RELEASE}=/somepath_on_your_machine
+
+          If this value, for either DEBUG or RELEASE is not "none", then the
+          main build controller will recursively copy all of the files out of
+          this directory.
+
+	  See build_rpm.sh for an example.
+
+  - Add your machine to the openwbem/build/automated/data/build_machine_list file, specifying
+    the name of your machine, the location of your config file (relative to
+    vmx/build/data), and the directory in which to place your files.  The
+    build_machine_list is whitespace dependant, and should only contain spaces
+    (one) between each field (no leading spaces): 
+        build_machine_name config_file_relative_path directory
+
+  - Additional software that needs to be installed:
+    - PAM libraries and headers (on Linux typically a pam-devel RPM) -- not
+      used for AIX, since LAM is used instead.
+    - OpenSSL libraries and headers (openssl-devel)
+    - zlib libraries and headers (zlib-devel)
+
+    NOTE: The OpenSSL/zlib libraries/headers are in CVS (external module)
+    for platforms which don't ship with them.  Only some of these platforms will
+    use the versions from CVS (with the exception of OpenSSL, which was
+    determined necessary for inclusion even when a similar version is
+    provided), the others will use the system-provided version (if it is
+    sufficient for use). 
+
+    If the OS doesn't provide the libraries and headers, then you'll need to
+    setup the config for your platform to use the headers that are in CVS under
+    external/include and you'll have to build the necessary libraries
+    and check them into external/<platform>/<package>/<package version>. 
+
+  After all this is checked in, the build system will automatically execute the
+  build on your machine in parallel with every other machine (starting on the
+  next build). 
+
+
+---------------------------------------------------------------------------
+OSX Setup notes
+* X-Code tools will need to be installed -- This includes the compiler, CVS,
+  and other stuff.  It has been placed in CVS, but CVS isn't installed by
+  default. As such, you'll need to pick a random box to check it out on and
+  then copy it to the OSX box.  The easiest way to install it is using the
+  dmg_installer.sh (in vmx/build/data/osx) script.
+
+ [from some box with cvs and ssh]
+ -$ cvs -d:ext:someuser@cvs:/opt/cvs co vmxbin/build-tools/osx-10.3/xtools
+ -$ scp vmxbin/build-tools/osx-10.3/xtools/* some_user@some_osx_box:/some_path
+ -$ cvs -d:ext:someuser@cvs:/opt/cvs co	vmx/build/data/osx/dmg_installer.sh
+ -$ scp vmx/build/data/osx/dmg_installer.sh some_user@some_osx_box:/some_path
+ [from some_osx_box/some_path, and as root:]
+ If you want to see progress, use -v for verbose.
+ -# ./dmg_installer.sh -i Xcode*.dmg
+
+* A sudoers will need to be created to allow the owbuild user to change 
+  ownership of packages:
+  edit it with 'visudo', adding the following:
+  owbuild ALL=(ALL) NOPASSWD: ALL
+
+---------------------------------------------------------------------------
+SuSE SLES-8
+* Additional (or updated) tools are required to build openwbem/vmx:
+	Autoconf 2.57 is required.  Newer versions may work, but have warnings.
+	Bison 1.75 is required.  Do NOT use 1.875.
+	Automake 1.63 is required.  Newer versions may work, but have warnings.
+	ccache is recommended.
+
+---------------------------------------------------------------------------
+AIX Setup notes (5.1)
+
+* The environment size must be increased.  It defaults to 24k, this
+  should be increased probably to 128k (or larger):
+  -# chdev -l sys0 -a ncargs=32
+
+  Where ncargs is the size (in 4k blocks) of the environment list
+  (includes command line arguments).
+
+* There is a precompiled toolchain available in cvs: 
+    vmxbin/build-tools/aix5.1/aix51_toolchain_gcc3.3.3.tar.gz
+  This should be untarred to / on the machine, and it will create /usr/local/*,
+  as needed for proper build.
+
+* NOTE: make, m4, and grep that ship with AIX are all broken beyond repair.
+  The GNU versions in /usr/local must be used (the path must be set correctly
+  in the config file). 
+
+* The following packages need to be installed (in this order) to get VMX/OpenWBEM
+  to compile correctly (get an initial bootstrapping compiler, if you don't
+  have one, from ftp://aixpdslib.seas.ucla.edu/pub, everything else can be
+  built from source): 
+  gcc (3.3.2 - patched, possibly newer versions), texinfo, m4, gnu make,
+  autoconf (2.57 works), automake (1.63 works), flex, bison (1.75 only!), cvs,
+  openssl, IBM's pam modules (if available).  GNU grep is required to properly
+  build openwbem (due to IBM's grep line limit).
+  
+  Optional packages (highly recomended for development, but not required for
+  building): 
+  gnu tar, gnu diff, less, gdb (malfunctions quite often), ddd, emacs
+
+  These can be installed anywhere, as long as they are added to the path in the
+  config file (VMX_REMOTE_PATH). 
+
+  Make sure that libm.a exists on the system before bootstrapping the compiler,
+	or building openwbem.
+
+  Replace /usr/local/lib/libgcc_s.a with a symlink to libgcc_s_pthread.a.
+  Replace /usr/local/lib/libstdc++.a with /usr/local/lib/pthread/libstdc++.a.
+  Remove any object files (.o) from both of those libraries because only a .so,
+  or a file called 'shr.o' should exist in these two libraries.   "ar" is the
+  tool used to do this (ar d foo.a FILE1 FILE2 ...).  Be sure to create a
+  backup before modifying this file, or you could destroy your toolchain.
+
+  FIXME! Instructions on how to get crap out of CVS.
+  
+
+---------------------------------------------------------------------------
+HP-UX 11.11 Setup notes
+* The default install doesn't give you much space, so use sam and resize
+  stuff.  You'll have to go to single user mode to resize /usr or /var.  Here's
+  the current sizes, which seem to be sufficient for now:
+
+/home                  (/dev/vg00/lvol5       ) :  2976874 total allocated Kb
+                                                   1437049 free allocated Kb
+                                                   1539825 used allocated Kb
+                                                        51 % allocation used
+/opt                   (/dev/vg00/lvol6       ) :  2007133 total allocated Kb
+                                                   1352508 free allocated Kb
+                                                    654625 used allocated Kb
+                                                        32 % allocation used
+/tmp                   (/dev/vg00/lvol4       ) :  1966253 total allocated Kb
+                                                   1964553 free allocated Kb
+                                                      1700 used allocated Kb
+                                                         0 % allocation used
+/usr                   (/dev/vg00/lvol7       ) :  3910960 total allocated Kb
+                                                   2776162 free allocated Kb
+                                                   1134798 used allocated Kb
+                                                        29 % allocation used
+/var                   (/dev/vg00/lvol8       ) :  2963526 total allocated Kb
+                                                   1634636 free allocated Kb
+                                                   1328890 used allocated Kb
+                                                        44 % allocation used
+/stand                 (/dev/vg00/lvol1       ) :   100473 total allocated Kb
+                                                     69475 free allocated Kb
+                                                     30998 used allocated Kb
+                                                        30 % allocation used
+/                      (/dev/vg00/lvol3       ) :   136670 total allocated Kb
+                                                    101167 free allocated Kb
+                                                     35503 used allocated Kb
+                                                        25 % allocation used
+
+You may need to go to single user mode to do this.  Typing init 1 may work,
+but I've had stuff still using /opt/ which I couldn't kill.  Use fuser -c to
+find the processes using a mount point.
+
+To boot into single user mode, break into the boot process by pressing enter
+at the right time.  At the prompt enter:
+sea
+bo <boot device - p1 on my box>
+Y (to interact with ISL)
+hpux -i1
+
+Even booting in single user mode may not be enough, and you'll have to run
+the commands sam tells you manually.
+
+* I used nfs to get everything from vmxbin/build-tools/hpux11.11/ over to 
+  the hpux machine.  You can't install depots from nfs, you have to copy them
+  over to /var/tmp to install them.
+
+* After installing all the patches and packages, setup sshd:
+
+---------------------
+KEYGEN=/usr/local/bin/ssh-keygen
+SSH_DIR=/usr/local/etc/openssh
+RSA1_KEY=$SSH_DIR/ssh_host_key
+RSA_KEY=$SSH_DIR/ssh_host_rsa_key
+DSA_KEY=$SSH_DIR/ssh_host_dsa_key
+
+do_rsa1_keygen() {
+        if [ ! -s $RSA1_KEY ]; then
+                echo "Generating SSH1 RSA host key: "
+                if $KEYGEN -q -t rsa1 -f $RSA1_KEY -C '' -N '' ; then
+                        chmod 600 $RSA1_KEY
+                        chmod 644 $RSA1_KEY.pub
+                else
+                        exit 1
+                fi
+        fi
+}
+
+do_rsa_keygen() {
+        if [ ! -s $RSA_KEY ]; then
+                echo "Generating SSH2 RSA host key: "
+                if $KEYGEN -q -t rsa -f $RSA_KEY -C '' -N '' ; then
+                        chmod 600 $RSA_KEY
+                        chmod 644 $RSA_KEY.pub
+                else
+                        exit 1
+                fi
+        fi
+}
+
+do_dsa_keygen() {
+        if [ ! -s $DSA_KEY ]; then
+                echo "Generating SSH2 DSA host key: "
+                if $KEYGEN -q -t dsa -f $DSA_KEY -C '' -N '' ; then
+                        chmod 600 $DSA_KEY
+                        chmod 644 $DSA_KEY.pub
+                else
+                        exit 1
+                fi
+        fi
+}
+
+mkdir -p $SSH_DIR
+do_rsa1_keygen
+do_rsa_keygen
+do_dsa_keygen
+---------------------
+create a sshd user: 
+echo "sshd:*:104:104::/:/usr/bin/false" >> /etc/passwd
+echo "sshd::104:" >> /etc/group
+
+Edit sshd_config and set:
+PermitUserEnvironment yes
+
+mkdir /var/empty
+
+chmod go-rwx /var/empty
+
+# verify it works
+/usr/local/sbin/sshd -d
+
+Create an init script: scp vmx/build/data/hpux/sshd user@hpux:/sbin/init.d/
+ln -s /sbin/init.d/sshd /sbin/rc2.d/S603sshd
+
+Add /usr/local/bin to the path by adding it to /etc/PATH
+
+This is because the sshd has a problem and doesn't include /usr/local/bin/ 
+in the PATH when running commands.  I couldn't figure out a way to get it 
+to add it, so we'll just put necessary things in /usr/bin.
+# cp /usr/local/bin/scp /usr/bin
+# cp /usr/local/bin/bash /usr/bin
+
+create a /home/owbuild/.bashrc:
+export PATH=/usr/local/bin:$PATH
+export CVS_RSH=ssh
+
+create /home/owbuild/.ssh/environment:
+BASH_ENV=/home/owbuild/.bashrc
+Make sure that it's chmod go-w
+
+ln -s gmake /usr/local/bin/make
+
+To prevent the openssl built with gcc (it has undefined symbols and will cause you pain) from being found by the configure script:
+mv /usr/local/include/openssl /usr/local/include/openssl.moved
+
+---------------------------------------------------------------------------
+FreeBSD 4.9 setup notes:
+
+(0) The best source of general freebsd info is the freebsd
+    handbook. Point a browser at
+    file:///usr/share/doc/handbook/index.html (on the local freeBSD
+    machine) or
+    http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/index.html
+		
+(1) When you install freebsd, be sure to install the 'Developer' and
+    'ports' distributions. If you forget, run /stand/sysinstall,
+    chose 'Configure', 'Distributions', and select 'ports'.
+
+		It is also very helpful to install all of the documentation.
+
+(2) Tools needed for building vmx:
+
+    bash:
+
+		# cd /usr/ports/shells/bash2
+		# make install clean
+
+		m4:
+
+		The m4 which is installed by selecting the developer distribution
+		is not sufficiently gnu compatible. You need to install gnu m4,
+		which can be found in ports:
+
+		# cd /usr/ports/devel/m4
+		# make install clean
+
+		automake 1.6.3 : I do not know if newer versions work.
+
+		If you are in a hurry:
+		
+		# cd /usr/ports/devel/automake17
+		# make install clean
+		# ln -s /usr/local/bin/automake17 /usr/local/bin/automake
+
+		If that seems unclean to you, do what I did:
+
+		Get it from ftp.gnu.org:/gnu/automake/automake-1.6.3.tar.bz2, and
+		build from source:
+
+		$ tar xjf automake-1.6.3.tar.bz2
+		$ mkdir automake-1.6.3.objdir
+		$ cd automake-1.6.3.objdir
+		$ configure --prefix=/usr/local/automake-1.6.3 
+		$ make
+		$ su
+		# make install
+		# echo 'export PATH="/usr/local/automake-1.6.3/bin:$PATH"' >> /home/owbuild/.bashrc
+
+		and add /usr/local/automake-1.6.3/bin to the path. I suppose the
+		--prefix argument isn't strictly necessary, but without that it
+		will confilict with ports, which will want to install an
+		incompatible version of automake in /usr/local .
+
+		Explanation:
+		
+				Freebsd has automake17 in /usr/ports, but it installs to
+						/usr/local/bin/automake17, and $top_srcdir/cvsbootstrap.sh
+				    runs 'automake', which is 1.5, assuming
+						/usr/ports/devel/automake has been installed. I solved
+						this by installing FSF automake 1.6.3 . I imagine it could
+						be solved by renaming /usr/local/bin/automake17, or by
+						tweaking the port's make parameters, but I didn't try
+						that. Executing the commands in cvsbootstrap.sh manually
+						should also work. 
+
+		    openwbem's makefiles use a local script, ow_ar.sh, in place of
+    		    ar, by setting
+						AR="\$(shell pwd)/\$(top_srcdir)/ow_ar.sh $SAVED_AR --"
+						in configure.in . When ow_ar.sh is used to link archives
+    		    together, it will extract the object files from the
+    		    archives, and then re-archive them. This avoids the
+    		    situation of archives containing archives.
+
+		    Older automakes override this with AR = ar, which prevents the
+    		    necessary use of ow_ar.sh. As a result, archives become
+    		    nested with archives, and those functions defined within
+    		    the nested archives cannot be found by the linker.
+						
+		autoconf 2.57 : Install this the same way you installed automake,
+    		for the same reasons.
+
+		    Quick way:
+
+				# cd /usr/ports/devel/autoconf257
+				# make install clean
+				# ln -s /usr/local/bin/autoconf257 /usr/local/bin/autoconf
+
+				Right way:
+
+				get it from ftp.gnu.org:/gnu/autoconf/autoconf-2.57.tar.bz2 .
+		
+				install help2man, which autoconf requires:
+
+				# cd /usr/ports/misc/help2man
+				# make install clean
+
+				install autoconf: 
+
+				$ mkdir autoconf-2.57.objdir
+				$ cd autoconf-2.57.objdir
+				$ configure --prefix=/usr/local/autoconf-2.57 
+				$ make
+				$ su
+				# make install
+				# echo 'export PATH="/usr/local/autoconf-2.57/bin:$PATH"' >>
+				/home/owbuild/.bashrc
+
+    GNU make:
+
+		    # cd /usr/ports/devel/gmake
+				# make install clean
+
+				Note that this install gmake with the name 'gmake' *not*
+				'make'. So far this hasn't been a problem. If you find out you
+				need it to be named make (probably becuase you are running it
+				from a script), you can make a symlink, or get the sources
+				from ftp.gnu.org:/gnu/make-3.80.tar.bz2, and you'll have to
+				configure your path so the desired make is found before
+				/usr/bin/make, which is a BSD make lacking some or all of the
+				GNU extensions. 
+
+		gcc 3.3.4
+
+		    Freebsd 4.9 system compiler is a derivative of 2.95.3 . It
+    		    builds openwbem fine, but it won't build vmx. So I picked
+    		    3.3.4 to try. I haven't yet tried any other gcc versions.
+
+		    Get it from: ftp.gnu.org:/gnu/gcc/gcc-3.3.4/gcc-3.3.4.tar.bz2
+
+				$ tar xjf gcc-3.3.4.tar.bz2
+				$ mkdir gcc-3.3.4.objdir
+				$ cd gcc-3.3.4.objdir
+				$ <absolute_path_to_gcc-3.3.4>/gcc-3.3.4/configure --prefix=/usr/local/gcc-3.3.4 --enable-languages=c,c++ --enable-libstdcxx-debug
+
+				Note: You must use the full absolute path to configure, *not*
+				a relative path as you may be accustomed to doing. If gcc
+				builds, but make install fails, you probably used a relative
+				path to run configure.
+
+				$ gmake bootstrap
+				$ su
+				# gmake install
+
+		GNU bison.
+
+		    # cd /usr/ports/devel/bison
+				# make install clean
+
+		    If you do not install bison, the openwbem configury will
+		    mistakenly try to byacc, and the build will die horribly.
+
+		It might seem like I go to much unecessary trouble to avoid
+		    putting symlinks in /usr/local/bin, and avoid installing
+		    things not installed via ports in /usr/local/ . I do this
+		    because the freebsd ports system treats /usr/local like its
+		    own private domain. Let's say you symlink
+		    /usr/local/bin/automake to /usr/local/bin/automake17, and then
+		    you install something which requires automake (1.5) via
+		    ports. The ports system will helpfully and automaticly fetch,
+		    build, and install automake for whatever requires it. Sometime
+		    later, you'll notice vmx and obemwbem no longer build
+		    correctly. Why? Because the automake installed by ports
+		    stomped on the symlink, and it's automake 1.5, which badly
+		    mishandles the replacement of ar with ow_ar.sh which openwbem
+		    and vmx use.
