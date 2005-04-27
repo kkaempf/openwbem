@@ -31,8 +31,8 @@ if [ "$OW_BUILD_CONFIG_FILE_ALREADY_SOURCED" = "0" ]; then
 	. $OW_BUILD_CONFIG_FILE
 	OW_BUILD_CONFIG_FILE_ALREADY_SOURCED=1
 
-	if echo "$PATH" | grep -v $BUILD_BIN_DIR; then
-		PATH="$BUILD_BIN_DIR:$PATH"
+	if echo "$PATH" | grep -v $OW_BUILD_BIN_DIR; then
+		PATH="$OW_BUILD_BIN_DIR:$PATH"
 	fi
 	
 fi

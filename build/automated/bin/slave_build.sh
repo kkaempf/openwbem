@@ -73,7 +73,7 @@ OW_BUILD_CONFIG_FILE=$CONFIG_FILE
 export OW_BUILD_CONFIG_FILE
 
 # Set the path
-export PATH="$BUILD_BIN_DIR:$PATH"
+export PATH="$OW_BUILD_BIN_DIR:$PATH"
 
 # Take anything else that was placed on the command line, and either stuff it
 # into an array, or export an environment variable for it.
