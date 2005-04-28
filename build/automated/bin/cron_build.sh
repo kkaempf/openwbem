@@ -25,15 +25,10 @@ CVS_BRANCH_DATE="date not set"
 # Locate the build system
 LocateBuildSystem()
 {
-	LBS_FLAGS=$-
-	set +e
-	if [ -e ./$0 ]
+	if [ -f ./$0 ]
 	then
 		PATH_TO_BUILD_SYSTEM=`pwd`/`dirname $0`/..
-	elif [ -e `dirname $0`/$0 ]
-	then
-		PATH_TO_BUILD_SYSTEM=`dirname $0`/..
-	elif which $0 >/dev/null 2>/dev/null
+	elif [ -f "`which $0`" ] >/dev/null 2>/dev/null
 	then
 		temp=`which $0`
 		PATH_TO_BUILD_SYSTEM=`dirname $temp`/..
@@ -42,8 +37,6 @@ LocateBuildSystem()
 		echo "I can't locate myself!  PWD=" `pwd` ", \$0=$0"
 		exit 1
 	fi
-	set -$LBS_FLAGS
-	unset LBS_FLAGS
 }
 
 UpdateBuildSystem()
