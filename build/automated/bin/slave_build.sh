@@ -11,7 +11,7 @@ set -u
 # execute to produce output. 
 # NOTE: This platform-specific script MUST echo values like:
 # OW_OUTPUT_DIRECTORY_RELEASE=somewhere or
-# OW_OUTPUT_DIRECTORY_DEBUG=somewhere_else, depending on the $BUILD_METHOD
+# OW_OUTPUT_DIRECTORY_DEBUG=somewhere_else, depending on the ${BUILD_METHOD}
 # parameter passed to it.
 # If there is no output directory, then report the output directory as none.
 # eg. OW_OUTPUT_DIRECTORY_RELEASE=none
@@ -22,8 +22,8 @@ then
 	exit 1
 fi
 
-CONFIG_FILE=$1
-BUILD_METHOD=$2
+CONFIG_FILE=${1}
+BUILD_METHOD=${2}
 
 shift 2
 
@@ -32,41 +32,41 @@ shift 2
 # the config file is sourced.
 GetSourceDirectory()
 {
-	if [ -f ./$0 ]
+	if [ -f ./${0} ]
 	then
-		MY_DIR=`pwd`/`dirname $0`
-	elif [ -f "`which $0`" ] >/dev/null 2>/dev/null
+		MY_DIR=`pwd`/`dirname ${0}`
+	elif [ -f "`which ${0}`" ] >/dev/null 2>/dev/null
 	then
-		temp=`which $0`
-		MY_DIR=`dirname $temp`
+		temp=`which ${0}`
+		MY_DIR=`dirname ${temp}`
 		unset temp
 	else
-		Abort "I can't locate myself!  PWD=" `pwd` ", \$0=$0"
+		Abort "I can't locate myself!  PWD=" `pwd` ", \${0}=${0}"
 	fi
 
-	OW_SOURCE_DIR=$MY_DIR/../../..
+	OW_SOURCE_DIR=${MY_DIR}/../../..
 }
 GetSourceDirectory
 
 # Source the common_functions script so that the functions therein can be used
 # in the config file.
-. $MY_DIR/common_functions.sh
+. ${MY_DIR}/common_functions.sh
 
-if [ -e $CONFIG_FILE ]
+if [ -e ${CONFIG_FILE} ]
 then
-	. $CONFIG_FILE
+	. ${CONFIG_FILE}
 	OW_BUILD_CONFIG_FILE_ALREADY_SOURCED=1
 else
 	echo "Config file does not exist!"
 	exit 2
 fi
 
-echo "Using $CONFIG_FILE for the machine-specific config file."
-OW_BUILD_CONFIG_FILE=$CONFIG_FILE
+echo "Using ${CONFIG_FILE} for the machine-specific config file."
+OW_BUILD_CONFIG_FILE=${CONFIG_FILE}
 export OW_BUILD_CONFIG_FILE
 
 # Set the path
-export PATH="$OW_BUILD_BIN_DIR:$PATH"
+export PATH="${OW_BUILD_BIN_DIR}:${PATH}"
 
 # Take anything else that was placed on the command line, and either stuff it
 # into an array, or export an environment variable for it.
@@ -82,12 +82,12 @@ exit_handler()
 {
 	code=$?
 	set +x
-	if [ "$OS" = "Darwin" ]
+	if [ "${OS}" = "Darwin" ]
 	then
 		# Ensure that this gets placed on a single line (regardless of surrounding output).
-		echo -e "\nKILL_ME_PLEASE: $code\n"
+		echo -e "\nKILL_ME_PLEASE: ${code}\n"
 	fi
-	exit $code
+	exit ${code}
 }
 
 trap exit_handler EXIT
@@ -95,15 +95,15 @@ trap exit_handler EXIT
 # Execute the term handler, so if any problems occur, this script will kill all children.
 . term_handler.sh
 
-if [ ! -z "$OW_REMOTE_PATH" ]; then
-	echo "$PATH"
+if [ ! -z "${OW_REMOTE_PATH}" ]; then
+	echo "${PATH}"
 	echo "Setting up the path, as was specified in the config file:"
-	eval "PATH=$OW_REMOTE_PATH:$PATH"
+	eval "PATH=${OW_REMOTE_PATH}:${PATH}"
 	export PATH
-	echo "$PATH"
+	echo "${PATH}"
 fi
 
-if [ "x$BUILD_METHOD" = "xdebug" -o "x$BUILD_METHOD" = "xDEBUG" ]
+if [ "x${BUILD_METHOD}" = "xdebug" -o "x${BUILD_METHOD}" = "xDEBUG" ]
 then
 	OW_BUILD_DEBUG=true
 	BUILD_METHOD=debug
@@ -115,24 +115,24 @@ fi
 export OW_BUILD_DEBUG
 
 # if ow is installed the build may fail.  Just quit right now and save ourselves the hassle of figuring it out
-if [ -d $OW_PREFIX/lib ]; then
-	echo "$OW_PREFIX/lib detected!!! BUILD aborting now!!!"
+if [ -d ${OW_PREFIX}/lib ]; then
+	echo "${OW_PREFIX}/lib detected!!! BUILD aborting now!!!"
   exit 3
 fi
 
 
 # clean up old build install
-rm -rf $LOCAL_BUILD_DIR/owstage
+rm -rf ${LOCAL_BUILD_DIR}/owstage
 
-cd $LOCAL_BUILD_DIR
+cd ${LOCAL_BUILD_DIR}
 
-safe_execute_noexit $USABLE_SHELL build_openwbem.sh
+safe_execute_noexit ${USABLE_SHELL} build_openwbem.sh
 
 ow_results=$?
-if [ $ow_results -ne 0 ]
+if [ ${ow_results} -ne 0 ]
 then
 	echo "Failed building OpenWBEM."
-	exit $ow_results
+	exit ${ow_results}
 fi
 
 strip_files()
@@ -171,22 +171,22 @@ else
 	echo "Not stripping files: Build mode is not release."
 fi
 
-if [ -z "$OW_PACKAGER_SCRIPT" ]
+if [ -z "${OW_PACKAGER_SCRIPT}" ]
 then
 	echo "OW_PACKAGER_SCRIPT not specified in config file: I don't know how to package OW!"
 	exit 3
 fi
 
-if [ "$OW_PACKAGER_SCRIPT" != "none" ]
+if [ "${OW_PACKAGER_SCRIPT}" != "none" ]
 then
-	echo "Executing packaging script: $OW_PACKAGER_SCRIPT"
-	safe_execute $OW_PACKAGER_SCRIPT $BUILD_METHOD
+	echo "Executing packaging script: ${OW_PACKAGER_SCRIPT}"
+	safe_execute ${OW_PACKAGER_SCRIPT} ${BUILD_METHOD}
 	echo "Packaging script finished."
 else
 	echo "No packaging script to execute"
 	# Make the other scripts (possibly on other machines), happy by saying
 	# there is no output directory (how could there be?).
-	if [ "x$BUILD_METHOD" = "xdebug" -o "x$BUILD_METHOD" = "xDEBUG" ]
+	if [ "x${BUILD_METHOD}" = "xdebug" -o "x${BUILD_METHOD}" = "xDEBUG" ]
 	then
 		echo "OW_OUTPUT_DIRECTORY_DEBUG=none"
 	else

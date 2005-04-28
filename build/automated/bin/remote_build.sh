@@ -33,13 +33,13 @@ REMOTE_RESULT=0
 
 if [ $# -lt 2 ]
 then
-	echo "$MESSAGE_PREFIX_RELEASE} Remote build executed without machine name or config file."
-	echo "$RESULTS_PREFIX_RELEASE} 1"
+	echo "${MESSAGE_PREFIX_RELEASE}} Remote build executed without machine name or config file."
+	echo "${RESULTS_PREFIX_RELEASE}} 1"
 	exit 1
 fi
 
-MACHINE_NAME=$1
-CONFIG_FILE_NAME=$2
+MACHINE_NAME=${1}
+CONFIG_FILE_NAME=${2}
 PID_FILE=${LOG_DIRECTORY}/${MACHINE_NAME}.pid
 
 shift 2
@@ -54,7 +54,7 @@ SAVED_COMMAND_LINE="$@"
 # 1. Create the PID file.
 #
 ############################################################################
-echo $$ > $PID_FILE
+echo $$ > ${PID_FILE}
 
 build_history_entry "begin"
 
@@ -75,7 +75,7 @@ function remove_pid_file()
 }
 trap remove_pid_file EXIT
 
-SAVED_OW_SOURCE_DIR="$OW_SOURCE_DIR"
+SAVED_OW_SOURCE_DIR="${OW_SOURCE_DIR}"
 # Execute the config file so that some settings can be obtained before the remote execution.
 # Note: This will change the OW_SOURCE_DIR, so it can't be used after this line.
 . ${OW_SOURCE_DIR}/build/automated/data/${CONFIG_FILE_NAME}
@@ -92,27 +92,27 @@ echo -e "\n<a name=\"BOOTSTRAP\">\n"
 
 # Create a script... This will check out OW so that the config file will exist on that machine.
 # NOTE: This is a self-destructive script, it will remove itself after use.
-echo "#!/bin/bash" > $TEMP_SCRIPT_NAME
-if [ ! -z "$OW_REMOTE_PATH" ]; then
-	echo "export PATH=$OW_REMOTE_PATH:"'$PATH' >> $TEMP_SCRIPT_NAME
+echo "#!/bin/bash" > ${TEMP_SCRIPT_NAME}
+if [ ! -z "${OW_REMOTE_PATH}" ]; then
+	echo "export PATH=${OW_REMOTE_PATH}:"'${PATH}' >> ${TEMP_SCRIPT_NAME}
 fi
-echo "set -e" >> $TEMP_SCRIPT_NAME
-echo "if [ -e $OW_WORK_DIRECTORY ]; then rm -rf $OW_WORK_DIRECTORY; fi" >> $TEMP_SCRIPT_NAME
-echo "mkdir -p $OW_WORK_DIRECTORY" >> $TEMP_SCRIPT_NAME
-echo "mkdir -p $LOCAL_BUILD_DIR" >> $TEMP_SCRIPT_NAME
-echo "cd $LOCAL_BUILD_DIR" >> $TEMP_SCRIPT_NAME
-echo "export CVS_RSH=ssh" >> $TEMP_SCRIPT_NAME
-echo "if [ -e openwbem ]; then rm -rf openwbem; fi" >> $TEMP_SCRIPT_NAME
-echo "scp -r $HOSTNAME:$SAVED_OW_SOURCE_DIR ." >> $TEMP_SCRIPT_NAME
-echo "rm \$0" >> $TEMP_SCRIPT_NAME
-chmod a+x $TEMP_SCRIPT_NAME
+echo "set -e" >> ${TEMP_SCRIPT_NAME}
+echo "if [ -e ${OW_WORK_DIRECTORY} ]; then rm -rf ${OW_WORK_DIRECTORY}; fi" >> ${TEMP_SCRIPT_NAME}
+echo "mkdir -p ${OW_WORK_DIRECTORY}" >> ${TEMP_SCRIPT_NAME}
+echo "mkdir -p ${LOCAL_BUILD_DIR}" >> ${TEMP_SCRIPT_NAME}
+echo "cd ${LOCAL_BUILD_DIR}" >> ${TEMP_SCRIPT_NAME}
+echo "export CVS_RSH=ssh" >> ${TEMP_SCRIPT_NAME}
+echo "if [ -e openwbem ]; then rm -rf openwbem; fi" >> ${TEMP_SCRIPT_NAME}
+echo "scp -r ${HOSTNAME}:${SAVED_OW_SOURCE_DIR} ." >> ${TEMP_SCRIPT_NAME}
+echo "rm \${0}" >> ${TEMP_SCRIPT_NAME}
+chmod a+x ${TEMP_SCRIPT_NAME}
 
 # A hard-coded (ICK) path to the bootstrap script.
-INITIAL_BOOTSTRAP=$OW_USER_HOME/initial_bootstrap.sh
+INITIAL_BOOTSTRAP=${OW_USER_HOME}/initial_bootstrap.sh
 
 # Copy the temporary script to the build machine.
 scp ${TEMP_SCRIPT_NAME} ${OW_BUILD_USER}@${MACHINE_NAME}:${INITIAL_BOOTSTRAP}
-rm $TEMP_SCRIPT_NAME
+rm ${TEMP_SCRIPT_NAME}
 
 ############################################################################
 #
@@ -124,7 +124,7 @@ ssh ${OW_BUILD_USER}@${MACHINE_NAME} bash -x ${INITIAL_BOOTSTRAP}
 
 build_history_entry "end:bootstrap"
 
-# Now, there should be a clean copy of openwbem in $OW_WORK_DIRECTORY on
+# Now, there should be a clean copy of openwbem in ${OW_WORK_DIRECTORY} on
 # MACHINE_NAME.
 
 ############################################################################
@@ -146,43 +146,43 @@ function check_for_kill_request()
 
 	local TEMP_FILE=`mktemp /tmp/log_tailing_${MACHINE_NAME}.XXXXXX`
 
-	tail -n $NUMBER_OF_LINES ${LOG_FILE} | egrep -v "(grep.*kill)|(local.*kill)" > $TEMP_FILE
+	tail -n ${NUMBER_OF_LINES} ${LOG_FILE} | egrep -v "(grep.*kill)|(local.*kill)" > ${TEMP_FILE}
 
 	# Trim the file, if needed, to get rid of prior kill requests.
-	if grep "$KILL_REQUEST_FOUND_TEXT" $TEMP_FILE >/dev/null 2>&1; then
-		local SPLIT_LINE=`grep -n "$KILL_REQUEST_FOUND_TEXT" $TEMP_FILE | tail -1 | cut -f1 -d':'`
-		local TEMP_FILE2=`mktemp $TEMP_FILE.XXXXXX`
-		local NUM_LINES=`cat $TEMP_FILE | wc -l`
-		local SKIP_LINES=`echo $NUM_LINES-$SPLIT_LINE-1 | bc`
-		tail -$SKIP_LINES $TEMP_FILE > $TEMP_FILE2
-		mv -f $TEMP_FILE2 $TEMP_FILE		
+	if grep "${KILL_REQUEST_FOUND_TEXT}" ${TEMP_FILE} >/dev/null 2>&1; then
+		local SPLIT_LINE=`grep -n "${KILL_REQUEST_FOUND_TEXT}" ${TEMP_FILE} | tail -1 | cut -f1 -d':'`
+		local TEMP_FILE2=`mktemp ${TEMP_FILE}.XXXXXX`
+		local NUM_LINES=`cat ${TEMP_FILE} | wc -l`
+		local SKIP_LINES=`echo ${NUM_LINES}-${SPLIT_LINE}-1 | bc`
+		tail -${SKIP_LINES} ${TEMP_FILE} > ${TEMP_FILE2}
+		mv -f ${TEMP_FILE2} ${TEMP_FILE}		
 	fi
 
 	local RETURN_VALUE=1
 
-	if cat $TEMP_FILE | tail -n $NUMBER_OF_LINES  | grep '^KILL_ME_PLEASE'
+	if cat ${TEMP_FILE} | tail -n ${NUMBER_OF_LINES}  | grep '^KILL_ME_PLEASE'
 	then
-		echo "$KILL_REQUEST_FOUND_TEXT"
+		echo "${KILL_REQUEST_FOUND_TEXT}"
 		REMOTE_RESULT=$(tail -n ${NUMBER_OF_LINES} ${TEMP_FILE} | grep '^KILL_ME_PLEASE' | tail -n1 | cut -f2- -d':')
 		RETURN_VALUE=0
 	fi
 	
-	rm -f $TEMP_FILE
+	rm -f ${TEMP_FILE}
 
-	return $RETURN_VALUE
+	return ${RETURN_VALUE}
 }
 
 BUILD_METHOD=
 function execute_build()
 {
-	build_history_entry "begin:build:$BUILD_METHOD"
+	build_history_entry "begin:build:${BUILD_METHOD}"
 	# Disable the auto-exit on errors, since the build may fail, and we
 	# want to have real results from both builds.
 	set +e
 	echo "Command line to execute on remote:"
-	echo "ssh ${OW_BUILD_USER}@${MACHINE_NAME} bash -x ${OW_BUILD_SCRIPT} ${OW_SOURCE_DIR}/build/automated/data/${CONFIG_FILE_NAME} ${BUILD_METHOD} $SAVED_COMMAND_LINE"
+	echo "ssh ${OW_BUILD_USER}@${MACHINE_NAME} bash -x ${OW_BUILD_SCRIPT} ${OW_SOURCE_DIR}/build/automated/data/${CONFIG_FILE_NAME} ${BUILD_METHOD} ${SAVED_COMMAND_LINE}"
 	# We're safe to execute their chosen build script now.
-	ssh ${OW_BUILD_USER}@${MACHINE_NAME} ${USABLE_SHELL} -x ${OW_BUILD_SCRIPT} ${OW_SOURCE_DIR}/build/automated/data/${CONFIG_FILE_NAME} ${BUILD_METHOD} $SAVED_COMMAND_LINE &
+	ssh ${OW_BUILD_USER}@${MACHINE_NAME} ${USABLE_SHELL} -x ${OW_BUILD_SCRIPT} ${OW_SOURCE_DIR}/build/automated/data/${CONFIG_FILE_NAME} ${BUILD_METHOD} ${SAVED_COMMAND_LINE} &
 	local killed=0
 
 	while ps $! 2>/dev/null >/dev/null
@@ -201,15 +201,15 @@ function execute_build()
 	RESULTS=$?
 	# If the remote process was killed (by request), use the value specified in
 	# the results instead of the return value (which will show an error).
-	if [ "x$killed" != "x0" ]
+	if [ "x${killed}" != "x0" ]
 	then
 		local LOG_FILE=${LOG_DIRECTORY}/${MACHINE_NAME}.log
 		RESULTS=${REMOTE_RESULT}
-		RESULTS=$(echo $RESULTS)
+		RESULTS=$(echo ${RESULTS})
 	fi
 	echo "Remote execution finished."
 	set -e
-	build_history_entry "end:build:$BUILD_METHOD:$RESULTS"
+	build_history_entry "end:build:${BUILD_METHOD}:${RESULTS}"
 }
 
 if build_release; then
@@ -217,14 +217,14 @@ if build_release; then
 	# Perform the release build
 	BUILD_METHOD=release
 	execute_build 
-	RELEASE_RESULTS=$RESULTS
+	RELEASE_RESULTS=${RESULTS}
 
 	############################################################################
 	#
 	# 5.release Output the return value.
 	#
 	############################################################################
-	if [ "$RELEASE_RESULTS" != "0" ]
+	if [ "${RELEASE_RESULTS}" != "0" ]
 	then
   	echo "${MESSAGE_PREFIX_RELEASE} Remote build failed."
 		echo "${RESULTS_PREFIX_RELEASE} ${RELEASE_RESULTS}"
@@ -245,7 +245,7 @@ if build_debug ; then
 	# Build the debug build.
 	BUILD_METHOD=debug
 	execute_build 
-	DEBUG_RESULTS=$RESULTS
+	DEBUG_RESULTS=${RESULTS}
 
 
 	############################################################################
@@ -253,7 +253,7 @@ if build_debug ; then
 	# 5.debug Output the return value.
 	#
 	############################################################################
-	if [ "$DEBUG_RESULTS" != "0" ]
+	if [ "${DEBUG_RESULTS}" != "0" ]
 	then
 	  echo "${MESSAGE_PREFIX_DEBUG} Remote build failed."
 	  echo "${RESULTS_PREFIX_DEBUG} ${DEBUG_RESULTS}"

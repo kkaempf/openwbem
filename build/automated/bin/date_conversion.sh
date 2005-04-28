@@ -43,35 +43,35 @@
 #                                                 ;  hours+min. (HHMM)
 
 
-DATE_TEXT="$1"
+DATE_TEXT="${1}"
 
 # First, replace any spaces or tabs with a single space.
-DATE_TEXT=`echo "$DATE_TEXT" | sed 's/\s/ /g' | sed 's/\s\+/ /g'`
+DATE_TEXT=`echo "${DATE_TEXT}" | sed 's/\s/ /g' | sed 's/\s\+/ /g'`
 
 # Now, we need to get rid of all optional fields that serve no purpose (DOW).
-DATE_TEXT=`echo "$DATE_TEXT" | sed -n 's/.*\(Mon,\|Tue,\|Wed,\|Thu,\|Fri,\|Sat,\|Sun,\)\(.*\)/\2/p'`
+DATE_TEXT=`echo "${DATE_TEXT}" | sed -n 's/.*\(Mon,\|Tue,\|Wed,\|Thu,\|Fri,\|Sat,\|Sun,\)\(.*\)/\2/p'`
 
 # Remove any leading spaces.
-DATE_TEXT=`echo "$DATE_TEXT" | sed -n 's/^\s\+\(.*\)$/\1/p'`
+DATE_TEXT=`echo "${DATE_TEXT}" | sed -n 's/^\s\+\(.*\)$/\1/p'`
 
 
-DAY=`echo "$DATE_TEXT" | cut -f1 -d' '`
-MONTH=`echo "$DATE_TEXT" | cut -f2 -d' '`
-YEAR=`echo "$DATE_TEXT" | cut -f3 -d' '`
-TIME=`echo "$DATE_TEXT" | cut -f4 -d' '`
-TIMEZONE=`echo "$DATE_TEXT" | cut -f5 -d' '`
+DAY=`echo "${DATE_TEXT}" | cut -f1 -d' '`
+MONTH=`echo "${DATE_TEXT}" | cut -f2 -d' '`
+YEAR=`echo "${DATE_TEXT}" | cut -f3 -d' '`
+TIME=`echo "${DATE_TEXT}" | cut -f4 -d' '`
+TIMEZONE=`echo "${DATE_TEXT}" | cut -f5 -d' '`
 
 
 # Find out if it is a leap year.
 LEAP_YEAR=0
-TEMP=`echo "$YEAR % 4" | bc`
-if [ "$TEMP" = "0" ]; then
+TEMP=`echo "${YEAR} % 4" | bc`
+if [ "${TEMP}" = "0" ]; then
 	# Potentially a leap year.
-	TEMP=`echo "$YEAR % 100" | bc`
-	if [ "$TEMP" = "0" ]; then
+	TEMP=`echo "${YEAR} % 100" | bc`
+	if [ "${TEMP}" = "0" ]; then
 		# Still could be a leap year (every 400 years)
-		TEMP=`echo "$YEAR % 400" | bc`
-		if [ "$TEMP" = "0" ]; then
+		TEMP=`echo "${YEAR} % 400" | bc`
+		if [ "${TEMP}" = "0" ]; then
 			LEAP_YEAR=1
 		fi
 	else
@@ -84,7 +84,7 @@ unset TEMP
 DAYS_PRIOR_TO_MONTH=(0 31 59 90 120 151 181 212 243 273 304 334)
 
 # Replace the month with the corresponding number.
-MONTH_INDEX=`echo "$MONTH" | \
+MONTH_INDEX=`echo "${MONTH}" | \
 		sed -n \
 			-e "s/Jan/0/p" \
 			-e "s/Feb/1/p" \
@@ -100,26 +100,26 @@ MONTH_INDEX=`echo "$MONTH" | \
 			-e "s/Dec/11/p"`
 
 # Calculate the current day of the year.
-DAY_OF_YEAR=`echo "${DAYS_PRIOR_TO_MONTH[$MONTH_INDEX]}+$DAY" | bc`
+DAY_OF_YEAR=`echo "${DAYS_PRIOR_TO_MONTH[${MONTH_INDEX}]}+${DAY}" | bc`
 
-if [ $MONTH_INDEX -ge 2 ]; then
-  DAY_OF_YEAR=`echo "$DAY_OF_YEAR+$LEAP_YEAR" | bc`
+if [ ${MONTH_INDEX} -ge 2 ]; then
+  DAY_OF_YEAR=`echo "${DAY_OF_YEAR}+${LEAP_YEAR}" | bc`
 fi 
 
-HOURS=`echo $TIME | cut -f1 -d':'`
-MINUTES=`echo $TIME | cut -f2 -d':'`
-SECONDS=`echo $TIME | cut -f3 -d':'`
+HOURS=`echo ${TIME} | cut -f1 -d':'`
+MINUTES=`echo ${TIME} | cut -f2 -d':'`
+SECONDS=`echo ${TIME} | cut -f3 -d':'`
 
-ADJUSTED_YEARS=$(echo "($YEAR-1970)" | bc)
+ADJUSTED_YEARS=$(echo "(${YEAR}-1970)" | bc)
 # A bad approximation.  This shoule be fixed sometime in the next 100 years.
-NUM_LEAP_YEARS=$(echo "(($ADJUSTED_YEARS + 1)/4) + ($YEAR-2001)/400 - ($YEAR-2001)/100" | bc)
-TOTAL_DAYS=$(echo "($DAY_OF_YEAR-1+$NUM_LEAP_YEARS)" | bc)
+NUM_LEAP_YEARS=$(echo "((${ADJUSTED_YEARS} + 1)/4) + (${YEAR}-2001)/400 - (${YEAR}-2001)/100" | bc)
+TOTAL_DAYS=$(echo "(${DAY_OF_YEAR}-1+${NUM_LEAP_YEARS})" | bc)
 
 # Seconds are optional, so leave them out for now, and add them in later (if
 # they were given).
-TOTAL_SECONDS=`echo "(((($ADJUSTED_YEARS*365)+$TOTAL_DAYS)*24+$HOURS)*60+$MINUTES)*60" | bc`
-if [ ! -z "$SECONDS" ]; then
-  TOTAL_SECONDS=`echo "$TOTAL_SECONDS+$SECONDS" | bc`
+TOTAL_SECONDS=`echo "((((${ADJUSTED_YEARS}*365)+${TOTAL_DAYS})*24+${HOURS})*60+${MINUTES})*60" | bc`
+if [ ! -z "${SECONDS}" ]; then
+  TOTAL_SECONDS=`echo "${TOTAL_SECONDS}+${SECONDS}" | bc`
 fi
-echo $TOTAL_SECONDS
+echo ${TOTAL_SECONDS}
 

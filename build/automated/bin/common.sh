@@ -8,31 +8,31 @@ set -e
 set -x
 
 set +u # turn off unset var error
-if [ -z "$OW_BUILD_CONFIG_FILE_ALREADY_SOURCED" ]; then
+if [ -z "${OW_BUILD_CONFIG_FILE_ALREADY_SOURCED}" ]; then
 	OW_BUILD_CONFIG_FILE_ALREADY_SOURCED=0
 fi
 
 # Treat unset variables as an error when performing parameter expansion
 set -u
 
-if [ "$OW_BUILD_CONFIG_FILE_ALREADY_SOURCED" = "0" ]; then
+if [ "${OW_BUILD_CONFIG_FILE_ALREADY_SOURCED}" = "0" ]; then
 	
-	if [ -z "$OW_BUILD_CONFIG_FILE" ]; then
-		echo "error: \$OW_BUILD_CONFIG_FILE is not set"
+	if [ -z "${OW_BUILD_CONFIG_FILE}" ]; then
+		echo "error: \${OW_BUILD_CONFIG_FILE} is not set"
 		exit 1
 	fi
 
-	if [ ! -f $OW_BUILD_CONFIG_FILE ]; then
-		echo "$OW_BUILD_CONFIG_FILE doesn't exist!"
+	if [ ! -f ${OW_BUILD_CONFIG_FILE} ]; then
+		echo "${OW_BUILD_CONFIG_FILE} doesn't exist!"
 		exit 1
 	fi
 
 	# read in the config file
-	. $OW_BUILD_CONFIG_FILE
+	. ${OW_BUILD_CONFIG_FILE}
 	OW_BUILD_CONFIG_FILE_ALREADY_SOURCED=1
 
-	if echo "$PATH" | grep -v $OW_BUILD_BIN_DIR; then
-		PATH="$OW_BUILD_BIN_DIR:$PATH"
+	if echo "${PATH}" | grep -v ${OW_BUILD_BIN_DIR}; then
+		PATH="${OW_BUILD_BIN_DIR}:${PATH}"
 	fi
 	
 fi

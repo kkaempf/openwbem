@@ -42,24 +42,24 @@ term_handler_execute()
 	# Save the old trap handlers
 	# =====================================================================
 	TRAP_LOCAL_REENABLE_SCRIPT=/tmp/trap_commands-$$.sh
-	trap > $TRAP_LOCAL_REENABLE_SCRIPT
+	trap > ${TRAP_LOCAL_REENABLE_SCRIPT}
 
-	cat $TRAP_LOCAL_REENABLE_SCRIPT
+	cat ${TRAP_LOCAL_REENABLE_SCRIPT}
 
 	# =====================================================================
 	# Save any preexisting exit handler.
 	# =====================================================================
-	TRAP_EXIT_HANDLER_RESTORE=`grep EXIT $TRAP_LOCAL_REENABLE_SCRIPT`
+	TRAP_EXIT_HANDLER_RESTORE=`grep EXIT ${TRAP_LOCAL_REENABLE_SCRIPT}`
 
 	# Remove the temporary file.
-	rm -f $TRAP_LOCAL_REENABLE_SCRIPT
+	rm -f ${TRAP_LOCAL_REENABLE_SCRIPT}
 
 	# Unset the existing trap handlers for TERM INT HUP EXIT (ignore them).
 	trap "" TERM INT HUP EXIT PIPE ALRM ABRT
 
 	# The default action is to send the term signal.
 	TERM_SIGNAL=term
-	if [ $TRAP_LOCAL_ERROR_CODE -eq 0 ]
+	if [ ${TRAP_LOCAL_ERROR_CODE} -eq 0 ]
 	then
 		TRAP_LOCAL_ERROR_CODE=127
 	else
@@ -67,8 +67,8 @@ term_handler_execute()
 		# signals, add a case for them.  Otherwise, they will get the
 		# TERM signal. 
 		local TRAP_NUMBER
-		let "TRAP_NUMBER=$TRAP_LOCAL_ERROR_CODE-128"
-		case $TRAP_LOCAL_ERROR_CODE in 
+		let "TRAP_NUMBER=${TRAP_LOCAL_ERROR_CODE}-128"
+		case ${TRAP_LOCAL_ERROR_CODE} in 
 			1 ) TERM_SIGNAL=hup ;;  ## Hangup
 			2 ) TERM_SIGNAL=term ;; ## Interrupt
 			5 ) TERM_SIGNAL=trap ;; ## Trap
@@ -78,20 +78,20 @@ term_handler_execute()
 			15) TERM_SIGNAL=term ;; ## Term
 		esac
 	fi
-	echo "TERM_SIGNAL=$TERM_SIGNAL"
+	echo "TERM_SIGNAL=${TERM_SIGNAL}"
 
 
 
 	# =====================================================================
 	# Run a script, function, or other command before killing the subprocesses.
 	# =====================================================================
-	if [ ! -z "$TERM_HANDLER_COMMAND1" ]
+	if [ ! -z "${TERM_HANDLER_COMMAND1}" ]
 	then
 		# Restore most of the settings (not the -e).
-		set -$TRAP_LOCAL_SETTINGS
+		set -${TRAP_LOCAL_SETTINGS}
 		set +e
 		# Run their command or function.
-		eval "$TERM_HANDLER_COMMAND1"
+		eval "${TERM_HANDLER_COMMAND1}"
 		TRAP_LOCAL_ERROR_CODE=$?
 		set +u
 	else
@@ -103,11 +103,11 @@ term_handler_execute()
 	# =====================================================================
 
 	# Kill the subprocesses (at least, send a kill request).
-	if [ -n "$TERM_SIGNAL" ]; then
-		echo "Sending $TERM_SIGNAL signal to all subprocesses"
+	if [ -n "${TERM_SIGNAL}" ]; then
+		echo "Sending ${TERM_SIGNAL} signal to all subprocesses"
 		# If the shell doesn't understand the kill -SIGNAL syntax, use
 		# the default kill.
-		kill -$TERM_SIGNAL 0 2>/dev/null || kill 0
+		kill -${TERM_SIGNAL} 0 2>/dev/null || kill 0
 	else
 		echo "Sending term signal to all subprocesses"
 		kill 0
@@ -119,28 +119,28 @@ term_handler_execute()
 	# =====================================================================
 	# Run a script, function, or other command (the subprocesses should be dead).
 	# =====================================================================
-	if [ ! -z "$TERM_HANDLER_COMMAND2" ]
+	if [ ! -z "${TERM_HANDLER_COMMAND2}" ]
 	then
 		# Restore most of the settings (not the -e).
-		set -$TRAP_LOCAL_SETTINGS
+		set -${TRAP_LOCAL_SETTINGS}
 		set +e
 		# Run their command or function.
-		eval "$TERM_HANDLER_COMMAND2"
+		eval "${TERM_HANDLER_COMMAND2}"
 		TRAP_LOCAL_ERROR_CODE=$?
 		set +u
 	else
 		echo "(Term Handler) Subprocesses killed."
 	fi
 
-	if [ -z "$INSIDE_SAFE_EXECUTE_DO_NOT_EXIT" ]
+	if [ -z "${INSIDE_SAFE_EXECUTE_DO_NOT_EXIT}" ]
 	then
 		# Unset (to the defaults) the SIG, INT, HUP signals
 		trap - TERM INT HUP PIPE ALRM ABRT
 
 		# Restore the exit handler
-		if [ "x$TRAP_EXIT_HANDLER_RESTORE" != "x" ]
+		if [ "x${TRAP_EXIT_HANDLER_RESTORE}" != "x" ]
 		then
-			eval "$TRAP_EXIT_HANDLER_RESTORE"
+			eval "${TRAP_EXIT_HANDLER_RESTORE}"
 		else
 			trap - EXIT
 		fi
@@ -148,18 +148,18 @@ term_handler_execute()
 		# =====================================================================
 		# Exit with an appropriate error code
 		# =====================================================================
-		exit $TRAP_LOCAL_ERROR_CODE	
+		exit ${TRAP_LOCAL_ERROR_CODE}	
 	else
 		# Restore the exit handler
-		if [ ! -z "x$TRAP_EXIT_HANDLER_RESTORE" ]
+		if [ ! -z "x${TRAP_EXIT_HANDLER_RESTORE}" ]
 		then
-			eval "$TRAP_EXIT_HANDLER_RESTORE"
+			eval "${TRAP_EXIT_HANDLER_RESTORE}"
 		else
 			trap - EXIT
 		fi
 
-		set -$TRAP_LOCAL_SETTINGS
-		return $TRAP_LOCAL_ERROR_CODE
+		set -${TRAP_LOCAL_SETTINGS}
+		return ${TRAP_LOCAL_ERROR_CODE}
 	fi
 } # term_handler_execute()
 
@@ -180,10 +180,10 @@ safe_execute_noexit()
 	set +e
 	wait $!
 	safe_execute_result=$?
-	set -$foo
-	echo "Finished executing '$@'. (error code $safe_execute_result)"
+	set -${foo}
+	echo "Finished executing '$@'. (error code ${safe_execute_result})"
 	unset INSIDE_SAFE_EXECUTE_DO_NOT_EXIT
-	return $safe_execute_result
+	return ${safe_execute_result}
 } 
 
 # Execute a program in the background, and wait on it.  This is needed to
@@ -196,9 +196,9 @@ safe_execute()
 	set +e
 	wait $!
 	safe_execute_result=$?
-	set -$foo
-	echo "Finished executing '$@'. (error code $safe_execute_result)"
-	return $safe_execute_result
+	set -${foo}
+	echo "Finished executing '$@'. (error code ${safe_execute_result})"
+	return ${safe_execute_result}
 } 
 
 # This function should rarely be used (the cron build script, where output must

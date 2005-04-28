@@ -30,10 +30,10 @@ recreate_environment()
 		let "current_param_number=1"
 		while [ $# -gt 0 ]
 		do
-			if echo "$1" | grep "=" > /dev/null
+			if echo "${1}" | grep "=" > /dev/null
 			then
-				LOCAL_VAR="`echo \"$1\" | cut -f1 -d'='`"
-				LOCAL_VALUE="`echo \"$1\" | cut -f2- -d'='`"
+				LOCAL_VAR="`echo \"${1}\" | cut -f1 -d'='`"
+				LOCAL_VALUE="`echo \"${1}\" | cut -f2- -d'='`"
 # FIXME! Debug output
 				echo "Setting ${LOCAL_VAR} to ${LOCAL_VALUE}"
 ####
@@ -42,7 +42,7 @@ recreate_environment()
 				unset LOCAL_VAR
 				unset LOCAL_VALUE
 			else
-				PARAMETERS[${current_param_number}]="$1"
+				PARAMETERS[${current_param_number}]="${1}"
 				let "current_param_number+=1"
 			fi  
 			shift

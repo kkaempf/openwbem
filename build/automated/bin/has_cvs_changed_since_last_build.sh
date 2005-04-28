@@ -12,10 +12,10 @@
 # changed.
 #
 # INPUT:
-#  $BUILD_DATE_FILE - the filename of a file which contains the date the last 
+#  ${BUILD_DATE_FILE} - the filename of a file which contains the date the last 
 #   build was run. The date should be in rfc 822 format (date -R)
-#  $BRANCH - The branch to examine.  If not set, then HEAD will be used.
-#  $COMMIT_DATE_FILE - the filename containing the last commit dates
+#  ${BRANCH} - The branch to examine.  If not set, then HEAD will be used.
+#  ${COMMIT_DATE_FILE} - the filename containing the last commit dates
 #
 # The current working directory must be the root of the cvs repository 
 #  checkout.
@@ -25,58 +25,58 @@
 # Side effects: None
 
 # Set the minimum time between a commit and a build at 15 minutes.
-if [ -z "$MINIMUM_COMMIT_AGE" ]; then
+if [ -z "${MINIMUM_COMMIT_AGE}" ]; then
 	echo "MINIMUM_COMMIT_AGE env var not set.  Using default."
 	MINIMUM_COMMIT_AGE=900
 fi
 
 set -x
 
-if [ -z "$BUILD_DATE_FILE" ]; then
+if [ -z "${BUILD_DATE_FILE}" ]; then
 	echo "BUILD_DATE_FILE env var not set!"
 	exit 1
 fi
 
-if [ -z "$COMMIT_DATE_FILE" ]; then
+if [ -z "${COMMIT_DATE_FILE}" ]; then
 	echo "COMMIT_DATE_FILE env var not set!"
 	exit 1
 fi
 
-if [ -f "$BUILD_DATE_FILE" ]; then
+if [ -f "${BUILD_DATE_FILE}" ]; then
 	:
 else
-	echo "WARNING: BUILD_DATE_FILE=$BUILD_DATE_FILE doesn't exist. Doing a build."
+	echo "WARNING: BUILD_DATE_FILE=${BUILD_DATE_FILE} doesn't exist. Doing a build."
 	exit 0
 fi
 
 
 TAG_TO_USE=
-if [ "x$BRANCH" = "x" ]; then
+if [ "x${BRANCH}" = "x" ]; then
 	BRANCHOPT="-b"
 	echo "WARNING: No branch specified when checking for changes.  Using HEAD."
 	TAG_TO_USE=HEAD
 else
-	BRANCHOPT="-r$BRANCH"
-	TAG_TO_USE=$BRANCH
+	BRANCHOPT="-r${BRANCH}"
+	TAG_TO_USE=${BRANCH}
 fi
 
-if grep "^$TAG_TO_USE" $BUILD_DATE_FILE >/dev/null 2>/dev/null; then
-	LAST_BUILD_DATE=`grep $TAG_TO_USE $BUILD_DATE_FILE | tail -n1 | cut -f2- -d' '`
+if grep "^${TAG_TO_USE}" ${BUILD_DATE_FILE} >/dev/null 2>/dev/null; then
+	LAST_BUILD_DATE=`grep ${TAG_TO_USE} ${BUILD_DATE_FILE} | tail -n1 | cut -f2- -d' '`
 else
-	echo "WARNING: Branch $TAG_TO_USE was not found in $BUILD_DATE_FILE.  Doing a build."
+	echo "WARNING: Branch ${TAG_TO_USE} was not found in ${BUILD_DATE_FILE}.  Doing a build."
 	exit 0
 fi
 
 # This check method is no longer used, and is here only for reference.
 old_check_method()
 {
-	NUM_CHANGES_SINCE_LAST_BUILD=`cvs -q log -d">$LAST_BUILD_DATE" -N "$BRANCHOPT" | grep 'selected revisions: [^0]' | wc -l`
-	NUM_RECENT_CHANGES=`cvs -q log -d">15 minutes ago" -N "$BRANCHOPT" | grep 'selected revisions: [^0]' | wc -l`
+	NUM_CHANGES_SINCE_LAST_BUILD=`cvs -q log -d">${LAST_BUILD_DATE}" -N "${BRANCHOPT}" | grep 'selected revisions: [^0]' | wc -l`
+	NUM_RECENT_CHANGES=`cvs -q log -d">15 minutes ago" -N "${BRANCHOPT}" | grep 'selected revisions: [^0]' | wc -l`
 
-	echo "NUM_CHANGES_SINCE_LAST_BUILD=$NUM_CHANGES_SINCE_LAST_BUILD"
-	echo "NUM_RECENT_CHANGES=$NUM_RECENT_CHANGES"
+	echo "NUM_CHANGES_SINCE_LAST_BUILD=${NUM_CHANGES_SINCE_LAST_BUILD}"
+	echo "NUM_RECENT_CHANGES=${NUM_RECENT_CHANGES}"
 
-	if [ "$NUM_CHANGES_SINCE_LAST_BUILD" -gt 0 ] && [ "$NUM_RECENT_CHANGES" -eq 0 ]; then
+	if [ "${NUM_CHANGES_SINCE_LAST_BUILD}" -gt 0 ] && [ "${NUM_RECENT_CHANGES}" -eq 0 ]; then
 		exit 0
 	else
 		exit 1
@@ -97,33 +97,33 @@ old_check_method()
 
 CVS_SERVER=`cat CVS/Root | cut -f3 -d':'`
 CVS_DIR=`cat CVS/Root | cut -f4 -d':'`
-scp $CVS_SERVER:$CVS_DIR/CVSROOT/`basename "$COMMIT_DATE_FILE"` "$COMMIT_DATE_FILE"
+scp ${CVS_SERVER}:${CVS_DIR}/CVSROOT/`basename "${COMMIT_DATE_FILE}"` "${COMMIT_DATE_FILE}"
 
 CVS_HAS_CHANGED=0
 
-if grep "^${TAG_TO_USE}:" "$COMMIT_DATE_FILE" >/dev/null 2>/dev/null; then
-	LAST_COMMIT_DATE=`grep $TAG_TO_USE $COMMIT_DATE_FILE | tail -n1 | cut -f2- -d' '`
+if grep "^${TAG_TO_USE}:" "${COMMIT_DATE_FILE}" >/dev/null 2>/dev/null; then
+	LAST_COMMIT_DATE=`grep ${TAG_TO_USE} ${COMMIT_DATE_FILE} | tail -n1 | cut -f2- -d' '`
 else
-	echo "WARNING: Branch $TAG_TO_USE has never had a commit. Not building."
+	echo "WARNING: Branch ${TAG_TO_USE} has never had a commit. Not building."
 	exit 1
 fi
 
-LAST_BUILD_SECONDS=`date_conversion.sh "$LAST_BUILD_DATE"`
-LAST_COMMIT_SECONDS=`date_conversion.sh "$LAST_COMMIT_DATE"`
-REMOTE_TIME=`ssh $CVS_SERVER date -R`
-CURRENT_TIME=`date_conversion.sh "$REMOTE_TIME"`
+LAST_BUILD_SECONDS=`date_conversion.sh "${LAST_BUILD_DATE}"`
+LAST_COMMIT_SECONDS=`date_conversion.sh "${LAST_COMMIT_DATE}"`
+REMOTE_TIME=`ssh ${CVS_SERVER} date -R`
+CURRENT_TIME=`date_conversion.sh "${REMOTE_TIME}"`
 
-BUILD_AGE=`echo "$CURRENT_TIME-$LAST_BUILD_SECONDS" | bc`
-COMMIT_AGE=`echo "$CURRENT_TIME-$LAST_COMMIT_SECONDS" | bc`
-TIME_DIFFERENCE=`echo "$LAST_COMMIT_SECONDS-$LAST_BUILD_SECONDS" | bc`
+BUILD_AGE=`echo "${CURRENT_TIME}-${LAST_BUILD_SECONDS}" | bc`
+COMMIT_AGE=`echo "${CURRENT_TIME}-${LAST_COMMIT_SECONDS}" | bc`
+TIME_DIFFERENCE=`echo "${LAST_COMMIT_SECONDS}-${LAST_BUILD_SECONDS}" | bc`
 if [ $? -ne 0 ]; then
 	echo "Failed to calculate time difference..."
 	exit 1
 fi
 
-if [ $TIME_DIFFERENCE -gt 0 ]; then
+if [ ${TIME_DIFFERENCE} -gt 0 ]; then
 	# A commit has occurred after the last build happened.
-	if [ $COMMIT_AGE -gt $MINIMUM_COMMIT_AGE ]; then
+	if [ ${COMMIT_AGE} -gt ${MINIMUM_COMMIT_AGE} ]; then
 		# The last commit
 		exit 0
 	else
@@ -131,6 +131,6 @@ if [ $TIME_DIFFERENCE -gt 0 ]; then
 		exit 1
 	fi
 else
-	echo "Last build happened $BUILD_AGE seconds ago ($TIME_DIFFERENCE seconds after the last commit)"
+	echo "Last build happened ${BUILD_AGE} seconds ago (${TIME_DIFFERENCE} seconds after the last commit)"
 	exit 1
 fi

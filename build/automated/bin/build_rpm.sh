@@ -75,46 +75,46 @@ GetPlatformInformation()
 		OSVER=UNKNOWN
 		RELEASE_PREFIX=unk
 	fi
-	local OSVER_WITH_SPACES=`echo $OSVER | tr '[.]' '[ ]'`
-	OS_MAJOR=`echo $OSVER_WITH_SPACES | awk '{ print $1; }'`
-	OS_MINOR=`echo $OSVER_WITH_SPACES | awk '{ print $2; }'`
-	OS_MICRO=`echo $OSVER_WITH_SPACES | awk '{ print $3; }'`
+	local OSVER_WITH_SPACES=`echo ${OSVER} | tr '[.]' '[ ]'`
+	OS_MAJOR=`echo ${OSVER_WITH_SPACES} | awk '{ print ${1}; }'`
+	OS_MINOR=`echo ${OSVER_WITH_SPACES} | awk '{ print ${2}; }'`
+	OS_MICRO=`echo ${OSVER_WITH_SPACES} | awk '{ print ${3}; }'`
 	# Assume (for now) that all versions with the same major number will work.
-	RELEASE_TEXT=`echo $RELEASE_PREFIX$OS_MAJOR`
-	[ "$OSVEND" = "RedHat" ] && [ "$OSVER" = "2.1AS" ] && RELEASE_TEXT="rhas21" || true
+	RELEASE_TEXT=`echo ${RELEASE_PREFIX}${OS_MAJOR}`
+	[ "${OSVEND}" = "RedHat" ] && [ "${OSVER}" = "2.1AS" ] && RELEASE_TEXT="rhas21" || true
 }
 
-OW_STAGE_DIR=$LOCAL_BUILD_DIR/owstage
+OW_STAGE_DIR=${LOCAL_BUILD_DIR}/owstage
 
 #install some things specific to the linux rpm
-cd $LOCAL_BUILD_DIR/$OW_CVS_MODULE
+cd ${LOCAL_BUILD_DIR}/${OW_CVS_MODULE}
 
-install -d $OW_STAGE_DIR/etc/init.d
-install etc/init/owcimomd $OW_STAGE_DIR/etc/init.d/owcimomd
-install -d $OW_STAGE_DIR/etc/init.d
-install -d $OW_STAGE_DIR/etc/pam.d
-install etc/pam.d/openwbem $OW_STAGE_DIR/etc/pam.d/openwbem
+install -d ${OW_STAGE_DIR}/etc/init.d
+install etc/init/owcimomd ${OW_STAGE_DIR}/etc/init.d/owcimomd
+install -d ${OW_STAGE_DIR}/etc/init.d
+install -d ${OW_STAGE_DIR}/etc/pam.d
+install etc/pam.d/openwbem ${OW_STAGE_DIR}/etc/pam.d/openwbem
 
-install -d $OW_STAGE_DIR/var$OW_PREFIX/openwbem
-install -d $OW_STAGE_DIR/$OW_PREFIX/libexec/openwbem
-install -d $OW_STAGE_DIR/var$OW_PREFIX/openwbem
-install -d $OW_STAGE_DIR/$OW_PREFIX/libexec/openwbem
+install -d ${OW_STAGE_DIR}/var${OW_PREFIX}/openwbem
+install -d ${OW_STAGE_DIR}/${OW_PREFIX}/libexec/openwbem
+install -d ${OW_STAGE_DIR}/var${OW_PREFIX}/openwbem
+install -d ${OW_STAGE_DIR}/${OW_PREFIX}/libexec/openwbem
 
-# $LOCAL_BUILD_DIR/owstage has OW & our providers installed into it
-cd $LOCAL_BUILD_DIR
+# ${LOCAL_BUILD_DIR}/owstage has OW & our providers installed into it
+cd ${LOCAL_BUILD_DIR}
 
 for x in SOURCES BUILD SRPMS RPMS
 do
 	# Clear out the old rpms, if they exist.
-	rm -rf $RPM_BUILD_DIR/$x
-	mkdir -p $RPM_BUILD_DIR/$x
+	rm -rf ${RPM_BUILD_DIR}/${x}
+	mkdir -p ${RPM_BUILD_DIR}/${x}
 done
 
 GetPlatformInformation
-export OW_RELEASE_TEXT=$RELEASE_TEXT
+export OW_RELEASE_TEXT=${RELEASE_TEXT}
 
 # rpm requires a source even if it's not used, so create one.
-tar czvf $RPM_BUILD_DIR/SOURCES/openwbem.tgz -C $OW_STAGE_DIR .
+tar czvf ${RPM_BUILD_DIR}/SOURCES/openwbem.tgz -C ${OW_STAGE_DIR} .
 
 
 RPMBUILD=
@@ -125,14 +125,14 @@ else
 	RPMBUILD=rpm
 fi
 
-rm -rf $RPM_BUILD_DIR/RPMS/{ppc,i386,i486,i586,i686}
+rm -rf ${RPM_BUILD_DIR}/RPMS/{ppc,i386,i486,i586,i686}
 
-$RPMBUILD -bb --define "_topdir ${RPM_BUILD_DIR}" $OW_BUILD_DATA_DIR/openwbem.spec
+${RPMBUILD} -bb --define "_topdir ${RPM_BUILD_DIR}" ${OW_BUILD_DATA_DIR}/openwbem.spec
 
-rm -rf $LOCAL_BUILD_DIR/packages
-mkdir $LOCAL_BUILD_DIR/packages
-cp $RPM_BUILD_DIR/RPMS/*/*rpm $LOCAL_BUILD_DIR/packages
-echo "OW_OUTPUT_DIRECTORY_RELEASE=$LOCAL_BUILD_DIR/packages"
-echo "OW_OUTPUT_DIRECTORY_DEBUG=$LOCAL_BUILD_DIR/packages"
+rm -rf ${LOCAL_BUILD_DIR}/packages
+mkdir ${LOCAL_BUILD_DIR}/packages
+cp ${RPM_BUILD_DIR}/RPMS/*/*rpm ${LOCAL_BUILD_DIR}/packages
+echo "OW_OUTPUT_DIRECTORY_RELEASE=${LOCAL_BUILD_DIR}/packages"
+echo "OW_OUTPUT_DIRECTORY_DEBUG=${LOCAL_BUILD_DIR}/packages"
 
 
