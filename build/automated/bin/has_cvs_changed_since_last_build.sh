@@ -97,7 +97,7 @@ old_check_method()
 
 CVS_SERVER=`cat CVS/Root | sed 's/.*@\([^:]*\):.*/\1/'`
 CVS_DIR=`cat CVS/Root | sed 's/.*:\(.*\)$/\1/'`
-scp $CVS_SERVER:CVS_DIR/CVSROOT/`basename "$COMMIT_DATE_FILE"` "$COMMIT_DATE_FILE"
+scp $CVS_SERVER:$CVS_DIR/CVSROOT/`basename "$COMMIT_DATE_FILE"` "$COMMIT_DATE_FILE"
 
 CVS_HAS_CHANGED=0
 
