@@ -37,31 +37,28 @@ else
 	# whith those, the build breaks (this search path comes before
 	# everything OW is building). 
   
-  # Turn off (temporarily) the -u.
-	TEMP_FLAGS=$-
-	set +u
-	CFLAGS="$CFLAGS"
-	CXXFLAGS="$CXXFLAGS"
-	if [ "x$SSL_INCLUDE_DIR" = "x" ]
+	CFLAGS="${CFLAGS:-}"
+	CXXFLAGS="${CXXFLAGS:-}"
+	if var_is_set SSL_INCLUDE_DIR
 			then
 			CPPFLAGS="$CPPFLAGS"
 	else
 			CPPFLAGS="$CPPFLAGS -I$SSL_INCLUDE_DIR"
 	fi
-	if [ "x$ZLIB_INCLUDE_DIR" = "x" ]
+	if var_is_set ZLIB_INCLUDE_DIR
 			then
 			CPPFLAGS="$CPPFLAGS"
 	else
 			CPPFLAGS="$CPPFLAGS -I$ZLIB_INCLUDE_DIR"
 	fi
 	
-	if [ "x$SSL_LIB_DIR" = "x" ]
+	if var_is_set SSL_LIB_DIR
 			then
 			LDFLAGS="$LDFLAGS"
 	else
 			LDFLAGS="$LDFLAGS -L$SSL_LIB_DIR"
 	fi
-	if [ "x$ZLIB_LIB_DIR" = "x" ]
+	if var_is_set ZLIB_LIB_DIR
 			then
 			LDFLAGS="$LDFLAGS"
 	else
@@ -69,8 +66,6 @@ else
 	fi
 	
 	export CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
-	set -$TEMP_FLAGS
-	unset TEMP_FLAGS
 fi
 
 $SHELL ./configure \

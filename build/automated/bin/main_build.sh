@@ -340,10 +340,6 @@ unset num_running cur_index
 get_results()
 {
 	[ $# -eq 3 ] || return 1
-	local temp_flags=$-
-
-	# Don't bail if any of the commands in this function fail.
-	set +e
 	
 	local log_file=$1
 	local machine_name=$2
@@ -381,7 +377,6 @@ get_results()
 
 	echo $result
 
-	set -$temp_flags
 	return 0
 }
 

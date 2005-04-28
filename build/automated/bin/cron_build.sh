@@ -48,11 +48,7 @@ LocateBuildSystem()
 
 UpdateBuildSystem()
 {
-	# Now that the build system has been located, update it.
-	UBS_FLAGS=$-
-	set -x
-
-	if [ "x$BUILD_SYSTEM_UPDATED" != "xtrue" ]
+	if [ "${BUILD_SYSTEM_UPDATED:-x}" != "xtrue" ]
 	then
 		export CVS_RSH=ssh
 		cd $PATH_TO_BUILD_SYSTEM
@@ -64,8 +60,6 @@ UpdateBuildSystem()
 		cd bin
 		exec $0 $@
 	fi
-	set -$UBS_FLAGS
-	unset $UBS_FLAGS
 }
 
 SourceConfigFile()

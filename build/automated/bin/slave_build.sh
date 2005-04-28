@@ -32,26 +32,19 @@ shift 2
 # the config file is sourced.
 GetSourceDirectory()
 {
-	LBS_FLAGS=$-
-	set +e
-	if [ -e ./$0 ]
+	if [ -f ./$0 ]
 	then
 		MY_DIR=`pwd`/`dirname $0`
-	elif [ -e `dirname $0`/$0 ]
-	then
-		MY_DIR=`dirname $0`
-	elif which $0 >/dev/null 2>/dev/null
+	elif [ -f "`which $0`" ] >/dev/null 2>/dev/null
 	then
 		temp=`which $0`
 		MY_DIR=`dirname $temp`
 		unset temp
 	else
-		echo "I can't locate myself!  PWD=" `pwd` ", \$0=$0"
-		exit 1
+		Abort "I can't locate myself!  PWD=" `pwd` ", \$0=$0"
 	fi
+
 	OW_SOURCE_DIR=$MY_DIR/../../..
-	set -$LBS_FLAGS
-	unset LBS_FLAGS
 }
 GetSourceDirectory
 
@@ -145,18 +138,14 @@ fi
 strip_files()
 {
 	if var_is_set OW_STRIP_FLAGS || var_is_set OW_STRIP_PROGRAM; then
-		local strip_files_old_flags=$-
-		set +e
-		set +u
 		for file; do
 			echo "Stripping ${file}..."
 			if var_is_set OW_STRIP_PROGRAM; then
-				${OW_STRIP_PROGRAM} ${OW_STRIP_FLAGS} ${file}
+				${OW_STRIP_PROGRAM} ${OW_STRIP_FLAGS:-} ${file} || true
 			else
-				strip ${OW_STRIP_FLAGS} ${file}
+				strip ${OW_STRIP_FLAGS:-} ${file} || true
 			fi
 		done
-		set -$strip_files_old_flags
 	else
 		echo "No strip flags known: Unable to strip ${@}"
 	fi

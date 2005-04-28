@@ -1,7 +1,5 @@
 #!/bin/sh -x
 
-set
-
 . common.sh
 
 # NOTES:
