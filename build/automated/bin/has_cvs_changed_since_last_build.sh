@@ -110,7 +110,7 @@ fi
 
 LAST_BUILD_SECONDS=`date_conversion.sh "$LAST_BUILD_DATE"`
 LAST_COMMIT_SECONDS=`date_conversion.sh "$LAST_COMMIT_DATE"`
-REMOTE_TIME=`ssh cvs date -R`
+REMOTE_TIME=`ssh $CVS_SERVER date -R`
 CURRENT_TIME=`date_conversion.sh "$REMOTE_TIME"`
 
 BUILD_AGE=`echo "$CURRENT_TIME-$LAST_BUILD_SECONDS" | bc`
