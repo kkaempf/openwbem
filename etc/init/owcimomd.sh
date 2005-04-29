@@ -17,7 +17,6 @@
 
 NAME=owcimomd
 SBINDIR=@sbindir@
-#SBINDIR=/opt/vintela/vmx/sbin
 DAEMON=$SBINDIR/$NAME
 OPTIONS=
 DESCRIPTIVE=
@@ -439,7 +438,7 @@ OW_CreateCronEntry()
 	if temp_file=`OW_MakeTemp /tmp/root_cronXXXXXX`; then
 		if crontab -l -u root >/dev/null 2>&1; then
 			[ $QUIET_OPT -eq 1 ] || echo "Adding a cron entry with tag \"${local_cron_pattern}\""
-			if crontab -l -u root 2>/dev/null | sed "/# BEGIN_VINTELA_INSTALLER_TAG_${local_cron_pattern}/,/# END_VINTELA_INSTALLER_TAG_${local_cron_pattern}/d" > $temp_file; then
+			if crontab -l -u root 2>/dev/null | sed "/# BEGIN_OPENWBEM_INSTALLER_TAG_${local_cron_pattern}/,/# END_OPENWBEM_INSTALLER_TAG_${local_cron_pattern}/d" > $temp_file; then
 				:
 			else
 				[ $QUIET_OPT -eq 1 ] || echo "Filtered crontab retrieval failed: \"${local_cron_pattern}\""
@@ -451,10 +450,10 @@ OW_CreateCronEntry()
 		fi
 
 		# Create a crontab entry...
-		echo "# BEGIN_VINTELA_INSTALLER_TAG_${local_cron_pattern}" >> $temp_file
+		echo "# BEGIN_OPENWBEM_INSTALLER_TAG_${local_cron_pattern}" >> $temp_file
 		echo 'CRON_IS_RUNNING_@product_abbreviation@=1' >> $temp_file
 		echo "*/1 * * * *  " "$@" >> $temp_file
-		echo "# END_VINTELA_INSTALLER_TAG_${local_cron_pattern}" >> $temp_file
+		echo "# END_OPENWBEM_INSTALLER_TAG_${local_cron_pattern}" >> $temp_file
 
 		if crontab -u root $temp_file; then
 			results=$?
@@ -486,8 +485,8 @@ OW_RemoveCronEntry()
 	# Remove any existing crontab entry.
 	if temp_file=`OW_MakeTemp /tmp/root_cronXXXXXX`; then
 		if crontab -l -u root >/dev/null 2>&1; then
-			if crontab -l -u root 2>/dev/null | grep "BEGIN_VINTELA_INSTALLER_TAG_${local_cron_pattern}" >/dev/null 2>&1; then
-				if crontab -l -u root 2>/dev/null | sed "/# BEGIN_VINTELA_INSTALLER_TAG_${local_cron_pattern}/,/# END_VINTELA_INSTALLER_TAG_${local_cron_pattern}/d" > $temp_file ; then
+			if crontab -l -u root 2>/dev/null | grep "BEGIN_OPENWBEM_INSTALLER_TAG_${local_cron_pattern}" >/dev/null 2>&1; then
+				if crontab -l -u root 2>/dev/null | sed "/# BEGIN_OPENWBEM_INSTALLER_TAG_${local_cron_pattern}/,/# END_OPENWBEM_INSTALLER_TAG_${local_cron_pattern}/d" > $temp_file ; then
 					[ $QUIET_OPT -eq 1 ] || echo "Removing crontab entry with tag \"${local_cron_pattern}\""
 					if crontab -u root $temp_file ; then
 						results=0
