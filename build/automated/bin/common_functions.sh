@@ -227,8 +227,6 @@ function mutex_release()
 
 function build_history_entry()
 {
-	pushf bhe_flags
-	set +x
 	local separator="|"
 	local history_file=${HOME}/build_history.txt
 	local history_mutex=${history_file}.mutex
@@ -258,5 +256,4 @@ function build_history_entry()
 	else
 		echo "Unable to create history entry."
 	fi
-	popf bhe_flags
 }
