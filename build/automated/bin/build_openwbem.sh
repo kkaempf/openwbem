@@ -39,6 +39,8 @@ else
   
 	CFLAGS="${CFLAGS:-}"
 	CXXFLAGS="${CXXFLAGS:-}"
+	CPPFLAGS="${CPPFLAGS:-}"
+	LDFLAGS="${LDFLAGS:-}"
 	if var_is_set SSL_INCLUDE_DIR
 			then
 			CPPFLAGS="${CPPFLAGS}"
