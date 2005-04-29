@@ -81,11 +81,12 @@ OS=`uname -s`
 exit_handler()
 {
 	code=$?
-	set +x
 	if [ "${OS}" = "Darwin" ]
 	then
+		set +x
 		# Ensure that this gets placed on a single line (regardless of surrounding output).
 		echo -e "\nKILL_ME_PLEASE: ${code}\n"
+		set -x
 	fi
 	exit ${code}
 }
