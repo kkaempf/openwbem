@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -u
+
 # This script is meant to be sourced from another script.  It MUST be done
 # before any local overriding of the sigs TERM, INT, HUP, PIPE, or ALRM.
 #
@@ -11,7 +13,11 @@
 #     after the subprocesses are killed.
 # (3) Set an exit handler for the EXIT trap.  This will be (temporarily)
 #     cleared before sub-processes are killed, and re-enabled (if it existed)
-#     before the handler exits. 
+#     before the handler exits.
+
+# NOTE: This will not work with any shell that maintains 'sticky' flags--those
+# that are visible in $- but cannot be set or cleared.  An example of such a
+# shell is /bin/sh on HP-UX.
 
 term_handler_unexport()
 {
@@ -30,29 +36,14 @@ term_handler_execute()
 	# =====================================================================
 	TRAP_LOCAL_SETTINGS=$-
 
-	# Turn of exit on error, as some of the commands in this function may 
+	# Turn of exit on error, as some of the commands in this function may
 	# return error codes
 	set +e
-	
-	# Turn off the error on undefined, as this script uses a few externally
-	# defined variables (if they are defined).
-	set +u
-
-	# =====================================================================
-	# Save the old trap handlers
-	# =====================================================================
-	TRAP_LOCAL_REENABLE_SCRIPT=/tmp/trap_commands-$$.sh
-	trap > ${TRAP_LOCAL_REENABLE_SCRIPT}
-
-	cat ${TRAP_LOCAL_REENABLE_SCRIPT}
 
 	# =====================================================================
 	# Save any preexisting exit handler.
 	# =====================================================================
-	TRAP_EXIT_HANDLER_RESTORE=`grep EXIT ${TRAP_LOCAL_REENABLE_SCRIPT}`
-
-	# Remove the temporary file.
-	rm -f ${TRAP_LOCAL_REENABLE_SCRIPT}
+	TRAP_EXIT_HANDLER_RESTORE=`trap | grep EXIT || true`
 
 	# Unset the existing trap handlers for TERM INT HUP EXIT (ignore them).
 	trap "" TERM INT HUP EXIT PIPE ALRM ABRT
@@ -65,10 +56,10 @@ term_handler_execute()
 	else
 		# FIXME! If processes need to act differently for different
 		# signals, add a case for them.  Otherwise, they will get the
-		# TERM signal. 
+		# TERM signal.
 		local TRAP_NUMBER
 		let "TRAP_NUMBER=${TRAP_LOCAL_ERROR_CODE}-128"
-		case ${TRAP_LOCAL_ERROR_CODE} in 
+		case ${TRAP_LOCAL_ERROR_CODE} in
 			1 ) TERM_SIGNAL=hup ;;  ## Hangup
 			2 ) TERM_SIGNAL=term ;; ## Interrupt
 			5 ) TERM_SIGNAL=trap ;; ## Trap
@@ -78,24 +69,24 @@ term_handler_execute()
 			15) TERM_SIGNAL=term ;; ## Term
 		esac
 	fi
-	echo "TERM_SIGNAL=${TERM_SIGNAL}"
+	echo "TERM_SIGNAL=${TERM_SIGNAL}" >&2
 
 
 
 	# =====================================================================
 	# Run a script, function, or other command before killing the subprocesses.
 	# =====================================================================
-	if [ ! -z "${TERM_HANDLER_COMMAND1}" ]
+	if [ ! -z "${TERM_HANDLER_COMMAND1:-}" ]
 	then
 		# Restore most of the settings (not the -e).
+		set +$-
 		set -${TRAP_LOCAL_SETTINGS}
 		set +e
 		# Run their command or function.
 		eval "${TERM_HANDLER_COMMAND1}"
 		TRAP_LOCAL_ERROR_CODE=$?
-		set +u
 	else
-		echo "(Term Handler) TERM requested.  Killing subprocesses..."
+		echo "(Term Handler) TERM requested.  Killing subprocesses... (${0})" >&2
 	fi
 
 	# =====================================================================
@@ -104,12 +95,12 @@ term_handler_execute()
 
 	# Kill the subprocesses (at least, send a kill request).
 	if [ -n "${TERM_SIGNAL}" ]; then
-		echo "Sending ${TERM_SIGNAL} signal to all subprocesses"
+		echo "Sending ${TERM_SIGNAL} signal to all subprocesses (${0})" >&2
 		# If the shell doesn't understand the kill -SIGNAL syntax, use
 		# the default kill.
 		kill -${TERM_SIGNAL} 0 2>/dev/null || kill 0
 	else
-		echo "Sending term signal to all subprocesses"
+		echo "Sending term signal to all subprocesses (${0})" >&2
 		kill 0
 	fi
 
@@ -119,26 +110,26 @@ term_handler_execute()
 	# =====================================================================
 	# Run a script, function, or other command (the subprocesses should be dead).
 	# =====================================================================
-	if [ ! -z "${TERM_HANDLER_COMMAND2}" ]
+	if [ -n "${TERM_HANDLER_COMMAND2:-}" ]
 	then
 		# Restore most of the settings (not the -e).
+		set +$-
 		set -${TRAP_LOCAL_SETTINGS}
 		set +e
 		# Run their command or function.
 		eval "${TERM_HANDLER_COMMAND2}"
 		TRAP_LOCAL_ERROR_CODE=$?
-		set +u
 	else
-		echo "(Term Handler) Subprocesses killed."
+		echo "(Term Handler) Subprocesses killed (${0})." >&2
 	fi
 
-	if [ -z "${INSIDE_SAFE_EXECUTE_DO_NOT_EXIT}" ]
+	if [ "${INSIDE_SAFE_EXECUTE_DO_NOT_EXIT:-false}" = "false" ]
 	then
 		# Unset (to the defaults) the SIG, INT, HUP signals
 		trap - TERM INT HUP PIPE ALRM ABRT
 
 		# Restore the exit handler
-		if [ "x${TRAP_EXIT_HANDLER_RESTORE}" != "x" ]
+		if [ "${TRAP_EXIT_HANDLER_RESTORE:-x}" != "x" ]
 		then
 			eval "${TRAP_EXIT_HANDLER_RESTORE}"
 		else
@@ -148,16 +139,18 @@ term_handler_execute()
 		# =====================================================================
 		# Exit with an appropriate error code
 		# =====================================================================
-		exit ${TRAP_LOCAL_ERROR_CODE}	
+		exit ${TRAP_LOCAL_ERROR_CODE}
 	else
 		# Restore the exit handler
-		if [ ! -z "x${TRAP_EXIT_HANDLER_RESTORE}" ]
+		if [ -n "x${TRAP_EXIT_HANDLER_RESTORE}" ]
 		then
 			eval "${TRAP_EXIT_HANDLER_RESTORE}"
 		else
 			trap - EXIT
 		fi
 
+		# Restore the previous shell flags.
+		set +$-
 		set -${TRAP_LOCAL_SETTINGS}
 		return ${TRAP_LOCAL_ERROR_CODE}
 	fi
@@ -175,31 +168,33 @@ safe_execute_noexit()
 	# Make sure the flag isn't exported.
 	term_handler_unexport INSIDE_SAFE_EXECUTE_DO_NOT_EXIT
 	"$@" &
-	echo "Waiting for '$@' to finish."
-	local foo=$-
+	echo "Waiting for '$@' to finish." >&2
+	local sene_old_flags=$-
 	set +e
 	wait $!
 	safe_execute_result=$?
-	set -${foo}
-	echo "Finished executing '$@'. (error code ${safe_execute_result})"
+	set +$-
+	set -${sene_old_flags}
+	echo "Finished executing '$@'. (error code ${safe_execute_result})" >&2
 	unset INSIDE_SAFE_EXECUTE_DO_NOT_EXIT
 	return ${safe_execute_result}
-} 
+}
 
 # Execute a program in the background, and wait on it.  This is needed to
 # safely kill a process and have its children killed as well.
 safe_execute()
 {
 	"$@" &
-	echo "Waiting for '$@' to finish."
-	local foo=$-
+	echo "Waiting for '$@' to finish." >&2
+	local se_old_flags=$-
 	set +e
 	wait $!
 	safe_execute_result=$?
-	set -${foo}
-	echo "Finished executing '$@'. (error code ${safe_execute_result})"
+	set +$-
+	set -${se_old_flags}
+	echo "Finished executing '$@'. (error code ${safe_execute_result})" >&2
 	return ${safe_execute_result}
-} 
+}
 
 # This function should rarely be used (the cron build script, where output must
 # be emailed is an example).
@@ -212,7 +207,8 @@ disable_exit_on_signals()
 
 enable_exit_on_signals()
 {
-	INSIDE_SAFE_EXECUTE_DO_NOT_EXIT=FOOBAR
+	# You can't unset without previously setting, so we use a garbage value when required.
+	INSIDE_SAFE_EXECUTE_DO_NOT_EXIT=${INSIDE_SAFE_EXECUTE_DO_NOT_EXIT:-garbage_value}
 	unset INSIDE_SAFE_EXECUTE_DO_NOT_EXIT
 }
 
