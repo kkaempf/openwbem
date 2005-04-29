@@ -225,10 +225,16 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 			case 0:
 				break;
 			case -1:
-				sendDaemonizeStatus(DAEMONIZE_FAIL);
-				OW_THROW_ERRNO_MSG(DaemonException,
-					"FAILED TO DETACH FROM THE TERMINAL - Second fork");
-				exit(1);
+				{
+					// Save the error number, since the sendDaemonizeStatus function can cause it to change.
+					int saved_errno = errno;
+					sendDaemonizeStatus(DAEMONIZE_FAIL);
+					// Restore the real error number.
+					errno = saved_errno;
+					OW_THROW_ERRNO_MSG(DaemonException,
+						"FAILED TO DETACH FROM THE TERMINAL - Second fork");
+					exit(1);
+				}
 			default:
 				_exit(0);
 		}
@@ -249,7 +255,11 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 #if !defined(OW_NETWARE)
 	if (PidFile::writePid(pidFile.c_str()) == -1)
 	{
+		// Save the error number, since the sendDaemonizeStatus function can cause it to change.
+		int saved_errno = errno;
 		sendDaemonizeStatus(DAEMONIZE_FAIL);
+		// Restore the real error number.
+		errno = saved_errno;
 		OW_THROW_ERRNO_MSG(DaemonException,
 			Format("Failed to write the pid file (%1)", pidFile).c_str());
 	}
