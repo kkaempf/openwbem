@@ -60,21 +60,6 @@ namespace Platform
 		SHUTDOWN,
 		REINIT
 	};
-	OW_CIMOMSERVER_API struct Options
-	{
-		Options()
-		: debug(false)
-		, configFile(false)
-		, configFilePath()
-		, help(false)
-		, error(false)
-		{}
-		bool debug;
-		bool configFile;
-		String configFilePath;
-		bool help;
-		bool error;
-	};
 
 	// Forward declaration of SignalInformation
 	namespace Signal
@@ -82,7 +67,7 @@ namespace Platform
 		struct SignalInformation;
 	}
 
-	OW_CIMOMSERVER_API Options daemonInit( int argc, char* argv[] );
+	OW_CIMOMSERVER_API void daemonInit( int argc, char* argv[] );
 	/**
 	 * @throws DaemonException on error
 	 */

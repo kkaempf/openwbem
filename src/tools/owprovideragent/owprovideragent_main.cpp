@@ -59,6 +59,7 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_ProviderAgent.hpp"
 #include "OW_CIMClass.hpp"
+#include "OW_CmdLineParser.hpp"
 
 #include <exception>
 #include <iostream> // for cout
@@ -69,8 +70,27 @@ using namespace OpenWBEM;
 namespace
 {
 
-bool processCommandLine(int argc, char* argv[], const ServiceEnvironmentIFCRef& env);
-void printUsage(std::ostream& ostrm);
+	enum
+	{
+		E_HELP_OPT,
+		E_VERSION_OPT,
+		E_LIBRARY_VERSION_OPT,
+		E_DEBUG_MODE_OPT,
+		E_CONFIG_FILE_OPT
+	};
+	const CmdLineParser::Option g_options[] =
+		{
+			{E_HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options and exit"},
+			{E_VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information and exit"},
+			{E_LIBRARY_VERSION_OPT, 'l', "libversion", CmdLineParser::E_NO_ARG, 0, "Show the required OpenWBEM library version and exit"},
+			{E_DEBUG_MODE_OPT, 'd', "debug", CmdLineParser::E_NO_ARG, 0, "Use debug mode (does not detach from terminal)"},
+			{E_CONFIG_FILE_OPT, 'c', "config", CmdLineParser::E_REQUIRED_ARG, 0, "Use <arg> instead of the default config file"},
+			{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
+		};
+
+	// Process the command line, setting appropriate options in the service environment.
+	void processCommandLine(int argc, char* argv[], const ServiceEnvironmentIFCRef& env);
+	void printUsage(std::ostream& ostrm);
 
 const String COMPONENT_NAME("ow.owprovideragent");
 const String DAEMON_NAME("owprovideragent");
@@ -409,13 +429,13 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		bool debugMode = processCommandLine(argc, argv, env);
+		processCommandLine(argc, argv, env);
 
 		// initialize the environment.  This reads the config file.
 		env->init();
 
 		// debug mode can be activated by -d or by the config file, so check both. The config file is loaded by env->init().
-		debugMode = debugMode || env->getConfigItem(ConfigOpts::DEBUGFLAG_opt, OW_DEFAULT_DEBUGFLAG).equalsIgnoreCase("true");
+		bool debugMode = env->getConfigItem(ConfigOpts::DEBUGFLAG_opt, OW_DEFAULT_DEBUGFLAG).equalsIgnoreCase("true");
 
 		// logger's not set up according to the config file until after init()
 		logger = env->getLogger(COMPONENT_NAME);
@@ -554,33 +574,67 @@ int main(int argc, char* argv[])
 namespace
 {
 
-//////////////////////////////////////////////////////////////////////////////
-bool
+void
 processCommandLine(int argc, char* argv[], const ServiceEnvironmentIFCRef& env)
 {
-	// Process command line options
-	Platform::Options opts = Platform::daemonInit(argc, argv);
-	// If the user only specified the help option on the command
-	// line then get out
-	if (opts.help)
+	// Give store a copy of the initial arguments for later use (should we need
+	// to restart).
+	Platform::daemonInit(argc, argv);
+
+	try
 	{
-		if (opts.error)
+		CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
+
+		//
+		// Options that will cause the cimom to exit.
+		//
+		if (parser.isSet(E_HELP_OPT))
 		{
-			std::cerr << "Unknown command line argument for owprovideragent" << std::endl;
+			printUsage(std::cout);
+			exit(0);
 		}
-		printUsage(std::cout);
-		exit(0);
+		else if (parser.isSet(E_VERSION_OPT))
+		{
+			std::cout << DAEMON_NAME << " from " OW_PACKAGE_STRING << std::endl;
+			exit(0);
+		}
+		else if (parser.isSet(E_LIBRARY_VERSION_OPT))
+		{
+#define STRINGIFY_ARGUMENT(x) #x
+#define STRINGIFY_DEFINITION_VALUE(x) STRINGIFY_ARGUMENT(x)
+			std::cout << STRINGIFY_DEFINITION_VALUE(OW_OPENWBEM_LIBRARY_VERSION) << std::endl;
+#undef STRINGIFY_ARGUMENT
+#undef STRINGIFY_DEFINITION_VALUE
+			exit(0);
+		}
+
+		//
+		// Options that will change the behavior of the CIMOM
+		//
+		if (parser.isSet(E_DEBUG_MODE_OPT))
+		{
+			env->setConfigItem(ConfigOpts::DEBUGFLAG_opt, "true", ServiceEnvironmentIFC::E_PRESERVE_PREVIOUS);
+			env->setConfigItem(ConfigOpts::LOG_LEVEL_opt, "debug");
+		}
+		if (parser.isSet(E_CONFIG_FILE_OPT))
+		{
+			env->setConfigItem(ConfigOpts::CONFIG_FILE_opt, parser.getOptionValue(E_CONFIG_FILE_OPT));
+		}
 	}
-	if (opts.debug)
+	catch (const CmdLineParserException& e)
 	{
-		env->setConfigItem(ConfigOpts::DEBUGFLAG_opt, "true", ServiceEnvironmentIFC::E_PRESERVE_PREVIOUS);
-		env->setConfigItem(ConfigOpts::LOG_LEVEL_opt, "debug");
+		switch (e.getErrorCode())
+		{
+			case CmdLineParser::E_INVALID_OPTION:
+				std::cerr << "Invalid option: " << e.getMessage() << std::endl;
+				break;
+			case CmdLineParser::E_MISSING_ARGUMENT:
+				std::cerr << "Argument not specified for option: " << e.getMessage() << std::endl;
+				break;
+		}
+		printUsage(std::cerr);
+		exit(1);
 	}
-	if (opts.configFile)
-	{
-		env->setConfigItem(ConfigOpts::CONFIG_FILE_opt, opts.configFilePath);
-	}
-	return  opts.debug;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -588,10 +642,7 @@ void
 printUsage(std::ostream& ostrm)
 {
 	ostrm << DAEMON_NAME << " [OPTIONS]..." << std::endl;
-	ostrm << "Available options:" << std::endl;
-	ostrm << "\t-d, --debug  Set debug on (does not detach from terminal"<< std::endl;
-	ostrm << "\t-c, --config Specifiy an alternate config file" << std::endl;
-	ostrm << "\t-h, --help   Print this help information" << std::endl;
+	ostrm << CmdLineParser::getUsage(g_options) << std::endl;
 }
 
 } // end unnamed namespace

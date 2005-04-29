@@ -113,7 +113,6 @@ const String COMPONENT_NAME("ow.owcimomd");
 
 const int DAEMONIZE_PIPE_TIMEOUT = 25;
 
-Options processCommandLineOptions(int argc, char** argv);
 void handleSignal(int sig);
 void setupSigHandler(bool dbgFlg);
 
@@ -136,11 +135,10 @@ bool FromEventHandler = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-Options
+void
 daemonInit( int argc, char* argv[] )
 {
 	g_argv = argv;
-	return processCommandLineOptions(argc, argv);
 }
 /**
  * daemonize() - detach process from user and disappear into the background
@@ -294,65 +292,6 @@ daemonShutdown(const String& daemonName, const ServiceEnvironmentIFCRef& env)
 	shutdownSig();
 	return 0;
 }
-
-namespace
-{
-
-#ifdef OW_HAVE_GETOPT_LONG
-//////////////////////////////////////////////////////////////////////////////
-struct option   long_options[] =
-{
-	{ "debug", 0, NULL, 'd' },
-	{ "config", required_argument, NULL, 'c' },
-	{ "help", 0, NULL, 'h' },
-	{ 0, 0, 0, 0 }
-};
-#endif
-const char* const short_options = "dc:h";
-//////////////////////////////////////////////////////////////////////////////
-Options
-processCommandLineOptions(int argc, char** argv)
-{
-	Options rval;
-#ifndef WIN32
-#ifdef OW_HAVE_GETOPT_LONG
-	int optndx = 0;
-	optind = 1;
-	int c = getopt_long(argc, argv, short_options, long_options, &optndx);
-#else
-	optind = 1;
-	int c = getopt(argc, argv, short_options);
-#endif
-	while (c != -1)
-	{
-		switch (c)
-		{
-			case 'd':
-				rval.debug = true;
-				break;
-			case 'c':
-				rval.configFile = true;
-				rval.configFilePath = optarg;
-				break;
-			case 'h':
-				rval.help = true;
-				return rval;
-			default:
-				rval.help = true;
-				rval.error = true;
-				return rval;
-		}
-#ifdef OW_HAVE_GETOPT_LONG
-		c = getopt_long(argc, argv, short_options, long_options, &optndx);
-#else
-		c = getopt(argc, argv, short_options);
-#endif
-	}
-#endif
-	return rval;
-}
-
-} // end unnamed namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void rerunDaemon()
