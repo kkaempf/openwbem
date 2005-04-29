@@ -18,3 +18,7 @@ $(PACKAGE_PREFIX_D)owcimomd.in: owcimomd.sh Makefile
 
 # The replacement rule for converting from a <foo>.in to <foo> will be applied
 # to create $(PACKAGE_PREFIX_D)owcimomd
+
+# Install the init script into the sbin directory.
+install-exec-local:
+	$(INSTALL) -m 755 $(PACKAGE_PREFIX_D)owcimomd $(sbindir)/$(PACKAGE_PREFIX_D)owcimomd_init
