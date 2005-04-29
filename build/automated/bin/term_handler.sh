@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -u
-
 # This script is meant to be sourced from another script.  It MUST be done
 # before any local overriding of the sigs TERM, INT, HUP, PIPE, or ALRM.
 #
