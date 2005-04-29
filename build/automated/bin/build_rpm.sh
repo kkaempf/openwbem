@@ -76,9 +76,9 @@ GetPlatformInformation()
 		RELEASE_PREFIX=unk
 	fi
 	local OSVER_WITH_SPACES=`echo ${OSVER} | tr '[.]' '[ ]'`
-	OS_MAJOR=`echo ${OSVER_WITH_SPACES} | awk '{ print ${1}; }'`
-	OS_MINOR=`echo ${OSVER_WITH_SPACES} | awk '{ print ${2}; }'`
-	OS_MICRO=`echo ${OSVER_WITH_SPACES} | awk '{ print ${3}; }'`
+	OS_MAJOR=`echo ${OSVER_WITH_SPACES} | awk '{ print $1; }'`
+	OS_MINOR=`echo ${OSVER_WITH_SPACES} | awk '{ print $2; }'`
+	OS_MICRO=`echo ${OSVER_WITH_SPACES} | awk '{ print $3; }'`
 	# Assume (for now) that all versions with the same major number will work.
 	RELEASE_TEXT=`echo ${RELEASE_PREFIX}${OS_MAJOR}`
 	[ "${OSVEND}" = "RedHat" ] && [ "${OSVER}" = "2.1AS" ] && RELEASE_TEXT="rhas21" || true
