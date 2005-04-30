@@ -70,7 +70,7 @@ function pushf()
 function popf()
 {
 	if var_is_set INTERNAL_flags_${1}; then
-		popf_local_flag_value=`eval "echo \"\\\${INTERNAL_flags_}${1}\""`
+		popf_local_flag_value=`eval "echo \"\\\${INTERNAL_flags_${1}}\""`
 		set +$-
 		set -${popf_local_flag_value}
 		unset INTERNAL_flags_${1} popf_local_flag_value
@@ -159,8 +159,8 @@ function mutex_create()
 	# A local function to grab a mutex.
 	function grab_mutex()
 	{
-		pushf grab_mutex_temp_flags
 		set -x
+		pushf grab_mutex_temp_flags
 		local rval=1
 
 		# Use the bash noclobber feature as an atomic set.
