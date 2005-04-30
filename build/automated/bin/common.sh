@@ -6,18 +6,14 @@ set -a
 set -e
 # After expanding each simple command, display it
 set -x
-
-set +u # turn off unset var error
-if [ -z "${OW_BUILD_CONFIG_FILE_ALREADY_SOURCED}" ]; then
-	OW_BUILD_CONFIG_FILE_ALREADY_SOURCED=0
-fi
-
 # Treat unset variables as an error when performing parameter expansion
 set -u
 
+OW_BUILD_CONFIG_FILE_ALREADY_SOURCED=${OW_BUILD_CONFIG_FILE_ALREADY_SOURCED:-0}
+
 if [ "${OW_BUILD_CONFIG_FILE_ALREADY_SOURCED}" = "0" ]; then
 	
-	if [ -z "${OW_BUILD_CONFIG_FILE}" ]; then
+	if [ "x${OW_BUILD_CONFIG_FILE:+set}" != "xset" ]; then
 		echo "error: \${OW_BUILD_CONFIG_FILE} is not set"
 		exit 1
 	fi
