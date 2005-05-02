@@ -21,4 +21,4 @@ $(PACKAGE_PREFIX_D)owcimomd.in: owcimomd.sh Makefile
 
 # Install the init script into the sbin directory.
 install-exec-local:
-	$(INSTALL) -m 755 $(PACKAGE_PREFIX_D)owcimomd $(sbindir)/$(PACKAGE_PREFIX_D)owcimomd_init
+	$(INSTALL) -m 755 $(PACKAGE_PREFIX_D)owcimomd $(DESTDIR)$(sbindir)/$(PACKAGE_PREFIX_D)owcimomd_init
