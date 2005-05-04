@@ -125,6 +125,7 @@ cp -r * $RPM_BUILD_ROOT
 %dir /opt/openwbem/sbin
 %defattr(0755,root,root)
 /opt/openwbem/sbin/*owcimomd
+/opt/openwbem/sbin/*owcimomd_init
 %defattr(0755,root,root)
 %dir /var/opt/openwbem
 %defattr(0755,root,root)
