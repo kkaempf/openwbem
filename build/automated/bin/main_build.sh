@@ -441,8 +441,8 @@ function copy_destination_files()
 					if [ "${output_directory}" != "none" ]
 					then
 						# Copy the files to the local directory.
-						eval mkdir -p \${PACKAGE_LOCATION_}${mode}/${PACKAGE_OUTPUT_DIRECTORIES[${local_index}]}
-						eval scp -r "${machine_name}:${output_directory}/*" \${PACKAGE_LOCATION_}${mode}/${PACKAGE_OUTPUT_DIRECTORIES[${local_index}]}
+						eval mkdir -p \${PACKAGE_LOCATION_${mode}}/${PACKAGE_OUTPUT_DIRECTORIES[${local_index}]}
+						eval scp -r "${machine_name}:${output_directory}/*" \${PACKAGE_LOCATION_${mode}}/${PACKAGE_OUTPUT_DIRECTORIES[${local_index}]}
 					fi
 				     	
 				fi
