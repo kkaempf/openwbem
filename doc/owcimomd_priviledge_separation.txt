@@ -11,43 +11,57 @@ owcimomd cannot be expected to rely on our good coding skills.
 
 The goals are:
 Limit the amount of code running as root so that code audits can be focused on security critical code.
-Limit exposure: if an attacker compromises owcimomd, he can't do anything as root without providing proper credentials.
+Limit priviledge excalation exposure: if an attacker compromises owcimomd, he can't do anything as root without providing proper credentials.
 Allow for providers to run as the user who authenticated so that provider code can be simplified (and thus more secure) by relying on the OS enforcing permissions.
-
-One valuable benefit gained from the architecture is that providers run in a separate process from owcimomd, so that a bug in the provider cannot crash owcimomd.
-
+The following provider types must be supported:
+	instance
+	associator
+	method
+	indication
+	indication export (really indication handler)
+	polled
 
 Running owcimomd as a non-root user (owcimomd):
-This is currently implemented and possible to do with the current code in CVS. If none of the providers root privileges to perform their function,
+This is currently implemented and possible to do with the current code in CVS. If none of the providers require root privileges to perform their function,
 then the problem is solved, everything can run as user "owcimomd".  Unfortunately this isn't usually the case :-(
 I have written a small daemon called owprovideragent.  It's basically a wrapper around the ProviderAgent api, which was created for Nortel in order
 to accomodate out of process providers. Used in conjuction with the RemoteProvider interface, it's possible for requests to providers which need elevated
-privileges to be routed from owcimomd to owprovideragent. This assumes that owprovideragent is running as root. The communication happens over a UDS,
-and permissions for it as well as authentication can be configured so that only user owcimomd is allowed to connect and run operations.  Doing this doesn't
+privileges to be routed from owcimomd to owprovideragent. This assumes that owprovideragent is running as root (or whatever user is necessary to obtain the
+require permissions). The communication happens over a UDS, and the
+permissions on the UDS cannot be relied on as a protection.
+According to "man 7 unix" on Linux:
+"Connecting to the socket object requires read/write permission.  This behavior differs from many BSD-derived systems which ignore permissions for Unix 
+sockets. Portable programs should not rely on this feature for security."
+Authentication can be configured so that only user owcimomd is allowed to connect and run operations.  Doing this doesn't
 significantly improve the security, because if an attacker compromises owcimomd, there is nothing stopping them from calling owprovideragent and performing
 provider operations as root.  Also a large amount of code is shared between owcimomd and owprovideragent, so if a buffer overflow exists in owcimomd, it is likely
 that the same bug exists in owprovideragent, thus allowing the attacker to gain full root access vs. only being able to call providers as root.
+This problem can be mitigated if owprovideragent is configured to require credentials.  In that situation the remote provider interface as well as the authentication
+module must be configured to propagate the credentials.  Doing this also restricts owcimomd from initiating a call to owprovideragent (i.e. from an
+indication provider (either LifecycleIndicationPoller or a threaded) or a polled provider.)
 
 owprovideragent currently has the following limitations:
 No support for polled, indication or indication export providers.
-Only handles c++ providers, OWBI1 or other types of providers aren't.
-To enable upcalls into the cimom, a new connection is created, this requires that owcimomd be configured to authenticate owprovideragent to allow that as
-well as providing an unsafe mechanism for client requests to bypass the read/write lock.
+Only handles c++ providers, other types of providers aren't handled.
+To enable upcalls into the cimom, a new connection is created, this requires that owcimomd be configured to authenticate owprovideragent or the credentials can be
+propagated from the original request.
+It also provides an unsafe mechanism for client requests to bypass the read/write lock, which is necessary to prevent deadlock.
 
-setuid owprovideragent
+setuid owprovideragent:
 
-problem is that owprovideragent is very configurable so how to prevent any old user launching a owprovideragent that does what they want?
-owprovideragent just exits immediately if it was launched by any UID other than owcimomd UID, so, any old user can't do a darn thing with it. 
-Only owcimomd process can use it. However this doesn't help if owcimomd is compromised, the attacker could still do things as root.
+If owcimomd is modified to launch each provider in a separate process, a setuid owprovideragent can run the provider as any user desired.
+Q: A problem is that owprovideragent is very configurable so how can it prevent an attacker from launching a owprovideragent that does what they want?
+A: Write owprovideragent so that it just exits immediately if it was launched by any UID other than owcimomd UID, so that only owcimomd user can use it. 
+However this doesn't help if owcimomd is compromised, the attacker could still do things as root.
+This is not considered an acceptable solution, because it offers no additional security.
 
 communication between owcimomd and owprovideragent:
 Using a UDS is problematic because of:
-1. permissions allow any "owcimomd" user in, even a compromised owcimomd process.
+1. permissions allow any "owcimomd" user in, even a compromised owcimomd process. Relying on permissions isn't portable either.
 2. If there is a new owprovideragent process for each request managing which UDS to connect to while preventing race-conditions or DOS attacks is hard.
 It'd be better to use pipes between owcimomd and owprovideragent, which avoid both of the above mentioned problems.
 
-userv
-sshd privilege separation 
+sshd privilege separation as a model
 http://www.citi.umich.edu/u/provos/ssh/privsep.html
 http://www.citi.umich.edu/u/provos/papers/privsep.pdf
 
@@ -58,16 +72,11 @@ Some providers may need to be running for a lengthy period of time or have an ex
 a new process for each request.
 
 Using PKI between owcimomd and owprovideragent:
-Once an attacker compromises owcimomd, they have access to the private key and could access owprovideragent
+This approach has the same problems as the other approaches.  The owcimomd
+user can't be trusted. Credentials to launch/access a priviledged provider process must be provided by an external entity.  owcimomd cannot be allowed to do it by itself.
+PKI is no advantage, because once an attacker compromises owcimomd, they have access to the private key and could then access owprovideragent
 
 
-The idea is using pipes between owcimomd and owprovideragent.
-To establish them, use a child-parent non-root/root pair of owcimomd processes.
-
-
-If the provider manager forks a owprovideragent on the fly, and connects to stdin/stdout, the owprovideragent has to be setuid, which is a security problem,
-even if it doesn't do anything unless the process that executed it was the owcimomd UID, because once owcimomd is compromised, the attacker could then
-launch owprovideragent as root.
 
 The sshd privilege separation model could be applied to OW.
 parent process runs as root.  It forks off a child which runs as non-root.
@@ -79,23 +88,211 @@ if the attacker doesn't have valid credentials it can't even cause an owprovider
 the worst it could do is whatever the owcimomd user has access to, say clobber the repository or something.
 yeah, we can make the root owcimomd launch owprovider agent as whatever user authenticated or is configured.
 
+One valuable benefit gained from the architecture is that providers run in a separate process from owcimomd, so that a bug in the provider cannot crash owcimomd.
+
+
+Using pipes between owcimomd and owprovideragent:
+This makes it easier for owprovideragent, since it doesn't have to listen for anything.  The communication channels with owcimomd are established when it's
+launched.
+To establish pipes, use a child-parent non-root/root pair of processes.  The root process will be called the "monitor". The monitor will launch the provider process
+as the authenticated user, then use file descriptor passing to send the pipes to owcimomd so that owcimomd can send the provider call to the process.
+
+
+Indication subscription:
+The threat here is information disclosure.  A user may create a subscription
+to monitor a class to which they wouldn't normally be able to access, and
+which could contain sensitive data. To address this, each subscription will
+cause an indication provider to be launched which will be running as the user
+who created the subscription.  Thus 
+
+
+If an attacker compromises owcimomd via a buffer overflow, they could control one thread, and then data handled by other threads 
+One idea is that each connection should be handled in it's own *process*, instead of thread, but this doesn't really provide any protection, since 
+
+
+Attacks and analysis:
+
+Remote:
+- buffer overflow
+- incorrectly handled input causing heap or stack corruption
+- owcimomd incorrectly handling authorization allowing access when the
+  attacker has invalid or non-existent credentials.
+- a backdoor (for testing or other purposes) is accidentally left in the code.
+- Attacker has limited privileges and exploits a bug to acquire additional
+  unauthorized privileges.
+- Spoofed data source (e.g. ip addr, etc.)
+- Network sniffing
+- DOS attacks
+
+Local:
+- temp file race condition
+- provider race condition causing corruption
+- attacker causes low memory, disk space or network-availability condition.
+- modifying files that owcimomd or a provider may access in a way that causes
+  corruption.
+
+
+Spoofing identity:
+The only avenue a user has to actively access owcimomd is by connecting and sending a
+request. Other input data sources are independent of identity.
+This is addressed by authentication, either local authentication or the
+combination of SSL, HTTP Basic & PAM.
+
+A current vulnerability is that a listener's identity is not validated. An
+attacker could hijack a listener's ip address and intercept indications that
+may contain sensitive information
+meant for the listener.  This is also a Denial of service for the listener,
+but is out of the realm of control of owcimomd (if the underlying network
+infrastructure is compromised, there's not much it can do!). To prevent
+information disclosure, owcimomd could validate the listener's identity using
+SSL or kerberos before delivering indications.
+
+
+Tampering with data:
+With the current model, providers have to be written to perform checks as to
+whether a user is permitted to access certain data, this is not only redundant
+work with what the OS can do, but it's also very tricky to get correct, and is
+subject to race conditions.  Its much better to let the OS do the permission
+checking.
+
+- Repository:
+This is currently a problem.  Without ACLs configured, any user can modify the
+repository.  Even with the current authorization module, the control is too
+course.  It's not possible to give a user permission to modify certain
+instances while prohibiting him from deleting all the schema.  The solution is
+a fine-grained ACL implementation with a locked-down default.
+The repository file itself is created with permissions so the only the owner
+can read or write it, preventing unauthorized tampering.
+Also users may create instances in the repository which shouldn't be there.
+There is no way to restrict this from happening.
+
+- Log files:
+There is no way an external user can modify log files, other than initiating requests
+which will generate log entries.
+A local user may be able to access/modify/remove log files, depending on where
+they are created.  Log messages may be sent to syslog, and what it does with
+them is beyond the control of owcimomd.
+Sensitive data should not be logged (the Invisible qualifier *is* honored).
+
+
+- Config files:
+The config files have appropriate permissions.  There is a config provider,
+and it could possibly disclose sensitive information or permit a user to
+tamper with the owcimomd configuration.
+
+
+Repudiation:
+owcimomd can be configured to log all requests and who initiated them.
+
+
+Information disclosure:
+If ACLs aren't configured appropriately, a user may be able to read sensitive
+information.
+
+
+Privilege escalation:
+If a buffer overflow or similar bug exists in the input processing code, it
+may be possible for an attacker to cause owcimomd to run attacker's code.
+Since owcimomd is running as root, this gives the attacker full access to the
+system.
 
 
 
-1. Handling calls back into CIMOM: One way of doing this that, after the CIMOM sends the request to the provider, it expects back either
+owcimomd Data Flow Description
 
-1. the response, or
-2. a call back into the CIMOM.
+External entities:
+WBEM Client(s)
+MOF files
+Repository
+Logs
+Files a provider may examine
+Processes a provider may invoke
+WBEM Listener(s)
+Shared libraries owcimomd loads
 
-If case (2) happens it carries out the request from the provider, sends the results back, and then waits for either (1) or (2) to happen again.  This probably needs to be recursive procedure (on both the CIMOM and provider sides) in case carrying out (2) results in another call to the provider.
 
-Likewise, when the provider sends off a call into the CIMOM, it has to allow for the possibility that, as part of carrying out that request, the CIMOM may call back in to the provider.
+Data:
+- WBEM Request
+   Socket Reads the raw data from the kernel.
+   std::istream Presents the data via istream interface
+   Service listening on socket gets control, currently only valid one is HTTPServer.  
+   HTTPServer launches HTTPSrvConnection in a new thread. It reads & processes the headers. 
+   authentication is handled by dispatching to the appropriate handler (based upon configuration and the mechanism the client is using)
+    owcimomd.allow_anonymous = true: authentication is bypassed even if the client request included credentials.  Probably should rename this to owcimomd.disable_authentication?
+    SSL client authentication: HTTP authentication isn't used, instead OpenSSL does the authentication. owcimomd relies on OpenSSL. If auto update is configured, when a user successfully authenticates with one of the other methods, his certificate is added to the trust store. If this method fails, HTTP authentication will still be attempted.
+    HTTP Digest: 
+     Phase 1. DigestAuthentication performs the appropriate algorithm and calculates the challenge which is added to a header which the server sends back to the client.
+     Phase 2. DigestAuthentication validates the client responded appropriately and reports the user is authenticated.
+    HTTP OWLocal: if owcimomd is running as root, LocalAuthentication performs these steps, otherwise it calls out to owlocalhelper which must be setuid root.
+     Phase 1. The client has to provide a uid value. Then a random number (cookie) is generated and inserted into a file created with permissions set so only the requested uid can read the file.  The filename is sent back to the client.
+     Phase 2. The client opens the file, reads the cookie from the file, then sends it. LocalAuthentication verifies if the cookie matches to authenticate the user.
+    HTTP Basic:
+     The credentials are base64 decoded, and then passed to CIMOMEnvironment, which then dispatched to the authentication module that is configured.
+     PAM: Used on everything but AIX. The credentials are passed to the PAM stack and the OS validates them.  The result is returned back to HTTPSvrConnection.
+     AIX: Uses the proprietary AIX mechanism, but the effect is the same as PAM.
+   HTTPSvrConnection configures portions of the pipeline based on HTTP content-encoding & chunking
+   [ Decodes http chunking - istream ]: Optional based upon HTTP request
+   [ Decompresses zlib compression content encoding - istream ]: Optional based upon HTTP request
+   Request Handler, either CIM/XML or OW Binary, decodes the request, and creates native objects.
+   LocalCIMOMHandle - starts the request
+   [ Authorizer - checks that the request is allowed by ACLs ]: Optional based upon owcimomd configuration.
+   [ IndicationRepLayer - forwards on request to CIMServer ]: Optional based upon owcimomd configuration.
+   CIMServer - Dispatches requests to providers and/or the repository. Also dispatches Access control verification to an Authorizer2 that can be optionally configured.
+    ProviderProxy - Translates from the internal provider interface to a concrete provider interface
+     Provider - Does it's work and may return results.
+    CIMRepository - Handles a read request by retrieving the requested data either from a cache or by reading it out of stable storage.
+                    Handles a write request by updating stable storage and optionally the appropriate cache.
+                    Will be called to provide class definitions that will be passed to provider invocations.
 
 
-2. Allowing multiple threads to call into an out-of-process provider: How about using sockets, but using AF_UNIX for the "family" parameter of socket instead of AF_INET.  This only allows connections on the same machine.  I'm not sure whether it's possible to further restrict connections to be from one particular process (or check the pid of the connecting process).
+- Successful WBEM Response
+
+   Provider - Does it's work and returns results.
+   ProviderProxy - Translates results from the concrete provider interface to a internal provider interface
+   CIMServer - Returns responses from providers and/or the repository
+   [ IndicationRepLayer - sends appropriate lifecycle indications if the request was sucessful ]: Optional based upon owcimomd configuration.
+   LocalCIMOMHandle - ends the request
+   Request Handler, either CIM/XML or OW Binary, encodes the response.
+   [ zlib compression content encoding - ostream ]: Optional based upon HTTP request
+   [ http chunking - ostream ]: Optional based upon HTTP request
+   Service (HTTPSvrConnection) adds headers on the response. In a chunking scenario, this happens before anything else.
+   std::ostream - Headers and content are sent.
+   Socket - Transmits data to the client.
+
+- Failed WBEM Response
+
+   Provider - Receives the request may do some work or not, but ultimately throws a CIMException.
+   ProviderProxy - Nothing, exception is propagated.
+   CIMServer - Nothing, exception is propagated.
+   [ IndicationRepLayer - Nothing, exception is propagated. ]
+   LocalCIMOMHandle - ends the request and propagates the exception.
+   Request Handler, either CIM/XML or OW Binary, catches the exception and encodes the error response.
+   [ zlib compression content encoding - ostream ]: Optional based upon HTTP request
+   [ http chunking - ostream ]: Optional based upon HTTP request
+   Service (HTTPSvrConnection) adds headers on the response. In a chunking scenario, this happens before anything else.
+   std::ostream - Headers and content are sent.
+   Socket - Transmits data to the client.
+
+
+- MOF Files
+   
+   They are read by owmofc, typically run as part of an installation procedure. owmofc usually runs with superuser permissions because that is the context of software installation.
+   During installation owmofc is usually run in "direct" mode where the repository files are created by owmofc. owmofc may (currently it always does) need superuser permissions in order to create & modify the repository files.
+    The repository and data from the mof files will be used to handle client requests.
+   owmofc can also connect to a cimom as a normal WBEM Client in which case the data flows through owcimomd as described above.
+
+
+- Repository
+   
+   A set of data files and indexes (stored with restrictive permissions so that unauthorized users may not read or write them).
 
 
 
+
+WBEM Client data flow description:
+
+
+Insecure default installation/settings:
 
 
 
