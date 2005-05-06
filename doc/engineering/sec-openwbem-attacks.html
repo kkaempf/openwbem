@@ -1,0 +1,156 @@
+<html>
+<head>
+<style>
+body { width: 6.5in }
+</style>
+</head>
+<body>
+
+<h1>Possible Attacks Against OpenWBEM</h1>
+
+<h2>Attack point: inter-process communication between OpenWBEM processes</h2>
+
+<p>
+Note: Every OpenWBEM subsystem process is a child of the OpenWBEM Monitor
+process.  Communication between an OpenWBEM subsystem and the Monitor occurs
+only through an anonymous Unix-domain socket pair that the Monitor creates
+just before forking off the child.  The monitor only accepts requests from
+such sockets associated with a child it has created, and thereby identifies
+the entity making the request.
+</p>
+
+<p>A. Attack: Obtain a capability from the monitor by impersonating another
+user/role.  OR:</p>
+<ol>
+<li>Obtain socket descriptor held by existing subsystem for communicating with
+   monitor.  REQUIRES:
+  <ol>
+  <li> Cause existing subsystem process to run attacker's code.  OR:
+    <ol>
+    <li> Run as root.
+    <li> Run as same user as subsystem process to alter memory image.
+    <li> Compromise through inputs.
+    </ol>
+  </ol>
+
+<li>Alter memory image of monitor. OR:
+  <ol>
+  <li> Run as root.
+  <li> Compromise through inputs.
+  </ol>
+</ol>
+
+<p>Defenses:</p>
+<ul>
+<li> Be very stingy in handing out capabilities.  When deciding whether a userid
+should be allowed a capability, consider whether that user should be entrusted
+with arbitrary use of that capability (not just in the manner it is used in
+the OpenWBEM code.)  Only hand out capabilities to a small set of system
+userids.
+
+<li> Supply and enforce narrow limits on the arguments allowed when requesting
+capabilities.
+
+<li> Have OpenWBEM code request capabilities in fixed patterns so that the
+Monitor can easily detect any deviation from the expected pattern.
+</ul>
+
+
+<p>B. Attack: Intercept a capability passed to a subsystem process.  OR:</p>
+<ol>
+<li> Obtain descriptor for capability after it is received by intended recipient
+     process.  REQUIRES:
+  <ol>
+  <li> Cause subsystem process to run attackers code. (See A.)
+  </ol>
+<li> Obtain descriptor for capability from Monitor.  REQUIRES:
+  <ol>
+  <li> Cause monitor to run attacker's code.  (See A.)
+  </ol>
+</ol>
+
+<p>Defenses: Same as A.</p>
+
+
+<p>C. Attack: Request an operation from a "server" subsystem process by
+impersonating another ("client") subsystem process.</p>
+<ol>
+<li> Obtain socket descriptor held by client subsystem for communicating with
+   server subsystem.  REQUIRES:
+  <ol>
+  <li> Cause client subsystem process to run attacker's code.  OR:
+    <ol>
+    <li> Run as root.
+    <li> Run as same user as client subsystem process to alter memory image.
+    <li> Compromise through inputs.
+    </ol>
+  </ol>
+<li> Alter memory image of server subsystem. OR:
+  <ol>
+  <li> Run as root.
+  <li> Run as same user as server subsystem process.
+  <li> Compromise through inputs.
+  </ol>
+</ol>
+
+<p>Defenses: Protect passwords / authentication info for OpenWBEM subsystem user
+accounts.</p>
+
+<p>Final note: no subsystem should assume that messages received from another
+subsystem are properly formed; this should always be checked.</p>
+
+</body>
+</html>
+
+
+<h2>Attack point: various files</h2>
+
+<p>The following files control the behavior of OpenWBEM:</p>
+<ul>
+<li> Configuration files.
+<li> Provider shared libraries.
+<li> Provider programs (for providers run out-of-process).
+<li> Repository files.
+<li> Monitor's ACL file.
+</ul>
+
+<p>Attack: modify file.</p>
+
+<p>Attack: Delete file.</p>
+
+<p>Attack: Create file that previously did not exist.</p>
+
+<p>Attack: delete empty directory that is searched for a file and re-create
+with attacker having write permissions.</p>
+
+<p>Defenses:</p>
+<ul>
+<li> Take care that not only the files themselves, but also the
+directories in which they reside, have the most restrictive permissions that
+will still let OpenWBEM function.
+<li> Have a small, fixed set of places where these files may be installed, to
+ease enforcement of permissions.
+<li> Check file and directory ownership, group membership, and permissions
+before reading/loading; if these are incorrect, fail.
+<li> Never scan a directory for files to process everything found therein.
+For example, don't load a shared lib found in a provider directory unless
+you already expected to find that specific shared library there.
+<li> Check modification / creation times against expected values?
+</ul>
+
+
+<h2>Attack point: system resources read by providers</h2>
+
+<p>Defense: Take care that any provider that has to parse or process external
+data sources never assumes that this data will be in the correct format or
+satisfy any reasonable limits.</p>
+
+
+<h2>Attack point: export of indications from IS to client</h2>
+
+<p>Require authentication of destination.</p>
+
+</body>
+</html>
+
+

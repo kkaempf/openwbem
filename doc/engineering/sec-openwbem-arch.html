@@ -1,0 +1,190 @@
+<html>
+<head><title>Outline of New Secure OpenWBEM Architecture</title>
+<style type="text/css">
+body { width: 6.5in }
+</style>
+</head>
+<body>
+
+<h1>Outline of New Secure OpenWBEM Architecture</h1>
+
+<p>
+Note: a &ldquo;passive&rdquo; provider is an instance provider, secondary
+instance provider, method provider, or associator provider.
+</p>
+
+<h2>The CIMOM is now a collection of processes.</h2>
+
+<p>
+Separate processes act as bulkheads to limit the damage that may be caused
+by bugs and exploits.
+</p>
+
+<p>
+Privileges of a subsystem limited based on userid of its process.
+</p>
+
+<p>
+Wherever practical, code runs only with the userid of the entity that
+initiated the operation.
+</p>
+
+<p>
+Only a single subsystem &mdash; the monitor &mdash; runs as root.
+</p>
+
+
+<h2>Decomposition into subsystems</h2>
+
+<p>Below are the various processes that comprise the CIMOM.  Those that
+persist for the entire time the CIMOM is running are marked with P
+(persistent); those that last for only the duration of a single CIMOM request
+(or less) are marked with T (transient); others of intermediate duration are
+marked with S (semipermanent).</p>
+<ul>
+<li>Monitor [P].
+<li>Logger [P].
+<li>Repository Server [P] (RS).
+<li>Indication Server [P] (IS).
+<li>Indication provider processes [S] (IPP).
+<li>Connection handlers [T] (CH).
+<li>User request processes [T] (URP).
+<li>User provider processes [T] (UPP).
+</ul>
+
+<h2>The Monitor</h2>
+
+<p>The Monitor may grant other subsystems (OpenWBEM processes) limited
+capabilities that they would not otherwise have.</p>
+
+<p>Monitor knows identity of a subsystem process because it created the
+process and created a Unix domain socket pair for communicating with it.</p>
+
+<p>The sendmsg / recvmsg systems calls used to pass descriptors from monitor to
+subsystem process.</p>
+
+<p>Kinds of requests a subsystem process might make to monitor:</p>
+<ul>
+<li>Open a file for reading, or writing, or both, and return the file
+descriptor.
+
+<li>Create a file with given permissions and user, and return the file
+descriptor for writing it.
+
+<li>Give ownership of a file to root.  (The logger subsystem needs this to
+ensure that only root can read log files.)
+
+<li>Fork a process running an executable as a particular user and return fds
+for stdin, stdout, and stderr.  (This includes specification of a timeout, so
+the monitor can kill the new process if it hangs.)
+
+<li>Grant one subsystem access to another subsystem.  It does this by creating
+a Unix-domain socket pair, passing one socket descriptor to the subsystem to
+the subsystem providing a service, and the other socket descriptor to the
+subsystem requesting the service.
+
+<li>Other requests related to authentication of users request an operation from
+the CIMOM.
+</ul>
+
+<p>Monitor has its own access control lists that specify what requests a
+particular subsystem process can make (includes allowable arguments). This may
+also take into account the sequence of requests the subsystem has made, using
+a FSM.</p>
+
+<p>If subsystem makes a disallowed request, the monitor will no longer accept
+requests from the subsystem.  (Should it go so far as to kill the process?)</p>
+
+
+<h2>The Logger</h2>
+<p> Runs as the OpenWBEM-Logger user.  All logging is done
+by sending a message to the logger.  (All? Most?) processes created by the
+monitor are given a descriptor for sending messages to the logger.  After
+creating a log file, but before writing to it, the logger asks the monitor to
+change its owner to root so that only root can read the log output.  </p>
+
+<h2>The Repository Server</h2>
+<p> Runs as the OpenWBEM-Repository user.  All
+repository files are owned by this user, and accessible only by owner.  The
+repository holds access control lists that control what operations are alowed
+based on userid, groupid?, namespace, and class.  When the monitor grants a
+process access to the repository server, it associates the userid of the
+requester with the descriptor it passes to the repository server.  The access
+control lists are implemented as CIM instances in the repository.  The
+repository also contains information identifying which providers are
+associated with a class. </p>
+
+
+<h2>Connection Handlers</h2>
+<p> The monitor accepts connections to the CIMOM,
+and for each connection it forks off a connection handler process.  This
+process runs as a user with essentially no privileges, chrooted to an empty
+directory.  It is responsible for parsing HTTP headers sufficiently to carry
+out authentication, with the help of requests sent to the monitor.  Once
+authentication has occurred it requests the monitor to create a user request
+process (see below) with the appropriate userid, and passes to this process
+the the information and resources (including socket descriptor) it needs to
+carry out the request.</p>
+
+
+<h2>User Request Processes</h2>
+<p> A URP coordinates carrying out an operation requested of the CIMOM, doing
+as much of the work itself as is practical.  It runs as the user making the
+request, as determined in the authentication phase.  It accesses the
+repository server for operations on static data and to find out what providers
+(if any) it must use to carry out the operation.</p>
+
+<p> The URP loads and runs any needed passive providers; hence these providers
+can only do whatever the requesting user is authorized to do.  These providers
+may in turn request certain capabilities (typically file descriptors opened
+for reading) from the monitor; these capabilities will be granted or not
+depending on the userid of the process.</p>
+
+<p>Some passive providers may run as independent processes because they are
+implemented in a scripting language (e.g., Perl) or to be isolated from C++
+binary compatibility problems.  These run with the same userid as the URP, and
+again request from the Monitor any special capabilities they may need.</p>
+
+
+<h2>User Provider Processes</h2>
+<p>  Described above under &ldquo;User request
+processes.&rdquo;</p>
+
+
+<h2>Indication Server</h2>
+<p> Runs as the OpenWBEM-indication-server user.  Handles activation and
+deactivation of indication providers and runs indication export providers and
+subscription filters (the &ldquo;where&rdquo; clause).</p>
+
+<p>When a user request process requests creation of an indication subscription,
+the indication server first contacts the repository server to determine if
+that user has permission to receive indications of the requested indication
+class, processed by the (provider for the) requested indication handler class.
+If so, it sends the appropriate activate message to the appropriate indication
+provider process, asking the monitor to create the process if it doesn't
+already exist, and updates its internal data structures for handling
+indications.</p>
+
+<p>When asked to remove a subscription, the indication server checks to see if
+the requester's userid is either explicitly authorized to remove the
+subscription (based on indication class and indication handler class) or is
+the same userid used to create the subscription. If so, it sends the
+appropriate deactivate message to the indication provider, and updates its
+internal data structures for handling indications.</p>
+
+<p>The indication server receives all indications generated by indication
+providers and runs the appropriate indication export providers to process
+them.</p>
+
+
+<h2>Indication Provider Processes</h2>
+
+<p>There is one of these for each active indication provider.  An IPP runs the
+code for an indication provider, sending the generated indications to the
+indication server.  It may request certain capabilities (typically file
+descriptors opened for reading) from the Monitor; these capabilities will be
+granted or not depending on which indication provider is requesting them.</p>
+
+</body>
+</html>
+
