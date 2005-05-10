@@ -47,7 +47,10 @@ marked with S (semipermanent).</p>
 <li>Repository Server [P] (RS).
 <li>Indication Server [P] (IS).
 <li>Indication provider processes [S] (IPP).
+<li>Pseudo Random Number Server [P] (PRNS).
+<li>Connection Handler Creator [P] (CHC).
 <li>Connection handlers [T] (CH).
+<li>User Request Creator [P] (URC).
 <li>User request processes [T] (URP).
 <li>User provider processes [T] (UPP).
 </ul>
@@ -114,25 +117,38 @@ control lists are implemented as CIM instances in the repository.  The
 repository also contains information identifying which providers are
 associated with a class. </p>
 
+<h2>The Pseudo Random Number Server</h2>
 
-<h2>Connection Handlers</h2>
-<p> The monitor accepts connections to the CIMOM,
-and for each connection it forks off a connection handler process.  This
-process runs as a user with essentially no privileges, chrooted to an empty
-directory.  It is responsible for parsing HTTP headers sufficiently to carry
-out authentication, with the help of requests sent to the monitor.  Once
-authentication has occurred it requests the monitor to create a user request
-process (see below) with the appropriate userid, and passes to this process
-the the information and resources (including socket descriptor) it needs to
-carry out the request.</p>
+<p>This process exists only on platforms that lack an acceptable
+<tt>/dev/urandom</tt> or its equivalent.  It runs a cryptographically strong
+pseudo-random number generator, seeded by the output of an entropy collector.
+(Do we restrict access to this server in some way to prevent DOS attacks?)
+
+<h2>Connection Handlers and Connection Handler Creator</h2>
+
+<p>The Connection Handler Creator accepts connections to the CIMOM, and for
+each connection it forks off a connection handler process.  (The purpose of
+the CHC is to reduce startup times, as it has already done the initialization
+the CH process will need.) The CH and CHC processes run as a user with
+essentially no privileges, chrooted to an empty directory.  A CH process is
+responsible for parsing HTTP headers sufficiently to carry out authentication,
+with the help of requests sent to the monitor.  Once authentication has
+occurred it requests the monitor to create a user request process (see below)
+with the appropriate userid, and passes to this process the the information
+and resources it needs to carry out the request.  The output of the URP is
+passed to the CH process, which does some further processing before sending
+the response back to client.</p>
 
 
-<h2>User Request Processes</h2>
-<p> A URP coordinates carrying out an operation requested of the CIMOM, doing
+<h2>User Request Processes and User Request Creator</h2>
+
+<p>A URP coordinates carrying out an operation requested of the CIMOM, doing
 as much of the work itself as is practical.  It runs as the user making the
 request, as determined in the authentication phase.  It accesses the
 repository server for operations on static data and to find out what providers
-(if any) it must use to carry out the operation.</p>
+(if any) it must use to carry out the operation.  URPs are forked off of the
+URC.  (This reduces startup times as the URC has already done most of the
+necessary initialization.)</p>
 
 <p> The URP loads and runs any needed passive providers; hence these providers
 can only do whatever the requesting user is authorized to do.  These providers
