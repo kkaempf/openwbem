@@ -55,7 +55,8 @@ owenumnamespace \
 $(NAMESPACE_MANIPULATION_PROGS) \
 $(ENUMQUALPROG) \
 owenumclassnames \
-owenumclasses
+owenumclasses \
+owgetclass
 
 
 ### owdigestgenpass
@@ -248,6 +249,24 @@ $(CXXBINLINKFLAGS) \
 #$(CXXBINLINKFLAGS) \
 #-o owtruststore$(EXEEXT)
 
+
+### owgetclass
+owgetclass_SOURCES = \
+owgetclass.cpp
+
+owgetclass_LDADD = \
+libtoolscommon.a \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+owgetclass_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owgetclass$(EXEEXT)
 
 
 
