@@ -1148,6 +1148,20 @@ TestSecondaryInstanceProvider()
 }
 
 #############################################################################
+TestSocketCat()
+{
+	for inputFile in $TOPSRCDIR/test/acceptance/testfiles/socketCat/*.in; do
+		REGEX_LIST_FILE=${inputFile%in}regexlist
+		REGEX_COUNT=`wc -l < $REGEX_LIST_FILE`
+		MATCH_COUNT=`$BUILDDIR/test/acceptance/progs/socketCat $* < $inputFile | grep -f $REGEX_LIST_FILE | wc -l`
+		if [ $MATCH_COUNT -lt $REGEX_COUNT ]; then
+			ExitWithFail "TestSocketCat: didn't get expected output for $inputFile"
+		fi
+	done
+
+}
+
+#############################################################################
 CoreCheck()
 {
 	CORES=`ls $STAGEDIR/core* 2> /dev/null`
@@ -1280,6 +1294,9 @@ TestSecondaryInstanceProvider
 
 RunATest testLargeRequest "http://test1:pass1@localhost:30926"
 RunATest testLargeRequest "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+
+TestSocketCat localhost 30926
+TestSocketCat "$STAGEDIR/owcimomduds"
 
 if [ "z$OWLONGTEST" = "z1" ]; then
 	RunATest testClientTimeout "http://test1:pass1@localhost:30926"
