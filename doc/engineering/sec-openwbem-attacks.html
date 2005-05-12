@@ -11,21 +11,20 @@ body { width: 6.5in }
 <h2>Attack point: inter-process communication between OpenWBEM processes</h2>
 
 <p>
-Note: Every OpenWBEM subsystem process is a child of the OpenWBEM Monitor
+Note: Every OpenWBEM subsystem process is a descendant of the OpenWBEM Monitor
 process.  Communication between an OpenWBEM subsystem and the Monitor occurs
-only through an anonymous Unix-domain socket pair that the Monitor creates
-just before forking off the child.  The monitor only accepts requests from
-such sockets associated with a child it has created, and thereby identifies
-the entity making the request.
+only through an anonymous Unix-domain socket pair that the Monitor creates.
+The monitor only accepts requests from such sockets associated with a child it
+has created, and thereby identifies the entity making the request.
 </p>
 
 <p>A. Attack: Obtain a capability from the monitor by impersonating another
-user/role.  OR:</p>
+user/role.</p>
 <ol>
 <li>Obtain socket descriptor held by existing subsystem for communicating with
-   monitor.  REQUIRES:
+   monitor.
   <ol>
-  <li> Cause existing subsystem process to run attacker's code.  OR:
+  <li> Cause existing subsystem process to run attacker's code.
     <ol>
     <li> Run as root.
     <li> Run as same user as subsystem process to alter memory image.
@@ -33,7 +32,7 @@ user/role.  OR:</p>
     </ol>
   </ol>
 
-<li>Alter memory image of monitor. OR:
+<li>Alter memory image of monitor.
   <ol>
   <li> Run as root.
   <li> Compromise through inputs.
@@ -56,14 +55,14 @@ Monitor can easily detect any deviation from the expected pattern.
 </ul>
 
 
-<p>B. Attack: Intercept a capability passed to a subsystem process.  OR:</p>
+<p>B. Attack: Intercept a capability passed to a subsystem process.</p>
 <ol>
 <li> Obtain descriptor for capability after it is received by intended recipient
-     process.  REQUIRES:
+     process.
   <ol>
   <li> Cause subsystem process to run attackers code. (See A.)
   </ol>
-<li> Obtain descriptor for capability from Monitor.  REQUIRES:
+<li> Obtain descriptor for capability from Monitor.
   <ol>
   <li> Cause monitor to run attacker's code.  (See A.)
   </ol>
@@ -76,16 +75,16 @@ Monitor can easily detect any deviation from the expected pattern.
 impersonating another ("client") subsystem process.</p>
 <ol>
 <li> Obtain socket descriptor held by client subsystem for communicating with
-   server subsystem.  REQUIRES:
+   server subsystem.
   <ol>
-  <li> Cause client subsystem process to run attacker's code.  OR:
+  <li> Cause client subsystem process to run attacker's code.
     <ol>
     <li> Run as root.
     <li> Run as same user as client subsystem process to alter memory image.
     <li> Compromise through inputs.
     </ol>
   </ol>
-<li> Alter memory image of server subsystem. OR:
+<li> Alter memory image of server subsystem.
   <ol>
   <li> Run as root.
   <li> Run as same user as server subsystem process.
@@ -125,11 +124,14 @@ with attacker having write permissions.</p>
 
 <p>Defenses:</p>
 <ul>
-<li> Take care that not only the files themselves, but also the
-directories in which they reside, have the most restrictive permissions that
-will still let OpenWBEM function.
+<li> Use most restrictive file permissions possible.
+<li> Store files only in secured directories: every ancestor directory must be
+writable only by root and the appropriate userid.
 <li> Have a small, fixed set of places where these files may be installed, to
 ease enforcement of permissions.
+<li> Preferentially use calls that deal with file descriptors instead of file
+paths, to avoid time-of-check/time-of-use race conditions.
+<li> Use secure file opening procedure to avoid race conditions (see BSS).
 <li> Check file and directory ownership, group membership, and permissions
 before reading/loading; if these are incorrect, fail.
 <li> Never scan a directory for files to process everything found therein.
