@@ -81,7 +81,7 @@ CmdLineParser::Option g_options[] =
 	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
 	{URL_OPT, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0,
 		"The url identifying the cimom and namespace. Default is http://localhost/root/cimv2 if not specified."},
-	{CLASSNAME_OPT, 'c', "classname", CmdLineParser::E_REQUIRED_ARG, 0, "If specified, only subclasses will be printed"},
+	{CLASSNAME_OPT, 'c', "classname", CmdLineParser::E_REQUIRED_ARG, 0, "If specified, only subclasses of <arg> will be printed"},
 	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
 };
 
