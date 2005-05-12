@@ -828,7 +828,11 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 		{
 			String ac = getHeaderValue("Accept");
 			if (ac.indexOf("text/xml") == String::npos
-				&& ac.indexOf("application/xml") == String::npos)
+				&& ac.indexOf("application/xml") == String::npos
+				&& ac.indexOf("*/*") == String::npos
+				&& ac.indexOf("text/*") == String::npos
+				&& ac.indexOf("application/*") == String::npos
+				)
 			{
 				m_errDetails = "Only entities of type \"text/xml\" or "
 					"\"application/xml\" are supported.";
