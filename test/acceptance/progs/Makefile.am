@@ -43,7 +43,8 @@ wqlTest2 \
 CIMOMLocator \
 fakeclient \
 infiniteClient \
-testProviderAgent
+testProviderAgent \
+socketCat
 
 testProviderAgent_SOURCES = \
 testProviderAgent.cpp
@@ -366,6 +367,19 @@ $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
 testEmbeddedCIMOM_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o testEmbeddedCIMOM$(EXEEXT)
+
+#socketCat
+socketCat_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+socketCat_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o socketCat$(EXEEXT)
+
+socketCat_SOURCES = \
+socketCat.cpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/ifcs \

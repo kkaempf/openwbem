@@ -28,3 +28,4 @@ testProviderAgent
 *.nlm.*
 testClientTimeout
 lib*sl*
+socketCat
