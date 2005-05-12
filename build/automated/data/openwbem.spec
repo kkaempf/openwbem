@@ -323,6 +323,8 @@ cp -r * $RPM_BUILD_ROOT
 %defattr(0755,root,root)
 /opt/openwbem/bin/owenumclasses
 %defattr(0755,root,root)
+/opt/openwbem/bin/owgetclass
+%defattr(0755,root,root)
 /opt/openwbem/bin/owenumclassnames
 %defattr(0755,root,root)
 /opt/openwbem/bin/owenumnamespace
