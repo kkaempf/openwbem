@@ -289,10 +289,10 @@ daemonShutdown(const String& daemonName, const ServiceEnvironmentIFCRef& env)
 		g_shutDown = true;
 		g_shutdownCond.notifyAll();
 		pthread_yield();
-		if(!FromEventHandler)
-		{
-			UnRegisterEventNotification(DownEvent);
-		}
+	}
+	if(!FromEventHandler)
+	{
+		UnRegisterEventNotification(DownEvent);
 	}
 #else
 	String pidFile(env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE));
