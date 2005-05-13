@@ -38,6 +38,7 @@
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
 #include "OW_Select.hpp"
+#include "OW_Thread.hpp"
 
 #include <vector>
 
@@ -59,6 +60,104 @@ usage(const char* name)
 	cerr << "Usage: " << name << " <addr> [port]" << endl;
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// TODO: make this portable to windows... Maybe have a way to get an UnnamedPipe to stdin
+class DataTransfer : public Thread
+{
+public:
+	DataTransfer(int inputfd, int outputfd) 
+		: m_inputfd(inputfd)
+		, m_outputfd(outputfd)
+	{
+	}
+
+	Int32 run()
+	{
+		int rc;
+		vector<char> buff;
+		do
+		{
+			SelectObjectArray soa;
+			if (m_inputfd != -1)
+			{
+				SelectObject soin(m_inputfd); 
+				soin.waitForRead = true;
+				soa.push_back(soin);
+			}
+
+			if (buff.size() > 0 && m_outputfd != -1)
+			{
+				SelectObject soout(m_outputfd);
+				soout.waitForWrite = true;
+				soa.push_back(soout);
+			}
+
+			if (soa.size() == 0)
+			{
+				return 0;
+			}
+
+			rc = Select::selectRW(soa);
+
+			for (int i = 0; i < rc; ++i)
+			{
+				const SelectObject& so(soa[i]);
+				if (so.readAvailable)
+				{
+					char tmpbuf[1024];
+					ssize_t bytesRead = ::read(so.s, tmpbuf, sizeof(tmpbuf));
+					if (bytesRead == -1)
+					{
+						perror("read failed");
+						return 1;
+					}
+					else if (bytesRead == 0)
+					{
+						::shutdown(so.s, SHUT_RD);
+						m_inputfd = -1;
+					}
+					else
+					{
+						buff.insert(buff.end(), tmpbuf, tmpbuf + bytesRead);
+					}
+				}
+
+				if (so.writeAvailable)
+				{
+					int bytesWritten = ::write(so.s, &buff[0], buff.size());
+					if (bytesWritten > 0)
+					{
+						buff.erase(buff.begin(), buff.begin() + bytesWritten);
+
+						// check for nothing left to write
+						if (buff.size() == 0 && m_inputfd == -1)
+						{
+							// by shutting down half the socket, the server can know to disconnect, but we could still read the response.
+							// TODO: make this portable to win32
+							::shutdown(so.s, SHUT_WR);
+							m_outputfd = -1;
+							return 0;
+						}
+					}
+					else if (bytesWritten < 0)
+					{
+						perror("write to socket failed");
+						return 1;
+					}
+				}
+
+			}
+
+		} while (rc > 0);
+
+		return 0;
+	}
+
+private:
+	int m_inputfd;
+	int m_outputfd;
+};
 
 //////////////////////////////////////////////////////////////////////////////
 int
@@ -87,96 +186,18 @@ main(int argc, char* argv[])
 
 		Socket sock(addr);
 
-		int rc;
-		vector<char> buff;
-		bool stdinOpen = true;
-		do
-		{
-			SelectObjectArray soa;
-			SelectObject soin(0); // TODO: make this portable to windows... Maybe have a way to get an UnnamedPipe to stdin
-			if (stdinOpen)
-			{
-				soin.waitForRead = true;
-			}
-			soa.push_back(soin);
+		const int stdinfd = 0;
+		const int stdoutfd = 1;
+		DataTransfer input(stdinfd, sock.getfd());
+		DataTransfer output(sock.getfd(), stdoutfd);
 
-			SelectObject sosock(sock.getSelectObj());
-			sosock.waitForRead = true;
-			if (buff.size() > 0)
-			{
-				sosock.waitForWrite = true;
-			}
-			soa.push_back(sosock);
-			rc = Select::selectRW(soa);
+		input.start();
+		output.start();
 
-			if (rc > 0)
-			{
-				// read from stdin into the buffer
-				if (soa[0].readAvailable)
-				{
-					char tmpbuf[1024];
-					ssize_t bytesRead = ::read(0, tmpbuf, sizeof(tmpbuf));
-					if (bytesRead == -1)
-					{
-						perror("read from stdin failed");
-						return 1;
-					}
-					else if (bytesRead == 0)
-					{
-						stdinOpen = false;
-					}
-					else
-					{
-						buff.insert(buff.end(), tmpbuf, tmpbuf + bytesRead);
-					}
-				}
+		Int32 inputrv = input.join();
+		Int32 outputrv = output.join(); 
 
-				// write on the socket
-				if (soa[1].writeAvailable)
-				{
-					int bytesWritten = sock.write(&buff[0], buff.size(), true);
-					if (bytesWritten > 0)
-					{
-						buff.erase(buff.begin(), buff.begin() + bytesWritten);
-
-						// check for nothing left to write
-						if (buff.size() == 0 && !stdinOpen)
-						{
-							// by shutting down half the socket, the server can know to disconnect, but we could still read the response.
-							::shutdown(sock.getfd(), SHUT_WR); 
-						}
-					}
-					else
-					{
-						perror("write to socket failed");
-						return 1;
-					}
-				}
-
-				// read from the socket
-				if (soa[1].readAvailable)
-				{
-					char tmpbuf[1024];
-					int bytesRead = sock.read(tmpbuf, sizeof(tmpbuf), true);
-					if (bytesRead > 0)
-					{
-						cout.write(tmpbuf, bytesRead);
-						if (!cout.good())
-						{
-							perror("write to cout failed");
-							return 1;
-						}
-					}
-					else if (bytesRead == 0)
-					{
-						break; // once the server closes the socket, we'll just quit
-					}
-				}
-			}
-
-		} while (rc > 0);
-
-		return 0;
+		return inputrv + outputrv;
 
 	}
 	catch (Exception& e)
