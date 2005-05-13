@@ -48,6 +48,11 @@ OpenWBEM::CIMValue value2CIMValue(CMPIValue* data, CMPIType type, CMPIrc *rc)
 		*rc = CMPI_RC_OK;
 	}
 
+	if (data == NULL)
+	{
+	  return v;
+	}
+	
 	if(type & CMPI_ARRAY)
 	{
 		CMPIArray *ar=data->array;
