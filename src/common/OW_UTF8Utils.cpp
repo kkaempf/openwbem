@@ -441,8 +441,13 @@ bool transformInPlace(char* input, TransformT transformer)
 		const UInt32 c0 = static_cast<UInt8>(p[0]);
 		int prevCharLen = SequenceLengthTable[c0];
 		int newCharLen = UTF8CharLen(newUcs4Char);
-		// can't grow the string, only shrink it.
-		OW_ASSERT(p <= output);
+		
+		// can't grow the string, only shrink it. This can't happen with valid UTF8, but with invalid stuff it could.
+		if (p > output)
+		{
+			return false;
+		}
+
 		// This is commented out, because, given the current set of data from Unicode 4.0.1, there are no
 		// chars that grow when either upper or lower-cased.
 		//if ((p + prevCharLen) < (output + newCharLen))
