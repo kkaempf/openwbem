@@ -420,7 +420,6 @@ IndicationServerImplThread::init(const CIMOMEnvironmentRef& env)
 	// Load map with available indication export providers
 	//-----------------
 	ProviderManagerRef pProvMgr = m_env->getProviderManager();
-	OperationContext context;
 	IndicationExportProviderIFCRefArray pra =
 		pProvMgr->getIndicationExportProviders(createProvEnvRef(m_env));
 	OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread: %1 export providers found",
@@ -446,13 +445,6 @@ IndicationServerImplThread::init(const CIMOMEnvironmentRef& env)
 		OW_THROW(IndicationServerException, err);
 	}
 
-	// Now initialize for all the subscriptions that exist in the repository.
-	// This calls createSubscription for every instance of
-	// CIM_IndicationSubscription in all namespaces.
-	// TODO: If the provider rejects the subscription, we need to disable it!
-	CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context);
-	namespaceEnumerator nsHandler(lch, this);
-	env->getRepository()->enumNameSpace(nsHandler, context);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -486,6 +478,16 @@ IndicationServerImplThread::run()
 {
 	// let CIMOMEnvironment know we're running and ready to go.
 	m_startedBarrier.wait();
+
+	// Now initialize for all the subscriptions that exist in the repository.
+	// This calls createSubscription for every instance of
+	// CIM_IndicationSubscription in all namespaces.
+	// TODO: If the provider rejects the subscription, we need to disable it!
+	OperationContext context;
+	CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context);
+	namespaceEnumerator nsHandler(lch, this);
+	m_env->getRepository()->enumNameSpace(nsHandler, context);
+
 	{
 		NonRecursiveMutexLock l(m_mainLoopGuard);
 		while (!m_shuttingDown)
