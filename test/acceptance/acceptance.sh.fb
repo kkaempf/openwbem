@@ -19,6 +19,7 @@
 #		testHeaders
 #		auth
 #		acl
+#		mofinstalltool
 #		mof
 #		testsuite
 #		testipcsuite
@@ -661,6 +662,29 @@ TestWQL()
 	echo "WQL Testsuite Passed"
 }
 
+#############################################################################
+TestMofinstalltool()
+{
+	set -x
+	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
+		mofinstalltool >/dev/null 2>&1
+	then
+		return
+	fi
+
+	RESULTS="$RESULTDIR/owmofinstalltooltest.out"
+	TEST_COMMAND="$BUILDDIR/test/acceptance/progs/owmofinstalltooltest/owmofinstalltooltest"
+
+	echo "Executing mofinstalltool test suite, saving output in " $RESULTS
+	## FIXME: command line parameters.
+	echo "STAGEDIR is $STAGEDIR"
+	$TEST_COMMAND $STAGEDIR $STAGEDIR/$OWSYSCONFDIR/openwbem/openwbem.conf-t 2>&1 $RESULTS || \
+		ExitWithFail "$TEST_COMMAND exited with error(s) . See $RESULTS ."
+
+	echo "\$? $?"
+	# Diff owmofinstalltooltest.out owmofinstalltooltest.out "FAIL: owmofinstalltooltest output differs from expected."
+	# echo "owmofinstalltool Testsuite Passed."
+}
 
 #############################################################################
 TestIndications()
@@ -1271,6 +1295,8 @@ fi
 
 SetupInteropSchema
 TestMof
+
+TestMofinstalltool
 
 TestSuite "http://test1:pass1@localhost:30926" "testsuiteTCPXML.out" "testsuite28.out"
 TestSuite "owbinary.wbem://test1:pass1@localhost:$OWIPC/ " "testsuiteUDSBIN.out" "testsuite28.out"
