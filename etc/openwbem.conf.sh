@@ -550,11 +550,26 @@ owcimomd.libexecdir = @libexecdir@/openwbem
 owcimomd.owlibdir = @libdir@/openwbem
 
 ################################################################################
+# owcimomd.bindir specifies the locaction of the bin directory.
+# binaries that owcimomd relies on are expected to be in
+# this directory.
+# You probably don't need to modify this option.
+# The default is "@bindir@"
+owcimomd.bindir = @bindir@
+
+################################################################################
 # owcimomd.datadir specifies the directory where owcimomd will place its data
 # file (repositories).
 # You probably don't need to modify this option.
 # The default is "@localstatedir@/openwbem"
 owcimomd.datadir = @localstatedir@/openwbem
+
+################################################################################
+# owcimomd.mofdir specifies the directory where owcimomd will place its mof
+# files (repositories).
+# You probably don't need to modify this option.
+# The default is "@sysconfdir@/openwbem/mof"
+owcimomd.mofdir = @sysconfdir@/openwbem/mof
 
 ################################################################################
 # owcimomd.provider_ifc_libs specifies the locations where all the provider
