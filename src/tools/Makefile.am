@@ -37,7 +37,7 @@ owcimindicationlistener
 endif
 endif
 
-SUBDIRS = $(MOFC_DIR) owprovideragent
+SUBDIRS = $(MOFC_DIR) owmofinstalltool owprovideragent
 
 noinst_LIBRARIES = libtoolscommon.a
 
@@ -282,6 +282,3 @@ INCLUDES = \
 -I$(top_srcdir)/src/cimxmllistener \
 -I$(top_srcdir)/src/services/http \
 -I$(top_srcdir)/src/repositories/hdb
-
-
-
