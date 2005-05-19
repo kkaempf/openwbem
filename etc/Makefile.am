@@ -15,6 +15,7 @@ SUFFIXES = .sh
 		-e 's!@''libdir''@!$(libdir)!g' \
 		-e 's!@''libexecdir''@!$(libexecdir)!g' \
 		-e 's!@''sysconfdir''@!$(sysconfdir)!g' \
+		-e 's!@''bindir''@!$(bindir)!g' \
 		-e 's!@''localstatedir''@!$(localstatedir)!g' \
 		-e 's!@''lib_ext''@!$(LIB_EXT)!g' \
 		-e 's!@''PACKAGE_PREFIX''@!$(PACKAGE_PREFIX)!g' \
