@@ -487,6 +487,11 @@ namespace Exec
 		String& output, int& processstatus,
 		int timeoutsecs = INFINITE_TIMEOUT, int outputlimit = -1, const String& input = String());
 
+	OW_COMMON_API void
+	executeProcessAndGatherOutput(const Array<String>& command,
+		String& output, int& processstatus, bool& threwException,
+		String& exceptionMessage, int timeoutsecs, int outputlimit, const String& input = String());
+
 	/**
 	 * Run a process, collect the output, and wait for it to exit.  The
 	 * function returns when the
