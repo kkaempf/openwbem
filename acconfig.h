@@ -49,7 +49,9 @@
 #undef DEFAULT_SYSCONF_DIR
 #undef DEFAULT_STATE_DIR
 #undef DEFAULT_LIB_DIR
+#undef DEFAULT_BIN_DIR
 #undef DEFAULT_LIBEXEC_DIR
+#undef DEFAULT_CIMOM_START_SCRIPT
 #undef PIDFILE_DIR
 
 /* Either "" or the argument to --with-package-prefix */
