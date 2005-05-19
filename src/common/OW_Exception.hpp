@@ -44,6 +44,8 @@
 #include <exception>
 #include <new>
 
+#include <cerrno>
+
 namespace OW_NAMESPACE
 {
 
