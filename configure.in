@@ -1294,7 +1294,26 @@ AC_CHECK_FUNCS(pthread_kill_other_threads_np)
 
 # restore flags after pthread tests
 LIBS=$OLD_LIBS
- 
+
+#####################################################
+# Set the locations of various directors.
+## FIXME!! Find out why on earth some of these use ${prefix} as the
+## base for the dir, and why others use ${exec_prefix}
+## This causes some weirdness that does not make sense to me;
+## configure openwbem with ./configure --prefix=/some/foo/prefix, and
+## then look at OW_config.h, and you'll see something like:
+##
+## #ifndef OW_DEFAULT_STATE_DIR
+## #define OW_DEFAULT_STATE_DIR "/some/foo/prefix/var"
+## #endif
+## #ifndef OW_DEFAULT_LIB_DIR
+## #define OW_DEFAULT_LIB_DIR "/usr/local/lib"
+## #endif
+##
+## which seems wrong to me. The solution is to pass both
+## --prefix=/some/foo/prefix and --exec-prefix=/some/foo/prefix to
+## configre.
+
 #####################################################
 # Set the location of the state dir
 if test "x$localstatedir" != "x\${prefix}/var"; then
@@ -1323,6 +1342,20 @@ AC_DEFINE_UNQUOTED(DEFAULT_LIB_DIR, "${tempDir}")
 
 
 #####################################################
+# Set the location of the bin dir
+if test "x$bindir" != "x\${exec_prefix}/bin"; then
+	tempDir=$bindir
+else
+	if test "x$exec_prefix" != "xNONE"; then
+		tempDir=${exec_prefix}/bin
+	else
+		tempDir=${ac_default_prefix}/bin
+	fi
+fi
+AC_DEFINE_UNQUOTED(DEFAULT_BIN_DIR, "${tempDir}")
+
+
+#####################################################
 # Set the location of the libexec dir
 if test "x$libexecdir" != "x\${exec_prefix}/libexec"; then
 	tempDir=$libexecdir
@@ -1348,8 +1381,27 @@ else
 fi
 AC_DEFINE_UNQUOTED(DEFAULT_SYSCONF_DIR, "${tempDir}")
 
-# This is down at the bottom, because $libdir expands to "${exec_prefix}/lib".
-# This variable won't be available until the makefiles are generated. 
+#####################################################
+# Set the location of the cimom startup script.
+if test "x$cimom_startup_script" != "x\${exec_prefix}/sbin/owcimomd_init"; then
+	tempScriptName=$bindir
+else
+	if test "x$exec_prefix" != "xNONE"; then
+		tempScriptName=${exec_prefix}/sbin/owcimomd_init
+	else
+		tempScriptName=${ac_default_prefix}/sbin/owcimomd_init
+	fi
+fi
+AC_DEFINE_UNQUOTED(DEFAULT_CIMOM_START_SCRIPT, "${tempScriptName}")
+
+
+# This is down at the bottom, because $libdir expands to
+# "${exec_prefix}/lib".  This variable won't be available until the
+# makefiles are generated.  This has the (unfortunate?) result that if
+# --prefix is passed to configure, and --exec-prefix is not, stuff
+# will end up rpath'd to a lib dir the openwbem libs are *not*
+# installed to.
+
 if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
 		LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}${RPATH_DEFAULT_PATH}$libdir"
 fi
@@ -1451,6 +1503,7 @@ src/services/http/Makefile
 src/tools/Makefile
 src/tools/owmofc/Makefile
 src/tools/owprovideragent/Makefile
+src/tools/owmofinstalltool/Makefile
 src/wql/Makefile
 src/wql/common/Makefile
 src/xml/Makefile
@@ -1458,6 +1511,8 @@ test/Makefile
 test/CppUnit/Makefile
 test/acceptance/Makefile
 test/acceptance/progs/Makefile
+test/acceptance/progs/owmofinstalltooltest/Makefile
+test/acceptance/progs/common/Makefile
 test/acceptance/testfiles/Makefile
 test/c++providers/Makefile
 test/c++providers/associator/Makefile
