@@ -169,6 +169,12 @@ exists(const String& path)
 	return _ACCESS(path.c_str(), F_OK) == 0;
 }
 
+bool
+executable(const String& path)
+{
+	return _ACCESS(path.c_str(), X_OK) == 0;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 bool
 canRead(const String& path)

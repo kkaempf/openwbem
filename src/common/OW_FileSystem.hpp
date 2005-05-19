@@ -96,6 +96,11 @@ namespace FileSystem
 	 */
 	OW_COMMON_API bool exists(const String& path);
 	/**
+	 * @return true if the file exists and is executable (and false
+	 * otherwise).
+	 */
+	OW_COMMON_API bool executable(const String& path);
+	/**
 	 * @return true if the file exists and can be read
 	 */
 	OW_COMMON_API bool canRead(const String& path);
@@ -154,7 +159,7 @@ namespace FileSystem
 	/**
 	 * Rename the given file to the new name
 	 * @param oldFileName	The name of the file to rename
-	 * @param newFileName	The new name for the olFileName
+	 * @param newFileName	The new name for the oldFileName
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
 	OW_COMMON_API bool renameFile(const String& oldFileName,
