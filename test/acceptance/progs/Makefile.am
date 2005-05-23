@@ -1,4 +1,4 @@
-SUBDIRS= common owmofinstalltooltest
+SUBDIRS= common
 
 if DISABLE_INSTANCE_MANIPULATION
 PROGS=

@@ -170,7 +170,7 @@ exists(const String& path)
 }
 
 bool
-executable(const String& path)
+isExecutable(const String& path)
 {
 	return _ACCESS(path.c_str(), X_OK) == 0;
 }

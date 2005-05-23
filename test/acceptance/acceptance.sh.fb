@@ -1296,7 +1296,7 @@ fi
 SetupInteropSchema
 TestMof
 
-TestMofinstalltool
+#TestMofinstalltool
 
 TestSuite "http://test1:pass1@localhost:30926" "testsuiteTCPXML.out" "testsuite28.out"
 TestSuite "owbinary.wbem://test1:pass1@localhost:$OWIPC/ " "testsuiteUDSBIN.out" "testsuite28.out"

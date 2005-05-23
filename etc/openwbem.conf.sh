@@ -216,8 +216,8 @@ log.debug.format = [%t] %m
 # owcimomd.wql_lib specifies the location where the wql processor library
 # will be loaded from.
 # To disable WQL, either set this option to empty or comment it out.
-# The default is "@libdir@/libowwql.@lib_ext@"
-owcimomd.wql_lib = @libdir@/libowwql.@lib_ext@
+# The default is "@libdir@/libowwql.@LIB_EXT@"
+owcimomd.wql_lib = @libdir@/libowwql.@LIB_EXT@
 
 ################################################################################
 # The owcimomd.dump_socket_io defines the directory where owcimomd will
@@ -240,7 +240,7 @@ owcimomd.wql_lib = @libdir@/libowwql.@lib_ext@
 ################################################################################
 # The authentication module to be used by owcimomd.  This should be a
 # an absolute path to the shared library containing the authentication module.
-owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthentication.@lib_ext@
+owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthentication.@LIB_EXT@
 
 ################################################################################
 # The maximum number of classes that will be cached by the cimom.
@@ -335,7 +335,7 @@ owcimomd.restart_on_error = true
 # There are 2 authorization interfaces, either one can work.
 # If this option is empty or commented out, no authorization module will be
 # used.
-;owcimomd.authorization_lib = @libdir@/openwbem/libowsimpleauthorizer.@lib_ext@
+;owcimomd.authorization_lib = @libdir@/openwbem/libowsimpleauthorizer.@LIB_EXT@
 
 ################################################################################
 # owcimomd.authorization2_lib specifies the location the authorization
@@ -343,7 +343,7 @@ owcimomd.restart_on_error = true
 # There are 2 authorization interfaces, either one can work.
 # If this option is empty or commented out, no authorization module will be
 # used.
-;owcimomd.authorization2_lib = @libdir@/openwbem/libowsimpleauthorizer2.@lib_ext@
+;owcimomd.authorization2_lib = @libdir@/openwbem/libowsimpleauthorizer2.@LIB_EXT@
 
 ################################################################################
 # owcimomd.interop_schema_namespace specifies the namespace which contains the
@@ -550,26 +550,11 @@ owcimomd.libexecdir = @libexecdir@/openwbem
 owcimomd.owlibdir = @libdir@/openwbem
 
 ################################################################################
-# owcimomd.bindir specifies the locaction of the bin directory.
-# binaries that owcimomd relies on are expected to be in
-# this directory.
-# You probably don't need to modify this option.
-# The default is "@bindir@"
-owcimomd.bindir = @bindir@
-
-################################################################################
 # owcimomd.datadir specifies the directory where owcimomd will place its data
 # file (repositories).
 # You probably don't need to modify this option.
 # The default is "@localstatedir@/openwbem"
 owcimomd.datadir = @localstatedir@/openwbem
-
-################################################################################
-# owcimomd.mofdir specifies the directory where owcimomd will place its mof
-# files (repositories).
-# You probably don't need to modify this option.
-# The default is "@sysconfdir@/openwbem/mof"
-owcimomd.mofdir = @sysconfdir@/openwbem/mof
 
 ################################################################################
 # owcimomd.provider_ifc_libs specifies the locations where all the provider

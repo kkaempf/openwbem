@@ -99,7 +99,7 @@ namespace FileSystem
 	 * @return true if the file exists and is executable (and false
 	 * otherwise).
 	 */
-	OW_COMMON_API bool executable(const String& path);
+	OW_COMMON_API bool isExecutable(const String& path);
 	/**
 	 * @return true if the file exists and can be read
 	 */

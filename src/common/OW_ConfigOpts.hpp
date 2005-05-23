@@ -248,9 +248,7 @@ namespace ConfigOpts
 	static const char* const ONLYHELP_opt = "owcimomd.onlyhelp";
 	static const char* const LIBEXECDIR_opt = "owcimomd.libexecdir";
 	static const char* const OWLIBDIR_opt = "owcimomd.owlibdir";
-	static const char* const BIN_DIR_opt = "owcimomd.bindir";
 	static const char* const DATADIR_opt = "owcimomd.datadir";
-	static const char* const MOF_DIR_opt = "owcimomd.mofdir";
 	static const char* const ALLOW_ANONYMOUS_opt = "owcimomd.allow_anonymous";
 	static const char* const PAM_ALLOWED_USERS_opt = "pam.allowed_users";
 	static const char* const SIMPLE_AUTH_PASSWORD_FILE_opt = "simple_auth.password_file";

@@ -9,17 +9,9 @@ CLEANFILES = openwbem.conf owgencert
 
 SUFFIXES = .sh
 
-.sh: Makefile
-	@RM@ -f $@ $@-t
-	@SED@ \
-		-e 's!@''libdir''@!$(libdir)!g' \
-		-e 's!@''libexecdir''@!$(libexecdir)!g' \
-		-e 's!@''sysconfdir''@!$(sysconfdir)!g' \
-		-e 's!@''bindir''@!$(bindir)!g' \
-		-e 's!@''localstatedir''@!$(localstatedir)!g' \
-		-e 's!@''lib_ext''@!$(LIB_EXT)!g' \
-		-e 's!@''PACKAGE_PREFIX''@!$(PACKAGE_PREFIX)!g' \
-		-e 's!@''PIDFILE_DIR''@!$(PIDFILE_DIR)!g' \
-	$< > $@-t
-	@MV@	$@-t $@
+.sh : $(top_builddir)/replacement_script.sed Makefile
+	rm -f $@ $@.partial
+	@echo "Creating $@ from $<";
+	sed -f $(top_builddir)/replacement_script.sed < $< > $@.partial
+	mv $@.partial $@
 

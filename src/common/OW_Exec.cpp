@@ -820,25 +820,6 @@ private:
 	int m_outputLimit;
 };
 
-void
-executeProcessAndGatherOutput(const Array<String>& command,
-	String& output, int& processstatus, bool& threwException,
-	String& exceptionMessage, int timeoutsecs, int outputlimit, const String& input)
-{
-	try
-	{
-		Exec::executeProcessAndGatherOutput
-			(command, output, processstatus, timeoutsecs, outputlimit, input);
-		threwException= false;
-	}
-	catch(Exception const& e)
-	{
-		threwException= true;
-		//Shoot the messenger, but keep the message.
- 		exceptionMessage= e.what();
-	}
-}
-
 /////////////////////////////////////////////////////////////////////////////
 class SingleStringInputCallback : public InputCallback
 {

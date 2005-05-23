@@ -37,7 +37,7 @@ owcimindicationlistener
 endif
 endif
 
-SUBDIRS = $(MOFC_DIR) owmofinstalltool owprovideragent
+SUBDIRS = $(MOFC_DIR) owprovideragent
 
 noinst_LIBRARIES = libtoolscommon.a
 
