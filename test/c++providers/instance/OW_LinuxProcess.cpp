@@ -280,7 +280,7 @@ public:
 		// Add the class(es) we are monitoring for lifecycle indications. We only need to add the most derived classes to this array.
 		const char* theMonitoredClasses[] =
 			{
-				"Linux_Process",
+				"LinuxProcess",
 				0
 			};
 
