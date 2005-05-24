@@ -1054,7 +1054,7 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 		CIMObjectPath cop(m_namespace, m_curInstance);
 		
 		m_aliasMap[*(pInstanceDeclaration->pAlias->pAliasIdentifier->pAliasIdentifier)] =
-			cop.modelPath();
+			m_namespace + ":" + cop.modelPath();
 	}
 	CIMOMprocessInstance(pInstanceDeclaration->theLineInfo);
 }
