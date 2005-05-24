@@ -52,6 +52,7 @@ public:
 private:
 	// test methods
 	void testcompileMOF();
+	void testCrossNamespaceAssociations();
 };
 
 #endif

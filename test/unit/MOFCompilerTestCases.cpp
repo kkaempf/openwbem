@@ -43,6 +43,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMQualifierType.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 using namespace OpenWBEM;
 
@@ -77,11 +78,83 @@ void MOFCompilerTestCases::testcompileMOF()
 	unitAssert(insts.size() == 2);
 }
 
+void MOFCompilerTestCases::testCrossNamespaceAssociations()
+{
+	CIMInstanceArray insts;
+	CIMClassArray classes;
+	CIMQualifierTypeArray qualTypes;
+	unitAssertNoThrow( MOF::compileMOF(
+	"#pragma namespace (\"test1\")\n"
+	"Qualifier Key : boolean = false,\n"
+	"    Scope(property, reference),\n"
+	"    Flavor(DisableOverride);\n"
+	
+	"class Test\n"
+	"{\n"
+	"    [key]\n"
+	"    string id;\n"
+	"};\n"
+	
+	"INSTANCE OF Test as $test1\n"
+	"{\n"
+	"    id = \"mytest1\";\n"
+	"};\n"
+	
+	"#pragma namespace (\"test2\")\n"
+	"Qualifier Key : boolean = false,\n"
+	"    Scope(property, reference),\n"
+	"    Flavor(DisableOverride);\n"
+	
+	"class Test\n"
+	"{\n"
+	"    [key]\n"
+	"    string id;\n"
+	"};\n"
+	
+	"INSTANCE OF Test as $test2\n"
+	"{\n"
+	"    id = \"mytest2\";\n"
+	"    value = 2;\n"
+	"};\n"
+	
+	"#pragma namespace (\"test3\")\n"
+	"Qualifier Key : boolean = false,\n"
+	"    Scope(property, reference),\n"
+	"    Flavor(DisableOverride);\n"
+	"Qualifier Association : boolean = false,\n"
+	"    Scope(association),\n"
+	"    Flavor(DisableOverride);\n"
+
+	
+	"[Association]\n"
+	"class Test_Assoc\n"
+	"{\n"
+	"   [Key]\n"
+	"   Test REF Antecedent;\n"
+	
+	"   [Key]\n"
+	"   Test REF Dependent;\n"
+	"};\n"
+	
+	"INSTANCE OF Test_Assoc\n"
+	"{\n"
+	"    antecedent = $test1;\n"
+	"    dependent =  $test2;\n"
+	"};\n"
+
+		, CIMOMHandleIFCRef(), "", insts, classes, qualTypes) );
+	unitAssert(insts.size() == 3);
+	unitAssert(insts[2].getClassName() == "Test_Assoc");
+	unitAssert(insts[2].getProperty("Antecedent").getValue().toCIMObjectPath().getNameSpace() == "test1");
+	unitAssert(insts[2].getProperty("Dependent").getValue().toCIMObjectPath().getNameSpace() == "test2");
+}
+
 Test* MOFCompilerTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("MOFCompiler");
 
 	ADD_TEST_TO_SUITE(MOFCompilerTestCases, testcompileMOF);
+	ADD_TEST_TO_SUITE(MOFCompilerTestCases, testCrossNamespaceAssociations);
 
 	return testSuite;
 }
