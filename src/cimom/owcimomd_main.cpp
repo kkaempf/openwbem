@@ -49,7 +49,12 @@
 #include <iostream> // for cout
 #include <new> // for new handler stuff
 
+#ifdef OW_USE_DL
+#include "OW_dlSharedLibrary.hpp"
+#endif
+
 using namespace OpenWBEM;
+
 
 namespace
 {
@@ -101,6 +106,13 @@ int main(int argc, char* argv[])
 		// logger's not set up according to the config file until after init()
 		logger = env->getLogger(COMPONENT_NAME);
 		OW_LOG_INFO(logger, "owcimomd (" OW_VERSION ") beginning startup");
+
+#ifdef OW_USE_DL
+		if (env->getConfigItem("owcimomd.dont_call_dlclose", "false").equalsIgnoreCase("true"))
+		{
+			dlSharedLibrary::setCallDlclose(false);
+		}
+#endif
 
 		// Call platform specific code to become a daemon/service
 		try
