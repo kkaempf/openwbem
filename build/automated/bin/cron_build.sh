@@ -41,7 +41,7 @@ LocateBuildSystem()
 
 UpdateBuildSystem()
 {
-	if [ "${BUILD_SYSTEM_UPDATED:-x}" != "xtrue" ]
+	if [ "${BUILD_SYSTEM_UPDATED:-x}" != "true" ]
 	then
 		export CVS_RSH=ssh
 		cd ${PATH_TO_BUILD_SYSTEM}
