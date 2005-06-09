@@ -1491,7 +1491,6 @@ test/Makefile
 test/CppUnit/Makefile
 test/acceptance/Makefile
 test/acceptance/progs/Makefile
-test/acceptance/progs/common/Makefile
 test/acceptance/testfiles/Makefile
 test/c++providers/Makefile
 test/c++providers/associator/Makefile
