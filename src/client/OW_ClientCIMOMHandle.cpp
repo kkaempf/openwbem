@@ -73,10 +73,12 @@ ClientCIMOMHandle::enumNameSpace(const String& ns_,
 //////////////////////////////////////////////////////////////////////////////
 // static
 ClientCIMOMHandleRef
-ClientCIMOMHandle::createFromURL(const String& url, const ClientAuthCBIFCRef& authCb)
+ClientCIMOMHandle::createFromURL(const String& url, 
+								 const ClientAuthCBIFCRef& authCb,
+								 SSLClientCtxRef sslCtx)
 {
 	URL owurl(url);
-	CIMProtocolIFCRef client(new HTTPClient(url));
+	CIMProtocolIFCRef client(new HTTPClient(url, sslCtx));
 	client->setLoginCallBack(authCb);
 
 	if (owurl.scheme.startsWith(URL::OWBINARY)

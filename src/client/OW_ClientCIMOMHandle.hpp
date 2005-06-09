@@ -41,6 +41,7 @@
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_Map.hpp"
 #include "OW_ClientFwd.hpp"
+#include "OW_SSLCtxMgr.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -105,6 +106,11 @@ public:
 	 *
 	 * @param authCb If authentication is necessary, and authCb != NULL, then
 	 * authCb->getCredentials() will be called to obtain credentials.
+	 * 
+	 * @param sslCtx A SSLClientCtx can optionally be provided.  This is useful
+	 * in the case where a client SSL certificate is used for client SSL 
+	 * authentication.  It is not necessary to provide this parameter to use 
+	 * SSL.  If it is not provided, a default SSLClientCtx will be used. 
 	 *
 	 * @return a ClientCIMOMHandleRef suitable for connecting to the given url.
 	 *
@@ -112,7 +118,9 @@ public:
 	 * @throws std::bad_alloc
 	 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
 	 */
-	static ClientCIMOMHandleRef createFromURL(const String& url, const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef());
+	static ClientCIMOMHandleRef createFromURL(const String& url, 
+											  const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef(),
+											  SSLClientCtxRef sslCtx = SSLClientCtxRef());
 
 protected:
 	// TODO: Fix this bad design! This class shouldn't know anything about HTTP or trailers!
