@@ -75,7 +75,7 @@ ClientCIMOMHandle::enumNameSpace(const String& ns_,
 ClientCIMOMHandleRef
 ClientCIMOMHandle::createFromURL(const String& url, 
 								 const ClientAuthCBIFCRef& authCb,
-								 SSLClientCtxRef sslCtx)
+								 const SSLClientCtxRef& sslCtx)
 {
 	URL owurl(url);
 	CIMProtocolIFCRef client(new HTTPClient(url, sslCtx));

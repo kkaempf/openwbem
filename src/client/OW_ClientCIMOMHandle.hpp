@@ -120,7 +120,7 @@ public:
 	 */
 	static ClientCIMOMHandleRef createFromURL(const String& url, 
 											  const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef(),
-											  SSLClientCtxRef sslCtx = SSLClientCtxRef());
+											  const SSLClientCtxRef& sslCtx = SSLClientCtxRef());
 
 protected:
 	// TODO: Fix this bad design! This class shouldn't know anything about HTTP or trailers!

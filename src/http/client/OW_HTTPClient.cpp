@@ -62,7 +62,7 @@ namespace OW_NAMESPACE
 using std::flush;
 using std::istream;
 //////////////////////////////////////////////////////////////////////////////
-HTTPClient::HTTPClient( const String &sURL, SSLClientCtxRef sslCtx)
+HTTPClient::HTTPClient( const String &sURL, const SSLClientCtxRef& sslCtx)
 #ifndef OW_DISABLE_DIGEST
 	: m_iDigestNonceCount(1) ,
 #else

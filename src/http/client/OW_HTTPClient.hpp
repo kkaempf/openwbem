@@ -87,7 +87,7 @@ public:
 	 *
 	 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
 	 */
-	HTTPClient(const String& url, SSLClientCtxRef sslCtx = SSLClientCtxRef());
+	HTTPClient(const String& url, const SSLClientCtxRef& sslCtx = SSLClientCtxRef());
 	virtual ~HTTPClient();
 	virtual Reference<std::iostream> beginRequest(
 			const String& methodName, const String& cimObject);
