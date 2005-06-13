@@ -216,7 +216,7 @@ selectRWEpoll(SelectObjectArray& selarray, UInt32 ms)
 	end.tv_usec += (ms % 1000) * 1000;
 
 	while ((ecc == 0) && ((ms == INFINITE_TIMEOUT) || (now.tv_sec < end.tv_sec)
-		 || ((now.tv_sec == end.tv_sec) && (now.tv_usec < end.tv_usec))))
+		 || ((now.tv_sec == end.tv_sec) && (now.tv_usec <= end.tv_usec))))
 	{
 		timeval tv;
 		tv.tv_sec = end.tv_sec - now.tv_sec;
@@ -288,7 +288,7 @@ selectRWPoll(SelectObjectArray& selarray, UInt32 ms)
 	end.tv_sec  += ms / 1000;
 	end.tv_usec += (ms % 1000) * 1000;
 	while ((rc == 0) && ((ms == INFINITE_TIMEOUT) || (now.tv_sec < end.tv_sec)
-		 || ((now.tv_sec == end.tv_sec) && (now.tv_usec < end.tv_usec))))
+		 || ((now.tv_sec == end.tv_sec) && (now.tv_usec <= end.tv_usec))))
 	{
 		for (size_t i = 0; i < selarray.size(); i++)
 		{
@@ -399,7 +399,7 @@ selectRWSelect(SelectObjectArray& selarray, UInt32 ms)
 	end.tv_sec  += ms / 1000;
 	end.tv_usec += (ms % 1000) * 1000;
 	while ((rc == 0) && ((ms == INFINITE_TIMEOUT) || (now.tv_sec < end.tv_sec)
-		 || ((now.tv_sec == end.tv_sec) && (now.tv_usec < end.tv_usec))))
+		 || ((now.tv_sec == end.tv_sec) && (now.tv_usec <= end.tv_usec))))
 	{
 		int maxfd = 0;
 		FD_ZERO(&ifds);
