@@ -349,6 +349,10 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& 
 	{
 		m_useConnectionCredentials = E_DONT_USE_CONNECTION_CREDENTIALS;
 	}
+	if (m_authenticator)
+	{
+		m_authenticator->init(this); 
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
