@@ -13,7 +13,7 @@ Group       	: Administration/System
 
 Summary     	: The OpenWBEM CIMOM
 
-Copyright   	: BSD
+License   		: BSD
 Packager    	: Bart Whiteley <bartw AT users DOT sourceforge DOT net>
 URL         	: http://www.openwbem.org/
 BuildRoot   	: %{_tmppath}/%{name}-%{version}
