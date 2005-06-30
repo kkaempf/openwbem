@@ -2,7 +2,7 @@
 instance of OpenWBEM_RemoteProviderRegistration
 {
         InstanceID = "test1";
-        Namespace = "root/remotetest";
+        NamespaceName = "root/remotetest";
         ClassName = "instancetest";
         ProviderTypes = { 1 }; // instance
         Url = "http://localhost:10001";
@@ -13,7 +13,7 @@ instance of OpenWBEM_RemoteProviderRegistration
 instance of OpenWBEM_RemoteProviderRegistration
 {
         InstanceID = "test2";
-        Namespace = "root/remotetest";
+        NamespaceName = "root/remotetest";
         ClassName = "instancetest";
         ProviderTypes = { 2 }; // secondary instance
         Url = "http://localhost:10002";
@@ -24,7 +24,7 @@ instance of OpenWBEM_RemoteProviderRegistration
 instance of OpenWBEM_RemoteProviderRegistration
 {
         InstanceID = "test3";
-        Namespace = "root/remotetest";
+        NamespaceName = "root/remotetest";
         ClassName = "assoctest";
         ProviderTypes = { 3 }; // associator
         Url = "http://localhost:10003";
@@ -35,7 +35,7 @@ instance of OpenWBEM_RemoteProviderRegistration
 instance of OpenWBEM_RemoteProviderRegistration
 {
         InstanceID = "test4";
-        Namespace = "root/remotetest";
+        NamespaceName = "root/remotetest";
         ClassName = "methodtest";
         ProviderTypes = { 5 }; // method
         Url = "http://localhost:10004";
