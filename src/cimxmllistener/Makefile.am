@@ -8,7 +8,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-OW_SHARED_LIBS = libowhttpxmllistener.$(LIB_EXT)
+OW_SHARED_LIBS = libowhttpxmllistener.$(LIB_EXT) libowcimxmllistener.$(LIB_EXT)
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
@@ -20,23 +20,31 @@ SHAREDLIBADD = \
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 owstatlib_LIBRARIES = \
-libowhttpxmllistener.a
+libowhttpxmllistener.a \
+libowcimxmllistener.a
 
 thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)
+
+libowcimxmllistener_a_SOURCES = \
+OW_CIMListenerCallback.cpp \
+OW_XMLListener.cpp \
+OW_CIMXMLListener.cpp
 
 libowhttpxmllistener_a_SOURCES = \
 OW_CIMListenerCallback.cpp \
 OW_XMLListener.cpp \
 OW_ListenerAuthenticator.cpp \
-OW_HTTPXMLCIMListener.cpp
+OW_HTTPXMLCIMListener.cpp \
+OW_CIMXMLListener.cpp
 
 pkginclude_HEADERS = \
 OW_CIMListenerCallback.hpp \
 OW_ListenerAuthenticator.hpp \
 OW_XMLListener.hpp \
 OW_HTTPXMLCIMListener.hpp \
-OW_CIMXMLListenerFwd.hpp
+OW_CIMXMLListenerFwd.hpp \
+OW_CIMXMLListener.hpp
 
 
 INCLUDES = \

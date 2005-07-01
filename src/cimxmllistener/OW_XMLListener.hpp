@@ -56,7 +56,7 @@ public:
 	 * 	method should be called when an indication occurrs.
 	 *
 	 */
-	XMLListener(CIMListenerCallback* callback);
+	XMLListener(const CIMListenerCallbackRef& callback);
 	virtual ~XMLListener();
 	virtual RequestHandlerIFC* clone() const;
 	virtual StringArray getSupportedContentTypes() const;
@@ -86,7 +86,7 @@ protected:
 	virtual void outputError(CIMException::ErrNoType errorCode,
 		const String& msg, std::ostream& ostr);
 private:
-	CIMListenerCallback* m_callback;
+	CIMListenerCallbackRef m_callback;
 	void processSimpleExpReq(CIMXMLParser& parser, std::ostream& ostrEntity,
 		std::ostream& ostrError, const String& messageId, OperationContext& context);
 };

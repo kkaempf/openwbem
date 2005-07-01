@@ -53,7 +53,7 @@ namespace OW_NAMESPACE
 
 using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
-XMLListener::XMLListener(CIMListenerCallback* callback)
+XMLListener::XMLListener(const CIMListenerCallbackRef& callback)
 : RequestHandlerIFCXML(),  m_callback(callback)
 {
 }

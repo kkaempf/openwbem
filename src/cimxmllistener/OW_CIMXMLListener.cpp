@@ -1,4 +1,5 @@
 /*******************************************************************************
+* Copyright (C) 2005 Novell, Inc. All rights reserved.
 * Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -11,14 +12,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Vintela, Inc., Novell, Inc., nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc., Novell, Inc., OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -29,11 +30,12 @@
 *******************************************************************************/
 
 /**
+ * @author Bart Whiteley
  * @author Dan Nuffer
  */
 
 #include "OW_config.h"
-#include "OW_HTTPXMLCIMListener.hpp"
+#include "OW_CIMXMLListener.hpp"
 #include "OW_CIMListenerCallback.hpp"
 #include "OW_HTTPServer.hpp"
 #include "OW_XMLListener.hpp"
@@ -129,46 +131,40 @@ typedef IntrusiveReference<EventSelectable> EventSelectableRef;
 #endif
 
 typedef std::pair<SelectableIFCRef, SelectableCallbackIFCRef> SelectablePair_t;
-class HTTPXMLCIMListenerServiceEnvironment : public ServiceEnvironmentIFC
+class CIMXMLListenerServiceEnvironment : public ServiceEnvironmentIFC
 {
 public:
-	HTTPXMLCIMListenerServiceEnvironment(
-		IntrusiveReference<ListenerAuthenticator> authenticator,
+	CIMXMLListenerServiceEnvironment(
+		const ConfigFile::ConfigMap& configItems, 
+		const AuthenticatorIFCRef& authenticator,
 		RequestHandlerIFCRef listener,
 		const LoggerRef& logger,
-		Reference<Array<SelectablePair_t> > selectables,
-		const String& certFileName)
-	: m_pLAuthenticator(authenticator)
+		Reference<Array<SelectablePair_t> > selectables)
+	: m_configItems(configItems)
+	, m_authenticator(authenticator)
 	, m_XMLListener(listener)
 	, m_logger(logger ? logger : LoggerRef(new NullLogger))
 	, m_selectables(selectables)
 	{
-		if(certFileName.empty())
-		{
-			setConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, String(0), E_OVERWRITE_PREVIOUS);
-			setConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, String(-1), E_OVERWRITE_PREVIOUS);
-		}
-		else
-		{
-			setConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, String(-1), E_OVERWRITE_PREVIOUS);
-			setConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, String(0), E_OVERWRITE_PREVIOUS);
-			setConfigItem(ConfigOpts::HTTP_SERVER_SSL_CERT_opt, certFileName, E_OVERWRITE_PREVIOUS);
-		}
+		setConfigItem(ConfigOpts::HTTP_SERVER_MAX_CONNECTIONS_opt, String(10), E_PRESERVE_PREVIOUS);
+		setConfigItem(ConfigOpts::HTTP_SERVER_SINGLE_THREAD_opt, "false", E_PRESERVE_PREVIOUS);
+		setConfigItem(ConfigOpts::HTTP_SERVER_ENABLE_DEFLATE_opt, "true", E_PRESERVE_PREVIOUS);
+		setConfigItem(ConfigOpts::HTTP_SERVER_USE_DIGEST_opt, "false", E_PRESERVE_PREVIOUS);
+		setConfigItem(ConfigOpts::HTTP_SERVER_USE_UDS_opt, "false", E_PRESERVE_PREVIOUS);
 
-		setConfigItem(ConfigOpts::HTTP_SERVER_MAX_CONNECTIONS_opt, String(10), E_OVERWRITE_PREVIOUS);
-		setConfigItem(ConfigOpts::HTTP_SERVER_SINGLE_THREAD_opt, "false", E_OVERWRITE_PREVIOUS);
-		setConfigItem(ConfigOpts::HTTP_SERVER_ENABLE_DEFLATE_opt, "true", E_OVERWRITE_PREVIOUS);
-		setConfigItem(ConfigOpts::HTTP_SERVER_USE_DIGEST_opt, "false", E_OVERWRITE_PREVIOUS);
-		setConfigItem(ConfigOpts::HTTP_SERVER_USE_UDS_opt, "false", E_OVERWRITE_PREVIOUS);
-
-		setConfigItem(ConfigOpts::ALLOW_ANONYMOUS_opt, "true", E_OVERWRITE_PREVIOUS);
-		setConfigItem(ConfigOpts::HTTP_SERVER_ENABLE_DEFLATE_opt, "false", E_OVERWRITE_PREVIOUS);
+		//setConfigItem(ConfigOpts::ALLOW_ANONYMOUS_opt, "true", E_PRESERVE_PREVIOUS);
+		setConfigItem(ConfigOpts::HTTP_SERVER_ENABLE_DEFLATE_opt, "false", E_PRESERVE_PREVIOUS);
 	}
-	virtual ~HTTPXMLCIMListenerServiceEnvironment() {}
+	virtual ~CIMXMLListenerServiceEnvironment() {}
 	virtual bool authenticate(String &userName,
 		const String &info, String &details, OperationContext& context) const
 	{
-		return m_pLAuthenticator->authenticate(userName, info, details, context);
+		// TODO what if m_authenticator == 0?  or should this even be allowed...
+		if (!m_authenticator)
+		{
+			return false; 
+		}
+		return m_authenticator->authenticate(userName, info, details, context);
 	}
 	virtual void addSelectable(const SelectableIFCRef& obj,
 		const SelectableCallbackIFCRef& cb)
@@ -211,7 +207,7 @@ public:
 	{
 		RequestHandlerIFCRef ref(m_XMLListener.getLibRef(),
 				m_XMLListener->clone());
-		ref->setEnvironment(ServiceEnvironmentIFCRef(const_cast<HTTPXMLCIMListenerServiceEnvironment*>(this)));
+		ref->setEnvironment(ServiceEnvironmentIFCRef(const_cast<CIMXMLListenerServiceEnvironment*>(this)));
 		return ref;
 	}
 	virtual LoggerRef getLogger() const
@@ -226,7 +222,7 @@ public:
 	}
 private:
 	ConfigFile::ConfigMap m_configItems;
-	IntrusiveReference<ListenerAuthenticator> m_pLAuthenticator;
+	AuthenticatorIFCRef m_authenticator;
 	RequestHandlerIFCRef m_XMLListener;
 	LoggerRef m_logger;
 	Reference<Array<SelectablePair_t> > m_selectables;
@@ -290,29 +286,21 @@ private:
 };
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
-HTTPXMLCIMListener::HTTPXMLCIMListener(const LoggerRef& logger,
-	const String& certFileName)
-	: m_XMLListener(SharedLibraryRef(0), new XMLListener(this))
-	, m_pLAuthenticator(new ListenerAuthenticator)
+CIMXMLListener::CIMXMLListener(const ConfigFile::ConfigMap& configItems, 
+							   const CIMListenerCallbackRef& callback, 
+							   const AuthenticatorIFCRef& authenticator, 
+							   const LoggerRef& logger)
+	: m_XMLListener(SharedLibraryRef(0), new XMLListener(callback)) 
+	//, m_pLAuthenticator(new ListenerAuthenticator)
 	, m_httpServer(new HTTPServer)
 	, m_httpListenPort(0)
 	, m_httpsListenPort(0)
-	, m_certFileName(certFileName)
 {
-	if(!certFileName.empty())
-	{
-		if(!FileSystem::canRead(certFileName))
-		{
-			OW_THROW_ERRNO_MSG(IOException, 
-				Format("Unable to open certificate file %1",
-					certFileName).c_str());
-		}
-	}
-
 	Reference<Array<SelectablePair_t> >
 		selectables(new Array<SelectablePair_t>);
-	ServiceEnvironmentIFCRef env(new HTTPXMLCIMListenerServiceEnvironment(
-		m_pLAuthenticator, m_XMLListener, logger, selectables, certFileName));
+	ServiceEnvironmentIFCRef env(new CIMXMLListenerServiceEnvironment(
+		configItems, 
+		authenticator, m_XMLListener, logger, selectables)); 
 	m_httpServer->init(env);
 	m_httpServer->start();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really
@@ -325,12 +313,13 @@ HTTPXMLCIMListener::HTTPXMLCIMListener(const LoggerRef& logger,
 	m_httpThread->start();
 }
 //////////////////////////////////////////////////////////////////////////////
-HTTPXMLCIMListener::~HTTPXMLCIMListener()
+CIMXMLListener::~CIMXMLListener()
 {
 	try
 	{
 		shutdownHttpServer();
 		// unregister all the callbacks from the CIMOMs
+		/*
 		MutexLock lock(m_mutex);
 		for (callbackMap_t::iterator i = m_callbacks.begin();
 			i != m_callbacks.end(); ++i)
@@ -352,6 +341,7 @@ HTTPXMLCIMListener::~HTTPXMLCIMListener()
 			}
 		}
 		m_pLAuthenticator = 0;
+		*/
 	}
 	catch (...)
 	{
@@ -359,7 +349,7 @@ HTTPXMLCIMListener::~HTTPXMLCIMListener()
 	}
 }
 void
-HTTPXMLCIMListener::shutdownHttpServer()
+CIMXMLListener::shutdownHttpServer()
 {
 	if (m_httpThread)
 	{
@@ -376,8 +366,9 @@ HTTPXMLCIMListener::shutdownHttpServer()
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
+/*
 String
-HTTPXMLCIMListener::registerForIndication(
+CIMXMLListener::registerForIndication(
 	const String& url,
 	const String& ns,
 	const String& filter,
@@ -502,9 +493,11 @@ HTTPXMLCIMListener::registerForIndication(
 	m_callbacks[httpPath] = reg;
 	return httpPath;
 }
+*/
 //////////////////////////////////////////////////////////////////////////////
+/*
 void
-HTTPXMLCIMListener::deregisterForIndication( const String& handle )
+CIMXMLListener::deregisterForIndication( const String& handle )
 {
 	MutexLock lock(m_mutex);
 	callbackMap_t::iterator i = m_callbacks.find(handle);
@@ -519,7 +512,7 @@ HTTPXMLCIMListener::deregisterForIndication( const String& handle )
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPXMLCIMListener::doIndicationOccurred( CIMInstance& ci,
+CIMXMLListener::doIndicationOccurred( CIMInstance& ci,
 		const String& listenerPath )
 {
 	CIMListenerCallbackRef cb;
@@ -537,13 +530,14 @@ HTTPXMLCIMListener::doIndicationOccurred( CIMInstance& ci,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPXMLCIMListener::deleteRegistrationObjects( const registrationInfo& reg )
+CIMXMLListener::deleteRegistrationObjects( const registrationInfo& reg )
 {
 	ClientCIMOMHandleRef hdl = ClientCIMOMHandle::createFromURL(reg.cimomUrl.toString(), reg.authCb);
 	hdl->deleteInstance(reg.ns, reg.subscription);
 	hdl->deleteInstance(reg.ns, reg.filter);
 	hdl->deleteInstance(reg.ns, reg.handler);
 }
+*/
 
 } // end namespace OW_NAMESPACE
 
