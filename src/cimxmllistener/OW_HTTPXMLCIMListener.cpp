@@ -160,9 +160,6 @@ public:
 		setConfigItem(ConfigOpts::HTTP_SERVER_ENABLE_DEFLATE_opt, "true", E_OVERWRITE_PREVIOUS);
 		setConfigItem(ConfigOpts::HTTP_SERVER_USE_DIGEST_opt, "false", E_OVERWRITE_PREVIOUS);
 		setConfigItem(ConfigOpts::HTTP_SERVER_USE_UDS_opt, "false", E_OVERWRITE_PREVIOUS);
-
-		setConfigItem(ConfigOpts::ALLOW_ANONYMOUS_opt, "true", E_OVERWRITE_PREVIOUS);
-		setConfigItem(ConfigOpts::HTTP_SERVER_ENABLE_DEFLATE_opt, "false", E_OVERWRITE_PREVIOUS);
 	}
 	virtual ~HTTPXMLCIMListenerServiceEnvironment() {}
 	virtual bool authenticate(String &userName,
