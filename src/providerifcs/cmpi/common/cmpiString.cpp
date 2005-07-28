@@ -42,13 +42,13 @@ static CMPIStatus stringRelease(CMPIString *eStr)
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIString* stringClone(CMPIString *eStr, CMPIStatus* rc)
+static CMPIString* stringClone(const CMPIString *eStr, CMPIStatus* rc)
 {
 	CMSetStatus(rc,CMPI_RC_OK);
 	return (CMPIString*) new CMPI_Object((char*) eStr->hdl);
 }
 
-static char* stringGetCharPtr(CMPIString *eStr, CMPIStatus* rc)
+static char* stringGetCharPtr(const CMPIString *eStr, CMPIStatus* rc)
 {
 	char* ptr = (char*) eStr->hdl;
 	CMSetStatus(rc,CMPI_RC_OK);

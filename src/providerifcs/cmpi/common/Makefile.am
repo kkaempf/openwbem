@@ -26,6 +26,7 @@ libcmpisupport_a_SOURCES = \
 cmpiArray.cpp \
 cmpiBroker.cpp \
 cmpiBrokerEnc.cpp \
+cmpiBrokerExt.cpp \
 cmpiContextArgs.cpp \
 cmpiDateTime.cpp \
 cmpiEnumeration.cpp \
@@ -44,6 +45,7 @@ CmpiImpl.cpp
 pkginclude_HEADERS = \
 cmpidt.h \
 cmpift.h \
+cmpios.h \
 cmpimacs.h \
 cmpisrv.h \
 cmpiThreadContext.h \

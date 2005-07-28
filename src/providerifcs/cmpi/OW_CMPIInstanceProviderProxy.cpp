@@ -165,7 +165,7 @@ CMPIInstanceProviderProxy::enumInstances(
 
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 		rc = m_ftable->miVector.instMI->ft->enumInstances(
-			mi, &eCtx, &eRes, &eRef, (char **)props);
+			mi, &eCtx, &eRes, &eRef, props);
 
 		if (rc.rc != CMPI_RC_OK)
 		{
@@ -237,7 +237,7 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 
 		rc = m_ftable->miVector.instMI->ft->getInstance(
-			mi, &eCtx, &eRes, &eRef, (char **)props);
+			mi, &eCtx, &eRes, &eRef, props);
 
 		if (rc.rc == CMPI_RC_OK)
 		{
@@ -358,7 +358,7 @@ void
 
 	m_ftable->lastAccessTime.setToCurrent();
 
-	if (m_ftable->miVector.instMI->ft->setInstance!= NULL)
+	if (m_ftable->miVector.instMI->ft->modifyInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		const char ** props = NULL;
@@ -379,8 +379,8 @@ void
 		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags),
 			(CMPIValue*)&flgs,CMPI_uint32);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
-		rc = m_ftable->miVector.instMI->ft->setInstance(
-			mi, &eCtx, &eRes, &eRef, &eInst, (char **)props);
+		rc = m_ftable->miVector.instMI->ft->modifyInstance(
+			mi, &eCtx, &eRes, &eRef, &eInst, props);
 		if (props && pCount)
 			for (int i=0;i<pCount;i++) free((char *)props[i]);
 		if (rc.rc == CMPI_RC_OK) return;

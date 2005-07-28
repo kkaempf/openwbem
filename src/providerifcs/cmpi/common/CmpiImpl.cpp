@@ -954,7 +954,7 @@ CmpiInstance CmpiBroker::getInstance(const CmpiContext& ctx,
 {
    CMPIStatus rc;
    CMPIInstance* en=getEnc()->bft->getInstance
-      (getEnc(),ctx.getEnc(),cop.getEnc(),(char**)properties,&rc);
+      (getEnc(),ctx.getEnc(),cop.getEnc(),properties,&rc);
    if (rc.rc!=CMPI_RC_OK) throw rc.rc;
    return CmpiInstance(en);
 }
@@ -993,7 +993,7 @@ CmpiEnumeration CmpiBroker::enumInstances(const CmpiContext& ctx,
 {
    CMPIStatus rc;
    CMPIEnumeration* en=getEnc()->bft->enumInstances
-      (getEnc(),ctx.getEnc(),cop.getEnc(),(char**)properties,&rc);
+      (getEnc(),ctx.getEnc(),cop.getEnc(),properties,&rc);
    if (rc.rc!=CMPI_RC_OK) throw rc.rc;
    return CmpiEnumeration(en);
 }

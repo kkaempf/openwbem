@@ -41,7 +41,7 @@ static CMPIStatus refReleaseNop(CMPIObjectPath* eRef)
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIObjectPath* refClone(CMPIObjectPath* eRef, CMPIStatus* rc)
+static CMPIObjectPath* refClone(const CMPIObjectPath* eRef, CMPIStatus* rc)
 {
 	OpenWBEM::CIMObjectPath *ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
 	//OpenWBEM::CIMObjectPath *nRef=new OpenWBEM::CIMObjectPath(ref->getClassName(),
@@ -55,14 +55,14 @@ static CMPIObjectPath* refClone(CMPIObjectPath* eRef, CMPIStatus* rc)
 	return neRef;
 }
 
-static CMPIStatus refSetNameSpace(CMPIObjectPath* eRef, char* ns)
+static CMPIStatus refSetNameSpace(CMPIObjectPath* eRef, const char* ns)
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
 	ref->setNameSpace(OpenWBEM::String(ns));
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIString* refGetNameSpace(CMPIObjectPath* eRef, CMPIStatus* rc)
+static CMPIString* refGetNameSpace(const CMPIObjectPath* eRef, CMPIStatus* rc)
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
 	const OpenWBEM::String &ns=ref->getNameSpace();
@@ -71,14 +71,14 @@ static CMPIString* refGetNameSpace(CMPIObjectPath* eRef, CMPIStatus* rc)
 	return eNs;
 }
 
-static CMPIStatus refSetClassName(CMPIObjectPath * eRef,char * cl)
+static CMPIStatus refSetClassName(CMPIObjectPath * eRef,const char * cl)
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
 	ref->setClassName(OpenWBEM::String(cl));
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIString* refGetClassName(CMPIObjectPath* eRef, CMPIStatus* rc)
+static CMPIString* refGetClassName(const CMPIObjectPath* eRef, CMPIStatus* rc)
 {
 	OpenWBEM::CIMObjectPath * ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
 	const OpenWBEM::String &cn=ref->getClassName();
@@ -101,8 +101,8 @@ static long locateKey(const OpenWBEM::CIMPropertyArray &kb, const OpenWBEM::Stri
 	return -1;
 }
 
-static CMPIStatus refAddKey(CMPIObjectPath* eRef, char* name,
-	CMPIValue* data, CMPIType type)
+static CMPIStatus refAddKey(CMPIObjectPath* eRef, const char* name,
+	const CMPIValue* data, const CMPIType type)
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
 	OpenWBEM::CIMPropertyArray keyBindings=ref->getKeys();
@@ -121,7 +121,7 @@ static CMPIStatus refAddKey(CMPIObjectPath* eRef, char* name,
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIData refGetKey(CMPIObjectPath* eRef, char* name, CMPIStatus* rc)
+static CMPIData refGetKey(const CMPIObjectPath* eRef, const char* name, CMPIStatus* rc)
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
 	const OpenWBEM::String eName(name);
@@ -141,7 +141,7 @@ static CMPIData refGetKey(CMPIObjectPath* eRef, char* name, CMPIStatus* rc)
 	return data;
 }
 
-static CMPIData refGetKeyAt(CMPIObjectPath* eRef, unsigned pos, CMPIString** name,
+static CMPIData refGetKeyAt(const CMPIObjectPath* eRef, unsigned pos, CMPIString** name,
 	CMPIStatus* rc)
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
@@ -166,7 +166,7 @@ static CMPIData refGetKeyAt(CMPIObjectPath* eRef, unsigned pos, CMPIString** nam
 	return data;
 }
 
-static CMPICount refGetKeyCount(CMPIObjectPath* eRef, CMPIStatus* rc)
+static CMPICount refGetKeyCount(const CMPIObjectPath* eRef, CMPIStatus* rc)
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
 	const OpenWBEM::CIMPropertyArray &akb=ref->getKeys();
@@ -175,7 +175,7 @@ static CMPICount refGetKeyCount(CMPIObjectPath* eRef, CMPIStatus* rc)
 }
 
 static CMPIStatus refSetNameSpaceFromObjectPath(CMPIObjectPath* eRef,
-	CMPIObjectPath* eSrc)
+	const CMPIObjectPath* eSrc)
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
 	OpenWBEM::CIMObjectPath* src=(OpenWBEM::CIMObjectPath*)eSrc->hdl;
@@ -188,6 +188,21 @@ static CMPIBoolean refClassPathIsA(CMPIObjectPath *eRef,
 	char * classname, CMPIStatus * rc)
 {
 	return false;
+}
+#endif
+
+#if defined(CMPI_VER_86)
+      /** Generates a well formed string representation of this ObjectPath
+	 @param op ObjectPath this pointer.
+	 @param rc Output: Service return status (suppressed when NULL).
+	 @return String representation.
+      */
+static      CMPIString *refToString(const CMPIObjectPath* op, CMPIStatus *rc)
+{
+	rc->rc = CMPI_RC_ERR_METHOD_NOT_AVAILABLE; 
+	CMPIString* rval = new CMPIString; 
+	//TODO
+	return rval; 
 }
 #endif
 
@@ -212,7 +227,8 @@ static CMPIObjectPathFT objectPath_FT={
 	NULL,
 	NULL,
 	NULL,
-	NULL
+	NULL,
+	refToString // toString
 };
 
 CMPIObjectPathFT *CMPI_ObjectPath_Ftab=&objectPath_FT;
@@ -238,7 +254,8 @@ static CMPIObjectPathFT objectPathOnStack_FT={
 	NULL,
 	NULL,
 	NULL,
-	NULL
+	NULL,
+	NULL // toString
 };
 
 CMPIObjectPathFT *CMPI_ObjectPathOnStack_Ftab=&objectPathOnStack_FT;

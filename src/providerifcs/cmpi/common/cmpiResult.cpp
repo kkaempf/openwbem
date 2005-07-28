@@ -24,8 +24,8 @@
 #include "OW_CIMException.hpp"
 #include "CmpiProviderBase.h"
 
-static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data,
-	CMPIType type)
+static CMPIStatus resultReturnData(const CMPIResult* eRes, const CMPIValue* data,
+	const CMPIType type)
 {
 	CMPIrc rc;
 	OpenWBEM::CIMValue v=value2CIMValue(data,type,&rc);
@@ -50,7 +50,7 @@ static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data,
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnInstance(CMPIResult* eRes, CMPIInstance* eInst)
+static CMPIStatus resultReturnInstance(const CMPIResult* eRes, const CMPIInstance* eInst)
 {
 	OpenWBEM::CIMInstanceResultHandlerIFC * res =
 		static_cast<OpenWBEM::CIMInstanceResultHandlerIFC *> (eRes->hdl);
@@ -81,7 +81,7 @@ static CMPIStatus resultReturnInstance(CMPIResult* eRes, CMPIInstance* eInst)
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnObject(CMPIResult* eRes, CMPIInstance* eInst)
+static CMPIStatus resultReturnObject(const CMPIResult* eRes, const CMPIInstance* eInst)
 {
 	OpenWBEM::CIMInstanceResultHandlerIFC * res =
 		static_cast<OpenWBEM::CIMInstanceResultHandlerIFC *> (eRes->hdl);
@@ -106,8 +106,8 @@ static CMPIStatus resultReturnObject(CMPIResult* eRes, CMPIInstance* eInst)
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnObjectPath(CMPIResult* eRes,
-	CMPIObjectPath* eRef)
+static CMPIStatus resultReturnObjectPath(const CMPIResult* eRes,
+	const CMPIObjectPath* eRef)
 {
 	OpenWBEM::CIMObjectPathResultHandlerIFC * res =
 		static_cast<OpenWBEM::CIMObjectPathResultHandlerIFC *>(eRes->hdl);
@@ -132,38 +132,38 @@ static CMPIStatus resultReturnObjectPath(CMPIResult* eRes,
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnInstDone(CMPIResult* eRes) 
+static CMPIStatus resultReturnInstDone(const CMPIResult* eRes) 
 {
 	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnRefDone(CMPIResult* eRes)
+static CMPIStatus resultReturnRefDone(const CMPIResult* eRes)
 {
 	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnDataDone(CMPIResult* eRes)
+static CMPIStatus resultReturnDataDone(const CMPIResult* eRes)
 {
 	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnMethDone(CMPIResult* eRes)
+static CMPIStatus resultReturnMethDone(const CMPIResult* eRes)
 {
 	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
-static CMPIStatus resultReturnObjDone(CMPIResult* eRes)
+static CMPIStatus resultReturnObjDone(const CMPIResult* eRes)
 {
 	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 
 
-static CMPIStatus resultBadReturnData(CMPIResult* eRes,
-	CMPIValue* data, CMPIType type)
+static CMPIStatus resultBadReturnData(const CMPIResult* eRes,
+	const CMPIValue* data, CMPIType type)
 {
 	(void) eRes;
 	(void) data;
@@ -171,16 +171,16 @@ static CMPIStatus resultBadReturnData(CMPIResult* eRes,
 	CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
 }
 
-static CMPIStatus resultBadReturnInstance(CMPIResult* eRes,
-	CMPIInstance* eInst)
+static CMPIStatus resultBadReturnInstance(const CMPIResult* eRes,
+	const CMPIInstance* eInst)
 {
 	(void) eRes;
 	(void) eInst;
 	CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
 }
 
-static CMPIStatus resultBadReturnObjectPath(CMPIResult* eRes,
-	CMPIObjectPath* eRef)
+static CMPIStatus resultBadReturnObjectPath(const CMPIResult* eRes,
+	const CMPIObjectPath* eRef)
 {
 	(void) eRes;
 	(void) eRef;

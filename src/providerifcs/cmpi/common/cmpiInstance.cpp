@@ -47,7 +47,7 @@ static CMPIStatus instReleaseNop(CMPIInstance* eInst)
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIInstance* instClone(CMPIInstance* eInst, CMPIStatus* rc)
+static CMPIInstance* instClone(const CMPIInstance* eInst, CMPIStatus* rc)
 {
 	OpenWBEM::CIMInstance* inst=(OpenWBEM::CIMInstance*)eInst->hdl;
 	OpenWBEM::CIMInstance* cInst=new OpenWBEM::CIMInstance(inst->clone(E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN));
@@ -56,7 +56,7 @@ static CMPIInstance* instClone(CMPIInstance* eInst, CMPIStatus* rc)
 	return neInst;
 }
 
-static CMPIData instGetPropertyAt(CMPIInstance* eInst, CMPICount pos, CMPIString** name,
+static CMPIData instGetPropertyAt(const CMPIInstance* eInst, CMPICount pos, CMPIString** name,
 	CMPIStatus* rc)
 {
 	OpenWBEM::CIMInstance* inst=(OpenWBEM::CIMInstance*)eInst->hdl;
@@ -93,7 +93,7 @@ static CMPIData instGetPropertyAt(CMPIInstance* eInst, CMPICount pos, CMPIString
 	return data;
 }
 
-static CMPIData instGetProperty(CMPIInstance* eInst, char* name, CMPIStatus* rc)
+static CMPIData instGetProperty(const CMPIInstance* eInst, const char* name, CMPIStatus* rc)
 {
 	OpenWBEM::CIMInstance* inst=(OpenWBEM::CIMInstance*)eInst->hdl;
 	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
@@ -115,7 +115,7 @@ static CMPIData instGetProperty(CMPIInstance* eInst, char* name, CMPIStatus* rc)
 }
 
 
-static CMPICount instGetPropertyCount(CMPIInstance* eInst, CMPIStatus* rc)
+static CMPICount instGetPropertyCount(const CMPIInstance* eInst, CMPIStatus* rc)
 {
 	OpenWBEM::CIMInstance* inst=(OpenWBEM::CIMInstance*)eInst->hdl;
 	const OpenWBEM::CIMPropertyArray& p=inst->getProperties();
@@ -123,8 +123,8 @@ static CMPICount instGetPropertyCount(CMPIInstance* eInst, CMPIStatus* rc)
 	return p.size();
 }
 
-static CMPIStatus instSetProperty(CMPIInstance* eInst, char* name,
-	CMPIValue* data, CMPIType type)
+static CMPIStatus instSetProperty(const CMPIInstance* eInst, const char* name,
+	const CMPIValue* data, CMPIType type)
 {
 	OpenWBEM::CIMInstance *inst = (OpenWBEM::CIMInstance*)eInst->hdl;
 	char **list = (char**)((CMPI_Object*)eInst)->priv;
@@ -152,7 +152,7 @@ static CMPIStatus instSetProperty(CMPIInstance* eInst, char* name,
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIObjectPath* instGetObjectPath(CMPIInstance* eInst, CMPIStatus* rc)
+static CMPIObjectPath* instGetObjectPath(const CMPIInstance* eInst, CMPIStatus* rc)
 {
 	OpenWBEM::CIMInstance* inst = (OpenWBEM::CIMInstance*)eInst->hdl;
 	OpenWBEM::CIMObjectPath ref("", *inst);
@@ -162,8 +162,8 @@ static CMPIObjectPath* instGetObjectPath(CMPIInstance* eInst, CMPIStatus* rc)
 	return cop;
 }
 
-static CMPIStatus instSetPropertyFilter(CMPIInstance* eInst,
-	char** propertyList, char **keys)
+static CMPIStatus instSetPropertyFilter(const CMPIInstance* eInst,
+	const char** propertyList, const char **keys)
 {
 	CMPI_Object *inst=(CMPI_Object*)eInst;
 	char **list=(char**)inst->priv;	   // Thank you Warren !
@@ -211,8 +211,8 @@ static CMPIStatus instSetPropertyFilter(CMPIInstance* eInst,
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus instSetPropertyFilterIgnore(CMPIInstance* eInst,
-	char** propertyList, char **keys)
+static CMPIStatus instSetPropertyFilterIgnore(const CMPIInstance* eInst,
+	const char** propertyList, const char **keys)
 {
 	(void)eInst;
 	(void)propertyList;
@@ -220,6 +220,15 @@ static CMPIStatus instSetPropertyFilterIgnore(CMPIInstance* eInst,
 	CMReturn(CMPI_RC_OK);
 }
 
+#if defined(CMPI_VER_100)
+static CMPIStatus instSetObjectPath(CMPIInstance* inst, const CMPIObjectPath* op)
+{
+	CMPIStatus rc; 
+	// TODO
+	rc.rc = CMPI_RC_ERR_METHOD_NOT_AVAILABLE; 
+	return rc; 
+}
+#endif
 
 
 static CMPIInstanceFT instance_FT={
@@ -232,6 +241,10 @@ static CMPIInstanceFT instance_FT={
 	instSetProperty,
 	instGetObjectPath,
 	instSetPropertyFilter,
+#if defined(CMPI_VER_100)
+	instSetObjectPath,
+#endif
+	// TODO setObjectPath
 };
 
 static CMPIInstanceFT instanceOnStack_FT={
@@ -244,6 +257,10 @@ static CMPIInstanceFT instanceOnStack_FT={
 	instSetProperty,
 	instGetObjectPath,
 	instSetPropertyFilterIgnore,
+#if defined(CMPI_VER_100)
+     instSetObjectPath,
+#endif
+	// TODO setObjectPath
 };
 
 CMPIInstanceFT *CMPI_Instance_Ftab=&instance_FT;

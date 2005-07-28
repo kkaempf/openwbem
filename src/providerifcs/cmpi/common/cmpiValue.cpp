@@ -40,7 +40,7 @@
    v.set(OpenWBEM::CIMValue(ar)); }
 
 
-OpenWBEM::CIMValue value2CIMValue(CMPIValue* data, CMPIType type, CMPIrc *rc)
+OpenWBEM::CIMValue value2CIMValue(const CMPIValue* data, const CMPIType type, CMPIrc *rc)
 {
 	OpenWBEM::CIMValue v(OpenWBEM::CIMNULL);
 	if(rc)

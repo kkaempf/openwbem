@@ -89,7 +89,7 @@ CMPIDateTime *newDateTime(CMPIUint64 tim, CMPIBoolean interval)
 		new CMPI_Object(makeCIMDateTime(tim/1000000,tim%1000000,interval));
 }
 
-CMPIDateTime *newDateTime(char *strTime) 
+CMPIDateTime *newDateTime(const char *strTime) 
 {
 	OpenWBEM::CIMDateTime *dt=new OpenWBEM::CIMDateTime(OpenWBEM::String(strTime));
 	return (CMPIDateTime*)new CMPI_Object(dt);
@@ -107,7 +107,7 @@ static CMPIStatus dtRelease(CMPIDateTime* eDt)
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIDateTime* dtClone(CMPIDateTime* eDt, CMPIStatus* rc) 
+static CMPIDateTime* dtClone(const CMPIDateTime* eDt, CMPIStatus* rc) 
 {
 	OpenWBEM::CIMDateTime * dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
 	//OpenWBEM::CIMDateTime * cDt=new OpenWBEM::CIMDateTime(dt->toString());
@@ -118,14 +118,14 @@ static CMPIDateTime* dtClone(CMPIDateTime* eDt, CMPIStatus* rc)
 	return neDt;
 }
 
-static CMPIBoolean dtIsInterval(CMPIDateTime* eDt, CMPIStatus* rc) 
+static CMPIBoolean dtIsInterval(const CMPIDateTime* eDt, CMPIStatus* rc) 
 {
 	OpenWBEM::CIMDateTime* dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
 	CMSetStatus(rc,CMPI_RC_OK);
 	return dt->isInterval();
 }
 
-static CMPIString *dtGetStringFormat(CMPIDateTime* eDt, CMPIStatus* rc) 
+static CMPIString *dtGetStringFormat(const CMPIDateTime* eDt, CMPIStatus* rc) 
 {
 	OpenWBEM::CIMDateTime* dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
 	CMPIString *str=(CMPIString*)new CMPI_Object(dt->toString());
@@ -133,7 +133,7 @@ static CMPIString *dtGetStringFormat(CMPIDateTime* eDt, CMPIStatus* rc)
 	return str;
 }
 
-static CMPIUint64 dtGetBinaryFormat(CMPIDateTime* eDt, CMPIStatus* rc) 
+static CMPIUint64 dtGetBinaryFormat(const CMPIDateTime* eDt, CMPIStatus* rc) 
 {
 	OpenWBEM::CIMDateTime* dt = (OpenWBEM::CIMDateTime*)eDt->hdl;
 	CMPIUint64 days,hours,mins,secs,usecs,utc,lTime;

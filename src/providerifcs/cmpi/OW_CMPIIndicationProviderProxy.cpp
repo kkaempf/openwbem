@@ -68,7 +68,6 @@ CMPIIndicationProviderProxy::deActivateFilter(
 		ProviderEnvironmentIFCRef env2(env);
 		::CMPI_Broker localBroker(m_ftable->broker);
 		localBroker.hdl = static_cast<void *>(&env2);
-		CMPI_ResultOnStack eRes;
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&localBroker, &eCtx);
 		WQLSelectStatement mutableFilter(filter);
@@ -83,7 +82,7 @@ CMPIIndicationProviderProxy::deActivateFilter(
 		//CMPIFlags flgs = 0;
 		::CMPIIndicationMI *mi = m_ftable->miVector.indMI;
 		char* _eventType = const_cast<char*>(eventType.c_str());
-		rc = m_ftable->miVector.indMI->ft->deActivateFilter(mi, &eCtx, &eRes,
+		rc = m_ftable->miVector.indMI->ft->deActivateFilter(mi, &eCtx,
 			&exp, _eventType, &eRef, lastActivation);
 
 		if (rc.rc != CMPI_RC_OK)
@@ -116,7 +115,6 @@ CMPIIndicationProviderProxy::activateFilter(
 		ProviderEnvironmentIFCRef env2(env);
 		::CMPI_Broker localBroker(m_ftable->broker);
 		localBroker.hdl = static_cast<void *>(&env2);
-		CMPI_ResultOnStack eRes;
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&localBroker, &eCtx);
 		WQLSelectStatement mutableFilter(filter);
@@ -132,7 +130,7 @@ CMPIIndicationProviderProxy::activateFilter(
 		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
 		char* _eventType = const_cast<char*>(eventType.c_str());
 
-		rc = m_ftable->miVector.indMI->ft->activateFilter(mi, &eCtx, &eRes,
+		rc = m_ftable->miVector.indMI->ft->activateFilter(mi, &eCtx, 
 			&exp, _eventType, &eRef, firstActivation);
 
 		if (rc.rc != CMPI_RC_OK)
@@ -167,7 +165,6 @@ CMPIIndicationProviderProxy::authorizeFilter(
 		localBroker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&localBroker, &eCtx);
-		CMPI_ResultOnStack eRes;
 		WQLSelectStatement mutableFilter(filter);
 		CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
@@ -181,7 +178,7 @@ CMPIIndicationProviderProxy::authorizeFilter(
 		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
 		char* _eventType = const_cast<char*>(eventType.c_str());
 		char* _owner = const_cast<char*>(owner.c_str());
-		rc = m_ftable->miVector.indMI->ft->authorizeFilter(mi, &eCtx, &eRes,
+		rc = m_ftable->miVector.indMI->ft->authorizeFilter(mi, &eCtx, 
 			&exp, _eventType, &eRef, _owner);
 		if (rc.rc != CMPI_RC_OK)
 		{
@@ -214,7 +211,6 @@ CMPIIndicationProviderProxy::mustPoll(
 		localBroker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&localBroker, &eCtx);
-		CMPI_ResultOnStack eRes;
 		WQLSelectStatement mutableFilter(filter);
 		CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
@@ -225,7 +221,7 @@ CMPIIndicationProviderProxy::mustPoll(
 		//CMPIFlags flgs = 0;
 		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
 		char* _eventType = const_cast<char*>(eventType.c_str());
-		rc = m_ftable->miVector.indMI->ft->mustPoll(mi, &eCtx, &eRes,
+		rc = m_ftable->miVector.indMI->ft->mustPoll(mi, &eCtx, 
 			&exp, _eventType, &eRef);
 
 		if (rc.rc != CMPI_RC_OK)

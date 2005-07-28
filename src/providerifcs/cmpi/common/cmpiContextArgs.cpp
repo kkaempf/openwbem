@@ -34,7 +34,7 @@ static CMPIStatus argsReleaseNop(CMPIArgs* eArg)
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIArgs* argsClone(CMPIArgs* eArg, CMPIStatus* rc)
+static CMPIArgs* argsClone(const CMPIArgs* eArg, CMPIStatus* rc)
 {
 	OpenWBEM::CIMParamValueArray * arg = (OpenWBEM::CIMParamValueArray *)eArg->hdl;
 	OpenWBEM::CIMParamValueArray * cArg = new OpenWBEM::CIMParamValueArray();
@@ -64,8 +64,8 @@ static long locateArg(const OpenWBEM::CIMParamValueArray &a, const OpenWBEM::Str
 	return -1;
 }
 
-static CMPIStatus argsAddArg(CMPIArgs* eArg, char* name,
-				 CMPIValue* data, CMPIType type)
+static CMPIStatus argsAddArg(CMPIArgs* eArg, const char* name,
+				 const CMPIValue* data, const CMPIType type)
 {
 	OpenWBEM::CIMParamValueArray* arg = (OpenWBEM::CIMParamValueArray *)eArg->hdl;
 	CMPIrc rc;
@@ -82,7 +82,7 @@ static CMPIStatus argsAddArg(CMPIArgs* eArg, char* name,
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIData argsGetArgAt(CMPIArgs* eArg, CMPICount pos, CMPIString** name,
+static CMPIData argsGetArgAt(const CMPIArgs* eArg, CMPICount pos, CMPIString** name,
 			CMPIStatus* rc)
 {
 	OpenWBEM::CIMParamValueArray * arg=(OpenWBEM::CIMParamValueArray *)eArg->hdl;
@@ -110,7 +110,7 @@ static CMPIData argsGetArgAt(CMPIArgs* eArg, CMPICount pos, CMPIString** name,
 	return data;
 }
 
-static CMPIData argsGetArg(CMPIArgs* eArg, char* name, CMPIStatus* rc)
+static CMPIData argsGetArg(const CMPIArgs* eArg, const char* name, CMPIStatus* rc)
 {
 	OpenWBEM::CIMParamValueArray *arg = (OpenWBEM::CIMParamValueArray *)eArg->hdl;
 	OpenWBEM::String eName(name);
@@ -126,7 +126,7 @@ static CMPIData argsGetArg(CMPIArgs* eArg, char* name, CMPIStatus* rc)
 	return data;
 }
 
-static CMPICount argsGetArgCount(CMPIArgs* eArg, CMPIStatus* rc)
+static CMPICount argsGetArgCount(const CMPIArgs* eArg, CMPIStatus* rc)
 {
 	OpenWBEM::CIMParamValueArray * arg=(OpenWBEM::CIMParamValueArray *)eArg->hdl;
 	CMSetStatus(rc,CMPI_RC_OK);
@@ -167,24 +167,24 @@ static CMPIStatus contextReleaseNop(CMPIContext* eCtx)
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIData contextGetEntry(CMPIContext* eCtx, char* name, CMPIStatus* rc)
+static CMPIData contextGetEntry(const CMPIContext* eCtx, const char* name, CMPIStatus* rc)
 {
 	return argsGetArg((CMPIArgs*)eCtx,name,rc);
 }
 
-CMPIData contextGetEntryAt(CMPIContext* eCtx, CMPICount pos,
+CMPIData contextGetEntryAt(const CMPIContext* eCtx, CMPICount pos,
 				CMPIString** name, CMPIStatus* rc)
 {
 	return argsGetArgAt((CMPIArgs*)eCtx,pos,name,rc);
 }
 
-static CMPICount contextGetEntryCount(CMPIContext* eCtx, CMPIStatus* rc)
+static CMPICount contextGetEntryCount(const CMPIContext* eCtx, CMPIStatus* rc)
 {
 	return argsGetArgCount((CMPIArgs*)eCtx,rc);
 }
 
-static CMPIStatus contextAddEntry(CMPIContext* eCtx, char* name,
-					CMPIValue* data, CMPIType type)
+static CMPIStatus contextAddEntry(const CMPIContext* eCtx, const char* name,
+					const CMPIValue* data, const CMPIType type)
 {
 	return argsAddArg((CMPIArgs*)eCtx,name,data,type);
 }

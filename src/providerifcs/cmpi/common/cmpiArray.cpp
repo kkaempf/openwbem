@@ -44,7 +44,7 @@ static CMPIStatus arrayRelease(CMPIArray* eArray)
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIArray* arrayClone(CMPIArray* eArray, CMPIStatus* rc)
+static CMPIArray* arrayClone(const CMPIArray* eArray, CMPIStatus* rc)
 {
 	CMPIData * dta=(CMPIData *)eArray->hdl;
 	CMPIData * nDta=new CMPIData[dta->value.uint32+1];
@@ -75,7 +75,7 @@ static CMPIArray* arrayClone(CMPIArray* eArray, CMPIStatus* rc)
 	return nArray;
 }
 
-static CMPIData arrayGetElementAt(CMPIArray* eArray, CMPICount pos,
+static CMPIData arrayGetElementAt(const CMPIArray* eArray, CMPICount pos,
 					 CMPIStatus* rc)
 {
 	CMPIData * dta=(CMPIData *)eArray->hdl;
@@ -88,7 +88,7 @@ static CMPIData arrayGetElementAt(CMPIArray* eArray, CMPICount pos,
 }
 
 static CMPIStatus arraySetElementAt(CMPIArray* eArray, CMPICount pos,
-					CMPIValue *val, CMPIType type)
+					const CMPIValue *val, CMPIType type)
 {
 	CMPIData * dta=(CMPIData *)eArray->hdl;
 
@@ -109,14 +109,14 @@ static CMPIStatus arraySetElementAt(CMPIArray* eArray, CMPICount pos,
 	CMReturn(CMPI_RC_ERR_NOT_FOUND);
 }
 
-static CMPICount arrayGetSize(CMPIArray* eArray, CMPIStatus* rc)
+static CMPICount arrayGetSize(const CMPIArray* eArray, CMPIStatus* rc)
 {
 	CMPIData * dta=(CMPIData *)eArray->hdl;
 	CMSetStatus(rc,CMPI_RC_OK);
 	return dta->value.uint32;
 }
 
-static CMPIType arrayGetType(CMPIArray* eArray, CMPIStatus* rc)
+static CMPIType arrayGetType(const CMPIArray* eArray, CMPIStatus* rc)
 {
 	CMPIData * dta=(CMPIData *)eArray->hdl;
 	CMSetStatus(rc,CMPI_RC_OK);

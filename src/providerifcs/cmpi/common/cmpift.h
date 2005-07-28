@@ -58,7 +58,8 @@ extern "C" {
          @return The newly created Instance.
      */
      CMPIInstance* (*newInstance)
-                 (CMPIBroker* mb,CMPIObjectPath* op,CMPIStatus* rc);
+                 (const CMPIBroker* mb,
+				  const CMPIObjectPath* op, CMPIStatus* rc);
 
      /** ObjectPath factory service.
          @param mb Broker this pointer
@@ -68,7 +69,8 @@ extern "C" {
          @return The newly created ObjectPath.
      */
      CMPIObjectPath* (*newObjectPath)
-                 (CMPIBroker* mb, char* ns, char* cn, CMPIStatus* rc);
+                 (const CMPIBroker* mb, 
+				  const char* ns, const char* cn, CMPIStatus* rc);
 
      /** Args container factory service.
          @param mb Broker this pointer
@@ -76,7 +78,7 @@ extern "C" {
          @return The newly created Args container.
      */
      CMPIArgs* (*newArgs)
-                 (CMPIBroker* mb, CMPIStatus* rc);
+                 (const CMPIBroker* mb, CMPIStatus* rc);
 
      /** String container factory service.
          @param mb Broker this pointer
@@ -85,7 +87,7 @@ extern "C" {
          @return The newly created String.
      */
      CMPIString* (*newString)
-                 (CMPIBroker* mb, char* data, CMPIStatus* rc);
+                 (const CMPIBroker* mb, const char* data, CMPIStatus* rc);
 
      /** Array container factory service.
          @param mb Broker this pointer
@@ -95,7 +97,7 @@ extern "C" {
          @return The newly created Array.
      */
      CMPIArray* (*newArray)
-                 (CMPIBroker* mb, CMPICount max, CMPIType type, CMPIStatus* rc);
+                 (const CMPIBroker* mb, CMPICount max, CMPIType type, CMPIStatus* rc);
 
      /** DateTime factory service. Initialized with the time of day.
          @param mb Broker this pointer
@@ -103,7 +105,7 @@ extern "C" {
          @return The newly created DateTime.
      */
      CMPIDateTime* (*newDateTime)
-                 (CMPIBroker* mb, CMPIStatus* rc);
+                 (const CMPIBroker* mb, CMPIStatus* rc);
 
      /** DateTime factory service. Initialized from <binTime>.
          @param mb Broker this pointer
@@ -114,7 +116,7 @@ extern "C" {
          @return The newly created DateTime.
      */
      CMPIDateTime* (*newDateTimeFromBinary)
-                 (CMPIBroker* mb, CMPIUint64 binTime, CMPIBoolean interval,
+                 (const CMPIBroker* mb, CMPIUint64 binTime, CMPIBoolean interval,
 		  CMPIStatus* rc);
 
      /** DateTime factory service. Is initialized from <utcTime>.
@@ -124,7 +126,7 @@ extern "C" {
          @return The newly created DateTime.
      */
      CMPIDateTime* (*newDateTimeFromChars)
-                 (CMPIBroker* mb, char* utcTime, CMPIStatus* rc);
+                 (const CMPIBroker* mb, const char* utcTime, CMPIStatus* rc);
 
      /** SelectExp factory service. TBD.
          @param mb Broker this pointer
@@ -135,7 +137,7 @@ extern "C" {
          @return The newly created SelectExp.
      */
      CMPISelectExp* (*newSelectExp)
-                 (CMPIBroker* mb, char* query, char* lang,
+                 (const CMPIBroker* mb, const char* query, const char* lang,
                   CMPIArray** projection, CMPIStatus* st);
 
      /** Function to determine whether a CIM class is of <type> or any of
@@ -147,7 +149,8 @@ extern "C" {
          @return True if test successful.
      */
      CMPIBoolean (*classPathIsA)
-                 (CMPIBroker* mb, CMPIObjectPath* op, char* type, CMPIStatus* rc);
+                 (const CMPIBroker* mb, const CMPIObjectPath* op, 
+				  const char* type, CMPIStatus* rc);
 
      /** Attempts to transforms an CMPI object to a broker specific string format.
          Intended for debugging purposes only.
@@ -157,7 +160,7 @@ extern "C" {
          @return String from representation of <object>.
      */
      CMPIString* (*toString)
-                 (CMPIBroker* mb, void* object, CMPIStatus* rc);
+                 (const CMPIBroker* mb, const void* object, CMPIStatus* rc);
 
      /** Verifies whether <object> is of CMPI type <type>.
          Intended for debugging purposes only.
@@ -169,7 +172,7 @@ extern "C" {
          @return True if test successful.
      */
      CMPIBoolean (*isOfType)
-                 (CMPIBroker* mb, void* object, char* type, CMPIStatus* rc);
+                 (const CMPIBroker* mb, const void* object, const char* type, CMPIStatus* rc);
 
      /** Retrieves the CMPI type of <object>.
          Intended for debugging purposes only.
@@ -179,7 +182,7 @@ extern "C" {
          @return CMPI object type.
      */
      CMPIString* (*getType)
-                 (CMPIBroker* mb, void* object, CMPIStatus* rc);
+                 (const CMPIBroker* mb, const void* object, CMPIStatus* rc);
 
      /** Retrieves translated message.
          @param mb Broker this pointer
@@ -191,8 +194,17 @@ extern "C" {
      */
      #if defined(CMPI_VER_85)
      CMPIString* (*getMessage)
-                 (CMPIBroker* mb, char *msgId, char *defMsg, CMPIStatus* rc, unsigned int count, ...);
+                 (const CMPIBroker* mb, const char *msgId, const char *defMsg, CMPIStatus* rc, unsigned int count, ...);
      #endif /* CMPI_VER_85 */
+
+	 #if defined(CMPI_VER_90)
+	 CMPIStatus (*logMessage)
+		(const CMPIBroker*,int,const char*,const char*,
+		 const CMPIString*);
+	 CMPIStatus (*trace)
+		(const CMPIBroker*,int,const char*,const char*,
+		 const CMPIString*);
+	 #endif /* CMPI_VER_90 */ 
    };
 
 
@@ -232,7 +244,7 @@ extern "C" {
 	 @return New Context object to be used by thread to be attached.
      */
      CMPIContext* (*prepareAttachThread)
-                (CMPIBroker* mb, CMPIContext* ctx);
+                (const CMPIBroker* mb, const CMPIContext* ctx);
 
       /** This function informs the CMPI run time system that the current
          thread with Context will begin using CMPI services.
@@ -241,7 +253,7 @@ extern "C" {
 	 @return Service return status.
      */
      CMPIStatus (*attachThread)
-                (CMPIBroker*,CMPIContext*);
+                (const CMPIBroker*,CMPIContext*);
 
       /** This function informs the CMPI run time system that the current thread
          will not be using CMPI services anymore. The Context object will be
@@ -251,7 +263,7 @@ extern "C" {
 	 @return Service return status.
      */
      CMPIStatus (*detachThread)
-                (CMPIBroker* mb, CMPIContext* ctx);
+                (const CMPIBroker* mb, CMPIContext* ctx);
 
      /* class 0 services */
 
@@ -264,8 +276,8 @@ extern "C" {
 	 @return Service return status.
      */
      CMPIStatus (*deliverIndication)
-                (CMPIBroker* mb, CMPIContext* ctx,
-                 char* ns, CMPIInstance* ind);
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const char* ns, const CMPIInstance* ind);
      /* class 1 services */
 
       /** Enumerate Instance Names of the class (and subclasses) defined by <op>.
@@ -276,8 +288,8 @@ extern "C" {
 	 @return Enumeration of ObjectPathes.
      */
      CMPIEnumeration* (*enumInstanceNames)
-                (CMPIBroker* mb, CMPIContext* ctx,
-                 CMPIObjectPath* op, CMPIStatus* rc);
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const CMPIObjectPath* op, CMPIStatus* rc);
 
       /** Get Instance using <op> as reference. Instance structure can be
          controled using the CMPIInvocationFlags entry in <ctx>.
@@ -291,8 +303,8 @@ extern "C" {
 	 @return The Instance.
      */
      CMPIInstance* (*getInstance)
-                (CMPIBroker* mb, CMPIContext* ctx,
-                 CMPIObjectPath* op, char** properties, CMPIStatus* rc);
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const CMPIObjectPath* op, const char** properties, CMPIStatus* rc);
 
      /* class 2 services */
 
@@ -305,8 +317,8 @@ extern "C" {
 	 @return The assigned instance reference.
      */
      CMPIObjectPath* (*createInstance)
-                (CMPIBroker* mb, CMPIContext* ctx,
-                 CMPIObjectPath* op, CMPIInstance* inst, CMPIStatus* rc);
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const CMPIObjectPath* op, const CMPIInstance* inst, CMPIStatus* rc);
 
       /** Replace an existing Instance from <inst> using <op> as reference.
 	 @param mb Broker this pointer.
@@ -315,9 +327,9 @@ extern "C" {
 	 @param inst Complete instance.
 	 @return Service return status.
      */
-     CMPIStatus (*setInstance)
-                (CMPIBroker* mb, CMPIContext* ctx,
-		 CMPIObjectPath* op, CMPIInstance* inst);
+     CMPIStatus (*modifyInstance)
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const CMPIObjectPath* op,  const CMPIInstance* inst, const char ** properties);
 
       /** Delete an existing Instance using <op> as reference.
 	 @param mb Broker this pointer.
@@ -326,8 +338,8 @@ extern "C" {
 	 @return Service return status.
      */
      CMPIStatus (*deleteInstance)
-                (CMPIBroker* mb, CMPIContext* ctx,
-                 CMPIObjectPath* op);
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const CMPIObjectPath* op);
 
       /** Query the enumeration of instances of the class (and subclasses) defined
          by <op> using <query> expression.
@@ -340,8 +352,8 @@ extern "C" {
 	 @return Resulting eumeration of Instances.
      */
      CMPIEnumeration* (*execQuery)
-                (CMPIBroker* mb, CMPIContext* ctx,
-                 CMPIObjectPath* op, char* query, char* lang, CMPIStatus* rc);
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const CMPIObjectPath* op, const char* query, const char* lang, CMPIStatus* rc);
 
       /** Enumerate Instances of the class (and subclasses) defined by <op>.
          Instance structure and inheritance scope can be controled using the
@@ -356,8 +368,8 @@ extern "C" {
 	 @return Enumeration of Instances.
      */
      CMPIEnumeration* (*enumInstances)
-                (CMPIBroker* mb, CMPIContext* ctx,
-                 CMPIObjectPath* op, char** properties, CMPIStatus* rc);
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const CMPIObjectPath* op, const char** properties, CMPIStatus* rc);
 
       /** Enumerate instances associated with the Instance defined by the <op>.
 	 @param mb Broker this pointer.
@@ -390,9 +402,9 @@ extern "C" {
 	 @return Enumeration of Instances.
      */
      CMPIEnumeration* (*associators)
-                (CMPIBroker* mb,CMPIContext* ctx,
-                 CMPIObjectPath* op, char* assocClass, char* resultClass,
-		 char* role, char* resultRole, char** properties, CMPIStatus* rc);
+                (const CMPIBroker* mb,const CMPIContext* ctx,
+                 const CMPIObjectPath* op, const char* assocClass, const char* resultClass,
+		 const char* role, const char* resultRole, const char** properties, CMPIStatus* rc);
 
       /** Enumerate ObjectPaths associated with the Instance defined by <op>.
 	 @param mb Broker this pointer.
@@ -422,9 +434,9 @@ extern "C" {
 	 @return Enumeration of ObjectPaths.
      */
      CMPIEnumeration* (*associatorNames)
-                (CMPIBroker* mb, CMPIContext* ctx,
-                 CMPIObjectPath* op, char* assocClass, char* resultClass,
-		 char* role, char* resultRole, CMPIStatus* rc);
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const CMPIObjectPath* op, const char* assocClass, const char* resultClass,
+		 const char* role, const char* resultRole, CMPIStatus* rc);
 
        /** Enumerates the association instances that refer to the instance defined by
            <op>.
@@ -448,9 +460,9 @@ extern "C" {
 	 @return Enumeration of ObjectPaths.
      */
      CMPIEnumeration* (*references)
-                (CMPIBroker* mb, CMPIContext* ctx,
-                 CMPIObjectPath* op, char* resultClass ,char* role ,
-		 char** properties, CMPIStatus* rc);
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const CMPIObjectPath* op, const char* resultClass ,const char* role ,
+		 const char** properties, CMPIStatus* rc);
 
        /** Enumerates the association ObjectPaths that refer to the instance defined by
            <op>.
@@ -471,8 +483,8 @@ extern "C" {
 	 @return Enumeration of ObjectPaths.
        */
      CMPIEnumeration* (*referenceNames)
-                (CMPIBroker* mb, CMPIContext* ctx,
-                 CMPIObjectPath* op, char* resultClass ,char* role,
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const CMPIObjectPath* op, const char* resultClass, const char* role,
                  CMPIStatus* rc);
 
        /** Invoke a named, extrinsic method of an Instance
@@ -487,9 +499,9 @@ extern "C" {
 	 @return Method return value.
       */
      CMPIData (*invokeMethod)
-                (CMPIBroker* mb, CMPIContext* ctx,
-                 CMPIObjectPath* op,char* method,
-		 CMPIArgs* in, CMPIArgs* out, CMPIStatus* rc);
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const CMPIObjectPath* op,const char* method,
+		 const CMPIArgs* in, CMPIArgs* out, CMPIStatus* rc);
 
        /** Set the named property value of an Instance defined by the <op> parameter.
 	 @param mb Broker this pointer.
@@ -501,8 +513,8 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*setProperty)
-                (CMPIBroker* mb, CMPIContext* ctx,
-                 CMPIObjectPath* op, char* name , CMPIValue* value,
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const CMPIObjectPath* op, const char* name , const CMPIValue* value,
                  CMPIType type);
 
        /** Get the named property value of an Instance defined by the <op> parameter.
@@ -514,8 +526,8 @@ extern "C" {
 	 @return Property value.
       */
      CMPIData (*getProperty)
-                (CMPIBroker* mb, CMPIContext* ctx,
-                 CMPIObjectPath*,char*,CMPIStatus*);
+                (const CMPIBroker* mb, const CMPIContext* ctx,
+                 const CMPIObjectPath*,const char*,CMPIStatus*);
    };
 
 
@@ -544,8 +556,107 @@ extern "C" {
        /** Pointer to MB factory service routines function table.
        */
      CMPIBrokerEncFT *eft;
+
+       /** Pointer to MB extended services function table..
+       */
+#if defined(CMPI_VER_90)
+     CMPIBrokerExtFT *xft;
+#endif
    };
 
+
+
+    //---------------------------------------------------
+   //--
+   //	_CMPIBrokerExtFT Function Table
+   //--
+   //---------------------------------------------------
+
+#if defined(CMPI_VER_90)
+
+#include "cmpios.h"
+
+   struct timespec;
+
+   /** This structure is a table of pointers to extended broker CIMOM
+       services This table is made available by the Management Broker,
+       whenever a provider is loaded and initialized.
+       This is an extension used by Pegasus to support platform dependencies.
+   */
+   struct _CMPIBrokerExtFT {
+     /** Function table version
+     */
+     int ftVersion;
+
+     char *(*resolveFileName)
+         (const char *filename);
+
+
+
+     CMPI_THREAD_TYPE (*newThread)
+        (CMPI_THREAD_RETURN (CMPI_THREAD_CDECL *start)(void *), void *parm, int detached);
+
+     int (*joinThread)
+        (CMPI_THREAD_TYPE thread, CMPI_THREAD_RETURN *retval );
+
+     int (*exitThread)
+        (CMPI_THREAD_RETURN return_code);
+
+     int (*cancelThread)
+        (CMPI_THREAD_TYPE thread);
+
+     int (*threadSleep)
+        (CMPIUint32 msec);
+
+     int (*threadOnce)
+        (int *once, void (*init)(void));
+
+
+     int (*createThreadKey)
+        (CMPI_THREAD_KEY_TYPE *key, void (*cleanup)(void*));
+
+     int (*destroyThreadKey)
+        (CMPI_THREAD_KEY_TYPE key);
+
+     void *(*getThreadSpecific)
+        (CMPI_THREAD_KEY_TYPE key);
+
+     int (*setThreadSpecific)
+        (CMPI_THREAD_KEY_TYPE key, void * value);
+
+
+
+     CMPI_MUTEX_TYPE (*newMutex)
+        (int opt);
+
+     void (*destroyMutex)
+        (CMPI_MUTEX_TYPE);
+
+     void (*lockMutex)
+        (CMPI_MUTEX_TYPE);
+
+     void (*unlockMutex)
+        (CMPI_MUTEX_TYPE);
+
+
+
+     CMPI_COND_TYPE (*newCondition)
+        (int opt);
+
+     void (*destroyCondition)
+        (CMPI_COND_TYPE);
+
+     int (*condWait)
+        (CMPI_COND_TYPE cond, CMPI_MUTEX_TYPE mutex);
+
+     int (*timedCondWait)
+        (CMPI_COND_TYPE cond, CMPI_MUTEX_TYPE mutex, struct timespec *wait);
+
+     int (*signalCondition)
+        (CMPI_COND_TYPE cond);
+  };
+
+#endif
 
 
    /*
@@ -580,7 +691,7 @@ extern "C" {
 	 @return Pointer to copied Context object.
       */
      CMPIContext* (*clone)
-              (CMPIContext* ctx, CMPIStatus* rc);
+              (const CMPIContext* ctx, CMPIStatus* rc);
 
        /** Gets a named Context entry value.
 	 @param ctx Context this pointer.
@@ -589,7 +700,7 @@ extern "C" {
 	 @return Entry value.
       */
      CMPIData (*getEntry)
-              (CMPIContext* ctx, char* name, CMPIStatus* rc);
+              (const CMPIContext* ctx, const char* name, CMPIStatus* rc);
 
        /** Gets a Context entry value defined by its index.
 	 @param ctx Context this pointer.
@@ -599,7 +710,7 @@ extern "C" {
 	 @return Entry value.
       */
      CMPIData (*getEntryAt)
-              (CMPIContext* ctx, unsigned int index, CMPIString** name,
+              (const CMPIContext* ctx, unsigned int index, CMPIString** name,
 	       CMPIStatus* rc);
 
       /** Gets the number of entries contained in this Context.
@@ -607,7 +718,7 @@ extern "C" {
 	 @return Number of entries.
       */
      unsigned int (*getEntryCount)
-              (CMPIContext* ctx, CMPIStatus* rc);
+              (const CMPIContext* ctx, CMPIStatus* rc);
 
       /** adds/replaces a named Context entry
 	 @param ctx Context this pointer.
@@ -617,7 +728,7 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*addEntry)
-              (CMPIContext* ctx, char* name, CMPIValue* value, CMPIType type);
+              (const CMPIContext* ctx, const char* name, const CMPIValue* value, const CMPIType type);
   };
 
 
@@ -638,10 +749,12 @@ extern "C" {
 
        /** Opaque pointer to MB specific implementation data.
        */
+	  /* spec says this should be const, but pegasus isn't */ 
     void *hdl;
 
        /** Pointer to the Context Function Table.
        */
+	/* spec says this should be const, but pegasus isn't */ 
     CMPIContextFT *ft;
   };
 
@@ -663,10 +776,12 @@ extern "C" {
 
        /** Opaque pointer to MB specific implementation data.
        */
+	  /* spec says this should be const, but pegasus isn't */ 
      void *hdl;
 
        /** Pointer to the Result Function Table.
        */
+	 /* spec says this should be const, but pegasus isn't */ 
      CMPIResultFT *ft;
   };
 
@@ -704,7 +819,7 @@ extern "C" {
 	 @return Pointer to copied Result object.
       */
      CMPIResult* (*clone)
-              (CMPIResult* rslt,CMPIStatus* rc);
+              (const CMPIResult* rslt,CMPIStatus* rc);
 
        /** Return a value/type pair.
 	 @param rslt Result this pointer.
@@ -713,7 +828,7 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*returnData)
-              (CMPIResult* rslt,CMPIValue* value,CMPIType type);
+              (const CMPIResult* rslt,const CMPIValue* value,const CMPIType type);
 
        /** Return a Instance object.
 	 @param rslt Result this pointer.
@@ -721,7 +836,7 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*returnInstance)
-              (CMPIResult* rslt,CMPIInstance* inst);
+              (const CMPIResult* rslt,const CMPIInstance* inst);
 
        /** Return a ObjectPath object..
 	 @param rslt Result this pointer.
@@ -729,14 +844,14 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*returnObjectPath)
-              (CMPIResult* rslt, CMPIObjectPath* ref);
+              (const CMPIResult* rslt, const CMPIObjectPath* ref);
 
        /** Indicates no further data to be returned.
 	 @param rslt Result this pointer.
 	 @return Service return status.
       */
      CMPIStatus (*returnDone)
-              (CMPIResult* rslt);
+              (const CMPIResult* rslt);
   };
 
 
@@ -757,10 +872,12 @@ extern "C" {
 
        /** Opaque pointer to MB specific implementation data.
        */
+	   /* Spec says this should be const, but it isn't in pegasus */
      void *hdl;
 
        /** Pointer to the Instance Function Table.
        */
+	 /* Spec says this should be const, but it isn't in pegasus */
      CMPIInstanceFT* ft;
    };
 
@@ -799,7 +916,7 @@ extern "C" {
 	 @return Pointer to copied Instance object.
       */
      CMPIInstance* (*clone)
-              (CMPIInstance* inst, CMPIStatus* rc);
+              (const CMPIInstance* inst, CMPIStatus* rc);
 
        /** Gets a named property value.
 	 @param inst Instance this pointer.
@@ -808,7 +925,7 @@ extern "C" {
 	 @return Property value.
       */
      CMPIData (*getProperty)
-              (CMPIInstance* inst, char* name, CMPIStatus* rc);
+              (const CMPIInstance* inst, const char* name, CMPIStatus* rc);
 
        /** Gets a Property value defined by its index.
 	 @param inst Instance this pointer.
@@ -818,7 +935,7 @@ extern "C" {
 	 @return Property value.
       */
      CMPIData (*getPropertyAt)
-              (CMPIInstance* inst, unsigned int index, CMPIString** name,
+              (const CMPIInstance* inst, unsigned int index, CMPIString** name,
 	       CMPIStatus* rc);
 
       /** Gets the number of properties contained in this Instance.
@@ -827,7 +944,7 @@ extern "C" {
 	 @return Number of properties.
       */
      unsigned int (*getPropertyCount)
-              (CMPIInstance* inst, CMPIStatus* rc);
+              (const CMPIInstance* inst, CMPIStatus* rc);
 
       /** Adds/replaces a named Property.
 	 @param inst Instance this pointer.
@@ -837,8 +954,8 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*setProperty)
-              (CMPIInstance* inst, char* name,
-               CMPIValue* value, CMPIType type);
+              (const CMPIInstance* inst, const char* name,
+               const CMPIValue* value, CMPIType type);
 
       /** Generates an ObjectPath out of the namespace, classname and
 	  key propeties of this Instance.
@@ -847,7 +964,7 @@ extern "C" {
          @return the generated ObjectPath.
       */
      CMPIObjectPath* (*getObjectPath)
-              (CMPIInstance* inst, CMPIStatus* rc);
+              (const CMPIInstance* inst, CMPIStatus* rc);
 
       /** Directs CMPI to ignore any setProperty operations for this
 	  instance for any properties not in this list.
@@ -859,7 +976,12 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*setPropertyFilter)
-              (CMPIInstance* inst, char **propertyList, char **keys);
+              (const CMPIInstance* inst, const char **propertyList, const char **keys);
+
+#ifdef CMPI_VER_100
+     CMPIStatus (*setObjectPath)
+         (CMPIInstance*, const CMPIObjectPath*);
+#endif
    };
 
 
@@ -880,10 +1002,12 @@ extern "C" {
 
        /** Opaque pointer to MB specific implementation data.
        */
+	   /* Spec says this should be const, but it isn't in pegasus */
      void *hdl;
 
        /** Pointer to the ObjectPath Function Table.
        */
+	 /* Spec says this should be const, but it isn't in pegasus */
      CMPIObjectPathFT* ft;
    };
 
@@ -892,7 +1016,7 @@ extern "C" {
   /*
    //---------------------------------------------------
    //--
-   //	_CMPIInstance Function Table
+   //	_CMPIObjectPath Function Table
    //--
    //---------------------------------------------------
    */
@@ -922,7 +1046,7 @@ extern "C" {
 	 @return Pointer to copied ObjectPath object.
       */
      CMPIObjectPath* (*clone)
-              (CMPIObjectPath* op,CMPIStatus* rc);
+              (const CMPIObjectPath* op,CMPIStatus* rc);
 
        /** Set/replace the namespace component.
 	 @param op ObjectPath this pointer.
@@ -930,7 +1054,7 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*setNameSpace)
-              (CMPIObjectPath* op,char* ns);
+              (CMPIObjectPath* op,const char* ns);
 
        /** Get the namespace component.
 	 @param op ObjectPath this pointer.
@@ -938,7 +1062,7 @@ extern "C" {
 	 @return The namespace component.
       */
      CMPIString* (*getNameSpace)
-              (CMPIObjectPath* op, CMPIStatus* rc);
+              (const CMPIObjectPath* op, CMPIStatus* rc);
 
        /** Set/replace the hostname component.
 	 @param op ObjectPath this pointer.
@@ -946,7 +1070,7 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*setHostname)
-              (CMPIObjectPath* op, char* hn);
+              (CMPIObjectPath* op, const char* hn);
 
        /** Get the hostname component.
 	 @param op ObjectPath this pointer.
@@ -954,7 +1078,7 @@ extern "C" {
 	 @return The hostname component.
       */
      CMPIString* (*getHostname)
-              (CMPIObjectPath* op,CMPIStatus* rc);
+              (const CMPIObjectPath* op,CMPIStatus* rc);
 
        /** Set/replace the classname component.
 	 @param op ObjectPath this pointer.
@@ -962,7 +1086,7 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*setClassName)
-              (CMPIObjectPath* op, char* cn);
+              (CMPIObjectPath* op, const char* cn);
 
        /** Get the classname component.
 	 @param op ObjectPath this pointer.
@@ -970,7 +1094,7 @@ extern "C" {
 	 @return The classname component.
       */
      CMPIString* (*getClassName)
-              (CMPIObjectPath* op,CMPIStatus* rc);
+              (const CMPIObjectPath* op,CMPIStatus* rc);
 
       /** Adds/replaces a named key property.
 	 @param op ObjectPath this pointer.
@@ -980,8 +1104,8 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*addKey)
-              (CMPIObjectPath* op,char* name,
-               CMPIValue* value, CMPIType type);
+              (CMPIObjectPath* op,const char* name,
+               const CMPIValue* value, const CMPIType type);
 
        /** Gets a named key property value.
 	 @param op ObjectPath this pointer.
@@ -990,7 +1114,7 @@ extern "C" {
 	 @return Entry value.
       */
      CMPIData (*getKey)
-              (CMPIObjectPath* op, char* name, CMPIStatus* rc);
+              (const CMPIObjectPath* op, const char* name, CMPIStatus* rc);
 
        /** Gets a key property value defined by its index.
 	 @param op ObjectPath this pointer.
@@ -1000,7 +1124,7 @@ extern "C" {
 	 @return Data value.
       */
      CMPIData (*getKeyAt)
-              (CMPIObjectPath* op,unsigned int index, CMPIString** name,
+              (const CMPIObjectPath* op,unsigned int index, CMPIString** name,
 	       CMPIStatus* rc);
 
       /** Gets the number of key properties contained in this ObjectPath.
@@ -1009,7 +1133,7 @@ extern "C" {
 	 @return Number of properties.
       */
      unsigned int (*getKeyCount)
-              (CMPIObjectPath* op, CMPIStatus* rc);
+              (const CMPIObjectPath* op, CMPIStatus* rc);
 
       /** Set/replace namespace and classname components from <src>.
 	 @param op ObjectPath this pointer.
@@ -1017,7 +1141,7 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*setNameSpaceFromObjectPath)
-              (CMPIObjectPath* op, CMPIObjectPath* src);
+              (CMPIObjectPath* op, const CMPIObjectPath* src);
 
       /** Set/replace hostname, namespace and classname components from <src>.
 	 @param op ObjectPath this pointer.
@@ -1026,7 +1150,7 @@ extern "C" {
       */
      CMPIStatus (*setHostAndNameSpaceFromObjectPath)
               (CMPIObjectPath* op,
-               CMPIObjectPath* src);
+               const CMPIObjectPath* src);
 
 
 
@@ -1040,8 +1164,8 @@ extern "C" {
 	 @return Qualifier value.
       */
      CMPIData (*getClassQualifier)
-              (CMPIObjectPath* op,
-               char *qName,
+              (const CMPIObjectPath* op,
+               const char *qName,
                CMPIStatus *rc);
 
        /** Get property qualifier value.
@@ -1052,9 +1176,9 @@ extern "C" {
 	 @return Qualifier value.
       */
      CMPIData (*getPropertyQualifier)
-              (CMPIObjectPath* op,
-               char *pName,
-               char *qName,
+              (const CMPIObjectPath* op,
+               const char *pName,
+               const char *qName,
                CMPIStatus *rc);
 
        /** Get method qualifier value.
@@ -1065,9 +1189,9 @@ extern "C" {
 	 @return Qualifier value.
       */
      CMPIData (*getMethodQualifier)
-              (CMPIObjectPath* op,
-               char *methodName,
-               char *qName,
+              (const CMPIObjectPath* op,
+               const char *methodName,
+               const char *qName,
                CMPIStatus *rc);
 
        /** Get method parameter quailifier value.
@@ -1079,11 +1203,21 @@ extern "C" {
 	 @return Qualifier value.
       */
      CMPIData (*getParameterQualifier)
-              (CMPIObjectPath* op,
-               char *mName,
-               char *pName,
-               char *qName,
+              (const CMPIObjectPath* op,
+               const char *mName,
+               const char *pName,
+               const char *qName,
                CMPIStatus *rc);
+
+#if defined(CMPI_VER_86)
+      /** Generates a well formed string representation of this ObjectPath
+	 @param op ObjectPath this pointer.
+	 @param rc Output: Service return status (suppressed when NULL).
+	 @return String representation.
+      */
+     CMPIString *(*toString)
+              (const CMPIObjectPath* op, CMPIStatus *rc);
+#endif
    };
 
 
@@ -1104,10 +1238,12 @@ extern "C" {
 
        /** Opaque pointer to MB specific implementation data.
        */
+	   /* Spec says this should be const, but it isn't in pegasus */
      void *hdl;
 
        /** Pointer to the SelExp Function Table.
        */
+	 /* Spec says this should be const, but it isn't in pegasus */
      CMPISelectExpFT* ft;
    };
 
@@ -1146,7 +1282,7 @@ extern "C" {
 	 @return Pointer to copied SelectExp object.
       */
      CMPISelectExp* (*clone)
-              (CMPISelectExp* se, CMPIStatus* rc);
+              (const CMPISelectExp* se, CMPIStatus* rc);
 
        /** Evaluate the instance using this select expression.
 	 @param se SelectExp this pointer.
@@ -1155,7 +1291,7 @@ extern "C" {
 	 @return True or false incicator.
       */
      CMPIBoolean (*evaluate)
-              (CMPISelectExp* se, CMPIInstance* inst, CMPIStatus* rc);
+              (const CMPISelectExp* se, const CMPIInstance* inst, CMPIStatus* rc);
 
        /** Return the select expression in string format.
 	 @param se SelectExp this pointer.
@@ -1163,7 +1299,7 @@ extern "C" {
 	 @return The select expression.
       */
      CMPIString* (*getString)
-              (CMPISelectExp* se, CMPIStatus* rc);
+              (const CMPISelectExp* se, CMPIStatus* rc);
 
        /** Return the select expression as disjunction of conjunctions.
 	 @param se SelectExp this pointer.
@@ -1171,7 +1307,7 @@ extern "C" {
 	 @return The disjunction.
       */
      CMPISelectCond* (*getDOC)
-              (CMPISelectExp* se, CMPIStatus* rc);
+              (const CMPISelectExp* se, CMPIStatus* rc);
 
        /** Return the select expression as conjunction of disjunctions.
 	 @param se SelectExp this pointer.
@@ -1179,7 +1315,19 @@ extern "C" {
 	 @return The conjunction.
       */
      CMPISelectCond* (*getCOD)
-              (CMPISelectExp* se, CMPIStatus* rc);
+              (const CMPISelectExp* se, CMPIStatus* rc);
+
+       /** Evaluate this select expression by using a data value accessor routine.
+	 @param se SelectExp this pointer.
+	 @param accessor Address of data accessor routine.
+	 @param parm Data accessor routine parameter.
+	 @param rc Output: Service return status (suppressed when NULL).
+	 @return True or false incicator.
+      */
+#if defined(CMPI_VER_87)
+     CMPIBoolean (*evaluateUsingAccessor)
+              (const CMPISelectExp* se,  CMPIAccessor *accessor, void *parm, CMPIStatus* rc);
+#endif
    };
 
 
@@ -1242,7 +1390,7 @@ extern "C" {
 	 @return Pointer to copied SelectExp object.
       */
      CMPISelectCond* (*clone)
-              (CMPISelectCond* sc, CMPIStatus* rc);
+              (const CMPISelectCond* sc, CMPIStatus* rc);
 
        /** Return the number of sub conditions that are partof this SelectCond.
            Optionally, the SelectCond type (COD or DOC) will be returned.
@@ -1252,7 +1400,7 @@ extern "C" {
 	 @return Number of SubCond elements.
       */
      CMPICount (*getCountAndType)
-              (CMPISelectCond* sc, int* type, CMPIStatus* rc);
+              (const CMPISelectCond* sc, int* type, CMPIStatus* rc);
 
        /** Return a SubCond element based on its index.
 	 @param sc SelectCond this pointer.
@@ -1261,7 +1409,7 @@ extern "C" {
 	 @return The indexed SubCond element.
       */
      CMPISubCond* (*getSubCondAt)
-              (CMPISelectCond* sc, unsigned int index, CMPIStatus* rc);
+              (const CMPISelectCond* sc, unsigned int index, CMPIStatus* rc);
    };
 
 
@@ -1324,7 +1472,7 @@ extern "C" {
 	 @return Pointer to copied SelectExp object.
       */
      CMPISubCond* (*clone)
-              (CMPISubCond* sc,CMPIStatus* rc);
+              (const CMPISubCond* sc,CMPIStatus* rc);
 
        /** Return the number of predicates that are part of sub condition.
 	 @param sc SubCond this pointer.
@@ -1332,7 +1480,7 @@ extern "C" {
 	 @return Number of Predicate elements.
       */
      CMPICount (*getCount)
-              (CMPISubCond* sc, CMPIStatus* rc);
+              (const CMPISubCond* sc, CMPIStatus* rc);
 
        /** Return a Predicate element based on its index.
 	 @param sc SubCond this pointer.
@@ -1341,7 +1489,7 @@ extern "C" {
 	 @return The indexed Predicate element.
       */
      CMPIPredicate* (*getPredicateAt)
-              (CMPISubCond* sc, unsigned int index, CMPIStatus* rc);
+              (const CMPISubCond* sc, unsigned int index, CMPIStatus* rc);
 
        /** Return a named Predicate element.
 	 @param sc SubCond this pointer.
@@ -1350,7 +1498,7 @@ extern "C" {
 	 @return The named Predicate element.
       */
      CMPIPredicate* (*getPredicate)
-              (CMPISubCond* sc, char* name, CMPIStatus* rc);
+              (const CMPISubCond* sc, const char* name, CMPIStatus* rc);
    };
 
 
@@ -1414,7 +1562,7 @@ extern "C" {
 	 @return Pointer to copied Predicate object.
       */
      CMPIPredicate* (*clone)
-              (CMPIPredicate* pr, CMPIStatus* rc);
+              (const CMPIPredicate* pr, CMPIStatus* rc);
 
        /** Get the predicate components.
 	 @param pr Predicate this pointer.
@@ -1425,7 +1573,7 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*getData)
-              (CMPIPredicate* pr, CMPIType* type,
+              (const CMPIPredicate* pr, CMPIType* type,
                CMPIPredOp* op, CMPIString** lhs, CMPIString** rhs);
 
        /** Evaluate the predicate using a specific value.
@@ -1436,9 +1584,17 @@ extern "C" {
 	 @param rc Output: Service return status (suppressed when NULL).
 	 @return Evaluation result.
       */
+#if defined(CMPI_VER_87) && !defined(CMPI_VER_100)
+// Deprecated in the CMPI spec.
      int (*evaluate)
-              (CMPIPredicate* pr, CMPIValue* value,
+        (CMPIPredicate* pr, CMPIValue* value,
                CMPIType type, CMPIStatus* rc);
+#endif
+
+#if defined(CMPI_VER_100)
+     CMPIBoolean (*evaluateUsingAccessor)
+       (const CMPIPredicate*,  CMPIAccessor *, void *, CMPIStatus *rc);
+#endif
    };
 
 
@@ -1501,7 +1657,7 @@ extern "C" {
 	 @return Pointer to copied Args object.
       */
      CMPIArgs* (*clone)
-              (CMPIArgs* as, CMPIStatus* rc);
+              (const CMPIArgs* as, CMPIStatus* rc);
 
       /** Adds/replaces a named argument.
 	 @param as Args this pointer.
@@ -1511,8 +1667,8 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*addArg)
-              (CMPIArgs* as, char* name ,CMPIValue* value,
-               CMPIType type);
+              (CMPIArgs* as, const char* name ,const CMPIValue* value,
+               const CMPIType type);
 
        /** Gets a named argument value.
 	 @param as Args this pointer.
@@ -1521,7 +1677,7 @@ extern "C" {
 	 @return Argument value.
       */
      CMPIData (*getArg)
-              (CMPIArgs* as, char* name, CMPIStatus* rc);
+              (const CMPIArgs* as, const char* name, CMPIStatus* rc);
 
        /** Gets a Argument value defined by its index.
 	 @param as Args this pointer.
@@ -1531,7 +1687,7 @@ extern "C" {
 	 @return Argument value.
       */
      CMPIData (*getArgAt)
-              (CMPIArgs* as, unsigned int index, CMPIString** name,
+              (const CMPIArgs* as, unsigned int index, CMPIString** name,
 	       CMPIStatus* rc);
 
       /** Gets the number of arguments contained in this Args.
@@ -1540,7 +1696,7 @@ extern "C" {
 	 @return Number of properties.
       */
      unsigned int (*getArgCount)
-              (CMPIArgs* as, CMPIStatus* rc);
+              (const CMPIArgs* as, CMPIStatus* rc);
    };
 
 
@@ -1561,10 +1717,12 @@ extern "C" {
 
        /** Opaque pointer to MB specific implementation data.
        */
+	   /* Spec says this should be const, but it isn't in pegasus */
      void *hdl;
 
        /** Pointer to the String Function Table.
        */
+	 /* Spec says this should be const, but it isn't in pegasus */
      CMPIStringFT* ft;
    };
 
@@ -1603,7 +1761,7 @@ extern "C" {
 	 @return Pointer to copied String object.
       */
      CMPIString* (*clone)
-             (CMPIString* st, CMPIStatus* rc);
+             (const CMPIString* st, CMPIStatus* rc);
 
        /** Get a pointer to a C char* representation of this String.
 	 @param st String this pointer.
@@ -1611,7 +1769,7 @@ extern "C" {
 	 @return Pointer to char* representation.
       */
      char* (*getCharPtr)
-             (CMPIString* st, CMPIStatus* rc);
+             (const CMPIString* st, CMPIStatus* rc);
    };
 
 
@@ -1632,10 +1790,12 @@ extern "C" {
 
        /** Opaque pointer to MB specific implementation data.
        */
+	   /* Spec says this should be const, but it isn't in pegasus */
      void *hdl;
 
        /** Pointer to the Array Function Table.
        */
+	 /* Spec says this should be const, but it isn't in pegasus */
      CMPIArrayFT* ft;
    };
 
@@ -1674,7 +1834,7 @@ extern "C" {
 	 @return Pointer to copied Array object.
       */
      CMPIArray* (*clone)
-             (CMPIArray* ar, CMPIStatus* rc);
+             (const CMPIArray* ar, CMPIStatus* rc);
 
       /** Gets the number of elements contained in this Array.
 	 @param ar Array this pointer.
@@ -1682,7 +1842,7 @@ extern "C" {
 	 @return Number of elements.
       */
      CMPICount (*getSize)
-             (CMPIArray* ar, CMPIStatus* rc);
+             (const CMPIArray* ar, CMPIStatus* rc);
 
       /** Gets the element type.
 	 @param ar Array this pointer.
@@ -1690,7 +1850,7 @@ extern "C" {
 	 @return Number of elements.
       */
      CMPIType (*getSimpleType)
-             (CMPIArray* ar, CMPIStatus* rc);
+             (const CMPIArray* ar, CMPIStatus* rc);
 
        /** Gets an element value defined by its index.
 	 @param ar Array this pointer.
@@ -1699,7 +1859,7 @@ extern "C" {
 	 @return Element value.
       */
      CMPIData (*getElementAt)
-             (CMPIArray* ar, CMPICount index, CMPIStatus* rc);
+             (const CMPIArray* ar, CMPICount index, CMPIStatus* rc);
 
        /** Sets an element value defined by its index.
 	 @param ar Array this pointer.
@@ -1709,7 +1869,7 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*setElementAt)
-             (CMPIArray* ar, CMPICount index, CMPIValue* value, CMPIType type);
+             (CMPIArray* ar, CMPICount index, const CMPIValue* value, CMPIType type);
    };
 
 
@@ -1731,10 +1891,12 @@ extern "C" {
 
        /** Opaque pointer to MB specific implementation data.
        */
+	   /* Spec says this should be const, but it isn't in pegasus */
      void *hdl;
 
        /** Pointer to the Enumeration Function Table.
        */
+	 /* Spec says this should be const, but it isn't in pegasus */
      CMPIEnumerationFT* ft;
    };
 
@@ -1773,7 +1935,7 @@ extern "C" {
 	 @return Pointer to copied Enumeration object.
       */
      CMPIEnumeration* (*clone)
-             (CMPIEnumeration* en, CMPIStatus* rc);
+             (const CMPIEnumeration* en, CMPIStatus* rc);
 
        /** Get the next element of this Enumeration.
 	 @param en Enumeration this pointer.
@@ -1781,7 +1943,7 @@ extern "C" {
 	 @return Element value.
       */
      CMPIData (*getNext)
-             (CMPIEnumeration* en, CMPIStatus* rc);
+             (const CMPIEnumeration* en, CMPIStatus* rc);
 
        /** Test for any elements left in this Enumeration.
 	 @param en Enumeration this pointer.
@@ -1789,7 +1951,7 @@ extern "C" {
 	 @return True or false.
       */
      CMPIBoolean (*hasNext)
-             (CMPIEnumeration* en, CMPIStatus* rc);
+             (const CMPIEnumeration* en, CMPIStatus* rc);
 
        /** Convert this Enumeration into an Array.
 	 @param en Enumeration this pointer.
@@ -1797,7 +1959,7 @@ extern "C" {
 	 @return The Array.
       */
      CMPIArray* (*toArray)
-             (CMPIEnumeration* en, CMPIStatus* rc);
+             (const CMPIEnumeration* en, CMPIStatus* rc);
   };
 
 
@@ -1819,10 +1981,12 @@ extern "C" {
 
        /** Opaque pointer to MB specific implementation data.
        */
+	  /* Spec says this should be const, but it isn't in pegasus */
      void *hdl;
 
        /** Pointer to the DateTime Function Table.
        */
+	 /* Spec says this should be const, but it isn't in pegasus */
      CMPIDateTimeFT *ft;
    };
 
@@ -1861,7 +2025,7 @@ extern "C" {
 	 @return Pointer to copied DateTime object.
       */
      CMPIDateTime* (*clone)
-             (CMPIDateTime* dt, CMPIStatus* rc);
+             (const CMPIDateTime* dt, CMPIStatus* rc);
 
        /** Get DateTime setting in binary format (in microsecods
 	       starting since 00:00:00 GMT, Jan 1,1970).
@@ -1870,7 +2034,7 @@ extern "C" {
 	 @return DateTime in binary.
       */
      CMPIUint64 (*getBinaryFormat)
-             (CMPIDateTime* dt, CMPIStatus* rc);
+             (const CMPIDateTime* dt, CMPIStatus* rc);
 
        /** Get DateTime setting in UTC string format.
 	 @param dt DateTime this pointer.
@@ -1878,7 +2042,7 @@ extern "C" {
 	 @return DateTime as UTC string.
       */
      CMPIString* (*getStringFormat)
-             (CMPIDateTime* dt, CMPIStatus* rc);
+             (const CMPIDateTime* dt, CMPIStatus* rc);
 
        /** Tests whether DateTime is an interval value.
 	 @param dt DateTime this pointer.
@@ -1886,7 +2050,7 @@ extern "C" {
 	 @return True if interval value.
       */
      CMPIBoolean (*isInterval)
-              (CMPIDateTime* dt, CMPIStatus* rc);
+              (const CMPIDateTime* dt, CMPIStatus* rc);
   };
 
 
@@ -1944,15 +2108,20 @@ extern "C" {
 
        /** Provider name
        */
-     char *miName;
+     char *miName;            
 
        /** Cleanup is called prior to unloading of the provider.
 	 @param mi Provider this pointer.
 	 @param ctx Invocation Context
+	 @param terminating When true, the terminating argument indicates that the
+		MB is in the process of terminating and that cleanup must be done. 
+		When set to false, the MI may respond with CMPI_IRC_DO_NOT_UNLOAD, or 
+		CMPI_IRC_NEVER_UNLOAD indicating that unload will interfere with 
+		current MI processing. 
 	 @return Function return status.
       */
      CMPIStatus (*cleanup)
-            (CMPIInstanceMI* mi, CMPIContext* ctx);
+            (CMPIInstanceMI* mi, const CMPIContext* ctx, CMPIBoolean terminating);
 
        /** Enumerate ObjectPaths of Instances serviced by this provider.
 	 @param mi Provider this pointer.
@@ -1962,8 +2131,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*enumInstanceNames)
-             (CMPIInstanceMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPIObjectPath* op);
+             (CMPIInstanceMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
+              const CMPIObjectPath* op);
 
        /** Enumerate the Instances serviced by this provider.
 	 @param mi Provider this pointer.
@@ -1976,8 +2145,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*enumInstances)
-             (CMPIInstanceMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPIObjectPath* op, char** properties);
+             (CMPIInstanceMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
+              const CMPIObjectPath* op, const char** properties);
 
        /** Get the Instances defined by <op>.
 	 @param mi Provider this pointer.
@@ -1990,8 +2159,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*getInstance)
-             (CMPIInstanceMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPIObjectPath* op, char** properties);
+             (CMPIInstanceMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
+              const CMPIObjectPath* op, const char** properties);
 
        /** Create Instance from <inst> using <op> as reference.
 	 @param mi Provider this pointer.
@@ -2002,8 +2171,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*createInstance)
-             (CMPIInstanceMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPIObjectPath* op, CMPIInstance* inst);
+             (CMPIInstanceMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
+              const CMPIObjectPath* op, const CMPIInstance* inst);
 
        /** Replace an existing Instance from <inst> using <op> as reference.
 	 @param mi Provider this pointer.
@@ -2017,9 +2186,9 @@ extern "C" {
 	     will be replaced.
 	 @return Function return status.
       */
-     CMPIStatus (*setInstance)
-             (CMPIInstanceMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPIObjectPath* op, CMPIInstance* inst, char** properties);
+     CMPIStatus (*modifyInstance)
+             (CMPIInstanceMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
+              const CMPIObjectPath* op, const CMPIInstance* inst, const char** properties);
 
        /** Delete an existing Instance defined by <op>.
 	 @param mi Provider this pointer.
@@ -2029,8 +2198,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*deleteInstance)
-             (CMPIInstanceMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPIObjectPath* op);
+             (CMPIInstanceMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
+              const CMPIObjectPath* op);
 
       /** Query the enumeration of instances of the class (and subclasses) defined
          by <op> using <query> expression.
@@ -2043,8 +2212,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*execQuery)
-             (CMPIInstanceMI*,CMPIContext*,CMPIResult*,
-              CMPIObjectPath*,char*,char*);
+             (CMPIInstanceMI*,const CMPIContext*,const CMPIResult*,
+              const CMPIObjectPath*,const char*,const char*);
    };
 
 
@@ -2105,11 +2274,16 @@ extern "C" {
 
        /** Cleanup is called prior to unloading of the provider.
 	 @param mi Provider this pointer.
-	 @param ctx Invocation Context
+	 @param ctx Invocation Contconst
+	 @param terminating When true, the terminating argument indicates that the
+		MB is in the process of terminating and that cleanup must be done. 
+		When set to false, the MI may respond with CMPI_IRC_DO_NOT_UNLOAD, or 
+		CMPI_IRC_NEVER_UNLOAD indicating that unload will interfere with 
+		current MI processing. 
 	 @return Function return status.
       */
      CMPIStatus (*cleanup)
-             (CMPIAssociationMI* mi, CMPIContext* ctx);
+             (CMPIAssociationMI* mi, const CMPIContext* ctx, CMPIBoolean terminating);
 
       /** Enumerate ObjectPaths associated with the Instance defined by <op>.
 	 @param mi Provider this pointer.
@@ -2142,9 +2316,9 @@ extern "C" {
 	 @return Function return status.
      */
      CMPIStatus (*associators)
-             (CMPIAssociationMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPIObjectPath* op, char* asscClass, char* resultClass,
-              char* role, char* resultRole, char** properties);
+             (CMPIAssociationMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
+              const CMPIObjectPath* op, const char* asscClass, const char* resultClass,
+              const char* role, const char* resultRole, const char** properties);
 
       /** Enumerate ObjectPaths associated with the Instance defined by <op>.
 	 @param mi Provider this pointer.
@@ -2174,9 +2348,9 @@ extern "C" {
 	 @return Function return status.
      */
      CMPIStatus (*associatorNames)
-             (CMPIAssociationMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPIObjectPath* op, char* assocClass, char* resultClass,
-              char* role, char* resultRole);
+             (CMPIAssociationMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
+              const CMPIObjectPath* op, const char* assocClass, const char* resultClass,
+              const char* role, const char* resultRole);
 
        /** Enumerates the association instances that refer to the instance defined by
            <op>.
@@ -2200,9 +2374,9 @@ extern "C" {
 	 @return Function return status.
      */
      CMPIStatus (*references)
-             (CMPIAssociationMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPIObjectPath* op, char* resultClass, char* role ,
-	      char** properties);
+             (CMPIAssociationMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
+              const CMPIObjectPath* op, const char* resultClass, const char* role ,
+	      const char** properties);
 
       /** Enumerates the association ObjectPaths that refer to the instance defined by
            <op>.
@@ -2223,8 +2397,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*referenceNames)
-             (CMPIAssociationMI*,CMPIContext*,CMPIResult*,
-              CMPIObjectPath*,char*,char*);
+             (CMPIAssociationMI*, const CMPIContext*, const CMPIResult*,
+              const CMPIObjectPath*, const char*, const char*);
    };
 
 
@@ -2286,10 +2460,15 @@ extern "C" {
        /** Cleanup is called prior to unloading of the provider.
 	 @param mi Provider this pointer.
 	 @param ctx Invocation Context
+	 @param terminating When true, the terminating argument indicates that the
+		MB is in the process of terminating and that cleanup must be done. 
+		When set to false, the MI may respond with CMPI_IRC_DO_NOT_UNLOAD, or 
+		CMPI_IRC_NEVER_UNLOAD indicating that unload will interfere with 
+		current MI processing. 
 	 @return Function return status.
       */
      CMPIStatus (*cleanup)
-             (CMPIMethodMI* mi, CMPIContext* ctx);
+             (CMPIMethodMI* mi, const CMPIContext* ctx, CMPIBoolean terminating);
 
       /** Invoke a named, extrinsic method of an Instance
          defined by the <op> parameter.
@@ -2303,8 +2482,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*invokeMethod)
-             (CMPIMethodMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPIObjectPath* op, char* method, CMPIArgs* in, CMPIArgs* out);
+             (CMPIMethodMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
+              const CMPIObjectPath* op, const char* method, const CMPIArgs* in, const CMPIArgs* out);
    };
 
 
@@ -2456,22 +2635,31 @@ extern "C" {
        /** Cleanup is called prior to unloading of the provider.
 	 @param mi Provider this pointer.
 	 @param ctx Invocation Context
+	 @param terminating When true, the terminating argument indicates that the
+		MB is in the process of terminating and that cleanup must be done. 
+		When set to false, the MI may respond with CMPI_IRC_DO_NOT_UNLOAD, or 
+		CMPI_IRC_NEVER_UNLOAD indicating that unload will interfere with 
+		current MI processing. 
 	 @return Function return status.
       */
      CMPIStatus (*cleanup)
-             (CMPIIndicationMI* mi, CMPIContext* ctx);
+             (CMPIIndicationMI* mi, const CMPIContext* ctx, CMPIBoolean terminating);
      CMPIStatus (*authorizeFilter)
-             (CMPIIndicationMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPISelectExp* se, char* ns, CMPIObjectPath* op, char* user);
+             (CMPIIndicationMI* mi, const CMPIContext* ctx, // CMPIResult* rslt,
+              const CMPISelectExp* se, const char* ns, const CMPIObjectPath* op, const char* user);
      CMPIStatus (*mustPoll)
-             (CMPIIndicationMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPISelectExp* se, char* ns, CMPIObjectPath* op);
+             (CMPIIndicationMI* mi, const CMPIContext* ctx, // CMPIResult* rslt,
+              const CMPISelectExp* se, const char* ns, const CMPIObjectPath* op);
      CMPIStatus (*activateFilter)
-            (CMPIIndicationMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-             CMPISelectExp* se, char* ns, CMPIObjectPath* op, CMPIBoolean first);
+            (CMPIIndicationMI* mi, const CMPIContext* ctx, // CMPIResult* rslt,
+             const CMPISelectExp* se, const char* ns, const CMPIObjectPath* op, CMPIBoolean first);
      CMPIStatus (*deActivateFilter)
-             (CMPIIndicationMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPISelectExp* se, char* ns, CMPIObjectPath* op, CMPIBoolean last);
+             (CMPIIndicationMI* mi, const CMPIContext* ctx, // CMPIResult* rslt,
+              const CMPISelectExp* se, const char* ns, const CMPIObjectPath* op, CMPIBoolean last);
+	 CMPIStatus (*enableIndications)
+	   		(CMPIIndicationMI* mi, const CMPIContext* ctx); 
+	 CMPIStatus (*disableIndications)
+	   		(CMPIIndicationMI* mi, const CMPIContext* ctx); 
    };
 
 

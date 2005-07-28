@@ -40,22 +40,83 @@ extern "C" {
 #define CMPIVersion070 70     /* 0.70 */
 #define CMPIVersion080 80     /* 0.80 */
 #define CMPIVersion085 85     /* 0.85 */
+#define CMPIVersion086 86     /* 0.86 */
+#define CMPIVersion087 87     /* 0.87 */
+#define CMPIVersion090 90     /* 0.90 */
+#define CMPIVersion100 100    /* 1.00 */
+
+
+// CMPI_VERSION compile switch should be used during MI compilation only.
+// It is used define minimal version support needed from Management Broker.
+// This value will be set in <mi-name>_Create<mi-type>MI.mi_version
+
+#ifdef CMPI_VERSION
+  #if (CMPI_VERSION==80)
+     #define CMPI_VER_80 1
+  #elif (CMPI_VERSION==85)
+     #define CMPI_VER_85 1
+  #elif (CMPI_VERSION==86)
+     #define CMPI_VER_86 1
+   #elif (CMPI_VERSION==87)
+     #define CMPI_VER_87 1
+   #elif (CMPI_VERSION==90)
+     #define CMPI_VER_90 1
+   #elif (CMPI_VERSION==100)
+     #define CMPI_VER_100 1
+  #else
+     #error Unsupported CMPI_VERSION defined
+  #endif
+#else
+  #define CMPI_VER_100
+#endif
+
+
 
 /*
  * Version compile switches to control inclusion of new CMPI support
  * Version definitions are cummulative
  * A new version definition must #define all previous definitions
  */
-   
-#if   defined (CMPI_VER_85) || defined(CMPI_VER_ALL)
+
+#if   defined (CMPI_VER_100) || defined(CMPI_VER_ALL)
+  #define CMPI_VER_90
+  #define CMPI_VER_87
+  #define CMPI_VER_86
+  #define CMPI_VER_85
+  #define CMPI_VER_80
+  #define CMPICurrentVersion CMPIVersion100
+#elif   defined (CMPI_VER_90) || defined(CMPI_VER_ALL)
+   // added Ext function table and getKeyList
+  #define CMPI_VER_87
+  #define CMPI_VER_86
+  #define CMPI_VER_85
+  #define CMPI_VER_80
+  #define CMPICurrentVersion CMPIVersion090
+#elif   defined (CMPI_VER_87) || defined(CMPI_VER_ALL)
+   // added evaluateUsingAccessor in _CMPISelectExp
+  #define CMPI_VER_86
+  #define CMPI_VER_85
+  #define CMPI_VER_80
+  #define CMPICurrentVersion CMPIVersion087
+#elif defined (CMPI_VER_86) || defined(CMPI_VER_ALL)
+   // enable() disable() support in _CMPIIndicationMIFT
+   // toString() in _CMPIObjectPathFT
+   // support for NULL return from <mi-name>_Create<mi-type>MI
+  #define CMPI_VER_85
+  #define CMPI_VER_80
+  #define CMPICurrentVersion CMPIVersion086
+#elif   defined (CMPI_VER_85) || defined(CMPI_VER_ALL)
+   // getMessage() globalization support in _CMPIBrokerEncFT
   #define CMPI_VER_80
   #define CMPICurrentVersion CMPIVersion085
 #elif defined (CMPI_VER_80) || defined(CMPI_VER_ALL)
   #define CMPICurrentVersion CMPIVersion080
-#else  /* default version */
+#else  // default version
   #define CMPI_VER_80
   #define CMPICurrentVersion CMPIVersion080
-#endif     
+#endif
+
+
    
 
    struct _CMPIBroker;
@@ -108,6 +169,7 @@ extern "C" {
 
    typedef struct _CMPIBrokerFT        CMPIBrokerFT;
    typedef struct _CMPIBrokerEncFT     CMPIBrokerEncFT;
+   typedef struct _CMPIBrokerExtFT     CMPIBrokerExtFT;
    typedef struct _CMPIInstanceFT      CMPIInstanceFT;
    typedef struct _CMPIObjectPathFT    CMPIObjectPathFT;
    typedef struct _CMPIArgsFT          CMPIArgsFT;
@@ -210,6 +272,7 @@ extern "C" {
         #define CMPI_chars        ((16+7)<<8)
         #define CMPI_dateTime     ((16+8)<<8)
         #define CMPI_ptr          ((16+9)<<8)
+        #define CMPI_charsptr     ((16+10)<<8)
 
         #define CMPI_ARRAY        ((1)<<13)
         #define CMPI_SIMPLEA      (CMPI_ARRAY | CMPI_SIMPLE)
@@ -236,6 +299,9 @@ extern "C" {
         #define CMPI_stringA      (CMPI_ARRAY | CMPI_string)
         #define CMPI_charsA       (CMPI_ARRAY | CMPI_chars)
         #define CMPI_dateTimeA    (CMPI_ARRAY | CMPI_dateTime)
+        #define CMPI_instanceA    (CMPI_ARRAY | CMPI_instance)
+        #define CMPI_refA         (CMPI_ARRAY | CMPI_ref)
+        #define CMPI_charsptrA    (CMPI_ARRAY | CMPI_charsptr)
 
         /* the following are CMPIObjectPath key-types synonyms 
 	 * and are valid only when CMPI_keyValue of CMPIValueState is set
@@ -248,15 +314,20 @@ extern "C" {
 	/* the following are predicate types only */
 
         #define CMPI_charString      (CMPI_string)
+		#define CMPI_realString      (CMPI_string | CMPI_real64)
+		#define CMPI_integerString      (CMPI_string | CMPI_sint64)
         #define CMPI_numericString   (CMPI_string | CMPI_sint64)
 	#define CMPI_booleanString   (CMPI_string | CMPI_boolean)
 	#define CMPI_dateTimeString  (CMPI_string | CMPI_dateTime)
         #define CMPI_classNameString (CMPI_string | CMPI_class)
+        #define CMPI_nameString (CMPI_string | ((16+10)<<8))
 
 
    typedef unsigned short CMPIValueState;
+        #define CMPI_goodValue (0)
         #define CMPI_nullValue (1<<8)
         #define CMPI_keyValue  (2<<8)
+        #define CMPI_notFound  (4<<8)
         #define CMPI_badValue  (0x80<<8)
 
    typedef struct _CMPIData {
@@ -313,6 +384,17 @@ extern "C" {
      CMPI_RC_ERR_INVALID_QUERY                =15,
      CMPI_RC_ERR_METHOD_NOT_AVAILABLE         =16,
      CMPI_RC_ERR_METHOD_NOT_FOUND             =17,
+
+
+	   /* The following return codes are used by cleanup() calls only */ 
+     CMPI_RC_DO_NOT_UNLOAD                    =50,
+     CMPI_RC_NEVER_UNLOAD                     =51,
+
+	   /* Internal CMPI return codes */
+	 CMPI_RC_ERR_INVALID_HANDLE               =60, 
+	 CMPI_RC_ERR_INVALID_DATA_TYPE            =61, 
+
+	   /* Hosting OS errors */ 
      CMPI_RC_ERROR_SYSTEM                     =100,
      CMPI_RC_ERROR                            =200
    } CMPIrc;
@@ -321,6 +403,11 @@ extern "C" {
       CMPIrc rc;
       CMPIString *msg;
    } CMPIStatus;
+
+
+#ifdef CMPI_VER_87
+   typedef CMPIData CMPIAccessor(const char*, void* parm);
+#endif
 
 
    /* Management Broker classification and feature support */

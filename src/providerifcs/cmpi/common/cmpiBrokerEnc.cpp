@@ -36,7 +36,7 @@ namespace
 
 // Factory section
 
-static CMPIInstance* mbEncNewInstance(CMPIBroker*, CMPIObjectPath* eCop,
+static CMPIInstance* mbEncNewInstance(const CMPIBroker*, const CMPIObjectPath* eCop,
 						 CMPIStatus *rc)
 {
 	OW_LOG_DEBUG(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewInstance()");
@@ -69,7 +69,7 @@ static CMPIInstance* mbEncNewInstance(CMPIBroker*, CMPIObjectPath* eCop,
 	return neInst;
 }
 
-static CMPIObjectPath* mbEncNewObjectPath(CMPIBroker*, char *ns, char *cls,
+static CMPIObjectPath* mbEncNewObjectPath(const CMPIBroker*, const char *ns, const char *cls,
 				  CMPIStatus *rc)
 {
 	OW_LOG_DEBUG(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewObjectPath()");
@@ -82,13 +82,13 @@ static CMPIObjectPath* mbEncNewObjectPath(CMPIBroker*, char *ns, char *cls,
 	return nePath;
 }
 
-static CMPIArgs* mbEncNewArgs(CMPIBroker*, CMPIStatus *rc)
+static CMPIArgs* mbEncNewArgs(const CMPIBroker*, CMPIStatus *rc)
 {
 	CMSetStatus(rc,CMPI_RC_OK);
 	return (CMPIArgs*)new CMPI_Object(new OpenWBEM::Array<OpenWBEM::CIMParamValue>());
 }
 
-static CMPIString* mbEncNewString(CMPIBroker*, char *cStr, CMPIStatus *rc)
+static CMPIString* mbEncNewString(const CMPIBroker*, const char *cStr, CMPIStatus *rc)
 {
 	CMSetStatus(rc,CMPI_RC_OK);
 	return (CMPIString*)new CMPI_Object(cStr);
@@ -98,7 +98,7 @@ CMPIString* mbIntNewString(char *s) {
 	return mbEncNewString(NULL,s,NULL);
 }
 
-static CMPIArray* mbEncNewArray(CMPIBroker*, CMPICount count, CMPIType type,
+static CMPIArray* mbEncNewArray(const CMPIBroker*, CMPICount count, CMPIType type,
 								CMPIStatus *rc)
 {
 	OW_LOG_DEBUG(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewArray()");
@@ -118,7 +118,7 @@ static CMPIArray* mbEncNewArray(CMPIBroker*, CMPICount count, CMPIType type,
 
 extern CMPIDateTime *newDateTime();
 
-static CMPIDateTime* mbEncNewDateTime(CMPIBroker*, CMPIStatus *rc)
+static CMPIDateTime* mbEncNewDateTime(const CMPIBroker*, CMPIStatus *rc)
 {
 	CMSetStatus(rc,CMPI_RC_OK);
 	return newDateTime();
@@ -126,23 +126,23 @@ static CMPIDateTime* mbEncNewDateTime(CMPIBroker*, CMPIStatus *rc)
 
 extern CMPIDateTime *newDateTime(CMPIUint64,CMPIBoolean);
 
-static CMPIDateTime* mbEncNewDateTimeFromBinary(CMPIBroker*,
+static CMPIDateTime* mbEncNewDateTimeFromBinary(const CMPIBroker*,
 	 CMPIUint64 time, CMPIBoolean interval ,CMPIStatus *rc)
 {
 	CMSetStatus(rc,CMPI_RC_OK);
 	return newDateTime(time,interval);
 }
 
-extern CMPIDateTime *newDateTime(char*);
+extern CMPIDateTime *newDateTime(const char*);
 
-static CMPIDateTime* mbEncNewDateTimeFromString(CMPIBroker*,
-		 char *t ,CMPIStatus *rc)
+static CMPIDateTime* mbEncNewDateTimeFromString(const CMPIBroker*,
+		 const char *t ,CMPIStatus *rc)
 {
 	CMSetStatus(rc,CMPI_RC_OK);
 	return newDateTime(t);
 }
 
-static CMPIString* mbEncToString(CMPIBroker *, void * o, CMPIStatus * rc)
+static CMPIString* mbEncToString(const CMPIBroker *, const void * o, CMPIStatus * rc)
 {
 	CMPI_Object *obj = (CMPI_Object*)o;
 	OpenWBEM::String str;
@@ -199,8 +199,8 @@ static CMPIString* mbEncToString(CMPIBroker *, void * o, CMPIStatus * rc)
 	return (CMPIString*) new CMPI_Object(str);
 }
 
-static CMPIBoolean mbEncClassPathIsA(CMPIBroker *, CMPIObjectPath *eCp,
-					char *type, CMPIStatus *rc)
+static CMPIBoolean mbEncClassPathIsA(const CMPIBroker *, const CMPIObjectPath *eCp,
+					const char *type, CMPIStatus *rc)
 {
 	OpenWBEM::CIMObjectPath* cop=static_cast<OpenWBEM::CIMObjectPath *>(eCp->hdl);
 
@@ -221,7 +221,7 @@ static CMPIBoolean mbEncClassPathIsA(CMPIBroker *, CMPIObjectPath *eCp,
 	return 0;
 }
 
-CMPIBoolean mbEncIsOfType(CMPIBroker *mb, void *o, char *type, CMPIStatus *rc)
+CMPIBoolean mbEncIsOfType(const CMPIBroker *mb, const void *o, const char *type, CMPIStatus *rc)
 {
 	CMPI_Object *obj=(CMPI_Object*)o;
 	char msg[128];
@@ -257,7 +257,7 @@ CMPIBoolean mbEncIsOfType(CMPIBroker *mb, void *o, char *type, CMPIStatus *rc)
 }
 
 
-static CMPIString* mbEncGetType(CMPIBroker *mb, void *o, CMPIStatus *rc)
+static CMPIString* mbEncGetType(const CMPIBroker *mb, const void *o, CMPIStatus *rc)
 {
 	CMPI_Object *obj=(CMPI_Object*)o;
 	char msg[128];
@@ -293,6 +293,7 @@ static CMPIString* mbEncGetType(CMPIBroker *mb, void *o, CMPIStatus *rc)
 }
 
 #if defined (CMPI_VER_85)
+#if 0 // need to port to OW
 static Formatter::Arg formatValue(va_list *argptr, CMPIStatus *rc) {
 																				
    CMPIValue *val=va_arg(*argptr,CMPIValue*);
@@ -330,9 +331,11 @@ static Formatter::Arg formatValue(va_list *argptr, CMPIStatus *rc) {
    CMSetStatus(rc,CMPI_RC_ERR_INVALID_PARAMETER);
    return Formatter::Arg((Boolean)0);
 }
+#endif // #if 0
 
-CMPIString* mbEncGetMessage(CMPIBroker *, char *msgId, char *defMsg,
+CMPIString* mbEncGetMessage(const CMPIBroker *, const char *msgId, const char *defMsg,
 			CMPIStatus* rc, unsigned int count, ...) {
+#if 0 
    MessageLoaderParms parms(msgId,defMsg);
    //cout<<"::: mbEncGetMessage() count: "<<count<<endl;
    if (count>0) {
@@ -363,9 +366,31 @@ CMPIString* mbEncGetMessage(CMPIBroker *, char *msgId, char *defMsg,
    }
    String nMsg=MessageLoader::getMessage(parms);
    return string2CMPIString(nMsg);
+#endif // #if 0
+   return string2CMPIString(OpenWBEM::String(defMsg)); 
 }
 #endif
 
+// TODO logMessage() and trace()
+
+CMPIStatus mbEncLogMessage(const CMPIBroker* mb, int severity, 
+						   const char* id, const char* text, 
+						   const CMPIString* string)
+{
+	// TODO
+	CMPIStatus rc; 
+	rc.rc = CMPI_RC_ERR_METHOD_NOT_AVAILABLE; 
+	return rc; 
+}
+
+CMPIStatus mbEncTrace(const CMPIBroker* mb, int level, const char* component, 
+					  const char* text, const CMPIString* string)
+{
+	// TODO
+	CMPIStatus rc; 
+	rc.rc = CMPI_RC_ERR_METHOD_NOT_AVAILABLE; 
+	return rc; 
+}
 
 
 static CMPIBrokerEncFT brokerEnc_FT={
@@ -385,6 +410,8 @@ CMPICurrentVersion,
 	mbEncGetType,
 #if defined (CMPI_VER_85)
 	mbEncGetMessage,
+	mbEncLogMessage, 
+	mbEncTrace
 #endif
 };
 

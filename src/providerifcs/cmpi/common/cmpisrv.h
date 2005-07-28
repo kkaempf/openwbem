@@ -295,12 +295,12 @@ struct CMPI_Broker : CMPIBroker {
 
 CMPIString* string2CMPIString(const OpenWBEM::String &s);
 CMPIType type2CMPIType(OpenWBEM::CIMDataType pt, int array);
-OpenWBEM::CIMValue value2CIMValue(CMPIValue* data, CMPIType type, CMPIrc *rc);
+OpenWBEM::CIMValue value2CIMValue(const CMPIValue* data, const CMPIType type, CMPIrc *rc);
 CMPIrc key2CMPIData(const OpenWBEM::String& v, OpenWBEM::CIMDataType t, CMPIData *data);
 /* CMPIrc key2CMPIData(const OpenWBEM::String& v, KeyBinding::Type t, CMPIData *data); */
 CMPIrc value2CMPIData(const OpenWBEM::CIMValue&,CMPIType,CMPIData *data);
 
-OpenWBEM::CIMClass *mbGetClass(CMPIBroker *mb, const OpenWBEM::CIMObjectPath &cop);
+OpenWBEM::CIMClass *mbGetClass(const CMPIBroker *mb, const OpenWBEM::CIMObjectPath &cop);
 
 #endif
 

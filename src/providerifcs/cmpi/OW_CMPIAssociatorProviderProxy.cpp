@@ -134,7 +134,7 @@ void CMPIAssociatorProviderProxy::associators(
 
 	if (m_ftable->miVector.assocMI->ft->associators != NULL)
 	{
-		char **props = NULL;
+		const char **props = NULL;
 		int pCount = 0;
 
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -155,7 +155,7 @@ void CMPIAssociatorProviderProxy::associators(
 		if (propertyList && propertyList->size() > 0)
 		{
 			pCount = propertyList->size();
-			props = reinterpret_cast<char **>
+			props = reinterpret_cast<const char **>
 				(alloca(1+pCount*sizeof(char *)));
 	
 			for (int i = 0; i < pCount; i++)
@@ -224,7 +224,7 @@ void CMPIAssociatorProviderProxy::references(
 
 	if (m_ftable->miVector.assocMI->ft->references != NULL)
 	{
-		char **props = NULL;
+		const char **props = NULL;
 		int pCount = 0;
 
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -248,12 +248,12 @@ void CMPIAssociatorProviderProxy::references(
 			if (propertyList->size() > 0)
 			{
 				pCount = propertyList->size();
-				props = reinterpret_cast<char **>
+				props = reinterpret_cast<const char **>
 					(alloca(1+pCount*sizeof(char *)));
 
 				for (int i = 0; i < pCount; i++)
 				{
-					props[i] = const_cast<char*>((*propertyList)[i].c_str());
+					props[i] = ((*propertyList)[i].c_str());
 				}
 
 				props[pCount] = NULL;

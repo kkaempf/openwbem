@@ -40,7 +40,7 @@ static CMPIStatus enumRelease(CMPIEnumeration* eEnum)
 //   CMReturn(CMPI_RC_OK);
 //}
 
-static CMPIEnumeration* enumClone(CMPIEnumeration* eEnum, CMPIStatus* rc)
+static CMPIEnumeration* enumClone(const CMPIEnumeration* eEnum, CMPIStatus* rc)
 {
 	(void)eEnum; (void)rc;
 //   CIMInstance* enm=(CIMInstance*)eEnum->hdl;
@@ -51,7 +51,7 @@ static CMPIEnumeration* enumClone(CMPIEnumeration* eEnum, CMPIStatus* rc)
 	return NULL;
 }
 
-CMPIData enumGetNext(CMPIEnumeration* eEnum, CMPIStatus* rc)
+CMPIData enumGetNext(const CMPIEnumeration* eEnum, CMPIStatus* rc)
 {
 	CMPIData data={0,0,{0}};
 	if ((void*)eEnum->ft==(void*)CMPI_ObjEnumeration_Ftab)
@@ -107,7 +107,7 @@ CMPIData enumGetNext(CMPIEnumeration* eEnum, CMPIStatus* rc)
 	return data;
 }
 
-CMPIBoolean enumHasNext(CMPIEnumeration* eEnum, CMPIStatus* rc)
+CMPIBoolean enumHasNext(const CMPIEnumeration* eEnum, CMPIStatus* rc)
 {
 	CMSetStatus(rc,CMPI_RC_OK);
 	if ((void*)eEnum->ft==(void*)CMPI_ObjEnumeration_Ftab)
@@ -128,7 +128,7 @@ CMPIBoolean enumHasNext(CMPIEnumeration* eEnum, CMPIStatus* rc)
 	return false;
 }
 
-CMPIArray* enumToArray(CMPIEnumeration* eEnum, CMPIStatus* rc)
+CMPIArray* enumToArray(const CMPIEnumeration* eEnum, CMPIStatus* rc)
 {
 	(void)eEnum; (void)rc;
 	return NULL;

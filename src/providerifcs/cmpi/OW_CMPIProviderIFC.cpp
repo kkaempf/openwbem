@@ -89,7 +89,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				miVector.instMI->ft->cleanup(miVector.instMI, &eCtx);
+				miVector.instMI->ft->cleanup(miVector.instMI, &eCtx, true);
 			}
 
 			// If associator provider, allow associator prov cleanup to run
@@ -97,7 +97,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				miVector.assocMI->ft->cleanup(miVector.assocMI, &eCtx);
+				miVector.assocMI->ft->cleanup(miVector.assocMI, &eCtx, true);
 			}
 
 			// If method provider, allow method prov cleanup to run
@@ -105,7 +105,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				miVector.methMI->ft->cleanup(miVector.methMI, &eCtx);
+				miVector.methMI->ft->cleanup(miVector.methMI, &eCtx, true);
 			}
 
 			// If property provider, allow property prov cleanup to run
@@ -113,7 +113,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				miVector.propMI->ft->cleanup(miVector.propMI, &eCtx);
+				miVector.propMI->ft->cleanup(miVector.propMI, &eCtx); 
 			}
 
 			// If indication provider, allow indication prov cleanup to run
@@ -121,7 +121,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				miVector.indMI->ft->cleanup(miVector.indMI, &eCtx);
+				miVector.indMI->ft->cleanup(miVector.indMI, &eCtx, true); 
 			}
 
 			it->second.setNull();
@@ -677,6 +677,7 @@ CMPIProviderIFC::doUnloadProviders(
 
 	DateTime dt;
 	dt.setToCurrent();
+	CMPIStatus rc = {CMPI_RC_OK, NULL}; 
 	MutexLock ml(m_guard);
 	ProviderMap::iterator it = m_provs.begin();
 	while (it != m_provs.end())
@@ -685,6 +686,7 @@ CMPIProviderIFC::doUnloadProviders(
 		provDt.addMinutes(iTimeWindow);
 		if(provDt < dt)
 		{
+			bool unload = true; 
 			//CMPIInstanceMI * mi = it->second->instMI;
 			MIs miVector = it->second->miVector;
 
@@ -693,7 +695,13 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				miVector.instMI->ft->cleanup(miVector.instMI, &eCtx);
+				rc=miVector.instMI->ft->cleanup(miVector.instMI, &eCtx, false);
+				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
+					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
+					|| rc.rc == CMPI_RC_NEVER_UNLOAD)
+				{
+					unload = false; 
+				}
 			}
 
 			// If associator provider, allow associator prov cleanup to run
@@ -701,7 +709,13 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				miVector.assocMI->ft->cleanup(miVector.assocMI, &eCtx);
+				rc=miVector.assocMI->ft->cleanup(miVector.assocMI, &eCtx, false);
+				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
+					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
+					|| rc.rc == CMPI_RC_NEVER_UNLOAD)
+				{
+					unload = false; 
+				}
 			}
 
 			// If method provider, allow method prov cleanup to run
@@ -709,7 +723,13 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				miVector.methMI->ft->cleanup(miVector.methMI, &eCtx);
+				rc=miVector.methMI->ft->cleanup(miVector.methMI, &eCtx, false); 
+				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
+					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
+					|| rc.rc == CMPI_RC_NEVER_UNLOAD)
+				{
+					unload = false; 
+				}
 			}
 
 			// If property provider, allow property prov cleanup to run
@@ -717,7 +737,13 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				miVector.propMI->ft->cleanup(miVector.propMI, &eCtx);
+				rc=miVector.propMI->ft->cleanup(miVector.propMI, &eCtx); 
+				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
+					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
+					|| rc.rc == CMPI_RC_NEVER_UNLOAD)
+				{
+					unload = false; 
+				}
 			}
 
 			// If indication provider, allow indication prov cleanup to run
@@ -725,10 +751,23 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				miVector.indMI->ft->cleanup(miVector.indMI, &eCtx);
+				rc=miVector.indMI->ft->cleanup(miVector.indMI, &eCtx, false); 
+				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
+					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
+					|| rc.rc == CMPI_RC_NEVER_UNLOAD)
+				{
+					unload = false; 
+				}
 			}
 
-			it->second.setNull();
+			if (unload)
+			{
+				it->second.setNull();
+			}
+			else
+			{
+				it->second->lastAccessTime.setToCurrent(); 
+			}
 		}
 		it++;
 	}
