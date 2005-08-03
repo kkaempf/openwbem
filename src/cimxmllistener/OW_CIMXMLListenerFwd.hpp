@@ -44,6 +44,8 @@ class CIMListenerCallback;
 typedef IntrusiveReference<CIMListenerCallback> CIMListenerCallbackRef;
 class HTTPXMLCIMListener;
 typedef IntrusiveReference<HTTPXMLCIMListener> HTTPXMLCIMListenerRef;
+class CIMXMLListener; 
+typedef IntrusiveReference<CIMXMLListener> CIMXMLListenerRef;
 class ListenerAuthenticator;
 class XMLListener;
 
