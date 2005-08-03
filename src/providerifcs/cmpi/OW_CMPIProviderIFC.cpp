@@ -113,7 +113,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				miVector.propMI->ft->cleanup(miVector.propMI, &eCtx); 
+				miVector.propMI->ft->cleanup(miVector.propMI, &eCtx, true); 
 			}
 
 			// If indication provider, allow indication prov cleanup to run
@@ -737,7 +737,7 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				rc=miVector.propMI->ft->cleanup(miVector.propMI, &eCtx); 
+				rc=miVector.propMI->ft->cleanup(miVector.propMI, &eCtx, false); 
 				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
 					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
 					|| rc.rc == CMPI_RC_NEVER_UNLOAD)

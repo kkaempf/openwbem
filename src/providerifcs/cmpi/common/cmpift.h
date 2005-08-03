@@ -253,7 +253,7 @@ extern "C" {
 	 @return Service return status.
      */
      CMPIStatus (*attachThread)
-                (const CMPIBroker*,CMPIContext*);
+                (const CMPIBroker*,const CMPIContext*);
 
       /** This function informs the CMPI run time system that the current thread
          will not be using CMPI services anymore. The Context object will be
@@ -263,7 +263,7 @@ extern "C" {
 	 @return Service return status.
      */
      CMPIStatus (*detachThread)
-                (const CMPIBroker* mb, CMPIContext* ctx);
+                (const CMPIBroker* mb, const CMPIContext* ctx);
 
      /* class 0 services */
 
@@ -2483,7 +2483,7 @@ extern "C" {
       */
      CMPIStatus (*invokeMethod)
              (CMPIMethodMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
-              const CMPIObjectPath* op, const char* method, const CMPIArgs* in, const CMPIArgs* out);
+              const CMPIObjectPath* op, const char* method, const CMPIArgs* in, CMPIArgs* out);
    };
 
 
@@ -2548,7 +2548,7 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*cleanup)
-             (CMPIPropertyMI* mi, CMPIContext* ctx);
+             (CMPIPropertyMI* mi, const CMPIContext* ctx, CMPIBoolean terminating);
 
       /** Set the named property value of an Instance defined by the <op> parameter.
 	 @param mi Provider this pointer.
@@ -2560,8 +2560,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*setProperty)
-             (CMPIPropertyMI* mi, CMPIContext* ctx, CMPIResult* rslt,
-              CMPIObjectPath* op, char* name, CMPIData data);
+             (CMPIPropertyMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
+              const CMPIObjectPath* op, const char* name, const CMPIData data);
 
       /** Get the named property value of an Instance defined by the <op> parameter.
 	 @param mi Provider this pointer.
@@ -2572,8 +2572,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*getProperty)
-             (CMPIPropertyMI*,CMPIContext*,CMPIResult*,
-              CMPIObjectPath*,char*);
+             (CMPIPropertyMI*,const CMPIContext*,const CMPIResult*,
+              const CMPIObjectPath*,const char*);
    };
 
 
