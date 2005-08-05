@@ -1,52 +1,39 @@
-//%2005////////////////////////////////////////////////////////////////////////
-//
-// Copyright (c) 2000, 2001, 2002 BMC Software; Hewlett-Packard Development
-// Company, L.P.; IBM Corp.; The Open Group; Tivoli Systems.
-// Copyright (c) 2003 BMC Software; Hewlett-Packard Development Company, L.P.;
-// IBM Corp.; EMC Corporation, The Open Group.
-// Copyright (c) 2004 BMC Software; Hewlett-Packard Development Company, L.P.;
-// IBM Corp.; EMC Corporation; VERITAS Software Corporation; The Open Group.
-// Copyright (c) 2005 Hewlett-Packard Development Company, L.P.; IBM Corp.;
-// EMC Corporation; VERITAS Software Corporation; The Open Group.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to
-// deal in the Software without restriction, including without limitation the
-// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-// sell copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// THE ABOVE COPYRIGHT NOTICE AND THIS PERMISSION NOTICE SHALL BE INCLUDED IN
-// ALL COPIES OR SUBSTANTIAL PORTIONS OF THE SOFTWARE. THE SOFTWARE IS PROVIDED
-// "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
-// LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-//==============================================================================
-//
-// Author:      Adrian Schuur, schuur@de.ibm.com
-//
-// Modified By:
-//
-//%/////////////////////////////////////////////////////////////////////////////
+
+/*
+ *
+ * cmpimacs.h
+ *
+ * (C) Copyright IBM Corp. 2003
+ *
+ * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
+ * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
+ * CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
+ *
+ * You can obtain a current copy of the Common Public License from
+ * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
+ *
+ * Author:        Adrian Schuur <schuur@de.ibm.com>
+ * Contributors:
+ *
+ * Description: CMPI Encapsulated types Function Tables
+ *
+ */
+
 
 #ifndef _CMPIMACS_H_
 #define _CMPIMACS_H_
+#include "OW_config.h"
 
-#ifndef DOC_ONLY
 #include "cmpidt.h"
 #include "cmpift.h"
-#endif
 
 #ifdef DOC_ONLY
 #define CMPI_INLINE
 #endif
 
+
 #ifdef DOC_ONLY
-  /** This macro builds a CMPIStatus object with &lt;rc&gt; as return code and returns
+  /** This macro builds a CMPIStatus object with <rc> as return code and returns
       to the Broker.
       @param rc the CMPI return code
       @return This macro contains a return statement and leaves the function.
@@ -59,7 +46,7 @@
 #endif
 
 #ifdef DOC_ONLY
-  /** This macro builds a CMPIStatus object with &lt;rc&gt; as return code and &lt;str&gt; as
+  /** This macro builds a CMPIStatus object with <rc> as return code and <str> as
       message and returns to the Broker.
       @param rc the CMPI return code
       @param str the message as String object
@@ -73,18 +60,18 @@
 #endif
 
 #ifdef DOC_ONLY
-  /** This macro builds a CMPIStatus object with &lt;rc&gt; as return code and &lt;msg&gt; as
+  /** This macro builds a CMPIStatus object with <rc> as return code and <msg> as
       message and returns to the Broker.
       @param mb Broker this pointer
       @param rc the CMPI return code
       @param msg the message as character string
       @return This macro contains a return statement and leaves the function.
    */
- noReturn CMReturnWithChars(const CMPIBroker *mb, CMPIrc rc, char *msg);
+noReturn CMReturnWithChars(CMPIBroker *mb, CMPIrc rc, char *msg);
 #else
 #define CMReturnWithChars(b,rc,chars) \
-      { CMPIStatus stat={(rc),NULL}; \
-         stat.msg=(b)->eft->newString((b),(chars),NULL); \
+      { CMPIStatus stat = {(rc),NULL}; \
+         stat.msg = (b)->eft->newString((b),(chars),NULL); \
          return stat; }
 #endif
 
@@ -95,10 +82,20 @@
       @param rcp CMPI return code
   */
 inline static  void CMSetStatus(CMPIStatus* st, CMPIrc rcp)
-      { (st)->rc=(rcp); (st)->msg=NULL; }
+{
+	if (st)
+	{
+		st->rc = rcp;
+		st->msg = NULL;
+	}
+}
+
 #else
 #define CMSetStatus(st,rcp) \
-      { (st)->rc=(rcp); (st)->msg=NULL; }
+if ((st)) { \
+	(st)->rc=(rcp); \
+	(st)->msg=NULL; \
+}
 #endif
 
 
@@ -109,12 +106,21 @@ inline static  void CMSetStatus(CMPIStatus* st, CMPIrc rcp)
       @param rcp CMPI return code
       @param string Message string
   */
-inline static   void CMSetStatusWithString(const CMPIBroker *mb, CMPIStatus *st, CMPIrc rcp,
-                                  const CMPIString *string)
-      { (st)->rc=(rcp); (st)->msg=(string); }
+inline static void CMSetStatusWithString(CMPIBroker *mb, CMPIStatus *st,
+	CMPIrc rcp, CMPIString *str)
+{
+	if (st)
+	{
+		st->rc = rcp;
+		st->msg = str;
+	}
+}
 #else
 #define CMSetStatusWithString(st,rcp,string) \
-      { (st)->rc=(rcp); (st)->msg=(string); }
+if ((st)) { \
+	(st)->rc=(rcp); \
+	(st)->msg=(string); \
+}
 #endif
 
 
@@ -125,29 +131,28 @@ inline static   void CMSetStatusWithString(const CMPIBroker *mb, CMPIStatus *st,
       @param rcp CMPI return code
       @param chars Message character string
   */
-inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, CMPIrc rcp,
-                                 const char* chars)
-      { (st)->rc=(rcp);
-        (st)->msg=(mb)->eft->newString((mb),(chars),NULL); }
+inline static void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st,
+	CMPIrc rcp, char* chars)
+{
+	if (st)
+	{
+		st->rc = rcp;
+		st->msg= mb->eft->newString(mb,(chars),NULL);
+	}
+}
 #else
 #define CMSetStatusWithChars(mb,st,rcp,chars) \
-      { (st)->rc=(rcp); \
-        (st)->msg=(mb)->eft->newString((mb),(chars),NULL); }
+if ((st)) { \
+	(st)->rc=(rcp); \
+    (st)->msg=(mb)->eft->newString((mb),(chars),NULL); \
+}
 #endif
 
 #ifndef DOC_ONLY
-  #ifdef CMPI_PLATFORM_WIN32_IX86_MSVC
-	#ifdef __cplusplus
-        #define CMPI_EXTERN_C extern "C" __declspec(dllexport)
-    #else
-        #define CMPI_EXTERN_C __declspec(dllexport)
-    #endif
+  #ifdef __cplusplus
+    #define EXTERN_C extern "C"
   #else
-	#ifdef __cplusplus
-        #define  CMPI_EXTERN_C extern "C"
-    #else
-        #define CMPI_EXTERN_C
-    #endif
+    #define EXTERN_C
   #endif
 #endif
 
@@ -155,7 +160,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
   /** Tests for encapsulated NULL object.
       @param obj CMPI Object pointer
   */
-  inline static   CMPIBoolean CMIsNullObject(const void* obj)
+  inline static   CMPIBoolean CMIsNullObject(void* obj)
        { return ((obj)==NULL || *((void**)(obj))==NULL); }
 #else
   #define CMIsNullObject(o)           ((o)==NULL || *((void**)(o))==NULL)
@@ -165,7 +170,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
   /** Tests for nullValue data item.
       @param val Value object
   */
-  inline static   CMPIBoolean CMIsNullValue(const CMPIData val)
+  inline static   CMPIBoolean CMIsNullValue(CMPIData val)
        { return ((val.state) & CMPI_nullValue); }
 #else
   #define CMIsNullValue(v)                   ((v.state) & CMPI_nullValue)
@@ -192,13 +197,13 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #endif
 
 
-    // Life-cycle macros
+/* Life-cycle macros */
 
   #define CMClone(o,rc)                        ((o)->ft->clone((o),(rc)))
   #define CMRelease(o)                            ((o)->ft->release((o)))
-  #define CMGetCharPtr(s)                                 ((char*)s->hdl)
-
-    // CMPIBroker factory macros
+  #define CMGetCharPtr(s)   ((s)!=NULL?((char*)(s)->hdl):(char*)"(NULL)")
+ 
+/* CMPIBroker factory macros */
 
 #ifdef CMPI_INLINE
      /** Instance factory service.
@@ -207,7 +212,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @param rc Output: Service return status (suppressed when NULL).
          @return The newly created Instance.
      */
-  inline static   CMPIInstance* CMNewInstance(const CMPIBroker *mb, const CMPIObjectPath *op,
+  inline static   CMPIInstance* CMNewInstance(CMPIBroker *mb, CMPIObjectPath *op,
                                      CMPIStatus *rc)
        { return ((mb)->eft->newInstance((mb),(op),(rc))); }
 #else
@@ -222,7 +227,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @param rc Output: Service return status (suppressed when NULL).
          @return The newly created ObjectPath.
      */
-  inline static   CMPIObjectPath* CMNewObjectPath(const CMPIBroker *mb, const char *ns, const char *cn,
+  inline static   CMPIObjectPath* CMNewObjectPath(CMPIBroker *mb, char *ns, char *cn,
                                          CMPIStatus *rc)
        { return ((mb)->eft->newObjectPath((mb),(ns),(cn),(rc))); }
 #else
@@ -237,7 +242,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @param rc Output: Service return status (suppressed when NULL).
          @return The newly created String.
      */
-  inline static   CMPIString* CMNewString(const CMPIBroker* mb, const char *data, CMPIStatus *rc)
+  inline static   CMPIString* CMNewString(CMPIBroker* mb, char *data, CMPIStatus *rc)
        { return ((mb)->eft->newString((mb),(data),(rc))); }
 #else
   #define CMNewString(b,s,rc)         ((b)->eft->newString((b),(s),(rc)))
@@ -249,7 +254,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @param rc Output: Service return status (suppressed when NULL).
          @return The newly created Args container.
      */
-  inline static   CMPIArgs* CMNewArgs(const CMPIBroker* mb, CMPIStatus* rc)
+  inline static   CMPIArgs* CMNewArgs(CMPIBroker* mb, CMPIStatus* rc)
        { return ((mb)->eft->newArgs((mb),(rc))); }
 #else
   #define CMNewArgs(b,rc)                   ((b)->eft->newArgs((b),(rc)))
@@ -263,7 +268,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @param rc Output: Service return status (suppressed when NULL).
          @return The newly created Array.
      */
-  inline static   CMPIArray* CMNewArray(const CMPIBroker* mb, CMPICount max, CMPIType type,
+  inline static   CMPIArray* CMNewArray(CMPIBroker* mb, CMPICount max, CMPIType type,
                                CMPIStatus* rc)
        { return ((mb)->eft->newArray((mb),(max),(type),(rc))); }
 #else
@@ -276,14 +281,14 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @param rc Output: Service return status (suppressed when NULL).
          @return The newly created DateTime.
      */
-   inline static   CMPIDateTime* CMNewDateTime(const CMPIBroker* mb, CMPIStatus* rc)
+   inline static   CMPIDateTime* CMNewDateTime(CMPIBroker* mb, CMPIStatus* rc)
         { return ((mb)->eft->newDateTime((mb),(rc))); }
 #else
   #define CMNewDateTime(b,rc)           ((b)->eft->newDateTime((b),(rc)))
 #endif
 
 #ifdef CMPI_INLINE
-     /** DateTime factory service. Initialized from &lt;binTime&gt;.
+     /** DateTime factory service. Initialized from <binTime>.
          @param mb Broker this pointer
 	 @param binTime Date/Time definition in binary format in microsecods
 	       starting since 00:00:00 GMT, Jan 1,1970.
@@ -292,7 +297,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
          @return The newly created DateTime.
      */
   inline static   CMPIDateTime* CMNewDateTimeFromBinary
-                 (const CMPIBroker* mb, CMPIUint64 binTime, CMPIBoolean interval,
+                 (CMPIBroker* mb, CMPIUint64 binTime, CMPIBoolean interval,
 		  CMPIStatus* rc)
        { return ((mb)->eft->newDateTimeFromBinary((mb),(binTime),(interval),(rc))); }
 #else
@@ -301,14 +306,14 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #endif
 
 #ifdef CMPI_INLINE
-     /** DateTime factory service. Is initialized from &lt;utcTime&gt;.
+     /** DateTime factory service. Is initialized from <utcTime>.
          @param mb Broker this pointer
 	 @param utcTime Date/Time definition in UTC format
 	 @param rc Output: Service return status (suppressed when NULL).
          @return The newly created DateTime.
      */
    inline static   CMPIDateTime* CMNewDateTimeFromChars
-                 (const CMPIBroker* mb, char* utcTime, CMPIStatus* rc)
+                 (CMPIBroker* mb, char* utcTime, CMPIStatus* rc)
 	{ return ((mb)->eft->newDateTimeFromChars((mb),(utcTime),(rc))); }
 #else
   #define CMNewDateTimeFromChars(b,d,rc) \
@@ -325,7 +330,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
          @return The newly created SelectExp.
      */
      inline static   CMPISelectExp* CMNewSelectExp
-                 (const CMPIBroker* mb, const char* query, const char* lang,
+                 (CMPIBroker* mb, char* query, char* lang,
                   CMPIArray** projection, CMPIStatus* rc)
 	{ return ((mb)->eft->newSelectExp((mb),(query),(lang),(projection),(rc))); }
 #else
@@ -334,8 +339,8 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #endif
 
 #ifdef CMPI_INLINE
-     /** Function to determine whether a CIM class is of &lt;type&gt; or any of
-         &lt;type&gt; subclasses.
+     /** Function to determine whether a CIM class is of <type> or any of
+         <type> subclasses.
          @param mb Broker this pointer
 	 @param op The class path (namespace and classname components).
 	 @param type The type to tested for.
@@ -343,14 +348,14 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
          @return True if test successful.
      */
    inline static   CMPIBoolean CMClassPathIsA
-                 (const CMPIBroker* mb, const CMPIObjectPath* op, const char* type, CMPIStatus* rc)
+                 (CMPIBroker* mb, CMPIObjectPath* op, char* type, CMPIStatus* rc)
 	{ return ((mb)->eft->classPathIsA((mb),(op),(type),(rc))); }
 #else
   #define CMClassPathIsA(b,p,pn,rc) \
                               ((b)->eft->classPathIsA((b),(p),(pn),(rc)))
 #endif
 
-    // Debugging macros
+/* Debugging macros */
 
 #ifdef CMPI_INLINE
      /** Attempts to transforms an CMPI object to a broker specific string format.
@@ -358,17 +363,17 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
          @param mb Broker this pointer
 	 @param object A valid CMPI object.
 	 @param rc Output: Service return status (suppressed when NULL).
-         @return String from representation of &lt;object&gt;.
+         @return String from representation of <object>.
      */
   inline static   CMPIString* CDToString
-                 (const CMPIBroker* mb, const void* object, CMPIStatus* rc)
+                 (CMPIBroker* mb, void* object, CMPIStatus* rc)
 	{ return ((mb)->eft->toString((mb),(void*)(object),(rc))); }
 #else
   #define CDToString(b,o,rc)    ((b)->eft->toString((b),(void*)(o),(rc)))
 #endif
 
 #ifdef CMPI_INLINE
-     /** Verifies whether &lt;object&gt; is of CMPI type &lt;type&gt;.
+     /** Verifies whether <object> is of CMPI type <type>.
          Intended for debugging purposes only.
          @param mb Broker this pointer
 	 @param object A valid CMPI object.
@@ -378,15 +383,15 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
          @return True if test successful.
      */
    inline static   CMPIBoolean CDIsOfType
-                 (const CMPIBroker* mb, const void* object, const char* type, CMPIStatus* rc)
+                 (CMPIBroker* mb, void* object, char* type, CMPIStatus* rc)
 	{ return ((mb)->eft->isOfType((mb),(void*)(object),(type),(rc))); }
 #else
   #define CDIsOfType(b,o,t,rc) \
-                             (b)->eft->isOfType((b),(void*)(o),(t),(rc))
+                             (b)->eft->isOfType((b),(void*)(o),(t),(rc)))
 #endif
 
 #ifdef CMPI_INLINE
-     /** Retrieves the CMPI type of &lt;object&gt;.
+     /** Retrieves the CMPI type of <object>.
          Intended for debugging purposes only.
          @param mb Broker this pointer
 	 @param object A valid CMPI object.
@@ -394,7 +399,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
          @return CMPI object type.
      */
   inline static   CMPIString* CDGetType
-                 (const CMPIBroker* mb, const void* object, CMPIStatus* rc)
+                 (CMPIBroker* mb, void* object, CMPIStatus* rc)
 	 { return ((mb)->eft->getType((mb),(object),(rc))); }
 #else
   #define CDGetType(b,o,rc)      ((b)->eft->getType((b),(void*)(o),(rc)))
@@ -402,115 +407,45 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 #if defined(CMPI_VER_85)
 #ifdef DOC_ONLY
-     /** Retrieves translated message. When using as macro, use
-         CMFmtArgsX and CMFmtX macros to generate the variable parameter list and ommit
-	 the count parameter.
-	 @example  CMGetMessage(_broker,"msgid","Test $0 $1",NULL,
-	       CMFmtArgs2(CMFmtChars("message"),CMFmtSint(1));
+     /** Retrieves translated message. Only available as macro.
+         Use CMFmtArgsX macros for specifying variable parameter list.
          @param mb Broker this pointer
 	 @param msgId The message identifier.
-	 @param defMsg The default message. The message can have up to 10 message
-	        insert placeholders ($0 through $9). The placeholders will be
-		replaced by the corresponding message insert values.
+	 @param defMsg The default message.
 	 @param rc Output: Service return status (suppressed when NULL).
-	 @param count The number of message insert values. Ommit when using
-	         CMGetMessage as macro.
-	 @param ... Up to 10 Message insert values.
-	        These are specified using the following macros:
-                   CMFmtSint(v)    integer value
-                   CMFmtUint(v)    unsigned integer value
-                   CMFmtSint64(v)  long integer value
-                   CMFmtUint64(v)  long unsigned integer vale
-                   CMFmtReal(v)    float or double real value
-                   CMFmtBoolean(v) CMPIBoolean value
-                   CMFmtChars(v)   char string
-                   CMFmtString(v)  CMPIString
-         @return the translated message.
+	 @param count The number of message substitution values.
+         @return the trabslated message.
      */
-  inline static   CMPIString* CMGetMessage
-                 (const CMPIBroker* mb, const char *msgId, const char *defMsg, CMPIStatus* rc, unsigned int, ...);
+  inline static   CMPIString* CMgetMessage
+                 (CMPIBroker* mb, char *msgId, char *defMsg, CMPIStatus* rc, unsigned int, ...);
 #endif
-
-  #define CMFmtSint(v)    CMPI_sint32,((long int)v)
-  #define CMFmtUint(v)    CMPI_uint32,((unsigned long int)v)
-  #define CMFmtSint64(v)  CMPI_sint64,((long long int)v)
-  #define CMFmtUint64(v)  CMPI_uint64,((unsigned long long int)v)
-  #define CMFmtReal(v)    CMPI_real64,((double)v)
-  #define CMFmtBoolean(v) CMPI_boolean,((int)v)
-  #define CMFmtChars(v)   CMPI_chars,((char*)v)
-  #define CMFmtString(v)  CMPI_String,((CMPI_String*)v)
 
   #define CMFmtArgs0() 0
-  #define CMFmtArgs1(v1) \
-     1,v1
-  #define CMFmtArgs2(v1,v2) \
-     2,v1,v2
-  #define CMFmtArgs3(v1,v2,v3) \
-     3,v1,v2,v3
-  #define CMFmtArgs4(v1,v2,v3,v4) \
-     4,v1,v2,v3,v4
-  #define CMFmtArgs5(v1,v2,v3,v4,v5) \
-     5,v1,v2,v3,v4,v5
-  #define CMFmtArgs6(v1,v2,v3,v4,v5,v6) \
-     6,v1,v2,v3,v4,v5,v6
-  #define CMFmtArgs7(v1,v2,v3,v4,v5,v6,v7) \
-     7,v1,v2,v3,v4,v5,v6,v7
-  #define CMFmtArgs8(v1,v2,v3,v4,v5,v6,v7,v8) \
-     8,v1,v2,v3,v4,v5,v6,v7,v8
-  #define CMFmtArgs9(v1,v2,v3,v4,v5,v6,v7,v8,v9) \
-     9,v1,v2,v3,v4,v5,v6,v7,v8,v9
-  #define CMFmtArgs10(v1,v2,v3,v4,v5,v6,v7,v8,v9,v10) \
-     10,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10
-
+  #define CMFmtArgs1(v1,t1) \
+     1,v1,t1
+  #define CMFmtArgs2(v1,t1,v2,t2) \
+     2,v1,t1,v2,t2
+  #define CMFmtArgs3(v1,t1,v2,t2,v3,t3) \
+     3,v1,t1,v2,t2,v3,t3
+  #define CMFmtArgs4(v1,t1,v2,t2,v3,t3,v4,t4) \
+     4,v1,t1,v2,t2,v3,t3,v4,t4
+  #define CMFmtArgs5(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5) \
+     5,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5
+  #define CMFmtArgs6(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6) \
+     6,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,
+  #define CMFmtArgs7(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7) \
+     7,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7
+  #define CMFmtArgs8(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8) \
+     8,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,
+  #define CMFmtArgs9(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9,v10,t19) \
+     9,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9
+  #define CMFmtArgs10(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9,v10,t19) \
+     10,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9,v10,t10
+  
   #define CMGetMessage(b,id,def,rc,parms)      ((b)->eft->getMessage((b),(id),(def),(rc),parms))
-#endif //CMPI_VER_85
+#endif /* CMPI_VER_85 */
 
-
-#ifdef CMPI_VER_100
-#ifdef CMPI_INLINE
-       /** Logs the message to the standard logging facility.
-	 @example  CMLogMessage(_broker, 1, "TestProvider","Entering EnumerateInstance", NULL);
-     @param mb Broker this pointer
-	 @param severity The severity is from 1-4. 1 is for information,
-       2, is for warning, 3 for severe and 4 for fatal.
-     @param id The ID of the provider.
-	 @param text The message. If not NULL, is the message text to be logged.
-	 @param string The message. If not NULL,  is the message text to be logged. 
-       string will be ignored when text is not NULL.
-	 @param rc Output: Service return status 
-      */
-   inline static   CMPIStatus CMLogMessage
-              (const CMPIBroker *b, int severity, const char *id,
-			   const char *text, const CMPIString *string)
-	{ return ((b)->eft->logMessage((b),(severity),(id), (text), (string))); }
-#else
-  #define CMLogMessage(b,severity,id, text, string)      ((b)->eft->logMessage((b),(severity),(id),(text),(string)))
-#endif
-#endif
-
-#ifdef CMPI_VER_100
-#ifdef CMPI_INLINE
-       /**  Logs the message to the trace facility.
-	 @example  CMLogMessage(_broker, 1, "TestProvider","Entering EnumerateInstance", NULL);
-     @param mb Broker this pointer
-	 @param level The severity is from 1-4. 
-     @param component The component name to use for logging. The available 
-      facilities are defined in TraceComponents.h file.
-	 @param text The message. If not NULL, is the message text to be logged.
-	 @param string The message. If not NULL,  is the message text to be logged. 
-       string will be ignored when text is not NULL.
-	 @param rc Output: Service return status 
-      */
-   inline static   CMPIStatus CMTraceMessage
-              (const CMPIBroker *b, int level, const char *component,
-			   const char *text, const CMPIString *string)
-	{ return ((b)->eft->logMessage((b),(level),(component), (text), (string))); }
-#else
-  #define CMTraceMessage(b,level,component, text, string)      ((b)->eft->trace((b),(level),(component),(text),(string)))
-#endif
-#endif
-
-    // CMPIInstance macros
+/* CMPIInstance macros */
 
 
 #ifdef CMPI_INLINE
@@ -521,11 +456,11 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Property value.
       */
    inline static   CMPIData CMGetProperty
-              (const CMPIInstance* inst, const char* name, CMPIStatus* rc)
+              (CMPIInstance* inst, char* name, CMPIStatus* rc)
 	{ return ((inst)->ft->getProperty((inst),(name),(rc))); }
 #else
   #define CMGetProperty(i,n,rc)      ((i)->ft->getProperty((i),(n),(rc)))
-#endif
+ #endif
 
 #ifdef CMPI_INLINE
        /** Gets a Property value defined by its index.
@@ -536,7 +471,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Property value.
       */
    inline static   CMPIData CMGetPropertyAt
-              (const CMPIInstance* inst, unsigned int index, CMPIString** name,
+              (CMPIInstance* inst, unsigned int index, CMPIString** name,
 	       CMPIStatus* rc)
 	{ return ((inst)->ft->getPropertyAt((inst),(index),(name),(rc))); }
 #else
@@ -553,9 +488,9 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
   inline static   CMPIStatus CMSetProperty
-              (const CMPIInstance* inst,const  char* name,
-               const CMPIValue* value, CMPIType type)
-	{ return ((inst)->ft->setProperty((inst),(name),(value),(type))); }
+              (CMPIInstance* inst, char* name,
+               void* value, CMPIType type)
+	{ return ((inst)->ft->setProperty((inst),(name),(CMPIValue*)(value),(type))); }
 #else
   #define CMSetProperty(i,n,v,t) \
                       ((i)->ft->setProperty((i),(n),(CMPIValue*)(v),(t)))
@@ -568,7 +503,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Number of properties.
       */
      inline static   unsigned int CMGetPropertyCount
-              (const CMPIInstance* inst, CMPIStatus* rc)
+              (CMPIInstance* inst, CMPIStatus* rc)
 	 { return ((inst)->ft->getPropertyCount((inst),(rc))); }
 #else
   #define CMGetPropertyCount(i,rc)   ((i)->ft->getPropertyCount((i),(rc)))
@@ -582,26 +517,10 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
          @return the generated ObjectPath.
       */
      inline static   CMPIObjectPath* CMGetObjectPath
-              (const CMPIInstance* inst, CMPIStatus* rc)
+              (CMPIInstance* inst, CMPIStatus* rc)
 	{ return ((inst)->ft->getObjectPath((inst),(rc))); }
 #else
   #define CMGetObjectPath(i,rc)        ((i)->ft->getObjectPath((i),(rc)))
-#endif
-
-#ifdef CMPI_VER_100
-#ifdef CMPI_INLINE
-      /** Replaces the ObjectPath of the instance.
-	 @param inst Instance this pointer.
-     @param obj Pointer to the new object path.
-	 @param rc Output: Service return status (suppressed when NULL).
-         @return the generated ObjectPath.
-      */
-     inline static   CMPIStatus CMSetObjectPath
-              ( CMPIInstance* inst, const CMPIObjectPath *obj)
-	{ return ((inst)->ft->setObjectPath((inst),(obj))); }
-#else
-  #define CMSetObjectPath(i,obj)        ((i)->ft->getObjectPath((i),(obj)))
-#endif
 #endif
 
 #ifdef CMPI_INLINE
@@ -614,7 +533,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
      inline static   CMPIStatus CMSetPropertyFilter
-              (CMPIInstance* inst, const char** propertyList, char **keys)
+              (CMPIInstance* inst, char** propertyList, char **keys)
 	{ return ((inst)->ft->setPropertyFilter((inst),(propertyList),(keys))); }
 #else
   #define CMSetPropertyFilter(i,pl,k) ((i)->ft->setPropertyFilter((i),(pl),(k)))
@@ -622,7 +541,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 
 
-   // CMPIObjectPath macros
+/* CMPIObjectPath macros */
 
 
 #ifdef CMPI_INLINE
@@ -632,7 +551,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
      inline static   CMPIStatus CMSetHostname
-              (CMPIObjectPath* op, const char* hn)
+              (CMPIObjectPath* op, char* hn)
 	{ return ((op)->ft->setHostname((op),(hn))); }
 #else
   #define CMSetHostname(p,n)              ((p)->ft->setHostname((p),(n)))
@@ -645,7 +564,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return The hostname component.
       */
    inline static   CMPIString* CMGetHostname
-              (const CMPIObjectPath* op,CMPIStatus* rc)
+              (CMPIObjectPath* op,CMPIStatus* rc)
 	{ return ((op)->ft->getHostname((op),(rc))); }
 #else
   #define CMGetHostname(p,rc)            ((p)->ft->getHostname((p),(rc)))
@@ -658,7 +577,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
    inline static   CMPIStatus CMSetNameSpace
-              (CMPIObjectPath* op,const char* ns)
+              (CMPIObjectPath* op,char* ns)
 	 { return ((op)->ft->setNameSpace((op),(ns))); }
 #else
   #define CMSetNameSpace(p,n)            ((p)->ft->setNameSpace((p),(n)))
@@ -671,7 +590,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return The namespace component.
       */
    inline static   CMPIString* CMGetNameSpace
-              (const CMPIObjectPath* op, CMPIStatus* rc)
+              (CMPIObjectPath* op, CMPIStatus* rc)
 	{ return ((op)->ft->getNameSpace((op),(rc))); }
 #else
   #define CMGetNameSpace(p,rc)          ((p)->ft->getNameSpace((p),(rc)))
@@ -684,7 +603,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
    inline static   CMPIStatus CMSetClassName
-                 (CMPIObjectPath* op, const char* cn)
+                 (CMPIObjectPath* op, char* cn)
 	{ return ((op)->ft->setClassName((op),(cn))); }
 #else
   #define CMSetClassName(p,n)            ((p)->ft->setClassName((p),(n)))
@@ -697,7 +616,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return The classname component.
       */
    inline static   CMPIString* CMGetClassName
-              (const CMPIObjectPath* op,CMPIStatus* rc)
+              (CMPIObjectPath* op,CMPIStatus* rc)
 	{ return ((op)->ft->getClassName((op),(rc))); }
 #else
   #define CMGetClassName(p,rc)          ((p)->ft->getClassName((p),(rc)))
@@ -712,9 +631,9 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
    inline static   CMPIStatus CMAddKey
-              (CMPIObjectPath* op, const char* name,
-               const CMPIValue * value, const CMPIType type)
-	{ return ((op)->ft->addKey((op),(name),(value),(type))); }
+              (CMPIObjectPath* op, char* name,
+               void* value, CMPIType type)
+	{ return ((op)->ft->addKey((op),(name),(CMPIValue*)(value),(type))); }
 #else
   #define CMAddKey(p,n,v,t) \
                            ((p)->ft->addKey((p),(n),(CMPIValue*)(v),(t)))
@@ -728,7 +647,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Entry value.
       */
    inline static   CMPIData CMGetKey
-              (const CMPIObjectPath* op, const char* name, CMPIStatus* rc)
+              (CMPIObjectPath* op, char* name, CMPIStatus* rc)
 	{ return ((op)->ft->getKey((op),(name),(rc))); }
 #else
   #define CMGetKey(p,n,rc)                ((p)->ft->getKey((p),(n),(rc)))
@@ -743,7 +662,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Data value.
       */
    inline static   CMPIData CMGetKeyAt
-              (const CMPIObjectPath* op,unsigned int index, CMPIString** name,
+              (CMPIObjectPath* op,unsigned int index, CMPIString** name,
 	       CMPIStatus* rc)
 	{ return ((op)->ft->getKeyAt((op),(index),(name),(rc))); }
 #else
@@ -758,20 +677,20 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Number of properties.
       */
    inline static   unsigned int CMGetKeyCount
-              (const CMPIObjectPath* op, CMPIStatus* rc)
+              (CMPIObjectPath* op, CMPIStatus* rc)
 	{ return ((op)->ft->getKeyCount((op),(rc))); }
 #else
   #define CMGetKeyCount(p,rc)            ((p)->ft->getKeyCount((p),(rc)))
 #endif
 
 #ifdef CMPI_INLINE
-      /** Set/replace namespace and classname components from &lt;src&gt;.
+      /** Set/replace namespace and classname components from <src>.
 	 @param op ObjectPath this pointer.
 	 @param src Source input.
 	 @return Service return status.
       */
    inline static   CMPIStatus CMSetNameSpaceFromObjectPath
-              (CMPIObjectPath* op, const CMPIObjectPath* src)
+              (CMPIObjectPath* op, CMPIObjectPath* src)
 	{ return ((op)->ft->setNameSpaceFromObjectPath((op),(src))); }
 #else
   #define CMSetNameSpaceFromObjectPath(p,s) \
@@ -779,37 +698,23 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #endif
 
 #ifdef CMPI_INLINE
-      /** Set/replace hostname, namespace and classname components from &lt;src&gt;.
+      /** Set/replace hostname, namespace and classname components from <src>.
 	 @param op ObjectPath this pointer.
 	 @param src Source input.
 	 @return Service return status.
       */
    inline static   CMPIStatus CMSetHostAndNameSpaceFromObjectPath
               (CMPIObjectPath* op,
-               const CMPIObjectPath* src)
+               CMPIObjectPath* src)
 	{ return ((op)->ft->setHostAndNameSpaceFromObjectPath((op),(src))); }
 #else
   #define CMSetHostAndNameSpaceFromObjectPath(p,s) \
                      ((p)->ft->setHostAndNameSpaceFromObjectPath((p),(s)))
 #endif
 
-#if defined(CMPI_VER_86)
-#ifdef CMPI_INLINE
-      /** Set/replace hostname, namespace and classname components from &lt;src&gt;.
-	 @param op ObjectPath this pointer.
-	 @param src Source input.
-	 @return Service return status.
-      */
-   inline static   CMPIString* CMObjectPathToString
-              (const CMPIObjectPath* op, CMPIStatus* rc)
-	{ return ((op)->ft->toString((op),(rc))); }
-#else
-  #define CMObjectPathToString(p,rc) \
-                     ((p)->ft->toString((p),(rc)))
-#endif
-#endif
 
-    // CMPIArray macros
+
+/* CMPIArray macros */
 
 
 #ifdef CMPI_INLINE
@@ -819,7 +724,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Number of elements.
       */
    inline static   CMPICount CMGetArrayCount
-             (const CMPIArray* ar, CMPIStatus* rc)
+             (CMPIArray* ar, CMPIStatus* rc)
 	{ return ((ar)->ft->getSize((ar),(rc))); }
 #else
    #define CMGetArrayCount(a,rc)             ((a)->ft->getSize((a),(rc)))
@@ -832,7 +737,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Number of elements.
       */
    inline static   CMPIType CMGetArrayType
-             (const CMPIArray* ar, CMPIStatus* rc)
+             (CMPIArray* ar, CMPIStatus* rc)
 	{ return ((ar)->ft->getSimpleType((ar),(rc))); }
 #else
    #define CMGetArrayType(a,rc)        ((a)->ft->getSimpleType((a),(rc)))
@@ -846,7 +751,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Element value.
       */
    inline static   CMPIData CMGetArrayElementAt
-             (const CMPIArray* ar, CMPICount index, CMPIStatus* rc)
+             (CMPIArray* ar, CMPICount index, CMPIStatus* rc)
 	{ return ((ar)->ft->getElementAt((ar),(index),(rc))); }
 #else
    #define CMGetArrayElementAt(a,n,rc) \
@@ -862,7 +767,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
    inline static   CMPIStatus CMSetArrayElementAt
-             (CMPIArray* ar, CMPICount index, const CMPIValue* value, CMPIType type)
+             (CMPIArray* ar, CMPICount index, CMPIValue* value, CMPIType type)
 	{ return ((ar)->ft->setElementAt((ar),(index),(value),(type))); }
 #else
    #define CMSetArrayElementAt(a,n,v,t) \
@@ -871,7 +776,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 
 
-    // CMPIArgs macros
+/* CMPIARgs macros */
 
 
 #ifdef CMPI_INLINE
@@ -899,7 +804,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Argument value.
       */
   inline static   CMPIData CMGetArg
-              (const CMPIArgs* as, const char* name, CMPIStatus* rc)
+              (CMPIArgs* as, char* name, CMPIStatus* rc)
 	{ return  ((as)->ft->getArg((as),(name),(rc))); }
 #else
   #define CMGetArg(a,n,rc)                ((a)->ft->getArg((a),(n),(rc)))
@@ -914,7 +819,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Argument value.
       */
    inline static   CMPIData CMGetArgAt
-              (const CMPIArgs* as, unsigned int index, CMPIString** name,
+              (CMPIArgs* as, unsigned int index, CMPIString** name,
 	       CMPIStatus* rc)
 	{ return  ((as)->ft->getArgAt((as),(index),(name),(rc))); }
 #else
@@ -928,7 +833,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Number of properties.
       */
    inline static   unsigned int CMGetArgCount
-              (const CMPIArgs* as, CMPIStatus* rc)
+              (CMPIArgs* as, CMPIStatus* rc)
 	{ return  ((as)->ft->getArgCount((as),(rc))); }
 #else
   #define CMGetArgCount(a,rc)            ((a)->ft->getArgCount((a),(rc)))
@@ -936,7 +841,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 
 
-    // CMPIString Macros
+/* CMPIString Macros */
 
 
 #ifdef CMPI_INLINE
@@ -946,7 +851,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Pointer to char* representation.
       */
    inline static   char* CMGetCharsPtr
-             (const CMPIString* st, CMPIStatus* rc)
+             (CMPIString* st, CMPIStatus* rc)
 	{ return  ((st)->ft->getCharPtr((st),(rc))); }
 #else
   #define CMGetCharsPtr(st,rc)              ((st)->ft->getCharPtr((st),(rc)))
@@ -954,7 +859,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 
 
-    // CMPIDateTime macros
+/* CMPIDateTime macros */
 
 
 #ifdef CMPI_INLINE
@@ -964,7 +869,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return DateTime as UTC string.
       */
    inline static   CMPIString* CMGetStringFormat
-             (const CMPIDateTime* dt, CMPIStatus* rc)
+             (CMPIDateTime* dt, CMPIStatus* rc)
 	{ return ((dt)->ft->getStringFormat((dt),(rc))); }
 #else
   #define CMGetStringFormat(d,rc)    ((d)->ft->getStringFormat((d),(rc)))
@@ -978,7 +883,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return DateTime in binary.
       */
    inline static   CMPIUint64 CMGetBinaryFormat
-             (const CMPIDateTime* dt, CMPIStatus* rc)
+             (CMPIDateTime* dt, CMPIStatus* rc)
 	{ return ((dt)->ft->getBinaryFormat((dt),(rc))); }
 #else
   #define CMGetBinaryFormat(d,rc)    ((d)->ft->getBinaryFormat((d),(rc)))
@@ -991,14 +896,14 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return True if interval value.
       */
    inline static   CMPIBoolean CMIsInterval
-              (const CMPIDateTime* dt, CMPIStatus* rc)
+              (CMPIDateTime* dt, CMPIStatus* rc)
 	{ return ((dt)->ft->isInterval((dt),(rc))); }
 #else
   #define CMIsInterval(d,rc)              ((d)->ft->isInterval((d),(rc)))
 #endif
 
 
-    // CMPIEnumeration Macros
+/* CMPIEnumeration Macros */
 
 
 #ifdef CMPI_INLINE
@@ -1008,7 +913,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Element value.
       */
    inline static   CMPIData CMGetNext
-             (const CMPIEnumeration* en, CMPIStatus* rc)
+             (CMPIEnumeration* en, CMPIStatus* rc)
 	{ return ((en)->ft->getNext((en),(rc))); }
 #else
   #define CMGetNext(n,rc)                    ((n)->ft->getNext((n),(rc)))
@@ -1021,7 +926,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return True or false.
       */
    inline static   CMPIBoolean CMHasNext
-             (const CMPIEnumeration* en, CMPIStatus* rc)
+             (CMPIEnumeration* en, CMPIStatus* rc)
 	{ return ((en)->ft->hasNext((en),(rc))); }
 #else
   #define CMHasNext(n,rc)                    ((n)->ft->hasNext((n),(rc)))
@@ -1034,14 +939,14 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return The Array.
       */
    inline static   CMPIArray* CMToArray
-             (const CMPIEnumeration* en, CMPIStatus* rc)
+             (CMPIEnumeration* en, CMPIStatus* rc)
 	{ return ((en)->ft->toArray((en),(rc))); }
 #else
   #define CMToArray(n,rc)                   ((n)->ft->toArray((n),(rc)))
 #endif
 
 
-   // CMPIResult Macros
+/* CMPIResult Macros */
 
 
 #ifdef CMPI_INLINE
@@ -1052,8 +957,8 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
   inline static   CMPIStatus CMReturnData
-              (const CMPIResult* rslt, const CMPIValue* value, const CMPIType type)
-	{ return ((rslt)->ft->returnData((rslt),(value),(type))); }
+              (CMPIResult* rslt, void* value, CMPIType type)
+	{ return ((rslt)->ft->returnData((rslt),(CMPIValue*)(value),(type))); }
 #else
   #define CMReturnData(r,v,t) \
                            ((r)->ft->returnData((r),(CMPIValue*)(v),(t)))
@@ -1066,7 +971,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
    inline static   CMPIStatus CMReturnInstance
-              (const CMPIResult* rslt,const CMPIInstance* inst)
+              (CMPIResult* rslt,CMPIInstance* inst)
 	{ return ((rslt)->ft->returnInstance((rslt),(inst))); }
 #else
   #define CMReturnInstance(r,i)        ((r)->ft->returnInstance((r),(i)))
@@ -1079,7 +984,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
    inline static   CMPIStatus CMReturnObjectPath
-              (const CMPIResult* rslt, const CMPIObjectPath* ref)
+              (CMPIResult* rslt, CMPIObjectPath* ref)
 	{ return ((rslt)->ft->returnObjectPath((rslt),(ref))); }
 #else
   #define CMReturnObjectPath(r,o)    ((r)->ft->returnObjectPath((r),(o)))
@@ -1091,7 +996,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
    inline static   CMPIStatus CMReturnDone
-              (const CMPIResult* rslt)
+              (CMPIResult* rslt)
 	{ return ((rslt)->ft->returnDone((rslt))); }
 #else
   #define CMReturnDone(r)                      ((r)->ft->returnDone((r)))
@@ -1099,7 +1004,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 
 
-    // CMPIContext Macros
+/* CMPIContext Macros */
 
 
 #ifdef CMPI_INLINE
@@ -1110,7 +1015,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Entry value.
       */
    inline static   CMPIData CMGetContextEntry
-              (const CMPIContext* ctx, const char* name, CMPIStatus* rc)
+              (CMPIContext* ctx, char* name, CMPIStatus* rc)
 	{ return ((ctx)->ft->getEntry((ctx),(name),(rc))); }
 #else
   #define CMGetContextEntry(c,n,rc)  \
@@ -1126,7 +1031,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Entry value.
       */
    inline static   CMPIData CMGetContextEntryAt
-              (const CMPIContext* ctx, unsigned int index, CMPIString** name,
+              (CMPIContext* ctx, unsigned int index, CMPIString** name,
 	       CMPIStatus* rc)
 	{ return ((ctx)->ft->getEntryAt((ctx),(index),(name),(rc))); }
 #else
@@ -1141,7 +1046,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Number of entries.
       */
    inline static   unsigned int CMGetContextEntryCount
-              (const CMPIContext* ctx, CMPIStatus* rc)
+              (CMPIContext* ctx, CMPIStatus* rc)
 	{ return ((ctx)->ft->getEntryCount((ctx),(rc))); }
 #else
   #define CMGetContextEntryCount(c,rc) \
@@ -1157,8 +1062,8 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
    inline static   CMPIStatus CMAddContextEntry
-              (const CMPIContext* ctx, const char* name, const CMPIValue* value, const CMPIType type)
-	{ return ((ctx)->ft->addEntry((ctx),(name),(value),(type))); }
+              (CMPIContext* ctx, char* name, void* value, CMPIType type)
+	{ return ((ctx)->ft->addEntry((ctx),(name),(CMPIValue*)(value),(type))); }
 #else
   #define CMAddContextEntry(c,n,v,t) \
                   ((c)->ft->addEntry((c),(n),(CMPIValue*)(v),(t)))
@@ -1166,7 +1071,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 
 
-    // CMPISelectExp macros
+/* CMPISelectExp macros */
 
 
 
@@ -1177,7 +1082,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return The select expression.
       */
    inline static   CMPIString* CMGetSelExpString
-              (const CMPISelectExp* se, CMPIStatus* rc)
+              (CMPISelectExp* se, CMPIStatus* rc)
 	{ return ((se)->ft->getString((se),(rc))); }
 #else
   #define CMGetSelExpString(s,rc)          ((s)->ft->getString((s),(rc)))
@@ -1191,28 +1096,10 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return True or false incicator.
       */
    inline static   CMPIBoolean CMEvaluateSelExp
-              (const CMPISelectExp* se, const CMPIInstance* inst, CMPIStatus* rc)
+              (CMPISelectExp* se, CMPIInstance* inst, CMPIStatus* rc)
 	{ return ((se)->ft->evaluate((se),(inst),(rc))); }
 #else
   #define CMEvaluateSelExp(s,i,r)        ((s)->ft->evaluate((s),(i),(r)))
-#endif
-
-#if defined(CMPI_VER_87)
-#ifdef CMPI_INLINE
-       /** Evaluate this select expression by using a data value accessor routine. .
-	 @param se SelectExp this pointer.
-	 @param accessor Data accessor routine to be used.
-	 @param parm Data accessor parameter.
-	 @param rc Output: Service return status (suppressed when NULL).
-	 @return True or false incicator.
-      */
-   inline static   CMPIBoolean CMEvaluateSelExpUsingAccessor
-              (const CMPISelectExp* se, CMPIAccessor* accessor, void *parm, CMPIStatus* rc)
-	{ return ((se)->ft->evaluateUsingAccessor((se),(accessor),(parm),(rc))); }
-#else
-  #define CMEvaluateSelExpUsingAccessor(s,i,p,r) \
-                            ((s)->ft->evaluateUsingAccessor((s),(i),(p),(r)))
-#endif
 #endif
 
 #ifdef CMPI_INLINE
@@ -1222,7 +1109,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return The disjunction.
       */
    inline static   CMPISelectCond* CMGetDoc
-              (const CMPISelectExp* se, CMPIStatus* rc)
+              (CMPISelectExp* se, CMPIStatus* rc)
 	{ return ((se)->ft->getDOC((se),(rc))); }
 #else
   #define CMGetDoc(s,rc)                      ((s)->ft->getDOC((s),(rc)))
@@ -1235,7 +1122,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return The conjunction.
       */
    inline static   CMPISelectCond* CMGetCod
-              (const CMPISelectExp* se, CMPIStatus* rc)
+              (CMPISelectExp* se, CMPIStatus* rc)
 	{ return ((se)->ft->getCOD((se),(rc))); }
 #else
   #define CMGetCod(s,rc)                      ((s)->ft->getCOD((s),(rc)))
@@ -1243,9 +1130,9 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 
 
-    // CMPISelectCond macros
+/* CMPISelectCond macros */
 
-
+    
 
 #ifdef CMPI_INLINE
        /** Return the number of sub conditions that are partof this SelectCond.
@@ -1256,11 +1143,11 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Number of SubCond elements.
       */
    inline static   CMPICount CMGetSubCondCountAndType
-              (const CMPISelectCond* sc, int* type, CMPIStatus* rc)
+              (CMPISelectCond* sc, int* type, CMPIStatus* rc)
 	{ return ((sc)->ft->getCountAndType((sc),(type),(rc))); }
 #else
-  #define CMGetSubCondCountAndType(c,t,rc) \
-                                ((c)->ft->getCountAndType((c),(t),(rc)))
+  #define CMGetSubCondCount(c,rc) \
+                                ((c)->ft->getCountAndType((c),NULL,(rc)))
 #endif
 
 #ifdef CMPI_INLINE
@@ -1271,7 +1158,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return The indexed SubCond element.
       */
    inline static   CMPISubCond* CMGetSubCondAt
-              (const CMPISelectCond* sc, unsigned int index, CMPIStatus* rc)
+              (CMPISelectCond* sc, unsigned int index, CMPIStatus* rc)
 	{ return ((sc)->ft->getSubCondAt((sc),(index),(rc))); }
 #else
   #define CMGetSubCondAt(c,p,rc)    ((c)->ft->getSubCondAt((c),(p),(rc)))
@@ -1279,7 +1166,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 
 
-    // CMPISubCond macros
+/* CMPISubCond macros */
 
 
 
@@ -1290,7 +1177,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Number of Predicate elements.
       */
    inline static   CMPICount CMGetPredicateCount
-              (const CMPISubCond* sc, CMPIStatus* rc)
+              (CMPISubCond* sc, CMPIStatus* rc)
 	{ return ((sc)->ft->getCount((sc),(rc))); }
 #else
   #define CMGetPredicateCount(s,rc)         ((s)->ft->getCount((s),(rc)))
@@ -1304,7 +1191,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return The indexed Predicate element.
       */
    inline static   CMPIPredicate* CMGetPredicateAt
-              (const CMPISubCond* sc, unsigned int index, CMPIStatus* rc)
+              (CMPISubCond* sc, unsigned int index, CMPIStatus* rc)
 	{ return ((sc)->ft->getPredicateAt((sc),(index),(rc))); }
 #else
    #define CMGetPredicateAt(s,p,rc) \
@@ -1319,7 +1206,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return The named Predicate element.
       */
    inline static   CMPIPredicate* CMGetPredicate
-              (const CMPISubCond* sc, const char* name, CMPIStatus* rc)
+              (CMPISubCond* sc, char* name, CMPIStatus* rc)
 	{ return ((sc)->ft->getPredicate((sc),(name),(rc))); }
 #else
   #define CMGetPredicate(s,n,rc)    ((s)->ft->getPredicate((s),(n),(rc)))
@@ -1327,7 +1214,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 
 
-    // CMPIPredicate macros
+/* CMPIPredicate macros */
 
 
 #ifdef CMPI_INLINE
@@ -1340,7 +1227,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
    inline static   CMPIStatus CMGetPredicateData
-              (const CMPIPredicate* pr, CMPIType* type,
+              (CMPIPredicate* pr, CMPIType* type,
                CMPIPredOp* op, CMPIString** lhs, CMPIString** rhs)
 	{ return ((pr)->ft->getData((pr),(type),(op),(lhs),(rhs))); }
 #else
@@ -1348,7 +1235,6 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
                                   ((p)->ft->getData((p),(t),(o),(n),(v)))
 #endif
 
-#if defined(CMPI_VER_87) && !defined(CMPI_VER_100)
 #ifdef CMPI_INLINE
        /** Evaluate the predicate using a specific value.
 	 @param pr Predicate this pointer.
@@ -1366,31 +1252,10 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
   #define CMEvaluatePredicate(p,v,t,rc) \
                                   ((p)->ft->evaluate((p),(CMPIValue*)(v),(t),(rc)))
 #endif
-#endif
-
-#if defined(CMPI_VER_100)
-#ifdef CMPI_INLINE
-       /** Evaluate this predicate  by using a data value accessor routine. .
-	 @param pr Predicate this pointer.
-	 @param accessor Data accessor routine to be used.
-	 @param parm Data accessor parameter.
-	 @param rc Output: Service return status (suppressed when NULL).
-	 @return Evaluation result.
-      */
-   inline static   int CMEvaluatePredicateUsingAccessor
-              (const CMPIPredicate* pr, CMPIAccessor *accessor, void* parm,
-               CMPIStatus* rc)
-	{ return ((pr)->ft->evaluateUsingAccessor((pr),(accessor), (parm), (rc))); }
-#else
-  #define CMEvaluatePredicateUsingAccessor(p,a,parm,rc) \
-                                  ((p)->ft->evaluateUsingAccessor((p),(a),(parm),(rc)))
-#endif
-
-#endif // CMPI_VER_100
 
 
 
-    // CMPIBroker Macros
+/* CMPIBroker Macros */
 
 
 
@@ -1398,7 +1263,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
      /** 32 bits describing CMPI features supported by this CIMOM.
          See CMPI_MB_Class_x and CMPI_MB_Supports_xxx flags.
      */
-   inline static   unsigned long CBGetClassification(const CMPIBroker* mb)
+   inline static   unsigned long CBGetClassification(CMPIBroker* mb)
 	{ return ((mb)->bft->brokerClassification); }
 #else
   #define CBGetClassification(b)         ((b)->bft->brokerClassification)
@@ -1407,7 +1272,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #ifdef CMPI_INLINE
      /** CIMOM version as defined by CIMOM
      */
-   inline static   int CBBrokerVersion(const CMPIBroker* mb)
+   inline static   int CBBrokerVersion(CMPIBroker* mb)
 	{ return ((mb)->bft->brokerVersion); }
 #else
   #define CBBrokerVersion(b)                    ((b)->bft->brokerVersion)
@@ -1416,7 +1281,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #ifdef CMPI_INLINE
      /** CIMOM name
      */
-   inline static const char* CBBrokerName(const CMPIBroker* mb)
+   inline static   char* CBbrokerName(CMPIBroker* mb)
 	{ return ((mb)->bft->brokerName); }
 #else
   #define CBBrokerName(b)                          ((b)->bft->brokerName)
@@ -1433,7 +1298,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return New Context object to be used by thread to be attached.
      */
    inline static   CMPIContext* CBPrepareAttachThread
-                (const CMPIBroker* mb, const CMPIContext* ctx)
+                (CMPIBroker* mb, CMPIContext* ctx)
 	{ return ((mb)->bft->prepareAttachThread((mb),(ctx))); }
 #else
   #define CBPrepareAttachThread(b,c) \
@@ -1448,7 +1313,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
      */
    inline static   CMPIStatus CBAttachThread
-                (const CMPIBroker* mb, const CMPIContext* ctx)
+                (CMPIBroker* mb, CMPIContext* ctx)
 	{ return ((mb)->bft->attachThread((mb),(ctx))); }
 #else
   #define CBAttachThread(b,c)           ((b)->bft->attachThread((b),(c)))
@@ -1463,7 +1328,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
      */
    inline static   CMPIStatus CBDetachThread
-                (const CMPIBroker* mb, const CMPIContext* ctx)
+                (CMPIBroker* mb, CMPIContext* ctx)
 	{ return ((mb)->bft->detachThread((mb),(ctx))); }
 #else
   #define CBDetachThread(b,c)           ((b)->bft->detachThread((b),(c)))
@@ -1481,8 +1346,8 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
      */
    inline static   CMPIStatus CBDeliverIndication
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const char* ns, const CMPIInstance* ind)
+                (CMPIBroker* mb, CMPIContext* ctx,
+                 char* ns, CMPIInstance* ind)
 	{ return ((mb)->bft->deliverIndication((mb),(ctx),(ns),(ind))); }
 #else
   #define CBDeliverIndication(b,c,n,i) \
@@ -1490,7 +1355,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #endif
 
 #ifdef CMPI_INLINE
-      /** Enumerate Instance Names of the class (and subclasses) defined by &lt;op&gt;.
+      /** Enumerate Instance Names of the class (and subclasses) defined by <op>.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op ObjectPath containing namespace and classname components.
@@ -1498,8 +1363,8 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Enumeration of ObjectPathes.
      */
    inline static   CMPIEnumeration* CBEnumInstanceNames
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const CMPIObjectPath* op, CMPIStatus* rc)
+                (CMPIBroker* mb, CMPIContext* ctx,
+                 CMPIObjectPath* op, CMPIStatus* rc)
 	{ return ((mb)->bft->enumInstanceNames((mb),(ctx),(op),(rc))); }
 #else
   #define CBEnumInstanceNames(b,c,p,rc) \
@@ -1507,9 +1372,9 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #endif
 
 #ifdef CMPI_INLINE
-     /** Enumerate Instances of the class (and subclasses) defined by &lt;op&gt;.
+     /** Enumerate Instances of the class (and subclasses) defined by <op>.
          Instance structure and inheritance scope can be controled using the
-	 CMPIInvocationFlags entry in &lt;ctx&gt;.
+	 CMPIInvocationFlags entry in <ctx>.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op ObjectPath containing namespace and classname components.
@@ -1520,8 +1385,8 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Enumeration of Instances.
      */
    inline static   CMPIEnumeration* CBEnumInstances
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const CMPIObjectPath* op, const char** properties, CMPIStatus* rc)
+                (CMPIBroker* mb, CMPIContext* ctx,
+                 CMPIObjectPath* op, char** properties, CMPIStatus* rc)
 	{ return ((mb)->bft->enumInstances((mb),(ctx),(op),(properties),(rc))); }
 #else
   #define CBEnumInstances(b,c,p,pr,rc) \
@@ -1529,8 +1394,8 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #endif
 
 #ifdef CMPI_INLINE
-      /** Get Instance using &lt;op&gt; as reference. Instance structure can be
-         controled using the CMPIInvocationFlags entry in &lt;ctx&gt;.
+      /** Get Instance using <op> as reference. Instance structure can be
+         controled using the CMPIInvocationFlags entry in <ctx>.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op ObjectPath containing namespace, classname and key components.
@@ -1541,8 +1406,8 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return The Instance.
      */
    inline static   CMPIInstance* CBGetInstance
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const CMPIObjectPath* op, const char** properties, CMPIStatus* rc)
+                (CMPIBroker* mb, CMPIContext* ctx,
+                 CMPIObjectPath* op, char** properties, CMPIStatus* rc)
 	{ return ((mb)->bft->getInstance((mb),(ctx),(op),(properties),(rc))); }
 #else
   #define CBGetInstance(b,c,p,pr,rc) \
@@ -1550,7 +1415,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #endif
 
 #ifdef CMPI_INLINE
-      /** Create Instance from &lt;inst&gt; using &lt;op&gt; as reference.
+      /** Create Instance from <inst> using <op> as reference.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op ObjectPath containing namespace, classname and key components.
@@ -1559,46 +1424,16 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return The assigned instance reference.
      */
    inline static   CMPIObjectPath* CBCreateInstance
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const CMPIObjectPath* op, const CMPIInstance* inst, CMPIStatus* rc)
+                (CMPIBroker* mb, CMPIContext* ctx,
+                 CMPIObjectPath* op, CMPIInstance* inst, CMPIStatus* rc)
 	{ return ((mb)->bft->createInstance((mb),(ctx),(op),(inst),(rc))); }
 #else
   #define CBCreateInstance(b,c,p,i,rc) \
                              ((b)->bft->createInstance((b),(c),(p),(i),(rc)))
 #endif
 
-#if defined(CMPI_VER_90) 
- 
-  #ifdef CMPI_INLINE
-      /** Replace an existing Instance from &lt;inst&gt; using &lt;op&gt; as reference.
-	 @param mb Broker this pointer.
-	 @param ctx Context object
-	 @param op ObjectPath containing namespace, classname and key components.
-	 @param inst Complete instance.
-	 @param properties Specifies which properties to set. All properties will be ste if NULL.
-	 @return Service return status.
-     */
-   #if defined(CMPI_VER_100)
-   inline static   CMPIStatus CBModifyInstance
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-		 		const CMPIObjectPath* op, const CMPIInstance* inst, const char** properties)
-	{ return ((mb)->bft->modifyInstance((mb),(ctx),(op),(inst),(properties))); }
-   #else // CMPI_VER_100
-   inline static   CMPIStatus CBSetInstance
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-		 const CMPIObjectPath* op, const CMPIInstance* inst, const char** properties)
-	{ return ((mb)->bft->setInstance((mb),(ctx),(op),(inst),(properties))); }
-   #endif // CMPI_VER_!00
-  #else // CMPI_INLINE
-    #if defined(CMPI_VER_100)
-      #define CBModifyInstance(b,c,p,i,pr)      ((b)->bft->modifyInstance((b),(c),(p),(i),(pr)))
-    #else
-      #define CBSetInstance(b,c,p,i,pr)      ((b)->bft->setInstance((b),(c),(p),(i),(pr)))
-    #endif //CMPI_VER_100
-  #endif
-#else
-  #ifdef CMPI_INLINE
-      /** Replace an existing Instance from &lt;inst&gt; using &lt;op&gt; as reference.
+#ifdef CMPI_INLINE
+      /** Replace an existing Instance from <inst> using <op> as reference.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op ObjectPath containing namespace, classname and key components.
@@ -1608,22 +1443,21 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
    inline static   CMPIStatus CBSetInstance
                 (CMPIBroker* mb, CMPIContext* ctx,
 		 CMPIObjectPath* op, CMPIInstance* inst)
-	{ return ((mb)->bft->setInstance((mb),(ctx),(op),(inst), NULL)); }
-  #else
+	{ return ((mb)->bft->setInstance((mb),(ctx),(op),(inst))); }
+#else
   #define CBSetInstance(b,c,p,i)      ((b)->bft->setInstance((b),(c),(p),(i)))
-  #endif
-#endif //version 90
+#endif
 
 #ifdef CMPI_INLINE
-      /** Delete an existing Instance using &lt;op&gt; as reference.
+      /** Delete an existing Instance using <op> as reference.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op ObjectPath containing namespace, classname and key components.
 	 @return Service return status.
      */
    inline static   CMPIStatus CBDeleteInstance
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const CMPIObjectPath* op)
+                (CMPIBroker* mb, CMPIContext* ctx,
+                 CMPIObjectPath* op)
 	{ return ((mb)->bft->deleteInstance((mb),(ctx),(op))); }
 #else
   #define CBDeleteInstance(b,c,p)  ((b)->bft->deleteInstance((b),(c),(p)))
@@ -1631,7 +1465,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 #ifdef CMPI_INLINE
       /** Query the enumeration of instances of the class (and subclasses) defined
-         by &lt;op&gt; using &lt;query&gt; expression.
+         by <op> using <query> expression.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op ObjectPath containing namespace and classname components.
@@ -1641,8 +1475,8 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Resulting eumeration of Instances.
      */
    inline static   CMPIEnumeration* CBExecQuery
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const CMPIObjectPath* op, const char* query, const char* lang, CMPIStatus* rc)
+                (CMPIBroker* mb, CMPIContext* ctx,
+                 CMPIObjectPath* op, char* query, char* lang, CMPIStatus* rc)
 	{ return ((mb)->bft->execQuery((mb),(ctx),(op),(query),(lang),(rc))); }
 #else
   #define CBExecQuery(b,c,p,l,q,rc) \
@@ -1651,7 +1485,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 
 #ifdef CMPI_INLINE
-      /** Enumerate instances associated with the Instance defined by the &lt;op&gt;.
+      /** Enumerate instances associated with the Instance defined by the <op>.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op Source ObjectPath containing namespace, classname and key components.
@@ -1682,9 +1516,9 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Enumeration of Instances.
      */
    inline static   CMPIEnumeration* CBAssociators
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const CMPIObjectPath* op, const char* assocClass, const char* resultClass,
-		 const char* role, const char* resultRole, const char** properties, CMPIStatus* rc)
+                (CMPIBroker* mb,CMPIContext* ctx,
+                 CMPIObjectPath* op, char* assocClass, char* resultClass,
+		 char* role, char* resultRole, char** properties, CMPIStatus* rc)
 	{ return ((mb)->bft->associators((mb),(ctx),(op),(assocClass),(resultClass),
 	                                 (role),(resultRole),(properties),(rc))); }
 #else
@@ -1693,7 +1527,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #endif
 
 #ifdef CMPI_INLINE
-      /** Enumerate ObjectPaths associated with the Instance defined by &lt;op&gt;.
+      /** Enumerate ObjectPaths associated with the Instance defined by <op>.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op Source ObjectPath containing namespace, classname and key components.
@@ -1721,9 +1555,9 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Enumeration of ObjectPaths.
      */
    inline static   CMPIEnumeration* CBAssociatorNames
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const CMPIObjectPath* op, const char* assocClass, const char* resultClass,
-		 const char* role, const char* resultRole, CMPIStatus* rc)
+                (CMPIBroker* mb, CMPIContext* ctx,
+                 CMPIObjectPath* op, char* assocClass, char* resultClass,
+		 char* role, char* resultRole, CMPIStatus* rc)
 	{ return ((mb)->bft->associatorNames((mb),(ctx),(op),
 	             (assocClass),(resultClass),(role),(resultRole),(rc))); }
 #else
@@ -1733,7 +1567,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 #ifdef CMPI_INLINE
        /** Enumerates the association instances that refer to the instance defined by
-           &lt;op&gt;.
+           <op>.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op Source ObjectPath containing namespace, classname and key components.
@@ -1754,9 +1588,9 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Enumeration of ObjectPaths.
      */
    inline static   CMPIEnumeration* CBReferences
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const CMPIObjectPath* op, const char* resultClass ,const char* role ,
-		 const char** properties, CMPIStatus* rc)
+                (CMPIBroker* mb, CMPIContext* ctx,
+                 CMPIObjectPath* op, char* resultClass ,char* role ,
+		 char** properties, CMPIStatus* rc)
 	{ return ((mb)->bft->references((mb),(ctx),(op),
 	             (resultClass),(role),(properties),(rc))); }
 #else
@@ -1766,7 +1600,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 #ifdef CMPI_INLINE
        /** Enumerates the association ObjectPaths that refer to the instance defined by
-           &lt;op&gt;.
+           <op>.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op Source ObjectPath containing namespace, classname and key components.
@@ -1784,8 +1618,8 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Enumeration of ObjectPaths.
        */
    inline static   CMPIEnumeration* CBReferenceNames
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const CMPIObjectPath* op, const char* resultClass ,const char* role,
+                (CMPIBroker* mb, CMPIContext* ctx,
+                 CMPIObjectPath* op, char* resultClass ,char* role,
                  CMPIStatus* rc)
 	{ return ((mb)->bft->referenceNames((mb),(ctx),(op),(resultClass),(role),(rc))); }
 #else
@@ -1796,7 +1630,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 #ifdef CMPI_INLINE
        /** Invoke a named, extrinsic method of an Instance
-         defined by the &lt;op&gt; parameter.
+         defined by the <op> parameter.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op ObjectPath containing namespace, classname and key components.
@@ -1807,9 +1641,9 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Method return value.
       */
    inline static   CMPIData CBInvokeMethod
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const CMPIObjectPath* op, const char* method,
-		 	     const CMPIArgs* in, CMPIArgs* out, CMPIStatus* rc)
+                (CMPIBroker* mb, CMPIContext* ctx,
+                 CMPIObjectPath* op,char* method,
+		 CMPIArgs* in, CMPIArgs* out, CMPIStatus* rc)
 	{ return ((mb)->bft->invokeMethod((mb),(ctx),(op),(method),(in),(out),(rc))); }
 #else
   #define CBInvokeMethod(b,c,p,m,ai,ao,rc) \
@@ -1817,7 +1651,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #endif
 
 #ifdef CMPI_INLINE
-       /** Set the named property value of an Instance defined by the &lt;op&gt; parameter.
+       /** Set the named property value of an Instance defined by the <op> parameter.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op ObjectPath containing namespace, classname and key components.
@@ -1827,9 +1661,9 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Service return status.
       */
      inline static   CMPIStatus CBSetProperty
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const CMPIObjectPath* op, const char* name , 
-				 const CMPIValue *value, const CMPIType type)
+                (CMPIBroker* mb, CMPIContext* ctx,
+                 CMPIObjectPath* op, char* name , void* value,
+                 CMPIType type)
 	{ return ((mb)->bft->setProperty((mb),(ctx),(op),(name),
 	                 (CMPIValue*)(value),(type))); }
 #else
@@ -1838,7 +1672,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #endif
 
 #ifdef CMPI_INLINE
-       /** Get the named property value of an Instance defined by the &lt;op&gt; parameter.
+       /** Get the named property value of an Instance defined by the <op> parameter.
 	 @param mb Broker this pointer.
 	 @param ctx Context object
 	 @param op ObjectPath containing namespace, classname and key components.
@@ -1847,8 +1681,8 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 	 @return Property value.
       */
    inline static   CMPIData CBGetProperty
-                (const CMPIBroker* mb, const CMPIContext* ctx,
-                 const CMPIObjectPath* op, const char* name, CMPIStatus* rc)
+                (CMPIBroker* mb, CMPIContext* ctx,
+                 CMPIObjectPath* op, char* name, CMPIStatus* rc)
 	{ return (mb)->bft->getProperty((mb),(ctx),(op),(name),(rc)); }
 #else
   #define CBGetProperty(b,c,p,n,rc) \
@@ -1857,9 +1691,9 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 
 #ifndef DOC_ONLY
-   // MI factory stubs
+/* MI factory stubs */
 
-  #define CMNoHook ; 
+  #define CMNoHook if (brkr)
 #endif
 
 /*
@@ -1868,19 +1702,19 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 #ifdef DOC_ONLY
        /** This macro generates the function table and initialization stub
-           for an instance provider. The initialization routine &lt;pn&gt;Create_InstanceMI
+           for an instance provider. The initialization routine <pn>Create_InstanceMI
 	   is called when this provider module is loaded by the broker.
 	   This macro is for CMPI providers written in plain C.
 	 @param pfx The prefix for all mandatory association provider functions.
 	        This is a character string without quotes.
-	        Mandatory functions are: &lt;pfx&gt;Cleanup, &lt;pfx&gt;EnumInstanceNames,
-                &lt;pfx&gt;EnumInstances, &lt;pfx&gt;GetInstance, &lt;pfx&gt;CreateInstance,
-                &lt;pfx&gt;SetInstance, &lt;pfx&gt;DeleteInstance and &lt;pfx&gt;ExecQuery.
+	        Mandatory functions are: <pfx>Cleanup, <pfx>EnumInstanceNames,
+                <pfx>EnumInstances, <pfx>GetInstance, <pfx>CreateInstance,
+                <pfx>SetInstance, <pfx>DeleteInstance and <pfx>ExecQuery.
 	 @param pn The provider name under which this provider is registered.
 	        This is a character string without quotes.
 	 @param broker The name of the broker variable used by this macro to store
 	               the CMPIBroker pointer
-	 @param hook A statement that is executed within &lt;pn&gt;Create_InstanceMI routine.
+	 @param hook A statement that is executed within <pn>Create_InstanceMI routine.
 	             This enables you to perform additional initialization functions and
 		     is normally a function call like furtherInit(broker) or CMNoHook.
 		     Use CMNoHook if no further intialization is required.
@@ -1889,13 +1723,6 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
    CMPIInstanceMI* CMInstanceMIStub(chars pfx, chars pn,
          CMPIBroker *broker, statement hook);
 #else
-
-  #if defined(CMPI_VER_100)
-    #define CMInstanceMIStubChange(pfx) pfx##ModifyInstance
-  #else
-    #define CMInstanceMIStubChange(pfx) pfx##SetInstance
-  #endif
-
   #define CMInstanceMIStub(pfx,pn,broker,hook) \
   static CMPIInstanceMIFT instMIFT__={ \
    CMPICurrentVersion, \
@@ -1906,12 +1733,12 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
    pfx##EnumInstances, \
    pfx##GetInstance, \
    pfx##CreateInstance, \
-   CMInstanceMIStubChange(pfx), \
+   pfx##SetInstance, \
    pfx##DeleteInstance, \
    pfx##ExecQuery, \
   }; \
-  CMPI_EXTERN_C \
-  CMPIInstanceMI* pn##_Create_InstanceMI(const CMPIBroker* brkr,const CMPIContext *ctx, CMPIStatus *rc) { \
+  EXTERN_C \
+  CMPIInstanceMI* pn##_Create_InstanceMI(CMPIBroker* brkr,CMPIContext *ctx) { \
    static CMPIInstanceMI mi={ \
       NULL, \
       &instMIFT__, \
@@ -1920,25 +1747,24 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
    hook; \
    return &mi;  \
   }
-
 #endif
 
 #ifdef DOC_ONLY
        /** This macro generates the function table and initialization stub
            for an association provider. The initialization routine
-	   &lt;pn&gt;Create_AssociationMI
+	   <pn>Create_AssociationMI
 	   is called when this provider module is loaded by the broker.
 	   This macro is for CMPI providers written in plain C.
 	 @param pfx The prefix for all mandatory instance provider functions.
 	        This is a character string without quotes.
-	        Mandatory functions are: &lt;pfx&gt;AssociationCleanup,
-                &lt;pfx&gt;Associators, &lt;pfx&gt;AssociatorNames, &lt;pfx&gt;References and
-                &lt;pfx&gt;ReferenceNames.
+	        Mandatory functions are: <pfx>AssociationCleanup,
+                <pfx>Associators, <pfx>AssociatorNames, <pfx>References and
+                <pfx>ReferenceNames.
 	 @param pn The provider name under which this provider is registered.
 	        This is a character string without quotes.
 	 @param broker The name of the broker variable used by this macro to store
 	               the CMPIBroker pointer
-	 @param hook A statement that is executed within &lt;pn&gt;Create_AssociationMI routine.
+	 @param hook A statement that is executed within <pn>Create_AssociationMI routine.
 	             This enables you to perform additional initialization functions and
 		     is normally a function call like furtherInit(broker) or CMNoHook.
 		     Use CMNoHook if no further intialization is required.
@@ -1951,15 +1777,15 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
   static CMPIAssociationMIFT assocMIFT__={ \
    CMPICurrentVersion, \
    CMPICurrentVersion, \
-   "association" #pn, \
+   "asscociation" #pn, \
    pfx##AssociationCleanup, \
    pfx##Associators, \
    pfx##AssociatorNames, \
    pfx##References, \
    pfx##ReferenceNames, \
   }; \
-  CMPI_EXTERN_C \
-  CMPIAssociationMI* pn##_Create_AssociationMI(const CMPIBroker* brkr,const CMPIContext *ctx,  CMPIStatus *rc) { \
+  EXTERN_C \
+  CMPIAssociationMI* pn##_Create_AssociationMI(CMPIBroker* brkr,CMPIContext *ctx) { \
    static CMPIAssociationMI mi={ \
       NULL, \
       &assocMIFT__, \
@@ -1972,17 +1798,17 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 #ifdef DOC_ONLY
        /** This macro generates the function table and initialization stub
-           for a method provider. The initialization routine &lt;pn&gt;Create_MethodMI
+           for a method provider. The initialization routine <pn>Create_MethodMI
 	   is called when this provider module is loaded by the broker.
 	   This macro is for CMPI providers written in plain C.
 	 @param pfx The prefix for all mandatory method provider functions.
 	        This is a character string without quotes.
-	        Mandatory functions are: &lt;pfx&gt;MthodCleanup and &lt;pfx&gt;InvokeMethod.
+	        Mandatory functions are: <pfx>MthodCleanup and <pfx>InvokeMethod.
 	 @param pn The provider name under which this provider is registered.
 	        This is a character string without quotes.
 	 @param broker The name of the broker variable used by this macro to store
 	               the CMPIBroker pointer
-	 @param hook A statement that is executed within &lt;pn&gt;Create_MethodMI routine.
+	 @param hook A statement that is executed within <pn>Create_MethodMI routine.
 	             This enables you to perform additional initialization functions and
 		     is normally a function call like furtherInit(broker) or CMNoHook.
 		     Use CMNoHook if no further intialization is required.
@@ -1999,8 +1825,8 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
    pfx##MethodCleanup, \
    pfx##InvokeMethod, \
   }; \
-  CMPI_EXTERN_C \
-  CMPIMethodMI* pn##_Create_MethodMI(const CMPIBroker* brkr, const CMPIContext *ctx,  CMPIStatus *rc) { \
+  EXTERN_C \
+  CMPIMethodMI* pn##_Create_MethodMI(CMPIBroker* brkr,CMPIContext *ctx) { \
    static CMPIMethodMI mi={ \
       NULL, \
       &methMIFT__, \
@@ -2013,19 +1839,19 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 #ifdef DOC_ONLY
        /** This macro generates the function table and initialization stub
-           for a property provider. The initialization routine &lt;pn&gt;Create_PropertyMI
+           for a property provider. The initialization routine <pn>Create_PropertyMI
 	   is called when this provider module is loaded by the broker.
 	   This macro is for CMPI providers written in plain C.
 	 @param pfx The prefix for all mandatory property provider functions.
 	        This is a character string without quotes.
-	        Mandatory functions are: &lt;pfx&gt;PropertyCleanup, &lt;pfx&gt;SetProperty and
-                &lt;pfx&gt;GetProperty.
+	        Mandatory functions are: <pfx>PropertyCleanup, <pfx>SetProperty and
+                <pfx>GetProperty.
 
 	 @param pn The provider name under which this provider is registered.
 	        This is a character string without quotes.
 	 @param broker The name of the broker variable used by this macro to store
 	               the CMPIBroker pointer
-	 @param hook A statement that is executed within &lt;pn&gt;Create_PropertyMI routine.
+	 @param hook A statement that is executed within <pn>Create_PropertyMI routine.
 	             This enables you to perform additional initialization functions and
 		     is normally a function call like furtherInit(broker) or CMNoHook.
 		     Use CMNoHook if no further intialization is required.
@@ -2043,8 +1869,8 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
    pfx##SetProperty, \
    pfx##GetProperty, \
   }; \
-  CMPI_EXTERN_C \
-  CMPIPropertyMI* pn##_Create_PropertyMI(const CMPIBroker* brkr,const CMPIContext *ctx,  CMPIStatus *rc) { \
+  EXTERN_C \
+  CMPIPropertyMI* pn##_Create_PropertyMI(CMPIBroker* brkr,CMPIContext *ctx) { \
    static CMPIPropertyMI mi={ \
       NULL, \
       &propMIFT__, \
@@ -2057,18 +1883,18 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 #ifdef DOC_ONLY
        /** This macro generates the function table and initialization stub
-           for an indication provider. The initialization routine &lt;pn&gt;Create_IndicationMI
+           for an indication provider. The initialization routine <pn>Create_IndicationMI
 	   is called when this provider module is loaded by the broker.
 	   This macro is for CMPI providers written in plain C.
 	 @param pfx The prefix for all mandatory indication provider functions.
 	        This is a character string without quotes.
-	        Mandatory functions are: &lt;pfx&gt;IndicationCleanup, &lt;pfx&gt;AuthorizeFilter,
-                &lt;pfx&gt;MustPoll, &lt;pfx&gt;ActivateFilter and &lt;pfx&gt;DeActivateFilter.
+	        Mandatory functions are: <pfx>IndicationCleanup, <pfx>AuthorizeFilter,
+                <pfx>MustPoll, <pfx>ActivateFilter and <pfx>DeActivateFilter.
 	 @param pn The provider name under which this provider is registered.
 	        This is a character string without quotes.
 	 @param broker The name of the broker variable used by this macro to store
 	               the CMPIBroker pointer
-	 @param hook A statement that is executed within &lt;pn&gt;Create_IndicationMI routine.
+	 @param hook A statement that is executed within <pn>Create_IndicationMI routine.
 	             This enables you to perform additional initialization functions and
 		     is normally a function call like furtherInit(broker) or CMNoHook.
 		     Use CMNoHook if no further intialization is required.
@@ -2077,14 +1903,6 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
    CMPIIndicationMI* CMIndicationMIStub(chars pfx, chars pn,
          CMPIBroker *broker, statement hook);
 #else
-
-  #if defined(CMPI_VER_86)
-    #define CMIndicationMIStubExtensions(pfx) pfx##EnableIndications, \
-       pfx##DisableIndications,
-  #else
-    #define CMIndicationMIStubExtensions(pfx)
-  #endif
-
   #define CMIndicationMIStub(pfx,pn,broker,hook) \
   static CMPIIndicationMIFT indMIFT__={ \
    CMPICurrentVersion, \
@@ -2095,10 +1913,9 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
    pfx##MustPoll, \
    pfx##ActivateFilter, \
    pfx##DeActivateFilter, \
-   CMIndicationMIStubExtensions(pfx) \
- }; \
-  CMPI_EXTERN_C \
-  CMPIIndicationMI* pn##_Create_IndicationMI(const CMPIBroker* brkr,const CMPIContext *ctx,CMPIStatus *rc) { \
+  }; \
+  EXTERN_C \
+  CMPIIndicationMI* pn##_Create_IndicationMI(CMPIBroker* brkr,CMPIContext *ctx) { \
    static CMPIIndicationMI mi={ \
       NULL, \
       &indMIFT__, \
@@ -2115,7 +1932,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 
 #ifdef DOC_ONLY
        /** This macro generates the function table and initialization stub
-           for an instance provider. The initialization routine &lt;pn&gt;Create_IndicationMI
+           for an instance provider. The initialization routine <pn>Create_IndicationMI
 	   is called when this provider module is loaded by the broker.
 	   This macro is for CMPI providers written in C++ using the Cmpi* classes.
 	 @param cn The C++ class name of this instance provider
@@ -2128,13 +1945,13 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
    CMPIInstanceMI* CMInstanceMIFactory(chars cn, chars pn);
 #else
  #define CMInstanceMIFactory(cn,pn) \
- CMPI_EXTERN_C \
- CMPIInstanceMI* pn##_Create_InstanceMI(const CMPIBroker* broker, const CMPIContext *ctxp,  CMPIStatus *rc) { \
+ extern "C" \
+ CMPIInstanceMI* pn##_Create_InstanceMI(CMPIBroker* broker, CMPIContext *ctxp) { \
    static CMPIInstanceMIFT instMIFT={ \
     CMPICurrentVersion, \
     CMPICurrentVersion, \
     "instance" #pn, \
-    (CMPIStatus(*)(CMPIInstanceMI*,const CMPIContext*,CMPIBoolean))CmpiBaseMI::driveBaseCleanup, \
+    (CMPIStatus(*)(CMPIInstanceMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
     CmpiInstanceMI::driveEnumInstanceNames, \
     CmpiInstanceMI::driveEnumInstances, \
     CmpiInstanceMI::driveGetInstance, \
@@ -2145,17 +1962,14 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
    }; \
    static CMPIInstanceMI mi; \
    fprintf(stderr,"--- _Create_InstanceMI() broker: %p\n",broker); \
-   CmpiContext ctx((CMPIContext*)ctxp); \
+   CmpiContext ctx(ctxp); \
    mi.ft=&instMIFT; \
-   CmpiBaseMI *provider=base##pn.getBaseMI(); \
-   if (provider == 0) {\
-     provider = new cn(CmpiBroker((CMPIBroker*)broker),ctx); \
-     provider->setProviderBase(&base##pn); \
-       provider->initialize(ctx); \
-     base##pn.setBaseMI(provider); \
-    } \
+   CmpiInstanceMI *provider=new cn(broker,ctx); \
    mi.hdl=provider; \
-   base##pn.incUseCount(); \
+   if (CmpiProviderBase::testAndSetOneTime(2)) { \
+       provider->initialize(ctx); \
+       CmpiProviderBase::setBroker(broker); \
+    } \
     return &mi; \
  }
 #endif
@@ -2163,7 +1977,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #ifdef DOC_ONLY
        /** This macro generates the function table and initialization stub
            for an association provider. The initialization routine
-	   &lt;pn&gt;Create_AssociationMI
+	   <pn>Create_AssociationMI
 	   is called when this provider module is loaded by the broker.
 	   This macro is for CMPI providers written in C++ using the Cmpi* classes.
 	 @param cn The C++ class name of this instance provider
@@ -2176,31 +1990,28 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
    CMPIAssociationMI* CMAssociationMIFactory(chars cn, chars pn);
 #else
  #define CMAssociationMIFactory(cn,pn) \
- CMPI_EXTERN_C \
- CMPIAssociationMI* pn##_Create_AssociationMI(const CMPIBroker* broker, const CMPIContext *ctxp,  CMPIStatus *rc) { \
+ extern "C" \
+ CMPIMethodMI* pn##_Create_AssociationMI(CMPIBroker* broker, CMPIContext *ctxp) { \
    static CMPIAssociationMIFT assocMIFT={ \
     CMPICurrentVersion, \
     CMPICurrentVersion, \
     "association" #pn, \
-    (CMPIStatus(*)(CMPIAssociationMI*,const CMPIContext*,CMPIBoolean))CmpiBaseMI::driveBaseCleanup, \
+    (CMPIStatus(*)(CMPIAssociationMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
     CmpiAssociationMI::driveAssociators, \
     CmpiAssociationMI::driveAssociatorNames, \
     CmpiAssociationMI::driveReferences, \
     CmpiAssociationMI::driveReferenceNames, \
   }; \
    static CMPIAssociationMI mi; \
-   fprintf(stderr,"--- _Create_AssociationMI() broker: %p\n",broker); \
-   CmpiContext ctx((CMPIContext*)ctxp); \
+   fprintf(stderr,"--- _Create_MethodMI() broker: %p\n",broker); \
+   CmpiContext ctx(ctxp); \
    mi.ft=&assocMIFT; \
-   CmpiBaseMI *provider=base##pn.getBaseMI(); \
-   if (provider == 0) {\
-     provider = new cn(CmpiBroker((CMPIBroker*)broker),ctx); \
-     provider->setProviderBase(&base##pn); \
-       provider->initialize(ctx); \
-     base##pn.setBaseMI(provider); \
-    } \
+   CmpiAssociationMI *provider=new cn(broker,ctx); \
    mi.hdl=provider; \
-   base##pn.incUseCount(); \
+   if (CmpiProviderBase::testAndSetOneTime(2)) { \
+       provider->initialize(ctx); \
+       CmpiProviderBase::setBroker(broker); \
+    } \
     return &mi; \
  }
 #endif
@@ -2208,7 +2019,7 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
 #ifdef DOC_ONLY
        /** This macro generates the function table and initialization stub
            for an method provider. The initialization routine
-	   &lt;pn&gt;Create_MethodMI is called when this provider module is loaded
+	   <pn>Create_MethodMI is called when this provider module is loaded
 	   by the broker.
 	   This macro is for CMPI providers written in C++ using the Cmpi* classes.
 	 @param cn The C++ class name of this method provider
@@ -2221,35 +2032,32 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
    CMPIMethodMI* CMMethodMIFactory(chars cn, chars pn);
 #else
  #define CMMethodMIFactory(cn,pn) \
- CMPI_EXTERN_C \
- CMPIMethodMI* pn##_Create_MethodMI(const CMPIBroker* broker, const CMPIContext *ctxp,  CMPIStatus *rc) { \
+ extern "C" \
+ CMPIMethodMI* pn##_Create_MethodMI(CMPIBroker* broker, CMPIContext *ctxp) { \
    static CMPIMethodMIFT methMIFT={ \
     CMPICurrentVersion, \
     CMPICurrentVersion, \
     "method" #pn, \
-    (CMPIStatus(*)(CMPIMethodMI*,const CMPIContext*, CMPIBoolean))CmpiBaseMI::driveBaseCleanup, \
+    (CMPIStatus(*)(CMPIMethodMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
     CmpiMethodMI::driveInvokeMethod, \
    }; \
    static CMPIMethodMI mi; \
    fprintf(stderr,"--- _Create_MethodMI() broker: %p\n",broker); \
-   CmpiContext ctx((CMPIContext*)ctxp); \
+   CmpiContext ctx(ctxp); \
    mi.ft=&methMIFT; \
-   CmpiBaseMI *provider=base##pn.getBaseMI(); \
-   if (provider == 0) {\
-     provider = new cn(CmpiBroker((CMPIBroker*)broker),ctx); \
-     provider->setProviderBase(&base##pn); \
-       provider->initialize(ctx); \
-     base##pn.setBaseMI(provider); \
-    } \
+   CmpiMethodMI *provider=new cn(broker,ctx); \
    mi.hdl=provider; \
-   base##pn.incUseCount(); \
+   if (CmpiProviderBase::testAndSetOneTime(2)) { \
+       provider->initialize(ctx); \
+       CmpiProviderBase::setBroker(broker); \
+    } \
     return &mi; \
  }
 #endif
 
 #ifdef DOC_ONLY
        /** This macro generates the function table and initialization stub
-           for a property provider. The initialization routine &lt;pn&gt;Create_PropertyMI
+           for a property provider. The initialization routine <pn>Create_PropertyMI
 	   is called when this provider module is loaded by the broker.
 	   This macro is for CMPI providers written in C++ using the Cmpi* classes.
 	 @param cn The C++ class name of this method provider
@@ -2262,88 +2070,73 @@ inline static   void CMSetStatusWithChars(const CMPIBroker *mb, CMPIStatus* st, 
    CMPIPropertyMI* CMPropertyMIFactory(chars cn, chars pn):
 #else
  #define CMPropertyMIFactory(cn,pn) \
- CMPI_EXTERN_C \
- CMPIMethodMI* pn##_Create_PropertyMI(const CMPIBroker* broker, const CMPIContext *ctxp,  CMPIStatus *rc) { \
+ extern "C" \
+ CMPIMethodMI* pn##_Create_PropertyMI(CMPIBroker* broker, CMPIContext *ctxp) { \
    static CMPIPropertyMIFT propMIFT={ \
     CMPICurrentVersion, \
     CMPICurrentVersion, \
     "property" #pn, \
-    (CMPIStatus(*)(CMPIPropertyMI*,const CMPIContext*,CMPIBoolean))CmpiBaseMI::driveBaseCleanup, \
+    (CMPIStatus(*)(CMPIPropertyMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
     CmpiPropertyMI::driveSetProperty, \
     CmpiPropertyMI::driveGetProperty, \
    }; \
    static CMPIPropertyMI mi; \
    fprintf(stderr,"--- _Create_MethodMI() broker: %p\n",broker); \
-   CmpiContext ctx((CMPIContext*)ctxp); \
+   CmpiContext ctx(ctxp); \
    mi.ft=&propMIFT; \
-   CmpiBaseMI *provider=base##pn.getBaseMI(); \
-   if (provider == 0) {\
-     provider = new cn(CmpiBroker((CMPIBroker*)broker),ctx); \
-     provider->setProviderBase(&base##pn); \
-       provider->initialize(ctx); \
-     base##pn.setBaseMI(provider); \
-    } \
+   CmpiPropertyMI *provider=new cn(broker,ctx); \
    mi.hdl=provider; \
-   base##pn.incUseCount(); \
+   if (CmpiProviderBase::testAndSetOneTime(2)) { \
+       provider->initialize(ctx); \
+       CmpiProviderBase::setBroker(broker); \
+    } \
    return &mi; \
  }
 #endif
 
-
 #ifdef DOC_ONLY
        /** This macro generates the function table and initialization stub
-           for an indication provider. The initialization routine &lt;pn&gt;Create_IndicationMI
+           for an indication provider. The initialization routine <pn>Create_IndicationMI
 	   is called when this provider module is loaded by the broker.
 	   This macro is for CMPI providers written in C++ using the Cmpi* classes.
-	 @param cn The C++ class name of this indication provider
-	        (a subclass of CmpiIndicationMI).
+	 @param cn The C++ class name of this method provider
+	        (a subclass of CmpiMethodMI).
 	        This is a character string without quotes.
 	 @param pn The provider name under which this provider is registered.
 	        This is a character string without quotes.
 	 @return The function table of this association provider.
       */
-   CMPIIndicationMI* CMIndicationMIFactory(chars cn, chars pn);
+   CMPIIndicationMI* CMIndicationMIFactor(chars cn, chars pn);
 #else
-
-  #if defined(CMPI_VER_86)
-    #define CMIndicationMIFactoryExtensions CmpiIndicationMI::driveEnableIndications, \
-       CmpiIndicationMI::driveDisableIndications,
-  #else
-    #define CMIndicationMIFactoryExtensions
-  #endif
-
-#define CMIndicationMIFactory(cn,pn) \
- CMPI_EXTERN_C \
- CMPIIndicationMI* pn##_Create_IndicationMI(const CMPIBroker* broker, const CMPIContext *ctxp,  CMPIStatus *rc) { \
+ #define CMIndicationMIFactory(cn,pn) \
+ extern "C" \
+ CMPIMethodMI* pn##_Create_IndicationMI(CMPIBroker* broker, CMPIContext *ctxp) { \
    static CMPIIndicationMIFT indMIFT={ \
     CMPICurrentVersion, \
     CMPICurrentVersion, \
     "indication" #pn, \
-    (CMPIStatus(*)(CMPIIndicationMI*,const CMPIContext*,CMPIBoolean))CmpiBaseMI::driveBaseCleanup, \
-    CmpiIndicationMI::driveAuthorizeFilter, \
-    CmpiIndicationMI::driveMustPoll, \
-    CmpiIndicationMI::driveActivateFilter, \
-    CmpiIndicationMI::driveDeActivateFilter, \
-    CMIndicationMIFactoryExtensions \
+    (CMPIStatus(*)(CMPIPropertyMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
+    Indication::driveAuthorizeFilter, \
+    Indication::driveMustPoll, \
+    Indication::driveActivateFilter, \
+    Indication::driveDeActivateFilter, \
    }; \
-   static CMPIIndicationMI mi; \
+   static CMPIPropertyMI mi; \
    fprintf(stderr,"--- _Create_IndicationMI() broker: %p\n",broker); \
-   CmpiContext ctx((CMPIContext*)ctxp); \
+   CmpiContext ctx(ctxp); \
    mi.ft=&indMIFT; \
-   CmpiBaseMI *provider=base##pn.getBaseMI(); \
-   if (provider == 0) {\
-     provider = new cn(CmpiBroker((CMPIBroker*)broker),ctx); \
-     provider->setProviderBase(&base##pn); \
-       provider->initialize(ctx); \
-     base##pn.setBaseMI(provider); \
-    } \
+   CmpiIndicationMI *provider=new cn(broker,ctx); \
    mi.hdl=provider; \
-   base##pn.incUseCount(); \
+   if (CmpiProviderBase::testAndSetOneTime(2)) { \
+       provider->initialize(ctx); \
+       CmpiProviderBase::setBroker(broker); \
+    } \
   return &mi; \
  }
 #endif
 
-#define CMProviderBase(pn) \
-   CmpiProviderBase base##pn;
+#define CMProviderBase(b) \
+   CmpiProviderBase* CmpiProviderBase::base=NULL; \
+   CmpiProviderBase b();
 
-#endif // _CMPIMACS_H_
+#endif /* _CMPIMACS_H_ */
