@@ -976,7 +976,7 @@ extern "C" {
 	 @return Service return status.
       */
      CMPIStatus (*setPropertyFilter)
-              (const CMPIInstance* inst, const char **propertyList, const char **keys);
+              (CMPIInstance* inst, const char **propertyList, const char **keys);
 
 #ifdef CMPI_VER_100
      CMPIStatus (*setObjectPath)
