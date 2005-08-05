@@ -162,7 +162,7 @@ static CMPIObjectPath* instGetObjectPath(const CMPIInstance* eInst, CMPIStatus* 
 	return cop;
 }
 
-static CMPIStatus instSetPropertyFilter(const CMPIInstance* eInst,
+static CMPIStatus instSetPropertyFilter(CMPIInstance* eInst,
 	const char** propertyList, const char **keys)
 {
 	CMPI_Object *inst=(CMPI_Object*)eInst;
@@ -211,7 +211,7 @@ static CMPIStatus instSetPropertyFilter(const CMPIInstance* eInst,
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus instSetPropertyFilterIgnore(const CMPIInstance* eInst,
+static CMPIStatus instSetPropertyFilterIgnore(CMPIInstance* eInst,
 	const char** propertyList, const char **keys)
 {
 	(void)eInst;
