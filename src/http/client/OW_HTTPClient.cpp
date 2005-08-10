@@ -476,6 +476,7 @@ void HTTPClient::copyStreams(std::ostream& ostr, std::istream& istr)
 
 		// reserve() is guaranteed to allocate the appropriate number of bytes.
 		buffer.reserve(bytesToRead);
+		buffer.push_back(0); // gcc-4.0.2 won't let us access buffer[0] below if the vector is empty
 
 		streamsize charsRead = inbuf->sgetn(&buffer[0], bytesToRead);
 		bytesWritten = outbuf->sputn(&buffer[0], charsRead);
