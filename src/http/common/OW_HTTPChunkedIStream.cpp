@@ -71,7 +71,7 @@ HTTPChunkedIStreamBuffer::buffer_from_device(char* c, int n)
 		if (m_inLen == -1)
 		{
 			m_istr >> std::hex >> m_inLen >> std::dec;
-			if (m_istr.fail() || m_istr.bad())
+			if (m_istr.fail() || m_istr.bad() || m_inLen < 0)
 			{
 				return -1;
 			}

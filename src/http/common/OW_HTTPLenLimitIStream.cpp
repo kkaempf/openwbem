@@ -62,6 +62,13 @@ HTTPLengthLimitStreamBuffer::buffer_from_device(char* c, int n)
 	}
 	// min of n and (length - pos)
 	int tmpInLen = (n < (m_length - m_pos)) ? n : (m_length - m_pos);
+	if (tmpInLen > n)
+	{
+		// This shouldn't happen, but it could if m_length were
+		// negative (32bit vs. 64bit problem).  Check it here to 
+		// prevent the possibility of a buffer overflow. 
+		return -1; 
+	}
 	m_istr.read(c, tmpInLen);
 	int lastRead = m_istr.gcount();
 	m_pos += lastRead;
