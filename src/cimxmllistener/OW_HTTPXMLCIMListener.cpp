@@ -285,16 +285,288 @@ private:
 	UnnamedPipeRef m_stopObject;
 #endif
 };
+
+
+
 } // end anonymous namespace
+
+class HTTPXMLCIMListenerCallback : public CIMListenerCallback
+{
+private: 
+	IntrusiveReference<ListenerAuthenticator> m_pLAuthenticator;
+	String m_certFileName; 
+public:
+	/**
+	 * @param logger If a logger specified then it will receive log messages, otherwise
+	 *  all log messages will be discarded.
+	 */
+	HTTPXMLCIMListenerCallback(IntrusiveReference<ListenerAuthenticator> authenticator,
+		const String& certFileName = String(),
+		const LoggerRef& logger = LoggerRef(0))
+		: m_pLAuthenticator(authenticator)
+		, m_certFileName(certFileName) 
+	{
+	}
+	~HTTPXMLCIMListenerCallback()
+{
+	try
+	{
+		MutexLock lock(m_mutex);
+		for (callbackMap_t::iterator i = m_callbacks.begin();
+			i != m_callbacks.end(); ++i)
+		{
+			registrationInfo reg = i->second;
+	
+			try
+			{
+				deleteRegistrationObjects(reg);
+			}
+			catch (Exception&)
+			{
+				// if an error occured, then just ignore it.  We don't have any way
+				// of logging it!
+			}
+			catch (...)
+			{
+				// who knows what happened, but we need to continue deregistering...
+			}
+		}
+		m_pLAuthenticator = 0;
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
+}
+	/**
+	 * Register for an indication.  The destructor will attempt to deregister
+	 * any subscriptions which are still outstanding at the time.
+	 * @param url The url identifying the cimom
+	 * @param ns The namespace where the
+	 *  indication subscription and related objects will be created.
+	 * @param filter The filter for the indication subscription
+	 * @param querylanguage The language of the filter (typically wql1)
+	 * @param sourceNamespace The path to a local namespace where the Indications
+	 *  originate. If empty, the namespace of the Filter registration
+	 *  is assumed.
+	 * @param cb An object derived from CIMListenerCallback.  When an
+	 *	indication is received, the doIndicationOccured member function will be called
+	 * @param authCb If authentication is necessary, and authCb != NULL, then
+	 *  authCb->getCredentials() will be called to obtain credentials.
+	 *
+	 * @return A unique handle identifying the indication subscription and callback.
+	 *		Use this handle to de-register the listener.
+	 */
+	String registerForIndication(const String& url,
+			const String& ns, const String& filter,
+			const String& querylanguage,
+			const String& sourceNamespace,
+			const CIMListenerCallbackRef& cb,
+			const ClientAuthCBIFCRef& authCb,
+			UInt16 httpPort, 
+			UInt16 httpsPort)
+	{
+		registrationInfo reg;
+		// create an http client with the url from the object path
+		URL curl(url);
+		reg.cimomUrl = curl;
+		ClientCIMOMHandleRef hdl = ClientCIMOMHandle::createFromURL(url, authCb);
+		String ipAddress = hdl->getWBEMProtocolHandler()->getLocalAddress().getAddress();
+		CIMClass delivery(CIMNULL);
+		String urlPrefix;
+
+		UInt16 listenerPort = httpsPort;
+		if(!m_certFileName.empty())	// Listener will be recieving over https
+		{
+			urlPrefix = "https://";
+			try
+			{
+				delivery = hdl->getClass(ns, "CIM_IndicationHandlerCIMXML");
+			}
+			catch (CIMException& e)
+			{
+				if (e.getErrNo() == CIMException::NOT_FOUND)
+				{
+					// the > 2.6 doesn't exist, try to get the 2.5 class
+					delivery = hdl->getClass(ns, "CIM_IndicationHandlerXMLHTTPS");
+				}
+				else
+					throw;
+			}
+		}
+		else
+		{
+			try
+			{
+				delivery = hdl->getClass(ns, "CIM_IndicationHandlerCIMXML");
+			}
+			catch (CIMException& e)
+			{
+				if (e.getErrNo() == CIMException::NOT_FOUND)
+				{
+					// the > 2.6 doesn't exist, try to get the 2.5 class
+					delivery = hdl->getClass(ns, "CIM_IndicationHandlerXMLHTTP");
+				}
+				else
+					throw;
+			}
+			urlPrefix = "http://";
+			listenerPort = httpPort;
+		}
+		CIMInstance ci = delivery.newInstance();
+		MutexLock lock(m_mutex);
+		String httpPath;
+		RandomNumber rn(0, 0x7FFFFFFF);
+		do
+		{
+			String randomHashValue(rn.getNextNumber());
+			httpPath = "/cimListener" + randomHashValue;
+		} while (m_callbacks.find(httpPath) != m_callbacks.end());
+		reg.httpCredentials = m_pLAuthenticator->getNewCredentials();
+		ci.setProperty("Destination", CIMValue(urlPrefix + reg.httpCredentials + "@" +
+					ipAddress + ":" + String(UInt32(listenerPort)) + httpPath));
+		ci.setProperty("SystemCreationClassName", CIMValue("CIM_System"));
+		ci.setProperty("SystemName", CIMValue(ipAddress));
+		ci.setProperty("CreationClassName", CIMValue(delivery.getName()));
+		ci.setProperty("Name", CIMValue(httpPath));
+		ci.setProperty("Owner", CIMValue("HTTPXMLCIMListener on " + ipAddress));
+		try
+		{
+			reg.handler = hdl->createInstance(ns, ci);
+		}
+		catch (CIMException& e)
+		{
+			// We don't care if it already exists, but err out on anything else
+			if (e.getErrNo() != CIMException::ALREADY_EXISTS)
+			{
+				throw;
+			}
+			else
+			{
+				reg.handler = CIMObjectPath(ns, ci);
+			}
+		}
+		// get class of CIM_IndicationFilter and new instance of it
+		CIMClass cimFilter = hdl->getClass(ns, "CIM_IndicationFilter", E_LOCAL_ONLY);
+		ci = cimFilter.newInstance();
+		// set Query property to query that was passed into function
+		ci.setProperty("Query", CIMValue(filter));
+		// set QueryLanguage property
+		ci.setProperty("QueryLanguage", CIMValue(querylanguage));
+		ci.setProperty("SystemCreationClassName", CIMValue("CIM_System"));
+		ci.setProperty("SystemName", CIMValue(ipAddress));
+		ci.setProperty("CreationClassName", CIMValue(cimFilter.getName()));
+		ci.setProperty("Name", CIMValue(httpPath));
+		if (!sourceNamespace.empty())
+		{
+			ci.setProperty("SourceNamespace", CIMValue(sourceNamespace));
+		}
+		// create instance of filter
+		reg.filter = hdl->createInstance(ns, ci);
+		// get class of CIM_IndicationSubscription and new instance of it.
+		// CIM_IndicationSubscription is an association class that connects
+		// the IndicationFilter to the IndicationHandler.
+		CIMClass cimClientFilterDelivery = hdl->getClass(ns,
+				"CIM_IndicationSubscription", E_LOCAL_ONLY);
+		ci = cimClientFilterDelivery.newInstance();
+		// set the properties for the filter and the handler
+		ci.setProperty("filter", CIMValue(reg.filter));
+		ci.setProperty("handler", CIMValue(reg.handler));
+		// creating the instance the CIM_IndicationSubscription creates
+		// the event subscription
+		reg.subscription = hdl->createInstance(ns, ci);
+		//save info for deletion later and callback delivery
+		reg.callback = cb;
+		reg.ns = ns;
+		reg.authCb = authCb;
+		m_callbacks[httpPath] = reg;
+		return httpPath;
+	}
+
+	/**
+	 * De-register for an indication
+	 * @param handle The string returned from registerForIndication
+	 * @param authCb If authentication is necessary, and authCb != NULL, then
+	 *  authCb->getCredentials() will be called to obtain credentials.
+	 */
+	void deregisterForIndication( const String& handle )
+	{
+		MutexLock lock(m_mutex);
+		callbackMap_t::iterator i = m_callbacks.find(handle);
+		if (i != m_callbacks.end())
+		{
+			registrationInfo reg = i->second;
+			m_callbacks.erase(i);
+			lock.release();
+			m_pLAuthenticator->removeCredentials(reg.httpCredentials);
+			deleteRegistrationObjects(reg);
+		}
+	}
+
+protected:
+	virtual void doIndicationOccurred( CIMInstance& ci,
+			const String& listenerPath )
+	{
+		CIMListenerCallbackRef cb;
+		{ // scope for the MutexLock
+			MutexLock lock(m_mutex);
+			callbackMap_t::iterator i = m_callbacks.find(listenerPath);
+			if (i == m_callbacks.end())
+			{
+				OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
+						Format("No listener for path: %1", listenerPath).c_str());
+			}
+			cb = i->second.callback;
+		}
+		cb->indicationOccurred( ci, listenerPath );
+	}
+private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
+	struct registrationInfo
+	{
+		registrationInfo()
+			: handler(CIMNULL)
+			, filter(CIMNULL)
+			, subscription(CIMNULL)
+		{}
+		URL cimomUrl;
+		String ns;
+		CIMObjectPath handler;
+		CIMObjectPath filter;
+		CIMObjectPath subscription;
+		CIMListenerCallbackRef callback;
+		String httpCredentials;
+		ClientAuthCBIFCRef authCb;
+	};
+	typedef Map< String, registrationInfo > callbackMap_t;
+	callbackMap_t m_callbacks;
+	void deleteRegistrationObjects( const registrationInfo& reg )
+	{
+		ClientCIMOMHandleRef hdl = ClientCIMOMHandle::createFromURL(reg.cimomUrl.toString(), reg.authCb);
+		hdl->deleteInstance(reg.ns, reg.subscription);
+		hdl->deleteInstance(reg.ns, reg.filter);
+		hdl->deleteInstance(reg.ns, reg.handler);
+	}
+	Mutex m_mutex;
+};
+
+
+
 //////////////////////////////////////////////////////////////////////////////
 HTTPXMLCIMListener::HTTPXMLCIMListener(const LoggerRef& logger,
 	const String& certFileName)
-	: m_XMLListener(SharedLibraryRef(0), new XMLListener(this))
-	, m_pLAuthenticator(new ListenerAuthenticator)
+	: m_pLAuthenticator(new ListenerAuthenticator)
 	, m_httpServer(new HTTPServer)
 	, m_httpListenPort(0)
 	, m_httpsListenPort(0)
 	, m_certFileName(certFileName)
+	, m_callback(new HTTPXMLCIMListenerCallback(m_pLAuthenticator, certFileName))
+	, m_XMLListener(SharedLibraryRef(0), new XMLListener(m_callback))
 {
 	if(!certFileName.empty())
 	{
@@ -327,27 +599,6 @@ HTTPXMLCIMListener::~HTTPXMLCIMListener()
 	try
 	{
 		shutdownHttpServer();
-		// unregister all the callbacks from the CIMOMs
-		MutexLock lock(m_mutex);
-		for (callbackMap_t::iterator i = m_callbacks.begin();
-			i != m_callbacks.end(); ++i)
-		{
-			registrationInfo reg = i->second;
-	
-			try
-			{
-				deleteRegistrationObjects(reg);
-			}
-			catch (Exception&)
-			{
-				// if an error occured, then just ignore it.  We don't have any way
-				// of logging it!
-			}
-			catch (...)
-			{
-				// who knows what happened, but we need to continue deregistering...
-			}
-		}
 		m_pLAuthenticator = 0;
 	}
 	catch (...)
@@ -383,163 +634,15 @@ HTTPXMLCIMListener::registerForIndication(
 	const CIMListenerCallbackRef& cb,
 	const ClientAuthCBIFCRef& authCb)
 {
-	registrationInfo reg;
-	// create an http client with the url from the object path
-	URL curl(url);
-	reg.cimomUrl = curl;
-	ClientCIMOMHandleRef hdl = ClientCIMOMHandle::createFromURL(url, authCb);
-	String ipAddress = hdl->getWBEMProtocolHandler()->getLocalAddress().getAddress();
-	CIMClass delivery(CIMNULL);
-	String urlPrefix;
-
-	UInt16 listenerPort = m_httpsListenPort;
-	if(!m_certFileName.empty())	// Listener will be recieving over https
-	{
-		urlPrefix = "https://";
-		try
-		{
-			delivery = hdl->getClass(ns, "CIM_IndicationHandlerCIMXML");
-		}
-		catch (CIMException& e)
-		{
-			if (e.getErrNo() == CIMException::NOT_FOUND)
-			{
-				// the > 2.6 doesn't exist, try to get the 2.5 class
-				delivery = hdl->getClass(ns, "CIM_IndicationHandlerXMLHTTPS");
-			}
-			else
-				throw;
-		}
-	}
-	else
-	{
-		try
-		{
-			delivery = hdl->getClass(ns, "CIM_IndicationHandlerCIMXML");
-		}
-		catch (CIMException& e)
-		{
-			if (e.getErrNo() == CIMException::NOT_FOUND)
-			{
-				// the > 2.6 doesn't exist, try to get the 2.5 class
-				delivery = hdl->getClass(ns, "CIM_IndicationHandlerXMLHTTP");
-			}
-			else
-				throw;
-		}
-		urlPrefix = "http://";
-		listenerPort = m_httpListenPort;
-	}
-	CIMInstance ci = delivery.newInstance();
-	MutexLock lock(m_mutex);
-	String httpPath;
-	RandomNumber rn(0, 0x7FFFFFFF);
-	do
-	{
-		String randomHashValue(rn.getNextNumber());
-		httpPath = "/cimListener" + randomHashValue;
-	} while (m_callbacks.find(httpPath) != m_callbacks.end());
-	reg.httpCredentials = m_pLAuthenticator->getNewCredentials();
-	ci.setProperty("Destination", CIMValue(urlPrefix + reg.httpCredentials + "@" +
-				ipAddress + ":" + String(UInt32(listenerPort)) + httpPath));
-	ci.setProperty("SystemCreationClassName", CIMValue("CIM_System"));
-	ci.setProperty("SystemName", CIMValue(ipAddress));
-	ci.setProperty("CreationClassName", CIMValue(delivery.getName()));
-	ci.setProperty("Name", CIMValue(httpPath));
-	ci.setProperty("Owner", CIMValue("HTTPXMLCIMListener on " + ipAddress));
-	try
-	{
-		reg.handler = hdl->createInstance(ns, ci);
-	}
-	catch (CIMException& e)
-	{
-		// We don't care if it already exists, but err out on anything else
-		if (e.getErrNo() != CIMException::ALREADY_EXISTS)
-		{
-			throw;
-		}
-		else
-		{
-			reg.handler = CIMObjectPath(ns, ci);
-		}
-	}
-	// get class of CIM_IndicationFilter and new instance of it
-	CIMClass cimFilter = hdl->getClass(ns, "CIM_IndicationFilter", E_LOCAL_ONLY);
-	ci = cimFilter.newInstance();
-	// set Query property to query that was passed into function
-	ci.setProperty("Query", CIMValue(filter));
-	// set QueryLanguage property
-	ci.setProperty("QueryLanguage", CIMValue(querylanguage));
-	ci.setProperty("SystemCreationClassName", CIMValue("CIM_System"));
-	ci.setProperty("SystemName", CIMValue(ipAddress));
-	ci.setProperty("CreationClassName", CIMValue(cimFilter.getName()));
-	ci.setProperty("Name", CIMValue(httpPath));
-	if (!sourceNamespace.empty())
-	{
-		ci.setProperty("SourceNamespace", CIMValue(sourceNamespace));
-	}
-	// create instance of filter
-	reg.filter = hdl->createInstance(ns, ci);
-	// get class of CIM_IndicationSubscription and new instance of it.
-	// CIM_IndicationSubscription is an association class that connects
-	// the IndicationFilter to the IndicationHandler.
-	CIMClass cimClientFilterDelivery = hdl->getClass(ns,
-			"CIM_IndicationSubscription", E_LOCAL_ONLY);
-	ci = cimClientFilterDelivery.newInstance();
-	// set the properties for the filter and the handler
-	ci.setProperty("filter", CIMValue(reg.filter));
-	ci.setProperty("handler", CIMValue(reg.handler));
-	// creating the instance the CIM_IndicationSubscription creates
-	// the event subscription
-	reg.subscription = hdl->createInstance(ns, ci);
-	//save info for deletion later and callback delivery
-	reg.callback = cb;
-	reg.ns = ns;
-	reg.authCb = authCb;
-	m_callbacks[httpPath] = reg;
-	return httpPath;
+	return m_callback->registerForIndication(url,ns,filter,querylanguage,
+									  sourceNamespace,cb,authCb,
+									  m_httpListenPort,m_httpsListenPort); 
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 HTTPXMLCIMListener::deregisterForIndication( const String& handle )
 {
-	MutexLock lock(m_mutex);
-	callbackMap_t::iterator i = m_callbacks.find(handle);
-	if (i != m_callbacks.end())
-	{
-		registrationInfo reg = i->second;
-		m_callbacks.erase(i);
-		lock.release();
-		m_pLAuthenticator->removeCredentials(reg.httpCredentials);
-		deleteRegistrationObjects(reg);
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-HTTPXMLCIMListener::doIndicationOccurred( CIMInstance& ci,
-		const String& listenerPath )
-{
-	CIMListenerCallbackRef cb;
-	{ // scope for the MutexLock
-		MutexLock lock(m_mutex);
-		callbackMap_t::iterator i = m_callbacks.find(listenerPath);
-		if (i == m_callbacks.end())
-		{
-			OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
-				Format("No listener for path: %1", listenerPath).c_str());
-		}
-		cb = i->second.callback;
-	}
-	cb->indicationOccurred( ci, listenerPath );
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-HTTPXMLCIMListener::deleteRegistrationObjects( const registrationInfo& reg )
-{
-	ClientCIMOMHandleRef hdl = ClientCIMOMHandle::createFromURL(reg.cimomUrl.toString(), reg.authCb);
-	hdl->deleteInstance(reg.ns, reg.subscription);
-	hdl->deleteInstance(reg.ns, reg.filter);
-	hdl->deleteInstance(reg.ns, reg.handler);
+	m_callback->deregisterForIndication(handle); 
 }
 
 } // end namespace OW_NAMESPACE

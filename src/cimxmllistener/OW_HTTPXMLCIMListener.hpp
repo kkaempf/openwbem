@@ -54,8 +54,10 @@
 
 namespace OW_NAMESPACE
 {
+class HTTPXMLCIMListenerCallback; 
+typedef IntrusiveReference<HTTPXMLCIMListenerCallback> HTTPXMLCIMListenerCallbackRef; 
 
-class OW_LISTENER_API HTTPXMLCIMListener : public CIMListenerCallback
+class OW_LISTENER_API HTTPXMLCIMListener  
 {
 public:
 	/**
@@ -105,9 +107,6 @@ public:
 	 *	have terminated.
 	 */
 	void shutdownHttpServer();
-protected:
-	virtual void doIndicationOccurred( CIMInstance& ci,
-		const String& listenerPath );
 private:
 
 #ifdef OW_WIN32
@@ -115,31 +114,10 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	struct registrationInfo
-	{
-		registrationInfo()
-			: handler(CIMNULL)
-			, filter(CIMNULL)
-			, subscription(CIMNULL)
-		{}
-		URL cimomUrl;
-		String ns;
-		CIMObjectPath handler;
-		CIMObjectPath filter;
-		CIMObjectPath subscription;
-		CIMListenerCallbackRef callback;
-		String httpCredentials;
-		ClientAuthCBIFCRef authCb;
-	};
-	typedef Map< String, registrationInfo > callbackMap_t;
-	callbackMap_t m_callbacks;
-	RequestHandlerIFCRef m_XMLListener;
 	IntrusiveReference<ListenerAuthenticator> m_pLAuthenticator;
 	IntrusiveReference<HTTPServer> m_httpServer;
 	UInt16 m_httpListenPort;
 	UInt16 m_httpsListenPort;
-	void deleteRegistrationObjects( const registrationInfo& reg );
-	Mutex m_mutex;
 	IntrusiveReference<Thread> m_httpThread;
 #ifndef OW_WIN32
 	UnnamedPipeRef m_stopHttpPipe;
@@ -147,6 +125,9 @@ private:
 #pragma warning (pop)
 #endif
 	String m_certFileName;
+	HTTPXMLCIMListenerCallbackRef m_callback; 
+	RequestHandlerIFCRef m_XMLListener;
+
 };
 
 } // end namespace OW_NAMESPACE
