@@ -564,10 +564,10 @@ BinaryRequestHandler::createInstance(const CIMOMHandleIFCRef& chdl,
 {
 	String ns(BinarySerialization::readString(istrm));
 	CIMInstance cimInstance(BinarySerialization::readInstance(istrm));
-	String className = cimInstance.getClassName();
+	CIMName className = cimInstance.getClassName();
 	//CIMObjectPath realPath(className, path.getNameSpace());
 	// Special treatment for __Namespace class
-	if (className.equals(CIMClass::NAMESPACECLASS))
+	if (className == "__Namespace")
 	{
 		CIMProperty prop = cimInstance.getProperty(
 			CIMProperty::NAME_PROPERTY);

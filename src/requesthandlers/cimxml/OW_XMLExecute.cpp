@@ -801,10 +801,10 @@ void XMLExecute::createInstance(ostream& ostr, CIMXMLParser& parser,
 {
 	parser.mustGetChild();		// Point parser to <INSTANCE> tag
 	CIMInstance cimInstance = XMLCIMFactory::createInstance(parser);
-	String className = cimInstance.getClassName();
+	CIMName className = cimInstance.getClassName();
 	//CIMObjectPath realPath = CIMObjectPath(className, path.getNameSpace());
 	// Special treatment for __Namespace class
-	if (className.equalsIgnoreCase(CIMClass::NAMESPACECLASS))
+	if (className == "__Namespace")
 	{
 		CIMProperty prop = cimInstance.getProperty(
 			CIMProperty::NAME_PROPERTY);

@@ -71,6 +71,7 @@ using namespace WBEMFlags;
 namespace
 {
 	const String COMPONENT_NAME("ow.owcimomd.CIMServer");
+	const char* const DEPRECATED__NamespaceClassName = "__Namespace";
 
 	class AuthorizerEnabler
 	{
@@ -538,7 +539,7 @@ CIMServer::createClass(const String& ns, const CIMClass& cimClass,
 	}
 
 	logOperation(m_logger, context, "GetClass", ns, cimClass.getName());
-	if (cimClass.getName().equals(CIMClass::NAMESPACECLASS))
+	if (cimClass.getName().equalsIgnoreCase(DEPRECATED__NamespaceClassName))
 	{
 		OW_THROWCIMMSG(CIMException::ALREADY_EXISTS,
 			Format("Creation of class %1 is not allowed",
@@ -661,7 +662,7 @@ CIMServer::enumInstanceNames(
 		E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
 	ie.handle(theClass);
 	// If this is the namespace class then just return now
-	if (className.equals(CIMClass::NAMESPACECLASS)
+	if (className.equalsIgnoreCase(DEPRECATED__NamespaceClassName)
 		|| !deep)
 	{
 		return;
@@ -771,7 +772,7 @@ CIMServer::enumInstances(
 		includeQualifiers, includeClassOrigin, propertyList, theTopClass);
 	ie.handle(theTopClass);
 	// If this is the namespace class then only do one class
-	if (theTopClass.getName().equals(CIMClass::NAMESPACECLASS)
+	if (theTopClass.getName().equalsIgnoreCase(DEPRECATED__NamespaceClassName)
 	   || enumSubclasses == E_DONT_ENUM_SUBCLASSES)
 	{
 		return;
@@ -1157,7 +1158,7 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 
 #ifndef OW_DISABLE_NAMESPACE_MANIPULATION
 	// TODO: This is broken!!!  Not only is __Namespace deprecated, but requests for CIM_Namespace won't be checked!
-	if (theClass.getName().equals(CIMClass::NAMESPACECLASS))
+	if (theClass.getName().equalsIgnoreCase(DEPRECATED__NamespaceClassName))
 	{
 		if (!m_authorizerMgr->allowDeleteNameSpace(m_env, ns, context))
 		{
@@ -1244,7 +1245,7 @@ CIMServer::createInstance(
 
 #ifndef OW_DISABLE_NAMESPACE_MANIPULATION
 	// TODO: This is broken!!!  Not only is __Namespace deprecated, but requests for CIM_Namespace won't be checked!
-	if (theClass.getName().equals(CIMClass::NAMESPACECLASS))
+	if (theClass.getName().equalsIgnoreCase(DEPRECATED__NamespaceClassName))
 	{
 		if (!m_authorizerMgr->allowCreateNameSpace(m_env, ns, context))
 		{
@@ -1796,12 +1797,12 @@ CIMServer::_getAssociatorProvider(const String& ns, const CIMClass& cc_, Operati
 CIMClass
 CIMServer::_getNameSpaceClass(const CIMName& className)
 {
-	if (className == "__Namespace")
+	if (className == DEPRECATED__NamespaceClassName)
 	{
 		MutexLock l(m_guard);
 		if (!m_nsClass_Namespace)
 		{
-			m_nsClass_Namespace = CIMClass("__Namespace");
+			m_nsClass_Namespace = CIMClass(DEPRECATED__NamespaceClassName);
 			CIMProperty cimProp(CIMProperty::NAME_PROPERTY);
 			cimProp.setDataType(CIMDataType::STRING);
 			cimProp.addQualifier(CIMQualifier::createKeyQualifier());

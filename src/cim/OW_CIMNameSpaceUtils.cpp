@@ -184,6 +184,11 @@ enumCIM_Namespace(CIMOMHandleIFC& hdl,
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 /////////////////////////////////////////////////////////////////////////////
+namespace
+{
+const char* const DEPRECATED__NamespaceClassName = "__Namespace";
+}
+
 void
 create__Namespace(CIMOMHandleIFC& hdl, const String& ns_)
 {
@@ -193,7 +198,7 @@ create__Namespace(CIMOMHandleIFC& hdl, const String& ns_)
 	String newNameSpace = ns.substring(index + 1);
 	if (!the__NamespaceClass)
 	{
-		the__NamespaceClass = CIMClass("__Namespace");
+		the__NamespaceClass = CIMClass(DEPRECATED__NamespaceClassName);
 		CIMProperty cimProp(CIMProperty::NAME_PROPERTY);
 		cimProp.setDataType(CIMDataType::STRING);
 		cimProp.addQualifier(CIMQualifier::createKeyQualifier());
@@ -217,7 +222,7 @@ delete__Namespace(CIMOMHandleIFC& hdl, const String& ns_)
 	CIMProperty cp("Name", cv);
 	cp.setDataType(CIMDataType::STRING);
 	v.push_back(cp);
-	CIMObjectPath path("__Namespace", v);
+	CIMObjectPath path(DEPRECATED__NamespaceClassName, v);
 	hdl.deleteInstance(parentPath, path);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -242,7 +247,7 @@ namespace
 		// throws a wrench in the works.  Each CIM Method call has to finish
 		// before another one can begin.
 		CIMInstanceEnumeration en = hdl.enumInstancesE(ns,
-			String("__Namespace"), E_SHALLOW, E_LOCAL_ONLY);
+			String(DEPRECATED__NamespaceClassName), E_SHALLOW, E_LOCAL_ONLY);
 		while (en.hasMoreElements())
 		{
 			CIMInstance i = en.nextElement();

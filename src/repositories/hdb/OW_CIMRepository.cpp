@@ -634,7 +634,7 @@ CIMRepository::enumInstanceNames(
 		CIMClass theClass = _instGetClass(ns, className);
 		ie.handle(theClass);
 		// If this is the namespace class then just return now
-		if (className.equals(CIMClass::NAMESPACECLASS)
+		if (className.equalsIgnoreCase("__Namespace")
 			|| !deep)
 		{
 			return;
