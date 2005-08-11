@@ -217,7 +217,7 @@ delete__Namespace(CIMOMHandleIFC& hdl, const String& ns_)
 	CIMProperty cp("Name", cv);
 	cp.setDataType(CIMDataType::STRING);
 	v.push_back(cp);
-	CIMObjectPath path(CIMClass::NAMESPACECLASS, v);
+	CIMObjectPath path("__Namespace", v);
 	hdl.deleteInstance(parentPath, path);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -242,7 +242,7 @@ namespace
 		// throws a wrench in the works.  Each CIM Method call has to finish
 		// before another one can begin.
 		CIMInstanceEnumeration en = hdl.enumInstancesE(ns,
-			String(CIMClass::NAMESPACECLASS), E_SHALLOW, E_LOCAL_ONLY);
+			String("__Namespace"), E_SHALLOW, E_LOCAL_ONLY);
 		while (en.hasMoreElements())
 		{
 			CIMInstance i = en.nextElement();
