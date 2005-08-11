@@ -182,6 +182,8 @@ selectRWEpoll(SelectObjectArray& selarray, UInt32 ms)
 		return Select::SELECT_ERROR;
 	}
 
+	UInt32 const read_events = EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP;
+	UInt32 const write_events = EPOLLOUT | EPOLLERR | EPOLLHUP;
 	for (size_t i = 0; i < selarray.size(); i++)
 	{
 		OW_ASSERT(selarray[i].s >= 0);
@@ -192,18 +194,19 @@ selectRWEpoll(SelectObjectArray& selarray, UInt32 ms)
 		events[i].events = 0;
 		if(selarray[i].waitForRead)
 		{
-			events[i].events |= (EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP);
+			events[i].events |= read_events;
 		}
 		if(selarray[i].waitForWrite)
 		{
-			events[i].events |= EPOLLOUT;
+			events[i].events |= write_events;
 		}
 
 		if(epoll_ctl(epfd, EPOLL_CTL_ADD, selarray[i].s, &events[i]) != 0)
 		{
+			int errnum = errno;
 			::close(epfd);
 			// Need to return something else?
-			return Select::SELECT_ERROR;
+			return errnum == EPERM ? SELECT_NOT_IMPLEMENTED : SELECT_ERROR;
 		}
 	}
 
@@ -257,11 +260,9 @@ selectRWEpoll(SelectObjectArray& selarray, UInt32 ms)
 
 	for(int i = 0; i < ecc; i++)
 	{
-		int ndx = events[i].data.u32;
-		selarray[ndx].readAvailable = ((events[i].events 
-			& (EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP)) != 0);
-		selarray[ndx].writeAvailable = ((events[i].events 
-			& (EPOLLOUT | EPOLLERR | EPOLLHUP)) != 0);
+		SelectObject & so = selarray[events[i].data.u32];
+		so.readAvailable = so.waitForRead && (events[i].events & read_events);
+		so.writeAvailable = so.waitForWrite && (events[i].events & write_events);
 	}
 
 	return ecc;
@@ -356,7 +357,7 @@ selectRWPoll(SelectObjectArray& selarray, UInt32 ms)
 	}
 	for (size_t i = 0; i < selarray.size(); i++)
 	{
-		if(pfds[i].events & (POLLERR | POLLNVAL))
+		if (pfds[i].revents & (POLLERR | POLLNVAL))
 		{
 			selarray[i].wasError = true;
 		}
