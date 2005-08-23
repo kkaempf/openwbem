@@ -217,12 +217,12 @@ case "$host" in
 	PLAT_CXXFLAGS="-no-cpp-precomp -fno-common -D_REENTRANT"
 	CXXCOMMONLINKFLAGS=""
 	CXXBINLINKFLAGS=""
-	CXXSHAREDLIBLINKFLAGS="-dynamiclib -install_name \$@ -compatibility_version \$(LIBRARY_BINARY_VERSION) -current_version \$(LIBRARY_BINARY_VERSION)"
+	CXXSHAREDLIBLINKFLAGS="-dynamiclib -install_name \$(thelibdir)/\$(DYFILENAME) -compatibility_version \$(LIBRARY_BINARY_VERSION) -current_version \$(LIBRARY_BINARY_VERSION)"
 	CXXBUNDLELIBLINKFLAGS="-bundle"
 	PLAT_OPTFLAGS="-O2"
 	PIDFILE_DIR="/var/run"
 	CXX="g++"
-	LIB_EXT="dylib"
+	LIB_EXT="dylib.bundle"
 	OW_NO_WDEPRECATED=1
 	;;
 #*-*-dgux*)

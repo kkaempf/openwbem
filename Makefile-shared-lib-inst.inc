@@ -5,14 +5,24 @@ install-ow-shared-libs:
 	$(INSTALL_PROGRAM) -d $(DESTDIR)$(thelibdir)
 	for i in $(OW_SHARED_LIBS); do \
 		if [ "x$(STATIC_SERVICES)" = "x" ]; then \
-			if [ "$(LIB_EXT)" = "dylib" ]; then \
-				$(INSTALL_PROGRAM) `echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT)* $(DESTDIR)$(thelibdir); \
-				rm -f $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
-				ln -sf `echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
+			if [ "$(LIB_EXT)" = "dylib.bundle" ]; then \
+				LONG_FILE_NAME=`echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT:%.bundle=%); \
+				SHORT_FILE_NAME=`echo $$i|cut -f1 -d'.'`.$(LIB_EXT:%.bundle=%); \
+				if [ "x$(MAKEDYLIB)" = "x1" ]; then \
+					$(INSTALL_PROGRAM) $$LONG_FILE_NAME $(DESTDIR)$(thelibdir); \
+					rm -f $(DESTDIR)$(thelibdir)/$$SHORT_FILE_NAME; \
+					ln -sf $$LONG_FILE_NAME $(DESTDIR)$(thelibdir)/$$SHORT_FILE_NAME; \
+				fi; \
+				if [ "x$(MAKEBUNDLE)" = "x1" ]; then \
+					$(INSTALL_PROGRAM) $$LONG_FILE_NAME.bundle $(DESTDIR)$(thelibdir); \
+					rm -f $(DESTDIR)$(thelibdir)/$$SHORT_FILE_NAME.bundle; \
+					ln -sf $$LONG_FILE_NAME.bundle $(DESTDIR)$(thelibdir)/$$SHORT_FILE_NAME.bundle; \
+				fi; \
 				for linkdir in $$OW_EXTRA_LINK_DIRS; do \
 					$(INSTALL_PROGRAM) -d $(DESTDIR)$$linkdir; \
-					ln -sf $(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT) $(DESTDIR)$$linkdir; \
-					ln -sf $(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT).bundle $(DESTDIR)$$linkdir; \
+					if [ "x$(MAKEBUNDLE)" = "x1" ]; then \
+						ln -sf $(thelibdir)/$$SHORT_FILE_NAME.bundle $(DESTDIR)$$linkdir; \
+					fi; \
 				done; \
 			elif [ "$(LIB_EXT)" = "nlm" ]; then \
 				$(INSTALL_PROGRAM)  $$i $(DESTDIR)$(thelibdir); \
@@ -49,11 +59,16 @@ install-ow-shared-libs:
 
 uninstall-ow-shared-libs:
 	for i in $(OW_SHARED_LIBS); do \
-		if [ "$(LIB_EXT)" = "dylib" ]; then \
-			rm -f $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT); \
-			rm -f $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
+		if [ "$(LIB_EXT)" = "dylib.bundle" ]; then \
+			LONG_FILE_NAME=`echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT:%.bundle=%); \
+			SHORT_FILE_NAME=`echo $$i|cut -f1 -d'.'`.$(LIB_EXT:%.bundle=%); \
+			rm -f $(DESTDIR)$(thelibdir)/$$LONG_FILE_NAME; \
+			rm -f $(DESTDIR)$(thelibdir)/$$LONG_FILE_NAME.bundle; \
+			rm -f $(DESTDIR)$(thelibdir)/$$SHORT_FILE_NAME; \
+			rm -f $(DESTDIR)$(thelibdir)/$$SHORT_FILE_NAME.bundle; \
 			for linkdir in $$OW_EXTRA_LINK_DIRS; do \
-				rm -f $(DESTDIR)$$linkdir/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
+				rm -f $(DESTDIR)$$linkdir/$$SHORT_FILE_NAME; \
+				rm -f $(DESTDIR)$$linkdir/$$SHORT_FILE_NAME.bundle; \
 			done; \
 		elif ["$(LIB_EXT)" = "nlm" ]; then \
 			rm -f $(DESTDIR)$(thelibdir)/$$i; \

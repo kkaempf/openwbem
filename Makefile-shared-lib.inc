@@ -1,7 +1,7 @@
 
 SO_EXT = $(LIBRARY_BINARY_VERSION)
 SOFILENAME = $@.$(SO_EXT)
-DYFILENAME = `basename -s .dylib $@`.$(SO_EXT).$(LIB_EXT)
+DYFILENAME = $(sort $(patsubst %.dylib,%,$(patsubst %.dylib.bundle,%.dylib,$@))).$(SO_EXT).dylib
 TMPLIBDIR = .$@.libs
 
 
@@ -61,25 +61,25 @@ CREATE_IMPORTS=nm -Bpg $(TMPLIBDIR)/*.o | \
 # In the case of the four libraries that have to be both loadable
 # and linkable, we FIXME EDGE
 
-%.dylib : %.a
+%.dylib.bundle %.dylib : %.a
+	rm -f $(@:%.dylib.bundle=%.dylib) $@
 	rm -rf $(TMPLIBDIR)
 	mkdir $(TMPLIBDIR)
 	cd $(TMPLIBDIR) && \
-	$(AR) x ../$< 
+	$(AR) x ../$<
 	if [ "x$(MAKEDYLIB)" = "x1" ]; then \
+		echo $(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(DYFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
 		$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(DYFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
+		echo ln -v -s $(DYFILENAME) $(@:%.dylib.bundle=%.dylib); \
+		ln -v -s $(DYFILENAME) $(@:%.dylib.bundle=%.dylib); \
 	fi;
 	if [ "x$(MAKEBUNDLE)" = "x1" ]; then \
-		if [ "x$(MAKEDYLIB)" = "x1" ]; then \
+		echo $(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(DYFILENAME).bundle $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
 		$(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(DYFILENAME).bundle $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
-		else \
-		$(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(DYFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
-		fi; \
+		echo ln -v -s $(DYFILENAME) $(@:%.dylib=%.dylib.bundle); \
+		ln -v -s $(DYFILENAME) $(@:%.dylib=%.dylib.bundle); \
 	fi;
-	rm -rf $@ $(TMPLIBDIR) $(@:%.so=%.exp)
-	ln -s $(DYFILENAME) $@
-	chmod +x $(DYFILENAME)
-
+	@echo "$@ done"
 
 all-ow-shared-libs: $(OW_SHARED_LIBS)
 

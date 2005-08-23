@@ -137,7 +137,7 @@ struct Select_t
 typedef int Select_t;
 
 #if defined OW_DARWIN
-#define OW_SHAREDLIB_EXTENSION ".dylib"
+#define OW_SHAREDLIB_EXTENSION ".dylib.bundle"
 #elif defined OW_HPUX
 #define OW_SHAREDLIB_EXTENSION ".sl"
 #elif defined OW_NETWARE
