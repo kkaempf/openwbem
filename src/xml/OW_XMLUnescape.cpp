@@ -229,7 +229,7 @@ yy36:	yych = *++YYCURSOR;
 #line 80
 	{
 		long lval = strtol( thisTokStart + 2, NULL, 10 );
-		if (lval > CHAR_MAX)
+		if (lval > CHAR_MAX || lval < 0)
 		{
 			OW_THROWXML(XMLParseException::MALFORMED_REFERENCE, Format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
 		}
@@ -258,7 +258,7 @@ yy40:	yych = *++YYCURSOR;
 #line 69
 	{
 		long lval = strtol( thisTokStart + 3, NULL, 16 );
-		if (lval > CHAR_MAX)
+		if (lval > CHAR_MAX || lval < 0)
 		{
 			OW_THROWXML(XMLParseException::MALFORMED_REFERENCE, Format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
 		}
