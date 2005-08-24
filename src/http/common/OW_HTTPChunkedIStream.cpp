@@ -48,7 +48,7 @@ using std::istream;
 HTTPChunkedIStreamBuffer::HTTPChunkedIStreamBuffer(istream& istr,
 	HTTPChunkedIStream* chunker)
 	: BaseStreamBuffer(HTTP_BUF_SIZE, "in"), m_istr(istr),
-	m_inLen(-1), m_inPos(0), m_isEOF(false), m_pChunker(chunker)
+	m_inLen(0), m_inPos(0), m_isEOF(false), m_pChunker(chunker)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -59,19 +59,20 @@ HTTPChunkedIStreamBuffer::~HTTPChunkedIStreamBuffer()
 int
 HTTPChunkedIStreamBuffer::buffer_from_device(char* c, int n)
 {
-	if (m_isEOF)
+	if (m_isEOF || n < 0)
 	{
 		return -1;
 	}
-	int tmpInLen = 0;
-	int offset = 0;
-	int lastRead = 0;
-	while (offset < n && m_istr.good())
+	unsigned int un = n; 
+	unsigned int tmpInLen = 0;
+	unsigned int offset = 0;
+	unsigned int lastRead = 0;
+	while (offset < un && m_istr.good())
 	{
-		if (m_inLen == -1)
+		if (m_inLen == 0)
 		{
 			m_istr >> std::hex >> m_inLen >> std::dec;
-			if (m_istr.fail() || m_istr.bad() || m_inLen < 0)
+			if (m_istr.fail() || m_istr.bad())
 			{
 				return -1;
 			}
@@ -85,22 +86,22 @@ HTTPChunkedIStreamBuffer::buffer_from_device(char* c, int n)
 			m_inPos = 0;
 			if (m_inLen == 0)
 			{
-				m_inLen = -1; // reset the state
+				// reset the state
 				m_isEOF = true;
 				m_pChunker->buildTrailerMap(); // build the trailer map
 				return offset;
 			}
 		}
 		// min of (n - offset) and (m_inLen - m_inPos)
-		tmpInLen = ((n - offset) < (m_inLen - m_inPos)) ? (n - offset)
+		tmpInLen = ((un - offset) < (m_inLen - m_inPos)) ? (un - offset)
 			: (m_inLen - m_inPos);
 		m_istr.read(c + offset, tmpInLen);
-		lastRead = m_istr.gcount();
+		lastRead = m_istr.gcount(); 
 		offset += lastRead;
 		m_inPos += lastRead;
 		if (m_inPos == m_inLen)
 		{
-			m_inLen = -1;
+			m_inLen = 0; 
 			m_inPos = 0;
 			// don't need to skip trailing \r\n, because formatted input will
 			// skip it.
@@ -117,7 +118,7 @@ void
 HTTPChunkedIStreamBuffer::resetInput()
 {
 	initGetBuffer();
-	m_inLen = -1;
+	m_inLen = 0; 
 	m_inPos = 0;
 	m_isEOF = false;
 }

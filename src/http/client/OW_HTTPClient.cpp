@@ -922,11 +922,7 @@ HTTPClient::convertToFiniteStream()
 	}
 	else if (headerHasKey("Content-Length"))
 	{
-		Int64 clen = getHeaderValue("Content-Length").toInt64(); 
-		if (clen < 0)
-		{
-			OW_THROW(HTTPException, "Invalid Content-Length"); 
-		}
+		UInt64 clen = getHeaderValue("Content-Length").toUInt64(); 
 		rval = new HTTPLenLimitIStream(m_istr,clen); 
 	}
 	if (getHeaderValue("Content-Encoding").equalsIgnoreCase("deflate"))

@@ -47,22 +47,22 @@ namespace OW_NAMESPACE
 class OW_HTTP_API HTTPLengthLimitStreamBuffer : public BaseStreamBuffer
 {
 public:
-	HTTPLengthLimitStreamBuffer(std::istream& istr, Int64 length);
+	HTTPLengthLimitStreamBuffer(std::istream& istr, UInt64 length);
 	virtual ~HTTPLengthLimitStreamBuffer();
 	/**
 	 * sets the Len to a new value,
 	 * sets m_pos to zero, and m_isEnd to false
 	 */
-	void resetLen(Int64 len);
+	void resetLen(UInt64 len);
 protected:
 	virtual int buffer_from_device(char* c, int n);
 private:
 	std::istream& m_istr;
 	
 	// holds the content length.
-	Int64 m_length;
+	UInt64 m_length;
 	// keeps track of how much we've read.
-	Int64 m_pos;
+	UInt64 m_pos;
 	// keeps track if we are at end of length.
 	bool m_isEnd;
 	// prohibit copying and assigning
@@ -75,7 +75,7 @@ private:
 class OW_HTTP_API HTTPLenLimitIStreamBase
 {
 public:
-	HTTPLenLimitIStreamBase(std::istream& istr, Int64 length)
+	HTTPLenLimitIStreamBase(std::istream& istr, UInt64 length)
 		: m_strbuf(istr, length) {}
 	HTTPLengthLimitStreamBuffer m_strbuf;
 };
@@ -91,12 +91,12 @@ public:
 	 * @param istr the original istream
 	 * @param len the number of bytes to read before setting EOF.
 	 */
-	HTTPLenLimitIStream(std::istream& istr, Int64 len);
+	HTTPLenLimitIStream(std::istream& istr, UInt64 len);
 	/**
 	 * Clear the EOF bit, and set the new length to len
 	 * @param len the new length to read before (re)setting EOF
 	 */
-	void resetLen(Int64 len);
+	void resetLen(UInt64 len);
 private:
 	std::istream& m_istr;
 	

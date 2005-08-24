@@ -41,7 +41,7 @@ namespace OW_NAMESPACE
 
 using std::istream;
 HTTPLengthLimitStreamBuffer::HTTPLengthLimitStreamBuffer(
-		istream& istr, Int64 length)
+		istream& istr, UInt64 length)
 	: BaseStreamBuffer(2048, "in"), m_istr(istr),
 	  m_length(length), m_pos(0), m_isEnd(false)
 // 2048 is a nice power of 2 that should be more than enough to hold most
@@ -56,19 +56,13 @@ HTTPLengthLimitStreamBuffer::~HTTPLengthLimitStreamBuffer()
 int
 HTTPLengthLimitStreamBuffer::buffer_from_device(char* c, int n)
 {
-	if (m_isEnd)
+	if (m_isEnd || n < 0)
 	{
 		return -1;
 	}
+	unsigned int un = n; 
 	// min of n and (length - pos)
-	int tmpInLen = (n < (m_length - m_pos)) ? n : (m_length - m_pos);
-	if (tmpInLen > n)
-	{
-		// This shouldn't happen, but it could if m_length were
-		// negative (32bit vs. 64bit problem).  Check it here to 
-		// prevent the possibility of a buffer overflow. 
-		return -1; 
-	}
+	int tmpInLen = (un < (m_length - m_pos)) ? un : (m_length - m_pos);
 	m_istr.read(c, tmpInLen);
 	int lastRead = m_istr.gcount();
 	m_pos += lastRead;
@@ -80,7 +74,7 @@ HTTPLengthLimitStreamBuffer::buffer_from_device(char* c, int n)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPLengthLimitStreamBuffer::resetLen(Int64 len)
+HTTPLengthLimitStreamBuffer::resetLen(UInt64 len)
 {
 	initGetBuffer();
 	m_length = len;
@@ -89,13 +83,13 @@ HTTPLengthLimitStreamBuffer::resetLen(Int64 len)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPLenLimitIStream::resetLen(Int64 len)
+HTTPLenLimitIStream::resetLen(UInt64 len)
 {
 	clear();
 	m_strbuf.resetLen(len);
 }
 //////////////////////////////////////////////////////////////////////////////
-HTTPLenLimitIStream::HTTPLenLimitIStream(istream& istr, Int64 len)
+HTTPLenLimitIStream::HTTPLenLimitIStream(istream& istr, UInt64 len)
 	: HTTPLenLimitIStreamBase(istr, len)
 	, CIMProtocolIStreamIFC(&m_strbuf)
 	, m_istr(istr)

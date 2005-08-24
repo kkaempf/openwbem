@@ -767,6 +767,11 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 			if (!cLen.empty())
 			{
 				m_contentLength = cLen.toInt64();
+				if (m_contentLength < 0)
+				{
+					m_errDetails = "Bad (negative) Content-Length"; 
+					return SC_BAD_REQUEST;
+				}
 			}
 		}
 		// POST or M_POST, no chunking: test for content length
@@ -1228,7 +1233,7 @@ HTTPSvrConnection::convertToFiniteStream(istream& istr)
 	}
 	else if (m_contentLength > 0)
 	{
-		rval = new HTTPLenLimitIStream(istr, m_contentLength);
+		rval = new HTTPLenLimitIStream(istr, UInt64(m_contentLength));
 	}
 	else
 	{

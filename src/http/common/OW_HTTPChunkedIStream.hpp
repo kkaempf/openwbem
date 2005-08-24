@@ -56,8 +56,8 @@ class OW_HTTP_API HTTPChunkedIStreamBuffer : public BaseStreamBuffer
 		~HTTPChunkedIStreamBuffer();
 	private:
 		std::istream& m_istr;
-		int m_inLen;
-		int m_inPos;
+		unsigned int m_inLen;
+		unsigned int m_inPos;
 		bool m_isEOF;
 		virtual int buffer_from_device(char* c, int n);
 		HTTPChunkedIStream* m_pChunker;
