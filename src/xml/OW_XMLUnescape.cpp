@@ -51,7 +51,7 @@ String XMLUnescape(const char* escapedText, unsigned len)
 	StringBuffer rval(len);
 	const char* begin = escapedText;
 	const char* q;
-	const char* thisTokStart = 0;
+	const char* thisTokStart = escapedText;
 	#define YYCTYPE char
 	#define YYCURSOR        begin
 	#define YYLIMIT         begin
