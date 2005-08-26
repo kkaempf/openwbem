@@ -1,4 +1,4 @@
-noinst_LIBRARIES = libCppUnit.a
+check_LIBRARIES = libCppUnit.a
 
 libCppUnit_a_SOURCES = \
 CppUnitException.cpp \

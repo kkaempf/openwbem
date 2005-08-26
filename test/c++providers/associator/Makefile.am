@@ -1,10 +1,10 @@
 MAKEBUNDLE=1
 include $(top_srcdir)/Makefile-shared-lib.inc
-all-local : all-ow-shared-libs
+check-local : all-ow-shared-libs
 clean-local : clean-ow-shared-libs
 
 
-noinst_LIBRARIES = libassociatortest.a 
+check_LIBRARIES = libassociatortest.a 
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \

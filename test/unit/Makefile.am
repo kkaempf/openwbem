@@ -16,10 +16,6 @@ endif
 endif
 endif
 
-noinst_PROGRAMS = $(PROGS)
-#check_PROGRAMS = unitMain
-
-
 MemTracerTest_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/ -lopenwbem  \
@@ -33,7 +29,7 @@ $(CXXBINLINKFLAGS) \
 MemTracerTest_SOURCES = \
 MemTracerTest.cpp
 
-check_PROGRAMS = unitMain
+check_PROGRAMS = unitMain $(PROGS)
 # Note: Do not change the following line, unless you also update the newtest.sh script
 unitMain_SOURCES = \
 ThreadOnceTestCases.cpp \

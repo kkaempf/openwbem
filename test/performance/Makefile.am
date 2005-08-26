@@ -1,4 +1,4 @@
-noinst_PROGRAMS = \
+check_PROGRAMS = \
 TimeString \
 TimeFile \
 Time_pthread_once \

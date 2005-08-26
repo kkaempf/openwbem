@@ -38,7 +38,7 @@ endif
 endif
 endif
 
-noinst_PROGRAMS = \
+check_PROGRAMS = \
 $(PROGS) \
 wqlTest1 \
 wqlTest2 \
@@ -403,7 +403,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/requesthandlers/cimxml \
 -I$(top_srcdir)/src/wql/common
-
 
 #
 

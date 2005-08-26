@@ -1,10 +1,10 @@
 MAKEBUNDLE=1
 include $(top_srcdir)/Makefile-shared-lib.inc
-all-local : all-ow-shared-libs
+check-local : all-ow-shared-libs
 clean-local : clean-ow-shared-libs
 
 
-noinst_LIBRARIES = libindicationtest1.a libindicationtest2.a 
+check_LIBRARIES = libindicationtest1.a libindicationtest2.a 
 
 OW_SHARED_LIBS = libindicationtest1.$(LIB_EXT) libindicationtest2.$(LIB_EXT) 
 
