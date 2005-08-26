@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,50 +32,45 @@
  * @author Dan Nuffer
  */
 
-
 /* a simple lexical scanner to escape xml */
 #include "OW_config.h"
 #include "OW_XMLUnescape.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_XMLParseException.hpp"
 #include "OW_Format.hpp"
-
 #include <limits.h> // for CHAR_MAX
 #include <stdlib.h> // for strtol
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
-String XMLUnescape(const String& escapedText)
+String XMLUnescape(const char* escapedText, unsigned len)
 {
-	StringBuffer rval(escapedText.length());
-
-	const char* begin = escapedText.c_str();
-	const char* end = escapedText.c_str() + escapedText.length();
+	StringBuffer rval(len);
+	const char* begin = escapedText;
 	const char* q;
-	const char* thisTokStart = 0;
-
+	const char* thisTokStart = escapedText;
 	#define YYCTYPE char
 	#define YYCURSOR        begin
-	#define YYLIMIT         end
+	#define YYLIMIT         begin
 	#define YYMARKER        q
 	#define YYFILL(n)
-
 start:
 	/*!re2c
 	END = [\000];
 	any = [\001-\377];
 	DIGIT = [0-9];
+	HEXDIGIT = [0-9a-fA-F];
 
-	"&gt;" { rval += ">"; thisTokStart = YYCURSOR; goto start; }
-	"&lt;" { rval += "<"; thisTokStart = YYCURSOR; goto start; }
-	"&amp;" { rval += "&"; thisTokStart = YYCURSOR; goto start; }
-	"&quot;" { rval += "\""; thisTokStart = YYCURSOR; goto start; }
-	"&apos;" { rval += "'"; thisTokStart = YYCURSOR; goto start; }
-	"&#x" DIGIT+ ";"
+	"&gt;" { rval += '>'; thisTokStart = YYCURSOR; goto start; }
+	"&lt;" { rval += '<'; thisTokStart = YYCURSOR; goto start; }
+	"&amp;" { rval += '&'; thisTokStart = YYCURSOR; goto start; }
+	"&quot;" { rval += '\"'; thisTokStart = YYCURSOR; goto start; }
+	"&apos;" { rval += '\''; thisTokStart = YYCURSOR; goto start; }
+	"&#x" HEXDIGIT+ ";"
 	{
-		long lval = strtol( thisTokStart + 3, NULL, 16 );
-		if (lval > CHAR_MAX || lval < 0)
+		unsigned long lval = strtoul( thisTokStart + 3, NULL, 16 );
+		if (lval > CHAR_MAX)
 		{
 			OW_THROWXML(XMLParseException::MALFORMED_REFERENCE, Format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
 		}
@@ -85,8 +80,8 @@ start:
 	}
 	"&#" DIGIT+ ";"
 	{
-		long lval = strtol( thisTokStart + 2, NULL, 10 );
-		if (lval > CHAR_MAX || lval < 0)
+		unsigned long lval = strtoul( thisTokStart + 2, NULL, 10 );
+		if (lval > CHAR_MAX)
 		{
 			OW_THROWXML(XMLParseException::MALFORMED_REFERENCE, Format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
 		}
@@ -95,10 +90,10 @@ start:
 		thisTokStart = YYCURSOR; goto start;
 	}
 	any { rval += *(YYCURSOR-1); thisTokStart = YYCURSOR; goto start; }
-	END { return rval.toString(); }
+	END { return rval.releaseString(); }
 	*/
 
-	return rval.toString();
+	return rval.releaseString();
 }
 
 } // end namespace OpenWBEM
