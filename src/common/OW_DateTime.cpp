@@ -1009,12 +1009,26 @@ DateTime::setTime(tm& tmarg, ETimeOffset timeOffset)
 	{
 #ifdef OW_HAVE_ASCTIME_R
 		char buff[30];
+		String extraError;
+
+		if( tmarg.tm_wday < 0 || tmarg.tm_wday > 6 )
+		{
+			extraError += Format("Invalid weekday: %1. ", tmarg.tm_wday);
+			tmarg.tm_wday = 0;
+		}
+
+		if( tmarg.tm_mon < 0 || tmarg.tm_mon > 12 )
+		{
+			extraError += Format("Invalid month: %1. ", tmarg.tm_mon);
+			tmarg.tm_mon = 0;
+		}
+
 		asctime_r(&tmarg, buff);
 #else
 		// if the c library isn't thread-safe, we'll need a mutex here.
 		char* buff = asctime(&tmarg);
 #endif
-		OW_THROW(DateTimeException, Format("Unable to represent time \"%1\" as a time_t", buff).c_str());
+		OW_THROW(DateTimeException, Format("Unable to represent time \"%1\" as a time_t. %2", buff, extraError).toString().rtrim().c_str());
 	}
 }
 //////////////////////////////////////////////////////////////////////////////									
@@ -1150,6 +1164,7 @@ DateTime::set(int year, int month, int day, int hour, int minute, int second,
 	UInt32 microseconds, ETimeOffset timeOffset)
 {
 	tm tmarg;
+	memset(&tmarg, 0, sizeof(tmarg));
 	tmarg.tm_year = (year >= 1900) ? year - 1900 : year;
 	tmarg.tm_mon = month-1;
 	tmarg.tm_mday = day;
