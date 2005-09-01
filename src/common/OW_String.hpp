@@ -741,7 +741,7 @@ public:
 #if defined(OW_AIX)
 	static const size_t npos;
 #else
-	static const size_t npos = ~0;
+	static const size_t npos = size_t(~0);
 #endif // OW_AIX
 
 #ifdef OW_WIN32
