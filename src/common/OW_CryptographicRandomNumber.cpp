@@ -684,7 +684,16 @@ CryptographicRandomNumber::initRandomness()
 			const char* RANDOM_COMMAND_PATH = "/bin:/sbin:/usr/bin:/usr/sbin:/usr/ucb:/usr/etc:/usr/bsd:/etc:/usr/local/bin:/usr/local/sbin";
 			cmd[0] = locateInPath(cmd[0], RANDOM_COMMAND_PATH);
 		}
-		streams.push_back(Exec::safePopen(cmd));
+
+		try
+		{
+			// safePopen can now throw an exception.
+			streams.push_back(Exec::safePopen(cmd));
+		}
+		catch(const ExecErrorException&)
+		{
+			// ignore it
+		}
 	}
 
 	RandomOutputGatherer randomOutputGatherer;
