@@ -54,7 +54,7 @@ class dyldSharedLibrary : public SharedLibrary
 {
 public:
 	dyldSharedLibrary(void * libhandle, const String& libName)
-		: SharedLibrary(), m_libhandle( libhandle ), m_libName(libName)
+		: SharedLibrary(), m_libhandle( reinterpret_cast<NSModule>(libhandle) ), m_libName(libName)
 	{
 	}
 	virtual ~dyldSharedLibrary();
