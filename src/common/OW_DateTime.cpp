@@ -1017,7 +1017,7 @@ DateTime::setTime(tm& tmarg, ETimeOffset timeOffset)
 			tmarg.tm_wday = 0;
 		}
 
-		if( tmarg.tm_mon < 0 || tmarg.tm_mon > 12 )
+		if( tmarg.tm_mon < 0 || tmarg.tm_mon > 11 )
 		{
 			extraError += Format("Invalid month: %1. ", tmarg.tm_mon);
 			tmarg.tm_mon = 0;
