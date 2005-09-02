@@ -70,7 +70,7 @@ uninstall-ow-shared-libs:
 				rm -f $(DESTDIR)$$linkdir/$$SHORT_FILE_NAME; \
 				rm -f $(DESTDIR)$$linkdir/$$SHORT_FILE_NAME.bundle; \
 			done; \
-		elif ["$(LIB_EXT)" = "nlm" ]; then \
+		elif [ "$(LIB_EXT)" = "nlm" ]; then \
 			rm -f $(DESTDIR)$(thelibdir)/$$i; \
 			for linkdir in $$OW_EXTRA_LINK_DIRS; do \
 				rm -f $(DESTDIR)$$linkdir/$$i; \
