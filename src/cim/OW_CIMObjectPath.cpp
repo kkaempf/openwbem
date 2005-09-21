@@ -438,7 +438,11 @@ CIMObjectPath::toString() const
 String
 CIMObjectPath::toMOF() const
 {
-	return escape(toString());
+	StringBuffer rv; 
+	rv = "\""; 
+	rv += escape(toString()); 
+	rv += "\""; 
+	return rv.releaseString(); 
 }
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -2517,7 +2517,7 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 			case CIMDataType::REFERENCE:
 				if (forMOF)
 				{
-					out = CIMObjectPath::escape((reinterpret_cast<const CIMObjectPath*>(&m_obj))->toString());
+					out = reinterpret_cast<const CIMObjectPath*>(&m_obj)->toMOF(); 
 				}
 				else
 				{

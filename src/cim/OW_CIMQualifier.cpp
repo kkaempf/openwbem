@@ -386,11 +386,19 @@ CIMQualifier::toMOF() const
 		rv += m_pdata->m_language;
 	}
 
-	if (m_pdata->m_qualifierValue)
+	if (m_pdata->m_qualifierValue 
+		&& m_pdata->m_name != CIMName("Association")
+		&& m_pdata->m_name != CIMName("Indication"))
 	{
-		rv += '(';
+		if (!m_pdata->m_qualifierValue.isArray())
+		{
+			rv += '(';
+		}
 		rv += m_pdata->m_qualifierValue.toMOF();
-		rv += ')';
+		if (!m_pdata->m_qualifierValue.isArray())
+		{
+			rv += ')';
+		}
 	}
 	
 	return rv.releaseString();
