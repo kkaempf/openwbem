@@ -65,6 +65,13 @@ AppenderLogger::~AppenderLogger()
 
 /////////////////////////////////////////////////////////////////////////////
 void
+AppenderLogger::addLogAppender(const LogAppenderRef& appender)
+{
+	    m_appenders.append(appender);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
 AppenderLogger::doProcessLogMessage(const LogMessage& message) const
 {
 	for (size_t i = 0; i < m_appenders.size(); ++i)

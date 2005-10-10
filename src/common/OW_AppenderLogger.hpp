@@ -52,6 +52,7 @@ public:
 	AppenderLogger(const String& defaultComponent, ELogLevel level, const LogAppenderRef& appender);
 	AppenderLogger(const String& defaultComponent, const Array<LogAppenderRef>& appenders);
 	virtual ~AppenderLogger();
+	void addLogAppender(const LogAppenderRef& appender);
 
 private:
 	virtual void doProcessLogMessage(const LogMessage& message) const;
