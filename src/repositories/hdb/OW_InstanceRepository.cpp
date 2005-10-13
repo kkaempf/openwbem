@@ -57,55 +57,7 @@ using namespace WBEMFlags;
 namespace
 {
 
-//////////////////////////////////////////////////////////////////////////////
-class UtilKeyArray
-{
-public:
-	UtilKeyArray() : m_names(), m_properties() {}
-	void addElement(const CIMProperty& prop);
-	String toString(const String& className);
-private:
-	StringArray m_names;
-	StringArray m_properties;
-};
-//////////////////////////////////////////////////////////////////////////////
-void
-UtilKeyArray::addElement(const CIMProperty& prop)
-{
-	String propName = prop.getName().toLowerCase();
-	for (size_t i = 0; i < m_names.size(); i++)
-	{
-		int cc = m_names[i].compareTo(propName);
-		if (cc == 0)
-		{
-			m_properties[i] = prop.getValue().toString();
-			return;
-		}
-		else if (cc > 0)
-		{
-			m_names.insert(i, propName);
-			m_properties.insert(i, prop.getValue().toString());
-			return;
-		}
-	}
-	m_names.append(propName);
-	m_properties.append(prop.getValue().toString());
-}
-//////////////////////////////////////////////////////////////////////////////
-String
-UtilKeyArray::toString(const String& className)
-{
-	StringBuffer rv(className.toString().toLowerCase());
-	for (size_t i = 0; i < m_names.size(); i++)
-	{
-		char c = (i == 0) ? '.' : ',';
-		rv += c;
-		rv += m_names[i];
-		rv += '=';
-		rv += m_properties[i];
-	}
-	return rv.releaseString();
-}
+
 } // end unnamed namespace
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -216,12 +168,10 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 				Format("Property in model path is not a key: %1", pname).c_str());
 		}
 	}
-	UtilKeyArray kra;
-	for (size_t i = 0; i < pra.size(); i++)
-	{
-		kra.addElement(pra[i]);
-	}
-	return kra.toString(rv.releaseString());
+
+	HDBUtilKeyArray kra(pra);
+	kra.toString(rv);
+	return rv.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
 String

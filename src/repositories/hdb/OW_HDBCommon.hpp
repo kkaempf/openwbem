@@ -38,6 +38,9 @@
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_Exception.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_Array.hpp"
+
 #include <cstring>
 
 namespace OW_NAMESPACE
@@ -47,6 +50,8 @@ OW_DECLARE_APIEXCEPTION(HDB, OW_HDB_API)
 
 #define OW_HDBSIGNATURE "OWHIERARCHICADB"
 const int HDBSIGLEN = 16;
+
+// This should generally be kept in sync with the binary serialization version in OW_BinarySerialization.hpp
 // The general idea is to have it be a concatenation of release numbers with
 // a revision on the end (to prevent problems during development)
 // So 3000003 originated from version 3.0.0 rev 4
@@ -63,10 +68,12 @@ const int HDBSIGLEN = 16;
 //   readObject() calls will be able to read older versions as well as the
 //   current.  Introduced MinBinaryProtocolVersion which is the oldest version
 //   we can sucessfully read.
-const UInt32 HDBVERSION = 3000008;
+// 9/01/2005 - 4000000. Changed key format to use : instead of / to fix a bug.
+// 10/12/2005 - 4000001. Fixed association and instance key format wrt associations.
+const UInt32 HDBVERSION = 4000001;
 
 // This is the oldest version the code can handle.
-const UInt32 MinHDBVERSION = 3000006;
+const UInt32 MinHDBVERSION = 4000001;
 
 /**
  * The HDBHeaderBlock structure represent the header information for
@@ -102,6 +109,18 @@ struct OW_HDB_API HDBBlock
 	// The length of the non-key data will be dataLength - keyLength;
 };
 #define OW_HDBLKSZ sizeof(HDBBlock);
+
+//////////////////////////////////////////////////////////////////////////////
+class HDBUtilKeyArray
+{
+public:
+	HDBUtilKeyArray(const CIMPropertyArray& props);
+	void toString(StringBuffer& out);
+private:
+	CIMPropertyArray m_props;
+};
+
+
 
 } // end namespace OW_NAMESPACE
 

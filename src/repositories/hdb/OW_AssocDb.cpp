@@ -123,32 +123,6 @@ namespace
 {
 
 //////////////////////////////////////////////////////////////////////////////
-class UtilKeyArray
-{
-public:
-	UtilKeyArray(const CIMPropertyArray& props)
-		: m_props(props)
-	{
-		std::sort(m_props.begin(), m_props.end());
-	}
-	void toString(StringBuffer& out);
-private:
-	CIMPropertyArray m_props;
-};
-//////////////////////////////////////////////////////////////////////////////
-void
-UtilKeyArray::toString(StringBuffer& out)
-{
-	for (size_t i = 0; i < m_props.size(); i++)
-	{
-		char c = (i == 0) ? '.' : ',';
-		out += c;
-		out += m_props[i].getName().toLowerCase();
-		out += '=';
-		out += m_props[i].getValue().toString();
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
 void
 makeClassKey(const String& ns_, const String& className, StringBuffer& out)
 {
@@ -169,7 +143,7 @@ makeInstanceKey(const CIMObjectPath& cop, StringBuffer& out)
 {
 	makeClassKey(cop.getNameSpace(), cop.getClassName(), out);
 	// Get keys from object path
-	UtilKeyArray kra(cop.getKeys());
+	HDBUtilKeyArray kra(cop.getKeys());
 	kra.toString(out);
 }
 } // end unnamed namespace

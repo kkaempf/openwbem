@@ -38,6 +38,7 @@ libowrepositoryhdb_a_SOURCES = \
 $(ASSOCIATION_S) \
 OW_CIMRepository.cpp \
 OW_GenericHDBRepository.cpp \
+OW_HDBCommon.cpp \
 OW_HDB.cpp \
 OW_HDBException.cpp \
 OW_HDBNode.cpp \
