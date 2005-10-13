@@ -182,14 +182,33 @@ CIMRepository::createNameSpace(const String& ns,
 	{
 		OW_THROWCIM(CIMException::INVALID_PARAMETER);
 	}
+
+	// namespaces can't contain :
+	const char NS_SEPARATOR_C(':');
+	if (ns.indexOf(NS_SEPARATOR_C) != String::npos)
+	{
+		OW_THROWCIMMSG(CIMException::FAILED, Format("Invalid namespace (%1). %2 is not allowed", ns, NS_SEPARATOR_C).c_str());
+	}
+
 	if (m_nStore.createNameSpace(ns) == -1)
 	{
 		OW_THROWCIMMSG(CIMException::ALREADY_EXISTS,
 			ns.c_str());
 	}
 	// TODO: Make this exception safe.
-	m_iStore.createNameSpace(ns);
-	m_mStore.createNameSpace(ns);
+	if (m_iStore.createNameSpace(ns) == -1)
+	{
+		m_nStore.deleteNameSpace(ns);
+		OW_THROWCIMMSG(CIMException::FAILED, Format("Failed to create namespace %1", ns).c_str());
+	}
+
+	if (m_mStore.createNameSpace(ns) == -1)
+	{
+		m_nStore.deleteNameSpace(ns);
+		m_iStore.deleteNameSpace(ns);
+		OW_THROWCIMMSG(CIMException::FAILED, Format("Failed to create namespace %1", ns).c_str());
+	}
+
 	OW_LOG_DEBUG(m_logger, Format("CIMRepository created namespace: %1", ns));
 }
 //////////////////////////////////////////////////////////////////////////////

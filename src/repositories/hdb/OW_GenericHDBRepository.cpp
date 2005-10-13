@@ -44,8 +44,13 @@
 namespace OW_NAMESPACE
 {
 
-static const int HDL_NOTINUSE = -1;
-static const int HDL_NOTCACHED = -2;
+namespace
+{
+	const char NS_SEPARATOR_C(':');
+	const int HDL_NOTINUSE = -1;	
+	const int HDL_NOTCACHED = -2;
+}
+
 const String GenericHDBRepository::COMPONENT_NAME("ow.repository.hdb");
 //////////////////////////////////////////////////////////////////////////////
 GenericHDBRepository::GenericHDBRepository()
@@ -187,6 +192,7 @@ GenericHDBRepository::createNameSpace(const String& ns)
 	{
 		return -1;
 	}
+	
 	node = hdl->getNode(ns);
 	if (!node)
 	{

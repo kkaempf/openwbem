@@ -122,17 +122,14 @@ AssocDbEntry::entry::readObject(istream& istrm)
 namespace
 {
 
+const char NS_SEPARATOR_C(':');
+
 //////////////////////////////////////////////////////////////////////////////
 void
-makeClassKey(const String& ns_, const String& className, StringBuffer& out)
+makeClassKey(const String& ns, const String& className, StringBuffer& out)
 {
-	String ns(ns_);
-	while (!ns.empty() && ns[0] == '/')
-	{
-		ns = ns.substring(1);
-	}
 	out += ns;
-	out += ':';
+	out += NS_SEPARATOR_C;
 	String lowerClassName(className);
 	lowerClassName.toLowerCase();
 	out += lowerClassName;

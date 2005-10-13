@@ -53,16 +53,21 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
-static const String QUAL_CONTAINER("q");
-static const String CLASS_CONTAINER("c");
+
+namespace
+{
+const String QUAL_CONTAINER("q");
+const String CLASS_CONTAINER("c");
+const char NS_SEPARATOR_C(':');
+
+}
 //////////////////////////////////////////////////////////////////////////////
 MetaRepository::~MetaRepository()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-static void createRootNode(String& qcontk, HDBHandleLock& hdl)
+static void createRootNode(const String& qcontk, HDBHandleLock& hdl)
 {
-	qcontk.toLowerCase();
 	HDBNode rnode = hdl->getNode(qcontk);
 	if (!rnode)
 	{
@@ -78,17 +83,21 @@ MetaRepository::open(const String& path)
 {
 	GenericHDBRepository::open(path);
 	OW_LOG_INFO(m_env->getLogger(COMPONENT_NAME), Format("Using MetaRepository: %1", path));
+
 	// Create root qualifier container
 	HDBHandleLock hdl(this, getHandle());
-	String qcontk(QUAL_CONTAINER);
-	createRootNode(qcontk, hdl);
-	qcontk += "/" + String("root");
-	createRootNode(qcontk,hdl);
+	StringBuffer qcontk(QUAL_CONTAINER);
+	createRootNode(qcontk.toString(), hdl);
+	qcontk += NS_SEPARATOR_C;
+	qcontk += String("root");
+	createRootNode(qcontk.releaseString(), hdl);
+
 	// Create root class container
-	qcontk = CLASS_CONTAINER;
-	createRootNode(qcontk, hdl);
-	qcontk += "/" + String("root");
-	createRootNode(qcontk,hdl);
+	StringBuffer ccontk = CLASS_CONTAINER;
+	createRootNode(ccontk.toString(), hdl);
+	ccontk += NS_SEPARATOR_C;
+	ccontk += String("root");
+	createRootNode(ccontk.releaseString(), hdl);
 }
 //////////////////////////////////////////////////////////////////////////////
 HDBNode
@@ -97,7 +106,7 @@ MetaRepository::_getQualContainer(HDBHandleLock& hdl, const String& ns)
 	StringBuffer qcontk(QUAL_CONTAINER);
 	if (!ns.empty())
 	{
-		qcontk += '/';
+		qcontk += NS_SEPARATOR_C;
 		qcontk += ns;
 	}
 	return getNameSpaceNode(hdl, qcontk.releaseString());
@@ -108,11 +117,11 @@ MetaRepository::_makeQualPath(const String& ns_, const CIMName& qualName)
 {
 	String ns(ns_);
 	StringBuffer qp(QUAL_CONTAINER);
-	qp += '/';
+	qp += NS_SEPARATOR_C;
 	qp += ns;
 	if (qualName != CIMName())
 	{
-		qp += '/';
+		qp += NS_SEPARATOR_C;
 		qp += qualName.toString();
 	}
 	return qp.releaseString().toLowerCase();
@@ -123,9 +132,9 @@ MetaRepository::_makeClassPath(const String& ns,
 	const CIMName& className)
 {
 	StringBuffer cp(CLASS_CONTAINER);
-	cp += '/';
+	cp += NS_SEPARATOR_C;
 	cp += ns;
-	cp += '/';
+	cp += NS_SEPARATOR_C;
 	cp += className.toString();
 	return cp.releaseString().toLowerCase();
 }
@@ -157,7 +166,7 @@ MetaRepository::getQualifierType(const String& ns,
 	getCIMObject(qualType, qkey, hdl.getHandle());
 	if (!qualType)
 	{
-		if (nameSpaceExists(QUAL_CONTAINER + "/" + ns))
+		if (nameSpaceExists(QUAL_CONTAINER + NS_SEPARATOR_C + ns))
 		{
 			OW_THROWCIMMSG(CIMException::NOT_FOUND,
 					Format("CIM QualifierType \"%1\" not found in namespace: %2",
@@ -559,7 +568,7 @@ MetaRepository::createClass(const String& ns, CIMClass& cimClass)
 	// pnode is null if there is no parent class, so get namespace node
 	if (!pnode)
 	{
-		if (!(pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns)))
+		if (!(pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + NS_SEPARATOR_C + ns)))
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE,
 				ns.c_str());
@@ -836,7 +845,7 @@ MetaRepository::getTopLevelAssociations(const String& ns,
 {
 	throwIfNotOpen();
 	HDBHandleLock hdl(this, getHandle());
-	HDBNode node = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns);
+	HDBNode node = getNameSpaceNode(hdl, CLASS_CONTAINER + NS_SEPARATOR_C + ns);
 	if (!node)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns.c_str());
@@ -872,7 +881,7 @@ MetaRepository::enumClass(const String& ns, const CIMName& className,
 		pnode = hdl->getNode(ckey);
 		if (!pnode)
 		{
-			pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns);
+			pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + NS_SEPARATOR_C + ns);
 			if (!pnode)
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns.c_str());
@@ -885,15 +894,10 @@ MetaRepository::enumClass(const String& ns, const CIMName& className,
 	}
 	else
 	{
-		String ns2(ns);
-		while (!ns2.empty() && ns2[0] == '/')
-		{
-			ns2 = ns2.substring(1);
-		}
-		pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns2);
+		pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + NS_SEPARATOR_C + ns);
 		if (!pnode)
 		{
-			OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns2.c_str());
+			OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns.c_str());
 		}
 	}
 	pnode = hdl->getFirstChild(pnode);
@@ -943,7 +947,7 @@ MetaRepository::enumClassNames(const String& ns, const CIMName& className,
 		pnode = hdl->getNode(ckey);
 		if (!pnode)
 		{
-			pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns);
+			pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + NS_SEPARATOR_C + ns);
 			if (!pnode)
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns.c_str());
@@ -956,15 +960,10 @@ MetaRepository::enumClassNames(const String& ns, const CIMName& className,
 	}
 	else
 	{
-		String ns2(ns);
-		while (!ns2.empty() && ns2[0] == '/')
-		{
-			ns2 = ns2.substring(1);
-		}
-		pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns2);
+		pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + NS_SEPARATOR_C + ns);
 		if (!pnode)
 		{
-			OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns2.c_str());
+			OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE, ns.c_str());
 		}
 	}
 	pnode = hdl->getFirstChild(pnode);
@@ -1001,8 +1000,8 @@ MetaRepository::deleteNameSpace(const String& nsName)
 {
 	throwIfNotOpen();
 	// ATTN: Do we need to do more later? Associations?
-	GenericHDBRepository::deleteNameSpace(QUAL_CONTAINER + "/" + nsName);
-	GenericHDBRepository::deleteNameSpace(CLASS_CONTAINER + "/" + nsName);
+	GenericHDBRepository::deleteNameSpace(QUAL_CONTAINER + NS_SEPARATOR_C + nsName);
+	GenericHDBRepository::deleteNameSpace(CLASS_CONTAINER + NS_SEPARATOR_C + nsName);
 	/*
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode node = _getQualContainer(hdl, nsName);
@@ -1018,13 +1017,13 @@ int
 MetaRepository::createNameSpace(const String& ns)
 {
 	// First create the name space in the class container.
-	if (GenericHDBRepository::createNameSpace(CLASS_CONTAINER + "/" + ns) == -1)
+	if (GenericHDBRepository::createNameSpace(CLASS_CONTAINER + NS_SEPARATOR_C + ns) == -1)
 	{
 		return -1;
 	}
 	// Now create the same name space in the qualifier container.
 	// TODO: If the second create fails, we need to undo the first one.
-	return GenericHDBRepository::createNameSpace(QUAL_CONTAINER + "/" + ns);
+	return GenericHDBRepository::createNameSpace(QUAL_CONTAINER + NS_SEPARATOR_C + ns);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////

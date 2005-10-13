@@ -57,6 +57,7 @@ using namespace WBEMFlags;
 namespace
 {
 
+const char NS_SEPARATOR_C(':');
 
 } // end unnamed namespace
 //////////////////////////////////////////////////////////////////////////////
@@ -70,7 +71,7 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 	}
 	// Start return value with the namespace
 	StringBuffer rv(makeClassKey(ns, cop.getClassName()));
-	rv += '/';
+	rv += NS_SEPARATOR_C;
 	CIMPropertyArray kprops = theClass.getKeys();
 	if (kprops.size() == 0)
 	{
@@ -179,11 +180,7 @@ InstanceRepository::makeClassKey(const String& ns,
 	const String& className)
 {
 	String rv(ns);
-	while (!rv.empty() && rv[0] == '/')
-	{
-		rv = rv.substring(1);
-	}
-	rv += "/";
+	rv += NS_SEPARATOR_C;
 	rv += className;
 	return rv.toLowerCase();
 }
