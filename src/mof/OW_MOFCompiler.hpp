@@ -77,10 +77,13 @@ public:
 			, m_removeDescriptions(false)
 			, m_removeObjects(false)
 		{}
+#if 0
+		// I don't think this was even being used -- bartw
 		Options(const String& namespace_,
 			bool createNamespaces, bool checkSyntaxOnly, const String& dumpXmlFile,
 			bool remove, bool preserve, bool upgrade, const StringArray& includeDirs,
-			bool ignoreDoubleIncludes, bool removeDescriptions, bool removeObjects)
+			bool ignoreDoubleIncludes, bool removeDescriptions, bool removeObjects, 
+			const String& depSearchDir = "")
 			: m_namespace(namespace_)
 			, m_createNamespaces(createNamespaces)
 			, m_checkSyntaxOnly(checkSyntaxOnly)
@@ -92,8 +95,10 @@ public:
 			, m_ignoreDoubleIncludes(ignoreDoubleIncludes)
 			, m_removeDescriptions(removeDescriptions)
 			, m_removeObjects(removeObjects)
+			, m_depSearchDir(depSearchDir)
 		{
 		}
+#endif
 
 		String m_namespace;
 		bool m_createNamespaces;
@@ -106,6 +111,7 @@ public:
 		bool m_ignoreDoubleIncludes;
 		bool m_removeDescriptions;
 		bool m_removeObjects;
+		String m_depSearchDir; 
 	};
 
 	Compiler( const CIMOMHandleIFCRef& ch, const Options& opts, const ParserErrorHandlerIFCRef& mpeh );

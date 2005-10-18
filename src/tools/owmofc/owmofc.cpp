@@ -145,7 +145,8 @@ enum
 	E_OPTinclude,
 	E_OPTignore_double_includes,
 	E_OPTremove_descriptions,
-	E_OPTinvalid
+	E_OPTinvalid,
+	E_OPTcreate_deps
 };
 
 CmdLineParser::Option options[] =
@@ -161,6 +162,9 @@ CmdLineParser::Option options[] =
 		"Remove all the Description qualifiers to save space."},
 	{ E_OPTcreate_namespaces, 'c', "create-namespaces", CmdLineParser::E_NO_ARG, 0,
 		"If the namespace doesn't exist, create it."},
+	{ E_OPTcreate_deps, 's', "create-deps", CmdLineParser::E_REQUIRED_ARG, 0,
+		"If a superclass or reference end point does not exist, look for a file called <classname>.mof "
+		"under the specified directory, compile this MOF, and try again to create the class"},
 	{ E_OPTremove, 'r', "remove", CmdLineParser::E_NO_ARG, 0,
 		"Instead of creating objects, remove them."},
 	{ E_OPTnamespace, 'n', "namespace", CmdLineParser::E_REQUIRED_ARG, 0,
@@ -253,6 +257,10 @@ processCommandLineOptions(int argc, char** argv)
 		if (parser.isSet(E_OPTcreate_namespaces))
 		{
 			g_opts.m_createNamespaces = true;
+		}
+		if (parser.isSet(E_OPTcreate_deps))
+		{
+			g_opts.m_depSearchDir = parser.getOptionValue(E_OPTcreate_deps); 
 		}
 		if (parser.isSet(E_OPTremove_descriptions))
 		{

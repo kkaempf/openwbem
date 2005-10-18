@@ -43,6 +43,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
+#include "OW_FileSystem.hpp"
 #include <assert.h>
 
 namespace OW_NAMESPACE
@@ -1189,35 +1190,153 @@ void CIMOMVisitor::CIMOMprocessClassAux(const LineInfo& li)
 	}
 }
 
+static 
+String findMOF(const String& path, const String& file)
+{
+	StringArray contents; 
+	String rval; 
+	if (!FileSystem::getDirectoryContents(path, contents))
+	{
+		return rval; 
+	}
+	for (StringArray::const_iterator iter = contents.begin(); 
+		  iter != contents.end(); ++iter)
+	{
+		if (iter->equals("..") || iter->equals("."))
+		{
+			continue; 
+		}
+		String curFile = path + OW_FILENAME_SEPARATOR + *iter;
+		if (FileSystem::isDirectory(curFile)) 
+		{
+			rval = findMOF(curFile,file); 
+			if (!rval.empty())
+			{
+				return rval; 
+			}
+		}
+		else if (iter->equalsIgnoreCase(file))
+		{
+			return curFile; 
+		}
+	}
+	return rval; 
+}
+
+void CIMOMVisitor::compileDep(const String& className, const LineInfo& li)
+{
+	String basename = className + ".mof"; 
+	basename.toLowerCase(); 
+	String filename = findMOF(m_opts.m_depSearchDir, 
+							  basename); 
+	if (filename.empty())
+	{
+		theErrorHandler->fatalError(Format("Unable to find file for class %1", className).c_str(), li); 
+	}
+	theErrorHandler->progressMessage(Format("Found file %1 for class %2",
+											filename, className).c_str(), li);
+	Compiler theCompiler(m_hdl, m_opts, theErrorHandler); 
+	theCompiler.compile(filename); 
+}
+
+
 void CIMOMVisitor::CIMOMprocessClass(const LineInfo& li)
 {
+	theErrorHandler->progressMessage(Format("Processing Class: %1", m_curClass.getName()).c_str(), li);
+
 	try
 	{
-		theErrorHandler->progressMessage(Format("Processing Class: %1", m_curClass.getName()).c_str(), li);
-		try
+		bool fixedNS, fixedRefs, fixedSuper; 
+		for(fixedNS = fixedRefs = fixedSuper = false; 
+			 fixedNS == false || fixedRefs == false || fixedSuper == false ; )
 		{
-			CIMOMprocessClassAux(li);
-		}
-		catch (CIMException& e)
-		{
-			if (e.getErrNo() == CIMException::INVALID_NAMESPACE && m_opts.m_createNamespaces)
+			try
 			{
-				CIMOMcreateNamespace(li);
 				CIMOMprocessClassAux(li);
+				const char* const msg = m_opts.m_removeObjects ? "Deleted Class: %1" : "Created Class: %1";
+				theErrorHandler->progressMessage(Format(msg, m_curClass.getName()).c_str(), li);
+				break; 
+				// Note we won't add the class to the cache, since mof usually 
+				// is just creating classes, it'll be mostly a waste of time.  
+				// getClass will put classes in the cache, in the case that 
+				// there are lots of instances, each class will only have to 
+				// be fetched once.
 			}
-			else
+			catch (CIMException& e)
 			{
-				throw;
+				switch (e.getErrNo())
+				{
+				case CIMException::INVALID_NAMESPACE:
+				{
+					if (fixedNS || !m_opts.m_createNamespaces)
+					{
+						throw; 
+					}
+					CIMOMcreateNamespace(li);
+					fixedNS = true; 
+					break; 
+				}
+				case CIMException::INVALID_PARAMETER:
+				{
+					if (fixedRefs || m_opts.m_depSearchDir.empty())
+					{
+						throw; 
+					}
+					CIMPropertyArray cpa = m_curClass.getAllProperties(); 
+					for (CIMPropertyArray::const_iterator iter = cpa.begin(); 
+						  iter != cpa.end(); ++iter)
+					{
+						const CIMProperty& prop = *iter; 
+						if (prop.isReference())
+						{
+							CIMDataType cdt = prop.getDataType(); 
+							String classToFind = cdt.getRefClassName(); 
+							StringArray emptyProps; 
+							try
+							{
+								m_hdl->getClass(m_namespace, classToFind, 
+												E_LOCAL_ONLY, 
+												E_EXCLUDE_QUALIFIERS, 
+												E_EXCLUDE_CLASS_ORIGIN, 
+												&emptyProps); 
+							}
+							catch (CIMException& ce)
+							{
+								theErrorHandler->progressMessage(
+									Format("Class %1 referenced by reference property %2 doesn't exist in namespace %3, searching...", 
+										   classToFind, prop.getName(), m_namespace).c_str(), li);
+								if (ce.getErrNo() == CIMException::NOT_FOUND)
+								{
+									compileDep(classToFind, li); 
+								}
+							}
+						}
+					}
+					fixedRefs = true; 
+					break; 
+				}
+				case CIMException::INVALID_SUPERCLASS:
+				{
+					if (fixedSuper || m_opts.m_depSearchDir.empty())
+					{
+						throw; 
+					}
+					String classToFind = m_curClass.getSuperClass(); 
+					theErrorHandler->progressMessage(Format("Superclass %1 does not exist in namespace %2, searching...", 
+													   classToFind, m_namespace).c_str(), li);
+					compileDep(classToFind, li); 
+					fixedSuper = true; 
+					break; 
+				}
+				default: 
+					throw; 
+				}
 			}
 		}
-		const char* const msg = m_opts.m_removeObjects ? "Deleted Class: %1" : "Created Class: %1";
-		theErrorHandler->progressMessage(Format(msg, m_curClass.getName()).c_str(), li);
-		// Note we won't add the class to the cache, since mof usually is just creating classes, it'll be mostly a waste of time.  getClass will put classes in the cache,
-		// in the case that there are lots of instances, each class will only have to be fetched once.
 	}
-	catch (const CIMException& ce)
+	catch (CIMException& e)
 	{
-		if (ce.getErrNo() == CIMException::ALREADY_EXISTS)
+		if (e.getErrNo() == CIMException::ALREADY_EXISTS)
 		{
 			try
 			{
@@ -1231,10 +1350,11 @@ void CIMOMVisitor::CIMOMprocessClass(const LineInfo& li)
 		}
 		else
 		{
-			theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
+			theErrorHandler->fatalError(Format("Error: %1", e.getMessage()).c_str(), li);
 		}
 	}
 }
+
 void CIMOMVisitor::CIMOMprocessQualifierTypeAux()
 {
 	if (m_opts.m_removeObjects)
