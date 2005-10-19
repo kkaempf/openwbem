@@ -77,8 +77,6 @@ public:
 			, m_removeDescriptions(false)
 			, m_removeObjects(false)
 		{}
-#if 0
-		// I don't think this was even being used -- bartw
 		Options(const String& namespace_,
 			bool createNamespaces, bool checkSyntaxOnly, const String& dumpXmlFile,
 			bool remove, bool preserve, bool upgrade, const StringArray& includeDirs,
@@ -98,7 +96,6 @@ public:
 			, m_depSearchDir(depSearchDir)
 		{
 		}
-#endif
 
 		String m_namespace;
 		bool m_createNamespaces;
