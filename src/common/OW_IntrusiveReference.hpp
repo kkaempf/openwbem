@@ -65,6 +65,12 @@ namespace OW_NAMESPACE
 //
 //  The object is responsible for destroying itself.
 //
+
+
+class IntrusiveCountableBase; 
+void IntrusiveReferenceAddRef(IntrusiveCountableBase * p); 
+void IntrusiveReferenceRelease(IntrusiveCountableBase * p); 
+
 template<class T> class IntrusiveReference
 {
 private:

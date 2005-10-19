@@ -32,6 +32,7 @@
 #include "cmpift.h"
 #include "cmpisrv.h"
 
+void initializeTheKey(); 
 
 class CMPI_ThreadContext {
    static pthread_key_t theKey;
