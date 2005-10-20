@@ -67,10 +67,6 @@ namespace OW_NAMESPACE
 //
 
 
-class IntrusiveCountableBase; 
-void IntrusiveReferenceAddRef(IntrusiveCountableBase * p); 
-void IntrusiveReferenceRelease(IntrusiveCountableBase * p); 
-
 template<class T> class IntrusiveReference
 {
 private:

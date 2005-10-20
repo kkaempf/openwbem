@@ -57,6 +57,13 @@ namespace OW_NAMESPACE
  * 
  * Derived classes must implement: Derived* clone()
  */
+
+class COWIntrusiveCountableBase; 
+void COWIntrusiveReferenceAddRef(COWIntrusiveCountableBase * p); 
+void COWIntrusiveReferenceRelease(COWIntrusiveCountableBase * p); 
+bool COWIntrusiveReferenceUnique(COWIntrusiveCountableBase* p); 
+template <typename T> T* COWIntrusiveReferenceClone(T* p); 
+
 class OW_COMMON_API COWIntrusiveCountableBase
 {
 private:
@@ -102,28 +109,31 @@ public:
 	}
 
 	template <typename T>
-	inline friend T* COWIntrusiveReferenceClone(T* p)
-	{
-		// this needs to happen first to avoid a race condition between 
-		// another thread deleting the object and this one making a copy.
-		T* tmp = p->clone();
-		if (p->m_usecount.decAndTest())
-		{
-			// only copy--don't need to clone, also not a race condition.
-			// undo the decAndTest.
-			p->m_usecount.inc();
-			delete tmp; // we won't need this anymore.
-			return p;
-		}
-		else
-		{
-			// need to become unique
-			if (tmp) COWIntrusiveReferenceAddRef(tmp);
-
-			return tmp;
-		}
-	}
+	friend T* COWIntrusiveReferenceClone(T* p); 
 };
+
+template <typename T>
+inline T* COWIntrusiveReferenceClone(T* p)
+{
+	// this needs to happen first to avoid a race condition between 
+	// another thread deleting the object and this one making a copy.
+	T* tmp = p->clone();
+	if (p->m_usecount.decAndTest())
+	{
+		// only copy--don't need to clone, also not a race condition.
+		// undo the decAndTest.
+		p->m_usecount.inc();
+		delete tmp; // we won't need this anymore.
+		return p;
+	}
+	else
+	{
+		// need to become unique
+		if (tmp) COWIntrusiveReferenceAddRef(tmp);
+
+		return tmp;
+	}
+}
 
 } // end namespace OW_NAMESPACE
 

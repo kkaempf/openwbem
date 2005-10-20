@@ -55,6 +55,11 @@ namespace OW_NAMESPACE
  * from this class.  Note that if multiple inheritance is used, you must derive
  * "virtual"ly.
  */
+
+class IntrusiveCountableBase; 
+void IntrusiveReferenceAddRef(IntrusiveCountableBase * p); 
+void IntrusiveReferenceRelease(IntrusiveCountableBase * p); 
+
 class OW_COMMON_API IntrusiveCountableBase
 {
 private:

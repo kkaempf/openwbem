@@ -87,12 +87,6 @@ namespace COWIntrusiveReferenceHelpers
  * functions.
  */
 
-class COWIntrusiveCountableBase; 
-void COWIntrusiveReferenceAddRef(COWIntrusiveCountableBase * p); 
-void COWIntrusiveReferenceRelease(COWIntrusiveCountableBase * p); 
-bool COWIntrusiveReferenceUnique(COWIntrusiveCountableBase* p); 
-template <class T> T* COWIntrusiveReferenceClone(T* p); 
-
 template<class T> class COWIntrusiveReference
 {
 private:
