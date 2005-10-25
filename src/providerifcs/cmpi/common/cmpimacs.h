@@ -1991,7 +1991,7 @@ if ((st)) { \
 #else
  #define CMAssociationMIFactory(cn,pn) \
  extern "C" \
- CMPIMethodMI* pn##_Create_AssociationMI(CMPIBroker* broker, CMPIContext *ctxp) { \
+ CMPIAssociationMI* pn##_Create_AssociationMI(CMPIBroker* broker, CMPIContext *ctxp) { \
    static CMPIAssociationMIFT assocMIFT={ \
     CMPICurrentVersion, \
     CMPICurrentVersion, \
@@ -2003,7 +2003,7 @@ if ((st)) { \
     CmpiAssociationMI::driveReferenceNames, \
   }; \
    static CMPIAssociationMI mi; \
-   fprintf(stderr,"--- _Create_MethodMI() broker: %p\n",broker); \
+   fprintf(stderr,"--- _Create_AssociationMI() broker: %p\n",broker); \
    CmpiContext ctx(ctxp); \
    mi.ft=&assocMIFT; \
    CmpiAssociationMI *provider=new cn(broker,ctx); \
@@ -2137,6 +2137,6 @@ if ((st)) { \
 
 #define CMProviderBase(b) \
    CmpiProviderBase* CmpiProviderBase::base=NULL; \
-   CmpiProviderBase b();
+   CmpiProviderBase b;
 
 #endif /* _CMPIMACS_H_ */
