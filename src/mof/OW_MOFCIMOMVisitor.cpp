@@ -1357,21 +1357,8 @@ void CIMOMVisitor::CIMOMprocessClass(const LineInfo& li)
 
 void CIMOMVisitor::CIMOMprocessQualifierTypeAux()
 {
-	if (m_opts.m_removeObjects)
-	{
-		try
-		{
-			m_hdl->deleteQualifierType(m_namespace, m_curQualifierType.getName());
-		}
-		catch (CIMException& e)
-		{
-			if (e.getErrNo() != CIMException::NOT_FOUND)
-			{
-				throw;
-			}
-		}
-	}
-	else
+	// we don't delete qualifers.  Easier and safer to just leave them be. 
+	if (!m_opts.m_removeObjects)
 	{
 		m_hdl->setQualifierType(m_namespace, m_curQualifierType);
 	}
@@ -1403,7 +1390,7 @@ void CIMOMVisitor::CIMOMprocessQualifierType(const LineInfo& li)
 		// TODO: Fix this to include the namespace in the key
 		m_dataTypeCache.addToCache(m_curQualifierType, lcqualName);
 
-		const char* const msg = m_opts.m_removeObjects ? "Deleted Qualifier Type: %1" : "Created Qualifier Type: %1";
+		const char* const msg = m_opts.m_removeObjects ? "Not Deleting Qualifier Type: %1" : "Created Qualifier Type: %1";
 		theErrorHandler->progressMessage(Format(msg, m_curQualifierType.getName()).c_str(), li);
 	}
 	catch (const CIMException& ce)
