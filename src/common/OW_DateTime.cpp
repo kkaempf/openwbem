@@ -95,6 +95,27 @@ struct tm *gmtime_r(const time_t *timep, struct tm *result)
 }
 #endif
 
+#ifndef OW_HAVE_ASCTIME_R
+namespace
+{
+	OW_NAMESPACE::Mutex asctimeMutex;
+}
+char *asctime_r(const struct tm *tm, char *result)
+{
+	OW_NAMESPACE::MutexLock lock(asctimeMutex);
+	char *p = asctime(tm);
+	
+	if (p)
+	{
+		//asctime_r requires a buffer to be at least 26 chars in size
+		::strncpy(result,p,25);
+		result[25] = 0;
+	}
+	
+	return result;
+}
+#endif
+
 namespace OW_NAMESPACE
 {
 
@@ -1007,7 +1028,6 @@ DateTime::setTime(tm& tmarg, ETimeOffset timeOffset)
 	// apparently some implementations of timegm return something other than -1 on error, but still < 0...
 	if (m_time < 0)
 	{
-#ifdef OW_HAVE_ASCTIME_R
 		char buff[30];
 		String extraError;
 
@@ -1024,10 +1044,7 @@ DateTime::setTime(tm& tmarg, ETimeOffset timeOffset)
 		}
 
 		asctime_r(&tmarg, buff);
-#else
-		// if the c library isn't thread-safe, we'll need a mutex here.
-		char* buff = asctime(&tmarg);
-#endif
+
 		OW_THROW(DateTimeException, Format("Unable to represent time \"%1\" as a time_t. %2", buff, extraError).toString().rtrim().c_str());
 	}
 }
@@ -1225,15 +1242,10 @@ String
 DateTime::toString(ETimeOffset timeOffset) const
 {
 	tm theTime = getTm(timeOffset);
-#ifdef OW_HAVE_ASCTIME_R
 	char buff[30];
 	asctime_r(&theTime, buff);
 	String s(buff);
 	return s;
-#else
-	// if the c library isn't thread-safe, we'll need a mutex here.
-	return asctime(&theTime);
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
