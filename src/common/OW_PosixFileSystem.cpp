@@ -169,11 +169,14 @@ exists(const String& path)
 	return _ACCESS(path.c_str(), F_OK) == 0;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+#ifndef OW_WIN32
 bool
 isExecutable(const String& path)
 {
 	return _ACCESS(path.c_str(), X_OK) == 0;
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -188,28 +191,18 @@ canWrite(const String& path)
 	return _ACCESS(path.c_str(), W_OK) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
+#ifndef OW_WIN32
 bool
 isLink(const String& path)
 {
-#ifdef OW_WIN32
-	return false;
-/* This stuff does not compile (_S_IFLNK?)
-	struct _stat st;
-	if (_stat(path.c_str(), &st) !=0)
-	{
-		return false;
-	}
-	return ((st.st_mode & _S_IFLNK) != 0);
-*/
-#else
 	struct stat st;
 	if (lstat(path.c_str(), &st) != 0)
 	{
 		return false;
 	}
 	return S_ISLNK(st.st_mode);
-#endif
 }
+#endif
 //////////////////////////////////////////////////////////////////////////////
 bool
 isDirectory(const String& path)

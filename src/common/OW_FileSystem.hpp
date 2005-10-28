@@ -95,11 +95,17 @@ namespace FileSystem
 	 * @return true if the file exists (and false otherwise).
 	 */
 	OW_COMMON_API bool exists(const String& path);
+#ifndef OW_WIN32
 	/**
+	 * Tests if a file is executable
+	 *
+	 * This method is not available on platforms that do not have
+	 * support for executable file attributes
 	 * @return true if the file exists and is executable (and false
 	 * otherwise).
 	 */
 	OW_COMMON_API bool isExecutable(const String& path);
+#endif
 	/**
 	 * @return true if the file exists and can be read
 	 */
@@ -108,10 +114,17 @@ namespace FileSystem
 	 * @return true if the file exists and can be written
 	 */
 	OW_COMMON_API bool canWrite(const String& path);
+#ifndef OW_WIN32
 	/**
-     * @return true if file exists and is a symbolic link
-     */
+	 * Tests if a file is a symbolic link
+	 *
+	 * This method is not available on platforms that do not have
+	 * support for symbolic links
+	 *
+	 * @return true if file exists and is a symbolic link
+	 */
 	OW_COMMON_API bool isLink(const String& path);
+#endif
 	/**
 	 * @return true if file exists and is a directory
 	 */
