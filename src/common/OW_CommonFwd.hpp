@@ -41,9 +41,10 @@
 // Yeah I know this is forbidden by the standard, but what am I gonna do?  #include <algorithm> ? I think not.
 // If it causes a problem on some compiler, just #ifdef a fix in.
 #ifdef OW_WIN32
-// someone who cares about windows should fix this to be a forward declaration for less so
-// that *everything* doesn't end up including <functional>
-#include <functional>
+namespace std
+{
+	template <typename T> struct less;
+}
 #else
 namespace std
 {
