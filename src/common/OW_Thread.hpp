@@ -84,7 +84,7 @@ public:
 	 *
 	 * It is also possible for an individual thread to override the cancellation
 	 * request, if it knows that cancellation at this time may crash the system
-	 * or cause a deadlock.  If this happens, an CancellationDeniedException
+	 * or cause a deadlock.  If this happens, a CancellationDeniedException
 	 * will be thrown.
 	 *
 	 * @exception CancellationDeniedException may be thrown if the thread
@@ -92,20 +92,18 @@ public:
 	 */
 	void cooperativeCancel();
 	/**
-	 * Attempt to cooperatively and then definitively cancel this Threads
+	 * Attempt to cooperatively and then definitively cancel this Thread's
 	 * execution.  You should still call join() in order to clean up resources
 	 * allocated for this thread.
 	 * This function will set a flag that the thread has been
 	 * cancelled, which can be checked by testCancel().
 	 * definitiveCancel() wil first try to stop the thread in a cooperative
 	 * manner to avoid leaks or corruption. If the thread has not
-	 * exited after waitForCoopeartiveSecs seconds, this it will be cancelled
-	 * (pthread_cancel will
-	 * be called)  Note that this will not clean up any objects on the stack,
-	 * (except for on some Linux systems newer than Nov. 2003.  Right now,
-	 * the only system I know of that does C++ stack unwinding on thread
-	 * cancellation is Fedora Core 1. & RedHat Enterprise 3.0)
-	 * so it may cause memory leaks or inconsistent state or even memory corruption.
+	 * exited after waitForCoopeartiveSecs seconds, it will be cancelled.
+	 * Note that when using this function, any objects on the thread's stack will
+	 * not be cleaned up unless the operating system and compiler support stack
+	 * unwinding on thread cancellation.  As such, it may cause memory leaks or
+	 * inconsistent state or even memory corruption.
 	 * Also note that this still may not stop the thread, since a thread can
 	 * make itself non-cancellable, or it may not ever call any cancellation
 	 * points.
@@ -137,13 +135,10 @@ public:
 	 * You should still call join() in order to clean up resources
 	 * allocated for this thread.
 	 *
-	 * pthread_cancel will be called.
-	 * Note that using this function will not clean up any objects on the
-	 * thread's stack,
-	 * (except for on some Linux systems newer than Nov. 2003.  Right now,
-	 * the only system I know of that does C++ stack unwinding on thread
-	 * cancellation is Fedora Core 1.)
-	 * so it may cause memory leaks or inconsistent state or even memory corruption.
+	 * Note that when using this function, any objects on the thread's stack will
+	 * not be cleaned up unless the operating system and compiler support stack
+	 * unwinding on thread cancellation.  As such, it may cause memory leaks or
+	 * inconsistent state or even memory corruption.
 	 * Also note that this still may not stop the thread, since a thread can
 	 * make itself non-cancellable, or it may not ever call any cancellation
 	 * points.
