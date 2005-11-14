@@ -1,5 +1,6 @@
 /*******************************************************************************
 * Copyright (C) 2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2005-2006 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -42,6 +43,15 @@ namespace OW_NAMESPACE
 /////////////////////////////////////////////////////////////////////////////
 CppMethodProviderIFC::~CppMethodProviderIFC() 
 {
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void 
+CppMethodProviderIFC::getMethodProviderInfoWithEnv(
+	const ProviderRegistrationEnvironmentIFCRef& env,
+	MethodProviderInfo& info)
+{
+	return getMethodProviderInfo(info);
 }
 
 /////////////////////////////////////////////////////////////////////////////

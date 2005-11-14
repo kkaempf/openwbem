@@ -54,6 +54,17 @@ public:
 	 *  The entry consists of the class name and an optional list of namespaces.
 	 *  If the namespace list is empty, all namespaces are implied.
 	 */
+	virtual void getSecondaryInstanceProviderInfoWithEnv(
+		const ProviderRegistrationEnvironmentIFCRef& env,
+		SecondaryInstanceProviderInfo& info);
+
+	/**
+	 * A provider should override this method to report which classes in
+	 * which namespaces it instruments.
+	 * It should insert an entry for each class it is responsible for.
+	 *  The entry consists of the class name and an optional list of namespaces.
+	 *  If the namespace list is empty, all namespaces are implied.
+	 */
 	virtual void getSecondaryInstanceProviderInfo(SecondaryInstanceProviderInfo& info) = 0;
 
 	/**

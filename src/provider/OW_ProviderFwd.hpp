@@ -44,6 +44,9 @@ namespace OW_NAMESPACE
 class ProviderEnvironmentIFC;
 typedef IntrusiveReference<ProviderEnvironmentIFC> ProviderEnvironmentIFCRef;
 
+class ProviderRegistrationEnvironmentIFC;
+typedef IntrusiveReference<ProviderRegistrationEnvironmentIFC> ProviderRegistrationEnvironmentIFCRef;
+
 class InstanceProviderIFC;
 typedef IntrusiveReference<InstanceProviderIFC> InstanceProviderIFCRef;
 class SecondaryInstanceProviderIFC;

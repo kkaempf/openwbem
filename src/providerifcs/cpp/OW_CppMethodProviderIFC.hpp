@@ -1,5 +1,6 @@
 /*******************************************************************************
 * Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2005-2006 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -52,6 +53,24 @@ class OW_CPPPROVIFC_API CppMethodProviderIFC: public virtual CppProviderBaseIFC
 {
 public:
 	virtual ~CppMethodProviderIFC();
+	/**
+	 * A provider should override this method to report which classes in
+	 * which namespaces it instruments.
+	 * It should insert an entry for each class it is responsible for.
+	 *  The entry consists of the class name and an optional list of namespaces.
+	 *  If the namespace list is empty, all namespaces are implied.
+	 * If the method does nothing, then the provider's class must have a
+	 * provider qualifier that identifies the provider.  This old behavior is
+	 * deprecated and will be removed sometime in the future.  This method
+	 * has a default implementation that does nothing, to allow old providers
+	 * to be migrated forward with little or no change, but once the old
+	 * provider location method is removed, this member function will be pure
+	 * virtual.
+	 */
+	virtual void getMethodProviderInfoWithEnv(
+		const ProviderRegistrationEnvironmentIFCRef& env,
+		MethodProviderInfo&);
+
 	/**
 	 * A provider should override this method to report which classes in
 	 * which namespaces it instruments.

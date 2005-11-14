@@ -65,6 +65,15 @@ CppIndicationProviderIFC::authorizeFilter(
 	
 ///////////////////////////////////////////////////////////////////////////////
 void 
+CppIndicationProviderIFC::getIndicationProviderInfoWithEnv(
+	const ProviderRegistrationEnvironmentIFCRef& env,
+	IndicationProviderInfo& info)
+{
+	return getIndicationProviderInfo(info);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void 
 CppIndicationProviderIFC::getIndicationProviderInfo(IndicationProviderInfo&)
 {
 }

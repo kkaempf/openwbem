@@ -33,6 +33,7 @@ OW_MethodProviderIFC.cpp \
 OW_PolledProviderIFC.cpp \
 OW_ProviderBaseIFC.cpp \
 OW_ProviderEnvironmentIFC.cpp \
+OW_ProviderRegistrationEnvironmentIFC.cpp \
 OW_ProviderIFCBaseIFC.cpp \
 OW_MethodProviderInfo.cpp \
 OW_IndicationProviderIFC.cpp \
@@ -54,7 +55,7 @@ OW_SecondaryInstanceProviderIFC.hpp \
 OW_MethodProviderIFC.hpp \
 OW_PolledProviderIFC.hpp \
 OW_ProviderBaseIFC.hpp \
-OW_ProviderEnvironmentIFC.hpp \
+OW_ProviderRegistrationEnvironmentIFC.hpp \
 OW_ProviderIFCBaseIFC.hpp \
 OW_InstanceProviderInfo.hpp \
 OW_SecondaryInstanceProviderInfo.hpp \

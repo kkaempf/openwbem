@@ -49,6 +49,7 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Condition.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_RepositoryIFC.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -61,8 +62,59 @@ typedef CppProviderBaseIFC* (*ProviderCreationFunc)();
 typedef const char* (*versionFunc_t)();
 namespace
 {
-	const String COMPONENT_NAME("ow.provider.cpp.ifc");
+const String COMPONENT_NAME("ow.provider.cpp.ifc");
+
+class ProvRegEnv : public ProviderRegistrationEnvironmentIFC
+{
+public:
+	ProvRegEnv(const ProviderEnvironmentIFCRef& env)
+		: ProviderRegistrationEnvironmentIFC()
+		, m_env(env)
+	{
+	}
+
+	virtual ~ProvRegEnv()
+	{
+	}
+
+	virtual RepositoryIFCRef getRepository() const
+	{
+		return m_env->getRepository();
+	}
+
+	virtual LoggerRef getLogger(const String& componentName) const
+	{
+		return m_env->getLogger(componentName);
+	}
+
+	virtual String getConfigItem(const String &name, const String& defRetVal="") const
+	{
+		return m_env->getConfigItem(name, defRetVal);
+	}
+
+	virtual StringArray getMultiConfigItem(const String &itemName, 
+		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const
+	{
+		return m_env->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
+	}
+
+	virtual ProviderRegistrationEnvironmentIFCRef clone() const
+	{
+		return ProviderRegistrationEnvironmentIFCRef(new ProvRegEnv(m_env));
+	}
+
+private:
+	ProviderEnvironmentIFCRef m_env;
+};
+
+ProviderRegistrationEnvironmentIFCRef
+createProvRegEnv(const ProviderEnvironmentIFCRef& env)
+{
+	return ProviderRegistrationEnvironmentIFCRef(new ProvRegEnv(env));
 }
+
+}		// Enf of anonymous namespace
+
 const char* const CppProviderIFC::CREATIONFUNC = "createProvider";
 
 //////////////////////////////////////////////////////////////////////////////
@@ -491,7 +543,8 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				{
 					InstanceProviderInfo info;
 					info.setProviderName(providerid);
-					p_ip->getInstanceProviderInfo(info);
+					p_ip->getInstanceProviderInfoWithEnv(
+						createProvRegEnv(env), info);
 					instanceProviderInfo.push_back(info);
 				}
 
@@ -502,7 +555,8 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				{
 					SecondaryInstanceProviderInfo info;
 					info.setProviderName(providerid);
-					p_sip->getSecondaryInstanceProviderInfo(info);
+					p_sip->getSecondaryInstanceProviderInfoWithEnv(
+						createProvRegEnv(env), info);
 					secondaryInstanceProviderInfo.push_back(info);
 				}
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -511,7 +565,8 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				{
 					AssociatorProviderInfo info;
 					info.setProviderName(providerid);
-					p_ap->getAssociatorProviderInfo(info);
+					p_ap->getAssociatorProviderInfoWithEnv(
+						createProvRegEnv(env), info);
 					associatorProviderInfo.push_back(info);
 				}
 #endif
@@ -520,7 +575,8 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				{
 					MethodProviderInfo info;
 					info.setProviderName(providerid);
-					p_mp->getMethodProviderInfo(info);
+					p_mp->getMethodProviderInfoWithEnv(
+						createProvRegEnv(env), info);
 					methodProviderInfo.push_back(info);
 				}
 				CppIndicationProviderIFC* p_indp = p->getIndicationProvider();
@@ -528,7 +584,8 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				{
 					IndicationProviderInfo info;
 					info.setProviderName(providerid);
-					p_indp->getIndicationProviderInfo(info);
+					p_indp->getIndicationProviderInfoWithEnv(
+						createProvRegEnv(env), info);
 					indicationProviderInfo.push_back(info);
 				}
 

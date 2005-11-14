@@ -1,4 +1,5 @@
 /*******************************************************************************
+* Copyright (C) 2005-2006 Novell, Inc. All rights reserved.
 * Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -33,40 +34,46 @@
  * @author Dan Nuffer
  */
 
+#ifndef OW_PROVIDER_REGISTRATION_ENVIRONMENT_HPP_
+#define OW_PROVIDER_REGISTRATION_ENVIRONMENT_HPP_
 #include "OW_config.h"
-#include "OW_CppAssociatorProviderIFC.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
+#include "OW_ProviderFwd.hpp"
+#include "OW_IfcsFwd.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OW_NAMESPACE
 {
 
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-/////////////////////////////////////////////////////////////////////////////
-CppAssociatorProviderIFC::~CppAssociatorProviderIFC()
+/**
+ * The ProviderEnvironmentIFC object is valid only for the lifetime of the
+ * referenced OperationContext.
+ */
+class OW_PROVIDER_API ProviderRegistrationEnvironmentIFC : public IntrusiveCountableBase
 {
-}
+public:
+	virtual ~ProviderRegistrationEnvironmentIFC();
 
-/////////////////////////////////////////////////////////////////////////////
-void CppAssociatorProviderIFC::getAssociatorProviderInfoWithEnv(
-	const ProviderRegistrationEnvironmentIFCRef& env,
-	AssociatorProviderInfo& info)
-{
-	return getAssociatorProviderInfo(info);
-}
+	/** This function returns a reference to the repository.
+	 * WARNING: The return value is valid only as long as this object
+	 * is valid (see class note).
+	 */
+	virtual RepositoryIFCRef getRepository() const = 0;
 
-/////////////////////////////////////////////////////////////////////////////
-void CppAssociatorProviderIFC::getAssociatorProviderInfo(AssociatorProviderInfo&)
-{
-}
+	virtual LoggerRef getLogger(const String& componentName) const = 0;
+	virtual String getConfigItem(const String &name, const String& defRetVal="") const = 0;
+	virtual StringArray getMultiConfigItem(const String &itemName, 
+		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const = 0;
 
-/////////////////////////////////////////////////////////////////////////////
-CppAssociatorProviderIFC* 
-CppAssociatorProviderIFC::getAssociatorProvider() 
-{ 
-	return this; 
-}
-
-#endif
+	/**
+	 * When a provider is passed a ProviderEnvironmentIFCRef, the particular instance is only valid for the lifetime of the particular
+	 * call.  If a provider needs to save a ProviderEnvironmentIFCRef for later use (e.g. in another thread), it must call clone() on
+	 * the original ProviderEnvironmentIFC and save the result for later use.
+	 */
+	virtual ProviderRegistrationEnvironmentIFCRef clone() const = 0;
+};
+									
 
 } // end namespace OW_NAMESPACE
 
-
+#endif	// OW_PROVIDER_REGISTRATION_ENVIRONMENT_HPP_

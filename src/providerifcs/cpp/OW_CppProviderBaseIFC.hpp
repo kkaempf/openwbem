@@ -37,6 +37,7 @@
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_ProviderRegistrationEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_DateTime.hpp"
 #include "OW_IntrusiveReference.hpp"

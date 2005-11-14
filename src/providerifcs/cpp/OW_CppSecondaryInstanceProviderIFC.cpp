@@ -43,6 +43,14 @@ CppSecondaryInstanceProviderIFC::~CppSecondaryInstanceProviderIFC()
 {
 }
 
+void 
+CppSecondaryInstanceProviderIFC::getSecondaryInstanceProviderInfoWithEnv(
+	const ProviderRegistrationEnvironmentIFCRef& env,
+	SecondaryInstanceProviderInfo& info)
+{
+	return getSecondaryInstanceProviderInfo(info);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void
 CppSecondaryInstanceProviderIFC::filterInstances(
