@@ -1239,6 +1239,20 @@ void CIMOMVisitor::compileDep(const String& className, const LineInfo& li)
 	theCompiler.compile(filename); 
 }
 
+void CIMOMVisitor::compileQuals(const LineInfo& li)
+{
+	String basename = "qualifiers.mof"; 
+	String filename = findMOF(m_opts.m_depSearchDir, basename); 
+	if (filename.empty())
+	{
+		theErrorHandler->fatalError(Format("Unable to find file ", basename).c_str(), li); 
+	}
+	theErrorHandler->progressMessage(Format("Found file %1 for Qualifiers",
+											filename).c_str(), li);
+	Compiler theCompiler(m_hdl, m_opts, theErrorHandler); 
+	theCompiler.compile(filename); 
+}
+
 
 void CIMOMVisitor::CIMOMprocessClass(const LineInfo& li)
 {
@@ -1248,7 +1262,7 @@ void CIMOMVisitor::CIMOMprocessClass(const LineInfo& li)
 	{
 		bool fixedNS, fixedRefs, fixedSuper; 
 		for(fixedNS = fixedRefs = fixedSuper = false; 
-			 fixedNS == false || fixedRefs == false || fixedSuper == false ; )
+			 !fixedNS || !fixedRefs || !fixedSuper ; )
 		{
 			try
 			{
@@ -1482,6 +1496,10 @@ CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const String& qualName, con
 			if (e.getErrNo() == CIMException::INVALID_NAMESPACE && m_opts.m_createNamespaces)
 			{
 				CIMOMcreateNamespace(li);
+				if (!m_opts.m_depSearchDir.empty())
+				{
+					compileQuals(li); 
+				}
 				return m_hdl->getQualifierType(m_namespace, qualName);
 			}
 			else

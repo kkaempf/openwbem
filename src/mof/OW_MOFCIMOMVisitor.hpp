@@ -194,6 +194,7 @@ private:
 	CIMValue convertValuesIntoValueArray( const CIMValueArray& values );
 
 	void compileDep(const String& className, const LineInfo& li); 
+	void compileQuals(const LineInfo& li); 
 	
 	// Functions that call into the remote cimom handle
 	CIMClass CIMOMgetClass(const String& className, const LineInfo& li);
