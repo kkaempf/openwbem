@@ -210,10 +210,6 @@ SSLCtxMgr::initCtx(const String& certfile, const String& keyfile)
 				keyfile.empty()?certfile:keyfile, getOpenSSLErrorDescription()).c_str());
 		}
 	}
-	else
-	{
-		OW_THROW(SSLException, "SSLCtxMgr::initCtx(): no certificate file specified");
-	}
 
 	CryptographicRandomNumber::initRandomness();
 
@@ -316,6 +312,10 @@ SSLCtxMgr::initClient(const String& certfile, const String& keyfile)
 void
 SSLCtxMgr::initServer(const String& certfile, const String& keyfile)
 {
+	if (certfile.empty())
+	{
+		OW_THROW(SSLException, "SSLCtxMgr::initCtx(): no certificate file specified");
+	}
 	if (m_ctxServer)
 	{
 		uninitServer();
