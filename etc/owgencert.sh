@@ -2,7 +2,8 @@
 
 #!/bin/sh -e
 
-KEYFILE=@sysconfdir@/openwbem/hostkey+cert.pem
+CERTFILE=@sysconfdir@/openwbem/servercert.pem
+KEYFILE=@sysconfdir@/openwbem/serverkey.pem
 CNFFILE=@sysconfdir@/openwbem/ssleay.cnf
 
 if [ "$1" != "--force" -a -f $KEYFILE ]; then
@@ -26,7 +27,7 @@ echo
 
 export RANDFILE=/dev/random
 openssl req -days 365 $@ -config $CNFFILE \
-  -new -x509 -nodes -out $KEYFILE \
+  -new -x509 -nodes -out $CERTFILE \
   -keyout $KEYFILE
 chmod 600 $KEYFILE
 

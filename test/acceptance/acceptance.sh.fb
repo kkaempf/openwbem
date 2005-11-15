@@ -119,9 +119,11 @@ $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@ \
 	echo "test2:pass2" >> $STAGEDIR/$OWSYSCONFDIR/openwbem/simple_auth.passwd
 	echo "test3:pass3" >> $STAGEDIR/$OWSYSCONFDIR/openwbem/simple_auth.passwd
 
-	# set a symlink to the server SSL key+certificate
+	# set up the server SSL key+certificate
 	cp $TOPSRCDIR/test/acceptance/testfiles/hostkey+cert.pem \
-		$STAGEDIR/$OWSYSCONFDIR/openwbem
+		$STAGEDIR/$OWSYSCONFDIR/openwbem/servercert.pem
+	cp $TOPSRCDIR/test/acceptance/testfiles/hostkey+cert.pem \
+		$STAGEDIR/$OWSYSCONFDIR/openwbem/serverkey.pem
 	
 	# for client driver and acl test.
 	InstallProvider $BUILDDIR/test/c++providers/method/libmethodtest.@lib_ext@

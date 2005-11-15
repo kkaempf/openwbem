@@ -416,14 +416,14 @@ http_server.max_connections = 30
 ################################################################################
 # http_server.SSL_cert specifies the location of the file that contains the
 # host's certificate that will be used by Open SSL for HTTPS communications.
-http_server.SSL_cert = @sysconfdir@/openwbem/hostkey+cert.pem
+http_server.SSL_cert = @sysconfdir@/openwbem/servercert.pem
 
 ################################################################################
 # http_server.SSL_key specifies the location of the file that contains the
 # host's private key that will be used by Open SSL for HTTPS communications.
 # The default is the value of the http_server.SSL_cert option (meaning that
 # both the private key and the certificate are in the same file).
-;http_server.SSL_key = @sysconfdir@/openwbem/hostkey+cert.pem
+http_server.SSL_key = @sysconfdir@/openwbem/serverkey.pem
 
 ################################################################################
 # Tell the http server to use Digest authentication
