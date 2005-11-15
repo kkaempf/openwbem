@@ -86,16 +86,20 @@ public:
 	static bool checkServerCert(SSL* ssl, const String& hostName);
 	/**
 	 * Initialize for a client
-	 * @param keyFile the path to the file containing the key
+	 * @param certFile the path to the file containing the certificate.
+	 * @param keyFile the path to the file containing the key.  If a certificate is
+	 *  specified but a key is not, the certificate file will also be searched for a key.
 	 * @exception SSLException
 	 */
-	static void initClient(const String& keyFile = String());
+	static void initClient(const String& certFile = String(), const String& keyFile = String());
 	/**
 	 * Initialize for a server
-	 * @param keyFile the path to the file containing the key
+	 * @param certFile the path to the file containing the certificate.
+	 * @param keyFile the path to the file containing the key.  If a certificate is
+	 *  specified but a key is not, the certificate file will also be searched for a key.
 	 * @exception SSLException
 	 */
-	static void initServer(const String& keyFile);	
+	static void initServer(const String& certFile, const String& keyFile = String());
 	/** 
 	 * get the Server SSL Context
 	 * @return the server SSL_CTX
@@ -174,7 +178,7 @@ private:
 	/**
 	 * @throws SSLException
 	 */
-	static SSL_CTX* initCtx(const String& keyfile);
+	static SSL_CTX* initCtx(const String& certfile, const String& keyfile);
 	/**
 	 * @throws SSLException
 	 */
@@ -197,6 +201,7 @@ private:
 struct OW_COMMON_API SSLOpts
 {
 	SSLOpts(); 
+	String certfile; 
 	String keyfile; 
 	String trustStore; 
 	enum VerifyMode_t

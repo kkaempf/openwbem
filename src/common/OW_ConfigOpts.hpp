@@ -274,6 +274,7 @@ namespace ConfigOpts
 #endif
 	static const char* const HTTP_SERVER_MAX_CONNECTIONS_opt = "http_server.max_connections";
 	static const char* const HTTP_SERVER_SSL_CERT_opt = "http_server.SSL_cert";
+	static const char* const HTTP_SERVER_SSL_KEY_opt = "http_server.SSL_key";
 	static const char* const CPPPROVIFC_PROV_TTL_opt = "cppprovifc.prov_TTL";
 	static const char* const REQUEST_HANDLER_TTL_opt = "owcimomd.request_handler_TTL";
 	static const char* const MAX_CLASS_CACHE_SIZE_opt = "owcimomd.max_class_cache_size";

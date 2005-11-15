@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 		{
 			cerr << "Initializing SSL in client mode with " << sslcert << endl;
 			SSLOpts opts;
-			opts.keyfile = String(sslcert);
+			opts.certfile = String(sslcert);
 			sslctx = SSLClientCtxRef(new SSLClientCtx(opts));
 		}
 #endif

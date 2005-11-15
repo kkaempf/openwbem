@@ -602,7 +602,12 @@ HTTPServer::start()
 #else
 			try
 			{
-				m_sslopts.keyfile = env->getConfigItem(ConfigOpts::HTTP_SERVER_SSL_CERT_opt);
+				m_sslopts.certfile = env->getConfigItem(ConfigOpts::HTTP_SERVER_SSL_CERT_opt);
+				m_sslopts.keyfile = env->getConfigItem(ConfigOpts::HTTP_SERVER_SSL_KEY_opt);
+				if (m_sslopts.keyfile.empty())
+				{
+					m_sslopts.keyfile = m_sslopts.certfile;
+				}
 				m_sslopts.trustStore = env->getConfigItem(ConfigOpts::HTTP_SERVER_SSL_TRUST_STORE,
 													   OW_DEFAULT_HTTP_SERVER_SSL_TRUST_STORE);
 				String verifyMode = env->getConfigItem(ConfigOpts::HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt,
@@ -630,7 +635,7 @@ HTTPServer::start()
 														 verifyMode,
 														 ConfigOpts::HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt).c_str());
 				}
-				//SSLCtxMgr::initServer(keyfile);
+				//SSLCtxMgr::initServer(certfile, keyfile);
 				m_sslCtx = SSLServerCtxRef(new SSLServerCtx(m_sslopts));
 				if (m_sslopts.verifyMode != SSLOpts::MODE_DISABLED)
 				{

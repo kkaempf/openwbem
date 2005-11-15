@@ -44,8 +44,9 @@ int main( int iArgC, char *asArgV[] )
 			return 1;
 		}
 		String sURL( asArgV[ 1 ] );
+		String certKeyFile( "/etc/ssl/private/hostkey+cert.pem" );
 		if ( sURL.startsWith( "https://" ) )
-			SSLCtxMgr::initClient("/etc/ssl/private/hostkey+cert.pem");
+			SSLCtxMgr::initClient( certKeyFile, certKeyFile );
 	
 		AutoPtrNoVec<HTTPClient> pClient;
 		pClient = new HTTPClient( sURL );

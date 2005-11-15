@@ -186,7 +186,7 @@ SSLCtxMgr::getOpenSSLErrorDescription()
 
 //////////////////////////////////////////////////////////////////////////////
 SSL_CTX*
-SSLCtxMgr::initCtx(const String& keyfile)
+SSLCtxMgr::initCtx(const String& certfile, const String& keyfile)
 {
 	ERR_clear_error();
 	SSL_CTX* ctx = SSL_CTX_new(SSLv23_method());
@@ -195,19 +195,24 @@ SSLCtxMgr::initCtx(const String& keyfile)
 		OW_THROW(SSLException, Format("SSLCtxMgr::initCtx(): SSL_CTX_new returned 0: %1", getOpenSSLErrorDescription()).c_str());
 	}
 	SSL_CTX_set_default_passwd_cb(ctx, pem_passwd_cb);
-	if (!keyfile.empty())
+	if (!certfile.empty())
 	{
-		if (SSL_CTX_use_certificate_chain_file(ctx, keyfile.c_str()) != 1)
+		if (SSL_CTX_use_certificate_chain_file(ctx, certfile.c_str()) != 1)
 		{
 			SSL_CTX_free(ctx);
-			OW_THROW(SSLException, Format("SSLCtxMgr::initCtx(): Couldn't read certificate file: %1: %2",
-				keyfile, getOpenSSLErrorDescription()).c_str());
+			OW_THROW(SSLException, Format("SSLCtxMgr::initCtx(): Couldn't read certificate from file: %1: %2",
+				certfile, getOpenSSLErrorDescription()).c_str());
 		}
-		if (SSL_CTX_use_PrivateKey_file(ctx, keyfile.c_str(), SSL_FILETYPE_PEM) != 1)
+		if (SSL_CTX_use_PrivateKey_file(ctx, keyfile.empty()?certfile.c_str():keyfile.c_str(), SSL_FILETYPE_PEM) != 1)
 		{
 			SSL_CTX_free(ctx);
-			OW_THROW(SSLException, Format("SSLCtxMgr::initCtx(): Couldn't read key file: %1", getOpenSSLErrorDescription()).c_str());
+			OW_THROW(SSLException, Format("SSLCtxMgr::initCtx(): Couldn't read key from file: %1: %2",
+				keyfile.empty()?certfile:keyfile, getOpenSSLErrorDescription()).c_str());
 		}
+	}
+	else
+	{
+		OW_THROW(SSLException, "SSLCtxMgr::initCtx(): no certificate file specified");
 	}
 
 	CryptographicRandomNumber::initRandomness();
@@ -299,23 +304,23 @@ SSLCtxMgr::generateEphRSAKey(SSL_CTX* ctx)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-SSLCtxMgr::initClient(const String& keyfile)
+SSLCtxMgr::initClient(const String& certfile, const String& keyfile)
 {
 	if (m_ctxClient)
 	{
 		uninitClient();
 	}
-	m_ctxClient = initCtx(keyfile);
+	m_ctxClient = initCtx(certfile,keyfile);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-SSLCtxMgr::initServer(const String& keyfile)
+SSLCtxMgr::initServer(const String& certfile, const String& keyfile)
 {
 	if (m_ctxServer)
 	{
 		uninitServer();
 	}
-	m_ctxServer = initCtx(keyfile);
+	m_ctxServer = initCtx(certfile,keyfile);
 	//loadDHParams(m_ctx, dhfile);
 	generateEphRSAKey(m_ctxServer);
 	String sessID("SSL_SESSION_");
@@ -560,7 +565,7 @@ static int verify_callback(int ok, X509_STORE_CTX *store)
 SSLCtxBase::SSLCtxBase(const SSLOpts& opts)
 	: m_ctx(0)
 {
-	m_ctx = SSLCtxMgr::initCtx(opts.keyfile);
+	m_ctx = SSLCtxMgr::initCtx(opts.certfile,opts.keyfile);
 	
 	SSLCtxMgr::generateEphRSAKey(m_ctx); // TODO what the heck is this?
 	String sessID("SSL_SESSION_");

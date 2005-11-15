@@ -137,7 +137,8 @@ public:
 		RequestHandlerIFCRef listener,
 		const LoggerRef& logger,
 		Reference<Array<SelectablePair_t> > selectables,
-		const String& certFileName)
+		const String& certFileName,
+		const String& keyFileName = String())
 	: m_pLAuthenticator(authenticator)
 	, m_XMLListener(listener)
 	, m_logger(logger ? logger : LoggerRef(new NullLogger))
@@ -153,6 +154,8 @@ public:
 			setConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, String(-1), E_OVERWRITE_PREVIOUS);
 			setConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, String(0), E_OVERWRITE_PREVIOUS);
 			setConfigItem(ConfigOpts::HTTP_SERVER_SSL_CERT_opt, certFileName, E_OVERWRITE_PREVIOUS);
+			setConfigItem(ConfigOpts::HTTP_SERVER_SSL_KEY_opt,
+					keyFileName.empty()?certFileName:keyFileName, E_OVERWRITE_PREVIOUS);
 		}
 
 		setConfigItem(ConfigOpts::HTTP_SERVER_MAX_CONNECTIONS_opt, String(10), E_OVERWRITE_PREVIOUS);
@@ -294,17 +297,17 @@ class HTTPXMLCIMListenerCallback : public CIMListenerCallback
 {
 private: 
 	IntrusiveReference<ListenerAuthenticator> m_pLAuthenticator;
-	String m_certFileName; 
+	Bool m_useHTTPS; 
 public:
 	/**
 	 * @param logger If a logger specified then it will receive log messages, otherwise
 	 *  all log messages will be discarded.
 	 */
 	HTTPXMLCIMListenerCallback(IntrusiveReference<ListenerAuthenticator> authenticator,
-		const String& certFileName = String(),
+		Bool useHTTPS = false,
 		const LoggerRef& logger = LoggerRef(0))
 		: m_pLAuthenticator(authenticator)
-		, m_certFileName(certFileName) 
+		, m_useHTTPS(useHTTPS) 
 	{
 	}
 	~HTTPXMLCIMListenerCallback()
@@ -376,7 +379,7 @@ public:
 		String urlPrefix;
 
 		UInt16 listenerPort = httpsPort;
-		if(!m_certFileName.empty())	// Listener will be recieving over https
+		if(m_useHTTPS)	// Listener will be recieving over https
 		{
 			urlPrefix = "https://";
 			try
@@ -559,13 +562,14 @@ private:
 
 //////////////////////////////////////////////////////////////////////////////
 HTTPXMLCIMListener::HTTPXMLCIMListener(const LoggerRef& logger,
-	const String& certFileName)
+	const String& certFileName, const String& keyFileName)
 	: m_pLAuthenticator(new ListenerAuthenticator)
 	, m_httpServer(new HTTPServer)
 	, m_httpListenPort(0)
 	, m_httpsListenPort(0)
 	, m_certFileName(certFileName)
-	, m_callback(new HTTPXMLCIMListenerCallback(m_pLAuthenticator, certFileName))
+	, m_keyFileName(keyFileName)
+	, m_callback(new HTTPXMLCIMListenerCallback(m_pLAuthenticator, !certFileName.empty()))
 	, m_XMLListener(SharedLibraryRef(0), new XMLListener(m_callback))
 {
 	if(!certFileName.empty())
@@ -577,11 +581,20 @@ HTTPXMLCIMListener::HTTPXMLCIMListener(const LoggerRef& logger,
 					certFileName).c_str());
 		}
 	}
+	if(!keyFileName.empty())
+	{
+		if(!FileSystem::canRead(keyFileName))
+		{
+			OW_THROW(IOException, 
+				Format("Unable to open key file %1",
+					keyFileName).c_str());
+		}
+	}
 
 	Reference<Array<SelectablePair_t> >
 		selectables(new Array<SelectablePair_t>);
 	ServiceEnvironmentIFCRef env(new HTTPXMLCIMListenerServiceEnvironment(
-		m_pLAuthenticator, m_XMLListener, logger, selectables, certFileName));
+		m_pLAuthenticator, m_XMLListener, logger, selectables, certFileName, keyFileName));
 	m_httpServer->init(env);
 	m_httpServer->start();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really
