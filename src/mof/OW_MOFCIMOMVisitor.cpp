@@ -1502,6 +1502,12 @@ CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const String& qualName, con
 				}
 				return m_hdl->getQualifierType(m_namespace, qualName);
 			}
+			else if (e.getErrNo() == CIMException::NOT_FOUND 
+						&& !m_opts.m_depSearchDir.empty())
+			{
+				compileQuals(li); 
+				return m_hdl->getQualifierType(m_namespace, qualName);
+			}
 			else
 			{
 				throw;
