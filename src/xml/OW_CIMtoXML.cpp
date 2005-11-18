@@ -62,6 +62,14 @@
 #endif
 #include <algorithm>
 
+#include <cfloat> // for DBL_MANT_DIG and FLT_RADIX
+
+#ifdef OW_WIN32
+#define SNPRINTF _snprintf
+#else
+#define SNPRINTF snprintf
+#endif
+
 namespace OW_NAMESPACE
 {
 
@@ -776,14 +784,41 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 			case CIMDataType::SINT32:
 			case CIMDataType::UINT64:
 			case CIMDataType::SINT64:
-			case CIMDataType::REAL32:
-			case CIMDataType::REAL64:
 			case CIMDataType::DATETIME:
 			{
 				out << cv.toString();
 				break;
 			}
-
+			case CIMDataType::REAL32:
+			{
+				char tmpbuf[128];
+#if FLT_RADIX == 2
+#if defined(OW_REAL32_IS_FLOAT)
+				::SNPRINTF(tmpbuf, sizeof(tmpbuf), "%.*e", FLT_MANT_DIG * 3 / 10 + 1, static_cast<double>(cv.toReal32()));
+#elif defined(OW_REAL32_IS_DOUBLE)
+				::SNPRINTF(tmpbuf, sizeof(tmpbuf), "%.*e", DBL_MANT_DIG * 3 / 10 + 1, cv.toReal32());
+#endif
+#else
+#error "The formula for computing the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"
+#endif
+				out << tmpbuf;
+				break;
+			}
+			case CIMDataType::REAL64:
+			{
+				char tmpbuf[128];
+#if FLT_RADIX == 2
+#if defined(OW_REAL64_IS_DOUBLE)
+				::SNPRINTF(tmpbuf, sizeof(tmpbuf), "%.*e", DBL_MANT_DIG * 3 / 10 + 1, cv.toReal64());
+#elif defined(OW_REAL64_IS_LONG_DOUBLE)
+				::SNPRINTF(tmpbuf, sizeof(tmpbuf), "%.*Le", LDBL_MANT_DIG * 3 / 10 + 1, cv.toReal64());
+#endif
+#else
+#error "The formula for computing the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"
+#endif
+				out << tmpbuf;
+				break;
+			}
 			case CIMDataType::CHAR16:
 			case CIMDataType::STRING:
 			{
