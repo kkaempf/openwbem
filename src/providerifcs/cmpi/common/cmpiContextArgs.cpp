@@ -95,6 +95,15 @@ static CMPIData argsGetArgAt(const CMPIArgs* eArg, CMPICount pos, CMPIString** n
 	}
 
 	OpenWBEM::CIMValue v=(*arg)[pos].getValue();
+
+	if (!v)
+	{
+		// Valid request, but the value for the named
+		// parm is null.
+		CMSetStatus(rc,CMPI_RC_OK);
+		return data;
+	}
+	
 	OpenWBEM::CIMDataType pType=v.getType();
 	CMPIType t=type2CMPIType(pType,v.isArray());
 
