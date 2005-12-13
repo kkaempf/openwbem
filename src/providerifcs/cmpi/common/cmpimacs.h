@@ -437,9 +437,9 @@ if ((st)) { \
      7,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7
   #define CMFmtArgs8(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8) \
      8,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,
-  #define CMFmtArgs9(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9,v10,t19) \
+  #define CMFmtArgs9(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9) \
      9,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9
-  #define CMFmtArgs10(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9,v10,t19) \
+  #define CMFmtArgs10(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9,v10,t10) \
      10,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9,v10,t10
   
   #define CMGetMessage(b,id,def,rc,parms)      ((b)->eft->getMessage((b),(id),(def),(rc),parms))
