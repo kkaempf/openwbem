@@ -46,6 +46,7 @@ namespace
 	const String COMPONENT_NAME("ow.provider.OpenWBEM_ObjectManager");
 	const String CLASS_OpenWBEM_ObjectManager("OpenWBEM_ObjectManager");
 	const String CLASS_OpenWBEM_InternalData("OpenWBEM_InternalData");
+	const String Class_OpenWBEM_ComputerSystem("OpenWBEM_UnitaryComputerSystem");
 	const String dataKey("OpenWBEM_ObjectManager.Name");
 	const String CLASS_CIM_InstModification("CIM_InstModification");
 	const String CLASS_OpenWBEM_HostedObjectManager("OpenWBEM_HostedObjectManager");
@@ -249,10 +250,11 @@ public:
 		CIMInstance newInst(OpenWBEM_ObjectManager.newInstance());
 
 		// We are weakly associated to the ComputerSystem, we'll get it and use it's keys.
-		CIMObjectPathArray computerSystems(hdl->enumInstanceNamesA(interopNS, "CIM_ComputerSystem"));
+		CIMObjectPathArray computerSystems(hdl->enumInstanceNamesA(interopNS, Class_OpenWBEM_ComputerSystem));
 		if (computerSystems.size() != 1)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, Format("Expected 1 instance of CIM_ComputerSystem, got %1", computerSystems.size()).c_str());
+			OW_THROWCIMMSG(CIMException::FAILED, Format("Expected 1 instance of %1, got %2", 
+				Class_OpenWBEM_ComputerSystem, computerSystems.size()).c_str());
 		}
 
 		CIMObjectPath& computerSystem(computerSystems[0]);
