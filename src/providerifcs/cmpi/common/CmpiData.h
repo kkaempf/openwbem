@@ -25,7 +25,6 @@
 
 #include "cmpidt.h"
 //#include "CmpiString.h"
-#include "CmpiInstance.h"
 #include "CmpiString.h"
 
 class CmpiArray;
