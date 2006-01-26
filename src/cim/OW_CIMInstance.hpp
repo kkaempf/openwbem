@@ -152,8 +152,9 @@ public:
 	/**
 	 * Set the language this CIMClass is using
 	 * @param language The new language for this CIMClass
+	 * @return a reference to *this
 	 */
-	void setLanguage(const String& language);
+	CIMInstance& setLanguage(const String& language);
 	/**
 	 * @return The qualifiers for this instance as an array of CIMQualifiers.
 	 */
@@ -426,6 +427,23 @@ public:
 	 * @return a reference to *this
 	 */
 	virtual void setName(const CIMName& name);
+	/**
+	 * Set the namespace on this instance.
+	 * This allows providers to provide additional namespace information
+	 * about an instance when the instance returned comes from a
+	 * namespace that is different from the namespace specified on
+	 * the client's request. Typically used in an associators call.
+	 * @param ns Specifies the namespace this instance is from.
+	 * @return a reference to *this
+	 */
+	CIMInstance& setNameSpace(const String& ns);
+	/**
+	 * @return the Namespace this instance was retrieved from.
+	 * If this is an empty string, the namespace is assumed to
+	 * be from the namespace that was specified on the client
+	 * request.
+	 */
+	String getNameSpace() const;
 	/**
 	 * Read this CIMInstance from an input stream.
 	 * @param istrm The input stream to read this object from.

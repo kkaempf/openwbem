@@ -104,6 +104,7 @@ getObjectWithPath(CIMXMLParser& parser, CIMClass& c,
 		{
 			parser.mustTokenIsId(CIMXMLParser::E_INSTANCE);
 			i = readInstance(parser,tmpcop);
+			i.setNameSpace(tmpcop.getNameSpace());
 		}
 		else
 		{
@@ -128,6 +129,7 @@ getObjectWithPath(CIMXMLParser& parser, CIMClass& c,
 		{
 			parser.mustTokenIsId(CIMXMLParser::E_INSTANCE);
 			i = readInstance(parser, tmpcop);
+			i.setNameSpace(tmpcop.getNameSpace());
 		}
 		else
 		{

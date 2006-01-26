@@ -659,7 +659,14 @@ namespace
 		virtual void doHandle(const CIMInstance &ci)
 		{
 			ostr <<  "<VALUE.OBJECTWITHPATH>";
-			CIMObjectPath cop( ns, ci );
+			// If instance has a namespace, use that
+			// instead of what we were constructed with
+			String cins = ci.getNameSpace();
+			if (cins.empty())
+			{
+				cins = ns;
+			}
+			CIMObjectPath cop( cins, ci );
 			// Make sure all outgoing object paths have our host name, instead of 127.0.0.1
 			cop.setHost(m_host);
 			CIMInstancePathAndInstancetoXML(ci, ostr, cop);
@@ -1309,7 +1316,14 @@ namespace
 	protected:
 		virtual void doHandle(const CIMInstance &i)
 		{
-			CIMObjectPath cop(ns, i);
+			// If instance has a namespace, use that
+			// instead of what we were constructed with
+			String cins = i.getNameSpace();
+			if (cins.empty())
+			{
+				cins = ns;
+			}
+			CIMObjectPath cop(cins, i);
 			ostr << "<VALUE.OBJECTWITHPATH>";
 			CIMInstancePathAndInstancetoXML(i, ostr, cop);
 			ostr << "</VALUE.OBJECTWITHPATH>";

@@ -57,6 +57,7 @@ using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMInstance::INSTData : public COWIntrusiveCountableBase
 {
+	String m_nameSpace;
 	CIMName m_owningClassName;
 	CIMPropertyArray m_keys;
 	CIMPropertyArray m_properties;
@@ -67,6 +68,7 @@ struct CIMInstance::INSTData : public COWIntrusiveCountableBase
 bool operator<(const CIMInstance::INSTData& x, const CIMInstance::INSTData& y)
 {
 	return StrictWeakOrdering(
+		x.m_nameSpace, y.m_nameSpace,
 		x.m_owningClassName, y.m_owningClassName,
 		x.m_properties, y.m_properties,
 		x.m_keys, y.m_keys,
@@ -129,16 +131,31 @@ CIMInstance::getClassName() const
 	return m_pdata->m_owningClassName.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
+CIMInstance& 
+CIMInstance::setNameSpace(const String& ns)
+{
+	m_pdata->m_nameSpace = ns;
+	return *this;
+}
+//////////////////////////////////////////////////////////////////////////////
+String 
+CIMInstance::getNameSpace() const
+{
+	return m_pdata->m_nameSpace;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 String
 CIMInstance::getLanguage() const
 {
 	return m_pdata->m_language;
 }
 //////////////////////////////////////////////////////////////////////////////
-void
+CIMInstance&
 CIMInstance::setLanguage(const String& language)
 {
 	m_pdata->m_language = language;
+	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance&
@@ -834,6 +851,7 @@ CIMInstance::readObject(istream &istrm)
 void
 CIMInstance::writeObject(std::ostream &ostrm) const
 {
+	// Ignore m_nameSpace and m_language
 	CIMBase::writeSig(ostrm, OW_CIMINSTANCESIG_V, CIMInstance::SERIALIZATION_VERSION);
 	m_pdata->m_owningClassName.writeObject(ostrm);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_keys);
