@@ -252,6 +252,12 @@ void
 HTTPClient::receiveAuthentication()
 {
 	String authInfo = getHeaderValue("www-authenticate");
+	String scheme; 
+    if (!authInfo.empty())
+	{
+		scheme = authInfo.tokenize()[0]; 
+		scheme.toLowerCase(); 
+	}
 	m_sRealm = getAuthParam("realm", authInfo);
 
 #ifndef OW_DISABLE_DIGEST
@@ -274,7 +280,7 @@ HTTPClient::receiveAuthentication()
 			m_url.credential, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
 		m_iDigestNonceCount = 1;
 	}
-	else if ( authInfo.indexOf( "Digest" ) != String::npos )
+	else if ( scheme.equals("digest"))
 	{
 		m_sAuthorization = "Digest";
 		m_uselocalAuthentication = false;
@@ -285,12 +291,12 @@ HTTPClient::receiveAuthentication()
 	}
 	else
 #endif
-	if ( authInfo.indexOf( "Basic" ) != String::npos )
+	if ( scheme.equals("basic"))
 	{
 		m_sAuthorization = "Basic";
 		m_uselocalAuthentication = false;
 	}
-	else if ( authInfo.indexOf( "OWLocal" ) != String::npos || m_uselocalAuthentication)
+	else if ( scheme.equals( "owlocal" ) || m_uselocalAuthentication)
 	{
 		m_sAuthorization = "OWLocal";
 		m_uselocalAuthentication = true;
