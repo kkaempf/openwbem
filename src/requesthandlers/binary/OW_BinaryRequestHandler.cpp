@@ -404,16 +404,27 @@ namespace
 	class BinaryCIMInstanceWriter : public CIMInstanceResultHandlerIFC
 	{
 	public:
-		BinaryCIMInstanceWriter(std::ostream& ostrm_)
+		BinaryCIMInstanceWriter(std::ostream& ostrm_, const String& ns_)
 		: ostrm(ostrm_)
+		, ns(ns_)
 		{}
 	protected:
 		virtual void doHandle(const CIMInstance &cop)
 		{
-			BinarySerialization::writeInstance(ostrm, cop);
+			if (cop.getNameSpace().empty())
+			{
+				CIMInstance ci(cop);
+				ci.setNameSpace(ns);
+				BinarySerialization::writeInstance(ostrm, ci);
+			}
+			else
+			{
+				BinarySerialization::writeInstance(ostrm, cop);
+			}
 		}
 	private:
 		std::ostream& ostrm;
+		String ns;
 	};
 	class BinaryCIMQualifierTypeWriter : public CIMQualifierTypeResultHandlerIFC
 	{
@@ -442,6 +453,7 @@ namespace
 		}
 	private:
 		std::ostream& ostrm;
+		String ns;
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -542,6 +554,8 @@ BinaryRequestHandler::getInstance(const CIMOMHandleIFCRef& chdl,
 	}
 	CIMInstance cimInstance = chdl->getInstance(ns, op, localOnly,
 		includeQualifiers, includeClassOrigin, propListPtr);
+	if (cimInstance.getNameSpace().empty())
+		cimInstance.setNameSpace(ns);
 	BinarySerialization::write(ostrm, BIN_OK);
 	BinarySerialization::writeInstance(ostrm, cimInstance);
 }
@@ -714,7 +728,7 @@ BinaryRequestHandler::enumInstances(const CIMOMHandleIFCRef& chdl,
 	BinarySerialization::write(ostrm, BIN_OK);
 	BinarySerialization::write(ostrm, BINSIG_INSTENUM);
 	
-	BinaryCIMInstanceWriter handler(ostrm);
+	BinaryCIMInstanceWriter handler(ostrm, ns);
 	chdl->enumInstances(ns, className, handler, deep, localOnly,
 		includeQualifiers, includeClassOrigin, propListPtr);
 	BinarySerialization::write(ostrm, END_INSTENUM);
@@ -771,7 +785,7 @@ BinaryRequestHandler::execQuery(const CIMOMHandleIFCRef& chdl,
 	String queryLang(BinarySerialization::readString(istrm));
 	BinarySerialization::write(ostrm, BIN_OK);
 	BinarySerialization::write(ostrm, BINSIG_INSTENUM);
-	BinaryCIMInstanceWriter handler(ostrm);
+	BinaryCIMInstanceWriter handler(ostrm, ns);
 	chdl->execQuery(ns, handler, query, queryLang);
 	BinarySerialization::write(ostrm, END_INSTENUM);
 	BinarySerialization::write(ostrm, END_INSTENUM);
@@ -814,7 +828,7 @@ BinaryRequestHandler::associators(const CIMOMHandleIFCRef& chdl,
 	{
 		// instance path
 		BinarySerialization::write(ostrm, BINSIG_INSTENUM);
-		BinaryCIMInstanceWriter handler(ostrm);
+		BinaryCIMInstanceWriter handler(ostrm, ns);
 		chdl->associators(ns, op, handler, assocClass, resultClass,
 			role, resultRole, includeQualifiers, includeClassOrigin, propListPtr);
 		BinarySerialization::write(ostrm, END_INSTENUM);
@@ -874,7 +888,7 @@ BinaryRequestHandler::references(const CIMOMHandleIFCRef& chdl,
 	{
 		// instance path
 		BinarySerialization::write(ostrm, BINSIG_INSTENUM);
-		BinaryCIMInstanceWriter handler(ostrm);
+		BinaryCIMInstanceWriter handler(ostrm, ns);
 		chdl->references(ns, op, handler, resultClass,
 			role, includeQualifiers, includeClassOrigin, propListPtr);
 		BinarySerialization::write(ostrm, END_INSTENUM);
