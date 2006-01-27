@@ -1,4 +1,4 @@
-*******************************************************************************
+/*******************************************************************************
 * Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -820,13 +820,11 @@ CIMInstance::setName(const CIMName& name)
 void
 CIMInstance::readObject(istream &istrm)
 {
-	// Ignore m_nameSpace
-
 	CIMName owningClassName;
 	CIMPropertyArray properties;
 	CIMPropertyArray keys;
 	CIMQualifierArray qualifiers;
-	String language;
+	String language, nameSpace;
 
 	UInt32 version = CIMBase::readSig(istrm, OW_CIMINSTANCESIG,
 		OW_CIMINSTANCESIG_V, CIMInstance::SERIALIZATION_VERSION);
@@ -840,6 +838,11 @@ CIMInstance::readObject(istream &istrm)
 	{
 		language.readObject(istrm);
 	}
+	// If dealing with version > 1 then read namespace
+	if (version > 1)
+	{
+		nameSpace.readObject(istrm);
+	}
 	if (!m_pdata)
 	{
 		m_pdata = new INSTData;
@@ -849,7 +852,7 @@ CIMInstance::readObject(istream &istrm)
 	m_pdata->m_properties = properties;
 	m_pdata->m_qualifiers = qualifiers;
 	m_pdata->m_language = language;
-	m_pdata->m_nameSpace.erase();
+	m_pdata->m_nameSpace = nameSpace;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -862,6 +865,7 @@ CIMInstance::writeObject(std::ostream &ostrm) const
 	BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
 	m_pdata->m_language.writeObject(ostrm);
+	m_pdata->m_nameSpace.writeObject(ostrm);
 }
 //////////////////////////////////////////////////////////////////////////////
 String

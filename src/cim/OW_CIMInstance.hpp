@@ -84,7 +84,7 @@ class OW_COMMON_API CIMInstance : public CIMElement
 public:
 	struct INSTData;
 	
-	enum { SERIALIZATION_VERSION = 1 };				// Version # for serialization
+	enum { SERIALIZATION_VERSION = 2 };				// Version # for serialization
 	
 	enum EErrorCodes
 	{
