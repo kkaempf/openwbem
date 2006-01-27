@@ -1,4 +1,4 @@
-/*******************************************************************************
+*******************************************************************************
 * Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -522,6 +522,7 @@ CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQuali
 	bool noProps) const
 {
 	CIMInstance ci;
+	ci.m_pdata->m_nameSpace = m_pdata->m_nameSpace;
 	ci.m_pdata->m_owningClassName = m_pdata->m_owningClassName;
 	ci.m_pdata->m_keys = m_pdata->m_keys;
 	ci.m_pdata->m_language = m_pdata->m_language;
@@ -819,6 +820,8 @@ CIMInstance::setName(const CIMName& name)
 void
 CIMInstance::readObject(istream &istrm)
 {
+	// Ignore m_nameSpace
+
 	CIMName owningClassName;
 	CIMPropertyArray properties;
 	CIMPropertyArray keys;
@@ -846,12 +849,13 @@ CIMInstance::readObject(istream &istrm)
 	m_pdata->m_properties = properties;
 	m_pdata->m_qualifiers = qualifiers;
 	m_pdata->m_language = language;
+	m_pdata->m_nameSpace.erase();
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMInstance::writeObject(std::ostream &ostrm) const
 {
-	// Ignore m_nameSpace and m_language
+	// Ignore m_nameSpace
 	CIMBase::writeSig(ostrm, OW_CIMINSTANCESIG_V, CIMInstance::SERIALIZATION_VERSION);
 	m_pdata->m_owningClassName.writeObject(ostrm);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_keys);
