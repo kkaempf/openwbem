@@ -123,8 +123,8 @@ namespace
         : AssocHelperResultHandlerIFC(objectName,resultClass ,role ,resultRole)
         , _realHandler(result)
         , _lch(lch)
-        , _includeQualifiers(_includeQualifiers)
-        , _includeClassOrigin(_includeClassOrigin)
+        , _includeQualifiers(includeQualifiers)
+        , _includeClassOrigin(includeClassOrigin)
         , _propertyList(propertyList)
         {}
     protected:
