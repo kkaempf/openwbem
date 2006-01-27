@@ -62,6 +62,7 @@ createMutex(NonRecursiveMutex_t& handle)
 	}
  
 	res = pthread_mutex_init(&handle.mutex, &attr);
+	pthread_mutexattr_destroy(&attr);
 	if (res != 0)
 	{
 		return -1;
