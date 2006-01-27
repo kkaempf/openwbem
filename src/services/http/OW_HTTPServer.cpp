@@ -152,11 +152,17 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	const Socket& socket)
 {
 	MutexLock lock(m_authGuard);
+	String scheme; 
+	if (!info.empty())
+	{
+		scheme = info.tokenize()[0]; 
+		scheme.toLowerCase(); 
+	}
 
 	
 	// user supplied creds.  Find out what type of auth they're using.  We currently support Basic, Digest & OWLocal
 #ifndef OW_WIN32
-	if (m_options.allowLocalAuthentication && info.startsWith("OWLocal"))
+	if (m_options.allowLocalAuthentication && scheme.equals("owlocal"))
 	{
 		OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), "HTTPServer::authenticate: processing OWLocal");
 		bool rv = m_localAuthentication->authenticate(userName, info, pconn) && isAllowedUser(userName);
@@ -199,7 +205,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	}
 #endif
 	bool rv = false;
-	if (m_options.allowDigestAuthentication && info.startsWith("Digest"))
+	if (m_options.allowDigestAuthentication && scheme.equals("digest"))
 	{
 #ifndef OW_DISABLE_DIGEST
 		OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), "HTTPServer::authenticate: processing Digest");
@@ -214,7 +220,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		}
 #endif
 	}
-	else if (m_options.allowBasicAuthentication && info.startsWith("Basic"))
+	else if (m_options.allowBasicAuthentication && scheme.equals("basic"))
 	{
 		OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), "HTTPServer::authenticate: processing Basic");
 		String authChallenge = "Basic realm=\"" + pconn->getHostName() + "\"";
