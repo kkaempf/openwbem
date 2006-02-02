@@ -118,6 +118,13 @@ protected:
 	}
 #endif
 
+    void useRefCountOf(const COWReferenceBase& arg)
+    {
+        decRef(); 
+        m_pRefCount = arg.m_pRefCount; 
+        incRef(); 
+    }
+
 protected:
 	RefCount* volatile m_pRefCount;
 };
