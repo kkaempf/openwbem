@@ -1492,6 +1492,8 @@ test/CppUnit/Makefile
 test/acceptance/Makefile
 test/acceptance/progs/Makefile
 test/acceptance/testfiles/Makefile
+test/acceptance/testfiles/socketCat/Makefile
+test/acceptance/testfiles/xml_input/Makefile
 test/c++providers/Makefile
 test/c++providers/associator/Makefile
 test/c++providers/method/Makefile
