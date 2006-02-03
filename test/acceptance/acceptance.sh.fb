@@ -1177,6 +1177,9 @@ TestSecondaryInstanceProvider()
 TestSocketCat()
 {
 	for inputFile in $TOPSRCDIR/test/acceptance/testfiles/socketCat/*.in; do
+		if [ "x`basename $inputFile`" = "xMakefile.in" ]; then
+			continue
+		fi                
 		REGEX_LIST_FILE=${inputFile%in}regexlist
 		REGEX_COUNT=`wc -l < $REGEX_LIST_FILE`
 		MATCH_COUNT=`$BUILDDIR/test/acceptance/progs/socketCat $* < $inputFile | grep -f $REGEX_LIST_FILE | wc -l`
