@@ -26,6 +26,7 @@
 #include "cmpidt.h"
 #include "cmpift.h"
 
+#include "CmpiData.h"
 #include "CmpiObject.h"
 
 class CmpiObjectPath;

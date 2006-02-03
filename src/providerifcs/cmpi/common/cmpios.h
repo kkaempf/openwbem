@@ -37,6 +37,8 @@
 #ifndef _CMPIOS_H_
 #define _CMPIOS_H_
 
+#include "OW_config.h"
+
 #define CMPI_THREAD_RETURN      void*
 #define CMPI_THREAD_TYPE        void*
 #define CMPI_MUTEX_TYPE         void*
