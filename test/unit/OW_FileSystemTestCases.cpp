@@ -205,19 +205,28 @@ void OW_FileSystemTestCases::testrealPath()
 {
 	using namespace FileSystem::Path;
 
+#if defined(OW_DARWIN)
+	// On MacOS, /etc is really a symlink.
+	const String nonSymlinkDir = "/dev";
+#else
+	const String nonSymlinkDir = "/etc";
+#endif
+
+	// TODO: These should be unlinked before symlinking.
 	symlink("SYMLINK_LOOP", "SYMLINK_LOOP");
 	symlink(".", "SYMLINK_1");
-	symlink("//////./../../etc", "SYMLINK_2");
+	symlink(String("//////./../.." + nonSymlinkDir).c_str(), "SYMLINK_2");
 	symlink("SYMLINK_1", "SYMLINK_3");
 	symlink("SYMLINK_2", "SYMLINK_4");
 	symlink("doesNotExist", "SYMLINK_5");
 	File f(FileSystem::createFile("doesExist"));
+	FileSystem::makeDirectory("doesExistDir");
 
 	unitAssert(realPath("/") == "/");
 	unitAssert(realPath("/////////////////////////////////") == "/");
 	unitAssert(realPath("/.././.././.././..///") ==  "/");
-	unitAssert(realPath("/etc") == "/etc");
-	unitAssert(realPath("/etc/../etc") == "/etc");
+	unitAssert(realPath(nonSymlinkDir) == nonSymlinkDir);
+	unitAssert(realPath(nonSymlinkDir + "/.." + nonSymlinkDir) == nonSymlinkDir);
 	try
 	{
 		realPath("/doesNotExist/../etc");
@@ -229,7 +238,7 @@ void OW_FileSystemTestCases::testrealPath()
 	}
 	unitAssert(realPath("././././.") == getCurrentWorkingDirectory());
 	unitAssert(realPath("/././././.") == "/");
-	unitAssert(realPath("/etc/./././.") == "/etc");
+	unitAssert(realPath(nonSymlinkDir + "/./././.") == nonSymlinkDir);
 	try
 	{
 		realPath("/etc/.//doesNotExist");
@@ -240,8 +249,26 @@ void OW_FileSystemTestCases::testrealPath()
 		unitAssert(e.getErrorCode() == ENOENT);
 	}
 	unitAssert(realPath("./doesExist") == getCurrentWorkingDirectory() + "/doesExist");
-	unitAssert(realPath("./doesExist/") == getCurrentWorkingDirectory() + "/doesExist");
-	unitAssert(realPath("./doesExist/../doesExist") == getCurrentWorkingDirectory() + "/doesExist");
+	unitAssert(realPath("./doesExistDir/") == getCurrentWorkingDirectory() + "/doesExistDir");
+	try
+	{
+		realPath("./doesExist/");
+		unitAssert(0);
+	}
+	catch (FileSystemException & e)
+	{
+		unitAssert(e.getErrorCode() == ENOTDIR);
+	}
+	unitAssert(realPath("./doesExistDir/../doesExist") == getCurrentWorkingDirectory() + "/doesExist");
+	try
+	{
+		realPath("./doesExist/../doesExist");
+		unitAssert(0);
+	}
+	catch (FileSystemException & e)
+	{
+		unitAssert(e.getErrorCode() == ENOTDIR);
+	}
 	try
 	{
 		realPath("doesNotExist");
@@ -289,13 +316,13 @@ void OW_FileSystemTestCases::testrealPath()
 	{
 		unitAssert(e.getErrorCode() == ENOENT);
 	}
-	unitAssert(realPath("SYMLINK_2") == "/etc");
+	unitAssert(realPath("SYMLINK_2") == nonSymlinkDir);
 	unitAssert(realPath("SYMLINK_3") == getCurrentWorkingDirectory());
-	unitAssert(realPath("SYMLINK_4") == "/etc");
+	unitAssert(realPath("SYMLINK_4") == nonSymlinkDir);
 	unitAssert(realPath("../unit/SYMLINK_1") == getCurrentWorkingDirectory());
-	unitAssert(realPath("../unit/SYMLINK_2") == "/etc");
+	unitAssert(realPath("../unit/SYMLINK_2") == nonSymlinkDir);
 	unitAssert(realPath("../unit/SYMLINK_3") == getCurrentWorkingDirectory());
-	unitAssert(realPath("../unit/SYMLINK_4") == "/etc");
+	unitAssert(realPath("../unit/SYMLINK_4") == nonSymlinkDir);
 	try
 	{
 		realPath("./SYMLINK_5");
@@ -323,9 +350,10 @@ void OW_FileSystemTestCases::testrealPath()
 	{
 		unitAssert(e.getErrorCode() == ENOENT);
 	}
-	unitAssert(realPath("doesExist/../../unit/doesExist") == getCurrentWorkingDirectory() + "/doesExist");
-	unitAssert(realPath("doesExist/../../unit/.") == getCurrentWorkingDirectory());
+	unitAssert(realPath("doesExistDir/../../unit/doesExist") == getCurrentWorkingDirectory() + "/doesExist");
+	unitAssert(realPath("doesExistDir/../../unit/.") == getCurrentWorkingDirectory());
 
+	FileSystem::removeDirectory("doesExistDir");
 	FileSystem::removeFile("doesExist");
 	FileSystem::removeFile("SYMLINK_LOOP");
 	FileSystem::removeFile("SYMLINK_1");
