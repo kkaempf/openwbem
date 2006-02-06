@@ -588,8 +588,15 @@ TestSuite()
 	$BUILDDIR/test/acceptance/progs/owcimclientcl $URL $RESULTDIR/testsuite \
 		> $RESULTDIR/$DIFF_FILE 2>&1 || \
 		ExitWithFail "TestSuite: owcimclientcl failed with an error.  "
-
-	Diff $DIFF_FILE2$OWDIFFSUFFIX $DIFF_FILE "TestSuite: Diff test for owcimclientcl failed."
+ 
+	MSTR_FILE=$TOPSRCDIR/test/acceptance/testfiles/$DIFF_FILE2$OWDIFFSUFFIX
+	if [ ! -f $MSTR_FILE -a "x$OWLONGTEST" = "x1" ]; then
+		echo "***** Not comparing with expected output.  This is"
+		echo "***** Normal if OWLONGTEST and not running from CVS"
+	else
+		Diff $DIFF_FILE2$OWDIFFSUFFIX $DIFF_FILE \
+			"TestSuite: Diff test for owcimclientcl failed."
+	fi
 
 	echo "Testsuite Passed"
 }
