@@ -432,8 +432,8 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		if (!FileSystem::getDirectoryContents(paths[i1], dirEntries))
 		{
 			String msg(Format("C++ provider ifc failed getting contents of directory: %1", paths[i1]));
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
-			OW_THROW(CppProviderIFCException, msg.c_str());
+			OW_LOG_INFO(env->getLogger(COMPONENT_NAME), msg);
+			continue; 
 		}
 		for (size_t i = 0; i < dirEntries.size(); i++)
 		{
