@@ -166,7 +166,7 @@ int mbExtThreadOnce (int *once, void (*init)(void))
 {
 	try
 	{
-		callOnce(*once, init); 
+		callOnce(*reinterpret_cast<OnceFlag*>(once), init); 
 	}
 	catch(...)
 	{

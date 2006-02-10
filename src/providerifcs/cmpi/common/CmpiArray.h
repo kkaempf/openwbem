@@ -28,6 +28,7 @@
 #include "CmpiObject.h"
 
 class CmpiString;
+class CmpiArray; 
 
 class CmpiArrayIdx {
   friend class CmpiArray;

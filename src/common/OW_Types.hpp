@@ -94,7 +94,6 @@ typedef float						Real32;
 typedef double						Real32;
 #define OW_REAL32_IS_DOUBLE 1
 #endif
-typedef off_t	off_t;
 
 #ifdef OW_WIN32
 

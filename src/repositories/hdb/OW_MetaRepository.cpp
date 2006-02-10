@@ -122,9 +122,11 @@ MetaRepository::_makeQualPath(const String& ns_, const CIMName& qualName)
 	if (qualName != CIMName())
 	{
 		qp += NS_SEPARATOR_C;
-		qp += qualName.toString();
+		String qname(qualName.toString());
+		qname.toLowerCase();
+		qp += qname;
 	}
-	return qp.releaseString().toLowerCase();
+	return qp.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -135,8 +137,10 @@ MetaRepository::_makeClassPath(const String& ns,
 	cp += NS_SEPARATOR_C;
 	cp += ns;
 	cp += NS_SEPARATOR_C;
-	cp += className.toString();
-	return cp.releaseString().toLowerCase();
+	String clsname(className.toString());
+	clsname.toLowerCase();
+	cp += clsname;
+	return cp.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifierType

@@ -66,11 +66,13 @@ createMutex(Mutex_t& handle)
 	assert(res == 0);
 	if (res != 0)
 	{
+		pthread_mutexattr_destroy(&attr);
 		return -1;
 	}
 #endif
  
 	res = pthread_mutex_init(&handle.mutex, &attr);
+	pthread_mutexattr_destroy(&attr);
 	if (res != 0)
 	{
 		return -1;

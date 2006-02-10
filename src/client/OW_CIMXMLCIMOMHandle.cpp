@@ -517,8 +517,10 @@ namespace
 {
 	struct enumInstancesOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-		enumInstancesOp(CIMInstanceResultHandlerIFC& result_)
+		enumInstancesOp(CIMInstanceResultHandlerIFC& result_, 
+			const String& ns_)
 			: result(result_)
+			, ns(ns_)
 		{}
 		virtual void operator ()(CIMXMLParser &parser)
 		{
@@ -528,11 +530,13 @@ namespace
 				CIMObjectPath iop(XMLCIMFactory::createObjectPath(parser));
 				CIMInstance ci = XMLCIMFactory::createInstance(parser);
 				ci.setKeys(iop.getKeys());
+				ci.setNameSpace(ns);
 				result.handle(ci);
 				parser.mustGetEndTag(); // pass </VALUE.NAMEDINSTANCE>
 			}
 		}
 		CIMInstanceResultHandlerIFC& result;
+		String ns;
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -571,7 +575,7 @@ CIMXMLCIMOMHandle::enumInstances(
 		params.push_back(Param(CIMXMLParser::P_IncludeClassOrigin, includeClassOrigin));
 	}
 	generatePropertyListXML(extra,propertyList);
-	enumInstancesOp op(result);
+	enumInstancesOp op(result, ns);
 	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params, extra.toString());
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -634,14 +638,17 @@ namespace
 {
 	struct getInstanceOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-		getInstanceOp(CIMInstance& result_)
+		getInstanceOp(CIMInstance& result_, const String& ns_)
 			: result(result_)
+			, ns(ns_)
 		{}
 		virtual void operator ()(CIMXMLParser &parser)
 		{
 			result = XMLCIMFactory::createInstance(parser);
+			result.setNameSpace(ns);
 		}
 		CIMInstance& result;
+		String ns;
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -672,7 +679,7 @@ CIMXMLCIMOMHandle::getInstance(
 	extra << instanceNameToKey(path, "InstanceName");
 	generatePropertyListXML(extra,propertyList);
 	CIMInstance rval(CIMNULL);
-	getInstanceOp op(rval);
+	getInstanceOp op(rval, ns);
 	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params, extra.toString());
 	return rval;
 }

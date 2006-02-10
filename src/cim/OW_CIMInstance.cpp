@@ -57,6 +57,7 @@ using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMInstance::INSTData : public COWIntrusiveCountableBase
 {
+	String m_nameSpace;
 	CIMName m_owningClassName;
 	CIMPropertyArray m_keys;
 	CIMPropertyArray m_properties;
@@ -67,6 +68,7 @@ struct CIMInstance::INSTData : public COWIntrusiveCountableBase
 bool operator<(const CIMInstance::INSTData& x, const CIMInstance::INSTData& y)
 {
 	return StrictWeakOrdering(
+		x.m_nameSpace, y.m_nameSpace,
 		x.m_owningClassName, y.m_owningClassName,
 		x.m_properties, y.m_properties,
 		x.m_keys, y.m_keys,
@@ -129,16 +131,31 @@ CIMInstance::getClassName() const
 	return m_pdata->m_owningClassName.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
+CIMInstance& 
+CIMInstance::setNameSpace(const String& ns)
+{
+	m_pdata->m_nameSpace = ns;
+	return *this;
+}
+//////////////////////////////////////////////////////////////////////////////
+String 
+CIMInstance::getNameSpace() const
+{
+	return m_pdata->m_nameSpace;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 String
 CIMInstance::getLanguage() const
 {
 	return m_pdata->m_language;
 }
 //////////////////////////////////////////////////////////////////////////////
-void
+CIMInstance&
 CIMInstance::setLanguage(const String& language)
 {
 	m_pdata->m_language = language;
+	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance&
@@ -505,6 +522,7 @@ CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQuali
 	bool noProps) const
 {
 	CIMInstance ci;
+	ci.m_pdata->m_nameSpace = m_pdata->m_nameSpace;
 	ci.m_pdata->m_owningClassName = m_pdata->m_owningClassName;
 	ci.m_pdata->m_keys = m_pdata->m_keys;
 	ci.m_pdata->m_language = m_pdata->m_language;
@@ -806,7 +824,7 @@ CIMInstance::readObject(istream &istrm)
 	CIMPropertyArray properties;
 	CIMPropertyArray keys;
 	CIMQualifierArray qualifiers;
-	String language;
+	String language, nameSpace;
 
 	UInt32 version = CIMBase::readSig(istrm, OW_CIMINSTANCESIG,
 		OW_CIMINSTANCESIG_V, CIMInstance::SERIALIZATION_VERSION);
@@ -820,6 +838,11 @@ CIMInstance::readObject(istream &istrm)
 	{
 		language.readObject(istrm);
 	}
+	// If dealing with version > 1 then read namespace
+	if (version > 1)
+	{
+		nameSpace.readObject(istrm);
+	}
 	if (!m_pdata)
 	{
 		m_pdata = new INSTData;
@@ -829,17 +852,20 @@ CIMInstance::readObject(istream &istrm)
 	m_pdata->m_properties = properties;
 	m_pdata->m_qualifiers = qualifiers;
 	m_pdata->m_language = language;
+	m_pdata->m_nameSpace = nameSpace;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMInstance::writeObject(std::ostream &ostrm) const
 {
+	// Ignore m_nameSpace
 	CIMBase::writeSig(ostrm, OW_CIMINSTANCESIG_V, CIMInstance::SERIALIZATION_VERSION);
 	m_pdata->m_owningClassName.writeObject(ostrm);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_keys);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
 	m_pdata->m_language.writeObject(ostrm);
+	m_pdata->m_nameSpace.writeObject(ostrm);
 }
 //////////////////////////////////////////////////////////////////////////////
 String

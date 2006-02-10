@@ -75,6 +75,9 @@ class COWReference : private COWReferenceBase
 		template <class U>
 		COWReference<U> cast_to() const;
 
+        template <class U>
+        void useRefCountOf(const COWReference<U>&); 
+
 #if !defined(__GNUC__) || __GNUC__ > 2 // causes gcc 2.95 to ICE
 		/* This is so the templated constructor will work */
 		template <class U> friend class COWReference;
@@ -244,9 +247,16 @@ COWReference<T>::cast_to() const
 	if (rval.m_pObj)
 	{
 		rval.useRefCountOf(*this);
-		rval.incRef();
 	}
 	return rval;
+}
+//////////////////////////////////////////////////////////////////////////////
+template <class T>
+template <class U>
+inline void
+COWReference<T>::useRefCountOf(const COWReference<U>& arg)
+{
+    COWReferenceBase::useRefCountOf(arg); 
 }
 //////////////////////////////////////////////////////////////////////////////
 // Comparisons

@@ -1,3 +1,5 @@
+SUBDIRS = socketCat xml_input
+
 EXTRA_DIST = \
 CIM_Min25.mof \
 ACLTest.mof \
