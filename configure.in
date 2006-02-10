@@ -1,5 +1,5 @@
 AC_PREREQ([2.57])
-AC_INIT(OpenWBEM, 3.1.1, openwbem-public@lists.sourceforge.net)
+AC_INIT(OpenWBEM, 3.2.0, openwbem-public@lists.sourceforge.net)
 dnl When we implement --help and --version for all installed binaries, use the std-options option
 dnl AM_INIT_AUTOMAKE([foreign dist-bzip2 std-options 1.6.3])
 
@@ -11,8 +11,8 @@ AC_CONFIG_SRCDIR(Makefile.am)
 AM_CONFIG_HEADER(config.h)
 
 OPENWBEM_MAJOR_VERSION=3
-OPENWBEM_MINOR_VERSION=1
-OPENWBEM_MICRO_VERSION=1
+OPENWBEM_MINOR_VERSION=2
+OPENWBEM_MICRO_VERSION=0
 dnl This gets incremented every release that a header has changed.
 OPENWBEM_LIBRARY_VERSION=4
 
