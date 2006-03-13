@@ -1089,6 +1089,8 @@ CIMOMEnvironment::getRequestHandler(const String &id) const
 			iter->second->rqIFCRef =
 				SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(
 					iter->second->filename, "createRequestHandler", getLogger(COMPONENT_NAME));
+
+			iter->second->rqIFCRef->setEnvironment(const_cast<CIMOMEnvironment*>(this));
 			
 			// re-add it to m_services and resort them.
 			m_services.push_back(iter->second->rqIFCRef);
