@@ -937,6 +937,10 @@ namespace
 			return;
 		}
 		String userName = env->getUserName();
+		if (userName.empty())
+		{
+			return; 
+		}
 
 		long pwnbufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
 		char buf[pwnbufsize];
