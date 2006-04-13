@@ -1,128 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
 <head>
-<title>OpenWBEM Security Policies</title>
-<style type="text/css">
+  <title>OpenWBEM Security Policies</title>
+  <style type="text/css">
 body { width: 6.5in }
-</style>
+  </style>
 </head>
 <body>
 <h1>OpenWBEM Security Policies</h1>
-
-<p>Here are some policies to aid in avoiding buffer overruns. The replacement
+<p>Here are some policies to aid in avoiding buffer overruns. The
+replacement
 functions mentioned are defined in the <code>OpenWBEM::SafeCString</code>
 namespace and declared in the header file <code>OW_SafeCString.hpp</code>.
 </p>
 <ul>
-<li> In general, prefer use of container classes (<code>String</code>,
-<code>StringBuffer</code>, <code>vector&lt;char&gt;</code>) to C-style
-strings.
-</li>
-<li> Avoid <code>strcpy</code>, as it is vulnerable to buffer
-overruns.  Use one of these instead:
-  <ul>
-  <li> <code>str_dup</code> </li>
-  <li> <code>str_dup_nothrow</code> </li>
-  <li> <code>strcpy_trunc</code> </li>
-  <li> <code>strcpy_to_pos_trunc</code> </li>
-  <li> <code>strcpy_check</code> </li>
-  <li> <code>strcpy_to_pos_check</code> </li>
-  </ul>
-</li>
-<li> Avoid <code>strncpy</code>, as it may have a large performance
-penalty relative to <code>strcpy</code> (it zero-pads the destination).
-Use one of these instead:
-  <ul>
-  <li> <code>strcpy_trunc</code> </li>
-  <li> <code>strcpy_to_pos_trunc</code> </li>
-  <li> <code>strcpy_check</code> </li>
-  <li> <code>strcpy_to_pos_check</code> </li>
-  </ul>
-</li>
-<li> Avoid <code>strdup</code>, as it uses <code>malloc</code> to
-allocate memory.  Use one of these instead:
-  <ul>
-  <li> <code>str_dup</code> </li>
-  <li> <code>str_dup_nothrow</code> </li>
-  </ul>
-</li>
-<li> Avoid <code>strcat</code>, as it is vulnerable to buffer
+  <li> In general, prefer use of container classes (<code>String</code>,
+    <code>StringBuffer</code>, <code>vector&lt;char&gt;</code>) to
+C-style
+strings. </li>
+  <li> Avoid <code>strcpy</code>, as it is vulnerable to buffer
 overruns. Use one of these instead:
-  <ul>
-  <li> <code>strcat_trunc</code> </li>
-  <li> <code>strcat_check</code> </li>
-  </ul>
-</li>
-<li> Avoid <code>strncat</code> &mdash; prefer the following alternatives that
-make you specify whether truncation is acceptable or should be considered an
-error:
-  <ul>
-  <li> <code>strcat_trunc</code> </li>
-  <li> <code>strcat_check</code> </li>
-  </ul>
-</li>
-<li> Avoid <code>sprintf</code>, as it is vulnerable to buffer overruns.  Use
-one of these instead:
-  <ul>
-  <li> <code>sprintf_trunc</code> </li>
-  <li> <code>sprintf_check</code> </li>
-  </ul>
-</li>
-<li> Avoid <code>snprintf</code> &mdash; prefer the following alternatives
-that make you specify whether truncation is acceptable or should be considered
-an error:
-  <ul>
-  <li> <code>sprintf_trunc</code> </li>
-  <li> <code>sprintf_check</code> </li>
-  </ul>
-</li>
-<li> Avoid <code>vsprintf</code>, as it is vulnerable to buffer overruns.
+    <ul>
+      <li> <code>str_dup</code> </li>
+      <li> <code>str_dup_nothrow</code> </li>
+      <li> <code>strcpy_trunc</code> </li>
+      <li> <code>strcpy_to_pos_trunc</code> </li>
+      <li> <code>strcpy_check</code> </li>
+      <li> <code>strcpy_to_pos_check</code> </li>
+    </ul>
+  </li>
+  <li> Avoid <code>strncpy</code>, as it may have a large performance
+penalty relative to <code>strcpy</code> (it zero-pads the
+destination).
 Use one of these instead:
-  <ul>
-  <li> <code>vsprintf_trunc</code> </li>
-  <li> <code>vsprintf_check</code> </li>
-  </ul>
-</li>
-<li> Avoid <code>vsnprintf</code> &mdash; prefer the following alternatives
-that make you specify whether truncation is acceptable or should be considered
-an error:
-  <ul>
-  <li> <code>vsprintf_trunc</code> </li>
-  <li> <code>vsprintf_check</code> </li>
-  </ul>
-</li>
-<li> Avoid <code>gets</code>, as it is vulnerable to buffer overruns.  Use
+    <ul>
+      <li> <code>strcpy_trunc</code> </li>
+      <li> <code>strcpy_to_pos_trunc</code> </li>
+      <li> <code>strcpy_check</code> </li>
+      <li> <code>strcpy_to_pos_check</code> </li>
+    </ul>
+  </li>
+  <li> Avoid <code>strdup</code>, as it uses <code>malloc</code> to
+allocate memory. Use one of these instead:
+    <ul>
+      <li> <code>str_dup</code> </li>
+      <li> <code>str_dup_nothrow</code> </li>
+    </ul>
+  </li>
+  <li> Avoid <code>strcat</code>, as it is vulnerable to buffer
+overruns. Use one of these instead:
+    <ul>
+      <li> <code>strcat_trunc</code> </li>
+      <li> <code>strcat_check</code> </li>
+    </ul>
+  </li>
+  <li> Avoid <code>strncat</code> &#8212; prefer the following alternatives
+that
+make you specify whether truncation is acceptable or should be
+considered an
+error:
+    <ul>
+      <li> <code>strcat_trunc</code> </li>
+      <li> <code>strcat_check</code> </li>
+    </ul>
+  </li>
+  <li> Avoid <code>sprintf</code>, as it is vulnerable to buffer
+overruns. Use
 one of these instead:
-  <ul>
-  <li> <code>fgets_trunc</code> </li>
-  <li> <code>fgets_check</code> </li>
-  <li> <code>fget_string</code> </li>
-  </ul>
-</li>
-<li> These functions should only be used with a constant format argument, with a
-maximum field width given for each conversion specification that actually
+    <ul>
+      <li> <code>sprintf_trunc</code> </li>
+      <li> <code>sprintf_check</code> </li>
+    </ul>
+  </li>
+  <li> Avoid <code>snprintf</code> &#8212; prefer the following alternatives
+that make you specify whether truncation is acceptable or should be
+considered
+an error:
+    <ul>
+      <li> <code>sprintf_trunc</code> </li>
+      <li> <code>sprintf_check</code> </li>
+    </ul>
+  </li>
+  <li> Avoid <code>vsprintf</code>, as it is vulnerable to buffer
+overruns.
+Use one of these instead:
+    <ul>
+      <li> <code>vsprintf_trunc</code> </li>
+      <li> <code>vsprintf_check</code> </li>
+    </ul>
+  </li>
+  <li> Avoid <code>vsnprintf</code> &#8212; prefer the following
+alternatives
+that make you specify whether truncation is acceptable or should be
+considered
+an error:
+    <ul>
+      <li> <code>vsprintf_trunc</code> </li>
+      <li> <code>vsprintf_check</code> </li>
+    </ul>
+  </li>
+  <li> Avoid <code>gets</code>, as it is vulnerable to buffer
+overruns. Use
+one of these instead:
+    <ul>
+      <li> <code>fgets_trunc</code> </li>
+      <li> <code>fgets_check</code> </li>
+      <li> <code>fget_string</code> </li>
+    </ul>
+  </li>
+  <li> These functions should only be used with a constant format
+argument, with a
+maximum field width given for each conversion specification that
+actually
 reads input:
-  <ul>
-  <li> <code>scanf</code> </li>
-  <li> <code>sscanf</code> </li>
-  <li> <code>fscanf</code> </li>
-  <li> <code>vscanf</code> </li>
-  <li> <code>vsscanf</code> </li>
-  <li> <code>vfscanf</code> </li>
-  </ul>
-The maximum field width is especially important when a string is to be read,
-to avoid buffer overrun, and it is useful for other types of read values to
-deal with runaway input.  Use the <code>OW_INTSTR</code> macro to insert into
-a format argument a maximum field width that is a symbolic constant (defined
-with <code>#define</code>).
-</li>
-<li> Avoid <code>realpath</code>, as the result length is unpredictable and
-some implementations are vulnerable to internal buffer overruns.  (If
-necessary, we'll write our own version that returns a <code>String</code>.)
-</li>
-<li> <code>syslog</code> should only be called with a format string of
-<code>"%.1023s"</code>; this is to avoid the possibility of an internal buffer
-overrun.
-</li>
+    <ul>
+      <li> <code>scanf</code> </li>
+      <li> <code>sscanf</code> </li>
+      <li> <code>fscanf</code> </li>
+      <li> <code>vscanf</code> </li>
+      <li> <code>vsscanf</code> </li>
+      <li> <code>vfscanf</code> </li>
+    </ul>
+The maximum field width is especially important when a string is to be
+read,
+to avoid buffer overrun, and it is useful for other types of read
+values to
+deal with runaway input. Use the <code>OW_INTSTR</code> macro to
+insert into
+a format argument a maximum field width that is a symbolic constant
+(defined
+with <code>#define</code>). </li>
+  <li> Avoid <code>realpath</code>, as the result length is
+unpredictable and
+some implementations are vulnerable to internal buffer overruns.&nbsp;
+Use <code>FileSystem::realPath()</code> instead.</li>
+  <li> <code>syslog</code> should only be called with a format string
+of <code>"%.1023s"</code>; this is to avoid the possibility of an
+internal buffer
+overrun. Consider using <code>Logger</code> instead. </li>
 </ul>
-
 </body>
 </html>

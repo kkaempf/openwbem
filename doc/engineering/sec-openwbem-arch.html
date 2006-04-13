@@ -64,10 +64,13 @@ marked with S (semipermanent).</p>
 <p>The Monitor may grant other subsystems (OpenWBEM processes) limited
 capabilities that they would not otherwise have.</p>
 <p>Monitor knows identity of a subsystem process because it created the
-process and created a Unix domain socket pair for communicating with it.</p>
-<p>The sendmsg / recvmsg systems calls used to pass descriptors from
-monitor to
-subsystem process.</p>
+process and created a Unix domain socket pair or a named pipe on win32
+for communicating with it.</p>
+<p>On POSIX OSs, the sendmsg / recvmsg systems calls are used to pass
+descriptors from monitor to
+subsystem process, and on win32 DuplicateHandle() will be used in
+conjunction with stdin to pass HANDLE values between processes.<br>
+</p>
 <p>Kinds of requests a subsystem process might make to monitor:</p>
 <ul>
   <li>Open a file for reading, or writing, or both, and return the file
