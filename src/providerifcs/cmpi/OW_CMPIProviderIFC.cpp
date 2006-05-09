@@ -89,6 +89,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
+				CMPI_ThreadContext thr(&_broker, &eCtx); 
 				miVector.instMI->ft->cleanup(miVector.instMI, &eCtx, true);
 			}
 
@@ -97,6 +98,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
+				CMPI_ThreadContext thr(&_broker, &eCtx); 
 				miVector.assocMI->ft->cleanup(miVector.assocMI, &eCtx, true);
 			}
 
@@ -105,6 +107,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
+				CMPI_ThreadContext thr(&_broker, &eCtx); 
 				miVector.methMI->ft->cleanup(miVector.methMI, &eCtx, true);
 			}
 
@@ -113,6 +116,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
+				CMPI_ThreadContext thr(&_broker, &eCtx); 
 				miVector.propMI->ft->cleanup(miVector.propMI, &eCtx, true); 
 			}
 
@@ -121,6 +125,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
+				CMPI_ThreadContext thr(&_broker, &eCtx); 
 				miVector.indMI->ft->cleanup(miVector.indMI, &eCtx, true); 
 			}
 
@@ -137,6 +142,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			CMPIInstanceMI * mi = m_noidProviders[i]->instMI;
 			::CMPIOperationContext context;
 			CMPI_ContextOnStack eCtx(context);
+			CMPI_ThreadContext thr(&_broker, &eCtx); 
 			mi->ft->cleanup(mi, &eCtx);
 			m_noidProviders[i].setNull();
 #endif
@@ -570,6 +576,7 @@ CMPIProviderIFC::getProvider(
 		_broker.eft = CMPI_BrokerEnc_Ftab;
 		::CMPIOperationContext opc;
 		CMPI_ContextOnStack eCtx(opc);
+		CMPI_ThreadContext thr(&_broker, &eCtx); 
 	
 		if (miVector.genericMode)
 		{
@@ -695,6 +702,7 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
+				CMPI_ThreadContext thr(&_broker, &eCtx); 
 				rc=miVector.instMI->ft->cleanup(miVector.instMI, &eCtx, false);
 				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
 					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
@@ -709,6 +717,7 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
+				CMPI_ThreadContext thr(&_broker, &eCtx); 
 				rc=miVector.assocMI->ft->cleanup(miVector.assocMI, &eCtx, false);
 				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
 					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
@@ -723,6 +732,7 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
+				CMPI_ThreadContext thr(&_broker, &eCtx); 
 				rc=miVector.methMI->ft->cleanup(miVector.methMI, &eCtx, false); 
 				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
 					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
@@ -737,6 +747,7 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
+				CMPI_ThreadContext thr(&_broker, &eCtx); 
 				rc=miVector.propMI->ft->cleanup(miVector.propMI, &eCtx, false); 
 				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
 					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
@@ -751,6 +762,7 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
+				CMPI_ThreadContext thr(&_broker, &eCtx); 
 				rc=miVector.indMI->ft->cleanup(miVector.indMI, &eCtx, false); 
 				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
 					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
