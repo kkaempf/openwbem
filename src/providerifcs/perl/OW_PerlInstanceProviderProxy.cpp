@@ -97,7 +97,7 @@ PerlInstanceProviderProxy::enumInstanceNames(
 		}
 		else
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support enumInstanceNames");
+			OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support enumInstanceNames");
 		}
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -118,7 +118,7 @@ PerlInstanceProviderProxy::enumInstances(
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::enumInstances()");
 	if (m_ftable->fp_enumInstances == NULL)
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support enumInstances");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support enumInstances");
 	}
 	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 	NPIHandleFreer nhf(_npiHandle);
@@ -232,7 +232,7 @@ PerlInstanceProviderProxy::createInstance(
 		}
 		else
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
+			OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support createInstance");
 		}
 		return rval;
 }
@@ -269,7 +269,7 @@ PerlInstanceProviderProxy::modifyInstance(const ProviderEnvironmentIFCRef &env,
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support modifyInstance");
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -298,7 +298,7 @@ PerlInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support deleteInstance");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support deleteInstance");
 	}
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION

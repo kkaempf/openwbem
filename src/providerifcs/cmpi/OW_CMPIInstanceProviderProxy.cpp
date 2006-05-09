@@ -102,7 +102,7 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support enumInstanceNames");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support enumInstanceNames");
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -174,7 +174,7 @@ CMPIInstanceProviderProxy::enumInstances(
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support enumInstances");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support enumInstances");
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -294,7 +294,7 @@ CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support deleteInstance");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support deleteInstance");
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -340,7 +340,7 @@ CIMObjectPath
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support createInstance");
 	}
 	return rval;
 }
@@ -391,7 +391,7 @@ void
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support modifyInstance");
 	}
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION

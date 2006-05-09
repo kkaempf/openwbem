@@ -47,13 +47,13 @@ using namespace WBEMFlags;
 void 
 CppReadOnlyInstanceProviderIFC::deleteInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &)
 {
-	OW_THROWCIMMSG(CIMException::FAILED, "DeleteInstance not supported by provider");
+	OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "DeleteInstance not supported by provider");
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath 
 CppReadOnlyInstanceProviderIFC::createInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMInstance &)
 {
-	OW_THROWCIMMSG(CIMException::FAILED, "DeleteInstance not supported by provider");
+	OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "CreateInstance not supported by provider");
 }
 //////////////////////////////////////////////////////////////////////////////
 void 
@@ -66,7 +66,7 @@ CppReadOnlyInstanceProviderIFC::modifyInstance(
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 {
-	OW_THROWCIMMSG(CIMException::FAILED, "DeleteInstance not supported by provider");
+	OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "ModifyInstance not supported by provider");
 }
 
 } // end namespace OW_NAMESPACE

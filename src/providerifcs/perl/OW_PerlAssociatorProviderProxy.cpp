@@ -93,7 +93,7 @@ PerlAssociatorProviderProxy::associatorNames(
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support associatorNames");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support associatorNames");
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -174,7 +174,7 @@ PerlAssociatorProviderProxy::associators(
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support associators");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support associators");
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -251,7 +251,7 @@ PerlAssociatorProviderProxy::references(
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support references");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support references");
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -298,7 +298,7 @@ PerlAssociatorProviderProxy::referenceNames(
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support referenceNames");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support referenceNames");
 	}
 }
 

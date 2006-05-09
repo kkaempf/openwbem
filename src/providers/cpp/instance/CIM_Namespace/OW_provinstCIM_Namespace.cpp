@@ -172,7 +172,7 @@ public:
 			OW_THROWCIM_SUBEX(CIMException::INVALID_PARAMETER, e);
 		}
 #else
-		OW_THROWCIMMSG(CIMException::FAILED, "namespace creation not supported");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "namespace creation not supported");
 #endif
 		return CIMObjectPath(ns, cimInstance);
 	}
@@ -216,7 +216,7 @@ public:
 			OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 		}
 #else
-		OW_THROWCIMMSG(CIMException::FAILED, "namespace creation not supported");
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "namespace creation not supported");
 #endif
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION

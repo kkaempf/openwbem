@@ -94,7 +94,7 @@ CIMValue RemoteMethodProvider::invokeMethod(
 	{
 		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
 		{
-			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
+			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED from InvokeMethod
 		}
 		OW_LOG_INFO(lgr, Format("RemoteMethodProvider::invokeMethod remote WBEM server threw: %1", e));
 		throw;

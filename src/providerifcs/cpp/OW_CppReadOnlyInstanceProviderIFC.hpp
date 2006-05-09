@@ -42,7 +42,7 @@ namespace OW_NAMESPACE
 
 /**
  * This class implements deleteInstance, createInstance, and modifyInstance.
- * All throw an CIMException::FAILED.
+ * All throw an CIMException::NOT_SUPPORTED.
  * If an instance provider is read-only, it can derive from this class and
  * it won't have to implement the mutating functions.
  * This class can be part of a multiple-inerhitance diamond.  

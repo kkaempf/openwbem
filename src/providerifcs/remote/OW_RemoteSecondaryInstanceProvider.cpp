@@ -193,7 +193,7 @@ RemoteSecondaryInstanceProvider::filterInstances(const ProviderEnvironmentIFCRef
 		{
 			if (e.getErrNo() == CIMException::NOT_SUPPORTED)
 			{
-				e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
+				e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED from getInstance. 
 			}
 			OW_LOG_INFO(lgr, Format("RemoteSecondaryInstanceProvider::filterInstances remote WBEM server threw: %1", e));
 			// we do want to throw here if something went wrong

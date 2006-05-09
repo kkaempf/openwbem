@@ -168,7 +168,7 @@ public:
 		(void)env;
 		(void)ns;
 		(void)cimInstance;
-        OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
+        OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support createInstance");
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -331,7 +331,7 @@ public:
 		(void)env;
 		(void)ns;
 		(void)cop;
-        OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support deleteInstance");
+        OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support deleteInstance");
 	}
 
 	////////////////////////////////////////////////////////////////////////////

@@ -99,10 +99,6 @@ RemoteAssociatorProvider::references(
 	}
 	catch (CIMException& e)
 	{
-		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
-		{
-			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
-		}
 		OW_LOG_INFO(lgr, Format("RemoteAssociatorProvider::references remote WBEM server threw: %1", e));
 		throw;
 	}
@@ -140,10 +136,6 @@ RemoteAssociatorProvider::associators(const ProviderEnvironmentIFCRef &env, CIMI
 	}
 	catch (CIMException& e)
 	{
-		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
-		{
-			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
-		}
 		OW_LOG_INFO(lgr, Format("RemoteAssociatorProvider::associators remote WBEM server threw: %1", e));
 		throw;
 	}
@@ -178,10 +170,6 @@ RemoteAssociatorProvider::associatorNames(const ProviderEnvironmentIFCRef &env, 
 	}
 	catch (CIMException& e)
 	{
-		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
-		{
-			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
-		}
 		OW_LOG_INFO(lgr, Format("RemoteAssociatorProvider::associatorNames remote WBEM server threw: %1", e));
 		throw;
 	}
@@ -215,10 +203,6 @@ RemoteAssociatorProvider::referenceNames(const ProviderEnvironmentIFCRef &env, C
 	}
 	catch (CIMException& e)
 	{
-		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
-		{
-			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
-		}
 		OW_LOG_INFO(lgr, Format("RemoteAssociatorProvider::referenceNames remote WBEM server threw: %1", e));
 		throw;
 	}

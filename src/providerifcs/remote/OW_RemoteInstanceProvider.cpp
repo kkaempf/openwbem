@@ -91,10 +91,6 @@ RemoteInstanceProvider::enumInstanceNames(
 	}
 	catch (CIMException& e)
 	{
-		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
-		{
-			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
-		}
 		OW_LOG_INFO(lgr, Format("RemoteInstanceProvider::enumInstanceNames remote WBEM server threw: %1", e));
 		throw;
 	}
@@ -137,10 +133,6 @@ RemoteInstanceProvider::enumInstances(
 	}
 	catch (CIMException& e)
 	{
-		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
-		{
-			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
-		}
 		OW_LOG_INFO(lgr, Format("RemoteInstanceProvider::enumInstances remote WBEM server threw: %1", e));
 		throw;
 	}
@@ -183,7 +175,7 @@ RemoteInstanceProvider::getInstance(
 	{
 		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
 		{
-			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
+			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED from getInstance
 		}
 		OW_LOG_INFO(lgr, Format("RemoteInstanceProvider::getInstance remote WBEM server threw: %1", e));
 		throw;
@@ -222,10 +214,6 @@ RemoteInstanceProvider::createInstance(
 	}
 	catch (CIMException& e)
 	{
-		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
-		{
-			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
-		}
 		OW_LOG_INFO(lgr, Format("RemoteInstanceProvider::createInstance remote WBEM server threw: %1", e));
 		throw;
 	}
@@ -265,10 +253,6 @@ RemoteInstanceProvider::modifyInstance(
 	}
 	catch (CIMException& e)
 	{
-		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
-		{
-			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
-		}
 		OW_LOG_INFO(lgr, Format("RemoteInstanceProvider::modifyInstance remote WBEM server threw: %1", e));
 		throw;
 	}
@@ -303,10 +287,6 @@ RemoteInstanceProvider::deleteInstance(
 	}
 	catch (CIMException& e)
 	{
-		if (e.getErrNo() == CIMException::NOT_SUPPORTED)
-		{
-			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
-		}
 		OW_LOG_INFO(lgr, Format("RemoteInstanceProvider::deleteInstance remote WBEM server threw: %1", e));
 		throw;
 	}

@@ -110,7 +110,7 @@ void CMPIAssociatorProviderProxy::associatorNames(
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED,
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED,
 			"Provider does not support associatorNames");
 	}
 }
@@ -202,7 +202,7 @@ void CMPIAssociatorProviderProxy::associators(
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED,
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED,
 			"Provider does not support associators");
 	}
 }
@@ -287,7 +287,7 @@ void CMPIAssociatorProviderProxy::references(
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED,
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED,
 			"Provider does not support references");
 	}
 }
@@ -339,7 +339,7 @@ void CMPIAssociatorProviderProxy::referenceNames(
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED,
+		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED,
 			"Provider does not support referenceNames");
 	}
 }
