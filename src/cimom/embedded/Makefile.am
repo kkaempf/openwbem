@@ -38,7 +38,9 @@ owstatlibdir = $(thelibdir)
 
 libowembeddedcimom_a_SOURCES =	\
 OW_EmbeddedCIMOMEnvironment.cpp \
+OW_LocalEmbeddedCIMOMHandle.cpp 
+
+pkginclude_HEADERS = \
 OW_EmbeddedCIMOMEnvironment.hpp \
-OW_LocalEmbeddedCIMOMHandle.cpp \
 OW_LocalEmbeddedCIMOMHandle.hpp
 
