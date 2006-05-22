@@ -31,6 +31,7 @@
 #		interop
 #		misc
 #		hammer
+#		embeddedCIMOM
 
 
 OWSYSCONFDIR=@sysconfdir@
@@ -1136,6 +1137,11 @@ TestMisc()
 #############################################################################
 TestEmbeddedCIMOM()
 {
+	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
+		embeddedCIMOM >/dev/null 2>&1
+	then
+		return
+	fi
 	OUT_FILE=testEmbedded.out
 	echo "Executing Embedded CIMOM test, saving output in " $RESULTDIR/$OUT_FILE
 	$BUILDDIR/test/acceptance/progs/testEmbeddedCIMOM \
