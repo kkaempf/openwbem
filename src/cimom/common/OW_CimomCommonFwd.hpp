@@ -36,6 +36,7 @@
 #define OW_CIMOM_COMMON_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_IntrusiveReference.hpp"
+#include "OW_SharedLibraryReference.hpp"
 
 namespace OW_NAMESPACE
 {
