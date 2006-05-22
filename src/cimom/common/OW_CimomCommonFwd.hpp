@@ -32,6 +32,10 @@
  * @author Dan Nuffer
  */
 
+/**
+ * NOTE: This header is internal and subject to change
+ */
+
 #ifndef OW_CIMOM_COMMON_FWD_HPP_INCLUDE_GUARD_
 #define OW_CIMOM_COMMON_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"

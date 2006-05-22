@@ -35,7 +35,6 @@ thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)
 
 libowcimomcommon_a_SOURCES =	\
-OW_CimomCommonFwd.hpp \
 OW_CIMOMEnvironment.cpp \
 OW_CIMOMEnvironment.hpp \
 OW_CIMServer.cpp \
@@ -65,5 +64,6 @@ OW_NetwareIdentity.cpp \
 OW_NetwareIdentity.hpp
 
 pkginclude_HEADERS = \
+OW_CimomCommonFwd.hpp \
 OW_NetwareIdentity.hpp
 
