@@ -248,7 +248,7 @@ owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthenti
 owcimomd.max_class_cache_size = 128
 
 ################################################################################
-# A space delimited list of system users who are allowed to acces the CIMOM
+# A space delimited list of system users who are allowed to access the CIMOM
 # The special value * to allow all users to authenticate (for instance, if
 # you choose to control access with ACLs instead).
 # This option is enforced for all authentication methods. If
@@ -332,17 +332,21 @@ owcimomd.restart_on_error = true
 ################################################################################
 # owcimomd.authorization_lib specifies the location the authorization
 # library will be loaded from.
-# There are 2 authorization interfaces, either one can work.
-# If this option is empty or commented out, no authorization module will be
-# used.
+# There are 2 authorization interfaces, either one can be used. 
+# This is the original authorization interface.  The new interface
+# (Authorizer2IFC) uses the owcimomd.authorization2_lib configuration 
+# item.  If both authorization options are empty or commented out, no
+# authorization module is used. 
 ;owcimomd.authorization_lib = @libdir@/openwbem/libowsimpleauthorizer.@LIB_EXT@
 
 ################################################################################
 # owcimomd.authorization2_lib specifies the location the authorization
 # library will be loaded from.
-# There are 2 authorization interfaces, either one can work.
-# If this option is empty or commented out, no authorization module will be
-# used.
+# There are 2 authorization interfaces, either one can be used. 
+# This is the new authorization interface.  The old interface
+# uses the owcimomd.authorization_lib configuration 
+# item.  If both authorization options are empty or commented out, no
+# authorization module is used. 
 ;owcimomd.authorization2_lib = @libdir@/openwbem/libowsimpleauthorizer2.@LIB_EXT@
 
 ################################################################################
@@ -352,7 +356,7 @@ owcimomd.restart_on_error = true
 owcimomd.interop_schema_namespace = root
 
 ################################################################################
-# If owcimomd.drop_root_privileges != "false", then owcimomd will run as the
+# If owcimomd.drop_root_privileges is true, then owcimomd will run as the
 # user "owcimomd" instead of root.
 # The default is false
 owcimomd.drop_root_privileges = false
@@ -370,7 +374,7 @@ cppprovifc.prov_TTL = 5
 # The remote provider interface uses a connection pool to re-use remote
 # connections. remoteprovifc.max_connections_per_url specifies the maximum
 # number of connections per url that will be pooled.  The value must be a
-# non-negative integer.
+# unsigned integer.
 # The default is 5
 remoteprovifc.max_connections_per_url = 5
 
@@ -527,7 +531,6 @@ slp.enable_advertisement = true
 # owcimomd.services_path Specifies the directory containing the services
 # shared libraries to be loaded by the CIMOM.
 # This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
-# You probably don't need to modify this option.
 # The default is "@libdir@/openwbem/services"
 owcimomd.services_path = @libdir@/openwbem/services
 
@@ -535,14 +538,12 @@ owcimomd.services_path = @libdir@/openwbem/services
 # owcimomd.request_handler_path Specifies the directory containing the
 # request handler shared libraries to be loaded by the CIMOM.
 # This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
-# You probably don't need to modify this option.
 # The default is "@libdir@/openwbem/requesthandlers"
 owcimomd.request_handler_path = @libdir@/openwbem/requesthandlers
 
 ################################################################################
 # owcimomd.libexecdir specifies the locaction of the libexec directory.
 # Binaries that owcimomd relies on are expected to be in this directory.
-# You probably don't need to modify this option.
 # The default is "@libexecdir@/openwbem"
 owcimomd.libexecdir = @libexecdir@/openwbem
 
@@ -550,14 +551,12 @@ owcimomd.libexecdir = @libexecdir@/openwbem
 # owcimomd.owlibdir specifies the locaction of the lib directory.
 # Dynamically loaded libraries that owcimomd relies on are expected to be in
 # this directory.
-# You probably don't need to modify this option.
 # The default is "@libdir@/openwbem"
 owcimomd.owlibdir = @libdir@/openwbem
 
 ################################################################################
 # owcimomd.datadir specifies the directory where owcimomd will place its data
 # file (repositories).
-# You probably don't need to modify this option.
 # The default is "@localstatedir@/openwbem"
 owcimomd.datadir = @localstatedir@/openwbem
 
@@ -567,7 +566,6 @@ owcimomd.datadir = @localstatedir@/openwbem
 # these directories are provider interfaces. If a shared library in this directory
 # does not support the provider interface api, it will be rejected.
 # This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
-# You probably don't need to modify this option.
 # The default is "@libdir@/openwbem/provifcs"
 owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 
@@ -576,7 +574,6 @@ owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 # interface. The cppprovifc.prov_location option specifies where the C++
 # provider interface will load it's providers from.
 # This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
-# You probably don't need to modify this option.
 # The default is "@libdir@/openwbem/c++providers"
 cppprovifc.prov_location = @libdir@/openwbem/c++providers
 
@@ -585,7 +582,6 @@ cppprovifc.prov_location = @libdir@/openwbem/c++providers
 # interface. The owbi1provifc.prov_location option specifies where the OWBI1
 # provider interface will load it's providers from.
 # This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
-# You probably don't need to modify this option.
 # The default is "@libdir@/openwbem/owbi1providers"
 owbi1provifc.prov_location = @libdir@/openwbem/owbi1providers
 
@@ -601,7 +597,6 @@ owbi1provifc.prov_TTL = 5
 ################################################################################
 # http_server.uds_filename specifies the name of the unix domain socket the
 # http server will listen on.
-# You probably don't need to modify this option.
 # The default is /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
 http_server.uds_filename = /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
 
@@ -655,7 +650,7 @@ owcimomd.pidfile = @PIDFILE_DIR@/@PACKAGE_PREFIX@owcimomd.pid
 
 
 ################################################################################
-# This option is DEPRECATED.  Use owcimomd.allowed_users instead.
+# THIS OPTION IS DEPRECATED.  Use owcimomd.allowed_users instead.
 # A space delimited list of system users who are allowed to access the CIMOM.
 # This option is only enforced by the pam authentication module, and has no
 # effect if you are not using http Basic authentication together with the
