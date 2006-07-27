@@ -46,24 +46,10 @@
 #define OW_COW_INTRUSIVE_REFERENCE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
+#include "OW_ReferenceHelpers.hpp"
 
 namespace OW_NAMESPACE
 {
-
-#ifdef OW_CHECK_NULL_REFERENCES
-namespace COWIntrusiveReferenceHelpers
-{
-	// these are not part of COWIntrusiveReference to try and avoid template bloat.
-	OW_COMMON_API void throwNULLException();
-	inline void checkNull(const void* p)
-	{
-		if (p == 0)
-		{
-			throwNULLException();
-		}
-	}
-}
-#endif
 
 /**
  *
@@ -136,8 +122,8 @@ public:
 	const T & operator*() const
 	{
 #ifdef OW_CHECK_NULL_REFERENCES
-		COWIntrusiveReferenceHelpers::checkNull(this);
-		COWIntrusiveReferenceHelpers::checkNull(m_pObj);
+		ReferenceHelpers::checkNull(this);
+		ReferenceHelpers::checkNull(m_pObj);
 #endif
 		return *m_pObj;
 	}
@@ -145,8 +131,8 @@ public:
 	const T * operator->() const
 	{
 #ifdef OW_CHECK_NULL_REFERENCES
-		COWIntrusiveReferenceHelpers::checkNull(this);
-		COWIntrusiveReferenceHelpers::checkNull(m_pObj);
+		ReferenceHelpers::checkNull(this);
+		ReferenceHelpers::checkNull(m_pObj);
 #endif
 		return m_pObj;
 	}
@@ -154,8 +140,8 @@ public:
 	T & operator*()
 	{
 #ifdef OW_CHECK_NULL_REFERENCES
-		COWIntrusiveReferenceHelpers::checkNull(this);
-		COWIntrusiveReferenceHelpers::checkNull(m_pObj);
+		ReferenceHelpers::checkNull(this);
+		ReferenceHelpers::checkNull(m_pObj);
 #endif
 		getWriteLock();
 		return *m_pObj;
@@ -164,8 +150,8 @@ public:
 	T * operator->()
 	{
 #ifdef OW_CHECK_NULL_REFERENCES
-		COWIntrusiveReferenceHelpers::checkNull(this);
-		COWIntrusiveReferenceHelpers::checkNull(m_pObj);
+		ReferenceHelpers::checkNull(this);
+		ReferenceHelpers::checkNull(m_pObj);
 #endif
 		getWriteLock();
 		return m_pObj;

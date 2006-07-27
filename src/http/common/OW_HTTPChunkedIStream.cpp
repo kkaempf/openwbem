@@ -45,10 +45,9 @@ namespace OW_NAMESPACE
 
 using std::istream;
 //////////////////////////////////////////////////////////////////////////////
-HTTPChunkedIStreamBuffer::HTTPChunkedIStreamBuffer(istream& istr,
-	HTTPChunkedIStream* chunker)
-	: BaseStreamBuffer(HTTP_BUF_SIZE, "in"), m_istr(istr),
-	m_inLen(0), m_inPos(0), m_isEOF(false), m_pChunker(chunker)
+HTTPChunkedIStreamBuffer::HTTPChunkedIStreamBuffer(istream& istr)
+	: BaseStreamBuffer(BaseStreamBuffer::E_IN, HTTP_BUF_SIZE), m_istr(istr),
+	m_inLen(0), m_inPos(0), m_isEOF(false)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -76,8 +75,8 @@ HTTPChunkedIStreamBuffer::buffer_from_device(char* c, int n)
 			{
 				return -1;
 			}
-				//OW_THROW(HTTPChunkException, "Invalid length in chunk header");
-					// skip past the trailing \r\n
+
+			// skip past the trailing \r\n
 			while (m_istr.get() != '\n' && m_istr.good())
 			{
 				// do nothing
@@ -88,7 +87,6 @@ HTTPChunkedIStreamBuffer::buffer_from_device(char* c, int n)
 			{
 				// reset the state
 				m_isEOF = true;
-				m_pChunker->buildTrailerMap(); // build the trailer map
 				return offset;
 			}
 		}
@@ -125,10 +123,9 @@ HTTPChunkedIStreamBuffer::resetInput()
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 HTTPChunkedIStream::HTTPChunkedIStream(istream& istr)
-	: HTTPChunkedIStreamBase(istr, this)
-	, CIMProtocolIStreamIFC(&m_strbuf)
+	: HTTPChunkedIStreamBase(istr)
+	, std::istream(&m_strbuf)
 	, m_istr(istr)
-	, m_trailerMap()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -142,67 +139,6 @@ HTTPChunkedIStream::resetInput()
 	clear();
 	m_strbuf.resetInput();
 }
-//////////////////////////////////////////////////////////////////////////////
-void
-HTTPChunkedIStream::buildTrailerMap()
-{
-	if (!HTTPUtils::parseHeader(m_trailerMap, m_istr))
-	{
-		m_trailerMap.clear();
-		OW_THROW(HTTPException, "Error parsing trailers");
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-String
-HTTPChunkedIStream::getTrailer(const String& key) const
-{
-	for (Map<String, String>::const_iterator iter = m_trailerMap.begin();
-		  iter != m_trailerMap.end(); ++iter)
-	{
-		if (iter->first.substring(3).equalsIgnoreCase(key))
-		{
-			return iter->second;
-		}
-	}
-	return String();
-}
-//////////////////////////////////////////////////////////////////////////////
-// TODO: Move all this knowledge about CIM and specific trailers into HTTPClient
-void HTTPChunkedIStream::checkForError() const
-{
-	String errorStr;
-	errorStr = getTrailer("CIMError");
-	if (!errorStr.empty())
-	{
-		OW_THROW(CIMErrorException, errorStr.c_str());
-	}
-	errorStr = getTrailer("CIMStatusCode");
-	if (errorStr.empty())
-	{
-		// try the old OW 2.0.x pre-standard way
-		errorStr = getTrailer("CIMErrorCode");
-	}
-	if (!errorStr.empty())
-	{
-		String descr;
-		descr = getTrailer("CIMStatusDescription");
-		if (descr.empty())
-		{
-			// try the old OW 2.0.x pre-standard way
-			descr = getTrailer("CIMErrorDescription");
-		}
-		if (!descr.empty())
-		{
-			OW_THROWCIMMSG(CIMException::ErrNoType(errorStr.toInt32()),
-				descr.c_str());
-		}
-		else
-		{
-			OW_THROWCIM(CIMException::ErrNoType(errorStr.toInt32()));
-		}
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
 
 } // end namespace OW_NAMESPACE
 

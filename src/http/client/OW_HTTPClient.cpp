@@ -44,15 +44,16 @@
 #include "OW_Format.hpp"
 #include "OW_TempFileStream.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_CryptographicRandomNumber.hpp"
+#include "OW_SecureRand.hpp"
 #include "OW_HTTPException.hpp"
 #include "OW_UserUtils.hpp"
 #include "OW_Select.hpp"
 #include "OW_SSLCtxMgr.hpp"
+#include "OW_CIMErrorException.hpp"
+#include "OW_CIMException.hpp"
 
 #include <fstream>
 #include <cerrno>
-
 
 using namespace std;
 
@@ -94,6 +95,7 @@ HTTPClient::HTTPClient( const String &sURL, const SSLClientCtxRef& sslCtx)
 	, m_retryCount(0)
 	, m_httpPath("/cimom")
 	, m_uselocalAuthentication(false)
+	, m_closeConnection(false)
 {
 	// turn off exceptions, since we're not coded to handle them.
 	m_istr.exceptions(std::ios::goodbit);
@@ -108,9 +110,9 @@ HTTPClient::HTTPClient( const String &sURL, const SSLClientCtxRef& sslCtx)
 	addHeaderPersistent("Host", m_url.host);
 	addHeaderPersistent("User-Agent", OW_PACKAGE"/"OW_VERSION);
 
-	m_socket.setConnectTimeout(60);
-	m_socket.setReceiveTimeout(600);
-	m_socket.setSendTimeout(600);
+	m_socket.setConnectTimeout(Timeout::relative(60));
+	m_socket.setReceiveTimeout(Timeout::relative(600));
+	m_socket.setSendTimeout(Timeout::relative(600));
 }
 //////////////////////////////////////////////////////////////////////////////
 HTTPClient::~HTTPClient()
@@ -253,23 +255,19 @@ HTTPClient::receiveAuthentication()
 {
 	String authInfo = getHeaderValue("www-authenticate");
 	String scheme; 
-    if (!authInfo.empty())
+	if (!authInfo.empty())
 	{
 		scheme = authInfo.tokenize()[0]; 
 		scheme.toLowerCase(); 
 	}
 	m_sRealm = getAuthParam("realm", authInfo);
-
 #ifndef OW_DISABLE_DIGEST
-	CryptographicRandomNumber rn(0, 0x7FFFFFFF);
-	m_sDigestCNonce.format( "%08x", rn.getNextNumber() );
-	// do this 4 more times, so we get > 128 bits of randomness. Each round only yields 31.
-	for (size_t i = 0; i < 4; ++i)
-	{
-		String randomData;
-		randomData.format("%08x", rn.getNextNumber());
-		m_sDigestCNonce += randomData;
-	}
+	m_sDigestCNonce.format(
+		"%08x%08x%08x%08x%08x",
+		Secure::rand_uint<UInt32>(), Secure::rand_uint<UInt32>(),
+		Secure::rand_uint<UInt32>(), Secure::rand_uint<UInt32>(),
+		Secure::rand_uint<UInt32>()
+	);
 	
 	if (headerHasKey("authentication-info") && m_sAuthorization=="Digest" )
 	{
@@ -296,6 +294,13 @@ HTTPClient::receiveAuthentication()
 		m_sAuthorization = "Basic";
 		m_uselocalAuthentication = false;
 	}
+	else if (m_spnegoHandler && authInfo.indexOf("Negotiate") != String::npos)
+	{
+		OW_ASSERT(m_spnegoData != "");
+		m_sAuthorization = "Negotiate";
+		m_uselocalAuthentication = false;
+	}
+	// note this else has to be last, because it will fallback to using OWLocal if m_uselocalAuthentication is set.
 	else if ( scheme.equals( "owlocal" ) || m_uselocalAuthentication)
 	{
 		m_sAuthorization = "OWLocal";
@@ -306,7 +311,7 @@ HTTPClient::receiveAuthentication()
 
 	}
 
-    if (m_sAuthorization.empty())
+	if (m_sAuthorization.empty())
 	{
 		OW_THROW(HTTPException, "No known authentication schemes");
 	}
@@ -359,13 +364,12 @@ void HTTPClient::addCustomHeader(const String& name, const String& value)
 bool HTTPClient::getResponseHeader(const String& hdrName,
 	String& valueOut) const
 {
-	bool cc = false;
 	if (HTTPUtils::headerHasKey(m_responseHeaders, hdrName))
 	{
-		cc = true;
 		valueOut = HTTPUtils::getHeaderValue(m_responseHeaders, hdrName);
+		return true;
 	}
-	return cc;
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -422,6 +426,28 @@ void HTTPClient::sendAuthorization()
 				ostr << "cookie=\"" << cookie << "\"";
 			}
 		}
+		else if (m_spnegoHandler && m_sAuthorization == "Negotiate")
+		{
+			if (m_spnegoData.empty())
+			{
+				String errDetails;
+				SPNEGOHandler::EResult result = m_spnegoHandler->handshake("", m_spnegoData, errDetails);
+				if (result == SPNEGOHandler::E_FAILURE)
+				{
+					OW_THROW(HTTPException, Format("SPNEGO authentication failed: %1", errDetails).c_str());
+				}
+				else if (result == SPNEGOHandler::E_CONTINUE)
+				{
+					// continue. Nothing to do. m_spnegoData was updated by handshake().
+				}
+				else
+				{
+					// something has gone horribly wrong. This shouldn't ever happen unless there is a bug.
+					OW_THROW(HTTPException, "SPNEGOAuthentication received success on first round. The handler is buggy.");
+				}
+			}
+			ostr << m_spnegoData;
+		}
 		addHeaderNew("Authorization", ostr.toString());
 	}
 }
@@ -435,7 +461,7 @@ HTTPClient::checkAndExamineStatusLine()
 	// It's a pretty safe assumption that if the server sent us anything not
 	// in response, but just out of the blue, it's terminating the connection
 	// for some reason.
-	if (m_socket.isConnected() && !m_socket.waitForInput(0))
+	if (m_socket.isConnected() && !m_socket.waitForInput(Timeout::relative(0)))
 	{
 		getStatusLine();
 		StringArray statusLine(m_statusLine.tokenize(" "));
@@ -452,7 +478,7 @@ HTTPClient::checkAndExamineStatusLine()
 		{
 			return E_STATUS_ERROR;
 		}
-		if (statusCode >= 300)
+		if (statusCode >= 300 && statusCode != 401) // ignore 401 for purposes of authentication
 		{
 			return E_STATUS_ERROR;
 		}
@@ -473,8 +499,22 @@ void HTTPClient::copyStreams(std::ostream& ostr, std::istream& istr)
 	std::vector<char> buffer(curbufsize);
 	while (curbufsize != -1)
 	{
+// From rfc 2626:
+//8.2.2 Monitoring Connections for Error Status Messages
+
+//   An HTTP/1.1 (or later) client sending a message-body SHOULD monitor
+//   the network connection for an error status while it is transmitting
+//   the request. If the client sees an error status, it SHOULD
+//   immediately cease transmitting the body. If the body is being sent
+//   using a "chunked" encoding (section 3.6), a zero length chunk and
+//   empty trailer MAY be used to prematurely mark the end of the message.
+//   If the body was preceded by a Content-Length header, the client MUST
+//   close the connection.
+
 		if (checkAndExamineStatusLine() == E_STATUS_ERROR)
 		{
+			// can't close() here, because we still need to read the rest of the response.
+			m_closeConnection = true;
 			break;
 		}
 
@@ -566,14 +606,11 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 	if (m_doDeflateOut)
 	{
 #ifdef OW_HAVE_ZLIB_H
-		// test deflate stuff
 		HTTPChunkedOStream chunkostr(m_ostr);
 		HTTPDeflateOStream deflateostr(chunkostr);
-//		deflateostr << tfs->rdbuf();
 		copyStreams(deflateostr, *tfs);
 		deflateostr.termOutput();
 		chunkostr.termOutput();
-		// end deflate test stuff
 #else
 		OW_THROW(HTTPException, "Attempted to deflate output but not "
 			"compiled with zlib!");
@@ -581,7 +618,6 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 	}
 	else
 	{
-//		m_ostr << tfs->rdbuf() << flush;
 		copyStreams(m_ostr, *tfs);
 		m_ostr.flush();
 	}
@@ -589,15 +625,15 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 	m_responseHeaders.clear();
 }
 //////////////////////////////////////////////////////////////////////////////
-Reference<std::iostream>
+Reference<std::ostream>
 HTTPClient::beginRequest(const String& methodName,
 	const String& cimObject)
 {
-	return Reference<std::iostream>(new TempFileStream());
+	return Reference<std::ostream>(new TempFileStream());
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMProtocolIStreamIFCRef
-HTTPClient::endRequest(const Reference<std::iostream>& request, const String& methodName,
+Reference<std::istream>
+HTTPClient::endRequest(const Reference<std::ostream>& request, const String& methodName,
 			const String& cimObject, ERequestType requestType, const String& cimProtocolVersion)
 {
 	Reference<TempFileStream> tfs = request.cast_to<TempFileStream>();
@@ -652,7 +688,7 @@ HTTPClient::endRequest(const Reference<std::iostream>& request, const String& me
 		}
 		else
 		{
-			OW_THROW(HTTPException, Format("Unable to process request: %1:%2",
+			OW_THROW(CIMErrorException, Format("Unable to process request: %1:%2",
 				reasonPhrase, CIMError).c_str());
 		}
 	}
@@ -662,6 +698,72 @@ HTTPClient::endRequest(const Reference<std::iostream>& request, const String& me
 		OW_THROW(HTTPException, "HTTPClient: unable to understand server response. There may be no content in the reply.");
 	}
 	return m_pIstrReturn;
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+HTTPClient::endResponse(std::istream & /*istr*/)
+{
+	// process the trailers
+	if (m_pIstrReturn)
+	{
+		// Before we can get at the trailers we need to empty out any data from the layer streams.
+		// This also needs to be done to reset the http stream for the next exchange.
+		HTTPUtils::eatEntity(*m_pIstrReturn);
+
+		Reference<std::istream> tmp = m_pIstrReturn;
+#ifdef OW_HAVE_ZLIB_H
+		tmp = m_pIstrReturn.cast_to<HTTPDeflateIStream>();
+		if (!tmp)
+		{
+			tmp = m_pIstrReturn;
+		}
+#endif
+		tmp = tmp.cast_to<HTTPChunkedIStream>();
+		if (tmp)
+		{
+			// the response was chunked, so there could be trailers.  We need to process them.
+			HTTPHeaderMap tmpMap;
+			if (!HTTPUtils::parseHeader(tmpMap, m_istr))
+			{
+				OW_THROW(HTTPException, "Error parsing trailers");
+			}
+			m_responseHeaders.insert(tmpMap.begin(), tmpMap.end());
+		}
+	}
+
+    String errorStr;
+    errorStr = getHeaderValue("CIMError");
+    if (!errorStr.empty())
+    {
+        OW_THROW(CIMErrorException, errorStr.c_str());
+    }
+    errorStr = getHeaderValue("CIMStatusCode");
+    if (errorStr.empty())
+    {
+        // try the old OW 2.0.x pre-standard way
+        errorStr = getHeaderValue("CIMErrorCode");
+    }
+    if (!errorStr.empty())
+    {
+        String descr;
+        descr = getHeaderValue("CIMStatusDescription");
+        if (descr.empty())
+        {
+            // try the old OW 2.0.x pre-standard way
+            descr = getHeaderValue("CIMErrorDescription");
+        }
+        if (!descr.empty())
+        {
+            OW_THROWCIMMSG(CIMException::ErrNoType(errorStr.toInt32()),
+                descr.c_str());
+        }
+        else
+        {
+            OW_THROWCIM(CIMException::ErrNoType(errorStr.toInt32()));
+        }
+    }
+
+	cleanUpIStreams();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMFeatures
@@ -761,11 +863,16 @@ HTTPClient::getFeatures()
 void
 HTTPClient::prepareForRetry()
 {
-	CIMProtocolIStreamIFCRef tmpIstr = convertToFiniteStream();
+	Reference<std::istream> tmpIstr = convertToFiniteStream();
 	if (tmpIstr)
 	{
 		HTTPUtils::eatEntity(*tmpIstr);
 	}
+	if (m_closeConnection)
+	{
+		close();
+	}
+	m_closeConnection = false;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -793,7 +900,8 @@ HTTPClient::processHeaders(String& reasonPhrase)
 {
 	if (getHeaderValue("Connection").equalsIgnoreCase("close"))
 	{
-		close();
+		m_closeConnection = true;
+		//close();
 	}
 
 	Resp_t rt = RETRY;
@@ -843,7 +951,8 @@ HTTPClient::processHeaders(String& reasonPhrase)
 			rt = FATAL; // support redirects?  I think not...
 			break;
 		case '4':
-			close();
+//			m_closeConnection = true;
+//			close();
 			switch (isc)
 			{
 				case SC_REQUEST_TIMEOUT:
@@ -874,8 +983,9 @@ HTTPClient::processHeaders(String& reasonPhrase)
 						rt = FATAL;
 					}
 					break;
-			default:
-					close();
+				default:
+					m_closeConnection = true;
+					//close();
 					rt = FATAL;
 					break;
 			} // switch (isc)
@@ -891,7 +1001,8 @@ HTTPClient::processHeaders(String& reasonPhrase)
 						m_requestMethod = "POST";
 						rt = RETRY;
 						// only do this for JWS, since it doesn't eat the entity.
-						close();
+						m_closeConnection = true;
+						//close();
 					}
 					else
 					{
@@ -908,6 +1019,20 @@ HTTPClient::processHeaders(String& reasonPhrase)
 			break;
 	} // switch (sc[0])
 
+	// Get the Man header and save the ns
+	String man = getHeaderValue("Man");
+	if (!man.empty())
+	{
+		StringArray manVals = man.tokenize(";");
+		if (manVals.size() >= 2)
+		{
+			StringArray nsVals = manVals[1].tokenize("=");
+			if (nsVals.size() == 2)
+			{
+				m_ns = nsVals[1];
+			}
+		}
+	}
 	// now check for headers which indicate an error
 	String CIMError = getHeaderValue("CIMError");
 	if (!CIMError.empty())
@@ -915,13 +1040,49 @@ HTTPClient::processHeaders(String& reasonPhrase)
 		rt = FATAL;
 	}
 
+	// have to process WWW-Authenticate: Negotiate <blah> here, because we have to validate it on the response.
+	String authInfo = getHeaderValue("www-authenticate");
+	String negStr("Negotiate");
+	if (m_spnegoHandler && authInfo.indexOf(negStr) != String::npos)
+	{
+		size_t idx = authInfo.indexOf(negStr);
+		if (idx != String::npos)
+		{
+			String data = authInfo.substring(idx + negStr.length() + 1);
+			String errDetails;
+			SPNEGOHandler::EResult result = m_spnegoHandler->handshake(data, m_spnegoData, errDetails);
+			if (result == SPNEGOHandler::E_SUCCESS)
+			{
+				// success. Do nothing.
+			}
+			else if (result == SPNEGOHandler::E_FAILURE)
+			{
+				reasonPhrase = Format("SPNEGO handshake failed: %1", errDetails);
+				rt = FATAL;
+			}
+			else if (result == SPNEGOHandler::E_CONTINUE)
+			{
+				// continue, so handshake() should have saved off the token for the next round in m_spnegoData.
+			}
+			else
+			{
+				// something has gone horribly wrong. This shouldn't ever happen unless there is a bug.
+				OW_THROW(HTTPException, Format("SPNEGOAuthentication received unknown response (%1) from spnego handler.", result).c_str());
+			}
+		}
+		else
+		{
+			m_spnegoData.erase();
+		}
+	}
+
 	return rt;
 }
 /////////////////////////////////////////////////////////////////////////////
-CIMProtocolIStreamIFCRef
+Reference<std::istream>
 HTTPClient::convertToFiniteStream()
 {
-	CIMProtocolIStreamIFCRef rval(0);
+	Reference<std::istream> rval(0);
 	if (getHeaderValue("Transfer-Encoding").equalsIgnoreCase("chunked"))
 	{
 		rval = new HTTPChunkedIStream(m_istr);
@@ -986,10 +1147,11 @@ HTTPClient::checkResponse(Resp_t& rt)
 		{
 			if (m_socket.receiveTimeOutExpired())
 			{
-				reasonPhrase = Format("Client receive timeout (%1 seconds) expired.", m_socket.getReceiveTimeout());
+				reasonPhrase = "Client receive timeout expired.";
 			}
 			rt = FATAL;
-			close();
+			m_closeConnection = true;
+			//close();
 			break;
 		}
 		if (!HTTPUtils::parseHeader(m_responseHeaders, m_istr))
@@ -1073,13 +1235,13 @@ void HTTPClient::close()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPClient::setReceiveTimeout(int seconds)
+HTTPClient::setReceiveTimeout(const Timeout& timeout)
 {
-	m_socket.setReceiveTimeout(seconds);
+	m_socket.setReceiveTimeout(timeout);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+Timeout
 HTTPClient::getReceiveTimeout() const
 {
 	return m_socket.getReceiveTimeout();
@@ -1087,13 +1249,13 @@ HTTPClient::getReceiveTimeout() const
 
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPClient::setSendTimeout(int seconds)
+HTTPClient::setSendTimeout(const Timeout& timeout)
 {
-	m_socket.setSendTimeout(seconds);
+	m_socket.setSendTimeout(timeout);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+Timeout
 HTTPClient::getSendTimeout() const
 {
 	return m_socket.getSendTimeout();
@@ -1101,13 +1263,13 @@ HTTPClient::getSendTimeout() const
 
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPClient::setConnectTimeout(int seconds)
+HTTPClient::setConnectTimeout(const Timeout& timeout)
 {
-	m_socket.setConnectTimeout(seconds);
+	m_socket.setConnectTimeout(timeout);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+Timeout
 HTTPClient::getConnectTimeout() const
 {
 	return m_socket.getConnectTimeout();
@@ -1115,11 +1277,26 @@ HTTPClient::getConnectTimeout() const
 
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPClient::setTimeouts(int seconds)
+HTTPClient::setTimeouts(const Timeout& timeout)
 {
-	m_socket.setTimeouts(seconds);
+	m_socket.setTimeouts(timeout);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void 
+HTTPClient::assumeSPNEGOAuth()
+{
+	close();
+	m_authRequired = true;
+	m_sAuthorization = "Negotiate";
+	m_uselocalAuthentication = false;
+}
+
+void
+HTTPClient::setSPNEGOHandler(const SPNEGOHandlerRef& spnegoHandler)
+{
+	m_spnegoHandler = spnegoHandler;
+}
 
 } // end namespace OW_NAMESPACE
 

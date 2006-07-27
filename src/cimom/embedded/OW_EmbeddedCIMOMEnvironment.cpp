@@ -58,15 +58,15 @@
 #include "OW_WQLIFC.hpp"
 #include "OW_SharedLibraryRepository.hpp"
 #include "OW_IndicationRepLayerMediator.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_LocalOperationContext.hpp"
 #include "OW_Authorizer2IFC.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_AuthorizerManager.hpp"
 #include "OW_AuthorizerIFC.hpp"
 #include "OW_LogAppender.hpp"
-#include "OW_AppenderLogger.hpp"
-#include "OW_CerrLogger.hpp"
+#include "OW_MultiAppender.hpp"
+#include "OW_CerrAppender.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ProviderManager.hpp"
 
@@ -135,13 +135,9 @@ namespace
 		{
 			return m_pCenv->getRepository();
 		}
-		virtual LoggerRef getLogger() const
+		virtual RepositoryIFCRef getAuthorizingRepository() const
 		{
-			return m_pCenv->getLogger();
-		}
-		virtual LoggerRef getLogger(const String& componentName) const
-		{
-			return m_pCenv->getLogger(componentName);
+			return m_pCenv->getAuthorizingRepository();
 		}
 		virtual String getUserName() const
 		{
@@ -157,7 +153,7 @@ namespace
 		}
 	private:
 		EmbeddedCIMOMEnvironmentRef m_pCenv;
-		OperationContext m_context;
+		LocalOperationContext m_context;
 	};
 	ProviderEnvironmentIFCRef createProvEnvRef(const EmbeddedCIMOMEnvironmentRef& pcenv)
 	{
@@ -168,7 +164,7 @@ namespace
 // We don't initialize everything here, since startServices() and shutdown() manage the lifecycle.
 // We start off with a dumb logger and an empty config map.
 EmbeddedCIMOMEnvironment::EmbeddedCIMOMEnvironment()
-	: m_Logger(new CerrLogger)
+	: m_Logger(COMPONENT_NAME, new CerrAppender())
 	, m_configItems(new ConfigMap)
 	, m_indicationsDisabled(true)
 	, m_indicationRepLayerDisabled(false)
@@ -568,7 +564,9 @@ EmbeddedCIMOMEnvironment::_createLogger()
 		logMainFormat, logMainType, getAppenderConfig(*m_configItems)));
 
 
-	m_Logger = new AppenderLogger(COMPONENT_NAME, appenders);
+	LogAppender::setDefaultLogAppender(new MultiAppender(appenders));
+
+	m_Logger = Logger(COMPONENT_NAME);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -676,7 +674,7 @@ EmbeddedCIMOMEnvironment::getWQLRef() const
 		OW_LOG_DEBUG(m_Logger, Format("CIMOM loading wql library %1", libname));
 		SharedLibraryLoaderRef sll =
 			SharedLibraryLoader::createSharedLibraryLoader();
-		m_wqlLib = sll->loadSharedLibrary(libname, m_Logger);
+		m_wqlLib = sll->loadSharedLibrary(libname);
 		if (!m_wqlLib)
 		{
 			OW_LOG_ERROR(m_Logger, Format("CIMOM Failed to load WQL Libary: %1", libname));
@@ -684,27 +682,7 @@ EmbeddedCIMOMEnvironment::getWQLRef() const
 		}
 	}
 	return  WQLIFCRef(m_wqlLib, SafeLibCreate<WQLIFC>::create(
-		m_wqlLib, "createWQL", m_Logger));
-}
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-LoggerRef
-EmbeddedCIMOMEnvironment::getLogger() const
-{
-	OW_ASSERT(m_Logger);
-	return m_Logger->clone();
-}
-//////////////////////////////////////////////////////////////////////////////
-LoggerRef
-EmbeddedCIMOMEnvironment::getLogger(const String& componentName) const
-{
-	OW_ASSERT(m_Logger);
-	LoggerRef rv(m_Logger->clone());
-	rv->setDefaultComponent(componentName);
-	return rv;
+		m_wqlLib, "createWQL"));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -730,6 +708,12 @@ EmbeddedCIMOMEnvironment::getRepository() const
 	return m_cimRepository;
 }
 //////////////////////////////////////////////////////////////////////////////
+RepositoryIFCRef
+EmbeddedCIMOMEnvironment::getAuthorizingRepository() const
+{
+	return m_cimRepository;
+}
+//////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 void
 EmbeddedCIMOMEnvironment::unloadProviders()
@@ -743,7 +727,7 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 struct Node
 {
-	Node(const String& name_, size_t index_ = ~0)
+	Node(const String& name_, size_t index_ = size_t(~0))
 		: name(name_)
 		, index(index_)
 	{}
@@ -765,7 +749,7 @@ bool operator<(const Node& x, const Node& y)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-Node INVALID_NODE("", ~0);
+Node INVALID_NODE("", size_t(~0));
 
 //////////////////////////////////////////////////////////////////////////////
 class ServiceDependencyGraph

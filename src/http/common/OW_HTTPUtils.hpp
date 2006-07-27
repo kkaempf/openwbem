@@ -48,7 +48,6 @@ namespace OW_NAMESPACE
 typedef Map<String, String> HTTPHeaderMap;
 namespace HTTPUtils
 {
-	extern OW_HTTP_API const char* const Header_BypassLocker; 
 	extern OW_HTTP_API const char* const HeaderValue_true; 
 	extern OW_HTTP_API const char* const HeaderValue_false; 
 	/**
@@ -172,6 +171,15 @@ namespace HTTPUtils
 	 * 	HTTPChunkedIStream, HTTPLenLimitIStream, or TempFileStream)
 	 */
 	OW_HTTP_API void eatEntity(std::istream& istr);
+	/**
+	 * Read from an input buffer, until the end of the entity is reached.
+	 * This is usefull when using a HTTPChunkedIStream or
+	 * HTTPLenLimitIStream, and the XML parser (for instance), may
+	 * not have read to the end of the entity.
+	 * @param istr A istream& containing the entity (presumably a
+	 * 	HTTPChunkedIStream, HTTPLenLimitIStream, or TempFileStream)
+	 */
+	OW_HTTP_API void eatEntity(std::streambuf& buf);
 	/**
 	 * Base64Decode a user name/password.
 	 * @param info a base64 encoded representation of a "<name>:<password>"

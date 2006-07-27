@@ -61,6 +61,7 @@
 #include "OW_NullLogger.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_ConfigFile.hpp"
+#include "OW_UnnamedPipe.hpp"
 
 #include <algorithm> // for std::remove
 
@@ -138,12 +139,10 @@ public:
 		const ConfigFile::ConfigMap& configItems, 
 		const AuthenticatorIFCRef& authenticator,
 		RequestHandlerIFCRef listener,
-		const LoggerRef& logger,
 		Reference<Array<SelectablePair_t> > selectables)
 	: m_configItems(configItems)
 	, m_authenticator(authenticator)
 	, m_XMLListener(listener)
-	, m_logger(logger ? logger : LoggerRef(new NullLogger))
 	, m_selectables(selectables)
 	{
 		setConfigItem(ConfigOpts::HTTP_SERVER_MAX_CONNECTIONS_opt, String(10), E_PRESERVE_PREVIOUS);
@@ -207,24 +206,13 @@ public:
 	{
 		RequestHandlerIFCRef ref(m_XMLListener.getLibRef(),
 				m_XMLListener->clone());
-		ref->setEnvironment(ServiceEnvironmentIFCRef(const_cast<CIMXMLListenerServiceEnvironment*>(this)));
+		ref->init(ServiceEnvironmentIFCRef(const_cast<CIMXMLListenerServiceEnvironment*>(this)));
 		return ref;
-	}
-	virtual LoggerRef getLogger() const
-	{
-		return getLogger(COMPONENT_NAME);
-	}
-	virtual LoggerRef getLogger(const String& componentName) const
-	{
-		LoggerRef rv(m_logger->clone());
-		rv->setDefaultComponent(componentName);
-		return rv;
 	}
 private:
 	ConfigFile::ConfigMap m_configItems;
 	AuthenticatorIFCRef m_authenticator;
 	RequestHandlerIFCRef m_XMLListener;
-	LoggerRef m_logger;
 	Reference<Array<SelectablePair_t> > m_selectables;
 };
 class SelectEngineThread : public Thread
@@ -250,17 +238,19 @@ public:
 	virtual Int32 run()
 	{
 		SelectEngine engine;
-		SelectableCallbackIFCRef cb(new SelectEngineStopper(engine));
-		m_selectables->push_back(std::make_pair(m_stopObject, cb));
 		for (size_t i = 0; i < m_selectables->size(); ++i)
 		{
-			engine.addSelectableObject((*m_selectables)[i].first,
-				(*m_selectables)[i].second);
+			engine.addSelectableObject((*m_selectables)[i].first->getSelectObj(),
+				(*m_selectables)[i].second, SelectableCallbackIFC::E_ACCEPT_EVENT);
 		}
-		engine.go();
+		engine.addSelectableObject(m_stopObject->getReadSelectObj(), 
+			SelectableCallbackIFCRef(new SelectEngineStopper(engine)),
+			SelectableCallbackIFC::E_READ_EVENT);
+
+		engine.go(Timeout::infinite);
 		return 0;
 	}
-	virtual void doCooperativeCancel()
+	virtual void doShutdown()
 	{
 #ifdef OW_WIN32
 		// signal the event to stop the select engine so the
@@ -288,8 +278,7 @@ private:
 //////////////////////////////////////////////////////////////////////////////
 CIMXMLListener::CIMXMLListener(const ConfigFile::ConfigMap& configItems, 
 							   const CIMListenerCallbackRef& callback, 
-							   const AuthenticatorIFCRef& authenticator, 
-							   const LoggerRef& logger)
+							   const AuthenticatorIFCRef& authenticator)
 	: m_XMLListener(SharedLibraryRef(0), new XMLListener(callback)) 
 	//, m_pLAuthenticator(new ListenerAuthenticator)
 	, m_httpServer(new HTTPServer)
@@ -299,8 +288,7 @@ CIMXMLListener::CIMXMLListener(const ConfigFile::ConfigMap& configItems,
 	Reference<Array<SelectablePair_t> >
 		selectables(new Array<SelectablePair_t>);
 	ServiceEnvironmentIFCRef env(new CIMXMLListenerServiceEnvironment(
-		configItems, 
-		authenticator, m_XMLListener, logger, selectables)); 
+		configItems, authenticator, m_XMLListener, selectables)); 
 	m_httpServer->init(env);
 	m_httpServer->start();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really
@@ -353,6 +341,7 @@ CIMXMLListener::shutdownHttpServer()
 {
 	if (m_httpThread)
 	{
+		m_httpThread->shutdown(Timeout::relative(1));
 		m_httpThread->cooperativeCancel();
 		// wait for the thread to quit
 		m_httpThread->join();

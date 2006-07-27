@@ -42,6 +42,11 @@ SharedLibraryLoader::~SharedLibraryLoader()
 {
 }
 
+namespace
+{
+	String COMPONENT_NAME("ow.SharedLibraryLoader");
+}
+
 } // end namespace OW_NAMESPACE
 
 

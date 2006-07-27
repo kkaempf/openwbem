@@ -35,11 +35,13 @@
 #ifndef OW_UNNAMEDPIPE_HPP_
 #define OW_UNNAMEDPIPE_HPP_
 #include "OW_config.h"
-#include "OW_SelectableIFC.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_Exception.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IOIFC.hpp"
 #include "OW_CommonFwd.hpp"
+#include "OW_Timeout.hpp"
+#include "OW_AutoDescriptor.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -51,11 +53,11 @@ OW_DECLARE_APIEXCEPTION(UnnamedPipe, OW_COMMON_API);
  * Abstract interface for an UnnamedPipe.
  * Blocking is enabled by default.
  */
-class OW_COMMON_API UnnamedPipe : public SelectableIFC, public IOIFC
+class OW_COMMON_API UnnamedPipe : public IOIFC, public IntrusiveCountableBase
 {
 public:
 	virtual ~UnnamedPipe();
-	
+
 	/**
 	 * Write an int (native binary representation) to the pipe.  If
 	 *  blocking is enabled, writeInt() will block for up to
@@ -100,41 +102,45 @@ public:
 	 */
 	int readString(String& strData);
 
+	static const int INFINITE_TIMEOUT = -1;
 	/**
 	 * Sets the read timeout value.  If blocking is enabled this is the number
 	 * of seconds a read operation will block.
 	 * Exception safety: No-throw
 	 * @param seconds The new read timeout.
 	 */
-	void setReadTimeout(int seconds) { m_readTimeout = seconds; }
+	void setReadTimeout(const Timeout& timeout) { m_readTimeout = timeout; }
+	OW_DEPRECATED void setReadTimeout(int seconds) { m_readTimeout = Timeout::relative(seconds); }
 	/**
 	 * Gets the read timeout value.  If blocking is enabled this is the number
 	 * of seconds a read operation will block.
 	 * Exception safety: No-throw
 	 * @return The read timeout.
 	 */
-	int getReadTimeout() { return m_readTimeout; }
+	Timeout getReadTimeout() { return m_readTimeout; }
 	/**
 	 * Sets the write timeout value.  If blocking is enabled this is the number
 	 * of seconds a write operation will block.
 	 * Exception safety: No-throw
 	 * @param seconds The new write timeout.
 	 */
-	void setWriteTimeout(int seconds) { m_writeTimeout = seconds; }
+	void setWriteTimeout(const Timeout& timeout) { m_writeTimeout = timeout; }
+	OW_DEPRECATED void setWriteTimeout(int seconds) { m_writeTimeout = Timeout::relative(seconds); }
 	/**
 	 * Gets the write timeout value.  If blocking is enabled this is the number
 	 * of seconds a write operation will block.
 	 * Exception safety: No-throw
 	 * @return seconds The write timeout.
 	 */
-	int getWriteTimeout() { return m_writeTimeout; }
+	Timeout getWriteTimeout() { return m_writeTimeout; }
 	/**
 	 * Sets the read & write timeout values.  If blocking is enabled this is
 	 * the number of seconds a read or write operation will block.
 	 * Exception safety: No-throw
 	 * @param seconds The new timeout.
 	 */
-	void setTimeouts(int seconds) { m_readTimeout = m_writeTimeout = seconds; }
+	void setTimeouts(const Timeout& timeout) { m_readTimeout = m_writeTimeout = timeout; }
+	OW_DEPRECATED void setTimeouts(int seconds) { m_readTimeout = m_writeTimeout = Timeout::relative(seconds); }
 
 	/**
 	 * Read from the pipe and collect into a string, until the other end of the
@@ -163,7 +169,12 @@ public:
 	virtual bool isOpen() const = 0;
 
 	/**
-	 * Get a write select object
+	 * Get the read select object
+	 */
+	virtual Select_t getReadSelectObj() const = 0;
+
+	/**
+	 * Get the write select object
 	 */
 	virtual Select_t getWriteSelectObj() const = 0;
 
@@ -178,10 +189,52 @@ public:
 	 * Precondition: The pipe is open.
 	 * @param outputIsBlocking new blocking mode.
 	 */
-	virtual void setBlocking(EBlockingMode outputIsBlocking=E_BLOCKING) = 0;
-	virtual void setOutputBlocking(bool outputIsBlocking=true) OW_DEPRECATED = 0; // in 3.0.0
+	virtual void setBlocking(EBlockingMode isBlocking=E_BLOCKING) = 0;
 
+	/**
+	 * Set blocking mode for writing to pipe.
+	 * Precondition: The pipe output is open.
+	 * @param isBlocking new write blocking mode.
+	 */
+	virtual void setWriteBlocking(EBlockingMode isBlocking=E_BLOCKING) = 0;
+
+	/**
+	 * Set blocking mode for reading from pipe.
+	 * Precondition: The pipe input is open.
+	 * @param isBlocking new read blocking mode.
+	 */
+	virtual void setReadBlocking(EBlockingMode isBlocking=E_BLOCKING) = 0;
+
+	/**
+	 * Get the underlying input descriptor. The UnnamedPipe instance retains ownership of the descriptor.
+	 */
+	virtual Descriptor getInputDescriptor() const = 0;
 	
+	/**
+	 * Get the underlying output descriptor. The UnnamedPipe instance retains ownership of the descriptor.
+	 */
+	virtual Descriptor getOutputDescriptor() const = 0;
+
+	/**
+	 * Sends a @c Descriptor to the peer.
+	 *
+	 * @param h The @c Descriptor to send.
+	 *
+	 * @throw IOException on I/O error.
+	 */
+	virtual void passDescriptor(Descriptor h) = 0;
+
+	/**
+	 * Gets a @c Descriptor from the peer.
+	 *
+	 * @return The @c Descriptor sent by the peer.
+	 *
+	 * @throw IOException on I/O error or if the peer does not send a
+	 * @c Descriptor
+	 */
+	virtual AutoDescriptor receiveDescriptor() = 0;
+
+
 	enum EOpen
 	{
 		E_DONT_OPEN,
@@ -190,16 +243,35 @@ public:
 	/**
 	 * Create an instance of the concrete class that implements the UnnamedPipe
 	 *  interface.
+	 * The input and output of the pipe will be connected.
+	 * The pipe defaults to have 10 minute timeouts.
 	 * @param doOpen Open the pipe or not.
 	 */
 	static UnnamedPipeRef createUnnamedPipe(EOpen doOpen=E_OPEN);
+	static UnnamedPipeRef createUnnamedPipeFromDescriptor(AutoDescriptor inputAndOutput);
+	static UnnamedPipeRef createUnnamedPipeFromDescriptor(AutoDescriptor input, AutoDescriptor output);
+
+	/**
+	 * Create a connected pair of pipes. The input from first will be connected to the output of second,
+	 * and the input from second will be connected to the output of first.
+	 * The pipes default to have 10 minute timeouts.
+	 * @throws UnnamedPipeException with error code EMFILE if too many descriptors are in use by the process.
+	 */
+	static void createConnectedPipes(UnnamedPipeRef& first, UnnamedPipeRef& second);
+
+    static UnnamedPipeRef createStdin();
+    static UnnamedPipeRef createStdout();
+    static UnnamedPipeRef createStdinStdout();
+    static UnnamedPipeRef createStderr();
 
 protected:
 	UnnamedPipe()
-		: SelectableIFC()
+		: m_readTimeout(Timeout::infinite)
+		, m_writeTimeout(Timeout::infinite)
 	{}
-	int m_readTimeout;
-	int m_writeTimeout;
+private:
+	Timeout m_readTimeout;
+	Timeout m_writeTimeout;
 };
 OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, UnnamedPipe);
 

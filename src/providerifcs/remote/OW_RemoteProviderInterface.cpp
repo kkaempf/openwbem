@@ -49,6 +49,7 @@
 #include "OW_NoSuchPropertyException.hpp"
 #include "OW_NULLValueException.hpp"
 #include "OW_Logger.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -96,7 +97,7 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 	}
 	m_connectionPool = ClientCIMOMHandleConnectionPoolRef(new ClientCIMOMHandleConnectionPool(maxConnectionsPerUrl));
 
-	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
+	Logger lgr(COMPONENT_NAME);
 	String interopNs = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 	CIMInstanceArray registrations;
 	try
@@ -243,6 +244,8 @@ RemoteProviderInterface::doGetInstanceProvider(const ProviderEnvironmentIFCRef& 
 		return InstanceProviderIFCRef(new RemoteInstanceProvider(env, iter->second.url, m_connectionPool,
 			iter->second.alwaysSendCredentials, iter->second.useConnectionCredentials));
 	}
+	// Not reachable
+	return InstanceProviderIFCRef();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -260,6 +263,8 @@ RemoteProviderInterface::doGetSecondaryInstanceProvider(const ProviderEnvironmen
 		return SecondaryInstanceProviderIFCRef(new RemoteSecondaryInstanceProvider(env, iter->second.url, m_connectionPool,
 			iter->second.alwaysSendCredentials, iter->second.useConnectionCredentials));
 	}
+	// Not reachable
+	return SecondaryInstanceProviderIFCRef();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -277,6 +282,8 @@ RemoteProviderInterface::doGetMethodProvider(const ProviderEnvironmentIFCRef& en
 		return MethodProviderIFCRef(new RemoteMethodProvider(env, iter->second.url, m_connectionPool,
 			iter->second.alwaysSendCredentials, iter->second.useConnectionCredentials));
 	}
+	// Not reachable
+	return MethodProviderIFCRef();
 }
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -295,6 +302,8 @@ RemoteProviderInterface::doGetAssociatorProvider(const ProviderEnvironmentIFCRef
 		return AssociatorProviderIFCRef(new RemoteAssociatorProvider(env, iter->second.url, m_connectionPool,
 			iter->second.alwaysSendCredentials, iter->second.useConnectionCredentials));
 	}
+	// Not reachable
+	return AssociatorProviderIFCRef();
 }
 #endif
 

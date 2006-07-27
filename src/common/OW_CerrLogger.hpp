@@ -48,9 +48,6 @@ class OW_COMMON_API CerrLogger : public Logger
 public:
 	CerrLogger();
 
-	virtual void doProcessLogMessage(const LogMessage&) const;
-
-	virtual LoggerRef doClone() const;
 };
 
 } // end namespace OW_NAMESPACE

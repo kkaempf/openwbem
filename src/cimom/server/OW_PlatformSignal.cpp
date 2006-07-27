@@ -35,6 +35,8 @@
 #include "OW_Platform.hpp"
 #include "OW_PlatformSignal.hpp"
 #include "OW_UserUtils.hpp"
+#include "OW_SignalUtils.hpp"
+
 #include <ostream>
 
 namespace OW_NAMESPACE
@@ -125,9 +127,9 @@ namespace OW_NAMESPACE
 				// any type conversion (raw data).
 				// THIS IS ONLY VALID FOR POD TYPES.
 				template<class T>
-				void flattenToPipe(const T& t, UnnamedPipeRef& destPipe)
+				bool flattenToPipe(const T& t, UnnamedPipeRef& destPipe)
 				{
-					destPipe->write(&t, sizeof(t));
+					return destPipe->write(&t, sizeof(t)) == sizeof(t);
 				}
 
 				// A helper function to unflatten types from a pipe without
@@ -136,7 +138,7 @@ namespace OW_NAMESPACE
 				template <class T>
 				bool unflattenFromPipe(T& dest, UnnamedPipeRef& sourcePipe)
 				{
-					return sourcePipe->read(&dest, sizeof(dest));
+					return sourcePipe->read(&dest, sizeof(dest)) == sizeof(dest);
 				}
 			}
 
@@ -146,18 +148,19 @@ namespace OW_NAMESPACE
 				{
 					return false;
 				}
+				bool success = true;
 
-				flattenToPipe(source.signalAction, destPipe);
-				flattenToPipe(source.signalNumber, destPipe);
-				flattenToPipe(source.errorNumber, destPipe);
-				flattenToPipe(source.signalCode, destPipe);
-				flattenToPipe(source.originatingPID, destPipe);
-				flattenToPipe(source.originatingUID, destPipe);
-				flattenToPipe(source.timerValue, destPipe);
-				flattenToPipe(source.faultAddress, destPipe);
-				flattenToPipe(source.fileDescriptor, destPipe);
-				flattenToPipe(source.band, destPipe);
-				return true;
+				success = success && flattenToPipe(source.signalAction, destPipe);
+				success = success && flattenToPipe(source.signalNumber, destPipe);
+				success = success && flattenToPipe(source.errorNumber, destPipe);
+				success = success && flattenToPipe(source.signalCode, destPipe);
+				success = success && flattenToPipe(source.originatingPID, destPipe);
+				success = success && flattenToPipe(source.originatingUID, destPipe);
+				success = success && flattenToPipe(source.timerValue, destPipe);
+				success = success && flattenToPipe(source.faultAddress, destPipe);
+				success = success && flattenToPipe(source.fileDescriptor, destPipe);
+				success = success && flattenToPipe(source.band, destPipe);
+				return success;
 			}
 
 			bool unflattenSignalInformation(SignalInformation& dest, UnnamedPipeRef& sourcePipe)
@@ -183,17 +186,10 @@ namespace OW_NAMESPACE
 				return success;
 			}
 
+
 			std::ostream& operator<<(std::ostream& o, const SignalInformation& sig)
 			{
-				const char* sigtext = NULL;
-#if defined(OW_HAVE_STRSIGNAL)
-				sigtext = strsignal(sig.signalNumber);
-#endif
-
-				if( !sigtext )
-				{
-					sigtext = "UNKNOWN";
-				}
+				const char* sigtext = SignalUtils::signalName(sig.signalNumber);
 				o << "  Signal: " << sigtext << " (" << sig.signalNumber << ")" << std::endl;
 				if( sig.errorNumber )
 				{

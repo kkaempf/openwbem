@@ -61,7 +61,20 @@ namespace SocketUtils
 	 *  -1 on error, and ETIMEDOUT on timeout.
 	 */
 	OW_COMMON_API int waitForIO(SocketHandle_t fd, HANDLE event,
-		int timeOutSecs, long networkEvents=-1L);
+		int timeOutSecs, long networkEvents=-1L) OW_DEPRECATED; // in 4.0.0
+
+	/**
+	 * Wait for input or output on a socket.
+	 * @param fd the handle of the socket to wait on.
+	 * @param event The event associated with the socket that will
+	 *		be signaled when I/O is available
+	 * @param timeOutSecs the number of seconds to wait.
+	 * @param networkEvents netWork events to wait for
+	 * @return zero if we got input before the timeout expired,
+	 *  -1 on error, and ETIMEDOUT on timeout.
+	 */
+	OW_COMMON_API int waitForIO(SocketHandle_t fd, HANDLE event,
+		const Timeout& timeout, long networkEvents=-1L);
 
 #else
 	/**
@@ -73,6 +86,16 @@ namespace SocketUtils
 	 *  -1 on error, and ETIMEDOUT on timeout.
 	 */
 	int waitForIO(SocketHandle_t fd, int timeOutSecs,
+		SocketFlags::EWaitDirectionFlag forInput) OW_DEPRECATED; // in 4.0.0
+	/**
+	 * Wait for input or output on a socket.
+	 * @param fd the handle of the socket to wait on.
+	 * @param timeOutSecs the number of seconds to wait.
+	 * @param forInput true if we are waiting for input.
+	 * @return zero if we got input before the timeout expired,
+	 *  -1 on error, and ETIMEDOUT on timeout.
+	 */
+	int waitForIO(SocketHandle_t fd, const Timeout& timeout,
 		SocketFlags::EWaitDirectionFlag forInput);
 #endif
 

@@ -55,37 +55,46 @@ extern "C"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
+
 #if defined(OW_HAVE_GETOPT_H) && !defined(OW_GETOPT_AND_UNISTD_CONFLICT)
-#include <getopt.h>
+	#include <getopt.h>
 #else
-#include <stdlib.h> // for getopt on Solaris
+	#include <stdlib.h> // for getopt on Solaris
 #endif
-#ifdef WIN32
-#include <process.h>
-#define getpid _getpid
+
+
+#ifdef OW_WIN32
+	#include <process.h>
+	#define getpid _getpid
 #else
-#include <unistd.h> // for getpid, getuid, etc.
+	#include <unistd.h> // for getpid, getuid, etc.
+	#include <sys/wait.h>
 #endif
+
 #include <signal.h>
 #include <fcntl.h>
+
 #if defined (OW_HAVE_PWD_H)
-#include <pwd.h>
+	#include <pwd.h>
 #endif
+
 #if defined (OW_HAVE_SYS_RESOURCE_H)
-#include <sys/resource.h>
+	#include <sys/resource.h>
 #endif
+
 #if defined(OW_HAVE_GRP_H)
-#include <grp.h>
+	#include <grp.h>
 #endif
 
 #ifdef OW_NETWARE
-#include <nks/vm.h>
-#include <nks/netware.h>
-#include <netware.h>
-#include <event.h>
-#include <library.h>
+	#include <nks/vm.h>
+	#include <nks/netware.h>
+	#include <netware.h>
+	#include <event.h>
+	#include <library.h>
 #endif
 }
+
 #include <cstring>
 #include <cstdio>
 #include <iostream>
@@ -109,11 +118,11 @@ static void theSigHandler(int sig, siginfo_t* info, void* context);
 
 namespace
 {
-const String COMPONENT_NAME("ow.owcimomd");
-
-const int DAEMONIZE_PIPE_TIMEOUT = 25;
+const Timeout DAEMONIZE_PIPE_TIMEOUT = Timeout::relative(25.0);
+const int RESTART_RETURN_VALUE = 94; // this is just a random value and has no other meaning or significance.
 
 void handleSignal(int sig);
+void ignoreSignal(int sig);
 void setupSigHandler(bool dbgFlg);
 
 UnnamedPipeRef plat_upipe;
@@ -140,50 +149,90 @@ daemonInit( int argc, char* argv[] )
 {
 	g_argv = argv;
 }
+
+// win32 version
+#ifdef OW_WIN32
 /**
  * daemonize() - detach process from user and disappear into the background
  * Throws DaemonException on error.
  */
 void
-daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef& env)
+daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool restartOnFatalError, const String& loggerComponentName)
 {
-#ifndef WIN32
+	initSig();
+
+}
+#endif // #ifdef OW_WIN32
+
+// netware version
 #ifdef OW_NETWARE
+void
+daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool restartOnFatalError, const String& loggerComponentName)
+{
 	{
 		NonRecursiveMutexLock l(g_shutdownGuard);
 		g_shutDown = false;
 	}
-#endif
 	initDaemonizePipe();
 
-	// If we're running as root and owcimomd.drop_root_privileges != "false", then try to switch users/groups to owcimomd/owcimomd
-	if (geteuid() == 0 && !env->getConfigItem(ConfigOpts::DROP_ROOT_PRIVILEGES_opt, OW_DEFAULT_DROP_ROOT_PRIVILEGES).equalsIgnoreCase("false"))
+	int pid = -1;
+	if (!dbgFlg)
 	{
-		const char OWCIMOMD_USER[] = "owcimomd";
-		// dont need to worry about thread safety here, the threads won't start until later.
-		struct passwd* owcimomdInfo = ::getpwnam(OWCIMOMD_USER);
-		if (!owcimomdInfo)
+		chdir("/");
+		close(0);
+		close(1);
+		close(2);
+		open("/dev/null", O_RDONLY);
+		open("/dev/null", O_WRONLY);
+		dup(1);
+	}
+	else
+	{
+		pid = getpid();
+	}
+	umask(0077); // ensure all files we create are only accessible by us.
+	Logger lgr(loggerComponentName);
+	OW_LOG_INFO(lgr, Format("Platform::daemonize() pid = %1", ::getpid()));
+	initSig();
+	setupSigHandler(dbgFlg);
+
+#ifdef OW_HAVE_PTHREAD_ATFORK
+	// this registers shutdownSig to be run in the child whenever a fork() happens. 
+	// This will prevent a child process from writing to the signal pipe and shutting down the parent.
+	::pthread_atfork(NULL, NULL, &shutdownSig);
+#endif
+}
+#endif // #ifdef OW_NETWARE
+
+
+// posix version
+#if !defined(OW_WIN32) && !defined(OW_NETWARE)
+
+namespace
+{
+	void cleanupChild(pid_t childPid, int& status)
+	{
+		pid_t rv = waitpid(childPid, &status, WNOHANG);
+		if (rv != childPid)
 		{
-			OW_THROW_ERRNO_MSG(DaemonException, "Platform::daemonize(): getpwnam(\"owcimomd\")");
-		}
-		if (::setgid(owcimomdInfo->pw_gid) != 0)
-		{
-			OW_THROW_ERRNO_MSG(DaemonException, "Platform::daemonize(): setgid");
-		}
-		if (::initgroups(owcimomdInfo->pw_name, owcimomdInfo->pw_gid) != 0)
-		{
-			OW_THROW_ERRNO_MSG(DaemonException, "Platform::daemonize(): initgroups");
-		}
-		if (::setuid(owcimomdInfo->pw_uid) != 0)
-		{
-			OW_THROW_ERRNO_MSG(DaemonException, "Platform::daemonize(): setuid");
+			perror("cleanupChild: waitpid()");
+			exit(1);
 		}
 	}
 
+	void doNothingHandler(int signo)
+	{
+		// nothing
+	}
+}
+
+void
+daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool restartOnFatalError, const String& loggerComponentName)
+{
+	initDaemonizePipe();
 
 	int pid = -1;
-#if !defined(OW_NETWARE)
-	String pidFile(env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE));
+
 	pid = PidFile::checkPid(pidFile.c_str());
 	// Is there already another instance of the cimom running?
 	if (pid != -1)
@@ -192,10 +241,9 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 			Format("Another instance of %1 is already running [%2]",
 				daemonName, pid).c_str());
 	}
-#endif
+
 	if (!dbgFlg)
 	{
-#if !defined(OW_NETWARE) && !defined(WIN32)
 		pid = fork();
 		switch (pid)
 		{
@@ -219,6 +267,8 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 			OW_THROW(DaemonException,
 				"FAILED TO DETACH FROM THE TERMINAL - setsid failed");
 		}
+
+		// second fork really detaches us
 		pid = fork();
 		switch (pid)
 		{
@@ -233,43 +283,275 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 					errno = saved_errno;
 					OW_THROW_ERRNO_MSG(DaemonException,
 						"FAILED TO DETACH FROM THE TERMINAL - Second fork");
-					exit(1);
 				}
 			default:
 				_exit(0);
 		}
-#endif
+
 		chdir("/");
+
+		// reattach stdin, stdout, stderr
 		close(0);
 		close(1);
 		close(2);
 		open("/dev/null", O_RDONLY);
 		open("/dev/null", O_WRONLY);
 		dup(1);
+
+		// to prevent a race condition between parent and child, block the signals now!
+
+		sigset_t newmask, oldmask;
+		sigemptyset(&newmask);
+		sigaddset(&newmask, SIGCHLD);
+		sigaddset(&newmask, SIGTERM);
+		sigaddset(&newmask, SIGHUP);
+
+		if (sigprocmask(SIG_BLOCK, &newmask, &oldmask) < 0)
+		{
+			int saved_errno = errno;
+			sendDaemonizeStatus(DAEMONIZE_FAIL);
+			errno = saved_errno;
+			OW_THROW_ERRNO_MSG(DaemonException,
+				"Platform::daemonize(): sigprocmask(SIG_BLOCK)");
+		}
+
+		// Write out pid file here so that we write out the pid of the
+		// child-watcher parent process, and not the child.
+		//
+		if (PidFile::writePid(pidFile.c_str()) == -1)
+		{
+			// Save the error number, since the sendDaemonizeStatus function can cause it to change.
+			int saved_errno = errno;
+			sendDaemonizeStatus(DAEMONIZE_FAIL);
+			// Restore the real error number.
+			errno = saved_errno;
+			OW_THROW_ERRNO_MSG(DaemonException,
+				Format("Failed to write the pid file (%1)", pidFile).c_str());
+		}
+
+		// third fork to create the child-watcher parent process. If the child segfaults or requests a restart, then it will be restarted.
+fork_child:
+
+		pid = fork();
+		switch (pid)
+		{
+			case 0: // child, so just continue on
+				break;
+			case -1:
+			{
+				int saved_errno = errno;
+				sendDaemonizeStatus(DAEMONIZE_FAIL);
+				errno = saved_errno;
+				OW_THROW_ERRNO_MSG(DaemonException,
+					"Platform::daemonize(): third fork() failed.");
+			}
+			break;
+			default: // parent
+			{
+				// Monitor the child's status.
+				// We just block waiting for signals: SIGCHLD, SIGTERM, SIGHUP and then take the appropriate action.
+
+				// by default, SIGCHLD is set to be ignored so unless we happen
+				// to be blocked on sigwaitinfo() at the time that SIGCHLD
+				// is set on us we will not get it.  To fix this, we simply
+				// register a signal handler.  Since we've masked the signal
+				// above, it will not affect us.  At the same time we will make
+				// it a queued signal so that if more than one are set on us,
+				// sigwaitinfo() will get them all.
+				struct sigaction action;
+				action.sa_handler = doNothingHandler;
+				sigemptyset(&action.sa_mask);
+				action.sa_flags = SA_SIGINFO; // make it a queued signal
+				sigaction(SIGCHLD, &action, NULL);
+
+wait_for_signal:
+
+				siginfo_t siginfo;
+				int rv = -1;
+				do
+				{
+#if defined(HAVE_DECL_SIGWAITINFO) && HAV_DECL_SIGWAITINFO
+					rv = sigwaitinfo(&newmask, &siginfo);
+#else
+					rv = sigwait(&newmask, &siginfo.si_signo);
+					if( rv != 0 )
+					{
+						errno = rv;
+						rv = -1;
+					}
+#endif
+				} while (rv == -1 && errno == EINTR);
+
+				if (rv == -1)
+				{
+					// shouldn't ever happen
+					abort();
+				}
+
+				switch (siginfo.si_signo)
+				{
+					case SIGCHLD:
+					{
+						// find out what happened to the child
+						int status;
+						pid_t pidrv = waitpid(pid, &status, WNOHANG);
+						if (pidrv == -1)
+						{
+							perror("parent: waitpid()");
+							exit(1);
+						}
+
+						// if the child exited
+						if (pidrv == pid)
+						{
+							if (WIFEXITED(status) && WEXITSTATUS(status) == RESTART_RETURN_VALUE)
+							{
+								goto fork_child;
+							}
+							else if (WIFEXITED(status))
+							{
+								exit(WEXITSTATUS(status));
+							}
+							else if (WIFSIGNALED(status))
+							{
+								// the cimom or one of it's providers had a bad bug... restart it.
+								int termsig = WTERMSIG(status);
+								switch (termsig)
+								{
+									case SIGABRT:
+									case SIGILL:
+									case SIGBUS:
+									case SIGSEGV:
+									case SIGFPE:
+										if (restartOnFatalError)
+										{
+											goto fork_child;
+										}
+										else
+										{
+											exit(1);
+										}
+									default:
+										exit(1);
+								}
+							}
+							else
+							{
+								abort(); // something is buggy...
+							}
+						}
+						else // if (WIFSTOPPED(status) || WIFCONTINUED(status)) or ??? just ignore it.
+						{
+							// debugger attached to it, so ignore the signal
+							goto wait_for_signal;
+						}
+
+					}
+					break;
+					case SIGHUP:
+					case SIGTERM:
+					{
+						// propagate the signal to the child
+						if (kill(pid, siginfo.si_signo) == -1)
+						{
+							perror("Platform::daemonize(): kill()");
+							exit(1);
+						}
+
+						// The child should exit upon receiving either a SIGHUP or a SIGTERM
+						// Wait 2 minutes for it to exit, if it hasn't then send a SIGKILL
+						const long WAIT_SECONDS = 120;
+						timespec ts = {WAIT_SECONDS, 0};
+						int rv = -1;
+						sigset_t chldmask;
+						sigemptyset(&chldmask);
+						sigaddset(&chldmask, SIGCHLD);
+						sigaddset(&chldmask, SIGALRM);
+						int childSignal = 0;
+
+ 						// Install an alarm for the number of seconds required.
+						handleSignal(SIGALRM); // The default OW signal handler will ignore this signal.
+						alarm(WAIT_SECONDS);
+						rv = sigwait(&chldmask, &childSignal);
+						ignoreSignal(SIGALRM);
+						int childStatus = 0;
+
+						if ( rv == 0 )
+						{
+							if (childSignal == SIGALRM) // wait timed out
+							{
+								if (kill(pid, SIGKILL) == -1)
+								{
+									perror("Platform::daemonize(): kill()");
+									exit(1);
+								}
+								cleanupChild(pid, childStatus);
+							}
+							else if (childSignal == SIGCHLD) // it exited!
+							{
+								cleanupChild(pid, childStatus);
+							}
+							else
+							{
+								abort(); // I screwed up something.  Another signal slipped through. :-(
+							}
+						}
+						else
+						{
+							abort(); // I screwed up something :-(
+						}
+
+						// restart if requested
+						if (siginfo.si_signo == SIGHUP)
+						{
+							goto fork_child;
+						}
+						else
+						{
+							// if the child exited, return the same value
+							if (WIFEXITED(childStatus))
+							{
+								exit(WEXITSTATUS(childStatus));
+							}
+							else
+							{
+								exit(1);
+							}
+						}
+					}
+					break;
+				}
+
+			}
+			break;
+		}
+
+		// child needs to restore signal mask
+		if (sigprocmask(SIG_SETMASK, &oldmask, NULL) < 0)
+		{
+			int saved_errno = errno;
+			sendDaemonizeStatus(DAEMONIZE_FAIL);
+			errno = saved_errno;
+			OW_THROW_ERRNO_MSG(DaemonException,
+				"Platform::daemonize(): sigprocmask(SIG_SETMASK)");
+		}
+
 	}
 	else
 	{
 		pid = getpid();
 	}
 	umask(0077); // ensure all files we create are only accessible by us.
-#if !defined(OW_NETWARE)
-	if (PidFile::writePid(pidFile.c_str()) == -1)
-	{
-		// Save the error number, since the sendDaemonizeStatus function can cause it to change.
-		int saved_errno = errno;
-		sendDaemonizeStatus(DAEMONIZE_FAIL);
-		// Restore the real error number.
-		errno = saved_errno;
-		OW_THROW_ERRNO_MSG(DaemonException,
-			Format("Failed to write the pid file (%1)", pidFile).c_str());
-	}
-#endif
-	OW_LOG_INFO(env->getLogger(COMPONENT_NAME), Format("Platform::daemonize() pid = %1", ::getpid()));
-#endif
+
+	// PidFile::writePid used to be here...
+
+	Logger lgr(loggerComponentName);
+	OW_LOG_INFO(lgr, Format("Platform::daemonize() pid = %1", ::getpid()));
+
 	initSig();
-#ifndef WIN32
+
 	setupSigHandler(dbgFlg);
-#endif
+
 
 #ifdef OW_HAVE_PTHREAD_ATFORK
 	// this registers shutdownSig to be run in the child whenever a fork() happens. 
@@ -277,9 +559,11 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 	::pthread_atfork(NULL, NULL, &shutdownSig);
 #endif
 }
+#endif // #if !defined(OW_WIN32) && !defined(OW_NETWARE)
+
 //////////////////////////////////////////////////////////////////////////////
 int
-daemonShutdown(const String& daemonName, const ServiceEnvironmentIFCRef& env)
+daemonShutdown(const String& daemonName, const String& pidFile)
 {
 #ifndef WIN32
 #if defined(OW_NETWARE)
@@ -295,7 +579,6 @@ daemonShutdown(const String& daemonName, const ServiceEnvironmentIFCRef& env)
 		UnRegisterEventNotification(DownEvent);
 	}
 #else
-	String pidFile(env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE));
 	PidFile::removePid(pidFile.c_str());
 #endif
 #endif
@@ -306,76 +589,9 @@ daemonShutdown(const String& daemonName, const ServiceEnvironmentIFCRef& env)
 //////////////////////////////////////////////////////////////////////////////
 void rerunDaemon()
 {
-#ifndef WIN32
-#ifdef OW_HAVE_PTHREAD_KILL_OTHER_THREADS_NP
-	// do this, since it seems that on some distros (debian sarge for instance)
-	// it doesn't happen when calling execv(), and it shouldn't hurt if it's
-	// called twice.
-	pthread_kill_other_threads_np();
-#endif
+	// If we've dropped privileges, just re-running ourselves won't do much, since we'll lose the monitor.
 
-#ifdef OW_DARWIN
-	// On Darwin, execv() fails with a ENOTIMP if any threads are running.
-	// The only way we have to really get rid of all the threads is to call fork() and exit() the parent.
-	// Note that we don't do this on other platforms because fork() isn't safe to call from a signal handler, and isn't necessary.
-	if (::fork() != 0)
-	{
-		_exit(1); // if fork fails or we're the parent, just exit.
-	}
-	// child continues.
-#endif
-
-	// On Linux pthreads will kill off all the threads when we call
-	// execv().  If we close all the fds, then that breaks pthreads and
-	// execv() will just hang.
-	// Instead set the close on exec flag so all file descriptors are closed
-	// by the kernel when we evecv() and we won't leak them.
-	rlimit rl;
-	int i = sysconf(_SC_OPEN_MAX);
-	if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
-	{
-	  if ( i < 0 )
-	  {
-		i = rl.rlim_max;
-	  }
-	  else
-	  {
-		i = std::min<int>(rl.rlim_max, i);
-	  }
-	}
-
-	struct flock lck;
-	::memset (&lck, '\0', sizeof (lck));
-	lck.l_type = F_UNLCK;       // unlock
-	lck.l_whence = 0;           // 0 offset for l_start
-	lck.l_start = 0L;           // lock starts at BOF
-	lck.l_len = 0L;             // extent is entire file
-
-	while (i > 2)
-	{
-		// clear any file locks - this shouldn't technically be necessary, but it seems on some systems, even though we restart, the locks persist,
-		// either because of bugs in the kernel or somehow things still hang around...
-		::fcntl(i, F_SETLK, &lck);
-
-		// set it for close on exec
-		::fcntl(i, F_SETFD, FD_CLOEXEC);
-		i--;
-	}
-
-	// reset the signal mask, since that is inherited by an exec()'d process, and if
-	// this was called from a signal handler, the signal being handled (e.g. SIGSEGV) will be blocked.
-	// some platforms make macros for sigemptyset, so we can't use ::
-	sigset_t emptymask;
-	sigemptyset(&emptymask);
-	::sigprocmask(SIG_SETMASK, &emptymask, 0);
-#endif
-
-	// This doesn't return. execv() will replace the current process with a
-	// new copy of g_argv[0] (owcimomd).
-	::execv(g_argv[0], g_argv);
-
-	// If we get here we're pretty much hosed.
-	OW_THROW_ERRNO_MSG(DaemonException, "execv() failed");
+	exit(RESTART_RETURN_VALUE);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -659,31 +875,6 @@ setupSigHandler(bool dbgFlg)
 
 } // end unnamed namespace
 
-//////////////////////////////////////////////////////////////////////////////
-void installFatalSignalHandlers()
-{
-	handleSignalAux(SIGABRT, fatalSigHandler);
-
-	handleSignalAux(SIGILL, fatalSigHandler);
-#ifdef SIGBUS // NetWare doesn't have this signal
-	handleSignalAux(SIGBUS, fatalSigHandler);
-#endif
-	handleSignalAux(SIGSEGV, fatalSigHandler);
-	handleSignalAux(SIGFPE, fatalSigHandler);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void removeFatalSignalHandlers()
-{
-	handleSignalAux(SIGABRT, SIG_DFL);
-
-	handleSignalAux(SIGILL, SIG_DFL);
-#ifdef SIGBUS // NetWare doesn't have this signal
-	handleSignalAux(SIGBUS, SIG_DFL);
-#endif
-	handleSignalAux(SIGSEGV, SIG_DFL);
-	handleSignalAux(SIGFPE, SIG_DFL);
-}
 #else // WIN32
 
 BOOL WINAPI CtrlHandlerRoutine(DWORD dwCtrlType)
@@ -692,6 +883,7 @@ BOOL WINAPI CtrlHandlerRoutine(DWORD dwCtrlType)
 	return TRUE;
 }
 
+#error "Figure out somewhere else to call this code"
 void installFatalSignalHandlers()
 {
 	::SetConsoleCtrlHandler(CtrlHandlerRoutine, TRUE);
@@ -756,9 +948,9 @@ void shutdownSig()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-SelectableIFCRef getSigSelectable()
+Select_t getSigSelectable()
 {
-	return plat_upipe;
+	return plat_upipe->getReadSelectObj();
 }
 
 

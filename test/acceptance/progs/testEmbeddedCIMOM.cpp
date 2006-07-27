@@ -41,8 +41,8 @@
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
 #include "OW_Logger.hpp"
-#include "OW_CerrLogger.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_CerrAppender.hpp"
+#include "OW_LocalOperationContext.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMValue.hpp"
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
 	EmbeddedCIMOMEnvironmentRef env = EmbeddedCIMOMEnvironment::instance();
 	
 	// until the config file is read and parsed, just use a logger that prints everything to stderr.
-	LoggerRef logger(new CerrLogger());
+	Logger logger(COMPONENT_NAME, new CerrAppender());
 
 	try
 	{
@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
 		debugMode = debugMode || env->getConfigItem(ConfigOpts::DEBUGFLAG_opt, OW_DEFAULT_DEBUGFLAG).equalsIgnoreCase("true");
 
 		// logger's not set up according to the config file until after init()
-		logger = env->getLogger(COMPONENT_NAME);
+		logger = Logger(COMPONENT_NAME);
 		OW_LOG_INFO(logger, "owcimomd (" OW_VERSION ") beginning startup");
 
 		env->setConfigItem(ConfigOpts::AUTHORIZATION_LIB_opt, "");
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 		env->startServices();
 		OW_LOG_INFO(logger, "owcimomd is now running!");
 
-		OperationContext oc; 
+		LocalOperationContext oc; 
 
 		CIMOMHandleIFCRef ch = env->getCIMOMHandle(oc); 
 
@@ -192,7 +192,7 @@ int main(int argc, char* argv[])
 	}
 	catch(...)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT owcimomd MAIN!");
+		OW_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT IN owcimomd MAIN!");
 		rval = 1;
 	}
 	// Call platform specific shutdown routine
@@ -239,7 +239,7 @@ processCommandLine(int argc, char* argv[], EmbeddedCIMOMEnvironmentRef env)
 void
 printUsage(std::ostream& ostrm)
 {
-	ostrm << OW_DAEMON_NAME << " [OPTIONS]..." << std::endl;
+	ostrm << "testEmbeddedCIMOM [OPTIONS]..." << std::endl;
 	ostrm << "Available options:" << std::endl;
 	ostrm << "\t-d, --debug  Set debug on (does not detach from terminal"<< std::endl;
 	ostrm << "\t-c, --config Specifiy an alternate config file" << std::endl;

@@ -37,7 +37,7 @@
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OperationContextTestCases.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_LocalOperationContext.hpp"
 
 using namespace OpenWBEM;
 
@@ -51,7 +51,7 @@ void OperationContextTestCases::tearDown()
 
 void OperationContextTestCases::testStringData()
 {
-	OperationContext context;
+	LocalOperationContext context;
 	context.setStringData("key", "value");
 	String val;
 	unitAssertNoThrow(val = context.getStringData("key"));

@@ -44,6 +44,10 @@
 namespace OW_NAMESPACE
 {
 
+namespace
+{
+	String COMPONENT_NAME("ow.common.DLLSharedLibraryLoader");
+}
 ///////////////////////////////////////////////////////////////////////////////
 DLLSharedLibraryLoader::DLLSharedLibraryLoader()
 {
@@ -52,8 +56,7 @@ DLLSharedLibraryLoader::DLLSharedLibraryLoader()
 
 ///////////////////////////////////////////////////////////////////////////////
 SharedLibraryRef
-DLLSharedLibraryLoader::loadSharedLibrary(const String& filename,
-	const LoggerRef& logger) const
+DLLSharedLibraryLoader::loadSharedLibrary(const String& filename) const
 {
 	if( filename.endsWith("libopenwbem.dll") )
 	{
@@ -67,6 +70,7 @@ DLLSharedLibraryLoader::loadSharedLibrary(const String& filename,
 			filename));
 	}
 
+	Logger logger(COMPONENT_NAME);
 	OW_LOG_ERROR(logger, Format("DLLSharedLibraryLoader::loadSharedLibrary "
 		"LoadLibrary returned NULL.  Error is: %1",
 		System::lastErrorMsg()).c_str());

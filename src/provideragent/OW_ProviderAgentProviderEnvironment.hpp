@@ -53,7 +53,6 @@ class OW_PROVIDERAGENT_API ProviderAgentProviderEnvironment : public ProviderEnv
 {
 public:
 	ProviderAgentProviderEnvironment(
-		const LoggerRef& logger,
 		const ConfigFile::ConfigMap& configMap,
 		OperationContext& operationContext,
 		const String& callbackURL,
@@ -73,13 +72,11 @@ public:
 	// This function returns a reference to the repository.  This function should only
 	// be called if getCIMOMHandle() and getRepositoryCIMOMHandle() are insufficient.
 	virtual RepositoryIFCRef getRepository() const;
-	virtual LoggerRef getLogger() const;
-	virtual LoggerRef getLogger(const String& componentName) const;
+	virtual RepositoryIFCRef getAuthorizingRepository() const;
 	virtual String getUserName() const;
 	virtual OperationContext& getOperationContext();
 	virtual ProviderEnvironmentIFCRef clone() const;
 private:
-	LoggerRef m_logger;
 	ConfigFile::ConfigMap m_configMap;
 	OperationContext& m_operationContext;
 	String m_callbackURL;

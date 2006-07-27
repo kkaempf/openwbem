@@ -27,9 +27,9 @@ class OpenWBEM_HostedObjectManager : CIM_HostedService
     "adding properties specific to the OpenWBEM binary protocol.")]
 class OpenWBEM_BinaryCommunicationMechanism : CIM_ObjectManagerCommunicationMechanism
 {
-	[Description("The version of the binary protocol supported by the Object "
-	"manager.")]
-	uint16 BinaryProtocolVersion;
+    [Description("The version of the binary protocol supported by the Object "
+    "manager.")]
+    uint16 BinaryProtocolVersion;
 };
 
 */
@@ -154,7 +154,7 @@ class OpenWBEM_RemoteProviderRegistration
 
         [Description (
           "The namespace for this provider registration. If this "
-          "property is empty of NULL, all namespaces is implied.")]
+          "property is empty or NULL, all namespaces is implied.")]
         string NamespaceName;
 
         [Required, Description (
@@ -204,9 +204,111 @@ class OpenWBEM_RemoteProviderRegistration
 [Description("Class used by some of the OpenWBEM interop providers to store data")]
 class OpenWBEM_InternalData
 {
-	[Key]
-	string Name;
-	[Required]
-	string Value;
+    [Key]
+    string Name;
+    [Required]
+    string Value;
+};
+
+class OpenWBEM_OOPProviderRegistration
+{
+    [Key, Description (
+      "Within the scope of the instantiating Namespace, InstanceID "
+      "opaquely and uniquely identifies an instance of this class. "
+      "In order to ensure uniqueness within the NameSpace, the "
+      "value of InstanceID SHOULD be constructed using the "
+      "following 'preferred' algorithm: \n"
+      "<OrgID>:<LocalID> \n"
+      "Where <OrgID> and <LocalID> are separated by a colon ':', "
+      "and where <OrgID> MUST include a copyrighted, trademarked "
+      "or otherwise unique name that is owned by the business "
+      "entity creating/defining the InstanceID, or is a registered "
+      "ID that is assigned to the business entity by a recognized "
+      "global authority. (This is similar to the <Schema "
+      "Name>_<Class Name> structure of Schema class names.) In "
+      "addition, to ensure uniqueness <OrgID> MUST NOT contain a "
+      "colon (':'). When using this algorithm, the first colon to "
+      "appear in InstanceID MUST appear between <OrgID> and "
+      "<LocalID>. \n"
+      "<LocalID> is chosen by the business entity and SHOULD not "
+      "be re-used to identify different underlying (real-world) "
+      "elements. If the above 'preferred' algorithm is not used, "
+      "the defining entity MUST assure that the resultant "
+      "InstanceID is not re-used across any InstanceIDs produced "
+      "by this or other providers for this instance's NameSpace. "
+      "For DMTF defined instances, the 'preferred' algorithm MUST "
+      "be used with the <OrgID> set to 'CIM'.")]
+    string InstanceID;
+
+    [Description (
+      "The namespaces for this provider registration. If this "
+      "property is empty or NULL, all namespaces are implied.")]
+    string NamespaceNames[];
+
+    [Required, Description (
+      "The CIM class name for the provider")]
+    string ClassName;
+
+    [Description (
+      "ProviderTypes identifies the kind of provider."),
+      ValueMap {"1", "2", "3", "4", "5", "6", "7", "8"},
+      Values {"Instance", "Secondary Instance", "Association", 
+         "Lifecycle Indication", "Alert Indication",
+         "Method", "Indication Export", "Polled"},
+      ArrayType ("Indexed"),
+      Required ]
+    uint16 ProviderTypes[];
+
+    [Required, Description (
+      "Process to launch.")]
+    string Process;
+
+    [Description (
+      "Command line arguments to use when launching Process.")]
+    string Args[];
+
+    [Required, Description (
+      "Protocol to use.  Valid values are: owcpp1.")]
+    string Protocol = "owcpp1";
+
+    [Required, Description (
+      "An interval (an absolute time is NOT valid) describing how "
+      "long the provider process will be allowed to run before being "
+      "terminated. Care must be taken in choosing this value for "
+      "persistent providers (polled & indication), because if a timeout "
+      "occurs, the provider process will be killed and will not be "
+      "called again.")]
+    datetime Timeout = "00000000000100.000000:000";
+
+    [Required, Description (
+      "The user context that will be used to run the provider process "
+      "super user means that the provider process will be run as root "
+      "on POSIX systems, and as SYSTEM on win32. BE VERY CAUTIOUS "
+      "WITH THIS SETTING!\n"
+      "operation means that the provider process will be run as the "
+      "authenticated username who initiated the operation.\n"
+      "unprivileged means that the provider process will be run as an "
+      "unprivileged user named owcimomd.\n"
+      "monitored means that the provider process will be run as the "
+      "user specified in the monitor privileges configuration file. "
+      "MonitorPrivilegesFile must be set in this case."),
+    ValueMap {"1", "2", "3", "4"},
+    Values {"super user", "operation", "unprivileged", "monitored"}]
+    uint16 UserContext = 3;
+
+    [Description (
+      "If UserContext = 4 (monitored), a monitor will be created for the "
+      "provider process. The monitor can give the process special "
+      "permissions. This property must be set to the file name of the "
+      "provider's privileges configuration file. The file must be in the "
+      "directory identified by the owcimomd.privileges_config_dir config "
+      "item.")]
+    string MonitorPrivilegesFile;
+
+    [Description (
+      "List of class names (subclasses of CIM_ListenerDestination) that "
+      "the provider handles. Only applicable for Indication Export "
+      "providers.")]
+    string IndicationExportHandlerClassNames[];
 };
 

@@ -39,23 +39,72 @@
 namespace OW_NAMESPACE
 {
 
+namespace
+{
+	IOIFCStreamBuffer::EDirectionFlag directionToEnum(const char* direction)
+	{
+		if (strcmp(direction, "in") == 0)
+		{
+			return IOIFCStreamBuffer::E_IN;
+		}
+		if (strcmp(direction, "out") == 0)
+		{
+			return IOIFCStreamBuffer::E_OUT;
+		}
+		return IOIFCStreamBuffer::E_IN_OUT;
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////
 IOIFCStreamBuffer::IOIFCStreamBuffer(IOIFC* dev, int bufSize,
 	const char* direction)
-	: BaseStreamBuffer(bufSize, direction)
+	: BaseStreamBuffer(directionToEnum(direction), bufSize)
 	, m_dev(dev)
+	, m_tied_buf(0)
+	, m_error_action(IOIFC::E_RETURN_ON_ERROR)
+{
+}
+//////////////////////////////////////////////////////////////////////////////
+IOIFCStreamBuffer::IOIFCStreamBuffer(IOIFC* dev, EDirectionFlag direction, int bufSize)
+	: BaseStreamBuffer(direction, bufSize)
+	, m_dev(dev)
+	, m_tied_buf(0)
+	, m_error_action(IOIFC::E_RETURN_ON_ERROR)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
 IOIFCStreamBuffer::~IOIFCStreamBuffer()
 {
-	sync();
+	try
+	{
+		sync();
+	}
+	catch (...)
+	{
+	}
 }
+//////////////////////////////////////////////////////////////////////////////
+std::streambuf * IOIFCStreamBuffer::tie(std::streambuf * tied_buf)
+{
+	std::streambuf * retval = m_tied_buf;
+	m_tied_buf = tied_buf;
+	return retval;
+}
+//////////////////////////////////////////////////////////////////////////////
+void IOIFCStreamBuffer::setErrorAction(IOIFC::ErrorAction error_action)
+{
+	m_error_action = error_action;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 int
 IOIFCStreamBuffer::buffer_from_device(char* c, int n)
 {
-	return m_dev->read(c,n);
+	if (m_tied_buf)
+	{
+		m_tied_buf->pubsync();
+	}
+	return m_dev->read(c, n, m_error_action);
 }
 //////////////////////////////////////////////////////////////////////////////
 int
@@ -63,7 +112,7 @@ IOIFCStreamBuffer::buffer_to_device(const char* c, int n)
 {
 	while (n > 0)
 	{
-		int cnt = m_dev->write(c, n);
+		int cnt = m_dev->write(c, n, m_error_action);
 		if (cnt == -1) // failure
 		{
 			return -1;

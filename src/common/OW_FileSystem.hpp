@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2005 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -31,6 +31,7 @@
 /**
  * @author Jon Carey
  * @author Dan Nuffer
+ * @author Kevin S. Van Horn
  */
 
 #ifndef OW_FILESYSTEM_HPP_INCLUDE_GUARD_
@@ -40,6 +41,11 @@
 #include "OW_ArrayFwd.hpp"
 #include "OW_Exception.hpp"
 #include "OW_CommonFwd.hpp"
+#ifdef OW_ENABLE_TEST_HOOKS
+#include "OW_GlobalPtr.hpp"
+#endif
+
+#include <utility>
 
 #ifdef OW_HAVE_SYS_PARAM_H
 #include <sys/param.h>
@@ -148,7 +154,13 @@ namespace FileSystem
 	 * @param size	Put the size of the file in this variable.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	OW_COMMON_API bool getFileSize(const String& path, off_t& size);
+	OW_COMMON_API bool getFileSize(const String& path, Int64& size);
+	/**
+	* Get the size of a file from the file handle.
+	* @param fh Handle of the desired file.
+	* @return The size of the file.
+	*/
+	OW_COMMON_API UInt64 fileSize(FileHandle fh);
 	/**
 	 * Remove the given directory
 	 * @param path	The name of the directory to remove
@@ -186,10 +198,10 @@ namespace FileSystem
 	 * @param offset			The offset to seek to in the file before the read
 	 *								operation is done. -1 will use the current offset.
 	 * @return The number of bytes read. If EOF or an error occurs, a short
-	 * count or zero is returned.
+	 * count or size_t(-1) is returned.
 	 */
 	OW_COMMON_API size_t read(const FileHandle& hdl, void* bfr, size_t numberOfBytes,
-		off_t offset=-1L);
+		Int64 offset=-1L);
 	/**
 	 * Write data to a file.
 	 * @param hdl				The file handle to perform the write operation on.
@@ -198,10 +210,10 @@ namespace FileSystem
 	 * @param offset			The offset to seek to in the file before the write
 	 *								operation is done. -1 will use the current offset.
 	 * @return The number of bytes written. If an error occurs, a short count
-	 * or zero is returned.
+	 * or size_t(-1) is returned.
 	 */
-	OW_COMMON_API size_t write(FileHandle& hdl, const void* bfr,
-		size_t numberOfBytes, off_t offset=-1L);
+	OW_COMMON_API size_t write(FileHandle hdl, const void* bfr,
+		size_t numberOfBytes, Int64 offset=-1L);
 	/**
 	 * Seek to a given offset within the file.
 	 * @param hdl			The file handle to use in the seek operation.
@@ -213,13 +225,13 @@ namespace FileSystem
 	 * @return The the current location in the file relative to the beginning
 	 * of the file on success. Other -1.
 	 */
-	OW_COMMON_API off_t seek(const FileHandle& hdl, off_t offset, int whence);
+	OW_COMMON_API Int64 seek(const FileHandle& hdl, Int64 offset, int whence);
 	/**
 	 * @param hdl	The file handle to use in the tell operation.
 	 * @return The current position in the file relative to the beginning of
 	 * the file on success. Otherwise -1.
 	 */
-	OW_COMMON_API off_t tell(const FileHandle& hdl);
+	OW_COMMON_API Int64 tell(const FileHandle& hdl);
 	/**
 	 * Position the file pointer associated with the given file handle to the
 	 * beginning of the file.
@@ -237,12 +249,6 @@ namespace FileSystem
 	 * @param hdl	The file handle to flush the buffer on.
 	 */
 	OW_COMMON_API int flush(FileHandle& hdl);
-	/**
-	 * Create a file with random data. This is suitable for use with SSL initialization,
-	 * If OpenSSL integration has been enabled.
-	 * @param filename  The name of the file to write the random data to
-	 */
-	OW_COMMON_API void initRandomFile(const String& file) OW_DEPRECATED;
 	/**
 	 * Read and return the contents of a text file.  If the file contains a null
 	 * character ('\0') then only previous data will be returned.
@@ -272,16 +278,84 @@ namespace FileSystem
 	namespace Path
 	{
 		/**
-		 * Convert path to the canonicalized absolute pathname by expanding all
-		 * symbolic links and resolving references to /./, /../ and extra /
-		 * characters. If path is relative, it will be interpreted as relative to
-		 * the current working directory. This function is similar to the SuSv3
-		 * function, however it's easier to use and thread safe.
-		 * @param path The path to canonicalize.
-		 * @return The canonicalized version of path.
-		 * @throws FileSystemException EACCESS, EIO, ELOOP, ENOENT, ENOTDIR
-		 */
+		* @return The canonical path specifying the same directory or file as
+		* @a path.  A path is in canonical form iff
+		* - it is an absolute path,
+		* - no component is ".", "..", nor a symbolic link,
+		* - it does not contain repeated '/' characters, and
+		* - the last character is not '/' unless the entire path is "/".
+		*
+		* If @a path is relative, it will be interpreted relative to the
+		* current working directory. This function is similar to the SuSv3
+		* function, however it's easier to use and thread safe.
+		*
+		* @param path The path to canonicalize.
+		*
+		* @pre No path component examined in the course of resolving @a path
+		* to its canonical form is renamed, deleted, or (for symbolic links)
+		* reassigned by some other thread or process while the function
+		* executes.
+		*
+		* @throws FileSystemException EACCESS, EIO, ELOOP, ENOENT, ENOTDIR
+		*/
 		OW_COMMON_API String realPath(const String& path);
+
+		enum ESecurity
+		{
+			E_INSECURE, E_SECURE_DIR, E_SECURE_FILE
+		};
+
+		/**
+		* @return A pair (@a sec, @a rpath), as follows:
+		* - @a rpath = @c realpath(@a path).
+		* - If @a path names a directory, and no user other than @c root
+		*   or user @a uid can change the contents of this directory or
+		*   make @a path refer to some other file or directory, then
+		*   @a sec = @c E_SECURE_DIR.
+		* - If @a path names a regular file, and no user other than @c root
+		*   or user @a uid can change the contents of this file or make
+		*   @a path refer to some other file or directory, then
+		*   @a sec = @c E_SECURE_FILE.
+		* - If any user other than @c root or user @a uid can change what
+		*   @a path refers to, or change the contents of the file or directory
+		*   it refers to, then @a sec = @c E_INSECURE.
+		*
+		* @pre No path component examined in the course of resolving @a path to
+		* its canonical form is renamed, deleted, or (for symbolic links)
+		* reassigned by @c root or user @a uid while the function executes.
+		*
+		* @throws FileSystemException EACCESS, EIO, ELOOP, ENOENT, ENOTDIR
+		*/
+		OW_COMMON_API std::pair<ESecurity, String>
+			security(String const & path, UserId uid);
+
+		/**
+		* Equivalent to @c security(@a path, @a uid), where @a uid is the
+		* effective user ID of the process.
+		*/
+		OW_COMMON_API std::pair<ESecurity, String> security(String const & path);
+
+		/**
+		* A variant of @c security() that is more efficient if some
+		* ancestor directory of the path is already known to be secure and
+		* in canonical form.
+		*
+		* @pre @a base_dir is a path in canonical form, as described for
+		* @c realPath(), and @a rel_path is a relative path.
+		*
+		* @return @c security(@a path, @a uid), where @a path is the
+		* catenation of @a base_dir, "/", and @a rel_path, under the assumption
+		* that @a base_dir is a secure directory.
+		*/
+		OW_COMMON_API std::pair<ESecurity, String>
+			security(String const & base_dir, String const & rel_path, UserId uid);
+
+		/**
+		* Equivalent to @c security(@a base_dir, @a rel_path, @a uid), 
+		* where @a uid is the effective user ID of the process.
+		*/
+		OW_COMMON_API std::pair<ESecurity, String>
+			security(String const & base_dir, String const & rel_path);
 
 		/**
 		 * Take a string that contains a pathname, and return a string that is
@@ -305,6 +379,24 @@ namespace FileSystem
 
 
 	} // end namespace Path
+
+	struct NullFactory
+	{
+		static void* create()
+		{
+			return 0;
+		}
+	};
+#ifdef OW_ENABLE_TEST_HOOKS
+	typedef GlobalPtr<FileSystemMockObject, NullFactory> FileSystemMockObject_t;
+	/** 
+	 * If this object is non-null, the default functionality of the FileSystem class will be replaced by calls to
+	 * g_fileSystemMockObject's member functions. This is to be used for unit tests. Not all functions may be
+	 * implemented, if you need one that isn't, then please implement it! Modifying this variable will affect all
+	 * threads, it should not be used in a threaded program.
+	 */
+	extern FileSystemMockObject_t g_fileSystemMockObject;
+#endif
 
 } // end namespace FileSystem
 

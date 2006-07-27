@@ -92,7 +92,7 @@ void OW_ExceptionTestCases::testThreadThrow()
 	g_caught = false;
 	ExTestRunnable t1;
 	t1.start();
-	unitAssert(g_sem.timedWait(30));
+	unitAssert(g_sem.timedWait(Timeout::relative(30)));
 
 	unitAssert(g_caught);
 }

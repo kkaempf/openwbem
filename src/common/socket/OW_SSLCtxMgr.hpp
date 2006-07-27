@@ -242,9 +242,6 @@ public:
 	SSLClientCtx(const SSLOpts& opts = SSLOpts()); 
 };
 
-typedef IntrusiveReference<SSLServerCtx> SSLServerCtxRef; 
-typedef IntrusiveReference<SSLClientCtx> SSLClientCtxRef; 
-
 //////////////////////////////////////////////////////////////////////////////
 class OW_COMMON_API SSLTrustStore: public IntrusiveCountableBase
 {
@@ -279,7 +276,6 @@ private:
 
 };
 
-typedef IntrusiveReference<SSLTrustStore> SSLTrustStoreRef; 
 //////////////////////////////////////////////////////////////////////////////
 
 struct OW_COMMON_API OWSSLContext
@@ -312,9 +308,6 @@ class OW_COMMON_API SSLClientCtx : public IntrusiveCountableBase
 };
 
 #endif // ifdef OW_HAVE_OPENSSL
-
-typedef IntrusiveReference<SSLServerCtx> SSLServerCtxRef; 
-typedef IntrusiveReference<SSLClientCtx> SSLClientCtxRef; 
 
 } // end namespace OW_NAMESPACE
 

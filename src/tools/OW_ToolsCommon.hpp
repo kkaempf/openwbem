@@ -43,7 +43,7 @@ namespace OW_NAMESPACE
 namespace Tools
 {
 
-void printCmdLineParserExceptionMessage(CmdLineParserException& e);
+void printCmdLineParserExceptionMessage(const CmdLineParserException& e);
 
 /////////////////////////////////////////////////////////////////////////////
 class GetLoginInfo : public ClientAuthCBIFC

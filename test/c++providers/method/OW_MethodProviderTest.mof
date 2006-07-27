@@ -17,11 +17,11 @@ class EXP_BartComputerSystem : CIM_System
 
   [ provider("c++::methodtest") ]
    string SetState(
-	[IN] string newState);
+	[IN, required] string newState);
 
   [ provider("c++::methodtest") ]
    UInt32 Sleep(
-	[IN] UInt32 duration); // units are in seconds
+	[IN, required] UInt32 duration); // units are in seconds
 };
 
 instance of EXP_BartComputerSystem

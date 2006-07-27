@@ -61,21 +61,6 @@ TempFileBuffer::TempFileBuffer(size_t bufSize)
 	initPutBuffer();
 }
 //////////////////////////////////////////////////////////////////////////////
-TempFileBuffer::TempFileBuffer(String const& filename, size_t bufSize)
-	: m_bufSize(bufSize)
-	, m_buffer(new char[m_bufSize])
-	, m_tempFile(new TmpFile(filename))
-	, m_readPos(0)
-	, m_writePos(0)
-	, m_isEOF(false)
-{
-	m_tempFile->seek(0, SEEK_END);
-	m_writePos = m_tempFile->tell();
-	m_tempFile->rewind();
-	setp(0,0); // start out in input mode.
-	initGetBuffer();
-}
-//////////////////////////////////////////////////////////////////////////////
 void
 TempFileBuffer::initBuffers()
 {
@@ -304,16 +289,6 @@ TempFileBuffer::reset()
 	m_isEOF = false;
 }
 //////////////////////////////////////////////////////////////////////////////
-String
-TempFileBuffer::releaseFile()
-{
-	buffer_out(); 	// Flush the buffer and cause the temp file to be written
-					// if it's not already being used.
-	String rval = m_tempFile->releaseFile();
-	reset();
-	return rval;
-}
-//////////////////////////////////////////////////////////////////////////////
 bool
 TempFileBuffer::usingTempFile() const
 {
@@ -322,12 +297,6 @@ TempFileBuffer::usingTempFile() const
 //////////////////////////////////////////////////////////////////////////////
 TempFileStream::TempFileStream(size_t bufSize)
 : std::basic_iostream<char, std::char_traits<char> >(new TempFileBuffer(bufSize))
-, m_buffer(dynamic_cast<TempFileBuffer*>(rdbuf()))
-{
-}
-//////////////////////////////////////////////////////////////////////////////
-TempFileStream::TempFileStream(String const& filename, size_t bufSize)
-: std::basic_iostream<char, std::char_traits<char> >(new TempFileBuffer(filename, bufSize))
 , m_buffer(dynamic_cast<TempFileBuffer*>(rdbuf()))
 {
 }
@@ -345,14 +314,6 @@ TempFileStream::reset()
 {
 	m_buffer->reset();
 	clear();
-}
-//////////////////////////////////////////////////////////////////////////////
-String
-TempFileStream::releaseFile()
-{
-	String rval = m_buffer->releaseFile();
-	clear();
-	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool

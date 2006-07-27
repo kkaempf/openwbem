@@ -50,8 +50,10 @@ namespace BinarySerialization
 {
 //////////////////////////////////////////////////////////////////////////////
 template <typename Handler, typename ReaderFunc>
-static inline void readEnum(std::istream& istrm, Handler& result,
-	const ReaderFunc& read, const Int32 beginsig, const Int32 endsig)
+static inline void readEnum(
+	std::streambuf & istrm, Handler & result,
+	const ReaderFunc & read, const Int32 beginsig, const Int32 endsig
+)
 {
 	verifySignature(istrm, beginsig);
 	bool done = false;
@@ -72,49 +74,51 @@ static inline void readEnum(std::istream& istrm, Handler& result,
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-readObjectPathEnum(std::istream& istrm, CIMObjectPathResultHandlerIFC& result)
+readObjectPathEnum(
+	std::streambuf & istrm, CIMObjectPathResultHandlerIFC & result)
 {
 	readEnum(istrm, result, &readObjectPath, BINSIG_OPENUM, END_OPENUM);
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-readClassEnum(std::istream& istrm, CIMClassResultHandlerIFC& result)
+readClassEnum(std::streambuf & istrm, CIMClassResultHandlerIFC & result)
 {
 	readEnum(istrm, result, &readClass, BINSIG_CLSENUM, END_CLSENUM);
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-readInstanceEnum(std::istream& istrm, CIMInstanceResultHandlerIFC& result)
+readInstanceEnum(std::streambuf & istrm, CIMInstanceResultHandlerIFC & result)
 {
 	readEnum(istrm, result, &readInstance, BINSIG_INSTENUM, END_INSTENUM);
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-readQualifierTypeEnum(std::istream& istrm, CIMQualifierTypeResultHandlerIFC& result)
+readQualifierTypeEnum(
+	std::streambuf & istrm, CIMQualifierTypeResultHandlerIFC & result)
 {
 	readEnum(istrm, result, &readQualType, BINSIG_QUAL_TYPEENUM, END_QUALENUM);
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-readStringEnum(std::istream& istrm, StringResultHandlerIFC& result)
+readStringEnum(std::streambuf & istrm, StringResultHandlerIFC & result)
 {
 	readEnum(istrm, result, &readString, BINSIG_STRINGENUM, END_STRINGENUM);
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-writeLen(std::ostream& ostrm, UInt32 len)
+writeLen(std::streambuf & ostrm, UInt32 len)
 {
 	// This is ASN.1 length encoding
 	/*
 	 * short len if it's less than 128 - one byte giving the len,
 	 * with bit 8 0.
 	 */
-	if ( len <= 127 )
+	if (len < 128)
 	{
 		UInt8 length_byte = static_cast<UInt8>(len);
 		write(ostrm, &length_byte, 1);
@@ -126,15 +130,15 @@ writeLen(std::ostream& ostrm, UInt32 len)
 	 */
 	/* find the first non-all-zero byte */
 	UInt8 lenlen;
-	if (len <= 255)
+	if (len < (1 << 8))
 	{
 		lenlen = 1;
 	}
-	else if (len <= 65536)
+	else if (len < (1 << 16))
 	{
 		lenlen = 2;
 	}
-	else if (len <= 16777216)
+	else if (len < (1 << 24))
 	{
 		lenlen = 3;
 	}
@@ -157,7 +161,7 @@ writeLen(std::ostream& ostrm, UInt32 len)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-readLen(std::istream& istrm, UInt32& len)
+readLen(std::streambuf & istrm, UInt32 & len)
 {
 	// This is ASN.1 length encoding
 	UInt8 lc;
@@ -166,7 +170,7 @@ readLen(std::istream& istrm, UInt32& len)
 	{
 		UInt8 noctets = lc & 0x7fU;
 		if ( noctets > sizeof(len) ) {
-			OW_THROW(IOException, Format("Failed reading data: length length (%1) is too large (> %2)", noctets, sizeof(len)).c_str());
+			OW_THROW(IOException, Format("Failed reading data: length length (%1) is too large (> %2)", static_cast<int>(noctets), sizeof(len)).c_str());
 		}
 		UInt8 netlen[sizeof(len)];
 		read(istrm, static_cast<void *>(netlen), noctets);
@@ -182,10 +186,10 @@ readLen(std::istream& istrm, UInt32& len)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-write(std::ostream& ostrm, const void* dataOut,
-	int dataOutLen)
+write(std::streambuf & ostrm, void const * dataOut, size_t dataOutLen)
 {
-	if (!ostrm.write(reinterpret_cast<const char*>(dataOut), dataOutLen))
+	std::streamsize cnt = dataOutLen;
+	if (ostrm.sputn(static_cast<char const *>(dataOut), cnt) != cnt)
 	{
 		OW_THROW_ERRNO_MSG(IOException, "Failed writing data");
 	}
@@ -193,7 +197,7 @@ write(std::ostream& ostrm, const void* dataOut,
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-verifySignature(std::istream& istrm, UInt8 validSig)
+verifySignature(std::streambuf & istrm, UInt8 validSig)
 {
 	UInt8 val;
 	read(istrm, val);
@@ -207,8 +211,7 @@ verifySignature(std::istream& istrm, UInt8 validSig)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-writeStringArray(std::ostream& ostrm,
-	const StringArray* propertyList)
+writeStringArray(std::streambuf & ostrm, const StringArray * propertyList)
 {
 	bool nullPropertyList = (propertyList == 0);
 	writeBool(ostrm, nullPropertyList);
@@ -220,14 +223,34 @@ writeStringArray(std::ostream& ostrm,
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-read(std::istream& istrm, void* dataIn, int dataInLen)
+read(std::streambuf & istrm, void * dataIn, size_t dataInLen)
 {
-	if (!istrm.read(reinterpret_cast<char*>(dataIn), dataInLen))
+	std::streamsize cnt = dataInLen;
+	if (istrm.sgetn(static_cast<char *>(dataIn), cnt) != cnt)
 	{
-		OW_THROW_ERRNO_MSG(IOException, "Failed reading data");
+		OW_THROW(IOException, "Failed reading data");
 	}
 }
+
+
+void 
+readPropertyList(
+	std::streambuf & istrm, StringArray & propList, StringArray * & propListPtr
+)
+{
+	Bool nullPropertyList(BinarySerialization::readBool(istrm));
+	if (!nullPropertyList)
+	{
+		propList = BinarySerialization::readStringArray(istrm);
+		propListPtr = &propList;
+	}
+	else
+	{
+		propListPtr = 0;
+	}
 }
+
+} // namespace BinarySerialization
 
 } // end namespace OW_NAMESPACE
 

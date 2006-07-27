@@ -36,8 +36,6 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Char16.hpp"
-#include "OW_CIMDateTime.hpp"
-#include "OW_CIMObjectPath.hpp"
 #include "OW_Array.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_Format.hpp"
@@ -75,6 +73,7 @@ namespace OW_NAMESPACE
 
 using std::istream;
 using std::ostream;
+using std::streambuf;
 
 OW_DEFINE_EXCEPTION_WITH_ID(StringConversion);
 
@@ -289,20 +288,6 @@ String::String(const String& arg) :
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-String::String(const CIMDateTime& parm) :
-	m_buf(NULL)
-{
-	String s = parm.toString();
-	m_buf = s.m_buf;
-}
-//////////////////////////////////////////////////////////////////////////////
-String::String(const CIMObjectPath& parm) :
-	m_buf(NULL)
-{
-	String s = parm.toString();
-	m_buf = s.m_buf;
-}
-//////////////////////////////////////////////////////////////////////////////
 String::String(const Char16Array& ra) :
 	m_buf(NULL)
 {
@@ -397,6 +382,8 @@ String::format(const char* fmt, ...)
 			size *= 2;  // twice the old size
 		p = new char[size];
 	}
+	// Not reachable.
+	return 0;
 }
 #ifdef OW_WIN32
 #undef vsnprintf // stupid windoze
@@ -581,11 +568,11 @@ String::indexOf(char ch, size_t fromIndex) const
 size_t
 String::indexOf(const char* arg, size_t fromIndex) const
 {
-	int cc = npos;
+	size_t cc = npos;
 	if (fromIndex < length())
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
-		// this code won't be executed, but we do need to check arg.m_buf
+		// this code won't be executed
 		char* p(0);
 		if (arg && *arg)
 		{
@@ -598,7 +585,7 @@ String::indexOf(const char* arg, size_t fromIndex) const
 
 		if (p != NULL)
 		{
-			cc = static_cast<int>(p - m_buf->data());
+			cc = static_cast<size_t>(p - m_buf->data());
 		}
 	}
 	return cc;
@@ -677,13 +664,9 @@ bool
 String::startsWith(const char* arg, EIgnoreCaseFlag ignoreCase) const
 {
 	bool cc = false;
-	if (!arg && !m_buf)
+	if (!arg || !*arg) // treat NULL as identical to the empty string
 	{
-		return true;
-	}
-	if (!*arg)
-	{
-		return (length() == 0);
+		return true; // the empty string is a prefix of any string
 	}
 
 	size_t arglen = ::strlen(arg);
@@ -691,7 +674,7 @@ String::startsWith(const char* arg, EIgnoreCaseFlag ignoreCase) const
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed.
-		if (ignoreCase)
+		if (ignoreCase == E_CASE_INSENSITIVE)
 		{
 			cc = (strncmpi(m_buf->data(), arg, arglen) == 0);
 		}
@@ -882,7 +865,7 @@ String::toUpperCase()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-String::readObject(istream& istrm)
+String::readObject(streambuf & istrm)
 {
 	UInt32 len;
 	BinarySerialization::readLen(istrm, len);
@@ -893,7 +876,7 @@ String::readObject(istream& istrm)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-String::writeObject(ostream& ostrm) const
+String::writeObject(streambuf & ostrm) const
 {
 	UInt32 len = static_cast<UInt32>(length());
 	BinarySerialization::writeLen(ostrm, len);
@@ -930,17 +913,12 @@ String::operator[] (size_t ndx) const
 #ifdef OW_DEBUG
 	OW_ASSERT(ndx <= length());
 #endif
-	// Don't need to check m_buf for NULL, because if length() == 0,
-	// m_buf->data() won't be executed.
-	//return (ndx <= length()) ? *(m_buf->data() + ndx) : cnullChar;
-	if (ndx <= length())
+	if (!m_buf) // then length() == 0
 	{
-		return *(m_buf->data() + ndx);
+		// Only needed in case ndx == 0, but doesn't hurt if ndx > 0
+		const_cast<buf_t &>(m_buf) = new ByteBuf("");
 	}
-	else
-	{
-		return cnullChar;
-	}
+	return *(ndx <= m_buf->length() ? m_buf->data() + ndx : &cnullChar);
 }
 //////////////////////////////////////////////////////////////////////////////
 static char nullChar = '\0';
@@ -950,9 +928,12 @@ String::operator[] (size_t ndx)
 #ifdef OW_DEBUG
 	OW_ASSERT(ndx <= length());
 #endif
-	// Don't need to check m_buf for NULL, because if length() == 0,
-	// m_buf->data() won't be executed.
-	return (ndx <= length()) ? m_buf->data()[ndx] : nullChar;
+	if (!m_buf) // then length() == 0
+	{
+		// Only needed in case ndx == 0, but doesn't hurt if ndx > 0
+		m_buf = new ByteBuf("");
+	}
+	return (ndx <= m_buf->length() ? m_buf->data()[ndx] : nullChar);
 }
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -1150,12 +1131,6 @@ int
 String::toInt(int base) const
 {
 	return convertToIntType<int>(m_buf, "int", base);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMDateTime
-String::toDateTime() const
-{
-	return CIMDateTime(*this);
 }
 //////////////////////////////////////////////////////////////////////////////
 StringArray

@@ -120,7 +120,7 @@ namespace
 	
 	StringArray enumNameSpaceE(const ProviderEnvironmentIFCRef& env, const String& ns)
 	{
-		RepositoryIFCRef rep = env->getRepository();
+		RepositoryIFCRef rep = env->getAuthorizingRepository();
 		StringArray rval;
 		StringArrayBuilder arrayBuilder(rval);
 		namespaceFilterer handler(ns, true, arrayBuilder);
@@ -129,7 +129,7 @@ namespace
 	}
 	void enumNameSpace(const ProviderEnvironmentIFCRef& env, const String& ns, StringResultHandlerIFC& result, bool deep)
 	{
-		RepositoryIFCRef rep = env->getRepository();
+		RepositoryIFCRef rep = env->getAuthorizingRepository();
 		namespaceFilterer handler(ns, deep, result);
 		rep->enumNameSpace(handler, env->getOperationContext());
 	}
@@ -171,11 +171,12 @@ NameSpaceProvider::deleteInstance(
 	String newns = ns + "/" + nsName;
 	// deleteNameSpace doesn't automatically delete subnamespaces, so we need to do it.
 	StringArray nstodel = enumNameSpaceE(env, newns);
+	RepositoryIFCRef rep = env->getAuthorizingRepository();
 	for (size_t i = 0; i < nstodel.size(); ++i)
 	{
-		env->getRepository()->deleteNameSpace(nstodel[i], env->getOperationContext());
+		rep->deleteNameSpace(nstodel[i], env->getOperationContext());
 	}
-	env->getRepository()->deleteNameSpace(newns, env->getOperationContext());
+	rep->deleteNameSpace(newns, env->getOperationContext());
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 namespace
@@ -341,9 +342,11 @@ NameSpaceProvider::createInstance(
 	String newNameSpace = ns;
 	newNameSpace += "/";
 	newNameSpace += newName;
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NameSpaceProvider::createInstance calling"
+	OW_LOG_DEBUG(Logger(COMPONENT_NAME), Format("NameSpaceProvider::createInstance calling"
 			" createNameSpace with %1", newNameSpace));
-	env->getRepository()->createNameSpace(newNameSpace, env->getOperationContext());
+	env->getAuthorizingRepository()->createNameSpace(
+		newNameSpace, env->getOperationContext()
+	);
 	return CIMObjectPath(ns, cimInstance);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -364,7 +367,7 @@ NameSpaceProvider::modifyInstance(
 void
 NameSpaceProvider::initialize(const ProviderEnvironmentIFCRef& env)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NameSpaceProvider initialize called");
+	OW_LOG_DEBUG(Logger(COMPONENT_NAME), "NameSpaceProvider initialize called");
 }
 //////////////////////////////////////////////////////////////////////////////
 void

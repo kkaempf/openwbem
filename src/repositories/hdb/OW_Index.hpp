@@ -39,6 +39,7 @@
 #include "OW_String.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -178,12 +179,11 @@ struct OW_HDB_API IndexEntry
 	IndexEntry(const String& k, Int32 o) :
 		key(k), offset(o) {}
 
-	typedef Int32 IndexEntry::*safe_bool;
 	/**
 	 * @return true if this IndexEntry contains a value.
 	 */
-	operator safe_bool() const { return (offset != -1 && !key.empty()) ? &IndexEntry::offset : 0; }
-	bool operator!() const { return !(offset != -1 && !key.empty()); }
+	OW_SAFE_BOOL_IMPL(IndexEntry, Int32, IndexEntry::offset, (offset != -1 && !key.empty()))
+
 	/**
 	 * The key associated with this index entry. If it has a zero length, this
 	 * should be considered an invalid IndexEntry.

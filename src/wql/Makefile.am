@@ -1,6 +1,5 @@
 MAKEDYLIB=1
 MAKEBUNDLE=1
-SUBDIRS = common
 
 include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs
@@ -10,21 +9,12 @@ EXPORT_PREFIX=createWQL
 
 include $(top_srcdir)/Makefile-shared-lib-inst.inc
 install-exec-local : install-ow-shared-libs
-	if [ "$(LIB_EXT)" = "dylib" ]; then \
-		if [ -f $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT).bundle ]; then \
-			mv $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT).dso; \
-			cp $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT).bundle $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT); \
-			ln -sf $(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir)/$(OW_SHARED_LIBS); \
-			fi; \
-	fi;
-
 uninstall-local : uninstall-ow-shared-libs
 
 
 OW_SHARED_LIBS = libowwql.$(LIB_EXT)
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/src/wql/common -lowwqlcommon
+-L$(top_builddir)/src/common -lopenwbem
 
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
@@ -38,8 +28,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/client \
--I$(top_srcdir)/src/wql/common
+-I$(top_srcdir)/src/client
 
 pkginclude_HEADERS = \
 OW_WQLImpl.hpp \
@@ -62,6 +51,8 @@ EXTRA_DIST = \
 $(top_builddir)/src/wql/OW_WQLParser.cc \
 $(top_builddir)/src/wql/OW_WQLLexer.cc \
 $(top_builddir)/src/wql/OW_WQLParser.h
+
+BUILT_SOURCES = OW_WQLParser.h
 
 #debug versions
 #AM_YFLAGS = -d -t -v -powwql

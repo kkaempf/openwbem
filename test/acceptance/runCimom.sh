@@ -26,9 +26,8 @@ if [ "$1" = "vg" ]; then
 	--show-reachable=yes \
 	--error-limit=no \
 	--num-callers=99 \
-	--logfile-fd=9 \
+	--log-file=valgrind.out \
 	--suppressions=OpenSSL.supp \
-	9>> valgrind.out \
 	$STAGEDIR/usr/local/sbin/owcimomd -d \
 	-c $STAGEDIR/usr/local/etc/openwbem/openwbem.conf-t 
 elif [ "x$1" = "xgdb" ]; then

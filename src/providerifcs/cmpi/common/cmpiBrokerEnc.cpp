@@ -32,7 +32,7 @@ namespace
 }
 
 #define CM_LOGGER() \
-(* static_cast<OpenWBEM::ProviderEnvironmentIFCRef *>(CMPI_ThreadContext::getBroker()->hdl))->getLogger(COMPONENT_NAME)
+::OpenWBEM::Logger(COMPONENT_NAME)
 
 // Factory section
 

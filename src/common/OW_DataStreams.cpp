@@ -42,6 +42,61 @@ namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
+int
+DataIStreamBuf::underflow()
+{
+	return (gptr() < egptr()) ? static_cast<unsigned char>(*gptr()) : EOF;	// need a static_cast so a -1 doesn't turn into an EOF
+}
+
+//////////////////////////////////////////////////////////////////////////////
+std::streambuf::pos_type
+DataIStreamBuf::seekoff(off_type off, std::ios_base::seekdir way, std::ios_base::openmode which)
+{
+	pos_type ret = pos_type(off_type(-1));
+
+	char* begin = eback();
+	char* cur = gptr();
+	char* end = egptr();
+
+	off_type newOff = 0;
+
+	if (way == std::ios_base::cur)
+	{
+		newOff = cur - begin;
+	}
+	else if (way == std::ios_base::end)
+	{
+		newOff = end - begin;
+	}
+
+	if (newOff + off >= 0 && end - begin >= newOff + off)
+	{
+		setg(begin, begin + newOff + off, end);
+		ret = pos_type(newOff);
+	}
+
+	return ret;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+std::streambuf::pos_type
+DataIStreamBuf::seekpos(pos_type sp, std::ios_base::openmode which)
+{
+	pos_type ret = pos_type(off_type(-1));
+
+	char* begin = eback();
+	char* end = egptr();
+
+	if (sp <= end - begin)
+	{
+		setg(begin, begin + sp, end);
+		ret = sp;
+	}
+
+	return ret;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 DataOStreamBuf::DataOStreamBuf(size_t initialSize)
 	: std::streambuf()
 {

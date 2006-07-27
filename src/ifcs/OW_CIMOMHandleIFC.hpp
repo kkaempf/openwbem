@@ -48,7 +48,7 @@ namespace OW_NAMESPACE
  * The CIMOMHandleIFC class is an abstract class used as an interface
  * definition for classes that provide access to a CIMOM.
  */
-class OW_COMMON_API CIMOMHandleIFC : public IntrusiveCountableBase
+class OW_COMMON_API CIMOMHandleIFC : virtual public IntrusiveCountableBase
 {
 public:
 	/**

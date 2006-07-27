@@ -47,14 +47,15 @@
 #include "OW_CIMValue.hpp"
 #include "OW_NoSuchProviderException.hpp"
 #include "OW_CIMClass.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_LocalOperationContext.hpp"
 #include "OW_CerrLogger.hpp"
 
 using namespace OpenWBEM;
 
 static int testFunction( int i )
 {
-	return i + 0xABCDEF01;
+	//return i + 0xABCDEF01;
+	return 0;
 }
 
 static const char* versionFunction()
@@ -499,8 +500,7 @@ class testSharedLibraryLoader: public SharedLibraryLoader
 	public:
 		virtual ~testSharedLibraryLoader(){}
 
-		virtual SharedLibraryRef loadSharedLibrary( const String& name,
-			const LoggerRef& ) const
+		virtual SharedLibraryRef loadSharedLibrary( const String& name ) const
 		{
 			if ( name == "lib1" )
 				return SharedLibraryRef( new testMuxSharedLibrary );
@@ -542,14 +542,9 @@ namespace
 			return RepositoryIFCRef();
 		}
 
-		virtual LoggerRef getLogger() const
+		virtual RepositoryIFCRef getAuthorizingRepository() const
 		{
-			return m_logger;
-		}
-
-		virtual LoggerRef getLogger(const String& componentName) const
-		{
-			return m_logger;
+			return RepositoryIFCRef();
 		}
 
 		virtual String getConfigItem(const String &, const String&) const
@@ -577,7 +572,7 @@ namespace
 			return ProviderEnvironmentIFCRef(new testProviderEnvironment());
 		}
 	private:
-		OperationContext m_context;
+		LocalOperationContext m_context;
 		CIMOMHandleIFCRef m_ch;
 		LoggerRef m_logger;
 	};

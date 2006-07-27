@@ -41,6 +41,9 @@
 #include "OW_String.hpp"
 #include "OW_Format.hpp"
 #include "OW_System.hpp"
+#include "OW_AutoPtr.hpp"
+#include "OW_SafeCString.hpp"
+#include "OW_Logger.hpp"
 #include <cstring>
 #include <cstdlib>
 #include <cerrno>
@@ -65,7 +68,14 @@ namespace {
 inline int
 closeFile(int fd)
 {
-	return ::close(fd);
+	int rv = ::close(fd);
+	if (rv == -1)
+	{
+		int lerrno = errno;
+		Logger lgr("ow.common");
+		OW_LOG_ERROR(lgr, Format("Closing file handle %1 failed: %2", fd, lerrno));
+	}
+	return rv;
 }
 
 #else
@@ -80,34 +90,9 @@ closeFile(HANDLE fh)
 
 //////////////////////////////////////////////////////////////////////////////
 TmpFileImpl::TmpFileImpl()
-	: m_filename(NULL)
-	, m_hdl(OW_INVALID_FILEHANDLE)
+	: m_hdl(OW_INVALID_FILEHANDLE)
 {
 	open();
-}
-//////////////////////////////////////////////////////////////////////////////
-TmpFileImpl::TmpFileImpl(String const& filename)
-	: m_filename(NULL)
-	, m_hdl(OW_INVALID_FILEHANDLE)
-{
-	size_t len = filename.length();
-	m_filename = new char[len + 1];
-	::strncpy(m_filename, filename.c_str(), len);
-	m_filename[len] = '\0';
-#if defined(OW_WIN32)
-	m_hdl = CreateFile(filename.c_str(), GENERIC_READ | GENERIC_WRITE,
-        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS,
-		FILE_ATTRIBUTE_NORMAL, NULL);
-#else
-	m_hdl = ::open(m_filename, O_RDWR);
-#endif
-	if (m_hdl == OW_INVALID_FILEHANDLE)
-	{
-		delete[] m_filename;
-		m_filename = NULL;
-		OW_THROW(IOException, Format("Error opening file %1: %2", filename,
-			System::lastErrorMsg()).c_str());
-	}
 }
 //////////////////////////////////////////////////////////////////////////////
 TmpFileImpl::~TmpFileImpl()
@@ -204,23 +189,34 @@ TmpFileImpl::open()
 	}
 }
 #else
+namespace
+{
+Mutex tmpfileMutex;
+}
+
 void
 TmpFileImpl::open()
 {
 	close();
-	String sfname("/tmp/owtmpfileXXXXXX");
+	const char* envtmp = ::getenv("TMPDIR");
+    if (!envtmp)
+	{
+		envtmp = "/tmp";
+	}
+	String sfname(envtmp);
+	sfname += "/owtmpfileXXXXXX";
 	size_t len = sfname.length();
-	m_filename = new char[len + 1];
-	strncpy(m_filename, sfname.c_str(), len);
-	m_filename[len] = '\0';
-	static Mutex tmpfileMutex;
+	AutoPtrVec<char> filename(new char[len + 1]);
+	SafeCString::strcpy_check(filename.get(), len + 1, sfname.c_str());
 	MutexLock tmpfileML(tmpfileMutex);
-	m_hdl = mkstemp(m_filename);
+	m_hdl = mkstemp(filename.get());
 	if (m_hdl == -1)
 	{
-		delete[] m_filename;
-		m_filename = NULL;
 		OW_THROW_ERRNO_MSG(IOException, "mkstemp failed");
+	}
+	else
+	{
+		::unlink(filename.get());
 	}
 }
 #endif
@@ -233,13 +229,6 @@ TmpFileImpl::close()
 	if (m_hdl != OW_INVALID_FILEHANDLE)
 	{
 		rv = closeFile(m_hdl);
-#if defined(OW_WIN32)
-		DeleteFile(m_filename);
-#else
-		remove(m_filename);
-#endif
-		delete [] m_filename;
-		m_filename = NULL;
 		m_hdl = OW_INVALID_FILEHANDLE;
 	}
 	return rv;
@@ -296,25 +285,6 @@ TmpFileImpl::write(const void* bfr, size_t numberOfBytes, long offset)
 	}
 	return rv;
 #endif
-}
-//////////////////////////////////////////////////////////////////////////////
-String
-TmpFileImpl::releaseFile()
-{
-	String rval(m_filename);
-	if (m_hdl != OW_INVALID_FILEHANDLE) 
-	{
-		if (closeFile(m_hdl) == -1)
-		{
-			OW_THROW_ERRNO_MSG(IOException, "Unable to close file");
-		}
-		// work like close, but don't delete the file, it will be given to the
-		// caller
-		delete [] m_filename;
-		m_filename = NULL;
-		m_hdl = OW_INVALID_FILEHANDLE;
-	}
-	return rval;
 }
 
 } // end namespace OW_NAMESPACE

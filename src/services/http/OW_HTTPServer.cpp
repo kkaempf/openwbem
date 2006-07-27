@@ -64,6 +64,7 @@
 #include "OW_OperationContext.hpp"
 #include "OW_ServiceIFCNames.hpp"
 #include "OW_Thread.hpp" // for ThreadException
+#include "OW_SPNEGOAuthentication.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -146,7 +147,7 @@ bool HTTPServer::isAllowedUser(const String& user) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-bool
+EAuthenticateResult
 HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	String& userName, const String& info, OperationContext& context,
 	const Socket& socket)
@@ -159,20 +160,29 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		scheme.toLowerCase(); 
 	}
 
-	
+	Logger logger(COMPONENT_NAME);
 	// user supplied creds.  Find out what type of auth they're using.  We currently support Basic, Digest & OWLocal
 #ifndef OW_WIN32
 	if (m_options.allowLocalAuthentication && scheme.equals("owlocal"))
 	{
-		OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), "HTTPServer::authenticate: processing OWLocal");
-		bool rv = m_localAuthentication->authenticate(userName, info, pconn) && isAllowedUser(userName);
-		if (rv)
+		OW_LOG_DEBUG(logger, "HTTPServer::authenticate: processing OWLocal");
+		EAuthenticateResult rv = m_localAuthentication->authenticate(userName, info, pconn);
+		if (rv == E_AUTHENTICATE_SUCCESS && !isAllowedUser(userName))
 		{
-			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authenticated %1", userName));
+			rv = E_AUTHENTICATE_FAIL;
+		}
+
+		if (rv == E_AUTHENTICATE_SUCCESS)
+		{
+			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
+		}
+		else if (rv == E_AUTHENTICATE_FAIL)
+		{
+			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authentication failed for: %1", userName));
 		}
 		else
 		{
-			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authentication failed for: %1", userName));
+			OW_LOG_DEBUG(logger, Format("HTTPServer::authenticate: authentication continued for: %1", userName));
 		}
 		return rv;
 	}
@@ -183,6 +193,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	{
 		if (socket.peerCertVerified())
 		{
+			OW_LOG_DEBUG(logger, "HTTPServer::authenticate: processing SSL auth");
 			SSL* ssl = socket.getSSL();
 			OW_ASSERT(ssl);
 			X509* cert = SSL_get_peer_certificate(ssl);
@@ -192,37 +203,46 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			String uid;
 			if (!m_trustStore->getUser(hash, userName, uid))
 			{
-				OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authentication failed for: %1.  (Cert verified, but unknown user)", userName));
-				return false;
+				OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authentication failed for: %1.  (Cert verified, but unknown user)", userName));
+				return E_AUTHENTICATE_FAIL;
 			}
-			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authenticated %1", userName));
+			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
 			if (!uid.empty())
 			{
 				context.setStringData(OperationContext::CURUSER_UIDKEY, uid);
 			}
-			return true;
+			return E_AUTHENTICATE_SUCCESS;
 		}
 	}
 #endif
-	bool rv = false;
+	EAuthenticateResult rv = E_AUTHENTICATE_FAIL;
 	if (m_options.allowDigestAuthentication && scheme.equals("digest"))
 	{
 #ifndef OW_DISABLE_DIGEST
-		OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), "HTTPServer::authenticate: processing Digest");
-		rv = m_digestAuthentication->authenticate(userName, info, pconn) && isAllowedUser(userName);
-		if (rv)
+		OW_LOG_DEBUG(logger, "HTTPServer::authenticate: processing Digest");
+		rv = m_digestAuthentication->authenticate(userName, info, pconn);
+		if (rv == E_AUTHENTICATE_SUCCESS && !isAllowedUser(userName))
 		{
-			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authenticated %1", userName));
+			rv = E_AUTHENTICATE_FAIL;
+		}
+
+		if (rv == E_AUTHENTICATE_SUCCESS)
+		{
+			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
+		}
+		else if (rv == E_AUTHENTICATE_FAIL)
+		{
+			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authentication failed for: %1", userName));
 		}
 		else
 		{
-			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authentication failed for: %1", userName));
+			OW_LOG_DEBUG(logger, Format("HTTPServer::authenticate: authentication continued for: %1", userName));
 		}
 #endif
 	}
 	else if (m_options.allowBasicAuthentication && scheme.equals("basic"))
 	{
-		OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), "HTTPServer::authenticate: processing Basic");
+		OW_LOG_DEBUG(logger, "HTTPServer::authenticate: processing Basic");
 		String authChallenge = "Basic realm=\"" + pconn->getHostName() + "\"";
 		String password;
 		// info is a username:password string that is base64 encoded. decode it.
@@ -235,24 +255,56 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			// decoding failed
 			pconn->setErrorDetails("Problem decoding credentials");
 			pconn->addHeader("WWW-Authenticate", authChallenge);
-			OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), "HTTPServer::authenticate: Problem decoding credentials");
-			return false;
+			OW_LOG_DEBUG(logger, "HTTPServer::authenticate: Problem decoding credentials");
+			return E_AUTHENTICATE_FAIL;
 		}
 		String details;
-		rv = m_options.env->authenticate(userName, password, details, context) && isAllowedUser(userName);
-		if (!rv)
+		rv = m_options.env->authenticate(userName, password, details, context) ? E_AUTHENTICATE_SUCCESS : E_AUTHENTICATE_FAIL;
+		if (rv == E_AUTHENTICATE_SUCCESS && !isAllowedUser(userName))
+		{
+			rv = E_AUTHENTICATE_FAIL;
+		}
+
+		if (rv == E_AUTHENTICATE_FAIL)
 		{
 			pconn->setErrorDetails(details);
 			pconn->addHeader("WWW-Authenticate", authChallenge);
-			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: failed: %1", details));
+			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: failed: %1", details));
+		}
+		else if (rv == E_AUTHENTICATE_SUCCESS)
+		{
+			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
 		}
 		else
 		{
-			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authenticated %1", userName));
+			OW_LOG_DEBUG(logger, Format("HTTPServer::authenticate: authentication continued for: %1", userName));
+		}
+	}
+	else if (m_options.allowSPNEGOAuthentication && info.startsWith("Negotiate"))
+	{
+		OW_LOG_DEBUG(logger, "HTTPServer::authenticate: processing Negotiate");
+		rv = m_SPNEGOAuthentication->authenticate(userName, info, pconn);
+		if (rv == E_AUTHENTICATE_SUCCESS && !isAllowedUser(userName))
+		{
+			rv = E_AUTHENTICATE_FAIL;
+		}
+
+		if (rv == E_AUTHENTICATE_SUCCESS)
+		{
+			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
+		}
+		else if (rv == E_AUTHENTICATE_FAIL)
+		{
+			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authentication failed for: %1", userName));
+		}
+		else
+		{
+			OW_LOG_DEBUG(logger, Format("HTTPServer::authenticate: authentication continued for: %1", userName));
 		}
 	}
 	else
 	{
+		OW_LOG_DEBUG(logger, "HTTPServer::authenticate: sending default challenge");
 		// We don't handle whatever they sent, so send the default challenge
 		String hostname = pconn->getHostName();
 		pconn->setErrorDetails("You must authenticate to access this"
@@ -269,12 +321,16 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 				authChallenge = "Basic realm=\"" + pconn->getHostName() + "\"";
 				break;
 
+			case E_SPNEGO:
+				authChallenge = m_SPNEGOAuthentication->getChallenge();
+				break;
+
 			default:
 				OW_ASSERT("Internal implementation error! m_options.defaultAuthChallenge is invalid!" == 0);
 		}
-		OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: Returning WWW-Authenticate: %1", authChallenge));
+		OW_LOG_DEBUG(logger, Format("HTTPServer::authenticate: Returning WWW-Authenticate: %1", authChallenge));
 		pconn->addHeader("WWW-Authenticate", authChallenge);
-		return false;
+		return E_AUTHENTICATE_CONTINUE;
 	}
 
 #ifndef OW_NO_SSL
@@ -294,7 +350,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 				}
 				catch (SSLException& e)
 				{
-					OW_LOG_ERROR(getEnvironment()->getLogger(COMPONENT_NAME), e.getMessage());
+					OW_LOG_ERROR(logger, e.getMessage());
 				}
 			}
 		}
@@ -309,6 +365,7 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 {
 	try
 	{
+		Logger logger(COMPONENT_NAME);
 		String item = env->getConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, OW_DEFAULT_HTTP_SERVER_HTTP_PORT);
 		m_options.httpPort = item.toInt32();
 		
@@ -328,7 +385,8 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_MAX_CONNECTIONS_opt, OW_DEFAULT_HTTP_SERVER_MAX_CONNECTIONS);
 		m_options.maxConnections = item.toInt32();
 		// TODO: Make the type of pool and the size of the queue be separate config options.
-		m_threadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, m_options.maxConnections, m_options.maxConnections * 100, env->getLogger(COMPONENT_NAME), "HTTPServer"));
+		m_threadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, m_options.maxConnections, m_options.maxConnections * 100, 
+			Logger(COMPONENT_NAME), "HTTPServer"));
 		
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_SINGLE_THREAD_opt, OW_DEFAULT_HTTP_SERVER_SINGLE_THREAD);
 		m_options.isSepThread = !item.equalsIgnoreCase("true");
@@ -340,8 +398,55 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 		m_options.allowAnonymous = item.equalsIgnoreCase("true");
 		m_options.env = env;
 		
-		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_USE_DIGEST_opt, OW_DEFAULT_HTTP_SERVER_USE_DIGEST);
-		m_options.allowDigestAuthentication = !item.equalsIgnoreCase("false");
+		String allowDigest = env->getConfigItem(ConfigOpts::HTTP_SERVER_ALLOW_DIGEST_AUTHENTICATION_opt);
+		String allowBasic = env->getConfigItem(ConfigOpts::HTTP_SERVER_ALLOW_BASIC_AUTHENTICATION_opt);
+		if (allowDigest.empty() && allowBasic.empty())
+		{
+			// handle old configs
+			item = env->getConfigItem(ConfigOpts::HTTP_SERVER_USE_DIGEST_opt, OW_DEFAULT_HTTP_SERVER_USE_DIGEST);
+			m_options.allowDigestAuthentication = !item.equalsIgnoreCase("false");
+			m_options.allowBasicAuthentication = !m_options.allowDigestAuthentication;
+			if (m_options.allowDigestAuthentication)
+			{
+#ifndef OW_DISABLE_DIGEST
+				m_options.defaultAuthChallenge = E_DIGEST;
+#else
+				OW_THROW(HTTPServerException, "Unable to initialize HTTP Server because"
+					" digest is enabled in the config file, but the digest code has been disabled");
+#endif
+			}
+			else
+			{
+				m_options.defaultAuthChallenge = E_BASIC;
+			}
+		}
+		else
+		{
+			m_options.allowDigestAuthentication = !allowDigest.equalsIgnoreCase("false");
+			m_options.allowBasicAuthentication = !allowBasic.equalsIgnoreCase("false");
+			String allowSPNEGO = env->getConfigItem(ConfigOpts::HTTP_SERVER_ALLOW_SPNEGO_AUTHENTICATION_opt);
+			m_options.allowSPNEGOAuthentication = !allowSPNEGO.equalsIgnoreCase("false");
+
+			item = env->getConfigItem(ConfigOpts::HTTP_SERVER_DEFAULT_AUTH_CHALLENGE_opt, OW_DEFAULT_HTTP_SERVER_DEFAULT_AUTH_CHALLENGE);
+			if (item == "Digest")
+			{
+				m_options.defaultAuthChallenge = E_DIGEST;
+			}
+			else if (item == "Basic")
+			{
+				m_options.defaultAuthChallenge = E_BASIC;
+			}
+			else if (item == "Negotiate")
+			{
+				m_options.defaultAuthChallenge = E_SPNEGO;
+			}
+			else
+			{
+				OW_THROW(HTTPServerException, Format("Invalid value for %1: %2. Valid options are Digest, Basic or Negotiate", 
+					ConfigOpts::HTTP_SERVER_DEFAULT_AUTH_CHALLENGE_opt, item).c_str());
+			}
+		}
+
 		if (m_options.allowDigestAuthentication)
 		{
 #ifndef OW_DISABLE_DIGEST
@@ -349,21 +454,11 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 				ConfigOpts::HTTP_SERVER_DIGEST_PASSWORD_FILE_opt, OW_DEFAULT_HTTP_SERVER_DIGEST_PASSWORD_FILE);
 			m_digestAuthentication = IntrusiveReference<DigestAuthentication>(
 				new DigestAuthentication(passwdFile));
-			m_options.defaultAuthChallenge = E_DIGEST;
 #else
 			OW_THROW(HTTPServerException, "Unable to initialize HTTP Server because"
 				" digest is enabled in the config file, but the digest code has been disabled");
 #endif
 		}
-		else
-		{
-			// TODO: deprecate ConfigOpts::HTTP_USE_DIGEST_opt and create a new option for the default auth challenge
-			// If OWLocal is desired for the default, set defaultAuthChallenge to E_OWLOCAL
-			m_options.defaultAuthChallenge = E_BASIC;
-		}
-		// TODO: right now basic and digest are mutually exclusive because of the config file setup.
-		// When possible deprecate the existing config items and make them independent.
-		m_options.allowBasicAuthentication = !m_options.allowDigestAuthentication;
 	
 #ifndef OW_WIN32
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_ALLOW_LOCAL_AUTHENTICATION_opt, OW_DEFAULT_HTTP_SERVER_ALLOW_LOCAL_AUTHENTICATION);
@@ -371,9 +466,17 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 		if (m_options.allowLocalAuthentication)
 		{
 			m_localAuthentication = IntrusiveReference<LocalAuthentication>(
-				new LocalAuthentication(env->getLogger(COMPONENT_NAME)));
+				new LocalAuthentication);
 		}
 #endif
+
+		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_ALLOW_SPNEGO_AUTHENTICATION_opt);
+		m_options.allowSPNEGOAuthentication = !item.equalsIgnoreCase("false");
+		if (m_options.allowSPNEGOAuthentication)
+		{
+			m_SPNEGOAuthentication = IntrusiveReference<SPNEGOAuthentication>(
+				new SPNEGOAuthentication);
+		}
 
 		String dumpPrefix = env->getConfigItem(ConfigOpts::DUMP_SOCKET_IO_opt);
 		if (!dumpPrefix.empty())
@@ -387,7 +490,7 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 		m_options.reuseAddr = !item.equalsIgnoreCase("false");
 		
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_TIMEOUT_opt, OW_DEFAULT_HTTP_SERVER_TIMEOUT);
-		m_options.timeout = item.toInt32();
+		m_options.timeout = Timeout::relative(item.toInt32());
 
 		StringArray users = env->getMultiConfigItem(ConfigOpts::ALLOWED_USERS_opt, 
 			String(OW_DEFAULT_ALLOWED_USERS).tokenize(" \t"),
@@ -421,8 +524,11 @@ public:
 	{
 	}
 	virtual ~HTTPServerSelectableCallback() {}
-	virtual void doSelected(SelectableIFCRef& selectedObject)
+	virtual void doSelected(Select_t& selectedObject, EEventType eventType)
 	{
+		OW_ASSERT(eventType == E_ACCEPT_EVENT);
+
+		Logger logger(COMPONENT_NAME);
 		try
 		{
 			IntrusiveReference<ServerSocket> pServerSocket;
@@ -438,8 +544,7 @@ public:
 			{
 				pServerSocket = m_HTTPServer->m_pHttpServerSocket;
 			}
-			Socket socket = pServerSocket->accept(2);
-			LoggerRef logger = m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME);
+			Socket socket = pServerSocket->accept(Timeout::relative(2));
 			OW_LOG_INFO(logger,
 				 Format("Received connection on %1 from %2",
 				 socket.getLocalAddress().toString(),
@@ -460,7 +565,7 @@ public:
 			{
 				OW_LOG_INFO(logger, "Server too busy, closing connection");
 				// main thread can't block, set the socket timeout to 0
-				socket.setTimeouts(0);
+				socket.setTimeouts(Timeout::relative(0));
 				std::ostream& socketOstr(socket.getOutputStream());
 				socketOstr << "HTTP/1.1 503 Service unavailable: connection queue full\r\n";
 				socketOstr << "Connection: close\r\n";
@@ -471,33 +576,27 @@ public:
 		}
 		catch (SSLException& se)
 		{
-			OW_LOG_INFO(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME),
-				Format("SSL Handshake failed: %1", se.getMessage()).c_str());
+			OW_LOG_INFO(logger, Format("SSL Handshake failed: %1", se.getMessage()).c_str());
 		}
 		catch (SocketTimeoutException &e)
 		{
-			OW_LOG_INFO(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME), Format(
-				"Socket TimeOut in HTTPServer: %1", e));
+			OW_LOG_INFO(logger, Format("Socket TimeOut in HTTPServer: %1", e));
 		}
 		catch (SocketException &e)
 		{
-			OW_LOG_INFO(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME), Format(
-				"Socket Exception in HTTPServer: %1", e));
+			OW_LOG_INFO(logger, Format("Socket Exception in HTTPServer: %1", e));
 		}
 		catch (IOException &e)
 		{
-			OW_LOG_ERROR(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME), Format(
-				"IO Exception in HTTPServer: %1", e));
+			OW_LOG_ERROR(logger, Format("IO Exception in HTTPServer: %1", e));
 		}
 		catch (ThreadException& e)
 		{
-			OW_LOG_ERROR(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME), Format(
-				"ThreadException in HTTPServer: %1", e));
+			OW_LOG_ERROR(logger, Format("ThreadException in HTTPServer: %1", e));
 		}
 		catch (Exception& e)
 		{
-			OW_LOG_ERROR(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME), Format(
-				"Exception in HTTPServer: %1", e));
+			OW_LOG_ERROR(logger, Format("Exception in HTTPServer: %1", e));
 			// since it's something we don't expect, it's probably a bad problem, and we'll
 			// just throw.
 			throw;
@@ -508,8 +607,7 @@ public:
 		}
 		catch (...)
 		{
-			OW_LOG_ERROR(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME),
-				"Unknown exception in HTTPServer.");
+			OW_LOG_ERROR(logger, "Unknown exception in HTTPServer.");
 			throw;
 		}
 	}
@@ -523,7 +621,7 @@ void
 HTTPServer::start()
 {
 	ServiceEnvironmentIFCRef env = m_options.env;
-	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
+	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, "HTTP Service is starting...");
 	if (m_options.httpPort < 0 && m_options.httpsPort < 0 && !m_options.useUDS)
 	{
@@ -536,8 +634,8 @@ HTTPServer::start()
 		{
 			m_pUDSServerSocket = new ServerSocket;
 			m_pUDSServerSocket->doListen(m_options.UDSFilename, 1000, m_options.reuseAddr);
-			OW_LOG_INFO(lgr, "HTTP server listening on Unix Domain Socket");
-			String theURL = "ipc://localhost/cimom";
+			OW_LOG_INFO(lgr, Format("HTTP server listening on Unix Domain Socket: %1", m_options.UDSFilename));
+			String theURL = "owbinary.wbem://localhost:" + HTTPUtils::escapeForURL(m_options.UDSFilename) + "/";
 			addURL(URL(theURL));
 			
 			SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
@@ -576,7 +674,7 @@ HTTPServer::start()
 				OW_LOG_INFO(lgr, Format("HTTP server listening on: %1:%2",
 				   curAddress, m_options.httpPort));
 				String theURL = "http://" + SocketAddress::getAnyLocalHost().getName()
-					+ ":" + String(m_options.httpPort) + "/cimom";
+					+ ":" + String(m_options.httpPort) + "/";
 				addURL(URL(theURL));
 
 				SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
@@ -671,7 +769,7 @@ HTTPServer::start()
 					   curAddress, m_options.httpsPort));
 					String theURL = "https://" +
 						SocketAddress::getAnyLocalHost().getName() + ":" +
-						String(m_options.httpsPort) + "/cimom";
+						String(m_options.httpsPort) + "/";
 					addURL(URL(theURL));
 					SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
 						true, this, false));
@@ -755,7 +853,8 @@ HTTPServer::shutdown()
 		MutexLock lock(m_shutdownGuard);
 		m_shuttingDown = true;
 	}
-	OW_LOG_DEBUG(m_options.env->getLogger(COMPONENT_NAME), "HTTP Service is shutting down...");
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "HTTP Service is shutting down...");
 	// first stop all new connections
 	m_options.env->removeSelectable(m_pHttpServerSocket);
 	m_options.env->removeSelectable(m_pHttpsServerSocket);
@@ -775,11 +874,11 @@ HTTPServer::shutdown()
 	}
 #endif
 	// not going to finish off what's in the queue, and we'll give the threads 60 seconds to exit before they're clobbered.
-	m_threadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 60);
+	m_threadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(50), Timeout::relative(60));
 	m_pHttpServerSocket = 0;
 	m_pHttpsServerSocket = 0;
 	m_pUDSServerSocket = 0;
-	OW_LOG_DEBUG(m_options.env->getLogger(COMPONENT_NAME), "HTTP Service has shut down");
+	OW_LOG_DEBUG(lgr, "HTTP Service has shut down");
 
 	// clear out variables to avoid circular reference counts.
 	m_options.env = 0;

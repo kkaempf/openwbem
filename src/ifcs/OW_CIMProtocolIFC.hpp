@@ -42,7 +42,6 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_SocketAddress.hpp"
-#include "OW_CIMProtocolIStreamIFC.hpp"
 #include "OW_Reference.hpp"
 #include "OW_IfcsFwd.hpp"
 #include <iosfwd>
@@ -54,11 +53,11 @@ namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(CIMProtocol, OW_COMMON_API);
-class OW_COMMON_API CIMProtocolIFC : public IntrusiveCountableBase
+class OW_COMMON_API CIMProtocolIFC : virtual public IntrusiveCountableBase
 {
 public:
 	virtual ~CIMProtocolIFC();
-	virtual Reference<std::iostream> beginRequest(
+	virtual Reference<std::ostream> beginRequest(
 			const String& methodName, const String& nameSpace) = 0;
 
 	/**
@@ -94,12 +93,23 @@ public:
 	 * @exception SocketException
 	 *
 	 */
-	virtual CIMProtocolIStreamIFCRef endRequest(
-		const Reference<std::iostream>& request,
+	virtual Reference<std::istream> endRequest(
+		const Reference<std::ostream>& request,
 		const String& methodName, 
 		const String& cimObject, 
 		ERequestType requestType, 
 		const String& cimProtocolVersion) = 0;
+
+	/**
+	 * Called when the response stream (returned from endRequest) has been
+	 * fully read.  endResponse() may do additional processing and/or error
+	 * detection.  In the HTTPClient case it will read trailers, and prime
+	 * the connection to begin a new response.
+	 * 
+	 * @param istr The return value from endRequest()
+	 */
+	virtual void endResponse(std::istream & istr) = 0;
+
 	/**
 	 * Get the supported features of a CIMOM
 	 * @return a CIMFeatures object listing the features of the CIMOM.
@@ -132,42 +142,47 @@ public:
 	 */
 	virtual void close() = 0;
 
-	static const int INFINITE_TIMEOUT = -1;
+	static const int INFINITE_TIMEOUT OW_DEPRECATED = -1; // in 4.0.0
+	
 	/**
 	 * Set the receive timeout on the socket
-	 * @param seconds the number of seconds for the receive timeout
+	 * @param timeout The timeout to use when waiting for data
 	 */
-	virtual void setReceiveTimeout(int seconds) = 0;
+	virtual void setReceiveTimeout(const Timeout& timeout) = 0;
+	void setReceiveTimeout(int seconds) OW_DEPRECATED; // in 4.0.0
 	/**
 	 * Get the receive timeout
-	 * @return The number of seconds of the receive timeout
+	 * @return The receive timeout
 	 */
-	virtual int getReceiveTimeout() const = 0;
+	virtual Timeout getReceiveTimeout() const = 0;
 	/**
 	 * Set the send timeout on the socket
-	 * @param seconds the number of seconds for the send timeout
+	 * @param timeout The timeout to use when waiting to send data
 	 */
-	virtual void setSendTimeout(int seconds) = 0;
+	virtual void setSendTimeout(const Timeout& timeout) = 0;
+	void setSendTimeout(int seconds) OW_DEPRECATED; // in 4.0.0
 	/**
 	 * Get the send timeout
 	 * @return The number of seconds of the send timeout
 	 */
-	virtual int getSendTimeout() const = 0;
+	virtual Timeout getSendTimeout() const = 0;
 	/**
 	 * Set the connect timeout on the socket
-	 * @param seconds the number of seconds for the connect timeout
+	 * @param timeout The connect timeout
 	 */
-	virtual void setConnectTimeout(int seconds) = 0;
+	virtual void setConnectTimeout(const Timeout& timeout) = 0;
+	void setConnectTimeout(int seconds) OW_DEPRECATED; // in 4.0.0
 	/**
 	 * Get the connect timeout
 	 * @return The number of seconds of the connect timeout
 	 */
-	virtual int getConnectTimeout() const = 0;
+	virtual Timeout getConnectTimeout() const = 0;
 	/**
 	 * Set all timeouts (send, receive, connect)
-	 * @param seconds the number of seconds for the timeouts
+	 * @param timeout The timeouts.
 	 */
-	virtual void setTimeouts(int seconds) = 0;
+	virtual void setTimeouts(const Timeout& timeout) = 0;
+	void setTimeouts(int seconds) OW_DEPRECATED; // in 4.0.0
 
 protected:
 

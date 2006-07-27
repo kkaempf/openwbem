@@ -46,7 +46,13 @@ namespace OW_NAMESPACE
 
 namespace StackTrace
 {
-	OW_COMMON_API void printStackTrace();
+	enum EDoStackTraceFlag
+	{
+		E_CHECK_ENV_VAR,
+		E_NO_CHECK_ENV_VAR
+	};
+	OW_COMMON_API void printStackTrace(EDoStackTraceFlag = E_CHECK_ENV_VAR);
+	OW_COMMON_API String getStackTrace(EDoStackTraceFlag = E_NO_CHECK_ENV_VAR);
 } // end namespace StackTrace
 
 } // end namespace OW_NAMESPACE

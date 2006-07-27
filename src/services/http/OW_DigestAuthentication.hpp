@@ -49,7 +49,7 @@ class DigestAuthentication : public IntrusiveCountableBase
 public:
 	DigestAuthentication(const String& passwdFile);
 	~DigestAuthentication() {}
-	bool authenticate(String& userName,
+	EAuthenticateResult authenticate(String& userName,
 		const String& info, HTTPSvrConnection* htcon);
 	String getChallenge(const String& hostname);
 private:

@@ -1,0 +1,35 @@
+class EXP_BionicComputerSystem : CIM_System
+{
+	boolean OptionalArg;
+};
+
+class EXP_Simple
+{
+	[Key] string the_key;
+	uint32 the_value;
+};
+
+INSTANCE OF EXP_Simple
+{
+	the_key = "asphalt";
+	the_value = 83247987;
+};
+
+INSTANCE OF EXP_BionicComputerSystem
+{
+CreationClassName="EXP_BionicComputerSystem";
+Name="SixMillion";
+};
+
+INSTANCE OF EXP_BionicComputerSystem
+{
+CreationClassName="EXP_BionicComputerSystem";
+Name="SevenMillion";
+};
+ 
+INSTANCE OF CIM_SystemComponent
+{
+GroupComponent = "EXP_BionicComputerSystem.CreationClassName=\"EXP_BionicComputerSystem\",Name=\"SevenMillion\"";
+PartComponent = "EXP_BionicComputerSystem.CreationClassName=\"EXP_BionicComputerSystem\",Name=\"SixMillion\"";
+};
+ 

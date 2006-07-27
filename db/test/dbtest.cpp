@@ -42,7 +42,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdarg.h>
 
 #include <db.h>
 
@@ -700,10 +699,13 @@ usage()
 	exit(1);
 }
 
-#if __STDC__
+
+#if defined(OW_HAVE_STDARG_H)
 #include <stdarg.h>
-#else
+#elif defined(OW_HAVE_VARARGS_H)
 #include <varargs.h>
+#else
+#error No varargs.h or stdarg.h is available.
 #endif
 
 void

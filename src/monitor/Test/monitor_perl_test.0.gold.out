@@ -1,0 +1,176 @@
+User: owprovdr
+
+readDirectory
+  .
+  ..
+  app-exists
+  bar
+  foo
+  in-out-exists
+  in-out-exists-ate
+  in-out-trunc-exists
+  link-exists
+  out-exists
+  out-trunc-exists
+  rename1
+  rename2
+  these-are-the-link-contents
+  unlink-exists
+
+readDirectory
+  app-exists
+  bar
+  foo
+  in-out-exists
+  in-out-exists-ate
+  in-out-trunc-exists
+  link-exists
+  out-exists
+  out-trunc-exists
+  rename1
+  rename2
+  these-are-the-link-contents
+  unlink-exists
+
+readDirectory
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: PrivilegeManager::readDirectory: could not read /dir/doesnt/exist/
+
+readDirectory
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: PrivilegeManager::readDirectory: could not read /dir/doesnt/exist/
+
+rename
+
+rename
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: PrivilegeManager::rename: could not rename /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename2 to /dir/doesnt/exist/rename-to
+
+rename
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: PrivilegeManager::rename: could not rename /dir/doesnt/exist/rename to /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename-to
+
+rename
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: PrivilegeManager::rename: could not rename /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/no-such-file to /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename-to
+
+unlink
+1
+
+unlink
+0
+
+unlink
+0
+
+open
+  Hokey smokes, Bullwinkle!
+
+
+open
+
+open
+
+open
+
+open
+
+open
+
+open
+
+open
+  xxxtle Bo Peep has lost her sheep
+
+
+open
+Privman::open_handle failed
+
+open
+  yyy
+
+open
+  This-is-the-song-that-never-ends
+
+open
+  Little Bo Peep has lost her sheep
+xxx
+
+userSpawn
+report_process...
+running: 1
+--- output stream ---
+uid == euid: 1
+User: root
+This is the input sent to mpt_user
+argv: /montest-689acb0e1ec89f45-7085a2a1780f5f42/safebin/mpt_user a b c
+env: PATH=/bin:/usr/bin FOO=bar
+--- error stream ---
+--- termination status ---
+running: 0
+terminated: 1
+terminated_successfully: 1
+exit_terminated: 1
+exit_status: 0
+signal_terminated: 0
+stopped: 0
+
+userSpawn
+report_process...
+running: 1
+--- output stream ---
+uid == euid: 1
+User: owprovdr
+This is the input sent to mpt_user
+argv: /montest-689acb0e1ec89f45-7085a2a1780f5f42/safebin/mpt_user d
+env: PATH=/bin:/usr/bin HIP=hop
+--- error stream ---
+--- termination status ---
+running: 0
+terminated: 1
+terminated_successfully: 1
+exit_terminated: 1
+exit_status: 0
+signal_terminated: 0
+stopped: 0
+
+monitoredSpawn
+report_process...
+running: 1
+--- output stream ---
+uid == euid: 1
+User: owprovdr
+This is the input sent to mpt_user
+argv: /montest-689acb0e1ec89f45-7085a2a1780f5f42/safebin/mpt_mon /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir a b c
+env: PATH=/bin:/usr/bin FOO=bar
+read_dir:
+  app-create
+  app-exists
+  bar
+  foo
+  in-out-exists
+  in-out-exists-ate
+  in-out-trunc-create
+  in-out-trunc-exists
+  link-exists
+  out-create
+  out-exists
+  out-trunc-create
+  out-trunc-exists
+  rename-to
+  rename2
+  these-are-the-link-contents
+--- error stream ---
+--- termination status ---
+running: 0
+terminated: 1
+terminated_successfully: 1
+exit_terminated: 1
+exit_status: 0
+signal_terminated: 0
+stopped: 0

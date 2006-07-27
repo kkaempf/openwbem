@@ -32,18 +32,19 @@
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "CryptographicRandomNumberTestCases.hpp"
-#include "OW_CryptographicRandomNumber.hpp"
+#include "OW_SecureRand.hpp"
+#include "OW_Types.hpp"
 
 using namespace OpenWBEM;
 
 void CryptographicRandomNumberTestCases::setUp()
 {
-	CryptographicRandomNumber::initRandomness();
+	Secure::rand_init();
 }
 
 void CryptographicRandomNumberTestCases::tearDown()
 {
-	CryptographicRandomNumber::saveRandomState();
+	Secure::rand_save_state();
 }
 
 // Need a fairly high test count to get a good test of randomness.
@@ -54,13 +55,12 @@ const long long MAX_TEST_COUNT = 10000000;
 
 void CryptographicRandomNumberTestCases::doTestRange(int low, int high)
 {
-	CryptographicRandomNumber gen(low, high);
 	bool saw_low = false;
 	bool saw_high = false;
 	long long i = 0;
 	while ((i < MIN_TEST_COUNT) || ((i < MAX_TEST_COUNT) && (!saw_low || !saw_high)))
 	{
-		Int32 rn = gen.getNextNumber();
+		int rn = Secure::rand_range<int>(low, high);
 		unitAssert(rn >= low && rn <= high);
 		if (rn == low)
 		{
@@ -79,7 +79,6 @@ void CryptographicRandomNumberTestCases::doTestRange(int low, int high)
 void CryptographicRandomNumberTestCases::testRandomNumbers()
 {
 	// test default.  range: 0-RAND_MAX
-	CryptographicRandomNumber g1;
 	int count = MIN_TEST_COUNT;
 	if (getenv("OWLONGTEST"))
 	{
@@ -87,7 +86,7 @@ void CryptographicRandomNumberTestCases::testRandomNumbers()
 	}
 	for (int i = 0; i < count; ++i)
 	{
-		Int32 rn = g1.getNextNumber();
+		Int32 rn = Secure::rand_range<Int32>(0, RAND_MAX);
 		unitAssert(rn >= 0 && rn <= RAND_MAX);
 	}
 

@@ -69,7 +69,7 @@ bool XMLParserCore::next(XMLToken& entry)
 	{
 		m_tagIsEmpty = false;
 		entry.type = XMLToken::END_TAG;
-		entry.attributeCount = 0;
+		entry.attributes.clear();
 		return true;
 	}
 	// Either a "<...>" or content begins next:
@@ -329,7 +329,7 @@ void XMLParserCore::getContent(XMLToken& entry)
 }
 void XMLParserCore::getElement(XMLToken& entry)
 {
-	entry.attributeCount = 0;
+	entry.attributes.clear();
 	entry.text.reset();
 	//--------------------------------------------------------------------------
 	// Get the element name (expect one of these: '?', '!', [A-Za-z_])
@@ -463,14 +463,10 @@ void XMLParserCore::getElement(XMLToken& entry)
 			++m_current;
 			return;
 		}
-		++entry.attributeCount;
-		XMLToken::Attribute& attr = entry.attributes[entry.attributeCount - 1];
+		entry.attributes.push_back(XMLToken::Attribute());
+		XMLToken::Attribute& attr = *entry.attributes.rbegin();
 		getAttributeNameAndEqual(attr);
 		getAttributeValue(attr);
-		if (entry.attributeCount == XMLToken::MAX_ATTRIBUTES)
-		{
-			OW_THROWXMLLINE(XMLParseException::TOO_MANY_ATTRIBUTES, m_line);
-		}
 	}
 }
 

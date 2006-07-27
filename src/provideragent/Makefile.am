@@ -16,7 +16,9 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/http/client -lowhttpclient \
--L$(top_builddir)/src/services/http -lowservicehttp 
+-L$(top_builddir)/src/monitor -lowprivman \
+-L$(top_builddir)/src/services/http -lowservicehttp
+
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 

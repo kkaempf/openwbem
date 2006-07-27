@@ -67,23 +67,6 @@ TempFileEnumerationImplBase::TempFileEnumerationImplBase()
 	}
 }
 
-TempFileEnumerationImplBase::TempFileEnumerationImplBase(String const& filename)
-	: m_size(readSize(filename)), m_Data(filename)
-{
-	// now we have to read the sig so that the temp file stream is
-	// positioned correctly
-	UInt32 tmpSig;
-	m_Data.read(reinterpret_cast<char*>(&tmpSig), sizeof(tmpSig));
-	if (!m_Data.good())
-	{
-		OW_THROW(EnumerationException, "Failed to read signature of "
-			"enumeration tempfile.");
-	}
-	if (tmpSig != TEMPFILE_ENUMERATION_SIG)
-	{
-		OW_THROW(EnumerationException, "Signature of enumeration tempfile is not valid.");
-	}
-}
 TempFileEnumerationImplBase::~TempFileEnumerationImplBase()
 {
 }
@@ -104,22 +87,6 @@ TempFileEnumerationImplBase::clear()
 	m_size = 0;
 	m_Data.reset();
 }
-String
-TempFileEnumerationImplBase::releaseFile()
-{
-	// Append the size onto the end of the stream so we can recover it
-	// when constructing from the file
-	m_Data.write(reinterpret_cast<char*>(&m_size), sizeof(m_size));
-	if (!m_Data.good())
-	{
-		OW_THROW(EnumerationException, "Failed to write size to "
-			"enumeration tempfile.");
-	}
-	String rval = m_Data.releaseFile();
-	clear();
-	return rval;
-}
-
 bool
 TempFileEnumerationImplBase::usingTempFile() const
 {

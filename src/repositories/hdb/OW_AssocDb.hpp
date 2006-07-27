@@ -49,6 +49,7 @@
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -58,7 +59,7 @@ namespace OW_NAMESPACE
  */
 struct OW_HDB_API AssocDbEntry
 {
-	AssocDbEntry(std::istream& istrm);
+	AssocDbEntry(std::streambuf & istrm);
 	AssocDbEntry()
 		: m_objectName(CIMNULL)
 		, m_offset(-1L)
@@ -79,12 +80,12 @@ struct OW_HDB_API AssocDbEntry
 		CIMObjectPath m_associatedObject; // value for associtor(Name)s
 		CIMObjectPath m_associationPath;  // value for reference(Name)s
 		
-		void writeObject(std::ostream& ostrm) const;
-		void readObject(std::istream& istrm);
+		void writeObject(std::streambuf & ostrm) const;
+		void readObject(std::streambuf & istrm);
 	};
 
-	void writeObject(std::ostream& ostrm) const;
-	void readObject(std::istream& istrm);
+	void writeObject(std::streambuf & ostrm) const;
+	void readObject(std::streambuf & istrm);
 	Int32 getOffset() const { return m_offset; }
 	void setOffset(Int32 offset) { m_offset = offset; }
 
@@ -93,11 +94,7 @@ struct OW_HDB_API AssocDbEntry
 	
 	String makeKey() const;
 
-	typedef CIMObjectPath AssocDbEntry::*safe_bool;
-	operator safe_bool () const
-		{  return m_objectName ? &AssocDbEntry::m_objectName : 0; }
-	bool operator!() const
-		{  return !m_objectName; }
+	OW_SAFE_BOOL_IMPL(AssocDbEntry, CIMObjectPath, AssocDbEntry::m_objectName, m_objectName)
 
 #ifdef OW_WIN32
 #pragma warning (push)

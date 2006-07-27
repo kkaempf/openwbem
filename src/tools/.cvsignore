@@ -20,3 +20,8 @@ owcimindicationlistener
 owrepositorydump
 lib*sl*
 owgetclass
+owenuminstances
+owinvokemethod
+owenuminstancenames
+owgetinstance
+owdeleteinstance

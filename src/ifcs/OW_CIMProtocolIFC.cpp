@@ -35,6 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMProtocolIFC.hpp"
+#include "OW_Timeout.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -43,6 +44,36 @@ namespace OW_NAMESPACE
 CIMProtocolIFC::~CIMProtocolIFC() 
 {
 }
+
+
+///////////////////////////////////////////////////////////////////////////////
+void 
+CIMProtocolIFC::setReceiveTimeout(int seconds)
+{
+	this->setReceiveTimeout(Timeout::relative(seconds));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void 
+CIMProtocolIFC::setSendTimeout(int seconds)
+{
+	this->setSendTimeout(Timeout::relative(seconds));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void 
+CIMProtocolIFC::setConnectTimeout(int seconds)
+{
+	this->setConnectTimeout(Timeout::relative(seconds));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+CIMProtocolIFC::setTimeouts(int seconds)
+{
+	this->setTimeouts(Timeout::relative(seconds));
+}
+
 
 } // end namespace OW_NAMESPACE
 

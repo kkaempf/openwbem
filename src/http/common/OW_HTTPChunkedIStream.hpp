@@ -33,16 +33,16 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_HTTPChunkedIStream_HPP_INCLUDE_GUARD_
-#define OW_HTTPChunkedIStream_HPP_INCLUDE_GUARD_
+#ifndef OW_HTTPCHUNKEDISTREAM_HPP_INCLUDE_GUARD_
+#define OW_HTTPCHUNKEDISTREAM_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_HTTPChunkException.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_String.hpp"
 #include "OW_Map.hpp"
 #include "OW_AutoPtr.hpp"
-#include "OW_CIMProtocolIStreamIFC.hpp"
 #include "OW_HttpCommonFwd.hpp"
+#include <istream>
 
 namespace OW_NAMESPACE
 {
@@ -50,8 +50,7 @@ namespace OW_NAMESPACE
 class OW_HTTP_API HTTPChunkedIStreamBuffer : public BaseStreamBuffer
 {
 	public:
-		HTTPChunkedIStreamBuffer(std::istream& istr,
-				HTTPChunkedIStream* chunkedIstr);
+		HTTPChunkedIStreamBuffer(std::istream& istr);
 		void resetInput();
 		~HTTPChunkedIStreamBuffer();
 	private:
@@ -60,20 +59,21 @@ class OW_HTTP_API HTTPChunkedIStreamBuffer : public BaseStreamBuffer
 		unsigned int m_inPos;
 		bool m_isEOF;
 		virtual int buffer_from_device(char* c, int n);
-		HTTPChunkedIStream* m_pChunker;
+		//HTTPChunkedIStream* m_pChunker;
 		// don't allow copying.
 		HTTPChunkedIStreamBuffer(const HTTPChunkedIStreamBuffer&);
 		HTTPChunkedIStreamBuffer& operator=(const HTTPChunkedIStreamBuffer&);
 };
+
 class OW_HTTP_API HTTPChunkedIStreamBase
 {
 public:
-	HTTPChunkedIStreamBase(std::istream& istr,
-		HTTPChunkedIStream* chunkedIStr) : m_strbuf(istr, chunkedIStr) {}
+	HTTPChunkedIStreamBase(std::istream& istr) : m_strbuf(istr) {}
 	HTTPChunkedIStreamBuffer m_strbuf;
 };
+
 class OW_HTTP_API HTTPChunkedIStream : private HTTPChunkedIStreamBase,
-	public CIMProtocolIStreamIFC
+	public std::istream
 {
 	public:
 		/**
@@ -90,39 +90,12 @@ class OW_HTTP_API HTTPChunkedIStream : private HTTPChunkedIStreamBase,
 		 */
 		std::istream& getInputStreamOrig() { return m_istr; }
 		/**
-		 * Get the HTTP trailers from the http response.
-		 * This must be called after EOF is hit on the input stream.
-		 * @return the trailers.
-		 */
-		Map<String, String> getTrailers() const { return m_trailerMap; }
-		/**
 		 * Clear the EOF/BAD bits, so that input can continue.
 		 */
 		void resetInput();
-		// TODO: Move all this knowledge about CIM and specific trailers into HTTPClient
-		virtual void checkForError() const;
-		virtual String getTrailer(const String& key) const;
 	private:
 		std::istream& m_istr;
-		// incoming trailer info
 
-#ifdef OW_WIN32
-#pragma warning (push)
-#pragma warning (disable: 4251)
-#endif
-
-		Map<String, String> m_trailerMap;
-
-#ifdef OW_WIN32
-#pragma warning (pop)
-#endif
-
-		/**
-		 * A callback function, invoked by the HTTPChunkingStreamBuffer.
-		 * After a zero length chunk is encountered, this is called to build
-		 * the trailer map, if there is one
-		 */
-		void buildTrailerMap();
 		// don't allow copying
 		HTTPChunkedIStream(const HTTPChunkedIStream&);
 		HTTPChunkedIStream& operator=(const HTTPChunkedIStream&);

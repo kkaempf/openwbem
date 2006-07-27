@@ -201,7 +201,8 @@ GenericHDBRepository::createNameSpace(const String& ns)
 			reinterpret_cast<const unsigned char*>(ns.c_str()));
 		hdl->turnFlagsOn(node, HDBNSNODE_FLAG);
 		hdl->addRootNode(node);
-		OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("created namespace %1", ns));
+		Logger lgr(COMPONENT_NAME);
+		OW_LOG_DEBUG(lgr, Format("created namespace %1", ns));
 	}
 	else
 	{
@@ -265,7 +266,7 @@ GenericHDBRepository::nodeToCIMObject(CIMBase& cimObj,
 {
 	if (node)
 	{
-		DataIStream istrm(node.getDataLen(), node.getData());
+		DataIStreamBuf istrm(node.getDataLen(), node.getData());
 		cimObj.readObject(istrm);
 	}
 	else
@@ -285,9 +286,24 @@ void
 GenericHDBRepository::updateCIMObject(const CIMBase& cimObj,
 	HDBNode& node, HDBHandle hdl)
 {
-	DataOStream ostrm;
+	DataOStreamBuf ostrm;
 	cimObj.writeObject(ostrm);
-	hdl.updateNode(node, ostrm.length(), ostrm.getData());
+	if (!hdl.updateNode(node, HDBNode(), ostrm.length(), ostrm.getData()))
+	{
+		OW_THROW(HDBException, "Failed to update repository node");
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+GenericHDBRepository::updateCIMObject(const CIMBase& cimObj,
+	HDBNode& node, HDBNode& parentNode, HDBHandle hdl)
+{
+	DataOStreamBuf ostrm;
+	cimObj.writeObject(ostrm);
+	if (!hdl.updateNode(node, parentNode, ostrm.length(), ostrm.getData()))
+	{
+		OW_THROW(HDBException, "Failed to update repository node");
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -295,7 +311,7 @@ GenericHDBRepository::addCIMObject(const CIMBase& cimObj,
 	const String& key, HDBNode& parentNode, HDBHandle hdl,
 	UInt32 nodeFlags)
 {
-	DataOStream ostrm;
+	DataOStreamBuf ostrm;
 	cimObj.writeObject(ostrm);
 	HDBNode node(key, ostrm.length(), ostrm.getData());
 	node.turnFlagsOn(hdl, nodeFlags);
@@ -306,7 +322,7 @@ void
 GenericHDBRepository::addCIMObject(const CIMBase& cimObj,
 	const String& key, HDBHandle hdl, UInt32 nodeFlags)
 {
-	DataOStream ostrm;
+	DataOStreamBuf ostrm;
 	cimObj.writeObject(ostrm);
 	HDBNode node(key, ostrm.length(), ostrm.getData());
 	node.turnFlagsOn(hdl, nodeFlags);

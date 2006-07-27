@@ -42,13 +42,20 @@
 namespace OW_NAMESPACE
 {
 
+/**
+* DO NOT DERIVE FROM THIS CLASS, as the dtor has to call a virtual fct.
+*/
 class OW_COMMON_API IOIFCStreamBuffer : public BaseStreamBuffer
 {
 public:
-	IOIFCStreamBuffer(IOIFC* dev, int bufSize = BASE_BUF_SIZE,
-		const char* direction = "io");
+	using BaseStreamBuffer::EDirectionFlag;
+
+	IOIFCStreamBuffer(IOIFC* dev, int bufSize, const char* direction) OW_DEPRECATED;
+	IOIFCStreamBuffer(IOIFC* dev, EDirectionFlag direction = E_IN_OUT, int bufSize = 64*1024/*BASE_BUF_SIZE*/);
+	void setErrorAction(IOIFC::ErrorAction error_action);
 	virtual ~IOIFCStreamBuffer();
 	virtual void reset();
+	std::streambuf * tie(std::streambuf * tied_buf);
 private:
 	// unimplemented
 	IOIFCStreamBuffer(const IOIFCStreamBuffer& arg);
@@ -56,6 +63,8 @@ private:
 	virtual int buffer_to_device(const char* c, int n);
 	virtual int buffer_from_device(char* c, int n);
 	IOIFC* m_dev;
+	std::streambuf * m_tied_buf;
+	IOIFC::ErrorAction m_error_action;
 };
 
 } // end namespace OW_NAMESPACE

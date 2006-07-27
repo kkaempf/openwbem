@@ -36,18 +36,11 @@
 #include "OW_config.h"
 #include "OW_DateTime.hpp"
 #include "OW_String.hpp"
-#include "OW_BinarySerialization.hpp"
+#include "OW_Array.hpp"
 #include "OW_Format.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_ExceptionIds.hpp"
-
-#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
-#include <istream>
-#include <ostream>
-#else
-#include <iostream>
-#endif
 
 #include <time.h>
 #ifdef OW_HAVE_SYS_TIME_H
@@ -118,9 +111,6 @@ char *asctime_r(const struct tm *tm, char *result)
 
 namespace OW_NAMESPACE
 {
-
-using std::istream;
-using std::ostream;
 
 //////////////////////////////////////////////////////////////////////////////
 OW_DEFINE_EXCEPTION_WITH_ID(DateTime);

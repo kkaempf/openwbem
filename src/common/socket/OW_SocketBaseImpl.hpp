@@ -47,6 +47,8 @@
 #include "OW_Types.hpp"
 #include "OW_SocketStreamBuffer.hpp"
 #include "OW_IOIFC.hpp"
+#include "OW_Timeout.hpp"
+
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -69,20 +71,20 @@ public:
 	virtual ~SocketBaseImpl();
 	virtual void connect(const SocketAddress& addr);
 	virtual void disconnect();
-	void setReceiveTimeout(int seconds) { m_recvTimeout = seconds; }
-	int getReceiveTimeout() const { return m_recvTimeout; }
-	void setSendTimeout(int seconds) { m_sendTimeout = seconds; }
-	int getSendTimeout() const { return m_sendTimeout; }
-	void setConnectTimeout(int seconds) { m_connectTimeout = seconds; }
-	int getConnectTimeout() const { return m_connectTimeout; }
-	void setTimeouts(int seconds) { m_recvTimeout = m_sendTimeout = m_connectTimeout = seconds; }
+	void setReceiveTimeout(const Timeout& timeout) { m_recvTimeout = timeout; }
+	Timeout getReceiveTimeout() const { return m_recvTimeout; }
+	void setSendTimeout(const Timeout& timeout) { m_sendTimeout = timeout; }
+	Timeout getSendTimeout() const { return m_sendTimeout; }
+	void setConnectTimeout(const Timeout& timeout) { m_connectTimeout = timeout; }
+	Timeout getConnectTimeout() const { return m_connectTimeout; }
+	void setTimeouts(const Timeout& timeout) { m_recvTimeout = m_sendTimeout = m_connectTimeout = timeout; }
 	bool receiveTimeOutExpired() const { return m_recvTimeoutExprd; }
 	int write(const void* dataOut, int dataOutLen,
-			bool errorAsException=false);
+			ErrorAction errorAsException = E_RETURN_ON_ERROR);
 	int read(void* dataIn, int dataInLen,
-			bool errorAsException=false);
-	virtual bool waitForInput(int timeOutSecs=-1);
-	bool waitForOutput(int timeOutSecs=-1);
+			ErrorAction errorAsException = E_RETURN_ON_ERROR);
+	virtual bool waitForInput(const Timeout& timeout);
+	bool waitForOutput(const Timeout& timeout);
 	std::istream& getInputStream();
 	std::ostream& getOutputStream();
 	std::iostream& getIOStream();
@@ -120,9 +122,9 @@ private:
 	std::istream m_in;
 	std::ostream m_out;
 	std::iostream m_inout;
-	int m_recvTimeout;
-	int m_sendTimeout;
-	int m_connectTimeout;
+	Timeout m_recvTimeout;
+	Timeout m_sendTimeout;
+	Timeout m_connectTimeout;
 	
 	static String m_traceFileOut;
 	static String m_traceFileIn;

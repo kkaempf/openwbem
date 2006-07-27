@@ -13,3 +13,5 @@ lib*dylib*
 *.nlm.*
 owlocalhelper
 lib*sl*
+owspnegovas4helper
+owspnegovas3helper

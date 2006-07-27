@@ -38,7 +38,7 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Types.hpp"
 #include "OW_Format.hpp"
-#include "OW_CryptographicRandomNumber.hpp"
+#include "OW_SecureRand.hpp"
 #include "OW_ExceptionIds.hpp"
 
 #if !defined(OW_WIN32)
@@ -136,16 +136,6 @@ void getCurrentTime(uuid_time_t * timestamp)
 	*timestamp = timeNow + uuidsThisTick;
 }
 /////////////////////////////////////////////////////////////////////////////
-void getRandomBytes(void* buf, size_t len)
-{
-	CryptographicRandomNumber rn;
-	unsigned char* cp = reinterpret_cast<unsigned char*>(buf);
-	for (size_t i = 0; i < len; ++cp, ++i)
-	{
-		*cp = rn.getNextNumber();
-	}
-}
-/////////////////////////////////////////////////////////////////////////////
 // these globals are protected by the mutex locked in UUID::UUID()
 unsigned char nodeId[6];
 bool nodeIdInitDone = false;
@@ -156,7 +146,7 @@ void getNodeIdentifier(uuid_node_t *node)
 	// numbers.
 	if (!nodeIdInitDone)
 	{
-		getRandomBytes(nodeId, sizeof(nodeId));
+		Secure::rand(nodeId, sizeof(nodeId));
 		// Set multicast bit, to prevent conflicts with MAC addressses.
 		nodeId[0] |= 0x80;
 		nodeIdInitDone = true;

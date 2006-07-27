@@ -84,36 +84,36 @@ void OW_MemTracerTestCases::testSomething()
 	Array<String> cmd;
 	cmd.append(execName);
 	cmd.append(String(UNDERRUN));
-	PopenStreams rval = Exec::safePopen(cmd);
-	String er = rval.err()->readAll();
-	rval.getExitStatus();
+	ProcessRef rval = Exec::spawn(cmd);
+	String er = rval->err()->readAll();
+	rval->waitCloseTerm();
 	size_t idx = er.indexOf("UNDERRUN");
 	unitAssert(idx != String::npos);
 
 	cmd.clear();
 	cmd.append(execName);
 	cmd.append(String(OVERRUN));
-	rval = Exec::safePopen(cmd);
-	er = rval.err()->readAll();
-	rval.getExitStatus();
+	rval = Exec::spawn(cmd);
+	er = rval->err()->readAll();
+	rval->waitCloseTerm();
 	idx = er.indexOf("OVERRUN");
 	unitAssert(idx != String::npos);
 
 	cmd.clear();
 	cmd.append(execName);
 	cmd.append(String(UNKNOWN_ADDR));
-	rval = Exec::safePopen(cmd);
-	er = rval.err()->readAll();
-	rval.getExitStatus();
+	rval = Exec::spawn(cmd);
+	er = rval->err()->readAll();
+	rval->waitCloseTerm();
 	idx = er.indexOf("UNKNOWN ADDRESS");
 	unitAssert(idx != String::npos);
 
 	cmd.clear();
 	cmd.append(execName);
 	cmd.append(String(DOUBLE_DELETE));
-	rval = Exec::safePopen(cmd);
-	er = rval.err()->readAll();
-	rval.getExitStatus();
+	rval = Exec::spawn(cmd);
+	er = rval->err()->readAll();
+	rval->waitCloseTerm();
 	idx = er.indexOf("DOUBLE DELETE");
 	unitAssert(idx != String::npos);
 
@@ -122,9 +122,9 @@ void OW_MemTracerTestCases::testSomething()
 	cmd.clear();
 	cmd.append(execName);
 	cmd.append(String(DOUBLE_DELETE));
-	rval = Exec::safePopen(cmd);
-	er = rval.err()->readAll();
-	rval.getExitStatus();
+	rval = Exec::spawn(cmd);
+	er = rval->err()->readAll();
+	rval->waitCloseTerm();
 	idx = er.indexOf("DOUBLE DELETE (NOFREE)");
 	unitAssert(idx != String::npos);
 
@@ -133,19 +133,19 @@ void OW_MemTracerTestCases::testSomething()
 	cmd.clear();
 	cmd.append(execName);
 	cmd.append(String(AGGRESSIVE));
-	rval = Exec::safePopen(cmd);
-	er = rval.err()->readAll();
-	idx = rval.getExitStatus();
-	unitAssert(idx == 0);
+	rval = Exec::spawn(cmd);
+	er = rval->err()->readAll();
+	rval->waitCloseTerm();
+	unitAssert(rval->processStatus().terminatedSuccessfully());
 
 	putenv("OW_MEM_AGGRESSIVE=1");
 
 	cmd.clear();
 	cmd.append(execName);
 	cmd.append(String(AGGRESSIVE));
-	rval = Exec::safePopen(cmd);
-	er = rval.err()->readAll();
-	rval.getExitStatus();
+	rval = Exec::spawn(cmd);
+	er = rval->err()->readAll();
+	rval->waitCloseTerm();
 	idx = er.indexOf("OVERRUN");
 	unitAssert(idx != String::npos);
 

@@ -41,6 +41,11 @@
 namespace OW_NAMESPACE
 {
 
+namespace
+{
+	String COMPONENT_NAME("ow.common.dyldSharedLibraryLoader");
+}
+
 std::ostream& operator<<(std::ostream& o, NSObjectFileImageReturnCode code)
 {
 #define SIMPLE_NSOBJ_CASE(X) case X: o << ""#X
@@ -65,9 +70,9 @@ std::ostream& operator<<(std::ostream& o, NSObjectFileImageReturnCode code)
 
 ///////////////////////////////////////////////////////////////////////////////
 SharedLibraryRef
-dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
-	const LoggerRef& logger) const
+dyldSharedLibraryLoader::loadSharedLibrary(const String& filename) const
 {
+	Logger logger(COMPONENT_NAME);
 	OW_LOG_DEBUG(logger, Format("Load request for %1 received.", filename));
 	NSObjectFileImage image = 0;
 	NSObjectFileImageReturnCode dsoerr = NSCreateObjectFileImageFromFile(filename.c_str(), &image);
@@ -86,17 +91,9 @@ dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
 		}
 		NSDestroyObjectFileImage(image);
 	}
-	else if ((dsoerr == NSObjectFileImageFormat ||
-					dsoerr == NSObjectFileImageInappropriateFile) &&
-					NSAddLibrary(filename.c_str()) == TRUE)
-	{
-		OW_LOG_ERROR(logger, Format("NSCreateObject: %1 failed with error \"%2\"",
-														filename, dsoerr));
-		// libhandle = (NSModule)DYLD_LIBRARY_HANDLE;
-	}
 	else
 	{
-		err_msg = "cannot create object file image or add library";
+		err_msg = "cannot create object file image";
 		OW_LOG_ERROR(logger, Format("NSCreateObject: %1 failed with error %2",
 														filename, dsoerr));
 	}

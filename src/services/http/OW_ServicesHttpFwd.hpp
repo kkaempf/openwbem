@@ -49,6 +49,15 @@ class DigestAuthentication;
 #ifndef OW_WIN32
 class LocalAuthentication;
 #endif
+class SPNEGOAuthentication;
+
+enum EAuthenticateResult
+{
+	E_AUTHENTICATE_FAIL,
+	E_AUTHENTICATE_CONTINUE,
+	E_AUTHENTICATE_SUCCESS
+};
+
 
 
 } // end namespace OW_NAMESPACE

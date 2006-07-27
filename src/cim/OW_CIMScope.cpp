@@ -41,8 +41,6 @@
 namespace OW_NAMESPACE
 {
 
-using std::istream;
-using std::ostream;
 //////////////////////////////////////////////////////////////////////////////					
 String
 CIMScope::toString() const
@@ -103,7 +101,7 @@ CIMScope::toMOF() const
 }
 //////////////////////////////////////////////////////////////////////////////					
 void
-CIMScope::readObject(istream &istrm)
+CIMScope::readObject(std::streambuf & istrm)
 {
 	// Don't do this, it'll double the size CIMBase::readSig( istrm, CIMSCOPESIG );
 	UInt32 v;
@@ -112,7 +110,7 @@ CIMScope::readObject(istream &istrm)
 }
 //////////////////////////////////////////////////////////////////////////////					
 void
-CIMScope::writeObject(ostream &ostrm) const
+CIMScope::writeObject(std::streambuf & ostrm) const
 {
 	// Don't do this, it'll double the size CIMBase::writeSig( ostrm, CIMSCOPESIG );
 	BinarySerialization::writeLen(ostrm, m_val);

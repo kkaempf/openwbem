@@ -96,7 +96,7 @@ main(int argc, char* argv[])
 		String url(argv[1]);
 
 		ClientCIMOMHandleRef hdl = ClientCIMOMHandle::createFromURL(url);
-		hdl->getWBEMProtocolHandler()->setReceiveTimeout(1); // make it really short
+		hdl->getWBEMProtocolHandler()->setReceiveTimeout(Timeout::relative(1.0)); // make it really short
 
 		CIMParamValueArray inParams;
 		CIMParamValueArray outParams;

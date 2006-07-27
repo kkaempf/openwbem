@@ -43,5 +43,19 @@ ProviderEnvironmentIFC::~ProviderEnvironmentIFC()
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
+LoggerRef
+ProviderEnvironmentIFC::getLogger() const
+{
+	return LoggerRef(new Logger());
+}
+
+///////////////////////////////////////////////////////////////////////////////
+LoggerRef
+ProviderEnvironmentIFC::getLogger(const String& componentName) const
+{
+	return LoggerRef(new Logger(componentName));
+}
+
 } // end namespace OW_NAMESPACE
 

@@ -70,8 +70,14 @@ using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 BinaryRequestHandler::BinaryRequestHandler()
 	: RequestHandlerIFC()
-	, m_userId(UserId(-1))
+	, m_supportExportIndication(false)
 {
+}
+BinaryRequestHandler::BinaryRequestHandler(ESupportExportIndicationFlag supportExportIndicationFlag)
+	: RequestHandlerIFC()
+	, m_supportExportIndication(supportExportIndicationFlag == E_SUPPORT_EXPORT_INDICATION)
+{
+
 }
 //////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFC*
@@ -84,12 +90,6 @@ String
 BinaryRequestHandler::getName() const
 {
 	return ServiceIFCNames::BinaryRequestHandler;
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-BinaryRequestHandler::setEnvironment(const ServiceEnvironmentIFCRef& env)
-{
-	RequestHandlerIFC::setEnvironment(env);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -108,28 +108,26 @@ BinaryRequestHandler::doOptions(CIMFeatures& cf,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
-	std::ostream* ostrError, OperationContext& context)
+BinaryRequestHandler::doProcess(std::istream * istr, std::ostream * ostrEntity,
+	std::ostream * ostrError, OperationContext & context)
+{
+	this->doProcess(
+		istr->rdbuf(), ostrEntity->rdbuf(), ostrError->rdbuf(), context);
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+BinaryRequestHandler::doProcess(std::streambuf * istrm, std::streambuf * ostrm,
+	std::streambuf * ostrError, OperationContext& context)
 {
 	clearError();
-	String userName = context.getStringDataWithDefault(OperationContext::USER_NAME);
-	if (!userName.empty())
-	{
-		bool validUserName = false;
-		m_userId = UserUtils::getUserId(userName, validUserName);
-		if (!validUserName)
-		{
-			m_userId = UserId(-1);
-		}
-	}
 	UInt8 funcNo = 0;
-	LoggerRef lgr = getEnvironment()->getLogger(COMPONENT_NAME);
+	Logger lgr(COMPONENT_NAME);
 	try
 	{
 		CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(context);
 		UInt32 version = 0;
 		BinarySerialization::read(*istrm, version);
-		if (version < MinBinaryProtocolVersion || version > BinaryProtocolVersion)
+		if (version < BinarySerialization::MinBinaryProtocolVersion || version > BinarySerialization::BinaryProtocolVersion)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED, "Incompatible version");
 		}
@@ -138,78 +136,78 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		{
 			switch (funcNo)
 			{
-				case BIN_GETQUAL:
+				case BinarySerialization::BIN_GETQUAL:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get qualifier"
 						" request");
 					getQual(chdl, *ostrm, *istrm);
 					break;
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-				case BIN_SETQUAL:
+				case BinarySerialization::BIN_SETQUAL:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler set qualifier"
 						" request");
 					setQual(chdl, *ostrm, *istrm);
 					break;
-				case BIN_DELETEQUAL:
+				case BinarySerialization::BIN_DELETEQUAL:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler delete qualifier"
 						" request");
 					deleteQual(chdl, *ostrm, *istrm);
 					break;
-				case BIN_ENUMQUALS:
+				case BinarySerialization::BIN_ENUMQUALS:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum qualifiers"
 						" request");
 					enumQualifiers(chdl, *ostrm, *istrm);
 					break;
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-				case BIN_GETCLS:
+				case BinarySerialization::BIN_GETCLS:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get class"
 						" request");
 					getClass(chdl, *ostrm, *istrm);
 					break;
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-				case BIN_CREATECLS:
+				case BinarySerialization::BIN_CREATECLS:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler create class"
 						" request");
 					createClass(chdl, *ostrm, *istrm);
 					break;
-				case BIN_MODIFYCLS:
+				case BinarySerialization::BIN_MODIFYCLS:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler modify class"
 						" request");
 					modifyClass(chdl, *ostrm, *istrm);
 					break;
-				case BIN_DELETECLS:
+				case BinarySerialization::BIN_DELETECLS:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler delete class"
 						" request");
 					deleteClass(chdl, *ostrm, *istrm);
 					break;
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-				case BIN_ENUMCLSS:
+				case BinarySerialization::BIN_ENUMCLSS:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum classes"
 						" request");
 					enumClasses(chdl, *ostrm, *istrm);
 					break;
-				case BIN_GETINST:
+				case BinarySerialization::BIN_GETINST:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get instance"
 						" request");
 					getInstance(chdl, *ostrm, *istrm);
 					break;
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-				case BIN_CREATEINST:
+				case BinarySerialization::BIN_CREATEINST:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler create instance"
 						" request");
 					createInstance(chdl, *ostrm, *istrm);
 					break;
-				case BIN_MODIFYINST:
+				case BinarySerialization::BIN_MODIFYINST:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get instance"
 						" request");
 					modifyInstance(chdl, *ostrm, *istrm);
 					break;
-				case BIN_DELETEINST:
+				case BinarySerialization::BIN_DELETEINST:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler delete instance"
 						" request");
 					deleteInstance(chdl, *ostrm, *istrm);
 					break;
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
-				case BIN_SETPROP:
+				case BinarySerialization::BIN_SETPROP:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler set property"
 						" request");
 					setProperty(chdl, *ostrm, *istrm);
@@ -217,67 +215,77 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
-				case BIN_GETPROP:
+				case BinarySerialization::BIN_GETPROP:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get property"
 						" request");
 					getProperty(chdl, *ostrm, *istrm);
 					break;
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
-				case BIN_ENUMCLSNAMES:
+				case BinarySerialization::BIN_ENUMCLSNAMES:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum class names"
 						" request");
 					enumClassNames(chdl, *ostrm, *istrm);
 					break;
-				case BIN_ENUMINSTS:
+				case BinarySerialization::BIN_ENUMINSTS:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum instances"
 						" request");
 					enumInstances(chdl, *ostrm, *istrm);
 					break;
-				case BIN_ENUMINSTNAMES:
+				case BinarySerialization::BIN_ENUMINSTNAMES:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum instance"
 						" names request");
 					enumInstanceNames(chdl, *ostrm, *istrm);
 					break;
-				case BIN_INVMETH:
+				case BinarySerialization::BIN_INVMETH:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler invoke method"
 						" request");
 					invokeMethod(chdl, *ostrm, *istrm);
 					break;
-				case BIN_EXECQUERY:
+				case BinarySerialization::BIN_EXECQUERY:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler exec query"
 						" request");
 					execQuery(chdl, *ostrm, *istrm);
 					break;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-				case BIN_ASSOCIATORS:
+				case BinarySerialization::BIN_ASSOCIATORS:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler associators"
 						" request");
 					associators(chdl, *ostrm, *istrm);
 					break;
-				case BIN_ASSOCNAMES:
+				case BinarySerialization::BIN_ASSOCNAMES:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler associator names"
 						" request");
 					associatorNames(chdl, *ostrm, *istrm);
 					break;
-				case BIN_REFERENCES:
+				case BinarySerialization::BIN_REFERENCES:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler references"
 						" request");
 					references(chdl, *ostrm, *istrm);
 					break;
-				case BIN_REFNAMES:
+				case BinarySerialization::BIN_REFNAMES:
 					OW_LOG_DEBUG(lgr, "BinaryRequestHandler reference names"
 						" request");
 					referenceNames(chdl, *ostrm, *istrm);
 					break;
 #endif
-				case BIN_GETSVRFEATURES:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get server"
-						" features request");
+				case BinarySerialization::BIN_GETSVRFEATURES:
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get server features request");
 					getServerFeatures(chdl, *ostrm, *istrm);
 					break;
+				case BinarySerialization::EXPORT_INDICATION:
+					if (m_supportExportIndication)
+					{
+						OW_LOG_DEBUG(lgr, "BinaryRequestHandler get export indication request");
+						exportIndication(chdl, *ostrm, *istrm);
+					}
+					else
+					{
+						OW_LOG_DEBUG(lgr, "Ignoring export indication request");
+						writeError(*ostrError, "Export indication not supported.");
+					}
+					break;
 				default:
-					OW_LOG_DEBUG(lgr, Format("BinaryRequestHandler: Received"
-						" invalid function number: %1", funcNo));
+					OW_LOG_DEBUG(lgr, Format("BinaryRequestHandler: Received invalid function number: %1", static_cast<int>(funcNo)));
 					writeError(*ostrError, "Invalid function number");
 					break;
 			}
@@ -286,7 +294,7 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		{
 			OW_LOG_INFO(lgr, Format("CIM Exception caught in"
 				" BinaryRequestHandler: %1", e));
-			BinarySerialization::write(*ostrError, BIN_EXCEPTION);
+			BinarySerialization::write(*ostrError, BinarySerialization::BIN_EXCEPTION);
 			BinarySerialization::write(*ostrError, UInt16(e.getErrNo()));
 			BinarySerialization::write(*ostrError, e.getMessage());
 			setError(e.getErrNo(), e.getDescription());
@@ -294,25 +302,25 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	}
 	catch(Exception& e)
 	{
-		OW_LOG_ERROR(lgr, "Exception caught in BinaryRequestHandler");
-		OW_LOG_ERROR(lgr, Format("Type: %1", e.type()));
-		OW_LOG_ERROR(lgr, Format("File: %1", e.getFile()));
-		OW_LOG_ERROR(lgr, Format("Line: %1", e.getLine()));
-		OW_LOG_ERROR(lgr, Format("Msg: %1", e.getMessage()));
+		OW_LOG_INFO(lgr, "Exception caught in BinaryRequestHandler");
+		OW_LOG_INFO(lgr, Format("Type: %1", e.type()));
+		OW_LOG_INFO(lgr, Format("File: %1", e.getFile()));
+		OW_LOG_INFO(lgr, Format("Line: %1", e.getLine()));
+		OW_LOG_INFO(lgr, Format("Msg: %1", e.getMessage()));
 		writeError(*ostrError, Format("BinaryRequestHandler caught exception: %1", e).c_str());
 		setError(CIMException::FAILED, e.getMessage());
 		
 	}
 	catch(std::exception& e)
 	{
-		OW_LOG_ERROR(lgr, Format("Caught %1 exception in BinaryRequestHandler",
+		OW_LOG_INFO(lgr, Format("Caught %1 exception in BinaryRequestHandler",
 			e.what()));
 		writeError(*ostrError, Format("BinaryRequestHandler caught exception: %1", e.what()).c_str());
 		setError(CIMException::FAILED, e.what());
 	}
 	catch (ThreadCancelledException&)
 	{
-		OW_LOG_ERROR(lgr, "Thread cancelled in BinaryRequestHandler");
+		OW_LOG_INFO(lgr, "Thread cancelled in BinaryRequestHandler");
 		writeError(*ostrError, "Thread cancelled");
 		setError(CIMException::FAILED, "Thread cancelled");
 		throw;
@@ -327,33 +335,33 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::createClass(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::createClass(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	CIMClass cc(BinarySerialization::readClass(istrm));
 	chdl->createClass(ns, cc);
-	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::modifyClass(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::modifyClass(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	CIMClass cc(BinarySerialization::readClass(istrm));
 	chdl->modifyClass(ns, cc);
-	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::deleteClass(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::deleteClass(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	String className(BinarySerialization::readString(istrm));
 	chdl->deleteClass(ns, className);
-	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
@@ -362,7 +370,7 @@ namespace
 	class BinaryCIMClassWriter : public CIMClassResultHandlerIFC
 	{
 	public:
-		BinaryCIMClassWriter(std::ostream& ostrm_)
+		BinaryCIMClassWriter(std::streambuf & ostrm_)
 		: ostrm(ostrm_)
 		{}
 	protected:
@@ -371,12 +379,12 @@ namespace
 			BinarySerialization::writeClass(ostrm, c);
 		}
 	private:
-		std::ostream& ostrm;
+		std::streambuf & ostrm;
 	};
 	class BinaryCIMObjectPathWriter : public CIMObjectPathResultHandlerIFC
 	{
 	public:
-		BinaryCIMObjectPathWriter(std::ostream& ostrm_, const String& host_)
+		BinaryCIMObjectPathWriter(std::streambuf & ostrm_, const String& host_)
 		: ostrm(ostrm_)
 		, m_host(host_)
 		{}
@@ -398,13 +406,13 @@ namespace
 			BinarySerialization::writeObjectPath(ostrm, cop);
 		}
 	private:
-		std::ostream& ostrm;
+		std::streambuf & ostrm;
 		String m_host;
 	};
 	class BinaryCIMInstanceWriter : public CIMInstanceResultHandlerIFC
 	{
 	public:
-		BinaryCIMInstanceWriter(std::ostream& ostrm_, const String& ns_)
+		BinaryCIMInstanceWriter(std::streambuf & ostrm_, const String& ns_)
 		: ostrm(ostrm_)
 		, ns(ns_)
 		{}
@@ -423,13 +431,13 @@ namespace
 			}
 		}
 	private:
-		std::ostream& ostrm;
+		std::streambuf & ostrm;
 		String ns;
 	};
 	class BinaryCIMQualifierTypeWriter : public CIMQualifierTypeResultHandlerIFC
 	{
 	public:
-		BinaryCIMQualifierTypeWriter(std::ostream& ostrm_)
+		BinaryCIMQualifierTypeWriter(std::streambuf & ostrm_)
 		: ostrm(ostrm_)
 		{}
 	protected:
@@ -438,12 +446,12 @@ namespace
 			BinarySerialization::writeQualType(ostrm, cqt);
 		}
 	private:
-		std::ostream& ostrm;
+		std::streambuf & ostrm;
 	};
 	class BinaryStringWriter : public StringResultHandlerIFC
 	{
 	public:
-		BinaryStringWriter(std::ostream& ostrm_)
+		BinaryStringWriter(std::streambuf & ostrm_)
 		: ostrm(ostrm_)
 		{}
 	protected:
@@ -452,92 +460,92 @@ namespace
 			BinarySerialization::writeString(ostrm, name);
 		}
 	private:
-		std::ostream& ostrm;
-		String ns;
+		std::streambuf & ostrm;
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::enumClasses(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::enumClasses(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	String className(BinarySerialization::readString(istrm));
 	EDeepFlag deep(BinarySerialization::readBool(istrm) ? E_DEEP : E_SHALLOW);
-	ELocalOnlyFlag localOnly(BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
-	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
-	BinarySerialization::write(ostrm, BIN_OK);
-	BinarySerialization::write(ostrm, BINSIG_CLSENUM);
+	ELocalOnlyFlag localOnly(
+		BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
+	EIncludeQualifiersFlag includeQualifiers(
+		BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(
+		BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BINSIG_CLSENUM);
 	BinaryCIMClassWriter handler(ostrm);
 	chdl->enumClass(ns, className, handler, deep, localOnly,
 		includeQualifiers, includeClassOrigin);
 	
-	BinarySerialization::write(ostrm, END_CLSENUM);
-	BinarySerialization::write(ostrm, END_CLSENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_CLSENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_CLSENUM);
 }
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::deleteQual(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::deleteQual(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	String qualName(BinarySerialization::readString(istrm));
 	chdl->deleteQualifierType(ns, qualName);
-	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::setQual(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::setQual(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	CIMQualifierType qt(BinarySerialization::readQualType(istrm));
 	chdl->setQualifierType(ns, qt);
-	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::enumQualifiers(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::enumQualifiers(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
-	BinarySerialization::write(ostrm, BIN_OK);
-	BinarySerialization::write(ostrm, BINSIG_QUAL_TYPEENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BINSIG_QUAL_TYPEENUM);
 	BinaryCIMQualifierTypeWriter handler(ostrm);
 	chdl->enumQualifierTypes(ns, handler);
-	BinarySerialization::write(ostrm, END_QUALENUM);
-	BinarySerialization::write(ostrm, END_QUALENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_QUALENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_QUALENUM);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::getClass(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::getClass(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	StringArray propList;
 	StringArray* propListPtr = 0;
 	String ns(BinarySerialization::readString(istrm));
 	String className(BinarySerialization::readString(istrm));
-	ELocalOnlyFlag localOnly(BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
-	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
-	Bool nullPropertyList(BinarySerialization::readBool(istrm));
-	if (!nullPropertyList)
-	{
-		propList = BinarySerialization::readStringArray(istrm);
-		propListPtr = &propList;
-	}
+	ELocalOnlyFlag localOnly(
+		BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
+	EIncludeQualifiersFlag includeQualifiers(
+		BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(
+		BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	BinarySerialization::readPropertyList(istrm, propList, propListPtr);
 	CIMClass cc = chdl->getClass(ns, className, localOnly, includeQualifiers,
 		includeClassOrigin, propListPtr);
-	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 	BinarySerialization::writeClass(ostrm, cc);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::getInstance(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::getInstance(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
@@ -546,35 +554,32 @@ BinaryRequestHandler::getInstance(const CIMOMHandleIFCRef& chdl,
 	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
 	StringArray propList;
 	StringArray* propListPtr = 0;
-	Bool nullPropertyList(BinarySerialization::readBool(istrm));
-	if (!nullPropertyList)
-	{
-		propList = BinarySerialization::readStringArray(istrm);
-		propListPtr = &propList;
-	}
+	BinarySerialization::readPropertyList(istrm, propList, propListPtr);
 	CIMInstance cimInstance = chdl->getInstance(ns, op, localOnly,
 		includeQualifiers, includeClassOrigin, propListPtr);
 	if (cimInstance.getNameSpace().empty())
+	{
 		cimInstance.setNameSpace(ns);
-	BinarySerialization::write(ostrm, BIN_OK);
+	}
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 	BinarySerialization::writeInstance(ostrm, cimInstance);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::getQual(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::getQual(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	String qualifierName(BinarySerialization::readString(istrm));
 	CIMQualifierType qt = chdl->getQualifierType(ns, qualifierName);
-	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 	BinarySerialization::writeQualType(ostrm, qt);
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::createInstance(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::createInstance(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	CIMInstance cimInstance(BinarySerialization::readInstance(istrm));
@@ -583,8 +588,7 @@ BinaryRequestHandler::createInstance(const CIMOMHandleIFCRef& chdl,
 	// Special treatment for __Namespace class
 	if (className == "__Namespace")
 	{
-		CIMProperty prop = cimInstance.getProperty(
-			CIMProperty::NAME_PROPERTY);
+		CIMProperty prop = cimInstance.getProperty(CIMProperty::NAME_PROPERTY);
 		// Need the name property since it contains the name of the new
 		// name space
 		if (!prop)
@@ -619,55 +623,46 @@ BinaryRequestHandler::createInstance(const CIMOMHandleIFCRef& chdl,
 	realPath.setKeys(keys);
 	*/
 	CIMObjectPath newPath = chdl->createInstance(ns, cimInstance);
-	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 	BinarySerialization::writeObjectPath(ostrm, newPath);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::deleteInstance(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::deleteInstance(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
 	chdl->deleteInstance(ns, op);
-	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::modifyInstance(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::modifyInstance(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	CIMInstance ci(BinarySerialization::readInstance(istrm));
-	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeQualifiersFlag includeQualifiers(
+		BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
 	StringArray propList;
 	StringArray* propListPtr = 0;
-	Bool nullPropertyList(BinarySerialization::readBool(istrm));
-	if (!nullPropertyList)
-	{
-		propList = BinarySerialization::readStringArray(istrm);
-		propListPtr = &propList;
-	}
+	BinarySerialization::readPropertyList(istrm, propList, propListPtr);
 	chdl->modifyInstance(ns, ci, includeQualifiers, propListPtr);
-	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 }
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::setProperty(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::setProperty(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
 	String propName(BinarySerialization::readString(istrm));
-	Bool isValue(BinarySerialization::readBool(istrm));
-	CIMValue cv(CIMNULL);
-	if (isValue)
-	{
-		cv = BinarySerialization::readValue(istrm);
-	}
+	CIMValue cv = BinarySerialization::readValue(istrm);
 	chdl->setProperty(ns, op, propName, cv);
-	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 }
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -675,83 +670,76 @@ BinaryRequestHandler::setProperty(const CIMOMHandleIFCRef& chdl,
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::getProperty(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::getProperty(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns (BinarySerialization::readString(istrm));
 	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
 	String propName(BinarySerialization::readString(istrm));
 	CIMValue cv = chdl->getProperty(ns, op, propName);
-	BinarySerialization::write(ostrm, BIN_OK);
-	Bool isValue = (cv) ? true : false;
-	BinarySerialization::writeBool(ostrm, isValue);
-	if (isValue)
-	{
-		BinarySerialization::writeValue(ostrm, cv);
-	}
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
+	BinarySerialization::writeValue(ostrm, cv);
 }
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::enumClassNames(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::enumClassNames(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	String className(BinarySerialization::readString(istrm));
 	EDeepFlag deep(BinarySerialization::readBool(istrm) ? E_DEEP : E_SHALLOW);
-	BinarySerialization::write(ostrm, BIN_OK);
-	BinarySerialization::write(ostrm, BINSIG_STRINGENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BINSIG_STRINGENUM);
 	BinaryStringWriter handler(ostrm);
 	chdl->enumClassNames(ns, className, handler, deep);
-	BinarySerialization::write(ostrm, END_STRINGENUM);
-	BinarySerialization::write(ostrm, END_STRINGENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_STRINGENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_STRINGENUM);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::enumInstances(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::enumInstances(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	StringArray propList;
 	StringArray* propListPtr = 0;
 	String ns(BinarySerialization::readString(istrm));
 	String className(BinarySerialization::readString(istrm));
 	EDeepFlag deep(BinarySerialization::readBool(istrm) ? E_DEEP : E_SHALLOW);
-	ELocalOnlyFlag localOnly(BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
-	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
-	Bool nullPropertyList(BinarySerialization::readBool(istrm));
-	if (!nullPropertyList)
-	{
-		propList = BinarySerialization::readStringArray(istrm);
-		propListPtr = &propList;
-	}
-	BinarySerialization::write(ostrm, BIN_OK);
-	BinarySerialization::write(ostrm, BINSIG_INSTENUM);
+	ELocalOnlyFlag localOnly(
+		BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
+	EIncludeQualifiersFlag includeQualifiers(
+		BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(
+		BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	BinarySerialization::readPropertyList(istrm, propList, propListPtr);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BINSIG_INSTENUM);
 	
 	BinaryCIMInstanceWriter handler(ostrm, ns);
 	chdl->enumInstances(ns, className, handler, deep, localOnly,
 		includeQualifiers, includeClassOrigin, propListPtr);
-	BinarySerialization::write(ostrm, END_INSTENUM);
-	BinarySerialization::write(ostrm, END_INSTENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_INSTENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_INSTENUM);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::enumInstanceNames(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::enumInstanceNames(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	String className(BinarySerialization::readString(istrm));
-	BinarySerialization::write(ostrm, BIN_OK);
-	BinarySerialization::write(ostrm, BINSIG_OPENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BINSIG_OPENUM);
 	BinaryCIMObjectPathWriter handler(ostrm, getHost());
 	chdl->enumInstanceNames(ns, className, handler);
-	BinarySerialization::write(ostrm, END_OPENUM);
-	BinarySerialization::write(ostrm, END_OPENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_OPENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_OPENUM);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::invokeMethod(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::invokeMethod(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns (BinarySerialization::readString(istrm));
 	CIMObjectPath path(BinarySerialization::readObjectPath(istrm));
@@ -759,42 +747,34 @@ BinaryRequestHandler::invokeMethod(const CIMOMHandleIFCRef& chdl,
 	CIMParamValueArray inparms;
 	CIMParamValueArray outparms;
 	// Get input params
-	BinarySerialization::verifySignature(istrm, BINSIG_PARAMVALUEARRAY);
+	BinarySerialization::verifySignature(istrm, BinarySerialization::BINSIG_PARAMVALUEARRAY);
 	BinarySerialization::readArray(istrm, inparms);
 	CIMValue cv = chdl->invokeMethod(ns, path, methodName, inparms, outparms);
-	BinarySerialization::write(ostrm, BIN_OK);
-	if (cv)
-	{
-		BinarySerialization::writeBool(ostrm, Bool(true));
-		BinarySerialization::writeValue(ostrm, cv);
-	}
-	else
-	{
-		BinarySerialization::writeBool(ostrm, Bool(false));
-	}
-	BinarySerialization::write(ostrm, BINSIG_PARAMVALUEARRAY);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
+	BinarySerialization::writeValue(ostrm, cv);
+	BinarySerialization::write(ostrm, BinarySerialization::BINSIG_PARAMVALUEARRAY);
 	BinarySerialization::writeArray(ostrm, outparms);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::execQuery(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::execQuery(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	String query(BinarySerialization::readString(istrm));
 	String queryLang(BinarySerialization::readString(istrm));
-	BinarySerialization::write(ostrm, BIN_OK);
-	BinarySerialization::write(ostrm, BINSIG_INSTENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BINSIG_INSTENUM);
 	BinaryCIMInstanceWriter handler(ostrm, ns);
 	chdl->execQuery(ns, handler, query, queryLang);
-	BinarySerialization::write(ostrm, END_INSTENUM);
-	BinarySerialization::write(ostrm, END_INSTENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_INSTENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_INSTENUM);
 }
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::associators(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::associators(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	StringArray propList;
 	StringArray* propListPtr = 0;
@@ -804,41 +784,38 @@ BinaryRequestHandler::associators(const CIMOMHandleIFCRef& chdl,
 	String resultClass(BinarySerialization::readString(istrm));
 	String role(BinarySerialization::readString(istrm));
 	String resultRole(BinarySerialization::readString(istrm));
-	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
-	Bool nullPropertyList(BinarySerialization::readBool(istrm));
-	if (!nullPropertyList)
-	{
-		propList = BinarySerialization::readStringArray(istrm);
-		propListPtr = &propList;
-	}
-	BinarySerialization::write(ostrm, BIN_OK);
+	EIncludeQualifiersFlag includeQualifiers(
+		BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(
+		BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	BinarySerialization::readPropertyList(istrm, propList, propListPtr);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 	if (op.isClassPath())
 	{
 		// class path
-		BinarySerialization::write(ostrm, BINSIG_CLSENUM);
+		BinarySerialization::write(ostrm, BinarySerialization::BINSIG_CLSENUM);
 		BinaryCIMClassWriter handler(ostrm);
 		op.setNameSpace(ns);
 		chdl->associatorsClasses(ns, op, handler, assocClass, resultClass,
 			role, resultRole, includeQualifiers, includeClassOrigin, propListPtr);
-		BinarySerialization::write(ostrm, END_CLSENUM);
-		BinarySerialization::write(ostrm, END_CLSENUM);
+		BinarySerialization::write(ostrm, BinarySerialization::END_CLSENUM);
+		BinarySerialization::write(ostrm, BinarySerialization::END_CLSENUM);
 	}
 	else
 	{
 		// instance path
-		BinarySerialization::write(ostrm, BINSIG_INSTENUM);
+		BinarySerialization::write(ostrm, BinarySerialization::BINSIG_INSTENUM);
 		BinaryCIMInstanceWriter handler(ostrm, ns);
 		chdl->associators(ns, op, handler, assocClass, resultClass,
 			role, resultRole, includeQualifiers, includeClassOrigin, propListPtr);
-		BinarySerialization::write(ostrm, END_INSTENUM);
-		BinarySerialization::write(ostrm, END_INSTENUM);
+		BinarySerialization::write(ostrm, BinarySerialization::END_INSTENUM);
+		BinarySerialization::write(ostrm, BinarySerialization::END_INSTENUM);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::associatorNames(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::associatorNames(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
@@ -846,18 +823,18 @@ BinaryRequestHandler::associatorNames(const CIMOMHandleIFCRef& chdl,
 	String resultClass(BinarySerialization::readString(istrm));
 	String role(BinarySerialization::readString(istrm));
 	String resultRole(BinarySerialization::readString(istrm));
-	BinarySerialization::write(ostrm, BIN_OK);
-	BinarySerialization::write(ostrm, BINSIG_OPENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BINSIG_OPENUM);
 	BinaryCIMObjectPathWriter handler(ostrm, getHost());
 	chdl->associatorNames(ns, op, handler, assocClass,
 		resultClass, role, resultRole);
-	BinarySerialization::write(ostrm, END_OPENUM);
-	BinarySerialization::write(ostrm, END_OPENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_OPENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_OPENUM);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::references(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::references(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	StringArray propList;
 	StringArray* propListPtr = 0;
@@ -865,60 +842,57 @@ BinaryRequestHandler::references(const CIMOMHandleIFCRef& chdl,
 	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
 	String resultClass(BinarySerialization::readString(istrm));
 	String role(BinarySerialization::readString(istrm));
-	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
-	Bool nullPropertyList(BinarySerialization::readBool(istrm));
-	if (!nullPropertyList)
-	{
-		propList = BinarySerialization::readStringArray(istrm);
-		propListPtr = &propList;
-	}
-	BinarySerialization::write(ostrm, BIN_OK);
+	EIncludeQualifiersFlag includeQualifiers(
+		BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(
+		BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	BinarySerialization::readPropertyList(istrm, propList, propListPtr);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 	if (op.isClassPath())
 	{
 		// class path
-		BinarySerialization::write(ostrm, BINSIG_CLSENUM);
+		BinarySerialization::write(ostrm, BinarySerialization::BINSIG_CLSENUM);
 		BinaryCIMClassWriter handler(ostrm);
 		chdl->referencesClasses(ns, op, handler, resultClass,
 			role, includeQualifiers, includeClassOrigin, propListPtr);
-		BinarySerialization::write(ostrm, END_CLSENUM);
-		BinarySerialization::write(ostrm, END_CLSENUM);
+		BinarySerialization::write(ostrm, BinarySerialization::END_CLSENUM);
+		BinarySerialization::write(ostrm, BinarySerialization::END_CLSENUM);
 	}
 	else
 	{
 		// instance path
-		BinarySerialization::write(ostrm, BINSIG_INSTENUM);
+		BinarySerialization::write(ostrm, BinarySerialization::BINSIG_INSTENUM);
 		BinaryCIMInstanceWriter handler(ostrm, ns);
 		chdl->references(ns, op, handler, resultClass,
 			role, includeQualifiers, includeClassOrigin, propListPtr);
-		BinarySerialization::write(ostrm, END_INSTENUM);
-		BinarySerialization::write(ostrm, END_INSTENUM);
+		BinarySerialization::write(ostrm, BinarySerialization::END_INSTENUM);
+		BinarySerialization::write(ostrm, BinarySerialization::END_INSTENUM);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::referenceNames(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& istrm)
+BinaryRequestHandler::referenceNames(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
 	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
 	String resultClass(BinarySerialization::readString(istrm));
 	String role(BinarySerialization::readString(istrm));
-	BinarySerialization::write(ostrm, BIN_OK);
-	BinarySerialization::write(ostrm, BINSIG_OPENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BINSIG_OPENUM);
 	BinaryCIMObjectPathWriter handler(ostrm, getHost());
 	chdl->referenceNames(ns, op, handler, resultClass, role);
-	BinarySerialization::write(ostrm, END_OPENUM);
-	BinarySerialization::write(ostrm, END_OPENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_OPENUM);
+	BinarySerialization::write(ostrm, BinarySerialization::END_OPENUM);
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::getServerFeatures(const CIMOMHandleIFCRef& chdl,
-	std::ostream& ostrm, std::istream& /*istrm*/)
+BinaryRequestHandler::getServerFeatures(const CIMOMHandleIFCRef & chdl,
+	std::streambuf & ostrm, std::streambuf & /*istrm*/)
 {
 	CIMFeatures f = chdl->getServerFeatures();
-	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 	BinarySerialization::write(ostrm, Int32(f.cimProduct));
 	BinarySerialization::writeString(ostrm, f.extURL);
 	BinarySerialization::writeStringArray(ostrm, f.supportedGroups);
@@ -930,42 +904,20 @@ BinaryRequestHandler::getServerFeatures(const CIMOMHandleIFCRef& chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::writeError(std::ostream& ostrm, const char* msg)
+BinaryRequestHandler::exportIndication(const CIMOMHandleIFCRef & chdl,
+	std::streambuf& ostrm, std::streambuf& istrm)
 {
-	BinarySerialization::write(ostrm, BIN_ERROR);
-	BinarySerialization::write(ostrm, msg);
+	CIMInstance indication(BinarySerialization::readInstance(istrm));
+	String instNS(BinarySerialization::readString(istrm));
+	chdl->exportIndication(indication, instNS);
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_OK);
 }
 //////////////////////////////////////////////////////////////////////////////
-bool
-BinaryRequestHandler::writeFileName(std::ostream& ostrm,
-	const String& fname)
+void
+BinaryRequestHandler::writeError(std::streambuf & ostrm, const char * msg)
 {
-	LoggerRef lgr = getEnvironment()->getLogger(COMPONENT_NAME);
-	if (m_userId == UserId(-1))
-	{
-		OW_LOG_ERROR(lgr, "Binary request handler cannot change file ownership:"
-			" Owner unknown");
-		return false;
-	}
-	try
-	{
-		if (FileSystem::changeFileOwner(fname, m_userId) != 0)
-		{
-			OW_LOG_ERROR(lgr, Format("Binary request handler failed changing"
-				" ownership on file %1", fname));
-			return false;
-		}
-		// Write -1 to indicate file name follows
-		BinarySerialization::write(ostrm, Int32(-1));
-		// Write file name
-		BinarySerialization::writeString(ostrm, fname);
-	}
-	catch(...)
-	{
-		FileSystem::removeFile(fname);
-		throw;
-	}
-	return true;
+	BinarySerialization::write(ostrm, BinarySerialization::BIN_ERROR);
+	BinarySerialization::write(ostrm, msg);
 }
 //////////////////////////////////////////////////////////////////////////////
 StringArray
@@ -986,6 +938,7 @@ BinaryRequestHandler::getContentType() const
 void
 BinaryRequestHandler::init(const ServiceEnvironmentIFCRef& env)
 {
+	setEnvironment(env);
 }
 
 //////////////////////////////////////////////////////////////////////////////

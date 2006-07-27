@@ -41,7 +41,7 @@ namespace OW_NAMESPACE
 {
 
 SocketStreamBuffer::SocketStreamBuffer(SocketBaseImpl* sock)
-	: IOIFCStreamBuffer(sock, 2048) 
+	: IOIFCStreamBuffer(sock, E_IN_OUT, 2048) 
 // 2048 is a nice power of 2 that should be more than enough to hold most
 // packets, since ethernet MTU is 1500
 {

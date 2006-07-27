@@ -44,6 +44,7 @@
 #include "OW_CIMNULL.hpp"
 #include "OW_WBEMFlags.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -385,12 +386,12 @@ public:
 	 * Read this CIMClass object from an input stream.
 	 * @param istrm The input stream to read this CIMClass from.
 	 */
-	virtual void readObject(std::istream &istrm);
+	virtual void readObject(std::streambuf & istrm);
 	/**
 	 * Write this CIMClass object to an output stream
 	 * @param ostrm The output stream to write this CIMClass to.
 	 */
-	virtual void writeObject(std::ostream &ostrm) const;
+	virtual void writeObject(std::streambuf & ostrm) const;
 	/**
 	 * @return The MOF representation of this CIMClass object as an
 	 * String object.
@@ -402,18 +403,11 @@ public:
 	 */
 	virtual String toString() const;
 
-	typedef COWIntrusiveReference<CLSData> CIMClass::*safe_bool;
 	/**
 	 * @return true if this CIMClass in not a NULL object.
 	 */
-	operator safe_bool () const
-	{
-		return m_pdata ? &CIMClass::m_pdata : 0;
-	}
-	bool operator!() const
-	{
-		return !this->m_pdata;
-	}
+	OW_SAFE_BOOL_IMPL(CIMClass, COWIntrusiveReference<CLSData>, CIMClass::m_pdata, m_pdata)
+
 private:
 
 #ifdef OW_WIN32

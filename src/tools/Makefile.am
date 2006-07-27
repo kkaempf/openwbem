@@ -56,7 +56,12 @@ $(NAMESPACE_MANIPULATION_PROGS) \
 $(ENUMQUALPROG) \
 owenumclassnames \
 owenumclasses \
-owgetclass
+owenuminstances \
+owenuminstancenames \
+owgetclass \
+owgetinstance \
+owdeleteinstance \
+owinvokemethod
 
 
 ### owdigestgenpass
@@ -200,6 +205,42 @@ owenumclasses_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owenumclasses$(EXEEXT)
 
+### owenuminstances
+owenuminstances_SOURCES = \
+owenuminstances.cpp
+
+owenuminstances_LDADD = \
+libtoolscommon.a \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+owenuminstances_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owenuminstances$(EXEEXT)
+
+### owenuminstancenames
+owenuminstancenames_SOURCES = \
+owenuminstancenames.cpp
+
+owenuminstancenames_LDADD = \
+libtoolscommon.a \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+owenuminstancenames_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owenuminstancenames$(EXEEXT)
+
 ### owcimindicationlistener
 owcimindicationlistener_SOURCES = \
 owcimindicationlistener.cpp
@@ -212,6 +253,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/services/http -lowservicehttp \
+-L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/common -lopenwbem \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
@@ -236,20 +278,6 @@ owrepositorydump_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owrepositorydump$(EXEEXT)
 
-### owtruststore
-#owtruststore_SOURCES = owtruststore.cpp
-
-#owtruststore_LDADD = \
-#libtoolscommon.a \
-#-L$(top_builddir)/src/common -lopenwbem \
-#$(Z_LIBS) $(SSL_LIBS)\
-#$(BINLINKAPPENDFLAGS)
-
-#owtruststore_LDFLAGS = \
-#$(CXXBINLINKFLAGS) \
-#-o owtruststore$(EXEEXT)
-
-
 ### owgetclass
 owgetclass_SOURCES = \
 owgetclass.cpp
@@ -267,6 +295,63 @@ $(BINLINKAPPENDFLAGS)
 owgetclass_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owgetclass$(EXEEXT)
+
+
+### owgetinstance
+owgetinstance_SOURCES = \
+owgetinstance.cpp
+
+owgetinstance_LDADD = \
+libtoolscommon.a \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+owgetinstance_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owgetinstance$(EXEEXT)
+
+
+### owdeleteinstance
+owdeleteinstance_SOURCES = \
+owdeleteinstance.cpp
+
+owdeleteinstance_LDADD = \
+libtoolscommon.a \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+owdeleteinstance_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owdeleteinstance$(EXEEXT)
+
+
+### owinvokemethod
+owinvokemethod_SOURCES = \
+owinvokemethod.cpp
+
+owinvokemethod_LDADD = \
+libtoolscommon.a \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+owinvokemethod_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owinvokemethod$(EXEEXT)
 
 
 

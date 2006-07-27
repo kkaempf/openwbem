@@ -44,6 +44,12 @@ class OW_COMMON_API IOIFC
 {
 public:
 	virtual ~IOIFC();
+
+	enum ErrorAction
+	{
+		E_THROW_ON_ERROR, E_RETURN_ON_ERROR
+	};
+
 	/**
 	 * Read a specified number of bytes from the device that is exposing
 	 * the IOIFC interface.
@@ -57,10 +63,11 @@ public:
 	 * @exception An exception will be thrown upon an error condition if
 	 * 	errorAsException is true.
 	 * @return The number of bytes actually read from the device, or -1 on
-	 * 	error. 
+	 * 	error. If the device is set to nonblocking and no input is available, 
+	 *  -1 will be returned and errno will be set to ETIMEDOUT
 	 */
 	virtual int read(void* dataIn, int dataInLen,
-			bool errorAsException=false) = 0;
+			ErrorAction errorAsException = E_RETURN_ON_ERROR) = 0;
 			
 	/**
 	 * Write a specified number of bytes to the device that is exposing the
@@ -75,10 +82,11 @@ public:
 	 * @exception An exception will be thrown upon an error condition if
 	 * 	errorAsException is true.	 
 	 * @return The number of bytes actually written to the device. or -1 on
-	 * 	error
+	 * 	error. If the device is set to nonblocking and the write would block,
+	 *  -1 will be returned and errno will be set to ETIMEDOUT.
 	 */
 	virtual int write(const void* dataOut, int dataOutLen,
-			bool errorAsException=false) = 0;
+			ErrorAction errorAsException = E_RETURN_ON_ERROR) = 0;
 };
 
 } // end namespace OW_NAMESPACE

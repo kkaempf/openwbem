@@ -44,6 +44,7 @@
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
 #include "OW_String.hpp" // for default parameter StringArray()
 #include "OW_Array.hpp"
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -448,12 +449,12 @@ public:
 	 * Read this CIMInstance from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
-	virtual void readObject(std::istream &istrm);
+	virtual void readObject(std::streambuf & istrm);
 	/**
 	 * Write this CIMInstance to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
-	virtual void writeObject(std::ostream &ostrm) const;
+	virtual void writeObject(std::streambuf & ostrm) const;
 	/**
 	 * @return The MOF representation of this CIMInstance as an String.
 	 */
@@ -471,12 +472,8 @@ public:
 	 */
 	bool propertiesAreEqualTo(const CIMInstance& other) const;
 
-	typedef COWIntrusiveReference<INSTData> CIMInstance::*safe_bool;
-	operator safe_bool () const
-		{  return m_pdata ? &CIMInstance::m_pdata : 0; }
-	bool operator!() const
-		{  return !m_pdata; }
-	
+	OW_SAFE_BOOL_IMPL(CIMInstance, COWIntrusiveReference<INSTData>, CIMInstance::m_pdata, m_pdata)
+
 protected:
 	void _buildKeys();
 

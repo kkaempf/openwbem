@@ -56,8 +56,7 @@ class OW_COMMON_API dyldSharedLibraryLoader : public SharedLibraryLoader
 {
 	public:
 		virtual ~dyldSharedLibraryLoader();
-		virtual SharedLibraryRef loadSharedLibrary(const String& filename,
-			const LoggerRef& logger) const;
+		virtual SharedLibraryRef loadSharedLibrary(const String& filename) const;
 };
 
 } // end namespace OW_NAMESPACE

@@ -58,8 +58,8 @@ void OW_SharedLibraryLoaderTestCases::tearDown()
 	
 void OW_SharedLibraryLoaderTestCases::testLoadSharedLibrary()
 {
-	testSharedLibraryLoader sll;
-	SharedLibraryRef slp = sll.loadSharedLibrary( "testlib", g_testEnvironment->getLogger(COMPONENT_NAME) );
+	SharedLibraryLoaderRef sll(new testSharedLibraryLoader);
+	SharedLibraryRef slp = sll->loadSharedLibrary( "testlib" );
 	unitAssert( slp );
 }
 

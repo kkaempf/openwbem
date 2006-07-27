@@ -37,8 +37,7 @@
 #include "OW_Bool.hpp"
 #include "OW_String.hpp"
 #include "OW_BinarySerialization.hpp"
-#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
-#include <istream>
+#ifdef OW_HAVE_OSTREAM
 #include <ostream>
 #else
 #include <iostream>
@@ -48,17 +47,17 @@ namespace OW_NAMESPACE
 {
 
 using std::ostream;
-using std::istream;
+using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////
 void
-Bool::writeObject(ostream& ostrm) const
+Bool::writeObject(streambuf & ostrm) const
 {
 	UInt8 v = m_val;
 	BinarySerialization::write(ostrm, v);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-Bool::readObject(istream& istrm)
+Bool::readObject(streambuf & istrm)
 {
 	UInt8 v;
 	BinarySerialization::read(istrm, v);

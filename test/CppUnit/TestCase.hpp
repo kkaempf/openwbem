@@ -36,6 +36,7 @@
 #include "Test.hpp"
 #include "CppUnitException.hpp"
 #include <iostream>
+#include <sstream>
 
 class TestResult;
 
@@ -144,6 +145,33 @@ protected:
 										  double       delta,
 										  long         lineNumber,
 										  const char*  fileName);
+	template <typename T1, typename T2>
+	void                assertEquals     (const T1& expected,
+										  const T2& actual,
+										  long         lineNumber,
+										  const char*  fileName)
+	{
+		if (expected != actual)
+		{
+			std::ostringstream oss;
+			oss << "expected: \"" << expected << "\" but was: \"" << actual << "\"";
+			assertImplementation (false, oss.str().c_str(), lineNumber, fileName);
+		}
+	}
+
+	template <typename T1, typename T2>
+	void                assertNotEquals     (const T1& expected,
+										  const T2& actual,
+										  long         lineNumber,
+										  const char*  fileName)
+	{
+		if (expected == actual)
+		{
+			std::ostringstream oss;
+			oss << "expected not equal to: \"" << expected << "\" but it was.";
+			assertImplementation (false, oss.str().c_str(), lineNumber, fileName);
+		}
+	}
 
 	const char*         notEqualsMessage (long         expected,
 										  long         actual);
@@ -221,5 +249,12 @@ private:
 (this->assertEquals ((expected),\
 		(actual),__LINE__,__FILE__))
 
+#define unitAssertEquals(expected,actual)\
+(this->assertEquals ((expected),\
+		(actual),__LINE__,__FILE__))
+
+#define unitAssertNotEquals(expected,actual)\
+(this->assertNotEquals ((expected),\
+		(actual),__LINE__,__FILE__))
 
 #endif

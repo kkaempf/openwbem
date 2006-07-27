@@ -40,12 +40,13 @@
 #include "OW_Array.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_CommonFwd.hpp"
+#include "OW_SerializableIFC.hpp"
 
 namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
-class OW_COMMON_API LanguageTag
+class OW_COMMON_API LanguageTag : public SerializableIFC
 {
 public:
 	LanguageTag();
@@ -71,6 +72,9 @@ public:
 	String getSubtag1() const { return String(m_subtag1); }
 	String getSubtag2() const { return String(m_subtag2); }
 	String getSubtag3() const { return String(m_subtag3); }
+
+	virtual void readObject(std::streambuf & istrm);
+	virtual void writeObject(std::streambuf & ostrm) const;
 
 private:
 	const char* setWeight(const char* arg);
@@ -136,6 +140,10 @@ public:
 	void addContentLanguage(const String& contentLanguage);
 	String getContentLanguage() const;
 
+	virtual void readObject(std::streambuf & istrm);
+	virtual void writeObject(std::streambuf & ostrm) const;
+	virtual String getType() const;
+
 private:
 	void buildLangTags(const char* acceptLangHdrValue);
 	static bool langsMatch(const LanguageTag& t1, const LanguageTag& t2,
@@ -146,7 +154,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-    LanguageTagArray m_langTags;
+	LanguageTagArray m_langTags;
 
 #ifdef OW_WIN32
 #pragma warning (pop)
@@ -154,6 +162,7 @@ private:
 
 	String m_contentLanguage;
 	String m_acceptLanguageString;
+	static const String s_type;
 };
 OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, SessionLanguage);
 

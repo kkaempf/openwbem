@@ -64,7 +64,8 @@ void CMPIAssociatorProviderProxy::associatorNames(
 	const String& role,
 	const String& resultRole)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIAssociatorProviderProxy::associatorNames()");
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "CMPIAssociatorProviderProxy::associatorNames()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -128,7 +129,8 @@ void CMPIAssociatorProviderProxy::associators(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray *propertyList)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIAssociatorProviderProxy::associators()");
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "CMPIAssociatorProviderProxy::associators()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -218,7 +220,8 @@ void CMPIAssociatorProviderProxy::references(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray *propertyList)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIAssociatorProviderProxy::references()");
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "CMPIAssociatorProviderProxy::references()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -300,7 +303,8 @@ void CMPIAssociatorProviderProxy::referenceNames(
 	const String& resultClass,
 	const String& role)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIAssociatorProviderProxy::referenceNames()");
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "CMPIAssociatorProviderProxy::referenceNames()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 

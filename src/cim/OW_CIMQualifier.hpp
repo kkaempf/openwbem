@@ -41,6 +41,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -253,11 +254,8 @@ public:
 	 */
 	String getLanguage() const;
 
-	typedef COWIntrusiveReference<QUALData> CIMQualifier::*safe_bool;
-	operator safe_bool () const
-		{  return m_pdata ? &CIMQualifier::m_pdata : 0; }
-	bool operator!() const
-		{  return !m_pdata; }
+	OW_SAFE_BOOL_IMPL(CIMQualifier, COWIntrusiveReference<QUALData>, CIMQualifier::m_pdata, m_pdata)
+
 	/**
 	 * @return The name of this qualifier as an String.
 	 */
@@ -272,12 +270,12 @@ public:
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
-	virtual void readObject(std::istream &istrm);
+	virtual void readObject(std::streambuf & istrm);
 	/**
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
-	virtual void writeObject(std::ostream &ostrm) const;
+	virtual void writeObject(std::streambuf & ostrm) const;
 	/**
 	 * @return The MOF representation of this qualifier as an String.
 	 */

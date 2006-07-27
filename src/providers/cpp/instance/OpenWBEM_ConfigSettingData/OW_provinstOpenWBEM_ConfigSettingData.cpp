@@ -56,6 +56,11 @@
 namespace OW_NAMESPACE
 {
 
+namespace
+{
+	String COMPONENT_NAME("ow.provider.OpenWBEM_ConfigSettingData");
+}
+
 class OpenWBEM_ConfigSettingDataInstProv : public virtual CppInstanceProviderIFC
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	, public virtual CppSimpleAssociatorProviderIFC
@@ -82,7 +87,7 @@ public:
 		const CIMClass& cimClass )
 	{
 		(void)cimClass;
-		env->getLogger()->logDebug("In OpenWBEM_ConfigSettingDataInstProv::enumInstanceNames");
+		OW_LOG_DEBUG(Logger(COMPONENT_NAME), "In OpenWBEM_ConfigSettingDataInstProv::enumInstanceNames");
 
 		if (mapNeedsLoad(getConfigFile(env)))
 		{
@@ -115,7 +120,7 @@ public:
 		const CIMClass& cimClass )
 	{
 		(void)ns;
-		env->getLogger()->logDebug("In OpenWBEM_ConfigSettingDataInstProv::getInstance");
+		OW_LOG_DEBUG(Logger(COMPONENT_NAME), "In OpenWBEM_ConfigSettingDataInstProv::getInstance");
 
 		if (mapNeedsLoad(getConfigFile(env)))
 		{
@@ -184,7 +189,7 @@ public:
 		(void)ns;
 		(void)includeQualifiers;
 		(void)theClass;
-		env->getLogger()->logDebug("In OpenWBEM_ConfigSettingDataInstProv::modifyInstance");
+		OW_LOG_DEBUG(Logger(COMPONENT_NAME), "In OpenWBEM_ConfigSettingDataInstProv::modifyInstance");
 
 		if (propertyList)
 		{

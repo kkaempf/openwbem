@@ -61,7 +61,7 @@ public:
 	virtual void startElement(const XMLToken &entry)
 	{
 		XMLAttributeArray newAttrArray;
-		unsigned int len = entry.attributeCount;
+		unsigned int len = entry.attributes.size();
 		for (unsigned int index = 0; index < len; index++)
 		{
 			String nodeName = entry.attributes[index].name.toString();

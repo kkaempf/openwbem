@@ -56,6 +56,7 @@ private:
 	void testThreadPoolDynamic1();
 	void testThreadPoolDynamic2();
 	void testThreadPoolDynamic3();
+	void testThreadPoolFull();
 };
 
 #endif

@@ -44,7 +44,7 @@ namespace OW_NAMESPACE
   
 using std::ostream;
 HTTPDeflateOStreamBuffer::HTTPDeflateOStreamBuffer(ostream& ostr)
-	: BaseStreamBuffer(HTTP_BUF_SIZE, "out")
+	: BaseStreamBuffer(BaseStreamBuffer::E_OUT, HTTP_BUF_SIZE)
 	, m_ostr(ostr)
 {
 	m_zstr.opaque = Z_NULL;

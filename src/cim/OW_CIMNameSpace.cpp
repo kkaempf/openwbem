@@ -43,8 +43,7 @@
 namespace OW_NAMESPACE
 {
 
-using std::ostream;
-using std::istream;
+using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMNameSpace::NSData : public COWIntrusiveCountableBase
 {
@@ -219,7 +218,7 @@ CIMNameSpace::setProtocol(const String& protocol)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMNameSpace::readObject(istream &istrm)
+CIMNameSpace::readObject(streambuf & istrm)
 {
 	CIMBase::readSig( istrm, OW_CIMNAMESPACESIG );
 	String ns;
@@ -236,7 +235,7 @@ CIMNameSpace::readObject(istream &istrm)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMNameSpace::writeObject(ostream &ostrm) const
+CIMNameSpace::writeObject(streambuf & ostrm) const
 {
 	CIMBase::writeSig( ostrm, OW_CIMNAMESPACESIG );
 	m_pdata->m_nameSpace.writeObject(ostrm);

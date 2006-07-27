@@ -56,6 +56,8 @@ private:
 	void testNumbers();
   	void testTokenize();
 	void testRealConstructors();
+	void test_cstr();
+	void testIndexOf();
 };
 
 #endif

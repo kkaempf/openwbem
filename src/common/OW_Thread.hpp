@@ -46,6 +46,8 @@
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_ThreadDoneCallback.hpp"
 #include "OW_ThreadCancelledException.hpp"
+#include "OW_Timeout.hpp"
+#include "OW_AtomicOps.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -72,6 +74,19 @@ public:
 	 * @exception ThreadException
 	 */
 	virtual void start(const ThreadDoneCallbackRef& cb = ThreadDoneCallbackRef(0));
+
+	/** 
+	 * Call the thread's doShutdown(), which may be used by the thread to safely stop.
+	 */
+	void shutdown();
+	
+	/** 
+	 * Call the thread's doShutdown(), which may be used by the thread to safely stop,
+	 * and then wait until the thread has exited or timeout has expired.
+	 * @return true if the thread is finished, false if the timeout expired.
+	 */
+	bool shutdown(const Timeout& timeout);
+
 	/**
 	 * Attempt to cooperatively cancel this Threads execution.
 	 * You should still call join() in order to clean up resources allocated
@@ -81,6 +96,14 @@ public:
 	 * not call testCancel(), it may keep running.
 	 * The thread may (probably) still be running after this function returns,
 	 * and it will exit as soon as it calls testCancel().
+	 * 
+	 * Note that a thread may not be able to utilize doCooperativeCancel() 
+	 * in order to cleanly stop if it uses any blocking OpenWBEM APIs. 
+	 * Many of them call Thread::testCancel(), which will cause a 
+	 * ThreadCancelledException to be thrown, thus interrupting the thread's 
+	 * cleanup process.
+	 * The supported mechanism for cleanly stopping a thread is for the thread to
+	 * implement doShutdown().
 	 *
 	 * It is also possible for an individual thread to override the cancellation
 	 * request, if it knows that cancellation at this time may crash the system
@@ -91,6 +114,7 @@ public:
 	 * cannot be safely cancelled at this time.
 	 */
 	void cooperativeCancel();
+
 	/**
 	 * Attempt to cooperatively and then definitively cancel this Thread's
 	 * execution.  You should still call join() in order to clean up resources
@@ -116,9 +140,8 @@ public:
 	 * or cause a deadlock.  If this happens, an CancellationDeniedException
 	 * will be thrown.
 	 *
-	 * @param waitForCooperativeSecs The number of seconds to wait for
-	 * cooperative cancellation to succeed before attempting to forcibly
-	 * cancel the thread.
+	 * @param timeout The time to wait for cooperative cancellation to succeed 
+	 * before attempting to forcibly cancel the thread.
 	 *
 	 * @return true if the thread exited cleanly.  false if the thread was
 	 * forcibly cancelled.
@@ -126,7 +149,8 @@ public:
 	 * @exception CancellationDeniedException may be thrown if the thread
 	 * cannot be safely cancelled at this time.
 	 */
-	bool definitiveCancel(UInt32 waitForCooperativeSecs = 60);
+	bool definitiveCancel(const Timeout& timeout = Timeout::relative(60));
+	bool definitiveCancel(UInt32 waitForCooperativeSecs) OW_DEPRECATED; // in 4.0.0
 	/**
 	 * Definitively cancel this Threads execution. The thread is *NOT*
 	 * given a chance to clean up or override the cancellation.
@@ -179,11 +203,19 @@ public:
 private:
 	/**
 	 * This function is available for subclasses of Thread to override if they
+	 * wish to be notified when shutdown() is invoked on the instance.
+	 * This function will be invoked in a separate thread.
+	 * For instance, a thread may use this function to:
+	 * 1. Set a flag and then signal a condition variable to wake up the thread.
+	 * 2. Write to a pipe or socket, if Thread::run() is blocked in select(), 
+	 * it can be unblocked and then exit.
+	 */
+	virtual void doShutdown();
+
+	/**
+	 * This function is available for subclasses of Thread to override if they
 	 * wish to be notified when a cooperative cancel is being invoked on the
 	 * instance.  Note that this function will be invoked in a separate thread.
-	 * For instance, a thread may use this function to write to a pipe or socket,
-	 * if Thread::run() is blocked in select(), it can be unblocked and
-	 * instructed to exit.
 	 *
 	 * It is also possible for an individual thread to override the cancellation
 	 * request, if it knows that cancellation at this time may crash the system
@@ -195,6 +227,7 @@ private:
 	 * @throws CancellationDeniedException
 	 */
 	virtual void doCooperativeCancel();
+
 	/**
 	 * See the documentation for doCooperativeCancel().  When definitiveCancel()
 	 * is called on a thread, first doCooperativeCancel() will be called, and
@@ -211,6 +244,14 @@ public:
 	{
 		return m_isRunning == true;
 	}
+	/**
+	 * Wait for the thread to finish. If the return value is true, join() 
+	 * can be called without blocking indefinitely.
+	 * 
+	 * @param timeout How long to wait
+	 * @return true if the thread is finished, false if the timeout expired.
+	 */
+	bool timedWait(const Timeout& timeout);
 	/**
 	 * Join with this Thread's execution. This method should be called
 	 * on all joinable threads. The destructor will call it as well.
@@ -246,6 +287,15 @@ public:
 		ThreadImpl::sleep(milliSeconds);
 	}
 	/**
+	 * Suspend execution of the current thread until the given number
+	 * of seconds have elapsed.
+	 * @param seconds The number of seconds to suspend execution for.
+	 */
+	static void sleep(const Timeout& timeout)
+	{
+		ThreadImpl::sleep(timeout);
+	}
+	/**
 	 * Voluntarily yield to the processor giving the next thread in the chain
 	 * the opportunity to run.
 	 */
@@ -261,14 +311,14 @@ private:
 	// thread state
 	Thread_t m_id;
 	bool m_isRunning;
-	bool m_isStarting;
 	bool m_joined;
 	// used to implement cancellation.
 	friend void ThreadImpl::testCancel();
-	NonRecursiveMutex m_cancelLock;
-	Condition m_cancelCond;
-	bool m_cancelRequested;
+	Atomic_t m_cancelRequested;
 	bool m_cancelled;
+
+	NonRecursiveMutex m_stateGuard;
+	Condition m_stateCond;
 
 	static Int32 threadRunner(void* paramPtr);
 	void doneRunning(const ThreadDoneCallbackRef& cb);

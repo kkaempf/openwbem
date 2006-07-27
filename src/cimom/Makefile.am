@@ -16,8 +16,10 @@ owcimomd_LDADD = \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/db/db -lowdb \
+$(REALTIME_LIBS) \
 $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
 
 owcimomd_SOURCES = \
@@ -29,12 +31,13 @@ INCLUDES = \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/cimom/server \
 -I$(top_srcdir)/src/provider \
--I$(top_srcdir)/src/cimom/common
+-I$(top_srcdir)/src/cimom/common \
+-I$(top_srcdir)/src/monitor
 
 if OW_STATIC_LINKING
 #use this rule to create the data dir
 install-exec-local: install-static-cimom-main
-	${INSTALL} -d ${DESTDIR}/@localstatedir@/openwbem
+	${INSTALL} -d ${DESTDIR}/@localstatedir@/openwbem/repository
 
 install-static-cimom-main : $(owcimomd_OBJECTS)
 	@if test "x$(STATIC_SERVICES)" != "x"; then \
@@ -48,7 +51,7 @@ clean-local:
 else
 #use this rule to create the data dir
 install-exec-local:
-	${INSTALL} -d ${DESTDIR}/@localstatedir@/openwbem
+	${INSTALL} -d ${DESTDIR}/@localstatedir@/openwbem/repository
 
 #need this in both sections of the conditional
 clean-local:

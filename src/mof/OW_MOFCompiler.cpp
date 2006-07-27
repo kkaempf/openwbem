@@ -69,6 +69,8 @@ namespace
 {
 // since flex/bison aren't re-entrant or thread-safe.
 NonRecursiveMutex g_guard;
+
+String COMPONENT_NAME("ow.mof");
 }
 
 Compiler::Compiler( const CIMOMHandleIFCRef& ch, const Options& opts, const ParserErrorHandlerIFCRef& mpeh )
@@ -500,88 +502,39 @@ class LoggerErrHandler : public ParserErrorHandlerIFC
 protected:
 	virtual void doProgressMessage(const char *message, const LineInfo &li)
 	{
-		if( logger )
-		{
-			OW_LOG_DEBUG(logger, Format("MOF compilation progress: %1: line %2: %3", li.filename, li.lineNum, message));
-		}
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, Format("MOF compilation progress: %1: line %2: %3", li.filename, li.lineNum, message));
 		warnings.push_back(message);
 	}
 	virtual void doFatalError(const char *error, const LineInfo &li)
 	{
-		if( logger )
-		{
-			OW_LOG_ERROR(logger, Format("Fatal MOF compilation error: %1: line %2: %3", li.filename, li.lineNum, error));
-		}
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_ERROR(logger, Format("Fatal MOF compilation error: %1: line %2: %3", li.filename, li.lineNum, error));
 		errors.push_back(error);
 	}
 	virtual EParserAction doRecoverableError(const char *error, const LineInfo &li)
 	{
-		if( logger )
-		{
-			OW_LOG_ERROR(logger, Format("MOF compilation error: %1: line %2: %3", li.filename, li.lineNum, error));
-		}
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_ERROR(logger, Format("MOF compilation error: %1: line %2: %3", li.filename, li.lineNum, error));
 		errors.push_back(error);
 		return ParserErrorHandlerIFC::E_ABORT_ACTION;
 	}
-	LoggerRef logger;
 
 public:
-	LoggerErrHandler(const LoggerRef& l):
-		logger(l)
+	LoggerErrHandler()
 	{
 	}
 	StringArray errors;
 	StringArray warnings;
 };
 
-CIMInstance compileInstanceFromMOF(const String& instMOF, const LoggerRef& logger)
-{
-	CIMInstanceArray cia;
-	CIMClassArray dummyClasses;
-	CIMQualifierTypeArray dummyQualifierTypes;
-	compileMOF(instMOF, CIMOMHandleIFCRef(), "", cia, dummyClasses, dummyQualifierTypes, logger);
-	if (cia.size() == 1)
-	{
-		return cia[0];
-	}
-	OW_THROW(MOFCompilerException, "MOF did not contain one instance");
-}
-
-CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const LoggerRef& logger)
-{
-	CIMInstanceArray cia;
-	CIMClassArray dummyClasses;
-	CIMQualifierTypeArray dummyQualifierTypes;
-	compileMOF(instMOF, CIMOMHandleIFCRef(), "", cia, dummyClasses, dummyQualifierTypes, logger);
-	return cia;
-}
-
-CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandleIFCRef& realhdl, const String& ns, const LoggerRef& logger)
-{
-	CIMInstanceArray cia;
-	CIMClassArray dummyClasses;
-	CIMQualifierTypeArray dummyQualifierTypes;
-	IntrusiveReference<StoreLocalDataHandle> hdl(new StoreLocalDataHandle(realhdl, cia, dummyClasses, dummyQualifierTypes));
-	MOF::Compiler::Options opts;
-	opts.m_namespace = ns;
-	IntrusiveReference<LoggerErrHandler> errHandler(new LoggerErrHandler(logger));
-	MOF::Compiler comp(hdl, opts, errHandler);
-	long errors = comp.compileString(instMOF);
-	if (errors > 0)
-	{
-		// just report the first message, since anything else is too complicated :-{
-		OW_THROW(MOFCompilerException, errHandler->errors.size() > 0 ? errHandler->errors[0].c_str() : "");
-	}
-	return cia;
-}
-
 void compileMOF(const String& mof, const CIMOMHandleIFCRef& realhdl, const String& ns,
-	CIMInstanceArray& instances, CIMClassArray& classes, CIMQualifierTypeArray& qualifierTypes, const LoggerRef& logger)
+	CIMInstanceArray& instances, CIMClassArray& classes, CIMQualifierTypeArray& qualifierTypes)
 {
 	IntrusiveReference<StoreLocalDataHandle> hdl(new StoreLocalDataHandle(realhdl, instances, classes, qualifierTypes));
 	MOF::Compiler::Options opts;
 	opts.m_namespace = ns;
-	IntrusiveReference<LoggerErrHandler> errHandler(new LoggerErrHandler(logger));
+	IntrusiveReference<LoggerErrHandler> errHandler(new LoggerErrHandler());
 	MOF::Compiler comp(hdl, opts, errHandler);
 	long errors = comp.compileString(mof);
 	if (errors > 0)

@@ -3,7 +3,7 @@
 # NOTE: These are separated by spaces. 
 buzz linux-rh3.config linux
 #aix51-64b aix.config aix
-#flik solaris.config sunos
+flik solaris-sparc.config sunos
 #nemo osx.config osx
 #potato linux-suse9.config linux
 #woody linux-rh2.1.config linux

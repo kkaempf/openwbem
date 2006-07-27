@@ -312,6 +312,16 @@ int main(int , char**)
 		testQuery("select * from wqlTestClass where __Path < \"wqlTestClass.name=\\\"test5\\\"\"");
 		testQuery("select * from wqlTestClass where \"wqlTestClass.name=\\\"test5\\\"\" < __Path");
 
+		// test conversion to string
+		testQuery("select * from wqlTestClass where sint32Data <> \"0\"");
+		testQuery("select * from wqlTestClass where \"0\" <> sint32Data");
+		testQuery("select * from wqlTestClass where booleanData <> \"true\"");
+		testQuery("select * from wqlTestClass where \"true\" <> booleanData");
+		testQuery("select * from wqlTestClass where booleanData <> \"false\"");
+		testQuery("select * from wqlTestClass where \"false\" <> booleanData");
+		testQuery("select * from wqlTestClass where realData <> \"123.456789\"");
+		testQuery("select * from wqlTestClass where \"123.456789\" <> realData");
+
 
 		// test IS, TRUE, NOT, and FALSE
 		testQuery("select * from wqlTestClass where booleanData IS TRUE");

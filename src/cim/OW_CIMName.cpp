@@ -91,13 +91,13 @@ CIMName::toString() const
 
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMName::readObject(std::istream &istrm)
+CIMName::readObject(std::streambuf & istrm)
 {
 	m_name.readObject(istrm);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMName::writeObject(std::ostream &ostrm) const
+CIMName::writeObject(std::streambuf & ostrm) const
 {
 	m_name.writeObject(ostrm);
 }
@@ -107,19 +107,6 @@ bool
 CIMName::isValid() const
 {
 	return !m_name.empty();
-}
-
-///////////////////////////////////////////////////////////////////////////
-CIMName::operator CIMName::safe_bool () const
-{
-	return isValid() ? &CIMName::m_name : 0;
-}
-	
-///////////////////////////////////////////////////////////////////////////
-bool
-CIMName::operator!() const
-{
-	return !isValid();
 }
 
 ///////////////////////////////////////////////////////////////////////////

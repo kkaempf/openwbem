@@ -40,6 +40,7 @@
 #include "OW_DateTime.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_ServicesHttpFwd.hpp"
+#include "OW_Logger.hpp"
 
 #include <vector>
 
@@ -49,10 +50,10 @@ namespace OW_NAMESPACE
 class OW_HTTP_API LocalAuthentication : public IntrusiveCountableBase
 {
 public:
-	LocalAuthentication(const LoggerRef& logger);
+	LocalAuthentication();
 	~LocalAuthentication();
 
-	bool authenticate(String& userName,
+	EAuthenticateResult authenticate(String& userName,
 		const String& info, HTTPSvrConnection* htcon);
 
 private:
@@ -70,7 +71,8 @@ private:
 	void cleanupStaleEntries();
 
 	std::vector<AuthEntry> m_authEntries;
-	LoggerRef m_logger;
+	Logger m_logger;
+	String m_local_auth_dir;
 
 	// unimplemented
 	LocalAuthentication(const LocalAuthentication&);

@@ -65,23 +65,6 @@ extern "C"
 namespace OW_NAMESPACE
 {
 
-static const Int32 POLLING_INTERVAL = 60 * 5;
-static const Int32 INITIAL_POLLING_INTERVAL = 5;
-extern "C"
-{
-static
-void
-slpRegReport(SLPHandle hdl, SLPError errArg, void* cookie)
-{
-	if (errArg < SLP_OK)
-	{
-		LoggerRef* pLogger = (LoggerRef*)cookie;
-		OW_LOG_ERROR((*pLogger), Format("cimom received error durring SLP registration: %1",
-			(int)errArg));
-	}
-}
-}
-
 namespace
 {
 
@@ -94,6 +77,23 @@ struct slpHandleCloser
 };
 
 const String COMPONENT_NAME("ow.provider.SLPProvider");
+
+static const Int32 POLLING_INTERVAL = 60 * 5;
+static const Int32 INITIAL_POLLING_INTERVAL = 5;
+extern "C"
+{
+static
+void
+slpRegReport(SLPHandle hdl, SLPError errArg, void* cookie)
+{
+	if (errArg < SLP_OK)
+	{
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_ERROR(logger, Format("cimom received error durring SLP registration: %1",
+			(int)errArg));
+	}
+}
+}
 
 }
 
@@ -112,7 +112,7 @@ public:
 			return 0;
 		}
 		Int32 rval = INITIAL_POLLING_INTERVAL;
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format(
+		OW_LOG_DEBUG(Logger(COMPONENT_NAME), Format(
 			"SLPProvider::getInitialPollingInterval returning %1",
 			INITIAL_POLLING_INTERVAL).c_str());
 		m_httpsPort = env->getConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, OW_DEFAULT_HTTP_SERVER_HTTPS_PORT);
@@ -156,8 +156,9 @@ public:
 		}
 		catch (CIMException& e)
 		{
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("SLP provider caught (%1) when executing enumInstanceNames(%2, \"CIM_ObjectManager\")", e, m_interopSchemaNamespace));
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "SLP provider unable to determine service-id");
+			Logger lgr(COMPONENT_NAME);
+			OW_LOG_ERROR(lgr, Format("SLP provider caught (%1) when executing enumInstanceNames(%2, \"CIM_ObjectManager\")", e, m_interopSchemaNamespace));
+			OW_LOG_ERROR(lgr, "SLP provider unable to determine service-id");
 		}
 
 		m_queryEnabled = !env->getConfigItem(ConfigOpts::WQL_LIB_opt, OW_DEFAULT_WQL_LIB).empty();
@@ -197,7 +198,8 @@ private:
 		SLPHandle slpHandle;
 		if ((err = SLPOpen("en", SLP_FALSE, &slpHandle)) != SLP_OK)
 		{
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("SLPProvider::doSlpRegister - SLPOpenFailed: %1",
+			Logger lgr(COMPONENT_NAME);
+			OW_LOG_ERROR(lgr, Format("SLPProvider::doSlpRegister - SLPOpenFailed: %1",
 				err).c_str());
 			return;
 		}
@@ -334,7 +336,7 @@ private:
 			urlString = OW_CIMOM_SLP_URL_PREFIX;
 			urlString += urls[i];
 			// Register URL with SLP
-			LoggerRef lgr = env->getLogger(COMPONENT_NAME);
+			Logger lgr(COMPONENT_NAME);
 			err = SLPReg(slpHandle,		// SLP Handle from open
 				urlString.c_str(),		// Service URL
 				POLLING_INTERVAL+60,		// Length of time registration last
@@ -342,15 +344,15 @@ private:
 				attributes.c_str(),		// Attributes string
 				SLP_TRUE,					// Fresh registration (Always true for OpenSLP)
 				slpRegReport,				// Call back for registration error reporting
-				&lgr);						// Give cimom handle to callback
+				0);						
 			if (err != SLP_OK)
 			{
-				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("cimom failed to register url with SLP: %1",
+				OW_LOG_ERROR(lgr, Format("cimom failed to register url with SLP: %1",
 					urlString).c_str());
 			}
 			else
 			{
-				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("cimom registered service url with SLP: %1",
+				OW_LOG_DEBUG(lgr, Format("cimom registered service url with SLP: %1",
 					urlString).c_str());
 			}
 		}

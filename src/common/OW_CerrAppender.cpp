@@ -35,8 +35,8 @@
 #include "OW_config.h"
 #include "OW_CerrAppender.hpp"
 #include "OW_String.hpp"
-#include "OW_Mutex.hpp"
-#include "OW_MutexLock.hpp"
+#include "OW_NonRecursiveMutex.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
 
 #include <iostream>
 
@@ -52,6 +52,12 @@ CerrAppender::CerrAppender(const StringArray& components,
 }
 
 /////////////////////////////////////////////////////////////////////////////
+CerrAppender::CerrAppender()
+	: LogAppender(LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES, STR_DEFAULT_MESSAGE_PATTERN)
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
 CerrAppender::~CerrAppender()
 {
 }
@@ -59,13 +65,13 @@ CerrAppender::~CerrAppender()
 /////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	Mutex cerrGuard;
+	NonRecursiveMutex cerrGuard;
 }
 
 void
 CerrAppender::doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const
 {
-	MutexLock lock(cerrGuard);
+	NonRecursiveMutexLock lock(cerrGuard);
 	std::clog << formattedMessage << std::endl;
 }
 

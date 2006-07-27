@@ -48,8 +48,7 @@
 namespace OW_NAMESPACE
 {
 
-using std::istream;
-using std::ostream;
+using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMQualifier::QUALData : public COWIntrusiveCountableBase
 {
@@ -308,7 +307,7 @@ CIMQualifier::setName(const CIMName& name)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMQualifier::readObject(istream &istrm)
+CIMQualifier::readObject(streambuf & istrm)
 {
 	CIMName name;
 	CIMValue qualifierValue(CIMNULL);
@@ -349,7 +348,7 @@ CIMQualifier::readObject(istream &istrm)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMQualifier::writeObject(ostream &ostrm) const
+CIMQualifier::writeObject(streambuf & ostrm) const
 {
 	CIMBase::writeSig(ostrm, OW_CIMQUALIFIERSIG_V, CIMQualifier::SERIALIZATION_VERSION);
 

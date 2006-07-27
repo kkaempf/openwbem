@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2005 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -38,6 +38,7 @@
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_FileSystem.hpp"
+#include "OW_SafeBool.hpp"
 #include <algorithm> // for std::swap
 
 namespace OW_NAMESPACE
@@ -61,10 +62,7 @@ public:
 	 * @param x	The File object to copy.
 	 */
 	File(const File& x);
-	~File()
-	{
-		close();
-	}
+	~File();
 	/**
 	 * Assignment operator
 	 * @param x	The File object to copy.
@@ -87,9 +85,9 @@ public:
 	 * @param offset			The offset to seek to in the file before the read
 	 *								operation is done. -1 will use the current offset.
 	 * @return The number of bytes read. If EOF or an error occurs, a short
-	 * count or zero is returned.
+	 * count or size_t(-1) is returned.
 	 */
-	size_t read(void* bfr, size_t numberOfBytes, off_t offset=-1L) const
+	size_t read(void* bfr, size_t numberOfBytes, Int64 offset=-1L) const
 	{
 		return FileSystem::read(m_hdl, bfr, numberOfBytes, offset);
 	}
@@ -100,9 +98,9 @@ public:
 	 * @param offset			The offset to seek to in the file before the write
 	 *								operation is done. -1 will use the current offset.
 	 * @return The number of bytes written. If an error occurs, a short count
-	 * or zero is returned.
+	 * or size_t(-1) is returned.
 	 */
-	size_t write(const void* bfr, size_t numberOfBytes, off_t offset=-1L)
+	size_t write(const void* bfr, size_t numberOfBytes, Int64 offset=-1L)
 	{
 		return FileSystem::write(m_hdl, bfr, numberOfBytes, offset);
 	}
@@ -113,10 +111,10 @@ public:
 	 *							SEEK_SET - Seek relative to the beginning of the file.
 	 *							SEEK_CUR - Seek relative to the current position.
 	 *							SEEK_END - Seek relative to the end of the file (bwd).
-	 * @return The the current location in the file relative to the beginning
+	 * @return The current location in the file relative to the beginning
 	 * of the file on success. Other -1.
 	 */
-	int seek(off_t offset, int whence) const
+	Int64 seek(Int64 offset, int whence) const
 	{
 		return FileSystem::seek(m_hdl, offset, whence);
 	}
@@ -124,7 +122,7 @@ public:
 	 * @return The current position in the file relative to the beginning of
 	 * the file on success. Otherwise -1.
 	 */
-	off_t tell() const
+	Int64 tell() const
 	{
 		return FileSystem::tell(m_hdl);
 	}
@@ -134,6 +132,13 @@ public:
 	void rewind() const
 	{
 		FileSystem::rewind(m_hdl);
+	}
+	/**
+	* Current size of file
+	*/
+	UInt64 size() const
+	{
+		return FileSystem::fileSize(m_hdl);
 	}
 	/**
 	 * Close the underlying file object.
@@ -160,10 +165,10 @@ public:
 	/**
 	 * Acquire a kernel lock on the file.  This call may block. The lock may
 	 * be released by calling unlock(). The lock will also be released when
-	 * the the file is closed or when locking application exits.  
-	 * This is only an advisory lock and will not prevent non-coordinated 
+	 * the file is closed or when locking application exits.
+	 * This is only an advisory lock and will not prevent non-coordinated
 	 * access to the file.
-	 * @return 0 on sucess.  On error, -1 is returned, and errno is set 
+	 * @return 0 on sucess.  On error, -1 is returned, and errno is set
 	 * appropriately.
 	 * errno may be one of: EBADF, EDEADLK, EINVAL, ENOLCK
 	 */
@@ -173,7 +178,7 @@ public:
 	 * be released by calling unlock() The lock will also be released when
 	 * the locking application exits.  This is only an advisory lock and will
 	 * not prevent non-coordinated access to the file.
-	 * @return 0 on sucess.  On error, -1 is returned, and errno is set 
+	 * @return 0 on sucess.  On error, -1 is returned, and errno is set
 	 * appropriately.
 	 * errno may be one of: EACCES, EAGAIN, EBADF, EDEADLK, EINVAL, ENOLCK.
 	 * EACCES or EAGAIN signifies the file is already locked.
@@ -181,20 +186,17 @@ public:
 	int tryLock();
 	/**
 	 * Release a lock on the file.  This call will not block.
-	 * @return 0 on sucess.  On error, -1 is returned, and errno is set 
+	 * @return 0 on sucess.  On error, -1 is returned, and errno is set
 	 * appropriately.
 	 * errno may be one of: EAGAIN, EBADF, EDEADLK, EINVAL, ENOLCK
 	 */
 	int unlock();
 
-	typedef FileHandle File::*safe_bool;
 	/**
 	 * @return true if this is a valid File object.
 	 */
-	operator safe_bool () const
-		{  return (m_hdl != OW_INVALID_FILEHANDLE) ? &File::m_hdl : 0; }
-	bool operator!() const
-		{  return m_hdl == OW_INVALID_FILEHANDLE; }
+	OW_SAFE_BOOL_IMPL(File, FileHandle, File::m_hdl, (m_hdl != OW_INVALID_FILEHANDLE))
+
 	/**
 	 * Equality operator.
 	 * @param rhs The File object to compare this object to.
@@ -217,3 +219,4 @@ private:
 } // end namespace OW_NAMESPACE
 
 #endif
+

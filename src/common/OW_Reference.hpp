@@ -37,6 +37,8 @@
 #define OW_REFERENCE_HPP_
 #include "OW_config.h"
 #include "OW_ReferenceBase.hpp"
+#include "OW_ReferenceHelpers.hpp"
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -69,11 +71,9 @@ class Reference :
 		T& operator*() const;
 		T* getPtr() const;
 		bool isNull() const OW_DEPRECATED; // in 3.1.0
-		typedef T* volatile Reference::*safe_bool;
-		operator safe_bool () const
-			{  return (m_pObj ? &Reference::m_pObj : 0); }
-		bool operator!() const
-			{  return !m_pObj; }
+
+		OW_SAFE_BOOL_IMPL(Reference, T* volatile, Reference::m_pObj, m_pObj)
+
 		template <class U>
 		Reference<U> cast_to() const;
 		template <class U>
@@ -156,8 +156,8 @@ template<class T>
 inline T* Reference<T>::operator->() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
-	checkNull(this);
-	checkNull(m_pObj);
+	ReferenceHelpers::checkNull(this);
+	ReferenceHelpers::checkNull(m_pObj);
 #endif
 	
 	return m_pObj;
@@ -167,8 +167,8 @@ template<class T>
 inline T& Reference<T>::operator*() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
-	checkNull(this);
-	checkNull(m_pObj);
+	ReferenceHelpers::checkNull(this);
+	ReferenceHelpers::checkNull(m_pObj);
 #endif
 	
 	return *(m_pObj);

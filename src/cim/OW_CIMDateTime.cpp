@@ -44,8 +44,8 @@
 #include "OW_Assertion.hpp"
 
 #include <cstdio>
-#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
-#include <istream>
+#include <streambuf>
+#ifdef OW_HAVE_OSTREAM
 #include <ostream>
 #else
 #include <iostream>
@@ -53,9 +53,6 @@
 
 namespace OW_NAMESPACE
 {
-
-using std::ostream;
-using std::istream;
 
 OW_DEFINE_EXCEPTION_WITH_ID(CIMDateTime);
 
@@ -148,24 +145,8 @@ CIMDateTime::operator= (const CIMDateTime& arg)
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMDateTime::operator CIMDateTime::safe_bool() const
-{
-	if (m_dptr)
-	{
-		return (m_dptr->m_days != 0
-			|| m_dptr->m_year != 0
-			|| m_dptr->m_month != 0
-			|| m_dptr->m_hours != 0
-			|| m_dptr->m_minutes != 0
-			|| m_dptr->m_seconds != 0
-			|| m_dptr->m_microSeconds != 0) ?
-			&CIMDateTime::m_dptr : 0;
-	}
-	return 0;
-}
-//////////////////////////////////////////////////////////////////////////////
 bool
-CIMDateTime::operator !() const
+CIMDateTime::isZero() const
 {
 	if (m_dptr)
 	{
@@ -260,7 +241,7 @@ CIMDateTime::equal(const CIMDateTime& arg) const
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMDateTime::readObject(istream &istrm)
+CIMDateTime::readObject(std::streambuf & istrm)
 {
 	DateTimeData dtdata;
 
@@ -282,7 +263,7 @@ CIMDateTime::readObject(istream &istrm)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMDateTime::writeObject(ostream &ostrm) const
+CIMDateTime::writeObject(std::streambuf & ostrm) const
 {
 	BinarySerialization::write(ostrm, m_dptr->m_year);
 	BinarySerialization::write(ostrm, m_dptr->m_month);
@@ -374,8 +355,8 @@ fillDateTimeData(CIMDateTime::DateTimeData& data, const char* str)
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-ostream&
-operator<< (ostream& ostr, const CIMDateTime& arg)
+std::ostream &
+operator<< (std::ostream & ostr, const CIMDateTime & arg)
 {
 	ostr << arg.toString();
 	return ostr;

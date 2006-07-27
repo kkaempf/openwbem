@@ -112,6 +112,8 @@ public:
 		HDBHandle hdl);
 	void updateCIMObject(const CIMBase& cimObj, HDBNode& node,
 		HDBHandle hdl);
+	void updateCIMObject(const CIMBase& cimObj, HDBNode& node,
+		HDBNode& parentNode, HDBHandle hdl);
 	void addCIMObject(const CIMBase& cimObj, const String& key,
 		HDBNode& parentNode, HDBHandle hdl, UInt32 nodeFlags=0);
 	void addCIMObject(const CIMBase& cimObj, const String& key,

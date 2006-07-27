@@ -74,14 +74,18 @@ AuthManager::getName() const
 void
 AuthManager::init(const ServiceEnvironmentIFCRef& env)
 {
-	m_authenticator.setNull();
-	String authLib = env->getConfigItem(ConfigOpts::AUTHENTICATION_MODULE_opt, OW_DEFAULT_AUTHENTICATION_MODULE);
-	LoggerRef logger(env->getLogger(COMPONENT_NAME));
+	Logger logger(COMPONENT_NAME);
+	String authLib = env->getConfigItem(ConfigOpts::AUTHENTICATION_MODULE_opt);
+	if (authLib.empty())
+	{
+		OW_LOG_INFO(logger, "Authentication Manager: No Basic Authentication module configured.");
+		return;
+	}
+
 	OW_LOG_INFO(logger, Format("Authentication Manager: Loading"
 		" authentication module %1", authLib));
 	m_authenticator =
-		SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib,
-			"createAuthenticator", logger);
+		SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib, "createAuthenticator");
 	if (m_authenticator)
 	{
 		try
@@ -93,11 +97,11 @@ AuthManager::init(const ServiceEnvironmentIFCRef& env)
 		}
 		catch(Exception& e)
 		{
-			OW_LOG_FATAL_ERROR(logger, Format("Authentication Module %1 failed"
+			OW_LOG_FATAL_ERROR(logger, Format("Basic Authentication Module %1 failed"
 				" to initialize: %2 - %3"
-				" [No Authentication Mechanism Available!]", authLib, e.type(),
+				" [No Basic Authentication Mechanism Available!]", authLib, e.type(),
 				e.getMessage()));
-			OW_THROW(AuthManagerException, "No Authentication Mechanism Available");
+			OW_THROW(AuthManagerException, "No Basic Authentication Mechanism Available");
 		}
 		catch (ThreadCancelledException&)
 		{
@@ -105,18 +109,18 @@ AuthManager::init(const ServiceEnvironmentIFCRef& env)
 		}
 		catch(...)
 		{
-			OW_LOG_FATAL_ERROR(logger, Format("Authentication Module %1 failed"
+			OW_LOG_FATAL_ERROR(logger, Format("Basic Authentication Module %1 failed"
 				" to initialize: Unknown Exception Caught"
-				" [No Authentication Mechanism Available!]", authLib));
-			OW_THROW(AuthManagerException, "No Authentication Mechanism Available");
+				" [No Basic Authentication Mechanism Available!]", authLib));
+			OW_THROW(AuthManagerException, "No Basic Authentication Mechanism Available");
 		}
 	}
 	else
 	{
-		OW_LOG_FATAL_ERROR(logger, Format("Authentication Module %1 failed"
+		OW_LOG_FATAL_ERROR(logger, Format("Basic Authentication Module %1 failed"
 			" to produce authentication module"
 			" [No Authentication Mechanism Available!]", authLib));
-		OW_THROW(AuthManagerException, "No Authentication Mechanism Available");
+		OW_THROW(AuthManagerException, "No Basic Authentication Mechanism Available");
 	}
 }
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,3 @@
+Caught OpenWBEM::Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: monitoredSpawn: insufficient privileges

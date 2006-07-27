@@ -5383,72 +5383,59 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 95 local: select * from wqlTestClass where booleanData IS TRUE
+Executing query 95 local: select * from wqlTestClass where sint32Data <> "0"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
-  name="test4";
-  sint32Data=NULL;
-  booleanData=true;
+  name="test2";
+  sint32Data=10;
+  booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
   realData=NULL;
 };
 
 
-Executing query 95 remote: select * from wqlTestClass where booleanData IS TRUE
+Executing query 95 remote: select * from wqlTestClass where sint32Data <> "0"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
-  name="test4";
-  sint32Data=NULL;
-  booleanData=true;
+  name="test2";
+  sint32Data=10;
+  booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
   realData=NULL;
 };
 
 
-Executing query 96 local: select * from wqlTestClass where booleanData IS NOT TRUE
+Executing query 96 local: select * from wqlTestClass where "0" <> sint32Data
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
-  name="test3";
-  sint32Data=NULL;
-  booleanData=false;
+  name="test2";
+  sint32Data=10;
+  booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
   realData=NULL;
 };
 
 
-Executing query 96 remote: select * from wqlTestClass where booleanData IS NOT TRUE
+Executing query 96 remote: select * from wqlTestClass where "0" <> sint32Data
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
-  name="test3";
-  sint32Data=NULL;
-  booleanData=false;
+  name="test2";
+  sint32Data=10;
+  booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
   realData=NULL;
 };
 
 
-Executing query 97 local: select * from wqlTestClass where booleanData IS FALSE
-Got back 1 instances.  Expected 1
-INSTANCE OF wqlTestClass
-{
-  name="test3";
-  sint32Data=NULL;
-  booleanData=false;
-  uint64Data=NULL;
-  stringData=NULL;
-  realData=NULL;
-};
-
-
-Executing query 97 remote: select * from wqlTestClass where booleanData IS FALSE
+Executing query 97 local: select * from wqlTestClass where booleanData <> "true"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -5461,7 +5448,46 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 98 local: select * from wqlTestClass where booleanData IS NOT FALSE
+Executing query 97 remote: select * from wqlTestClass where booleanData <> "true"
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test3";
+  sint32Data=NULL;
+  booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
+};
+
+
+Executing query 98 local: select * from wqlTestClass where "true" <> booleanData
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test3";
+  sint32Data=NULL;
+  booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
+};
+
+
+Executing query 98 remote: select * from wqlTestClass where "true" <> booleanData
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test3";
+  sint32Data=NULL;
+  booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
+};
+
+
+Executing query 99 local: select * from wqlTestClass where booleanData <> "false"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -5474,7 +5500,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 98 remote: select * from wqlTestClass where booleanData IS NOT FALSE
+Executing query 99 remote: select * from wqlTestClass where booleanData <> "false"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -5487,7 +5513,189 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 99 local: select * from wqlTestClass where realData ISNULL
+Executing query 100 local: select * from wqlTestClass where "false" <> booleanData
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test4";
+  sint32Data=NULL;
+  booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
+};
+
+
+Executing query 100 remote: select * from wqlTestClass where "false" <> booleanData
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test4";
+  sint32Data=NULL;
+  booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
+};
+
+
+Executing query 101 local: select * from wqlTestClass where realData <> "123.456789"
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=4.567890123e+27;
+};
+
+
+Executing query 101 remote: select * from wqlTestClass where realData <> "123.456789"
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=4.567890123e+27;
+};
+
+
+Executing query 102 local: select * from wqlTestClass where "123.456789" <> realData
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=4.567890123e+27;
+};
+
+
+Executing query 102 remote: select * from wqlTestClass where "123.456789" <> realData
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=4.567890123e+27;
+};
+
+
+Executing query 103 local: select * from wqlTestClass where booleanData IS TRUE
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test4";
+  sint32Data=NULL;
+  booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
+};
+
+
+Executing query 103 remote: select * from wqlTestClass where booleanData IS TRUE
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test4";
+  sint32Data=NULL;
+  booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
+};
+
+
+Executing query 104 local: select * from wqlTestClass where booleanData IS NOT TRUE
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test3";
+  sint32Data=NULL;
+  booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
+};
+
+
+Executing query 104 remote: select * from wqlTestClass where booleanData IS NOT TRUE
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test3";
+  sint32Data=NULL;
+  booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
+};
+
+
+Executing query 105 local: select * from wqlTestClass where booleanData IS FALSE
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test3";
+  sint32Data=NULL;
+  booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
+};
+
+
+Executing query 105 remote: select * from wqlTestClass where booleanData IS FALSE
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test3";
+  sint32Data=NULL;
+  booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
+};
+
+
+Executing query 106 local: select * from wqlTestClass where booleanData IS NOT FALSE
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test4";
+  sint32Data=NULL;
+  booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
+};
+
+
+Executing query 106 remote: select * from wqlTestClass where booleanData IS NOT FALSE
+Got back 1 instances.  Expected 1
+INSTANCE OF wqlTestClass
+{
+  name="test4";
+  sint32Data=NULL;
+  booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
+};
+
+
+Executing query 107 local: select * from wqlTestClass where realData ISNULL
 Got back 8 instances.  Expected 8
 INSTANCE OF wqlTestClass
 {
@@ -5570,7 +5778,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 99 remote: select * from wqlTestClass where realData ISNULL
+Executing query 107 remote: select * from wqlTestClass where realData ISNULL
 Got back 8 instances.  Expected 8
 INSTANCE OF wqlTestClass
 {
@@ -5653,7 +5861,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 100 local: select * from wqlTestClass where realData IS NULL
+Executing query 108 local: select * from wqlTestClass where realData IS NULL
 Got back 8 instances.  Expected 8
 INSTANCE OF wqlTestClass
 {
@@ -5736,7 +5944,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 100 remote: select * from wqlTestClass where realData IS NULL
+Executing query 108 remote: select * from wqlTestClass where realData IS NULL
 Got back 8 instances.  Expected 8
 INSTANCE OF wqlTestClass
 {
@@ -5819,7 +6027,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 101 local: select * from wqlTestClass where realData NOTNULL
+Executing query 109 local: select * from wqlTestClass where realData NOTNULL
 Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
@@ -5842,7 +6050,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 101 remote: select * from wqlTestClass where realData NOTNULL
+Executing query 109 remote: select * from wqlTestClass where realData NOTNULL
 Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
@@ -5865,7 +6073,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 102 local: select * from wqlTestClass where realData IS NOT NULL
+Executing query 110 local: select * from wqlTestClass where realData IS NOT NULL
 Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
@@ -5888,7 +6096,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 102 remote: select * from wqlTestClass where realData IS NOT NULL
+Executing query 110 remote: select * from wqlTestClass where realData IS NOT NULL
 Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
@@ -5911,7 +6119,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 103 local: select * from wqltestClass where name = "test4" or booleanData IS true
+Executing query 111 local: select * from wqltestClass where name = "test4" or booleanData IS true
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -5924,7 +6132,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 103 remote: select * from wqltestClass where name = "test4" or booleanData IS true
+Executing query 111 remote: select * from wqltestClass where name = "test4" or booleanData IS true
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -5937,7 +6145,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 104 local: select name, booleanData from wqltestClass where name = "test5" or booleanData IS true
+Executing query 112 local: select name, booleanData from wqltestClass where name = "test5" or booleanData IS true
 Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
@@ -5952,7 +6160,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 104 remote: select name, booleanData from wqltestClass where name = "test5" or booleanData IS true
+Executing query 112 remote: select name, booleanData from wqltestClass where name = "test5" or booleanData IS true
 Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
@@ -5967,13 +6175,13 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 105 local: select name, sint32Data from wqltestClass where name = "test4" and sint32Data = 1
+Executing query 113 local: select name, sint32Data from wqltestClass where name = "test4" and sint32Data = 1
 Got back 0 instances.  Expected 0
 
-Executing query 105 remote: select name, sint32Data from wqltestClass where name = "test4" and sint32Data = 1
+Executing query 113 remote: select name, sint32Data from wqltestClass where name = "test4" and sint32Data = 1
 Got back 0 instances.  Expected 0
 
-Executing query 106 local: select name, booleanData, sint32Data from wqltestClass where name = "test4" and booleanData IS TRUE
+Executing query 114 local: select name, booleanData, sint32Data from wqltestClass where name = "test4" and booleanData IS TRUE
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -5983,7 +6191,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 106 remote: select name, booleanData, sint32Data from wqltestClass where name = "test4" and booleanData IS TRUE
+Executing query 114 remote: select name, booleanData, sint32Data from wqltestClass where name = "test4" and booleanData IS TRUE
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -5993,7 +6201,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 107 local: select name, realData from wqltestClass where name IS NOT NULL and realData IS NOT NULL
+Executing query 115 local: select name, realData from wqltestClass where name IS NOT NULL and realData IS NOT NULL
 Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
@@ -6008,7 +6216,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 107 remote: select name, realData from wqltestClass where name IS NOT NULL and realData IS NOT NULL
+Executing query 115 remote: select name, realData from wqltestClass where name IS NOT NULL and realData IS NOT NULL
 Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
@@ -6023,7 +6231,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 108 local: select name, booleanData from wqltestClass where (name IS NOT NULL and realData IS NOT NULL) or (name = "test5" or booleanData IS true)
+Executing query 116 local: select name, booleanData from wqltestClass where (name IS NOT NULL and realData IS NOT NULL) or (name = "test5" or booleanData IS true)
 Got back 4 instances.  Expected 4
 INSTANCE OF wqlTestClass
 {
@@ -6050,7 +6258,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 108 remote: select name, booleanData from wqltestClass where (name IS NOT NULL and realData IS NOT NULL) or (name = "test5" or booleanData IS true)
+Executing query 116 remote: select name, booleanData from wqltestClass where (name IS NOT NULL and realData IS NOT NULL) or (name = "test5" or booleanData IS true)
 Got back 4 instances.  Expected 4
 INSTANCE OF wqlTestClass
 {
@@ -6077,7 +6285,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 109 local: select * from wqltestClass where (name = "test4" or name = "test2") and (sint32Data = 1 or booleanData = true)
+Executing query 117 local: select * from wqltestClass where (name = "test4" or name = "test2") and (sint32Data = 1 or booleanData = true)
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6090,7 +6298,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 109 remote: select * from wqltestClass where (name = "test4" or name = "test2") and (sint32Data = 1 or booleanData = true)
+Executing query 117 remote: select * from wqltestClass where (name = "test4" or name = "test2") and (sint32Data = 1 or booleanData = true)
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6103,7 +6311,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 109 remote: INSERT INTO wqlTestClass (name, booleanData, stringData) VALUES ("test11", true, "test11String")
+Executing query 117 remote: INSERT INTO wqlTestClass (name, booleanData, stringData) VALUES ("test11", true, "test11String")
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6117,7 +6325,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 110 local: select * from wqlTestClass where name = "test11"
+Executing query 118 local: select * from wqlTestClass where name = "test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6130,7 +6338,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 110 remote: select * from wqlTestClass where name = "test11"
+Executing query 118 remote: select * from wqlTestClass where name = "test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6143,7 +6351,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 110 local: INSERT INTO wqlTestClass VALUES ("test12", 32, true, 64, "test12String", 50.0)
+Executing query 118 local: INSERT INTO wqlTestClass VALUES ("test12", 32, true, 64, "test12String", 50.0)
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6157,7 +6365,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 111 local: UPDATE wqlTestClass SET booleanData=false, sint32Data=12345 WHERE name="test11"
+Executing query 119 local: UPDATE wqlTestClass SET booleanData=false, sint32Data=12345 WHERE name="test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6170,7 +6378,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 111 remote: UPDATE wqlTestClass SET booleanData=false, sint32Data=12345 WHERE name="test11"
+Executing query 119 remote: UPDATE wqlTestClass SET booleanData=false, sint32Data=12345 WHERE name="test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6183,7 +6391,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 112 local: select * from wqlTestClass where name = "test11"
+Executing query 120 local: select * from wqlTestClass where name = "test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6196,7 +6404,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 112 remote: select * from wqlTestClass where name = "test11"
+Executing query 120 remote: select * from wqlTestClass where name = "test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6209,7 +6417,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 113 local: UPDATE wqlTestClass SET stringData="" WHERE name="test11"
+Executing query 121 local: UPDATE wqlTestClass SET stringData="" WHERE name="test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6222,7 +6430,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 113 remote: UPDATE wqlTestClass SET stringData="" WHERE name="test11"
+Executing query 121 remote: UPDATE wqlTestClass SET stringData="" WHERE name="test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6235,7 +6443,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 114 local: select * from wqlTestClass where name = "test11"
+Executing query 122 local: select * from wqlTestClass where name = "test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6248,7 +6456,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 114 remote: select * from wqlTestClass where name = "test11"
+Executing query 122 remote: select * from wqlTestClass where name = "test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6261,7 +6469,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 115 local: UPDATE wqlTestClass SET stringData=null WHERE name="test11"
+Executing query 123 local: UPDATE wqlTestClass SET stringData=null WHERE name="test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6274,7 +6482,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 115 remote: UPDATE wqlTestClass SET stringData=null WHERE name="test11"
+Executing query 123 remote: UPDATE wqlTestClass SET stringData=null WHERE name="test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6287,7 +6495,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 116 local: select * from wqlTestClass where name = "test11"
+Executing query 124 local: select * from wqlTestClass where name = "test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6300,7 +6508,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 116 remote: select * from wqlTestClass where name = "test11"
+Executing query 124 remote: select * from wqlTestClass where name = "test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6313,7 +6521,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 116 remote: DELETE FROM wqlTestClass WHERE name="test11"
+Executing query 124 remote: DELETE FROM wqlTestClass WHERE name="test11"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6326,13 +6534,13 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 117 local: select * from wqlTestClass where name = "test11"
+Executing query 125 local: select * from wqlTestClass where name = "test11"
 Got back 0 instances.  Expected 0
 
-Executing query 117 remote: select * from wqlTestClass where name = "test11"
+Executing query 125 remote: select * from wqlTestClass where name = "test11"
 Got back 0 instances.  Expected 0
 
-Executing query 117 local: DELETE FROM wqlTestClass WHERE name="test12"
+Executing query 125 local: DELETE FROM wqlTestClass WHERE name="test12"
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -6345,23 +6553,23 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 118 local: select * from wqlTestClass where name = "test12"
+Executing query 126 local: select * from wqlTestClass where name = "test12"
 Got back 0 instances.  Expected 0
 
-Executing query 118 remote: select * from wqlTestClass where name = "test12"
+Executing query 126 remote: select * from wqlTestClass where name = "test12"
 Got back 0 instances.  Expected 0
 
-Executing query 119 local: SELECT "*" FROM meta_class WHERE __this ISA  "ClassWhichDoesNotExist" 
+Executing query 127 local: SELECT "*" FROM meta_class WHERE __this ISA  "ClassWhichDoesNotExist" 
 
-Executing query 120 local: SELECT "*" FROM meta_class WHERE __This ISA  "ClassWhichDoesNotExist" 
+Executing query 128 local: SELECT "*" FROM meta_class WHERE __This ISA  "ClassWhichDoesNotExist" 
 
-Executing query 121 local: SELECT "*" FROM meta_class WHERE __THIS ISA  "ClassWhichDoesNotExist" 
+Executing query 129 local: SELECT "*" FROM meta_class WHERE __THIS ISA  "ClassWhichDoesNotExist" 
 
-Executing query 122 local: SELECT "*" FROM meta_class WHERE __this ISA  "ClassWhichDoesNotExist" 
+Executing query 130 local: SELECT "*" FROM meta_class WHERE __this ISA  "ClassWhichDoesNotExist" 
 
-Executing query 123 local: SELECT "*" FROM meta_class WHERE __this = "ClassWhichDoesNotExist" 
+Executing query 131 local: SELECT "*" FROM meta_class WHERE __this = "ClassWhichDoesNotExist" 
 
-Executing query 124 local: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithNoChildren" 
+Executing query 132 local: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6369,7 +6577,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 124 remote: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithNoChildren" 
+Executing query 132 remote: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6377,7 +6585,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 125 local: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithManyChildren" 
+Executing query 133 local: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithManyChildren" 
 Got back 4 instances.  Expected 4
 INSTANCE OF __SchemaQueryResult
 {
@@ -6400,7 +6608,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 125 remote: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithManyChildren" 
+Executing query 133 remote: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithManyChildren" 
 Got back 4 instances.  Expected 4
 INSTANCE OF __SchemaQueryResult
 {
@@ -6423,7 +6631,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 126 local: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithManyChildren2Level" 
+Executing query 134 local: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithManyChildren2Level" 
 Got back 13 instances.  Expected 13
 INSTANCE OF __SchemaQueryResult
 {
@@ -6491,7 +6699,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 126 remote: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithManyChildren2Level" 
+Executing query 134 remote: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithManyChildren2Level" 
 Got back 13 instances.  Expected 13
 INSTANCE OF __SchemaQueryResult
 {
@@ -6559,7 +6767,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 127 local: SELECT "*" FROM meta_class WHERE __this ISA "Child1OfClassWithManyChildren2Level" 
+Executing query 135 local: SELECT "*" FROM meta_class WHERE __this ISA "Child1OfClassWithManyChildren2Level" 
 Got back 4 instances.  Expected 4
 INSTANCE OF __SchemaQueryResult
 {
@@ -6582,7 +6790,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 127 remote: SELECT "*" FROM meta_class WHERE __this ISA "Child1OfClassWithManyChildren2Level" 
+Executing query 135 remote: SELECT "*" FROM meta_class WHERE __this ISA "Child1OfClassWithManyChildren2Level" 
 Got back 4 instances.  Expected 4
 INSTANCE OF __SchemaQueryResult
 {
@@ -6605,17 +6813,17 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 128 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
+Executing query 136 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
 
-Executing query 129 local: SELECT "*" FROM meta_class WHERE __Class =  "ClassWhichDoesNotExist" 
+Executing query 137 local: SELECT "*" FROM meta_class WHERE __Class =  "ClassWhichDoesNotExist" 
 
-Executing query 130 local: SELECT "*" FROM meta_class WHERE __CLASS =  "ClassWhichDoesNotExist" 
+Executing query 138 local: SELECT "*" FROM meta_class WHERE __CLASS =  "ClassWhichDoesNotExist" 
 
-Executing query 131 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
+Executing query 139 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
 
-Executing query 132 local: SELECT "*" FROM meta_class WHERE __class ISA "ClassWhichDoesNotExist" 
+Executing query 140 local: SELECT "*" FROM meta_class WHERE __class ISA "ClassWhichDoesNotExist" 
 
-Executing query 133 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
+Executing query 141 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6623,7 +6831,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 133 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
+Executing query 141 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6631,7 +6839,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 134 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
+Executing query 142 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6639,7 +6847,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 134 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
+Executing query 142 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6647,7 +6855,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 135 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
+Executing query 143 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6655,7 +6863,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 135 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
+Executing query 143 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6663,7 +6871,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 136 local: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
+Executing query 144 local: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6671,7 +6879,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 136 remote: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
+Executing query 144 remote: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6679,17 +6887,17 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 137 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
+Executing query 145 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
 
-Executing query 138 local: SELECT "*" FROM meta_class WHERE __Dynasty =  "ClassWhichDoesNotExist" 
+Executing query 146 local: SELECT "*" FROM meta_class WHERE __Dynasty =  "ClassWhichDoesNotExist" 
 
-Executing query 139 local: SELECT "*" FROM meta_class WHERE __DYNASTY =  "ClassWhichDoesNotExist" 
+Executing query 147 local: SELECT "*" FROM meta_class WHERE __DYNASTY =  "ClassWhichDoesNotExist" 
 
-Executing query 140 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
+Executing query 148 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
 
-Executing query 141 local: SELECT "*" FROM meta_class WHERE __dynasty ISA "ClassWhichDoesNotExist" 
+Executing query 149 local: SELECT "*" FROM meta_class WHERE __dynasty ISA "ClassWhichDoesNotExist" 
 
-Executing query 142 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Executing query 150 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6697,7 +6905,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 142 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Executing query 150 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6705,7 +6913,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 143 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
+Executing query 151 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
 Got back 4 instances.  Expected 4
 INSTANCE OF __SchemaQueryResult
 {
@@ -6728,7 +6936,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 143 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
+Executing query 151 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
 Got back 4 instances.  Expected 4
 INSTANCE OF __SchemaQueryResult
 {
@@ -6751,7 +6959,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 144 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
+Executing query 152 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
 Got back 13 instances.  Expected 13
 INSTANCE OF __SchemaQueryResult
 {
@@ -6819,7 +7027,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 144 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
+Executing query 152 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
 Got back 13 instances.  Expected 13
 INSTANCE OF __SchemaQueryResult
 {
@@ -6887,19 +7095,19 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 145 local: SELECT "*" FROM meta_class WHERE __dynasty = "Child1OfClassWithManyChildren2Level" 
+Executing query 153 local: SELECT "*" FROM meta_class WHERE __dynasty = "Child1OfClassWithManyChildren2Level" 
 
-Executing query 146 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
+Executing query 154 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
 
-Executing query 147 local: SELECT "*" FROM meta_class WHERE __Class =  "ClassWhichDoesNotExist" 
+Executing query 155 local: SELECT "*" FROM meta_class WHERE __Class =  "ClassWhichDoesNotExist" 
 
-Executing query 148 local: SELECT "*" FROM meta_class WHERE __CLASS =  "ClassWhichDoesNotExist" 
+Executing query 156 local: SELECT "*" FROM meta_class WHERE __CLASS =  "ClassWhichDoesNotExist" 
 
-Executing query 149 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
+Executing query 157 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
 
-Executing query 150 local: SELECT "*" FROM meta_class WHERE __class ISA "ClassWhichDoesNotExist" 
+Executing query 158 local: SELECT "*" FROM meta_class WHERE __class ISA "ClassWhichDoesNotExist" 
 
-Executing query 151 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
+Executing query 159 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6907,7 +7115,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 151 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
+Executing query 159 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6915,7 +7123,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 152 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
+Executing query 160 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6923,7 +7131,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 152 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
+Executing query 160 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6931,7 +7139,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 153 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
+Executing query 161 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6939,7 +7147,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 153 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
+Executing query 161 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6947,7 +7155,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 154 local: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
+Executing query 162 local: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6955,7 +7163,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 154 remote: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
+Executing query 162 remote: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6963,17 +7171,17 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 155 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
+Executing query 163 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
 
-Executing query 156 local: SELECT "*" FROM meta_class WHERE __Dynasty =  "ClassWhichDoesNotExist" 
+Executing query 164 local: SELECT "*" FROM meta_class WHERE __Dynasty =  "ClassWhichDoesNotExist" 
 
-Executing query 157 local: SELECT "*" FROM meta_class WHERE __DYNASTY =  "ClassWhichDoesNotExist" 
+Executing query 165 local: SELECT "*" FROM meta_class WHERE __DYNASTY =  "ClassWhichDoesNotExist" 
 
-Executing query 158 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
+Executing query 166 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
 
-Executing query 159 local: SELECT "*" FROM meta_class WHERE __dynasty ISA "ClassWhichDoesNotExist" 
+Executing query 167 local: SELECT "*" FROM meta_class WHERE __dynasty ISA "ClassWhichDoesNotExist" 
 
-Executing query 160 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Executing query 168 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6981,7 +7189,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 160 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Executing query 168 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6989,7 +7197,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 161 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
+Executing query 169 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
 Got back 4 instances.  Expected 4
 INSTANCE OF __SchemaQueryResult
 {
@@ -7012,7 +7220,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 161 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
+Executing query 169 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
 Got back 4 instances.  Expected 4
 INSTANCE OF __SchemaQueryResult
 {
@@ -7035,7 +7243,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 162 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
+Executing query 170 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
 Got back 13 instances.  Expected 13
 INSTANCE OF __SchemaQueryResult
 {
@@ -7103,7 +7311,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 162 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
+Executing query 170 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
 Got back 13 instances.  Expected 13
 INSTANCE OF __SchemaQueryResult
 {
@@ -7171,4 +7379,4 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 163 local: SELECT "*" FROM meta_class WHERE __dynasty = "Child1OfClassWithManyChildren2Level" 
+Executing query 171 local: SELECT "*" FROM meta_class WHERE __dynasty = "Child1OfClassWithManyChildren2Level" 

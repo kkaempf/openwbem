@@ -39,7 +39,6 @@
 #include "OW_String.hpp"
 #include "OW_Char16.hpp"
 #include "OW_Bool.hpp"
-#include "OW_CIMFwd.hpp"
 #include <iosfwd>
 #include <cstring>
 
@@ -102,16 +101,13 @@ public:
 	StringBuffer& operator += (Int32 v);
 	StringBuffer& operator += (UInt64 v);
 	StringBuffer& operator += (Int64 v);
+// do this check so we fill in the gaps and have int, long & long long constructors if necessary
+#if defined(OW_INT32_IS_INT) && defined(OW_INT64_IS_LONG_LONG)
+	StringBuffer& operator += (long v);
+	StringBuffer& operator += (unsigned long v);
+#endif
 	StringBuffer& operator += (Real32 v);
 	StringBuffer& operator += (Real64 v);
-	/**
-	 * DEPRECATED in favor of CIMDateTime::toString() in 3.1.0.
-	 */
-	StringBuffer& operator += (const CIMDateTime& arg) OW_DEPRECATED;
-	/**
-	 * DEPRECATED in favor of CIMObjectPath::toString() in 3.1.0.
-	 */
-	StringBuffer& operator += (const CIMObjectPath& arg) OW_DEPRECATED;
 	StringBuffer& operator += (const StringBuffer& arg)
 	{
 		return append(arg);

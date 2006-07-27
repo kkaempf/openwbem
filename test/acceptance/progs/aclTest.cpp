@@ -80,7 +80,6 @@ void createClass(CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing createClass() *******\n" << endl;
 	try
 	{
-		CIMObjectPath cqtPath("Key", "/root/acltest");
 		CIMQualifierType cqt("Key");
 		cqt.setDataType(CIMDataType::BOOLEAN);
 		cqt.setDefaultValue(CIMValue(Bool(false)));
@@ -270,7 +269,6 @@ void createInstance(CIMOMHandleIFC& hdl, const String& newInstance)
 	{
 		String fromClass = "EXP_BionicComputerSystem2";
 
-		CIMObjectPath cop(fromClass, "/root/acltest");
 		CIMClass cimClass = bionicClass;
 
 		CIMInstance newInst = cimClass.newInstance();

@@ -66,7 +66,6 @@ namespace HTTPUtils
 using std::istream;
 
 ///////////////////////////////////////////////////////////////////////////////
-const char* const Header_BypassLocker = "OW_BypassLocker"; 
 const char* const HeaderValue_true = "true"; 
 const char* const HeaderValue_false = "false"; 
 ///////////////////////////////////////////////////////////////////////////////
@@ -270,7 +269,8 @@ static const char Pad64 = '=';
 String base64Decode(const String& arg)
 {
 	// only up to the first '\0' will be returned.
-	return String(&base64Decode(arg.c_str())[0]);
+	Array<char> a(base64Decode(arg.c_str()));
+	return String(&a[0], a.size());
 }
 static int char2val(char c)
 {
@@ -430,7 +430,7 @@ Array<char> base64Decode(const char* src)
 					break;
 				}
 			}
-				// Make sure there is another trailing = sign
+			// Make sure there is another trailing = sign
 			if ( ch != Pad64 )
 			{
 				OW_THROW(Base64FormatException, "non-base64 char");
@@ -448,10 +448,10 @@ Array<char> base64Decode(const char* src)
 					OW_THROW(Base64FormatException, "non-base64 char");
 				}
 			}
-				// Now make sure for cases 2 and 3 that the "extra"
-				//	bits that slopped past the last full byte were
-				//	zeros.  If we don't check them, they become a
-				//	subliminal channel.
+			// Now make sure for cases 2 and 3 that the "extra"
+			//	bits that slopped past the last full byte were
+			//	zeros.  If we don't check them, they become a
+			//	subliminal channel.
 			if ( dest[destidx] != 0 )
 			{
 				OW_THROW(Base64FormatException, "non-base64 char");
@@ -467,7 +467,7 @@ Array<char> base64Decode(const char* src)
 			OW_THROW(Base64FormatException, "non-base64 char");
 		}
 	}
-	Array<char> rval(dest.get(), dest.get()+destidx+1);
+	Array<char> rval(dest.get(), dest.get()+destidx);
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -680,6 +680,16 @@ eatEntity(istream& istr)
 		istr.get();
 	}
 }
+
+void
+eatEntity(std::streambuf& ibuf)
+{
+	char buf[1024];
+	while (ibuf.sgetn(buf, sizeof(buf)) == sizeof(buf))
+	{
+	}
+}
+
 void
 decodeBasicCreds(const String& info, String& name, String& password)
 {

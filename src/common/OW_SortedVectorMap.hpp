@@ -113,12 +113,16 @@ public:
 	typedef typename container_t::difference_type difference_type;
 	SortedVectorMap() : m_impl(new container_t) {  }
 	explicit SortedVectorMap(container_t* toWrap) : m_impl(toWrap)
-		{ }
+	{
+		std::sort(m_impl->begin(), m_impl->end(), Compare());
+		m_impl->erase(std::unique(m_impl->begin(), m_impl->end(), &equivalent), m_impl->end());
+	}
 	template <class InputIterator>
 	SortedVectorMap(InputIterator first, InputIterator last) :
 		m_impl(new container_t(first, last))
 	{
 		std::sort(m_impl->begin(), m_impl->end(), Compare());
+		m_impl->erase(std::unique(m_impl->begin(), m_impl->end(), &equivalent), m_impl->end());
 	}
 	const_iterator begin() const
 	{
@@ -191,11 +195,9 @@ public:
 	template <class InputIterator>
 	void insert(InputIterator first, InputIterator last)
 	{
-		for (; first != last; ++first)
-		{
-			m_impl->push_back(*first);
-		}
+		m_impl->insert(m_impl->end(), first, last);
 		std::sort(m_impl->begin(), m_impl->end(), Compare());
+		m_impl->erase(std::unique(m_impl->begin(), m_impl->end(), &equivalent), m_impl->end());
 	}
 	void erase(iterator position)
 	{
@@ -275,7 +277,7 @@ public:
 	friend bool operator< <>(const SortedVectorMap<Key, T, Compare>& x,
 		const SortedVectorMap<Key, T, Compare>& y);
 private:
-	bool equivalent(const key_type& x, const key_type& y) const
+	static bool equivalent(const key_type& x, const key_type& y)
 	{
 		// Strict weak ordering: Two objects x and y are equivalent if both f(x, y) and f(y, x) are false.
 		return (!Compare()(x, y) && !Compare()(y, x));

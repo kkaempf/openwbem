@@ -64,9 +64,21 @@ readPid(const char *pidfile)
 	FILE *f;
 	int pid = -1;
 	if (!(f = fopen(pidfile,"r")))
+	{
 		return -1;
-	fscanf(f,"%d", &pid);
-	fclose(f);
+	}
+
+	if (fscanf(f,"%d", &pid) != 1)
+	{
+		fclose(f);
+		return -1;
+	}
+	
+	if (fclose(f) != 0)
+	{
+		return -1;
+	}
+
 	return pid;
 }
 /**
@@ -78,8 +90,15 @@ int
 checkPid(const char *pidfile)
 {
 	int pid = readPid(pidfile);
+	// Check for failure to open the pid file.  Without this test, a kill(-1,0)
+	// would be attempted, which will only show that there is at least one
+	// process running on the system (any random process).
+	if ( pid <= 0 )
+	{
+		return -1;
+	}
 	// Amazing ! _I_ am already holding the pid file...
-	if ((!pid) || (pid == getpid()))
+	if (pid == getpid())
 		return -1;
 	// Check if the process exists
 	if (kill(pid, 0) && errno == ESRCH)
@@ -129,7 +148,10 @@ writePid(const char *pidfile)
 	}
 	fflush(f);
 	OWf.unlock();
-	fclose(f);
+	if (fclose(f) != 0)
+	{
+		return -1;
+	}
 	return pid;
 }
 /**

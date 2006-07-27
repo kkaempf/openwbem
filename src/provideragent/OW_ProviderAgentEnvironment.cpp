@@ -54,6 +54,8 @@
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_HTTPServer.hpp"
 #include "OW_Thread.hpp"
+#include "OW_LocalOperationContext.hpp"
+#include "OW_Timeout.hpp"
 
 #include <algorithm> // for std::find
 
@@ -82,10 +84,11 @@ private:
 class PALockerSWMR : public ProviderAgentLockerIFC
 {
 public:
-	PALockerSWMR(UInt32 timeout)
+	PALockerSWMR(const Timeout& timeout)
 		: m_timeout(timeout)
 	{
 	}
+	PALockerSWMR(UInt32 timeout) OW_DEPRECATED; // in 4.0.0
 	virtual ~PALockerSWMR() {}
 	virtual void doGetReadLock()
 	{
@@ -109,8 +112,14 @@ private:
 	PALockerSWMR& operator=(const PALockerSWMR&);
 
 	RWLocker m_rwlocker;
-	UInt32 m_timeout;
+	Timeout m_timeout;
 };
+
+inline
+PALockerSWMR::PALockerSWMR(UInt32 timeout)
+	: m_timeout(Timeout::relative(timeout))
+{
+}
 
 class PALockerSingleThreaded : public ProviderAgentLockerIFC
 {
@@ -149,13 +158,11 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& 
 		const Array<CIMClass>& cimClasses,
 		const AuthenticatorIFCRef& authenticator,
 		const Array<RequestHandlerIFCRef>& requestHandlers,
-		const LoggerRef& logger,
 		const String& callbackURL,
 		const Reference<Array<SelectablePair_t> >& selectables,
 		const ProviderAgentLockerIFCRef& locker)
 	: m_configItems(configMap)
 	, m_authenticator(authenticator)
-	, m_logger(logger ? logger : LoggerRef(new NullLogger))
 	, m_callbackURL(callbackURL)
 	, m_requestHandlers(requestHandlers)
 	, m_selectables(selectables)
@@ -178,9 +185,9 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& 
 	{
 		CppProviderBaseIFCRef prov = *iter;
 
-		OperationContext oc;
+		LocalOperationContext oc;
 		ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(
-			m_logger, m_configItems, oc, m_callbackURL, m_connectionPool, E_DONT_USE_CONNECTION_CREDENTIALS));
+			m_configItems, oc, m_callbackURL, m_connectionPool, E_DONT_USE_CONNECTION_CREDENTIALS));
 		prov->initialize(pe);
 		CppMethodProviderIFC* methodProv = prov->getMethodProvider();
 		if (methodProv)
@@ -316,7 +323,7 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& 
 			{
 				OW_THROW(ConfigException, "invalid locking timeout");
 			}
-			m_locker = new PALockerSWMR(lockingTimeout);
+			m_locker = new PALockerSWMR(Timeout::relative(lockingTimeout));
 		}
 		else if (confItem == ProviderAgent::LockingTypeSingleThreaded)
 		{
@@ -416,7 +423,7 @@ ProviderAgentEnvironment::getRequestHandler(const String& ct) const
 		{
 			RequestHandlerIFCRef ref = RequestHandlerIFCRef(iter->getLibRef(),
 				(*iter)->clone());
-			ref->setEnvironment(ServiceEnvironmentIFCRef(const_cast<ProviderAgentEnvironment *>(this)));
+			ref->init(ServiceEnvironmentIFCRef(const_cast<ProviderAgentEnvironment *>(this)));
 			return ref;
 		}
 	}
@@ -429,25 +436,10 @@ ProviderAgentEnvironment::getCIMOMHandle(OperationContext& context,
 		ELockingFlag locking) const
 {
 	ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(
-		m_logger, m_configItems, context, m_callbackURL, m_connectionPool, m_useConnectionCredentials));
+		m_configItems, context, m_callbackURL, m_connectionPool, m_useConnectionCredentials));
 	return CIMOMHandleIFCRef(new ProviderAgentCIMOMHandle(
 		m_assocProvs, m_instProvs, m_secondaryInstProvs, m_methodProvs,
 		m_cimClasses, pe, m_classRetrieval, m_locker));
-}
-//////////////////////////////////////////////////////////////////////////////
-LoggerRef
-ProviderAgentEnvironment::getLogger() const
-{
-	return getLogger(COMPONENT_NAME);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-LoggerRef
-ProviderAgentEnvironment::getLogger(const String& componentName) const
-{
-	LoggerRef rv(m_logger->clone());
-	rv->setDefaultComponent(componentName);
-	return rv;
 }
 
 } // end namespace OW_NAMESPACE

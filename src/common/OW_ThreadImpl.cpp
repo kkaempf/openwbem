@@ -38,7 +38,11 @@
 #include "OW_Assertion.hpp"
 #include "OW_Thread.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
+#include "OW_NonRecursiveMutex.hpp"
+#include "OW_Condition.hpp"
+#include "OW_Timeout.hpp"
 #include "OW_Format.hpp"
+#include "OW_TimeoutTimer.hpp"
 #if defined(OW_WIN32)
 #include "OW_Map.hpp"
 #include "OW_MutexLock.hpp"
@@ -81,49 +85,25 @@ namespace ThreadImpl {
 void
 sleep(UInt32 milliSeconds)
 {
-	ThreadImpl::testCancel();
-#if defined(OW_HAVE_NANOSLEEP)
-	struct timespec wait;
-	wait.tv_sec = milliSeconds / 1000;
-	wait.tv_nsec = (milliSeconds % 1000) * 1000000;
-	while (nanosleep(&wait, &wait) == -1 && errno == EINTR)
+	sleep(Timeout::relative(milliSeconds / 1000.0));
+}
+
+void
+sleep(const Timeout& timeout)
+{
+	NonRecursiveMutex mtx;
+	NonRecursiveMutexLock lock(mtx);
+	Condition cond;
+	TimeoutTimer timer(timeout);
+	while (!timer.expired())
 	{
-		ThreadImpl::testCancel();
+		// if it timed out, no reason to loop again
+		if (!cond.timedWait(lock, timer.asAbsoluteTimeout()))
+		{
+			return;
+		}
+		timer.loop();
 	}
-#elif OW_WIN32
-	Sleep(milliSeconds);
-#else
-	timeval now, end;
-	unsigned long microSeconds = milliSeconds * 1000;
-	const UInt32 loopMicroSeconds = 100 * 1000; // 1/10 of a second
-	gettimeofday(&now, NULL);
-	end = now;
-	end.tv_sec  += microSeconds / 1000000;
-	end.tv_usec += microSeconds % 1000000;
-	while ((now.tv_sec < end.tv_sec)
-		 || ((now.tv_sec == end.tv_sec) && (now.tv_usec < end.tv_usec)))
-	{
-		timeval tv;
-		tv.tv_sec = end.tv_sec - now.tv_sec;
-		if (end.tv_usec >= now.tv_usec)
-		{
-			tv.tv_usec = end.tv_usec - now.tv_usec;
-		}
-		else
-		{
-			tv.tv_sec--;
-			tv.tv_usec = 1000000 + end.tv_usec - now.tv_usec;
-		}
-		if (tv.tv_sec > 0 || tv.tv_usec > loopMicroSeconds)
-		{
-			tv.tv_sec = 0;
-			tv.tv_usec = loopMicroSeconds;
-		}
-		ThreadImpl::testCancel();
-		select(0, NULL, NULL, NULL, &tv);
-		gettimeofday(&now, NULL);
-	}
-#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
@@ -151,10 +131,9 @@ extern "C" {
 static void*
 threadStarter(void* arg)
 {
-	// set our cancellation state to asynchronous, so we can actually be
-	// killed if need be.
+	// set our cancellation state
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+	pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
 
 	// block all signals except SIGUSR1, which is used to signal termination
 	sigset_t signalSet;
@@ -223,21 +202,25 @@ default_stack_size g_theDefaultStackSize;
 pthread_once_t once_control = PTHREAD_ONCE_INIT;
 pthread_key_t theKey;
 extern "C" {
+
+static void
+SIGUSR1Handler(int sig)
+{
+	// do nothing
+}
+
 //////////////////////////////////////////////////////////////////////
-static void initializeTheKey()
+static void doOneTimeThreadInitialization()
 {
 	pthread_key_create(&theKey,NULL);
-	// set SIGUSR1 to SIG_IGN so we can safely send it to threads when we want to cancel them.
+	// Handle SIGUSR1 so we can safely send it to threads when we want to cancel them.
 	struct sigaction temp;
 	memset(&temp, '\0', sizeof(temp));
 	sigaction(SIGUSR1, 0, &temp);
-	if (temp.sa_handler != SIG_IGN)
-	{
-		temp.sa_handler = SIG_IGN;
-		sigemptyset(&temp.sa_mask);
-		temp.sa_flags = 0;
-		sigaction(SIGUSR1, &temp, NULL);
-	}
+	temp.sa_handler = SIGUSR1Handler;
+	sigemptyset(&temp.sa_mask);
+	temp.sa_flags = 0;
+	sigaction(SIGUSR1, &temp, NULL);
 }
 } // end extern "C"
 } // end unnamed namespace
@@ -345,14 +328,13 @@ void
 testCancel()
 {
 	// set up our TLS which will be used to store the Thread* in.
-	pthread_once(&once_control, &initializeTheKey);
+	pthread_once(&once_control, &doOneTimeThreadInitialization);
 	Thread* theThread = reinterpret_cast<Thread*>(pthread_getspecific(theKey));
 	if (theThread == 0)
 	{
 		return;
 	}
-	NonRecursiveMutexLock l(theThread->m_cancelLock);
-	if (theThread->m_cancelRequested)
+	if (AtomicGet(theThread->m_cancelRequested) == 1)
 	{
 		// We don't use OW_THROW here because 
 		// ThreadCancelledException is special.  It's not derived
@@ -366,7 +348,7 @@ testCancel()
 void saveThreadInTLS(void* pTheThread)
 {
 	// set up our TLS which will be used to store the Thread* in.
-	pthread_once(&once_control, &initializeTheKey);
+	pthread_once(&once_control, &doOneTimeThreadInitialization);
 	int rc;
 	if ((rc = pthread_setspecific(theKey, pTheThread)) != 0)
 	{
@@ -585,8 +567,7 @@ testCancel()
 	Thread* pTheThread = getThreadObject(threadId);
 	if (pTheThread)
 	{
-		NonRecursiveMutexLock l(pTheThread->m_cancelLock);
-		if (pTheThread->m_cancelRequested)
+		if (AtomicGet(pTheThread->m_cancelRequested) == 1)
 		{
 			// We don't use OW_THROW here because 
 			// ThreadCancelledException is special.  It's not derived

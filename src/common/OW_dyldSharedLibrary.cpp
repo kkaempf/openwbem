@@ -41,6 +41,13 @@
 namespace OW_NAMESPACE
 {
 
+dyldSharedLibrary::dyldSharedLibrary(NSModule libhandle, const String& libName)
+	: SharedLibrary()
+	, m_libhandle( libhandle )
+	, m_libName(libName)
+{
+}
+
 dyldSharedLibrary::~dyldSharedLibrary()
 {
 	NSUnLinkModule(m_libhandle, NSUNLINKMODULE_OPTION_NONE);

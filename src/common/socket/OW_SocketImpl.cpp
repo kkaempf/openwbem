@@ -39,6 +39,7 @@
 
 #include "OW_config.h"
 #include "OW_SocketImpl.hpp"
+#include "OW_SignalScope.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -92,6 +93,8 @@ int SocketImpl::writeAux(const void* dataOut, int dataOutLen)
 #if defined(OW_WIN32)
 	return ::send(m_sockfd, static_cast<const char*>(dataOut), dataOutLen, 0);
 #else
+	// block SIGPIPE so we don't kill the process if the socket is closed.
+	SignalScope ss(SIGPIPE, SIG_IGN);
 	return ::write(m_sockfd, dataOut, dataOutLen);
 #endif
 }

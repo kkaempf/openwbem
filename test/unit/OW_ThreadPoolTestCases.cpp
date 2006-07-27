@@ -38,6 +38,7 @@
 #include "OW_ThreadPoolTestCases.hpp"
 #include "OW_ThreadPool.hpp"
 #include "OW_Thread.hpp"
+#include "OW_ThreadBarrier.hpp"
 
 using namespace OpenWBEM;
 
@@ -171,7 +172,7 @@ void OW_ThreadPoolTestCases::testThreadPool3()
 
 	// shutdown asap. But use 1 as the timeout so we don't need to definitively 
 	// cancel any threads (which can cause problems)
-	thePool.shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
+	thePool.shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(1));
 
 	// after the pool is shutdown, tryAddWork should fail
 	unitAssert(!thePool.tryAddWork(RunnableRef(new testRunner(ints[0]))));
@@ -309,6 +310,54 @@ void OW_ThreadPoolTestCases::testThreadPoolDynamic3()
 
 }
 
+namespace {
+
+class testRunner2 : public Runnable
+{
+public:
+	testRunner2(const ThreadBarrier& bar) : m_bar(bar) {}
+
+	virtual void run()
+	{
+		m_bar.wait();
+	}
+	ThreadBarrier m_bar;
+};
+
+class Waiter
+{
+public:
+	Waiter(const ThreadBarrier& bar) : m_bar(bar) {}
+	~Waiter() { m_bar.wait(); }
+	ThreadBarrier m_bar;
+};
+
+} // end anonymous namespace
+
+void OW_ThreadPoolTestCases::testThreadPoolFull()
+{
+	// The pool has 2 threads
+	ThreadPool thePool(ThreadPool::DYNAMIC_SIZE_NO_QUEUE, 2, 0);
+
+	ThreadBarrier barrier(3); // us and 2 test threads.
+	Waiter waiter(barrier); // signals the threads to exit when destroyed.
+
+	unitAssert(thePool.tryAddWork(RunnableRef(new testRunner2(barrier))));
+	// Need to use a timeout on this second call because of the implementation of a DYNAMIC_SIZE_NO_QUEUE pool.
+	// The last slot to be filled may take a small amount of time to open up.
+	unitAssert(thePool.tryAddWork(RunnableRef(new testRunner2(barrier)), Timeout::relative(0.1)));
+
+	// 3rd try should fail.
+	unitAssert(!thePool.tryAddWork(RunnableRef(new testRunner2(barrier))));
+
+	// test the timeout
+	DateTime before(DateTime::getCurrent());
+	unitAssert(!thePool.tryAddWork(RunnableRef(new testRunner2(barrier)), Timeout::relative(0.1)));
+	DateTime after(DateTime::getCurrent());
+	DateTime diff = after - before;
+	unitAssert(diff.getMicrosecond() >= 100000);
+}
+
 Test* OW_ThreadPoolTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_ThreadPool");
@@ -319,6 +368,7 @@ Test* OW_ThreadPoolTestCases::suite()
 	ADD_TEST_TO_SUITE(OW_ThreadPoolTestCases, testThreadPoolDynamic1);
 	ADD_TEST_TO_SUITE(OW_ThreadPoolTestCases, testThreadPoolDynamic2);
 	ADD_TEST_TO_SUITE(OW_ThreadPoolTestCases, testThreadPoolDynamic3);
+	ADD_TEST_TO_SUITE(OW_ThreadPoolTestCases, testThreadPoolFull);
 
 	return testSuite;
 }

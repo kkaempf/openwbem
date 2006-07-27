@@ -40,6 +40,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
+#include "OW_SafeBool.hpp"
 #include <iosfwd>
 
 namespace OW_NAMESPACE
@@ -89,28 +90,21 @@ public:
 	CIMValue getValue() const;
 	CIMParamValue& setValue(const CIMValue& val);
 
-	typedef COWIntrusiveReference<Data> CIMParamValue::*safe_bool;
 	/**
 	 * @return true if this CIMParamValue is a valid CIM data type
 	 */
-	operator safe_bool () const
-	{
-		return m_pdata ? &CIMParamValue::m_pdata : 0;
-	}
-	bool operator!() const
-	{
-		return !this->m_pdata;
-	}
+	OW_SAFE_BOOL_IMPL(CIMParamValue, COWIntrusiveReference<Data>, CIMParamValue::m_pdata, m_pdata)
+
 	/**
 	 * Read this CIMParamValue from an inputstream.
 	 * @param istrm The input stream to read this object from.
 	 */
-	virtual void readObject(std::istream &istrm);
+	virtual void readObject(std::streambuf & istrm);
 	/**
 	 * Write this CIMParamValue to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
-	virtual void writeObject(std::ostream &ostrm) const;
+	virtual void writeObject(std::streambuf & ostrm) const;
 	virtual void setNull();
 	/**
 	 * @return The string representation of this CIMParamValue object.

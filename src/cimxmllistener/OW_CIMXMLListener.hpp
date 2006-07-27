@@ -67,13 +67,10 @@ public:
 	 * @param callback Callback to be called when indications are received. 
 	 * @param authenticator HTTP authenticator.  If none is provided, then 
 	 *     allow_anonymous or enable_digest should be set in the config settings
-	 * @param logger If a logger specified then it will receive log messages, otherwise
-	 *  all log messages will be discarded.
 	 */
 	CIMXMLListener(const ConfigFile::ConfigMap& configItems, 
 				   const CIMListenerCallbackRef& callback, 
-				   const AuthenticatorIFCRef& authenticator = AuthenticatorIFCRef(SharedLibraryRef(0), 0), 
-				   const LoggerRef& logger = LoggerRef(0)); 
+				   const AuthenticatorIFCRef& authenticator = AuthenticatorIFCRef(SharedLibraryRef(0), 0)); 
 	virtual ~CIMXMLListener();
 
 	/**

@@ -36,6 +36,7 @@
 #define OW_CIMSCOPE_HPP_
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
+#include "OW_SafeBool.hpp"
 
 #if defined(BAD)
 #undef BAD
@@ -132,14 +133,11 @@ public:
 		return !equals(arg);
 	}
 
-	typedef Scope CIMScope::*safe_bool;
 	/**
 	 * @return true if this is a valid flavor
 	 */
-	operator safe_bool () const
-		{  return (validScope(m_val) == true) ? &CIMScope::m_val : 0; }
-	bool operator!() const
-		{  return !validScope(m_val); }
+	OW_SAFE_BOOL_IMPL(CIMScope, Scope, CIMScope::m_val, (validScope(m_val) == true))
+
 	/**
 	 * @return The string representation of this scopy
 	 */
@@ -152,12 +150,12 @@ public:
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
-	virtual void readObject(std::istream &istrm);
+	virtual void readObject(std::streambuf & istrm);
 	/**
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
-	virtual void writeObject(std::ostream &ostrm) const;
+	virtual void writeObject(std::streambuf & ostrm) const;
 private:
 	static bool validScope(Scope val)
 	{

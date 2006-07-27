@@ -50,7 +50,7 @@
 #endif
 
 #include "OW_RequestHandlerIFC.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_LocalOperationContext.hpp"
 #include "OW_URL.hpp"
 #include "OW_Logger.hpp"
 #include "OW_Reference.hpp"
@@ -168,7 +168,7 @@ CmdLineParser::Option options[] =
 	{ E_OPTremove, 'r', "remove", CmdLineParser::E_NO_ARG, 0,
 		"Instead of creating objects, remove them."},
 	{ E_OPTnamespace, 'n', "namespace", CmdLineParser::E_REQUIRED_ARG, 0,
-		"This option is deprecated (in 3.1.0) in favor of the URL namespace. The initial namespace "
+		"This option is overridden by the URL namespace. The initial namespace "
 		"to use. Default is root/cimv2 if not specified via this option or in the URL."},
 	{ E_OPTencoding, 'e', "encoding", CmdLineParser::E_REQUIRED_ARG, 0,
 		"This option is deprecated (in 3.1.0) in favor of the URL scheme. "
@@ -322,16 +322,6 @@ processCommandLineOptions(int argc, char** argv)
 class MOFCompEnvironment : public ServiceEnvironmentIFC
 {
 public:
-	virtual LoggerRef getLogger() const
-	{
-		LoggerRef rv(new CerrLogger);
-		rv->setLogLevel(E_ERROR_LEVEL);
-		return rv;
-	}
-	virtual LoggerRef getLogger(const String& componentName) const
-	{
-		return getLogger();
-	}
 	virtual String getConfigItem(const String& name, const String& defRetVal) const
 	{
 		// CIMRepository may query for this.
@@ -368,7 +358,7 @@ int main(int argc, char** argv)
 			RepositoryIFCRef cimRepository = RepositoryIFCRef(new CIMRepository);
 #endif
 			cimRepository->init(mofCompEnvironment);
-			context = Reference<OperationContext>(new OperationContext);
+			context = Reference<OperationContext>(new LocalOperationContext);
 			handle = CIMOMHandleIFCRef(new MOFCompCIMOMHandle(cimRepository, *context));
 		}
 		else

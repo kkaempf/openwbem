@@ -57,14 +57,13 @@ OW_DEFINE_EXCEPTION(ProviderIFCLoader);
 ProviderIFCBaseIFCRef
 ProviderIFCLoaderBase::createProviderIFCFromLib(const String& libname) const
 {
-	LoggerRef lgr(m_env->getLogger(COMPONENT_NAME));
+	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib loading library %1", libname));
-	SharedLibraryRef sl = m_sll->loadSharedLibrary(libname,
-		lgr);
+	SharedLibraryRef sl = m_sll->loadSharedLibrary(libname);
 	ProviderIFCBaseIFC* ptr = 0;
 	if ( sl )
 	{
-		ptr = SafeLibCreate<ProviderIFCBaseIFC>::create(sl, "createProviderIFC", lgr);
+		ptr = SafeLibCreate<ProviderIFCBaseIFC>::create(sl, "createProviderIFC");
 	}
 	else
 	{
@@ -79,7 +78,7 @@ void
 ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 {
 	ServiceEnvironmentIFCRef env = getEnvironment();
-	LoggerRef lgr(env->getLogger(COMPONENT_NAME));
+	Logger lgr(COMPONENT_NAME);
 	int ifcCount = 0;
 
 	StringArray libdirs = env->getMultiConfigItem(ConfigOpts::PROVIDER_IFC_LIBS_opt, String(OW_DEFAULT_PROVIDER_IFC_LIBS).tokenize(), OW_PATHNAME_SEPARATOR);
@@ -88,11 +87,13 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 		const String libdir(libdirs[i]);
 		OW_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider interfaces from: %1", libdir));
 		StringArray libs;
-		FileSystem::getDirectoryContents(libdir, libs);
+		if (!FileSystem::getDirectoryContents(libdir, libs))
+		{
+			OW_THROW_ERRNO_MSG(ProviderIFCLoaderException, "ProviderIFCBaseIFCLoaderBase::loadIFCs failed to getDirectoryContents");
+		}
 		if (libs.size() == 0)
 		{
 			OW_THROW(ProviderIFCLoaderException, "ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any provider interfaces");
-			return;
 		}
 		for (StringArray::size_type i = 0; i < libs.size(); ++i)
 		{

@@ -242,28 +242,50 @@ void OW_StringTestCases::testRealConstructors()
 	unitAssert(String(Real64(-32897.23828125)).startsWith("-32897.23828125"));
 }
 
+void OW_StringTestCases::test_cstr()
+{
+	// This tests for a bug we found and fixed that caused c_str() to behave
+	// as if it were not const, resulting in COW problems.  The test mimics
+	// the code that manifested the bug.
+	String str("[$01 $][$02 $][$03 $][$04 $][$05 $][$06 $][$07 $][$08 $][$09 $][$10 $][$11 $][$12 $][$13 $][$14 $][$15 $][$17 $][$18 $][$19 $][$20 $]");
+	char const * cstr = str.c_str();
+	String scopy;
+	scopy = str;
+	char const * cstrcopy = str.c_str();
+	unitAssert(cstr == cstrcopy);
+	unitAssert(std::strcmp(cstr, "[$01 $][$02 $][$03 $][$04 $][$05 $][$06 $][$07 $][$08 $][$09 $][$10 $][$11 $][$12 $][$13 $][$14 $][$15 $][$17 $][$18 $][$19 $][$20 $]") == 0);
+	scopy = str;
+	cstrcopy = str.c_str();
+	unitAssert(cstr == cstrcopy);
+	unitAssert(std::strcmp(cstr, "[$01 $][$02 $][$03 $][$04 $][$05 $][$06 $][$07 $][$08 $][$09 $][$10 $][$11 $][$12 $][$13 $][$14 $][$15 $][$17 $][$18 $][$19 $][$20 $]") == 0);
+}
+
+void OW_StringTestCases::testIndexOf()
+{
+	String abc("abc");
+	unitAssertEquals(1U, abc.indexOf("bc"));
+	unitAssert(String::npos == abc.indexOf("bc", 5));
+	unitAssert(String::npos == abc.indexOf("c", 3));
+	unitAssertEquals(2U, abc.indexOf("c", 2));
+	unitAssertEquals(1U, abc.indexOf("", 1));
+	unitAssertEquals(0U, abc.indexOf(""));
+	unitAssertEquals(1U, abc.indexOf(static_cast<const char*>(0), 1));
+	unitAssertEquals(0U, abc.indexOf(static_cast<const char*>(0)));
+}
+
 Test* OW_StringTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_String");
 
-	testSuite->addTest (new TestCaller <OW_StringTestCases>
-			("testErase",
-			&OW_StringTestCases::testErase));
-	testSuite->addTest (new TestCaller <OW_StringTestCases>
-			("testSubstring",
-			&OW_StringTestCases::testSubstring));
-	testSuite->addTest (new TestCaller <OW_StringTestCases>
-			("testNumbers",
-			&OW_StringTestCases::testNumbers));
-	testSuite->addTest (new TestCaller <OW_StringTestCases>
-			("testEqualsIgnoreCase",
-			&OW_StringTestCases::testEqualsIgnoreCase));
-	testSuite->addTest (new TestCaller <OW_StringTestCases>
-			("testTokenize",
-			&OW_StringTestCases::testTokenize));	
-	testSuite->addTest (new TestCaller <OW_StringTestCases>
-			("testRealConstructors",
-			&OW_StringTestCases::testRealConstructors));	
+	ADD_TEST_TO_SUITE(OW_StringTestCases, testErase);
+	ADD_TEST_TO_SUITE(OW_StringTestCases, testSubstring);
+	ADD_TEST_TO_SUITE(OW_StringTestCases, testNumbers);
+	ADD_TEST_TO_SUITE(OW_StringTestCases, testEqualsIgnoreCase);
+	ADD_TEST_TO_SUITE(OW_StringTestCases, testTokenize);	
+	ADD_TEST_TO_SUITE(OW_StringTestCases, testRealConstructors);
+	ADD_TEST_TO_SUITE(OW_StringTestCases, test_cstr);
+	ADD_TEST_TO_SUITE(OW_StringTestCases, testIndexOf);
+	
 	
 	return testSuite;
 }

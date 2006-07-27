@@ -43,6 +43,8 @@
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_NullLogger.hpp"
+#include "OW_Timeout.hpp"
+#include "OW_TimeoutTimer.hpp"
 
 #include <deque>
 
@@ -56,16 +58,17 @@ namespace OW_NAMESPACE
 OW_DEFINE_EXCEPTION(ThreadPool);
 
 // logger can be null
-#define OW_POOL_LOG_DEBUG(logger, arg) do { if ((logger)) OW_LOG_DEBUG(logger, m_poolName + ": " + arg); } while (0)
-#define OW_POOL_LOG_FATAL_ERROR(logger, arg) do { if ((logger)) OW_LOG_FATAL_ERROR(logger, m_poolName + ": " + arg); } while (0)
+#define OW_POOL_LOG_DEBUG(logger, arg) do { OW_LOG_DEBUG(logger, m_poolName + ": " + arg); } while (0)
+#define OW_POOL_LOG_ERROR(logger, arg) do { OW_LOG_ERROR(logger, m_poolName + ": " + arg); } while (0)
+#define OW_POOL_LOG_FATAL_ERROR(logger, arg) do { OW_LOG_FATAL_ERROR(logger, m_poolName + ": " + arg); } while (0)
 
 /////////////////////////////////////////////////////////////////////////////
 class ThreadPoolImpl : public IntrusiveCountableBase
 {
 public:
 	// returns true if work is placed in the queue to be run and false if not.
-	virtual bool addWork(const RunnableRef& work, bool blockWhenFull) = 0;
-	virtual void shutdown(ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs) = 0;
+	virtual bool addWork(const RunnableRef& work, const Timeout& timeout) = 0;
+	virtual void shutdown(ThreadPool::EShutdownQueueFlag finishWorkInQueue, const Timeout& shutdownTimeout, const Timeout& definitiveCancelTimeout) = 0;
 	virtual void waitForEmptyQueue() = 0;
 	virtual ~ThreadPoolImpl()
 	{
@@ -84,6 +87,14 @@ public:
 	}
 	virtual Int32 run();
 private:
+	virtual void doShutdown()
+	{
+		MutexLock lock(m_guard);
+		if (m_currentRunnable)
+		{
+			m_currentRunnable->doShutdown();
+		}
+	}
 	virtual void doCooperativeCancel()
 	{
 		MutexLock lock(m_guard);
@@ -97,7 +108,7 @@ private:
 		MutexLock lock(m_guard);
 		if (m_currentRunnable)
 		{
-			m_currentRunnable->doCooperativeCancel();
+			m_currentRunnable->doDefinitiveCancel();
 		}
 	}
 
@@ -114,7 +125,7 @@ private:
 class CommonPoolImpl : public ThreadPoolImpl
 {
 protected:
-	CommonPoolImpl(UInt32 maxQueueSize, const LoggerRef& logger, const String& poolName)
+	CommonPoolImpl(UInt32 maxQueueSize, const Logger& logger, const String& poolName)
 		: m_maxQueueSize(maxQueueSize)
 		, m_queueClosed(false)
 		, m_shutdown(false)
@@ -139,7 +150,7 @@ protected:
 		return m_shutdown || m_queueClosed;
 	}
 	
-	bool finishOffWorkInQueue(ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
+	bool finishOffWorkInQueue(ThreadPool::EShutdownQueueFlag finishWorkInQueue, const Timeout& timeout)
 	{
 		NonRecursiveMutexLock l(m_queueLock);
 		// the pool is in the process of being destroyed
@@ -153,9 +164,10 @@ protected:
 		
 		if (finishWorkInQueue)
 		{
+			TimeoutTimer timer(timeout);
 			while (m_queue.size() != 0)
 			{
-				if (shutdownSecs < 0)
+				if (timer.infinite())
 				{
 					OW_POOL_LOG_DEBUG(m_logger, "Waiting forever for queue to empty");
 					m_queueEmpty.wait(l);
@@ -163,7 +175,7 @@ protected:
 				else
 				{
 					OW_POOL_LOG_DEBUG(m_logger, "Waiting w/timout for queue to empty");
-					if (!m_queueEmpty.timedWait(l, shutdownSecs))
+					if (!m_queueEmpty.timedWait(l, timer.asAbsoluteTimeout()))
 					{
 						OW_POOL_LOG_DEBUG(m_logger, "Wait timed out. Work in queue will be discarded.");
 						break; // timed out
@@ -186,9 +198,11 @@ protected:
 		OW_POOL_LOG_DEBUG(m_logger, "Queue empty: the wait is over");
 	}
 	
-	void shutdownThreads(ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
+	void shutdownThreads(ThreadPool::EShutdownQueueFlag finishWorkInQueue, const Timeout& shutdownTimeout, const Timeout& definitiveCancelTimeout)
 	{
-		if (!finishOffWorkInQueue(finishWorkInQueue, shutdownSecs))
+		TimeoutTimer shutdownTimer(shutdownTimeout);
+		TimeoutTimer dTimer(definitiveCancelTimeout);
+		if (!finishOffWorkInQueue(finishWorkInQueue, shutdownTimer.asAbsoluteTimeout()))
 		{
 			return;
 		}
@@ -197,24 +211,53 @@ protected:
 		m_queueNotEmpty.notifyAll();
 		m_queueNotFull.notifyAll();
 
-		if (shutdownSecs >= 0)
+		if (!shutdownTimer.infinite())
 		{
-			// Set cooperative thread cancellation flag
+			// Tell all the threads to shutdown
+			for (UInt32 i = 0; i < m_threads.size(); ++i)
+			{
+				OW_POOL_LOG_DEBUG(m_logger, Format("Calling shutdown on thread %1", i));
+				m_threads[i]->shutdown();
+			}
+
+			// Wait until shutdownTimeout for the threads to finish
+			Timeout absoluteShutdownTimeout(shutdownTimer.asAbsoluteTimeout());
+			for (UInt32 i = 0; i < m_threads.size(); ++i)
+			{
+				OW_POOL_LOG_DEBUG(m_logger, Format("Waiting for thread %1 to exit.", i));
+				m_threads[i]->timedWait(absoluteShutdownTimeout);
+			}
+
+			// Tell all the threads to cooperative cancel
 			for (UInt32 i = 0; i < m_threads.size(); ++i)
 			{
 				OW_POOL_LOG_DEBUG(m_logger, Format("Calling cooperativeCancel on thread %1", i));
 				m_threads[i]->cooperativeCancel();
 			}
-			// If any still haven't shut down, definitiveCancel will kill them.
-			for (UInt32 i = 0; i < m_threads.size(); ++i)
+
+			if (!dTimer.infinite())
 			{
-				OW_POOL_LOG_DEBUG(m_logger, Format("Calling definitiveCancel on thread %1", i));
-				if (!m_threads[i]->definitiveCancel(shutdownSecs))
+				// If any still haven't shut down, definitiveCancel will kill them.
+				Timeout absoluteDefinitiveTimeout(dTimer.asAbsoluteTimeout());
+				for (UInt32 i = 0; i < m_threads.size(); ++i)
 				{
-					OW_POOL_LOG_FATAL_ERROR(m_logger, Format("Thread %1 was forcibly cancelled.", i));
+					OW_POOL_LOG_DEBUG(m_logger, Format("Calling definitiveCancel on thread %1", i));
+					try
+					{
+						if (!m_threads[i]->definitiveCancel(absoluteDefinitiveTimeout))
+						{
+							OW_POOL_LOG_FATAL_ERROR(m_logger, Format("Thread %1 was forcibly cancelled.", i));
+						}
+					}
+					catch (CancellationDeniedException& e)
+					{
+						OW_POOL_LOG_ERROR(m_logger, Format("Caught CanacellationDeniedException: %1 for thread %2. Pool shutdown may hang.", e, i));
+					}
 				}
 			}
+
 		}
+
 		// Clean up after the threads and/or wait for them to exit.
 		for (UInt32 i = 0; i < m_threads.size(); ++i)
 		{
@@ -238,7 +281,7 @@ protected:
 			{
 				// wait 1 sec for work, to more efficiently handle a stream
 				// of single requests.
-				if (!m_queueNotEmpty.timedWait(l,1))
+				if (!m_queueNotEmpty.timedWait(l,Timeout::relative(1)))
 				{
 					OW_POOL_LOG_DEBUG(m_logger, "No work after 1 sec. I'm not waiting any longer");
 					return RunnableRef();
@@ -282,13 +325,13 @@ protected:
 	Condition m_queueNotFull;
 	Condition m_queueEmpty;
 	Condition m_queueNotEmpty;
-	LoggerRef m_logger;
+	Logger m_logger;
 	String m_poolName;
 };
 class FixedSizePoolImpl : public CommonPoolImpl
 {
 public:
-	FixedSizePoolImpl(UInt32 numThreads, UInt32 maxQueueSize, const LoggerRef& logger, const String& poolName)
+	FixedSizePoolImpl(UInt32 numThreads, UInt32 maxQueueSize, const Logger& logger, const String& poolName)
 		: CommonPoolImpl(maxQueueSize, logger, poolName)
 	{
 		// create the threads and start them up.
@@ -299,12 +342,23 @@ public:
 		}
 		for (UInt32 i = 0; i < numThreads; ++i)
 		{
-			m_threads[i]->start();
+			try
+			{
+				m_threads[i]->start();
+			}
+			catch (ThreadException& e)
+			{
+				OW_POOL_LOG_ERROR(m_logger, Format("Failed to start thread #%1: %2", i, e));
+				m_threads.resize(i); // remove non-started threads
+				// shutdown the rest
+				this->FixedSizePoolImpl::shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(0.5), Timeout::relative(0.5));
+				throw;
+			}
 		}
 		OW_POOL_LOG_DEBUG(m_logger, "Threads are started and ready to go");
 	}
 	// returns true if work is placed in the queue to be run and false if not.
-	virtual bool addWork(const RunnableRef& work, bool blockWhenFull)
+	virtual bool addWork(const RunnableRef& work, const Timeout& timeout)
 	{
 		// check precondition: work != NULL
 		if (!work)
@@ -312,23 +366,27 @@ public:
 			OW_POOL_LOG_DEBUG(m_logger, "Trying to add NULL work! Shame on you.");
 			return false;
 		}
+		
 		NonRecursiveMutexLock l(m_queueLock);
-		if (!blockWhenFull && queueIsFull())
-		{
-			OW_POOL_LOG_DEBUG(m_logger, "Queue is full. Not adding work and returning false");
-			return false;
-		}
+		TimeoutTimer timer(timeout);
 		while ( queueIsFull() && !queueClosed() )
 		{
 			OW_POOL_LOG_DEBUG(m_logger, "Queue is full. Waiting until a spot opens up so we can add some work");
-			m_queueNotFull.wait(l);
+			if (!m_queueNotFull.timedWait(l, timer.asAbsoluteTimeout()))
+			{
+				// timed out
+				OW_POOL_LOG_DEBUG(m_logger, "Queue is full and timeout expired. Not adding work and returning false");
+				return false;
+			}
 		}
+		
 		// the pool is in the process of being destroyed
 		if (queueClosed())
 		{
 			OW_POOL_LOG_DEBUG(m_logger, "Queue was closed out from underneath us. Not adding work and returning false");
 			return false;
 		}
+
 		m_queue.push_back(work);
 		
 		// if the queue was empty, there may be workers just sitting around, so we need to wake them up!
@@ -343,9 +401,9 @@ public:
 	}
 
 	// we keep this around so it can be called in the destructor
-	virtual void shutdown(ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
+	virtual void shutdown(ThreadPool::EShutdownQueueFlag finishWorkInQueue, const Timeout& shutdownTimeout, const Timeout& definitiveCancelTimeout)
 	{
-		shutdownThreads(finishWorkInQueue, shutdownSecs);
+		shutdownThreads(finishWorkInQueue, shutdownTimeout, definitiveCancelTimeout);
 	}
 	virtual ~FixedSizePoolImpl()
 	{
@@ -357,7 +415,7 @@ public:
 			{
 				// Make sure the pool is shutdown.
 				// Specify which shutdown() we want so we don't get undefined behavior calling a virtual function from the destructor.
-				this->FixedSizePoolImpl::shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
+				this->FixedSizePoolImpl::shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(0.5), Timeout::relative(0.5));
 			}
 		}
 		catch (...)
@@ -387,7 +445,7 @@ void runRunnable(const RunnableRef& work)
 	catch(std::exception& ex)
 	{
 #ifdef OW_DEBUG
-		std::cerr << "!!! std::exception what = " << ex.what() << std::endl;
+		std::cerr << "!!! std::exception what = \"" << ex.what() << "\" caught in ThreadPool worker" << std::endl;
 #endif
 	}
 	catch (...)
@@ -432,6 +490,14 @@ public:
 	}
 	virtual Int32 run();
 private:
+	virtual void doShutdown()
+	{
+		MutexLock lock(m_guard);
+		if (m_currentRunnable)
+		{
+			m_currentRunnable->doShutdown();
+		}
+	}
 	virtual void doCooperativeCancel()
 	{
 		MutexLock lock(m_guard);
@@ -445,7 +511,7 @@ private:
 		MutexLock lock(m_guard);
 		if (m_currentRunnable)
 		{
-			m_currentRunnable->doCooperativeCancel();
+			m_currentRunnable->doDefinitiveCancel();
 		}
 	}
 
@@ -462,13 +528,13 @@ private:
 class DynamicSizePoolImpl : public CommonPoolImpl
 {
 public:
-	DynamicSizePoolImpl(UInt32 maxThreads, UInt32 maxQueueSize, const LoggerRef& logger, const String& poolName)
+	DynamicSizePoolImpl(UInt32 maxThreads, UInt32 maxQueueSize, const Logger& logger, const String& poolName)
 		: CommonPoolImpl(maxQueueSize, logger, poolName)
 		, m_maxThreads(maxThreads)
 	{
 	}
 	// returns true if work is placed in the queue to be run and false if not.
-	virtual bool addWork(const RunnableRef& work, bool blockWhenFull)
+	virtual bool addWork(const RunnableRef& work, const Timeout& timeout)
 	{
 		// check precondition: work != NULL
 		if (!work)
@@ -503,17 +569,25 @@ public:
 			}
 		}
 
-		if (!blockWhenFull && queueIsFull())
-		{
-			OW_POOL_LOG_DEBUG(m_logger, "Queue is full. Not adding work and returning false");
-			return false;
-		}
+		TimeoutTimer timer(timeout);
 		while ( queueIsFull() && !queueClosed() )
 		{
 			OW_POOL_LOG_DEBUG(m_logger, "Queue is full. Waiting until a spot opens up so we can add some work");
-			m_queueNotFull.wait(l);
+			if (!m_queueNotFull.timedWait(l, timer.asAbsoluteTimeout()))
+			{
+				// timed out
+				OW_POOL_LOG_DEBUG(m_logger, "Queue is full and timeout expired. Not adding work and returning false");
+				return false;
+			}
 		}
 		
+		// The previous loop could have ended because a spot opened in the queue or it was closed.  Check for the close.
+		if (queueClosed())
+		{
+			OW_POOL_LOG_DEBUG(m_logger, "Queue was closed out from underneath us. Not adding work and returning false");
+			return false;
+		}
+
 		m_queue.push_back(work);
 		
 		OW_POOL_LOG_DEBUG(m_logger, "Work has been added to the queue");
@@ -535,16 +609,25 @@ public:
 			ThreadRef theThread(new DynamicSizePoolWorkerThread(this));
 			m_threads.push_back(theThread);
 			OW_POOL_LOG_DEBUG(m_logger, "About to start a new thread");
-			theThread->start();
+			try
+			{
+				theThread->start();
+			}
+			catch (ThreadException& e)
+			{
+				OW_POOL_LOG_ERROR(m_logger, Format("Failed to start thread: %1", e));
+				m_threads.pop_back();
+				throw;
+			}
 			OW_POOL_LOG_DEBUG(m_logger, "New thread started");
 		}
 		return true;
 	}
 
 	// we keep this around so it can be called in the destructor
-	virtual void shutdown(ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
+	virtual void shutdown(ThreadPool::EShutdownQueueFlag finishWorkInQueue, const Timeout& shutdownTimeout, const Timeout& definitiveCancelTimeout)
 	{
-		shutdownThreads(finishWorkInQueue, shutdownSecs);
+		shutdownThreads(finishWorkInQueue, shutdownTimeout, definitiveCancelTimeout);
 	}
 	virtual ~DynamicSizePoolImpl()
 	{
@@ -556,7 +639,7 @@ public:
 			{
 				// Make sure the pool is shutdown.
 				// Specify which shutdown() we want so we don't get undefined behavior calling a virtual function from the destructor.
-				this->DynamicSizePoolImpl::shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
+				this->DynamicSizePoolImpl::shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(0.5), Timeout::relative(0.5));
 			}
 		}
 		catch (...)
@@ -602,7 +685,7 @@ Int32 DynamicSizePoolWorkerThread::run()
 class DynamicSizeNoQueuePoolImpl : public DynamicSizePoolImpl
 {
 public:
-	DynamicSizeNoQueuePoolImpl(UInt32 maxThreads, const LoggerRef& logger, const String& poolName)
+	DynamicSizeNoQueuePoolImpl(UInt32 maxThreads, const Logger& logger, const String& poolName)
 		: DynamicSizePoolImpl(maxThreads, maxThreads, logger, poolName) // allow queue in superclass, but prevent it from having any backlog
 	{
 	}
@@ -624,13 +707,25 @@ public:
 
 } // end anonymous namespace
 /////////////////////////////////////////////////////////////////////////////
-ThreadPool::ThreadPool(PoolType poolType, UInt32 numThreads, UInt32 maxQueueSize, const LoggerRef& logger_, const String& poolName)
+ThreadPool::ThreadPool(PoolType poolType, UInt32 numThreads, UInt32 maxQueueSize, const String& poolName)
 {
-	LoggerRef logger(logger_);
-	if (!logger)
+	NullLogger logger;
+	switch (poolType)
 	{
-		logger = LoggerRef(new NullLogger());
+		case FIXED_SIZE:
+			m_impl = new FixedSizePoolImpl(numThreads, maxQueueSize, logger, poolName);
+			break;
+		case DYNAMIC_SIZE:
+			m_impl = new DynamicSizePoolImpl(numThreads, maxQueueSize, logger, poolName);
+			break;
+		case DYNAMIC_SIZE_NO_QUEUE:
+			m_impl = new DynamicSizeNoQueuePoolImpl(numThreads, logger, poolName);
+			break;
 	}
+}
+/////////////////////////////////////////////////////////////////////////////
+ThreadPool::ThreadPool(PoolType poolType, UInt32 numThreads, UInt32 maxQueueSize, const Logger& logger, const String& poolName)
+{
 	switch (poolType)
 	{
 		case FIXED_SIZE:
@@ -647,17 +742,32 @@ ThreadPool::ThreadPool(PoolType poolType, UInt32 numThreads, UInt32 maxQueueSize
 /////////////////////////////////////////////////////////////////////////////
 bool ThreadPool::addWork(const RunnableRef& work)
 {
-	return m_impl->addWork(work, true);
+	return m_impl->addWork(work, Timeout::infinite);
 }
 /////////////////////////////////////////////////////////////////////////////
 bool ThreadPool::tryAddWork(const RunnableRef& work)
 {
-	return m_impl->addWork(work, false);
+	return m_impl->addWork(work, Timeout::relative(0));
+}
+/////////////////////////////////////////////////////////////////////////////
+bool ThreadPool::tryAddWork(const RunnableRef& work, const Timeout& timeout)
+{
+	return m_impl->addWork(work, timeout);
 }
 /////////////////////////////////////////////////////////////////////////////
 void ThreadPool::shutdown(EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
 {
-	m_impl->shutdown(finishWorkInQueue, shutdownSecs);
+	m_impl->shutdown(finishWorkInQueue, Timeout::relative(shutdownSecs), Timeout::relative(shutdownSecs));
+}
+/////////////////////////////////////////////////////////////////////////////
+void ThreadPool::shutdown(EShutdownQueueFlag finishWorkInQueue, const Timeout& timeout)
+{
+	m_impl->shutdown(finishWorkInQueue, timeout, timeout);
+}
+/////////////////////////////////////////////////////////////////////////////
+void ThreadPool::shutdown(EShutdownQueueFlag finishWorkInQueue, const Timeout& shutdownTimeout, const Timeout& definitiveCancelTimeout)
+{
+	m_impl->shutdown(finishWorkInQueue, shutdownTimeout, definitiveCancelTimeout);
 }
 /////////////////////////////////////////////////////////////////////////////
 void ThreadPool::waitForEmptyQueue()

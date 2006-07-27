@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004-2005 Quest Software, Inc. All rights reserved.
 * Copyright (C) 2005 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -46,8 +46,15 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_DateTime.hpp"
 #include "OW_AutoPtr.hpp"
+#include "OW_TimeoutTimer.hpp"
+#include "OW_Process.hpp"
+#include "OW_SafeCString.hpp"
+#include "OW_Paths.hpp"
+#include "OW_ExecMockObject.hpp"
+#include "OW_GlobalPtr.hpp"
 
 #include <map>
+#include <limits>
 
 extern "C"
 {
@@ -72,716 +79,422 @@ extern "C"
 #define NSIG 64
 #endif
 
+#if defined(sigemptyset)
+// We want to use the function instead of the macro (for scoping reasons).
+#undef sigemptyset
+#endif // sigemptyset
+
 namespace OW_NAMESPACE
 {
 
 using std::cerr;
 using std::endl;
-OW_DEFINE_EXCEPTION_WITH_ID(ExecTimeout);
-OW_DEFINE_EXCEPTION_WITH_ID(ExecBufferFull);
+OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID(ExecTimeout, ExecErrorException);
+OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID(ExecBufferFull, ExecErrorException);
 OW_DEFINE_EXCEPTION_WITH_ID(ExecError);
 
-#ifndef OW_WIN32
-class PopenStreamsImpl : public IntrusiveCountableBase
-{
-public:
-	PopenStreamsImpl();
-	~PopenStreamsImpl();
-	UnnamedPipeRef in() const;
-	void in(const UnnamedPipeRef& pipe);
-	UnnamedPipeRef out() const;
-	void out(const UnnamedPipeRef& pipe);
-	UnnamedPipeRef err() const;
-	void err(const UnnamedPipeRef& pipe);
-	Array<UnnamedPipeRef> extraPipes() const;
-	void setExtraPipes(const Array<UnnamedPipeRef>& pipes);
-
-	pid_t pid();
-	void pid(pid_t newPid);
-	int getExitStatus();
-	int getExitStatus(UInt32 wait_initial, UInt32 wait_close, UInt32 wait_term);
-	void setProcessStatus(int ps)
-	{
-		m_processstatus = ps;
-	}
-private:
-	UnnamedPipeRef m_in;
-	UnnamedPipeRef m_out;
-	UnnamedPipeRef m_err;
-	Array<UnnamedPipeRef> m_extraPipes;
-	pid_t m_pid;
-	int m_processstatus;
-};
-//////////////////////////////////////////////////////////////////////////////
-PopenStreamsImpl::PopenStreamsImpl()
-	: m_pid(-1)
-	, m_processstatus(-1)
-{
-}
-//////////////////////////////////////////////////////////////////////////////
-UnnamedPipeRef PopenStreamsImpl::in() const
-{
-	return m_in;
-}
-//////////////////////////////////////////////////////////////////////////////
-void PopenStreamsImpl::in(const UnnamedPipeRef& pipe)
-{
-	m_in = pipe;
-}
-//////////////////////////////////////////////////////////////////////////////
-UnnamedPipeRef PopenStreamsImpl::out() const
-{
-	return m_out;
-}
-//////////////////////////////////////////////////////////////////////////////
-void PopenStreamsImpl::out(const UnnamedPipeRef& pipe)
-{
-	m_out = pipe;
-}
-//////////////////////////////////////////////////////////////////////////////
-UnnamedPipeRef PopenStreamsImpl::err() const
-{
-	return m_err;
-}
-//////////////////////////////////////////////////////////////////////////////
-void PopenStreamsImpl::err(const UnnamedPipeRef& pipe)
-{
-	m_err = pipe;
-}
-//////////////////////////////////////////////////////////////////////////////
-Array<UnnamedPipeRef> PopenStreamsImpl::extraPipes() const
-{
-	return m_extraPipes;
-}
-//////////////////////////////////////////////////////////////////////////////
-void PopenStreamsImpl::setExtraPipes(const Array<UnnamedPipeRef>& pipes)
-{
-	m_extraPipes = pipes;
-}
-//////////////////////////////////////////////////////////////////////////////
-pid_t PopenStreamsImpl::pid()
-{
-	return m_pid;
-}
-//////////////////////////////////////////////////////////////////////////////
-void PopenStreamsImpl::pid(pid_t newPid)
-{
-	m_pid = newPid;
-}
-//////////////////////////////////////////////////////////////////////
-static inline ProcId safeWaitPid(ProcId pid, int* status, int options)
-{
-	// The status is not passed directly to waitpid because some implementations
-	// store a value there even when the function returns <= 0.
-	int localReturnValue = -1;
-	pid_t returnedPID = ::waitpid(pid, &localReturnValue, options);
-	if( returnedPID > 0 )
-	{
-		*status = localReturnValue;
-	}	
-	return returnedPID;
-}
-
-//////////////////////////////////////////////////////////////////////
-static ProcId noIntrWaitPid(ProcId pid, int* status, int options)
-{
-	pid_t waitpidrv;
-	do
-	{
-		Thread::testCancel();
-		waitpidrv = safeWaitPid(pid, status, options);
-	} while (waitpidrv == -1 && errno == EINTR);
-	return waitpidrv;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-static inline void
-milliSleep(UInt32 milliSeconds)
-{
-	Thread::sleep(milliSeconds);
-}
-//////////////////////////////////////////////////////////////////////////////
-static inline void
-secSleep(UInt32 seconds)
-{
-	Thread::sleep(seconds * 1000);
-}
-//////////////////////////////////////////////////////////////////////////////
-static bool
-timedWaitPid(ProcId pid, int * pstatus, UInt32 wait_time)
-{
-	UInt32 const N = 154;
-	UInt32 const M = 128;  // N/M is about 1.20
-	UInt32 const MAXPERIOD = 5000;
-	UInt32 period = 100;
-	UInt32 t = 0;
-	ProcId waitpidrv = noIntrWaitPid(pid, pstatus, WNOHANG);
-	while (t < wait_time && waitpidrv == 0) {
-		milliSleep(period);
-		t += period;
-		period *= N;
-		period /= M; 
-		if (period > MAXPERIOD)
-		{
-			period = MAXPERIOD;
-		}
-		waitpidrv = noIntrWaitPid(pid, pstatus, WNOHANG);
-	}
-	if (waitpidrv < 0) {
-		OW_THROW_ERRNO_MSG(ExecErrorException, "waitpid() failed.");
-	}
-	return waitpidrv != 0;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// Send signal sig to the process, then wait at most wait_time milliseconds.
-// for the process to terminate.  Return true if termination detected.
-//
-static bool killWait(
-	ProcId pid, int * pstatus, UInt32 wait_time, int sig, char const * signame
-)
-{
-	if (::kill(pid, sig) == -1) {
-		// don't trust waitpid, Format ctor, etc. to leave errno alone
-		int errnum = errno;
-		// maybe kill() failed because child terminated first
-		if (noIntrWaitPid(pid, pstatus, WNOHANG) > 0) {
-			return true;
-		}
-		else {
-			Format fmt("Failed sending %1 to process %2.", signame, pid);
-			char const * msg = fmt.c_str();
-			errno = errnum;
-			OW_THROW_ERRNO_MSG(ExecErrorException, msg);
-		}
-	}
-	return timedWaitPid(pid, pstatus, wait_time);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-int PopenStreamsImpl::getExitStatus()
-{
-	return this->getExitStatus(0, 10 *1000, 10 * 1000);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-int PopenStreamsImpl::getExitStatus(
-	UInt32 wait_initial, UInt32 wait_close, UInt32 wait_term)
-{
-	if (m_pid < 0)
-	{
-		return m_processstatus;
-	}
-	if (m_pid == ::getpid())
-	{
-		OW_THROW(ExecErrorException, "PopenStreamsImpl::getExitStatus: m_pid == getpid()");
-	}
-
-	ProcId pid = m_pid;
-	m_pid = -1;
-	int * pstatus = &m_processstatus;
-
-	// Convert times to milliseconds
-	wait_initial *= 1000;
-	wait_close *= 1000;
-	wait_term *= 1000;
-
-	if (wait_initial > 0 &&	timedWaitPid(pid, pstatus, wait_initial))
-	{
-		return m_processstatus;
-	}
-
-	if (wait_close > 0)
-	{
-		// Close the streams. If the child process is blocked waiting to output,
-		// then this will cause it to get a SIGPIPE, and it may be able to clean
-		// up after itself.  Likewise, if the child process is blocked waiting
-		// for input, it will now detect EOF.
-		UnnamedPipeRef upr;
-		if (upr = in())
-		{
-			upr->close();
-		}
-		if (upr = out())
-		{
-			upr->close();
-		}
-		if (upr = err())
-		{
-			upr->close();
-		}
-		if (timedWaitPid(pid, pstatus, wait_close))
-		{
-			return m_processstatus;
-		}
-	}
-
-	if (wait_term > 0 && killWait(pid, pstatus, wait_term, SIGTERM, "SIGTERM"))
-	{
-		return m_processstatus;
-	}
-	if (!killWait(pid, pstatus, 5000, SIGKILL, "SIGKILL")) {
-		OW_THROW(
-			ExecErrorException, "PopenStreamsImpl::getExitStatus: Child process has not exited after sending it a SIGKILL."
-		);
-	}
-	return m_processstatus;
-}
-//////////////////////////////////////////////////////////////////////////////
-PopenStreamsImpl::~PopenStreamsImpl()
-{
-	try // can't let exceptions past.
-	{
-		// This will terminate the process.
-		getExitStatus();
-	}
-	catch (...)
-	{
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////
-PopenStreams::PopenStreams()
-	: m_impl(new PopenStreamsImpl)
-{
-}
-/////////////////////////////////////////////////////////////////////////////
-PopenStreams::~PopenStreams()
-{
-}
-/////////////////////////////////////////////////////////////////////////////
-UnnamedPipeRef PopenStreams::in() const
-{
-	return m_impl->in();
-}
-/////////////////////////////////////////////////////////////////////////////
-void PopenStreams::in(const UnnamedPipeRef& pipe)
-{
-	m_impl->in(pipe);
-}
-/////////////////////////////////////////////////////////////////////////////
-UnnamedPipeRef PopenStreams::out() const
-{
-	return m_impl->out();
-}
-/////////////////////////////////////////////////////////////////////////////
-void PopenStreams::out(const UnnamedPipeRef& pipe)
-{
-	m_impl->out(pipe);
-}
-/////////////////////////////////////////////////////////////////////////////
-UnnamedPipeRef PopenStreams::err() const
-{
-	return m_impl->err();
-}
-/////////////////////////////////////////////////////////////////////////////
-void PopenStreams::err(const UnnamedPipeRef& pipe)
-{
-	m_impl->err(pipe);
-}
-/////////////////////////////////////////////////////////////////////////////
-Array<UnnamedPipeRef> PopenStreams::extraPipes() const
-{
-	return m_impl->extraPipes();
-}
-/////////////////////////////////////////////////////////////////////////////
-void PopenStreams::setExtraPipes(const Array<UnnamedPipeRef>& pipes)
-{
-	m_impl->setExtraPipes(pipes);
-}
-/////////////////////////////////////////////////////////////////////////////
-pid_t PopenStreams::pid() const
-{
-	return m_impl->pid();
-}
-/////////////////////////////////////////////////////////////////////////////
-void PopenStreams::pid(pid_t newPid)
-{
-	m_impl->pid(newPid);
-}
-/////////////////////////////////////////////////////////////////////////////
-int PopenStreams::getExitStatus()
-{
-	return m_impl->getExitStatus();
-}
-/////////////////////////////////////////////////////////////////////////////
-int PopenStreams::getExitStatus(UInt32 wait0, UInt32 wait1, UInt32 wait2)
-{
-	return m_impl->getExitStatus(wait0, wait1, wait2);
-}
-/////////////////////////////////////////////////////////////////////////////
-void PopenStreams::setProcessStatus(int ps)
-{
-	m_impl->setProcessStatus(ps);
-}
-/////////////////////////////////////////////////////////////////////////////
-PopenStreams::PopenStreams(const PopenStreams& src)
-	: m_impl(src.m_impl)
-{
-}
-/////////////////////////////////////////////////////////////////////////////
-PopenStreams& PopenStreams::operator=(const PopenStreams& src)
-{
-	m_impl = src.m_impl;
-	return *this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-bool operator==(const PopenStreams& x, const PopenStreams& y)
-{
-	return x.m_impl == y.m_impl;
-}
 
 //////////////////////////////////////////////////////////////////////////////
 namespace Exec
 {
+::OW_NAMESPACE::GlobalPtr<ExecMockObject, NullFactory> g_execMockObject = OW_GLOBAL_PTR_INIT;
+
+namespace
+{
+
+class SystemPreExec : public PreExec
+{
+public:
+
+	SystemPreExec()
+	: PreExec(true)
+	{
+	}
+
+	/// @return true
+	//
+	virtual bool keepStd(int d) const
+	{
+		return true; // want them all unchanged
+	}
+	
+	/**
+	* Resets all signals to their default actions and sets to
+	* close-on-exec all descriptors except the standard descriptors.
+	*/
+	virtual void call(pipe_pointer_t const pparr[])
+	{
+		std::vector<bool> empty;
+		PreExec::resetSignals();
+		PreExec::closeDescriptorsOnExec(empty);
+	}
+};
+
+} // end anonymous namespace
 
 //////////////////////////////////////////////////////////////////////////////
-int 
-safeSystem(const Array<String>& command, const EnvVars& envVars)
+Process::Status
+system(const Array<String>& command, const char* const envp[], const Timeout& timeout)
 {
-	const char* const* envp = (envVars.size() > 0) ? envVars.getenvp() : 0;
-	return safeSystem(command, envp);
+	SystemPreExec spe;
+	ProcessRef proc = Exec::spawn(command[0], command, envp, spe);
+
+	proc->waitCloseTerm(Timeout::relative(0), timeout, Timeout::relative(0));
+	return proc->processStatus();
+
 }
 
-//////////////////////////////////////////////////////////////////////////////
-int
-safeSystem(const Array<String>& command, const char* const envp[])
+namespace // anonymous
 {
-	int status;
-	pid_t pid;
-	if (command.size() == 0)
+	long getMaxOpenFiles()
 	{
-		return 1;
-	}
-
-	// This has to be done before fork().  In a multi-threaded app, calling new after fork() can cause a deadlock.
-	AutoPtrVec<const char*> argv(new const char*[command.size() + 1]);
-	for (size_t i = 0; i < command.size(); i++)
-	{
-		argv[i] = command[i].c_str();
-	}
-	argv[command.size()] = 0;
-
-	pid = ::fork();
-	if (pid == -1)
-	{
-		return -1;
-	}
-	if (pid == 0)
-	{
-		try
+		long sysconfValue = sysconf(_SC_OPEN_MAX);
+		long maxOpen = sysconfValue;
+		rlimit rl;
+		rl.rlim_cur = rlim_t(0);
+		if( getrlimit(RLIMIT_NOFILE, &rl) != -1 )
 		{
-
-			// according to susv3:
-			//        This  volume  of  IEEE Std 1003.1-2001  specifies  that  signals set to
-			//        SIG_IGN remain set to SIG_IGN, and that  the  process  signal  mask  be
-			//        unchanged  across an exec. This is consistent with historical implemen-
-			//        tations, and it permits some useful functionality, such  as  the  nohup
-			//        command.  However,  it  should be noted that many existing applications
-			//        wrongly assume that they start with certain signals set to the  default
-			//        action  and/or  unblocked.  In  particular, applications written with a
-			//        simpler signal model that does not include blocking of signals, such as
-			//        the  one in the ISO C standard, may not behave properly if invoked with
-			//        some signals blocked. Therefore, it is best not to block or ignore sig-
-			//        nals  across execs without explicit reason to do so, and especially not
-			//        to block signals across execs of arbitrary (not  closely  co-operating)
-			//        programs.
-
-			// so we'll reset the signal mask and all signal handlers to SIG_DFL. We set them all
-			// just in case the current handlers may misbehave now that we've fork()ed.
-			sigset_t emptymask;
-			sigemptyset(&emptymask);
-			::sigprocmask(SIG_SETMASK, &emptymask, 0);
-
-			for (size_t sig = 1; sig <= NSIG; ++sig)
+			if( sysconfValue < 0 )
 			{
-				struct sigaction temp;
-				sigaction(sig, 0, &temp);
-				temp.sa_handler = SIG_DFL;
-				sigaction(sig, &temp, NULL);
-			}
-
-			// Close all file handle from parent process
-			rlimit rl;
-			int i = sysconf(_SC_OPEN_MAX);
-			if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
-			{
-				if ( i < 0 )
-				{
-					i = rl.rlim_max;
-				}
-				else
-				{
-					i = std::min<int>(rl.rlim_max, i);
-				}
-			}
-			while (i > 2)
-			{
-				// set it for close on exec
-				::fcntl(i, F_SETFD, FD_CLOEXEC);
-				i--;
-			}
-
-			int rval; 
-			if (envp)
-			{
-				rval = execve(argv[0], const_cast<char* const*>(argv.get()), const_cast<char* const*>(envp));
+				maxOpen = rl.rlim_cur;
 			}
 			else
 			{
-				rval = execv(argv[0], const_cast<char* const*>(argv.get()));
+				maxOpen = std::min<rlim_t>(rl.rlim_cur, sysconfValue);
 			}
-			cerr << Format( "Exec::safeSystem: execv failed for program "
-					"%1, rval is %2", argv[0], rval);
 		}
-		catch (...)
-		{
-			cerr << "something threw an exception after fork()!";
-		}
-		_exit(127);
+		// Check for a value of maxOpen that really is reasonable.
+		// This checks the maximum value to make sure it will fit in an int
+		// (required for close).
+		OW_ASSERT( (maxOpen > 2) && (maxOpen <= long(std::numeric_limits<int>::max())) );
+		return maxOpen;
 	}
-	do
+
+	unsigned const IN       = 0;
+	unsigned const OUT      = 1;
+	unsigned const ERR      = 2;
+	unsigned const EXEC_ERR = 3;
+	unsigned const NPIPE = 4;
+
+	void throw_child_error(Exec::PreExec::Error const & err, const String& process_path)
 	{
-		Thread::testCancel();
-		if (waitpid(pid, &status, 0) == -1)
+		Format msg("Exec::spawn(%1): child startup failed: %2", process_path, err.message);
+		if (err.error_num != 0)
 		{
-			if (errno != EINTR)
-			{
-				return -1;
-			}
+			OW_THROW_ERRNO_MSG1(
+				ExecErrorException,	msg.c_str(), err.error_num);
 		}
 		else
 		{
-			return WEXITSTATUS(status);
+			OW_THROW(ExecErrorException, msg.c_str());
 		}
-	} while (1);
-}
+	}
 
-//////////////////////////////////////////////////////////////////////////////
-PopenStreams
-safePopen(const Array<String>& command,
-		const String& initialInput)
-{
-	PopenStreams retval = safePopen(command);
-
-	if (initialInput != "")
+	void check(bool b, char const * message, bool use_errno = true)
 	{
-		if (retval.in()->write(initialInput.c_str(), initialInput.length()) == -1)
+		if (!b)
 		{
-			OW_THROW_ERRNO_MSG(IOException, "Exec::safePopen: Failed writing input to process");
+			Exec::PreExec::Error x;
+			SafeCString::strcpy_trunc(x.message, message);
+			x.error_num = use_errno ? errno : 0;
+			throw x;
 		}
 	}
 
-	return retval;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-PopenStreams 
-safePopen(const Array<String>& command, const EnvVars& envVars)
-{
-	const char* const* envp = (envVars.size() > 0) ? envVars.getenvp() : 0;
-	return safePopen(command, envp);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-PopenStreams
-safePopen(const Array<String>& command, const char* const envp[])
-{
-	// sent over the execErrorPipe if an exception is caught after fork()ing.
-	// Negative because errno values are positive. Maybe this is a bad assumption? 
-	// The worst that could happen is reporting an unknown exception instead of the real errno value.
-	const int UNKNOWN_EXCEPTION = -2000; 
-
-	if (command.size() == 0)
+	void parent_check(bool b, char const * msg)
 	{
-		OW_THROW(ExecErrorException, "Exec::safePopen: command is empty");
+		if (!b)
+		{
+			OW_THROW(ExecErrorException, msg);
+		}
 	}
-	
-	PopenStreams retval;
-	retval.in( UnnamedPipe::createUnnamedPipe() );
-	UnnamedPipeRef upipeOut = UnnamedPipe::createUnnamedPipe();
-	retval.out( upipeOut );
-	UnnamedPipeRef upipeErr = UnnamedPipe::createUnnamedPipe();
-	retval.err( upipeErr );
 
-	UnnamedPipeRef execErrorPipe = UnnamedPipe::createUnnamedPipe();
-
-	// This has to be done before fork().  In a multi-threaded app, calling new after fork() can cause a deadlock.
-	AutoPtrVec<const char*> argv(new const char*[command.size() + 1]);
-	for (size_t i = 0; i < command.size(); i++)
+	void close_on_exec(int descr, bool may_be_bad)
 	{
-		argv[i] = command[i].c_str();
+		int e = ::fcntl(descr, F_SETFD, FD_CLOEXEC);
+		check(e == 0 || may_be_bad && errno == EBADF, "fcntl");
 	}
-	argv[command.size()] = 0;
 
-	pid_t forkrv = ::fork();
-	if (forkrv == -1)
+	void init_child(
+		char const * exec_path, 
+		char const * const argv[], char const * const envp[],
+		Exec::PreExec & pre_exec, PosixUnnamedPipe * ppipe[NPIPE]
+	)
 	{
-		OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::safePopen: fork() failed");
-	}
-	if (forkrv == 0)
-	{
-		int execErrorFd = -1;
+		// This code must be careful not to allocate memory, as this can
+		// cause a deadlock on some platforms when there are multiple
+		// threads running at the time of the fork().
+
+		int exec_err_desc = -1;
+		Exec::PreExec::Error err;
+		err.error_num = 0;      // should be unnecessary, but just in case...
+		err.message[0] = '\0';  // should be unnecessary, but just in case...
 		try
 		{
+			int rc;
+			exec_err_desc = ppipe[EXEC_ERR]->getOutputHandle();
+			pre_exec.call(ppipe);
 
-			// child process
-			// according to susv3:
-			//        This  volume  of  IEEE Std 1003.1-2001  specifies  that  signals set to
-			//        SIG_IGN remain set to SIG_IGN, and that  the  process  signal  mask  be
-			//        unchanged  across an exec. This is consistent with historical implemen-
-			//        tations, and it permits some useful functionality, such  as  the  nohup
-			//        command.  However,  it  should be noted that many existing applications
-			//        wrongly assume that they start with certain signals set to the  default
-			//        action  and/or  unblocked.  In  particular, applications written with a
-			//        simpler signal model that does not include blocking of signals, such as
-			//        the  one in the ISO C standard, may not behave properly if invoked with
-			//        some signals blocked. Therefore, it is best not to block or ignore sig-
-			//        nals  across execs without explicit reason to do so, and especially not
-			//        to block signals across execs of arbitrary (not  closely  co-operating)
-			//        programs.
-	
-			// so we'll reset the signal mask and all signal handlers to SIG_DFL. We set them all
-			// just in case the current handlers may misbehave now that we've fork()ed.
-			sigset_t emptymask;
-			sigemptyset(&emptymask);
-			::sigprocmask(SIG_SETMASK, &emptymask, 0);
-	
-			for (size_t sig = 1; sig <= NSIG; ++sig)
-			{
-				struct sigaction temp;
-				sigaction(sig, 0, &temp);
-				temp.sa_handler = SIG_DFL;
-				sigaction(sig, &temp, NULL);
-			}
-	
-			// Close stdin, stdout, and stderr.
-			close(0);
-			close(1);
-			close(2);
-
-			// this should only fail because of programmer error.
-			UnnamedPipeRef foo1 = retval.in();
-			PosixUnnamedPipeRef in = foo1.cast_to<PosixUnnamedPipe>();
-	
-			UnnamedPipeRef foo2 = retval.out();
-			PosixUnnamedPipeRef out = foo2.cast_to<PosixUnnamedPipe>();
-	
-			UnnamedPipeRef foo3 = retval.err();
-			PosixUnnamedPipeRef err = foo3.cast_to<PosixUnnamedPipe>();
-
-			
-			OW_ASSERT(in);
-			OW_ASSERT(out);
-			OW_ASSERT(err);
-			// connect stdin, stdout, and stderr to the return pipes.
-			int rv = dup2(in->getInputHandle(), 0);
-			OW_ASSERT(rv != -1);
-			rv = dup2(out->getOutputHandle(), 1);
-			OW_ASSERT(rv != -1);
-			rv = dup2(err->getOutputHandle(), 2);
-			OW_ASSERT(rv != -1);
-
-			// set up the execError fd
-			PosixUnnamedPipeRef execError = execErrorPipe.cast_to<PosixUnnamedPipe>();
-			OW_ASSERT(execError);
-			execErrorFd = execError->getOutputHandle();
-
-
-			// Close all other file handle from parent process
-			rlimit rl;
-			int i = sysconf(_SC_OPEN_MAX);
-			if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
-			{
-				if ( i < 0 )
-				{
-					i = rl.rlim_max;
-				}
-				else
-				{
-					i = std::min<int>(rl.rlim_max, i);
-				}
-			}
-			while (i > 2)
-			{
-				// set it for close on exec
-				::fcntl(i, F_SETFD, FD_CLOEXEC);
-				i--;
-			}
-	
 			int rval = 0;
+			char * const * cc_argv = const_cast<char * const *>(argv);
+			char * const * cc_envp = const_cast<char * const *>(envp);
 			if (envp)
 			{
-				rval = execve(argv[0], const_cast<char* const*>(argv.get()), const_cast<char* const*>(envp));
+				check(::execve(exec_path, cc_argv, cc_envp) != -1, "execve");
 			}
 			else
 			{
-				rval = execv(argv[0], const_cast<char* const*>(argv.get()));
+				check(::execv(exec_path, cc_argv) != -1, "execv");
 			}
-			// send errno over the pipe
-			int lerrno = errno;
-			write(execErrorFd, &lerrno, sizeof(lerrno));
+		}
+		catch (Exec::PreExec::Error & e)
+		{
+			err = e;
+		}
+		catch (std::exception & e)
+		{
+			SafeCString::strcpy_trunc(err.message, e.what());
+			err.error_num = 0;
+		}
+		catch (Exec::PreExec::DontCatch & e)
+		{
+			throw;
 		}
 		catch (...)
 		{
-			int errorVal = UNKNOWN_EXCEPTION;
-			write(execErrorFd, &errorVal, sizeof(errorVal));
+			SafeCString::strcpy_trunc(err.message, "unknown exception");
+			err.error_num = 0;
 		}
-		_exit(127);
+		::write(exec_err_desc, &err, sizeof(err));
+		::_exit(127);
 	}
 
-	// parent process
-	retval.pid (forkrv);
-
-	// this should only fail because of programmer error.
-	UnnamedPipeRef foo1 = retval.in();
-	PosixUnnamedPipeRef in = foo1.cast_to<PosixUnnamedPipe>();
-	UnnamedPipeRef foo2 = retval.out();	
-	PosixUnnamedPipeRef out = foo2.cast_to<PosixUnnamedPipe>();
-	UnnamedPipeRef foo3 = retval.err();	
-	PosixUnnamedPipeRef err = foo3.cast_to<PosixUnnamedPipe>();
-	OW_ASSERT(in);
-	OW_ASSERT(out);
-	OW_ASSERT(err);
-	// prevent the parent from using the child's end of the pipes.
-	in->closeInputHandle();
-	out->closeOutputHandle();
-	err->closeOutputHandle();
-	
-	PosixUnnamedPipeRef execErrorPosixPipe = execErrorPipe.cast_to<PosixUnnamedPipe>();
-	OW_ASSERT(execErrorPosixPipe);
-	// we need to close the parent's output side so that when the child's output side is closed, it can be detected.
-	execErrorPosixPipe->closeOutputHandle();
-
-	const int SECONDS_TO_WAIT_FOR_CHILD_TO_EXEC = 10; // 10 seconds should be plenty for the child to go from fork() to execv()
-	execErrorPipe->setReadTimeout(SECONDS_TO_WAIT_FOR_CHILD_TO_EXEC);
-
-	int childErrorCode = 0;
-	int bytesRead = execErrorPipe->read(&childErrorCode, sizeof(childErrorCode));
-	// 0 bytes means execv() happened successfully.
-	if (bytesRead == ETIMEDOUT) // broken interface... grumble, grumble...
+	void close_child_ends(PosixUnnamedPipe * ppipe[NPIPE])
 	{
-		// for some reason the child never ran exec(). Must've deadlocked or the system is *really* loaded down.
-		// Kill it forcefully.
-		kill(forkrv, SIGKILL);
-		OW_THROW(ExecErrorException, "Exec::safePopen: timed out waiting for child process to exec()");
+		// prevent the parent from using the child's end of the pipes.
+		if (ppipe[IN])
+		{
+			ppipe[IN]->closeInputHandle();
+		}
+		if (ppipe[OUT])
+		{
+			ppipe[OUT]->closeOutputHandle();
+		}
+		if (ppipe[ERR])
+		{
+			ppipe[ERR]->closeOutputHandle();
+		}
+		ppipe[EXEC_ERR]->closeOutputHandle();
 	}
-	if (bytesRead > 0)
+
+	void handle_child_error(
+		int rc, Exec::PreExec::Error const & ce, Process & proc, const String& process_path)
 	{
-		// exec failed
-		if (childErrorCode == UNKNOWN_EXCEPTION)
+		if (rc < 0) // read of error status from child failed
 		{
-			OW_THROW(ExecErrorException, "Exec::safePopen: child process caught an exception before reaching exec()");
+			int errnum = errno;
+			// For some reason child initialization failed; kill it.
+			proc.waitCloseTerm(Timeout::relative(0.0), Timeout::relative(0.0), Timeout::relative(0.0));
+			if (errnum == ETIMEDOUT)
+			{
+				OW_THROW(ExecErrorException,
+					Format("Exec::spawn(%1): timed out waiting for child to exec()",process_path).c_str());
+			}
+			OW_THROW_ERRNO_MSG1(ExecErrorException,
+				Format("Exec::spawn(%1): error reading init status from child",process_path).c_str(), errnum);
 		}
-		else
+		if (rc > 0) // child sent an initialization error message
 		{
-			errno = childErrorCode;
-			OW_THROW_ERRNO_MSG(ExecErrorException, Format("Exec::safePopen: child process failed running exec() process = %1", command[0]));
+			throw_child_error(ce, process_path);
 		}
+		// If rc == 0, initialization succeeded
 	}
+
+} // end anonymous namespace
+
+ProcessRef spawn(
+	char const * exec_path,
+	char const * const argv[], char const * const envp[],
+	PreExec & pre_exec
+)
+{
+	// It's important that this code be exception-safe (proper release
+	// of resources when exception thrown), as at least one caller
+	// (the monitor code) relies on being able to throw a DontCatch-derived
+	// exception from pre_exec.call() in the child process and have
+	// it propagate out of the spawn call.
+	//
+	parent_check(exec_path, "Exec::spawn: null exec_path");
+	char const * default_argv[2] = { exec_path, 0 };
+	if (!argv || !*argv)
+	{
+		argv = default_argv;
+	}
+
+	// Check this here so that any exceptions or core files caused by it can
+	// be traced to a real problem instead of the child processes just
+	// failing for an unreportable reason.
+	getMaxOpenFiles();
+
+	UnnamedPipeRef upipe[NPIPE];
+	PosixUnnamedPipe * ppipe[NPIPE];
+	for (unsigned i = 0; i < NPIPE; ++i)
+	{
+		if (i == EXEC_ERR || pre_exec.keepStd(i))
+		{
+			upipe[i] = UnnamedPipe::createUnnamedPipe();
+		}
+		ppipe[i] = dynamic_cast<PosixUnnamedPipe *>(upipe[i].getPtr());
+	}
+
+	::pid_t child_pid = ::fork();
+	if (child_pid == 0) // child process
+	{
+		init_child(exec_path, argv, envp, pre_exec, ppipe); // never returns
+	}
+	parent_check(child_pid >= 0, Format("Exec::spawn(%1): fork() failed", exec_path).c_str());
+	close_child_ends(ppipe);
+
+	const Timeout SECONDS_TO_WAIT_FOR_CHILD_TO_EXEC = Timeout::relative(10);
+	// 10 seconds should be plenty for the child to go from fork() to execv()
+	upipe[EXEC_ERR]->setReadTimeout(SECONDS_TO_WAIT_FOR_CHILD_TO_EXEC);
+
+	ProcessRef retval(new Process(upipe[0], upipe[1], upipe[2], child_pid));
+
+	PreExec::Error child_error;
+	int nread = upipe[EXEC_ERR]->read(&child_error, sizeof(child_error));
+	handle_child_error(nread, child_error, *retval, exec_path);
 
 	return retval;
+}
+
+void PreExec::resetSignals()
+{
+	/*
+	according to susv3:
+	
+	This  volume  of  IEEE Std 1003.1-2001  specifies  that signals set to
+	SIG_IGN remain set to SIG_IGN, and that  the  process  signal  mask be
+	unchanged across an exec. This is consistent with historical implemen-
+	tations, and it permits some useful functionality, such  as  the nohup
+	command.  However,  it should be noted that many existing applications
+	wrongly assume that they start with certain signals set to the default
+	action  and/or  unblocked.  In particular, applications written with a
+	simpler signal model that does not include blocking of signals, such as
+	the one in the ISO C standard, may not behave properly if invoked with
+	some signals blocked. Therefore, it is best not to block or ignore sig-
+	nals across execs without explicit reason to do so, and especially not
+	to block signals across execs of arbitrary (not  closely co-operating)
+	programs.
+	
+	so we'll reset the signal mask and all signal handlers to SIG_DFL.
+	We set them all just in case the current handlers may misbehave now
+	that we've fork()ed.
+	*/
+	int rc;
+	::sigset_t emptymask;
+	check(::sigemptyset(&emptymask) == 0, "sigemptyset");
+	check(::sigprocmask(SIG_SETMASK, &emptymask, 0) == 0, "sigprocmask");
+
+	for (std::size_t sig = 1; sig <= NSIG; ++sig)
+	{
+		if (sig == SIGKILL || sig == SIGSTOP)
+		{
+			continue;
+		}
+		struct sigaction temp;
+		int e = ::sigaction(sig, 0, &temp);
+		check(e == 0 || errno == EINVAL, "sigaction [1]");
+		if (e == 0 && temp.sa_handler != SIG_DFL) // valid signal
+		{
+			temp.sa_handler = SIG_DFL;
+			// note that we don't check the return value because there are signals 
+			// (e.g. SIGGFAULT on HP-UX), which are gettable, but not settable.
+			::sigaction(sig, &temp, 0);
+		}
+	}
+}
+
+void PreExec::closeDescriptorsOnExec(std::vector<bool> const & keep)
+{
+	long numd = m_max_descriptors ? m_max_descriptors : getMaxOpenFiles();
+	for (int d = 3; d < int(numd); ++d) // Don't close standard descriptors
+	{
+		if (size_t(d) >= keep.size() || !keep[d])
+		{
+			close_on_exec(d, true);
+		}
+	}
+}
+
+void PreExec::setupStandardDescriptors(pipe_pointer_t const ppipe[])
+{
+	int nulld = 0;
+	if (!(ppipe[0] && ppipe[1] && ppipe[2]))
+	{
+		nulld = ::open(_PATH_DEVNULL, O_RDWR);
+		check(nulld >= 0, "open");
+		close_on_exec(nulld, false);
+	}
+	for (unsigned d = 0; d < 3; ++d)
+	{
+		PosixUnnamedPipe * p = ppipe[d];
+		int ddup =
+			!p ? nulld : d==IN ? p->getInputHandle() : p->getOutputHandle();
+		check(::dup2(ddup, d) != -1, "dup2");
+	}
+}
+
+void PreExec::closePipesOnExec(pipe_pointer_t const ppipe[])
+{
+	for (unsigned d = 0; d < NPIPE; ++d)
+	{
+		PosixUnnamedPipe * p = ppipe[d];
+		if (p)
+		{
+			close_on_exec(p->getInputHandle(), false);
+			close_on_exec(p->getOutputHandle(), false);
+		}
+	}
+}
+
+PreExec::PreExec(bool precompute_max_descriptors)
+: m_max_descriptors(precompute_max_descriptors ? getMaxOpenFiles() : 0)
+{
+}
+
+PreExec::~PreExec()
+{
+}
+
+PreExec::DontCatch::~DontCatch()
+{
+}
+
+StandardPreExec::StandardPreExec()
+: PreExec(true)
+{
+}
+
+bool StandardPreExec::keepStd(int) const
+{
+	return true;
+}
+
+void StandardPreExec::call(pipe_pointer_t const pparr[])
+{
+	std::vector<bool> empty;
+	PreExec::resetSignals();
+	PreExec::setupStandardDescriptors(pparr);
+	PreExec::closeDescriptorsOnExec(empty);
+}
+
+ProcessRef spawn(
+	char const * const argv[], char const * const envp[]
+)
+{
+	StandardPreExec pre_exec;
+	return spawn(argv[0], argv, envp, pre_exec);
 }
 
 namespace
@@ -801,7 +514,7 @@ public:
 	{
 	}
 private:
-	virtual void doHandleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex, Array<char>& inputBuffer)
+	virtual void doHandleData(const char* data, size_t dataLen, EOutputSource outputSource, const ProcessRef& theProc, size_t streamIndex, Array<char>& inputBuffer)
 	{
 		if (m_outputLimit >= 0 && m_output.length() + dataLen > static_cast<size_t>(m_outputLimit))
 		{
@@ -829,16 +542,16 @@ public:
 	{
 	}
 private:
-	virtual void doGetData(Array<char>& inputBuffer, PopenStreams& theStream, size_t streamIndex)
+	virtual void doGetData(Array<char>& inputBuffer, const ProcessRef& theProc, size_t streamIndex)
 	{
 		if (m_s.length() > 0)
 		{
 			inputBuffer.insert(inputBuffer.end(), m_s.c_str(), m_s.c_str() + m_s.length());
 			m_s.erase();
 		}
-		else if (theStream.in()->isOpen())
+		else if (theProc->in()->isOpen())
 		{
-			theStream.in()->close();
+			theProc->in()->close();
 		}
 	}
 	String m_s;
@@ -847,60 +560,54 @@ private:
 }// end anonymous namespace
 
 /////////////////////////////////////////////////////////////////////////////
-void
-executeProcessAndGatherOutput(const Array<String>& command,
-	String& output, int& processStatus,
-	int timeoutSecs, int outputLimit, const String& input)
+Process::Status executeProcessAndGatherOutput(
+	char const * const command[],
+	String& output,
+	char const * const envVars[],
+	const Timeout& timeout,
+	int outputLimit,
+	char const * input)
 {
-	executeProcessAndGatherOutput(command, output, processStatus, EnvVars(),
-		timeoutSecs, outputLimit, input);
+	if (g_execMockObject.get())
+	{
+		return g_execMockObject.get()->executeProcessAndGatherOutput(command, output, envVars, timeout, outputLimit, input);
+	}
+	return feedProcessAndGatherOutput(spawn(command, envVars),
+		output, timeout, outputLimit, input);
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void executeProcessAndGatherOutput(
-	const Array<String>& command,
-	String& output, 
-	int& processStatus, 
-	const EnvVars& envVars,
-	int timeoutSecs, 
+Process::Status feedProcessAndGatherOutput(
+	ProcessRef const & proc,
+	String & output,
+	Timeout const & timeout, 
 	int outputLimit, 
-	const String& input)
+	String const & input)
 {
-	processStatus = -1;
-	Array<PopenStreams> streams;
-	streams.push_back(safePopen(command, envVars));
-	Array<ProcessStatus> processStatuses(1);
+	Array<ProcessRef> procarr(1, proc);
 	SingleStringInputCallback singleStringInputCallback(input);
 
 	StringOutputGatherer gatherer(output, outputLimit);
-	processInputOutput(gatherer, streams, processStatuses, 
-		singleStringInputCallback, timeoutSecs);
-
-	if (processStatuses[0].hasExited())
-	{
-		processStatus = processStatuses[0].getStatus();
-	}
-	else
-	{
-		processStatus = streams[0].getExitStatus();
-	}
+	processInputOutput(gatherer, procarr, singleStringInputCallback, timeout);
+	proc->waitCloseTerm();
+	return proc->processStatus();
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void
-gatherOutput(String& output, PopenStreams& stream, int& processStatus, int timeoutSecs, int outputLimit)
+gatherOutput(String& output, const ProcessRef& proc, int timeoutSecs, int outputLimit)
 {
-	Array<PopenStreams> streams;
-	streams.push_back(stream);
-	Array<ProcessStatus> processStatuses(1);
+	gatherOutput(output, proc, Timeout::relativeWithReset(timeoutSecs), outputLimit);
+}
+/////////////////////////////////////////////////////////////////////////////
+void
+gatherOutput(String& output, const ProcessRef& proc, const Timeout& timeout, int outputLimit)
+{
+	Array<ProcessRef> procs(1, proc);
 
 	StringOutputGatherer gatherer(output, outputLimit);
 	SingleStringInputCallback singleStringInputCallback = SingleStringInputCallback(String());
-	processInputOutput(gatherer, streams, processStatuses, singleStringInputCallback, timeoutSecs);
-	if (processStatuses[0].hasExited())
-	{
-		processStatus = processStatuses[0].getStatus();
-	}
+	processInputOutput(gatherer, procs, singleStringInputCallback, timeout);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -911,9 +618,9 @@ OutputCallback::~OutputCallback()
 
 /////////////////////////////////////////////////////////////////////////////
 void
-OutputCallback::handleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex, Array<char>& inputBuffer)
+OutputCallback::handleData(const char* data, size_t dataLen, EOutputSource outputSource, const ProcessRef& theProc, size_t streamIndex, Array<char>& inputBuffer)
 {
-	doHandleData(data, dataLen, outputSource, theStream, streamIndex, inputBuffer);
+	doHandleData(data, dataLen, outputSource, theProc, streamIndex, inputBuffer);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -923,9 +630,9 @@ InputCallback::~InputCallback()
 
 /////////////////////////////////////////////////////////////////////////////
 void
-InputCallback::getData(Array<char>& inputBuffer, PopenStreams& theStream, size_t streamIndex)
+InputCallback::getData(Array<char>& inputBuffer, const ProcessRef& theProc, size_t streamIndex)
 {
-	doGetData(inputBuffer, theStream, streamIndex);
+	doGetData(inputBuffer, theProc, streamIndex);
 }
 
 namespace
@@ -947,97 +654,72 @@ namespace
 	};
 
 }
+
 /////////////////////////////////////////////////////////////////////////////
 void
-processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<ProcessStatus>& processStatuses, InputCallback& input, int timeoutsecs)
+processInputOutput(OutputCallback& output, Array<ProcessRef>& procs, InputCallback& input, const Timeout& timeout)
 {
-	processStatuses.clear();
-	processStatuses.resize(streams.size());
+	TimeoutTimer timer(timeout);
 
-	Array<ProcessOutputState> processStates(streams.size());
-	int numOpenPipes(streams.size() * 2); // count of stdout & stderr. Ignore stdin for purposes of algorithm termination.
-
-	DateTime curTime;
-	curTime.setToCurrent();
-	DateTime timeoutEnd(curTime);
-	timeoutEnd += timeoutsecs;
+	Array<ProcessOutputState> processStates(procs.size());
+	int numOpenPipes(procs.size() * 2); // count of stdout & stderr. Ignore stdin for purposes of algorithm termination.
 
 	Array<Array<char> > inputs(processStates.size());
 	for (size_t i = 0; i < processStates.size(); ++i)
 	{
-		input.getData(inputs[i], streams[i], i);
+		input.getData(inputs[i], procs[i], i);
 		processStates[i].availableDataLen = inputs[i].size();
-		if (!streams[i].out()->isOpen())
+		if (!procs[i]->out()->isOpen())
 		{
 			processStates[i].outIsOpen = false;
 		}
-		if (!streams[i].err()->isOpen())
+		if (!procs[i]->err()->isOpen())
 		{
 			processStates[i].errIsOpen = false;
 		}
-		if (!streams[i].in()->isOpen())
+		if (!procs[i]->in()->isOpen())
 		{
 			processStates[i].inIsOpen = false;
 		}
 
 	}
 
+	timer.start();
+
 	while (numOpenPipes > 0)
 	{
 		Select::SelectObjectArray selObjs; 
 		std::map<int, int> inputIndexProcessIndex;
 		std::map<int, int> outputIndexProcessIndex;
-		for (size_t i = 0; i < streams.size(); ++i)
+		for (size_t i = 0; i < procs.size(); ++i)
 		{
 			if (processStates[i].outIsOpen)
 			{
-				Select::SelectObject selObj(streams[i].out()->getSelectObj()); 
+				Select::SelectObject selObj(procs[i]->out()->getReadSelectObj()); 
 				selObj.waitForRead = true; 
 				selObjs.push_back(selObj); 
 				inputIndexProcessIndex[selObjs.size() - 1] = i;
 			}
 			if (processStates[i].errIsOpen)
 			{
-				Select::SelectObject selObj(streams[i].err()->getSelectObj()); 
+				Select::SelectObject selObj(procs[i]->err()->getReadSelectObj()); 
 				selObj.waitForRead = true; 
 				selObjs.push_back(selObj); 
 				inputIndexProcessIndex[selObjs.size() - 1] = i;
 			}
 			if (processStates[i].inIsOpen && processStates[i].availableDataLen > 0)
 			{
-				Select::SelectObject selObj(streams[i].in()->getWriteSelectObj()); 
+				Select::SelectObject selObj(procs[i]->in()->getWriteSelectObj()); 
 				selObj.waitForWrite = true; 
 				selObjs.push_back(selObj); 
 				outputIndexProcessIndex[selObjs.size() - 1] = i;
 			}
 
-			// check if the child has exited - the pid gets set to -1 once it's exited.
-			if (streams[i].pid() != -1)
-			{
-				pid_t waitpidrv;
-				int processStatus(-1);
-				waitpidrv = noIntrWaitPid(streams[i].pid(), &processStatus, WNOHANG);
-				if (waitpidrv == -1)
-				{
-					streams[i].pid(-1);
-					OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::gatherOutput: waitpid() failed");
-				}
-				else if (waitpidrv != 0)
-				{
-					streams[i].pid(-1);
-					streams[i].setProcessStatus(processStatus);
-					processStatuses[i] = ProcessStatus(processStatus);
-				}
-			}
 		}
 
-		const int mstimeout = 100; // use 1/10 of a second
-		int selectrval = Select::selectRW(selObjs, mstimeout);
+		int selectrval = Select::selectRW(selObjs, timer.asRelativeTimeout(0.1));
 		switch (selectrval)
 		{
-			case Select::SELECT_INTERRUPTED:
-				// if we got interrupted, just try again
-				break;
 			case Select::SELECT_ERROR:
 			{
 				OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::gatherOutput: error selecting on stdout and stderr");
@@ -1047,32 +729,32 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 			{
 				// Check all processes and see if they've exited but the pipes are still open. If so, close the pipes,
 				// since there's nothing to read from them.
-				for (size_t i = 0; i < streams.size(); ++i)
+				for (size_t i = 0; i < procs.size(); ++i)
 				{
-					if (streams[i].pid() == -1)
+					if (procs[i]->processStatus().terminated())
 					{
 						if (processStates[i].inIsOpen)
 						{
 							processStates[i].inIsOpen = false;
-							streams[i].in()->close();
+							procs[i]->in()->close();
 						}
 						if (processStates[i].outIsOpen)
 						{
 							processStates[i].outIsOpen = false;
-							streams[i].out()->close();
+							procs[i]->out()->close();
 							--numOpenPipes;
 						}
 						if (processStates[i].errIsOpen)
 						{
 							processStates[i].errIsOpen = false;
-							streams[i].err()->close();
+							procs[i]->err()->close();
 							--numOpenPipes;
 						}
 					}
 				}
 
-				curTime.setToCurrent();
-				if (timeoutsecs >= 0 && curTime > timeoutEnd)
+				timer.loop();
+				if (timer.expired())
 				{
 					OW_THROW(ExecTimeoutException, "Exec::gatherOutput: timedout");
 				}
@@ -1081,10 +763,9 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 			default:
 			{
 				int availableToFind = selectrval;
+				
 				// reset the timeout counter
-				curTime.setToCurrent();
-				timeoutEnd = curTime;
-				timeoutEnd += timeoutsecs;
+				timer.resetOnLoop();
 
 				for (size_t i = 0; i < selObjs.size() && availableToFind > 0; ++i)
 				{
@@ -1100,17 +781,17 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 					UnnamedPipeRef readstream;
 					if (processStates[streamIndex].outIsOpen)
 					{
-						if (streams[streamIndex].out()->getSelectObj() == selObjs[i].s)
+						if (procs[streamIndex]->out()->getReadSelectObj() == selObjs[i].s)
 						{
-							readstream = streams[streamIndex].out();
+							readstream = procs[streamIndex]->out();
 						}
 					}
 
 					if (!readstream && processStates[streamIndex].errIsOpen)
 					{
-						if (streams[streamIndex].err()->getSelectObj() == selObjs[i].s)
+						if (procs[streamIndex]->err()->getReadSelectObj() == selObjs[i].s)
 						{
-							readstream = streams[streamIndex].err();
+							readstream = procs[streamIndex]->err();
 						}
 					}
 
@@ -1123,15 +804,15 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 					int readrc = readstream->read(buff, sizeof(buff) - 1);
 					if (readrc == 0)
 					{
-						if (readstream == streams[streamIndex].out())
+						if (readstream == procs[streamIndex]->out())
 						{
 							processStates[streamIndex].outIsOpen = false;
-							streams[streamIndex].out()->close();
+							procs[streamIndex]->out()->close();
 						}
 						else
 						{
 							processStates[streamIndex].errIsOpen = false;
-							streams[streamIndex].err()->close();
+							procs[streamIndex]->err()->close();
 						}
 						--numOpenPipes;
 					}
@@ -1142,7 +823,7 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 					else
 					{
 						buff[readrc] = '\0';
-						output.handleData(buff, readrc, readstream == streams[streamIndex].out() ? E_STDOUT : E_STDERR, streams[streamIndex],
+						output.handleData(buff, readrc, readstream == procs[streamIndex]->out() ? E_STDOUT : E_STDERR, procs[streamIndex],
 							streamIndex, inputs[streamIndex]);
 					}
 				}
@@ -1162,7 +843,7 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 					UnnamedPipeRef writestream;
 					if (processStates[streamIndex].inIsOpen)
 					{
-						writestream = streams[streamIndex].in();
+						writestream = procs[streamIndex]->in();
 					}
 
 					if (!writestream)
@@ -1175,7 +856,7 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 					if (writerc == 0)
 					{
 						processStates[streamIndex].inIsOpen = false;
-						streams[streamIndex].in()->close();
+						procs[streamIndex]->in()->close();
 					}
 					else if (writerc == -1)
 					{
@@ -1184,7 +865,7 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 					else
 					{
 						inputs[streamIndex].erase(inputs[streamIndex].begin(), inputs[streamIndex].begin() + writerc);
-						input.getData(inputs[streamIndex], streams[streamIndex], streamIndex);
+						input.getData(inputs[streamIndex], procs[streamIndex], streamIndex);
 						processStates[streamIndex].availableDataLen = inputs[streamIndex].size();
 					}
 				}
@@ -1194,7 +875,19 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 	}
 }
 
+void processInputOutput(const String& input, String& output, const ProcessRef& process, 
+	const Timeout& timeout, int outputLimit)
+{
+	Array<ProcessRef> procs;
+	procs.push_back(process);
+
+	StringOutputGatherer gatherer(output, outputLimit);
+	SingleStringInputCallback singleStringInputCallback = SingleStringInputCallback(input);
+	processInputOutput(gatherer, procs, singleStringInputCallback, timeout);
+}
+
+
 } // end namespace Exec
-#endif
+
 } // end namespace OW_NAMESPACE
 

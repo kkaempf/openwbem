@@ -49,30 +49,11 @@ namespace OW_NAMESPACE
 class OW_COMMON_API AppenderLogger : public Logger
 {
 public:
-	AppenderLogger(const String& defaultComponent, ELogLevel level, const LogAppenderRef& appender);
+	AppenderLogger(const String& defaultComponent, const LogAppenderRef& appender);
 	AppenderLogger(const String& defaultComponent, const Array<LogAppenderRef>& appenders);
+	AppenderLogger(const String& defaultComponent, ELogLevel logLevel, const LogAppenderRef& appender);
+	AppenderLogger(const String& defaultComponent, ELogLevel logLevel, const Array<LogAppenderRef>& appenders);
 	virtual ~AppenderLogger();
-	void addLogAppender(const LogAppenderRef& appender);
-
-private:
-	virtual void doProcessLogMessage(const LogMessage& message) const;
-	bool doComponentAndCategoryAreEnabled(const String& component, const String& category) const;
-	bool doCategoryIsEnabled(const String& category) const;
-	LoggerRef doClone() const;
-
-	static ELogLevel getLevel(const Array<LogAppenderRef>& appenders);
-
-private:
-#ifdef OW_WIN32
-#pragma warning (push)
-#pragma warning (disable: 4251)
-#endif
-
-	Array<LogAppenderRef> m_appenders;
-
-#ifdef OW_WIN32
-#pragma warning (pop)
-#endif
 };
 
 } // end namespace OW_NAMESPACE

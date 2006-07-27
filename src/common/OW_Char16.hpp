@@ -40,6 +40,7 @@
 #include "OW_Types.hpp"
 #include "OW_Bool.hpp"
 #include "OW_CommonFwd.hpp"
+#include "OW_SafeBool.hpp"
 #include <iosfwd>
 
 namespace OW_NAMESPACE
@@ -243,12 +244,9 @@ public:
 		m_value /= arg.m_value;
 		return *this;
 	}
-	
-	typedef UInt16 Char16::*safe_bool;
-	operator safe_bool () const
-		{  return m_value ? &Char16::m_value : 0; }
-	bool operator!() const
-		{  return !m_value; }
+
+	OW_SAFE_BOOL_IMPL(Char16, UInt16, Char16::m_value, m_value)
+
 	/**
 	 * Deprecated in favor of toString()
 	 */
@@ -261,12 +259,12 @@ public:
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
-	void writeObject(std::ostream& ostrm) const;
+	void writeObject(std::streambuf & ostrm) const;
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
-	void readObject(std::istream& istrm);
+	void readObject(std::streambuf & istrm);
 private:
 	UInt16 m_value;
 };

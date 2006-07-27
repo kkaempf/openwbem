@@ -151,6 +151,7 @@ typedef int Select_t;
 
 #ifdef OW_WIN32
 typedef HANDLE FileHandle;
+typedef HANDLE Descriptor;
 #define OW_INVALID_FILEHANDLE INVALID_HANDLE_VALUE
 typedef int UserId;
 typedef int uid_t;
@@ -159,6 +160,7 @@ typedef DWORD ProcId;
 typedef struct {} siginfo_t;
 #else
 typedef int FileHandle;
+typedef int Descriptor;
 #define OW_INVALID_FILEHANDLE -1
 typedef uid_t UserId;
 typedef pid_t ProcId;

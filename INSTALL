@@ -115,9 +115,9 @@ CONTENTS
    I prefer to do the above process slightly differently:
    
       cd /[root directory of the OpenWBEM source tree]
-      mkdir build
+      mkdir owbuild
       ./cvsbootstrap.sh
-      cd build
+      cd owbuild
       ../configure
       make
       make install

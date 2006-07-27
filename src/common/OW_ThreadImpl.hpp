@@ -38,6 +38,7 @@
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_ThreadTypes.hpp"
+#include "OW_Timeout.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -153,20 +154,11 @@ namespace ThreadImpl
 	 */
 	OW_COMMON_API void sleep(UInt32 milliSeconds);
 	/**
-	 * Deprecated because no code should need to use this, and if some does it should be rewritten to use the other thread primitives.
+	 * Suspend execution of the current thread until the given number
+	 * of seconds have elapsed.
+	 * @param seconds	The number of seconds to suspend execution for.
 	 */
-	inline OW_DEPRECATED void memoryBarrier()
-	{
-		// DEC/COMPAQ/HP Alpha
-		#if defined(__alpha)
-		__asm__ __volatile__("mb");
-		#endif
-		
-		// Intel Itanium
-		#if defined(__ia64__) || defined(__ia64)
-		__asm__ __volatile__("mf");
-		#endif
-	}
+	OW_COMMON_API void sleep(const Timeout& timeout);
 	/**
 	 * Test if this thread has been cancelled.  If so, a 
 	 * ThreadCancelledException will be thrown.  DO NOT catch this exception.

@@ -1,20 +1,20 @@
 AC_PREREQ([2.57])
-AC_INIT(OpenWBEM, 3.2.1, openwbem-public@lists.sourceforge.net)
+AC_INIT(OpenWBEM, 4.0.1, openwbem-public@lists.sourceforge.net)
 dnl When we implement --help and --version for all installed binaries, use the std-options option
 dnl AM_INIT_AUTOMAKE([foreign dist-bzip2 std-options 1.6.3])
 
 dnl We are a "foreign" type distribution (i.e. don't require all the standard GNU files)
 dnl  And we want a dist-bzip2 rule to be able to create .tar.bz2 dist files.
-dnl  And we require automake >= 1.6.3
-AM_INIT_AUTOMAKE([foreign dist-bzip2 1.6.3])
+dnl  And we require automake >= 1.9 (because of the tar-ustar option)
+AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar 1.9])
 AC_CONFIG_SRCDIR(Makefile.am)
 AM_CONFIG_HEADER(config.h)
 
-OPENWBEM_MAJOR_VERSION=3
-OPENWBEM_MINOR_VERSION=2
+OPENWBEM_MAJOR_VERSION=4
+OPENWBEM_MINOR_VERSION=0
 OPENWBEM_MICRO_VERSION=1
 dnl This gets incremented every release that a header has changed.
-OPENWBEM_LIBRARY_VERSION=4
+OPENWBEM_LIBRARY_VERSION=6
 
 OPENWBEM_VERSION=$OPENWBEM_MAJOR_VERSION.$OPENWBEM_MINOR_VERSION.$OPENWBEM_MICRO_VERSION
 AC_SUBST(OPENWBEM_MAJOR_VERSION)
@@ -63,40 +63,57 @@ AC_DEFINE_UNQUOTED(TRUE_PATHNAME, "$TRUE_PATHNAME", [Where true is.])
 AC_PATH_PROG(FALSE_PATHNAME, false, [Error, false not found.])
 AC_DEFINE_UNQUOTED(FALSE_PATHNAME, "$FALSE_PATHNAME", [Where false is.])
 
+dnl Check to see if we have Perl development stuff
 dnl This needs to be before we set any CFLAGS since setting DEBUG screws up perl.h
 HAVE_PERL=no
+#PGAC_CHECK_PERL_CONFIGS([archlibexp,privlibexp,useshrplib])
+PGAC_CHECK_PERL_CONFIG(archlibexp)
+PGAC_CHECK_PERL_CONFIG(privlibexp)
+PGAC_CHECK_PERL_CONFIG(useshrplib)
+PGAC_CHECK_PERL_EMBED_CCFLAGS
+PGAC_CHECK_PERL_EMBED_LDFLAGS
+saved_LDFLAGS="$LDFLAGS"
+saved_CFLAGS="$CFLAGS"
+CFLAGS="$CFLAGS $perl_embed_ccflags"
+LDFLAGS="$LDFLAGS $perl_embed_ldflags"
+# Basic test to check for compilation success
+AC_TRY_COMPILE(
+	[
+	#include <EXTERN.h>
+	#include <perl.h>
+	],
+	[],
+	[
+		HAVE_PERL=yes
+		break;
+	]
+)
+CFLAGS="$saved_CFLAGS"
+LDFLAGS="$saved_LDFLAGS"
+
+ENABLE_PPIFC=no
 AC_ARG_ENABLE(perl-providerifc,
 OW_HELP_STRING(--enable-perl-providerifc,enable the perl provider interface),
 [
-	dnl BMMU check for perl
-	#PGAC_CHECK_PERL_CONFIGS([archlibexp,privlibexp,useshrplib])
-	PGAC_CHECK_PERL_CONFIG(archlibexp)
-	PGAC_CHECK_PERL_CONFIG(privlibexp)
-	PGAC_CHECK_PERL_CONFIG(useshrplib)
-	PGAC_CHECK_PERL_EMBED_CCFLAGS
-	PGAC_CHECK_PERL_EMBED_LDFLAGS
-	saved_LDFLAGS="$LDFLAGS"
-	saved_CFLAGS="$CFLAGS"
-	CFLAGS="$CFLAGS $perl_embed_ccflags"
-	LDFLAGS="$LDFLAGS $perl_embed_ldflags"
-
-	# Basic test to check for compilation success
-	AC_TRY_COMPILE(
-		[
-		#include <EXTERN.h>
-		#include <perl.h>
-		],
-		[],
-		[
-			AC_DEFINE(PERLIFC)
-			HAVE_PERL=yes
-			break;
-		]
-	)
-	CFLAGS="$saved_CFLAGS"
-	LDFLAGS="$saved_LDFLAGS"
+	ENABLE_PPIFC=yes
+	if test x$HAVE_PERL != xyes; then
+		AC_MSG_ERROR([Cannot enable Perl provider interface])
+	fi
 ])
-AM_CONDITIONAL(HAVE_PERL_EMBED, test x$HAVE_PERL = xyes)
+AM_CONDITIONAL([ENABLE_PERL_PROVIDERIFC],
+	[test x$HAVE_PERL = xyes -a x$ENABLE_PPIFC = xyes])
+
+ENABLE_MPIFC=no
+AC_ARG_ENABLE(monitored-perl-ifc,
+OW_HELP_STRING(--enable-monitored-perl-ifc,enable the monitored perl process interface),
+[
+	ENABLE_MPIFC=yes
+	if test x$HAVE_PERL != xyes; then
+		AC_MSG_ERROR([Cannot enable monitored Perl process interface])
+	fi
+])
+AM_CONDITIONAL([ENABLE_MONITORED_PERL_IFC],
+	[test x$HAVE_PERL = xyes -a x$ENABLE_MPIFC = xyes])
 
 STATIC_LINK_FLAGS=
 DYNAMIC_LINK_FLAGS=
@@ -104,15 +121,23 @@ DYNAMIC_EXPORT_FLAG=
 RPATH_LINK_FLAG=
 RPATH_LINK_FLAG_REQUIRED=0
 RPATH_DEFAULT_PATH=
+REALTIME_LIBS=
 
 echo "Setting host specific flags..."
+
+if test -z "$target"; then
+	target="$host"
+fi
+
 #Figure out which platform dir to compile
-case "$host" in
+case "$target" in
 *-*-aix*)
 	AC_MSG_WARN(*** AIX support is currently experimental ***)
 	AIX=1
-	AC_DEFINE(AIX, $AIX, Target OS is AIX)
+	AC_DEFINE(AIX, 1, Target OS is AIX)
 	AC_SUBST(AIX)
+	AC_DEFINE(ENV_VAR_LIBPATH, "LIBPATH", LIBPATH env var gives path for finding shared libs)
+	AC_SUBST(ENV_VAR_LIBPATH)
 	LIBS="$LIBS -lxnet"
 	AIX_COMMON_CFLAGS="-D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -D_XOPEN_SOURCE=500 -D_ALL_SOURCE=1"
 	AIX_COMMON_LFLAGS="-L/usr/lib/threads"
@@ -142,7 +167,8 @@ case "$host" in
 		RPATH_LINK_FLAG="-blibpath:"
 		# This is a bad hack, as it includes an export using GNU make (others?)
 		# substitutions. 
-		CXXSHAREDLIBLINKFLAGS='-bdynamic -G -qmkshrobj -bnoentry -bexport:$(@:%.so=%.exp)'
+		CXXSHAREDLIBLINKFLAGS='-bdynamic -G -qmkshrobj -bnoentry  -Wl,-bso'
+#-bexport:$(@:%.so=%.exp)
 		DO_NOT_USE_DASH_PTHREAD=1
 		DYNAMIC_EXPORT_FLAG=-bexpall
 		;;
@@ -207,30 +233,43 @@ case "$host" in
 	PLAT_OPTFLAGS="-O0"
 	PIDFILE_DIR="/var/locks"
 	LIB_EXT="so"
+	AC_DEFINE(SETEUID_BREAKS_SETUID, 1, [seteuid() breaks setuid()])
+	AC_DEFINE(BROKEN_SETREUID, 1, [setreuid() is broken])
+	AC_DEFINE(BROKEN_SETREGID, 1, [setregid() is broken])
+
 	;;
 #*-*-cygwin*)
 #	;;
 *-*-darwin*)
+	DARWIN=1
 	PLATFORMDIR="posix"
 	AC_DEFINE(DARWIN, 1, Target OS is DARWIN)
+	AC_DEFINE(ENV_VAR_LIBPATH, "DYLD_LIBRARY_PATH", DYLD_LIBRARY_PATH env var gives path for finding shared libs)
+	AC_SUBST(ENV_VAR_LIBPATH)
 	PLAT_CFLAGS="-fno-common -D_REENTRANT"
 	PLAT_CXXFLAGS="-no-cpp-precomp -fno-common -D_REENTRANT"
-	CXXCOMMONLINKFLAGS=""
+	CXXCOMMONLINKFLAGS="-Wl,-search_paths_first"
 	CXXBINLINKFLAGS=""
 	CXXSHAREDLIBLINKFLAGS="-dynamiclib -install_name \$(thelibdir)/\$(DYFILENAME) -compatibility_version \$(LIBRARY_BINARY_VERSION) -current_version \$(LIBRARY_BINARY_VERSION)"
 	CXXBUNDLELIBLINKFLAGS="-bundle"
 	PLAT_OPTFLAGS="-O2"
 	PIDFILE_DIR="/var/run"
-	CXX="g++"
 	LIB_EXT="dylib.bundle"
 	OW_NO_WDEPRECATED=1
+	AC_DEFINE(SETEUID_BREAKS_SETUID, 1, [seteuid() breaks setuid()])
+	AC_DEFINE(BROKEN_SETREUID, 1, [setreuid() is broken])
+	AC_DEFINE(BROKEN_SETREGID, 1, [setregid() is broken])
+
 	;;
 #*-*-dgux*)
 #	;;
 #*-*-hpux10*)
 #	;;
 *-*-hpux11*)
+	HPUX=1
 	AC_DEFINE(HPUX)
+	AC_DEFINE(ENV_VAR_LIBPATH, "SHLIB_PATH", SHLIB_PATH env var gives path for finding shared libs)
+	AC_SUBST(ENV_VAR_LIBPATH)	
 	LIBS="$LIBS -lxnet -lpthread -lrt"
 	PLAT_CFLAGS="+Z -mt -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1"
 	PLAT_CXXFLAGS="-AA +Z -mt +p -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1 -D__HPACC_THREAD_SAFE_RB_TREE"
@@ -248,7 +287,10 @@ case "$host" in
 #*-*-irix6*)
 #	;;
 *-*-linux*)
+	LINUX=1
 	AC_DEFINE(GNU_LINUX)
+	AC_DEFINE(ENV_VAR_LIBPATH, "LD_LIBRARY_PATH", LD_LIBRARY_PATH env var gives path for finding shared libs)
+	AC_SUBST(ENV_VAR_LIBPATH)	
 	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
 	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
 	CXXCOMMONLINKFLAGS=""
@@ -265,6 +307,8 @@ case "$host" in
 	;;
 *-*-netware*)
 	AC_DEFINE(NETWARE, 1, Target OS is NetWare)
+	AC_DEFINE(ENV_VAR_LIBPATH, "LD_LIBRARY_PATH", LD_LIBRARY_PATH env var gives path for finding shared libs)
+	AC_SUBST(ENV_VAR_LIBPATH)	
 	NETWARE=1
 	PLATFORMDIR="posix"
 	AC_DEFINE(USE_FAKE_LIBS, 1, Fake libraries are enabled)
@@ -281,7 +325,10 @@ case "$host" in
 #*-*-netbsd*)
 #	;;
 *-*-freebsd*)
+	FREEBSD=1
 	AC_DEFINE(FREEBSD)
+	AC_DEFINE(ENV_VAR_LIBPATH, "LD_LIBRARY_PATH", LD_LIBRARY_PATH env var gives path for finding shared libs)
+	AC_SUBST(ENV_VAR_LIBPATH)	
 	PLAT_CFLAGS="-fPIC -D_REENTRANT -pipe -pthread"
 	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -pipe -pthread"
 	CXXCOMMONLINKFLAGS="-pthread"
@@ -292,7 +339,10 @@ case "$host" in
 	LIB_EXT="so"
 	;;
 *-*-solaris*)
+	SOLARIS=1
 	AC_DEFINE(SOLARIS)
+	AC_DEFINE(ENV_VAR_LIBPATH, "LD_LIBRARY_PATH", LD_LIBRARY_PATH env var gives path for finding shared libs)
+	AC_SUBST(ENV_VAR_LIBPATH)	
 	LIBS="$LIBS -lsocket -lnsl"
 	PLAT_CFLAGS="-fPIC -pthreads -D_REENTRANT -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS"
 	PLAT_CXXFLAGS="-fPIC -pthreads -D_REENTRANT -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS"
@@ -303,10 +353,11 @@ case "$host" in
 	PIDFILE_DIR="/var/run"
 	RPATH_LINK_FLAG="-R"
 	LIB_EXT="so"
+	REALTIME_LIBS="-lrt"
 	;;
 *)
 	AC_MSG_WARN(***************************************************************************)
-	AC_MSG_WARN(Unknown platform ($host). The build may fail. Using linux/gcc build flags.)
+	AC_MSG_WARN(Unknown platform ($target). The build may fail. Using linux/gcc build flags.)
 	AC_MSG_WARN(***************************************************************************)
 	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
 	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
@@ -324,9 +375,8 @@ case "$host" in
 	;;
 esac
 
-
-#Figure out which architecture we are on
-case "$host" in
+#Figure out the architecture of the target platform
+case "$target" in
 i?86-*-*)
 	AC_DEFINE(ARCH_X86, 1, Intel x86 architecture)
 	;;
@@ -390,6 +440,7 @@ fi
 
 AC_SUBST(DYNAMIC_EXPORT_FLAG)
 AC_SUBST(LIB_EXT)
+AC_SUBST(REALTIME_LIBS)
 
 AC_SUBST(PIDFILE_DIR)
 AC_DEFINE_UNQUOTED(PIDFILE_DIR, "${PIDFILE_DIR}")
@@ -414,12 +465,15 @@ OW_HELP_STRING(--enable-rpath-link,enable the encoding of the destination librar
 	RPATH_LINK_FLAG_REQUIRED=0
 ])
 
+RPATH_LINK_FLAG_WITH_PATH=
+
 AC_ARG_WITH(runtime-link-path,
 OW_HELP_STRING(--with-runtime-link-path=PATH,enable the encoding of the specified library search path into all executables for runtime linking),
 [
 	if test "x$RPATH_LINK_FLAG" != "x"; then
 		if test "x${with_runtime_link_path}" != "xyes" -a "x${with_runtime_link_path}" != "xno"; then
-			LDFLAGS="$LDFLAGS $RPATH_LINK_FLAG${with_runtime_link_path}"
+			RPATH_LINK_FLAG_WITH_PATH=$RPATH_LINK_FLAG${with_runtime_link_path}
+			LDFLAGS="$LDFLAGS $RPATH_LINK_FLAG_WITH_PATH"
 		elif test "x${with_runtime_link_path}" = "xyes"; then
 			AC_MSG_WARN(***************************************************************************)
 			AC_MSG_WARN(A runtime path must be specified when using --runtime-link-path            )
@@ -434,6 +488,10 @@ OW_HELP_STRING(--with-runtime-link-path=PATH,enable the encoding of the specifie
 		fi
 	fi
 ])
+
+AM_CONDITIONAL(USE_RPATH, test "x${RPATH_LINK_FLAG_REQUIRED}" = "x1" -a "x${RPATH_LINK_FLAG}" != "x")
+AC_SUBST(RPATH_LINK_FLAG)
+AC_SUBST(RPATH_LINK_FLAG_WITH_PATH)
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -479,35 +537,38 @@ fi
 AC_SUBST(Z_LIBS)
 
 AC_CHECK_HEADERS( \
-fcntl.h \
-limits.h \
-sys/file.h \
-unistd.h \
+alloca.h \
+arpa/inet.h \
 byteswap.h \
-pthread.h \
-sys/cdefs.h \
-sys/queue.h \
-sys/int_types.h \
-inttypes.h \
-getopt.h \
-sys/sockio.h \
-sys/time.h \
-sys/param.h \
 dirent.h \
+fcntl.h \
+getopt.h \
+grp.h \
+inttypes.h \
+limits.h \
+netinet/in.h \
+pthread.h \
+pwd.h \
+signal.h \
+stropts.h \
+sys/file.h \
+sys/cdefs.h \
+sys/epoll.h \
+sys/int_types.h \
+sys/param.h \
+sys/poll.h \
+sys/queue.h \
 sys/resource.h \
 sys/select.h \
-sys/poll.h \
-sys/epoll.h \
 sys/socket.h \
-netinet/in.h \
-sys/un.h \
-stropts.h \
-alloca.h \
-sys/types.h \
+sys/sockio.h \
 sys/stat.h \
-pwd.h \
+sys/time.h \
+sys/types.h \
+sys/un.h \
 sys/wait.h \
-grp.h \
+unistd.h \
+paths.h \
 )
 
 # check for C++ headers
@@ -524,6 +585,28 @@ hash_map \
 ext/hash_map \
 cxxabi.h \
 )
+
+dnl Needed for monitor
+AC_CHECK_FUNCS(setsid)
+LO_CHECK_CMSGHDR
+LO_CHECK_CMSG_LEN
+LO_CHECK_PAM_FAIL_DELAY
+LO_PAM_CONST_CONV_FUNC
+LO_PAM_CONST_GET_ITEM
+dnl Check if msghdr{} has msg_control member.
+AC_CHECK_MEMBER([struct msghdr.msg_control],
+  AC_DEFINE(HAVE_MSGHDR_MSG_CONTROL, 1, define if struct msghdr contains the msg_control member),,
+  [
+    #include <sys/types.h>
+    #include <sys/socket.h>
+  ]
+)
+
+dnl On AIX (at least 5.2), <varargs.h> and <stdarg.h> have conflicting macros.
+dnl These only seem to show up in C++, with xlC as the compiler.  Fortunately,
+dnl there isn't much of a reason to include both, as the stdarg.h file will be
+dnl preferred over the non-standard varargs.h
+AC_CHECK_HEADERS(stdarg.h varargs.h)
 
 dnl On FreeBSD 4.9, <unistd.h> and <getopt.h> contain conflicting declarations
 dnl    for getopt.
@@ -617,11 +700,126 @@ AC_TRY_COMPILE(
 	AC_MSG_RESULT(no)
 ])
 
+AC_MSG_CHECKING(for setresgid prototype)
+AC_TRY_COMPILE(
+[
+	#include <stdlib.h>
+],
+[
+	setresgid(0,0,0);
+],
+[
+	AC_MSG_RESULT(yes) 
+],
+[ 
+	AC_MSG_RESULT(no) 
+	AC_DEFINE(NO_SETRESGID_PROTO, 1, [Define to 1 if the setresgid prototype is missing])
+])
+
+AC_MSG_CHECKING(for setresuid prototype)
+AC_TRY_COMPILE(
+[
+	#include <stdlib.h>
+],
+[
+	setresuid(0,0,0);
+],
+[
+	AC_MSG_RESULT(yes) 
+],
+[ 
+	AC_MSG_RESULT(no) 
+	AC_DEFINE(NO_SETRESUID_PROTO, 1, [Define to 1 if the setresuid prototype is missing])
+])
+
+dnl See if the C++ compiler supports std::tr1::is_pod<> correctly
+AC_MSG_CHECKING(if the C++ compiler supports std::tr1::is_pod<> correctly)
+AC_TRY_COMPILE(
+[
+#include <tr1/type_traits>
+template <bool x> struct StaticAssertionFailure;
+
+template <>
+struct StaticAssertionFailure<true>
+{
+};
+
+#define OW_STATIC_ASSERT_CAT(a, b) a ## b
+#define OW_STATIC_ASSERT_AUX(a, b) OW_STATIC_ASSERT_CAT(a, b)
+
+#define OW_STATIC_ASSERT( B ) \
+enum { \
+	OW_STATIC_ASSERT_AUX(openwbem_static_assert_enum_, __LINE__) \
+	= sizeof( StaticAssertionFailure< (bool)( B ) > ) \
+}
+
+struct POD
+{
+	int x;
+	int y;
+};
+
+OW_STATIC_ASSERT(std::tr1::is_pod<POD>::value == true);
+
+class nonPOD
+{
+private:
+	nonPOD();
+	nonPOD(const nonPOD& x);
+	int x;
+};
+
+OW_STATIC_ASSERT(std::tr1::is_pod<nonPOD>::value == false);
+	
+],
+[
+],
+[
+	AC_MSG_RESULT(yes)
+	AC_DEFINE(HAVE_STD_TR1_IS_POD, 1, [Define to 1 if the C++ compiler supports std::tr1::is_pod<>])
+],
+[
+	AC_MSG_RESULT(no)
+])
+
 AC_LANG_C
 
 AC_CHECK_FUNCS(getopt_long sched_yield backtrace nanosleep \
 mkstemp snprintf random srandom asctime_r gmtime_r localtime_r gettimeofday \
-timegm getpwnam_r getpwuid_r strtof setrlimit)
+timegm getpwnam_r getpwuid_r strtof setrlimit setregid setreuid seteuid \
+setegid)
+
+AC_CHECK_FUNCS(setresuid, [
+    dnl Some platorms have setresuid that isn't implemented, test for this
+    AC_MSG_CHECKING(if setresuid seems to work)
+    AC_RUN_IFELSE(
+        [AC_LANG_SOURCE([[
+#include <stdlib.h>
+#include <errno.h>
+int main(){errno=0; setresuid(0,0,0); if (errno==ENOSYS) exit(1); else exit(0);}
+        ]])],
+        [AC_MSG_RESULT(yes)],
+        [AC_DEFINE(BROKEN_SETRESUID, 1, [setresuid() is broken])
+         AC_MSG_RESULT(not implemented)],
+        [AC_MSG_WARN([cross compiling: not checking setresuid])]
+    )
+])
+
+AC_CHECK_FUNCS(setresgid, [
+    dnl Some platorms have setresgid that isn't implemented, test for this
+    AC_MSG_CHECKING(if setresgid seems to work)
+    AC_RUN_IFELSE(
+        [AC_LANG_SOURCE([[
+#include <stdlib.h>
+#include <errno.h>
+int main(){errno=0; setresgid(0,0,0); if (errno==ENOSYS) exit(1); else exit(0);}
+        ]])],
+        [AC_MSG_RESULT(yes)],
+        [AC_DEFINE(BROKEN_SETRESGID, 1, [setresgid() is broken])
+         AC_MSG_RESULT(not implemented)],
+        [AC_MSG_WARN([cross compiling: not checking setresgid])]
+    )
+])
 
 dnl Test for pthread_atfork(), since some versions of glibc are broken and have a prototype but no function.
 if test ".${ac_cv_header_pthread_h}" = ".yes"; then
@@ -742,6 +940,12 @@ dnl If *all* of the above SIGVAL_TYPE checks failed, then tests for members of
 dnl those types will fail here (as they should)
 AC_CHECK_MEMBERS([siginfo_t.si_fd, SIGVAL_TYPE.sival_int, SIGVAL_TYPE.sigval_int], , ,[#include <signal.h>])
 
+dnl Check for sigwaitinfo and sigtimedwait
+AC_CHECK_DECLS([sigwaitinfo, sigtimedwait], [], [], [#include <signal.h>])
+
+# Check for some standard paths (not present on some busted operating systems).
+AC_CHECK_DECLS([_PATH_DEFPATH, _PATH_STDPATH], [], [], [#include <paths.h>])
+
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
 
@@ -769,6 +973,11 @@ AC_CHECK_TYPE(u_int32_t, uint32_t)
 AC_STRUCT_ST_BLKSIZE
 AC_DECL_SYS_SIGLIST
 TYPE_SOCKLEN_T
+AC_CHECK_TYPES([struct timeval, struct timespec], , , 
+  [
+    #include <time.h> 
+    #include <sys/time.h>
+  ])
 
 dnl Checks for library functions
 AC_FUNC_MEMCMP
@@ -802,6 +1011,9 @@ OW_HELP_STRING(--enable-debug-mode,enable debugging mode),
 	AC_DEFINE(DEBUG)
 	CFLAGS="$CFLAGS -g"
 	CXXFLAGS="$CXXFLAGS -g -D_GLIBCXX_DEBUG"
+   CXXBINLINKFLAGS="$CXXBINLINKFLAGS -g"
+   CXXSHAREDLIBLINKFLAGS="$CXXSHAREDLIBLINKFLAGS -g"
+
 	OW_CHECK_COMPILER_FLAG(Werror,[CXXFLAGS="$CXXFLAGS -Werror"])
 	OW_CHECK_COMPILER_FLAG(Wall,[CXXFLAGS="$CXXFLAGS -Wall"])
 	OW_CHECK_COMPILER_FLAG(W,[CXXFLAGS="$CXXFLAGS -W"])
@@ -850,12 +1062,28 @@ OW_HELP_STRING(--enable-static-services,force services to be statically linked (
 ])
 CXXBINLINKFLAGS="$CURRENT_LINK_MODE_FLAGS $CXXBINLINKFLAGS $CURRENT_LINK_MODE_FLAGS"
 CBINLINKFLAGS="$CURRENT_LINK_MODE_FLAGS $CBINLINKFLAGS $CURRENT_LINK_MODE_FLAGS"
+# A bunch of platform-specific automake conditionals.
+AM_CONDITIONAL(AIX, test "x$AIX" != "x")
+AM_CONDITIONAL(DARWIN, test "x$DARWIN" != "x")
+AM_CONDITIONAL(FREEBSD, test "x$FREEBSD" != "x")
+AM_CONDITIONAL(HPUX, test "x$HPUX" != "x")
+AM_CONDITIONAL(LINUX, test "x$LINUX" != "x")
+AM_CONDITIONAL(NETWARE, test "x$NETWARE" != "x")
+AM_CONDITIONAL(SOLARIS, test "x$SOLARIS" != "x")
 AC_SUBST(STATIC_LINK_FLAGS)
 AC_SUBST(DYNAMIC_LINK_FLAGS)
 AC_SUBST(STATIC_SERVICES)
 AM_CONDITIONAL(OW_STATIC_LINKING, test "x$STATIC_SERVICES" != "x")
 AC_SUBST(CURRENT_LINK_MODE_FLAGS)
 AC_SUBST(BINLINKAPPENDFLAGS)
+
+VERSIONED_LIB_EXT=${LIB_EXT}.${OPENWBEM_LIBRARY_VERSION}
+if test x${STATIC_SERVICES} = x1; then
+	VERSIONED_LIB_EXT=${LIB_EXT}
+elif test x${DARWIN} = x1; then
+	VERSIONED_LIB_EXT=${OPENWBEM_LIBRARY_VERSION}.${LIB_EXT}
+fi
+AC_SUBST(VERSIONED_LIB_EXT)
 
 AC_ARG_ENABLE(openslp,
 OW_HELP_STRING(--disable-openslp,disable openslp integration))
@@ -1027,6 +1255,91 @@ OW_HELP_STRING(--enable-db4-repository,enable (still in development) db4 reposit
 ])
 AM_CONDITIONAL(ENABLE_DB4_REPOSITORY, test x$OW_ENABLE_DB4_REPOSITORY = x1)
 
+AC_ARG_ENABLE(vas,
+OW_HELP_STRING(--enable-vas,enable VAS (Vintela Authentication Services) integration),
+[ 
+  USE_VAS=1
+  AC_DEFINE(USE_VAS, 1, VAS integration is enabled)
+])
+
+AC_ARG_WITH(vas2,
+    OW_HELP_STRING( --with-vas2=PATH,Specify the directory in which the vas 2
+    headers and libs reside),
+    [
+    # This fancy thing just erases ./ and foo/.. since aCC on HPUX doesn't work
+    # if include dirs have that!
+    # We use [[ and ]] because m4 eats [ and ]
+
+	 # Note that this is a loop instead of global substitution, because items
+	 # like "/foo/bar/baz/quux/../../.." don't convert correctly using the
+	 # simple sed expression.  It turns it into "foo/bar/baz" instead of "/foo".
+	 # This loop ensures left-to-right eating of one 'DIR/..' at a time.
+	 # After trying to come up with a functional (and portable) sed expression,
+	 # this loop looked very appetizing (less error prone and it actually
+	 # works).
+	 VAS2_DIR=`echo $withval | sed -e 's~/\\./~/~g'`
+	 temp_dir=""
+	 until [[ "$temp_dir" = "$VAS2_DIR" ]]; do
+		temp_dir="$VAS2_DIR"
+		VAS2_DIR=`echo $VAS2_DIR | sed -e 's~/[[^/]]*/\\.\\.~~'`
+	 done
+	VAS2_INCLUDE_DIR=$VAS2_DIR/include
+
+	if test -d "$VAS2_DIR/lib64" ; then
+		VAS2_LIB_DIR=$VAS2_DIR/lib64
+	else
+		VAS2_LIB_DIR=$VAS2_DIR/lib
+	fi
+    ]
+)
+AC_ARG_WITH(vas2-rpath,
+    OW_HELP_STRING(--with-vas2-rpath=PATH,Specify the directory in which the vas
+    2 runtime libs reside),
+    [
+	VAS2_RPATH=$withval
+    ]
+)
+AC_SUBST(VAS2_INCLUDE_DIR)
+AC_SUBST(VAS2_LIB_DIR)
+AC_SUBST(VAS2_RPATH)
+AM_CONDITIONAL(HAVE_VAS2, test x$VAS2_DIR != x)
+
+AC_ARG_WITH(vas3,
+    OW_HELP_STRING(--with-vas3=PATH,Specify the directory in which the vas 3
+    headers and libs reside),
+    [
+    # This fancy thing just erases ./ and foo/.. since aCC on HPUX doesn't work
+    # if include dirs have that!
+    # We use [[ and ]] because m4 eats [ and ]
+	 # See the comments for VAS2_DIR above.
+	 VAS3_DIR=`echo $withval | sed -e 's~/\\./~/~g'`
+	 temp_dir=""
+	 until [[ "$temp_dir" = "$VAS3_DIR" ]]; do
+		temp_dir="$VAS3_DIR"
+		VAS3_DIR=`echo $VAS3_DIR | sed -e 's~/[[^/]]*/\\.\\.~~'`
+	 done
+	VAS3_INCLUDE_DIR=$VAS3_DIR/include
+
+	if test -d "$VAS3_DIR/lib64" ; then
+		VAS3_LIB_DIR=$VAS3_DIR/lib64
+	else
+		VAS3_LIB_DIR=$VAS3_DIR/lib
+	fi
+    ]
+)
+AC_ARG_WITH(vas3-rpath,
+    OW_HELP_STRING(--with-vas3-rpath=PATH,Specify the directory in which the vas
+    3 runtime libs reside),
+    [
+	VAS3_RPATH=$withval
+    ]
+)
+AC_SUBST(VAS3_INCLUDE_DIR)
+AC_SUBST(VAS3_LIB_DIR)
+AC_SUBST(VAS3_RPATH)
+AM_CONDITIONAL(HAVE_VAS3, test x$VAS3_DIR != x)
+
+
 dnl for now everything that uses the configure script uses pthreads
 AC_DEFINE(USE_PTHREAD)
 
@@ -1044,11 +1357,6 @@ AC_ARG_WITH(search-dir,
 saved_LDFLAGS="$LDFLAGS"
 saved_CPPFLAGS="$CPPFLAGS"
 saved_LIBS="$LIBS"
-
-AC_ARG_ENABLE(ssl,
-OW_HELP_STRING(--disable-ssl,disable ssl integration))
-
-if test "$enable_ssl" != no; then
 
 # The big search for OpenSSL.  Thanks to the openssh configure.in file!
 AC_ARG_WITH(ssl-dir,
@@ -1134,17 +1442,13 @@ AC_CACHE_CHECK([for OpenSSL directory], ac_cv_openssldir, [
  
 	ac_cv_openssldir=$ssldir
 ])
- 
+
 if (test ! -z "$ac_cv_openssldir") ; then
 	AC_DEFINE(HAVE_OPENSSL)
 	SSL_LIBS="-lssl -lcrypto"
 	LIBS="$saved_LIBS"
 else
-	AC_DEFINE(NO_SSL)
-	SSL_LIBS=""
-	LDFLAGS="$saved_LDFLAGS"
-	CPPFLAGS="$saved_CPPFLAGS"
-	LIBS="$saved_LIBS"
+	AC_MSG_ERROR([OpenSSL not found])
 fi
 
 if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ; then
@@ -1174,13 +1478,6 @@ if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ;
 	fi
 	SSL_LIBS="-lssl -lcrypto"
 fi
-else
-	AC_DEFINE(NO_SSL)
-	SSL_LIBS=""
-	LDFLAGS="$saved_LDFLAGS"
-	CPPFLAGS="$saved_CPPFLAGS"
-	LIBS="$saved_LIBS"
-fi
 
 dnl
 dnl   Fix this section, to make it more 'autoconfish', as this is just a chunk
@@ -1199,7 +1496,8 @@ then
   
 	if `pkg-config openssl`
 	then
-		EXTRA_SSL_LIBS=`pkg-config openssl --libs`
+		EXTRA_SSL_LIBS=""
+		#EXTRA_SSL_LIBS=`pkg-config openssl --libs`
 		EXTRA_SSL_INCLUDES=`pkg-config openssl --cflags`
 		CPPFLAGS="$CPPFLAGS $EXTRA_SSL_INCLUDES"
 		SSL_LIBS="$SSL_LIBS $EXTRA_SSL_LIBS"
@@ -1295,16 +1593,22 @@ AC_CHECK_FUNCS(pthread_kill_other_threads_np)
 # restore flags after pthread tests
 LIBS=$OLD_LIBS
 
+
+pfx=$prefix
+if test "x$pfx" = "xNONE"; then
+	pfx=${ac_default_prefix}
+fi
+execpfx=$exec_prefix
+if test "x$execpfx" = "xNONE"; then
+	execpfx=$pfx
+fi
+
 #####################################################
 # Set the location of the state dir
 if test "x$localstatedir" != "x\${prefix}/var"; then
 	tempDir=$localstatedir
 else
-	if test "x$prefix" != "xNONE"; then
-		tempDir=${prefix}/var
-	else
-		tempDir=${ac_default_prefix}/var
-	fi
+	tempDir=$pfx/var
 fi
 AC_DEFINE_UNQUOTED(DEFAULT_STATE_DIR, "${tempDir}")
 
@@ -1313,11 +1617,7 @@ AC_DEFINE_UNQUOTED(DEFAULT_STATE_DIR, "${tempDir}")
 if test "x$libdir" != "x\${exec_prefix}/lib"; then
 	tempDir=$libdir
 else
-	if test "x$exec_prefix" != "xNONE"; then
-		tempDir=${exec_prefix}/lib
-	else
-		tempDir=${ac_default_prefix}/lib
-	fi
+	tempDir=$execpfx/lib
 fi
 AC_DEFINE_UNQUOTED(DEFAULT_LIB_DIR, "${tempDir}")
 
@@ -1327,11 +1627,7 @@ AC_DEFINE_UNQUOTED(DEFAULT_LIB_DIR, "${tempDir}")
 if test "x$bindir" != "x\${exec_prefix}/bin"; then
 	tempDir=$bindir
 else
-	if test "x$exec_prefix" != "xNONE"; then
-		tempDir=${exec_prefix}/bin
-	else
-		tempDir=${ac_default_prefix}/bin
-	fi
+	tempDir=$execpfx/bin
 fi
 AC_DEFINE_UNQUOTED(DEFAULT_BIN_DIR, "${tempDir}", "The bin dir")
 
@@ -1341,11 +1637,7 @@ AC_DEFINE_UNQUOTED(DEFAULT_BIN_DIR, "${tempDir}", "The bin dir")
 if test "x$sbindir" != "x\${exec_prefix}/sbin"; then
 	tempDir=$sbindir
 else
-	if test "x$exec_prefix" != "xNONE"; then
-		tempDir=${exec_prefix}/sbin
-	else
-		tempDir=${ac_default_prefix}/sbin
-	fi
+	tempDir=$execpfx/sbin
 fi
 AC_DEFINE_UNQUOTED(DEFAULT_SBIN_DIR, "${tempDir}", "The sbin dir")
 
@@ -1355,11 +1647,7 @@ AC_DEFINE_UNQUOTED(DEFAULT_SBIN_DIR, "${tempDir}", "The sbin dir")
 if test "x$libexecdir" != "x\${exec_prefix}/libexec"; then
 	tempDir=$libexecdir
 else
-	if test "x$exec_prefix" != "xNONE"; then
-		tempDir=${exec_prefix}/libexec
-	else
-		tempDir=${ac_default_prefix}/libexec
-	fi
+	tempDir=$execpfx/libexec
 fi
 AC_DEFINE_UNQUOTED(DEFAULT_LIBEXEC_DIR, "${tempDir}")
 
@@ -1368,11 +1656,7 @@ AC_DEFINE_UNQUOTED(DEFAULT_LIBEXEC_DIR, "${tempDir}")
 if test "x$sysconfdir" != "x\${prefix}/etc"; then
 	tempDir=$sysconfdir
 else
-	if test "x$prefix" != "xNONE"; then
-		tempDir=${prefix}/etc
-	else
-		tempDir=${ac_default_prefix}/etc
-	fi
+	tempDir=$pfx/etc
 fi
 AC_DEFINE_UNQUOTED(DEFAULT_SYSCONF_DIR, "${tempDir}")
 
@@ -1389,6 +1673,7 @@ fi
 
 CXXSHAREDLIBLINKFLAGS="$CXXCOMMONLINKFLAGS $CXXSHAREDLIBLINKFLAGS $LDFLAGS"
 CXXBINLINKFLAGS="$CXXCOMMONLINKFLAGS $CXXBINLINKFLAGS $LDFLAGS"
+CXXBUNDLELIBLINKFLAGS="$CXXCOMMONLINKFLAGS $CXXBUNDLELIBLINKFLAGS $LDFLAGS"
 CBINLINKFLAGS="$CBINLINKFLAGS $LDFLAGS"
 
 AC_SUBST(CXXSHAREDLIBLINKFLAGS)
@@ -1425,6 +1710,7 @@ src/authenticators/pam/Makefile
 src/authenticators/pamcl/Makefile
 src/authenticators/aix/Makefile
 src/authorizers/Makefile
+src/authorizers/basic/Makefile
 src/authorizers/simple/Makefile
 src/authorizers/simple2/Makefile
 src/cim/Makefile
@@ -1445,10 +1731,18 @@ src/http/test/Makefile
 src/http/test/certs/Makefile
 src/ifcs/Makefile
 src/mof/Makefile
+src/monitor/Makefile
+src/monitor/bin/Makefile
+src/monitor/Cifc/Makefile
+src/monitor/Perlifc/Makefile
+src/monitor/Test/Makefile
+src/oopcpp1pr/Makefile
+src/oopcpp1pr/bin/Makefile
 src/provider/Makefile
 src/providerifcs/Makefile
 src/providerifcs/cpp/Makefile
 src/providerifcs/remote/Makefile
+src/providerifcs/oop/Makefile
 src/providerifcs/cmpi/Makefile
 src/providerifcs/cmpi/common/Makefile
 src/providerifcs/npi/Makefile
@@ -1474,7 +1768,6 @@ src/providers/cpp/indication/Makefile
 src/providers/cpp/indication/IndicationRepLayer/Makefile
 src/repositories/Makefile
 src/repositories/hdb/Makefile
-src/repositories/tdbcr/Makefile
 src/requesthandlers/Makefile
 src/requesthandlers/binary/Makefile
 src/requesthandlers/cimxml/Makefile
@@ -1485,13 +1778,13 @@ src/tools/Makefile
 src/tools/owmofc/Makefile
 src/tools/owprovideragent/Makefile
 src/wql/Makefile
-src/wql/common/Makefile
 src/xml/Makefile
 test/Makefile
 test/CppUnit/Makefile
 test/acceptance/Makefile
 test/acceptance/progs/Makefile
 test/acceptance/testfiles/Makefile
+test/acceptance/oop/Makefile
 test/acceptance/testfiles/socketCat/Makefile
 test/acceptance/testfiles/xml_input/Makefile
 test/c++providers/Makefile

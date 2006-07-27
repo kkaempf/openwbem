@@ -39,6 +39,7 @@
 #include "OW_Types.hpp"
 #include "OW_Array.hpp"
 #include "OW_SelectableIFC.hpp"
+#include "OW_Timeout.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -58,17 +59,13 @@ namespace Select
 	 */
 	const int SELECT_ERROR = -1;
 	/**
-	 * The value returned from select when select is interrupted by a signal.
-	 */
-	const int SELECT_INTERRUPTED = -3;
-	/**
 	 * Used internally, but listed here to prevent conflicts
 	 */
 	const int SELECT_NOT_IMPLEMENTED = -4;
 	/**
 	 * Value that means infinite timeout
 	 */
-	const UInt32 INFINITE_TIMEOUT = ~0U;
+	const UInt32 INFINITE_TIMEOUT OW_DEPRECATED = ~0U;
 	
 	/**
 	 * Select returns as soon as input is available on any of Select_t
@@ -83,7 +80,8 @@ namespace Select
 	 * object that input has become available on. SELECT_ERROR on error.
 	 * SELECT_TIMEOUT if the given timeout value has expired.
 	 */
-	OW_COMMON_API int select(const SelectTypeArray& selarray, UInt32 ms = INFINITE_TIMEOUT);
+	OW_COMMON_API int select(const SelectTypeArray& selarray, UInt32 ms) OW_DEPRECATED;
+	OW_COMMON_API int select(const SelectTypeArray& selarray, const Timeout& timeout = Timeout::infinite);
 
 	struct SelectObject
 	{
@@ -119,13 +117,15 @@ namespace Select
 	 * @param selarray An array of Select_t objects that will be used while
 	 *	waiting for input or output to become available.
 	 *
-	 * @param ms The timeout value specified in milliseconds
+	 * @param timeout The timeout.
 	 *
 	 * @return On success, the number of descriptors available. SELECT_ERROR on error.
 	 * SELECT_TIMEOUT if the given timeout value has expired. The input and output
 	 * out parameters are modified to indicate which descriptors are available.
 	 */
-	OW_COMMON_API int selectRW(SelectObjectArray& selarray, UInt32 ms = INFINITE_TIMEOUT);
+	OW_COMMON_API int selectRW(SelectObjectArray& selarray, const Timeout& timeout = Timeout::infinite);
+
+	OW_COMMON_API int selectRW(SelectObjectArray& selarray, UInt32 ms) OW_DEPRECATED;
 
 } // end namespace Select
 

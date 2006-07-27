@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_ListenerAuthenticator.hpp"
-#include "OW_CryptographicRandomNumber.hpp"
+#include "OW_SecureRand.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -81,38 +81,38 @@ ListenerAuthenticator::doInit(ServiceEnvironmentIFCRef)
 {
 }
 ///////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	char alphanumeric[] =
+		"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	unsigned char num_alnum = sizeof(alphanumeric) - 1;
+
+	void rand_alnum(char * s, std::size_t N)
+	{
+		for (size_t i = 0; i < N; ++i)
+		{
+			s[i] = alphanumeric[Secure::rand_uint_lt(num_alnum)];
+		}
+	}
+}
+
 String
 ListenerAuthenticator::getNewCredentials()
 {
-	String name, pass;
-	CryptographicRandomNumber rn('0', 'z');
+	const std::size_t N = 128;
+	char name[N + 1];
+	char pass[N + 1];
+	name[N] = pass[N] = '\0';
 	MutexLock lock(m_mutex);
 	do
 	{
-		name.erase();
-		for (size_t i = 0; i < 128;)
-		{
-			int x = rn.getNextNumber();
-			if ((x > '9' && x < 'A') || (x > 'Z' && x < 'a'))
-			{ // only allow alpha-numeric
-				continue;
-			}
-			name += String(static_cast<char>(x));
-			++i;
-		}
+		rand_alnum(name, N);
 	} while (m_passwdMap.find(name) != m_passwdMap.end());
-	for (size_t i = 0; i < 128;)
-	{
-		int x = rn.getNextNumber();
-		if ((x > '9' && x < 'A') || (x > 'Z' && x < 'a'))
-		{ // only allow alpha-numeric
-			continue;
-		}
-		pass += String(static_cast<char>(x));
-		++i;
-	}
-	m_passwdMap[name] = pass;
-	return name + ":" + pass;
+	rand_alnum(pass, N);
+	String sname = name;
+	String spass = pass;
+	m_passwdMap[sname] = spass;
+	return sname + ":" + spass;
 }
 ///////////////////////////////////////////////////////////////////////////////
 void

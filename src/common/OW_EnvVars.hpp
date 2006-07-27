@@ -38,6 +38,7 @@
 #include "OW_config.h"
 #include "OW_Map.hpp"
 #include "OW_String.hpp"
+#include "OW_Cstr.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -152,6 +153,24 @@ private:
 	EnvMap m_envMap;
 	mutable char** m_envp;
 };
+
+
+namespace Cstr
+{
+
+template <>
+struct CstrArr<EnvVars>
+{
+	char const * const * sarr;
+
+	CstrArr(EnvVars const & ev)
+	{
+		sarr = ev.getenvp();
+	}
+};
+
+} // namespace Cstr
+
 
 }	// End of OW_NAMESPACE
 

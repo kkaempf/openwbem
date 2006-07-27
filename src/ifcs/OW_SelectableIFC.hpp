@@ -37,13 +37,12 @@
 #define OW_SELECTABLEIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
-#include "OW_IfcsFwd.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
 namespace OW_NAMESPACE
 {
 
-class OW_COMMON_API SelectableIFC : public IntrusiveCountableBase
+class OW_COMMON_API SelectableIFC : virtual public IntrusiveCountableBase
 {
 public:
    virtual ~SelectableIFC();

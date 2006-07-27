@@ -62,13 +62,21 @@ public:
 	 * This function is available for subclasses to override if they
 	 * wish to be notified when a cooperative cancel is being invoked on the
 	 * thread.  Note that this function will be invoked in a separate thread.
-	 * For instance, a thread may use this function to write to a pipe or socket,
-	 * if Thread::run() is blocked in select(), it can be unblocked and
-	 * instructed to exit.
+	 * For instance, a thread may use this function to:
+	 * 1. Set a flag and then signal a condition variable to wake up the thread.
+	 * 2. Write to a pipe or socket, if Thread::run() is blocked in select(), 
+	 * it can be unblocked and then exit.
+	 */
+	virtual void doShutdown();
+
+	/**
+	 * This function is available for subclasses to override if they
+	 * wish to be notified when a cooperative cancel is being invoked on the
+	 * thread.  Note that this function will be invoked in a separate thread.
 	 *
 	 * It is also possible for an individual thread to override the cancellation
 	 * request, if it knows that cancellation at this time may crash the system
-	 * or cause a deadlock.  To do this, the thread should throw an 
+	 * or cause a deadlock.  To do this, the thread should throw an
 	 * CancellationDeniedException.  Note that threads are usually only
 	 * cancelled in the event of a system shutdown or restart, so a thread
 	 * should make a best effort to actually shutdown.
@@ -76,6 +84,7 @@ public:
 	 * @throws CancellationDeniedException
 	 */
 	virtual void doCooperativeCancel();
+
 	/**
 	 * See the documentation for doCooperativeCancel().  When definitiveCancel()
 	 * is called on a thread, first doCooperativeCancel() will be called, and 

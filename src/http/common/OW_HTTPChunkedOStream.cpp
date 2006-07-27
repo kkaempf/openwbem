@@ -42,7 +42,7 @@ namespace OW_NAMESPACE
 using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
 HTTPChunkedOStreamBuffer::HTTPChunkedOStreamBuffer(ostream& ostr)
-	: BaseStreamBuffer(HTTP_BUF_SIZE, "out"), m_ostr(ostr)
+	: BaseStreamBuffer(BaseStreamBuffer::E_OUT, HTTP_BUF_SIZE), m_ostr(ostr)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,11 @@ int
 HTTPChunkedOStreamBuffer::sync()
 {
 	int rval = BaseStreamBuffer::sync();
-	m_ostr.flush();
+	if (!m_ostr.flush())
+	{
+		// ERROR
+		return -1;
+	}
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -108,35 +112,19 @@ HTTPChunkedOStream::termOutput(ESendLastChunkFlag sendLastChunk)
 	}
 	else
 	{
-		m_strbuf.BaseStreamBuffer::sync(); // don't call the derived one because it flushes to the stream, which isn't necessary at this point.
+		// Don't call the derived one because it flushes to the stream, which isn't necessary at this point.
+		// This call is necessary to cause buffer_to_device() to write the chunk to m_ostr.
+		m_strbuf.BaseStreamBuffer::sync(); 
 	}
 
 	m_ostr << "0\r\n";
-	for (size_t i = 0; i < m_trailers.size(); i++)
+	if (!m_ostr.flush())
 	{
-		m_ostr << m_trailers[i] << "\r\n";
+		clear(m_ostr.rdstate());
 	}
-	m_ostr << "\r\n";
-	m_ostr.flush();
 
 	// once the output is terminated, we have to reset the stream
 	m_strbuf.initPutBuffer();
-	m_trailers.clear();
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-HTTPChunkedOStream::addTrailer(const String& key, const String& value)
-{
-	String tmpKey = key;
-	tmpKey.trim();
-	if (!tmpKey.empty())
-	{
-		m_trailers.push_back(key + ": " + value);
-	}
-	else // A "folded" continuation line from previous key
-	{
-		m_trailers.push_back(" " + value);
-	}
 }
 
 } // end namespace OW_NAMESPACE

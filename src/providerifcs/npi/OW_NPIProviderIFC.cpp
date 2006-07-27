@@ -271,8 +271,7 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		  String libName = libPath;
 		  libName += OW_FILENAME_SEPARATOR;
 		  libName += dirEntries[i];
-		  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
-				env->getLogger(COMPONENT_NAME));
+		  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName);
 		  String guessProvId = dirEntries[i].substring(3, dirEntries[i].length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
 		  if (!theLib)
 		  {
@@ -368,8 +367,7 @@ NPIProviderIFC::getProvider(
 			continue;
 		}
 
-		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
-			env->getLogger(COMPONENT_NAME));
+		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName);
 		if (!theLib)
 		{
 			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc failed to load library: %1 "

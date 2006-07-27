@@ -10,6 +10,25 @@ if [ $# -ne 2 ]; then
 	 exit 1
 fi
 
+# This is here to do what 'tail -n1' should do.  Some platforms don't like the
+# -n, and newer utilities say that 'tail -1' is deprecated.  This doesn't
+# require the '-n 1'.
+last_line()
+{
+	sed -e :a -e '$q;N;2,$D;ba' "$@"
+}
+
+# This emulates 'head -nX', where X is some integer.  It exists for the same
+# reason as the 'last_line' function.  This requires thaty the first parameter
+# is the number of lines (no '-').
+first_n_lines()
+{
+	status_hackery_local_line_count="$1"
+	shift
+
+	sed "${status_hackery_local_line_count}q" "$@"
+}
+
 # I apologize about the unreadability of this file, but I had to create
 # variables that would not likely collide with anything exported in a configure
 # script. Should you want to read this, replace 'status_hackery_local_' with
@@ -38,7 +57,7 @@ status_hackery_local_input_file="$2"
 egrep '^s.@[A-Za-z0-9_]+@' ${status_hackery_local_input_file} | egrep -v '\$\(.*\)|\\,' | sed 's/\\/\\\\/g' > $status_hackery_local_temp_output_file
 
 # Get the delimiter character that was used for the sed expressions.
-status_hackery_local_delim_char=`tail -1 $status_hackery_local_temp_output_file | cut -c2`
+status_hackery_local_delim_char=`last_line $status_hackery_local_temp_output_file | cut -c2`
 cat $status_hackery_local_temp_output_file | cut -f1-3 -d"${status_hackery_local_delim_char}" > ${status_hackery_local_temp_output_file}.tweaked
 mv -f ${status_hackery_local_temp_output_file}.tweaked ${status_hackery_local_temp_output_file}
 
@@ -57,7 +76,7 @@ while [ $status_hackery_local_changes_made -gt 0 ]; do
 	status_hackery_local_changes_made=0
 	status_hackery_local_line=1
 	while [ $status_hackery_local_line -le $status_hackery_local_num_lines ]; do
-		status_hackery_local_line_text=`cat ${status_hackery_local_temp_output_file} | head -$status_hackery_local_line | tail -1`
+		status_hackery_local_line_text=`cat ${status_hackery_local_temp_output_file} | first_n_lines $status_hackery_local_line | last_line`
 		status_hackery_local_line=`expr ${status_hackery_local_line} \+ 1`
 
 		status_hackery_local_variable=`echo "$status_hackery_local_line_text" | cut -f2 -d'@'`
@@ -96,7 +115,7 @@ fi
 status_hackery_local_temp_evil_hack_file=/tmp/evil_hackery_file.$$
 
 while [ $status_hackery_local_line -le $status_hackery_local_num_lines ]; do
-	status_hackery_local_line_text=`cat ${status_hackery_local_temp_output_file} | head -$status_hackery_local_line | tail -1`
+	status_hackery_local_line_text=`cat ${status_hackery_local_temp_output_file} | first_n_lines $status_hackery_local_line | last_line`
 	status_hackery_local_variable=`echo "$status_hackery_local_line_text" | cut -f2 -d'@'`
 	
 	# Get the value of the variable as it currently exists in the environment.

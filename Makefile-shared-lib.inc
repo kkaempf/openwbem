@@ -1,7 +1,10 @@
 
 SO_EXT = $(LIBRARY_BINARY_VERSION)
 SOFILENAME = $@.$(SO_EXT)
-DYFILENAME = $(sort $(patsubst %.dylib,%,$(patsubst %.dylib.bundle,%.dylib,$@))).$(SO_EXT).dylib
+# This DYFILENAME definition looks confusing.  It takes the target of the
+# Darwin rule, makes sure there is a library version in it (only one), and
+# forces the suffix as .dylib.
+DYFILENAME = $(patsubst %.$(SO_EXT).$(SO_EXT).dylib,%.$(SO_EXT).dylib,$(sort $(patsubst %.dylib,%,$(patsubst %.dylib.bundle,%.dylib,$@))).$(SO_EXT).dylib)
 TMPLIBDIR = .$@.libs
 
 
@@ -20,13 +23,30 @@ CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
 				{ print $$3 } }' | \
 			sort -u > $(@:%.so=%.exp)
 
+
+# This exists to make the body of the shared library rule more readable.
+# Note the use of the override keyword to keep automake from barfing about redefining a value.
+DO_CREATE_EXPORTS=
+if AIX
+override DO_CREATE_EXPORTS=$(CREATE_EXPORTS)
+endif # AIX
+
+# Do shared library fixups for AIX if not static linking.
+DO_SHARED_LIBRARY_FIXUP=
+if AIX
+if !OW_STATIC_LINKING
+override DO_SHARED_LIBRARY_FIXUP=rtl_enable -l -R $(SOFILENAME)
+endif # !OW_STATIC_LINKING
+endif # AIX
+
 %.so %.sl : %.a
 	rm -rf $(TMPLIBDIR)
 	mkdir $(TMPLIBDIR)
 	cd $(TMPLIBDIR) && \
-	$(AR) x ../$< 
-	if [ "x$(AIX)" = "x1" ]; then $(CREATE_EXPORTS); fi
+	$(AR) x ../$<
+	$(DO_CREATE_EXPORTS)
 	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
+	$(DO_SHARED_LIBRARY_FIXUP)
 	rm -rf $@ $(TMPLIBDIR) $(@:%.so=%.exp)
 	ln -s $(SOFILENAME) $@
 	chmod +x $(SOFILENAME)
@@ -55,37 +75,54 @@ CREATE_IMPORTS=nm -Bpg $(TMPLIBDIR)/*.o | \
 	cp $@ $(SOFILENAME)
 	rm -rf $(TMPLIBDIR)
 
-# Rules for Darwin so we can get the plugable modules built
+DO_NOTHING=
+VALID_CONDITION=$(1:0=)$(1:1=1)
+
+BUILD_DYLIB=$(if $(call VALID_CONDITION,$(MAKEDYLIB)), \
+$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(DYFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD), \
+$(DO_NOTHING))
+BUILD_BUNDLE=$(if $(call VALID_CONDITION,$(MAKEBUNDLE)), \
+$(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(DYFILENAME).bundle $(TMPLIBDIR)/*.o $(SHAREDLIBADD), \
+$(DO_NOTHING))
+
+
+TOUCH_FILE_IF_NEEDED=$(if $(wildcard $(1)),$(DO_NOTHING),echo "The target for the rule was not created. Touching $(1)"; touch "$(1)")
+
+define TOUCH_UNCREATED_LIBS
+	$(call TOUCH_FILE_IF_NEEDED,$(DYFILENAME))
+	$(call TOUCH_FILE_IF_NEEDED,$(DYFILENAME).bundle)
+endef
+
+# Rules for OSX (Darwin) so we can get the plugable modules built
 # at the same time. Requires that either MAKEDYLIB or MAKEBUNDLE
 # be inserted into Makefile.am in the appropriate directory.
-# In the case of the four libraries that have to be both loadable
-# and linkable, we FIXME EDGE
-
-%.dylib.bundle %.dylib : %.a
-	rm -f $(@:%.dylib.bundle=%.dylib) $@
+%.$(SO_EXT).dylib.bundle %.$(SO_EXT).dylib : %.a
+	rm -f $(@:%.dylib=%.dylib.bundle) $@ $(DYFILENAME)
 	rm -rf $(TMPLIBDIR)
 	mkdir $(TMPLIBDIR)
 	cd $(TMPLIBDIR) && \
 	$(AR) x ../$<
-	if [ "x$(MAKEDYLIB)" = "x1" ]; then \
-		echo $(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(DYFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
-		$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(DYFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
-		echo ln -v -s $(DYFILENAME) $(@:%.dylib.bundle=%.dylib); \
-		ln -v -s $(DYFILENAME) $(@:%.dylib.bundle=%.dylib); \
-	fi;
-	if [ "x$(MAKEBUNDLE)" = "x1" ]; then \
-		echo $(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(DYFILENAME).bundle $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
-		$(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(DYFILENAME).bundle $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
-		echo ln -v -s $(DYFILENAME) $(@:%.dylib=%.dylib.bundle); \
-		ln -v -s $(DYFILENAME) $(@:%.dylib=%.dylib.bundle); \
-	fi;
+	$(BUILD_DYLIB)
+	$(BUILD_BUNDLE)
+	$(TOUCH_UNCREATED_LIBS)
+	rm -rf $(TMPLIBDIR)
 	@echo "$@ done"
+
+%.dylib.bundle %.dylib : %.$(SO_EXT).dylib.bundle %.$(SO_EXT).dylib
+	ln -f -v -s $(DYFILENAME) $(DYFILENAME:%.$(SO_EXT).dylib=%.dylib)
+	ln -f -v -s $(DYFILENAME).bundle $(DYFILENAME:%.$(SO_EXT).dylib=%.dylib).bundle
+
+# Prevent the generated libraries (and symlinks) from being removed as 'side
+# effects'.  This improves recompilation (or installation) time in some cases.
+.PRECIOUS: %.$(SO_EXT).dylib.bundle %.dylib.bundle %.$(SO_EXT).dylib %.dylib
+.PRECIOUS: %.so.$(SO_EXT) %.so
+.PRECIOUS: %.sl.$(SO_EXT) %.sl
+.PRECIOUS: %.a
 
 all-ow-shared-libs: $(OW_SHARED_LIBS)
 
 clean-ow-shared-libs:
-	for i in $(OW_SHARED_LIBS); do \
-		rm -rf $$i* .$$i.libs; \
-	done
-
-
+	rm -rf $(OW_SHARED_LIBS:%=.%.libs)
+	rm -f $(OW_SHARED_LIBS:%=%*)
+	rm -f $(OW_SHARED_LIBS:%.dylib.bundle=%.*.dylib*) $(OW_SHARED_LIBS:%.dylib.bundle=%.dylib*)
+	rm -f *.fsl

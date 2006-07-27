@@ -36,17 +36,22 @@
 #ifndef OW_SOCKET_HPP_INCLUDE_GUARD_
 #define OW_SOCKET_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include "OW_CommonFwd.hpp"
 #include "OW_SelectableIFC.hpp"
+#include "OW_IOIFC.hpp"
 #include "OW_SocketBaseImpl.hpp"
-#include "OW_String.hpp"
 #include "OW_Types.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_SocketFlags.hpp"
 #include "OW_NetworkTypes.hpp"
 #include "OW_SocketAddress.hpp"
 #include "OW_IntrusiveReference.hpp"
-#include "OW_SSLCtxMgr.hpp"
+#include "OW_Timeout.hpp"
+#include "OW_Exception.hpp"
 
+#ifndef OW_NO_SSL
+#include <openssl/ssl.h>
+#endif
 
 // TODO: This is duplicated in OW_ConfigOpts.hpp.  Figure out a way to merge the 2 without drastically increasing header dependencies.
 #ifdef OW_DEFAULT_HTTP_SERVER_UDS_FILENAME
@@ -107,42 +112,62 @@ public:
 	 */
 	void disconnect() { m_impl->disconnect(); }
 
-	static const int INFINITE_TIMEOUT = -1;
+	static const int INFINITE_TIMEOUT OW_DEPRECATED = -1;
 	/**
 	 * Set the receive timeout on the socket
 	 * @param seconds the number of seconds for the receive timeout
 	 */
-	void setReceiveTimeout(int seconds) { m_impl->setReceiveTimeout(seconds);}
+	OW_DEPRECATED void setReceiveTimeout(int seconds) { m_impl->setReceiveTimeout(Timeout::relative(seconds));}
+	/**
+	 * Set the receive timeout on the socket
+	 * @param seconds the number of seconds for the receive timeout
+	 */
+	void setReceiveTimeout(const Timeout& timeout) { m_impl->setReceiveTimeout(timeout);}
 	/**
 	 * Get the receive timeout
 	 * @return The number of seconds of the receive timeout
 	 */
-	int getReceiveTimeout() const { return m_impl->getReceiveTimeout(); }
+	Timeout getReceiveTimeout() const { return m_impl->getReceiveTimeout(); }
 	/**
 	 * Set the send timeout on the socket
 	 * @param seconds the number of seconds for the send timeout
 	 */
-	void setSendTimeout(int seconds) { m_impl->setSendTimeout(seconds); }
+	OW_DEPRECATED void setSendTimeout(int seconds) { m_impl->setSendTimeout(Timeout::relative(seconds)); }
+	/**
+	 * Set the send timeout on the socket
+	 * @param seconds the number of seconds for the send timeout
+	 */
+	void setSendTimeout(const Timeout& timeout) { m_impl->setSendTimeout(timeout); }
 	/**
 	 * Get the send timeout
 	 * @return The number of seconds of the send timeout
 	 */
-	int getSendTimeout() const { return m_impl->getSendTimeout(); }
+	Timeout getSendTimeout() const { return m_impl->getSendTimeout(); }
 	/**
 	 * Set the connect timeout on the socket
 	 * @param seconds the number of seconds for the connect timeout
 	 */
-	void setConnectTimeout(int seconds) { m_impl->setConnectTimeout(seconds); }
+	OW_DEPRECATED void setConnectTimeout(int seconds) { m_impl->setConnectTimeout(Timeout::relative(seconds)); }
+	/**
+	 * Set the connect timeout on the socket
+	 * @param seconds the number of seconds for the connect timeout
+	 */
+	void setConnectTimeout(const Timeout& timeout) { m_impl->setConnectTimeout(timeout); }
 	/**
 	 * Get the connect timeout
 	 * @return The number of seconds of the connect timeout
 	 */
-	int getConnectTimeout() const { return m_impl->getConnectTimeout(); }
+	Timeout getConnectTimeout() const { return m_impl->getConnectTimeout(); }
 	/**
 	 * Set all timeouts (send, receive, connect)
 	 * @param seconds the number of seconds for the timeouts
 	 */
-	void setTimeouts(int seconds) { m_impl->setTimeouts(seconds); }
+	OW_DEPRECATED void setTimeouts(int seconds) { m_impl->setTimeouts(Timeout::relative(seconds)); }
+	/**
+	 * Set all timeouts (send, receive, connect)
+	 * @param seconds the number of seconds for the timeouts
+	 */
+	void setTimeouts(const Timeout& timeout) { m_impl->setTimeouts(timeout); }
 	/**
 	 * Has the receive timeout expired?
 	 * @return true if the receive timeout has expired.
@@ -156,7 +181,7 @@ public:
 	 * @return the number of bytes written.
 	 * @throws SocketException
 	 */
-	int write(const void* dataOut, int dataOutLen, bool errorAsException=false)
+	int write(const void* dataOut, int dataOutLen, ErrorAction errorAsException = E_RETURN_ON_ERROR)
 		{ return m_impl->write(dataOut, dataOutLen, errorAsException); }
 	/**
 	 * Read from the socket
@@ -166,24 +191,44 @@ public:
 	 * @return the number of bytes read.
 	 * @throws SocketException
 	 */
-	int read(void* dataIn, int dataInLen, bool errorAsException=false)
+	int read(void* dataIn, int dataInLen, ErrorAction errorAsException = E_RETURN_ON_ERROR)
 		{ return m_impl->read(dataIn, dataInLen, errorAsException); }
+	
 	/**
 	 * Wait for input on the socket for a specified length of time.
 	 * @param timeOutSecs the number of seconds to wait.
 	 * @return true if the timeout expired
 	 * @throws SocketException
 	 */
-	bool waitForInput(int timeOutSecs=INFINITE_TIMEOUT)
-		{ return m_impl->waitForInput(timeOutSecs); }
+	OW_DEPRECATED bool waitForInput(int timeOutSecs)
+		{ return m_impl->waitForInput(Timeout::relative(timeOutSecs)); }
+	
+	/**
+	 * Wait for input on the socket for a specified length of time.
+	 * @param timeOutSecs the number of seconds to wait.
+	 * @return true if the timeout expired
+	 * @throws SocketException
+	 */
+	bool waitForInput(const Timeout& timeout = Timeout::infinite)
+		{ return m_impl->waitForInput(timeout); }
+	
 	/**
 	 * Wait for output on the socket for a specified length of time.
 	 * @param timeOutSecs the number of seconds to wait.
 	 * @return true if the timeout expired
 	 * @throws SocketException
 	 */
-	bool waitForOutput(int timeOutSecs=INFINITE_TIMEOUT)
-		{ return m_impl->waitForOutput(timeOutSecs); }
+	OW_DEPRECATED bool waitForOutput(int timeOutSecs)
+		{ return m_impl->waitForOutput(Timeout::relative(timeOutSecs)); }
+	
+	/**
+	 * Wait for output on the socket for a specified length of time.
+	 * @param timeOutSecs the number of seconds to wait.
+	 * @return true if the timeout expired
+	 * @throws SocketException
+	 */
+	bool waitForOutput(const Timeout& timeout = Timeout::infinite)
+		{ return m_impl->waitForOutput(timeout); }
 
 	/**
 	 * Get the local address associated with the socket connection

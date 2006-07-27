@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004-2005 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -36,6 +36,7 @@
 #define OW_CONFIGOPTS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp" // for OW_SHAREDLIB_EXTENSION
+#include "OW_CommonFwd.hpp" // for String
 
 #ifndef OW_DEFAULT_DEBUGFLAG
 #define OW_DEFAULT_DEBUGFLAG "false"
@@ -80,9 +81,6 @@
 #ifndef OW_DEFAULT_PERLPROVIFC_PROV_LOCATION
 #define OW_DEFAULT_PERLPROVIFC_PROV_LOCATION OW_DEFAULT_OWLIBDIR"/perlproviders"
 #endif
-#ifndef OW_DEFAULT_AUTHENTICATION_MODULE
-#define OW_DEFAULT_AUTHENTICATION_MODULE OW_DEFAULT_OWLIBDIR"/authentication/libpamauthentication"OW_SHAREDLIB_EXTENSION
-#endif
 #ifndef OW_DEFAULT_CONFIG_FILE
 #define OW_DEFAULT_CONFIG_FILE OW_DEFAULT_SYSCONF_DIR"/openwbem/openwbem.conf"
 #endif
@@ -92,12 +90,8 @@
 #ifndef OW_DEFAULT_SIMPLE_AUTH_PASSWORD_FILE
 #define OW_DEFAULT_SIMPLE_AUTH_PASSWORD_FILE OW_DEFAULT_SYSCONF_DIR"/openwbem/simple_auth.passwd"
 #endif
-// deprecated - use OW_DEFAULT_DATADIR instead
-#ifndef OW_DEFAULT_DATA_DIR
-#define OW_DEFAULT_DATA_DIR OW_DEFAULT_STATE_DIR"/lib/openwbem"
-#endif
 #ifndef OW_DEFAULT_DATADIR
-#define OW_DEFAULT_DATADIR OW_DEFAULT_STATE_DIR"/lib/openwbem"
+#define OW_DEFAULT_DATADIR OW_DEFAULT_STATE_DIR"/openwbem/repository"
 #endif
 #ifndef OW_DEFAULT_OWLIBEXECDIR
 #define OW_DEFAULT_OWLIBEXECDIR OW_DEFAULT_LIBEXEC_DIR"/openwbem"
@@ -231,99 +225,120 @@
 #ifndef OW_DEFAULT_ADDITIONAL_CONFIG_FILES_DIRS
 #define OW_DEFAULT_ADDITIONAL_CONFIG_FILES_DIRS OW_DEFAULT_SYSCONF_DIR"/openwbem/openwbem.conf.d"
 #endif
+#ifndef OW_DEFAULT_HTTP_SERVER_DEFAULT_AUTH_CHALLENGE
+#define OW_DEFAULT_HTTP_SERVER_DEFAULT_AUTH_CHALLENGE "Basic"
+#endif
 
 
 namespace OW_NAMESPACE
 {
 namespace ConfigOpts
 {
+	// Initial value is OW_DEFAULT_OWLIBEXECDIR, but may be set to other
+	// values for testing.
+	extern String installed_owlibexec_dir;
+
+	// Initial value is OW_DEFAULT_STATE_DIR/openwbem, but may be set to other
+	// values for testing.
+	extern String installed_owdata_dir;
+
+	// Initial value is OW_DEFAULT_OWLIBDIR, but may be set to other values
+	// for testing.
+	extern String installed_owlib_dir;
+
 	// Naming rule: if the option begins with owcimomd, name is the same text all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.
 	// If the option has a default, the default macro is named OW_DEFAULT_<all caps name>
-	static const char* const DEBUGFLAG_opt = "owcimomd.debugflag";
-	static const char* const CONFIG_FILE_opt = "owcimomd.config_file";
-	static const char* const LOG_LOCATION_opt = "owcimomd.log_location";
-	static const char* const LOG_LEVEL_opt = "owcimomd.log_level";
-	static const char* const PROVIDER_IFC_LIBS_opt = "owcimomd.provider_ifc_libs";
-	static const char* const ONLYHELP_opt = "owcimomd.onlyhelp";
-	static const char* const LIBEXECDIR_opt = "owcimomd.libexecdir";
-	static const char* const OWLIBDIR_opt = "owcimomd.owlibdir";
-	static const char* const DATADIR_opt = "owcimomd.datadir";
-	static const char* const ALLOW_ANONYMOUS_opt = "owcimomd.allow_anonymous";
-	static const char* const PAM_ALLOWED_USERS_opt = "pam.allowed_users";
-	static const char* const SIMPLE_AUTH_PASSWORD_FILE_opt = "simple_auth.password_file";
-	static const char* const AUTHENTICATION_MODULE_opt = "owcimomd.authentication_module";
-	static const char* const DUMP_SOCKET_IO_opt = "owcimomd.dump_socket_io";
-	static const char* const CPPPROVIFC_PROV_LOCATION_opt = "cppprovifc.prov_location";
-	static const char* const DISABLE_INDICATIONS_opt = "owcimomd.disable_indications";
-	static const char* const WQL_LIB_opt = "owcimomd.wql_lib";
-	static const char* const ACL_SUPERUSER_opt = "owcimomd.ACL_superuser";
+	extern char const DEBUGFLAG_opt[];
+	extern char const CONFIG_FILE_opt[];
+	extern char const LOG_LOCATION_opt[];
+	extern char const LOG_LEVEL_opt[];
+	extern char const PROVIDER_IFC_LIBS_opt[];
+	extern char const ONLYHELP_opt[];
+	extern char const LIBEXECDIR_opt[];
+	extern char const OWLIBDIR_opt[];
+	extern char const DATADIR_opt[];
+	extern char const ALLOW_ANONYMOUS_opt[];
+	extern char const PAM_ALLOWED_USERS_opt[];
+	extern char const SIMPLE_AUTH_PASSWORD_FILE_opt[];
+	extern char const AUTHENTICATION_MODULE_opt[];
+	extern char const DUMP_SOCKET_IO_opt[];
+	extern char const CPPPROVIFC_PROV_LOCATION_opt[];
+	extern char const DISABLE_INDICATIONS_opt[];
+	extern char const WQL_LIB_opt[];
+	extern char const ACL_SUPERUSER_opt[];
 	// 2.0 additions
-	static const char* const SERVICES_PATH_opt = "owcimomd.services_path";
-	static const char* const REQUEST_HANDLER_PATH_opt = "owcimomd.request_handler_path";
-	static const char* const SLP_ENABLE_ADVERTISEMENT_opt = "slp.enable_advertisement";
-	static const char* const HTTP_SERVER_USE_UDS_opt = "http_server.use_UDS";
-	static const char* const NPIPROVIFC_PROV_LOCATION_opt = "npiprovifc.prov_location";
-	static const char* const HTTP_SERVER_SINGLE_THREAD_opt = "http_server.single_thread";
-	static const char* const HTTP_SERVER_HTTP_PORT_opt = "http_server.http_port";
-	static const char* const HTTP_SERVER_HTTPS_PORT_opt = "http_server.https_port";
-	static const char* const HTTP_SERVER_ENABLE_DEFLATE_opt = "http_server.enable_deflate";
-	static const char* const HTTP_SERVER_USE_DIGEST_opt = "http_server.use_digest";
+	extern char const SERVICES_PATH_opt[];
+	extern char const REQUEST_HANDLER_PATH_opt[];
+	extern char const SLP_ENABLE_ADVERTISEMENT_opt[];
+	extern char const HTTP_SERVER_USE_UDS_opt[];
+	extern char const NPIPROVIFC_PROV_LOCATION_opt[];
+	extern char const HTTP_SERVER_SINGLE_THREAD_opt[];
+	extern char const HTTP_SERVER_HTTP_PORT_opt[];
+	extern char const HTTP_SERVER_HTTPS_PORT_opt[];
+	extern char const HTTP_SERVER_ENABLE_DEFLATE_opt[];
+	extern char const HTTP_SERVER_USE_DIGEST_opt[];
 #ifndef OW_DISABLE_DIGEST
-	static const char* const HTTP_SERVER_DIGEST_PASSWORD_FILE_opt = "http_server.digest_password_file";
+	extern char const HTTP_SERVER_DIGEST_PASSWORD_FILE_opt[];
 #endif
-	static const char* const HTTP_SERVER_MAX_CONNECTIONS_opt = "http_server.max_connections";
-	static const char* const HTTP_SERVER_SSL_CERT_opt = "http_server.SSL_cert";
-	static const char* const HTTP_SERVER_SSL_KEY_opt = "http_server.SSL_key";
-	static const char* const CPPPROVIFC_PROV_TTL_opt = "cppprovifc.prov_TTL";
-	static const char* const REQUEST_HANDLER_TTL_opt = "owcimomd.request_handler_TTL";
-	static const char* const MAX_CLASS_CACHE_SIZE_opt = "owcimomd.max_class_cache_size";
+	extern char const HTTP_SERVER_MAX_CONNECTIONS_opt[];
+	extern char const HTTP_SERVER_SSL_CERT_opt[];
+	extern char const HTTP_SERVER_SSL_KEY_opt[];
+	extern char const CPPPROVIFC_PROV_TTL_opt[];
+	extern char const REQUEST_HANDLER_TTL_opt[];
+	extern char const MAX_CLASS_CACHE_SIZE_opt[];
 	// 3.0 additions
-	static const char* const HTTP_SERVER_REUSE_ADDR_opt = "http_server.reuse_addr";
-	static const char* const CMPIPROVIFC_PROV_LOCATION_opt = "cmpiprovifc.prov_location";
-	static const char* const CMPIPROVIFC_PROV_TTL_opt = "cmpiprovifc.prov_TTL";
-	static const char* const PERLPROVIFC_PROV_LOCATION_opt = "perlprovifc.prov_location";
-	static const char* const CHECK_REFERENTIAL_INTEGRITY_opt = "owcimomd.check_referential_integrity";
-	static const char* const POLLING_MANAGER_MAX_THREADS_opt = "owcimomd.polling_manager_max_threads";
-	static const char* const HTTP_SERVER_TIMEOUT_opt = "http_server.timeout";
-	static const char* const MAX_INDICATION_EXPORT_THREADS_opt = "owcimomd.max_indication_export_threads";
-	static const char* const RESTART_ON_ERROR_opt = "owcimomd.restart_on_error";
-	static const char* const AUTHORIZATION_LIB_opt = "owcimomd.authorization_lib";
-	static const char* const AUTHORIZATION2_LIB_opt = "owcimomd.authorization2_lib";
-	static const char* const HTTP_SERVER_LISTEN_ADDRESSES_opt = "http_server.listen_addresses";
-	static const char* const INTEROP_SCHEMA_NAMESPACE_opt = "owcimomd.interop_schema_namespace";
-	static const char* const HTTP_SERVER_UDS_FILENAME_opt = "http_server.uds_filename";
-	static const char* const HTTP_SERVER_ALLOW_LOCAL_AUTHENTICATION_opt = "http_server.allow_local_authentication";
-	static const char* const REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL_opt = "remoteprovifc.max_connections_per_url";
-	static const char* const ALLOWED_USERS_opt = "owcimomd.allowed_users";
-	static const char* const HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt = "http_server.default_content_language";
+	extern char const HTTP_SERVER_REUSE_ADDR_opt[];
+	extern char const CMPIPROVIFC_PROV_LOCATION_opt[];
+	extern char const CMPIPROVIFC_PROV_TTL_opt[];
+	extern char const PERLPROVIFC_PROV_LOCATION_opt[];
+	extern char const CHECK_REFERENTIAL_INTEGRITY_opt[];
+	extern char const POLLING_MANAGER_MAX_THREADS_opt[];
+	extern char const HTTP_SERVER_TIMEOUT_opt[];
+	extern char const MAX_INDICATION_EXPORT_THREADS_opt[];
+	extern char const RESTART_ON_ERROR_opt[];
+	extern char const AUTHORIZATION_LIB_opt[];
+	extern char const AUTHORIZATION2_LIB_opt[];
+	extern char const HTTP_SERVER_LISTEN_ADDRESSES_opt[];
+	extern char const INTEROP_SCHEMA_NAMESPACE_opt[];
+	extern char const HTTP_SERVER_UDS_FILENAME_opt[];
+	extern char const HTTP_SERVER_ALLOW_LOCAL_AUTHENTICATION_opt[];
+	extern char const REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL_opt[];
+	extern char const ALLOWED_USERS_opt[];
+	extern char const HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt[];
 	// 3.1 additions.
-	static const char* const HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt = "http_server.ssl_client_verification";
-	static const char* const HTTP_SERVER_SSL_TRUST_STORE = "http_server.ssl_trust_store";
-	static const char* const ADDITIONAL_LOGS_opt = "owcimomd.additional_logs";
-	static const char* const DISABLE_CPP_PROVIDER_INTERFACE_opt = "owcimomd.disable_cpp_provider_interface";
+	extern char const HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt[];
+	extern char const HTTP_SERVER_SSL_TRUST_STORE[];
+	extern char const ADDITIONAL_LOGS_opt[];
+	extern char const DISABLE_CPP_PROVIDER_INTERFACE_opt[];
 	// These aren't a whole config option, but log names, which are substituted as part of the log options
-	static const char* const LOG_DEBUG_LOG_NAME = "debug";
-	static const char* const LOG_MAIN_LOG_NAME = "main";
+	extern char const LOG_DEBUG_LOG_NAME[];
+	extern char const LOG_MAIN_LOG_NAME[];
 	// These log options aren't usable as is, the log name has to be substituted in using Format()
-	static const char* const LOG_1_TYPE_opt = "log.%1.type";
-	static const char* const LOG_1_COMPONENTS_opt = "log.%1.components";
-	static const char* const LOG_1_CATEGORIES_opt = "log.%1.categories";
-	static const char* const LOG_1_LEVEL_opt = "log.%1.level";
-	static const char* const LOG_1_FORMAT_opt = "log.%1.format";
-	static const char* const LOG_1_LOCATION_opt = "log.%1.location";
-	static const char* const LOG_1_MAX_FILE_SIZE_opt = "log.%1.max_file_size";
-	static const char* const LOG_1_MAX_BACKUP_INDEX_opt = "log.%1.max_backup_index";
+	extern char const LOG_1_TYPE_opt[];
+	extern char const LOG_1_COMPONENTS_opt[];
+	extern char const LOG_1_CATEGORIES_opt[];
+	extern char const LOG_1_LEVEL_opt[];
+	extern char const LOG_1_FORMAT_opt[];
+	extern char const LOG_1_LOCATION_opt[];
+	extern char const LOG_1_MAX_FILE_SIZE_opt[];
+	extern char const LOG_1_MAX_BACKUP_INDEX_opt[];
 	// 3.2 additions.
-	static const char* const OWBI1IFC_PROV_LOCATION_opt = "owbi1provifc.prov_location";
-	static const char* const OWBI1IFC_PROV_TTL_opt = "owbi1provifc.prov_ttl";
-	static const char* const LOG_1_FLUSH_opt = "log.%1.flush";
+	extern char const OWBI1IFC_PROV_LOCATION_opt[];
+	extern char const OWBI1IFC_PROV_TTL_opt[];
+	extern char const LOG_1_FLUSH_opt[];
 
-	static const char* const PIDFILE_opt = "owcimomd.pidfile";
-	static const char* const DROP_ROOT_PRIVILEGES_opt = "owcimomd.drop_root_privileges";
-	static const char* const ADDITIONAL_CONFIG_FILES_DIRS_opt = "owcimomd.additional_config_files_dirs";
+	extern char const PIDFILE_opt[];
+	extern char const ADDITIONAL_CONFIG_FILES_DIRS_opt[];
 
-	static const char* const EXPLICIT_REGISTRATION_NAMESPACES_opt = "owcimomd.explicit_registration_namespaces";
+	extern char const EXPLICIT_REGISTRATION_NAMESPACES_opt[];
+	extern char const PRIVILEGES_CONFIG_DIR_opt[];
+	extern char const INSTALLED_DEST_DIR_opt[];
+	extern char const PRIVILEGE_MONITOR_USE_LIB_PATH_opt[];
+	extern char const HTTP_SERVER_DEFAULT_AUTH_CHALLENGE_opt[];
+	extern char const HTTP_SERVER_ALLOW_DIGEST_AUTHENTICATION_opt[];
+	extern char const HTTP_SERVER_ALLOW_BASIC_AUTHENTICATION_opt[];
+	extern char const HTTP_SERVER_ALLOW_SPNEGO_AUTHENTICATION_opt[];
 
 	// Naming rule: if the option begins with owcimomd, name is the same text all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.

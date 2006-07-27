@@ -44,10 +44,14 @@
 namespace OW_NAMESPACE
 {
 
+namespace
+{
+	String COMPONENT_NAME("ow.common.shlSharedLibraryLoader");
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 SharedLibraryRef
-shlSharedLibraryLoader::loadSharedLibrary(const String& filename,
-	const LoggerRef& logger) const
+shlSharedLibraryLoader::loadSharedLibrary(const String& filename) const
 {
 	shl_t libhandle = ::shl_load(filename.c_str(), BIND_IMMEDIATE, 0L);
 	if (libhandle)
@@ -65,6 +69,7 @@ shlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	}
 	else
 	{
+		Logger logger(COMPONENT_NAME);
 		OW_LOG_ERROR(logger, Format("shlSharedLibraryLoader::loadSharedLibrary "
 			"shl_load returned NULL.  Error is: %1(%2)", errno, strerror(errno)));
 		return SharedLibraryRef( 0 );

@@ -38,12 +38,10 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_MutexLock.hpp"
-#include "OW_SSLException.hpp"
 #include "OW_Exception.hpp"
 #include "OW_IOException.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_SocketImpl.hpp"
-#include "OW_SSLSocketImpl.hpp"
 
 
 namespace OW_NAMESPACE
@@ -59,90 +57,7 @@ Socket::Socket()
 	: m_impl(new SocketImpl)
 {
 }
-//////////////////////////////////////////////////////////////////////////////
-Socket::Socket(const SSLClientCtxRef& sslCtx)
-{
-	if (sslCtx)
-	{
-#ifndef OW_NO_SSL
-		m_impl = SocketBaseImplRef(new SSLSocketImpl(sslCtx));
-#else
-		OW_THROW(SSLException, "Not built with SSL");
-#endif // #ifndef OW_NO_SSL
-	}
-	else
-	{
-		m_impl = SocketBaseImplRef(new SocketImpl);
-	}
-}
 
-//////////////////////////////////////////////////////////////////////////////
-Socket::Socket(SocketFlags::ESSLFlag isSSL)
-{
-	if (isSSL == SocketFlags::E_SSL)
-	{
-#ifndef OW_NO_SSL
-		m_impl = SocketBaseImplRef(new SSLSocketImpl);
-#else
-		OW_THROW(SSLException, "Not built with SSL");
-#endif // #ifndef OW_NO_SSL
-	}
-	else
-	{
-		m_impl = SocketBaseImplRef(new SocketImpl);
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-Socket::Socket(SocketHandle_t fd,
-	SocketAddress::AddressType addrType, SocketFlags::ESSLFlag isSSL)
-{
-	if (isSSL == SocketFlags::E_SSL)
-	{
-#ifndef OW_NO_SSL
-		m_impl = SocketBaseImplRef(new SSLSocketImpl(fd, addrType));
-#else
-		OW_THROW(SSLException, "Not built with SSL");
-#endif // #ifndef OW_NO_SSL
-	}
-	else
-	{
-		m_impl = SocketBaseImplRef(new SocketImpl(fd, addrType));
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-// Used by ServerSocket2::accept()
-Socket::Socket(SocketHandle_t fd,
-	SocketAddress::AddressType addrType, const SSLServerCtxRef& sslCtx)
-{
-	if (sslCtx)
-	{
-#ifndef OW_NO_SSL
-		m_impl = SocketBaseImplRef(new SSLSocketImpl(fd, addrType, sslCtx));
-#else
-		OW_THROW(SSLException, "Not built with SSL");
-#endif // #ifndef OW_NO_SSL
-	}
-	else
-	{
-		m_impl = SocketBaseImplRef(new SocketImpl(fd, addrType));
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-Socket::Socket(const SocketAddress& addr, SocketFlags::ESSLFlag isSSL)
-{
-	if (isSSL == SocketFlags::E_SSL)
-	{
-#ifndef OW_NO_SSL
-		m_impl = SocketBaseImplRef(new SSLSocketImpl(addr));
-#else
-		OW_THROW(SSLException, "Not built with SSL");
-#endif // #ifndef OW_NO_SSL
-	}
-	else
-	{
-		m_impl = SocketBaseImplRef(new SocketImpl(addr));
-	}
-}
 static bool b_gotShutDown = false;
 static Mutex shutdownMutex;
 //////////////////////////////////////////////////////////////////////////////
@@ -208,30 +123,6 @@ Socket::gotShutDown()
 	MutexLock mlock(shutdownMutex);
 	return b_gotShutDown;
 }
-#ifndef OW_NO_SSL
-SSL*
-Socket::getSSL() const
-{
-	IntrusiveReference<SSLSocketImpl> sslsock = m_impl.cast_to<SSLSocketImpl>(); 
-	if (!sslsock)
-	{
-		return 0; 
-	}
-	return sslsock->getSSL(); 
-}
-
-//////////////////////////////////////////////////////////////////////////////
-bool
-Socket::peerCertVerified() const
-{
-    IntrusiveReference<SSLSocketImpl> sslsock = m_impl.cast_to<SSLSocketImpl>(); 
-    if (!sslsock)
-    {
-            return false; 
-    }
-    return sslsock->peerCertVerified(); 
-}
-#endif
 
 } // end namespace OW_NAMESPACE
 

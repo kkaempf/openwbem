@@ -35,10 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_StringBuffer.hpp"
-#include "OW_CIMDateTime.hpp"
 #include "OW_Char16.hpp"
-#include "OW_CIMObjectPath.hpp"
-#include "OW_CIMDateTime.hpp"
 
 #include <cstring>
 #include <cstdio>
@@ -150,18 +147,6 @@ StringBuffer::operator += (Bool v)
 {
 	return append(v.toString());
 }
-//////////////////////////////////////////////////////////////////////////////
-StringBuffer&
-StringBuffer::operator += (const CIMDateTime& arg)
-{
-	return append(arg.toString());
-}
-//////////////////////////////////////////////////////////////////////////////
-StringBuffer&
-StringBuffer::operator += (const CIMObjectPath& arg)
-{
-	return append(arg.toString());
-}
 #if defined(OW_WIN32)
 #define snprintf _snprintf // stupid windoze...
 #endif
@@ -213,6 +198,24 @@ StringBuffer::operator += (Int32 v)
 	::snprintf(bfr, sizeof(bfr), "%d", v);
 	return append(bfr);
 }
+#if defined(OW_INT32_IS_INT) && defined(OW_INT64_IS_LONG_LONG)
+//////////////////////////////////////////////////////////////////////////////
+StringBuffer&
+StringBuffer::operator += (unsigned long v)
+{
+	char bfr[28];
+	::snprintf(bfr, sizeof(bfr), "%lu", v);
+	return append(bfr);
+}
+//////////////////////////////////////////////////////////////////////////////
+StringBuffer&
+StringBuffer::operator += (long v)
+{
+	char bfr[28];
+	::snprintf(bfr, sizeof(bfr), "%ld", v);
+	return append(bfr);
+}
+#endif
 //////////////////////////////////////////////////////////////////////////////
 StringBuffer&
 StringBuffer::operator += (UInt64 v)

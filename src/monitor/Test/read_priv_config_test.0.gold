@@ -1,0 +1,67 @@
+unpriv_user: ;
+read_dir:
+monitored_exec:
+  /a .
+  /a/a .
+  /abba .
+  /b .
+  /bubba .
+  /cee/dee .
+  /cee/deep .
+  /ee/eff .
+  /ee/effigy .
+  /gi/aich/eye/ .
+  /jay .
+  /jaywalker .
+  /kay/ell .
+  /kay/ello .
+  /emm/enn/oh .
+  /emm/enn/ohno .
+  /pea/queue .
+  /pea/queu .
+  /are/ess/tea .
+  /are/ess/tea/toast .
+  /ewe-vee .
+  /double/hew .
+  why .
+  /sbin/zee .
+user_exec:
+  /a .
+  /a/a .
+  /abba .
+  /b .
+  /bubba .
+  /cee/dee .
+  /cee/deep .
+  /ee/eff .
+  /ee/effigy .
+  /gi/aich/eye/ .
+  /jay .
+  /jaywalker .
+  /kay/ell .
+  /kay/ello .
+  /emm/enn/oh .
+  /emm/enn/ohno .
+  /pea/queue .
+  /pea/queu .
+  /are/ess/tea .
+  /are/ess/tea/toast .
+  /ewe-vee .
+  /double/hew .
+  why .
+  /sbin/zee .
+monitored_exec_check_args:
+  /bin/foo .
+  /bin/foo a .
+  /bin/foo a b c .
+user_exec_check_args:
+  /bin/foo .
+  /bin/foo a .
+  /bin/foo a b c .
+open_read:
+open_write:
+open_append:
+check_path:
+rename_from:
+rename_to:
+unlink:

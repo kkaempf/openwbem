@@ -38,9 +38,9 @@
 #include "OW_String.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
-#include "OW_SortedVectorMap.hpp"
 #include "OW_Exception.hpp"
 #include "OW_CommonFwd.hpp"
+#include "OW_SerializableIFC.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -62,14 +62,15 @@ OW_DECLARE_APIEXCEPTION(ContextDataNotFound, OW_COMMON_API);
  * Thread safety: None
  * Copy Semantics: Non-copyable
  */
-class OW_COMMON_API OperationContext
+class OW_COMMON_API OperationContext : public IntrusiveCountableBase
 {
 public:
 	
-	class OW_COMMON_API Data : public IntrusiveCountableBase
+	class OW_COMMON_API Data : public IntrusiveCountableBase, public SerializableIFC
 	{
 	public:
-		virtual ~Data(); // subclasses can clean-up & free memory
+		virtual ~Data();
+		virtual String getType() const = 0;
 	};
 
 	typedef IntrusiveReference<Data> DataRef;
@@ -78,7 +79,11 @@ public:
 
 	/**
 	 * Caller creats a subclass of Data and passes it in.
+	 * In an out of process provider, only an existing key can be updated.  A new key cannot be added.
+	 * 
 	 * @param key
+	 * 
+	 * @throws ContextDataNotFound
 	 */
 	void setData(const String& key, const DataRef& data);
 
@@ -90,8 +95,16 @@ public:
 	void removeData(const String& key);
 	
 	/**
-	 * caller uses IntrusiveReference::cast_to<>() on the return value to attempt to
-	 * recover the original type passed into storeData.
+	 * In an out of process provider, changes to the returned object will not be
+	 * propagated back to the main process. Call setData() to do that.
+	 * @return The same DataRef associated with key that was passed to setData().
+	 *  A NULL DataRef if key is not valid.
+	 */
+	template <typename T>
+	IntrusiveReference<T> getDataAs(const String& key) const;
+
+	/**
+	 * In an out of process provider, this function will always fail and return NULL. Use getDataAs() instead.
 	 * @return The same DataRef associated with key that was passed to setData().
 	 *  A NULL DataRef if key is not valid.
 	 */
@@ -125,7 +138,6 @@ public:
 	static const char* const USER_PASSWD;
 	static const char* const HTTP_PATH;
 	static const char* const CURUSER_UIDKEY;
-	static const char* const BYPASS_LOCKERKEY;
 	static const char* const SESSION_LANGUAGE_KEY;
 	static const char* const HTTP_ACCEPT_LANGUAGE_KEY;
 	static const char* const CLIENT_IPADDR;
@@ -134,23 +146,75 @@ public:
 
 	UserInfo getUserInfo() const;
 
+	class StringData : public OperationContext::Data
+	{
+	public:
+		StringData();
+		StringData(const String& str);
+		virtual void writeObject(std::streambuf& ostr) const;
+	
+		virtual void readObject(std::streambuf& istr);
+	
+		virtual String getType() const;
+		static const String s_type;
+		
+		String getString() const
+		{
+			return m_str;
+		}
+	private:
+		String m_str;
+	};
+
 private:
 
-#ifdef OW_WIN32
-#pragma warning (push)
-#pragma warning (disable: 4251)
-#endif
+	// derived class interface
+	/**
+	 * If key is found, assign to data and return true, else return false.
+	 * @param data in: may be null or a default constructed instance. out: will contain the data, if found.
+	 */
+	virtual bool doGetData(const String& key, DataRef& data) const = 0;
+	/**
+	 * Caller creats a subclass of Data and passes it in.
+	 * @param key
+	 * @throws ContextDataNotFound if the data cannot be set.
+	 */
+	virtual void doSetData(const String& key, const DataRef& data) = 0;
 
-	SortedVectorMap<String, DataRef> m_data;
-
-#ifdef OW_WIN32
-#pragma warning (pop)
-#endif
+	/**
+	 * Remove the data identified by key.  It is not an error if key has not
+	 * already been added to the context with setData().
+	 * @param key Identifies the data to remove.
+	 */
+	virtual void doRemoveData(const String& key) = 0;
+	
+	/**
+	 * Test whether there is data for the key.
+	 * @param key The key to test.
+	 * @return true if there is data for the key.
+	 */
+	virtual bool doKeyHasData(const String& key) const = 0;
 
 	// non-copyable
 	OperationContext(const OperationContext&);
 	OperationContext& operator=(const OperationContext&);
 };
+
+/////////////////////////////////////////////////////////////////////////////
+template <typename T>
+IntrusiveReference<T>
+OperationContext::getDataAs(const String& key) const
+{
+	DataRef rval = new T();
+	if (doGetData(key, rval))
+	{
+		return rval.template cast_to<T>();
+	}
+	else
+	{
+		return IntrusiveReference<T>();
+	}
+}
 
 } // end namespace OW_NAMESPACE
 

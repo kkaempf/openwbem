@@ -1,0 +1,10 @@
+User: owprovdr
+
+unlink
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: unlink: insufficient privileges
+
+unlink
+Exception:
+  type: IPCIOException

@@ -466,13 +466,6 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 	m_isActive = true;
 }
 //////////////////////////////////////////////////////////////////////////////
-bool
-ServerSocketImpl::waitForIO(int fd, int timeOutSecs,
-	SocketFlags::EWaitDirectionFlag forInput)
-{
-	return SocketUtils::waitForIO(fd, timeOutSecs, forInput) == 0;
-}
-//////////////////////////////////////////////////////////////////////////////
 /*
 String
 ServerSocketImpl::addrString()
@@ -482,13 +475,14 @@ ServerSocketImpl::addrString()
 */
 //////////////////////////////////////////////////////////////////////////////
 Socket
-ServerSocketImpl::accept(int timeoutSecs)
+ServerSocketImpl::accept(const Timeout& timeout)
 {
 	if (!m_isActive)
 	{
 		OW_THROW(SocketException, "ServerSocketImpl::accept(): m_isActive == false");
 	}
-	if (SocketUtils::waitForIO(m_sockfd, timeoutSecs, SocketFlags::E_WAIT_FOR_INPUT) == 0)
+	int rc = 0;
+	if ((rc = SocketUtils::waitForIO(m_sockfd, timeout, SocketFlags::E_WAIT_FOR_INPUT)) == 0)
 	{
 		int clntfd;
 		socklen_t clntlen;
@@ -549,10 +543,14 @@ ServerSocketImpl::accept(int timeoutSecs)
 		}
 		return Socket(clntfd, m_localAddress.getType(), m_sslCtx);
 	}
-	else
+	else if (rc == ETIMEDOUT)
 	{
 		// The timeout expired.
 		OW_THROW(SocketTimeoutException,"Timed out waiting for a connection");
+	}
+	else
+	{
+		OW_THROW_ERRNO_MSG(SocketException,"Timed out waiting for a connection");
 	}
 }
 #endif

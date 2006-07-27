@@ -1,0 +1,57 @@
+#pragma namespace("root/ooptest")
+
+Qualifier Key : boolean = false, Scope(property, reference),
+    Flavor(DisableOverride);
+
+Qualifier In : boolean = true,
+    Scope(parameter),
+    Flavor(DisableOverride);
+
+Qualifier Required : boolean = false, 
+    Scope(property, reference, parameter),
+    Flavor(DisableOverride);
+
+class ooptest
+{
+    [key] string id;
+
+	string method1([in, required] string arg1);
+	string testUnknownException();
+	string testStdException();
+	string testOWException();
+	string testCIMException();
+	string testExit();
+	string testOperationContextGetStringData([in, required] string key);
+	string testOperationContextSessionLanguage();
+	boolean testOperationContextSetStringData([in, required] string key, [in, required] string value);
+	boolean testOperationContextRemoveData([in, required] string key);
+	boolean testOperationContextKeyHasData([in, required] string key);
+	boolean testCIMOMHandle();
+	boolean testRepositoryCIMOMHandle();
+	boolean testGetConfig();
+};
+
+
+
+#pragma namespace("root")
+
+instance of OpenWBEM_OOPProviderRegistration
+{
+        InstanceID = "1";
+
+        NamespaceNames = {"root/ooptest"};
+
+        ClassName = "ooptest";
+
+        ProviderTypes = {1, 4, 6, 8}; // instance, lifecycle indication, method, polled
+
+        Process = "@libexecdir@/openwbem/owoopcpp1pr";
+
+        Args = { "--provider=@provdir@/libooptest.@LIB_EXT@", "--logfile=" };
+
+        Protocol = "owcpp1";
+
+        Timeout = "00000000000010.000000:000";
+};
+
+

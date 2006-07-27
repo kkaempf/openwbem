@@ -133,9 +133,8 @@ namespace OW_NAMESPACE
 
 		// cpp provider interface
 		static const int CppProviderIFCExceptionId = 10001;
+		static const int ProviderEnvironmentExceptionId = 10002;
 
-		// OWBI1 provider interface
-		static const int BI1ProviderIFCExceptionId = 11001;
 	}
 }
 

@@ -75,29 +75,20 @@ do																								\
 {																									\
 	String messageWithFunction(message);						\
 	messageWithFunction+= String(" ") + String(OW_FUNCTION_NAME) + String(" "); \
-	OW_LOG_DEBUG(getLogger(), messageWithFunction);	\
+	OW_LOG_DEBUG(Logger("wqlTest1"), messageWithFunction);	\
 }while(0);
 
 
 namespace
 {
-	LoggerRef createWqlTestLogger()
+	void createWqlTestLogger()
 	{
-		Array<LogAppenderRef> appenders;
 		StringArray components; components.push_back("test.wql.schema_query");
 		StringArray categories; categories.push_back("*");
 		String messageFormat("%r [%t] %p %c - %m");
-		appenders.push_back(LogAppenderRef(
-			new FileAppender(components, categories, (String("results/") + components[0]).c_str(), messageFormat, 0, 0, true)));
-
-		return LoggerRef(new AppenderLogger(components[0], appenders));
+        LogAppender::setDefaultLogAppender(new FileAppender(components, categories, (String("results/") + components[0]).c_str(), messageFormat, 0, 0, true));
 	}
 	
-	LoggerRef getLogger()
-	{
-		static LoggerRef logger(createWqlTestLogger());
-		return logger;
-	}
 	
 class CIMInstanceEnumBuilder : public CIMInstanceResultHandlerIFC
 {
@@ -578,6 +569,15 @@ int main(int argc, char* argv[])
 		testQuery(rch, "select * from wqlTestClass where __Path < \"wqlTestClass.name=\\\"test5\\\"\"", 5);
 		testQuery(rch, "select * from wqlTestClass where \"wqlTestClass.name=\\\"test5\\\"\" < __Path", 4);
 
+		// test conversion to string
+		testQuery(rch, "select * from wqlTestClass where sint32Data <> \"0\"", 1);
+		testQuery(rch, "select * from wqlTestClass where \"0\" <> sint32Data", 1);
+		testQuery(rch, "select * from wqlTestClass where booleanData <> \"true\"", 1);
+		testQuery(rch, "select * from wqlTestClass where \"true\" <> booleanData", 1);
+		testQuery(rch, "select * from wqlTestClass where booleanData <> \"false\"", 1);
+		testQuery(rch, "select * from wqlTestClass where \"false\" <> booleanData", 1);
+		testQuery(rch, "select * from wqlTestClass where realData <> \"123.456789\"", 1);
+		testQuery(rch, "select * from wqlTestClass where \"123.456789\" <> realData", 1);
 
 		// test IS, TRUE, NOT, and FALSE
 		testQuery(rch, "select * from wqlTestClass where booleanData IS TRUE", 1);

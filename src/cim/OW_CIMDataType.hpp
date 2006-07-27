@@ -177,12 +177,11 @@ public:
 	 */
 	String getRefClassName() const;
 
-	typedef COWIntrusiveReference<DTData> CIMDataType::*safe_bool;
 	/**
 	 * @return true if this CIMDataType is a valid CIM data type
 	 */
-	operator safe_bool () const;
-	bool operator!() const;
+	OW_SAFE_BOOL_IMPL(CIMDataType, COWIntrusiveReference<DTData>, CIMDataType::m_pdata, (m_pdata && (getType() != CIMNULL) && (getType() != INVALID)))
+
 	/**
 	 * Create an CIMDataType object represented by a given string.
 	 * @param arg	An String that contains a valid name of a CIM data type.
@@ -208,12 +207,12 @@ public:
 	 * Read this CIMDataType from an inputstream.
 	 * @param istrm The input stream to read this object from.
 	 */
-	virtual void readObject(std::istream &istrm);
+	virtual void readObject(std::streambuf & istrm);
 	/**
 	 * Write this CIMDataType to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
-	virtual void writeObject(std::ostream &ostrm) const;
+	virtual void writeObject(std::streambuf & ostrm) const;
 	/**
 	 * @return The string representation of this CIMDataType object.
 	 */

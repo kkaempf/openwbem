@@ -59,7 +59,8 @@ public:
 	~CppProviderIFC();
 
 	// Making this public so other code can re-use it.
-	static CppProviderBaseIFCRef loadProvider(const String& libName, LoggerRef logger);
+	static CppProviderBaseIFCRef loadProvider(const String& libName, LoggerRef logger) OW_DEPRECATED; // in 4.0.0
+	static CppProviderBaseIFCRef loadProvider(const String& libName);
 
 protected:
 	virtual const char* getName() const { return "c++"; }

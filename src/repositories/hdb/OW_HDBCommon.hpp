@@ -70,7 +70,8 @@ const int HDBSIGLEN = 16;
 //   we can sucessfully read.
 // 9/01/2005 - 4000000. Changed key format to use : instead of / to fix a bug.
 // 10/12/2005 - 4000001. Fixed association and instance key format wrt associations.
-const UInt32 HDBVERSION = 4000001;
+// 4/17/2006 - 4000002. Added namespace field to CIMInstance.
+const UInt32 HDBVERSION = 4000002;
 
 // This is the oldest version the code can handle.
 const UInt32 MinHDBVERSION = 4000001;
@@ -109,6 +110,8 @@ struct OW_HDB_API HDBBlock
 	// The length of the non-key data will be dataLength - keyLength;
 };
 #define OW_HDBLKSZ sizeof(HDBBlock);
+
+String HDBBlockDebugString(const HDBBlock& blk);
 
 //////////////////////////////////////////////////////////////////////////////
 class HDBUtilKeyArray

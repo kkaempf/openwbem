@@ -1,62 +1,141 @@
+# Make sure you define STATIC_COMMON_LIBRARY before including this file, if it
+# should be anything other than the default.
+STATIC_COMMON_LIBRARY ?= $(libdir)/libopenwbem_all.a
+
 # This is necessary so that it can be used as a variable in the following script. If make expands it, non-bash shells puke on "for linkdir in ;"
 export OW_EXTRA_LINK_DIRS
 
-install-ow-shared-libs:
-	$(INSTALL_PROGRAM) -d $(DESTDIR)$(thelibdir)
-	for i in $(OW_SHARED_LIBS); do \
-		if [ "x$(STATIC_SERVICES)" = "x" ]; then \
-			if [ "$(LIB_EXT)" = "dylib.bundle" ]; then \
-				LONG_FILE_NAME=`echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT:%.bundle=%); \
-				SHORT_FILE_NAME=`echo $$i|cut -f1 -d'.'`.$(LIB_EXT:%.bundle=%); \
-				if [ "x$(MAKEDYLIB)" = "x1" ]; then \
-					$(INSTALL_PROGRAM) $$LONG_FILE_NAME $(DESTDIR)$(thelibdir); \
-					rm -f $(DESTDIR)$(thelibdir)/$$SHORT_FILE_NAME; \
-					ln -sf $$LONG_FILE_NAME $(DESTDIR)$(thelibdir)/$$SHORT_FILE_NAME; \
-				fi; \
-				if [ "x$(MAKEBUNDLE)" = "x1" ]; then \
-					$(INSTALL_PROGRAM) $$LONG_FILE_NAME.bundle $(DESTDIR)$(thelibdir); \
-					rm -f $(DESTDIR)$(thelibdir)/$$SHORT_FILE_NAME.bundle; \
-					ln -sf $$LONG_FILE_NAME.bundle $(DESTDIR)$(thelibdir)/$$SHORT_FILE_NAME.bundle; \
-				fi; \
-				for linkdir in $$OW_EXTRA_LINK_DIRS; do \
-					$(INSTALL_PROGRAM) -d $(DESTDIR)$$linkdir; \
-					if [ "x$(MAKEBUNDLE)" = "x1" ]; then \
-						ln -sf $(thelibdir)/$$SHORT_FILE_NAME.bundle $(DESTDIR)$$linkdir; \
-					fi; \
-				done; \
-			elif [ "$(LIB_EXT)" = "nlm" ]; then \
-				$(INSTALL_PROGRAM)  $$i $(DESTDIR)$(thelibdir); \
-				for linkdir in $$OW_EXTRA_LINK_DIRS; do \
-					$(INSTALL_PROGRAM) -d $(DESTDIR)$$linkdir; \
-					$(INSTALL_PROGRAM) $$i $(DESTDIR)$$linkdir; \
-				done; \
-			else \
-				$(INSTALL_PROGRAM)  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
-				rm -f $(DESTDIR)$(thelibdir)/$$i; \
-				ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
-				for linkdir in $$OW_EXTRA_LINK_DIRS; do \
-					$(INSTALL_PROGRAM) -d $(DESTDIR)$$linkdir; \
-					ln -sf $(thelibdir)/$$i $(DESTDIR)$$linkdir; \
-				done; \
-			fi; \
-		else \
-			$(SHELL) $(top_srcdir)/fake_library_creator.sh $(EXPORT_PREFIX) $$i; \
-			if [ -e `echo $$i | cut -f1 -d'.'`.fsl ]; then \
-				$(INSTALL_PROGRAM) `echo $$i | cut -f1 -d'.'`.fsl $(DESTDIR)$(thelibdir)/$$i; \
-				for linkdir in $$OW_EXTRA_LINK_DIRS; do \
-					$(INSTALL_PROGRAM) `echo $$i | cut -f1 -d'.'`.fsl $(DESTDIR)$$linkdir/$$i; \
-				done; \
-				rm -f `echo $$i | cut -f1 -d'.'`.fsl; \
-				if [ -e $(DESTDIR)$(libdir)/libopenwbem_all.a ]; then \
-					echo "Adding the static version of $$i to $(DESTDIR)$(libdir)/libopenwbem_all.a"; \
-					ar r $(DESTDIR)$(libdir)/libopenwbem_all.a `echo $$i | cut -f1 -d'.'`.a; \
-				fi; \
-			else \
-				echo "Not installing $$i because no exports were found."; \
-			fi; \
-		fi; \
-	done;
+# Common install rules.
+define install-create-extra-links
+	$(if $(OW_EXTRA_LINK_DIRS), \
+		$(foreach linkdir,$(OW_EXTRA_LINK_DIRS), \
+			$(INSTALL_PROGRAM) -d $(DESTDIR)$(linkdir) && \
+			ln -sf $(thelibdir)/$(1) $(DESTDIR)$(linkdir)/$(2) && \
+		) \
+		true \
+	)
+endef
 
+#
+# Darwin (MacOS X) install rules
+#
+define install-darwin-lib
+	rm -f $(DESTDIR)$(thelibdir)/$(1:%.$(LIB_EXT)=%.$(2))
+	$(INSTALL_PROGRAM) $(1:%.$(LIB_EXT)=%.$(SO_EXT).$(2)) $(DESTDIR)$(thelibdir)
+	ln -s $(1:%.$(LIB_EXT)=%.$(SO_EXT).$(2)) $(DESTDIR)$(thelibdir)/$(1:%.$(LIB_EXT)=%.$(2))
+	$(call install-create-extra-links,$(1:%.$(LIB_EXT)=%.$(SO_EXT).$(2)),$(1:%.$(LIB_EXT)=%.$(2)))
+endef
+
+define install-check-dylib
+	$(if $(MAKEDYLIB:0=)$(MAKEDYLIB:1=1),$(call install-darwin-lib,$(1),dylib),$(warning Not installing $(1:%.$(LIB_EXT)=%.dylib): MAKEDYLIB is disabled.))
+endef
+define install-check-bundle
+	$(if $(MAKEBUNDLE:0=)$(MAKEBUNDLE:1=1),$(call install-darwin-lib,$(1),dylib.bundle),$(warning Not installing $(1): MAKEBUNDLE is disabled.))
+endef
+
+define install-lib-dylib.bundle
+	$(call install-check-dylib,$(1))
+	$(call install-check-bundle,$(1))
+endef
+
+
+#
+# Netware install rules
+#
+define install-lib-nlm
+	$(INSTALL_PROGRAM) $(1).$(SO_EXT) $(DESTDIR)$(thelibdir)
+	rm -f $(DESTDIR)$(thelibdir)/$(1)
+	ln -sf $(1).$(SO_EXT) $(DESTDIR)$(thelibdir)/$(1)
+endef
+
+
+#
+# Linux, Solaris install rules
+#
+define install-lib-so
+	$(INSTALL_PROGRAM) $(1).$(SO_EXT) $(DESTDIR)$(thelibdir)
+	rm -f $(DESTDIR)$(thelibdir)/$(1)
+	ln -sf $(1).$(SO_EXT) $(DESTDIR)$(thelibdir)/$(1)
+	$(call install-create-extra-links,$(1).$(SO_EXT),$(1))
+endef
+
+
+#
+# HP-UX install rules (just calls the normal "so" install function)
+#
+define install-lib-sl
+	$(call install-lib-so,$(1))
+endef
+
+
+#
+# Static install rules.
+#
+define install-fake-library
+	@echo Installing fake library for $(1)
+	$(INSTALL_PROGRAM) $(1:%.$(LIB_EXT)=%.fsl) $(DESTDIR)$(thelibdir)/$(1)
+	$(call install-create-extra-links,$(1),$(1))
+endef
+
+install-fake-lib-%:
+	$(call install-fake-library,$(@:install-fake-lib-%=%))
+
+define install-static-lib-helper
+	@true \
+		# This is really ugly.  I want to be able to use a *MUCH* cleaner \
+		# $ (if ...) here, but it will have the condition evaluated once \
+		# before execution begins.  Thus, the results would depend on a \
+		# previous invokation of $(MAKE) and not the current one.  Note \
+		# that the recursive use of make here is used to allow make-based \
+		# function calls from within the shell script without having the \
+		# function called when it should not be (the false case). 
+	if test -f $(1:%.$(LIB_EXT)=%.fsl); then \
+		$(MAKE) --no-print-directory install-fake-lib-$(1); \
+	else \
+		echo "Warning: Not installing $(1) because no exports were found ($(1:%.$(LIB_EXT)=%.fsl))"; \
+	fi
+	@true \
+		# This can be safely executed here, because all preconditions are \
+		# set before the initial evaluation (before execution).
+	$(if $(wildcard $(DESTDIR)/$(STATIC_COMMON_LIBRARY)), \
+		$(warning Warning: Adding the static version of $(1) to $(DESTDIR)/${STATIC_COMMON_LIBRARY}) \
+		$(AR) cru $(DESTDIR)/${STATIC_COMMON_LIBRARY} $(1:%.$(LIB_EXT)=%.a), \
+		$(warning Warning: Not adding $(1) to static common library -- Does not exist: $(DESTDIR)$(STATIC_COMMON_LIBRARY)) \
+	)
+endef
+
+define install-static-lib
+	$(if $(strip $(STATIC_COMMON_LIBRARY)),,$(error STATIC_COMMON_LIBRARY is not defined in this makefile.  Cannot install.))
+	@echo Checking $(1) for fake library exports...
+	$(SHELL) $(top_srcdir)/fake_library_creator.sh $(EXPORT_PREFIX) $(1)
+	$(call install-static-lib-helper,$(1))
+endef
+
+
+
+
+install-create-libdir:
+	$(INSTALL_PROGRAM) -d $(DESTDIR)$(thelibdir)
+
+install-ow-shared-lib-%: %
+	@echo "Executing install rule for $^"
+	$(if $(STATIC_SERVICES), $(call install-static-lib,$^), $(call install-lib-$(LIB_EXT),$^))
+
+#
+# Install all shared libraries listed in $(OW_SHARED_LIBS) using the above install functions
+#
+# Note that this does "install as side-effect" because the $(foreach) command
+# isn't well-suited to complex loops (individual commands would need trailing
+# semicolons or &&s).
+#
+install-ow-shared-libs: install-create-libdir $(OW_SHARED_LIBS:%=install-ow-shared-lib-%)
+
+
+
+# The uninstall rules are much shorter than the install rules were (and
+# executed less frequently), so they will be left in a single glob for now.
+#
+# NOTE: Static members added to the common library CAN NOT be uninstalled.
 uninstall-ow-shared-libs:
 	for i in $(OW_SHARED_LIBS); do \
 		if [ "$(LIB_EXT)" = "dylib.bundle" ]; then \
@@ -83,4 +162,3 @@ uninstall-ow-shared-libs:
 			done; \
 		fi; \
 	done;
-

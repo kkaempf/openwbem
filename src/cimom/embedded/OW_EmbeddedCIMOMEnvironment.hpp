@@ -41,7 +41,6 @@
 
 #ifndef OW_EMBEDDEDCIMOMENVIRONMENT_HPP_INCLUDE_GUARD_
 #define OW_EMBEDDEDCIMOMENVIRONMENT_HPP_INCLUDE_GUARD_
-#define OW_DAEMON_NAME "owcimomd"
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_LogLevel.hpp"
@@ -62,6 +61,7 @@
 #include "OW_CimomCommonFwd.hpp"
 #include "OW_CimomServerFwd.hpp"
 #include "OW_CIMFwd.hpp"
+#include "OW_Logger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -110,8 +110,6 @@ public:
 		OperationContext& context) const;
 
 	virtual WQLIFCRef getWQLRef() const;
-	virtual LoggerRef getLogger() const OW_DEPRECATED;
-	virtual LoggerRef getLogger(const String& componentName) const;
 	IndicationServerRef getIndicationServer() const;
 	PollingManagerRef getPollingManager() const;
 	void clearConfigItems();
@@ -124,6 +122,7 @@ public:
 	void unloadReqHandlers();
 	IndicationRepLayerMediatorRef getIndicationRepLayerMediator() const;
 	RepositoryIFCRef getRepository() const;
+	RepositoryIFCRef getAuthorizingRepository() const;
 	AuthorizerManagerRef getAuthorizerManager() const;
 
 
@@ -160,7 +159,7 @@ private:
 	AuthorizerManagerRef m_authorizerManager;
 	//AuthorizerIFCRef m_authorizer;
 
-	LoggerRef m_Logger;
+	Logger m_Logger;
 	ConfigMapRef m_configItems;
 	ProviderManagerRef m_providerManager;
 	mutable SharedLibraryRef m_wqlLib;

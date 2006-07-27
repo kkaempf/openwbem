@@ -50,7 +50,7 @@ namespace OW_NAMESPACE
  * URL, and the cimom returns a Unauthorized, this will be called
  * so the client can repeat the request with authentication credentials.
  */
-class OW_COMMON_API ClientAuthCBIFC : public IntrusiveCountableBase
+class OW_COMMON_API ClientAuthCBIFC : virtual public IntrusiveCountableBase
 {
 public:
 	/**

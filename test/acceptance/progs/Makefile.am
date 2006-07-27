@@ -23,6 +23,7 @@ owcimclientcl \
 testCIMExceptions \
 testinstprov \
 aclTest \
+aclTestBasic \
 cimlistener \
 testNamespaces \
 testMisc \
@@ -38,7 +39,7 @@ endif
 endif
 endif
 
-check_PROGRAMS = \
+noinst_PROGRAMS = \
 $(PROGS) \
 wqlTest1 \
 wqlTest2 \
@@ -46,7 +47,9 @@ CIMOMLocator \
 fakeclient \
 infiniteClient \
 testProviderAgent \
-socketCat
+socketCat \
+testListener \
+testSPNEGO
 
 testProviderAgent_SOURCES = \
 testProviderAgent.cpp
@@ -61,6 +64,7 @@ testProviderAgent_LDADD = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/common -lopenwbem \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
@@ -100,6 +104,7 @@ cimlistener_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/services/http -lowservicehttp \
+-L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/common -lopenwbem \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
@@ -114,7 +119,6 @@ wqlTest1_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/wql -lowwql \
--L$(top_builddir)/src/wql/common -lowwqlcommon \
 -L$(top_builddir)/src/common -lopenwbem \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
@@ -128,7 +132,6 @@ wqlTest1.cpp
 
 #wqlTest2
 wqlTest2_LDADD = \
--L$(top_builddir)/src/wql/common -lowwqlcommon \
 -L$(top_builddir)/src/wql -lowwql \
 -L$(top_builddir)/src/common -lopenwbem \
 $(SSL_LIBS) \
@@ -157,6 +160,23 @@ $(CXXBINLINKFLAGS) \
 
 aclTest_SOURCES = \
 aclTest.cpp
+
+#aclTestBasic
+aclTestBasic_LDADD = \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+aclTestBasic_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o aclTestBasic$(EXEEXT)
+
+aclTestBasic_SOURCES = \
+aclTestBasic.cpp
 
 #infiniteClient
 infiniteClient_LDADD = \
@@ -362,8 +382,10 @@ testEmbeddedCIMOM_LDADD = \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/cimom/common -lowcimomcommon \
 -L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/db/db -lowdb \
+$(REALTIME_LIBS) \
 $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
 
 testEmbeddedCIMOM_LDFLAGS = \
@@ -383,6 +405,46 @@ $(CXXBINLINKFLAGS) \
 socketCat_SOURCES = \
 socketCat.cpp
 
+### testListener
+testListener_SOURCES = \
+testListener.cpp
+
+testListener_LDADD = \
+-L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/services/http -lowservicehttp \
+-L$(top_builddir)/src/monitor -lowprivman \
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+testListener_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o testListener$(EXEEXT)
+
+### testSPNEGO
+testSPNEGO_SOURCES = \
+testSPNEGO.cpp
+
+testSPNEGO_LDADD = \
+-L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/services/http -lowservicehttp \
+-L$(top_builddir)/src/monitor -lowprivman \
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+testSPNEGO_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o testSPNEGO$(EXEEXT)
+
 INCLUDES = \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/cimom/embedded \
@@ -401,8 +463,9 @@ INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/cpp \
 -I$(top_srcdir)/src/services/http \
 -I$(top_srcdir)/src/provider \
--I$(top_srcdir)/src/requesthandlers/cimxml \
--I$(top_srcdir)/src/wql/common
+-I$(top_srcdir)/src/monitor \
+-I$(top_srcdir)/src/requesthandlers/cimxml
+
 
 #
 

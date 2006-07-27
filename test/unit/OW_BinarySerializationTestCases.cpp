@@ -61,16 +61,17 @@ void OW_BinarySerializationTestCases::testSomething()
         StringArray cmd; 
         cmd.push_back("/bin/cat"); 
         CIMObjectPath origCop("ClassName", "ns"); 
-        PopenStreams rval = OpenWBEM::Exec::safePopen(cmd); 
-        IOIFCStreamBuffer stdinbuf(rval.in().getPtr(), 256, "out"); 
-        IOIFCStreamBuffer stdoutbuf(rval.out().getPtr(), 256, "in"); 
+        ProcessRef rval = OpenWBEM::Exec::spawn(cmd); 
+        IOIFCStreamBuffer stdinbuf(rval->in().getPtr(), IOIFCStreamBuffer::E_OUT, 256); 
+        IOIFCStreamBuffer stdoutbuf(rval->out().getPtr(), IOIFCStreamBuffer::E_IN, 256); 
         ostream stdinstr(&stdinbuf); 
         istream stdoutstr(&stdoutbuf); 
-        OpenWBEM::BinarySerialization::writeObjectPath(stdinstr, origCop); 
+        OpenWBEM::BinarySerialization::writeObjectPath(stdinbuf, origCop); 
         stdinstr.flush(); 
-        rval.in()->close(); 
-        CIMObjectPath newCop = OpenWBEM::BinarySerialization::readObjectPath(stdoutstr); 
-        unitAssert(rval.getExitStatus() == 0); 
+        rval->in()->close(); 
+        CIMObjectPath newCop = OpenWBEM::BinarySerialization::readObjectPath(stdoutbuf);
+		rval->waitCloseTerm(3.0, 3.0, 3.0);
+        unitAssert(rval->processStatus().terminatedSuccessfully()); 
         unitAssert(newCop.getClassName() == "ClassName"); 
         unitAssert(newCop.getNameSpace() == "ns"); 
 }

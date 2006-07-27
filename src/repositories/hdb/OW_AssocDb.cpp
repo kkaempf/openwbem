@@ -60,7 +60,7 @@ namespace
 	const String COMPONENT_NAME("ow.repository.hdb");
 }
 
-using std::istream;
+using std::streambuf;
 using std::ostream;
 using std::endl;
 //////////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ static UInt32 calcCheckSum(unsigned char* src, Int32 len);
 static void writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File& file);
 static void readRecHeader(AssocDbRecHeader& rh, Int32 offset, const File& file);
 //////////////////////////////////////////////////////////////////////////////
-AssocDbEntry::AssocDbEntry(istream& istrm)
+AssocDbEntry::AssocDbEntry(streambuf & istrm)
 	: m_objectName(CIMNULL)
 	, m_offset(-1L)
 {
@@ -85,7 +85,7 @@ AssocDbEntry::AssocDbEntry(const CIMObjectPath& objectName,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-AssocDbEntry::writeObject(ostream& ostrm) const
+AssocDbEntry::writeObject(streambuf & ostrm) const
 {
 	m_objectName.writeObject(ostrm);
 	m_role.writeObject(ostrm);
@@ -94,7 +94,7 @@ AssocDbEntry::writeObject(ostream& ostrm) const
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-AssocDbEntry::entry::writeObject(ostream& ostrm) const
+AssocDbEntry::entry::writeObject(streambuf & ostrm) const
 {
 	m_assocClass.writeObject(ostrm);
 	m_resultClass.writeObject(ostrm);
@@ -103,7 +103,7 @@ AssocDbEntry::entry::writeObject(ostream& ostrm) const
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-AssocDbEntry::readObject(istream& istrm)
+AssocDbEntry::readObject(streambuf & istrm)
 {
 	m_objectName.readObject(istrm);
 	m_role.readObject(istrm);
@@ -112,7 +112,7 @@ AssocDbEntry::readObject(istream& istrm)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-AssocDbEntry::entry::readObject(istream& istrm)
+AssocDbEntry::entry::readObject(streambuf & istrm)
 {
 	m_assocClass.readObject(istrm);
 	m_resultClass.readObject(istrm);
@@ -474,7 +474,8 @@ AssocDb::~AssocDb()
 	{
 		if (m_hdlCount > 0)
 		{
-			OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), "*** AssocDb::~AssocDb - STILL OUTSTANDING"
+			Logger logger(COMPONENT_NAME);
+			OW_LOG_DEBUG(logger, "*** AssocDb::~AssocDb - STILL OUTSTANDING"
 				" HANDLES ***");
 		}
 		close();
@@ -631,7 +632,7 @@ AssocDb::readEntry(Int32 offset, AssocDbHandle& hdl)
 	{
 		OW_THROW_ERRNO_MSG(IOException, "Failed to read data for rec on assoc db");
 	}
-	DataIStream istrm(rh.dataSize, bfr.get());
+	DataIStreamBuf istrm(rh.dataSize, bfr.get());
 	dbentry.readObject(istrm);
 	dbentry.setOffset(offset);
 	return dbentry;
@@ -713,7 +714,7 @@ void
 AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 {
 	MutexLock l = getDbLock();
-	DataOStream ostrm;
+	DataOStreamBuf ostrm;
 	nentry.writeObject(ostrm);
 	UInt32 blkSize = ostrm.length() + sizeof(AssocDbRecHeader);
 	Int32 offset;
@@ -722,15 +723,15 @@ AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 	File f = hdl.getFile();
 	writeRecHeader(rh, offset, f);
 	
-	if (f.write(ostrm.getData(), ostrm.length()) !=
-		size_t(ostrm.length()))
+	if (f.write(ostrm.getData(), ostrm.length()) !=	size_t(ostrm.length()))
 	{
 		OW_THROW_ERRNO_MSG(IOException, "Failed to write data assoc db");
 	}
 	
 	if (!m_pIndex->add(nentry.makeKey().c_str(), offset))
 	{
-		OW_LOG_ERROR(m_env->getLogger(COMPONENT_NAME), Format("AssocDb::addEntry failed to add entry to"
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_ERROR(logger, Format("AssocDb::addEntry failed to add entry to"
 			" association index: ", nentry.makeKey()));
 		OW_THROW_ERRNO_MSG(IOException, "Failed to add entry to association index");
 	}

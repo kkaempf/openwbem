@@ -3,7 +3,6 @@ class EXP_BionicComputerSystem:CIM_ComputerSystem
 boolean OptionalArg;
 };
 
-
 INSTANCE OF EXP_BionicComputerSystem
 {
 CreationClassName="EXP_BionicComputerSystem";

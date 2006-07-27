@@ -37,7 +37,8 @@ OW_ProviderRegistrationEnvironmentIFC.cpp \
 OW_ProviderIFCBaseIFC.cpp \
 OW_MethodProviderInfo.cpp \
 OW_IndicationProviderIFC.cpp \
-OW_ProviderInfoBase.cpp
+OW_ProviderInfoBase.cpp \
+OW_ProviderEnvironmentException.cpp
 
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_PROVIDER_H=
@@ -64,7 +65,8 @@ OW_MethodProviderInfo.hpp \
 OW_IndicationProviderIFC.hpp \
 OW_IndicationProviderInfo.hpp \
 OW_ProviderInfoBase.hpp \
-OW_ProviderFwd.hpp
+OW_ProviderFwd.hpp \
+OW_ProviderEnvironmentException.hpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

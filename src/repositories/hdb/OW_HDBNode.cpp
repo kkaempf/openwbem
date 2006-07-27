@@ -37,11 +37,23 @@
 #include "OW_HDBNode.hpp"
 #include "OW_HDB.hpp"
 #include "OW_AutoPtr.hpp"
+#include "OW_Logger.hpp"
+#include "OW_Format.hpp"
+#include "OW_String.hpp"
+#include "OW_StringBuffer.hpp"
 #include <cstring>
 #include <cerrno>
 
 namespace OW_NAMESPACE
 {
+
+
+namespace
+{
+#define OW_HDBNODE_LOG_DEBUG(lgr, msg)
+// #define OW_HDBNODE_LOG_DEBUG(lgr, msg) OW_LOG_DEBUG(lgr, msg)
+// const String COMPONENT_NAME("ow.repository.hdb");
+}
 
 //////////////////////////////////////////////////////////////////////////////
 HDBNode::HDBNodeData::HDBNodeData() :
@@ -310,7 +322,7 @@ HDBNode::turnFlagsOff(HDBHandle& hdl, UInt32 flags)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-HDBNode::updateData(HDBHandle& hdl, int dataLen, const unsigned char* data)
+HDBNode::updateData(HDBHandle& hdl, const HDBNode& parentNode, int dataLen, const unsigned char* data)
 {
 	bool cc = false;
 	if (m_pdata)
@@ -345,7 +357,14 @@ HDBNode::updateData(HDBHandle& hdl, int dataLen, const unsigned char* data)
 		// If this node is already on file, then write changes to file
 		if (m_pdata->m_offset > 0)
 		{
+			//Logger lgr(COMPONENT_NAME);
+			OW_HDBNODE_LOG_DEBUG(lgr, "HDBNode::updateData() writing updated data");
 			write(hdl);
+			if (parentNode)
+			{
+				OW_HDBNODE_LOG_DEBUG(lgr, "HDBNode::updateData() updating new parent node");
+				updateParent(hdl, parentNode);
+			}
 		}
 	}
 	return cc;
@@ -414,6 +433,117 @@ HDBNode::write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader)
 	m_pdata->m_version = hdl.registerWrite();
 	return m_pdata->m_offset;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+HDBNode::updateParent(HDBHandle& hdl, const HDBNode& parentNode)
+{
+	// no need to do anything is the current parent is the same as parentNode
+	if (m_pdata->m_blk.parent == parentNode.m_pdata->m_offset)
+	{
+		return;
+	}
+
+	//Logger lgr(COMPONENT_NAME);
+	OW_HDBNODE_LOG_DEBUG(lgr, Format("HDBNode::updateParent updating node\n(%1) to have parent\n(%2)", this->debugString(), parentNode.debugString()));
+	detachFromParent(hdl);
+	HDBNode mutableParentNode(parentNode);
+	// the parent may have been changed, so reload it.
+	mutableParentNode.reload(hdl);
+	OW_HDBNODE_LOG_DEBUG(lgr, "HDBNode::updateParent detached child from old parent, adding to new parent.");
+	addToNewParent(hdl, mutableParentNode);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+HDBNode::detachFromParent(HDBHandle& hdl)
+{
+	HDB* pdb = hdl.getHDB();
+	File file = hdl.getFile();
+	HDBBlock fblk;
+	// Set pointer on next sibling if it exists
+	if (m_pdata->m_blk.nextSib > 0)
+	{
+		HDB::readBlock(fblk, file, m_pdata->m_blk.nextSib);
+		fblk.prevSib = m_pdata->m_blk.prevSib;
+		HDB::writeBlock(fblk, file, m_pdata->m_blk.nextSib);
+	}
+	// Set pointer on prev sibling if it exists
+	if (m_pdata->m_blk.prevSib > 0)
+	{
+		HDB::readBlock(fblk, file, m_pdata->m_blk.prevSib);
+		fblk.nextSib = m_pdata->m_blk.nextSib;
+		HDB::writeBlock(fblk, file, m_pdata->m_blk.prevSib);
+	}
+	// If it has a parent, insure parent doesn't contain it's offset
+	if (m_pdata->m_blk.parent > 0)
+	{
+		// Read parent block
+		HDB::readBlock(fblk, file, m_pdata->m_blk.parent);
+		bool changed = false;
+		// If this was the first child in the list, then update the
+		// first child pointer in the parent block
+		if (fblk.firstChild == m_pdata->m_offset)
+		{
+			changed = true;
+			fblk.firstChild = m_pdata->m_blk.nextSib;
+		}
+		// If this was the last child in the list, then update the
+		// last child pointer in the parent block
+		if (fblk.lastChild == m_pdata->m_offset)
+		{
+			changed = true;
+			fblk.lastChild = m_pdata->m_blk.prevSib;
+		}
+		// If any offsets changed in the parent block, then update the parent
+		if (changed)
+		{
+			HDB::writeBlock(fblk, file, m_pdata->m_blk.parent);
+		}
+	}
+	else
+	{
+		// Must be a root node
+		if (pdb->getFirstRootOffSet() == m_pdata->m_offset)
+		{
+			pdb->setFirstRootOffSet(file, m_pdata->m_blk.nextSib);
+		}
+		if (pdb->getLastRootOffset() == m_pdata->m_offset)
+		{
+			pdb->setLastRootOffset(file, m_pdata->m_blk.prevSib);
+		}
+	}
+	m_pdata->m_blk.parent = m_pdata->m_blk.nextSib = m_pdata->m_blk.prevSib = -1;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+HDBNode::addToNewParent(HDBHandle& hdl, HDBNode& parentNode)
+{
+	m_pdata->m_blk.prevSib = parentNode.m_pdata->m_blk.lastChild;
+	m_pdata->m_blk.nextSib = -1;
+	m_pdata->m_blk.parent = parentNode.m_pdata->m_offset;
+	File file = hdl.getFile();
+	// If the parent node already had children, then update the last node in the
+	// child list to point to the new node.
+	if (parentNode.m_pdata->m_blk.lastChild > 0)
+	{
+		HDBBlock node;
+		HDB::readBlock(node, file, parentNode.m_pdata->m_blk.lastChild);
+		// Update next sibling pointer on node
+		node.nextSib = m_pdata->m_offset;
+		// Write prev sibling node
+		HDB::writeBlock(node, file, parentNode.m_pdata->m_blk.lastChild);
+	}
+	parentNode.m_pdata->m_blk.lastChild = m_pdata->m_offset;
+	if (parentNode.m_pdata->m_blk.firstChild <= 0)
+	{
+		parentNode.m_pdata->m_blk.firstChild = parentNode.m_pdata->m_blk.lastChild;
+	}
+	HDB::writeBlock(m_pdata->m_blk, file, m_pdata->m_offset);
+	HDB::writeBlock(parentNode.m_pdata->m_blk, file, parentNode.m_pdata->m_offset);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 HDBNode::updateOffsets(HDBHandle& hdl, Int32 offset)
@@ -482,43 +612,48 @@ HDBNode::updateOffsets(HDBHandle& hdl, Int32 offset)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HDBNode::addChild(HDBHandle& hdl, HDBNode& arg)
+HDBNode::addChild(HDBHandle& hdl, HDBNode& child)
 {
-	if (!arg)
+	if (!child)
 	{
 		return;
 	}
+	//Logger lgr(COMPONENT_NAME);
+	OW_HDBNODE_LOG_DEBUG(lgr, Format("HDBNode::addChild() child:%1", child.debugString()));
 	// If this node has never been written, then write it before
 	// we create a child. If we don't do this, we don't have
 	// a parent offset to put in the child node
 	if (m_pdata->m_offset <= 0)
 	{
+		OW_HDBNODE_LOG_DEBUG(lgr, Format("HDBNode::addChild() Node offset == -1, writing: %1", this->debugString()));
 		write(hdl);
 	}
 	// If this node has already been written to the file, and it is the
 	// child of another parent, throw and exception.
 	// If it is already a child of this node, then just write it out
 	// and return.
-	if (arg.m_pdata->m_offset > 0)
+	if (child.m_pdata->m_offset > 0)
 	{
 		// If this node is already the parent, then just
 		// write the child node and return
-		if (arg.m_pdata->m_blk.parent == m_pdata->m_offset)
+		if (child.m_pdata->m_blk.parent == m_pdata->m_offset)
 		{
-			arg.write(hdl);
+			child.write(hdl);
 			return;
 		}
 		OW_THROW(HDBException, "Child node already has a parent. db may be corrupt");
 	}
-	arg.m_pdata->m_blk.prevSib = m_pdata->m_blk.lastChild;
-	arg.m_pdata->m_blk.nextSib = -1;
-	arg.m_pdata->m_blk.parent = m_pdata->m_offset;
-	Int32 newNodeOffset = arg.write(hdl);
+	child.m_pdata->m_blk.prevSib = m_pdata->m_blk.lastChild;
+	child.m_pdata->m_blk.nextSib = -1;
+	child.m_pdata->m_blk.parent = m_pdata->m_offset;
+	OW_HDBNODE_LOG_DEBUG(lgr, "HDBNode::addChild() writing child");
+	Int32 newNodeOffset = child.write(hdl);
 	File file = hdl.getFile();
 	// If this node already had children, then update the last node in the
 	// child list to point to the new node.
 	if (m_pdata->m_blk.lastChild > 0)
 	{
+		OW_HDBNODE_LOG_DEBUG(lgr, "HDBNode::addChild() updating last child to point to new child");
 		HDBBlock node;
 		HDB::readBlock(node, file, m_pdata->m_blk.lastChild);
 		// Update next sibling pointer on node
@@ -526,11 +661,12 @@ HDBNode::addChild(HDBHandle& hdl, HDBNode& arg)
 		// Write prev sibling node
 		HDB::writeBlock(node, file, m_pdata->m_blk.lastChild);
 	}
-	m_pdata->m_blk.lastChild = arg.m_pdata->m_offset;
+	m_pdata->m_blk.lastChild = child.m_pdata->m_offset;
 	if (m_pdata->m_blk.firstChild <= 0)
 	{
 		m_pdata->m_blk.firstChild = m_pdata->m_blk.lastChild;
 	}
+	OW_HDBNODE_LOG_DEBUG(lgr, "HDBNode::addChild() writing parent");
 	write(hdl);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -660,6 +796,54 @@ HDBNode::removeBlock(HDBHandle& hdl, HDBBlock& fblk, Int32 offset)
 	hdl.removeIndexEntry(reinterpret_cast<const char*>(pbfr.get()));
 	// Add the block to the free list
 	hdl.getHDB()->addBlockToFreeList(file, fblk, offset);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String HDBBlockDebugString(const HDBBlock& blk)
+{
+	StringBuffer bfr; 
+	bfr += "chkSum=";
+	bfr += blk.chkSum;		// The check sum of all following fields
+	bfr += " isFree=";
+	bfr += blk.isFree;	// Node is free block
+	bfr += " size=";
+	bfr += blk.size;				// The size of this block (used in free list)
+	bfr += " flags=";
+	bfr += blk.flags;		// User defined flags
+	bfr += " nextSib=";
+	bfr += blk.nextSib;				// offset of next sibling node in the file
+	bfr += " prevSib=";
+	bfr += blk.prevSib;				// offset of prev sibling node in the file
+	bfr += " parent=";
+	bfr += blk.parent;				// offset of the parent node in the file
+	bfr += " firstChild=";
+	bfr += blk.firstChild;			// offset of the first child node for this node
+	bfr += " lastChild=";
+	bfr += blk.lastChild;			// offset of the last child node for this node
+	bfr += " keyLength=";
+	bfr += blk.keyLength;			// length of the key component of the data
+	bfr += " dataLength=";
+	bfr += blk.dataLength;		// length of data not including key
+	return bfr.releaseString();
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+String
+HDBNode::debugString() const
+{
+	StringBuffer bfr;
+	bfr += HDBBlockDebugString(m_pdata->m_blk);
+	bfr += " key=";
+	bfr += m_pdata->m_key;
+	bfr += " bfrLen=";
+	bfr += m_pdata->m_bfrLen;
+	//unsigned char* m_bfr;
+	bfr += " offset=";
+	bfr += m_pdata->m_offset;
+	bfr += " version=";
+	bfr += m_pdata->m_version;
+	return bfr.releaseString();
 }
 
 } // end namespace OW_NAMESPACE

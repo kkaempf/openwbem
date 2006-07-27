@@ -42,6 +42,11 @@ namespace OW_NAMESPACE
 
 
 /////////////////////////////////////////////////////////////////////////////					
+NullAppender::NullAppender()
+	: LogAppender(StringArray(), StringArray(), STR_DEFAULT_MESSAGE_PATTERN)
+{}
+
+/////////////////////////////////////////////////////////////////////////////					
 NullAppender::NullAppender(const StringArray& components,
 	const StringArray& categories,
 	const String& pattern)

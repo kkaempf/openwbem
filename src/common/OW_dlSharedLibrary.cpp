@@ -39,6 +39,10 @@
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include <dlfcn.h>
+#ifdef OW_HAVE_FCNTL_H
+// For O_RDONLY
+#include <fcntl.h>
+#endif
 
 #include "OW_Types.hpp"
 
@@ -137,31 +141,33 @@ bool dlSharedLibrary::doGetFunctionPointer(const String& functionName,
 
 bool dlSharedLibrary::isFakeLibrary(const String& library_path)
 {
+	bool fake = false;
 #if defined(OW_USE_FAKE_LIBS)
-  if ( FileSystem::canRead(library_path) )
-  {
-    // Read the beginning of the file and see if it
-    // contains the fake library heading.
-    File libfile = FileSystem::openFile(library_path);
-
-    if ( libfile )
-    {
-      char buffer[(OW_FAKELIB_HEADING_LENGTH) + 1];
-      size_t num_read = libfile.read(buffer,(OW_FAKELIB_HEADING_LENGTH));
-      if ( num_read == (OW_FAKELIB_HEADING_LENGTH) )
-      {
-	// Null terminate it.
-	buffer[OW_FAKELIB_HEADING_LENGTH] = '\0';
-	if ( String(OW_FAKELIB_HEADING) == buffer )
+	if ( FileSystem::canRead(library_path) )
 	{
-	  // Yes, it's a fake library.
-	  return true;
+		// Read the beginning of the file and see if it
+		// contains the fake library heading.
+		int libfd = open(library_path.c_str(), O_RDONLY);
+
+		if ( libfd )
+		{
+			char buffer[(OW_FAKELIB_HEADING_LENGTH) + 1];
+			size_t num_read = read(libfd, buffer,(OW_FAKELIB_HEADING_LENGTH));
+			if ( num_read == (OW_FAKELIB_HEADING_LENGTH) )
+			{
+				// Null terminate it.
+				buffer[OW_FAKELIB_HEADING_LENGTH] = '\0';
+				if ( String(OW_FAKELIB_HEADING) == buffer )
+				{
+					// Yes, it's a fake library.
+					fake = true;
+				}
+			}
+			close(libfd);
+		}
 	}
-      }
-    }
-  }  
 #endif
-  return false;
+	return fake;
 }
 
 #if defined(OW_USE_FAKE_LIBS)

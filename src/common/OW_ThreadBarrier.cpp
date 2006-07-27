@@ -41,6 +41,7 @@
 
 #if defined(OW_USE_PTHREAD) && defined(OW_HAVE_PTHREAD_BARRIER) && !defined(OW_VALGRIND_SUPPORT)
  #include <pthread.h>
+ #include <cstring>
 #else
  // This is for the generic less-efficient version
  #include "OW_Condition.hpp"
@@ -61,6 +62,7 @@ public:
 	ThreadBarrierImpl(UInt32 threshold)
 	{
 		OW_ASSERT(threshold != 0);
+		memset(&barrier, 0, sizeof(barrier)); // AIX pukes if the barrier isn't zeroed out.
 		int res = pthread_barrier_init(&barrier, NULL, threshold);
 		if (res != 0)
 		{

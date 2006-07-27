@@ -43,7 +43,7 @@ namespace OW_NAMESPACE
 
 using std::istream;
 HTTPDeflateIStreamBuffer::HTTPDeflateIStreamBuffer(istream& istr)
-	: BaseStreamBuffer(HTTP_BUF_SIZE, "in")
+	: BaseStreamBuffer(BaseStreamBuffer::E_IN, HTTP_BUF_SIZE)
 	, m_istr(istr)
 {
 	m_zstr.opaque = Z_NULL;
@@ -125,22 +125,15 @@ HTTPDeflateIStreamBuffer::buffer_from_device(char* c, int n)
 }
 //////////////////////////////////////////////////////////////////////////////
 HTTPDeflateIStream::HTTPDeflateIStream(
-			const CIMProtocolIStreamIFCRef& istr)
+			const Reference<std::istream>& istr)
 	: HTTPDeflateIStreamBase(*istr)
-	, CIMProtocolIStreamIFC(&m_strbuf)
+	, std::istream(&m_strbuf)
 	, m_istr(istr)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// TODO: Move all this knowledge about CIM and specific trailers into HTTPClient
-void HTTPDeflateIStream::checkForError() const
-{
-	m_istr->checkForError();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-CIMProtocolIStreamIFCRef
+Reference<std::istream>
 HTTPDeflateIStream::getInputStreamOrig()
 {
 	return m_istr;

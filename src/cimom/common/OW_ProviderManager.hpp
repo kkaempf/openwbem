@@ -64,6 +64,7 @@ namespace OW_NAMESPACE
 class OW_CIMOMCOMMON_API ProviderManager : public ServiceIFC
 {
 public:
+	ProviderManager();
 	/**
 	 * Load and instantiate the ProviderIFCBaseIFC classes using the
 	 * ifcLoader to do the work.
@@ -110,7 +111,7 @@ public:
 	 * @return A ref counted InstanceProvider. If no provider is found then
 	 * 	null is returned.
 	 */
-	InstanceProviderIFCRef getInstanceProvider(const ProviderEnvironmentIFCRef& env,
+	InstanceProviderIFCRef getInstanceProvider(
 		const String& ns, const CIMClass& cc) const;
 
 	/**
@@ -122,7 +123,7 @@ public:
 	 * @return An array of secondary instance providers which have registered
 	 * for the class identified by the className argument.
 	 */
-	SecondaryInstanceProviderIFCRefArray getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& env,
+	SecondaryInstanceProviderIFCRefArray getSecondaryInstanceProviders(
 		const String& ns, const CIMName& className) const;
 	/**
 	 * Locate a Method provider.
@@ -138,7 +139,7 @@ public:
 	 * @returns A ref counted MethodProvider. If no provider is found then
 	 *	null is returned.
 	 */
-	MethodProviderIFCRef getMethodProvider(const ProviderEnvironmentIFCRef& env,
+	MethodProviderIFCRef getMethodProvider(
 		const String& ns, const CIMClass& cc, const CIMMethod& method) const;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
@@ -157,21 +158,19 @@ public:
 	 * @returns A ref counted AssociatorProvider. If no provider is found then
 	 * 	null is returned.
 	 */
-	AssociatorProviderIFCRef getAssociatorProvider(const ProviderEnvironmentIFCRef& env,
+	AssociatorProviderIFCRef getAssociatorProvider(
 		const String& ns, const CIMClass& cc) const;
 #endif
 	/**
 	 * @return all available indication export providers from the available
 	 * provider interfaces.
 	 */
-	IndicationExportProviderIFCRefArray
-		getIndicationExportProviders(const ProviderEnvironmentIFCRef& env) const;
+	IndicationExportProviderIFCRefArray	getIndicationExportProviders() const;
 	/**
 	 * @return all available polled providers from the available
 	 * provider interfaces.
 	 */
-	PolledProviderIFCRefArray
-		getPolledProviders(const ProviderEnvironmentIFCRef& env) const;
+	PolledProviderIFCRefArray getPolledProviders() const;
 	/**
 	 * @return all available indication providers from the available
 	 * provider interfaces, which are interested in exporting indications of
@@ -180,7 +179,7 @@ public:
 	 *  they will be passed in this parameter.
 	 */
 	IndicationProviderIFCRefArray
-		getIndicationProviders(const ProviderEnvironmentIFCRef& env,
+		getIndicationProviders(
 			const String& ns, const CIMName& indicationClassName,
 			const CIMNameArray& monitoredClassNames) const;
 	/**
@@ -236,7 +235,7 @@ private:
 	// For a lifecycle provider, /* and /classname entries are made for each lifecycle class.
 	MultiProvRegMap_t m_registeredIndProvs;
 
-	LoggerRef m_logger;
+	Logger m_logger;
 	ServiceEnvironmentIFCRef m_env;
 	NameSpaceSet_t m_restrictedNamespaces;
 };

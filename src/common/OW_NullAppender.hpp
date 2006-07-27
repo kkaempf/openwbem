@@ -47,6 +47,7 @@ namespace OW_NAMESPACE
 class OW_COMMON_API NullAppender : public LogAppender
 {
 public:
+	NullAppender();
 	NullAppender(const StringArray& components,
 		const StringArray& categories,
 		const String& pattern);

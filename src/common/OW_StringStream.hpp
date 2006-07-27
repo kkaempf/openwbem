@@ -87,7 +87,6 @@ class IStringStream : private IStringStreamBase, public std::istream
 public:
 	IStringStream(const String& s);
 	~IStringStream();
-	void reset();
 private:
 	// not implemented
 	IStringStream(const IStringStream&);

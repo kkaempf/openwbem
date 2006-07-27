@@ -1359,12 +1359,12 @@ void CIMOMVisitor::CIMOMprocessClass(const LineInfo& li)
 			}
 			catch (const CIMException& ce)
 			{
-				theErrorHandler->recoverableError(Format("Error: %1", ce.getMessage()).c_str(), li);
+				theErrorHandler->recoverableError(Format("Error: %1", ce).c_str(), li);
 			}
 		}
 		else
 		{
-			theErrorHandler->fatalError(Format("Error: %1", e.getMessage()).c_str(), li);
+			theErrorHandler->fatalError(Format("Error: %1", e).c_str(), li);
 		}
 	}
 }
@@ -1409,7 +1409,7 @@ void CIMOMVisitor::CIMOMprocessQualifierType(const LineInfo& li)
 	}
 	catch (const CIMException& ce)
 	{
-		theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
+		theErrorHandler->fatalError(Format("Error: %1", ce).c_str(), li);
 	}
 }
 
@@ -1474,12 +1474,12 @@ void CIMOMVisitor::CIMOMprocessInstance(const LineInfo& li)
 			}
 			catch (const CIMException& ce)
 			{
-				theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
+				theErrorHandler->fatalError(Format("Error: %1", ce).c_str(), li);
 			}
 		}
 		else
 		{
-			theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
+			theErrorHandler->fatalError(Format("Error: %1", ce).c_str(), li);
 		}
 	}
 }
@@ -1516,7 +1516,7 @@ CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const String& qualName, con
 	}
 	catch (const CIMException& ce)
 	{
-		theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
+		theErrorHandler->fatalError(Format("Error: %1", ce).c_str(), li);
 	}
 	return CIMQualifierType();
 }
@@ -1551,7 +1551,7 @@ CIMClass CIMOMVisitor::CIMOMgetClass(const String& className, const LineInfo& li
 	}
 	catch (const CIMException& ce)
 	{
-		theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
+		theErrorHandler->fatalError(Format("Error: %1", ce).c_str(), li);
 	}
 	return CIMClass();
 }

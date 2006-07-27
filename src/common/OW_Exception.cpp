@@ -230,6 +230,11 @@ operator<<(std::ostream& os, const Exception& e)
 	}
 	
 	os << e.type() << ": ";
+
+	if (e.getErrorCode() != Exception::UNKNOWN_ERROR_CODE)
+	{
+		os << e.getErrorCode() << ": ";
+	}
 	
 	if (*e.getMessage() == '\0')
 	{

@@ -41,6 +41,10 @@
 #include "OW_String.hpp"
 #include "OW_Thread.hpp"
 #include "OW_ThreadOnce.hpp"
+#include "OW_NonRecursiveMutex.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
+#include "OW_StaticAssert.hpp"
+#include "OW_MemoryBarrier.hpp"
 #include <cstring>
 
 namespace
@@ -49,7 +53,7 @@ namespace
 }
 
 #define CM_LOGGER() \
-(* static_cast<OpenWBEM::ProviderEnvironmentIFCRef *>(CMPI_ThreadContext::getBroker()->hdl))->getLogger(COMPONENT_NAME)
+Logger(COMPONENT_NAME)
 
 
 using namespace OW_NAMESPACE; 
@@ -162,11 +166,25 @@ int mbExtThreadSleep (CMPIUint32 msec)
 	return 0; 
 }
 
+namespace
+{
+	NonRecursiveMutex onceGuard;
+}
+
 int mbExtThreadOnce (int *once, void (*init)(void))
 {
 	try
 	{
-		callOnce(*reinterpret_cast<OnceFlag*>(once), init); 
+		readWriteMemoryBarrier()
+		if (*once == 0)
+		{
+			NonRecursiveMutexLock lock(onceGuard);
+			if (*once == 0)
+			{
+				init();
+				*once = 1;
+			}
+		}
 	}
 	catch(...)
 	{

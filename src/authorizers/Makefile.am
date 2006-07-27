@@ -1,1 +1,1 @@
-SUBDIRS=simple simple2
+SUBDIRS=simple simple2 basic

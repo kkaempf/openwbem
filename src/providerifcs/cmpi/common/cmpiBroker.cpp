@@ -43,7 +43,7 @@ namespace
 #define CM_CIMOM() \
 (* static_cast<OpenWBEM::ProviderEnvironmentIFCRef *>(CMPI_ThreadContext::getBroker()->hdl))->getCIMOMHandle()
 #define CM_LOGGER() \
-(* static_cast<OpenWBEM::ProviderEnvironmentIFCRef *>(CMPI_ThreadContext::getBroker()->hdl))->getLogger(COMPONENT_NAME)
+::OpenWBEM::Logger(COMPONENT_NAME)
 #define CM_Context(ctx) (((CMPI_Context*)ctx)->ctx)
 #define CM_Instance(ci) ((OpenWBEM::CIMInstance*)ci->hdl)
 #define CM_ObjectPath(cop) ((OpenWBEM::CIMObjectPath*)cop->hdl)

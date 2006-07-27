@@ -177,9 +177,9 @@ public:
 	 * Create a DateTime object that represents the given time.
 	 *
 	 * @param t      The epoch time that this DateTime object will respresent
-	 * @param microseconds The microsecond component of the time.
 	 *  This is the number of seconds since the Epoch, and should not be
 	 *  adjusted for time zone.
+	 * @param microseconds The microsecond component of the time. Valid values are 0..999999
 	 * @throws DateTimeException if t == time_t(-1)
 	 */
 	explicit DateTime(time_t t, UInt32 microseconds=0);

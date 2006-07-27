@@ -235,29 +235,6 @@ void OW_EnumerationTestCases::testInsertIterator()
 	}
 }
 
-void OW_EnumerationTestCases::testReleaseFile()
-{
-	String file;
-	{
-		Enumeration<String> e;
-		e.addElement("5");
-		unitAssert(e.numberOfElements() == 1);
-		e.addElement("a");
-		unitAssert(e.numberOfElements() == 2);
-		unitAssert(!e.usingTempFile());
-		file = e.releaseFile();
-		unitAssert(file.length() > 0);
-		unitAssert(e.numberOfElements() == 0);
-	}
-	Enumeration<String> e2(file);
-	unitAssert(e2.numberOfElements() == 2);
-	unitAssert(e2.nextElement() == String("5"));
-	unitAssert(e2.numberOfElements() == 1);
-	unitAssert(e2.nextElement() == String("a"));
-	unitAssert(e2.numberOfElements() == 0);
-}
-
-
 Test* OW_EnumerationTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_Enumeration");
@@ -282,9 +259,6 @@ Test* OW_EnumerationTestCases::suite()
 	testSuite->addTest (new TestCaller <OW_EnumerationTestCases>
 			("testQueueBig",
 			&OW_EnumerationTestCases::testQueueBig));
-	testSuite->addTest (new TestCaller <OW_EnumerationTestCases>
-			("testReleaseFile",
-			&OW_EnumerationTestCases::testReleaseFile));
 
 	return testSuite;
 }

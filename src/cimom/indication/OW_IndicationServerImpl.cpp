@@ -40,7 +40,6 @@
 #include "OW_ProviderManager.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_WQLIFC.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_SortedVectorSet.hpp"
 #include "OW_NULLValueException.hpp"
@@ -51,7 +50,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_WQLInstancePropertySource.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_LocalOperationContext.hpp"
 #include "OW_LocalCIMOMHandle.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_CIMException.hpp"
@@ -211,6 +210,7 @@ public:
 		m_pmgr(pmgr), m_trans(ntrans) {}
 	virtual void run();
 private:
+	virtual void doShutdown();
 	virtual void doCooperativeCancel();
 	virtual void doDefinitiveCancel();
 	IndicationServerImplThread* m_pmgr;
@@ -239,6 +239,10 @@ public:
 	{
 		return m_env->getRepository();
 	}
+	virtual RepositoryIFCRef getAuthorizingRepository() const
+	{
+		return m_env->getAuthorizingRepository();
+	}
 	virtual String getConfigItem(const String& name, const String& defRetVal="") const
 	{
 		return m_env->getConfigItem(name, defRetVal);
@@ -249,14 +253,6 @@ public:
 		return m_env->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
 	}
 	
-	virtual LoggerRef getLogger() const
-	{
-		return m_env->getLogger(COMPONENT_NAME);
-	}
-	virtual LoggerRef getLogger(const String& componentName) const
-	{
-		return m_env->getLogger(componentName);
-	}
 	virtual String getUserName() const
 	{
 		return Platform::getCurrentUserName();
@@ -270,7 +266,7 @@ public:
 		return ProviderEnvironmentIFCRef(new IndicationServerProviderEnvironment(m_env));
 	}
 private:
-	mutable OperationContext m_opctx;
+	mutable LocalOperationContext m_opctx;
 	CIMOMEnvironmentRef m_env;
 };
 ProviderEnvironmentIFCRef createProvEnvRef(CIMOMEnvironmentRef env)
@@ -290,7 +286,8 @@ Notifier::run()
 	}
 	catch(Exception& e)
 	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Caught exception while exporting indication: %1", e));
+		Logger lgr(COMPONENT_NAME);
+		OW_LOG_ERROR(lgr, Format("Caught exception while exporting indication: %1", e));
 	}
 	catch(ThreadCancelledException&)
 	{
@@ -298,8 +295,15 @@ Notifier::run()
 	}
 	catch(...)
 	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "Unknown exception caught while exporting indication");
+		Logger lgr(COMPONENT_NAME);
+		OW_LOG_ERROR(lgr, "Unknown exception caught while exporting indication");
 	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+Notifier::doShutdown()
+{
+	m_trans.m_provider->doShutdown();
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -319,6 +323,7 @@ Notifier::doDefinitiveCancel()
 IndicationServerImplThread::IndicationServerImplThread()
 	: m_shuttingDown(false)
 	, m_startedBarrier(2)
+	, m_logger(COMPONENT_NAME)
 {
 }
 namespace
@@ -350,7 +355,7 @@ private:
 		try
 		{
 			// TODO: If the provider rejects the subscription, we need to disable it!
-			is->createSubscription(ns, i, username);
+			is->startCreateSubscription(ns, i, username);
 		}
 		catch(Exception& e)
 		{
@@ -395,7 +400,6 @@ void
 IndicationServerImplThread::init(const CIMOMEnvironmentRef& env)
 {
 	m_env = env;
-	m_logger = env->getLogger(COMPONENT_NAME);
 	// set up the thread pool
 	Int32 maxIndicationExportThreads;
 	try
@@ -421,7 +425,7 @@ IndicationServerImplThread::init(const CIMOMEnvironmentRef& env)
 	//-----------------
 	ProviderManagerRef pProvMgr = m_env->getProviderManager();
 	IndicationExportProviderIFCRefArray pra =
-		pProvMgr->getIndicationExportProviders(createProvEnvRef(m_env));
+		pProvMgr->getIndicationExportProviders();
 	OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread: %1 export providers found",
 		pra.size()));
 	for (size_t i = 0; i < pra.size(); i++)
@@ -483,7 +487,7 @@ IndicationServerImplThread::run()
 	// This calls createSubscription for every instance of
 	// CIM_IndicationSubscription in all namespaces.
 	// TODO: If the provider rejects the subscription, we need to disable it!
-	OperationContext context;
+	LocalOperationContext context;
 	CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context);
 	namespaceEnumerator nsHandler(lch, this);
 	m_env->getRepository()->enumNameSpace(nsHandler, context);
@@ -494,37 +498,40 @@ IndicationServerImplThread::run()
 		{
 			m_mainLoopCondition.wait(l);
 			
-			try
+			while (!m_procTrans.empty() && !m_shuttingDown)
 			{
-				while (!m_procTrans.empty() && !m_shuttingDown)
+				ProcIndicationTrans trans = m_procTrans.front();
+				l.release();
+				try
 				{
-					ProcIndicationTrans trans = m_procTrans.front();
-					m_procTrans.pop_front();
-					l.release();
 					_processIndication(trans.instance, trans.nameSpace);
 					l.lock();
+					// sucessfully processed, so remove it from the queue.
+					m_procTrans.pop_front();
 				}
-			}
-			catch (const Exception& e)
-			{
-				OW_LOG_ERROR(m_logger, Format("IndicationServerImplThread::run caught "
-					" exception %1", e));
-			}
-			catch(ThreadCancelledException&)
-			{
-				throw;
-			}
-			catch(...)
-			{
-				OW_LOG_ERROR(m_logger, "IndicationServerImplThread::run caught unknown"
-					" exception");
-				// Ignore?
+				catch (const Exception& e)
+				{
+					OW_LOG_ERROR(m_logger, Format("IndicationServerImplThread::run caught "
+						" exception %1", e));
+					l.lock();
+				}
+				catch(ThreadCancelledException&)
+				{
+					throw;
+				}
+				catch(...)
+				{
+					OW_LOG_ERROR(m_logger, "IndicationServerImplThread::run caught unknown"
+						" exception");
+					// Ignore?
+					l.lock();
+				}
 			}
 		}
 	}
 	OW_LOG_DEBUG(m_logger, "IndicationServerImplThread::run shutting down");
-	m_subscriptionPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 5);
-	m_notifierThreadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 60);
+	m_subscriptionPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(5));
+	m_notifierThreadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(45), Timeout::relative(55));
 	return 0;
 }
 
@@ -782,7 +789,7 @@ IndicationServerImplThread::_processIndication(const CIMInstance& instanceArg,
 		CIMClass cc;
 		try
 		{
-			OperationContext context;
+			LocalOperationContext context;
 			cc = m_env->getRepositoryCIMOMHandle(context)->getClass(instNS, curClassName.toString());
 			curClassName = cc.getSuperClass();
 		}
@@ -799,7 +806,7 @@ IndicationServerImplThread::_processIndicationRange(
 	IndicationServerImplThread::subscriptions_iterator first,
 	IndicationServerImplThread::subscriptions_iterator last)
 {
-	OperationContext context;
+	LocalOperationContext context;
 	CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(context, CIMOMEnvironment::E_DONT_SEND_INDICATIONS);
 	for ( ;first != last; ++first)
 	{
@@ -1106,7 +1113,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 	OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread::createSubscription ns = %1, subInst = %2", ns, subInst.toString()));
 	
 	// get the filter
-	OperationContext context;
+	LocalOperationContext context;
 	CIMOMHandleIFCRef hdl = m_env->getRepositoryCIMOMHandle(context);
 	CIMObjectPath filterPath = subInst.getProperty("Filter").getValueT().toCIMObjectPath();
 	String filterNS = filterPath.getNameSpace();
@@ -1178,6 +1185,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		try
 		{
 			StringArray tmp(hdl->enumClassNamesA(filterSourceNameSpace, isaClassNames[i].toString()));
+			OW_LOG_DEBUG(m_logger, Format("enumClassNamesA(%1, %2) returned %3 class names", filterSourceNameSpace, isaClassNames[i].toString(), tmp.size()));
 			subClasses.insert(subClasses.end(), tmp.begin(), tmp.end());
 		}
 		catch (CIMException& e)
@@ -1213,13 +1221,17 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 
 	if (!isaClassNames.empty())
 	{
-		providers = pm->getIndicationProviders(createProvEnvRef(m_env),
-			ns, indicationClassName, isaClassNames);
+		OW_LOG_DEBUG(m_logger, Format("Querying ProviderManager for indication providers. filterSourceNameSpace = %1, indicationClassName = %2, isaClassNames = {%3}", 
+			filterSourceNameSpace, indicationClassName, ss.toString()));
+		providers = pm->getIndicationProviders(
+			filterSourceNameSpace, indicationClassName, isaClassNames);
 	}
 	else
 	{
-		providers = pm->getIndicationProviders(createProvEnvRef(m_env), ns,
-			indicationClassName, CIMNameArray());
+		OW_LOG_DEBUG(m_logger, Format("Querying ProviderManager for indication providers. filterSourceNameSpace = %1, indicationClassName = %2, isaClassNames = {}", 
+			filterSourceNameSpace, indicationClassName));
+		providers = pm->getIndicationProviders(
+			filterSourceNameSpace, indicationClassName, CIMNameArray());
 	}
 	
 	OW_LOG_DEBUG(m_logger, Format("Found %1 providers for the subscription", providers.size()));
@@ -1305,9 +1317,9 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 			}
 
 		}
-		catch (CIMException& ce)
+		catch (Exception& e)
 		{
-			OW_LOG_ERROR(m_logger, Format("Caught exception while calling mustPoll for provider: %1", ce));
+			OW_LOG_ERROR(m_logger, Format("Caught exception while calling mustPoll for provider: %1", e));
 		}
 		catch(ThreadCancelledException&)
 		{
@@ -1371,9 +1383,9 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 
 			++successfulActivations;
 		}
-		catch (CIMException& ce)
+		catch (Exception& e)
 		{
-			OW_LOG_ERROR(m_logger, Format("Caught exception while calling activateFilter for provider: %1", ce));
+			OW_LOG_ERROR(m_logger, Format("Caught exception while calling activateFilter for provider %1: %2", i, e));
 		}
 		catch(ThreadCancelledException&)
 		{
@@ -1381,7 +1393,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		}
 		catch (...)
 		{
-			OW_LOG_ERROR(m_logger, "Caught unknown exception while calling activateFilter for provider");
+			OW_LOG_ERROR(m_logger, Format("Caught unknown exception while calling activateFilter for provider %1", i));
 		}
 	}
 
@@ -1439,7 +1451,7 @@ IndicationServerImplThread::modifyFilter(const String& ns, const CIMInstance& fi
 	// before the creation.
 	try
 	{
-		OperationContext context;
+		LocalOperationContext context;
 		CIMOMHandleIFCRef hdl(m_env->getRepositoryCIMOMHandle(context));
 		// get all the CIM_IndicationSubscription instances referencing the filter
 		CIMObjectPath filterPath(ns, filterInst);
@@ -1469,7 +1481,7 @@ IndicationServerImplThread::modifyFilter(const String& ns, const CIMInstance& fi
 }
 
 void
-IndicationServerImplThread::doCooperativeCancel()
+IndicationServerImplThread::doShutdown()
 {
 	NonRecursiveMutexLock l(m_mainLoopGuard);
 	m_shuttingDown = true;

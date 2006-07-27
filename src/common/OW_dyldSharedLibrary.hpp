@@ -53,10 +53,7 @@ namespace OW_NAMESPACE
 class dyldSharedLibrary : public SharedLibrary
 {
 public:
-	dyldSharedLibrary(void * libhandle, const String& libName)
-		: SharedLibrary(), m_libhandle( reinterpret_cast<NSModule>(libhandle) ), m_libName(libName)
-	{
-	}
+	dyldSharedLibrary(NSModule libhandle, const String& libName);
 	virtual ~dyldSharedLibrary();
 
 protected:

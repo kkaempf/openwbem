@@ -25,6 +25,8 @@ set -e
 # Enable error reporting on undefined vars.
 set -u
 
+set -x
+
 MESSAGE_PREFIX_RELEASE="OW_BUILD_MESSAGE_RELEASE:"
 RESULTS_PREFIX_RELEASE="OW_BUILD_RESULTS_RELEASE:"
 MESSAGE_PREFIX_DEBUG="OW_BUILD_MESSAGE_DEBUG:"
@@ -180,7 +182,7 @@ function execute_build()
 	# want to have real results from both builds.
 	set +e
 	echo "Command line to execute on remote:"
-	echo "ssh ${OW_BUILD_USER}@${MACHINE_NAME} bash -x ${OW_BUILD_SCRIPT} ${OW_SOURCE_DIR}/build/automated/data/${CONFIG_FILE_NAME} ${BUILD_METHOD} ${SAVED_COMMAND_LINE}"
+	echo "ssh ${OW_BUILD_USER}@${MACHINE_NAME} ${USABLE_SHELL} -x ${OW_BUILD_SCRIPT} ${OW_SOURCE_DIR}/build/automated/data/${CONFIG_FILE_NAME} ${BUILD_METHOD} ${SAVED_COMMAND_LINE}"
 	# We're safe to execute their chosen build script now.
 	ssh ${OW_BUILD_USER}@${MACHINE_NAME} ${USABLE_SHELL} -x ${OW_BUILD_SCRIPT} ${OW_SOURCE_DIR}/build/automated/data/${CONFIG_FILE_NAME} ${BUILD_METHOD} ${SAVED_COMMAND_LINE} &
 	local killed=0

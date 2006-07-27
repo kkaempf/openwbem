@@ -49,7 +49,8 @@
 #include "OW_CppProviderIFC.hpp"
 #include "OW_Logger.hpp"
 #include "OW_LogAppender.hpp"
-#include "OW_AppenderLogger.hpp"
+#include "OW_MultiAppender.hpp"
+#include "OW_ConfigFile.hpp"
 
 #include <csignal>
 #include <iostream> // for cout and cerr
@@ -102,32 +103,17 @@ void Usage()
 	cerr << CmdLineParser::getUsage(g_options) << endl;
 }
 
-LoggerRef
-createLogger(const String& type_)
+LogAppender::ConfigMap getAppenderConfig(const ConfigFile::ConfigMap& configItems)
 {
-	String type(type_);
-	StringArray components;
-	components.push_back("*");
-
-	StringArray categories;
-	categories.push_back(Logger::STR_FATAL_CATEGORY);
-	categories.push_back(Logger::STR_ERROR_CATEGORY);
-
-	LogAppender::ConfigMap configItems;
-
-	// TODO: Fix this to use the new logging configuration scheme
-	String filename = type;
-	if (type != "syslog")
+	LogAppender::ConfigMap appenderConfig;
+	for (ConfigFile::ConfigMap::const_iterator iter = configItems.begin(); iter != configItems.end(); ++iter)
 	{
-		type = "file";
-		configItems["log.test.location"] = filename;
+		if (iter->first.startsWith("log") && iter->second.size() > 0)
+		{
+			appenderConfig[iter->first] = iter->second.back().value;
+		}
 	}
-
-	LogAppenderRef logAppender = LogAppender::createLogAppender("", components, categories,
-		LogMessagePatternFormatter::STR_DEFAULT_MESSAGE_PATTERN, type, configItems);
-
-	return LoggerRef(new AppenderLogger("owcimomd", E_ERROR_LEVEL, logAppender));
-
+	return appenderConfig;
 }
 
 } // end anonymous namespace
@@ -140,8 +126,8 @@ int main(int argc, char* argv[])
 		CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
 
 		sigPipe = UnnamedPipe::createUnnamedPipe();
-		sigPipe->setOutputBlocking(UnnamedPipe::E_NONBLOCKING);
-		sigPipe->setWriteTimeout(0);
+		sigPipe->setWriteBlocking(UnnamedPipe::E_NONBLOCKING);
+		sigPipe->setWriteTimeout(Timeout::relative(0.0));
 		signal(SIGINT, sig_handler);
 
 		if (parser.isSet(HELP_OPT))
@@ -179,10 +165,47 @@ int main(int argc, char* argv[])
 			ConfigFile::setConfigItem(cmap, ProviderAgent::DynamicClassRetrieval_opt, "true", ConfigFile::E_PRESERVE_PREVIOUS);
 		}
 
-		bool debugMode = false;
+		using namespace ConfigOpts;
+		Array<LogAppenderRef> appenders;
 
-		LoggerRef logger = createLogger(ConfigFile::getConfigItem(cmap, ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_LOCATION));
-		logger->setLogLevel(ConfigFile::getConfigItem(cmap, ConfigOpts::LOG_LEVEL_opt, OW_DEFAULT_LOG_LEVEL));
+		StringArray additionalLogs = ConfigFile::getMultiConfigItem(cmap, ADDITIONAL_LOGS_opt, StringArray(), " \t");
+		additionalLogs.push_back("main");
+
+		for (size_t i = 0; i < additionalLogs.size(); ++i)
+		{
+			const String& logName(additionalLogs[i]);
+
+			String logMainType = ConfigFile::getConfigItem(cmap, Format(LOG_1_TYPE_opt, logName), OW_DEFAULT_LOG_1_TYPE);
+			String logMainComponents = ConfigFile::getConfigItem(cmap, Format(LOG_1_COMPONENTS_opt, logName), OW_DEFAULT_LOG_1_COMPONENTS);
+			String logMainCategories = ConfigFile::getConfigItem(cmap, Format(LOG_1_CATEGORIES_opt, logName));
+			if (logMainCategories.empty())
+			{
+				// convert level into categories
+				String logMainLevel = ConfigFile::getConfigItem(cmap, Format(LOG_1_LEVEL_opt, logName), OW_DEFAULT_LOG_1_LEVEL);
+				if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
+				{
+					logMainCategories = Logger::STR_DEBUG_CATEGORY + " " + Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+				}
+				else if (logMainLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
+				{
+					logMainCategories = Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+				}
+				else if (logMainLevel.equalsIgnoreCase(Logger::STR_ERROR_CATEGORY))
+				{
+					logMainCategories = Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+				}
+				else if (logMainLevel.equalsIgnoreCase(Logger::STR_FATAL_CATEGORY))
+				{
+					logMainCategories = Logger::STR_FATAL_CATEGORY;
+				}
+			}
+			String logMainFormat = ConfigFile::getConfigItem(cmap, Format(LOG_1_FORMAT_opt, logName), OW_DEFAULT_LOG_1_FORMAT);
+
+			appenders.push_back(LogAppender::createLogAppender(logName, logMainComponents.tokenize(), logMainCategories.tokenize(),
+				logMainFormat, logMainType, getAppenderConfig(cmap)));
+		}
+
+		LogAppender::setDefaultLogAppender(new MultiAppender(appenders));
 
 		// TODO: set the http server timeout
 
@@ -202,7 +225,7 @@ int main(int argc, char* argv[])
 		for (size_t i = 0; i < providers.size(); ++i)
 		{
 			String libName(providers[i]);
-			CppProviderBaseIFCRef provider = CppProviderIFC::loadProvider(libName, logger);
+			CppProviderBaseIFCRef provider = CppProviderIFC::loadProvider(libName);
 			if (!provider->getInstanceProvider()
 				&& !provider->getSecondaryInstanceProvider()
 	#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -218,7 +241,7 @@ int main(int argc, char* argv[])
 
 		CIMClassArray cra;
 
-		ProviderAgent pa(cmap, pra, cra, rha, authenticator, logger, url);
+		ProviderAgent pa(cmap, pra, cra, rha, authenticator, url);
 		
 		// wait until we get a SIGINT as a shutdown signal
 		int dummy;

@@ -3,7 +3,7 @@ dist-hook:
 	cp $(srcdir)/perlNPI/{Changes,MANIFEST,Makefile.PL,README.1ST,perlNPI.pm,perlNPI.xs,test.pl,typemap} $(distdir)/perlNPI
 
 
-if HAVE_PERL_EMBED
+if ENABLE_PERL_PROVIDERIFC
 #include $(top_srcdir)/Makefile-shared-lib.inc
 
 # contents of Makefile-shared-lib.inc slightly modified for this special dir.

@@ -87,7 +87,7 @@ public:
 	 *
 	 * @throws BadCIMSignatureException
 	 */
-	static void readSig(std::istream& istrm, const char* const sig);
+	static void readSig(std::streambuf & istrm, const char * const sig);
 
 	/**
 	 * Read one of two given signatures from the input stream. Each class
@@ -115,8 +115,10 @@ public:
 	 * @throws BadCIMSignatureException If the signature doesn't match sig or
 	 *  verSig, or if the version read is > maxVersion.
 	 */
-	static UInt32 readSig(std::istream& istrm, const char* const sig,
-		const char* const verSig, UInt32 maxVersion);
+	static UInt32 readSig(
+		std::streambuf & istrm, char const * const sig,
+		char const * const verSig, UInt32 maxVersion
+	);
 
 	/**
 	 * Write the given class signature to an output stream.
@@ -126,7 +128,7 @@ public:
 	 * @param sig The signature to write to the output stream as a NULL
 	 *		terminated string.
 	 */
-	static void writeSig(std::ostream& ostrm, const char* const sig);
+	static void writeSig(std::streambuf & ostrm, char const * const sig);
 
 	/**
 	 * Write the given class signature and version to the output stream.
@@ -135,8 +137,9 @@ public:
 	 *		terminated string.
 	 * @param version The version value to write to the output stream.
 	 */
-	static void writeSig(std::ostream& ostrm, const char* const sig,
-		UInt32 version);
+	static void writeSig(
+		std::streambuf & ostrm, char const * const sig, UInt32 version
+	);
 
 };
 OW_COMMON_API std::ostream& operator<<(std::ostream& ostr, const CIMBase& cb);

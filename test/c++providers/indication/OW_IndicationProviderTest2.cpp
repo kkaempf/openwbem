@@ -101,7 +101,7 @@ public:
 		m_cond.notifyAll(); // wake up run() so it will exit.
 	}
 
-	virtual void doCooperativeCancel()
+	virtual void doShutdown()
 	{
 		shutdown();
 	}
@@ -179,13 +179,14 @@ public:
 		const StringArray& classes,
 		bool firstActivation)
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("IndicationProviderTest2::activateFilter filter = %1, eventType = %2, nameSpace = %3, firstActivation = %4", filter.toString(), eventType, nameSpace, firstActivation));
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, Format("IndicationProviderTest2::activateFilter filter = %1, eventType = %2, nameSpace = %3, firstActivation = %4", filter.toString(), eventType, nameSpace, firstActivation));
 		
 		NonRecursiveMutexLock l(m_mtx);
 		// create the thread now that someone is listening for our events.
 		if (m_threadStarted == false && !m_thread)
 		{
-			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::activateFilter creating helper thread");
+			OW_LOG_DEBUG(logger, "IndicationProviderTest2::activateFilter creating helper thread");
 			m_thread = new TestProviderThread(this, env->clone());
 		}
 		// eventType contains the name of the indication the listener subscribed to.
@@ -229,7 +230,7 @@ public:
 		// start the thread now that someone is listening for our events.
 		if (m_threadStarted == false)
 		{
-			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::activateFilter starting helper thread");
+			OW_LOG_DEBUG(logger, "IndicationProviderTest2::activateFilter starting helper thread");
 			m_thread->start();
 			m_threadStarted = true;
 		}
@@ -243,18 +244,19 @@ public:
 		const StringArray& classes,
 		bool lastActivation)
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("IndicationProviderTest2::deActivateFilter filter = %1, eventType = %2, nameSpace = %3, lastActivation = %4", filter.toString(), eventType, nameSpace, lastActivation));
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, Format("IndicationProviderTest2::deActivateFilter filter = %1, eventType = %2, nameSpace = %3, lastActivation = %4", filter.toString(), eventType, nameSpace, lastActivation));
 		
 		NonRecursiveMutexLock l(m_mtx);
 		// terminate the thread if no one is listening for our events.
 		if (lastActivation && m_thread && m_threadStarted == true)
 		{
-			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::deActivateFilter stopping helper thread");
+			OW_LOG_DEBUG(logger, "IndicationProviderTest2::deActivateFilter stopping helper thread");
 			m_thread->shutdown();
 			m_thread->join();
 			m_thread = 0;
 			m_threadStarted = false;
-			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::deActivateFilter helper thread stopped");
+			OW_LOG_DEBUG(logger, "IndicationProviderTest2::deActivateFilter helper thread stopped");
 			return;
 		}
 
@@ -377,7 +379,8 @@ public:
 		const StringArray *propertyList,
 		const CIMClass &cimClass)
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::getInstance");
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, "IndicationProviderTest2::getInstance");
 		Int32 id = 0;
 		try
 		{
@@ -410,7 +413,8 @@ public:
 		const CIMClass &requestedClass,
 		const CIMClass &cimClass)
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::enumInstances");
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, "IndicationProviderTest2::enumInstances");
 		// m_insts could be accessed from multiple threads
 		NonRecursiveMutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
@@ -426,7 +430,8 @@ public:
 		CIMObjectPathResultHandlerIFC &result,
 		const CIMClass &cimClass)
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::enumInstanceNames");
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, "IndicationProviderTest2::enumInstanceNames");
 		// m_insts could be accessed from multiple threads
 		NonRecursiveMutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
@@ -449,7 +454,8 @@ public:
 
 	virtual void initialize(const ProviderEnvironmentIFCRef& env)
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::initialize - creating the thread");
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, "IndicationProviderTest2::initialize - creating the thread");
 		NonRecursiveMutexLock l(m_mtx);
 		m_threadStarted = false;
 	}
@@ -554,11 +560,10 @@ Int32 TestProviderThread::run()
 	NonRecursiveMutexLock l(m_guard);
 	while (!m_shuttingDown)
 	{
-		OperationContext context;
 		m_pProv->updateInstancesAndSendIndications(m_env->getCIMOMHandle(), m_creationFilterCount, m_modificationFilterCount, m_deletionFilterCount);
 		// wait one second.  If this were a real provider we would wait on some IPC mechanism.  This has to be done carefully so that we don't block forever.  The provider needs
 		// to be able to stop the thread when the cimom shuts down or restarts.
-		m_cond.timedWait(l, 1);
+		m_cond.timedWait(l, Timeout::relative(1));
 	}
 	return 0;
 }

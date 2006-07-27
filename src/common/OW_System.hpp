@@ -41,6 +41,8 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
+// TODO: Fix the name of this. System is horrible!
+// TODO: Fix the implementation of this. It isn't thread safe on some platforms.
 namespace OW_NAMESPACE
 {
 namespace System

@@ -33,12 +33,14 @@
  */
 #include "OW_config.h"
 #include "OW_SessionLanguage.hpp"
+#include "OW_BinarySerialization.hpp"
 
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
 #include <cerrno>
 #include <algorithm>	// for sort
+#include <functional>
 
 namespace OW_NAMESPACE
 {
@@ -86,6 +88,7 @@ LanguageTag::LanguageTag(const char* languageTag)
 
 //////////////////////////////////////////////////////////////////////////////
 LanguageTag::LanguageTag(const LanguageTag& arg)
+	: SerializableIFC(arg)
 {
 	copy(arg);
 }
@@ -308,6 +311,20 @@ LanguageTag::setWeight(const char* arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void 
+LanguageTag::readObject(std::streambuf & istrm)
+{
+	*this = LanguageTag(BinarySerialization::readString(istrm).c_str());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+LanguageTag::writeObject(std::streambuf & ostrm) const
+{
+	BinarySerialization::writeString(ostrm, toString());
+}
+
+//////////////////////////////////////////////////////////////////////////////
 SessionLanguage::SessionLanguage()
 	: OperationContext::Data()
 	, m_langTags()
@@ -478,6 +495,34 @@ String
 SessionLanguage::getContentLanguage() const
 {
 	return m_contentLanguage;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void 
+SessionLanguage::readObject(std::streambuf & istrm)
+{
+	BinarySerialization::readArray(istrm, m_langTags);
+	m_contentLanguage = BinarySerialization::readString(istrm);
+	m_acceptLanguageString = BinarySerialization::readString(istrm);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+SessionLanguage::writeObject(std::streambuf & ostrm) const
+{
+	BinarySerialization::writeArray(ostrm, m_langTags);
+	BinarySerialization::writeString(ostrm, m_contentLanguage);
+	BinarySerialization::writeString(ostrm, m_acceptLanguageString);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+const String SessionLanguage::s_type("SessionLanguage");
+
+//////////////////////////////////////////////////////////////////////////////
+String
+SessionLanguage::getType() const
+{
+	return s_type;
 }
 
 }	// end namespace OW_NAMESPACE

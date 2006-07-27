@@ -45,7 +45,6 @@
 #include "OW_Socket.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_RequestHandlerIFC.hpp"
-#include "OW_CIMProtocolIStreamIFC.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_HttpCommonFwd.hpp"
 #include "OW_Reference.hpp"
@@ -137,7 +136,13 @@ public:
 	/**
 	 * Get the hostname of the server.
 	 */
-	String getHostName();
+	String getHostName() const;
+
+	/**
+	 * Get a unique id for this connection.
+	 */
+	UInt64 getConnectionId() const;
+
 protected:
 private:
 
@@ -170,6 +175,7 @@ private:
 	int m_resCode;
 	bool m_needSendError;
 	Array<String> m_responseHeaders;
+	Array<String> m_trailers;
 	httpVerFlag_t m_httpVersion;
 	requestMethod_t m_method;
 	std::istream& m_istr;
@@ -204,6 +210,8 @@ private:
 
 	Reference<TempFileStream> m_TempFileStreamRef;
 
+	UInt64 m_connectionId;
+
 #ifdef OW_WIN32
 #pragma warning (pop)
 #endif
@@ -220,13 +228,21 @@ private:
 		TempFileStream& ostrError, OperationContext& context);
 	int performAuthentication(const String& info, OperationContext& context);
 	void sendHeaders(int sc, int len = -1);
-	void cleanUpIStreams(const CIMProtocolIStreamIFCRef& istrm);
-	CIMProtocolIStreamIFCRef convertToFiniteStream(
+	void cleanUpIStreams(const Reference<std::istream>& istrm);
+	Reference<std::istream> convertToFiniteStream(
 			std::istream& istr);
 	String getContentLanguage(OperationContext& context, bool& setByProvider,
 		bool& clientSpecified);
 
-	void doCooperativeCancel();
+	void doShutdown();
+
+	/**
+	 * Add a HTTP trailer (header at the end of a chunked entity)
+	 * @param key the name of the trailer (left of the ':')
+	 * @param value the value of the trailer (right of the ':')
+	 */
+	void addTrailer(const String& key, const String& value);
+	void outputTrailers();
 };
 
 } // end namespace OW_NAMESPACE

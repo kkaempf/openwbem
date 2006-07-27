@@ -45,6 +45,7 @@
 #include "OW_HDBNode.hpp"
 #include "OW_RWLocker.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_SafeBool.hpp"
 #include <cstdio>
 
 namespace OW_NAMESPACE
@@ -186,12 +187,13 @@ public:
 	/**
 	 * Update the data associated with a node.
 	 * @param node		The node to update the data on.
+	 * @param parentNode The parent node. If NULL, the existing parent node will not be updated.
 	 * @param dataLen	The length of the data that will be associated with node.
 	 * @param data		The data that will be associated with node.
 	 * @return true if the update was successful. Otherwise false.
 	 * @exception HDBException
 	 */
-	bool updateNode(HDBNode& node, Int32 dataLen, const unsigned char* data);
+	bool updateNode(HDBNode& node, const HDBNode& parentNode, Int32 dataLen, const unsigned char* data);
 	/**
 	 * Turn the user defined flags on in this node.
 	 * @param node		The node to turn the flags on in
@@ -218,14 +220,11 @@ public:
 	 */
 	Int32 getUserValue() const { return m_pdata->m_userVal; }
 
-	typedef HDBHandleDataRef HDBHandle::*safe_bool;
 	/**
 	 * @return true if the is a valid HDBHandle. Otherwise false.
 	 */
-	operator safe_bool () const
-		{  return m_pdata ? &HDBHandle::m_pdata : 0; }
-	bool operator!() const
-		{  return !m_pdata; }
+	OW_SAFE_BOOL_IMPL(HDBHandle, HDBHandleDataRef, HDBHandle::m_pdata, m_pdata)
+
 private:
 	HDBHandle(HDB* pdb, const File& file);
 	File getFile() { return m_pdata->m_file; }

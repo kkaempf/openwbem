@@ -40,6 +40,10 @@
 #include "OW_ThreadBarrier.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_Timeout.hpp"
+#include "OW_TimeoutTimer.hpp"
+#include "OW_DateTime.hpp"
+#include "OW_Logger.hpp"
 
 #include <cstring>
 #include <cstdio>
@@ -59,6 +63,11 @@ namespace OW_NAMESPACE
 //////////////////////////////////////////////////////////////////////////////
 OW_DEFINE_EXCEPTION_WITH_ID(Thread);
 OW_DEFINE_EXCEPTION_WITH_ID(CancellationDenied);
+
+namespace
+{
+const String COMPONENT_NAME("ow.libopenwbem");
+
 //////////////////////////////////////////////////////////////////////
 // this is what's really passed to threadRunner
 struct ThreadParam
@@ -72,7 +81,16 @@ struct ThreadParam
 	ThreadDoneCallbackRef cb;
 	ThreadBarrier thread_barrier;
 };
-static Thread_t zeroThread();
+
+//////////////////////////////////////////////////////////////////////
+static Thread_t
+zeroThread()
+{
+	Thread_t zthr;
+	::memset(&zthr, 0, sizeof(zthr));
+	return zthr;
+}
+
 static Thread_t NULLTHREAD = zeroThread();
 //////////////////////////////////////////////////////////////////////
 static inline bool
@@ -80,14 +98,15 @@ sameId(const Thread_t& t1, const Thread_t& t2)
 {
 	return ThreadImpl::sameThreads(t1, t2);
 }
+} // end unnamed namespace
+
 //////////////////////////////////////////////////////////////////////////////
 // Constructor
 Thread::Thread() 
 	: m_id(NULLTHREAD)
 	, m_isRunning(false)
-	, m_isStarting(false)
 	, m_joined(false)
-	, m_cancelRequested(false)
+	, m_cancelRequested(0)
 	, m_cancelled(false)
 {
 }
@@ -97,13 +116,13 @@ Thread::~Thread()
 {
 	try
 	{
-		if (!m_joined)
-		{
-			join();
-		}
-		assert(m_isRunning == false);
 		if (!sameId(m_id, NULLTHREAD))
 		{
+			if (!m_joined)
+			{
+				join();
+			}
+			assert(m_isRunning == false);
 			ThreadImpl::destroyThread(m_id);
 		}
 	}
@@ -127,7 +146,6 @@ Thread::start(const ThreadDoneCallbackRef& cb)
 		OW_THROW(ThreadException,
 			"Thread::start - cannot start previously run thread");
 	}
-	m_isStarting = true;
 	UInt32 flgs = OW_THREAD_FLG_JOINABLE;
 	ThreadBarrier thread_barrier(2);
 	// p will be delted by threadRunner
@@ -136,7 +154,6 @@ Thread::start(const ThreadDoneCallbackRef& cb)
 	{
 		OW_THROW(ThreadException, "ThreadImpl::createThread failed");
 	}
-	m_isStarting = false;
 	thread_barrier.wait();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -152,8 +169,6 @@ Thread::join()
 			Format("Thread::join - ThreadImpl::joinThread: %1(%2)", 
 				   errno, strerror(errno)).c_str());
 	}
-	// need to set this to false, since the thread may have been cancelled, in which case the m_isRunning flag will be wrong.
-	m_isRunning = false;
 	m_joined = true;
 	return rval;
 }
@@ -238,15 +253,16 @@ Thread::threadRunner(void* paramPtr)
 void
 Thread::doneRunning(const ThreadDoneCallbackRef& cb)
 {
-	NonRecursiveMutexLock l(m_cancelLock);
-	m_isRunning = m_isStarting = false;
-	m_cancelled = true;
-	m_cancelCond.notifyAll();
+	{
+		NonRecursiveMutexLock lock(m_stateGuard);
+		m_isRunning = false;
+		m_stateCond.notifyAll();
+	}
+
 	if (cb)
 	{
 		cb->notifyThreadDone(this);
 	}
-
 #ifdef OW_HAVE_OPENSSL
 	// this is necessary to free memory associated with the OpenSSL error queue for this thread.
 	ERR_remove_state(0);
@@ -254,12 +270,17 @@ Thread::doneRunning(const ThreadDoneCallbackRef& cb)
 }
 
 //////////////////////////////////////////////////////////////////////
-static Thread_t
-zeroThread()
+void
+Thread::shutdown()
 {
-	Thread_t zthr;
-	::memset(&zthr, 0, sizeof(zthr));
-	return zthr;
+	doShutdown();
+}
+//////////////////////////////////////////////////////////////////////
+bool
+Thread::shutdown(const Timeout& timeout)
+{
+	doShutdown();
+	return timedWait(timeout);
 }
 //////////////////////////////////////////////////////////////////////
 void
@@ -272,8 +293,7 @@ Thread::cooperativeCancel()
 
 	// give the thread a chance to clean up a bit or abort the cancellation.
 	doCooperativeCancel();
-	NonRecursiveMutexLock l(m_cancelLock);
-	m_cancelRequested = true;
+	m_cancelRequested = Atomic_t(1);
 
 #if !defined(OW_WIN32)
 	// send a SIGUSR1 to the thread to break it out of any blocking syscall.
@@ -293,6 +313,12 @@ Thread::cooperativeCancel()
 bool
 Thread::definitiveCancel(UInt32 waitForCooperativeSecs)
 {
+	return definitiveCancel(Timeout::relative(waitForCooperativeSecs));
+}
+//////////////////////////////////////////////////////////////////////
+bool
+Thread::definitiveCancel(const Timeout& timeout)
+{
 	if (!isRunning())
 	{
 		return true;
@@ -300,8 +326,7 @@ Thread::definitiveCancel(UInt32 waitForCooperativeSecs)
 
 	// give the thread a chance to clean up a bit or abort the cancellation.
 	doCooperativeCancel();
-	NonRecursiveMutexLock l(m_cancelLock);
-	m_cancelRequested = true;
+	m_cancelRequested = Atomic_t(1);
 
 #if !defined(OW_WIN32)
 	// send a SIGUSR1 to the thread to break it out of any blocking syscall.
@@ -317,15 +342,20 @@ Thread::definitiveCancel(UInt32 waitForCooperativeSecs)
 	}
 #endif
 
+	Logger logger(COMPONENT_NAME);
+	TimeoutTimer timer(timeout);
+	NonRecursiveMutexLock l(m_stateGuard);
 	while (!m_cancelled && isRunning())
 	{
-		if (!m_cancelCond.timedWait(l, waitForCooperativeSecs, 0))
+		OW_LOG_DEBUG(logger, "Thread::definitiveCancel waiting for thread to exit.");
+		if (!m_stateCond.timedWait(l, timer.asAbsoluteTimeout()))
 		{
 			// give the thread a chance to clean up a bit or abort the cancellation.
 			doDefinitiveCancel();
 			// thread didn't (or won't) exit by itself, we'll have to really kill it.
 			if (!m_cancelled && isRunning())
 			{
+				OW_LOG_ERROR(logger, "Thread::definitiveCancel cancelling thread because it did not exit!");
 				this->cancel();
 			}
 			return false;
@@ -346,13 +376,24 @@ Thread::cancel()
 	catch (ThreadException&)
 	{
 	}
-	m_cancelled = true;
+	{
+		NonRecursiveMutexLock l(m_stateGuard);
+		m_cancelled = true;
+		m_isRunning = false;
+		m_stateCond.notifyAll();
+	}
 }
 //////////////////////////////////////////////////////////////////////
 void
 Thread::testCancel()
 {
 	ThreadImpl::testCancel();
+}
+
+//////////////////////////////////////////////////////////////////////
+void
+Thread::doShutdown()
+{
 }
 //////////////////////////////////////////////////////////////////////
 void 
@@ -363,6 +404,22 @@ Thread::doCooperativeCancel()
 void 
 Thread::doDefinitiveCancel()
 {
+}
+
+//////////////////////////////////////////////////////////////////////
+bool
+Thread::timedWait(const Timeout& timeout)
+{
+	TimeoutTimer tt(timeout);
+	NonRecursiveMutexLock lock(m_stateGuard);
+	while (m_isRunning == true)
+	{
+		if (!m_stateCond.timedWait(lock, tt.asAbsoluteTimeout()))
+		{
+			return false; // timeout
+		}
+	}
+	return true; // exited
 }
 
 } // end namespace OW_NAMESPACE

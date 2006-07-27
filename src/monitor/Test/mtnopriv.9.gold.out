@@ -1,0 +1,10 @@
+User: owprovdr
+
+open
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: open: insufficient privileges
+
+open
+Exception:
+  type: IPCIOException

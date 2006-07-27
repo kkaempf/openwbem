@@ -166,7 +166,7 @@ const String COMPONENT_NAME("ow.owcimomd.indication.LifecyclePoller");
 Int32
 LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 {
-	LoggerRef logger(env->getLogger(COMPONENT_NAME));
+	Logger logger(COMPONENT_NAME);
 	// do enumInstances to populate m_prevInsts
 	if (!m_initializedInstances)
 	{

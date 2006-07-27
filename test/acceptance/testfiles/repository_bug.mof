@@ -1,0 +1,21 @@
+Qualifier Key : boolean = false, Scope(property, reference),
+    Flavor(DisableOverride);
+
+class Base
+{
+[key] string key;
+};
+
+class Derived1 : Base
+{
+};
+
+class Derived_Inserted : Base
+{
+};
+
+class Derived1 : Derived_Inserted
+{
+};
+
+

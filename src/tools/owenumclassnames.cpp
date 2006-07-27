@@ -40,6 +40,7 @@
 #include "OW_CmdLineParser.hpp"
 #include "OW_ToolsCommon.hpp"
 #include "OW_URL.hpp"
+#include "OW_CIMException.hpp"
 
 #include <iostream>
 #include <algorithm>
@@ -70,7 +71,9 @@ enum
 	HELP_OPT,
 	VERSION_OPT,
 	URL_OPT,
-	CLASSNAME_OPT
+	CLASSNAME_OPT,
+	TREE_OPT,
+	SHALLOW_OPT
 };
 
 CmdLineParser::Option g_options[] =
@@ -80,6 +83,9 @@ CmdLineParser::Option g_options[] =
 	{URL_OPT, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0,
 		"The url identifying the cimom and namespace. Default is http://localhost/root/cimv2 if not specified."},
 	{CLASSNAME_OPT, 'c', "classname", CmdLineParser::E_REQUIRED_ARG, 0, "If specified, only subclasses of <arg> will be printed"},
+	{TREE_OPT, 't', "tree", CmdLineParser::E_NO_ARG, 0, "Indent the class names to indicate hierarchy"},
+	{SHALLOW_OPT, 's', "shallow", CmdLineParser::E_NO_ARG, 0, "Specify deep=false for the call to EnumerateClassNames. "
+		"This will cause only the direct descendants of the specified class to be printed."},
 	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
 };
 
@@ -87,6 +93,25 @@ void Usage()
 {
 	cerr << "Usage: owenumclassnames [options]\n\n";
 	cerr << CmdLineParser::getUsage(g_options) << endl;
+}
+
+void enumClassNamesTreeStyle(int indentationLevel, const String& ns, const String& classname, const ClientCIMOMHandleRef& rch,
+	WBEMFlags::EDeepFlag deep)
+{
+	StringArray names = rch->enumClassNamesA(ns, classname, WBEMFlags::E_SHALLOW);
+	std::sort(names.begin(), names.end());
+	for (size_t i = 0; i < names.size(); ++i)
+	{
+		for (int j = 0; j < indentationLevel; ++j)
+		{
+			cout << ' ';
+		}
+		cout << names[i] << '\n';
+		if (deep == WBEMFlags::E_DEEP)
+		{
+			enumClassNamesTreeStyle(indentationLevel + 1, ns, names[i], rch, deep);
+		}
+	}
 }
 
 }
@@ -99,6 +124,9 @@ int main(int argc, char* argv[])
 		String url;
 		String ns;
 		String classname;
+		bool printTree = false;
+		WBEMFlags::EDeepFlag deep = WBEMFlags::E_DEEP;
+
 		// handle backwards compatible options, which was <URL> <namespace> <classname>
 		// TODO: This is deprecated in 3.1.0, remove it post 3.1
 		if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
@@ -133,18 +161,34 @@ int main(int argc, char* argv[])
 				return 1;
 			}
 			classname = parser.getOptionValue(CLASSNAME_OPT);
+			printTree = parser.isSet(TREE_OPT);
+			if (parser.isSet(SHALLOW_OPT))
+			{
+				deep = WBEMFlags::E_SHALLOW;
+			}
 		}
 
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		ClientCIMOMHandleRef rch = ClientCIMOMHandle::createFromURL(url, getLoginInfo);
-		classNamePrinter handler;
-		rch->enumClassNames(ns, classname, handler);
+		if (printTree)
+		{
+			enumClassNamesTreeStyle(0, ns, classname, rch, deep);
+		}
+		else
+		{
+			classNamePrinter handler;
+			rch->enumClassNames(ns, classname, handler, deep);
+		}
 		return 0;
 	}
 	catch (CmdLineParserException& e)
 	{
 		printCmdLineParserExceptionMessage(e);
 		Usage();
+	}
+	catch(const CIMException& e)
+	{
+		cerr << CIMException::getCodeName(e.getErrNo()) << ':' << e.getMessage() << endl;
 	}
 	catch(const Exception& e)
 	{

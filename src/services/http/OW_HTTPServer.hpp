@@ -47,6 +47,7 @@
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_ServicesHttpFwd.hpp"
+#include "OW_Timeout.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -94,11 +95,33 @@ public:
 	{
 		E_DIGEST,
 		E_BASIC,
-		E_OWLOCAL
+		E_OWLOCAL,
+		E_SPNEGO
 	};
 	
 	struct Options
 	{
+		Options()
+			: httpPort(-1)
+			, httpsPort(-1)
+			, UDSFilename()
+			, maxConnections(0)
+			, isSepThread(true)
+			, enableDeflate(false)
+			, defaultAuthChallenge(E_DIGEST)
+			, allowDigestAuthentication(false)
+			, allowBasicAuthentication(false)
+			, allowLocalAuthentication(false)
+			, allowSPNEGOAuthentication(false)
+			, allowAnonymous(false)
+			, useUDS(false)
+			, reuseAddr(false)
+			, env()
+			, timeout(Timeout::infinite)
+			, defaultContentLanguage()
+		{
+		}
+
 		Int32 httpPort;
 		Int32 httpsPort;
 		String UDSFilename;
@@ -109,15 +132,16 @@ public:
 		bool allowDigestAuthentication;
 		bool allowBasicAuthentication;
 		bool allowLocalAuthentication;
+		bool allowSPNEGOAuthentication;
 		bool allowAnonymous;
 		bool useUDS;
 		bool reuseAddr;
 		ServiceEnvironmentIFCRef env;
-		Int32 timeout;
+		Timeout timeout;
 		String defaultContentLanguage;
 	};
 private:
-	bool authenticate(HTTPSvrConnection* pconn,
+	EAuthenticateResult authenticate(HTTPSvrConnection* pconn,
 		String& userName, const String& info, OperationContext& context,
 					  const Socket& socket);
 	bool isAllowedUser(const String& user) const;
@@ -141,6 +165,7 @@ private:
 #ifndef OW_WIN32
 	IntrusiveReference<LocalAuthentication> m_localAuthentication;
 #endif
+	IntrusiveReference<SPNEGOAuthentication> m_SPNEGOAuthentication;
 	Mutex m_authGuard;
 	IntrusiveReference<ThreadPool> m_threadPool;
 	SortedVectorSet<String> m_allowedUsers;

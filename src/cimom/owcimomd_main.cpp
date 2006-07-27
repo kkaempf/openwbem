@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -42,8 +42,9 @@
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
 #include "OW_Logger.hpp"
-#include "OW_CerrLogger.hpp"
+#include "OW_CerrAppender.hpp"
 #include "OW_CmdLineParser.hpp"
+#include "OW_PrivilegeManager.hpp"
 
 #include <exception>
 #include <iostream> // for cout
@@ -54,7 +55,6 @@
 #endif
 
 using namespace OpenWBEM;
-
 
 namespace
 {
@@ -81,9 +81,42 @@ namespace
 	void printUsage(std::ostream& ostrm);
 
 	const String COMPONENT_NAME("ow.owcimomd");
+	const String OW_DAEMON_NAME("owcimomd");
+	const String UNPRIVILEGED_USER_NAME("owcimomd");
+
+	LoggerSpec const * createMonitorLoggerSpec(
+		CIMOMEnvironmentRef const & env, Logger const & logger,
+		LoggerSpec & lspec
+	)
+	{
+		try
+		{
+			lspec.categories = env->getConfigItem("monitor.log.categories").tokenize();
+			lspec.message_format = env->getConfigItem("monitor.log.format", "[%t] %m");
+			lspec.file_name = env->getConfigItem("monitor.log.location");
+			lspec.max_file_size = env->getConfigItem("monitor.log.max_file_size", "0").toUInt64();
+			lspec.max_backup_index = env->getConfigItem("monitor.log.max_backup_index", "1").toUInt32();
+			if (!lspec.categories.empty() && !lspec.file_name.empty() && !lspec.message_format.empty())
+			{
+				return &lspec;
+			}
+		}
+		catch (Exception & e)
+		{
+			OW_LOG_ERROR(logger,
+				Format("Error processing config for monitor logger: %1", e));
+		}
+		return 0;
+	}
+
 }
 
 void owcimomd_new_handler();
+
+inline void prepend(String const & prefix, String & s)
+{
+	s = prefix + s;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
@@ -92,7 +125,7 @@ int main(int argc, char* argv[])
 	CIMOMEnvironmentRef env = CIMOMEnvironment::instance();
 
 	// until the config file is read and parsed, just use a logger that prints everything to stderr.
-	LoggerRef logger(new CerrLogger());
+	Logger logger(COMPONENT_NAME, LogAppenderRef(new CerrAppender()));
 
 	try
 	{
@@ -103,8 +136,8 @@ int main(int argc, char* argv[])
 		// debug mode can be activated by -d or by the config file, so check both. The config file is loaded by env->init().
 		bool debugMode = env->getConfigItem(ConfigOpts::DEBUGFLAG_opt, OW_DEFAULT_DEBUGFLAG).equalsIgnoreCase("true");
 
-		// logger's not set up according to the config file until after init()
-		logger = env->getLogger(COMPONENT_NAME);
+		// The global log appender is not set up according to the config file until after init()
+		logger = Logger(COMPONENT_NAME);
 		OW_LOG_INFO(logger, "owcimomd (" OW_VERSION ") beginning startup");
 
 #ifdef OW_USE_DL
@@ -114,10 +147,19 @@ int main(int argc, char* argv[])
 		}
 #endif
 
-		// Call platform specific code to become a daemon/service
+		bool restartOnFatalError = env->getConfigItem(ConfigOpts::RESTART_ON_ERROR_opt, OW_DEFAULT_RESTART_ON_ERROR).equalsIgnoreCase("true")
+			&& debugMode == false;
+#ifdef OW_DEBUG
+		restartOnFatalError = false;
+#endif
+
+		// Call platform specific code to become a daemon/service.
+		// This needs to happen as early as possible to minimize unused, but allocated, memory in the "child watcher" parent process.
 		try
 		{
-			Platform::daemonize(debugMode, OW_DAEMON_NAME, env);
+			Platform::daemonize(debugMode, OW_DAEMON_NAME, 
+				env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE), restartOnFatalError,
+				COMPONENT_NAME);
 		}
 		catch (const DaemonException& e)
 		{
@@ -125,6 +167,30 @@ int main(int argc, char* argv[])
 			OW_LOG_FATAL_ERROR(logger, "owcimomd failed to initialize. Aborting...");
 			return 1;
 		}
+
+		// re-initialize the environment. This reads the config file. This needs to be done *again* after daemonizing, because in a restart situation,
+		// the config file may have changed so we need to re-read it.
+		env = CIMOMEnvironment::instance() = CIMOMEnvironmentRef(new CIMOMEnvironment);
+		processCommandLine(argc, argv, env);
+		env->init();
+
+		String dest_dir = env->getConfigItem(ConfigOpts::INSTALLED_DEST_DIR_opt);
+		prepend(dest_dir, ConfigOpts::installed_owlibexec_dir);
+		prepend(dest_dir, ConfigOpts::installed_owdata_dir);
+		prepend(dest_dir, ConfigOpts::installed_owlib_dir);
+
+		// Initializing PrivilegeManager (and subsequently dropping privileges) has to happen *after* daemonizing.
+		// This also has to happen *before* any threads are created or we start listening for requests.
+		// From a security point of view, this should happend as soon as possible.
+		PrivilegeManager::use_lib_path = 
+			("true" == env->getConfigItem(ConfigOpts::PRIVILEGE_MONITOR_USE_LIB_PATH_opt, "false"));
+		String privConfigDir =
+			env->getConfigItem(ConfigOpts::PRIVILEGES_CONFIG_DIR_opt);
+		LoggerSpec lspec;
+		LoggerSpec const * plspec =	createMonitorLoggerSpec(env, logger, lspec);
+		PrivilegeManager privMan = PrivilegeManager::createMonitor(
+			privConfigDir, OW_DAEMON_NAME, UNPRIVILEGED_USER_NAME, plspec);
+
 		// Start all of the cimom services
 		env->startServices();
 		OW_LOG_INFO(logger, "owcimomd is now running!");
@@ -136,26 +202,23 @@ int main(int argc, char* argv[])
 
 		if (env->getConfigItem(ConfigOpts::RESTART_ON_ERROR_opt, OW_DEFAULT_RESTART_ON_ERROR).equalsIgnoreCase("true"))
 		{
-			const char* const restartDisabledMessage =
-				"WARNING: even though the owcimomd.restart_on_error config option = true, it\n"
-				"is not enabled. Possible reasons are that OpenWBEM is built in debug mode,\n"
-				"owcimomd is running in debug mode (-d), or owcimomd was not run using an\n"
-				"absolute path (argv[0][0] != '/')";
-
 			// only do this in production mode. During development we want it to crash!
 #if !defined(OW_DEBUG)
-			if ((debugMode == false) && argv[0][0] == '/') // if argv[0][0] != '/' the restart will not be predictable
+			if (debugMode == false)
 			{
-				Platform::installFatalSignalHandlers();
 				oldUnexpectedHandler = std::set_unexpected(Platform::rerunDaemon);
 				oldTerminateHandler = std::set_terminate(Platform::rerunDaemon);
 			}
 			else
 			{
-				OW_LOG_INFO(logger, restartDisabledMessage);
+				OW_LOG_INFO(logger, 				
+					"WARNING: even though the owcimomd.restart_on_error config option = true, it\n"
+					"is not enabled because owcimomd is running in debug mode (-d)");
 			}
 #else
-			OW_LOG_INFO(logger, restartDisabledMessage);
+			OW_LOG_INFO(logger,
+				"WARNING: even though the owcimomd.restart_on_error config option = true, it\n"
+				"is not enabled because OpenWBEM is built in debug mode");
 #endif
 		}
 
@@ -183,7 +246,6 @@ int main(int argc, char* argv[])
 
 #if !defined(OW_DEBUG)
 					// need to remove them so we don't restart while shutting down.
-					Platform::removeFatalSignalHandlers();
 					if (oldUnexpectedHandler)
 					{
 						std::set_unexpected(oldUnexpectedHandler);
@@ -203,10 +265,11 @@ int main(int argc, char* argv[])
 					env->shutdown();
 					env->clearConfigItems();
 					env = CIMOMEnvironment::instance() = 0;
+
 					// don't try to catch the DeamonException, because if it's thrown, stuff is so whacked, we should just exit!
 					Platform::rerunDaemon();
 
-					// typically on *nix, restartDaemon() doesn't return, however to account for environments where
+					// typically on *nix, rerunDaemon() doesn't return, however to account for environments where
 					// it won't we'll leave this code here to re-initialize.
 					env = CIMOMEnvironment::instance() = new CIMOMEnvironment;
 					processCommandLine(argc, argv, env);
@@ -235,12 +298,12 @@ int main(int argc, char* argv[])
 	}
 	catch(...)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT owcimomd MAIN!");
+		OW_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT IN owcimomd MAIN!");
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
 	// Call platform specific shutdown routine
-	Platform::daemonShutdown(OW_DAEMON_NAME, env);
+	Platform::daemonShutdown(OW_DAEMON_NAME, env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE));
 
 	CIMOMEnvironment::instance() = env = 0;
 	
@@ -273,7 +336,7 @@ processCommandLine(int argc, char* argv[], CIMOMEnvironmentRef env)
 		}
 		else if (parser.isSet(E_VERSION_OPT))
 		{
-			std::cout << OW_DAEMON_NAME " from " OW_PACKAGE_STRING << std::endl;
+			std::cout << OW_DAEMON_NAME << " from " << OW_PACKAGE_STRING << std::endl;
 			exit(0);
 		}
 		else if (parser.isSet(E_LIBRARY_VERSION_OPT))

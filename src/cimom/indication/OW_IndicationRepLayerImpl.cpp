@@ -97,8 +97,8 @@ IndicationRepLayerImpl::getInstance(
 		}
 		catch (CIMException&)
 		{
-			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for getInstance"
-				" because CIM_InstRead does not exist");
+			Logger lgr(COMPONENT_NAME);
+			OW_LOG_DEBUG(lgr, "Unable to export indication for getInstance because CIM_InstRead does not exist");
 		}
 	}
 	return theInst;
@@ -155,8 +155,8 @@ IndicationRepLayerImpl::invokeMethod(
 			}
 			catch (CIMException&)
 			{
-				OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for"
-					" invokeMethod because CIM_InstMethodCall does not exist");
+				Logger lgr(COMPONENT_NAME);
+				OW_LOG_DEBUG(lgr, "Unable to export indication for invokeMethod because CIM_InstMethodCall does not exist");
 			}
 		}
 	}
@@ -183,8 +183,8 @@ IndicationRepLayerImpl::modifyClass(const String &ns,
 		}
 		catch (CIMException&)
 		{
-			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for modifyClass"
-				" because CIM_ClassModification does not exist");
+			Logger lgr(COMPONENT_NAME);
+			OW_LOG_DEBUG(lgr, "Unable to export indication for modifyClass because CIM_ClassModification does not exist");
 		}
 	}
 	return CCOrig;
@@ -207,8 +207,8 @@ IndicationRepLayerImpl::createClass(const String& ns,
 		}
 		catch(CIMException&)
 		{
-			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for createClass"
-				" because CIM_ClassCreation does not exist");
+			Logger lgr(COMPONENT_NAME);
+			OW_LOG_DEBUG(lgr, "Unable to export indication for createClass because CIM_ClassCreation does not exist");
 		}
 	}
 }
@@ -229,8 +229,8 @@ IndicationRepLayerImpl::deleteClass(const String& ns, const String& className,
 		}
 		catch (CIMException&)
 		{
-			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for"
-				" deleteClass because CIM_ClassDeletion does not exist");
+			Logger lgr(COMPONENT_NAME);
+			OW_LOG_DEBUG(lgr, "Unable to export indication for deleteClass because CIM_ClassDeletion does not exist");
 		}
 	}
 	
@@ -263,8 +263,8 @@ IndicationRepLayerImpl::modifyInstance(
 		}
 		catch (CIMException&)
 		{
-			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for modifyInstance"
-				" because CIM_InstModification does not exist");
+			Logger lgr(COMPONENT_NAME);
+			OW_LOG_DEBUG(lgr, "Unable to export indication for modifyInstance because CIM_InstModification does not exist");
 		}
 	}
 	return ciOrig;
@@ -286,8 +286,8 @@ IndicationRepLayerImpl::createInstance(const String& ns,
 		}
 		catch(CIMException&)
 		{
-			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for createInstance"
-				" because CIM_InstCreation does not exist");
+			Logger lgr(COMPONENT_NAME);
+			OW_LOG_DEBUG(lgr, "Unable to export indication for createInstance because CIM_InstCreation does not exist");
 		}
 	}
 	return rval;
@@ -309,8 +309,8 @@ IndicationRepLayerImpl::deleteInstance(const String& ns, const CIMObjectPath& pa
 		}
 		catch (CIMException&)
 		{
-			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for deleteInstance"
-				" because CIM_InstDeletion does not exist");
+			Logger lgr(COMPONENT_NAME);
+			OW_LOG_DEBUG(lgr, "Unable to export indication for deleteInstance because CIM_InstDeletion does not exist");
 		}
 	}
 	return instOrig;

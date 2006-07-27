@@ -59,8 +59,7 @@ class OW_COMMON_API DLLSharedLibraryLoader : public SharedLibraryLoader
 	public:
 		DLLSharedLibraryLoader();
 		virtual ~DLLSharedLibraryLoader();
-		virtual SharedLibraryRef loadSharedLibrary(const String& filename,
-			const LoggerRef& logger) const;
+		virtual SharedLibraryRef loadSharedLibrary(const String& filename) const;
 };
 
 } // end namespace OW_NAMESPACE

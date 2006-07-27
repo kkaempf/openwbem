@@ -51,14 +51,14 @@ public:
 	 *
 	 * @param istrm The input stream to read this object from.
 	 */
-	virtual void readObject(std::istream& istrm) = 0;
+	virtual void readObject(std::streambuf & istrm) = 0;
 	/**
 	 * Write this object to an output stream. The intent is for the object to
 	 * be retrieved later through a call to readObject.
 	 *
 	 * @param ostrm	The output stream to write the object to.
 	 */
-	virtual void writeObject(std::ostream& ostrm) const = 0;
+	virtual void writeObject(std::streambuf & ostrm) const = 0;
 };
 
 } // end namespace OW_NAMESPACE

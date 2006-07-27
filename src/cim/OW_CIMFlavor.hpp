@@ -38,6 +38,7 @@
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
 #include "OW_Types.hpp"
+#include "OW_SafeBool.hpp"
 #include <iosfwd>
 
 namespace OW_NAMESPACE
@@ -110,14 +111,11 @@ public:
 	{
 	}
 
-	typedef Int32 CIMFlavor::*safe_bool;
 	/**
 	 * @return true if this is a valid flavor
 	 */
-	operator safe_bool () const
-		{  return (validFlavor(m_flavor) == true) ? &CIMFlavor::m_flavor : 0; }
-	bool operator!() const
-		{  return !validFlavor(m_flavor); }
+	OW_SAFE_BOOL_IMPL(CIMFlavor, Int32, CIMFlavor::m_flavor, (validFlavor(m_flavor) == true))
+
 	/**
 	 * Set this to a null object.
 	 */
@@ -175,12 +173,12 @@ public:
 	 * Read this CIMFlavor object from an input stream.
 	 * @param istrm The input stream to read this flavor from.
 	 */
-	virtual void readObject(std::istream &istrm);
+	virtual void readObject(std::streambuf & istrm);
 	/**
 	 * Write this CIMFlavor object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
-	virtual void writeObject(std::ostream &ostrm) const;
+	virtual void writeObject(std::streambuf & ostrm) const;
 	/**
 	 * @return An String object that represents this CIMFlavor.
 	 */

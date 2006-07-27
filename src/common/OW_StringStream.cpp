@@ -41,7 +41,7 @@ namespace OW_NAMESPACE
 
 ///////////////////////////////////////////////////////////////////////////////
 OStringStreamBuf::OStringStreamBuf(size_t size)
-	: BaseStreamBuffer(size, "out"), m_buf(size)
+	: BaseStreamBuffer(BaseStreamBuffer::E_OUT, size), m_buf(size)
 {
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -146,6 +146,16 @@ const char* OStringStream::c_str() const
 void OStringStream::reset()
 {
 	m_buf.reset();
+}
+///////////////////////////////////////////////////////////////////////////////
+IStringStream::IStringStream(const String& s)
+: IStringStreamBase(s)
+, std::istream(&m_buf)
+{
+}
+///////////////////////////////////////////////////////////////////////////////
+IStringStream::~IStringStream()
+{
 }
 
 } // end namespace OW_NAMESPACE

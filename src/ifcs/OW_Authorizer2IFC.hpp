@@ -46,7 +46,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_COMMON_API Authorizer2IFC : public IntrusiveCountableBase
+class OW_COMMON_API Authorizer2IFC : virtual public IntrusiveCountableBase
 {
 public:
 

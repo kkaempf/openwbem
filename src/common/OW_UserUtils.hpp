@@ -47,7 +47,7 @@ namespace OW_NAMESPACE
 		typedef int UserID; // fixme
 #else
 		typedef uid_t UserID;
-		const UserID INVALID_USERID = ~0;
+		const UserID INVALID_USERID = UserID(~0);
 #endif
 
 

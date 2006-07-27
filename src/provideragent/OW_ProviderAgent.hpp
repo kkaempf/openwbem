@@ -151,7 +151,6 @@ public:
 		const Array<CIMClass>& classes,
 		const Array<RequestHandlerIFCRef>& requestHandlers,
 		const AuthenticatorIFCRef& authenticator,
-		const LoggerRef& logger = LoggerRef(),
 		const String& callbackURL = String(""),
 		const ProviderAgentLockerIFCRef& locker = ProviderAgentLockerIFCRef(),
 		const ProviderAgentLifecycleCallbackIFCRef& lifecycleCB = ProviderAgentLifecycleCallbackIFCRef());

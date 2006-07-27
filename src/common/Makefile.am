@@ -8,7 +8,7 @@ include $(top_srcdir)/Makefile-shared-lib-inst.inc
 install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
-OW_SHARED_LIBS = libopenwbem.$(LIB_EXT) 
+OW_SHARED_LIBS = libopenwbem.$(LIB_EXT)
 SHAREDLIBADD = $(DL_LIB) $(SSL_LIBS)
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
@@ -34,6 +34,7 @@ OW_AppenderLogger.cpp \
 OW_Array.cpp \
 OW_Assertion.cpp \
 OW_AtomicOps.cpp \
+OW_AutoDescriptor.cpp \
 OW_BaseStreamBuffer.cpp \
 OW_BinarySerialization.cpp \
 OW_Bool.cpp \
@@ -47,11 +48,11 @@ OW_ConfigException.cpp \
 OW_ConfigFile.cpp \
 OW_ConfigOpts.cpp \
 OW_COWIntrusiveCountableBase.cpp \
-OW_COWIntrusiveReference.cpp \
-OW_COWReferenceBase.cpp \
-OW_CryptographicRandomNumber.cpp \
 OW_DataStreams.cpp \
 OW_DateTime.cpp \
+OW_DelayedFormat.cpp \
+OW_DescriptorUtils.cpp \
+OW_DescriptorUtils_noexcept.cpp \
 OW_dlSharedLibrary.cpp \
 OW_dlSharedLibraryLoader.cpp \
 OW_dyldSharedLibrary.cpp \
@@ -59,16 +60,24 @@ OW_dyldSharedLibraryLoader.cpp \
 OW_EnumerationException.cpp \
 OW_Exception.cpp \
 OW_Exec.cpp \
+OW_ExecMockObject.cpp \
 OW_FileAppender.cpp \
+OW_FileBuf.cpp \
+OW_FileSystemMockObject.cpp \
 OW_Format.cpp \
+OW_IFileStream.cpp \
 OW_IntrusiveCountableBase.cpp \
 OW_IOException.cpp \
 OW_IOIFCStreamBuffer.cpp \
+OW_LocalOperationContext.cpp \
 OW_LogAppender.cpp \
+OW_LogAppenderScope.cpp \
 OW_Logger.cpp \
 OW_LogMessagePatternFormatter.cpp \
 OW_MD5.cpp \
 OW_MemTracer.cpp \
+OW_MultiAppender.cpp \
+OW_MultiProcessFileAppender.cpp \
 OW_Mutex.cpp \
 OW_MutexImpl.cpp \
 OW_NonRecursiveMutex.cpp \
@@ -81,15 +90,22 @@ OW_NullLogger.cpp \
 OW_NULLValueException.cpp \
 OW_OperationContext.cpp \
 OW_OutOfBoundsException.cpp \
+OW_PathSecurity.cpp \
 OW_PosixFile.cpp \
 OW_PosixFileSystem.cpp \
 OW_PosixUnnamedPipe.cpp \
+OW_Process.cpp \
 OW_RandomNumber.cpp \
-OW_ReferenceBase.cpp \
+OW_ReferenceHelpers.cpp \
 OW_RepositoryCIMOMHandle.cpp \
 OW_ResultHandlers.cpp \
 OW_Runnable.cpp \
 OW_RWLocker.cpp \
+OW_SafeCString.cpp \
+OW_SafeCStringIO.cpp \
+OW_ScopeLogger.cpp \
+OW_Secure.cpp \
+OW_SecureRand.cpp \
 OW_Select.cpp \
 OW_SelectEngine.cpp \
 OW_SessionLanguage.cpp \
@@ -99,6 +115,7 @@ OW_SharedLibraryLoader.cpp \
 OW_shlSharedLibrary.cpp \
 OW_shlSharedLibraryLoader.cpp \
 OW_SafeLibCreate.cpp \
+OW_SignalUtils.cpp \
 OW_StackTrace.cpp \
 OW_StringBuffer.cpp \
 OW_String.cpp \
@@ -114,7 +131,9 @@ OW_ThreadDoneCallback.cpp \
 OW_ThreadImpl.cpp \
 OW_ThreadOnce.cpp \
 OW_ThreadPool.cpp \
+OW_Timeout.cpp \
 OW_TimeoutException.cpp \
+OW_TimeoutTimer.cpp \
 OW_TmpFile.cpp \
 OW_UnnamedPipe.cpp \
 OW_URL.cpp \
@@ -124,7 +143,12 @@ OW_UTF8UtilscompareToIgnoreCase.cpp \
 OW_UTF8Utils.cpp \
 OW_System.cpp \
 OW_UUID.cpp \
-OW_EnvVars.cpp
+OW_EnvVars.cpp \
+OW_WQLSelectStatement.cpp \
+OW_WQLCompile.cpp \
+OW_WQLOperand.cpp \
+OW_WQLPropertySource.cpp \
+OW_WQLInstancePropertySource.cpp
 
 pkginclude_HEADERS =	\
 OW_AppenderLogger.hpp \
@@ -133,7 +157,9 @@ OW_Array.hpp \
 OW_ArrayImpl.hpp \
 OW_Assertion.hpp \
 OW_AtomicOps.hpp \
+OW_AutoDescriptor.hpp \
 OW_AutoPtr.hpp \
+OW_AutoResource.hpp \
 OW_BaseStreamBuffer.hpp \
 OW_BinarySerialization.hpp \
 OW_Bool.hpp \
@@ -155,39 +181,56 @@ OW_COWIntrusiveCountableBase.hpp \
 OW_COWIntrusiveReference.hpp \
 OW_COWReferenceBase.hpp \
 OW_COWReference.hpp \
-OW_CryptographicRandomNumber.hpp \
+OW_Cstr.hpp \
 OW_DataStreams.hpp \
 OW_DateTime.hpp \
+OW_DelayedFormat.hpp \
+OW_DescriptorUtils.hpp \
+OW_DescriptorUtils_noexcept.hpp \
 OW_dlSharedLibrary.hpp \
 OW_dlSharedLibraryLoader.hpp \
 OW_dyldSharedLibrary.hpp \
 OW_dyldSharedLibraryLoader.hpp \
 OW_Enumeration.hpp \
 OW_EnumerationException.hpp \
+OW_EnvVars.hpp \
+OW_Environ.hpp \
 OW_Exception.hpp \
 OW_ExceptionIds.hpp \
 OW_Exec.hpp \
+OW_ExecMockObject.hpp \
 OW_File.hpp \
 OW_FileAppender.hpp \
+OW_FileBuf.hpp \
 OW_FileSystem.hpp \
+OW_FileSystemMockObject.hpp \
 OW_Format.hpp \
 OW_FuncNamePrinter.hpp \
+OW_GlobalPtr.hpp \
 OW_HashMap.hpp \
 OW_HashMultiMap.hpp \
+OW_IFileStream.hpp \
+OW_Infinity.hpp \
 OW_IntrusiveCountableBase.hpp \
 OW_IntrusiveReference.hpp \
 OW_IOException.hpp \
 OW_IOIFCStreamBuffer.hpp \
 OW_IstreamBufIterator.hpp \
+OW_LazyGlobal.hpp \
 OW_List.hpp \
+OW_LocalOperationContext.hpp \
 OW_LogAppender.hpp \
+OW_LogAppenderScope.hpp \
 OW_Logger.hpp \
 OW_LogLevel.hpp \
 OW_LogMessage.hpp \
 OW_LogMessagePatternFormatter.hpp \
 OW_Map.hpp \
 OW_MD5.hpp \
+OW_MemoryBarrier.hpp \
 OW_MemTracer.hpp \
+OW_MultiAppender.hpp \
+OW_MultiProcessFileAppender.hpp \
 OW_Mutex.hpp \
 OW_MutexImpl.hpp \
 OW_MutexLock.hpp \
@@ -202,16 +245,28 @@ OW_NullAppender.hpp \
 OW_NullLogger.hpp \
 OW_NULLValueException.hpp \
 OW_OperationContext.hpp \
+OW_Paths.hpp \
 OW_PosixUnnamedPipe.hpp \
+OW_Process.hpp \
 OW_RandomNumber.hpp \
 OW_RefCount.hpp \
+OW_RefCountedPimpl.hpp \
 OW_ReferenceBase.hpp \
 OW_Reference.hpp \
+OW_ReferenceHelpers.hpp \
+OW_RefToValue.hpp \
 OW_RepositoryCIMOMHandle.hpp \
 OW_ResultHandlers.hpp \
 OW_Runnable.hpp \
 OW_RWLocker.hpp \
+OW_SafeBool.hpp \
+OW_SafeCString.hpp \
+OW_SafeCStringIO.hpp \
 OW_SafeLibCreate.hpp \
+OW_ScopeGuard.hpp \
+OW_ScopeLogger.hpp \
+OW_Secure.hpp \
+OW_SecureRand.hpp \
 OW_SelectEngine.hpp \
 OW_SessionLanguage.hpp \
 OW_Select.hpp \
@@ -223,16 +278,19 @@ OW_SharedLibraryReference.hpp \
 OW_shlSharedLibrary.hpp \
 OW_shlSharedLibraryLoader.hpp \
 OW_SignalScope.hpp \
+OW_SignalUtils.hpp \
 OW_SortedVectorMap.hpp \
 OW_SortedVectorSet.hpp \
 OW_Stack.hpp \
 OW_StackTrace.hpp \
+OW_StaticAssert.hpp \
 OW_StrictWeakOrdering.hpp \
 OW_StringBuffer.hpp \
 OW_StringEnumeration.hpp \
 OW_String.hpp \
 OW_StringStream.hpp \
 OW_SyslogAppender.hpp \
+OW_System.hpp \
 OW_TempFileEnumerationImplBase.hpp \
 OW_TempFileStream.hpp \
 OW_ThreadBarrier.hpp \
@@ -244,7 +302,9 @@ OW_ThreadImpl.hpp \
 OW_ThreadOnce.hpp \
 OW_ThreadPool.hpp \
 OW_ThreadTypes.hpp \
+OW_Timeout.hpp \
 OW_TimeoutException.hpp \
+OW_TimeoutTimer.hpp \
 OW_TmpFile.hpp \
 OW_Types.hpp \
 OW_UnnamedPipe.hpp \
@@ -254,9 +314,13 @@ OW_UserUtils.hpp \
 OW_UTF8Utils.hpp \
 OW_UUID.hpp \
 OW_vector.hpp \
-OW_System.hpp \
-OW_EnvVars.hpp \
-OW_WBEMFlags.hpp
+OW_WBEMFlags.hpp \
+OW_WQLSelectStatement.hpp \
+OW_WQLCompile.hpp \
+OW_WQLOperand.hpp \
+OW_WQLOperation.hpp \
+OW_WQLPropertySource.hpp \
+OW_WQLInstancePropertySource.hpp
 
 libopenwbem_a_LIBADD = \
 ../cim/libOW_cim.a \

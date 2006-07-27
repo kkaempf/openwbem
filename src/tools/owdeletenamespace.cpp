@@ -38,6 +38,7 @@
 #include "OW_URL.hpp"
 #include "OW_String.hpp"
 #include "OW_ToolsCommon.hpp"
+#include "OW_CIMException.hpp"
 
 #include <iostream>
 
@@ -120,6 +121,10 @@ int main(int argc, char* argv[])
 	{
 		printCmdLineParserExceptionMessage(e);
 		Usage();
+	}
+	catch(const CIMException& e)
+	{
+		cerr << CIMException::getCodeName(e.getErrNo()) << ':' << e.getMessage() << endl;
 	}
 	catch(const Exception& e)
 	{

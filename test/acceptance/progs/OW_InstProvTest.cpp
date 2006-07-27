@@ -135,8 +135,8 @@ main(int argc, char* argv[])
 		 **********************************************************************/
 
 		// Test the accept-language header processing on the CIMOM.
-		TEST_ASSERT(chRef->setHTTPRequestHeader("Accept-Language",
-			"x-owtest"));
+		CIMProtocolIFCRef cp(chRef->getWBEMProtocolHandler());
+		cp.cast_to<HTTPClient>()->addCustomHeader("Accept-Language", "x-owtest");
 
 		cout << "** Enumerating instances (0 instances)" << endl;
 		CIMObjectPathEnumeration copEnu = rch.enumInstanceNamesE("root", "TestInstance");

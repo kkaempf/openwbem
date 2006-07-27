@@ -47,10 +47,10 @@
 #include "OW_OperationContext.hpp"
 #include "OW_Array.hpp"
 
-#define OW_LOGDEBUG(msg) OW_LOG_DEBUG(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
-#define OW_LOGINFO(msg) OW_LOG_INFO(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
-#define OW_LOGERROR(msg) OW_LOG_ERROR(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
-#define OW_LOGFATALERROR(msg) OW_LOG_FATAL_ERROR(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
+#define OW_LOGDEBUG(msg) OW_LOG_DEBUG(logger, msg)
+#define OW_LOGINFO(msg) OW_LOG_INFO(logger, msg)
+#define OW_LOGERROR(msg) OW_LOG_ERROR(logger, msg)
+#define OW_LOGFATALERROR(msg) OW_LOG_FATAL_ERROR(logger, msg)
 
 namespace OW_NAMESPACE
 {
@@ -83,6 +83,7 @@ RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 
 	try
 	{
+		Logger logger(COMPONENT_NAME);
 		CIMXMLParser parser(*istr);
 		if (!parser)
 		{

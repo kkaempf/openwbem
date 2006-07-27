@@ -44,7 +44,7 @@
 #include "OW_ProviderManager.hpp"
 #include "OW_Platform.hpp"
 #include "OW_TimeoutException.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_LocalOperationContext.hpp"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_ServiceIFCNames.hpp"
 
@@ -119,6 +119,20 @@ PollingManager::addPolledProvider(const PolledProviderIFCRef& p)
 	m_pollingManagerThread->addPolledProvider(p);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void
+PollingManager::addPolledProvider(const PolledProviderIFCRef& p, Int32 initialPollingInterval)
+{
+	m_pollingManagerThread->addPolledProvider(p, initialPollingInterval);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+PollingManager::removePolledProvider(const PolledProviderIFCRef& p)
+{
+	m_pollingManagerThread->removePolledProvider(p);
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -126,6 +140,7 @@ PollingManagerThread::PollingManagerThread(const ProviderManagerRef& providerMan
 	: Thread()
 	, m_shuttingDown(false)
 	, m_providerManager(providerManager)
+	, m_logger(COMPONENT_NAME)
 	, m_startedBarrier(2)
 {
 }
@@ -154,7 +169,6 @@ void
 PollingManagerThread::init(const ServiceEnvironmentIFCRef& env)
 {
 	m_env = env;
-	m_logger = m_env->getLogger(COMPONENT_NAME);
 	Int32 maxThreads;
 	try
 	{
@@ -166,7 +180,7 @@ PollingManagerThread::init(const ServiceEnvironmentIFCRef& env)
 	}
 	
 	m_triggerRunnerThreadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, maxThreads, maxThreads * 10,
-		m_logger, "Polling Manager"));
+		"Polling Manager"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -191,6 +205,10 @@ namespace
 		{
 			return m_env->getRepository();
 		}
+		virtual RepositoryIFCRef getAuthorizingRepository() const
+		{
+			return m_env->getAuthorizingRepository();
+		}
 		virtual String getConfigItem(const String& name, const String& defRetVal="") const
 		{
 			return m_env->getConfigItem(name, defRetVal);
@@ -201,14 +219,6 @@ namespace
 			return m_env->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
 		}
 		
-		virtual LoggerRef getLogger() const
-		{
-			return m_env->getLogger(COMPONENT_NAME);
-		}
-		virtual LoggerRef getLogger(const String& componentName) const
-		{
-			return m_env->getLogger(componentName);
-		}
 		virtual String getUserName() const
 		{
 			return Platform::getCurrentUserName();
@@ -222,7 +232,7 @@ namespace
 			return ProviderEnvironmentIFCRef(new PollingManagerProviderEnvironment(m_env));
 		}
 	private:
-		mutable OperationContext m_context;
+		mutable LocalOperationContext m_context;
 		ServiceEnvironmentIFCRef m_env;
 	};
 	ProviderEnvironmentIFCRef createProvEnvRef(ServiceEnvironmentIFCRef env)
@@ -240,8 +250,7 @@ PollingManagerThread::run()
 	bool doInit = true;
 
 	// Get all of the indication trigger providers
-	PolledProviderIFCRefArray itpra =
-			m_providerManager->getPolledProviders(createProvEnvRef(m_env));
+	PolledProviderIFCRefArray itpra = m_providerManager->getPolledProviders();
 
 	OW_LOG_DEBUG(m_logger, Format("PollingManager found %1 polled providers",
 		itpra.size()));
@@ -278,7 +287,7 @@ PollingManagerThread::run()
 				}
 				else
 				{
-					m_triggerCondition.timedWait(l, sleepTime);
+					m_triggerCondition.timedWait(l, Timeout::relative(sleepTime));
 				}
 			}
 			if (m_shuttingDown)
@@ -289,7 +298,7 @@ PollingManagerThread::run()
 		}
 	}
 	// wait until all the threads exit
-	m_triggerRunnerThreadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 60);
+	m_triggerRunnerThreadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(50), Timeout::relative(60));
 	m_triggerRunners.clear();
 	return 0;
 }
@@ -410,6 +419,54 @@ PollingManagerThread::addPolledProvider(const PolledProviderIFCRef& p)
 	m_triggerCondition.notifyAll();
 }
 //////////////////////////////////////////////////////////////////////////////
+void
+PollingManagerThread::addPolledProvider(const PolledProviderIFCRef& p, Int32 initialPollingInterval)
+{
+	if (initialPollingInterval <= 0)
+	{
+		return;
+	}
+
+	NonRecursiveMutexLock l(m_triggerGuard);
+	if (m_shuttingDown)
+		return;
+
+	TriggerRunnerRef tr(new TriggerRunner(this, m_env));
+	tr->m_pollInterval = initialPollingInterval;
+	if (!tr->m_pollInterval)
+	{
+		return;
+	}
+	DateTime dtm;
+	dtm.setToCurrent();
+	time_t tm = dtm.get();
+	tr->m_nextPoll = safe_add(tm, tr->m_pollInterval);
+	tr->m_itp = p;
+
+	m_triggerRunners.append(tr);
+	m_triggerCondition.notifyAll();
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+PollingManagerThread::removePolledProvider(const PolledProviderIFCRef& p)
+{
+	NonRecursiveMutexLock l(m_triggerGuard);
+	
+	if (m_shuttingDown)
+		return;
+
+	for (size_t i = 0; i < m_triggerRunners.size(); ++i)
+	{
+		if (m_triggerRunners[i]->m_itp == p)
+		{
+			m_triggerRunners.remove(i);
+			--i;
+		}
+	}
+	
+	m_triggerCondition.notifyAll();
+}
+//////////////////////////////////////////////////////////////////////////////
 PollingManagerThread::TriggerRunner::TriggerRunner(PollingManagerThread* svr,
 	ServiceEnvironmentIFCRef env)
 	: Runnable()
@@ -419,7 +476,7 @@ PollingManagerThread::TriggerRunner::TriggerRunner(PollingManagerThread* svr,
 	, m_pollInterval(0)
 	, m_pollMan(svr)
 	, m_env(env)
-	, m_logger(env->getLogger(COMPONENT_NAME))
+	, m_logger(COMPONENT_NAME)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -431,10 +488,15 @@ PollingManagerThread::TriggerRunner::run()
 	{
 		nextInterval = m_itp->poll(createProvEnvRef(m_env));
 	}
+	catch (Exception & e)
+	{
+		OW_LOG_ERROR(m_logger,
+			Format("Caught Exception while running poll: %1", e));
+	}
 	catch(std::exception& e)
 	{
-		OW_LOG_ERROR(m_logger, Format("Caught Exception while running poll: %1",
-			e.what()));
+		OW_LOG_ERROR(m_logger,
+			Format("Caught standard exception while running poll: %1", e.what()));
 	}
 	catch(ThreadCancelledException& e)
 	{
@@ -466,6 +528,13 @@ PollingManagerThread::TriggerRunner::run()
 
 //////////////////////////////////////////////////////////////////////////////
 void
+PollingManagerThread::TriggerRunner::doShutdown()
+{
+	m_itp->doShutdown();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 PollingManagerThread::TriggerRunner::doCooperativeCancel()
 {
 	m_itp->doCooperativeCancel();
@@ -480,7 +549,7 @@ PollingManagerThread::TriggerRunner::doDefinitiveCancel()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-PollingManagerThread::doCooperativeCancel()
+PollingManagerThread::doShutdown()
 {
 	NonRecursiveMutexLock l(m_triggerGuard);
 	m_shuttingDown = true;

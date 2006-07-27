@@ -52,6 +52,8 @@ void StackTrace::printStackTrace()
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Format.hpp"
 #include "OW_Array.hpp"
+#include "OW_StringBuffer.hpp"
+
 #include <fstream>
 #include <iostream>	// for cerr
 
@@ -82,9 +84,15 @@ using std::flush;
 #endif
 
 // static
-void StackTrace::printStackTrace()
+void StackTrace::printStackTrace(EDoStackTraceFlag doStackTrace)
 {
-	if (getenv("OW_STACKTRACE"))
+	std::cerr << getStackTrace(doStackTrace);
+}
+
+String StackTrace::getStackTrace(EDoStackTraceFlag doStackTrace)
+{
+
+	if (doStackTrace == E_NO_CHECK_ENV_VAR || (doStackTrace == E_CHECK_ENV_VAR && getenv("OW_STACKTRACE")))
 	{
 		// if we have the GNU backtrace functions we use them.  They don't give
 		// as good information as gdb does, but they are orders of magnitude
@@ -95,7 +103,7 @@ void StackTrace::printStackTrace()
 		size_t size = backtrace (array, 200);
 		char **strings = backtrace_symbols (array, size);
 		
-		String bt;
+		StringBuffer bt;
 		
 		size_t i;
 		for (i = 0; i < size; i++)
@@ -122,7 +130,7 @@ void StackTrace::printStackTrace()
 		
 		free (strings);
 		
-		std::cerr << bt << std::endl;
+		return bt.releaseString();
 #else
 		ifstream file(OW_DEFAULT_GDB_PATH);
 		if (file)
@@ -148,20 +156,22 @@ void StackTrace::printStackTrace()
 			Array<String> command;
 			command.push_back( "/bin/sh" );
 			command.push_back( scriptName );
-			Exec::safeSystem(command);
+			Exec::system(command);
 			ifstream outputFile(outputName.c_str(), std::ios::in);
-			String output;
+			StringBuffer output;
 			while (outputFile)
 			{
-				output += String::getLine(outputFile) + "\n";
+				output += String::getLine(outputFile);
+				output += "\n";
 			}
 			outputFile.close();
 			unlink(outputName.c_str());
 			unlink(scriptName.c_str());
-			std::cerr << output << std::endl;
+			return output.releaseString();
 		}
 #endif
 	}
+	return String();
 }
 
 } // end namespace OW_NAMESPACE

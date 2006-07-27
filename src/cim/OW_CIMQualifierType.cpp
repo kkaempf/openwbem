@@ -50,8 +50,7 @@
 namespace OW_NAMESPACE
 {
 
-using std::istream;
-using std::ostream;
+using std::streambuf;
 
 struct CIMQualifierType::QUALTData : public COWIntrusiveCountableBase
 {
@@ -192,7 +191,7 @@ CIMQualifierType::addScope(const CIMScope& newScope)
 	{
 		if (!hasScope(newScope))
 		{
-			if (newScope == CIMScope::ANY)
+			if (newScope == CIMScope(CIMScope::ANY))
 			{
 				m_pdata->m_scope.clear();
 			}
@@ -319,7 +318,7 @@ CIMQualifierType::setName(const CIMName& name)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMQualifierType::writeObject(ostream &ostrm) const
+CIMQualifierType::writeObject(streambuf & ostrm) const
 {
 	CIMBase::writeSig( ostrm, OW_CIMQUALIFIERTYPESIG );
 	m_pdata->m_name.writeObject(ostrm);
@@ -338,7 +337,7 @@ CIMQualifierType::writeObject(ostream &ostrm) const
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMQualifierType::readObject(istream &istrm)
+CIMQualifierType::readObject(streambuf & istrm)
 {
 	CIMName name;
 	CIMDataType dataType(CIMNULL);

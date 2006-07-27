@@ -1,0 +1,10 @@
+User: owprovdr
+
+readLink
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: readLink: insufficient privileges
+
+readLink
+Exception:
+  type: IPCIOException

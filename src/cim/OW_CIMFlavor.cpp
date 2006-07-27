@@ -37,18 +37,11 @@
 #include "OW_CIMFlavor.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_String.hpp"
-#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
-#include <istream>
-#include <ostream>
-#else
-#include <iostream>
-#endif
 
 namespace OW_NAMESPACE
 {
 
-using std::ostream;
-using std::istream;
+using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////		
 String
 CIMFlavor::toString() const
@@ -84,7 +77,7 @@ CIMFlavor::toMOF() const
 }
 //////////////////////////////////////////////////////////////////////////////		
 void
-CIMFlavor::readObject(istream &istrm)
+CIMFlavor::readObject(streambuf & istrm)
 {
 	// Don't do this, it'll double the size CIMBase::readSig( istrm, CIMFLAVORSIG );
 	UInt32 f;
@@ -94,7 +87,7 @@ CIMFlavor::readObject(istream &istrm)
 
 //////////////////////////////////////////////////////////////////////////////		
 void
-CIMFlavor::writeObject(ostream &ostrm) const
+CIMFlavor::writeObject(streambuf & ostrm) const
 {
 	// Don't do this, it'll double the size CIMBase::writeSig( ostrm, CIMFLAVORSIG );
 	BinarySerialization::writeLen(ostrm, m_flavor);

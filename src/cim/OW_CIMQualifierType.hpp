@@ -42,6 +42,7 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -175,12 +176,12 @@ public:
 	 * Write this CIMQualifierType object to the given output stream.
 	 * @param ostrm	The output stream to write this CIMQualifierType to.
 	 */
-	virtual void writeObject(std::ostream &ostrm) const;
+	virtual void writeObject(std::streambuf & ostrm) const;
 	/**
 	 * Read this CIMQualifierType object from the given input stream.
 	 * @param istrm	The input stream to read this CIMQualifierType from.
 	 */
-	virtual void readObject(std::istream &istrm);
+	virtual void readObject(std::streambuf & istrm);
 	
 	/**
 	 * @return An String representing this CIMQualifierType.
@@ -202,11 +203,7 @@ public:
 	 */
 	virtual void setName(const CIMName& name);
 
-	typedef COWIntrusiveReference<QUALTData> CIMQualifierType::*safe_bool;
-	operator safe_bool () const
-		{  return m_pdata ? &CIMQualifierType::m_pdata : 0; }
-	bool operator!() const
-		{  return !m_pdata; }
+	OW_SAFE_BOOL_IMPL(CIMQualifierType, COWIntrusiveReference<QUALTData>, CIMQualifierType::m_pdata, m_pdata)
 
 	friend OW_COMMON_API bool operator<(const CIMQualifierType& x, const CIMQualifierType& y);
 private:

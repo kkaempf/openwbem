@@ -41,6 +41,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -91,14 +92,11 @@ public:
 	 */
 	CIMParameter& operator= (const CIMParameter& arg);
 
-	typedef COWIntrusiveReference<PARMData> CIMParameter::*safe_bool;
 	/**
 	 * @return true if this a valid CIMParameter object.
 	 */
-	operator safe_bool () const
-		{  return m_pdata ? &CIMParameter::m_pdata : 0; }
-	bool operator!() const
-		{  return !m_pdata; }
+	OW_SAFE_BOOL_IMPL(CIMParameter, COWIntrusiveReference<PARMData>, CIMParameter::m_pdata, m_pdata)
+
 	/**
 	 * Set the qualifiers for this parameter
 	 * @param quals An CIMQualifierArray that contains the qualifiers for
@@ -147,12 +145,12 @@ public:
 	 * Write this object to the given output stream.
 	 * @param ostrm The output stream to write this CIMElement to.
 	 */
-	virtual void writeObject(std::ostream &ostrm) const;
+	virtual void writeObject(std::streambuf & ostrm) const;
 	/**
 	 * Read this object from the given input stream.
 	 * @param istrm The input stream to read this CIMElement from.
 	 */
-	virtual void readObject(std::istream &istrm);
+	virtual void readObject(std::streambuf & istrm);
 	/**
 	 * @return a string representation of this CIMParameter.
 	 */

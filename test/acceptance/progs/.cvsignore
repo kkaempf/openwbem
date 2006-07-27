@@ -29,3 +29,6 @@ testProviderAgent
 testClientTimeout
 lib*sl*
 socketCat
+testListener
+aclTestBasic
+testSPNEGO

@@ -41,6 +41,7 @@
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_ToolsCommon.hpp"
+#include "OW_CIMException.hpp"
 
 #include <iterator>
 #include <algorithm>
@@ -148,6 +149,10 @@ int main(int argc, char* argv[])
 	{
 		printCmdLineParserExceptionMessage(e);
 		Usage();
+	}
+	catch(const CIMException& e)
+	{
+		cerr << CIMException::getCodeName(e.getErrNo()) << ':' << e.getMessage() << endl;
 	}
 	catch(const Exception& e)
 	{

@@ -36,6 +36,8 @@
 #define OW_COWREFERENCE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_COWReferenceBase.hpp"
+#include "OW_ReferenceHelpers.hpp"
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -66,17 +68,13 @@ class COWReference : private COWReferenceBase
 		const T* getPtr() const;
 		bool isNull() const OW_DEPRECATED; // in 3.1.0
 
-		typedef T* volatile COWReference::*safe_bool;
-		operator safe_bool () const
-			{  return m_pObj ? &COWReference::m_pObj : 0; }
-		bool operator!() const
-			{  return !m_pObj; }
-		
+		OW_SAFE_BOOL_IMPL(COWReference, T* volatile, COWReference::m_pObj, m_pObj)
+
 		template <class U>
 		COWReference<U> cast_to() const;
 
-        template <class U>
-        void useRefCountOf(const COWReference<U>&); 
+		template <class U>
+		void useRefCountOf(const COWReference<U>&);
 
 #if !defined(__GNUC__) || __GNUC__ > 2 // causes gcc 2.95 to ICE
 		/* This is so the templated constructor will work */
@@ -183,8 +181,8 @@ template<class T>
 inline T* COWReference<T>::operator->()
 {
 #ifdef OW_CHECK_NULL_REFERENCES
-	checkNull(this);
-	checkNull(m_pObj);
+	ReferenceHelpers::checkNull(this);
+	ReferenceHelpers::checkNull(m_pObj);
 #endif
 	getWriteLock();
 	
@@ -195,8 +193,8 @@ template<class T>
 inline T& COWReference<T>::operator*()
 {
 #ifdef OW_CHECK_NULL_REFERENCES
-	checkNull(this);
-	checkNull(m_pObj);
+	ReferenceHelpers::checkNull(this);
+	ReferenceHelpers::checkNull(m_pObj);
 #endif
 	getWriteLock();
 	
@@ -207,8 +205,8 @@ template<class T>
 inline const T* COWReference<T>::operator->() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
-	checkNull(this);
-	checkNull(m_pObj);
+	ReferenceHelpers::checkNull(this);
+	ReferenceHelpers::checkNull(m_pObj);
 #endif
 	
 	return m_pObj;
@@ -218,8 +216,8 @@ template<class T>
 inline const T& COWReference<T>::operator*() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
-	checkNull(this);
-	checkNull(m_pObj);
+	ReferenceHelpers::checkNull(this);
+	ReferenceHelpers::checkNull(m_pObj);
 #endif
 	
 	return *(m_pObj);
@@ -256,7 +254,7 @@ template <class U>
 inline void
 COWReference<T>::useRefCountOf(const COWReference<U>& arg)
 {
-    COWReferenceBase::useRefCountOf(arg); 
+	COWReferenceBase::useRefCountOf(arg);
 }
 //////////////////////////////////////////////////////////////////////////////
 // Comparisons

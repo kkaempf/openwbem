@@ -37,6 +37,7 @@
 
 #include "OW_config.h"
 #include "OW_ServerSocket.hpp"
+#include "OW_Timeout.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -55,13 +56,22 @@ ServerSocket::ServerSocket(SocketFlags::ESSLFlag isSSL)
 } 
 //////////////////////////////////////////////////////////////////////////////
 ServerSocket::ServerSocket(const ServerSocket& arg)
-	: SelectableIFC()
-	, m_impl(arg.m_impl) {}
+	: IntrusiveCountableBase()
+	, SelectableIFC()
+	, m_impl(arg.m_impl)
+{
+}
 //////////////////////////////////////////////////////////////////////////////
 Socket 
 ServerSocket::accept(int timeoutSecs)
 {
-	return m_impl->accept(timeoutSecs);
+	return accept(Timeout::relative(static_cast<float>(timeoutSecs)));
+}
+//////////////////////////////////////////////////////////////////////////////
+Socket 
+ServerSocket::accept(const Timeout& timeout)
+{
+	return m_impl->accept(timeout);
 }
 //////////////////////////////////////////////////////////////////////////////
 void 

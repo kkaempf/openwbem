@@ -58,8 +58,7 @@
 namespace OW_NAMESPACE
 {
 
-using std::istream;
-using std::ostream;
+using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMObjectPath::OPData : public COWIntrusiveCountableBase
 {
@@ -375,25 +374,22 @@ String
 CIMObjectPath::modelPath() const
 {
 	StringBuffer rv(m_pdata->m_objectName.toString());
-	if (m_pdata->m_keys.size() > 0)
+	for (size_t i = 0; i < m_pdata->m_keys.size(); i++)
 	{
-		for (size_t i = 0; i < m_pdata->m_keys.size(); i++)
+		CIMProperty cp = m_pdata->m_keys[i];
+		if (i > 0)
 		{
-			CIMProperty cp = m_pdata->m_keys[i];
-			if (i > 0)
-			{
-				rv += ',';
-			}
-			else
-			{
-				rv += '.';
-			}
-			rv += cp.getName();
-			rv += "=\"";
-			rv += (cp.getValue()
-				   ? escape(cp.getValue().toString())
-				   : String("null")) + "\"";
+			rv += ',';
 		}
+		else
+		{
+			rv += '.';
+		}
+		rv += cp.getName();
+		rv += "=\"";
+		rv += (cp.getValue()
+			   ? escape(cp.getValue().toString())
+			   : String("null")) + "\"";
 	}
 	return rv.releaseString();
 }
@@ -446,7 +442,7 @@ CIMObjectPath::toMOF() const
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMObjectPath::readObject(istream& istrm)
+CIMObjectPath::readObject(streambuf & istrm)
 {
 	CIMNameSpace nameSpace(CIMNULL);
 	CIMName objectName;
@@ -465,7 +461,7 @@ CIMObjectPath::readObject(istream& istrm)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMObjectPath::writeObject(ostream& ostrm) const
+CIMObjectPath::writeObject(streambuf & ostrm) const
 {
 	CIMBase::writeSig( ostrm, OW_CIMOBJECTPATHSIG );
 	m_pdata->m_nameSpace.writeObject(ostrm);
@@ -508,7 +504,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 			catch (const StringConversionException&)
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-					"Invalid port in Object Path");
+					Format("Invalid port (%1) in Object Path", host.substring(ndx+1)).c_str());
 			}
 			host = host.substring(0, ndx);
 		}

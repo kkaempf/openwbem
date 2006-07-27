@@ -37,6 +37,7 @@
 #define OW_CIMXMLPARSER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_XMLPullParser.hpp"
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -130,11 +131,7 @@ public:
 		return getTokenFromName(m_curTok.text.c_str());
 	}
 
-	typedef bool CIMXMLParser::*safe_bool;
-	operator safe_bool () const
-		{  return m_good ? &CIMXMLParser::m_good : 0; }
-	bool operator!() const
-		{  return !m_good; }
+	OW_SAFE_BOOL_IMPL(CIMXMLParser, bool, CIMXMLParser::m_good, m_good)
 
 	// naming convention:
 	// A_ for attribute name

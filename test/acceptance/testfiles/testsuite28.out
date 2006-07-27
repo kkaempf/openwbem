@@ -145,7 +145,6 @@ CIMClass: CIM_PhysicalStatistics
 CIMClass: CIM_RelatedStatistics
 CIMClass: CIM_ParameterValueSources
 CIMClass: CIM_ParametersForMethod
-CIMClass: wqlTestClass
 CIMClass: TestInstance
 CIMClass: S1
 CIMClass: Example_C1
@@ -191,7 +190,6 @@ CIMClass: CIM_Statistics
 CIMClass: CIM_RelatedStatistics
 CIMClass: CIM_ParameterValueSources
 CIMClass: CIM_ParametersForMethod
-CIMClass: wqlTestClass
 CIMClass: TestInstance
 CIMClass: S1
 CIMClass: Example_C1

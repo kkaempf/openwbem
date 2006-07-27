@@ -181,29 +181,18 @@ CIMXMLCIMOMHandle::sendXMLTrailer( ostream& ostr, bool intrinsic)
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMXMLCIMOMHandle::doSendRequest(
-	const Reference<std::iostream>& ostrRef,
+	const Reference<std::ostream>& ostrRef,
 	const String& methodName,
 	const String& cimObject,
 	bool isIntrinsic,
 	ClientOperation& op,
 	const String& cimProtocolVersion)
 {
-	CIMProtocolIStreamIFCRef istr = m_protocol->endRequest(
+	Reference<std::istream> istr = m_protocol->endRequest(
 		ostrRef, methodName, cimObject, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, cimProtocolVersion);
-	// Debug stuff
-	/*
-	TempFileStream buf;
-	buf << istr.rdbuf();
-	ofstream ofstr("/tmp/rchXMLDump", ios::app);
-	ofstr << "******* New dump ********" << endl;
-	ofstr << buf.rdbuf() << endl;
-	buf.rewind();
-	XMLParser parser(&buf);
-	*/
-	// end debug stuff
-	CIMXMLParser parser(*istr);
 	try
 	{
+		CIMXMLParser parser(*istr);
 		checkNodeForCIMError(parser, methodName, isIntrinsic);
 		if (isIntrinsic)
 		{
@@ -222,15 +211,11 @@ CIMXMLCIMOMHandle::doSendRequest(
 		parser.mustGetEndTag(); // pass </SIMPLERSP>
 		parser.mustGetEndTag(); // pass </MESSAGE>
 		parser.mustGetEndTag(); // pass </CIM>
-		HTTPUtils::eatEntity(*istr);
-		getHTTPTrailers(istr);
-		istr->checkForError();
+		m_protocol->endResponse(*istr);
 	}
-	catch (Exception&)
+	catch (...)
 	{
-		HTTPUtils::eatEntity(*istr);
-		getHTTPTrailers(istr);
-		istr->checkForError();
+		m_protocol->endResponse(*istr);
 		throw;
 	}
 }
@@ -768,9 +753,9 @@ CIMXMLCIMOMHandle::invokeMethod(
 	const CIMParamValueArray& inParams,
 	CIMParamValueArray& outParams)
 {
-	Reference<std::iostream> iostrRef =
+	Reference<std::ostream> ostrRef =
 		m_protocol->beginRequest(methodName, ns);
-	std::iostream& tfs = *iostrRef;
+	std::ostream& tfs = *ostrRef;
 	sendExtrinsicXMLHeader(methodName, ns, path, tfs, PROTOCOL_VERSION_1_0);
 	for (size_t i = 0; i < inParams.size(); ++i)
 	{
@@ -795,7 +780,7 @@ CIMXMLCIMOMHandle::invokeMethod(
 	sendXMLTrailer(tfs, false);
 	CIMValue rval(CIMNULL);
 	invokeMethodOp op(rval, outParams);
-	doSendRequest(iostrRef, methodName,
+	doSendRequest(ostrRef, methodName,
 		ns + ":" + path.modelPath(),
 		false, op, PROTOCOL_VERSION_1_0);
 	return rval;
@@ -1475,58 +1460,20 @@ CIMXMLCIMOMHandle::intrinsicMethod(
 	const String& cimProtocolVersion,
 	const Array<Param>& params, const String& extra)
 {
-	Reference<std::iostream> iostrRef = m_protocol->beginRequest(operation, ns);
-	std::iostream& iostr = *iostrRef;
-	sendIntrinsicXMLHeader(operation, ns, iostr, cimProtocolVersion);
+	Reference<std::ostream> ostrRef = m_protocol->beginRequest(operation, ns);
+	std::ostream& ostr = *ostrRef;
+	sendIntrinsicXMLHeader(operation, ns, ostr, cimProtocolVersion);
 	for (size_t i = 0; i < params.size(); i++)
 	{
-		iostr << "<IPARAMVALUE NAME=\"" << params[i].getArgName()
+		ostr << "<IPARAMVALUE NAME=\"" << params[i].getArgName()
 		<< "\">" << params[i].getArgValue() << "</IPARAMVALUE>";
 	}
 	if (!extra.empty())
 	{
-		iostr << extra;
+		ostr << extra;
 	}
-	sendXMLTrailer(iostr);
-	doSendRequest(iostrRef, operation, ns, true, op, cimProtocolVersion);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-bool
-CIMXMLCIMOMHandle::setHTTPRequestHeader(const String& hdrName,
-	const String& hdrValue)
-{
-	bool cc = false;
-	IntrusiveReference<HTTPClient> httpClient =
-		m_protocol.cast_to<HTTPClient>();
-	if (httpClient)
-	{
-		httpClient->addCustomHeader(hdrName, hdrValue);
-		cc = true;
-	}
-	return cc;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-bool
-CIMXMLCIMOMHandle::getHTTPResponseHeader(const String& hdrName,
-	String& valueOut) const
-{
-	bool cc = false;
-	IntrusiveReference<HTTPClient> httpClient =
-		m_protocol.cast_to<HTTPClient>();
-	if (httpClient)
-	{
-		if (!(cc = httpClient->getResponseHeader(hdrName, valueOut)))
-		{
-			if (HTTPUtils::headerHasKey(m_trailers, hdrName))
-			{
-				cc = true;
-				valueOut = HTTPUtils::getHeaderValue(m_trailers, hdrName);
-			}
-		}
-	}
-	return cc;
+	sendXMLTrailer(ostr);
+	doSendRequest(ostrRef, operation, ns, true, op, cimProtocolVersion);
 }
 
 } // end namespace OW_NAMESPACE

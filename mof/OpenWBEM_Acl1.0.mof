@@ -37,6 +37,14 @@ class OpenWBEM_UserACL : OpenWBEM_ACL
     string username;
 };
 
+[Description("Namespace creation/deletion ACLs")]
+class OpenWBEM_CreateDeleteNamespaceACL
+{
+    [Description("Identifies a user allowed to create and delete namespaces."),
+	 Key]
+    string username;
+};
+
 /*
 instance of OpenWBEM_UserACL
 {

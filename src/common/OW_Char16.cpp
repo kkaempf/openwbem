@@ -41,8 +41,7 @@
 #include "OW_UTF8Utils.hpp"
 #include <cstdio>
 #include <cstring>
-#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
-#include <istream>
+#ifdef OW_HAVE_OSTREAM
 #include <ostream>
 #else
 #include <iostream>
@@ -51,8 +50,8 @@
 namespace OW_NAMESPACE
 {
 
-using std::istream;
 using std::ostream;
+using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////
 Char16::Char16(const String& x) :
 	m_value(0)
@@ -73,13 +72,13 @@ Char16::toString() const
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-Char16::writeObject(ostream& ostrm) const
+Char16::writeObject(streambuf & ostrm) const
 {
 	BinarySerialization::write(ostrm, m_value);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-Char16::readObject(istream& istrm)
+Char16::readObject(streambuf & istrm)
 {
 	BinarySerialization::read(istrm, m_value);
 }

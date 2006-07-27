@@ -48,28 +48,36 @@ class OW_COMMON_API PosixUnnamedPipe : public UnnamedPipe
 {
 public:
 	PosixUnnamedPipe(EOpen doOpen=E_OPEN);
+	/// If @a fd_in == -1, then you cannot read from this object.
+	/// If @a fd_out == -1, then you cannot write to this object
+	//
+	PosixUnnamedPipe(AutoDescriptor inputfd, AutoDescriptor outputfd);
 	virtual ~PosixUnnamedPipe();
-	virtual int write(const void* data, int dataLen, bool errorAsException=false);
-	virtual int read(void* buffer, int bufferLen, bool errorAsException=false);
-	int getInputHandle() { return m_fds[0]; }
-	int getOutputHandle() { return m_fds[1]; }
+	virtual int write(const void* data, int dataLen, ErrorAction errorAsException = E_RETURN_ON_ERROR);
+	virtual int read(void* buffer, int bufferLen, ErrorAction errorAsException = E_RETURN_ON_ERROR);
+	int getInputHandle() const { return m_fds[0]; }
+	int getOutputHandle() const { return m_fds[1]; }
 	virtual void open();
 	virtual int close();
 	virtual bool isOpen() const;
 	int closeInputHandle();
 	int closeOutputHandle();
-	virtual void setOutputBlocking(bool outputIsBlocking=true) OW_DEPRECATED; // in 3.0.0
 	virtual void setBlocking(EBlockingMode outputIsBlocking=E_BLOCKING);
-	virtual Select_t getSelectObj() const;
+	virtual void setWriteBlocking(EBlockingMode isBlocking=E_BLOCKING);
+	virtual void setReadBlocking(EBlockingMode isBlocking=E_BLOCKING);
+	virtual Select_t getReadSelectObj() const;
 	virtual Select_t getWriteSelectObj() const;
+	virtual Descriptor getInputDescriptor() const;
+	virtual Descriptor getOutputDescriptor() const;
+	virtual void passDescriptor(Descriptor h);
+	virtual AutoDescriptor receiveDescriptor();
+
 private:
 	int m_fds[2];
 #ifdef OW_WIN32
 	int m_events[2];
-	EBlockingMode m_blocking[2];
-#else
-	EBlockingMode m_blocking;
 #endif
+	EBlockingMode m_blocking[2];
 };
 typedef IntrusiveReference<PosixUnnamedPipe> PosixUnnamedPipeRef;
 

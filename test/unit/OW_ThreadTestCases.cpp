@@ -95,6 +95,7 @@ class testCancellationThread1 : public Thread
 public:
 	testCancellationThread1()
 		: Thread()
+		, m_shutdownCalled(false)
 		, m_cooperativeCancelCalled(false)
 		, m_definitiveCancelCalled(false)
 	{
@@ -105,13 +106,20 @@ public:
 	{
 		shouldRunOnException x;
 		// just wait a long time for us to get cancelled.
-		while (true)
+		while (!m_shutdownCalled)
 		{
 			testCancel();
 			Thread::yield();
 		}
 		return x.getRV();
 	}
+
+	virtual void doShutdown()
+	{
+		m_shutdownCalled = true;
+	}
+
+	bool m_shutdownCalled;
 
 	virtual void doCooperativeCancel()
 	{
@@ -216,6 +224,21 @@ public:
 };
 
 } // end anonymous namespace
+
+void OW_ThreadTestCases::testShutdown()
+{
+	testCancellationThread1 theThread;
+	unitAssert(!cancelCleanedUp);
+	theThread.start();
+	theThread.shutdown();
+	unitAssertNoThrow(theThread.shutdown());
+	theThread.join();
+	unitAssert(!theThread.isRunning());
+	unitAssert(cancelCleanedUp);
+	unitAssert(theThread.m_shutdownCalled == true);
+	unitAssert(theThread.m_cooperativeCancelCalled == false);
+	unitAssert(theThread.m_definitiveCancelCalled == false);
+}
 
 void OW_ThreadTestCases::testCooperativeCancellation()
 {
@@ -341,6 +364,16 @@ void OW_ThreadTestCases::testSetUID()
 #endif
 }
 
+void OW_ThreadTestCases::testSleep()
+{
+	DateTime a = DateTime::getCurrent();
+	Thread::sleep(Timeout::relative(0.01));
+	DateTime b = DateTime::getCurrent();
+	DateTime diff = b - a;
+	unitAssert(diff.get() == 0);
+	unitAssert(diff.getMicrosecond() >= 1000);
+}
+
 Test* OW_ThreadTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_Thread");
@@ -350,8 +383,10 @@ Test* OW_ThreadTestCases::suite()
 	// system, and run as root
 	//ADD_TEST_TO_SUITE(OW_ThreadTestCases, testSetUID);
 	ADD_TEST_TO_SUITE(OW_ThreadTestCases, testReturn);
+	ADD_TEST_TO_SUITE(OW_ThreadTestCases, testShutdown);
 	ADD_TEST_TO_SUITE(OW_ThreadTestCases, testCooperativeCancellation);
 	ADD_TEST_TO_SUITE(OW_ThreadTestCases, testDefinitiveCancellation);
+	ADD_TEST_TO_SUITE(OW_ThreadTestCases, testSleep);
 
 	return testSuite;
 }

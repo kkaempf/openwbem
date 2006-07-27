@@ -35,7 +35,6 @@
 
 #ifndef OW_CIMOMENVIRONMENT_HPP_INCLUDE_GUARD_
 #define OW_CIMOMENVIRONMENT_HPP_INCLUDE_GUARD_
-#define OW_DAEMON_NAME "owcimomd"
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_LogLevel.hpp"
@@ -56,6 +55,7 @@
 #include "OW_CimomCommonFwd.hpp"
 #include "OW_CimomServerFwd.hpp"
 #include "OW_CIMFwd.hpp"
+#include "OW_Logger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -107,8 +107,6 @@ public:
 
 	virtual WQLIFCRef getWQLRef() const;
 	virtual RequestHandlerIFCRef getRequestHandler(const String &id) const;
-	virtual LoggerRef getLogger() const OW_DEPRECATED;
-	virtual LoggerRef getLogger(const String& componentName) const;
 	IndicationServerRef getIndicationServer() const;
 	PollingManagerRef getPollingManager() const;
 	void clearConfigItems();
@@ -124,9 +122,9 @@ public:
 	void runSelectEngine() const;
 	void exportIndication(const CIMInstance& instance,
 		const String& instNS);
-	void unloadReqHandlers();
 	IndicationRepLayerMediatorRef getIndicationRepLayerMediator() const;
 	RepositoryIFCRef getRepository() const;
+	RepositoryIFCRef getAuthorizingRepository() const;
 	AuthorizerManagerRef getAuthorizerManager() const;
 
 
@@ -152,9 +150,7 @@ private:
 	typedef Reference<ConfigMap> ConfigMapRef;
 	struct ReqHandlerData : public IntrusiveCountableBase
 	{
-		DateTime dt;
 		RequestHandlerIFCRef rqIFCRef;
-		String filename;
 	};
 	typedef IntrusiveReference<ReqHandlerData> ReqHandlerDataRef;
 	typedef SortedVectorMap<String, ReqHandlerDataRef> ReqHandlerMap;
@@ -167,7 +163,7 @@ private:
 	//AuthorizerIFCRef m_authorizer;
 
 	AuthManagerRef m_authManager;
-	LoggerRef m_Logger;
+	Logger m_Logger;
 	ConfigMapRef m_configItems;
 	ProviderManagerRef m_providerManager;
 	mutable SharedLibraryRef m_wqlLib;
@@ -209,7 +205,6 @@ private:
 	mutable Mutex m_stateGuard;
 	IndicationRepLayerMediatorRef m_indicationRepLayerMediatorRef;
 
-	static String COMPONENT_NAME;
 };
 
 } // end namespace OW_NAMESPACE

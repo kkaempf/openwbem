@@ -104,6 +104,7 @@ enum
 	URL_OPT,
 	FILTER_QUERY_OPT,
 	CERT_FILE_OPT,
+	SOURCE_NAMESPACE_OPT
 };
 
 CmdLineParser::Option g_options[] =
@@ -113,6 +114,7 @@ CmdLineParser::Option g_options[] =
 	{URL_OPT, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0,
 		"The url identifying the cimom and namespace. Default is http://localhost/root/cimv2 if not specified."},
 	{FILTER_QUERY_OPT, 'f', "filter_query", CmdLineParser::E_REQUIRED_ARG, 0, "Set the indication filter WQL query."},
+	{SOURCE_NAMESPACE_OPT, 's', "source_namespace", CmdLineParser::E_REQUIRED_ARG, 0, "Set the indication source namespace."},
 	{CERT_FILE_OPT, 'c', "cert_file", CmdLineParser::E_REQUIRED_ARG, 0,
 		"The fully qualified path to a certificate file in PEM format. If specified the listener will support HTTPS only"},
 	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
@@ -190,9 +192,9 @@ int main(int argc, char* argv[])
 
 
 		CIMListenerCallbackRef mcb(new myCallBack);
-		LoggerRef logger(new CerrLogger);
-		logger->setLogLevel(E_FATAL_ERROR_LEVEL);
-		HTTPXMLCIMListener hxcl(logger, certfile);
+		CerrLogger logger;
+		logger.setLogLevel(E_FATAL_ERROR_LEVEL);
+		HTTPXMLCIMListener hxcl(certfile);
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		String handle = hxcl.registerForIndication(url, ns, query, "wql1", ns, mcb, getLoginInfo);
 #ifdef OW_WIN32
@@ -212,6 +214,10 @@ int main(int argc, char* argv[])
 	{
 		printCmdLineParserExceptionMessage(e);
 		Usage();
+	}
+	catch(const CIMException& e)
+	{
+		cerr << CIMException::getCodeName(e.getErrNo()) << ':' << e.getMessage() << endl;
 	}
 	catch(Exception& e)
 	{

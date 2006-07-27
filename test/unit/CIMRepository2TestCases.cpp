@@ -56,11 +56,6 @@ void CIMRepository2TestCases::tearDown()
 namespace {
 	class testEnv : public ServiceEnvironmentIFC
 	{
-	public:
-		virtual LoggerRef getLogger() const
-		{
-			return Logger::createLogger("", true);
-		}
 	};
 }
 

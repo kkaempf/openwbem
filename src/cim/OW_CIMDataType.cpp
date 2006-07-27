@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMDataType.hpp"
-#include "OW_StringStream.hpp"
+#include "OW_StringBuffer.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
@@ -44,8 +44,7 @@
 namespace OW_NAMESPACE
 {
 
-using std::istream;
-using std::ostream;
+using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMDataType::DTData : public COWIntrusiveCountableBase
 {
@@ -193,28 +192,6 @@ CIMDataType::getRefClassName() const
 	return m_pdata->m_reference.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMDataType::operator CIMDataType::safe_bool () const
-{
-	safe_bool cc = 0;
-	if (m_pdata)
-	{
-		cc = (m_pdata->m_type != CIMNULL && m_pdata->m_type != INVALID)
-			? &CIMDataType::m_pdata : 0;
-	}
-	return cc;
-}
-//////////////////////////////////////////////////////////////////////////////
-bool
-CIMDataType::operator!() const
-{
-	bool cc = true;
-	if (m_pdata)
-	{
-		cc = m_pdata->m_type == CIMNULL || m_pdata->m_type == INVALID;
-	}
-	return cc;
-}
-//////////////////////////////////////////////////////////////////////////////
 bool
 CIMDataType::setToArrayType(Int32 size)
 {
@@ -276,7 +253,7 @@ CIMDataType::equals(const CIMDataType& arg) const
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMDataType::readObject(istream &istrm)
+CIMDataType::readObject(streambuf & istrm)
 {
 	UInt32 type;
 	UInt32 numberOfElements;
@@ -298,7 +275,7 @@ CIMDataType::readObject(istream &istrm)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMDataType::writeObject(ostream &ostrm) const
+CIMDataType::writeObject(streambuf & ostrm) const
 {
 	CIMBase::writeSig( ostrm, OW_CIMDATATYPESIG );
 	BinarySerialization::writeLen(ostrm, m_pdata->m_type);

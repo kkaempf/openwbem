@@ -39,6 +39,11 @@
 #include "OW_String.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_PosixUnnamedPipe.hpp"
+
+#include <unistd.h> // for dup()
+#include <sys/types.h>
+#include <sys/socket.h> // for socketpair()
 
 namespace OW_NAMESPACE
 {
@@ -101,11 +106,111 @@ UnnamedPipe::readAll()
 	StringBuffer retval;
 	do
 	{
-		readbytes = this->read(buf, sizeof(buf)-1, true); // throws on error
+		readbytes = this->read(buf, sizeof(buf)-1, E_THROW_ON_ERROR);
 		buf[readbytes] = 0; // null-terminate the buffer
 		retval += buf;
 	} while (readbytes > 0); // keep going until we don't fill up the buffer.
 	return retval.releaseString();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+UnnamedPipeRef
+UnnamedPipe::createUnnamedPipe(EOpen doOpen)
+{
+	return UnnamedPipeRef(new PosixUnnamedPipe(doOpen));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+UnnamedPipeRef
+UnnamedPipe::createStdin()
+{
+	AutoDescriptor duped(::dup(0));
+	if (duped.get() == -1)
+	{
+		OW_THROW_ERRNO_MSG(UnnamedPipeException, "UnnamedPipe::createStdin(): dup():");
+	}
+	return UnnamedPipeRef(new PosixUnnamedPipe(duped, AutoDescriptor()));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+UnnamedPipeRef
+UnnamedPipe::createStdout()
+{
+	AutoDescriptor duped(::dup(1));
+	if (duped.get() == -1)
+	{
+		OW_THROW_ERRNO_MSG(UnnamedPipeException, "UnnamedPipe::createStdout(): dup():");
+	}
+	return UnnamedPipeRef(new PosixUnnamedPipe(AutoDescriptor(), duped));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+UnnamedPipeRef
+UnnamedPipe::createStdinStdout()
+{
+	AutoDescriptor dupedIn(::dup(0));
+	if (dupedIn.get() == -1)
+	{
+		OW_THROW_ERRNO_MSG(UnnamedPipeException, "UnnamedPipe::createStdout(): dup():");
+	}
+	AutoDescriptor dupedOut(::dup(1));
+	if (dupedOut.get() == -1)
+	{
+		OW_THROW_ERRNO_MSG(UnnamedPipeException, "UnnamedPipe::createStdout(): dup():");
+	}
+	return UnnamedPipeRef(new PosixUnnamedPipe(dupedIn, dupedOut));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+UnnamedPipeRef
+UnnamedPipe::createStderr()
+{
+	AutoDescriptor duped(::dup(2));
+	if (duped.get() == -1)
+	{
+		OW_THROW_ERRNO_MSG(UnnamedPipeException, "UnnamedPipe::createStderr(): dup():");
+	}
+	return UnnamedPipeRef(new PosixUnnamedPipe(AutoDescriptor(), duped));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// static 
+UnnamedPipeRef 
+UnnamedPipe::createUnnamedPipeFromDescriptor(AutoDescriptor inputAndOutput)
+{
+	AutoDescriptor duped(::dup(inputAndOutput.get()));
+	if (duped.get() == -1)
+	{
+		OW_THROW_ERRNO_MSG(UnnamedPipeException, "UnnamedPipe::createUnnamedPipeFromDescriptor(): dup():");
+	}
+	return UnnamedPipeRef(new PosixUnnamedPipe(inputAndOutput, duped));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// static 
+UnnamedPipeRef 
+UnnamedPipe::createUnnamedPipeFromDescriptor(AutoDescriptor input, AutoDescriptor output)
+{
+	return UnnamedPipeRef(new PosixUnnamedPipe(input, output));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// static 
+void
+UnnamedPipe::createConnectedPipes(UnnamedPipeRef& first, UnnamedPipeRef& second)
+{
+	int fds[2];
+	if (::socketpair(AF_UNIX, SOCK_STREAM, 0, fds) == -1)
+	{
+		OW_THROW_ERRNO_MSG(UnnamedPipeException, "PosixUnamedPipe::open(): soketpair()");
+	}
+	first = createUnnamedPipeFromDescriptor(AutoDescriptor(fds[0]));
+	second = createUnnamedPipeFromDescriptor(AutoDescriptor(fds[1]));
 }
 
 } // end namespace OW_NAMESPACE

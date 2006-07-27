@@ -49,6 +49,7 @@ static const char* const HTTPServer = "HTTPServer";
 static const char* const XMLListener = "XMLListener";
 static const char* const WQL = "WQL";
 static const char* const SimpleAuthorizer = "SimpleAuthorizer";
+static const char* const BasicAuthorizer = "BasicAuthorizer";
 static const char* const XMLExecute = "XMLExecute";
 static const char* const BinaryRequestHandler = "BinaryRequestHandler";
 static const char* const AuthorizerManager = "AuthorizerManager";

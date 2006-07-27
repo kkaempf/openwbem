@@ -58,7 +58,7 @@ namespace
 		{
 			if (x.longopt != 0)
 			{
-				return m_longOpt.startsWith(x.longopt);
+				return m_longOpt == x.longopt;
 			}
 			return false;
 		}
@@ -114,7 +114,18 @@ CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Opt
 				// long option
 				longOpt = true;
 				arg = arg.substring(2); // erase the --
-				theOpt = std::find_if (options,  optionsEnd, longOptIs(arg));
+				// get rid of =
+				size_t idx = arg.indexOf('=');
+				String argNoVal;
+				if (idx != String::npos)
+				{
+					argNoVal = arg.substring(0, idx);
+				}
+				else
+				{
+					argNoVal = arg;
+				}
+				theOpt = std::find_if (options,  optionsEnd, longOptIs(argNoVal));
 			}
 			else // short option
 			{
@@ -157,7 +168,8 @@ CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Opt
 				// look at the next arg
 				else if (argv+1 != argvEnd)
 				{
-					if (**(argv+1) != '-')
+					// Save the next arg if it doesn't start with '-' or if is just '-' by itself.
+					if ( **(argv+1) != '-' || (**(argv+1) == '-' && String(*(argv+1)).length() == 1) )
 					{
 						val = *(argv+1);
 						++argv;

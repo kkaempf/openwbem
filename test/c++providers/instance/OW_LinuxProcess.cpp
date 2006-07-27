@@ -67,13 +67,14 @@ public:
 		const CIMClass& cimClass )
 	{
 		String cmd = "/bin/ps ax --no-heading -eo pid,comm,vsz";
-		PopenStreams pos = Exec::safePopen(cmd.tokenize());
+		ProcessRef proc = Exec::spawn(cmd.tokenize());
 
-		String output = pos.out()->readAll();
+		String output = proc->out()->readAll();
 
-		if (pos.getExitStatus() != 0)
+		proc->waitCloseTerm();
+		if (!proc->processStatus().terminatedSuccessfully())
 		{
-			//OW_THROWCIMMSG(CIMException::FAILED, "Bad exit status from popen");
+			OW_THROWCIMMSG(CIMException::FAILED, "Bad exit status from popen");
 		}
 
 		StringArray lines = output.tokenize("\n");
@@ -111,9 +112,10 @@ public:
 		const CIMClass& cimClass )
 	{
 		String cmd = "/bin/ps ax --no-heading -eo pid,vsize,pcpu,comm";
-		PopenStreams pos = Exec::safePopen(cmd.tokenize());
-		String output = pos.out()->readAll();
-		if (pos.getExitStatus() != 0)
+		ProcessRef proc = Exec::spawn(cmd.tokenize());
+		String output = proc->out()->readAll();
+		proc->waitCloseTerm();
+		if (!proc->processStatus().terminatedSuccessfully())
 		{
 			OW_THROWCIMMSG(CIMException::FAILED, "Bad exit status from popen");
 		}
@@ -167,18 +169,19 @@ public:
 		String cmd("/bin/ps p ");
 		cmd += pid;
 		cmd += " --no-headers -o vsize,pcpu,comm";
-		PopenStreams pos = Exec::safePopen(cmd.tokenize());
-		StringArray proc = pos.out()->readAll().tokenize();
-		if (pos.getExitStatus() != 0)
+		ProcessRef proc = Exec::spawn(cmd.tokenize());
+		StringArray procOut = proc->out()->readAll().tokenize();
+		proc->waitCloseTerm();
+		if (!proc->processStatus().terminatedSuccessfully())
 		{
 			OW_THROWCIMMSG(CIMException::NOT_FOUND,
 				"The Instance does not (any longer) exist");
 		}
-		inst.setProperty(String("Name"), CIMValue(proc[2]));
+		inst.setProperty(String("Name"), CIMValue(procOut[2]));
 		try
 		{
-			inst.setProperty(String("VirtualMemorySize"), CIMValue(proc[0].toUInt32()));
-			inst.setProperty(String("PercentCPU"), CIMValue(proc[1].toReal32()));
+			inst.setProperty(String("VirtualMemorySize"), CIMValue(procOut[0].toUInt32()));
+			inst.setProperty(String("PercentCPU"), CIMValue(procOut[1].toReal32()));
 		}
 		catch (const StringConversionException& e)
 		{

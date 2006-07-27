@@ -46,7 +46,8 @@
 #include "OW_Assertion.hpp"
 #include "OW_MD5.hpp"
 #include "OW_Array.hpp"
-#include "OW_CryptographicRandomNumber.hpp"
+#include "OW_SecureRand.hpp"
+#include "OW_SignalScope.hpp"
 
 #include <openssl/rand.h>
 #include <openssl/err.h>
@@ -211,7 +212,7 @@ SSLCtxMgr::initCtx(const String& certfile, const String& keyfile)
 		}
 	}
 
-	CryptographicRandomNumber::initRandomness();
+	Secure::rand_init();
 
 	return ctx;
 }
@@ -245,7 +246,7 @@ public:
 	{
 		if (SSLCtxMgr::isClient() || SSLCtxMgr::isServer())
 		{
-			CryptographicRandomNumber::saveRandomState();
+			Secure::rand_save_state();
 		}
 		SSLCtxMgr::uninit();
 		delete[] mutex_buf;
@@ -324,8 +325,7 @@ SSLCtxMgr::initServer(const String& certfile, const String& keyfile)
 	//loadDHParams(m_ctx, dhfile);
 	generateEphRSAKey(m_ctxServer);
 	String sessID("SSL_SESSION_");
-	CryptographicRandomNumber rn(0, 10000);
-	sessID += String(static_cast<UInt32>(rn.getNextNumber()));
+	sessID += String(Secure::rand_range<UInt16>(0, 10000));
 	int sessIDLen =
 		(SSL_MAX_SSL_SESSION_ID_LENGTH < (sessID.length())) ?
 		SSL_MAX_SSL_SESSION_ID_LENGTH : (sessID.length());
@@ -433,6 +433,8 @@ SSLCtxMgr::sslWrite(SSL* ssl, const char* buf, int len)
 	int r, cc, retries;
 	int myLen = len;
 	int offset = 0;
+	// block SIGPIPE so we don't kill the process if the socket is closed.
+	SignalScope ss(SIGPIPE, SIG_IGN);
 	while (myLen > 0)
 	{
 		cc = SSL_ERROR_WANT_WRITE;
@@ -569,8 +571,7 @@ SSLCtxBase::SSLCtxBase(const SSLOpts& opts)
 	
 	SSLCtxMgr::generateEphRSAKey(m_ctx); // TODO what the heck is this?
 	String sessID("SSL_SESSION_");
-	CryptographicRandomNumber rn(0, 10000);
-	sessID += String(static_cast<UInt32>(rn.getNextNumber()));
+	sessID += String(Secure::rand_range<UInt16>(0, 10000));
 	int sessIDLen =
 		(SSL_MAX_SSL_SESSION_ID_LENGTH < (sessID.length())) ?
 		SSL_MAX_SSL_SESSION_ID_LENGTH : (sessID.length());

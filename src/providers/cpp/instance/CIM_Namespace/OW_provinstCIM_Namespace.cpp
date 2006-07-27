@@ -119,7 +119,7 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		EPropertiesFlag propertiesFlag)
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "In CIM_NamespaceInstProv::enumInstances");
+		OW_LOG_DEBUG(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::enumInstances");
 		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 		CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
 		String sccn;
@@ -145,7 +145,7 @@ public:
 		}
 		
 		NSHandlerInst nshandler(result, cimClass, sccn, sn, omccn, omn);
-		RepositoryIFCRef rep = env->getRepository();
+		RepositoryIFCRef rep = env->getAuthorizingRepository();
 		rep->enumNameSpace(nshandler, env->getOperationContext());
 	}
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION)
@@ -155,12 +155,12 @@ public:
 		const String& ns,
 		const CIMInstance& cimInstance )
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "In CIM_NamespaceInstProv::createInstance");
+		OW_LOG_DEBUG(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::createInstance");
 #if !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
  		try
 		{
 			String name = cimInstance.getPropertyT("Name").getValueT().toString();
-			RepositoryIFCRef rep = env->getRepository();
+			RepositoryIFCRef rep = env->getAuthorizingRepository();
 			rep->createNameSpace(name, env->getOperationContext());
 		}
 		catch (const CIMException& e)
@@ -196,12 +196,12 @@ public:
 		const String& ns,
 		const CIMObjectPath& cop)
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "In CIM_NamespaceInstProv::createInstance");
+		OW_LOG_DEBUG(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::deleteInstance");
 #if !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 		try
 		{
 			String name = cop.getKeyT("Name").getValueT().toString();
-			RepositoryIFCRef rep = env->getRepository();
+			RepositoryIFCRef rep = env->getAuthorizingRepository();
 			// The client can't delete a non-empty namespace.  If we find any class names, we'll throw an exception
 			DeleteHandler handler;
 			rep->enumClassNames(name,"", handler, E_SHALLOW, env->getOperationContext());

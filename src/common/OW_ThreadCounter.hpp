@@ -54,11 +54,13 @@ public:
 	ThreadCounter(Int32 maxThreads);
 	~ThreadCounter();
 	// Throws TimeoutException in case of timeout
-	void incThreadCount(UInt32 sTimeout, UInt32 usTimeout);
+	void incThreadCount(const Timeout& timeout);
+	OW_DEPRECATED void incThreadCount(UInt32 sTimeout, UInt32 usTimeout);
 	void decThreadCount();
 	Int32 getThreadCount();
 	// Throws TimeoutException in case of timeout
-	void waitForAll(UInt32 sTimeout, UInt32 usTimeout);
+	void waitForAll(const Timeout& timeout);
+	OW_DEPRECATED void waitForAll(UInt32 sTimeout, UInt32 usTimeout);
 	void setMax(Int32 maxThreads);
 private:
 	Int32 m_maxThreads;

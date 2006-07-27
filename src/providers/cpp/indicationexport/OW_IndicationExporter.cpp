@@ -106,7 +106,7 @@ void
 IndicationExporter::doSendRequest(Reference<iostream> ostr, const String& methodName,
 		const String& ns, const String& cimProtocolVersion)
 {
-	CIMProtocolIStreamIFCRef istr = m_protocol->endRequest(ostr, methodName,
+	Reference<std::istream> istr = m_protocol->endRequest(ostr, methodName,
 		ns, CIMProtocolIFC::E_CIM_EXPORT_REQUEST, cimProtocolVersion);
 	// Debug stuff
 	/*

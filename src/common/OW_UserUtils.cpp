@@ -89,6 +89,43 @@ namespace
 Mutex g_getpwMutex;
 }
 
+namespace // anonymous
+{
+	// Get a sysconf value.  If no value is set (or another error occurs), return the default value.
+	long getSysconfValue(int name, long default_value, int& error)
+	{
+		errno = 0;
+
+		long l = sysconf(name);
+
+		if( l == -1 )
+		{
+			if( errno == 0 )
+			{
+				// The POSIX standard says this means the limit is indefinite (not infinite).
+				error = 0;
+				return default_value;
+			}
+			else
+			{
+				error = errno;
+				return default_value;
+			}
+		}
+		else
+		{
+			error = 0;
+			return l;
+		}
+	}
+
+	long getSysconfValue(int name, long default_value)
+	{
+		int unused;
+		return getSysconfValue(name, default_value, unused);
+	}
+} // end annymous namespace
+
 //////////////////////////////////////////////////////////////////////////////
 String getUserName(uid_t uid,bool& ok)
 {
@@ -112,7 +149,7 @@ String getUserName(uid_t uid,bool& ok)
 	passwd pw;
 	size_t const additionalSize =
 #ifdef _SC_GETPW_R_SIZE_MAX
-		sysconf (_SC_GETPW_R_SIZE_MAX);
+		getSysconfValue(_SC_GETPW_R_SIZE_MAX, 10240);
 #else
 		10240;
 #endif
@@ -156,7 +193,7 @@ getUserId(const String& userName, bool& validUserName)
 #ifdef OW_HAVE_GETPWNAM_R
 	size_t bufsize =
 #ifdef _SC_GETPW_R_SIZE_MAX
-		sysconf (_SC_GETPW_R_SIZE_MAX);
+		getSysconfValue(_SC_GETPW_R_SIZE_MAX, 10240);
 #else
 		1024;
 #endif

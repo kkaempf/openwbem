@@ -29,9 +29,10 @@ OW_AuthManager.hpp \
 OW_PidFile.cpp \
 OW_PidFile.hpp \
 OW_Platform.cpp \
-OW_Platform.hpp \
-OW_PlatformSignal.cpp \
-OW_PlatformSignal.hpp 
+OW_PlatformSignal.cpp
 
 pkginclude_HEADERS = \
+OW_Platform.hpp \
+OW_PlatformSignal.hpp \
 OW_CimomServerFwd.hpp 
+

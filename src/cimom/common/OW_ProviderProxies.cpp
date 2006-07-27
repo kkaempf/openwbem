@@ -860,7 +860,7 @@ namespace
 				m_env->getCIMOMHandle(), m_nwi)); 
 #endif
 		}
-		
+
 		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
 #if defined(OW_GNU_LINUX)
@@ -874,23 +874,12 @@ namespace
 		
 		virtual RepositoryIFCRef getRepository() const
 		{
-#if defined(OW_GNU_LINUX)
-			return RepositoryIFCRef(new ProxyRepository(
-				m_env->getRepository(), m_cimomuid, m_useruid));
-#elif defined(OW_NETWARE)
-			return RepositoryIFCRef(new ProxyRepository(
-				m_env->getRepository(), m_nwi)); 
-#endif
+			return this->makeRepository(m_env->getRepository());
 		}
 
-		virtual LoggerRef getLogger() const
+		virtual RepositoryIFCRef getAuthorizingRepository() const
 		{
-			return m_env->getLogger();
-		}
-
-		virtual LoggerRef getLogger(const String& componentName) const
-		{
-			return m_env->getLogger(componentName);
+			return this->makeRepository(m_env->getAuthorizingRepository());
 		}
 
 		virtual String getUserName() const
@@ -912,6 +901,16 @@ namespace
 		}
 
 	private:
+
+		RepositoryIFCRef makeRepository(RepositoryIFCRef const & rep) const
+		{
+#if defined(OW_GNU_LINUX)
+			return RepositoryIFCRef(
+				new ProxyRepository(rep, m_cimomuid, m_useruid));
+#elif defined(OW_NETWARE)
+			return RepositoryIFCRef(new ProxyRepository(rep, m_nwi));
+#endif
+		}
 
 #if defined(OW_GNU_LINUX)
 		uid_t m_cimomuid;

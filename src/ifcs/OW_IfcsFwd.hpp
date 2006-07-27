@@ -87,9 +87,6 @@ typedef ResultHandlerIFC<CIMQualifierType> CIMQualifierTypeResultHandlerIFC;
 class CIMProtocolIFC;
 typedef IntrusiveReference<CIMProtocolIFC> CIMProtocolIFCRef;
 
-class CIMProtocolIStreamIFC;
-typedef IntrusiveReference<CIMProtocolIStreamIFC> CIMProtocolIStreamIFCRef;
-
 class ClientAuthCBIFC;
 typedef IntrusiveReference<ClientAuthCBIFC> ClientAuthCBIFCRef;
 

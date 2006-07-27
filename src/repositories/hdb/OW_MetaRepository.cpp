@@ -82,7 +82,8 @@ void
 MetaRepository::open(const String& path)
 {
 	GenericHDBRepository::open(path);
-	OW_LOG_INFO(m_env->getLogger(COMPONENT_NAME), Format("Using MetaRepository: %1", path));
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_INFO(lgr, Format("Using MetaRepository: %1", path));
 
 	// Create root qualifier container
 	HDBHandleLock hdl(this, getHandle());
@@ -387,7 +388,7 @@ CIMName
 MetaRepository::_getClassNameFromNode(HDBNode& node)
 {
 	CIMName name;
-	DataIStream istrm(node.getDataLen(), node.getData());
+	DataIStreamBuf istrm(node.getDataLen(), node.getData());
 	// Not going to do this, it's too slow! cimObj.readObject(istrm);
 	// This is breaking abstraction, and may bite us later if CIMClass::readObject() ever changes..., but in some cases efficiency wins out.
 	CIMBase::readSig( istrm, OW_CIMCLASSSIG, OW_CIMCLASSSIG_V, CIMClass::SERIALIZATION_VERSION );
@@ -596,7 +597,17 @@ MetaRepository::modifyClass(const String& ns,
 	throwIfNotOpen();
 	HDBHandleLock hdl(this, getHandle());
 	CIMClass cimClass(cimClass_);
-	adjustClass(ns, cimClass, hdl.getHandle());
+	HDBNode parentNode = adjustClass(ns, cimClass, hdl.getHandle());
+	// adjustClass() returns a null parentNode is there isn't a base class. For the call to updateCIMObject below, 
+	// we want to set the parent node to the namespace.
+	if (!parentNode)
+	{
+		if (!(parentNode = getNameSpaceNode(hdl, CLASS_CONTAINER + NS_SEPARATOR_C + ns)))
+		{
+			OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE,
+				ns.c_str());
+		}
+	}
 	String ckey = _makeClassPath(ns, cimClass.getName());
 	HDBNode node = hdl->getNode(ckey);
 	if (!node)
@@ -609,7 +620,7 @@ MetaRepository::modifyClass(const String& ns,
 	nodeToCIMObject(clsToUpdate, node);
 	// At this point we know we are updating an CIMClass
 	m_classCache.removeFromCache(ckey);
-	updateCIMObject(cimClass, node, hdl.getHandle());
+	updateCIMObject(cimClass, node, parentNode, hdl.getHandle());
 }
 //////////////////////////////////////////////////////////////////////////////
 HDBNode
@@ -736,7 +747,8 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 						{
 							// TODO: look at this message, it seems the dmtf cim schema causes it quite often.
 							// maybe we should only output it if the value is different?
-							OW_LOG_INFO(m_env->getLogger(COMPONENT_NAME), Format("Warning: %1.%2: qualifier %3 was "
+							Logger lgr(COMPONENT_NAME);
+							OW_LOG_INFO(lgr, Format("Warning: %1.%2: qualifier %3 was "
 										"overridden, but the qualifier can't be "
 										"overridden because it has DisableOverride flavor",
 										childClass.getName(), propArray[i].getName(),
@@ -774,7 +786,7 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 				{
 					OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 							Format("Parent class has keys. Child cannot have additional"
-								" key properties: %1", childClass.getName()).c_str());
+								" key properties: %1: %2", childClass.getName(), propArray[i].toMOF()).c_str());
 				}
 			}
 			propArray[i].setOriginClass(childName);
@@ -832,7 +844,8 @@ MetaRepository::_resolveQualifiers(const String& ns,
 		}
 		else
 		{
-			OW_LOG_ERROR(m_env->getLogger(COMPONENT_NAME), Format("Unable to find qualifier: %1",
+			Logger lgr(COMPONENT_NAME);
+			OW_LOG_ERROR(lgr, Format("Unable to find qualifier: %1",
 				quals[i].getName()));
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				Format("Unable to find qualifier: %1",

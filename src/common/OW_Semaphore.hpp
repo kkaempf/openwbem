@@ -39,6 +39,8 @@
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_Condition.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
+#include "OW_Timeout.hpp"
+#include "OW_TimeoutTimer.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -61,13 +63,18 @@ public:
 		}
 		--m_curCount;
 	}
-	bool timedWait(UInt32 sTimeout, UInt32 usTimeout=0)
+	OW_DEPRECATED bool timedWait(UInt32 sTimeout, UInt32 usTimeout=0) // in 4.0.0
+	{
+		return timedWait(Timeout::relative(sTimeout + static_cast<float>(usTimeout) * 1000000.0));
+	}
+	bool timedWait(const Timeout& timeout)
 	{
 		bool ret = true;
 		NonRecursiveMutexLock l(m_mutex);
+		TimeoutTimer timer(timeout);
 		while (m_curCount <= 0 && ret == true)
 		{
-			ret = m_cond.timedWait(l, sTimeout, usTimeout);
+			ret = m_cond.timedWait(l, timer.asAbsoluteTimeout());
 		}
 		if (ret == true)
 		{

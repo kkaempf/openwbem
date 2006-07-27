@@ -59,7 +59,7 @@
 #include "OW_SocketUtils.hpp"
 #include "OW_SocketException.hpp"
 #include "OW_Logger.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_LocalOperationContext.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_ServiceIFCNames.hpp"
@@ -67,10 +67,10 @@
 
 #include <algorithm>
 
-#define OW_LOGDEBUG(msg) OW_LOG_DEBUG(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
-#define OW_LOGINFO(msg) OW_LOG_INFO(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
-#define OW_LOGERROR(msg) OW_LOG_ERROR(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
-#define OW_LOGFATALERROR(msg) OW_LOG_FATAL_ERROR(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
+#define OW_LOGDEBUG(msg) OW_LOG_DEBUG(logger, msg)
+#define OW_LOGINFO(msg) OW_LOG_INFO(logger, msg)
+#define OW_LOGERROR(msg) OW_LOG_ERROR(logger, msg)
+#define OW_LOGFATALERROR(msg) OW_LOG_FATAL_ERROR(logger, msg)
 
 namespace OW_NAMESPACE
 {
@@ -251,6 +251,7 @@ XMLExecute::executeIntrinsic(ostream& ostr,
 {
 	String functionNameLC = m_functionName;
 	functionNameLC.toLowerCase();
+	Logger logger(COMPONENT_NAME);
 	OW_LOGDEBUG(Format("Got function name. calling function %1",
 		functionNameLC));
 	FuncEntry fe = { 0, 0 };
@@ -1353,6 +1354,7 @@ void
 XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
 	ostream& ostrError, OperationContext& context)
 {
+	Logger logger(COMPONENT_NAME);
 	try
 	{
 		ostrEntity << "<SIMPLERSP>";
@@ -1464,15 +1466,17 @@ void
 XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 {
 	setEnvironment(env);
+// TODO: Move this stuff into some other class
+#if 0
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	LoggerRef logger(env->getLogger(COMPONENT_NAME));
+	Logger logger(COMPONENT_NAME);
 	// Create the interop instance of CIM_CIMXMLCommunicationMechanism.
 	// There are no properties in it which are dynamic, just it's existence is.
 	// So we just create/delete it and let the repository do all the work :-)
 	try
 	{
 		String interopNS = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
-		OperationContext context;
+		LocalOperationContext context;
 		CIMOMHandleIFCRef hdl(env->getCIMOMHandle(context));
 		
 		CIMClass CIM_CIMXMLCommunicationMechanism(hdl->getClass(interopNS, "CIM_CIMXMLCommunicationMechanism"));
@@ -1634,23 +1638,25 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		OW_LOG_DEBUG(logger, Format("Failed creating CIM_CIMXMLCommunicationMechanism: %1", e));
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	
+#endif // #if 0
 }
 
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-void cleanupInteropInstance(const CIMObjectPath& path, const LoggerRef& logger, const ServiceEnvironmentIFCRef& env)
+void cleanupInteropInstance(const CIMObjectPath& path, const ServiceEnvironmentIFCRef& env)
 {
+#if 0
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	if (path)
 	{
+		Logger logger(COMPONENT_NAME);
 		OW_LOG_DEBUG(logger, "XMLExecute::shutdown() cleaning up CIM_HostedAccessPoint instance");
 
 		try
 		{
 			String interopNS(path.getNameSpace());
-			OperationContext context;
+			LocalOperationContext context;
 			CIMOMHandleIFCRef hdl(env->getCIMOMHandle(context));
 			hdl->deleteInstance(interopNS, path);
 		}
@@ -1661,6 +1667,7 @@ void cleanupInteropInstance(const CIMObjectPath& path, const LoggerRef& logger, 
 		}
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#endif // #if 0
 }
 } // end unnamed namespace
 
@@ -1671,12 +1678,11 @@ XMLExecute::shutdown()
 	// clean up the instances we created in init()
 	ServiceEnvironmentIFCRef env(getEnvironment());
 	OW_ASSERT(env);
-	LoggerRef logger(env->getLogger(COMPONENT_NAME));
-	OW_ASSERT(logger);
+	Logger logger(COMPONENT_NAME);
 
-	cleanupInteropInstance(m_commMechPath, logger, env);
-	cleanupInteropInstance(m_hostedAccessPointPath, logger, env);
-	cleanupInteropInstance(m_commMechForManager, logger, env);
+	cleanupInteropInstance(m_commMechPath, env);
+	cleanupInteropInstance(m_hostedAccessPointPath, env);
+	cleanupInteropInstance(m_commMechForManager, env);
 
 	// clear the reference to the environment
 	setEnvironment(ServiceEnvironmentIFCRef());

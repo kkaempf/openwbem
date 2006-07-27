@@ -48,8 +48,7 @@
 namespace OW_NAMESPACE
 {
 
-using std::ostream;
-using std::istream;
+using std::streambuf;
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////													
 struct CIMMethod::METHData : public COWIntrusiveCountableBase
@@ -311,7 +310,7 @@ CIMMethod::setName(const CIMName& name)
 }
 //////////////////////////////////////////////////////////////////////////////													
 void
-CIMMethod::readObject(istream &istrm)
+CIMMethod::readObject(streambuf & istrm)
 {
 	CIMName name;
 	CIMDataType returnDatatype(CIMNULL);
@@ -342,7 +341,7 @@ CIMMethod::readObject(istream &istrm)
 }
 //////////////////////////////////////////////////////////////////////////////													
 void
-CIMMethod::writeObject(ostream &ostrm) const
+CIMMethod::writeObject(streambuf & ostrm) const
 {
 	CIMBase::writeSig( ostrm, OW_CIMMETHODSIG );
 	m_pdata->m_name.writeObject(ostrm);

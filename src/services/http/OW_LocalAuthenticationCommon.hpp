@@ -46,15 +46,13 @@ namespace LocalAuthenticationCommon
 
 OW_DECLARE_EXCEPTION(LocalAuthentication);
 
-void initializeDir();
-String createFile(const String& uid, const String& cookie);
+void initializeDir(String const & local_auth_dir);
+String createFile(
+	String const & local_auth_dir, const String& uid, const String& cookie);
 
-static const char* const OWLOCALHELPER_BINARY = OW_DEFAULT_LIBEXEC_DIR "/openwbem/owlocalhelper";
 static const char* const REMOVE_CMD = "remove";
 static const char* const INITIALIZE_CMD = "initialize";
 static const char* const CREATE_CMD = "create";
-
-#define LOCAL_AUTH_DIR OW_DEFAULT_STATE_DIR "/openwbem/OWLocal"
 
 } // end namespace LocalAuthenticationCommon
 

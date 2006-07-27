@@ -66,7 +66,13 @@ public:
 	 * @param timeoutSecs the timeout
 	 * @return an Socket for the connection just accepted.
 	 */
-	Socket accept(int timeoutSecs=-1); 
+	Socket accept(int timeoutSecs=-1) OW_DEPRECATED; // in 4.0.0
+	/**
+	 * Accept a connection to the server socket
+	 * @param timeoutSecs the timeout
+	 * @return an Socket for the connection just accepted.
+	 */
+	Socket accept(const Timeout& timeout); 
 	/**
 	 * Start listening on a port
 	 *

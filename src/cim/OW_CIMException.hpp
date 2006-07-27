@@ -115,6 +115,13 @@ public:
 	virtual CIMException* clone() const throw();
 
 	/**
+	 * Get a static string name of errCode.
+	 * This function is thread safe. Each description is stored in a separate buffer.
+	 * Caller must not free or modify the result.
+	 * If errCode is invalid a pointer to "CIM_ERR_UNKNOWN" will be returned.
+	 */
+	static const char* getCodeName(ErrNoType errCode);
+	/**
 	 * Get a static string description of errCode.
 	 * This function is thread safe. Each description is stored in a separate buffer.
 	 * Caller must not free or modify the result.
@@ -125,6 +132,8 @@ public:
 private:
 	const char* m_description;
 };
+
+OW_COMMON_API std::ostream& operator<<(std::ostream& ostr, const CIMException& e);
 
 /**
  * Throw a CIMException with error code errval.

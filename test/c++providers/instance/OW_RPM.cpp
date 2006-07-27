@@ -110,15 +110,16 @@ public:
 		const CIMClass& cimClass )
 	{
 		String cmd = "/usr/bin/apt-cache search .*";
-		PopenStreams pos = Exec::safePopen(cmd.tokenize());
+		ProcessRef proc = Exec::spawn(cmd.tokenize());
 
-		StringArray lines = pos.out()->readAll().tokenize("\n");
+		StringArray lines = proc->out()->readAll().tokenize("\n");
 
 		std::sort(lines.begin(), lines.end());
 
-		if (pos.getExitStatus() != 0)
+		proc->waitCloseTerm();
+		if (!proc->processStatus().terminatedSuccessfully())
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, "Bad exit status from popen");
+			OW_THROWCIMMSG(CIMException::FAILED, "Bad apt-cache exit status");
 		}
 
 
@@ -166,17 +167,19 @@ public:
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "in RPM::enumInstances");
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, "in RPM::enumInstances");
 		String cmd = "/usr/bin/apt-cache search .*";
-		PopenStreams pos = Exec::safePopen(cmd.tokenize());
+		ProcessRef proc = Exec::spawn(cmd.tokenize());
 
-		StringArray lines = pos.out()->readAll().tokenize("\n");
+		StringArray lines = proc->out()->readAll().tokenize("\n");
 
 		std::sort(lines.begin(), lines.end());
 
-		if (pos.getExitStatus() != 0)
+		proc->waitCloseTerm();
+		if (!proc->processStatus().terminatedSuccessfully())
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, "Bad exit status from popen");
+			OW_THROWCIMMSG(CIMException::FAILED, "Bad apt-cache exit status");
 		}
 
 
@@ -291,9 +294,12 @@ public:
 		cmd.push_back(methodName);
 		cmd.push_back(pkgName);
 
-		int rc = Exec::safeSystem(cmd);
+		String output;
+		const Timeout timeout = Timeout::relative(60.0);
+		const int outputLimit = 1024;
+		Process::Status status = Exec::executeProcessAndGatherOutput(cmd, output, timeout, outputLimit);
 
-		return CIMValue(Int32(rc));
+		return CIMValue(status.exitTerminated() ? status.exitStatus() : 1);
 	}
 
 
@@ -319,10 +325,11 @@ public:
 		// get package details
 		String cmd = "/usr/bin/apt-cache --no-a show ";
 		cmd += name;
-		PopenStreams pos = Exec::safePopen(cmd.tokenize());
+		ProcessRef proc = Exec::spawn(cmd.tokenize());
 
-		StringArray lines = pos.out()->readAll().tokenize("\n");
-		if (pos.getExitStatus() != 0)
+		StringArray lines = proc->out()->readAll().tokenize("\n");
+		proc->waitCloseTerm();
+		if (!proc->processStatus().terminatedSuccessfully())
 		{
 			return false;
 		}
@@ -418,7 +425,7 @@ public:
 
 		// determine if package is installed.
 		cmd = _pkgHandler + name;
-		if (Exec::safeSystem(cmd.tokenize()) == 0)
+		if (Exec::system(cmd.tokenize()).terminatedSuccessfully())
 		{
 			inst.setProperty("Status", CIMValue(String("Installed")));
 		}
@@ -452,10 +459,11 @@ public:
 			cmd += name;
 			cmd += " ";
 		}
-		PopenStreams pos = Exec::safePopen(cmd.tokenize());
+		ProcessRef proc = Exec::spawn(cmd.tokenize());
 
-		StringArray lines = pos.out()->readAll().tokenize("\n");
-		if (pos.getExitStatus() != 0)
+		StringArray lines = proc->out()->readAll().tokenize("\n");
+		proc->waitCloseTerm();
+		if (!proc->processStatus().terminatedSuccessfully())
 		{
 			return false;
 		}
@@ -498,7 +506,7 @@ public:
 
 				// determine if package is installed.
 				cmd = _pkgHandler + value;
-				if (Exec::safeSystem(cmd.tokenize()) == 0)
+				if (Exec::system(cmd.tokenize()).terminatedSuccessfully())
 				{
 					insts[curInst].setProperty("Status", CIMValue(String("Installed")));
 				}

@@ -42,8 +42,7 @@
 namespace OW_NAMESPACE
 {
 
-using std::istream;
-using std::ostream;
+using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMParamValue::Data : public COWIntrusiveCountableBase
 {
@@ -134,7 +133,7 @@ CIMParamValue::setNull()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMParamValue::writeObject(ostream &ostrm) const
+CIMParamValue::writeObject(streambuf & ostrm) const
 {
 	CIMBase::writeSig( ostrm, OW_CIMPARAMVALUESIG );
 	m_pdata->m_name.writeObject(ostrm);
@@ -150,7 +149,7 @@ CIMParamValue::writeObject(ostream &ostrm) const
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMParamValue::readObject(istream &istrm)
+CIMParamValue::readObject(streambuf & istrm)
 {
 	CIMName name;
 	CIMValue val(CIMNULL);

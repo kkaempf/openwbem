@@ -47,6 +47,9 @@
 #include "OW_Socket.hpp"
 #include "OW_Thread.hpp"
 #include "OW_DateTime.hpp"
+#include "OW_TimeoutTimer.hpp"
+#include "OW_AutoDescriptor.hpp"
+#include "OW_Logger.hpp"
 
 extern "C"
 {
@@ -79,6 +82,12 @@ using std::ifstream;
 using std::ofstream;
 using std::fstream;
 using std::ios;
+
+namespace
+{
+static Mutex g_guard;
+}
+
 String SocketBaseImpl::m_traceFileOut;
 String SocketBaseImpl::m_traceFileIn;
 
@@ -95,9 +104,9 @@ SocketBaseImpl::SocketBaseImpl()
 	, m_in(&m_streamBuf)
 	, m_out(&m_streamBuf)
 	, m_inout(&m_streamBuf)
-	, m_recvTimeout(Socket::INFINITE_TIMEOUT)
-	, m_sendTimeout(Socket::INFINITE_TIMEOUT)
-	, m_connectTimeout(Socket::INFINITE_TIMEOUT)
+	, m_recvTimeout(Timeout::infinite)
+	, m_sendTimeout(Timeout::infinite)
+	, m_connectTimeout(Timeout::infinite)
 {
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
@@ -116,9 +125,9 @@ SocketBaseImpl::SocketBaseImpl(SocketHandle_t fd,
 	, m_in(&m_streamBuf)
 	, m_out(&m_streamBuf)
 	, m_inout(&m_streamBuf)
-	, m_recvTimeout(Socket::INFINITE_TIMEOUT)
-	, m_sendTimeout(Socket::INFINITE_TIMEOUT)
-	, m_connectTimeout(Socket::INFINITE_TIMEOUT)
+	, m_recvTimeout(Timeout::infinite)
+	, m_sendTimeout(Timeout::infinite)
+	, m_connectTimeout(Timeout::infinite)
 {
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
@@ -148,9 +157,9 @@ SocketBaseImpl::SocketBaseImpl(const SocketAddress& addr)
 	, m_in(&m_streamBuf)
 	, m_out(&m_streamBuf)
 	, m_inout(&m_streamBuf)
-	, m_recvTimeout(Socket::INFINITE_TIMEOUT)
-	, m_sendTimeout(Socket::INFINITE_TIMEOUT)
-	, m_connectTimeout(Socket::INFINITE_TIMEOUT)
+	, m_recvTimeout(Timeout::infinite)
+	, m_sendTimeout(Timeout::infinite)
+	, m_connectTimeout(Timeout::infinite)
 {
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
@@ -186,29 +195,27 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 	m_in.clear();
 	m_out.clear();
 	m_inout.clear();
-	OW_ASSERT(addr.getType() == SocketAddress::INET
-			|| addr.getType() == SocketAddress::UDS);
-	if ((m_sockfd = ::socket(addr.getType() == SocketAddress::INET ?
-		AF_INET : PF_UNIX, SOCK_STREAM, 0)) == -1)
+	OW_ASSERT(m_sockfd == -1);
+	OW_ASSERT(addr.getType() == SocketAddress::INET || addr.getType() == SocketAddress::UDS);
+	AutoDescriptor sockfd(::socket(addr.getType() == SocketAddress::INET ? AF_INET : PF_UNIX, SOCK_STREAM, 0));
+	if (sockfd.get() == -1)
 	{
 		OW_THROW_ERRNO_MSG(SocketException,
 			"Failed to create a socket");
 	}
 	// set the close on exec flag so child process can't keep the socket.
-	if (::fcntl(m_sockfd, F_SETFD, FD_CLOEXEC) == -1)
+	if (::fcntl(sockfd.get(), F_SETFD, FD_CLOEXEC) == -1)
 	{
-		::close(m_sockfd);
 		OW_THROW_ERRNO_MSG(SocketException, "SocketBaseImpl::connect() failed to set close-on-exec flag on socket");
 	}
 	int n;
-	int flags = ::fcntl(m_sockfd, F_GETFL, 0);
-	::fcntl(m_sockfd, F_SETFL, flags | O_NONBLOCK);
-	if ((n = ::connect(m_sockfd, addr.getNativeForm(),
+	int flags = ::fcntl(sockfd.get(), F_GETFL, 0);
+	::fcntl(sockfd.get(), F_SETFL, flags | O_NONBLOCK);
+	if ((n = ::connect(sockfd.get(), addr.getNativeForm(),
 					addr.getNativeFormSize())) < 0)
 	{
 		if (errno != EINPROGRESS)
 		{
-			::close(m_sockfd);
 			OW_THROW_ERRNO_MSG(SocketException,
 				Format("Failed to connect to: %1", addr.toString()).c_str());
 		}
@@ -228,45 +235,37 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		}
 		fd_set rset, wset;
 		// here we spin checking for thread cancellation every so often.
-		UInt32 remainingMsWait = m_connectTimeout != Socket::INFINITE_TIMEOUT ? m_connectTimeout * 1000 : ~0U;
+		TimeoutTimer timer(m_connectTimeout);
+		timer.start();
 		do
 		{
 			FD_ZERO(&rset);
-			if (m_sockfd < 0 || m_sockfd >= FD_SETSIZE)
+			if (sockfd.get() < 0 || sockfd.get() >= FD_SETSIZE)
 			{
 				OW_THROW(SocketException, "Invalid fd (< 0 || >= FD_SETSIZE)");
 			}
-			FD_SET(m_sockfd, &rset);
+			FD_SET(sockfd.get(), &rset);
 			if (pipefd != -1 && pipefd < FD_SETSIZE)
 			{
 				FD_SET(pipefd, &rset);
 			}
 			FD_ZERO(&wset);
-			FD_SET(m_sockfd, &wset);
-			int maxfd = m_sockfd > pipefd ? m_sockfd : pipefd;
-
-			const UInt32 waitMs = 100; // 1/10 of a second
-			struct timeval tv;
-			tv.tv_sec = 0;
-			tv.tv_usec = std::min((waitMs % 1000), remainingMsWait) * 1000;
+			FD_SET(sockfd.get(), &wset);
+			int maxfd = sockfd.get() > pipefd ? sockfd.get() : pipefd;
 
 			Thread::testCancel();
-			n = ::select(maxfd+1, &rset, &wset, NULL, &tv);
-
-			if (m_connectTimeout != Socket::INFINITE_TIMEOUT)
-			{
-				remainingMsWait -= std::min(waitMs, remainingMsWait);
-			}
-		} while (n == 0 && remainingMsWait > 0);
+			const float waitSec = 0.1;
+			struct timeval tv;
+			n = ::select(maxfd+1, &rset, &wset, NULL, timer.asTimeval(tv, waitSec));
+			timer.loop();
+		} while (n == 0 && !timer.expired());
 
 		if (n == 0)
 		{
-			::close(m_sockfd);
 			OW_THROW(SocketException, "SocketBaseImpl::connect() select timedout");
 		}
 		else if (n == -1)
 		{
-			::close(m_sockfd);
 			if (errno == EINTR)
 			{
 				Thread::testCancel();
@@ -275,23 +274,20 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		}
 		if (pipefd != -1 && FD_ISSET(pipefd, &rset))
 		{
-			::close(m_sockfd);
 			OW_THROW(SocketException, "Sockets have been shutdown");
 		}
-		else if (FD_ISSET(m_sockfd, &rset) || FD_ISSET(m_sockfd, &wset))
+		else if (FD_ISSET(sockfd.get(), &rset) || FD_ISSET(sockfd.get(), &wset))
 		{
 			int error = 0;
 			socklen_t len = sizeof(error);
-			if (::getsockopt(m_sockfd, SOL_SOCKET, SO_ERROR, &error,
+			if (::getsockopt(sockfd.get(), SOL_SOCKET, SO_ERROR, &error,
 						&len) < 0)
 			{
-				::close(m_sockfd);
 				OW_THROW_ERRNO_MSG(SocketException,
 						"SocketBaseImpl::connect() getsockopt() failed");
 			}
 			if (error != 0)
 			{
-				::close(m_sockfd);
 				errno = error;
 				OW_THROW_ERRNO_MSG(SocketException,
 						"SocketBaseImpl::connect() failed");
@@ -299,11 +295,11 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		}
 		else
 		{
-			::close(m_sockfd);
-			OW_THROW(SocketException, "SocketBaseImpl::connect(). Logic error, m_sockfd not in FD set.");
+			OW_THROW(SocketException, "SocketBaseImpl::connect(). Logic error, sockfd not in FD set.");
 		}
 	}
-	::fcntl(m_sockfd, F_SETFL, flags);
+	::fcntl(sockfd.get(), F_SETFL, flags);
+	m_sockfd = sockfd.release();
 	m_isConnected = true;
 	m_peerAddress = addr; // To get the hostname from addr
 	if (addr.getType() == SocketAddress::INET)
@@ -337,8 +333,29 @@ SocketBaseImpl::disconnect()
 	}
 	if (m_sockfd != -1 && m_isConnected)
 	{
-		::close(m_sockfd);
+		if (::close(m_sockfd) == -1)
+		{
+			int lerrno = errno;
+			Logger lgr("ow.common");
+			OW_LOG_ERROR(lgr, Format("Closing socket handle %1 failed: %2", m_sockfd, lerrno));
+		}
 		m_isConnected = false;
+
+		if (!m_traceFileIn.empty())
+		{
+			MutexLock ml(g_guard);
+
+			ofstream comboTraceFile(String(m_traceFileOut + "Combo").c_str(), std::ios::app);
+			if (!comboTraceFile)
+			{
+				OW_THROW_ERRNO_MSG(IOException, "Failed opening socket dump file");
+			}
+			DateTime curDateTime;
+			curDateTime.setToCurrent();
+			comboTraceFile << "\n--->fd: " << getfd() << " closed at " << curDateTime.toString("%X") <<
+				'.' << curDateTime.getMicrosecond() << "<---\n";
+		}
+
 		m_sockfd = -1;
 	}
 }
@@ -388,10 +405,9 @@ SocketBaseImpl::fillUnixAddrParms()
 	m_localAddress.assignFromNativeForm(&addr, len);
 	m_peerAddress.assignFromNativeForm(&addr, len);
 }
-static Mutex guard;
 //////////////////////////////////////////////////////////////////////////////
 int
-SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException)
+SocketBaseImpl::write(const void* dataOut, int dataOutLen, ErrorAction errorAsException)
 {
 	int rc = 0;
 	bool isError = false;
@@ -407,7 +423,7 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 			rc = writeAux(dataOut, dataOutLen);
 			if (!m_traceFileOut.empty() && rc > 0)
 			{
-				MutexLock ml(guard);
+				MutexLock ml(g_guard);
 				ofstream traceFile(m_traceFileOut.c_str(), std::ios::app);
 				if (!traceFile)
 				{
@@ -425,7 +441,7 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 				}
 				DateTime curDateTime;
 				curDateTime.setToCurrent();
-				comboTraceFile << "\n--->Out " << rc << " bytes at " << curDateTime.toString("%X") <<
+				comboTraceFile << "\n--->fd: " << getfd() << " Out " << rc << " bytes at " << curDateTime.toString("%X") <<
 					'.' << curDateTime.getMicrosecond() << "<---\n";
 				if (!comboTraceFile.write(static_cast<const char*>(dataOut), rc))
 				{
@@ -438,7 +454,7 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 	{
 		rc = -1;
 	}
-	if (rc < 0 && errorAsException)
+	if (rc < 0 && errorAsException == E_THROW_ON_ERROR)
 	{
 		OW_THROW_ERRNO_MSG(SocketException, "SocketBaseImpl::write");
 	}
@@ -446,7 +462,7 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException) 	
+SocketBaseImpl::read(void* dataIn, int dataInLen, ErrorAction errorAsException)
 {
 	int rc = 0;
 	bool isError = false;
@@ -462,7 +478,7 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 			rc = readAux(dataIn, dataInLen);
 			if (!m_traceFileIn.empty() && rc > 0)
 			{
-				MutexLock ml(guard);
+				MutexLock ml(g_guard);
 				ofstream traceFile(m_traceFileIn.c_str(), std::ios::app);
 				if (!traceFile)
 				{
@@ -480,7 +496,7 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 				}
 				DateTime curDateTime;
 				curDateTime.setToCurrent();
-				comboTraceFile << "\n--->In " << rc << " bytes at " << curDateTime.toString("%X") <<
+				comboTraceFile << "\n--->fd: " << getfd() << " In " << rc << " bytes at " << curDateTime.toString("%X") <<
 					'.' << curDateTime.getMicrosecond() << "<---\n";
 				if (!comboTraceFile.write(reinterpret_cast<const char*>(dataIn), rc))
 				{
@@ -495,7 +511,7 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 	}
 	if (rc < 0)
 	{
-		if (errorAsException)
+		if (errorAsException == E_THROW_ON_ERROR)
 		{
 			OW_THROW_ERRNO_MSG(SocketException, "SocketBaseImpl::read");
 		}
@@ -504,9 +520,9 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-SocketBaseImpl::waitForInput(int timeOutSecs)
+SocketBaseImpl::waitForInput(const Timeout& timeout)
 {
-	int rval = SocketUtils::waitForIO(m_sockfd, timeOutSecs, SocketFlags::E_WAIT_FOR_INPUT);
+	int rval = SocketUtils::waitForIO(m_sockfd, timeout, SocketFlags::E_WAIT_FOR_INPUT);
 	if (rval == ETIMEDOUT)
 	{
 		m_recvTimeoutExprd = true;
@@ -519,9 +535,9 @@ SocketBaseImpl::waitForInput(int timeOutSecs)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-SocketBaseImpl::waitForOutput(int timeOutSecs)
+SocketBaseImpl::waitForOutput(const Timeout& timeout)
 {
-	return SocketUtils::waitForIO(m_sockfd, timeOutSecs, SocketFlags::E_WAIT_FOR_OUTPUT) != 0;
+	return SocketUtils::waitForIO(m_sockfd, timeout, SocketFlags::E_WAIT_FOR_OUTPUT) != 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 istream&

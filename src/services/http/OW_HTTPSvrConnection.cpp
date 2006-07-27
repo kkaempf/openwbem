@@ -55,9 +55,11 @@
 #include "OW_SortedVectorMap.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_ThreadCancelledException.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_LocalOperationContext.hpp"
 #include "OW_SessionLanguage.hpp"
 #include "OW_AuthenticationException.hpp"
+#include "OW_NonRecursiveMutex.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
 
 #if defined(BAD)
 #undef BAD
@@ -79,12 +81,20 @@ using std::endl;
 namespace
 {
 	const String COMPONENT_NAME("ow.httpserver");
+
+	UInt64 g_connectionIdCounter = 0;
+	NonRecursiveMutex g_connectionIdCounterGuard;
+	UInt64 getNewConnectionId()
+	{
+		NonRecursiveMutexLock lock(g_connectionIdCounterGuard);
+		return g_connectionIdCounter++;
+	}
 }
 
-#define OW_LOGDEBUG(x) OW_LOG_DEBUG(m_options.env->getLogger(COMPONENT_NAME), x)
-#define OW_LOGERROR(x) OW_LOG_ERROR(m_options.env->getLogger(COMPONENT_NAME), x)
-#define OW_LOGCUSTINFO(x) OW_LOG_INFO(m_options.env->getLogger(COMPONENT_NAME), x)
-#define OW_LOGFATALERROR(x) OW_LOG_FATAL_ERROR(m_options.env->getLogger(COMPONENT_NAME), x)
+#define OW_LOGDEBUG(x) OW_LOG_DEBUG(logger, x)
+#define OW_LOGERROR(x) OW_LOG_ERROR(logger, x)
+#define OW_LOGCUSTINFO(x) OW_LOG_INFO(logger, x)
+#define OW_LOGFATALERROR(x) OW_LOG_FATAL_ERROR(logger, x)
 
 //////////////////////////////////////////////////////////////////////////////
 #ifdef OW_WIN32
@@ -131,6 +141,7 @@ HTTPSvrConnection::HTTPSvrConnection(const Socket& socket,
 	, m_requestHandler()
 	, m_options(opts)
 	, m_shutdown(false)
+	, m_connectionId(getNewConnectionId())
 {
 	m_socket.setTimeouts(m_options.timeout);
 }
@@ -151,28 +162,32 @@ HTTPSvrConnection::~HTTPSvrConnection()
 void
 HTTPSvrConnection::run()
 {
-	CIMProtocolIStreamIFCRef istrToReadFrom(0);
+	Reference<std::istream> istrToReadFrom(0);
 	SelectTypeArray selArray;
 #ifdef OW_WIN32
 	Select_t st;
 	st.event = m_event;
 	selArray.push_back(st);
 #else
-	selArray.push_back(m_upipe->getSelectObj());
+	selArray.push_back(m_upipe->getReadSelectObj());
 #endif
 	selArray.push_back(m_socket.getSelectObj());
+	Logger logger(COMPONENT_NAME);
 	try
 	{
 		m_isAuthenticated = false;
-		OperationContext context;
+		LocalOperationContext context;
 		while (m_istr.good())
 		{
+			OW_LOGDEBUG("HTTPSvrConnection::run() beginning loop");
+
 			//m_isAuthenticated = false;
 			m_errDetails.erase();
 			m_requestLine.clear();
 			m_requestHeaders.clear();
 			m_reqHeaderPrefix.erase();
 			m_responseHeaders.clear();
+			m_trailers.clear();
 			m_needSendError = false;
 			m_resCode = SC_OK;
 			m_contentLength = -1;
@@ -180,25 +195,18 @@ HTTPSvrConnection::run()
 			//
 			// Add response headers common to all responses
 			//
-			addHeader("Date",
-				HTTPUtils::date());
-			addHeader("Cache-Control",
-				"no-cache");
-			addHeader("Server",
-				OW_PACKAGE "/" OW_VERSION " (CIMOM)");
+			addHeader("Date", HTTPUtils::date());
+			addHeader("Cache-Control", "no-cache");
+			addHeader("Server", OW_PACKAGE "/" OW_VERSION " (CIMOM)");
 
 			// only select if the buffer is empty
 			if (m_istr.rdbuf()->in_avail() == 0)
 			{
-				int selType = Select::SELECT_INTERRUPTED;
-				while(selType == Select::SELECT_INTERRUPTED)
-				{
-					selType = Select::select(selArray, m_options.timeout * 1000); // *1000 to convert seconds to milliseconds
-				}
+				int selType = Select::select(selArray, m_options.timeout);
 
 				if (selType == Select::SELECT_ERROR)
 				{
-				   OW_THROW(SocketException, "Error occurred during select()");
+				   OW_THROW_ERRNO_MSG(SocketException, "Error occurred during select()");
 				}
 				if (selType == Select::SELECT_TIMEOUT)
 				{
@@ -219,7 +227,7 @@ HTTPSvrConnection::run()
 			else
 			{
 				// check for server shutting down message.
-				int selType = Select::select(selArray, 0); // 0 so we don't block
+				int selType = Select::select(selArray, Timeout::relative(0)); // 0 so we don't block
 				if (selType == 0)	// Unnamped pipe/event selected
 				{
 				   m_resCode = SC_SERVICE_UNAVAILABLE;
@@ -271,9 +279,31 @@ HTTPSvrConnection::run()
 			istrToReadFrom = convertToFiniteStream(m_istr);
 			if (m_resCode >= 300)	// problem with request detected in headers.
 			{
-				cleanUpIStreams(istrToReadFrom);
+				DateTime timeout = DateTime::getCurrent();
+				timeout.addSeconds(1);
+				m_socket.setTimeouts(Timeout::absolute(timeout));
 				sendError(m_resCode);
-				return;
+				try
+				{
+					cleanUpIStreams(istrToReadFrom);
+				}
+				catch (std::ios::failure& e)
+				{
+					OW_LOGDEBUG("failed to read input");
+					return;
+				}
+				// if authorization needs another round, leave the connection open.
+				if (m_resCode == SC_UNAUTHORIZED)
+				{
+					OW_LOGDEBUG("unauthorized, continue");
+					m_socket.setTimeouts(m_options.timeout);
+					continue;
+				}
+				else
+				{
+					OW_LOGDEBUG("other error, returning");
+					return;
+				}
 			}
 			
 			//
@@ -373,7 +403,7 @@ HTTPSvrConnection::run()
 	//m_socket.disconnect();
 }
 void
-HTTPSvrConnection::cleanUpIStreams(const CIMProtocolIStreamIFCRef& istr)
+HTTPSvrConnection::cleanUpIStreams(const Reference<std::istream>& istr)
 {
 	if (istr)
 	{
@@ -463,6 +493,7 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 	int clen = -1;
 	Int32 errCode = 0;
 	String errDescr = "";
+	Logger logger(COMPONENT_NAME);
 	if (!m_chunkedOut)
 	{
 		ostream* ostrToSend = ostrEntity;
@@ -516,6 +547,7 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 					deflateostr << tfs->rdbuf();
 					deflateostr.termOutput();
 					costr.termOutput(HTTPChunkedOStream::E_SEND_LAST_CHUNK);
+					outputTrailers();
 #else
 					OW_THROW(HTTPException, "Attempting to deflate response "
 						" but we're not compiled with zlib!  (shouldn't happen)");
@@ -567,7 +599,7 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 			OW_LOGDEBUG(Format("HTTPSvrConnection::sendPostResponse (chunk)"
 				" setting Content-Language to %1", clang).c_str());
 
-			ostrChunk->addTrailer("Content-Language", clang);
+			addTrailer("Content-Language", clang);
 		}
 
 		if (m_requestHandler && m_requestHandler->hasError(errCode, errDescr))
@@ -583,7 +615,7 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 				CIMStatusDescriptionTrailer = "CIMErrorDescription";
 			}
 
-			ostrChunk->addTrailer(m_respHeaderPrefix + CIMStatusCodeTrailer,
+			addTrailer(m_respHeaderPrefix + CIMStatusCodeTrailer,
 				String(errCode));
 			if (!errDescr.empty())
 			{
@@ -593,19 +625,21 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 				{
 					errDescr += lines[i] + " ";
 				}
-				ostrChunk->addTrailer(m_respHeaderPrefix + CIMStatusDescriptionTrailer,
+				addTrailer(m_respHeaderPrefix + CIMStatusDescriptionTrailer,
 					errDescr);
 			}
 			if (!m_requestHandler->getCIMError().empty())
 			{
-				ostrChunk->addTrailer(m_respHeaderPrefix + "CIMError",
+				addTrailer(m_respHeaderPrefix + "CIMError",
 					m_requestHandler->getCIMError());
 			}
 			ostrChunk->termOutput(HTTPChunkedOStream::E_DISCARD_LAST_CHUNK);
+			outputTrailers();
 		}
 		else
 		{
 			ostrChunk->termOutput(HTTPChunkedOStream::E_SEND_LAST_CHUNK);
+			outputTrailers();
 		}
 	} // else m_chunkedOut
 }
@@ -680,35 +714,6 @@ HTTPSvrConnection::processRequestLine()
 int
 HTTPSvrConnection::processHeaders(OperationContext& context)
 {
-//
-// Check for Authentication
-//
-	// if m_options.allowAnonymous is true, we don't check.
-	if (m_options.allowAnonymous == false)
-	{
-		if (!m_isAuthenticated)
-		{
-			m_isAuthenticated = false;
-			try
-			{
-				if (performAuthentication(getHeaderValue("Authorization"), context) < 300 )
-				{
-					m_isAuthenticated = true;
-				}
-			}
-			catch (AuthenticationException& e)
-			{
-				m_errDetails = e.getMessage();
-				m_isAuthenticated = false;
-				return SC_INTERNAL_SERVER_ERROR;
-			}
-			if (m_isAuthenticated == false)
-			{
-				return SC_UNAUTHORIZED;
-			}
-		}
-		context.setStringData(OperationContext::USER_NAME, m_userName);
-	}
 //
 // check for required headers with HTTP/1.1
 //
@@ -796,6 +801,7 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 			}
 		}
 	} // if (!m_chunkedIn)
+
 //
 // Check for content-encoding
 //
@@ -824,6 +830,38 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 			return SC_NOT_ACCEPTABLE;
 		}
 	}
+//
+// Check for Authentication
+//
+	// if m_options.allowAnonymous is true, we don't check.
+	if (m_options.allowAnonymous == false)
+	{
+		if (!m_isAuthenticated)
+		{
+			m_isAuthenticated = false;
+			try
+			{
+				if (performAuthentication(getHeaderValue("Authorization"), context) < 300 )
+				{
+					m_isAuthenticated = true;
+				}
+			}
+			catch (AuthenticationException& e)
+			{
+				m_errDetails = e.getMessage();
+				m_isAuthenticated = false;
+				return SC_INTERNAL_SERVER_ERROR;
+			}
+			// Don't return here if authentication failed, we need to process the rest of the headers so that a
+			// possible next-phase of the authentication can happen on the same connection.
+		}
+		context.setStringData(OperationContext::USER_NAME, m_userName);
+	}
+	else
+	{
+		m_isAuthenticated = true;
+	}
+
 //
 // Check for correct Accept value
 //
@@ -1008,21 +1046,15 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 			return SC_NOT_EXTENDED;
 		}
 	} // if (m_method == M_POST)
-//
-// Check for Custom OW_BypassLocker header
-//
-	if (headerHasKey(HTTPUtils::Header_BypassLocker))
-	{
-		if (getHeaderValue(HTTPUtils::Header_BypassLocker) == HTTPUtils::HeaderValue_true)
-		{
-			context.setStringData(OperationContext::BYPASS_LOCKERKEY, "true");
-		}
-	}
 
-//
-//
-//
-	return SC_OK;
+	if (m_isAuthenticated == false)
+	{
+		return SC_UNAUTHORIZED;
+	}
+	else
+	{
+		return SC_OK;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1042,6 +1074,7 @@ HTTPSvrConnection::trace()
 		ostr << iter->first << ": " << iter->second << "\r\n" ;
 	}
 	ostr.termOutput(HTTPChunkedOStream::E_SEND_LAST_CHUNK);
+	outputTrailers();
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1052,7 +1085,6 @@ HTTPSvrConnection::post(istream& istr, OperationContext& context)
 	OW_ASSERT(ostrEntity);
 	TempFileStream ostrError(400);
 
-	m_requestHandler->setEnvironment(m_options.env);
 	beginPostResponse();
 	// process the request
 
@@ -1079,7 +1111,6 @@ HTTPSvrConnection::options(OperationContext& context)
 	{
 		OW_HTTP_THROW(HTTPException, "OPTIONS is only implemented for XML requests", SC_NOT_IMPLEMENTED);
 	}
-	m_requestHandler->setEnvironment(m_options.env);
 	
 	m_requestHandler->options(cf, context);
 	
@@ -1173,7 +1204,13 @@ HTTPSvrConnection::sendError(int resCode)
 	}
 	m_ostr << reqProtocol << " " << resCode << " " << resMessage << "\r\n";
 	// TODO more headers (date and such)
-	addHeader("Connection", "close");
+
+	// don't want to close the connection on unauthorized.
+	if (resCode != SC_UNAUTHORIZED)
+	{
+		addHeader("Connection", "close");
+	}
+
 	addHeader("Content-Length", "0");
 	//addHeader("Content-Length",
 	//	String(tmpOstr.length()));
@@ -1189,7 +1226,7 @@ HTTPSvrConnection::sendError(int resCode)
 int
 HTTPSvrConnection::performAuthentication(const String& info, OperationContext& context)
 {
-	if (m_pHTTPServer->authenticate(this, m_userName, info, context, m_socket))
+	if (m_pHTTPServer->authenticate(this, m_userName, info, context, m_socket) == E_AUTHENTICATE_SUCCESS)
 	{
 		return SC_OK;
 	}
@@ -1217,16 +1254,22 @@ HTTPSvrConnection::sendHeaders(int sc, int len)
 }
 //////////////////////////////////////////////////////////////////////////////
 String
-HTTPSvrConnection::getHostName()
+HTTPSvrConnection::getHostName() const
 {
 	//return m_socket.getLocalAddress().getName();
 	return SocketAddress::getAnyLocalHost().getName();
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMProtocolIStreamIFCRef
+UInt64
+HTTPSvrConnection::getConnectionId() const
+{
+	return m_connectionId;
+}
+//////////////////////////////////////////////////////////////////////////////
+Reference<std::istream>
 HTTPSvrConnection::convertToFiniteStream(istream& istr)
 {
-	CIMProtocolIStreamIFCRef rval(0);
+	Reference<std::istream> rval(0);
 	if (m_chunkedIn)
 	{
 		rval = new HTTPChunkedIStream(istr);
@@ -1260,14 +1303,8 @@ HTTPSvrConnection::getContentLanguage(OperationContext& context,
 	clientSpecified = false;
 	String contentLang = m_options.defaultContentLanguage;
 
-	OperationContext::DataRef dataref = context.getData(
+	SessionLanguageRef slref = context.getDataAs<SessionLanguage>(
 		OperationContext::SESSION_LANGUAGE_KEY);
-	if (!dataref)
-	{
-		return contentLang;
-	}
-
-	SessionLanguageRef slref = dataref.cast_to<SessionLanguage>();
 	if (!slref)
 	{
 		return contentLang;
@@ -1289,11 +1326,37 @@ HTTPSvrConnection::getContentLanguage(OperationContext& context,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPSvrConnection::doCooperativeCancel()
+HTTPSvrConnection::doShutdown()
 {
 	m_shutdown = true;
 	m_socket.disconnect();
 }
 
+///////////////////////////////////////////////////////////////////////////
+void
+HTTPSvrConnection::addTrailer(const String& key, const String& value)
+{
+    String tmpKey = key;
+    tmpKey.trim();
+    if (!tmpKey.empty())
+    {
+        m_trailers.push_back(key + ": " + value);
+    }
+    else // A "folded" continuation line from previous key
+    {
+        m_trailers.push_back(" " + value);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////
+void
+HTTPSvrConnection::outputTrailers()
+{
+	for (size_t i = 0; i < m_trailers.size(); i++)
+	{
+		m_ostr << m_trailers[i] << "\r\n";
+	}
+	m_ostr << "\r\n";
+}
 } // end namespace OW_NAMESPACE
 

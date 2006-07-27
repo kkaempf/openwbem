@@ -56,8 +56,7 @@ class shlSharedLibraryLoader : public SharedLibraryLoader
 {
 	public:
 		virtual ~shlSharedLibraryLoader();
-		virtual SharedLibraryRef loadSharedLibrary(const String& filename,
-			const LoggerRef& logger) const;
+		virtual SharedLibraryRef loadSharedLibrary(const String& filename) const;
 };
 
 } // end namespace OW_NAMESPACE

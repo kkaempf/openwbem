@@ -1,13 +1,55 @@
-#include "OW_SafeCString.hpp"
+/*******************************************************************************
+* Copyright (C) 2005 Vintela, Inc. All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+*
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+*  - Neither the name of Vintela, Inc. nor the names of its
+*    contributors may be used to endorse or promote products derived from this
+*    software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
 
+/**
+ * @author Kevin S. Van Horn
+ */
+
+#include "OW_config.h"
+#include "OW_SafeCString.hpp"
 #include <cstring>
 #include <new>
 
+using namespace OpenWBEM;
+using namespace OpenWBEM::SafeCString;
+
 namespace
 {
+	inline char const * strend(char const * s, std::size_t n)
+	{
+		return static_cast<char const *>(std::memchr(s, '\0', n));
+	}
+
 	inline char * strend(char * s, std::size_t n)
 	{
-		return static_cast<char *>(std::memchr(s, '\0', n));
+		return static_cast<char *>(strend(s, n));
 	}
 
 	char * strend_checked(char * s, std::size_t n)
@@ -27,20 +69,21 @@ namespace
 		}
 	}
 
-	// PROMISE: Copies first m = min(n, strlen(src) + 1) chars of src to dst.
-	// RETURNS: dst + m if strlen(src) < n, NULL otherwise.
+	// PROMISE: Copies first min(n, strlen(src) + 1) chars of src to dst.
+	// RETURNS: dst + strlen(src) if strlen(src) < n, NULL otherwise.
 	//
 	inline char * safe_strcpy(char * dst, char const * src, std::size_t n)
 	{
 #ifdef OW_HAS_MEMCCPY
-		return static_cast<char *>(std::memccpy(dst, src, '\0', n));
+		char * rv = static_cast<char *>(std::memccpy(dst, src, '\0', n));
+		return rv ? rv - 1 : 0;
 #else
 		char const * end = strend(src, n);
 		if (end) // '\0' found
 		{
-			n = (end - src) + 1;
-			std::memcpy(dst, src, n);
-			return dst + n;
+			size_t len = end - src;
+			std::memcpy(dst, src, len + 1);  // include terminating '\0'
+			return dst + len;
 		}
 		else
 		{
@@ -58,13 +101,13 @@ namespace SafeCString
 
 OW_DEFINE_EXCEPTION(Overflow);
 
-char * str_dup(char const * s);
+char * str_dup(char const * s)
 {
 	char * retval = new char[std::strlen(s) + 1];
 	return std::strcpy(retval, s);
 }
 
-char * str_dup_nothrow(char const * s);
+char * str_dup_nothrow(char const * s)
 {
 	char * retval = new (std::nothrow) char[std::strlen(s)];
 	if (retval)
@@ -174,75 +217,6 @@ namespace Impl
 		}
 		return static_cast<std::size_t>(retval);
 	}
-}
-
-char * fgets_trunc(char * dst, std::size_t dstsize, FILE * fp)
-{
-	char * res = std::fgets(dst, dstsize, fp);
-	if (!res)
-	{
-		if (std::feof(fp))
-		{
-			return 0;
-		}
-		OW_THROW(OpenWBEM::IOException, "read error");
-	}
-	return res;
-}
-
-char * fgets_check(char * dst, std::size_t dstsize, FILE * fp)
-{
-	std::size_t const end = dstsize - 1;
-	char savechar = dst[end];
-	dst[end] = ' '; // anything but '\0'
-	char * res = std::fgets(dst, dstsize, fp);
-	char endchar = dst[end];
-	dst[end] = savechar;
-	if (res)
-	{
-		if (endchar == '\0' && (end == 0 || dst[end - 1] != '\n'))
-		{
-			// No newline at end.  Either the input line was truncated, or
-			// we read the last line of the file and it had no newline.
-			// We test for EOF to distinguish the two cases.  Since the EOF
-			// marker doesn't get set until we actually try to read past EOF,
-			// we first peek one character ahead.
-			std::ungetc(std::fgetc(fp), fp);
-			if (!std::feof(fp))
-			{
-				OW_THROW_ERR(
-					OverflowException, "fgets overflow", RESULT_TRUNCATED);
-			}
-		}
-		return res;
-	}
-	else
-	{
-		if (std::feof(fp))
-		{
-			return 0;
-		}
-		OW_THROW(OpenWBEM::IOException, "read error");
-	}
-}
-
-String fget_string(FILE * fp, std::size_t const max_chars)
-{
-	// This could perhaps be made more efficient by reading directly into a
-	// custom resizable character array.
-	std::size_t const BUFSIZE = 8 * 1024;
-	StringBuffer sb;
-	char buf[BUFSIZE];
-	while (!sb.endsWith('\n') && sb.length() <= max_chars &&
-		fgets_trunc(buf, fp))
-	{
-		sb.append(buf);
-	}
-	if (sb.length() > max_chars)
-	{
-		OW_THROW(StringConversionException, "input line too long");
-	}
-	return sb.releaseString();
 }
 
 } // namespace SafeCString

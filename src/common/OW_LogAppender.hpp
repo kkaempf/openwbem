@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004-2005 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -45,16 +45,52 @@
 namespace OW_NAMESPACE
 {
 
-#ifdef OW_WIN32
-template class OW_COMMON_API Array<String>;
-template class OW_COMMON_API SortedVectorSet<String>;
-#endif
-
 class OW_COMMON_API LogAppender : public IntrusiveCountableBase
 {
 public:
 
 	virtual ~LogAppender();
+
+	/**
+	 * Get a copy of the per thread LogAppenderRef or if
+	 * not set, the default one. If neither setDefaultLogAppender() or
+	 * setThreadLogAppender() has been called, the default LogAppender will be set
+	 * to a NullAppender, and then returned.
+	 * 
+	 * This method is preferred over getDefaultLogAppender() or
+	 * getThreadLogAppender().
+	 */
+	static LogAppenderRef getCurrentLogAppender();
+
+	/**
+	 * Returns a copy of default LogAppenderRef.
+	 * If you want to get a log appender to log messages, you shouldn't call this function.  Use getCurrentLogAppender() instead.
+	 * If setDefaultLogAppender() hasn't been called, 
+	 * the default LogAppender will be set to a NullAppender, and then returned.
+	 */
+	static LogAppenderRef getDefaultLogAppender();
+
+	/**
+	 * Set the default global LogAppenderRef.
+	 * Each application that wants logging should call this function with the desired LogAppenderRef.
+	 */
+	static bool setDefaultLogAppender(const LogAppenderRef &ref);
+
+	/**
+	 * Returns a copy of the thread LogAppenderRef.
+	 * If you want to get a log appender to log messages, you shouldn't call this function.  Use getCurrentLogAppender() instead.
+	 * If setThreadLogAppender() hasn't been called by the current thread, a null LogAppenderRef is returned.
+	 */
+	static LogAppenderRef getThreadLogAppender();
+
+	/**
+	 * Set a per thread LogAppenderRef that overrides the default one.
+	 * If a thread desires to use a different log appender than the default, it can call this function to set it.
+	 * @param ref The appender that will be returned from subsequent calls to getCurrentLogAppender() or
+	 *            getThreadLogAppender() by the same thread. Pass a null to cause subsequent calls to
+	 *            getCurrentLogAppender() to return the global LogAppenderRef.
+	 */
+	static bool setThreadLogAppender(const LogAppenderRef &ref);
 
 	/**
 	 * Log a message using the specified component and category
@@ -65,19 +101,27 @@ public:
 	bool categoryIsEnabled(const String& category) const;
 	bool componentAndCategoryAreEnabled(const String& component, const String& category) const;
 
-	ELogLevel getLogLevel() const;
+	ELogLevel getLogLevel() const
+	{
+		return m_logLevel;
+	}
 
 	typedef SortedVectorMap<String, String> ConfigMap;
 
 	/**
 	 * Create a concrete log appender depending on the type string passed in.
-	 * If type == "syslog" a logger the writes to the syslog
+	 * If type == "syslog" (TYPE_SYSLOG) a logger the writes to the syslog
 	 * will be returned.
-	 * If type == "" || type == "null" a logger that doesn't do anything
-	 * will be returned.
-	 * If type == "stderr" a logger that writes to stderr will be returned.
-	 * Otherwise type is treated as a filename and a logger that writes
-	 * to that file will be returned.
+	 * If type == "" || type == "null" (TYPE_NULL) a logger that doesn't do
+	 * anything will be returned.
+	 * If type == "cerr" || type == "stderr" (TYPE_STDERR) a logger that
+	 * writes to stderr will be returned.
+	 * If type == "file" (TYPE_FILE) then a logger that writes to a file --
+	 * will be returned; the file name and other parameters are taken from
+	 * @a configItems.
+	 * If type == "mpfile" (TYPE_MPFILE) then a logger that writes to a file
+	 * that may be shared with other process will be returned; the file name
+	 * and other parameters are taken from @a configItems.
 	 *
 	 * @param name The name of the logger to create
 	 * @param components The message components the logger will log.
@@ -113,12 +157,16 @@ public:
 	static const String TYPE_STDERR;
 	/// String of the type of the file log appender
 	static const String TYPE_FILE;
+	/// String of the type of the multi-process file log appender
+	static const String TYPE_MPFILE;
 	/// String of the type of the null log appender
 	static const String TYPE_NULL;
 
 protected:
 
-	LogAppender(const StringArray& components, const StringArray& categories, const String& pattern);
+	LogAppender(const StringArray& components = ALL_COMPONENTS, 
+		const StringArray& categories = ALL_CATEGORIES, 
+		const String& pattern = STR_TTCC_MESSAGE_FORMAT);
 
 private:
 	virtual void doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const = 0;
@@ -130,6 +178,8 @@ private: // data
 	bool m_allCategories;
 
 	LogMessagePatternFormatter m_formatter;
+
+	ELogLevel m_logLevel;
 
 };
 OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, LogAppender);

@@ -37,7 +37,7 @@
 #include "OW_CIMBase.hpp"
 #include "OW_Format.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_StringStream.hpp"
+//#include "OW_StringStream.hpp"
 #include "OW_IOException.hpp"
 #include "OW_BinarySerialization.hpp"
 #include <cstring>
@@ -45,12 +45,12 @@
 namespace OW_NAMESPACE
 {
 
-using std::istream;
+using std::streambuf;
 using std::ostream;
 //////////////////////////////////////////////////////////////////////////////		
 // static
 void
-CIMBase::readSig( istream& istr, const char* const sig )
+CIMBase::readSig( streambuf & istr, char const * const sig )
 {
 	char expected, read;
 	OW_ASSERT( strlen(sig) == 1 );
@@ -61,14 +61,16 @@ CIMBase::readSig( istream& istr, const char* const sig )
 		OW_THROW_ERR(BadCIMSignatureException,
 			Format("Signature does not match. In CIMBase::readSig. "
 				"signature read: %1, expected: %2",
-				read, sig).c_str(), E_UNEXPECTED_SIGNATURE);
+				int(read), sig).c_str(), E_UNEXPECTED_SIGNATURE);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////		
 // static
 UInt32
-CIMBase::readSig(std::istream& istr, const char* const sig,
-	const char* const verSig, UInt32 maxVersion)
+CIMBase::readSig(
+	streambuf & istr, char const * const sig,
+	char const * const verSig, UInt32 maxVersion
+)
 {
 	UInt32 version = 0;
 	char ch;
@@ -83,7 +85,7 @@ CIMBase::readSig(std::istream& istr, const char* const sig,
 			OW_THROW_ERR(BadCIMSignatureException,
 				Format("Signature does not match. In CIMBase::readSig. "
 					"signature read: %1, expected: %2 or %3",
-					ch, sig, verSig).c_str(), E_UNEXPECTED_SIGNATURE);
+					int(ch), sig, verSig).c_str(), E_UNEXPECTED_SIGNATURE);
 		}
 
 		// Version is ASN.1 length encoded
@@ -102,7 +104,7 @@ CIMBase::readSig(std::istream& istr, const char* const sig,
 //////////////////////////////////////////////////////////////////////////////		
 // static
 void
-CIMBase::writeSig( ostream& ostr, const char* const sig )
+CIMBase::writeSig( streambuf & ostr, char const * const sig )
 {
 	OW_ASSERT(strlen(sig) == 1);
 	BinarySerialization::write(ostr, sig, 1);
@@ -110,7 +112,7 @@ CIMBase::writeSig( ostream& ostr, const char* const sig )
 //////////////////////////////////////////////////////////////////////////////		
 // static
 void
-CIMBase::writeSig(std::ostream& ostr, const char* const sig, UInt32 version)
+CIMBase::writeSig(streambuf & ostr, char const * const sig, UInt32 version)
 {
 	OW_ASSERT(strlen(sig) == 1);
 	BinarySerialization::write(ostr, sig, 1);
@@ -119,7 +121,7 @@ CIMBase::writeSig(std::ostream& ostr, const char* const sig, UInt32 version)
 }
 
 //////////////////////////////////////////////////////////////////////////////		
-std::ostream& operator<<(std::ostream& ostr, const CIMBase& cb)
+ostream & operator<<(ostream & ostr, const CIMBase & cb)
 {
 	ostr << cb.toString();
 	return ostr;

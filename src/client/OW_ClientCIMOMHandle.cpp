@@ -92,25 +92,6 @@ ClientCIMOMHandle::createFromURL(const String& url,
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-void
-ClientCIMOMHandle::getHTTPTrailers(const CIMProtocolIStreamIFCRef& istr_)
-{
-	m_trailers.clear();
-	CIMProtocolIStreamIFCRef istr(istr_);
-#ifdef OW_HAVE_ZLIB_H
-	IntrusiveReference<HTTPDeflateIStream> defistr = istr_.cast_to<HTTPDeflateIStream>();
-	if (defistr)
-	{
-		istr = defistr->getInputStreamOrig();
-	}
-#endif
-	IntrusiveReference<HTTPChunkedIStream> chunkistr = istr.cast_to<HTTPChunkedIStream>();
-	if (chunkistr)
-	{
-		m_trailers = chunkistr->getTrailers();
-	}
-}
 
 
 } // end namespace OW_NAMESPACE

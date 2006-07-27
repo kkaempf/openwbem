@@ -91,7 +91,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 	CIMOMHandleIFCRef lch = env->getCIMOMHandle(context,
 		ServiceEnvironmentIFC::E_USE_PROVIDERS);
 
-	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
+	Logger lgr(COMPONENT_NAME);
 
 	if (!userInfo.getUserName().empty())
 	{

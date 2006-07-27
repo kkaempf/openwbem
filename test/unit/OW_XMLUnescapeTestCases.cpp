@@ -39,7 +39,6 @@
 #include "OW_XMLUnescape.hpp"
 #include <iostream>
 
-#define TESTSTRING "&amp;&quot;&lt;&gt;&#9;&apos;"
 
 using namespace OpenWBEM;
 
@@ -53,7 +52,12 @@ void OW_XMLUnescapeTestCases::tearDown()
 
 void OW_XMLUnescapeTestCases::test()
 {
-	unitAssert( XMLUnescape(TESTSTRING, strlen(TESTSTRING)) == "&\"<>\x9'" );
+#define TESTSTRING1 "&amp;&quot;&lt;&gt;&#9;&apos;"
+	unitAssert( XMLUnescape(TESTSTRING1, strlen(TESTSTRING1)) == "&\"<>\x9'" );
+#define TESTSTRING2 "&#13;"
+	unitAssert( XMLUnescape(TESTSTRING2, strlen(TESTSTRING2)) == "\xD" );
+#define TESTSTRING3 "&#xD;"
+	unitAssert( XMLUnescape(TESTSTRING3, strlen(TESTSTRING3)) == "\xD" );
 }
 
 Test* OW_XMLUnescapeTestCases::suite()

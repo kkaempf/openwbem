@@ -8,6 +8,7 @@ OW_SSLSocketImpl.cpp \
 OW_ServerSocketImpl.cpp \
 OW_ServerSocket.cpp \
 OW_Socket.cpp \
+OW_Socket_needs_SSL.cpp \
 OW_SocketBaseImpl.cpp \
 OW_SocketImpl.cpp \
 OW_NwIface.cpp \

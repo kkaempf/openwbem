@@ -1380,7 +1380,127 @@ Terminal expression 0: STRING_VALUE: wqlTestClass.name="test5" < PROPERTY_NAME: 
 Tableau 0
 PROPERTY_NAME: __Path > STRING_VALUE: wqlTestClass.name="test5"
 
-Executing query 95 local: select * from wqlTestClass where booleanData IS TRUE
+Executing query 95 local: select * from wqlTestClass where sint32Data <> "0"
+WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "STRING_VALUE: 0"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data <> STRING_VALUE: 0
+Tableau 0
+PROPERTY_NAME: sint32Data <> STRING_VALUE: 0
+
+Executing query 96 local: select * from wqlTestClass where "0" <> sint32Data
+WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: 0"
+	_operStack[1]: "PROPERTY_NAME: sint32Data"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: STRING_VALUE: 0 <> PROPERTY_NAME: sint32Data
+Tableau 0
+PROPERTY_NAME: sint32Data <> STRING_VALUE: 0
+
+Executing query 97 local: select * from wqlTestClass where booleanData <> "true"
+WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "STRING_VALUE: true"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: booleanData <> STRING_VALUE: true
+Tableau 0
+PROPERTY_NAME: booleanData <> STRING_VALUE: true
+
+Executing query 98 local: select * from wqlTestClass where "true" <> booleanData
+WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: true"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: STRING_VALUE: true <> PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData <> STRING_VALUE: true
+
+Executing query 99 local: select * from wqlTestClass where booleanData <> "false"
+WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "STRING_VALUE: false"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: booleanData <> STRING_VALUE: false
+Tableau 0
+PROPERTY_NAME: booleanData <> STRING_VALUE: false
+
+Executing query 100 local: select * from wqlTestClass where "false" <> booleanData
+WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: false"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: STRING_VALUE: false <> PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData <> STRING_VALUE: false
+
+Executing query 101 local: select * from wqlTestClass where realData <> "123.456789"
+WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: realData"
+	_operStack[1]: "STRING_VALUE: 123.456789"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: realData <> STRING_VALUE: 123.456789
+Tableau 0
+PROPERTY_NAME: realData <> STRING_VALUE: 123.456789
+
+Executing query 102 local: select * from wqlTestClass where "123.456789" <> realData
+WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: 123.456789"
+	_operStack[1]: "PROPERTY_NAME: realData"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: STRING_VALUE: 123.456789 <> PROPERTY_NAME: realData
+Tableau 0
+PROPERTY_NAME: realData <> STRING_VALUE: 123.456789
+
+Executing query 103 local: select * from wqlTestClass where booleanData IS TRUE
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1395,7 +1515,7 @@ Terminal expression 0: PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
 Tableau 0
 PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
 
-Executing query 96 local: select * from wqlTestClass where booleanData IS NOT TRUE
+Executing query 104 local: select * from wqlTestClass where booleanData IS NOT TRUE
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1410,7 +1530,7 @@ Terminal expression 0: PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: TRUE
 Tableau 0
 PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: TRUE
 
-Executing query 97 local: select * from wqlTestClass where booleanData IS FALSE
+Executing query 105 local: select * from wqlTestClass where booleanData IS FALSE
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1425,7 +1545,7 @@ Terminal expression 0: PROPERTY_NAME: booleanData = BOOLEAN_VALUE: FALSE
 Tableau 0
 PROPERTY_NAME: booleanData = BOOLEAN_VALUE: FALSE
 
-Executing query 98 local: select * from wqlTestClass where booleanData IS NOT FALSE
+Executing query 106 local: select * from wqlTestClass where booleanData IS NOT FALSE
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1440,7 +1560,7 @@ Terminal expression 0: PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: FALSE
 Tableau 0
 PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: FALSE
 
-Executing query 99 local: select * from wqlTestClass where realData ISNULL
+Executing query 107 local: select * from wqlTestClass where realData ISNULL
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1455,7 +1575,7 @@ Terminal expression 0: PROPERTY_NAME: realData = NULL_VALUE
 Tableau 0
 PROPERTY_NAME: realData = NULL_VALUE
 
-Executing query 100 local: select * from wqlTestClass where realData IS NULL
+Executing query 108 local: select * from wqlTestClass where realData IS NULL
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1470,7 +1590,7 @@ Terminal expression 0: PROPERTY_NAME: realData = NULL_VALUE
 Tableau 0
 PROPERTY_NAME: realData = NULL_VALUE
 
-Executing query 101 local: select * from wqlTestClass where realData NOTNULL
+Executing query 109 local: select * from wqlTestClass where realData NOTNULL
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1485,7 +1605,7 @@ Terminal expression 0: PROPERTY_NAME: realData <> NULL_VALUE
 Tableau 0
 PROPERTY_NAME: realData <> NULL_VALUE
 
-Executing query 102 local: select * from wqlTestClass where realData IS NOT NULL
+Executing query 110 local: select * from wqlTestClass where realData IS NOT NULL
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1500,7 +1620,7 @@ Terminal expression 0: PROPERTY_NAME: realData <> NULL_VALUE
 Tableau 0
 PROPERTY_NAME: realData <> NULL_VALUE
 
-Executing query 103 local: select * from wqltestClass where name = "test4" or booleanData IS true
+Executing query 111 local: select * from wqltestClass where name = "test4" or booleanData IS true
 WQLSelectStatement
 {
 	_className: "wqltestClass"
@@ -1522,7 +1642,7 @@ PROPERTY_NAME: name = STRING_VALUE: test4
 Tableau 1
 PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
 
-Executing query 104 local: select * from wqltestClass where name = "test5" or booleanData IS true
+Executing query 112 local: select * from wqltestClass where name = "test5" or booleanData IS true
 WQLSelectStatement
 {
 	_className: "wqltestClass"
@@ -1544,7 +1664,7 @@ PROPERTY_NAME: name = STRING_VALUE: test5
 Tableau 1
 PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
 
-Executing query 105 local: select * from wqltestClass where name = "test4" and sint32Data = 1
+Executing query 113 local: select * from wqltestClass where name = "test4" and sint32Data = 1
 WQLSelectStatement
 {
 	_className: "wqltestClass"
@@ -1565,7 +1685,7 @@ Tableau 0
 PROPERTY_NAME: name = STRING_VALUE: test4
 PROPERTY_NAME: sint32Data = INTEGER_VALUE: 1
 
-Executing query 106 local: select * from wqltestClass where name = "test4" and booleanData IS TRUE
+Executing query 114 local: select * from wqltestClass where name = "test4" and booleanData IS TRUE
 WQLSelectStatement
 {
 	_className: "wqltestClass"
@@ -1586,7 +1706,7 @@ Tableau 0
 PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
 PROPERTY_NAME: name = STRING_VALUE: test4
 
-Executing query 107 local: select * from wqltestClass where name IS NOT NULL and realData IS NOT NULL
+Executing query 115 local: select * from wqltestClass where name IS NOT NULL and realData IS NOT NULL
 WQLSelectStatement
 {
 	_className: "wqltestClass"
@@ -1607,7 +1727,7 @@ Tableau 0
 PROPERTY_NAME: name <> NULL_VALUE
 PROPERTY_NAME: realData <> NULL_VALUE
 
-Executing query 108 local: select * from wqltestClass where (name IS NOT NULL and realData IS NOT NULL) or (name = "test5" or booleanData IS true)
+Executing query 116 local: select * from wqltestClass where (name IS NOT NULL and realData IS NOT NULL) or (name = "test5" or booleanData IS true)
 WQLSelectStatement
 {
 	_className: "wqltestClass"
@@ -1642,7 +1762,7 @@ Tableau 2
 PROPERTY_NAME: name <> NULL_VALUE
 PROPERTY_NAME: realData <> NULL_VALUE
 
-Executing query 109 local: select * from wqltestClass where (name = "test4" or name = "test2") and (sint32Data = 1 or booleanData = true)
+Executing query 117 local: select * from wqltestClass where (name = "test4" or name = "test2") and (sint32Data = 1 or booleanData = true)
 WQLSelectStatement
 {
 	_className: "wqltestClass"
@@ -1682,7 +1802,7 @@ Tableau 3
 PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
 PROPERTY_NAME: name = STRING_VALUE: test2
 
-Executing query 110 local: select * from wqlTestClass where embed ISA fooClass
+Executing query 118 local: select * from wqlTestClass where embed ISA fooClass
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1697,7 +1817,7 @@ Terminal expression 0: PROPERTY_NAME: embed ISA PROPERTY_NAME: fooClass
 Tableau 0
 PROPERTY_NAME: embed ISA PROPERTY_NAME: fooClass
 
-Executing query 111 local: select * from wqlTestClass where embed ISA "fooClass"
+Executing query 119 local: select * from wqlTestClass where embed ISA "fooClass"
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1712,7 +1832,7 @@ Terminal expression 0: PROPERTY_NAME: embed ISA STRING_VALUE: fooClass
 Tableau 0
 PROPERTY_NAME: embed ISA STRING_VALUE: fooClass
 
-Executing query 112 local: select * from wqlTestClass where wqlTestClass.embed ISA "fooClass"
+Executing query 120 local: select * from wqlTestClass where wqlTestClass.embed ISA "fooClass"
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1727,7 +1847,7 @@ Terminal expression 0: PROPERTY_NAME: wqlTestClass.embed ISA STRING_VALUE: fooCl
 Tableau 0
 PROPERTY_NAME: wqlTestClass.embed ISA STRING_VALUE: fooClass
 
-Executing query 113 local: select * from wqlTestClass where wqlTestClass.embed.embed2 ISA "fooClass"
+Executing query 121 local: select * from wqlTestClass where wqlTestClass.embed.embed2 ISA "fooClass"
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1742,7 +1862,7 @@ Terminal expression 0: PROPERTY_NAME: wqlTestClass.embed.embed2 ISA STRING_VALUE
 Tableau 0
 PROPERTY_NAME: wqlTestClass.embed.embed2 ISA STRING_VALUE: fooClass
 
-Executing query 114 local: select * from wqlTestClass where embed.embed2 ISA "fooClass"
+Executing query 122 local: select * from wqlTestClass where embed.embed2 ISA "fooClass"
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1757,7 +1877,7 @@ Terminal expression 0: PROPERTY_NAME: embed.embed2 ISA STRING_VALUE: fooClass
 Tableau 0
 PROPERTY_NAME: embed.embed2 ISA STRING_VALUE: fooClass
 
-Executing query 115 local: select embed from wqlTestClass where embed.embed2 ISA "fooClass"
+Executing query 123 local: select embed from wqlTestClass where embed.embed2 ISA "fooClass"
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1772,7 +1892,7 @@ Terminal expression 0: PROPERTY_NAME: embed.embed2 ISA STRING_VALUE: fooClass
 Tableau 0
 PROPERTY_NAME: embed.embed2 ISA STRING_VALUE: fooClass
 
-Executing query 116 local: select embed from wqlTestClass where wqlTestClass.embed.embedInt = 1
+Executing query 124 local: select embed from wqlTestClass where wqlTestClass.embed.embedInt = 1
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1787,7 +1907,7 @@ Terminal expression 0: PROPERTY_NAME: wqlTestClass.embed.embedInt = INTEGER_VALU
 Tableau 0
 PROPERTY_NAME: wqlTestClass.embed.embedInt = INTEGER_VALUE: 1
 
-Executing query 117 local: select embed.Name from wqlTestClass where wqlTestClass.embed.embedInt = 1
+Executing query 125 local: select embed.Name from wqlTestClass where wqlTestClass.embed.embedInt = 1
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1802,7 +1922,7 @@ Terminal expression 0: PROPERTY_NAME: wqlTestClass.embed.embedInt = INTEGER_VALU
 Tableau 0
 PROPERTY_NAME: wqlTestClass.embed.embedInt = INTEGER_VALUE: 1
 
-Executing query 118 local: select wqlTestClass.embed.Name from wqlTestClass where wqlTestClass.embed.embedInt = 1
+Executing query 126 local: select wqlTestClass.embed.Name from wqlTestClass where wqlTestClass.embed.embedInt = 1
 WQLSelectStatement
 {
 	_className: "wqlTestClass"
@@ -1817,7 +1937,7 @@ Terminal expression 0: PROPERTY_NAME: wqlTestClass.embed.embedInt = INTEGER_VALU
 Tableau 0
 PROPERTY_NAME: wqlTestClass.embed.embedInt = INTEGER_VALUE: 1
 
-Executing query 119 local: SELECT x,y,z FROM myclass WHERE x > 5 AND y < 25 AND z > 1.2
+Executing query 127 local: SELECT x,y,z FROM myclass WHERE x > 5 AND y < 25 AND z > 1.2
 WQLSelectStatement
 {
 	_className: "myclass"
@@ -1846,7 +1966,7 @@ PROPERTY_NAME: x > INTEGER_VALUE: 5
 PROPERTY_NAME: y < INTEGER_VALUE: 25
 PROPERTY_NAME: z > DOUBLE_VALUE: 1.2
 
-Executing query 120 local: SELECT x,y,z,a FROM myclass WHERE (x > 5) AND ((y < 25) OR (a = "Foo")) AND (z > 1.2)
+Executing query 128 local: SELECT x,y,z,a FROM myclass WHERE (x > 5) AND ((y < 25) OR (a = "Foo")) AND (z > 1.2)
 WQLSelectStatement
 {
 	_className: "myclass"
@@ -1885,7 +2005,7 @@ PROPERTY_NAME: a = STRING_VALUE: Foo
 PROPERTY_NAME: x > INTEGER_VALUE: 5
 PROPERTY_NAME: z > DOUBLE_VALUE: 1.2
 
-Executing query 121 local: SELECT x,y,z,a FROM myclass WHERE (y > x) AND (((y < 25) OR (a = "Bar")) OR (z > 1.2))
+Executing query 129 local: SELECT x,y,z,a FROM myclass WHERE (y > x) AND (((y < 25) OR (a = "Bar")) OR (z > 1.2))
 WQLSelectStatement
 {
 	_className: "myclass"
@@ -1925,7 +2045,7 @@ Tableau 2
 PROPERTY_NAME: y > PROPERTY_NAME: x
 PROPERTY_NAME: z > DOUBLE_VALUE: 1.2
 
-Executing query 122 local: SELECT w,x,y,z FROM ClassName
+Executing query 130 local: SELECT w,x,y,z FROM ClassName
 WQLSelectStatement
 {
 	_className: "ClassName"
@@ -1936,7 +2056,7 @@ WQLSelectStatement
 	_selectPropertyNames[3]: "z"
 }
 
-Executing query 123 local: SELECT w,x,y,z FROM ClassName WHERE w = TRUE OR w = FALSE
+Executing query 131 local: SELECT w,x,y,z FROM ClassName WHERE w = TRUE OR w = FALSE
 WQLSelectStatement
 {
 	_className: "ClassName"
@@ -1961,7 +2081,7 @@ PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
 Tableau 1
 PROPERTY_NAME: w = BOOLEAN_VALUE: FALSE
 
-Executing query 124 local: SELECT w,x,y,z FROM ClassName WHERE w = TRUE AND x >= 10 AND y <= 13.10 AND z = "Ten"
+Executing query 132 local: SELECT w,x,y,z FROM ClassName WHERE w = TRUE AND x >= 10 AND y <= 13.10 AND z = "Ten"
 WQLSelectStatement
 {
 	_className: "ClassName"
@@ -1997,7 +2117,7 @@ PROPERTY_NAME: x >= INTEGER_VALUE: 10
 PROPERTY_NAME: y <= DOUBLE_VALUE: 13.1
 PROPERTY_NAME: z = STRING_VALUE: Ten
 
-Executing query 125 local: SELECT * FROM ClassName WHERE (w = TRUE AND x >= 10 AND y <= 13.10 AND z = "Ten") AND NOT w = TRUE IS NOT TRUE
+Executing query 133 local: SELECT * FROM ClassName WHERE (w = TRUE AND x >= 10 AND y <= 13.10 AND z = "Ten") AND NOT w = TRUE IS NOT TRUE
 WQLSelectStatement
 {
 	_className: "ClassName"
@@ -2038,7 +2158,7 @@ PROPERTY_NAME: x >= INTEGER_VALUE: 10
 PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
 PROPERTY_NAME: z = STRING_VALUE: Ten
 
-Executing query 126 local: SELECT * FROM ClassName WHERE (w = TRUE AND x >= 10 AND y <= 13.10 AND z = "Ten") AND NOT ((w = TRUE) IS NOT TRUE)
+Executing query 134 local: SELECT * FROM ClassName WHERE (w = TRUE AND x >= 10 AND y <= 13.10 AND z = "Ten") AND NOT ((w = TRUE) IS NOT TRUE)
 WQLSelectStatement
 {
 	_className: "ClassName"
@@ -2079,7 +2199,7 @@ PROPERTY_NAME: x >= INTEGER_VALUE: 10
 PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
 PROPERTY_NAME: z = STRING_VALUE: Ten
 
-Executing query 127 local: SELECT * FROM ClassName WHERE NOT NOT NOT x < 5
+Executing query 135 local: SELECT * FROM ClassName WHERE NOT NOT NOT x < 5
 WQLSelectStatement
 {
 	_className: "ClassName"
@@ -2097,7 +2217,7 @@ Terminal expression 0: PROPERTY_NAME: x >= INTEGER_VALUE: 5
 Tableau 0
 PROPERTY_NAME: x >= INTEGER_VALUE: 5
 
-Executing query 128 local: SELECT * FROM ClassName WHERE v IS NULL
+Executing query 136 local: SELECT * FROM ClassName WHERE v IS NULL
 WQLSelectStatement
 {
 	_className: "ClassName"
@@ -2112,7 +2232,7 @@ Terminal expression 0: PROPERTY_NAME: v = NULL_VALUE
 Tableau 0
 PROPERTY_NAME: v = NULL_VALUE
 
-Executing query 129 local: SELECT * FROM myclass WHERE (NOT (x>5) OR (y<1.0) AND (z = "BLAH")) AND NOT ((x<10) OR (y>4.0))
+Executing query 137 local: SELECT * FROM myclass WHERE (NOT (x>5) OR (y<1.0) AND (z = "BLAH")) AND NOT ((x<10) OR (y>4.0))
 WQLSelectStatement
 {
 	_className: "myclass"
@@ -2156,7 +2276,7 @@ PROPERTY_NAME: x >= INTEGER_VALUE: 10
 PROPERTY_NAME: x <= INTEGER_VALUE: 5
 PROPERTY_NAME: y <= DOUBLE_VALUE: 4
 
-Executing query 130 local: SELECT * FROM myclass WHERE NOT NOT( NOT (NOT (5>x) OR (y<1.0) AND NOT (z = "BLAH")) AND NOT NOT ((x<10) OR (y>4.0)))
+Executing query 138 local: SELECT * FROM myclass WHERE NOT NOT( NOT (NOT (5>x) OR (y<1.0) AND NOT (z = "BLAH")) AND NOT NOT ((x<10) OR (y>4.0)))
 WQLSelectStatement
 {
 	_className: "myclass"
@@ -2212,7 +2332,7 @@ PROPERTY_NAME: x < INTEGER_VALUE: 5
 PROPERTY_NAME: y > DOUBLE_VALUE: 4
 PROPERTY_NAME: z = STRING_VALUE: BLAH
 
-Executing query 131 local: select * from wqlTestClass
+Executing query 139 local: select * from wqlTestClass
 WQLSelectStatement
 {
 	_className: "wqlTestClass"

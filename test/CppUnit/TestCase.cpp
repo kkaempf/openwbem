@@ -165,8 +165,10 @@ void handleSignal(int sigtype, const char* where, TestResult* result, TestCase* 
 		report += " - unrecognized signal";
 	}
 
-	static char buff[1024];
-	strncpy( buff, report.c_str(), sizeof(buff) );
+	const int BUFF_SIZE = 1024;
+	static char buff[BUFF_SIZE];
+	strncpy( buff, report.c_str(), BUFF_SIZE );
+	buff[BUFF_SIZE-1] = 0;
 	result->addFailure( tc, new CppUnitException( buff, -1, "<unknown>" ) );
 
 }

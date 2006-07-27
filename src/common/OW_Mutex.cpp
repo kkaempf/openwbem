@@ -38,6 +38,8 @@
 #include "OW_Assertion.hpp"
 #include "OW_MutexImpl.hpp"
 
+#include <cassert>
+
 namespace OW_NAMESPACE
 {
 
@@ -50,10 +52,14 @@ Mutex::Mutex()
 }
 Mutex::~Mutex()
 {
-	if (MutexImpl::destroyMutex(m_mutex) == -1)
+	int rv = MutexImpl::destroyMutex(m_mutex);
+	if (rv == -1)
 	{
-		MutexImpl::releaseMutex(m_mutex);
-		MutexImpl::destroyMutex(m_mutex);
+		assert(0 == "MutexImpl::destroyMutex failed because it is currently locked.");
+	}
+	else if (rv != 0)
+	{
+		assert(0 == "MutexImpl::destroyMutex failed.");
 	}
 }
 void 

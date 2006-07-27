@@ -38,6 +38,7 @@
 #include "OW_String.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_IstreamBufIterator.hpp"
+#include <vector>
 #include <stack>
 #include <iosfwd>
 
@@ -47,7 +48,7 @@ namespace OW_NAMESPACE
 /////////////////////////////////////////////////////////////////////////////
 struct OW_XML_API XMLToken
 {
-	XMLToken() : type(INVALID), text(8096), attributeCount(0)
+	XMLToken() : type(INVALID), text(8096)
 	{}
 	enum XMLType
 	{
@@ -68,11 +69,9 @@ struct OW_XML_API XMLToken
 		StringBuffer name;
 		StringBuffer value;
 	};
-	enum { MAX_ATTRIBUTES = 10 };
 	XMLType type;
 	StringBuffer text;
-	Attribute attributes[MAX_ATTRIBUTES];
-	unsigned int attributeCount;
+	std::vector<Attribute> attributes;
 };
 
 /////////////////////////////////////////////////////////////////////////////

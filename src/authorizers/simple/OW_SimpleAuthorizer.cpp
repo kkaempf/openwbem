@@ -194,13 +194,10 @@ AccessMgr::checkAccess(int op, const String& ns,
 	InternalDataRemover internalDataRemover(context, ACCESS_MSG_INTERNAL_CALL);
 
 
-	LoggerRef lgr = m_env->getLogger(COMPONENT_NAME);
-	if (lgr->getLogLevel() == E_DEBUG_LEVEL)
-	{
-		OW_LOG_DEBUG(lgr, Format("Checking access to namespace: \"%1\"", ns));
-		OW_LOG_DEBUG(lgr, Format("UserName is: \"%1\" Operation is : %2",
-			userInfo.getUserName(), op));
-	}
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, Format("Checking access to namespace: \"%1\"", ns));
+	OW_LOG_DEBUG(lgr, Format("UserName is: \"%1\" Operation is : %2",
+		userInfo.getUserName(), op));
 	String lns(ns);
 	while (!lns.empty() && lns[0] == '/')
 	{
@@ -307,11 +304,8 @@ AccessMgr::checkAccess(int op, const String& ns,
 		}
 		catch(const CIMException& ce)
 		{
-			if (lgr->getLogLevel() == E_DEBUG_LEVEL)
-			{
-				OW_LOG_DEBUG(lgr, Format("Caught exception: %1 in"
-					" AccessMgr::checkAccess", ce));
-			}
+			OW_LOG_DEBUG(lgr, Format("Caught exception: %1 in"
+				" AccessMgr::checkAccess", ce));
 			ci.setNull();
 		}
 	

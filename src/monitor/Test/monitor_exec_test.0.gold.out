@@ -1,0 +1,114 @@
+argv:
+  montest;
+  arg1;
+  arg2;
+environ:
+  XPATH=XXX;
+  IFS= ;
+  XPATH=XXX;
+  XPATH=XXX;
+  OW_PRIVILEGE_MONITOR_DESCRIPTOR=XXX;
+  PATH=/bin;
+  XPATH=XXX;
+  foo=bar;
+User: owprovdr
+
+readDirectory
+  .
+  ..
+  app-exists
+  bar
+  foo
+  in-out-exists
+  in-out-exists-ate
+  in-out-trunc-exists
+  out-exists
+  out-trunc-exists
+  rename1
+  rename2
+  unlink-exists
+
+readDirectory
+  app-exists
+  bar
+  foo
+  in-out-exists
+  in-out-exists-ate
+  in-out-trunc-exists
+  out-exists
+  out-trunc-exists
+  rename1
+  rename2
+  unlink-exists
+
+readDirectory
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: PrivilegeManager::readDirectory: could not read /dir/doesnt/exist/
+
+readDirectory
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: PrivilegeManager::readDirectory: could not read /dir/doesnt/exist/
+
+rename
+
+rename
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: PrivilegeManager::rename: could not rename /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename2 to /dir/doesnt/exist/rename-to
+
+rename
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: PrivilegeManager::rename: could not rename /dir/doesnt/exist/rename to /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename-to
+
+rename
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: PrivilegeManager::rename: could not rename /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/no-such-file to /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename-to
+
+unlink
+1
+
+unlink
+0
+
+unlink
+0
+
+open
+  Hokey smokes, Bullwinkle!
+
+
+open
+
+open
+
+open
+
+open
+
+open
+
+open
+
+open
+  xxxtle Bo Peep has lost her sheep
+
+
+open
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: PrivilegeManager::open: 2(No such file or directory)
+
+open
+  yyy
+
+open
+  This-is-the-song-that-never-ends
+
+open
+  Little Bo Peep has lost her sheep
+xxx
+ERROR OUTPUT: err output

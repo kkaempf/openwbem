@@ -136,6 +136,7 @@ ow.provider.*                     - Each OW provider uses it's name with the
                                     ow.provider. prefix
 ow.owmofc                         - The mof compiler utility
 ow.owrepositorydump               - The owrepositorydump utility
+ow.libopenwbem                    - The code in libopenwbem
 
 -----------------------------------------------------------------------------
 Log message format

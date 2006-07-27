@@ -34,106 +34,40 @@
 
 #include "OW_config.h"
 #include "OW_AppenderLogger.hpp"
-#include "OW_LogMessage.hpp"
-#include "OW_LogAppender.hpp"
-
-#ifdef OW_WIN32
-#include <algorithm>
-#endif
+#include "OW_MultiAppender.hpp"
 
 namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
-AppenderLogger::AppenderLogger(const String& defaultComponent, ELogLevel level, const LogAppenderRef& appender)
-	: Logger(defaultComponent, level)
-	, m_appenders(1, appender)
+AppenderLogger::AppenderLogger(const String& defaultComponent, const LogAppenderRef& appender)
+	: Logger(defaultComponent, LogAppenderRef(new MultiAppender(appender)))
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////
 AppenderLogger::AppenderLogger(const String& defaultComponent, const Array<LogAppenderRef>& appenders)
-	: Logger(defaultComponent, getLevel(appenders))
-	, m_appenders(appenders)
+	: Logger(defaultComponent, LogAppenderRef(new MultiAppender(appenders)))
 {
+}
+
+/////////////////////////////////////////////////////////////////////////////
+AppenderLogger::AppenderLogger(const String& defaultComponent, ELogLevel logLevel, const LogAppenderRef& appender)
+	: Logger(defaultComponent, LogAppenderRef(new MultiAppender(appender)))
+{
+	setLogLevel(logLevel);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+AppenderLogger::AppenderLogger(const String& defaultComponent, ELogLevel logLevel, const Array<LogAppenderRef>& appenders)
+	: Logger(defaultComponent, LogAppenderRef(new MultiAppender(appenders)))
+{
+	setLogLevel(logLevel);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 AppenderLogger::~AppenderLogger()
 {
-}
-
-/////////////////////////////////////////////////////////////////////////////
-void
-AppenderLogger::addLogAppender(const LogAppenderRef& appender)
-{
-	    m_appenders.append(appender);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-void
-AppenderLogger::doProcessLogMessage(const LogMessage& message) const
-{
-	for (size_t i = 0; i < m_appenders.size(); ++i)
-	{
-		m_appenders[i]->logMessage(message);
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////
-bool
-AppenderLogger::doComponentAndCategoryAreEnabled(const String& component, const String& category) const
-{
-	for (size_t i = 0; i < m_appenders.size(); ++i)
-	{
-		if (m_appenders[i]->componentAndCategoryAreEnabled(component, category))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-bool
-AppenderLogger::doCategoryIsEnabled(const String& category) const
-{
-	for (size_t i = 0; i < m_appenders.size(); ++i)
-	{
-		if (m_appenders[i]->categoryIsEnabled(category))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-LoggerRef
-AppenderLogger::doClone() const
-{
-	return LoggerRef(new AppenderLogger(*this));
-}
-
-/////////////////////////////////////////////////////////////////////////////
-#ifdef OW_WIN32
-using namespace std;
-#endif
-
-ELogLevel
-AppenderLogger::getLevel(const Array<LogAppenderRef>& appenders)
-{
-	ELogLevel rv = E_FATAL_ERROR_LEVEL;
-	for (size_t i = 0; i < appenders.size(); ++i)
-	{
-#ifdef OW_WIN32
-		// This format was necessary on windoz C2589
-		rv = max(rv, appenders[i]->getLogLevel());
-#else
-		rv = std::max(rv, appenders[i]->getLogLevel());
-#endif
-	}
-	return rv;
 }
 
 } // end namespace OW_NAMESPACE

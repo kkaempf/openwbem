@@ -166,7 +166,19 @@ acquireMutex(Mutex_t& handle)
 		while (handle.valid_id)
 		{
 			res = pthread_cond_wait(&handle.unlocked, &handle.mutex);
-			assert(res == 0);
+			assert(res == 0 || res == EINTR);
+			if (res == EINTR)
+			{
+				try
+				{
+					Thread::testCancel();
+				}
+				catch (...)
+				{
+					pthread_mutex_unlock(&handle.mutex);
+					throw;
+				}
+			}
 		}
  
 		handle.thread_id = tid;

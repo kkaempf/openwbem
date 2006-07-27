@@ -41,20 +41,19 @@
 #include "OW_HTTPClient.hpp"
 #include "OW_Logger.hpp"
 #include "OW_RepositoryIFC.hpp"
+#include "OW_ProviderEnvironmentException.hpp"
 
 namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgentProviderEnvironment::ProviderAgentProviderEnvironment(
-	const LoggerRef& logger,
 	const ConfigFile::ConfigMap& configMap,
 	OperationContext& operationContext,
 	const String& callbackURL,
 	ClientCIMOMHandleConnectionPool& pool,
 	ProviderAgentEnvironment::EConnectionCredentialsUsageFlag useConnectionCredentials)
-	: m_logger(logger)
-	, m_configMap(configMap)
+	: m_configMap(configMap)
 	, m_operationContext(operationContext)
 	, m_callbackURL(callbackURL)
 	, m_connectionPool(pool)
@@ -99,16 +98,6 @@ ProviderAgentProviderEnvironment::getCIMOMHandle() const
 
 	ClientCIMOMHandleRef client = m_connectionPool.getConnection(callbackURL);
 
-	CIMProtocolIFCRef tmp = client->getWBEMProtocolHandler();
-	if (tmp)
-	{
-		IntrusiveReference<HTTPClient> httpClient = tmp.cast_to<HTTPClient>();
-		if (httpClient)
-		{
-			httpClient->addCustomHeader(HTTPUtils::Header_BypassLocker,
-										HTTPUtils::HeaderValue_true);
-		}
-	}
 	m_CIMOMHandleRA.push_back(client);
 	return client;
 }
@@ -146,19 +135,11 @@ ProviderAgentProviderEnvironment::getRepository() const
 	OW_ASSERTMSG(0, "not implemented");
 	return RepositoryIFCRef();
 }
-//////////////////////////////////////////////////////////////////////////////
-LoggerRef
-ProviderAgentProviderEnvironment::getLogger() const
+RepositoryIFCRef
+ProviderAgentProviderEnvironment::getAuthorizingRepository() const
 {
-	return m_logger->clone();
-}
-//////////////////////////////////////////////////////////////////////////////
-LoggerRef
-ProviderAgentProviderEnvironment::getLogger(const String& componentName) const
-{
-	LoggerRef rv = m_logger->clone();
-	rv->setDefaultComponent(componentName);
-	return rv;
+	OW_ASSERTMSG(0, "not implemented");
+	return RepositoryIFCRef();
 }
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -181,8 +162,6 @@ ProviderAgentProviderEnvironment::clone() const
 	OW_ASSERTMSG(0, "not implemented");
 	return ProviderEnvironmentIFCRef();
 }
-
-//////////////////////////////////////////////////////////////////////////////
 
 } // end namespace OW_NAMESPACE
 

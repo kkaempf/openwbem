@@ -33,7 +33,7 @@
  */
 #include "OW_config.h"
 #include "OW_CIMRepository.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_LocalOperationContext.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_CmdLineParser.hpp"
 #include "OW_Logger.hpp"
@@ -43,7 +43,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RequestHandlerIFC.hpp"
-#include "OW_CerrLogger.hpp"
+#include "OW_CerrAppender.hpp"
 #include "OW_ToolsCommon.hpp"
 #include "OW_ResultHandlers.hpp"
 #include "OW_RepositoryCIMOMHandle.hpp"
@@ -74,17 +74,6 @@ public:
 	{
 
 	}
-	virtual LoggerRef getLogger() const
-	{
-		LoggerRef rv(new CerrLogger);
-		rv->setLogLevel(E_ERROR_LEVEL);
-		return rv;
-	}
-	virtual LoggerRef getLogger(const String& componentName) const
-	{
-		return getLogger();
-	}
-
 	virtual String getConfigItem(const String& item, const String& defRetVal) const
 	{
 		if (item == ConfigOpts::DATADIR_opt)
@@ -268,7 +257,9 @@ int main(int argc, char** argv)
 			g_output.rdbuf(fb);
 		}
 	
-		OperationContext context;
+		LogAppender::setDefaultLogAppender(new CerrAppender());
+
+		LocalOperationContext context;
 		RepositoryIFCRef cimRepository = new CIMRepository;
 		cimRepository->init(new TheServiceEnvironment(repositoryDir));
 		RepositoryCIMOMHandleRef repositoryCIMOMHandle(new RepositoryCIMOMHandle(cimRepository, context));
@@ -280,6 +271,10 @@ int main(int argc, char** argv)
 	{
 		printCmdLineParserExceptionMessage(e);
 		usage();
+	}
+	catch(const CIMException& e)
+	{
+		cerr << CIMException::getCodeName(e.getErrNo()) << ':' << e.getMessage() << endl;
 	}
 	catch (Exception& e)
 	{

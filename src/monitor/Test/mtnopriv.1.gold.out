@@ -1,0 +1,10 @@
+User: owprovdr
+
+readDirectory
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: readDirectory: insufficient privileges
+
+readDirectory
+Exception:
+  type: IPCIOException

@@ -43,6 +43,7 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_XMLAttribute.hpp"
 #include "OW_XMLFwd.hpp"
+#include "OW_SafeBool.hpp"
 
 #include <iosfwd>
 
@@ -402,12 +403,7 @@ public:
 	 */
 	String toString() const;
 
-	typedef XMLNodeImplRef XMLNode::*safe_bool;
-	operator safe_bool () const
-		{  return (m_impl) ? &XMLNode::m_impl : 0; }
-	bool operator!() const
-		{  return !m_impl; }
-
+	OW_SAFE_BOOL_IMPL(XMLNode, XMLNodeImplRef, XMLNode::m_impl, m_impl)
 
 private:
 

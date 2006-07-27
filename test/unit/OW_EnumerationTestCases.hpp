@@ -57,7 +57,6 @@ private:
 	void testQueueBig();
 	void testInputIterator();
 	void testInsertIterator();
-	void testReleaseFile();
 };
 
 #endif

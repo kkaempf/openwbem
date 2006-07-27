@@ -26,7 +26,8 @@ INCLUDES = \
 -I$(top_srcdir)/src/cimom/server \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/repositories/hdb \
--I$(top_srcdir)/src/providerifcs/cpp
+-I$(top_srcdir)/src/providerifcs/cpp \
+-I$(top_srcdir)/src/monitor
 
 OW_SHARED_LIBS = libowcimomcommon.$(LIB_EXT)
 # increment this number every time a release breaks binary compatibility
@@ -39,6 +40,8 @@ OW_CIMOMEnvironment.cpp \
 OW_CIMOMEnvironment.hpp \
 OW_CIMServer.cpp \
 OW_CIMServer.hpp \
+OW_CIMServerProviderEnvironment.cpp \
+OW_CIMServerProviderEnvironment.hpp \
 OW_LocalCIMOMHandle.cpp \
 OW_LocalCIMOMHandle.hpp \
 OW_PollingManager.cpp \

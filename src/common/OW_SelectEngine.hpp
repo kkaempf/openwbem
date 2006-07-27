@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
 #include "OW_SelectableCallbackIFC.hpp"
-#include "OW_Array.hpp"
+#include "OW_SortedVectorMap.hpp"
 #include "OW_Exception.hpp"
 
 // The classes and functions defined in this file are not meant for general
@@ -51,23 +51,33 @@ OW_DECLARE_APIEXCEPTION(Select, OW_COMMON_API)
 class OW_COMMON_API SelectEngine
 {
 public:
-	void addSelectableObject(const SelectableIFCRef& obj,
-		const SelectableCallbackIFCRef& cb);
-	void go(); // Throws SelectException on error
+	/**
+	 * Add an object to the set.
+	 * If obj is already added, the previous values for cb and eventType will be overwritten
+	 */
+	void addSelectableObject(const Select_t& obj,
+		const SelectableCallbackIFCRef& cb, SelectableCallbackIFC::EEventType eventType);
+	/// return indicates if obj was removed
+	bool removeSelectableObject(const Select_t& obj, SelectableCallbackIFC::EEventType eventType);
+	void go(const Timeout& timeout); // Throws SelectException on error
 	void stop();
 private:
 
-#ifdef OW_WIN32
-#pragma warning (push)
-#pragma warning (disable: 4251)
-#endif
+	struct Data
+	{
+		Data(const SelectableCallbackIFCRef& callback_,
+			SelectableCallbackIFC::EEventType eventType_)
+			: callback(callback_)
+			, eventType(eventType_)
+		{
+		}
 
-	Array<SelectableIFCRef> m_selectableObjs;
-	Array<SelectableCallbackIFCRef> m_callbacks;
+		SelectableCallbackIFCRef callback;
+		SelectableCallbackIFC::EEventType eventType;
 
-#ifdef OW_WIN32
-#pragma warning (pop)
-#endif
+	};
+
+	SortedVectorMap<Select_t, Data> m_table; // the key is Data::selectObj->getSelectObj()
 
 	bool m_stopFlag;
 };
@@ -77,7 +87,7 @@ class OW_COMMON_API SelectEngineStopper : public SelectableCallbackIFC
 public:
 	SelectEngineStopper(SelectEngine& engine);
 protected:
-	virtual void doSelected(SelectableIFCRef& selectedObject);
+	virtual void doSelected(Select_t& selectedObject, EEventType eventType);
 private:
 	SelectEngine& m_engine;
 };

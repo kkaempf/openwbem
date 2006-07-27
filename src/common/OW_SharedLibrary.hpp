@@ -82,7 +82,6 @@ protected:
 	virtual bool doGetFunctionPointer( const String& functionName,
 			void** fp ) const = 0;
 };
-typedef IntrusiveReference<SharedLibrary> SharedLibraryRef;
 
 } // end namespace OW_NAMESPACE
 

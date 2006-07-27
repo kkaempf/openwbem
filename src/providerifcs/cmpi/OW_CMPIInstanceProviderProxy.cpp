@@ -69,7 +69,8 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 	CIMObjectPathResultHandlerIFC& result,
 	const CIMClass& cimClass )
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::enumInstanceNames()");
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::enumInstanceNames()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -120,7 +121,8 @@ CMPIInstanceProviderProxy::enumInstances(
 	const CIMClass& requestedClass,
 	const CIMClass& cimClass )
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::enumInstances()");
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::enumInstances()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -189,7 +191,8 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 	const CIMClass& cimClass)
 {
 	CIMInstance rval;
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::getInstance()");
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::getInstance()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -261,7 +264,8 @@ void
 CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 	const String& ns, const CIMObjectPath& cop)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::deleteInstance()");
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::deleteInstance()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -304,7 +308,8 @@ CIMObjectPath
 	const CIMInstance& cimInstance)
 {
 	CIMObjectPath rval;
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, Format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -354,7 +359,8 @@ void
 	const StringArray* propertyList,
 	const CIMClass& theClass)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::modifyInstance()");
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::modifyInstance()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 

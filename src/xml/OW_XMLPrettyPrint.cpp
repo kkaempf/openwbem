@@ -51,7 +51,7 @@ static void addIndent(StringBuffer& sb, int indent)
 }
 static void outputAttrs(StringBuffer& sb, const XMLToken& tok)
 {
-	for (size_t i = 0; i < tok.attributeCount; ++i)
+	for (size_t i = 0; i < tok.attributes.size(); ++i)
 	{
 		sb += ' ';
 		sb += tok.attributes[i].name;

@@ -54,8 +54,7 @@
 namespace OW_NAMESPACE
 {
 
-using std::istream;
-using std::ostream;
+using std::streambuf;
 using namespace WBEMFlags;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -647,7 +646,7 @@ CIMClass::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifie
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMClass::readObject(istream &istrm)
+CIMClass::readObject(streambuf & istrm)
 {
 	CIMName name;
 	CIMName pcName;
@@ -686,7 +685,7 @@ CIMClass::readObject(istream &istrm)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMClass::writeObject(ostream &ostrm) const
+CIMClass::writeObject(streambuf & ostrm) const
 {
 	// ATTENTION: There is a bad hack in MetaRepository::_getClassNameFromNode which relies on the format of a CIMClass.
 	// If you update/change this function, make sure you update it too!

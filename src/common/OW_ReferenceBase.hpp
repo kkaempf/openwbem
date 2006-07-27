@@ -94,17 +94,6 @@ public:
 		incRef();
 	}
 	
-#ifdef OW_CHECK_NULL_REFERENCES
-	static void throwNULLException();
-	static void checkNull(const void *p)
-	{
-		if (p == 0)
-		{
-			throwNULLException();
-		}
-	}
-#endif
-
 #if !defined(__GNUC__) || __GNUC__ > 2 // because of a gcc 2.95 ICE
 protected:
 #else

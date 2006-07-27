@@ -1,0 +1,6 @@
+open in|out|ate 402
+  /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/in-out-exists-ate
+  xxx
+open in|out|ate 402
+  /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/in-out-exists-ate
+  xxx

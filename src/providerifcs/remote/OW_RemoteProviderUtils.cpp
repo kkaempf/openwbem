@@ -83,7 +83,7 @@ ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl,
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteProviderUtils::getRemoteClientCIMOMHandle() failed to get a connection: %1", e);
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
+		OW_LOG_ERROR(Logger(COMPONENT_NAME), msg);
 		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 

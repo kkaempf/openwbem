@@ -82,18 +82,21 @@ public:
 		try
 		{
 			SelectEngine engine;
-			SelectableCallbackIFCRef cb(new SelectEngineStopper(engine));
-			m_selectables->push_back(std::make_pair(m_stopObject, cb));
 			for (size_t i = 0; i < m_selectables->size(); ++i)
 			{
-				engine.addSelectableObject((*m_selectables)[i].first,
-					(*m_selectables)[i].second);
+				engine.addSelectableObject((*m_selectables)[i].first->getSelectObj(),
+					(*m_selectables)[i].second, SelectableCallbackIFC::E_ACCEPT_EVENT);
 			}
+
+			SelectableCallbackIFCRef cb(new SelectEngineStopper(engine));
+			engine.addSelectableObject(m_stopObject->getReadSelectObj(),
+				cb, SelectableCallbackIFC::E_READ_EVENT);
+
 			if (m_lifecycleCB)
 			{
 				m_lifecycleCB->started();
 			}
-			engine.go();
+			engine.go(Timeout::infinite);
 		}
 		catch (Exception& e)
 		{
@@ -113,7 +116,7 @@ public:
 		}
 		return 0;
 	}
-	virtual void doCooperativeCancel()
+	virtual void doShutdown()
 	{
 		// write something into the stop pipe to stop the select engine so the
 		// thread will exit
@@ -148,7 +151,6 @@ ProviderAgent::ProviderAgent(
 	const Array<CIMClass>& cimClasses,
 	const Array<RequestHandlerIFCRef>& requestHandlers,
 	const AuthenticatorIFCRef& authenticator,
-	const LoggerRef& logger,
 	const String& callbackURL,
 	const ProviderAgentLockerIFCRef& locker,
 	const ProviderAgentLifecycleCallbackIFCRef& lifecycleCB)
@@ -159,7 +161,7 @@ ProviderAgent::ProviderAgent(
 			selectables(new Array<SelectablePair_t>);
 	ServiceEnvironmentIFCRef env(new ProviderAgentEnvironment(configMap,
 			providers, cimClasses, authenticator, requestHandlers,
-			logger, callbackURL, selectables, locker));
+			callbackURL, selectables, locker));
 	m_httpServer->init(env);
 	m_httpServer->start();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really

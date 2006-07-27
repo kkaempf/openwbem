@@ -37,10 +37,11 @@
 #define OW_HTTPDEFLATEISTREAM_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #ifdef OW_HAVE_ZLIB_H
-#include "OW_CIMProtocolIStreamIFC.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_IfcsFwd.hpp"
+#include "OW_Reference.hpp"
+#include <istream>
 #include <zlib.h>
 
 namespace OW_NAMESPACE
@@ -73,7 +74,7 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////////
 class OW_HTTP_API HTTPDeflateIStream : private HTTPDeflateIStreamBase,
-	public CIMProtocolIStreamIFC
+	public std::istream
 {
 public:
 	/**
@@ -82,14 +83,12 @@ public:
 	 * the original istream, and then inflated.
 	 * @param istr the original istream to wrap.
 	 */
-	HTTPDeflateIStream(const CIMProtocolIStreamIFCRef& istr);
+	HTTPDeflateIStream(const Reference<std::istream>& istr);
 	/**
 	 * Get the original istream
 	 * @return the original istream.
 	 */
-	CIMProtocolIStreamIFCRef getInputStreamOrig();
-	// TODO: Move all this knowledge about CIM and specific trailers into HTTPClient
-	virtual void checkForError() const;
+	Reference<std::istream> getInputStreamOrig();
 private:
 
 #ifdef OW_WIN32
@@ -97,7 +96,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	CIMProtocolIStreamIFCRef m_istr;
+	Reference<std::istream> m_istr;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

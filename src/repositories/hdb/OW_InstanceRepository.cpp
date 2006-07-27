@@ -59,6 +59,7 @@ namespace
 
 const char NS_SEPARATOR_C(':');
 
+
 } // end unnamed namespace
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -328,7 +329,7 @@ InstanceRepository::createInstance(const String& ns,
 		OW_THROWCIMMSG(CIMException::ALREADY_EXISTS, instanceKey.c_str());
 	}
 	_removeDuplicatedQualifiers(ci, theClass);
-	DataOStream ostrm;
+	DataOStreamBuf ostrm;
 	ci.writeObject(ostrm);
 	node = HDBNode(instanceKey, ostrm.length(), ostrm.getData());
 	hdl.getHandle().addChild(clsNode, node);
@@ -409,7 +410,7 @@ InstanceRepository::modifyInstance(const String& ns,
 		}
 	}
 	_removeDuplicatedQualifiers(ci, theClass);
-	DataOStream ostrm;
+	DataOStreamBuf ostrm;
 	ci.writeObject(ostrm);
 	String instanceKey = makeInstanceKey(ns, cop, theClass);
 	HDBNode node = hdl->getNode(instanceKey);
@@ -417,7 +418,10 @@ InstanceRepository::modifyInstance(const String& ns,
 	{
 		OW_THROWCIMMSG(CIMException::NOT_FOUND, cop.toString().c_str());
 	}
-	hdl.getHandle().updateNode(node, ostrm.length(), ostrm.getData());
+	if (!hdl.getHandle().updateNode(node, HDBNode(), ostrm.length(), ostrm.getData()))
+	{
+		OW_THROW(HDBException, "Failed to update repository node");
+	}
 }
 #endif
 

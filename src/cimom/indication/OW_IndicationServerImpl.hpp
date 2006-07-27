@@ -52,6 +52,7 @@
 #include "OW_Map.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_Thread.hpp"
+#include "OW_Logger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -114,7 +115,7 @@ public:
 	
 	virtual void modifyFilter(const String& ns, const CIMInstance& filterInst, const String& userName);
 
-	virtual void doCooperativeCancel();
+	virtual void doShutdown();
 
 private:
 	struct Subscription : public IntrusiveCountableBase
@@ -193,7 +194,7 @@ private:
 	ThreadPoolRef m_notifierThreadPool;
 	ThreadPoolRef m_subscriptionPool;
 	WQLIFCRef m_wqlRef;
-	LoggerRef m_logger;
+	Logger m_logger;
 };
 
 } // end namespace OW_NAMESPACE

@@ -40,6 +40,7 @@
 #include "OW_LogLevel.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_Exception.hpp"
+#include "OW_LogAppender.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -49,12 +50,17 @@ OW_DECLARE_APIEXCEPTION(Logger, OW_COMMON_API)
 
 /**
  * Logging interface. Used to output log messages.
- * A Logger has a component and a log level.
- * The component will be used for all log messages generated, unless another component explicitly
+ * A Logger has a component, a log level and a LogAppenderRef.
+ * The component will be used for all log messages generated, unless another component is explicitly
  * specified in a call to logMessage().
+ * The AppenderRef is the target for log messages. The global LogAppenderRef will be retrieved via 
+ * LogAppender::getCurrentLogAppender() if one is not passed to the constructor.
+ * An application may call LogAppender::setDefaultLogAppender() to set the global LogAppenderRef.
+ * The log level will be obtained from the appender by calling m_appender->getLogLevel().
  *
  * Invariants:
  * - m_defaultComponent != ""
+ * - m_appender is not NULL.
  *
  * Responsibilities:
  * - Report log level.
@@ -67,7 +73,7 @@ OW_DECLARE_APIEXCEPTION(Logger, OW_COMMON_API)
  * Thread safety: read/write, except for setDefaultComponent() and setLogLevel() which should
  * only be called during initialization phase.
  *
- * Copy semantics: Non-copyable
+ * Copy semantics: Value
  *
  * Exception safety: Strong
  */
@@ -91,31 +97,18 @@ public:
 	};
 
 	/**
-	 * Get a copy of the per thread LoggerRef or if
-	 * not set, the default one.
-	 * If neither setDefaultLogger() or setThreadLogger() has been called, 
-	 * the default logger will be set to a NullLogger, and then returned.
+	 * @param defaultComponent The component used for log messages (can be overridden by logMessage())
+	 * @param appender The Appender which will receive log messages. If NULL, the result of LogAppender::getCurrentLogAppender() will be used.
 	 */
-	static LoggerRef getCurrentLogger();
+	Logger(const String& defaultComponent = STR_DEFAULT_COMPONENT, const LogAppenderRef& appender = LogAppenderRef());
 
-	/**
-	 * Returns a copy of default LoggerRef.
-	 * If you want to log messages, you shouldn't call this function.  Use getCurrentLogger() instead.
-	 * If setDefaultLogger() hasn't been called, 
-	 * the default logger will be set to a NullLogger, and then returned.
-	 */
-	static LoggerRef getDefaultLogger();
+	Logger(const Logger&);
+	Logger& operator=(const Logger&);
+	void swap(Logger& x);
+	virtual ~Logger();
 
-	/**
-	 * Set the default global logger.
-	 */
-	static bool setDefaultLogger(const LoggerRef &ref);
-
-	/**
-	 * Set a per thread Logger that overrides the default one.
-	 */
-	static bool setThreadLogger(const LoggerRef &ref);
-
+	virtual LoggerRef clone() const OW_DEPRECATED; // in 4.0.0
+	
 	/**
 	 * Log message with a fatal error category and the default component.
 	 * @param message The string to log.
@@ -252,85 +245,24 @@ public:
 	bool componentAndCategoryAreEnabled(const String& component, const String& category) const;
 
 	/**
-	 * Make a copy of the derived instance.
-	 * Provided the derived class has a suitable copy constructor, an implementation of clone should simply be:
-	 * LoggerRef DerivedLogger::doClone() const
-	 * {
-	 *     return LoggerRef(new DerivedLogger(*this));
-	 * }
+	 * Utility functions for backward compatibility with LoggerRef and the OW_LOG macros
 	 */
-	LoggerRef clone() const;
-
-	/**
-	 * Create a concrete logger depending on the type string passed in.
-	 * On Linux, if type == "syslog" a logger the writes to the syslog
-	 * will be returned.
-	 * If type == "" || type == "null" a logger that doesn't do anything
-	 * will be returned.
-	 * If type == "stderr" a logger that writes to stderr will be returned.
-	 * Otherwise type is treated as a filename and a logger that writes
-	 * to that file will be returned.
-	 * @param type The type of logger to create
-	 * @param debug Indicates whether to create a debug logger (duplicates
-	 *   			all messages to stderr)
-	 * @return a Logger. The default component == STR_DEFAULT_COMPONENT and log level == E_DEBUG_LEVEL
-	 */
-	static LoggerRef createLogger( const String& type,
-		bool debug ) OW_DEPRECATED;	// in 3.1.0
-
-	virtual ~Logger();
-
-protected:
-	Logger() OW_DEPRECATED; // in 3.1.0
-	Logger(const ELogLevel l) OW_DEPRECATED; // in 3.1.0
-
-	// Derived class interface
-
-	/**
-	 * @param defaultComponent The component used for log messages (can be overridden my logMessage())
-	 * @param logLevel The log level. All lower level log messages will be ignored.
-	 */
-	Logger(const String& defaultComponent, const ELogLevel logLevel);
-
-	/**
-	 * Output the message.
-	 * Calls will not be serialized, so the derived class' implementation must be thread safe.
-	 */
-	virtual void doProcessLogMessage(const LogMessage& message) const = 0;
-
-	/**
-	 * Return whether logging is enabled for the category.
-	 * Default implementation always returns true.
-	 */
-	virtual bool doCategoryIsEnabled(const String& category) const;
-	
-	/**
-	 * Return whether logging is enabled for the component and category.
-	 * Default implementation always returns true.
-	 */
-	virtual bool doComponentAndCategoryAreEnabled(const String& component, const String& category) const;
-
-	/**
-	 * Make a copy of the derived instance.
-	 * Provided the derived class has a suitable copy constructor, an implementation of clone should simply be:
-	 * LoggerRef DerivedLogger::doClone() const
-	 * {
-	 *     return LoggerRef(new DerivedLogger(*this));
-	 * }
-	 */
-	virtual LoggerRef doClone() const = 0;
-
-protected:
-	Logger(const Logger&);
-	Logger& operator=(const Logger&);
-	void swap(Logger& x);
+	static inline const Logger& asLogger(const Logger& lgr)
+	{
+		return lgr;
+	}
+	static inline const Logger& asLogger(const LoggerRef& lgr)
+	{
+		return *lgr;
+	}
 
 private:
 	void processLogMessage(const LogMessage& message) const;
 
 private: // data
-	ELogLevel m_logLevel;
 	String m_defaultComponent;
+	LogAppenderRef m_appender;
+	ELogLevel m_logLevel;
 };
 OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, Logger);
 
@@ -354,9 +286,9 @@ OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, Logger);
 #define OW_LOG_DEBUG(logger, message) \
 do \
 { \
-	if ((logger)->getLogLevel() >= ::OW_NAMESPACE::E_DEBUG_LEVEL) \
+	if (::OW_NAMESPACE::Logger::asLogger((logger)).getLogLevel() >= ::OW_NAMESPACE::E_DEBUG_LEVEL) \
 	{ \
-		(logger)->logMessage(::OW_NAMESPACE::Logger::STR_DEBUG_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
+		::OW_NAMESPACE::Logger::asLogger((logger)).logMessage(::OW_NAMESPACE::Logger::STR_DEBUG_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 
@@ -369,9 +301,9 @@ do \
 #define OW_LOG_INFO(logger, message) \
 do \
 { \
-	if ((logger)->getLogLevel() >= ::OW_NAMESPACE::E_INFO_LEVEL) \
+	if (::OW_NAMESPACE::Logger::asLogger((logger)).getLogLevel() >= ::OW_NAMESPACE::E_INFO_LEVEL) \
 	{ \
-		(logger)->logMessage(::OW_NAMESPACE::Logger::STR_INFO_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
+		::OW_NAMESPACE::Logger::asLogger((logger)).logMessage(::OW_NAMESPACE::Logger::STR_INFO_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 
@@ -384,9 +316,9 @@ do \
 #define OW_LOG_ERROR(logger, message) \
 do \
 { \
-	if ((logger)->getLogLevel() >= ::OW_NAMESPACE::E_ERROR_LEVEL) \
+	if (::OW_NAMESPACE::Logger::asLogger((logger)).getLogLevel() >= ::OW_NAMESPACE::E_ERROR_LEVEL) \
 	{ \
-		(logger)->logMessage(::OW_NAMESPACE::Logger::STR_ERROR_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
+		::OW_NAMESPACE::Logger::asLogger((logger)).logMessage(::OW_NAMESPACE::Logger::STR_ERROR_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 
@@ -399,9 +331,9 @@ do \
 #define OW_LOG_FATAL_ERROR(logger, message) \
 do \
 { \
-	if ((logger)->getLogLevel() >= ::OW_NAMESPACE::E_FATAL_ERROR_LEVEL) \
+	if (::OW_NAMESPACE::Logger::asLogger((logger)).getLogLevel() >= ::OW_NAMESPACE::E_FATAL_ERROR_LEVEL) \
 	{ \
-		(logger)->logMessage(::OW_NAMESPACE::Logger::STR_FATAL_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
+		::OW_NAMESPACE::Logger::asLogger((logger)).logMessage(::OW_NAMESPACE::Logger::STR_FATAL_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 
@@ -415,9 +347,9 @@ do \
 #define OW_LOG(logger, category, message) \
 do \
 { \
-	if ((logger)->categoryIsEnabled((category))) \
+	if (::OW_NAMESPACE::Logger::asLogger((logger)).categoryIsEnabled((category))) \
 	{ \
-		(logger)->logMessage((category), (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
+		::OW_NAMESPACE::Logger::asLogger((logger)).logMessage((category), (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 

@@ -43,6 +43,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <algorithm> // for std::swap
+#include <ostream>
 
 namespace OW_NAMESPACE
 {
@@ -80,7 +81,7 @@ String createLongMessage(CIMException::ErrNoType errval, const char* msg)
 //////////////////////////////////////////////////////////////////////////////
 CIMException::CIMException(const char* file, int line, CIMException::ErrNoType errval,
 	const char* msg, const Exception* otherException)
-	: Exception(file, line, createLongMessage(errval, msg).c_str(), errval, otherException, ExceptionIds::CIMExceptionId)
+	: Exception(file, line, msg, errval, otherException, ExceptionIds::CIMExceptionId)
 	, m_description(Exception::dupString(msg))
 {
 }
@@ -127,33 +128,76 @@ CIMException::getDescription() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+
 struct MsgRec
 {
 	CIMException::ErrNoType errval;
 	const char* msg;
 };
 
+static MsgRec names[] =
+{
+	{ CIMException::SUCCESS, "SUCCESS" },
+	{ CIMException::FAILED, "CIM_ERR_FAILED" },
+	{ CIMException::ACCESS_DENIED, "CIM_ERR_ACCESS_DENIED" },
+	{ CIMException::INVALID_NAMESPACE, "CIM_ERR_INVALID_NAMESPACE" },
+	{ CIMException::INVALID_PARAMETER, "CIM_ERR_INVALID_PARAMETER" },
+	{ CIMException::INVALID_CLASS, "CIM_ERR_INVALID_CLASS" },
+	{ CIMException::NOT_FOUND, "CIM_ERR_NOT_FOUND" },
+	{ CIMException::NOT_SUPPORTED, "CIM_ERR_NOT_SUPPORTED" },
+	{ CIMException::CLASS_HAS_CHILDREN, "CIM_ERR_CLASS_HAS_CHILDREN" },
+	{ CIMException::CLASS_HAS_INSTANCES, "CIM_ERR_CLASS_HAS_INSTANCES" },
+	{ CIMException::INVALID_SUPERCLASS, "CIM_ERR_INVALID_SUPERCLASS" },
+	{ CIMException::ALREADY_EXISTS, "CIM_ERR_ALREADY_EXISTS" },
+	{ CIMException::NO_SUCH_PROPERTY, "CIM_ERR_NO_SUCH_PROPERTY" },
+	{ CIMException::TYPE_MISMATCH, "CIM_ERR_TYPE_MISMATCH" },
+	{ CIMException::QUERY_LANGUAGE_NOT_SUPPORTED, "CIM_ERR_QUERY_LANGUAGE_NOT_SUPPORTED" },
+	{ CIMException::INVALID_QUERY, "CIM_ERR_INVALID_QUERY" },
+	{ CIMException::METHOD_NOT_AVAILABLE, "CIM_ERR_METHOD_NOT_AVAILABLE" },
+	{ CIMException::METHOD_NOT_FOUND, "CIM_ERR_METHOD_NOT_FOUND" }
+};
+
+} // end unnamed namespace
+
+// static
+const char*
+CIMException::getCodeName(ErrNoType errCode)
+{
+	if (errCode >= SUCCESS && errCode <= METHOD_NOT_FOUND)
+	{
+		OW_ASSERT(names[errCode].errval == errCode);
+		return names[errCode].msg;
+	}
+	return "CIM_ERR_UNKNOWN";
+}
+
+namespace
+{
 static MsgRec _pmsgs[] =
 {
-	{ CIMException::SUCCESS, "no error" },
-	{ CIMException::FAILED, "general error" },
-	{ CIMException::ACCESS_DENIED, "Access to CIM resource unavailable to client" },
-	{ CIMException::INVALID_NAMESPACE, "namespace does not exist" },
-	{ CIMException::INVALID_PARAMETER, "invalid parameter passed to method" },
-	{ CIMException::INVALID_CLASS, "class does not exist" },
-	{ CIMException::NOT_FOUND, "requested object could not be found" },
-	{ CIMException::NOT_SUPPORTED, "requested operation is not supported" },
-	{ CIMException::CLASS_HAS_CHILDREN, "operation cannot be done on class with subclasses" },
-	{ CIMException::CLASS_HAS_INSTANCES, "operator cannot be done on class with instances" },
-	{ CIMException::INVALID_SUPERCLASS, "specified superclass does not exist" },
-	{ CIMException::ALREADY_EXISTS, "object already exists" },
-	{ CIMException::NO_SUCH_PROPERTY, "specified property does not exist" },
-	{ CIMException::TYPE_MISMATCH, "value supplied is incompatible with type" },
-	{ CIMException::QUERY_LANGUAGE_NOT_SUPPORTED, "query language is not recognized or supported" },
-	{ CIMException::INVALID_QUERY, "query is not valid for the specified query language" },
-	{ CIMException::METHOD_NOT_AVAILABLE, "extrinsic method could not be executed" },
-	{ CIMException::METHOD_NOT_FOUND, "extrinsic method does not exist" }
+	{ CIMException::SUCCESS, "No error." },
+	{ CIMException::FAILED, "A general error occurred that is not covered by a more specific error code." },
+	{ CIMException::ACCESS_DENIED, "Access to a CIM resource is not available to the client." },
+	{ CIMException::INVALID_NAMESPACE, "The target namespace does not exist." },
+	{ CIMException::INVALID_PARAMETER, "One or more parameter values passed to the method are not valid." },
+	{ CIMException::INVALID_CLASS, "The specified class does not exist." },
+	{ CIMException::NOT_FOUND, "The requested object cannot be found." },
+	{ CIMException::NOT_SUPPORTED, "The requested operation is not supported." },
+	{ CIMException::CLASS_HAS_CHILDREN, "The operation cannot be invoked on this class because it has subclasses." },
+	{ CIMException::CLASS_HAS_INSTANCES, "The operation cannot be invoked on this class because one or more instances of this class exist." },
+	{ CIMException::INVALID_SUPERCLASS, "The operation cannot be invoked because the specified superclass does not exist." },
+	{ CIMException::ALREADY_EXISTS, "The operation cannot be invoked because an object already exists." },
+	{ CIMException::NO_SUCH_PROPERTY, "The specified property does not exist." },
+	{ CIMException::TYPE_MISMATCH, "The value supplied is not compatible with the type." },
+	{ CIMException::QUERY_LANGUAGE_NOT_SUPPORTED, "The query language is not recognized or supported." },
+	{ CIMException::INVALID_QUERY, "The query is not valid for the specified query language." },
+	{ CIMException::METHOD_NOT_AVAILABLE, "The extrinsic method cannot be invoked." },
+	{ CIMException::METHOD_NOT_FOUND, "The specified extrinsic method does not exist." }
 };
+
+} // end unnamed namespace
 
 // static
 const char*
@@ -171,6 +215,36 @@ CIMException*
 CIMException::clone() const throw()
 {
 	return new(std::nothrow) CIMException(*this);
+}
+
+std::ostream& operator<<(std::ostream& os, const CIMException& e)
+{
+	if (*e.getFile() == '\0')
+	{
+		os << "[no file]: ";
+	}
+	else
+	{
+		os << e.getFile() << ": ";
+	}
+	
+	if (e.getLine() == 0)
+	{
+		os << "[no line] ";
+	}
+	else
+	{
+		os << e.getLine() << ' ';
+	}
+	
+	os << createLongMessage(e.getErrNo(), e.getMessage());
+
+	const Exception* subEx = e.getSubException();
+	if (subEx)
+	{
+		os << " <" << *subEx << '>';
+	}
+	return os;
 }
 
 } // end namespace OW_NAMESPACE

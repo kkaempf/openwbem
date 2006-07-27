@@ -47,17 +47,16 @@
 #include "OW_CIMName.hpp"
 #include "OW_COWIntrusiveCountableBase.hpp"
 #include <algorithm> // for std::sort
+#include <streambuf>
 
 namespace OW_NAMESPACE
 {
 
-using std::ostream;
-using std::istream;
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMInstance::INSTData : public COWIntrusiveCountableBase
 {
-	String m_nameSpace;
+	String m_namespace;
 	CIMName m_owningClassName;
 	CIMPropertyArray m_keys;
 	CIMPropertyArray m_properties;
@@ -68,7 +67,7 @@ struct CIMInstance::INSTData : public COWIntrusiveCountableBase
 bool operator<(const CIMInstance::INSTData& x, const CIMInstance::INSTData& y)
 {
 	return StrictWeakOrdering(
-		x.m_nameSpace, y.m_nameSpace,
+		x.m_namespace, y.m_namespace,
 		x.m_owningClassName, y.m_owningClassName,
 		x.m_properties, y.m_properties,
 		x.m_keys, y.m_keys,
@@ -134,14 +133,14 @@ CIMInstance::getClassName() const
 CIMInstance& 
 CIMInstance::setNameSpace(const String& ns)
 {
-	m_pdata->m_nameSpace = ns;
+	m_pdata->m_namespace = ns;
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 String 
 CIMInstance::getNameSpace() const
 {
-	return m_pdata->m_nameSpace;
+	return m_pdata->m_namespace;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -522,7 +521,7 @@ CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQuali
 	bool noProps) const
 {
 	CIMInstance ci;
-	ci.m_pdata->m_nameSpace = m_pdata->m_nameSpace;
+	ci.m_pdata->m_namespace = m_pdata->m_namespace;
 	ci.m_pdata->m_owningClassName = m_pdata->m_owningClassName;
 	ci.m_pdata->m_keys = m_pdata->m_keys;
 	ci.m_pdata->m_language = m_pdata->m_language;
@@ -818,7 +817,7 @@ CIMInstance::setName(const CIMName& name)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMInstance::readObject(istream &istrm)
+CIMInstance::readObject(std::streambuf & istrm)
 {
 	CIMName owningClassName;
 	CIMPropertyArray properties;
@@ -852,20 +851,20 @@ CIMInstance::readObject(istream &istrm)
 	m_pdata->m_properties = properties;
 	m_pdata->m_qualifiers = qualifiers;
 	m_pdata->m_language = language;
-	m_pdata->m_nameSpace = nameSpace;
+	m_pdata->m_namespace = nameSpace;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMInstance::writeObject(std::ostream &ostrm) const
+CIMInstance::writeObject(std::streambuf & ostrm) const
 {
-	// Ignore m_nameSpace
+	// Ignore m_namespace
 	CIMBase::writeSig(ostrm, OW_CIMINSTANCESIG_V, CIMInstance::SERIALIZATION_VERSION);
 	m_pdata->m_owningClassName.writeObject(ostrm);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_keys);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
 	m_pdata->m_language.writeObject(ostrm);
-	m_pdata->m_nameSpace.writeObject(ostrm);
+	m_pdata->m_namespace.writeObject(ostrm);
 }
 //////////////////////////////////////////////////////////////////////////////
 String

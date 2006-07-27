@@ -49,15 +49,13 @@
 namespace OW_NAMESPACE
 {
 
-using std::istream;
-using std::ostream;
+using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////
 class CIMValue::CIMValueImpl : public COWIntrusiveCountableBase
 {
 public:
 	static CIMValueImpl createSimpleValue(CIMDataType::Type cimtype,
 		const String& value);
-	CIMValueImpl();
 	CIMValueImpl(const CIMValueImpl& arg);
 	explicit CIMValueImpl(Bool val);
 	explicit CIMValueImpl(bool val);
@@ -131,8 +129,6 @@ public:
 	void get(CIMClassArray& arg) const;
 	void get(CIMInstanceArray& arg) const;
 	UInt32 getArraySize() const;
-	CIMValueImpl& operator= (const CIMValueImpl& arg);
-	CIMValueImpl& set(const CIMValueImpl& arg);
 	bool equal(const CIMValueImpl& arg) const;
 	bool operator== (const CIMValueImpl& arg) const
 	{
@@ -176,8 +172,8 @@ public:
 	{
 		return m_isArray;
 	}
-	void readObject(std::istream &istrm);
-	void writeObject(std::ostream &ostrm) const;
+	static COWIntrusiveReference<CIMValueImpl> readObject(streambuf & istrm);
+	void writeObject(streambuf & ostrm) const;
 	String toString(bool forMOF=false) const;
 	String toMOF() const;
 private:
@@ -236,12 +232,12 @@ private:
 		return false;
 	}
 
-	void setupObject(const CIMValueData& odata, CIMDataType::Type type, bool isArray);
-	void destroyObject();
 	CIMDataType::Type m_type;
 	Bool m_isArray;
-	Bool m_objDestroyed;
 	CIMValueData m_obj;
+
+	// unimplemented
+	CIMValueImpl& operator= (CIMValueImpl& arg);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -262,13 +258,9 @@ CIMValue::createSimpleValue(const String& cimtype,
 }
 //////////////////////////////////////////////////////////////////////////////
 void				
-CIMValue::readObject(istream &istrm)
+CIMValue::readObject(streambuf & istrm)
 {
-	if (!m_impl)
-	{
-		m_impl = new CIMValueImpl;
-	}
-	m_impl->readObject(istrm);
+	m_impl = CIMValueImpl::readObject(istrm);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMValue::CIMValue(CIMNULL_t)
@@ -875,7 +867,7 @@ bool CIMValue::sameType(const CIMValue& x) const
 //////////////////////////////////////////////////////////////////////////////
 bool CIMValue::isArray() const {  return m_impl->isArray(); }
 //////////////////////////////////////////////////////////////////////////////
-void CIMValue::writeObject(std::ostream &ostrm) const
+void CIMValue::writeObject(streambuf & ostrm) const
 {
 	m_impl->writeObject(ostrm);
 }
@@ -908,404 +900,69 @@ CIMValue::CIMValueImpl
 CIMValue::CIMValueImpl::createSimpleValue(CIMDataType::Type type,
 	const String& value)
 {
-	CIMValueImpl cimValue;
 	switch (type)
 	{
 		case CIMDataType::UINT8:
-			cimValue = CIMValueImpl(value.toUInt8());
+			return CIMValueImpl(value.toUInt8());
 			break;
 			
 		case CIMDataType::SINT8:
-			cimValue = CIMValueImpl(value.toInt8());
+			return CIMValueImpl(value.toInt8());
 			break;
 		case CIMDataType::UINT16:
-			cimValue = CIMValueImpl(value.toUInt16());
+			return CIMValueImpl(value.toUInt16());
 			break;
 		case CIMDataType::SINT16:
-			cimValue = CIMValueImpl(value.toInt16());
+			return CIMValueImpl(value.toInt16());
 			break;
 		case CIMDataType::UINT32:
-			cimValue = CIMValueImpl(value.toUInt32());
+			return CIMValueImpl(value.toUInt32());
 			break;
 		case CIMDataType::SINT32:
-			cimValue = CIMValueImpl(value.toInt32());
+			return CIMValueImpl(value.toInt32());
 			break;
 		case CIMDataType::UINT64:
-			cimValue = CIMValueImpl(value.toUInt64());
+			return CIMValueImpl(value.toUInt64());
 			break;
 		case CIMDataType::SINT64:
-			cimValue = CIMValueImpl(value.toInt64());
+			return CIMValueImpl(value.toInt64());
 			break;
 		case CIMDataType::BOOLEAN:
-			cimValue = CIMValueImpl(value.toBool());
+			return CIMValueImpl(value.toBool());
 			break;
 		case CIMDataType::REAL32:
-			cimValue = CIMValueImpl(value.toReal32());
+			return CIMValueImpl(value.toReal32());
 			break;
 		case CIMDataType::REAL64:
-			cimValue = CIMValueImpl(value.toReal64());
+			return CIMValueImpl(value.toReal64());
 			break;
 		case CIMDataType::CHAR16:
-			cimValue = CIMValueImpl(Char16(value));
+			return CIMValueImpl(Char16(value));
 			break;
 		case CIMDataType::DATETIME:
-			cimValue = CIMValueImpl(CIMDateTime(value));
+			return CIMValueImpl(CIMDateTime(value));
 			break;
 		case CIMDataType::STRING:
-			cimValue = CIMValueImpl(value);
+			return CIMValueImpl(value);
 			break;
 		case CIMDataType::REFERENCE:
-			cimValue = CIMValueImpl(CIMObjectPath::parse(value));
+			return CIMValueImpl(CIMObjectPath::parse(value));
 			break;
 		default:
 			OW_ASSERT(0);
 	}
-	return cimValue;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl():
-	m_type(CIMDataType::CIMNULL), m_isArray(false),
-	m_objDestroyed(true), m_obj()
-{
+	return CIMValueImpl(value);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMValue::CIMValueImpl::CIMValueImpl(const CIMValueImpl& arg) :
 	COWIntrusiveCountableBase(arg),
-	m_type(CIMDataType::CIMNULL), m_isArray(false),
-	m_objDestroyed(true), m_obj()
+	m_type(arg.m_type), m_isArray(arg.m_isArray)
 {
-	setupObject(arg.m_obj, arg.m_type, arg.m_isArray);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(Bool v) :
-	m_type(CIMDataType::BOOLEAN), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	m_obj.m_booleanValue = (v) ? 1 : 0;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(bool v) :
-	m_type(CIMDataType::BOOLEAN), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	m_obj.m_booleanValue = (v) ? 1 : 0;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(UInt8 v) :
-	m_type(CIMDataType::UINT8), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	m_obj.m_uint8Value = v;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(Int8 v) :
-	m_type(CIMDataType::SINT8), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	m_obj.m_sint8Value = v;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const Char16& v) :
-	m_type(CIMDataType::CHAR16), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) Char16(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(UInt16 v) :
-	m_type(CIMDataType::UINT16), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	m_obj.m_uint16Value = v;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(Int16 v) :
-	m_type(CIMDataType::SINT16), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	m_obj.m_sint16Value = v;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(UInt32 v) :
-	m_type(CIMDataType::UINT32), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	m_obj.m_uint32Value = v;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(Int32 v) :
-	m_type(CIMDataType::SINT32), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	m_obj.m_sint32Value = v;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(UInt64 v) :
-	m_type(CIMDataType::UINT64), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	m_obj.m_uint64Value = v;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(Int64 v) :
-	m_type(CIMDataType::SINT64), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	m_obj.m_sint64Value = v;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(Real32 v) :
-	m_type(CIMDataType::REAL32), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	m_obj.m_real32Value = v;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(Real64 v) :
-	m_type(CIMDataType::REAL64), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	m_obj.m_real64Value = v;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const String& v) :
-	m_type(CIMDataType::STRING), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) String(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const CIMDateTime& v) :
-	m_type(CIMDataType::DATETIME), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) CIMDateTime(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const CIMObjectPath& v) :
-	m_type(CIMDataType::REFERENCE), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) CIMObjectPath(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const CIMClass& v) :
-	m_type(CIMDataType::EMBEDDEDCLASS), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) CIMClass(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const CIMInstance& v) :
-	m_type(CIMDataType::EMBEDDEDINSTANCE), m_isArray(false),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) CIMInstance(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const Char16Array& v) :
-	m_type(CIMDataType::CHAR16), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) Char16Array(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const UInt8Array& v) :
-	m_type(CIMDataType::UINT8), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) UInt8Array(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const Int8Array& v) :
-	m_type(CIMDataType::SINT8), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) Int8Array(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const UInt16Array& v) :
-	m_type(CIMDataType::UINT16), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) UInt16Array(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const Int16Array& v) :
-	m_type(CIMDataType::SINT16), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) Int16Array(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const UInt32Array& v) :
-	m_type(CIMDataType::UINT32), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) UInt32Array(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const Int32Array& v) :
-	m_type(CIMDataType::SINT32), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) Int32Array(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const UInt64Array& v) :
-	m_type(CIMDataType::UINT64), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) UInt64Array(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const Int64Array& v) :
-	m_type(CIMDataType::SINT64), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) Int64Array(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const Real64Array& v) :
-	m_type(CIMDataType::REAL64), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) Real64Array(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const Real32Array& v) :
-	m_type(CIMDataType::REAL32), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) Real32Array(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const StringArray& v) :
-	m_type(CIMDataType::STRING), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) StringArray(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const CIMDateTimeArray& v) :
-	m_type(CIMDataType::DATETIME), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) CIMDateTimeArray(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const CIMObjectPathArray& v) :
-	m_type(CIMDataType::REFERENCE), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) CIMObjectPathArray(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const BoolArray& v) :
-	m_type(CIMDataType::BOOLEAN), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) BoolArray(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const CIMClassArray& v) :
-	m_type(CIMDataType::EMBEDDEDCLASS), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) CIMClassArray(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::CIMValueImpl(const CIMInstanceArray& v) :
-	m_type(CIMDataType::EMBEDDEDINSTANCE), m_isArray(true),
-	m_objDestroyed(false), m_obj()
-{
-	new(&m_obj) CIMInstanceArray(v);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl::~CIMValueImpl()
-{
-	destroyObject();
-}
-//////////////////////////////////////////////////////////////////////////////
-UInt32
-CIMValue::CIMValueImpl::getArraySize() const
-{
-	if (m_type == CIMDataType::CIMNULL)
-	{
-		return 0;
-	}
-	if (!m_isArray)
-	{
-		return 1;
-	}
-	UInt32 sz = 0;
-	switch (m_type)
-	{
-		case CIMDataType::UINT8:
-			sz = (reinterpret_cast<const UInt8Array*>(&m_obj))->size();
-		break;
-		case CIMDataType::SINT8:
-			sz = (reinterpret_cast<const Int8Array*>(&m_obj))->size();
-		break;
-		case CIMDataType::UINT16:
-			sz = (reinterpret_cast<const UInt16Array*>(&m_obj))->size();
-		break;
-		case CIMDataType::SINT16:
-			sz = (reinterpret_cast<const Int16Array*>(&m_obj))->size();
-		break;
-		case CIMDataType::UINT32:
-			sz = (reinterpret_cast<const UInt32Array*>(&m_obj))->size();
-		break;
-		case CIMDataType::SINT32:
-			sz = (reinterpret_cast<const Int32Array*>(&m_obj))->size();
-		break;
-		case CIMDataType::UINT64:
-			sz = (reinterpret_cast<const UInt64Array*>(&m_obj))->size();
-		break;
-		case CIMDataType::SINT64:
-			sz = (reinterpret_cast<const Int64Array*>(&m_obj))->size();
-		break;
-		case CIMDataType::BOOLEAN:
-			sz = (reinterpret_cast<const BoolArray*>(&m_obj))->size();
-		break;
-		case CIMDataType::REAL32:
-			sz = (reinterpret_cast<const Real32Array*>(&m_obj))->size();
-		break;
-		case CIMDataType::REAL64:
-			sz = (reinterpret_cast<const Real64Array*>(&m_obj))->size();
-		break;
-		case CIMDataType::CHAR16:
-			sz = (reinterpret_cast<const Char16Array*>(&m_obj))->size();
-		break;
-		case CIMDataType::DATETIME:
-			sz = (reinterpret_cast<const CIMDateTimeArray*>(&m_obj))->size();
-		break;
-		case CIMDataType::STRING:
-			sz = (reinterpret_cast<const StringArray*>(&m_obj))->size();
-		break;
-		case CIMDataType::REFERENCE:
-			sz = (reinterpret_cast<const CIMObjectPathArray*>(&m_obj))->size();
-		break;
-		case CIMDataType::EMBEDDEDCLASS:
-			sz = (reinterpret_cast<const CIMClassArray*>(&m_obj))->size();
-		break;
-		case CIMDataType::EMBEDDEDINSTANCE:
-			sz = (reinterpret_cast<const CIMInstanceArray*>(&m_obj))->size();
-		break;
-		default:
-			sz = 0;
-	}
-	return sz;
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-CIMValue::CIMValueImpl::setupObject(const CIMValueData& odata, CIMDataType::Type type, bool isArray)
-{
-	destroyObject();
-	m_objDestroyed = false;
-	m_type = type;
-	m_isArray = isArray;
-	if (isArray)
+	OW_ASSERT(arg.m_type > CIMDataType::CIMNULL && arg.m_type < CIMDataType::MAXDATATYPE);
+
+	const CIMValueData& odata(arg.m_obj);
+
+	if (m_isArray)
 	{
 		switch (m_type)
 		{
@@ -1361,8 +1018,7 @@ CIMValue::CIMValueImpl::setupObject(const CIMValueData& odata, CIMDataType::Type
 				new(&m_obj) CIMInstanceArray(*(reinterpret_cast<const CIMInstanceArray*>(&odata)));
 			break;
 			default:
-				m_objDestroyed = true;
-				m_type = CIMDataType::CIMNULL;
+				OW_ASSERTMSG(false, "Invalid value for m_type");
 				break;
 		}
 	}
@@ -1402,21 +1058,224 @@ CIMValue::CIMValueImpl::setupObject(const CIMValueData& odata, CIMDataType::Type
 				new(&m_obj) CIMInstance(*(reinterpret_cast<const CIMInstance*>(&odata)));
 			break;
 			default:
-				m_objDestroyed = true;
-				m_type = CIMDataType::CIMNULL;
+				OW_ASSERTMSG(0, "Invalid value for m_type");
 				break;
 		}
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-void
-CIMValue::CIMValueImpl::destroyObject()
+CIMValue::CIMValueImpl::CIMValueImpl(Bool v) :
+	m_type(CIMDataType::BOOLEAN), m_isArray(false)
 {
-	if (m_objDestroyed)
-	{
-		return;
-	}
-	m_objDestroyed = true;
+	m_obj.m_booleanValue = (v) ? 1 : 0;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(bool v) :
+	m_type(CIMDataType::BOOLEAN), m_isArray(false)
+{
+	m_obj.m_booleanValue = (v) ? 1 : 0;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(UInt8 v) :
+	m_type(CIMDataType::UINT8), m_isArray(false)
+{
+	m_obj.m_uint8Value = v;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(Int8 v) :
+	m_type(CIMDataType::SINT8), m_isArray(false)
+{
+	m_obj.m_sint8Value = v;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const Char16& v) :
+	m_type(CIMDataType::CHAR16), m_isArray(false)
+{
+	new(&m_obj) Char16(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(UInt16 v) :
+	m_type(CIMDataType::UINT16), m_isArray(false)
+{
+	m_obj.m_uint16Value = v;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(Int16 v) :
+	m_type(CIMDataType::SINT16), m_isArray(false)
+{
+	m_obj.m_sint16Value = v;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(UInt32 v) :
+	m_type(CIMDataType::UINT32), m_isArray(false)
+{
+	m_obj.m_uint32Value = v;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(Int32 v) :
+	m_type(CIMDataType::SINT32), m_isArray(false)
+{
+	m_obj.m_sint32Value = v;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(UInt64 v) :
+	m_type(CIMDataType::UINT64), m_isArray(false)
+{
+	m_obj.m_uint64Value = v;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(Int64 v) :
+	m_type(CIMDataType::SINT64), m_isArray(false)
+{
+	m_obj.m_sint64Value = v;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(Real32 v) :
+	m_type(CIMDataType::REAL32), m_isArray(false)
+{
+	m_obj.m_real32Value = v;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(Real64 v) :
+	m_type(CIMDataType::REAL64), m_isArray(false)
+{
+	m_obj.m_real64Value = v;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const String& v) :
+	m_type(CIMDataType::STRING), m_isArray(false)
+{
+	new(&m_obj) String(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const CIMDateTime& v) :
+	m_type(CIMDataType::DATETIME), m_isArray(false)
+{
+	new(&m_obj) CIMDateTime(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const CIMObjectPath& v) :
+	m_type(CIMDataType::REFERENCE), m_isArray(false)
+{
+	new(&m_obj) CIMObjectPath(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const CIMClass& v) :
+	m_type(CIMDataType::EMBEDDEDCLASS), m_isArray(false)
+{
+	new(&m_obj) CIMClass(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const CIMInstance& v) :
+	m_type(CIMDataType::EMBEDDEDINSTANCE), m_isArray(false)
+{
+	new(&m_obj) CIMInstance(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const Char16Array& v) :
+	m_type(CIMDataType::CHAR16), m_isArray(true)
+{
+	new(&m_obj) Char16Array(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const UInt8Array& v) :
+	m_type(CIMDataType::UINT8), m_isArray(true)
+{
+	new(&m_obj) UInt8Array(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const Int8Array& v) :
+	m_type(CIMDataType::SINT8), m_isArray(true)
+{
+	new(&m_obj) Int8Array(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const UInt16Array& v) :
+	m_type(CIMDataType::UINT16), m_isArray(true)
+{
+	new(&m_obj) UInt16Array(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const Int16Array& v) :
+	m_type(CIMDataType::SINT16), m_isArray(true)
+{
+	new(&m_obj) Int16Array(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const UInt32Array& v) :
+	m_type(CIMDataType::UINT32), m_isArray(true)
+{
+	new(&m_obj) UInt32Array(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const Int32Array& v) :
+	m_type(CIMDataType::SINT32), m_isArray(true)
+{
+	new(&m_obj) Int32Array(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const UInt64Array& v) :
+	m_type(CIMDataType::UINT64), m_isArray(true)
+{
+	new(&m_obj) UInt64Array(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const Int64Array& v) :
+	m_type(CIMDataType::SINT64), m_isArray(true)
+{
+	new(&m_obj) Int64Array(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const Real64Array& v) :
+	m_type(CIMDataType::REAL64), m_isArray(true)
+{
+	new(&m_obj) Real64Array(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const Real32Array& v) :
+	m_type(CIMDataType::REAL32), m_isArray(true)
+{
+	new(&m_obj) Real32Array(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const StringArray& v) :
+	m_type(CIMDataType::STRING), m_isArray(true)
+{
+	new(&m_obj) StringArray(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const CIMDateTimeArray& v) :
+	m_type(CIMDataType::DATETIME), m_isArray(true)
+{
+	new(&m_obj) CIMDateTimeArray(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const CIMObjectPathArray& v) :
+	m_type(CIMDataType::REFERENCE), m_isArray(true)
+{
+	new(&m_obj) CIMObjectPathArray(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const BoolArray& v) :
+	m_type(CIMDataType::BOOLEAN), m_isArray(true)
+{
+	new(&m_obj) BoolArray(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const CIMClassArray& v) :
+	m_type(CIMDataType::EMBEDDEDCLASS), m_isArray(true)
+{
+	new(&m_obj) CIMClassArray(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(const CIMInstanceArray& v) :
+	m_type(CIMDataType::EMBEDDEDINSTANCE), m_isArray(true)
+{
+	new(&m_obj) CIMInstanceArray(v);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::~CIMValueImpl()
+{
 	if (m_isArray)
 	{
 		switch (m_type)
@@ -1510,25 +1369,92 @@ CIMValue::CIMValueImpl::destroyObject()
 			case CIMDataType::EMBEDDEDINSTANCE:
 				(reinterpret_cast<CIMInstance*>(&m_obj))->~CIMInstance();
 				break;
+#if defined(__GNUC__) && (__GNUC__ == 4)
+// This shouldn't really be here, as the only time a data type is marked as
+// CIMNULL is when it is destroyed, but there seems to be a bug in GCC 4.0
+// (noticed on both MacOS and Linux X86) that can be hidden by adding this.  It
+// doesn't fix the problem, but it masks it so it is no longer visible.
+//
+// TODO: At some point in time the real cause of this problem should be located
+// and this should be removed.
+			case CIMDataType::CIMNULL:
+				break;
+#endif
 			default:
 				assert(0); // don't want to throw from a destructor, just segfault
 		}
 	}
-	m_type = CIMDataType::CIMNULL;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl&
-CIMValue::CIMValueImpl::set(const CIMValueImpl& arg)
+UInt32
+CIMValue::CIMValueImpl::getArraySize() const
 {
-	setupObject(arg.m_obj, arg.m_type, arg.m_isArray);
-	return *this;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMValue::CIMValueImpl&
-CIMValue::CIMValueImpl::operator= (const CIMValueImpl& arg)
-{
-	set(arg);
-	return *this;
+	if (m_type == CIMDataType::CIMNULL)
+	{
+		return 0;
+	}
+	if (!m_isArray)
+	{
+		return 1;
+	}
+	UInt32 sz = 0;
+	switch (m_type)
+	{
+		case CIMDataType::UINT8:
+			sz = (reinterpret_cast<const UInt8Array*>(&m_obj))->size();
+		break;
+		case CIMDataType::SINT8:
+			sz = (reinterpret_cast<const Int8Array*>(&m_obj))->size();
+		break;
+		case CIMDataType::UINT16:
+			sz = (reinterpret_cast<const UInt16Array*>(&m_obj))->size();
+		break;
+		case CIMDataType::SINT16:
+			sz = (reinterpret_cast<const Int16Array*>(&m_obj))->size();
+		break;
+		case CIMDataType::UINT32:
+			sz = (reinterpret_cast<const UInt32Array*>(&m_obj))->size();
+		break;
+		case CIMDataType::SINT32:
+			sz = (reinterpret_cast<const Int32Array*>(&m_obj))->size();
+		break;
+		case CIMDataType::UINT64:
+			sz = (reinterpret_cast<const UInt64Array*>(&m_obj))->size();
+		break;
+		case CIMDataType::SINT64:
+			sz = (reinterpret_cast<const Int64Array*>(&m_obj))->size();
+		break;
+		case CIMDataType::BOOLEAN:
+			sz = (reinterpret_cast<const BoolArray*>(&m_obj))->size();
+		break;
+		case CIMDataType::REAL32:
+			sz = (reinterpret_cast<const Real32Array*>(&m_obj))->size();
+		break;
+		case CIMDataType::REAL64:
+			sz = (reinterpret_cast<const Real64Array*>(&m_obj))->size();
+		break;
+		case CIMDataType::CHAR16:
+			sz = (reinterpret_cast<const Char16Array*>(&m_obj))->size();
+		break;
+		case CIMDataType::DATETIME:
+			sz = (reinterpret_cast<const CIMDateTimeArray*>(&m_obj))->size();
+		break;
+		case CIMDataType::STRING:
+			sz = (reinterpret_cast<const StringArray*>(&m_obj))->size();
+		break;
+		case CIMDataType::REFERENCE:
+			sz = (reinterpret_cast<const CIMObjectPathArray*>(&m_obj))->size();
+		break;
+		case CIMDataType::EMBEDDEDCLASS:
+			sz = (reinterpret_cast<const CIMClassArray*>(&m_obj))->size();
+		break;
+		case CIMDataType::EMBEDDEDINSTANCE:
+			sz = (reinterpret_cast<const CIMInstanceArray*>(&m_obj))->size();
+		break;
+		default:
+			sz = 0;
+	}
+	return sz;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -2241,34 +2167,37 @@ CIMValue::CIMValueImpl::get(CIMInstanceArray& arg) const
 	}
 	arg = *(reinterpret_cast<const CIMInstanceArray*>(&m_obj));
 }
+
+namespace
+{
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-static inline String toString(const T& x)
+inline String toString(const T& x)
 {
 	return String(x);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static inline String toString(const CIMObjectPath& x)
+inline String toString(const CIMObjectPath& x)
 {
 	return x.toString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static inline String toString(const Char16& x)
+inline String toString(const Char16& x)
 {
 	return x.toString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static inline String toString(const CIMDateTime& x)
+inline String toString(const CIMDateTime& x)
 {
 	return x.toString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-static String raToString(const T& ra, bool forMOF=false)
+String raToString(const T& ra, bool forMOF=false)
 {
 	StringBuffer out;
 	for (size_t i = 0; i < ra.size(); i++)
@@ -2291,7 +2220,7 @@ static String raToString(const T& ra, bool forMOF=false)
 	return out.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
-static String
+String
 raToString(const Array<String>& ra, bool forMOF=false)
 {
 	StringBuffer out;
@@ -2315,7 +2244,7 @@ raToString(const Array<String>& ra, bool forMOF=false)
 	return out.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
-static String
+String
 raToString(const Array<CIMClass>& ra, bool forMOF=false)
 {
 	StringBuffer out;
@@ -2339,7 +2268,7 @@ raToString(const Array<CIMClass>& ra, bool forMOF=false)
 	return out.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
-static String
+String
 raToString(const Array<CIMInstance>& ra, bool forMOF=false)
 {
 	StringBuffer out;
@@ -2362,7 +2291,7 @@ raToString(const Array<CIMInstance>& ra, bool forMOF=false)
 	}
 	return out.releaseString();
 }
-static String
+String
 raToString(const Array<Bool>& ra, bool isString=false)
 {
 	StringBuffer out;
@@ -2384,6 +2313,8 @@ raToString(const Array<Bool>& ra, bool isString=false)
 	}
 	return out.releaseString();
 }
+} // end unnamed namespace
+
 //////////////////////////////////////////////////////////////////////////////
 String
 CIMValue::CIMValueImpl::toString(bool forMOF) const
@@ -2583,7 +2514,7 @@ CIMValue::CIMValueImpl::toMOF() const
 //					3 = 64 bit
 template<class T>
 void
-readValue(istream& istrm, T& val, int convType)
+readValue(streambuf & istrm, T & val, int convType)
 {
 	BinarySerialization::read(istrm, &val, sizeof(val));
 	switch (convType)
@@ -2603,7 +2534,7 @@ readValue(istream& istrm, T& val, int convType)
 }
 //////////////////////////////////////////////////////////////////////////////
 static Real64
-readReal64Value(istream& istrm)
+readReal64Value(streambuf & istrm)
 {
 	String rstr;
 	rstr.readObject(istrm);
@@ -2611,7 +2542,7 @@ readReal64Value(istream& istrm)
 }
 //////////////////////////////////////////////////////////////////////////////
 static Real32
-readReal32Value(istream& istrm)
+readReal32Value(streambuf & istrm)
 {
 	String rstr;
 	rstr.readObject(istrm);
@@ -2624,7 +2555,7 @@ readReal32Value(istream& istrm)
 //					3 = 64 bit
 template<class T>
 void
-readArray(istream& istrm, T& ra, int convType)
+readArray(streambuf & istrm, T & ra, int convType)
 {
 	ra.clear();
 	UInt32 sz;
@@ -2651,7 +2582,7 @@ readArray(istream& istrm, T& ra, int convType)
 	}
 }
 static void
-readReal32Array(istream& istrm, Array<Real32>& ra)
+readReal32Array(streambuf & istrm, Array<Real32> & ra)
 {
 	ra.clear();
 	UInt32 sz;
@@ -2663,7 +2594,7 @@ readReal32Array(istream& istrm, Array<Real32>& ra)
 	}
 }
 static void
-readReal64Array(istream& istrm, Array<Real64>& ra)
+readReal64Array(streambuf & istrm, Array<Real64> & ra)
 {
 	ra.clear();
 	UInt32 sz;
@@ -2677,26 +2608,21 @@ readReal64Array(istream& istrm, Array<Real64>& ra)
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 void
-readObjectArray(istream& istrm, T& ra)
+readObjectArray(streambuf & istrm, T & ra)
 {
 	BinarySerialization::readArray(istrm, ra);
-//	ra.clear();
-//	Int32 sz;
-//	readValue(istrm, sz, 2);
-//	for (Int32 i = 0; i < sz; i++)
-//	{
-//		typename T::value_type v;
-//		v.readObject(istrm);
-//		ra.push_back(v);
-//	}
 }
 //////////////////////////////////////////////////////////////////////////////
-void
-CIMValue::CIMValueImpl::readObject(istream &istrm)
+// static
+COWIntrusiveReference<CIMValue::CIMValueImpl>
+CIMValue::CIMValueImpl::readObject(streambuf & istrm)
 {
+	COWIntrusiveReference<CIMValue::CIMValueImpl> rval(new CIMValue::CIMValueImpl(0));
+	CIMDataType::Type& m_type(rval->m_type);
+	Bool& m_isArray(rval->m_isArray);
+	CIMValueData& m_obj(rval->m_obj);
+
 	CIMBase::readSig( istrm, OW_CIMVALUESIG );
-	destroyObject();
-	m_objDestroyed = false;
 	UInt32 tmp;
 	BinarySerialization::readLen(istrm, tmp);
 	m_type = CIMDataType::Type(tmp);
@@ -2842,6 +2768,7 @@ CIMValue::CIMValueImpl::readObject(istream &istrm)
 				OW_ASSERT(0);
 		}
 	}
+	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
 // convType:	0 = no conversion
@@ -2850,7 +2777,7 @@ CIMValue::CIMValueImpl::readObject(istream &istrm)
 //					3 = 64 bit
 template<class T>
 void
-writeValue(ostream& ostrm, T val, int convType)
+writeValue(streambuf & ostrm, T val, int convType)
 {
 	T v;
 	switch (convType)
@@ -2874,7 +2801,7 @@ writeValue(ostream& ostrm, T val, int convType)
 	BinarySerialization::write(ostrm, &v, sizeof(v));
 }
 static void
-writeRealValue(ostream& ostrm, Real64 rv)
+writeRealValue(streambuf & ostrm, Real64 rv)
 {
 	String v(rv);
 	v.writeObject(ostrm);
@@ -2886,7 +2813,7 @@ writeRealValue(ostream& ostrm, Real64 rv)
 //					3 = 64 bit
 template<class T>
 void
-writeArray(ostream& ostrm, const T& ra, int convType)
+writeArray(streambuf & ostrm, const T & ra, int convType)
 {
 	UInt32 sz = ra.size();
 	BinarySerialization::writeLen(ostrm, sz);
@@ -2915,7 +2842,7 @@ writeArray(ostream& ostrm, const T& ra, int convType)
 	}
 }
 static void
-writeArray(ostream& ostrm, const Array<Real32>& ra)
+writeArray(streambuf & ostrm, const Array<Real32> & ra)
 {
 	UInt32 sz = ra.size();
 	BinarySerialization::writeLen(ostrm, sz);
@@ -2925,7 +2852,7 @@ writeArray(ostream& ostrm, const Array<Real32>& ra)
 	}
 }
 static void
-writeArray(ostream& ostrm, const Array<Real64>& ra)
+writeArray(streambuf & ostrm, const Array<Real64> & ra)
 {
 	UInt32 sz = ra.size();
 	BinarySerialization::writeLen(ostrm, sz);
@@ -2937,7 +2864,7 @@ writeArray(ostream& ostrm, const Array<Real64>& ra)
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 void
-writeObjectArray(ostream& ostrm, const T& ra)
+writeObjectArray(streambuf & ostrm, const T & ra)
 {
 	BinarySerialization::writeArray(ostrm, ra);
 //	Int32 sz = ra.size();
@@ -2949,7 +2876,7 @@ writeObjectArray(ostream& ostrm, const T& ra)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMValue::CIMValueImpl::writeObject(ostream &ostrm) const
+CIMValue::CIMValueImpl::writeObject(streambuf & ostrm) const
 {
 	CIMBase::writeSig(ostrm, OW_CIMVALUESIG);
 	BinarySerialization::writeLen(ostrm, m_type);

@@ -1,0 +1,14 @@
+Makefile.in
+Makefile
+.deps
+.*.libs
+*.lo
+*.la
+lib*so*
+lib*dylib*
+*.imp
+*.exp
+*.nlm
+*.nlm.*
+lib*sl*
+owoopcpp1pr

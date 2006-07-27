@@ -59,7 +59,7 @@ namespace OW_NAMESPACE
  * to one of these.  When a [M-]POST or OPTIONS is done, the process() and
  * options() functions for this class are called, respectively.
  */
-class OW_COMMON_API RequestHandlerIFC : public ServiceIFC
+class OW_COMMON_API RequestHandlerIFC : virtual public ServiceIFC
 {
 public:
 	RequestHandlerIFC();
@@ -89,8 +89,6 @@ public:
 	void options(CIMFeatures& cf, OperationContext& context)
 		{  doOptions(cf, context); }
 	virtual RequestHandlerIFC* clone() const = 0;
-	ServiceEnvironmentIFCRef getEnvironment() const;
-	virtual void setEnvironment(const ServiceEnvironmentIFCRef& env);
 	virtual StringArray getSupportedContentTypes() const = 0;
 	virtual String getContentType() const = 0;
 	String getCIMError() const { return m_cimError; }
@@ -106,7 +104,18 @@ public:
 		m_errorCode = 0;
 		m_errorDescription.erase();
 	}
+
 protected:
+
+	void setEnvironment(const ServiceEnvironmentIFCRef& env);
+	ServiceEnvironmentIFCRef getEnvironment() const;
+	String m_cimError;
+	String getHost();
+	String m_cachedHost;
+
+private:
+
+	// derived class implementation interface
 	/**
 	 * The HTTP server calls this once all HTTP headers have been processed
 	 * and removed from the input stream.  Also, the http server takes care
@@ -125,10 +134,8 @@ protected:
 	 * @param path The requested path
 	 */
 	virtual void doOptions(CIMFeatures& cf, OperationContext& context) = 0;
-	String m_cimError;
-	String getHost();
-	String m_cachedHost;
-private:
+
+
 	// set these through setError() and clearError()
 	bool m_hasError;
 	Int32 m_errorCode;

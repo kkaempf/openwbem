@@ -77,7 +77,6 @@ public:
 		const Array<CIMClass>& cimClasses,
 		const AuthenticatorIFCRef& authenticator,
 		const Array<RequestHandlerIFCRef>& requestHandlers,
-		const LoggerRef& logger,
         const String& callbackURL,
 		const Reference<Array<SelectablePair_t> >& selectables,
 		const ProviderAgentLockerIFCRef& locker);
@@ -108,13 +107,10 @@ public:
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&,
 		EBypassProvidersFlag bypassProviders,
 		ELockingFlag locking) const;
-	virtual LoggerRef getLogger() const;
-	virtual LoggerRef getLogger(const String& componentName) const;
 
 private:
 	ConfigFile::ConfigMap m_configItems;
 	AuthenticatorIFCRef m_authenticator;
-	LoggerRef m_logger;
 	String m_callbackURL;
 	Array<RequestHandlerIFCRef> m_requestHandlers;
 	Reference<Array<SelectablePair_t> > m_selectables;

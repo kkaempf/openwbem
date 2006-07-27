@@ -50,30 +50,26 @@ public:
 	TempFileEnumerationImpl()
 	{
 	}
-	TempFileEnumerationImpl(String const& filename)
-	: TempFileEnumerationImplBase(filename)
-	{
-	}
 	virtual ~TempFileEnumerationImpl()
 	{
 	}
 	void nextElement(T& out)
 	{
 		throwIfEmpty();
-		out.readObject(m_Data);
+		out.readObject(*m_Data.rdbuf());
 		--m_size;
 	}
 	T nextElement()
 	{
 		throwIfEmpty();
 		T retval;
-		retval.readObject(m_Data);
+		retval.readObject(*m_Data.rdbuf());
 		--m_size;
 		return retval;
 	}
 	void addElement( const T& arg )
 	{
-		arg.writeObject(m_Data);
+		arg.writeObject(*m_Data.rdbuf());
 		++m_size;
 	}
 private:
@@ -88,11 +84,6 @@ class Enumeration
 public:
 	Enumeration()
 	: m_impl( new TempFileEnumerationImpl<T> )
-	{
-	}
-	// Build an enumeration out of the file referenced by filename
-	Enumeration(String const& filename)
-	: m_impl( new TempFileEnumerationImpl<T>(filename) )
 	{
 	}
 	bool hasMoreElements() const
@@ -118,12 +109,6 @@ public:
 	void clear()
 	{
 		m_impl->clear();
-	}
-	// Returns the filename of the file that contains the enumeration data.
-	// After this call, the enumeration will not contain any items.
-	String releaseFile()
-	{
-		return m_impl->releaseFile();
 	}
 	bool usingTempFile() const
 	{

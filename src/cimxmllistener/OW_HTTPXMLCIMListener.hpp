@@ -61,15 +61,12 @@ class OW_LISTENER_API HTTPXMLCIMListener
 {
 public:
 	/**
-	 * @param logger If a logger specified then it will receive log messages, otherwise
-	 *  all log messages will be discarded.
 	 * @param certFileName Filename of a certificate to use for HTTPS. If none specified,
 	 *  listner will receive over HTTP instead.
 	 * @param keyFileName Filename of a private key to use for HTTPS. If none specified,
 	 *  will attempt to use a key found in the same file as the certificate.
 	 */
-	HTTPXMLCIMListener(const LoggerRef& logger = LoggerRef(0),
-		const String& certFileName = String(), const String& keyFileName = String());
+	HTTPXMLCIMListener(const String& certFileName = String(), const String& keyFileName = String());
 	~HTTPXMLCIMListener();
 	/**
 	 * Register for an indication.  The destructor will attempt to deregister

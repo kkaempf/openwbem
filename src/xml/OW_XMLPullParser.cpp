@@ -105,7 +105,7 @@ String
 XMLPullParser::getAttribute(const char* const attrId, bool throwIfError) const
 {
 	OW_ASSERT(m_curTok.type == XMLToken::START_TAG);
-	for (unsigned i = 0; i < m_curTok.attributeCount; i++)
+	for (unsigned i = 0; i < m_curTok.attributes.size(); i++)
 	{
 		const XMLToken::Attribute& attr = m_curTok.attributes[i];
 		// Should this be case insensentive? NO
@@ -259,7 +259,7 @@ std::ostream& operator<<(std::ostream& ostr, const XMLPullParser& p)
 			break;
 		case XMLToken::START_TAG:
 			ostr << '<' << p.m_curTok.text << ' ';
-			for (unsigned int x = 0; x < p.m_curTok.attributeCount; ++x)
+			for (unsigned int x = 0; x < p.m_curTok.attributes.size(); ++x)
 			{
 				ostr << p.m_curTok.attributes[x].name << "=\"" <<
 					p.m_curTok.attributes[x].value << "\" ";

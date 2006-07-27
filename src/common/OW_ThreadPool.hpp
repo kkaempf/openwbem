@@ -41,6 +41,7 @@
 #include "OW_Runnable.hpp"
 #include "OW_Exception.hpp"
 #include "OW_Logger.hpp"
+#include "OW_Timeout.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -72,14 +73,14 @@ public:
 	/**
 	 * Constructor
 	 *
-	 * @param poolType The type of pool, either FIXED_SIZE or DYNAMIC_SIZE
+	 * @param poolType The type of pool, one of the following:
 	 * FIXED_SIZE - numThreads threads will be created at instantiation time.
 	 *  No threads are created or destroyed until the pool is shutdown.
 	 * DYNAMIC_SIZE - Threads will be created as work is added.  The number
 	 *  of threads will always be less than numThreads. Threads exit when no
 	 *  more work is available in the queue for 1 second.
 	 * DYNAMIC_SIZE_NO_QUEUE - Threads will be created as work is added.  
-	 *  The number of threads will always be less than numThreads. Threads 
+	 *  The number of threads will always be less than or equal to numThreads. Threads 
 	 *  exit when no more work is available in the queue for 1 second. A queue
 	 *  with numThreads size is used, however addWork() and tryAddWork() will
 	 *  not allow the number of threads plus the number of RunnableRefs in the
@@ -98,7 +99,8 @@ public:
 	 *
 	 * @throw ThreadPoolException if the underlying implementation fails.
 	 */
-	ThreadPool(PoolType poolType, UInt32 numThreads, UInt32 maxQueueSize, const LoggerRef& logger=LoggerRef(), const String& poolName="");
+	ThreadPool(PoolType poolType, UInt32 numThreads, UInt32 maxQueueSize, const Logger& logger, const String& poolName="");
+	ThreadPool(PoolType poolType, UInt32 numThreads, UInt32 maxQueueSize, const String& poolName="");
 	/**
 	 * Add an RunnableRef for the pool to execute.
 	 * If the queue is full, this call will block until there is space in the queue.
@@ -111,6 +113,12 @@ public:
 	 * @return true if added to the queue, false if not.
 	 */
 	bool tryAddWork(const RunnableRef& work);
+	/**
+	 * Add an RunnableRef for the pool to execute.
+	 * If the queue is full, this call will block until the timeout has expired.
+	 * @return true if added to the queue, false if not.
+	 */
+	bool tryAddWork(const RunnableRef& work, const Timeout& timeout);
 	enum EShutdownQueueFlag
 	{
 		E_DISCARD_WORK_IN_QUEUE,
@@ -124,14 +132,40 @@ public:
 	 *  current work in the queue, before shutting down.  If E_DISCARD_WORK_IN_QUEUE, the work in
 	 *  the queue will be discarded.
 	 *
-	 * @param timeoutSecs The number of seconds to wait for the threads to finish
+	 * @param timeout The length of time to wait for the threads to finish
 	 *  their work (and possibly the work in the queue) before attempting to
-	 *  cancel the threads.  If timeoutSecs < 0, the timeout will be unlimited,
+	 *  shutdown & cancel the threads.  If the timeout is infinite, then
 	 *  the threads will not be cancelled, and shutdown() will return once
 	 *  all the threads have exited (which may never happen if one or more
 	 *  of the threads are deadlocked).
 	 */
-	void shutdown(EShutdownQueueFlag finishWorkInQueue = E_FINISH_WORK_IN_QUEUE, int timeoutSecs=-1);
+	void shutdown(EShutdownQueueFlag finishWorkInQueue = E_FINISH_WORK_IN_QUEUE, const Timeout& timeout = Timeout::infinite);
+	void shutdown(EShutdownQueueFlag finishWorkInQueue, int timeoutSecs) OW_DEPRECATED; // in 4.0.0
+	
+	/**
+	 * Instruct all threads to exit and stop working.  After shutdown() is
+	 * called, addWork() and tryAddWork() will return false. Both timeouts
+	 * are measure from the start of the function.
+	 *
+	 * @param finishWorkInQueue If E_FINISH_WORK_IN_QUEUE, threads will continue to process the
+	 *  current work in the queue, before shutting down.  If E_DISCARD_WORK_IN_QUEUE, the work in
+	 *  the queue will be discarded.
+	 *
+	 * @param shutdownTimeout The length of time to wait for the threads to finish
+	 *  their work (and possibly the work in the queue) before attempting to
+	 *  shutdown the threads.  If the timeout is infinite, then
+	 *  the threads will not be shutdown, and shutdown() will return once
+	 *  all the threads have exited (which may never happen if one or more
+	 *  of the threads are deadlocked).
+	 * 
+	 * @param definitiveCancelTimeout The length of time to wait for the 
+	 *  threads to exit before attempting to definitively cancel the threads.  
+	 *  If the timeout is infinite, then the threads will not be cancelled, 
+	 *  and shutdown() will return once all the threads have exited (which 
+	 *  may never happen if one or more of the threads are deadlocked).
+	 */
+	void shutdown(EShutdownQueueFlag finishWorkInQueue, const Timeout& shutdownTimeout, const Timeout& definitiveCancelTimeout);
+	
 	/**
 	 * Wait for the queue to empty out.
 	 */

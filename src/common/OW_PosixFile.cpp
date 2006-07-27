@@ -35,6 +35,8 @@
 
 #include "OW_config.h"
 #include "OW_File.hpp"
+#include "OW_Logger.hpp"
+#include "OW_Format.hpp"
 
 #ifdef OW_WIN32
 	#include <io.h>
@@ -126,8 +128,19 @@ File::unlock()
 #else	// NOT WIN32
 
 /////////////////////////////////////////////////////////////////////////////
-File::File(const File& x) : m_hdl(dup(x.m_hdl))
+File::File(const File& x) : m_hdl(x.m_hdl != OW_INVALID_FILEHANDLE ? dup(x.m_hdl) : OW_INVALID_FILEHANDLE)
 {
+}
+
+/////////////////////////////////////////////////////////////////////////////
+File::~File()
+{
+	if (close() == -1)
+	{
+		int lerrno = errno;
+		Logger lgr("ow.common");
+		OW_LOG_ERROR(lgr, Format("Closing file handle %1 failed: %2", m_hdl, lerrno));
+	}
 }
 
 namespace {

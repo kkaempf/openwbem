@@ -63,6 +63,8 @@ ClientCIMOMHandleConnectionPool::getConnection(const String& url)
 		m_pool.erase(iter);
 		return rv;
 	}
+	// Not reachable.
+	return ClientCIMOMHandleRef();
 }
 
 //////////////////////////////////////////////////////////////////////////////

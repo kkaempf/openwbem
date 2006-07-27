@@ -3,6 +3,8 @@ SUBDIRS = socketCat xml_input
 EXTRA_DIST = \
 CIM_Min25.mof \
 ACLTest.mof \
+ACLTestBasic.mof \
+ACLTestPerms.mof \
 EnumClassesInput.xml \
 GetFeatures.out \
 MultiReqInput.xml \

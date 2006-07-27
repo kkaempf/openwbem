@@ -34,40 +34,17 @@
 
 #include "OW_config.h"
 #include "OW_CerrLogger.hpp"
-#include "OW_Mutex.hpp"
-#include "OW_MutexLock.hpp"
-#include "OW_LogMessage.hpp"
-
-#include <iostream>
+#include "OW_CerrAppender.hpp"
 
 namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
 CerrLogger::CerrLogger()
-	: Logger("cerr", E_ALL_LEVEL)
+	: Logger("cerr", LogAppenderRef(new CerrAppender()))
 {
 }
 
-namespace
-{
-	Mutex guard;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-void
-CerrLogger::doProcessLogMessage(const LogMessage& message) const
-{
-	MutexLock l(guard);
-	std::clog << message.message << std::endl;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-LoggerRef
-CerrLogger::doClone() const
-{
-	return LoggerRef(new CerrLogger(*this));
-}
 
 } // end namespace OW_NAMESPACE
 

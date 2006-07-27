@@ -68,6 +68,9 @@ public:
 	virtual void shutdown();
 
 	void addPolledProvider(const PolledProviderIFCRef& p);
+	void addPolledProvider(const PolledProviderIFCRef& p, Int32 initialPollingInterval);
+	void removePolledProvider(const PolledProviderIFCRef& p);
+
 private:
 	IntrusiveReference<PollingManagerThread> m_pollingManagerThread;
 };
@@ -84,6 +87,8 @@ public:
 		m_startedBarrier.wait();
 	}
 	void addPolledProvider(const PolledProviderIFCRef& p);
+	void addPolledProvider(const PolledProviderIFCRef& p, Int32 initialPollingInterval);
+	void removePolledProvider(const PolledProviderIFCRef& p);
 protected:
 	virtual Int32 run();
 private:
@@ -99,8 +104,9 @@ private:
 		Int32 m_pollInterval;
 		PollingManagerThread* m_pollMan;
 		ServiceEnvironmentIFCRef m_env;
-		LoggerRef m_logger;
+		Logger m_logger;
 	private:
+		void doShutdown();
 		void doCooperativeCancel();
 		void doDefinitiveCancel();
 	};
@@ -111,7 +117,7 @@ private:
 	Condition m_triggerCondition;
 	ServiceEnvironmentIFCRef m_env;
 	ProviderManagerRef m_providerManager;
-	LoggerRef m_logger;
+	Logger m_logger;
 	ThreadBarrier m_startedBarrier;
 	ThreadPoolRef m_triggerRunnerThreadPool;
 
@@ -121,7 +127,7 @@ private:
 	void processTriggers();
 	friend class TriggerRunner;
 
-	virtual void doCooperativeCancel();
+	virtual void doShutdown();
 };
 
 } // end namespace OW_NAMESPACE

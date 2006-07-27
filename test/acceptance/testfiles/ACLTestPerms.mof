@@ -1,0 +1,8 @@
+#pragma namespace("root/security")
+
+instance of OpenWBEM_UserACL
+{
+	nspace = "root/security";
+	username = "test1";
+	capability = "rwR";
+};

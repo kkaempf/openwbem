@@ -34,6 +34,7 @@
 
 #include "OW_config.h"
 #include "OW_NullLogger.hpp"
+#include "OW_NullAppender.hpp"
 
 #include <iostream>
 
@@ -42,21 +43,8 @@ namespace OW_NAMESPACE
 
 /////////////////////////////////////////////////////////////////////////////
 NullLogger::NullLogger()
-	: Logger("null", E_NONE_LEVEL)
+	: Logger("null", LogAppenderRef(new NullAppender()))
 {
-}
-
-/////////////////////////////////////////////////////////////////////////////
-void
-NullLogger::doProcessLogMessage(const LogMessage& message) const
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////
-LoggerRef
-NullLogger::doClone() const
-{
-	return LoggerRef(new NullLogger(*this));
 }
 
 } // end namespace OW_NAMESPACE

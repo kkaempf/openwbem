@@ -39,7 +39,6 @@
 #include "OW_Types.hpp"
 #include "OW_COWIntrusiveReference.hpp"
 #include "OW_CommonFwd.hpp"
-#include "OW_CIMFwd.hpp"
 #include "OW_Exception.hpp"
 #include <iosfwd>
 
@@ -154,20 +153,6 @@ public:
 	 * @param parm	The Char16 object this string will represent.
 	 */
 	explicit String(const Char16& parm) OW_DEPRECATED;
-	/**
-	 * DEPRECATED in favor of CIMDateTime::toString() in 3.1.0.
-	 * Create a new String object that will contain the representation of
-	 * an CIMDateTime object
-	 * @param parm the CIMDateTime object this string will represent.
-	 */
-	explicit String(const CIMDateTime& parm) OW_DEPRECATED;
-	/**
-	 * DEPRECATED in favor of CIMObjectPath::toString() in 3.1.0.
-	 * Create a new String object that will contain the representation of
-	 * an CIMObjectPath object.
-	 * @param parm the CIMObject path object this string will represent.
-	 */
-	explicit String(const CIMObjectPath& parm) OW_DEPRECATED;
 	enum ETakeOwnershipFlag
 	{
 		E_TAKE_OWNERSHIP
@@ -479,19 +464,19 @@ public:
 
 	/**
 	 * Determine if this String object starts with a given substring.
-	 * @param arg The String object to search the beginning of this String
-	 * object for.
+	 * @param arg The substring to test for.  NULL is considered an empty string.
 	 * @param ignoreCase	If true, case of the characters will be ignored.
-	 * @return true if this String object starts with the given string.
+	 * @return true if this String object starts with @a arg, i.e., @a arg is
+	 * a prefix of *this.  Note that the empty string is a prefix of all strings.
 	 * Otherwise false.
 	 */
 	bool startsWith(const char* arg, EIgnoreCaseFlag ignoreCase = E_CASE_SENSITIVE) const;
 	/**
 	 * Determine if this String object starts with a given substring.
-	 * @param arg The String object to search the beginning of this String
-	 * object for.
+	 * @param arg The substring to test for.
 	 * @param ignoreCase	If true, case of the characters will be ignored.
-	 * @return true if this String object starts with the given string.
+	 * @return true if this String object starts with @a arg, i.e., @a arg is
+	 * a prefix of *this.  Note that the empty string is a prefix of all strings.
 	 * Otherwise false.
 	 */
 	bool startsWith(const String& arg, EIgnoreCaseFlag ignoreCase = E_CASE_SENSITIVE) const
@@ -608,13 +593,13 @@ public:
 	 * @param istrm	The input stream to read this String from.
 	 * @exception IOException
 	 */
-	void readObject(std::istream& istrm);
+	void readObject(std::streambuf & istrm);
 	/**
 	 * Write this String object to the given ostream.
 	 * @param ostrm	The output stream to write this String to.
 	 * @exception IOException
 	 */
-	void writeObject(std::ostream& ostrm) const;
+	void writeObject(std::streambuf & ostrm) const;
 	/**
 	 * @return A copy of this String object.
 	 */
@@ -691,12 +676,6 @@ public:
 	 * @throws StringConversionException if the conversion is impossible.
 	 */
 	int toInt(int base=10) const;
-	/**
-	 * DEPRECATED in favor of CIMDateTime::CIMDateTime(const String&) in 3.1.0.
-	 * @return The CIMDateTime value of this String object.
-	 * @throws CIMDateTimeException if the string is not a valid CIMDateTime.
-	 */
-	CIMDateTime toDateTime() const OW_DEPRECATED;
 	/**
 	 * Convert a null terminated string to an unsigned 64 bit value.
 	 * @param nptr A pointer to beginning of string to convert.

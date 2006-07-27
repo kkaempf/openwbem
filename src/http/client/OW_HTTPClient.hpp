@@ -43,6 +43,9 @@
 #include "OW_CIMProtocolIFC.hpp"
 #include "OW_URL.hpp"
 #include "OW_CommonFwd.hpp"
+#include "OW_ClientFwd.hpp"
+#include "OW_SSLCtxMgr.hpp"
+#include "OW_SPNEGOHandler.hpp"
 
 #if defined(GOOD)
 #undef GOOD
@@ -89,7 +92,7 @@ public:
 	 */
 	HTTPClient(const String& url, const SSLClientCtxRef& sslCtx = SSLClientCtxRef());
 	virtual ~HTTPClient();
-	virtual Reference<std::iostream> beginRequest(
+	virtual Reference<std::ostream> beginRequest(
 			const String& methodName, const String& cimObject);
 
 	/**
@@ -111,12 +114,14 @@ public:
 	 * @exception SocketException
 	 *
 	 */
-	virtual CIMProtocolIStreamIFCRef endRequest(
-		const Reference<std::iostream>& request,
+	virtual Reference<std::istream> endRequest(
+		const Reference<std::ostream>& request,
 		const String& methodName,
 		const String& cimObject,
 		ERequestType requestType,
 		const String& cimProtocolVersion);
+
+	virtual void endResponse(std::istream & istr);
 
 	/**
 	 * Sends an OPTIONS request to the HTTP server, and reports the
@@ -154,6 +159,8 @@ public:
 	 */
 	void assumeBasicAuth();
 
+	void assumeSPNEGOAuth();
+
 	/**
 	 * Close the connetion to the CIMOM. This will free resources used for the
 	 * client session.
@@ -177,42 +184,47 @@ public:
 	 */
 	bool getResponseHeader(const String& hdrName, String& valueOut) const;
 
-	static const int INFINITE_TIMEOUT = -1;
+	static const int INFINITE_TIMEOUT OW_DEPRECATED = -1; // in 4.0.0
 	/**
 	 * Set the receive timeout on the socket
-	 * @param seconds the number of seconds for the receive timeout
+	 * @param timeout The timeout to use when waiting for data
 	 */
-	virtual void setReceiveTimeout(int seconds);
+	virtual void setReceiveTimeout(const Timeout& timeout);
 	/**
 	 * Get the receive timeout
-	 * @return The number of seconds of the receive timeout
+	 * @return The receive timeout
 	 */
-	virtual int getReceiveTimeout() const;
+	virtual Timeout getReceiveTimeout() const;
 	/**
 	 * Set the send timeout on the socket
-	 * @param seconds the number of seconds for the send timeout
+	 * @param timeout The timeout to use when waiting to send data
 	 */
-	virtual void setSendTimeout(int seconds);
+	virtual void setSendTimeout(const Timeout& timeout);
 	/**
 	 * Get the send timeout
 	 * @return The number of seconds of the send timeout
 	 */
-	virtual int getSendTimeout() const;
+	virtual Timeout getSendTimeout() const;
 	/**
 	 * Set the connect timeout on the socket
-	 * @param seconds the number of seconds for the connect timeout
+	 * @param timeout The connect timeout
 	 */
-	virtual void setConnectTimeout(int seconds);
+	virtual void setConnectTimeout(const Timeout& timeout);
 	/**
 	 * Get the connect timeout
 	 * @return The number of seconds of the connect timeout
 	 */
-	virtual int getConnectTimeout() const;
+	virtual Timeout getConnectTimeout() const;
 	/**
 	 * Set all timeouts (send, receive, connect)
-	 * @param seconds the number of seconds for the timeouts
+	 * @param timeout The timeouts.
 	 */
-	virtual void setTimeouts(int seconds);
+	virtual void setTimeouts(const Timeout& timeout);
+
+	/**
+	 * Set the SPNEGO handler.
+	 */
+	void setSPNEGOHandler(const SPNEGOHandlerRef& spnegoHandler);
 
 private:
 	/*
@@ -260,7 +272,7 @@ private:
 	// New headers are replaced each time the client repeats
 	// a request (with new auth credentials, for instance).
 	Array<String> m_requestHeadersNew;
-	CIMProtocolIStreamIFCRef m_pIstrReturn;
+	Reference<std::istream> m_pIstrReturn;
 	SSLClientCtxRef m_sslCtx;
 	mutable Socket m_socket;
 	String m_requestMethod;
@@ -274,6 +286,11 @@ private:
 	String m_localNonce;
 	String m_localCookieFile;
 	String m_statusLine;
+	// stores the ns value of the Man header
+	String m_ns;
+	bool m_closeConnection;
+	String m_spnegoData;
+	SPNEGOHandlerRef m_spnegoHandler;
 
 #ifdef OW_WIN32
 #pragma warning (pop)
@@ -281,11 +298,20 @@ private:
 
 	bool headerHasKey(const String& key)
 	{
-		return HTTPUtils::headerHasKey(m_responseHeaders, key);
+		if (!HTTPUtils::headerHasKey(m_responseHeaders, m_ns + "-" + key))
+		{
+			return HTTPUtils::headerHasKey(m_responseHeaders, key);
+		}
+		return true;
 	}
 	String getHeaderValue(const String& key)
 	{
-		return HTTPUtils::getHeaderValue(m_responseHeaders, key);
+		String rval = HTTPUtils::getHeaderValue(m_responseHeaders, m_ns + "-" + key);
+		if (rval.empty())
+		{
+			return HTTPUtils::getHeaderValue(m_responseHeaders, key);
+		}
+		return rval;
 	}
 	void addHeaderCommon(const String& key, const String& value)
 	{
@@ -306,7 +332,7 @@ private:
 	 * @param reasonPhrase - out parameter that will contain the reason phrase portion of the HTTP status line.
 	 */
 	Resp_t processHeaders(String& reasonPhrase);
-	CIMProtocolIStreamIFCRef convertToFiniteStream();
+	Reference<std::istream> convertToFiniteStream();
 	void prepareForRetry();
 	void handleAuth(); // process authorization
 	void checkConnection();
@@ -346,13 +372,10 @@ private:
 	EStatusLineSummary checkAndExamineStatusLine();
 
 
-
 	// unimplemented
 	HTTPClient(const HTTPClient&);
 	HTTPClient& operator=(const HTTPClient&);
 };
-
-typedef IntrusiveReference<HTTPClient> HTTPClientRef;
 
 } // end namespace OW_NAMESPACE
 

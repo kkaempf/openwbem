@@ -1,0 +1,42 @@
+# These test cases where there are no protocol errors
+
+readDirectory /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/ keep_special
+readDirectory /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/ omit_special
+readDirectory /dir/doesnt/exist/ keep_special
+readDirectory /dir/doesnt/exist/ omit_special
+
+rename /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename1 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename-to
+rename /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename2 /dir/doesnt/exist/rename-to
+rename /dir/doesnt/exist/rename /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename-to
+rename /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/no-such-file /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename-to
+
+unlink /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/unlink-exists
+unlink /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/unlink-doesnt-exist
+unlink /dir/doesnt/exist/unlink
+
+open < 0 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/bar
+open > 604 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/out-exists
+  piffle-prog
+open > 606 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/out-create
+  hack-phlegm
+open > 604 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/out-trunc-exists
+  enigmatic
+open > 604 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/out-trunc-create
+  wizard-of-oz
+open >> 700 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/app-exists
+  send-in-the-clowns
+open >> 500 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/app-create
+  horatio-at-the-bridge
+open +< 404 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/in-out-exists
+  xxx
+open +< 400 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/in-out-nonesuch
+  foo-bar-baz
+open +> 606 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/in-out-trunc-exists
+  yyy
+open +> 606 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/in-out-trunc-create
+  This-is-the-song-that-never-ends
+open +>> 402 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/in-out-exists-ate
+  xxx
+userSpawn /montest-689acb0e1ec89f45-7085a2a1780f5f42/safebin/mpt_user a+b+c PATH=/bin:/usr/bin+FOO=bar root
+userSpawn /montest-689acb0e1ec89f45-7085a2a1780f5f42/safebin/mpt_user d PATH=/bin:/usr/bin+HIP=hop owprovdr
+monitoredSpawn /montest-689acb0e1ec89f45-7085a2a1780f5f42/safebin/mpt_mon mpt_mon.cfg /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir+a+b+c PATH=/bin:/usr/bin+FOO=bar

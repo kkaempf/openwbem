@@ -7,7 +7,6 @@ OW_Authorizer2IFC.cpp \
 OW_AuthorizerIFC.cpp \
 OW_CIMOMHandleIFC.cpp \
 OW_CIMProtocolIFC.cpp \
-OW_CIMProtocolIStreamIFC.cpp \
 OW_ClientAuthCBIFC.cpp \
 OW_IOIFC.cpp \
 OW_RepositoryIFC.cpp \
@@ -27,7 +26,6 @@ OW_Authorizer2IFC.hpp \
 OW_AuthorizerIFC.hpp \
 OW_CIMOMHandleIFC.hpp \
 OW_CIMProtocolIFC.hpp \
-OW_CIMProtocolIStreamIFC.hpp \
 OW_ClientAuthCBIFC.hpp \
 OW_IfcsFwd.hpp \
 OW_IOIFC.hpp \

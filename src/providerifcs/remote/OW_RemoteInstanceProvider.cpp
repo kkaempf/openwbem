@@ -75,7 +75,7 @@ RemoteInstanceProvider::enumInstanceNames(
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 {
-	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
+	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::enumInstanceNames ns = %1, className = %2", ns, className));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -117,7 +117,7 @@ RemoteInstanceProvider::enumInstances(
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 {
-	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
+	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::enumInstances ns = %1, className = %2", ns, className));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -156,7 +156,7 @@ RemoteInstanceProvider::getInstance(
 		const StringArray* propertyList,
 		const CIMClass& cimClass )
 {
-	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
+	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::getInstance ns = %1, instanceName = %2", ns, instanceName));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -197,7 +197,7 @@ RemoteInstanceProvider::createInstance(
 		const String& ns,
 		const CIMInstance& cimInstance )
 {
-	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
+	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::createInstance ns = %1", ns));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -237,7 +237,7 @@ RemoteInstanceProvider::modifyInstance(
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 {
-	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
+	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::modifyInstance ns = %1", ns));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -271,7 +271,7 @@ RemoteInstanceProvider::deleteInstance(
 		const String& ns,
 		const CIMObjectPath& cop)
 {
-	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
+	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::deleteInstance ns = %1, cop = %2", ns, cop));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);

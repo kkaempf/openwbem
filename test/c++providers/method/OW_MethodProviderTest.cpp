@@ -94,7 +94,8 @@ private:
 void
 MethodProviderTest::initialize(const ProviderEnvironmentIFCRef& env)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "MethodProviderTest initialize called");
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG(logger, "MethodProviderTest initialize called");
 }
 
 

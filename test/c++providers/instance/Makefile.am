@@ -1,10 +1,10 @@
 MAKEBUNDLE=1
 include $(top_srcdir)/Makefile-shared-lib.inc
-check-local : all-ow-shared-libs
+all-local : all-ow-shared-libs
 clean-local : clean-ow-shared-libs
 
 
-check_LIBRARIES = \
+noinst_LIBRARIES = \
 liblaptopbat.a \
 liblinuxprocess.a \
 librpmip.a \
@@ -48,7 +48,7 @@ SoftwarePackage.mof \
 testinstance.mof
 
 INCLUDES = \
--I$(top_srcdir)/src/common -I$(top_srcdir)/src/thread -I$(top_srcdir)/src \
+-I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/cimom/server \
 -I$(top_srcdir)/src/client \

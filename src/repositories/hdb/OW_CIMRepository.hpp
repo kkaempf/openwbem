@@ -44,6 +44,7 @@
 #include "OW_AssocDb.hpp"
 #endif
 #include "OW_RWLocker.hpp"
+#include "OW_Logger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -654,7 +655,7 @@ private:
 #endif
 
 	ServiceEnvironmentIFCRef m_env;
-	LoggerRef m_logger;
+	Logger m_logger;
 	bool m_checkReferentialIntegrity;
 	RWLocker m_schemaLock;
 	RWLocker m_instanceLock;

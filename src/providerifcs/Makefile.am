@@ -1,10 +1,10 @@
-if HAVE_PERL_EMBED
+if ENABLE_PERL_PROVIDERIFC
 PERLDIR=perl
 else
 PERLDIR=
 endif
 
-SUBDIRS = cpp remote npi ${PERLDIR} cmpi 
+SUBDIRS = cpp remote npi ${PERLDIR} cmpi oop
 
 #owbi1
 

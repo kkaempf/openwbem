@@ -49,12 +49,10 @@ class OW_COMMON_API TempFileEnumerationImplBase : public IntrusiveCountableBase
 
 public:
 	TempFileEnumerationImplBase();
-	TempFileEnumerationImplBase(String const& filename);
 	virtual ~TempFileEnumerationImplBase();
 	bool hasMoreElements() const;
 	size_t numberOfElements() const;
 	void clear();
-	String releaseFile();
 	bool usingTempFile() const;
 private:
 	// Prevent copying or assignment

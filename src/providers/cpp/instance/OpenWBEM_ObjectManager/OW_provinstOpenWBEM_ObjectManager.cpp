@@ -162,6 +162,22 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 	virtual void initialize(const ProviderEnvironmentIFCRef &env)
 	{
+		// TODO: FIX THIS PROBLEM: initialize may do a write operation
+		// (creating an OpenWBEM_InternalData instance), but it may be called
+		// as a result of a read-only operation if this provider has not been
+		// loaded yet.  In this case the write operation fails because we
+		// already have a read lock and are then trying to get a write lock.
+		// Once this problem is fixed, remove the LoadCIMObjectManager call
+		// in TestACLBasic in acceptance.sh.
+		//
+		// WORKAROUND: Do a 'select * from CIM_ObjectManager' query right
+		// after starting up the CIMOM; since WQL queries are treated as
+		// read/write operations, this ensures that we already have a write
+		// lock when the CIM_ObjectManager provider is loaded and initialize
+		// called.  Since the provider will already be loaded and initialized,
+		// future read-only operations on CIM_ObjectManager will not result
+		// in initialize() being called.
+
 		// retrieve the name from the repository
 		String interopNS = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 		CIMOMHandleIFCRef rephdl(env->getRepositoryCIMOMHandle());
@@ -193,6 +209,9 @@ public:
 				CIMInstance newData(OpenWBEM_InternalData.newInstance());
 				newData.updatePropertyValue(PROP_Name, CIMValue(dataKey));
 				newData.updatePropertyValue("Value", CIMValue(omName));
+				// TODO: FIX THIS. The provider could get loaded and initialized
+				// as the result of a read operation, with only the read lock
+				// acquired, but here we are doing a write operation.
 				rephdl->createInstance(interopNS, newData);
 #else
 				throw;
@@ -233,7 +252,7 @@ public:
 			}
 			catch (Exception& e)
 			{
-				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("OpenWBEM_ObjectManager caught exception while exporting indication in shuttingDown(): %1", e));
+				OW_LOG_ERROR(Logger(COMPONENT_NAME), Format("OpenWBEM_ObjectManager caught exception while exporting indication in shuttingDown(): %1", e));
 			}
 				
 		}

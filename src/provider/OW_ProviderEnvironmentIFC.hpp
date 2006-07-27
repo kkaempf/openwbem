@@ -79,8 +79,13 @@ public:
 	 */
 	virtual RepositoryIFCRef getRepository() const = 0;
 
-	virtual LoggerRef getLogger() const OW_DEPRECATED = 0; // in 3.1.0
-	virtual LoggerRef getLogger(const String& componentName) const = 0;
+	/** Like getRepository(), but all operations get checked to see if the
+	* user is authorized to do the operation.
+	*/
+	virtual RepositoryIFCRef getAuthorizingRepository() const = 0;
+
+	virtual LoggerRef getLogger() const OW_DEPRECATED; // in 3.1.0
+	virtual LoggerRef getLogger(const String& componentName) const;
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const = 0;
 	virtual StringArray getMultiConfigItem(const String &itemName, 
 		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const = 0;

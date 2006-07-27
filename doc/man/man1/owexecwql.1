@@ -1,29 +1,43 @@
-.Id $Id: owexecwql.1,v 1.1.1.1 2002-03-01 16:58:14 nuffer Exp $
-.TH owexecwql 1 "September 2001" owexecwql "OpenWBEM Framework"
+.Id $Id: owexecwql.1,v 1.2 2006-07-27 22:06:19 nuffer Exp $
+.TH owexecwql 1 "February 2006" owexecwql "OpenWBEM Framework"
 .SH NAME
 owexecwql \- Execute a WQL statement on a CIMOM
 .SH SYNOPSIS
 .B owexecwql
-.IR URL
-.IR NAMESPACE
-.IR STATEMENT
+.RI [ options ]
 .SH DESCRIPTION
 .B owexecwql
 is a command-line tool used to execute WQL statements on a CIMOM.  
 .PP
 .SH OPTIONS
-.TP 8
-.IR URL
-The URL to the CIMOM.  This has the form 
-http[s]://[<name>:<password>@]<hostname>[:<port>][/<path>]
+.TP 3
+\fB\-h\fP  or  \fB\-\-help\fP
+Show a help message describing the options.
+.TP
+\fB\-v\fP  or  \fB\-\-version\fP
+Show version.
+.TP
+\fB\-u\fP \fIURL\fP  or  \fB\-\-url=\fP\fIURL\fP
+Specifies the URL to the CIMOM.  This has the form
+.sp
+  <scheme>://[<name>:<password>@]<hostname>[:<port>][/<namespace>]
+.sp
+where
+\fIscheme\fP may be any of the standard WBEM schemes \fBcimxml.wbem\fP,
+\fBcimxml.wbems\fP, \fBhttp\fP, or \fBhttps\fP; or one of the non-standard,
+OpenWBEM-specific schemes \fBowbinary.wbem\fP or \fBowbinary.wbems\fP.
+\fIport\fP may be a numeric port or the identifier \fBowipc\fP,
+to do a local connection using the Unix domain socket for the system.
+.sp
+If the \fB\-u\fP option is not specified, then \fIURL\fP defaults to
+.sp
+  http://localhost/root/cimv2.
+.sp
 If no name and password are provided in the URL, and the CIMOM requires
 authentication, you will be prompted for a name and password.
-.TP 8
-.IR NAMESPACE
-The namespace on which to execute the WQL statement.
-.TP 8
-.IR STATEMENT
-The WQL statement to execute.
+.TP
+\fB-w\fP \fIquery\fP  or  \fB\-\-wql_statement=\fP\fIquery\fP
+Specifies the WQL query to run.  \fBREQUIRED\fP.
 .PP
 .SH "SEE ALSO"
 owmofc(1), owcimomd(8)

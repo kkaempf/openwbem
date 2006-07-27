@@ -42,7 +42,7 @@ namespace OW_NAMESPACE
 using std::istream;
 HTTPLengthLimitStreamBuffer::HTTPLengthLimitStreamBuffer(
 		istream& istr, UInt64 length)
-	: BaseStreamBuffer(2048, "in"), m_istr(istr),
+	: BaseStreamBuffer(BaseStreamBuffer::E_IN, 2048), m_istr(istr),
 	  m_length(length), m_pos(0), m_isEnd(false)
 // 2048 is a nice power of 2 that should be more than enough to hold most
 // packets, since ethernet MTU is 1500
@@ -91,7 +91,7 @@ HTTPLenLimitIStream::resetLen(UInt64 len)
 //////////////////////////////////////////////////////////////////////////////
 HTTPLenLimitIStream::HTTPLenLimitIStream(istream& istr, UInt64 len)
 	: HTTPLenLimitIStreamBase(istr, len)
-	, CIMProtocolIStreamIFC(&m_strbuf)
+	, std::istream(&m_strbuf)
 	, m_istr(istr)
 {
 }

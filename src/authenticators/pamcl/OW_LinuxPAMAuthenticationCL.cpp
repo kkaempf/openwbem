@@ -98,24 +98,20 @@ LinuxPAMAuthenticationCL::doAuthenticate(String &userName,
 	Array<String> commandLine;
 	commandLine.push_back(pathToPamAuth);
 	String output;
-	int status = -1;
-	int timeoutSecs = 60;
-	int outputLimit = 1024;
+	Process::Status status;
+	const Timeout timeout = Timeout::relative(60.0);
+	const int outputLimit = 1024;
 	String input = userName + " " + info + "\n";
 	try
 	{
-		Exec::executeProcessAndGatherOutput(commandLine, output, status, timeoutSecs, outputLimit, input);
+		status = Exec::executeProcessAndGatherOutput(commandLine, output, timeout, outputLimit, input);
 	}
 	catch (Exception& e)
 	{
 		return false;
 	}
 
-	if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
-	{
-		return true;
-	}
-	return false;
+	return status.terminatedSuccessfully();
 }
 void
 LinuxPAMAuthenticationCL::doInit(ServiceEnvironmentIFCRef env)

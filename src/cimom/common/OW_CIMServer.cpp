@@ -51,7 +51,7 @@
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_LocalOperationContext.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_UserInfo.hpp"
 #include "OW_ResultHandlers.hpp"
@@ -59,6 +59,7 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ProviderManager.hpp"
 #include "OW_ServiceIFCNames.hpp"
+#include "OW_CIMServerProviderEnvironment.hpp"
 
 #include <iterator>
 
@@ -97,135 +98,16 @@ namespace
 		OperationContext& m_context;
 	};
 
-	class ClonedCIMServerProviderEnvironment : public ProviderEnvironmentIFC
-	{
-	public:
-		ClonedCIMServerProviderEnvironment(
-			const ServiceEnvironmentIFCRef& env)
-			: m_env(env)
-		{}
-		virtual String getConfigItem(const String &name,
-			const String& defRetVal="") const
-		{
-			return m_env->getConfigItem(name, defRetVal);
-		}
-		virtual StringArray getMultiConfigItem(const String &itemName, 
-			const StringArray& defRetVal, const char* tokenizeSeparator = 0) const
-		{
-			return m_env->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
-		}
-		virtual CIMOMHandleIFCRef getCIMOMHandle() const
-		{
-			return m_env->getCIMOMHandle(m_context,
-				ServiceEnvironmentIFC::E_USE_PROVIDERS);
-		}
-		
-		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
-		{
-			return m_env->getCIMOMHandle(m_context,
-				ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
-		}
-		
-		virtual RepositoryIFCRef getRepository() const
-		{
-			return m_env->getRepository();
-		}
-		virtual LoggerRef getLogger() const
-		{
-			return m_env->getLogger(COMPONENT_NAME);
-		}
-		virtual LoggerRef getLogger(const String& componentName) const
-		{
-			return m_env->getLogger(componentName);
-		}
-		virtual String getUserName() const
-		{
-			return m_context.getUserInfo().getUserName();
-		}
-		virtual OperationContext& getOperationContext()
-		{
-			return m_context;
-		}
-		virtual ProviderEnvironmentIFCRef clone() const
-		{
-			return ProviderEnvironmentIFCRef(new ClonedCIMServerProviderEnvironment(m_env));
-		}
-	private:
-		mutable OperationContext m_context;
-		ServiceEnvironmentIFCRef m_env;
-	};
-
-	class CIMServerProviderEnvironment : public ProviderEnvironmentIFC
-	{
-	public:
-		CIMServerProviderEnvironment(OperationContext& context,
-			const ServiceEnvironmentIFCRef& env)
-			: m_context(context)
-			, m_env(env)
-		{}
-		virtual String getConfigItem(const String &name,
-			const String& defRetVal="") const
-		{
-			return m_env->getConfigItem(name, defRetVal);
-		}
-		virtual StringArray getMultiConfigItem(const String &itemName, 
-			const StringArray& defRetVal, const char* tokenizeSeparator = 0) const
-		{
-			return m_env->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
-		}
-		virtual CIMOMHandleIFCRef getCIMOMHandle() const
-		{
-			return m_env->getCIMOMHandle(m_context,
-				ServiceEnvironmentIFC::E_USE_PROVIDERS,
-				ServiceEnvironmentIFC::E_NO_LOCKING);
-		}
-		
-		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
-		{
-			return m_env->getCIMOMHandle(m_context,
-				ServiceEnvironmentIFC::E_BYPASS_PROVIDERS,
-				ServiceEnvironmentIFC::E_NO_LOCKING);
-		}
-		
-		virtual RepositoryIFCRef getRepository() const
-		{
-			return m_env->getRepository();
-		}
-		virtual LoggerRef getLogger() const
-		{
-			return m_env->getLogger(COMPONENT_NAME);
-		}
-		virtual LoggerRef getLogger(const String& componentName) const
-		{
-			return m_env->getLogger(componentName);
-		}
-		virtual String getUserName() const
-		{
-			return m_context.getUserInfo().getUserName();
-		}
-		virtual OperationContext& getOperationContext()
-		{
-			return m_context;
-		}
-		virtual ProviderEnvironmentIFCRef clone() const
-		{
-			return ProviderEnvironmentIFCRef(new ClonedCIMServerProviderEnvironment(m_env));
-		}
-	private:
-		OperationContext& m_context;
-		ServiceEnvironmentIFCRef m_env;
-	};
-
 	inline ProviderEnvironmentIFCRef createProvEnvRef(OperationContext& context,
 		const ServiceEnvironmentIFCRef& env)
 	{
 		return ProviderEnvironmentIFCRef(new CIMServerProviderEnvironment(context, env));
 	}
 
-	inline void logOperation(const LoggerRef& lgr, const OperationContext& context, const char* operation, const String& ns, const String& objectName = String())
+	inline void logOperation(const Logger& lgr, const OperationContext& context, const char* operation, const String& ns, const String& objectName = String())
 	{
 		// avoid the overhead of formatting the message if we're not going to log this.
-		ELogLevel level = lgr->getLogLevel();
+		ELogLevel level = lgr.getLogLevel();
 		if (level == E_DEBUG_LEVEL || level == E_INFO_LEVEL)
 		{
 			String userString;
@@ -256,7 +138,7 @@ CIMServer::CIMServer(const ServiceEnvironmentIFCRef& env,
 	, m_cimRepository(cimRepository)
 	, m_realRepository(dynamic_pointer_cast<CIMRepository>(m_cimRepository))
 	, m_authorizerMgr(authorizerMgr)
-	, m_logger(env->getLogger(COMPONENT_NAME))
+	, m_logger(COMPONENT_NAME)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -617,30 +499,25 @@ namespace
 			const String& ns_,
 			CIMObjectPathResultHandlerIFC& result_,
 			OperationContext& context_,
-			const ServiceEnvironmentIFCRef& env_,
 			CIMServer* server_)
 			: ns(ns_)
 			, result(result_)
 			, context(context_)
-			, m_env(env_)
+			, m_lgr(COMPONENT_NAME)
 			, server(server_)
 		{}
 	protected:
 		virtual void doHandle(const CIMClass &cc)
 		{
-			LoggerRef lgr(m_env->getLogger(COMPONENT_NAME));
-			if (lgr->getLogLevel() == E_DEBUG_LEVEL)
-			{
-				OW_LOG_DEBUG(lgr, Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
-					cc.getName()));
-			}
+			OW_LOG_DEBUG(m_lgr, Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
+				cc.getName()));
 			server->_getCIMInstanceNames(ns, cc.getName(), cc, result, context);
 		}
 	private:
 		String ns;
 		CIMObjectPathResultHandlerIFC& result;
 		OperationContext& context;
-		const ServiceEnvironmentIFCRef& m_env;
+		Logger m_lgr;
 		CIMServer* server;
 	};
 }
@@ -657,7 +534,7 @@ CIMServer::enumInstanceNames(
 
 	logOperation(m_logger, context, "EnumerateInstanceNames", ns, className);
 
-	InstNameEnumerator ie(ns, result, context, m_env, this);
+	InstNameEnumerator ie(ns, result, context, this);
 	CIMClass theClass = _instGetClass(ns, className,E_NOT_LOCAL_ONLY,
 		E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
 	ie.handle(theClass);
@@ -703,7 +580,6 @@ namespace
 			const String& ns_,
 			CIMInstanceResultHandlerIFC& result_,
 			OperationContext& context_,
-			const ServiceEnvironmentIFCRef& env_,
 			CIMServer* server_,
 			EDeepFlag deep_,
 			ELocalOnlyFlag localOnly_,
@@ -714,7 +590,7 @@ namespace
 			: ns(ns_)
 			, result(result_)
 			, context(context_)
-			, m_env(env_)
+			, m_lgr(COMPONENT_NAME)
 			, server(server_)
 			, deep(deep_)
 			, localOnly(localOnly_)
@@ -726,12 +602,8 @@ namespace
 	protected:
 		virtual void doHandle(const CIMClass &cc)
 		{
-			LoggerRef lgr(m_env->getLogger(COMPONENT_NAME));
-			if (lgr->getLogLevel() == E_DEBUG_LEVEL)
-			{
-				OW_LOG_DEBUG(lgr, Format("CIMServer InstEnumerator Enumerating"
-					" derived instance names: %1:%2", ns, cc.getName()));
-			}
+			OW_LOG_DEBUG(m_lgr, Format("CIMServer InstEnumerator Enumerating"
+				" derived instance names: %1:%2", ns, cc.getName()));
 			server->_getCIMInstances(ns, cc.getName(), theTopClass, cc,
 				result, localOnly, deep, includeQualifiers,
 				includeClassOrigin, propertyList, context);
@@ -740,7 +612,7 @@ namespace
 		String ns;
 		CIMInstanceResultHandlerIFC& result;
 		OperationContext& context;
-		const ServiceEnvironmentIFCRef& m_env;
+		Logger m_lgr;
 		CIMServer* server;
 		EDeepFlag deep;
 		ELocalOnlyFlag localOnly;
@@ -768,7 +640,7 @@ CIMServer::enumInstances(
 	CIMClass theTopClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY,
 		E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, context);
 
-	InstEnumerator ie(ns, result, context, m_env, this, deep, localOnly,
+	InstEnumerator ie(ns, result, context, this, deep, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList, theTopClass);
 	ie.handle(theTopClass);
 	// If this is the namespace class then only do one class
@@ -1002,11 +874,8 @@ CIMServer::_getCIMInstances(
 
 	if (instancep)
 	{
-		if (m_logger->getLogLevel() == E_DEBUG_LEVEL)
-		{
-			OW_LOG_DEBUG(m_logger, Format("CIMServer calling provider to"
-				" enumerate instances: %1:%2", ns, className));
-		}
+		OW_LOG_DEBUG(m_logger, Format("CIMServer calling provider to"
+			" enumerate instances: %1:%2", ns, className));
 
 		// not going to use these, the provider ifc/providers are now
 		// responsible for it.
@@ -1140,11 +1009,8 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 
 	CIMObjectPath cop(cop_);
 	cop.setNameSpace(ns);
-	if (m_logger->getLogLevel() == E_DEBUG_LEVEL)
-	{
-		OW_LOG_DEBUG(m_logger, Format("CIMServer::deleteInstance.  cop = %1",
-			cop.toString()));
-	}
+	OW_LOG_DEBUG(m_logger, Format("CIMServer::deleteInstance.  cop = %1",
+		cop.toString()));
 
 	AuthorizerEnabler ae(m_authorizerMgr, context, true);
 	CIMClass theClass(CIMNULL);
@@ -1232,11 +1098,8 @@ CIMServer::createInstance(
 	// Make sure instance jives with class definition
 	CIMInstance lci(ci);
 	lci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS);
-	if (m_logger->getLogLevel() == E_DEBUG_LEVEL)
-	{
-		OW_LOG_DEBUG(m_logger, Format("CIMServer::createInstance.  ns = %1, "
-			"instance = %2", ns, lci.toMOF()));
-	}
+	OW_LOG_DEBUG(m_logger, Format("CIMServer::createInstance.  ns = %1, "
+		"instance = %2", ns, lci.toMOF()));
 	CIMObjectPath rval(CIMNULL);
 	InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass, context);
 
@@ -1287,6 +1150,7 @@ CIMServer::createInstance(
 	// Prevent lazy providers from causing a problem.
 	if (!rval)
 	{
+		OW_LOG_INFO(m_logger, "Provider erroneously returned a NULL CIMObjectPath from createInstance! Will construct one.");
 		rval = CIMObjectPath(ns, lci);
 	}
 	return rval;
@@ -1343,7 +1207,7 @@ CIMServer::modifyInstance(
 	}
 
 	logOperation(m_logger, context, "ModifyInstance", ns, modifiedInstance.getClassName());
-	ELogLevel lvl = m_logger->getLogLevel();
+	ELogLevel lvl = m_logger.getLogLevel();
 	if (lvl == E_DEBUG_LEVEL || lvl == E_INFO_LEVEL)
 	{
 		OW_LOG_INFO(m_logger, Format("ModifyInstance: modified instance = %1", lci));
@@ -1555,8 +1419,7 @@ CIMServer::invokeMethod(
 	CIMClass cctemp(cc);
 	try
 	{
-		methodp = m_provManager->getMethodProvider(
-			createProvEnvRef(context, m_env), ns, cctemp, method);
+		methodp = m_provManager->getMethodProvider(ns, cctemp, method);
 	}
 	catch (const NoSuchProviderException&)
 	{
@@ -1657,7 +1520,7 @@ CIMServer::invokeMethod(
 			"Unknown or duplicate parameter: %1", inParams2[0].getName()).c_str());
 	}
 	StringBuffer methodStr;
-	if (m_logger->getLogLevel() == E_DEBUG_LEVEL)
+	if (m_logger.getLogLevel() == E_DEBUG_LEVEL)
 	{
 		methodStr += "CIMServer invoking extrinsic method provider: ";
 		methodStr += ns;
@@ -1700,7 +1563,7 @@ CIMServer::invokeMethod(
 			}
 		}
 	}
-	if (m_logger->getLogLevel() == E_DEBUG_LEVEL)
+	if (m_logger.getLogLevel() == E_DEBUG_LEVEL)
 	{
 		methodStr.reset();
 		methodStr += "CIMServer finished invoking extrinsic method provider: ";
@@ -1735,8 +1598,7 @@ CIMServer::_getInstanceProvider(const String& ns, const CIMClass& cc_,
 	CIMClass cc(cc_);
 	try
 	{
-		instancep =
-			m_provManager->getInstanceProvider(createProvEnvRef(context, m_env), ns, cc);
+		instancep =	m_provManager->getInstanceProvider(ns, cc);
 	}
 	catch (const NoSuchProviderException& e)
 	{
@@ -1753,7 +1615,7 @@ CIMServer::_getSecondaryInstanceProviders(const String& ns, const CIMName& class
 	SecondaryInstanceProviderIFCRefArray rval;
 	try
 	{
-		rval = m_provManager->getSecondaryInstanceProviders(createProvEnvRef(context, m_env), ns, className);
+		rval = m_provManager->getSecondaryInstanceProviders(ns, className);
 	}
 	catch (const NoSuchProviderException& e)
 	{
@@ -1772,16 +1634,14 @@ CIMServer::_getAssociatorProvider(const String& ns, const CIMClass& cc_, Operati
 	CIMClass cc(cc_);
 	try
 	{
-		ap =  m_provManager->getAssociatorProvider(
-			createProvEnvRef(context, m_env), ns, cc);
+		ap =  m_provManager->getAssociatorProvider(ns, cc);
 	}
 	catch (const NoSuchProviderException&)
 	{
 		// if it's not an instance or associator provider, then ERROR!
 		try
 		{
-			m_provManager->getInstanceProvider(
-				createProvEnvRef(context, m_env), ns, cc);
+			m_provManager->getInstanceProvider(ns, cc);
 		}
 		catch (const NoSuchProviderException& e)
 		{
@@ -1840,8 +1700,7 @@ CIMServer::execQuery(
 		logOperation(m_logger, context, "ExecQuery", ns, query);
 
 		CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context,
-				ServiceEnvironmentIFC::E_USE_PROVIDERS,
-				ServiceEnvironmentIFC::E_NO_LOCKING);
+				ServiceEnvironmentIFC::E_USE_PROVIDERS);
 		try
 		{
 			wql->evaluate(ns, result, query, queryLanguage, lch);
@@ -2062,7 +1921,7 @@ namespace
 			CIMServer& server_,
 			OperationContext& context_,
 			const String& ns_,
-			const LoggerRef& lgr)
+			const Logger& lgr)
 		: staticAssocs(staticAssocs_)
 		, dynamicAssocs(dynamicAssocs_)
 		, server(server_)
@@ -2097,7 +1956,7 @@ namespace
 		CIMServer& server;
 		OperationContext& context;
 		String ns;
-		LoggerRef logger;
+		Logger logger;
 	};
 }
 //////////////////////////////////////////////////////////////////////////////

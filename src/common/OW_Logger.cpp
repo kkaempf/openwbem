@@ -44,10 +44,6 @@
 #include "OW_LogAppender.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Format.hpp"
-#include "OW_Mutex.hpp"
-#include "OW_MutexLock.hpp"
-#include "OW_ThreadOnce.hpp"
-#include "OW_NullLogger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -63,73 +59,55 @@ const String Logger::STR_ALL_CATEGORY("ALL");
 const String Logger::STR_DEFAULT_COMPONENT("none");
 
 //////////////////////////////////////////////////////////////////////////////
+Logger::Logger(const String& defaultComponent, const LogAppenderRef& appender)
+	: m_defaultComponent(defaultComponent)
+	, m_appender(appender ? appender : LogAppender::getCurrentLogAppender())
+	, m_logLevel(m_appender->getLogLevel())
+{
+	OW_ASSERT(m_defaultComponent != "");
+}
+
+/////////////////////////////////////////////////////////////////////////////
+Logger::Logger(const Logger& x)
+	: IntrusiveCountableBase(x)
+	, m_defaultComponent(x.m_defaultComponent)
+	, m_appender(x.m_appender)
+	, m_logLevel(x.m_logLevel)
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+Logger&
+Logger::operator=(const Logger& x)
+{
+	m_defaultComponent = x.m_defaultComponent;
+	m_appender = x.m_appender;
+	m_logLevel = x.m_logLevel;
+
+	return *this;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+Logger::swap(Logger& x)
+{
+	m_defaultComponent.swap(x.m_defaultComponent);
+	m_appender.swap(x.m_appender);
+	std::swap(m_logLevel, x.m_logLevel);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 Logger::~Logger()
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-Logger::Logger()
-	: m_logLevel(E_ERROR_LEVEL)
-	, m_defaultComponent(STR_DEFAULT_COMPONENT)
+LoggerRef
+Logger::clone() const
 {
+	return LoggerRef(new Logger(*this));
 }
-
-//////////////////////////////////////////////////////////////////////////////
-Logger::Logger(const ELogLevel l)
-	: m_logLevel(l)
-	, m_defaultComponent(STR_DEFAULT_COMPONENT)
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
-Logger::Logger(const String& defaultComponent, const ELogLevel l)
-	: m_logLevel(l)
-	, m_defaultComponent(defaultComponent)
-{
-	OW_ASSERT(m_defaultComponent != "");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-Logger::processLogMessage(const LogMessage& message) const
-{
-	OW_ASSERT(!message.component.empty());
-	OW_ASSERT(!message.category.empty());
-	OW_ASSERT(!message.message.empty());
-
-	doProcessLogMessage(message);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-Logger::setLogLevel(const String& l)
-{
-	if (l.equalsIgnoreCase(STR_INFO_CATEGORY))
-	{
-		setLogLevel(E_INFO_LEVEL);
-	}
-	else if (l.equalsIgnoreCase(STR_DEBUG_CATEGORY))
-	{
-		setLogLevel(E_DEBUG_LEVEL);
-	}
-	else if (l.equalsIgnoreCase(STR_ERROR_CATEGORY))
-	{
-		setLogLevel(E_ERROR_LEVEL);
-	}
-	else if (l.equalsIgnoreCase(STR_ALL_CATEGORY))
-	{
-		setLogLevel(E_ALL_LEVEL);
-	}
-	else if (l.equalsIgnoreCase(STR_NONE_CATEGORY))
-	{
-		setLogLevel(E_NONE_LEVEL);
-	}
-	else
-	{
-		setLogLevel(E_FATAL_ERROR_LEVEL);
-	}
-}
-
+	
 //////////////////////////////////////////////////////////////////////////////
 void
 Logger::logFatalError(const String& message, const char* filename, int fileline, const char* methodname) const
@@ -206,34 +184,6 @@ Logger::logMessage(const LogMessage& message) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-bool
-Logger::categoryIsEnabled(const String& category) const
-{
-	return doCategoryIsEnabled(category);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-bool
-Logger::componentAndCategoryAreEnabled(const String& component, const String& category) const
-{
-	return doComponentAndCategoryAreEnabled(component, category);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-bool
-Logger::doComponentAndCategoryAreEnabled(const String& component, const String& category) const
-{
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-bool
-Logger::doCategoryIsEnabled(const String& category) const
-{
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
 void
 Logger::setDefaultComponent(const String& component)
 {
@@ -255,176 +205,41 @@ Logger::setLogLevel(ELogLevel logLevel)
 	m_logLevel = logLevel;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-LoggerRef
-Logger::createLogger( const String& type, bool debug )
-{
-	LogAppender::ConfigMap configItems;
-
-	Array<LogAppenderRef> appenders;
-	String name("");
-	if (type == LogAppender::TYPE_SYSLOG || type == LogAppender::TYPE_STDERR || type == LogAppender::TYPE_NULL)
-	{
-		appenders.push_back(LogAppender::createLogAppender(name, LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES,
-			LogMessagePatternFormatter::STR_DEFAULT_MESSAGE_PATTERN, type, configItems));
-	}
-	else
-	{
-		// we need a special case for filenames in the type, since createLogAppender only handles types it knows about
-		String configItem = Format(ConfigOpts::LOG_1_LOCATION_opt, name);
-		String filename = type;
-		configItems[configItem] = filename;
-		appenders.push_back(LogAppender::createLogAppender(name, LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES,
-			LogMessagePatternFormatter::STR_DEFAULT_MESSAGE_PATTERN, LogAppender::TYPE_FILE, configItems));
-	}
-
-	if ( debug )
-	{
-		appenders.push_back(LogAppender::createLogAppender(name, LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES,
-			LogMessagePatternFormatter::STR_DEFAULT_MESSAGE_PATTERN, LogAppender::TYPE_STDERR, configItems));
-
-	}
-
-	return LoggerRef(new AppenderLogger(STR_DEFAULT_COMPONENT, appenders));
-
-}
-
-/////////////////////////////////////////////////////////////////////////////
-LoggerRef
-Logger::clone() const
-{
-	return doClone();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-Logger::Logger(const Logger& x)
-	: IntrusiveCountableBase(x)
-	, m_logLevel(x.m_logLevel)
-	, m_defaultComponent(x.m_defaultComponent)
-
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////
-Logger&
-Logger::operator=(const Logger& x)
-{
-	m_logLevel = x.m_logLevel;
-	m_defaultComponent = x.m_defaultComponent;
-	return *this;
-}
-
-/////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 void
-Logger::swap(Logger& x)
+Logger::setLogLevel(const String& l)
 {
-	std::swap(m_logLevel, x.m_logLevel);
-	m_defaultComponent.swap(x.m_defaultComponent);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// we're passing a pointer to this to pthreads, it has to have C linkage.
-extern "C" 
-{
-static void freeThreadLogger(void *ptr)
-{
-	delete static_cast<LoggerRef *>(ptr);
-}
-} // end extern "C"
-
-/////////////////////////////////////////////////////////////////////////////
-namespace
-{
-
-OnceFlag         g_onceGuard  = OW_ONCE_INIT;
-Mutex           *g_mutexGuard = NULL;
-pthread_key_t    g_loggerKey; // FIXME: port me :)
-LoggerRef        g_defaultLogger;
-
-
-/////////////////////////////////////////////////////////////////////////////
-void initGuardAndKey()
-{
-	g_mutexGuard = new Mutex();
-	int ret = pthread_key_create(&g_loggerKey, freeThreadLogger);
-	OW_ASSERTMSG(ret == 0, "failed create a thread specific key");
-}
-
-
-} // end unnamed namespace
-
-/////////////////////////////////////////////////////////////////////////////
-// STATIC
-bool
-Logger::setDefaultLogger(const LoggerRef &ref)
-{
-	if (ref)
+	if (l.equalsIgnoreCase(STR_INFO_CATEGORY))
 	{
-		callOnce(g_onceGuard, initGuardAndKey);
-		MutexLock lock(*g_mutexGuard);
-
-		g_defaultLogger = ref;
-		return true;
+		setLogLevel(E_INFO_LEVEL);
 	}
-	return false;
-}
-
-
-/////////////////////////////////////////////////////////////////////////////
-// STATIC
-bool
-Logger::setThreadLogger(const LoggerRef &ref)
-{
-
-	if (ref)
+	else if (l.equalsIgnoreCase(STR_DEBUG_CATEGORY))
 	{
-		callOnce(g_onceGuard, initGuardAndKey);
-		LoggerRef *ptr = new LoggerRef(ref);
-
-		freeThreadLogger(pthread_getspecific(g_loggerKey));
-
-		int ret = pthread_setspecific(g_loggerKey, ptr);
-		if (ret)
-		{
-			delete ptr;
-		}
-		OW_ASSERTMSG(ret == 0, "failed to set a thread specific logger");
-		return true;
+		setLogLevel(E_DEBUG_LEVEL);
 	}
-	return false;
-}
-
-
-/////////////////////////////////////////////////////////////////////////////
-// STATIC
-LoggerRef
-Logger::getDefaultLogger()
-{
-	callOnce(g_onceGuard, initGuardAndKey);
-	MutexLock lock(*g_mutexGuard);
-	if (!g_defaultLogger)
+	else if (l.equalsIgnoreCase(STR_ERROR_CATEGORY))
 	{
-		g_defaultLogger = LoggerRef(new NullLogger());
+		setLogLevel(E_ERROR_LEVEL);
 	}
-	return g_defaultLogger;
-}
-
-
-/////////////////////////////////////////////////////////////////////////////
-// STATIC
-LoggerRef
-Logger::getCurrentLogger()
-{
-	callOnce(g_onceGuard, initGuardAndKey);
-	LoggerRef *ptr = static_cast<LoggerRef *>(pthread_getspecific(g_loggerKey));
-	if(ptr)
+	else if (l.equalsIgnoreCase(STR_ALL_CATEGORY))
 	{
-		return *ptr;
+		setLogLevel(E_ALL_LEVEL);
+	}
+	else if (l.equalsIgnoreCase(STR_NONE_CATEGORY))
+	{
+		setLogLevel(E_NONE_LEVEL);
 	}
 	else
 	{
-		return getDefaultLogger();
+		setLogLevel(E_FATAL_ERROR_LEVEL);
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+Logger::categoryIsEnabled(const String& category) const
+{
+	return m_appender->categoryIsEnabled(category);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -432,6 +247,24 @@ bool
 Logger::levelIsEnabled(const ELogLevel level)
 {
 	return (getLogLevel() >= level);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+Logger::componentAndCategoryAreEnabled(const String& component, const String& category) const
+{
+	return m_appender->componentAndCategoryAreEnabled(component, category);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+Logger::processLogMessage(const LogMessage& message) const
+{
+	OW_ASSERT(!message.component.empty());
+	OW_ASSERT(!message.category.empty());
+	OW_ASSERT(!message.message.empty());
+
+	m_appender->logMessage(message);
 }
 
 } // end namespace OW_NAMESPACE

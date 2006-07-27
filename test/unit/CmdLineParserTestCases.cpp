@@ -203,6 +203,31 @@ void CmdLineParserTestCases::testSomething()
 		}
 	}
 	{
+		int argc = 6;
+		const char* argv[] = {
+			"progname",
+			"-2",
+			"-",
+			"-3",
+			"-",
+			"-1"
+		};
+		try
+		{
+			CmdLineParser parser(argc, argv, options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
+			unitAssert(parser.isSet(opt1));
+			unitAssert(parser.isSet(opt2));
+			unitAssert(parser.isSet(opt3));
+			unitAssert(!parser.isSet(invalidOpt));
+			unitAssert(parser.getOptionValue(opt2) == "-");
+			unitAssert(parser.getOptionValue(opt3) == "-");
+		}
+		catch (CmdLineParserException& e)
+		{
+			unitAssert(0);
+		}
+	}
+	{
 		unitAssert(CmdLineParser::getUsage(options) ==
 			"Options:\n"
 			"  -1, --one                 first description\n"
@@ -243,6 +268,28 @@ void CmdLineParserTestCases::testSomething()
 			"  --two [arg]               second description (default is optional)\n"
 			"  -3, --three <arg>         third description\n"
 			);
+	}
+
+
+	{
+		CmdLineParser::Option optionsOverlapping[] =
+		{
+			{opt1, '1', "XX", CmdLineParser::E_NO_ARG, 0, "first description"},
+			{opt2, '2', "XXX", CmdLineParser::E_NO_ARG, 0, "second description"},
+			{opt3, '3', "XXXX", CmdLineParser::E_NO_ARG, 0, "third description"},
+			{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
+		};
+
+		int argc = 3;
+		const char* argv[] = {
+			"progname",
+			"--XX",
+			"--XXXX"
+		};
+		CmdLineParser parser(argc, argv, optionsOverlapping, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
+		unitAssert(parser.isSet(opt1));
+		unitAssert(!parser.isSet(opt2));
+		unitAssert(parser.isSet(opt3));
 	}
 }
 

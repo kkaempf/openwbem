@@ -60,6 +60,14 @@ ServiceEnvironmentIFC::getRepository() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+RepositoryIFCRef
+ServiceEnvironmentIFC::getAuthorizingRepository() const
+{
+	OW_ASSERTMSG(0, "getAuthorizingRepository Not Implemented");
+	return RepositoryIFCRef();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 ServiceEnvironmentIFC::getRepositoryCIMOMHandle(OperationContext& context) const
 {
@@ -107,22 +115,6 @@ ServiceEnvironmentIFC::getRequestHandler(const String& id) const
 {
 	OW_ASSERTMSG(0, "getRequestHandler Not Implemented");
 	return RequestHandlerIFCRef();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-LoggerRef
-ServiceEnvironmentIFC::getLogger() const
-{
-	OW_ASSERTMSG(0, "getLogger Not Implemented");
-	return LoggerRef();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-LoggerRef
-ServiceEnvironmentIFC::getLogger(const String& componentName) const
-{
-	OW_ASSERTMSG(0, "getLogger(const String& componentName) Not Implemented");
-	return LoggerRef();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

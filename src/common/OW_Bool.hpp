@@ -120,12 +120,12 @@ public:
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
-	void writeObject(std::ostream& ostrm) const;
+	void writeObject(std::streambuf & ostrm) const;
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
-	void readObject(std::istream& istrm);
+	void readObject(std::streambuf & istrm);
 	/**
 	 * Less than operator (friend function)
 	 * @param b1 The first Bool object to use in the comparison.
@@ -138,7 +138,7 @@ public:
 	}
 	friend bool operator!=(bool b1, Bool b2)
 	{
-		return b1 < b2.m_val;
+		return b1 != b2.m_val;
 	}
 private:
 	// These are private/unimplemented to help prevent unintended errors of

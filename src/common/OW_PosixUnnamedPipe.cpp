@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2005 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -40,29 +40,115 @@
 #include "OW_Format.hpp"
 #include "OW_SocketUtils.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_DescriptorUtils.hpp"
+#include "OW_SignalScope.hpp"
+#include "OW_Logger.hpp"
 
-extern "C"
-{
-#ifdef OW_WIN32
-	#define _CLOSE ::_close
-	#define _WRITE ::_write
-	#define _READ ::_read
-	#define _OPEN ::_open
-	#include <io.h>
-#else
+// extern "C"
+// {
+#ifndef OW_WIN32
+	#include "OW_Thread.hpp"
 	#ifdef OW_HAVE_UNISTD_H
 		#include <unistd.h>
 	#endif
-	#define _CLOSE ::close
-	#define _WRITE ::write
-	#define _READ ::read
-	#define _OPEN ::open
+	#include <sys/socket.h>
+	#include <sys/types.h>
 #endif
 
 #include <fcntl.h>
 #include <errno.h>
-}
+// }
 #include <cstring>
+
+namespace
+{
+	using namespace OpenWBEM;
+#ifndef OW_WIN32
+	int upclose(int fd)
+	{
+		int rc;
+		do
+		{
+			rc = ::close(fd);
+		} while (rc < 0 && errno == EINTR);
+		if (rc == -1)
+		{
+			int lerrno = errno;
+			Logger lgr("ow.common");
+			OW_LOG_ERROR(lgr, Format("Closing pipe handle %1 failed: %2", fd, lerrno));
+		}
+		return rc;
+	}
+
+	::ssize_t upread(int fd, void * buf, std::size_t count)
+	{
+		::ssize_t rv;
+		do
+		{
+			Thread::testCancel();
+			rv = ::read(fd, buf, count);
+		} while (rv < 0 && errno == EINTR);
+		return rv;
+	}
+
+	::ssize_t upwrite(int fd, void const * buf, std::size_t count)
+	{
+		::ssize_t rv;
+		// block SIGPIPE so we don't kill the process if the pipe is closed.
+		SignalScope ss(SIGPIPE, SIG_IGN);
+		do
+		{
+			Thread::testCancel();
+			rv = ::write(fd, buf, count);
+		} while (rv < 0 && errno == EINTR);
+		return rv;
+	}
+
+	int upaccept(int s, struct sockaddr * addr, socklen_t * addrlen)
+	{
+		int rv;
+		do
+		{
+			rv = ::accept(s, addr, addrlen);
+		} while (rv < 0 && errno == EINTR);
+		return rv;
+	}
+
+	enum EDirection
+	{
+		E_WRITE_PIPE, E_READ_PIPE
+	};
+
+	// bufsz MUST be an int, and not some other integral type (address taken)
+	//
+	void setKernelBufferSize(int sockfd, int bufsz, EDirection edir)
+	{
+		if (sockfd == -1)
+		{
+			return;
+		}
+
+		int optname = (edir == E_WRITE_PIPE ? SO_SNDBUF : SO_RCVBUF);
+
+		int getbufsz;
+		socklen_t getbufsz_len = sizeof(getbufsz);
+		int errc = ::getsockopt(sockfd, SOL_SOCKET, optname, &getbufsz, &getbufsz_len);
+		if (errc == 0 && getbufsz < bufsz)
+		{
+			::setsockopt(sockfd, SOL_SOCKET, optname, &bufsz, sizeof(bufsz));
+		}
+	}
+
+	void setDefaultKernelBufsz(int sockfd_read, int sockfd_write)
+	{
+		int const BUFSZ = 64 * 1024;
+		setKernelBufferSize(sockfd_read, BUFSZ, E_READ_PIPE);
+		setKernelBufferSize(sockfd_write, BUFSZ, E_WRITE_PIPE);
+	}
+
+#endif
+
+}
 
 namespace OW_NAMESPACE
 {
@@ -96,9 +182,9 @@ AcceptThread::acceptConnection()
 	tmp = 1;
 	::setsockopt(m_serversock, IPPROTO_TCP, 1,		// #define TCP_NODELAY 1
 		(char*) &tmp, sizeof(int));
-	
+
 	val = sizeof(struct sockaddr_in);
-	if ((m_serverconn = ::accept(m_serversock, (struct sockaddr*)&sin, &val))
+	if ((m_serverconn = upaccept(m_serversock, (struct sockaddr*)&sin, &val))
 	   == -1)
 	{
 		return;
@@ -132,25 +218,25 @@ _pipe(int *fds)
 	sin.sin_addr.s_addr = htonl( 0x7f000001 ); // loopback
 	sin.sin_port = 0;
 	memset(sin.sin_zero, 0, 8 );
-	if (bind(svrfd, (struct sockaddr * )&sin, sizeof( struct sockaddr_in ) ) == -1) 
+	if (bind(svrfd, (struct sockaddr * )&sin, sizeof( struct sockaddr_in ) ) == -1)
 	{
 		int lerrno = errno;
-		::close(svrfd);
+		upclose(svrfd);
 		fprintf(stderr, "CreateSocket(): Failed to bind on socket" );
 		return -1;
 	}
-	if (listen(svrfd, 1) == -1) 
+	if (listen(svrfd, 1) == -1)
 	{
 		int lerrno = errno;
-		::close(svrfd);
+		upclose(svrfd);
 		return -1;
 	}
   	val = sizeof(struct sockaddr_in);
-	if (getsockname(svrfd, ( struct sockaddr * )&sin, &val ) == -1) 
+	if (getsockname(svrfd, ( struct sockaddr * )&sin, &val ) == -1)
 	{
 		int lerrno = errno;
 		fprintf(stderr, "CreateSocket(): Failed to obtain socket name" );
-		::close(svrfd);
+		upclose(svrfd);
 		return -1;
 	}
 
@@ -167,7 +253,7 @@ _pipe(int *fds)
 		return -1;
 	}
 
-	// Connect to server 
+	// Connect to server
 	struct sockaddr_in csin;
 	csin.sin_family = AF_INET;
 	csin.sin_addr.s_addr = htonl(0x7f000001); // loopback
@@ -191,7 +277,7 @@ _pipe(int *fds)
 	// Wait for accept thread to terminate
 	::pthread_join(athread, &threadResult);
 
-	::close(svrfd);
+	upclose(svrfd);
 	fds[0] = pat->getConnectFD();
 	fds[1] = clientfd;
 	delete pat;
@@ -201,120 +287,95 @@ _pipe(int *fds)
 #endif // OW_NETWARE
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
-UnnamedPipeRef
-UnnamedPipe::createUnnamedPipe(EOpen doOpen)
-{
-	return UnnamedPipeRef(new PosixUnnamedPipe(doOpen));
-}
-//////////////////////////////////////////////////////////////////////////////
 PosixUnnamedPipe::PosixUnnamedPipe(EOpen doOpen)
-#ifndef OW_WIN32
-	: m_blocking(E_BLOCKING)
-#endif
 {
-#ifdef OW_WIN32
-	m_blocking[0] = m_blocking[1] = E_BLOCKING;
-#endif
 	m_fds[0] = m_fds[1] = -1;
 	if (doOpen)
 	{
 		open();
 	}
-	setTimeouts(60 * 10); // 10 minutes. This helps break deadlocks when using safePopen()
+	setTimeouts(Timeout::relative(60 * 10)); // 10 minutes. This helps break deadlocks when using safePopen()
+#ifndef OW_WIN32
 	setBlocking(E_BLOCKING); // necessary to set the pipes up right.
+#endif
 }
-	
+
+//////////////////////////////////////////////////////////////////////////////
+PosixUnnamedPipe::PosixUnnamedPipe(AutoDescriptor inputfd, AutoDescriptor outputfd)
+{
+	m_fds[0] = inputfd.get();
+	m_fds[1] = outputfd.get();
+	setTimeouts(Timeout::relative(60 * 10)); // 10 minutes. This helps break deadlocks when using safePopen()
+	setBlocking(E_BLOCKING);
+	setDefaultKernelBufsz(m_fds[0], m_fds[1]);
+	inputfd.release();
+	outputfd.release();
+}
+
 //////////////////////////////////////////////////////////////////////////////
 PosixUnnamedPipe::~PosixUnnamedPipe()
 {
 	close();
 }
 //////////////////////////////////////////////////////////////////////////////
-void
-PosixUnnamedPipe::setBlocking(EBlockingMode outputIsBlocking)
+namespace
 {
-#ifdef OW_WIN32
-	// precondition
-	OW_ASSERT(m_fds[0] != -1 && m_fds[1] != -1);
-
-	m_blocking[0] = outputIsBlocking;
-	m_blocking[1] = outputIsBlocking;
-	// Unnamed pipes on Win32 cannot do non-blocking i/o (aka async, overlapped)
-	// Only named pipes can. If this becomes a problem in the future, then
-	// PosixUnnamedPipe can be implemented with NamedPipes. I know this can be
-	// a problem with the signal handling mechanism that is used in the daemon
-	// code, but I plan on do that differently on Win32
-//	OW_ASSERT(outputIsBlocking);
-	return;
-#else
-	// precondition
-	OW_ASSERT(m_fds[0] != -1 && m_fds[1] != -1);
-
-	m_blocking = outputIsBlocking;
-
-	for (size_t i = 0; i <= 1; ++i)
+#ifndef OW_WIN32
+	typedef UnnamedPipe::EBlockingMode EBlockingMode;
+	void set_desc_blocking(
+		int d, EBlockingMode & bmflag, EBlockingMode blocking_mode)
 	{
-		int fdflags = fcntl(m_fds[i], F_GETFL, 0);
+		OW_ASSERT(d != -1);
+		int fdflags = fcntl(d, F_GETFL, 0);
 		if (fdflags == -1)
 		{
-			OW_THROW_ERRNO_MSG(IOException, "Failed to set pipe to non-blocking");
+			OW_THROW_ERRNO_MSG(IOException, "Failed to set pipe blocking mode");
 		}
-		if (outputIsBlocking == E_BLOCKING)
+		if (blocking_mode == UnnamedPipe::E_BLOCKING)
 		{
-			fdflags &= !O_NONBLOCK;
+			fdflags &= ~O_NONBLOCK;
 		}
 		else
 		{
 			fdflags |= O_NONBLOCK;
 		}
-		if (fcntl(m_fds[i], F_SETFL, fdflags) == -1)
+		if (fcntl(d, F_SETFL, fdflags) == -1)
 		{
-			OW_THROW_ERRNO_MSG(IOException, "Failed to set pipe to non-blocking");
+			OW_THROW_ERRNO_MSG(IOException, "Failed to set pipe blocking mode");
 		}
+		bmflag = blocking_mode;
 	}
-
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
+PosixUnnamedPipe::setBlocking(EBlockingMode blocking_mode)
 {
+	OW_ASSERT(m_fds[0] != -1 || m_fds[1] != -1);
 #ifdef OW_WIN32
-	// precondition
-	OW_ASSERT(m_fds[1] != -1);
-	
-	m_blocking[1] = outputIsBlocking ? E_BLOCKING : E_NONBLOCKING ;
-	// Unnamed pipes on Win32 cannot do non-blocking i/o (aka async, overlapped)
-	// Only named pipes can. If this becomes a problem in the future, then
-	// PosixUnnamedPipe can be implemented with NamedPipes. I know this can be
-	// a problem with the signal handling mechanism that is used in the daemon
-	// code, but I plan on do that differently on Win32
-//	OW_ASSERT(outputIsBlocking);
-	return;
+	m_blocking[0] = blocking_mode;
+	m_blocking[1] = blocking_mode;
 #else
-	// precondition
-	OW_ASSERT(m_fds[1] != -1);
-	
-	m_blocking = outputIsBlocking ? E_BLOCKING : E_NONBLOCKING ;
-	int fdflags = fcntl(m_fds[1], F_GETFL, 0);
-	if (fdflags == -1)
+	for (size_t i = 0; i < 2; ++i)
 	{
-		OW_THROW_ERRNO_MSG(IOException, "Failed to set pipe to non-blocking");
-	}
-	if (outputIsBlocking)
-	{
-		fdflags ^= O_NONBLOCK;
-	}
-	else
-	{
-		fdflags |= O_NONBLOCK;
-	}
-	if (fcntl(m_fds[1], F_SETFL, fdflags) == -1)
-	{
-		OW_THROW_ERRNO_MSG(IOException, "Failed to set pipe to non-blocking");
+		if (m_fds[i] != -1)
+		{
+			set_desc_blocking(m_fds[i], m_blocking[i], blocking_mode);
+		}
 	}
 #endif
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+PosixUnnamedPipe::setWriteBlocking(EBlockingMode blocking_mode)
+{
+	set_desc_blocking(m_fds[1], m_blocking[1], blocking_mode);
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+PosixUnnamedPipe::setReadBlocking(EBlockingMode blocking_mode)
+{
+	set_desc_blocking(m_fds[0], m_blocking[0], blocking_mode);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -350,9 +411,9 @@ PosixUnnamedPipe::open()
 	if( !bConnected && GetLastError() == ERROR_PIPE_CONNECTED )
 		bConnected = TRUE;
 
-	BOOL bSuccess = 
-		pipe != INVALID_HANDLE_VALUE && 
-		client != INVALID_HANDLE_VALUE && 
+	BOOL bSuccess =
+		pipe != INVALID_HANDLE_VALUE &&
+		client != INVALID_HANDLE_VALUE &&
 		event1 != INVALID_HANDLE_VALUE &&
 		event2 != INVALID_HANDLE_VALUE &&
 		bConnected;
@@ -376,19 +437,33 @@ PosixUnnamedPipe::open()
 //	if (::_pipe(m_fds, 2560, _O_BINARY) == -1)
 #elif defined(OW_NETWARE)
 	if (_pipe(m_fds) == -1)
-#else
-	if (::pipe(m_fds) == -1)
-#endif
 	{
 		m_fds[0] = m_fds[1] = -1;
-		OW_THROW(UnnamedPipeException, ::strerror(errno));
+		OW_THROW_ERRNO_MSG(UnnamedPipeException, "PosixUnamedPipe::open(): soketpair()");
 	}
+#else
+	if (::socketpair(AF_UNIX, SOCK_STREAM, 0, m_fds) == -1)
+	{
+		m_fds[0] = m_fds[1] = -1;
+		OW_THROW_ERRNO_MSG(UnnamedPipeException, "PosixUnamedPipe::open(): soketpair()");
+	}
+	::shutdown(m_fds[0], SHUT_WR);
+	::shutdown(m_fds[1], SHUT_RD);
+	setDefaultKernelBufsz(m_fds[0], m_fds[1]);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 int
 PosixUnnamedPipe::close()
 {
 	int rc = -1;
+
+	// handle the case where both input and output are the same descriptor.  It can't be closed twice.
+	if (m_fds[0] == m_fds[1])
+	{
+		m_fds[1] = -1;
+	}
+
 	if (m_fds[0] != -1)
 	{
 #ifdef OW_WIN32
@@ -397,7 +472,7 @@ PosixUnnamedPipe::close()
 		if( CloseHandle(h) && CloseHandle(e) )
 			rc = 0;
 #else
-		rc = _CLOSE(m_fds[0]);
+		rc = upclose(m_fds[0]);
 #endif
 		m_fds[0] = -1;
 	}
@@ -409,7 +484,7 @@ PosixUnnamedPipe::close()
 		if( CloseHandle(h) && CloseHandle(e) )
 			rc = 0;
 #else
-		rc = _CLOSE(m_fds[1]);
+		rc = upclose(m_fds[1]);
 #endif
 		m_fds[1] = -1;
 	}
@@ -435,7 +510,10 @@ PosixUnnamedPipe::closeInputHandle()
 		if( CloseHandle(h) && CloseHandle(e) )
 			rc = 0;
 #else
-		rc = _CLOSE(m_fds[0]);
+		if (m_fds[0] != m_fds[1])
+		{
+			rc = upclose(m_fds[0]);
+		}
 #endif
 		m_fds[0] = -1;
 	}
@@ -454,7 +532,10 @@ PosixUnnamedPipe::closeOutputHandle()
 		if( CloseHandle(h) && CloseHandle(e) )
 			rc = 0;
 #else
-		rc = _CLOSE(m_fds[1]);
+		if (m_fds[0] != m_fds[1])
+		{
+			rc = upclose(m_fds[1]);
+		}
 #endif
 		m_fds[1] = -1;
 	}
@@ -462,28 +543,32 @@ PosixUnnamedPipe::closeOutputHandle()
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
+PosixUnnamedPipe::write(const void* data, int dataLen, ErrorAction errorAsException)
 {
 	int rc = -1;
 	if (m_fds[1] != -1)
 	{
 #ifndef OW_WIN32
-		if (m_blocking == E_BLOCKING)
+		if (m_blocking[1] == E_BLOCKING)
 		{
-			rc = SocketUtils::waitForIO(m_fds[1], m_writeTimeout, SocketFlags::E_WAIT_FOR_OUTPUT);
+			rc = SocketUtils::waitForIO(m_fds[1], getWriteTimeout(), SocketFlags::E_WAIT_FOR_OUTPUT);
 			if (rc != 0)
 			{
-				if (errorAsException)
+				if (rc == ETIMEDOUT)
+				{
+					errno = ETIMEDOUT;
+				}
+				if (errorAsException == E_THROW_ON_ERROR)
 				{
 					OW_THROW_ERRNO_MSG(IOException, "SocketUtils::waitForIO failed.");
 				}
 				else
 				{
-					return rc;
+					return -1;
 				}
 			}
 		}
-		rc = _WRITE(m_fds[1], data, dataLen);
+		rc = upwrite(m_fds[1], data, dataLen);
 #else
 		BOOL bSuccess = FALSE;
 
@@ -493,6 +578,7 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 		ovl.Offset = 0;
 		ovl.OffsetHigh = 0;
 
+#error "This is broken for non-blocking io. If no output buffer is available, write() should return -1 and set errno == ETIMEDOUT"
 		bSuccess = WriteFile(
 			(HANDLE)m_fds[1],
 			data,
@@ -502,6 +588,7 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 
 		if( bSuccess && m_blocking[1] == E_BLOCKING )
 		{
+#error "This needs to honor the timeout value"
 			bSuccess = WaitForSingleObject( (HANDLE)m_events[1], INFINITE ) == WAIT_OBJECT_0;
 		}
 
@@ -509,36 +596,47 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 			rc = 0;
 #endif
 	}
-	if (errorAsException && rc == -1)
+	if (errorAsException == E_THROW_ON_ERROR && rc == -1)
 	{
-		OW_THROW_ERRNO_MSG(IOException, "pipe write failed.");
+		if (m_fds[1] == -1)
+		{
+			OW_THROW(IOException, "pipe write failed because pipe is closed");
+		}
+		else
+		{
+			OW_THROW_ERRNO_MSG(IOException, "pipe write failed");
+		}
 	}
 	return rc;
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
+PosixUnnamedPipe::read(void* buffer, int bufferLen, ErrorAction errorAsException)
 {
 	int rc = -1;
 	if (m_fds[0] != -1)
 	{
 #ifndef OW_WIN32
-		if (m_blocking == E_BLOCKING)
+		if (m_blocking[0] == E_BLOCKING)
 		{
-			rc = SocketUtils::waitForIO(m_fds[0], m_readTimeout, SocketFlags::E_WAIT_FOR_INPUT);
+			rc = SocketUtils::waitForIO(m_fds[0], getReadTimeout(), SocketFlags::E_WAIT_FOR_INPUT);
 			if (rc != 0)
 			{
-				if (errorAsException)
+				if (rc == ETIMEDOUT)
+				{
+					errno = ETIMEDOUT;
+				}
+				if (errorAsException == E_THROW_ON_ERROR)
 				{
 					OW_THROW_ERRNO_MSG(IOException, "SocketUtils::waitForIO failed.");
 				}
 				else
 				{
-					return rc;
+					return -1;
 				}
 			}
 		}
-		rc = _READ(m_fds[0], buffer, bufferLen);
+		rc = upread(m_fds[0], buffer, bufferLen);
 #else
 		BOOL bSuccess = FALSE;
 
@@ -547,7 +645,7 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 		ovl.hEvent = (HANDLE)m_events[0];
 		ovl.Offset = 0;
 		ovl.OffsetHigh = 0;
-
+#error "This is broken for non-blocking io. If no input is available, read() should return -1 and set errno == ETIMEDOUT"
 		bSuccess = ReadFile(
 			(HANDLE)m_fds[0],
 			buffer,
@@ -557,6 +655,7 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 
 		if( bSuccess && m_blocking[0] == E_BLOCKING )
 		{
+#error "This needs to honor the timeout value"
 			bSuccess = WaitForSingleObject( (HANDLE)m_events[0], INFINITE ) == WAIT_OBJECT_0;
 		}
 
@@ -564,15 +663,26 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 			rc = 0;
 #endif
 	}
-	if (errorAsException && rc == -1)
+	if (rc == 0)
 	{
-		OW_THROW_ERRNO_MSG(IOException, "pipe read failed.");
+		closeInputHandle();
+	}
+	if (errorAsException == E_THROW_ON_ERROR && rc == -1)
+	{
+		if (m_fds[0] == -1)
+		{
+			OW_THROW(IOException, "pipe read failed because pipe is closed");
+		}
+		else
+		{
+			OW_THROW_ERRNO_MSG(IOException, "pipe read failed");
+		}
 	}
 	return rc;
 }
 //////////////////////////////////////////////////////////////////////////////
 Select_t
-PosixUnnamedPipe::getSelectObj() const
+PosixUnnamedPipe::getReadSelectObj() const
 {
 #ifdef OW_WIN32
 	Select_t selectObj;
@@ -603,6 +713,84 @@ PosixUnnamedPipe::getWriteSelectObj() const
 	return m_fds[1];
 #endif
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+PosixUnnamedPipe::passDescriptor(Descriptor descriptor)
+{
+	int rc = -1;
+	if (m_fds[1] != -1)
+	{
+		if (m_blocking[1] == E_BLOCKING)
+		{
+			rc = SocketUtils::waitForIO(m_fds[1], getWriteTimeout(), SocketFlags::E_WAIT_FOR_OUTPUT);
+			if (rc != 0)
+			{
+				if (rc == ETIMEDOUT)
+				{
+					errno = ETIMEDOUT;
+				}
+				OW_THROW_ERRNO_MSG(IOException, "SocketUtils::waitForIO failed.");
+			}
+		}
+		rc = OpenWBEM::passDescriptor(m_fds[1], descriptor);
+	}
+	if (rc == -1)
+	{
+		if (m_fds[1] == -1)
+		{
+			OW_THROW(IOException, "sendDescriptor() failed because pipe is closed");
+		}
+		else
+		{
+			OW_THROW_ERRNO_MSG(IOException, "sendDescriptor() failed");
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+AutoDescriptor
+PosixUnnamedPipe::receiveDescriptor()
+{
+	int rc = -1;
+	AutoDescriptor descriptor;
+	if (m_fds[0] != -1)
+	{
+		if (m_blocking[0] == E_BLOCKING)
+		{
+			rc = SocketUtils::waitForIO(m_fds[0], getReadTimeout(), SocketFlags::E_WAIT_FOR_INPUT);
+			if (rc != 0)
+			{
+				if (rc == ETIMEDOUT)
+				{
+					errno = ETIMEDOUT;
+				}
+				OW_THROW_ERRNO_MSG(IOException, "SocketUtils::waitForIO failed.");
+			}
+		}
+		descriptor = OpenWBEM::receiveDescriptor(m_fds[0]);
+	}
+	else
+	{
+		OW_THROW(IOException, "receiveDescriptor() failed because pipe is closed");
+	}
+	return descriptor;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+Descriptor
+PosixUnnamedPipe::getInputDescriptor() const
+{
+	return m_fds[0];
+}
+
+//////////////////////////////////////////////////////////////////////////////
+Descriptor
+PosixUnnamedPipe::getOutputDescriptor() const
+{
+	return m_fds[1];
+}
+
 
 } // end namespace OW_NAMESPACE
 

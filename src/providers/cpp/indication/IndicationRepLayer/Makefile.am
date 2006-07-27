@@ -38,7 +38,8 @@ INCLUDES = \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/wql/common \
 -I$(top_srcdir)/src/cimom/common \
--I$(top_srcdir)/src/cimom/server
+-I$(top_srcdir)/src/cimom/server \
+-I$(top_srcdir)/src/monitor
 
 
 

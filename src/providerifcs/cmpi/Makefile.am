@@ -19,14 +19,13 @@ OW_SHARED_LIBS = libcmpiprovifc.$(LIB_EXT)
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \
--L$(top_builddir)/src/providerifcs/cmpi/common -lcmpisupport \
--L$(top_builddir)/src/wql/common -lowwqlcommon 
+-L$(top_builddir)/src/providerifcs/cmpi/common -lcmpisupport
+
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 thelibdir = $(pkglibdir)/provifcs
 
-#OW_CMPIIndicationProviderProxy.cpp
 
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_PROVIDER_S=
@@ -49,9 +48,6 @@ OW_CMPIProviderIFC.hpp \
 OW_CMPIProviderIFCUtils.hpp \
 OW_FTABLERef.hpp
 
-#libOW_CppIFC_a_LDFLAGS = -L$(top_builddir)/src/common/
-#libOW_CppIFC_a_LIBADD = -lOpenWBEM
-
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \
@@ -60,7 +56,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/cimom \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/providerifcs/cmpi/common \
--I$(top_srcdir)/src/cimom/server \
--I$(top_srcdir)/src/wql/common
+-I$(top_srcdir)/src/cimom/server
 
 endif

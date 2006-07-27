@@ -12,8 +12,8 @@ owstatlib_LIBRARIES = libnpisupport.a
 OW_SHARED_LIBS = libnpisupport.$(LIB_EXT)
 SHAREDLIBADD =  \
 -L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/src/provider -lowprovider \
--L$(top_builddir)/src/wql/common -lowwqlcommon
+-L$(top_builddir)/src/provider -lowprovider
+
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
@@ -41,7 +41,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/provider \
--I$(top_srcdir)/src/providerifcs/npi \
--I$(top_srcdir)/src/wql/common
+-I$(top_srcdir)/src/providerifcs/npi
 
 

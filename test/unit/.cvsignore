@@ -12,3 +12,8 @@ MemTracerTest
 *.nlm.*
 exitWithSignal
 lib*sl*
+runMultiProcessLogger
+fillOutputBuffer
+*.dylib*
+*.so*
+*.sl*

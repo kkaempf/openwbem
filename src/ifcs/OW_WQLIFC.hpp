@@ -51,7 +51,7 @@ namespace OW_NAMESPACE
 class WQLSelectStatement;
 // TODO: FIX THIS! This class in libopenwbem cannot depend on anything outside of libopenwbem.
 // Either move this class out of libopenwbem or else move WQLSelectStatement into libopenwbem
-class OW_COMMON_API WQLIFC : public ServiceIFC
+class OW_COMMON_API WQLIFC : virtual public ServiceIFC
 {
 public:
 	virtual ~WQLIFC();

@@ -40,6 +40,15 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "LogAppenderTestCases.hpp"
+#include "OW_DelayedFormatTestCases.hpp"
+#include "OW_ScopeLoggerTestCases.hpp"
+#include "GlobalPtrTestCases.hpp"
+#include "IStringStreamTestCases.hpp"
+#include "UnnamedPipeTestCases.hpp"
+#include "ProcessTestCases.hpp"
+#include "ConditionTestCases.hpp"
+#include "TimeoutTimerTestCases.hpp"
 #include "ThreadOnceTestCases.hpp"
 #include "CryptographicRandomNumberTestCases.hpp"
 #include "COWIntrusiveReferenceTestCases.hpp"
@@ -94,6 +103,7 @@
 #include "OW_StringTestCases.hpp"
 #include "OW_FormatTestCases.hpp"
 #include "OW_ConfigOpts.hpp"
+#include "OW_LazyGlobalTestCases.hpp"
 
 // includes for this file
 #include "TestRunner.hpp"
@@ -104,6 +114,15 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "LogAppender", LogAppenderTestCases::suite());
+	runner.addTest( "OW_DelayedFormat", OW_DelayedFormatTestCases::suite());
+	runner.addTest( "OW_ScopeLogger", OW_ScopeLoggerTestCases::suite());
+	runner.addTest( "GlobalPtr", GlobalPtrTestCases::suite());
+	runner.addTest( "IStringStream", IStringStreamTestCases::suite());
+	runner.addTest( "UnnamedPipe", UnnamedPipeTestCases::suite());
+	runner.addTest( "Process", ProcessTestCases::suite());
+	runner.addTest( "Condition", ConditionTestCases::suite());
+	runner.addTest( "TimeoutTimer", TimeoutTimerTestCases::suite());
 	runner.addTest( "ThreadOnce", ThreadOnceTestCases::suite());
 	runner.addTest( "CryptographicRandomNumber", CryptographicRandomNumberTestCases::suite());
 	runner.addTest( "COWIntrusiveReference", COWIntrusiveReferenceTestCases::suite());
@@ -156,10 +175,11 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_Exec", OW_ExecTestCases::suite());
 #endif
 
-#if !defined(OW_STATIC_SERVICES)
+#if !defined(OW_STATIC_SERVICES) && !defined(OW_DARWIN)
 	// Don't run this test if things are static, as it opens a library that
 	// is statically linked to this executable.  On AIX, doing so causes a
-	// core dump. 	
+	// core dump. 	We can't load this library dynamically on MacOS either
+	// (it's not a real bundle).
 	runner.addTest( "OW_LinuxSharedLibraryLoader", OW_LinuxSharedLibraryLoaderTestCases::suite());
 #endif /* !defined(OW_STATIC_SERVICES) */
 
@@ -172,6 +192,7 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_Logger", OW_LoggerTestCases::suite());
 	runner.addTest( "OW_String", OW_StringTestCases::suite());
 	runner.addTest( "OW_Format", OW_FormatTestCases::suite());
+	runner.addTest( "OW_LazyGlobal", OW_LazyGlobalTestCases::suite());
 
 	if ( argc < 2 || ( argc == 2 && OpenWBEM::String("all") == argv[1] ) )
 	{

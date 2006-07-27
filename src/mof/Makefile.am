@@ -25,8 +25,6 @@ INCLUDES = \
 
 libowmofc_a_SOURCES = \
 OW_MOFVisitor.cpp \
-OW_MOFParser.cc \
-OW_MOFLexer.cc \
 OW_MOFParser.yy \
 OW_MOFLexer.ll \
 OW_MOFCIMOMVisitor.cpp \
@@ -48,6 +46,9 @@ EXTRA_DIST = \
 $(top_builddir)/src/mof/OW_MOFParser.cc \
 $(top_builddir)/src/mof/OW_MOFLexer.cc \
 $(top_builddir)/src/mof/OW_MOFParser.h
+
+# This is necessary in order for dependency tracking to work
+BUILT_SOURCES = OW_MOFParser.h
 
 #debug versions
 #AM_YFLAGS = -d -t -v -powmof

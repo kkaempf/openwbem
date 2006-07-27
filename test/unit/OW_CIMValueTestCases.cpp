@@ -90,9 +90,28 @@ void OW_CIMValueTestCases::testInserterOp()
 
 void OW_CIMValueTestCases::testToMOF()
 {
-	CIMValue v = CIMValue(CIMDateTime("00000000000000.000000:000"));
-	unitAssert(v.toMOF() == "\"00000000000000.000000:000\"");
-	unitAssert(v.toString() == "00000000000000.000000:000");
+	unitAssert(CIMValue(CIMDateTime("00000000000000.000000:000")).toMOF() == "\"00000000000000.000000:000\"");
+
+	UInt8Array a(5);
+	for (size_t i = 0; i < a.size(); ++i)
+	{
+		a[i] = i;
+	}
+	CIMValue v(a);
+	unitAssert(v.toString() == "0,1,2,3,4");
+}
+
+void OW_CIMValueTestCases::testToString()
+{
+	unitAssert(CIMValue(CIMDateTime("00000000000000.000000:000")).toString() == "00000000000000.000000:000");
+
+	UInt8Array a(5);
+	for (size_t i = 0; i < a.size(); ++i)
+	{
+		a[i] = i;
+	}
+	CIMValue v(a);
+	unitAssert(v.toString() == "0,1,2,3,4");
 }
 
 void OW_CIMValueTestCases::test_createSimpleValue()
@@ -117,6 +136,7 @@ Test* OW_CIMValueTestCases::suite()
 	ADD_TEST_TO_SUITE(OW_CIMValueTestCases, testGetArraySize);
 	ADD_TEST_TO_SUITE(OW_CIMValueTestCases, testInserterOp);
 	ADD_TEST_TO_SUITE(OW_CIMValueTestCases, testToMOF);
+	ADD_TEST_TO_SUITE(OW_CIMValueTestCases, testToString);
 	ADD_TEST_TO_SUITE(OW_CIMValueTestCases, test_createSimpleValue);
 
 	return testSuite;

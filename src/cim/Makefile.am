@@ -22,7 +22,8 @@ OW_CIMQualifier.cpp \
 OW_CIMQualifierType.cpp \
 OW_CIMScope.cpp \
 OW_CIMUrl.cpp \
-OW_CIMParamValue.cpp
+OW_CIMParamValue.cpp \
+OW_CIMInstanceWrapperBase.cpp
 
 pkginclude_HEADERS = \
 OW_CIM.hpp \
@@ -53,7 +54,8 @@ OW_CIMScope.hpp \
 OW_CIMUrl.hpp \
 OW_CIMValue.hpp \
 OW_CIMValueCast.hpp \
-OW_CIMParamValue.hpp
+OW_CIMParamValue.hpp \
+OW_CIMInstanceWrapperBase.hpp
 
 
 # Shouldn't depend on anything not in common. DON'T ADD ANYTHING TO THIS LIST!

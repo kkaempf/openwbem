@@ -70,7 +70,6 @@ class OW_COMMON_API TempFileBuffer : public std::streambuf
 {
 public:
 	TempFileBuffer(size_t bufSize);
-	TempFileBuffer(String const& filename, size_t bufSize);
 	~TempFileBuffer();
 	std::streamsize getSize();
 	void rewind();
@@ -106,11 +105,9 @@ class OW_COMMON_API TempFileStream : public std::iostream
 {
 public:
 	TempFileStream(size_t bufSize = 4096);
-	TempFileStream(String const& filename, size_t bufSize = 4096);
 	std::streamsize getSize() { return m_buffer->getSize(); }
 	void rewind();
 	void reset();
-	String releaseFile();
 	bool usingTempFile() const;
 private:
 

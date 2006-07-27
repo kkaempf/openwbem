@@ -38,10 +38,13 @@
  */
 
 #include "OW_config.h"
+
+#ifdef OW_HAVE_OPENSSL
+
 #include "OW_SSLSocketImpl.hpp"
 #include "OW_Format.hpp"
 #include "OW_Assertion.hpp"
-#ifdef OW_HAVE_OPENSSL
+#include "OW_Timeout.hpp"
 #include <openssl/err.h>
 #include <OW_Format.hpp>
 #include <OW_SocketUtils.hpp>
@@ -64,11 +67,11 @@ void sslWaitForIO(SocketBaseImpl& s, int type)
 {
 	if(type == SSL_ERROR_WANT_READ)
 	{
-		s.waitForInput();
+		s.waitForInput(Timeout::infinite);
 	}
 	else
 	{
-		s.waitForOutput();
+		s.waitForOutput(Timeout::infinite);
 	}
 }
 
@@ -350,14 +353,14 @@ SSLSocketImpl::peerCertVerified() const
 // SSL buffer can contain the data therefore select
 // does not work without checking SSL_pending() first.
 bool
-SSLSocketImpl::waitForInput(int timeOutSecs)
+SSLSocketImpl::waitForInput(const Timeout& timeout)
 {
    // SSL buffer contains data -> read them
    if (SSL_pending(m_ssl))
    {
 	   return false;
    }
-   return SocketBaseImpl::waitForInput(timeOutSecs);
+   return SocketBaseImpl::waitForInput(timeout);
 }
 //////////////////////////////////////////////////////////////////////////////
 

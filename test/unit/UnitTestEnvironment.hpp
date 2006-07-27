@@ -51,14 +51,6 @@ using namespace OpenWBEM;
 class TestEnvironment : public ServiceEnvironmentIFC
 {
 public:
-	virtual LoggerRef getLogger() const 
-	{
-		return LoggerRef(new CerrLogger);
-	}
-	virtual LoggerRef getLogger(const String& componentName) const
-	{
-		return getLogger();
-	}
 	virtual String getConfigItem(const String &name, const String& defRetVal) const 
 	{
 		return ConfigFile::getConfigItem(config, name, defRetVal);

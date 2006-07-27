@@ -66,7 +66,8 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 	const String &methodName,
 	const CIMParamValueArray &in, CIMParamValueArray &out)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIMethodProviderProxy::invokeMethod()");
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "CMPIMethodProviderProxy::invokeMethod()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 

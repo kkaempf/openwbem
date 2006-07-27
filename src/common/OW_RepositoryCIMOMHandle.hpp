@@ -41,6 +41,7 @@
 #include "OW_RWLocker.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_CommonFwd.hpp"
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -218,11 +219,8 @@ virtual void references(
 		CIMInstanceResultHandlerIFC& result,
 		const String &query, const String& queryLanguage);
 
-	typedef RepositoryIFCRef RepositoryCIMOMHandle::*safe_bool;
-	operator safe_bool () const
-		{  return (m_pServer) ? &RepositoryCIMOMHandle::m_pServer : 0; }
-	bool operator!() const
-		{  return !m_pServer; }
+	OW_SAFE_BOOL_IMPL(RepositoryCIMOMHandle, RepositoryIFCRef, RepositoryCIMOMHandle::m_pServer, m_pServer)
+
 	void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
 	void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result);
 

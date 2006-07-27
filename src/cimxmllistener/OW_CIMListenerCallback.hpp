@@ -67,9 +67,12 @@ protected:
 	 * This gets called when the CIM Listener receives an indication.
 	 * @param ci The CIM Instance representing the indication
 	 * @param listenerPath the path from the http URL, useful for
-	 * 	determining what action to take.  I.e. you can have several
-	 * 	listerners on a single http server.  This lets you know which
-	 * 	one was triggered.
+	 *      determining what action to take.  I.e. you can have several
+	 *      listerners on a single http server.  This lets you know which
+	 *      one was triggered.
+	 * @throws CIMException On failure. This will return the error
+	 *                      back to the client sending the
+	 *                      indication.
 	 */
 	virtual void doIndicationOccurred( CIMInstance& ci,
 		const String& listenerPath ) = 0;

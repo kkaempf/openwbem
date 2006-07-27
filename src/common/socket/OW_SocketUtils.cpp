@@ -179,6 +179,13 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 int
 waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag waitFlag)
 {
+	return waitForIO(fd, Timeout::relative(timeOutSecs), waitFlag);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+int
+waitForIO(SocketHandle_t fd, const Timeout& timeout, SocketFlags::EWaitDirectionFlag waitFlag)
+{
 	if (fd == -1)
 	{
 		errno = EBADF;
@@ -218,7 +225,7 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag wa
 		selarray.push_back(so); 
 	}
 
-	int rc = Select::selectRW(selarray, timeOutSecs*1000); 
+	int rc = Select::selectRW(selarray, timeout); 
 	switch (rc)
 	{
 	case Select::SELECT_TIMEOUT:
@@ -226,6 +233,7 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag wa
 		break; 
 	case 2:
 		rc = -1; // pipe was signalled
+		errno = ECANCELED;
 		break; 
 	case 1: 
 		if (pipefd != -1)

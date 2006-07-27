@@ -194,7 +194,8 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "TestInstance::modifyInstance");
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, "TestInstance::modifyInstance");
 		String name;
 		StringArray params;
 		modifiedInstance.getProperty("Name").getValue().get(name);
@@ -240,36 +241,27 @@ public:
 	String
 	procAcceptLanguage(const ProviderEnvironmentIFCRef& env)
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "TestInstance::procAcceptLanguage");
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, "TestInstance::procAcceptLanguage");
 
 		String al;
-		OperationContext::DataRef dataRef =
-			env->getOperationContext().getData(OperationContext::SESSION_LANGUAGE_KEY);
-
-		if (dataRef)
+		OperationContext& oc(env->getOperationContext());
+		SessionLanguageRef slref = oc.getDataAs<SessionLanguage>(OperationContext::SESSION_LANGUAGE_KEY);
+		if (slref)
 		{
-			SessionLanguageRef slref = dataRef.cast_to<SessionLanguage>();
-			if (slref)
-			{
-				al = slref->getAcceptLanguageString();
-				slref->addContentLanguage("x-testinst");
-				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "TestInstance::procAcceptLanguage"
-					" setting content-language in SessionLanguage object");
-				String cl = slref->getContentLanguage();
-				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format(
-					"TestInstance::procAcceptLanguage content-language"
-					" now is %1", cl).c_str());
-			}
-			else
-			{
-				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "TestInstance::procAcceptLanguage"
-					" didn't find SessionLanguage object in opctx");
-			}
+			al = slref->getAcceptLanguageString();
+			slref->addContentLanguage("x-testinst");
+			OW_LOG_DEBUG(logger, "TestInstance::procAcceptLanguage"
+				" setting content-language in SessionLanguage object");
+			String cl = slref->getContentLanguage();
+			OW_LOG_DEBUG(logger, Format(
+				"TestInstance::procAcceptLanguage content-language"
+				" now is %1", cl).c_str());
 		}
 		else
 		{
-			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "TestInstance::procAcceptLanguage"
-				" didn't find SESSION_LANGUAGE_KEY in opctx");
+			OW_LOG_DEBUG(logger, "TestInstance::procAcceptLanguage"
+				" didn't find SessionLanguage object in opctx");
 		}
 
 		return al;

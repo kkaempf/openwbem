@@ -40,6 +40,7 @@
 #include "OW_String.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -179,14 +180,11 @@ public:
 		return ( hasNextSibling() || hasPreviousSibling() );
 	}
 
-	typedef HDBNodeDataRef HDBNode::*safe_bool;
 	/**
 	 * @return true if this HDBNode is valid.
 	 */
-	operator safe_bool () const
-		{  return m_pdata ? &HDBNode::m_pdata : 0; }
-	bool operator!() const
-		{  return !m_pdata; }
+	OW_SAFE_BOOL_IMPL(HDBNode, HDBNodeDataRef, HDBNode::m_pdata, m_pdata)
+
 private:
 	HDBNode(const char* key, HDBHandle& hdl);
 	HDBNode(Int32 offset, HDBHandle& hdl);
@@ -208,8 +206,12 @@ private:
 	bool remove(HDBHandle& hdl);
 	void removeBlock(HDBHandle& hdl, HDBBlock& fblk, Int32 offset);
 	void addChild(HDBHandle& hdl, HDBNode& arg);
-	bool updateData(HDBHandle& hdl, int dataLen, const unsigned char* data);
+	bool updateData(HDBHandle& hdl, const HDBNode& parentNode, int dataLen, const unsigned char* data);
+	void updateParent(HDBHandle& hdl, const HDBNode& parentNode);
+	void detachFromParent(HDBHandle& hdl);
+	void addToNewParent(HDBHandle& hdl, HDBNode& parentNode);
 	void setNull() { m_pdata = 0; }
+	String debugString() const;
 
 #ifdef OW_WIN32
 #pragma warning (push)

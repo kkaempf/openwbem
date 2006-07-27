@@ -1,0 +1,45 @@
+IMPORTANT: Have monitor remove LD_LIBRARY_PATH from environment before creating
+a monitored process.
+
+Fix or document unexpected behavior of Thread::cooperativeCancel: it
+causes ThreadCancelledException to be thrown if the thread, in the process
+of shutting down, happens to call any function that does a Thread::testCancel.
+
+Test FileSystem::Path::security.
+
+Timeouts for IPCIO.
+
+Check on timeouts for UnnamedPipe?
+
+Make "monitor" work even when we are not running as root.  (In that case,
+PrivilegeManager just directly carries out tasks, and doesn't create
+a monitor process.)
+
+Add privilege config file tests with random characters, random tokens,
+and random ASTs.
+
+Check which files should have both Vintela and Network Associates copyright
+notices, and which should just have Vintela.
+
+Check uses of ::close -- it can fail if interrupted by a signal.
+
+Check for places where we do a system call where EINTR is a possible error code.
+
+Modify Monitor::kill and Monitor::poll_status to use the corresponding Process
+methods? (avoid duplicating Process code in Monitor)
+
+Rework OW_Exec.hpp functions to use Process class instead of PopenStreams?
+
+Find some way of testing that monitor's path cache (for security checking)
+is working?
+
+rand_init needs more scrutiny; it seems to me that it doesn't fail safely.
+- on Windows, if RAND_status() != 1, we just return instead of failing
+- on Unix, we keep on trying additional data sources of unknown entropy
+  if RAND_status() != 1, and never try to verify that we'v got enough
+  entropy.
+
+Test OW_SafeCString
+Test OW_Secure
+Test OW_IPCIO
+

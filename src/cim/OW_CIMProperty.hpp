@@ -43,6 +43,7 @@
 #include "OW_CIMNULL.hpp"
 #include "OW_WBEMFlags.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -107,14 +108,11 @@ public:
 	 */
 	CIMProperty& operator= (const CIMProperty& arg);
 
-	typedef COWIntrusiveReference<PROPData> CIMProperty::*safe_bool;
 	/**
 	 * @return true If this CIMProperty has an implementation.
 	 */
-	operator safe_bool () const
-		{  return m_pdata ? &CIMProperty::m_pdata : 0; }
-	bool operator!() const
-		{  return !m_pdata; }
+	OW_SAFE_BOOL_IMPL(CIMProperty, COWIntrusiveReference<PROPData>, CIMProperty::m_pdata, m_pdata)
+
 	/**
 	 * @return A copy of this CIMProperty object.
 	 */
@@ -284,21 +282,23 @@ public:
 	 * Write this CIMProperty to the given output stream.
 	 * @param ostrm	The output stream to write this object to.
 	 */
-	virtual void writeObject(std::ostream &ostrm) const;
+	virtual void writeObject(std::streambuf & ostrm) const;
 	/**
 	 * Write this CIMProperty, optionally omitting all qualifiers except
 	 * the key qualifier.
 	 * @param ostrm	The output stream to write this object to.
 	 * @param includeQulifiers If true write all qualifiers for property
 	 */
-	virtual void writeObject(std::ostream &ostrm,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers) const;
+	virtual void writeObject(
+		std::streambuf & ostrm,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers
+	) const;
 	
 	/**
 	 * Read this CIIMProperty object from the given input stream.
 	 * @param istrm	The input stream to read this CIMElement from.
 	 */
-	virtual void readObject(std::istream &istrm);
+	virtual void readObject(std::streambuf & istrm);
 	/**
 	 * @return The string representation of this CIMProperty.
 	 */

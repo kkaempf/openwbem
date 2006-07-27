@@ -35,9 +35,13 @@
 #include "OW_Condition.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_Timeout.hpp"
+#include "OW_TimeoutTimer.hpp"
+#include "OW_ThreadImpl.hpp"
 
 #include <cassert>
 #include <cerrno>
+#include <limits>
 #ifdef OW_HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
@@ -81,36 +85,82 @@ Condition::notifyAll()
 void
 Condition::doWait(NonRecursiveMutex& mutex)
 {
+	ThreadImpl::testCancel();
 	int res;
 	NonRecursiveMutexLockState state;
 	mutex.conditionPreWait(state);
 	res = pthread_cond_wait(&m_condition, state.pmutex);
 	mutex.conditionPostWait(state);
-	assert(res == 0);
+	assert(res == 0 || res == EINTR);
+	if (res == EINTR)
+	{
+		ThreadImpl::testCancel();
+	}
 }
 /////////////////////////////////////////////////////////////////////////////
-bool
-Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeout)
+#ifdef OW_SOLARIS
+namespace
 {
+	inline 
+	bool timespec_less(struct timespec const & x, struct timespec const & y)
+	{
+		return x.tv_sec < y.tv_sec ||
+			x.tv_sec == y.tv_sec && x.tv_nsec < y.tv_nsec;
+	}
+
+	int check_timedwait(
+		int rc, pthread_cond_t * cond, pthread_mutex_t * mtx,
+		struct timespec const * abstime
+	)
+	{
+		if (rc != EINVAL)
+		{
+			return rc;
+		}
+		// Solaris won't let you wait more than 10 ** 8 seconds.
+		time_t const max_future = 99999999;
+		time_t const max_time = std::numeric_limits<time_t>::max();
+		time_t now_sec = DateTime::getCurrent().get();
+		struct timespec new_abstime;
+		new_abstime.tv_sec = (
+			now_sec <= max_time - max_future
+			? now_sec + max_future
+			: max_time
+		);
+		new_abstime.tv_nsec = 0;
+		bool early = timespec_less(new_abstime, *abstime);
+		if (!early)
+		{
+			new_abstime = *abstime;
+		}
+		int newrc = pthread_cond_timedwait(cond, mtx, &new_abstime);
+		return (newrc == ETIMEDOUT && early ? EINTR : newrc);
+	}
+}
+#endif
+
+bool
+Condition::doTimedWait(NonRecursiveMutex& mutex, const Timeout& timeout)
+{
+	ThreadImpl::testCancel();
 	int res;
 	NonRecursiveMutexLockState state;
 	mutex.conditionPreWait(state);
 	bool ret = false;
+
 	timespec ts;
-	struct timeval now;
-	::gettimeofday(&now, NULL);
-	
-	ts.tv_sec = now.tv_sec + sTimeout;
+	TimeoutTimer timer(timeout);
 
-	const int NANOSECONDS_PER_MICROSECOND = 1000;
-	const int NANOSECONDS_PER_SECOND = 1000000000;
-	int nsec = (now.tv_usec + usTimeout) * NANOSECONDS_PER_MICROSECOND;
-	ts.tv_sec += nsec / NANOSECONDS_PER_SECOND;
-	ts.tv_nsec = nsec % NANOSECONDS_PER_SECOND;
-
-	res = pthread_cond_timedwait(&m_condition, state.pmutex, &ts);
+	res = pthread_cond_timedwait(&m_condition, state.pmutex, timer.asTimespec(ts));
+#ifdef OW_SOLARIS
+	res = check_timedwait(res, &m_condition, state.pmutex, &ts);
+#endif
 	mutex.conditionPostWait(state);
-	assert(res == 0 || res == ETIMEDOUT);
+	assert(res == 0 || res == ETIMEDOUT || res == EINTR);
+	if (res == EINTR)
+	{
+		ThreadImpl::testCancel();
+	}
 	ret = res != ETIMEDOUT;
 	return ret;
 }
@@ -192,6 +242,7 @@ Condition::doWait(NonRecursiveMutex& mutex)
 bool
 Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeout)
 {
+	ThreadImpl::testCancel();
 	bool cc = true;
 	NonRecursiveMutexLockState state;
 	mutex.conditionPreWait(state);
@@ -258,11 +309,18 @@ Condition::wait(NonRecursiveMutexLock& lock)
 bool
 Condition::timedWait(NonRecursiveMutexLock& lock, UInt32 sTimeout, UInt32 usTimeout)
 {
+	return timedWait(lock, Timeout::relative(sTimeout + static_cast<float>(usTimeout) / 1000000.0));
+}
+
+/////////////////////////////////////////////////////////////////////////////
+bool
+Condition::timedWait(NonRecursiveMutexLock& lock, const Timeout& timeout)
+{
 	if (!lock.isLocked())
 	{
 		OW_THROW(ConditionLockException, "Lock must be locked");
 	}
-	return doTimedWait(*(lock.m_mutex), sTimeout, usTimeout);
+	return doTimedWait(*(lock.m_mutex), timeout);
 }
 
 } // end namespace OW_NAMESPACE

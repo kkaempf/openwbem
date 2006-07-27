@@ -37,6 +37,8 @@
 #include "OW_SelectEngine.hpp"
 #include "OW_Select.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_Timeout.hpp"
+#include "OW_TimeoutTimer.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -44,38 +46,80 @@ namespace OW_NAMESPACE
 OW_DEFINE_EXCEPTION_WITH_ID(Select);
 //////////////////////////////////////////////////////////////////////////////
 void
-SelectEngine::addSelectableObject(const SelectableIFCRef& obj,
-	const SelectableCallbackIFCRef& cb)
+SelectEngine::addSelectableObject(const Select_t& obj,
+	const SelectableCallbackIFCRef& cb, SelectableCallbackIFC::EEventType eventType)
 {
-	m_selectableObjs.push_back(obj);
-	m_callbacks.push_back(cb);
+	m_table.insert(std::make_pair(obj, Data(cb, eventType)));
 }
+
+//////////////////////////////////////////////////////////////////////////////
+bool 
+SelectEngine::removeSelectableObject(const Select_t& obj, SelectableCallbackIFC::EEventType eventType)
+{
+	return m_table.erase(obj);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
-SelectEngine::go()
+SelectEngine::go(const Timeout& timeout)
 {
+	TimeoutTimer timer(timeout);
+	timer.start();
 	m_stopFlag = false;
 	do
 	{
-		SelectTypeArray selObjs;
-		for (size_t i = 0; i < m_selectableObjs.size(); ++i)
+		Select::SelectObjectArray selObjs;
+		typedef SortedVectorMap<Select_t, Data>::const_iterator citer_t;
+		for (citer_t iter = m_table.begin(); iter != m_table.end(); ++iter)
 		{
-			selObjs.push_back(m_selectableObjs[i]->getSelectObj());
+			Select::SelectObject so(iter->first);
+			if (iter->second.eventType & SelectableCallbackIFC::E_READ_EVENT)
+			{
+				so.waitForRead = true;
+			}
+			if (iter->second.eventType & SelectableCallbackIFC::E_WRITE_EVENT)
+			{
+				so.waitForWrite = true;
+			}
+			selObjs.push_back(so);
 		}
-		int selected = Select::select(selObjs);
+		
+		if (selObjs.empty())
+		{
+			return;
+		}
+
+		int selected = Select::selectRW(selObjs, timer.asTimeout());
 		if (selected == Select::SELECT_ERROR)
 		{
-			OW_THROW(SelectException, "Select Error");
+			OW_THROW_ERRNO_MSG(SelectException, "Select Error");
 		}
-		else if (selected == Select::SELECT_TIMEOUT
-				 || selected == Select::SELECT_INTERRUPTED)
+		else if (selected == Select::SELECT_TIMEOUT)
 		{
-			continue;
+			OW_THROW(SelectException, "Select Timeout");
 		}
 		else
 		{
-			m_callbacks[selected]->selected(m_selectableObjs[selected]);
+			for (size_t i = 0; i < selObjs.size() && selected > 0; ++i)
+			{
+				const Select::SelectObject& selObj(selObjs[i]);
+				if (selObj.readAvailable || selObj.writeAvailable)
+				{
+					--selected;
+					typedef SortedVectorMap<Select_t, Data>::iterator iter_t;
+					iter_t iter = m_table.find(selObj.s);
+					if (selObj.readAvailable)
+					{
+						iter->second.callback->selected(iter->first, SelectableCallbackIFC::E_READ_EVENT);
+					}
+					if (selObj.writeAvailable)
+					{
+						iter->second.callback->selected(iter->first, SelectableCallbackIFC::E_WRITE_EVENT);
+					}
+				}
+			}
 		}
+		timer.resetOnLoop();
 	} while (!m_stopFlag);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -94,10 +138,10 @@ SelectEngineStopper::SelectEngineStopper(SelectEngine& engine)
 
 //////////////////////////////////////////////////////////////////////////////
 void 
-SelectEngineStopper::doSelected(SelectableIFCRef& selectedObject)
+SelectEngineStopper::doSelected(Select_t& selectedObject, EEventType eventType)
 {
 	m_engine.stop();
 }
-
+	
 } // end namespace OW_NAMESPACE
 

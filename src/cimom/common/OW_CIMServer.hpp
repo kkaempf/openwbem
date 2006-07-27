@@ -44,6 +44,7 @@
 #include "OW_CommonFwd.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_Mutex.hpp"
+#include "OW_Logger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -677,7 +678,7 @@ private:
 	RepositoryIFCRef m_cimRepository;
 	IntrusiveReference<CIMRepository> m_realRepository;
 	AuthorizerManagerRef m_authorizerMgr;
-	LoggerRef m_logger;
+	Logger m_logger;
 };
 
 } // end namespace OW_NAMESPACE

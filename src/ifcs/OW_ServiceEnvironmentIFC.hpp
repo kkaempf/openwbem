@@ -55,7 +55,7 @@ namespace OW_NAMESPACE
 /**
  * This is an internal interface which is used by the various OpenWBEM services to interface with their "environment"
  */
-class OW_COMMON_API ServiceEnvironmentIFC : public IntrusiveCountableBase
+class OW_COMMON_API ServiceEnvironmentIFC : virtual public IntrusiveCountableBase
 {
 public:
 	virtual ~ServiceEnvironmentIFC();
@@ -82,10 +82,6 @@ public:
 
 	virtual RequestHandlerIFCRef getRequestHandler(const String& id) const;
 
-	virtual LoggerRef getLogger() const OW_DEPRECATED; // in 3.1.0
-
-	virtual LoggerRef getLogger(const String& componentName) const;
-
 	virtual bool authenticate(String& userName, const String& info, String& details, OperationContext& context) const;
 
 	enum EBypassProvidersFlag
@@ -107,8 +103,9 @@ public:
 	
 	CIMOMHandleIFCRef getRepositoryCIMOMHandle(OperationContext& context) const;
 	
-	
 	virtual RepositoryIFCRef getRepository() const;
+
+	virtual RepositoryIFCRef getAuthorizingRepository() const;
 
 	virtual WQLIFCRef getWQLRef() const;
 };

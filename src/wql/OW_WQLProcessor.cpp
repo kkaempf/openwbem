@@ -105,7 +105,6 @@ namespace
 
 	bool isTableRefMetaClass(tableRef* table_ref)
 	{
-		//FIXME. Most uses of dynamic_cast indicate a design error. :-(
 		if (tableRef_relationExpr* trre
 			= dynamic_cast<tableRef_relationExpr*>(table_ref))
 		{
@@ -2265,6 +2264,12 @@ WQLProcessor::filterInstancesOnPropertyValue(const String& propName, const CIMVa
 						{
 							// Upgrade a REAL32 to a REAL64
 							cv = CIMValueCast::castValueToDataType(cv, CIMDataType::REAL64);
+						}
+
+						if (val && val.getType() == CIMDataType::STRING)
+						{
+							// if the comparison is against a string, convert the property value to a string.
+							cv = CIMValue(cv.toString());
 						}
 					}
 					if (compare(cv, val))

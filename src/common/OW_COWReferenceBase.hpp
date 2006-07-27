@@ -107,23 +107,12 @@ protected:
 		COWRefSwap(m_pRefCount, arg.m_pRefCount);
 	}
 
-#ifdef OW_CHECK_NULL_REFERENCES
-	static void throwNULLException();
-	static void checkNull(const void* p)
+	void useRefCountOf(const COWReferenceBase& arg)
 	{
-		if (p == 0)
-		{
-			throwNULLException();
-		}
+		decRef();
+		m_pRefCount = arg.m_pRefCount;
+		incRef();
 	}
-#endif
-
-    void useRefCountOf(const COWReferenceBase& arg)
-    {
-        decRef(); 
-        m_pRefCount = arg.m_pRefCount; 
-        incRef(); 
-    }
 
 protected:
 	RefCount* volatile m_pRefCount;

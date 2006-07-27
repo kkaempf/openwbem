@@ -52,6 +52,8 @@ class ClientCIMOMHandleConnectionPool;
 typedef IntrusiveReference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPoolRef;
 class ClientCIMOMHandle;
 typedef IntrusiveReference<ClientCIMOMHandle> ClientCIMOMHandleRef;
+class HTTPClient;
+typedef IntrusiveReference<HTTPClient> HTTPClientRef;
 
 } // end namespace OW_NAMESPACE
 

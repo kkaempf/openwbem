@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2005 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -42,9 +42,15 @@
 #include "OW_ConfigFile.hpp"
 #include "OW_LogAppender.hpp"
 #include "OW_AppenderLogger.hpp"
+#include "OW_StringBuffer.hpp"
+#include "OW_Process.hpp"
+#include "OW_UnnamedPipe.hpp"
+#include "OW_Exec.hpp"
 
 #include <string>
 #include <cstdio> // for remove
+#include <algorithm>
+#include <vector>
 
 using std::string;
 
@@ -225,6 +231,158 @@ void OW_LoggerTestCases::testFileLogging()
 					 );
 
 	FileSystem::removeFile(filename);
+}
+
+namespace
+{
+	char const mp_mid_line[] =
+		": xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx line ";
+	size_t const mp_line_len = (sizeof(mp_mid_line) - 1) + 2 + 3;
+
+	String mp_expected_output(unsigned nprocs, unsigned nreps)
+	{
+		StringBuffer buf;
+		for (unsigned i = 0; i < nprocs; ++i)
+		{
+			String s;
+			s.format("%02x", i);
+			for (unsigned j = 0; j < nreps; ++j)
+			{
+				String nstr;
+				nstr.format("%02x\n", j);
+				buf += s;
+				buf += mp_mid_line;
+				buf += nstr;
+			}
+		}
+		return buf.releaseString();
+	}
+
+	bool mp_less(String const & s1, String const & s2)
+	{
+		return s1.substring(0, 2) < s2.substring(0, 2);
+	}
+
+	template <typename InputIter>
+	String cat_strings(InputIter first, InputIter last)
+	{
+		StringBuffer buf;
+		for ( ; first != last; ++first)
+		{
+			buf += *first;
+		}
+		return buf.releaseString();
+	}
+
+	void remove_log_files(String const & fname, unsigned n)
+	{
+		FileSystem::removeFile(fname);
+		for (unsigned i = 0; i <= n; ++i)
+		{
+			FileSystem::removeFile(fname + "." + String(i));
+		}
+		FileSystem::removeFile(fname + ".lock");
+	}
+
+	// Split contents on newline characters and append the resulting
+	// sequence of strings to lines.  The terminating newlines are retained.
+	//
+	void append_lines(std::vector<String> & lines, String const & contents)
+	{
+		size_t pos = 0;
+		while (pos < contents.length())
+		{
+			size_t end = contents.indexOf('\n', pos);
+			if (end == String::npos)
+			{
+				lines.push_back(contents.substring(pos));
+				return;
+			}
+			else
+			{
+				++end;
+				lines.push_back(contents.substring(pos, end - pos));
+				pos = end;
+			}
+		}
+	}
+
+	String backup_fname(String const & log_fname, unsigned i)
+	{
+		String fname;
+		fname.format("%s.%u", log_fname.c_str(), i);
+		return fname;
+	}
+}
+
+void OW_LoggerTestCases::testMultiProcessLogger()
+{
+	char const *   log_file_name       = "test.mp.log";
+	char const *   lock_file_name       = "test.mp.log.lock";
+	unsigned const nreps               = 23;
+	char const *   nreps_str           = "23";
+	unsigned const max_file_kbytes     = 1;
+	char const *   max_file_kbytes_str = "1";
+	unsigned const max_backups         = 50;
+	char const *   max_backups_str     = "50";
+	unsigned const nprocs = 10;
+
+	remove_log_files(log_file_name, max_backups);
+	std::vector<ProcessRef> process;
+	char const * argv[] = {
+		"./runMultiProcessLogger", max_file_kbytes_str, max_backups_str, 0,
+		nreps_str, log_file_name, 0
+	};
+	unsigned i;
+	for (i = 0; i < nprocs; ++i)
+	{
+		String s;
+		s.format("%02x", i);
+		argv[3] = s.c_str();
+		process.push_back(Exec::spawn(argv));
+	}
+	for (i = 0; i < nprocs; ++i)
+	{
+		String errmsg = process[i]->err()->readAll();
+		String outmsg = process[i]->out()->readAll();
+		unitAssert(errmsg == "");
+		unitAssert(outmsg == "");
+		process[i]->waitCloseTerm(Timeout::relative(5.0), Timeout::relative(0.0), Timeout::relative(8.0));
+		unitAssert(process[i]->processStatus().terminatedSuccessfully());
+	}
+
+	size_t lower_limit = max_file_kbytes * 1024;
+	size_t upper_limit = lower_limit + mp_line_len;
+
+	for (i = 0; FileSystem::exists(backup_fname(log_file_name, i + 1)); ++i)
+	{
+	}
+	unsigned nbackup = i;
+
+	std::vector<String> lines;
+	String contents;
+	for (i = nbackup; i > 0; --i)
+	{
+		contents = FileSystem::getFileContents(backup_fname(log_file_name, i));
+		append_lines(lines, contents);
+		unitAssert(contents.length() < upper_limit);
+		unitAssert(contents.length() >= lower_limit);
+	}
+	contents = FileSystem::getFileContents(log_file_name);
+	append_lines(lines, contents);
+	unitAssert(contents.length() < upper_limit);
+
+	std::stable_sort(lines.begin(), lines.end(), &mp_less);
+	String output = cat_strings(lines.begin(), lines.end());
+	String expected = mp_expected_output(nprocs, nreps);
+	unitAssert(output == expected);
+
+	for (i = nbackup; i > 0; --i)
+	{
+		FileSystem::removeFile(backup_fname(log_file_name, i));
+	}
+	FileSystem::removeFile(log_file_name);
+	FileSystem::removeFile(lock_file_name);
 }
 
 void OW_LoggerTestCases::testSyslogLogging()
@@ -539,6 +697,13 @@ void OW_LoggerTestCases::testLogMessageFormat()
 		unitAssert(outputMessages.size() == 1);
 		unitAssertNoThrow(outputMessages[0].toUInt64());
 	}
+	{ // test process id %P
+		StringArray outputMessages;
+		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "%P");
+		OW_LOG_ERROR(lgr, "error1");
+		unitAssert(outputMessages.size() == 1);
+		unitAssertNoThrow(outputMessages[0].toUInt64());
+	}
 	{ // bad format strings
 		StringArray outputMessages;
 		unitAssertThrows(LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "%.m"));
@@ -611,7 +776,7 @@ void OW_LoggerTestCases::testLogMessageFormat()
 		//std::cout << "\n01234567890123456789\n" << outputMessages[0] << std::endl;
 #if defined (OW_HAVE_UUPRETTY_FUNCTIONUU)
 		unitAssert(outputMessages[0] == __PRETTY_FUNCTION__);
-#elif defined (OW_HAVE_UUFUNCUU)
+#elif defined (OW_HAVE_C99_UUFUNCUU)
 		unitAssert(outputMessages[0] == __func__);
 #else
 		unitAssert(outputMessages[0] == "");
@@ -633,6 +798,7 @@ Test* OW_LoggerTestCases::suite()
 	ADD_TEST_TO_SUITE(OW_LoggerTestCases, testComponentCategoryLog);
 	ADD_TEST_TO_SUITE(OW_LoggerTestCases, testMultipleComponentLogs);
 	ADD_TEST_TO_SUITE(OW_LoggerTestCases, testLogMessageFormat);
+	ADD_TEST_TO_SUITE(OW_LoggerTestCases, testMultiProcessLogger);
 
 	return testSuite;
 }

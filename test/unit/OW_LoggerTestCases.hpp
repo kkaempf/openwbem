@@ -59,8 +59,7 @@ private:
 	void testComponentCategoryLog();
 	void testMultipleComponentLogs();
 	void testLogMessageFormat();
-
-
+	void testMultiProcessLogger();
 
 	void verifyFileLog( const char* file, int line, const char* filename, const char* test );
 };

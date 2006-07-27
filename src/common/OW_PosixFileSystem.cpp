@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2005 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -31,11 +31,11 @@
 /**
  * @author Jon Carey
  * @author Dan Nuffer
+ * @author Kevin S. Van Horn
  */
 
 #include "OW_config.h"
 #include "OW_FileSystem.hpp"
-#include "OW_CryptographicRandomNumber.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_File.hpp"
@@ -44,6 +44,8 @@
 #include "OW_Format.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_GlobalPtr.hpp"
+#include "OW_FileSystemMockObject.hpp"
 
 extern "C"
 {
@@ -100,6 +102,9 @@ OW_DEFINE_EXCEPTION_WITH_ID(FileSystem);
 namespace FileSystem
 {
 
+typedef GlobalPtr<FileSystemMockObject, NullFactory> FileSystemMockObject_t;
+FileSystemMockObject_t g_fileSystemMockObject = OW_GLOBAL_PTR_INIT;
+
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 int
@@ -117,6 +122,10 @@ changeFileOwner(const String& filename,
 File
 openFile(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->openFile(path);
+	}
 #ifdef OW_WIN32
 	HANDLE fh = ::CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
 		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING,
@@ -132,6 +141,10 @@ openFile(const String& path)
 File
 createFile(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->createFile(path);
+	}
 #ifdef OW_WIN32
 	HANDLE fh = ::CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_NEW,
@@ -152,6 +165,10 @@ createFile(const String& path)
 File
 openOrCreateFile(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->openOrCreateFile(path);
+	}
 #ifdef OW_WIN32
 	HANDLE fh = ::CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
 		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS,
@@ -166,6 +183,10 @@ openOrCreateFile(const String& path)
 bool
 exists(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->exists(path);
+	}
 	return _ACCESS(path.c_str(), F_OK) == 0;
 }
 
@@ -174,6 +195,10 @@ exists(const String& path)
 bool
 isExecutable(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->isExecutable(path);
+	}
 	return _ACCESS(path.c_str(), X_OK) == 0;
 }
 #endif
@@ -182,12 +207,20 @@ isExecutable(const String& path)
 bool
 canRead(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->canRead(path);
+	}
 	return _ACCESS(path.c_str(), R_OK) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 canWrite(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->canWrite(path);
+	}
 	return _ACCESS(path.c_str(), W_OK) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -195,6 +228,10 @@ canWrite(const String& path)
 bool
 isLink(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->isLink(path);
+	}
 	struct stat st;
 	if (lstat(path.c_str(), &st) != 0)
 	{
@@ -207,6 +244,10 @@ isLink(const String& path)
 bool
 isDirectory(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->isDirectory(path);
+	}
 #ifdef OW_WIN32
 	struct _stat st;
 	if (_stat(path.c_str(), &st) != 0)
@@ -227,18 +268,30 @@ isDirectory(const String& path)
 bool
 changeDirectory(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->changeDirectory(path);
+	}
 	return _CHDIR(path.c_str()) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 makeDirectory(const String& path, int mode)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->makeDirectory(path, mode);
+	}
 	return _MKDIR(path.c_str(), mode) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-getFileSize(const String& path, off_t& size)
+getFileSize(const String& path, Int64& size)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->getFileSize(path, size);
+	}
 #ifdef OW_WIN32
 	struct _stat st;
 	if (_stat(path.c_str(), &st) != 0)
@@ -259,12 +312,20 @@ getFileSize(const String& path, off_t& size)
 bool
 removeDirectory(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->removeDirectory(path);
+	}
 	return _RMDIR(path.c_str()) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 removeFile(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->removeFile(path);
+	}
 	return _UNLINK(path.c_str()) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -272,6 +333,10 @@ bool
 getDirectoryContents(const String& path,
 	StringArray& dirEntries)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->getDirectoryContents(path, dirEntries);
+	}
 	static Mutex readdirGuard;
 	MutexLock lock(readdirGuard);
 
@@ -317,19 +382,32 @@ bool
 renameFile(const String& oldFileName,
 	const String& newFileName)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->renameFile(oldFileName, newFileName);
+	}
 	return ::rename(oldFileName.c_str(), newFileName.c_str()) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 size_t
 read(const FileHandle& hdl, void* bfr, size_t numberOfBytes,
-	off_t offset)
+	Int64 offset)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->read(hdl, bfr, numberOfBytes, offset);
+	}
 #ifdef OW_WIN32
 	OVERLAPPED ov = { 0, 0, 0, 0, NULL };
 	OVERLAPPED *pov = NULL;
 	if(offset != -1L)
 	{
 		ov.Offset = (DWORD) offset;
+		// check for truncation
+		if (ov.Offset != offset) 
+		{
+			OW_THROW(FileSystemException, "offset out of range");
+		}
 		pov = &ov;
 	}
 
@@ -344,22 +422,38 @@ read(const FileHandle& hdl, void* bfr, size_t numberOfBytes,
 #else
 	if (offset != -1L)
 	{
-		::lseek(hdl, offset, SEEK_SET);
+		::off_t offset2 = static_cast< ::off_t>(offset);
+		// check for truncation
+		if (offset2 != offset) 
+		{
+			OW_THROW(FileSystemException, "offset out of range");
+		}
+
+		::lseek(hdl, offset2, SEEK_SET);
 	}
 	return ::read(hdl, bfr, numberOfBytes);
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
 size_t
-write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
-	off_t offset)
+write(FileHandle hdl, const void* bfr, size_t numberOfBytes,
+	Int64 offset)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->write(hdl, bfr, numberOfBytes, offset);
+	}
 #ifdef OW_WIN32
 	OVERLAPPED ov = { 0, 0, 0, 0, NULL };
 	OVERLAPPED *pov = NULL;
 	if(offset != -1L)
 	{
 		ov.Offset = (DWORD) offset;
+		// check for truncation
+		if (ov.Offset != offset) 
+		{
+			OW_THROW(FileSystemException, "offset out of range");
+		}
 		pov = &ov;
 	}
 
@@ -374,15 +468,26 @@ write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 
 	if (offset != -1L)
 	{
-		::lseek(hdl, offset, SEEK_SET);
+		::off_t offset2 = static_cast< ::off_t>(offset);
+		// check for truncation
+		if (offset2 != offset) 
+		{
+			OW_THROW(FileSystemException, "offset out of range");
+		}
+		::lseek(hdl, offset2, SEEK_SET);
 	}
 	return ::write(hdl, bfr, numberOfBytes);
 #endif
 }
+
 //////////////////////////////////////////////////////////////////////////////
-off_t
-seek(const FileHandle& hdl, off_t offset, int whence)
+Int64
+seek(const FileHandle& hdl, Int64 offset, int whence)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->seek(hdl, offset, whence);
+	}
 #ifdef OW_WIN32
 	DWORD moveMethod;
 	switch(whence)
@@ -391,25 +496,75 @@ seek(const FileHandle& hdl, off_t offset, int whence)
 		case SEEK_CUR: moveMethod = FILE_CURRENT; break;
 		default: moveMethod = FILE_BEGIN; break;
 	}
-	return (off_t) ::SetFilePointer(hdl, (LONG)offset, NULL, moveMethod);
+
+	LARGE_INTEGER li;
+	li.QuadPart = offset;
+	li.LowPart = SetFilePointer(hdl, li.LowPart, &li.HighPart, moveMethod);
+
+	if (li.LowPart == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
+	{
+	   li.QuadPart = -1;
+	}
+
+	return li.QuadPart;
 #else
-	return ::lseek(hdl, offset, whence);
+	::off_t offset2 = static_cast< ::off_t>(offset);
+	// check for truncation
+	if (offset2 != offset) 
+	{
+		OW_THROW(FileSystemException, "offset out of range");
+	}
+	return ::lseek(hdl, offset2, whence);
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
-off_t
+Int64
 tell(const FileHandle& hdl)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->tell(hdl);
+	}
 #ifdef OW_WIN32
-	return (off_t) ::SetFilePointer(hdl, 0L, NULL, FILE_CURRENT);
+	LARGE_INTEGER li;
+	li.QuadPart = 0;
+	li.LowPart = SetFilePointer(hdl, li.LowPart, &li.HighPart, FILE_CURRENT);
+
+	if (li.LowPart == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
+	{
+	   li.QuadPart = -1;
+	}
+
+	return li.QuadPart;
 #else
 	return ::lseek(hdl, 0, SEEK_CUR);
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
+#ifndef OW_WIN32
+UInt64 fileSize(FileHandle fh)
+{
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->fileSize(fh);
+	}
+	struct stat st;
+	int rc = ::fstat(fh, &st);
+	if (rc != 0)
+	{
+		OW_THROW_ERRNO_MSG(FileSystemException, "Could not stat file handle: ");
+	}
+	return st.st_size;
+}
+#endif
+//////////////////////////////////////////////////////////////////////////////
 void
 rewind(const FileHandle& hdl)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->rewind(hdl);
+	}
 #ifdef OW_WIN32
 	::SetFilePointer(hdl, 0L, NULL, FILE_BEGIN);
 #else
@@ -420,6 +575,10 @@ rewind(const FileHandle& hdl)
 int
 close(const FileHandle& hdl)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->close(hdl);
+	}
 #ifdef OW_WIN32
 	return (::CloseHandle(hdl)) ? 0 : -1;
 #else
@@ -430,64 +589,23 @@ close(const FileHandle& hdl)
 int
 flush(FileHandle& hdl)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->flush(hdl);
+	}
 #ifdef OW_WIN32
 	return (::FlushFileBuffers(hdl)) ? 0 : -1;
 #else
-	#ifdef OW_DARWIN
-		return ::fsync(hdl);
-	#else
-		return 0;
-	#endif
+	return ::fsync(hdl);
 #endif
 }
-//////////////////////////////////////////////////////////////////////////////
-void
-initRandomFile(const String& filename)
-{
-#ifdef OW_WIN32
-	char bfr[1024];
-	CryptographicRandomNumber rnum(0, 0xFF);
-	for (size_t i = 0; i < 1024; ++i)
-	{
-		bfr[i] = (char)rnum.getNextNumber();
-	}
-	HANDLE fh = ::CreateFile(filename.c_str(), GENERIC_WRITE,
-		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
-		FILE_ATTRIBUTE_NORMAL, NULL);
-	if(fh == INVALID_HANDLE_VALUE)
-	{
-		OW_THROW(FileSystemException,
-			Format("Can't open random file %1 for writing",
-			filename).c_str());
-	}
-	DWORD bytesWritten;
-	size_t cc = (size_t)-1;
-	bool success = (::WriteFile(fh, bfr, (DWORD)1024, &bytesWritten, NULL) != 0);
-	::CloseHandle(fh);
-	if(!success || bytesWritten < 1024)
-	{
-		OW_THROW(FileSystemException,
-			Format("Failed writing data to random file %1", filename).c_str());
-	}
-#else
-	int hdl = ::open(filename.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0600);
-	if (hdl == -1)
-	{
-		OW_THROW(FileSystemException, Format("Can't open random file %1 for writing", filename).c_str());
-	}
-	CryptographicRandomNumber rnum(0, 0xFF);
-	for (size_t i = 0; i < 1024; ++i)
-	{
-		char c = rnum.getNextNumber();
-		::write(hdl, &c, 1);
-	}
-	::close(hdl);
-#endif
-}
-
 //////////////////////////////////////////////////////////////////////////////
 String getFileContents(const String& filename)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->getFileContents(filename);
+	}
 	std::ifstream in(filename.c_str());
 	if (!in)
 	{
@@ -501,30 +619,50 @@ String getFileContents(const String& filename)
 //////////////////////////////////////////////////////////////////////////////
 StringArray getFileLines(const String& filename)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->getFileLines(filename);
+	}
 	return getFileContents(filename).tokenize("\r\n");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 String readSymbolicLink(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->readSymbolicLink(path);
+	}
 #ifdef OW_WIN32
 	return Path::realPath(path);
 #else
-	std::vector<char> buf(MAXPATHLEN);
+	std::vector<char> buf(MAXPATHLEN + 1);
 	int rc;
-	do
+	while (true)
 	{
 		rc = ::readlink(path.c_str(), &buf[0], buf.size());
-		if (rc >= 0)
+		// If the link value is too big to fit into buf, but
+		// there is no other error, then rc == buf.size(); in particular,
+		// we do NOT get rc < 0 with errno == ENAMETOOLONG (this indicates
+		// a problem with the input path, not the link value returned).
+		if (rc < 0)
+		{
+			OW_THROW_ERRNO_MSG(FileSystemException, path);
+		}
+		else if (static_cast<unsigned>(rc) == buf.size())
+		{
+			buf.resize(buf.size() * 2);
+		}
+		else
 		{
 			buf.resize(rc);
 			buf.push_back('\0');
 			return String(&buf[0]);
 		}
-		buf.resize(buf.size() * 2);
-	} while (rc < 0 && errno == ENAMETOOLONG);
-	OW_THROW_ERRNO(FileSystemException);
+	}
 #endif
+	// Not reachable.
+	return String();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -534,6 +672,10 @@ namespace Path
 //////////////////////////////////////////////////////////////////////////////
 String realPath(const String& path)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->realPath(path);
+	}
 #ifdef OW_WIN32
 	char c, *bfr, *pname;
 	const char *pathcstr;
@@ -568,118 +710,24 @@ String realPath(const String& path)
 	delete [] bfr;
 	return rstr;
 #else
-	String workingPath(path);
-	String resolvedPath;
-	int numLinks = 0;
-
-	// handle relative paths.
-	if (workingPath.length() > 0 && workingPath[0] != '/')
+	if (path.startsWith("/"))
 	{
-		// result of getCurrentWorkingDirectory is already resolved.
-		resolvedPath = getCurrentWorkingDirectory();
+		return security(path, 0).second;
 	}
-
-	const char* pathCompBegin(workingPath.c_str());
-	const char* pathCompEnd(pathCompBegin);
-	while (*pathCompBegin != '\0')
+	else
 	{
-		// skip bunches of ////
-		while (*pathCompBegin == '/')
-		{
-			++pathCompBegin;
-		}
-
-		// find end of the path component
-		pathCompEnd = pathCompBegin;
-		while (*pathCompEnd != '\0' && *pathCompEnd != '/')
-		{
-			++pathCompEnd;
-		}
-
-		if (pathCompEnd - pathCompBegin == 0)
-		{
-			break;
-		}
-		else if (pathCompEnd - pathCompBegin == 1 && pathCompBegin[0] == '.')
-		{
-			;// don't add . to the result
-		}
-		else if (pathCompEnd - pathCompBegin == 2 && pathCompBegin[0] == '.' && pathCompBegin[1] == '.')
-		{
-			// hit .. so remove the last directory from the result
-			size_t lastSlash = resolvedPath.lastIndexOf('/');
-			if (lastSlash != String::npos)
-			{
-				resolvedPath.erase(lastSlash);
-			}
-		}
-		else
-		{
-			resolvedPath += '/';
-			resolvedPath += String(pathCompBegin, pathCompEnd - pathCompBegin);
-
-			// now check the path actually exists
-			struct stat pathStats;
-#ifdef OW_NETWARE
-			if (::stat(resolvedPath.c_str(), &pathStats) < 0)
-			{
-				OW_THROW_ERRNO_MSG(FileSystemException, resolvedPath);
-			}
-#else
-			if (::lstat(resolvedPath.c_str(), &pathStats) < 0)
-			{
-				OW_THROW_ERRNO_MSG(FileSystemException, resolvedPath);
-			}
-			if (S_ISLNK(pathStats.st_mode))
-			{
-				++numLinks;
-				if (numLinks > MAXSYMLINKS)
-				{
-					errno = ELOOP;
-					OW_THROW_ERRNO_MSG(FileSystemException, resolvedPath);
-				}
-				String linkTarget(readSymbolicLink(resolvedPath));
-
-				if (linkTarget.length() > 0 && linkTarget[0] != '/')
-				{
-					// relative link. Remove the link from the resolvedPath and add the linkTarget
-					OW_ASSERT(resolvedPath.lastIndexOf('/') != String::npos); // should always happen, we just added a / to the string
-					resolvedPath.erase(resolvedPath.lastIndexOf('/'));
-
-					resolvedPath += '/';
-					resolvedPath += linkTarget;
-				}
-				else
-				{
-					// absolute link
-					resolvedPath = linkTarget;
-				}
-
-				// now reset and start over on the new path
-				resolvedPath += pathCompEnd;
-				workingPath = resolvedPath;
-				pathCompBegin = pathCompEnd = workingPath.c_str();
-				resolvedPath.erase();
-			}
-#endif
-		}
-
-		// keep the loop flowing
-		pathCompBegin = pathCompEnd;
+		return security(getCurrentWorkingDirectory(), path, 0).second;
 	}
-
-	if (resolvedPath.empty())
-	{
-		resolvedPath = "/";
-	}
-
-	return resolvedPath;
 #endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
 String dirname(const String& filename)
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->dirname(filename);
+	}
 	// skip over trailing slashes
 	size_t lastSlash = filename.length() - 1;
 	while (lastSlash > 0 
@@ -711,6 +759,10 @@ String dirname(const String& filename)
 //////////////////////////////////////////////////////////////////////////////
 String getCurrentWorkingDirectory()
 {
+	if (g_fileSystemMockObject)
+	{
+		return g_fileSystemMockObject->getCurrentWorkingDirectory();
+	}
 	std::vector<char> buf(MAXPATHLEN);
 	char* p;
 	do

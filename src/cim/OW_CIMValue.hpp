@@ -42,6 +42,7 @@
 #include "OW_Array.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMNULL.hpp"
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -445,11 +446,8 @@ public:
 	 */
 	virtual void setNull();
 
-	typedef COWIntrusiveReference<CIMValueImpl> CIMValue::*safe_bool;
-	operator safe_bool () const
-		{  return (m_impl) ? &CIMValue::m_impl : 0; }
-	bool operator!() const
-		{  return !m_impl; }
+	OW_SAFE_BOOL_IMPL(CIMValue, COWIntrusiveReference<CIMValueImpl>, CIMValue::m_impl, m_impl)
+
 	/**
 	 * Assign another CIMValue to this one.
 	 * @param x The CIMValue to assign to this one.
@@ -534,12 +532,12 @@ public:
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
-	virtual void readObject(std::istream &istrm);
+	virtual void readObject(std::streambuf & istrm);
 	/**
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
-	virtual void writeObject(std::ostream &ostrm) const;
+	virtual void writeObject(std::streambuf & ostrm) const;
 	/**
 	 * @return The string representation of this CIMValue object.
 	 */

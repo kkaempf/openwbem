@@ -51,7 +51,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_COMMON_API RepositoryIFC : public ServiceIFC
+class OW_COMMON_API RepositoryIFC : virtual public ServiceIFC
 {
 	typedef ServiceIFC base_t;
 

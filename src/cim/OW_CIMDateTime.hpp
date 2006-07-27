@@ -42,6 +42,7 @@
 #include "OW_CIMNULL.hpp"
 #include "OW_String.hpp"
 #include "OW_CommonFwd.hpp"
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -169,22 +170,22 @@ public:
 	CIMDateTime& operator= (const CIMDateTime& arg);
 	/**
 	 * @return The year component of this CIMDateTime object as an UInt16.
-	 * Range (0-9999)
+	 * Range (0-9999) for a date/time, 0 for an interval
 	 */
 	UInt16 getYear() const;
 	/**
 	 * @return The month component of this CIMDateTime object as an UInt8.
-	 * Range (1-12)
+	 * Range (1-12) for a date/time, 0 for an interval
 	 */
 	UInt8 getMonth() const;
 	/**
 	 * @return The days component of this CIMDateTime object as an UInt32.
-	 * Range (1-31)
+	 * Range (1-31) for a date/time, (0-99999999) for an interval
 	 */
 	UInt32 getDays() const;
 	/**
 	 * @return The day component of this CIMDateTime object as an UInt32.
-	 * Range (1-31)
+	 * Range (1-31) for a date/time, (0-99999999) for an interval
 	 */
 	UInt32 getDay() const;
 	/**
@@ -224,25 +225,25 @@ public:
 	bool equal(const CIMDateTime& arg) const;
 	/**
 	 * Set the year component of the CIMDateTime object.
-	 * @param arg The new year for this object. Valid values are 0-9999
+	 * @param arg The new year for this object. Valid values are 0-9999 for a date/time, 0 for an interval
 	 * @return a reference to *this
 	 */
 	CIMDateTime& setYear(UInt16 arg);
 	/**
 	 * Set the month component of the CIMDateTime object.
-	 * @param arg The new month for this object. Valid values are 1-12
+	 * @param arg The new month for this object. Valid values are 1-12 for a date/time, 0 for an interval
 	 * @return a reference to *this
 	 */
 	CIMDateTime& setMonth(UInt8 arg);
 	/**
 	 * Set the days component of the CIMDateTime object.
-	 * @param arg The new days value for this object. Valid values are 1-31
+	 * @param arg The new days value for this object. Valid values are 1-31 for a date/time, 0-99999999 for an interval
 	 * @return a reference to *this
 	 */
 	CIMDateTime& setDays(UInt32 arg);
 	/**
 	 * Set the day component of the CIMDateTime object.
-	 * @param arg The new day for this object. Valid values are 1-31
+	 * @param arg The new day for this object. Valid values are 1-31 for a date/time, 0-99999999 for an interval
 	 * @return a reference to *this
 	 */
 	CIMDateTime& setDay(UInt32 arg);
@@ -272,7 +273,7 @@ public:
 	CIMDateTime& setMicroSeconds(UInt32 arg);
 	/**
 	 * Set the utc offset component of the CIMDateTime object.
-	 * @param arg The new utc offset for this object.
+	 * @param arg The new utc offset for this object. For an interval, the only valid value is 0.
 	 * @return a reference to *this
 	 */
 	CIMDateTime& setUtc(Int16 arg);
@@ -289,12 +290,12 @@ public:
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
-	void readObject(std::istream &istrm);
+	void readObject(std::streambuf & istrm);
 	/**
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
-	void writeObject(std::ostream &ostrm) const;
+	void writeObject(std::streambuf & ostrm) const;
 	/**
 	 * @return the string representation of this CIMDateTime object. (see
 	 * description of string format in documentation of class CIMDateTime)
@@ -305,12 +306,15 @@ public:
 	 */
 	DateTime toDateTime() const;
 
-	typedef COWIntrusiveReference<DateTimeData> CIMDateTime::*safe_bool;
 	/**
 	 * @return true If this CIMDateTime is not comprised of zero values.
 	 */
-	operator safe_bool () const;
-	bool operator!() const;
+	OW_SAFE_BOOL_IMPL(CIMDateTime, COWIntrusiveReference<DateTimeData>, CIMDateTime::m_dptr, !isZero())
+
+	/**
+	 * @return true If this CIMDateTime is comprised of zero values.
+	 */
+	bool isZero() const;
 private:
 
 #ifdef OW_WIN32

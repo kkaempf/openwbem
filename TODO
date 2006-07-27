@@ -182,6 +182,7 @@ New features:
     - Add ability to compress (w/zlib) data in the repository.
     - Add ability for methods to return arrays
     - Add capability for real (not string properties) embedded objects.
+    - Add log rotation on startup for file logs.
 
 Refactorings:
     - Start to use __attribute__ ((warn_unused_result)) where applicable.

@@ -55,11 +55,12 @@
 #include "OW_Exception.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_LogAppender.hpp"
-#include "OW_AppenderLogger.hpp"
+#include "OW_MultiAppender.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_ProviderAgent.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CmdLineParser.hpp"
+#include "OW_CerrAppender.hpp"
 
 #include <exception>
 #include <iostream> // for cout
@@ -103,18 +104,16 @@ OW_DEFINE_EXCEPTION(PA);
 class MyLifecycleCallback : public ProviderAgentLifecycleCallbackIFC
 {
 public:
-	MyLifecycleCallback(const LoggerRef& logger)
-		: m_logger(logger)
+	MyLifecycleCallback()
 	{
 	}
 
 	virtual void fatalError(const String& errorDescription)
 	{
-		OW_LOG_FATAL_ERROR(m_logger, errorDescription);
+		Logger lgr(COMPONENT_NAME);
+		OW_LOG_FATAL_ERROR(lgr, errorDescription);
 		Platform::restartDaemon();
 	}
-private:
-	LoggerRef m_logger;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -135,7 +134,6 @@ class MyServiceEnvironment : public ServiceEnvironmentIFC
 {
 public:
 	MyServiceEnvironment()
-		: m_logger(new CerrLogger)
 	{
 
 	}
@@ -144,7 +142,8 @@ public:
 	{
 		// The config file config item may be set before init() is called.
 		String filename = getConfigItem(ConfigOpts::CONFIG_FILE_opt, OW_PA_DEFAULT_CONFIG_FILE);
-		OW_LOG_DEBUG(m_logger, "\nUsing config file: " + filename);
+		Logger lgr(COMPONENT_NAME);
+		OW_LOG_DEBUG(lgr, "\nUsing config file: " + filename);
 		ConfigFile::loadConfigFile(filename, m_configItems);
 
 		// logger is treated special, so it goes in init() not startServices()
@@ -159,13 +158,14 @@ public:
 		Socket::createShutDownMechanism();
 
 		// load
-		OW_LOG_DEBUG(m_logger, "loading services");
+		Logger lgr(COMPONENT_NAME);
+		OW_LOG_DEBUG(lgr, "loading services");
 
 		_loadAuthenticator();
 		_loadRequestHandlers();
 		_loadProviders();
 
-		OW_LOG_DEBUG(m_logger, "finished loading services");
+		OW_LOG_DEBUG(lgr, "finished loading services");
 
 		// start
 
@@ -178,12 +178,11 @@ public:
 			CIMClassArray(),
 			m_reqHandlers,
 			m_authenticator,
-			m_logger,
 			url,
 			ProviderAgentLockerIFCRef(),
-			ProviderAgentLifecycleCallbackIFCRef(new MyLifecycleCallback(m_logger)));
+			ProviderAgentLifecycleCallbackIFCRef(new MyLifecycleCallback()));
 
-		OW_LOG_DEBUG(m_logger, "finished starting services");
+		OW_LOG_DEBUG(lgr, "finished starting services");
 	}
 	void shutdown()
 	{
@@ -195,14 +194,15 @@ public:
 
 		// PHASE 2: unload/delete
 
-		OW_LOG_DEBUG(m_logger, "unloading and deleting services");
+		Logger lgr(COMPONENT_NAME);
+		OW_LOG_DEBUG(lgr, "unloading and deleting services");
 
 		m_providerAgent = 0;
 		m_providers.clear();
 		m_reqHandlers.clear();
 		m_authenticator.setNull();
 
-		OW_LOG_DEBUG(m_logger, "owprovideragent has shut down");
+		OW_LOG_DEBUG(lgr, "owprovideragent has shut down");
 	}
 
 	void setConfigItem(const String &item, const String &value, EOverwritePreviousFlag overwritePrevious)
@@ -221,35 +221,23 @@ public:
 		return ConfigFile::getMultiConfigItem(m_configItems, itemName, defRetVal, tokenizeSeparator);
 	}
 
-	LoggerRef getLogger() const
-	{
-		OW_ASSERT(m_logger);
-		return m_logger->clone();
-	}
-	
-	LoggerRef getLogger(const String& componentName) const
-	{
-		OW_ASSERT(m_logger);
-		LoggerRef rv(m_logger->clone());
-		rv->setDefaultComponent(componentName);
-		return rv;
-	}
 private:
 	void _loadAuthenticator()
 	{
 		String authLib = getConfigItem(ConfigOpts::AUTHENTICATION_MODULE_opt, ""); // don't use the default, since if this is empty, we don't want to use an authenticator.
+		Logger logger(COMPONENT_NAME);
 		if (!authLib.empty())
 		{
-			OW_LOG_INFO(m_logger, Format("Authentication Manager: Loading authentication module %1", authLib));
-			m_authenticator = SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib, "createAuthenticator", m_logger);
+			OW_LOG_INFO(logger, Format("Authentication Manager: Loading authentication module %1", authLib));
+			m_authenticator = SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib, "createAuthenticator");
 			if (m_authenticator)
 			{
 				m_authenticator->init(this);
-				OW_LOG_INFO(m_logger, Format("Authentication module %1 is now being used for authentication", authLib));
+				OW_LOG_INFO(logger, Format("Authentication module %1 is now being used for authentication", authLib));
 			}
 			else
 			{
-				OW_LOG_FATAL_ERROR(m_logger, Format("Authentication Module %1 failed"
+				OW_LOG_FATAL_ERROR(logger, Format("Authentication Module %1 failed"
 					" to produce authentication module"
 					" [No Authentication Mechanism Available!]", authLib));
 				OW_THROW(PAException, "No Authentication Mechanism Available");
@@ -264,11 +252,12 @@ private:
 		{
 			libPath += OW_FILENAME_SEPARATOR;
 		}
-		OW_LOG_INFO(m_logger, Format("owprovideragent loading request handlers from directory %1", libPath));
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_INFO(logger, Format("owprovideragent loading request handlers from directory %1", libPath));
 		StringArray dirEntries;
 		if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 		{
-			OW_LOG_FATAL_ERROR(m_logger, Format("owprovideragent failed getting the contents of the request handler directory: %1", libPath));
+			OW_LOG_FATAL_ERROR(logger, Format("owprovideragent failed getting the contents of the request handler directory: %1", libPath));
 			OW_THROW(PAException, "No RequestHandlers");
 		}
 		for (size_t i = 0; i < dirEntries.size(); i++)
@@ -285,14 +274,14 @@ private:
 #endif // OW_DARWIN
 			String libName = libPath;
 			libName += dirEntries[i];
-			RequestHandlerIFCRef rh = SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(libName, "createRequestHandler", getLogger(COMPONENT_NAME));
+			RequestHandlerIFCRef rh = SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(libName, "createRequestHandler");
 			if (rh)
 			{
 				m_reqHandlers.push_back(rh);
 			}
 			else
 			{
-				OW_LOG_FATAL_ERROR(m_logger, Format("owprovideragent failed to load request handler from file: %1", libName));
+				OW_LOG_FATAL_ERROR(logger, Format("owprovideragent failed to load request handler from file: %1", libName));
 				OW_THROW(PAException, "Invalid request handler");
 			}
 		}
@@ -308,11 +297,12 @@ private:
 		for (size_t i = 0; i < paths.size(); ++i)
 		{
 			const String libPath(paths[i]);
-			OW_LOG_INFO(m_logger, Format("owprovideragent loading providers from directory %1", libPath));
+			Logger logger(COMPONENT_NAME);
+			OW_LOG_INFO(logger, Format("owprovideragent loading providers from directory %1", libPath));
 			StringArray dirEntries;
 			if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 			{
-				OW_LOG_FATAL_ERROR(m_logger, Format("owprovideragent failed getting the contents of the provider directory: %1", libPath));
+				OW_LOG_FATAL_ERROR(logger, Format("owprovideragent failed getting the contents of the provider directory: %1", libPath));
 				OW_THROW(PAException, "No Providers");
 			}
 			for (size_t i = 0; i < dirEntries.size(); i++)
@@ -329,10 +319,10 @@ private:
 #endif // OW_DARWIN
 				String libName = libPath;
 				libName += dirEntries[i];
-				CppProviderBaseIFCRef provider = CppProviderIFC::loadProvider(libName, m_logger);
+				CppProviderBaseIFCRef provider = CppProviderIFC::loadProvider(libName);
 				if (!provider)
 				{
-					OW_LOG_FATAL_ERROR(m_logger, Format("provider %1 did not load", libName));
+					OW_LOG_FATAL_ERROR(logger, Format("provider %1 did not load", libName));
 					OW_THROW(PAException, "Invalid provider");
 				}
 				if (!provider->getInstanceProvider()
@@ -342,7 +332,7 @@ private:
 #endif
 					&& !provider->getMethodProvider())
 				{
-					OW_LOG_FATAL_ERROR(m_logger, Format("provider %1 is not a supported (instance, secondary instance, associator, method) type", libName));
+					OW_LOG_FATAL_ERROR(logger, Format("provider %1 is not a supported (instance, secondary instance, associator, method) type", libName));
 					OW_THROW(PAException, "Invalid provider");
 				}
 				m_providers.push_back(provider);
@@ -399,13 +389,11 @@ private:
 				logFormat, logType, getAppenderConfig(m_configItems)));
 		}
 	
-	
-		m_logger = new AppenderLogger(COMPONENT_NAME, appenders);
+		LogAppender::setDefaultLogAppender(new MultiAppender(appenders));
 	}
 
 private: // data
 	AuthenticatorIFCRef m_authenticator;
-	LoggerRef m_logger;
 	Array<CppProviderBaseIFCRef> m_providers;
 	Array<RequestHandlerIFCRef> m_reqHandlers;
 	ConfigFile::ConfigMap m_configItems;
@@ -425,7 +413,7 @@ int main(int argc, char* argv[])
 	MyServiceEnvironmentRef env = new MyServiceEnvironment();
 	
 	// until the config file is read and parsed, just use a logger that prints everything to stderr.
-	LoggerRef logger(new CerrLogger());
+	Logger logger(COMPONENT_NAME, LogAppenderRef(new CerrAppender()));
 
 	try
 	{
@@ -437,14 +425,23 @@ int main(int argc, char* argv[])
 		// debug mode can be activated by -d or by the config file, so check both. The config file is loaded by env->init().
 		bool debugMode = env->getConfigItem(ConfigOpts::DEBUGFLAG_opt, OW_DEFAULT_DEBUGFLAG).equalsIgnoreCase("true");
 
-		// logger's not set up according to the config file until after init()
-		logger = env->getLogger(COMPONENT_NAME);
+		// The global log appender is not set up according to the config file until after init()
+		logger = Logger(COMPONENT_NAME);
 		OW_LOG_INFO(logger, "owprovideragent (" OW_VERSION ") beginning startup");
 
-		// Call platform specific code to become a daemon/service
+		bool restartOnFatalError = env->getConfigItem(ConfigOpts::RESTART_ON_ERROR_opt, OW_DEFAULT_RESTART_ON_ERROR).equalsIgnoreCase("true")
+			&& debugMode == false;
+#ifdef OW_DEBUG
+		restartOnFatalError = false;
+#endif
+
+		// Call platform specific code to become a daemon/service.
+		// This needs to happen as early as possible to minimize unused, but allocated, memory in the "child watcher" parent process.
 		try
 		{
-			Platform::daemonize(debugMode, DAEMON_NAME, env);
+			Platform::daemonize(debugMode, "owprovideragent", 
+				env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE), restartOnFatalError,
+				COMPONENT_NAME);
 		}
 		catch (const DaemonException& e)
 		{
@@ -452,6 +449,13 @@ int main(int argc, char* argv[])
 			OW_LOG_FATAL_ERROR(logger, "owprovideragent failed to initialize. Aborting...");
 			return 1;
 		}
+
+		// re-initialize the environment. This reads the config file. This needs to be done *again* after daemonizing, because in a restart situation,
+		// the config file may have changed so we need to re-read it.
+		env = MyServiceEnvironmentRef(new MyServiceEnvironment);
+		processCommandLine(argc, argv, env);
+		env->init();
+
 		// Start all of the cimom services
 		env->startServices();
 		OW_LOG_INFO(logger, "owprovideragent is now running!");
@@ -463,26 +467,23 @@ int main(int argc, char* argv[])
 
 		if (env->getConfigItem(ConfigOpts::RESTART_ON_ERROR_opt, OW_DEFAULT_RESTART_ON_ERROR).equalsIgnoreCase("true"))
 		{
-			const char* const restartDisabledMessage =
-				"WARNING: even though the owprovideragent.restart_on_error config option = true, it\n"
-				"is not enabled. Possible reasons are that OpenWBEM is built in debug mode,\n"
-				"owprovideragent is running in debug mode (-d), or owprovideragent was not run using an\n"
-				"absolute path (argv[0][0] != '/')";
-
 			// only do this in production mode. During development we want it to crash!
 #if !defined(OW_DEBUG)
-			if ((debugMode == false) && argv[0][0] == '/') // if argv[0][0] != '/' the restart will not be predictable
+			if (debugMode == false)
 			{
-				Platform::installFatalSignalHandlers();
 				oldUnexpectedHandler = std::set_unexpected(Platform::rerunDaemon);
 				oldTerminateHandler = std::set_terminate(Platform::rerunDaemon);
 			}
 			else
 			{
-				OW_LOG_INFO(logger, restartDisabledMessage);
+				OW_LOG_INFO(logger, 				
+					"WARNING: even though the owcimomd.restart_on_error config option = true, it\n"
+					"is not enabled because owprovideragent is running in debug mode (-d)");
 			}
 #else
-			OW_LOG_INFO(logger, restartDisabledMessage);
+			OW_LOG_INFO(logger,
+				"WARNING: even though the owcimomd.restart_on_error config option = true, it\n"
+				"is not enabled because OpenWBEM is built in debug mode");
 #endif
 		}
 
@@ -507,7 +508,6 @@ int main(int argc, char* argv[])
 
 #if !defined(OW_DEBUG)
 					// need to remove them so we don't restart while shutting down.
-					Platform::removeFatalSignalHandlers();
 					if (oldUnexpectedHandler)
 					{
 						std::set_unexpected(oldUnexpectedHandler);
@@ -529,7 +529,7 @@ int main(int argc, char* argv[])
 					// don't try to catch the DeamonException, because if it's thrown, stuff is so whacked, we should just exit!
 					Platform::rerunDaemon();
 
-					// typically on *nix, restartDaemon() doesn't return, however to account for environments where
+					// typically on *nix, rerunDaemon() doesn't return, however to account for environments where
 					// it won't we'll leave this code here to re-initialize.
 					env = new MyServiceEnvironment;
 					processCommandLine(argc, argv, env);
@@ -558,12 +558,12 @@ int main(int argc, char* argv[])
 	}
 	catch(...)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT owprovideragent MAIN!");
+		OW_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT IN owprovideragent MAIN!");
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
 	// Call platform specific shutdown routine
-	Platform::daemonShutdown(DAEMON_NAME, env);
+	Platform::daemonShutdown(DAEMON_NAME, env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE));
 
 	env = 0;
 	

@@ -49,8 +49,7 @@
 namespace OW_NAMESPACE
 {
 
-using std::istream;
-using std::ostream;
+using std::streambuf;
 using namespace WBEMFlags;
 struct CIMProperty::PROPData : public COWIntrusiveCountableBase
 {
@@ -480,13 +479,15 @@ CIMProperty::clearNonKeyQualifiers()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMProperty::writeObject(ostream &ostrm) const
+CIMProperty::writeObject(streambuf & ostrm) const
 {
 	writeObject(ostrm, E_INCLUDE_QUALIFIERS);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMProperty::writeObject(ostream &ostrm, EIncludeQualifiersFlag includeQualifiers) const
+CIMProperty::writeObject(
+	streambuf & ostrm, EIncludeQualifiersFlag includeQualifiers
+) const
 {
 	CIMBase::writeSig( ostrm, OW_CIMPROPERTYSIG );
 	m_pdata->m_name.writeObject(ostrm);
@@ -515,7 +516,7 @@ CIMProperty::writeObject(ostream &ostrm, EIncludeQualifiersFlag includeQualifier
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMProperty::readObject(istream &istrm)
+CIMProperty::readObject(streambuf & istrm)
 {
 	CIMName name;
 	CIMName override;

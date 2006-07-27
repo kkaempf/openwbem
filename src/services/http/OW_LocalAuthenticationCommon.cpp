@@ -62,9 +62,9 @@ OW_DEFINE_EXCEPTION(LocalAuthentication);
 /**
  * @throws LocalAuthenticationException if something failed
  */
-void initializeDir()
+void initializeDir(String const & local_auth_dir)
 {
-	StringArray dirParts = String(LOCAL_AUTH_DIR).tokenize(OW_FILENAME_SEPARATOR);
+	StringArray dirParts = local_auth_dir.tokenize(OW_FILENAME_SEPARATOR);
 	String curDir;
 	for (size_t i = 0; i < dirParts.size(); ++i)
 	{
@@ -117,7 +117,7 @@ void initializeDir()
 
 	// for each file in the dir, check it's creation time and delete it if its more than a day old or newer than the current time.
 	StringArray files;
-	if (!FileSystem::getDirectoryContents(LOCAL_AUTH_DIR, files))
+	if (!FileSystem::getDirectoryContents(local_auth_dir, files))
 	{
 		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthentication::initializeDir(): getDirectoryContents(%1, ...) failed", curDir).c_str());
 	}
@@ -125,7 +125,7 @@ void initializeDir()
 	for (size_t i = 0; i < files.size(); ++i)
 	{
 		struct stat statbuf;
-		String curFilePath = String(LOCAL_AUTH_DIR) + OW_FILENAME_SEPARATOR + files[i];
+		String curFilePath = local_auth_dir + OW_FILENAME_SEPARATOR + files[i];
 		if (lstat(curFilePath.c_str(), &statbuf) == -1)
 		{
 			OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthentication::initializeDir(): lstat(%1, ...)", curFilePath).c_str());
@@ -188,9 +188,10 @@ namespace
 	};
 }
 
-String createFile(const String& uid, const String& cookie)
+String createFile(
+	String const & local_auth_dir, const String& uid, const String& cookie)
 {
-	uid_t userid = ~0;
+	uid_t userid = uid_t(~0);
 	try
 	{
 		if (sizeof(userid) == sizeof(UInt16))
@@ -215,7 +216,7 @@ String createFile(const String& uid, const String& cookie)
 
 	// Some old implementations of mkstemp() create a file with mode 0666.
 
-	String tfname = Format("%1/%2XXXXXX", LOCAL_AUTH_DIR, ::getpid());
+	String tfname = Format("%1/%2XXXXXX", local_auth_dir, ::getpid());
 	int authfd;
 
 	{

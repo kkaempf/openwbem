@@ -208,6 +208,10 @@ public:
 		m_pProv->exportIndication(env, ns, indHandlerInst, indicationInst);
 	}
 
+	virtual void doShutdown()
+	{
+		m_pProv->doShutdown();
+	}
 	virtual void doCooperativeCancel()
 	{
 		m_pProv->doCooperativeCancel();
@@ -228,6 +232,10 @@ public:
 			{ return m_pProv->poll(env); }
 	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env )
 			{ return m_pProv->getInitialPollingInterval(env); }
+	virtual void doShutdown()
+	{
+		m_pProv->doShutdown();
+	}
 	virtual void doCooperativeCancel()
 	{
 		m_pProv->doCooperativeCancel();
@@ -252,7 +260,10 @@ public:
 		const String& nameSpace,
 		const StringArray& classes) 
 	{
-		bool lastActivation = (--m_activationCount == 0);
+		bool lastActivation;
+		{
+			lastActivation = (--m_activationCount == 0);
+		}
 		m_pProv->deActivateFilter(env,filter,eventType,nameSpace, classes,lastActivation);
 	}
 	virtual void activateFilter(
@@ -262,7 +273,10 @@ public:
 		const String& nameSpace,
 		const StringArray& classes) 
 	{
-		bool firstActivation = (m_activationCount++ == 0);
+		bool firstActivation;
+		{
+			firstActivation = (m_activationCount++ == 0);
+		}
 		m_pProv->activateFilter(env,filter,eventType,nameSpace,classes,firstActivation);
 	}
 	virtual void authorizeFilter(
@@ -287,6 +301,8 @@ public:
 	}
 private:
 	CppIndicationProviderIFCRef m_pProv;
+	
+	// note this doesn't need to be mutex protected because the indication server always [de]activates subscriptions serially.
 	unsigned int m_activationCount;
 };
 

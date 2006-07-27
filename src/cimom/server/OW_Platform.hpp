@@ -71,15 +71,15 @@ namespace Platform
 	/**
 	 * @throws DaemonException on error
 	 */
-	OW_CIMOMSERVER_API void daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef& env);
-	OW_CIMOMSERVER_API int daemonShutdown(const String& daemonName, const ServiceEnvironmentIFCRef& env);
+	OW_CIMOMSERVER_API void daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool restartOnFatalError, const String& loggerComponentName);
+	OW_CIMOMSERVER_API int daemonShutdown(const String& daemonName, const String& pidFile);
 	OW_CIMOMSERVER_API void initDaemonizePipe();
 	OW_CIMOMSERVER_API void sendDaemonizeStatus(int status);
 	OW_CIMOMSERVER_API void initSig();
 	OW_CIMOMSERVER_API void pushSig(const Signal::SignalInformation& sig);
 	OW_CIMOMSERVER_API int popSig(Signal::SignalInformation& sig);
 	OW_CIMOMSERVER_API void shutdownSig();
-	OW_CIMOMSERVER_API SelectableIFCRef getSigSelectable();
+	OW_CIMOMSERVER_API Select_t getSigSelectable();
 	using UserUtils::getCurrentUserName;
 
 	/** 
@@ -100,8 +100,6 @@ namespace Platform
 	 */
 	OW_CIMOMSERVER_API void restartDaemon();
 
-	OW_CIMOMSERVER_API void installFatalSignalHandlers();
-	OW_CIMOMSERVER_API void removeFatalSignalHandlers();
 }; // end namespace Platform
 
 

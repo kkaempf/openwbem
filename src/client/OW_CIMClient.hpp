@@ -37,9 +37,11 @@
 #define OW_CIMClient_hpp_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
+#include "OW_ClientFwd.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_ResultHandlerIFC.hpp"
-#include "OW_ClientCIMOMHandle.hpp"
+#include "OW_WBEMFlags.hpp"
+//#include "OW_ClientCIMOMHandle.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -70,6 +72,11 @@ public:
 	 */
 	CIMClient(const String& url, const String& ns,
 			const ClientAuthCBIFCRef& authCB = ClientAuthCBIFCRef());
+	
+	~CIMClient();
+	CIMClient(const CIMClient& x);
+	CIMClient& operator=(const CIMClient& x);
+
 	void setNameSpace(const String& arg) { m_namespace = arg; }
 	String getNameSpace() const { return m_namespace; }
 	
@@ -775,6 +782,7 @@ private:
 #endif
 
 	ClientCIMOMHandleRef m_ch;
+	HTTPClientRef m_httpClient;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

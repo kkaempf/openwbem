@@ -50,7 +50,7 @@ namespace OW_NAMESPACE
 class OW_COMMON_API FileAppender : public LogAppender
 {
 public:
-	static const unsigned int NO_MAX_LOG_SIZE = 0;
+	static UInt64 const NO_MAX_LOG_SIZE = 0;
 
 	FileAppender(const StringArray& components,
 		const StringArray& categories,

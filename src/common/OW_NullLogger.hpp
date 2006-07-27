@@ -47,10 +47,6 @@ class OW_COMMON_API NullLogger : public Logger
 {
 public:
 	NullLogger();
-
-	virtual void doProcessLogMessage(const LogMessage&) const;
-
-	virtual LoggerRef doClone() const;
 };
 
 } // end namespace OW_NAMESPACE

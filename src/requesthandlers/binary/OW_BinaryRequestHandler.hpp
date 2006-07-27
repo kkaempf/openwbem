@@ -48,11 +48,22 @@ class BinaryRequestHandler : public RequestHandlerIFC
 {
 public:
 	BinaryRequestHandler();
+	
+	enum ESupportExportIndicationFlag
+	{
+		E_SUPPORT_EXPORT_INDICATION,
+		E_DONT_SUPPORT_EXPORT_INDICATION
+	};
+
+	BinaryRequestHandler(ESupportExportIndicationFlag supportExportIndicationFlag);
+
+public:
 	virtual RequestHandlerIFC* clone() const;
-	virtual void doProcess(std::istream *istr, std::ostream *ostrEntity,
-			std::ostream *ostrError, OperationContext& context);
+	virtual void doProcess(std::istream * istr, std::ostream * ostrEntity,
+			std::ostream * ostrError, OperationContext& context);
+	void doProcess(std::streambuf * istr, std::streambuf * ostrEntity,
+			std::streambuf * ostrError, OperationContext& context);
 	virtual void doOptions(CIMFeatures &cf, OperationContext& context);
-	virtual void setEnvironment(const ServiceEnvironmentIFCRef& env);
 	virtual StringArray getSupportedContentTypes() const;
 	virtual String getContentType() const;
 
@@ -61,71 +72,98 @@ public:
 	virtual void shutdown();
 private:
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-	void createClass(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void modifyClass(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void deleteClass(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
+	void createClass(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
+	void modifyClass(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
+	void deleteClass(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
+
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	void createInstance(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void deleteInstance(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void modifyInstance(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
+	void createInstance(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
+	void deleteInstance(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
+	void modifyInstance(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
-	void setProperty(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
+	void setProperty(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	void enumClasses(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void getClass(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void getInstance(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
+
+	void enumClasses(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
+	void getClass(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+	void getInstance(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
 	
-	void getQual(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
+	void getQual(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-	void setQual(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void enumQualifiers(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void deleteQual(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
+	void setQual(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
+	void enumQualifiers(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
+	void deleteQual(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
+
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
-	void getProperty(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
+	void getProperty(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
-	void enumClassNames(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void enumInstances(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void enumInstanceNames(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-			std::istream& istrm);
-	void invokeMethod(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void execQuery(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
+
+	void enumClassNames(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
+	void enumInstances(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
+	void enumInstanceNames(const CIMOMHandleIFCRef & chdl,
+		std::streambuf & ostrm,	std::streambuf & istrm);
+
+	void invokeMethod(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
+	void execQuery(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	void associators(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void associatorNames(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void references(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void referenceNames(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
+	void associators(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
+	void associatorNames(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
+	void references(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
+
+	void referenceNames(const CIMOMHandleIFCRef & chdl, std::streambuf & ostrm,
+		std::streambuf & istrm);
 #endif
-	void getServerFeatures(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
-		std::istream& istrm);
-	void writeError(std::ostream& ostrm, const char* msg);
-	bool writeFileName(std::ostream& ostrm, const String& fname);
-	UserId m_userId;
+
+	void getServerFeatures(const CIMOMHandleIFCRef & chdl,
+		std::streambuf & ostrm,	std::streambuf & istrm);
+
+	void exportIndication(const CIMOMHandleIFCRef & chdl,
+		std::streambuf & ostrm,	std::streambuf & istrm);
+
+	void writeError(std::streambuf & ostrm, const char* msg);
+
+private:
+	bool m_supportExportIndication;
 };
 
 } // end namespace OW_NAMESPACE

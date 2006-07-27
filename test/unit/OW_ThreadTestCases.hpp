@@ -51,9 +51,11 @@ public:
 private:
 	// test methods
 	void testReturn();
+	void testShutdown();
 	void testCooperativeCancellation();
 	void testDefinitiveCancellation();
-	void testSetUID(); 
+	void testSetUID();
+	void testSleep();
 
 };
 

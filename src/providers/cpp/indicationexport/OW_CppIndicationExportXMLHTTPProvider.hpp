@@ -68,7 +68,7 @@ public:
 	 */
 	virtual void initialize(const ProviderEnvironmentIFCRef&) {}
 
-	virtual void doCooperativeCancel();
+	virtual void doShutdown();
 private:
 	// We store these (vs. keeping it on the stack) so that when a cancellation request is made
 	// close() can be called which will stop the exporting thread(s).

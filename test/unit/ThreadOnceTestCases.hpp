@@ -47,6 +47,7 @@ public:
 private:
 	// test methods
 	void testOnce();
+	void testOnceRace();
 };
 
 #endif

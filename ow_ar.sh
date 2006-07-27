@@ -34,7 +34,7 @@ case "$MODE" in
 		$AR x $@ && exit 0
 		;;
 	*)
-		echo "ERROR: $MODE passed to $THIS"
+		echo "ERROR: Mode $MODE passed to $THIS"
 		exit 1
 		;;
 esac
@@ -50,7 +50,7 @@ do
 			ARCHIVES="$ARCHIVES $1"
 			;;
 		*)
-			echo "ERROR: $1 passed to $THIS"
+			echo "ERROR: Unexpected file type for $1 passed to $THIS"
 			exit 1
 			;;
 	esac

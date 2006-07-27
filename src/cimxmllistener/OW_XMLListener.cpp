@@ -220,6 +220,7 @@ XMLListener::getContentType() const
 void
 XMLListener::init(const ServiceEnvironmentIFCRef& env)
 {
+	setEnvironment(env);
 }
 
 //////////////////////////////////////////////////////////////////////////////

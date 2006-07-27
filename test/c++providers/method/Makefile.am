@@ -1,17 +1,17 @@
 MAKEBUNDLE=1
 include $(top_srcdir)/Makefile-shared-lib.inc
-check-local : all-ow-shared-libs
+all-local : all-ow-shared-libs
 clean-local : clean-ow-shared-libs
 
 
-check_LIBRARIES = libmethodtest.a 
+noinst_LIBRARIES = libmethodtest.a 
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
 
 
-OW_SHARED_LIBS = libmethodtest.$(LIB_EXT) 
+OW_SHARED_LIBS = libmethodtest.$(LIB_EXT)
 
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
@@ -19,7 +19,7 @@ LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 libmethodtest_a_SOURCES = \
 OW_MethodProviderTest.cpp
 
-EXTRA_DIST = OW_MethodProviderTest.mof 
+EXTRA_DIST = OW_MethodProviderTest.mof
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

@@ -75,7 +75,7 @@ CIMValue RemoteMethodProvider::invokeMethod(
 		const CIMParamValueArray& in,
 		CIMParamValueArray& out )
 {
-	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
+	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, Format("RemoteMethodProvider::invokeMethod ns = %1, path = %2, methodName = %3", ns, path, methodName));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);

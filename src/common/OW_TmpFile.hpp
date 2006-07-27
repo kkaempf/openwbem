@@ -53,7 +53,6 @@ class OW_COMMON_API TmpFileImpl : public IntrusiveCountableBase
 {
 public:
 	TmpFileImpl();
-	TmpFileImpl(String const& filename);
 	~TmpFileImpl();
 	size_t read(void* bfr, size_t numberOfBytes, long offset=-1L);
 	size_t write(const void* bfr, size_t numberOfBytes, long offset=-1L);
@@ -73,13 +72,11 @@ public:
 
 	void newFile() { open(); }
 	long getSize();
-	String releaseFile();
 private:
 	void open();
 	int close();
 	TmpFileImpl(const TmpFileImpl& arg);	// Not implemented
 	TmpFileImpl& operator= (const TmpFileImpl& arg);	// Not implemented
-	char* m_filename;
 #ifndef OW_WIN32
 	int m_hdl;
 #else
@@ -92,9 +89,6 @@ class OW_COMMON_API TmpFile
 public:
 	TmpFile() :
 		m_impl(new TmpFileImpl) {  }
-	TmpFile(String const& filename)
-		: m_impl(new TmpFileImpl(filename))
-	{}
 	TmpFile(const TmpFile& arg) :
 		m_impl(arg.m_impl) {}
 	TmpFile& operator= (const TmpFile& arg)
@@ -118,7 +112,6 @@ public:
 	int flush() { return m_impl->flush(); }
 	void newFile() { m_impl->newFile(); }
 	long getSize() { return m_impl->getSize(); }
-	String releaseFile() { return m_impl->releaseFile(); }
 private:
 
 #ifdef OW_WIN32

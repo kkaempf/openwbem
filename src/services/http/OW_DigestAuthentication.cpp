@@ -44,7 +44,7 @@
 #include "OW_MD5.hpp"
 #include "OW_HTTPSvrConnection.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_CryptographicRandomNumber.hpp"
+#include "OW_SecureRand.hpp"
 #include <fstream>
 
 namespace OW_NAMESPACE
@@ -94,15 +94,11 @@ DigestAuthentication::generateNewNonce( void )
 	DateTime.setToCurrent();
 	String sDateTime( static_cast<Int64>(DateTime.get()) );
 	String sPrivateData;
-	CryptographicRandomNumber rn(0, 0x7FFFFFFF);
-	sPrivateData.format( "%08x", rn.getNextNumber() );
-	// do this 4 more times, so we get > 128 bits of randomness. Each round only yields 31.
-	for (size_t i = 0; i < 4; ++i)
-	{
-		String randomData;
-		randomData.format("%08x", rn.getNextNumber());
-		sPrivateData += randomData;
-	}
+	sPrivateData.format("%08x%08x%08x%08x%08x",
+		Secure::rand_uint<UInt32>(), Secure::rand_uint<UInt32>(),
+		Secure::rand_uint<UInt32>(), Secure::rand_uint<UInt32>(),
+		Secure::rand_uint<UInt32>()
+	);
 	
 	MD5 md5;
 	md5.update(sDateTime);
@@ -166,7 +162,7 @@ parseInfo(const String& pinfo, Map<String, String>& infoMap)
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-bool
+EAuthenticateResult
 DigestAuthentication::authenticate(String& userName,
 		const String& info, HTTPSvrConnection* htcon)
 {
@@ -175,7 +171,7 @@ DigestAuthentication::authenticate(String& userName,
 	{
 		htcon->setErrorDetails("You must authenticate to access this resource");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return false;
+		return E_AUTHENTICATE_CONTINUE;
 	}
 	Map<String, String> infoMap;
 	parseInfo(info, infoMap);
@@ -198,28 +194,28 @@ DigestAuthentication::authenticate(String& userName,
 	{
 		htcon->setErrorDetails("No nonce value was provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return false;
+		return E_AUTHENTICATE_FAIL;
 	}
 	userName = infoMap["username"];
 	if ( userName.empty() )
 	{
 		htcon->setErrorDetails("No user name was provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return false;
+		return E_AUTHENTICATE_FAIL;
 	}
 	String sRealm = infoMap["realm"];
 	if ( sRealm.empty() )
 	{
 		htcon->setErrorDetails("No realm was provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return false;
+		return E_AUTHENTICATE_FAIL;
 	}
 	String sNonceCount = infoMap["nc"];
 	if ( sNonceCount.empty() )
 	{
 		htcon->setErrorDetails("No Nonce Count was provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return false;
+		return E_AUTHENTICATE_FAIL;
 	}
 	// TODO isn't cnonce optional?
 	String sCNonce = infoMap["cnonce"];
@@ -227,14 +223,14 @@ DigestAuthentication::authenticate(String& userName,
 	{
 		htcon->setErrorDetails("No cnonce value provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return false;
+		return E_AUTHENTICATE_FAIL;
 	}
 	String sResponse = infoMap["response"];
 	if ( sResponse.empty() )
 	{
 		htcon->setErrorDetails("The response was zero length");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return false;
+		return E_AUTHENTICATE_FAIL;
 	}
 	String sHA1 = getHash( userName, sRealm );
 	String sTestResponse;
@@ -247,14 +243,14 @@ DigestAuthentication::authenticate(String& userName,
 		{
 			htcon->addHeader("Authentication-Info",
 				"qop=\"auth\", nextnonce=\"" + generateNewNonce() + "\"");
-			return true;
+			return E_AUTHENTICATE_SUCCESS;
 		}
 		else
 		{
 			htcon->setErrorDetails("Nonce not found.");
 			htcon->addHeader("WWW-Authenticate", getChallenge(hostname)
 				+ ", stale=true");
-			return false;
+			return E_AUTHENTICATE_FAIL;
 		}
 	}
 	/*
@@ -268,7 +264,7 @@ DigestAuthentication::authenticate(String& userName,
 	String errDetails = "User name or password not valid";
 	htcon->setErrorDetails(errDetails);
 	htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-	return false;
+	return E_AUTHENTICATE_FAIL;
 }
 //////////////////////////////////////////////////////////////////////////////
 String

@@ -44,7 +44,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_LocalOperationContext.hpp"
 #include "OW_CerrLogger.hpp"
 
 using namespace OpenWBEM;
@@ -75,15 +75,6 @@ namespace
 
 class TestServiceEnvironmentIFC : public ServiceEnvironmentIFC
 {
-	virtual LoggerRef getLogger(const String& componentName) const
-	{
-		return LoggerRef(new CerrLogger);
-	}
-	virtual LoggerRef getLogger() const
-	{
-		return LoggerRef(new CerrLogger);
-	}
-
 };
 
 ServiceEnvironmentIFCRef createServiceEnvRef()
@@ -97,7 +88,7 @@ void OW_ProviderManagerTestCases::testGetInstanceProvider()
 {
 	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader(), g_testEnvironment);
-	OperationContext context;
+	LocalOperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createServiceEnvRef());
 
@@ -106,51 +97,41 @@ void OW_ProviderManagerTestCases::testGetInstanceProvider()
 	CIMQualifier provQual(CIMQualifier::CIM_QUAL_PROVIDER);
 	provQual.setValue(CIMValue("lib1::TestInstanceProvider"));
 	c1.addQualifier(provQual);
-	InstanceProviderIFCRef provRef = mgr.getInstanceProvider(
-		createProvEnvRef(hdl), "root", c1);
+	InstanceProviderIFCRef provRef = mgr.getInstanceProvider("root", c1);
 	unitAssert(provRef);
 
 	// bad qualifier
 	CIMClass c2("TestClass");
 	provQual.setValue(CIMValue("lib1::bad"));
 	c2.addQualifier(provQual);
-	unitAssertThrows(provRef = mgr.getInstanceProvider(
-		createProvEnvRef(hdl), "root", c2));
+	unitAssertThrows(provRef = mgr.getInstanceProvider("root", c2));
 
 	// self-registering provider all namespaces
 	CIMClass c3("SelfReg");
-	provRef = mgr.getInstanceProvider(
-		createProvEnvRef(hdl), "root", c3);
+	provRef = mgr.getInstanceProvider("root", c3);
 	unitAssert(provRef);
-	provRef = mgr.getInstanceProvider(
-		createProvEnvRef(hdl), "root/foo", c3);
+	provRef = mgr.getInstanceProvider("root/foo", c3);
 	unitAssert(provRef);
 	
 	// self-registering provider two namespaces
 	CIMClass c4("SelfRegTwoNamespaces");
-	provRef = mgr.getInstanceProvider(
-		createProvEnvRef(hdl), "root", c4);
+	provRef = mgr.getInstanceProvider("root", c4);
 	unitAssert(provRef);
-	provRef = mgr.getInstanceProvider(
-		createProvEnvRef(hdl), "root/foo", c4);
+	provRef = mgr.getInstanceProvider("root/foo", c4);
 	unitAssert(!provRef);
-	provRef = mgr.getInstanceProvider(
-		createProvEnvRef(hdl), "root/good", c4);
+	provRef = mgr.getInstanceProvider("root/good", c4);
 	unitAssert(provRef);
 	
 	// nothing
 	CIMClass c5("Nothing");
-	provRef = mgr.getInstanceProvider(
-		createProvEnvRef(hdl), "root", c5);
+	provRef = mgr.getInstanceProvider("root", c5);
 	unitAssert(!provRef);
 
 	// self-registering provider all namespaces - case insensitivity
 	CIMClass c6("selFreG");
-	provRef = mgr.getInstanceProvider(
-		createProvEnvRef(hdl), "Root", c6);
+	provRef = mgr.getInstanceProvider("Root", c6);
 	unitAssert(provRef);
-	provRef = mgr.getInstanceProvider(
-		createProvEnvRef(hdl), "rooT/fOo", c6);
+	provRef = mgr.getInstanceProvider("rooT/fOo", c6);
 	unitAssert(provRef);
 	
 
@@ -160,7 +141,7 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 {
 	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader(), g_testEnvironment);
-	OperationContext context;
+	LocalOperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createServiceEnvRef());
 
@@ -171,95 +152,74 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 	provQual.setValue(CIMValue("lib1::TestMethodProvider"));
 	mwq.addQualifier(provQual);
 	c1.addMethod(mwq);
-	MethodProviderIFCRef provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root", c1, mwq);
+	MethodProviderIFCRef provRef = mgr.getMethodProvider("root", c1, mwq);
 	unitAssert(provRef);
 
 	// test qualifier on class, not on method
 	CIMMethod m("TestMethod");
 	CIMClass c2("TestClass");
 	c2.addQualifier(provQual);
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root", c2, m);
+	provRef = mgr.getMethodProvider("root", c2, m);
 	unitAssert(provRef);
 
 	// bad qualifier
 	CIMClass c2_2("TestClass");
 	provQual.setValue(CIMValue("lib1::bad"));
 	c2_2.addQualifier(provQual);
-	unitAssertThrows(provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root", c2_2, m));
+	unitAssertThrows(provRef = mgr.getMethodProvider("root", c2_2, m));
 
 	// self-registering provider all namespaces
 	CIMClass c3("SelfReg");
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root", c3, m);
+	provRef = mgr.getMethodProvider("root", c3, m);
 	unitAssert(provRef);
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root/foo", c3, m);
+	provRef = mgr.getMethodProvider("root/foo", c3, m);
 	unitAssert(provRef);
 	
 	// self-registering provider two namespaces
 	CIMClass c4("SelfRegTwoNamespaces");
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root", c4, m);
+	provRef = mgr.getMethodProvider("root", c4, m);
 	unitAssert(provRef);
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root/foo", c4, m);
+	provRef = mgr.getMethodProvider("root/foo", c4, m);
 	unitAssert(!provRef);
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "ROOT/FOO", c4, m);
+	provRef = mgr.getMethodProvider("ROOT/FOO", c4, m);
 	unitAssert(!provRef);
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root/good", c4, m);
+	provRef = mgr.getMethodProvider("root/good", c4, m);
 	unitAssert(provRef);
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "ROOT/GOOD", c4, m);
+	provRef = mgr.getMethodProvider("ROOT/GOOD", c4, m);
 	unitAssert(provRef);
 	
 	// nothing
 	CIMClass c5("Nothing");
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root", c5, m);
+	provRef = mgr.getMethodProvider("root", c5, m);
 	unitAssert(!provRef);
 
 	// self-registering provider all namespaces - case insensitivity
 	CIMClass c6("selFreG");
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "Root", c6, m);
+	provRef = mgr.getMethodProvider("Root", c6, m);
 	unitAssert(provRef);
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "rooT/fOo", c6, m);
+	provRef = mgr.getMethodProvider("rooT/fOo", c6, m);
 	unitAssert(provRef);
 	
 	// self-registering provider all namespaces - one method
 	CIMClass c7("SelfRegOneMethod");
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root", c7, m);
+	provRef = mgr.getMethodProvider("root", c7, m);
 	unitAssert(provRef);
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root/foo", c7, m);
+	provRef = mgr.getMethodProvider("root/foo", c7, m);
 	unitAssert(provRef);
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root/foo", c7, CIMMethod("BadMethod"));
+	provRef = mgr.getMethodProvider("root/foo", c7, CIMMethod("BadMethod"));
 	unitAssert(!provRef);
 	
 	// self-registering provider one namespaces - one method
 	CIMClass c8("SelfRegOneNamespaceOneMethod");
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root", c8, m);
+	provRef = mgr.getMethodProvider("root", c8, m);
 	unitAssert(provRef);
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "Root", c8, CIMMethod("testMETHOD"));
+	provRef = mgr.getMethodProvider("Root", c8, CIMMethod("testMETHOD"));
 	unitAssert(provRef);
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root/foo", c8, m);
+	provRef = mgr.getMethodProvider("root/foo", c8, m);
 	unitAssert(!provRef);
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root", c8, CIMMethod("BadMethod"));
+	provRef = mgr.getMethodProvider("root", c8, CIMMethod("BadMethod"));
 	unitAssert(!provRef);
-	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root/foo", c8, CIMMethod("BadMethod"));
+	provRef = mgr.getMethodProvider("root/foo", c8, CIMMethod("BadMethod"));
 	unitAssert(!provRef);
 	
 }
@@ -269,7 +229,7 @@ void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 {
 	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader(), g_testEnvironment);
-	OperationContext context;
+	LocalOperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createServiceEnvRef());
 
@@ -278,51 +238,41 @@ void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 	CIMQualifier provQual(CIMQualifier::CIM_QUAL_PROVIDER);
 	provQual.setValue(CIMValue("lib1::TestAssociatorProvider"));
 	c1.addQualifier(provQual);
-	AssociatorProviderIFCRef provRef = mgr.getAssociatorProvider(
-		createProvEnvRef(hdl), "root", c1);
+	AssociatorProviderIFCRef provRef = mgr.getAssociatorProvider("root", c1);
 	unitAssert(provRef);
 
 	// bad qualifier
 	CIMClass c2("TestClass");
 	provQual.setValue(CIMValue("lib1::bad"));
 	c2.addQualifier(provQual);
-	unitAssertThrows(provRef = mgr.getAssociatorProvider(
-		createProvEnvRef(hdl), "root", c2));
+	unitAssertThrows(provRef = mgr.getAssociatorProvider("root", c2));
 
 	// self-registering provider all namespaces
 	CIMClass c3("SelfReg");
-	provRef = mgr.getAssociatorProvider(
-		createProvEnvRef(hdl), "root", c3);
+	provRef = mgr.getAssociatorProvider("root", c3);
 	unitAssert(provRef);
-	provRef = mgr.getAssociatorProvider(
-		createProvEnvRef(hdl), "root/foo", c3);
+	provRef = mgr.getAssociatorProvider("root/foo", c3);
 	unitAssert(provRef);
 	
 	// self-registering provider two namespaces
 	CIMClass c4("SelfRegTwoNamespaces");
-	provRef = mgr.getAssociatorProvider(
-		createProvEnvRef(hdl), "root", c4);
+	provRef = mgr.getAssociatorProvider("root", c4);
 	unitAssert(provRef);
-	provRef = mgr.getAssociatorProvider(
-		createProvEnvRef(hdl), "root/foo", c4);
+	provRef = mgr.getAssociatorProvider("root/foo", c4);
 	unitAssert(!provRef);
-	provRef = mgr.getAssociatorProvider(
-		createProvEnvRef(hdl), "root/good", c4);
+	provRef = mgr.getAssociatorProvider("root/good", c4);
 	unitAssert(provRef);
 	
 	// nothing
 	CIMClass c5("Nothing");
-	provRef = mgr.getAssociatorProvider(
-		createProvEnvRef(hdl), "root", c5);
+	provRef = mgr.getAssociatorProvider("root", c5);
 	unitAssert(!provRef);
 
 	// self-registering provider all namespaces - case insensitivity
 	CIMClass c6("selFreG");
-	provRef = mgr.getAssociatorProvider(
-		createProvEnvRef(hdl), "Root", c6);
+	provRef = mgr.getAssociatorProvider("Root", c6);
 	unitAssert(provRef);
-	provRef = mgr.getAssociatorProvider(
-		createProvEnvRef(hdl), "rooT/fOo", c6);
+	provRef = mgr.getAssociatorProvider("rooT/fOo", c6);
 	unitAssert(provRef);
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -331,72 +281,72 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 {
 	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader(), g_testEnvironment);
-	OperationContext context;
+	LocalOperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createServiceEnvRef());
 
 	CIMNameArray noLifeCycleClasses;
 	// self-registering provider all namespaces
 	IndicationProviderIFCRefArray provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root", "SelfReg", noLifeCycleClasses);
+		"root", "SelfReg", noLifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/foo", "SelfReg", noLifeCycleClasses);
+		"root/foo", "SelfReg", noLifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 	
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root", "SelfReg2", noLifeCycleClasses);
+		"root", "SelfReg2", noLifeCycleClasses);
 	unitAssert(provRefs.size() == 2);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/foo", "SelfReg2", noLifeCycleClasses);
+		"root/foo", "SelfReg2", noLifeCycleClasses);
 	unitAssert(provRefs.size() == 2);
 	
 	// self-registering provider two namespaces
 	String c4("SelfRegTwoNamespaces");
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root", c4, noLifeCycleClasses);
+		"root", c4, noLifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/foo", c4, noLifeCycleClasses);
+		"root/foo", c4, noLifeCycleClasses);
 	unitAssert(provRefs.size() == 0);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/good", c4, noLifeCycleClasses);
+		"root/good", c4, noLifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 	
 	// nothing
 	String c5("Nothing");
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root", c5, noLifeCycleClasses);
+		"root", c5, noLifeCycleClasses);
 	unitAssert(provRefs.size() == 0);
 
 	// self-registering provider all namespaces - case insensitivity
 	String c6("selFreG");
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "Root", c6, noLifeCycleClasses);
+		"Root", c6, noLifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "rooT/fOo", c6, noLifeCycleClasses);
+		"rooT/fOo", c6, noLifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 
 	// lifecycle providers
 	CIMNameArray lifeCycleClasses;
 	lifeCycleClasses.push_back("TestClass1");
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/cimv2", "CIM_InstCreation", lifeCycleClasses);
+		"root/cimv2", "CIM_InstCreation", lifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 	
 	lifeCycleClasses[0] = "TestClass2";
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/cimv2", "CIM_InstModification", lifeCycleClasses);
+		"root/cimv2", "CIM_InstModification", lifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 	
 	lifeCycleClasses[0] = "TestClass3";
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/cimv2", "CIM_InstDeletion", lifeCycleClasses);
+		"root/cimv2", "CIM_InstDeletion", lifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/cimv2", "CIM_InstDeletion", noLifeCycleClasses);
+		"root/cimv2", "CIM_InstDeletion", noLifeCycleClasses);
 	unitAssert(provRefs.size() == 2);
 }
 

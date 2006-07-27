@@ -34,33 +34,24 @@
  */
 
 #include "OW_config.h"
+#include "OW_ConfigOpts.hpp"
 #include "OW_LocalAuthentication.hpp"
 #include "OW_HTTPSvrConnection.hpp"
-#include "OW_CryptographicRandomNumber.hpp"
+#include "OW_SecureRand.hpp"
 #include "OW_UUID.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_Format.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_UserUtils.hpp"
 #include "OW_AuthenticationException.hpp"
+#include "OW_Process.hpp"
 #include "OW_Exec.hpp"
 #include "OW_LocalAuthenticationCommon.hpp"
+#include "OW_ThreadOnce.hpp"
+#include "OW_PrivilegeManager.hpp"
+#include "OW_Assertion.hpp"
+#include "OW_Secure.hpp"
 
-#ifdef OW_HAVE_PWD_H
-#include <pwd.h>
-#endif
-#ifdef OW_HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef OW_HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef OW_HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#ifdef OW_HAVE_SYS_WAIT_H
-#include <sys/wait.h>
-#endif
 #include <cerrno>
 
 namespace OW_NAMESPACE
@@ -68,55 +59,81 @@ namespace OW_NAMESPACE
 
 using namespace LocalAuthenticationCommon;
 
+// TODO: For efficiency's sake get rid of owlocalhelper and use the monitor do perform all the necessary work.
+
 namespace
 {
-	bool useHelper()
+	String COMPONENT_NAME("ow.LocalAuthentication");
+
+	bool g_useHelper = false;
+	OnceFlag g_useHelperOnceFlag = OW_ONCE_INIT;
+	void initUseHelper()
 	{
-		// only root can change file ownership, so unless we can, we'll have to rely on owlocalhelper to do it.
-		return ::geteuid() != 0;
+		// only root can change file ownership, so unless we can, we'll have to rely on the privilege manager/owlocalhelper to do it.
+		g_useHelper = ::geteuid() != 0 || !PrivilegeManager::getPrivilegeManager().isNull();
 	}
 
-	String runHelper(const String& inputCmd, const String& extraInput = String())
+	bool useHelper()
 	{
+		callOnce(g_useHelperOnceFlag, initUseHelper);
+		return g_useHelper;
+	}
+
+	String runHelper(
+		String const & local_auth_dir, const String& inputCmd,
+		const String& extraInput = String())
+	{
+		String localhelper_bin_path =
+			ConfigOpts::installed_owlibexec_dir + "/owlocalhelper";
 		StringArray cmd;
-		cmd.push_back(OWLOCALHELPER_BINARY);
+		cmd.push_back(localhelper_bin_path);
+		cmd.push_back(local_auth_dir);
 		String output;
-		int processStatus = -1;
 		try
 		{
-			PopenStreams helper = Exec::safePopen(cmd); //, inputCmd + "\n" + extraInput);
+			PrivilegeManager privMan(PrivilegeManager::getPrivilegeManager());
+			OW_ASSERT(!privMan.isNull());
+
+			#ifdef OW_WIN32
+			static const char* const SUPERUSER = "SYSTEM";
+			#else
+			static const char* const SUPERUSER = "root";
+			#endif
+			
+			ProcessRef helper = privMan.userSpawn(localhelper_bin_path, cmd, Secure::minimalEnvironment(), SUPERUSER);
 			String input = inputCmd + "\n" + extraInput;
 			
-			// purposely ignore this return code
-			helper.in()->write(input.c_str(), input.length());
-			helper.in()->close();
-
-			const int TIMEOUT = 10;
+			const Timeout TIMEOUT = Timeout::relative(10.0);
 			const int OUTPUT_LIMIT = 1024;
-			Exec::gatherOutput(output, helper, processStatus, TIMEOUT, OUTPUT_LIMIT);
-			if (processStatus == -1)
+			Exec::processInputOutput(input, output, helper, TIMEOUT, OUTPUT_LIMIT);
+			helper->waitCloseTerm();
+			Process::Status status = helper->processStatus();
+			if (!status.terminatedSuccessfully())
 			{
-				processStatus = helper.getExitStatus();
+				OW_THROW(LocalAuthenticationException, Format("%1 failed with exit status %2. command = %3, output = \"%4\"", 
+					localhelper_bin_path, status.toString(), inputCmd, output).c_str());
 			}
+		}
+		catch (LocalAuthenticationException&)
+		{
+			throw;
 		}
 		catch (Exception& e)
 		{
-			OW_THROW(LocalAuthenticationException, Format("Failed running %1: %2. command = %3, output = \"%4\"", OWLOCALHELPER_BINARY, e, inputCmd, output).c_str());
-		}
-		if (!WIFEXITED(processStatus) || WEXITSTATUS(processStatus) != 0)
-		{
-			OW_THROW(LocalAuthenticationException, Format("%1 failed with exit status %2. command = %3, output = \"%4\"", 
-				OWLOCALHELPER_BINARY, processStatus, inputCmd, output).c_str());
+			OW_THROW_SUBEX(LocalAuthenticationException, Format("Failed running %1. command = %2, output = \"%3\"", 
+				localhelper_bin_path, inputCmd, output).c_str(), e);
 		}
 		return output;
 	}
 
-	void initializeHelper()
+	void initializeHelper(String const & local_auth_dir)
 	{
-		runHelper(INITIALIZE_CMD);
+		runHelper(local_auth_dir, INITIALIZE_CMD);
 	}
 
-	void cleanupEntryHelper(const String& pathToFile, const String& cookie)
+	void cleanupEntryHelper(
+		String const & local_auth_dir, const String& pathToFile,
+		const String& cookie)
 	{
 		size_t begin = pathToFile.lastIndexOf(OW_FILENAME_SEPARATOR);
 		if (begin == String::npos)
@@ -124,35 +141,44 @@ namespace
 			begin = 0;
 		}
 		String fileName = pathToFile.substring(begin + 1);
-		runHelper(REMOVE_CMD, fileName + "\n" + cookie + "\n");
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, Format("cleanupEntryHelper: pathToFile = %1, fileName = %2", pathToFile, fileName));
+		runHelper(local_auth_dir, REMOVE_CMD, fileName + "\n" + cookie + "\n");
 	}
 
-	String createFileHelper(const String& uid, const String& cookie)
+	String createFileHelper(
+		String const & local_auth_dir, const String& uid, const String& cookie)
 	{
- 		String filename = runHelper(CREATE_CMD, uid + "\n" + cookie + "\n");
+		String extra_input = uid + "\n" + cookie + "\n";
+ 		String filename = runHelper(local_auth_dir, CREATE_CMD, extra_input);
  		// remove the trailing \n
  		if (filename.length() > 0 && filename[filename.length()-1] == '\n')
  		{
  			filename.erase(filename.length()-1);
  		}
+		if (filename.empty())
+		{
+			OW_THROW(LocalAuthenticationException, 
+				"createFileHelper: got back empty filename from owlocalhelper!");
+		}
  		return filename;
-
 	}
 
-}
+} // end anonymous namespace
 
 
 //////////////////////////////////////////////////////////////////////////////
-LocalAuthentication::LocalAuthentication(const LoggerRef& logger)
-	: m_logger(logger)
+LocalAuthentication::LocalAuthentication()
+	: m_logger(COMPONENT_NAME)
+	, m_local_auth_dir(ConfigOpts::installed_owdata_dir + "/OWLocal")
 {
 	if (useHelper())
 	{
-		initializeHelper();
+		initializeHelper(m_local_auth_dir);
 	}
 	else
 	{
-		LocalAuthenticationCommon::initializeDir();
+		LocalAuthenticationCommon::initializeDir(m_local_auth_dir);
 	}
 }
 
@@ -234,31 +260,33 @@ parseInfo(const String& pinfo, SortedVectorMap<String, String>& infoMap)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-generateNewCookieFile(const String& uid, String& cookieFileName, String& cookie)
+generateNewCookieFile(
+	String const & local_auth_dir, const String& uid, String& cookieFileName,
+	String& cookie)
 {
 	// Generate random number to put in file for client to read
-	CryptographicRandomNumber rng;
-	UInt32 rn1 = rng.getNextNumber();
-	UInt32 rn2 = rng.getNextNumber();
-	UInt32 rn3 = rng.getNextNumber();
-	UInt32 rn4 = rng.getNextNumber();
-	UInt32 rn5 = rng.getNextNumber();
-	cookie = Format("%1%2%3%4%5", rn1, rn2, rn3, rn4, rn5);
+	UInt32 rn1 = Secure::rand_uint<UInt32>();
+	UInt32 rn2 = Secure::rand_uint<UInt32>();
+	UInt32 rn3 = Secure::rand_uint<UInt32>();
+	UInt32 rn4 = Secure::rand_uint<UInt32>();
+	UInt32 rn5 = Secure::rand_uint<UInt32>();
+	cookie = Format("%1-%2-%3-%4-%5", rn1, rn2, rn3, rn4, rn5);
 
 	if (useHelper())
 	{
-		cookieFileName = createFileHelper(uid, cookie);
+		cookieFileName = createFileHelper(local_auth_dir, uid, cookie);
 	}
 	else
 	{
-		cookieFileName = LocalAuthenticationCommon::createFile(uid, cookie);
+		cookieFileName = 
+			LocalAuthenticationCommon::createFile(local_auth_dir, uid, cookie);
 	}
 }
 
 } // end unnamed namespace
 
 //////////////////////////////////////////////////////////////////////////////
-bool
+EAuthenticateResult
 LocalAuthentication::authenticate(String& userName,
 		const String& info, HTTPSvrConnection* htcon)
 {
@@ -267,10 +295,13 @@ LocalAuthentication::authenticate(String& userName,
 
 		cleanupStaleEntries();
 	
+		OW_ASSERT(!info.empty());
+
 		if (info.empty())
 		{
+			// shouldn't ever happen, but just in case.
 			htcon->setErrorDetails("You must authenticate to access this resource");
-			return false;
+			return E_AUTHENTICATE_CONTINUE;
 		}
 		
 		typedef SortedVectorMap<String, String> map_t;
@@ -293,7 +324,7 @@ LocalAuthentication::authenticate(String& userName,
 			catch (StringConversionException& e)
 			{
 				htcon->setErrorDetails("Invalid uid");
-				return false;
+				return E_AUTHENTICATE_FAIL;
 			}
 			
 			bool ok;
@@ -305,13 +336,13 @@ LocalAuthentication::authenticate(String& userName,
 			else
 			{
 				htcon->setErrorDetails("Invalid uid");
-				return false;
+				return E_AUTHENTICATE_FAIL;
 			}
 	
 			// give them back the challenge
 			htcon->addHeader("WWW-Authenticate", createNewChallenge(uidStr, userName));
-			htcon->setErrorDetails("You must authenticate to access this resource");
-			return false;
+			htcon->setErrorDetails("OWLocal:2");
+			return E_AUTHENTICATE_CONTINUE;
 		}
 	
 		// it's not an initial connection, so it's phase 2, look for the nonce and cookie
@@ -319,7 +350,7 @@ LocalAuthentication::authenticate(String& userName,
 		if (iter == infoMap.end() || iter->second.empty())
 		{
 			htcon->setErrorDetails("No nonce was provided");
-			return false;
+			return E_AUTHENTICATE_FAIL;
 		}
 	
 		String sNonce = iter->second;
@@ -340,7 +371,7 @@ LocalAuthentication::authenticate(String& userName,
 		if (!nonceFound)
 		{
 			htcon->setErrorDetails("invalid nonce");
-			return false;
+			return E_AUTHENTICATE_FAIL;
 		}
 	
 		userName = m_authEntries[i].userName;
@@ -349,25 +380,32 @@ LocalAuthentication::authenticate(String& userName,
 		if (iter == infoMap.end() || iter->second.empty())
 		{
 			htcon->setErrorDetails("No cookie was provided");
-			return false;
+			return E_AUTHENTICATE_FAIL;
 		}
 		String cookie = iter->second;
 		if ( cookie == m_authEntries[i].cookie )
 		{
 			// Match! Authenticated. Clean up.
-			cleanupEntry(m_authEntries[i]);
+			try
+			{
+				cleanupEntry(m_authEntries[i]);
+			}
+			catch (LocalAuthenticationException& e)
+			{
+				OW_LOG_ERROR(m_logger, Format("LocalAuthentication::authenticate() failed to clean up entry: %1", e));
+			}
 			m_authEntries.erase(m_authEntries.begin() + i);
-			return true;
+			return E_AUTHENTICATE_SUCCESS;
 		}
 	
 		htcon->setErrorDetails("invalid cookie");
-		return false;
+		return E_AUTHENTICATE_FAIL;
 	}
 	catch(LocalAuthenticationException& e)
 	{
 		OW_LOG_ERROR(m_logger, Format("LocalAuthentication::authenticate(): %1", e));
 		htcon->setErrorDetails(Format("%1", e));
-		return false;
+		return E_AUTHENTICATE_FAIL;
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -377,7 +415,7 @@ LocalAuthentication::createNewChallenge(const String& uid, const String& userNam
 	String nonce = generateNewNonce();
 	String cookieFileName;
 	String cookie;
-	generateNewCookieFile(uid, cookieFileName, cookie);
+	generateNewCookieFile(m_local_auth_dir, uid, cookieFileName, cookie);
 
 	AuthEntry newEntry;
 	newEntry.fileName = cookieFileName;
@@ -394,9 +432,10 @@ LocalAuthentication::createNewChallenge(const String& uid, const String& userNam
 void
 LocalAuthentication::cleanupEntry(const AuthEntry& entry)
 {
+	OW_LOG_DEBUG(m_logger, Format("LocalAuthentication::cleanupEntry(): cleaning up %1 for %2", entry.fileName, entry.userName));
 	if (useHelper())
 	{
-		cleanupEntryHelper(entry.fileName, entry.cookie);
+		cleanupEntryHelper(m_local_auth_dir, entry.fileName, entry.cookie);
 	}
 	else
 	{
@@ -419,7 +458,15 @@ LocalAuthentication::cleanupStaleEntries()
 	// entries from the front as long as they're older than 1 minute.
 	while (m_authEntries.size() > 0 && m_authEntries[0].creationTime < oneMinuteAgo)
 	{
-		cleanupEntry(m_authEntries[0]);
+		try
+		{
+			cleanupEntry(m_authEntries[0]);
+		}
+		catch (LocalAuthenticationException& e)
+		{
+			OW_LOG_ERROR(m_logger, Format("LocalAuthentication::cleanupStaleEntries() failed to remove entry: %1 for %2: %3",
+				m_authEntries[0].fileName, m_authEntries[0].userName, e));
+		}
 		m_authEntries.erase(m_authEntries.begin());
 	}
 }

@@ -48,7 +48,7 @@ namespace OW_NAMESPACE
 {
 
 // This class is a base interface for any services for Openwbem.
-class OW_COMMON_API ServiceIFC : public IntrusiveCountableBase
+class OW_COMMON_API ServiceIFC : virtual public IntrusiveCountableBase
 {
 public:
 	virtual ~ServiceIFC();

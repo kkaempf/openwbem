@@ -1054,7 +1054,7 @@ createProperty(CIMXMLParser& parser)
 		rval.setDataType(dt);
 	}
 	rval.setOriginClass(classOrigin);
-	rval.setPropagated(!propagate.empty() && propagate.equalsIgnoreCase("true"));
+	rval.setPropagated(propagate.equalsIgnoreCase("true"));
 	//
 	// See if there are qualifiers
 	//

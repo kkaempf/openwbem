@@ -1,4 +1,4 @@
-SUBDIRS = testfiles progs
+SUBDIRS = testfiles progs oop
 
 check_SCRIPTS = acceptance.sh
 
@@ -21,6 +21,7 @@ SUFFIXES = .fb
 		-e 's!@''includedir''@!$(includedir)!g' \
 		-e 's!@''pkglibdir''@!$(pkglibdir)!g' \
 		-e 's!@''libexecdir''@!$(libexecdir)!g' \
+		-e 's!@''localstatedir''@!$(localstatedir)!g' \
 		-e 's!@''PACKAGE_PREFIX_D''@!$(PACKAGE_PREFIX_D)!g' \
 		-e 's!@''PACKAGE_PREFIX''@!$(PACKAGE_PREFIX)!g' \
 		-e 's!@''lib_ext''@!$(LIB_EXT)!g' \

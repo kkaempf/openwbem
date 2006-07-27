@@ -1,6 +1,6 @@
 #include "OW_config.h"
 #include "OW_AuthorizerManager.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_LocalOperationContext.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Logger.hpp"
@@ -65,19 +65,7 @@ public:
 		EBypassProvidersFlag bypassProviders,
 		ELockingFlag locking) const
 	{
-		// specifically ignore the locking flag, since we know we'll only be invoked in the context of an operation.
-		return m_env->getCIMOMHandle(m_context, bypassProviders,
-			ServiceEnvironmentIFC::E_NO_LOCKING);
-	}
-
-	virtual LoggerRef getLogger() const
-	{
-		return m_env->getLogger(COMPONENT_NAME);
-	}
-
-	virtual LoggerRef getLogger(const String& componentName) const
-	{
-		return m_env->getLogger(componentName);
+		return m_env->getCIMOMHandle(m_context, bypassProviders, locking);
 	}
 
 	virtual bool authenticate(String &userName, const String &info,
@@ -185,7 +173,7 @@ AuthorizerManager::init(const ServiceEnvironmentIFCRef& env)
 	{
 		if (m_authorizer)
 		{
-			OperationContext oc;
+			LocalOperationContext oc;
 			ServiceEnvironmentIFCRef envref = createAuthEnvRef(oc, env);
 			m_authorizer->init(envref);
 

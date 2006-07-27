@@ -52,6 +52,8 @@ private:
 	// test methods
 	void testDeadlock();
 	void testTimeout();
+	void testReadAndWrite();
+	void testRWLockerException();
 };
 
 #endif

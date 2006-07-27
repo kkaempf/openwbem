@@ -56,13 +56,13 @@ OW_DECLARE_APIEXCEPTION(Assertion, OW_COMMON_API);
 #endif
 
 /**
- * OW_ASSERTMSG works the same as OW_ASSERT, but with a second string parameter
+ * OW_ASSERTMSG works the same as OW_ASSERT, but with a second string literal parameter
  * that will be added to the exception message on failure.
  * @param CON The condition which will be evaluated.
  * @param MSG The extra message.  A C string literal.
  */
 #ifdef OW_DEBUG
-// MSG should be a string
+// MSG should be a string literal
 #define OW_ASSERTMSG(CON, MSG) if (!(CON)) throw ::OW_NAMESPACE::AssertionException(__FILE__, __LINE__, \
 		#CON ":" MSG)
 #else

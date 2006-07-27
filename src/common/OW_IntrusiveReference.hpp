@@ -47,6 +47,8 @@
 #define OW_INTRUSIVE_REFERENCE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
+#include "OW_ReferenceHelpers.hpp"
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -114,21 +116,23 @@ public:
 	}
 	T & operator*() const
 	{
+#ifdef OW_CHECK_NULL_REFERENCES
+		ReferenceHelpers::checkNull(this);
+		ReferenceHelpers::checkNull(m_pObj);
+#endif
 		return *m_pObj;
 	}
 	T * operator->() const
 	{
+#ifdef OW_CHECK_NULL_REFERENCES
+		ReferenceHelpers::checkNull(this);
+		ReferenceHelpers::checkNull(m_pObj);
+#endif
 		return m_pObj;
 	}
-	typedef T * this_type::*safe_bool;
-	operator safe_bool() const
-	{
-		return m_pObj == 0? 0: &this_type::m_pObj;
-	}
-	bool operator! () const
-	{
-		return m_pObj == 0;
-	}
+
+	OW_SAFE_BOOL_IMPL(this_type, T*, this_type::m_pObj, m_pObj)
+
 	OW_DEPRECATED bool isNull() const // in 3.1.0
 	{
 	    return m_pObj == 0;

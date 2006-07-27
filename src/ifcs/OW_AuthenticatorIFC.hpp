@@ -49,7 +49,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_COMMON_API AuthenticatorIFC : public IntrusiveCountableBase
+class OW_COMMON_API AuthenticatorIFC : virtual public IntrusiveCountableBase
 {
 public:
 	AuthenticatorIFC()

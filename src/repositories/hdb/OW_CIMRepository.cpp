@@ -67,7 +67,8 @@ namespace
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 CIMRepository::CIMRepository()
-	: m_checkReferentialIntegrity(false)
+	: m_logger(COMPONENT_NAME)
+	, m_checkReferentialIntegrity(false)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -153,7 +154,6 @@ CIMRepository::init(const ServiceEnvironmentIFCRef& env)
 	m_instAssocDb.init(env);
 #endif
 	m_env = env;
-	m_logger = env->getLogger(COMPONENT_NAME);
 	if (m_env->getConfigItem(ConfigOpts::CHECK_REFERENTIAL_INTEGRITY_opt,
 		OW_DEFAULT_CHECK_REFERENTIAL_INTEGRITY).equalsIgnoreCase("true"))
 	{
@@ -168,7 +168,6 @@ void
 CIMRepository::shutdown()
 {
 	close();
-	m_logger = 0;
 	m_env = 0;
 }
 
@@ -616,25 +615,24 @@ public:
 	InstNameEnumerator(
 		const String& ns_,
 		CIMObjectPathResultHandlerIFC& result_,
-		const ServiceEnvironmentIFCRef& env_,
+		Logger& lgr_,
 		InstanceRepository& iStore)
 		: ns(ns_)
 		, result(result_)
-		, m_env(env_)
+		, m_lgr(lgr_)
 		, m_iStore(iStore)
 	{}
 protected:
 	virtual void doHandle(const CIMClass &cc)
 	{
-		LoggerRef lgr(m_env->getLogger(COMPONENT_NAME));
-		OW_LOG_DEBUG(lgr, Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
+		OW_LOG_DEBUG(m_lgr, Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
 			cc.getName()));
 		m_iStore.getInstanceNames(ns, cc, result);
 	}
 private:
 	String ns;
 	CIMObjectPathResultHandlerIFC& result;
-	const ServiceEnvironmentIFCRef& m_env;
+	Logger& m_lgr;
 	InstanceRepository& m_iStore;
 };
 }
@@ -649,7 +647,7 @@ CIMRepository::enumInstanceNames(
 {
 	try
 	{
-		InstNameEnumerator ie(ns, result, m_env, m_iStore);
+		InstNameEnumerator ie(ns, result, m_logger, m_iStore);
 		CIMClass theClass = _instGetClass(ns, className);
 		ie.handle(theClass);
 		// If this is the namespace class then just return now
@@ -892,8 +890,7 @@ CIMRepository::createInstance(
 					CIMClass rcc(CIMNULL);
 					try
 					{
-						m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS,
-							ServiceEnvironmentIFC::E_NO_LOCKING)->getInstance(ns, op);
+						m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS)->getInstance(ns, op);
 					}
 					catch (CIMException& e)
 					{
@@ -1370,7 +1367,7 @@ CIMRepository::_staticReferences(const CIMObjectPath& path,
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
 	staticReferencesInstResultHandler handler(context, m_env->getCIMOMHandle(context,
-		ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_NO_LOCKING), result,
+		ServiceEnvironmentIFC::E_USE_PROVIDERS), result,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
 		refClasses, 0, role, CIMName(), handler);
@@ -1469,7 +1466,7 @@ CIMRepository::_staticAssociators(const CIMObjectPath& path,
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
 	staticAssociatorsInstResultHandler handler(context, m_env->getCIMOMHandle(context,
-		ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_NO_LOCKING), result,
+		ServiceEnvironmentIFC::E_USE_PROVIDERS), result,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
 		passocClasses, presultClasses, role, resultRole, handler);
@@ -1839,8 +1836,7 @@ CIMRepository::_validatePropagatedKeys(OperationContext& context, const String& 
 			OW_LOG_DEBUG(m_logger, Format("Trying getInstance of: %1", op.toString()));
 			try
 			{
-				m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS,
-					ServiceEnvironmentIFC::E_NO_LOCKING)->getInstance(ns, op);
+				m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS)->getInstance(ns, op);
 				// if the previous line didn't throw, then we found it.
 				found = true;
 				break;
@@ -1859,17 +1855,16 @@ CIMRepository::_validatePropagatedKeys(OperationContext& context, const String& 
 	}
 }
 
+namespace
+{
+// TODO: Make this configurable?  Maybe even a parameter that can be specifed by the client on each request?
+const Timeout LockTimeout = Timeout::relative(300); // 5 mins.
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
 {
-	if (context.keyHasData(OperationContext::BYPASS_LOCKERKEY))
-	{
-		return;
-	}
-
-// TODO: Make this configurable?  Maybe even a parameter that can be specifed by the client on each request?
-	const UInt32 LockTimeout = 300; // seconds - 5 mins.
 	switch (op)
 	{
 	case E_CREATE_NAMESPACE:
@@ -1921,11 +1916,6 @@ CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& co
 void
 CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result)
 {
-	if (context.keyHasData(OperationContext::BYPASS_LOCKERKEY))
-	{
-		return;
-	}
-
 	switch (op)
 	{
 	case E_CREATE_NAMESPACE:

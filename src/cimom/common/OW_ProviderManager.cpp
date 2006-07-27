@@ -46,7 +46,7 @@
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CppProviderIFC.hpp"
-#include "OW_OperationContext.hpp"
+#include "OW_LocalOperationContext.hpp"
 #include "OW_Platform.hpp"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_ServiceIFCNames.hpp"
@@ -121,13 +121,9 @@ public:
 	{
 		return env->getRepository();
 	}
-	virtual LoggerRef getLogger() const
+	virtual RepositoryIFCRef getAuthorizingRepository() const
 	{
-		return env->getLogger();
-	}
-	virtual LoggerRef getLogger(const String& componentName) const
-	{
-		return env->getLogger(componentName);
+		return env->getAuthorizingRepository();
 	}
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const
 	{
@@ -152,7 +148,7 @@ public:
 	}
 private:
 	ServiceEnvironmentIFCRef env;
-	mutable OperationContext m_context;
+	mutable LocalOperationContext m_context;
 };
 
 } // end anonymous namespace
@@ -177,19 +173,21 @@ void registerProviderInfo(
 	const String& name_,
 	const ProviderIFCBaseIFCRef& ifc,
 	const String& providerName,
+	const String& providerType,
 	ProviderManager::ProvRegMap_t& regMap)
 {
 	String name(name_);
 	name.toLowerCase();
 	// search for duplicates
 	ProviderManager::ProvRegMap_t::const_iterator ci = regMap.find(name);
+	Logger logger(ProviderManager::COMPONENT_NAME);
 	if (ci != regMap.end())
 	{
-		OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format("More than one provider is registered to instrument class (%1). %2::%3 and %4::%5",
+		OW_LOG_ERROR(logger, Format("More than one provider is registered to instrument class (%1). %2::%3 and %4::%5",
 			name, ci->second.ifc->getName(), ci->second.provName, ifc->getName(), providerName));
 		return;
 	}
-	OW_LOG_DEBUG(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Registering provider %1::%2 for %3", ifc->getName(), providerName, name));
+	OW_LOG_DEBUG(logger, Format("Registering %1 provider %2::%3 for %4", providerType, ifc->getName(), providerName, name));
 	// now save it so we can look it up quickly when needed
 	ProviderManager::ProvReg reg;
 	reg.ifc = ifc;
@@ -206,11 +204,13 @@ void registerProviderInfo(
 	const String& name_,
 	const ProviderIFCBaseIFCRef& ifc,
 	const String& providerName,
+	const String& providerType,
 	ProviderManager::MultiProvRegMap_t& regMap)
 {
 	String name(name_);
 	name.toLowerCase();
-	OW_LOG_DEBUG(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Registering provider %1::%2 for %3", ifc->getName(), providerName, name));
+	Logger logger(ProviderManager::COMPONENT_NAME);
+	OW_LOG_DEBUG(logger, Format("Registering %1 provider %2::%3 for %4", providerType, ifc->getName(), providerName, name));
 	// now save it so we can look it up quickly when needed
 	ProviderManager::ProvReg reg;
 	reg.ifc = ifc;
@@ -226,11 +226,12 @@ void processProviderClassExtraInfo(
 	const StringArray& extra,
 	const ProviderIFCBaseIFCRef& ifc,
 	const String& providerName,
+	const String& providerType,
 	ProviderManager::ProvRegMap_t& regMap)
 {
 	if (extra.empty())
 	{
-		registerProviderInfo(env, name, ifc, providerName, regMap);
+		registerProviderInfo(env, name, ifc, providerName, providerType, regMap);
 	}
 	else
 	{
@@ -239,12 +240,12 @@ void processProviderClassExtraInfo(
 			String extraName = extra[i];
 			if (extraName.empty())
 			{
-				OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Provider sub-name is "
-					"empty for %1 by provider %2::%3",
+				Logger logger(ProviderManager::COMPONENT_NAME);
+				OW_LOG_ERROR(logger, Format("Provider sub-name is empty for %1 by provider %2::%3",
 					name, ifc->getName(), providerName));
 				continue;
 			}
-			registerProviderInfo(env, name + "/" + extraName, ifc, providerName, regMap);
+			registerProviderInfo(env, name + "/" + extraName, ifc, providerName, providerType, regMap);
 		}
 	}
 }
@@ -256,29 +257,30 @@ void processProviderClassExtraInfo(
 	const StringArray& extra,
 	const ProviderIFCBaseIFCRef& ifc,
 	const String& providerName,
+	const String& providerType,
 	ProviderManager::MultiProvRegMap_t& regMap)
 {
 	if (!extra.empty())
 	{
 		// The "/*" identifies the registration as a lifecycle provider.
-		registerProviderInfo(env, name + "/*", ifc, providerName, regMap);
+		registerProviderInfo(env, name + "/*", ifc, providerName, providerType, regMap);
 		for (size_t i = 0; i < extra.size(); ++i)
 		{
 			String extraName = extra[i];
 			if (extraName.empty())
 			{
-				OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Provider sub-name is "
-					"empty for %1 by provider %2::%3",
+				Logger logger(ProviderManager::COMPONENT_NAME);
+				OW_LOG_ERROR(logger, Format("Provider sub-name is empty for %1 by provider %2::%3",
 					name, ifc->getName(), providerName));
 				continue;
 			}
-			registerProviderInfo(env, name + '/' + extraName, ifc, providerName, regMap);
+			registerProviderInfo(env, name + '/' + extraName, ifc, providerName, providerType, regMap);
 		}
 	}
 	else
 	{
 		// The lack of "/*" identifies the registration as a non-lifecycle provider.
-		registerProviderInfo(env, name, ifc, providerName, regMap);
+		registerProviderInfo(env, name, ifc, providerName, providerType, regMap);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -298,11 +300,12 @@ void processProviderClassInfo(
 	const ClassInfoT& classInfo,
 	const ProviderIFCBaseIFCRef& ifc,
 	const String& providerName,
+	const String& providerType,
 	RegMapT& regMap)
 {
 	if (classInfo.namespaces.empty())
 	{
-		registerProviderInfo(env, getClassName(classInfo), ifc, providerName, regMap);
+		registerProviderInfo(env, getClassName(classInfo), ifc, providerName, providerType, regMap);
 	}
 	else
 	{
@@ -311,13 +314,13 @@ void processProviderClassInfo(
 			String ns = classInfo.namespaces[l];
 			if (ns.empty())
 			{
-				OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Provider namespace is "
-					"empty for class %1 by provider %2::%3",
+				Logger logger(ProviderManager::COMPONENT_NAME);
+				OW_LOG_ERROR(logger, Format("Provider namespace is empty for class %1 by provider %2::%3",
 					getClassName(classInfo), ifc->getName(), providerName));
 				continue;
 			}
 			String name = ns + ":" + getClassName(classInfo);
-			registerProviderInfo(env, name, ifc, providerName, regMap);
+			registerProviderInfo(env, name, ifc, providerName, providerType, regMap);
 		}
 	}
 }
@@ -327,11 +330,12 @@ void processProviderClassInfo(
 	const MethodProviderInfo::ClassInfo& classInfo,
 	const ProviderIFCBaseIFCRef& ifc,
 	const String& providerName,
+	const String& providerType,
 	ProviderManager::ProvRegMap_t& regMap)
 {
 	if (classInfo.namespaces.empty())
 	{
-		processProviderClassExtraInfo(env, classInfo.className, classInfo.methods, ifc, providerName, regMap);
+		processProviderClassExtraInfo(env, classInfo.className, classInfo.methods, ifc, providerName, providerType, regMap);
 	}
 	else
 	{
@@ -340,13 +344,13 @@ void processProviderClassInfo(
 			String ns = classInfo.namespaces[l];
 			if (ns.empty())
 			{
-				OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Provider namespace is "
-					"empty for class %1 by provider %2::%3",
+				Logger logger(ProviderManager::COMPONENT_NAME);
+				OW_LOG_ERROR(logger, Format("Provider namespace is empty for class %1 by provider %2::%3",
 					classInfo.className, ifc->getName(), providerName));
 				continue;
 			}
 			String name = ns + ":" + classInfo.className;
-			processProviderClassExtraInfo(env, name, classInfo.methods, ifc, providerName, regMap);
+			processProviderClassExtraInfo(env, name, classInfo.methods, ifc, providerName, providerType, regMap);
 		}
 	}
 }
@@ -356,11 +360,12 @@ void processProviderClassInfo(
 	const IndicationProviderInfo::ClassInfo& classInfo,
 	const ProviderIFCBaseIFCRef& ifc,
 	const String& providerName,
+	const String& providerType,
 	ProviderManager::MultiProvRegMap_t& regMap)
 {
 	if (classInfo.namespaces.empty())
 	{
-		processProviderClassExtraInfo(env, classInfo.indicationName, classInfo.classes, ifc, providerName, regMap);
+		processProviderClassExtraInfo(env, classInfo.indicationName, classInfo.classes, ifc, providerName, providerType, regMap);
 	}
 	else
 	{
@@ -369,13 +374,13 @@ void processProviderClassInfo(
 			String ns = classInfo.namespaces[l];
 			if (ns.empty())
 			{
-				OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Provider namespace is "
-					"empty for class %1 by provider %2::%3",
+				Logger logger(ProviderManager::COMPONENT_NAME);
+				OW_LOG_ERROR(logger, Format("Provider namespace is empty for class %1 by provider %2::%3",
 					classInfo.indicationName, ifc->getName(), providerName));
 				continue;
 			}
 			String name = ns + ":" + classInfo.indicationName;
-			processProviderClassExtraInfo(env, name, classInfo.classes, ifc, providerName, regMap);
+			processProviderClassExtraInfo(env, name, classInfo.classes, ifc, providerName, providerType, regMap);
 		}
 	}
 }
@@ -385,6 +390,7 @@ void processProviderInfo(
 	const ProviderEnvironmentIFCRef& env,
 	const Array<ProviderInfoT>& providerInfo,
 	const ProviderIFCBaseIFCRef& ifc,
+	const String& providerType,
 	RegMapT& regMap)
 {
 	// process the provider info.  Each provider may have added an entry.
@@ -394,7 +400,8 @@ void processProviderInfo(
 		String providerName = providerInfo[j].getProviderName();
 		if (providerName.empty())
 		{
-			OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format(
+			Logger logger(ProviderManager::COMPONENT_NAME);
+			OW_LOG_ERROR(logger, Format(
 				"Provider name not supplied for provider class registrations from IFC %1", ifc->getName()));
 			continue;
 		}
@@ -405,18 +412,23 @@ void processProviderInfo(
 		for (size_t k = 0; k < classInfos.size(); ++k)
 		{
 			ClassInfo classInfo(classInfos[k]);
-			processProviderClassInfo(env, classInfo, ifc, providerName, regMap);
+			processProviderClassInfo(env, classInfo, ifc, providerName, providerType, regMap);
 		}
 	}
 }
 
 } // end anonymous namespace
+
+//////////////////////////////////////////////////////////////////////////////
+ProviderManager::ProviderManager()
+	: m_logger(COMPONENT_NAME)
+{
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void ProviderManager::init(const ServiceEnvironmentIFCRef& env)
 {
 	m_env = env;
-
-	m_logger = env->getLogger(COMPONENT_NAME);
 
 	ProviderEnvironmentIFCRef penv = ProviderEnvironmentIFCRef(
 		new ProviderEnvironmentServiceEnvironmentWrapper(env));
@@ -442,15 +454,15 @@ void ProviderManager::init(const ServiceEnvironmentIFCRef& env)
 			methodProviderInfo,
 			indicationProviderInfo);
 
-		processProviderInfo(penv, instanceProviderInfo, m_IFCArray[i], m_registeredInstProvs);
-		processProviderInfo(penv, secondaryInstanceProviderInfo, m_IFCArray[i], m_registeredSecInstProvs);
+		processProviderInfo(penv, instanceProviderInfo, m_IFCArray[i], "instance", m_registeredInstProvs);
+		processProviderInfo(penv, secondaryInstanceProviderInfo, m_IFCArray[i], "secondary instance", m_registeredSecInstProvs);
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		processProviderInfo(penv, associatorProviderInfo, m_IFCArray[i], m_registeredAssocProvs);
+		processProviderInfo(penv, associatorProviderInfo, m_IFCArray[i], "associator", m_registeredAssocProvs);
 #endif
 
-		processProviderInfo(penv, methodProviderInfo, m_IFCArray[i], m_registeredMethProvs);
-		processProviderInfo(penv, indicationProviderInfo, m_IFCArray[i], m_registeredIndProvs);
+		processProviderInfo(penv, methodProviderInfo, m_IFCArray[i], "method", m_registeredMethProvs);
+		processProviderInfo(penv, indicationProviderInfo, m_IFCArray[i], "indication", m_registeredIndProvs);
 	}
 
 	StringArray restrictedNamespaces = m_env->getMultiConfigItem(ConfigOpts::EXPLICIT_REGISTRATION_NAMESPACES_opt, StringArray(), " \t");
@@ -541,13 +553,19 @@ wrapProvider(AssociatorProviderIFCRef pref,
 
 #endif	// OW_SETUID_PROVIDERS
 
+ProviderEnvironmentIFCRef createProvEnvRef(ServiceEnvironmentIFCRef const & env)
+{
+	return ProviderEnvironmentIFCRef(
+		new ProviderEnvironmentServiceEnvironmentWrapper(env));
+}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 InstanceProviderIFCRef
-ProviderManager::getInstanceProvider(const ProviderEnvironmentIFCRef& env,
-	const String& ns, const CIMClass& cc) const
+ProviderManager::getInstanceProvider(const String& ns, const CIMClass& cc) const
 {
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
 	ProvRegMap_t::const_iterator ci;
 	if(!isRestrictedNamespace(ns) || cc.getName().equalsIgnoreCase("__Namespace"))
 	{
@@ -589,9 +607,10 @@ ProviderManager::getInstanceProvider(const ProviderEnvironmentIFCRef& env,
 
 //////////////////////////////////////////////////////////////////////////////
 SecondaryInstanceProviderIFCRefArray
-ProviderManager::getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& env,
+ProviderManager::getSecondaryInstanceProviders(
 	const String& ns, const CIMName& className) const
 {
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
 	String lowerName = className.toString();
 	lowerName.toLowerCase();
 	MultiProvRegMap_t::const_iterator lci;
@@ -600,7 +619,7 @@ ProviderManager::getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& 
 	std::pair<MultiProvRegMap_t::const_iterator, 
 		MultiProvRegMap_t::const_iterator> range;
 
-	lci =  m_registeredSecInstProvs.end();
+	lci = uci = m_registeredSecInstProvs.end();
 	if(!isRestrictedNamespace(ns))
 	{
 		// lookup just the class name to see if a provider registered for the
@@ -610,6 +629,7 @@ ProviderManager::getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& 
 		uci = range.second;
 	}
 
+	if (std::distance(lci, uci) == 0)
 	if (lci == m_registeredSecInstProvs.end())
 	{
 		// lookup namespace:classname to see if we've got one for the
@@ -622,22 +642,20 @@ ProviderManager::getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& 
 	}
 
 	SecondaryInstanceProviderIFCRefArray rval;
-	if (lci != m_registeredSecInstProvs.end())
+	// loop through the matching range and put them in rval
+	for (MultiProvRegMap_t::const_iterator tci = lci; tci != uci; ++tci)
 	{
-		// loop through the matching range and put them in rval
-		for (MultiProvRegMap_t::const_iterator tci = lci; tci != uci; ++tci)
-		{
-			rval.push_back(wrapProvider(tci->second.ifc->getSecondaryInstanceProvider(env, tci->second.provName.c_str()), env));
-		}
+		rval.push_back(wrapProvider(tci->second.ifc->getSecondaryInstanceProvider(env, tci->second.provName.c_str()), env));
 	}
 	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 MethodProviderIFCRef
-ProviderManager::getMethodProvider(const ProviderEnvironmentIFCRef& env,
+ProviderManager::getMethodProvider(
 	const String& ns, const CIMClass& cc, const CIMMethod& method) const
 {
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
 	ProvRegMap_t::const_iterator ci;
 	CIMName methodName = method.getName();
 	
@@ -717,9 +735,10 @@ ProviderManager::getMethodProvider(const ProviderEnvironmentIFCRef& env,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 AssociatorProviderIFCRef
-ProviderManager::getAssociatorProvider(const ProviderEnvironmentIFCRef& env,
+ProviderManager::getAssociatorProvider(
 	const String& ns, const CIMClass& cc) const
 {
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
 	ProvRegMap_t::const_iterator ci;
 	if(!isRestrictedNamespace(ns))
 	{
@@ -761,9 +780,9 @@ ProviderManager::getAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 IndicationExportProviderIFCRefArray
-ProviderManager::getIndicationExportProviders(
-	const ProviderEnvironmentIFCRef& env) const
+ProviderManager::getIndicationExportProviders() const
 {
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
 	IndicationExportProviderIFCRefArray rv;
 	for (size_t i = 0; i < m_IFCArray.size(); i++)
 	{
@@ -778,9 +797,9 @@ ProviderManager::getIndicationExportProviders(
 }
 //////////////////////////////////////////////////////////////////////////////
 PolledProviderIFCRefArray
-ProviderManager::getPolledProviders(
-	const ProviderEnvironmentIFCRef& env) const
+ProviderManager::getPolledProviders() const
 {
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
 	PolledProviderIFCRefArray rv;
 	for (size_t i = 0; i < m_IFCArray.size(); i++)
 	{
@@ -806,14 +825,14 @@ ProviderManager::findIndicationProviders(
 	typedef ProviderManager::MultiProvRegMap_t::const_iterator citer_t;
 	std::pair<citer_t, citer_t> range;
 
-	range.first = indProvs.end();
+	range.first = range.second = indProvs.end();
 
 	if(!isRestrictedNamespace(ns))
 	{
 		range = indProvs.equal_range(className.toString());
 	}
 
-	if (range.first == indProvs.end())
+	if (std::distance(range.first, range.second) == 0)
 	{
 		// didn't find any or restricted namespace, so
 		// next lookup Namespace:className to see if we've got one for the
@@ -823,22 +842,20 @@ ProviderManager::findIndicationProviders(
 		range = indProvs.equal_range(nsAndClassName);
 	}
 
-	if (range.first != indProvs.end())
+	// loop through the matching range and put them in rval
+	for (citer_t tci = range.first; tci != range.second; ++tci)
 	{
-		// loop through the matching range and put them in rval
-		for (citer_t tci = range.first; tci != range.second; ++tci)
-		{
-			rval.push_back(tci->second.ifc->getIndicationProvider(env, tci->second.provName.c_str()));
-		}
+		rval.push_back(tci->second.ifc->getIndicationProvider(env, tci->second.provName.c_str()));
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 IndicationProviderIFCRefArray
-ProviderManager::getIndicationProviders(const ProviderEnvironmentIFCRef& env,
+ProviderManager::getIndicationProviders(
 	const String& ns, const CIMName& indicationClassName,
 	const CIMNameArray& monitoredClassNames) const
 {
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
 	IndicationProviderIFCRefArray providers;
 	String lowerName = indicationClassName.toString();
 	lowerName.toLowerCase();

@@ -1,10 +1,10 @@
 MAKEBUNDLE=1
 include $(top_srcdir)/Makefile-shared-lib.inc
-check-local : all-ow-shared-libs
+all-local : all-ow-shared-libs
 clean-local : clean-ow-shared-libs
 
 
-check_LIBRARIES = \
+noinst_LIBRARIES = \
 libsecondaryinstancetest1.a \
 libsecondaryinstancetest2.a
 

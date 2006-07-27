@@ -38,6 +38,7 @@
 #include "OW_UserInfo.hpp"
 #include "OW_Array.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_BinarySerialization.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -73,75 +74,102 @@ OperationContext::Data::~Data()
 void 
 OperationContext::setData(const String& key, const DataRef& data)
 {
-	m_data[key] = data;
+	doSetData(key, data);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void
 OperationContext::removeData(const String& key)
 {
-	m_data.erase(key);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-OperationContext::DataRef  
-OperationContext::getData(const String& key) const
-{
-	SortedVectorMap<String, DataRef>::const_iterator ci = m_data.find(key);
-	if (ci != m_data.end())
-	{
-		return ci->second;
-	}
-	return DataRef();
+	doRemoveData(key);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 bool
 OperationContext::keyHasData(const String& key) const
 {
-	return m_data.count(key) > 0;
+	return doKeyHasData(key);
 }
 
 /////////////////////////////////////////////////////////////////////////////
-namespace 
+OperationContext::StringData::StringData() 
 {
-struct StringData : public OperationContext::Data
-{
-	StringData(const String& str) : m_str(str) {}
-	String m_str;
-};
 }
+
+/////////////////////////////////////////////////////////////////////////////
+OperationContext::StringData::StringData(const String& str) 
+	: m_str(str) 
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+OperationContext::StringData::writeObject(std::streambuf& ostr) const
+{
+	BinarySerialization::writeString(ostr, m_str);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+OperationContext::StringData::readObject(std::streambuf& istr)
+{
+	m_str = BinarySerialization::readString(istr);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+String
+OperationContext::StringData::getType() const
+{
+	return s_type;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+const String OperationContext::StringData::s_type("StringData");
+
 /////////////////////////////////////////////////////////////////////////////
 void  
 OperationContext::setStringData(const String& key, const String& str)
 {
-	m_data[key] = DataRef(new StringData(str));
+	setData(key, DataRef(new StringData(str)));
 }
 
 /////////////////////////////////////////////////////////////////////////////
 String  
 OperationContext::getStringData(const String& key) const
 {
-	DataRef foo = getData(key);
-	IntrusiveReference<StringData> strData = foo.cast_to<StringData>();
+	IntrusiveReference<StringData> strData = getDataAs<StringData>(key);
 	if (!strData)
 	{
 		OW_THROW(ContextDataNotFoundException, key.c_str());
 	}
-	return strData->m_str;
+	return strData->getString();
 }
 
 /////////////////////////////////////////////////////////////////////////////
 String  
 OperationContext::getStringDataWithDefault(const String& key, const String& def) const
 {
-	DataRef foo = getData(key);
-	IntrusiveReference<StringData> strData = foo.cast_to<StringData>();
+	IntrusiveReference<StringData> strData = getDataAs<StringData>(key);
 	if (!strData)
 	{
 		return def;
 	}
-	return strData->m_str;
+	return strData->getString();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+OperationContext::DataRef
+OperationContext::getData(const String& key) const
+{
+	DataRef rval;
+	if (doGetData(key, rval))
+	{
+		return rval;
+	}
+	else
+	{
+		return DataRef();
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -149,7 +177,6 @@ const char* const OperationContext::USER_NAME = "USER_NAME";
 const char* const OperationContext::USER_PASSWD = "USER_PASSWD";
 const char* const OperationContext::HTTP_PATH = "HTTP_PATH";
 const char* const OperationContext::CURUSER_UIDKEY = "CURUSER_UIDKEY";
-const char* const OperationContext::BYPASS_LOCKERKEY = "BYPASS_LOCKER"; 
 const char* const OperationContext::SESSION_LANGUAGE_KEY = "SESSION_LANGUAGE_KEY";
 const char* const OperationContext::HTTP_ACCEPT_LANGUAGE_KEY = "HTTP_ACCEPT_LANGUAGE_KEY";
 const char* const OperationContext::CLIENT_IPADDR = "CLIENT_IPADDR"; 

@@ -46,6 +46,10 @@
 #include <vector>
 #include <cstdlib> // for strtol
 
+#ifdef OW_HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 extern "C"
 {
 #include <errno.h>
@@ -270,6 +274,20 @@ public:
 	virtual void convert(const LogMessage &message, StringBuffer &output) const
 	{
 		output += ThreadImpl::thread_t_ToUInt64(ThreadImpl::currentThread());
+	}
+};
+
+/////////////////////////////////////////////////////////////////////////////
+class PidConverter : public Converter
+{
+public:
+	PidConverter(const Formatting& formatting)
+		: Converter(formatting)
+	{}
+
+	virtual void convert(const LogMessage &message, StringBuffer &output) const
+	{
+		output += ::getpid();
 	}
 };
 
@@ -837,6 +855,12 @@ public:
 			case 't':
 			{
 				rv = new ThreadConverter(formatting);
+			}
+			break;
+
+			case 'P':
+			{
+				rv = new PidConverter(formatting);
 			}
 			break;
 #if 0 // don't support these for now.

@@ -85,8 +85,19 @@ FileAppender::doProcessLogMessage(const String& formattedMessage, const LogMessa
 	// take into account external log rotators, if the file we have open no longer exists, then reopen it.
 	if (!FileSystem::exists(m_filename.c_str()))
 	{
-		m_log.close();
-		m_log.open(m_filename.c_str(), std::ios::out | std::ios::app);
+		// make sure we can re-open the log file before we close it
+		std::ofstream temp;
+		temp.open(m_filename.c_str(), std::ios::out | std::ios::app);
+		if (temp)
+		{
+			temp.close();
+			m_log.close();
+			m_log.open(m_filename.c_str(), std::ios::out | std::ios::app);
+		}
+		else
+		{
+			m_log << "FileAppender::doProcessLogMessage(): " << m_filename << " no longer exists and re-opening it failed!\n";
+		}
 	}
 
 	if (!m_log)
@@ -106,14 +117,11 @@ FileAppender::doProcessLogMessage(const String& formattedMessage, const LogMessa
 	// handle log rotation
 	if (m_maxFileSize != NO_MAX_LOG_SIZE && m_log.tellp() >= static_cast<std::streampos>(m_maxFileSize * 1024))
 	{
-		// since we can't throw an exception, or log any errors, it something fails here, we'll just return silently :-(
-
 		// do the roll over
-		m_log.close();
 
 		if (m_maxBackupIndex > 0)
 		{
-			// delete the oldest file first - this may or may not exist, we try anyway.
+			// Delete the oldest file first - this may or may not exist; we try anyway.
 			FileSystem::removeFile(m_filename + '.' + String(m_maxBackupIndex));
 
 			// increment the numbers on all the files - some may exist or not, but try anyway.
@@ -125,12 +133,27 @@ FileAppender::doProcessLogMessage(const String& formattedMessage, const LogMessa
 			if (!FileSystem::renameFile(m_filename, m_filename + ".1"))
 			{
 				// if we can't rename it, avoid truncating it.
+				m_log << "FileAppender::doProcessLogMessage(): Failed to rename " << m_filename << " to " << m_filename + ".1! Logging to this file STOPPED!\n";
+				m_log.close();
 				return;
 			}
 		}
 
-		// truncate the existing one
-		m_log.open(m_filename.c_str(), std::ios_base::out | std::ios_base::trunc);
+		// make sure we can re-open the log file before we close it
+		std::ofstream temp;
+		temp.open(m_filename.c_str(), std::ios::out | std::ios::app);
+		if (temp)
+		{
+			temp.close();
+			m_log.close();
+			// truncate the existing one
+			m_log.open(m_filename.c_str(), std::ios_base::out | std::ios_base::trunc);
+		}
+		else
+		{
+			m_log << "FileAppender::doProcessLogMessage(): Failed to open " << m_filename << "! Logging to this file STOPPED!\n";
+			m_log.close();
+		}
 	}
 }
 

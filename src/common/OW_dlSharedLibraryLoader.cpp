@@ -42,10 +42,13 @@
 namespace OW_NAMESPACE
 {
 
+namespace
+{
+	String COMPONENT_NAME("ow.common.dlSharedLibraryLoader");
+}
 ///////////////////////////////////////////////////////////////////////////////
 SharedLibraryRef
-dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
-	const LoggerRef& logger) const
+dlSharedLibraryLoader::loadSharedLibrary(const String& filename) const
 {
 	// There is a reason to use RTLD_NOW.  If some symbols can't be resolved because
 	// the shared library is built incorrectly or missing some symbols or something,
@@ -86,6 +89,7 @@ dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	}
 	else
 	{
+		Logger logger(COMPONENT_NAME);
 		OW_LOG_ERROR(logger, Format("dlSharedLibraryLoader::loadSharedLibrary "
 			"dlopen returned NULL.  Error is: %1", first_error));
 		if ( !second_error.empty() )

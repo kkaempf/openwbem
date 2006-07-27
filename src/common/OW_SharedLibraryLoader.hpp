@@ -59,13 +59,10 @@ public:
 	 * OW_LOG_ERROR(logger, ) will be called to report the details of the error.
 	 * Exception safety: Strong
 	 * @param filename The name of the shared library to load.
-	 * @param logger If an error occurs, OW_LOG_ERROR(logger, ) will be passed
-	 *  a description.
 	 * @return SharedLibraryRef owning representing the shared library
 	 *  identified by filename.  NULL on failure.
 	 */
-	virtual SharedLibraryRef loadSharedLibrary(const String& filename,
-		const LoggerRef& logger) const = 0;
+	virtual SharedLibraryRef loadSharedLibrary(const String& filename) const = 0;
 
 	/**
 	 * @return A reference to an SharedLibraryLoader object.

@@ -670,12 +670,6 @@ typedef long off_t;
 #define OW_WQL_API OW_IMPORT
 #endif
 
-#ifdef OW_WQLCOMMON_BUILD
-#define OW_WQLCOMMON_API OW_EXPORT
-#else
-#define OW_WQLCOMMON_API OW_IMPORT
-#endif
-
 #ifdef OW_PROVIDER_BUILD
 #define OW_PROVIDER_API OW_EXPORT
 #else

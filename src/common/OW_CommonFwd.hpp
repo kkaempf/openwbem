@@ -148,6 +148,36 @@ typedef IntrusiveReference<ThreadDoneCallback> ThreadDoneCallbackRef;
 class CmdLineParser;
 class CmdLineParserException;
 
+//class PopenStreams;
+
+class Timeout;
+class TimeoutTimer;
+
+class SSLServerCtx;
+typedef IntrusiveReference<SSLServerCtx> SSLServerCtxRef; 
+
+class SSLClientCtx;
+typedef IntrusiveReference<SSLClientCtx> SSLClientCtxRef; 
+
+class SSLTrustStore;
+typedef IntrusiveReference<SSLTrustStore> SSLTrustStoreRef; 
+
+class SharedLibrary;
+typedef IntrusiveReference<SharedLibrary> SharedLibraryRef;
+
+class Process;
+typedef IntrusiveReference<Process> ProcessRef;
+
+#ifdef OW_ENABLE_TEST_HOOKS
+class FileSystemMockObject;
+class ExecMockObject;
+#endif
+
+#ifdef OW_WIN32
+template class OW_COMMON_API Array<String>;
+template class OW_COMMON_API SortedVectorSet<String>;
+#endif
+
 } // end namespace OW_NAMESPACE
 
 #endif

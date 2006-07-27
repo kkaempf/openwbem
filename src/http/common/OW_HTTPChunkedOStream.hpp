@@ -106,25 +106,8 @@ public:
 	 * @return the original ostream
 	 */
 	std::ostream& getOutputStreamOrig() { return m_ostr; };
-	/**
-	 * Add a HTTP trailer (header at the end of a chunked entity)
-	 * @param key the name of the trailer (left of the ':')
-	 * @param value the value of the trailer (right of the ':')
-	 */
-	void addTrailer(const String& key, const String& value);
 private:
 	std::ostream& m_ostr;
-
-#ifdef OW_WIN32
-#pragma warning (push)
-#pragma warning (disable: 4251)
-#endif
-
-	Array<String> m_trailers;
-
-#ifdef OW_WIN32
-#pragma warning (pop)
-#endif
 
 	// disallow copying and assigning
 	HTTPChunkedOStream(const HTTPChunkedOStream&);

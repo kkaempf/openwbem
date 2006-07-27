@@ -29,7 +29,6 @@
 *******************************************************************************/
 
 /**
- * @author Jon Carey
  * @author Dan Nuffer
  */
 
@@ -39,176 +38,250 @@
 #include "OW_ThreadImpl.hpp"
 #include "OW_TimeoutException.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_Timeout.hpp"
+#include "OW_TimeoutTimer.hpp"
 
 namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(RWLocker);
+
+inline bool RWLocker::ThreadComparer::operator()(Thread_t x, Thread_t y) const
+{
+	return !ThreadImpl::sameThreads(x, y) && x < y;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 RWLocker::RWLocker()
-	: m_waiting_writers()
-	, m_waiting_readers()
-	, m_num_waiting_writers(0)
-	, m_num_waiting_readers(0)
-	, m_readers_next(0)
-	, m_guard()
-	, m_state(0)
+	: m_canRead(true)
+	, m_numReaderThreads(0)
+	, m_numWriterThreads(0)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
 RWLocker::~RWLocker()
 {
-	// ???
-	//try
-	//{
-	//	m_cond.notifyAll();
-	//}
-	//catch (...)
-	//{
-		// don't let exceptions escape
-	//}
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 RWLocker::getReadLock(UInt32 sTimeout, UInt32 usTimeout)
 {
-	NonRecursiveMutexLock l(m_guard);
-	
-	// Wait until no exclusive lock is held.
-	//
-	// Note:  Scheduling priorities are enforced in the unlock()
-	//   call.  unlock will wake the proper thread.
-	// if we will lock, then make sure we won't deadlock
+	getReadLock(Timeout::relative(sTimeout + static_cast<float>(usTimeout) * 1000000.0));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+RWLocker::getReadLock(const Timeout& timeout)
+{
+	TimeoutTimer timer(timeout);
 	Thread_t tid = ThreadImpl::currentThread();
-	if (m_state < 0)
+
+	NonRecursiveMutexLock l(m_guard);
+	ThreadMap::iterator info = m_threads.find(tid);
+
+	if (info != m_threads.end())
 	{
-		// see if we already have the write lock
-		if (ThreadImpl::sameThreads(m_writer, tid))
-		{
-			OW_THROW(DeadlockException, "A thread that has a write lock is trying to acquire a read lock.");
-		}
+		ThreadInfo& ti(info->second);
+		// The thread already have a read or write lock, so just increment.
+		OW_ASSERT(ti.isReader() || ti.isWriter());
+		++ti.readCount;
+		return;
 	}
-	while (m_state < 0)
+
+	// The thread is a new reader
+
+	while (!m_canRead || m_numWriterThreads > 0)
 	{
-		++m_num_waiting_readers;
-		//m_waiting_readers.wait(l);
-		if (!m_waiting_readers.timedWait(l, sTimeout, usTimeout))
+		if (!m_waiting_readers.timedWait(l, timer.asAbsoluteTimeout()))
 		{
-			--m_num_waiting_readers;
 			OW_THROW(TimeoutException, "Timeout while waiting for read lock.");
 		}
-		--m_num_waiting_readers;
 	}
 	
 	// Increase the reader count
-	m_state++;
-	m_readers.push_back(tid);
+	ThreadInfo threadInfo;
+	threadInfo.readCount = 1;
+	threadInfo.writeCount = 0;
+	m_threads.insert(ThreadMap::value_type(tid, threadInfo));
+
+	++m_numReaderThreads;
 }
-//////////////////////////////////////////////////////////////////////////////
-void
-RWLocker::getWriteLock(UInt32 sTimeout, UInt32 usTimeout)
-{
-	NonRecursiveMutexLock l(m_guard);
-	// Wait until no exclusive lock is held.
-	//
-	// Note:  Scheduling priorities are enforced in the unlock()
-	//   call.  unlock will wake the proper thread.
-	// if we will lock, then make sure we won't deadlock
-	Thread_t tid = ThreadImpl::currentThread();
-	if (m_state != 0)
-	{
-		// see if we already have a read lock
-		for (size_t i = 0; i < m_readers.size(); ++i)
-		{
-			if (ThreadImpl::sameThreads(m_readers[i], tid))
-			{
-				OW_THROW(DeadlockException, "A thread that has a read lock is trying to acquire a write lock.");
-			}
-		}
-	}
-	while (m_state != 0)
-	{
-		++m_num_waiting_writers;
-		if (!m_waiting_writers.timedWait(l, sTimeout, usTimeout))
-		{
-			--m_num_waiting_writers;
-			OW_THROW(TimeoutException, "Timeout while waiting for write lock.");
-		}
-		--m_num_waiting_writers;
-	}
-	m_state = -1;
-	m_writer = tid;
-}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 RWLocker::releaseReadLock()
 {
-	NonRecursiveMutexLock l(m_guard);
-	if (m_state > 0)        // Release a reader.
-		--m_state;
-	else
-		OW_THROW(RWLockerException, "A writer is releasing a read lock");
-	if (m_state == 0)
-	{
-		doWakeups();
-	}
 	Thread_t tid = ThreadImpl::currentThread();
-	size_t i = 0;
-	while (i < m_readers.size())
+	NonRecursiveMutexLock l(m_guard);
+
+	ThreadMap::iterator pInfo = m_threads.find(tid);
+
+	if (pInfo == m_threads.end() || !pInfo->second.isReader())
 	{
-		if (ThreadImpl::sameThreads(m_readers[i], tid))
+		OW_THROW(RWLockerException, "Cannot release a read lock when no read lock is held");
+	}
+
+	ThreadInfo& info(pInfo->second);
+	--info.readCount;
+
+	if (!info.isWriter() && !info.isReader())
+	{
+		--m_numReaderThreads;
+		if (m_numReaderThreads == 0)
 		{
-			m_readers.remove(i);
+			// This needs to wake them all up. In the case where one thread is waiting to upgrade a read to a write lock
+			// and others are waiting to get a write lock, we have to wake up the thread trying to upgrade.
+			m_waiting_writers.notifyAll();
 		}
-		else
-		{
-			++i;
-		}
+		m_threads.erase(pInfo);
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+RWLocker::getWriteLock(UInt32 sTimeout, UInt32 usTimeout)
+{
+	getWriteLock(Timeout::relative(sTimeout + static_cast<float>(usTimeout) * 1000000.0));
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+RWLocker::getWriteLock(const Timeout& timeout)
+{
+	// 7 cases:
+	// 1. No thread has the lock
+	//   Get the lock
+	// 2. This thread has the write lock
+	//   Increment the lock count
+	// 3. Another thread has the write lock & other threads may be waiting for read and/or write locks.
+	//   Block until the lock is acquired.
+	// 4. Only this thread has a read lock
+	//   Increment the write lock count .
+	// 5. >0 other threads have the read lock & other threads may be waiting for write locks.
+	//   Block until the write lock is acquired.
+	// 6. This thread and other threads have the read lock
+	//   Block new readers and writers and wait until existing readers finish.
+	// 7. This thread and other threads have the read lock and one of the other threads has requested a write lock.
+	//   Throw an exception.
+
+	Thread_t tid = ThreadImpl::currentThread();
+	TimeoutTimer timer(timeout);
+
+	NonRecursiveMutexLock l(m_guard);
+
+	ThreadMap::iterator pInfo = m_threads.find(tid);
+	if (pInfo != m_threads.end())
+	{
+		// This thread already has some sort of lock
+		ThreadInfo& ti(pInfo->second);
+		OW_ASSERT(ti.isReader() || ti.isWriter());
+
+		if (!ti.isWriter())
+		{
+			// The thread is upgrading
+
+			OW_ASSERT(m_numWriterThreads == 0 || m_numWriterThreads == 1);
+			if (m_numWriterThreads == 1)
+			{
+				// another thread beat us to upgrading the write lock.  Throw an exception.
+				OW_THROW(DeadlockException, "Upgrading read lock to a write lock failed, another thread is already upgrading.");
+			}
+
+			// switch from being a reader to a writer
+			--m_numReaderThreads;
+			// mark us as a writer, this will prevent other threads from becoming a writer
+			++m_numWriterThreads;
+
+			// This thread isn't the only reader. Wait for others to finish.
+			while (m_numReaderThreads != 0)
+			{
+				// stop new readers - inside while loop, because it may get reset by other threads releasing locks.
+				m_canRead = false;
+
+				if (!m_waiting_writers.timedWait(l, timer.asAbsoluteTimeout()))
+				{
+					// undo changes
+					++m_numReaderThreads;
+					--m_numWriterThreads;
+					m_canRead = true;
+					if (m_numWriterThreads == 0)
+					{
+						m_waiting_readers.notifyAll();
+					}
+					OW_THROW(TimeoutException, "Timeout while waiting for write lock.");
+				}
+			}
+		}
+		++ti.writeCount;
+
+	}
+	else
+	{
+		// This thread doesn't have any lock
+
+		while (m_numReaderThreads != 0 || m_numWriterThreads != 0)
+		{
+			// stop new readers
+			m_canRead = false;
+
+			if (!m_waiting_writers.timedWait(l, timer.asAbsoluteTimeout()))
+			{
+				m_canRead = true;
+				if (m_numWriterThreads == 0)
+				{
+					m_waiting_readers.notifyAll();
+				}
+				OW_THROW(TimeoutException, "Timeout while waiting for write lock.");
+			}
+		}
+
+		ThreadInfo ti;
+		ti.readCount = 0;
+		ti.writeCount = 1;
+		m_threads.insert(ThreadMap::value_type(tid, ti));
+		++m_numWriterThreads;
+		m_canRead = false;
+	}
+
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 RWLocker::releaseWriteLock()
 {
+	Thread_t tid = ThreadImpl::currentThread();
 	NonRecursiveMutexLock l(m_guard);
-	if (m_state == -1)
+	
+	ThreadMap::iterator pInfo = m_threads.find(tid);
+	
+	if (pInfo == m_threads.end() || !pInfo->second.isWriter())
 	{
-		m_state = 0;
+		OW_THROW(RWLockerException, "Cannot release a write lock when no write lock is held");
 	}
-	else
+
+	ThreadInfo& ti(pInfo->second);
+
+	OW_ASSERT(ti.isWriter());
+
+	--ti.writeCount;
+
+	if (!ti.isWriter())
 	{
-		OW_THROW(RWLockerException, "A reader is releasing a write lock");
-	}
-	// After a writer is unlocked, we are always back in the unlocked state.
-	//
-	doWakeups();
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-RWLocker::doWakeups()
-{
-	if ( m_num_waiting_writers > 0 && 
-		m_num_waiting_readers > 0)
-	{
-		if (m_readers_next == 1)
+		--m_numWriterThreads;
+
+		OW_ASSERT(m_numWriterThreads == 0);
+
+		m_canRead = true;
+		if (ti.isReader())
 		{
-			m_readers_next = 0;
-			m_waiting_readers.notifyAll();
+			// restore reader status
+			++m_numReaderThreads;
 		}
 		else
 		{
+			// This thread no longer holds locks.
 			m_waiting_writers.notifyOne();
-			m_readers_next = 1;
+			m_threads.erase(pInfo);
 		}
-	}
-	else if (m_num_waiting_writers > 0)
-	{
-		// Only writers - scheduling doesn't matter
-		m_waiting_writers.notifyOne();
-	}
-	else if (m_num_waiting_readers > 0)
-	{
-		// Only readers - scheduling doesn't matter
 		m_waiting_readers.notifyAll();
 	}
 }

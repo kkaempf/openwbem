@@ -68,10 +68,10 @@ public:
 			const_cast<char*>(reinterpret_cast<const char*>(data+dataLen)));
 	}
 protected:
-	int underflow()
-	{
-		return (gptr() < egptr()) ? static_cast<unsigned char>(*gptr()) : EOF;	// need a static_cast so a -1 doesn't turn into an EOF
-	}
+	virtual int underflow();
+
+	virtual pos_type seekoff(off_type off, std::ios_base::seekdir way, std::ios_base::openmode which);
+	virtual pos_type seekpos(pos_type sp, std::ios_base::openmode which);
 };
 //////////////////////////////////////////////////////////////////////////////
 class OW_COMMON_API DataIStreamBase

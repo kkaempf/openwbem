@@ -37,7 +37,7 @@
 #include "OW_XMLParserSAX.hpp"
 #include "OW_XMLParserCore.hpp"
 #include "OW_XMLParseException.hpp"
-#include "OW_TempFileStream.hpp"
+#include "OW_StringStream.hpp"
 #include "OW_XMLUnescape.hpp"
 
 #ifdef OW_HAVE_ISTREAM
@@ -81,7 +81,7 @@ void parse(istream& istr, SAXDocumentHandler& docHandler, SAXErrorHandler& errHa
 				case XMLToken::XML_DECLARATION:
 					break;
 				case XMLToken::START_TAG:
-					for (size_t i = 0; i < entry.attributeCount; ++i)
+					for (size_t i = 0; i < entry.attributes.size(); ++i)
 					{						  
 						entry.attributes[i].value = XMLUnescape(entry.attributes[i].value.c_str(), entry.attributes[i].value.length());
 					}
@@ -118,9 +118,7 @@ void parse(istream& istr, SAXDocumentHandler& docHandler, SAXErrorHandler& errHa
 void 
 parse(const String& xmlData, SAXDocumentHandler& docHandler, SAXErrorHandler& errHandler)
 {
-	TempFileStream tfs;
-	tfs << xmlData;
-	tfs.rewind();
+	IStringStream tfs(xmlData);
 	parse(tfs, docHandler, errHandler);
 }
 

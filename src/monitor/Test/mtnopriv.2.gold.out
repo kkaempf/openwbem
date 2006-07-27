@@ -1,0 +1,10 @@
+User: owprovdr
+
+rename
+Exception:
+  type: PrivilegeManagerException
+  msg:  CheckException: rename: insufficient privileges
+
+rename
+Exception:
+  type: IPCIOException

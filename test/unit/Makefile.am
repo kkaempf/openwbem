@@ -10,11 +10,15 @@ else
 if DISABLE_NAMESPACE_MANIPULATION
 PROGS=
 else
-PROGS= MemTracerTest unitMain exitWithSignal
+PROGS= MemTracerTest unitMain exitWithSignal fillOutputBuffer runMultiProcessLogger
 endif
 endif
 endif
 endif
+
+noinst_PROGRAMS = $(PROGS)
+#check_PROGRAMS = unitMain
+
 
 MemTracerTest_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
@@ -29,9 +33,42 @@ $(CXXBINLINKFLAGS) \
 MemTracerTest_SOURCES = \
 MemTracerTest.cpp
 
-check_PROGRAMS = unitMain $(PROGS)
+runMultiProcessLogger_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/ -lopenwbem  \
+$(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+runMultiProcessLogger_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o runMultiProcessLogger$(EXEEXT)
+
+runMultiProcessLogger_SOURCES = \
+runMultiProcessLogger.cpp
+
+check_PROGRAMS = unitMain
 # Note: Do not change the following line, unless you also update the newtest.sh script
 unitMain_SOURCES = \
+OW_LazyGlobalTestCases.cpp \
+OW_LazyGlobalTestCases.hpp \
+LogAppenderTestCases.cpp \
+LogAppenderTestCases.hpp \
+OW_DelayedFormatTestCases.cpp \
+OW_DelayedFormatTestCases.hpp \
+OW_ScopeLoggerTestCases.cpp \
+OW_ScopeLoggerTestCases.hpp \
+GlobalPtrTestCases.cpp \
+GlobalPtrTestCases.hpp \
+IStringStreamTestCases.cpp \
+IStringStreamTestCases.hpp \
+UnnamedPipeTestCases.cpp \
+UnnamedPipeTestCases.hpp \
+ProcessTestCases.cpp \
+ProcessTestCases.hpp \
+ConditionTestCases.cpp \
+ConditionTestCases.hpp \
+TimeoutTimerTestCases.cpp \
+TimeoutTimerTestCases.hpp \
 ThreadOnceTestCases.cpp \
 ThreadOnceTestCases.hpp \
 CryptographicRandomNumberTestCases.cpp \
@@ -156,7 +193,8 @@ INCLUDES = \
 -I$(top_srcdir)/src/cimxmllistener \
 -I$(top_srcdir)/src/client \
 -I$(top_srcdir)/src/mof \
--I$(top_srcdir)/src/repositories/tdbcr
+-I$(top_srcdir)/src/repositories/tdbcr \
+-I$(top_srcdir)/src/monitor
 
 if ENABLE_DB4_REPOSITORY
 REPLIBFLAGS=-L$(top_builddir)/src/repositories/tdbcr -lowrepositorytdbcr
@@ -180,8 +218,10 @@ unitMain_LDADD = \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 $(REPLIBFLAGS) \
 -L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/common -lopenwbem \
 $(SSL_LIBS) $(Z_LIBS) \
+$(REALTIME_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
 
@@ -203,4 +243,28 @@ $(CXXBINLINKFLAGS) \
 
 exitWithSignal_SOURCES = \
 exitWithSignal.cpp
+
+fillOutputBuffer_LDADD = \
+$(BINLINKAPPENDFLAGS)
+
+fillOutputBuffer_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o fillOutputBuffer$(EXEEXT)
+
+fillOutputBuffer_SOURCES = \
+fillOutputBuffer.cpp
+
+include $(top_srcdir)/Makefile-shared-lib.inc
+# We don't need a dylib, as we only want to load and not link this library.
+MAKEDYLIB=0
+MAKEBUNDLE=1
+OW_SHARED_LIBS = libLazyGlobalTestLibrary.$(LIB_EXT)
+
+SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem
+
+noinst_LIBRARIES = libLazyGlobalTestLibrary.a
+libLazyGlobalTestLibrary_a_SOURCES = OW_LazyGlobalTestLibrary.cpp
+
+all-local: all-ow-shared-libs
+clean-local: clean-ow-shared-libs
 

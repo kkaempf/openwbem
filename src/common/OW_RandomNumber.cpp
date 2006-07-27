@@ -59,7 +59,7 @@ namespace OW_NAMESPACE
 /////////////////////////////////////////////////////////////////////////////
 namespace
 {
-OnceFlag guard;
+OnceFlag guard = OW_ONCE_INIT;
 unsigned int seed = 0;
 }
 

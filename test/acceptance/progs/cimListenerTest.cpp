@@ -50,7 +50,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_Bool.hpp"
 #include "OW_SocketBaseImpl.hpp"
-#include "OW_CerrLogger.hpp"
+#include "OW_CerrAppender.hpp"
 
 #include <iostream> // for cout and cerr
 
@@ -66,7 +66,7 @@ Semaphore sem(0);
 Semaphore test1sem(0);
 Semaphore test2sem(0);
 Mutex coutMutex;
-#define PRINT(arg) do {MutexLock lock(coutMutex); std::cout << arg << std::flush;} while (0)
+#define PRINT(arg) do {MutexLock lock(coutMutex); std::cout << "CIMLISTENER: " << arg << std::flush;} while (0)
 
 class myCallBack : public CIMListenerCallback
 {
@@ -270,9 +270,9 @@ int main(int argc, char* argv[])
 	// these need to be out of the try, so that a potential deadlock won't happen
 	// the problem is that Exception has a mutex, and the HTTPXMLCIMListener
 	// destructor shouldn't run when the Exception mutex is locked.
-	LoggerRef logger(new CerrLogger);
+	LogAppender::setDefaultLogAppender(LogAppenderRef(new CerrAppender(LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES, LogAppender::STR_TTCC_MESSAGE_FORMAT)));
 
-	HTTPXMLCIMListener hxcl(logger);
+	HTTPXMLCIMListener hxcl;
 
 	try
 	{
@@ -331,7 +331,7 @@ int main(int argc, char* argv[])
 			// we'll wait for 5 TestIndication1 indications.
 			for (size_t i = 0; i < 5; ++i)
 			{
-				if (!test1sem.timedWait(25))
+				if (!test1sem.timedWait(Timeout::relative(25)))
 				{
 					OW_THROW(ListenerTestException, "semaphore 1 timed out");
 				}
@@ -339,7 +339,7 @@ int main(int argc, char* argv[])
 			// we'll wait for 5 TestIndication2 indications.
 			for (size_t i = 0; i < 5; ++i)
 			{
-				if (!test2sem.timedWait(25))
+				if (!test2sem.timedWait(Timeout::relative(25)))
 				{
 					OW_THROW(ListenerTestException, "semaphore 2 timed out");
 				}
@@ -446,21 +446,23 @@ int main(int argc, char* argv[])
 			//invokeMethod(rch, 2); // TODO
 
 			//cout << "Now waiting for intrinsic method indications" << endl;
-			for (size_t i = 0; i < 10; ++i)
+			for (size_t j = 0; j < 10; ++j)
 			{
-				if (!sem.timedWait(25))
+				if (!sem.timedWait(Timeout::relative(25)))
 				{
 					OW_THROW(ListenerTestException, "timeout on semaphore");
 				}
-				PRINT(i << endl);
+				PRINT(j << endl);
 			}
 
-			PRINT("Now deregistering...\n");
+			PRINT("Now deregistering. loop " << i << "...\n");
 
-			for (size_t i = 0; i < registrationHandles.size() - 1; ++i)
+			for (size_t j = 0; j < registrationHandles.size() - 1; ++j)
 			{
-				hxcl.deregisterForIndication(registrationHandles[i]);
+				PRINT("Now deregistering handle " << registrationHandles[j] << "...\n");
+				hxcl.deregisterForIndication(registrationHandles[j]);
 			}
+			PRINT("Done deregistering. loop " << i << "...\n");
 		}
 
 		PRINT("Now shutting down...\n");
@@ -478,15 +480,16 @@ int main(int argc, char* argv[])
 	}
 	catch(Exception& e)
 	{
-		cerr << e << endl;
+		cerr << "!cimlistener failed! caught Exception: " << e << endl;
+		exit(1);
 	}
 	catch(std::exception& e)
 	{
-		cerr << e.what() << endl;
+		cerr << "!cimlistener failed! caught std::exception: " << e.what() << endl;
 	}
 	catch(...)
 	{
-		cerr << "Caught unknown exception in main" << endl;
+		cerr << "!cimlistener failed! caught unknown exception in main" << endl;
 	}
 	return 1;
 }

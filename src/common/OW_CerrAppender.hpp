@@ -47,6 +47,7 @@ namespace OW_NAMESPACE
 class OW_COMMON_API CerrAppender : public LogAppender
 {
 public:
+	CerrAppender();
 	CerrAppender(const StringArray& components,
 		const StringArray& categories,
 		const String& pattern);

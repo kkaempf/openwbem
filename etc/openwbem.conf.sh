@@ -18,8 +18,9 @@
 ###############################################################################
 
 ################################################################################
-# For each directory specified, all the files contained in the directory will
-# be loaded and processed as additional config files.
+# For each directory specified, all the files contained in the directory,
+# whose names end in ".conf", will be loaded and processed as additional config
+# files.
 # This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
 # This option will be evaluated after the main config file is parsed, and so
 # additional directories specified in additional config files will not be 
@@ -127,6 +128,7 @@ log.main.level = ERROR
 # %r - The number of milliseconds elapsed since the start of the application
 #      until the creation of the logging event
 # %t - Thread id
+# %P - Process id
 # %% - %
 # \n - newline
 # \t - tab
@@ -164,8 +166,7 @@ log.main.level = ERROR
 #    </log4j:event>"
 #
 # The default is "[%t]%m"
-log.main.format = [%t]%m
-
+log.main.format = [%t %-5p %c] %m
 
 ################################################################################
 # If owcimomd is run in debug mode, then the debug log will be active.
@@ -173,7 +174,8 @@ log.debug.type = stderr
 log.debug.components = *
 log.debug.categories = *
 ;log.debug.level = *
-log.debug.format = [%t] %m
+log.debug.format = [%-5r %t %-5p %c %F:%L] %m
+
 # Color version using ascii escape codes
 ;log.debug.format = \x1b[1;37;40m[\x1b[1;31;40m%-.6t\x1b[1;37;40m]\x1b[1;32;40m %m\x1b[0;37;40m
 
@@ -213,6 +215,17 @@ log.debug.format = [%t] %m
 ;owcimomd.additional_logs =
 
 ################################################################################
+# These settings specify the logging used by all instances of the
+# monitor, and have the same meanings as regular logger settings.
+#
+monitor.log.location = @localstatedir@/owcimomd.monitor.log
+monitor.log.max_file_size = 8000
+monitor.log.max_backup_index = 1
+monitor.log.categories = INFO ERROR FATAL
+monitor.log.format = [%P %d %-5p %c] %m
+
+
+################################################################################
 # owcimomd.wql_lib specifies the location where the wql processor library
 # will be loaded from.
 # To disable WQL, either set this option to empty or comment it out.
@@ -238,8 +251,10 @@ owcimomd.wql_lib = @libdir@/libowwql.@LIB_EXT@
 ;owcimomd.debugflag = false
 
 ################################################################################
-# The authentication module to be used by owcimomd.  This should be a
-# an absolute path to the shared library containing the authentication module.
+# The authentication module to be used by owcimomd for HTTP Basic 
+# authentication.  This should be an absolute path to the shared library 
+# containing the authentication module.
+# If empty, Basic authentication will be disabled.
 owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthentication.@LIB_EXT@
 
 ################################################################################
@@ -338,6 +353,7 @@ owcimomd.restart_on_error = true
 # item.  If both authorization options are empty or commented out, no
 # authorization module is used. 
 ;owcimomd.authorization_lib = @libdir@/openwbem/libowsimpleauthorizer.@LIB_EXT@
+;owcimomd.authorization_lib = @libdir@/openwbem/libowbasicauthorizer.@LIB_EXT@
 
 ################################################################################
 # owcimomd.authorization2_lib specifies the location the authorization
@@ -356,10 +372,11 @@ owcimomd.restart_on_error = true
 owcimomd.interop_schema_namespace = root
 
 ################################################################################
-# If owcimomd.drop_root_privileges is true, then owcimomd will run as the
-# user "owcimomd" instead of root.
-# The default is false
-owcimomd.drop_root_privileges = false
+# owcimomd.privileges_config_dir specifies the directory containing the 
+# privileges file(s) the owcimomd monitor will use. The privileges file for
+# owcimomd must be named owcimomd. Other privileges files must be places in the
+# same directory.
+owcimomd.privileges_config_dir = @sysconfdir@/openwbem/privileges
 
 ################################################################################
 # cppprovifc.prov_TTL specifies how many minutes the C++ provider manager
@@ -401,7 +418,7 @@ http_server.listen_addresses = 0.0.0.0
 # instance, you only want to support HTTPS connections).  If a value of 0
 # is given, a port will be dynamically assigned at run-time.
 # The default is 5988
-http_server.http_port = 5988
+http_server.http_port = -1
 
 ################################################################################
 # http_server.https_port specifies the port number owcimomd will listen on
@@ -430,15 +447,29 @@ http_server.SSL_cert = @sysconfdir@/openwbem/servercert.pem
 http_server.SSL_key = @sysconfdir@/openwbem/serverkey.pem
 
 ################################################################################
-# Tell the http server to use Digest authentication
-# Digest will bypass the Basic authentication mechanism.
-# You must set up the digest password file using owdigestgenpass to use digest.
+# Specify the authentication mechanism the server will prompt clients to use.
+# See RFC 2617 for more details.
+# Valid values are: "Basic", "Digest", "Negotiate" (SPNEGO)
+# The default is Basic
+http_server.default_auth_challenge = Basic
+
+################################################################################
+# Tell the http server to allow Basic authentication
+# You must configure an authentication module by setting 
+# owcimomd.authentication_module
+http_server.allow_basic_authentication = true
+
+################################################################################
+# Tell the http server to allow Digest authentication
+# You must set up the digest password file specified by 
+# http_server.digest_password_file using owdigestgenpass to use digest.
 # Digest doesn't use the authentication module specified by the
 # owcimomd.authentication_module config item.
-# If this option is true, then Basic will not be used.
-# If this option is false, then Basic will be used.
-# The default is true
-http_server.use_digest = false
+http_server.allow_digest_authentication = false
+
+################################################################################
+# Tell the http server to allow SPNEGO authentication
+http_server.allow_spnego_authentication = false
 
 ################################################################################
 # If the Digest authentication option is enabled, this needs to be the path to
@@ -555,10 +586,9 @@ owcimomd.libexecdir = @libexecdir@/openwbem
 owcimomd.owlibdir = @libdir@/openwbem
 
 ################################################################################
-# owcimomd.datadir specifies the directory where owcimomd will place its data
-# file (repositories).
-# The default is "@localstatedir@/openwbem"
-owcimomd.datadir = @localstatedir@/openwbem
+# owcimomd.datadir specifies the directory containing the CIM repository
+# The default is "@localstatedir@/openwbem/repository"
+owcimomd.datadir = @localstatedir@/openwbem/repository
 
 ################################################################################
 # owcimomd.provider_ifc_libs specifies the locations where all the provider

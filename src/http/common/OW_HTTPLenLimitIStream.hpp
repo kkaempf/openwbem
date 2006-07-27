@@ -39,7 +39,7 @@
 #include "OW_Types.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_AutoPtr.hpp"
-#include "OW_CIMProtocolIStreamIFC.hpp"
+#include <istream>
 
 namespace OW_NAMESPACE
 {
@@ -81,7 +81,7 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////////
 class OW_HTTP_API HTTPLenLimitIStream : private HTTPLenLimitIStreamBase,
-	public CIMProtocolIStreamIFC
+	public std::istream
 {
 public:
 	/**

@@ -129,10 +129,7 @@ getMultiConfigItem(const ConfigMap& configItems, const String &itemName, const S
 		}
 		return rv;
 	}
-	else
-	{
-		return defRetVal;
-	}
+	return defRetVal;
 }
 
 //////////////////////////////////////////////////////////////////////////////

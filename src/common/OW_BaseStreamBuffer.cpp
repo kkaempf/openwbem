@@ -44,17 +44,16 @@
 namespace OW_NAMESPACE
 {
 
-BaseStreamBuffer::BaseStreamBuffer(size_t bufSize,
-		const char* direction_)
+//////////////////////////////////////////////////////////////////////////////
+BaseStreamBuffer::BaseStreamBuffer(EDirectionFlag direction, size_t bufSize)
 	: m_bufSize(bufSize), m_inputBuffer(NULL), m_outputBuffer(NULL)
 {
-	String direction(direction_);
-	if (direction.equals("in") || direction.equals("io"))
+	if (direction == E_IN || direction == E_IN_OUT)
 	{
 		m_inputBuffer = new char[m_bufSize];
 		initGetBuffer();
 	}
-	if (direction.equals("out") || direction.equals("io"))
+	if (direction == E_OUT || direction == E_IN_OUT)
 	{
 		m_outputBuffer = new char[m_bufSize];
 		initPutBuffer();
@@ -95,34 +94,10 @@ BaseStreamBuffer::sync()
 int
 BaseStreamBuffer::buffer_out()
 {
-	// NOTE: If an exception escapes this function, __terminate will be called
-	// for gcc 2.95.2
-#if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
-	try
-	{
-#endif
-		int cnt = pptr() - pbase();
-		int retval = buffer_to_device(m_outputBuffer, cnt);
-		pbump(-cnt);
-		return retval;
-#if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
-	}
-	catch (const Exception& e)
-	{
-		std::cerr << "Caught Exception in BaseStreamBuffer::buffer_out(): " << e << std::endl;
-		return EOF;
-	}
-	catch (const std::exception& e)
-	{
-		std::cerr << "Caught std::exception in BaseStreamBuffer::buffer_out(): " << e.what() << std::endl;
-		return EOF;
-	}
-	catch (...)
-	{
-		std::cerr << "Caught unknown exception in BaseStreamBuffer::buffer_out()" << std::endl;
-		return EOF;
-	}
-#endif
+    int cnt = pptr() - pbase();
+    int retval = buffer_to_device(m_outputBuffer, cnt);
+    pbump(-cnt);
+    return retval;
 }
 //////////////////////////////////////////////////////////////////////////////
 int
@@ -170,42 +145,18 @@ BaseStreamBuffer::xsputn(const char* s, std::streamsize n)
 int
 BaseStreamBuffer::underflow()
 {
-	// NOTE: If an exception escapes this function, __terminate will be called
-	// for gcc 2.95.2
-#if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
-	try
-	{
-#endif
-		if (gptr() < egptr())
-		{
-			return static_cast<unsigned char>(*gptr());	// need a static_cast so a -1 doesn't turn into an EOF
-		}
-		if (buffer_in() < 0)
-		{
-			return EOF;
-		}
-		else
-		{
-			return static_cast<unsigned char>(*gptr());	// need a static_cast so a -1 doesn't turn into an EOF
-		}
-#if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
-	}
-	catch (const Exception& e)
-	{
-		std::cerr << "Caught Exception in BaseStreamBuffer::underflow(): " << e << std::endl;
-		return EOF;
-	}
-	catch (const std::exception& e)
-	{
-		std::cerr << "Caught std::exception in BaseStreamBuffer::underflow(): " << e.what() << std::endl;
-		return EOF;
-	}
-	catch (...)
-	{
-		std::cerr << "Caught unknown exception in BaseStreamBuffer::underflow()" << std::endl;
-		return EOF;
-	}
-#endif
+    if (gptr() < egptr())
+    {
+        return static_cast<unsigned char>(*gptr());	// need a static_cast so a -1 doesn't turn into an EOF
+    }
+    if (buffer_in() < 0)
+    {
+        return EOF;
+    }
+    else
+    {
+        return static_cast<unsigned char>(*gptr());	// need a static_cast so a -1 doesn't turn into an EOF
+    }
 }
 //////////////////////////////////////////////////////////////////////////////
 int

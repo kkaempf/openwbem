@@ -54,14 +54,19 @@ const size_t HTTP_BUF_SIZE = 4096;
 class OW_COMMON_API BaseStreamBuffer : public std::streambuf
 {
 public:
+	enum EDirectionFlag
+	{
+		E_IN,
+		E_OUT,
+		E_IN_OUT
+	};
 	/**
 	 * Create a base stream buffer.
-	 * TODO: Make a different version of this ctor that doesn't use strings. Use an enum instead.
+	 * @param direction E_IN, E_OUT, E_IN_OUT
 	 * @param bufSize size of buffer
-	 * @param direction "in", "out", or "io"
 	 */
-	BaseStreamBuffer(size_t bufSize = BASE_BUF_SIZE,
-			const char* direction = "io");
+	BaseStreamBuffer(EDirectionFlag direction, size_t bufSize = BASE_BUF_SIZE);
+
 	~BaseStreamBuffer();
 protected:
 	// for input
@@ -92,6 +97,7 @@ protected:
 	 * @return -1 if no bytes are able to be read from the "device"
 	 *             (for instance, end of input stream).  Otherwise,
 	 *             return the number of bytes read into the buffer.
+	 * @throws IOException on failure.
 	 */
 	virtual int buffer_from_device(char* c, int n);
 private:

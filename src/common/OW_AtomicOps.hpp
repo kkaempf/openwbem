@@ -43,6 +43,10 @@ extern "C"
 }
 #endif
 
+// TODO: PA-RISC and itanium.
+// See http://h21007.www2.hp.com/dspp/files/unprotected/Itanium/spinlocks.pdf
+// http://www.hpl.hp.com/research/linux/atomic_ops/
+
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 

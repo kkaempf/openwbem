@@ -41,18 +41,10 @@
 #include "OW_COWIntrusiveCountableBase.hpp"
 #include "OW_StringBuffer.hpp"
 
-#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
-#include <istream>
-#include <ostream>
-#else
-#include <iostream>
-#endif
-
 namespace OW_NAMESPACE
 {
 
-using std::istream;
-using std::ostream;
+using std::streambuf;
 
 struct CIMUrl::URLData : public COWIntrusiveCountableBase
 {
@@ -351,7 +343,7 @@ CIMUrl::buildSpec()
 //////////////////////////////////////////////////////////////////////////////
 // PUBLIC
 void
-CIMUrl::readObject(istream &istrm)
+CIMUrl::readObject(streambuf & istrm)
 {
 	CIMBase::readSig( istrm, OW_CIMURLSIG );
 	String spec;
@@ -367,7 +359,7 @@ CIMUrl::readObject(istream &istrm)
 //////////////////////////////////////////////////////////////////////////////
 // PUBLIC
 void
-CIMUrl::writeObject(ostream &ostrm) const
+CIMUrl::writeObject(streambuf & ostrm) const
 {
 	CIMBase::writeSig( ostrm, OW_CIMURLSIG );
 	m_pdata->m_spec.writeObject(ostrm);

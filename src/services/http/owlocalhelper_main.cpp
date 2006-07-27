@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2005 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -80,33 +80,17 @@ using namespace OpenWBEM::LocalAuthenticationCommon;
 namespace
 {
 
-const char* OWCIMOMD_USER_STR = "owcimomd";
-
 const int SUCCESS = 0;
 
 // list of possible error codes.
-const int INVALID_USER = 2;
 const int NOT_SETUID_ROOT = 3;
 const int INVALID_INPUT = 4;
 const int REMOVE_FAILED = 5;
 const int UNEXPECTED_EXCEPTION = 6;
 const int SETRLIMIT_FAILED = 7;
+const int MISSING_LOCAL_AUTH_DIR_ARG = 8;
 
-bool checkRealUser()
-{
-	struct passwd* pw = ::getpwuid(::getuid());
-	if (pw == 0)
-	{
-		perror("owlocalhelper:checkRealUser():getpwuid");
-		return false;
-	}
-	if (strcmp(OWCIMOMD_USER_STR, pw->pw_name) == 0)
-	{
-		return true;
-	}
-	cerr << "owlocalhelper:checkRealUser(): username is not " << OWCIMOMD_USER_STR << endl;
-	return false;
-}
+String local_auth_dir;
 
 // returns true if a line was successfully read
 bool getLineFromStdin(String& line)
@@ -167,7 +151,7 @@ int processRemove()
 		return INVALID_INPUT;
 	}
 
-	String fullPath = String(LOCAL_AUTH_DIR) + OW_FILENAME_SEPARATOR + filename;
+	String fullPath = local_auth_dir + OW_FILENAME_SEPARATOR + filename;
 	// translate to the real path and recheck the directory
 	String realPath;
 	try
@@ -181,7 +165,7 @@ int processRemove()
 	}
 
 	String realPathDirname = FileSystem::Path::dirname(realPath);
-	if (realPath != fullPath || realPathDirname != LOCAL_AUTH_DIR)
+	if (realPath != fullPath || realPathDirname != local_auth_dir)
 	{
 		cerr << "owlocalhelper::processRemove(): real path is not equal. no symlinks allowed in " << fullPath << endl;
 		return INVALID_INPUT;
@@ -228,7 +212,7 @@ int processCreate()
 		return INVALID_INPUT;
 	}
 
-    cout << createFile(uid, cookie) << endl;
+    cout << createFile(local_auth_dir, uid, cookie) << endl;
 	
 	return SUCCESS;
 }
@@ -251,7 +235,7 @@ int processStdin()
 	}
 	else if (curLine == INITIALIZE_CMD)
 	{
-		initializeDir();
+		initializeDir(local_auth_dir);
 		return SUCCESS;
 	}
 	else if (curLine == CREATE_CMD)
@@ -268,6 +252,11 @@ int processStdin()
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
+	if (argc < 2)
+	{
+		return MISSING_LOCAL_AUTH_DIR_ARG;
+	}
+	local_auth_dir = argv[1];
 	try
 	{
 
@@ -284,13 +273,6 @@ int main(int argc, char* argv[])
 			return SETRLIMIT_FAILED;
 		}
 #endif
-	
-		// only owcimomd user can run me, but we still have to be careful in case owcimomd gets compromised, 
-		// we don't want the attacker to be able to wreak havoc on the system as root.
-		if (!checkRealUser())
-		{
-			return INVALID_USER;
-		}
 	
 		// I can't work without euid 0, because only root can change file ownership.
 		if (::geteuid() != 0)

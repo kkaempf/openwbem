@@ -135,13 +135,11 @@ public:
 	HTTPXMLCIMListenerServiceEnvironment(
 		IntrusiveReference<ListenerAuthenticator> authenticator,
 		RequestHandlerIFCRef listener,
-		const LoggerRef& logger,
 		Reference<Array<SelectablePair_t> > selectables,
 		const String& certFileName,
 		const String& keyFileName = String())
 	: m_pLAuthenticator(authenticator)
 	, m_XMLListener(listener)
-	, m_logger(logger ? logger : LoggerRef(new NullLogger))
 	, m_selectables(selectables)
 	{
 		if(certFileName.empty())
@@ -211,24 +209,13 @@ public:
 	{
 		RequestHandlerIFCRef ref(m_XMLListener.getLibRef(),
 				m_XMLListener->clone());
-		ref->setEnvironment(ServiceEnvironmentIFCRef(const_cast<HTTPXMLCIMListenerServiceEnvironment*>(this)));
+		ref->init(ServiceEnvironmentIFCRef(const_cast<HTTPXMLCIMListenerServiceEnvironment*>(this)));
 		return ref;
-	}
-	virtual LoggerRef getLogger() const
-	{
-		return getLogger(COMPONENT_NAME);
-	}
-	virtual LoggerRef getLogger(const String& componentName) const
-	{
-		LoggerRef rv(m_logger->clone());
-		rv->setDefaultComponent(componentName);
-		return rv;
 	}
 private:
 	ConfigFile::ConfigMap m_configItems;
 	IntrusiveReference<ListenerAuthenticator> m_pLAuthenticator;
 	RequestHandlerIFCRef m_XMLListener;
-	LoggerRef m_logger;
 	Reference<Array<SelectablePair_t> > m_selectables;
 };
 class SelectEngineThread : public Thread
@@ -254,17 +241,19 @@ public:
 	virtual Int32 run()
 	{
 		SelectEngine engine;
-		SelectableCallbackIFCRef cb(new SelectEngineStopper(engine));
-		m_selectables->push_back(std::make_pair(m_stopObject, cb));
 		for (size_t i = 0; i < m_selectables->size(); ++i)
 		{
-			engine.addSelectableObject((*m_selectables)[i].first,
-				(*m_selectables)[i].second);
+			engine.addSelectableObject((*m_selectables)[i].first->getSelectObj(),
+				(*m_selectables)[i].second, SelectableCallbackIFC::E_ACCEPT_EVENT);
 		}
-		engine.go();
+		SelectableCallbackIFCRef cb(new SelectEngineStopper(engine));
+		engine.addSelectableObject(m_stopObject->getReadSelectObj(),
+			cb, SelectableCallbackIFC::E_READ_EVENT);
+
+		engine.go(Timeout::infinite);
 		return 0;
 	}
-	virtual void doCooperativeCancel()
+	virtual void doShutdown()
 	{
 #ifdef OW_WIN32
 		// signal the event to stop the select engine so the
@@ -304,43 +293,42 @@ public:
 	 *  all log messages will be discarded.
 	 */
 	HTTPXMLCIMListenerCallback(IntrusiveReference<ListenerAuthenticator> authenticator,
-		Bool useHTTPS = false,
-		const LoggerRef& logger = LoggerRef(0))
+		Bool useHTTPS = false)
 		: m_pLAuthenticator(authenticator)
 		, m_useHTTPS(useHTTPS) 
 	{
 	}
 	~HTTPXMLCIMListenerCallback()
-{
-	try
 	{
-		MutexLock lock(m_mutex);
-		for (callbackMap_t::iterator i = m_callbacks.begin();
-			i != m_callbacks.end(); ++i)
+		try
 		{
-			registrationInfo reg = i->second;
-	
-			try
+			MutexLock lock(m_mutex);
+			for (callbackMap_t::iterator i = m_callbacks.begin();
+				i != m_callbacks.end(); ++i)
 			{
-				deleteRegistrationObjects(reg);
+				registrationInfo reg = i->second;
+		
+				try
+				{
+					deleteRegistrationObjects(reg);
+				}
+				catch (Exception&)
+				{
+					// if an error occured, then just ignore it.  We don't have any way
+					// of logging it!
+				}
+				catch (...)
+				{
+					// who knows what happened, but we need to continue deregistering...
+				}
 			}
-			catch (Exception&)
-			{
-				// if an error occured, then just ignore it.  We don't have any way
-				// of logging it!
-			}
-			catch (...)
-			{
-				// who knows what happened, but we need to continue deregistering...
-			}
+			m_pLAuthenticator = 0;
 		}
-		m_pLAuthenticator = 0;
+		catch (...)
+		{
+			// don't let exceptions escape
+		}
 	}
-	catch (...)
-	{
-		// don't let exceptions escape
-	}
-}
 	/**
 	 * Register for an indication.  The destructor will attempt to deregister
 	 * any subscriptions which are still outstanding at the time.
@@ -561,7 +549,7 @@ private:
 
 
 //////////////////////////////////////////////////////////////////////////////
-HTTPXMLCIMListener::HTTPXMLCIMListener(const LoggerRef& logger,
+HTTPXMLCIMListener::HTTPXMLCIMListener(
 	const String& certFileName, const String& keyFileName)
 	: m_pLAuthenticator(new ListenerAuthenticator)
 	, m_httpServer(new HTTPServer)
@@ -594,7 +582,7 @@ HTTPXMLCIMListener::HTTPXMLCIMListener(const LoggerRef& logger,
 	Reference<Array<SelectablePair_t> >
 		selectables(new Array<SelectablePair_t>);
 	ServiceEnvironmentIFCRef env(new HTTPXMLCIMListenerServiceEnvironment(
-		m_pLAuthenticator, m_XMLListener, logger, selectables, certFileName, keyFileName));
+		m_pLAuthenticator, m_XMLListener, selectables, certFileName, keyFileName));
 	m_httpServer->init(env);
 	m_httpServer->start();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really
@@ -624,6 +612,7 @@ HTTPXMLCIMListener::shutdownHttpServer()
 {
 	if (m_httpThread)
 	{
+		m_httpThread->shutdown(Timeout::relative(1));
 		m_httpThread->cooperativeCancel();
 		// wait for the thread to quit
 		m_httpThread->join();

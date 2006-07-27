@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004-2005 Quest Software, Inc. All rights reserved.
 * Copyright (C) 2005 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc., Novell, Inc., nor the names of its
+*  - Neither the name of Quest Software, Inc., Novell, Inc., nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
@@ -33,8 +33,8 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_EXEC_HPP_
-#define OW_EXEC_HPP_
+#ifndef OW_EXEC_HPP_INCLUDE_GUARD_
+#define OW_EXEC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_IntrusiveReference.hpp"
@@ -42,119 +42,21 @@
 #include "OW_ArrayFwd.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_EnvVars.hpp"
+#include "OW_Timeout.hpp"
+#include "OW_Process.hpp"
+#include "OW_Cstr.hpp"
+#ifdef OW_ENABLE_TEST_HOOKS
+#include "OW_GlobalPtr.hpp"
+#endif
 
 namespace OW_NAMESPACE
 {
 
-OW_DECLARE_APIEXCEPTION(ExecTimeout, OW_COMMON_API);
-OW_DECLARE_APIEXCEPTION(ExecBufferFull, OW_COMMON_API);
 OW_DECLARE_APIEXCEPTION(ExecError, OW_COMMON_API);
+OW_DECLARE_APIEXCEPTION2(ExecTimeout, ExecErrorException, OW_COMMON_API);
+OW_DECLARE_APIEXCEPTION2(ExecBufferFull, ExecErrorException, OW_COMMON_API);
 
-class PopenStreamsImpl;
-/**
- * This class represents a connection to a process.
- */
-class OW_COMMON_API PopenStreams
-{
-public:
-	PopenStreams();
-	~PopenStreams();
-	PopenStreams(const PopenStreams& src);
-	PopenStreams& operator=(const PopenStreams& src);
-	/**
-	 * Get a write-only pipe to the process's stdin.
-	 */
-	UnnamedPipeRef in() const;
-	
-	/**
-	 * Set a pipe to the process's stdin
-	 */
-	void in(const UnnamedPipeRef& pipe);
-	/**
-	 * Get a read-only pipe to the process's stdout
-	 */
-	UnnamedPipeRef out() const;
-	/**
-	 * Set a pipe to the process's stdout
-	 */
-	void out(const UnnamedPipeRef& pipe);
-	/**
-	 * Get a read-only pipe to the process's stderr
-	 */
-	UnnamedPipeRef err() const;
-	/**
-	 * Set a pipe to the process's stderr
-	 */
-	void err(const UnnamedPipeRef& pipe);
-
-	/**
-	 * Get additional pipes that may be connected to the process
-	 */
-	Array<UnnamedPipeRef> extraPipes() const;
-
-	/**
-	 * Set additional pipes that may be connected to the process
-	 */
-	void setExtraPipes(const Array<UnnamedPipeRef>& pipes);
-
-	/**
-	 * Get the process's pid.  If the process's exit status has already been
-	 * read by calling getExitStatus(), then this will return -1
-	 */
-	ProcId pid() const;
-	/**
-	 * Set the process's pid.
-	 */
-	void pid(ProcId newPid);
-
-	/**
-	 * Waits for the process to terminate and returns its exit status.
-	 * Takes increasingly severe measures to ensure that the process dies --
-	 * the following steps are taken in order until termination is detected:
-	 * 
-	 * 1. If wait_initial > 0, waits wait_initial seconds for the process to
-	 * die on its own.
-	 *
-	 * 2. If wait_close > 0, closes the input and output pipes and then waits
-	 * wait_close seconds for the process to die.
-	 *
-	 * 3. If wait_term > 0, sends process a SIGTERM signal and waits
-	 * wait_term seconds for it to die.
-	 *
-	 * 4. Sends the process a SIGKILL signal.
-	 * 
-	 * In steps 1-3 the function returns as soon as termination is detected.
-	 * After calling this function the object is basically useless, except
-	 * that if the function is called again it will return the same exit status
-	 * without going through the above steps.
-	 * 
-	 * Note to maintainers: it is important that if wait_close == 0 then the
-	 * pipes are NOT closed.
-	 *
-	 * @require Wait times are no larger than 4294967 seconds.
-	 *
-	 * @return The exit status of the process.  This should be evaluated using
-	 * the family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
-	 *
-	 * @throw ExecErrorException, ThreadCancelledException
-	 */
-	int getExitStatus(UInt32 wait_initial, UInt32 wait_close, UInt32 wait_term);
-
-	/**
-	 * Same as getExitStatus(0, 10*1000, 10*1000);
-	**/
-	int getExitStatus();
-
-	/**
-	 * Sets the process's exit status.
-	 * This function is used by Exec::gatherOutput()
-	 */
-	void setProcessStatus(int ps);
-private:
-	IntrusiveReference<PopenStreamsImpl> m_impl;
-
-	friend bool operator==(const PopenStreams& x, const PopenStreams& y);
-};
+class PosixUnnamedPipe; // TODO: something about this. It shouldn't be here!
 
 /////////////////////////////////////////////////////////////////////////////
 namespace Exec
@@ -167,9 +69,8 @@ namespace Exec
 	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
 	 * and then fill in the rest of the array with the command you wish to
 	 * execute.
-	 * This function blocks until the child process exits.  Be careful that
-	 * the command you run doesn't hang.  It is recommended to use
-	 * executeProcessAndGatherOutput() if the command is untrusted.
+	 * This function blocks until the child process exits.  Use a timeout or
+	 * be careful that the command you run doesn't hang.
 	 *
 	 * @param command
 	 *  command[0] is the binary to be executed.
@@ -179,116 +80,220 @@ namespace Exec
 	 *  as environment to the new program. envp must be terminated by a null 
 	 *  pointer. envp may be 0, in which case the current process's environment
 	 *  variables will be used.
+	 * 
+	 * @param timeout How long to wait for the process to exit.
 	 *
-	 * @return 127 if the execve() call for command[0]
-	 * fails,  -1 if there was another error and the return code
-	 * of the command otherwise.
+	 * @return The process's status
+	 * @throws ExecErrorException on error
 	 */
-	OW_COMMON_API int safeSystem(const Array<String>& command,
-		const char* const envp[] = 0);
+	OW_COMMON_API Process::Status system(const Array<String>& command,
+		const char* const envp[] = 0, const Timeout& = Timeout::infinite);
 
-	// TODO: Add a timeout to this and rewrite the impl to use safePopen()
-	/**
-	 * Execute a command.
-	 * The command will inherit stdin, stdout, and stderr from the parent
-	 * process.  This function will not search the path for command[0], so
-	 * the absolute path to the binary should be specified.  If the path needs
-	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
-	 * and then fill in the rest of the array with the command you wish to
-	 * execute.
-	 * This function blocks until the child process exits.  Be careful that
-	 * the command you run doesn't hang.  It is recommended to use
-	 * executeProcessAndGatherOutput() if the command is untrusted.
-	 *
-	 * @param command
-	 *  command[0] is the binary to be executed.
-	 *  command[1] .. command[n] are the command line parameters to the command.
-	 *
-	 * @param envVars An EnvVars object that contains the environment variables
-	 *	which will be pass as the environment to the new process. If envVars
-	 *	doesn't contain any environment variables, then the current process's
-	 *	environment variables will be used.
-	 *
-	 * @return 127 if the execve() call for command[0]
-	 * fails,  -1 if there was another error and the return code
-	 * of the command otherwise.
-	 */
-	OW_COMMON_API int safeSystem(const Array<String>& command,
-		const EnvVars& envVars);
+	template <typename SA1, typename SA2>
+	OW_COMMON_API Process::Status system(const SA1& command,
+		const SA2& envVars, const Timeout& timeout = Timeout::infinite)
+	{
+		Cstr::CstrArr<SA1> sa_command(command);
+		Cstr::CstrArr<SA2> sa_envVars(envVars);
+		return system(sa_command.sarr, sa_envVars.sarr, timeout);
+	}
 	
-	/**
-	 * Execute a command.
-	 * The command's stdin, stdout, and stderr will be connected via pipes to
-	 * the parent process that can be accessed from the return value.
-	 * This function will not search the path for command[0], so
-	 * the absolute path to the binary should be specified.  If the path needs
-	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
-	 * and then fill in the rest of the array with the command you wish to
-	 * execute.
-	 * This function does *not* block until the child process exits.
-	 * If the binary specified in command[0] does not exist, execv() will fail,
-	 * and the return code of the sub-process will be 127. However, this is not
-	 * distinguishable from the command process returning 127.
-	 *
-	 * @param command
-	 *  command[0] is the binary to be executed.
-	 *  command[1] .. command[n] are the command line parameters to the command.
-	 * 
-	 * @param envp an array of strings  of the form "key=value", which are passed
-	 *  as environment to the new program. envp must be terminated by a null 
-	 *  pointer. envp may be 0, in which case the current process's environment
-	 *  variables will be used.
-	 *
-	 * @return A PopenStreams object which can be used to access the child
-	 *  process and/or get it's return value.
-	 *
-	 * @throws IOException If writing initialInput to the child process input fails.
-	 *         ExecErrorException If command.size() == 0 or if fork() fails.
-	 */
-	OW_COMMON_API PopenStreams safePopen(const Array<String>& command, const char* const envp[] = 0);
 
 	/**
-	 * Execute a command.
-	 * The command's stdin, stdout, and stderr will be connected via pipes to
-	 * the parent process that can be accessed from the return value.
-	 * This function will not search the path for command[0], so
-	 * the absolute path to the binary should be specified.  If the path needs
-	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
-	 * and then fill in the rest of the array with the command you wish to
-	 * execute.
-	 * This function does *not* block until the child process exits.
-	 * If the binary specified in command[0] does not exist, execv() will fail,
-	 * and the return code of the sub-process will be 127. However, this is not
-	 * distinguishable from the command process returning 127.
-	 *
-	 * @param command
-	 *  command[0] is the binary to be executed.
-	 *  command[1] .. command[n] are the command line parameters to the command.
-	 * 
-	 * @param envVars An EnvVars object that contains the environment variables
-	 *	which will be pass as the environment to the new process. If envVars
-	 *	doesn't contain any environment variables, then the current process's
-	 *	environment variables will be used.
-	 *
-	 * @return A PopenStreams object which can be used to access the child
-	 *  process and/or get it's return value.
-	 *
-	 * @throws IOException If writing initialInput to the child process input fails.
-	 *         ExecErrorException If command.size() == 0 or if fork() fails.
-	 */
-	OW_COMMON_API PopenStreams safePopen(const Array<String>& command, const EnvVars& envVars);
+	* This class is used to specify what spawn() should do between fork and
+	* exec.
+	*/
+	class PreExec
+	{
+	public:
+		typedef class ::OW_NAMESPACE::PosixUnnamedPipe * pipe_pointer_t;
 
-	// TODO: Create a version of safePopen that allows the caller to specify the number of extra pipes to be opened.
+		PreExec(bool precompute_max_descriptors = false);
+
+		virtual ~PreExec();
+
+		/**
+		* @return True if @c Process object returned by @c spawn() should
+		* contain one end of a pipe connected to standard descriptor @a d
+		* for the child process.  False if standard descriptor @a d of child
+		* should be connected to <tt>/dev/null</tt>.
+		*
+		* @pre 0 <= @a d < 3.
+		*/
+		virtual bool keepStd(int d) const = 0;
+
+		struct Error
+		{
+			enum { MAX_MSG_LEN = 64 };
+			char message[MAX_MSG_LEN + 1]; // must be null-terminated
+			int error_num;        // errno value; 0 means no errno value
+		};
+
+		/**
+		* Use this class to allow @c call() to throw an exception
+		*/
+		struct DontCatch
+		{
+			virtual ~DontCatch();
+		};
+
+		/**
+		* This function is called between @c fork and @c exec in the @c spawn()
+		* function.  It must not allocate memory unless you can guarantee
+		* that there is only one thread running -- on some platforms allocating
+		* memory between fork and exec when there were other threads running
+		* can result in a deadlock.
+		*
+		* Any exception thrown of type <tt>PreExec::Error</tt> or derived from
+		* <tt>std::exception</tt> is reported in full back to the parent;
+		* any exception derived from <tt>PreExec::DontCatch</tt> is allowed to
+		* propagate out of <tt>Exec::spawn</tt>; and any other type of
+		* exception is reported as an unknown exception.
+		*
+		* @param pparr an array pointer that can be passed to the static
+		* functions @c close_pipes_on_exec() and @c setup_std_descriptors().
+		* It includes pipes for each of the standard descriptors, plus any
+		* additional pipes used by <tt>Exec::spawn</tt> for communicating
+		* between child and parent before the @c execve occurs.
+		*/
+		virtual void call(pipe_pointer_t const pparr[]) = 0;
+
+		/**
+		* For calling from <tt>PreExec::call</tt>.
+		* Sets every descriptor to close-on-exec, with the exception of
+		* the standard descriptors 0, 1, and 2, and those descriptors d
+		* for which d < keep.size() and keep[d] is true.
+		*/
+		void closeDescriptorsOnExec(std::vector<bool> const & keep);
+
+		/**
+		* For calling from <tt>PreExec::call</tt>.
+		* Resets all signals to their default actions.
+		*/
+		static void resetSignals();
+
+		/**
+		* For calling from <tt>PreExec::call</tt>.
+		* Sets all the pipe descriptors in pparr to close-on-exec.
+		*
+		* @param pparr The @a pparr parameter passed to <tt>PreExec::call</tt>.
+		*/
+		static void closePipesOnExec(pipe_pointer_t const pparr[]);
+
+		/**
+		* For calling from <tt>PreExec::call</tt>.
+		* Connects standard descriptors to the appropriate pipes, or
+		* opens them to <tt>/dev/null</tt>, as appropriate.
+		*
+		* @param pparr The @a pparr parameter passed to <tt>PreExec::call</tt>.
+		*/
+		static void setupStandardDescriptors(pipe_pointer_t const pparr[]);
+
+	protected:
+		long m_max_descriptors;
+	};
+
+	class StandardPreExec : public PreExec
+	{
+	public:
+		StandardPreExec();
+
+		/// @return true
+		//
+		virtual bool keepStd(int d) const;
+		
+		/**
+		* Resets all signals to their default actions and sets to
+		* close-on-exec all descriptors except the standard descriptors.
+		*/
+		virtual void call(pipe_pointer_t const pparr[]);
+	};
+
+	/// Intended to be used as a parameter to spawn() to indicate that the 
+	/// current environment will be used for the child process.
+	static char const * const * const currentEnvironment = 0;
 
 	/**
-	 * The use of initialInput is deprecated, because it's not safe to use it in a
-	 * portable manner. Either use the input parameter to processInputOutput or do it
-	 * manually (not that you must be careful not to cause a deadlock).
-	 */
-	OW_COMMON_API PopenStreams safePopen(const Array<String>& command,
-			const String& initialInput) OW_DEPRECATED;
+	* Run the executable @a exec_path in a child process, with @a argv for
+	* the program arguments and @a envp for the environment.
+	*
+	* @pre The standard descriptors (0, 1, and 2) are all open.
+	*
+	* @param exec_path Absolute path of the executable to run in the child
+	* process.
+	*
+	* @param argv Null-terminated argument list for the child process.
+	* If @a argv is null or the empty sequence (@a argv[0] is null),
+	* then it is replaced with a sequence containing only @a exec_path.
+	*
+	* @param envp The null-terminated environment for the child process.  If
+	* null then the caller's environment is used.  It is recommended that
+	* envp be constructed by starting with <tt>Secure::minimal_environment()</tt>
+	* and adding only those additional environment variables known to be
+	* needed.
+	*
+	* @param pre_exec Specifies what action to take in the child process
+	* between @c fork and @c exec.
+	*/
+	ProcessRef spawn(
+		char const * exec_path,
+		char const * const argv[], char const * const envp[],
+		PreExec & pre_exec
+	);
 
-	const int INFINITE_TIMEOUT = -1;
+	/**
+	 * Variant of @c spawn that allows @a exec_path to have an arbitrary
+	 * string-like type, and @a argv and @a envp to have arbitrary
+	 * string-array-like types. If argv or envp are of type StringArray
+	 * a terminating null is not necessary.
+	 *
+	 * @pre @a S is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
+	 *
+	 * @pre Specializations of the <tt>Cstr::CstrArr</tt> class template are
+	 * defined for both types @a SA1 and @a SA2.
+	 */
+	template <typename S, typename SA1, typename SA2>
+	ProcessRef spawn(
+		S const & exec_path, SA1 const & argv, SA2 const & envp,
+		PreExec & pre_exec
+	)
+	{
+		Cstr::CstrArr<SA1> sa_argv(argv);
+		Cstr::CstrArr<SA2> sa_envp(envp);
+		char const * s_exec_path = Cstr::to_char_ptr(exec_path);
+		return spawn(s_exec_path, sa_argv.sarr, sa_envp.sarr, pre_exec);
+	}
+
+	/// Variant of spawn that uses @c StandardPreExec.
+	//
+	ProcessRef spawn(
+		char const * const argv[], char const * const envp[]
+	);
+
+	/**
+	* Variant of @c spawn that uses @c StandardPreExec and
+	* @a argv and @a envp to have arbitrary string-array-like types.
+	*
+	* @pre Specializations of the <tt>Cstr::CstrArr</tt> class template are
+	* defined for both types @a SA1 and @a SA2.
+	*/
+	template <typename SA1, typename SA2>
+	ProcessRef spawn(
+		SA1 const & argv, SA2 const & envp
+	)
+	{
+		Cstr::CstrArr<SA1> sa_argv(argv);
+		Cstr::CstrArr<SA2> sa_envp(envp);
+		return spawn(sa_argv.sarr, sa_envp.sarr);
+	}
+
+	template <typename SA1>
+	ProcessRef spawn(
+		SA1 const & argv
+	)
+	{
+		return spawn(argv, Exec::currentEnvironment);
+	}
 
 	/**
 	 * Wait for output from a child process.  The function returns when the
@@ -299,15 +304,14 @@ namespace Exec
 	 *
 	 * @param output An out parameter, the process output will be appended to
 	 *  this string.
-	 * @param streams The connection to the child process.
-	 * @param processstatus An out parameter, which will contain the process
-	 *  status.  It is only valid if the funtion returns. In the case an
-	 *  exception is thrown, it's undefined. It should be evaluated using the
-	 *  family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
-	 * @param timeoutsecs Specifies the number of seconds to wait for the
-	 *  process to exit. If the process hasn't exited after timeoutsecs seconds,
-	 *  an ExecTimeoutException will be thrown. If timeoutsecs == INFINITE_TIMEOUT, the
-	 *  timeout will be infinite, and no exception will ever be thrown.
+	 * 
+	 * @param proc The connection to the child process.
+	 * 
+	 * @param timeout Specifies the interval to wait for the
+	 *  process to exit. If the process hasn't exited after the timeout,
+	 *  an ExecTimeoutException will be thrown.  
+	 *  Output from a process can reset a relative with reset timeout.
+	 * 
 	 * @param outputlimit Specifies the maximum size of the parameter output,
 	 *  in order to constrain possible memory usage.  If the process outputs
 	 *  more data than will fit into output, then an ExecBufferFullException
@@ -318,7 +322,7 @@ namespace Exec
 	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs.
 	 * @throws ProcessBufferFull if the process output exceeds outputlimit bytes.
 	 */
-	OW_COMMON_API void gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs = INFINITE_TIMEOUT, int outputlimit = -1);
+	OW_COMMON_API void gatherOutput(String& output, const ProcessRef& proc, const Timeout& timeout = Timeout::infinite, int outputlimit = -1);
 	
 	enum EOutputSource
 	{
@@ -330,24 +334,24 @@ namespace Exec
 	{
 	public:
 		virtual ~OutputCallback();
-		void handleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex, Array<char>& inputBuffer);
+		void handleData(const char* data, size_t dataLen, EOutputSource outputSource, const ProcessRef& theProc, size_t streamIndex, Array<char>& inputBuffer);
 	private:
 		/**
 		 * @param data The data output from the process identified by theStream. Will be NULL terminated.  However, if the process
 		 * output 0 bytes, those will be contained in data.
 		 */
-		virtual void doHandleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex, Array<char>& inputBuffer) = 0;
+		virtual void doHandleData(const char* data, size_t dataLen, EOutputSource outputSource, const ProcessRef& theProc, size_t streamIndex, Array<char>& inputBuffer) = 0;
 	};
 
 	class InputCallback
 	{
 	public:
 		virtual ~InputCallback();
-		void getData(Array<char>& inputBuffer, PopenStreams& theStream, size_t streamIndex);
+		void getData(Array<char>& inputBuffer, const ProcessRef& theProc, size_t streamIndex);
 	private:
-		virtual void doGetData(Array<char>& inputBuffer, PopenStreams& theStream, size_t streamIndex) = 0;
+		virtual void doGetData(Array<char>& inputBuffer, const ProcessRef& theProc, size_t streamIndex) = 0;
 	};
-
+#if 0
 	enum EProcessRunning
 	{
 		E_PROCESS_RUNNING,
@@ -383,6 +387,7 @@ namespace Exec
 		EProcessRunning m_running;
 		int m_status;
 	};
+#endif
 
 	/**
 	 * Send input and wait for output from child processes.  The function returns when the
@@ -394,23 +399,11 @@ namespace Exec
 	 * @param output A callback, whenever data is received from a process, it will
 	 *  be passed to output.handleData().
 	 *
-	 * @param streams The connections to the child processes.
+	 * @param procs The connections to the child processes.
 	 *
-	 * @param processstatus An out parameter, which will contain a enum flag
-	 *  indicating if the process has exited, and if it has, the processes'
-	 *  status. The ProcessStatus::status value, if ProcessStatus::running == E_PROCESS_RUNNING,
-	 *  should be evaluated using the family of macros (WIFEXITED(), WEXITSTATUS(), etc.)
-	 *  from "sys/wait.h"
-	 *  Each status corresponds to the element at the same index in streams.
-	 *  If processStatuses.size() != streams.size(), it will be resized.
-	 *  Each element will be set to (E_PROCESS_RUNNING, 0) or else
-	 *  (E_PROCESS_EXITED, the status of the exited process).
-	 *
-	 * @param timeoutSecs Specifies the number of seconds to wait for all the
-	 *  processes to exit. If no output has been received and all the processes
-	 *  haven't exited after timeoutSecs seconds, an ExecTimeoutException will
-	 *  be thrown. If timeoutSecs == INFINITE_TIMEOUT, the timeout will be infinite, and no
-	 *  exception will ever be thrown.
+	 * @param timeout Specifies the interval to wait for all the
+	 *  processes to exit. If the timeout expires, an ExecTimeoutException will
+	 *  be thrown. Output from a process can reset a relative with reset timeout.
 	 *
 	 * @param input Callback to provide data to be written to the process(es) standard input.
 	 *  input.getData() will be called once for each stream, and subsequently once every time
@@ -420,143 +413,179 @@ namespace Exec
 	 * @throws ExecErrorException on error.
 	 * @throws ExecTimeoutException if the process hasn't finished within timeoutSecs.
 	 */
-	OW_COMMON_API void processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<ProcessStatus>& processStatuses,
-		InputCallback& input, int timeoutSecs = INFINITE_TIMEOUT);
+	OW_COMMON_API void processInputOutput(OutputCallback& output, Array<ProcessRef>& procs,
+		InputCallback& input, const Timeout& timeout = Timeout::infinite);
 	
+
+	OW_COMMON_API void processInputOutput(const String& input, String& output, const ProcessRef& process, 
+		const Timeout& timeout = Timeout::infinite, int outputlimit = -1);
+
 	/**
-	 * Run a process, collect the output, and wait for it to exit.  The
-	 * function returns when the
-	 * process exits. In the case that the child process doesn't exit, if a
-	 * timout is specified, then an ExecTimeoutException is thrown.
-	 * If the process outputs more bytes than outputlimit, an
-	 * ExecBufferFullException is thrown.
-	 * This function will not search the path for command[0], so
-	 * the absolute path to the binary should be specified.  If the path needs
-	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
-	 * and then fill in the rest of the array with the command you wish to
-	 * execute. Exercise caution when doing this, as you may be creating a
-	 * security hole.
+	 * Send input to a process, collect the output, and wait for it to exit.
+	 * The function returns when the process exits. In the case that the child
+	 * process doesn't exit, if a timout is specified, then an
+	 * @c ExecTimeoutException is thrown. If the process outputs more bytes
+	 * than outputlimit, an @c ExecBufferFullException is thrown.
+	 *
 	 * If the process does not terminate by itself, or if an exception is
-	 * thrown because a limit has been reached (time or output), then the
-	 * the following steps will be taken to attempt to terminate the child
-	 * process.
-	 * 1. The input and output pipes will be closed.  This may cause the
-	 *    child to get a SIGPIPE which may terminate it.
-	 * 2. If the child still hasn't terminated after 10 seconds, a SIGTERM
-	 *    is sent.
-	 * 3. If the child still hasn't terminated after 10 seconds, a SIGKILL
-	 *    is sent.
+	 * thrown because a limit has been reached (time or output), then
+	 * Process::waitCloseTerm() is called with default arguments to force
+	 * termination.
 	 *
-	 * @param command
-	 *  command[0] is the binary to be executed.
-	 *  command[1] .. command[n] are the command line parameters to the command.
+	 * @param proc The object managing the process.
 	 *
-	 * @param output An out parameter, the process output will be appended to
-	 *  this string.
+	 * @param output Process output is appended to this string.
 	 *
-	 * @param streams The connection to the child process.
+	 * @param timeout The interval to wait for the
+	 *  process to exit. If the process hasn't exited after the timeout,
+	 *  an @c ExecTimeoutException will be thrown, and the process will be
+	 *  killed. Output from a process can reset a relative with reset timeout.
 	 *
-	 * @param processstatus An out parameter, which will contain the process
-	 *  status.  It is only valid if the funtion returns. In the case an
-	 *  exception is thrown, it's undefined. It should be evaluated using the
-	 *  family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
-	 *
-	 * @param timeoutsecs Specifies the number of seconds to wait for the
-	 *  process to exit. If the process hasn't exited after timeoutsecs seconds,
-	 *  an ExecTimeoutException will be thrown, and the process will be
-	 *  killed.
-	 *  If timeoutsecs == INFINITE_TIMEOUT, the timeout will be infinite, and a
-	 *  ExecTimeoutException will not be thrown.
-	 *
-	 * @param outputlimit Specifies the maximum size of the parameter output,
+	 * @param outputlimit The maximum size of the parameter output,
 	 *  in order to constrain possible memory usage.  If the process outputs
-	 *  more data than will fit into output, then an ExecBufferFullException
+	 *  more data than will fit into output, then an @c ExecBufferFullException
 	 *  is thrown, and the process will be killed.
-	 *  If outputlimit < 0, the limit will be infinite, and an
-	 *  ExecBufferFullException will not be thrown.
+	 *  If @c outputlimit < 0, the limit will be infinite, and an
+	 *  @c ExecBufferFullException will not be thrown.
 	 *
-	 * @param input Data to be written to the child's stdin. After the data has been
-	 *  written, stdin will be closed.
+	 * @param input Data to write to the child's stdin. After the data
+	 *  has been written, stdin is closed.
 	 *
 	 * @throws ExecErrorException on error.
 	 * @throws ExecTimeoutException if the process hasn't finished within timeoutsecs.
 	 * @throws ExecBufferFullException if the process output exceeds outputlimit bytes.
 	 */
-	OW_COMMON_API void executeProcessAndGatherOutput(
-		const Array<String>& command,
-		String& output, int& processstatus,
-		int timeoutsecs = INFINITE_TIMEOUT, int outputlimit = -1, const String& input = String());
+	OW_COMMON_API Process::Status feedProcessAndGatherOutput(
+		ProcessRef const & proc, String & output,
+		Timeout const & timeout = Timeout::infinite, int outputlimit = -1,
+		String const & input = String());
 
 	/**
-	 * Run a process, collect the output, and wait for it to exit.  The
-	 * function returns when the
-	 * process exits. In the case that the child process doesn't exit, if a
-	 * timout is specified, then an ExecTimeoutException is thrown.
-	 * If the process outputs more bytes than outputlimit, an
-	 * ExecBufferFullException is thrown.
+	 * Execute a command and run @c feedProcessAndGatherOutput() on the process.
 	 * This function will not search the path for command[0], so
 	 * the absolute path to the binary should be specified.  If the path needs
 	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
 	 * and then fill in the rest of the array with the command you wish to
 	 * execute. Exercise caution when doing this, as you may be creating a
 	 * security hole.
-	 * If the process does not terminate by itself, or if an exception is
-	 * thrown because a limit has been reached (time or output), then the
-	 * the following steps will be taken to attempt to terminate the child
-	 * process.
-	 * 1. The input and output pipes will be closed.  This may cause the
-	 *    child to get a SIGPIPE which may terminate it.
-	 * 2. If the child still hasn't terminated after 10 seconds, a SIGTERM
-	 *    is sent.
-	 * 3. If the child still hasn't terminated after 10 seconds, a SIGKILL
-	 *    is sent.
 	 *
 	 * @param command
 	 *  command[0] is the binary to be executed.
 	 *  command[1] .. command[n] are the command line parameters to the command.
 	 *
-	 * @param output An out parameter, the process output will be appended to
-	 *  this string.
+	 * @param output @see feedProcessAndGatherOutput().
 	 *
-	 * @param streams The connection to the child process.
-	 *
-	 * @param processstatus An out parameter, which will contain the process
-	 *  status.  It is only valid if the funtion returns. In the case an
-	 *  exception is thrown, it's undefined. It should be evaluated using the
-	 *  family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
-	 *
-	 * @param envVars An EnvVars object that contains the environment variables
-	 *	which will be pass as the environment to the new process. If envVars
+	 * @param envVars An @c EnvVars object that contains the environment variables
+	 *	to pass as the environment to the new process. If @a envVars
 	 *	doesn't contain any environment variables, then the current process's
 	 *	environment variables will be used.
 	 *
-	 * @param timeoutsecs Specifies the number of seconds to wait for the
-	 *  process to exit. If the process hasn't exited after timeoutsecs seconds,
-	 *  an ExecTimeoutException will be thrown, and the process will be
-	 *  killed.
-	 *  If timeoutsecs == INFINITE_TIMEOUT, the timeout will be infinite, and a
-	 *  ExecTimeoutException will not be thrown.
+	 * @param timeout @see feedProcessAndGatherOutput().
 	 *
-	 * @param outputlimit Specifies the maximum size of the parameter output,
-	 *  in order to constrain possible memory usage.  If the process outputs
-	 *  more data than will fit into output, then an ExecBufferFullException
-	 *  is thrown, and the process will be killed.
-	 *  If outputlimit < 0, the limit will be infinite, and an
-	 *  ExecBufferFullException will not be thrown.
+	 * @param outputlimit @see feedProcessAndGatherOutput().
 	 *
-	 * @param input Data to be written to the child's stdin. After the data has been
-	 *  written, stdin will be closed.
+	 * @param input @see feedProcessAndGatherOutput().
 	 *
 	 * @throws ExecErrorException on error.
 	 * @throws ExecTimeoutException if the process hasn't finished within timeoutsecs.
 	 * @throws ExecBufferFullException if the process output exceeds outputlimit bytes.
 	 */
-	OW_COMMON_API void executeProcessAndGatherOutput(
-		const Array<String>& command,
-		String& output, int& processstatus, const EnvVars& envVars,
-		int timeoutsecs = INFINITE_TIMEOUT, int outputlimit = -1, const String& input = String());
+	OW_COMMON_API Process::Status executeProcessAndGatherOutput(
+		char const * const command[], String& output, char const * const envVars[],
+		const Timeout& timeout = Timeout::infinite, int outputlimit = -1,
+		char const * input = 0);
 	
+	/**
+	 * Version of @c executeProcessAndGatherOutput() that passes the current
+	 * process's environment to the child process.
+	 */
+	template <typename SA1, typename S1, typename S2>
+	Process::Status executeProcessAndGatherOutput(
+		SA1 const & command, S1& output,
+		const Timeout& timeout, int outputlimit, S2 const& input)
+	{
+		return executeProcessAndGatherOutput(command, output, currentEnvironment, timeout, outputlimit, input);
+	}
+
+	/**
+	 * Version of @c executeProcessAndGatherOutput() that passes the current
+	 * process's environment to the child process.
+	 */
+	template <typename SA1, typename S1>
+	Process::Status executeProcessAndGatherOutput(
+		SA1 const & command, S1& output,
+		const Timeout& timeout = Timeout::infinite, int outputlimit = -1)
+	{
+		return executeProcessAndGatherOutput(command, output, currentEnvironment, timeout,
+			outputlimit, String());
+	}
+
+	/**
+     * Variant of @c executeProcessAndGatherOutput that allows @a command and @a envp
+     * to have arbitrary string-array-like types and @a output to have an arbitrary
+     * string-like type. If command or envp are of type StringArray a terminating
+     * null is not necessary.
+     * 
+     * @pre @a S1 supports assignment from a const char*.
+     * 
+     * @pre @a S2 is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
+     * 
+	 * @pre Specializations of the <tt>Cstr::CstrArr</tt> class template are
+	 * defined for both types @a SA1 and @a SA2.
+	 */
+	template <typename SA1, typename S1, typename SA2, typename S2>
+	Process::Status executeProcessAndGatherOutput(
+		SA1 const & command, S1& output, SA2 const & envp,
+		const Timeout& timeout, int outputlimit, S2 const& input)
+	{
+		Cstr::CstrArr<SA1> sa_command(command);
+		Cstr::CstrArr<SA2> sa_envp(envp);
+		String tmpOutput;
+		char const * sInput = Cstr::to_char_ptr(input);
+		Process::Status res;
+		try
+		{
+			res = executeProcessAndGatherOutput(sa_command.sarr, tmpOutput, sa_envp.sarr,
+				timeout, outputlimit, sInput);
+		}
+		catch(...)
+		{
+			output = tmpOutput.c_str();
+			throw;
+		}
+		output = tmpOutput.c_str();
+		return res;
+	}
+
+	/**
+     * Version of @c executeProcessAndGatherOutput() that passes no input to the process.
+	 */
+	template <typename SA1, typename S1, typename SA2>
+	Process::Status executeProcessAndGatherOutput(
+		SA1 const & command, S1& output, SA2 const & envp,
+		const Timeout& timeout = Timeout::infinite, int outputlimit = -1)
+	{
+		return executeProcessAndGatherOutput(command, output, envp, timeout,
+			outputlimit, String());
+	}
 	
+	struct NullFactory
+	{
+		static void* create()
+		{
+			return 0;
+		}
+	};
+#ifdef OW_ENABLE_TEST_HOOKS
+	/**
+	 * If this object is non-null, the default functionality of the Exec class will be replaced by calls to
+	 * g_execMockObject's member functions. This is meant to be used for unit tests. Not all functions may be
+	 * implemented, if you need one that isn't, then please implement it! Modifying this variable will affect all
+	 * threads, it should not be used in a threaded program.
+	 */
+	extern GlobalPtr<ExecMockObject, NullFactory> g_execMockObject;
+#endif
+
 } // end namespace Exec
 
 } // end namespace OW_NAMESPACE

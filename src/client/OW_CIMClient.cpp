@@ -44,6 +44,7 @@
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMProtocolIFC.hpp"
+#include "OW_HTTPClient.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -54,7 +55,33 @@ CIMClient::CIMClient(const String& url, const String& ns, const ClientAuthCBIFCR
 	: m_namespace(ns)
 	, m_ch(ClientCIMOMHandle::createFromURL(url, authCB))
 {
+	CIMProtocolIFCRef tmp(m_ch->getWBEMProtocolHandler());
+	m_httpClient = tmp.cast_to<HTTPClient>();
 }
+
+///////////////////////////////////////////////////////////////////////////////
+CIMClient::~CIMClient()
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////
+CIMClient::CIMClient(const CIMClient& x)
+	: m_namespace(x.m_namespace)
+	, m_ch(x.m_ch)
+	, m_httpClient(x.m_httpClient)
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////
+CIMClient&
+CIMClient::operator=(const CIMClient& x)
+{
+	m_namespace = x.m_namespace;
+	m_ch = x.m_ch;
+	m_httpClient = x.m_httpClient;
+	return *this;
+}
+
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 ///////////////////////////////////////////////////////////////////////////////
 void CIMClient::createNameSpace(const String& ns)
@@ -524,13 +551,23 @@ CIMClient::execQueryE(
 bool
 CIMClient::setHTTPRequestHeader(const String& hdrName, const String& hdrValue)
 {
-	return m_ch->setHTTPRequestHeader(hdrName, hdrValue);
+	if (!m_httpClient)
+	{
+		return false;
+	}
+	m_httpClient->addCustomHeader(hdrName, hdrValue);
+	return true;
 }
 ///////////////////////////////////////////////////////////////////////////////
 bool
 CIMClient::getHTTPResponseHeader(const String& hdrName, String& valueOut) const
 {
-	return m_ch->getHTTPResponseHeader(hdrName, valueOut);
+	if (!m_httpClient)
+	{
+		return false;
+	}
+
+	return m_httpClient->getResponseHeader(hdrName, valueOut);
 }
 
 } // end namespace OW_NAMESPACE

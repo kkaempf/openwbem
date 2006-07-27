@@ -37,12 +37,7 @@ cmpiResult.cpp \
 cmpiString.cpp \
 cmpiThreadContext.cpp \
 cmpiValue.cpp \
-CmpiImpl.cpp
-
-#libOW_CppIFC_a_LDFLAGS = -L$(top_builddir)/src/common/
-#libOW_CppIFC_a_LIBADD = -lOpenWBEM
-
-pkginclude_HEADERS = \
+CmpiImpl.cpp \
 cmpidt.h \
 cmpift.h \
 cmpios.h \

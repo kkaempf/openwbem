@@ -37,6 +37,7 @@
 #include "OW_config.h"
 #include "OW_SerializableIFC.hpp"
 #include "OW_String.hpp"
+#include "OW_SafeBool.hpp"
 
 #include <iosfwd>
 
@@ -86,23 +87,21 @@ public:
 	 * This function is equivalent to String::readObject()
 	 * @param istrm The input stream to read from.
 	 */
-	virtual void readObject(std::istream &istrm);
+	virtual void readObject(std::streambuf & istrm);
 	
 	/**
 	 * Write the object to an output stream
 	 * This function is equivalent to String::writeObject()
 	 * @param ostrm The output stream to write to.
 	 */
-	virtual void writeObject(std::ostream &ostrm) const;
+	virtual void writeObject(std::streambuf & ostrm) const;
 
 	/**
 	 * Test if this is a valid CIMName. A valid CIMName is defined as != ""
 	 */
 	bool isValid() const;
 
-	typedef String CIMName::*safe_bool;
-	operator safe_bool () const;
-	bool operator!() const;
+	OW_SAFE_BOOL_IMPL(CIMName, String, CIMName::m_name, isValid())
 
 	friend OW_COMMON_API bool operator<(const CIMName& x, const CIMName& y);
 	friend OW_COMMON_API bool operator==(const CIMName& x, const CIMName& y);

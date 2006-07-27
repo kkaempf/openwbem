@@ -42,6 +42,7 @@
 #include "OW_SocketBaseImpl.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 using std::cerr;
 using std::cin;
