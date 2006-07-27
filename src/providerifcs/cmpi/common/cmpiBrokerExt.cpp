@@ -175,7 +175,7 @@ int mbExtThreadOnce (int *once, void (*init)(void))
 {
 	try
 	{
-		readWriteMemoryBarrier()
+		readWriteMemoryBarrier();
 		if (*once == 0)
 		{
 			NonRecursiveMutexLock lock(onceGuard);
