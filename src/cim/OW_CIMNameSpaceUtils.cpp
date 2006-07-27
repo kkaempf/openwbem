@@ -194,6 +194,10 @@ create__Namespace(CIMOMHandleIFC& hdl, const String& ns_)
 {
 	String ns(prepareNamespace(ns_));
 	size_t index = ns.lastIndexOf('/');
+	if (index == String::npos)
+	{
+		OW_THROWCIMMSG(CIMException::FAILED, "To create a namespace using __Namespace, the namespace must contain a /");
+	}
 	String parentPath = ns.substring(0, index);
 	String newNameSpace = ns.substring(index + 1);
 	if (!the__NamespaceClass)
@@ -215,6 +219,10 @@ delete__Namespace(CIMOMHandleIFC& hdl, const String& ns_)
 {
 	String ns(prepareNamespace(ns_));
 	size_t index = ns.lastIndexOf('/');
+	if (index == String::npos)
+	{
+		OW_THROWCIMMSG(CIMException::FAILED, "To delete a namespace using __Namespace, the namespace must contain a /");
+	}
 	String parentPath = ns.substring(0,index);
 	String newNameSpace = ns.substring(index + 1);
 	CIMPropertyArray v;
