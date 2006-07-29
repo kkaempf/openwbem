@@ -119,7 +119,7 @@ install-create-libdir:
 
 install-ow-shared-lib-%: %
 	@echo "Executing install rule for $^"
-	$(if $(STATIC_SERVICES), $(call install-static-lib,$^), $(call install-lib-$(LIB_EXT),$^))
+	$(if $(shell test x$(STATIC_SERVICES) = x1 -a x$(NO_FAKE_LIB_INSTALL) = x && echo STATIC), $(call install-static-lib,$^), $(call install-lib-$(LIB_EXT),$^))
 
 #
 # Install all shared libraries listed in $(OW_SHARED_LIBS) using the above install functions
