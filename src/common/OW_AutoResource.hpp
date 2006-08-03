@@ -35,6 +35,7 @@
 */
 
 #include "OW_config.h"
+#include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -151,6 +152,8 @@ namespace OW_NAMESPACE
 		{
 			Policy::free(hdl);
 		}
+
+		OW_SAFE_BOOL_IMPL(AutoResource<Policy>, handle_type, AutoResource<Policy>::hdl, (hdl != Policy::null()));
       
 		/// Return handle of resource, retaining ownership.
 		//
