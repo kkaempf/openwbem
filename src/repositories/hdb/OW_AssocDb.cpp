@@ -772,6 +772,7 @@ AssocDb::addToFreeList(Int32 offset, AssocDbHandle& hdl)
 	AssocDbRecHeader rh;
 	readRecHeader(rh, offset, hdl.getFile());
 	rh.nextFree = m_hdrBlock.firstFree;
+	OW_ASSERT(rh.nextFree != offset);
 	File f = hdl.getFile();
 	writeRecHeader(rh, offset, f);
 	m_hdrBlock.firstFree = offset;
@@ -794,6 +795,7 @@ AssocDb::getNewBlock(Int32& offset, UInt32 blkSize,
 	while (coffset != -1)
 	{
 		readRecHeader(rh, coffset, hdl.getFile());
+		OW_ASSERT(rh.nextFree != coffset);
 		if (rh.blkSize >= blkSize)
 		{
 			if (lastOffset != -1L)

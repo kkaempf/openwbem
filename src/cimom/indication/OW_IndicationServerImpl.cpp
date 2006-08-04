@@ -1086,8 +1086,11 @@ public:
 void
 IndicationServerImplThread::startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username)
 {
+	OW_LOG_DEBUG(m_logger, "Entering IndicationServerImplThread::startCreateSubscription");
 	RunnableRef rr(new createSubscriptionRunnable(ns, subInst, username, this));
+	OW_LOG_DEBUG(m_logger, "Created RunnableRef in IndicationServerImplThread::startCreateSubscription");
 	m_subscriptionPool->addWork(rr);
+	OW_LOG_DEBUG(m_logger, "Leaving IndicationServerImplThread::startCreateSubscription");
 }
 
 //////////////////////////////////////////////////////////////////////////////

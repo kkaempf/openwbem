@@ -44,6 +44,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
+#include "OW_Logger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -51,6 +52,9 @@ namespace OW_NAMESPACE
 using namespace WBEMFlags;
 namespace
 {
+
+String const COMPONENT_NAME("ow.provider.CIM_IndicationSubscription");
+
 // This is a pass through provider.  The instances are really stored in the repository.  All CIM_IndicationSubscription actions are intercepted and passed to the indication
 // server so it can keep track of subscriptions and also deny the creation of any subscriptions for which no providers exist.
 class provCIM_IndicationSubscription : public CppInstanceProviderIFC
@@ -94,8 +98,11 @@ public:
 			OW_THROWCIMMSG(CIMException::FAILED, "Indication are disabled.  Subscription creation is not allowed.");
 		}
 		CIMObjectPath rv = env->getRepositoryCIMOMHandle()->createInstance(ns, cimInstance);
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, "Created instance in repository; now about to call startCreateSubscription");
 		// Tell the indication server about the new subscription.
 		CIMOMEnvironment::instance()->getIndicationServer()->startCreateSubscription(ns, cimInstance, username);
+		OW_LOG_DEBUG(logger, "Returned from startCreateSubscription");
 		return rv;
 	}
 	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance,

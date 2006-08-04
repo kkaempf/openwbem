@@ -356,16 +356,24 @@ Thread::definitiveCancel(const Timeout& timeout)
 			if (!m_cancelled && isRunning())
 			{
 				OW_LOG_ERROR(logger, "Thread::definitiveCancel cancelling thread because it did not exit!");
-				this->cancel();
+				this->cancel_internal(true);
 			}
 			return false;
 		}
 	}
 	return true;
 }
+
 //////////////////////////////////////////////////////////////////////
 void
 Thread::cancel()
+{
+	this->cancel_internal(false);
+}
+
+//////////////////////////////////////////////////////////////////////
+void
+Thread::cancel_internal(bool is_locked)
 {
 	// Ignore errors from ThreadImpl (usually caused by the fact that the thread
 	// has already exited)
@@ -377,7 +385,8 @@ Thread::cancel()
 	{
 	}
 	{
-		NonRecursiveMutexLock l(m_stateGuard);
+		NonRecursiveMutex mtx;
+		NonRecursiveMutexLock l(is_locked ? mtx : m_stateGuard);
 		m_cancelled = true;
 		m_isRunning = false;
 		m_stateCond.notifyAll();

@@ -201,6 +201,9 @@ public:
 	 */
 	static void testCancel();
 private:
+
+	void cancel_internal(bool is_locked);
+
 	/**
 	 * This function is available for subclasses of Thread to override if they
 	 * wish to be notified when shutdown() is invoked on the instance.
