@@ -4,29 +4,18 @@ check_SCRIPTS = acceptance.sh
 
 EXTRA_DIST = acceptance.sh.fb
 
-clean-local: 
+clean-local:
+	@echo "Cleanup Warning: There may be another stage directory: /ow_test"
 	rm -rf stage
 
 CLEANFILES = acceptance.sh
 SUFFIXES = .fb
 
-.fb: Makefile
-	@RM@ -f $@ $@-t
-	@SED@ \
-		-e 's!@''sysconfdir''@!$(sysconfdir)!g' \
-		-e 's!@''top_srcdir''@!$(top_srcdir)!g' \
-		-e 's!@''sbindir''@!$(sbindir)!g' \
-		-e 's!@''bindir''@!$(bindir)!g' \
-		-e 's!@''libdir''@!$(libdir)!g' \
-		-e 's!@''includedir''@!$(includedir)!g' \
-		-e 's!@''pkglibdir''@!$(pkglibdir)!g' \
-		-e 's!@''libexecdir''@!$(libexecdir)!g' \
-		-e 's!@''localstatedir''@!$(localstatedir)!g' \
-		-e 's!@''PACKAGE_PREFIX_D''@!$(PACKAGE_PREFIX_D)!g' \
-		-e 's!@''PACKAGE_PREFIX''@!$(PACKAGE_PREFIX)!g' \
-		-e 's!@''lib_ext''@!$(LIB_EXT)!g' \
-		$< > $@-t
-	@MV@	$@-t $@
+# Note that the top_srcdir and top_builddir are defined here instead as a
+# replacement.  This is because the replacement will replace them as nothing.
+%.in: %.fb Makefile
+	rm -f $@
+	cp $< $@
 	if [ "x$(STATIC_SERVICES)" != "x" ]; then \
 		@SED@ \
 			-e 's!OWSYMLINKS=1!OWSYMLINKS=0!g' \
@@ -36,7 +25,16 @@ SUFFIXES = .fb
 		@MV@	$@-t $@; \
 	fi
 
-	chmod +x $@
+include ${top_srcdir}/Makefile-replacement.inc
+
+acceptance.sh_extra_substitutions = \
+	-e 's!@''absolute_srcdir''@!$(shell pwd)/$(top_srcdir)!g' \
+	-e 's!@''absolute_builddir''@!$(shell pwd)/$(top_builddir)!g' \
+	-e 's!@''pkglibdir''@!$(pkglibdir)!g' \
+	-e 's!@''lib_ext''@!$(LIB_EXT)!g'
+
+all-local: $(check_SCRIPTS)
+	chmod +x $^
 
 INCLUDES = \
 -I$(top_srcdir)/src \
@@ -54,3 +52,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/client
 
 TESTS = acceptance.sh
+
+noinst_PROGRAMS = check_security
+check_security_SOURCES = check_security.cpp
+check_security_LDFLAGS = -o $@ -L$(top_builddir)/src/common -lopenwbem

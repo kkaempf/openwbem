@@ -12,3 +12,4 @@ ow_methodProviderTestFile.txt
 *.nlm
 *.nlm.*
 lib*sl*
+check_security

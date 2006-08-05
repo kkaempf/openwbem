@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 # The following environment variables affect the execuction of this
 # script.  
 #
@@ -12,6 +10,9 @@ set -x
 #   OWNODIFF
 #		If this has a value of 1, no diffs will be performed.  This
 #		can be usefull if using the MemTracer
+#   SECURE_DIRECTORY
+#     This pathname, if specified, will be used as a secure directory
+#     for UID 0 (root) tests.  It defaults to /ow_test.
 #   OWTESTLIST
 #		If this is non-empty, only the specified tests will be performed.
 #		Valid values are (case insensitive):
@@ -37,7 +38,7 @@ set -x
 #		OOPProvider
 #		EmbeddedCIMOM
 
-
+ACCEPTANCE_DIR=`pwd`
 OWSYSCONFDIR=@sysconfdir@
 OWLIBDIR=@libdir@
 OWBINDIR=@bindir@
@@ -46,14 +47,51 @@ OWINCLUDEDIR=@includedir@
 OWPKGLIBDIR=@pkglibdir@
 OWLIBEXECDIR=@libexecdir@
 OWLOCALSTATEDIR=@localstatedir@
-TOPSRCDIR=../@top_srcdir@
+TOP_SRCDIR=@absolute_srcdir@
+TOP_BUILDDIR=@absolute_builddir@
 STATIC_SERVICES=0
+SECURE_DIRECTORY=${SECURE_DIRECTORY:-/ow_test}
+CREATED_SECURE_STAGEDIR=0
+
+# Set later.
+OSTYPE=
+UDS_PATH=
+OWIPC=
+PIDFILE=
+BUILDDIR=
+RESULTDIR=
+
 
 if diff -u /dev/null /dev/null > /dev/null 2>&1; then
 	DIFF="diff -u"
 else
 	DIFF="diff"
 fi
+
+# Remove any /./ or /../ entries from a directory name.
+CleanupDirectoryName()
+{
+	cdn_dir_name="`echo \"$1\" | sed -e 's~/\./~/~g' -e 's~//~/~g'`"
+	cdn_temp_dir=""
+	until [ "${cdn_temp_dir}" = "${cdn_dir_name}" ]; do
+		cdn_temp_dir="${cdn_dir_name}"
+		cdn_dir_name="`echo ${cdn_dir_name} | sed -e 's~/[^/]*/\.\.~~'`"
+	done
+	echo "${cdn_dir_name}"
+	unset cdn_dir_name
+	unset cdn_temp_dir
+}
+
+CleanupPathNames()
+{
+	for name in OWSYSCONFDIR OWLIBDIR OWBINDIR OWSBINDIR OWINCLUDEDIR OWPKGLIBDIR OWLIBEXECDIR OWLOCALSTATEDIR TOP_SRCDIR TOP_BUILDDIR; do
+		eval "${name}=`eval CleanupDirectoryName \\$${name}`"
+	done
+}
+
+# There may be a bunch of ../..'s in the paths defined above.  Clean them up.
+CleanupPathNames
+
 
 #############################################################################
 SaveState()
@@ -77,12 +115,27 @@ RestoreState()
 	cp -r $STAGEDIR$OWLOCALSTATEDIR/openwbem.saved/* $STAGEDIR$OWLOCALSTATEDIR/openwbem/ || ExitWithFail "RestoreState: repository"
 	cp $STAGEDIR/$OWSYSCONFDIR/openwbem/openwbem.conf-t.saved $STAGEDIR/$OWSYSCONFDIR/openwbem/openwbem.conf-t || "RestoreState: config file"
 
+	if IAmRoot; then
+		CorrectInstallationPrivileges
+	fi
+
 	if [ "$START_DAEMON" = "1" ]; then
 		StartDaemon
 	fi
 }
 
 #############################################################################
+CorrectInstallationPrivileges()
+{
+	# The write bit shouldn't be set for g&o, but we'll make sure.
+	chmod -R go-w ${STAGEDIR}
+
+	for unprivileged_dir in ${OWLOCALSTATEDIR}/openwbem results; do
+		mkdir -p ${STAGEDIR}/${unprivileged_dir}
+		chown -R owcimomd ${STAGEDIR}/${unprivileged_dir}
+	done
+}
+
 Install()
 {
 	echo "Install"
@@ -92,12 +145,12 @@ Install()
 		return
 	fi
 
-	rm -rf stage
-	mkdir stage
+	rm -rf ${STAGEDIR}
+	mkdir ${STAGEDIR}
 	mkdir $RESULTDIR
 	mkdir -p $STAGEDIR$OWSYSCONFDIR/openwbem/truststore
 
-	cd ../../
+	cd ${TOP_BUILDDIR}
 	
 	PROVIDERS="\
 $BUILDDIR/test/c++providers/indication/libindicationtest1.@lib_ext@ \
@@ -136,13 +189,13 @@ $BUILDDIR/test/acceptance/oop/libooptest.@lib_ext@ \
 			-e "s!.*http_server.ssl_trust_store =.*!http_server.ssl_trust_store = $STAGEDIR$OWSYSCONFDIR/openwbem/truststore!g" \
 			-e "s!.*owcimomd.check_referential_integrity =.*!owcimomd.check_referential_integrity = true!g" \
 			-e "s!.*owcimomd.pidfile =.*!owcimomd.pidfile = $PIDFILE!g" \
-			-e "s!http_server.uds_filename = \(.*\)!http_server.uds_filename = $STAGEDIR/owcimomduds!g" \
+			-e "s!http_server.uds_filename = \(.*\)!http_server.uds_filename = ${UDS_PATH}!g" \
 		openwbem.conf > openwbem.conf-t
 			#-e "s!;http_server.enable_deflate =.*!http_server.enable_deflate = false!g" \
 			#-e "s!.*owcimomd.disable_indications =.*!owcimomd.disable_indications = true!g" \
 	cd $STAGEDIR
 
-	if grep "define OW_NO_SSL" $TOPSRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
+	if grep "define OW_NO_SSL" $TOP_SRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
 		EditConfig 's!http_server.https_port = \(.*\)!http_server.https_port = -1!g'
 	fi
 
@@ -160,9 +213,9 @@ $BUILDDIR/test/acceptance/oop/libooptest.@lib_ext@ \
 	echo "test3:pass3" >> $STAGEDIR/$OWSYSCONFDIR/openwbem/simple_auth.passwd
 
 	# set up the server SSL key+certificate
-	cp $TOPSRCDIR/test/acceptance/testfiles/hostkey+cert.pem \
+	cp $TOP_SRCDIR/test/acceptance/testfiles/hostkey+cert.pem \
 		$STAGEDIR/$OWSYSCONFDIR/openwbem/servercert.pem
-	cp $TOPSRCDIR/test/acceptance/testfiles/hostkey+cert.pem \
+	cp $TOP_SRCDIR/test/acceptance/testfiles/hostkey+cert.pem \
 		$STAGEDIR/$OWSYSCONFDIR/openwbem/serverkey.pem
 	
 	InstallProvider $BUILDDIR/test/c++providers/method/libmethodtest.@lib_ext@
@@ -184,7 +237,11 @@ $BUILDDIR/test/acceptance/oop/libooptest.@lib_ext@ \
 			ln -sf $STAGEDIR/$OWLIBDIR/`basename $link` $link
 		fi
 	done
-		
+
+	if IAmRoot; then
+		CorrectInstallationPrivileges
+	fi
+
 	StartDaemon
 
 	# Get the basic mof installed.
@@ -192,10 +249,10 @@ $BUILDDIR/test/acceptance/oop/libooptest.@lib_ext@ \
 
 	CreateNameSpace testsuite
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:$OWIPC/ -n root/testsuite \
-			$TOPSRCDIR/schemas/cim28/CIM_Core28.mof || \
+			$TOP_SRCDIR/schemas/cim28/CIM_Core28.mof || \
 			ExitWithFail "Install: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:$OWIPC/ -n root/testsuite \
-		$TOPSRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
+		$TOP_SRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
 		ExitWithFail "Install: MOF compiler exited with error."
 
 	StopDaemon
@@ -225,7 +282,7 @@ SwitchToLinks()
 	for i in $LISTTOSWITCH; do
 		rm -f $i
 		BASENAME=`basename $i`
-		FNAME=`find $TOPSRCDIR -name $BASENAME -perm -0100 ! -type d ! -type l`
+		FNAME=`find $TOP_SRCDIR -name $BASENAME -perm -0100 ! -type d ! -type l`
 		FNAME=$STAGEDIR/$FNAME
 		echo "Creating symbolic link: $i -> $FNAME"
 		ln -sf $FNAME $i || ExitWithFail "Link creation failed.  Check that you don't have the remants of a failed '$MAKE distcheck'"
@@ -498,7 +555,7 @@ InstallOOPProvider()
 	PROVIDER=$1
 	
 	if [ "$STATIC_SERVICES" = "1" ]; then
-		$TOPSRCDIR/fake_library_creator.sh createProvider $PROVIDER
+		$TOP_SRCDIR/fake_library_creator.sh createProvider $PROVIDER
 		PROVIDER_DIR_NAME=`dirname $PROVIDER`
 		PROVIDER_BASE_NAME=`basename $PROVIDER .@lib_ext@`
 		cp $PROVIDER_DIR_NAME/$PROVIDER_BASE_NAME.fsl $STAGEDIR/$OWPKGLIBDIR/oopproviders/$PROVIDER_BASE_NAME.@lib_ext@
@@ -514,7 +571,7 @@ InstallProvider()
 	PROVIDER=$1
 	
 	if [ "$STATIC_SERVICES" = "1" ]; then
-		$TOPSRCDIR/fake_library_creator.sh createProvider $PROVIDER
+		$TOP_SRCDIR/fake_library_creator.sh createProvider $PROVIDER
 		PROVIDER_DIR_NAME=`dirname $PROVIDER`
 		PROVIDER_BASE_NAME=`basename $PROVIDER .@lib_ext@`
 		cp $PROVIDER_DIR_NAME/$PROVIDER_BASE_NAME.fsl $STAGEDIR/$OWPKGLIBDIR/c++providers/$PROVIDER_BASE_NAME.@lib_ext@
@@ -653,9 +710,9 @@ Diff()
 	DIFF_FILE1=$1
 	DIFF_FILE2=$2
 	if [ "$NODIFF" = "0" ]; then
-		echo "$DIFF $TOPSRCDIR/test/acceptance/testfiles/$DIFF_FILE1 \
+		echo "$DIFF $TOP_SRCDIR/test/acceptance/testfiles/$DIFF_FILE1 \
 			$RESULTDIR/$DIFF_FILE2"
-		$DIFF  $TOPSRCDIR/test/acceptance/testfiles/$DIFF_FILE1 \
+		$DIFF  $TOP_SRCDIR/test/acceptance/testfiles/$DIFF_FILE1 \
 			 $RESULTDIR/$DIFF_FILE2 || \
 			 ExitWithFail "$3"
 	fi
@@ -678,13 +735,13 @@ TestSuite()
 
 	echo "Importing mof files for test"
 	$STAGEDIR/$OWBINDIR/owmofc -u $URL -n root/testsuite \
-		$TOPSRCDIR/test/c++providers/associator/OW_AssociatorTest.mof || \
+		$TOP_SRCDIR/test/c++providers/associator/OW_AssociatorTest.mof || \
 		ExitWithFail "TestSuite: MOF compiler exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u $URL -n root/testsuite \
-		$TOPSRCDIR/test/c++providers/instance/testinstance.mof || \
+		$TOP_SRCDIR/test/c++providers/instance/testinstance.mof || \
 		ExitWithFail "TestSuite: MOF compiler exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u $URL -n root/testsuite \
-		$TOPSRCDIR/test/acceptance/testfiles/testsuite.mof || \
+		$TOP_SRCDIR/test/acceptance/testfiles/testsuite.mof || \
 		ExitWithFail "TestSuite: MOF compiler exited with error."
 
 	echo "Executing test suite, saving output in " $RESULTDIR/$DIFF_FILE
@@ -692,7 +749,7 @@ TestSuite()
 		> $RESULTDIR/$DIFF_FILE 2>&1 || \
 		ExitWithFail "TestSuite: owcimclientcl failed with an error.  "
  
-	MSTR_FILE=$TOPSRCDIR/test/acceptance/testfiles/$DIFF_FILE2$OWDIFFSUFFIX
+	MSTR_FILE=$TOP_SRCDIR/test/acceptance/testfiles/$DIFF_FILE2$OWDIFFSUFFIX
 	if [ ! -f $MSTR_FILE -a "x$OWLONGTEST" = "x1" ]; then
 		echo "***** Not comparing with expected output.  This is"
 		echo "***** Normal if OWLONGTEST and not running from CVS"
@@ -761,7 +818,7 @@ TestWQL()
 
 	# import mof the the test
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:$OWIPC/ -n root/testsuite \
-		$TOPSRCDIR/test/acceptance/testfiles/wqlTest.mof || \
+		$TOP_SRCDIR/test/acceptance/testfiles/wqlTest.mof || \
 		ExitWithFail "MOF compiler test: MOF compiler exited with error"
 
 	echo "Executing wql test suite, saving output in " $RESULTDIR/wqlTest.out
@@ -823,11 +880,11 @@ TestIndications()
 
 	# import the mof
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:$OWIPC/ -n root/testsuite \
-		$TOPSRCDIR/schemas/cim28/CIM_Event28.mof || \
+		$TOP_SRCDIR/schemas/cim28/CIM_Event28.mof || \
 		ExitWithFail "indication test: owmofc exited with error."
 
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:$OWIPC/ -n root/testsuite \
-		$TOPSRCDIR/test/acceptance/testfiles/indicationTest.mof || \
+		$TOP_SRCDIR/test/acceptance/testfiles/indicationTest.mof || \
 		ExitWithFail "indication test: owmofc exited with error."
 
 	echo "Executing indication test suite, saving output in " $RESULTDIR/indicationTest.out
@@ -866,7 +923,7 @@ TestMultiReq()
 	DIFF_FILE="MultiReqResp.xml"
 
 	$BUILDDIR/test/acceptance/progs/fakeclient http://test1:pass1@localhost:30926 \
-		$TOPSRCDIR/test/acceptance/testfiles/MultiReqInput.xml > \
+		$TOP_SRCDIR/test/acceptance/testfiles/MultiReqInput.xml > \
 			$RESULTDIR/$DIFF_FILE || \
 			ExitWithFail "MultiReq test: fakeclient exited with error."
 
@@ -874,12 +931,12 @@ TestMultiReq()
 
 	echo "Multiple Operations Support Passed."
 
-	grep "define OW_NO_SSL" $TOPSRCDIR/src/common/OW_config.h > /dev/null 2>&1
+	grep "define OW_NO_SSL" $TOP_SRCDIR/src/common/OW_config.h > /dev/null 2>&1
 	if [ ! "$?" = "0" ]; then
 		echo "Testing HTTPS support..."
 
 		$BUILDDIR/test/acceptance/progs/fakeclient https://test1:pass1@localhost:30927 \
-			$TOPSRCDIR/test/acceptance/testfiles/MultiReqInput.xml > \
+			$TOP_SRCDIR/test/acceptance/testfiles/MultiReqInput.xml > \
 				$RESULTDIR/$DIFF_FILE || \
 				ExitWithFail "HTTPS test: fakeclient exited with error."
 
@@ -961,7 +1018,7 @@ TestAuth()
 
 	echo "Simple Authentication module and GetFeatures Passed"
 	
-	if grep "define OW_DISABLE_DIGEST" $TOPSRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
+	if grep "define OW_DISABLE_DIGEST" $TOP_SRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
 		echo "OpenWBEM was not build with Digest support"
 	else
 		EditConfig "s!http_server.allow_digest_authentication = false!http_server.allow_digest_authentication = true!g" 
@@ -1012,7 +1069,7 @@ TestAuth()
 		RestartDaemon
 	fi
 
-	if grep "define OW_HAVE_PAM" $TOPSRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
+	if grep "define OW_HAVE_PAM" $TOP_SRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
 		# just start with the pam authentication module to make sure it can be loaded.
 		EditConfig "s!owcimomd.authentication_module\(.*\)simple\(.*\)!owcimomd.authentication_module\1pam\2!g"
 		RestartDaemon
@@ -1081,16 +1138,16 @@ TestACL()
 	CreateNameSpace "security"
 	CreateNameSpace "acltest"
 	$STAGEDIR/$OWBINDIR/owmofc -u $SUACLURL -n root \
-		$TOPSRCDIR/mof/OpenWBEM_Acl1.0.mof || 
+		$TOP_SRCDIR/mof/OpenWBEM_Acl1.0.mof || 
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	$STAGEDIR/$OWBINDIR/owmofc -u $SUACLURL -n root/acltest \
-		$TOPSRCDIR/test/acceptance/testfiles/CIM_Min25.mof || \
+		$TOP_SRCDIR/test/acceptance/testfiles/CIM_Min25.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	$STAGEDIR/$OWBINDIR/owmofc -u $SUACLURL -n root/acltest \
-		$TOPSRCDIR/test/acceptance/testfiles/ACLTest.mof || \
+		$TOP_SRCDIR/test/acceptance/testfiles/ACLTest.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	$STAGEDIR/$OWBINDIR/owmofc -u $SUACLURL -n root/acltest \
-		$TOPSRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
+		$TOP_SRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 
 	echo "Verifying superuser access..."
@@ -1262,35 +1319,35 @@ TestACLBasic()
 	DATADIR=`GetDataDir`
 	echo "Importing MOF to enable ACLs..."
 
-	$OWMOFC -c -d $DATADIR -n root $TOPSRCDIR/mof/OpenWBEM_Acl1.0.mof ||
+	$OWMOFC -c -d $DATADIR -n root $TOP_SRCDIR/mof/OpenWBEM_Acl1.0.mof ||
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root \
-		$TOPSRCDIR/test/acceptance/testfiles/ACLTestPerms.mof || \
+		$TOP_SRCDIR/test/acceptance/testfiles/ACLTestPerms.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
-		$TOPSRCDIR/schemas/cim28/CIM_Core28.mof || \
+		$TOP_SRCDIR/schemas/cim28/CIM_Core28.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
-		$TOPSRCDIR/schemas/cim28/CIM_Interop28.mof || \
+		$TOP_SRCDIR/schemas/cim28/CIM_Interop28.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
-		$TOPSRCDIR/schemas/cim28/Physical28_Package.mof || \
+		$TOP_SRCDIR/schemas/cim28/Physical28_Package.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
-		$TOPSRCDIR/schemas/cim28/System28_SystemElements.mof || \
+		$TOP_SRCDIR/schemas/cim28/System28_SystemElements.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
-		$TOPSRCDIR/mof/OpenWBEM_Interop.mof || \
+		$TOP_SRCDIR/mof/OpenWBEM_Interop.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
-		$TOPSRCDIR/test/acceptance/testfiles/ACLTestBasic.mof || \
+		$TOP_SRCDIR/test/acceptance/testfiles/ACLTestBasic.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	# Create namespace root/acltest/sub0; we don't care what's in it
 	$OWMOFC -c -d $DATADIR -n root/acltest/sub0 \
-		$TOPSRCDIR/schemas/cim28/Core28_Qualifiers.mof || \
+		$TOP_SRCDIR/schemas/cim28/Core28_Qualifiers.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
-		$TOPSRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
+		$TOP_SRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	StartDaemon
 
@@ -1358,7 +1415,7 @@ TestACLBasic()
 	# Remove namespace root/acltest/sub0 and its contents
 	ACLURL="owbinary.wbem://test2:pass2@localhost:$OWIPC/"
 	$OWMOFC -r -u $ACLURL \
-		-n root/acltest/sub0 $TOPSRCDIR/schemas/cim28/Core28_Qualifiers.mof
+		-n root/acltest/sub0 $TOP_SRCDIR/schemas/cim28/Core28_Qualifiers.mof
 	$STAGEDIR/$OWBINDIR/owexecwql $ACLURL root/acltest 'delete from __Namespace where Name = "sub0"'
 
 }
@@ -1378,15 +1435,15 @@ TestMof()
 
 	CreateNameSpace testsuite
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:$OWIPC/ -n root/testsuite \
-			$TOPSRCDIR/schemas/cim28/CIM_Core28.mof || \
+			$TOP_SRCDIR/schemas/cim28/CIM_Core28.mof || \
 			ExitWithFail "MOF compiler test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:$OWIPC/ -n root/testsuite \
-		$TOPSRCDIR/test/acceptance/testfiles/wqlTest.mof || \
+		$TOP_SRCDIR/test/acceptance/testfiles/wqlTest.mof || \
 		ExitWithFail "MOF compiler test: MOF compiler exited with error"
 	mkdir $STAGEDIR/owmofc_test
 	$STAGEDIR/$OWBINDIR/owmofc -d $STAGEDIR/owmofc_test \
 		-c -n root/testsuite \
-		$TOPSRCDIR/schemas/cim28/CIM_Core28.mof || \
+		$TOP_SRCDIR/schemas/cim28/CIM_Core28.mof || \
 		ExitWithFail "MOF compiler test: owmofc -d exited with error."
 	rm -r $STAGEDIR/owmofc_test
 }
@@ -1403,22 +1460,22 @@ SetupInteropSchema()
 	echo "SetupInteropSchema"
 
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:30926/ -n root \
-			$TOPSRCDIR/schemas/cim28/CIM_Core28.mof || \
+			$TOP_SRCDIR/schemas/cim28/CIM_Core28.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:30926/ -n root \
-                        $TOPSRCDIR/schemas/cim28/CIM_Event28.mof || \
+                        $TOP_SRCDIR/schemas/cim28/CIM_Event28.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:30926/ -n root \
-                        $TOPSRCDIR/schemas/cim28/Physical28_Package.mof || \
+                        $TOP_SRCDIR/schemas/cim28/Physical28_Package.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:30926/ -n root \
-                        $TOPSRCDIR/schemas/cim28/System28_SystemElements.mof || \
+                        $TOP_SRCDIR/schemas/cim28/System28_SystemElements.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:$OWIPC/ -n root \
-			$TOPSRCDIR/schemas/cim28/CIM_Interop28.mof || \
+			$TOP_SRCDIR/schemas/cim28/CIM_Interop28.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:$OWIPC/ -n root \
-			$TOPSRCDIR/mof/OpenWBEM_Interop.mof || \
+			$TOP_SRCDIR/mof/OpenWBEM_Interop.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
 
 	# TODO: FIX THIS PROBLEM
@@ -1462,13 +1519,13 @@ TestEmbeddedCIMOM()
 	echo "Importing mof files for test"
 	DATADIR=`GetDataDir`
 	$STAGEDIR/$OWBINDIR/owmofc -d $DATADIR -n root/testsuite \
-		$TOPSRCDIR/test/c++providers/associator/OW_AssociatorTest.mof || \
+		$TOP_SRCDIR/test/c++providers/associator/OW_AssociatorTest.mof || \
 		ExitWithFail "TestSuite: MOF compiler exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -d $DATADIR -n root/testsuite \
-		$TOPSRCDIR/test/c++providers/instance/testinstance.mof || \
+		$TOP_SRCDIR/test/c++providers/instance/testinstance.mof || \
 		ExitWithFail "TestSuite: MOF compiler exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -d $DATADIR -n root/testsuite \
-		$TOPSRCDIR/test/acceptance/testfiles/testsuite.mof || \
+		$TOP_SRCDIR/test/acceptance/testfiles/testsuite.mof || \
 		ExitWithFail "TestSuite: MOF compiler exited with error."
 
 	OUT_FILE=testEmbedded.out
@@ -1518,9 +1575,9 @@ TestSecondaryInstanceProvider()
 	InstallProvider $BUILDDIR/test/c++providers/secondary_instance/libsecondaryinstancetest1.@lib_ext@
 	InstallProvider $BUILDDIR/test/c++providers/secondary_instance/libsecondaryinstancetest2.@lib_ext@
 	RestartDaemon
-	ImportMOF $TOPSRCDIR/test/c++providers/secondary_instance/SecondaryInstanceTest.mof
+	ImportMOF $TOP_SRCDIR/test/c++providers/secondary_instance/SecondaryInstanceTest.mof
 	ExecTestProg testSecondaryInstanceProviders "http://test1:pass1@localhost:30926"
-	RemoveMOF $TOPSRCDIR/test/c++providers/secondary_instance/SecondaryInstanceTest.mof
+	RemoveMOF $TOP_SRCDIR/test/c++providers/secondary_instance/SecondaryInstanceTest.mof
 }
 
 #############################################################################
@@ -1533,7 +1590,7 @@ TestSocketCat()
 
 	RestoreState
 
-	for inputFile in $TOPSRCDIR/test/acceptance/testfiles/socketCat/*.in; do
+	for inputFile in $TOP_SRCDIR/test/acceptance/testfiles/socketCat/*.in; do
 		if [ "x`basename $inputFile`" = "xMakefile.in" ]; then
 			continue
 		fi                
@@ -1821,152 +1878,290 @@ CoreCheck()
 Exit()
 {
 	CoreCheck
+
+	if [ ${CREATED_SECURE_STAGEDIR} = 1 ] || echo "${STAGEDIR}" | grep -q "^${SECURE_DIRECTORY}"; then
+		echo "######################################################################"
+		echo "                             READ THIS"
+		echo "######################################################################"
+		echo "A secure directory was created that you may delete if it is no longer"
+		echo " needed: ${STAGEDIR}"
+		if [ $1 != 0 ]; then
+			echo "You will probably want to find out why the acceptance test failed"
+			echo "before removing it."
+		fi
+		echo "######################################################################"
+
+	fi
 	exit $1
 }
 
+GetStageDir()
+{
+	STAGEDIR=${ACCEPTANCE_DIR}/stage
+	if IAmRoot; then
+		for testdir in ${STAGEDIR} ${SECURE_DIRECTORY:-}; do
+			cleaned_testdir=`CleanupDirectoryName ${testdir}`
+
+			if [ x${cleaned_testdir} = "x/" ]; then
+				echo "Security problem: Attempted use of '/' as a stagedir."
+				Exit 1
+			fi
+
+			if IsSecure ${cleaned_testdir}; then
+				STAGEDIR=${cleaned_testdir}
+			elif [ $? -eq 3 ]; then
+				echo "Making stage directory ${cleaned_testdir}"
+				mkdir ${cleaned_testdir}
+				chmod 755 ${cleaned_testdir}
+				STAGEDIR=${cleaned_testdir}
+				CREATED_SECURE_STAGEDIR=1
+			else
+				echo "Potential stage directory ${cleaned_testdir} is not secure." >&2
+			fi
+		done
+
+		if IsSecure ${STAGEDIR}; then
+			:
+		else
+			echo "Could not determine a secure stage directory." >&2
+			Exit 1
+		fi
+	fi
+}
+
+GetOSType()
+{
+	OSTYPE=`uname | tr '[a-z]' '[A-Z]'`
+}
+
+ChangeLimits()
+{
+	if [ ${OSTYPE} = "LINUX" ]; then
+		# allow core file dumps
+		ulimit -c unlimited
+		# turn on symlinks
+		OWSYMLINKS=1
+		# This causes glibc to abort() if we do anything funky with memory.
+		MALLOC_CHECK_=2
+		export MALLOC_CHECK_
+	fi
+
+	#on HP-UX the file descriptor limit is terrible.
+	if [ `ulimit -n` -lt 512 ]; then
+		ulimit -n 512
+	fi
+}
+
+
+
+RemoveDuplicateLibraryEntries()
+{
+	my_lib_path="$1"
+	good_lib_path=""
+
+	if [ x${my_lib_path:+set} = xset ]; then
+		duplicate_entries=" `echo \"${my_lib_path}\" | tr ':' '\n' | sort | uniq -d | tr '\n' ' '` "
+		marked_duplicates=""
+		for libdir in `echo "${my_lib_path}" | tr ':' ' '`; do
+			if [ "x${duplicate_entries% ${libdir} *}" != "x${duplicate_entries}" ]; then
+				# It's in the duplicate list... Check for a prior use.
+				if [ "x${marked_duplicates% ${libdir} *}" != "x${marked_duplicates}" ]; then
+					# Yup, we've already used it.
+					:
+				else
+					good_lib_path="${good_lib_path:-}${good_lib_path:+:}${libdir}"
+					marked_duplicates="${marked_duplicates} ${libdir} "
+				fi
+			else
+				good_lib_path="${good_lib_path:-}${good_lib_path:+:}${libdir}"
+			fi
+		done
+		echo "${good_lib_path}"
+	fi
+}
+
+
+GetLibraryPath()
+{
+	# Linux
+	my_lib_path="${LD_LIBRARY_PATH:-}"
+
+	# AIX
+	my_lib_path="${my_lib_path:-}${my_lib_path:+:}${LIBPATH:-}"
+
+	# HP-UX
+	my_lib_path="${my_lib_path:-}${my_lib_path:+:}${SHLIB_PATH:-}"
+
+	# OSX
+	my_lib_path="${my_lib_path:-}${my_lib_path:+:}${DYLD_LIBRARY_PATH:-}"
+
+	RemoveDuplicateLibraryEntries "${my_lib_path}"
+}
+
+SetLibraryPath()
+{
+	# Linux
+	LD_LIBRARY_PATH="$1"
+
+	# AIX
+	LIBPATH="$1"
+
+	# HP-UX
+	SHLIB_PATH="$1"
+
+	# OSX
+	DYLD_LIBRARY_PATH="$1"
+	export LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH
+}
+
+AddToLibraryPath()
+{
+	current_library_path=`GetLibraryPath`
+	SetLibraryPath "$1${current_library_path:+:}${current_library_path}"
+}
+
+# Check the security of the given file (or directory) for the current use
+IsSecure()
+{
+	file_insecure=0
+	old_library_path="`GetLibraryPath`"
+
+	# The check_security program requires the library path to be set properly.
+	AddToLibraryPath ${TOP_BUILDDIR}/src/common
+	for file in "$@"; do
+		if ${ACCEPTANCE_DIR}/check_security "${file}"; then
+			:
+		else
+			file_insecure=$?
+		fi
+	done
+	SetLibraryPath "${old_library_path}"
+	return ${file_insecure}
+}
 
 #############################################################################
 ## MAIN starts here.
 #############################################################################
+main()
+{
+	#disable OW_MemTracer so diffs will work.
+	OW_MEM_DISABLE=1
+	export OW_MEM_DISABLE
 
-#disable OW_MemTracer so diffs will work.
-OW_MEM_DISABLE=1
-export OW_MEM_DISABLE
+	if [ "z$OWLONGTEST" = "z1" ]; then
+		OWDIFFSUFFIX=".long"
+	fi
 
-if [ "z$OWLONGTEST" = "z1" ]; then
-	OWDIFFSUFFIX=".long"
-fi
+	if [ "$OWNODIFF" = "1" ]; then
+		NODIFF=1
+	else
+		NODIFF=0
+	fi
 
-if [ "$OWNODIFF" = "1" ]; then
-	NODIFF=1
-else
-	NODIFF=0
-fi
+	GetOSType
+	ChangeLimits
+	GetStageDir
 
-SYSNAME=`uname -s`
-if [ $SYSNAME = "Linux" ]; then
-	# allow core file dumps
-	ulimit -c unlimited
-	# turn on symlinks
-	OWSYMLINKS=1
-	# This causes glibc to abort() if we do anything funky with memory.
-	MALLOC_CHECK_=2
-	export MALLOC_CHECK_
-fi
+	if IAmRoot || [ ${CREATED_SECURE_STAGEDIR} = 1 ]; then
+		# Disable symlinks, as the files they are linking to may be considered
+		# insecure by the opwnebem security tests.
+		OWSYMLINKS=0
+	fi
 
-#on HP-UX the file descriptor limit is terrible.
-if [ `ulimit -n` -lt 512 ]; then
-	ulimit -n 512
-fi
+	RESULTDIR=$STAGEDIR/results
+	BUILDDIR=${TOP_BUILDDIR}
+	PIDFILE=$STAGEDIR/owcimomd.pid
+	UDS_PATH="${STAGEDIR}${OWLOCALSTATEDIR}/openwbem/owcimomduds"
+	OWIPC=`echo ${UDS_PATH} | sed -e s'~/~%2F~g'`
 
-STAGEDIR=`pwd`/stage
-RESULTDIR=$STAGEDIR/results
+	# This is how the test method provider knows where to store it's state.
+	OW_METHOD_PROVIDER_TEST_FILENAME=$STAGEDIR/ow_MethodProviderTest.txt
+	export OW_METHOD_PROVIDER_TEST_FILENAME
 
-BUILDDIR=$STAGEDIR/../../..
 
-PIDFILE=$STAGEDIR/owcimomd.pid
+	AddToLibraryPath "$STAGEDIR/$OWLIBDIR:$STAGEDIR/$OWLIBDIR/openwbem/services"
 
-OWIPC=`echo "$STAGEDIR/owcimomduds" | sed -e s'~/~%2F~g'`
+	RANDFILE=$STAGEDIR/ssl_randfile
+	export RANDFILE
 
-# This is how the test method provider knows where to store it's state.
-OW_METHOD_PROVIDER_TEST_FILENAME=$STAGEDIR/ow_MethodProviderTest.txt
-export OW_METHOD_PROVIDER_TEST_FILENAME
+	if [ -z "$MAKE" ]; then
+		if gmake -v >/dev/null 2>&1; then
+			MAKE=gmake
+		else
+			MAKE=make
+		fi
+	fi
 
-# Linux
-LD_LIBRARY_PATH="$STAGEDIR/$OWLIBDIR:$STAGEDIR/$OWLIBDIR/openwbem/services:$LD_LIBRARY_PATH"
+	Install
 
-# AIX
-LIBPATH="$LD_LIBRARY_PATH:$LIBPATH" 
+	cd $STAGEDIR
 
-# HP-UX
-SHLIB_PATH="$LD_LIBRARY_PATH:$SHLIB_PATH"
+	RestoreState
+	StartDaemon
 
-# OSX
-DYLD_LIBRARY_PATH="$LD_LIBRARY_PATH:$DYLD_LIBRARY_PATH"
+	if [ "z$OWLONGTEST" = "z1" ]; then
+		TestAuth
+		TestACL ''
+		TestACL 2
+		TestACLBasic
+	fi
 
-export LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH
+	TestMof
 
-RANDFILE=$STAGEDIR/ssl_randfile
-export RANDFILE
+	TestSuite "http://test1:pass1@localhost:30926" "testsuiteTCPXML.out" "testsuite28.out"
+	TestSuite "owbinary.wbem://test1:pass1@localhost:$OWIPC/ " "testsuiteUDSBIN.out" "testsuite28.out"
 
-if [ -z "$MAKE" ]; then
-  if gmake -v >/dev/null 2>&1; then
-    MAKE=gmake
-  else
-    MAKE=make
-  fi
-fi
+	TestCIMExceptions "http://test1:pass1@localhost:30926"
+	TestCIMExceptions "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 
-Install
+	TestNamespaces "http://test1:pass1@localhost:30926"
+	TestNamespaces "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 
-cd $STAGEDIR
+	TestMisc "http://test1:pass1@localhost:30926"
+	TestMisc "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 
-RestoreState
-StartDaemon
+	TestIndications
 
-if [ "z$OWLONGTEST" = "z1" ]; then
-  TestAuth
-  TestACL ''
-  TestACL 2
-  TestACLBasic
-fi
+	TestWQL
 
-TestMof
+	TestMultiReq
 
-#TestMofinstalltool
+	TestSecondaryInstanceProvider
 
-TestSuite "http://test1:pass1@localhost:30926" "testsuiteTCPXML.out" "testsuite28.out"
-TestSuite "owbinary.wbem://test1:pass1@localhost:$OWIPC/ " "testsuiteUDSBIN.out" "testsuite28.out"
+	RunATest testLargeRequest "http://test1:pass1@localhost:30926"
+	RunATest testLargeRequest "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 
-TestCIMExceptions "http://test1:pass1@localhost:30926"
-TestCIMExceptions "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+	TestSocketCat localhost 30926
+	TestSocketCat "${UDS_PATH}"
 
-TestNamespaces "http://test1:pass1@localhost:30926"
-TestNamespaces "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+	TestOOPProvider
 
-TestMisc "http://test1:pass1@localhost:30926"
-TestMisc "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+	if [ "z$OWLONGTEST" = "z1" ]; then
+		RunATest testClientTimeout "http://test1:pass1@localhost:30926"
+		RunATest testClientTimeout "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 
-TestIndications
+		TestHammer "http://test1:pass1@localhost:30926"
+		TestHammer "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+	fi
 
-TestWQL
+	StopDaemon
 
-TestMultiReq
+	TestEmbeddedCIMOM
 
-TestSecondaryInstanceProvider
+	if [ "z$OWLONGTEST" = "z1" ]; then
+		TestInstalledHeaders $STAGEDIR/$OWINCLUDEDIR/openwbem/
+		TestInstalledHeaders $STAGEDIR/$OWINCLUDEDIR/owbi1/
+		TestInstalledHeadersOneByOne $STAGEDIR/$OWINCLUDEDIR/openwbem/ OW_config.h
+		TestInstalledHeadersOneByOne $STAGEDIR/$OWINCLUDEDIR/owbi1/ OWBI1_config.h
+	fi
 
-RunATest testLargeRequest "http://test1:pass1@localhost:30926"
-RunATest testLargeRequest "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+	CoreCheck
 
-TestSocketCat localhost 30926
-TestSocketCat "$STAGEDIR/owcimomduds"
+	Exit 0
 
-TestOOPProvider
-
-if [ "z$OWLONGTEST" = "z1" ]; then
-	RunATest testClientTimeout "http://test1:pass1@localhost:30926"
-	RunATest testClientTimeout "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
-
-	TestHammer "http://test1:pass1@localhost:30926"
-	TestHammer "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
-fi
-
-StopDaemon
-
-TestEmbeddedCIMOM
-
-if [ "z$OWLONGTEST" = "z1" ]; then
-  TestInstalledHeaders $STAGEDIR/$OWINCLUDEDIR/openwbem/
-  TestInstalledHeaders $STAGEDIR/$OWINCLUDEDIR/owbi1/
-  TestInstalledHeadersOneByOne $STAGEDIR/$OWINCLUDEDIR/openwbem/ OW_config.h
-  TestInstalledHeadersOneByOne $STAGEDIR/$OWINCLUDEDIR/owbi1/ OWBI1_config.h
-fi
-
-CoreCheck
-
-Exit 0
-
+}
 #############################################################################
 # end of main
 #############################################################################
 
+main "$@"
