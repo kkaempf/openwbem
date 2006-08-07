@@ -283,7 +283,6 @@ SwitchToLinks()
 		rm -f $i
 		BASENAME=`basename $i`
 		FNAME=`find $TOP_SRCDIR -name $BASENAME -perm -0100 ! -type d ! -type l`
-		FNAME=$STAGEDIR/$FNAME
 		echo "Creating symbolic link: $i -> $FNAME"
 		ln -sf $FNAME $i || ExitWithFail "Link creation failed.  Check that you don't have the remants of a failed '$MAKE distcheck'"
 	done
