@@ -74,7 +74,6 @@ void OW_InetAddressTestCases::testIPv6_localaddress()
 	unitAssertNoThrow(SocketAddress::getByName("::ffff:127.0.0.1"));
 	unitAssertNoThrow(SocketAddress::getByName("0:0:0:0:0:ffff:127.0.0.1"));
 	unitAssertNoThrow(SocketAddress::getByName("0:0:0:0:0:ffff:7F00:0001"));
-	unitAssertNoThrow(SocketAddress::getByName("0:0:0:0:0:ffff:7F00:0001"));
 	// Prove that the above is actually doing something that really does throw.
 	unitAssertThrows(SocketAddress::getByName("::0::1")); // error: only one :: is allowed.
 	unitAssertThrows(SocketAddress::getByName("0:0:0:0:0:0:0:0:0")); // error: too many entries
