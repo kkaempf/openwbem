@@ -33,7 +33,7 @@
  * @author Dan Nuffer
  */
 
-
+#include "OW_config.h"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_InetAddressTestCases.hpp"
@@ -57,13 +57,39 @@ void OW_InetAddressTestCases::testSomething()
 	//unitAssert(addrName.indexOf('.') != String::npos);
 }
 
+void OW_InetAddressTestCases::testIPv4_localaddress()
+{
+	unitAssertNoThrow(SocketAddress::getByName("127.0.0.1"));
+	unitAssertThrows(SocketAddress::getByName("127.0.0.1.3")); // error: too many entries
+}
+
+#ifdef OW_HAVE_IPV6
+void OW_InetAddressTestCases::testIPv6_localaddress()
+{
+	// These are local IPv6 addresses (all mapping to 127.0.0.1) and
+	// should not cause any host resolution errors.
+	unitAssertNoThrow(SocketAddress::getByName("::1"));
+	unitAssertNoThrow(SocketAddress::getByName("0::1"));
+	unitAssertNoThrow(SocketAddress::getByName("0:0:0:0:0:0:0:1"));
+	unitAssertNoThrow(SocketAddress::getByName("::ffff:127.0.0.1"));
+	unitAssertNoThrow(SocketAddress::getByName("0:0:0:0:0:ffff:127.0.0.1"));
+	unitAssertNoThrow(SocketAddress::getByName("0:0:0:0:0:ffff:7F00:0001"));
+	unitAssertNoThrow(SocketAddress::getByName("0:0:0:0:0:ffff:7F00:0001"));
+	// Prove that the above is actually doing something that really does throw.
+	unitAssertThrows(SocketAddress::getByName("::0::1")); // error: only one :: is allowed.
+	unitAssertThrows(SocketAddress::getByName("0:0:0:0:0:0:0:0:0")); // error: too many entries
+}
+#endif
+
 Test* OW_InetAddressTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_SocketAddress");
 
-	testSuite->addTest (new TestCaller <OW_InetAddressTestCases> 
-			("testSomething", 
-			&OW_InetAddressTestCases::testSomething));
+	ADD_TEST_TO_SUITE(OW_InetAddressTestCases, testSomething);
+	ADD_TEST_TO_SUITE(OW_InetAddressTestCases, testIPv4_localaddress);
+#ifdef OW_HAVE_IPV6
+	ADD_TEST_TO_SUITE(OW_InetAddressTestCases, testIPv6_localaddress);
+#endif
 
 	return testSuite;
 }

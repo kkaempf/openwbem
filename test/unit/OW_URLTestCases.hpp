@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -28,21 +28,16 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-/**
- * @author Bart Whiteley
- * @author Dan Nuffer
- */
+#ifndef OW_OW_URL_TEST_CASES_HPP_
+#define OW_OW_URL_TEST_CASES_HPP_
 
-
-#ifndef OW_InetAddress_TEST_CASES_HPP_
-#define OW_InetAddress_TEST_CASES_HPP_
-
+#include "OW_config.h"
 #include "TestCase.hpp"
 
-class OW_InetAddressTestCases : public TestCase
+class OW_URLTestCases : public TestCase
 {
 public:
-	OW_InetAddressTestCases( const char* name )
+	OW_URLTestCases( const char* name )
 		: TestCase( name ) {}
 
 	void setUp();
@@ -51,9 +46,11 @@ public:
 
 private:
 	// test methods
-	void testSomething();
-	void testIPv4_localaddress();
-	void testIPv6_localaddress();
+	void testValidIPv4();
+	void testValidIPv6();
+	void testInvalidIPv4();
+	void testInvalidIPv6();
+	void testAddressEquality();
 };
 
 #endif
