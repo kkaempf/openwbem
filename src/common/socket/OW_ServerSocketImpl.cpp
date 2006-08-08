@@ -55,6 +55,8 @@ extern "C"
 #include <netdb.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#define INVALID_SOCKET -1
 #endif
 }
 
@@ -64,7 +66,7 @@ namespace OW_NAMESPACE
 {
 //////////////////////////////////////////////////////////////////////////////
 ServerSocketImpl::ServerSocketImpl(SSLServerCtxRef sslCtx)
-	: m_sockfd(-1)
+	: m_sockfd(INVALID_SOCKET)
 	, m_localAddress(SocketAddress::allocEmptyAddress(SocketAddress::INET))
 	, m_isActive(false)
 	, m_sslCtx(sslCtx)
@@ -83,7 +85,7 @@ ServerSocketImpl::ServerSocketImpl(SSLServerCtxRef sslCtx)
 
 //////////////////////////////////////////////////////////////////////////////
 ServerSocketImpl::ServerSocketImpl(SocketFlags::ESSLFlag isSSL)
-	: m_sockfd(-1)
+	: m_sockfd(INVALID_SOCKET)
 	, m_localAddress(SocketAddress::allocEmptyAddress(SocketAddress::INET))
 	, m_isActive(false)
 	, m_isSSL(isSSL)
@@ -148,14 +150,40 @@ ServerSocketImpl::doListen(UInt16 port,
 	int queueSize, const String& listenAddr,
 	SocketFlags::EReuseAddrFlag reuseAddr)
 {
+	SocketHandle_t sock_ipv6 = INVALID_SOCKET;
 	m_localAddress = SocketAddress::allocEmptyAddress(SocketAddress::INET);
 	close();
-	if ((m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
+
+#ifdef OW_HAVE_IPV6
+	// This will try to use IPv6 (AF_INET6).  If it is not supported, it will
+	// fall back to the normal IPv4 (AF_INET).
+	sock_ipv6 = ::socket(AF_INET6, SOCK_STREAM, 0);
+	if (sock_ipv6 == INVALID_SOCKET)
+	{
+		switch(errno)
+		{
+		case EPROTONOSUPPORT:
+		case EAFNOSUPPORT:
+		case EPFNOSUPPORT:
+		case EINVAL:
+			m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0);
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+	    m_sockfd = sock_ipv6;
+	}
+#else
+	m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0);
+#endif
+	if (m_sockfd  == INVALID_SOCKET)
 	{
 		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
 			System::lastErrorMsg(true)).c_str());
 	}
-
 	// Set listen socket to nonblocking
 	unsigned long cmdArg = 1;
 	if (::ioctlsocket(m_sockfd, FIONBIO, &cmdArg) == SOCKET_ERROR)
@@ -170,19 +198,39 @@ ServerSocketImpl::doListen(UInt16 port,
 		::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR,
 			(const char*)&reuse, sizeof(reuse));
 	}
-		
-	InetSocketAddress_t inetAddr;
-	inetAddr.sin_family = AF_INET;
+
+	if ( sock_ipv6 == INVALID_SOCKET )
+	{
+		// IPv4
+		ServerSocketImpl::doListenIPv4( port, queueSize, listenAddr, reuseAddr);
+	}
+#ifdef OW_HAVE_IPV6
+	else
+	{
+		// IPv6
+		ServerSocketImpl::doListenIPv6( port, queueSize, listenAddr, reuseAddr);
+	}
+#endif
+}
+///////////////////////////////////////////////////////////////////////////////////////
+void
+ServerSocketImpl::doListenIPv4(UInt16 port, int queueSize, const String& listenAddr )
+{
+	//	use IPv4 protocol
+	InetSocketAddress_t 	inetAddr;
+	memset(&inetAddr, 0, sizeof(inetAddr));
+	reinterpret_cast<sockaddr_in*>(&inetAddr)->sin_family  =  AF_INET;
+	reinterpret_cast<sockaddr_in*>(&inetAddr)->sin_port    =  hton16(port);
 	if (listenAddr == SocketAddress::ALL_LOCAL_ADDRESSES)
 	{
-		inetAddr.sin_addr.s_addr = hton32(INADDR_ANY);
+		reinterpret_cast<sockaddr_in*>(&inetAddr)->sin_addr.s_addr = hton32(INADDR_ANY);
 	}
 	else
 	{
 		SocketAddress addr = SocketAddress::getByName(listenAddr);
-		inetAddr.sin_addr.s_addr = addr.getInetAddress()->sin_addr.s_addr;
+		reinterpret_cast<sockaddr_in*>(&inetAddr)->sin_addr.s_addr = 
+		    reinterpret_cast<const sockaddr_in*>(addr.getInetAddress())->sin_addr.s_addr;
 	}
-	inetAddr.sin_port = hton16(port);
 	if (::bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)
 	{
 		close();
@@ -198,6 +246,57 @@ ServerSocketImpl::doListen(UInt16 port,
 	fillAddrParms();
 	m_isActive = true;
 }
+///////////////////////////////////////////////////////////////////////////////////////
+#ifdef OW_HAVE_IPV6
+void
+ServerSocketImpl::doListenIPv6(UInt16 port, int queueSize, const String& listenAddr)
+{
+	//	use IPv6 protocol
+	InetSocketAddress_t 	inetAddr;
+	memset(&inetAddr, 0, sizeof(inetAddr));
+	reinterpret_cast<sockaddr_in6*>(&inetAddr)->sin6_family =  AF_INET6;
+	reinterpret_cast<sockaddr_in6*>(&inetAddr)->sin6_port   =  hton16(port);
+	if (listenAddr == SocketAddress::ALL_LOCAL_ADDRESSES)
+	{
+		// copy IPv6 address any
+		memcpy(reinterpret_cast<sockaddr_in6*>(&inetAddr)->sin6_addr.s6_addr, &in6addr_any, sizeof(struct in6_addr));
+	}
+	else
+	{
+		// create network address structure for IPv6 protocol
+		if(!inet_pton(AF_INET6, listenAddr.c_str(), (void*)&reinterpret_cast<sockaddr_in6*>(&inetAddr)->sin6_addr))
+		{
+			addrinfo *addrinfos;
+			addrinfo hints;
+			memset(&hints, 0, sizeof(hints));
+			hints.ai_socktype = SOCK_STREAM;
+			hints.ai_family   = AF_INET6;
+			if(getaddrinfo(listenAddr.c_str(), NULL, &hints, &addrinfos))
+			{
+				close();
+				OW_THROW(SocketException, Format("ServerSocketImpl:: doListen(): getaddrinfo() %1",
+					System::lastErrorMsg(true)).c_str());
+			}
+			memcpy(reinterpret_cast<sockaddr_in6*>(&inetAddr), addrinfos->ai_addr, addrinfos->ai_addrlen);
+			freeaddrinfo(addrinfos);
+		}
+	}
+	if (::bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)
+	{
+		close();
+		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
+			System::lastErrorMsg(true)).c_str());
+	}
+	if (::listen(m_sockfd, queueSize) == -1)
+	{
+		close();
+		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
+			System::lastErrorMsg(true)).c_str());
+	}
+	fillAddrParms();
+	m_isActive = true;
+}
+#endif // OW_HAVE_IPV6
 
 namespace
 {
@@ -261,7 +360,7 @@ ServerSocketImpl::accept(int timeoutSecs)
 
 	SOCKET clntfd;
 	socklen_t clntlen;
-	struct sockaddr_in clntInetAddr;
+	InetSocketAddress_t clntInetAddr;
 	HANDLE events[2];
 	int cc;
 
@@ -330,9 +429,45 @@ ServerSocketImpl::doListen(UInt16 port,
 	int queueSize, const String& listenAddr,
 	SocketFlags::EReuseAddrFlag reuseAddr)
 {
+	SocketHandle_t sock_ipv6 = INVALID_SOCKET;
 	m_localAddress = SocketAddress::allocEmptyAddress(SocketAddress::INET);
 	close();
-	if ((m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1)
+
+#ifdef OW_HAVE_IPV6
+	// This will try to use IPv6 (AF_INET6).  If it is not supported, it will
+	// fall back to the normal IPv4 (AF_INET).
+	sock_ipv6 = ::socket(AF_INET6, SOCK_STREAM, 0);
+	if (sock_ipv6 == INVALID_SOCKET)
+	{
+		switch(errno)
+		{
+		case EPROTONOSUPPORT:
+		case EAFNOSUPPORT:
+		case EPFNOSUPPORT:
+		case EINVAL:
+			// open socket for IPv4 protocol
+			m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0);
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		m_sockfd = sock_ipv6;
+#ifdef IPV6_V6ONLY
+		int ipv6_proto = IPPROTO_IPV6;
+#ifdef SOL_IP
+		ipv6_proto = SOL_IP;
+#endif
+		int ipv6_only=0;
+		::setsockopt(m_sockfd, ipv6_proto, IPV6_V6ONLY, &ipv6_only, sizeof(ipv6_only));
+#endif
+	}
+#else
+	m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0);
+#endif
+	if (m_sockfd  == INVALID_SOCKET)
 	{
 		OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::doListen(): socket()");
 	}
@@ -360,19 +495,38 @@ ServerSocketImpl::doListen(UInt16 port,
 		int reuse = 1;
 		::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
 	}
-		
-	InetSocketAddress_t inetAddr;
-	inetAddr.sin_family = AF_INET;
+	if ( sock_ipv6 == INVALID_SOCKET)
+	{
+		// IPv4
+		ServerSocketImpl::doListenIPv4( port, queueSize, listenAddr );
+	}
+#ifdef OW_HAVE_IPV6
+	else
+	{	// IPv6
+		ServerSocketImpl::doListenIPv6( port, queueSize, listenAddr );
+	}
+#endif
+}
+
+///////////////////////////////////////////////////////
+void
+ServerSocketImpl::doListenIPv4(UInt16 port, int queueSize, const String& listenAddr )
+{
+	//	use IPv4 protocol
+	InetSocketAddress_t 	inetAddr;
+	memset(&inetAddr, 0, sizeof(inetAddr));
+	reinterpret_cast<sockaddr_in*>(&inetAddr)->sin_family  =  AF_INET;
+	reinterpret_cast<sockaddr_in*>(&inetAddr)->sin_port    =  hton16(port);
 	if (listenAddr == SocketAddress::ALL_LOCAL_ADDRESSES)
 	{
-		inetAddr.sin_addr.s_addr = hton32(INADDR_ANY);
+		reinterpret_cast<sockaddr_in*>(&inetAddr)->sin_addr.s_addr = hton32(INADDR_ANY);
 	}
 	else
 	{
 		SocketAddress addr = SocketAddress::getByName(listenAddr);
-		inetAddr.sin_addr.s_addr = addr.getInetAddress()->sin_addr.s_addr;
+		reinterpret_cast<sockaddr_in*>(&inetAddr)->sin_addr.s_addr = 
+		    reinterpret_cast<const sockaddr_in*>(addr.getInetAddress())->sin_addr.s_addr;
 	}
-	inetAddr.sin_port = hton16(port);
 	if (::bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)
 	{
 		close();
@@ -387,13 +541,62 @@ ServerSocketImpl::doListen(UInt16 port,
 	m_isActive = true;
 }
 
+#ifdef OW_HAVE_IPV6
 //////////////////////////////////////////////////////////////////////////////
 void
-ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr)
+ServerSocketImpl::doListenIPv6(UInt16 port, int queueSize, const String& listenAddr)
+{
+	//	use IPv6 protocol
+	InetSocketAddress_t 	inetAddr;
+	memset(&inetAddr, 0, sizeof(inetAddr));
+	reinterpret_cast<sockaddr_in6*>(&inetAddr)->sin6_family =  AF_INET6;
+	reinterpret_cast<sockaddr_in6*>(&inetAddr)->sin6_port   =  hton16(port);
+	if (listenAddr == SocketAddress::ALL_LOCAL_ADDRESSES)
+	{
+		// copy IPv6 address any
+		memcpy(reinterpret_cast<sockaddr_in6*>(&inetAddr)->sin6_addr.s6_addr, &in6addr_any, sizeof(struct in6_addr));
+	}
+	else
+	{
+		// create network address structure for IPv6 protocol
+		if(!inet_pton(AF_INET6, listenAddr.c_str(), (void*)&reinterpret_cast<sockaddr_in6*>(&inetAddr)->sin6_addr))
+		{
+			addrinfo *addrinfos;
+			addrinfo hints;
+			memset(&hints, 0, sizeof(hints));
+			hints.ai_socktype = SOCK_STREAM;
+			hints.ai_family   = AF_INET6;
+			if(getaddrinfo(listenAddr.c_str(), NULL, &hints, &addrinfos))
+			{
+				close();
+				OW_THROW_ERRNO_MSG(SocketException,"ServerSocketImpl::doListen(): getaddrinfo()");
+			}
+			memcpy(reinterpret_cast<sockaddr_in6*>(&inetAddr), addrinfos->ai_addr, addrinfos->ai_addrlen);
+			freeaddrinfo(addrinfos);
+		}
+	}
+	if (::bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)
+	{
+		close();
+		OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::doListen(): bind");
+	}
+	if (::listen(m_sockfd, queueSize) == -1)
+	{
+		close();
+		OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::doListen(): listen");
+	}
+	fillAddrParms();
+	m_isActive = true;
+}
+#endif
+//////////////////////////////////////////////////////////////////////////////
+void
+ServerSocketImpl::doListenUDS(const String& filename, int queueSize, bool reuseAddr)
 {
 	m_localAddress = SocketAddress::getUDS(filename);
 	close();
-	if ((m_sockfd = ::socket(PF_UNIX,SOCK_STREAM, 0)) == -1)
+	m_sockfd = ::socket(PF_UNIX,SOCK_STREAM, 0);
+	if (m_sockfd == INVALID_SOCKET)
 	{
 		OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::doListen(): socket()");
 	}
@@ -409,7 +612,7 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 	// pages 422-424.
 	int fdflags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, fdflags | O_NONBLOCK);
-	
+
 	if (reuseAddr)
 	{
 		// Let the kernel reuse the port without waiting for it to time out.
@@ -443,7 +646,7 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 					filename).c_str());
 		}
 	}
-		
+
 	if (::bind(m_sockfd, m_localAddress.getNativeForm(),
 		m_localAddress.getNativeFormSize()) == -1)
 	{
@@ -486,7 +689,7 @@ ServerSocketImpl::accept(const Timeout& timeout)
 	{
 		int clntfd;
 		socklen_t clntlen;
-		struct sockaddr_in clntInetAddr;
+		InetSocketAddress_t clntInetAddr;
 		struct sockaddr_un clntUnixAddr;
 		struct sockaddr* pSA(0);
 		if (m_localAddress.getType() == SocketAddress::INET)
@@ -604,14 +807,17 @@ ServerSocketImpl::fillAddrParms()
 	socklen_t len;
 	if (m_localAddress.getType() == SocketAddress::INET)
 	{
-		struct sockaddr_in addr;
-		memset(&addr, 0, sizeof(addr));
-		len = sizeof(addr);
-		if (getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
+		// get information of local address for IPv6 protocol
+		struct sockaddr *p_addr;
+		InetSocketAddress_t ss;
+		memset(&ss, 0, sizeof(ss));
+		len = sizeof(ss);
+		p_addr = reinterpret_cast<struct sockaddr*>(&ss);
+		if (getsockname(m_sockfd, p_addr, &len) == -1)
 		{
-			OW_THROW_ERRNO_MSG(SocketException, "SocketImpl::fillAddrParms(): getsockname");
+	    	OW_THROW_ERRNO_MSG(SocketException, "SocketImpl::fillAddrParms(): getsockname");
 		}
-		m_localAddress.assignFromNativeForm(&addr, len);
+		m_localAddress.assignFromNativeForm(&ss, len);
 	}
 #if !defined(OW_WIN32)
 	else if (m_localAddress.getType() == SocketAddress::UDS)

@@ -62,13 +62,16 @@ struct OW_COMMON_API URL
 	 * An Acceptable URL for this class is defined as follows:
 	 * [scheme"://"][[<principal>][":"<credential>]"@"]<host>[":"<port>]["/"<namespace name>["/:"<model path>]]
 	 * The only required element is <host>
-	 * 
+	 *
+	 * If <host> is an IPv6 address, it must be contained within '[' and ']', as
+	 * per rfc 2732.
+	 *
 	 * Standard WBEM schemes are: cimxml.wbem, cimxml.wbems, http, https.
 	 * OW specific WBEM schemes are: owbinary.wbem, owbinary.wbems
-	 * 
+	 *
 	 * A port may be a number to indicate a TCP port, or it may be the special
 	 *  value owipc which indicates the Unix Domain Socket for the system.
-	 * 
+	 *
 	 * @param sUrl The URL such as "https://jdd:test@myhost.com:5989/interop/:CIM_Namespace.Name=unknown,CreationClassName=CIM_ComputerSystem"
 	 * @throws MalformedURLException
 	 */
@@ -80,6 +83,7 @@ struct OW_COMMON_API URL
 	String port;
 	String namespaceName;
 	String modelPath;
+	bool ipv6Address;
 	/**
 	 * Return a string based on the data in the member variables.
 	 */

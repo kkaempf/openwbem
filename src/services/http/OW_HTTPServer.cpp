@@ -671,8 +671,10 @@ HTTPServer::start()
 					1000, curAddress,
 					m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
 				m_options.httpPort = m_pHttpServerSocket->getLocalAddress().getPort();
+
 				OW_LOG_INFO(lgr, Format("HTTP server listening on: %1:%2",
-				   curAddress, m_options.httpPort));
+				    m_pHttpServerSocket->getLocalAddress().getAddress(), m_options.httpPort));
+
 				String theURL = "http://" + SocketAddress::getAnyLocalHost().getName()
 					+ ":" + String(m_options.httpPort) + "/";
 				addURL(URL(theURL));
@@ -763,10 +765,12 @@ HTTPServer::start()
 					m_pHttpsServerSocket->doListen(lport,
 						1000, curAddress,
 						m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
-					m_options.httpsPort =
-					   m_pHttpsServerSocket->getLocalAddress().getPort();
+					SocketAddress addr = m_pHttpsServerSocket->getLocalAddress();
+					String listenAddress = addr.getAddress().toString();
+					m_options.httpsPort = addr.getPort();
 					OW_LOG_INFO(lgr, Format("HTTPS server listening on: %1:%2",
-					   curAddress, m_options.httpsPort));
+					   addr.getAddress(), m_options.httpsPort));
+
 					String theURL = "https://" +
 						SocketAddress::getAnyLocalHost().getName() + ":" +
 						String(m_options.httpsPort) + "/";

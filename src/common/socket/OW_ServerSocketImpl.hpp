@@ -69,17 +69,23 @@ public:
 	SocketHandle_t getfd() const { return m_sockfd; }
 
 
-	// this is deprecated, but we don't mark it so here because it's and impl. 
-	void doListen(UInt16 port, SocketFlags::ESSLFlag isSSL, int queueSize=10, 
-		const String& listenAddr = SocketAddress::ALL_LOCAL_ADDRESSES, 
-		SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR); 
+	// this is deprecated, but we don't mark it so here because it's and impl.
+	void doListen(UInt16 port, SocketFlags::ESSLFlag isSSL, int queueSize=10,
+		const String& listenAddr = SocketAddress::ALL_LOCAL_ADDRESSES,
+		SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR);
 
-	void doListen(UInt16 port, int queueSize=10, 
-		const String& listenAddr = SocketAddress::ALL_LOCAL_ADDRESSES, 
+	// listen for IPv4 protocol
+	void doListenIPv4(UInt16 port, int queueSize, const String& listenAddr);
+#ifdef OW_HAVE_IPV6
+	// listen for IPv6 protocol
+	void doListenIPv6(UInt16 port, int queueSize, const String& listenAddr);
+#endif
+	void doListen(UInt16 port, int queueSize=10,
+		const String& listenAddr = SocketAddress::ALL_LOCAL_ADDRESSES,
 		SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR);
 
 #ifndef OW_WIN32
-	void doListen(const String& filename, int queueSize=10, 
+	void doListenUDS(const String& filename, int queueSize=10,
 		bool reuseAddr = true);
 #endif
 

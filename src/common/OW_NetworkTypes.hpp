@@ -72,7 +72,11 @@ namespace OW_NAMESPACE
 // Platform specific socket address type
 typedef sockaddr		SocketAddress_t;
 // Platform specific inet socket address type
+#ifdef OW_HAVE_IPV6
+typedef sockaddr_storage	InetSocketAddress_t;
+#else
 typedef sockaddr_in		InetSocketAddress_t;
+#endif
 
 #if !defined(OW_WIN32)
 	// Platform specific unix socket address type

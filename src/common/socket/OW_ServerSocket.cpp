@@ -92,7 +92,7 @@ ServerSocket::doListen(UInt16 port, int queueSize,
 void 
 ServerSocket::doListen(const String& filename, int queueSize, bool reuseAddr)
 {
-	m_impl->doListen(filename, queueSize, reuseAddr);
+	m_impl->doListenUDS(filename, queueSize, reuseAddr);
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////

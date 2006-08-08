@@ -117,6 +117,20 @@ Mutex gethostbynameMutex;
 SocketAddress
 SocketAddress::getByName(const String& hostName, UInt16 port)
 {
+#ifdef OW_HAVE_IPV6
+	// create SocketAddress structure for IPV6 protocol
+	InetSocketAddress_t sa;
+	memset(&sa, 0, sizeof(sa));
+	if( inet_pton(AF_INET6, hostName.c_str(), (void*)&(reinterpret_cast<sockaddr_in6*>(&sa)->sin6_addr)))
+	{
+		reinterpret_cast<sockaddr_in6*>(&sa)->sin6_family = AF_INET6;
+		reinterpret_cast<sockaddr_in6*>(&sa)->sin6_port   = htons(port);
+		SocketAddress p = SocketAddress(sa);
+		p.m_type = INET;
+		p.m_name = hostName;
+		return p;
+	}
+#endif
 #if defined(OW_HAVE_GETHOSTBYNAME_R) && defined(OW_GETHOSTBYNAME_R_ARGUMENTS)
 	hostent hostbuf;
 	hostent* host = &hostbuf;
@@ -124,7 +138,7 @@ SocketAddress::getByName(const String& hostName, UInt16 port)
 	char buf[2048];
 	int h_err = 0;
 	if (gethostbyname_r(hostName.c_str(), &hostbuf, buf, sizeof(buf),
-						&host, &h_err) == -1)
+		&host, &h_err) == -1)
 	{
 		host = NULL;
 	}
@@ -185,9 +199,9 @@ SocketAddress::getFromNativeForm( const InetAddress_t& nativeForm,
 {
 	InetSocketAddress_t addr;
 	memset(&addr, 0, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = hton16(nativePort);
-	addr.sin_addr = nativeForm;
+        reinterpret_cast<sockaddr_in*>(&addr)->sin_family = AF_INET;
+        reinterpret_cast<sockaddr_in*>(&addr)->sin_port = hton16(nativePort);
+        reinterpret_cast<sockaddr_in*>(&addr)->sin_addr = nativeForm;
 	SocketAddress p = SocketAddress(addr);
 	p.m_type = INET;
 	p.m_name = hostName;
@@ -198,7 +212,7 @@ const SocketAddress_t* SocketAddress::getNativeForm() const
 {
 	if (m_type == INET)
 	{
-		return reinterpret_cast<const sockaddr*>(&m_inetNativeAddress);
+	    return reinterpret_cast<const sockaddr*>(&m_inetNativeAddress);
 	}
 
 #if !defined(OW_WIN32)
@@ -286,7 +300,15 @@ void SocketAddress::assignFromNativeForm(
 {
 	m_type = INET;
 	memcpy(&m_inetNativeAddress, address, sizeof(m_inetNativeAddress));
-	m_address = inet_ntoa(m_inetNativeAddress.sin_addr);
+        if ( reinterpret_cast<sockaddr*>(&m_inetNativeAddress)->sa_family==AF_INET6)
+	{
+		char buf[INET6_ADDRSTRLEN];
+		m_address = inet_ntop(AF_INET6, &(reinterpret_cast<sockaddr_in6*>(&m_inetNativeAddress)->sin6_addr), buf, sizeof(buf)-1);
+	}
+	else
+	{
+	    m_address = inet_ntoa( reinterpret_cast<sockaddr_in*>(&m_inetNativeAddress)->sin_addr);
+	}
 	m_nativeSize = sizeof(m_inetNativeAddress);
 }
 
@@ -307,7 +329,15 @@ void SocketAddress::assignFromNativeForm(
 UInt16 SocketAddress::getPort() const
 {
 	OW_ASSERT(m_type == INET);
-	return ntoh16(m_inetNativeAddress.sin_port);
+
+        if ( reinterpret_cast<const sockaddr*>(&m_inetNativeAddress)->sa_family==AF_INET6)
+	{
+	    return ntoh16(reinterpret_cast<const sockaddr_in6*>(&m_inetNativeAddress)->sin6_port);
+	}
+	else
+	{
+	    return ntoh16(reinterpret_cast<const sockaddr_in*>(&m_inetNativeAddress)->sin_port);
+	}
 }
 
 #if !defined(OW_WIN32)
@@ -325,6 +355,7 @@ SocketAddress::SocketAddress(const InetSocketAddress_t& nativeForm)
 {
 	assignFromNativeForm(&nativeForm, sizeof(nativeForm));
 }
+
 //////////////////////////////////////////////////////////////////////////////
 const String SocketAddress::getName() const
 {
@@ -345,9 +376,9 @@ SocketAddress SocketAddress::allocEmptyAddress(AddressType type)
 {
 	if (type == INET)
 	{
-		sockaddr_in addr;
+		InetSocketAddress_t addr;
 		memset(&addr, 0, sizeof(addr));
-		addr.sin_family = AF_INET;
+		reinterpret_cast<sockaddr_in*>(&addr)->sin_family = AF_INET;
 		return SocketAddress(SocketAddress::getFromNativeForm(addr));
 	}
 #if !defined(OW_WIN32)

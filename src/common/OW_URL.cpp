@@ -37,6 +37,8 @@
 #include "OW_URL.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_ExceptionIds.hpp"
+#include <algorithm>
+#include <functional>
 
 namespace OW_NAMESPACE
 {
@@ -63,7 +65,19 @@ URL::toString() const
 		}
 		retval += '@';
 	}
+#ifdef OW_HAVE_IPV6
+	if( ipv6Address )
+	{
+		retval += '[';
+	}
+#endif
 	retval += host;
+#ifdef OW_HAVE_IPV6
+	if( ipv6Address )
+	{
+		retval += ']';
+	}
+#endif
 	if (!port.empty())
 	{
 		retval += ":";
@@ -83,12 +97,14 @@ URL::toString() const
 	return retval.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
-URL::URL() // default for all data members is okay.
+URL::URL() // default for all data members except ipv6Address is okay.
+	: ipv6Address(false)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-URL::URL(const String& sUrl) // default for all data members is okay.
+URL::URL(const String& sUrl) // default for all data members but ipv6Address is okay.
+	: ipv6Address(false)
 {
 	String sURL = sUrl;
 	sURL.trim();
@@ -139,7 +155,30 @@ URL::URL(const String& sUrl) // default for all data members is okay.
 	{
 		OW_THROW(MalformedURLException, String("Invalid URL: " + sUrl).c_str());
 	}
-	size_t colonIdx = hostPort.indexOf( ':' );
+
+	size_t colonIdx = String::npos;
+#ifdef OW_HAVE_IPV6
+	if( hostPort.startsWith('[') ) // as per rfc 2732
+	{
+		size_t closeBracket = hostPort.indexOf(']');
+		if( closeBracket != String::npos )
+		{
+			ipv6Address = true;
+			colonIdx = hostPort.indexOf(':', closeBracket);
+		}
+		else
+		{
+			OW_THROW(MalformedURLException, String("Invalid URL (missing ']'): " + sUrl).c_str());
+		}
+	}
+	else
+	{
+		colonIdx = hostPort.indexOf( ':' );
+	}
+#else
+	colonIdx = hostPort.indexOf( ':' );
+#endif
+
 	if ( colonIdx != String::npos )
 	{
 		host = hostPort.substring( 0, colonIdx );
@@ -149,6 +188,15 @@ URL::URL(const String& sUrl) // default for all data members is okay.
 	{
 		host = hostPort;
 	}
+
+	#ifdef OW_HAVE_IPV6
+		if( ipv6Address && host.startsWith('[') )
+		{
+			// Store the host without the '[' and ']'
+			host = host.substring(1, host.length() - 2);
+		}
+#endif
+
 	if (host.empty())
 	{
 		OW_THROW(MalformedURLException, String("Invalid URL: " + sUrl).c_str());

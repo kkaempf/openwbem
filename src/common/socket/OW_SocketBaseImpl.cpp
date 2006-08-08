@@ -197,12 +197,27 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 	m_inout.clear();
 	OW_ASSERT(m_sockfd == -1);
 	OW_ASSERT(addr.getType() == SocketAddress::INET || addr.getType() == SocketAddress::UDS);
-	AutoDescriptor sockfd(::socket(addr.getType() == SocketAddress::INET ? AF_INET : PF_UNIX, SOCK_STREAM, 0));
+
+	int domain_type = PF_UNIX;
+	if( addr.getType() == SocketAddress::INET )
+	{
+		domain_type = PF_INET;
+#ifdef OW_HAVE_IPV6
+		// set PF_INET6 domain type for IPV6 protocol
+		if( reinterpret_cast<const sockaddr*>(addr.getInetAddress())->sa_family == AF_INET6)
+		{
+			domain_type = PF_INET6;
+		}
+#endif
+	}
+
+	AutoDescriptor sockfd(::socket(domain_type, SOCK_STREAM, 0));
 	if (sockfd.get() == -1)
 	{
 		OW_THROW_ERRNO_MSG(SocketException,
 			"Failed to create a socket");
 	}
+
 	// set the close on exec flag so child process can't keep the socket.
 	if (::fcntl(sockfd.get(), F_SETFD, FD_CLOEXEC) == -1)
 	{
@@ -345,10 +360,11 @@ SocketBaseImpl::disconnect()
 		{
 			MutexLock ml(g_guard);
 
-			ofstream comboTraceFile(String(m_traceFileOut + "Combo").c_str(), std::ios::app);
+			String combofilename = m_traceFileOut + "Combo";
+			ofstream comboTraceFile(combofilename.c_str(), std::ios::app);
 			if (!comboTraceFile)
 			{
-				OW_THROW_ERRNO_MSG(IOException, "Failed opening socket dump file");
+				OW_THROW_ERRNO_MSG(IOException, Format("Failed opening socket dump file \"%1\"", combofilename));
 			}
 			DateTime curDateTime;
 			curDateTime.setToCurrent();
@@ -364,30 +380,22 @@ SocketBaseImpl::disconnect()
 void
 SocketBaseImpl::fillInetAddrParms()
 {
+	// create LocalAddress and PeerAddress structures for IPV6 protocol
 	socklen_t len;
-	InetSocketAddress_t addr;
-	memset(&addr, 0, sizeof(addr));
-	len = sizeof(addr);
-	if (getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
+	struct sockaddr *p_addr;
+	InetSocketAddress_t ss;
+	memset(&ss, 0, sizeof(ss));
+	len = sizeof(ss);
+	p_addr = reinterpret_cast<struct sockaddr*>(&ss);
+	if (getsockname(m_sockfd, p_addr, &len) != -1)
 	{
-// Don't error out here, we can still operate without working DNS.
-//		OW_THROW_ERRNO_MSG(SocketException,
-//				"SocketBaseImpl::fillInetAddrParms: getsockname");
+	    m_localAddress.assignFromNativeForm(&ss, len);
 	}
-	else
+	memset(&ss, 0, sizeof(ss));
+	len = sizeof(ss);
+	if (getpeername(m_sockfd, p_addr, &len) != -1)
 	{
-		m_localAddress.assignFromNativeForm(&addr, len);
-	}
-	len = sizeof(addr);
-	if (getpeername(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
-	{
-// Don't error out here, we can still operate without working DNS.
-//		OW_THROW_ERRNO_MSG(SocketException,
-//				"SocketBaseImpl::fillInetAddrParms: getpeername");
-	}
-	else
-	{
-		m_peerAddress.assignFromNativeForm(&addr, len);
+	    m_peerAddress.assignFromNativeForm(&ss, len);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -427,17 +435,18 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, ErrorAction errorAsEx
 				ofstream traceFile(m_traceFileOut.c_str(), std::ios::app);
 				if (!traceFile)
 				{
-					OW_THROW_ERRNO_MSG(IOException, "Failed opening socket dump file");
+					OW_THROW_ERRNO_MSG(IOException, Format("Failed opening socket dump file \"%1\"", m_traceFileOut));
 				}
 				if (!traceFile.write(static_cast<const char*>(dataOut), rc))
 				{
 					OW_THROW_ERRNO_MSG(IOException, "Failed writing to socket dump");
 				}
 
-				ofstream comboTraceFile(String(m_traceFileOut + "Combo").c_str(), std::ios::app);
+				String combofilename = m_traceFileOut + "Combo";
+				ofstream comboTraceFile(combofilename.c_str(), std::ios::app);
 				if (!comboTraceFile)
 				{
-					OW_THROW_ERRNO_MSG(IOException, "Failed opening socket dump file");
+					OW_THROW_ERRNO_MSG(IOException, Format("Failed opening socket dump file \"%1\"", combofilename));
 				}
 				DateTime curDateTime;
 				curDateTime.setToCurrent();
@@ -482,17 +491,18 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, ErrorAction errorAsException)
 				ofstream traceFile(m_traceFileIn.c_str(), std::ios::app);
 				if (!traceFile)
 				{
-					OW_THROW_ERRNO_MSG(IOException, "Failed opening tracefile");
+					OW_THROW_ERRNO_MSG(IOException, Format("Failed opening tracefile \"%1\"", m_traceFileIn));
 				}
 				if (!traceFile.write(reinterpret_cast<const char*>(dataIn), rc))
 				{
 					OW_THROW_ERRNO_MSG(IOException, "Failed writing to socket dump");
 				}
 
-				ofstream comboTraceFile(String(m_traceFileOut + "Combo").c_str(), std::ios::app);
+				String combofilename = m_traceFileOut + "Combo";
+				ofstream comboTraceFile(combofilename.c_str(), std::ios::app);
 				if (!comboTraceFile)
 				{
-					OW_THROW_ERRNO_MSG(IOException, "Failed opening socket dump file");
+					OW_THROW_ERRNO_MSG(IOException, Format("Failed opening socket dump file \"%1\"", combofilename));
 				}
 				DateTime curDateTime;
 				curDateTime.setToCurrent();

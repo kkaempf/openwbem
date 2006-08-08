@@ -244,7 +244,20 @@ void HTTPClient::setUrl()
 #endif
 	}
 
-	if ((m_url.host == "localhost" || m_url.host == "127.0.0.1") && m_url.principal.empty() && m_url.credential.empty())
+	bool hostIsLocal = false;
+	if (m_url.host == "localhost" || m_url.host == "127.0.0.1")
+	{
+		hostIsLocal = true;
+	}
+#ifdef OW_HAVE_IPV6
+	// check local address IPV6 format
+	if (m_url.host == "::1" || m_url.host == "::ffff:127.0.0.1" || m_url.host == "::127.0.0.1" )
+	{
+		hostIsLocal = true;
+	}
+#endif
+
+	if (hostIsLocal && m_url.principal.empty() && m_url.credential.empty())
 	{
 		m_uselocalAuthentication = true;
 	}
