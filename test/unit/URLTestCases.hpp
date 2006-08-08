@@ -52,6 +52,11 @@ public:
 private:
 	// test methods
 	void testURLParsing();
+	void testValidIPv4();
+	void testValidIPv6();
+	void testInvalidIPv4();
+	void testInvalidIPv6();
+	void testAddressEquality();
 };
 
 #endif

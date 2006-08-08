@@ -49,8 +49,6 @@ runMultiProcessLogger.cpp
 check_PROGRAMS = unitMain
 # Note: Do not change the following line, unless you also update the newtest.sh script
 unitMain_SOURCES = \
-OW_URLTestCases.cpp \
-OW_URLTestCases.hpp \
 OW_LazyGlobalTestCases.cpp \
 OW_LazyGlobalTestCases.hpp \
 LogAppenderTestCases.cpp \

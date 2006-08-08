@@ -77,11 +77,83 @@ void URLTestCases::testURLParsing()
 	}
 }
 
+void URLTestCases::testValidIPv4()
+{
+	unitAssertNoThrow( URL("localhost") );
+	unitAssertNoThrow( URL("localhost:80") );
+	unitAssertNoThrow( URL("http://localhost") );
+	unitAssertNoThrow( URL("http://localhost:631") );
+	unitAssertNoThrow( URL("https://localhost") );
+	unitAssertNoThrow( URL("https://localhost:8080") );
+	unitAssertNoThrow( URL("https://nobody:nothing@localhost:8080/foo/:ick") );
+	unitAssertNoThrow( URL("https://nobody:nothing@127.0.0.1:8080/foo/:ick") );
+}
+
+#ifdef OW_HAVE_IPV6
+void URLTestCases::testValidIPv6()
+{
+	unitAssertNoThrow( URL("[::1]") );
+	unitAssertNoThrow( URL("http://[::1]:80") );
+	unitAssertNoThrow( URL("http://[::FFFF:127.0.0.1]:1234") );
+}
+#endif
+
+void URLTestCases::testInvalidIPv4()
+{
+	unitAssertThrows( URL("://:@:/:") );
+	unitAssertThrows( URL("/") );
+	unitAssertThrows( URL("/bob/") );
+	//	unitAssertThrows( URL("://localhost") ); // Should this throw?
+}
+
+#ifdef OW_HAVE_IPV6
+void URLTestCases::testInvalidIPv6()
+{
+	// must be in '[' and ']' -- This turns out to be too many empty fields.
+	// Not quite the reason we want it to fail, but good enough.
+	unitAssertThrows( URL("::1") );
+	unitAssertThrows( URL("[::1") );
+	unitAssertThrows( URL("[]") );
+}
+#endif
+
+void URLTestCases::testAddressEquality()
+{
+	String testAddress1 = "http://localhost:80";
+	unitAssertNoThrow(
+		URL foo(testAddress1);
+		unitAssertEquals("localhost", foo.host);
+		unitAssertEquals("80", foo.port);
+		unitAssert(!foo.ipv6Address);
+		unitAssertEquals(testAddress1, foo.toString());
+	);
+#ifdef OW_HAVE_IPV6
+	String testAddress2 = "http://[::1]:631";
+	unitAssertNoThrow(
+		URL foo(testAddress2);
+		unitAssertEquals("::1", foo.host);
+		unitAssertEquals("631", foo.port);
+		unitAssert(foo.ipv6Address);
+		unitAssertEquals(testAddress2, foo.toString());
+	);
+#endif
+}
+
 Test* URLTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("URL");
 
 	ADD_TEST_TO_SUITE(URLTestCases, testURLParsing);
+
+	ADD_TEST_TO_SUITE(URLTestCases,  testValidIPv4);
+	ADD_TEST_TO_SUITE(URLTestCases,  testInvalidIPv4);
+
+#ifdef OW_HAVE_IPV6
+	ADD_TEST_TO_SUITE(URLTestCases,  testValidIPv6);
+	ADD_TEST_TO_SUITE(URLTestCases,  testInvalidIPv6);
+#endif
+
+	ADD_TEST_TO_SUITE(URLTestCases,  testAddressEquality);
 
 	return testSuite;
 }

@@ -40,7 +40,6 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
-#include "OW_URLTestCases.hpp"
 #include "LogAppenderTestCases.hpp"
 #include "OW_DelayedFormatTestCases.hpp"
 #include "OW_ScopeLoggerTestCases.hpp"
@@ -115,7 +114,6 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
-	runner.addTest( "OW_URL", OW_URLTestCases::suite());
 	runner.addTest( "LogAppender", LogAppenderTestCases::suite());
 	runner.addTest( "OW_DelayedFormat", OW_DelayedFormatTestCases::suite());
 	runner.addTest( "OW_ScopeLogger", OW_ScopeLoggerTestCases::suite());
