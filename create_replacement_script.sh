@@ -54,11 +54,14 @@ status_hackery_local_input_file="$2"
 # NOTE: This will only find the sed expressions that are located at the
 # BEGINNING of a line (that's how they are layed out in configure's
 # config.status output file).
-egrep '^s.@[A-Za-z0-9_]+@' ${status_hackery_local_input_file} | egrep -v '\$\(.*\)|\\,' | sed 's/\\/\\\\/g' > $status_hackery_local_temp_output_file
+egrep '^s.@[A-Za-z0-9_]+@' ${status_hackery_local_input_file} | egrep -v '\$\(.*\)|\\,' | sed 's/\\/\\\\/g' | sed 's/|#_!!_#|//g'> $status_hackery_local_temp_output_file
 
 # Get the delimiter character that was used for the sed expressions.
-status_hackery_local_delim_char=`last_line $status_hackery_local_temp_output_file | cut -c2`
-cat $status_hackery_local_temp_output_file | cut -f1-3 -d"${status_hackery_local_delim_char}" > ${status_hackery_local_temp_output_file}.tweaked
+while read status_hackery_local_line_text; do
+	# Get the delimiter character that was used for the sed expressions.
+	status_hackery_local_delim_char=`echo "${status_hackery_local_line_text}" | cut -c2`
+	echo "${status_hackery_local_line_text}" | cut -f1-3 -d"${status_hackery_local_delim_char}"
+done < ${status_hackery_local_temp_output_file} > ${status_hackery_local_temp_output_file}.tweaked
 mv -f ${status_hackery_local_temp_output_file}.tweaked ${status_hackery_local_temp_output_file}
 
 # Count the number of lines (expressions) in the file.
@@ -78,6 +81,7 @@ while [ $status_hackery_local_changes_made -gt 0 ]; do
 	while [ $status_hackery_local_line -le $status_hackery_local_num_lines ]; do
 		status_hackery_local_line_text=`cat ${status_hackery_local_temp_output_file} | first_n_lines $status_hackery_local_line | last_line`
 		status_hackery_local_line=`expr ${status_hackery_local_line} \+ 1`
+		status_hackery_local_delim_char=`echo "${status_hackery_local_line_text}" | cut -c2`
 
 		status_hackery_local_variable=`echo "$status_hackery_local_line_text" | cut -f2 -d'@'`
 		status_hackery_local_value=`echo "$status_hackery_local_line_text" | cut -f3 -d"${status_hackery_local_delim_char}"`
@@ -117,7 +121,8 @@ status_hackery_local_temp_evil_hack_file=/tmp/evil_hackery_file.$$
 while [ $status_hackery_local_line -le $status_hackery_local_num_lines ]; do
 	status_hackery_local_line_text=`cat ${status_hackery_local_temp_output_file} | first_n_lines $status_hackery_local_line | last_line`
 	status_hackery_local_variable=`echo "$status_hackery_local_line_text" | cut -f2 -d'@'`
-	
+	status_hackery_local_delim_char=`echo "${status_hackery_local_line_text}" | cut -c2`
+
 	# Get the value of the variable as it currently exists in the environment.
 	eval "evaled_status_hackery_local_value=\"\$$status_hackery_local_variable\""
 	if [ $status_hackery_local_create_script -eq 1 ]; then
