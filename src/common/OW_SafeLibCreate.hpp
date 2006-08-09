@@ -179,7 +179,11 @@ public:
 	}
 	
 private:
+#ifdef WIN32
 	static jmp_buf theLoaderBuf;
+#else
+	static sigjmp_buf theLoaderBuf;
+#endif
 	
 	// this is commented out because it won't compile.  As it is, it may
 	// invoke undefined behavior if the C calling convention is different
