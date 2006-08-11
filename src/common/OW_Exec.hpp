@@ -494,6 +494,7 @@ namespace Exec
 		char const * const command[], String& output, char const * const envVars[],
 		const Timeout& timeout = Timeout::infinite, int outputlimit = -1,
 		char const * input = 0);
+
 	
 	/**
 	 * Version of @c executeProcessAndGatherOutput() that passes the current
@@ -504,8 +505,24 @@ namespace Exec
 		SA1 const & command, S1& output,
 		const Timeout& timeout, int outputlimit, S2 const& input)
 	{
-		return executeProcessAndGatherOutput(command, output, currentEnvironment, timeout, outputlimit, input);
+		Cstr::CstrArr<SA1> sa_command(command);
+		String tmpOutput;
+		char const * sInput = Cstr::to_char_ptr(input);
+		Process::Status res;
+		try
+		{
+			res = executeProcessAndGatherOutput(sa_command.sarr, tmpOutput,
+				currentEnvironment,	timeout, outputlimit, sInput);
+		}
+		catch(...)
+		{
+			output = tmpOutput.c_str();
+			throw;
+		}
+		output = tmpOutput.c_str();
+		return res;
 	}
+
 
 	/**
 	 * Version of @c executeProcessAndGatherOutput() that passes the current
@@ -516,8 +533,21 @@ namespace Exec
 		SA1 const & command, S1& output,
 		const Timeout& timeout = Timeout::infinite, int outputlimit = -1)
 	{
-		return executeProcessAndGatherOutput(command, output, currentEnvironment, timeout,
-			outputlimit, String());
+		Cstr::CstrArr<SA1> sa_command(command);
+		String tmpOutput;
+		Process::Status res;
+		try
+		{
+			res = executeProcessAndGatherOutput(sa_command.sarr, tmpOutput,
+				currentEnvironment,	timeout, outputlimit, (char const*)0);
+		}
+		catch(...)
+		{
+			output = tmpOutput.c_str();
+			throw;
+		}
+		output = tmpOutput.c_str();
+		return res;
 	}
 
 	/**
