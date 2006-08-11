@@ -577,6 +577,7 @@ namespace Exec
 		{
 			res = executeProcessAndGatherOutput(sa_command.sarr, tmpOutput, sa_envp.sarr,
 				timeout, outputlimit, sInput);
+	typedef GlobalPtr<ExecMockObject, NullFactory> ExecMockObject_t;
 		}
 		catch(...)
 		{
@@ -613,7 +614,7 @@ namespace Exec
 	 * implemented, if you need one that isn't, then please implement it! Modifying this variable will affect all
 	 * threads, it should not be used in a threaded program.
 	 */
-	extern GlobalPtr<ExecMockObject, NullFactory> g_execMockObject;
+	extern ExecMockObject_t g_execMockObject;
 #endif
 
 } // end namespace Exec
