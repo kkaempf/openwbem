@@ -260,6 +260,7 @@ MAKEDYLIB=0
 MAKEBUNDLE=1
 OW_SHARED_LIBS = libLazyGlobalTestLibrary.$(LIB_EXT)
 
+LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem
 
 noinst_LIBRARIES = libLazyGlobalTestLibrary.a
