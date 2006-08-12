@@ -577,7 +577,6 @@ namespace Exec
 		{
 			res = executeProcessAndGatherOutput(sa_command.sarr, tmpOutput, sa_envp.sarr,
 				timeout, outputlimit, sInput);
-	typedef GlobalPtr<ExecMockObject, NullFactory> ExecMockObject_t;
 		}
 		catch(...)
 		{
@@ -607,6 +606,7 @@ namespace Exec
 			return 0;
 		}
 	};
+	typedef GlobalPtr<ExecMockObject, NullFactory> ExecMockObject_t;
 #ifdef OW_ENABLE_TEST_HOOKS
 	/**
 	 * If this object is non-null, the default functionality of the Exec class will be replaced by calls to
