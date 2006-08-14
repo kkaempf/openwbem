@@ -41,6 +41,7 @@
 #include "OW_PosixUnnamedPipe.hpp"
 #include "OW_IOIFCStreamBuffer.hpp"
 #include "OW_AutoDescriptor.hpp"
+#include "OW_Reference.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -141,8 +142,8 @@ private:
 	IPCIO(IPCIO const &); // unimplemented
 	void operator=(IPCIO const &); // unimplemented
 
-	PosixUnnamedPipe m_pipe;
-	IOIFCStreamBuffer m_streambuf;
+	IntrusiveReference<PosixUnnamedPipe> m_pipe;
+	Reference<IOIFCStreamBuffer> m_streambuf;
 };
 
 /**

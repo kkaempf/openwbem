@@ -59,11 +59,14 @@ namespace OW_NAMESPACE
 OW_DEFINE_EXCEPTION(IPCIO);
 
 IPCIO::IPCIO(AutoDescriptor peer_descriptor, Timeout const & timeout)
-: m_pipe(peer_descriptor, AutoDescriptor(::dup(peer_descriptor.get()))),
-  m_streambuf(&m_pipe, IOIFCStreamBuffer::E_IN_OUT, IO_BUFFER_SIZE)
+: m_pipe(),
+  m_streambuf()
 {
-	m_pipe.setTimeouts(timeout);
-	m_streambuf.setErrorAction(IOIFC::E_THROW_ON_ERROR);
+	AutoDescriptor peerDup(::dup(peer_descriptor.get())); // This needs to happen *before* passing it to the PosixUnnamedPipe constructor.
+	m_pipe = new PosixUnnamedPipe(peer_descriptor, peerDup);
+	m_pipe->setTimeouts(timeout);
+	m_streambuf = new IOIFCStreamBuffer(m_pipe.getPtr(), IOIFCStreamBuffer::E_IN_OUT, IO_BUFFER_SIZE);
+	m_streambuf->setErrorAction(IOIFC::E_THROW_ON_ERROR);
 }
 
 IPCIO::~IPCIO()
@@ -80,7 +83,7 @@ IPCIO::~IPCIO()
 
 void IPCIO::close()
 {
-	m_pipe.close();
+	m_pipe->close();
 }
 
 bool IPCIO::sgetn(
@@ -91,7 +94,7 @@ bool IPCIO::sgetn(
 	{
 		try
 		{
-			nr = m_streambuf.sgetn(buf, count);
+			nr = m_streambuf->sgetn(buf, count);
 			OW_ASSERT(nr <= count);
 		}
 		RETHROW_IOEXCEPTION("IPCIO::sgetn")
@@ -102,7 +105,7 @@ bool IPCIO::sgetn(
 		ssize_t n;
 		for (nr = 0; nr < count; nr += n)
 		{
-			n = ::read(m_pipe.getInputDescriptor(), buf + nr, count - nr);
+			n = ::read(m_pipe->getInputDescriptor(), buf + nr, count - nr);
 			if (n == 0)
 			{
 				break;
@@ -136,7 +139,7 @@ void IPCIO::sputn(char const * buf, std::streamsize count)
 {
 	try
 	{
-		if (m_streambuf.sputn(buf, count) < count)
+		if (m_streambuf->sputn(buf, count) < count)
 		{
 			OW_THROW(IPCIOException, "Could not complete write");
 		}
@@ -153,7 +156,7 @@ void IPCIO::put_handle(int descr)
 
 	try
 	{
-		m_pipe.passDescriptor(descr);
+		m_pipe->passDescriptor(descr);
 	}
 	catch(IOException& e)
 	{
@@ -170,7 +173,7 @@ AutoDescriptor IPCIO::get_handle()
 
 	try
 	{
-		return m_pipe.receiveDescriptor();
+		return m_pipe->receiveDescriptor();
 	}
 	RETHROW_IOEXCEPTION("IPCIO::get_handle")
 }
@@ -180,7 +183,7 @@ void IPCIO::put_sync()
 	try
 	{
 		errno = 0;
-		if (m_streambuf.pubsync() < 0)
+		if (m_streambuf->pubsync() < 0)
 		{
 			OW_THROW_ERRNO_MSG(IPCIOException, "IPCIO::put_sync() failed");
 		}
@@ -192,7 +195,7 @@ void IPCIO::get_sync()
 {
 	try
 	{
-		if (m_streambuf.in_avail() > 0)
+		if (m_streambuf->in_avail() > 0)
 		{
 			OW_THROW(IPCIOException, "message longer than expected");
 		}
