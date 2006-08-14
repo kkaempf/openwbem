@@ -47,6 +47,7 @@
 #include "OW_Cstr.hpp"
 #ifdef OW_ENABLE_TEST_HOOKS
 #include "OW_GlobalPtr.hpp"
+#include "OW_ExecMockObject.hpp"
 #endif
 
 namespace OW_NAMESPACE
@@ -606,8 +607,8 @@ namespace Exec
 			return 0;
 		}
 	};
-	typedef GlobalPtr<ExecMockObject, NullFactory> ExecMockObject_t;
 #ifdef OW_ENABLE_TEST_HOOKS
+	typedef GlobalPtr<ExecMockObject, NullFactory> ExecMockObject_t;
 	/**
 	 * If this object is non-null, the default functionality of the Exec class will be replaced by calls to
 	 * g_execMockObject's member functions. This is meant to be used for unit tests. Not all functions may be
