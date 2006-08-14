@@ -203,7 +203,12 @@ private:
 	
 };
 template <typename T>
-jmp_buf SafeLibCreate<T>::theLoaderBuf;
+#ifdef WIN32
+jmp_buf 
+#else
+sigjmp_buf 
+#endif
+SafeLibCreate<T>::theLoaderBuf;
 	
 } // end namespace OW_NAMESPACE
 
