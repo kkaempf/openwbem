@@ -404,7 +404,7 @@ g++* | c++*)
 	# Check for gcc versions which are known to be broken.
 	GCC_COMPILER_VERSION=`$CXX --version | head -n1 | cut -f3 -d' '`
 	case $GCC_COMPILER_VERSION in
-	2.96 | 3.0*)
+	1.* | 2.* | 3.[012]*)
 		AC_MSG_WARN(***************************************************************************)
 		AC_MSG_WARN(This gcc compiler version ($GCC_COMPILER_VERSION) will fail.  Aborting now.)
 		AC_MSG_WARN(***************************************************************************)
