@@ -52,6 +52,7 @@ public:
 	/// If @a fd_out == -1, then you cannot write to this object
 	//
 	PosixUnnamedPipe(AutoDescriptor inputfd, AutoDescriptor outputfd);
+
 	virtual ~PosixUnnamedPipe();
 	virtual int write(const void* data, int dataLen, ErrorAction errorAsException = E_RETURN_ON_ERROR);
 	virtual int read(void* buffer, int bufferLen, ErrorAction errorAsException = E_RETURN_ON_ERROR);
@@ -73,6 +74,10 @@ public:
 	virtual AutoDescriptor receiveDescriptor();
 
 private:
+	// unimplemented
+	PosixUnnamedPipe(const PosixUnnamedPipe& x);
+	PosixUnnamedPipe& operator=(const PosixUnnamedPipe& x);
+
 	int m_fds[2];
 #ifdef OW_WIN32
 	int m_events[2];
