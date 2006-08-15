@@ -10,9 +10,30 @@ AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar 1.9])
 AC_CONFIG_SRCDIR(Makefile.am)
 AM_CONFIG_HEADER(config.h)
 
-OPENWBEM_MAJOR_VERSION=4
-OPENWBEM_MINOR_VERSION=0
-OPENWBEM_MICRO_VERSION=1
+dnl All OW_INCLUDE_M4 statements MUST occur after the AC_INIT and
+dnl AM_INIT_AUTOMAKE.  As such, they cannot occur in acinclude.m4.
+dnl
+dnl These are not just dumped in the "cf" directory because autoconf/automake
+dnl will fail to rebuild/rerun the configure script when changes are made
+dnl (maintainer mode).  This also adds each of these m4 files as a dependency.
+OW_INCLUDE_M4(m4/help_string.m4)          dnl A customized help string.
+OW_INCLUDE_M4(m4/enable_support.m4)       dnl For easier implementation of --enable and --disable testing.
+OW_INCLUDE_M4(m4/pg.m4)                   dnl
+OW_INCLUDE_M4(m4/check_compiler_flag.m4)  dnl Macros for compiler flag testing.
+OW_INCLUDE_M4(m4/lo.m4)                   dnl Tests required for the monitor.
+OW_INCLUDE_M4(m4/is_pod.m4)               dnl
+OW_INCLUDE_M4(m4/prefix_config.m4)        dnl Macros involved in prefixing all #defines with OW_.
+OW_INCLUDE_M4(m4/type_checks.m4)          dnl Macros for checking various types.
+OW_INCLUDE_M4(m4/hacks.m4)
+OW_INCLUDE_M4(m4/pushpop.m4)              dnl Macros for stack operations -- pushing and popping variables.
+
+# A hack to alter autoconf to always treat all files as obsolete, and rebuild
+# the configure script any time the dependencies are modified.
+OW_APPLY_AUTOCONF_REEXECUTION_HACK
+
+OPENWBEM_MAJOR_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\1/'`
+OPENWBEM_MINOR_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\2/'`
+OPENWBEM_MICRO_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\3/'`
 dnl This gets incremented every release that a header has changed.
 OPENWBEM_LIBRARY_VERSION=6
 
@@ -30,7 +51,6 @@ AC_DEFINE_UNQUOTED(OPENWBEM_LIBRARY_VERSION, $OPENWBEM_LIBRARY_VERSION, [OpenWBE
 
 
 AM_MAINTAINER_MODE
-#AM_DISABLE_STATIC
 
 dnl Checks for programs.
 AC_CANONICAL_HOST
@@ -65,55 +85,51 @@ AC_DEFINE_UNQUOTED(FALSE_PATHNAME, "$FALSE_PATHNAME", [Where false is.])
 
 dnl Check to see if we have Perl development stuff
 dnl This needs to be before we set any CFLAGS since setting DEBUG screws up perl.h
-HAVE_PERL=no
 #PGAC_CHECK_PERL_CONFIGS([archlibexp,privlibexp,useshrplib])
 PGAC_CHECK_PERL_CONFIG(archlibexp)
 PGAC_CHECK_PERL_CONFIG(privlibexp)
 PGAC_CHECK_PERL_CONFIG(useshrplib)
 PGAC_CHECK_PERL_EMBED_CCFLAGS
 PGAC_CHECK_PERL_EMBED_LDFLAGS
-saved_LDFLAGS="$LDFLAGS"
-saved_CFLAGS="$CFLAGS"
+
+OW_SAVE_FLAGS
 CFLAGS="$CFLAGS $perl_embed_ccflags"
 LDFLAGS="$LDFLAGS $perl_embed_ldflags"
-# Basic test to check for compilation success
-AC_TRY_COMPILE(
-	[
-	#include <EXTERN.h>
-	#include <perl.h>
-	],
-	[],
-	[
-		HAVE_PERL=yes
-		break;
-	]
-)
-CFLAGS="$saved_CFLAGS"
-LDFLAGS="$saved_LDFLAGS"
 
 ENABLE_PPIFC=no
-AC_ARG_ENABLE(perl-providerifc,
-OW_HELP_STRING(--enable-perl-providerifc,enable the perl provider interface),
-[
+OW_VERIFY_ENABLE_SUPPORT(perl-providerifc,
+	AC_LANG_PROGRAM(
+		[
+			#include <EXTERN.h>
+			#include <perl.h>
+		],
+		[
+		]
+	),
+	ENABLE_PPIFC=yes,
 	ENABLE_PPIFC=yes
-	if test x$HAVE_PERL != xyes; then
-		AC_MSG_ERROR([Cannot enable Perl provider interface])
-	fi
-])
-AM_CONDITIONAL([ENABLE_PERL_PROVIDERIFC],
-	[test x$HAVE_PERL = xyes -a x$ENABLE_PPIFC = xyes])
+)
+AM_CONDITIONAL([ENABLE_PERL_PROVIDERIFC],[test x$ENABLE_PPIFC = xyes])
 
+# This is a near duplicate of the above perl-providerifc test.  It is provided
+# here so that they can be enabled/disabled independently, like they were
+# before.
 ENABLE_MPIFC=no
-AC_ARG_ENABLE(monitored-perl-ifc,
-OW_HELP_STRING(--enable-monitored-perl-ifc,enable the monitored perl process interface),
-[
+OW_VERIFY_ENABLE_SUPPORT(monitored-perl-ifc,
+	AC_LANG_PROGRAM(
+		[
+			#include <EXTERN.h>
+			#include <perl.h>
+		],
+		[
+		]
+	),
+	ENABLE_MPIFC=yes,
 	ENABLE_MPIFC=yes
-	if test x$HAVE_PERL != xyes; then
-		AC_MSG_ERROR([Cannot enable monitored Perl process interface])
-	fi
-])
-AM_CONDITIONAL([ENABLE_MONITORED_PERL_IFC],
-	[test x$HAVE_PERL = xyes -a x$ENABLE_MPIFC = xyes])
+)
+AM_CONDITIONAL([ENABLE_MONITORED_PERL_IFC],[test x$ENABLE_MPIFC = xyes])
+
+OW_RESTORE_FLAGS
 
 STATIC_LINK_FLAGS=
 DYNAMIC_LINK_FLAGS=
@@ -733,54 +749,7 @@ AC_TRY_COMPILE(
 ])
 
 dnl See if the C++ compiler supports std::tr1::is_pod<> correctly
-AC_MSG_CHECKING(if the C++ compiler supports std::tr1::is_pod<> correctly)
-AC_TRY_COMPILE(
-[
-#include <tr1/type_traits>
-template <bool x> struct StaticAssertionFailure;
-
-template <>
-struct StaticAssertionFailure<true>
-{
-};
-
-#define OW_STATIC_ASSERT_CAT(a, b) a ## b
-#define OW_STATIC_ASSERT_AUX(a, b) OW_STATIC_ASSERT_CAT(a, b)
-
-#define OW_STATIC_ASSERT( B ) \
-enum { \
-	OW_STATIC_ASSERT_AUX(openwbem_static_assert_enum_, __LINE__) \
-	= sizeof( StaticAssertionFailure< (bool)( B ) > ) \
-}
-
-struct POD
-{
-	int x;
-	int y;
-};
-
-OW_STATIC_ASSERT(std::tr1::is_pod<POD>::value == true);
-
-class nonPOD
-{
-private:
-	nonPOD();
-	nonPOD(const nonPOD& x);
-	int x;
-};
-
-OW_STATIC_ASSERT(std::tr1::is_pod<nonPOD>::value == false);
-	
-],
-[
-],
-[
-	AC_MSG_RESULT(yes)
-	AC_DEFINE(HAVE_STD_TR1_IS_POD, 1, [Define to 1 if the C++ compiler supports std::tr1::is_pod<>])
-],
-[
-	AC_MSG_RESULT(no)
-])
+OW_CHECK_TR1_IS_POD(AC_DEFINE(HAVE_STD_TR1_IS_POD, 1, [Define to 1 if the C++ compiler supports std::tr1::is_pod<>]),[])
 
 AC_LANG_C
 
@@ -1590,56 +1559,32 @@ AC_TRY_COMPILE(
 
 AC_CHECK_FUNCS(pthread_kill_other_threads_np)
 
-
-dnl ----- Check support for IPV6  ----------------
-ENABLE_IPV6=no
-AC_MSG_CHECKING([whether IPv6 support is requested])
-AC_ARG_ENABLE(ipv6,
-AC_HELP_STRING(--enable-ipv6, enable ipv6 (with ipv4) support),
-[
-	if test "$enable_ipv6" = yes; then
-		ENABLE_IPV6=yes
-		AC_MSG_RESULT(yes)
-	else
-		AC_MSG_RESULT(no)
-	fi
-],
-[
-	AC_MSG_RESULT(no)
-])
-
-if test x$ENABLE_IPV6 = xyes; then
-	AC_MSG_CHECKING(whether IPv6 support is possible)
-	AC_TRY_RUN(
-	[
-		/* is AF_INET6 available? */
-		#include <sys/types.h>
-		#include <sys/socket.h>
-		#include <netinet/in.h>
-		main()
-		{
-			struct sockaddr_storage unused;
-			if (socket(AF_INET6, SOCK_STREAM, 0) < 0)
-				exit(1);
-			else
-				exit(0);
-		}
-	],
-	[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_IPV6, 1, IPv6 is present and enabled)
-	],
-	[
-		AC_MSG_ERROR([IPv6 support requested but not present])
-	])
-fi
-dnl ----- End check support for IPv6  ------------
-
-
-
 # restore flags after pthread tests
 LIBS=$OLD_LIBS
 
+
+
+dnl ----- Check support for IPV6  ----------------
+OW_EXEC_VERIFY_ENABLE_SUPPORT(ipv6,
+	AC_LANG_PROGRAM(
+		[
+			/* is AF_INET6 available? */
+			#include <sys/types.h>
+			#include <sys/socket.h>
+			#include <netinet/in.h>
+		],
+		[
+			struct sockaddr_storage unused;
+			if (socket(AF_INET6, SOCK_STREAM, 0) < 0)
+				return 1;
+			else
+				return 0;
+		]
+	),
+	AC_DEFINE(HAVE_IPV6, 1, IPv6 is present and enabled),
+	AC_DEFINE(HAVE_IPV6, 1, IPv6 is present and auto-enabled)
+)
+dnl ----- End check support for IPv6  ------------
 
 pfx=$prefix
 if test "x$pfx" = "xNONE"; then
