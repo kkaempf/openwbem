@@ -38,6 +38,8 @@
 #		OOPProvider
 #		EmbeddedCIMOM
 
+set -x
+
 ACCEPTANCE_DIR=`pwd`
 OWSYSCONFDIR=@sysconfdir@
 OWLIBDIR=@libdir@
