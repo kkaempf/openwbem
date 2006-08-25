@@ -119,7 +119,7 @@ namespace Secure
 	// John Viega and Matt Messier. 
 	// Original C code reformatted and modified for C++.
 	// Some inspiration provided by uidswap.c from openssh-portable
-	void dropPrivilegesPermanently(::uid_t newuid, ::gid_t newgid)
+	void dropPrivilegesPermanently(::uid_t newuid, ::gid_t newgid, EChildGroupAction extendedGroupAction)
 	{
 		// Note: If any manipulation of privileges cannot be completed
 		// successfully, it is safest to assume that the process is in an
@@ -145,7 +145,19 @@ namespace Secure
 		// or permanently.
 		if (oldeuid == 0)
 		{
+			struct passwd *newuser(NULL);
+			if (extendedGroupAction == E_SOURCE_EXTENDED_GROUPS)
+			{
+				newuser = ::getpwuid(newuid);
+			}
+			if (newuser)
+			{
+				::initgroups(newuser->pw_name, newgid);
+			}
+			else
+			{
 			::setgroups(1, &newgid);
+		}
 		}
 
 		if (newgid != oldegid)
@@ -296,7 +308,7 @@ namespace
 		return retval;
 	}
 
-	void runAs(char const * username)
+	void runAs(char const * username, EChildGroupAction extendedGroupAction)
 	{
 		ABORT_IF(!username, "null user name");
 		ABORT_IF(*username == '\0', "empty user name");
@@ -308,7 +320,7 @@ namespace
 		ABORT_IF(!pwent, Format("user name (%1) not found", username).c_str());
 		int rc = ::chdir("/");
 		ABORT_ERRNO_IF(rc != 0, "chdir failed");
-		Secure::dropPrivilegesPermanently(pwent->pw_uid, pwent->pw_gid);
+		Secure::dropPrivilegesPermanently(pwent->pw_uid, pwent->pw_gid, extendedGroupAction);
 	}
 
 } // namespace Secure

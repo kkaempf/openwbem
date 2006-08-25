@@ -43,6 +43,12 @@ namespace OW_NAMESPACE
 {
 namespace Secure
 {
+	enum EChildGroupAction
+	{
+		E_NO_EXTENDED_GROUPS = 0,
+		E_SOURCE_EXTENDED_GROUPS
+	};
+
 	/**
 	* Secure::ProcessAbortException should be caught only at the top level of
 	* the program.  The process should then exit after optionally writing an
@@ -52,21 +58,26 @@ namespace Secure
 
 	/**
 	* Changes both the effective and actual user ID to @a newuid, and
-	* the effective and actual group IDs to @a newgid, clearing out all auxiliary
+	* the effective and actual group IDs to @a newgid, clearing out all of root's auxiliary
 	* groups.  If @a newuid == -1, defaults to the actual user ID.
 	* If @a newgid == -1, defaults to the actual group ID.
 	*
+	* The second parameter controls whether or not the new user's auxiliary groups are sourced.
+	*
 	* @pre Currently running as root (both uid and euid).
 	*/
-	void dropPrivilegesPermanently(::uid_t newuid, ::gid_t newgid);
+	void dropPrivilegesPermanently(::uid_t newuid, ::gid_t newgid, EChildGroupAction extendedGroupAction);
 
 	/**
 	* Look up user ID and group ID for username in password file, chdir
 	* to "/", then drop privileges and run with that user ID and group ID.
+	* The extendedGroupAction parameter determines whether or not the child
+	* process's extended groups get initialized, or if it only runs with its
+	* primary group.
 	*
 	* @pre Currently running as root (both uid and euid).
 	*/
-	void runAs(char const * username);
+	void runAs(char const * username, EChildGroupAction extendedGroupAction = E_SOURCE_EXTENDED_GROUPS);
 
 	/**
 	* @return A minimal environment appropriate for the platform.
