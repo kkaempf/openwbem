@@ -41,7 +41,6 @@ namespace OW_NAMESPACE
 {
 
 class PrivilegeManager;
-class Process;
 
 namespace MonitoredPerl
 {
@@ -60,7 +59,7 @@ namespace MonitoredPerl
 	* ConfigOpts::installed_owlibexec_dir and <OWLIB> is
 	* ConfigOpts::installed_owlib_dir.  
 	*/
-	IntrusiveReference<Process> monitoredPerl(
+	ProcessRef monitoredPerl(
 		char const * script_path, char const * app_name,
 		char const * const script_args[],
 		char const * const envp[]

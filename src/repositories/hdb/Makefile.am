@@ -18,7 +18,7 @@ owstatlib_LIBRARIES = \
 libowrepositoryhdb.a
 
 SHAREDLIBADD = \
--L$(top_builddir)/src/common/ -lopenwbem \
+-L$(top_builddir)/src/common/ -lopenwbem -lblocxx \
 -L$(top_builddir)/db/db -lowdb
 
 thelibdir = $(libdir)

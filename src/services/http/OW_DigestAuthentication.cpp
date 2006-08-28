@@ -52,6 +52,7 @@ namespace OW_NAMESPACE
 
 using std::endl;
 using std::ifstream;
+using blocxx::MD5;  // needed to compile on OSX.  not sure why
 //////////////////////////////////////////////////////////////////////////////
 DigestAuthentication::DigestAuthentication(const String& passwdFile)
 	: m_asNonces()

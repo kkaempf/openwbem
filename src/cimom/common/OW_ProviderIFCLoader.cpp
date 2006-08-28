@@ -63,7 +63,7 @@ ProviderIFCLoaderBase::createProviderIFCFromLib(const String& libname) const
 	ProviderIFCBaseIFC* ptr = 0;
 	if ( sl )
 	{
-		ptr = SafeLibCreate<ProviderIFCBaseIFC>::create(sl, "createProviderIFC");
+		ptr = SafeLibCreate<ProviderIFCBaseIFC>::create(sl, "createProviderIFC", OW_VERSION);
 	}
 	else
 	{

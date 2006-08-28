@@ -35,47 +35,5 @@
 #ifndef OW_SHARED_LIBRARY_LOADER_HPP_
 #define OW_SHARED_LIBRARY_LOADER_HPP_
 #include "OW_config.h"
-#include "OW_SharedLibrary.hpp"
-#include "OW_String.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
-#include "OW_Logger.hpp"
-#include "OW_CommonFwd.hpp"
-
-namespace OW_NAMESPACE
-{
-
-/**
- * SharedLibraryLoader is the base class for a platform class for loading
- * shared libraries.
- */
-class OW_COMMON_API SharedLibraryLoader : public IntrusiveCountableBase
-{
-public:
-	virtual ~SharedLibraryLoader();
-	/**
-	 * Load a shared library specified by filename.  If the operation fails,
-	 * the return value will be null ref counted pointer, and
-	 * OW_LOG_ERROR(logger, ) will be called to report the details of the error.
-	 * Exception safety: Strong
-	 * @param filename The name of the shared library to load.
-	 * @return SharedLibraryRef owning representing the shared library
-	 *  identified by filename.  NULL on failure.
-	 */
-	virtual SharedLibraryRef loadSharedLibrary(const String& filename) const = 0;
-
-	/**
-	 * @return A reference to an SharedLibraryLoader object.
-	 *
-	 * Note: The implementation of createSharedLibraryLoader is contained
-	 * in the platforms specific source file.  Only one type of
-	 * SharedLibraryLoader exists for a given system.  The build system selects
-	 * the correct one to build.
-	 */
-	static SharedLibraryLoaderRef createSharedLibraryLoader();
-};
-OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, SharedLibraryLoader);
-
-} // end namespace OW_NAMESPACE
-
+#include <blocxx/SharedLibraryLoader.hpp>
 #endif

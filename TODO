@@ -1,3 +1,13 @@
+BloCxx Merge notes: 
+Does BloCxx need NULLValueException? 
+Why does owlocalhelper link statically (vs. dynamically) with libopenwbem ? 
+Note that OW_ExceptionIds is defined within BLOCXX_NAMESPACE.  Is this OK? 
+Time_pthread_once statically links to libopenwbem. 
+
+
+
+
+
 Testing:
     - smaller schema for make check.  create classes to exercise all aspects 
       of mof and xml.

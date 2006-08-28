@@ -37,6 +37,7 @@
 #include "OW_DateTime.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
+#include "OW_Logger.hpp"
 #include "OW_ProviderManager.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_WQLIFC.hpp"
@@ -443,10 +444,10 @@ IndicationServerImplThread::init(const CIMOMEnvironmentRef& env)
 	m_wqlRef = m_env->getWQLRef();
 	if (!m_wqlRef)
 	{
-		const char* const err = "Cannot process indications, because there is no "
+		const char* const strerr = "Cannot process indications, because there is no "
 			"WQL library.";
-		OW_LOG_FATAL_ERROR(m_logger, err);
-		OW_THROW(IndicationServerException, err);
+		OW_LOG_FATAL_ERROR(m_logger, strerr);
+		OW_THROW(IndicationServerException, strerr);
 	}
 
 }

@@ -10,7 +10,7 @@ $(CXXBINLINKFLAGS) \
 -o TimeString$(EXEEXT)
 
 TimeString_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 $(Z_LIBS) $(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
 
@@ -24,7 +24,7 @@ $(CXXBINLINKFLAGS) \
 -o TimeFile$(EXEEXT)
 
 TimeFile_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 $(Z_LIBS) $(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
 
@@ -39,7 +39,7 @@ $(CXXBINLINKFLAGS) \
 
 Time_pthread_once_LDADD = \
 $(top_builddir)/src/common/libopenwbem.a \
-$(Z_LIBS) $(SSL_LIBS)\
+$(Z_LIBS) $(SSL_LIBS) -lblocxx \
 $(BINLINKAPPENDFLAGS)
 
 Time_pthread_once_SOURCES = \

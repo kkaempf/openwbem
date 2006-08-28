@@ -35,29 +35,6 @@
 #ifndef OW_SYSLOG_APPENDER_HPP_INCLUDE_GUARD_
 #define OW_SYSLOG_APPENDER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_CommonFwd.hpp"
-#include "OW_LogAppender.hpp"
-
-namespace OW_NAMESPACE
-{
-
-/**
- * This class sends log messges to syslog
- */
-class SyslogAppender : public LogAppender
-{
-public:
-	SyslogAppender(const StringArray& components,
-		const StringArray& categories,
-		const String& pattern);
-	virtual ~SyslogAppender();
-	static const String STR_DEFAULT_MESSAGE_PATTERN;
-protected:
-	virtual void doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const;
-	static bool calledOpenLog;
-};
-
-} // end namespace OW_NAMESPACE
-
+#include <blocxx/SyslogAppender.hpp>
 #endif
 

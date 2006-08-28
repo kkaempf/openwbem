@@ -94,6 +94,7 @@ LinuxPAMAuthenticationCL::doAuthenticate(String &userName,
 	{
 		return false;
 	}
+
 	String pathToPamAuth = m_libexecdir + "/PAMAuth";
 	Array<String> commandLine;
 	commandLine.push_back(pathToPamAuth);
@@ -102,6 +103,7 @@ LinuxPAMAuthenticationCL::doAuthenticate(String &userName,
 	const Timeout timeout = Timeout::relative(60.0);
 	const int outputLimit = 1024;
 	String input = userName + " " + info + "\n";
+
 	try
 	{
 		status = Exec::executeProcessAndGatherOutput(commandLine, output, timeout, outputLimit, input);

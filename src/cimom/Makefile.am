@@ -17,7 +17,7 @@ owcimomd_LDADD = \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 -L$(top_builddir)/db/db -lowdb \
 $(REALTIME_LIBS) \
 $(SSL_LIBS) $(BINLINKAPPENDFLAGS)

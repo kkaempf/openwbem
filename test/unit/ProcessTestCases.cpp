@@ -40,6 +40,7 @@
 #include "OW_Timeout.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Exec.hpp"
+#include "OW_Types.hpp"
 
 #include <iostream>
 

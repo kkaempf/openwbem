@@ -36,15 +36,7 @@
 #define OW_SIGNAL_UTILS_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_CommonFwd.hpp"
-
-namespace OW_NAMESPACE
-{
-	namespace SignalUtils
-	{
-		const char* signalName(int sig);
-	}
-}
+#include <blocxx/SignalUtils.hpp>
 
 #endif
 

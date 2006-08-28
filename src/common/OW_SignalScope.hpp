@@ -35,53 +35,18 @@
 #ifndef OW_SIGNALSCOPE_HPP_INCLUDE_GUARD_
 #define OW_SIGNALSCOPE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include <signal.h>
-
-// The classes and functions defined in this file are not meant for general
-// use, they are internal implementation details.  They may change at any time.
+#include <blocxx/SignalScope.hpp>
 
 namespace OW_NAMESPACE
 {
 
-const int OW_SIGSEGV = SIGSEGV;
-const int OW_SIGABRT = SIGABRT;
+const int OW_SIGSEGV = BLOCXX_SIGSEGV;
+const int OW_SIGABRT = BLOCXX_SIGABRT;
+
 #ifdef SIGBUS // NetWare doesn't have this signal
-const int OW_SIGBUS = SIGBUS;
+const int OW_SIGBUS = BLOCXX_SIGBUS;
 #endif
-const int OW_SIGFPE = SIGFPE;
-
-extern "C" {
-typedef void (*sighandler_t)(int);
-}
-
-class OW_COMMON_API SignalScope
-{
-public:
-	SignalScope( int sig, sighandler_t handler )
-			: m_sig( sig )
-	{
-#ifndef OW_WIN32
-		struct sigaction saNew;
-		saNew.sa_handler = handler;
-		sigemptyset(&saNew.sa_mask);
-		saNew.sa_flags = 0;
-		sigaction(m_sig, &saNew, &m_oldHandler);
-#endif
-	}
-	~SignalScope()
-	{
-#ifndef OW_WIN32
-		sigaction(m_sig, &m_oldHandler, 0);
-#endif
-	}
-private:
-	SignalScope(const SignalScope&);
-	const SignalScope& operator=(const SignalScope&);
-	int m_sig;
-#ifndef OW_WIN32
-	struct sigaction m_oldHandler;
-#endif
-};
+const int OW_SIGFPE = BLOCXX_SIGFPE;
 
 } // end namespace OW_NAMESPACE
 

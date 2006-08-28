@@ -35,27 +35,7 @@
 #ifndef OW_VECTOR_HPP_INCLUDE_GUARD_
 #define OW_VECTOR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include <vector>
-
-// The classes and functions defined in this file are not meant for general
-// use, they are internal implementation details.  They may change at any time.
-
-namespace OW_NAMESPACE
-{
-
-/**
- * The purpose of this header is to only have one definition of this function.  Various classes use 
- * COWReference<std::vector<T> > and thus need this function.
- */
-template <class T>
-inline std::vector<T>* COWReferenceClone(std::vector<T>* obj)
-{
-	return new std::vector<T>(*obj);
-}
-
-
-} // end namespace OW_NAMESPACE
-
+#include <blocxx/vector.hpp>
 
 #endif
 	

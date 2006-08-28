@@ -35,85 +35,9 @@
 #ifndef OW_THREAD_ONCE_HPP_INCLUDE_GUARD_
 #define OW_THREAD_ONCE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include <blocxx/ThreadOnce.hpp>
 
-
-#if defined(OW_USE_PTHREAD)
-#include <pthread.h>
-#include <csignal> // for sig_atomic_t
-#include <cassert>
-#include "OW_MemoryBarrier.hpp"
-#endif
-
-namespace OW_NAMESPACE
-{
-
-#if defined(OW_USE_PTHREAD)
-
-struct OnceFlag
-{
-	volatile ::sig_atomic_t flag;
-	::pthread_mutex_t mtx;
-};
-
-#define OW_ONCE_INIT {0, PTHREAD_MUTEX_INITIALIZER}
-
-#elif defined(OW_WIN32)
-
-typedef long OnceFlag;
-#define OW_ONCE_INIT 0
-
-#else
-#error "Port me!"
-#endif
-
-/**
- * The first time callOnce is called with a given onceFlag argument, it calls func with no argument and changes the value of flag to indicate
- * that func has been run.  Subsequent calls with the same onceFlag do nothing.
- */
-template <typename FuncT>
-void OW_COMMON_API callOnce(OnceFlag& flag, FuncT F);
-
-
-
-#if defined(OW_USE_PTHREAD)
-
-class CallOnce_pthread_MutexLock
-{
-public:
-	CallOnce_pthread_MutexLock(::pthread_mutex_t* mtx)
-		: m_mtx(mtx)
-	{
-		int res = pthread_mutex_lock(m_mtx);
-		assert(res == 0);
-	}
-	~CallOnce_pthread_MutexLock()
-	{
-		int res = pthread_mutex_unlock(m_mtx);
-		assert(res == 0);
-	}
-private:
-	::pthread_mutex_t* m_mtx;
-};
-
-template <typename FuncT>
-inline void callOnce(OnceFlag& flag, FuncT f)
-{
-	readWriteMemoryBarrier();
-	if (flag.flag == 0)
-	{
-		CallOnce_pthread_MutexLock lock(&flag.mtx);
-		if (flag.flag == 0)
-		{
-			f();
-			flag.flag = 1;
-		}
-	}
-}
-
-#endif
-
-
-} // end namespace OW_NAMESPACE
+#define OW_ONCE_INIT BLOCXX_ONCE_INIT
 
 #endif
 

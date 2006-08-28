@@ -10,7 +10,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 noinst_LIBRARIES = libowindicationserver.a libowindicationreplayer.a
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 -L$(top_builddir)/src/cimom/common -lowcimomcommon \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/provider -lowprovider \

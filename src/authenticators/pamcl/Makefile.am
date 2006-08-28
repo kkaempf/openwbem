@@ -21,7 +21,7 @@ OW_PAMAuth_SOURCES = OW_PAMAuthSA.cpp
 OW_PAMAuth_LDADD = -lpam $(DL_LIB) $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
 
 OW_SHARED_LIBS = libpamclauthentication.$(LIB_EXT)
-SHAREDLIBADD = -lpam -L$(top_builddir)/src/common/ -lopenwbem
+SHAREDLIBADD = -lpam -L$(top_builddir)/src/common/ -lopenwbem -lblocxx
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 

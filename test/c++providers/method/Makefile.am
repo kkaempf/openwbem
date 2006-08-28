@@ -6,7 +6,7 @@ clean-local : clean-ow-shared-libs
 
 noinst_LIBRARIES = libmethodtest.a 
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
 

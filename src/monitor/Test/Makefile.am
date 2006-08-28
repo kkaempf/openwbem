@@ -42,7 +42,7 @@ AM_CPPFLAGS = -I$(srcdir)/.. -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/ifcs
 
 DFLT_LDADD = \
-../libowprivman.a -L$(top_builddir)/src/common -lopenwbem \
+../libowprivman.a -L$(top_builddir)/src/common -lopenwbem -lblocxx \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS) 
 

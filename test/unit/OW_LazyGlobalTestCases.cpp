@@ -33,7 +33,7 @@
 #include "TestCaller.hpp"
 #include "OW_LazyGlobalTestCases.hpp"
 #include "OW_LazyGlobal.hpp"
-
+#include "OW_Types.hpp"
 #include "OW_SharedLibraryLoader.hpp"
 #include "OW_String.hpp"
 #include "OW_LogMessage.hpp"

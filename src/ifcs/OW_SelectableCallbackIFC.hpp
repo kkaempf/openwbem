@@ -29,43 +29,14 @@
 *******************************************************************************/
 
 /**
- * @author Bart Whiteley
+ * @author Jon Carey
  * @author Dan Nuffer
  */
 
-#ifndef OW_SELECTABLE_CALLBACKIFC_HPP_INCLUDE_GUARD_
-#define OW_SELECTABLE_CALLBACKIFC_HPP_INCLUDE_GUARD_
+#ifndef OW_SelectableCallbackIFC_HPP_INCLUDE_GUARD_
+#define OW_SelectableCallbackIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_IfcsFwd.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include <blocxx/SelectableCallbackIFC.hpp> 
 
-// The classes and functions defined in this file are not meant for general
-// use, they are internal implementation details.  They may change at any time.
-
-namespace OW_NAMESPACE
-{
-
-class OW_COMMON_API SelectableCallbackIFC : virtual public IntrusiveCountableBase
-{
-public:
-
-	enum EEventType
-	{
-		// bits that can be or'd together
-		E_READ_EVENT = 1,
-		E_ACCEPT_EVENT = 1, // E_ACCEPT_EVENT aliases E_READ_EVENT due to select() semantics
-		E_WRITE_EVENT = 2
-	};
-
-	virtual ~SelectableCallbackIFC();
-	void selected(Select_t& selectedObject, EEventType eventType)
-	{
-		doSelected(selectedObject, eventType);
-	}
-protected:
-	virtual void doSelected(Select_t& selectedObject, EEventType eventType) = 0;
-};
-
-} // end namespace OW_NAMESPACE
 
 #endif

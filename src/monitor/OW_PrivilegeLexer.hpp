@@ -41,6 +41,11 @@
 #define yyFlexLexer openwbem_privconfig_FlexLexer
 #include <FlexLexer.h>
 #endif
+#include "OW_config.h"
+
+/**
+ * @author ???
+ */
 
 // Location of token in file
 //

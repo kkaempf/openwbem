@@ -35,26 +35,5 @@
 #ifndef OW_STACK_TRACE_HPP_
 #define OW_STACK_TRACE_HPP_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include <iosfwd>
-
-// The classes and functions defined in this file are not meant for general
-// use, they are internal implementation details.  They may change at any time.
-
-namespace OW_NAMESPACE
-{
-
-namespace StackTrace
-{
-	enum EDoStackTraceFlag
-	{
-		E_CHECK_ENV_VAR,
-		E_NO_CHECK_ENV_VAR
-	};
-	OW_COMMON_API void printStackTrace(EDoStackTraceFlag = E_CHECK_ENV_VAR);
-	OW_COMMON_API String getStackTrace(EDoStackTraceFlag = E_NO_CHECK_ENV_VAR);
-} // end namespace StackTrace
-
-} // end namespace OW_NAMESPACE
-
+#include <blocxx/StackTrace.hpp>
 #endif

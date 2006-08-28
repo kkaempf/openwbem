@@ -14,7 +14,7 @@ owstatlibdir = $(thelibdir)
 
 OW_SHARED_LIBS = libowmofc.$(LIB_EXT)
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem
+-L$(top_builddir)/src/common -lopenwbem -lblocxx
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 

@@ -37,6 +37,7 @@
 #include "OW_Array.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_Format.hpp"
+#include "OW_Types.hpp"
 #include "OW_LocalAuthenticationCommon.hpp"
 
 #include <unistd.h>

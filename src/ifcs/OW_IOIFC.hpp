@@ -36,59 +36,7 @@
 #ifndef OW_IOIFC_HPP_INCLUDE_GUARD_
 #define OW_IOIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include <blocxx/IOIFC.hpp>
 
-namespace OW_NAMESPACE
-{
-
-class OW_COMMON_API IOIFC
-{
-public:
-	virtual ~IOIFC();
-
-	enum ErrorAction
-	{
-		E_THROW_ON_ERROR, E_RETURN_ON_ERROR
-	};
-
-	/**
-	 * Read a specified number of bytes from the device that is exposing
-	 * the IOIFC interface.
-	 *
-	 * @param dataIn A pointer to a location in memory to put the bytes
-	 * 	that have been read. 
-	 * @param dataInLen The number of bytes being requested from the
-	 * 	device. 
-	 * @param errorAsException If true and an error occurs durring the read
-	 * 	operation, then throw an exception.
-	 * @exception An exception will be thrown upon an error condition if
-	 * 	errorAsException is true.
-	 * @return The number of bytes actually read from the device, or -1 on
-	 * 	error. If the device is set to nonblocking and no input is available, 
-	 *  -1 will be returned and errno will be set to ETIMEDOUT
-	 */
-	virtual int read(void* dataIn, int dataInLen,
-			ErrorAction errorAsException = E_RETURN_ON_ERROR) = 0;
-			
-	/**
-	 * Write a specified number of bytes to the device that is exposing the
-	 * IOIFC interface.
-	 *
-	 * @param dataOut A pointer to a location in memory that contains the
-	 * 	bytes that will be written to the device.
-	 * @param dataOutLen The length of the data pointed to by the dataOut
-	 * 	param.
-	 * @param errorAsException If true and an error occurs durring the
-	 * 	write operation, then throw an exception.
-	 * @exception An exception will be thrown upon an error condition if
-	 * 	errorAsException is true.	 
-	 * @return The number of bytes actually written to the device. or -1 on
-	 * 	error. If the device is set to nonblocking and the write would block,
-	 *  -1 will be returned and errno will be set to ETIMEDOUT.
-	 */
-	virtual int write(const void* dataOut, int dataOutLen,
-			ErrorAction errorAsException = E_RETURN_ON_ERROR) = 0;
-};
-
-} // end namespace OW_NAMESPACE
 
 #endif

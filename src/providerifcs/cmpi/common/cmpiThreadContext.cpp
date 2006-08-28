@@ -26,6 +26,7 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Format.hpp"
 #include "OW_ThreadImpl.hpp"
+#include "OW_Exception.hpp"
 
 pthread_key_t CMPI_ThreadContext::theKey;
 namespace 

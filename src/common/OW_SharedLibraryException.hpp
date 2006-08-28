@@ -35,13 +35,5 @@
 #ifndef OW_SHAREDLIBRARYEXCEPTION_HPP_
 #define OW_SHAREDLIBRARYEXCEPTION_HPP_
 #include "OW_config.h"
-#include "OW_Exception.hpp"
-
-namespace OW_NAMESPACE
-{
-
-OW_DECLARE_APIEXCEPTION(SharedLibrary, OW_COMMON_API);
-
-} // end namespace OW_NAMESPACE
-
+#include <blocxx/SharedLibraryException.hpp>
 #endif

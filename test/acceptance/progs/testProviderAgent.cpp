@@ -103,9 +103,9 @@ void Usage()
 	cerr << CmdLineParser::getUsage(g_options) << endl;
 }
 
-LogAppender::ConfigMap getAppenderConfig(const ConfigFile::ConfigMap& configItems)
+LoggerConfigMap getAppenderConfig(const ConfigFile::ConfigMap& configItems)
 {
-	LogAppender::ConfigMap appenderConfig;
+	LoggerConfigMap appenderConfig;
 	for (ConfigFile::ConfigMap::const_iterator iter = configItems.begin(); iter != configItems.end(); ++iter)
 	{
 		if (iter->first.startsWith("log") && iter->second.size() > 0)

@@ -45,6 +45,7 @@
 #include "OW_HTTPLenLimitIStream.hpp"
 #include "OW_Select.hpp"
 #include "OW_Format.hpp"
+#include "OW_Logger.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_TempFileStream.hpp"

@@ -77,7 +77,7 @@ createLogger(const String& type_)
 	StringArray categories;
 	categories.push_back("*");
 
-	LogAppender::ConfigMap configItems;
+	LoggerConfigMap configItems;
 
 	String filename = type;
 	if (type != "syslog")

@@ -1,5 +1,6 @@
 /*******************************************************************************
-* Copyright (C) 2005, Quest Software, Inc. All rights reserved.
+* Copyright (C) 2005, Vintela, Inc. All rights reserved.
+* Copyright (C) 2006, Novell, Inc. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -9,10 +10,12 @@
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of Quest Software, Inc., nor the
-*       names of its contributors or employees may be used to endorse or promote
-*       products derived from this software without specific prior written
-*       permission.
+*     * Neither the name of 
+*       Vintela, Inc., 
+*       nor Novell, Inc., 
+*       nor the names of its contributors or employees may be used to 
+*       endorse or promote products derived from this software without 
+*       specific prior written permission.
 * 
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -28,67 +31,17 @@
 *******************************************************************************/
 
 /**
- * @author Dan Nuffer
+ * @author <see corresponding BloCxx header>
  */
 
-#ifndef OW_PATHS_HPP_INCLUDE_GUARD_
-#define OW_PATHS_HPP_INCLUDE_GUARD_
+
+
+
+#ifndef OW_Paths_HPP_INCLUDE_GUARD_
+#define OW_Paths_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-
-// The purpose of this file is to portably provide system paths from paths.h (BSD derived)
-
-#ifdef OW_HAVE_PATHS_H
-#include <paths.h>
-
-// Standard paths for busted systems that have paths.h but don't define all the
-// neccessary paths.
-#if !defined(OW_HAVE_DECL__PATH_DEFPATH) || (OW_HAVE_DECL__PATH_DEFPATH == 0)
-#define _PATH_DEFPATH   "/usr/bin:/bin"
-#endif
-#if !defined(OW_HAVE_DECL__PATH_STDPATH) || (OW_HAVE_DECL__PATH_STDPATH == 0)
-#define _PATH_STDPATH   "/usr/bin:/bin:/usr/sbin:/sbin"
-#endif
-
-#else
-
-#define _PATH_DEFPATH   "/usr/bin:/bin"
-#define _PATH_STDPATH   "/usr/bin:/bin:/usr/sbin:/sbin"
-
-#define _PATH_BSHELL    "/bin/sh"
-#define _PATH_CONSOLE   "/dev/console"
-#define _PATH_CSHELL    "/bin/csh"
-#define _PATH_DEVDB     "/var/run/dev.db"
-#define _PATH_DEVNULL   "/dev/null"
-#define _PATH_DRUM      "/dev/drum"
-#define _PATH_KLOG      "/proc/kmsg"
-#define _PATH_KMEM      "/dev/kmem"
-#define _PATH_LASTLOG   "/var/log/lastlog"
-#define _PATH_MAILDIR   "/var/mail"
-#define _PATH_MAN       "/usr/share/man"
-#define _PATH_MEM       "/dev/mem"
-#define _PATH_MNTTAB    "/etc/fstab"
-#define _PATH_MOUNTED   "/etc/mtab"
-#define _PATH_NOLOGIN   "/etc/nologin"
-#define _PATH_PRESERVE  "/var/lib"
-#define _PATH_RWHODIR   "/var/spool/rwho"
-#define _PATH_SENDMAIL  "/usr/sbin/sendmail"
-#define _PATH_SHADOW    "/etc/shadow"
-#define _PATH_SHELLS    "/etc/shells"
-#define _PATH_TTY       "/dev/tty"
-#define _PATH_UNIX      "/boot/vmlinux"
-#define _PATH_UTMP      "/var/run/utmp"
-#define _PATH_VI        "/bin/vi"
-#define _PATH_WTMP      "/var/log/wtmp"
-#define _PATH_DEV       "/dev/"
-#define _PATH_TMP       "/tmp/"
-#define _PATH_VARDB     "/var/db/"
-#define _PATH_VARRUN    "/var/run/"
-#define _PATH_VARTMP    "/var/tmp/"
-
-
-
-#endif
+#include <blocxx/Paths.hpp>
 
 #endif
 

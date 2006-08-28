@@ -35,23 +35,5 @@
 #ifndef OW_THREAD_DONE_CALLBACK_HPP_INCLUDE_GUARD_
 #define OW_THREAD_DONE_CALLBACK_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
-#include "OW_CommonFwd.hpp"
-
-namespace OW_NAMESPACE
-{
-
-class OW_COMMON_API ThreadDoneCallback : public IntrusiveCountableBase
-{
-public:
-	virtual ~ThreadDoneCallback();
-	void notifyThreadDone(Thread* t);
-protected:
-	virtual void doNotifyThreadDone(Thread* t) = 0;
-};
-OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, ThreadDoneCallback);
-
-} // end namespace OW_NAMESPACE
-
+#include <blocxx/ThreadDoneCallback.hpp>
 #endif

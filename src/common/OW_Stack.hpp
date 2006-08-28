@@ -36,36 +36,5 @@
 #ifndef OW_STACK_HPP_INCLUDE_GUARD_
 #define OW_STACK_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Types.hpp"
-#include "OW_Array.hpp"
-
-namespace OW_NAMESPACE
-{
-
-template<class T>
-class Stack : private Array<T>
-{
-public:
-	typedef typename Array<T>::size_type size_type;
-	typedef typename Array<T>::reference reference;
-	typedef typename Array<T>::const_reference const_reference;
-	Stack() : Array<T>() {  }
-	bool empty() const {   return (size() == 0); }
-	reference top() {   return this->back(); }
-	const_reference top() const {   return this->back(); }
-	void pop() { this->pop_back(); }
-	void push(const T& x) {   push_back(x); }
-	int search(const T& x) const
-	{
-		int i = find(x);
-		return (i >= 0) ? static_cast<int>(size()) - i : -1;
-	}
-	size_type size() const
-	{
-		return Array<T>::size();
-	}
-};
-
-} // end namespace OW_NAMESPACE
-
+#include <blocxx/Stack.hpp>
 #endif

@@ -35,8 +35,5 @@
 #ifndef OW_STRINGENUMERATION_HPP_INCLUDE_GUARD_
 #define OW_STRINGENUMERATION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Enumeration.hpp"
-#include "OW_String.hpp"
-#include "OW_CommonFwd.hpp"
-
+#include <blocxx/StringEnumeration.hpp>
 #endif

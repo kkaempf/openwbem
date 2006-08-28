@@ -1,4 +1,3 @@
-SUBDIRS = socket
 
 include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs
@@ -9,7 +8,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libopenwbem.$(LIB_EXT)
-SHAREDLIBADD = $(DL_LIB) $(SSL_LIBS)
+SHAREDLIBADD = $(DL_LIB) $(SSL_LIBS) -lblocxx
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 MAKEDYLIB=1
@@ -25,125 +24,28 @@ owstatlibdir = $(thelibdir)
 # Shouldn't depend on anything not in common. DON'T ADD ANYTHING TO THIS LIST!
 INCLUDES = \
 -I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/ifcs \
--I$(top_srcdir)/src/common/socket
+-I$(top_srcdir)/src/ifcs 
 
 
 libopenwbem_a_SOURCES =	\
-OW_AppenderLogger.cpp \
-OW_Array.cpp \
-OW_Assertion.cpp \
-OW_AtomicOps.cpp \
-OW_AutoDescriptor.cpp \
-OW_BaseStreamBuffer.cpp \
 OW_BinarySerialization.cpp \
-OW_Bool.cpp \
-OW_CerrAppender.cpp \
-OW_CerrLogger.cpp \
-OW_Char16.cpp \
 OW_CIMErrorException.cpp \
-OW_CmdLineParser.cpp \
-OW_Condition.cpp \
 OW_ConfigException.cpp \
 OW_ConfigFile.cpp \
 OW_ConfigOpts.cpp \
-OW_COWIntrusiveCountableBase.cpp \
-OW_DataStreams.cpp \
-OW_DateTime.cpp \
-OW_DelayedFormat.cpp \
-OW_DescriptorUtils.cpp \
-OW_DescriptorUtils_noexcept.cpp \
-OW_dlSharedLibrary.cpp \
-OW_dlSharedLibraryLoader.cpp \
-OW_dyldSharedLibrary.cpp \
-OW_dyldSharedLibraryLoader.cpp \
-OW_EnumerationException.cpp \
-OW_Exception.cpp \
-OW_Exec.cpp \
-OW_ExecMockObject.cpp \
-OW_FileAppender.cpp \
-OW_FileBuf.cpp \
-OW_FileSystemMockObject.cpp \
-OW_Format.cpp \
-OW_IFileStream.cpp \
-OW_IntrusiveCountableBase.cpp \
 OW_IOException.cpp \
-OW_IOIFCStreamBuffer.cpp \
 OW_LocalOperationContext.cpp \
-OW_LogAppender.cpp \
-OW_LogAppenderScope.cpp \
-OW_Logger.cpp \
-OW_LogMessagePatternFormatter.cpp \
-OW_MD5.cpp \
 OW_MemTracer.cpp \
-OW_MultiAppender.cpp \
-OW_MultiProcessFileAppender.cpp \
-OW_Mutex.cpp \
-OW_MutexImpl.cpp \
-OW_NonRecursiveMutex.cpp \
-OW_NonRecursiveMutexImpl.cpp \
 OW_NoSuchPropertyException.cpp \
 OW_NoSuchProviderException.cpp \
 OW_NoSuchQualifierException.cpp \
-OW_NullAppender.cpp \
-OW_NullLogger.cpp \
 OW_NULLValueException.cpp \
 OW_OperationContext.cpp \
-OW_OutOfBoundsException.cpp \
-OW_PathSecurity.cpp \
-OW_PosixFile.cpp \
-OW_PosixFileSystem.cpp \
-OW_PosixUnnamedPipe.cpp \
-OW_Process.cpp \
-OW_RandomNumber.cpp \
-OW_ReferenceHelpers.cpp \
 OW_RepositoryCIMOMHandle.cpp \
 OW_ResultHandlers.cpp \
-OW_Runnable.cpp \
-OW_RWLocker.cpp \
-OW_SafeCString.cpp \
-OW_SafeCStringIO.cpp \
-OW_ScopeLogger.cpp \
-OW_Secure.cpp \
-OW_SecureRand.cpp \
-OW_Select.cpp \
-OW_SelectEngine.cpp \
 OW_SessionLanguage.cpp \
-OW_SharedLibrary.cpp \
-OW_SharedLibraryException.cpp \
-OW_SharedLibraryLoader.cpp \
-OW_shlSharedLibrary.cpp \
-OW_shlSharedLibraryLoader.cpp \
-OW_SafeLibCreate.cpp \
-OW_SignalUtils.cpp \
-OW_StackTrace.cpp \
-OW_StringBuffer.cpp \
-OW_String.cpp \
-OW_StringStream.cpp \
-OW_SyslogAppender.cpp \
-OW_TempFileEnumerationImplBase.cpp \
-OW_TempFileStream.cpp \
-OW_ThreadBarrier.cpp \
-OW_ThreadCancelledException.cpp \
-OW_ThreadCounter.cpp \
-OW_Thread.cpp \
-OW_ThreadDoneCallback.cpp \
-OW_ThreadImpl.cpp \
-OW_ThreadOnce.cpp \
-OW_ThreadPool.cpp \
-OW_Timeout.cpp \
-OW_TimeoutException.cpp \
-OW_TimeoutTimer.cpp \
-OW_TmpFile.cpp \
-OW_UnnamedPipe.cpp \
 OW_URL.cpp \
 OW_UserInfo.cpp \
-OW_UserUtils.cpp \
-OW_UTF8UtilscompareToIgnoreCase.cpp \
-OW_UTF8Utils.cpp \
-OW_System.cpp \
-OW_UUID.cpp \
-OW_EnvVars.cpp \
 OW_WQLSelectStatement.cpp \
 OW_WQLCompile.cpp \
 OW_WQLOperand.cpp \
@@ -151,10 +53,10 @@ OW_WQLPropertySource.cpp \
 OW_WQLInstancePropertySource.cpp
 
 pkginclude_HEADERS =	\
+OW_BinarySerialization.hpp \
 OW_AppenderLogger.hpp \
 OW_ArrayFwd.hpp \
 OW_Array.hpp \
-OW_ArrayImpl.hpp \
 OW_Assertion.hpp \
 OW_AtomicOps.hpp \
 OW_AutoDescriptor.hpp \
@@ -232,11 +134,9 @@ OW_MemTracer.hpp \
 OW_MultiAppender.hpp \
 OW_MultiProcessFileAppender.hpp \
 OW_Mutex.hpp \
-OW_MutexImpl.hpp \
 OW_MutexLock.hpp \
 OW_NetworkTypes.hpp \
 OW_NonRecursiveMutex.hpp \
-OW_NonRecursiveMutexImpl.hpp \
 OW_NonRecursiveMutexLock.hpp \
 OW_NoSuchPropertyException.hpp \
 OW_NoSuchProviderException.hpp \
@@ -279,6 +179,7 @@ OW_shlSharedLibrary.hpp \
 OW_shlSharedLibraryLoader.hpp \
 OW_SignalScope.hpp \
 OW_SignalUtils.hpp \
+OW_SocketBaseImpl.hpp \
 OW_SortedVectorMap.hpp \
 OW_SortedVectorSet.hpp \
 OW_Stack.hpp \
@@ -291,7 +192,6 @@ OW_String.hpp \
 OW_StringStream.hpp \
 OW_SyslogAppender.hpp \
 OW_System.hpp \
-OW_TempFileEnumerationImplBase.hpp \
 OW_TempFileStream.hpp \
 OW_ThreadBarrier.hpp \
 OW_ThreadCancelledException.hpp \
@@ -305,7 +205,6 @@ OW_ThreadTypes.hpp \
 OW_Timeout.hpp \
 OW_TimeoutException.hpp \
 OW_TimeoutTimer.hpp \
-OW_TmpFile.hpp \
 OW_Types.hpp \
 OW_UnnamedPipe.hpp \
 OW_URL.hpp \
@@ -320,10 +219,20 @@ OW_WQLCompile.hpp \
 OW_WQLOperand.hpp \
 OW_WQLOperation.hpp \
 OW_WQLPropertySource.hpp \
-OW_WQLInstancePropertySource.hpp
+OW_WQLInstancePropertySource.hpp \
+OW_GetPass.hpp \
+OW_SocketAddress.hpp \
+OW_ServerSocket.hpp \
+OW_Socket.hpp \
+OW_NwIface.hpp \
+OW_SSLCtxMgr.hpp \
+OW_SSLException.hpp \
+OW_SocketException.hpp \
+OW_SocketStreamBuffer.hpp \
+OW_SocketUtils.hpp \
+OW_SocketFlags.hpp
 
 libopenwbem_a_LIBADD = \
 ../cim/libOW_cim.a \
-../common/socket/libOW_Socket.a \
 ../ifcs/libOW_ifcs.a
 

@@ -22,7 +22,7 @@ libowprovindIndicationRepLayer_a_SOURCES = \
 OW_provindIndicationRepLayer.cpp
 
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/cimom/common -lowcimomcommon \

@@ -35,54 +35,5 @@
 #ifndef OW_SHAREDLIBRARY_HPP_
 #define OW_SHAREDLIBRARY_HPP_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
-
-namespace OW_NAMESPACE
-{
-
-/**
- * SharedLibrary is a base class for platform classes that implement the
- * functionality of loading and querying shared libraries.
- */
-class OW_COMMON_API SharedLibrary : public IntrusiveCountableBase
-{
-public:
-	virtual ~SharedLibrary();
-	/**
-	 * given a symbol name, getFunctionPointer will store a pointer to the
-	 * function in retval.  If the symbol is found the function returns
-	 * true, otherwise false.
-	 * This function should be called like this:
-	 * typedef ReturnType (*func_t)(param_t p1, ...);
-	 * func_t theFunction;
-	 * sharedLibrary->getFunctionPointer(sharedLibrary, "FunctionName", theFunction);
-	 *
-	 * @param functionName	The name of the function to resolve.
-	 * @param retval			Will be set to the function pointer.
-	 * @return true if function succeeded, false otherwise.
-	 */
-	template< class fptype >
-	bool getFunctionPointer(const String& functionName, fptype& retval )
-	{
-		return this->doGetFunctionPointer( functionName, reinterpret_cast<void**>(&retval));
-	}
-
-protected:
-	/**
-	 * Derived classes have to override this function to implement
-	 * the symbol loading.  The symbol to be looked up is contained in
-	 * functionName, and the pointer to the function should be written
-	 * into *fp.  Return true if the function succeeded, false otherwise.
-	 * @param functionName	The name of the function to resolve.
-	 * @param fp				Where to store the function pointer.
-	 * @return true if function succeeded, false otherwise.
-	 */
-	virtual bool doGetFunctionPointer( const String& functionName,
-			void** fp ) const = 0;
-};
-
-} // end namespace OW_NAMESPACE
-
+#include <blocxx/SharedLibrary.hpp>
 #endif

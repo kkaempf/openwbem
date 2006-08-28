@@ -29,26 +29,15 @@
 *******************************************************************************/
 
 /**
- * @author Bart Whiteley
+ * @author Jon Carey
  * @author Dan Nuffer
  */
 
-#ifndef OW_SELECTABLEIFC_HPP_INCLUDE_GUARD_
-#define OW_SELECTABLEIFC_HPP_INCLUDE_GUARD_
+#ifndef OW_SelectableIFC_HPP_INCLUDE_GUARD_
+#define OW_SelectableIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Types.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include <blocxx/SelectableIFC.hpp> 
+#include "OW_SelectableCallbackIFC.hpp"
 
-namespace OW_NAMESPACE
-{
-
-class OW_COMMON_API SelectableIFC : virtual public IntrusiveCountableBase
-{
-public:
-   virtual ~SelectableIFC();
-   virtual Select_t getSelectObj() const = 0;
-};
-
-} // end namespace OW_NAMESPACE
 
 #endif

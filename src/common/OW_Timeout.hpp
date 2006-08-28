@@ -36,54 +36,7 @@
 #define OW_TIMEOUT_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_CommonFwd.hpp"
-#include "OW_DateTime.hpp"
-
-namespace OW_NAMESPACE
-{
-
-/**
- * A timeout can be absolute, which means that it will happen at the specified DateTime.
- * A timeout can be relative, which means that it will happen at the specified interval after the call is made.
- * A timeout can be relative with reset, which means that it will happen at the specified interval after "no activity" has occurred.
- *   "no activity" is dependent on the operation.
- * A timeout can be infinite.
- */
-class Timeout
-{
-public:
-	static Timeout absolute(const DateTime& dt);
-	static Timeout relative(float seconds);
-	static Timeout relativeWithReset(float seconds);
-
-	static Timeout infinite;
-
-	enum ETimeoutType
-	{
-		E_ABSOLUTE,
-		E_RELATIVE,
-		E_RELATIVE_WITH_RESET
-	};
-
-	ETimeoutType getType() const;
-	DateTime getAbsolute() const;
-	float getRelative() const;
-
-private:
-	// have to use static factory functions to create a Timeout instance
-	Timeout();
-	Timeout(ETimeoutType type, const DateTime& dt);
-	Timeout(ETimeoutType type, float seconds);
-
-	ETimeoutType m_type;
-	DateTime m_absolute;
-	float m_seconds;
-};
-
-bool operator==(const Timeout& x, const Timeout& y);
-bool operator!=(const Timeout& x, const Timeout& y);
-
-} // end namespace OW_NAMESPACE
+#include <blocxx/Timeout.hpp>
 
 #endif
 

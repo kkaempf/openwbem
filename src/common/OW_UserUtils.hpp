@@ -34,46 +34,8 @@
 
 #ifndef OW_USER_UTILS_HPP_INCLUDE_GUARD
 #define OW_USER_UTILS_HPP_INCLUDE_GUARD
-
 #include "OW_config.h"
-#include "OW_String.hpp"
-
-namespace OW_NAMESPACE
-{
-    /// Facade encapsulating OS specific user functionality.
-	namespace UserUtils
-	{
-#ifdef OW_WIN32
-		typedef int UserID; // fixme
-#else
-		typedef uid_t UserID;
-		const UserID INVALID_USERID = UserID(~0);
-#endif
-
-
-		/**
-		 * Get the effective user id.  On POSIX platforms this calls geteuid().
-		 */
-		OW_COMMON_API String getEffectiveUserId();
-		OW_COMMON_API String getCurrentUserName();
-		/**
-		 * If the username is invalid, or if getUserName() fails for any other
-		 * reason, 'success' will be set to false. On success, 'success' is
-		 * set to true.  
-		 */
-		OW_COMMON_API String getUserName(UserID uid, bool& success);
-
-		/**
-		 * Convert a textual username into a platform native user type.
-		 * @param userName The user name to convert.
-		 * @param validUserName Out param set to true if the conversion was successful, false otherwise.
-		 * @return The user id corresponding to userName.
-		 */
-		OW_COMMON_API UserID getUserId(const String& userName, bool& validUserName);
-
-	} // end namespace UserUtils
-} // end namespace OW_NAMESPACE
-
+#include <blocxx/UserUtils.hpp>
 #endif
 
 

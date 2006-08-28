@@ -16,7 +16,7 @@ owprovideragent_LDADD = \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 $(REALTIME_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) $(BINLINKAPPENDFLAGS)
 

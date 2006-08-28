@@ -17,7 +17,7 @@ owstatlibdir = $(thelibdir)
 OW_SHARED_LIBS = libowoopcpp1pr.$(LIB_EXT)
 
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \

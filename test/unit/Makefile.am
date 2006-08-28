@@ -21,8 +21,8 @@ noinst_PROGRAMS = $(PROGS)
 
 
 MemTracerTest_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/src/ -lopenwbem  \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/ -lopenwbem -lblocxx  \
 $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -34,8 +34,8 @@ MemTracerTest_SOURCES = \
 MemTracerTest.cpp
 
 runMultiProcessLogger_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/src/ -lopenwbem  \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/ -lopenwbem -lblocxx  \
 $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -219,7 +219,7 @@ unitMain_LDADD = \
 $(REPLIBFLAGS) \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 $(SSL_LIBS) $(Z_LIBS) \
 $(REALTIME_LIBS) \
 $(BINLINKAPPENDFLAGS)
@@ -259,9 +259,10 @@ include $(top_srcdir)/Makefile-shared-lib.inc
 MAKEDYLIB=0
 MAKEBUNDLE=1
 OW_SHARED_LIBS = libLazyGlobalTestLibrary.$(LIB_EXT)
+LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
-SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem
+SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem -lblocxx
 
 noinst_LIBRARIES = libLazyGlobalTestLibrary.a
 libLazyGlobalTestLibrary_a_SOURCES = OW_LazyGlobalTestLibrary.cpp

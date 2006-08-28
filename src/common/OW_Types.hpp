@@ -36,6 +36,7 @@
 #ifndef OW_TYPES_HPP_INCLUDE_GUARD_
 #define OW_TYPES_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include <blocxx/Types.hpp>
 
 #ifndef __cplusplus
 #error "OW_Types.hpp can only be included by c++ files"
@@ -49,49 +50,31 @@ extern "C"
 namespace OW_NAMESPACE
 {
 
-typedef unsigned char      			UInt8;
-typedef signed char        			Int8;
 #if OW_SIZEOF_SHORT_INT == 2
-typedef unsigned short     			UInt16;
-typedef short       				Int16;
 #define OW_INT16_IS_SHORT 1
 #elif OW_SIZEOF_INT == 2
-typedef unsigned int     			UInt16;
-typedef int       					Int16;
 #define OW_INT16_IS_INT 1
 #endif
 #if OW_SIZEOF_INT == 4
-typedef unsigned int       			UInt32;
-typedef int         				Int32;
 #define OW_INT32_IS_INT 1
 #elif OW_SIZEOF_LONG_INT == 4
-typedef unsigned long       		UInt32;
-typedef long         				Int32;
 #define OW_INT32_IS_LONG 1
 #endif
 #if OW_SIZEOF_LONG_INT == 8
-typedef unsigned long   UInt64;
-typedef long    Int64;
 #define OW_INT64_IS_LONG 1
 #elif OW_SIZEOF_LONG_LONG_INT == 8
-typedef unsigned long long 			UInt64;
-typedef long long   				Int64;
 #define OW_INT64_IS_LONG_LONG 1
 #else
 #error "Compiler must support 64 bit long"
 #endif
 #if OW_SIZEOF_DOUBLE == 8
-typedef double						Real64;
 #define OW_REAL64_IS_DOUBLE 1
 #elif OW_SIZEOF_LONG_DOUBLE == 8
-typedef long double					Real64;
 #define OW_REAL64_IS_LONG_DOUBLE 1
 #endif
 #if OW_SIZEOF_FLOAT == 4
-typedef float						Real32;
 #define OW_REAL32_IS_FLOAT 1
 #elif OW_SIZEOF_DOUBLE == 4
-typedef double						Real32;
 #define OW_REAL32_IS_DOUBLE 1
 #endif
 
@@ -101,39 +84,9 @@ typedef double						Real32;
 #define OW_FILENAME_SEPARATOR "\\"
 #define OW_FILENAME_SEPARATOR_C '\\'
 #define OW_PATHNAME_SEPARATOR ";"
-// OW_Select_t is the type of object that can be used in
-// synchronous I/O multiplexing (i.e. select).
-struct Select_t
-{
-	Select_t() 
-		: event(NULL)
-		, sockfd(INVALID_SOCKET)
-		, networkevents(0)
-		, doreset(false)
-	{
-	}
 
-	Select_t(const Select_t& arg)
-		: event(arg.event)
-		, sockfd(arg.sockfd)
-		, networkevents(arg.networkevents)
-		, doreset(arg.doreset)
-	{
-	}
-	
-	HANDLE event;
-	SOCKET sockfd;
-	long networkevents;
-	bool doreset;
-};
 
-//typedef HANDLE Select_t;
 #else
-// Select_t is the type of object that can be used in
-// synchronous I/O multiplexing (i.e. select). There is a
-// possibility this can be something other than an int on
-// a platform we don't yet support.
-typedef int Select_t;
 
 #if defined OW_DARWIN
 #define OW_SHAREDLIB_EXTENSION ".dylib.bundle"
@@ -150,20 +103,9 @@ typedef int Select_t;
 #endif
 
 #ifdef OW_WIN32
-typedef HANDLE FileHandle;
-typedef HANDLE Descriptor;
 #define OW_INVALID_FILEHANDLE INVALID_HANDLE_VALUE
-typedef int UserId;
-typedef int uid_t;
-typedef DWORD pid_t;
-typedef DWORD ProcId;
-typedef struct {} siginfo_t;
 #else
-typedef int FileHandle;
-typedef int Descriptor;
 #define OW_INVALID_FILEHANDLE -1
-typedef uid_t UserId;
-typedef pid_t ProcId;
 #endif
 
 } // end namespace OW_NAMESPACE

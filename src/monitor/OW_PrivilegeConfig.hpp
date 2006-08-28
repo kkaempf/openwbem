@@ -38,6 +38,10 @@
 #include <map>
 #include <vector>
 
+/**
+ * @author ???
+ */
+
 namespace OW_NAMESPACE
 {
 namespace PrivilegeConfig

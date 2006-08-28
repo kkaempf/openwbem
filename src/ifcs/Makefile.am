@@ -8,11 +8,8 @@ OW_AuthorizerIFC.cpp \
 OW_CIMOMHandleIFC.cpp \
 OW_CIMProtocolIFC.cpp \
 OW_ClientAuthCBIFC.cpp \
-OW_IOIFC.cpp \
 OW_RepositoryIFC.cpp \
 OW_RequestHandlerIFC.cpp \
-OW_SelectableCallbackIFC.cpp \
-OW_SelectableIFC.cpp \
 OW_SerializableIFC.cpp \
 OW_ServiceIFC.cpp \
 OW_ServiceEnvironmentIFC.cpp \

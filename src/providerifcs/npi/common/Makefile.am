@@ -11,7 +11,7 @@ uninstall-local : uninstall-ow-shared-libs
 owstatlib_LIBRARIES = libnpisupport.a
 OW_SHARED_LIBS = libnpisupport.$(LIB_EXT)
 SHAREDLIBADD =  \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 -L$(top_builddir)/src/provider -lowprovider
 
 # increment this number every time a release breaks binary compatibility

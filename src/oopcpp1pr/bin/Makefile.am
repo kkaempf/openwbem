@@ -15,7 +15,7 @@ owoopcpp1pr_LDADD = \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/requesthandlers/binary -lowrequesthandlerbinary \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 $(SSL_LIBS) $(Z_LIBS) $(BINLINKAPPENDFLAGS)
 
 owoopcpp1pr_SOURCES = \

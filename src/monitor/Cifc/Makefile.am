@@ -19,7 +19,7 @@ noinst_LIBRARIES = libowcprivman.a
 
 # SHAREDLIBADD = \
 # -L$(top_builddir)/src/monitor -lowprivman \
-# -L$(top_builddir)/src/common -lopenwbem
+# -L$(top_builddir)/src/common -lopenwbem -lblocxx
 
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 

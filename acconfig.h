@@ -33,6 +33,7 @@
  */
 
 
+#include <blocxx/BLOCXX_config.h>
 
 
 /* autoconf set variables here */
@@ -303,6 +304,12 @@ namespace OW_NAMESPACE
 }
 
 namespace OpenWBEM = OW_NAMESPACE;
+
+
+namespace OW_NAMESPACE
+{
+  using namespace blocxx; 
+}
 
 #ifdef OW_DEBUG_MEMORY
 #include "OW_MemTracer.hpp"

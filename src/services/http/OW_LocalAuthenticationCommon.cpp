@@ -39,6 +39,8 @@
 #include "OW_FileSystem.hpp"
 #include "OW_File.hpp"
 #include "OW_Format.hpp"
+#include "OW_Logger.hpp"
+#include "OW_Types.hpp"
 
 #include <unistd.h>
 #include <sys/types.h>

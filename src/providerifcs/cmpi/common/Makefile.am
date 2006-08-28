@@ -14,7 +14,7 @@ uninstall-local : uninstall-ow-shared-libs
 owstatlib_LIBRARIES = libcmpisupport.a
 OW_SHARED_LIBS = libcmpisupport.$(LIB_EXT)
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 -L$(top_builddir)/src/provider -lowprovider 
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)

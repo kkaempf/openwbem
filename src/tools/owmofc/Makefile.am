@@ -38,7 +38,7 @@ owmofc_LDADD = \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 $(REPLIBFLAGS) \
 -L$(top_builddir)/db/db -lowdb \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 

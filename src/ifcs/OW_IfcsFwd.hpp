@@ -55,12 +55,6 @@ typedef SharedLibraryReference<IntrusiveReference<ServiceIFC> > ServiceIFCRef;
 class WQLIFC;
 typedef SharedLibraryReference<IntrusiveReference<WQLIFC> > WQLIFCRef;
 
-class SelectableIFC;
-typedef IntrusiveReference<SelectableIFC> SelectableIFCRef;
-
-class SelectableCallbackIFC;
-typedef IntrusiveReference<SelectableCallbackIFC> SelectableCallbackIFCRef;
-
 class RepositoryIFC;
 typedef IntrusiveReference<RepositoryIFC> RepositoryIFCRef;
 typedef SharedLibraryReference<RepositoryIFCRef> SharedLibraryRepositoryIFCRef;

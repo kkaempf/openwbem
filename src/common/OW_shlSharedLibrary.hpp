@@ -36,37 +36,6 @@
 #define OW_SHL_SHAREDLIBRARY_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #if defined(OW_USE_SHL)
-#include "OW_SharedLibrary.hpp"
-
-#include <dl.h> // for shl_t
-
-// The classes and functions defined in this file are not meant for general
-// use, they are internal implementation details.  They may change at any time.
-
-namespace OW_NAMESPACE
-{
-
-/**
- * shlSharedLibrary loads and queries shared libraries. Using dlsym &
- * friends.
- */
-class shlSharedLibrary : public SharedLibrary
-{
-public:
-	shlSharedLibrary(void * libhandle, const String& libName)
-		: SharedLibrary(), m_libhandle( reinterpret_cast<shl_t>(libhandle) ), m_libName(libName)
-	{
-	}
-	virtual ~shlSharedLibrary();
-
-protected:
-	virtual bool doGetFunctionPointer( const String& functionName, void** fp ) const;
-private:
-	mutable shl_t m_libhandle;
-	String m_libName;
-};
-
-} // end namespace OW_NAMESPACE
-
+#include <blocxx/shlSharedLibrary.hpp>
 #endif // #if defined(OW_USE_SHL)
 #endif

@@ -36,6 +36,7 @@
 #include "OW_config.h"
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_ConfigOpts.hpp"
+#include "OW_ConfigFile.hpp"
 #include "OW_ConfigException.hpp"
 #include "OW_Format.hpp"
 #include "OW_FileSystem.hpp"
@@ -482,7 +483,7 @@ CIMOMEnvironment::_createIndicationServer()
 		}
 		indicationLib += "libowindicationserver"OW_SHAREDLIB_EXTENSION;
 		m_indicationServer = SafeLibCreate<IndicationServer>::loadAndCreateObject(
-				indicationLib, "createIndicationServer");
+				indicationLib, "createIndicationServer", OW_VERSION);
 		if (!m_indicationServer)
 		{
 
@@ -536,7 +537,7 @@ CIMOMEnvironment::_loadRequestHandlers()
 			libName += dirEntries[i];
 			RequestHandlerIFCRef rh =
 				SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(
-					libName, "createRequestHandler");
+					libName, "createRequestHandler", OW_VERSION);
 			if (rh)
 			{
 				++reqHandlerCount;
@@ -607,7 +608,7 @@ CIMOMEnvironment::_loadServices()
 			libName += dirEntries[i];
 			ServiceIFCRef srv =
 				SafeLibCreate<ServiceIFC>::loadAndCreateObject(libName,
-					"createService");
+					"createService", OW_VERSION);
 			if (srv)
 			{
 				m_services.push_back(srv);
@@ -628,9 +629,9 @@ CIMOMEnvironment::_loadServices()
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-LogAppender::ConfigMap getAppenderConfig(const ConfigFile::ConfigMap& configItems)
+LoggerConfigMap getAppenderConfig(const ConfigFile::ConfigMap& configItems)
 {
-	LogAppender::ConfigMap appenderConfig;
+	LoggerConfigMap appenderConfig;
 	for (ConfigFile::ConfigMap::const_iterator iter = configItems.begin(); iter != configItems.end(); ++iter)
 	{
 		if (iter->first.startsWith("log") && iter->second.size() > 0)
@@ -951,7 +952,7 @@ CIMOMEnvironment::getWQLRef() const
 		}
 	}
 	return  WQLIFCRef(m_wqlLib, SafeLibCreate<WQLIFC>::create(
-		m_wqlLib, "createWQL"));
+		m_wqlLib, "createWQL", OW_VERSION));
 }
 //////////////////////////////////////////////////////////////////////////////
 SharedLibraryRepositoryIFCRef
@@ -989,7 +990,7 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref) const
 		}
 		IndicationRepLayer* pirep =
 			SafeLibCreate<IndicationRepLayer>::create(
-				m_indicationRepLayerLib, "createIndicationRepLayer");
+				m_indicationRepLayerLib, "createIndicationRepLayer", OW_VERSION);
 		if (pirep)
 		{
 			retref = SharedLibraryRepositoryIFCRef(m_indicationRepLayerLib,
@@ -1039,7 +1040,7 @@ CIMOMEnvironment::_loadAuthorizer()
 	}
 	AuthorizerIFC* p =
 		SafeLibCreate<AuthorizerIFC>::create(
-			authorizerLib, "createAuthorizer");
+			authorizerLib, "createAuthorizer", OW_VERSION);
 	if (!p)
 	{
 		String msg = Format("CIMOM failed to load authorization"
@@ -1089,7 +1090,7 @@ CIMOMEnvironment::_createAuthorizerManager()
 	}
 	Authorizer2IFC* p =
 		SafeLibCreate<Authorizer2IFC>::create(
-			authorizerLib, "createAuthorizer2");
+			authorizerLib, "createAuthorizer2", OW_VERSION);
 	if (!p)
 	{
 		String msg = Format("CIMOM failed to load authorization"

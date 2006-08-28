@@ -35,45 +35,11 @@
 #ifndef OW_COMMON_FWD_HPP_INCLUDE_GUARD_
 #define OW_COMMON_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_ArrayFwd.hpp"
-#include "OW_IntrusiveReference.hpp"
+#include <blocxx/CommonFwd.hpp>
 
-// Yeah I know this is forbidden by the standard, but what am I gonna do?  #include <algorithm> ? I think not.
-// If it causes a problem on some compiler, just #ifdef a fix in.
-#ifdef OW_WIN32
-namespace std
-{
-	template <typename T> struct less;
-}
-#else
-namespace std
-{
-	template <typename T> class less;
-}
-#endif
 
 namespace OW_NAMESPACE
 {
-
-struct LogMessage;
-
-class OW_COMMON_API Logger;
-typedef IntrusiveReference<Logger> LoggerRef;
-
-class OW_COMMON_API LogAppender;
-typedef IntrusiveReference<LogAppender> LogAppenderRef;
-
-class String;
-typedef Array<String> StringArray;
-
-class Char16;
-typedef Array<Char16> Char16Array;
-
-template <class Key, class T, class Compare>
-class SortedVectorMapDataCompare;
-
-template<class Key, class T, class Compare = SortedVectorMapDataCompare<Key, T, std::less<Key> > >
-class SortedVectorMap;
 
 namespace ConfigFile
 {
@@ -82,101 +48,18 @@ namespace ConfigFile
 	typedef SortedVectorMap<String, ItemDataArray> ConfigMap;
 }
 
-class StringBuffer;
-
-class DateTime;
-
 class OperationContext;
-
-template <class T> class Enumeration;
-typedef Enumeration<String> StringEnumeration;
-
-class Thread;
-typedef IntrusiveReference<Thread> ThreadRef;
-
-class ThreadPool;
-typedef IntrusiveReference<ThreadPool> ThreadPoolRef;
-
-class Bool;
-typedef Array<Bool>       			BoolArray;
 
 struct CIMFeatures;
 
-class NonRecursiveMutexLock;
-
-class NonRecursiveMutex;
-class Mutex;
-
-class UnnamedPipe;
-typedef IntrusiveReference<UnnamedPipe> UnnamedPipeRef;
-
-class File;
-
-class MD5;
-
 class UserInfo;
-
-class SharedLibraryLoader;
-typedef IntrusiveReference<SharedLibraryLoader> SharedLibraryLoaderRef;
-
-class TmpFile;
-
-class Socket;
-
-class SocketBaseImpl;
-typedef IntrusiveReference<SocketBaseImpl> SocketBaseImplRef;
-
-class ServerSocket;
-
-class TempFileStream;
 
 class RepositoryCIMOMHandle;
 typedef IntrusiveReference<RepositoryCIMOMHandle> RepositoryCIMOMHandleRef;
 
-class Runnable;
-typedef IntrusiveReference<Runnable> RunnableRef;
-
 class SessionLanguage;
 typedef IntrusiveReference<SessionLanguage> SessionLanguageRef;
 
-class ThreadCounter;
-typedef IntrusiveReference<ThreadCounter> ThreadCounterRef;
-
-class ThreadDoneCallback;
-typedef IntrusiveReference<ThreadDoneCallback> ThreadDoneCallbackRef;
-
-class CmdLineParser;
-class CmdLineParserException;
-
-//class PopenStreams;
-
-class Timeout;
-class TimeoutTimer;
-
-class SSLServerCtx;
-typedef IntrusiveReference<SSLServerCtx> SSLServerCtxRef; 
-
-class SSLClientCtx;
-typedef IntrusiveReference<SSLClientCtx> SSLClientCtxRef; 
-
-class SSLTrustStore;
-typedef IntrusiveReference<SSLTrustStore> SSLTrustStoreRef; 
-
-class SharedLibrary;
-typedef IntrusiveReference<SharedLibrary> SharedLibraryRef;
-
-class Process;
-typedef IntrusiveReference<Process> ProcessRef;
-
-#ifdef OW_ENABLE_TEST_HOOKS
-class FileSystemMockObject;
-class ExecMockObject;
-#endif
-
-#ifdef OW_WIN32
-template class OW_COMMON_API Array<String>;
-template class OW_COMMON_API SortedVectorSet<String>;
-#endif
 
 } // end namespace OW_NAMESPACE
 

@@ -35,36 +35,5 @@
 #ifndef OW_THREAD_CANCELLED_EXCEPTION_HPP_INCLUDE_GUARD_
 #define OW_THREAD_CANCELLED_EXCEPTION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-
-namespace OW_NAMESPACE
-{
-
-/**
- * In the event a thread has been cancelled, a 
- * ThreadCancelledException will be thrown.  DO NOT catch this exception.
- * ThreadCancelledException is not derived from anything.
- * Except for in destructors, do not write code like this:
- * try {
- *  //...
- * } catch (...) {
- *  // swallow all exceptions
- * }
- *
- * Instead do this:
- * try {
- *  //...
- * } catch (ThreadCancelledException&) {
- *  throw;
- * } catch (std::exception& e) {
- *  // handle the exception
- * }
- * The only place ThreadCancelledException should be caught is in 
- * Thread::threadRunner() or a destructor. main() shouldn't need to catch it, as the main
- * thread of an application should never be cancelled.  The main thread
- * shouldn't need to ever call testCancel.
- */
-struct ThreadCancelledException {};
-
-} // end namespace OW_NAMESPACE
-
+#include <blocxx/ThreadCancelledException.hpp>
 #endif

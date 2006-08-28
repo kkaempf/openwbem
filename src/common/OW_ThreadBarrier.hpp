@@ -35,54 +35,5 @@
 #ifndef OW_THREAD_BARRIER_HPP_INCLUDE_GUARD_
 #define OW_THREAD_BARRIER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Types.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_Exception.hpp"
-
-namespace OW_NAMESPACE
-{
-
-class ThreadBarrierImpl;
-OW_DECLARE_APIEXCEPTION(ThreadBarrier, OW_COMMON_API);
-/**
- * The ThreadBarrier class is used to synchronize threads.  Each thread that calls wait() will 
- * block until <i>threshold</i> number of threads has called wait()
- * This class is freely copyable.  All copies reference the same underlying implementation.
- */
-class OW_COMMON_API ThreadBarrier
-{
-public:
-	/**
-	 * Constructor
-	 * @param threshold The number of threads that must call wait() before any of them successfully 
-     * return from the call. The value specified by threshold must be greater than zero.
-	 * @throw ThreadBarrierException if the underlying implementation fails.
-	 */
-	ThreadBarrier(UInt32 threshold);
-	/**
-	 * Synchronize participating threads at the barrier. The calling thread shall block until the 
-     * required number of threads have called wait().
-	 * @throw ThreadBarrierException if the underlying implementation fails.
-	 */
-	void wait();
-	~ThreadBarrier();
-	ThreadBarrier(const ThreadBarrier& x);
-	ThreadBarrier& operator=(const ThreadBarrier& x);
-private:
-
-#ifdef OW_WIN32
-#pragma warning (push)
-#pragma warning (disable: 4251)
-#endif
-
-	IntrusiveReference<ThreadBarrierImpl> m_impl;
-
-#ifdef OW_WIN32
-#pragma warning (pop)
-#endif
-
-};
-
-} // end namespace OW_NAMESPACE
-
+#include <blocxx/ThreadBarrier.hpp>
 #endif

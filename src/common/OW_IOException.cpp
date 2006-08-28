@@ -40,7 +40,6 @@
 namespace OW_NAMESPACE
 {
 
-OW_DEFINE_EXCEPTION_WITH_ID(IO);
 OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID(BadCIMSignature, IOException);
 
 } // end namespace OW_NAMESPACE

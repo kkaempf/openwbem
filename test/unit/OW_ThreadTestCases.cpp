@@ -37,6 +37,7 @@
 #include "TestCaller.hpp"
 #include "OW_ThreadTestCases.hpp"
 #include "OW_Thread.hpp"
+#include "OW_Exception.hpp"
 
 #include <sys/types.h>
 

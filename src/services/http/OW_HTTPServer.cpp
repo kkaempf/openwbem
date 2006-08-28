@@ -42,6 +42,7 @@
 #include "OW_Socket.hpp"
 #include "OW_Format.hpp"
 #include "OW_SelectableIFC.hpp"
+#include "OW_SelectableCallbackIFC.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_HTTPUtils.hpp"

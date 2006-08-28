@@ -34,25 +34,9 @@
 /// @author Kevin S. Van Horn
 
 #include "OW_config.h"
-
-namespace OW_NAMESPACE
-{
-	template <bool x> struct StaticAssertionFailure;
-
-	template <>
-	struct StaticAssertionFailure<true>
-	{
-	};
-}
-
-// Need this first macro because ## doesn't expand vars, and we need an intermediate step
-#define OW_STATIC_ASSERT_CAT(a, b) a ## b
-#define OW_STATIC_ASSERT_AUX(a, b) OW_STATIC_ASSERT_CAT(a, b)
-
-#define OW_STATIC_ASSERT( B ) \
-enum { \
-	OW_STATIC_ASSERT_AUX(openwbem_static_assert_enum_, __LINE__) \
-	= sizeof( ::OpenWBEM::StaticAssertionFailure< (bool)( B ) > ) \
-}
-
+#include <blocxx/StaticAssert.hpp>
+#define OW_STATIC_ASSERT_CAT(a, b) BLOCXX_STATIC_ASSERT_CAT(a, b)
+#define OW_STATIC_ASSERT_AUX(a, b) BLOCXX_STATIC_ASSERT_AUX(a, b)
+#define OW_STATIC_ASSERT( B ) BLOCXX_STATIC_ASSERT( B )
 #endif
+

@@ -36,6 +36,7 @@
 #include "OW_config.h"
 #include "OW_AuthManager.hpp"
 #include "OW_Format.hpp"
+#include "OW_Logger.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_SafeLibCreate.hpp"
 #include "OW_ThreadCancelledException.hpp"
@@ -85,7 +86,7 @@ AuthManager::init(const ServiceEnvironmentIFCRef& env)
 	OW_LOG_INFO(logger, Format("Authentication Manager: Loading"
 		" authentication module %1", authLib));
 	m_authenticator =
-		SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib, "createAuthenticator");
+		SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib, "createAuthenticator", OW_VERSION);
 	if (m_authenticator)
 	{
 		try

@@ -55,7 +55,7 @@ LoggerRef create_logger(
 	StringArray categories;
 	categories.push_back("*");
 
-	LogAppender::ConfigMap config_items;
+	LoggerConfigMap config_items;
 	config_items["log.test.location"] = log_file_name;
 	config_items["log.test.max_file_size"] = max_file_size;
 	config_items["log.test.max_backup_index"] = max_backup_index;

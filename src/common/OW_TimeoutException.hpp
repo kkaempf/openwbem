@@ -35,13 +35,6 @@
 #ifndef OW_TIMEOUTEXCEPTION_HPP_INCLUDE_GUARD_
 #define OW_TIMEOUTEXCEPTION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Exception.hpp"
-
-namespace OW_NAMESPACE
-{
-
-OW_DECLARE_APIEXCEPTION(Timeout, OW_COMMON_API);
-
-} // end namespace OW_NAMESPACE
+#include <blocxx/TimeoutException.hpp>
 
 #endif

@@ -36,30 +36,6 @@
 #define OW_SHL_SHARED_LIBRARY_LOADER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #if defined(OW_USE_SHL)
-#include "OW_SharedLibraryLoader.hpp"
-
-// The classes and functions defined in this file are not meant for general
-// use, they are internal implementation details.  They may change at any time.
-
-namespace OW_NAMESPACE
-{
-
-/**
- * shlSharedLibraryLoader is the class for loading
- * shared libraries with shl_load() on HP-UX.
- * Invariants: None, the class has no state.
- * Thread safety: read/write
- * Copy semantics: Value
- * Exception safety: Strong
- */
-class shlSharedLibraryLoader : public SharedLibraryLoader
-{
-	public:
-		virtual ~shlSharedLibraryLoader();
-		virtual SharedLibraryRef loadSharedLibrary(const String& filename) const;
-};
-
-} // end namespace OW_NAMESPACE
-
+#include <blocxx/shlSharedLibraryLoader.hpp>
 #endif // #if defined(OW_USE_SHL)
 #endif

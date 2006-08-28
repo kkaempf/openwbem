@@ -40,6 +40,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_ConfigException.hpp"
 #include "OW_Format.hpp"
+#include "OW_Logger.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_SafeLibCreate.hpp"
 #include "OW_SelectEngine.hpp"
@@ -420,9 +421,9 @@ EmbeddedCIMOMEnvironment::getProviderManager() const
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-LogAppender::ConfigMap getAppenderConfig(const ConfigFile::ConfigMap& configItems)
+LoggerConfigMap getAppenderConfig(const ConfigFile::ConfigMap& configItems)
 {
-	LogAppender::ConfigMap appenderConfig;
+	LoggerConfigMap appenderConfig;
 	for (ConfigFile::ConfigMap::const_iterator iter = configItems.begin(); iter != configItems.end(); ++iter)
 	{
 		if (iter->first.startsWith("log") && iter->second.size() > 0)
@@ -682,7 +683,7 @@ EmbeddedCIMOMEnvironment::getWQLRef() const
 		}
 	}
 	return  WQLIFCRef(m_wqlLib, SafeLibCreate<WQLIFC>::create(
-		m_wqlLib, "createWQL"));
+		m_wqlLib, "createWQL", OW_VERSION));
 }
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -40,6 +40,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_PrivilegeManager.hpp"
 #include "OW_Format.hpp"
+#include "OW_Logger.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Exception.hpp"
 #include "OW_FileSystem.hpp"

@@ -117,9 +117,9 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-LogAppender::ConfigMap getAppenderConfig(const ConfigFile::ConfigMap& configItems)
+LoggerConfigMap getAppenderConfig(const ConfigFile::ConfigMap& configItems)
 {
-	LogAppender::ConfigMap appenderConfig;
+	LoggerConfigMap appenderConfig;
 	for (ConfigFile::ConfigMap::const_iterator iter = configItems.begin(); iter != configItems.end(); ++iter)
 	{
 		if (iter->first.startsWith("log") && iter->second.size() > 0)
@@ -229,7 +229,7 @@ private:
 		if (!authLib.empty())
 		{
 			OW_LOG_INFO(logger, Format("Authentication Manager: Loading authentication module %1", authLib));
-			m_authenticator = SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib, "createAuthenticator");
+			m_authenticator = SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib, "createAuthenticator", OW_VERSION);
 			if (m_authenticator)
 			{
 				m_authenticator->init(this);
@@ -274,7 +274,7 @@ private:
 #endif // OW_DARWIN
 			String libName = libPath;
 			libName += dirEntries[i];
-			RequestHandlerIFCRef rh = SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(libName, "createRequestHandler");
+			RequestHandlerIFCRef rh = SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(libName, "createRequestHandler", OW_VERSION);
 			if (rh)
 			{
 				m_reqHandlers.push_back(rh);

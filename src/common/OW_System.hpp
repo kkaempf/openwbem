@@ -36,23 +36,6 @@
 #define _OW_SYSTEM_HPP_GUARD_
 
 #include "OW_config.h"
-#include "OW_String.hpp"
-
-// The classes and functions defined in this file are not meant for general
-// use, they are internal implementation details.  They may change at any time.
-
-// TODO: Fix the name of this. System is horrible!
-// TODO: Fix the implementation of this. It isn't thread safe on some platforms.
-namespace OW_NAMESPACE
-{
-namespace System
-{
-
-OW_COMMON_API String errorMsg(int errorCode);
-OW_COMMON_API String lastErrorMsg(bool socketError=false);
-
-}	// End of System namespace
-}	// End of OpenWBEM namespace
-
+#include <blocxx/System.hpp>
 #endif	// _OW_SYSTEM_HPP_GUARD_
 

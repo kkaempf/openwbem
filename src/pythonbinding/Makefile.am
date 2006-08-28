@@ -11,7 +11,7 @@ uninstall-local : uninstall-ow-shared-libs
 OW_SHARED_LIBS = owclient.$(LIB_EXT)
 SHAREDLIBADD = \
 $(LIBS) \
--L../common -lopenwbem \
+-L../common -lopenwbem -lblocxx \
 -L../client -lowclient \
 -L../xml -lowxml \
 -L../http/common -lowhttpcommon \

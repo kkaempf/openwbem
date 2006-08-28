@@ -16,7 +16,7 @@ install-exec-local: install-ow-shared-libs
 uninstall-local: uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libowprivman.$(LIB_EXT)
-SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem
+SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem -lblocxx
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)

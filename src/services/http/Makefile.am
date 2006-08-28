@@ -16,7 +16,7 @@ EXPORT_PREFIX=createService
 
 OW_SHARED_LIBS = libowservicehttp.$(LIB_EXT)
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/monitor -lowprivman \
 $(SSL_LIBS)
@@ -85,7 +85,7 @@ $(CXXBINLINKFLAGS) \
 # Do things a bit differently and statically link to libopenwbem to avoid restrictions with LD_LIBRARY_PATH and setuid binaries.
 owlocalhelper_LDADD = \
 $(top_builddir)/src/common/libopenwbem.a \
-$(Z_LIBS) $(SSL_LIBS) \
+$(Z_LIBS) $(SSL_LIBS) -lblocxx \
 $(BINLINKAPPENDFLAGS)
 
 
@@ -131,7 +131,7 @@ $(vas3_link_flags) \
 -o owspnegovas3helper$(EXEEXT) 
 
 owspnegovas3helper_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(VAS2_LIB_DIR) -lvas \
 $(Z_LIBS) $(SSL_LIBS) \
@@ -155,7 +155,7 @@ $(vas3_link_flags) \
 -o owspnegovas4helper$(EXEEXT) 
 
 owspnegovas4helper_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(VAS3_LIB_DIR) -lvas \
 $(Z_LIBS) $(SSL_LIBS) \
