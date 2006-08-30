@@ -32,7 +32,7 @@
  */
 
 #include "OW_IPCIO_noexcept.hpp"
-#include "OW_DescriptorUtils_noexcept.hpp"
+#include "Cifc_DescriptorUtils_noexcept.hpp"
 #include <cerrno>
 #include <unistd.h>
 

@@ -26,10 +26,14 @@ LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 libowcprivman_a_SOURCES = \
 OW_IPCIO_noexcept.cpp \
 OW_privman_noexcept.cpp \
-$(top_srcdir)/src/common/OW_DescriptorUtils_noexcept.cpp \
-$(top_srcdir)/src/common/OW_AutoDescriptor.cpp
+Cifc_DescriptorUtils_noexcept.cpp \
+Cifc_AutoDescriptor.cpp
 
-noinst_HEADERS = OW_privman_noexcept.h OW_IPCIO_noexcept.hpp
+noinst_HEADERS = \
+OW_privman_noexcept.h \
+OW_IPCIO_noexcept.hpp \
+Cifc_AutoDescriptor.hpp \
+Cifc_DescriptorUtils_noexcept.hpp 
 
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/monitor -I$(top_srcdir)/src/common -DOW_NO_EXCEPTIONS
