@@ -119,14 +119,15 @@ $(monitor_test_data) \
 $(monitor_test_scripts:%.sh=%.gold.out) \
 monitor_test.nopriv.cfg \
 monitor_test.nopriv.test.tgz \
-$(monitor_test_nopriv_data) \
 $(monitor_exec_test_data) \
 $(monitor_exec_test_scripts:%.sh=%.gold.out) \
 $(user_exec_test_scripts:%.sh=%.cfg) \
 monitor_perl_test.0.inp \
 monitor_perl_test.0.cfg \
-monitor_perl_test.0.gold.out \
-monitor_perl_test_mon.cfg
+monitor_perl_test.0.gold.out 
+
+# $(monitor_test_nopriv_data) 
+# monitor_perl_test_mon.cfg
 
 # The inpf here is NOT a typeo.  It is used by some of the scripts.
 CLEANFILES = \
