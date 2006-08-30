@@ -217,19 +217,26 @@ OpenWBEM::CIMValue value2CIMValue(const CMPIValue* data, const CMPIType type, CM
 
 
 
-#define CopyFromArray(pt,ct) { OpenWBEM::Array<pt> ar; \
+#define CopyFromArray(pt,ct,dt) { OpenWBEM::Array<pt> ar; \
    v.get(ar); \
-   for (int i=0; i<aSize; i++) aData[i].value.ct=ar[i]; }
+   for (int i=0; i<aSize; i++){ \
+       aData[i].value.ct=ar[i]; \
+       aData[i].state = 0; \
+       aData[i].type = dt; } }
 
 #define CopyFromStringArray(pt,ct) { OpenWBEM::Array<pt> ar; \
    v.get(ar); \
    for (int i=0; i<aSize; i++) { \
-	  aData[i].value.ct=(CMPIString*)new CMPI_Object(ar[i]); } }
+	  aData[i].value.ct=(CMPIString*)new CMPI_Object(ar[i]); \
+      aData[i].state = 0; \
+      aData[i].type = CMPI_string; } }
 
-#define CopyFromEncArray(pt,ct,cn) { OpenWBEM::Array<pt> ar; \
+#define CopyFromEncArray(pt,ct,cn,dt) { OpenWBEM::Array<pt> ar; \
    v.get(ar); \
    for (int i=0; i<aSize; i++) { \
-	 aData[i].value.cn=(ct*)new CMPI_Object(new pt(ar[i])); } }
+	 aData[i].value.cn=(ct*)new CMPI_Object(new pt(ar[i])); \
+     aData[i].state = 0; \
+     aData[i].type = dt; } }
 
 
 CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data)
@@ -250,10 +257,10 @@ CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data)
 		{
 			switch(aType)
 			{
-				case CMPI_sint32: CopyFromArray(OpenWBEM::Int32,sint32); break;
-				case CMPI_sint16: CopyFromArray(OpenWBEM::Int16,sint16); break;
-				case CMPI_sint8:  CopyFromArray(OpenWBEM::Int8,sint8);   break;
-				case CMPI_sint64: CopyFromArray(OpenWBEM::Int64,sint64); break;
+				case CMPI_sint32: CopyFromArray(OpenWBEM::Int32,sint32,CMPI_sint32); break;
+				case CMPI_sint16: CopyFromArray(OpenWBEM::Int16,sint16,CMPI_sint16); break;
+				case CMPI_sint8:  CopyFromArray(OpenWBEM::Int8,sint8,CMPI_sint8);   break;
+				case CMPI_sint64: CopyFromArray(OpenWBEM::Int64,sint64,CMPI_sint64); break;
 				default: ;
 			}
 		}
@@ -265,10 +272,10 @@ CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data)
 		{
 			switch(aType)
 			{
-				case CMPI_uint32: CopyFromArray(OpenWBEM::UInt32,uint32); break;
-				case CMPI_uint16: CopyFromArray(OpenWBEM::UInt16,uint16); break;
-				case CMPI_uint8:  CopyFromArray(OpenWBEM::UInt8,uint8);   break;
- 				case CMPI_uint64: CopyFromArray(OpenWBEM::UInt64,uint64); break;
+				case CMPI_uint32: CopyFromArray(OpenWBEM::UInt32,uint32,CMPI_uint32); break;
+				case CMPI_uint16: CopyFromArray(OpenWBEM::UInt16,uint16,CMPI_uint16); break;
+				case CMPI_uint8:  CopyFromArray(OpenWBEM::UInt8,uint8,CMPI_uint8);   break;
+ 				case CMPI_uint64: CopyFromArray(OpenWBEM::UInt64,uint64,CMPI_uint64); break;
 				default: ;
 			}
 		}
@@ -276,12 +283,12 @@ CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data)
 		{
 			switch(aType)
 			{
-				case CMPI_ref:      CopyFromEncArray(OpenWBEM::CIMObjectPath,CMPIObjectPath,ref); break;
-				case CMPI_dateTime: CopyFromEncArray(OpenWBEM::CIMDateTime,CMPIDateTime,dateTime); break;
-				case CMPI_boolean:  CopyFromArray(OpenWBEM::Bool,boolean); break;
-				case CMPI_char16:   CopyFromArray(OpenWBEM::Char16,char16); break;
-				case CMPI_real32:   CopyFromArray(OpenWBEM::Real32,real32); break;
-				case CMPI_real64:   CopyFromArray(OpenWBEM::Real64,real64); break;
+				case CMPI_ref:      CopyFromEncArray(OpenWBEM::CIMObjectPath,CMPIObjectPath,ref,CMPI_ref); break;
+				case CMPI_dateTime: CopyFromEncArray(OpenWBEM::CIMDateTime,CMPIDateTime,dateTime,CMPI_dateTime); break;
+				case CMPI_boolean:  CopyFromArray(OpenWBEM::Bool,boolean,CMPI_boolean); break;
+				case CMPI_char16:   CopyFromArray(OpenWBEM::Char16,char16,CMPI_char16); break;
+				case CMPI_real32:   CopyFromArray(OpenWBEM::Real32,real32,CMPI_real32); break;
+				case CMPI_real64:   CopyFromArray(OpenWBEM::Real64,real64,CMPI_real64); break;
 				default:
 					return CMPI_RC_ERR_NOT_SUPPORTED;
 			}
