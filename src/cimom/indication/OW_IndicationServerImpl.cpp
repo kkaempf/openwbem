@@ -63,27 +63,6 @@
 #include <iterator>
 #include <set>
 
-#if defined(OW_THREADS_RUN_AS_USER)
-	#if defined(OW_NETWARE)
-		#include <client.h>
-		#include <fsio.h>
-		#include <nks/dirio.h>
-		#define USE_CIMOM_UID setcwd2(0)
-	#elif defined(OW_GNU_LINUX)
-		#ifdef OW_HAVE_UNISTD_H
-			#include <unistd.h>
-		#endif
-		#ifdef OW_HAVE_SYS_TYPES_H
-			#include <sys/types.h>
-		#endif
-		#define USE_CIMOM_UID seteuid(getuid())
-	#else
-		#define USE_CIMOM_UID
-	#endif
-#else
-	#define USE_CIMOM_UID
-#endif
-
 namespace OW_NAMESPACE
 {
 
@@ -1037,8 +1016,6 @@ public:
 
 	virtual void run()
 	{
-		USE_CIMOM_UID;
-
 		is->createSubscription(ns, subInst, username);
 	}
 }; // end class createSubscriptionRunnable
@@ -1057,7 +1034,6 @@ public:
 
 	virtual void run()
 	{
-		USE_CIMOM_UID;
 		is->modifySubscription(ns, subInst);
 	}
 }; // end class modifySubscriptionRunnable
@@ -1076,7 +1052,6 @@ public:
 
 	virtual void run()
 	{
-		USE_CIMOM_UID;
 		is->deleteSubscription(ns, sub);
 	}
 }; // end class deleteSubscriptionRunnable

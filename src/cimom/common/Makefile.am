@@ -60,13 +60,8 @@ OW_IndicationServer.hpp \
 OW_AuthorizerManager.cpp \
 OW_AuthorizerManager.hpp \
 OW_ProviderManager.cpp \
-OW_ProviderManager.hpp \
-OW_ProviderProxies.cpp \
-OW_ProviderProxies.hpp \
-OW_NetwareIdentity.cpp \
-OW_NetwareIdentity.hpp
+OW_ProviderManager.hpp
 
 pkginclude_HEADERS = \
-OW_CimomCommonFwd.hpp \
-OW_NetwareIdentity.hpp
+OW_CimomCommonFwd.hpp
 

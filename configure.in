@@ -1191,12 +1191,6 @@ OW_HELP_STRING(--enable-non-thread-safe-exception-handling-workaround,enable wor
 	AC_DEFINE(NON_THREAD_SAFE_EXCEPTION_HANDLING)
 ])
 
-AC_ARG_ENABLE(threads-run-as-user,
-OW_HELP_STRING(--enable-threads-run-as-user,enable threads to run as the authenticated user.  This has only been tested on Linux, and probably doesn't work on other platforms.),
-[
-	AC_DEFINE(THREADS_RUN_AS_USER, 1, Threads run as the authenticated user)
-])
-
 AC_ARG_WITH(package-prefix,
 	OW_HELP_STRING(--with-package-prefix=PREFIX,specify an optional prefix for 
 		use when building a commercial version of OpenWBEM.  This allows separate 

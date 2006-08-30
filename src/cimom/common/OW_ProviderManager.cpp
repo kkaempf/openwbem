@@ -35,7 +35,6 @@
 
 #include "OW_config.h"
 #include "OW_ProviderManager.hpp"
-#include "OW_ProviderProxies.hpp"
 #include "OW_Format.hpp"
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_CppIndicationExportProviderIFC.hpp"
@@ -481,78 +480,6 @@ ProviderManager::isRestrictedNamespace(const String& ns) const
 namespace
 {
 
-#ifdef OW_THREADS_RUN_AS_USER
-
-inline InstanceProviderIFCRef
-wrapProvider(InstanceProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
-{
-	if (!pref)
-	{
-		return pref;
-	}
-	return InstanceProviderIFCRef(new InstanceProviderProxy(pref, env));
-}
-inline SecondaryInstanceProviderIFCRef
-wrapProvider(SecondaryInstanceProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
-{
-	if (!pref)
-	{
-		return pref;
-	}
-	return SecondaryInstanceProviderIFCRef(new SecondaryInstanceProviderProxy(pref, env));
-}
-inline MethodProviderIFCRef
-wrapProvider(MethodProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
-{
-	if (!pref)
-	{
-		return pref;
-	}
-	return MethodProviderIFCRef(new MethodProviderProxy(pref, env));
-}
-
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-inline AssociatorProviderIFCRef
-wrapProvider(AssociatorProviderIFCRef pref,
-	const ProviderEnvironmentIFCRef& env)
-{
-	if (!pref)
-	{
-		return pref;
-	}
-	return AssociatorProviderIFCRef(new AssociatorProviderProxy(pref, env));
-}
-#endif
-
-#else	// OW_SETUID_PROVIDERS
-
-inline InstanceProviderIFCRef
-wrapProvider(InstanceProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
-{
-	return pref;
-}
-inline SecondaryInstanceProviderIFCRef
-wrapProvider(SecondaryInstanceProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
-{
-	return pref;
-}
-inline MethodProviderIFCRef
-wrapProvider(MethodProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
-{
-	return pref;
-}
-
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-inline AssociatorProviderIFCRef
-wrapProvider(AssociatorProviderIFCRef pref,
-	const ProviderEnvironmentIFCRef& env)
-{
-	return pref;
-}
-#endif
-
-#endif	// OW_SETUID_PROVIDERS
-
 ProviderEnvironmentIFCRef createProvEnvRef(ServiceEnvironmentIFCRef const & env)
 {
 	return ProviderEnvironmentIFCRef(
@@ -574,8 +501,8 @@ ProviderManager::getInstanceProvider(const String& ns, const CIMClass& cc) const
 		ci = m_registeredInstProvs.find(cc.getName().toLowerCase());
 		if (ci != m_registeredInstProvs.end())
 		{
-			return wrapProvider(ci->second.ifc->getInstanceProvider(env,
-				ci->second.provName.c_str()), env);
+			return ci->second.ifc->getInstanceProvider(env,
+				ci->second.provName.c_str());
 		}
 	}
 
@@ -586,8 +513,8 @@ ProviderManager::getInstanceProvider(const String& ns, const CIMClass& cc) const
 	ci = m_registeredInstProvs.find(nsAndClassName);
 	if (ci != m_registeredInstProvs.end())
 	{
-		return wrapProvider(ci->second.ifc->getInstanceProvider(env,
-				ci->second.provName.c_str()), env);
+		return ci->second.ifc->getInstanceProvider(env,
+			ci->second.provName.c_str());
 	}
 	// if we don't have a new registration, try the old method
 	CIMQualifier qual = cc.getQualifier(
@@ -598,8 +525,7 @@ ProviderManager::getInstanceProvider(const String& ns, const CIMClass& cc) const
 		ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
 		if (theIFC)
 		{
-			return wrapProvider(theIFC->getInstanceProvider(env,
-				provStr.c_str()), env);
+			return theIFC->getInstanceProvider(env, provStr.c_str());
 		}
 	}
 	return InstanceProviderIFCRef(0);
@@ -645,7 +571,8 @@ ProviderManager::getSecondaryInstanceProviders(
 	// loop through the matching range and put them in rval
 	for (MultiProvRegMap_t::const_iterator tci = lci; tci != uci; ++tci)
 	{
-		rval.push_back(wrapProvider(tci->second.ifc->getSecondaryInstanceProvider(env, tci->second.provName.c_str()), env));
+		rval.push_back(tci->second.ifc->getSecondaryInstanceProvider(env,
+			tci->second.provName.c_str()));
 	}
 	return rval;
 }
@@ -666,8 +593,8 @@ ProviderManager::getMethodProvider(
 		ci = m_registeredMethProvs.find(cc.getName().toLowerCase());
 		if (ci != m_registeredMethProvs.end())
 		{
-			return wrapProvider(ci->second.ifc->getMethodProvider(env,
-					ci->second.provName.c_str()), env);
+			return ci->second.ifc->getMethodProvider(env,
+				ci->second.provName.c_str());
 		}
 
 		// next lookup classname/methodname to see if we've got one for the
@@ -677,8 +604,8 @@ ProviderManager::getMethodProvider(
 		ci = m_registeredMethProvs.find(classAndMethodName);
 		if (ci != m_registeredMethProvs.end())
 		{
-			return wrapProvider(ci->second.ifc->getMethodProvider(env,
-					ci->second.provName.c_str()), env);
+			return ci->second.ifc->getMethodProvider(env,
+				ci->second.provName.c_str());
 		}
 	}
 
@@ -689,8 +616,8 @@ ProviderManager::getMethodProvider(
 	ci = m_registeredMethProvs.find(nsAndClassName);
 	if (ci != m_registeredMethProvs.end())
 	{
-		return wrapProvider(ci->second.ifc->getMethodProvider(env,
-				ci->second.provName.c_str()), env);
+		return ci->second.ifc->getMethodProvider(env,
+			ci->second.provName.c_str());
 	}
 	// next lookup namespace:classname/methodname to see if we've got one for the
 	// specific namespace/class/method
@@ -699,8 +626,8 @@ ProviderManager::getMethodProvider(
 	ci = m_registeredMethProvs.find(name);
 	if (ci != m_registeredMethProvs.end())
 	{
-		return wrapProvider(ci->second.ifc->getMethodProvider(env,
-			ci->second.provName.c_str()), env);
+		return ci->second.ifc->getMethodProvider(env,
+			ci->second.provName.c_str());
 	}
 	// didn't find it, so try the old way by looking at the provider qualifier.
 	CIMQualifier qual = method.getQualifier(
@@ -711,8 +638,7 @@ ProviderManager::getMethodProvider(
 		ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
 		if (theIFC)
 		{
-			return wrapProvider(theIFC->getMethodProvider(env,
-				provStr.c_str()), env);
+			return theIFC->getMethodProvider(env, provStr.c_str());
 		}
 	}
 	// no method provider qualifier for the method, see if the class level
@@ -725,8 +651,7 @@ ProviderManager::getMethodProvider(
 		ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
 		if (theIFC)
 		{
-			return wrapProvider(theIFC->getMethodProvider(env,
-				provStr.c_str()), env);
+			return theIFC->getMethodProvider(env, provStr.c_str());
 		}
 	}
 	return MethodProviderIFCRef(0);
@@ -747,8 +672,8 @@ ProviderManager::getAssociatorProvider(
 		ci = m_registeredAssocProvs.find(cc.getName().toLowerCase());
 		if (ci != m_registeredAssocProvs.end())
 		{
-			return wrapProvider(ci->second.ifc->getAssociatorProvider(env,
-					ci->second.provName.c_str()), env);
+			return ci->second.ifc->getAssociatorProvider(env,
+				ci->second.provName.c_str());
 		}
 	}
 
@@ -759,8 +684,8 @@ ProviderManager::getAssociatorProvider(
 	ci = m_registeredAssocProvs.find(nsAndClassName);
 	if (ci != m_registeredAssocProvs.end())
 	{
-		return wrapProvider(ci->second.ifc->getAssociatorProvider(env,
-				ci->second.provName.c_str()), env);
+		return ci->second.ifc->getAssociatorProvider(env,
+			ci->second.provName.c_str());
 	}
 	// if we don't have a new registration, try the old method
 	CIMQualifier qual = cc.getQualifier(
@@ -771,8 +696,8 @@ ProviderManager::getAssociatorProvider(
 		ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
 		if (theIFC)
 		{
-			return wrapProvider(theIFC->getAssociatorProvider(env,
-				provStr.c_str()), env);
+			return theIFC->getAssociatorProvider(env,
+				provStr.c_str());
 		}
 	}
 	return AssociatorProviderIFCRef(0);
