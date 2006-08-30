@@ -38,7 +38,7 @@
 
 /**
  * If you make improvements to this file, consider making the same 
- * improvements in AutoDescriptor.hpp in BloCxx
+ * improvements in DescriptorUtils_noexcept.hpp in BloCxx
  */
 
 #include "OW_config.h"

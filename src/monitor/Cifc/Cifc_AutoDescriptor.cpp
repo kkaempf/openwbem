@@ -33,7 +33,7 @@
 
 /**
  * If you make improvements to this file, consider making the same 
- * improvements in AutoDescriptor.hpp in BloCxx
+ * improvements in AutoDescriptor.cpp in BloCxx
  */
 
 #include "Cifc_AutoDescriptor.hpp"
