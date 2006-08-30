@@ -33,6 +33,7 @@ OW_CIMErrorException.cpp \
 OW_ConfigException.cpp \
 OW_ConfigFile.cpp \
 OW_ConfigOpts.cpp \
+OW_dlSharedLibrary.cpp \
 OW_IOException.cpp \
 OW_LocalOperationContext.cpp \
 OW_NoSuchPropertyException.cpp \
@@ -42,6 +43,7 @@ OW_NULLValueException.cpp \
 OW_OperationContext.cpp \
 OW_RepositoryCIMOMHandle.cpp \
 OW_ResultHandlers.cpp \
+OW_SafeLibCreate.cpp \
 OW_SessionLanguage.cpp \
 OW_URL.cpp \
 OW_UserInfo.cpp \
