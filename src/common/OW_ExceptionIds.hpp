@@ -61,7 +61,6 @@ namespace BLOCXX_NAMESPACE
 		static const int CIMErrorExceptionId = 2;
 		static const int CIMProtocolExceptionId = 8;
 		static const int BadCIMSignatureExceptionId = 23;
-		static const int NULLValueExceptionId = 29; 
 		static const int CIMDateTimeExceptionId = 49;
 
 		// http
