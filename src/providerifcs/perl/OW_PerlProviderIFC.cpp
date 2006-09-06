@@ -295,8 +295,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			String libName = libPath;
 			libName += OW_FILENAME_SEPARATOR;
 			libName += String("libperlProvider"OW_SHAREDLIB_EXTENSION);
-			SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
-				env->getLogger(COMPONENT_NAME));
+			SharedLibraryRef theLib = ldr->loadSharedLibrary(libName); 
 			String guessProvId = dirEntries[i];
 			if (!theLib)
 			{
@@ -415,8 +414,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		  libName += OW_FILENAME_SEPARATOR;
 		  //libName += dirEntries[i];
 		  libName += String("libperlProvider"OW_SHAREDLIB_EXTENSION);
-		  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
-				env->getLogger(COMPONENT_NAME));
+		  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName); 
 		  String guessProvId = dirEntries[i];
 		  if (!theLib)
 		  {
@@ -526,8 +524,7 @@ PerlProviderIFC::getProvider(
 			continue;
 		}
 
-		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
-			env->getLogger(COMPONENT_NAME));
+		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName); 
 		if (!theLib)
 		{
 			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc failed to load library: %1 "
