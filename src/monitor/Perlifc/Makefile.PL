@@ -36,7 +36,7 @@ WriteMakefile(
     DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
 	# -I$ow_common is needed ONLY because the coding guidelines for header
 	# files forces us to include OW_config.h in OW_PrivManOpenFlags.h
-    INC               => "-I. -I$monitor_source -I$monitor_source/Cifc -I$owcommon",
+    INC               => "-I. -I$monitor_source -I$monitor_source/Cifc -I$owcommon @OWCPPFLAGS@",
 	LDDLFLAGS         => $Config{lddlflags} . $extra_lddlflags,
 	# Un-comment this if you add C files to link with later:
 	# OBJECT            => '$(O_FILES)', # link all the C files too

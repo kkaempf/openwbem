@@ -43,16 +43,17 @@ perlxsbuild: $(PERLXSBUILD_SOURCES) Makefile
 	mkdir $@/lib
 	for f in $(PERLXS_LIB_SOURCES); do cp $(srcdir)/$$f $@/lib; done
 	cat $(srcdir)/Makefile.PL | \
-		$(SED) -e 's|@rpath@|$(RPATH_LINK_FLAG_WITH_PATH)|g' | \
-		$(SED) -e 's|@owcprivman_install@|$(PMDIR)|g' | \
-		$(SED) -e 's|@owcprivman_build@|$(top_builddir)/src/monitor/Cifc|g' | \
-		$(SED) -e 's|@monitor_source@|$(top_srcdir)/src/monitor|g' | \
-		$(SED) -e 's|@monitor_build@|$(top_builddir)/src/monitor|g' | \
-		$(SED) -e 's|@owcommon@|$(top_srcdir)/src/common|g' | \
-		$(SED) -e 's|@OWLDFLAGS@|$(LDFLAGS)|g' | \
-		$(SED) -e 's|@OWCC@|$(CC)|g' | \
-		$(SED) -e 's|@SSL_LIB_FLAGS@|$(SSL_LIBS)|g' > \
-		$@/Makefile.PL
+		$(SED) -e 's|@rpath@|$(RPATH_LINK_FLAG_WITH_PATH)|g' \
+		-e 's|@owcprivman_install@|$(PMDIR)|g' \
+		-e 's|@owcprivman_build@|$(top_builddir)/src/monitor/Cifc|g' \
+		-e 's|@monitor_source@|$(top_srcdir)/src/monitor|g' \
+		-e 's|@monitor_build@|$(top_builddir)/src/monitor|g' \
+		-e 's|@owcommon@|$(top_srcdir)/src/common|g' \
+		-e 's|@OWLDFLAGS@|$(LDFLAGS)|g' \
+		-e 's|@OWCC@|$(CC)|g' \
+		-e 's|@SSL_LIB_FLAGS@|$(SSL_LIBS)|g' \
+		-e 's|@OWCPPFLAGS@|$(CPPFLAGS)|g' \
+		> $@/Makefile.PL
 	$(SET_OSX_VARIABLES); cd $@; $(PERL) Makefile.PL; $(MAKE)
 
 endif
