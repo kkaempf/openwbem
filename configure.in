@@ -1310,22 +1310,20 @@ AC_ARG_WITH(search-dir,
 	OW_HELP_STRING(--with-search-dir=PATH,specify an additional directory to look for include/ and lib/ sub dirs),
 	[
 		if test "x$withval" != "xno" ; then
-			CXXFLAGS="$CXXFLAGS -I$withval/include" 
-			CFLAGS="$CFLAGS -I$withval/include" 
+			CPPFLAGS="$CPPFLAGS -I$withval/include" 
 			LDFLAGS="$LDFLAGS -L$withval/lib" 
 		fi
 	]
 )
 
+dnl Check for BloCxx
+AC_CHECK_HEADER([blocxx/BLOCXX_config.h], [], [echo "** ERROR: You must install BloCxx **"; exit 1])
+
+# The big search for OpenSSL.  Thanks to the openssh configure.in file!
 saved_LDFLAGS="$LDFLAGS"
 saved_CPPFLAGS="$CPPFLAGS"
 saved_LIBS="$LIBS"
 
-dnl Check for BloCxx
-AC_CHECK_HEADER([blocxx/BLOCXX_config.h], [], [echo "** ERROR: You must install BloCxx **"; exit 1])
-
-
-# The big search for OpenSSL.  Thanks to the openssh configure.in file!
 AC_ARG_WITH(ssl-dir,
 	OW_HELP_STRING(--with-ssl-dir=PATH,specify path to OpenSSL installation),
 [
