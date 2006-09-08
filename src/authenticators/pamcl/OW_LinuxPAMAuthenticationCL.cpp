@@ -39,6 +39,10 @@
 #include "OW_String.hpp"
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_Array.hpp"
+#include "OW_Array.hpp"
+#include "OW_UnnamedPipe.hpp"
+#include "OW_Secure.hpp"
+#include "OW_PrivilegeManager.hpp"
 #if defined(OW_HAVE_SYS_WAIT_H) && defined(OW_WIFEXITED_NEEDS_WAIT_H)
 #include <sys/wait.h>
 #endif
@@ -80,11 +84,13 @@ LinuxPAMAuthenticationCL::doAuthenticate(String &userName,
 		details = "You must authenticate to access this resource";
 		return false;
 	}
+
 	Array<String> allowedUsers = m_allowedUsers.tokenize();
 	bool nameFound = false;
 	for (size_t i = 0; i < allowedUsers.size(); i++)
 	{
-		if (allowedUsers[i].equals(userName))
+		if (allowedUsers[i].equals(userName)
+                    || allowedUsers[i].equals("*"))
 		{
 			nameFound = true;
 			break;
@@ -92,24 +98,48 @@ LinuxPAMAuthenticationCL::doAuthenticate(String &userName,
 	}
 	if (!nameFound)
 	{
+		details = "You must authenticate to access this resource";
 		return false;
 	}
 
-	String pathToPamAuth = m_libexecdir + "/PAMAuth";
-	Array<String> commandLine;
-	commandLine.push_back(pathToPamAuth);
-	String output;
-	Process::Status status;
-	const Timeout timeout = Timeout::relative(60.0);
-	const int outputLimit = 1024;
-	String input = userName + " " + info + "\n";
+	PrivilegeManager privmgr = PrivilegeManager::getPrivilegeManager();
+	if (privmgr.isNull())
+	{
+		details = "Authenticator unable to get privilege manager";
+		return false;
+	}
 
+	String pathToPamAuth = m_libexecdir + "/OW_PAMAuth";
+	Process::Status status;
 	try
 	{
-		status = Exec::executeProcessAndGatherOutput(commandLine, output, timeout, outputLimit, input);
+		StringArray argv(1, pathToPamAuth);
+		ProcessRef pproc(privmgr.userSpawn(
+			pathToPamAuth, argv, Secure::minimalEnvironment(), "root"));
+
+		UnnamedPipeRef authin = pproc->in();
+		String luserName = userName + "\r";
+		if (authin->write(luserName.c_str(), luserName.length()) == -1)
+		{
+			details = "Failed to execute authenticator";
+			return false;
+		}
+
+		String lpasswd = info + "\r";
+		if (authin->write(lpasswd.c_str(), lpasswd.length()) == -1)
+		{
+			details = "Failed to execute authenticator";
+			return false;
+		}
+
+		pproc->waitCloseTerm(Timeout::relative(60.0),
+			Timeout::relative(0), Timeout::relative(0));
+		status = pproc->processStatus();
+
 	}
-	catch (Exception& e)
+	catch(Exception& e)
 	{
+		details = "Failed to execute authenticator";
 		return false;
 	}
 
