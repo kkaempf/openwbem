@@ -34,7 +34,8 @@
  */
 
 #include "OW_config.h"
-#include <iostream>
+#include "OW_UnnamedPipe.hpp"
+#include "OW_String.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,8 +53,8 @@ extern "C"
 #include <security/pam_misc.h>
 #endif
 }
-using std::cin;
-using std::endl;
+
+using namespace OW_NAMESPACE;
 
 #if !defined(_pam_overwrite)
 #define _pam_overwrite(x)        \
@@ -123,7 +124,7 @@ MY_PAM_conv(int num_msg, const struct pam_message **msgm, struct pam_response **
 					}
 					break;
 				case PAM_TEXT_INFO:
-					if (fprintf(stdout,"%s\n",msgm[count]->msg) < 0) {
+					if (fprintf(stderr,"%s\n",msgm[count]->msg) < 0) {
 						goto failed_conversation;
 					}
 					break;
@@ -233,16 +234,31 @@ authenticate(const char* userName,
 	free(pUserName);
 	return( rval == PAM_SUCCESS ? true : false );		 /* indicate success */
 }
-//////////////////////////////////////////////////////////////////////////////
-int main()
-{
-	char name[80];
-	char passwd[80];
-	memset(name, 0, sizeof(name));
-	memset(passwd, 0, sizeof(passwd));
-	cin >> name;
-	cin >> passwd;
-	bool rval = authenticate(name, passwd);
-	return (rval == true) ? 0: 1;
-}
 
+
+//////////////////////////////////////////////////////////////////////////////
+int
+main()
+{
+	String name, passwd;
+	UnnamedPipeRef stdIn = UnnamedPipe::createStdin();
+	UnnamedPipeRef stdOut = UnnamedPipe::createStdout();
+	while(true)
+	{
+		if (stdIn->readString(name) == -1)
+		{
+			// Error. do something?
+			break;
+		}
+
+		if (stdIn->readString(passwd) == -1)
+		{
+			// Error. do something?
+			break;
+		}
+
+		int authcc = (authenticate(name.c_str(), passwd.c_str())) ? 1 : 0;
+		stdOut->writeInt(authcc);
+	}
+}
+	

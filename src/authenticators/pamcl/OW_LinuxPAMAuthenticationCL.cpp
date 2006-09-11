@@ -49,11 +49,25 @@
 
 #include <string.h>
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
 namespace OW_NAMESPACE
 {
 
 class LinuxPAMAuthenticationCL : public AuthenticatorIFC
 {
+public:
+	LinuxPAMAuthenticationCL()
+		: AuthenticatorIFC()
+		, m_allowedUsers()
+		, m_allUsersAllowed(false)
+		, m_libexecdir()
+		, m_authProc(0)
+	{
+	}
+
 	/**
 	 * Authenticates a user
 	 *
@@ -69,11 +83,69 @@ class LinuxPAMAuthenticationCL : public AuthenticatorIFC
 	 */
 private:
 	virtual bool doAuthenticate(String &userName, const String &info, String &details, OperationContext& context);
-	
 	virtual void doInit(ServiceEnvironmentIFCRef env);
-	String m_allowedUsers;
+	bool initAuthProc(String& details);
+	ProcessRef getAuthProc(String& details);
+	StringArray m_allowedUsers;
+	bool m_allUsersAllowed;
 	String m_libexecdir;
+	ProcessRef m_authProc;
 };
+
+//////////////////////////////////////////////////////////////////////////////
+ProcessRef
+LinuxPAMAuthenticationCL::getAuthProc(String& details)
+{
+	if (m_authProc)
+	{
+		Process::Status status = m_authProc->processStatus();
+		if (status.running())
+			return m_authProc;
+	}
+	initAuthProc(details);
+	return m_authProc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+LinuxPAMAuthenticationCL::initAuthProc(String& details)
+{
+	m_authProc = 0;
+	PrivilegeManager privmgr = PrivilegeManager::getPrivilegeManager();
+	if (privmgr.isNull())
+	{
+		details = "Authenticator unable to get privilege manager";
+		return false;
+	}
+
+	String pathToPamAuth = m_libexecdir + "/OW_PAMAuth";
+	try
+	{
+		StringArray argv(1, pathToPamAuth);
+		m_authProc = privmgr.userSpawn(pathToPamAuth, argv,
+			Secure::minimalEnvironment(), "root");
+		if (!m_authProc)
+		{
+			details = "Failed to start authentication process";
+			return false;
+		}
+
+		Process::Status status = m_authProc->processStatus();
+		if (!status.running())
+		{
+			details = "Unexpected termination of authentication process";
+			return false;
+		}
+	}
+	catch(Exception& e)
+	{
+		details = "Exception caught executing authentication process";
+		return false;
+	}
+
+	return true;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 bool
 LinuxPAMAuthenticationCL::doAuthenticate(String &userName,
@@ -85,12 +157,10 @@ LinuxPAMAuthenticationCL::doAuthenticate(String &userName,
 		return false;
 	}
 
-	Array<String> allowedUsers = m_allowedUsers.tokenize();
-	bool nameFound = false;
-	for (size_t i = 0; i < allowedUsers.size(); i++)
+	bool nameFound = m_allUsersAllowed;
+	for (size_t i = 0; i < m_allowedUsers.size() && !nameFound; i++)
 	{
-		if (allowedUsers[i].equals(userName)
-                    || allowedUsers[i].equals("*"))
+		if (m_allowedUsers[i].equals(userName))
 		{
 			nameFound = true;
 			break;
@@ -102,54 +172,62 @@ LinuxPAMAuthenticationCL::doAuthenticate(String &userName,
 		return false;
 	}
 
-	PrivilegeManager privmgr = PrivilegeManager::getPrivilegeManager();
-	if (privmgr.isNull())
-	{
-		details = "Authenticator unable to get privilege manager";
-		return false;
-	}
-
-	String pathToPamAuth = m_libexecdir + "/OW_PAMAuth";
-	Process::Status status;
 	try
 	{
-		StringArray argv(1, pathToPamAuth);
-		ProcessRef pproc(privmgr.userSpawn(
-			pathToPamAuth, argv, Secure::minimalEnvironment(), "root"));
+		ProcessRef pproc = getAuthProc(details);
+		if (!pproc)
+		{
+			return false;
+		}
 
 		UnnamedPipeRef authin = pproc->in();
-		String luserName = userName + "\r";
-		if (authin->write(luserName.c_str(), luserName.length()) == -1)
+		UnnamedPipeRef authout = pproc->out();
+
+		if (authin->writeString(userName) == -1)
 		{
-			details = "Failed to execute authenticator";
+			details = "Failed to communicate with authentication process";
 			return false;
 		}
 
-		String lpasswd = info + "\r";
-		if (authin->write(lpasswd.c_str(), lpasswd.length()) == -1)
+		if (authin->writeString(info) == -1)
 		{
-			details = "Failed to execute authenticator";
+			details = "Failed to communicate with authentication process";
 			return false;
 		}
 
-		pproc->waitCloseTerm(Timeout::relative(60.0),
-			Timeout::relative(0), Timeout::relative(0));
-		status = pproc->processStatus();
+		int authcc;
+		if (authout->readInt(&authcc) == -1)
+		{
+			details = "Failed to get response from authentication process";
+			return false;
+		}
 
+		return (authcc == 1);
 	}
 	catch(Exception& e)
 	{
-		details = "Failed to execute authenticator";
-		return false;
+		details = "Exception caught while authenticating";
 	}
 
-	return status.terminatedSuccessfully();
+	return false;
 }
+
 void
 LinuxPAMAuthenticationCL::doInit(ServiceEnvironmentIFCRef env)
 {
-	m_allowedUsers = env->getConfigItem(ConfigOpts::PAM_ALLOWED_USERS_opt);
+	String allowedUsersLine = env->getConfigItem(ConfigOpts::PAM_ALLOWED_USERS_opt);
+	m_allowedUsers = allowedUsersLine.tokenize();
 	m_libexecdir = env->getConfigItem(ConfigOpts::LIBEXECDIR_opt, OW_DEFAULT_OWLIBEXECDIR);
+
+	m_allUsersAllowed = false;
+	for (StringArray::size_type i = 0; i < m_allowedUsers.size(); i++)
+	{
+		if (m_allowedUsers[i].equals("*"))
+		{
+			m_allUsersAllowed = true;
+			break;
+		}
+	}
 }
 
 } // end namespace OW_NAMESPACE
