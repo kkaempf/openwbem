@@ -55,4 +55,4 @@ TESTS = acceptance.sh
 
 noinst_PROGRAMS = check_security
 check_security_SOURCES = check_security.cpp
-check_security_LDFLAGS = $(CXXBINLINKFLAGS) -o check_security$(EXEEXT) -L$(top_builddir)/src/common -lopenwbem $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
+check_security_LDFLAGS = $(CXXBINLINKFLAGS) -o check_security$(EXEEXT) -L$(top_builddir)/src/common -lblocxx -lopenwbem $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
