@@ -53,7 +53,7 @@ $(CXXBINLINKFLAGS) \
 
 TimeAtomicOps_LDADD = \
 $(top_builddir)/src/common/libopenwbem.a \
-$(Z_LIBS) $(SSL_LIBS)\
+$(Z_LIBS) $(SSL_LIBS) -lblocxx \
 $(BINLINKAPPENDFLAGS)
 
 TimeAtomicOps_SOURCES = \
