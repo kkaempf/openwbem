@@ -175,6 +175,9 @@ public:
 			const String& ns,
 			const CIMObjectPath& cop) = 0;
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+
+	virtual InstanceProviderIFC* getInstanceProvider();
 };
 
 } // end namespace OW_NAMESPACE

@@ -81,6 +81,7 @@ public:
 		const String& nameSpace,
 		const StringArray& classes
 		) = 0;
+	virtual IndicationProviderIFC* getIndicationProvider();
 };
 
 } // end namespace OW_NAMESPACE

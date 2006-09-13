@@ -92,6 +92,8 @@ public:
 	virtual void doCooperativeCancel() = 0;
 
 	virtual void doDefinitiveCancel() = 0;
+
+	virtual PolledProviderIFC* getPolledProvider();
 };
 
 typedef IntrusiveReference<PolledProviderIFC> PolledProviderIFCRef;

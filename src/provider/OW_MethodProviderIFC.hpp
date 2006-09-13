@@ -76,6 +76,8 @@ public:
 			const String& methodName,
 			const CIMParamValueArray& in,
 			CIMParamValueArray& out ) = 0;
+
+	virtual MethodProviderIFC* getMethodProvider();
 };
 
 typedef IntrusiveReference< MethodProviderIFC > MethodProviderIFCRef;

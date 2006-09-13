@@ -43,5 +43,12 @@ InstanceProviderIFC::~InstanceProviderIFC()
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
+InstanceProviderIFC*
+InstanceProviderIFC::getInstanceProvider()
+{
+	return this;
+}
+
 } // end namespace OW_NAMESPACE
 

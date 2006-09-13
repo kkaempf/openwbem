@@ -141,6 +141,8 @@ public:
 			const String& ns,
 			const CIMObjectPath& cop) = 0;
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+	virtual SecondaryInstanceProviderIFC* getSecondaryInstanceProvider();
 };
 
 } // end namespace OW_NAMESPACE

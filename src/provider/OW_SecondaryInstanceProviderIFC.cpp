@@ -43,6 +43,13 @@ SecondaryInstanceProviderIFC::~SecondaryInstanceProviderIFC()
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
+SecondaryInstanceProviderIFC*
+SecondaryInstanceProviderIFC::getSecondaryInstanceProvider()
+{
+	return this;
+}
+
 } // end namespace OW_NAMESPACE
 
 

@@ -34,6 +34,15 @@
 
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
+#include "OW_InstanceProviderIFC.hpp"
+#include "OW_SecondaryInstanceProviderIFC.hpp"
+#include "OW_MethodProviderIFC.hpp"
+#include "OW_IndicationProviderIFC.hpp"
+#include "OW_IndicationExportProviderIFC.hpp"
+#include "OW_PolledProviderIFC.hpp"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+#include "OW_AssociatorProviderIFC.hpp"
+#endif
 
 namespace OW_NAMESPACE
 {
@@ -42,6 +51,51 @@ namespace OW_NAMESPACE
 ProviderBaseIFC::~ProviderBaseIFC() 
 {
 }
+
+InstanceProviderIFC* 
+ProviderBaseIFC::getInstanceProvider()
+{
+	return 0;
+}
+
+MethodProviderIFC* 
+ProviderBaseIFC::getMethodProvider()
+{
+	return 0;
+}
+
+IndicationExportProviderIFC* 
+ProviderBaseIFC::getIndicationExportProvider()
+{
+	return 0;
+}
+
+IndicationProviderIFC* 
+ProviderBaseIFC::getIndicationProvider()
+{
+	return 0;
+}
+
+PolledProviderIFC* 
+ProviderBaseIFC::getPolledProvider()
+{
+	return 0;
+}
+
+SecondaryInstanceProviderIFC* 
+ProviderBaseIFC::getSecondaryInstanceProvider()
+{
+	return 0;
+}
+
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+AssociatorProviderIFC* 
+ProviderBaseIFC::getAssociatorProvider()
+{
+	return 0;
+}
+
+#endif
 
 } // end namespace OW_NAMESPACE
 

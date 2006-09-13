@@ -97,6 +97,8 @@ public:
 	 */
 	virtual void doDefinitiveCancel() = 0;
 
+	virtual IndicationExportProviderIFC* getIndicationExportProvider();
+
 };
 
 } // end namespace OW_NAMESPACE

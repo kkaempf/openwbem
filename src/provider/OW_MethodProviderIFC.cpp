@@ -43,5 +43,12 @@ MethodProviderIFC::~MethodProviderIFC()
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
+MethodProviderIFC*
+MethodProviderIFC::getMethodProvider()
+{
+	return this;
+}
+
 } // end namespace OW_NAMESPACE
 

@@ -48,6 +48,17 @@ class OW_PROVIDER_API ProviderBaseIFC : public virtual IntrusiveCountableBase
 {
 	public:
 		virtual ~ProviderBaseIFC();
+		virtual InstanceProviderIFC* getInstanceProvider();
+		virtual SecondaryInstanceProviderIFC* getSecondaryInstanceProvider();
+		virtual MethodProviderIFC* getMethodProvider();
+		virtual IndicationExportProviderIFC* getIndicationExportProvider();
+		virtual IndicationProviderIFC* getIndicationProvider();
+		virtual PolledProviderIFC* getPolledProvider();
+
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+		virtual AssociatorProviderIFC* getAssociatorProvider();
+#endif
+
 };
 
 } // end namespace OW_NAMESPACE

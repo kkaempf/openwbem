@@ -260,6 +260,8 @@ class OW_PROVIDER_API AssociatorProviderIFC: public ProviderBaseIFC
 				const CIMObjectPath& objectName,
 				const String& resultClass,
 				const String& role ) = 0;
+
+		virtual AssociatorProviderIFC* getAssociatorProvider();
 };
 
 } // end namespace OW_NAMESPACE

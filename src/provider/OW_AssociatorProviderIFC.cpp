@@ -43,5 +43,12 @@ AssociatorProviderIFC::~AssociatorProviderIFC()
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
+AssociatorProviderIFC*
+AssociatorProviderIFC::getAssociatorProvider()
+{
+	return this;
+}
+
 } // end namespace OW_NAMESPACE
 

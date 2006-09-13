@@ -49,17 +49,28 @@ typedef IntrusiveReference<ProviderRegistrationEnvironmentIFC> ProviderRegistrat
 
 class InstanceProviderIFC;
 typedef IntrusiveReference<InstanceProviderIFC> InstanceProviderIFCRef;
+
 class SecondaryInstanceProviderIFC;
 typedef IntrusiveReference<SecondaryInstanceProviderIFC> SecondaryInstanceProviderIFCRef;
 typedef Array<SecondaryInstanceProviderIFCRef> SecondaryInstanceProviderIFCRefArray;
+
+class MethodProviderIFC;
+typedef IntrusiveReference<MethodProviderIFC> MethodProviderIFCRef;
+
+class PolledProviderIFC;
+typedef IntrusiveReference<PolledProviderIFC> PolledProviderIFCRef;
+
 class ProviderBaseIFC;
 typedef IntrusiveReference<ProviderBaseIFC> ProviderBaseIFCRef;
 typedef Array<ProviderBaseIFCRef> ProviderBaseIFCRefArray;
+
 class AssociatorProviderIFC;
 typedef IntrusiveReference< AssociatorProviderIFC > AssociatorProviderIFCRef;
+
 class IndicationProviderIFC;
 typedef IntrusiveReference< IndicationProviderIFC > IndicationProviderIFCRef;
 typedef Array<IndicationProviderIFCRef> IndicationProviderIFCRefArray;
+
 class IndicationExportProviderIFC;
 typedef IntrusiveReference<IndicationExportProviderIFC> IndicationExportProviderIFCRef;
 typedef Array<IndicationExportProviderIFCRef> IndicationExportProviderIFCRefArray;

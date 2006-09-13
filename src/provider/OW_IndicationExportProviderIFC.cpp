@@ -43,5 +43,12 @@ IndicationExportProviderIFC::~IndicationExportProviderIFC()
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
+IndicationExportProviderIFC*
+IndicationExportProviderIFC::getIndicationExportProvider()
+{
+	return this;
+}
+
 } // end namespace OW_NAMESPACE
 

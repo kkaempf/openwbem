@@ -43,5 +43,12 @@ PolledProviderIFC::~PolledProviderIFC()
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
+PolledProviderIFC*
+PolledProviderIFC::getPolledProvider()
+{
+	return this;
+}
+
 } // end namespace OW_NAMESPACE
 
