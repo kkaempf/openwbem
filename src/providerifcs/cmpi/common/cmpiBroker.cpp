@@ -47,6 +47,7 @@ namespace
 #define CM_Context(ctx) (((CMPI_Context*)ctx)->ctx)
 #define CM_Instance(ci) ((OpenWBEM::CIMInstance*)ci->hdl)
 #define CM_ObjectPath(cop) ((OpenWBEM::CIMObjectPath*)cop->hdl)
+#define CM_Args(args) ((OpenWBEM::CIMParamValueArray*)args->hdl)
 #define CM_LocalOnly(flgs) (((flgs) & CMPI_FLAG_LocalOnly)!=0)
 #define CM_ClassOrigin(flgs) \
 (((flgs) & CMPI_FLAG_IncludeClassOrigin)!=0)
@@ -609,15 +610,39 @@ static CMPIData mbInvokeMethod(const CMPIBroker *, const CMPIContext *ctx,
 	CMPIStatus *rc)
 {
 	(void) ctx;
-	(void) cop;
-	(void) method;
-	(void) in;
-	(void) out;
 
 	OW_LOG_DEBUG(CM_LOGGER(), "CMPIBroker: mbInvokeMethod()");
-	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
-	CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
-	return data;
+
+	try
+	{
+		OpenWBEM::CIMValue cv = CM_CIMOM()->invokeMethod(
+			CM_ObjectPath(cop)->getNameSpace(),
+			*CM_ObjectPath(cop),
+			OpenWBEM::String(method),
+			*CM_Args(in),
+			*CM_Args(out));
+		CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
+		OpenWBEM::CIMDataType vType=cv.getType();
+		CMPIType t=type2CMPIType(vType,cv.isArray());
+		value2CMPIData(cv,t,&data);
+		CMSetStatus(rc,CMPI_RC_OK);
+		return data;
+	}
+	catch(OpenWBEM::CIMException &e)
+	{
+		OW_LOG_DEBUG(CM_LOGGER(), Format("CMPIBroker Exception in "
+			"mbInvokeMethod code: %1, msg %2",
+			e.type(), e.getMessage()));
+
+		CMSetStatus(rc,(CMPIrc)e.getErrNo());
+	}
+	catch(...)
+	{
+		OW_LOG_DEBUG(CM_LOGGER(), "CMPIBroker Exception in mbInvokeMethod");
+		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+	}
+	CMPIData data2={(CMPIType) 0, CMPI_nullValue, {0} };
+	return data2;
 }
 
 static CMPIStatus mbSetProperty(const CMPIBroker *, const CMPIContext *ctx,
