@@ -55,6 +55,11 @@
 #include <fstream>
 #include <cerrno>
 
+// stupid AIX has a macro named GOOD.
+#ifdef GOOD
+#undef GOOD
+#endif
+
 using namespace std;
 
 namespace OW_NAMESPACE
