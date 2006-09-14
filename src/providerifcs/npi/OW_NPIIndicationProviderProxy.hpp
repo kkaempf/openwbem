@@ -41,7 +41,6 @@ class NPIIndicationProviderProxy : public IndicationProviderIFC
 public:
 	NPIIndicationProviderProxy(const FTABLERef& f)
 	: m_ftable(f)
-	, m_activationCount(0)
 	{
 	}
 	virtual ~NPIIndicationProviderProxy()
@@ -52,13 +51,15 @@ public:
 		const WQLSelectStatement &filter, 
 		const String &eventType, 
 		const String& nameSpace,
-		const StringArray& classes); 
+		const StringArray& classes,
+		bool lastActivation);
 	virtual void activateFilter(
 		const ProviderEnvironmentIFCRef &env, 
 		const WQLSelectStatement &filter, 
 		const String &eventType, 
 		const String& nameSpace,
-		const StringArray& classes);
+		const StringArray& classes,
+		bool firstActivation);
 	virtual void authorizeFilter(
 		const ProviderEnvironmentIFCRef &env, 
 		const WQLSelectStatement &filter, 
@@ -75,7 +76,6 @@ public:
 		);
 private:
 	FTABLERef m_ftable;
-	unsigned int m_activationCount;
 };
 
 } // end namespace OW_NAMESPACE

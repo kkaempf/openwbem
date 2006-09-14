@@ -194,10 +194,10 @@ public:
 class TestIndicationProvider : public IndicationProviderIFC
 {
 public:
-	virtual void deActivateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray& )
+	virtual void deActivateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray&, bool)
 	{
 	}
-	virtual void activateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray& )
+	virtual void activateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray&, bool)
 	{
 	}
 	virtual void authorizeFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray&, const String &)

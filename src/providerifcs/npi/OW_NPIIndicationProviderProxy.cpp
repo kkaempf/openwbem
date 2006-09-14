@@ -51,9 +51,9 @@ NPIIndicationProviderProxy::deActivateFilter(
 	const WQLSelectStatement &filter,
 	const String &eventType,
 	const String& nameSpace,
-	const StringArray& classes)
+	const StringArray& classes,
+	bool lastActivation)
 {
-	bool lastActivation = (--m_activationCount == 0);
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
@@ -84,9 +84,9 @@ NPIIndicationProviderProxy::activateFilter(
 	const WQLSelectStatement &filter,
 	const String &eventType,
 	const String& nameSpace,
-	const StringArray& classes)
+	const StringArray& classes,
+	bool firstActivation)
 {
-	bool firstActivation = (m_activationCount++ == 0);
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{

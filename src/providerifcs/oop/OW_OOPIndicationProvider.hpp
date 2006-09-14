@@ -60,7 +60,8 @@ public:
 		const WQLSelectStatement& filter,
 		const String& eventType,
 		const String& nameSpace,
-		const StringArray& classes
+		const StringArray& classes,
+		bool firstActivation
 		);
 	virtual void authorizeFilter(
 		const ProviderEnvironmentIFCRef& env,
@@ -75,7 +76,8 @@ public:
 		const WQLSelectStatement& filter,
 		const String& eventType,
 		const String& nameSpace,
-		const StringArray& classes
+		const StringArray& classes,
+		bool lastActivation
 		);
 	virtual int mustPoll(
 		const ProviderEnvironmentIFCRef& env,
@@ -86,8 +88,6 @@ public:
 		);
 
 private:
-	// note this doesn't need to be mutex protected because the indication server always [de]activates subscriptions serially.
-	UInt32 m_subscriptionCount;
 };
 
 

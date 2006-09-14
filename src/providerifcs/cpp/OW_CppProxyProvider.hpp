@@ -251,19 +251,15 @@ class OW_CPPPROVIFC_API CppIndicationProviderProxy : public IndicationProviderIF
 {
 public:
 	CppIndicationProviderProxy(CppIndicationProviderIFCRef pProv)
-		: m_pProv(pProv)
-		, m_activationCount(0) {}
+		: m_pProv(pProv) {}
 	virtual void deActivateFilter(
 		const ProviderEnvironmentIFCRef &env, 
 		const WQLSelectStatement &filter, 
 		const String &eventType, 
 		const String& nameSpace,
-		const StringArray& classes) 
+		const StringArray& classes,
+		bool lastActivation)
 	{
-		bool lastActivation;
-		{
-			lastActivation = (--m_activationCount == 0);
-		}
 		m_pProv->deActivateFilter(env,filter,eventType,nameSpace, classes,lastActivation);
 	}
 	virtual void activateFilter(
@@ -271,12 +267,9 @@ public:
 		const WQLSelectStatement &filter, 
 		const String &eventType, 
 		const String& nameSpace,
-		const StringArray& classes) 
+		const StringArray& classes,
+		bool firstActivation)
 	{
-		bool firstActivation;
-		{
-			firstActivation = (m_activationCount++ == 0);
-		}
 		m_pProv->activateFilter(env,filter,eventType,nameSpace,classes,firstActivation);
 	}
 	virtual void authorizeFilter(
@@ -303,7 +296,6 @@ private:
 	CppIndicationProviderIFCRef m_pProv;
 	
 	// note this doesn't need to be mutex protected because the indication server always [de]activates subscriptions serially.
-	unsigned int m_activationCount;
 };
 
 } // end namespace OW_NAMESPACE

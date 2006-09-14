@@ -163,6 +163,9 @@ private:
 		IndicationExportProviderIFCRef provider);
 	
 	IndicationExportProviderIFCRef getProvider(const CIMName& className);
+
+	UInt32 activateFilterOnClass(const String& ns, const CIMName& className);
+	UInt32 deActivateFilterOnClass(const String& ns, const CIMName& className);
 	
 	void deactivateAllSubscriptions();
 
@@ -177,6 +180,9 @@ private:
 	};
 	typedef SortedVectorMap<CIMName, IndicationExportProviderIFCRef> provider_map_t;
 	provider_map_t m_providers;
+
+	typedef SortedVectorMap<String, UInt32> activatecount_map_t;
+	activatecount_map_t m_activations;
 	
 	// m_procTrans is where new indications to be delivered are put.
 	// Both m_procTrans and m_shuttingDown are protected by the same condition
@@ -188,6 +194,7 @@ private:
 	ThreadBarrier m_startedBarrier;
 	subscriptions_t m_subscriptions;
 	Mutex m_subGuard;
+	Mutex m_actCountGuard;
 	typedef SharedLibraryReference< IntrusiveReference<LifecycleIndicationPoller> > LifecycleIndicationPollerRef;
 	typedef Map<CIMName, LifecycleIndicationPollerRef > poller_map_t;
 	poller_map_t m_pollers;

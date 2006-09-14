@@ -47,7 +47,6 @@ OOPIndicationProvider::OOPIndicationProvider(const OOPProviderInterface::ProvReg
 	const Reference<ProcessRef>& persistentProcessRef
 	)
 	: OOPProviderBase(info, guardRef, persistentProcessRef)
-	, m_subscriptionCount(0)
 {
 
 }
@@ -98,11 +97,10 @@ OOPIndicationProvider::activateFilter(
 	const WQLSelectStatement& filter,
 	const String& eventType,
 	const String& nameSpace,
-	const StringArray& classes
+	const StringArray& classes,
+	bool firstActivation
 	)
 {
-	++m_subscriptionCount;
-	bool firstActivation = (m_subscriptionCount == 1);
 	OW_LOG_DEBUG(Logger("OOPIndicationProvider"), "OOPIndicationProvider::activateFilter");
 	ActivateCallback filterCallback(filter, eventType, nameSpace, classes, firstActivation);
 	startProcessAndCallFunction(env, filterCallback, "OOPMethodProvider::activateFilter", E_USE_PERSISTENT_PROCESS);
@@ -201,11 +199,10 @@ OOPIndicationProvider::deActivateFilter(
 	const WQLSelectStatement& filter,
 	const String& eventType,
 	const String& nameSpace,
-	const StringArray& classes
+	const StringArray& classes,
+	bool lastActivation
 	)
 {
-	--m_subscriptionCount;
-	bool lastActivation = (m_subscriptionCount == 0);
 	OW_LOG_DEBUG(Logger("OOPIndicationProvider"), "OOPIndicationProvider::deActivateFilter");
 	DeActivateCallback filterCallback(filter, eventType, nameSpace, classes, lastActivation);
 	startProcessAndCallFunction(env, filterCallback, "OOPIndicationProvider::deActivateFilter", E_USE_PERSISTENT_PROCESS);

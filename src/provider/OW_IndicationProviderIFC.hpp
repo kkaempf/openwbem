@@ -57,7 +57,8 @@ public:
 		const WQLSelectStatement& filter,
 		const String& eventType,
 		const String& nameSpace,
-		const StringArray& classes
+		const StringArray& classes,
+		bool firstActivation
 		) = 0;
 	virtual void authorizeFilter(
 		const ProviderEnvironmentIFCRef& env,
@@ -72,7 +73,8 @@ public:
 		const WQLSelectStatement& filter,
 		const String& eventType,
 		const String& nameSpace,
-		const StringArray& classes
+		const StringArray& classes,
+		bool lastActivation
 		) = 0;
 	virtual int mustPoll(
 		const ProviderEnvironmentIFCRef& env,

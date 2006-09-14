@@ -56,9 +56,9 @@ CMPIIndicationProviderProxy::deActivateFilter(
 	const WQLSelectStatement &filter,
 	const String &eventType,
 	const String& nameSpace,
-	const StringArray& classes)
+	const StringArray& classes,
+	bool lastActivation)
 {
-	bool lastActivation = (--m_activationCount == 0);
 	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, "deactivateFilter");
 	m_ftable->lastAccessTime.setToCurrent();
@@ -104,9 +104,9 @@ CMPIIndicationProviderProxy::activateFilter(
 	const WQLSelectStatement &filter,
 	const String &eventType,
 	const String& nameSpace,
-	const StringArray& classes)
+	const StringArray& classes,
+	bool firstActivation)
 {
-	bool firstActivation = (m_activationCount++ == 0);
 	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, "activateFilter");
 	m_ftable->lastAccessTime.setToCurrent();

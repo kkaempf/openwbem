@@ -44,7 +44,6 @@ class CMPIIndicationProviderProxy : public IndicationProviderIFC
 public:
 	CMPIIndicationProviderProxy(const CMPIFTABLERef& f)
 	: m_ftable(f)
-	, m_activationCount(0)
 	{
 	}
 	virtual ~CMPIIndicationProviderProxy()
@@ -55,14 +54,16 @@ public:
 		const WQLSelectStatement& filter, 
 		const String& eventType, 
 		const String& nameSpace,
-		const StringArray& classes
+		const StringArray& classes,
+		bool lastActivation
 		);
 	virtual void activateFilter(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter, 
 		const String& eventType, 
 		const String& nameSpace,
-		const StringArray& classes 
+		const StringArray& classes,
+		bool firstActivation
 		);
 	virtual void authorizeFilter(
 		const ProviderEnvironmentIFCRef& env,
@@ -81,7 +82,6 @@ public:
 		);
 private:
 	CMPIFTABLERef m_ftable;
-	unsigned int m_activationCount;
 };
 
 } // end namespace OW_NAMESPACE
