@@ -959,6 +959,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 			else
 			{
 				rt = E_RESPONSE_FATAL; // support protocol upgrades?  nope.
+				reasonPhrase = "No support for protocol upgrades";
 			}
 			break;
 		case '2':
@@ -967,6 +968,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 			break;
 		case '3':
 			rt = E_RESPONSE_FATAL; // support redirects?  I think not...
+			reasonPhrase = "No support for redirects";
 			break;
 		case '4':
 //			m_closeConnection = true;
@@ -987,6 +989,8 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					else
 					{
 						rt = E_RESPONSE_FATAL; // already tried authorization once.
+						reasonPhrase = "Authentication failure";
+						
 					}
 					break;
 				case SC_METHOD_NOT_ALLOWED:
@@ -999,12 +1003,14 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					else
 					{
 						rt = E_RESPONSE_FATAL;
+						reasonPhrase = "Request method not supported";
 					}
 					break;
 				default:
 					m_closeConnection = true;
 					//close();
 					rt = E_RESPONSE_FATAL;
+					reasonPhrase = "Unknown status code";
 					break;
 			} // switch (isc)
 			break;
@@ -1025,10 +1031,12 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					else
 					{
 						rt = E_RESPONSE_FATAL;
+						reasonPhrase = "Request method not supported";
 					}
 					break;
 				default:
 					rt = E_RESPONSE_FATAL;
+					reasonPhrase = "Unknown status code";
 					break;
 			} // switch (isc)
 			break;
@@ -1056,6 +1064,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 	if (!CIMError.empty())
 	{
 		rt = E_RESPONSE_FATAL;
+		reasonPhrase = "CIMError";
 	}
 
 	// have to process WWW-Authenticate: Negotiate <blah> here, because we have to validate it on the response.
@@ -1167,6 +1176,10 @@ HTTPClient::checkResponse(Resp_t& rt)
 			{
 				reasonPhrase = "Client receive timeout expired.";
 			}
+			else
+			{
+				reasonPhrase = "Lost connection with server";
+			}
 			rt = E_RESPONSE_FATAL;
 			m_closeConnection = true;
 			//close();
@@ -1188,6 +1201,7 @@ HTTPClient::checkResponse(Resp_t& rt)
 		if (m_retryCount > 3)
 		{
 			rt = E_RESPONSE_FATAL;
+			reasonPhrase = "Tried maximum number of times";
 		}
 		else
 		{
