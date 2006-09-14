@@ -468,6 +468,11 @@ http_server.allow_basic_authentication = true
 http_server.allow_digest_authentication = false
 
 ################################################################################
+# The realm to be sent with HTTP Basic or Digest authentication 
+# challenges.  If this is not set, the hostname will be used. 
+;http_server.authentication_realm = 
+
+################################################################################
 # Tell the http server to allow SPNEGO authentication
 http_server.allow_spnego_authentication = false
 

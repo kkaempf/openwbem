@@ -244,7 +244,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	else if (m_options.allowBasicAuthentication && scheme.equals("basic"))
 	{
 		OW_LOG_DEBUG(logger, "HTTPServer::authenticate: processing Basic");
-		String authChallenge = "Basic realm=\"" + pconn->getHostName() + "\"";
+		String authChallenge = "Basic realm=\"" + m_options.authenticationRealm + "\"";
 		String password;
 		// info is a username:password string that is base64 encoded. decode it.
 		try
@@ -307,7 +307,6 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	{
 		OW_LOG_DEBUG(logger, "HTTPServer::authenticate: sending default challenge");
 		// We don't handle whatever they sent, so send the default challenge
-		String hostname = pconn->getHostName();
 		pconn->setErrorDetails("You must authenticate to access this"
 			" resource");
 		String authChallenge;
@@ -315,11 +314,11 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		{
 #ifndef OW_DISABLE_DIGEST
 			case E_DIGEST:
-				authChallenge = m_digestAuthentication->getChallenge(hostname);
+				authChallenge = m_digestAuthentication->getChallenge(m_options.authenticationRealm);
 				break;
 #endif
 			case E_BASIC:
-				authChallenge = "Basic realm=\"" + pconn->getHostName() + "\"";
+				authChallenge = "Basic realm=\"" + m_options.authenticationRealm + "\"";
 				break;
 
 			case E_SPNEGO:
@@ -401,6 +400,7 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 		
 		String allowDigest = env->getConfigItem(ConfigOpts::HTTP_SERVER_ALLOW_DIGEST_AUTHENTICATION_opt);
 		String allowBasic = env->getConfigItem(ConfigOpts::HTTP_SERVER_ALLOW_BASIC_AUTHENTICATION_opt);
+		m_options.authenticationRealm = env->getConfigItem(ConfigOpts::HTTP_SERVER_AUTHENTICATION_REALM_opt,SocketAddress::getAnyLocalHost().getName()); 
 		if (allowDigest.empty() && allowBasic.empty())
 		{
 			// handle old configs

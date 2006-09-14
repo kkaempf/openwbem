@@ -130,6 +130,7 @@ namespace ConfigOpts
 	char const HTTP_SERVER_ALLOW_DIGEST_AUTHENTICATION_opt[] = "http_server.allow_digest_authentication";
 	char const HTTP_SERVER_ALLOW_BASIC_AUTHENTICATION_opt[] = "http_server.allow_basic_authentication";
 	char const HTTP_SERVER_ALLOW_SPNEGO_AUTHENTICATION_opt[] = "http_server.allow_spnego_authentication";
+	char const HTTP_SERVER_AUTHENTICATION_REALM_opt[] = "http_server.authentication_realm";
 	char const HTTP_SERVER_SSL_KEY_opt[] = "http_server.SSL_key";
 
 	String installed_owlibexec_dir(OW_DEFAULT_OWLIBEXECDIR);
@@ -168,6 +169,7 @@ const NameAndDefault g_defaults[] =
 	{ HTTP_SERVER_ALLOW_DIGEST_AUTHENTICATION_opt ,  "" },
 	{ HTTP_SERVER_ALLOW_BASIC_AUTHENTICATION_opt ,  "" },
 	{ HTTP_SERVER_ALLOW_SPNEGO_AUTHENTICATION_opt, "" },
+	{ HTTP_SERVER_AUTHENTICATION_REALM_opt, "" }, 
 	{ HTTP_SERVER_HTTP_PORT_opt ,  OW_DEFAULT_HTTP_SERVER_HTTP_PORT },
 	{ HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt ,  OW_DEFAULT_HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE },
 	{ HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt ,  OW_DEFAULT_HTTP_SERVER_SSL_CLIENT_VERIFICATION },

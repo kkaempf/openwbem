@@ -339,6 +339,7 @@ namespace ConfigOpts
 	extern char const HTTP_SERVER_ALLOW_DIGEST_AUTHENTICATION_opt[];
 	extern char const HTTP_SERVER_ALLOW_BASIC_AUTHENTICATION_opt[];
 	extern char const HTTP_SERVER_ALLOW_SPNEGO_AUTHENTICATION_opt[];
+	extern char const HTTP_SERVER_AUTHENTICATION_REALM_opt[];
 
 	// Naming rule: if the option begins with owcimomd, name is the same text all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.

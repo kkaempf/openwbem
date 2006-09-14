@@ -51,7 +51,7 @@ public:
 	~DigestAuthentication() {}
 	EAuthenticateResult authenticate(String& userName,
 		const String& info, HTTPSvrConnection* htcon);
-	String getChallenge(const String& hostname);
+	String getChallenge(const String& realm);
 private:
 	String getHash( const String &sUserName, const String &sRealm );
 	String generateNewNonce( void );

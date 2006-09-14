@@ -119,6 +119,7 @@ public:
 			, env()
 			, timeout(Timeout::infinite)
 			, defaultContentLanguage()
+			, authenticationRealm()
 		{
 		}
 
@@ -139,6 +140,7 @@ public:
 		ServiceEnvironmentIFCRef env;
 		Timeout timeout;
 		String defaultContentLanguage;
+		String authenticationRealm; 
 	};
 private:
 	EAuthenticateResult authenticate(HTTPSvrConnection* pconn,

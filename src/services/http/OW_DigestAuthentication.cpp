@@ -269,9 +269,9 @@ DigestAuthentication::authenticate(String& userName,
 }
 //////////////////////////////////////////////////////////////////////////////
 String
-DigestAuthentication::getChallenge(const String& hostname)
+DigestAuthentication::getChallenge(const String& realm)
 {
-	return String("Digest realm=\"" + hostname + "\", "
+	return String("Digest realm=\"" + realm + "\", "
 			"qop=\"auth\", nonce=\"" + generateNewNonce() + "\"");
 }
 
