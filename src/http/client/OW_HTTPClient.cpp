@@ -687,7 +687,7 @@ HTTPClient::endRequest(const Reference<std::ostream>& request, const String& met
 
 
 	String reasonPhrase;
-	Resp_t rt = RETRY;
+	Resp_t rt = E_RESPONSE_RETRY;
 	do
 	{
 		if (checkAndExamineStatusLine() == E_STATUS_GOOD)
@@ -695,8 +695,8 @@ HTTPClient::endRequest(const Reference<std::ostream>& request, const String& met
 			sendDataToServer(tfs, methodName, cimObject, requestType);
 		}
 		reasonPhrase = checkResponse(rt);
-	} while (rt == RETRY);
-	if (rt == FATAL)
+	} while (rt == E_RESPONSE_RETRY);
+	if (rt == E_RESPONSE_FATAL)
 	{
 		String CIMError = getHeaderValue("CIMError");
 		if (CIMError.empty())
@@ -791,7 +791,7 @@ HTTPClient::getFeatures()
 	m_requestMethod = "OPTIONS";
 	prepareHeaders();
 	String reasonPhrase;
-	Resp_t rt = RETRY;
+	Resp_t rt = E_RESPONSE_RETRY;
 	do
 	{
 		checkConnection();
@@ -802,9 +802,9 @@ HTTPClient::getFeatures()
 		m_responseHeaders.clear();
 		m_statusLine.erase();
 		reasonPhrase = checkResponse(rt);
-	} while (rt == RETRY);
+	} while (rt == E_RESPONSE_RETRY);
 	m_requestMethod = methodOrig;
-	if (rt == FATAL)
+	if (rt == E_RESPONSE_FATAL)
 	{
 		OW_THROW(HTTPException, Format("Unable to process request: %1",
 			reasonPhrase).c_str());
@@ -922,7 +922,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 		//close();
 	}
 
-	Resp_t rt = RETRY;
+	Resp_t rt = E_RESPONSE_RETRY;
 	String statusLine(m_statusLine);
 	size_t idx = statusLine.indexOf(' ');
 	String sc; // http status code
@@ -942,31 +942,31 @@ HTTPClient::processHeaders(String& reasonPhrase)
 		}
 		catch (const StringConversionException&)
 		{
-			return RETRY;
+			return E_RESPONSE_RETRY;
 		}
 	}
 	if (sc.length() != 3)
 	{
-		return RETRY;
+		return E_RESPONSE_RETRY;
 	}
 	switch (sc[0])
 	{
 		case '1':
 			if (isc == 100)
 			{
-				rt = CONTINUE;
+				rt = E_RESPONSE_CONTINUE;
 			}
 			else
 			{
-				rt = FATAL; // support protocol upgrades?  nope.
+				rt = E_RESPONSE_FATAL; // support protocol upgrades?  nope.
 			}
 			break;
 		case '2':
-			rt = GOOD;
+			rt = E_RESPONSE_GOOD;
 			m_authRequired = false;
 			break;
 		case '3':
-			rt = FATAL; // support redirects?  I think not...
+			rt = E_RESPONSE_FATAL; // support redirects?  I think not...
 			break;
 		case '4':
 //			m_closeConnection = true;
@@ -974,7 +974,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 			switch (isc)
 			{
 				case SC_REQUEST_TIMEOUT:
-					rt = RETRY;
+					rt = E_RESPONSE_RETRY;
 					break;
 				case SC_UNAUTHORIZED:
 					// add authentication info, if available
@@ -982,11 +982,11 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					{
 						m_authRequired = true;
 						m_retryCount = 0;
-						rt = RETRY;
+						rt = E_RESPONSE_RETRY;
 					}
 					else
 					{
-						rt = FATAL; // already tried authorization once.
+						rt = E_RESPONSE_FATAL; // already tried authorization once.
 					}
 					break;
 				case SC_METHOD_NOT_ALLOWED:
@@ -994,17 +994,17 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					if (m_requestMethod.equals("M-POST"))
 					{
 						m_requestMethod = "POST";
-						rt = RETRY;
+						rt = E_RESPONSE_RETRY;
 					}
 					else
 					{
-						rt = FATAL;
+						rt = E_RESPONSE_FATAL;
 					}
 					break;
 				default:
 					m_closeConnection = true;
 					//close();
-					rt = FATAL;
+					rt = E_RESPONSE_FATAL;
 					break;
 			} // switch (isc)
 			break;
@@ -1017,23 +1017,23 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					if (m_requestMethod.equals("M-POST"))
 					{
 						m_requestMethod = "POST";
-						rt = RETRY;
+						rt = E_RESPONSE_RETRY;
 						// only do this for JWS, since it doesn't eat the entity.
 						m_closeConnection = true;
 						//close();
 					}
 					else
 					{
-						rt = FATAL;
+						rt = E_RESPONSE_FATAL;
 					}
 					break;
 				default:
-					rt = FATAL;
+					rt = E_RESPONSE_FATAL;
 					break;
 			} // switch (isc)
 			break;
 		default:
-			rt = RETRY; // shouln't happen
+			rt = E_RESPONSE_RETRY; // shouln't happen
 			break;
 	} // switch (sc[0])
 
@@ -1055,7 +1055,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 	String CIMError = getHeaderValue("CIMError");
 	if (!CIMError.empty())
 	{
-		rt = FATAL;
+		rt = E_RESPONSE_FATAL;
 	}
 
 	// have to process WWW-Authenticate: Negotiate <blah> here, because we have to validate it on the response.
@@ -1076,7 +1076,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 			else if (result == SPNEGOHandler::E_FAILURE)
 			{
 				reasonPhrase = Format("SPNEGO handshake failed: %1", errDetails);
-				rt = FATAL;
+				rt = E_RESPONSE_FATAL;
 			}
 			else if (result == SPNEGOHandler::E_CONTINUE)
 			{
@@ -1167,7 +1167,7 @@ HTTPClient::checkResponse(Resp_t& rt)
 			{
 				reasonPhrase = "Client receive timeout expired.";
 			}
-			rt = FATAL;
+			rt = E_RESPONSE_FATAL;
 			m_closeConnection = true;
 			//close();
 			break;
@@ -1177,24 +1177,24 @@ HTTPClient::checkResponse(Resp_t& rt)
 			OW_THROW(HTTPException, Format("Received junk from server statusline = %1", m_statusLine).c_str());
 		}
 		rt = processHeaders(reasonPhrase);
-		if (rt == CONTINUE)
+		if (rt == E_RESPONSE_CONTINUE)
 		{
 			prepareForRetry();
 		}
-	} while (rt == CONTINUE);
-	if (rt == RETRY)
+	} while (rt == E_RESPONSE_CONTINUE);
+	if (rt == E_RESPONSE_RETRY)
 	{
 		++m_retryCount;
 		if (m_retryCount > 3)
 		{
-			rt = FATAL;
+			rt = E_RESPONSE_FATAL;
 		}
 		else
 		{
 			prepareForRetry();
 		}
 	}
-	else if (rt == GOOD)
+	else if (rt == E_RESPONSE_GOOD)
 	{
 		m_retryCount = 0;
 	}

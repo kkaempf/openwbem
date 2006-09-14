@@ -47,10 +47,6 @@
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_SPNEGOHandler.hpp"
 
-#if defined(GOOD)
-#undef GOOD
-#endif
-
 namespace OW_NAMESPACE
 {
 
@@ -254,10 +250,10 @@ private:
 #endif
 	enum Resp_t
 	{
-		FATAL,
-		RETRY,
-		GOOD,
-		CONTINUE
+		E_RESPONSE_FATAL,
+		E_RESPONSE_RETRY,
+		E_RESPONSE_GOOD,
+		E_RESPONSE_CONTINUE
 	};
 	SocketAddress m_serverAddress;
 	URL m_url;
