@@ -459,35 +459,29 @@ IndicationServerImplThread::~IndicationServerImplThread()
 
 //////////////////////////////////////////////////////////////////////////////
 UInt32
-IndicationServerImplThread::activateFilterOnClass(
-	const String& ns,
-	const CIMName& className)
+IndicationServerImplThread::activateFilterOnProvider(
+	IndicationProviderIFCRef& prov)
 {
 	MutexLock l(m_actCountGuard);
 	UInt32 actcount = 0;
-	String actkey = ns + ":" + className.toString();
-	actkey.toLowerCase();
-	activatecount_map_t::iterator it = m_activations.find(actkey);
+	activatecount_map_t::iterator it = m_activations.find(prov);
 	if (it != m_activations.end())
 	{
 		actcount = it->second;
 	}
 	actcount++;
-	m_activations[actkey] = actcount;
+	m_activations[prov] = actcount;
 	return actcount;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 UInt32
-IndicationServerImplThread::deActivateFilterOnClass(
-	const String& ns,
-	const CIMName& className)
+IndicationServerImplThread::deActivateFilterOnProvider(
+	IndicationProviderIFCRef& prov)
 {
 	MutexLock l(m_actCountGuard);
-	UInt32 actcount = 1;
-	String actkey = ns + ":" + className.toString();
-	actkey.toLowerCase();
-	activatecount_map_t::iterator it = m_activations.find(actkey);
+	UInt32 actcount = 0;
+	activatecount_map_t::iterator it = m_activations.find(prov);
 	if (it != m_activations.end())
 	{
 		if (it->second != 0)
@@ -495,7 +489,6 @@ IndicationServerImplThread::deActivateFilterOnClass(
 			it->second--;
 		}
 		actcount = it->second;
-
 	}
 	return actcount;
 }
@@ -960,8 +953,6 @@ IndicationServerImplThread::deleteSubscription(const String& ns, const CIMObject
 	{
 		Subscription& sub(**curSubscription);
 		CIMName indicationClassName = sub.m_selectStmt.getClassName();
-		bool lastActivation = (deActivateFilterOnClass(ns, indicationClassName) == 0);
-
 		for (size_t i = 0; i < sub.m_providers.size(); ++i)
 		{
 			try
@@ -1009,6 +1000,7 @@ IndicationServerImplThread::deleteSubscription(const String& ns, const CIMObject
 				else
 				{
 					IndicationProviderIFCRef p = sub.m_providers[i];
+					bool lastActivation = (deActivateFilterOnProvider(p) == 0);
 					p->deActivateFilter(createProvEnvRef(m_env), sub.m_selectStmt, 
 						indicationClassName.toString(), ns, sub.m_classes, lastActivation);
 				}
@@ -1397,9 +1389,6 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		}
 	}
 
-	// Get the activation count for the indication class name
-	bool firstActivation = (activateFilterOnClass(ns, indicationClassName) == 1);
-
 	// call activateFilter on all the providers
 	// If activateFilter calls fail or throw, just ignore it and keep going.
 	// If none succeed, we need to remove it from m_subscriptions and throw
@@ -1409,6 +1398,8 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 	{
 		try
 		{
+			// Get the activation count for the indication class name
+			bool firstActivation = (activateFilterOnProvider(providers[i]) == 1);
 			providers[i]->activateFilter(createProvEnvRef(m_env),
 				selectStmt, indicationClassName.toString(), ns, strIsaClassNames, firstActivation);
 

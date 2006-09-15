@@ -161,7 +161,6 @@ public:
 	IndicationProviderTest2()
 		: m_threadStarted(false)
 		, m_theClass(CIMNULL)
-		, m_subscriptionCount(0)
 	{
 	}
 
@@ -180,8 +179,6 @@ public:
 		const StringArray& classes,
 		bool firstActivation)
 	{
-		m_subscriptionCount++;
-
 		Logger logger(COMPONENT_NAME);
 		OW_LOG_DEBUG(logger, Format("IndicationProviderTest2::activateFilter filter = %1, eventType = %2, nameSpace = %3, firstActivation = %4", filter.toString(), eventType, nameSpace, firstActivation));
 		
@@ -247,13 +244,12 @@ public:
 		const StringArray& classes,
 		bool lastActivation)
 	{
-		m_subscriptionCount--;
 		Logger logger(COMPONENT_NAME);
 		OW_LOG_DEBUG(logger, Format("IndicationProviderTest2::deActivateFilter filter = %1, eventType = %2, nameSpace = %3, lastActivation = %4", filter.toString(), eventType, nameSpace, lastActivation));
 		
 		NonRecursiveMutexLock l(m_mtx);
 		// terminate the thread if no one is listening for our events.
-		if (!m_subscriptionCount && m_thread && m_threadStarted == true)
+		if (lastActivation && m_thread && m_threadStarted == true)
 		{
 			OW_LOG_DEBUG(logger, "IndicationProviderTest2::deActivateFilter stopping helper thread");
 			m_thread->shutdown();
@@ -556,7 +552,6 @@ private:
 	NonRecursiveMutex m_mtx;
 	NonRecursiveMutex m_guard;
 	CIMClass m_theClass;
-	int m_subscriptionCount;
 };
 
 

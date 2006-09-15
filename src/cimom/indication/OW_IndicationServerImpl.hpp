@@ -164,8 +164,8 @@ private:
 	
 	IndicationExportProviderIFCRef getProvider(const CIMName& className);
 
-	UInt32 activateFilterOnClass(const String& ns, const CIMName& className);
-	UInt32 deActivateFilterOnClass(const String& ns, const CIMName& className);
+	UInt32 activateFilterOnProvider(IndicationProviderIFCRef& prov);
+	UInt32 deActivateFilterOnProvider(IndicationProviderIFCRef& prov);
 	
 	void deactivateAllSubscriptions();
 
@@ -181,7 +181,7 @@ private:
 	typedef SortedVectorMap<CIMName, IndicationExportProviderIFCRef> provider_map_t;
 	provider_map_t m_providers;
 
-	typedef SortedVectorMap<String, UInt32> activatecount_map_t;
+	typedef SortedVectorMap<IndicationProviderIFCRef, UInt32> activatecount_map_t;
 	activatecount_map_t m_activations;
 	
 	// m_procTrans is where new indications to be delivered are put.
