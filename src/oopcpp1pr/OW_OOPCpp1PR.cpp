@@ -1,5 +1,6 @@
 /*******************************************************************************
 * Copyright (C) 2005 Quest Software, Inc. All rights reserved.
+* Copyright (C) 2006 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -34,6 +35,7 @@
 
 
 #include "OW_config.h"
+#include "OW_OOPCpp1PR.hpp"
 #include "OW_Format.hpp"
 #include "OW_Logger.hpp"
 #include "OW_LogAppender.hpp"
@@ -41,18 +43,15 @@
 #include "OW_LogMessage.hpp"
 #include "OW_LogLevel.hpp"
 #include "OW_CerrAppender.hpp"
-#include "OW_CppProviderBaseIFC.hpp"
-#include "OW_CppProviderIFC.hpp"
-#include "OW_UnnamedPipe.hpp"
-#include "OW_IOIFCStreamBuffer.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ResultHandlerIFC.hpp"
-#include "OW_CppInstanceProviderIFC.hpp"
-#include "OW_CppMethodProviderIFC.hpp"
-#include "OW_CppPolledProviderIFC.hpp"
-#include "OW_CppIndicationProviderIFC.hpp"
-#include "OW_CppIndicationExportProviderIFC.hpp"
+#include "OW_InstanceProviderIFC.hpp"
+#include "OW_MethodProviderIFC.hpp"
+#include "OW_PolledProviderIFC.hpp"
+#include "OW_IndicationProviderIFC.hpp"
+#include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_UserInfo.hpp"
@@ -70,6 +69,7 @@
 #include <iostream>
 #include <csignal>
 #include <cstdio>
+#include <cstring>
 #include <cerrno>
 
 using namespace std;
@@ -79,14 +79,13 @@ using namespace OpenWBEM::WBEMFlags;
 namespace OW_NAMESPACE
 {
 
+OW_DEFINE_EXCEPTION(OOPCpp1);
+
+const char* const OOPCpp1ProviderRunner::COMPONENT_NAME = "ow.owoopcpp1pr";
+
 namespace
 {
-
-
-CppProviderBaseIFCRef loadProvider(const String& provider);
-
-const String COMPONENT_NAME("ow.owoopcpp1pr");
-
+//////////////////////////////////////////////////////////////////////////////
 class BinaryCIMInstanceWriter : public CIMInstanceResultHandlerIFC
 {
 public:
@@ -103,6 +102,7 @@ private:
 	std::streambuf & obuf;
 };
 
+//////////////////////////////////////////////////////////////////////////////
 class BinaryCIMObjectPathWriter : public CIMObjectPathResultHandlerIFC
 {
 public:
@@ -119,6 +119,7 @@ private:
 	std::streambuf & obuf;
 };
 
+//////////////////////////////////////////////////////////////////////////////
 class OOPcpp1LogAppender : public LogAppender
 {
 public:
@@ -142,6 +143,7 @@ private:
 	std::streambuf & obuf;
 };
 
+//////////////////////////////////////////////////////////////////////////////
 class OOPOperationContext : public OperationContext
 {
 public:
@@ -208,6 +210,7 @@ private:
 	std::streambuf & m_outbuf;
 };
 
+//////////////////////////////////////////////////////////////////////////////
 class OOPProtocol : public CIMProtocolIFC
 {
 public:
@@ -342,6 +345,7 @@ private:
 	std::ostream m_ostr;
 };
 
+//////////////////////////////////////////////////////////////////////////////
 class OOPProviderEnvironment : public ProviderEnvironmentIFC
 {
 public:
@@ -380,7 +384,7 @@ public:
 		}
 		else if (op == BinarySerialization::BIN_ERROR)
 		{
-			Logger logger(COMPONENT_NAME);
+			Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
 			OW_LOG_DEBUG(logger, "OOPProviderEnvironment::commonGetCIMOMHandle() got BIN_ERROR");
 			String msg;
 			BinarySerialization::read(m_inbuf, msg);
@@ -402,12 +406,12 @@ public:
 	}
 	virtual RepositoryIFCRef getRepository() const
 	{
-		OW_ASSERTMSG(0, "Not implemented");
+		OW_ASSERTMSG(0, "Not supported");
 		return RepositoryIFCRef();
 	}
 	virtual RepositoryIFCRef getAuthorizingRepository() const
 	{
-		OW_ASSERTMSG(0, "Not implemented");
+		OW_ASSERTMSG(0, "Not supported");
 		return RepositoryIFCRef();
 	}
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const
@@ -449,10 +453,16 @@ private:
 	UnnamedPipeRef m_inpipe;
 };
 
-int callInstanceProvider(UInt8 op, CppProviderBaseIFCRef * provider, std::streambuf& inbuf, std::streambuf& outbuf, const UnnamedPipeRef& stdinout)
+//////////////////////////////////////////////////////////////////////////////
+int callInstanceProvider(
+	UInt8 op, 
+	ProviderBaseIFCRef provider,
+	std::streambuf& inbuf,
+	std::streambuf& outbuf,
+	const UnnamedPipeRef& stdinout)
 {
-	CppInstanceProviderIFC* instProvider = (*provider)->getInstanceProvider();
-	Logger logger(COMPONENT_NAME);
+	InstanceProviderIFC* instProvider = provider->getInstanceProvider();
+	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
 	if (!instProvider)
 	{
 		OW_LOG_ERROR(logger, "provider is not an instance provider");
@@ -576,10 +586,15 @@ int callInstanceProvider(UInt8 op, CppProviderBaseIFCRef * provider, std::stream
 	return 0;
 }
 
-int callPolledProvider(UInt8 op, CppProviderBaseIFCRef * provider, std::streambuf& inbuf, std::streambuf& outbuf, const UnnamedPipeRef& stdinout)
+//////////////////////////////////////////////////////////////////////////////
+int callPolledProvider(UInt8 op,
+	ProviderBaseIFCRef provider,
+	std::streambuf& inbuf,
+	std::streambuf& outbuf,
+	const UnnamedPipeRef& stdinout)
 {
-	CppPolledProviderIFC* polledProvider = (*provider)->getPolledProvider();
-	Logger logger(COMPONENT_NAME);
+	PolledProviderIFC* polledProvider = provider->getPolledProvider();
+	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
 	if (!polledProvider)
 	{
 		OW_LOG_ERROR(logger, "provider is not a polled provider");
@@ -612,10 +627,16 @@ int callPolledProvider(UInt8 op, CppProviderBaseIFCRef * provider, std::streambu
 	return 0;
 }
 
-int callIndicationProvider(UInt8 op, CppProviderBaseIFCRef * provider, std::streambuf& inbuf, std::streambuf& outbuf, const UnnamedPipeRef& stdinout)
+//////////////////////////////////////////////////////////////////////////////
+int callIndicationProvider(
+	UInt8 op,
+	ProviderBaseIFCRef provider,
+	std::streambuf& inbuf,
+	std::streambuf& outbuf,
+	const UnnamedPipeRef& stdinout)
 {
-	CppIndicationProviderIFC* indicationProvider = (*provider)->getIndicationProvider();
-	Logger logger(COMPONENT_NAME);
+	IndicationProviderIFC* indicationProvider = provider->getIndicationProvider();
+	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
 	if (!indicationProvider)
 	{
 		OW_LOG_ERROR(logger, "provider is not an indication provider");
@@ -684,10 +705,16 @@ int callIndicationProvider(UInt8 op, CppProviderBaseIFCRef * provider, std::stre
 	return 0;
 }
 
-int callIndicationExportProvider(UInt8 op, CppProviderBaseIFCRef * provider, std::streambuf& inbuf, std::streambuf& outbuf, const UnnamedPipeRef& stdinout)
+//////////////////////////////////////////////////////////////////////////////
+int callIndicationExportProvider(
+	UInt8 op,
+	ProviderBaseIFCRef provider,
+	std::streambuf& inbuf,
+	std::streambuf& outbuf, 
+	const UnnamedPipeRef& stdinout)
 {
-	CppIndicationExportProviderIFC* indicationExportProvider = (*provider)->getIndicationExportProvider();
-	Logger logger(COMPONENT_NAME);
+	IndicationExportProviderIFC* indicationExportProvider = provider->getIndicationExportProvider();
+	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
 	if (!indicationExportProvider)
 	{
 		OW_LOG_ERROR(logger, "provider is not a indicationExport provider");
@@ -713,11 +740,17 @@ int callIndicationExportProvider(UInt8 op, CppProviderBaseIFCRef * provider, std
 	return 0;
 }
 
-int callMethodProvider(UInt8 op, CppProviderBaseIFCRef * provider, std::streambuf& inbuf, std::streambuf& outbuf, const UnnamedPipeRef& stdinout)
+//////////////////////////////////////////////////////////////////////////////
+int callMethodProvider(
+	UInt8 op,
+	ProviderBaseIFCRef provider,
+	std::streambuf& inbuf,
+	std::streambuf& outbuf,
+	const UnnamedPipeRef& stdinout)
 {
 	//OW_LOG_DEBUG(logger, "owoopcpp1pr Got BIN_INVMETH command");
-	Logger logger(COMPONENT_NAME);
-	CppMethodProviderIFC* methProvider = (*provider)->getMethodProvider();
+	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
+	MethodProviderIFC* methProvider = provider->getMethodProvider();
 	if (!methProvider)
 	{
 		OW_LOG_ERROR(logger, "provider is not a method provider");
@@ -744,22 +777,26 @@ int callMethodProvider(UInt8 op, CppProviderBaseIFCRef * provider, std::streambu
 	return 0;
 }
 
+//////////////////////////////////////////////////////////////////////////////
 bool opRequiresEndReply(UInt8 op)
 {
 	return op != BinarySerialization::SET_PERSISTENT;
 }
 
-bool doPlatformInitialization()
+//////////////////////////////////////////////////////////////////////////////
+bool doPlatformInitialization(String& msg)
 {
 	if (::signal(SIGPIPE, SIG_IGN) == SIG_ERR)
 	{
-		::perror("signal(SIGPIPE, SIG_IGN) failed");
+		msg = Format("signal(SIGPIPE, SIG_IGN) failed: %s",
+			::strerror(errno));
 		return false;
 	}
-
+	msg.erase();
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
 String where(String const & provider_lib, UInt8 op, bool got_op)
 {
 	return got_op ? provider_lib + ", op=" + String(int(op)) : provider_lib;
@@ -767,62 +804,64 @@ String where(String const & provider_lib, UInt8 op, bool got_op)
 
 } // end unnamed namespace
 
-namespace OOPCpp1
-{
 
-int runOOPProvider(
-	const String& providerLib, const String& logfile, const String & loglevel)
+//////////////////////////////////////////////////////////////////////////////
+OOPCpp1ProviderRunner::OOPCpp1ProviderRunner(
+	const String& logFile,
+	const String& logLevel)
+	: m_stdinout(UnnamedPipe::createStdinStdout())
+	, m_inbuf(m_stdinout.getPtr())
+	, m_outbuf(m_stdinout.getPtr())
 {
-	int rval = 0;
-	UnnamedPipeRef stdinout = UnnamedPipe::createStdinStdout();
-	IOIFCStreamBuffer inbuf(stdinout.getPtr());
-	IOIFCStreamBuffer outbuf(stdinout.getPtr());
-	inbuf.tie(&outbuf);
-
-	if (!doPlatformInitialization())
+	m_inbuf.tie(&m_outbuf);
+	String msg;
+	if (!doPlatformInitialization(msg))
 	{
-		return 1;
+		OW_THROW(OOPCpp1Exception, msg.c_str());
 	}
 
-	// set up a file log as well so we can see what happened even if the communication back to the provider interface is broken.
+	// set up a file log as well so we can see what happened even if the 
+	// communication back to the provider interface is broken.
 	Array<LogAppenderRef> appenders;
-	StringArray categories = loglevel.tokenize(",");
-	appenders.push_back(new OOPcpp1LogAppender(outbuf, categories));
+	StringArray categories = logLevel.tokenize(",");
+	appenders.push_back(new OOPcpp1LogAppender(m_outbuf, categories));
 
 	const char LOG_FORMAT[] = "%-3r [%t] %-5p %F:%L %c - %m";
-	if (!logfile.empty())
+	if (!logFile.empty())
 	{
-		appenders.push_back(new FileAppender(LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES, logfile.c_str(),
+		appenders.push_back(new FileAppender(LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES, logFile.c_str(),
 			LOG_FORMAT, FileAppender::NO_MAX_LOG_SIZE, 9999));
 	}
 	LogAppender::setDefaultLogAppender(LogAppenderRef(new MultiAppender(appenders)));
+}
 
+//////////////////////////////////////////////////////////////////////////////
+ProviderEnvironmentIFCRef 
+OOPCpp1ProviderRunner::getProviderEnvironment()
+{
+	return ProviderEnvironmentIFCRef(new OOPProviderEnvironment(m_inbuf,
+		m_outbuf, m_stdinout));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+int
+OOPCpp1ProviderRunner::runProvider(
+	ProviderBaseIFCRef& provider,
+	const String& sourceLib)
+{
+	int rval = 0;
 	Logger logger(COMPONENT_NAME);
 
 	bool got_op = false;
 	UInt8 op;
 	try
 	{
-		//OW_LOG_DEBUG(logger, Format("about to load %1", providerLib));
-		// static and a pointer so it never gets unloaded (or deleted)
-		static CppProviderBaseIFCRef * provider = new CppProviderBaseIFCRef(
-			CppProviderIFC::loadProvider(providerLib)
-		);
-		if (!*provider)
-		{
-			OW_LOG_ERROR(logger, Format("provider %1 did not load", providerLib));
-			rval = 1;
-			goto main_end;
-		}
-
-		//OW_LOG_DEBUG(logger, "loaded provider");
-
 		bool persistent = false;
 		do
 		{
 			got_op = false;
 			UInt32 binaryProtocolVersion = 0;
-			BinarySerialization::read(inbuf, binaryProtocolVersion);
+			BinarySerialization::read(m_inbuf, binaryProtocolVersion);
 			//OW_LOG_DEBUG(logger, Format("Read protocol version %1", binaryProtocolVersion));
 			if (binaryProtocolVersion < BinarySerialization::MinBinaryProtocolVersion
 				|| binaryProtocolVersion > BinarySerialization::BinaryProtocolVersion)
@@ -833,7 +872,7 @@ int runOOPProvider(
 				goto main_end;
 			}
 
-			BinarySerialization::read(inbuf, op);
+			BinarySerialization::read(m_inbuf, op);
 			got_op = true;
 			switch (op)
 			{
@@ -844,27 +883,27 @@ int runOOPProvider(
 				case BinarySerialization::BIN_MODIFYINST:
 				case BinarySerialization::BIN_DELETEINST:
 				{
-					rval = callInstanceProvider(op, provider, inbuf, outbuf, stdinout);
+					rval = callInstanceProvider(op, provider, m_inbuf, m_outbuf, m_stdinout);
 				}
 				break;
 
 				case BinarySerialization::BIN_INVMETH:
 				{
-					rval = callMethodProvider(op, provider, inbuf, outbuf, stdinout);
+					rval = callMethodProvider(op, provider, m_inbuf, m_outbuf, m_stdinout);
 				}
 				break;
 
 				case BinarySerialization::SET_PERSISTENT:
 				{
 					//OW_LOG_DEBUG(logger, "owoopcpp1pr Got SET_PERSISTENT command");
-					persistent = BinarySerialization::readBool(inbuf);
+					persistent = BinarySerialization::readBool(m_inbuf);
 					if (persistent)
 					{
-						stdinout->setTimeouts(Timeout::infinite);
+						m_stdinout->setTimeouts(Timeout::infinite);
 					}
 					else
 					{
-						stdinout->setTimeouts(Timeout::relative(60 * 10.0));
+						m_stdinout->setTimeouts(Timeout::relative(60 * 10.0));
 					}
 				}
 				break;
@@ -872,7 +911,7 @@ int runOOPProvider(
 				case BinarySerialization::POLL:
 				case BinarySerialization::GET_INITIAL_POLLING_INTERVAL:
 				{
-					rval = callPolledProvider(op, provider, inbuf, outbuf, stdinout);
+					rval = callPolledProvider(op, provider, m_inbuf, m_outbuf, m_stdinout);
 				}
 				break;
 
@@ -881,13 +920,13 @@ int runOOPProvider(
 				case BinarySerialization::ACTIVATE_FILTER:
 				case BinarySerialization::DEACTIVATE_FILTER:
 				{
-					rval = callIndicationProvider(op, provider, inbuf, outbuf, stdinout);
+					rval = callIndicationProvider(op, provider, m_inbuf, m_outbuf, m_stdinout);
 				}
 				break;
 
 				case BinarySerialization::EXPORT_INDICATION:
 				{
-					rval = callIndicationExportProvider(op, provider, inbuf, outbuf, stdinout);
+					rval = callIndicationExportProvider(op, provider, m_inbuf, m_outbuf, m_stdinout);
 				}
 				break;
 
@@ -899,10 +938,10 @@ int runOOPProvider(
 			}
 			if (persistent && opRequiresEndReply(op))
 			{
-				BinarySerialization::write(outbuf, BinarySerialization::BIN_END);
-				if (outbuf.pubsync() == -1)
+				BinarySerialization::write(m_outbuf, BinarySerialization::BIN_END);
+				if (m_outbuf.pubsync() == -1)
 				{
-					cerr << "owoopcpp1pr main() outbuf.pubsync() failed" << endl;
+					cerr << "owoopcpp1pr main() m_outbuf.pubsync() failed" << endl;
 					rval = 7;
 					goto main_end;
 				}
@@ -912,22 +951,22 @@ int runOOPProvider(
 	}
 	catch (CIMException& e)
 	{
-		OW_LOG_INFO(logger, Format("CIMException in owoopcpp1pr (%2): %1", e, where(providerLib, op, got_op)));
-		BinarySerialization::write(outbuf, BinarySerialization::BIN_EXCEPTION);
-		BinarySerialization::write(outbuf, UInt16(e.getErrNo()));
-		BinarySerialization::write(outbuf, e.getMessage());
+		OW_LOG_INFO(logger, Format("CIMException in owoopcpp1pr (%2): %1", e, where(sourceLib, op, got_op)));
+		BinarySerialization::write(m_outbuf, BinarySerialization::BIN_EXCEPTION);
+		BinarySerialization::write(m_outbuf, UInt16(e.getErrNo()));
+		BinarySerialization::write(m_outbuf, e.getMessage());
 	}
 	catch (const IOException& e)
 	{
-		String msg = Format("Exception in owoopcpp1pr (%2): %1", e, where(providerLib, op, got_op));
+		String msg = Format("Exception in owoopcpp1pr (%2): %1", e, where(sourceLib, op, got_op));
 		OW_LOG_ERROR(logger, msg);
 		// Odds are that the output pipe was closed.  We can't use the
 		// BinarySerialization::write functions without catching the exceptions
 		// that will result from logging these errors.
 		try
 		{
-			BinarySerialization::write(outbuf, BinarySerialization::BIN_ERROR);
-			BinarySerialization::write(outbuf, msg);
+			BinarySerialization::write(m_outbuf, BinarySerialization::BIN_ERROR);
+			BinarySerialization::write(m_outbuf, msg);
 		}
 		catch (...)
 		{
@@ -938,39 +977,37 @@ int runOOPProvider(
 	}
 	catch (Exception& e)
 	{
-		String msg = Format("Exception in owoopcpp1pr (%2): %1", e, where(providerLib, op, got_op));
+		String msg = Format("Exception in owoopcpp1pr (%2): %1", e, where(sourceLib, op, got_op));
 		OW_LOG_INFO(logger, msg);
-		BinarySerialization::write(outbuf, BinarySerialization::BIN_ERROR);
-		BinarySerialization::write(outbuf, msg);
+		BinarySerialization::write(m_outbuf, BinarySerialization::BIN_ERROR);
+		BinarySerialization::write(m_outbuf, msg);
 	}
 	catch (std::exception& e)
 	{
-		String msg = Format("std::exception in owoopcpp1pr (%2): %1", e.what(), where(providerLib, op, got_op));
+		String msg = Format("std::exception in owoopcpp1pr (%2): %1", e.what(), where(sourceLib, op, got_op));
 		OW_LOG_ERROR(logger, msg);
-		BinarySerialization::write(outbuf, BinarySerialization::BIN_ERROR);
-		BinarySerialization::write(outbuf, msg);
+		BinarySerialization::write(m_outbuf, BinarySerialization::BIN_ERROR);
+		BinarySerialization::write(m_outbuf, msg);
 	}
 	catch(...)
 	{
 		String msg = "* UNKNOWN EXCEPTION CAUGHT IN owoopcpp1pr MAIN! ("
-			+ where(providerLib, op, got_op) + ")";
+			+ where(sourceLib, op, got_op) + ")";
 		OW_LOG_ERROR(logger, msg);
-		BinarySerialization::write(outbuf, BinarySerialization::BIN_ERROR);
-		BinarySerialization::write(outbuf, msg);
+		BinarySerialization::write(m_outbuf, BinarySerialization::BIN_ERROR);
+		BinarySerialization::write(m_outbuf, msg);
 	}
 
 main_end:
 
-	BinarySerialization::write(outbuf, BinarySerialization::BIN_END);
-	if (outbuf.pubsync() == -1)
+	BinarySerialization::write(m_outbuf, BinarySerialization::BIN_END);
+	if (m_outbuf.pubsync() == -1)
 	{
-		cerr << "owoopcpp1pr main() outbuf.pubsync() failed" << endl;
+		cerr << "owoopcpp1pr main() m_outbuf.pubsync() failed" << endl;
 		rval = 7;
 	}
 	return rval;
 }
-
-} // end namespace OOPCpp1
 
 } // end namespace OW_NAMESPACE
 

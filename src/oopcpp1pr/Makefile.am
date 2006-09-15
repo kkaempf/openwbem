@@ -24,8 +24,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/requesthandlers/binary -lowrequesthandlerbinary \
--L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
+-L$(top_builddir)/src/requesthandlers/binary -lowrequesthandlerbinary
 
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
@@ -48,7 +47,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/http/client \
 -I$(top_srcdir)/src/http/common \
 -I$(top_srcdir)/src/provider \
--I$(top_srcdir)/src/providerifcs/cpp \
 -I$(top_srcdir)/src/requesthandlers/binary \
 -I$(top_srcdir)/src/monitor
 

@@ -1,5 +1,6 @@
 /*******************************************************************************
 * Copyright (C) 2005 Quest Software, Inc. All rights reserved.
+* Copyright (C) 2006 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -37,18 +38,30 @@
 
 #include "OW_config.h"
 #include "OW_CommonFwd.hpp"
+#include "OW_ProviderFwd.hpp"
+#include "OW_IOIFCStreamBuffer.hpp"
+#include "OW_UnnamedPipe.hpp"
+#include "OW_Exception.hpp"
 
 namespace OW_NAMESPACE
 {
 
+OW_DECLARE_EXCEPTION(OOPCpp1);
 
-namespace OOPCpp1
+class OOPCpp1ProviderRunner
 {
+public:
+	static const char* const COMPONENT_NAME;
 
-int runOOPProvider(
-	const String& providerLib, const String& logfile, const String & loglevel);
+	OOPCpp1ProviderRunner(const String& logFile, const String& logLevel);
+	int runProvider(ProviderBaseIFCRef& provider, const String& sourceLib);
+	ProviderEnvironmentIFCRef getProviderEnvironment();
 
-} // end namespace OOPCpp1
+private:
+	UnnamedPipeRef m_stdinout;
+	IOIFCStreamBuffer m_inbuf;
+	IOIFCStreamBuffer m_outbuf;
+};
 
 } // end namespace OW_NAMESPACE
 

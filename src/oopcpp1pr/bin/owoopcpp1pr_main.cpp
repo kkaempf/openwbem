@@ -1,5 +1,6 @@
 /*******************************************************************************
 * Copyright (C) 2005 Quest Software, Inc. All rights reserved.
+* Copyright (C) 2006 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,12 +33,14 @@
  * @author Dan Nuffer
  */
 
-
 #include "OW_config.h"
 #include "OW_OOPCpp1PR.hpp"
 #include "OW_CmdLineParser.hpp"
 #include "OW_PrivilegeManager.hpp"
 #include "OW_String.hpp"
+#include "OW_CppProviderIFC.hpp"
+#include "OW_CppProxyProvider.hpp"
+#include "OW_Format.hpp"
 
 #include <iostream>
 
@@ -46,6 +49,149 @@ using namespace OpenWBEM;
 
 namespace
 {
+
+class LocalCppProvider : public ProviderBaseIFC
+{
+public:
+	LocalCppProvider(CppProviderBaseIFCRef& pprov)
+		: ProviderBaseIFC()
+		, m_prov(pprov)
+		, m_instProv(0)
+		, m_sinstProv(0)
+		, m_methProv(0)
+		, m_iexpProv(0)
+		, m_indProv(0)
+		, m_polledProv(0)
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+		, m_assocProv(0)
+#endif
+	{
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	virtual InstanceProviderIFC* getInstanceProvider()
+	{
+		if (!m_instProv);
+		{
+			CppInstanceProviderIFC* pIP = m_prov->getInstanceProvider();
+			if (!pIP)
+			{
+				return 0;
+			}
+			CppInstanceProviderIFCRef ipRef(m_prov.getLibRef(), pIP);
+			m_instProv = InstanceProviderIFCRef(new CppInstanceProviderProxy(ipRef));
+		}
+		return m_instProv->getInstanceProvider();
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	virtual SecondaryInstanceProviderIFC* getSecondaryInstanceProvider()
+	{
+		if (!m_sinstProv);
+		{
+			CppSecondaryInstanceProviderIFC* pIP = m_prov->getSecondaryInstanceProvider();
+			if (!pIP)
+			{
+				return 0;
+			}
+			CppSecondaryInstanceProviderIFCRef ipRef(m_prov.getLibRef(), pIP);
+			m_sinstProv = SecondaryInstanceProviderIFCRef(new CppSecondaryInstanceProviderProxy(ipRef));
+		}
+		return m_sinstProv->getSecondaryInstanceProvider();
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	virtual MethodProviderIFC* getMethodProvider()
+	{
+		if (!m_methProv);
+		{
+			CppMethodProviderIFC* pIP = m_prov->getMethodProvider();
+			if (!pIP)
+			{
+				return 0;
+			}
+			CppMethodProviderIFCRef ipRef(m_prov.getLibRef(), pIP);
+			m_methProv = MethodProviderIFCRef(new CppMethodProviderProxy(ipRef));
+		}
+		return m_methProv->getMethodProvider();
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	virtual IndicationExportProviderIFC* getIndicationExportProvider()
+	{
+		if (!m_iexpProv);
+		{
+			CppIndicationExportProviderIFC* pIP = m_prov->getIndicationExportProvider();
+			if (!pIP)
+			{
+				return 0;
+			}
+			CppIndicationExportProviderIFCRef ipRef(m_prov.getLibRef(), pIP);
+			m_iexpProv = IndicationExportProviderIFCRef(new CppIndicationExportProviderProxy(ipRef));
+		}
+		return m_iexpProv->getIndicationExportProvider();
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	virtual IndicationProviderIFC* getIndicationProvider()
+	{
+		if (!m_indProv);
+		{
+			CppIndicationProviderIFC* pIP = m_prov->getIndicationProvider();
+			if (!pIP)
+			{
+				return 0;
+			}
+			CppIndicationProviderIFCRef ipRef(m_prov.getLibRef(), pIP);
+			m_indProv = IndicationProviderIFCRef(new CppIndicationProviderProxy(ipRef));
+		}
+		return m_indProv->getIndicationProvider();
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	virtual PolledProviderIFC* getPolledProvider()
+	{
+		if (!m_polledProv);
+		{
+			CppPolledProviderIFC* pIP = m_prov->getPolledProvider();
+			if (!pIP)
+			{
+				return 0;
+			}
+			CppPolledProviderIFCRef ipRef(m_prov.getLibRef(), pIP);
+			m_polledProv = PolledProviderIFCRef(new CppPolledProviderProxy(ipRef));
+		}
+		return m_polledProv->getPolledProvider();
+	}
+
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+	virtual AssociatorProviderIFC* getAssociatorProvider()
+	{
+		if (!m_assocProv);
+		{
+			CppAssociatorProviderIFC* pIP = m_prov->getAssociatorProvider();
+			if (!pIP)
+			{
+				return 0;
+			}
+			CppAssociatorProviderIFCRef ipRef(m_prov.getLibRef(), pIP);
+			m_assocProv = AssociatorProviderIFCRef(new CppAssociatorProviderProxy(ipRef));
+		}
+		return m_assocProv->getAssociatorProvider();
+	}
+#endif
+private:
+	CppProviderBaseIFCRef m_prov;
+	InstanceProviderIFCRef m_instProv;
+	SecondaryInstanceProviderIFCRef m_sinstProv;
+	MethodProviderIFCRef m_methProv;
+	IndicationExportProviderIFCRef m_iexpProv;
+	IndicationProviderIFCRef m_indProv;
+	PolledProviderIFCRef m_polledProv;
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+	AssociatorProviderIFCRef m_assocProv;
+#endif
+};
 
 enum
 {
@@ -83,9 +229,7 @@ int main(int argc, char* argv[])
 {
     int rval = 0;
 
-	String providerLib;
-	String logfile;
-	String loglevel;
+	String providerLib, logfile, loglevel;
 	int pclrv = processCommandLine(argc, argv, providerLib, logfile, loglevel);
 	if (pclrv == -1)
 	{
@@ -99,16 +243,42 @@ int main(int argc, char* argv[])
 	{
 		loglevel = "*";
 	}
-	return OOPCpp1::runOOPProvider(providerLib, logfile, loglevel);
 
+	OOPCpp1ProviderRunner provrunner(logfile, loglevel);
+	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
+	ProviderEnvironmentIFCRef penv = provrunner.getProviderEnvironment();
+
+	CppProviderBaseIFCRef cppprov = CppProviderIFC::loadProvider(providerLib);
+	if (!cppprov)
+	{
+		OW_LOG_ERROR(logger, Format("provider %1 did not load", providerLib));
+		return 1;
+	}
+
+	try
+	{
+		cppprov->initialize(penv);
+	}
+	catch(...)
+	{
+		OW_LOG_ERROR(logger, Format("provider %1 failed to initialize", providerLib));
+		return 1;
+	}
+
+	ProviderBaseIFCRef provider = ProviderBaseIFCRef(new LocalCppProvider(cppprov));
+	return provrunner.runProvider(provider, providerLib);
 }
 
 namespace
 {
 
+//////////////////////////////////////////////////////////////////////////////
 int
 processCommandLine(
-	int argc, char* argv[], String& providerLib, String& logfile,
+	int argc,
+	char* argv[],
+	String& providerLib,
+	String& logfile,
 	String & loglevel)
 {
 	try
