@@ -484,7 +484,7 @@ IndicationServerImplThread::deActivateFilterOnClass(
 	const CIMName& className)
 {
 	MutexLock l(m_actCountGuard);
-	UInt32 actcount = 0;
+	UInt32 actcount = 1;
 	String actkey = ns + ":" + className.toString();
 	actkey.toLowerCase();
 	activatecount_map_t::iterator it = m_activations.find(actkey);
