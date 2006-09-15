@@ -116,6 +116,60 @@ public:
 		const String& ns,
 		const CIMObjectPath& cop);
 
+	virtual void associators(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		CIMInstanceResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList);
+
+	virtual void associatorNames(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		CIMObjectPathResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole );
+
+	virtual void references(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		CIMInstanceResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& resultClass,
+		const String& role,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList);
+
+	virtual void referenceNames(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		CIMObjectPathResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& resultClass,
+		const String& role );
+
 	virtual CIMValue invokeMethod(
 		const UnnamedPipeRef& in,
 		const UnnamedPipeRef& out,

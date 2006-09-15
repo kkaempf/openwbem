@@ -1218,6 +1218,146 @@ OOPProtocolCPP1::deleteInstance(
 	}
 }
 
+void
+OOPProtocolCPP1::associators(
+	const UnnamedPipeRef& in,
+	const UnnamedPipeRef& out,
+	const Timeout& timeout,
+	const ProviderEnvironmentIFCRef& env,
+	CIMInstanceResultHandlerIFC& result,
+	const String& ns,
+	const CIMObjectPath& objectName,
+	const String& assocClass,
+	const String& resultClass,
+	const String& role,
+	const String& resultRole,
+	WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	const StringArray* propertyList)
+{
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::associators about to start filling request buffer");
+	
+	Array<unsigned char> buf;
+	OOPDataOStreamBuf obuf(buf);
+	BinarySerialization::write(obuf, BinarySerialization::BinaryProtocolVersion);
+	BinarySerialization::write(obuf, BinarySerialization::BIN_ASSOCIATORS);
+	BinarySerialization::writeString(obuf, ns);
+	BinarySerialization::writeObjectPath(obuf, objectName);
+	BinarySerialization::writeString(obuf, assocClass);
+	BinarySerialization::writeString(obuf, resultClass);
+	BinarySerialization::writeString(obuf, role);
+	BinarySerialization::writeString(obuf, resultRole);
+	BinarySerialization::writeBool(obuf, includeQualifiers);
+	BinarySerialization::writeBool(obuf, includeClassOrigin);
+	BinarySerialization::writeStringArray(obuf, propertyList);
+
+	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::associators finished filling buffer");
+
+	CIMInstanceOperationResultHandler operationResult(result);
+	end(buf, in, out, timeout, env, operationResult);
+}
+
+void
+OOPProtocolCPP1::associatorNames(
+	const UnnamedPipeRef& in,
+	const UnnamedPipeRef& out,
+	const Timeout& timeout,
+	const ProviderEnvironmentIFCRef& env,
+	CIMObjectPathResultHandlerIFC& result,
+	const String& ns,
+	const CIMObjectPath& objectName,
+	const String& assocClass,
+	const String& resultClass,
+	const String& role,
+	const String& resultRole )
+{
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::associatorNames about to start filling request buffer");
+	
+	Array<unsigned char> buf;
+	OOPDataOStreamBuf obuf(buf);
+	BinarySerialization::write(obuf, BinarySerialization::BinaryProtocolVersion);
+	BinarySerialization::write(obuf, BinarySerialization::BIN_ASSOCNAMES);
+	BinarySerialization::writeString(obuf, ns);
+	BinarySerialization::writeObjectPath(obuf, objectName);
+	BinarySerialization::writeString(obuf, assocClass);
+	BinarySerialization::writeString(obuf, resultClass);
+	BinarySerialization::writeString(obuf, role);
+	BinarySerialization::writeString(obuf, resultRole);
+	
+	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::associatorNames finished filling buffer");
+
+	CIMObjectPathOperationResultHandler operationResult(result);
+	end(buf, in, out, timeout, env, operationResult);
+}
+
+void
+OOPProtocolCPP1::references(
+	const UnnamedPipeRef& in,
+	const UnnamedPipeRef& out,
+	const Timeout& timeout,
+	const ProviderEnvironmentIFCRef& env,
+	CIMInstanceResultHandlerIFC& result,
+	const String& ns,
+	const CIMObjectPath& objectName,
+	const String& resultClass,
+	const String& role,
+	WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	const StringArray* propertyList)
+{
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::references about to start filling request buffer");
+	
+	Array<unsigned char> buf;
+	OOPDataOStreamBuf obuf(buf);
+	BinarySerialization::write(obuf, BinarySerialization::BinaryProtocolVersion);
+	BinarySerialization::write(obuf, BinarySerialization::BIN_REFERENCES);
+	BinarySerialization::writeString(obuf, ns);
+	BinarySerialization::writeObjectPath(obuf, objectName);
+	BinarySerialization::writeString(obuf, resultClass);
+	BinarySerialization::writeString(obuf, role);
+	BinarySerialization::writeBool(obuf, includeQualifiers);
+	BinarySerialization::writeBool(obuf, includeClassOrigin);
+	BinarySerialization::writeStringArray(obuf, propertyList);
+
+	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::references finished filling buffer");
+
+	CIMInstanceOperationResultHandler operationResult(result);
+	end(buf, in, out, timeout, env, operationResult);
+}
+
+void
+OOPProtocolCPP1::referenceNames(
+	const UnnamedPipeRef& in,
+	const UnnamedPipeRef& out,
+	const Timeout& timeout,
+	const ProviderEnvironmentIFCRef& env,
+	CIMObjectPathResultHandlerIFC& result,
+	const String& ns,
+	const CIMObjectPath& objectName,
+	const String& resultClass,
+	const String& role )
+{
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::referenceNames about to start filling request buffer");
+	
+	Array<unsigned char> buf;
+	OOPDataOStreamBuf obuf(buf);
+	BinarySerialization::write(obuf, BinarySerialization::BinaryProtocolVersion);
+	BinarySerialization::write(obuf, BinarySerialization::BIN_REFNAMES);
+	BinarySerialization::writeString(obuf, ns);
+	BinarySerialization::writeObjectPath(obuf, objectName);
+	BinarySerialization::writeString(obuf, resultClass);
+	BinarySerialization::writeString(obuf, role);
+	
+	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::referenceNames finished filling buffer");
+
+	CIMObjectPathOperationResultHandler operationResult(result);
+	end(buf, in, out, timeout, env, operationResult);
+}
+
 CIMValue
 OOPProtocolCPP1::invokeMethod(
 	const UnnamedPipeRef& in,

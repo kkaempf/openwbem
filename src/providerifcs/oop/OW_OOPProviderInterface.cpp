@@ -378,7 +378,7 @@ OOPProviderInterface::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& e
 	}
 	else
 	{
-		return AssociatorProviderIFCRef();
+		return AssociatorProviderIFCRef(new OOPAssociatorProvider(*iter->second));
 	}
 }
 

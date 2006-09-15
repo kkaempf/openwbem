@@ -1,5 +1,6 @@
 /*******************************************************************************
 * Copyright (C) 2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2006 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -123,6 +124,60 @@ public:
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
 		const CIMObjectPath& cop) = 0;
+
+	virtual void associators(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		CIMInstanceResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList) = 0;
+
+	virtual void associatorNames(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		CIMObjectPathResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole ) = 0;
+
+	virtual void references(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		CIMInstanceResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& resultClass,
+		const String& role,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList) = 0;
+
+	virtual void referenceNames(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		CIMObjectPathResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& resultClass,
+		const String& role ) = 0;
 
 	virtual CIMValue invokeMethod(
 		const UnnamedPipeRef& in,

@@ -1,5 +1,6 @@
 /*******************************************************************************
 * Copyright (C) 2005 Vintela, Inc. All rights reserved.
+* Copyright (C) 2006 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -30,6 +31,7 @@
 
 /**
  * @author Dan Nuffer
+ * @author Jon Carey
  */
 
 #include "OW_config.h"
@@ -41,17 +43,72 @@
 namespace OW_NAMESPACE
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.OOP.ifc");
+}
+
+
 OOPAssociatorProvider::OOPAssociatorProvider(const OOPProviderInterface::ProvRegInfo& info)
 	: OOPProviderBase(info)
 {
-
 }
 OOPAssociatorProvider::~OOPAssociatorProvider()
 {
-
 }
 
+namespace
+{
+	class AssociatorsCallback : public OOPProviderBase::MethodCallback
+	{
+	public:
+		AssociatorsCallback(
+			CIMInstanceResultHandlerIFC& result,
+			const String& ns,
+			const CIMObjectPath& objectName,
+			const String& assocClass,
+			const String& resultClass,
+			const String& role,
+			const String& resultRole,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			const StringArray* propertyList)
+			: m_result(result)
+			, m_ns(ns)
+			, m_objectName(objectName)
+			, m_assocClass(assocClass)
+			, m_resultClass(resultClass)
+			, m_role(role)
+			, m_resultRole(resultRole)
+			, m_includeQualifiers(includeQualifiers)
+			, m_includeClassOrigin(includeClassOrigin)
+			, m_propertyList(propertyList)
+		{
+		}
 
+		virtual void call(const OOPProtocolIFCRef& protocol, const UnnamedPipeRef& out, 
+			const UnnamedPipeRef& in, const Timeout& timeout, 
+			const ProviderEnvironmentIFCRef& env) const
+		{
+			protocol->associators(out, in, timeout, env, m_result, m_ns, m_objectName, m_assocClass,
+				m_resultClass, m_role, m_resultRole, m_includeQualifiers, m_includeClassOrigin,
+				m_propertyList);
+		}
+
+	private:
+
+		CIMInstanceResultHandlerIFC& m_result;
+		const String& m_ns;
+		const CIMObjectPath& m_objectName;
+		const String& m_assocClass;
+		const String& m_resultClass;
+		const String& m_role;
+		const String& m_resultRole;
+		WBEMFlags::EIncludeQualifiersFlag m_includeQualifiers;
+		WBEMFlags::EIncludeClassOriginFlag m_includeClassOrigin;
+		const StringArray* m_propertyList;
+	};
+}
 void
 OOPAssociatorProvider::associators(
 		const ProviderEnvironmentIFCRef& env,
@@ -66,7 +123,52 @@ OOPAssociatorProvider::associators(
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList)
 {
+	AssociatorsCallback associatorsCallback(result, ns, objectName, assocClass, resultClass,
+		role, resultRole, includeQualifiers, includeClassOrigin, propertyList);
 
+	startProcessAndCallFunction(env, associatorsCallback, "OOPInstanceProvider::associators", 
+			E_SPAWN_NEW_PROCESS);
+}
+
+namespace
+{
+	class AssociatorNamesCallback : public OOPProviderBase::MethodCallback
+	{
+	public:
+		AssociatorNamesCallback(
+			CIMObjectPathResultHandlerIFC& result,
+			const String& ns,
+			const CIMObjectPath& objectName,
+			const String& assocClass,
+			const String& resultClass,
+			const String& role,
+			const String& resultRole )
+			: m_result(result)
+			, m_ns(ns)
+			, m_objectName(objectName)
+			, m_assocClass(assocClass)
+			, m_resultClass(resultClass)
+			, m_role(role)
+			, m_resultRole(resultRole)
+		{
+		}
+
+		virtual void call(const OOPProtocolIFCRef& protocol, const UnnamedPipeRef& out, 
+			const UnnamedPipeRef& in, const Timeout& timeout, const ProviderEnvironmentIFCRef& env) const
+		{
+			protocol->associatorNames(out, in, timeout, env, m_result, m_ns, m_objectName, m_assocClass,
+				m_resultClass, m_role, m_resultRole);
+		}
+
+	private:
+		CIMObjectPathResultHandlerIFC& m_result;
+		const String& m_ns;
+		const CIMObjectPath& m_objectName;
+		const String& m_assocClass;
+		const String& m_resultClass;
+		const String& m_role;
+		const String& m_resultRole;
+	};
 }
 
 void 
@@ -80,7 +182,57 @@ OOPAssociatorProvider::associatorNames(
 		const String& role,
 		const String& resultRole )
 {
+	AssociatorNamesCallback associatorNamesCallback(result, ns, objectName, assocClass,
+		resultClass, role, resultRole);
+	startProcessAndCallFunction(env, associatorNamesCallback, "OOPInstanceProvider::associatorNames", 
+		E_SPAWN_NEW_PROCESS);
+}
 
+namespace
+{
+	class ReferencesCallback : public OOPProviderBase::MethodCallback
+	{
+	public:
+		ReferencesCallback(
+			CIMInstanceResultHandlerIFC& result,
+			const String& ns,
+			const CIMObjectPath& objectName,
+			const String& resultClass,
+			const String& role,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			const StringArray* propertyList)
+			: m_result(result)
+			, m_ns(ns)
+			, m_objectName(objectName)
+			, m_resultClass(resultClass)
+			, m_role(role)
+			, m_includeQualifiers(includeQualifiers)
+			, m_includeClassOrigin(includeClassOrigin)
+			, m_propertyList(propertyList)
+		{
+		}
+
+		virtual void call(const OOPProtocolIFCRef& protocol, const UnnamedPipeRef& out, 
+			const UnnamedPipeRef& in, const Timeout& timeout, 
+			const ProviderEnvironmentIFCRef& env) const
+		{
+			protocol->references(out, in, timeout, env, m_result, m_ns, m_objectName,
+				m_resultClass, m_role, m_includeQualifiers, m_includeClassOrigin,
+				m_propertyList);
+		}
+
+	private:
+
+		CIMInstanceResultHandlerIFC& m_result;
+		const String& m_ns;
+		const CIMObjectPath& m_objectName;
+		const String& m_resultClass;
+		const String& m_role;
+		WBEMFlags::EIncludeQualifiersFlag m_includeQualifiers;
+		WBEMFlags::EIncludeClassOriginFlag m_includeClassOrigin;
+		const StringArray* m_propertyList;
+	};
 }
 
 void
@@ -95,7 +247,46 @@ OOPAssociatorProvider::references(
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList)
 {
+	ReferencesCallback referencesCallback(result, ns, objectName, resultClass, role,
+		includeQualifiers, includeClassOrigin, propertyList);
+	startProcessAndCallFunction(env, referencesCallback, "OOPInstanceProvider::references", 
+			E_SPAWN_NEW_PROCESS);
+}
 
+namespace
+{
+	class ReferenceNamesCallback : public OOPProviderBase::MethodCallback
+	{
+	public:
+		ReferenceNamesCallback(
+			CIMObjectPathResultHandlerIFC& result,
+			const String& ns,
+			const CIMObjectPath& objectName,
+			const String& resultClass,
+			const String& role )
+			: m_result(result)
+			, m_ns(ns)
+			, m_objectName(objectName)
+			, m_resultClass(resultClass)
+			, m_role(role)
+		{
+		}
+
+		virtual void call(const OOPProtocolIFCRef& protocol, const UnnamedPipeRef& out, 
+			const UnnamedPipeRef& in, const Timeout& timeout, const ProviderEnvironmentIFCRef& env) const
+		{
+			protocol->referenceNames(out, in, timeout, env, m_result, m_ns, m_objectName,
+				m_resultClass, m_role);
+		}
+
+	private:
+
+		CIMObjectPathResultHandlerIFC& m_result;
+		const String& m_ns;
+		const CIMObjectPath& m_objectName;
+		const String& m_resultClass;
+		const String& m_role;
+	};
 }
 
 void
@@ -107,7 +298,9 @@ OOPAssociatorProvider::referenceNames(
 		const String& resultClass,
 		const String& role )
 {
-
+	ReferenceNamesCallback referenceNamesCallback(result, ns, objectName, resultClass, role);
+	startProcessAndCallFunction(env, referenceNamesCallback, "OOPInstanceProvider::referenceNames",
+		E_SPAWN_NEW_PROCESS);
 }
 
 
