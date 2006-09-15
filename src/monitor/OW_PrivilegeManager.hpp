@@ -520,7 +520,7 @@ private:
 
 	Process::Status pollStatus(ProcId pid);
 
-	friend class MonitorChild;
+	friend class MonitorChildImpl;
 
 	static PrivilegeManager setInstance(IntrusiveCountableBase * p_impl);
 

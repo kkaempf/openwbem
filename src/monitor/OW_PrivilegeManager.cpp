@@ -337,6 +337,26 @@ namespace
 
 }
 
+class MonitorChildImpl : public ProcessImpl
+{
+public:
+	MonitorChildImpl(PrivilegeManager const & priv_mgr)
+		: m_priv_mgr(priv_mgr)
+	{
+	}
+	virtual int kill(ProcId pid, int sig)
+	{
+		return m_priv_mgr.kill(pid, sig);
+	}
+	virtual Process::Status pollStatus(ProcId pid)
+	{
+		return m_priv_mgr.pollStatus(pid);
+	}
+private:
+	PrivilegeManager m_priv_mgr;
+
+};
+
 class MonitorChild : public Process
 {
 public:
@@ -345,26 +365,11 @@ public:
 		UnnamedPipeRef const & err, ProcId pid,
 		PrivilegeManager const & priv_mgr
 	)
-	: Process(in, out, err, pid),
-	  m_priv_mgr(priv_mgr)
+		: Process(ProcessImplRef(new MonitorChildImpl(priv_mgr)), in, out, err, pid)
 	{
 	}
 
-private:
-	virtual int kill(ProcId pid, int sig);
-	virtual Status pollStatus(ProcId pid);
-	PrivilegeManager m_priv_mgr;
 };
-
-int MonitorChild::kill(ProcId pid, int sig)
-{
-	return m_priv_mgr.kill(pid, sig);
-}
-
-Process::Status MonitorChild::pollStatus(ProcId pid)
-{
-	return m_priv_mgr.pollStatus(pid);
-}
 
 IntrusiveCountableBase *
 PrivilegeManager::init(
