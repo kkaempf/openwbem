@@ -48,6 +48,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_InstanceProviderIFC.hpp"
+#include "OW_AssociatorProviderIFC.hpp"
 #include "OW_MethodProviderIFC.hpp"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
@@ -587,6 +588,95 @@ int callInstanceProvider(
 }
 
 //////////////////////////////////////////////////////////////////////////////
+int callAssociatorProvider(
+	UInt8 op,
+	ProviderBaseIFCRef provider,
+	std::streambuf& inbuf,
+	std::streambuf& outbuf,
+	const UnnamedPipeRef& stdinout)
+{
+	AssociatorProviderIFC* assocProvider = provider->getAssociatorProvider();
+	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
+	if (!assocProvider)
+	{
+		OW_LOG_ERROR(logger, "provider is not an associator provider");
+		return 3;
+	}
+	ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
+
+	switch (op)
+	{
+		case BinarySerialization::BIN_ASSOCNAMES:
+		{
+			String ns = BinarySerialization::readString(inbuf);
+			CIMObjectPath instanceName = BinarySerialization::readObjectPath(inbuf);
+			String assocClass = BinarySerialization::readString(inbuf);
+			String resultClass = BinarySerialization::readString(inbuf);
+			String role = BinarySerialization::readString(inbuf);
+			String resultRole = BinarySerialization::readString(inbuf);
+
+			BinaryCIMObjectPathWriter handler(outbuf);
+			assocProvider->associatorNames(provenv, handler, ns, instanceName, assocClass,
+				resultClass, role, resultRole);
+		}
+		break;
+		case BinarySerialization::BIN_ASSOCIATORS:
+		{
+			String ns = BinarySerialization::readString(inbuf);
+			CIMObjectPath instanceName = BinarySerialization::readObjectPath(inbuf);
+			String assocClass = BinarySerialization::readString(inbuf);
+			String resultClass = BinarySerialization::readString(inbuf);
+			String role = BinarySerialization::readString(inbuf);
+			String resultRole = BinarySerialization::readString(inbuf);
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers(
+				BinarySerialization::readBool(inbuf) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin(
+				BinarySerialization::readBool(inbuf) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+			StringArray propertyList;
+			StringArray* propertyListPtr;
+			BinarySerialization::readPropertyList(inbuf, propertyList, propertyListPtr);
+
+			BinaryCIMInstanceWriter handler(outbuf);
+			assocProvider->associators(provenv, handler, ns, instanceName, assocClass, resultClass,
+				role, resultRole, includeQualifiers, includeClassOrigin, propertyListPtr);
+		}
+		break;
+		case BinarySerialization::BIN_REFNAMES:
+		{
+			String ns = BinarySerialization::readString(inbuf);
+			CIMObjectPath instanceName = BinarySerialization::readObjectPath(inbuf);
+			String resultClass = BinarySerialization::readString(inbuf);
+			String role = BinarySerialization::readString(inbuf);
+
+			BinaryCIMObjectPathWriter handler(outbuf);
+			assocProvider->referenceNames(provenv, handler, ns, instanceName,
+				resultClass, role);
+		}
+		break;
+		case BinarySerialization::BIN_REFERENCES:
+		{
+			String ns = BinarySerialization::readString(inbuf);
+			CIMObjectPath instanceName = BinarySerialization::readObjectPath(inbuf);
+			String resultClass = BinarySerialization::readString(inbuf);
+			String role = BinarySerialization::readString(inbuf);
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers(
+				BinarySerialization::readBool(inbuf) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin(
+				BinarySerialization::readBool(inbuf) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+			StringArray propertyList;
+			StringArray* propertyListPtr;
+			BinarySerialization::readPropertyList(inbuf, propertyList, propertyListPtr);
+			
+			BinaryCIMInstanceWriter handler(outbuf);
+			assocProvider->references(provenv, handler, ns, instanceName, resultClass, role,
+				includeQualifiers, includeClassOrigin, propertyListPtr);
+		}
+		break;
+	}
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 int callPolledProvider(UInt8 op,
 	ProviderBaseIFCRef provider,
 	std::streambuf& inbuf,
@@ -890,6 +980,15 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::BIN_INVMETH:
 				{
 					rval = callMethodProvider(op, provider, m_inbuf, m_outbuf, m_stdinout);
+				}
+				break;
+
+				case BinarySerialization::BIN_ASSOCNAMES:
+				case BinarySerialization::BIN_ASSOCIATORS:
+				case BinarySerialization::BIN_REFNAMES:
+				case BinarySerialization::BIN_REFERENCES:
+				{
+					rval = callAssociatorProvider(op, provider, m_inbuf, m_outbuf, m_stdinout);
 				}
 				break;
 
