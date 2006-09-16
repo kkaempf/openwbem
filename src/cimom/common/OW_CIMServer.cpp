@@ -758,6 +758,41 @@ namespace
 		bool deep;
 	};
 
+	enum EOverwriteNS
+	{
+		E_DO_NOT_OVERWRITE_NS,
+		E_OVERWRITE_NS
+	}; 
+
+	class HandleNamespace : public CIMInstanceResultHandlerIFC
+	{
+	public:
+		HandleNamespace(CIMInstanceResultHandlerIFC& result_, 
+			const String& ns_, EOverwriteNS overwrite_ = E_OVERWRITE_NS)
+		: result(result_)
+		, ns(ns_)
+		, overwrite(overwrite_)
+		{}
+	protected: 
+		virtual void doHandle(const CIMInstance& inst)
+		{
+			if (overwrite == E_OVERWRITE_NS || inst.getNameSpace().empty())
+			{
+				CIMInstance newInst(inst);
+				newInst.setNameSpace(ns); 
+				result.handle(newInst); 
+			}
+			else
+			{
+				result.handle(inst); 
+			}
+		}
+	private: 
+		CIMInstanceResultHandlerIFC& result; 
+		const String& ns; 
+		EOverwriteNS overwrite; 
+	}; 
+
 	class SecondaryInstanceProviderHandler : public CIMInstanceResultHandlerIFC
 	{
 	public:
@@ -862,11 +897,13 @@ CIMServer::_getCIMInstances(
 	SecondaryInstanceProviderIFCRefArray secProvs =
 		_getSecondaryInstanceProviders(ns, className, context);
 
+	HandleNamespace nsresult(result, ns); 
+
 	SecondaryInstanceProviderHandler secondaryHandler(context, m_env, ns,
 		className, localOnly, deep, includeQualifiers, includeClassOrigin,
-		propertyList, theTopClass, theClass, secProvs, result);
+		propertyList, theTopClass, theClass, secProvs, nsresult);
 
-	CIMInstanceResultHandlerIFC* presult = &result;
+	CIMInstanceResultHandlerIFC* presult = &nsresult;
 	if (!secProvs.empty())
 	{
 		presult = &secondaryHandler;
@@ -995,6 +1032,8 @@ CIMServer::getInstance(
 		ci = cia[0];
 	}
 	
+	// make sure instance has namespace set
+	ci.setNameSpace(ns); 
 	return ci;
 }
 
@@ -2294,8 +2333,10 @@ CIMServer::_dynamicAssociators(const CIMObjectPath& path,
 		CIMName assocClass(assocClasses[i].getName());
 		if (piresult != 0)
 		{
+			String ns = path.getNameSpace(); 
+			HandleNamespace nsiresult(*piresult, ns, E_DO_NOT_OVERWRITE_NS); 
 			OW_LOG_DEBUG(m_logger, "Calling associators on associator provider for class: " + cc.getName());
-			assocP->associators(createProvEnvRef(context, m_env), *piresult, path.getNameSpace(),
+			assocP->associators(createProvEnvRef(context, m_env), nsiresult, path.getNameSpace(),
 				path, assocClass.toString(), resultClass.toString(), role.toString(), resultRole.toString(),
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
