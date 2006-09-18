@@ -73,6 +73,13 @@
 #include <cstring>
 #include <cerrno>
 
+
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+
 using namespace std;
 using namespace OpenWBEM;
 using namespace OpenWBEM::WBEMFlags;
@@ -923,6 +930,29 @@ OOPCpp1ProviderRunner::OOPCpp1ProviderRunner(
 			LOG_FORMAT, FileAppender::NO_MAX_LOG_SIZE, 9999));
 	}
 	LogAppender::setDefaultLogAppender(LogAppenderRef(new MultiAppender(appenders)));
+
+	if (::close(0) == -1)
+	{
+		OW_THROW_ERRNO_MSG(IOException, "Failed to close stdin");
+	}
+	if (::close(1) == -1)
+	{
+		OW_THROW_ERRNO_MSG(IOException, "Failed to close stdout");
+	}
+
+	// Open stdin	== /dev/null
+	int fd = ::open("/dev/null", O_RDWR);
+	if (fd == -1)
+	{
+		OW_THROW_ERRNO_MSG(IOException, "Failed to open /dev/null for stdin");
+	}
+
+	// Stdout == /dev/null
+	if (::dup(fd) == -1)
+	{
+		OW_THROW_ERRNO_MSG(IOException, "Failed to dup /dev/null for stdout");
+	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
