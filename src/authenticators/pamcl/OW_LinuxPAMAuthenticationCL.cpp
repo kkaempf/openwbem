@@ -139,7 +139,8 @@ LinuxPAMAuthenticationCL::initAuthProc(String& details)
 	}
 	catch(Exception& e)
 	{
-		details = "Exception caught executing authentication process";
+		details = "Exception caught executing authentication process: ";
+		details += e.getMessage(); 
 		return false;
 	}
 
@@ -206,7 +207,8 @@ LinuxPAMAuthenticationCL::doAuthenticate(String &userName,
 	}
 	catch(Exception& e)
 	{
-		details = "Exception caught while authenticating";
+		details = "Exception caught while authenticating: ";
+		details += e.getMessage(); 
 	}
 
 	return false;
