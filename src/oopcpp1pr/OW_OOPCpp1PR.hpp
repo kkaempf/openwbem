@@ -53,12 +53,12 @@ class OOPCpp1ProviderRunner
 public:
 	static const char* const COMPONENT_NAME;
 
-	OOPCpp1ProviderRunner(const String& logFile, const String& logLevel);
+	OOPCpp1ProviderRunner(const UnnamedPipeRef& IOPipe, const String& logFile, const String& logLevel);
 	int runProvider(ProviderBaseIFCRef& provider, const String& sourceLib);
 	ProviderEnvironmentIFCRef getProviderEnvironment();
 
 private:
-	UnnamedPipeRef m_stdinout;
+	UnnamedPipeRef m_IOPipe;
 	IOIFCStreamBuffer m_inbuf;
 	IOIFCStreamBuffer m_outbuf;
 };

@@ -74,12 +74,6 @@
 #include <cerrno>
 
 
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-
 using namespace std;
 using namespace OpenWBEM;
 using namespace OpenWBEM::WBEMFlags;
@@ -904,11 +898,12 @@ String where(String const & provider_lib, UInt8 op, bool got_op)
 
 //////////////////////////////////////////////////////////////////////////////
 OOPCpp1ProviderRunner::OOPCpp1ProviderRunner(
+	const UnnamedPipeRef& IOPipe,
 	const String& logFile,
 	const String& logLevel)
-	: m_stdinout(UnnamedPipe::createStdinStdout())
-	, m_inbuf(m_stdinout.getPtr())
-	, m_outbuf(m_stdinout.getPtr())
+	: m_IOPipe(IOPipe)
+	, m_inbuf(m_IOPipe.getPtr())
+	, m_outbuf(m_IOPipe.getPtr())
 {
 	m_inbuf.tie(&m_outbuf);
 	String msg;
@@ -931,28 +926,6 @@ OOPCpp1ProviderRunner::OOPCpp1ProviderRunner(
 	}
 	LogAppender::setDefaultLogAppender(LogAppenderRef(new MultiAppender(appenders)));
 
-	if (::close(0) == -1)
-	{
-		OW_THROW_ERRNO_MSG(IOException, "Failed to close stdin");
-	}
-	if (::close(1) == -1)
-	{
-		OW_THROW_ERRNO_MSG(IOException, "Failed to close stdout");
-	}
-
-	// Open stdin	== /dev/null
-	int fd = ::open("/dev/null", O_RDWR);
-	if (fd == -1)
-	{
-		OW_THROW_ERRNO_MSG(IOException, "Failed to open /dev/null for stdin");
-	}
-
-	// Stdout == /dev/null
-	if (::dup(fd) == -1)
-	{
-		OW_THROW_ERRNO_MSG(IOException, "Failed to dup /dev/null for stdout");
-	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -960,7 +933,7 @@ ProviderEnvironmentIFCRef
 OOPCpp1ProviderRunner::getProviderEnvironment()
 {
 	return ProviderEnvironmentIFCRef(new OOPProviderEnvironment(m_inbuf,
-		m_outbuf, m_stdinout));
+		m_outbuf, m_IOPipe));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1003,13 +976,13 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::BIN_MODIFYINST:
 				case BinarySerialization::BIN_DELETEINST:
 				{
-					rval = callInstanceProvider(op, provider, m_inbuf, m_outbuf, m_stdinout);
+					rval = callInstanceProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
 				}
 				break;
 
 				case BinarySerialization::BIN_INVMETH:
 				{
-					rval = callMethodProvider(op, provider, m_inbuf, m_outbuf, m_stdinout);
+					rval = callMethodProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
 				}
 				break;
 
@@ -1018,7 +991,7 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::BIN_REFNAMES:
 				case BinarySerialization::BIN_REFERENCES:
 				{
-					rval = callAssociatorProvider(op, provider, m_inbuf, m_outbuf, m_stdinout);
+					rval = callAssociatorProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
 				}
 				break;
 
@@ -1028,11 +1001,11 @@ OOPCpp1ProviderRunner::runProvider(
 					persistent = BinarySerialization::readBool(m_inbuf);
 					if (persistent)
 					{
-						m_stdinout->setTimeouts(Timeout::infinite);
+						m_IOPipe->setTimeouts(Timeout::infinite);
 					}
 					else
 					{
-						m_stdinout->setTimeouts(Timeout::relative(60 * 10.0));
+						m_IOPipe->setTimeouts(Timeout::relative(60 * 10.0));
 					}
 				}
 				break;
@@ -1040,7 +1013,7 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::POLL:
 				case BinarySerialization::GET_INITIAL_POLLING_INTERVAL:
 				{
-					rval = callPolledProvider(op, provider, m_inbuf, m_outbuf, m_stdinout);
+					rval = callPolledProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
 				}
 				break;
 
@@ -1049,13 +1022,13 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::ACTIVATE_FILTER:
 				case BinarySerialization::DEACTIVATE_FILTER:
 				{
-					rval = callIndicationProvider(op, provider, m_inbuf, m_outbuf, m_stdinout);
+					rval = callIndicationProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
 				}
 				break;
 
 				case BinarySerialization::EXPORT_INDICATION:
 				{
-					rval = callIndicationExportProvider(op, provider, m_inbuf, m_outbuf, m_stdinout);
+					rval = callIndicationExportProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
 				}
 				break;
 

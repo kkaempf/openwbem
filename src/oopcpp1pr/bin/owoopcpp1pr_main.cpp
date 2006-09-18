@@ -41,8 +41,18 @@
 #include "OW_CppProviderIFC.hpp"
 #include "OW_CppProxyProvider.hpp"
 #include "OW_Format.hpp"
+#include "OW_FileSystem.hpp"
+#include "OW_IOException.hpp"
+#include "OW_AutoDescriptor.hpp"
+#include "OW_UnnamedPipe.hpp"
 
 #include <iostream>
+
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 
 using namespace std;
 using namespace OpenWBEM;
@@ -244,10 +254,52 @@ int main(int argc, char* argv[])
 		loglevel = "*";
 	}
 
-	OOPCpp1ProviderRunner provrunner(logfile, loglevel);
+	AutoDescriptor infd(::dup(0));
+	if (infd.get() == -1)
+	{
+		OW_THROW_ERRNO_MSG(IOException, "Failed to dup stdin");
+	}
+	AutoDescriptor outfd(::dup(1));
+	if (outfd.get() == -1)
+	{
+		OW_THROW_ERRNO_MSG(IOException, "Failed to dup stdout");
+	}
+
+	if (::close(0) == -1)
+	{
+		OW_THROW_ERRNO_MSG(IOException, "Failed to close stdin");
+	}
+	if (::close(1) == -1)
+	{
+		OW_THROW_ERRNO_MSG(IOException, "Failed to close stdout");
+	}
+
+	// Open stdin	== /dev/null
+	int fd = ::open("/dev/null", O_RDWR);
+	if (fd == -1)
+	{
+		OW_THROW_ERRNO_MSG(IOException, "Failed to open /dev/null for stdin");
+	}
+
+	// Stdout == /dev/null
+	if (::dup(fd) == -1)
+	{
+		OW_THROW_ERRNO_MSG(IOException, "Failed to dup /dev/null for stdout");
+	}
+
+	UnnamedPipeRef iopipe = UnnamedPipe::createUnnamedPipeFromDescriptor(infd, outfd);
+	OOPCpp1ProviderRunner provrunner(iopipe, logfile, loglevel);
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
 	ProviderEnvironmentIFCRef penv = provrunner.getProviderEnvironment();
-
+/*
+	std::pair<FileSystem::Path::ESecurity, String> sec = FileSystem::Path::security(providerLib);
+	if (sec.first != FileSystem::Path::E_SECURE_FILE)
+	{
+		OW_LOG_ERROR(logger, Format("ERROR: %1(%2) is not a secure file.", providerLib, sec.second));
+		return 1;
+	}
+	providerLib = sec.second;
+*/
 	CppProviderBaseIFCRef cppprov = CppProviderIFC::loadProvider(providerLib);
 	if (!cppprov)
 	{
