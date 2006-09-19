@@ -16,18 +16,21 @@ include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs
 clean-local : clean-ow-shared-libs
 
-
 noinst_LIBRARIES = \
-libooptest.a
-
+libooptest.a \
+liboopassoctest.a
 
 OW_SHARED_LIBS = \
-libooptest.$(LIB_EXT)
+libooptest.$(LIB_EXT) \
+liboopassoctest.$(LIB_EXT)
 
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 libooptest_a_SOURCES = \
 testOOPProv.cpp
+
+liboopassoctest_a_SOURCES = \
+testOOPAssocProv.cpp
 
 CLEANFILES = oopTest.mof
 

@@ -165,6 +165,7 @@ $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@ \
 "
 	OOP_EXTERNAL_PROVIDERS="\
 $BUILDDIR/test/acceptance/oop/libooptest.@lib_ext@ \
+$BUILDDIR/test/acceptance/oop/liboopassoctest.@lib_ext@ \
 "
 
 	$MAKE DESTDIR=$STAGEDIR EXTERNAL_PROVIDERS="$PROVIDERS" OOP_EXTERNAL_PROVIDERS="$OOP_EXTERNAL_PROVIDERS" install || ExitWithFail "$MAKE install didn't work"
@@ -224,6 +225,7 @@ $BUILDDIR/test/acceptance/oop/libooptest.@lib_ext@ \
 	InstallProvider $BUILDDIR/test/c++providers/instance/libtestinstance.@lib_ext@
 	InstallProvider $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@
 	InstallOOPProvider $BUILDDIR/test/acceptance/oop/libooptest.@lib_ext@
+	InstallOOPProvider $BUILDDIR/test/acceptance/oop/liboopassoctest.@lib_ext@
 	
 	if [ "$OWSYMLINKS" = "1" ]; then
 		SwitchToLinks
@@ -1630,6 +1632,9 @@ TestOOPProvider()
 	# run the tests
 	$STAGEDIR/$OWBINDIR/owenuminstances --url http://test1:pass1@localhost:30926/root/ooptest --classname ooptest || \
 		ExitWithFail "owenuminstances failed to enumerate instances of ooptest"
+
+	# Associations
+	ExecTestProg testOOPAssoc "http://test1:pass1@localhost:30926"
 
 	$STAGEDIR/$OWBINDIR/owinvokemethod --url http://test1:pass1@localhost:30926/root/ooptest --target ooptest --methodname testUnknownException > $RESULTDIR/owinvokemethod.testUnknownException 2>&1
 	RVAL=$?

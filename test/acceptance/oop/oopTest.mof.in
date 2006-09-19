@@ -11,6 +11,10 @@ Qualifier Required : boolean = false,
     Scope(property, reference, parameter),
     Flavor(DisableOverride);
 
+Qualifier Association : boolean = false,
+    Scope(association),
+    Flavor(DisableOverride);
+
 class ooptest
 {
     [key] string id;
@@ -31,7 +35,24 @@ class ooptest
 	boolean testGetConfig();
 };
 
+class ooptestInst1
+{
+    [key] string id;
+	sint32 value;
+};
 
+class ooptestInst100
+{
+    [key] string id;
+	sint32 value;
+};
+
+[association]
+class ooptestAssoc
+{
+	[key] ooptestInst1 REF inst1;
+	[key] ooptestInst100 REF inst100;
+};
 
 #pragma namespace("root")
 
@@ -54,4 +75,39 @@ instance of OpenWBEM_OOPProviderRegistration
         Timeout = "00000000000010.000000:000";
 };
 
+instance of OpenWBEM_OOPProviderRegistration
+{
+        InstanceID = "2";
+        NamespaceNames = {"root/ooptest"};
+        ClassName = "ooptestInst1";
+        ProviderTypes = {1}; // instance
+        Process = "@libexecdir@/openwbem/owoopcpp1pr";
+        Args = { "--provider=@provdir@/liboopassoctest.@LIB_EXT@", "--logfile=" };
+        Protocol = "owcpp1";
+        Timeout = "00000000000010.000000:000";
+};
+
+instance of OpenWBEM_OOPProviderRegistration
+{
+        InstanceID = "3";
+        NamespaceNames = {"root/ooptest"};
+        ClassName = "ooptestInst100";
+        ProviderTypes = {1}; // instance
+        Process = "@libexecdir@/openwbem/owoopcpp1pr";
+        Args = { "--provider=@provdir@/liboopassoctest.@LIB_EXT@", "--logfile=" };
+        Protocol = "owcpp1";
+        Timeout = "00000000000010.000000:000";
+};
+
+instance of OpenWBEM_OOPProviderRegistration
+{
+        InstanceID = "4";
+        NamespaceNames = {"root/ooptest"};
+        ClassName = "ooptestAssoc";
+        ProviderTypes = {3}; // associator
+        Process = "@libexecdir@/openwbem/owoopcpp1pr";
+        Args = { "--provider=@provdir@/liboopassoctest.@LIB_EXT@", "--logfile=" };
+        Protocol = "owcpp1";
+        Timeout = "00000000000010.000000:000";
+};
 

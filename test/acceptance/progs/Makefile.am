@@ -20,6 +20,7 @@ PROGS=
 else
 PROGS= \
 owcimclientcl \
+testOOPAssoc \
 testCIMExceptions \
 testinstprov \
 aclTest \
@@ -215,6 +216,24 @@ $(SSL_LIBS) \
 
 owcimclientcl_SOURCES = \
 OW_CIMClientCL.cpp
+
+#testOOPAssoc
+testOOPAssoc_LDADD = \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+testOOPAssoc_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+$(SSL_LIBS) \
+-o testOOPAssoc$(EXEEXT)
+
+testOOPAssoc_SOURCES = \
+testOOPAssoc.cpp
 
 #testinstprov
 testinstprov_LDADD = \
