@@ -203,53 +203,60 @@ ExecArgsPatterns::add_pattern(char const * exec_path_pattern, const Array<ExecAr
 bool 
 ExecArgsPatterns::match(String const & exec_path, Array<String> const & args, String const & ident) const
 {
-	map_t::const_iterator it = m.find(ident);
-	if (it == m.end())
+	StringArray users; 
+	users.push_back(ident); 
+	users.push_back("*"); 
+	for (StringArray::const_iterator user_it = users.begin(); 
+			user_it != users.end(); ++user_it)
 	{
-		return false;
-	}
-
-	for (size_t i = 0; i < it->second.size(); ++i)
-	{
-		if (!it->second[i].first.match(exec_path))
+		map_t::const_iterator it = m.find(*user_it);
+		if (it == m.end())
 		{
-			continue;
+			continue; 
 		}
 
-		// executable matched, now check the args.
-		// For the time being, we will treat the args as a string or a path. In the future this will be evaluated as a regular expression
-		const Array<Arg>& argsPattern(it->second[i].second);
-		if (argsPattern.size() != args.size())
+		for (size_t i = 0; i < it->second.size(); ++i)
 		{
-			continue;
-		}
-
-		bool argsMatch = true;
-		for (size_t j = 0; j < argsPattern.size(); ++j)
-		{
-			if (argsPattern[j].argType == E_PATH_PATTERN_ARG)
+			if (!it->second[i].first.match(exec_path))
 			{
-				PathPatterns tmppp;
-				tmppp.add_pattern(argsPattern[j].arg.c_str());
-				if (!tmppp.match(args[j]))
+				continue;
+			}
+
+			// executable matched, now check the args.
+			// For the time being, we will treat the args as a string or a path. In the future this will be evaluated as a regular expression
+			const Array<Arg>& argsPattern(it->second[i].second);
+			if (argsPattern.size() != args.size())
+			{
+				continue;
+			}
+
+			bool argsMatch = true;
+			for (size_t j = 0; j < argsPattern.size(); ++j)
+			{
+				if (argsPattern[j].argType == E_PATH_PATTERN_ARG)
 				{
-					argsMatch = false;
-					break;
+					PathPatterns tmppp;
+					tmppp.add_pattern(argsPattern[j].arg.c_str());
+					if (!tmppp.match(args[j]))
+					{
+						argsMatch = false;
+						break;
+					}
+				}
+				else // if (argsPattern[j].argType == E_LITERAL_ARG)
+				{
+					if (argsPattern[j].arg != args[j])
+					{
+						argsMatch = false;
+						break;
+					}
 				}
 			}
-			else // if (argsPattern[j].argType == E_LITERAL_ARG)
-			{
-				if (argsPattern[j].arg != args[j])
-				{
-					argsMatch = false;
-					break;
-				}
-			}
-		}
 
-		if (argsMatch)
-		{
-			return true;
+			if (argsMatch)
+			{
+				return true;
+			}
 		}
 	}
 	return false;

@@ -84,7 +84,7 @@ void openwbem_privconfig_error(
 int yylex(YYSTYPE * lvalp, YYLTYPE * llocp, openwbem_privconfig_Lexer * lexerp);
 %}
 
-%token <s>  NAME DIRPATH SUBTREE FILEPATH FPATHWC
+%token <s>  SPLAT NAME DIRPATH SUBTREE FILEPATH FPATHWC
 
 // These do not have values
 %token      K_OPEN_R K_OPEN_W K_OPEN_RW K_OPEN_A K_READ_DIR K_READ_LINK
@@ -94,10 +94,10 @@ int yylex(YYSTYPE * lvalp, YYLTYPE * llocp, openwbem_privconfig_Lexer * lexerp);
 %token		AT
 %token      SCANNER_ERROR
 
-%type <s>   path_pattern exec_path_pattern
+%type <s>   path_pattern exec_path_pattern user_name
 %type <sa>	exec_arg_list
 
-%destructor { delete [] $$; } path_pattern NAME DIRPATH SUBTREE FILEPATH FPATHWC
+%destructor { delete [] $$; } path_pattern NAME DIRPATH SUBTREE FILEPATH FPATHWC SPLAT
 %destructor { delete $$; } exec_arg_list
 
 %%
@@ -198,7 +198,7 @@ monitored_exec_args:
 
 user_exec_args:
 	/* empty */
-|	user_exec_args exec_path_pattern AT NAME {
+|	user_exec_args exec_path_pattern AT user_name {
 		add_pattern(p_priv->user_exec, $2, $4);
 	}
 ;
@@ -212,10 +212,15 @@ monitored_exec_check_args_args:
 
 user_exec_check_args_args:
 	/* empty */
-|	user_exec_check_args_args exec_path_pattern exec_arg_list AT NAME {
+|	user_exec_check_args_args exec_path_pattern exec_arg_list AT user_name {
 		add_pattern(p_priv->user_exec_check_args, $2, $3, $5);
 	}
 ;
+
+user_name: 
+  SPLAT    { $$ = $1; }
+| NAME     { $$ = $1; }
+; 
 
 unpriv_user_arg: NAME { p_priv->unpriv_user = make_name_or_path($1); }
 ;

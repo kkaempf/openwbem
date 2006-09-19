@@ -57,6 +57,7 @@ PATHELM      (\.{0,2}{PECH_NO_DOT}|\.\.\.){PECH}*
   /* any nonempty sequence of PECH chars, except sequences "." and ".." */
 PATHSEP      [/]
 AT           @
+SPLAT        \*
 
 DIRPATH      {PATHSEP}({PATHELM}{PATHSEP})*
 SUBTREE      {DIRPATH}\*\*
@@ -96,6 +97,7 @@ unpriv_user             { return K_UNPRIV_USER; }
 
 <NOKEYWORDS>\}          { BEGIN(INITIAL); return yytext[0]; }
 <NOKEYWORDS>{AT}			{ return AT; }
+<NOKEYWORDS>{SPLAT}	    { m_has_value = true; return(SPLAT); }
 <NOKEYWORDS>{DIRPATH}   { m_has_value = true; return(DIRPATH); }
 <NOKEYWORDS>{SUBTREE}   { m_has_value = true; return(SUBTREE); }
 <NOKEYWORDS>{NAME}      { m_has_value = true; return(NAME); }

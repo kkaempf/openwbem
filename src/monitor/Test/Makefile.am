@@ -57,7 +57,8 @@ read_priv_config_test.0.sh \
 read_priv_config_test.1.sh \
 read_priv_config_test.2.sh \
 read_priv_config_test.3.sh \
-read_priv_config_test.4.sh
+read_priv_config_test.4.sh \
+read_priv_config_test.5.sh
 
 monitor_test_scripts = \
 monitor_test.0.sh \
@@ -174,6 +175,8 @@ read_priv_config_test.3.sh: Makefile
 read_priv_config_test.4.sh: Makefile
 	$(call read_priv_config_template,app1 app2 app3 app4)
 
+read_priv_config_test.5.sh: Makefile
+	$(call read_priv_config_template,app1 app2 app3 app4)
 
 #
 # monitor tests

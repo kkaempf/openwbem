@@ -118,6 +118,8 @@ A name has the same lexical restrictions as a path component.
 
 A privileges_file has the same lexical restrictions as a path component.
 
-A user_name has the same lexical restrictions as a path component.
+A user_name can be a specific user name with the same lexical restrictions 
+as a path component, or it can be '*', indicating that any user can execute
+the command. 
 
 A exec_arg_list is a list of path_patterns and names.

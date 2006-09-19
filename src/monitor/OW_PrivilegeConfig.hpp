@@ -104,7 +104,13 @@ public:
 	bool match(String const & exec_path, String const & ident) const
 	{
 		map_t::const_iterator it = m.find(ident);
-		return it != m.end() && it->second.match(exec_path);
+		bool rv = it != m.end() && it->second.match(exec_path);
+		if (!rv)
+		{
+			it = m.find("*"); 
+			rv = it != m.end() && it->second.match(exec_path);
+		}
+		return rv; 
 	}
 
 private:
