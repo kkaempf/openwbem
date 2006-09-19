@@ -164,6 +164,27 @@ $(BINLINKAPPENDFLAGS)
 owspnegovas4helper_CPPFLAGS = -I$(VAS3_INCLUDE_DIR) -DOW_USE_VAS3_API
 endif
 
+# Here comes our GSSAPI part which has his own helper binary
+# This part is only activated, if we have GSSAPI WITH SPENGO
+if HAVE_SPNEGO_SUPPORT
+owspnegogssapihelperbin_PROGRAMS = owspnegogssapihelper
+owspnegogssapihelperbindir = $(libexecdir)/openwbem
+
+owspnegogssapihelper_SOURCES = owspnegogssapihelper_main.cpp
+
+owspnegogssapihelper_LDFLAGS = \
+$(KRB5_LDFLAGS) $(LIB_resolv) \
+-o owspnegogssapihelper$(EXEEXT)
+
+owspnegogssapihelper_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+owspnegogssapihelper_CPPFLAGS = -I$(srcdir) $(KRB5_CPPFLAGS) $(AM_CPPFLAGS) $(DEFS)
+endif
+
 INCLUDES = \
 -I$(top_srcdir)/src/common	\
 -I$(top_srcdir)/src/common/socket \
@@ -172,4 +193,3 @@ INCLUDES = \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/client \
 -I$(top_srcdir)/src/http/common
-

@@ -67,9 +67,11 @@ SPNEGOAuthentication::~SPNEGOAuthentication()
 {
 	try
 	{
-		if (m_vasHelper)
+		if (m_spnegoHelper)
 		{
-			m_vasHelper->waitCloseTerm(Timeout::relative(0), Timeout::relative(0.01), Timeout::relative(0.02));
+			m_spnegoHelper->waitCloseTerm(Timeout::relative(0),
+			                              Timeout::relative(0.01),
+			                              Timeout::relative(0.02));
 		}
 	}
 	catch (...)
@@ -93,8 +95,11 @@ SPNEGOAuthentication::authenticate(String& userName,
 
 	if (!info.startsWith(NegotiateSTR))
 	{
-		htcon->setErrorDetails("Internal error. !info.startsWith(\"Negotiate: \")");
-		OW_LOG_DEBUG(m_logger, Format("Error, expected info to begin with \"Negotiate \", but it is: \"%1\"", info));
+		htcon->setErrorDetails("Internal error. !info.startsWith"
+		                       "(\"Negotiate: \")");
+		OW_LOG_DEBUG(m_logger, Format("Error, expected info to begin with "
+		                              "\"Negotiate \", but it is: \"%1\"",
+		                              info));
 		return E_AUTHENTICATE_FAIL;
 	}
 
@@ -106,17 +111,20 @@ SPNEGOAuthentication::authenticate(String& userName,
 	try
 	{
 
-		IOIFCStreamBuffer inbuf(m_vasHelper->out().getPtr());
-		IOIFCStreamBuffer outbuf(m_vasHelper->in().getPtr());
+		IOIFCStreamBuffer inbuf(m_spnegoHelper->out().getPtr());
+		IOIFCStreamBuffer outbuf(m_spnegoHelper->in().getPtr());
 		std::istream istr(&inbuf);
 		std::ostream ostr(&outbuf);
 		istr.tie(&ostr);
 		ostr << info2 << '\n';
-		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got request, sending to helper: %1", info2));
+		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got request, "
+		                              "sending to helper: %1", info2));
 		ostr << htcon->getConnectionId() << std::endl;
-		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication sending connection id: %1", htcon->getConnectionId()));
+		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication sending connection "
+		                              "id: %1", htcon->getConnectionId()));
 		String result = String::getLine(istr);
-		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got response: %1", result));
+		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got response: %1",
+		                              result));
 		if (result == "S")
 		{
 			userName = String::getLine(istr);
@@ -140,14 +148,22 @@ SPNEGOAuthentication::authenticate(String& userName,
 		}
 		else
 		{
-			// something has gone horribly wrong. This shouldn't ever happen unless there is a bug.
-			OW_LOG_ERROR(m_logger, Format("SPNEGOAuthentication received unknown response (%1) from %2. Terminating.", result, vasHelperPath()));
-			m_vasHelper->waitCloseTerm(Timeout::relative(0), Timeout::relative(0.01), Timeout::relative(0.02));
+			// something has gone horribly wrong. This shouldn't ever happen
+			// unless there is a bug.
+			OW_LOG_ERROR(m_logger, Format("SPNEGOAuthentication received "
+			                              "unknown response (%1) from %2. "
+			                              "Terminating.",
+			                              result,
+			                              spnegoHelperPath()));
+			m_spnegoHelper->waitCloseTerm(Timeout::relative(0),
+			                              Timeout::relative(0.01),
+			                              Timeout::relative(0.02));
 		}
 	}
 	catch (IOException& e)
 	{
-		htcon->setErrorDetails(Format("Error communicating with %1: %2", vasHelperPath(), e));
+		htcon->setErrorDetails(Format("Error communicating with %1: %2",
+		                              spnegoHelperPath(), e));
 	}
 	
 	return E_AUTHENTICATE_FAIL;
@@ -164,49 +180,59 @@ SPNEGOAuthentication::checkProcess()
 {
 	// precondition: m_guard is locked.
 
-	if (m_vasHelper && m_vasHelper->processStatus().running())
+	if (m_spnegoHelper && m_spnegoHelper->processStatus().running())
 	{
 		return;
 	}
 
-	if (m_vasHelper)
+	if (m_spnegoHelper)
 	{
 		// must have died
-		OW_LOG_ERROR(m_logger, Format("SPNEGOAuthentication Detected that %1 is not running. Status: %2", vasHelperPath(), m_vasHelper->processStatus().toString()));
-		m_vasHelper->waitCloseTerm(0.00, 0.01, 0.02);
-		m_vasHelper = 0;
+		OW_LOG_ERROR(m_logger, Format("SPNEGOAuthentication Detected that %1 is"
+		                              "not running. Status: %2", 
+		                              spnegoHelperPath(), 
+		                              m_spnegoHelper->processStatus().toString()
+		                             )
+		             );
+		m_spnegoHelper->waitCloseTerm(0.00, 0.01, 0.02);
+		m_spnegoHelper = 0;
 	}
 	
 	PrivilegeManager privman = PrivilegeManager::getPrivilegeManager();
 	OW_ASSERT(!privman.isNull());
-	String helperPath(vasHelperPath());
+	String helperPath(spnegoHelperPath());
 	if (helperPath.empty())
 	{
-		const char* msg = "SPNEGOAuthentication unable to locate libvas";
+		const char* msg = "SPNEGOAuthentication unable to locate helper binary";
 		OW_LOG_ERROR(m_logger, msg);
 		OW_THROW(SPNEGOAuthenticationException, msg);
 	}
 
 	StringArray helperArgv(1, helperPath);
 	helperArgv.push_back("server");
-	m_vasHelper = privman.userSpawn(helperPath, helperArgv, Exec::currentEnvironment, "root");
+	m_spnegoHelper = privman.userSpawn(helperPath,
+	                                   helperArgv,
+	                                   Exec::currentEnvironment,
+	                                   "root");
 
-	if (!m_vasHelper->processStatus().running())
+	if (!m_spnegoHelper->processStatus().running())
 	{
-		String msg = Format("SPNEGOAuthentication failed to start %1. status = %2, stderr = %3", vasHelperPath(), 
-			m_vasHelper->processStatus().toString(), m_vasHelper->err()->readAll());
+		String msg = Format("SPNEGOAuthentication failed to start %1. status = "
+		                    "%2, stderr = %3", spnegoHelperPath(), 
+		                    m_spnegoHelper->processStatus().toString(),
+		                    m_spnegoHelper->err()->readAll());
 		OW_LOG_ERROR(m_logger, msg);
 		OW_THROW(SPNEGOAuthenticationException, msg.c_str());
 	}
 
 	Timeout to(Timeout::relative(5));
-	m_vasHelper->in()->setTimeouts(to);
-	m_vasHelper->out()->setTimeouts(to);
-	m_vasHelper->err()->setTimeouts(to);
+	m_spnegoHelper->in()->setTimeouts(to);
+	m_spnegoHelper->out()->setTimeouts(to);
+	m_spnegoHelper->err()->setTimeouts(to);
 }
 
 String 
-SPNEGOAuthentication::vasHelperPath()
+SPNEGOAuthentication::spnegoHelperPath()
 {
 	if (FileSystem::exists("/opt/quest/lib/libvas.so.4"))
 	{
@@ -216,7 +242,18 @@ SPNEGOAuthentication::vasHelperPath()
 	{
 		return ConfigOpts::installed_owlibexec_dir + "/owspnegovas3helper";
 	}
-	return "";
+	else
+	// As libkrb5.so is installed by MIT Kerberos AND Heimdal Kerberos, we can
+	// use this to check if one of these is installed
+#ifdef OW_KRB5
+	{
+		return ConfigOpts::installed_owlibexec_dir + "/owspnegogssapihelper";
+	}
+#else
+	{
+		return "";
+	}
+#endif
 }
 
 } // end namespace OW_NAMESPACE

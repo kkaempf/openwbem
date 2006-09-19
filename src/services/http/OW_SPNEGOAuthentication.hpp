@@ -52,12 +52,12 @@ public:
 		const String& info, HTTPSvrConnection* htcon);
 	String getChallenge();
 private:
-	ProcessRef m_vasHelper;
+	ProcessRef m_spnegoHelper;
 	Mutex m_guard;
 	Logger m_logger;
 
 	void checkProcess();
-	static String vasHelperPath();
+	static String spnegoHelperPath();
 };
 
 } // end namespace OW_NAMESPACE

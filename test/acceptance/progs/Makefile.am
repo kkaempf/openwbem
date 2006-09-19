@@ -49,7 +49,8 @@ infiniteClient \
 testProviderAgent \
 socketCat \
 testListener \
-testSPNEGO
+testSPNEGO \
+testSPNEGOGSSAPI
 
 testProviderAgent_SOURCES = \
 testProviderAgent.cpp
@@ -444,6 +445,26 @@ $(BINLINKAPPENDFLAGS)
 testSPNEGO_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o testSPNEGO$(EXEEXT)
+
+### testSPNEGOGSSAPI
+testSPNEGOGSSAPI_SOURCES = \
+testSPNEGOGSSAPI.cpp
+
+testSPNEGOGSSAPI_LDADD = \
+-L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/services/http -lowservicehttp \
+-L$(top_builddir)/src/monitor -lowprivman \
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+testSPNEGOGSSAPI_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o testSPNEGOGSSAPI$(EXEEXT)
 
 INCLUDES = \
 -I$(top_srcdir)/src/ifcs \
