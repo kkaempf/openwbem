@@ -1,9 +1,17 @@
-owoopcpp1prbin_PROGRAMS = owoopcpp1pr
+owoopcpp1prbin_PROGRAMS = \
+owoopcpp1pr \
+owoopcmpipr
+
 owoopcpp1prbindir = $(libexecdir)/openwbem
+owoopcmpiprbindir = $(libexecdir)/openwbem
 
 owoopcpp1pr_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owoopcpp1pr$(EXEEXT)
+
+owoopcmpipr_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owoopcmpipr$(EXEEXT)
 
 owoopcpp1pr_LDADD = \
 -L$(top_builddir)/src/oopcpp1pr -lowoopcpp1pr \
@@ -18,8 +26,25 @@ owoopcpp1pr_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem -lblocxx \
 $(SSL_LIBS) $(Z_LIBS) $(BINLINKAPPENDFLAGS)
 
+owoopcmpipr_LDADD = \
+-L$(top_builddir)/src/oopcpp1pr -lowoopcpp1pr \
+-L$(top_builddir)/src/providerifcs/cmpi -lcmpiprovifc \
+-L$(top_builddir)/src/providerifcs/cmpi/common -lcmpisupport \
+-L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/monitor -lowprivman \
+-L$(top_builddir)/src/requesthandlers/binary -lowrequesthandlerbinary \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
+$(SSL_LIBS) $(Z_LIBS) $(BINLINKAPPENDFLAGS)
+
 owoopcpp1pr_SOURCES = \
 owoopcpp1pr_main.cpp
+
+owoopcmpipr_SOURCES = \
+owoopcmpipr_main.cpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \
@@ -27,22 +52,31 @@ INCLUDES = \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/providerifcs/cpp \
+-I$(top_srcdir)/src/providerifcs/cmpi \
+-I$(top_srcdir)/src/providerifcs/cmpi/common \
 -I$(top_srcdir)/src/oopcpp1pr \
 -I$(top_srcdir)/src/monitor
 
 if OW_STATIC_LINKING
-install-exec-local: install-static-owoopcpp1pr-main
+install-exec-local: install-static-owoopcpp1pr-main install-static-owoopcmpipr-main
 
-MAINLIB=libowoopcpp1pr_main.a
+MAINLIB1=libowoopcpp1pr_main.a
+MAINLIB2=libowoopcpmipr_main.a
 
-$(MAINLIB): $(owoopcpp1pr_OBJECTS)
+$(MAINLIB1): $(owoopcpp1pr_OBJECTS)
 	ar cru $@ $^
 
-install-static-owoopcpp1pr-main : $(MAINLIB)
+$(MAINLIB2): $(owoopcmpipr_OBJECTS)
+	ar cru $@ $^
+
+install-static-owoopcpp1pr-main : $(MAINLIB1)
+	$(INSTALL_PROGRAM) $^ $(DESTDIR)$(libdir)
+
+install-static-owoopcmpipr-main : $(MAINLIB2)
 	$(INSTALL_PROGRAM) $^ $(DESTDIR)$(libdir)
 
 clean-local:
-	rm -f $(MAINLIB)
+	rm -f $(MAINLIB1) $(MAINLIB2)
 
 else
 

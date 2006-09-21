@@ -56,6 +56,13 @@ public:
 	static const char * const CREATIONFUNC;
 	CMPIProviderIFC();
 	~CMPIProviderIFC();
+
+	static CMPIFTABLERef loadProvider(
+		const ProviderEnvironmentIFCRef& env,
+		const String& provId,
+		const String& providerLib,
+		::CMPI_Broker& broker);
+
 		//static ::CMPIBroker * getBroker() { return &(_broker); }
 protected:
 	//static ::CMPIBroker _broker;

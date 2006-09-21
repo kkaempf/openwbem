@@ -378,6 +378,263 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// Static
+CMPIFTABLERef
+CMPIProviderIFC::loadProvider(
+	const ProviderEnvironmentIFCRef& env,
+	const String& provId,
+	const String& providerLib,
+	::CMPI_Broker& broker)
+{
+	Logger lgr(COMPONENT_NAME);
+
+	SharedLibraryLoaderRef ldr =
+		SharedLibraryLoader::createSharedLibraryLoader();
+
+	if (!ldr)
+	{
+		OW_LOG_ERROR(lgr, "CMPI: provider ifc failed to get shared lib loader");
+		return CMPIFTABLERef();
+	}
+
+	SharedLibraryRef theLib = ldr->loadSharedLibrary(providerLib);
+	if (!theLib)
+	{
+		OW_LOG_ERROR(lgr, Format("CMPI provider ifc failed to load library: %1 "
+			"for provider id %2", providerLib, provId));
+		return CMPIFTABLERef();
+	}
+
+	MIs miVector;
+	fill_n((char*)&miVector, sizeof(MIs), 0);
+
+	int specificMode = 0;
+
+	///////////////////////////////////////////
+	// find InstanceProvider entry points
+	if (theLib->getFunctionPointer("_Generic_Create_InstanceMI",
+		miVector.createGenInstMI))
+	{
+		miVector.miTypes |= CMPI_MIType_Instance;
+			miVector.genericMode = 1;
+	}
+
+	String creationFuncName;
+	if (provId.startsWith("cmpi"))
+	{
+		creationFuncName = provId.substring(4) + "_Create_InstanceMI";
+	}
+	else 
+	{
+		creationFuncName = provId + "_Create_InstanceMI";
+	}
+	
+	OW_LOG_ERROR(lgr, Format("CMPI provider ifc: Library %1 should contain %2",
+		provId, creationFuncName));
+
+	if (theLib->getFunctionPointer(creationFuncName, miVector.createInstMI))
+	{
+		miVector.miTypes |= CMPI_MIType_Instance;
+		specificMode = 1;
+	}
+
+	///////////////////////////////////////////
+	// find AssociationProvider entry points
+	if (theLib->getFunctionPointer("_Generic_Create_AssociationMI",
+		miVector.createGenAssocMI))
+	{
+		miVector.miTypes |= CMPI_MIType_Association;
+			miVector.genericMode = 1;
+	}
+
+	if (provId.startsWith("cmpi"))
+	{
+		creationFuncName = provId.substring(4) + "_Create_AssociationMI";
+	}
+	else
+	{
+		creationFuncName = provId + "_Create_AssociationMI";
+	}
+
+	if (theLib->getFunctionPointer(creationFuncName, miVector.createAssocMI))
+	{
+		miVector.miTypes |= CMPI_MIType_Association;
+		specificMode = 1;
+	}
+
+	///////////////////////////////////////////
+	// find MethodProvider entry points
+	if (theLib->getFunctionPointer("_Generic_Create_MethodMI",
+		miVector.createGenMethMI))
+	{
+		miVector.miTypes |= CMPI_MIType_Method;
+			miVector.genericMode = 1;
+	}
+
+	if (provId.startsWith("cmpi"))
+	{
+		creationFuncName = provId.substring(4) + "_Create_MethodMI";
+	}
+	else
+	{
+		creationFuncName = provId + "_Create_MethodMI";
+	}
+
+	if (theLib->getFunctionPointer(creationFuncName, miVector.createMethMI))
+	{
+		miVector.miTypes |= CMPI_MIType_Method;
+		specificMode = 1;
+	}
+
+	///////////////////////////////////////////
+	// find PropertyProvider entry points
+	if (theLib->getFunctionPointer("_Generic_Create_PropertyMI",
+		miVector.createGenPropMI))
+	{
+		miVector.miTypes |= CMPI_MIType_Property;
+			miVector.genericMode = 1;
+	}
+
+	if (provId.startsWith("cmpi"))
+	{
+		creationFuncName = provId.substring(4) + "_Create_PropertyMI";
+	}
+	else
+	{
+		creationFuncName = provId + "_Create_PropertyMI";
+	}
+
+	if (theLib->getFunctionPointer(creationFuncName, miVector.createPropMI))
+	{
+		miVector.miTypes |= CMPI_MIType_Property;
+		specificMode = 1;
+	}
+
+	///////////////////////////////////////////
+	// find IndicationProvider entry points
+	if (theLib->getFunctionPointer("_Generic_Create_IndicationMI",
+		miVector.createGenIndMI))
+	{
+		miVector.miTypes |= CMPI_MIType_Indication;
+			miVector.genericMode = 1;
+	}
+
+	if (provId.startsWith("cmpi"))
+	{
+		creationFuncName = provId.substring(4) + "_Create_IndicationMI";
+	}
+	else
+	{
+		creationFuncName = provId + "_Create_IndicationMI";
+	}
+
+	if (theLib->getFunctionPointer(creationFuncName, miVector.createIndMI))
+	{
+		miVector.miTypes |= CMPI_MIType_Indication;
+		specificMode = 1;
+	}
+				
+	if (miVector.miTypes == 0)
+	{
+		OW_LOG_ERROR(lgr, Format("CMPI provider ifc: Library %1 does not contain"
+			" any CMPI function", providerLib));
+		return CMPIFTABLERef();
+	}
+
+	if (miVector.genericMode && specificMode)
+	{
+		OW_LOG_ERROR(lgr, Format("CMPI provider ifc: Library %1 mixes generic/specific"
+			" CMPI style provider functions", providerLib));
+		return CMPIFTABLERef();
+	}
+
+	///////////////////////////////////////////
+	// Now it's time to initialize the providers
+
+	// This is a bad hack for the broken CMPI architecture.  Even though the
+	// _broker.hdl pointer will outlive the lifetime of nonConstEnv (or env),
+	// it won't (shouldn't) ever be used after initialization.
+	ProviderEnvironmentIFCRef nonConstEnv(env);
+	broker.hdl = &nonConstEnv;
+	broker.bft = CMPI_Broker_Ftab;
+	broker.eft = CMPI_BrokerEnc_Ftab;
+	::CMPIOperationContext opc;
+	CMPI_ContextOnStack eCtx(opc);
+	CMPI_ThreadContext thr(&broker, &eCtx); 
+
+	if (miVector.genericMode)
+	{
+		const char *mName = provId.c_str();
+		if (miVector.miTypes & CMPI_MIType_Instance)
+		{
+			miVector.instMI = miVector.createGenInstMI(&broker,&eCtx,mName);
+		}
+
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+		if (miVector.miTypes & CMPI_MIType_Association)
+		{
+			miVector.assocMI = miVector.createGenAssocMI(&broker, &eCtx,
+				mName);
+		}
+#endif
+
+		if (miVector.miTypes & CMPI_MIType_Method)
+		{
+			miVector.methMI = miVector.createGenMethMI(&broker, &eCtx, mName);
+		}
+
+		if (miVector.miTypes & CMPI_MIType_Property)
+		{
+			miVector.propMI = miVector.createGenPropMI(&broker, &eCtx, mName);
+		}
+
+		if (miVector.miTypes & CMPI_MIType_Indication)
+		{
+			miVector.indMI = miVector.createGenIndMI(&broker, &eCtx, mName);
+		}
+	}
+	else
+	{
+		if (miVector.miTypes & CMPI_MIType_Instance)
+		{
+			miVector.instMI = miVector.createInstMI(&broker,&eCtx);
+		}
+
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+		if (miVector.miTypes & CMPI_MIType_Association)
+		{
+			miVector.assocMI = miVector.createAssocMI(&broker,&eCtx);
+		}
+#endif
+
+		if (miVector.miTypes & CMPI_MIType_Method)
+		{
+			miVector.methMI = miVector.createMethMI(&broker,&eCtx);
+		}
+		if (miVector.miTypes & CMPI_MIType_Property)
+		{
+			miVector.propMI = miVector.createPropMI(&broker,&eCtx);
+		}
+		if (miVector.miTypes & CMPI_MIType_Indication)
+		{
+			miVector.indMI = miVector.createIndMI(&broker,&eCtx);
+		}
+	}
+
+	OW_LOG_DEBUG(lgr, Format("CMPI provider ifc: provider %1 loaded and initialized",
+		provId));
+	CMPIFTABLERef completeMI(theLib, new CompleteMI);
+	completeMI->miVector = miVector;
+	completeMI->broker = broker;
+	//MIs * _miVector = new MIs(miVector);
+	if (completeMI->miVector.instMI != miVector.instMI)
+	{
+		OW_LOG_DEBUG(lgr, "CMPI provider ifc: WARNING Vector mismatch");
+	}
+	return completeMI;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 CMPIFTABLERef
 CMPIProviderIFC::getProvider(
 	const ProviderEnvironmentIFCRef& env, const char* provIdString)
@@ -421,244 +678,14 @@ CMPIProviderIFC::getProvider(
 		{
 			continue;
 		}
+		
+		CMPIFTABLERef prvtbl = loadProvider(env, provIdString, libName, _broker);
+		if (!prvtbl)
+		{
+			return CMPIFTABLERef();
+		}
 
-		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName);
-	
-		if (!theLib)
-		{
-			OW_LOG_ERROR(lgr, Format("CMPI provider ifc failed to load library: %1 "
-				"for provider id %2", libName, provId));
-			return CMPIFTABLERef();
-		}
-		
-		fill_n((char*)&miVector, sizeof(MIs), 0);
-		int specificMode = 0;
-	
-		///////////////////////////////////////////
-		// find InstanceProvider entry points
-		if (theLib->getFunctionPointer(
-			"_Generic_Create_InstanceMI", miVector.createGenInstMI))
-		{
-			miVector.miTypes |= CMPI_MIType_Instance;
-				miVector.genericMode = 1;
-		}
-	
-		String creationFuncName;
-		if ( provId.startsWith("cmpi") )
-		{
-			creationFuncName = provId.substring(4) + "_Create_InstanceMI";
-		} else {
-			creationFuncName = provId + "_Create_InstanceMI";
-		}
-		
-		OW_LOG_ERROR(lgr, Format("CMPI provider ifc: Library %1 should contain %2",
-				provId, creationFuncName));
-	
-		if (theLib->getFunctionPointer(
-			creationFuncName, miVector.createInstMI))
-		{
-			miVector.miTypes |= CMPI_MIType_Instance;
-			specificMode = 1;
-		}
-	
-		///////////////////////////////////////////
-		// find AssociationProvider entry points
-		if (theLib->getFunctionPointer(
-			"_Generic_Create_AssociationMI", miVector.createGenAssocMI))
-		{
-			miVector.miTypes |= CMPI_MIType_Association;
-				miVector.genericMode = 1;
-		}
-	
-		if ( provId.startsWith("cmpi") )
-		{
-			creationFuncName = provId.substring(4) + "_Create_AssociationMI";
-		} else {
-			creationFuncName = provId + "_Create_AssociationMI";
-		}
-	
-		if (theLib->getFunctionPointer(
-			creationFuncName, miVector.createAssocMI))
-		{
-			miVector.miTypes |= CMPI_MIType_Association;
-			specificMode = 1;
-		}
-	
-		///////////////////////////////////////////
-		// find MethodProvider entry points
-		if (theLib->getFunctionPointer(
-			"_Generic_Create_MethodMI", miVector.createGenMethMI))
-		{
-			miVector.miTypes |= CMPI_MIType_Method;
-				miVector.genericMode = 1;
-		}
-	
-		if ( provId.startsWith("cmpi") )
-		{
-			creationFuncName = provId.substring(4) + "_Create_MethodMI";
-		} else {
-			creationFuncName = provId + "_Create_MethodMI";
-		}
-	
-		if (theLib->getFunctionPointer(
-			creationFuncName, miVector.createMethMI))
-		{
-			miVector.miTypes |= CMPI_MIType_Method;
-			specificMode = 1;
-		}
-	
-		///////////////////////////////////////////
-		// find PropertyProvider entry points
-		if (theLib->getFunctionPointer(
-			"_Generic_Create_PropertyMI", miVector.createGenPropMI))
-		{
-			miVector.miTypes |= CMPI_MIType_Property;
-				miVector.genericMode = 1;
-		}
-	
-		if ( provId.startsWith("cmpi") )
-		{
-			creationFuncName = provId.substring(4) + "_Create_PropertyMI";
-		} else {
-			creationFuncName = provId + "_Create_PropertyMI";
-		}
-	
-		if (theLib->getFunctionPointer(
-			creationFuncName, miVector.createPropMI))
-		{
-			miVector.miTypes |= CMPI_MIType_Property;
-			specificMode = 1;
-		}
-	
-		///////////////////////////////////////////
-		// find IndicationProvider entry points
-		if (theLib->getFunctionPointer(
-			"_Generic_Create_IndicationMI", miVector.createGenIndMI))
-		{
-			miVector.miTypes |= CMPI_MIType_Indication;
-				miVector.genericMode = 1;
-		}
-	
-		if ( provId.startsWith("cmpi") )
-		{
-			creationFuncName = provId.substring(4) + "_Create_IndicationMI";
-		} else {
-			creationFuncName = provId + "_Create_IndicationMI";
-		}
-	
-		if (theLib->getFunctionPointer(
-			creationFuncName, miVector.createIndMI))
-		{
-			miVector.miTypes |= CMPI_MIType_Indication;
-			specificMode = 1;
-		}
-					
-		if (miVector.miTypes == 0)
-		{
-			OW_LOG_ERROR(lgr, Format("CMPI provider ifc: Library %1 does not contain"
-			" any CMPI function", libName));
-			return CMPIFTABLERef();
-		}
-	
-		if (miVector.genericMode && specificMode)
-		{
-			OW_LOG_ERROR(lgr, Format("CMPI provider ifc: Library %1 mixes generic/specific"
-			" CMPI style provider functions", libName));
-			return CMPIFTABLERef();
-		}
-	
-		///////////////////////////////////////////
-		// Now it's time to initialize the providers
-	
-		// This is a bad hack for the broken CMPI architecture.  Even though the
-		// _broker.hdl pointer will outlive the lifetime of nonConstEnv (or env),
-		// it won't (shouldn't) ever be used after initialization.
-		ProviderEnvironmentIFCRef nonConstEnv(env);
-		_broker.hdl = &nonConstEnv;
-		_broker.bft = CMPI_Broker_Ftab;
-		_broker.eft = CMPI_BrokerEnc_Ftab;
-		::CMPIOperationContext opc;
-		CMPI_ContextOnStack eCtx(opc);
-		CMPI_ThreadContext thr(&_broker, &eCtx); 
-	
-		if (miVector.genericMode)
-		{
-			const char *mName = provId.c_str();
-			if (miVector.miTypes & CMPI_MIType_Instance)
-			{
-				miVector.instMI = miVector.createGenInstMI(&_broker,&eCtx,mName);
-			}
-	
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-			if (miVector.miTypes & CMPI_MIType_Association)
-			{
-				miVector.assocMI =
-					miVector.createGenAssocMI(&_broker, &eCtx, mName);
-			}
-#endif
-	
-			if (miVector.miTypes & CMPI_MIType_Method)
-			{
-				miVector.methMI =
-					miVector.createGenMethMI(&_broker, &eCtx, mName);
-			}
-	
-			if (miVector.miTypes & CMPI_MIType_Property)
-			{
-				miVector.propMI =
-					miVector.createGenPropMI(&_broker, &eCtx, mName);
-			}
-	
-			if (miVector.miTypes & CMPI_MIType_Indication)
-			{
-				miVector.indMI =
-					miVector.createGenIndMI(&_broker, &eCtx, mName);
-			}
-		}
-		else
-		{
-			if (miVector.miTypes & CMPI_MIType_Instance)
-			{
-				miVector.instMI =
-					miVector.createInstMI(&_broker,&eCtx);
-			}
-	
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-			if (miVector.miTypes & CMPI_MIType_Association)
-			{
-				miVector.assocMI =
-					miVector.createAssocMI(&_broker,&eCtx);
-			}
-#endif
-	
-			if (miVector.miTypes & CMPI_MIType_Method)
-			{
-				miVector.methMI =
-					miVector.createMethMI(&_broker,&eCtx);
-			}
-			if (miVector.miTypes & CMPI_MIType_Property)
-			{
-				miVector.propMI =
-					miVector.createPropMI(&_broker,&eCtx);
-			}
-			if (miVector.miTypes & CMPI_MIType_Indication)
-			{
-				miVector.indMI =
-					miVector.createIndMI(&_broker,&eCtx);
-			}
-		}
-	
-		OW_LOG_DEBUG(lgr, Format("CMPI provider ifc: provider %1 loaded and initialized",
-			provId));
-		CMPIFTABLERef completeMI(theLib, new CompleteMI);
-		completeMI->miVector = miVector;
-		completeMI->broker = _broker;
-		//MIs * _miVector = new MIs(miVector);
-		if (completeMI->miVector.instMI != miVector.instMI)
-		{
-			OW_LOG_DEBUG(lgr, "CMPI provider ifc: WARNING Vector mismatch");
-		}
-		m_provs[provId] = completeMI;
+		m_provs[provId] = prvtbl;
 		return m_provs[provId];
 	}
 	return CMPIFTABLERef();
