@@ -24,8 +24,12 @@ SHAREDLIBADD = \
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
-thelibdir = $(pkglibdir)/provifcs
+# This needs to be placed in the libdir because the
+# oop provider runner needs it.
+thelibdir = $(libdir)
 
+# create links here
+OW_EXTRA_LINK_DIRS=$(pkglibdir)/provifcs
 
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_PROVIDER_S=

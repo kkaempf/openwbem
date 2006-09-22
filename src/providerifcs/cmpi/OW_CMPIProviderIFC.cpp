@@ -382,11 +382,23 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 CMPIFTABLERef
 CMPIProviderIFC::loadProvider(
 	const ProviderEnvironmentIFCRef& env,
-	const String& provId,
 	const String& providerLib,
 	::CMPI_Broker& broker)
 {
 	Logger lgr(COMPONENT_NAME);
+
+	size_t ndx = providerLib.lastIndexOf(OW_FILENAME_SEPARATOR);
+	String provId = (ndx != String::npos) ? providerLib.substring(ndx+1) : providerLib;
+
+	if (provId.startsWith("lib"))
+	{
+		provId = provId.substring(3);
+	}
+	ndx = provId.indexOf('.');
+	if (ndx != String::npos)
+	{
+		provId = provId.substring(0, ndx);
+	}
 
 	SharedLibraryLoaderRef ldr =
 		SharedLibraryLoader::createSharedLibraryLoader();
@@ -679,7 +691,7 @@ CMPIProviderIFC::getProvider(
 			continue;
 		}
 		
-		CMPIFTABLERef prvtbl = loadProvider(env, provIdString, libName, _broker);
+		CMPIFTABLERef prvtbl = loadProvider(env, libName, _broker);
 		if (!prvtbl)
 		{
 			return CMPIFTABLERef();

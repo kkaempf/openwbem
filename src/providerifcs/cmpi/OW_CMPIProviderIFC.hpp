@@ -59,7 +59,6 @@ public:
 
 	static CMPIFTABLERef loadProvider(
 		const ProviderEnvironmentIFCRef& env,
-		const String& provId,
 		const String& providerLib,
 		::CMPI_Broker& broker);
 
