@@ -1218,6 +1218,14 @@ OW_HELP_STRING(--enable-db4-repository,enable (still in development) db4 reposit
 ])
 AM_CONDITIONAL(ENABLE_DB4_REPOSITORY, test x$OW_ENABLE_DB4_REPOSITORY = x1)
 
+if test "$enable_apparmor" != no; then
+  AC_CHECK_HEADERS(sys/apparmor.h, 
+  [
+    APPARMOR_LIBS=-lapparmor
+  ])
+fi
+AC_SUBST(APPARMOR_LIBS)
+
 AC_ARG_ENABLE(vas,
 OW_HELP_STRING(--enable-vas,enable VAS (Vintela Authentication Services) integration),
 [ 
