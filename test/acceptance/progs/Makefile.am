@@ -477,7 +477,7 @@ testSPNEGOGSSAPI_LDADD = \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem -lblocxx \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
