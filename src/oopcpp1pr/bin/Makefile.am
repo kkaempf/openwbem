@@ -1,17 +1,18 @@
+if ENABLE_CMPI
+OWOOPCMPIPR_BIN=owoopcmpipr
+else
+OWOOPCMPIPR_BIN=
+endif
+
 owoopcpp1prbin_PROGRAMS = \
-owoopcpp1pr \
-owoopcmpipr
+$(OWOOPCMPIPR_BIN) \
+owoopcpp1pr
 
 owoopcpp1prbindir = $(libexecdir)/openwbem
-owoopcmpiprbindir = $(libexecdir)/openwbem
 
 owoopcpp1pr_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owoopcpp1pr$(EXEEXT)
-
-owoopcmpipr_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owoopcmpipr$(EXEEXT)
 
 owoopcpp1pr_LDADD = \
 -L$(top_builddir)/src/oopcpp1pr -lowoopcpp1pr \
@@ -25,6 +26,18 @@ owoopcpp1pr_LDADD = \
 -L$(top_builddir)/src/requesthandlers/binary -lowrequesthandlerbinary \
 -L$(top_builddir)/src/common -lopenwbem -lblocxx \
 $(SSL_LIBS) $(Z_LIBS) $(BINLINKAPPENDFLAGS) $(APPARMOR_LIBS)
+
+owoopcpp1pr_SOURCES = \
+owoopcpp1pr_main.cpp
+
+if ENABLE_CMPI
+# cmpi
+
+owoopcmpiprbindir = $(libexecdir)/openwbem
+
+owoopcmpipr_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owoopcmpipr$(EXEEXT)
 
 owoopcmpipr_LDADD = \
 -L$(top_builddir)/src/oopcpp1pr -lowoopcpp1pr \
@@ -40,11 +53,10 @@ owoopcmpipr_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem -lblocxx \
 $(SSL_LIBS) $(Z_LIBS) $(BINLINKAPPENDFLAGS) $(APPARMOR_LIBS)
 
-owoopcpp1pr_SOURCES = \
-owoopcpp1pr_main.cpp
-
 owoopcmpipr_SOURCES = \
 owoopcmpipr_main.cpp
+
+endif
 
 INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/cmpi \
