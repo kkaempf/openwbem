@@ -942,9 +942,10 @@ namespace
 		{
 			this->check_valid_path(exec_path, "monitoredSpawn");
 			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredSpawn: app name too long");
-			CHECKARGS(priv().monitored_exec.match(exec_path, app_name),
-				"monitoredSpawn: insufficient privileges");
 			CHECKARGS(xargv.second,	"monitoredSpawn: argv too large");
+			CHECKARGS(priv().monitored_exec.match(exec_path, app_name)
+				|| priv().monitored_exec_check_args.match(exec_path, xargv.first, app_name),
+				"monitoredSpawn: insufficient privileges");
 			CHECKARGS(xenvp.second,	"monitoredSpawn: envp too large");
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
@@ -984,9 +985,10 @@ namespace
 			CHECKARGS(user_name.length() <= MAX_USER_NAME_LENGTH,
 				"monitoredUserSpawn: user name too long");
 			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredUserSpawn: app name too long");
-			CHECKARGS(priv().monitored_user_exec.match(exec_path, app_name, user_name),
-				"monitoredUserSpawn: insufficient privileges");
 			CHECKARGS(xargv.second,	"monitoredUserSpawn: argv too large");
+			CHECKARGS(priv().monitored_user_exec.match(exec_path, app_name, user_name)
+				|| priv().monitored_user_exec_check_args.match(exec_path, xargv.first, app_name, user_name),
+				"monitoredUserSpawn: insufficient privileges");
 			CHECKARGS(xenvp.second,	"monitoredUserSpawn: envp too large");
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
@@ -1119,9 +1121,10 @@ namespace
 				"userSpawn: user name too long");
 			CHECKARGS(working_dir.length() <= MAX_PATH_LENGTH,
 				"userSpawn: working dir too long");
-			CHECKARGS(priv().user_exec.match(exec_path, user_name),
-				"userSpawn: insufficient privileges");
 			CHECKARGS(xargv.second, "userSpawn: argv too large");
+			CHECKARGS(priv().user_exec.match(exec_path, user_name) 
+				|| priv().user_exec_check_args.match(exec_path, xargv.first, user_name),
+				"userSpawn: insufficient privileges");
 			CHECKARGS(xenvp.second, "userSpawn: envp too large");
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
