@@ -1,6 +1,7 @@
 %{
-/*
-* Copyright (C) 2005, Vintela, Inc. All rights reserved.
+/*******************************************************************************
+* Copyright (C) 2005, Quest Software, Inc. All rights reserved.
+* Copyright (C) 2006, Novell, Inc. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -10,7 +11,7 @@
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of Vintela, Inc., nor the
+*     * Neither the name of Quest Software, Inc., nor Novell, Inc., nor the
 *       names of its contributors or employees may be used to endorse or promote
 *       products derived from this software without specific prior written
 *       permission.
@@ -26,9 +27,10 @@
 * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
-*/
+*******************************************************************************/
 /**
 * @author Kevin S. Van Horn
+* @author Bart Whiteley
 */
 
 #include "OW_config.h"
@@ -41,7 +43,9 @@
 using OpenWBEM::PrivilegeConfig::Privileges;
 using OpenWBEM::PrivilegeConfig::PathPatterns;
 using OpenWBEM::PrivilegeConfig::ExecPatterns;
+using OpenWBEM::PrivilegeConfig::MonitoredUserExecPatterns;
 using OpenWBEM::PrivilegeConfig::ExecArgsPatterns;
+using OpenWBEM::PrivilegeConfig::MonitoredUserExecArgsPatterns;
 using OpenWBEM::Array;
 using OpenWBEM::String;
 using OpenWBEM::PrivilegeConfig::ParseError;
@@ -51,7 +55,9 @@ namespace
 	void add_pattern(PathPatterns & pp, char * consumed_c_str);
 	void add_pattern(PathPatterns & pp1, PathPatterns & pp2, char * consumed_c_str);
 	void add_pattern(ExecPatterns & ep, char * consumed_exec_path, char * consumed_ident);
+	void add_pattern(MonitoredUserExecPatterns & ep, char * consumed_exec_path, char * consumed_app_name, char * consumed_user_name);
 	void add_pattern(ExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_ident);
+	void add_pattern(MonitoredUserExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_app_name, char * consumed_user_name);
 	String make_name_or_path(char * consumed_c_str);
 }
 
@@ -91,6 +97,7 @@ int yylex(YYSTYPE * lvalp, YYLTYPE * llocp, openwbem_privconfig_Lexer * lexerp);
 %token      K_CHECK_PATH K_RENAME_FROM K_RENAME_TO K_RENAME_FROM_TO
 %token      K_UNLINK K_MONITORED_EXEC K_USER_EXEC K_UNPRIV_USER
 %token		K_MONITORED_EXEC_CHECK_ARGS K_USER_EXEC_CHECK_ARGS
+%token		K_MONITORED_USER_EXEC_CHECK_ARGS K_MONITORED_USER_EXEC
 %token		AT
 %token      SCANNER_ERROR
 
@@ -113,15 +120,17 @@ config_stmt:
 |	K_OPEN_RW '{' open_rw_args '}'
 |	K_OPEN_A '{' open_a_args '}'
 |	K_READ_DIR '{' read_dir_args '}'
-|  K_READ_LINK '{' read_link_args '}'
+|	K_READ_LINK '{' read_link_args '}'
 |	K_CHECK_PATH '{' check_path_args '}'
 |	K_RENAME_FROM '{' rename_from_args '}'
 |	K_RENAME_TO '{' rename_to_args '}'
 |	K_RENAME_FROM_TO '{' rename_from_to_args '}'
 |	K_UNLINK '{' unlink_args '}'
 |	K_MONITORED_EXEC '{' monitored_exec_args '}'
+|	K_MONITORED_USER_EXEC '{' monitored_user_exec_args '}'
 |	K_USER_EXEC '{' user_exec_args '}'
 |	K_MONITORED_EXEC_CHECK_ARGS '{' monitored_exec_check_args_args '}'
+|	K_MONITORED_USER_EXEC_CHECK_ARGS '{' monitored_user_exec_check_args_args '}'
 |	K_USER_EXEC_CHECK_ARGS '{' user_exec_check_args_args '}'
 |	K_UNPRIV_USER '{' unpriv_user_arg '}'
 ;
@@ -196,6 +205,13 @@ monitored_exec_args:
 	}
 ;
 
+monitored_user_exec_args:
+	/* empty */
+|	monitored_user_exec_args exec_path_pattern AT NAME AT user_name{
+		add_pattern(p_priv->monitored_user_exec, $2, $4, $6);
+	}
+;
+
 user_exec_args:
 	/* empty */
 |	user_exec_args exec_path_pattern AT user_name {
@@ -207,6 +223,13 @@ monitored_exec_check_args_args:
 	/* empty */
 |	monitored_exec_check_args_args exec_path_pattern exec_arg_list AT NAME {
 		add_pattern(p_priv->monitored_exec_check_args, $2, $3, $5);
+	}
+;
+
+monitored_user_exec_check_args_args:
+	/* empty */
+|	monitored_user_exec_check_args_args exec_path_pattern exec_arg_list AT NAME AT user_name {
+		add_pattern(p_priv->monitored_user_exec_check_args, $2, $3, $5, $7);
 	}
 ;
 
@@ -267,12 +290,30 @@ namespace
 		ep.add_pattern(consumed_exec_path, ident);
 	}
 
+	void add_pattern(
+		MonitoredUserExecPatterns & ep, char * consumed_exec_path, char * consumed_app_name, char * consumed_user_name)
+	{
+		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
+		String app_name(make_name_or_path(consumed_app_name));
+		String user_name(make_name_or_path(consumed_user_name));
+		ep.add_pattern(consumed_exec_path, app_name, user_name);
+	}
+
 	void add_pattern(ExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_ident)
 	{
 		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
 		String ident(make_name_or_path(consumed_ident));
 		OpenWBEM::AutoPtr<Array<ExecArgsPatterns::Arg> > args(consumed_args);
 		ep.add_pattern(consumed_exec_path, *consumed_args, ident);
+	}
+
+	void add_pattern(MonitoredUserExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_app_name, char * consumed_user_name)
+	{
+		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
+		String app_name(make_name_or_path(consumed_app_name));
+		String user_name(make_name_or_path(consumed_user_name));
+		OpenWBEM::AutoPtr<Array<ExecArgsPatterns::Arg> > args(consumed_args);
+		ep.add_pattern(consumed_exec_path, *consumed_args, app_name, user_name);
 	}
 
 	String make_name_or_path(char * consumed_c_str)

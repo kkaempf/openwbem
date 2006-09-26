@@ -1,5 +1,7 @@
 /*******************************************************************************
+* Copyright © 2002  Networks Associates Technology, Inc.  All rights reserved.
 * Copyright (C) 2005, Quest Software, Inc. All rights reserved.
+* Copyright (C) 2006, Novell, Inc. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -9,7 +11,8 @@
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of the Network Associates, nor Quest Software, Inc., nor the
+*     * Neither the name of the Network Associates, 
+*       nor Quest Software, Inc., nor Novell, Inc., nor the
 *       names of its contributors or employees may be used to endorse or promote
 *       products derived from this software without specific prior written
 *       permission.
@@ -259,7 +262,7 @@ namespace
 	{
 	public:
 		// REQUIRE: child_desc >= 3
-		PrivMonPreExec(int child_desc);
+		PrivMonPreExec(int child_desc); 
 		virtual bool keepStd(int d) const;
 		virtual void call(pipe_pointer_t const pparr[]);
 
@@ -268,8 +271,8 @@ namespace
 	};
 
 	PrivMonPreExec::PrivMonPreExec(int child_desc)
-	: PreExec(true),
-	  m_keep(child_desc + 1, false)
+	  : PreExec(true)
+	  , m_keep(child_desc + 1, false)
 	{
 		m_keep[child_desc] = true;
 	}
@@ -320,7 +323,7 @@ namespace
 		char const * config_dir, char const * app_name
 	)
 	{
-		PrivMonPreExec pre_exec(child_desc);
+		PrivMonPreExec pre_exec(child_desc); 
 		String exec_path = 
 			ConfigOpts::installed_owlibexec_dir + "/owprivilegemonitor" + String(OW_OPENWBEM_LIBRARY_VERSION);
 		using namespace FileSystem::Path;
@@ -585,6 +588,45 @@ ProcessRef PrivilegeManager::monitoredSpawn(
 	ipcio_put(conn, app_name);
 	ipcio_put_strarr(conn, argv);
 	ipcio_put_strarr(conn, envp);
+	conn.put_sync();
+
+	check_result(conn, IPCIO::E_UNBUFFERED);
+	UnnamedPipeRef in(new PosixUnnamedPipe(AutoDescriptor(), conn.get_handle()));
+	UnnamedPipeRef out(new PosixUnnamedPipe(conn.get_handle(), AutoDescriptor()));
+	UnnamedPipeRef err(new PosixUnnamedPipe(conn.get_handle(), AutoDescriptor()));
+	ProcId pid;
+	ipcio_get(conn, pid);
+	conn.get_sync();
+	return ProcessRef(new MonitorChild(in, out, err, pid, *this));
+}
+
+ProcessRef PrivilegeManager::monitoredUserSpawn(
+	char const * exec_path,
+	char const * app_name,
+	char const * const argv[], char const * const envp[],
+	char const * user
+)
+{
+	CHECK(pimpl(), "monitoredSpawn: process has no privileges");
+	NonRecursiveMutexLock lock(pimpl()->m_mutex);
+	IPCIO & conn = pimpl()->m_conn;
+
+	char const * default_argv[2] = { exec_path, 0 };
+	if (!argv || !*argv)
+	{
+		argv = default_argv;
+	}
+	if (!envp)
+	{
+		envp = environ;
+	}
+
+	ipcio_put(conn, PrivilegeCommon::E_CMD_MONITORED_USER_SPAWN);
+	ipcio_put(conn, exec_path);
+	ipcio_put(conn, app_name);
+	ipcio_put_strarr(conn, argv);
+	ipcio_put_strarr(conn, envp);
+	ipcio_put(conn, user);
 	conn.put_sync();
 
 	check_result(conn, IPCIO::E_UNBUFFERED);

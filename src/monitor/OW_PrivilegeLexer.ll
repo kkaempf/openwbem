@@ -5,9 +5,10 @@
 %option c++
 
 %{
-/* 
+/*******************************************************************************
 * Copyright © 2002  Networks Associates Technology, Inc.  All rights reserved.
 * Copyright (C) 2005, Quest Software, Inc. All rights reserved.
+* Copyright (C) 2006, Novell, Inc. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -17,8 +18,8 @@
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of the Network Associates, nor Quest Software, Inc.,
-*       nor the
+*     * Neither the name of the Network Associates, 
+*       nor Quest Software, Inc., nor Novell, Inc., nor the
 *       names of its contributors or employees may be used to endorse or promote
 *       products derived from this software without specific prior written
 *       permission.
@@ -34,7 +35,7 @@
 * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
-*/
+*******************************************************************************/
 
 #define  OW_PRIVILEGE_LEXER_LL
 #include "OW_PrivilegeLexer.hpp"
@@ -86,8 +87,10 @@ rename_to               { return K_RENAME_TO; }
 rename_from_to          { return K_RENAME_FROM_TO; }
 unlink                  { return K_UNLINK; }
 monitored_exec          { return K_MONITORED_EXEC; }
+monitored_user_exec     { return K_MONITORED_USER_EXEC; }
 user_exec               { return K_USER_EXEC; }
 monitored_exec_check_args          { return K_MONITORED_EXEC_CHECK_ARGS; }
+monitored_user_exec_check_args     { return K_MONITORED_USER_EXEC_CHECK_ARGS; }
 user_exec_check_args               { return K_USER_EXEC_CHECK_ARGS; }
 
 unpriv_user             { return K_UNPRIV_USER; }

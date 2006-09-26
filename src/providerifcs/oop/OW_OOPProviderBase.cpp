@@ -228,6 +228,19 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 				Exec::currentEnvironment
 			);
 		}
+		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION_MONITORED:
+		{
+			String currentUserName = UserUtils::getCurrentUserName();
+			String procUserName = currentUserName;
+			String operationUserName = env->getOperationContext().getUserInfo().getUserName();
+			if (!operationUserName.empty())
+			{
+				procUserName = operationUserName;
+			}
+			proc = privMan.monitoredUserSpawn(
+				m_provInfo.process, m_provInfo.monitorPrivilegesFile, argv,
+				Exec::currentEnvironment, procUserName); 
+		}
 		break;
 	}
 

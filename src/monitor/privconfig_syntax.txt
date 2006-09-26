@@ -58,6 +58,15 @@ These are the kinds of configuration statements allowed:
   <config_dir>/<privileges_file>, where <config_dir> is the corresponding 
   directory path previously passed to PrivilegeManager::createMonitor().
 
+- 'monitored_user_exec_check_args' '{' <exec_path_pattern> <exec_arg_list> '@' 
+    <privileges_file> '@' <user_name>'}'
+  The client can run (using PrivilegeManager::monitoredUserSpawn()) any program
+  matching <exec_path_pattern>, with args matching <exec_arg_list>.  This 
+  program is run with its own attached monitor and privileges file 
+  <config_dir>/<privileges_file>, where <config_dir> is the corresponding 
+  directory path previously passed to PrivilegeManager::createMonitor().
+  The attached monitor runs as the specified user <user_name>. 
+
 - 'monitored_exec' '{' <exec_path_pattern> '@' <privileges_file> '}'
   The client can run (using PrivilegeManager::monitoredSpawn()) any program
   matching <exec_path_pattern>.  This program is run with its own
@@ -65,6 +74,17 @@ These are the kinds of configuration statements allowed:
   <config_dir> is the corresponding directory path previously passed to
   PrivilegeManager::createMonitor(). Any command line arguments are valid, so do
   not grant this privilege if monitored_exec_check_args is sufficient.
+
+- 'monitored_user_exec' '{' <exec_path_pattern> '@' <privileges_file> 
+    '@' <user_name> '}'
+  The client can run (using PrivilegeManager::monitoredUserSpawn()) any program
+  matching <exec_path_pattern>.  This program is run with its own
+  attached monitor and privileges file <config_dir>/<privileges_file>, where
+  <config_dir> is the corresponding directory path previously passed to
+  PrivilegeManager::createMonitor().  The attached monitor runs as the 
+  specified user <user_name>.  PrivilegeManager::createMonitor(). Any command 
+  line arguments are valid, so do not grant this privilege if 
+  monitored_exec_check_args is sufficient.
 
 - 'user_exec_check_args' '{' <exec_path_pattern> <exec_arg_list> '@' <user_name> '}'
   The client can run (using PrivilegeManager::userSpawn()) any program matching

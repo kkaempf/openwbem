@@ -290,10 +290,16 @@ class OpenWBEM_OOPProviderRegistration
       "unprivileged means that the provider process will be run as an "
       "unprivileged user named owcimomd.\n"
       "monitored means that the provider process will be run as the "
-      "user specified in the monitor privileges configuration file. "
-      "MonitorPrivilegesFile must be set in this case."),
-    ValueMap {"1", "2", "3", "4"},
-    Values {"super user", "operation", "unprivileged", "monitored"}]
+      "user specified in the monitor privileges configuration file, "
+      "and the monitor will run as root.\n"
+      "operation monitored means that the provider process will be run as the "
+      "user specified in the monitor privileges configuration file, "
+      "and the monitor wil run as as the authenticated username who "
+      "initiated the operation.\n"
+      "If this setting is \"monitored\" or \"operation monitored\", "
+      "MonitorPrivilegesFile must be set."),
+    ValueMap {"1", "2", "3", "4", "5"},
+    Values {"super user", "operation", "unprivileged", "monitored", "operation monitored"}]
     uint16 UserContext = 3;
 
     [Description (

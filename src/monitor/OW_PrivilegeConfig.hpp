@@ -3,6 +3,7 @@
 
 /*******************************************************************************
 * Copyright (C) 2005, Quest Software, Inc. All rights reserved.
+* Copyright (C) 2006, Novell, Inc. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -12,7 +13,8 @@
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of the Network Associates, nor Quest Software, Inc., nor the
+*     * Neither the name of the Network Associates, 
+*       nor Quest Software, Inc., nor Novell, Inc., nor the
 *       names of its contributors or employees may be used to endorse or promote
 *       products derived from this software without specific prior written
 *       permission.
@@ -40,6 +42,7 @@
 
 /**
  * @author ???
+ * @ Bart Whiteley
  */
 
 namespace OW_NAMESPACE
@@ -119,6 +122,31 @@ private:
 	map_t m;
 };
 
+class MonitoredUserExecPatterns
+{
+public:
+	void add_pattern(char const * exec_path_pattern, String const & ident, 
+					 String const & user_name)
+	{
+		m[user_name].add_pattern(exec_path_pattern, ident); 
+	}
+	bool match(String const & exec_path, String const & ident, String const & user_name) const
+	{
+		map_t::const_iterator it = m.find(user_name); 
+		bool rv = it != m.end() && it->second.match(exec_path, ident); 
+		if (!rv)
+		{
+			it = m.find("*"); 
+			rv = it != m.end() && it->second.match(exec_path, ident); 
+		}
+		return rv; 
+	}
+private: 
+	// Key is the user_name
+	typedef std::map<String, ExecPatterns> map_t; 
+	map_t m; 
+}; 
+
 class ExecArgsPatterns
 {
 public:
@@ -149,6 +177,30 @@ private:
 	map_t m;
 };
 
+class MonitoredUserExecArgsPatterns
+{
+public: 
+	void add_pattern(char const * exec_path_pattern, const Array<ExecArgsPatterns::Arg>& args, String const & ident, String const & user_name)
+	{
+		m[user_name].add_pattern(exec_path_pattern, args, ident);
+	}
+	bool match(String const & exec_path, Array<String> const & args, String const & ident, String const & user_name) const
+	{
+		map_t::const_iterator it = m.find(user_name); 
+		bool rv = it != m.end() && it->second.match(exec_path, args, ident); 
+		if (!rv)
+		{
+			it = m.find("*"); 
+			rv = it != m.end() && it->second.match(exec_path, args, ident); 
+		}
+		return rv; 
+	}
+private: 
+	// Key is user_name
+	typedef std::map<String, ExecArgsPatterns> map_t; 
+	map_t m; 
+}; 
+
 class DirPatterns
 {
 public:
@@ -177,6 +229,8 @@ struct Privileges
 	ExecPatterns user_exec;
 	ExecArgsPatterns monitored_exec_check_args;
 	ExecArgsPatterns user_exec_check_args;
+	MonitoredUserExecArgsPatterns monitored_user_exec_check_args;
+	MonitoredUserExecPatterns monitored_user_exec;
 };
 
 struct ParseError

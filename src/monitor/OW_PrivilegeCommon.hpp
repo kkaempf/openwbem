@@ -3,6 +3,7 @@
 
 /*******************************************************************************
 * Copyright (C) 2005, Quest Software, Inc. All rights reserved.
+* Copyright (C) 2006, Novell, Inc. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -12,7 +13,8 @@
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of the Network Associates, nor Quest Software, Inc., nor the
+*     * Neither the name of the Network Associates, 
+*       nor Quest Software, Inc., nor Novell, Inc., nor the
 *       names of its contributors or employees may be used to endorse or promote
 *       products derived from this software without specific prior written
 *       permission.
@@ -80,6 +82,7 @@ namespace PrivilegeCommon
 		E_CMD_KILL,
 		E_CMD_POLL_STATUS,
 		E_CMD_DONE,
+		E_CMD_MONITORED_USER_SPAWN,
 		E_NUM_MONITOR_CMDS // must be last
 	};
 

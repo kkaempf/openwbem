@@ -348,6 +348,21 @@ int main_aux(int argc, char * * argv)
 				String user = get_string();
 				ProcessRef pproc(mgr.userSpawn(exec_path, argv, envp, user, ""));
 			}
+			else if (tmp == "monitoredUserSpawn")
+			{
+				// failure test only
+				String exec_path = get_string();
+				String app_name = get_string();
+				StringArray argv = get_string().tokenize("+");
+				StringArray envp = get_string().tokenize("+");
+				String user_name = get_string();
+				copy_env_var("LD_LIBRARY_PATH", envp);
+				copy_env_var("LIBPATH", envp); // AIX
+				copy_env_var("SHLIB_PATH", envp); // HPUX
+				copy_env_var("DYLD_LIBRARY_PATH", envp); // DARWIN (OS X)
+				ProcessRef pproc(
+					mgr.monitoredUserSpawn(exec_path, app_name, argv, envp, user_name));
+			}
 		}
 		catch (Exception & e)
 		{

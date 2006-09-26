@@ -1,5 +1,7 @@
 /*******************************************************************************
+* Copyright (c) 2002, Networks Associates, Inc. All rights reserved.
 * Copyright (C) 2005, Quest Software, Inc. All rights reserved.
+* Copyright (C) 2006, Novell, Inc. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -9,7 +11,8 @@
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of the Network Associates, nor Quest Software, Inc., nor the
+*     * Neither the name of the Network Associates, 
+*       nor Quest Software, Inc., nor Novell, Inc., nor the
 *       names of its contributors or employees may be used to endorse or promote
 *       products derived from this software without specific prior written
 *       permission.
@@ -332,6 +335,7 @@ namespace
 			int errnum;
 			int monitor_desc;
 			String app_name;
+			String user_name; 
 		};
 
 	private:
@@ -346,6 +350,7 @@ namespace
 		void rename();
 		void unlink();
 		void monitoredSpawn();
+		void monitoredUserSpawn();
 		void kill();
 		void pollStatus();
 		void userSpawn();
@@ -432,6 +437,7 @@ namespace
 				CMDCASE(RENAME, rename);
 				CMDCASE(UNLINK, unlink);
 				CMDCASE(MONITORED_SPAWN, monitoredSpawn);
+				CMDCASE(MONITORED_USER_SPAWN, monitoredUserSpawn);
 				CMDCASE(KILL, kill);
 				CMDCASE(POLL_STATUS, pollStatus);
 				CMDCASE(USER_SPAWN, userSpawn);
@@ -732,12 +738,15 @@ namespace
 
 	struct SMPolicy : public PrivilegeCommon::SpawnMonitorPolicy
 	{
+		SMPolicy(char const * user_name = 0)
+		  : m_user_name(user_name) {}
 		virtual char const * check_config_dir(char const * config_dir);
 
 		virtual void spawn(
 			int child_desc, int parent_desc,
 			char const * config_dir, char const * app_name
 		);
+        char const * m_user_name; 
 		int m_monitor_desc;
 	};
 
@@ -761,6 +770,7 @@ namespace
 			r.errnum = ::dup2(child_desc, m_monitor_desc) >= 0 ? 0 : errno;
 			r.monitor_desc = m_monitor_desc;
 			r.app_name = app_name;
+			r.user_name = m_user_name; 
 			throw r;
 		}
 		else // parent (monitored process)
@@ -781,7 +791,8 @@ namespace
 		//
 		ME_PreExec(
 			char const * config_dir, char const * app_name,
-			Monitor * p_monitor, AutoDescriptor & monitor_desc
+			Monitor * p_monitor, AutoDescriptor & monitor_desc,
+			char const * user_name = 0
 		);
 		virtual bool keepStd(int d) const;
 		virtual void call(pipe_pointer_t const pparr[]);
@@ -789,16 +800,19 @@ namespace
 	private:
 		char const * m_config_dir;
 		char const * m_app_name;
+		char const * m_user_name; 
 		Monitor * m_p_monitor;
 		AutoDescriptor m_monitor_desc;
 	};
 
 	ME_PreExec::ME_PreExec(
 		char const * config_dir, char const * app_name,
-		Monitor * p_monitor, AutoDescriptor & monitor_desc
+		Monitor * p_monitor, AutoDescriptor & monitor_desc,
+		char const * user_name
 	)
 	: m_config_dir(config_dir),
 	  m_app_name(app_name),
+	  m_user_name(user_name),
 	  m_p_monitor(p_monitor),
 	  m_monitor_desc(monitor_desc)
 	{
@@ -832,9 +846,9 @@ namespace
 		m_p_monitor->release();
 
 		// Create new monitor process
-		SMPolicy policy;
+		SMPolicy policy(m_user_name);
 		policy.m_monitor_desc = m_monitor_desc.release();
-		PrivilegeCommon::spawn_monitor(m_config_dir, m_app_name, policy);
+		PrivilegeCommon::spawn_monitor(m_config_dir, m_app_name, policy); 
 
 		// Signals already set to defaults
 		
@@ -943,6 +957,48 @@ namespace
 			CHECK(desc.get() >= 0, "monitoredSpawn: dup failed");
 			putenv_monitor_desc(xenvp.first, desc.get());
 			ME_PreExec pre_exec(m_config_dir, app_name.c_str(), this, desc);
+			this->spawn_and_return(
+				exec_path, xargv.first, xenvp.first, pre_exec);
+		}
+		PRIVOP_FINISH;
+	}
+	
+	void Monitor::monitoredUserSpawn()
+	{
+		String exec_path;
+		String app_name;
+		String user_name; 
+		std::pair<StringArray, bool> xargv, xenvp;
+		ipcio_get(conn(), exec_path, MAX_PATH_LENGTH + 1);
+		ipcio_get(conn(), app_name, MAX_APPNAME_LENGTH + 1);
+		xargv = ipcio_get_strarr(conn(), MAX_ARGV_LENGTH, MAX_ARG_LENGTH);
+		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH, MAX_ENVITEM_LENGTH);
+		ipcio_get(conn(), user_name, MAX_USER_NAME_LENGTH + 1);
+		conn().get_sync();
+
+		OW_LOG_INFO(logger, Format("REQ monitoredUserSpawn, exec_path=%1, app_name=%2, user=%3", 
+								   exec_path, app_name, user_name));
+		PRIVOP_BODY
+		{
+			this->check_valid_path(exec_path, "monitoredUserSpawn");
+			CHECKARGS(user_name.length() <= MAX_USER_NAME_LENGTH,
+				"monitoredUserSpawn: user name too long");
+			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredUserSpawn: app name too long");
+			CHECKARGS(priv().monitored_user_exec.match(exec_path, app_name, user_name),
+				"monitoredUserSpawn: insufficient privileges");
+			CHECKARGS(xargv.second,	"monitoredUserSpawn: argv too large");
+			CHECKARGS(xenvp.second,	"monitoredUserSpawn: envp too large");
+			bool reserved_env_var_absent = filter_env(xenvp.first);
+			CHECKARGS(reserved_env_var_absent,
+				"monitoredUserSpawn: reserved env var set in environment argument"
+			);
+			CHECK(m_secure_paths.is_secure(exec_path),
+				"monitoredUserSpawn: exec path " + exec_path + " is insecure");
+
+			AutoDescriptor desc(::dup(0)); // get some unused descriptor
+			CHECK(desc.get() >= 0, "monitoredUserSpawn: dup failed");
+			putenv_monitor_desc(xenvp.first, desc.get());
+			ME_PreExec pre_exec(m_config_dir, app_name.c_str(), this, desc, user_name.c_str());
 			this->spawn_and_return(
 				exec_path, xargv.first, xenvp.first, pre_exec);
 		}
@@ -1174,7 +1230,7 @@ namespace
 		}
 		int client_descriptor = x.descriptor;
 		int exit_status;
-		String config_dir, app_name, user_name;
+		String config_dir, app_name, user_name, mon_user_name;
 		LoggerSpec ls;
 		bool has_logger = false;
 		enum { E_FIRST, E_REPEAT, E_DONE } iteration = E_FIRST;
@@ -1230,6 +1286,10 @@ namespace
 					{
 						mon.set_logger_from_spec(app_name, ls);
 					}
+					if (iteration == E_REPEAT && !mon_user_name.empty())
+					{
+						Secure::runAs(mon_user_name.c_str()); 
+					}
 					mon.run();
 				}
 				iteration = E_DONE;
@@ -1243,6 +1303,7 @@ namespace
 				}
 				client_descriptor = e.monitor_desc;
 				app_name = e.app_name;
+				mon_user_name = e.user_name; 
 				iteration = E_REPEAT;
 			}
 		}

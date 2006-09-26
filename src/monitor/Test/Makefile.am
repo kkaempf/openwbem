@@ -227,7 +227,9 @@ monitor_test_username.0.sh: Makefile
 define monitor_exec_test_template
 	echo "#!/bin/bash" > $@
 	echo 'echo Running $$0 $$@' >> $@
-	echo "MXTPRIV=$(1) $(srcdir)/monexectest.sh $(srcdir)/$(2) root 700 $(srcdir)/monitor_exec_test.0.test.tgz $(srcdir)/monitor_exec_test.0.inp $(srcdir)/$(@:%.sh=%.gold.out) $(srcdir)/monitor_exec_test.0.$(3).tgz" >> $@
+	echo 'for i in 0 1; do' >> $@
+	echo 'MUE=$$i MXTPRIV=$(1) $(srcdir)/monexectest.sh $(srcdir)/$(2) root 700 $(srcdir)/monitor_exec_test.0.test.tgz $(srcdir)/monitor_exec_test.0.inp $(srcdir)/$(@:%.sh=%.gold.out) $(srcdir)/monitor_exec_test.0.$(3).tgz' >> $@
+	echo 'done' >> $@
 	chmod +x $@
 endef
 
@@ -243,7 +245,6 @@ monitor_exec_test.nopriv.1.sh: Makefile
 
 monitor_exec_test.nopriv.2.sh: Makefile
 	$(call monitor_exec_test_template,BAD_CFG,monitor_exec_test.0.cfg,test)
-
 
 
 #
