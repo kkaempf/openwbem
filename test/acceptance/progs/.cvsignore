@@ -33,3 +33,4 @@ testListener
 aclTestBasic
 testSPNEGO
 testSPNEGOGSSAPI
+testOOPAssoc
