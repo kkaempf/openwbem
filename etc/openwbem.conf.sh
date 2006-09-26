@@ -255,7 +255,7 @@ owcimomd.wql_lib = @libdir@/libowwql.@LIB_EXT@
 # authentication.  This should be an absolute path to the shared library 
 # containing the authentication module.
 # If empty, Basic authentication will be disabled.
-owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthentication.@LIB_EXT@
+owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamclauthentication.@LIB_EXT@
 
 ################################################################################
 # The maximum number of classes that will be cached by the cimom.
