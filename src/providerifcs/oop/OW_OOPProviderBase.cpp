@@ -228,6 +228,7 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 				Exec::currentEnvironment
 			);
 		}
+		break;
 		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION_MONITORED:
 		{
 			String currentUserName = UserUtils::getCurrentUserName();
