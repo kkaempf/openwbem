@@ -325,25 +325,32 @@ int main(int argc, char* argv[])
 #ifdef OW_HAVE_SYS_APPARMOR_H
    	String subprofile = FileSystem::Path::basename(providerLib);  
 	subprofile = subprofile.substring(3, subprofile.indexOf('.')-3); 
-	if (change_hat(subprofile.c_str(), 0) == 0)
+	int aarv = change_hat(subprofile.c_str(), 0); 
+	if (aarv != 0 && errno == EACCES)
 	{
-		OW_LOG_INFO(logger, Format("Enforcing AppArmor subprofile %1", subprofile));
+		OW_LOG_INFO(logger, Format("AppArmor: Subprofile does not exist: %1", subprofile));
+		subprofile = "default_provider_hat"; 
+		aarv = change_hat(subprofile.c_str(), 0);
 	}
-	else
+	if (aarv == 0)
+	{
+		OW_LOG_INFO(logger, Format("AppArmor: Enforcing subprofile: %1", subprofile));
+	}
+	else 
 	{
 		switch (errno)
 		{
 		case EACCES:
-			OW_LOG_INFO(logger, Format("AppArmor: subprofile does not exist: %1", subprofile));
+			OW_LOG_INFO(logger, Format("AppArmor: Subprofile does not exist: %1", subprofile));
 			break; 
 		case EFAULT:
-			OW_LOG_ERROR(logger, Format("AppArmor: Internal error while attempting to enforce subprofile %1", subprofile));
+			OW_LOG_ERROR(logger, Format("AppArmor: Internal error while attempting to enforce subprofile: %1", subprofile));
 			break; 
 		case ENOMEM:
-			OW_LOG_ERROR(logger, Format("AppArmor: Insufficient kernel memory to enforce subprofile %1", subprofile));
+			OW_LOG_ERROR(logger, Format("AppArmor: Insufficient kernel memory to enforce subprofile: %1", subprofile));
 			break; 
 		default:
-			OW_LOG_ERROR(logger, Format("AppArmor: Unknown error while attempting to enforce %1: %2", subprofile, strerror(errno)));
+			OW_LOG_ERROR(logger, Format("AppArmor: Unknown error while attempting to enforce subprofile: %1: %2", subprofile, strerror(errno)));
 		}
 	}
 #endif
