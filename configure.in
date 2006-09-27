@@ -247,6 +247,8 @@ case "$target" in
 	esac
 
 	PLAT_OPTFLAGS="-O0"
+	ICONV_LIB="-liconv"
+	AC_SUBST(ICONV_LIB)
 	PIDFILE_DIR="/var/locks"
 	LIB_EXT="so"
 	AC_DEFINE(SETEUID_BREAKS_SETUID, 1, [seteuid() breaks setuid()])
@@ -269,6 +271,8 @@ case "$target" in
 	CXXSHAREDLIBLINKFLAGS="-dynamiclib -install_name \$(thelibdir)/\$(DYFILENAME) -compatibility_version \$(LIBRARY_BINARY_VERSION) -current_version \$(LIBRARY_BINARY_VERSION)"
 	CXXBUNDLELIBLINKFLAGS="-bundle"
 	PLAT_OPTFLAGS="-O2"
+	ICONV_LIB="-liconv"
+	AC_SUBST(ICONV_LIB)
 	PIDFILE_DIR="/var/run"
 	LIB_EXT="dylib.bundle"
 	OW_NO_WDEPRECATED=1
@@ -366,6 +370,8 @@ case "$target" in
 	CXXBINLINKFLAGS="-Wl,-Bdynamic"
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-h -Wl,$@.$(LIBRARY_BINARY_VERSION)'
 	PLAT_OPTFLAGS="-O3"
+	ICONV_LIB="-liconv"
+	AC_SUBST(ICONV_LIB)
 	PIDFILE_DIR="/var/run"
 	RPATH_LINK_FLAG="-R"
 	LIB_EXT="so"

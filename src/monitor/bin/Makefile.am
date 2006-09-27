@@ -6,7 +6,7 @@ owprivilegemonitor@OPENWBEM_LIBRARY_VERSION@_SOURCES = OW_PrivilegeMonitor.cpp
 owprivilegemonitor@OPENWBEM_LIBRARY_VERSION@_LDADD = \
   -L$(top_builddir)/src/monitor -lowprivman \
   -L$(top_builddir)/src/common -lopenwbem -lblocxx \
-  $(SSL_LIBS) \
+  $(SSL_LIBS) $(ICONV_LIB) \
   $(BINLINKAPPENDFLAGS)
 
 owprivilegemonitor@OPENWBEM_LIBRARY_VERSION@_LDFLAGS = $(CXXBINLINKFLAGS) -o owprivilegemonitor@OPENWBEM_LIBRARY_VERSION@$(EXEEXT)
