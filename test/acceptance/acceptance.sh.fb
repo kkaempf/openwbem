@@ -1696,6 +1696,7 @@ TestOOPProvider()
 	fi
 
 	if echo "$OUTPUT" | grep -q "exitStatus = exited with status 11" ||
+	   echo "$OUTPUT" | grep -q "No result from call to invokeMethod" ||
 	   echo "$OUTPUT" | grep -q "sending a BIN_END"; then
 	   :
 	else
