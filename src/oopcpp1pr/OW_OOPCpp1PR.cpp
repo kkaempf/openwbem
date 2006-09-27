@@ -356,8 +356,6 @@ public:
 		, m_inbuf(ibuf)
 		, m_outbuf(obuf)
 		, m_inpipe(inpipe)
-		, m_chdl(0)
-		, m_rchdl(0)
 	{}
 
 	CIMOMHandleIFCRef commonGetCIMOMHandle() const
@@ -403,21 +401,13 @@ public:
 
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const
 	{
-		if (!m_chdl)
-		{
-			BinarySerialization::write(m_outbuf, BinarySerialization::CIMOM_HANDLE_REQUEST);
-			m_chdl = commonGetCIMOMHandle();
-		}
-		return m_chdl;
+		BinarySerialization::write(m_outbuf, BinarySerialization::CIMOM_HANDLE_REQUEST);
+		return commonGetCIMOMHandle();
 	}
 	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 	{
-		if (!m_rchdl)
-		{
-			BinarySerialization::write(m_outbuf, BinarySerialization::REPOSITORY_CIMOM_HANDLE_REQUEST);
-			m_rchdl = commonGetCIMOMHandle();
-		}
-		return m_rchdl;
+		BinarySerialization::write(m_outbuf, BinarySerialization::REPOSITORY_CIMOM_HANDLE_REQUEST);
+		return commonGetCIMOMHandle();
 	}
 	virtual RepositoryIFCRef getRepository() const
 	{
@@ -466,8 +456,6 @@ private:
 	std::streambuf& m_inbuf;
 	std::streambuf& m_outbuf;
 	UnnamedPipeRef m_inpipe;
-	mutable CIMOMHandleIFCRef m_chdl;
-	mutable CIMOMHandleIFCRef m_rchdl;
 };
 
 //////////////////////////////////////////////////////////////////////////////
