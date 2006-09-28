@@ -2078,7 +2078,7 @@ main()
 	RESULTDIR=$STAGEDIR/results
 	BUILDDIR=${TOP_BUILDDIR}
 	PIDFILE=$STAGEDIR/owcimomd.pid
-	UDS_PATH="${STAGEDIR}${OWLOCALSTATEDIR}/openwbem/owcimomduds"
+	UDS_PATH="${STAGEDIR}/uds"
 	OWIPC=`echo ${UDS_PATH} | sed -e s'~/~%2F~g'`
 
 	# This is how the test method provider knows where to store it's state.
