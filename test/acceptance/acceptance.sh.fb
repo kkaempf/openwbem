@@ -184,7 +184,7 @@ $BUILDDIR/test/acceptance/oop/liboopassoctest.@lib_ext@ \
 			-e "s!.*log.main.format =\(.*\)!log.main.format = %-3r [%t] %-5p %F:%L %c - %m!g" \
 		    -e "s!.*log.main.flush =\(.*\)!log.main.flush = true!" \
 			-e "s!.*owcimomd.dump_socket_io =\(.*\)!owcimomd.dump_socket_io = $RESULTDIR!g" \
-			-e "s!.*wcimomd.authentication_module\(.*\)pam\(.*\)!owcimomd.authentication_module\1simple\2!g" \
+			-e "s!.*wcimomd.authentication_module\(.*\)pamcl\(.*\)!owcimomd.authentication_module\1simple\2!g" \
 			-e "s!.*wcimomd.wql_lib =\(.*\)!owcimomd.wql_lib = $STAGEDIR$OWLIBDIR/libowwql.@lib_ext@!g" \
 			-e "s!.*http_server.timeout =.*!http_server.timeout = 3000!g" \
 			-e "s!.*owcimomd.restart_on_error =.*!owcimomd.restart_on_error = false!g" \
@@ -1074,7 +1074,7 @@ TestAuth()
 
 	if grep "define OW_HAVE_PAM" $TOP_SRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
 		# just start with the pam authentication module to make sure it can be loaded.
-		EditConfig "s!owcimomd.authentication_module\(.*\)simple\(.*\)!owcimomd.authentication_module\1pam\2!g"
+		EditConfig "s!owcimomd.authentication_module\(.*\)simple\(.*\)!owcimomd.authentication_module\1pamcl\2!g"
 		RestartDaemon
 		
 		# if we have a pam username/password, then try it out
@@ -1087,7 +1087,7 @@ TestAuth()
 			ExitWithFail "10. Authentication test (pam): fakeclient return wrong code. $RVAL != 0"
 		fi
 		# switch back from pam
-		EditConfig "s!owcimomd.authentication_module\(.*\)pam\(.*\)!owcimomd.authentication_module\1simple\2!g" \
+		EditConfig "s!owcimomd.authentication_module\(.*\)pamcl\(.*\)!owcimomd.authentication_module\1simple\2!g" \
 		RestartDaemon
 	else
 		echo "OpenWBEM was not build with pam support"
