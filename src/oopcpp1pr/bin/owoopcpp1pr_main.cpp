@@ -55,6 +55,7 @@
 
 #ifdef OW_HAVE_SYS_APPARMOR_H
 #include <sys/apparmor.h>
+#include "OW_SecureRand.hpp"
 #endif
 
 using namespace std;
@@ -323,14 +324,15 @@ int main(int argc, char* argv[])
 	ProviderBaseIFCRef provider = ProviderBaseIFCRef(new LocalCppProvider(cppprov));
 
 #ifdef OW_HAVE_SYS_APPARMOR_H
+	unsigned int magtok = Secure::rand_uint<unsigned int>(); 
    	String subprofile = FileSystem::Path::basename(providerLib);  
 	subprofile = subprofile.substring(3, subprofile.indexOf('.')-3); 
-	int aarv = change_hat(subprofile.c_str(), 0); 
+	int aarv = change_hat(subprofile.c_str(), magtok); 
 	if (aarv != 0 && errno == EACCES)
 	{
 		OW_LOG_INFO(logger, Format("AppArmor: Subprofile does not exist: %1", subprofile));
 		subprofile = "default_provider_hat"; 
-		aarv = change_hat(subprofile.c_str(), 0);
+		aarv = change_hat(subprofile.c_str(), magtok);
 	}
 	if (aarv == 0)
 	{
