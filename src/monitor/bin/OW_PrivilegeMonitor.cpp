@@ -50,6 +50,7 @@
 #include "OW_Secure.hpp"
 #include "OW_String.hpp"
 #include "OW_Timeout.hpp"
+#include "blocxx/WaitpidThreadFix.hpp"
 
 #include <algorithm>
 #include <deque>
@@ -1224,6 +1225,7 @@ namespace
 	int aux_main(int argc, char * * argv)
 	{
 		::umask(0);
+		turnOffWaitpidThreadFix();
 
 		PrivilegeCommon::DescriptorInfo x
 			= PrivilegeCommon::monitor_descriptor();
