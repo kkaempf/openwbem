@@ -12,3 +12,4 @@ lib*dylib*
 *.nlm.*
 lib*sl*
 owoopcpp1pr
+owoopcmpipr
