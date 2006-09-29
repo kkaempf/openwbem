@@ -464,7 +464,8 @@ int callInstanceProvider(
 	ProviderBaseIFCRef provider,
 	std::streambuf& inbuf,
 	std::streambuf& outbuf,
-	const UnnamedPipeRef& stdinout)
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
 {
 	InstanceProviderIFC* instProvider = provider->getInstanceProvider();
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
@@ -497,6 +498,7 @@ int callInstanceProvider(
 			CIMClass cimClass = BinarySerialization::readClass(inbuf);
 
 			BinaryCIMInstanceWriter handler(outbuf);
+			initializeCallback.init(provenv);
 			instProvider->enumInstances(provenv, ns, className, handler, localOnly, deep,
 				includeQualifiers, includeClassOrigin, propertyListPtr, requestedClass, cimClass);
 		}
@@ -510,6 +512,7 @@ int callInstanceProvider(
 			CIMClass cimClass = BinarySerialization::readClass(inbuf);
 
 			BinaryCIMObjectPathWriter handler(outbuf);
+			initializeCallback.init(provenv);
 			instProvider->enumInstanceNames(provenv, ns, className, handler, cimClass);
 		}
 		break;
@@ -530,6 +533,7 @@ int callInstanceProvider(
 			BinarySerialization::readPropertyList(inbuf, propertyList, propertyListPtr);
 			CIMClass cimClass = BinarySerialization::readClass(inbuf);
 
+			initializeCallback.init(provenv);
 			CIMInstance rval = instProvider->getInstance(provenv, ns, instanceName, localOnly,
 				includeQualifiers, includeClassOrigin, propertyListPtr, cimClass);
 
@@ -545,6 +549,7 @@ int callInstanceProvider(
 			String ns = BinarySerialization::readString(inbuf);
 			CIMInstance instance = BinarySerialization::readInstance(inbuf);
 
+			initializeCallback.init(provenv);
 			CIMObjectPath rval = instProvider->createInstance(provenv, ns, instance);
 			if (!rval)
 			{
@@ -569,6 +574,7 @@ int callInstanceProvider(
 			BinarySerialization::readPropertyList(inbuf, propertyList, propertyListPtr);
 			CIMClass cimClass = BinarySerialization::readClass(inbuf);
 
+			initializeCallback.init(provenv);
 			instProvider->modifyInstance(provenv, ns, modifiedInstance, previousInstance,
 				includeQualifiers, propertyListPtr, cimClass);
 
@@ -582,6 +588,7 @@ int callInstanceProvider(
 			String ns = BinarySerialization::readString(inbuf);
 			CIMObjectPath cop = BinarySerialization::readObjectPath(inbuf);
 
+			initializeCallback.init(provenv);
 			instProvider->deleteInstance(provenv, ns, cop);
 
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
@@ -597,7 +604,8 @@ int callAssociatorProvider(
 	ProviderBaseIFCRef provider,
 	std::streambuf& inbuf,
 	std::streambuf& outbuf,
-	const UnnamedPipeRef& stdinout)
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
 {
 	AssociatorProviderIFC* assocProvider = provider->getAssociatorProvider();
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
@@ -620,6 +628,7 @@ int callAssociatorProvider(
 			String resultRole = BinarySerialization::readString(inbuf);
 
 			BinaryCIMObjectPathWriter handler(outbuf);
+			initializeCallback.init(provenv);
 			assocProvider->associatorNames(provenv, handler, ns, instanceName, assocClass,
 				resultClass, role, resultRole);
 		}
@@ -641,6 +650,7 @@ int callAssociatorProvider(
 			BinarySerialization::readPropertyList(inbuf, propertyList, propertyListPtr);
 
 			BinaryCIMInstanceWriter handler(outbuf);
+			initializeCallback.init(provenv);
 			assocProvider->associators(provenv, handler, ns, instanceName, assocClass, resultClass,
 				role, resultRole, includeQualifiers, includeClassOrigin, propertyListPtr);
 		}
@@ -653,6 +663,7 @@ int callAssociatorProvider(
 			String role = BinarySerialization::readString(inbuf);
 
 			BinaryCIMObjectPathWriter handler(outbuf);
+			initializeCallback.init(provenv);
 			assocProvider->referenceNames(provenv, handler, ns, instanceName,
 				resultClass, role);
 		}
@@ -672,6 +683,7 @@ int callAssociatorProvider(
 			BinarySerialization::readPropertyList(inbuf, propertyList, propertyListPtr);
 			
 			BinaryCIMInstanceWriter handler(outbuf);
+			initializeCallback.init(provenv);
 			assocProvider->references(provenv, handler, ns, instanceName, resultClass, role,
 				includeQualifiers, includeClassOrigin, propertyListPtr);
 		}
@@ -685,7 +697,8 @@ int callPolledProvider(UInt8 op,
 	ProviderBaseIFCRef provider,
 	std::streambuf& inbuf,
 	std::streambuf& outbuf,
-	const UnnamedPipeRef& stdinout)
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
 {
 	PolledProviderIFC* polledProvider = provider->getPolledProvider();
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
@@ -702,6 +715,7 @@ int callPolledProvider(UInt8 op,
 		case BinarySerialization::POLL:
 		{
 			//OW_LOG_DEBUG(logger, "owoopcpp1pr Got POLL command");
+			initializeCallback.init(provenv);
 			Int32 rval = polledProvider->poll(provenv);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 			BinarySerialization::write(outbuf, rval);
@@ -711,6 +725,7 @@ int callPolledProvider(UInt8 op,
 		case BinarySerialization::GET_INITIAL_POLLING_INTERVAL:
 		{
 			//OW_LOG_DEBUG(logger, "owoopcpp1pr Got GET_INITIAL_POLLING_INTERVAL command");
+			initializeCallback.init(provenv);
 			Int32 rval = polledProvider->getInitialPollingInterval(provenv);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 			BinarySerialization::write(outbuf, rval);
@@ -727,7 +742,8 @@ int callIndicationProvider(
 	ProviderBaseIFCRef provider,
 	std::streambuf& inbuf,
 	std::streambuf& outbuf,
-	const UnnamedPipeRef& stdinout)
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
 {
 	IndicationProviderIFC* indicationProvider = provider->getIndicationProvider();
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
@@ -748,6 +764,7 @@ int callIndicationProvider(
 			String eventType = BinarySerialization::readString(inbuf);
 			String nameSpace = BinarySerialization::readString(inbuf);
 			StringArray classes = BinarySerialization::readStringArray(inbuf);
+			initializeCallback.init(provenv);
 			Int32 rval = indicationProvider->mustPoll(provenv, filter, eventType, nameSpace, classes);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 			BinarySerialization::write(outbuf, rval);
@@ -762,6 +779,7 @@ int callIndicationProvider(
 			String nameSpace = BinarySerialization::readString(inbuf);
 			StringArray classes = BinarySerialization::readStringArray(inbuf);
 			String owner = BinarySerialization::readString(inbuf);
+			initializeCallback.init(provenv);
 			indicationProvider->authorizeFilter(provenv, filter, eventType, nameSpace, classes, owner);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 		}
@@ -776,6 +794,7 @@ int callIndicationProvider(
 			StringArray classes = BinarySerialization::readStringArray(inbuf);
 			Bool firstActivation;
 			firstActivation.readObject(inbuf);
+			initializeCallback.init(provenv);
 			indicationProvider->activateFilter(provenv, filter, eventType, nameSpace, classes, firstActivation);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 		}
@@ -790,6 +809,7 @@ int callIndicationProvider(
 			StringArray classes = BinarySerialization::readStringArray(inbuf);
 			Bool lastActivation;
 			lastActivation.readObject(inbuf);
+			initializeCallback.init(provenv);
 			indicationProvider->deActivateFilter(provenv, filter, eventType, nameSpace, classes, lastActivation);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 		}
@@ -805,7 +825,8 @@ int callIndicationExportProvider(
 	ProviderBaseIFCRef provider,
 	std::streambuf& inbuf,
 	std::streambuf& outbuf, 
-	const UnnamedPipeRef& stdinout)
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
 {
 	IndicationExportProviderIFC* indicationExportProvider = provider->getIndicationExportProvider();
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
@@ -825,6 +846,7 @@ int callIndicationExportProvider(
 			String ns = BinarySerialization::readString(inbuf);
 			CIMInstance indHandlerInst = BinarySerialization::readInstance(inbuf);
 			CIMInstance indicationInst = BinarySerialization::readInstance(inbuf);
+			initializeCallback.init(provenv);
 			indicationExportProvider->exportIndication(provenv, ns, indHandlerInst, indicationInst);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 		}
@@ -840,7 +862,8 @@ int callMethodProvider(
 	ProviderBaseIFCRef provider,
 	std::streambuf& inbuf,
 	std::streambuf& outbuf,
-	const UnnamedPipeRef& stdinout)
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
 {
 	//OW_LOG_DEBUG(logger, "owoopcpp1pr Got BIN_INVMETH command");
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
@@ -861,6 +884,7 @@ int callMethodProvider(
 
 	ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
 	CIMParamValueArray outparms;
+	initializeCallback.init(provenv);
 	CIMValue cv = methProvider->invokeMethod(provenv, ns, path, methodName, inparms, outparms);
 	//OW_LOG_DEBUG(logger, "invokeMethod done");
 	BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
@@ -943,7 +967,8 @@ OOPCpp1ProviderRunner::getProviderEnvironment()
 int
 OOPCpp1ProviderRunner::runProvider(
 	ProviderBaseIFCRef& provider,
-	const String& sourceLib)
+	const String& sourceLib,
+	InitializeCallback& initializeCallback)
 {
 	int rval = 0;
 	Logger logger(COMPONENT_NAME);
@@ -979,13 +1004,13 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::BIN_MODIFYINST:
 				case BinarySerialization::BIN_DELETEINST:
 				{
-					rval = callInstanceProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
+					rval = callInstanceProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
 				}
 				break;
 
 				case BinarySerialization::BIN_INVMETH:
 				{
-					rval = callMethodProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
+					rval = callMethodProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
 				}
 				break;
 
@@ -994,7 +1019,7 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::BIN_REFNAMES:
 				case BinarySerialization::BIN_REFERENCES:
 				{
-					rval = callAssociatorProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
+					rval = callAssociatorProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
 				}
 				break;
 
@@ -1016,7 +1041,7 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::POLL:
 				case BinarySerialization::GET_INITIAL_POLLING_INTERVAL:
 				{
-					rval = callPolledProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
+					rval = callPolledProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
 				}
 				break;
 
@@ -1025,13 +1050,13 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::ACTIVATE_FILTER:
 				case BinarySerialization::DEACTIVATE_FILTER:
 				{
-					rval = callIndicationProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
+					rval = callIndicationProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
 				}
 				break;
 
 				case BinarySerialization::EXPORT_INDICATION:
 				{
-					rval = callIndicationExportProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
+					rval = callIndicationExportProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
 				}
 				break;
 

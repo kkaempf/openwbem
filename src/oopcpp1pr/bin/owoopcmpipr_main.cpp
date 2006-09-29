@@ -198,7 +198,25 @@ int processCommandLine(
 
 void printUsage();
 
-}
+
+// TODO: CMPI initialized the provider right after it runs. However the provider environment won't work at that time, 
+// so it should be changed to initialize using this callback.
+class CMPIProvInitializer : public OOPCpp1ProviderRunner::InitializeCallback
+{
+public:
+	CMPIProvInitializer()
+	{
+	}
+
+private:
+	void doInit(const ProviderEnvironmentIFCRef& provenv)
+	{
+		// nothing to do for now.
+	}
+
+};
+
+} // end anonymous namespace
 
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
@@ -312,7 +330,8 @@ int main(int argc, char* argv[])
 	}
 #endif
 
-	return provrunner.runProvider(provider, providerLib);
+	CMPIProvInitializer cmpiProvInitializer;
+	return provrunner.runProvider(provider, providerLib, cmpiProvInitializer);
 }
 
 namespace

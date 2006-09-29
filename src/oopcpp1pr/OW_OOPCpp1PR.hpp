@@ -53,8 +53,35 @@ class OOPCpp1ProviderRunner
 public:
 	static const char* const COMPONENT_NAME;
 
+	class InitializeCallback
+	{
+	public:
+		InitializeCallback()
+			: m_initialized(false)
+		{
+		}
+
+		virtual ~InitializeCallback()
+		{
+		}
+	
+	public:
+		void init(const ProviderEnvironmentIFCRef& provenv)
+		{
+			if (!m_initialized)
+			{
+				doInit(provenv);
+				m_initialized = true;
+			}
+		}
+
+	private:
+		virtual void doInit(const ProviderEnvironmentIFCRef& provenv) = 0;
+		bool m_initialized;
+	};
+
 	OOPCpp1ProviderRunner(const UnnamedPipeRef& IOPipe, const String& logFile, const String& logLevel);
-	int runProvider(ProviderBaseIFCRef& provider, const String& sourceLib);
+	int runProvider(ProviderBaseIFCRef& provider, const String& sourceLib, InitializeCallback& initializeCallback);
 	ProviderEnvironmentIFCRef getProviderEnvironment();
 
 private:

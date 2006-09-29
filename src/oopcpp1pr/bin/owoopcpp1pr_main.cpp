@@ -236,7 +236,41 @@ int processCommandLine(
 );
 void printUsage();
 
-}
+class CPPProvInitializer : public OOPCpp1ProviderRunner::InitializeCallback
+{
+public:
+	CPPProvInitializer(const CppProviderBaseIFCRef& cppProv, const String& providerLib)
+	: m_cppProv(cppProv)
+	, m_providerLib(providerLib)
+	{
+	}
+
+private:
+	void doInit(const ProviderEnvironmentIFCRef& provenv)
+	{
+		try
+		{
+			m_cppProv->initialize(provenv);
+		}
+		catch(Exception& e)
+		{
+			Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
+			OW_LOG_ERROR(logger, Format("provider %1 failed to initialize: %2", m_providerLib, e));
+			throw;
+		}
+		catch(...)
+		{
+			Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
+			OW_LOG_ERROR(logger, Format("provider %1 failed to initialize", m_providerLib));
+			throw;
+		}
+	}
+
+	CppProviderBaseIFCRef m_cppProv;
+	String m_providerLib;
+};
+
+} // end anonymous namespace
 
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
@@ -311,15 +345,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	try
-	{
-		cppprov->initialize(penv);
-	}
-	catch(...)
-	{
-		OW_LOG_ERROR(logger, Format("provider %1 failed to initialize", providerLib));
-		return 1;
-	}
+	CPPProvInitializer cppProvInitializer(cppprov, providerLib);
 
 	ProviderBaseIFCRef provider = ProviderBaseIFCRef(new LocalCppProvider(cppprov));
 
@@ -357,7 +383,7 @@ int main(int argc, char* argv[])
 	}
 #endif
 
-	return provrunner.runProvider(provider, providerLib);
+	return provrunner.runProvider(provider, providerLib, cppProvInitializer);
 }
 
 namespace
