@@ -385,7 +385,7 @@ namespace
 		proc_map_t m_proc_map;
 		SecurePathCache m_secure_paths;
 		bool m_done;
-	};
+	}; // end class Monitor
 
 	Monitor::Monitor(
 		std::auto_ptr<IPCIO> & p_conn,
@@ -1046,6 +1046,10 @@ namespace
 			CHECK_ERRNO(wpid >= 0, "wait_pid");
 			if (Process::Status(wpid, status).terminated())
 			{
+				// Prevent future waitpids from being called when the destructor happens.
+				m_proc_map[pid]->release();
+
+				// Remove the process from the selection of processes currently maintained by this instance of the monitor.
 				m_proc_map.erase(pid);
 			}
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
