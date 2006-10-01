@@ -66,6 +66,7 @@
 #include "OW_ServiceIFCNames.hpp"
 #include "OW_Thread.hpp" // for ThreadException
 #include "OW_SPNEGOAuthentication.hpp"
+#include "OW_PrivilegeManager.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -743,6 +744,33 @@ HTTPServer::start()
 														 ConfigOpts::HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt).c_str());
 				}
 				//SSLCtxMgr::initServer(certfile, keyfile);
+				
+				if (! FileSystem::canRead(m_sslopts.keyfile))
+				{
+					PrivilegeManager privmgr = PrivilegeManager::getPrivilegeManager();
+					if (privmgr.isNull())
+					{
+						OW_THROW(HTTPServerException, "HTTP Service: Unable to get privilege manager"); 
+					}
+					AutoDescriptor fd = privmgr.open(m_sslopts.keyfile, PrivilegeManager::in); 
+					FILE* fp = fdopen(fd.get(), "r"); 
+					if (fp == NULL)
+					{
+						OW_THROW(HTTPServerException, Format("Unable to read key file %1: %2", m_sslopts.keyfile, strerror(errno)).c_str()); 
+					}
+					BIO* in = BIO_new_fp(fp, BIO_NOCLOSE); 
+					if (in == NULL)
+					{
+						OW_THROW(HTTPServerException, Format("Unable to read key file %1: %2", m_sslopts.keyfile, SSLCtxMgr::getOpenSSLErrorDescription()).c_str()); 
+					}
+					m_sslopts.pkey = PEM_read_bio_PrivateKey(in, NULL, NULL, NULL); 
+					if (m_sslopts.pkey == NULL)
+					{
+						BIO_free(in); 
+						OW_THROW(HTTPServerException, Format("Unable to read key file %1: %2", m_sslopts.keyfile, SSLCtxMgr::getOpenSSLErrorDescription()).c_str()); 
+					}
+					BIO_free(in); 
+				}
 				m_sslCtx = SSLServerCtxRef(new SSLServerCtx(m_sslopts));
 				if (m_sslopts.verifyMode != SSLOpts::MODE_DISABLED)
 				{
