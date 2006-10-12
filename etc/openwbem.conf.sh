@@ -46,6 +46,16 @@ owcimomd.allow_anonymous = false
 log.main.type = syslog
 
 ################################################################################
+# log.main.identity specifies the syslog identity.
+# This option only is applicable if the log type == "syslog"
+log.main.identity = @PACKAGE_PREFIX@owcimomd
+
+################################################################################
+# log.main.facility specifies the syslog facility.
+# This option only is applicable if the log type == "syslog"
+log.main.facility = daemon
+
+################################################################################
 # log.main.location specifies the location of the log file
 # (if the type == "file".)
 ;log.main.location =
