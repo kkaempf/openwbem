@@ -9,8 +9,7 @@ Time_pthread_once statically links to libopenwbem.
 
 
 Testing:
-    - smaller schema for make check.  create classes to exercise all aspects 
-      of mof and xml.
+    - create classes to exercise all aspects of mof and xml.
     - bad xml tests
     - do some interop testing (client-server & server-client)
       - snia old and new (http://www.opengroup.org/snia-cimom/)
