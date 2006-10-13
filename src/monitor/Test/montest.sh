@@ -14,7 +14,7 @@ config_dir_owner=$2
 config_dir_perms=$3
 testtgz=$4
 inpf=$5
-goldout=$6
+exceptionlist=$6
 goldtgz=$7
 nofail=$8
 
@@ -146,13 +146,7 @@ fi
 # echo "No log file found"
 # fi
 
-if diff $goldout montest.out; then
-	:
-else
-	foo=$?
-	echo "Execution output did not match \"gold\" output." >&2
-	exit ${foo}
-fi
+./check_for_exceptions.sh ${exceptionlist} montest.out || exit 1
 
 rm -rf $gold_dir
 mkdir -p $gold_dir

@@ -9,6 +9,23 @@
 #include <vector>
 #include <stdexcept>
 
+//
+// Usage: read_privconfig <config_file> <path_file> <exec_file> <ident1> ... <identN>
+//   config_file: the privilege file containing rules for opening, unlinking,
+//      renaming, execution (monitor, user, and both with checked arguments),
+//      and similar rules.
+//   path_file:  a file containing a newline separated list of paths that is
+//      applied to all file-based rules in the config file and any matching
+//      rules are printed to stdout.
+//   exec_file:  a file containing a newline separated list of command lines
+//      that are applied to the exec rules in the config file and any matching
+//      rules are printed to stdout.
+//   ident1..N: user identifiers to use in comparing the exec tests.
+//
+// When printing out the matches, any matching rule will be displayed as '1',
+// and non-matching rules as '.'
+
+
 using std::cout;
 using std::endl;
 using namespace OpenWBEM;

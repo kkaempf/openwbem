@@ -12,7 +12,7 @@ thisdir=`/bin/pwd`
 script_cfgpath=$1
 testtgz=$2
 inpf=$3
-goldout=$4
+exception_list=$4
 goldtgz=$5
 
 # Convert $inpf to an absolute path
@@ -103,7 +103,7 @@ chmod -R og-rwx $test_dir
 ./perl_launcher $config_dir $user $safe_bin $base_dir/`basename $inpf` \
 	> monperltest.out 2>&1
 
-diff $goldout monperltest.out
+./check_for_exceptions.sh $exception_list monperltest.out
 
 rm -rf $gold_dir
 mkdir -p $gold_dir

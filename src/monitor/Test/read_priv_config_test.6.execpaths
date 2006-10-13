@@ -1,0 +1,14 @@
+/bin/foo /quux/flurp
+/bin/foo /quux/norf /quux/glarp
+/bin/foo /noiz/erroneous1
+/bin/foo erroneous2
+/bin/bar something
+/bin/bar something different
+/bin/bar something broken here
+/bin/baz *
+/bin/baz * anything
+/bin/baz @
+/bin/baz @ * @
+/bin/baz unacceptable
+/bin/noid
+/bin/noid a b c

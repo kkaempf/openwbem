@@ -1,3 +1,0 @@
-Caught OpenWBEM::Exception:
-  type: PrivilegeManagerException
-  msg:  PrivilegeManager::PrivilegeManager: config_dir is insecure

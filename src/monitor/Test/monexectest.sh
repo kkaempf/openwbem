@@ -12,7 +12,7 @@ config_dir_owner=$2
 config_dir_perms=$3
 testtgz=$4
 inpf=$5
-goldout=$6
+exception_list=$6
 goldtgz=$7
 
 
@@ -118,7 +118,7 @@ sed ${extended_sed_flag} -e 's/^  OW_PRIVILEGE_MONITOR_DESCRIPTOR=[0-9]+;$/  OW_
 	-e 's/^  .+PATH=.*;$/  XPATH=XXX;/' \
 	-e 's/monitoredUserSpawn/monitoredSpawn/' \
   < monexectest.out.tmp > monexectest.out
-diff $goldout monexectest.out
+./check_for_exceptions.sh $exception_list monexectest.out
 
 rm -rf $gold_dir
 mkdir -p $gold_dir

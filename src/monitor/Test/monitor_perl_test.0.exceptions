@@ -1,0 +1,3 @@
+CheckException   PrivilegeManager::readDirectory: could not read /dir/doesnt/exist/
+CheckException   PrivilegeManager::readDirectory: could not read /dir/doesnt/exist/
+
