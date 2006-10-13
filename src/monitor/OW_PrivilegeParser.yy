@@ -71,6 +71,7 @@ void openwbem_privconfig_error(
 %}
 
 %defines
+%debug
 %name-prefix="openwbem_privconfig_"
 %error-verbose
 %locations
@@ -263,6 +264,7 @@ exec_arg_list:
 	/* empty */ { $$ = new Array<ExecArgsPatterns::Arg>; }
 | exec_arg_list path_pattern { $1->push_back(ExecArgsPatterns::Arg($2, ExecArgsPatterns::E_PATH_PATTERN_ARG)); $$ = $1; }
 | exec_arg_list NAME { $1->push_back(ExecArgsPatterns::Arg($2, ExecArgsPatterns::E_LITERAL_ARG)); $$ = $1; }
+| exec_arg_list SPLAT { $1->push_back(ExecArgsPatterns::Arg($2, ExecArgsPatterns::E_ANYTHING_ARG)); $$ = $1; }
 ;
 
 %%

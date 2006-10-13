@@ -233,7 +233,11 @@ ExecArgsPatterns::match(String const & exec_path, Array<String> const & args, St
 			bool argsMatch = true;
 			for (size_t j = 0; j < argsPattern.size(); ++j)
 			{
-				if (argsPattern[j].argType == E_PATH_PATTERN_ARG)
+				if (argsPattern[j].argType == E_ANYTHING_ARG)
+				{
+					// We'll eat anything and like it.
+				}
+				else if (argsPattern[j].argType == E_PATH_PATTERN_ARG)
 				{
 					PathPatterns tmppp;
 					tmppp.add_pattern(argsPattern[j].arg.c_str());

@@ -153,7 +153,8 @@ public:
 	enum EArgType
 	{
 		E_PATH_PATTERN_ARG,
-		E_LITERAL_ARG
+		E_LITERAL_ARG,
+		E_ANYTHING_ARG // Not as useful as a regular expression, but this will allow a single argument to contain any value.
 	};
 	struct Arg
 	{

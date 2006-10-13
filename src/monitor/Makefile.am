@@ -6,6 +6,8 @@ endif
 
 SUBDIRS = . bin $(MPDIRS) Test
 
+YFLAGS = -t -v
+
 MAKEDYLIB=1
 include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs

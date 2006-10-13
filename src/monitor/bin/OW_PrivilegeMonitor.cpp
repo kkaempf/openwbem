@@ -53,6 +53,7 @@
 #include "blocxx/WaitpidThreadFix.hpp"
 
 #include <algorithm>
+#include <iterator>
 #include <deque>
 #include <fstream>
 #include <fcntl.h>
@@ -123,6 +124,21 @@ namespace
 
 	OW_DECLARE_EXCEPTION(Check);
 	OW_DEFINE_EXCEPTION(Check);
+
+	String simpleUntokenize(const StringArray& arr, const String& separator = ", ")
+	{
+		String output;
+		StringArray::const_iterator iter = arr.begin();
+		if( iter != arr.end() )
+		{
+			output = *iter;
+			for( ++iter; iter != arr.end(); ++iter )
+			{
+				output += separator + *iter;
+			}
+		}
+		return output;
+	}
 
 	void report_error(IPCIO & conn, Exception const & e)
 	{
@@ -584,7 +600,7 @@ namespace
 		{
 			this->check_valid_path(path, "open");
 			CHECKARGS(has_open_priv(path, flags, priv()),
-				"open: insufficient privileges");
+				Format("open: insufficient privileges: file=\"%1\" flags=%2, perms=%3", path, flags, perms).c_str());
 
 			char const * cpath = path.c_str();
 			AutoDescriptor d;
@@ -612,7 +628,7 @@ namespace
 					d.reset(::open(cpath, O_RDWR | O_CREAT | O_APPEND, perms));
 					break;
 				default:
-					CHECKARGS(false, "open: illegal flags parameter");
+					CHECKARGS(false, Format("open: illegal flags parameter: %1", perms).c_str());
 			}
 			CHECK_ERRNO(d.get() >= 0, "open");
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
@@ -634,7 +650,7 @@ namespace
 		{
 			this->check_valid_path(dirpath, "readDirectory");
 			CHECKARGS(priv().read_dir.match(dirpath),
-				"readDirectory: insufficient privileges");
+				Format("readDirectory: insufficient privileges: dirpath=\"%1\" opt=%2", dirpath, opt).c_str());
 
 			StringArray dir_entries;
 			bool ok = FileSystem::getDirectoryContents(dirpath, dir_entries);
@@ -669,7 +685,7 @@ namespace
 		{
 			this->check_valid_path(lpath, "readLink");
 			CHECKARGS(priv().read_link.match(lpath),
-				"readLink: insufficient privileges");
+				Format("readLink: insufficient privileges: path=\"%1\"", lpath).c_str());
 
 			String s = FileSystem::readSymbolicLink(lpath);
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
@@ -691,11 +707,11 @@ namespace
 		{
 			this->check_valid_path(old_path, "rename");
 			CHECKARGS(priv().rename_from.match(old_path),
-				"rename: insufficient privileges");
+				Format("rename: insufficient privileges for source path: %1", old_path).c_str());
 
 			this->check_valid_path(new_path, "rename");
 			CHECKARGS(priv().rename_to.match(new_path),
-				"rename: insufficient privileges");
+				Format("rename: insufficient privileges for dest path: %1", new_path).c_str());
 
 			bool ok = FileSystem::renameFile(old_path, new_path);
 			CHECK(ok,
@@ -717,7 +733,7 @@ namespace
 		{
 			this->check_valid_path(path, "unlink");
 			CHECKARGS(priv().unlink.match(path),
-				"unlink: insufficient privileges");
+				Format("unlink: insufficient privileges: path=\"%1\"", path).c_str());
 
 			bool ok = FileSystem::removeFile(path);
 
@@ -946,7 +962,7 @@ namespace
 			CHECKARGS(xargv.second,	"monitoredSpawn: argv too large");
 			CHECKARGS(priv().monitored_exec.match(exec_path, app_name)
 				|| priv().monitored_exec_check_args.match(exec_path, xargv.first, app_name),
-				"monitoredSpawn: insufficient privileges");
+				Format("monitoredSpawn: insufficient privileges: path=\"%1\" app=\"%2\" args={%3}", exec_path, app_name, simpleUntokenize(xargv.first)).c_str());
 			CHECKARGS(xenvp.second,	"monitoredSpawn: envp too large");
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
@@ -989,7 +1005,7 @@ namespace
 			CHECKARGS(xargv.second,	"monitoredUserSpawn: argv too large");
 			CHECKARGS(priv().monitored_user_exec.match(exec_path, app_name, user_name)
 				|| priv().monitored_user_exec_check_args.match(exec_path, xargv.first, app_name, user_name),
-				"monitoredUserSpawn: insufficient privileges");
+				Format("monitoredUserSpawn: insufficient privileges: user=%1 path=\"%2\" app=\"%3\" args={%4}", user_name, exec_path, app_name, simpleUntokenize(xargv.first)).c_str());
 			CHECKARGS(xenvp.second,	"monitoredUserSpawn: envp too large");
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
@@ -1127,9 +1143,9 @@ namespace
 			CHECKARGS(working_dir.length() <= MAX_PATH_LENGTH,
 				"userSpawn: working dir too long");
 			CHECKARGS(xargv.second, "userSpawn: argv too large");
-			CHECKARGS(priv().user_exec.match(exec_path, user_name) 
+			CHECKARGS(priv().user_exec.match(exec_path, user_name)
 				|| priv().user_exec_check_args.match(exec_path, xargv.first, user_name),
-				"userSpawn: insufficient privileges");
+				Format("userSpawn: insufficient privileges: user=%1 path=\"%2\" dir=\"%3\" args={%4}", user_name, exec_path, working_dir, simpleUntokenize(xargv.first)).c_str());
 			CHECKARGS(xenvp.second, "userSpawn: envp too large");
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
@@ -1225,6 +1241,7 @@ namespace
 			"user name specified as both " + cfg_user + " and " + arg_user);
 		return have_cfg_user ? cfg_user : String(arg_user);
 	}
+
 
 	int aux_main(int argc, char * * argv)
 	{
