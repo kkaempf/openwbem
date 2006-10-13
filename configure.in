@@ -1528,6 +1528,8 @@ AC_ARG_WITH(search-dir,
 
 dnl Check for BloCxx
 AC_CHECK_HEADER([blocxx/BLOCXX_config.h], [], [echo "** ERROR: You must install BloCxx **"; exit 1])
+BLOCXX_LIBS="-lblocxx $ICONV_LIB"
+AC_SUBST(BLOCXX_LIBS)
 
 # The big search for OpenSSL.  Thanks to the openssh configure.in file!
 saved_LDFLAGS="$LDFLAGS"

@@ -8,7 +8,7 @@ INCLUDES= \
 
 owmofinstalltooltest_LDADD = \
 -L$(top_srcdir)/test/acceptance/progs/common -low_test_common \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 

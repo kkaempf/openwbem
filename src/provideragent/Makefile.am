@@ -10,7 +10,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libowprovideragent.$(LIB_EXT)
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/provider -lowprovider \

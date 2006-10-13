@@ -11,7 +11,7 @@ uninstall-local : uninstall-ow-shared-libs
 owstatlib_LIBRARIES = libowcppprovifc.a
 OW_SHARED_LIBS = libowcppprovifc.$(LIB_EXT)
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/provider -lowprovider
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)

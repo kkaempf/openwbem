@@ -59,7 +59,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/cimom/common
 
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/provider -lowprovider \

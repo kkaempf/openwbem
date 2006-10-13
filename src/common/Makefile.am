@@ -8,7 +8,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libopenwbem.$(LIB_EXT)
-SHAREDLIBADD = $(DL_LIB) $(SSL_LIBS) -lblocxx
+SHAREDLIBADD = $(DL_LIB) $(SSL_LIBS) $(BLOCXX_LIBS)
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 MAKEDYLIB=1

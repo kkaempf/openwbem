@@ -24,7 +24,7 @@ owoopcpp1pr_LDADD = \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/requesthandlers/binary -lowrequesthandlerbinary \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) $(BINLINKAPPENDFLAGS) $(APPARMOR_LIBS)
 
 owoopcpp1pr_SOURCES = \
@@ -50,7 +50,7 @@ owoopcmpipr_LDADD = \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/requesthandlers/binary -lowrequesthandlerbinary \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) $(BINLINKAPPENDFLAGS) $(APPARMOR_LIBS)
 
 owoopcmpipr_SOURCES = \

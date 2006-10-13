@@ -10,7 +10,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 owstatlib_LIBRARIES = libowserver.a
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
 
 OW_SHARED_LIBS = libowserver.$(LIB_EXT)
 thelibdir = $(libdir)
