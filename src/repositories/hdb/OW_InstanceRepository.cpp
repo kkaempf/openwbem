@@ -280,6 +280,7 @@ InstanceRepository::getCIMInstance(
 			propertyList);
 	}
 	
+	ci.setNameSpace(ns); 
 	return ci;
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION

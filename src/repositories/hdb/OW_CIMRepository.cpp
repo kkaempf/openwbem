@@ -1315,7 +1315,7 @@ namespace
 		{
 			CIMObjectPath op = e.m_associatedObject;
 			CIMInstance ci = hdl->getInstance(op.getNameSpace(), op, E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList);
-			// TODO: This is a problem because the correct object path may not be passed back! The namespace will be lost, since a CIMInstance can't hold a namespace.
+			ci.setNameSpace(op.getNameSpace()); 
 			result.handle(ci);
 		}
 	private:
@@ -1349,6 +1349,7 @@ namespace
 		{
 			CIMObjectPath op = e.m_associationPath;
 			CIMInstance ci = hdl->getInstance(op.getNameSpace(), op, E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList);
+			ci.setNameSpace(op.getNameSpace()); 
 			result.handle(ci);
 		}
 	private:
