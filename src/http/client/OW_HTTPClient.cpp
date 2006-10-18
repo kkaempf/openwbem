@@ -833,6 +833,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 			else
 			{
 				rt = FATAL; // support protocol upgrades?  nope.
+				reasonPhrase = Format("%1: Protocol Upgrades Not Supported", isc);
 			}
 			break;
 		case '2':
@@ -841,6 +842,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 			break;
 		case '3':
 			rt = FATAL; // support redirects?  I think not...
+			reasonPhrase = Format("%1: Redirects Not Supported", isc);
 			break;
 		case '4':
 			close();
@@ -860,6 +862,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					else
 					{
 						rt = FATAL; // already tried authorization once.
+						reasonPhrase = Format("%1: Authentication failure", isc);
 					}
 					break;
 				case SC_METHOD_NOT_ALLOWED:
@@ -872,11 +875,13 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					else
 					{
 						rt = FATAL;
+						reasonPhrase = Format("%1: Server doesn't support request method", isc);
 					}
 					break;
 			default:
 					close();
 					rt = FATAL;
+					reasonPhrase = String(isc);
 					break;
 			} // switch (isc)
 			break;
@@ -896,10 +901,12 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					else
 					{
 						rt = FATAL;
+						reasonPhrase = String(isc);
 					}
 					break;
 				default:
 					rt = FATAL;
+					reasonPhrase = String(isc);
 					break;
 			} // switch (isc)
 			break;
@@ -913,6 +920,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 	if (!CIMError.empty())
 	{
 		rt = FATAL;
+		reasonPhrase = "Received CIMError"; 
 	}
 
 	return rt;
@@ -987,8 +995,13 @@ HTTPClient::checkResponse(Resp_t& rt)
 			if (m_socket.receiveTimeOutExpired())
 			{
 				reasonPhrase = Format("Client receive timeout (%1 seconds) expired.", m_socket.getReceiveTimeout());
+				rt = FATAL;
 			}
-			rt = FATAL;
+			else
+			{
+				reasonPhrase = "Lost input stream"; 
+				rt = RETRY;
+			}
 			close();
 			break;
 		}
@@ -1005,9 +1018,10 @@ HTTPClient::checkResponse(Resp_t& rt)
 	if (rt == RETRY)
 	{
 		++m_retryCount;
-		if (m_retryCount > 3)
+		if (m_retryCount > 5)
 		{
 			rt = FATAL;
+			reasonPhrase = "Exceeded 5 retries";
 		}
 		else
 		{
