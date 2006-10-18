@@ -173,7 +173,7 @@ owspnegogssapihelperbindir = $(libexecdir)/openwbem
 owspnegogssapihelper_SOURCES = owspnegogssapihelper_main.cpp
 
 owspnegogssapihelper_LDFLAGS = \
-$(KRB5_LDFLAGS) $(LIB_resolv) \
+$(KRB5_LDFLAGS) $(GSSAPI_LIBS) $(LIB_resolv) \
 -o owspnegogssapihelper$(EXEEXT)
 
 owspnegogssapihelper_LDADD = \
@@ -182,7 +182,7 @@ owspnegogssapihelper_LDADD = \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
-owspnegogssapihelper_CPPFLAGS = -I$(srcdir) $(KRB5_CPPFLAGS) $(AM_CPPFLAGS) $(DEFS)
+owspnegogssapihelper_CPPFLAGS = -I$(srcdir) $(KRB5_CPPFLAGS) $(GSSAPI_CPPFLAGS) $(AM_CPPFLAGS) $(DEFS)
 endif
 
 INCLUDES = \

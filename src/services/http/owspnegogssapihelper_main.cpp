@@ -50,7 +50,7 @@
 extern "C" {
 #include <unistd.h>
 #include <stdlib.h>
-#ifdef OW_KRB5
+#ifdef OW_HAVE_KRB5
 #include <krb5.h>
 #ifdef OW_HEIMDAL
 #include <gssapi.h>
@@ -61,7 +61,7 @@ extern "C" {
 #define GSS_C_NT_USER_NAME gss_nt_user_name
 #define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
 #endif /* OW_HEIMDAL */
-#endif /* OW_KRB5 */
+#endif /* OW_HAVE_KRB5 */
 }
 
 using namespace std;
@@ -89,6 +89,10 @@ static gss_OID_desc spnego_oid_desc = {6,
                                  (void *) "\x2b\x06\x01\x05\x05\x02"
                                        };
 
+	// The default identifier passed to the syslog appender.
+	const char* const SPNEGO_LOG_IDENT = "owspnego";
+	const char* const SPNEGO_LOG_FACILITY = "auth";
+
 LogAppenderRef getlogappender()
 {
 	StringArray components;
@@ -98,9 +102,10 @@ LogAppenderRef getlogappender()
 	categories.push_back("*");
 
 	LogAppenderRef logappender = new SyslogAppender(components, categories,
-                                        SyslogAppender::STR_DEFAULT_MESSAGE_PATTERN);
+		SyslogAppender::STR_DEFAULT_MESSAGE_PATTERN,
+		SPNEGO_LOG_IDENT,
+		SPNEGO_LOG_FACILITY);
 	return logappender;
-	
 }
 
 Logger logger("ow.helper", getlogappender());
