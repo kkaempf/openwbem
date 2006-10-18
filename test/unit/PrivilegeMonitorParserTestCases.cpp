@@ -67,6 +67,9 @@
 
 using namespace OpenWBEM;
 
+// set this to 1 to enable parser debugging
+//extern int openwbem_privconfig_debug;
+
 void PrivilegeMonitorParserTestCases::setUp()
 {
 }
@@ -236,6 +239,7 @@ user_exec                                       \n\
 		String cmd3("/bin/foo #@! f g");
 		String cmd4("/bin/foo *");
 		String cmd5("/bin/foo * @ *");
+		String cmd6("/bin/foo str");
 
 		String bad_cmd1("/bin/quux");
 		String bad_cmd2("/bin/foo x y z");
@@ -247,14 +251,16 @@ user_exec                                       \n\
 		String user("id");
 		String bad_user("occidare");
 		String input(Format("\
-user_exec_check_args	                           \n\
+user_exec_check_args	                        \n\
 {                                               \n\
   /bin/foo @ %1                                 \n\
-  /bin/foo a b c @ %1                           \n\
+  /bin/foo \"a\" \"b\" \"c\" @ %1                           \n\
   # Allow a single argument to be anything      \n\
-  /bin/foo * f g @ %1                           \n\
-  /bin/foo \\* @ %1                             \n\
-  /bin/foo \\* \\@ \\* @ %1                     \n\
+  /bin/foo * \"f\" \"g\" @ %1                           \n\
+  /bin/foo \"*\" @ %1                             \n\
+  /bin/foo \"*\" \"@\" \"*\" @ %1                     \n\
+  # string arguments                            \n\
+  /bin/foo \"str\" @ %1                         \n\
 }                                                 \
 ", user, cmd1, cmd2, cmd3));
 		OpenWBEM::PrivilegeConfig::Privileges privileges;
@@ -270,6 +276,7 @@ user_exec_check_args	                           \n\
 		unitAssert(CHECKCOMMAND(cmd3, user));
 		unitAssert(CHECKCOMMAND(cmd4, user));
 		unitAssert(CHECKCOMMAND(cmd5, user));
+		unitAssert(CHECKCOMMAND(cmd6, user));
 		unitAssert(!CHECKCOMMAND(bad_cmd1, user));
 		unitAssert(!CHECKCOMMAND(bad_cmd2, user));
 		unitAssert(!CHECKCOMMAND(bad_cmd3, user));
@@ -284,6 +291,7 @@ user_exec_check_args	                           \n\
 		unitAssert(!CHECKCOMMAND(cmd3, bad_user));
 		unitAssert(!CHECKCOMMAND(cmd4, bad_user));
 		unitAssert(!CHECKCOMMAND(cmd5, bad_user));
+		unitAssert(!CHECKCOMMAND(cmd6, bad_user));
 		unitAssert(!CHECKCOMMAND(bad_cmd1, bad_user));
 		unitAssert(!CHECKCOMMAND(bad_cmd2, bad_user));
 		unitAssert(!CHECKCOMMAND(bad_cmd3, bad_user));
@@ -355,11 +363,11 @@ monitored_user_exec                             \n\
 monitored_user_exec_check_args	               \n\
 {                                               \n\
   /bin/foo @ %1 @ %2                            \n\
-  /bin/foo a b c @ %1 @ %2                      \n\
+  /bin/foo \"a\" \"b\" \"c\" @ %1 @ %2                      \n\
   # Allow a single argument to be anything      \n\
-  /bin/foo * f g @ %1 @ %2                      \n\
-  /bin/foo \\* @ %1 @ %2                        \n\
-  /bin/foo \\* \\@ \\* @ %1 @ %2                \n\
+  /bin/foo * \"f\" \"g\" @ %1 @ %2                      \n\
+  /bin/foo \"*\" @ %1 @ %2                        \n\
+  /bin/foo \"*\" \"@\" \"*\" @ %1 @ %2                \n\
 }                                                 \
 ", user, ident, cmd1, cmd2, cmd3));
 		OpenWBEM::PrivilegeConfig::Privileges privileges;
@@ -460,11 +468,11 @@ monitored_exec                                  \n\
 monitored_exec_check_args	                     \n\
 {                                               \n\
   /bin/foo @ %1                                 \n\
-  /bin/foo a b c @ %1                           \n\
+  /bin/foo \"a\" \"b\" \"c\" @ %1                           \n\
   # Allow a single argument to be anything      \n\
-  /bin/foo * f g @ %1                           \n\
-  /bin/foo \\* @ %1                             \n\
-  /bin/foo \\* \\@ \\* @ %1                     \n\
+  /bin/foo * \"f\" \"g\" @ %1                           \n\
+  /bin/foo \"*\" @ %1                             \n\
+  /bin/foo \"*\" \"@\" \"*\" @ %1                     \n\
 }                                                 \
 ",
 				user, cmd1, cmd2, cmd3));

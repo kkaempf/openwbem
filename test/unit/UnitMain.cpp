@@ -40,6 +40,7 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "PrivilegeConfigTestCases.hpp"
 #include "PrivilegeMonitorParserTestCases.hpp"
 #include "LogAppenderTestCases.hpp"
 #include "OW_DelayedFormatTestCases.hpp"
@@ -115,6 +116,7 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "PrivilegeConfig", PrivilegeConfigTestCases::suite());
 	runner.addTest( "PrivilegeMonitorParser", PrivilegeMonitorParserTestCases::suite());
 	runner.addTest( "LogAppender", LogAppenderTestCases::suite());
 	runner.addTest( "OW_DelayedFormat", OW_DelayedFormatTestCases::suite());

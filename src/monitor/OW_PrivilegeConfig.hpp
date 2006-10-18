@@ -36,6 +36,7 @@
 #include "OW_Array.hpp"
 #include "OW_String.hpp"
 #include "OW_PrivilegeLexer.hpp"
+#include "OW_Exception.hpp"
 #include <set>
 #include <map>
 #include <vector>
@@ -51,6 +52,17 @@ namespace PrivilegeConfig
 {
 
 String unescape_path(char const * epath);
+
+OW_DECLARE_EXCEPTION(UnescapeString);
+/**
+ * Unescape C-style escape sequences as accepted in the privilege files.
+ * @param str The string to unescape. This string must contain valid escape sequences (as allowed by the lexer)
+ * 
+ * @return String The unescaped string.
+ * 
+ * @throws UnescapeStringException if an invalid escape sequence is encountered.
+ */
+String unescapeString(char const * str);
 
 class PathPatterns
 {
@@ -236,6 +248,12 @@ struct Privileges
 
 struct ParseError
 {
+	ParseError()
+		: column(0)
+		, line(0)
+	{
+	}
+
 	String message;
 	// column and line for start of token where error detected
 	unsigned column;

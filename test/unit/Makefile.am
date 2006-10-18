@@ -49,6 +49,8 @@ runMultiProcessLogger.cpp
 check_PROGRAMS = unitMain
 # Note: Do not change the following line, unless you also update the newtest.sh script
 unitMain_SOURCES = \
+PrivilegeConfigTestCases.cpp \
+PrivilegeConfigTestCases.hpp \
 PrivilegeMonitorParserTestCases.cpp \
 PrivilegeMonitorParserTestCases.hpp \
 OW_LazyGlobalTestCases.cpp \

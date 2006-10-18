@@ -91,7 +91,7 @@ void openwbem_privconfig_error(
 int yylex(YYSTYPE * lvalp, YYLTYPE * llocp, openwbem_privconfig_Lexer * lexerp);
 %}
 
-%token <s>  SPLAT NAME DIRPATH SUBTREE FILEPATH FPATHWC
+%token <s>  SPLAT NAME DIRPATH SUBTREE FILEPATH FPATHWC STRING_VALUE
 
 // These do not have values
 %token      K_OPEN_R K_OPEN_W K_OPEN_RW K_OPEN_A K_READ_DIR K_READ_LINK
@@ -263,7 +263,7 @@ exec_path_pattern:
 exec_arg_list:
 	/* empty */ { $$ = new Array<ExecArgsPatterns::Arg>; }
 | exec_arg_list path_pattern { $1->push_back(ExecArgsPatterns::Arg($2, ExecArgsPatterns::E_PATH_PATTERN_ARG)); $$ = $1; }
-| exec_arg_list NAME { $1->push_back(ExecArgsPatterns::Arg($2, ExecArgsPatterns::E_LITERAL_ARG)); $$ = $1; }
+| exec_arg_list STRING_VALUE { $1->push_back(ExecArgsPatterns::Arg(OpenWBEM::PrivilegeConfig::unescapeString(String($2).substring(1,String($2).length() - 2).c_str()), ExecArgsPatterns::E_LITERAL_ARG)); $$ = $1; }
 | exec_arg_list SPLAT { $1->push_back(ExecArgsPatterns::Arg($2, ExecArgsPatterns::E_ANYTHING_ARG)); $$ = $1; }
 ;
 

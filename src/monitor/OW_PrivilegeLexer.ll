@@ -51,8 +51,8 @@
 
 %}
 
-ESCCH        \\[\\*?]
-PECH_NO_DOT  ([^/.[:cntrl:][:space:]\\*?]|{ESCCH})
+ESCCH        \\[\\*?"]
+PECH_NO_DOT  ([^/.[:cntrl:][:space:]\\*?"]|{ESCCH})
 PECH         ({PECH_NO_DOT}|[.])
 PATHELM      (\.{0,2}{PECH_NO_DOT}|\.\.\.){PECH}*
   /* any nonempty sequence of PECH chars, except sequences "." and ".." */
@@ -65,6 +65,16 @@ SUBTREE      {DIRPATH}\*\*
 NAME         {PATHELM}
 FILEPATH     {DIRPATH}{NAME}
 FPATHWC      {DIRPATH}{NAME}?\*
+
+simpleEscape [abfnrtv'"?\\]
+hexEscape ("x"|"X")[0-9a-fA-F]{1,2}
+octalEscape [0-7]{1,3}
+
+escapeSequence [\\]({simpleEscape}|{hexEscape}|{octalEscape})
+sChar [^"\\\n\r]|{escapeSequence}
+
+STRING_VALUE \"{sChar}*\"
+
 
 %x NOKEYWORDS
 
@@ -100,14 +110,13 @@ unpriv_user             { return K_UNPRIV_USER; }
 
 <NOKEYWORDS>\}          { BEGIN(INITIAL); return yytext[0]; }
 <NOKEYWORDS>{AT}			{ return AT; }
-<NOKEYWORDS>\\{SPLAT}	{ m_has_value = true; ++yytext; return(NAME); }
-<NOKEYWORDS>\\{AT}	   { m_has_value = true; ++yytext; return(NAME); }
 <NOKEYWORDS>{SPLAT}	   { m_has_value = true; return(SPLAT); }
 <NOKEYWORDS>{DIRPATH}   { m_has_value = true; return(DIRPATH); }
 <NOKEYWORDS>{SUBTREE}   { m_has_value = true; return(SUBTREE); }
 <NOKEYWORDS>{NAME}      { m_has_value = true; return(NAME); }
 <NOKEYWORDS>{FILEPATH}  { m_has_value = true; return(FILEPATH); }
 <NOKEYWORDS>{FPATHWC}   { m_has_value = true; return(FPATHWC); }
+<NOKEYWORDS>{STRING_VALUE}   { m_has_value = true; return(STRING_VALUE); }
 <NOKEYWORDS>.           { return yytext[0]; }
 
 %%
@@ -167,6 +176,7 @@ int openwbem_privconfig_lex(
 	YYSTYPE * lvalp, YYLTYPE * llocp, openwbem_privconfig_Lexer * lexerp)
 {
 	try {
+		//lexerp->set_debug(1);
 		int retval = lexerp->yylex();
 		if (retval)
 		{

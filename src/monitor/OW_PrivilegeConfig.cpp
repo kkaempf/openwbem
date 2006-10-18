@@ -30,11 +30,14 @@
 #include "OW_PrivilegeConfig.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_StringBuffer.hpp"
+#include "OW_Format.hpp"
 
 namespace OW_NAMESPACE
 {
 namespace PrivilegeConfig
 {
+
+OW_DEFINE_EXCEPTION(UnescapeString)
 
 namespace
 {
@@ -85,11 +88,162 @@ namespace
 		n -= std::size_t(pattern_type);
 		return std::make_pair(unescape_path(s, n), pattern_type);
 	}
-}
+
+	bool isoctal(int c)
+	{
+		switch (c)
+		{
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+				return true;
+			default:
+				return false;
+		}
+	}
+} // end unnamed namespace
 
 String unescape_path(char const * epath)
 {
 	return unescape_path(epath, std::strlen(epath));
+}
+
+String unescapeString(char const * str)
+{
+	StringBuffer unescaped;
+	size_t len = strlen(str);
+	for (size_t i = 0; i < len; ++i)
+	{
+		if (str[i] == '\\')
+		{
+			++i;
+
+			/* this can never happen, unless someone messes up the lexer */
+			OW_ASSERT(i < len);
+
+			switch (str[i])
+			{
+				// simple escapes
+				case 'a':
+					unescaped += '\a';
+					break;
+				case 'b':
+					unescaped += '\b';
+					break;
+				case 'f':
+					unescaped += '\f';
+					break;
+				case 'n':
+					unescaped += '\n';
+					break;
+				case 'r':
+					unescaped += '\r';
+					break;
+				case 't':
+					unescaped += '\t';
+					break;
+				case 'v':
+					unescaped += '\v';
+					break;
+				case '\'':
+					unescaped += '\'';
+					break;
+				case '"':
+					unescaped += '"';
+					break;
+				case '\?':
+					unescaped += '\?';
+					break;
+				case '\\':
+					unescaped += '\\';
+					break;
+				// hex escapes
+				case 'x':
+				case 'X':
+					{
+						++i;
+						// The lexer guarantees that there will be from 1-2 hex chars.
+						UInt16 hex = 0;
+						size_t j = 0;
+						for (; j < 2; ++j)
+						{
+							char c = str[i+j];
+							if (isdigit(c))
+							{
+								hex <<= 4;
+								hex |= c - '0';
+							}
+							else if (isxdigit(c))
+							{
+								c = toupper(c);
+								hex <<= 4;
+								hex |= c - 'A' + 0xA;
+							}
+							else
+							{
+								break;
+							}
+						}
+						if (hex > CHAR_MAX)
+						{
+							OW_THROW(UnescapeStringException, Format("Escape sequence (%1) larger than supported maximum (%2)", String(&str[i-2], j+2), int(CHAR_MAX)).c_str());
+						}
+						unescaped += static_cast<char>(hex);
+						i += j - 1;
+					}
+					break;
+				// octal escapes
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+					{
+						// The lexer guarantees that there will be from 1-3 oct chars.
+						UInt16 oct = 0;
+						size_t j = 0;
+						for (; j < 3; ++j)
+						{
+							char c = str[i+j];
+							if (isoctal(c))
+							{
+								oct <<= 3;
+								oct |= c - '0';
+							}
+							else
+							{
+								break;
+							}
+						}
+						if (oct > CHAR_MAX)
+						{
+							OW_THROW(UnescapeStringException, Format("Escape sequence (%1) larger than supported maximum (%2)", String(&str[i-1], j+1), int(CHAR_MAX)).c_str());
+						}
+						unescaped += static_cast<char>(oct);
+						i += j - 1;
+					}
+					break;
+				default:
+					// this could never happen unless someone messes up the lexer
+					OW_ASSERTMSG(0, "Invalid escape sequence");
+					break;
+			}
+		}
+		else
+		{
+			unescaped += str[i];
+		}
+	}
+
+	return unescaped.releaseString();
 }
 
 PathPatterns::PathPatterns()
