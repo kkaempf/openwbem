@@ -85,11 +85,17 @@ void CryptographicRandomNumberTestCases::testRandomNumbers()
 	{
 		count = LONG_TEST_COUNT;
 	}
+	bool hitNonZero = false; 
 	for (int i = 0; i < count; ++i)
 	{
 		Int32 rn = g1.getNextNumber();
+		if (rn != 0)
+		{
+		    hitNonZero = true; 
+		}
 		unitAssert(rn >= 0 && rn <= RAND_MAX);
 	}
+	unitAssert(hitNonZero); 
 
 	doTestRange(0, 1);
 	doTestRange(0, 2);

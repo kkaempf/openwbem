@@ -75,7 +75,7 @@ private:
 	Int32 m_lowVal;
 	Int32 m_highVal;
 	Int32 m_range;
-	int m_numBits;
+	unsigned int m_numBits;
 };
 
 } // end namespace OW_NAMESPACE

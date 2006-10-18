@@ -88,7 +88,7 @@ namespace
 {
 
 /////////////////////////////////////////////////////////////////////////////
-int getNumBits(Int32 num)
+unsigned int getNumBits(Int32 num)
 {
 	for (size_t i = 0; i < sizeof(num) * CHAR_BIT; ++i)
 	{
@@ -133,7 +133,10 @@ CryptographicRandomNumber::getNextNumber()
 		// make it positive
 		randNum = randNum < 0 ? -randNum : randNum;
 		// filter out all the unnecessary high bits
-		randNum &= ~(~0 << m_numBits);
+		if (m_numBits < sizeof(randNum)*CHAR_BIT)
+		{
+		    randNum &= ~(~0 << m_numBits);
+		}
 	} while (randNum > m_range);
 
 	return randNum + m_lowVal;
