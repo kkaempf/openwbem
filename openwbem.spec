@@ -4,7 +4,7 @@
 %define startnum 36
 %define killnum 64
 %define daemonname owcimomd
-%define owversion 3.1.1
+%define owversion 3.2.0
 
 Name        	: openwbem
 Version     	: %{owversion}
@@ -52,7 +52,7 @@ Headers files for OpenWBEM
 %setup 
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" ./configure \
+CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="" ./configure \
 	--prefix=%{prefix} \
 	--sysconfdir=/etc \
 	--localstatedir=%{localstatedir}
@@ -81,7 +81,7 @@ ln -s %{prefix}/lib/openwbem/services/libowservicehttp.so $RPM_BUILD_ROOT/%{pref
 
 #move the man pages into the correct spot
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/
-mv $RPM_BUILD_ROOT/%{prefix}/man/* $RPM_BUILD_ROOT/%{_mandir}/
+#mv $RPM_BUILD_ROOT/%{prefix}/man/* $RPM_BUILD_ROOT/%{_mandir}/
 
 #rm -f $RPM_BUILD_ROOT/%{prefix}/lib/perl5/*/*/perllocal.pod
 
@@ -198,7 +198,7 @@ fi
 %Files
 %defattr(-,root,root)
 %doc README TODO AUTHORS COPYING ChangeLog INSTALL LICENSE
-%doc doc/{*.HOWTO,*.txt,*.html,HowToCreateAMinimalOpenWBEM,OpenWBEM-pg.sxw,PerlIFC.sxw,pg.tex}
+%doc doc/{*.HOWTO,*.txt,*.html,HowToCreateAMinimalOpenWBEM,OpenWBEM_Getting_Started_Guide.sxw,PerlIFC.sxw,pg.tex}
 %dir %{prefix}/lib/openwbem
 %{prefix}/lib/openwbem/*
 %dir %{prefix}/libexec/openwbem
