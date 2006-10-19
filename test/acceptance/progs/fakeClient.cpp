@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
 	{
 		cerr << he << endl;
 		String message = he.getMessage();
-		size_t idx = message.indexOf("Unauthorized");
+		size_t idx = message.indexOf("401");
 		if (idx != String::npos)
 		{
 			return 1;
