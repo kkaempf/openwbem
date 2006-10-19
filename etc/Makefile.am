@@ -15,3 +15,6 @@ SUFFIXES = .sh
 	sed -f $(top_builddir)/replacement_script.sed < $< > $@.partial
 	mv $@.partial $@
 
+install-exec-hook:
+	install -d $(DESTDIR)/$(openwbemconfdir)/openwbem.conf.d
+
