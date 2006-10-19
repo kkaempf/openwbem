@@ -35,6 +35,9 @@
  * @author Dan Nuffer
  */
 
+/**
+ * NOTE: This header is experimental and subject to change
+ */
 
 #ifndef OW_LOCALEMBEDDEDCIMOMHANDLE_HPP_INCLUDE_GUARD_
 #define OW_LOCALEMBEDDEDCIMOMHANDLE_HPP_INCLUDE_GUARD_

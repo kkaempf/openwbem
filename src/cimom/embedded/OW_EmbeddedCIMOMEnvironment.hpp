@@ -35,6 +35,10 @@
  * @author Dan Nuffer
  */
 
+/**
+ * NOTE: This header is experimental and subject to change
+ */
+
 #ifndef OW_EMBEDDEDCIMOMENVIRONMENT_HPP_INCLUDE_GUARD_
 #define OW_EMBEDDEDCIMOMENVIRONMENT_HPP_INCLUDE_GUARD_
 #define OW_DAEMON_NAME "owcimomd"
