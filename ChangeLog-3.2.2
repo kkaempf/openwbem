@@ -1,0 +1,88 @@
+2006-10-19 10:31  bartw
+
+	* src/cimom/common/OW_CIMOMEnvironment.cpp: Fixed extra include
+	  file dir processing
+
+2006-10-19 10:31  bartw
+
+	* src/cimom/: common/Makefile.am, common/OW_CimomCommonFwd.hpp,
+	  embedded/OW_EmbeddedCIMOMEnvironment.hpp,
+	  embedded/OW_LocalEmbeddedCIMOMHandle.hpp, server/Makefile.am,
+	  server/OW_CimomServerFwd.hpp: Fixing includes for embeddedCIMOM
+	  lib
+
+2006-10-19 10:31  bartw
+
+	* configure.in: preserve previous compiler flags
+
+2006-10-19 10:30  bartw
+
+	* etc/Makefile.am: install openwbem.conf.d directory
+
+2006-10-18 10:31  bartw
+
+	* src/http/client/OW_HTTPClient.cpp: add more details to track down
+	  what may be wrong, retry in more cases where appropriate
+
+2006-10-18 10:30  bartw
+
+	* src/: cimom/common/OW_CIMServer.cpp,
+	  repositories/hdb/OW_CIMRepository.cpp,
+	  repositories/hdb/OW_InstanceRepository.cpp: fixing x-namespace
+	  associations
+
+2006-10-18 10:28  bartw
+
+	* src/common/OW_CryptographicRandomNumber.cpp,
+	  src/common/OW_CryptographicRandomNumber.hpp,
+	  test/unit/CryptographicRandomNumberTestCases.cpp: fixed
+	  CryptographicRandomNumber to stop returning only 0 when default
+	  ctor is used.
+
+2006-10-17 12:08  nuffer
+
+	* src/xml/OW_XMLUnescape.cpp: Regenerate using newer re2c to avoid
+	  a problem with utf8. Thanks to chris-bkb for reporting this.
+
+2006-09-13 08:41  jbgill
+
+	* src/providerifcs/cmpi/common/cmpiBroker.cpp: added implementation
+	  for CMPIBrokerFT.invokeMethod upcall
+
+2006-09-12 14:04  jbgill
+
+	* src/providerifcs/cmpi/common/cmpiBrokerEnc.cpp: Fixed segfault in
+	  mbEncClassPathIsA when provided object path does not specify a
+	  namespace or a valid class, and fixed return codes in same
+	  function.
+
+2006-09-11 10:38  jbgill
+
+	* src/providerifcs/cmpi/common/: cmpiInstance.cpp, cmpiValue.cpp:
+	  added a NULL check when retrieving values from CMPIInstance to
+	  validate that a proper value is present prior to operating on it.
+	  Also made CMPIValue macros more completely fill out CMPIData
+	  type and state values.
+
+2006-05-18 16:15  bartw
+
+	* src/cimom/embedded/Makefile.am: install headers for embedded
+	  cimom lib
+
+2006-05-09 08:58  bartw
+
+	* src/providerifcs/cpp/OW_CppSimpleAssociatorProviderIFC.cpp: fixed
+	  cross-namespace assocs
+
+2006-05-09 08:58  bartw
+
+	* src/providerifcs/cmpi/OW_CMPIProviderIFC.cpp: fixed context
+	  passed to cmpi providers during initialize and cleanup, so they
+	  will not crash if they try to use it
+
+2006-03-13 16:55  jcarey
+
+	* src/cimom/common/OW_CIMOMEnvironment.cpp: Fixed problem with
+	  segfault on shutdown of request handlers after they had been
+	  reloaded once before
+
