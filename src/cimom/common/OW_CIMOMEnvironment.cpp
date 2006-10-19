@@ -784,6 +784,24 @@ CIMOMEnvironment::_loadConfigItemsFromFile(const String& filename)
 		ConfigOpts::ADDITIONAL_CONFIG_FILES_DIRS_opt, 
 		String(OW_DEFAULT_ADDITIONAL_CONFIG_FILES_DIRS).tokenize(OW_PATHNAME_SEPARATOR), 
 		OW_PATHNAME_SEPARATOR);
+	for (size_t i = 0; i < configDirs.size(); ++i)
+	{
+		String const & dir = configDirs[i];
+		StringArray dir_entries;
+		bool ok = FileSystem::getDirectoryContents(dir, dir_entries);
+		if (!ok)
+		{
+			OW_THROW(ConfigException, Format("Unable to read additional config directory: %1", dir).c_str());
+		}
+		for (size_t j = 0; j < dir_entries.size(); ++j)
+		{
+			String const & fname = dir_entries[j];
+			if (fname.endsWith(".conf"))
+			{
+				ConfigFile::loadConfigFile(dir + "/" + fname, *m_configItems);
+			}
+		}
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -1119,7 +1137,7 @@ void
 CIMOMEnvironment::unloadReqHandlers()
 {
 	//OW_LOG_DEBUG(m_Logger, "Running unloadReqHandlers()");
-	Int32 ttl;
+	Int32 ttl = 0;
 	try
 	{
 		ttl = getConfigItem(ConfigOpts::REQUEST_HANDLER_TTL_opt, OW_DEFAULT_REQUEST_HANDLER_TTL).toInt32();
