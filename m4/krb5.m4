@@ -49,6 +49,7 @@ AC_DEFUN(
 
 		KRB5_DISABLED=0
 		KRB5_LOCATION=""
+		HAVE_KRB5=0
 		AC_ARG_WITH(krb5,
 			AC_HELP_STRING([--with-krb5=dir],[use krb5 in dir]),
 			[
@@ -61,7 +62,9 @@ AC_DEFUN(
 			]
 		)
 
-		if test x$KRB5_DISABLED != x1; then
+		if test x$KRB5_DISABLED = x1; then
+			AC_MSG_NOTICE([Skipping KRB5 tests due to user request.])
+		else
 			dnl
 			dnl Find krb5 headers.
 			dnl
@@ -131,6 +134,11 @@ AC_DEFUN(
 
 			AC_MSG_CHECKING(krb5 link flags)
 			AC_MSG_RESULT(${KRB5_LDFLAGS:-NONE})
+
+			if test x"$KRB5_CPPFLAGS" != x || test x"$KRB5_LDFLAGS" != x; then
+				HAVE_KRB5=1
+				AC_DEFINE_UNQUOTED(HAVE_KRB5, 1, [Have krb5])
+			fi
 		fi
 
 		dnl Clean up
@@ -138,11 +146,6 @@ AC_DEFUN(
 		AC_SUBST(KRB5_CPPFLAGS)
 		AC_SUBST(KRB5_LDFLAGS)
 
-		HAVE_KRB5=0
-		if test x"$KRB5_CPPFLAGS" != x || test x"$KRB5_LDFLAGS" != x; then
-			HAVE_KRB5=1
-			AC_DEFINE_UNQUOTED(HAVE_KRB5, 1, [Have krb5])
-		fi
 		AM_CONDITIONAL(HAVE_KRB, test x$HAVE_KRB5 = x1)
 	]
 )

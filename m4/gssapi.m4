@@ -89,64 +89,69 @@ AC_DEFUN(
 AC_DEFUN(
 	[OW_GSSAPI_SUPPORT],
 	[
-		dnl Save flags for later cleanup
-		OW_SAVE_FLAGS
-		CPPFLAGS="$CPPFLAGS $KRB5_CPPFLAGS"
+		gssapi_supports_spnego=no
+		if test x${KRB5_DISABLED} = x1; then
+			AC_MSG_NOTICE([KRB5 is disabled.  Skipping gssapi tests.])
+		else
+			dnl Save flags for later cleanup
+			OW_SAVE_FLAGS
+			CPPFLAGS="$CPPFLAGS $KRB5_CPPFLAGS"
 
-		dnl
-		dnl Find gssapi headers.
-		dnl
-		if test -z "$GSSAPI_CPPFLAGS"; then
-			TMP_GSSAPI_CPPFLAGS=""
+			dnl
+			dnl Find gssapi headers.
+			dnl
+			if test -z "$GSSAPI_CPPFLAGS"; then
+				TMP_GSSAPI_CPPFLAGS=""
+				if test -n "$krb5_config_command"; then
+					TMP_GSSAPI_CPPFLAGS=" `$krb5_config_command --cflags gssapi 2>/dev/null` "
+				else
+					for possible_location in $KRB5_LOCATION /usr/include /usr/local/include; do
+						if test -z "$TMP_GSSAPI_CPPFLAGS"; then
+							OW_PUSH_VARIABLE(CPPFLAGS)
+							CPPFLAGS="$CPPFLAGS -I${possible_location}"
+							AC_CHECK_HEADER(gssapi.h, [ TMP_GSSAPI_CPPFLAGS="-I$possible_location" ])
+							OW_POP_VARIABLE(CPPFLAGS)
+						fi
+					done
+				fi
+				if test -z "$TMP_GSSAPI_CPPFLAGS" -a -n "$GSSAPI_location"; then
+					TMP_GSSAPI_CPPFLAGS="-I$GSSAPI_LOCATION/include"
+				fi
+				CPPFLAGS="$CPPFLAGS $TMP_GSSAPI_CPPFLAGS"
+				AC_CHECK_HEADER(gssapi.h, [ GSSAPI_CPPFLAGS="$TMP_GSSAPI_CPPFLAGS" ])
+			fi
+
+			AC_MSG_CHECKING(for gssapi preprocessor flags)
+			AC_MSG_RESULT(${GSSAPI_CPPFLAGS:-NONE})
+
+			dnl
+			dnl Find gssapi libraries
+			dnl
+
+			dnl Using the krb5-config command
 			if test -n "$krb5_config_command"; then
-				TMP_GSSAPI_CPPFLAGS=" `$krb5_config_command --cflags gssapi 2>/dev/null` "
-			else
-				for possible_location in $KRB5_LOCATION /usr/include /usr/local/include; do
-					if test -z "$TMP_GSSAPI_CPPFLAGS"; then
-						OW_PUSH_VARIABLE(CPPFLAGS)
-						CPPFLAGS="$CPPFLAGS -I${possible_location}"
-						AC_CHECK_HEADER(gssapi.h, [ TMP_GSSAPI_CPPFLAGS="-I$possible_location" ])
-						OW_POP_VARIABLE(CPPFLAGS)
-					fi
-				done
+				TMP_GSSAPI_LIBS=`$krb5_config_command --libs gssapi 2>/dev/null`
+				OW_GSSAPI_LIB_HELPER(krb5-config,$TMP_GSSAPI_LIBS)
 			fi
-			if test -z "$TMP_GSSAPI_CPPFLAGS" -a -n "$GSSAPI_location"; then
-				TMP_GSSAPI_CPPFLAGS="-I$GSSAPI_LOCATION/include"
+
+			if test -n "$KRB5_LOCATION"; then
+				dnl Using MIT kerberos libs
+				OW_GSSAPI_LIB_HELPER(mit-style,-L$KRB5_LOCATION/lib -lgssapi_krb5 -lkrb5 -lk5crypto -lcom_err)
+				dnl Using Heimdal
+				OW_GSSAPI_LIB_HELPER(Heimdal,-L$KRB5_LOCATION/lib -lgssapi -lkrb5 -lasn1 -lcrypto -lroken -lcrypt)
+				dnl Heimdal on OpenBSD
+				OW_GSSAPI_LIB_HELPER(Heimdal (OpenBSD style),-L$KRB5_LOCATION/lib -lgssapi -lkrb5 -lasn1 -ldes -lcrypto)
 			fi
-			CPPFLAGS="$CPPFLAGS $TMP_GSSAPI_CPPFLAGS"
-			AC_CHECK_HEADER(gssapi.h, [ GSSAPI_CPPFLAGS="$TMP_GSSAPI_CPPFLAGS" ])
+
+			AC_MSG_CHECKING(gssapi link flags)
+			AC_MSG_RESULT(${GSSAPI_LIBS:-NONE})
+
+			dnl Clean up
+			OW_RESTORE_FLAGS
+			AC_SUBST(GSSAPI_CPPFLAGS)
+			AC_SUBST(GSSAPI_LIBS)
+
 		fi
-
-		AC_MSG_CHECKING(for gssapi preprocessor flags)
-		AC_MSG_RESULT(${GSSAPI_CPPFLAGS:-NONE})
-
-		dnl
-		dnl Find gssapi libraries
-		dnl
-
-		dnl Using the krb5-config command
-		if test -n "$krb5_config_command"; then
-			TMP_GSSAPI_LIBS=`$krb5_config_command --libs gssapi 2>/dev/null`
-			OW_GSSAPI_LIB_HELPER(krb5-config,$TMP_GSSAPI_LIBS)
-		fi
-
-		if test -n "$KRB5_LOCATION"; then
-			dnl Using MIT kerberos libs
-			OW_GSSAPI_LIB_HELPER(mit-style,-L$KRB5_LOCATION/lib -lgssapi_krb5 -lkrb5 -lk5crypto -lcom_err)
-			dnl Using Heimdal
-			OW_GSSAPI_LIB_HELPER(Heimdal,-L$KRB5_LOCATION/lib -lgssapi -lkrb5 -lasn1 -lcrypto -lroken -lcrypt)
-			dnl Heimdal on OpenBSD
-			OW_GSSAPI_LIB_HELPER(Heimdal (OpenBSD style),-L$KRB5_LOCATION/lib -lgssapi -lkrb5 -lasn1 -ldes -lcrypto)
-		fi
-
-		AC_MSG_CHECKING(gssapi link flags)
-		AC_MSG_RESULT(${GSSAPI_LIBS:-NONE})
-
-		dnl Clean up
-		OW_RESTORE_FLAGS
-		AC_SUBST(GSSAPI_CPPFLAGS)
-		AC_SUBST(GSSAPI_LIBS)
-
 		AM_CONDITIONAL(HAVE_SPNEGO_SUPPORT, test x"$gssapi_supports_spnego" = xyes)
 	]
 )
