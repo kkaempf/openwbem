@@ -6,7 +6,7 @@ dnl AM_INIT_AUTOMAKE([foreign dist-bzip2 std-options 1.6.3])
 dnl We are a "foreign" type distribution (i.e. don't require all the standard GNU files)
 dnl  And we want a dist-bzip2 rule to be able to create .tar.bz2 dist files.
 dnl  And we require automake >= 1.6.3
-AM_INIT_AUTOMAKE([foreign dist-bzip2 1.6.3])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar 1.9])
 AC_CONFIG_SRCDIR(Makefile.am)
 AM_CONFIG_HEADER(config.h)
 

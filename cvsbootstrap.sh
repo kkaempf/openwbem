@@ -17,8 +17,8 @@ if [ ! $AUTOMAKE_MICRO ] ; then AUTOMAKE_MICRO="0"
 fi
 
 AUTOMAKE_NUMBER=`expr $AUTOMAKE_MAJOR \* 10000 \+ $AUTOMAKE_MINOR \* 100 \+ $AUTOMAKE_MICRO`
-if [ $AUTOMAKE_NUMBER -ge 10603 ] ; then echo 'automake version 1.6.3 or greater, good.'
-else echo 'automake 1.6.3 or newer required.'
+if [ $AUTOMAKE_NUMBER -ge 10900 ] ; then echo 'automake version 1.9.0 or greater, good.'
+else echo 'automake 1.9.0 or newer required.'
 fi
 
 aclocal \
