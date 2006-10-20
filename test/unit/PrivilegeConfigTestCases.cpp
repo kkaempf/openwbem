@@ -47,8 +47,8 @@ void PrivilegeConfigTestCases::tearDown()
 void PrivilegeConfigTestCases::testunescapeString()
 {
 	unitAssert( PrivilegeConfig::unescapeString("\\a\\b\\f\\n\\r\\t\\v\\'\\\"\\?\\\\") == "\a\b\f\n\r\t\v\'\"\?\\" );
-	unitAssert( PrivilegeConfig::unescapeString("\\x0\\xA\\x1\\x0F\\x7F") == "\x0\xA\x1\x0F\x7F" );
-	unitAssert( PrivilegeConfig::unescapeString("\\0\\7\\1\\02\\003\\43\\165") == "\0\7\1\02\003\43\165" );
+	unitAssert( PrivilegeConfig::unescapeString("\\xA\\x1\\x0F\\x7F") == "\xA\x1\x0F\x7F" );
+	unitAssert( PrivilegeConfig::unescapeString("\\7\\1\\02\\003\\43\\165") == "\7\1\02\003\43\165" );
 	unitAssert( PrivilegeConfig::unescapeString("only one escape\\n") == "only one escape\n" );
 
 	// test too large hex
