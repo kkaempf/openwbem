@@ -53,6 +53,7 @@ private:
 	// test methods
 	void testcompileMOF();
 	void testCrossNamespaceAssociations();
+	void testfixParsedString();
 };
 
 #endif

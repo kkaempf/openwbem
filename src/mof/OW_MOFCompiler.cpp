@@ -52,6 +52,7 @@
 #include <assert.h>
 #include <cctype>
 
+
 // forward declarations of some lex/yacc functions we need to call.
 void owmof_delete_buffer(YY_BUFFER_STATE b);
 YY_BUFFER_STATE owmof_scan_bytes( const char *bytes, int len );
@@ -271,16 +272,18 @@ String Compiler::fixParsedString(const String& s)
 						{
 							// The lexer guarantees that there will be from 1-4 hex chars.
 							UInt16 hex = 0;
-							for (size_t j = 0; j < 4; ++j)
+							size_t j = 1;
+							for (; j <= 4; ++j)
 							{
-								hex <<= 4;
 								char c = s[i+j];
 								if (isdigit(c))
 								{
+									hex <<= 4;
 									hex |= c - '0';
 								}
 								else if (isxdigit(c))
 								{
+									hex <<= 4;
 									c = toupper(c);
 									hex |= c - 'A' + 0xA;
 								}
@@ -294,6 +297,7 @@ String Compiler::fixParsedString(const String& s)
 								OW_THROW(MOFCompilerException, "Escape sequence larger than supported maximum");
 							}
 							unescaped += static_cast<char>(hex);
+							i += j - 1;
 						}
 						break;
 					default:
