@@ -101,6 +101,7 @@ HTTPClient::HTTPClient( const String &sURL, const SSLClientCtxRef& sslCtx)
 	, m_httpPath("/cimom")
 	, m_uselocalAuthentication(false)
 	, m_closeConnection(false)
+	, m_statusCode(-1)
 {
 	// turn off exceptions, since we're not coded to handle them.
 	m_istr.exceptions(std::ios::goodbit);
@@ -331,7 +332,7 @@ HTTPClient::receiveAuthentication()
 
 	if (m_sAuthorization.empty())
 	{
-		OW_THROW(HTTPException, "No known authentication schemes");
+		OW_THROW_ERR(HTTPException, "No known authentication schemes", m_statusCode);
 	}
 
 
@@ -344,7 +345,7 @@ void HTTPClient::getCredentialsIfNecessary()
 	{
 		if (!m_loginCB)
 		{
-			OW_THROW(HTTPException, "No login/password to send");
+			OW_THROW_ERR(HTTPException, "No login/password to send", m_statusCode);
 		}
 		else
 		{
@@ -365,7 +366,7 @@ void HTTPClient::getCredentialsIfNecessary()
 			}
 			else
 			{
-				OW_THROW(HTTPException, "No login/password to send");
+				OW_THROW_ERR(HTTPException, "No login/password to send", m_statusCode);
 			}
 		}
 	}
@@ -437,7 +438,7 @@ void HTTPClient::sendAuthorization()
 				std::ifstream cookieFile(m_localCookieFile.c_str());
 				if (!cookieFile)
 				{
-					OW_THROW_ERRNO_MSG(HTTPException, "Unable to open local authentication file");
+					OW_THROW_ERR(HTTPException, Format("Unable to open local authentication file: %1", strerror(errno)).c_str(), m_statusCode);
 				}
 				String cookie = String::getLine(cookieFile);
 				ostr << "nonce=\"" << m_localNonce << "\", ";
@@ -452,7 +453,7 @@ void HTTPClient::sendAuthorization()
 				SPNEGOHandler::EResult result = m_spnegoHandler->handshake("", m_spnegoData, errDetails);
 				if (result == SPNEGOHandler::E_FAILURE)
 				{
-					OW_THROW(HTTPException, Format("SPNEGO authentication failed: %1", errDetails).c_str());
+					OW_THROW_ERR(HTTPException, Format("SPNEGO authentication failed: %1", errDetails).c_str(), m_statusCode);
 				}
 				else if (result == SPNEGOHandler::E_CONTINUE)
 				{
@@ -461,7 +462,7 @@ void HTTPClient::sendAuthorization()
 				else
 				{
 					// something has gone horribly wrong. This shouldn't ever happen unless there is a bug.
-					OW_THROW(HTTPException, "SPNEGOAuthentication received success on first round. The handler is buggy.");
+					OW_THROW_ERR(HTTPException, "SPNEGOAuthentication received success on first round. The handler is buggy.", m_statusCode);
 				}
 			}
 			ostr << m_spnegoData;
@@ -630,8 +631,8 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 		deflateostr.termOutput();
 		chunkostr.termOutput();
 #else
-		OW_THROW(HTTPException, "Attempted to deflate output but not "
-			"compiled with zlib!");
+		OW_THROW_ERR(HTTPException, "Attempted to deflate output but not "
+			"compiled with zlib!", m_statusCode);
 #endif
 	}
 	else
@@ -658,7 +659,7 @@ HTTPClient::endRequest(const Reference<std::ostream>& request, const String& met
 	OW_ASSERT(tfs);
 	if (!tfs->good())
 	{
-		OW_THROW(HTTPException, "HTTPClient: TempFileStream is bad. Temp file creation failed.");
+		OW_THROW_ERR(HTTPException, "HTTPClient: TempFileStream is bad. Temp file creation failed.",m_statusCode);
 	}
 
 	int len = tfs->getSize();
@@ -701,8 +702,8 @@ HTTPClient::endRequest(const Reference<std::ostream>& request, const String& met
 		String CIMError = getHeaderValue("CIMError");
 		if (CIMError.empty())
 		{
-			OW_THROW(HTTPException, Format("Unable to process request: %1",
-				reasonPhrase).c_str());
+			OW_THROW_ERR(HTTPException, Format("Unable to process request: %1",
+				reasonPhrase).c_str(), m_statusCode);
 		}
 		else
 		{
@@ -713,7 +714,7 @@ HTTPClient::endRequest(const Reference<std::ostream>& request, const String& met
 	m_pIstrReturn = convertToFiniteStream();
 	if (!m_pIstrReturn)
 	{
-		OW_THROW(HTTPException, "HTTPClient: unable to understand server response. There may be no content in the reply.");
+		OW_THROW_ERR(HTTPException, "HTTPClient: unable to understand server response. There may be no content in the reply.", m_statusCode);
 	}
 	return m_pIstrReturn;
 }
@@ -743,7 +744,7 @@ HTTPClient::endResponse(std::istream & /*istr*/)
 			HTTPHeaderMap tmpMap;
 			if (!HTTPUtils::parseHeader(tmpMap, m_istr))
 			{
-				OW_THROW(HTTPException, "Error parsing trailers");
+				OW_THROW_ERR(HTTPException, "Error parsing trailers",m_statusCode);
 			}
 			m_responseHeaders.insert(tmpMap.begin(), tmpMap.end());
 		}
@@ -787,6 +788,7 @@ HTTPClient::endResponse(std::istream & /*istr*/)
 CIMFeatures
 HTTPClient::getFeatures()
 {
+	m_statusCode = -1; 
 	String methodOrig = m_requestMethod;
 	m_requestMethod = "OPTIONS";
 	prepareHeaders();
@@ -806,8 +808,8 @@ HTTPClient::getFeatures()
 	m_requestMethod = methodOrig;
 	if (rt == E_RESPONSE_FATAL)
 	{
-		OW_THROW(HTTPException, Format("Unable to process request: %1",
-			reasonPhrase).c_str());
+		OW_THROW_ERR(HTTPException, Format("Unable to process request: %1",
+			reasonPhrase).c_str(), m_statusCode);
 	}
 	if (getHeaderValue("allow").indexOf("M-POST") == String::npos)
 	{
@@ -821,7 +823,7 @@ HTTPClient::getFeatures()
 	size_t idx = extURL.indexOf(';');
 	if (idx < 1 || idx == String::npos)
 	{
-		OW_THROW(HTTPException, "No \"Opt\" header in OPTIONS response");
+		OW_THROW_ERR(HTTPException, "No \"Opt\" header in OPTIONS response", m_statusCode);
 	}
 	CIMFeatures rval;
 	rval.extURL = extURL.substring(0, idx);
@@ -832,8 +834,8 @@ HTTPClient::getFeatures()
 	hp.trim();
 	if (hp.length() != 2)
 	{
-		OW_THROW(HTTPException, "HTTP Ext header prefix is not a two digit "
-			"number");
+		OW_THROW_ERR(HTTPException, "HTTP Ext header prefix is not a two digit "
+			"number", m_statusCode);
 	}
 	hp += "-";
 	rval.protocolVersion = getHeaderValue(hp + "CIMProtocolVersion");
@@ -859,8 +861,8 @@ HTTPClient::getFeatures()
 	}
 	else
 	{
-		OW_THROW(HTTPException, "No CIMSupportedFunctionalGroups or "
-			"CIMSupportedExportGroups header");
+		OW_THROW_ERR(HTTPException, "No CIMSupportedFunctionalGroups or "
+			"CIMSupportedExportGroups header", m_statusCode);
 	}
 	rval.supportedGroups = supportedGroups.tokenize(",");
 	for (size_t i = 0; i < rval.supportedGroups.size(); i++)
@@ -926,7 +928,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 	String statusLine(m_statusLine);
 	size_t idx = statusLine.indexOf(' ');
 	String sc; // http status code
-	int isc = 500; // status code (int)
+	m_statusCode = 500; // status code (int)
 	if (idx > 0 && idx != String::npos)
 	{
 		statusLine = statusLine.substring(idx + 1);
@@ -938,7 +940,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 		reasonPhrase = statusLine.substring(idx + 1);
 		try
 		{
-			isc = sc.toInt32();
+			m_statusCode = sc.toInt32();
 		}
 		catch (const StringConversionException&)
 		{
@@ -952,7 +954,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 	switch (sc[0])
 	{
 		case '1':
-			if (isc == 100)
+			if (m_statusCode == 100)
 			{
 				rt = E_RESPONSE_CONTINUE;
 			}
@@ -973,7 +975,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 		case '4':
 //			m_closeConnection = true;
 //			close();
-			switch (isc)
+			switch (m_statusCode)
 			{
 				case SC_REQUEST_TIMEOUT:
 					rt = E_RESPONSE_RETRY;
@@ -1012,10 +1014,10 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					rt = E_RESPONSE_FATAL;
 					reasonPhrase = "Unknown status code";
 					break;
-			} // switch (isc)
+			} // switch (m_statusCode)
 			break;
 		case '5':
-			switch (isc)
+			switch (m_statusCode)
 			{
 				case SC_NOT_IMPLEMENTED:
 				case SC_NOT_EXTENDED:
@@ -1038,7 +1040,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					rt = E_RESPONSE_FATAL;
 					reasonPhrase = "Unknown status code";
 					break;
-			} // switch (isc)
+			} // switch (m_statusCode)
 			break;
 		default:
 			rt = E_RESPONSE_RETRY; // shouln't happen
@@ -1094,7 +1096,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 			else
 			{
 				// something has gone horribly wrong. This shouldn't ever happen unless there is a bug.
-				OW_THROW(HTTPException, Format("SPNEGOAuthentication received unknown response (%1) from spnego handler.", result).c_str());
+				OW_THROW_ERR(HTTPException, Format("SPNEGOAuthentication received unknown response (%1) from spnego handler.", result).c_str(), m_statusCode);
 			}
 		}
 		else
@@ -1124,8 +1126,8 @@ HTTPClient::convertToFiniteStream()
 #ifdef OW_HAVE_ZLIB_H
 		rval = new HTTPDeflateIStream(rval);
 #else
-		OW_THROW(HTTPException, "Response is deflated but we're not "
-			"compiled with zlib!");
+		OW_THROW_ERR(HTTPException, "Response is deflated but we're not "
+			"compiled with zlib!", m_statusCode);
 #endif // #ifdef OW_HAVE_ZLIB_H
 	}
 	return rval;
@@ -1160,6 +1162,7 @@ HTTPClient::getStatusLine()
 	{
 		m_statusLine = String::getLine(m_istr);
 	}
+	m_statusCode = -1; 
 }
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -1187,7 +1190,7 @@ HTTPClient::checkResponse(Resp_t& rt)
 		}
 		if (!HTTPUtils::parseHeader(m_responseHeaders, m_istr))
 		{
-			OW_THROW(HTTPException, Format("Received junk from server statusline = %1", m_statusLine).c_str());
+			OW_THROW_ERR(HTTPException, Format("Received junk from server statusline = %1", m_statusLine).c_str(), m_statusCode);
 		}
 		rt = processHeaders(reasonPhrase);
 		if (rt == E_RESPONSE_CONTINUE)

@@ -287,6 +287,7 @@ private:
 	bool m_closeConnection;
 	String m_spnegoData;
 	SPNEGOHandlerRef m_spnegoHandler;
+	int m_statusCode; 
 
 #ifdef OW_WIN32
 #pragma warning (pop)
