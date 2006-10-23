@@ -107,8 +107,7 @@ namespace
 	inline void logOperation(const Logger& lgr, const OperationContext& context, const char* operation, const String& ns, const String& objectName = String())
 	{
 		// avoid the overhead of formatting the message if we're not going to log this.
-		ELogLevel level = lgr.getLogLevel();
-		if (level == E_DEBUG_LEVEL || level == E_INFO_LEVEL)
+		if (lgr.levelIsEnabled(E_INFO_LEVEL))
 		{
 			String userString;
 			String user = context.getStringDataWithDefault(OperationContext::USER_NAME);
@@ -1246,8 +1245,7 @@ CIMServer::modifyInstance(
 	}
 
 	logOperation(m_logger, context, "ModifyInstance", ns, modifiedInstance.getClassName());
-	ELogLevel lvl = m_logger.getLogLevel();
-	if (lvl == E_DEBUG_LEVEL || lvl == E_INFO_LEVEL)
+	if (m_logger.levelIsEnabled(E_INFO_LEVEL))
 	{
 		OW_LOG_INFO(m_logger, Format("ModifyInstance: modified instance = %1", lci));
 		if (propertyList && !propertyList->empty())
@@ -1271,10 +1269,7 @@ CIMServer::modifyInstance(
 		oldInst = getInstance(ns, cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS,
 			E_INCLUDE_CLASS_ORIGIN, NULL, NULL, context);
 
-		if (lvl == E_DEBUG_LEVEL || lvl == E_INFO_LEVEL)
-		{
-			OW_LOG_INFO(m_logger, Format("ModifyInstance: previous instance = %1", oldInst));
-		}
+		OW_LOG_INFO(m_logger, Format("ModifyInstance: previous instance = %1", oldInst));
 
 		instancep->modifyInstance(createProvEnvRef(context, m_env), ns,
 			lci, oldInst, includeQualifiers, propertyList, theClass);
@@ -1559,7 +1554,7 @@ CIMServer::invokeMethod(
 			"Unknown or duplicate parameter: %1", inParams2[0].getName()).c_str());
 	}
 	StringBuffer methodStr;
-	if (m_logger.getLogLevel() == E_DEBUG_LEVEL)
+	if (m_logger.levelIsEnabled(E_DEBUG_LEVEL))
 	{
 		methodStr += "CIMServer invoking extrinsic method provider: ";
 		methodStr += ns;
@@ -1602,7 +1597,7 @@ CIMServer::invokeMethod(
 			}
 		}
 	}
-	if (m_logger.getLogLevel() == E_DEBUG_LEVEL)
+	if (m_logger.levelIsEnabled(E_DEBUG_LEVEL))
 	{
 		methodStr.reset();
 		methodStr += "CIMServer finished invoking extrinsic method provider: ";
