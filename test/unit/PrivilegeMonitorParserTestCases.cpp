@@ -95,6 +95,12 @@ namespace // anonymous
 		return parsePrivilegeStream(str, privileges, error);
 	}
 
+	bool parsePrivilegeStringInclude(const String& s, const String& include, OpenWBEM::PrivilegeConfig::Privileges& privileges, OpenWBEM::PrivilegeConfig::ParseError error)
+	{
+		IStringStream str(s);
+		return parsePrivilegeStream(str, privileges, error);
+	}
+
 	//
 	// Helper functions for converting a string into the executable/arguments it contains.
 	//
@@ -111,10 +117,10 @@ namespace // anonymous
 	StringArray getArguments(const String& var)
 	{
 		StringArray foo = var.tokenize();
-		if( !foo.empty() )
+/*		if( !foo.empty() )
 		{
 			foo.erase(foo.begin());
-		}
+		}*/
 		return foo;
 	}
 } // end anonymous namespace
@@ -515,6 +521,36 @@ monitored_exec_check_args	                     \n\
 
 }
 
+void
+PrivilegeMonitorParserTestCases::parseInclude()
+{
+/*	{
+		String cmd1("/bin/foo");
+		String cmd2("/bin/bar");
+		String user("id");
+		String input(Format("\
+user_exec                                       \n\
+{                                               \n\
+  %2 @ %1                                       \n\
+}                                               \n\
+include { \"input2\" }                          \n\
+",
+				user, cmd1));
+		String input(Format("\
+user_exec                                       \n\
+{                                               \n\
+  %2 @ %1                                       \n\
+}                                                 \
+",
+				user, cmd2));
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(parsePrivilegeStringInclude(input1, input2, privileges, error));
+		unitAssert(privileges.user_exec.match(cmd1, user));
+		unitAssert(privileges.user_exec.match(cmd2, user));
+	}
+*/
+}
 
 Test* PrivilegeMonitorParserTestCases::suite()
 {
@@ -526,6 +562,7 @@ Test* PrivilegeMonitorParserTestCases::suite()
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseValidUserExec);
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseValidMonitoredExec);
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseValidMonitoredUserExec);
+	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseInclude);
 
 	return testSuite;
 }

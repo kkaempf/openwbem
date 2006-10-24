@@ -105,7 +105,7 @@ void print_exec_args_matches(
 		for (j = idents.begin(); j != jend; ++j)
 		{
 			StringArray tok(paths[i].tokenize(" "));
-			StringArray args(tok.begin() + 1, tok.end());
+			StringArray args(tok.begin(), tok.end());
 			cout << (ep.match(tok[0], args, *j) ? '1' : '.');
 		}
 		cout << '\n';
@@ -129,7 +129,7 @@ void print_mon_exec_args_matches(
 			for (j = idents.begin(); j != jend; ++j)
 			{
 				StringArray tok(paths[i].tokenize(" "));
-				StringArray args(tok.begin() + 1, tok.end());
+				StringArray args(tok.begin(), tok.end());
 				cout << (ep.match(tok[0], args, *j, *k) ? '1' : '.');
 			}
 			cout << '\n';

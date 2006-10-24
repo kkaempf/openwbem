@@ -377,9 +377,16 @@ ExecArgsPatterns::match(String const & exec_path, Array<String> const & args, St
 			}
 
 			// executable matched, now check the args.
+			// argv[0] is special, being the name of the executable
+			if (args[0] != exec_path)
+			{
+				continue;
+			}
+
 			// For the time being, we will treat the args as a string or a path. In the future this will be evaluated as a regular expression
+			StringArray argsWithoutExecPath(args.size() != 0 ? args.begin()+1 : args.begin(), args.end());
 			const Array<Arg>& argsPattern(it->second[i].second);
-			if (argsPattern.size() != args.size())
+			if (argsPattern.size() != argsWithoutExecPath.size())
 			{
 				continue;
 			}
@@ -395,7 +402,7 @@ ExecArgsPatterns::match(String const & exec_path, Array<String> const & args, St
 				{
 					PathPatterns tmppp;
 					tmppp.add_pattern(argsPattern[j].arg.c_str());
-					if (!tmppp.match(args[j]))
+					if (!tmppp.match(argsWithoutExecPath[j]))
 					{
 						argsMatch = false;
 						break;
@@ -403,7 +410,7 @@ ExecArgsPatterns::match(String const & exec_path, Array<String> const & args, St
 				}
 				else // if (argsPattern[j].argType == E_LITERAL_ARG)
 				{
-					if (argsPattern[j].arg != args[j])
+					if (argsPattern[j].arg != argsWithoutExecPath[j])
 					{
 						argsMatch = false;
 						break;

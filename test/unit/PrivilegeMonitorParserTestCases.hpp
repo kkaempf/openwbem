@@ -52,6 +52,7 @@ private:
 	void parseValidUserExec();
 	void parseValidMonitoredUserExec();
 	void parseValidMonitoredExec();
+	void parseInclude();
 };
 
 #endif
