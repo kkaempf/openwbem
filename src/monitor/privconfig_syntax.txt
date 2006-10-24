@@ -142,7 +142,8 @@ A user_name can be a specific user name with the same lexical restrictions
 as a path component, or it can be '*', indicating that any user can execute
 the command. 
 
-A exec_arg_list is a list of path_patterns and strings.
+A exec_arg_list is a list of path_patterns, strings and *. A * means that any
+value will be accepted for that particular argument.
 
 A string has the same lexical conventions as a C-style string and supports
 hex, octal and character (\t, \n, etc.) escapes.
