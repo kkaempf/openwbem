@@ -73,7 +73,7 @@ if OW_STATIC_LINKING
 install-exec-local: install-static-owoopcpp1pr-main install-static-owoopcmpipr-main
 
 MAINLIB1=libowoopcpp1pr_main.a
-MAINLIB2=libowoopcpmipr_main.a
+MAINLIB2=libowoopcmpipr_main.a
 
 $(MAINLIB1): $(owoopcpp1pr_OBJECTS)
 	ar cru $@ $^
