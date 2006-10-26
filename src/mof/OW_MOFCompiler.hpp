@@ -50,8 +50,7 @@
 #pragma warning (disable: 4251)
 #endif
 
-// these 2 need to be at global scope because flex also declares them.
-struct owmof_buffer_state;
+// this needs to be at global scope because flex also declares it.
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
 namespace OW_NAMESPACE
