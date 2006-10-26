@@ -91,6 +91,9 @@ if [ $config_dir != null -a $config_dir != empty ]; then
   mkdir -p $config_dir
   if [ $cfgfname != null -a $cfgfname != empty -a $cfgfname != noexist ]; then
     cp $cfgpath $config_dir
+    if [ -e $cfgpath.inc ]; then
+      cp $cfgpath.inc  $config_dir
+    fi
     chown root:${root_group} $config_dir/$cfgfname
     chmod og-rwx $config_dir/$cfgfname
   fi

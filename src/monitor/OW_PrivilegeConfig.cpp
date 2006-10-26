@@ -427,7 +427,9 @@ ExecArgsPatterns::match(String const & exec_path, Array<String> const & args, St
 	return false;
 }
 
-
+IncludeHandler::~IncludeHandler()
+{
+}
 
 } // namespace PrivilegeConfig	
 } // namespace OW_NAMESPACE

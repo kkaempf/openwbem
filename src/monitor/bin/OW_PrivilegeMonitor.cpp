@@ -1169,20 +1169,52 @@ namespace
 	}
 #endif
 
-	void readConfigFile(Privileges& privs, const String& path)
+	class MonitorIncludeHandler : public OpenWBEM::PrivilegeConfig::IncludeHandler
+	{
+	public:
+		MonitorIncludeHandler(const String& configDir)
+		: m_configDir(configDir)
+		{
+		}
+
+		virtual std::istream* getInclude(const String& includeParam)
+		{
+			String cd = m_configDir.endsWith(OW_FILENAME_SEPARATOR) ? m_configDir : m_configDir + OW_FILENAME_SEPARATOR;
+			String path = cd + includeParam;
+			using namespace FileSystem::Path;
+			CHECK0(security(m_configDir, includeParam, ROOT_USERID).first != E_INSECURE,
+				"Config file " + path + " insecure");
+
+			Reference<std::ifstream> is(new std::ifstream(path.c_str()));
+			CHECK0(*is, "Could not open privilege config file " + path);
+			m_includeStorage.push_back(is);
+			return is.getPtr();
+		}
+
+		virtual void endInclude()
+		{
+			m_includeStorage.pop_back();
+		}
+	private:
+		String m_configDir;
+		// This class has to maintain ownership of the ifstreams.
+		std::vector<Reference<std::ifstream> > m_includeStorage;
+	};
+
+	void readConfigFile(Privileges& privs, const String& path, const String& configDir)
 	{
 		std::ifstream is(path.c_str());
 		CHECK0(is, "Could not open privilege config file " + path);
 
-		openwbem_privconfig_Lexer lexer(is);
+		MonitorIncludeHandler mih(configDir);
+		openwbem_privconfig_Lexer lexer(is, mih, path);
 		PrivilegeConfig::ParseError err;
 
 		int code = openwbem_privconfig_parse(&privs, &err, &lexer);
 		CHECK0(code == 0,
-			"Parse error in privilege config file " + path + 
-			" (line " + String(err.line) + ", column " + String(err.column) +
-			"): " + err.message
-		);
+			Format("Parse error in privilege config file %1 (line %2, column %3): %4",
+				path, err.line, err.column, err.message));
+
 	}
 
 	// REQUIRE:	config_dir has already been verified to be a secure directory
@@ -1216,12 +1248,12 @@ namespace
 
 				String privFile = path + OW_FILENAME_SEPARATOR + s;
 				CHECK0(security(path, s, ROOT_USERID).first != E_INSECURE, "Config file " + privFile + " insecure");
-				readConfigFile(*p_priv, privFile);
+				readConfigFile(*p_priv, privFile, config_dir);
 			}
 		}
 		else
 		{
-			readConfigFile(*p_priv, path);
+			readConfigFile(*p_priv, path, config_dir);
 		}
 		return p_priv;
 	}

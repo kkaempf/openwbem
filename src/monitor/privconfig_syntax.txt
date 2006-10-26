@@ -98,6 +98,11 @@ These are the kinds of configuration statements allowed:
 - 'unpriv_user' '{' <name> '}'
   The client runs as the user with the indicated name.
 
+- 'include' '{' <include_file>* '}'
+  The file(s) <config_dir>/<include_file> are included as part of the set of
+  privileges. <config_dir> is the directory path previously passed to 
+  PrivilegeManager::createMonitor(). The include files must be secure.
+
 A path component is a nonempty sequence of characters, with the following
 restrictions:
 - no control characters, whitespace characters, nor '/' character;
@@ -147,3 +152,6 @@ value will be accepted for that particular argument.
 
 A string has the same lexical conventions as a C-style string and supports
 hex, octal and character (\t, \n, etc.) escapes.
+
+An include_file is a string.
+

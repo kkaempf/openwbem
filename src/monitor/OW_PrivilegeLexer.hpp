@@ -42,10 +42,16 @@
 #include <FlexLexer.h>
 #endif
 #include "OW_config.h"
+#include "OW_CommonFwd.hpp"
+#include "OW_String.hpp"
+#include <deque>
 
 /**
  * @author ???
  */
+
+// these need to be at global scope because flex also declares them.
+typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
 // Location of token in file
 //
@@ -59,10 +65,12 @@ struct openwbem_privconfig_yyltype
 
 #define YYLTYPE openwbem_privconfig_yyltype
 
+namespace OW_NAMESPACE { namespace PrivilegeConfig { class IncludeHandler; } }
+
 class openwbem_privconfig_Lexer : public yyFlexLexer
 {
 public:
-	openwbem_privconfig_Lexer(std::istream & arg_yyin);
+	openwbem_privconfig_Lexer(std::istream & arg_yyin, OpenWBEM::PrivilegeConfig::IncludeHandler& includeHandler, const OpenWBEM::String& bufferName);
 
 	virtual int yylex();
 
@@ -71,9 +79,42 @@ public:
 	bool has_value()
 	{
 		return m_has_value;
-	}	
+	}
+
+	// returns 0 on success. 1 if the include is recursive
+	int include(const OpenWBEM::String& includeParam);
+	// returns false if no more include buffers are on the stack
+	bool endInclude();
 
 private:
+
+	struct LexerState
+	{
+		LexerState()
+		: m_has_value(false)
+		, m_first_column(0)
+		, m_first_line(0)
+		, m_last_column(0)
+		, m_last_line(0)
+		, m_next_column(1)
+		, m_next_line(1)
+		{
+		}
+
+		bool m_has_value;
+		unsigned m_first_column;
+		unsigned m_first_line;
+		unsigned m_last_column;
+		unsigned m_last_line;
+		unsigned m_next_column;
+		unsigned m_next_line;
+		YY_BUFFER_STATE m_bufferState;
+		OpenWBEM::String m_bufferName;
+	};
+
+	std::deque<LexerState> m_includeStack;
+	OpenWBEM::PrivilegeConfig::IncludeHandler* m_includeHandler;
+
 	virtual void LexerOutput(char const *, int);
 	virtual void LexerError(char const * msg);
 
@@ -86,6 +127,7 @@ private:
 	unsigned m_last_line;
 	unsigned m_next_column;
 	unsigned m_next_line;
+	OpenWBEM::String m_bufferName;
 };
 
 #endif

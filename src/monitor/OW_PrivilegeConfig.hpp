@@ -260,6 +260,30 @@ struct ParseError
 	unsigned line;
 };
 
+class IncludeHandler
+{
+public:
+	virtual ~IncludeHandler();
+	/**
+     * Return a pointer to the data to be parsed for an include. The caller does not take ownership and will not free
+     * the result.
+     * @param includeParam The include parameter. e.g. include { "foo" } would cause foo to be passed.
+	 * 
+     * @return std::istream* Must not return NULL.
+     * 
+     * @throws An exception derived from Exception indicating the reason for failure.
+	 */
+	virtual std::istream* getInclude(const String& includeParam) = 0;
+
+	/**
+     * Called when the std::istream* from the last stacked call to getInclude() is no longer needed. The intention is
+     * that the derived class can then free it.
+	 */
+	virtual void endInclude() = 0;
+};
+
+
+
 } // namespace PrivilegeConfig
 } // namespace OW_NAMESPACE
 

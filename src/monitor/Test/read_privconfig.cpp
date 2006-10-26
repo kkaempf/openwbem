@@ -146,7 +146,29 @@ std::istream & operator>>(std::istream & is, String & s)
 	String(ss.c_str()).swap(s);
 	return is;
 }
-}
+} // end namespace OW_NAMESPACE
+
+class TestIncludeHandler : public OpenWBEM::PrivilegeConfig::IncludeHandler
+{
+public:
+	TestIncludeHandler()
+	{
+	}
+
+	virtual std::istream* getInclude(const String& includeParam)
+	{
+		// this shouldn't ever get called.
+		assert(0);
+		return 0;
+	}
+	virtual void endInclude()
+	{
+		// this shouldn't ever get called.
+		assert(0);
+	}
+};
+
+
 
 int main_(int argc, char * * argv)
 {
@@ -162,7 +184,8 @@ int main_(int argc, char * * argv)
 		idents.push_back(argv[i]);
 	}
 
-	openwbem_privconfig_Lexer lex(is_cfg);
+	TestIncludeHandler tih;
+	openwbem_privconfig_Lexer lex(is_cfg, tih, argv[1]);
 	OpenWBEM::PrivilegeConfig::Privileges priv;
 	OpenWBEM::PrivilegeConfig::ParseError err;
 	int code = openwbem_privconfig_parse(&priv, &err, &lex);

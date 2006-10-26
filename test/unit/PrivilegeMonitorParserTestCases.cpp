@@ -64,6 +64,7 @@
 #include "OW_PrivilegeConfig.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_Format.hpp"
+#include "OW_Reference.hpp"
 
 using namespace OpenWBEM;
 
@@ -80,12 +81,61 @@ void PrivilegeMonitorParserTestCases::tearDown()
 
 namespace // anonymous
 {
+	class TestIncludeHandler : public PrivilegeConfig::IncludeHandler
+	{
+	public:
+		TestIncludeHandler()
+		: m_liveIncludeCount(0)
+		{
+		}
+
+		TestIncludeHandler(const StringArray& names, const StringArray& includes)
+		: m_liveIncludeCount(0)
+		, m_names(names)
+		{
+			for (size_t i = 0; i < includes.size(); ++i)
+			{
+				m_s.push_back(Reference<IStringStream>(new IStringStream(includes[i])));
+			}
+		}
+
+		virtual std::istream* getInclude(const String& includeParam)
+		{
+			for (size_t i = 0; i < m_names.size(); ++i)
+			{
+				if (m_names[i] == includeParam)
+				{
+					++m_liveIncludeCount;
+					return m_s[i].getPtr();
+				}
+			}
+			assert(0);
+		}
+
+		virtual void endInclude()
+		{
+			--m_liveIncludeCount;
+		}
+	private:
+		int m_liveIncludeCount;
+		StringArray m_names;
+		Array<Reference<IStringStream> > m_s;
+	};
+
+	#define FIRST_PRIV_BUFFER_NAME "original buffer"
 	//
 	// Helper functions for parsing privilege strings
 	//
 	bool parsePrivilegeStream(std::istream& s, OpenWBEM::PrivilegeConfig::Privileges& privileges, OpenWBEM::PrivilegeConfig::ParseError error)
 	{
-		openwbem_privconfig_Lexer lex(s);
+		TestIncludeHandler tih;
+		openwbem_privconfig_Lexer lex(s, tih, FIRST_PRIV_BUFFER_NAME);
+		return openwbem_privconfig_parse(&privileges, &error, &lex) == 0;
+	}
+
+	bool parsePrivilegeStreamInclude(std::istream& s, PrivilegeConfig::IncludeHandler& includeHandler, OpenWBEM::PrivilegeConfig::Privileges& privileges, OpenWBEM::PrivilegeConfig::ParseError error)
+	{
+		openwbem_privconfig_Lexer lex(s, includeHandler, FIRST_PRIV_BUFFER_NAME);
 		return openwbem_privconfig_parse(&privileges, &error, &lex) == 0;
 	}
 
@@ -95,10 +145,22 @@ namespace // anonymous
 		return parsePrivilegeStream(str, privileges, error);
 	}
 
+
 	bool parsePrivilegeStringInclude(const String& s, const String& include, OpenWBEM::PrivilegeConfig::Privileges& privileges, OpenWBEM::PrivilegeConfig::ParseError error)
 	{
 		IStringStream str(s);
-		return parsePrivilegeStream(str, privileges, error);
+		StringArray names(1, "input2");
+		StringArray includes(1, include);
+		names.push_back(FIRST_PRIV_BUFFER_NAME);
+		includes.push_back(s);
+		TestIncludeHandler tih(names, includes);
+		return parsePrivilegeStreamInclude(str, tih, privileges, error);
+	}
+
+	bool parsePrivilegeStringInclude(const String& s, TestIncludeHandler& tih, OpenWBEM::PrivilegeConfig::Privileges& privileges, OpenWBEM::PrivilegeConfig::ParseError error)
+	{
+		IStringStream str(s);
+		return parsePrivilegeStreamInclude(str, tih, privileges, error);
 	}
 
 	//
@@ -116,12 +178,7 @@ namespace // anonymous
 
 	StringArray getArguments(const String& var)
 	{
-		StringArray foo = var.tokenize();
-/*		if( !foo.empty() )
-		{
-			foo.erase(foo.begin());
-		}*/
-		return foo;
+		return var.tokenize();
 	}
 } // end anonymous namespace
 
@@ -524,11 +581,11 @@ monitored_exec_check_args	                     \n\
 void
 PrivilegeMonitorParserTestCases::parseInclude()
 {
-/*	{
+	{	// include at the end
 		String cmd1("/bin/foo");
 		String cmd2("/bin/bar");
 		String user("id");
-		String input(Format("\
+		String input1(Format("\
 user_exec                                       \n\
 {                                               \n\
   %2 @ %1                                       \n\
@@ -536,7 +593,7 @@ user_exec                                       \n\
 include { \"input2\" }                          \n\
 ",
 				user, cmd1));
-		String input(Format("\
+		String input2(Format("\
 user_exec                                       \n\
 {                                               \n\
   %2 @ %1                                       \n\
@@ -549,7 +606,139 @@ user_exec                                       \n\
 		unitAssert(privileges.user_exec.match(cmd1, user));
 		unitAssert(privileges.user_exec.match(cmd2, user));
 	}
-*/
+
+	{	// include at the beginning
+		String cmd1("/bin/foo");
+		String cmd2("/bin/bar");
+		String user("id");
+		String input1(Format("\
+include { \"input2\" }                          \n\
+user_exec                                       \n\
+{                                               \n\
+  %2 @ %1                                       \n\
+}                                               \n\
+",
+				user, cmd1));
+		String input2(Format("\
+user_exec                                       \n\
+{                                               \n\
+  %2 @ %1                                       \n\
+}                                                 \
+",
+				user, cmd2));
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(parsePrivilegeStringInclude(input1, input2, privileges, error));
+		unitAssert(privileges.user_exec.match(cmd1, user));
+		unitAssert(privileges.user_exec.match(cmd2, user));
+	}
+
+	{	// include in the middle
+		String cmd1("/bin/foo");
+		String cmd2("/bin/bar");
+		String cmd3("/bin/baz");
+		String user("id");
+		String input1(Format("\
+user_exec                                       \n\
+{                                               \n\
+  %2 @ %1                                       \n\
+}                                               \n\
+include { \"input2\" }                          \n\
+user_exec                                       \n\
+{                                               \n\
+  %3 @ %1                                       \n\
+}                                               \n\
+",
+				user, cmd1, cmd3));
+		String input2(Format("\
+user_exec                                       \n\
+{                                               \n\
+  %2 @ %1                                       \n\
+}                                                 \
+",
+				user, cmd2));
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(parsePrivilegeStringInclude(input1, input2, privileges, error));
+		unitAssert(privileges.user_exec.match(cmd1, user));
+		unitAssert(privileges.user_exec.match(cmd2, user));
+		unitAssert(privileges.user_exec.match(cmd3, user));
+	}
+
+	{	// recursive include
+		String cmd1("/bin/foo");
+		String cmd2("/bin/bar");
+		String user("id");
+		String input1(Format("\
+include { \"input2\" }                          \n\
+user_exec                                       \n\
+{                                               \n\
+  %2 @ %1                                       \n\
+}                                               \n\
+",
+				user, cmd1));
+		String input2(Format("\
+include { \"" FIRST_PRIV_BUFFER_NAME "\" }      \n\
+user_exec                                       \n\
+{                                               \n\
+  %2 @ %1                                       \n\
+}                                                 \
+",
+				user, cmd2));
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(!parsePrivilegeStringInclude(input1, input2, privileges, error));
+	}
+	{	// multiple include
+		String cmd1("/bin/foo");
+		String cmdbar1("/bin/bar1");
+		String cmdbar2("/bin/bar2");
+		String cmdbar3("/bin/bar3");
+		String user("id");
+		String input1(Format("\
+include { \"input2\" \"input3\" \"input4\" }    \n\
+user_exec                                       \n\
+{                                               \n\
+  %2 @ %1                                       \n\
+}                                               \n\
+",
+				user, cmd1));
+		String input2(Format("\
+user_exec                                       \n\
+{                                               \n\
+  %2 @ %1                                       \n\
+}                                                 \
+",
+				user, cmdbar1));
+		String input3(Format("\
+user_exec                                       \n\
+{                                               \n\
+  %2 @ %1                                       \n\
+}                                                 \
+",
+				user, cmdbar2));
+		String input4(Format("\
+user_exec                                       \n\
+{                                               \n\
+  %2 @ %1                                       \n\
+}                                                 \
+",
+				user, cmdbar3));
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		StringArray names(1, "input2");
+		StringArray includes(1, input2);
+		names.push_back("input3");
+		includes.push_back(input3);
+		names.push_back("input4");
+		includes.push_back(input4);
+		TestIncludeHandler tih(names, includes);
+		unitAssert(parsePrivilegeStringInclude(input1, tih, privileges, error));
+		unitAssert(privileges.user_exec.match(cmd1, user));
+		unitAssert(privileges.user_exec.match(cmdbar1, user));
+		unitAssert(privileges.user_exec.match(cmdbar2, user));
+		unitAssert(privileges.user_exec.match(cmdbar3, user));
+	}
 }
 
 Test* PrivilegeMonitorParserTestCases::suite()

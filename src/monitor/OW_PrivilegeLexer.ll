@@ -104,6 +104,7 @@ monitored_user_exec_check_args     { return K_MONITORED_USER_EXEC_CHECK_ARGS; }
 user_exec_check_args               { return K_USER_EXEC_CHECK_ARGS; }
 
 unpriv_user             { return K_UNPRIV_USER; }
+include			{ return K_INCLUDE; }
 
 \{                      { BEGIN(NOKEYWORDS); return yytext[0]; }
 .                       { return yytext[0]; }
@@ -119,14 +120,32 @@ unpriv_user             { return K_UNPRIV_USER; }
 <NOKEYWORDS>{STRING_VALUE}   { m_has_value = true; return(STRING_VALUE); }
 <NOKEYWORDS>.           { return yytext[0]; }
 
+
+<<EOF>> {
+	if (!endInclude())
+	{
+		yyterminate();
+	}
+}
+
+
 %%
 
-openwbem_privconfig_Lexer::openwbem_privconfig_Lexer(std::istream & arg_yyin)
-: yyFlexLexer(&arg_yyin, 0),
-  m_next_column(1),
-  m_next_line(1)
+openwbem_privconfig_Lexer::openwbem_privconfig_Lexer(std::istream & arg_yyin, OpenWBEM::PrivilegeConfig::IncludeHandler& includeHandler, const OpenWBEM::String& bufferName)
+: yyFlexLexer(&arg_yyin, 0)
+, m_includeHandler(&includeHandler)
+, m_has_value(false)
+, m_first_column(0)
+, m_first_line(0)
+, m_last_column(0)
+, m_last_line(0)
+, m_next_column(1)
+, m_next_line(1)
+, m_bufferName(bufferName)
 {
 }
+
+
 
 void openwbem_privconfig_Lexer::pre_action()
 {
@@ -134,7 +153,7 @@ void openwbem_privconfig_Lexer::pre_action()
 	m_first_line = m_last_line = m_next_line;
 	m_first_column = m_next_column;
 	char c;
-    for (std::size_t i = 0; (c = yytext[i]) != '\0'; ++i)
+	for (std::size_t i = 0; (c = yytext[i]) != '\0'; ++i)
 	{
 		m_last_column = m_next_column;
 		++m_next_column;
@@ -172,6 +191,79 @@ void openwbem_privconfig_Lexer::LexerError(char const * msg)
 	throw LexerException();
 }
 
+int openwbem_privconfig_Lexer::include(const OpenWBEM::String& includeParam)
+{
+	// report an error if the include is recursive
+	for (std::deque<LexerState>::const_iterator i = m_includeStack.begin(); i != m_includeStack.end(); ++i)
+	{
+		if (i->m_bufferName == includeParam)
+		{
+			return 1;
+		}
+	}
+
+	// first, get the new stream
+	if (!m_includeHandler)
+	{
+		throw LexerException();
+	}
+
+	std::istream* newistr = m_includeHandler->getInclude(includeParam);
+
+	// save the current state into the include stack
+
+	m_includeStack.push_back(LexerState());
+
+	m_includeStack.back().m_has_value = m_has_value;
+	m_includeStack.back().m_first_column = m_first_column;
+	m_includeStack.back().m_first_line = m_first_line;
+	m_includeStack.back().m_last_column = m_last_column;
+	m_includeStack.back().m_last_line = m_last_line;
+	m_includeStack.back().m_next_column = m_next_column;
+	m_includeStack.back().m_next_line = m_next_line;
+	m_includeStack.back().m_bufferState = YY_CURRENT_BUFFER;
+	m_includeStack.back().m_bufferName = m_bufferName;
+
+	// set up new state
+	m_has_value = false;
+	m_first_column = 0;
+	m_first_line = 0;
+	m_last_column = 0;
+	m_last_line = 0;
+	m_next_column = 1;
+	m_next_line = 1;
+	m_bufferName = includeParam;
+
+	yy_switch_to_buffer( yy_create_buffer( newistr, YY_BUF_SIZE ) );
+
+	return 0;
+}
+
+bool openwbem_privconfig_Lexer::endInclude()
+{
+	if (m_includeStack.size() == 0)
+	{
+		return false;
+	}
+
+	yy_delete_buffer( YY_CURRENT_BUFFER );
+	m_has_value = m_includeStack.back().m_has_value;
+	m_first_column = m_includeStack.back().m_first_column;
+	m_first_line = m_includeStack.back().m_first_line;
+	m_last_column = m_includeStack.back().m_last_column;
+	m_last_line = m_includeStack.back().m_last_line;
+	m_next_column = m_includeStack.back().m_next_column;
+	m_next_line = m_includeStack.back().m_next_line;
+	m_bufferName = m_includeStack.back().m_bufferName;
+
+	yy_switch_to_buffer(m_includeStack.back().m_bufferState);
+
+	m_includeStack.pop_back();
+	m_includeHandler->endInclude();
+
+	return true;
+}
+
 int openwbem_privconfig_lex(
 	YYSTYPE * lvalp, YYLTYPE * llocp, openwbem_privconfig_Lexer * lexerp)
 {
@@ -191,6 +283,7 @@ int openwbem_privconfig_lex(
 	}
 	catch (LexerException &)
 	{
+std::cout << "Caught LexerException. returning SCANNER_ERROR" << std::endl;
 		// Don''t let exception propagate out, as Bison code that calls this
 		// function is not exception-safe at all.
 		lvalp->s = 0;

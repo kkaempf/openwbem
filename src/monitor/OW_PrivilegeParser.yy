@@ -59,6 +59,7 @@ namespace
 	void add_pattern(ExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_ident);
 	void add_pattern(MonitoredUserExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_app_name, char * consumed_user_name);
 	String make_name_or_path(char * consumed_c_str);
+	String makeString(char * consumedStr);
 }
 
 void openwbem_privconfig_error(
@@ -84,7 +85,8 @@ void openwbem_privconfig_error(
 %union
 {
 	char * s;
-	::OpenWBEM::Array< ::OpenWBEM::PrivilegeConfig::ExecArgsPatterns::Arg>* sa;
+	::OpenWBEM::Array< ::OpenWBEM::PrivilegeConfig::ExecArgsPatterns::Arg>* ArgArray;
+	::OpenWBEM::Array< ::OpenWBEM::String>* StringArray;
 }
 
 %{
@@ -94,19 +96,22 @@ int yylex(YYSTYPE * lvalp, YYLTYPE * llocp, openwbem_privconfig_Lexer * lexerp);
 %token <s>  SPLAT NAME DIRPATH SUBTREE FILEPATH FPATHWC STRING_VALUE
 
 // These do not have values
-%token      K_OPEN_R K_OPEN_W K_OPEN_RW K_OPEN_A K_READ_DIR K_READ_LINK
-%token      K_CHECK_PATH K_RENAME_FROM K_RENAME_TO K_RENAME_FROM_TO
-%token      K_UNLINK K_MONITORED_EXEC K_USER_EXEC K_UNPRIV_USER
-%token		K_MONITORED_EXEC_CHECK_ARGS K_USER_EXEC_CHECK_ARGS
-%token		K_MONITORED_USER_EXEC_CHECK_ARGS K_MONITORED_USER_EXEC
-%token		AT
-%token      SCANNER_ERROR
+%token K_OPEN_R K_OPEN_W K_OPEN_RW K_OPEN_A K_READ_DIR K_READ_LINK
+%token K_CHECK_PATH K_RENAME_FROM K_RENAME_TO K_RENAME_FROM_TO
+%token K_UNLINK K_MONITORED_EXEC K_USER_EXEC K_UNPRIV_USER
+%token K_MONITORED_EXEC_CHECK_ARGS K_USER_EXEC_CHECK_ARGS
+%token K_MONITORED_USER_EXEC_CHECK_ARGS K_MONITORED_USER_EXEC
+%token K_INCLUDE
+%token AT
+%token SCANNER_ERROR
 
 %type <s>   path_pattern exec_path_pattern user_name
-%type <sa>	exec_arg_list
+%type <ArgArray>	exec_arg_list
+%type <StringArray> include_args
 
 %destructor { delete [] $$; } path_pattern NAME DIRPATH SUBTREE FILEPATH FPATHWC SPLAT
 %destructor { delete $$; } exec_arg_list
+%destructor { delete $$; } include_args
 
 %%
 
@@ -134,6 +139,18 @@ config_stmt:
 |	K_MONITORED_USER_EXEC_CHECK_ARGS '{' monitored_user_exec_check_args_args '}'
 |	K_USER_EXEC_CHECK_ARGS '{' user_exec_check_args_args '}'
 |	K_UNPRIV_USER '{' unpriv_user_arg '}'
+|	K_INCLUDE '{' include_args '}'
+	{
+		// Process the list in reverse order because the include mechanism works on a stack (LIFO).
+		for (OpenWBEM::StringArray::reverse_iterator i = $3->rbegin(); i != $3->rend(); ++i)
+		{
+			if (p_lexer->include(*i) != 0)
+			{
+				yyerror(&yylloc, p_priv, p_err, p_lexer, "Recursive include");
+				return 1;
+			}
+		}
+	}
 ;
 
 open_r_args:
@@ -249,6 +266,15 @@ user_name:
 unpriv_user_arg: NAME { p_priv->unpriv_user = make_name_or_path($1); }
 ;
 
+include_args:
+	/* empty */
+	{ $$ = new Array<String>; }
+|	include_args STRING_VALUE 
+	{
+		$1->push_back(makeString($2)); $$ = $1;
+	}
+;
+
 path_pattern:
   FILEPATH { $$ = $1; }
 | FPATHWC  { $$ = $1; }
@@ -263,7 +289,7 @@ exec_path_pattern:
 exec_arg_list:
 	/* empty */ { $$ = new Array<ExecArgsPatterns::Arg>; }
 | exec_arg_list path_pattern { $1->push_back(ExecArgsPatterns::Arg($2, ExecArgsPatterns::E_PATH_PATTERN_ARG)); $$ = $1; }
-| exec_arg_list STRING_VALUE { $1->push_back(ExecArgsPatterns::Arg(OpenWBEM::PrivilegeConfig::unescapeString(String($2).substring(1,String($2).length() - 2).c_str()), ExecArgsPatterns::E_LITERAL_ARG)); $$ = $1; }
+| exec_arg_list STRING_VALUE { $1->push_back(ExecArgsPatterns::Arg(makeString($2), ExecArgsPatterns::E_LITERAL_ARG)); $$ = $1; }
 | exec_arg_list SPLAT { $1->push_back(ExecArgsPatterns::Arg($2, ExecArgsPatterns::E_ANYTHING_ARG)); $$ = $1; }
 ;
 
@@ -322,6 +348,16 @@ namespace
 	{
 		OpenWBEM::AutoPtrVec<char> s(consumed_c_str);
 		return OpenWBEM::PrivilegeConfig::unescape_path(consumed_c_str);
+	}
+
+	String makeString(char * consumedStr)
+	{
+		int len = strlen(consumedStr);
+		assert(len >= 2);
+		assert(consumedStr[0] == '"');
+		assert(consumedStr[len-1] == '"');
+		consumedStr[len-1] = 0;
+		return OpenWBEM::PrivilegeConfig::unescapeString(consumedStr+1);
 	}
 }
 
