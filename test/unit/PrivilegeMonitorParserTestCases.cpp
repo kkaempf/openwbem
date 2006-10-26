@@ -65,6 +65,7 @@
 #include "OW_StringStream.hpp"
 #include "OW_Format.hpp"
 #include "OW_Reference.hpp"
+#include <cassert>
 
 using namespace OpenWBEM;
 
