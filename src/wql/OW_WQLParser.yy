@@ -59,7 +59,7 @@ using namespace OpenWBEM;
 
 %}
 
-
+%error-verbose
 
 %token ALL
 %token AND
