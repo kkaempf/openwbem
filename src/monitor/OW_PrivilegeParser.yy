@@ -39,6 +39,7 @@
 #include "OW_String.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_PrivilegeConfig.hpp"
+#include <cassert>
 
 using OpenWBEM::PrivilegeConfig::Privileges;
 using OpenWBEM::PrivilegeConfig::PathPatterns;
