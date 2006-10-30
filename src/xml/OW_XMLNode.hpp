@@ -436,6 +436,7 @@ public:
 	XMLNodeImpl(const String& name, const XMLAttributeArray& attrArray);
 	XMLNodeImpl(const String& name);
 	XMLNodeImpl();
+	~XMLNodeImpl();
 	String getNodeName() const;
 	void assignText(const String& text);
 	void appendText(const String& text);
