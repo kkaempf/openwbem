@@ -435,9 +435,6 @@ namespace
 		conn().close();
 	}
 
-#define CMDCASE(name, fct) \
-	case PrivilegeCommon::E_CMD_ ## name : this->fct(); break
-
 	void Monitor::run_body()
 	{
 		ECommand cmd;
@@ -445,20 +442,20 @@ namespace
 		{
 			switch (cmd)
 			{
-				CMDCASE(OPEN, open);
-				CMDCASE(READ_DIR, read_dir);
-				CMDCASE(READ_LINK, read_link);
+				case PrivilegeCommon::E_CMD_OPEN :                 this->open(); break;
+				case PrivilegeCommon::E_CMD_READ_DIR :             this->read_dir(); break;
+				case PrivilegeCommon::E_CMD_READ_LINK :            this->read_link(); break;
 #if 0
-				CMDCASE(CHECK_PATH, check_path);
+				case PrivilegeCommon::E_CMD_CHECK_PATH :           this->check_path(); break;
 #endif
-				CMDCASE(RENAME, rename);
-				CMDCASE(UNLINK, unlink);
-				CMDCASE(MONITORED_SPAWN, monitoredSpawn);
-				CMDCASE(MONITORED_USER_SPAWN, monitoredUserSpawn);
-				CMDCASE(KILL, kill);
-				CMDCASE(POLL_STATUS, pollStatus);
-				CMDCASE(USER_SPAWN, userSpawn);
-				CMDCASE(DONE, done);
+				case PrivilegeCommon::E_CMD_RENAME :               this->rename(); break;
+				case PrivilegeCommon::E_CMD_UNLINK :               this->unlink(); break;
+				case PrivilegeCommon::E_CMD_MONITORED_SPAWN :      this->monitoredSpawn(); break;
+				case PrivilegeCommon::E_CMD_MONITORED_USER_SPAWN : this->monitoredUserSpawn(); break;
+				case PrivilegeCommon::E_CMD_KILL :                 this->kill(); break;
+				case PrivilegeCommon::E_CMD_POLL_STATUS :          this->pollStatus(); break;
+				case PrivilegeCommon::E_CMD_USER_SPAWN :           this->userSpawn(); break;
+				case PrivilegeCommon::E_CMD_DONE :                 this->done(); break;
 
 			default:
 				ipcio_put(conn(), PrivilegeCommon::E_ERROR);
