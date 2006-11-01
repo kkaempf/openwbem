@@ -1975,6 +1975,7 @@ unsigned CIMRepository::checkFreeLists()
 	retval |= static_cast<unsigned>(!m_classAssocDb.checkFreeList()) << 3;
 	retval |= static_cast<unsigned>(!m_instAssocDb.checkFreeList()) << 4;
 #endif
+	return retval;
 }
 
 const char* const CIMRepository::INST_REPOS_NAME = "instances";
