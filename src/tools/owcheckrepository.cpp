@@ -12,6 +12,6 @@ int main(int argc, char * * argv)
 	char const * const repos_dir = argv[1];
 	CIMRepository repos;
 	repos.open(repos_dir);
-	cout << ios::hex << repos.checkFreeLists() << endl;
+	cout << hex << repos.checkFreeLists() << endl;
 	return 0;
 }
