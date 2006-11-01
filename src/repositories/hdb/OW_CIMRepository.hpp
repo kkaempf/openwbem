@@ -565,6 +565,8 @@ public:
 
 	ServiceEnvironmentIFCRef getEnvironment() const { return m_env; }
 
+	unsigned checkFreeLists();
+
 private:
 	CIMClass _getClass(const String& ns, const CIMName& className);
 	CIMClass _instGetClass(const String& ns, const CIMName& className);

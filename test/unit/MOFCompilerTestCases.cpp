@@ -159,9 +159,6 @@ void MOFCompilerTestCases::testfixParsedString()
 
 	// test too large hex
 	unitAssertThrows(MOF::Compiler::fixParsedString("\"\\xFF\""));
-	// test too large oct
-	unitAssertThrows(MOF::Compiler::fixParsedString("\"\\777\""));
-
 }
 
 Test* MOFCompilerTestCases::suite()

@@ -1964,6 +1964,18 @@ CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& cont
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+unsigned CIMRepository::checkFreeLists()
+{
+	unsigned retval = 0;
+	retval |= static_cast<unsigned>(!m_nStore.checkFreeList()) << 0;
+	retval |= static_cast<unsigned>(!m_iStore.checkFreeList()) << 1;
+	retval |= static_cast<unsigned>(!m_mStore.checkFreeList()) << 2;
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+	retval |= static_cast<unsigned>(!m_classAssocDb.checkFreeList()) << 3;
+	retval |= static_cast<unsigned>(!m_instAssocDb.checkFreeList()) << 4;
+#endif
+}
 
 const char* const CIMRepository::INST_REPOS_NAME = "instances";
 const char* const CIMRepository::META_REPOS_NAME = "schema";

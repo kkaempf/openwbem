@@ -103,7 +103,7 @@ chmod -R og-rwx $test_dir
 ./perl_launcher $config_dir $user $safe_bin $base_dir/`basename $inpf` \
 	> monperltest.out 2>&1
 
-./check_for_exceptions.sh $exception_list monperltest.out
+`dirname $0`/check_for_exceptions.sh $exception_list monperltest.out
 
 rm -rf $gold_dir
 mkdir -p $gold_dir

@@ -783,6 +783,23 @@ AssocDb::addToFreeList(Int32 offset, AssocDbHandle& hdl)
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
+bool AssocDb::checkFreeList()
+{
+	AssocDbHandle hdl = this->getHandle();
+	AssocDbRecHeader rh;
+	Int32 coffset = m_hdrBlock.firstFree;
+	while (coffset != -1)
+	{
+		readRecHeader(rh, coffset, hdl.getFile());
+		if (rh.nextFree == coffset)
+		{
+			return false;
+		}
+		coffset = rh.nextFree;
+	}
+	return true;
+}
+//////////////////////////////////////////////////////////////////////////////
 // PRIVATE
 AssocDbRecHeader
 AssocDb::getNewBlock(Int32& offset, UInt32 blkSize,

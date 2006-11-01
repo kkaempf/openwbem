@@ -118,7 +118,7 @@ sed ${extended_sed_flag} -e 's/^  OW_PRIVILEGE_MONITOR_DESCRIPTOR=[0-9]+;$/  OW_
 	-e 's/^  .+PATH=.*;$/  XPATH=XXX;/' \
 	-e 's/monitoredUserSpawn/monitoredSpawn/' \
   < monexectest.out.tmp > monexectest.out
-./check_for_exceptions.sh $exception_list monexectest.out
+`dirname $0`/check_for_exceptions.sh $exception_list monexectest.out
 
 rm -rf $gold_dir
 mkdir -p $gold_dir

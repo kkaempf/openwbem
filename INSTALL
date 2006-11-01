@@ -30,6 +30,10 @@ CONTENTS
          to fix this, but if you build it from source, you'll need 
          (see http://www.gnu.org).
 
+      Blocxx
+         See http://developer.novell.com/wiki/index.php/Blocxx-svn-access for
+         instructions on obtaining the source code. 
+
       Flex - (optional)
          Fast lexical analyser.
          (see http://www.gnu.org).

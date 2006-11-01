@@ -61,7 +61,8 @@ owenuminstancenames \
 owgetclass \
 owgetinstance \
 owdeleteinstance \
-owinvokemethod
+owinvokemethod \
+owcheckrepository
 
 
 ### owdigestgenpass
@@ -132,6 +133,20 @@ $(BINLINKAPPENDFLAGS)
 owdeletenamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owdeletenamespace$(EXEEXT)
+
+### owcheckrepository
+owcheckrepository_SOURCES = owcheckrepository.cpp
+
+owcheckrepository_LDADD = \
+libtoolscommon.a \
+-L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
+-L$(top_builddir)/db/db -lowdb \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+owcheckrepository_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owcheckrepository$(EXEEXT)
 
 ### owenumnamespace
 owenumnamespace_SOURCES = \

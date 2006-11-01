@@ -251,6 +251,24 @@ HDB::setFirstFreeOffSet(File& file, Int32 offset)
 	setOffsets(file, m_hdrBlock.firstRoot, m_hdrBlock.lastRoot, offset);
 }
 //////////////////////////////////////////////////////////////////////////////
+bool HDB::checkFreeList(File & file)
+{
+	MutexLock l(m_guard);
+	Int32 offset = -1;
+	HDBBlock fblk;
+	Int32 coffset = m_hdrBlock.firstFree;
+	while (coffset != -1L)
+	{
+		readBlock(fblk, file, coffset);
+		if (fblk.nextSib == coffset)
+		{
+			return false;
+		}
+		coffset = fblk.nextSib;
+	}
+	return true;
+}
+//////////////////////////////////////////////////////////////////////////////
 // Find a block in the free list that is large enough to hold the given
 // size. If no block in the free list is large enough or the free list
 // is empty, then the offset to the end of the file is returned
@@ -582,6 +600,11 @@ HDBHandle::HDBHandle() :
 HDBHandle::HDBHandle(HDB* pdb, const File& file) :
 	m_pdata(new HDBHandleData(pdb, file))
 {
+}
+//////////////////////////////////////////////////////////////////////////////
+bool HDBHandle::checkFreeList()
+{
+	return m_pdata->m_pdb->checkFreeList(m_pdata->m_file);
 }
 //////////////////////////////////////////////////////////////////////////////
 Int32

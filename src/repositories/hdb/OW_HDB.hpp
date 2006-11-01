@@ -220,6 +220,8 @@ public:
 	 */
 	Int32 getUserValue() const { return m_pdata->m_userVal; }
 
+	bool checkFreeList();
+
 	/**
 	 * @return true if the is a valid HDBHandle. Otherwise false.
 	 */
@@ -317,6 +319,7 @@ public:
 	 */
 	static void readBlock(HDBBlock& fblk, const File& file, Int32 offset);
 private:
+	bool checkFreeList(File & file);
 	bool createFile();
 	void checkFile();
 	void setOffsets(File& file, Int32 firstRootOffset, Int32 lastRootOffset,

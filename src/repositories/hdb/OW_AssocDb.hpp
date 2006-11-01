@@ -287,6 +287,8 @@ public:
 	 */
 	AssocDbHandle getHandle();
 
+	bool checkFreeList();
+
 	typedef bool AssocDb::*safe_bool;
 	/**
 	 * @return true if this AssocDb is currently opened.
