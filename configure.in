@@ -1262,7 +1262,7 @@ AC_ARG_WITH(search-dir,
 	[
 		if test "x$withval" != "xno" ; then
 			CPPFLAGS="$CPPFLAGS -I$withval/include" 
-			LDFLAGS="$LDFLAGS -L$withval/lib" 
+			LDFLAGS="$LDFLAGS -L$withval/lib -L$withval/lib64" 
 		fi
 	]
 )
