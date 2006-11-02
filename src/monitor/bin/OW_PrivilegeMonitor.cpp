@@ -865,7 +865,10 @@ namespace
 		PrivilegeCommon::spawn_monitor(m_config_dir, m_app_name, policy); 
 
 		// Signals already set to defaults
-		
+
+		// This is after the new monitor is created. We don't want it in the new process group.
+		PreExec::setNewProcessGroup();
+
 		// Close unneeded descriptors that aren't already being auto-closed.
 		PreExec::closePipesOnExec(pparr);
 
@@ -1101,6 +1104,8 @@ namespace
 		Secure::runAs(m_user_name.c_str());
 
 		// Signals already set to defaults
+
+		PreExec::setNewProcessGroup();
 
 		// Close unneeded descriptors that aren't already being auto-closed.
 		PreExec::closePipesOnExec(pparr);

@@ -59,6 +59,40 @@ void OW_ExecTestCases::tearDown()
 {
 }
 
+bool OW_ExecTestCases::executeTestScript(const String& option1, const String& option2, const String& desiredOutput)
+{
+	String output;
+	{
+		try
+		{
+			StringArray cmd;
+			cmd.push_back("./exec_test_script.sh");
+			cmd.push_back(option1);
+			cmd.push_back(option2);
+			Process::Status status = Exec::executeProcessAndGatherOutput(cmd, output, Timeout::relative(5));
+			unitAssert(0);
+		}
+		catch (const ExecTimeoutException& e)
+		{
+		}
+		String filename = output.trim();
+		unitAssert(FileSystem::exists(filename));
+		if( FileSystem::exists(filename) )
+		{
+			StringArray foo = FileSystem::getFileLines(filename);
+			FileSystem::removeFile(filename);
+			for( StringArray::const_iterator i = foo.begin(); i != foo.end(); ++i )
+			{
+				if( i->indexOf(desiredOutput) != String::npos )
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 {
 	{
@@ -96,33 +130,12 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 	// only do timeout tests if we're doing the long test, since it's slowwww
 	if (getenv("OWLONGTEST"))
 	{
-		// do a timeout
-		String output;
-		try
-		{
-			StringArray cmd;
-			cmd.push_back("/bin/sh");
-			cmd.push_back("-c");
-
-			// We want a delay in this test before any output occurs.  This is
-			// important because on some platforms (like Linux), the output could be
-			// received even if the timeout was set as 0.  With a sleep at the
-			// beginning of the test, this should hopefully avoid any scheduling
-			// issues with a child process going too fast on an unloaded machine.
-
-			// The sequence should go like this:
-			// 1. sleep 1 - test blocks
-			// 2. echo before - test gets it then resets timeout to 2 seconds.
-			// 3. sleep 4 starts
-			// 4. test times out after 2 seconds and throws.
-			cmd.push_back("sleep 1; echo before; sleep 4; echo after");
-			Process::Status status = Exec::executeProcessAndGatherOutput(cmd, output, Timeout::relativeWithReset(2.0));
-			unitAssert(0);
-		}
-		catch (const ExecTimeoutException& e)
-		{
-		}
-		unitAssert(output == "before\n");
+		// Test our child process which requires a signal, and NOT ignoring the term signal.
+		unitAssert(executeTestScript("wait_child", "noignore", "Parent received signal"));
+		// Test our child process which requires a signal, and ignoring the term signal.
+		unitAssert(executeTestScript("wait_child", "ignore", "Child received signal"));
+		// Test our child process which requires a kill signal, yet the child quits when the process group is signaled.
+		unitAssert(executeTestScript("sleep", "ignore", "Child sleep terminated"));
 	}
 
 	{

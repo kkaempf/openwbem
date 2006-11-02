@@ -285,6 +285,7 @@ namespace
 	void PrivMonPreExec::call(pipe_pointer_t const pparr[])
 	{
 		PreExec::resetSignals();
+		PreExec::setNewProcessGroup();
 		PreExec::setupStandardDescriptors(pparr);
 		PreExec::closeDescriptorsOnExec(m_keep);
 	}

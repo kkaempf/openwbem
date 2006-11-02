@@ -37,6 +37,7 @@
 #define OW_Exec_TEST_CASES_HPP_
 
 #include "TestCase.hpp"
+#include "OW_String.hpp"
 
 class OW_ExecTestCases : public TestCase
 {
@@ -52,6 +53,9 @@ private:
 	// test methods
 	void testExecuteProcessAndGatherOutput();
 	void testgatherOutput();
+
+	// helper method
+	bool executeTestScript(const OpenWBEM::String& option1, const OpenWBEM::String& option2, const OpenWBEM::String& desiredOutput);
 };
 
 #endif
