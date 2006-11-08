@@ -144,6 +144,7 @@ RPATH_LINK_FLAG=
 RPATH_LINK_FLAG_REQUIRED=0
 RPATH_DEFAULT_PATH=
 REALTIME_LIBS=
+ICONV_LIB=
 
 echo "Setting host specific flags..."
 
@@ -253,8 +254,6 @@ case "$target" in
 	esac
 
 	PLAT_OPTFLAGS="-O0"
-	ICONV_LIB="-liconv"
-	AC_SUBST(ICONV_LIB)
 	PIDFILE_DIR="/var/locks"
 	LIB_EXT="so"
 	AC_DEFINE(SETEUID_BREAKS_SETUID, 1, [seteuid() breaks setuid()])
@@ -277,8 +276,6 @@ case "$target" in
 	CXXSHAREDLIBLINKFLAGS="-dynamiclib -install_name \$(thelibdir)/\$(DYFILENAME) -compatibility_version \$(LIBRARY_BINARY_VERSION) -current_version \$(LIBRARY_BINARY_VERSION)"
 	CXXBUNDLELIBLINKFLAGS="-bundle"
 	PLAT_OPTFLAGS="-O2"
-	ICONV_LIB="-liconv"
-	AC_SUBST(ICONV_LIB)
 	PIDFILE_DIR="/var/run"
 	LIB_EXT="dylib.bundle"
 	OW_NO_WDEPRECATED=1
@@ -376,8 +373,6 @@ case "$target" in
 	CXXBINLINKFLAGS="-Wl,-Bdynamic"
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-h -Wl,$@.$(LIBRARY_BINARY_VERSION)'
 	PLAT_OPTFLAGS="-O3"
-	ICONV_LIB="-liconv"
-	AC_SUBST(ICONV_LIB)
 	PIDFILE_DIR="/var/run"
 	RPATH_LINK_FLAG="-R"
 	LIB_EXT="so"
@@ -613,6 +608,25 @@ hash_map \
 ext/hash_map \
 cxxabi.h \
 )
+
+dnl Check the libraries needed for iconv.  On many (most?) platforms, this will
+dnl be nothing, and the -lc won't be used.  On other platforms, -liconv is
+dnl needed.
+LIBS_icsaved="$LIBS"
+AC_CHECK_LIB(c, iconv_open,
+	[
+		dnl Use whatever was defined previously for ICONV_LIB.  This should be
+		dnl empty, unless explicitly overridden.
+		ICONV_LIB="$ICONV_LIB"
+	],
+	[
+		AC_CHECK_LIB(iconv, iconv_open,
+			[ ICONV_LIB="-liconv" ],
+		)
+	]
+)
+LIBS="$LIBS_icsaved"
+AC_SUBST(ICONV_LIB)
 
 dnl Needed for monitor
 AC_CHECK_FUNCS(setsid)
