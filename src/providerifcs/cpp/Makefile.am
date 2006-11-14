@@ -32,8 +32,6 @@ $(ASSOCIATION_S) \
 OW_CppProviderBaseIFC.cpp \
 OW_CppProviderIFC.cpp \
 OW_CppProxyProvider.cpp \
-OW_CppProxyProvider.hpp \
-OW_CppProviderIFC.hpp \
 OW_CppIndicationExportProviderIFC.cpp \
 OW_CppIndicationProviderIFC.cpp \
 OW_CppMethodProviderIFC.cpp \
@@ -53,6 +51,8 @@ OW_CppAssociatorProviderIFC.hpp
 endif
 
 pkginclude_HEADERS = \
+OW_CppProxyProvider.hpp \
+OW_CppProviderIFC.hpp \
 OW_CppProviderBaseIFC.hpp \
 $(ASSOCIATION_H) \
 OW_CppIndicationExportProviderIFC.hpp \
