@@ -50,6 +50,7 @@
 #include "OW_Secure.hpp"
 #include "OW_String.hpp"
 #include "OW_Timeout.hpp"
+#include "OW_SyslogAppender.hpp"
 #include "blocxx/WaitpidThreadFix.hpp"
 
 #include <algorithm>
@@ -98,7 +99,20 @@ extern "C" void ERR_remove_state(unsigned long)
 
 namespace
 {
-	Logger logger("none", LogAppenderRef(new NullAppender()));
+	LogAppenderRef getSyslogAppender()
+	{
+		LogAppenderRef logappender = 
+			new SyslogAppender(
+				LogAppender::ALL_COMPONENTS, 
+				LogAppender::ALL_CATEGORIES,
+				SyslogAppender::STR_DEFAULT_MESSAGE_PATTERN,
+				"ow.mon.tempsyslogger", "daemon"
+				);
+
+		return logappender;
+	}
+
+	Logger logger("ow.mon.none", getSyslogAppender());
 
 	unsigned const PATH_CACHE_SIZE = 100;
 	int const NUM_CMDS = static_cast<int>(PrivilegeCommon::E_NUM_MONITOR_CMDS);
@@ -1276,16 +1290,20 @@ namespace
 		return have_cfg_user ? cfg_user : String(arg_user);
 	}
 
-
 	int aux_main(int argc, char * * argv)
 	{
 		::umask(0);
+
+		// until the real logger is created we will log all errors to syslog
+		LogAppender::setDefaultLogAppender(getSyslogAppender());
+
 		turnOffWaitpidThreadFix();
 
 		PrivilegeCommon::DescriptorInfo x
 			= PrivilegeCommon::monitor_descriptor();
 		if (x.errnum != 0)
 		{
+			OW_LOG_ERROR(logger, Format("monitor_descriptor() returned an error: %1", x.errnum));
 			return x.errnum;
 		}
 		int client_descriptor = x.descriptor;
