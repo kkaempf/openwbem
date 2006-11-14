@@ -157,8 +157,11 @@ void MOFCompilerTestCases::testfixParsedString()
 	unitAssertEquals( MOF::Compiler::fixParsedString("\"\\nescape at the beginning\""), "\nescape at the beginning" );
 	unitAssertEquals( MOF::Compiler::fixParsedString("\"\\nescape at the beginning and end\\n\""), "\nescape at the beginning and end\n" );
 
-	// test too large hex
-	unitAssertThrows(MOF::Compiler::fixParsedString("\"\\xFF\""));
+	if (CHAR_MAX == SCHAR_MAX)
+	{
+		// test too large hex
+		unitAssertThrows(MOF::Compiler::fixParsedString("\"\\xFF\""));
+	}
 }
 
 Test* MOFCompilerTestCases::suite()

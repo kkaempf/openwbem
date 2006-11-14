@@ -51,10 +51,13 @@ void PrivilegeConfigTestCases::testunescapeString()
 	unitAssert( PrivilegeConfig::unescapeString("\\7\\1\\02\\003\\43\\165") == "\7\1\02\003\43\165" );
 	unitAssert( PrivilegeConfig::unescapeString("only one escape\\n") == "only one escape\n" );
 
-	// test too large hex
-	unitAssertThrows(PrivilegeConfig::unescapeString("\\xFF"));
-	// test too large oct
-	unitAssertThrows(PrivilegeConfig::unescapeString("\\777"));
+	if(CHAR_MAX == SCHAR_MAX)
+	{
+		// test too large hex
+		unitAssertThrows(PrivilegeConfig::unescapeString("\\xFF"));
+		// test too large oct
+		unitAssertThrows(PrivilegeConfig::unescapeString("\\777"));
+	}
 }
 
 Test* PrivilegeConfigTestCases::suite()
