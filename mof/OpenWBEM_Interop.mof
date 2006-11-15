@@ -291,7 +291,11 @@ class OpenWBEM_OOPProviderRegistration
       "unprivileged user named owcimomd.\n"
       "monitored means that the provider process will be run as the "
       "user specified in the monitor privileges configuration file, "
-      "and the monitor will run as root.\n"
+      "and the monitor will run as root.  BE VERY CAUTIOUS WITH THIS "
+      "SETTING!  Operation monitored is preferred to monitored because "
+      "with monitored, non-root users can run code as root if the CIMOM "
+      "is configured to allow non-root users to log in.  Monitored is "
+      "similar to super user in this regard.\n"
       "operation monitored means that the provider process will be run as the "
       "user specified in the monitor privileges configuration file, "
       "and the monitor wil run as as the authenticated username who "
@@ -303,7 +307,7 @@ class OpenWBEM_OOPProviderRegistration
     uint16 UserContext = 3;
 
     [Description (
-      "If UserContext = 4 (monitored), a monitor will be created for the "
+      "If UserContext = 4 or 5 (monitored), a monitor will be created for the "
       "provider process. The monitor can give the process special "
       "permissions. This property must be set to the file name of the "
       "provider's privileges configuration file. The file must be in the "
