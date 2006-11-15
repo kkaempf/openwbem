@@ -43,6 +43,8 @@
 #include "OW_Process.hpp"
 #include "OW_Reference.hpp"
 #include "OW_OOPProtocolIFC.hpp"
+#include "OW_ThreadPool.hpp"
+#include "OW_UnnamedPipe.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -56,6 +58,8 @@ public:
 		);
 
 	virtual ~OOPProviderBase();
+
+	UnnamedPipeRef startClonedProviderEnv(const ProviderEnvironmentIFCRef& env);
 
 	class MethodCallback
 	{
@@ -89,6 +93,7 @@ private:
 	ProcessRef getProcess(const char* fname, const ProviderEnvironmentIFCRef& env, EUsePersistentProcessFlag usePersistentProcess);
 	Reference<Mutex> m_guardRef;
 	Reference<ProcessRef> m_persistentProcessRef;
+	ThreadPool m_threadPool;
 };
 
 } // end namespace OW_NAMESPACE

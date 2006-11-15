@@ -62,6 +62,7 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMServerProviderEnvironment.hpp"
+#include "OW_OOPProviderBase.hpp"
 
 #include <deque>
 #include <iosfwd>
@@ -75,7 +76,8 @@ namespace OW_NAMESPACE
 OW_DECLARE_EXCEPTION(OOPProtocolCPP1);
 OW_DEFINE_EXCEPTION(OOPProtocolCPP1);
 
-OOPProtocolCPP1::OOPProtocolCPP1()
+OOPProtocolCPP1::OOPProtocolCPP1(OOPProviderBase* pprov)
+	: OOPProtocolIFC(pprov)
 {
 }
 
@@ -225,14 +227,16 @@ namespace
 		std::deque<OutputEntry>& outputEntries,
 		const ProviderEnvironmentIFCRef& env,
 		OperationResultHandler& result,
-		ThreadPool& threadPool);
+		ThreadPool& threadPool,
+		OOPProviderBase* pprov);
 
 	int process(Array<unsigned char>& in,
 		std::deque<OutputEntry>& outputEntries,
 		const ProviderEnvironmentIFCRef& env,
 		const Logger& logger, 
 		OperationResultHandler& result,
-		ThreadPool& threadPool)
+		ThreadPool& threadPool,
+		OOPProviderBase* pprov)
 	{
 		//OW_LOG_DEBUG(logger, Format("in process(). in.size() = %1", in.size()));
 		if (in.size() == 0)
@@ -250,7 +254,7 @@ namespace
 			{
 				Array<unsigned char> out;
 				OOPDataOStreamBuf outbuf(out);
-				processrv = processOneRequest(inbuf, outbuf, outputEntries, env, result, threadPool);
+				processrv = processOneRequest(inbuf, outbuf, outputEntries, env, result, threadPool, pprov);
 				if (!out.empty())
 				{
 					//OW_LOG_DEBUG(logger, Format("processOneRequest() found %1 bytes of out. Adding to outputEntries.", out.size()));
@@ -302,7 +306,8 @@ namespace
 			OperationResultHandler& result,
 			SelectEngine& selectEngine,
 			bool &finishedSuccessfully,
-			ThreadPool& threadPool
+			ThreadPool& threadPool,
+			OOPProviderBase* pprov
 			)
 			: m_inputBuf(inputBuf)
 			, m_outputEntries(outputEntries)
@@ -313,6 +318,7 @@ namespace
 			, m_selectEngine(selectEngine)
 			, m_finishedSuccessfully(finishedSuccessfully)
 			, m_threadPool(threadPool)
+			, m_pprov(pprov)
 		{
 
 		}
@@ -361,7 +367,7 @@ namespace
 					oldSize = m_inputBuf.size();
 				}
 				// now that we've read the data, see if we can do anything with it.
-				if (process(m_inputBuf, m_outputEntries, m_env, logger, m_result, m_threadPool) == FINISHED)
+				if (process(m_inputBuf, m_outputEntries, m_env, logger, m_result, m_threadPool, m_pprov) == FINISHED)
 				{
 					OW_LOG_DEBUG(logger, "process() returned FINISHED, telling the select engine to stop");
 					m_selectEngine.stop();
@@ -459,6 +465,7 @@ namespace
 		SelectEngine& m_selectEngine;
 		bool& m_finishedSuccessfully;
 		ThreadPool& m_threadPool;
+		OOPProviderBase* m_pprov;
 	};
 
 	struct ShutdownThreadPool
@@ -484,6 +491,7 @@ namespace
 		const Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		OperationResultHandler& result,
+		OOPProviderBase* pprov,
 		EReadWriteFlag readWriteFlag = E_READ_WRITE_UNTIL_FINISHED)
 	{
 		const int MAX_CALLBACK_THREADS = 10;
@@ -499,7 +507,7 @@ namespace
 
 		SelectableCallbackIFCRef callback(new OOPSelectableCallback(
 			inputBuf, outputEntries, inputPipe, outputPipe, env, result, selectEngine, 
-			finishedSuccessfully, threadPool));
+			finishedSuccessfully, threadPool, pprov));
 
 		if (readWriteFlag == E_READ_WRITE_UNTIL_FINISHED)
 		{
@@ -551,6 +559,21 @@ namespace
 			Logger logger(COMPONENT_NAME);
 			while (m_instr.good() && !cancelled())
 			{
+				UInt8 op;
+				BinarySerialization::read(*m_instr.rdbuf(), op);
+				if (op == BinarySerialization::BIN_END)
+				{
+					//OW_LOG_DEBUG(logger, "CloneCIMOMHandleConnectionRunner::run() "
+					//	"received BIN_END request. shutting down cimom handle");
+					return;
+				}
+				else if (op != BinarySerialization::BIN_OK)
+				{
+					//OW_LOG_ERROR(logger, "CloneCIMOMHandleConnectionRunner::run() "
+					//	"invalid byte received from client");
+					return;
+				}
+
 				HTTPChunkedIStream operationIstr(m_instr);
 				HTTPChunkedOStream operationOstr(m_outstr);
 				TempFileStream operationErrstr;
@@ -605,7 +628,9 @@ namespace
 		std::deque<OutputEntry>& outputEntries,
 		const ProviderEnvironmentIFCRef& env,
 		OperationResultHandler& result,
-		ThreadPool& threadPool)
+		ThreadPool& threadPool,
+		OOPProviderBase* pprov)
+
 	{
 		Logger logger(COMPONENT_NAME);
 		// Either out or outputEntries can be used.  If both are used in the same call, the data inserted 
@@ -771,6 +796,28 @@ namespace
 				{
 					OW_LOG_DEBUG(logger, "processOneRequest flush failed!");
 					OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
+				}
+			}
+			break; 
+
+			case BinarySerialization::PROVIDER_ENVIRONMENT_REQUEST:
+			{
+				OW_LOG_DEBUG(logger, "processOneRequest got PROVIDER_ENVIRONMENT_REQUEST");
+				UnnamedPipeRef envconn = pprov->startClonedProviderEnv(env);
+				if (envconn)
+				{
+					// Provider environment thread is now running in the
+					// OOPProviderBase thread pool.
+					outputEntries.push_back(OutputEntry(Array<unsigned char>(1, BinarySerialization::BIN_OK)));
+					outputEntries.push_back(OutputEntry(OutputEntry::E_INPUT, envconn));
+					outputEntries.push_back(OutputEntry(OutputEntry::E_OUTPUT, envconn));
+				}
+				else
+				{
+					// Assume OOPProviderBase was unable to start the thread
+					OW_LOG_DEBUG(logger, "processOneRequest PROVIDER_ENVIRONMENT_REQUEST returning BIN_ERROR");
+					BinarySerialization::write(outbuf, BinarySerialization::BIN_ERROR);
+					BinarySerialization::write(outbuf, String("thread limit reached"));
 				}
 			}
 			break;
@@ -1017,7 +1064,7 @@ OOPProtocolCPP1::enumInstanceNames(
 	const String& ns,
 	const String& className,
 	CIMObjectPathResultHandlerIFC& result,
-	const CIMClass& cimClass )
+	const CIMClass& cimClass)
 {
 	Logger logger(COMPONENT_NAME);
 	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::enumInstanceNames about to start filling request buffer");
@@ -1033,7 +1080,7 @@ OOPProtocolCPP1::enumInstanceNames(
 	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::enumInstanceNames finished filling buffer");
 
 	CIMObjectPathOperationResultHandler operationResult(result);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 
 }
 
@@ -1052,7 +1099,7 @@ OOPProtocolCPP1::enumInstances(
 	WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList,
 	const CIMClass& requestedClass,
-	const CIMClass& cimClass )
+	const CIMClass& cimClass)
 {
 	Logger logger(COMPONENT_NAME);
 	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::enumInstances about to start filling request buffer");
@@ -1074,7 +1121,7 @@ OOPProtocolCPP1::enumInstances(
 	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::enumInstances finished filling buffer");
 
 	CIMInstanceOperationResultHandler operationResult(result);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 
 }
 
@@ -1090,7 +1137,7 @@ OOPProtocolCPP1::getInstance(
 	WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
 	WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, 
-	const CIMClass& cimClass )
+	const CIMClass& cimClass)
 {
 	Logger logger(COMPONENT_NAME);
 	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::getInstance about to start filling request buffer");
@@ -1111,7 +1158,7 @@ OOPProtocolCPP1::getInstance(
 
 	CIMInstance rval(CIMNULL);
 	GetInstanceOperationResultHandler operationResult(rval);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!rval)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to getInstance");
@@ -1126,7 +1173,7 @@ OOPProtocolCPP1::createInstance(
 	const Timeout& timeout,
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
-	const CIMInstance& cimInstance )
+	const CIMInstance& cimInstance)
 {
 	Logger logger(COMPONENT_NAME);
 	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::createInstance about to start filling request buffer");
@@ -1142,7 +1189,7 @@ OOPProtocolCPP1::createInstance(
 
 	CIMObjectPath rval(CIMNULL);
 	CreateInstanceOperationResultHandler operationResult(rval);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!rval)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to createInstance");
@@ -1181,7 +1228,7 @@ OOPProtocolCPP1::modifyInstance(
 
 	bool gotOK = false;
 	VoidOperationResultHandler operationResult(gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!gotOK)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to modifyInstance");
@@ -1211,7 +1258,7 @@ OOPProtocolCPP1::deleteInstance(
 
 	bool gotOK = false;
 	VoidOperationResultHandler operationResult(gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!gotOK)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to deleteInstance");
@@ -1255,7 +1302,7 @@ OOPProtocolCPP1::associators(
 	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::associators finished filling buffer");
 
 	CIMInstanceOperationResultHandler operationResult(result);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 }
 
 void
@@ -1270,7 +1317,7 @@ OOPProtocolCPP1::associatorNames(
 	const String& assocClass,
 	const String& resultClass,
 	const String& role,
-	const String& resultRole )
+	const String& resultRole)
 {
 	Logger logger(COMPONENT_NAME);
 	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::associatorNames about to start filling request buffer");
@@ -1289,7 +1336,7 @@ OOPProtocolCPP1::associatorNames(
 	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::associatorNames finished filling buffer");
 
 	CIMObjectPathOperationResultHandler operationResult(result);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 }
 
 void
@@ -1325,7 +1372,7 @@ OOPProtocolCPP1::references(
 	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::references finished filling buffer");
 
 	CIMInstanceOperationResultHandler operationResult(result);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 }
 
 void
@@ -1338,7 +1385,7 @@ OOPProtocolCPP1::referenceNames(
 	const String& ns,
 	const CIMObjectPath& objectName,
 	const String& resultClass,
-	const String& role )
+	const String& role)
 {
 	Logger logger(COMPONENT_NAME);
 	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::referenceNames about to start filling request buffer");
@@ -1355,7 +1402,7 @@ OOPProtocolCPP1::referenceNames(
 	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::referenceNames finished filling buffer");
 
 	CIMObjectPathOperationResultHandler operationResult(result);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 }
 
 CIMValue
@@ -1388,7 +1435,7 @@ OOPProtocolCPP1::invokeMethod(
 	CIMValue returnValue(CIMNULL);
 	bool gotOK = false;
 	InvokeMethodOperationResultHandler operationResult(returnValue, outparams, gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 
 	if (!gotOK)
 	{
@@ -1417,7 +1464,7 @@ OOPProtocolCPP1::poll(
 	Int32 returnValue(-1);
 	bool gotOK = false;
 	Int32OperationResultHandler operationResult(returnValue, gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 
 	if (!gotOK)
 	{
@@ -1446,7 +1493,7 @@ OOPProtocolCPP1::getInitialPollingInterval(
 	Int32 returnValue(-1);
 	bool gotOK = false;
 	Int32OperationResultHandler operationResult(returnValue, gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 
 	if (!gotOK)
 	{
@@ -1461,8 +1508,7 @@ OOPProtocolCPP1::setPersistent(
 	const UnnamedPipeRef& out,
 	const Timeout& timeout,
 	const ProviderEnvironmentIFCRef& env,
-	bool persistent
-	)
+	bool persistent)
 {
 	Logger logger(COMPONENT_NAME);
 	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::setPersistent about to start writing");
@@ -1476,7 +1522,7 @@ OOPProtocolCPP1::setPersistent(
 	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::setPersistent finished writing.");
 
 	NoResultHandler noResultHandler;
-	end(buf, in, out, timeout, env, noResultHandler, E_WRITE_ONLY);
+	end(buf, in, out, timeout, env, noResultHandler, m_pprov, E_WRITE_ONLY);
 
 }
 
@@ -1490,8 +1536,7 @@ OOPProtocolCPP1::activateFilter(
 	const String& eventType,
 	const String& nameSpace,
 	const StringArray& classes,
-	bool firstActivation
-	)
+	bool firstActivation)
 {
 	Logger logger(COMPONENT_NAME);
 	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::activateFilter about to start writing");
@@ -1510,7 +1555,7 @@ OOPProtocolCPP1::activateFilter(
 
 	bool gotOK = false;
 	VoidOperationResultHandler operationResult(gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!gotOK)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to activateFilter");
@@ -1527,8 +1572,7 @@ OOPProtocolCPP1::authorizeFilter(
 	const String& eventType,
 	const String& nameSpace,
 	const StringArray& classes,
-	const String& owner
-	)
+	const String& owner)
 {
 	Logger logger(COMPONENT_NAME);
 	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::authorizeFilter about to start writing");
@@ -1547,7 +1591,7 @@ OOPProtocolCPP1::authorizeFilter(
 
 	bool gotOK = false;
 	VoidOperationResultHandler operationResult(gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!gotOK)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to authorizeFilter");
@@ -1564,8 +1608,7 @@ OOPProtocolCPP1::deActivateFilter(
 	const String& eventType,
 	const String& nameSpace,
 	const StringArray& classes,
-	bool lastActivation
-	)
+	bool lastActivation)
 {
 	Logger logger(COMPONENT_NAME);
 	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::deActivateFilter about to start writing");
@@ -1584,7 +1627,7 @@ OOPProtocolCPP1::deActivateFilter(
 
 	bool gotOK = false;
 	VoidOperationResultHandler operationResult(gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!gotOK)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to deActivateFilter");
@@ -1600,8 +1643,7 @@ OOPProtocolCPP1::mustPoll(
 	const WQLSelectStatement& filter,
 	const String& eventType,
 	const String& nameSpace,
-	const StringArray& classes
-	)
+	const StringArray& classes)
 {
 	Logger logger(COMPONENT_NAME);
 	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::mustPoll about to start writing");
@@ -1620,7 +1662,7 @@ OOPProtocolCPP1::mustPoll(
 	Int32 returnValue(-1);
 	bool gotOK = false;
 	Int32OperationResultHandler operationResult(returnValue, gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 
 	if (!gotOK)
 	{
@@ -1638,8 +1680,7 @@ OOPProtocolCPP1::exportIndication(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
 	const CIMInstance& indHandlerInst, 
-	const CIMInstance& indicationInst
-	)
+	const CIMInstance& indicationInst)
 {
 	Logger logger(COMPONENT_NAME);
 	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::exportIndication about to start writing");
@@ -1656,7 +1697,7 @@ OOPProtocolCPP1::exportIndication(
 
 	bool gotOK = false;
 	VoidOperationResultHandler operationResult(gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!gotOK)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to exportIndication");

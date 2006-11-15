@@ -122,7 +122,7 @@ CreateClass:
 	insert into SuperClasses
 	select last_insert_rowid(), supercid, depth+1
 	  from Classes as c, SuperClasses as sc
-	  where c.name = <SuperClass Name> and SuperClasses.subcid = c.cid and nsname = <Namespace>
+	  where c.name = <SuperClass Name> and sc.subcid = c.cid and nsname = <Namespace>
 	union all
 	select last_insert_rowid(), cid, 1
 	  from Classes

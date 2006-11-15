@@ -60,6 +60,7 @@ OW_OOPProviderInterface.hpp \
 OW_OOPProviderInterface.cpp \
 OW_OOPProviderBase.hpp \
 OW_OOPProviderBase.cpp \
+OW_OOPClonedProviderEnv.cpp \
 OW_OOPFwd.hpp \
 OW_OpenWBEM_OOPProviderRegistration.hpp
 

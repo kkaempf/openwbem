@@ -88,6 +88,7 @@ private:
 	UnnamedPipeRef m_IOPipe;
 	IOIFCStreamBuffer m_inbuf;
 	IOIFCStreamBuffer m_outbuf;
+	ProviderEnvironmentIFCRef m_penv;
 };
 
 } // end namespace OW_NAMESPACE

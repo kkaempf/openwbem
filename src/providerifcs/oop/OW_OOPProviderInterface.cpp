@@ -125,8 +125,6 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 			if (!curReg.NamespaceNamesIsNULL())
 				namespaceNames = curReg.getNamespaceNames();
 
-			String className = curReg.getClassName();
-			
 			CIMDateTime timeout = curReg.getTimeout();
 			if (!timeout.isInterval())
 			{
@@ -167,6 +165,27 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 			{
 				OW_LOG_ERROR(lgr, "ProviderTypes property value has no entries. Registration will be ignored.");
 			}
+
+			String className;
+			try
+			{
+				// This can throw a NullValueException. This is fine if this 
+				// is a polled provider or an indication export provider, otherwise
+				// the class name must be known.
+				className = curReg.getClassName();
+			}
+			catch (NULLValueException& e)
+			{
+				for (size_t j = 0; j < providerTypes.size(); ++j)
+				{
+					if (providerTypes[j] != OpenWBEM::OOPProviderRegistration::E_PROVIDERTYPES_POLLED
+						&& providerTypes[j] != OpenWBEM::OOPProviderRegistration::E_PROVIDERTYPES_INDICATION_EXPORT)
+					{
+						throw;
+					}
+				}
+			}
+
 
 			for (size_t j = 0; j < providerTypes.size(); ++j)
 			{

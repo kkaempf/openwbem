@@ -1,5 +1,6 @@
 /*******************************************************************************
 * Copyright (C) 2005 Quest Software, Inc. All rights reserved.
+* Copyright (C) 2006 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -52,6 +53,7 @@
 #include "OW_OperationContext.hpp"
 #include "OW_UserInfo.hpp"
 #include "OW_Exec.hpp"
+#include "OW_OOPClonedProviderEnv.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -125,6 +127,7 @@ OOPProviderBase::OOPProviderBase(const OOPProviderInterface::ProvRegInfo& info,
 	: m_provInfo(info)
 	, m_guardRef(guardRef)
 	, m_persistentProcessRef(persistentProcessRef)
+	, m_threadPool(ThreadPool::DYNAMIC_SIZE_NO_QUEUE, 10, 10, "OOPProviderBase")
 {
 	// persistent provider instances must have non-null pointers.
 	if (!m_guardRef || !m_persistentProcessRef)
@@ -134,7 +137,7 @@ OOPProviderBase::OOPProviderBase(const OOPProviderInterface::ProvRegInfo& info,
 
 	if (info.protocol == "owcpp1")
 	{
-		m_protocol = new OOPProtocolCPP1();
+		m_protocol = new OOPProtocolCPP1(this);
 	}
 	else
 	{
@@ -144,7 +147,28 @@ OOPProviderBase::OOPProviderBase(const OOPProviderInterface::ProvRegInfo& info,
 
 OOPProviderBase::~OOPProviderBase()
 {
+	m_threadPool.shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE,
+		Timeout::relative(0.1), Timeout::infinite);
+}
 
+UnnamedPipeRef
+OOPProviderBase::startClonedProviderEnv(
+	const ProviderEnvironmentIFCRef& env)
+{
+	UnnamedPipeRef connToKeep;	// This one gets returned to caller. Descriptors will be used by the client
+	UnnamedPipeRef connToSend;	// This one gets used by the provider environment.
+
+	UnnamedPipe::createConnectedPipes(connToKeep, connToSend);
+	connToKeep->setTimeouts(Timeout::infinite);
+	if (m_threadPool.tryAddWork(RunnableRef(new OOPClonedProviderEnv(this, connToKeep,
+		env)), Timeout::relative(10)))
+	{
+		return connToSend;
+	}
+
+	connToKeep->close();
+	connToSend->close();
+	return UnnamedPipeRef();
 }
 
 ProcessRef
@@ -256,7 +280,6 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 
 	return proc;
 }
-
 
 void 
 OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& env, const OOPProviderBase::MethodCallback& func, 
