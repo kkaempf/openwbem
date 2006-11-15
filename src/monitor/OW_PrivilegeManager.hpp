@@ -58,6 +58,9 @@ namespace OW_NAMESPACE
 class PrivilegeManagerImpl;
 
 OW_DECLARE_EXCEPTION(PrivilegeManager);
+OW_DECLARE_EXCEPTION2(MonitorCommunication, PrivilegeManagerException);
+OW_DECLARE_EXCEPTION2(InsufficientPrivileges, PrivilegeManagerException);
+
 
 /**
 * This class implements the privilege separation scheme described in these two
