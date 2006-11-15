@@ -113,6 +113,7 @@ namespace
 			String msg = Format("%1 failed. exitStatus = %2, stderr output = %3", 
 				procName, status.toString(), output);
 			OW_LOG_ERROR(lgr, msg);
+			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 		}
 	}
 
