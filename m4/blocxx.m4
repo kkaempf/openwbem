@@ -1,8 +1,7 @@
 # This is a macro that should contain pretty much everything needed to check
 # for blocxx and set up the BLOCXX_LIBS autoconf substitution.
 
-AC_DEFUN(
-	[OW_BLOCXX_SUPPORT],
+AC_DEFUN([OW_BLOCXX_SUPPORT],
 	[
 		BLOCXX_LOCATION=
 		AC_ARG_WITH(blocxx,
