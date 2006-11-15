@@ -111,6 +111,7 @@ namespace // anonymous
 				}
 			}
 			assert(0);
+			return 0; 
 		}
 
 		virtual void endInclude()
