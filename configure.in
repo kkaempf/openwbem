@@ -31,6 +31,7 @@ OW_INCLUDE_M4(m4/gssapi.m4)               dnl Macros for detecting the presence 
 OW_INCLUDE_M4(m4/ssl.m4)                  dnl Macros for ssl
 OW_INCLUDE_M4(m4/pthread.m4)              dnl Macros for threading
 OW_INCLUDE_M4(m4/vas.m4)						dnl Macros for vas
+OW_INCLUDE_M4(m4/blocxx.m4)					dnl Macros for blocxx
 OW_INCLUDE_M4(m4/dirs.m4)						dnl Macros for setting default directories
 
 # A hack to alter autoconf to always treat all files as obsolete, and rebuild
@@ -608,25 +609,6 @@ hash_map \
 ext/hash_map \
 cxxabi.h \
 )
-
-dnl Check the libraries needed for iconv.  On many (most?) platforms, this will
-dnl be nothing, and the -lc won't be used.  On other platforms, -liconv is
-dnl needed.
-LIBS_icsaved="$LIBS"
-AC_CHECK_LIB(c, iconv_open,
-	[
-		dnl Use whatever was defined previously for ICONV_LIB.  This should be
-		dnl empty, unless explicitly overridden.
-		ICONV_LIB="$ICONV_LIB"
-	],
-	[
-		AC_CHECK_LIB(iconv, iconv_open,
-			[ ICONV_LIB="-liconv" ],
-		)
-	]
-)
-LIBS="$LIBS_icsaved"
-AC_SUBST(ICONV_LIB)
 
 dnl Needed for monitor
 AC_CHECK_FUNCS(setsid)
@@ -1282,9 +1264,7 @@ AC_ARG_WITH(search-dir,
 )
 
 dnl Check for BloCxx
-AC_CHECK_HEADER([blocxx/BLOCXX_config.h], [], [echo "** ERROR: You must install BloCxx **"; exit 1])
-BLOCXX_LIBS="-lblocxx $ICONV_LIB"
-AC_SUBST(BLOCXX_LIBS)
+OW_BLOCXX_SUPPORT
 
 # The big search for OpenSSL.  Thanks to the openssh configure.in file!
 OW_SSL_SUPPORT
