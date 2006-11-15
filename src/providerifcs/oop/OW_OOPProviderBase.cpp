@@ -104,7 +104,7 @@ namespace
 		// still running, so shut it down. 0 for second parameter because we don't want
 		// to close the pipes. Later we try to read stderr if the process failed.
 		OW_LOG_DEBUG(lgr, Format("Terminating process \"%1\" (%2)", procName, proc->pid()));
-		proc->waitCloseTerm(Timeout::relative(1.0), Timeout::relative(0), Timeout::relative(1.0));
+		proc->waitCloseTerm(Timeout::relative(10.0), Timeout::relative(0), Timeout::relative(10.1));
 		status = proc->processStatus();
 
 		if (!status.terminatedSuccessfully())
