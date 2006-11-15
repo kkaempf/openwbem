@@ -30,9 +30,9 @@ OW_INCLUDE_M4(m4/krb5.m4)                 dnl Macros for krb5
 OW_INCLUDE_M4(m4/gssapi.m4)               dnl Macros for detecting the presence and functionality of gssapi with spnego.
 OW_INCLUDE_M4(m4/ssl.m4)                  dnl Macros for ssl
 OW_INCLUDE_M4(m4/pthread.m4)              dnl Macros for threading
-OW_INCLUDE_M4(m4/vas.m4)						dnl Macros for vas
-OW_INCLUDE_M4(m4/blocxx.m4)					dnl Macros for blocxx
-OW_INCLUDE_M4(m4/dirs.m4)						dnl Macros for setting default directories
+OW_INCLUDE_M4(m4/vas.m4)                  dnl Macros for vas
+OW_INCLUDE_M4(m4/blocxx.m4)               dnl Macros for blocxx
+OW_INCLUDE_M4(m4/dirs.m4)                 dnl Macros for setting default directories
 
 # A hack to alter autoconf to always treat all files as obsolete, and rebuild
 # the configure script any time the dependencies are modified.
