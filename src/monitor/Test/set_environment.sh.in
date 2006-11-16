@@ -1,6 +1,8 @@
 #!/bin/sh
 
-LD_LIBRARY_PATH="`pwd`/..:`pwd`/../../common":${LD_LIBRARY_PATH:-}
+BLOCXX_LIB_DIR="@BLOCXX_LIB_DIR@"
+
+LD_LIBRARY_PATH="`pwd`/..:`pwd`/../../common":${BLOCXX_LIB_DIR:-}${BLOCXX_LIB_DIR:+:}${LD_LIBRARY_PATH:-}
 
 # AIX
 LIBPATH=$LD_LIBRARY_PATH:${LIBPATH:-}

@@ -290,3 +290,12 @@ monitor_perl_test.0.sh: Makefile
 	echo "PERL_PATH=$(PERL) $(srcdir)/monperltest.sh $(srcdir)/$(@:%.sh=%.cfg) $(srcdir)/monitor_test.0.test.tgz $(srcdir)/$(@:%.sh=%.inp) $(srcdir)/$(@:%.sh=%.exceptions) $(srcdir)/monitor_test.0.basic.gold.tgz" >> $@
 	chmod +x $@
 
+helper_scripts = set_environment.sh
+BUILT_SOURCES = $(helper_scripts)
+
+local-scripts: $(helper_scripts)
+	chmod +x $^
+
+all-local: local-scripts
+
+include $(top_srcdir)/Makefile-replacement.inc
