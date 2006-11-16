@@ -43,6 +43,9 @@
 #define THROW_MSG_E(exType, msg) \
 	OW_THROW(exType, ::OpenWBEM::Cstr::to_char_ptr(msg))
 
+#define THROW_MSG_ERR(exType, msg, err) \
+	OW_THROW_ERR(exType, ::OpenWBEM::Cstr::to_char_ptr(msg), err)
+
 #define THROW_ERRNO_MSG1_E(exType, msg, errnum) \
 	OW_THROW_ERRNO_MSG1(exType, ::OpenWBEM::Cstr::to_char_ptr(msg), errnum)
 
@@ -55,6 +58,9 @@
 
 #define CHECK_E(tst, exType, msg) \
 	WRAP_STMT(if (!(tst)) THROW_MSG_E(exType, msg))
+
+#define CHECK_E_ERR(tst, exType, msg, err) \
+	WRAP_STMT(if (!(tst)) THROW_MSG_ERR(exType, msg, err))
 
 #define CHECK_ERRNO1_E(tst, exType, msg, errnum) \
 	WRAP_STMT(if (!(tst)) THROW_ERRNO_MSG1_E(exType, msg, errnum))
@@ -90,6 +96,26 @@ namespace PrivilegeCommon
 	{
 		E_OK,
 		E_ERROR
+	};
+
+	// An enum that describes what type of error is stored in the error code.
+	// Any error with an error code less than MONITOR_ERROR_START can be assumed
+	// to be an errno.  Everything equal or greater to MONITOR_FATAL_ERROR_START
+	// should be assume to be a fatal monitor error, most likely due to errors
+	// in privileges or security.
+	enum EMonitorErrors
+	{
+		MONITOR_ERROR_START = 65536,
+		E_UNKNOWN,
+		E_OPERATION_FAILED,
+		MONITOR_FATAL_ERROR_START = MONITOR_ERROR_START * 2,
+		E_INVALID_OPERATION,
+		E_INVALID_PATH,
+		E_INVALID_SIZE,
+		E_INVALID_PARAMETER,
+		E_INVALID_SECURITY,
+		E_INSUFFICIENT_PRIVILEGES,
+		E_ALREADY_INITIALIZED
 	};
 
 	struct DescriptorInfo
