@@ -802,6 +802,7 @@ CIMOMEnvironment::_loadConfigItemsFromFile(const String& filename)
 		OW_PATHNAME_SEPARATOR);
 	for (size_t i = 0; i < configDirs.size(); ++i)
 	{
+		OW_LOG_DEBUG(m_Logger, Format("Searching %1 for additional config files (*.conf)", configDirs[i]));
 		String const & dir = configDirs[i];
 		StringArray dir_entries;
 		bool ok = FileSystem::getDirectoryContents(dir, dir_entries);
@@ -814,7 +815,9 @@ CIMOMEnvironment::_loadConfigItemsFromFile(const String& filename)
 			String const & fname = dir_entries[j];
 			if (fname.endsWith(".conf"))
 			{
-				ConfigFile::loadConfigFile(dir + "/" + fname, *m_configItems);
+				String confPath = dir + "/" + fname;
+				OW_LOG_DEBUG(m_Logger, Format("Loading additional config items from file: %1", confPath));
+				ConfigFile::loadConfigFile(confPath, *m_configItems);
 			}
 		}
 	}
