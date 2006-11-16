@@ -70,24 +70,18 @@ using OpenWBEM::PrivilegeConfig::Privileges;
 typedef PrivilegeCommon::ECommand ECommand;
 
 #define CHECK0(tst, msg) CHECK_E(tst, CheckException, msg)
-#define CHECK(tst, msg) CHECK0(tst, add_prefix(msg))
+#define CHECK0_ERR(tst, msg, err) CHECK_E_ERR(tst, CheckException, msg, err)
+#define CHECK(tst, msg, err) CHECK0_ERR(tst, add_prefix(msg), err)
 
 #define CHECK0_ERRNO(tst, msg) CHECK_ERRNO_E(tst, CheckException, msg)
 #define CHECK_ERRNO(tst, msg) CHECK0_ERRNO(tst, add_prefix(msg))
 
 // CHECKARGS differs from CHECK only in that it also causes the monitor to quit
 //
-#define CHECKARGS(tst, msg) \
-	WRAP_STMT(if (!(tst)) { m_done = true; THROW_MSG_E(CheckException, msg); })
+#define CHECKARGS(tst, msg, err) \
+	WRAP_STMT(if (!(tst)) { if( (err) >= PrivilegeCommon::MONITOR_FATAL_ERROR_START) {  m_done = true; } THROW_MSG_ERR(CheckException, msg, err); })
 
-#define PRIVOP_BODY try
 
-#define PRIVOP_FINISH \
-	catch (Exception & e) \
-	{ \
-		report_error(conn(), e); \
-	} \
-	conn().put_sync()
 
 // There is a call to the SSL function ERR_remove_state in the Thread code.
 // It's really only needed if you're using SSL.  To avoid a dependency on
@@ -154,20 +148,31 @@ namespace
 		return output;
 	}
 
-	void report_error(IPCIO & conn, Exception const & e)
+	void sendError(IPCIO& conn, const String& msg, int errorCode)
 	{
-		if (dynamic_cast<IPCIOException const *>(&e) == 0)
+		ipcio_put(conn, PrivilegeCommon::E_ERROR);
+		ipcio_put(conn, errorCode);
+		ipcio_put(conn, msg);
+		conn.put_sync();
+	}
+
+	void reportError(IPCIO& conn, const String& msg, int errorCode)
+	{
+		OW_LOG_ERROR(logger, Format("Error (code %2): %1", msg, errorCode));
+		sendError(conn, msg, errorCode);
+	}
+
+	// Report an exception.  If it is an ipcio exception, it will be rethrown,
+	// as these should not be hidden from main() because it returns different
+	// error codes for IPCIO problems.
+	void reportException(IPCIO & conn, const String& prefix, const Exception& e)
+	{
+		OW_LOG_ERROR(logger, Format("%1%2", prefix, e));
+		sendError(conn, Format("%1%2: %3", prefix, e.type(), e.what()), e.getErrorCode());
+
+		if (dynamic_cast<const IPCIOException*>(&e))
 		{
-			OW_LOG_ERROR(logger, Format("%1", e));
-			ipcio_put(conn, PrivilegeCommon::E_ERROR);
-			// explicitly specify type, to protect against Exception API changes
-			ipcio_put<int>(conn, e.getErrorCode());
-			Format fmt("%1: %2", e.type(), e.what());
-			ipcio_put(conn, fmt.c_str());
-		}
-		else
-		{
-			throw;
+			e.rethrow();
 		}
 	}
 
@@ -472,9 +477,7 @@ namespace
 				case PrivilegeCommon::E_CMD_DONE :                 this->done(); break;
 
 			default:
-				ipcio_put(conn(), PrivilegeCommon::E_ERROR);
-				ipcio_put(conn(), "Unknown operation requested");
-				conn().put_sync();
+				reportError(conn(), "Unknown operation requested", PrivilegeCommon::E_INVALID_OPERATION);
 				m_done = true;
 				OW_LOG_FATAL_ERROR(logger, "Unknown operation requested; monitor exiting");
 			}
@@ -498,9 +501,11 @@ namespace
 	void Monitor::check_valid_path(String const & path, char const * op)
 	{
 		CHECKARGS(path.length() <= MAX_PATH_LENGTH,
-			String(op) + ": path argument too long");
+			String(op) + ": path argument too long",
+			PrivilegeCommon::E_INVALID_PATH);
 		CHECKARGS(path.startsWith("/"),
-			String(op) + ": path argument must be an absolute path");
+			String(op) + ": path argument must be an absolute path",
+			PrivilegeCommon::E_INVALID_PATH);
 	}
 
 	void Monitor::done()
@@ -543,16 +548,20 @@ namespace
 		// the CHECKARGS macro to work correctly.
 
 		CHECKARGS(ls.categories.size() <= MAX_CATEGORIES,
-			"set_logger: too many categories");
+			"set_logger: too many categories",
+			PrivilegeCommon::E_INVALID_SIZE);
 		for (size_t i = 0; i < ls.categories.size(); ++i)
 		{
 			CHECKARGS(ls.categories[i].length() <= MAX_CATEGORY_LENGTH,
-				"set_logger: category name too long");
+				"set_logger: category name too long",
+				PrivilegeCommon::E_INVALID_SIZE);
 		}
 		CHECKARGS(ls.message_format.length() <= MAX_FORMAT_LENGTH,
-			"set_logger: format too long");
+			"set_logger: format too long",
+			PrivilegeCommon::E_INVALID_SIZE);
 		CHECKARGS(ls.file_name.length() <= MAX_PATH_LENGTH,
-			"set_logger: log file path too long");
+			"set_logger: log file path too long",
+			PrivilegeCommon::E_INVALID_SIZE);
 	}
 
 	void Monitor::set_logger_from_spec(
@@ -576,23 +585,27 @@ namespace
 			return false;
 		}
 
-		PRIVOP_BODY
+		try
 		{
-			CHECKARGS(!m_logger_set, "set_logger: logger already set");
+			CHECKARGS(!m_logger_set, "set_logger: logger already set", PrivilegeCommon::E_ALREADY_INITIALIZED);
 			check_logger_spec(ls, m_done);
 			this->check_valid_path(ls.file_name, "set_logger");
 			String dir_name = FileSystem::Path::dirname(ls.file_name);
 			CHECKARGS(m_secure_paths.is_secure(dir_name),
-				"set_logger: log file dir " + dir_name + " is insecure");
+				"set_logger: log file dir " + dir_name + " is insecure",
+				PrivilegeCommon::E_INVALID_SECURITY);
 			// Don't check log file itself, because race conditions we
 			// may encounter during log rotation may cause us to throw a
 			// "file not found" exception.
 			this->set_logger_from_spec(app_name, ls);
 
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
+			conn().put_sync();
 		}
-		PRIVOP_FINISH;
-
+		catch (const Exception& e)
+		{
+			reportException(conn(), "setLogger: ", e);
+		}
 		return true;
 	}
 
@@ -607,11 +620,12 @@ namespace
 		conn().get_sync();
 
 		OW_LOG_INFO(logger, Format("REQ open, path=%1, flags=%2, perms=%3", path, flags, perms).toString());
-		PRIVOP_BODY
+		try
 		{
 			this->check_valid_path(path, "open");
 			CHECKARGS(has_open_priv(path, flags, priv()),
-				Format("open: insufficient privileges: file=\"%1\" flags=%2, perms=%3", path, flags, perms).c_str());
+				Format("open: insufficient privileges: file=\"%1\" flags=%2, perms=%3", path, flags, perms).c_str(),
+				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
 
 			char const * cpath = path.c_str();
 			AutoDescriptor d;
@@ -639,13 +653,17 @@ namespace
 					d.reset(::open(cpath, O_RDWR | O_CREAT | O_APPEND, perms));
 					break;
 				default:
-					CHECKARGS(false, Format("open: illegal flags parameter: %1", perms).c_str());
+					CHECKARGS(false, Format("open: illegal flags parameter: %1", perms).c_str(), PrivilegeCommon::E_INVALID_PARAMETER);
 			}
 			CHECK_ERRNO(d.get() >= 0, "open");
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			conn().put_handle(d.get());
+			conn().put_sync();
 		}
-		PRIVOP_FINISH;
+		catch (const Exception& e)
+		{
+			reportException(conn(), "open: ", e);
+		}
 	}
 
 	void Monitor::read_dir()
@@ -657,15 +675,16 @@ namespace
 		conn().get_sync();
 
 		OW_LOG_INFO(logger, Format("REQ readDirectory, path=%1, opt=%2", dirpath, opt).toString());
-		PRIVOP_BODY
+		try
 		{
 			this->check_valid_path(dirpath, "readDirectory");
 			CHECKARGS(priv().read_dir.match(dirpath),
-				Format("readDirectory: insufficient privileges: dirpath=\"%1\" opt=%2", dirpath, opt).c_str());
+				Format("readDirectory: insufficient privileges: dirpath=\"%1\" opt=%2", dirpath, opt).c_str(),
+				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
 
 			StringArray dir_entries;
 			bool ok = FileSystem::getDirectoryContents(dirpath, dir_entries);
-			CHECK(ok, "readDirectory: could not read " + dirpath);
+			CHECK(ok, "readDirectory: could not read " + dirpath, PrivilegeCommon::E_OPERATION_FAILED);
 			if (opt == PrivilegeManager::E_OMIT_SPECIAL)
 			{
 				StringArray::iterator end = dir_entries.end();
@@ -681,8 +700,12 @@ namespace
 			{
 				ipcio_put(conn(), dir_entries[i]);
 			}
+			conn().put_sync();
 		}
-		PRIVOP_FINISH;
+		catch (const Exception& e)
+		{
+			reportException(conn(), "readDir: ", e);
+		}
 	}
 
 	void Monitor::read_link()
@@ -692,17 +715,22 @@ namespace
 		conn().get_sync();
 
 		OW_LOG_INFO(logger, Format("REQ readLink, path=%1", lpath).toString());
-		PRIVOP_BODY
+		try
 		{
 			this->check_valid_path(lpath, "readLink");
 			CHECKARGS(priv().read_link.match(lpath),
-				Format("readLink: insufficient privileges: path=\"%1\"", lpath).c_str());
+				Format("readLink: insufficient privileges: path=\"%1\"", lpath).c_str(),
+				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
 
 			String s = FileSystem::readSymbolicLink(lpath);
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			ipcio_put(conn(), s);
+			conn().put_sync();
 		}
-		PRIVOP_FINISH;
+		catch (const Exception& e)
+		{
+			reportException(conn(), "readLink: ", e);
+		}
 	}
 
 	void Monitor::rename()
@@ -714,23 +742,29 @@ namespace
 
 		OW_LOG_INFO(logger, Format("REQ rename, oldpath=%1, newpath=%2", old_path, new_path).toString());
 
-		PRIVOP_BODY
+		try
 		{
 			this->check_valid_path(old_path, "rename");
 			CHECKARGS(priv().rename_from.match(old_path),
-				Format("rename: insufficient privileges for source path: %1", old_path).c_str());
+				Format("rename: insufficient privileges for source path: %1", old_path).c_str(),
+				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
 
 			this->check_valid_path(new_path, "rename");
 			CHECKARGS(priv().rename_to.match(new_path),
-				Format("rename: insufficient privileges for dest path: %1", new_path).c_str());
+				Format("rename: insufficient privileges for dest path: %1", new_path).c_str(),
+				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
 
 			bool ok = FileSystem::renameFile(old_path, new_path);
 			CHECK(ok,
-				"rename: could not rename " + old_path + " to " + new_path);
+				"rename: could not rename " + old_path + " to " + new_path, PrivilegeCommon::E_OPERATION_FAILED);
 
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
+			conn().put_sync();
 		}
-		PRIVOP_FINISH;
+		catch (const Exception& e)
+		{
+			reportException(conn(), "rename: ", e);
+		}
 	}
 
 	void Monitor::unlink()
@@ -740,18 +774,23 @@ namespace
 		conn().get_sync();
 
 		OW_LOG_INFO(logger, Format("REQ unlink, path=%1", path).toString());
-		PRIVOP_BODY
+		try
 		{
 			this->check_valid_path(path, "unlink");
 			CHECKARGS(priv().unlink.match(path),
-				Format("unlink: insufficient privileges: path=\"%1\"", path).c_str());
+				Format("unlink: insufficient privileges: path=\"%1\"", path).c_str(),
+				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
 
 			bool ok = FileSystem::removeFile(path);
 
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			ipcio_put(conn(), ok);
+			conn().put_sync();
 		}
-		PRIVOP_FINISH;
+		catch (const Exception& e)
+		{
+			reportException(conn(), "unlink: ", e);
+		}
 	}
 
 	inline int output_handle(UnnamedPipeRef const & p)
@@ -969,30 +1008,36 @@ namespace
 		conn().get_sync();
 
 		OW_LOG_INFO(logger, Format("REQ monitoredSpawn, exec_path=%1, app_name=%2", exec_path, app_name));
-		PRIVOP_BODY
+		try
 		{
 			this->check_valid_path(exec_path, "monitoredSpawn");
-			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredSpawn: app name too long");
-			CHECKARGS(xargv.second,	"monitoredSpawn: argv too large");
+			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredSpawn: app name too long", PrivilegeCommon::E_INVALID_SIZE);
+			CHECKARGS(xargv.second, "monitoredSpawn: argv too large", PrivilegeCommon::E_INVALID_SIZE);
 			CHECKARGS(priv().monitored_exec.match(exec_path, app_name)
 				|| priv().monitored_exec_check_args.match(exec_path, xargv.first, app_name),
-				Format("monitoredSpawn: insufficient privileges: path=\"%1\" app=\"%2\" args={%3}", exec_path, app_name, simpleUntokenize(xargv.first)).c_str());
-			CHECKARGS(xenvp.second,	"monitoredSpawn: envp too large");
+				Format("monitoredSpawn: insufficient privileges: path=\"%1\" app=\"%2\" args={%3}", exec_path, app_name, simpleUntokenize(xargv.first)).c_str(),
+				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
+			CHECKARGS(xenvp.second,	"monitoredSpawn: envp too large", PrivilegeCommon::E_INVALID_SIZE);
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
-				"monitoredSpawn: reserved env var set in environment argument"
-			);
+				"monitoredSpawn: reserved env var set in environment argument",
+				PrivilegeCommon::E_INVALID_PARAMETER);
 			CHECK(m_secure_paths.is_secure(exec_path),
-				"monitoredSpawn: exec path " + exec_path + " is insecure");
+				"monitoredSpawn: exec path " + exec_path + " is insecure",
+				PrivilegeCommon::E_INVALID_SECURITY);
 
 			AutoDescriptor desc(::dup(0)); // get some unused descriptor
-			CHECK(desc.get() >= 0, "monitoredSpawn: dup failed");
+			CHECK(desc.get() >= 0, "monitoredSpawn: dup failed", PrivilegeCommon::E_OPERATION_FAILED);
 			putenv_monitor_desc(xenvp.first, desc.get());
 			ME_PreExec pre_exec(m_config_dir, app_name.c_str(), this, desc);
 			this->spawn_and_return(
 				exec_path, xargv.first, xenvp.first, pre_exec);
+			conn().put_sync();
 		}
-		PRIVOP_FINISH;
+		catch (const Exception& e)
+		{
+			reportException(conn(), "monitoredSpawn: ", e);
+		}
 	}
 	
 	void Monitor::monitoredUserSpawn()
@@ -1010,32 +1055,40 @@ namespace
 
 		OW_LOG_INFO(logger, Format("REQ monitoredUserSpawn, exec_path=%1, app_name=%2, user=%3", 
 								   exec_path, app_name, user_name));
-		PRIVOP_BODY
+		try
 		{
 			this->check_valid_path(exec_path, "monitoredUserSpawn");
 			CHECKARGS(user_name.length() <= MAX_USER_NAME_LENGTH,
-				"monitoredUserSpawn: user name too long");
-			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredUserSpawn: app name too long");
-			CHECKARGS(xargv.second,	"monitoredUserSpawn: argv too large");
+				"monitoredUserSpawn: user name too long",
+				PrivilegeCommon::E_INVALID_SIZE);
+			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredUserSpawn: app name too long", PrivilegeCommon::E_INVALID_SIZE);
+			CHECKARGS(xargv.second, "monitoredUserSpawn: argv too large", PrivilegeCommon::E_INVALID_SIZE);
 			CHECKARGS(priv().monitored_user_exec.match(exec_path, app_name, user_name)
 				|| priv().monitored_user_exec_check_args.match(exec_path, xargv.first, app_name, user_name),
-				Format("monitoredUserSpawn: insufficient privileges: user=%1 path=\"%2\" app=\"%3\" args={%4}", user_name, exec_path, app_name, simpleUntokenize(xargv.first)).c_str());
-			CHECKARGS(xenvp.second,	"monitoredUserSpawn: envp too large");
+				Format("monitoredUserSpawn: insufficient privileges: user=%1 path=\"%2\" app=\"%3\" args={%4}", user_name, exec_path, app_name, simpleUntokenize(xargv.first)).c_str(),
+				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
+			CHECKARGS(xenvp.second, "monitoredUserSpawn: envp too large", PrivilegeCommon::E_INVALID_SIZE);
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
-				"monitoredUserSpawn: reserved env var set in environment argument"
+				"monitoredUserSpawn: reserved env var set in environment argument",
+				PrivilegeCommon::E_INVALID_PARAMETER
 			);
 			CHECK(m_secure_paths.is_secure(exec_path),
-				"monitoredUserSpawn: exec path " + exec_path + " is insecure");
+				"monitoredUserSpawn: exec path " + exec_path + " is insecure",
+				PrivilegeCommon::E_INVALID_SECURITY);
 
 			AutoDescriptor desc(::dup(0)); // get some unused descriptor
-			CHECK(desc.get() >= 0, "monitoredUserSpawn: dup failed");
+			CHECK(desc.get() >= 0, "monitoredUserSpawn: dup failed", PrivilegeCommon::E_OPERATION_FAILED);
 			putenv_monitor_desc(xenvp.first, desc.get());
 			ME_PreExec pre_exec(m_config_dir, app_name.c_str(), this, desc, user_name.c_str());
 			this->spawn_and_return(
 				exec_path, xargv.first, xenvp.first, pre_exec);
+			conn().put_sync();
 		}
-		PRIVOP_FINISH;
+		catch (const Exception& e)
+		{
+			reportException(conn(), "monitoredUserSpawn: ", e);
+		}
 	}
 
 	void Monitor::kill()
@@ -1047,14 +1100,19 @@ namespace
 		conn().get_sync();
 
 		OW_LOG_INFO(logger, Format("REQ kill, pid=%1, sig=%2", pid, sig).toString());
-		PRIVOP_BODY
+		try
 		{
-			CHECKARGS(has(m_proc_map, pid), "kill: unknown process");
+			CHECKARGS(has(m_proc_map, pid), "kill: unknown process", PrivilegeCommon::E_INVALID_PARAMETER);
 			int rv = (::kill(pid, sig) == 0 ? 0 : errno);
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			ipcio_put(conn(), rv);
+			conn().put_sync();
 		}
-		PRIVOP_FINISH;
+		catch (const Exception& e)
+		{
+			reportException(conn(), "kill: ", e);
+		}
+
 	}
 
 	void Monitor::pollStatus()
@@ -1064,9 +1122,9 @@ namespace
 		conn().get_sync();
 
 		OW_LOG_INFO(logger, Format("REQ pollStatus, pid=%1", pid).toString());
-		PRIVOP_BODY
+		try
 		{
-			CHECKARGS(has(m_proc_map, pid), "pollStatus: unknown process");
+			CHECKARGS(has(m_proc_map, pid), "pollStatus: unknown process", PrivilegeCommon::E_INVALID_PARAMETER);
 			ProcId wpid;
 			int status;
 			do
@@ -1085,8 +1143,12 @@ namespace
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			ipcio_put(conn(), wpid);
 			ipcio_put(conn(), status);
+			conn().put_sync();
 		}
-		PRIVOP_FINISH;
+		catch (const Exception& e)
+		{
+			reportException(conn(), "pollStatus: ", e);
+		}
 	}
 
 	class UE_PreExec : public Exec::PreExec
@@ -1151,31 +1213,42 @@ namespace
 		conn().get_sync();
 
 		OW_LOG_INFO(logger, Format("REQ userSpawn, exec_path=%1, user=%2", exec_path, user_name));
-		PRIVOP_BODY
+		try
 		{
 			this->check_valid_path(exec_path, "userSpawn");
 			CHECKARGS(user_name.length() <= MAX_USER_NAME_LENGTH,
-				"userSpawn: user name too long");
+				"userSpawn: user name too long",
+				PrivilegeCommon::E_INVALID_SIZE);
 			CHECKARGS(working_dir.length() <= MAX_PATH_LENGTH,
-				"userSpawn: working dir too long");
-			CHECKARGS(xargv.second, "userSpawn: argv too large");
+				"userSpawn: working dir too long",
+				PrivilegeCommon::E_INVALID_SIZE);
+			CHECKARGS(xargv.second, "userSpawn: argv too large", PrivilegeCommon::E_INVALID_SIZE);
 			CHECKARGS(priv().user_exec.match(exec_path, user_name)
 				|| priv().user_exec_check_args.match(exec_path, xargv.first, user_name),
-				Format("userSpawn: insufficient privileges: user=%1 path=\"%2\" dir=\"%3\" args={%4}", user_name, exec_path, working_dir, simpleUntokenize(xargv.first)).c_str());
-			CHECKARGS(xenvp.second, "userSpawn: envp too large");
+				Format("userSpawn: insufficient privileges: user=%1 path=\"%2\" dir=\"%3\" args={%4}", user_name, exec_path, working_dir, simpleUntokenize(xargv.first)).c_str(),
+				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
+			CHECKARGS(xenvp.second, "userSpawn: envp too large", PrivilegeCommon::E_INVALID_SIZE);
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
-				"userSpawn: reserved env var set in environment argument");
+				"userSpawn: reserved env var set in environment argument",
+				PrivilegeCommon::E_INVALID_PARAMETER);
 			CHECK(m_secure_paths.is_secure(exec_path),
-				"userSpawn: exec path " + exec_path + " is insecure");
+				"userSpawn: exec path " + exec_path + " is insecure",
+				PrivilegeCommon::E_INVALID_SECURITY);
 			CHECK(working_dir.empty() || working_dir.startsWith("/"),
-				"userSpawn: working dir must be an absolute path");
+				"userSpawn: working dir must be an absolute path",
+				PrivilegeCommon::E_INVALID_PATH);
 
 			UE_PreExec pre_exec(user_name, working_dir);
 			this->spawn_and_return(
 				exec_path, xargv.first, xenvp.first, pre_exec);
+
+			conn().put_sync();
 		}
-		PRIVOP_FINISH;
+		catch (Exception & e)
+		{
+			reportException(conn(), "userSpawn: ", e);
+		}
 	}
 
 #if 0
@@ -1346,9 +1419,7 @@ namespace
 				}
 				catch (CheckException & e)
 				{
-					OW_LOG_ERROR(logger, Format("Exception caught in setup: %1", e));
-					ipcio_put(*p_conn, PrivilegeCommon::E_ERROR);
-					ipcio_put(*p_conn, e.what());
+					reportException(*p_conn, "Setup Exception: ", e);
 				}
 				p_conn->put_sync();
 
