@@ -68,6 +68,17 @@ namespace
 {
 	::uid_t const ROOT_UID = 0;
 
+#if defined(OW_DEBUG)
+	// We don't want to write anything to stderr (it stderr could be used for
+	// something important that we'd hose), but we want a core file.  By
+	// aborting here (the end result of a failed assert()), we should have
+	// access to the error code, error message, status, and all of the other
+	// happy variables needed to debug the failure.
+#define THROW_ERROR_CASE(exception, msg, code) abort()
+#else
+#define THROW_ERROR_CASE(exception, msg, code) OW_THROW_ERR(exception, msg, code)
+#endif
+
 	void check_result(IPCIO & conn, IPCIO::EBuffering eb = IPCIO::E_BUFFERED)
 	{
 		PrivilegeCommon::EStatus status;
@@ -79,23 +90,22 @@ namespace
 			ipcio_get(conn, errcode);
 			ipcio_get(conn, errmsg);
 			conn.get_sync();
-			// This seems wrong, but there isn't much of a way to obtain useful
-			// information.  I hope someone comes up with a better way of
-			// detecting the case where there are insufficient privileges.
-			if( errmsg.indexOf("insufficient privileges") != String::npos )
+
+			if( errcode < PrivilegeCommon::MONITOR_FATAL_ERROR_START )
 			{
-#if defined(OW_DEBUG)
-				// We don't want to write anything to stderr (it stderr could be used
-				// for something important that we'd hose), but we want a core file.
-				// By aborting here (the end result of a failed assert()), we should
-				// have access to the error code, error message, status, and all of
-				// the other happy variables needed to debug the failure.
-				abort();
-#else
-				OW_THROW_ERR(InsufficientPrivilegesException, errmsg.c_str(), errcode);
-#endif
+				// Non-fatal errors and errno errors can just be forwarded on
+				OW_THROW_ERR(PrivilegeManagerException, errmsg.c_str(), errcode);
 			}
-			OW_THROW_ERR(PrivilegeManagerException, errmsg.c_str(), errcode);
+
+			// This switch is using nasty macros that would be nice to avoid but
+			// we need to do different actions for debug/non debug compilations.
+			switch(errcode)
+			{
+			case PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES:
+				THROW_ERROR_CASE(InsufficientPrivilegesException, errmsg.c_str(), errcode);
+			default:
+				THROW_ERROR_CASE(FatalPrivilegeManagerException, errmsg.c_str(), errcode);
+			}
 		}
 	}
 
@@ -127,8 +137,9 @@ namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION(PrivilegeManager);
-OW_DEFINE_EXCEPTION2(MonitorCommunication, PrivilegeManagerException)
-OW_DEFINE_EXCEPTION2(InsufficientPrivileges, PrivilegeManagerException);
+OW_DEFINE_EXCEPTION2(FatalPrivilegeManager, PrivilegeManagerException);
+OW_DEFINE_EXCEPTION2(MonitorCommunication, FatalPrivilegeManagerException)
+OW_DEFINE_EXCEPTION2(InsufficientPrivileges, FatalPrivilegeManagerException);
 
 bool PrivilegeManager::use_lib_path = false;
 
@@ -527,7 +538,7 @@ AutoDescriptor PrivilegeManager::open(
 		pimpl()->invalidateConnection();
 		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while opening file", e);
 	}
-	catch(const InsufficientPrivilegesException& e)
+	catch(const FatalPrivilegeManagerException& e)
 	{
 		pimpl()->invalidateConnection();
 		throw;
@@ -569,7 +580,7 @@ StringArray PrivilegeManager::readDirectory(
 		pimpl()->invalidateConnection();
 		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while reading directory", e);
 	}
-	catch(const InsufficientPrivilegesException& e)
+	catch(const FatalPrivilegeManagerException& e)
 	{
 		pimpl()->invalidateConnection();
 		throw;
@@ -601,7 +612,7 @@ String PrivilegeManager::readLink(char const * pathname)
 		pimpl()->invalidateConnection();
 		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while reading link", e);
 	}
-	catch(const InsufficientPrivilegesException& e)
+	catch(const FatalPrivilegeManagerException& e)
 	{
 		pimpl()->invalidateConnection();
 		throw;
@@ -633,7 +644,7 @@ bool PrivilegeManager::checkPath(char const * path, char const * user)
 		pimpl()->invalidateConnection();
 		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while checking path", e);
 	}
-	catch(const InsufficientPrivilegesException& e)
+	catch(const FatalPrivilegeManagerException& e)
 	{
 		pimpl()->invalidateConnection();
 		throw;
@@ -663,7 +674,7 @@ void PrivilegeManager::rename(char const * oldpath, char const * newpath)
 		pimpl()->invalidateConnection();
 		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while renaming file", e);
 	}
-	catch(const InsufficientPrivilegesException& e)
+	catch(const FatalPrivilegeManagerException& e)
 	{
 		pimpl()->invalidateConnection();
 		throw;
@@ -695,7 +706,7 @@ bool PrivilegeManager::unlink(char const * path)
 		pimpl()->invalidateConnection();
 		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while unlinking file", e);
 	}
-	catch(const InsufficientPrivilegesException& e)
+	catch(const FatalPrivilegeManagerException& e)
 	{
 		pimpl()->invalidateConnection();
 		throw;
@@ -746,7 +757,7 @@ ProcessRef PrivilegeManager::monitoredSpawn(
 		pimpl()->invalidateConnection();
 		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while executing monitored spawn", e);
 	}
-	catch(const InsufficientPrivilegesException& e)
+	catch(const FatalPrivilegeManagerException& e)
 	{
 		pimpl()->invalidateConnection();
 		throw;
@@ -799,7 +810,7 @@ ProcessRef PrivilegeManager::monitoredUserSpawn(
 		pimpl()->invalidateConnection();
 		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while executing monitored user spawn", e);
 	}
-	catch(const InsufficientPrivilegesException& e)
+	catch(const FatalPrivilegeManagerException& e)
 	{
 		pimpl()->invalidateConnection();
 		throw;
@@ -831,7 +842,7 @@ int PrivilegeManager::kill(ProcId pid, int sig)
 		pimpl()->invalidateConnection();
 		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while executing kill", e);
 	}
-	catch(const InsufficientPrivilegesException& e)
+	catch(const FatalPrivilegeManagerException& e)
 	{
 		pimpl()->invalidateConnection();
 		throw;
@@ -864,7 +875,7 @@ Process::Status PrivilegeManager::pollStatus(ProcId pid)
 		pimpl()->invalidateConnection();
 		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while executing poll status", e);
 	}
-	catch(const InsufficientPrivilegesException& e)
+	catch(const FatalPrivilegeManagerException& e)
 	{
 		pimpl()->invalidateConnection();
 		throw;
@@ -925,7 +936,7 @@ ProcessRef PrivilegeManager::userSpawn(
 		pimpl()->invalidateConnection();
 		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while executing user spawn", e);
 	}
-	catch(const InsufficientPrivilegesException& e)
+	catch(const FatalPrivilegeManagerException& e)
 	{
 		pimpl()->invalidateConnection();
 		throw;
