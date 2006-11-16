@@ -2086,7 +2086,7 @@ main()
 	export OW_METHOD_PROVIDER_TEST_FILENAME
 
 
-	AddToLibraryPath "$STAGEDIR/$OWLIBDIR:$STAGEDIR/$OWLIBDIR/openwbem/services"
+	AddToLibraryPath "$STAGEDIR/$OWLIBDIR:$STAGEDIR/$OWLIBDIR/openwbem/services:@BLOCXX_LIB_DIR@"
 
 	RANDFILE=$STAGEDIR/ssl_randfile
 	export RANDFILE

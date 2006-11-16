@@ -2,13 +2,15 @@ SUBDIRS = testfiles progs oop
 
 check_SCRIPTS = acceptance.sh
 
-EXTRA_DIST = acceptance.sh.fb
+BUILT_SOURCES = $(check_SCRIPTS) env.sh
+
+EXTRA_DIST = acceptance.sh.fb env.sh.fb
 
 clean-local:
 	@echo "Cleanup Warning: There may be another stage directory: /ow_test"
 	rm -rf stage
 
-CLEANFILES = acceptance.sh
+CLEANFILES = acceptance.sh env.sh
 SUFFIXES = .fb
 
 # Note that the top_srcdir and top_builddir are defined here instead as a

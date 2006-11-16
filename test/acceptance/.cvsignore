@@ -5,6 +5,8 @@ Makefile
 *.lo
 *.la
 acceptance.sh
+acceptance.sh.in
+env.sh
 stage
 ow_methodProviderTestFile.txt
 *.imp
