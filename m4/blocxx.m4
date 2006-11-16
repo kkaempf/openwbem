@@ -24,7 +24,7 @@ AC_DEFUN([OW_BLOCXX_SUPPORT],
 		dnl pkg-config, because blocxx installs the pc file on all platforms, but
 		dnl pkg-config is mostly linux-specific.
 		if test "x$BLOCXX_LOCATION" != x && test -f "$BLOCXX_LOCATION/lib/pkgconfig/blocxx.pc"; then
-			BLOCXX_LIBS="`cat $BLOCXX_LOCATION/lib/pkgconfig/blocxx.pc | grep -i \"^libs:\" | sed \"s/^[^:]*://g\"`"
+			BLOCXX_LIBS="`cat $BLOCXX_LOCATION/lib/pkgconfig/blocxx.pc | grep -i \"^libs:\" | sed \"s/^[[^:]]*://g\"`"
 		fi
 
 		dnl If we don't know the libs, we'll need to figure them out.
