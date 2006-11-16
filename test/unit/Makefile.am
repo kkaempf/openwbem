@@ -235,6 +235,7 @@ $(CXXBINLINKFLAGS) \
 
 check_SCRIPTS = run_make_check.sh
 EXTRA_DIST = $(check_SCRIPTS)
+BUILT_SOURCES = $(check_SCRIPTS)
 
 TESTS = run_make_check.sh
 
@@ -270,6 +271,10 @@ SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
 noinst_LIBRARIES = libLazyGlobalTestLibrary.a
 libLazyGlobalTestLibrary_a_SOURCES = OW_LazyGlobalTestLibrary.cpp
 
-all-local: all-ow-shared-libs
+local-scripts: $(check_SCRIPTS)
+	chmod +x $^
+
+all-local: all-ow-shared-libs local-scripts
 clean-local: clean-ow-shared-libs
 
+include $(top_srcdir)/Makefile-replacement.inc
