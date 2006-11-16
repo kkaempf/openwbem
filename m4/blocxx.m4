@@ -18,8 +18,16 @@ AC_DEFUN([OW_BLOCXX_SUPPORT],
 						BLOCXX_LIB_DIR="${BLOCXX_LOCATION}/lib"
 					elif test -d ${BLOCXX_LOCATION}/lib64; then
 						BLOCXX_LIB_DIR="${BLOCXX_LOCATION}/lib64"
+					elif test -d ${BLOCXX_LOCATION}/src/blocxx; then
+						BLOCXX_LIB_DIR="${BLOCXX_LOCATION}/src/blocxx"
 					fi
-					CPPFLAGS="$CPPFLAGS -I$BLOCXX_LOCATION/include"
+					if test -d ${BLOCXX_LOCATION}/include; then
+						CPPFLAGS="$CPPFLAGS -I$BLOCXX_LOCATION/include"
+					elif test -d ${BLOCXX_LOCATION}/src/blocxx; then
+						CPPFLAGS="$CPPFLAGS -I$BLOCXX_LOCATION/src"
+					else
+						AC_MSG_ERROR([Can't find blocxx include directory])
+					fi
 					AC_MSG_RESULT([$BLOCXX_LOCATION])
 				else
 					AC_MSG_ERROR([The blocxx requirement cannot be disabled.])
