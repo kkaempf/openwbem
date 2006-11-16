@@ -274,6 +274,7 @@ private:
 	String m_localNonce;
 	String m_localCookieFile;
 	String m_statusLine;
+	int m_statusCode; 
 
 #ifdef OW_WIN32
 #pragma warning (pop)

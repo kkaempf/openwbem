@@ -94,6 +94,7 @@ HTTPClient::HTTPClient( const String &sURL, const SSLClientCtxRef& sslCtx)
 	, m_retryCount(0)
 	, m_httpPath("/cimom")
 	, m_uselocalAuthentication(false)
+	, m_statusCode(-1)
 {
 	// turn off exceptions, since we're not coded to handle them.
 	m_istr.exceptions(std::ios::goodbit);
@@ -308,7 +309,7 @@ HTTPClient::receiveAuthentication()
 
     if (m_sAuthorization.empty())
 	{
-		OW_THROW(HTTPException, "No known authentication schemes");
+		OW_THROW_ERR(HTTPException, "No known authentication schemes", m_statusCode);
 	}
 
 
@@ -321,7 +322,7 @@ void HTTPClient::getCredentialsIfNecessary()
 	{
 		if (!m_loginCB)
 		{
-			OW_THROW(HTTPException, "No login/password to send");
+			OW_THROW_ERR(HTTPException, "No login/password to send", m_statusCode);
 		}
 		else
 		{
@@ -342,7 +343,7 @@ void HTTPClient::getCredentialsIfNecessary()
 			}
 			else
 			{
-				OW_THROW(HTTPException, "No login/password to send");
+				OW_THROW_ERR(HTTPException, "No login/password to send", m_statusCode);
 			}
 		}
 	}
@@ -415,7 +416,7 @@ void HTTPClient::sendAuthorization()
 				std::ifstream cookieFile(m_localCookieFile.c_str());
 				if (!cookieFile)
 				{
-					OW_THROW_ERRNO_MSG(HTTPException, "Unable to open local authentication file");
+					OW_THROW_ERR(HTTPException, Format("Unable to open local authentication file: %1", strerror(errno)).c_str(), m_statusCode);
 				}
 				String cookie = String::getLine(cookieFile);
 				ostr << "nonce=\"" << m_localNonce << "\", ";
@@ -575,8 +576,8 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 		chunkostr.termOutput();
 		// end deflate test stuff
 #else
-		OW_THROW(HTTPException, "Attempted to deflate output but not "
-			"compiled with zlib!");
+		OW_THROW_ERR(HTTPException, "Attempted to deflate output but not "
+			"compiled with zlib!", m_statusCode);
 #endif
 	}
 	else
@@ -593,6 +594,7 @@ Reference<std::iostream>
 HTTPClient::beginRequest(const String& methodName,
 	const String& cimObject)
 {
+	m_statusCode = -1; 
 	return Reference<std::iostream>(new TempFileStream());
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -604,7 +606,7 @@ HTTPClient::endRequest(const Reference<std::iostream>& request, const String& me
 	OW_ASSERT(tfs);
 	if (!tfs->good())
 	{
-		OW_THROW(HTTPException, "HTTPClient: TempFileStream is bad. Temp file creation failed.");
+		OW_THROW_ERR(HTTPException, "HTTPClient: TempFileStream is bad. Temp file creation failed.",m_statusCode);
 	}
 
 	int len = tfs->getSize();
@@ -647,13 +649,13 @@ HTTPClient::endRequest(const Reference<std::iostream>& request, const String& me
 		String CIMError = getHeaderValue("CIMError");
 		if (CIMError.empty())
 		{
-			OW_THROW(HTTPException, Format("Unable to process request: %1",
-				reasonPhrase).c_str());
+			OW_THROW_ERR(HTTPException, Format("Unable to process request: %1",
+				reasonPhrase).c_str(), m_statusCode);
 		}
 		else
 		{
-			OW_THROW(HTTPException, Format("Unable to process request: %1:%2",
-				reasonPhrase, CIMError).c_str());
+			OW_THROW_ERR(HTTPException, Format("Unable to process request: %1:%2",
+				reasonPhrase, CIMError).c_str(), m_statusCode);
 		}
 	}
 	m_pIstrReturn = convertToFiniteStream();
@@ -667,6 +669,7 @@ HTTPClient::endRequest(const Reference<std::iostream>& request, const String& me
 CIMFeatures
 HTTPClient::getFeatures()
 {
+	m_statusCode = -1; 
 	String methodOrig = m_requestMethod;
 	m_requestMethod = "OPTIONS";
 	prepareHeaders();
@@ -686,8 +689,8 @@ HTTPClient::getFeatures()
 	m_requestMethod = methodOrig;
 	if (rt == FATAL)
 	{
-		OW_THROW(HTTPException, Format("Unable to process request: %1",
-			reasonPhrase).c_str());
+		OW_THROW_ERR(HTTPException, Format("Unable to process request: %1",
+			reasonPhrase).c_str(), m_statusCode);
 	}
 	if (getHeaderValue("allow").indexOf("M-POST") == String::npos)
 	{
@@ -701,7 +704,7 @@ HTTPClient::getFeatures()
 	size_t idx = extURL.indexOf(';');
 	if (idx < 1 || idx == String::npos)
 	{
-		OW_THROW(HTTPException, "No \"Opt\" header in OPTIONS response");
+		OW_THROW_ERR(HTTPException, "No \"Opt\" header in OPTIONS response", m_statusCode);
 	}
 	CIMFeatures rval;
 	rval.extURL = extURL.substring(0, idx);
@@ -712,8 +715,8 @@ HTTPClient::getFeatures()
 	hp.trim();
 	if (hp.length() != 2)
 	{
-		OW_THROW(HTTPException, "HTTP Ext header prefix is not a two digit "
-			"number");
+		OW_THROW_ERR(HTTPException, "HTTP Ext header prefix is not a two digit "
+			"number", m_statusCode);
 	}
 	hp += "-";
 	rval.protocolVersion = getHeaderValue(hp + "CIMProtocolVersion");
@@ -739,8 +742,8 @@ HTTPClient::getFeatures()
 	}
 	else
 	{
-		OW_THROW(HTTPException, "No CIMSupportedFunctionalGroups or "
-			"CIMSupportedExportGroups header");
+		OW_THROW_ERR(HTTPException, "No CIMSupportedFunctionalGroups or "
+			"CIMSupportedExportGroups header", m_statusCode);
 	}
 	rval.supportedGroups = supportedGroups.tokenize(",");
 	for (size_t i = 0; i < rval.supportedGroups.size(); i++)
@@ -800,7 +803,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 	String statusLine(m_statusLine);
 	size_t idx = statusLine.indexOf(' ');
 	String sc; // http status code
-	int isc = 500; // status code (int)
+	m_statusCode = 500; // status code (int)
 	if (idx > 0 && idx != String::npos)
 	{
 		statusLine = statusLine.substring(idx + 1);
@@ -812,7 +815,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 		reasonPhrase = statusLine.substring(idx + 1);
 		try
 		{
-			isc = sc.toInt32();
+			m_statusCode = sc.toInt32();
 		}
 		catch (const StringConversionException&)
 		{
@@ -826,14 +829,14 @@ HTTPClient::processHeaders(String& reasonPhrase)
 	switch (sc[0])
 	{
 		case '1':
-			if (isc == 100)
+			if (m_statusCode == 100)
 			{
 				rt = CONTINUE;
 			}
 			else
 			{
 				rt = FATAL; // support protocol upgrades?  nope.
-				reasonPhrase = Format("%1: Protocol Upgrades Not Supported", isc);
+				reasonPhrase = Format("%1: Protocol Upgrades Not Supported", m_statusCode);
 			}
 			break;
 		case '2':
@@ -842,11 +845,11 @@ HTTPClient::processHeaders(String& reasonPhrase)
 			break;
 		case '3':
 			rt = FATAL; // support redirects?  I think not...
-			reasonPhrase = Format("%1: Redirects Not Supported", isc);
+			reasonPhrase = Format("%1: Redirects Not Supported", m_statusCode);
 			break;
 		case '4':
 			close();
-			switch (isc)
+			switch (m_statusCode)
 			{
 				case SC_REQUEST_TIMEOUT:
 					rt = RETRY;
@@ -862,7 +865,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					else
 					{
 						rt = FATAL; // already tried authorization once.
-						reasonPhrase = Format("%1: Authentication failure", isc);
+						reasonPhrase = Format("%1: Authentication failure", m_statusCode);
 					}
 					break;
 				case SC_METHOD_NOT_ALLOWED:
@@ -875,18 +878,18 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					else
 					{
 						rt = FATAL;
-						reasonPhrase = Format("%1: Server doesn't support request method", isc);
+						reasonPhrase = Format("%1: Server doesn't support request method", m_statusCode);
 					}
 					break;
 			default:
 					close();
 					rt = FATAL;
-					reasonPhrase = String(isc);
+					reasonPhrase = String(m_statusCode);
 					break;
-			} // switch (isc)
+			} // switch (m_statusCode)
 			break;
 		case '5':
-			switch (isc)
+			switch (m_statusCode)
 			{
 				case SC_NOT_IMPLEMENTED:
 				case SC_NOT_EXTENDED:
@@ -901,14 +904,14 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					else
 					{
 						rt = FATAL;
-						reasonPhrase = String(isc);
+						reasonPhrase = String(m_statusCode);
 					}
 					break;
 				default:
 					rt = FATAL;
-					reasonPhrase = String(isc);
+					reasonPhrase = String(m_statusCode);
 					break;
-			} // switch (isc)
+			} // switch (m_statusCode)
 			break;
 		default:
 			rt = RETRY; // shouln't happen
@@ -944,8 +947,8 @@ HTTPClient::convertToFiniteStream()
 #ifdef OW_HAVE_ZLIB_H
 		rval = new HTTPDeflateIStream(rval);
 #else
-		OW_THROW(HTTPException, "Response is deflated but we're not "
-			"compiled with zlib!");
+		OW_THROW_ERR(HTTPException, "Response is deflated but we're not "
+			"compiled with zlib!", m_statusCode);
 #endif // #ifdef OW_HAVE_ZLIB_H
 	}
 	return rval;
@@ -980,6 +983,7 @@ HTTPClient::getStatusLine()
 	{
 		m_statusLine = String::getLine(m_istr);
 	}
+	m_statusCode = -1; 
 }
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -1007,7 +1011,7 @@ HTTPClient::checkResponse(Resp_t& rt)
 		}
 		if (!HTTPUtils::parseHeader(m_responseHeaders, m_istr))
 		{
-			OW_THROW(HTTPException, Format("Received junk from server statusline = %1", m_statusLine).c_str());
+			OW_THROW_ERR(HTTPException, Format("Received junk from server statusline = %1", m_statusLine).c_str(), m_statusCode);
 		}
 		rt = processHeaders(reasonPhrase);
 		if (rt == CONTINUE)
