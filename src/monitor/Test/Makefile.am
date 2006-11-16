@@ -103,7 +103,7 @@ $(PERL_CHECK_S)
 TESTS = $(check_SCRIPTS)
 
 EXTRA_DIST = \
-set_environment.sh \
+set_environment.sh.in \
 $(priv_config_test_scripts:%.sh=%.gold) \
 montest.sh \
 monperltest.sh \

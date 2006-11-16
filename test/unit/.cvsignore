@@ -17,3 +17,4 @@ fillOutputBuffer
 *.dylib*
 *.so*
 *.sl*
+run_make_check.sh

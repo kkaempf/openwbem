@@ -234,7 +234,7 @@ $(CXXBINLINKFLAGS) \
 -o unitMain$(EXEEXT)
 
 check_SCRIPTS = run_make_check.sh
-EXTRA_DIST = $(check_SCRIPTS)
+EXTRA_DIST = run_make_check.sh.in
 BUILT_SOURCES = $(check_SCRIPTS)
 
 TESTS = run_make_check.sh
