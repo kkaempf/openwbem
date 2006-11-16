@@ -4,12 +4,23 @@
 AC_DEFUN([OW_BLOCXX_SUPPORT],
 	[
 		BLOCXX_LOCATION=
+		BLOCXX_LIB_DIR=
+		AC_MSG_CHECKING(for BloCxx)
 		AC_ARG_WITH(blocxx,
 			OW_HELP_STRING(--with-blocxx=PATH,specify the directory to look for BloCxx include/ and lib/ dirs),
 			[
-				if test "x$withval" != "xno" ; then
+				if test "x$withval" = "xyes" ; then
+					# Someone specified --with-blocxx without supplying a directory.  How annoying.
+					AC_MSG_RESULT([unspecified location])
+				elif test "x$withval" != "xno" ; then
 					BLOCXX_LOCATION=$withval
+					if test -d ${BLOCXX_LOCATION}/lib; then
+						BLOCXX_LIB_DIR="${BLOCXX_LOCATION}/lib"
+					elif test -d ${BLOCXX_LOCATION}/lib64; then
+						BLOCXX_LIB_DIR="${BLOCXX_LOCATION}/lib64"
+					fi
 					CPPFLAGS="$CPPFLAGS -I$BLOCXX_LOCATION/include"
+					AC_MSG_RESULT([$BLOCXX_LOCATION])
 				else
 					AC_MSG_ERROR([The blocxx requirement cannot be disabled.])
 				fi
@@ -78,9 +89,11 @@ AC_DEFUN([OW_BLOCXX_SUPPORT],
 				dnl It was not linked with iconv, so we do not need it either.
 				ICONV_LIB=""
 			fi
-			BLOCXX_LIBS="-lblocxx $ICONV_LIB"
+			BLOCXX_LIBS="${BLOCXX_LIB_DIR:+-L}${BLOCXX_LIB_DIR} -lblocxx $ICONV_LIB"
 		fi
 		AC_SUBST(ICONV_LIB)
+		AC_SUBST(BLOCXX_LOCATION)
+		AC_SUBST(BLOCXX_LIB_DIR)
 		AC_SUBST(BLOCXX_LIBS)
 	]
 )
