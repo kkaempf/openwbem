@@ -270,7 +270,8 @@ static const char Pad64 = '=';
 String base64Decode(const String& arg)
 {
 	// only up to the first '\0' will be returned.
-	return String(&base64Decode(arg.c_str())[0]);
+	Array<char> a(base64Decode(arg.c_str()));
+	return String(&a[0], a.size());
 }
 static int char2val(char c)
 {
@@ -467,7 +468,7 @@ Array<char> base64Decode(const char* src)
 			OW_THROW(Base64FormatException, "non-base64 char");
 		}
 	}
-	Array<char> rval(dest.get(), dest.get()+destidx+1);
+	Array<char> rval(dest.get(), dest.get()+destidx);
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
