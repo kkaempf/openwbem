@@ -89,8 +89,6 @@ MOFCompilerTestCases.cpp \
 MOFCompilerTestCases.hpp \
 OperationContextTestCases.cpp \
 OperationContextTestCases.hpp \
-OW_Base64TestCases.cpp \
-OW_Base64TestCases.hpp \
 OW_BinarySerializationTestCases.cpp \
 OW_BinarySerializationTestCases.hpp \
 OW_CIMClassTestCases.cpp \

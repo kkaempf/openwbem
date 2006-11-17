@@ -45,6 +45,7 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_Format.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_Assertion.hpp"
 
 #include <algorithm> // for std::find
 #include <cctype>
@@ -270,8 +271,11 @@ String base64Decode(const String& arg)
 {
 	// only up to the first '\0' will be returned.
 	Array<char> a(base64Decode(arg.c_str()));
+	if (a.size() == 0)
+		return String("");
 	return String(&a[0], a.size());
 }
+
 static int char2val(char c)
 {
 	switch (c)
@@ -346,8 +350,7 @@ static int char2val(char c)
 //////////////////////////////////////////////////////////////////////////////
 Array<char> base64Decode(const char* src)
 {
-	int szdest = strlen(src) * 2;
-	// TODO this is likely too big, but safe.  figure out correct minimal size.
+	int szdest = strlen(src) * 3 / 4 + 3; // Maximum of 3 output bytes for every 4 input bytes. +3 acts like a round-up
 	AutoPtrVec<char> dest(new char[szdest]);
 	memset(dest.get(), '\0', szdest);
 	int destidx, state, ch;
@@ -484,8 +487,11 @@ String base64Encode(const char* src)
 //////////////////////////////////////////////////////////////////////////////
 String base64Encode(const UInt8* src, size_t len)
 {
-	int szdest = len * 3 + 4;
-	// TODO this is likely too big, but safe.  figure out correct minimal size.
+	int szdest = len * 4 / 3 +		// 4 output bytes for every 3 input bytes
+			((len % 3 == 2) ? 1 :	// 1 pad '=' for a remainder 2,
+			 ((len % 3 == 1) ? 2 : 0));	// 2 pads for a remainder 1, 0 pads for remainder 0
+	if (szdest == 0)	//empty input.. better make dest have at least one byte in it
+		szdest = 1;	//so that the rval creation below will work
 	AutoPtrVec<char> dest(new char[szdest]);
 	dest[0] = '\0'; // null terminate in case input is empty
 	char a, b, c, d;
@@ -506,10 +512,7 @@ String base64Encode(const UInt8* src, size_t len)
 		c |= (cp[2] >> 6);
 		d = cp[2] & 0x3f;
 		cp +=3;
-		if ( dst + 6 - dest.get() > szdest )
-		{
-			OW_THROW(Base64FormatException, "buffer too small");
-		}
+		OW_ASSERT( dst + 6 - dest.get() <= szdest );
 		sprintf(dst, "%c%c%c%c",Base64[a],Base64[b],Base64[c],Base64[d]);
 		dst+=4;
 	}
@@ -517,10 +520,7 @@ String base64Encode(const UInt8* src, size_t len)
 	{
 		a = (cp[0] >> 2);
 		b = (cp[0] << 4) & 0x30;
-		if ( dst + 6 - dest.get() > szdest )
-		{
-			OW_THROW(Base64FormatException, "buffer too small");
-		}
+		OW_ASSERT( dst + 6 - dest.get() <= szdest );
 		sprintf(dst, "%c%c==",Base64[a],Base64[b]);
 		dst+=4;
 	}
@@ -530,10 +530,7 @@ String base64Encode(const UInt8* src, size_t len)
 		b = (cp[0] << 4) & 0x30 ;
 		b |= (cp[1] >> 4);
 		c = (cp[1] << 2) & 0x3c;
-		if ( dst + 6 - dest.get() > szdest )
-		{
-			OW_THROW(Base64FormatException, "non-base64 char");
-		}
+		OW_ASSERT( dst + 6 - dest.get() <= szdest );
 		sprintf(dst, "%c%c%c=",Base64[a],Base64[b],Base64[c]);
 		dst+=4;
 	}

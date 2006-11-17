@@ -85,7 +85,6 @@
 #include "OW_CIMUrlTestCases.hpp"
 #include "OW_ListenerAuthenticatorTestCases.hpp"
 #include "OW_InetAddressTestCases.hpp"
-#include "OW_Base64TestCases.hpp"
 #include "OW_MD5TestCases.hpp"
 #include "OW_XMLEscapeTestCases.hpp"
 #include "OW_XMLUnescapeTestCases.hpp"
@@ -166,7 +165,6 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_CIMUrl", OW_CIMUrlTestCases::suite());
 	runner.addTest( "OW_ListenerAuthenticator", OW_ListenerAuthenticatorTestCases::suite());
 	runner.addTest( "OW_SocketAddress", OW_InetAddressTestCases::suite());
-	runner.addTest( "OW_Base64", OW_Base64TestCases::suite());
 	runner.addTest( "OW_MD5", OW_MD5TestCases::suite());
 	runner.addTest( "OW_XMLEscape", OW_XMLEscapeTestCases::suite());
 	runner.addTest( "OW_XMLUnescape", OW_XMLUnescapeTestCases::suite());
