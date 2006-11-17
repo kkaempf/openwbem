@@ -282,6 +282,27 @@ public:
 		E_KEEP_SPECIAL, E_OMIT_SPECIAL
 	};
 
+
+	// An enum that describes what type of error is stored in the error code.
+	// Any error with an error code less than MONITOR_ERROR_START can be assumed
+	// to be an errno.  Everything equal or greater to MONITOR_FATAL_ERROR_START
+	// should be assume to be a fatal monitor error, most likely due to errors
+	// in privileges or security.
+	enum ErrorCodes
+	{
+		MONITOR_ERROR_START = 65536,
+		E_UNKNOWN,
+		E_OPERATION_FAILED,
+		MONITOR_FATAL_ERROR_START = MONITOR_ERROR_START * 2,
+		E_INVALID_OPERATION,
+		E_INVALID_PATH,
+		E_INVALID_SIZE,
+		E_INVALID_PARAMETER,
+		E_INVALID_SECURITY,
+		E_INSUFFICIENT_PRIVILEGES,
+		E_ALREADY_INITIALIZED
+	};
+
 	/**
 	* @return The entries in the directory @a pathname.  If @a opt ==
 	* @c E_KEEP_SPECIAL, then the result includes the special entries for the
