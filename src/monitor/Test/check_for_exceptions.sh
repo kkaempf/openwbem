@@ -25,6 +25,9 @@ else
 fi
 
 while read exception_type exception_message; do
+	case $exception_type in
+		'#' | '#*') continue ;;
+	esac
 	if [ x${exception_type:+set} = xset ]; then
 		if grep -iq "^[ 	]*type:[ 	]*${exception_type}$" ${output_file}; then
 			:
@@ -35,7 +38,7 @@ while read exception_type exception_message; do
 		fi
 	fi
 	if [ x${exception_message:+set} = xset ]; then
-		if grep -iq "^[ 	]*msg:[ 	]*${exception_message}.*" ${output_file}; then
+		if grep -iq "^[ 	]*msg:.*${exception_message}.*" ${output_file}; then
 			:
 		else
 			foo=$?

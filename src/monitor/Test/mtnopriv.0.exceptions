@@ -1,2 +1,2 @@
-PrivilegeManagerException   CheckException: readDirectory: insufficient privileges
-IPCIOException
+InsufficientPrivilegesException   CheckException: readDirectory: insufficient privileges
+PrivilegeManagerException  PrivilegeManager.* no connection to the monitor

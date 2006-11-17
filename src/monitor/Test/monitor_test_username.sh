@@ -50,7 +50,7 @@ run_one_test empty 1
 run_one_test owprovdr 1
 
 cat > $exceptionlist <<EOF
-PrivilegeManagerException   PrivilegeManager::init() failed to spawn monitor: creation of monitor failed: user name specified as both owprovdr and not_owprovdr
+PrivilegeManagerException   PrivilegeManager::init() failed to spawn monitor: creation of monitor failed.*user name specified as both owprovdr and not_owprovdr
 EOF
 run_one_test not_owprovdr 0
 
@@ -64,7 +64,7 @@ read_dir {
 EOF
 
 cat > $exceptionlist <<EOF
-PrivilegeManagerException   PrivilegeManager::init() failed to spawn monitor: creation of monitor failed: must specify user name
+PrivilegeManagerException   PrivilegeManager::init() failed to spawn monitor: creation of monitor failed.* must specify user name
 EOF
 run_one_test null 0
 run_one_test empty 0

@@ -53,7 +53,7 @@ if [ $nofail -ne 0 ]; then
   stdin_string
 else
 cat > userexectest.expected <<EOF
-PrivilegeManagerException  CheckException: userSpawn: insufficient privileges
+InsufficientPrivilegesException  CheckException: userSpawn: insufficient privileges
 EOF
 ! ./userexectest $config_dir/ $cfgfname \
   $safe_bin/userexecprog \

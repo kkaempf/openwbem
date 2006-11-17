@@ -111,12 +111,11 @@ user_name null
 EOF
 cat $inpf >> monexectest.inp
 ./monexectest $config_dir/ $monexectest_cfgfname $safe_bin/montest $cfgfname \
-  montest+arg1+arg2 'IFS= +PATH=/bin+foo=bar' $MUE \
+  montest+arg1+arg2 'IFS= +PATH=/bin+foo=bar+OW_PRIVMAN_NO_ABORT=1' $MUE \
   < monexectest.inp > monexectest.out.tmp
 
 sed ${extended_sed_flag} -e 's/^  OW_PRIVILEGE_MONITOR_DESCRIPTOR=[0-9]+;$/  OW_PRIVILEGE_MONITOR_DESCRIPTOR=XXX;/' \
 	-e 's/^  .+PATH=.*;$/  XPATH=XXX;/' \
-	-e 's/monitoredUserSpawn/monitoredSpawn/' \
   < monexectest.out.tmp > monexectest.out
 `dirname $0`/check_for_exceptions.sh $exception_list monexectest.out
 

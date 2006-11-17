@@ -1,2 +1,2 @@
-PrivilegeManagerException  CheckException: unlink: insufficient privileges
-IPCIOException
+InsufficientPrivilegesException  CheckException: unlink: insufficient privileges
+PrivilegeManagerException  PrivilegeManager.* no connection to the monitor

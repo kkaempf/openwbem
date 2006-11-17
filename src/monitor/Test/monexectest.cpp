@@ -202,7 +202,14 @@ int main(int argc, char * * argv)
 		cout << "Caught OpenWBEM::Exception:" << endl;
 		cout << "  type: " << e.type() << endl;
 		cout << "  msg:  " << e.getMessage() << endl;
-		return std::strcmp(e.type(), "PrivilegeManagerException") == 0 ? 0 : 1;
+
+		if( dynamic_cast<PrivilegeManagerException*>(&e) )
+		{
+			cout << "Expected this exception type..." << endl;
+			return 0;
+		}
+		cout << "Exception type was not expected." << endl;
+		return 1;
 	}
 	catch (std::exception & e)
 	{

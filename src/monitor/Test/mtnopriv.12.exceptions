@@ -1,2 +1,2 @@
-PrivilegeManagerException   CheckException: open: insufficient privileges
-IPCIOException
+InsufficientPrivilegesException   CheckException: open: insufficient privileges
+PrivilegeManagerException  PrivilegeManager.* no connection to the monitor

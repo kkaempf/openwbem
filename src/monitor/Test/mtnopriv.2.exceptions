@@ -1,2 +1,2 @@
-PrivilegeManagerException  CheckException: rename: insufficient privileges
-IPCIOException
+InsufficientPrivilegesException  CheckException: rename: insufficient privileges
+PrivilegeManagerException  PrivilegeManager.* no connection to the monitor

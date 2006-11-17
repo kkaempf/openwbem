@@ -1,2 +1,2 @@
-PrivilegeManagerException   CheckException: readLink: insufficient privileges
-IPCIOException
+InsufficientPrivilegesException   CheckException: readLink: insufficient privileges
+PrivilegeManagerException  PrivilegeManager.* no connection to the monitor
