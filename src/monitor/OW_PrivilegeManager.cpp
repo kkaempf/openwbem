@@ -74,7 +74,17 @@ namespace
 	// aborting here (the end result of a failed assert()), we should have
 	// access to the error code, error message, status, and all of the other
 	// happy variables needed to debug the failure.
-#define THROW_ERROR_CASE(exception, msg, code) abort()
+#define THROW_ERROR_CASE(exception, msg, code) \
+	WRAP_STMT( \
+		if( !::getenv("OW_PRIVMAN_NO_ABORT") ) \
+		{ \
+			abort(); \
+		} \
+		else \
+		{ \
+			OW_THROW_ERR(exception, msg, code); \
+		} \
+	)
 #else
 #define THROW_ERROR_CASE(exception, msg, code) OW_THROW_ERR(exception, msg, code)
 #endif
@@ -91,7 +101,7 @@ namespace
 			ipcio_get(conn, errmsg);
 			conn.get_sync();
 
-			if( errcode < PrivilegeCommon::MONITOR_FATAL_ERROR_START )
+			if( errcode < PrivilegeManager::MONITOR_FATAL_ERROR_START )
 			{
 				// Non-fatal errors and errno errors can just be forwarded on
 				OW_THROW_ERR(PrivilegeManagerException, errmsg.c_str(), errcode);
@@ -101,10 +111,22 @@ namespace
 			// we need to do different actions for debug/non debug compilations.
 			switch(errcode)
 			{
-			case PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES:
-				THROW_ERROR_CASE(InsufficientPrivilegesException, errmsg.c_str(), errcode);
+			case PrivilegeManager::E_INSUFFICIENT_PRIVILEGES:
+#if defined(OW_DEBUG)
+				if( !::getenv("OW_PRIVMAN_NO_ABORT") )
+				{
+					abort();
+				}
+#endif
+				OW_THROW_ERR(InsufficientPrivilegesException, errmsg.c_str(), errcode);
 			default:
-				THROW_ERROR_CASE(FatalPrivilegeManagerException, errmsg.c_str(), errcode);
+#if defined(OW_DEBUG)
+				if( !::getenv("OW_PRIVMAN_NO_ABORT") )
+				{
+					abort();
+				}
+#endif
+				OW_THROW_ERR(InsufficientPrivilegesException, errmsg.c_str(), errcode);
 			}
 		}
 	}
@@ -721,9 +743,6 @@ ProcessRef PrivilegeManager::monitoredSpawn(
 {
 	CHECK(pimpl(), "monitoredSpawn: process has no privileges");
 	pimpl()->verifyValidConnection("monitoredSpawn: no connection to the monitor");
-	NonRecursiveMutexLock lock(pimpl()->m_mutex);
-	IPCIO & conn = pimpl()->m_conn;
-
 	char const * default_argv[2] = { exec_path, 0 };
 	if (!argv || !*argv)
 	{
@@ -736,6 +755,9 @@ ProcessRef PrivilegeManager::monitoredSpawn(
 
 	try
 	{
+		NonRecursiveMutexLock lock(pimpl()->m_mutex);
+		IPCIO & conn = pimpl()->m_conn;
+
 		ipcio_put(conn, PrivilegeCommon::E_CMD_MONITORED_SPAWN);
 		ipcio_put(conn, exec_path);
 		ipcio_put(conn, app_name);
@@ -773,8 +795,6 @@ ProcessRef PrivilegeManager::monitoredUserSpawn(
 {
 	CHECK(pimpl(), "monitoredUserSpawn: process has no privileges");
 	pimpl()->verifyValidConnection("monitoredUserSpawn: no connection to the monitor");
-	NonRecursiveMutexLock lock(pimpl()->m_mutex);
-	IPCIO & conn = pimpl()->m_conn;
 
 	char const * default_argv[2] = { exec_path, 0 };
 	if (!argv || !*argv)
@@ -788,6 +808,9 @@ ProcessRef PrivilegeManager::monitoredUserSpawn(
 
 	try
 	{
+		NonRecursiveMutexLock lock(pimpl()->m_mutex);
+		IPCIO & conn = pimpl()->m_conn;
+
 		ipcio_put(conn, PrivilegeCommon::E_CMD_MONITORED_USER_SPAWN);
 		ipcio_put(conn, exec_path);
 		ipcio_put(conn, app_name);
@@ -821,11 +844,12 @@ int PrivilegeManager::kill(ProcId pid, int sig)
 {
 	CHECK(pimpl(), "kill: process has no privileges");
 	pimpl()->verifyValidConnection("kill: no connection to the monitor");
-	NonRecursiveMutexLock lock(pimpl()->m_mutex);
-	IPCIO & conn = pimpl()->m_conn;
 
 	try
 	{
+		NonRecursiveMutexLock lock(pimpl()->m_mutex);
+		IPCIO & conn = pimpl()->m_conn;
+
 		ipcio_put(conn, PrivilegeCommon::E_CMD_KILL);
 		ipcio_put(conn, pid);
 		ipcio_put(conn, sig);
@@ -853,11 +877,12 @@ Process::Status PrivilegeManager::pollStatus(ProcId pid)
 {
 	CHECK(pimpl(), "pollStatus: process has no privileges");
 	pimpl()->verifyValidConnection("pollStatus: no connection to the monitor");
-	NonRecursiveMutexLock lock(pimpl()->m_mutex);
-	IPCIO & conn = pimpl()->m_conn;
 
 	try
 	{
+		NonRecursiveMutexLock lock(pimpl()->m_mutex);
+		IPCIO & conn = pimpl()->m_conn;
+
 		ipcio_put(conn, PrivilegeCommon::E_CMD_POLL_STATUS);
 		ipcio_put(conn, pid);
 		conn.put_sync();
@@ -909,11 +934,12 @@ ProcessRef PrivilegeManager::userSpawn(
 		working_dir = "";
 	}
 
-	NonRecursiveMutexLock lock(pimpl()->m_mutex);
-	IPCIO & conn = pimpl()->m_conn;
 
 	try
 	{
+		NonRecursiveMutexLock lock(pimpl()->m_mutex);
+		IPCIO & conn = pimpl()->m_conn;
+
 		ipcio_put(conn, PrivilegeCommon::E_CMD_USER_SPAWN);
 		ipcio_put(conn, exec_path);
 		ipcio_put_strarr(conn, argv);
