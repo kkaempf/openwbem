@@ -126,7 +126,7 @@ namespace
 					abort();
 				}
 #endif
-				OW_THROW_ERR(InsufficientPrivilegesException, errmsg.c_str(), errcode);
+				OW_THROW_ERR(FatalPrivilegeManagerException, errmsg.c_str(), errcode);
 			}
 		}
 	}
