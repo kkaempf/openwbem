@@ -35,6 +35,7 @@
 #include "OW_Secure.hpp"
 #include "OW_String.hpp"
 #include "OW_Timeout.hpp"
+#include "OW_Format.hpp"
 #include <cstdlib>
 #include <cstring>
 #include <cerrno>
@@ -115,8 +116,10 @@ void spawn_monitor(
 	if (status == PrivilegeCommon::E_ERROR)
 	{
 		String errmsg;
-		ipcio_get(conn, errmsg, std::size_t(-1));
-		CHECK(false, "creation of monitor failed: " + errmsg);
+		int errcode;
+		ipcio_get(conn, errcode);
+		ipcio_get(conn, errmsg);
+		CHECK(false, Format("creation of monitor failed (%1): %2", errcode, errmsg));
 	}
 
 	String unpriv_user;
