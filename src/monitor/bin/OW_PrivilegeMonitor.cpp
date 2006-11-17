@@ -79,7 +79,7 @@ typedef PrivilegeCommon::ECommand ECommand;
 // CHECKARGS differs from CHECK only in that it also causes the monitor to quit
 //
 #define CHECKARGS(tst, msg, err) \
-	WRAP_STMT(if (!(tst)) { if( (err) >= PrivilegeCommon::MONITOR_FATAL_ERROR_START) {  m_done = true; } THROW_MSG_ERR(CheckException, msg, err); })
+	WRAP_STMT(if (!(tst)) { if( (err) >= PrivilegeManager::MONITOR_FATAL_ERROR_START) {  m_done = true; } THROW_MSG_ERR(CheckException, msg, err); })
 
 
 
@@ -477,7 +477,7 @@ namespace
 				case PrivilegeCommon::E_CMD_DONE :                 this->done(); break;
 
 			default:
-				reportError(conn(), "Unknown operation requested", PrivilegeCommon::E_INVALID_OPERATION);
+				reportError(conn(), "Unknown operation requested", PrivilegeManager::E_INVALID_OPERATION);
 				m_done = true;
 				OW_LOG_FATAL_ERROR(logger, "Unknown operation requested; monitor exiting");
 			}
@@ -502,10 +502,10 @@ namespace
 	{
 		CHECKARGS(path.length() <= MAX_PATH_LENGTH,
 			String(op) + ": path argument too long",
-			PrivilegeCommon::E_INVALID_PATH);
+			PrivilegeManager::E_INVALID_PATH);
 		CHECKARGS(path.startsWith("/"),
 			String(op) + ": path argument must be an absolute path",
-			PrivilegeCommon::E_INVALID_PATH);
+			PrivilegeManager::E_INVALID_PATH);
 	}
 
 	void Monitor::done()
@@ -549,19 +549,19 @@ namespace
 
 		CHECKARGS(ls.categories.size() <= MAX_CATEGORIES,
 			"set_logger: too many categories",
-			PrivilegeCommon::E_INVALID_SIZE);
+			PrivilegeManager::E_INVALID_SIZE);
 		for (size_t i = 0; i < ls.categories.size(); ++i)
 		{
 			CHECKARGS(ls.categories[i].length() <= MAX_CATEGORY_LENGTH,
 				"set_logger: category name too long",
-				PrivilegeCommon::E_INVALID_SIZE);
+				PrivilegeManager::E_INVALID_SIZE);
 		}
 		CHECKARGS(ls.message_format.length() <= MAX_FORMAT_LENGTH,
 			"set_logger: format too long",
-			PrivilegeCommon::E_INVALID_SIZE);
+			PrivilegeManager::E_INVALID_SIZE);
 		CHECKARGS(ls.file_name.length() <= MAX_PATH_LENGTH,
 			"set_logger: log file path too long",
-			PrivilegeCommon::E_INVALID_SIZE);
+			PrivilegeManager::E_INVALID_SIZE);
 	}
 
 	void Monitor::set_logger_from_spec(
@@ -587,13 +587,13 @@ namespace
 
 		try
 		{
-			CHECKARGS(!m_logger_set, "set_logger: logger already set", PrivilegeCommon::E_ALREADY_INITIALIZED);
+			CHECKARGS(!m_logger_set, "set_logger: logger already set", PrivilegeManager::E_ALREADY_INITIALIZED);
 			check_logger_spec(ls, m_done);
 			this->check_valid_path(ls.file_name, "set_logger");
 			String dir_name = FileSystem::Path::dirname(ls.file_name);
 			CHECKARGS(m_secure_paths.is_secure(dir_name),
 				"set_logger: log file dir " + dir_name + " is insecure",
-				PrivilegeCommon::E_INVALID_SECURITY);
+				PrivilegeManager::E_INVALID_SECURITY);
 			// Don't check log file itself, because race conditions we
 			// may encounter during log rotation may cause us to throw a
 			// "file not found" exception.
@@ -625,7 +625,7 @@ namespace
 			this->check_valid_path(path, "open");
 			CHECKARGS(has_open_priv(path, flags, priv()),
 				Format("open: insufficient privileges: file=\"%1\" flags=%2, perms=%3", path, flags, perms).c_str(),
-				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 
 			char const * cpath = path.c_str();
 			AutoDescriptor d;
@@ -653,7 +653,7 @@ namespace
 					d.reset(::open(cpath, O_RDWR | O_CREAT | O_APPEND, perms));
 					break;
 				default:
-					CHECKARGS(false, Format("open: illegal flags parameter: %1", perms).c_str(), PrivilegeCommon::E_INVALID_PARAMETER);
+					CHECKARGS(false, Format("open: illegal flags parameter: %1", perms).c_str(), PrivilegeManager::E_INVALID_PARAMETER);
 			}
 			CHECK_ERRNO(d.get() >= 0, "open");
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
@@ -680,11 +680,11 @@ namespace
 			this->check_valid_path(dirpath, "readDirectory");
 			CHECKARGS(priv().read_dir.match(dirpath),
 				Format("readDirectory: insufficient privileges: dirpath=\"%1\" opt=%2", dirpath, opt).c_str(),
-				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 
 			StringArray dir_entries;
 			bool ok = FileSystem::getDirectoryContents(dirpath, dir_entries);
-			CHECK(ok, "readDirectory: could not read " + dirpath, PrivilegeCommon::E_OPERATION_FAILED);
+			CHECK(ok, "readDirectory: could not read " + dirpath, PrivilegeManager::E_OPERATION_FAILED);
 			if (opt == PrivilegeManager::E_OMIT_SPECIAL)
 			{
 				StringArray::iterator end = dir_entries.end();
@@ -720,7 +720,7 @@ namespace
 			this->check_valid_path(lpath, "readLink");
 			CHECKARGS(priv().read_link.match(lpath),
 				Format("readLink: insufficient privileges: path=\"%1\"", lpath).c_str(),
-				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 
 			String s = FileSystem::readSymbolicLink(lpath);
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
@@ -747,16 +747,16 @@ namespace
 			this->check_valid_path(old_path, "rename");
 			CHECKARGS(priv().rename_from.match(old_path),
 				Format("rename: insufficient privileges for source path: %1", old_path).c_str(),
-				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 
 			this->check_valid_path(new_path, "rename");
 			CHECKARGS(priv().rename_to.match(new_path),
 				Format("rename: insufficient privileges for dest path: %1", new_path).c_str(),
-				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 
 			bool ok = FileSystem::renameFile(old_path, new_path);
 			CHECK(ok,
-				"rename: could not rename " + old_path + " to " + new_path, PrivilegeCommon::E_OPERATION_FAILED);
+				"rename: could not rename " + old_path + " to " + new_path, PrivilegeManager::E_OPERATION_FAILED);
 
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			conn().put_sync();
@@ -779,7 +779,7 @@ namespace
 			this->check_valid_path(path, "unlink");
 			CHECKARGS(priv().unlink.match(path),
 				Format("unlink: insufficient privileges: path=\"%1\"", path).c_str(),
-				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 
 			bool ok = FileSystem::removeFile(path);
 
@@ -1011,23 +1011,23 @@ namespace
 		try
 		{
 			this->check_valid_path(exec_path, "monitoredSpawn");
-			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredSpawn: app name too long", PrivilegeCommon::E_INVALID_SIZE);
-			CHECKARGS(xargv.second, "monitoredSpawn: argv too large", PrivilegeCommon::E_INVALID_SIZE);
+			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredSpawn: app name too long", PrivilegeManager::E_INVALID_SIZE);
+			CHECKARGS(xargv.second, "monitoredSpawn: argv too large", PrivilegeManager::E_INVALID_SIZE);
 			CHECKARGS(priv().monitored_exec.match(exec_path, app_name)
 				|| priv().monitored_exec_check_args.match(exec_path, xargv.first, app_name),
 				Format("monitoredSpawn: insufficient privileges: path=\"%1\" app=\"%2\" args={%3}", exec_path, app_name, simpleUntokenize(xargv.first)).c_str(),
-				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
-			CHECKARGS(xenvp.second,	"monitoredSpawn: envp too large", PrivilegeCommon::E_INVALID_SIZE);
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
+			CHECKARGS(xenvp.second,	"monitoredSpawn: envp too large", PrivilegeManager::E_INVALID_SIZE);
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
 				"monitoredSpawn: reserved env var set in environment argument",
-				PrivilegeCommon::E_INVALID_PARAMETER);
+				PrivilegeManager::E_INVALID_PARAMETER);
 			CHECK(m_secure_paths.is_secure(exec_path),
 				"monitoredSpawn: exec path " + exec_path + " is insecure",
-				PrivilegeCommon::E_INVALID_SECURITY);
+				PrivilegeManager::E_INVALID_SECURITY);
 
 			AutoDescriptor desc(::dup(0)); // get some unused descriptor
-			CHECK(desc.get() >= 0, "monitoredSpawn: dup failed", PrivilegeCommon::E_OPERATION_FAILED);
+			CHECK(desc.get() >= 0, "monitoredSpawn: dup failed", PrivilegeManager::E_OPERATION_FAILED);
 			putenv_monitor_desc(xenvp.first, desc.get());
 			ME_PreExec pre_exec(m_config_dir, app_name.c_str(), this, desc);
 			this->spawn_and_return(
@@ -1060,25 +1060,25 @@ namespace
 			this->check_valid_path(exec_path, "monitoredUserSpawn");
 			CHECKARGS(user_name.length() <= MAX_USER_NAME_LENGTH,
 				"monitoredUserSpawn: user name too long",
-				PrivilegeCommon::E_INVALID_SIZE);
-			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredUserSpawn: app name too long", PrivilegeCommon::E_INVALID_SIZE);
-			CHECKARGS(xargv.second, "monitoredUserSpawn: argv too large", PrivilegeCommon::E_INVALID_SIZE);
+				PrivilegeManager::E_INVALID_SIZE);
+			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredUserSpawn: app name too long", PrivilegeManager::E_INVALID_SIZE);
+			CHECKARGS(xargv.second, "monitoredUserSpawn: argv too large", PrivilegeManager::E_INVALID_SIZE);
 			CHECKARGS(priv().monitored_user_exec.match(exec_path, app_name, user_name)
 				|| priv().monitored_user_exec_check_args.match(exec_path, xargv.first, app_name, user_name),
 				Format("monitoredUserSpawn: insufficient privileges: user=%1 path=\"%2\" app=\"%3\" args={%4}", user_name, exec_path, app_name, simpleUntokenize(xargv.first)).c_str(),
-				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
-			CHECKARGS(xenvp.second, "monitoredUserSpawn: envp too large", PrivilegeCommon::E_INVALID_SIZE);
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
+			CHECKARGS(xenvp.second, "monitoredUserSpawn: envp too large", PrivilegeManager::E_INVALID_SIZE);
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
 				"monitoredUserSpawn: reserved env var set in environment argument",
-				PrivilegeCommon::E_INVALID_PARAMETER
+				PrivilegeManager::E_INVALID_PARAMETER
 			);
 			CHECK(m_secure_paths.is_secure(exec_path),
 				"monitoredUserSpawn: exec path " + exec_path + " is insecure",
-				PrivilegeCommon::E_INVALID_SECURITY);
+				PrivilegeManager::E_INVALID_SECURITY);
 
 			AutoDescriptor desc(::dup(0)); // get some unused descriptor
-			CHECK(desc.get() >= 0, "monitoredUserSpawn: dup failed", PrivilegeCommon::E_OPERATION_FAILED);
+			CHECK(desc.get() >= 0, "monitoredUserSpawn: dup failed", PrivilegeManager::E_OPERATION_FAILED);
 			putenv_monitor_desc(xenvp.first, desc.get());
 			ME_PreExec pre_exec(m_config_dir, app_name.c_str(), this, desc, user_name.c_str());
 			this->spawn_and_return(
@@ -1102,7 +1102,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ kill, pid=%1, sig=%2", pid, sig).toString());
 		try
 		{
-			CHECKARGS(has(m_proc_map, pid), "kill: unknown process", PrivilegeCommon::E_INVALID_PARAMETER);
+			CHECKARGS(has(m_proc_map, pid), "kill: unknown process", PrivilegeManager::E_INVALID_PARAMETER);
 			int rv = (::kill(pid, sig) == 0 ? 0 : errno);
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			ipcio_put(conn(), rv);
@@ -1124,7 +1124,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ pollStatus, pid=%1", pid).toString());
 		try
 		{
-			CHECKARGS(has(m_proc_map, pid), "pollStatus: unknown process", PrivilegeCommon::E_INVALID_PARAMETER);
+			CHECKARGS(has(m_proc_map, pid), "pollStatus: unknown process", PrivilegeManager::E_INVALID_PARAMETER);
 			ProcId wpid;
 			int status;
 			do
@@ -1218,26 +1218,26 @@ namespace
 			this->check_valid_path(exec_path, "userSpawn");
 			CHECKARGS(user_name.length() <= MAX_USER_NAME_LENGTH,
 				"userSpawn: user name too long",
-				PrivilegeCommon::E_INVALID_SIZE);
+				PrivilegeManager::E_INVALID_SIZE);
 			CHECKARGS(working_dir.length() <= MAX_PATH_LENGTH,
 				"userSpawn: working dir too long",
-				PrivilegeCommon::E_INVALID_SIZE);
-			CHECKARGS(xargv.second, "userSpawn: argv too large", PrivilegeCommon::E_INVALID_SIZE);
+				PrivilegeManager::E_INVALID_SIZE);
+			CHECKARGS(xargv.second, "userSpawn: argv too large", PrivilegeManager::E_INVALID_SIZE);
 			CHECKARGS(priv().user_exec.match(exec_path, user_name)
 				|| priv().user_exec_check_args.match(exec_path, xargv.first, user_name),
 				Format("userSpawn: insufficient privileges: user=%1 path=\"%2\" dir=\"%3\" args={%4}", user_name, exec_path, working_dir, simpleUntokenize(xargv.first)).c_str(),
-				PrivilegeCommon::E_INSUFFICIENT_PRIVILEGES);
-			CHECKARGS(xenvp.second, "userSpawn: envp too large", PrivilegeCommon::E_INVALID_SIZE);
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
+			CHECKARGS(xenvp.second, "userSpawn: envp too large", PrivilegeManager::E_INVALID_SIZE);
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
 				"userSpawn: reserved env var set in environment argument",
-				PrivilegeCommon::E_INVALID_PARAMETER);
+				PrivilegeManager::E_INVALID_PARAMETER);
 			CHECK(m_secure_paths.is_secure(exec_path),
 				"userSpawn: exec path " + exec_path + " is insecure",
-				PrivilegeCommon::E_INVALID_SECURITY);
+				PrivilegeManager::E_INVALID_SECURITY);
 			CHECK(working_dir.empty() || working_dir.startsWith("/"),
 				"userSpawn: working dir must be an absolute path",
-				PrivilegeCommon::E_INVALID_PATH);
+				PrivilegeManager::E_INVALID_PATH);
 
 			UE_PreExec pre_exec(user_name, working_dir);
 			this->spawn_and_return(
