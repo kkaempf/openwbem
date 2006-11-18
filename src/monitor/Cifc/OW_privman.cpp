@@ -1,3 +1,10 @@
+// This file does not appear to be used anywhere.  I believe this was the
+// original implementation, but is no longer used in favor of the
+// OW_privman_noexcept.cpp file.  The exceptionless version was created to work
+// around bugs (AIX) where (under some circumstances) throwing an exception in
+// a shared library (even if it was immediately caught) would cause
+// __cxx_terminate() to be called.
+
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 #include "OW_Format.hpp"
