@@ -487,8 +487,8 @@ String base64Encode(const char* src)
 //////////////////////////////////////////////////////////////////////////////
 String base64Encode(const UInt8* src, size_t len)
 {
-	int szdest = len * 4 / 3 + 1 +	// 4 output bytes for every 3 input bytes, 1 for trailing null
-		((len % 3) ? 4 : 0);	// If len % 3 > 0, add another output block for data + pad
+	int szdest = len / 3 * 4 + 1 +	// 4 output bytes for every 3 input bytes, 1 for trailing null
+		((len % 3) ? 4 : 0);	// If len % 3 > 0, add another output block for remainder data + pad
 	AutoPtrVec<char> dest(new char[szdest]);
 	dest[0] = '\0'; // null terminate in case input is empty
 	char a, b, c, d;
