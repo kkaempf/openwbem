@@ -42,6 +42,8 @@ OW_OOPProtocolCPP1.hpp \
 OW_OOPProtocolCPP1.cpp \
 OW_OOPProtocolIFC.hpp \
 OW_OOPProtocolIFC.cpp \
+OW_OOPProviderBase.hpp \
+OW_OOPProviderBase.cpp \
 OW_OOPAssociatorProvider.hpp \
 OW_OOPAssociatorProvider.cpp \
 OW_OOPInstanceProvider.hpp \
@@ -58,8 +60,6 @@ OW_OOPIndicationExportProvider.hpp \
 OW_OOPIndicationExportProvider.cpp \
 OW_OOPProviderInterface.hpp \
 OW_OOPProviderInterface.cpp \
-OW_OOPProviderBase.hpp \
-OW_OOPProviderBase.cpp \
 OW_OOPClonedProviderEnv.hpp \
 OW_OOPClonedProviderEnv.cpp \
 OW_OOPFwd.hpp \

@@ -73,9 +73,10 @@ namespace
 class LocalCMPIProvider : public ProviderBaseIFC
 {
 public:
-	LocalCMPIProvider(CMPIFTABLERef& pprov)
+	LocalCMPIProvider(CMPIFTABLERef& pprov, ::CMPI_Broker& broker)
 		: ProviderBaseIFC()
 		, m_prov(pprov)
+		, m_broker(broker)
 		, m_instProv(0)
 		, m_methProv(0)
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -156,8 +157,38 @@ public:
 		return m_assocProv->getAssociatorProvider();
 	}
 #endif
+
+	void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	{
+		if (m_prov->miVector.instMI)
+		{
+			::CMPIOperationContext context;
+			CMPI_ContextOnStack eCtx(context);
+			CMPI_ThreadContext thr(&m_broker, &eCtx);
+			m_prov->miVector.instMI->ft->cleanup(m_prov->miVector.instMI,
+				&eCtx, true);
+		}
+		if (m_prov->miVector.methMI)
+		{
+			::CMPIOperationContext context;
+			CMPI_ContextOnStack eCtx(context);
+			CMPI_ThreadContext thr(&m_broker, &eCtx);
+			m_prov->miVector.methMI->ft->cleanup(m_prov->miVector.methMI,
+				&eCtx, true);
+		}
+		if (m_prov->miVector.assocMI)
+		{
+			::CMPIOperationContext context;
+			CMPI_ContextOnStack eCtx(context);
+			CMPI_ThreadContext thr(&m_broker, &eCtx);
+			m_prov->miVector.assocMI->ft->cleanup(m_prov->miVector.assocMI,
+				&eCtx, true);
+		}
+	}
+
 private:
 	CMPIFTABLERef m_prov;
+	::CMPI_Broker& m_broker;
 	InstanceProviderIFCRef m_instProv;
 	MethodProviderIFCRef m_methProv;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -215,6 +246,26 @@ private:
 	}
 
 };
+
+//////////////////////////////////////////////////////////////////////////////
+void
+completeExecution(
+	const ProviderEnvironmentIFCRef& env,
+	ProviderBaseIFCRef& provider)
+{
+	LoggerRef logger = env->getLogger(OOPCpp1ProviderRunner::COMPONENT_NAME);
+	OW_LOG_DEBUG(logger, "owoopcmpipr completeExecution called");
+	IntrusiveReference<LocalCMPIProvider> localProv = provider.cast_to<LocalCMPIProvider>();
+	if (localProv)
+	{
+		OW_LOG_DEBUG(logger, "owoopcmpipr::completeExecution calling cleanup on provider");
+		localProv->shuttingDown(env);
+	}
+	else
+	{
+		OW_LOG_ERROR(logger, "owoopcmpipr::completeExecution failed getting provider ref. Skipping cleanup on provider");
+	}
+}
 
 } // end anonymous namespace
 
@@ -294,7 +345,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	ProviderBaseIFCRef provider = ProviderBaseIFCRef(new LocalCMPIProvider(cmpiprov));
+	ProviderBaseIFCRef provider = ProviderBaseIFCRef(new LocalCMPIProvider(cmpiprov, broker));
 
 #ifdef OW_HAVE_SYS_APPARMOR_H
 	unsigned int magtok = Secure::rand_uint<unsigned int>(); 
@@ -331,7 +382,8 @@ int main(int argc, char* argv[])
 #endif
 
 	CMPIProvInitializer cmpiProvInitializer;
-	return provrunner.runProvider(provider, providerLib, cmpiProvInitializer);
+	return provrunner.runProvider(provider, providerLib, cmpiProvInitializer,
+		completeExecution);
 }
 
 namespace

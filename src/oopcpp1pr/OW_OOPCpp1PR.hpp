@@ -52,6 +52,7 @@ class OOPCpp1ProviderRunner
 {
 public:
 	static const char* const COMPONENT_NAME;
+	typedef void (*CompletionCB)(const ProviderEnvironmentIFCRef& env, ProviderBaseIFCRef& provider);
 
 	class InitializeCallback
 	{
@@ -81,7 +82,9 @@ public:
 	};
 
 	OOPCpp1ProviderRunner(const UnnamedPipeRef& IOPipe, const String& logFile, const String& logLevel);
-	int runProvider(ProviderBaseIFCRef& provider, const String& sourceLib, InitializeCallback& initializeCallback);
+	int runProvider(ProviderBaseIFCRef& provider, const String& sourceLib,
+		InitializeCallback& initializeCallback, CompletionCB completionCB=0);
+
 	ProviderEnvironmentIFCRef getProviderEnvironment();
 
 private:

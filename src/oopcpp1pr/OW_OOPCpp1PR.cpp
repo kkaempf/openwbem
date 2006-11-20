@@ -406,8 +406,12 @@ protected:
 public:
 	~OOPProviderEnvironment()
 	{
-		delete m_prinbuf;
-		delete m_proutbuf;
+		if (m_proutbuf)	// "Cloned" != NULL
+		{
+			BinarySerialization::write(m_outbuf, BinarySerialization::BIN_END);
+			delete m_prinbuf;
+			delete m_proutbuf;
+		}
 	}
 
 	LogAppenderRef getLogAppender() const
@@ -1079,7 +1083,8 @@ int
 OOPCpp1ProviderRunner::runProvider(
 	ProviderBaseIFCRef& provider,
 	const String& sourceLib,
-	InitializeCallback& initializeCallback)
+	InitializeCallback& initializeCallback,
+	CompletionCB completionCB)
 {
 	int rval = 0;
 	Logger logger(COMPONENT_NAME);
@@ -1136,7 +1141,6 @@ OOPCpp1ProviderRunner::runProvider(
 
 				case BinarySerialization::SET_PERSISTENT:
 				{
-					//OW_LOG_DEBUG(logger, "owoopcpp1pr Got SET_PERSISTENT command");
 					persistent = BinarySerialization::readBool(m_inbuf);
 					if (persistent)
 					{
@@ -1145,6 +1149,27 @@ OOPCpp1ProviderRunner::runProvider(
 					else
 					{
 						m_IOPipe->setTimeouts(Timeout::relative(60 * 10.0));
+					}
+					if (!persistent)
+					{
+						// Pesistent being set to false.
+						// If polled/indication export, then call doShutdown.
+						// shuttingDown/cleanup will be called by the provider runner.
+						PolledProviderIFC* polledProvider = provider->getPolledProvider();
+						if (polledProvider)
+						{
+							//OW_LOG_DEBUG(logger, "owoopcpp1pr Got SET_PERSISTENT shutting down polled provider");
+							polledProvider->doShutdown();
+						}
+						else
+						{
+							IndicationExportProviderIFC* indicationExportProvider = provider->getIndicationExportProvider();
+							if (indicationExportProvider)
+							{
+								//OW_LOG_DEBUG(logger, "owoopcpp1pr Got SET_PERSISTENT shutting down indication export provider");
+								indicationExportProvider->doShutdown();
+							}
+						}
 					}
 				}
 				break;
@@ -1189,6 +1214,11 @@ OOPCpp1ProviderRunner::runProvider(
 
 			}
 		} while (persistent);
+
+		if (completionCB)
+		{
+			completionCB(m_penv, provider);
+		}
 	}
 	catch (CIMException& e)
 	{
@@ -1247,6 +1277,8 @@ main_end:
 		cerr << "owoopcpp1pr main() m_outbuf.pubsync() failed" << endl;
 		rval = 7;
 	}
+
+	OW_LOG_DEBUG(logger, "owoopcpp1pr returning from runprovider");
 	return rval;
 }
 

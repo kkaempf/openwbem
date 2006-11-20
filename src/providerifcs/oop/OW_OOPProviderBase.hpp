@@ -60,6 +60,7 @@ public:
 	virtual ~OOPProviderBase();
 
 	UnnamedPipeRef startClonedProviderEnv(const ProviderEnvironmentIFCRef& env);
+	void terminate(const ProviderEnvironmentIFCRef& env);
 
 	class MethodCallback
 	{
@@ -70,6 +71,7 @@ public:
 	};
 
 protected:
+
 	const OOPProviderInterface::ProvRegInfo& getProvInfo() const
 	{
 		return m_provInfo;
@@ -91,6 +93,7 @@ private:
 	OOPProtocolIFCRef m_protocol;
 
 	ProcessRef getProcess(const char* fname, const ProviderEnvironmentIFCRef& env, EUsePersistentProcessFlag usePersistentProcess);
+
 	Reference<Mutex> m_guardRef;
 	Reference<ProcessRef> m_persistentProcessRef;
 	ThreadPool m_threadPool;

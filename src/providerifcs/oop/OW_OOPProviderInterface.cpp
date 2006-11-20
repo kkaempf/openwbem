@@ -431,6 +431,7 @@ OOPProviderInterface::doGetIndicationExportProviders(const ProviderEnvironmentIF
 		{
 			SavedProviders savedProviders;
 			IndicationExportProviderIFCRef p(new OOPIndicationExportProvider(*iter->second, savedProviders.guard, savedProviders.process));
+			savedProviders.indicationExportProv = p;
 			m_persistentProvs.insert(std::make_pair(iter->first, savedProviders));
 			rval.push_back(p);
 		}
@@ -469,6 +470,7 @@ OOPProviderInterface::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 		{
 			SavedProviders savedProviders;
 			PolledProviderIFCRef p(new OOPPolledProvider(*iter->second, savedProviders.guard, savedProviders.process));
+			savedProviders.polledProv = p;
 			m_persistentProvs.insert(std::make_pair(iter->first, savedProviders));
 			rval.push_back(p);
 		}
@@ -509,6 +511,7 @@ OOPProviderInterface::doGetIndicationProvider(const ProviderEnvironmentIFCRef& e
 		{
 			SavedProviders savedProviders;
 			IndicationProviderIFCRef p(new OOPIndicationProvider(*iter->second, savedProviders.guard, savedProviders.process));
+			savedProviders.indProv = p;
 			m_persistentProvs.insert(std::make_pair(String(provIdString), savedProviders));
 			return p;
 		}
@@ -521,14 +524,56 @@ OOPProviderInterface::doGetIndicationProvider(const ProviderEnvironmentIFCRef& e
 void 
 OOPProviderInterface::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 {
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void 
 OOPProviderInterface::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 {
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "OOPProviderInterface::doShuttingDown");
+	Mutex mutexOnStack;
+	OOPProviderBase* pprov;
+	MutexLock lock(m_persistentProvsGuard);
 
+	for (PersistentProvMap_t::iterator proviter = m_persistentProvs.begin();
+		proviter != m_persistentProvs.end(); proviter++)
+	{
+		pprov = 0;
+		if (proviter->second.polledProv)
+		{
+			IntrusiveReference<OOPPolledProvider> pref = proviter->second.polledProv.cast_to<OOPPolledProvider>();
+			if (pref)
+			{
+				Mutex* mutexToUse = proviter->second.guard ? proviter->second.guard.getPtr() : &mutexOnStack;
+				MutexLock pl(*mutexToUse);
+				OW_LOG_DEBUG(lgr, "OOPProviderInterface::doShuttingDown terminating polled provider");
+				pref->terminate(env);
+			}
+		}
+		else if (proviter->second.indicationExportProv)
+		{
+			IntrusiveReference<OOPIndicationExportProvider> pref = proviter->second.polledProv.cast_to<OOPIndicationExportProvider>();
+			if (pref)
+			{
+				Mutex* mutexToUse = proviter->second.guard ? proviter->second.guard.getPtr() : &mutexOnStack;
+				MutexLock pl(*mutexToUse);
+				OW_LOG_DEBUG(lgr, "OOPProviderInterface::doShuttingDown terminating indication export provider");
+				pref->terminate(env);
+			}
+		}
+		else if (proviter->second.indProv)
+		{
+			IntrusiveReference<OOPIndicationProvider> pref = proviter->second.polledProv.cast_to<OOPIndicationProvider>();
+			if (pref)
+			{
+				Mutex* mutexToUse = proviter->second.guard ? proviter->second.guard.getPtr() : &mutexOnStack;
+				MutexLock pl(*mutexToUse);
+				OW_LOG_DEBUG(lgr, "OOPProviderInterface::doShuttingDown terminating indication provider");
+				pref->terminate(env);
+			}
+		}
+	}
 }
 
 } // end namespace OW_NAMESPACE

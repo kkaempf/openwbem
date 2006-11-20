@@ -282,6 +282,26 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 	return proc;
 }
 
+void
+OOPProviderBase::terminate(const ProviderEnvironmentIFCRef& env)
+{
+	Logger lgr(COMPONENT_NAME);
+	ProcessRef proc;
+	if (m_persistentProcessRef
+		&& (*m_persistentProcessRef))
+	{
+		OW_LOG_DEBUG(lgr, Format("OOPProviderBase::terminate terminating "
+			"provider: %1", m_provInfo.process));
+		ProcessRef proc = *m_persistentProcessRef;
+		m_protocol->setPersistent(proc->out(), proc->in(), m_provInfo.timeout, env, false);
+
+	}
+
+	// Shutdown the clonedEnv threadPool
+	m_threadPool.shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE,
+		Timeout::relative(0.1), Timeout::infinite);
+}
+
 void 
 OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& env, const OOPProviderBase::MethodCallback& func, 
 	const char* fname, EUsePersistentProcessFlag usePersistentProcess)
@@ -348,6 +368,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 
 OOPProviderBase::MethodCallback::~MethodCallback()
 {
+
 }
 
 } // end namespace OW_NAMESPACE

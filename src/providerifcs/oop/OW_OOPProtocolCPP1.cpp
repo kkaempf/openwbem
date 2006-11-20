@@ -1511,7 +1511,9 @@ OOPProtocolCPP1::setPersistent(
 	bool persistent)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::setPersistent about to start writing");
+	OW_LOG_DEBUG(logger,
+		Format("OOPProtocolCPP1::setPersistent about to start writing: %1",
+			persistent));
 
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1523,7 +1525,6 @@ OOPProtocolCPP1::setPersistent(
 
 	NoResultHandler noResultHandler;
 	end(buf, in, out, timeout, env, noResultHandler, m_pprov, E_WRITE_ONLY);
-
 }
 
 void

@@ -140,7 +140,6 @@ private:
 		IndicationExportProviderIFCRef indicationExportProv;
 		Reference<Mutex> guard;
 		Reference<ProcessRef> process;
-
 	};
 
 	// key is the provider id
