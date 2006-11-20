@@ -375,21 +375,53 @@ CMPIString* mbEncGetMessage(const CMPIBroker *, const char *msgId, const char *d
 
 CMPIStatus mbEncLogMessage(const CMPIBroker* mb, int severity, 
 						   const char* id, const char* text, 
-						   const CMPIString* string)
+						   const CMPIString* stringArg)
 {
-	// TODO
-	CMPIStatus rc; 
-	rc.rc = CMPI_RC_ERR_METHOD_NOT_AVAILABLE; 
+	CMPIStatus rc = {CMPI_RC_OK, NULL};
+	const char* pid = (id) ? id : "";
+	const char* msg = text;
+
+	if (!msg && stringArg)
+	{
+		msg = CMGetCharPtr(stringArg);
+		//msg = stringGetCharPtr(stringArg, &rc);
+	}
+
+	if (msg)
+	{
+		if (!id)
+		{
+			id = COMPONENT_NAME.c_str();
+		}
+
+		OpenWBEM::Logger lgr(id);
+		switch (severity)
+		{
+			case 1:		// Info
+				OW_LOG_INFO(lgr, msg);
+				break;
+			case 2:		// Warning (No WARNING in OW)
+				OW_LOG_ERROR(lgr, msg);
+				break;
+			case 3:		// Severe
+				OW_LOG_ERROR(lgr, msg);
+				break;
+			case 4:		// Fatal
+				OW_LOG_FATAL_ERROR(lgr, msg);
+				break;
+			default:
+				rc.rc = CMPI_RC_ERR_INVALID_PARAMETER;
+				break;
+		}
+	}
+
 	return rc; 
 }
 
 CMPIStatus mbEncTrace(const CMPIBroker* mb, int level, const char* component, 
-					  const char* text, const CMPIString* string)
+					  const char* text, const CMPIString* stringArg)
 {
-	// TODO
-	CMPIStatus rc; 
-	rc.rc = CMPI_RC_ERR_METHOD_NOT_AVAILABLE; 
-	return rc; 
+	return mbEncLogMessage(mb, level, component, text, stringArg);
 }
 
 
