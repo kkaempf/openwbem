@@ -185,13 +185,12 @@ case "$target" in
 		PLAT_CXXFLAGS="$AIX_COMMON_CFLAGS -qrtti=all"
 		CBINLINKFLAGS="-brtl -Wl,-bh:5"
 		CXXCOMMONLINKFLAGS="-brtl"
-		CXXBINLINKFLAGS="-Wl,-bh:5"
-		STATIC_LINK_FLAGS="-bstatic"
-		DYNAMIC_LINK_FLAGS="-bdynamic"
+		STATIC_LINK_FLAGS="-Wl,-bstatic"
+		DYNAMIC_LINK_FLAGS="-Wl,-bdynamic"
+		CXXBINLINKFLAGS="$AIX_COMMON_LFLAGS $DYNAMIC_LINK_FLAGS -lpthread -qthreaded"
 		RPATH_LINK_FLAG="-blibpath:"
-		# This is a bad hack, as it includes an export using GNU make (others?)
-		# substitutions. 
-		CXXSHAREDLIBLINKFLAGS='-bdynamic -G -qmkshrobj -bnoentry  -Wl,-bso'
+		CXXSHAREDLIBLINKFLAGS='-qmkshrobj -G'
+		STATIC_SERVICES=""
 #-bexport:$(@:%.so=%.exp)
 		DO_NOT_USE_DASH_PTHREAD=1
 		DYNAMIC_EXPORT_FLAG=-bexpall

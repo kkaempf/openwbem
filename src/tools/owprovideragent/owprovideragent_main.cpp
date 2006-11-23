@@ -368,19 +368,24 @@ private:
 				String logLevel = getConfigItem(Format(LOG_1_LEVEL_opt, logName), OW_DEFAULT_LOG_1_LEVEL);
 				if (logLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
 				{
-					logCategories = Logger::STR_DEBUG_CATEGORY + " " + Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+					logCategories = String(Logger::STR_DEBUG_CATEGORY)
+						+ " " + String(Logger::STR_INFO_CATEGORY) 
+						+ " " + String(Logger::STR_ERROR_CATEGORY) 
+						+ " " + String(Logger::STR_FATAL_CATEGORY);
 				}
 				else if (logLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
 				{
-					logCategories = Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+					logCategories = String(Logger::STR_INFO_CATEGORY) 
+						+ " " + String(Logger::STR_ERROR_CATEGORY) 
+						+ " " + String(Logger::STR_FATAL_CATEGORY);
 				}
 				else if (logLevel.equalsIgnoreCase(Logger::STR_ERROR_CATEGORY))
 				{
-					logCategories = Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+					logCategories = String(Logger::STR_ERROR_CATEGORY) + " " + String(Logger::STR_FATAL_CATEGORY);
 				}
 				else if (logLevel.equalsIgnoreCase(Logger::STR_FATAL_CATEGORY))
 				{
-					logCategories = Logger::STR_FATAL_CATEGORY;
+					logCategories = String(Logger::STR_FATAL_CATEGORY);
 				}
 			}
 			String logFormat = getConfigItem(Format(LOG_1_FORMAT_opt, logName), OW_DEFAULT_LOG_1_FORMAT);

@@ -35,7 +35,8 @@ endif # AIX
 DO_SHARED_LIBRARY_FIXUP=
 if AIX
 if !OW_STATIC_LINKING
-override DO_SHARED_LIBRARY_FIXUP=rtl_enable -l -R $(SOFILENAME)
+# rtl_enable doesn't appear to be necessary and only works with with the iy80079_52.060721 hotfix from IBM.
+#override DO_SHARED_LIBRARY_FIXUP=rtl_enable -l -R $(SOFILENAME)
 endif # !OW_STATIC_LINKING
 endif # AIX
 

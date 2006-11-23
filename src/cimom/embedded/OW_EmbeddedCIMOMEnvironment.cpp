@@ -465,19 +465,24 @@ EmbeddedCIMOMEnvironment::_createLogger()
 			String logMainLevel = getConfigItem(Format(LOG_1_LEVEL_opt, logName), OW_DEFAULT_LOG_1_LEVEL);
 			if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
 			{
-				logMainCategories = Logger::STR_DEBUG_CATEGORY + " " + Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+				logMainCategories = String(Logger::STR_DEBUG_CATEGORY)
+					+ " " + String(Logger::STR_INFO_CATEGORY) 
+					+ " " + String(Logger::STR_ERROR_CATEGORY) 
+					+ " " + String(Logger::STR_FATAL_CATEGORY);
 			}
 			else if (logMainLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
 			{
-				logMainCategories = Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+				logMainCategories = String(Logger::STR_INFO_CATEGORY) 
+					+ " " + String(Logger::STR_ERROR_CATEGORY)
+					+ " " + String(Logger::STR_FATAL_CATEGORY);
 			}
 			else if (logMainLevel.equalsIgnoreCase(Logger::STR_ERROR_CATEGORY))
 			{
-				logMainCategories = Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+				logMainCategories = String(Logger::STR_ERROR_CATEGORY) + " " + String(Logger::STR_FATAL_CATEGORY);
 			}
 			else if (logMainLevel.equalsIgnoreCase(Logger::STR_FATAL_CATEGORY))
 			{
-				logMainCategories = Logger::STR_FATAL_CATEGORY;
+				logMainCategories = String(Logger::STR_FATAL_CATEGORY);
 			}
 		}
 		String logMainFormat = getConfigItem(Format(LOG_1_FORMAT_opt, logName), OW_DEFAULT_LOG_1_FORMAT);
@@ -545,19 +550,24 @@ EmbeddedCIMOMEnvironment::_createLogger()
 		String logMainLevel = getConfigItem(Format(LOG_1_LEVEL_opt, logName), OW_DEFAULT_LOG_1_LEVEL);
 		if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
 		{
-			logMainCategories = Logger::STR_DEBUG_CATEGORY + " " + Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+			logMainCategories = String(Logger::STR_DEBUG_CATEGORY)
+				+ " " + String(Logger::STR_INFO_CATEGORY) 
+				+ " " + String(Logger::STR_ERROR_CATEGORY) 
+				+ " " + String(Logger::STR_FATAL_CATEGORY);
 		}
 		else if (logMainLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
 		{
-			logMainCategories = Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+			logMainCategories = String(Logger::STR_INFO_CATEGORY)
+				+ " " + String(Logger::STR_ERROR_CATEGORY) 
+				+ " " + String(Logger::STR_FATAL_CATEGORY);
 		}
 		else if (logMainLevel.equalsIgnoreCase(Logger::STR_ERROR_CATEGORY))
 		{
-			logMainCategories = Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+			logMainCategories = String(Logger::STR_ERROR_CATEGORY) + " " + String(Logger::STR_FATAL_CATEGORY);
 		}
 		else if (logMainLevel.equalsIgnoreCase(Logger::STR_FATAL_CATEGORY))
 		{
-			logMainCategories = Logger::STR_FATAL_CATEGORY;
+			logMainCategories = String(Logger::STR_FATAL_CATEGORY);
 		}
 	}
 

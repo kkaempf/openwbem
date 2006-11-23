@@ -142,6 +142,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb \
 -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+$(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
 
 owcheckrepository_LDFLAGS = \

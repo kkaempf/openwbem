@@ -143,7 +143,6 @@ public:
 	static const char* const CLIENT_IPADDR;
 
 
-
 	UserInfo getUserInfo() const;
 
 	class StringData : public OperationContext::Data
