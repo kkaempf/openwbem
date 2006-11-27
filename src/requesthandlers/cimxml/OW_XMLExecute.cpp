@@ -1383,7 +1383,7 @@ XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
 		// <!ATTLIST METHODCALL %CIMName;>
 		m_functionName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 		parser.mustGetChild();
-		CIMOMHandleIFCRef hdl = this->getEnvironment()->getCIMOMHandle(context);
+		CIMOMHandleIFCRef hdl = this->getEnvironment()->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_OPERATION_CONTEXT_LOCKING);
 		if (m_isIntrinsic)
 		{
 			// <!ELEMENT LOCALNAMESPACEPATH (NAMESPACE+)>
@@ -1413,7 +1413,7 @@ void
 XMLExecute::doOptions(CIMFeatures& cf,
 	OperationContext& context)
 {
-	cf = this->getEnvironment()->getCIMOMHandle(context)->getServerFeatures();
+	cf = this->getEnvironment()->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_OPERATION_CONTEXT_LOCKING)->getServerFeatures();
 }
 //////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFC*

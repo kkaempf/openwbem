@@ -124,7 +124,7 @@ BinaryRequestHandler::doProcess(std::streambuf * istrm, std::streambuf * ostrm,
 	Logger lgr(COMPONENT_NAME);
 	try
 	{
-		CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(context);
+		CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_OPERATION_CONTEXT_LOCKING);
 		UInt32 version = 0;
 		BinarySerialization::read(*istrm, version);
 		if (version < BinarySerialization::MinBinaryProtocolVersion || version > BinarySerialization::BinaryProtocolVersion)

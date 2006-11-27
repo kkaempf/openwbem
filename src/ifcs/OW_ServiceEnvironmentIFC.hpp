@@ -92,7 +92,8 @@ public:
 	enum ELockingFlag
 	{
 		E_NO_LOCKING,
-		E_LOCKING
+		E_LOCKING,
+		E_OPERATION_CONTEXT_LOCKING
 	};
 	/**
 	 * WARNING: The return value is valid only for the lifetime of context.

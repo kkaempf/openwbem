@@ -936,8 +936,27 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 		rref = authorizingRepository(rref, m_authorizer);
 	}
 
+	LocalCIMOMHandle::ELockingFlag lockingFlag;
+	switch (locking)
+	{
+		case E_LOCKING:
+			lockingFlag = LocalCIMOMHandle::E_LOCKING;
+			break;
+		case E_NO_LOCKING:
+			lockingFlag = LocalCIMOMHandle::E_NO_LOCKING;
+			break;
+		case E_OPERATION_CONTEXT_LOCKING:
+			{
+				OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment::getCIMOMHandle() locking = E_OPERATION_CONTEXT_LOCKING, DISABLE_LOCKING is set to %1", context.keyHasData(OperationContext::DISABLE_LOCKING)));
+				lockingFlag = context.keyHasData(OperationContext::DISABLE_LOCKING) ? 
+					LocalCIMOMHandle::E_NO_LOCKING :
+					LocalCIMOMHandle::E_LOCKING;
+			}
+			break;
+	}
+
 	return CIMOMHandleIFCRef(new LocalCIMOMHandle(const_cast<CIMOMEnvironment*>(this), rref,
-		context, locking == E_LOCKING ? LocalCIMOMHandle::E_LOCKING : LocalCIMOMHandle::E_NO_LOCKING));
+		context, lockingFlag));
 }
 //////////////////////////////////////////////////////////////////////////////
 WQLIFCRef

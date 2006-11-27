@@ -141,6 +141,7 @@ public:
 	static const char* const SESSION_LANGUAGE_KEY;
 	static const char* const HTTP_ACCEPT_LANGUAGE_KEY;
 	static const char* const CLIENT_IPADDR;
+	static const char* const DISABLE_LOCKING;
 
 
 	UserInfo getUserInfo() const;

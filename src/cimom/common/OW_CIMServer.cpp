@@ -1733,10 +1733,8 @@ CIMServer::execQuery(
 	{
 		logOperation(m_logger, context, "ExecQuery", ns, query);
 
-		ServiceEnvironmentIFC::ELockingFlag lockingFlag = ???;
-
 		CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context,
-				ServiceEnvironmentIFC::E_USE_PROVIDERS, lockingFlag);
+				ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_OPERATION_CONTEXT_LOCKING);
 		try
 		{
 			wql->evaluate(ns, result, query, queryLanguage, lch);

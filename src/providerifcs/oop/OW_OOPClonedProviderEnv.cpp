@@ -47,7 +47,6 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_CIMServerProviderEnvironment.hpp"
 #include "OW_OOPProviderBase.hpp"
 
 #include <deque>
@@ -384,12 +383,6 @@ public:
 		: m_type(type)
 		, m_provEnv(provEnv)
 	{
-		// We have to disable locking here if the call originated from the CIMServer because this will execute in 
-		// a separate thread from the original request, and re-acquiring will deadlock. This thread won't
-		// execute in parallel with the original thread, it will only execute when it is blocked and vise-verse.
-		IntrusiveReference<CIMServerProviderEnvironment> csEnv(provEnv.cast_to<CIMServerProviderEnvironment>());
-		if (csEnv)
-			csEnv->setLockingMode(ServiceEnvironmentIFC::E_NO_LOCKING);
 	}
 
 	virtual String getConfigItem(const String& item, const String& defRetVal) const

@@ -61,7 +61,6 @@
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_CIMServerProviderEnvironment.hpp"
 #include "OW_OOPProviderBase.hpp"
 
 #include <deque>
@@ -97,14 +96,6 @@ namespace
 			: m_type(type)
 			, m_provEnv(provEnv)
 		{
-			// We have to disable locking here if the call originated from the CIMServer because this will execute in 
-			// a separate thread from the original request, and re-acquiring will deadlock. This thread won't
-			// execute in parallel with the original thread, it will only execute when it is blocked and vise-verse.
-			IntrusiveReference<CIMServerProviderEnvironment> csEnv(provEnv.cast_to<CIMServerProviderEnvironment>());
-			if (csEnv)
-			{
-				csEnv->setLockingMode(ServiceEnvironmentIFC::E_NO_LOCKING);
-			}
 		}
 	
 		virtual String getConfigItem(const String& item, const String& defRetVal) const
@@ -485,6 +476,30 @@ namespace
 		E_WRITE_ONLY
 	};
 
+	struct OperationContextDataRestorer
+	{
+		OperationContextDataRestorer(OperationContext& oc, const String& key)
+		: m_oc(oc)
+		, m_key(key)
+		, m_prevValue(oc.getData(key))
+		{
+		}
+		~OperationContextDataRestorer()
+		{
+			if (!m_prevValue)
+			{
+				m_oc.removeData(m_key);
+			}
+			else
+			{
+				m_oc.setData(m_key, m_prevValue);
+			}
+		}
+		OperationContext& m_oc;
+		String m_key;
+		OperationContext::DataRef m_prevValue;
+	};
+
 	void end(Array<unsigned char>& outputBuf,
 		const UnnamedPipeRef& inputPipe,
 		const UnnamedPipeRef& outputPipe,
@@ -508,6 +523,12 @@ namespace
 		SelectableCallbackIFCRef callback(new OOPSelectableCallback(
 			inputBuf, outputEntries, inputPipe, outputPipe, env, result, selectEngine, 
 			finishedSuccessfully, threadPool, pprov));
+
+		// need to set the DISABLE_LOCKING flag in the OperationContext so that callbacks that happen in another thread won't deadlock.
+		OperationContextDataRestorer restorer(env->getOperationContext(), OperationContext::DISABLE_LOCKING);
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, "OOPProtocolCPP1 setting DISABLE_LOCKING to 1");
+		env->getOperationContext().setStringData(OperationContext::DISABLE_LOCKING, "1");
 
 		if (readWriteFlag == E_READ_WRITE_UNTIL_FINISHED)
 		{

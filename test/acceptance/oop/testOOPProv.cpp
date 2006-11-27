@@ -311,6 +311,15 @@ public:
 		else if (methodName == "testCIMOMHandle")
 		{
 			CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+
+			// test a WQL query
+			CIMInstanceArray cia = hdl->execQueryA(ns, "select * from ooptest where id=\"1\"", "wql1");
+			if (cia.size() != 1)
+			{
+				OW_THROWCIMMSG(CIMException::FAILED, Format("Expected one instance from WQL. Got %1", cia.size()).c_str());
+			}
+
+			// test some methods
 			CIMParamValueArray inargs;
 			inargs.push_back(CIMParamValue("arg1", CIMValue("param1")));
 			CIMParamValueArray outargs;
