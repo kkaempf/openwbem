@@ -161,8 +161,19 @@ OOPProviderBase::startClonedProviderEnv(
 
 	UnnamedPipe::createConnectedPipes(connToKeep, connToSend);
 	connToKeep->setTimeouts(Timeout::infinite);
-	if (m_threadPool.tryAddWork(RunnableRef(new OOPClonedProviderEnv(this, connToKeep,
-		env->clone())), Timeout::relative(10)))
+	ProviderEnvironmentIFCRef clonedEnv(env->clone());
+	RunnableRef newConnection;
+
+	if (m_provInfo.protocol == "owcpp1")
+	{
+		newConnection = RunnableRef(new OOPClonedProviderEnv(this, connToKeep, clonedEnv));
+	}
+	else
+	{
+		OW_THROW(OOPProviderBaseException, Format("Invalid protocol: %1", m_provInfo.protocol).c_str());
+	}
+
+	if (m_threadPool.tryAddWork(newConnection, Timeout::relative(10)))
 	{
 		return connToSend;
 	}
