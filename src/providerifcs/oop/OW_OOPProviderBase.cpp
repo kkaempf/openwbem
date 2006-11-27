@@ -162,7 +162,7 @@ OOPProviderBase::startClonedProviderEnv(
 	UnnamedPipe::createConnectedPipes(connToKeep, connToSend);
 	connToKeep->setTimeouts(Timeout::infinite);
 	if (m_threadPool.tryAddWork(RunnableRef(new OOPClonedProviderEnv(this, connToKeep,
-		env)), Timeout::relative(10)))
+		env->clone())), Timeout::relative(10)))
 	{
 		return connToSend;
 	}
