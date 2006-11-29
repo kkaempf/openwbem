@@ -384,13 +384,13 @@ namespace
 
 	char const * SMPolicy::check_config_dir(char const * config_dir)
 	{
-		CHECK(config_dir, Format("%1: config_dir: %2 must be non-null", CTOR, config_dir));
+		CHECK(config_dir, Format("%1: config_dir must be non-null", CTOR));
 		CHECK(config_dir[0] == '/', Format("%1: config_dir: %2 must be an absolute path", CTOR, config_dir));
 
 		using namespace FileSystem::Path;
 		std::pair<ESecurity, String> x = security(config_dir, ROOT_UID);
-		CHECK(x.first != E_INSECURE, Format(": config_dir: %1 is insecure", config_dir));
-		CHECK(x.first == E_SECURE_DIR, Format(": config_dir: %1 is not a directory", config_dir));
+		CHECK(x.first != E_INSECURE, Format("%1: config_dir: %2 is insecure", CTOR, config_dir));
+		CHECK(x.first == E_SECURE_DIR, Format("%1: config_dir: %2 is not a directory", CTOR, config_dir));
 		m_config_dir = x.second;  // real path
 		return m_config_dir.c_str();
 	}
