@@ -10,14 +10,10 @@ lib*so*
 lib*dylib*
 *.exp
 *.imp
-*.inp
 *.inpf
-*.test.tgz
-*.exceptions
 *.expected
 *.out.tmp
 *.out
-*.cfg
 *.nlm.*
 montest
 read_privconfig
