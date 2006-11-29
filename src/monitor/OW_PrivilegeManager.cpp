@@ -48,6 +48,7 @@
 #include "OW_String.hpp"
 #include "OW_Environ.hpp"
 #include "OW_Exec.hpp"
+#include "OW_Logger.hpp"
 
 #include <cstdlib>
 #include <cstring>
@@ -383,15 +384,13 @@ namespace
 
 	char const * SMPolicy::check_config_dir(char const * config_dir)
 	{
-		CHECK(config_dir, CTOR ": config_dir must be non-null");
-		CHECK(config_dir[0] == '/', CTOR ": config_dir must be absolute path");
-		// CHECK(config_dir[std::strlen(config_dir) - 1] == '/',
-			// CTOR ": config_dir must end in '/'");
+		CHECK(config_dir, Format("%1: config_dir: %2 must be non-null", CTOR, config_dir));
+		CHECK(config_dir[0] == '/', Format("%1: config_dir: %2 must be an absolute path", CTOR, config_dir));
 
 		using namespace FileSystem::Path;
 		std::pair<ESecurity, String> x = security(config_dir, ROOT_UID);
-		CHECK(x.first != E_INSECURE, CTOR ": config_dir is insecure");
-		CHECK(x.first == E_SECURE_DIR, CTOR ": config_dir is not a directory");
+		CHECK(x.first != E_INSECURE, Format(": config_dir: %1 is insecure", config_dir));
+		CHECK(x.first == E_SECURE_DIR, Format(": config_dir: %1 is not a directory", config_dir));
 		m_config_dir = x.second;  // real path
 		return m_config_dir.c_str();
 	}
@@ -532,6 +531,9 @@ AutoDescriptor PrivilegeManager::open(
 	char const * pathname, OpenFlags flags, OpenPerms perms
 )
 {
+	Logger logger("PrivilegeManager.open");
+
+	OW_LOG_DEBUG(logger, Format("Attempting to open: %1", pathname));
 	CHECK(pimpl(), "open: process has no privileges");
 	pimpl()->verifyValidConnection("open: no connection to the monitor");
 	try

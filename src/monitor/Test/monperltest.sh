@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# set -x
+#set -x
 set -e
 set -o nounset # treat undefined variables as errors, not as empty string
 
@@ -57,6 +57,7 @@ MPT=$srcdir/monperltest_basic.pl
 rm -rf $base_dir
 mkdir -p $base_dir
 cp $inpf $base_dir
+chmod go+r $base_dir/`basename $inpf`
 mkdir -p $safe_bin
 cp $MPT $safe_bin
 chmod o+r $MPT

@@ -1,1 +1,1 @@
-PrivilegeManagerException   PrivilegeManager::PrivilegeManager: config_dir is insecure
+PrivilegeManagerException   PrivilegeManager::: config_dir: /montest-689acb0e1ec89f45-7085a2a1780f5f42/config_dir is insecure
