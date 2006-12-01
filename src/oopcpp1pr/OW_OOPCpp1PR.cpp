@@ -959,8 +959,6 @@ int callIndicationExportProvider(
 		return 3;
 	}
 
-	//ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
-
 	switch (op)
 	{
 		case BinarySerialization::EXPORT_INDICATION:
@@ -1006,8 +1004,11 @@ int callMethodProvider(
 	BinarySerialization::verifySignature(inbuf, BinarySerialization::BINSIG_PARAMVALUEARRAY);
 	BinarySerialization::readArray(inbuf, inparms);
 
-	//ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
 	CIMParamValueArray outparms;
+	// Get output params
+	BinarySerialization::verifySignature(inbuf, BinarySerialization::BINSIG_PARAMVALUEARRAY);
+	BinarySerialization::readArray(inbuf, outparms);
+
 	initializeCallback.init(provenv);
 	CIMValue cv = methProvider->invokeMethod(provenv, ns, path, methodName, inparms, outparms);
 	//OW_LOG_DEBUG(logger, "invokeMethod done");

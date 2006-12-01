@@ -1450,6 +1450,8 @@ OOPProtocolCPP1::invokeMethod(
 	BinarySerialization::writeString(obuf, methodName);
 	BinarySerialization::write(obuf, BinarySerialization::BINSIG_PARAMVALUEARRAY);
 	BinarySerialization::writeArray(obuf, inparams);
+	BinarySerialization::write(obuf, BinarySerialization::BINSIG_PARAMVALUEARRAY);
+	BinarySerialization::writeArray(obuf, outparams);
 	
 	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::invokeMethod finished writing.");
 
