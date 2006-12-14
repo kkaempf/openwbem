@@ -196,7 +196,9 @@ private:
 	Mutex m_subGuard;
 	Mutex m_actCountGuard;
 	typedef SharedLibraryReference< IntrusiveReference<LifecycleIndicationPoller> > LifecycleIndicationPollerRef;
-	typedef Map<CIMName, LifecycleIndicationPollerRef > poller_map_t;
+
+	// the key is <Source Namespace>:<Classname>
+	typedef Map<String, LifecycleIndicationPollerRef > poller_map_t;
 	poller_map_t m_pollers;
 	ThreadPoolRef m_notifierThreadPool;
 	ThreadPoolRef m_subscriptionPool;

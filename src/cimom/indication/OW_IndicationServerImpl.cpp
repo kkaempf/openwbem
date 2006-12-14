@@ -730,6 +730,12 @@ CIMInstance filterInstance(const CIMInstance& toFilter, const StringArray& props
 	rval.setProperties(propArrayToKeep);
 	return rval;
 }
+
+String makePollerMapKey(const String& nameSpace, const CIMName& className)
+{
+	return nameSpace + ':' + className.toString().toLowerCase();
+}
+
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -965,7 +971,7 @@ IndicationServerImplThread::deleteSubscription(const String& ns, const CIMObject
 					// the provider
 					for (size_t j = 0; j < sub.m_classes.size(); ++j)
 					{
-						CIMName key = sub.m_classes[j];
+						String key = makePollerMapKey(sub.m_filterSourceNameSpace, sub.m_classes[j]);
 						poller_map_t::iterator iter = m_pollers.find(key);
 						if (iter != m_pollers.end())
 						{
@@ -1288,20 +1294,20 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 				isPolled[i] = true;
 				for (size_t j = 0; j < isaClassNames.size(); ++j)
 				{
-					CIMName key = isaClassNames[j];
-					OW_LOG_DEBUG(m_logger, Format("searching on class key %1", isaClassNames[j]));
+					String key = makePollerMapKey(filterSourceNameSpace, isaClassNames[j]);
+					OW_LOG_DEBUG(m_logger, Format("searching m_pollers on key %1", key));
 					poller_map_t::iterator iter = m_pollers.find(key);
 					LifecycleIndicationPollerRef p;
 					if (iter != m_pollers.end())
 					{
-						OW_LOG_DEBUG(m_logger, Format("found on class key %1: %2", isaClassNames[j], iter->first));
+						OW_LOG_DEBUG(m_logger, Format("found poller for key %1: %2", key, iter->first));
 						p = iter->second;
 					}
 					else
 					{
-						OW_LOG_DEBUG(m_logger, Format("not found on class key %1", isaClassNames[j]));
+						OW_LOG_DEBUG(m_logger, Format("not found on key %1", key));
 						p = LifecycleIndicationPollerRef(SharedLibraryRef(0),
-							LifecycleIndicationPollerRef::element_type(new LifecycleIndicationPoller(ns, key, pollInterval)));
+							LifecycleIndicationPollerRef::element_type(new LifecycleIndicationPoller(filterSourceNameSpace, isaClassNames[j], pollInterval)));
 					}
 					CIMName subClsName = selectStmt.getClassName();
 					if (subClsName == "CIM_InstCreation")
