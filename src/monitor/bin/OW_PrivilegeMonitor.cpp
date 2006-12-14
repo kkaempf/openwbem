@@ -1367,6 +1367,10 @@ namespace
 	{
 		::umask(0);
 
+		// Create a new process group so that any signals sent by the shell to owcimomd will not be sent to owprivilegemonitor as well.
+		// This is useful when running owcimomd in debug mode and using Ctrl-C to shut it down.
+		::setpgid(0, 0);
+
 		// until the real logger is created we will log all errors to syslog
 		LogAppender::setDefaultLogAppender(getSyslogAppender());
 
