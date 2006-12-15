@@ -94,6 +94,9 @@ private:
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
 	virtual void doShuttingDown(const ProviderEnvironmentIFCRef& env);
 
+	template <typename T, typename RT, typename DMP>
+	RT getProvider(const char* provIdString, DMP dmp, const OOPProviderInterface::ProvRegInfo& info);
+
 	// These variables are only modified in doInit() and are accessed read only by 
 	// other functions, thus they aren't mutex protected.
 	// key is the provider id. the value may be shared between multiple maps.
