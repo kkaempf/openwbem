@@ -1270,7 +1270,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 	CIMName handlerClass = handlerPath.getClassName();
 	if (!getProvider(handlerClass))
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "No indication export provider found for this subscription");
+		OW_THROWCIMMSG(CIMException::FAILED, Format("No indication export provider found for the subscription's handler class: %1", handlerClass).c_str());
 	}
 	// call authorizeFilter on all the indication providers
 	for (size_t i = 0; i < providers.size(); ++i)
