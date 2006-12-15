@@ -47,8 +47,10 @@ namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
-OOPMethodProvider::OOPMethodProvider(const OOPProviderInterface::ProvRegInfo& info)
-	: OOPProviderBase(info)
+OOPMethodProvider::OOPMethodProvider(const OOPProviderInterface::ProvRegInfo& info,
+	const Reference<Mutex>& guardRef,
+	const Reference<ProcessRef>& persistentProcessRef)
+	: OOPProviderBase(info, guardRef, persistentProcessRef)
 {
 }
 

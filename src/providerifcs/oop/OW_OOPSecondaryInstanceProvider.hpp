@@ -49,7 +49,9 @@ namespace OW_NAMESPACE
 class OOPSecondaryInstanceProvider : public SecondaryInstanceProviderIFC, public OOPProviderBase
 {
 public:
-	OOPSecondaryInstanceProvider(const OOPProviderInterface::ProvRegInfo& info);
+	OOPSecondaryInstanceProvider(const OOPProviderInterface::ProvRegInfo& info,
+		const Reference<Mutex>& guardRef,
+		const Reference<ProcessRef>& persistentProcessRef);
 	virtual ~OOPSecondaryInstanceProvider();
 	
 	virtual void filterInstances(

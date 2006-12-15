@@ -49,8 +49,10 @@ namespace
 }
 
 
-OOPAssociatorProvider::OOPAssociatorProvider(const OOPProviderInterface::ProvRegInfo& info)
-	: OOPProviderBase(info)
+OOPAssociatorProvider::OOPAssociatorProvider(const OOPProviderInterface::ProvRegInfo& info,
+	const Reference<Mutex>& guardRef,
+	const Reference<ProcessRef>& persistentProcessRef)
+	: OOPProviderBase(info, guardRef, persistentProcessRef)
 {
 }
 OOPAssociatorProvider::~OOPAssociatorProvider()

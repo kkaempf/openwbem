@@ -49,7 +49,10 @@ namespace OW_NAMESPACE
 class OOPInstanceProvider : public InstanceProviderIFC, public OOPProviderBase
 {
 public:
-	OOPInstanceProvider(const OOPProviderInterface::ProvRegInfo& info);
+	OOPInstanceProvider(const OOPProviderInterface::ProvRegInfo& info,
+		const Reference<Mutex>& guardRef,
+		const Reference<ProcessRef>& persistentProcessRef
+		);
 	virtual ~OOPInstanceProvider();
 	
 	virtual void enumInstanceNames(

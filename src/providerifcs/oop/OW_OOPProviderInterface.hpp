@@ -114,6 +114,34 @@ private:
 		{
 		}
 
+		SavedProviders(const InstanceProviderIFCRef& ipir)
+			: instanceProv(ipir)
+			, guard(new Mutex)
+			, process(new ProcessRef)
+		{
+		}
+
+		SavedProviders(const SecondaryInstanceProviderIFCRef& sipir)
+			: secondaryInstanceProv(sipir)
+			, guard(new Mutex)
+			, process(new ProcessRef)
+		{
+		}
+
+		SavedProviders(const AssociatorProviderIFCRef& apir)
+			: associatorProv(apir)
+			, guard(new Mutex)
+			, process(new ProcessRef)
+		{
+		}
+
+		SavedProviders(const MethodProviderIFCRef& mpir)
+			: methodProv(mpir)
+			, guard(new Mutex)
+			, process(new ProcessRef)
+		{
+		}
+
 		SavedProviders(const IndicationProviderIFCRef& ipir)
 			: indProv(ipir)
 			, guard(new Mutex)
@@ -135,6 +163,10 @@ private:
 		{
 		}
 
+		InstanceProviderIFCRef instanceProv;
+		SecondaryInstanceProviderIFCRef secondaryInstanceProv;
+		AssociatorProviderIFCRef associatorProv;
+		MethodProviderIFCRef methodProv;
 		IndicationProviderIFCRef indProv;
 		PolledProviderIFCRef polledProv;
 		IndicationExportProviderIFCRef indicationExportProv;

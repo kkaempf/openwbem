@@ -49,7 +49,9 @@ namespace OW_NAMESPACE
 class OOPAssociatorProvider : public AssociatorProviderIFC, public OOPProviderBase
 {
 public:
-	OOPAssociatorProvider(const OOPProviderInterface::ProvRegInfo& info);
+	OOPAssociatorProvider(const OOPProviderInterface::ProvRegInfo& info,
+		const Reference<Mutex>& guardRef,
+		const Reference<ProcessRef>& persistentProcessRef);
 	virtual ~OOPAssociatorProvider();
 	
 

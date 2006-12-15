@@ -38,8 +38,10 @@
 namespace OW_NAMESPACE
 {
 
-OOPSecondaryInstanceProvider::OOPSecondaryInstanceProvider(const OOPProviderInterface::ProvRegInfo& info)
-	: OOPProviderBase(info)
+OOPSecondaryInstanceProvider::OOPSecondaryInstanceProvider(const OOPProviderInterface::ProvRegInfo& info,
+	const Reference<Mutex>& guardRef,
+	const Reference<ProcessRef>& persistentProcessRef)
+	: OOPProviderBase(info, guardRef, persistentProcessRef)
 {
 
 }

@@ -351,7 +351,29 @@ OOPProviderInterface::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env
 	}
 	else
 	{
-		return InstanceProviderIFCRef(new OOPInstanceProvider(*iter->second));
+		MutexLock lock(m_persistentProvsGuard);
+		PersistentProvMap_t::iterator proviter = m_persistentProvs.find(provIdString);
+		if (proviter != m_persistentProvs.end())
+		{
+			if (proviter->second.indProv)
+			{
+				return proviter->second.instanceProv;
+			}
+			else
+			{
+				InstanceProviderIFCRef p(new OOPInstanceProvider(*iter->second, proviter->second.guard, proviter->second.process));
+				proviter->second.instanceProv = p;
+				return p;
+			}
+		}
+		else
+		{
+			SavedProviders savedProviders;
+			InstanceProviderIFCRef p(new OOPInstanceProvider(*iter->second, savedProviders.guard, savedProviders.process));
+			savedProviders.instanceProv = p;
+			m_persistentProvs.insert(std::make_pair(String(provIdString), savedProviders));
+			return p;
+		}
 	}
 }
 
@@ -385,7 +407,29 @@ OOPProviderInterface::doGetMethodProvider(const ProviderEnvironmentIFCRef& env, 
 	}
 	else
 	{
-		return MethodProviderIFCRef(new OOPMethodProvider(*iter->second));
+		MutexLock lock(m_persistentProvsGuard);
+		PersistentProvMap_t::iterator proviter = m_persistentProvs.find(provIdString);
+		if (proviter != m_persistentProvs.end())
+		{
+			if (proviter->second.indProv)
+			{
+				return proviter->second.methodProv;
+			}
+			else
+			{
+				MethodProviderIFCRef p(new OOPMethodProvider(*iter->second, proviter->second.guard, proviter->second.process));
+				proviter->second.methodProv = p;
+				return p;
+			}
+		}
+		else
+		{
+			SavedProviders savedProviders;
+			MethodProviderIFCRef p(new OOPMethodProvider(*iter->second, savedProviders.guard, savedProviders.process));
+			savedProviders.methodProv = p;
+			m_persistentProvs.insert(std::make_pair(String(provIdString), savedProviders));
+			return p;
+		}
 	}
 }
 
@@ -402,7 +446,30 @@ OOPProviderInterface::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& e
 	}
 	else
 	{
-		return AssociatorProviderIFCRef(new OOPAssociatorProvider(*iter->second));
+		//return AssociatorProviderIFCRef(new OOPAssociatorProvider(*iter->second));
+		MutexLock lock(m_persistentProvsGuard);
+		PersistentProvMap_t::iterator proviter = m_persistentProvs.find(provIdString);
+		if (proviter != m_persistentProvs.end())
+		{
+			if (proviter->second.indProv)
+			{
+				return proviter->second.associatorProv;
+			}
+			else
+			{
+				AssociatorProviderIFCRef p(new OOPAssociatorProvider(*iter->second, proviter->second.guard, proviter->second.process));
+				proviter->second.associatorProv = p;
+				return p;
+			}
+		}
+		else
+		{
+			SavedProviders savedProviders;
+			AssociatorProviderIFCRef p(new OOPAssociatorProvider(*iter->second, savedProviders.guard, savedProviders.process));
+			savedProviders.associatorProv = p;
+			m_persistentProvs.insert(std::make_pair(String(provIdString), savedProviders));
+			return p;
+		}
 	}
 }
 

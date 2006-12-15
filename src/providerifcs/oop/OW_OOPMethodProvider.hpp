@@ -49,7 +49,9 @@ namespace OW_NAMESPACE
 class OOPMethodProvider : public MethodProviderIFC, public OOPProviderBase
 {
 public:
-	OOPMethodProvider(const OOPProviderInterface::ProvRegInfo& info);
+	OOPMethodProvider(const OOPProviderInterface::ProvRegInfo& info,
+		const Reference<Mutex>& guardRef,
+		const Reference<ProcessRef>& persistentProcessRef);
 	virtual ~OOPMethodProvider();
 	
 

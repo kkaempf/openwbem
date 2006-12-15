@@ -53,9 +53,8 @@ class OOPProviderBase
 {
 public:
 	OOPProviderBase(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<Mutex>& guardRef = Reference<Mutex>(),
-		const Reference<ProcessRef>& persistentProcessRef = Reference<ProcessRef>()
-		);
+		const Reference<Mutex>& guardRef,
+		const Reference<ProcessRef>& persistentProcessRef);
 
 	virtual ~OOPProviderBase();
 
