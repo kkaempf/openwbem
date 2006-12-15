@@ -502,6 +502,44 @@ public:
 
 
 
+	/**
+	 * This function returns the OpenWBEM_OOPProviderRegistration.Persistent property value. 
+	 * This property is described as follows: 
+	 * 
+	 *  Setting this property to true means that the provider process will not be terminated and sent the SET_PERSISTENT(true) command. For polled, indication export or indication providers it defaults to true. For other provider types it defaults to false.
+	 * 
+	 * @return bool current Persistent property value
+	 * @exception NullValueException if the property value is NULL (uninitialized)
+	 */
+	bool getPersistent() const
+	{
+		return getBoolProperty("Persistent");
+	}
+
+	/**
+	 * This function sets the OpenWBEM_OOPProviderRegistration.Persistent property value.
+	 * This property is described as follows: 
+	 * 
+	 *  Setting this property to true means that the provider process will not be terminated and sent the SET_PERSISTENT(true) command. For polled, indication export or indication providers it defaults to true. For other provider types it defaults to false.
+	 * 
+	 * @param String new Persistent property value
+	 */
+	void setPersistent(bool v)
+	{
+		setBoolProperty("Persistent", v);
+	}
+
+	/**
+	 * This function tests whether the OpenWBEM_OOPProviderRegistration.Persistent property value
+	 * is NULL, meaning it has not been initialized to a value.
+	 */
+	bool PersistentIsNULL()
+	{
+		return propertyIsNULL("Persistent");
+	}
+
+
+
 };
 
 }

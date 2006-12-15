@@ -292,7 +292,7 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 					case OpenWBEM::OOPProviderRegistration::E_PROVIDERTYPES_POLLED:
 					{
 						// keep it for ourselves
-						info->isPersistent = true; // TODO: Make this configurable
+						info->isPersistent = true;
 						m_polledProvReg[instanceID] = info;
 					}
 					break;
@@ -300,7 +300,7 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 					case OpenWBEM::OOPProviderRegistration::E_PROVIDERTYPES_INDICATION_EXPORT:
 					{
 						// keep it for ourselves
-						info->isPersistent = true; // TODO: Make this configurable
+						info->isPersistent = true;
 						if (curReg.IndicationExportHandlerClassNamesIsNULL())
 						{
 							OW_LOG_ERROR(lgr, "IndicationExportHandlerClassNames property value has no entries. Registration will be ignored.");
@@ -316,6 +316,11 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 					default:
 						OW_LOG_ERROR(lgr, Format("Invalid or unsupported value (%1) in ProviderTypes", providerTypes[j]));
 						break;
+				}
+				// this code relies on the constructor and above switch to set info->isPersistent to the default based on the provider type
+				if (!curReg.PersistentIsNULL())
+				{
+					info->isPersistent = curReg.getPersistent();
 				}
 			}
 		}
