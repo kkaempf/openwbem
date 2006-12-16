@@ -62,6 +62,7 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_OOPProviderBase.hpp"
+#include "OW_OOPDataOStreamBuf.hpp"
 
 #include <deque>
 #include <iosfwd>
@@ -136,42 +137,6 @@ namespace
 
 		virtual void handleResult(std::streambuf & instr, UInt8 op) = 0;
 	};
-
-	class OOPDataOStreamBuf : public std::streambuf
-	{
-	public:
-		OOPDataOStreamBuf(Array<unsigned char>& buf)
-			: m_bfr(buf)
-		{
-		}
-	protected:
-		virtual int overflow(int c);
-		virtual std::streamsize xsputn(const char* s, std::streamsize n);
-	private:
-	
-		Array<unsigned char>& m_bfr;
-	};
-
-	int
-	OOPDataOStreamBuf::overflow(int c)
-	{
-		if (c != std::char_traits<char>::eof())
-		{
-			m_bfr.push_back(c);
-			return c;
-		}
-		else
-		{
-			return 0; // anything other than EOF
-		}
-	}
-	
-	std::streamsize
-	OOPDataOStreamBuf::xsputn(const char* s, std::streamsize n)
-	{
-		m_bfr.insert(m_bfr.end(), s, s+n);
-		return n;
-	}
 
 	struct OutputEntry
 	{

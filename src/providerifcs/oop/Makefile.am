@@ -63,6 +63,10 @@ OW_OOPProviderInterface.cpp \
 OW_OOPClonedProviderEnv.hpp \
 OW_OOPClonedProviderEnv.cpp \
 OW_OOPFwd.hpp \
+OW_OOPDataOStreamBuf.hpp \
+OW_OOPDataOStreamBuf.cpp
+
+pkginclude_HEADERS = \
 OW_OpenWBEM_OOPProviderRegistration.hpp
 
 #OW_OOPAssociatorProvider.hpp \
