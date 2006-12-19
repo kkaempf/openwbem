@@ -63,6 +63,16 @@ namespace OW_NAMESPACE
 namespace
 {
 	const String COMPONENT_NAME("ow.provider.OOP.ifc");
+
+	bool userContextIsOperationDependent(const OpenWBEM::OOPProviderRegistration& reg)
+	{
+		return reg.getUserContext() == OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION || reg.getUserContext() == OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION_MONITORED;
+	}
+
+	bool userContextIsMonitorDependent(const OpenWBEM::OOPProviderRegistration& reg)
+	{
+		return reg.getUserContext() == OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_MONITORED || reg.getUserContext() == OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION_MONITORED;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -159,11 +169,18 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 				info->monitorPrivilegesFile = curReg.getMonitorPrivilegesFile();
 			}
 
+			if (userContextIsMonitorDependent(curReg) && info->monitorPrivilegesFile == "")
+			{
+				OW_LOG_ERROR(lgr, "MonitorPrivilegesFile property cannot be NULL if UserContext is \"Monitored\" or \"OperationMonitored\"");
+				continue;
+			}
+
 			UInt16Array providerTypes = curReg.getProviderTypes();
 
 			if (providerTypes.empty())
 			{
 				OW_LOG_ERROR(lgr, "ProviderTypes property value has no entries. Registration will be ignored.");
+				continue;
 			}
 
 			String className;
@@ -186,6 +203,47 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 				}
 			}
 
+			// work on figuring out isPersistent
+			for (size_t j = 0; j < providerTypes.size(); ++j)
+			{
+				switch (providerTypes[j])
+				{
+					case OpenWBEM::OOPProviderRegistration::E_PROVIDERTYPES_LIFECYCLE_INDICATION:
+					{
+						info->isPersistent = true;
+					}
+					break;
+
+					case OpenWBEM::OOPProviderRegistration::E_PROVIDERTYPES_ALERT_INDICATION:
+					{
+						info->isPersistent = true;
+					}
+					break;
+
+					case OpenWBEM::OOPProviderRegistration::E_PROVIDERTYPES_POLLED:
+					{
+						info->isPersistent = true;
+					}
+					break;
+
+					case OpenWBEM::OOPProviderRegistration::E_PROVIDERTYPES_INDICATION_EXPORT:
+					{
+						info->isPersistent = true;
+					}
+					break;
+				}
+				// this code relies on the constructor and above switch to set info->isPersistent to the default based on the provider type
+				if (!curReg.PersistentIsNULL())
+				{
+					info->isPersistent = curReg.getPersistent();
+				}
+
+				if (userContextIsOperationDependent(curReg) && info->isPersistent)
+				{
+					OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have a UserContext that depends on the operation user (\"Operation\" or \"OperationMonitored\")", 
+						instanceID));
+				}
+			}
 
 			for (size_t j = 0; j < providerTypes.size(); ++j)
 			{
@@ -233,7 +291,6 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 					case OpenWBEM::OOPProviderRegistration::E_PROVIDERTYPES_LIFECYCLE_INDICATION:
 					{
 						// keep it for ourselves
-						info->isPersistent = true;
 						m_indicationProvReg[instanceID] = info;
 						// give the info back to the provider manager
 						IndicationProviderInfo ipi;
@@ -264,7 +321,6 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 					case OpenWBEM::OOPProviderRegistration::E_PROVIDERTYPES_ALERT_INDICATION:
 					{
 						// keep it for ourselves
-						info->isPersistent = true;
 						m_indicationProvReg[instanceID] = info;
 						// give the info back to the provider manager
 						IndicationProviderInfo ipi;
@@ -292,7 +348,6 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 					case OpenWBEM::OOPProviderRegistration::E_PROVIDERTYPES_POLLED:
 					{
 						// keep it for ourselves
-						info->isPersistent = true;
 						m_polledProvReg[instanceID] = info;
 					}
 					break;
@@ -300,7 +355,6 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 					case OpenWBEM::OOPProviderRegistration::E_PROVIDERTYPES_INDICATION_EXPORT:
 					{
 						// keep it for ourselves
-						info->isPersistent = true;
 						if (curReg.IndicationExportHandlerClassNamesIsNULL())
 						{
 							OW_LOG_ERROR(lgr, "IndicationExportHandlerClassNames property value has no entries. Registration will be ignored.");
@@ -316,11 +370,6 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 					default:
 						OW_LOG_ERROR(lgr, Format("Invalid or unsupported value (%1) in ProviderTypes", providerTypes[j]));
 						break;
-				}
-				// this code relies on the constructor and above switch to set info->isPersistent to the default based on the provider type
-				if (!curReg.PersistentIsNULL())
-				{
-					info->isPersistent = curReg.getPersistent();
 				}
 			}
 		}
@@ -542,6 +591,31 @@ OOPProviderInterface::doGetIndicationProvider(const ProviderEnvironmentIFCRef& e
 void 
 OOPProviderInterface::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 {
+	/* This is the code from CPPProviderInterface.cpp 
+	DateTime dt;
+	dt.setToCurrent();
+	MutexLock l(m_guard);
+	for (ProviderMap::iterator iter = m_provs.begin();
+		  iter != m_provs.end();)
+	{
+		// If this is not a persistent provider, see if we can unload it.
+		if (!iter->second->getProvider()->getPersist())
+		{
+			DateTime provDt = iter->second->getProvider()->getLastAccessTime();
+			provDt.addMinutes(iTimeWindow);
+			if (provDt < dt && iter->second->getProvider()->canUnload())
+			{
+				Logger lgr(COMPONENT_NAME);
+				OW_LOG_INFO(lgr, Format("Unloading Provider %1", iter->first));
+				iter->second = 0;
+				m_provs.erase(iter++);
+				continue;
+			}
+		}
+
+		++iter;
+	}
+	*/
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -551,13 +625,12 @@ OOPProviderInterface::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, "OOPProviderInterface::doShuttingDown");
 	Mutex mutexOnStack;
-	OOPProviderBase* pprov;
 	MutexLock lock(m_persistentProvsGuard);
 
 	for (PersistentProvMap_t::iterator proviter = m_persistentProvs.begin();
 		proviter != m_persistentProvs.end(); proviter++)
 	{
-		pprov = 0;
+		OOPProviderBase* pprov = 0;
 		if (proviter->second.polledProv)
 		{
 			IntrusiveReference<OOPPolledProvider> pref = proviter->second.polledProv.cast_to<OOPPolledProvider>();
