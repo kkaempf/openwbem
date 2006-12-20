@@ -15,3 +15,4 @@ ow_methodProviderTestFile.txt
 *.nlm.*
 lib*sl*
 check_security
+runCimom.sh

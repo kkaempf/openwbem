@@ -2,15 +2,15 @@ SUBDIRS = testfiles progs oop
 
 check_SCRIPTS = acceptance.sh
 
-BUILT_SOURCES = $(check_SCRIPTS) env.sh
+BUILT_SOURCES = $(check_SCRIPTS) env.sh runCimom.sh
 
-EXTRA_DIST = acceptance.sh.fb env.sh.fb
+EXTRA_DIST = acceptance.sh.fb env.sh.fb runCimom.sh.fb
 
 clean-local:
 	@echo "Cleanup Warning: There may be another stage directory: /ow_test"
 	rm -rf stage
 
-CLEANFILES = acceptance.sh env.sh
+CLEANFILES = acceptance.sh env.sh runCimom.sh
 SUFFIXES = .fb
 
 # Note that the top_srcdir and top_builddir are defined here instead as a
