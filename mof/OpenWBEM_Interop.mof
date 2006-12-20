@@ -327,5 +327,11 @@ class OpenWBEM_OOPProviderRegistration
       "For polled, indication export or indication providers it defaults "
       "to true. For other provider types it defaults to false.")]
     boolean Persistent;
+
+    [Description (
+      "If a provider is not persistent, then it can stay running for the period "
+      "of time specified by this property. The value must be an interval, an "
+      "absolute datetime is not allowed.")]
+    datetime UnloadTimeout;
 };
 

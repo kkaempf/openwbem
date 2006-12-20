@@ -51,7 +51,8 @@ class OOPIndicationExportProvider : public IndicationExportProviderIFC, public O
 public:
 	OOPIndicationExportProvider(const OOPProviderInterface::ProvRegInfo& info,
 		const Reference<Mutex>& guardRef,
-		const Reference<ProcessRef>& persistentProcessRef
+		const Reference<ProcessRef>& persistentProcessRef,
+		const Reference<String>& persistentProcessUserNameRef
 		);
 	virtual ~OOPIndicationExportProvider();
 	

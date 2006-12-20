@@ -40,9 +40,10 @@ namespace OW_NAMESPACE
 
 OOPPolledProvider::OOPPolledProvider(const OOPProviderInterface::ProvRegInfo& info,
 	const Reference<Mutex>& guardRef,
-	const Reference<ProcessRef>& persistentProcessRef
+	const Reference<ProcessRef>& persistentProcessRef,
+	const Reference<String>& persistentProcessUserNameRef
 	)
-	: OOPProviderBase(info, guardRef, persistentProcessRef)
+	: OOPProviderBase(info, guardRef, persistentProcessRef, persistentProcessUserNameRef)
 {
 
 }
@@ -98,7 +99,7 @@ OOPPolledProvider::poll(const ProviderEnvironmentIFCRef& env)
 {
 	Int32 retval(-1);
 	PollCallback pollCallback(retval);
-	startProcessAndCallFunction(env, pollCallback, "OOPPolledProvider::poll", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, pollCallback, "OOPPolledProvider::poll");
 	return retval;
 }
 
@@ -107,7 +108,7 @@ OOPPolledProvider::getInitialPollingInterval(const ProviderEnvironmentIFCRef& en
 {
 	Int32 retval(-1);
 	GetInitialPollingIntervalCallback getInitialPollingIntervalCallback(retval);
-	startProcessAndCallFunction(env, getInitialPollingIntervalCallback, "OOPPolledProvider::getInitialPollingInterval", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, getInitialPollingIntervalCallback, "OOPPolledProvider::getInitialPollingInterval");
 	return retval;
 }
 

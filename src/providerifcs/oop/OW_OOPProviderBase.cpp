@@ -54,6 +54,7 @@
 #include "OW_UserInfo.hpp"
 #include "OW_Exec.hpp"
 #include "OW_OOPClonedProviderEnv.hpp"
+#include "OW_Assertion.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -123,16 +124,20 @@ namespace
 
 OOPProviderBase::OOPProviderBase(const OOPProviderInterface::ProvRegInfo& info,
 		const Reference<Mutex>& guardRef,
-		const Reference<ProcessRef>& persistentProcessRef
+		const Reference<ProcessRef>& persistentProcessRef,
+		const Reference<String>& persistentProcessUserNameRef
 		)
 	: m_provInfo(info)
 	, m_guardRef(guardRef)
 	, m_persistentProcessRef(persistentProcessRef)
+	, m_persistentProcessUserNameRef(persistentProcessUserNameRef)
 	, m_threadPool(ThreadPool::DYNAMIC_SIZE_NO_QUEUE, 10, 10, "OOPProviderBase")
+	, m_unloadTimer(info.unloadTimeout)
 {
 	// persistent provider instances must have non-null pointers.
-	if (!m_guardRef || !m_persistentProcessRef)
+	if (!m_guardRef || !m_persistentProcessRef || !m_persistentProcessUserNameRef)
 	{
+		OW_ASSERT(m_provInfo.providerNeedsNewProcessForEveryInvocation() == true);
 		m_provInfo.isPersistent = false;
 	}
 
@@ -150,6 +155,11 @@ OOPProviderBase::~OOPProviderBase()
 {
 	m_threadPool.shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE,
 		Timeout::relative(0.1), Timeout::infinite);
+}
+
+inline void OOPProviderBase::resetUnloadTimer()
+{
+	m_unloadTimer.resetOnLoop();
 }
 
 UnnamedPipeRef
@@ -184,12 +194,56 @@ OOPProviderBase::startClonedProviderEnv(
 }
 
 ProcessRef
-OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& env, EUsePersistentProcessFlag usePersistentProcess)
+OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& env, EUsePersistentProcessFlag usePersistentProcess, String& procUserName)
 {
 	Logger lgr(COMPONENT_NAME);
+
+	// figure out procUserName
+	switch (m_provInfo.userContext)
+	{
+		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_SUPER_USER:
+		{
+#if OW_WIN32
+			const char superUser[] = "SYSTEM";
+#else
+			const char superUser[] = "root";
+#endif
+			procUserName = superUser;
+		}
+		break;
+		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION:
+		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_UNPRIVILEGED:
+		{
+			String currentUserName = UserUtils::getCurrentUserName();
+			procUserName = currentUserName;
+			if (m_provInfo.userContext == OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION)
+			{
+				String operationUserName = env->getOperationContext().getUserInfo().getUserName();
+				if (!operationUserName.empty())
+				{
+					procUserName = operationUserName;
+				}
+			}
+
+		}
+		break;
+		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION_MONITORED:
+		{
+			String currentUserName = UserUtils::getCurrentUserName();
+			procUserName = currentUserName;
+			String operationUserName = env->getOperationContext().getUserInfo().getUserName();
+			if (!operationUserName.empty())
+			{
+				procUserName = operationUserName;
+			}
+		}
+		break;
+	}
+
 	if (usePersistentProcess == E_USE_PERSISTENT_PROCESS && *m_persistentProcessRef)
 	{
-		if ((*m_persistentProcessRef)->processStatus().running())
+		// if the user of the persistent process has changed, we need to kill the old process and start a new one.
+		if ((*m_persistentProcessRef)->processStatus().running() && procUserName == *m_persistentProcessUserNameRef)
 		{
 			OW_LOG_DEBUG(lgr, Format("Using persistent process %1", (*m_persistentProcessRef)->pid()));
 			return *m_persistentProcessRef;
@@ -204,6 +258,8 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 		}
 	}
 
+
+	// launch the process
 	OW_LOG_DEBUG(lgr, Format("%1 about to spawn %2", fname, m_provInfo.process));
 	for (size_t i = 0; i < m_provInfo.args.size(); ++i)
 	{
@@ -214,38 +270,19 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 	argv.insert(argv.begin(), m_provInfo.process);
 
 	ProcessRef proc;
+
 	PrivilegeManager privMan = PrivilegeManager::getPrivilegeManager();
-	
 	switch (m_provInfo.userContext)
 	{
 		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_SUPER_USER:
 		{
-			if (privMan.isNull())
-			{
-				OW_THROWCIMMSG(CIMException::FAILED, "Unable to launch process as super user because there is no monitor");
-			}
-#if OW_WIN32
-			const char superUser[] = "SYSTEM";
-#else
-			const char superUser[] = "root";
-#endif
-			proc = privMan.userSpawn(m_provInfo.process, argv, Secure::minimalEnvironment(), superUser);
+			proc = privMan.userSpawn(m_provInfo.process, argv, Secure::minimalEnvironment(), procUserName);
 		}
 		break;
 		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION:
 		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_UNPRIVILEGED:
 		{
 			String currentUserName = UserUtils::getCurrentUserName();
-			String procUserName = currentUserName;
-			if (m_provInfo.userContext == OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION)
-			{
-				String operationUserName = env->getOperationContext().getUserInfo().getUserName();
-				if (!operationUserName.empty())
-				{
-					procUserName = operationUserName;
-				}
-			}
-
 			if (currentUserName == procUserName)
 			{
 				proc = Exec::spawn(argv);
@@ -267,13 +304,6 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 		break;
 		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION_MONITORED:
 		{
-			String currentUserName = UserUtils::getCurrentUserName();
-			String procUserName = currentUserName;
-			String operationUserName = env->getOperationContext().getUserInfo().getUserName();
-			if (!operationUserName.empty())
-			{
-				procUserName = operationUserName;
-			}
 			proc = privMan.monitoredUserSpawn(
 				m_provInfo.process, m_provInfo.monitorPrivilegesFile, argv,
 				Exec::currentEnvironment, procUserName); 
@@ -294,45 +324,50 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 }
 
 void
-OOPProviderBase::terminate(const ProviderEnvironmentIFCRef& env)
+OOPProviderBase::terminate(const ProviderEnvironmentIFCRef& env, const String& providerID)
 {
 	Logger lgr(COMPONENT_NAME);
 	ProcessRef proc;
-	if (m_persistentProcessRef
-		&& (*m_persistentProcessRef))
+	if (m_persistentProcessRef && (*m_persistentProcessRef))
 	{
-		OW_LOG_DEBUG(lgr, Format("OOPProviderBase::terminate terminating "
-			"provider: %1", m_provInfo.process));
+		OW_LOG_DEBUG(lgr, Format("OOPProviderBase::terminate terminating provider: %1", providerID));
 		ProcessRef proc = *m_persistentProcessRef;
 		m_protocol->setPersistent(proc->out(), proc->in(), m_provInfo.timeout, env, false);
-
+	}
+	else
+	{
+		OW_LOG_DEBUG(lgr, Format("OOPProviderBase::terminate provider: %1 is not running", providerID));
 	}
 
 	// Shutdown the clonedEnv threadPool
-	m_threadPool.shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE,
-		Timeout::relative(0.1), Timeout::infinite);
+	m_threadPool.shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(0.1), Timeout::infinite);
 }
 
 void 
 OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& env, const OOPProviderBase::MethodCallback& func, 
-	const char* fname, EUsePersistentProcessFlag usePersistentProcess)
+	const char* fname)
 {
 	Logger lgr(COMPONENT_NAME);
 
 	try
 	{
-		if (!m_provInfo.isPersistent)
+		EUsePersistentProcessFlag usePersistentProcess = E_USE_PERSISTENT_PROCESS;
+		if (m_provInfo.providerNeedsNewProcessForEveryInvocation())
 		{
 			 usePersistentProcess = E_SPAWN_NEW_PROCESS;
 		}
+
 		bool doLock = (usePersistentProcess == E_USE_PERSISTENT_PROCESS);
 		// This lock guards modification of m_persistentProcess as well as serializing 
 		// communication requests to it.
 		Mutex mutexOnStack;
 		Mutex* mutexToUse = m_guardRef ? m_guardRef.getPtr() : &mutexOnStack;
-		MutexLock lock(*mutexToUse, doLock); 
+		MutexLock lock(*mutexToUse, doLock);
 
-		ProcessRef proc = getProcess(fname, env, usePersistentProcess);
+		resetUnloadTimer();
+
+		String procUserName;
+		ProcessRef proc = getProcess(fname, env, usePersistentProcess, procUserName);
 
 		try
 		{
@@ -350,6 +385,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 			if (e.getSubClassId() == ExceptionIds::CIMExceptionId && usePersistentProcess == E_USE_PERSISTENT_PROCESS)
 			{
 				*m_persistentProcessRef = proc;
+				*m_persistentProcessUserNameRef = procUserName;
 				throw;
 			}
 			else
@@ -363,6 +399,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 		if (usePersistentProcess == E_USE_PERSISTENT_PROCESS)
 		{
 			*m_persistentProcessRef = proc;
+			*m_persistentProcessUserNameRef = procUserName;
 		}
 		else
 		{
@@ -376,6 +413,16 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 		OW_THROWCIMMSG(CIMException::FAILED, Format("Failed to run %1: %2", m_provInfo.process, e).c_str());
 	}
 }
+
+bool
+OOPProviderBase::unloadTimeoutExpired()
+{
+	OW_ASSERT(m_guardRef);
+	MutexLock lock(*m_guardRef);
+	m_unloadTimer.loop();
+	return m_unloadTimer.expired();
+}
+
 
 OOPProviderBase::MethodCallback::~MethodCallback()
 {

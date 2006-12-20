@@ -44,9 +44,10 @@ namespace OW_NAMESPACE
 
 OOPIndicationProvider::OOPIndicationProvider(const OOPProviderInterface::ProvRegInfo& info,
 	const Reference<Mutex>& guardRef,
-	const Reference<ProcessRef>& persistentProcessRef
+	const Reference<ProcessRef>& persistentProcessRef,
+	const Reference<String>& persistentProcessUserNameRef
 	)
-	: OOPProviderBase(info, guardRef, persistentProcessRef)
+	: OOPProviderBase(info, guardRef, persistentProcessRef, persistentProcessUserNameRef)
 {
 
 }
@@ -103,7 +104,7 @@ OOPIndicationProvider::activateFilter(
 {
 	OW_LOG_DEBUG(Logger("OOPIndicationProvider"), "OOPIndicationProvider::activateFilter");
 	ActivateCallback filterCallback(filter, eventType, nameSpace, classes, firstActivation);
-	startProcessAndCallFunction(env, filterCallback, "OOPMethodProvider::activateFilter", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, filterCallback, "OOPMethodProvider::activateFilter");
 }
 
 namespace
@@ -154,7 +155,7 @@ OOPIndicationProvider::authorizeFilter(
 {
 	OW_LOG_DEBUG(Logger("OOPIndicationProvider"), "OOPIndicationProvider::authorizeFilter");
 	AuthorizeFilterCallback filterCallback(filter, eventType, nameSpace, classes, owner);
-	startProcessAndCallFunction(env, filterCallback, "OOPMethodProvider::authorizeFilter", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, filterCallback, "OOPMethodProvider::authorizeFilter");
 }
 
 namespace
@@ -205,7 +206,7 @@ OOPIndicationProvider::deActivateFilter(
 {
 	OW_LOG_DEBUG(Logger("OOPIndicationProvider"), "OOPIndicationProvider::deActivateFilter");
 	DeActivateCallback filterCallback(filter, eventType, nameSpace, classes, lastActivation);
-	startProcessAndCallFunction(env, filterCallback, "OOPIndicationProvider::deActivateFilter", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, filterCallback, "OOPIndicationProvider::deActivateFilter");
 }
 
 namespace
@@ -256,7 +257,7 @@ OOPIndicationProvider::mustPoll(
 {
 	int retval;
 	MustPollCallback mustPollCallback(retval, filter, eventType, nameSpace, classes);
-	startProcessAndCallFunction(env, mustPollCallback, "OOPMethodProvider::mustPoll", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, mustPollCallback, "OOPMethodProvider::mustPoll");
 	return retval;
 }
 

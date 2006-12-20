@@ -540,6 +540,48 @@ public:
 
 
 
+	/**
+	 * This function returns the OpenWBEM_OOPProviderRegistration.UnloadTimeout property value. 
+	 * This property is described as follows: 
+	 * 
+     *  If a provider is not persistent, then it can stay running for the period of time
+     *  specified by this property.
+	 * 
+	 * @return CIMDateTime current UnloadTimeout property value
+	 * @exception NullValueException if the property value is NULL (uninitialized)
+	 */
+	CIMDateTime getUnloadTimeout() const
+	{
+		return getCIMDateTimeProperty("UnloadTimeout");
+	}
+
+	/**
+	 * This function sets the OpenWBEM_OOPProviderRegistration.UnloadTimeout property value.
+	 * This property is described as follows: 
+	 * 
+     *  If a provider is not persistent, then it can stay running for the period of time
+     *  specified by this property.
+	 * 
+	 * @param CIMDateTime new UnloadTimeout property value
+	 */
+	void setUnloadTimeout(const CIMDateTime& v)
+	{
+		setCIMDateTimeProperty("UnloadTimeout", v);
+	}
+
+	/**
+	 * This function tests whether the OpenWBEM_OOPProviderRegistration.UnloadTimeout property value
+	 * is NULL, meaning it has not been initialized to a value.
+	 */
+	bool UnloadTimeoutIsNULL()
+	{
+		return propertyIsNULL("UnloadTimeout");
+	}
+
+
+
+
+
 };
 
 }

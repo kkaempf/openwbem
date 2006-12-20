@@ -45,6 +45,7 @@
 #include "OW_OOPProtocolIFC.hpp"
 #include "OW_ThreadPool.hpp"
 #include "OW_UnnamedPipe.hpp"
+#include "OW_TimeoutTimer.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -54,12 +55,13 @@ class OOPProviderBase
 public:
 	OOPProviderBase(const OOPProviderInterface::ProvRegInfo& info,
 		const Reference<Mutex>& guardRef,
-		const Reference<ProcessRef>& persistentProcessRef);
+		const Reference<ProcessRef>& persistentProcessRef,
+		const Reference<String>& persistentProcessUserNameRef);
 
 	virtual ~OOPProviderBase();
 
 	UnnamedPipeRef startClonedProviderEnv(const ProviderEnvironmentIFCRef& env);
-	void terminate(const ProviderEnvironmentIFCRef& env);
+	void terminate(const ProviderEnvironmentIFCRef& env, const String& providerID);
 
 	class MethodCallback
 	{
@@ -69,12 +71,16 @@ public:
 			const Timeout& timeout, const ProviderEnvironmentIFCRef& env) const = 0;
 	};
 
-protected:
-
 	const OOPProviderInterface::ProvRegInfo& getProvInfo() const
 	{
 		return m_provInfo;
 	}
+
+	/// Precondition: m_guardRef is not NULL.
+	bool unloadTimeoutExpired();
+
+protected:
+
 	const OOPProtocolIFCRef& getProtocol() const
 	{
 		return m_protocol;
@@ -85,17 +91,22 @@ protected:
 		E_USE_PERSISTENT_PROCESS,
 		E_SPAWN_NEW_PROCESS
 	};
-	void startProcessAndCallFunction(const ProviderEnvironmentIFCRef& env, const MethodCallback& func, const char* fname, EUsePersistentProcessFlag usePersistentProcess);
+	void startProcessAndCallFunction(const ProviderEnvironmentIFCRef& env, const MethodCallback& func, const char* fname);
 
 private:
+	ProcessRef getProcess(const char* fname, const ProviderEnvironmentIFCRef& env, EUsePersistentProcessFlag usePersistentProcess, String& procUserName);
+
+	/// Precondition: if m_guardRef != NULL, then *m_guardRef is locked.
+	void resetUnloadTimer();
+
 	OOPProviderInterface::ProvRegInfo m_provInfo;
 	OOPProtocolIFCRef m_protocol;
 
-	ProcessRef getProcess(const char* fname, const ProviderEnvironmentIFCRef& env, EUsePersistentProcessFlag usePersistentProcess);
-
 	Reference<Mutex> m_guardRef;
 	Reference<ProcessRef> m_persistentProcessRef;
+	Reference<String> m_persistentProcessUserNameRef;
 	ThreadPool m_threadPool;
+	TimeoutTimer m_unloadTimer;
 };
 
 } // end namespace OW_NAMESPACE

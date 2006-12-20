@@ -56,6 +56,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Infinity.hpp"
+#include "OW_Assertion.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -238,10 +239,43 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 					info->isPersistent = curReg.getPersistent();
 				}
 
-				if (userContextIsOperationDependent(curReg) && info->isPersistent)
+			}
+			if (userContextIsOperationDependent(curReg) && info->isPersistent)
+			{
+				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have a UserContext that depends on the operation user (\"Operation\" or \"OperationMonitored\")", 
+					instanceID));
+				continue;
+			}
+
+			if (info->isPersistent && !curReg.UnloadTimeoutIsNULL())
+			{
+				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have an UnloadTimeout value", 
+					instanceID));
+				continue;
+			}
+
+			if (!curReg.UnloadTimeoutIsNULL())
+			{
+				CIMDateTime unloadTimeout = curReg.getUnloadTimeout();
+				if (!unloadTimeout.isInterval())
 				{
-					OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have a UserContext that depends on the operation user (\"Operation\" or \"OperationMonitored\")", 
-						instanceID));
+					OW_LOG_ERROR(lgr, Format("UnloadTimeout property value is not an interval: %1. Skipping registration: %2", timeout, curReg.toString()));
+					continue;
+				}
+
+				float timeoutSecs = unloadTimeout.getSeconds() + 60 * 
+					(unloadTimeout.getMinutes() + 60 * 
+					 (unloadTimeout.getHours() + 24 * static_cast<float>(unloadTimeout.getDays())));
+
+				OW_LOG_DEBUG(lgr, Format("unload timeoutSecs = %1", timeoutSecs));
+
+				if (timeoutSecs == INFINITY)
+				{
+					info->unloadTimeout = Timeout::infinite;
+				}
+				else
+				{
+					info->unloadTimeout = Timeout::relativeWithReset(timeoutSecs);
 				}
 			}
 
@@ -392,9 +426,9 @@ template <typename T, typename RT, typename DMP>
 RT
 OOPProviderInterface::getProvider(const char* provIdString, DMP dmp, const OOPProviderInterface::ProvRegInfo& info)
 {
-	if (!info.isPersistent)
+	if (info.providerNeedsNewProcessForEveryInvocation())
 	{
-		return RT(new T(info, Reference<Mutex>(), Reference<ProcessRef>()));
+		return RT(new T(info, Reference<Mutex>(), Reference<ProcessRef>(), Reference<String>()));
 	}
 
 	MutexLock lock(m_persistentProvsGuard);
@@ -407,7 +441,7 @@ OOPProviderInterface::getProvider(const char* provIdString, DMP dmp, const OOPPr
 		}
 		else
 		{
-			RT p(new T(info, proviter->second.guard, proviter->second.process));
+			RT p(new T(info, proviter->second.guard, proviter->second.process, proviter->second.processUserName));
 			proviter->second.*dmp = p;
 			return p;
 		}
@@ -415,7 +449,7 @@ OOPProviderInterface::getProvider(const char* provIdString, DMP dmp, const OOPPr
 	else
 	{
 		SavedProviders savedProviders;
-		RT p(new T(info, savedProviders.guard, savedProviders.process));
+		RT p(new T(info, savedProviders.guard, savedProviders.process, savedProviders.processUserName));
 		savedProviders.*dmp = p;
 		m_persistentProvs.insert(std::make_pair(String(provIdString), savedProviders));
 		return p;
@@ -511,7 +545,7 @@ OOPProviderInterface::doGetIndicationExportProviders(const ProviderEnvironmentIF
 			}
 			else
 			{
-				IndicationExportProviderIFCRef p(new OOPIndicationExportProvider(*iter->second, proviter->second.guard, proviter->second.process));
+				IndicationExportProviderIFCRef p(new OOPIndicationExportProvider(*iter->second, proviter->second.guard, proviter->second.process, proviter->second.processUserName));
 				proviter->second.indicationExportProv = p;
 				rval.push_back(p);
 			}
@@ -519,7 +553,7 @@ OOPProviderInterface::doGetIndicationExportProviders(const ProviderEnvironmentIF
 		else
 		{
 			SavedProviders savedProviders;
-			IndicationExportProviderIFCRef p(new OOPIndicationExportProvider(*iter->second, savedProviders.guard, savedProviders.process));
+			IndicationExportProviderIFCRef p(new OOPIndicationExportProvider(*iter->second, savedProviders.guard, savedProviders.process, savedProviders.processUserName));
 			savedProviders.indicationExportProv = p;
 			m_persistentProvs.insert(std::make_pair(iter->first, savedProviders));
 			rval.push_back(p);
@@ -550,7 +584,7 @@ OOPProviderInterface::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 			}
 			else
 			{
-				PolledProviderIFCRef p(new OOPPolledProvider(*iter->second, proviter->second.guard, proviter->second.process));
+				PolledProviderIFCRef p(new OOPPolledProvider(*iter->second, proviter->second.guard, proviter->second.process, proviter->second.processUserName));
 				proviter->second.polledProv = p;
 				rval.push_back(p);
 			}
@@ -558,7 +592,7 @@ OOPProviderInterface::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 		else
 		{
 			SavedProviders savedProviders;
-			PolledProviderIFCRef p(new OOPPolledProvider(*iter->second, savedProviders.guard, savedProviders.process));
+			PolledProviderIFCRef p(new OOPPolledProvider(*iter->second, savedProviders.guard, savedProviders.process, savedProviders.processUserName));
 			savedProviders.polledProv = p;
 			m_persistentProvs.insert(std::make_pair(iter->first, savedProviders));
 			rval.push_back(p);
@@ -591,81 +625,107 @@ OOPProviderInterface::doGetIndicationProvider(const ProviderEnvironmentIFCRef& e
 void 
 OOPProviderInterface::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 {
-	/* This is the code from CPPProviderInterface.cpp 
 	DateTime dt;
 	dt.setToCurrent();
-	MutexLock l(m_guard);
-	for (ProviderMap::iterator iter = m_provs.begin();
-		  iter != m_provs.end();)
+	MutexLock l(m_persistentProvsGuard);
+	PersistentProvMap_t::iterator proviter = m_persistentProvs.begin();
+	while (proviter != m_persistentProvs.end())
 	{
 		// If this is not a persistent provider, see if we can unload it.
-		if (!iter->second->getProvider()->getPersist())
+		if (!proviter->second.getInfo().isPersistent)
 		{
-			DateTime provDt = iter->second->getProvider()->getLastAccessTime();
-			provDt.addMinutes(iTimeWindow);
-			if (provDt < dt && iter->second->getProvider()->canUnload())
+			OOPProviderBase* prov = proviter->second.getOOPProviderBase();
+            if (prov->unloadTimeoutExpired())
 			{
 				Logger lgr(COMPONENT_NAME);
-				OW_LOG_INFO(lgr, Format("Unloading Provider %1", iter->first));
-				iter->second = 0;
-				m_provs.erase(iter++);
+				OW_LOG_INFO(lgr, Format("Shutting down and terminating provider %1", proviter->first));
+// TODO: implement this				prov->shuttingDown();
+				prov->terminate(env, proviter->first);
+				proviter = m_persistentProvs.erase(proviter);
 				continue;
 			}
 		}
 
-		++iter;
+		++proviter;
 	}
-	*/
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void 
 OOPProviderInterface::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 {
+	/* TODO: This should not call terminate(). At this point, providers are still expected to work and can be called after shuttingDown. 
+	Instead it should send a shuttingDown command, which should cause shuttingDown() to be called on the provider, and the provider should
+	not terminate. The providers get terminated in ~OOPProviderInterface.
+
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "OOPProviderInterface::doShuttingDown");
 	Mutex mutexOnStack;
 	MutexLock lock(m_persistentProvsGuard);
+	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown, there are %1 persistent providers to shutdown", m_persistentProvs.size()));
 
 	for (PersistentProvMap_t::iterator proviter = m_persistentProvs.begin();
 		proviter != m_persistentProvs.end(); proviter++)
 	{
-		OOPProviderBase* pprov = 0;
-		if (proviter->second.polledProv)
+		OOPProviderBase* pprov = proviter->second.getOOPProviderBase();
+		OW_ASSERT(pprov);
+		if (pprov)
 		{
-			IntrusiveReference<OOPPolledProvider> pref = proviter->second.polledProv.cast_to<OOPPolledProvider>();
-			if (pref)
-			{
-				Mutex* mutexToUse = proviter->second.guard ? proviter->second.guard.getPtr() : &mutexOnStack;
-				MutexLock pl(*mutexToUse);
-				OW_LOG_DEBUG(lgr, "OOPProviderInterface::doShuttingDown terminating polled provider");
-				pref->terminate(env);
-			}
-		}
-		else if (proviter->second.indicationExportProv)
-		{
-			IntrusiveReference<OOPIndicationExportProvider> pref = proviter->second.polledProv.cast_to<OOPIndicationExportProvider>();
-			if (pref)
-			{
-				Mutex* mutexToUse = proviter->second.guard ? proviter->second.guard.getPtr() : &mutexOnStack;
-				MutexLock pl(*mutexToUse);
-				OW_LOG_DEBUG(lgr, "OOPProviderInterface::doShuttingDown terminating indication export provider");
-				pref->terminate(env);
-			}
-		}
-		else if (proviter->second.indProv)
-		{
-			IntrusiveReference<OOPIndicationProvider> pref = proviter->second.polledProv.cast_to<OOPIndicationProvider>();
-			if (pref)
-			{
-				Mutex* mutexToUse = proviter->second.guard ? proviter->second.guard.getPtr() : &mutexOnStack;
-				MutexLock pl(*mutexToUse);
-				OW_LOG_DEBUG(lgr, "OOPProviderInterface::doShuttingDown terminating indication provider");
-				pref->terminate(env);
-			}
+			Mutex* mutexToUse = proviter->second.guard ? proviter->second.guard.getPtr() : &mutexOnStack;
+			MutexLock pl(*mutexToUse);
+			OW_LOG_DEBUG(lgr, "OOPProviderInterface::doShuttingDown terminating provider");
+			pprov->terminate(env, proviter->first);
 		}
 	}
+	*/
 }
+
+//////////////////////////////////////////////////////////////////////////////
+const OOPProviderInterface::ProvRegInfo&
+OOPProviderInterface::SavedProviders::getInfo() const
+{
+	OOPProviderBase* p = getOOPProviderBase();
+	return p->getProvInfo();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OOPProviderBase* 
+OOPProviderInterface::SavedProviders::getOOPProviderBase() const
+{
+	if (instanceProv)
+	{
+		return dynamic_cast<OOPProviderBase*>(instanceProv.getPtr());
+	}
+	else if (secondaryInstanceProv)
+	{
+		return dynamic_cast<OOPProviderBase*>(secondaryInstanceProv.getPtr());
+	}
+	else if (associatorProv)
+	{
+		return dynamic_cast<OOPProviderBase*>(associatorProv.getPtr());
+	}
+	else if (methodProv)
+	{
+		return dynamic_cast<OOPProviderBase*>(methodProv.getPtr());
+	}
+	else if (indProv)
+	{
+		return dynamic_cast<OOPProviderBase*>(indProv.getPtr());
+	}
+	else if (polledProv)
+	{
+		return dynamic_cast<OOPProviderBase*>(polledProv.getPtr());
+	}
+	else if (indicationExportProv)
+	{
+		return dynamic_cast<OOPProviderBase*>(indicationExportProv.getPtr());
+	}
+	else
+	{
+		OW_ASSERTMSG(0, "Error, no pointer was set!");
+		return 0;
+	}
+}
+
 
 } // end namespace OW_NAMESPACE
 

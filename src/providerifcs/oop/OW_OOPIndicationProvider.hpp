@@ -51,7 +51,8 @@ class OOPIndicationProvider : public IndicationProviderIFC, public OOPProviderBa
 public:
 	OOPIndicationProvider(const OOPProviderInterface::ProvRegInfo& info,
 		const Reference<Mutex>& guardRef,
-		const Reference<ProcessRef>& persistentProcessRef
+		const Reference<ProcessRef>& persistentProcessRef,
+		const Reference<String>& persistentProcessUserNameRef
 		);
 	virtual ~OOPIndicationProvider();
 	

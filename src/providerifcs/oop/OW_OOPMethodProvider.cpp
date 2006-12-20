@@ -49,8 +49,9 @@ namespace OW_NAMESPACE
 //////////////////////////////////////////////////////////////////////////////
 OOPMethodProvider::OOPMethodProvider(const OOPProviderInterface::ProvRegInfo& info,
 	const Reference<Mutex>& guardRef,
-	const Reference<ProcessRef>& persistentProcessRef)
-	: OOPProviderBase(info, guardRef, persistentProcessRef)
+	const Reference<ProcessRef>& persistentProcessRef,
+	const Reference<String>& persistentProcessUserNameRef)
+	: OOPProviderBase(info, guardRef, persistentProcessRef, persistentProcessUserNameRef)
 {
 }
 
@@ -111,7 +112,7 @@ OOPMethodProvider::invokeMethod(
 {
 	CIMValue retval(CIMNULL);
 	InvokeMethodCallback invokeMethodCallback(retval, ns, path, methodName, in, out);
-	startProcessAndCallFunction(env, invokeMethodCallback, "OOPMethodProvider::invokeMethod", E_SPAWN_NEW_PROCESS);
+	startProcessAndCallFunction(env, invokeMethodCallback, "OOPMethodProvider::invokeMethod");
 	return retval;
 }
 

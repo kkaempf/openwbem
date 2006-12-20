@@ -58,8 +58,9 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 OOPInstanceProvider::OOPInstanceProvider(const OOPProviderInterface::ProvRegInfo& info,
 	const Reference<Mutex>& guardRef,
-	const Reference<ProcessRef>& persistentProcessRef)
-	: OOPProviderBase(info, guardRef, persistentProcessRef)
+	const Reference<ProcessRef>& persistentProcessRef,
+	const Reference<String>& persistentProcessUserNameRef)
+	: OOPProviderBase(info, guardRef, persistentProcessRef, persistentProcessUserNameRef)
 {
 }
 
@@ -110,7 +111,7 @@ OOPInstanceProvider::enumInstanceNames(
 		const CIMClass& cimClass )
 {
 	EnumInstanceNamesCallback enumInstanceNamesCallback(ns, className, result, cimClass);
-	startProcessAndCallFunction(env, enumInstanceNamesCallback, "OOPInstanceProvider::enumInstanceNames", E_SPAWN_NEW_PROCESS);
+	startProcessAndCallFunction(env, enumInstanceNamesCallback, "OOPInstanceProvider::enumInstanceNames");
 }
 
 namespace
@@ -180,7 +181,7 @@ OOPInstanceProvider::enumInstances(
 		const CIMClass& cimClass )
 {
 	EnumInstancesCallback enumInstancesCallback(ns, className, result, localOnly, deep, includeQualifiers, includeClassOrigin, propertyList, requestedClass, cimClass);
-	startProcessAndCallFunction(env, enumInstancesCallback, "OOPInstanceProvider::enumInstances", E_SPAWN_NEW_PROCESS);
+	startProcessAndCallFunction(env, enumInstancesCallback, "OOPInstanceProvider::enumInstances");
 }
 
 namespace
@@ -242,7 +243,7 @@ OOPInstanceProvider::getInstance(
 {
 	CIMInstance rval(CIMNULL);
 	GetInstanceCallback getInstanceCallback(rval, ns, instanceName, localOnly, includeQualifiers, includeClassOrigin, propertyList, cimClass);
-	startProcessAndCallFunction(env, getInstanceCallback, "OOPInstanceProvider::getInstance", E_SPAWN_NEW_PROCESS);
+	startProcessAndCallFunction(env, getInstanceCallback, "OOPInstanceProvider::getInstance");
 	
 	return rval;
 }
@@ -285,7 +286,7 @@ OOPInstanceProvider::createInstance(
 {
 	CIMObjectPath rval(CIMNULL);
 	CreateInstanceCallback createInstanceCallback(rval, ns, cimInstance);
-	startProcessAndCallFunction(env, createInstanceCallback, "OOPInstanceProvider::createInstance", E_SPAWN_NEW_PROCESS);
+	startProcessAndCallFunction(env, createInstanceCallback, "OOPInstanceProvider::createInstance");
 	
 	return rval;
 }
@@ -341,7 +342,7 @@ OOPInstanceProvider::modifyInstance(
 		const CIMClass& theClass)
 {
 	ModifyInstanceCallback modifyInstanceCallback(ns, modifiedInstance, previousInstance, includeQualifiers, propertyList, theClass);
-	startProcessAndCallFunction(env, modifyInstanceCallback, "OOPInstanceProvider::modifyInstance", E_SPAWN_NEW_PROCESS);
+	startProcessAndCallFunction(env, modifyInstanceCallback, "OOPInstanceProvider::modifyInstance");
 }
 
 namespace
@@ -378,7 +379,7 @@ OOPInstanceProvider::deleteInstance(
 		const CIMObjectPath& cop)
 {
 	DeleteInstanceCallback deleteInstanceCallback(ns, cop);
-	startProcessAndCallFunction(env, deleteInstanceCallback, "OOPInstanceProvider::deleteInstance", E_SPAWN_NEW_PROCESS);
+	startProcessAndCallFunction(env, deleteInstanceCallback, "OOPInstanceProvider::deleteInstance");
 }
 
 

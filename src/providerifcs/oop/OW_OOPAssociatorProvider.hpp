@@ -51,7 +51,8 @@ class OOPAssociatorProvider : public AssociatorProviderIFC, public OOPProviderBa
 public:
 	OOPAssociatorProvider(const OOPProviderInterface::ProvRegInfo& info,
 		const Reference<Mutex>& guardRef,
-		const Reference<ProcessRef>& persistentProcessRef);
+		const Reference<ProcessRef>& persistentProcessRef,
+		const Reference<String>& persistentProcessUserNameRef);
 	virtual ~OOPAssociatorProvider();
 	
 

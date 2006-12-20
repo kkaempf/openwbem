@@ -40,9 +40,10 @@ namespace OW_NAMESPACE
 
 OOPIndicationExportProvider::OOPIndicationExportProvider(const OOPProviderInterface::ProvRegInfo& info,
 	const Reference<Mutex>& guardRef,
-	const Reference<ProcessRef>& persistentProcessRef
+	const Reference<ProcessRef>& persistentProcessRef,
+	const Reference<String>& persistentProcessUserNameRef
 	)
-	: OOPProviderBase(info, guardRef, persistentProcessRef)
+	: OOPProviderBase(info, guardRef, persistentProcessRef, persistentProcessUserNameRef)
 {
 
 }
@@ -91,7 +92,7 @@ OOPIndicationExportProvider::exportIndication(const ProviderEnvironmentIFCRef& e
 	const CIMInstance& indHandlerInst, const CIMInstance& indicationInst)
 {
 	ExportIndicationCallback exportIndicationCallback(ns, indHandlerInst, indicationInst);
-	startProcessAndCallFunction(env, exportIndicationCallback, "OOPIndicationExportProvider::exportIndication", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, exportIndicationCallback, "OOPIndicationExportProvider::exportIndication");
 }
 
 void

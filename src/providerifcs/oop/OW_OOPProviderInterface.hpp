@@ -50,6 +50,8 @@
 namespace OW_NAMESPACE
 {
 
+class OOPProviderBase;
+
 class OOPProviderInterface : public ProviderIFCBaseIFC
 {
 public:
@@ -62,6 +64,7 @@ public:
 			: timeout(Timeout::infinite)
 			, isPersistent(false)
 			, userContext(OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_UNPRIVILEGED)
+			, unloadTimeout(Timeout::relativeWithReset(0)) // the default is to not leave the provider loaded
 		{
 		}
 		String process;
@@ -72,6 +75,12 @@ public:
 		UInt16 userContext;
 		String monitorPrivilegesFile;
 		StringArray indicationExportHandlerClassNames;
+		Timeout unloadTimeout;
+
+		bool providerNeedsNewProcessForEveryInvocation() const
+		{
+			return (isPersistent == false) && (unloadTimeout == Timeout::relativeWithReset(0));
+		}
 	};
 
 	typedef IntrusiveReference<ProvRegInfo> ProvRegInfoRef;
@@ -114,6 +123,7 @@ private:
 		SavedProviders()
 			: guard(new Mutex)
 			, process(new ProcessRef)
+			, processUserName(new String)
 		{
 		}
 
@@ -121,6 +131,7 @@ private:
 			: instanceProv(ipir)
 			, guard(new Mutex)
 			, process(new ProcessRef)
+			, processUserName(new String)
 		{
 		}
 
@@ -128,6 +139,7 @@ private:
 			: secondaryInstanceProv(sipir)
 			, guard(new Mutex)
 			, process(new ProcessRef)
+			, processUserName(new String)
 		{
 		}
 
@@ -135,6 +147,7 @@ private:
 			: associatorProv(apir)
 			, guard(new Mutex)
 			, process(new ProcessRef)
+			, processUserName(new String)
 		{
 		}
 
@@ -142,6 +155,7 @@ private:
 			: methodProv(mpir)
 			, guard(new Mutex)
 			, process(new ProcessRef)
+			, processUserName(new String)
 		{
 		}
 
@@ -149,6 +163,7 @@ private:
 			: indProv(ipir)
 			, guard(new Mutex)
 			, process(new ProcessRef)
+			, processUserName(new String)
 		{
 		}
 
@@ -156,6 +171,7 @@ private:
 			: polledProv(ppir)
 			, guard(new Mutex)
 			, process(new ProcessRef)
+			, processUserName(new String)
 		{
 		}
 
@@ -163,6 +179,7 @@ private:
 			: indicationExportProv(iepir)
 			, guard(new Mutex)
 			, process(new ProcessRef)
+			, processUserName(new String)
 		{
 		}
 
@@ -175,6 +192,11 @@ private:
 		IndicationExportProviderIFCRef indicationExportProv;
 		Reference<Mutex> guard;
 		Reference<ProcessRef> process;
+		Reference<String> processUserName;
+
+		const ProvRegInfo& getInfo() const;
+
+		OOPProviderBase* getOOPProviderBase() const;
 	};
 
 	// key is the provider id

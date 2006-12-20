@@ -51,7 +51,8 @@ class OOPInstanceProvider : public InstanceProviderIFC, public OOPProviderBase
 public:
 	OOPInstanceProvider(const OOPProviderInterface::ProvRegInfo& info,
 		const Reference<Mutex>& guardRef,
-		const Reference<ProcessRef>& persistentProcessRef
+		const Reference<ProcessRef>& persistentProcessRef,
+		const Reference<String>& persistentProcessUserNameRef
 		);
 	virtual ~OOPInstanceProvider();
 	
