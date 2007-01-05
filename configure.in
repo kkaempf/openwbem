@@ -103,21 +103,6 @@ OW_SAVE_FLAGS
 CFLAGS="$CFLAGS $perl_embed_ccflags"
 LDFLAGS="$LDFLAGS $perl_embed_ldflags"
 
-ENABLE_PPIFC=no
-OW_VERIFY_ENABLE_SUPPORT(perl-providerifc,
-	AC_LANG_PROGRAM(
-		[
-			#include <EXTERN.h>
-			#include <perl.h>
-		],
-		[
-		]
-	),
-	ENABLE_PPIFC=yes,
-	ENABLE_PPIFC=yes
-)
-AM_CONDITIONAL([ENABLE_PERL_PROVIDERIFC],[test x$ENABLE_PPIFC = xyes])
-
 # This is a near duplicate of the above perl-providerifc test.  It is provided
 # here so that they can be enabled/disabled independently, like they were
 # before.
@@ -1380,10 +1365,6 @@ src/providerifcs/remote/Makefile
 src/providerifcs/oop/Makefile
 src/providerifcs/cmpi/Makefile
 src/providerifcs/cmpi/common/Makefile
-src/providerifcs/npi/Makefile
-src/providerifcs/npi/common/Makefile
-src/providerifcs/perl/Makefile
-src/providerifcs/perl/perlProvider/Makefile
 src/providers/Makefile
 src/providers/cpp/Makefile
 src/providers/cpp/indicationexport/Makefile
