@@ -1102,7 +1102,8 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ kill, pid=%1, sig=%2", pid, sig).toString());
 		try
 		{
-			CHECKARGS(has(m_proc_map, pid), "kill: unknown process", PrivilegeManager::E_INVALID_PARAMETER);
+			// allow either a process or a process group (-pid)
+			CHECKARGS((pid > 0) ? has(m_proc_map, pid) : has(m_proc_map, -pid), "kill: unknown process", PrivilegeManager::E_INVALID_PARAMETER);
 			int rv = (::kill(pid, sig) == 0 ? 0 : errno);
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			ipcio_put(conn(), rv);
