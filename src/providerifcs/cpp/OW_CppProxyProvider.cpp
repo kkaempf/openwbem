@@ -115,6 +115,13 @@ CppAssociatorProviderProxy::referenceNames(
 	m_pProv->updateAccessTime();
 	m_pProv->referenceNames(env, result, ns, objectName, resultClass, role);
 }
+//////////////////////////////////////////////////////////////////////////////		
+void
+CppAssociatorProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	m_pProv->shuttingDown(env);
+}
+
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////		
 CppInstanceProviderProxy::CppInstanceProviderProxy(
@@ -209,6 +216,13 @@ CppInstanceProviderProxy::deleteInstance(
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////		
+void
+CppInstanceProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	m_pProv->shuttingDown(env);
+}
+
+//////////////////////////////////////////////////////////////////////////////		
 CppSecondaryInstanceProviderProxy::CppSecondaryInstanceProviderProxy(CppSecondaryInstanceProviderIFCRef pProv)
 	: SecondaryInstanceProviderIFC()
 	, m_pProv(pProv)
@@ -254,6 +268,13 @@ CppSecondaryInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRe
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////		
+void
+CppSecondaryInstanceProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	m_pProv->shuttingDown(env);
+}
+
+//////////////////////////////////////////////////////////////////////////////		
 CppMethodProviderProxy::CppMethodProviderProxy(CppMethodProviderIFCRef pProv) :
 	MethodProviderIFC(), m_pProv(pProv)
 {
@@ -270,6 +291,13 @@ CppMethodProviderProxy::invokeMethod(
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->invokeMethod(env, ns, path, methodName, in, out);
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+void
+CppMethodProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	m_pProv->shuttingDown(env);
 }
 
 } // end namespace OW_NAMESPACE

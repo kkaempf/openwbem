@@ -105,6 +105,7 @@ public:
 			const CIMObjectPath& objectName,
 			const String& resultClass,
 			const String& role);
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 private:
 	CppAssociatorProviderIFCRef m_pProv;
 };
@@ -159,6 +160,7 @@ public:
 			const String& ns,
 			const CIMObjectPath& cop);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 private:
 	CppInstanceProviderIFCRef m_pProv;
 };
@@ -173,6 +175,7 @@ public:
 	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass);
 	virtual void deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 private:
 	CppSecondaryInstanceProviderIFCRef m_pProv;
 };
@@ -188,6 +191,7 @@ public:
 			const String& methodName,
 			const CIMParamValueArray& in,
 			CIMParamValueArray& out);
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 private:
 	CppMethodProviderIFCRef m_pProv;
 };
@@ -220,6 +224,10 @@ public:
 	{
 		m_pProv->doDefinitiveCancel();
 	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	{
+		m_pProv->shuttingDown(env);
+	}
 private:
 	CppIndicationExportProviderIFCRef m_pProv;
 };
@@ -243,6 +251,10 @@ public:
 	virtual void doDefinitiveCancel()
 	{
 		m_pProv->doDefinitiveCancel();
+	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	{
+		m_pProv->shuttingDown(env);
 	}
 private:
 	CppPolledProviderIFCRef m_pProv;
@@ -291,6 +303,10 @@ public:
 		)
 	{
 		return m_pProv->mustPoll(env,filter,eventType,nameSpace,classes);
+	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	{
+		m_pProv->shuttingDown(env);
 	}
 private:
 	CppIndicationProviderIFCRef m_pProv;

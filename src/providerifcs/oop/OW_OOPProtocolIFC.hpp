@@ -264,6 +264,12 @@ public:
 		const String& ns,
 		const CIMInstance& indHandlerInst, 
 		const CIMInstance& indicationInst) = 0;
+
+	virtual void shuttingDown(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env) = 0;
 protected:
 	OOPProviderBase* m_pprov;		// Pointer to avoid circular reference
 };

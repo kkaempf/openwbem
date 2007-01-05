@@ -59,20 +59,27 @@ class ooptestAssoc
 instance of OpenWBEM_OOPProviderRegistration
 {
         InstanceID = "1";
-
         NamespaceNames = {"root/ooptest"};
-
         ClassName = "ooptest";
-
-        ProviderTypes = {1, 4, 6, 8}; // instance, lifecycle indication, method, polled
-
+        ProviderTypes = {4, 8}; // lifecycle indication, polled
         Process = "@libexecdir@/openwbem/owoopcpp1pr";
-
         Args = { "--provider=@provdir@/libooptest.@LIB_EXT@", "--logfile=" };
-
         Protocol = "owcpp1";
-
         Timeout = "00000000000010.000000:000";
+};
+
+// The instance/method provider is a separate registration so it can be a non-persistent provider
+instance of OpenWBEM_OOPProviderRegistration
+{
+        InstanceID = "1inst";
+        NamespaceNames = {"root/ooptest"};
+        ClassName = "ooptest";
+        ProviderTypes = {1, 6}; // instance, method
+        Process = "@libexecdir@/openwbem/owoopcpp1pr";
+        Args = { "--provider=@provdir@/libooptest.@LIB_EXT@", "--logfile=" };
+        Protocol = "owcpp1";
+        Timeout = "00000000000010.000000:000";
+	Persistent=false;
 };
 
 instance of OpenWBEM_OOPProviderRegistration

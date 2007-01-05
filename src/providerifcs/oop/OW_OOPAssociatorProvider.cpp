@@ -36,6 +36,7 @@
 
 #include "OW_config.h"
 #include "OW_OOPAssociatorProvider.hpp"
+#include "OW_OOPShuttingDownCallback.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -50,7 +51,7 @@ namespace
 
 
 OOPAssociatorProvider::OOPAssociatorProvider(const OOPProviderInterface::ProvRegInfo& info,
-	const Reference<Mutex>& guardRef,
+	const Reference<RWLocker>& guardRef,
 	const Reference<ProcessRef>& persistentProcessRef,
 	const Reference<String>& persistentProcessUserNameRef)
 	: OOPProviderBase(info, guardRef, persistentProcessRef, persistentProcessUserNameRef)
@@ -300,6 +301,14 @@ OOPAssociatorProvider::referenceNames(
 {
 	ReferenceNamesCallback referenceNamesCallback(result, ns, objectName, resultClass, role);
 	startProcessAndCallFunction(env, referenceNamesCallback, "OOPInstanceProvider::referenceNames");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OOPAssociatorProvider::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	OOPShuttingDownCallback shuttingDownCallback;
+	startProcessAndCallFunction(env, shuttingDownCallback, "OOPAssociatorProvider::shuttingDown");
 }
 
 

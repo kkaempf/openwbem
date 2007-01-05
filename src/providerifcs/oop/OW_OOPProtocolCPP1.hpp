@@ -251,6 +251,13 @@ public:
 		const String& ns,
 		const CIMInstance& indHandlerInst, 
 		const CIMInstance& indicationInst);
+
+	virtual void shuttingDown(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env);
+
 };
 
 } // end namespace OW_NAMESPACE

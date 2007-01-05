@@ -58,6 +58,9 @@ public:
 			const String& methodName,
 			const CIMParamValueArray& in,
 			CIMParamValueArray& out );
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	{
+	}
 
 
 private:

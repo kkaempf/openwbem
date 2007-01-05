@@ -50,7 +50,7 @@ class OOPSecondaryInstanceProvider : public SecondaryInstanceProviderIFC, public
 {
 public:
 	OOPSecondaryInstanceProvider(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<Mutex>& guardRef,
+		const Reference<RWLocker>& guardRef,
 		const Reference<ProcessRef>& persistentProcessRef,
 		const Reference<String>& persistentProcessUserNameRef);
 	virtual ~OOPSecondaryInstanceProvider();

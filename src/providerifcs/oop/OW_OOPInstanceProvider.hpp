@@ -50,7 +50,7 @@ class OOPInstanceProvider : public InstanceProviderIFC, public OOPProviderBase
 {
 public:
 	OOPInstanceProvider(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<Mutex>& guardRef,
+		const Reference<RWLocker>& guardRef,
 		const Reference<ProcessRef>& persistentProcessRef,
 		const Reference<String>& persistentProcessUserNameRef
 		);
@@ -104,6 +104,8 @@ public:
 			const ProviderEnvironmentIFCRef& env,
 			const String& ns,
 			const CIMObjectPath& cop);
+
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 
 };
 

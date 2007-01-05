@@ -127,6 +127,9 @@ public:
 	virtual void deleteInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &)
 	{
 	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef &)
+	{
+	}
 };
 
 class TestMethodProvider : public MethodProviderIFC
@@ -135,6 +138,9 @@ public:
 	virtual CIMValue invokeMethod(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &, const String &, const CIMParamValueArray &, CIMParamValueArray &)
 	{
 		return CIMValue(CIMNULL);
+	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef &)
+	{
 	}
 };
 
@@ -188,6 +194,9 @@ public:
 		const StringArray* propertyList)
 	{
 	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef &)
+	{
+	}
 };
 #endif
 
@@ -206,6 +215,9 @@ public:
 	virtual int mustPoll(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray&)
 	{
 		return 0;
+	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef &)
+	{
 	}
 };
 

@@ -104,7 +104,7 @@ namespace
 
 		// still running, so shut it down. 0 for second parameter because we don't want
 		// to close the pipes. Later we try to read stderr if the process failed.
-		OW_LOG_DEBUG(lgr, Format("Terminating process \"%1\" (%2)", procName, proc->pid()));
+		OW_LOG_DEBUG(lgr, Format("Cleaning up process \"%1\" (%2)", procName, proc->pid()));
 		proc->waitCloseTerm(Timeout::relative(10.0), Timeout::relative(0), Timeout::relative(10.1));
 		status = proc->processStatus();
 
@@ -123,7 +123,7 @@ namespace
 
 
 OOPProviderBase::OOPProviderBase(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<Mutex>& guardRef,
+		const Reference<RWLocker>& guardRef,
 		const Reference<ProcessRef>& persistentProcessRef,
 		const Reference<String>& persistentProcessUserNameRef
 		)
@@ -311,6 +311,8 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 		break;
 	}
 
+	OW_LOG_DEBUG(lgr, Format("%1: %2 was spawned with pid %3", fname, m_provInfo.process, proc->pid()));
+
 	proc->in()->setTimeouts(m_provInfo.timeout);
 	proc->out()->setTimeouts(m_provInfo.timeout);
 	proc->err()->setTimeouts(m_provInfo.timeout);
@@ -360,9 +362,11 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 		bool doLock = (usePersistentProcess == E_USE_PERSISTENT_PROCESS);
 		// This lock guards modification of m_persistentProcess as well as serializing 
 		// communication requests to it.
-		Mutex mutexOnStack;
-		Mutex* mutexToUse = m_guardRef ? m_guardRef.getPtr() : &mutexOnStack;
-		MutexLock lock(*mutexToUse, doLock);
+		Reference<WriteLock> lock;
+		if (doLock)
+		{
+			lock = new WriteLock(*m_guardRef, m_provInfo.timeout);
+		}
 
 		resetUnloadTimer();
 
@@ -418,7 +422,7 @@ bool
 OOPProviderBase::unloadTimeoutExpired()
 {
 	OW_ASSERT(m_guardRef);
-	MutexLock lock(*m_guardRef);
+	WriteLock lock(*m_guardRef, m_provInfo.timeout);
 	m_unloadTimer.loop();
 	return m_unloadTimer.expired();
 }

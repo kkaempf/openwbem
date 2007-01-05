@@ -50,7 +50,7 @@ class OOPAssociatorProvider : public AssociatorProviderIFC, public OOPProviderBa
 {
 public:
 	OOPAssociatorProvider(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<Mutex>& guardRef,
+		const Reference<RWLocker>& guardRef,
 		const Reference<ProcessRef>& persistentProcessRef,
 		const Reference<String>& persistentProcessUserNameRef);
 	virtual ~OOPAssociatorProvider();
@@ -97,6 +97,8 @@ public:
 			const CIMObjectPath& objectName,
 			const String& resultClass,
 			const String& role );
+
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 };
 
 

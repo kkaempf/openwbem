@@ -158,7 +158,7 @@ public:
 	}
 #endif
 
-	void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
 	{
 		if (m_prov->miVector.instMI)
 		{
@@ -246,26 +246,6 @@ private:
 	}
 
 };
-
-//////////////////////////////////////////////////////////////////////////////
-void
-completeExecution(
-	const ProviderEnvironmentIFCRef& env,
-	ProviderBaseIFCRef& provider)
-{
-	LoggerRef logger = env->getLogger(OOPCpp1ProviderRunner::COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "owoopcmpipr completeExecution called");
-	IntrusiveReference<LocalCMPIProvider> localProv = provider.cast_to<LocalCMPIProvider>();
-	if (localProv)
-	{
-		OW_LOG_DEBUG(logger, "owoopcmpipr::completeExecution calling cleanup on provider");
-		localProv->shuttingDown(env);
-	}
-	else
-	{
-		OW_LOG_ERROR(logger, "owoopcmpipr::completeExecution failed getting provider ref. Skipping cleanup on provider");
-	}
-}
 
 } // end anonymous namespace
 
@@ -382,8 +362,7 @@ int main(int argc, char* argv[])
 #endif
 
 	CMPIProvInitializer cmpiProvInitializer;
-	return provrunner.runProvider(provider, providerLib, cmpiProvInitializer,
-		completeExecution);
+	return provrunner.runProvider(provider, providerLib, cmpiProvInitializer);
 }
 
 namespace

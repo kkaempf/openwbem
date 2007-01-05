@@ -50,7 +50,7 @@ class OOPIndicationProvider : public IndicationProviderIFC, public OOPProviderBa
 {
 public:
 	OOPIndicationProvider(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<Mutex>& guardRef,
+		const Reference<RWLocker>& guardRef,
 		const Reference<ProcessRef>& persistentProcessRef,
 		const Reference<String>& persistentProcessUserNameRef
 		);
@@ -87,6 +87,8 @@ public:
 		const String& nameSpace,
 		const StringArray& classes
 		);
+
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 
 private:
 };

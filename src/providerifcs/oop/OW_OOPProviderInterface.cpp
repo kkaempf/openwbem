@@ -57,6 +57,8 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Infinity.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_LocalOperationContext.hpp"
+#include "OW_RepositoryIFC.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -74,6 +76,48 @@ namespace
 	{
 		return reg.getUserContext() == OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_MONITORED || reg.getUserContext() == OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION_MONITORED;
 	}
+
+	class DoNothingProviderEnvironment : public ProviderEnvironmentIFC
+	{
+	public:
+		virtual ProviderEnvironmentIFCRef clone() const
+		{
+			return ProviderEnvironmentIFCRef();
+		}
+		virtual RepositoryIFCRef getAuthorizingRepository() const
+		{
+			return RepositoryIFCRef();
+		}
+		virtual CIMOMHandleIFCRef getCIMOMHandle() const
+		{
+			return CIMOMHandleIFCRef();
+		}
+		virtual String getConfigItem(const String& name, const String& defRetVal) const
+		{
+			return String();
+		}
+		virtual StringArray getMultiConfigItem(const String& itemName, const StringArray& defRetVal, const char* tokenizeSeparator) const
+		{
+			return StringArray();
+		}
+		virtual OperationContext& getOperationContext()
+		{
+			return m_context;
+		}
+		virtual RepositoryIFCRef getRepository() const
+		{
+			return RepositoryIFCRef();
+		}
+		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
+		{
+			return CIMOMHandleIFCRef();
+		}
+		virtual String getUserName() const
+		{
+			return String();
+		}
+		LocalOperationContext m_context;
+	};
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -84,6 +128,25 @@ OOPProviderInterface::OOPProviderInterface()
 //////////////////////////////////////////////////////////////////////////////
 OOPProviderInterface::~OOPProviderInterface()
 {
+	Logger lgr(COMPONENT_NAME);
+	for (PersistentProvMap_t::iterator proviter = m_persistentProvs.begin(); proviter != m_persistentProvs.end(); ++proviter)
+	{
+		try
+		{
+			OOPProviderBase* prov = proviter->second.getOOPProviderBase();
+			OW_LOG_INFO(lgr, Format("terminating provider %1", proviter->first));
+			ProviderEnvironmentIFCRef env(new DoNothingProviderEnvironment);
+			prov->terminate(env, proviter->first);
+		}
+		catch (Exception& e)
+		{
+			OW_LOG_ERROR(lgr, Format("Caught exception in OOPProviderInterface::~OOPProviderInterface(): %1", e));
+		}
+		catch (...)
+		{
+			OW_LOG_ERROR(lgr, "Caught unknown exception in OOPProviderInterface::~OOPProviderInterface()");
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -428,7 +491,7 @@ OOPProviderInterface::getProvider(const char* provIdString, DMP dmp, const OOPPr
 {
 	if (info.providerNeedsNewProcessForEveryInvocation())
 	{
-		return RT(new T(info, Reference<Mutex>(), Reference<ProcessRef>(), Reference<String>()));
+		return RT(new T(info, Reference<RWLocker>(), Reference<ProcessRef>(), Reference<String>()));
 	}
 
 	MutexLock lock(m_persistentProvsGuard);
@@ -625,11 +688,12 @@ OOPProviderInterface::doGetIndicationProvider(const ProviderEnvironmentIFCRef& e
 void 
 OOPProviderInterface::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 {
-	DateTime dt;
-	dt.setToCurrent();
 	MutexLock l(m_persistentProvsGuard);
-	PersistentProvMap_t::iterator proviter = m_persistentProvs.begin();
-	while (proviter != m_persistentProvs.end())
+	PersistentProvMap_t persistentProvsCopy(m_persistentProvs);
+	l.release();
+
+	PersistentProvMap_t::iterator proviter = persistentProvsCopy.begin();
+	while (proviter != persistentProvsCopy.end())
 	{
 		// If this is not a persistent provider, see if we can unload it.
 		if (!proviter->second.getInfo().isPersistent)
@@ -639,9 +703,9 @@ OOPProviderInterface::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 			{
 				Logger lgr(COMPONENT_NAME);
 				OW_LOG_INFO(lgr, Format("Shutting down and terminating provider %1", proviter->first));
-// TODO: implement this				prov->shuttingDown();
+				dynamic_cast<ProviderBaseIFC&>(*prov).shuttingDown(env);
 				prov->terminate(env, proviter->first);
-				proviter = m_persistentProvs.erase(proviter);
+				proviter = persistentProvsCopy.erase(proviter);
 				continue;
 			}
 		}
@@ -654,29 +718,32 @@ OOPProviderInterface::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 void 
 OOPProviderInterface::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 {
-	/* TODO: This should not call terminate(). At this point, providers are still expected to work and can be called after shuttingDown. 
-	Instead it should send a shuttingDown command, which should cause shuttingDown() to be called on the provider, and the provider should
-	not terminate. The providers get terminated in ~OOPProviderInterface.
+	// This should not call terminate(). At this point, providers are still expected to work and can be called after shuttingDown. 
+	// The providers get terminated in ~OOPProviderInterface.
 
 	Logger lgr(COMPONENT_NAME);
-	Mutex mutexOnStack;
-	MutexLock lock(m_persistentProvsGuard);
-	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown, there are %1 persistent providers to shutdown", m_persistentProvs.size()));
 
-	for (PersistentProvMap_t::iterator proviter = m_persistentProvs.begin();
-		proviter != m_persistentProvs.end(); proviter++)
+	// this mutex cannot stay locked while calling shuttingDown() as callbacks can happen on another thread and cause a deadlock.
+	MutexLock lock(m_persistentProvsGuard);
+	PersistentProvMap_t provsCopy(m_persistentProvs);
+	lock.release();
+
+	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown, there are %1 persistent providers to shutdown", provsCopy.size()));
+
+	RWLocker mutexOnStack;
+	for (PersistentProvMap_t::iterator proviter = provsCopy.begin();
+		proviter != provsCopy.end(); proviter++)
 	{
-		OOPProviderBase* pprov = proviter->second.getOOPProviderBase();
+		ProviderBaseIFC* pprov = dynamic_cast<ProviderBaseIFC*>(proviter->second.getOOPProviderBase());
 		OW_ASSERT(pprov);
 		if (pprov)
 		{
-			Mutex* mutexToUse = proviter->second.guard ? proviter->second.guard.getPtr() : &mutexOnStack;
-			MutexLock pl(*mutexToUse);
+			RWLocker* mutexToUse = proviter->second.guard ? proviter->second.guard.getPtr() : &mutexOnStack;
+			WriteLock pl(*mutexToUse, proviter->second.getInfo().timeout);
 			OW_LOG_DEBUG(lgr, "OOPProviderInterface::doShuttingDown terminating provider");
-			pprov->terminate(env, proviter->first);
+			pprov->shuttingDown(env);
 		}
 	}
-	*/
 }
 
 //////////////////////////////////////////////////////////////////////////////

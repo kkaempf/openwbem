@@ -42,13 +42,14 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_DateTime.hpp"
+#include "OW_OOPShuttingDownCallback.hpp"
 
 namespace OW_NAMESPACE
 {
 
 //////////////////////////////////////////////////////////////////////////////
 OOPMethodProvider::OOPMethodProvider(const OOPProviderInterface::ProvRegInfo& info,
-	const Reference<Mutex>& guardRef,
+	const Reference<RWLocker>& guardRef,
 	const Reference<ProcessRef>& persistentProcessRef,
 	const Reference<String>& persistentProcessUserNameRef)
 	: OOPProviderBase(info, guardRef, persistentProcessRef, persistentProcessUserNameRef)
@@ -114,6 +115,14 @@ OOPMethodProvider::invokeMethod(
 	InvokeMethodCallback invokeMethodCallback(retval, ns, path, methodName, in, out);
 	startProcessAndCallFunction(env, invokeMethodCallback, "OOPMethodProvider::invokeMethod");
 	return retval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OOPMethodProvider::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	OOPShuttingDownCallback shuttingDownCallback;
+	startProcessAndCallFunction(env, shuttingDownCallback, "OOPMethodProvider::shuttingDown");
 }
 
 

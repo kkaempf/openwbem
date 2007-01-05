@@ -46,6 +46,7 @@
 #include "OW_IOIFCStreamBuffer.hpp"
 #include "OW_IOException.hpp"
 #include "OW_DateTime.hpp"
+#include "OW_OOPShuttingDownCallback.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -57,7 +58,7 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 OOPInstanceProvider::OOPInstanceProvider(const OOPProviderInterface::ProvRegInfo& info,
-	const Reference<Mutex>& guardRef,
+	const Reference<RWLocker>& guardRef,
 	const Reference<ProcessRef>& persistentProcessRef,
 	const Reference<String>& persistentProcessUserNameRef)
 	: OOPProviderBase(info, guardRef, persistentProcessRef, persistentProcessUserNameRef)
@@ -382,6 +383,13 @@ OOPInstanceProvider::deleteInstance(
 	startProcessAndCallFunction(env, deleteInstanceCallback, "OOPInstanceProvider::deleteInstance");
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void
+OOPInstanceProvider::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	OOPShuttingDownCallback shuttingDownCallback;
+	startProcessAndCallFunction(env, shuttingDownCallback, "OOPInstanceProvider::shuttingDown");
+}
 
 } // end namespace OW_NAMESPACE
 

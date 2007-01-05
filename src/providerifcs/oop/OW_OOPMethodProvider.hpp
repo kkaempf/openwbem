@@ -50,7 +50,7 @@ class OOPMethodProvider : public MethodProviderIFC, public OOPProviderBase
 {
 public:
 	OOPMethodProvider(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<Mutex>& guardRef,
+		const Reference<RWLocker>& guardRef,
 		const Reference<ProcessRef>& persistentProcessRef,
 		const Reference<String>& persistentProcessUserNameRef);
 	virtual ~OOPMethodProvider();
@@ -63,6 +63,8 @@ public:
 			const String& methodName,
 			const CIMParamValueArray& in,
 			CIMParamValueArray& out);
+
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 
 };
 

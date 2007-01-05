@@ -54,7 +54,7 @@ class OOPProviderBase
 {
 public:
 	OOPProviderBase(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<Mutex>& guardRef,
+		const Reference<RWLocker>& guardRef,
 		const Reference<ProcessRef>& persistentProcessRef,
 		const Reference<String>& persistentProcessUserNameRef);
 
@@ -102,7 +102,7 @@ private:
 	OOPProviderInterface::ProvRegInfo m_provInfo;
 	OOPProtocolIFCRef m_protocol;
 
-	Reference<Mutex> m_guardRef;
+	Reference<RWLocker> m_guardRef;
 	Reference<ProcessRef> m_persistentProcessRef;
 	Reference<String> m_persistentProcessUserNameRef;
 	ThreadPool m_threadPool;

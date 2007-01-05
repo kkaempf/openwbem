@@ -36,11 +36,13 @@
 #define OW_OOP_PROVIDER_INTERFACE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
+#include "OW_OOPFwd.hpp"
 #include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_String.hpp"
 #include "OW_SortedVectorMap.hpp"
 #include "OW_Timeout.hpp"
 #include "OW_Mutex.hpp"
+#include "OW_RWLocker.hpp"
 #include "OW_Reference.hpp"
 #include "OW_OpenWBEM_OOPProviderRegistration.hpp"
 
@@ -49,8 +51,6 @@
 
 namespace OW_NAMESPACE
 {
-
-class OOPProviderBase;
 
 class OOPProviderInterface : public ProviderIFCBaseIFC
 {
@@ -121,7 +121,7 @@ private:
 	struct SavedProviders
 	{
 		SavedProviders()
-			: guard(new Mutex)
+			: guard(new RWLocker)
 			, process(new ProcessRef)
 			, processUserName(new String)
 		{
@@ -129,7 +129,7 @@ private:
 
 		SavedProviders(const InstanceProviderIFCRef& ipir)
 			: instanceProv(ipir)
-			, guard(new Mutex)
+			, guard(new RWLocker)
 			, process(new ProcessRef)
 			, processUserName(new String)
 		{
@@ -137,7 +137,7 @@ private:
 
 		SavedProviders(const SecondaryInstanceProviderIFCRef& sipir)
 			: secondaryInstanceProv(sipir)
-			, guard(new Mutex)
+			, guard(new RWLocker)
 			, process(new ProcessRef)
 			, processUserName(new String)
 		{
@@ -145,7 +145,7 @@ private:
 
 		SavedProviders(const AssociatorProviderIFCRef& apir)
 			: associatorProv(apir)
-			, guard(new Mutex)
+			, guard(new RWLocker)
 			, process(new ProcessRef)
 			, processUserName(new String)
 		{
@@ -153,7 +153,7 @@ private:
 
 		SavedProviders(const MethodProviderIFCRef& mpir)
 			: methodProv(mpir)
-			, guard(new Mutex)
+			, guard(new RWLocker)
 			, process(new ProcessRef)
 			, processUserName(new String)
 		{
@@ -161,7 +161,7 @@ private:
 
 		SavedProviders(const IndicationProviderIFCRef& ipir)
 			: indProv(ipir)
-			, guard(new Mutex)
+			, guard(new RWLocker)
 			, process(new ProcessRef)
 			, processUserName(new String)
 		{
@@ -169,7 +169,7 @@ private:
 
 		SavedProviders(const PolledProviderIFCRef& ppir)
 			: polledProv(ppir)
-			, guard(new Mutex)
+			, guard(new RWLocker)
 			, process(new ProcessRef)
 			, processUserName(new String)
 		{
@@ -177,7 +177,7 @@ private:
 
 		SavedProviders(const IndicationExportProviderIFCRef& iepir)
 			: indicationExportProv(iepir)
-			, guard(new Mutex)
+			, guard(new RWLocker)
 			, process(new ProcessRef)
 			, processUserName(new String)
 		{
@@ -190,7 +190,7 @@ private:
 		IndicationProviderIFCRef indProv;
 		PolledProviderIFCRef polledProv;
 		IndicationExportProviderIFCRef indicationExportProv;
-		Reference<Mutex> guard;
+		Reference<RWLocker> guard;
 		Reference<ProcessRef> process;
 		Reference<String> processUserName;
 

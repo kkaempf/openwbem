@@ -195,7 +195,7 @@ public:
 	}
 #endif
 
-	void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
 	{
 		m_prov->shuttingDown(env);
 	}
@@ -275,26 +275,6 @@ private:
 	CppProviderBaseIFCRef m_cppProv;
 	String m_providerLib;
 };
-
-//////////////////////////////////////////////////////////////////////////////
-void
-completeExecution(
-	const ProviderEnvironmentIFCRef& env,
-	ProviderBaseIFCRef& provider)
-{
-	LoggerRef logger = env->getLogger(OOPCpp1ProviderRunner::COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "owoopcpp1pr completeExecution called");
-	IntrusiveReference<LocalCppProvider> localProv = provider.cast_to<LocalCppProvider>();
-	if (localProv)
-	{
-		OW_LOG_DEBUG(logger, "owoopcpp1pr::completeExecution shuttingDown provider");
-		localProv->shuttingDown(env);
-	}
-	else
-	{
-		OW_LOG_ERROR(logger, "owoopcpp1pr::completeExecution failed getting provider ref. Skipping shuttingDown on provider");
-	}
-}
 
 } // end anonymous namespace
 
@@ -409,7 +389,7 @@ int main(int argc, char* argv[])
 	}
 #endif
 
-	return provrunner.runProvider(provider, providerLib, cppProvInitializer, completeExecution);
+	return provrunner.runProvider(provider, providerLib, cppProvInitializer);
 
 }
 

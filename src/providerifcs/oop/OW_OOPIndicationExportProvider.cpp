@@ -34,12 +34,13 @@
 
 #include "OW_config.h"
 #include "OW_OOPIndicationExportProvider.hpp"
+#include "OW_OOPShuttingDownCallback.hpp"
 
 namespace OW_NAMESPACE
 {
 
 OOPIndicationExportProvider::OOPIndicationExportProvider(const OOPProviderInterface::ProvRegInfo& info,
-	const Reference<Mutex>& guardRef,
+	const Reference<RWLocker>& guardRef,
 	const Reference<ProcessRef>& persistentProcessRef,
 	const Reference<String>& persistentProcessUserNameRef
 	)
@@ -111,6 +112,12 @@ OOPIndicationExportProvider::doDefinitiveCancel()
 {
 }
 
+void 
+OOPIndicationExportProvider::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	OOPShuttingDownCallback shuttingDownCallback;
+	startProcessAndCallFunction(env, shuttingDownCallback, "OOPIndicationExportProvider::shuttingDown");
+}
 
 } // end namespace OW_NAMESPACE
 

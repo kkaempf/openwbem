@@ -1693,6 +1693,29 @@ OOPProtocolCPP1::exportIndication(
 	}
 }
 
+void
+OOPProtocolCPP1::shuttingDown(
+	const UnnamedPipeRef& in,
+	const UnnamedPipeRef& out,
+	const Timeout& timeout,
+	const ProviderEnvironmentIFCRef& env)
+{
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::shuttingDown about to start writing");
+
+	Array<unsigned char> buf;
+	OOPDataOStreamBuf obuf(buf);
+	BinarySerialization::write(obuf, BinarySerialization::BinaryProtocolVersion);
+	BinarySerialization::write(obuf, BinarySerialization::SHUTTING_DOWN);
+
+	bool gotOK = false;
+	VoidOperationResultHandler operationResult(gotOK);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
+	if (!gotOK)
+	{
+		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to shuttingDown");
+	}
+}
 
 } // end namespace OW_NAMESPACE
 

@@ -1084,8 +1084,7 @@ int
 OOPCpp1ProviderRunner::runProvider(
 	ProviderBaseIFCRef& provider,
 	const String& sourceLib,
-	InitializeCallback& initializeCallback,
-	CompletionCB completionCB)
+	InitializeCallback& initializeCallback)
 {
 	int rval = 0;
 	Logger logger(COMPONENT_NAME);
@@ -1095,6 +1094,7 @@ OOPCpp1ProviderRunner::runProvider(
 	try
 	{
 		bool persistent = false;
+		bool receivedShuttingDown = false;
 		do
 		{
 			got_op = false;
@@ -1175,6 +1175,13 @@ OOPCpp1ProviderRunner::runProvider(
 				}
 				break;
 
+				case BinarySerialization::SHUTTING_DOWN:
+				{
+					provider->shuttingDown(m_penv);
+					receivedShuttingDown = true;
+				}
+				break;
+
 				case BinarySerialization::POLL:
 				case BinarySerialization::GET_INITIAL_POLLING_INTERVAL:
 				{
@@ -1216,9 +1223,9 @@ OOPCpp1ProviderRunner::runProvider(
 			}
 		} while (persistent);
 
-		if (completionCB)
+		if (!receivedShuttingDown)
 		{
-			completionCB(m_penv, provider);
+			provider->shuttingDown(m_penv);
 		}
 	}
 	catch (CIMException& e)

@@ -60,6 +60,8 @@ class OW_PROVIDER_API ProviderBaseIFC : public virtual IntrusiveCountableBase
 		virtual AssociatorProviderIFC* getAssociatorProvider();
 #endif
 
+		virtual void shuttingDown(const ProviderEnvironmentIFCRef& env) = 0;
+
 };
 
 } // end namespace OW_NAMESPACE

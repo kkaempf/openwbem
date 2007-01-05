@@ -34,12 +34,13 @@
 
 #include "OW_config.h"
 #include "OW_OOPPolledProvider.hpp"
+#include "OW_OOPShuttingDownCallback.hpp"
 
 namespace OW_NAMESPACE
 {
 
 OOPPolledProvider::OOPPolledProvider(const OOPProviderInterface::ProvRegInfo& info,
-	const Reference<Mutex>& guardRef,
+	const Reference<RWLocker>& guardRef,
 	const Reference<ProcessRef>& persistentProcessRef,
 	const Reference<String>& persistentProcessUserNameRef
 	)
@@ -126,6 +127,13 @@ OOPPolledProvider::doCooperativeCancel()
 void
 OOPPolledProvider::doDefinitiveCancel()
 {
+}
+
+void
+OOPPolledProvider::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	OOPShuttingDownCallback shuttingDownCallback;
+	startProcessAndCallFunction(env, shuttingDownCallback, "OOPPolledProvider::shuttingDown");
 }
 
 

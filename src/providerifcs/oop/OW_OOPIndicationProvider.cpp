@@ -35,6 +35,7 @@
 #include "OW_config.h"
 #include "OW_OOPIndicationProvider.hpp"
 #include "OW_Logger.hpp"
+#include "OW_OOPShuttingDownCallback.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -43,7 +44,7 @@ namespace OW_NAMESPACE
 {
 
 OOPIndicationProvider::OOPIndicationProvider(const OOPProviderInterface::ProvRegInfo& info,
-	const Reference<Mutex>& guardRef,
+	const Reference<RWLocker>& guardRef,
 	const Reference<ProcessRef>& persistentProcessRef,
 	const Reference<String>& persistentProcessUserNameRef
 	)
@@ -259,6 +260,14 @@ OOPIndicationProvider::mustPoll(
 	MustPollCallback mustPollCallback(retval, filter, eventType, nameSpace, classes);
 	startProcessAndCallFunction(env, mustPollCallback, "OOPMethodProvider::mustPoll");
 	return retval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OOPIndicationProvider::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	OOPShuttingDownCallback shuttingDownCallback;
+	startProcessAndCallFunction(env, shuttingDownCallback, "OOPIndicationProvider::shuttingDown");
 }
 
 
