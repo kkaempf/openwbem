@@ -696,7 +696,8 @@ OOPProviderInterface::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 	while (proviter != persistentProvsCopy.end())
 	{
 		// If this is not a persistent provider, see if we can unload it.
-		if (!proviter->second.getInfo().isPersistent)
+		if (!proviter->second.getInfo().isPersistent && proviter->second.process && *proviter->second.process && 
+			(*proviter->second.process)->processStatus().running())
 		{
 			OOPProviderBase* prov = proviter->second.getOOPProviderBase();
             if (prov->unloadTimeoutExpired())
@@ -740,8 +741,15 @@ OOPProviderInterface::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 		{
 			RWLocker* mutexToUse = proviter->second.guard ? proviter->second.guard.getPtr() : &mutexOnStack;
 			WriteLock pl(*mutexToUse, proviter->second.getInfo().timeout);
-			OW_LOG_DEBUG(lgr, "OOPProviderInterface::doShuttingDown terminating provider");
-			pprov->shuttingDown(env);
+			OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown terminating provider %1", proviter->first));
+			try
+			{
+				pprov->shuttingDown(env);
+			}
+			catch (Exception& e)
+			{
+				OW_LOG_ERROR(lgr, Format("OOPProviderInterface::doShuttingDown caught Exception: %1", e));
+			}
 		}
 	}
 }

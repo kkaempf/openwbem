@@ -1178,6 +1178,7 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::SHUTTING_DOWN:
 				{
 					provider->shuttingDown(m_penv);
+					BinarySerialization::write(m_outbuf, BinarySerialization::BIN_OK);
 					receivedShuttingDown = true;
 				}
 				break;
