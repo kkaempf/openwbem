@@ -257,7 +257,13 @@ daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool res
 				if (daemonize_upipe->readInt(&status) < 1
 						|| status != DAEMONIZE_SUCCESS)
 				{
-					cerr << "Error starting CIMOM.  Check the log files." << endl;
+					// This object is being used for several different executables now.
+					String displayName(daemonName);
+					if (daemonName.equals("owcimomd"))
+					{
+						displayName = "CIMOM";
+					}
+					cerr << "Error starting " << displayName.c_str() << ".  Check the log files." << endl;
 					_exit(1);
 				}
 				_exit(0); // exit the original process
