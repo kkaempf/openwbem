@@ -216,7 +216,8 @@ CppProviderIFC::doInit(const ProviderEnvironmentIFCRef& env,
 	AssociatorProviderInfoArray& a,
 #endif
 	MethodProviderInfoArray& m,
-	IndicationProviderInfoArray& ind)
+	IndicationProviderInfoArray& ind,
+	QueryProviderInfoArray& q)
 {
 	loadProviders(env, i,
 		si,
@@ -224,7 +225,8 @@ CppProviderIFC::doInit(const ProviderEnvironmentIFCRef& env,
 		a,
 #endif
 		m,
-		ind);
+		ind,
+		q);
 }
 //////////////////////////////////////////////////////////////////////////////
 InstanceProviderIFCRef
@@ -398,6 +400,27 @@ CppProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 	OW_THROW(NoSuchProviderException, provIdString);
 }
 //////////////////////////////////////////////////////////////////////////////
+QueryProviderIFCRef
+CppProviderIFC::doGetQueryProvider(const ProviderEnvironmentIFCRef& env,
+	const char* provIdString)
+{
+	CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
+	if (pProv)
+	{
+		Logger lgr(COMPONENT_NAME);
+		CppQueryProviderIFC* pIP = pProv->getQueryProvider();
+		if (pIP)
+		{
+			OW_LOG_DEBUG(lgr, Format("CPPProviderIFC found Query provider %1", provIdString));
+			CppQueryProviderIFCRef ipRef(pProv.getLibRef(), pIP);
+			return QueryProviderIFCRef(new CppQueryProviderProxy(ipRef));
+		}
+		OW_LOG_ERROR(lgr, Format("Provider %1 is not an Query provider",
+			provIdString));
+	}
+	OW_THROW(NoSuchProviderException, provIdString);
+}
+//////////////////////////////////////////////////////////////////////////////
 void
 CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 	InstanceProviderInfoArray& instanceProviderInfo,
@@ -406,7 +429,8 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 	AssociatorProviderInfoArray& associatorProviderInfo,
 #endif
 	MethodProviderInfoArray& methodProviderInfo,
-	IndicationProviderInfoArray& indicationProviderInfo)
+	IndicationProviderInfoArray& indicationProviderInfo,
+	QueryProviderInfoArray& queryProviderInfo)
 {
 	MutexLock ml(m_guard);
 	if (m_loadDone)
@@ -589,6 +613,16 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 					p_indp->getIndicationProviderInfoWithEnv(
 						createProvRegEnv(env), info);
 					indicationProviderInfo.push_back(info);
+				}
+
+				CppQueryProviderIFC* p_qp = p->getQueryProvider();
+				if (p_qp)
+				{
+					QueryProviderInfo info;
+					info.setProviderName(providerid);
+					p_qp->getQueryProviderInfoWithEnv(
+						createProvRegEnv(env), info);
+					queryProviderInfo.push_back(info);
 				}
 
 				continue;

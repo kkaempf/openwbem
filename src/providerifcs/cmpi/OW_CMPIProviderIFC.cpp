@@ -166,7 +166,8 @@ CMPIProviderIFC::doInit(const ProviderEnvironmentIFCRef&,
 #endif
 
 	MethodProviderInfoArray&,
-	IndicationProviderInfoArray&)
+	IndicationProviderInfoArray&,
+	QueryProviderInfoArray&)
 {
 	return;
 }

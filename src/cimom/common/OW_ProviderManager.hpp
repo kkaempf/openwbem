@@ -89,10 +89,10 @@ public:
 	virtual void shutdown();
 
 	/**
-	* Called just prior to shutting down the CIMOM, to allow shutdown
-    * activities that still require access to the CIMOM.  See
-    * description in base class ServiceIFC.
-	*/
+	 * Called just prior to shutting down the CIMOM, to allow shutdown
+	 * activities that still require access to the CIMOM.  See
+	 * description in base class ServiceIFC.
+	 */
 	virtual void shuttingDown();
 
 	/**
@@ -182,6 +182,17 @@ public:
 		getIndicationProviders(
 			const String& ns, const CIMName& indicationClassName,
 			const CIMNameArray& monitoredClassNames) const;
+
+	/**
+	 * Locate a Query provider.
+	 *
+	 * @param ns The namespace of the class.
+	 * @param cc The class
+	 *
+	 * @return A QueryProviderRef. If no provider is found then null is returned.
+	 */
+	QueryProviderIFCRef getQueryProvider(const String& ns, const CIMClass& cc) const;
+
 	/**
 	 * Call into each ProviderIFC to unload providers which haven't been
 	 * used for a while
@@ -234,6 +245,10 @@ private:
 	// namespace:classname for a specific namespace.
 	// For a lifecycle provider, /* and /classname entries are made for each lifecycle class.
 	MultiProvRegMap_t m_registeredIndProvs;
+
+	// The key must be: a classname if the provider supports any namespace,
+	// or namespace:classname for a specific namespace.
+	ProvRegMap_t m_registeredQueryProvs;
 
 	Logger m_logger;
 	ServiceEnvironmentIFCRef m_env;

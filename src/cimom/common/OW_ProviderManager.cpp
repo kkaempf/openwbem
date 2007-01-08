@@ -91,6 +91,7 @@ void ProviderManager::shutdown()
 	m_registeredMethProvs.clear();
 	m_registeredPropProvs.clear();
 	m_registeredIndProvs.clear();
+	m_registeredQueryProvs.clear();
 	m_IFCArray.clear();
 
 	m_env = 0;
@@ -443,6 +444,7 @@ void ProviderManager::init(const ServiceEnvironmentIFCRef& env)
 
 		MethodProviderInfoArray methodProviderInfo;
 		IndicationProviderInfoArray indicationProviderInfo;
+		QueryProviderInfoArray queryProviderInfo;
 
 		m_IFCArray[i]->init(penv,
 			instanceProviderInfo,
@@ -451,7 +453,8 @@ void ProviderManager::init(const ServiceEnvironmentIFCRef& env)
 			associatorProviderInfo,
 #endif
 			methodProviderInfo,
-			indicationProviderInfo);
+			indicationProviderInfo,
+			queryProviderInfo);
 
 		processProviderInfo(penv, instanceProviderInfo, m_IFCArray[i], "instance", m_registeredInstProvs);
 		processProviderInfo(penv, secondaryInstanceProviderInfo, m_IFCArray[i], "secondary instance", m_registeredSecInstProvs);
@@ -462,6 +465,7 @@ void ProviderManager::init(const ServiceEnvironmentIFCRef& env)
 
 		processProviderInfo(penv, methodProviderInfo, m_IFCArray[i], "method", m_registeredMethProvs);
 		processProviderInfo(penv, indicationProviderInfo, m_IFCArray[i], "indication", m_registeredIndProvs);
+		processProviderInfo(penv, queryProviderInfo, m_IFCArray[i], "query", m_registeredQueryProvs);
 	}
 
 	StringArray restrictedNamespaces = m_env->getMultiConfigItem(ConfigOpts::EXPLICIT_REGISTRATION_NAMESPACES_opt, StringArray(), " \t");
@@ -812,6 +816,38 @@ ProviderManager::getIndicationProviders(
 
 	return providers;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+QueryProviderIFCRef
+ProviderManager::getQueryProvider(const String& ns, const CIMClass& cc) const
+{
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
+	ProvRegMap_t::const_iterator ci;
+	if(!isRestrictedNamespace(ns) || cc.getName().equalsIgnoreCase("__Namespace"))
+	{
+		// lookup just the class name to see if a provider registered for the
+		// class in all namespaces.
+		ci = m_registeredQueryProvs.find(cc.getName().toLowerCase());
+		if (ci != m_registeredQueryProvs.end())
+		{
+			return ci->second.ifc->getQueryProvider(env,
+				ci->second.provName.c_str());
+		}
+	}
+
+	// next lookup namespace:classname to see if we've got one for the
+	// specific namespace
+	String nsAndClassName = ns + ':' + cc.getName();
+	nsAndClassName.toLowerCase();
+	ci = m_registeredQueryProvs.find(nsAndClassName);
+	if (ci != m_registeredQueryProvs.end())
+	{
+		return ci->second.ifc->getQueryProvider(env,
+			ci->second.provName.c_str());
+	}
+	return QueryProviderIFCRef(0);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 ProviderManager::unloadProviders(const ProviderEnvironmentIFCRef& env)

@@ -163,7 +163,8 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 		SecondaryInstanceProviderInfoArray& sipia,
 		AssociatorProviderInfoArray& apia,
 		MethodProviderInfoArray& mpia,
-		IndicationProviderInfoArray& indpia)
+		IndicationProviderInfoArray& indpia,
+		QueryProviderInfoArray& qpia)
 {
 	Logger lgr(COMPONENT_NAME);
 	String interopNs = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);

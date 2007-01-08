@@ -96,6 +96,11 @@ ProviderBaseIFC::getAssociatorProvider()
 }
 
 #endif
+QueryProviderIFC* 
+ProviderBaseIFC::getQueryProvider()
+{
+	return 0;
+}
 
 } // end namespace OW_NAMESPACE
 

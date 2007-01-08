@@ -234,7 +234,8 @@ class testProviderMux: public ProviderIFCBaseIFC
 			AssociatorProviderInfoArray& aa,
 #endif
 			MethodProviderInfoArray& ma,
-			IndicationProviderInfoArray& inda)
+			IndicationProviderInfoArray& inda,
+			QueryProviderInfoArray& qpia)
 		{
 			if (m_name == "lib1")
 			{

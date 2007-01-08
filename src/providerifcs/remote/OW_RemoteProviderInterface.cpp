@@ -85,7 +85,8 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 		AssociatorProviderInfoArray& apia,
 #endif
 		MethodProviderInfoArray& mpia,
-		IndicationProviderInfoArray& indpia)
+		IndicationProviderInfoArray& indpia,
+		QueryProviderInfoArray& qpia)
 {
 	unsigned maxConnectionsPerUrl = 5;
 	try

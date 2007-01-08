@@ -59,7 +59,7 @@ class OW_PROVIDER_API ProviderBaseIFC : public virtual IntrusiveCountableBase
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		virtual AssociatorProviderIFC* getAssociatorProvider();
 #endif
-
+		virtual QueryProviderIFC* getQueryProvider();
 		virtual void shuttingDown(const ProviderEnvironmentIFCRef& env) = 0;
 
 };

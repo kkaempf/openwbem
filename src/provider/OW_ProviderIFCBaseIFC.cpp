@@ -57,7 +57,8 @@ ProviderIFCBaseIFC::init(const ProviderEnvironmentIFCRef& env,
 	AssociatorProviderInfoArray& a,
 #endif
 	MethodProviderInfoArray& m,
-	IndicationProviderInfoArray& ind)
+	IndicationProviderInfoArray& ind,
+	QueryProviderInfoArray& q)
 {
 	doInit(env, i,
 		si,
@@ -65,7 +66,8 @@ ProviderIFCBaseIFC::init(const ProviderEnvironmentIFCRef& env,
 		a,
 #endif
 		m,
-		ind);
+		ind,
+		q);
 }
 ///////////////////////////////////////////////////////////////////////////////
 InstanceProviderIFCRef
@@ -111,6 +113,13 @@ ProviderIFCBaseIFC::getPolledProviders(const ProviderEnvironmentIFCRef& env
 	)
 {
 	return doGetPolledProviders(env);
+}
+///////////////////////////////////////////////////////////////////////////////
+QueryProviderIFCRef
+ProviderIFCBaseIFC::getQueryProvider(const ProviderEnvironmentIFCRef& env,
+	const char* provIdString)
+{
+	return doGetQueryProvider(env, provIdString);
 }
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -185,6 +194,13 @@ ProviderIFCBaseIFC::doGetIndicationProvider(
 	const char* provIdString)
 {
 	OW_THROW(NoSuchProviderException, "INTERNAL ERROR! Provider IFC didn't override ProviderIFCBaseIFC::doGetIndicationProvider()");
+}
+///////////////////////////////////////////////////////////////////////////////
+QueryProviderIFCRef
+ProviderIFCBaseIFC::doGetQueryProvider(const ProviderEnvironmentIFCRef& env,
+	const char* provIdString)
+{
+	OW_THROW(NoSuchProviderException, "INTERNAL ERROR! Provider IFC didn't override ProviderIFCBaseIFC::doGetQueryProvider()");
 }
 ///////////////////////////////////////////////////////////////////////////////
 void

@@ -55,6 +55,7 @@ class CppAssociatorProviderIFC;
 class CppIndicationExportProviderIFC;
 class CppPolledProviderIFC;
 class CppIndicationProviderIFC;
+class CppQueryProviderIFC;
 /**
  * This is the base class implemented by all providers that are loaded
  * by the C++ provider interface.
@@ -118,6 +119,7 @@ public:
 	virtual CppIndicationExportProviderIFC* getIndicationExportProvider();
 	virtual CppPolledProviderIFC* getPolledProvider();
 	virtual CppIndicationProviderIFC* getIndicationProvider();
+	virtual CppQueryProviderIFC* getQueryProvider();
 	DateTime getLastAccessTime() const;
 	void updateAccessTime();
 	

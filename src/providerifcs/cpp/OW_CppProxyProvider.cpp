@@ -46,7 +46,7 @@ using namespace WBEMFlags;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////		
 CppAssociatorProviderProxy::CppAssociatorProviderProxy(
-	CppAssociatorProviderIFCRef pProv) :
+	const CppAssociatorProviderIFCRef& pProv) :
 	AssociatorProviderIFC(), m_pProv(pProv)
 {
 }
@@ -125,7 +125,7 @@ CppAssociatorProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////		
 CppInstanceProviderProxy::CppInstanceProviderProxy(
-		CppInstanceProviderIFCRef pProv) :
+		const CppInstanceProviderIFCRef& pProv) :
 	InstanceProviderIFC(), m_pProv(pProv)
 {
 }
@@ -223,7 +223,7 @@ CppInstanceProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
 }
 
 //////////////////////////////////////////////////////////////////////////////		
-CppSecondaryInstanceProviderProxy::CppSecondaryInstanceProviderProxy(CppSecondaryInstanceProviderIFCRef pProv)
+CppSecondaryInstanceProviderProxy::CppSecondaryInstanceProviderProxy(const CppSecondaryInstanceProviderIFCRef& pProv)
 	: SecondaryInstanceProviderIFC()
 	, m_pProv(pProv)
 {
@@ -275,7 +275,7 @@ CppSecondaryInstanceProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef&
 }
 
 //////////////////////////////////////////////////////////////////////////////		
-CppMethodProviderProxy::CppMethodProviderProxy(CppMethodProviderIFCRef pProv) :
+CppMethodProviderProxy::CppMethodProviderProxy(const CppMethodProviderIFCRef& pProv) :
 	MethodProviderIFC(), m_pProv(pProv)
 {
 }
