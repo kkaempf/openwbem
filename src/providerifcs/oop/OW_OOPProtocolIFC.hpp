@@ -270,6 +270,17 @@ public:
 		const UnnamedPipeRef& out,
 		const Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env) = 0;
+
+	virtual void queryInstances(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const WQLSelectStatement& query,
+		CIMInstanceResultHandlerIFC& result,
+		const CIMClass& cimClass) = 0;
+
 protected:
 	OOPProviderBase* m_pprov;		// Pointer to avoid circular reference
 };

@@ -846,6 +846,29 @@ TestWQL()
 		> $RESULTDIR/wqlTest3.out 3>&1 || \
 		ExitWithFail "WQL test 3 exited with error"
 
+	# Change the query provider to be out of process instead of in-process
+	rm -f $STAGEDIR/$OWPKGLIBDIR/c++providers/libtestWQLProv.@lib_ext@
+	InstallOOPProvider $BUILDDIR/test/acceptance/progs/libtestWQLProv.@lib_ext@
+
+	# import the mof.  We have to change the path to the owoopcpp1pr command
+	# and tell owoopcpp1pr where to stick its log file
+	sed -e "s!${OWLIBEXECDIR}!${STAGEDIR}${OWLIBEXECDIR}!g" \
+		-e "s!${OWLIBDIR}/openwbem!${STAGEDIR}${OWLIBDIR}/openwbem!g" \
+		-e's!--logfile=!--logfile='"$RESULTDIR/owoopcpp1pr.log!g" \
+		$BUILDDIR/test/acceptance/progs/wqlTestReg.mof | \
+		$STAGEDIR/$OWBINDIR/owmofc --url http://test1:pass1@localhost:30926/ --create-namespaces - || \
+		ExitWithFail "owmofc exited with error."
+
+	# have to restart for provider registration to take effect
+	RestartDaemon
+
+	echo "Executing wql test suite 3 oop, saving output in " $RESULTDIR/wqlTest3-oop.out
+	$BUILDDIR/test/acceptance/progs/wqlTest3 owbinary.wbem://test1:pass1@localhost:$OWIPC/ \
+		> $RESULTDIR/wqlTest3-oop.out 3>&1 || \
+		ExitWithFail "WQL test 3 oop exited with error"
+
+	
+
 	echo "WQL Testsuite Passed"
 }
 

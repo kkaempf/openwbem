@@ -41,6 +41,7 @@
 #include "OW_OOPIndicationProvider.hpp"
 #include "OW_OOPPolledProvider.hpp"
 #include "OW_OOPIndicationExportProvider.hpp"
+#include "OW_OOPQueryProvider.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMException.hpp"
@@ -465,6 +466,19 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 					}
 					break;
 
+					case OpenWBEM::OOPProviderRegistration::E_PROVIDERTYPES_QUERY:
+					{
+						// keep it for ourselves
+						m_queryProvReg[instanceID] = info;
+						// give the info back to the provider manager
+						QueryProviderInfo qpi;
+						qpi.setProviderName(instanceID);
+						QueryProviderInfo::ClassInfo classInfo(className, namespaceNames);
+						qpi.addInstrumentedClass(classInfo);
+						qpia.push_back(qpi);
+					}
+					break;
+
 					default:
 						OW_LOG_ERROR(lgr, Format("Invalid or unsupported value (%1) in ProviderTypes", providerTypes[j]));
 						break;
@@ -686,6 +700,23 @@ OOPProviderInterface::doGetIndicationProvider(const ProviderEnvironmentIFCRef& e
 }
 
 //////////////////////////////////////////////////////////////////////////////
+QueryProviderIFCRef
+OOPProviderInterface::doGetQueryProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
+{
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doGetQueryProvider, provIdString = %1", provIdString));
+	ProvRegMap_t::const_iterator iter = m_queryProvReg.find(provIdString);
+	if (iter == m_queryProvReg.end())
+	{
+		OW_THROW(NoSuchProviderException, provIdString);
+	}
+	else
+	{
+		return getProvider<OOPQueryProvider, QueryProviderIFCRef>(provIdString, &SavedProviders::queryProv, *(iter->second));
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void 
 OOPProviderInterface::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 {
@@ -736,20 +767,24 @@ OOPProviderInterface::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 	for (PersistentProvMap_t::iterator proviter = provsCopy.begin();
 		proviter != provsCopy.end(); proviter++)
 	{
-		ProviderBaseIFC* pprov = dynamic_cast<ProviderBaseIFC*>(proviter->second.getOOPProviderBase());
-		OW_ASSERT(pprov);
-		if (pprov)
+		if (!proviter->second.getInfo().isPersistent && proviter->second.process && *proviter->second.process && 
+			(*proviter->second.process)->processStatus().running())
 		{
-			RWLocker* mutexToUse = proviter->second.guard ? proviter->second.guard.getPtr() : &mutexOnStack;
-			WriteLock pl(*mutexToUse, proviter->second.getInfo().timeout);
-			OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown terminating provider %1", proviter->first));
-			try
+			ProviderBaseIFC* pprov = dynamic_cast<ProviderBaseIFC*>(proviter->second.getOOPProviderBase());
+			OW_ASSERT(pprov);
+			if (pprov)
 			{
-				pprov->shuttingDown(env);
-			}
-			catch (Exception& e)
-			{
-				OW_LOG_ERROR(lgr, Format("OOPProviderInterface::doShuttingDown caught Exception: %1", e));
+				RWLocker* mutexToUse = proviter->second.guard ? proviter->second.guard.getPtr() : &mutexOnStack;
+				WriteLock pl(*mutexToUse, proviter->second.getInfo().timeout);
+				OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown terminating provider %1", proviter->first));
+				try
+				{
+					pprov->shuttingDown(env);
+				}
+				catch (Exception& e)
+				{
+					OW_LOG_ERROR(lgr, Format("OOPProviderInterface::doShuttingDown caught Exception: %1", e));
+				}
 			}
 		}
 	}
@@ -794,6 +829,10 @@ OOPProviderInterface::SavedProviders::getOOPProviderBase() const
 	else if (indicationExportProv)
 	{
 		return dynamic_cast<OOPProviderBase*>(indicationExportProv.getPtr());
+	}
+	else if (queryProv)
+	{
+		return dynamic_cast<OOPProviderBase*>(queryProv.getPtr());
 	}
 	else
 	{

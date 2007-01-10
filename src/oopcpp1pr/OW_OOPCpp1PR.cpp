@@ -53,6 +53,7 @@
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
+#include "OW_QueryProviderIFC.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_UserInfo.hpp"
@@ -66,6 +67,8 @@
 #include "OW_FileAppender.hpp"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_Timeout.hpp"
+#include "OW_WQLSelectStatement.hpp"
+#include "OW_WQLCompile.hpp"
 
 #include <iostream>
 #include <csignal>
@@ -1021,6 +1024,43 @@ int callMethodProvider(
 }
 
 //////////////////////////////////////////////////////////////////////////////
+int callQueryProvider(
+	UInt8 op, 
+	ProviderBaseIFCRef provider,
+	ProviderEnvironmentIFCRef& provenv,
+	std::streambuf& inbuf,
+	std::streambuf& outbuf,
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
+{
+	QueryProviderIFC* queryProvider = provider->getQueryProvider();
+	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
+	if (!queryProvider)
+	{
+		OW_LOG_ERROR(logger, "provider is not a query provider");
+		return 3;
+	}
+
+	switch (op)
+	{
+		case BinarySerialization::QUERY_INSTANCES:
+		{
+			String ns = BinarySerialization::readString(inbuf);
+			WQLSelectStatement wss = BinarySerialization::readWQLSelectStatement(inbuf);
+			WQLCompile wc(wss);
+			CIMClass cimClass = BinarySerialization::readClass(inbuf);
+
+			BinaryCIMInstanceWriter handler(outbuf);
+			initializeCallback.init(provenv);
+			queryProvider->queryInstances(provenv, ns, wss, wc, handler, cimClass);
+		}
+		break;
+
+	}
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 bool opRequiresEndReply(UInt8 op)
 {
 	return op != BinarySerialization::SET_PERSISTENT;
@@ -1202,6 +1242,12 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::EXPORT_INDICATION:
 				{
 					rval = callIndicationExportProvider(op, provider, m_penv, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
+				}
+				break;
+
+				case BinarySerialization::QUERY_INSTANCES:
+				{
+					rval = callQueryProvider(op, provider, m_penv, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
 				}
 				break;
 

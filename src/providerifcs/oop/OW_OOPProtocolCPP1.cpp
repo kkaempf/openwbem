@@ -1717,6 +1717,33 @@ OOPProtocolCPP1::shuttingDown(
 	}
 }
 
+void
+OOPProtocolCPP1::queryInstances(
+	const UnnamedPipeRef& in,
+	const UnnamedPipeRef& out,
+	const Timeout& timeout,
+	const ProviderEnvironmentIFCRef& env,
+	const String& ns,
+	const WQLSelectStatement& query,
+	CIMInstanceResultHandlerIFC& result,
+	const CIMClass& cimClass)
+{
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::queryInstances about to start filling request buffer");
+
+	Array<unsigned char> buf;
+	OOPDataOStreamBuf obuf(buf);
+	BinarySerialization::write(obuf, BinarySerialization::BinaryProtocolVersion);
+	BinarySerialization::write(obuf, BinarySerialization::QUERY_INSTANCES);
+	BinarySerialization::writeString(obuf, ns);
+	BinarySerialization::writeWQLSelectStatement(obuf, query);
+	BinarySerialization::writeClass(obuf, cimClass);
+
+	CIMInstanceOperationResultHandler operationResult(result);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
+
+}
+
 } // end namespace OW_NAMESPACE
 
 

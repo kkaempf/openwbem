@@ -519,6 +519,18 @@ $(CXXBINLINKFLAGS) \
 libtestWQLProv_a_SOURCES = \
 testWQLProv.cpp
 
+EXTRA_DIST = \
+wqlTestReg.mof.in
+
+BUILT_SOURCES = \
+wqlTestReg.mof
+
+
+include ${top_srcdir}/Makefile-replacement.inc
+
+global_substitutions = \
+-e 's!@provdir@!${libdir}/openwbem/oopproviders!g'
+
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/provider -lowprovider \

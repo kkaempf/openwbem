@@ -37,3 +37,4 @@ testSPNEGO
 testSPNEGOGSSAPI
 testOOPAssoc
 wqlTest3
+wqlTestReg.mof

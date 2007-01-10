@@ -85,7 +85,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual InstanceProviderIFC* getInstanceProvider()
 	{
-		if (!m_instProv);
+		if (!m_instProv)
 		{
 			CppInstanceProviderIFC* pIP = m_prov->getInstanceProvider();
 			if (!pIP)
@@ -101,7 +101,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual SecondaryInstanceProviderIFC* getSecondaryInstanceProvider()
 	{
-		if (!m_sinstProv);
+		if (!m_sinstProv)
 		{
 			CppSecondaryInstanceProviderIFC* pIP = m_prov->getSecondaryInstanceProvider();
 			if (!pIP)
@@ -117,7 +117,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual MethodProviderIFC* getMethodProvider()
 	{
-		if (!m_methProv);
+		if (!m_methProv)
 		{
 			CppMethodProviderIFC* pIP = m_prov->getMethodProvider();
 			if (!pIP)
@@ -133,7 +133,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual IndicationExportProviderIFC* getIndicationExportProvider()
 	{
-		if (!m_iexpProv);
+		if (!m_iexpProv)
 		{
 			CppIndicationExportProviderIFC* pIP = m_prov->getIndicationExportProvider();
 			if (!pIP)
@@ -149,7 +149,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual IndicationProviderIFC* getIndicationProvider()
 	{
-		if (!m_indProv);
+		if (!m_indProv)
 		{
 			CppIndicationProviderIFC* pIP = m_prov->getIndicationProvider();
 			if (!pIP)
@@ -165,7 +165,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual PolledProviderIFC* getPolledProvider()
 	{
-		if (!m_polledProv);
+		if (!m_polledProv)
 		{
 			CppPolledProviderIFC* pIP = m_prov->getPolledProvider();
 			if (!pIP)
@@ -181,7 +181,7 @@ public:
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual AssociatorProviderIFC* getAssociatorProvider()
 	{
-		if (!m_assocProv);
+		if (!m_assocProv)
 		{
 			CppAssociatorProviderIFC* pIP = m_prov->getAssociatorProvider();
 			if (!pIP)
@@ -194,6 +194,22 @@ public:
 		return m_assocProv->getAssociatorProvider();
 	}
 #endif
+
+	///////////////////////////////////////////////////////////////////////////
+	virtual QueryProviderIFC* getQueryProvider()
+	{
+		if (!m_queryProv)
+		{
+			CppQueryProviderIFC* pIP = m_prov->getQueryProvider();
+			if (!pIP)
+			{
+				return 0;
+			}
+			CppQueryProviderIFCRef ipRef(m_prov.getLibRef(), pIP);
+			m_queryProv = QueryProviderIFCRef(new CppQueryProviderProxy(ipRef));
+		}
+		return m_queryProv->getQueryProvider();
+	}
 
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
 	{
@@ -211,6 +227,7 @@ private:
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	AssociatorProviderIFCRef m_assocProv;
 #endif
+	QueryProviderIFCRef m_queryProv;
 };
 
 enum

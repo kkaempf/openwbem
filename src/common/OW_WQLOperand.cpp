@@ -177,7 +177,7 @@ WQLOperand::writeObject(std::streambuf & ostrm) const
 			break;
 
 		case BOOLEAN_VALUE:
-			BinarySerialization::write(ostrm, Bool(_booleanValue));
+			Bool(_booleanValue).writeObject(ostrm);
 			break;
 
 		case STRING_VALUE:

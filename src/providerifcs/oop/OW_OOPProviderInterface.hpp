@@ -101,6 +101,7 @@ private:
 	virtual IndicationExportProviderIFCRefArray doGetIndicationExportProviders(const ProviderEnvironmentIFCRef& env);
 	virtual PolledProviderIFCRefArray doGetPolledProviders(const ProviderEnvironmentIFCRef& env);
 	virtual IndicationProviderIFCRef doGetIndicationProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString);
+	virtual QueryProviderIFCRef doGetQueryProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString);
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
 	virtual void doShuttingDown(const ProviderEnvironmentIFCRef& env);
 
@@ -118,6 +119,7 @@ private:
 	ProvRegMap_t m_indicationProvReg;
 	ProvRegMap_t m_polledProvReg;
 	ProvRegMap_t m_indicationExportProvReg;
+	ProvRegMap_t m_queryProvReg;
 
 	struct SavedProviders
 	{
@@ -184,6 +186,14 @@ private:
 		{
 		}
 
+		SavedProviders(const QueryProviderIFCRef& qpir)
+			: queryProv(qpir)
+			, guard(new RWLocker)
+			, process(new ProcessRef)
+			, processUserName(new String)
+		{
+		}
+
 		InstanceProviderIFCRef instanceProv;
 		SecondaryInstanceProviderIFCRef secondaryInstanceProv;
 		AssociatorProviderIFCRef associatorProv;
@@ -191,6 +201,7 @@ private:
 		IndicationProviderIFCRef indProv;
 		PolledProviderIFCRef polledProv;
 		IndicationExportProviderIFCRef indicationExportProv;
+		QueryProviderIFCRef queryProv;
 		Reference<RWLocker> guard;
 		Reference<ProcessRef> process;
 		Reference<String> processUserName;

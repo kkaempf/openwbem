@@ -258,6 +258,16 @@ public:
 		const Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env);
 
+	virtual void queryInstances(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const WQLSelectStatement& query,
+		CIMInstanceResultHandlerIFC& result,
+		const CIMClass& cimClass);
+
 };
 
 } // end namespace OW_NAMESPACE

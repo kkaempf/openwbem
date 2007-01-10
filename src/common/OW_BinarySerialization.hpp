@@ -48,6 +48,7 @@
 #include "OW_ByteSwap.hpp"
 #include "OW_IfcsFwd.hpp"
 #include "OW_WQLSelectStatement.hpp"
+#include "OW_WQLCompile.hpp"
 
 #include <iosfwd>
 
@@ -141,6 +142,7 @@ const UInt8 DEACTIVATE_FILTER = 60;
 const UInt8 EXPORT_INDICATION = 61;
 const UInt8 PROVIDER_ENVIRONMENT_REQUEST = 62;
 const UInt8 SHUTTING_DOWN = 63;
+const UInt8 QUERY_INSTANCES = 64;
 
 
 const UInt8 BINSIG_NS	=			100;
