@@ -103,6 +103,51 @@ void WQLImpl::evaluate(const String& nameSpace,
 	s_parserInput = 0;
 }
 
+void WQLImpl::evaluate(const String& nameSpace,
+	CIMInstanceResultHandlerIFC& result,
+	const String& query, const String& queryLanguage,
+	const RepositoryIFCRef& hdl,
+	OperationContext& oc)
+{
+	OW_WQL_LOG_DEBUG(Format("nameSpace %1, query %2, queryLanguage %3 .", nameSpace, query, queryLanguage));
+	MutexLock lock(s_classLock);
+	// set up the parser's input
+	s_parserInput = query.c_str();
+	WQLscanner_init();
+#ifdef YYOW_DEBUG
+	owwqldebug = 1;
+#endif
+	OW_WQL_LOG_DEBUG("Parsing: ");
+	int owwqlresult = owwqlparse();
+	if (owwqlresult)
+	{
+		OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Parse failed");
+	}
+	else
+	{
+		OW_WQL_LOG_DEBUG("Parse succeeded");
+	}
+	OW_WQL_LOG_DEBUG("Processing: ");
+	AutoPtr<stmt> pAST(WQLImpl::s_statement);
+	lock.release();
+	WQLProcessor p(hdl, &oc, pAST.get(), nameSpace);
+	if (pAST.get())
+	{
+		pAST->acceptInterface(&p);
+	}
+	else
+	{
+		OW_WQL_LOG_DEBUG("pAST was NULL!");
+	}
+	CIMInstanceArray instances = p.getInstances();
+	for (size_t i = 0; i < instances.size(); ++i)
+	{
+		result.handle(instances[i]);
+	}
+
+	s_parserInput = 0;
+}
+
 WQLSelectStatement
 WQLImpl::createSelectStatement(const String& query)
 {

@@ -27,6 +27,8 @@ testProviderAgent
 *.nlm
 *.nlm.*
 testClientTimeout
+lib*so*
+lib*dylib*
 lib*sl*
 socketCat
 testListener
@@ -34,3 +36,4 @@ aclTestBasic
 testSPNEGO
 testSPNEGOGSSAPI
 testOOPAssoc
+wqlTest3

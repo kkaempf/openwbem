@@ -1,3 +1,8 @@
+MAKEBUNDLE=1
+include $(top_srcdir)/Makefile-shared-lib.inc
+all-local : all-ow-shared-libs
+clean-local : clean-ow-shared-libs
+
 SUBDIRS=
 
 if DISABLE_INSTANCE_MANIPULATION
@@ -44,6 +49,7 @@ noinst_PROGRAMS = \
 $(PROGS) \
 wqlTest1 \
 wqlTest2 \
+wqlTest3 \
 CIMOMLocator \
 fakeclient \
 infiniteClient \
@@ -52,6 +58,12 @@ socketCat \
 testListener \
 testSPNEGO \
 testSPNEGOGSSAPI
+
+noinst_LIBRARIES = \
+libtestWQLProv.a
+
+OW_SHARED_LIBS = \
+libtestWQLProv.$(LIB_EXT)
 
 testProviderAgent_SOURCES = \
 testProviderAgent.cpp
@@ -145,6 +157,24 @@ $(CXXBINLINKFLAGS) \
 
 wqlTest2_SOURCES = \
 wqlTest2.cpp
+
+#wqlTest3
+wqlTest3_LDADD = \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/wql -lowwql \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+wqlTest3_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o wqlTest3$(EXEEXT)
+
+wqlTest3_SOURCES = \
+wqlTest3.cpp
 
 #aclTest
 aclTest_LDADD = \
@@ -485,6 +515,18 @@ testSPNEGOGSSAPI_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o testSPNEGOGSSAPI$(EXEEXT)
 
+### testWQLProv
+libtestWQLProv_a_SOURCES = \
+testWQLProv.cpp
+
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+-L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
+-L$(top_builddir)/src/mof -lowmofc
+
+LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
+
 INCLUDES = \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/cimom/embedded \
@@ -504,8 +546,8 @@ INCLUDES = \
 -I$(top_srcdir)/src/services/http \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/monitor \
--I$(top_srcdir)/src/requesthandlers/cimxml
+-I$(top_srcdir)/src/requesthandlers/cimxml \
+-I$(top_srcdir)/src/mof
 
 
-#
 

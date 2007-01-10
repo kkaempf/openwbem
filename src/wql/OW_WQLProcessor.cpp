@@ -47,6 +47,9 @@
 #include "OW_WQLScanUtils.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_ResultHandlerIFC.hpp"
+#include "OW_RepositoryCIMOMHandle.hpp"
+#include "OW_WQLSelectStatementGen.hpp"
+#include "OW_WQLCompile.hpp"
 
 #include <errno.h>
 #include <iterator> // for back_inserter
@@ -160,9 +163,26 @@ WQLProcessor::WQLProcessor(
 	const CIMOMHandleIFCRef& hdl,
 	const String& ns)
 	: m_hdl(hdl)
+	, m_operationContext(0)
 	, m_ns(ns)
 	, m_doingSelect(false)
 	, m_isSchemaQuery(false)
+	, m_astRoot(0)
+{
+}
+
+WQLProcessor::WQLProcessor(
+	const RepositoryIFCRef& repos,
+	OperationContext* operationContext,
+	stmt* astRoot,
+	const String& ns)
+	: m_hdl(new RepositoryCIMOMHandle(repos, *operationContext, RepositoryCIMOMHandle::E_NO_LOCKING))
+	, m_repos(repos)
+	, m_operationContext(operationContext)
+	, m_ns(ns)
+	, m_doingSelect(false)
+	, m_isSchemaQuery(false)
+	, m_astRoot(astRoot)
 {
 }
 void WQLProcessor::visit_stmt_selectStmt_optSemicolon(
@@ -2384,7 +2404,38 @@ void WQLProcessor::populateInstances()
 {
 	OW_WQL_LOG_DEBUG("");
 	InstanceArrayBuilder handler(m_instances);
-	m_hdl->enumInstances(m_ns, m_tableRef, handler, E_DEEP);
+
+	bool statementIsCompilable = false;
+	if (m_repos)
+	{
+		WQLSelectStatementGen p;
+		try
+		{
+			m_astRoot->acceptInterface(&p);
+			WQLSelectStatement wss(p.getSelectStatement());
+			WQLCompile wc;
+			wss.compileWhereClause(0, wc);
+			statementIsCompilable = true;
+			m_repos->enumInstancesWQL(m_ns, m_tableRef, handler, wss, wc, *m_operationContext);
+		}
+		catch (Exception& e)
+		{
+			if (statementIsCompilable)
+			{
+				throw;
+			}
+		}
+	}
+
+	if (!statementIsCompilable)
+	{
+		StringArray* properties = 0;
+		if (m_propertyArray.size() > 1 || (m_propertyArray.size() > 0 && m_propertyArray[0] != "*"))
+		{
+			properties = &m_propertyArray;
+		}
+		m_hdl->enumInstances(m_ns, m_tableRef, handler, E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, properties);
+	}
 }
 
 } // end namespace OW_NAMESPACE

@@ -800,6 +800,27 @@ public:
 	virtual void exportIndication(const CIMInstance&,
 		const String&);
 
+	/**
+	 * Retrieve an enumeration of instances (CIMInstance) for a particular
+	 * class.
+	 *
+	 * @param ns The namespace to search for instances.
+	 * @param className The name of the class to locate.
+	 * @param result A callback object which will handle the instances as
+	 * 	they are received.
+	 * @param context ACL object describing user making request.
+	 * @exception HDBException
+	 * @exception CIMException
+	 * @exception IOException
+	 */
+	virtual void enumInstancesWQL(
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
+		const WQLSelectStatement& wss,
+		const WQLCompile& wc,
+		OperationContext& context);
+
 	virtual void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context) = 0;
 	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result) = 0;
 };

@@ -10,8 +10,4 @@ Makefile
 *.nlm.*
 lib*so*
 lib*dylib*
-lib*dylib*
-lib*dylib*
-lib*dylib*
-lib*dylib*
 lib*sl*

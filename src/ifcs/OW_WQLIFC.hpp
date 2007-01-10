@@ -35,6 +35,7 @@
 #ifndef OW_WQLIFC_HPP_
 #define OW_WQLIFC_HPP_
 #include "OW_config.h"
+#include "OW_CommonFwd.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
@@ -47,10 +48,6 @@
 namespace OW_NAMESPACE
 {
 
-// this class is part of the wqlcommon library, which is not in libopenwbem
-class WQLSelectStatement;
-// TODO: FIX THIS! This class in libopenwbem cannot depend on anything outside of libopenwbem.
-// Either move this class out of libopenwbem or else move WQLSelectStatement into libopenwbem
 class OW_COMMON_API WQLIFC : virtual public ServiceIFC
 {
 public:
@@ -58,7 +55,12 @@ public:
 	virtual void evaluate(const String& nameSpace,
 		CIMInstanceResultHandlerIFC& result,
 		const String& query, const String& queryLanguage,
-				const CIMOMHandleIFCRef& hdl) = 0;
+		const CIMOMHandleIFCRef& hdl) = 0;
+	virtual void evaluate(const String& nameSpace,
+		CIMInstanceResultHandlerIFC& result,
+		const String& query, const String& queryLanguage,
+		const RepositoryIFCRef& hdl,
+		OperationContext& oc) = 0;
 	virtual WQLSelectStatement createSelectStatement(const String& query) = 0;
 	virtual bool supportsQueryLanguage(const String& lang) = 0;
 };

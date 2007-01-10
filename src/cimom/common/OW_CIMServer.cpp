@@ -585,7 +585,9 @@ namespace
 			EIncludeQualifiersFlag includeQualifiers_,
 			EIncludeClassOriginFlag includeClassOrigin_,
 			const StringArray* propertyList_,
-			const CIMClass& theTopClass_)
+			const CIMClass& theTopClass_,
+			const WQLSelectStatement* pwss_,
+			const WQLCompile* pwc_)
 			: ns(ns_)
 			, result(result_)
 			, context(context_)
@@ -597,6 +599,8 @@ namespace
 			, includeClassOrigin(includeClassOrigin_)
 			, propertyList(propertyList_)
 			, theTopClass(theTopClass_)
+			, pwss(pwss_)
+			, pwc(pwc_)
 		{}
 	protected:
 		virtual void doHandle(const CIMClass &cc)
@@ -605,7 +609,7 @@ namespace
 				" derived instance names: %1:%2", ns, cc.getName()));
 			server->_getCIMInstances(ns, cc.getName(), theTopClass, cc,
 				result, localOnly, deep, includeQualifiers,
-				includeClassOrigin, propertyList, context);
+				includeClassOrigin, propertyList, pwss, pwc, context);
 		}
 	private:
 		String ns;
@@ -619,7 +623,34 @@ namespace
 		EIncludeClassOriginFlag includeClassOrigin;
 		const StringArray* propertyList;
 		const CIMClass& theTopClass;
+		const WQLSelectStatement* pwss;
+		const WQLCompile* pwc;
 	};
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void 
+CIMServer::enumInstancesWQL(
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result,
+	const WQLSelectStatement& wss,
+	const WQLCompile& wc,
+	OperationContext& context)
+{
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
+
+	logOperation(m_logger, context, "enumInstancesWQL", ns, className);
+
+	CIMClass theTopClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY,
+		E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, context);
+
+	InstEnumerator ie(ns, result, context, this, E_DEEP, E_NOT_LOCAL_ONLY,
+		E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, theTopClass, &wss, &wc);
+	ie.handle(theTopClass);
+	m_cimRepository->enumClasses(ns, className, ie, E_DEEP,
+		E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN,
+		context);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -640,7 +671,7 @@ CIMServer::enumInstances(
 		E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, context);
 
 	InstEnumerator ie(ns, result, context, this, deep, localOnly,
-		includeQualifiers, includeClassOrigin, propertyList, theTopClass);
+		includeQualifiers, includeClassOrigin, propertyList, theTopClass, 0, 0);
 	ie.handle(theTopClass);
 	// If this is the namespace class then only do one class
 	if (theTopClass.getName().equalsIgnoreCase(DEPRECATED__NamespaceClassName)
@@ -865,7 +896,10 @@ CIMServer::_getCIMInstances(
 	const CIMClass& theTopClass,
 	const CIMClass& theClass, CIMInstanceResultHandlerIFC& result,
 	ELocalOnlyFlag localOnly, EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, OperationContext& context)
+	const StringArray* propertyList,
+	const WQLSelectStatement* pwss,
+	const WQLCompile* pwc,
+	OperationContext& context)
 {
 	InstanceProviderIFCRef instancep(_getInstanceProvider(ns, theClass, context));
 
@@ -908,10 +942,20 @@ CIMServer::_getCIMInstances(
 		presult = &secondaryHandler;
 	}
 
+	if (pwss)
+	{
+		OW_ASSERT(pwc != 0);
+		QueryProviderIFCRef queryp(_getQueryProvider(ns, theClass, context));
+		if (queryp)
+		{
+			OW_LOG_DEBUG(m_logger, Format("CIMServer calling query provider to enumerate instances: %1:%2", ns, className));
+			queryp->queryInstances(createProvEnvRef(context, m_env), ns, *pwss, *pwc, *presult, theClass);
+		}
+	}
+
 	if (instancep)
 	{
-		OW_LOG_DEBUG(m_logger, Format("CIMServer calling provider to"
-			" enumerate instances: %1:%2", ns, className));
+		OW_LOG_DEBUG(m_logger, Format("CIMServer calling provider to enumerate instances: %1:%2", ns, className));
 
 		// not going to use these, the provider ifc/providers are now
 		// responsible for it.
@@ -1687,6 +1731,24 @@ CIMServer::_getAssociatorProvider(const String& ns, const CIMClass& cc_, Operati
 	return ap;
 }
 #endif
+//////////////////////////////////////////////////////////////////////////////
+QueryProviderIFCRef
+CIMServer::_getQueryProvider(const String& ns, const CIMClass& cc,
+	OperationContext& context)
+{
+	QueryProviderIFCRef queryp;
+	try
+	{
+		queryp = m_provManager->getQueryProvider(ns, cc);
+	}
+	catch (const NoSuchProviderException& e)
+	{
+		// This will only happen if the provider qualifier is incorrect
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED,
+			Format("Invalid provider: %1", e.getMessage()).c_str(), e);
+	}
+	return queryp;
+}
 //////////////////////////////////////////////////////////////////////
 CIMClass
 CIMServer::_getNameSpaceClass(const CIMName& className)
@@ -1737,7 +1799,8 @@ CIMServer::execQuery(
 				ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_OPERATION_CONTEXT_LOCKING);
 		try
 		{
-			wql->evaluate(ns, result, query, queryLanguage, lch);
+			//wql->evaluate(ns, result, query, queryLanguage, lch);
+			wql->evaluate(ns, result, query, queryLanguage, RepositoryIFCRef(this), context);
 		}
 		catch (const CIMException& ce)
 		{

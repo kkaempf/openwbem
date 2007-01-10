@@ -120,8 +120,8 @@ void WQLCompile::eval_el::order()
 //
 // Helper function copied from WQLSelectStatement
 // 
-template<class T>
-inline static bool _Compare(const T& x, const T& y, WQLOperation op)
+template<class T, class U>
+inline static bool _Compare(const T& x, const U& y, WQLOperation op)
 {
 	switch (op)
 	{
@@ -142,6 +142,102 @@ inline static bool _Compare(const T& x, const T& y, WQLOperation op)
 	}
 	return false;
 }
+
+template<class T>
+static bool _EvaluateRHS(
+	const T& lhs, 
+	const WQLOperand& rhs, 
+	WQLOperation op)
+{
+	switch (rhs.getType())
+	{
+		case WQLOperand::NULL_VALUE:
+		{
+			// return true if the op is WQL_EQ and the rhs is NULL
+			// also if op is WQL_NE and rhs is not NULL
+			return !(op == WQL_EQ);
+			break;
+		}
+		case WQLOperand::INTEGER_VALUE:
+		{
+			return _Compare(
+			lhs,
+			rhs.getIntegerValue(),
+			op);
+		}
+		case WQLOperand::DOUBLE_VALUE:
+		{
+			return _Compare(
+			lhs,
+			rhs.getDoubleValue(),
+			op);
+		}
+		case WQLOperand::BOOLEAN_VALUE:
+		{
+			return _Compare(
+			lhs,
+			rhs.getBooleanValue(),
+			op);
+		}
+		case WQLOperand::STRING_VALUE:
+		{
+			return _Compare(
+			String(lhs),
+			rhs.getStringValue(),
+			op);
+		}
+		default:
+		OW_ASSERT(0);
+	}
+	return false;
+}
+static bool _EvaluateRHS(
+	const String& lhs, 
+	const WQLOperand& rhs, 
+	WQLOperation op)
+{
+	switch (rhs.getType())
+	{
+		case WQLOperand::NULL_VALUE:
+		{
+			// return true if the op is WQL_EQ and the rhs is NULL
+			// also if op is WQL_NE and rhs is not NULL
+			return !(op == WQL_EQ);
+			break;
+		}
+		case WQLOperand::INTEGER_VALUE:
+		{
+			return _Compare(
+			lhs,
+			String(rhs.getIntegerValue()),
+			op);
+		}
+		case WQLOperand::DOUBLE_VALUE:
+		{
+			return _Compare(
+			lhs,
+			String(rhs.getDoubleValue()),
+			op);
+		}
+		case WQLOperand::BOOLEAN_VALUE:
+		{
+			return _Compare(
+			lhs,
+			String(rhs.getBooleanValue()),
+			op);
+		}
+		case WQLOperand::STRING_VALUE:
+		{
+			return _Compare(
+			lhs,
+			rhs.getStringValue(),
+			op);
+		}
+		default:
+		OW_ASSERT(0);
+	}
+	return false;
+}
 static bool _Evaluate(
 const WQLOperand& lhs, 
 const WQLOperand& rhs, 
@@ -158,34 +254,34 @@ WQLOperation op)
 		}
 		case WQLOperand::INTEGER_VALUE:
 		{
-			return _Compare(
+			return _EvaluateRHS(
 			lhs.getIntegerValue(),
-			rhs.getIntegerValue(),
+			rhs,
 			op);
 		}
 		case WQLOperand::DOUBLE_VALUE:
 		{
-			return _Compare(
+			return _EvaluateRHS(
 			lhs.getDoubleValue(),
-			rhs.getDoubleValue(),
+			rhs,
 			op);
 		}
 		case WQLOperand::BOOLEAN_VALUE:
 		{
-			return _Compare(
+			return _EvaluateRHS(
 			lhs.getBooleanValue(),
-			rhs.getBooleanValue(),
+			rhs,
 			op);
 		}
 		case WQLOperand::STRING_VALUE:
 		{
-			return _Compare(
+			return _EvaluateRHS(
 			lhs.getStringValue(),
-			rhs.getStringValue(),
+			rhs,
 			op);
 		}
 		default:
-		OW_ASSERT(0);
+			OW_ASSERT(0);
 	}
 	return false;
 }
@@ -279,10 +375,6 @@ bool WQLCompile::evaluate(const WQLPropertySource& source) const
 				WQLCompile::_ResolveProperty(lhs,source);
 				rhs = tr[j].opn2;
 				WQLCompile::_ResolveProperty(rhs,source);
-				if (rhs.getType() != lhs.getType())
-				{
-					OW_THROW(TypeMismatchException, Format("Type mismatch: lhs: %1 rhs: %2", lhs.toString(), rhs.toString()).c_str());
-				}
 				b = _Evaluate(lhs, rhs, tr[j].op);
 			}
 		}

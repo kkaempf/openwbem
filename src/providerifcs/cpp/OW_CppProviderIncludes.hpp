@@ -57,6 +57,8 @@
 #include "OW_CppReadOnlyInstanceProviderIFC.hpp"
 #include "OW_CppSimpleInstanceProviderIFC.hpp"
 #include "OW_CppSimpleAssociatorProviderIFC.hpp"
+#include "OW_CppQueryProviderIFC.hpp"
+#include "OW_QueryProviderInfo.hpp"
 #include "OW_Format.hpp"
 #include "OW_Enumeration.hpp"
 #include "OW_Logger.hpp"
@@ -69,6 +71,9 @@
 #include "OW_OperationContext.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_WQLSelectStatement.hpp"
+#include "OW_WQLCompile.hpp"
+#include "OW_WQLInstancePropertySource.hpp"
 
 
 #endif
