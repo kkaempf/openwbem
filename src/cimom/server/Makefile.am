@@ -34,5 +34,6 @@ OW_PlatformSignal.cpp
 pkginclude_HEADERS = \
 OW_Platform.hpp \
 OW_PlatformSignal.hpp \
-OW_CimomServerFwd.hpp 
+OW_CimomServerFwd.hpp \
+OW_PidFile.hpp
 
