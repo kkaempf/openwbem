@@ -117,11 +117,13 @@ void WQLCompile::eval_el::order()
 		}
 	}
 }
+
+namespace {
 //
 // Helper function copied from WQLSelectStatement
 // 
 template<class T, class U>
-inline static bool _Compare(const T& x, const U& y, WQLOperation op)
+inline bool _Compare(const T& x, const U& y, WQLOperation op)
 {
 	switch (op)
 	{
@@ -142,9 +144,8 @@ inline static bool _Compare(const T& x, const U& y, WQLOperation op)
 	}
 	return false;
 }
-
 template<class T>
-static bool _EvaluateRHS(
+bool _EvaluateRHS(
 	const T& lhs, 
 	const WQLOperand& rhs, 
 	WQLOperation op)
@@ -191,6 +192,7 @@ static bool _EvaluateRHS(
 	}
 	return false;
 }
+} // end of namespace
 static bool _EvaluateRHS(
 	const String& lhs, 
 	const WQLOperand& rhs, 
