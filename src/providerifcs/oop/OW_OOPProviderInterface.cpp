@@ -134,10 +134,14 @@ OOPProviderInterface::~OOPProviderInterface()
 	{
 		try
 		{
-			OOPProviderBase* prov = proviter->second.getOOPProviderBase();
-			OW_LOG_INFO(lgr, Format("terminating provider %1", proviter->first));
-			ProviderEnvironmentIFCRef env(new DoNothingProviderEnvironment);
-			prov->terminate(env, proviter->first);
+			if (proviter->second.process && *proviter->second.process && 
+				(*proviter->second.process)->processStatus().running())
+			{
+				OOPProviderBase* prov = proviter->second.getOOPProviderBase();
+				OW_LOG_INFO(lgr, Format("terminating provider %1", proviter->first));
+				ProviderEnvironmentIFCRef env(new DoNothingProviderEnvironment);
+				prov->terminate(env, proviter->first);
+			}
 		}
 		catch (Exception& e)
 		{
