@@ -335,6 +335,9 @@ OOPProviderBase::terminate(const ProviderEnvironmentIFCRef& env, const String& p
 		OW_LOG_DEBUG(lgr, Format("OOPProviderBase::terminate terminating provider: %1", providerID));
 		ProcessRef proc = *m_persistentProcessRef;
 		m_protocol->setPersistent(proc->out(), proc->in(), m_provInfo.timeout, env, false);
+		proc->waitCloseTerm(Timeout::relative(10.0), Timeout::relative(0), Timeout::relative(10.1));
+		*m_persistentProcessRef = ProcessRef();
+		*m_persistentProcessUserNameRef = String();
 	}
 	else
 	{
