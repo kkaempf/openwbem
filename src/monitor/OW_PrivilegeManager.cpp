@@ -69,27 +69,6 @@ namespace
 {
 	::uid_t const ROOT_UID = 0;
 
-#if defined(OW_DEBUG)
-	// We don't want to write anything to stderr (it stderr could be used for
-	// something important that we'd hose), but we want a core file.  By
-	// aborting here (the end result of a failed assert()), we should have
-	// access to the error code, error message, status, and all of the other
-	// happy variables needed to debug the failure.
-#define THROW_ERROR_CASE(exception, msg, code) \
-	WRAP_STMT( \
-		if( !::getenv("OW_PRIVMAN_NO_ABORT") ) \
-		{ \
-			abort(); \
-		} \
-		else \
-		{ \
-			OW_THROW_ERR(exception, msg, code); \
-		} \
-	)
-#else
-#define THROW_ERROR_CASE(exception, msg, code) OW_THROW_ERR(exception, msg, code)
-#endif
-
 	void check_result(IPCIO & conn, IPCIO::EBuffering eb = IPCIO::E_BUFFERED)
 	{
 		PrivilegeCommon::EStatus status;
@@ -112,22 +91,28 @@ namespace
 			// we need to do different actions for debug/non debug compilations.
 			switch(errcode)
 			{
-			case PrivilegeManager::E_INSUFFICIENT_PRIVILEGES:
-#if defined(OW_DEBUG)
-				if( !::getenv("OW_PRIVMAN_NO_ABORT") )
+				case PrivilegeManager::E_INSUFFICIENT_PRIVILEGES:
 				{
-					abort();
-				}
-#endif
-				OW_THROW_ERR(InsufficientPrivilegesException, errmsg.c_str(), errcode);
-			default:
 #if defined(OW_DEBUG)
-				if( !::getenv("OW_PRIVMAN_NO_ABORT") )
-				{
-					abort();
-				}
+					if( !::getenv("OW_PRIVMAN_NO_ABORT") )
+					{
+						Logger logger("PrivilegeManager");
+						OW_LOG_FATAL_ERROR(logger, Format("check_result got an INSUFFICIENT_PRIVILEGES error: %1:%2, aborting", errcode, errmsg));
+						abort();
+					}
 #endif
-				OW_THROW_ERR(FatalPrivilegeManagerException, errmsg.c_str(), errcode);
+					OW_THROW_ERR(InsufficientPrivilegesException, errmsg.c_str(), errcode);
+				default:
+#if defined(OW_DEBUG)
+					if( !::getenv("OW_PRIVMAN_NO_ABORT") )
+					{
+						Logger logger("PrivilegeManager");
+						OW_LOG_FATAL_ERROR(logger, Format("check_result got an error: %1:%2, aborting", errcode, errmsg));
+						abort();
+					}
+#endif
+					OW_THROW_ERR(FatalPrivilegeManagerException, errmsg.c_str(), errcode);
+				}
 			}
 		}
 	}
