@@ -102,7 +102,9 @@ namespace
 					}
 #endif
 					OW_THROW_ERR(InsufficientPrivilegesException, errmsg.c_str(), errcode);
+				}
 				default:
+				{
 #if defined(OW_DEBUG)
 					if( !::getenv("OW_PRIVMAN_NO_ABORT") )
 					{
