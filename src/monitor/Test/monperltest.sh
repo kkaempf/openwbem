@@ -47,7 +47,7 @@ if [ "x`uname`" = "xDarwin" ]; then
 fi
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$lib_dir
-export LIBPATH=$LD_LIBRARY_PATH            # AIX
+export LIBPATH=$LD_LIBRARY_PATH:$LIBPATH   # AIX
 export SHLIB_PATH=$LD_LIBRARY_PATH         # HPUX
 export DYLD_LIBRARY_PATH=$LD_LIBRARY_PATH  # DARWIN (OS X)
 
