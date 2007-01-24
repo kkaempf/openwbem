@@ -84,7 +84,7 @@ namespace
 		const String& extraInput = String())
 	{
 		String localhelper_bin_path =
-			ConfigOpts::installed_owlibexec_dir + "/owlocalhelper";
+			ConfigOpts::installed_owlibexec_dir + "/owlocalhelper" + String(OW_OPENWBEM_LIBRARY_VERSION);
 		StringArray cmd;
 		cmd.push_back(localhelper_bin_path);
 		cmd.push_back(local_auth_dir);

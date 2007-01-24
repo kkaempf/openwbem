@@ -70,20 +70,20 @@ $(DIGEST_HEADER_FILES)
 
 
 # owlocalhelper rules
-owlocalhelperbin_PROGRAMS = owlocalhelper
+owlocalhelperbin_PROGRAMS = owlocalhelper@OPENWBEM_LIBRARY_VERSION@
 owlocalhelperbindir = $(libexecdir)/openwbem
 
-owlocalhelper_SOURCES = \
+owlocalhelper@OPENWBEM_LIBRARY_VERSION@_SOURCES = \
 owlocalhelper_main.cpp \
 OW_LocalAuthenticationCommon.cpp \
 OW_LocalAuthenticationCommon.hpp
 
-owlocalhelper_LDFLAGS = \
+owlocalhelper@OPENWBEM_LIBRARY_VERSION@_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owlocalhelper$(EXEEXT) 
+-o owlocalhelper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT) 
 
 # Do things a bit differently and statically link to libopenwbem to avoid restrictions with LD_LIBRARY_PATH and setuid binaries.
-owlocalhelper_LDADD = \
+owlocalhelper@OPENWBEM_LIBRARY_VERSION@_LDADD = \
 $(top_builddir)/src/common/libopenwbem.a \
 $(Z_LIBS) $(SSL_LIBS) $(BLOCXX_LIBS) \
 $(BINLINKAPPENDFLAGS)
@@ -119,70 +119,70 @@ endif
 # This version info is confusing. VAS 2 has libvas.so.3
 if HAVE_VAS2
 # owspnegovas3helper rules
-owspnegovas3helperbin_PROGRAMS = owspnegovas3helper
+owspnegovas3helperbin_PROGRAMS = owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@
 owspnegovas3helperbindir = $(libexecdir)/openwbem
 
-owspnegovas3helper_SOURCES = \
+owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_SOURCES = \
 owspnegovashelper_main.cpp
 
-owspnegovas3helper_LDFLAGS = \
+owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_LDFLAGS = \
 -L$(VAS2_LIB_DIR) \
 $(vas3_link_flags) \
--o owspnegovas3helper$(EXEEXT) 
+-o owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT) 
 
-owspnegovas3helper_LDADD = \
+owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(VAS2_LIB_DIR) -lvas \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
-owspnegovas3helper_CPPFLAGS = -I$(VAS2_INCLUDE_DIR) -DOW_USE_VAS2_API
+owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_CPPFLAGS = -I$(VAS2_INCLUDE_DIR) -DOW_USE_VAS2_API
 endif
 
 # This version info is confusing. VAS 3 has libvas.so.4
 if HAVE_VAS3
 # owspnegovas4helper rules
-owspnegovas4helperbin_PROGRAMS = owspnegovas4helper
+owspnegovas4helperbin_PROGRAMS = owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@
 owspnegovas4helperbindir = $(libexecdir)/openwbem
 
-owspnegovas4helper_SOURCES = \
+owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@_SOURCES = \
 owspnegovashelper_main.cpp
 
-owspnegovas4helper_LDFLAGS = \
+owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@_LDFLAGS = \
 -L$(VAS3_LIB_DIR) \
 $(vas3_link_flags) \
--o owspnegovas4helper$(EXEEXT) 
+-o owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT) 
 
-owspnegovas4helper_LDADD = \
+owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(VAS3_LIB_DIR) -lvas \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
-owspnegovas4helper_CPPFLAGS = -I$(VAS3_INCLUDE_DIR) -DOW_USE_VAS3_API
+owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@_CPPFLAGS = -I$(VAS3_INCLUDE_DIR) -DOW_USE_VAS3_API
 endif
 
 # Here comes our GSSAPI part which has his own helper binary
 # This part is only activated, if we have GSSAPI WITH SPENGO
 if HAVE_SPNEGO_SUPPORT
-owspnegogssapihelperbin_PROGRAMS = owspnegogssapihelper
+owspnegogssapihelperbin_PROGRAMS = owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@
 owspnegogssapihelperbindir = $(libexecdir)/openwbem
 
-owspnegogssapihelper_SOURCES = owspnegogssapihelper_main.cpp
+owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@_SOURCES = owspnegogssapihelper_main.cpp
 
-owspnegogssapihelper_LDFLAGS = \
+owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@_LDFLAGS = \
 $(KRB5_LDFLAGS) $(GSSAPI_LIBS) $(LIB_resolv) \
--o owspnegogssapihelper$(EXEEXT)
+-o owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT)
 
-owspnegogssapihelper_LDADD = \
+owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
-owspnegogssapihelper_CPPFLAGS = -I$(srcdir) $(KRB5_CPPFLAGS) $(GSSAPI_CPPFLAGS) $(AM_CPPFLAGS) $(DEFS)
+owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@_CPPFLAGS = -I$(srcdir) $(KRB5_CPPFLAGS) $(GSSAPI_CPPFLAGS) $(AM_CPPFLAGS) $(DEFS)
 endif
 
 INCLUDES = \

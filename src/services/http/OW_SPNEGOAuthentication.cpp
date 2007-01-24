@@ -236,18 +236,18 @@ SPNEGOAuthentication::spnegoHelperPath()
 {
 	if (FileSystem::exists("/opt/quest/lib/libvas.so.4"))
 	{
-		return ConfigOpts::installed_owlibexec_dir + "/owspnegovas4helper";
+		return ConfigOpts::installed_owlibexec_dir + "/owspnegovas4helper" + String(OW_OPENWBEM_LIBRARY_VERSION);
 	}
 	else if (FileSystem::exists("/opt/vas/lib/libvas.so.3"))
 	{
-		return ConfigOpts::installed_owlibexec_dir + "/owspnegovas3helper";
+		return ConfigOpts::installed_owlibexec_dir + "/owspnegovas3helper" + String(OW_OPENWBEM_LIBRARY_VERSION);
 	}
 	else
 	// As libkrb5.so is installed by MIT Kerberos AND Heimdal Kerberos, we can
 	// use this to check if one of these is installed
 #ifdef OW_KRB5
 	{
-		return ConfigOpts::installed_owlibexec_dir + "/owspnegogssapihelper";
+		return ConfigOpts::installed_owlibexec_dir + "/owspnegogssapihelper" + String(OW_OPENWBEM_LIBRARY_VERSION);
 	}
 #else
 	{
