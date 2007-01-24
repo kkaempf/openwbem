@@ -326,6 +326,7 @@ user_exec_check_args	                        \n\
   /bin/foo \"*\" \"@\" \"*\" @ %1                     \n\
   # string arguments                            \n\
   /bin/foo \"str\" @ %1                         \n\
+  /opt/quest/bin/vastool       \"-u\" \"host/\" \"search\" * \"serviceBindingInformation\" @ root\n\
 }                                                 \
 ", user, cmd1, cmd2, cmd3));
 		OpenWBEM::PrivilegeConfig::Privileges privileges;
@@ -334,6 +335,8 @@ user_exec_check_args	                        \n\
 
 #define CHECKCOMMAND(cmd, user)														\
 		privileges.user_exec_check_args.match(getExecutable(cmd), getArguments(cmd), user)
+#define CHECKCOMMAND2(cmd, args, user)														\
+		privileges.user_exec_check_args.match(cmd, getArguments(args), user)
 
 		// All of the commands should match when executed as the correct user.
 		unitAssert(CHECKCOMMAND(cmd1, user));
@@ -349,6 +352,10 @@ user_exec_check_args	                        \n\
 		unitAssert(!CHECKCOMMAND(bad_cmd5, user));
 		unitAssert(!CHECKCOMMAND(bad_cmd6, user));
 		unitAssert(!CHECKCOMMAND(bad_cmd7, user));
+
+		unitAssert(CHECKCOMMAND("/opt/quest/bin/vastool -u host/ search (cn=SMS-Site-DAN) serviceBindingInformation", "root"));
+		unitAssert(!CHECKCOMMAND("/opt/quest/bin//vastool -u host/ search (cn=SMS-Site-DAN) serviceBindingInformation", "root"));
+		unitAssert(!CHECKCOMMAND2("/opt/quest/bin/vastool", "/opt/quest/bin//vastool -u host/ search (cn=SMS-Site-DAN) serviceBindingInformation", "root"));
 
 		// All of the commands should fail to match when executed as an invalid (unspecified) user.
 		unitAssert(!CHECKCOMMAND(cmd1, bad_user));
