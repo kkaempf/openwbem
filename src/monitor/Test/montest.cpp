@@ -48,6 +48,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <fcntl.h>
+
 using namespace OpenWBEM;
 using std::cin;
 using std::cout;
@@ -111,6 +113,10 @@ OpenFlags get_open_flags()
 		else if (toks[i] == "binary")
 		{
 			flags |= PrivilegeManager::binary;
+		}
+		else if (toks[i] == "nonblock")
+		{
+			flags |= PrivilegeManager::posix_nonblock;
 		}
 		else
 		{
@@ -275,6 +281,16 @@ int main_aux(int argc, char * * argv)
 // 					cerr << Format("Writing to file:\n%1", contents) << endl;
 // 				}
 				AutoDescriptor f = mgr.open(path.c_str(), flags, perms);
+
+
+				if( flags & PrivilegeManager::posix_nonblock )
+				{
+					// Verify the nonblocking status on the open file descriptor.
+					int fd_flags = ::fcntl(f.get(), F_GETFL);
+					check(fd_flags & O_NONBLOCK, Format("Nonblocking open did not set nonblocking status: set flags=%1", fd_flags));
+					cout << "--->Nonblocking status set properly<---" << endl;
+				}
+
 				if (flags & PrivilegeManager::out)
 				{
 					FileSystem::write(f.get(), contents.c_str(), contents.length());
