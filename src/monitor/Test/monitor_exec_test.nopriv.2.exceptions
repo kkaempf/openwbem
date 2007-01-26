@@ -1,1 +1,1 @@
-InsufficientPrivilegesException   CheckException: monitoredUserSpawn: insufficient privileges
+InsufficientPrivilegesException   CheckException: monitored.*Spawn: insufficient privileges
