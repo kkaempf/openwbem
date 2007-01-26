@@ -629,28 +629,36 @@ namespace
 
 			char const * cpath = path.c_str();
 			AutoDescriptor d;
+
+			int pflags = 0;
+			// If any other posix flags are added, add them here.
+			if( flags & PrivilegeManager::posix_nonblock )
+			{
+				pflags |= O_NONBLOCK;
+			}
+
 			switch (flags & PrivilegeManager::iota)
 			{
 				case PrivilegeManager::in:
-					d.reset(::open(cpath, O_RDONLY));
+					d.reset(::open(cpath, pflags | O_RDONLY));
 					break;
 				case PrivilegeManager::out:
-					d.reset(::open(cpath, O_WRONLY | O_CREAT | O_TRUNC, perms));
+					d.reset(::open(cpath, pflags | O_WRONLY | O_CREAT | O_TRUNC, perms));
 					break;
 				case PrivilegeManager::out_trunc:
-					d.reset(::open(cpath, O_WRONLY | O_CREAT | O_TRUNC, perms));
+					d.reset(::open(cpath, pflags | O_WRONLY | O_CREAT | O_TRUNC, perms));
 					break;
 				case PrivilegeManager::out_app:
-					d.reset(::open(cpath, O_WRONLY | O_CREAT | O_APPEND, perms));
+					d.reset(::open(cpath, pflags | O_WRONLY | O_CREAT | O_APPEND, perms));
 					break;
 				case PrivilegeManager::in_out:
-					d.reset(::open(cpath, O_RDWR));
+					d.reset(::open(cpath, pflags | O_RDWR));
 					break;
 				case PrivilegeManager::in_out_trunc:
-					d.reset(::open(cpath, O_RDWR | O_CREAT | O_TRUNC, perms));
+					d.reset(::open(cpath, pflags | O_RDWR | O_CREAT | O_TRUNC, perms));
 					break;
 				case PrivilegeManager::in_out_app:
-					d.reset(::open(cpath, O_RDWR | O_CREAT | O_APPEND, perms));
+					d.reset(::open(cpath, pflags | O_RDWR | O_CREAT | O_APPEND, perms));
 					break;
 				default:
 					CHECKARGS(false, Format("open: illegal flags parameter: %1", perms).c_str(), PrivilegeManager::E_INVALID_PARAMETER);

@@ -206,7 +206,11 @@ public:
 		in_out       = in | out,
 		in_out_trunc = in | out | trunc,
 		in_out_app   = in | out | app,
-		iota         = in | out | trunc | app
+		iota         = in | out | trunc | app,
+
+		// These flags are used only with the posix open() function.  Their use
+		// should be considered non-portable.
+		posix_nonblock = 1 << 6
 	};
 
 	enum OpenPerms
@@ -227,6 +231,7 @@ public:
 		other_rx    = other_read | other_exec,
 		other_all   = other_read | other_write | other_exec
 	};
+
 
 	/**
 	* Used to access a file that requires special privileges to read or write.
