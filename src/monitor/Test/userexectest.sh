@@ -59,7 +59,7 @@ EOF
   $safe_bin/userexecprog \
   userexecprog+37+stderr_string 'IFS= +PATH=/bin+foo=bar' \
   stdin_string > userexectest.out
-`dirname $0`/check_for_exceptions.sh userexectest.expected userexectest.out
+`dirname $0`/check_for_exceptions.sh userexectest.expected userexectest.out || exit $?
 rm -f userexectest.{expected,out}
 fi
 

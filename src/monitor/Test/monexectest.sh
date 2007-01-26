@@ -117,7 +117,7 @@ cat $inpf >> monexectest.inp
 sed ${extended_sed_flag} -e 's/^  OW_PRIVILEGE_MONITOR_DESCRIPTOR=[0-9]+;$/  OW_PRIVILEGE_MONITOR_DESCRIPTOR=XXX;/' \
 	-e 's/^  .+PATH=.*;$/  XPATH=XXX;/' \
   < monexectest.out.tmp > monexectest.out
-`dirname $0`/check_for_exceptions.sh $exception_list monexectest.out
+`dirname $0`/check_for_exceptions.sh $exception_list monexectest.out || exit $?
 
 rm -rf $gold_dir
 mkdir -p $gold_dir

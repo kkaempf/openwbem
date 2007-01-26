@@ -149,7 +149,7 @@ fi
 # echo "No log file found"
 # fi
 
-`dirname $0`/check_for_exceptions.sh ${exceptionlist} montest.out || exit 1
+`dirname $0`/check_for_exceptions.sh ${exceptionlist} montest.out || exit $?
 
 rm -rf $gold_dir
 mkdir -p $gold_dir

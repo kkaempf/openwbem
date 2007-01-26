@@ -230,6 +230,7 @@ monitor_test_username.0.sh: Makefile
 # This uses the target name as a base for the cfg and "gold" output files.
 define monitor_exec_test_template
 	echo "#!/bin/bash" > $@
+	echo "set -e" >> $@
 	echo 'echo Running $$0 $$@' >> $@
 	echo 'for i in 0 1; do' >> $@
 	echo 'MUE=$$i MXTPRIV=$(1) $(srcdir)/monexectest.sh $(srcdir)/$(2) root 700 $(srcdir)/monitor_exec_test.0.test.tgz $(srcdir)/monitor_exec_test.0.inp $(srcdir)/$(@:%.sh=%.exceptions) $(srcdir)/monitor_exec_test.0.$(3).tgz' >> $@
