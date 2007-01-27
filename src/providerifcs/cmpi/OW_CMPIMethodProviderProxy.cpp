@@ -111,5 +111,21 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 	return CIMValue(CIMNULL);
 }
 
+void 
+CMPIMethodProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	if (m_ftable->miVector.methMI)
+	{
+		::CMPIOperationContext context;
+		CMPI_ContextOnStack eCtx(context);
+		ProviderEnvironmentIFCRef env2(env);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
+		m_ftable->miVector.methMI->ft->cleanup(m_ftable->miVector.methMI,
+			&eCtx, true);
+	}
+}
+
 } // end namespace OW_NAMESPACE
 

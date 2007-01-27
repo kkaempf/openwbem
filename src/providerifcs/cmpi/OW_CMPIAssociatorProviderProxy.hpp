@@ -90,6 +90,8 @@ public:
 		const CIMObjectPath& objectName,
 		const String& resultClass,
 		const String& role);
+
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 private:
 	CMPIFTABLERef m_ftable;
 };

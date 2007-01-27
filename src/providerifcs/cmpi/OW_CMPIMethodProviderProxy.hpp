@@ -66,6 +66,8 @@ public:
 		const CIMObjectPath& path,
 		const String &methodName,
 		const CIMParamValueArray &in, CIMParamValueArray &out);
+
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 private:
 	CMPIFTABLERef m_ftable;
 };

@@ -402,5 +402,21 @@ void
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
+void 
+CMPIInstanceProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	if (m_ftable->miVector.instMI)
+	{
+		::CMPIOperationContext context;
+		CMPI_ContextOnStack eCtx(context);
+		ProviderEnvironmentIFCRef env2(env);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
+		m_ftable->miVector.instMI->ft->cleanup(m_ftable->miVector.instMI,
+			&eCtx, true);
+	}
+}
+
 } // end namespace OW_NAMESPACE
 

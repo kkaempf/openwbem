@@ -158,6 +158,8 @@ public:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		const StringArray* propertyList,
 		const CIMClass& theClass);
+
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 private:
 	CMPIFTABLERef m_ftable;

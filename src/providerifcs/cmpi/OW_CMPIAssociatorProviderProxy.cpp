@@ -348,5 +348,21 @@ void CMPIAssociatorProviderProxy::referenceNames(
 	}
 }
 
+void 
+CMPIAssociatorProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	if (m_ftable->miVector.assocMI)
+	{
+		::CMPIOperationContext context;
+		CMPI_ContextOnStack eCtx(context);
+		ProviderEnvironmentIFCRef env2(env);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
+		m_ftable->miVector.assocMI->ft->cleanup(m_ftable->miVector.assocMI,
+			&eCtx, true);
+	}
+}
+
 } // end namespace OW_NAMESPACE
 
