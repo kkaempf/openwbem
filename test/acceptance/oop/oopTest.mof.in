@@ -69,17 +69,40 @@ instance of OpenWBEM_OOPProviderRegistration
 };
 
 // The instance/method provider is a separate registration so it can be a non-persistent provider
-instance of OpenWBEM_OOPProviderRegistration
+instance of OpenWBEM_OOPProviderProcess as $pp1
 {
-        InstanceID = "1inst";
-        NamespaceNames = {"root/ooptest"};
-        ClassName = "ooptest";
-        ProviderTypes = {1, 6}; // instance, method
+        InstanceID = "proc1inst";
         Process = "@libexecdir@/openwbem/owoopcpp1pr";
         Args = { "--provider=@provdir@/libooptest.@LIB_EXT@", "--logfile=" };
         Protocol = "owcpp1";
         Timeout = "00000000000010.000000:000";
 	Persistent=false;
+};
+
+instance of OpenWBEM_OOPInstanceProviderCapabilities as $ipc1
+{
+	InstanceID = "1inst";
+        NamespaceNames = {"root/ooptest"};
+        ClassNames = {"ooptest"};
+};
+
+instance of OpenWBEM_OOPMethodProviderCapabilities as $mpc1
+{
+	InstanceID = "1meth";
+        NamespaceNames = {"root/ooptest"};
+        ClassNames = {"ooptest"};
+};
+
+instance of OpenWBEM_OOPProviderProcessCapabilities
+{
+	Process = $pp1;
+	Capabilities = $ipc1;
+};
+
+instance of OpenWBEM_OOPProviderProcessCapabilities
+{
+	Process = $pp1;
+	Capabilities = $mpc1;
 };
 
 instance of OpenWBEM_OOPProviderRegistration
