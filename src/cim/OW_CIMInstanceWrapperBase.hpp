@@ -55,6 +55,7 @@ class CIMInstanceWrapperBase
 {
 public:
 	String toString();
+	const CIMInstance& instance();
 
 protected:
 	/**

@@ -53,6 +53,19 @@
 #include "OW_Logger.hpp"
 #include "OW_NoSuchProviderException.hpp"
 #include "OW_OpenWBEM_OOPProviderRegistration.hpp"
+#include "OW_OpenWBEM_OOPAlertIndicationProviderCapabilities.hpp"
+#include "OW_OpenWBEM_OOPAssociationProviderCapabilities.hpp"
+#include "OW_OpenWBEM_OOPIndicationExportProviderCapabilities.hpp"
+#include "OW_OpenWBEM_OOPInstanceProviderCapabilities.hpp"
+#include "OW_OpenWBEM_OOPLifecycleIndicationProviderCapabilities.hpp"
+#include "OW_OpenWBEM_OOPMethodProviderCapabilities.hpp"
+#include "OW_OpenWBEM_OOPPolledProviderCapabilities.hpp"
+#include "OW_OpenWBEM_OOPProviderCapabilities.hpp"
+#include "OW_OpenWBEM_OOPProviderProcess.hpp"
+#include "OW_OpenWBEM_OOPProviderProcessCapabilities.hpp"
+#include "OW_OpenWBEM_OOPQueryProviderCapabilities.hpp"
+#include "OW_OpenWBEM_OOPSecondaryInstanceProviderCapabilities.hpp"
+
 #include "OW_UnnamedPipe.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
@@ -67,15 +80,36 @@ namespace OW_NAMESPACE
 namespace
 {
 	const String COMPONENT_NAME("ow.provider.OOP.ifc");
+	const String CLASS_OpenWBEM_OOPInstanceProviderCapabilities("OpenWBEM_OOPInstanceProviderCapabilities");
+	const String CLASS_OpenWBEM_OOPProviderProcessCapabilities("OpenWBEM_OOPProviderProcessCapabilities");
+	const String CLASS_OpenWBEM_OOPProviderProcess("OpenWBEM_OOPProviderProcess");
+	const String CLASS_OpenWBEM_OOPSecondaryInstanceProviderCapabilities("OpenWBEM_OOPSecondaryInstanceProviderCapabilities");
+	const String CLASS_OpenWBEM_OOPAssociationProviderCapabilities("OpenWBEM_OOPAssociationProviderCapabilities");
+	const String CLASS_OpenWBEM_OOPLifecycleIndicationProviderCapabilities("OpenWBEM_OOPLifecycleIndicationProviderCapabilities");
+	const String CLASS_OpenWBEM_OOPAlertIndicationProviderCapabilities("OpenWBEM_OOPAlertIndicationProviderCapabilities");
+	const String CLASS_OpenWBEM_OOPMethodProviderCapabilities("OpenWBEM_OOPMethodProviderCapabilities");
+	const String CLASS_OpenWBEM_OOPPolledProviderCapabilities("OpenWBEM_OOPPolledProviderCapabilities");
+	const String CLASS_OpenWBEM_OOPIndicationExportProviderCapabilities("OpenWBEM_OOPIndicationExportProviderCapabilities");
+	const String CLASS_OpenWBEM_OOPQueryProviderCapabilities("OpenWBEM_OOPQueryProviderCapabilities");
 
 	bool userContextIsOperationDependent(const OpenWBEM::OOPProviderRegistration& reg)
 	{
 		return reg.getUserContext() == OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION || reg.getUserContext() == OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION_MONITORED;
 	}
 
+	bool userContextIsOperationDependent(const OpenWBEM::OOPProviderProcess& reg)
+	{
+		return reg.getUserContext() == OpenWBEM::OOPProviderProcess::E_USERCONTEXT_OPERATION || reg.getUserContext() == OpenWBEM::OOPProviderProcess::E_USERCONTEXT_OPERATION_MONITORED;
+	}
+
 	bool userContextIsMonitorDependent(const OpenWBEM::OOPProviderRegistration& reg)
 	{
 		return reg.getUserContext() == OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_MONITORED || reg.getUserContext() == OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION_MONITORED;
+	}
+
+	bool userContextIsMonitorDependent(const OpenWBEM::OOPProviderProcess& reg)
+	{
+		return reg.getUserContext() == OpenWBEM::OOPProviderProcess::E_USERCONTEXT_MONITORED || reg.getUserContext() == OpenWBEM::OOPProviderProcess::E_USERCONTEXT_OPERATION_MONITORED;
 	}
 
 	class DoNothingProviderEnvironment : public ProviderEnvironmentIFC
@@ -171,6 +205,20 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 		IndicationProviderInfoArray& indpia,
 		QueryProviderInfoArray& qpia)
 {
+	processOOPProviderRegistrationInstances(env, ipia, sipia, apia, mpia, indpia, qpia);
+	processOOPProviderProcessCapabilitiesInstances(env, ipia, sipia, apia, mpia, indpia, qpia);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvironmentIFCRef& env,
+		InstanceProviderInfoArray& ipia,
+		SecondaryInstanceProviderInfoArray& sipia,
+		AssociatorProviderInfoArray& apia,
+		MethodProviderInfoArray& mpia,
+		IndicationProviderInfoArray& indpia,
+		QueryProviderInfoArray& qpia)
+{
 	Logger lgr(COMPONENT_NAME);
 	String interopNs = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 	CIMInstanceArray registrations;
@@ -183,7 +231,7 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 		OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while enumerating instances of "
 			"OpenWBEM_OOPProviderRegistration in namespace %2", e, interopNs));
 	}
-	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() found %1 registrations", registrations.size()));
+	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderRegistration", registrations.size()));
 	for (size_t i = 0; i < registrations.size(); ++i)
 	{
 		OpenWBEM::OOPProviderRegistration curReg(registrations[i]);
@@ -497,6 +545,343 @@ OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 		catch (NULLValueException& e)
 		{
 			OW_LOG_ERROR(lgr, Format("Registration instance: %1 property has null value: %2", curReg.toString(), e.getMessage()));
+			throw;
+		}
+	}
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const ProviderEnvironmentIFCRef& env,
+		InstanceProviderInfoArray& ipia,
+		SecondaryInstanceProviderInfoArray& sipia,
+		AssociatorProviderInfoArray& apia,
+		MethodProviderInfoArray& mpia,
+		IndicationProviderInfoArray& indpia,
+		QueryProviderInfoArray& qpia)
+{
+	Logger lgr(COMPONENT_NAME);
+	String interopNs = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
+	CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+	CIMInstanceArray providerProcesses;
+	try
+	{
+		providerProcesses = hdl->enumInstancesA(interopNs, CLASS_OpenWBEM_OOPProviderProcess);
+	}
+	catch (CIMException& e)
+	{
+		OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while enumerating instances of "
+			"OpenWBEM_OOPProviderProcess in namespace %2", e, interopNs));
+	}
+	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderProcess", providerProcesses.size()));
+	for (size_t i = 0; i < providerProcesses.size(); ++i)
+	{
+		OpenWBEM::OOPProviderProcess curProvProc(providerProcesses[i]);
+		OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() processing OpenWBEM_OOPProviderProcess %1: %2", i, curProvProc.toString()));
+		try
+		{
+			String instanceID = curProvProc.getInstanceID();
+			ProvRegInfoRef info(new ProvRegInfo);
+			info->process = curProvProc.getProcess();
+			info->args = curProvProc.getArgs();
+			info->protocol = curProvProc.getProtocol();
+			if (info->protocol != "owcpp1")
+			{
+				OW_LOG_ERROR(lgr, Format("Unknown protocol: %1. Skipping registration: %2", info->protocol, curProvProc.toString()));
+				continue;
+			}
+			
+			CIMDateTime timeout = curProvProc.getTimeout();
+			if (!timeout.isInterval())
+			{
+				OW_LOG_ERROR(lgr, Format("Timeout property value is not an interval: %1. Skipping registration: %2", timeout, curProvProc.toString()));
+				continue;
+			}
+
+			float timeoutSecs = timeout.getSeconds() + 60 * 
+				(timeout.getMinutes() + 60 * 
+				 (timeout.getHours() + 24 * static_cast<float>(timeout.getDays())));
+
+			OW_LOG_DEBUG(lgr, Format("timeoutSecs = %1", timeoutSecs));
+
+			if (timeoutSecs == INFINITY)
+			{
+				info->timeout = Timeout::infinite;
+			}
+			else
+			{
+				info->timeout = Timeout::relative(timeoutSecs);
+			}
+
+			info->userContext = curProvProc.getUserContext();
+			if (info->userContext < 1 || info->userContext > 4)
+			{
+				OW_LOG_ERROR(lgr, Format("Invalid value for UserContext: %1", info->userContext));
+				continue;
+			}
+
+			if (!curProvProc.MonitorPrivilegesFileIsNULL())
+			{
+				info->monitorPrivilegesFile = curProvProc.getMonitorPrivilegesFile();
+			}
+
+			if (userContextIsMonitorDependent(curProvProc) && info->monitorPrivilegesFile == "")
+			{
+				OW_LOG_ERROR(lgr, "MonitorPrivilegesFile property cannot be NULL if UserContext is \"Monitored\" or \"OperationMonitored\"");
+				continue;
+			}
+
+			// this code relies on the constructor to set info->isPersistent to the default based on the provider type
+			if (!curProvProc.PersistentIsNULL())
+			{
+				info->isPersistent = curProvProc.getPersistent();
+			}
+
+			if (userContextIsOperationDependent(curProvProc) && info->isPersistent)
+			{
+				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have a UserContext that depends on the operation user (\"Operation\" or \"OperationMonitored\")", 
+					instanceID));
+				continue;
+			}
+
+			if (info->isPersistent && !curProvProc.UnloadTimeoutIsNULL())
+			{
+				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have an UnloadTimeout value", 
+					instanceID));
+				continue;
+			}
+
+			if (!curProvProc.UnloadTimeoutIsNULL())
+			{
+				CIMDateTime unloadTimeout = curProvProc.getUnloadTimeout();
+				if (!unloadTimeout.isInterval())
+				{
+					OW_LOG_ERROR(lgr, Format("UnloadTimeout property value is not an interval: %1. Skipping registration: %2", timeout, curProvProc.toString()));
+					continue;
+				}
+
+				float timeoutSecs = unloadTimeout.getSeconds() + 60 * 
+					(unloadTimeout.getMinutes() + 60 * 
+					 (unloadTimeout.getHours() + 24 * static_cast<float>(unloadTimeout.getDays())));
+
+				OW_LOG_DEBUG(lgr, Format("unload timeoutSecs = %1", timeoutSecs));
+
+				if (timeoutSecs == INFINITY)
+				{
+					info->unloadTimeout = Timeout::infinite;
+				}
+				else
+				{
+					info->unloadTimeout = Timeout::relativeWithReset(timeoutSecs);
+				}
+			}
+
+
+			CIMInstanceArray providerCapabilities;
+			try
+			{
+				providerCapabilities = hdl->associatorsA(interopNs, CIMObjectPath(interopNs, curProvProc.instance()), CLASS_OpenWBEM_OOPProviderProcessCapabilities);
+			}
+			catch (CIMException& e)
+			{
+				OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while getting associations of "
+					"OpenWBEM_OOPProviderCapabilities in namespace %2", e, interopNs));
+			}
+			OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderCapabilities", providerCapabilities.size()));
+
+			for (size_t j = 0; j < providerCapabilities.size(); ++j)
+			{
+				const CIMInstance& curCapabilities(providerCapabilities[j]);
+				const CIMName clsName = curCapabilities.getClassName();
+				if (clsName == CLASS_OpenWBEM_OOPInstanceProviderCapabilities)
+				{
+					// keep it for ourselves
+					m_instanceProvReg[instanceID] = info;
+					// give the info back to the provider manager
+					InstanceProviderInfo ipi;
+					ipi.setProviderName(instanceID);
+					OpenWBEM::OOPInstanceProviderCapabilities instCap(curCapabilities);
+					StringArray namespaceNames;
+					if (!instCap.NamespaceNamesIsNULL())
+						namespaceNames = instCap.getNamespaceNames();
+
+					StringArray classNames = instCap.getClassNames();
+					for (size_t k = 0; k < classNames.size(); ++k)
+					{
+						InstanceProviderInfo::ClassInfo classInfo(classNames[k], namespaceNames);
+						ipi.addInstrumentedClass(classInfo);
+						ipia.push_back(ipi);
+					}
+				}
+				else if (clsName == CLASS_OpenWBEM_OOPSecondaryInstanceProviderCapabilities)
+				{
+					// keep it for ourselves
+					m_secondaryInstanceProvReg[instanceID] = info;
+					// give the info back to the provider manager
+					SecondaryInstanceProviderInfo sipi;
+					sipi.setProviderName(instanceID);
+					OpenWBEM::OOPSecondaryInstanceProviderCapabilities secInstCap(curCapabilities);
+					StringArray namespaceNames;
+					if (!secInstCap.NamespaceNamesIsNULL())
+						namespaceNames = secInstCap.getNamespaceNames();
+
+					StringArray classNames = secInstCap.getClassNames();
+					for (size_t k = 0; k < classNames.size(); ++k)
+					{
+						SecondaryInstanceProviderInfo::ClassInfo classInfo(classNames[k], namespaceNames);
+						sipi.addInstrumentedClass(classInfo);
+						sipia.push_back(sipi);
+					}
+				}
+				else if (clsName == CLASS_OpenWBEM_OOPAssociationProviderCapabilities)
+				{
+					// keep it for ourselves
+					m_associatorProvReg[instanceID] = info;
+					// give the info back to the provider manager
+					AssociatorProviderInfo api;
+					api.setProviderName(instanceID);
+					OpenWBEM::OOPAssociationProviderCapabilities assocCap(curCapabilities);
+					StringArray namespaceNames;
+					if (!assocCap.NamespaceNamesIsNULL())
+						namespaceNames = assocCap.getNamespaceNames();
+
+					StringArray classNames = assocCap.getClassNames();
+					for (size_t k = 0; k < classNames.size(); ++k)
+					{
+						AssociatorProviderInfo::ClassInfo classInfo(classNames[k], namespaceNames);
+						api.addInstrumentedClass(classInfo);
+						apia.push_back(api);
+					}
+				}
+				else if (clsName == CLASS_OpenWBEM_OOPLifecycleIndicationProviderCapabilities)
+				{
+					// keep it for ourselves
+					m_indicationProvReg[instanceID] = info;
+					// give the info back to the provider manager
+					IndicationProviderInfo ipi;
+					ipi.setProviderName(instanceID);
+
+					const char* instanceLifeCycleIndicationClassNames[] =
+						{
+							"CIM_InstCreation",
+							"CIM_InstModification",
+							"CIM_InstDeletion",
+							"CIM_InstIndication",
+							"CIM_Indication",
+							0
+						};
+
+					OpenWBEM::OOPLifecycleIndicationProviderCapabilities liCap(curCapabilities);
+					StringArray namespaceNames;
+					if (!liCap.NamespaceNamesIsNULL())
+						namespaceNames = liCap.getNamespaceNames();
+
+					StringArray classNames = liCap.getClassNames();
+					for (size_t k = 0; k < classNames.size(); ++k)
+					{
+						for (const char** pIndicationClassName = instanceLifeCycleIndicationClassNames;
+							  *pIndicationClassName != 0;
+							  ++pIndicationClassName)
+						{
+							const char* indicationClassName = *pIndicationClassName;
+							IndicationProviderInfoEntry e(indicationClassName, namespaceNames, StringArray(1, classNames[k]));
+							ipi.addInstrumentedClass(e);
+						}
+						indpia.push_back(ipi);
+					}
+				}
+				else if (clsName == CLASS_OpenWBEM_OOPAlertIndicationProviderCapabilities)
+				{
+					// keep it for ourselves
+					m_indicationProvReg[instanceID] = info;
+					// give the info back to the provider manager
+					IndicationProviderInfo ipi;
+					ipi.setProviderName(instanceID);
+					OpenWBEM::OOPAlertIndicationProviderCapabilities aiCap(curCapabilities);
+					StringArray namespaceNames;
+					if (!aiCap.NamespaceNamesIsNULL())
+						namespaceNames = aiCap.getNamespaceNames();
+
+					StringArray classNames = aiCap.getClassNames();
+					for (size_t k = 0; k < classNames.size(); ++k)
+					{
+						IndicationProviderInfo::ClassInfo classInfo(classNames[k], namespaceNames);
+						ipi.addInstrumentedClass(classInfo);
+						indpia.push_back(ipi);
+					}
+				}
+				else if (clsName == CLASS_OpenWBEM_OOPMethodProviderCapabilities)
+				{
+					// keep it for ourselves
+					m_methodProvReg[instanceID] = info;
+					// give the info back to the provider manager
+					MethodProviderInfo mpi;
+					mpi.setProviderName(instanceID);
+					OpenWBEM::OOPMethodProviderCapabilities methCap(curCapabilities);
+					StringArray namespaceNames;
+					if (!methCap.NamespaceNamesIsNULL())
+						namespaceNames = methCap.getNamespaceNames();
+
+					StringArray methods; // leaving this empty means all methods
+					if (!methCap.MethodNamesIsNULL())
+					{
+						methods = methCap.getMethodNames();
+					}
+					StringArray classNames = methCap.getClassNames();
+					for (size_t k = 0; k < classNames.size(); ++k)
+					{
+						MethodProviderInfo::ClassInfo classInfo(classNames[k], namespaceNames, methods);
+						mpi.addInstrumentedClass(classInfo);
+						mpia.push_back(mpi);
+					}
+				}
+				else if (clsName == CLASS_OpenWBEM_OOPPolledProviderCapabilities)
+				{
+					// keep it for ourselves
+					m_polledProvReg[instanceID] = info;
+				}
+				else if (clsName == CLASS_OpenWBEM_OOPIndicationExportProviderCapabilities)
+				{
+					OpenWBEM::OOPIndicationExportProviderCapabilities ieCap(curCapabilities);
+					// keep it for ourselves
+					info->indicationExportHandlerClassNames = ieCap.getClassNames();
+					m_indicationExportProvReg[instanceID] = info;
+				}
+				else if (clsName == CLASS_OpenWBEM_OOPQueryProviderCapabilities)
+				{
+					// keep it for ourselves
+					m_queryProvReg[instanceID] = info;
+					// give the info back to the provider manager
+					QueryProviderInfo qpi;
+					qpi.setProviderName(instanceID);
+					OpenWBEM::OOPQueryProviderCapabilities queryCap(curCapabilities);
+					StringArray namespaceNames;
+					if (!queryCap.NamespaceNamesIsNULL())
+						namespaceNames = queryCap.getNamespaceNames();
+
+					StringArray classNames = queryCap.getClassNames();
+					for (size_t k = 0; k < classNames.size(); ++k)
+					{
+						QueryProviderInfo::ClassInfo classInfo(classNames[k], namespaceNames);
+						qpi.addInstrumentedClass(classInfo);
+						qpia.push_back(qpi);
+					}
+				}
+				else
+				{
+					OW_LOG_ERROR(lgr, Format("Invalid or unsupported registration instance: %1", curCapabilities.toString()));
+				}
+			}
+		}
+		catch (NoSuchPropertyException& e)
+		{
+			OW_LOG_ERROR(lgr, Format("Registration instance: %1 has no property: %2", curProvProc.toString(), e.getMessage()));
+			throw;
+		}
+		catch (NULLValueException& e)
+		{
+			OW_LOG_ERROR(lgr, Format("Registration instance: %1 property has null value: %2", curProvProc.toString(), e.getMessage()));
 			throw;
 		}
 	}

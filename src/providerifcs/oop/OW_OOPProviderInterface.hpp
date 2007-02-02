@@ -107,6 +107,20 @@ private:
 
 	template <typename T, typename RT, typename DMP>
 	RT getProvider(const char* provIdString, DMP dmp, const OOPProviderInterface::ProvRegInfo& info);
+	virtual void processOOPProviderRegistrationInstances(const ProviderEnvironmentIFCRef& env,
+		InstanceProviderInfoArray& i,
+		SecondaryInstanceProviderInfoArray& si,
+		AssociatorProviderInfoArray& a,
+		MethodProviderInfoArray& m,
+		IndicationProviderInfoArray& ind,
+		QueryProviderInfoArray& q);
+	virtual void processOOPProviderProcessCapabilitiesInstances(const ProviderEnvironmentIFCRef& env,
+		InstanceProviderInfoArray& i,
+		SecondaryInstanceProviderInfoArray& si,
+		AssociatorProviderInfoArray& a,
+		MethodProviderInfoArray& m,
+		IndicationProviderInfoArray& ind,
+		QueryProviderInfoArray& q);
 
 	// These variables are only modified in doInit() and are accessed read only by 
 	// other functions, thus they aren't mutex protected.

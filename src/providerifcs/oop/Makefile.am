@@ -71,7 +71,20 @@ OW_OOPDataOStreamBuf.hpp \
 OW_OOPDataOStreamBuf.cpp
 
 pkginclude_HEADERS = \
-OW_OpenWBEM_OOPProviderRegistration.hpp
+OW_OpenWBEM_OOPProviderRegistration.hpp \
+OW_OpenWBEM_OOPAlertIndicationProviderCapabilities.hpp \
+OW_OpenWBEM_OOPAssociationProviderCapabilities.hpp \
+OW_OpenWBEM_OOPIndicationExportProviderCapabilities.hpp \
+OW_OpenWBEM_OOPInstanceProviderCapabilities.hpp \
+OW_OpenWBEM_OOPLifecycleIndicationProviderCapabilities.hpp \
+OW_OpenWBEM_OOPMethodProviderCapabilities.hpp \
+OW_OpenWBEM_OOPPolledProviderCapabilities.hpp \
+OW_OpenWBEM_OOPProviderCapabilities.hpp \
+OW_OpenWBEM_OOPProviderProcess.hpp \
+OW_OpenWBEM_OOPProviderProcessCapabilities.hpp \
+OW_OpenWBEM_OOPQueryProviderCapabilities.hpp \
+OW_OpenWBEM_OOPSecondaryInstanceProviderCapabilities.hpp
+
 
 #OW_OOPAssociatorProvider.hpp \
 #OW_OOPAssociatorProvider.cpp \

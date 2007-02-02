@@ -50,6 +50,12 @@ CIMInstanceWrapperBase::toString()
 	return m_inst.toString();
 }
 
+const CIMInstance& 
+CIMInstanceWrapperBase::instance()
+{
+	return m_inst;
+}
+
 CIMInstanceWrapperBase::CIMInstanceWrapperBase(const CIMInstance& x, const char* name)
 	: m_inst(x)
 {
