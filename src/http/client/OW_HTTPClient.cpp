@@ -1178,12 +1178,13 @@ HTTPClient::checkResponse(Resp_t& rt)
 			if (m_socket.receiveTimeOutExpired())
 			{
 				reasonPhrase = "Client receive timeout expired.";
+				rt = E_RESPONSE_FATAL;
 			}
 			else
 			{
 				reasonPhrase = "Lost connection with server";
+				rt = E_RESPONSE_RETRY;
 			}
-			rt = E_RESPONSE_FATAL;
 			m_closeConnection = true;
 			//close();
 			break;
