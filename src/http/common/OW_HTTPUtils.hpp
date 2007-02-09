@@ -98,20 +98,17 @@ namespace HTTPUtils
 	OW_HTTP_API Array<char> base64Decode(const char* src);
 	/**
 	 * Encode src in Base64
-	 * @throws (Base64FormatException)
 	 */
 	OW_HTTP_API String base64Encode(const String& arg);
 	/**
 	 * Encode src in Base64
 	 * @param src NULL-terminated string to be encoded
-	 * @throws (Base64FormatException)
 	 */
 	OW_HTTP_API String base64Encode(const char* src);
 	/**
 	 * @param src pointer to data to be encoded.  The data may contain any
 	 * value, including 0.
 	 * @param len The length of the data to be encoded.
-	 * @throws (Base64FormatException)
 	 */
 	OW_HTTP_API String base64Encode(const UInt8* src, size_t len);
 #ifndef OW_DISABLE_DIGEST
