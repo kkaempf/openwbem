@@ -1111,7 +1111,7 @@ namespace
 		try
 		{
 			// allow either a process or a process group (-pid)
-			CHECKARGS((pid > 0) ? has(m_proc_map, pid) : has(m_proc_map, -pid), "kill: unknown process", PrivilegeManager::E_INVALID_PARAMETER);
+			CHECKARGS((pid > 0) ? has(m_proc_map, pid) : has(m_proc_map, -pid), Format("kill: unknown process: %1", pid), PrivilegeManager::E_INVALID_PARAMETER);
 			int rv = (::kill(pid, sig) == 0 ? 0 : errno);
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			ipcio_put(conn(), rv);
