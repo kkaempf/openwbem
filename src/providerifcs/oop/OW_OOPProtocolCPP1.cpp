@@ -230,13 +230,13 @@ namespace
 		}
 		catch (IOException& e)
 		{
-			OW_LOG_DEBUG(logger, Format("processOneRequest() threw IOException: %1", e));
+			//OW_LOG_DEBUG(logger, Format("processOneRequest() threw IOException: %1", e));
 
 			// check that the exception happened because of reaching the end of the stream.
 			// Otherwise, re-throw. This will happen if something is corrupted and we can't parse the input.
 			if (static_cast<size_t>(inbuf.pubseekoff(0, std::ios::cur)) != in.size())
 			{
-				OW_LOG_DEBUG(logger, "IOException not caused by reaching end of input.  process() Re-throwing");
+				OW_LOG_INFO(logger, "IOException not caused by reaching end of input.  process() Re-throwing");
 				throw;
 			}
 
@@ -382,7 +382,7 @@ namespace
 							{
 								throw;
 							}
-							OW_LOG_DEBUG(logger, "doSelected() got EAGAIN while attempting to write.");
+							//OW_LOG_DEBUG(logger, "doSelected() got EAGAIN while attempting to write.");
 						}
 						//OW_LOG_DEBUG(logger, Format("write returned %1", numWrote));
 						if (static_cast<size_t>(numWrote) == entry.buf.size())
@@ -492,7 +492,7 @@ namespace
 		// need to set the DISABLE_LOCKING flag in the OperationContext so that callbacks that happen in another thread won't deadlock.
 		OperationContextDataRestorer restorer(env->getOperationContext(), OperationContext::DISABLE_LOCKING);
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "OOPProtocolCPP1 setting DISABLE_LOCKING to 1");
+		//OW_LOG_DEBUG(logger, "OOPProtocolCPP1 setting DISABLE_LOCKING to 1");
 		env->getOperationContext().setStringData(OperationContext::DISABLE_LOCKING, "1");
 
 		if (readWriteFlag == E_READ_WRITE_UNTIL_FINISHED)
@@ -672,7 +672,7 @@ namespace
 
 			case BinarySerialization::BIN_LOG_MESSAGE:
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest got BIN_LOG_MESSAGE");
+				//OW_LOG_DEBUG(logger, "processOneRequest got BIN_LOG_MESSAGE");
 				String component = BinarySerialization::readString(inbuf);
 				String category = BinarySerialization::readString(inbuf);
 				String message = BinarySerialization::readString(inbuf);
@@ -704,7 +704,7 @@ namespace
 				}
 				if (outbuf.pubsync() == -1)
 				{
-					OW_LOG_DEBUG(logger, "processOneRequest flush failed!");
+					OW_LOG_ERROR(logger, "processOneRequest flush failed!");
 					OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
 				}
 			}
@@ -738,7 +738,7 @@ namespace
 				}
 				else
 				{
-					OW_LOG_DEBUG(logger, "processOneRequest didn't find it, writing false");
+					OW_LOG_DEBUG(logger, "processOneRequest didn't find it, not a string type, writing false");
 					BinarySerialization::writeBool(outbuf, false);
 				}
 				
