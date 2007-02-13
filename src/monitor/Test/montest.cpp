@@ -38,6 +38,8 @@
 #include "OW_String.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_Format.hpp"
+#include "OW_CerrAppender.hpp"
+#include "OW_LogAppender.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -205,6 +207,8 @@ void copy_env_var(char const * varname, StringArray & env)
 
 int main_aux(int argc, char * * argv)
 {
+	// for debugging 
+	// LogAppender::setDefaultLogAppender(new CerrAppender(LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES, "[%-5r %t %-5p %c %F:%L] %m"));
 	std::size_t const BUFSZ = 1024;
 	char cwdbuf[BUFSZ + 1];
 	std::string config_dir, app_name, user_name, tmp;
