@@ -49,6 +49,7 @@
 #include "OW_Environ.hpp"
 #include "OW_Exec.hpp"
 #include "OW_Logger.hpp"
+#include "blocxx/WaitpidThreadFix.hpp"
 
 #include <cstdlib>
 #include <cstring>
@@ -207,8 +208,40 @@ PrivilegeManagerImpl::PrivilegeManagerImpl(AutoDescriptor peer_descriptor)
 	}
 }
 
+namespace
+{
+	class WaitpidThreadFixSettingRestorer
+	{
+	public:
+		WaitpidThreadFixSettingRestorer(bool setting) 
+		: m_setting(setting)
+		, m_restored(false) 
+		{
+		}
+
+		~WaitpidThreadFixSettingRestorer() 
+		{ 
+			if (!m_restored)
+			{
+				WaitpidThreadFix::setWaitpidThreadFixEnabled(m_setting); 
+			}
+		}
+
+		void restore()
+		{
+			WaitpidThreadFix::setWaitpidThreadFixEnabled(m_setting); 
+			m_restored = true;
+		}
+	private:
+		bool m_setting;
+		bool m_restored;
+	};
+}
+
 PrivilegeManagerImpl::~PrivilegeManagerImpl()
 {
+	bool prevSetting = WaitpidThreadFix::setWaitpidThreadFixEnabled(false);
+	WaitpidThreadFixSettingRestorer restorer(prevSetting);
 	try
 	{
 		if (m_pproc->processStatus().running())
@@ -221,6 +254,7 @@ PrivilegeManagerImpl::~PrivilegeManagerImpl()
 	catch (...)
 	{
 	}
+	m_pproc = 0; // do this explicitly while the waitpid thread fix is disabled
 }
 
 namespace
@@ -396,7 +430,10 @@ namespace
 		StringArray argv = 
 			monitor_argv(exec_path.c_str(), config_dir, app_name, m_user_name);
 		StringArray envp = monitor_envp(child_desc);
+		bool prevSetting = WaitpidThreadFix::setWaitpidThreadFixEnabled(false);
+		WaitpidThreadFixSettingRestorer restorer(prevSetting);
 		ProcessRef p_monitor = Exec::spawn(exec_path, argv, envp, pre_exec);
+		restorer.restore();
 
 		// Caller owns parent_desc, so object makes own copy.
 		m_pmgr.reset(new PrivilegeManagerImpl(AutoDescriptor(::dup(parent_desc)), p_monitor));

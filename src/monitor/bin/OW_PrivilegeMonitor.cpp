@@ -1383,7 +1383,7 @@ namespace
 		// until the real logger is created we will log all errors to syslog
 		LogAppender::setDefaultLogAppender(getSyslogAppender());
 
-		turnOffWaitpidThreadFix();
+		WaitpidThreadFix::setWaitpidThreadFixEnabled(false);
 
 		PrivilegeCommon::DescriptorInfo x
 			= PrivilegeCommon::monitor_descriptor();
