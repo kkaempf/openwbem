@@ -170,7 +170,7 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 LocalAuthentication::LocalAuthentication()
 	: m_logger(COMPONENT_NAME)
-	, m_local_auth_dir(FileSystem::Path::realPath(ConfigOpts::installed_owdata_dir + "/OWLocal"))
+	, m_local_auth_dir(ConfigOpts::installed_owdata_dir + "/OWLocal")
 {
 	if (useHelper())
 	{
@@ -180,6 +180,7 @@ LocalAuthentication::LocalAuthentication()
 	{
 		LocalAuthenticationCommon::initializeDir(m_local_auth_dir);
 	}
+	m_local_auth_dir = FileSystem::Path::realPath(m_local_auth_dir);
 }
 
 //////////////////////////////////////////////////////////////////////////////
