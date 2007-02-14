@@ -50,10 +50,7 @@ class OOPInstanceProvider : public InstanceProviderIFC, public OOPProviderBase
 {
 public:
 	OOPInstanceProvider(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<RWLocker>& guardRef,
-		const Reference<ProcessRef>& persistentProcessRef,
-		const Reference<String>& persistentProcessUserNameRef
-		);
+		const OOPProcessState& processState);
 	virtual ~OOPInstanceProvider();
 	
 	virtual void enumInstanceNames(

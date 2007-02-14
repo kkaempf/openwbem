@@ -50,9 +50,7 @@ class OOPSecondaryInstanceProvider : public SecondaryInstanceProviderIFC, public
 {
 public:
 	OOPSecondaryInstanceProvider(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<RWLocker>& guardRef,
-		const Reference<ProcessRef>& persistentProcessRef,
-		const Reference<String>& persistentProcessUserNameRef);
+		const OOPProcessState& processState);
 	virtual ~OOPSecondaryInstanceProvider();
 	
 	virtual void filterInstances(

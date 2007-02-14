@@ -68,7 +68,8 @@ OW_OOPClonedProviderEnv.hpp \
 OW_OOPClonedProviderEnv.cpp \
 OW_OOPFwd.hpp \
 OW_OOPDataOStreamBuf.hpp \
-OW_OOPDataOStreamBuf.cpp
+OW_OOPDataOStreamBuf.cpp \
+OW_OOPProcessState.hpp
 
 pkginclude_HEADERS = \
 OW_OpenWBEM_OOPProviderRegistration.hpp \

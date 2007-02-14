@@ -45,6 +45,7 @@
 #include "OW_RWLocker.hpp"
 #include "OW_Reference.hpp"
 #include "OW_OpenWBEM_OOPProviderRegistration.hpp"
+#include "OW_OOPProcessState.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -138,73 +139,46 @@ private:
 	struct SavedProviders
 	{
 		SavedProviders()
-			: guard(new RWLocker)
-			, process(new ProcessRef)
-			, processUserName(new String)
 		{
 		}
 
 		SavedProviders(const InstanceProviderIFCRef& ipir)
 			: instanceProv(ipir)
-			, guard(new RWLocker)
-			, process(new ProcessRef)
-			, processUserName(new String)
 		{
 		}
 
 		SavedProviders(const SecondaryInstanceProviderIFCRef& sipir)
 			: secondaryInstanceProv(sipir)
-			, guard(new RWLocker)
-			, process(new ProcessRef)
-			, processUserName(new String)
 		{
 		}
 
 		SavedProviders(const AssociatorProviderIFCRef& apir)
 			: associatorProv(apir)
-			, guard(new RWLocker)
-			, process(new ProcessRef)
-			, processUserName(new String)
 		{
 		}
 
 		SavedProviders(const MethodProviderIFCRef& mpir)
 			: methodProv(mpir)
-			, guard(new RWLocker)
-			, process(new ProcessRef)
-			, processUserName(new String)
 		{
 		}
 
 		SavedProviders(const IndicationProviderIFCRef& ipir)
 			: indProv(ipir)
-			, guard(new RWLocker)
-			, process(new ProcessRef)
-			, processUserName(new String)
 		{
 		}
 
 		SavedProviders(const PolledProviderIFCRef& ppir)
 			: polledProv(ppir)
-			, guard(new RWLocker)
-			, process(new ProcessRef)
-			, processUserName(new String)
 		{
 		}
 
 		SavedProviders(const IndicationExportProviderIFCRef& iepir)
 			: indicationExportProv(iepir)
-			, guard(new RWLocker)
-			, process(new ProcessRef)
-			, processUserName(new String)
 		{
 		}
 
 		SavedProviders(const QueryProviderIFCRef& qpir)
 			: queryProv(qpir)
-			, guard(new RWLocker)
-			, process(new ProcessRef)
-			, processUserName(new String)
 		{
 		}
 
@@ -216,9 +190,7 @@ private:
 		PolledProviderIFCRef polledProv;
 		IndicationExportProviderIFCRef indicationExportProv;
 		QueryProviderIFCRef queryProv;
-		Reference<RWLocker> guard;
-		Reference<ProcessRef> process;
-		Reference<String> processUserName;
+		OOPProcessState processState;
 
 		const ProvRegInfo& getInfo() const;
 

@@ -51,10 +51,8 @@ namespace
 
 
 OOPAssociatorProvider::OOPAssociatorProvider(const OOPProviderInterface::ProvRegInfo& info,
-	const Reference<RWLocker>& guardRef,
-	const Reference<ProcessRef>& persistentProcessRef,
-	const Reference<String>& persistentProcessUserNameRef)
-	: OOPProviderBase(info, guardRef, persistentProcessRef, persistentProcessUserNameRef)
+	const OOPProcessState& processState)
+	: OOPProviderBase(info, processState)
 {
 }
 OOPAssociatorProvider::~OOPAssociatorProvider()

@@ -46,6 +46,7 @@
 #include "OW_ThreadPool.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_TimeoutTimer.hpp"
+#include "OW_OOPProcessState.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -54,9 +55,7 @@ class OOPProviderBase
 {
 public:
 	OOPProviderBase(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<RWLocker>& guardRef,
-		const Reference<ProcessRef>& persistentProcessRef,
-		const Reference<String>& persistentProcessUserNameRef);
+		const OOPProcessState& processState);
 
 	virtual ~OOPProviderBase();
 
@@ -94,7 +93,7 @@ protected:
 	void startProcessAndCallFunction(const ProviderEnvironmentIFCRef& env, const MethodCallback& func, const char* fname);
 
 private:
-	ProcessRef getProcess(const char* fname, const ProviderEnvironmentIFCRef& env, EUsePersistentProcessFlag usePersistentProcess, String& procUserName);
+	ThreadSafeProcessRef getProcess(const char* fname, const ProviderEnvironmentIFCRef& env, EUsePersistentProcessFlag usePersistentProcess, String& procUserName);
 
 	/// Precondition: if m_guardRef != NULL, then *m_guardRef is locked.
 	void resetUnloadTimer();
@@ -102,9 +101,7 @@ private:
 	OOPProviderInterface::ProvRegInfo m_provInfo;
 	OOPProtocolIFCRef m_protocol;
 
-	Reference<RWLocker> m_guardRef;
-	Reference<ProcessRef> m_persistentProcessRef;
-	Reference<String> m_persistentProcessUserNameRef;
+	OOPProcessState m_processState;
 	ThreadPool m_threadPool;
 	TimeoutTimer m_unloadTimer;
 };

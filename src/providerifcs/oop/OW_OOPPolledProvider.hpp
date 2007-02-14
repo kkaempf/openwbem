@@ -50,10 +50,7 @@ class OOPPolledProvider : public PolledProviderIFC, public OOPProviderBase
 {
 public:
 	OOPPolledProvider(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<RWLocker>& guardRef,
-		const Reference<ProcessRef>& persistentProcessRef,
-		const Reference<String>& persistentProcessUserNameRef
-		);
+		const OOPProcessState& processState);
 	virtual ~OOPPolledProvider();
 	
 	virtual Int32 poll(const ProviderEnvironmentIFCRef& env);

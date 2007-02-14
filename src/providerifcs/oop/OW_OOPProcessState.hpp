@@ -32,37 +32,41 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_OOP_QUERY_PROVIDER_HPP_INCLUDE_GUARD_
-#define OW_OOP_QUERY_PROVIDER_HPP_INCLUDE_GUARD_
-#include "OW_config.h"
-#include "OW_QueryProviderIFC.hpp"
-#include "OW_OOPProviderInterface.hpp"
-#include "OW_OOPFwd.hpp"
-#include "OW_OOPProviderBase.hpp"
+#ifndef OW_OOP_PROCESS_STATE_HPP_INCLUDE_GUARD_
+#define OW_OOP_PROCESS_STATE_HPP_INCLUDE_GUARD_
 
-// The classes and functions defined in this file are not meant for general
-// use, they are internal implementation details.  They may change at any time.
+#include "OW_config.h"
+#include "OW_CommonFwd.hpp"
+#include "OW_String.hpp"
+#include "OW_RWLocker.hpp"
+#include "OW_Reference.hpp"
+#include "OW_ThreadSafeProcess.hpp"
 
 namespace OW_NAMESPACE
 {
 
-class OOPQueryProvider : public QueryProviderIFC, public OOPProviderBase
+struct OOPProcessState
 {
-public:
-	OOPQueryProvider(const OOPProviderInterface::ProvRegInfo& info,
-		const OOPProcessState& processState);
-	virtual ~OOPQueryProvider();
-	
-	virtual void queryInstances(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const WQLSelectStatement& query,
-		const WQLCompile& compiledWhereClause,
-		CIMInstanceResultHandlerIFC& result,
-		const CIMClass& cimClass );
+	OOPProcessState()
+	: m_guardRef(new RWLocker)
+	, m_persistentProcessRef(new ThreadSafeProcessRef)
+	, m_persistentProcessUserNameRef(new String)
+	{
+	}
 
-	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
+	enum PSNULL 
+	{
+		E_PSNULL
+	};
 
+	OOPProcessState(PSNULL)
+	{
+	}
+
+
+	Reference<RWLocker> m_guardRef;
+	Reference<ThreadSafeProcessRef> m_persistentProcessRef;
+	Reference<String> m_persistentProcessUserNameRef;
 };
 
 
@@ -70,6 +74,5 @@ public:
 
 
 #endif
-
 
 

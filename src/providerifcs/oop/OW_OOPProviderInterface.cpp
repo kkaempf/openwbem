@@ -168,8 +168,8 @@ OOPProviderInterface::~OOPProviderInterface()
 	{
 		try
 		{
-			if (proviter->second.process && *proviter->second.process && 
-				(*proviter->second.process)->processStatus().running())
+			if (proviter->second.processState.m_persistentProcessRef && *proviter->second.processState.m_persistentProcessRef && 
+				(*proviter->second.processState.m_persistentProcessRef)->processStatus().running())
 			{
 				OOPProviderBase* prov = proviter->second.getOOPProviderBase();
 				OW_LOG_INFO(lgr, Format("terminating provider %1", proviter->first));
@@ -895,7 +895,7 @@ OOPProviderInterface::getProvider(const char* provIdString, DMP dmp, const OOPPr
 {
 	if (info.providerNeedsNewProcessForEveryInvocation())
 	{
-		return RT(new T(info, Reference<RWLocker>(), Reference<ProcessRef>(), Reference<String>()));
+		return RT(new T(info, OOPProcessState(OOPProcessState::E_PSNULL)));
 	}
 
 	MutexLock lock(m_persistentProvsGuard);
@@ -908,7 +908,7 @@ OOPProviderInterface::getProvider(const char* provIdString, DMP dmp, const OOPPr
 		}
 		else
 		{
-			RT p(new T(info, proviter->second.guard, proviter->second.process, proviter->second.processUserName));
+			RT p(new T(info, proviter->second.processState));
 			proviter->second.*dmp = p;
 			return p;
 		}
@@ -916,7 +916,7 @@ OOPProviderInterface::getProvider(const char* provIdString, DMP dmp, const OOPPr
 	else
 	{
 		SavedProviders savedProviders;
-		RT p(new T(info, savedProviders.guard, savedProviders.process, savedProviders.processUserName));
+		RT p(new T(info, savedProviders.processState));
 		savedProviders.*dmp = p;
 		m_persistentProvs.insert(std::make_pair(String(provIdString), savedProviders));
 		return p;
@@ -1012,7 +1012,7 @@ OOPProviderInterface::doGetIndicationExportProviders(const ProviderEnvironmentIF
 			}
 			else
 			{
-				IndicationExportProviderIFCRef p(new OOPIndicationExportProvider(*iter->second, proviter->second.guard, proviter->second.process, proviter->second.processUserName));
+				IndicationExportProviderIFCRef p(new OOPIndicationExportProvider(*iter->second, proviter->second.processState));
 				proviter->second.indicationExportProv = p;
 				rval.push_back(p);
 			}
@@ -1020,7 +1020,7 @@ OOPProviderInterface::doGetIndicationExportProviders(const ProviderEnvironmentIF
 		else
 		{
 			SavedProviders savedProviders;
-			IndicationExportProviderIFCRef p(new OOPIndicationExportProvider(*iter->second, savedProviders.guard, savedProviders.process, savedProviders.processUserName));
+			IndicationExportProviderIFCRef p(new OOPIndicationExportProvider(*iter->second, savedProviders.processState));
 			savedProviders.indicationExportProv = p;
 			m_persistentProvs.insert(std::make_pair(iter->first, savedProviders));
 			rval.push_back(p);
@@ -1051,7 +1051,7 @@ OOPProviderInterface::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 			}
 			else
 			{
-				PolledProviderIFCRef p(new OOPPolledProvider(*iter->second, proviter->second.guard, proviter->second.process, proviter->second.processUserName));
+				PolledProviderIFCRef p(new OOPPolledProvider(*iter->second, proviter->second.processState));
 				proviter->second.polledProv = p;
 				rval.push_back(p);
 			}
@@ -1059,7 +1059,7 @@ OOPProviderInterface::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 		else
 		{
 			SavedProviders savedProviders;
-			PolledProviderIFCRef p(new OOPPolledProvider(*iter->second, savedProviders.guard, savedProviders.process, savedProviders.processUserName));
+			PolledProviderIFCRef p(new OOPPolledProvider(*iter->second, savedProviders.processState));
 			savedProviders.polledProv = p;
 			m_persistentProvs.insert(std::make_pair(iter->first, savedProviders));
 			rval.push_back(p);
@@ -1117,8 +1117,8 @@ OOPProviderInterface::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 	while (proviter != persistentProvsCopy.end())
 	{
 		// If this is not a persistent provider, see if we can unload it.
-		if (!proviter->second.getInfo().isPersistent && proviter->second.process && *proviter->second.process && 
-			(*proviter->second.process)->processStatus().running())
+		if (!proviter->second.getInfo().isPersistent && proviter->second.processState.m_persistentProcessRef && *proviter->second.processState.m_persistentProcessRef && 
+			(*proviter->second.processState.m_persistentProcessRef)->processStatus().running())
 		{
 			OOPProviderBase* prov = proviter->second.getOOPProviderBase();
             if (prov->unloadTimeoutExpired())
@@ -1156,14 +1156,14 @@ OOPProviderInterface::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 	for (PersistentProvMap_t::iterator proviter = provsCopy.begin();
 		proviter != provsCopy.end(); proviter++)
 	{
-		if (!proviter->second.getInfo().isPersistent && proviter->second.process && *proviter->second.process && 
-			(*proviter->second.process)->processStatus().running())
+		if (!proviter->second.getInfo().isPersistent && proviter->second.processState.m_persistentProcessRef && *proviter->second.processState.m_persistentProcessRef && 
+			(*proviter->second.processState.m_persistentProcessRef)->processStatus().running())
 		{
 			ProviderBaseIFC* pprov = dynamic_cast<ProviderBaseIFC*>(proviter->second.getOOPProviderBase());
 			OW_ASSERT(pprov);
 			if (pprov)
 			{
-				RWLocker* mutexToUse = proviter->second.guard ? proviter->second.guard.getPtr() : &mutexOnStack;
+				RWLocker* mutexToUse = proviter->second.processState.m_guardRef ? proviter->second.processState.m_guardRef.getPtr() : &mutexOnStack;
 				WriteLock pl(*mutexToUse, proviter->second.getInfo().timeout);
 				OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown terminating provider %1", proviter->first));
 				try

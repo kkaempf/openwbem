@@ -50,9 +50,7 @@ class OOPMethodProvider : public MethodProviderIFC, public OOPProviderBase
 {
 public:
 	OOPMethodProvider(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<RWLocker>& guardRef,
-		const Reference<ProcessRef>& persistentProcessRef,
-		const Reference<String>& persistentProcessUserNameRef);
+		const OOPProcessState& processState);
 	virtual ~OOPMethodProvider();
 	
 
