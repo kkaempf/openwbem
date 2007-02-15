@@ -1304,6 +1304,8 @@ namespace
 		std::ifstream is(path.c_str());
 		CHECK0(is, "Could not open privilege config file " + path);
 
+		OW_LOG_INFO(logger, Format("Reading privileges from %1(%2)", path, FileSystem::Path::realPath(path)));
+
 		MonitorIncludeHandler mih(configDir);
 		openwbem_privconfig_Lexer lexer(is, mih, path);
 		PrivilegeConfig::ParseError err;
