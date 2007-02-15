@@ -1133,7 +1133,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ pollStatus, pid=%1", pid).toString());
 		try
 		{
-			CHECKARGS(has(m_proc_map, pid), "pollStatus: unknown process", PrivilegeManager::E_INVALID_PARAMETER);
+			CHECKARGS(has(m_proc_map, pid), Format("pollStatus: unknown process: %1", pid), PrivilegeManager::E_INVALID_PARAMETER);
 			ProcId wpid;
 			int status;
 			do
