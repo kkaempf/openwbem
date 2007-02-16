@@ -155,7 +155,7 @@ void OW_BinarySerializationTestCases::testCIMValueSerializationAux(const CIMValu
 {
 	DataOStreamBuf ostrbuf;
 	BinarySerialization::writeValue(ostrbuf, v);
-	if (getenv(OWLONGTEST))
+	if (getenv("OWLONGTEST"))
 	{
 		for (int i = 0; i < ostrbuf.length() - 1; ++i)
 		{
