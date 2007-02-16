@@ -49,6 +49,7 @@
 #include "OW_CIMDateTime.hpp"
 
 #include <iostream>
+#include <cstdlib>
 
 using namespace OpenWBEM;
 using namespace std; 
