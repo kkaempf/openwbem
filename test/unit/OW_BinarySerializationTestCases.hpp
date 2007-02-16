@@ -38,6 +38,7 @@
 
 #include "OW_config.h"
 #include "TestCase.hpp"
+#include "OW_CIMFwd.hpp"
 
 class OW_BinarySerializationTestCases : public TestCase
 {
@@ -51,7 +52,11 @@ public:
 
 private:
 	// test methods
-	void testSomething();
+	void testObjectPath();
+	void testCIMValueSerialization();
+
+	// helper
+	void testCIMValueSerializationAux(const OpenWBEM::CIMValue& v);
 };
 
 #endif

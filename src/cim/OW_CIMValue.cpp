@@ -57,6 +57,7 @@ public:
 	static CIMValueImpl createSimpleValue(CIMDataType::Type cimtype,
 		const String& value);
 	CIMValueImpl(const CIMValueImpl& arg);
+	explicit CIMValueImpl(CIMNULL_t);
 	explicit CIMValueImpl(Bool val);
 	explicit CIMValueImpl(bool val);
 	explicit CIMValueImpl(UInt8 arg);
@@ -1064,6 +1065,11 @@ CIMValue::CIMValueImpl::CIMValueImpl(const CIMValueImpl& arg) :
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
+CIMValue::CIMValueImpl::CIMValueImpl(CIMNULL_t) :
+	m_type(CIMDataType::CIMNULL), m_isArray(false)
+{
+}
+//////////////////////////////////////////////////////////////////////////////
 CIMValue::CIMValueImpl::CIMValueImpl(Bool v) :
 	m_type(CIMDataType::BOOLEAN), m_isArray(false)
 {
@@ -1369,17 +1375,9 @@ CIMValue::CIMValueImpl::~CIMValueImpl()
 			case CIMDataType::EMBEDDEDINSTANCE:
 				(reinterpret_cast<CIMInstance*>(&m_obj))->~CIMInstance();
 				break;
-#if defined(__GNUC__) && (__GNUC__ == 4)
-// This shouldn't really be here, as the only time a data type is marked as
-// CIMNULL is when it is destroyed, but there seems to be a bug in GCC 4.0
-// (noticed on both MacOS and Linux X86) that can be hidden by adding this.  It
-// doesn't fix the problem, but it masks it so it is no longer visible.
-//
-// TODO: At some point in time the real cause of this problem should be located
-// and this should be removed.
+			// This case is needed for a partially constructed instance (e.g. when readObject() is executing)
 			case CIMDataType::CIMNULL:
 				break;
-#endif
 			default:
 				assert(0); // don't want to throw from a destructor, just segfault
 		}
@@ -2617,16 +2615,19 @@ readObjectArray(streambuf & istrm, T & ra)
 COWIntrusiveReference<CIMValue::CIMValueImpl>
 CIMValue::CIMValueImpl::readObject(streambuf & istrm)
 {
-	COWIntrusiveReference<CIMValue::CIMValueImpl> rval(new CIMValue::CIMValueImpl(0));
-	CIMDataType::Type& m_type(rval->m_type);
-	Bool& m_isArray(rval->m_isArray);
-	CIMValueData& m_obj(rval->m_obj);
 
 	CIMBase::readSig( istrm, OW_CIMVALUESIG );
-	UInt32 tmp;
-	BinarySerialization::readLen(istrm, tmp);
-	m_type = CIMDataType::Type(tmp);
+	UInt32 type;
+	BinarySerialization::readLen(istrm, type);
+	CIMDataType::Type m_type = CIMDataType::Type(type);
+	Bool m_isArray;
 	m_isArray.readObject(istrm);
+
+	COWIntrusiveReference<CIMValue::CIMValueImpl> rval(new CIMValue::CIMValueImpl(CIMNULL));
+	rval->m_isArray = m_isArray;
+	rval->m_type = m_type;
+	// if anything below here throws, ~CIMValueImpl() will properly destroy the object.
+	CIMValueData& m_obj(rval->m_obj);
 	if (m_isArray)
 	{
 		switch (m_type)
