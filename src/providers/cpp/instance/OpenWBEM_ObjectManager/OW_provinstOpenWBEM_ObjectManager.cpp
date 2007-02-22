@@ -317,7 +317,11 @@ public:
 		const String &role,
 		const String &resultRole)
 	{
-		doSimpleEnumInstances(env, ns, assocClass, result, E_ALL_PROPERTIES);
+    		if (objectName.getClassName().equalsIgnoreCase(Class_OpenWBEM_ComputerSystem)
+		    || objectName.getClassName().equalsIgnoreCase(CLASS_OpenWBEM_ObjectManager))
+		{
+		    doSimpleEnumInstances(env, ns, assocClass, result, E_ALL_PROPERTIES);
+		}
 	}
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 };
