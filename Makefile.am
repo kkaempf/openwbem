@@ -19,9 +19,7 @@ create_replacement_script.sh \
 generic-company-openwbem.spec.in \
 $(m4_DATA)
 
-BUILT_SOURCES = replacement_script.sed
-
-CLEANFILES = Doxyfile replacement_script.sed
+CLEANFILES = Doxyfile
 
 clean-local:
 	if [ -n "$(PACKAGE_PREFIX_D)" ]; then \
