@@ -119,6 +119,8 @@ public:
 	 * @returns def if key is not found
 	 */
 	String getStringDataWithDefault(const String& key, const String& def = String() ) const;
+
+	void getAllStringData(SortedVectorMap<String, String> &outmap) const;
 	
 	// Keys values we use.
 	static const char* const USER_NAME;

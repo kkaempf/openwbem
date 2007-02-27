@@ -145,6 +145,24 @@ OperationContext::getStringDataWithDefault(const String& key, const String& def)
 }
 
 /////////////////////////////////////////////////////////////////////////////
+void
+OperationContext::getAllStringData(SortedVectorMap<String, String> &outmap) const
+{
+	outmap.clear();
+	SortedVectorMap<String, DataRef>::const_iterator ci = m_data.begin();
+	while (ci != m_data.end())
+	{
+		IntrusiveReference<StringData> strData = ci->second.cast_to<StringData>();
+		if (strData)
+		{
+			outmap[ci->first] = strData->m_str;
+		}
+		ci++;
+	}
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
 const char* const OperationContext::USER_NAME = "USER_NAME";
 const char* const OperationContext::USER_PASSWD = "USER_PASSWD";
 const char* const OperationContext::HTTP_PATH = "HTTP_PATH";
