@@ -50,7 +50,7 @@
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 #endif
 
-enum S { COMMAND, COMPARE, GET, PUT, REMOVE, SEQ, SEQFLAG, KEY, DATA };
+enum S { COMMAND, COMPARE, GET, PUT, REMOVE, SEQ, SEQFLAG, KEY, DATA, INVALID};
 
 void	 compare (DBT *, DBT *);
 DBTYPE	 dbtype (char *);
@@ -83,7 +83,7 @@ main(int argc, char *argv[])
 {
 	extern int optind;
 	extern char *optarg;
-	enum S command, state;
+	enum S state, command = INVALID; // Assign command to remove warning
 	DB *dbp;
 	DBT data, key, keydata;
 	size_t len;
