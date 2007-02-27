@@ -266,7 +266,7 @@ CIMValueGetRef(NPIHandle* npiHandle, ::CIMValue cv)
 extern "C" ::CIMType
 CIMParameterGetType(NPIHandle* npiHandle, ::CIMParameter cp)
 {
-	int dt;
+	int dt = 0;
 	try {
 		OpenWBEM::CIMParamValue* pcp = (OpenWBEM::CIMParamValue*)cp.ptr;
 		dt = pcp->getValue().getType();
