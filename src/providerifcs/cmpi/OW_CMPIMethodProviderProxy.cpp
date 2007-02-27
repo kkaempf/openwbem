@@ -88,9 +88,7 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 		CMPIValueValueResultHandler handler;
 		CMPI_ResultOnStack eRes(handler);
 		char* mName = const_cast<char*>(methodName.c_str());
-		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx, const_cast<char*>(CMPIInvocationFlags), (CMPIValue*)&flgs,
-			CMPI_uint32);
+		CMPIPrepareContext(env, eCtx);
 
 		rc=m_ftable->miVector.methMI->ft->invokeMethod(
 			m_ftable->miVector.methMI, &eCtx, &eRes, &eRef, mName, &eArgsIn,

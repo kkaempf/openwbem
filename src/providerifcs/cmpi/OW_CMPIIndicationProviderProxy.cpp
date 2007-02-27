@@ -80,6 +80,7 @@ CMPIIndicationProviderProxy::deActivateFilter(
 		CMPI_ObjectPathOnStack eRef(mutablePath);
 		CMPISelectExp exp; // = {&mutableFilter};
 		//CMPIFlags flgs = 0;
+		CMPIPrepareContext(env, eCtx);
 		::CMPIIndicationMI *mi = m_ftable->miVector.indMI;
 		char* _eventType = const_cast<char*>(eventType.c_str());
 		rc = m_ftable->miVector.indMI->ft->deActivateFilter(mi, &eCtx,
@@ -129,6 +130,7 @@ CMPIIndicationProviderProxy::activateFilter(
 		//CMPIFlags flgs = 0;
 		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
 		char* _eventType = const_cast<char*>(eventType.c_str());
+		CMPIPrepareContext(env, eCtx);
 
 		rc = m_ftable->miVector.indMI->ft->activateFilter(mi, &eCtx, 
 			&exp, _eventType, &eRef, firstActivation);
@@ -178,6 +180,7 @@ CMPIIndicationProviderProxy::authorizeFilter(
 		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
 		char* _eventType = const_cast<char*>(eventType.c_str());
 		char* _owner = const_cast<char*>(owner.c_str());
+		CMPIPrepareContext(env, eCtx);
 		rc = m_ftable->miVector.indMI->ft->authorizeFilter(mi, &eCtx, 
 			&exp, _eventType, &eRef, _owner);
 		if (rc.rc != CMPI_RC_OK)
@@ -221,6 +224,7 @@ CMPIIndicationProviderProxy::mustPoll(
 		//CMPIFlags flgs = 0;
 		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
 		char* _eventType = const_cast<char*>(eventType.c_str());
+		CMPIPrepareContext(env, eCtx);
 		rc = m_ftable->miVector.indMI->ft->mustPoll(mi, &eCtx, 
 			&exp, _eventType, &eRef);
 

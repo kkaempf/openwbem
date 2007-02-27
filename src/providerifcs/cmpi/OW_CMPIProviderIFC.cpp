@@ -45,6 +45,9 @@
 #include "OW_CMPIAssociatorProviderProxy.hpp"
 #endif
 #include "OW_CMPIIndicationProviderProxy.hpp"
+#include "OW_CMPIProviderIFCUtils.hpp"
+#include "cmpisrv.h"
+#include "OW_OperationContext.hpp"
 
 #include <algorithm>
 using std::fill_n;
@@ -55,6 +58,66 @@ namespace OW_NAMESPACE
 namespace
 {
 	const String COMPONENT_NAME("ow.provider.cmpi.ifc");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+CMPIPrepareContext(
+	const ProviderEnvironmentIFCRef& env,
+	CMPI_ContextOnStack& eCtx,
+	ELocalOnlyFlag localOnly,
+	EDeepFlag deep,
+	EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin)
+{
+	LoggerRef logger = env->getLogger(COMPONENT_NAME);
+
+	CMPIFlags flgs = 0;
+	String user, fulluser;
+	if (localOnly == E_LOCAL_ONLY)
+		flgs |= CMPI_FLAG_LocalOnly;
+	if (deep == E_DEEP)
+		flgs |= CMPI_FLAG_DeepInheritance;
+	if (includeQualifiers == E_INCLUDE_QUALIFIERS)
+		flgs |= CMPI_FLAG_IncludeQualifiers;
+	if (includeClassOrigin == E_INCLUDE_CLASS_ORIGIN)
+		flgs |= CMPI_FLAG_IncludeClassOrigin;
+
+	CIMParamValueArray* args = (CIMParamValueArray *)eCtx.hdl;
+
+	args->append(CIMParamValue(CMPIInvocationFlags, CIMValue(UInt32(flgs))));
+
+	OperationContext &ctx = env->getOperationContext();
+
+	try
+	{
+		// Populate context with all of string data from operation
+		// context
+		SortedVectorMap<String,String> ctxStrData;
+		ctx.getAllStringData(ctxStrData);
+		SortedVectorMap<String,String>::const_iterator it = ctxStrData.begin();
+		while (it != ctxStrData.end())
+		{
+			args->append(CIMParamValue(it->first, CIMValue(it->second)));
+			if (it->first == OperationContext::USER_NAME)
+			{
+				args->append(CIMParamValue("CMPIPrincipal",
+					CIMValue(it->second)));
+			}
+			it++;
+		}
+	}
+	catch(...)
+	{
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME),
+			"Caught exception getting all string data from "
+			"operation context");
+		// Ignore?
+	}
+
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME),
+		Format("CMPIPrepareContext. User: %1  Full User: %2  Flgs: %3",
+			user, fulluser, flgs));
 }
 
 //typedef CMPIProviderBaseIFC* (*ProviderCreationFunc)();

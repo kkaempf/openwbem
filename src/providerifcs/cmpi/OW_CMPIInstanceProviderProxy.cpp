@@ -85,9 +85,7 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 		CIMObjectPath cop(className, ns);
 		CMPI_ObjectPathOnStack eRef(cop);
 		CMPI_ResultOnStack eRes(result);
-		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx, const_cast<char*>(CMPIInvocationFlags),
-			(CMPIValue*)&flgs,CMPI_uint32);
+		CMPIPrepareContext(env, eCtx);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 		rc = m_ftable->miVector.instMI->ft->enumInstanceNames(
 			mi, &eCtx, &eRes, &eRef);
@@ -152,16 +150,8 @@ CMPIInstanceProviderProxy::enumInstances(
 				props[pCount]=NULL;
 			}
 		}
-		CMPIFlags flgs = 0;
-
-		if (includeQualifiers)
-			flgs |= CMPI_FLAG_IncludeQualifiers;
-
-		if (includeClassOrigin)
-			flgs |= CMPI_FLAG_IncludeClassOrigin;
-
-		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags), (CMPIValue*)&flgs,
-			CMPI_uint32);
+		CMPIPrepareContext(env, eCtx, localOnly, deep, includeQualifiers,
+			includeClassOrigin);
 
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 		rc = m_ftable->miVector.instMI->ft->enumInstances(
@@ -223,16 +213,9 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 				props[pCount] = NULL;
 			}
 		}
-		CMPIFlags flgs=0;
 
-		if (includeQualifiers)
-			flgs |= CMPI_FLAG_IncludeQualifiers;
-
-		if (includeClassOrigin)
-			flgs |= CMPI_FLAG_IncludeClassOrigin;
-
-		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags), (CMPIValue*)&flgs,
-			CMPI_uint32);
+		CMPIPrepareContext(env, eCtx, localOnly, E_SHALLOW, includeQualifiers,
+			includeClassOrigin);
 
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 
@@ -278,9 +261,7 @@ CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 		copWithNS.setNameSpace(ns);
 		CMPI_ObjectPathOnStack eRef(copWithNS);
 		CMPI_ResultOnStack eRes;
-		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags),
-			(CMPIValue*)&flgs,CMPI_uint32);
+		CMPIPrepareContext(env, eCtx);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 
 		rc = m_ftable->miVector.instMI->ft->deleteInstance(
@@ -322,9 +303,7 @@ CIMObjectPath
 		CMPI_InstanceOnStack eInst(cimInstance);
 		CMPIObjectPathValueResultHandler coprh;
 		CMPI_ResultOnStack eRes(coprh);
-		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags),
-			(CMPIValue*)&flgs,CMPI_uint32);
+		CMPIPrepareContext(env, eCtx);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 // Cheating
 		rc = m_ftable->miVector.instMI->ft->createInstance(
@@ -374,10 +353,8 @@ void
 		CMPI_InstanceOnStack eInst(modifiedInstance);
 		//CMPI_ResultOnStack eRes(result);
 		CMPI_ResultOnStack eRes;
-		CMPIFlags flgs=0;
-		//if (includeQualifier) flgs|=CMPI_FLAG_IncludeQualifiers;
-		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags),
-			(CMPIValue*)&flgs,CMPI_uint32);
+		CMPIPrepareContext(env, eCtx, E_NOT_LOCAL_ONLY, E_SHALLOW,
+			includeQualifiers);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 		rc = m_ftable->miVector.instMI->ft->modifyInstance(
 			mi, &eCtx, &eRes, &eRef, &eInst, props);
