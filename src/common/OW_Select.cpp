@@ -168,7 +168,7 @@ int
 selectRWEpoll(SelectObjectArray& selarray, UInt32 ms)
 {
 #ifdef OW_HAVE_SYS_EPOLL_H
-	int lerrno, ecc = 0;
+	int lerrno = 0, ecc = 0;
 	int timeout;
 	AutoPtrVec<epoll_event> events(new epoll_event[selarray.size()]);
 	int epfd = epoll_create(selarray.size());
