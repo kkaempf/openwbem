@@ -58,4 +58,3 @@ BUILT_SOURCES = OW_MOFParser.h
 AM_YFLAGS = -d -powmof
 AM_LFLAGS = -i -Cfe -Powmof -olex.yy.c
 
-

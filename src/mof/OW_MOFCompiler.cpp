@@ -200,15 +200,15 @@ long Compiler::compileString( const String& mof )
 		}
 		catch (AssertionException& e)
 		{
-			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e).c_str(), LineInfo("(none)", 0));
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e).c_str(), theLineInfo);
 		}
 		catch (Exception& e)
 		{
-			theErrorHandler->fatalError(Format( "ERROR: %1", e).c_str(), LineInfo("(none)", 0));
+			theErrorHandler->fatalError(Format( "ERROR: %1", e).c_str(), theLineInfo);
 		}
 		catch (std::exception& e)
 		{
-			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), LineInfo("(none)", 0));
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), theLineInfo);
 		}
 		catch (ThreadCancelledException&)
 		{
@@ -217,7 +217,7 @@ long Compiler::compileString( const String& mof )
 		}
 		catch(...)
 		{
-			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", LineInfo("(none)", 0));
+			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", theLineInfo);
 		}
 	}
 	catch (const ParseFatalErrorException&)
@@ -852,7 +852,6 @@ void compileMOF(const String& mof, const CIMOMHandleIFCRef& realhdl, const Strin
 	long errors = comp.compileString(mof);
 	if (errors > 0)
 	{
-		// just report the first message, since anything else is too complicated :-{
 		StringBuffer errorStrs;
 		for (size_t i = 0; i < errHandler->errors.size(); ++i)
 		{
