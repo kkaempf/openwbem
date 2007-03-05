@@ -45,6 +45,9 @@
 #include "OW_CMPIAssociatorProviderProxy.hpp"
 #endif
 #include "OW_CMPIIndicationProviderProxy.hpp"
+#include "OW_CMPIProviderIFCUtils.hpp"
+#include "cmpisrv.h"
+#include "OW_OperationContext.hpp"
 
 #include <algorithm>
 using std::fill_n;
@@ -55,6 +58,46 @@ namespace OW_NAMESPACE
 namespace
 {
 	const String COMPONENT_NAME("ow.provider.cmpi.ifc");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+CMPIPrepareContext(
+	const ProviderEnvironmentIFCRef& env,
+	CMPI_ContextOnStack& eCtx,
+	ELocalOnlyFlag localOnly,
+	EDeepFlag deep,
+	EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin)
+{
+	LoggerRef logger = env->getLogger(COMPONENT_NAME);
+
+	CMPIFlags flgs = 0;
+	if (localOnly == E_LOCAL_ONLY)
+		flgs |= CMPI_FLAG_LocalOnly;
+	if (deep == E_DEEP)
+		flgs |= CMPI_FLAG_DeepInheritance;
+	if (includeQualifiers == E_INCLUDE_QUALIFIERS)
+		flgs |= CMPI_FLAG_IncludeQualifiers;
+	if (includeClassOrigin == E_INCLUDE_CLASS_ORIGIN)
+		flgs |= CMPI_FLAG_IncludeClassOrigin;
+
+	CIMParamValueArray* args = (CIMParamValueArray *)eCtx.hdl;
+
+	args->append(CIMParamValue(CMPIInvocationFlags, CIMValue(UInt32(flgs))));
+
+	OperationContext &ctx = env->getOperationContext();
+
+	String user = ctx.getStringDataWithDefault(OperationContext::USER_NAME); 
+	if (!user.empty())
+	{
+	    args->append(CIMParamValue("CMPIPrincipal", CIMValue(user))); 
+	}
+
+
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME),
+		Format("CMPIPrepareContext. User: %1 Flgs: %2",
+			user, flgs));
 }
 
 //typedef CMPIProviderBaseIFC* (*ProviderCreationFunc)();

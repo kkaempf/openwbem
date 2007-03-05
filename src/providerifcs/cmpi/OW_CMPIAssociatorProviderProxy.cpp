@@ -87,7 +87,6 @@ void CMPIAssociatorProviderProxy::associatorNames(
 
 		char *aClass = const_cast<char*>(assocClass.c_str());
 
-		CMPIFlags flgs = 0;
 		char *_resultClass = const_cast<char*>(resultClass.empty() ? 0 :
 			resultClass.c_str());
 
@@ -96,8 +95,7 @@ void CMPIAssociatorProviderProxy::associatorNames(
 		char *_resultRole = const_cast<char*>(resultRole.empty() ? 0 :
 			resultRole.c_str());
 
-		eCtx.ft->addEntry(&eCtx, const_cast<char*>(CMPIInvocationFlags),
-			(CMPIValue *)&flgs, CMPI_uint32);
+		CMPIPrepareContext(env, eCtx);
 
 		::CMPIAssociationMI *mi = m_ftable->miVector.assocMI;
 
@@ -168,18 +166,6 @@ void CMPIAssociatorProviderProxy::associators(
 			props[pCount]=NULL;
 		}
 	
-		CMPIFlags flgs = 0;
-	
-		if (includeQualifiers)
-		{
-			flgs |= CMPI_FLAG_IncludeQualifiers;
-		}
-	
-		if (includeClassOrigin)
-		{
-			flgs |= CMPI_FLAG_IncludeClassOrigin;
-		}
-	
 		char *_resultClass = const_cast<char*>(resultClass.empty() ? 0 :
 			resultClass.c_str());
 	
@@ -187,9 +173,9 @@ void CMPIAssociatorProviderProxy::associators(
 	
 		char * _resultRole = const_cast<char*>(resultRole.empty() ? 0 :
 			resultRole.c_str());
-	
-		eCtx.ft->addEntry(&eCtx, const_cast<char*>(CMPIInvocationFlags),
-			(CMPIValue *)&flgs, CMPI_uint32);
+
+		CMPIPrepareContext(env, eCtx, E_NOT_LOCAL_ONLY, E_SHALLOW,
+			includeQualifiers, includeClassOrigin);
 	
 		::CMPIAssociationMI * mi = m_ftable->miVector.assocMI;
 	
@@ -263,21 +249,10 @@ void CMPIAssociatorProviderProxy::references(
 			}
 		}
 
-		CMPIFlags flgs = 0;
-
-		if (includeQualifiers)
-		{
-			flgs |= CMPI_FLAG_IncludeQualifiers;
-		}
-
-		if (includeClassOrigin)
-		{
-			flgs |= CMPI_FLAG_IncludeClassOrigin;
-		}
-
 		char *_role = const_cast<char*>(role.empty() ? 0 : role.c_str());
-		eCtx.ft->addEntry(&eCtx, const_cast<char*>(CMPIInvocationFlags),
-			(CMPIValue *)&flgs, CMPI_uint32);
+
+		CMPIPrepareContext(env, eCtx, E_NOT_LOCAL_ONLY, E_SHALLOW,
+			includeQualifiers, includeClassOrigin);
 
 		::CMPIAssociationMI *mi = m_ftable->miVector.assocMI;
 		rc=m_ftable->miVector.assocMI->ft->references(mi, &eCtx, &eRes, &eRef,
@@ -327,10 +302,8 @@ void CMPIAssociatorProviderProxy::referenceNames(
 		CMPI_ObjectPathOnStack eRef(objectNameWithNS);
 		CMPI_ResultOnStack eRes(result);
 		char* aClass = const_cast<char*>(resultClass.c_str());
-		CMPIFlags flgs = 0;
 		char* _role = const_cast<char*>(role.empty() ? 0 : role.c_str());
-		eCtx.ft->addEntry(&eCtx, const_cast<char*>(CMPIInvocationFlags),
-			(CMPIValue *)&flgs, CMPI_uint32);
+		CMPIPrepareContext(env, eCtx);
 
 		::CMPIAssociationMI * mi = m_ftable->miVector.assocMI;
 		rc = m_ftable->miVector.assocMI->ft->referenceNames(

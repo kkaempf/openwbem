@@ -301,7 +301,13 @@ CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data)
 	{
 		switch(t)
 		{
-			case CMPI_sint32: v.get((OpenWBEM::Int32&)data->value.sint32); break;
+			case CMPI_sint32:
+			{
+				OpenWBEM::Int32 iv;
+				v.get(iv);
+				data->value.sint32 = (CMPISint32)iv;
+				break;
+			}
 			case CMPI_sint16: v.get((OpenWBEM::Int16&)data->value.sint16); break;
 			case CMPI_sint8:  v.get((OpenWBEM::Int8&)data->value.sint8);   break;
 			case CMPI_sint64: v.get((OpenWBEM::Int64&)data->value.sint64); break;
@@ -313,7 +319,13 @@ CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data)
 	{
 		switch(t)
 		{
-			case CMPI_uint32: v.get((OpenWBEM::UInt32&)data->value.uint32); break;
+			case CMPI_uint32:
+			{
+				OpenWBEM::UInt32 uv;
+				v.get(uv);
+				data->value.uint32 = (CMPIUint32)uv;
+				break;
+			}
 			case CMPI_uint16: v.get((OpenWBEM::UInt16&)data->value.uint16); break;
 			case CMPI_uint8:  v.get((OpenWBEM::UInt8&)data->value.uint8);   break;
 			case CMPI_uint64: v.get((OpenWBEM::UInt64&)data->value.uint64); break;
