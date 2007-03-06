@@ -904,7 +904,8 @@ IndicationServerImplThread::addTrans(
 	NotifyTrans trans(ns, indication, handler, subscription, provider);
 	if (!m_notifierThreadPool->tryAddWork(RunnableRef(new Notifier(this, trans))))
 	{
-		OW_LOG_ERROR(m_logger, Format("Indication export notifier pool overloaded.  Dropping indication: %1", indication.toMOF()));
+		OW_LOG_ERROR(m_logger, "Indication export notifier pool overloaded.  Dropping indication.");
+		OW_LOG_DEBUG(m_logger, Format("Dropped indication: %1", indication.toMOF()));
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
