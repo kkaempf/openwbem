@@ -284,6 +284,7 @@ CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data)
 			switch(aType)
 			{
 				case CMPI_ref:      CopyFromEncArray(OpenWBEM::CIMObjectPath,CMPIObjectPath,ref,CMPI_ref); break;
+				case CMPI_instance: CopyFromEncArray(OpenWBEM::CIMInstance,CMPIInstance,inst,CMPI_instance); break;
 				case CMPI_dateTime: CopyFromEncArray(OpenWBEM::CIMDateTime,CMPIDateTime,dateTime,CMPI_dateTime); break;
 				case CMPI_boolean:  CopyFromArray(OpenWBEM::Bool,boolean,CMPI_boolean); break;
 				case CMPI_char16:   CopyFromArray(OpenWBEM::Char16,char16,CMPI_char16); break;
@@ -355,6 +356,18 @@ CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data)
 				}
 				break;
 
+			//case CMPI_class:
+				// There is no CMPIClass!
+
+			case CMPI_instance:
+				{
+				    OpenWBEM::CIMInstance inst;
+				    v.get(inst);
+				    data->value.inst =(CMPIInstance*)new CMPI_Object(
+						new OpenWBEM::CIMInstance(inst));
+				}
+				break;
+
 			case CMPI_dateTime:
 				{
 					OpenWBEM::CIMDateTime dt;
@@ -394,6 +407,8 @@ CMPIType type2CMPIType(OpenWBEM::CIMDataType pt, int array)
 		CMPI_dateTime,	 // DATETIME,
 		CMPI_char16,	 // CHAR16,
 		CMPI_ref,		 // REFERENCE
+    		CMPI_class, 	 // Embedded Class
+    		CMPI_instance	 // Embedded Instance
 	};
 
 	int t = types[pt.getType()];
