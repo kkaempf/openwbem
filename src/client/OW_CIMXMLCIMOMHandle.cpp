@@ -783,7 +783,16 @@ CIMXMLCIMOMHandle::invokeMethod(
 			{
 				type = "reference";
 			}
-			tfs << " PARAMTYPE=\"" << type << "\">";
+			tfs << " PARAMTYPE=\"" << type << "\"";
+			if (v.getType() == CIMDataType::EMBEDDEDINSTANCE)
+			{
+				tfs << ' ' << CIMXMLParser::A_EMBEDDEDOBJECT << "=\"" << CIMXMLParser::AV_EMBEDDEDOBJECT_INSTANCE_VALUE << '"';
+			}
+			else if (v.getType() == CIMDataType::EMBEDDEDCLASS)
+			{
+				tfs << ' ' << CIMXMLParser::A_EMBEDDEDOBJECT << "=\"" << CIMXMLParser::AV_EMBEDDEDOBJECT_OBJECT_VALUE << '"';
+			}
+			tfs << ">";
 			CIMtoXML(inParams[i].getValue(), tfs);
 		}
 		else
