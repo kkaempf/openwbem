@@ -117,14 +117,11 @@ SPNEGOAuthentication::authenticate(String& userName,
 		std::ostream ostr(&outbuf);
 		istr.tie(&ostr);
 		ostr << info2 << '\n';
-		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got request, "
-		                              "sending to helper: %1", info2));
+		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got request, sending to helper: %1", info2));
 		ostr << htcon->getConnectionId() << std::endl;
-		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication sending connection "
-		                              "id: %1", htcon->getConnectionId()));
+		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication sending connection id: %1", htcon->getConnectionId()));
 		String result = String::getLine(istr);
-		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got response: %1",
-		                              result));
+		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got response: %1", result));
 		if (result == "S")
 		{
 			userName = String::getLine(istr);
@@ -150,20 +147,14 @@ SPNEGOAuthentication::authenticate(String& userName,
 		{
 			// something has gone horribly wrong. This shouldn't ever happen
 			// unless there is a bug.
-			OW_LOG_ERROR(m_logger, Format("SPNEGOAuthentication received "
-			                              "unknown response (%1) from %2. "
-			                              "Terminating.",
-			                              result,
-			                              spnegoHelperPath()));
-			m_spnegoHelper->waitCloseTerm(Timeout::relative(0),
-			                              Timeout::relative(0.01),
-			                              Timeout::relative(0.02));
+			OW_LOG_ERROR(m_logger, Format("SPNEGOAuthentication received unknown response (%1) from %2. Terminating.",
+			                              result, spnegoHelperPath()));
+			m_spnegoHelper->waitCloseTerm(Timeout::relative(0), Timeout::relative(0.01), Timeout::relative(0.02));
 		}
 	}
 	catch (IOException& e)
 	{
-		htcon->setErrorDetails(Format("Error communicating with %1: %2",
-		                              spnegoHelperPath(), e));
+		htcon->setErrorDetails(Format("Error communicating with %1: %2", spnegoHelperPath(), e));
 	}
 	
 	return E_AUTHENTICATE_FAIL;

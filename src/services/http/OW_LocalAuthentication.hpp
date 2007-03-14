@@ -69,10 +69,19 @@ private:
 	String createNewChallenge(const String& uid, const String& userName);
 	void cleanupEntry(const AuthEntry& entry);
 	void cleanupStaleEntries();
+	void checkProcess();
+	String processHelperCommand(const String& inputCmd, const String& extraInput = String());
+	void initializeHelper();
+	void cleanupEntryHelper(const String& pathToFile, const String& cookie);
+	String createFileHelper(const String& uid, const String& cookie);
+	void generateNewCookieFile(const String& uid, String& cookieFileName, String& cookie);
+
 
 	std::vector<AuthEntry> m_authEntries;
 	Logger m_logger;
-	String m_local_auth_dir;
+	String m_localAuthDir;
+	String m_localHelperBinPath;
+	ProcessRef m_owlocalhelper;
 
 	// unimplemented
 	LocalAuthentication(const LocalAuthentication&);

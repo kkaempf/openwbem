@@ -79,108 +79,24 @@ namespace
 		return g_useHelper;
 	}
 
-	String runHelper(
-		String const & local_auth_dir, const String& inputCmd,
-		const String& extraInput = String())
-	{
-		String localhelper_bin_path =
-			ConfigOpts::installed_owlibexec_dir + "/owlocalhelper" + String(OW_OPENWBEM_LIBRARY_VERSION);
-		StringArray cmd;
-		cmd.push_back(localhelper_bin_path);
-		cmd.push_back(local_auth_dir);
-		String output;
-		try
-		{
-			PrivilegeManager privMan(PrivilegeManager::getPrivilegeManager());
-			OW_ASSERT(!privMan.isNull());
-
-			#ifdef OW_WIN32
-			static const char* const SUPERUSER = "SYSTEM";
-			#else
-			static const char* const SUPERUSER = "root";
-			#endif
-			
-			ProcessRef helper = privMan.userSpawn(localhelper_bin_path, cmd, Secure::minimalEnvironment(), SUPERUSER);
-			String input = inputCmd + "\n" + extraInput;
-			
-			const Timeout TIMEOUT = Timeout::relative(10.0);
-			const int OUTPUT_LIMIT = 1024;
-			Exec::processInputOutput(input, output, helper, TIMEOUT, OUTPUT_LIMIT);
-			helper->waitCloseTerm();
-			Process::Status status = helper->processStatus();
-			if (!status.terminatedSuccessfully())
-			{
-				OW_THROW(LocalAuthenticationException, Format("%1 failed with exit status %2. command = %3, output = \"%4\"", 
-					localhelper_bin_path, status.toString(), inputCmd, output).c_str());
-			}
-		}
-		catch (LocalAuthenticationException&)
-		{
-			throw;
-		}
-		catch (Exception& e)
-		{
-			OW_THROW_SUBEX(LocalAuthenticationException, Format("Failed running %1. command = %2, output = \"%3\"", 
-				localhelper_bin_path, inputCmd, output).c_str(), e);
-		}
-		return output;
-	}
-
-	void initializeHelper(String const & local_auth_dir)
-	{
-		runHelper(local_auth_dir, INITIALIZE_CMD);
-	}
-
-	void cleanupEntryHelper(
-		String const & local_auth_dir, const String& pathToFile,
-		const String& cookie)
-	{
-		size_t begin = pathToFile.lastIndexOf(OW_FILENAME_SEPARATOR);
-		if (begin == String::npos)
-		{
-			begin = 0;
-		}
-		String fileName = pathToFile.substring(begin + 1);
-		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, Format("cleanupEntryHelper: pathToFile = %1, fileName = %2", pathToFile, fileName));
-		runHelper(local_auth_dir, REMOVE_CMD, fileName + "\n" + cookie + "\n");
-	}
-
-	String createFileHelper(
-		String const & local_auth_dir, const String& uid, const String& cookie)
-	{
-		String extra_input = uid + "\n" + cookie + "\n";
- 		String filename = runHelper(local_auth_dir, CREATE_CMD, extra_input);
- 		// remove the trailing \n
- 		if (filename.length() > 0 && filename[filename.length()-1] == '\n')
- 		{
- 			filename.erase(filename.length()-1);
- 		}
-		if (filename.empty())
-		{
-			OW_THROW(LocalAuthenticationException, 
-				"createFileHelper: got back empty filename from owlocalhelper!");
-		}
- 		return filename;
-	}
-
 } // end anonymous namespace
 
 
 //////////////////////////////////////////////////////////////////////////////
 LocalAuthentication::LocalAuthentication()
 	: m_logger(COMPONENT_NAME)
-	, m_local_auth_dir(ConfigOpts::installed_owdata_dir + "/OWLocal")
+	, m_localAuthDir(ConfigOpts::installed_owdata_dir + "/OWLocal")
+	, m_localHelperBinPath(ConfigOpts::installed_owlibexec_dir + "/owlocalhelper" + String(OW_OPENWBEM_LIBRARY_VERSION))
 {
 	if (useHelper())
 	{
-		initializeHelper(m_local_auth_dir);
+		initializeHelper();
 	}
 	else
 	{
-		LocalAuthenticationCommon::initializeDir(m_local_auth_dir);
+		LocalAuthenticationCommon::initializeDir(m_localAuthDir);
 	}
-	m_local_auth_dir = FileSystem::Path::realPath(m_local_auth_dir);
+	m_localAuthDir = FileSystem::Path::realPath(m_localAuthDir);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -259,30 +175,6 @@ parseInfo(const String& pinfo, SortedVectorMap<String, String>& infoMap)
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-void
-generateNewCookieFile(
-	String const & local_auth_dir, const String& uid, String& cookieFileName,
-	String& cookie)
-{
-	// Generate random number to put in file for client to read
-	UInt32 rn1 = Secure::rand_uint<UInt32>();
-	UInt32 rn2 = Secure::rand_uint<UInt32>();
-	UInt32 rn3 = Secure::rand_uint<UInt32>();
-	UInt32 rn4 = Secure::rand_uint<UInt32>();
-	UInt32 rn5 = Secure::rand_uint<UInt32>();
-	cookie = Format("%1-%2-%3-%4-%5", rn1, rn2, rn3, rn4, rn5);
-
-	if (useHelper())
-	{
-		cookieFileName = createFileHelper(local_auth_dir, uid, cookie);
-	}
-	else
-	{
-		cookieFileName = 
-			LocalAuthenticationCommon::createFile(local_auth_dir, uid, cookie);
-	}
-}
 
 } // end unnamed namespace
 
@@ -416,7 +308,7 @@ LocalAuthentication::createNewChallenge(const String& uid, const String& userNam
 	String nonce = generateNewNonce();
 	String cookieFileName;
 	String cookie;
-	generateNewCookieFile(m_local_auth_dir, uid, cookieFileName, cookie);
+	generateNewCookieFile(uid, cookieFileName, cookie);
 
 	AuthEntry newEntry;
 	newEntry.fileName = cookieFileName;
@@ -436,7 +328,7 @@ LocalAuthentication::cleanupEntry(const AuthEntry& entry)
 	OW_LOG_DEBUG(m_logger, Format("LocalAuthentication::cleanupEntry(): cleaning up %1 for %2", entry.fileName, entry.userName));
 	if (useHelper())
 	{
-		cleanupEntryHelper(m_local_auth_dir, entry.fileName, entry.cookie);
+		cleanupEntryHelper(entry.fileName, entry.cookie);
 	}
 	else
 	{
@@ -469,6 +361,165 @@ LocalAuthentication::cleanupStaleEntries()
 				m_authEntries[0].fileName, m_authEntries[0].userName, e));
 		}
 		m_authEntries.erase(m_authEntries.begin());
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+LocalAuthentication::checkProcess()
+{
+	if (m_owlocalhelper && m_owlocalhelper->processStatus().running())
+	{
+		return;
+	}
+
+	if (m_owlocalhelper)
+	{
+		// must have died
+		OW_LOG_ERROR(m_logger, Format("LocalAuthentication detected that \"%1\" is not running. Status: %2", 
+			m_localHelperBinPath, m_owlocalhelper->processStatus().toString()));
+		m_owlocalhelper->waitCloseTerm(0.00, 0.01, 0.02);
+		m_owlocalhelper = 0;
+	}
+	
+	PrivilegeManager privMan(PrivilegeManager::getPrivilegeManager());
+	OW_ASSERT(!privMan.isNull());
+
+	#ifdef OW_WIN32
+	static const char* const SUPERUSER = "SYSTEM";
+	#else
+	static const char* const SUPERUSER = "root";
+	#endif
+
+	StringArray cmd;
+	cmd.push_back(m_localHelperBinPath);
+	cmd.push_back(m_localAuthDir);
+	m_owlocalhelper = privMan.userSpawn(m_localHelperBinPath, cmd, Secure::minimalEnvironment(), SUPERUSER);
+
+	if (!m_owlocalhelper->processStatus().running())
+	{
+		String msg = Format("LocalAuthentication failed to start %1. status = %2, stderr = %3", 
+			m_localHelperBinPath, m_owlocalhelper->processStatus().toString(), m_owlocalhelper->err()->readAll());
+		OW_LOG_ERROR(m_logger, msg);
+		OW_THROW(LocalAuthenticationException, msg.c_str());
+	}
+
+	Timeout to(Timeout::relative(10.0));
+	m_owlocalhelper->in()->setTimeouts(to);
+	m_owlocalhelper->out()->setTimeouts(to);
+	m_owlocalhelper->err()->setTimeouts(to);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String
+LocalAuthentication::processHelperCommand(const String& inputCmd, const String& extraInput)
+{
+	checkProcess();
+	String output;
+	try
+	{
+		IOIFCStreamBuffer inbuf(m_owlocalhelper->out().getPtr());
+		IOIFCStreamBuffer outbuf(m_owlocalhelper->in().getPtr());
+		std::istream istr(&inbuf);
+		std::ostream ostr(&outbuf);
+		istr.tie(&ostr);
+		ostr << inputCmd << '\n';
+		ostr << extraInput << std::flush;
+		OW_LOG_DEBUG(m_logger, Format("LocalAuthentication::processHelperCommand() got request, sending to helper: %1", inputCmd));
+		String result = String::getLine(istr);
+		OW_LOG_DEBUG(m_logger, Format("LocalAuthentication::processHelperCommand() got response: %1", result));
+		if (result == "S")
+		{
+			output = String::getLine(istr);
+			OW_LOG_DEBUG(m_logger, Format("LocalAuthentication::processHelperCommand() got success. output: %1", output));
+		}
+		else if (result == "F")
+		{
+			String details = String::getLine(istr);
+			OW_LOG_ERROR(m_logger, Format("LocalAuthentication::processHelperCommand() got failure. details: %1", details));
+			size_t idx = details.indexOf(' ');
+			if (idx != String::npos)
+			{
+				OW_THROW_ERR(LocalAuthenticationException, details.substring(idx).c_str(), details.substring(0, idx).toInt32());
+			}
+			else
+			{
+				OW_THROW(LocalAuthenticationException, details.c_str());
+			}
+		}
+	}
+	catch (LocalAuthenticationException&)
+	{
+		throw;
+	}
+	catch (Exception& e)
+	{
+		OW_THROW_SUBEX(LocalAuthenticationException, Format("Failed running %1. command = %2, output = \"%3\"", 
+			m_localHelperBinPath, inputCmd, output).c_str(), e);
+	}
+	return output;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+LocalAuthentication::initializeHelper()
+{
+	processHelperCommand(INITIALIZE_CMD);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+LocalAuthentication::cleanupEntryHelper(const String& pathToFile, const String& cookie)
+{
+	size_t begin = pathToFile.lastIndexOf(OW_FILENAME_SEPARATOR);
+	if (begin == String::npos)
+	{
+		begin = 0;
+	}
+	String fileName = pathToFile.substring(begin + 1);
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG(logger, Format("cleanupEntryHelper: pathToFile = %1, fileName = %2", pathToFile, fileName));
+	processHelperCommand(REMOVE_CMD, fileName + "\n" + cookie + "\n");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String
+LocalAuthentication::createFileHelper(const String& uid, const String& cookie)
+{
+	String extra_input = uid + "\n" + cookie + "\n";
+	String filename = processHelperCommand(CREATE_CMD, extra_input);
+	// remove the trailing \n
+	if (filename.length() > 0 && filename[filename.length()-1] == '\n')
+	{
+		filename.erase(filename.length()-1);
+	}
+	if (filename.empty())
+	{
+		OW_THROW(LocalAuthenticationException, 
+			"createFileHelper: got back empty filename from owlocalhelper!");
+	}
+	return filename;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+LocalAuthentication::generateNewCookieFile(const String& uid, String& cookieFileName, String& cookie)
+{
+	// Generate random number to put in file for client to read
+	UInt32 rn1 = Secure::rand_uint<UInt32>();
+	UInt32 rn2 = Secure::rand_uint<UInt32>();
+	UInt32 rn3 = Secure::rand_uint<UInt32>();
+	UInt32 rn4 = Secure::rand_uint<UInt32>();
+	UInt32 rn5 = Secure::rand_uint<UInt32>();
+	cookie = Format("%1-%2-%3-%4-%5", rn1, rn2, rn3, rn4, rn5);
+
+	if (useHelper())
+	{
+		cookieFileName = createFileHelper(uid, cookie);
+	}
+	else
+	{
+		cookieFileName = LocalAuthenticationCommon::createFile(m_localAuthDir, uid, cookie);
 	}
 }
 

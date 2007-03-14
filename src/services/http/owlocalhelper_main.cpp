@@ -39,6 +39,7 @@
 #include "OW_Format.hpp"
 #include "OW_Types.hpp"
 #include "OW_LocalAuthenticationCommon.hpp"
+#include "OW_Exception.hpp"
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -46,9 +47,6 @@
 #include <sys/stat.h>
 #if defined(OW_HAVE_SYS_TIME_H)
 #include <sys/time.h>
-#endif
-#if defined(OW_HAVE_SYS_RESOURCE_H)
-#include <sys/resource.h>
 #endif
 
 #include <cstring>
@@ -60,16 +58,16 @@
 // commands (first line read from stdin):
 //   remove - delete one file
 //    input: filename w/out the path, cookie
-//    output: none
+//    output: S\n<empty>
 //   initialize - create dir if necessary & remove all old files
 //    input: none
-//    output: none
+//    output: S\n<empty>
 //   create - creates a file
 //    input: uid, cookie
-//    output: absolute pathname
+//    output: S\nabsolute pathname
 //
-// If the operation was successful, 0 (SUCCESS) is the return value.
-// If the operation failed, an error message is printed to stderr and the return code is != 0.
+// If the operation was successful, S is printed to stdout, followed by a newline and then the return value.
+// If the operation failed, F followed by a newline a unsigned integer error number a space and an error message is printed to stdout.
 
 using std::cerr;
 using std::endl;
@@ -84,17 +82,19 @@ namespace
 const int SUCCESS = 0;
 
 // list of possible error codes.
-const int NOT_SETUID_ROOT = 3;
-const int INVALID_INPUT = 4;
-const int REMOVE_FAILED = 5;
-const int UNEXPECTED_EXCEPTION = 6;
-const int SETRLIMIT_FAILED = 7;
-const int MISSING_LOCAL_AUTH_DIR_ARG = 8;
+const int ERR_NOT_ROOT = 3;
+const int ERR_INVALID_INPUT = 4;
+const int ERR_REMOVE_FAILED = 5;
+const int ERR_UNEXPECTED_EXCEPTION = 6;
+const int ERR_MISSING_LOCAL_AUTH_DIR_ARG = 7;
 
-String local_auth_dir;
+OW_DECLARE_EXCEPTION(LocalHelper);
+OW_DEFINE_EXCEPTION(LocalHelper);
+
+const char* local_auth_dir = 0; // assigned in main()
 
 // returns true if a line was successfully read
-bool getLineFromStdin(String& line)
+void getLineFromStdin(String& line)
 {
 	// Use basic_istream::getline() instead of String::getline() so that I can limit the amount of data that is read.
 
@@ -106,53 +106,46 @@ bool getLineFromStdin(String& line)
 	// if hit eof
 	if (!cin && count == 0)
 	{
-		cerr << "owlocalhelper:getLineFromStdin(): expected a line, but hit eof." << endl;
-		return false;
+		OW_THROW_ERR(LocalHelperException, "owlocalhelper:getLineFromStdin(): expected a line, but hit eof.", ERR_INVALID_INPUT);
 	}
 
 	// read a partial line, then hit eof
 	if (cin.eof())
 	{
 		line = buffer;
-		return true;
+		return;
 	}
 
 	// line is longer than the buffer.  This shouldn't happen, and I'll treat it as a fatal error
 	else if (cin.fail())
 	{
-		cerr << "owlocalhelper:getLineFromStdin(): line too long." << endl;
-		return false;
+		OW_THROW_ERR(LocalHelperException, "owlocalhelper:getLineFromStdin(): line too long.", ERR_INVALID_INPUT);
 	}
 
 	// successfully read a line
 	else
 	{
 		line = buffer;
-		return true;
+		return;
 	}
 }
 
-int processRemove()
+void processRemove()
 {
 	String filename;
-	if (!getLineFromStdin(filename))
-	{
-		return INVALID_INPUT;
-	}
+	getLineFromStdin(filename);
 
 	if (filename.indexOf(OW_FILENAME_SEPARATOR) != String::npos)
 	{
-		cerr << "owlocalhelper::processRemove(): filename cannot contain " OW_FILENAME_SEPARATOR << endl;
-		return INVALID_INPUT;
+		OW_THROW_ERR(LocalHelperException, Format("owlocalhelper::processRemove(): filename cannot contain %1", OW_FILENAME_SEPARATOR).c_str(), ERR_INVALID_INPUT);
 	}
 
 	if (filename.empty())
 	{
-		cerr << "owlocalhelper::processRemove(): filename cannot be empty." << endl;
-		return INVALID_INPUT;
+		OW_THROW_ERR(LocalHelperException, "owlocalhelper::processRemove(): filename cannot be empty.", ERR_INVALID_INPUT);
 	}
 
-	String fullPath = local_auth_dir + OW_FILENAME_SEPARATOR + filename;
+	String fullPath = Format("%1%2%3", local_auth_dir, OW_FILENAME_SEPARATOR, filename);
 	// translate to the real path and recheck the directory
 	String realPath;
 	try
@@ -161,90 +154,82 @@ int processRemove()
 	}
 	catch (FileSystemException& e)
 	{
-		cerr << "owlocalhelper::processRemove(): realPath failed: " << e << endl;
-		return INVALID_INPUT;
+		OW_THROW_ERR(LocalHelperException, Format("owlocalhelper::processRemove(): realPath failed: %1", e).c_str(), ERR_INVALID_INPUT);
 	}
 
 	String realPathDirname = FileSystem::Path::dirname(realPath);
 	if (realPath != fullPath || realPathDirname != local_auth_dir)
 	{
-		cerr << "owlocalhelper::processRemove(): real path is not equal. no symlinks allowed in " << fullPath << endl;
-		return INVALID_INPUT;
+		OW_THROW_ERR(LocalHelperException, Format("owlocalhelper::processRemove(): real path is not equal. no symlinks allowed in \"%1\"", fullPath).c_str(), ERR_INVALID_INPUT);
 	}
 
 	String cookie;
-	if (!getLineFromStdin(cookie))
-	{
-		return INVALID_INPUT;
-	}
+	getLineFromStdin(cookie);
 
 	String realCookie = FileSystem::getFileContents(realPath);
 
 	if (realCookie != cookie)
 	{
-		cerr << "owlocalhelper::processRemove(): real cookie is not equal, not removing." << endl;
-		return INVALID_INPUT;
+		OW_THROW_ERR(LocalHelperException, "owlocalhelper::processRemove(): real cookie is not equal, not removing.", ERR_INVALID_INPUT);
 	}
 
 	if (!FileSystem::removeFile(realPath))
 	{
-		perror(Format("owlocalhelper::processRemove(): failed to remove %1", realPath).c_str());
-		return REMOVE_FAILED;
+		OW_THROW_ERR(LocalHelperException, Format("owlocalhelper::processRemove(): failed to remove \"%1\":%2", realPath, ::strerror(errno)).c_str(), ERR_REMOVE_FAILED);
 	}
-
-	return SUCCESS;
 }
 
-int processCreate()
+void processCreate(String& filepath)
 {
 	// Read the uid from stdin
 	String uid;
-	if (!getLineFromStdin(uid))
-	{
-		cerr << "owlocalhelper::processCreate(): expected to get the uid" << endl;
-		return INVALID_INPUT;
-	}
+	getLineFromStdin(uid);
 	
 	// Read a random number from stdin to put in file for client to read
 	String cookie;
-	if (!getLineFromStdin(cookie))
-	{
-		cerr << "owlocalhelper::processCreate(): expected to get the cookie" << endl;
-		return INVALID_INPUT;
-	}
+	getLineFromStdin(cookie);
 
-    cout << createFile(local_auth_dir, uid, cookie) << endl;
-	
-	return SUCCESS;
+    filepath = createFile(local_auth_dir, uid, cookie);
 }
 
-int processStdin()
+void processStdin(String& output)
 {
-	// even though we'll only run if getuid() == owcimomd, we'll still be extremely 
-	// paranoid about any input we get, since as a setuid binary, we could do a lot
-	// of damage
+	// Be extremely paranoid about any input we get, since as a root binary, we could do a lot of damage
 
 	String curLine;
-    if (!getLineFromStdin(curLine))
-	{
-		return INVALID_INPUT;
-	}
+    getLineFromStdin(curLine);
 
 	if (curLine == REMOVE_CMD)
 	{
-		return processRemove();
+		processRemove();
+		output = "S\n";
 	}
 	else if (curLine == INITIALIZE_CMD)
 	{
 		initializeDir(local_auth_dir);
-		return SUCCESS;
+		output = "S\n";
 	}
 	else if (curLine == CREATE_CMD)
 	{
-		return processCreate();
+		String filepath;
+		processCreate(filepath);
+		output = Format("S\n%1", filepath);
 	}
+	else
+	{
+		OW_THROW_ERR(LocalHelperException, Format("owlocalhelper::processStdin(): invalid command: \"%1\"", curLine).c_str(), ERR_INVALID_INPUT);
+	}
+}
 
-	return INVALID_INPUT;
+void removeNewlines(String& s)
+{
+	for (size_t i = 0; i < s.length(); ++i)
+	{
+		if (s[i] == '\n')
+		{
+			s[i] = ' ';
+		}
+	}
 }
 
 } // end unnamed namespace
@@ -255,49 +240,85 @@ int main(int argc, char* argv[])
 {
 	if (argc < 2)
 	{
-		return MISSING_LOCAL_AUTH_DIR_ARG;
+		return ERR_MISSING_LOCAL_AUTH_DIR_ARG;
 	}
 	local_auth_dir = argv[1];
-	try
-	{
 
-		// I want full control over file permissions
-		::umask(0);
+	// I want full control over file permissions
+	::umask(0);
 
-#ifdef OW_HAVE_SETRLIMIT
-		// Be careful to not drop core.
-		struct rlimit rlim;
-		rlim.rlim_cur = rlim.rlim_max = 0;
-		if (setrlimit(RLIMIT_CORE, &rlim) < 0)
+	// I can't work without euid 0, because only root can change file ownership.
+	if (::geteuid() != 0)
+	{
+		cerr << "owlocalhelper must run as root to work" << endl;
+		return ERR_NOT_ROOT;
+	}
+
+	while (true)
+	{
+		try
 		{
-			perror("owlocalhelper::setrlimit failed");
-			return SETRLIMIT_FAILED;
+			String output;
+			processStdin(output);
+			cout << output << endl;
 		}
-#endif
-	
-		// I can't work without euid 0, because only root can change file ownership.
-		if (::geteuid() != 0)
+		catch (LocalHelperException& e)
 		{
-			cerr << "owlocalhelper must be setuid root to work" << endl;
-			return NOT_SETUID_ROOT;
+			cout << "F\n";
+			if (e.getErrorCode() != Exception::UNKNOWN_ERROR_CODE)
+			{
+				cout << e.getErrorCode();
+			}
+			else
+			{
+				cout << ERR_UNEXPECTED_EXCEPTION;
+			}
+			cout << ' ';
+
+			// have to make sure no newlines mess up the protocol
+			String msg = e.getMessage();
+			removeNewlines(msg);
+
+			cout << msg << endl;
 		}
-	
-		return processStdin();
-	}
-	catch (LocalAuthenticationException& e)
-	{
-		cerr << e.getMessage() << endl;
-		return e.getErrorCode();
-	}
-	catch (std::exception& e)
-	{
-		cerr << "Caught unexpected exception: " << e.what() << endl;
-		return UNEXPECTED_EXCEPTION;
-	}
-	catch (...)
-	{
-		cerr << "Caught unexpected exception" << endl;
-		return UNEXPECTED_EXCEPTION;
+		catch (LocalAuthenticationException& e)
+		{
+			cout << "F\n";
+			if (e.getErrorCode() != Exception::UNKNOWN_ERROR_CODE)
+			{
+				cout << e.getErrorCode();
+			}
+			else
+			{
+				cout << ERR_UNEXPECTED_EXCEPTION;
+			}
+			cout << ' ';
+
+			// have to make sure no newlines mess up the protocol
+			String msg = e.getMessage();
+			removeNewlines(msg);
+
+			cout << msg << endl;
+		}
+		catch (std::exception& e)
+		{
+			cout << "F\n";
+			cout << ERR_UNEXPECTED_EXCEPTION;
+			cout << ' ';
+
+			// have to make sure no newlines mess up the protocol
+			String msg = e.what();
+			removeNewlines(msg);
+
+			cout << msg << endl;
+		}
+		catch (...)
+		{
+			cout << "F\n";
+			cout << ERR_UNEXPECTED_EXCEPTION;
+			cout << ' ';
+			cout << "Caught unexpected exception" << endl;
+		}
 	}
 }
 
