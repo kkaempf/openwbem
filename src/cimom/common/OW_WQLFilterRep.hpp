@@ -395,6 +395,12 @@ public:
 		const CIMObjectPath &name,
 		const String &propertyName, OperationContext& context);
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+	virtual RepositoryIFC::ELockType getLockTypeForMethod(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in, 
+		OperationContext& context);
 	/**
 	 * Invokes a method
 	 *

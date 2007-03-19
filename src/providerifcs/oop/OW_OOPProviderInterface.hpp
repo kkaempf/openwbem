@@ -45,6 +45,7 @@
 #include "OW_RWLocker.hpp"
 #include "OW_Reference.hpp"
 #include "OW_OpenWBEM_OOPProviderRegistration.hpp"
+#include "OW_OpenWBEM_OOPMethodProviderCapabilities.hpp"
 #include "OW_OOPProcessState.hpp"
 
 // The classes and functions defined in this file are not meant for general
@@ -66,6 +67,7 @@ public:
 			, isPersistent(false)
 			, userContext(OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_UNPRIVILEGED)
 			, unloadTimeout(Timeout::relativeWithReset(0)) // the default is to not leave the provider loaded
+			, methodLockType(OpenWBEM::OOPMethodProviderCapabilities::E_LOCKTYPE_WRITE_LOCK)
 		{
 		}
 		String process;
@@ -77,6 +79,7 @@ public:
 		String monitorPrivilegesFile;
 		StringArray indicationExportHandlerClassNames;
 		Timeout unloadTimeout;
+		UInt16 methodLockType;
 
 		bool providerNeedsNewProcessForEveryInvocation() const
 		{

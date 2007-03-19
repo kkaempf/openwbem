@@ -90,8 +90,9 @@ public:
 	/**
 	 * The CIMOM calls this method when the method specified in the parameters
 	 * is to be invoked.
-	 *
-	 * @param cop Contains the path to the instance whose method must be
+	 * 
+	 * @param ns The namespace of the target object.
+	 * @param path Contains the path to the instance whose method must be
 	 * 	invoked.
 	 * @param methodName The name of the method.
 	 * @param inParams An array of CIMValues which are the input parameters
@@ -99,7 +100,7 @@ public:
 	 * @param outParams An array of CIMValues which are the output
 	 * 	parameters for this method.
 	 *
-	 * @returns CIMValue - The return value of the method.  Must be a
+	 * @return CIMValue - The return value of the method.  Must be a
 	 *    valid CIMValue.
 	 *
 	 * @throws CIMException
@@ -111,6 +112,58 @@ public:
 			const String& methodName,
 			const CIMParamValueArray& in,
 			CIMParamValueArray& out ) = 0;
+
+	enum ELockType
+	{
+		E_NO_LOCK,
+		E_READ_LOCK,
+		E_WRITE_LOCK
+	};
+
+	/**
+	 * Return the type of lock necessary for the method invocation. If this method is not overridden, then the default
+	 * implementation will return E_WRITE_LOCK.
+	 * 
+	 * If a method does callbacks via a CIMOMHandleRef obtained from env, you as a developer must carefully consider how
+	 * your method provider is written and what guarantees the method provider needs from the cimom.
+	 * 
+	 * If getLockTypeForMethod() returns E_NO_LOCK, then the read-write mutex will not be locked by the provider's
+	 * calling thread. This has the following implications for the method provider:
+	 *  - It must be fully thread safe.
+	 *  - No isolation guarantees about the CIMOM can be made. Other threads may be simultaneously modifying the
+	 *    repository or other providers. Any callback operations will acquire the necessary lock, but it is only held
+	 *    for one operation. Multiple operations are not atomic.
+	 * 
+	 * If getLockTypeForMethod() returns E_READ_LOCK, then the read-write mutex will be read locked by the provider's
+	 * calling thread. This has the following implications for the method provider:
+	 *  - It must be fully thread safe.
+	 *  - No other write operations will occur in the CIMOM, so the provider can assume that the repository and other
+	 *    providers will not change state during the execution of invokeMethod().
+	 * 
+	 * If getLockTypeForMethod() returns E_WRITE_LOCK, then the read-write mutex will be write locked by the provider's
+	 * calling thread. This has the following implications for the method provider:
+	 *  - It does not have to be thread safe, only one thread will execute invokeMethod() at a time.
+	 *  - No other write or read operations will occur in the CIMOM, so the provider can assume that the repository and
+	 *     other providers will not change state during the execution of invokeMethod().
+	 * 
+	 * @param ns The namespace of the target object.
+	 * @param path Contains the path to the instance whose method must be
+	 * 	invoked.
+	 * @param methodName The name of the method.
+	 * @param inParams An array of CIMValues which are the input parameters
+	 *  for this method.
+	 * 
+	 * @return The necessary locking type.
+	 * 
+	 * @throws CIMException
+	 */
+	virtual ELockType getLockTypeForMethod(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in);
+
 	virtual CppMethodProviderIFC* getMethodProvider();
 };
 typedef SharedLibraryReference< IntrusiveReference<CppMethodProviderIFC> > CppMethodProviderIFCRef;

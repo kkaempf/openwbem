@@ -194,6 +194,13 @@ public:
 			const CIMParamValueArray& in,
 			CIMParamValueArray& out);
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
+	virtual ELockType getLockTypeForMethod(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in);
+
 private:
 	CppMethodProviderIFCRef m_pProv;
 };

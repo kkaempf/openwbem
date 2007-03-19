@@ -1505,7 +1505,7 @@ CIMServer::invokeMethod(
 	if (!methodp)
 	{
 		OW_THROWCIMMSG(CIMException::NOT_FOUND,
-			Format("No provider for method %1", methodName).c_str());
+			Format("No provider for method %1:%2.%3", ns, path.getClassName(), methodName).c_str());
 	}
 	CIMParameterArray methodInParams = method.getINParameters();
 	CIMParameterArray methodOutParams = method.getOUTParameters();
@@ -1666,6 +1666,50 @@ CIMServer::invokeMethod(
 		OW_LOG_DEBUG(m_logger, methodStr.toString());
 	}
 	return cv;
+}
+//////////////////////////////////////////////////////////////////////
+RepositoryIFC::ELockType
+CIMServer::getLockTypeForMethod(
+	const String& ns,
+	const CIMObjectPath& path_,
+	const String& methodName,
+	const CIMParamValueArray& in, 
+	OperationContext& context)
+{
+	CIMObjectPath path(path_);
+	CIMClass cc = getClass(ns, path.getClassName(),E_NOT_LOCAL_ONLY,
+		E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
+	path.syncWithClass(cc);
+	// Get the method from the class definition
+	CIMMethod method = cc.getMethod(methodName);
+	if (!method)
+	{
+		OW_THROWCIMMSG(CIMException::METHOD_NOT_FOUND, methodName.c_str());
+	}
+	MethodProviderIFCRef methodp;
+	try
+	{
+		methodp = m_provManager->getMethodProvider(ns, cc, method);
+	}
+	catch (const NoSuchProviderException&)
+	{
+	}
+	if (!methodp)
+	{
+		OW_THROWCIMMSG(CIMException::NOT_FOUND,
+			Format("No provider for method %1:%2.%3", ns, path.getClassName(), methodName).c_str());
+	}
+	MethodProviderIFC::ELockType mlt = methodp->getLockTypeForMethod(createProvEnvRef(context, m_env), ns, path, methodName, in);
+	switch (mlt)
+	{
+		case MethodProviderIFC::E_NO_LOCK:
+			return RepositoryIFC::E_NO_LOCK;
+		case MethodProviderIFC::E_READ_LOCK:
+			return RepositoryIFC::E_READ_LOCK;
+		case MethodProviderIFC::E_WRITE_LOCK:
+			return RepositoryIFC::E_WRITE_LOCK;
+	}
+	return RepositoryIFC::E_WRITE_LOCK;
 }
 //////////////////////////////////////////////////////////////////////////////
 InstanceProviderIFCRef

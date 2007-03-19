@@ -300,5 +300,28 @@ CppMethodProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
 	m_pProv->shuttingDown(env);
 }
 
+//////////////////////////////////////////////////////////////////////////////		
+MethodProviderIFC::ELockType
+CppMethodProviderProxy::getLockTypeForMethod(
+	const ProviderEnvironmentIFCRef& env,
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& in)
+{
+	CppMethodProviderIFC::ELockType lt = m_pProv->getLockTypeForMethod(env, ns, path, methodName, in);
+	switch (lt)
+	{
+		case CppMethodProviderIFC::E_NO_LOCK:
+			return MethodProviderIFC::E_NO_LOCK;
+		case CppMethodProviderIFC::E_READ_LOCK:
+			return MethodProviderIFC::E_READ_LOCK;
+		case CppMethodProviderIFC::E_WRITE_LOCK:
+			return MethodProviderIFC::E_WRITE_LOCK;
+	}
+	// If a provider returns an invalid enum value...
+	return MethodProviderIFC::E_WRITE_LOCK;
+}
+
 } // end namespace OW_NAMESPACE
 

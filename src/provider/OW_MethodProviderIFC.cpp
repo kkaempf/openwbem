@@ -50,5 +50,18 @@ MethodProviderIFC::getMethodProvider()
 	return this;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+MethodProviderIFC::ELockType
+MethodProviderIFC::getLockTypeForMethod(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in)
+{
+	// This is the default because if a provider doesn't say otherwise we have to assume the worst, that it needs a full write lock.
+	return E_WRITE_LOCK;
+}
+
 } // end namespace OW_NAMESPACE
 

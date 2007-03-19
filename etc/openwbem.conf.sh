@@ -623,23 +623,6 @@ owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 cppprovifc.prov_location = @libdir@/openwbem/c++providers
 
 ################################################################################
-# One of the provider interfaces provided with owcimomd is the OWBI1 provider
-# interface. The owbi1provifc.prov_location option specifies where the OWBI1
-# provider interface will load it's providers from.
-# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
-# The default is "@libdir@/openwbem/owbi1providers"
-owbi1provifc.prov_location = @libdir@/openwbem/owbi1providers
-
-################################################################################
-# owbi1provifc.prov_TTL specifies how many minutes the OWBI1 provider manager
-# will keep a provider in memory.  If a provider has not been accessed for
-# longer than this value, it will be unloaded and the memory associated with
-# it will be freed.  If the value of this option is -1, the providers will
-# never be unloaded.
-# The default is 5
-owbi1provifc.prov_TTL = 5
-
-################################################################################
 # http_server.uds_filename specifies the name of the unix domain socket the
 # http server will listen on.
 # The default is /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
@@ -688,6 +671,13 @@ owcimomd.disable_cpp_provider_interface = false
 # Specify the location of the owcimomd pidfile
 # The default is "@PIDFILE_DIR@/@PACKAGE_PREFIX@owcimomd.pid"
 owcimomd.pidfile = @PIDFILE_DIR@/@PACKAGE_PREFIX@owcimomd.pid
+
+################################################################################
+# Specify the time in seconds to use for the timeout when requests are waiting
+# to acquire the owcimomd read/write lock. The syntax for this value is a
+# floating point in the format accepted by ANSI C strtod().
+# The default is 300
+owcimomd.read_write_lock_timeout = 300
 
 ################################################################################
 # The following options are deprecated

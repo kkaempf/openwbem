@@ -43,6 +43,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_DateTime.hpp"
 #include "OW_OOPShuttingDownCallback.hpp"
+#include "OW_OpenWBEM_OOPMethodProviderCapabilities.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -123,6 +124,27 @@ OOPMethodProvider::shuttingDown(const ProviderEnvironmentIFCRef& env)
 	startProcessAndCallFunction(env, shuttingDownCallback, "OOPMethodProvider::shuttingDown");
 }
 
+//////////////////////////////////////////////////////////////////////////////
+MethodProviderIFC::ELockType
+OOPMethodProvider::getLockTypeForMethod(
+	const ProviderEnvironmentIFCRef& env,
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& in)
+{
+	UInt16 lt = getProvInfo().methodLockType;
+	switch (lt)
+	{
+		case OpenWBEM::OOPMethodProviderCapabilities::E_LOCKTYPE_NO_LOCK:
+			return MethodProviderIFC::E_NO_LOCK;
+		case OpenWBEM::OOPMethodProviderCapabilities::E_LOCKTYPE_READ_LOCK:
+			return MethodProviderIFC::E_READ_LOCK;
+		case OpenWBEM::OOPMethodProviderCapabilities::E_LOCKTYPE_WRITE_LOCK:
+			return MethodProviderIFC::E_WRITE_LOCK;
+	}
+	return MethodProviderIFC::E_WRITE_LOCK;
+}
 
 } // end namespace OW_NAMESPACE
 

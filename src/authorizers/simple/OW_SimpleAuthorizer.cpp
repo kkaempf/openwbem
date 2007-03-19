@@ -653,6 +653,17 @@ SimpleAuthorizer::invokeMethod(
 	return m_cimRepository->invokeMethod(ns, path, methodName, inParams, outParams, context);
 }
 //////////////////////////////////////////////////////////////////////
+RepositoryIFC::ELockType
+SimpleAuthorizer::getLockTypeForMethod(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& in, 
+	OperationContext& context)
+{
+	return m_cimRepository->getLockTypeForMethod(ns, path, methodName, in, context);
+}
+//////////////////////////////////////////////////////////////////////
 void
 SimpleAuthorizer::execQuery(
 	const String& ns,

@@ -1401,6 +1401,7 @@ test/acceptance/Makefile
 test/acceptance/progs/Makefile
 test/acceptance/testfiles/Makefile
 test/acceptance/oop/Makefile
+test/acceptance/methodLocking/Makefile
 test/acceptance/testfiles/socketCat/Makefile
 test/acceptance/testfiles/xml_input/Makefile
 test/c++providers/Makefile

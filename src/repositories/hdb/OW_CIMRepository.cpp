@@ -69,6 +69,7 @@ using namespace WBEMFlags;
 CIMRepository::CIMRepository()
 	: m_logger(COMPONENT_NAME)
 	, m_checkReferentialIntegrity(false)
+	, m_lockTimeout(Timeout::relative(String(OW_DEFAULT_READ_WRITE_LOCK_TIMEOUT).toReal32()))
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -158,6 +159,19 @@ CIMRepository::init(const ServiceEnvironmentIFCRef& env)
 		OW_DEFAULT_CHECK_REFERENTIAL_INTEGRITY).equalsIgnoreCase("true"))
 	{
 		m_checkReferentialIntegrity = true;
+	}
+
+	String readWriteLockTimeoutConfigItem = m_env->getConfigItem(ConfigOpts::READ_WRITE_LOCK_TIMEOUT_opt, OW_DEFAULT_READ_WRITE_LOCK_TIMEOUT);
+	try
+	{
+		Real32 r = readWriteLockTimeoutConfigItem.toReal32();
+		OW_LOG_DEBUG(m_logger, Format("CIMRepository::init() set the read/write lock timeout: %1", r));
+		m_lockTimeout = Timeout::relative(r);
+	}
+	catch (StringConversionException& e)
+	{
+		OW_LOG_ERROR(m_logger, Format("Invalid value for %1: %2. The default of %3 will be used.", 
+			ConfigOpts::READ_WRITE_LOCK_TIMEOUT_opt, readWriteLockTimeoutConfigItem, OW_DEFAULT_READ_WRITE_LOCK_TIMEOUT));
 	}
 
 	this->open(m_env->getConfigItem(ConfigOpts::DATADIR_opt, OW_DEFAULT_DATADIR));
@@ -1043,6 +1057,17 @@ CIMRepository::getProperty(
 	return prop.getValue();
 }
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+//////////////////////////////////////////////////////////////////////
+RepositoryIFC::ELockType
+CIMRepository::getLockTypeForMethod(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& in, 
+	OperationContext& context)
+{
+	OW_THROWCIM(CIMException::NOT_SUPPORTED);
+}
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 CIMRepository::invokeMethod(
@@ -1856,12 +1881,6 @@ CIMRepository::_validatePropagatedKeys(OperationContext& context, const String& 
 	}
 }
 
-namespace
-{
-// TODO: Make this configurable?  Maybe even a parameter that can be specifed by the client on each request?
-const Timeout LockTimeout = Timeout::relative(300); // 5 mins.
-}
-
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
@@ -1874,10 +1893,10 @@ CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& co
 	case E_CREATE_INSTANCE:
 	case E_MODIFY_INSTANCE:
 	case E_SET_PROPERTY:
-	case E_INVOKE_METHOD:
+	case E_INVOKE_METHOD_WRITE_LOCK:
 	case E_EXEC_QUERY:
-		m_schemaLock.getWriteLock(LockTimeout);
-		m_instanceLock.getWriteLock(LockTimeout);
+		m_schemaLock.getWriteLock(m_lockTimeout);
+		m_instanceLock.getWriteLock(m_lockTimeout);
 		break;
 	case E_ENUM_NAMESPACE:
 	case E_GET_QUALIFIER_TYPE:
@@ -1887,14 +1906,14 @@ CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& co
 	case E_ENUM_CLASS_NAMES:
 	case E_ASSOCIATORS_CLASSES:
 	case E_REFERENCES_CLASSES:
-		m_schemaLock.getReadLock(LockTimeout);
+		m_schemaLock.getReadLock(m_lockTimeout);
 		break;
 	case E_DELETE_QUALIFIER_TYPE:
 	case E_SET_QUALIFIER_TYPE:
 	case E_DELETE_CLASS:
 	case E_CREATE_CLASS:
 	case E_MODIFY_CLASS:
-		m_schemaLock.getWriteLock(LockTimeout);
+		m_schemaLock.getWriteLock(m_lockTimeout);
 		break;
 	case E_ENUM_INSTANCES:
 	case E_ENUM_INSTANCE_NAMES:
@@ -1904,10 +1923,12 @@ CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& co
 	case E_ASSOCIATORS:
 	case E_REFERENCE_NAMES:
 	case E_REFERENCES:
-		m_schemaLock.getReadLock(LockTimeout);
-		m_instanceLock.getReadLock(LockTimeout);
+	case E_INVOKE_METHOD_READ_LOCK:
+		m_schemaLock.getReadLock(m_lockTimeout);
+		m_instanceLock.getReadLock(m_lockTimeout);
 		break;
 	case E_EXPORT_INDICATION:
+	case E_INVOKE_METHOD_NO_LOCK:
 	default:
 		break;
 	}
@@ -1925,7 +1946,7 @@ CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& cont
 	case E_CREATE_INSTANCE:
 	case E_MODIFY_INSTANCE:
 	case E_SET_PROPERTY:
-	case E_INVOKE_METHOD:
+	case E_INVOKE_METHOD_WRITE_LOCK:
 	case E_EXEC_QUERY:
 		m_instanceLock.releaseWriteLock();
 		m_schemaLock.releaseWriteLock();
@@ -1955,10 +1976,12 @@ CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& cont
 	case E_ASSOCIATORS:
 	case E_REFERENCE_NAMES:
 	case E_REFERENCES:
+	case E_INVOKE_METHOD_READ_LOCK:
 		m_instanceLock.releaseReadLock();
 		m_schemaLock.releaseReadLock();
 		break;
 	case E_EXPORT_INDICATION:
+	case E_INVOKE_METHOD_NO_LOCK:
 	default:
 		break;
 	}

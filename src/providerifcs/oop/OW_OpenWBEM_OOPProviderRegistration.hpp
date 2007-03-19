@@ -575,6 +575,54 @@ public:
 
 
 
+	// This enum is to be used with getMethodProviderLockType() and setMethodProviderLockType()
+	// These values are distinct values and can *NOT* be and'd and or'd together.
+	enum
+	{
+		E_METHODPROVIDERLOCKTYPE_NO_LOCK = 0,
+		E_METHODPROVIDERLOCKTYPE_READ_LOCK = 1,
+		E_METHODPROVIDERLOCKTYPE_WRITE_LOCK = 2
+	};
+
+
+	/**
+	 * This function returns the OpenWBEM_OOPProviderRegistration.MethodProviderLockType property value. 
+	 * This property is described as follows: 
+	 * 
+	 *  Specify which type of lock is required by a method provider. This property is ignored for non-method providers.
+	 * 
+	 * @return UInt16 current MethodProviderLockType property value
+	 * @exception NullValueException if the property value is NULL (uninitialized)
+	 */
+	UInt16 getMethodProviderLockType() const
+	{
+		return getUInt16Property("MethodProviderLockType");
+	}
+
+	/**
+	 * This function sets the OpenWBEM_OOPProviderRegistration.MethodProviderLockType property value.
+	 * This property is described as follows: 
+	 * 
+	 *  Specify which type of lock is required by a method provider. This property is ignored for non-method providers.
+	 * 
+	 * @param UInt16 new MethodProviderLockType property value
+	 */
+	void setMethodProviderLockType(const UInt16 v)
+	{
+		setUInt16Property("MethodProviderLockType", v);
+	}
+
+	/**
+	 * This function tests whether the OpenWBEM_OOPProviderRegistration.MethodProviderLockType property value
+	 * is NULL, meaning it has not been initialized to a value.
+	 */
+	bool MethodProviderLockTypeIsNULL()
+	{
+		return propertyIsNULL("MethodProviderLockType");
+	}
+
+
+
 };
 
 }

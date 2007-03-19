@@ -128,6 +128,12 @@ public:
 		const String& className,
 		StringResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep, OperationContext& context);
+	virtual RepositoryIFC::ELockType getLockTypeForMethod(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in, 
+		OperationContext& context);
 	virtual CIMValue invokeMethod(
 		const String& ns,
 		const CIMObjectPath& path,

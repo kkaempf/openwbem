@@ -77,6 +77,22 @@ public:
 			const CIMParamValueArray& in,
 			CIMParamValueArray& out ) = 0;
 
+	enum ELockType
+	{
+		E_NO_LOCK,
+		E_READ_LOCK,
+		E_WRITE_LOCK
+	};
+	/**
+	 * Return the type of lock necessary for the method invocation
+	 */
+	virtual ELockType getLockTypeForMethod(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in);
+
 	virtual MethodProviderIFC* getMethodProvider();
 };
 

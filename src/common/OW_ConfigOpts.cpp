@@ -132,6 +132,7 @@ namespace ConfigOpts
 	char const HTTP_SERVER_ALLOW_SPNEGO_AUTHENTICATION_opt[] = "http_server.allow_spnego_authentication";
 	char const HTTP_SERVER_AUTHENTICATION_REALM_opt[] = "http_server.authentication_realm";
 	char const HTTP_SERVER_SSL_KEY_opt[] = "http_server.SSL_key";
+	char const READ_WRITE_LOCK_TIMEOUT_opt[] = "owcimomd.read_write_lock_timeout";
 
 	String installed_owlibexec_dir(OW_DEFAULT_OWLIBEXECDIR);
 	String installed_owdata_dir(OW_DEFAULT_STATE_DIR "/openwbem");
@@ -220,6 +221,7 @@ const NameAndDefault g_defaults[] =
 	{ HTTP_SERVER_USE_UDS_opt ,  OW_DEFAULT_HTTP_SERVER_USE_UDS },
 	{ WQL_LIB_opt ,  OW_DEFAULT_WQL_LIB },
 	{ PRIVILEGES_CONFIG_DIR_opt, "" },
+	{ READ_WRITE_LOCK_TIMEOUT_opt, OW_DEFAULT_READ_WRITE_LOCK_TIMEOUT},
 	{ "zz_end" , "garbage" }
 }; 
 

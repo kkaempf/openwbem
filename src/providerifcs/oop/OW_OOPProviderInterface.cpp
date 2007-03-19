@@ -396,6 +396,11 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 				}
 			}
 
+			if (!curReg.MethodProviderLockTypeIsNULL())
+			{
+				info->methodLockType = curReg.getMethodProviderLockType();
+			}
+
 			for (size_t j = 0; j < providerTypes.size(); ++j)
 			{
 				switch (providerTypes[j])
@@ -813,12 +818,17 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 				}
 				else if (clsName == CLASS_OpenWBEM_OOPMethodProviderCapabilities)
 				{
+					OpenWBEM::OOPMethodProviderCapabilities methCap(curCapabilities);
+					if (!methCap.LockTypeIsNULL())
+					{
+						info->methodLockType = methCap.getLockType();
+					}
+
 					// keep it for ourselves
 					m_methodProvReg[instanceID] = info;
 					// give the info back to the provider manager
 					MethodProviderInfo mpi;
 					mpi.setProviderName(instanceID);
-					OpenWBEM::OOPMethodProviderCapabilities methCap(curCapabilities);
 					StringArray namespaceNames;
 					if (!methCap.NamespaceNamesIsNULL())
 						namespaceNames = methCap.getNamespaceNames();

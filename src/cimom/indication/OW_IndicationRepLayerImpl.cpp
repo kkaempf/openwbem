@@ -104,6 +104,17 @@ IndicationRepLayerImpl::getInstance(
 	return theInst;
 }
 //////////////////////////////////////////////////////////////////////////////
+RepositoryIFC::ELockType
+IndicationRepLayerImpl::getLockTypeForMethod(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& in, 
+	OperationContext& context)
+{
+	return m_pServer->getLockTypeForMethod(ns, path, methodName, in, context);
+}
+//////////////////////////////////////////////////////////////////////////////
 CIMValue
 IndicationRepLayerImpl::invokeMethod(
 	const String& ns,

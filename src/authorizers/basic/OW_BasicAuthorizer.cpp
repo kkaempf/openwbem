@@ -515,6 +515,17 @@ BasicAuthorizer::invokeMethod(
 	return m_cimRepository->invokeMethod(ns, path, methodName, inParams, outParams, context);
 }
 //////////////////////////////////////////////////////////////////////
+RepositoryIFC::ELockType
+BasicAuthorizer::getLockTypeForMethod(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& in, 
+	OperationContext& context)
+{
+	return m_cimRepository->getLockTypeForMethod(ns, path, methodName, in, context);
+}
+//////////////////////////////////////////////////////////////////////
 void
 BasicAuthorizer::execQuery(
 	const String& ns,

@@ -482,6 +482,12 @@ public:
 		const CIMObjectPath& path,
 		const String& methodName, const CIMParamValueArray& inParams,
 		CIMParamValueArray& outParams, OperationContext& context);
+	virtual RepositoryIFC::ELockType getLockTypeForMethod(
+			const String& ns,
+			const CIMObjectPath& path,
+			const String& methodName,
+			const CIMParamValueArray& in, 
+			OperationContext& context);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associatorNames(
 		const String& ns,

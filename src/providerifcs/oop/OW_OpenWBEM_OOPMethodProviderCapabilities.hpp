@@ -207,6 +207,54 @@ public:
 
 
 
+	// This enum is to be used with getLockType() and setLockType()
+	// These values are distinct values and can *NOT* be and'd and or'd together.
+	enum
+	{
+		E_LOCKTYPE_NO_LOCK = 0,
+		E_LOCKTYPE_READ_LOCK = 1,
+		E_LOCKTYPE_WRITE_LOCK = 2
+	};
+
+
+	/**
+	 * This function returns the OpenWBEM_OOPProviderRegistration.LockType property value. 
+	 * This property is described as follows: 
+	 * 
+	 *  Specify which type of lock is required by a method provider.
+	 * 
+	 * @return UInt16 current LockType property value
+	 * @exception NullValueException if the property value is NULL (uninitialized)
+	 */
+	UInt16 getLockType() const
+	{
+		return getUInt16Property("LockType");
+	}
+
+	/**
+	 * This function sets the OpenWBEM_OOPProviderRegistration.LockType property value.
+	 * This property is described as follows: 
+	 * 
+	 *  Specify which type of lock is required by a method provider.
+	 * 
+	 * @param UInt16 new LockType property value
+	 */
+	void setLockType(const UInt16 v)
+	{
+		setUInt16Property("LockType", v);
+	}
+
+	/**
+	 * This function tests whether the OpenWBEM_OOPProviderRegistration.LockType property value
+	 * is NULL, meaning it has not been initialized to a value.
+	 */
+	bool LockTypeIsNULL()
+	{
+		return propertyIsNULL("LockType");
+	}
+
+
+
 };
 
 }

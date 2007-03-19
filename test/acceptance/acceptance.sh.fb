@@ -37,6 +37,7 @@
 #		SocketCat
 #		OOPProvider
 #		EmbeddedCIMOM
+#		MethodLocking
 
 set -x
 
@@ -183,7 +184,7 @@ $BUILDDIR/test/acceptance/oop/liboopassoctest.@lib_ext@ \
 			-e "s!.*log.main.location =\(.*\)!log.main.location = $RESULTDIR/logfile!g" \
 			-e "s!.*log.main.categories =\(.*\)!log.main.categories = *!g" \
 			-e "s!.*log.main.format =\(.*\)!log.main.format = %-3r [%t] %-5p %F:%L %c - %m!g" \
-		    -e "s!.*log.main.flush =\(.*\)!log.main.flush = true!" \
+			-e "s!.*log.main.flush =\(.*\)!log.main.flush = true!" \
 			-e "s!.*owcimomd.dump_socket_io =\(.*\)!owcimomd.dump_socket_io = $RESULTDIR!g" \
 			-e "s!.*wcimomd.authentication_module\(.*\)pamcl\(.*\)!owcimomd.authentication_module\1simple\2!g" \
 			-e "s!.*wcimomd.wql_lib =\(.*\)!owcimomd.wql_lib = $STAGEDIR$OWLIBDIR/libowwql.@lib_ext@!g" \
@@ -1904,6 +1905,43 @@ EOI
 }
 
 #############################################################################
+TestMethodLocking()
+{
+	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i MethodLocking >/dev/null 2>&1
+	then
+		return
+	fi
+
+	StopDaemon
+	RestoreState
+
+	EditConfig "s!owcimomd.read_write_lock_timeout = \(.*\)!owcimomd.read_write_lock_timeout = 0.001!g"
+	InstallProvider $BUILDDIR/test/acceptance/methodLocking/libmethodLockingTest.@lib_ext@
+	InstallOOPProvider $BUILDDIR/test/acceptance/methodLocking/libmethodLockingTest.@lib_ext@
+	StartDaemon
+
+	# import the mof.  We have to change the path to the owoopcpp1pr command
+	# and tell owoopcpp1pr where to stick its log file
+	sed -e "s!${OWLIBEXECDIR}!${STAGEDIR}${OWLIBEXECDIR}!g" \
+		-e "s!${OWLIBDIR}/openwbem!${STAGEDIR}${OWLIBDIR}/openwbem!g" \
+		-e's!--logfile=!--logfile='"$RESULTDIR/owoopcpp1pr.log!g" \
+		$BUILDDIR/test/acceptance/methodLocking/methodLockingTest.mof | \
+		$STAGEDIR/$OWBINDIR/owmofc --url http://test1:pass1@localhost:30926/ --create-namespaces - || \
+		ExitWithFail "owmofc exited with error."
+
+	# have to restart for provider registration to take effect
+	RestartDaemon
+
+	# run the tests - first by initiating the calls externally
+	$BUILDDIR/test/acceptance/methodLocking/testMethodLocking http://test1:pass1@localhost:30926/root > $RESULTDIR/testMethodLocking.out 2>&1
+	RVAL=$?
+	if [ $RVAL != "0" ]; then
+		ExitWithFail "Method Locking test failed. Check $RESULTDIR/testMethodLocking.out"
+	fi
+	
+}
+
+#############################################################################
 CoreCheck()
 {
 	CORES=`ls $STAGEDIR/core* /cores/core.* 2> /dev/null`
@@ -2174,6 +2212,8 @@ main()
 	TestSocketCat "${UDS_PATH}"
 
 	TestOOPProvider
+
+	TestMethodLocking
 
 	if [ "z$OWLONGTEST" = "z1" ]; then
 		RunATest testClientTimeout "http://test1:pass1@localhost:30926"

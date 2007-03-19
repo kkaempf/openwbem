@@ -435,6 +435,25 @@ public:
 		const CIMObjectPath& name,
 		const String& propertyName, OperationContext& context) = 0;
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+
+	enum ELockType
+	{
+		E_NO_LOCK,
+		E_READ_LOCK,
+		E_WRITE_LOCK
+	};
+	/**
+	 * Return the type of lock necessary for the method invocation.
+	 * 
+	 * @throws CIMException on failure or if not implemented.
+	 */
+	virtual ELockType getLockTypeForMethod(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in, 
+		OperationContext& context) = 0;
+
 	/**
 	 * Invokes a method
 	 *
@@ -453,6 +472,7 @@ public:
 		const CIMObjectPath& path,
 		const String& methodName, const CIMParamValueArray& inParams,
 		CIMParamValueArray& outParams, OperationContext& context) = 0;
+
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * This method is used to enumerate the names of CIM Objects (Classes

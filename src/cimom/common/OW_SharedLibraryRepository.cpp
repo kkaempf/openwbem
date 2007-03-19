@@ -197,6 +197,16 @@ void SharedLibraryRepository::enumClassNames(
 {
 	m_ref->enumClassNames(ns, className, result, deep, context);
 }
+RepositoryIFC::ELockType
+SharedLibraryRepository::getLockTypeForMethod(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& in, 
+	OperationContext& context)
+{
+	return m_ref->getLockTypeForMethod(ns, path, methodName, in, context);
+}
 CIMValue SharedLibraryRepository::invokeMethod(
 	const String& ns,
 	const CIMObjectPath& path,

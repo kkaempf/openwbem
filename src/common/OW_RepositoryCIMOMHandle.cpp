@@ -246,7 +246,21 @@ RepositoryCIMOMHandle::invokeMethod(
 	const String& methodName, const CIMParamValueArray& inParams,
 	CIMParamValueArray& outParams)
 {
-	OperationScope os(this, E_INVOKE_METHOD, m_context);
+	EOperationFlag operation = E_INVOKE_METHOD_WRITE_LOCK;
+	RepositoryIFC::ELockType methodLockType = m_pServer->getLockTypeForMethod(ns, path, methodName, inParams, m_context);
+	switch (methodLockType)
+	{
+		case RepositoryIFC::E_NO_LOCK:
+			operation = E_INVOKE_METHOD_NO_LOCK;
+			break;
+		case RepositoryIFC::E_READ_LOCK:
+			operation = E_INVOKE_METHOD_READ_LOCK;
+			break;
+		case RepositoryIFC::E_WRITE_LOCK:
+			operation = E_INVOKE_METHOD_WRITE_LOCK;
+			break;
+	}
+	OperationScope os(this, operation, m_context);
 	CIMValue rval = m_pServer->invokeMethod(ns, path, methodName, inParams, outParams,
 		m_context);
 	os.completedSuccessfully();

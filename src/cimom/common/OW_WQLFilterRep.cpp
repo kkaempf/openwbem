@@ -297,14 +297,24 @@ WQLFilterRep::getProperty(
 		"is supported in the WQLCIMOMHandle.");
 }
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+//////////////////////////////////////////////////////////////////////
+RepositoryIFC::ELockType
+WQLFilterRep::getLockTypeForMethod(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& in, 
+	OperationContext& context)
+{
+	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() is supported in the WQLCIMOMHandle.");
+}
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 WQLFilterRep::invokeMethod(const String&, const CIMObjectPath &/*name*/,
 	const String &/*methodName*/, const CIMParamValueArray &/*inParams*/,
 	CIMParamValueArray &/*outParams*/, OperationContext&)
 {
-	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() "
-		"is supported in the WQLCIMOMHandle.");
+	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() is supported in the WQLCIMOMHandle.");
 }
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////

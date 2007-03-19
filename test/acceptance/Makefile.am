@@ -1,4 +1,4 @@
-SUBDIRS = testfiles progs oop
+SUBDIRS = testfiles progs oop methodLocking
 
 check_SCRIPTS = acceptance.sh
 

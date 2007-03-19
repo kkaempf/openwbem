@@ -1,0 +1,16 @@
+Makefile.in
+Makefile
+.deps
+.libs
+*.lo
+*.la
+*.imp
+*.exp
+*.nlm
+*.nlm.*
+lib*sl*
+methodLockingTest.mof
+lib*so*
+lib*dylib*
+lib*sl*
+testMethodLocking

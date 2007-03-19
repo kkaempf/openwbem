@@ -228,6 +228,9 @@
 #ifndef OW_DEFAULT_HTTP_SERVER_DEFAULT_AUTH_CHALLENGE
 #define OW_DEFAULT_HTTP_SERVER_DEFAULT_AUTH_CHALLENGE "Basic"
 #endif
+#ifndef OW_DEFAULT_READ_WRITE_LOCK_TIMEOUT
+#define OW_DEFAULT_READ_WRITE_LOCK_TIMEOUT "300"
+#endif
 
 
 namespace OW_NAMESPACE
@@ -340,6 +343,7 @@ namespace ConfigOpts
 	extern char const HTTP_SERVER_ALLOW_BASIC_AUTHENTICATION_opt[];
 	extern char const HTTP_SERVER_ALLOW_SPNEGO_AUTHENTICATION_opt[];
 	extern char const HTTP_SERVER_AUTHENTICATION_REALM_opt[];
+	extern char const READ_WRITE_LOCK_TIMEOUT_opt[];
 
 	// Naming rule: if the option begins with owcimomd, name is the same text all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.
