@@ -41,6 +41,7 @@ OW_NoSuchProviderException.cpp \
 OW_NoSuchQualifierException.cpp \
 OW_NULLValueException.cpp \
 OW_OperationContext.cpp \
+OW_OperationRWLock.cpp \
 OW_RepositoryCIMOMHandle.cpp \
 OW_ResultHandlers.cpp \
 OW_SafeLibCreate.cpp \
@@ -146,6 +147,7 @@ OW_NullAppender.hpp \
 OW_NullLogger.hpp \
 OW_NULLValueException.hpp \
 OW_OperationContext.hpp \
+OW_OperationRWLock.hpp \
 OW_Paths.hpp \
 OW_PosixUnnamedPipe.hpp \
 OW_Process.hpp \
