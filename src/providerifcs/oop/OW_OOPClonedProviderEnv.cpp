@@ -355,8 +355,7 @@ public:
 	}
 
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
-		EBypassProvidersFlag bypassProviders,
-		ELockingFlag locking) const
+		EBypassProvidersFlag bypassProviders) const
 	{
 		if (m_type == BinarySerialization::CIMOM_HANDLE_REQUEST)
 			return m_provEnv->getCIMOMHandle();
@@ -610,6 +609,18 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 			//OW_LOG_DEBUG(logger, Format("clonedEvnProcessOneRequest read key: %1", key));
 			BinarySerialization::writeBool(
 				outbuf, env->getOperationContext().keyHasData(key));
+			if (outbuf.pubsync() == -1)
+			{
+				OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest flush failed!");
+				OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
+			}
+		}
+		break; 
+
+		case BinarySerialization::OPERATION_CONTEXT_GET_OPERATION_ID:
+		{
+			OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest got OPERATION_CONTEXT_GET_OPERATION_ID");
+			BinarySerialization::write(outbuf, env->getOperationContext().getOperationId());
 			if (outbuf.pubsync() == -1)
 			{
 				OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest flush failed!");

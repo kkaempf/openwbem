@@ -25,7 +25,8 @@ libmethodLockingTest.$(LIB_EXT)
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 libmethodLockingTest_a_SOURCES = \
-testMethodLockingProv.cpp
+testMethodLockingProv.cpp \
+testMethodLocking.cpp
 
 noinst_PROGRAMS = \
 testMethodLocking

@@ -48,10 +48,9 @@ namespace OW_NAMESPACE
 
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-RepositoryCIMOMHandle::RepositoryCIMOMHandle(const RepositoryIFCRef& pRepos, OperationContext& context, ELockingFlag lock)
+RepositoryCIMOMHandle::RepositoryCIMOMHandle(const RepositoryIFCRef& pRepos, OperationContext& context)
 	: CIMOMHandleIFC()
 	, m_pServer(pRepos)
-	, m_lock(lock)
 	, m_context(context)
 {
 }
@@ -469,20 +468,14 @@ RepositoryCIMOMHandle::execQuery(
 void
 RepositoryCIMOMHandle::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& m_context)
 {
-	if (m_lock)
-	{
-		m_pServer->beginOperation(op, m_context);
-	}
+	m_pServer->beginOperation(op, m_context);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 RepositoryCIMOMHandle::endOperation(WBEMFlags::EOperationFlag op, OperationContext& m_context, WBEMFlags::EOperationResultFlag result)
 {
-	if (m_lock)
-	{
-		m_pServer->endOperation(op, m_context, result);
-	}
+	m_pServer->endOperation(op, m_context, result);
 }
 
 } // end namespace OW_NAMESPACE

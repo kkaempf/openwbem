@@ -43,7 +43,7 @@
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssocDb.hpp"
 #endif
-#include "OW_RWLocker.hpp"
+#include "OW_OperationRWLock.hpp"
 #include "OW_Logger.hpp"
 
 namespace OW_NAMESPACE
@@ -565,6 +565,13 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		const String &query, const String& queryLanguage,
 		OperationContext& context);
+	virtual void enumInstancesWQL(
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
+		const WQLSelectStatement& wss,
+		const WQLCompile& wc,
+		OperationContext& context);
 	
 	virtual void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
 	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result);
@@ -665,8 +672,8 @@ private:
 	ServiceEnvironmentIFCRef m_env;
 	Logger m_logger;
 	bool m_checkReferentialIntegrity;
-	RWLocker m_schemaLock;
-	RWLocker m_instanceLock;
+	OperationRWLock m_schemaLock;
+	OperationRWLock m_instanceLock;
 	Timeout m_lockTimeout;
 
 #ifdef OW_WIN32

@@ -1250,14 +1250,14 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		OW_LOG_DEBUG(m_logger, Format("Querying ProviderManager for indication providers. filterSourceNameSpace = %1, indicationClassName = %2, isaClassNames = {%3}", 
 			filterSourceNameSpace, indicationClassName, ss.toString()));
 		providers = pm->getIndicationProviders(
-			filterSourceNameSpace, indicationClassName, isaClassNames);
+			filterSourceNameSpace, indicationClassName, isaClassNames, context);
 	}
 	else
 	{
 		OW_LOG_DEBUG(m_logger, Format("Querying ProviderManager for indication providers. filterSourceNameSpace = %1, indicationClassName = %2, isaClassNames = {}", 
 			filterSourceNameSpace, indicationClassName));
 		providers = pm->getIndicationProviders(
-			filterSourceNameSpace, indicationClassName, CIMNameArray());
+			filterSourceNameSpace, indicationClassName, CIMNameArray(), context);
 	}
 	
 	OW_LOG_DEBUG(m_logger, Format("Found %1 providers for the subscription", providers.size()));

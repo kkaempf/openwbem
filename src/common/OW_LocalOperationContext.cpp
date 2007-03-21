@@ -34,11 +34,27 @@
 
 #include "OW_config.h"
 #include "OW_LocalOperationContext.hpp"
+#include "blocxx/GlobalMutex.hpp"
+#include "blocxx/MutexLock.hpp"
 
 namespace OW_NAMESPACE
 {
 
+namespace
+{
+
+GlobalMutex g_mtx = BLOCXX_GLOBAL_MUTEX_INIT();
+UInt64 g_operationCount = 0;
+UInt64 getNewOperationId()
+{
+	MutexLock lock(g_mtx);
+	return g_operationCount++;
+}
+
+} // end anonymous namespace
+
 LocalOperationContext::LocalOperationContext()
+: m_operationId(getNewOperationId())
 {
 
 }
@@ -71,6 +87,12 @@ bool
 LocalOperationContext::doKeyHasData(const String& key) const
 {
 	return m_data.count(key) > 0;
+}
+
+UInt64 
+LocalOperationContext::doGetOperationId() const
+{
+	return m_operationId;
 }
 
 

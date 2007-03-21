@@ -60,6 +60,8 @@
 #include "OW_ProviderManager.hpp"
 #include "OW_ServiceIFCNames.hpp"
 #include "OW_CIMServerProviderEnvironment.hpp"
+#include "OW_AuthorizerIFC.hpp"
+#include "OW_SharedLibraryRepository.hpp"
 
 #include <iterator>
 
@@ -129,7 +131,8 @@ namespace
 CIMServer::CIMServer(const ServiceEnvironmentIFCRef& env,
 	const ProviderManagerRef& provManager,
 	const RepositoryIFCRef& cimRepository,
-	const AuthorizerManagerRef& authorizerMgr)
+	const AuthorizerManagerRef& authorizerMgr,
+	const AuthorizerIFCRef& authorizer)
 	: RepositoryIFC()
 	, m_provManager(provManager)
 	, m_nsClass_Namespace(CIMNULL)
@@ -137,6 +140,7 @@ CIMServer::CIMServer(const ServiceEnvironmentIFCRef& env,
 	, m_cimRepository(cimRepository)
 	, m_realRepository(dynamic_pointer_cast<CIMRepository>(m_cimRepository))
 	, m_authorizerMgr(authorizerMgr)
+	, m_authorizer(authorizer)
 	, m_logger(COMPONENT_NAME)
 {
 }
@@ -197,6 +201,7 @@ CIMServer::shutdown()
 	m_cimRepository = 0;
 	m_realRepository = 0;
 	m_authorizerMgr = 0;
+	m_authorizer.setNull();
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1497,7 +1502,7 @@ CIMServer::invokeMethod(
 	CIMClass cctemp(cc);
 	try
 	{
-		methodp = m_provManager->getMethodProvider(ns, cctemp, method);
+		methodp = m_provManager->getMethodProvider(ns, cctemp, method, context);
 	}
 	catch (const NoSuchProviderException&)
 	{
@@ -1689,7 +1694,7 @@ CIMServer::getLockTypeForMethod(
 	MethodProviderIFCRef methodp;
 	try
 	{
-		methodp = m_provManager->getMethodProvider(ns, cc, method);
+		methodp = m_provManager->getMethodProvider(ns, cc, method, context);
 	}
 	catch (const NoSuchProviderException&)
 	{
@@ -1720,7 +1725,7 @@ CIMServer::_getInstanceProvider(const String& ns, const CIMClass& cc_,
 	CIMClass cc(cc_);
 	try
 	{
-		instancep =	m_provManager->getInstanceProvider(ns, cc);
+		instancep =	m_provManager->getInstanceProvider(ns, cc, context);
 	}
 	catch (const NoSuchProviderException& e)
 	{
@@ -1737,7 +1742,7 @@ CIMServer::_getSecondaryInstanceProviders(const String& ns, const CIMName& class
 	SecondaryInstanceProviderIFCRefArray rval;
 	try
 	{
-		rval = m_provManager->getSecondaryInstanceProviders(ns, className);
+		rval = m_provManager->getSecondaryInstanceProviders(ns, className, context);
 	}
 	catch (const NoSuchProviderException& e)
 	{
@@ -1756,14 +1761,14 @@ CIMServer::_getAssociatorProvider(const String& ns, const CIMClass& cc_, Operati
 	CIMClass cc(cc_);
 	try
 	{
-		ap =  m_provManager->getAssociatorProvider(ns, cc);
+		ap =  m_provManager->getAssociatorProvider(ns, cc, context);
 	}
 	catch (const NoSuchProviderException&)
 	{
 		// if it's not an instance or associator provider, then ERROR!
 		try
 		{
-			m_provManager->getInstanceProvider(ns, cc);
+			m_provManager->getInstanceProvider(ns, cc, context);
 		}
 		catch (const NoSuchProviderException& e)
 		{
@@ -1783,7 +1788,7 @@ CIMServer::_getQueryProvider(const String& ns, const CIMClass& cc,
 	QueryProviderIFCRef queryp;
 	try
 	{
-		queryp = m_provManager->getQueryProvider(ns, cc);
+		queryp = m_provManager->getQueryProvider(ns, cc, context);
 	}
 	catch (const NoSuchProviderException& e)
 	{
@@ -1839,12 +1844,19 @@ CIMServer::execQuery(
 	{
 		logOperation(m_logger, context, "ExecQuery", ns, query);
 
-		CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context,
-				ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_OPERATION_CONTEXT_LOCKING);
+		// Go through some convolutions to create an appropriate authorizing repository for the wql query
+		RepositoryIFCRef wqlRep(this);
+		if (m_authorizer)
+		{
+			AuthorizerIFC * auth1 = m_authorizer->clone();
+			RepositoryIFCRef rep1(auth1);
+			auth1->setSubRepositoryIFC(wqlRep);
+			wqlRep = RepositoryIFCRef(new SharedLibraryRepository(SharedLibraryRepositoryIFCRef(m_authorizer.getLibRef(), rep1)));
+		}
+
 		try
 		{
-			//wql->evaluate(ns, result, query, queryLanguage, lch);
-			wql->evaluate(ns, result, query, queryLanguage, RepositoryIFCRef(this), context);
+			wql->evaluate(ns, result, query, queryLanguage, wqlRep, context);
 		}
 		catch (const CIMException& ce)
 		{

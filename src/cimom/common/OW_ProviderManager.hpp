@@ -107,24 +107,26 @@ public:
 	 * assumed that the provider interface will use this string to identify the
 	 * provider.  This function will also return any providers registered for
 	 * the class (without the provider qualifier).
+	 * @param context The OperationContext.
 	 *
 	 * @return A ref counted InstanceProvider. If no provider is found then
 	 * 	null is returned.
 	 */
 	InstanceProviderIFCRef getInstanceProvider(
-		const String& ns, const CIMClass& cc) const;
+		const String& ns, const CIMClass& cc, OperationContext& context) const;
 
 	/**
 	 * Locate secondary Instance providers.
 	 *
 	 * @param ns The namespace of the class.
-	 * @param className The name of the class.
+     * @param className The name of the class.
+     * @param context The OperationContext.
 	 *
 	 * @return An array of secondary instance providers which have registered
 	 * for the class identified by the className argument.
 	 */
 	SecondaryInstanceProviderIFCRefArray getSecondaryInstanceProviders(
-		const String& ns, const CIMName& className) const;
+		const String& ns, const CIMName& className, OperationContext& context) const;
 	/**
 	 * Locate a Method provider.
 	 *
@@ -135,12 +137,13 @@ public:
 	 * interface. The "provider string" is provider interface specific. It is
 	 * assumed that the provider interface will use this string to identify the
 	 * provider.
+	 * @param context The OperationContext.
 	 *
 	 * @returns A ref counted MethodProvider. If no provider is found then
 	 *	null is returned.
 	 */
 	MethodProviderIFCRef getMethodProvider(
-		const String& ns, const CIMClass& cc, const CIMMethod& method) const;
+		const String& ns, const CIMClass& cc, const CIMMethod& method, OperationContext& context) const;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * Locate an Associator provider.
@@ -154,12 +157,13 @@ public:
 	 * assumed that the provider interface will use this string to identify the
 	 * provider.  This function will also return any providers registered for
 	 * the class (without the provider qualifier).
+	 * @param context The OperationContext.
 	 *
 	 * @returns A ref counted AssociatorProvider. If no provider is found then
 	 * 	null is returned.
 	 */
 	AssociatorProviderIFCRef getAssociatorProvider(
-		const String& ns, const CIMClass& cc) const;
+		const String& ns, const CIMClass& cc, OperationContext& context) const;
 #endif
 	/**
 	 * @return all available indication export providers from the available
@@ -177,21 +181,23 @@ public:
 	 * indicationClassName in namespace ns.
 	 * @param monitoredClassNames If lifecycle indications are being requested,
 	 *  they will be passed in this parameter.
+	 * @param context The OperationContext.
 	 */
 	IndicationProviderIFCRefArray
 		getIndicationProviders(
 			const String& ns, const CIMName& indicationClassName,
-			const CIMNameArray& monitoredClassNames) const;
+			const CIMNameArray& monitoredClassNames, OperationContext& context) const;
 
 	/**
 	 * Locate a Query provider.
 	 *
 	 * @param ns The namespace of the class.
 	 * @param cc The class
+	 * @param context The OperationContext.
 	 *
 	 * @return A QueryProviderRef. If no provider is found then null is returned.
 	 */
-	QueryProviderIFCRef getQueryProvider(const String& ns, const CIMClass& cc) const;
+	QueryProviderIFCRef getQueryProvider(const String& ns, const CIMClass& cc, OperationContext& context) const;
 
 	/**
 	 * Call into each ProviderIFC to unload providers which haven't been

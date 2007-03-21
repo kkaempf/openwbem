@@ -141,10 +141,11 @@ public:
 	static const char* const SESSION_LANGUAGE_KEY;
 	static const char* const HTTP_ACCEPT_LANGUAGE_KEY;
 	static const char* const CLIENT_IPADDR;
-	static const char* const DISABLE_LOCKING;
 
 
 	UserInfo getUserInfo() const;
+
+	UInt64 getOperationId() const;
 
 	class StringData : public OperationContext::Data
 	{
@@ -156,7 +157,6 @@ public:
 		virtual void readObject(std::streambuf& istr);
 	
 		virtual String getType() const;
-		static const String s_type;
 		
 		String getString() const
 		{
@@ -194,6 +194,11 @@ private:
 	 * @return true if there is data for the key.
 	 */
 	virtual bool doKeyHasData(const String& key) const = 0;
+
+	/**
+     * @return The operation id. Each operation has a unique id.
+	 */
+	virtual UInt64 doGetOperationId() const = 0;
 
 	// non-copyable
 	OperationContext(const OperationContext&);

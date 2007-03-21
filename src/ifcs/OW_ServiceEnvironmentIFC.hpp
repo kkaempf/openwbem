@@ -89,18 +89,11 @@ public:
 		E_USE_PROVIDERS,
 		E_BYPASS_PROVIDERS
 	};
-	enum ELockingFlag
-	{
-		E_NO_LOCKING,
-		E_LOCKING,
-		E_OPERATION_CONTEXT_LOCKING
-	};
 	/**
 	 * WARNING: The return value is valid only for the lifetime of context.
 	 */
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
-		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS,
-		ELockingFlag locking = E_LOCKING) const;
+		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS) const;
 	
 	CIMOMHandleIFCRef getRepositoryCIMOMHandle(OperationContext& context) const;
 	

@@ -105,8 +105,7 @@ namespace
 		}
 	
 		virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
-			EBypassProvidersFlag bypassProviders,
-			ELockingFlag locking) const
+			EBypassProvidersFlag bypassProviders) const
 		{
 			if (m_type == BinarySerialization::CIMOM_HANDLE_REQUEST)
 			{
@@ -441,30 +440,6 @@ namespace
 		E_WRITE_ONLY
 	};
 
-	struct OperationContextDataRestorer
-	{
-		OperationContextDataRestorer(OperationContext& oc, const String& key)
-		: m_oc(oc)
-		, m_key(key)
-		, m_prevValue(oc.getData(key))
-		{
-		}
-		~OperationContextDataRestorer()
-		{
-			if (!m_prevValue)
-			{
-				m_oc.removeData(m_key);
-			}
-			else
-			{
-				m_oc.setData(m_key, m_prevValue);
-			}
-		}
-		OperationContext& m_oc;
-		String m_key;
-		OperationContext::DataRef m_prevValue;
-	};
-
 	void end(Array<unsigned char>& outputBuf,
 		const UnnamedPipeRef& inputPipe,
 		const UnnamedPipeRef& outputPipe,
@@ -489,11 +464,7 @@ namespace
 			inputBuf, outputEntries, inputPipe, outputPipe, env, result, selectEngine, 
 			finishedSuccessfully, threadPool, pprov));
 
-		// need to set the DISABLE_LOCKING flag in the OperationContext so that callbacks that happen in another thread won't deadlock.
-		OperationContextDataRestorer restorer(env->getOperationContext(), OperationContext::DISABLE_LOCKING);
 		Logger logger(COMPONENT_NAME);
-		//OW_LOG_DEBUG(logger, "OOPProtocolCPP1 setting DISABLE_LOCKING to 1");
-		env->getOperationContext().setStringData(OperationContext::DISABLE_LOCKING, "1");
 
 		if (readWriteFlag == E_READ_WRITE_UNTIL_FINISHED)
 		{
@@ -778,6 +749,18 @@ namespace
 				//OW_LOG_DEBUG(logger, Format("processOneRequest read key: %1", key));
 				BinarySerialization::writeBool(
 					outbuf, env->getOperationContext().keyHasData(key));
+				if (outbuf.pubsync() == -1)
+				{
+					OW_LOG_DEBUG(logger, "processOneRequest flush failed!");
+					OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
+				}
+			}
+			break; 
+
+			case BinarySerialization::OPERATION_CONTEXT_GET_OPERATION_ID:
+			{
+				OW_LOG_DEBUG(logger, "processOneRequest got OPERATION_CONTEXT_GET_OPERATION_ID");
+				BinarySerialization::write(outbuf, env->getOperationContext().getOperationId());
 				if (outbuf.pubsync() == -1)
 				{
 					OW_LOG_DEBUG(logger, "processOneRequest flush failed!");

@@ -47,8 +47,8 @@ public:
 	virtual OpenWBEM::CIMOMHandleIFCRef getCIMOMHandle() const = 0;
 };
 
-int test(const OpenWBEM::String& ns, const OpenWBEM::String& waitClass, const OpenWBEM::String& testClass, const CIMOMHandleSource& chs);
-int test(const OpenWBEM::String& ns, const OpenWBEM::String& waitClass1, const OpenWBEM::String& waitClass2, const OpenWBEM::String& testClass, const CIMOMHandleSource& chs);
+bool test(const OpenWBEM::String& ns, const OpenWBEM::String& waitClass, const OpenWBEM::String& testClass, const CIMOMHandleSource& chs);
+bool test(const OpenWBEM::String& ns, const OpenWBEM::String& waitClass1, const OpenWBEM::String& waitClass2, const OpenWBEM::String& testClass, const CIMOMHandleSource& chs);
 
 } // end namespace MethodLocking
 

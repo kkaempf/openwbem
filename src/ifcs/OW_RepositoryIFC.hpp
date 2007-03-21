@@ -839,7 +839,7 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		const WQLSelectStatement& wss,
 		const WQLCompile& wc,
-		OperationContext& context);
+		OperationContext& context) = 0;
 
 	virtual void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context) = 0;
 	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result) = 0;

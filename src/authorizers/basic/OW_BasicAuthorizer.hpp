@@ -320,6 +320,14 @@ public:
 		const StringArray* propertyList,
 		WBEMFlags::EEnumSubclassesFlag enumSubclasses,
 		OperationContext& context);
+
+	virtual void enumInstancesWQL(
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
+		const WQLSelectStatement& wss,
+		const WQLCompile& wc,
+		OperationContext& context);
 	/**
 	 * Retrieve an enumeration of instances object paths (CIMObjectPath)
 	 * for a particular class

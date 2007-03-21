@@ -143,6 +143,7 @@ public:
 		BinarySerialization::writeString(obuf, message.filename);
 		BinarySerialization::write(obuf, message.fileline);
 		BinarySerialization::writeString(obuf, message.methodname);
+		obuf.pubsync(); // if it fails, we can't log anything, throw an exception or do much of anything :-(
 	}
 private:
 	std::streambuf & obuf;
@@ -209,6 +210,14 @@ private:
 		BinarySerialization::write(m_outbuf, BinarySerialization::OPERATION_CONTEXT_KEY_HAS_DATA);
 		BinarySerialization::writeString(m_outbuf, key);
 		return BinarySerialization::readBool(m_inbuf);
+	}
+
+	virtual UInt64 doGetOperationId() const
+	{
+		BinarySerialization::write(m_outbuf, BinarySerialization::OPERATION_CONTEXT_GET_OPERATION_ID);
+		UInt64 operationId;
+		BinarySerialization::read(m_inbuf, operationId);
+		return operationId;
 	}
 
 	std::streambuf & m_inbuf;

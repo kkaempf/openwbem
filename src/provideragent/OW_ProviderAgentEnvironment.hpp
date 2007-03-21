@@ -105,8 +105,7 @@ public:
 
 	virtual RequestHandlerIFCRef getRequestHandler(const String& ct) const;
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&,
-		EBypassProvidersFlag bypassProviders,
-		ELockingFlag locking) const;
+		EBypassProvidersFlag bypassProviders) const;
 
 private:
 	ConfigFile::ConfigMap m_configItems;

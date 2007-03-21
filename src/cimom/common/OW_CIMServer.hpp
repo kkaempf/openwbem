@@ -69,7 +69,8 @@ public:
 	CIMServer(const ServiceEnvironmentIFCRef& env,
 		const ProviderManagerRef& providerManager,
 		const RepositoryIFCRef& repository,
-		const AuthorizerManagerRef& authorizerMgr);
+		const AuthorizerManagerRef& authorizerMgr,
+		const AuthorizerIFCRef& authorizer);
 	/**
 	 * Destroy this CIMServer object.
 	 */
@@ -696,6 +697,7 @@ private:
 	RepositoryIFCRef m_cimRepository;
 	IntrusiveReference<CIMRepository> m_realRepository;
 	AuthorizerManagerRef m_authorizerMgr;
+	AuthorizerIFCRef m_authorizer;
 	Logger m_logger;
 };
 

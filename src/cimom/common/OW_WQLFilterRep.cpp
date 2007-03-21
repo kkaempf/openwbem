@@ -409,6 +409,18 @@ WQLFilterRep::execQuery(const String& /*ns*/,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
+WQLFilterRep::enumInstancesWQL(
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result,
+	const WQLSelectStatement& wss,
+	const WQLCompile& wc,
+	OperationContext& context)
+{
+	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() is supported in the WQLCIMOMHandle.");
+}
+//////////////////////////////////////////////////////////////////////////////
+void
 WQLFilterRep::beginOperation(WBEMFlags::EOperationFlag, OperationContext&)
 {
 }

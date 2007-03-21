@@ -36,6 +36,8 @@
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_SocketBaseImpl.hpp"
+#include "OW_LogAppender.hpp"
+#include "OW_CerrAppender.hpp"
 #include "testMethodLocking.hpp"
 
 #include <iostream>
@@ -107,6 +109,7 @@ main(int argc, char* argv[])
 			SocketBaseImpl::setDumpFiles("","");
 		}
 
+		LogAppender::setDefaultLogAppender(LogAppenderRef(new CerrAppender()));
 		String url(argv[1]);
 		
 		ClientCIMOMHandleSource chs(url);

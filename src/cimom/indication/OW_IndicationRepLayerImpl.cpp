@@ -507,6 +507,17 @@ void IndicationRepLayerImpl::execQuery(
 {
 	m_pServer->execQuery(ns, result, query, queryLanguage, context);
 }
+void
+IndicationRepLayerImpl::enumInstancesWQL(
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result,
+	const WQLSelectStatement& wss,
+	const WQLCompile& wc,
+	OperationContext& context)
+{
+	m_pServer->enumInstancesWQL(ns, className, result, wss, wc, context);
+}
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 void IndicationRepLayerImpl::deleteNameSpace(const String &ns, OperationContext& context)
 {

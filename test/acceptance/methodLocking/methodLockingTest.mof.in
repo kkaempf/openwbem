@@ -19,8 +19,8 @@ class methodLockingBase
 {
 	[key] string id;
 
-	sint32 wait([in, required] string startedFile, [in, required] string waitForFile);
-	sint32 test();
+	boolean wait([in, required] string startedFile, [in, required] string waitForFile);
+	boolean test();
 };
 
 class no : methodLockingBase
@@ -57,8 +57,8 @@ class methodLockingBase
 {
 	[key] string id;
 
-	sint32 wait([in, required] string startedFile, [in, required] string waitForFile);
-	sint32 test();
+	boolean wait([in, required] string startedFile, [in, required] string waitForFile);
+	boolean test();
 };
 
 class no : methodLockingBase
@@ -75,6 +75,11 @@ class read : methodLockingBase
 
 class write : methodLockingBase
 {
+};
+
+class testInProv
+{
+	boolean runAllTestsInProvider([in, required] string testdir);
 };
 
 
@@ -130,5 +135,18 @@ instance of OpenWBEM_OOPProviderRegistration
 	Protocol = "owcpp1";
 	Timeout = "00000000000010.000000:000";
 	MethodProviderLockType = 2;
+};
+
+instance of OpenWBEM_OOPProviderRegistration
+{
+	InstanceID = "methodLockingTest-oop:testInProv";
+	NamespaceNames = {"root/methodLockingTest-oop"};
+	ClassName = "testInProv";
+	ProviderTypes = { 6 }; // method
+	Process = "@libexecdir@/openwbem/owoopcpp1pr";
+	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=" };
+	Protocol = "owcpp1";
+	Timeout = "00000000000010.000000:000";
+	MethodProviderLockType = 0;
 };
 

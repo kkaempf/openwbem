@@ -426,6 +426,19 @@ BasicAuthorizer::enumInstances(
 	m_cimRepository->enumInstances(ns, className, result, deep, localOnly, includeQualifiers, includeClassOrigin, propertyList, enumSubclasses, context);
 }
 //////////////////////////////////////////////////////////////////////////////
+void
+BasicAuthorizer::enumInstancesWQL(
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result,
+	const WQLSelectStatement& wss,
+	const WQLCompile& wc,
+	OperationContext& context)
+{
+	m_accessMgr->checkAccess("enumInstances", "r", &ns, context);
+	m_cimRepository->enumInstancesWQL(ns, className, result, wss, wc, context);
+}
+//////////////////////////////////////////////////////////////////////////////
 CIMInstance
 BasicAuthorizer::getInstance(
 	const String& ns,

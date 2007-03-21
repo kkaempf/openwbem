@@ -39,6 +39,7 @@
 #include "OW_Array.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_BinarySerialization.hpp"
+#include "blocxx/GlobalString.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -117,14 +118,16 @@ OperationContext::StringData::readObject(std::streambuf& istr)
 }
 
 /////////////////////////////////////////////////////////////////////////////
+namespace
+{
+GlobalString g_StringDataType = BLOCXX_GLOBAL_STRING_INIT("StringData");
+}
+/////////////////////////////////////////////////////////////////////////////
 String
 OperationContext::StringData::getType() const
 {
-	return s_type;
+	return g_StringDataType;
 }
-
-/////////////////////////////////////////////////////////////////////////////
-const String OperationContext::StringData::s_type("StringData");
 
 /////////////////////////////////////////////////////////////////////////////
 void  
@@ -173,6 +176,13 @@ OperationContext::getData(const String& key) const
 }
 
 /////////////////////////////////////////////////////////////////////////////
+UInt64
+OperationContext::getOperationId() const
+{
+	return doGetOperationId();
+}
+
+/////////////////////////////////////////////////////////////////////////////
 const char* const OperationContext::USER_NAME = "USER_NAME";
 const char* const OperationContext::USER_PASSWD = "USER_PASSWD";
 const char* const OperationContext::HTTP_PATH = "HTTP_PATH";
@@ -180,7 +190,6 @@ const char* const OperationContext::CURUSER_UIDKEY = "CURUSER_UIDKEY";
 const char* const OperationContext::SESSION_LANGUAGE_KEY = "SESSION_LANGUAGE_KEY";
 const char* const OperationContext::HTTP_ACCEPT_LANGUAGE_KEY = "HTTP_ACCEPT_LANGUAGE_KEY";
 const char* const OperationContext::CLIENT_IPADDR = "CLIENT_IPADDR"; 
-const char* const OperationContext::DISABLE_LOCKING = "DISABLE_LOCKING";
 
 } // end namespace OW_NAMESPACE
 

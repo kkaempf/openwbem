@@ -1300,22 +1300,6 @@ BasicACLTestCase()
 	$ACLPROG $ACLURL "$1$2" || ExitWithFail "ACL test case failed."
 }
 
-LoadCIM_ObjectManager()
-{
-	# TODO: FIX THIS PROBLEM
-	# This function is a hack to ensure that the CIM_ObjectManager provider
-	# gets loaded before it's needed.
-	WQLEXEC=$STAGEDIR/$OWBINDIR/owexecwql
-	SUACLURL="owbinary.wbem://test1:pass1@localhost:$OWIPC/"
-	ACLPROG=$BUILDDIR/test/acceptance/progs/aclTestBasic
-
-	$WQLEXEC $SUACLURL root/security \
-		'insert into OpenWBEM_UserACL (nspace, username, capability) values ("root/acltest", "test2", "rwR")'
-	CREDS="test2:pass2"
-	ACLURL="http://$CREDS@localhost:$OWIPC"
-	$WQLEXEC $ACLURL root/acltest 'select * from CIM_ObjectManager'
-}
-
 BasicACLTestNoACLs()
 {
 	WQLEXEC=$STAGEDIR/$OWBINDIR/owexecwql
@@ -1386,11 +1370,6 @@ TestACLBasic()
 		$TOP_SRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	StartDaemon
-
-	# This is a hack to work around a problem described in the "TODO" comment
-	# in OpenWBEM_ObjectManagerInstProv::initialize
-	# in file OW_provinstOpenWBEM_ObjectManager.cpp
-	LoadCIM_ObjectManager
 
 	# The following test cases were chosen using an orthogonal
 	# array, to get maximum coverage with a minimum of test cases.
@@ -1513,11 +1492,6 @@ SetupInteropSchema()
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:$OWIPC/ -n root \
 			$TOP_SRCDIR/mof/OpenWBEM_Interop.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
-
-	# TODO: FIX THIS PROBLEM
-	# This is a hack to ensure that the CIM_ObjectManager provider gets
-	# loaded before it's needed
-	$STAGEDIR/$OWBINDIR/owexecwql owbinary.wbem://test1:pass1@localhost:$OWIPC/ root 'select * from CIM_ObjectManager'
 }
 
 #############################################################################
@@ -1938,7 +1912,15 @@ TestMethodLocking()
 	if [ $RVAL != "0" ]; then
 		ExitWithFail "Method Locking test failed. Check $RESULTDIR/testMethodLocking.out"
 	fi
-	
+
+	# second - run the tests inside an oop provider to test that callbacks correctly lock.	
+	$STAGEDIR/$OWBINDIR/owinvokemethod --url http://test1:pass1@localhost:30926/root/methodLockingTest-oop --target testInProv --methodname runAllTestsInProvider --inparams "testdir=$STAGEDIR"> $RESULTDIR/owinvokemethod.testInProv 2>&1
+	RVAL=$?
+	OUTPUT=`cat $RESULTDIR/owinvokemethod.testInProv`
+	if [ $RVAL != "0" ] || [ "$OUTPUT" != "true" ]; then
+		ExitWithFail "Method Locking test in a provider failed. Check $RESULTDIR/owinvokemethod.testInProv"
+	fi
+
 }
 
 #############################################################################

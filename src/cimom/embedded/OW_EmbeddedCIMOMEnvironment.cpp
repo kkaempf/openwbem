@@ -237,7 +237,7 @@ EmbeddedCIMOMEnvironment::startServices()
 	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_cimRepository));
 
 	m_cimServer = RepositoryIFCRef(new CIMServer(this,
-		m_providerManager, m_cimRepository, m_authorizerManager));
+		m_providerManager, m_cimRepository, m_authorizerManager, m_authorizer));
 	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_cimServer));
 
 	//_loadAuthorizer();  // old stuff
@@ -627,18 +627,16 @@ EmbeddedCIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 EmbeddedCIMOMEnvironment::getCIMOMHandle(OperationContext& context,
-	EBypassProvidersFlag bypassProviders,
-	ELockingFlag locking) const
+	EBypassProvidersFlag bypassProviders) const
 {
-	return getCIMOMHandle(context, E_SEND_INDICATIONS, bypassProviders, locking);
+	return getCIMOMHandle(context, E_SEND_INDICATIONS, bypassProviders);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 EmbeddedCIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 	ESendIndicationsFlag sendIndications,
-	EBypassProvidersFlag bypassProviders,
-	ELockingFlag locking) const
+	EBypassProvidersFlag bypassProviders) const
 {
 	{
 		MutexLock l(m_stateGuard);
@@ -665,7 +663,7 @@ EmbeddedCIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 
 
 	return CIMOMHandleIFCRef(new LocalEmbeddedCIMOMHandle(const_cast<EmbeddedCIMOMEnvironment*>(this), rref,
-		context, locking == E_LOCKING ? LocalEmbeddedCIMOMHandle::E_LOCKING : LocalEmbeddedCIMOMHandle::E_NO_LOCKING));
+		context));
 }
 //////////////////////////////////////////////////////////////////////////////
 WQLIFCRef

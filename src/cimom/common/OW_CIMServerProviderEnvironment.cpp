@@ -65,16 +65,14 @@ CIMOMHandleIFCRef
 CIMServerProviderEnvironment::getCIMOMHandle() const
 {
 	return m_env->getCIMOMHandle(m_context,
-		ServiceEnvironmentIFC::E_USE_PROVIDERS,
-		ServiceEnvironmentIFC::E_OPERATION_CONTEXT_LOCKING);
+		ServiceEnvironmentIFC::E_USE_PROVIDERS);
 }
 
 CIMOMHandleIFCRef
 CIMServerProviderEnvironment::getRepositoryCIMOMHandle() const
 {
 	return m_env->getCIMOMHandle(m_context,
-		ServiceEnvironmentIFC::E_BYPASS_PROVIDERS,
-		ServiceEnvironmentIFC::E_OPERATION_CONTEXT_LOCKING);
+		ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
 }
 
 RepositoryIFCRef

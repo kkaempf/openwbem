@@ -60,17 +60,6 @@ RepositoryIFC::exportIndication(const CIMInstance&, const String&)
 {
 }
 
-///////////////////////////////////////////////////////////////////////////////
-void 
-RepositoryIFC::enumInstancesWQL(
-	const String& ns,
-	const String& className,
-	CIMInstanceResultHandlerIFC& result,
-	const WQLSelectStatement& wss,
-	const WQLCompile& wc,
-	OperationContext& context)
-{
-}
 
 } // end namespace OW_NAMESPACE
 

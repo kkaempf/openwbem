@@ -89,7 +89,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 	}
 
 	CIMOMHandleIFCRef lch = env->getCIMOMHandle(context,
-		ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_OPERATION_CONTEXT_LOCKING);
+		ServiceEnvironmentIFC::E_USE_PROVIDERS);
 
 	Logger lgr(COMPONENT_NAME);
 

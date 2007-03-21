@@ -432,8 +432,7 @@ ProviderAgentEnvironment::getRequestHandler(const String& ct) const
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 ProviderAgentEnvironment::getCIMOMHandle(OperationContext& context,
-		EBypassProvidersFlag bypassProviders,
-		ELockingFlag locking) const
+		EBypassProvidersFlag bypassProviders) const
 {
 	ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(
 		m_configItems, context, m_callbackURL, m_connectionPool, m_useConnectionCredentials));

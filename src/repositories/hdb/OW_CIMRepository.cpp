@@ -904,7 +904,7 @@ CIMRepository::createInstance(
 					CIMClass rcc(CIMNULL);
 					try
 					{
-						m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_OPERATION_CONTEXT_LOCKING)->getInstance(ns, op);
+						m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS)->getInstance(ns, op);
 					}
 					catch (CIMException& e)
 					{
@@ -1085,6 +1085,18 @@ CIMRepository::execQuery(
 	CIMInstanceResultHandlerIFC&,
 	const String&,
 	const String&, OperationContext&)
+{
+	OW_THROWCIM(CIMException::NOT_SUPPORTED);
+}
+//////////////////////////////////////////////////////////////////////
+void
+CIMRepository::enumInstancesWQL(
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result,
+	const WQLSelectStatement& wss,
+	const WQLCompile& wc,
+	OperationContext& context)
 {
 	OW_THROWCIM(CIMException::NOT_SUPPORTED);
 }
@@ -1393,7 +1405,7 @@ CIMRepository::_staticReferences(const CIMObjectPath& path,
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
 	staticReferencesInstResultHandler handler(context, m_env->getCIMOMHandle(context,
-		ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_OPERATION_CONTEXT_LOCKING), result,
+		ServiceEnvironmentIFC::E_USE_PROVIDERS), result,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
 		refClasses, 0, role, CIMName(), handler);
@@ -1492,7 +1504,7 @@ CIMRepository::_staticAssociators(const CIMObjectPath& path,
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
 	staticAssociatorsInstResultHandler handler(context, m_env->getCIMOMHandle(context,
-		ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_OPERATION_CONTEXT_LOCKING), result,
+		ServiceEnvironmentIFC::E_USE_PROVIDERS), result,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
 		passocClasses, presultClasses, role, resultRole, handler);
@@ -1862,7 +1874,7 @@ CIMRepository::_validatePropagatedKeys(OperationContext& context, const String& 
 			OW_LOG_DEBUG(m_logger, Format("Trying getInstance of: %1", op.toString()));
 			try
 			{
-				m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_OPERATION_CONTEXT_LOCKING)->getInstance(ns, op);
+				m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS)->getInstance(ns, op);
 				// if the previous line didn't throw, then we found it.
 				found = true;
 				break;
@@ -1895,8 +1907,8 @@ CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& co
 	case E_SET_PROPERTY:
 	case E_INVOKE_METHOD_WRITE_LOCK:
 	case E_EXEC_QUERY:
-		m_schemaLock.getWriteLock(m_lockTimeout);
-		m_instanceLock.getWriteLock(m_lockTimeout);
+		m_schemaLock.acquireWriteLock(context.getOperationId(), m_lockTimeout);
+		m_instanceLock.acquireWriteLock(context.getOperationId(), m_lockTimeout);
 		break;
 	case E_ENUM_NAMESPACE:
 	case E_GET_QUALIFIER_TYPE:
@@ -1906,14 +1918,14 @@ CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& co
 	case E_ENUM_CLASS_NAMES:
 	case E_ASSOCIATORS_CLASSES:
 	case E_REFERENCES_CLASSES:
-		m_schemaLock.getReadLock(m_lockTimeout);
+		m_schemaLock.acquireReadLock(context.getOperationId(), m_lockTimeout);
 		break;
 	case E_DELETE_QUALIFIER_TYPE:
 	case E_SET_QUALIFIER_TYPE:
 	case E_DELETE_CLASS:
 	case E_CREATE_CLASS:
 	case E_MODIFY_CLASS:
-		m_schemaLock.getWriteLock(m_lockTimeout);
+		m_schemaLock.acquireWriteLock(context.getOperationId(), m_lockTimeout);
 		break;
 	case E_ENUM_INSTANCES:
 	case E_ENUM_INSTANCE_NAMES:
@@ -1924,8 +1936,8 @@ CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& co
 	case E_REFERENCE_NAMES:
 	case E_REFERENCES:
 	case E_INVOKE_METHOD_READ_LOCK:
-		m_schemaLock.getReadLock(m_lockTimeout);
-		m_instanceLock.getReadLock(m_lockTimeout);
+		m_schemaLock.acquireReadLock(context.getOperationId(), m_lockTimeout);
+		m_instanceLock.acquireReadLock(context.getOperationId(), m_lockTimeout);
 		break;
 	case E_EXPORT_INDICATION:
 	case E_INVOKE_METHOD_NO_LOCK:
@@ -1948,8 +1960,8 @@ CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& cont
 	case E_SET_PROPERTY:
 	case E_INVOKE_METHOD_WRITE_LOCK:
 	case E_EXEC_QUERY:
-		m_instanceLock.releaseWriteLock();
-		m_schemaLock.releaseWriteLock();
+		m_instanceLock.releaseWriteLock(context.getOperationId());
+		m_schemaLock.releaseWriteLock(context.getOperationId());
 		break;
 	case E_ENUM_NAMESPACE:
 	case E_GET_QUALIFIER_TYPE:
@@ -1959,14 +1971,14 @@ CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& cont
 	case E_ENUM_CLASS_NAMES:
 	case E_ASSOCIATORS_CLASSES:
 	case E_REFERENCES_CLASSES:
-		m_schemaLock.releaseReadLock();
+		m_schemaLock.releaseReadLock(context.getOperationId());
 		break;
 	case E_DELETE_QUALIFIER_TYPE:
 	case E_SET_QUALIFIER_TYPE:
 	case E_DELETE_CLASS:
 	case E_CREATE_CLASS:
 	case E_MODIFY_CLASS:
-		m_schemaLock.releaseWriteLock();
+		m_schemaLock.releaseWriteLock(context.getOperationId());
 		break;
 	case E_ENUM_INSTANCES:
 	case E_ENUM_INSTANCE_NAMES:
@@ -1977,8 +1989,8 @@ CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& cont
 	case E_REFERENCE_NAMES:
 	case E_REFERENCES:
 	case E_INVOKE_METHOD_READ_LOCK:
-		m_instanceLock.releaseReadLock();
-		m_schemaLock.releaseReadLock();
+		m_instanceLock.releaseReadLock(context.getOperationId());
+		m_schemaLock.releaseReadLock(context.getOperationId());
 		break;
 	case E_EXPORT_INDICATION:
 	case E_INVOKE_METHOD_NO_LOCK:

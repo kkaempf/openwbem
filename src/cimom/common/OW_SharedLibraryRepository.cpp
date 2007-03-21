@@ -324,6 +324,16 @@ void SharedLibraryRepository::execQuery(
 {
 	m_ref->execQuery(ns, result, query, queryLanguage, context);
 }
+void SharedLibraryRepository::enumInstancesWQL(
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result,
+	const WQLSelectStatement& wss,
+	const WQLCompile& wc,
+	OperationContext& context)
+{
+	m_ref->enumInstancesWQL(ns, className, result, wss, wc, context);
+}
 void SharedLibraryRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
 {
 	m_ref->beginOperation(op, context);

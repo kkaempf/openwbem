@@ -37,6 +37,12 @@
 #include "OW_CppProviderIncludes.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_Thread.hpp" // for yield()
+#include "OW_Assertion.hpp"
+#include "OW_Timeout.hpp"
+#include "OW_TimeoutTimer.hpp"
+#include "OW_NonRecursiveMutex.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
+#include "testMethodLocking.hpp"
 
 using namespace std;
 using namespace OpenWBEM;
@@ -45,6 +51,34 @@ using namespace WBEMFlags;
 namespace
 {
 const String COMPONENT_NAME("ow.test.testMethodLockingProv");
+
+class ProviderEnvCIMOMHandleSource : public MethodLocking::CIMOMHandleSource
+{
+public:
+	ProviderEnvCIMOMHandleSource(const ProviderEnvironmentIFCRef& env)
+	: m_env(env)
+	{
+	}
+
+	virtual CIMOMHandleIFCRef getCIMOMHandle() const
+	{
+		// ProviderEnvironments aren't thread safe
+		NonRecursiveMutexLock lock(m_mtx);
+		ProviderEnvironmentIFCRef clonedEnv(m_env->clone());
+		m_clonedEnvs.push_back(clonedEnv);
+		return clonedEnv->getCIMOMHandle();
+	}
+
+	void clearClonedEnvs()
+	{
+		m_clonedEnvs.clear();
+	}
+private:
+	ProviderEnvironmentIFCRef m_env;
+	mutable Array<ProviderEnvironmentIFCRef> m_clonedEnvs; // we need to keep them around for a while
+	mutable NonRecursiveMutex m_mtx;
+};
+
 
 class testMethodLockingProv: public CppMethodProviderIFC
 {
@@ -108,18 +142,60 @@ public:
 			String startedFile = in[0].getValue().toString();
 			String waitForFile = in[1].getValue().toString();
 			OW_LOG_DEBUG(lgr, Format("startedFile = \"%1\", waitForFile = \"%2\"", startedFile, waitForFile));
-			FileSystem::createFile(startedFile); // this is the signal to the caller that the method has started to wait
+			if (!FileSystem::createFile(startedFile)) // this is the signal to the caller that the method has started to wait
+			{
+				OW_LOG_ERROR(lgr, Format("Failed to create %1: %2", startedFile, strerror(errno)));
+			}
 			OW_LOG_DEBUG(lgr, "created startedFile, waiting for existence of waitForFile");
+			Timeout to = Timeout::relative(10.0);
+			TimeoutTimer timer(to);
 			do
 			{
 				Thread::yield();
-			} while (!FileSystem::exists(waitForFile));
+				timer.loop();
+			} while (!FileSystem::exists(waitForFile) && !timer.expired());
+			if (!FileSystem::exists(waitForFile))
+			{
+				OW_LOG_DEBUG(lgr, "timed out waiting for waitForFile. Exiting with failure.");
+				return CIMValue(false);
+			}
 			OW_LOG_DEBUG(lgr, "waitForFile now exists. Exiting.");
-			return CIMValue(Int32(0));
+			return CIMValue(true);
 		}
 		else if (methodName == "test")
 		{
-			return CIMValue(Int32(0));
+			return CIMValue(true);
+		}
+		else if (methodName == "runAllTestsInProvider")
+		{
+			String testDir = in[0].getValue().toString();
+			// the tests rely on the current working directory to place the syncronization files. By default OOP providers have the cwd set to /. 
+			// It needs to be set to the test stage dir so it can be written to.
+			::chdir(testDir.c_str());
+			ProviderEnvCIMOMHandleSource chs(env);
+			const char* const cppNS = "root/methodLockingTest-cpp";
+			const char* const oopNS = "root/methodLockingTest-oop";
+			const char* const no = "no";
+			const char* const no2 = "no2";
+			const char* const read = "read";
+			const char* const write = "write";
+			int testCount = 1;
+#define TEST_ASSERT(CON) OW_LOG_DEBUG(lgr, Format("About to run test %1: %2", testCount++, #CON)); if (!(CON)) throw AssertionException(__FILE__, __LINE__, #CON); chs.clearClonedEnvs()
+			// first oop
+			TEST_ASSERT(MethodLocking::test(oopNS, no, read, chs));
+			TEST_ASSERT(MethodLocking::test(oopNS, no, read, read, chs));
+			TEST_ASSERT(MethodLocking::test(oopNS, no, write, chs));
+			TEST_ASSERT(MethodLocking::test(oopNS, no, write, no, chs));
+			TEST_ASSERT(MethodLocking::test(oopNS, read, read, chs));
+			TEST_ASSERT(MethodLocking::test(oopNS, read, read, read, chs));
+			TEST_ASSERT(MethodLocking::test(oopNS, write, no, chs));
+			TEST_ASSERT(MethodLocking::test(oopNS, no2, no, chs));
+			// cpp
+			TEST_ASSERT(MethodLocking::test(cppNS, no, no, chs));
+			TEST_ASSERT(MethodLocking::test(cppNS, no, write, chs));
+			TEST_ASSERT(!MethodLocking::test(cppNS, read, no, write, chs));
+			TEST_ASSERT(!MethodLocking::test(cppNS, write, read, chs));
+			return CIMValue(true);
 		}
 
 		OW_THROWCIMMSG(CIMException::METHOD_NOT_AVAILABLE, Format("Provider hasn't implemented %1", methodName).c_str());

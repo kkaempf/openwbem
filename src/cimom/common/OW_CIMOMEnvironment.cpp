@@ -244,12 +244,13 @@ CIMOMEnvironment::startServices()
 	m_cimRepository = new CIMRepository;
 	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_cimRepository));
 
+	_loadAuthorizer();  // CIMServer constructor has a dependency on m_authorizer
+	_createAuthorizerManager();  // new stuff
+
 	m_cimServer = RepositoryIFCRef(new CIMServer(this,
-		m_providerManager, m_cimRepository, m_authorizerManager));
+		m_providerManager, m_cimRepository, m_authorizerManager, m_authorizer));
 	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_cimServer));
 
-	_loadAuthorizer();  // old stuff
-	_createAuthorizerManager();  // new stuff
 	_createAuthManager();
 	_loadRequestHandlers();
 	_loadServices();
@@ -868,9 +869,9 @@ CIMOMEnvironment::getMultiConfigItem(const String &itemName,
 
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
-CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
-		OperationContext& context) const
+CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst, OperationContext& context) const
 {
+	OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment::getWQLFilterCIMOMHandle(). context.getOperationId() = %1", context.getOperationId()));
 	{
 		MutexLock l(m_stateGuard);
 		if (!isLoaded(m_state))
@@ -887,19 +888,18 @@ CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
-	EBypassProvidersFlag bypassProviders,
-	ELockingFlag locking) const
+	EBypassProvidersFlag bypassProviders) const
 {
-	return getCIMOMHandle(context, E_SEND_INDICATIONS, bypassProviders, locking);
+	return getCIMOMHandle(context, E_SEND_INDICATIONS, bypassProviders);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 	ESendIndicationsFlag sendIndications,
-	EBypassProvidersFlag bypassProviders,
-	ELockingFlag locking) const
+	EBypassProvidersFlag bypassProviders) const
 {
+	OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment::getCIMOMHandle(). context.getOperationId() = %1", context.getOperationId()));
 	{
 		MutexLock l(m_stateGuard);
 		if (!isLoaded(m_state))
@@ -936,27 +936,7 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 		rref = authorizingRepository(rref, m_authorizer);
 	}
 
-	LocalCIMOMHandle::ELockingFlag lockingFlag;
-	switch (locking)
-	{
-		case E_LOCKING:
-			lockingFlag = LocalCIMOMHandle::E_LOCKING;
-			break;
-		case E_NO_LOCKING:
-			lockingFlag = LocalCIMOMHandle::E_NO_LOCKING;
-			break;
-		case E_OPERATION_CONTEXT_LOCKING:
-			{
-				OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment::getCIMOMHandle() locking = E_OPERATION_CONTEXT_LOCKING, DISABLE_LOCKING is set to %1", context.keyHasData(OperationContext::DISABLE_LOCKING)));
-				lockingFlag = context.keyHasData(OperationContext::DISABLE_LOCKING) ? 
-					LocalCIMOMHandle::E_NO_LOCKING :
-					LocalCIMOMHandle::E_LOCKING;
-			}
-			break;
-	}
-
-	return CIMOMHandleIFCRef(new LocalCIMOMHandle(const_cast<CIMOMEnvironment*>(this), rref,
-		context, lockingFlag));
+	return CIMOMHandleIFCRef(new LocalCIMOMHandle(const_cast<CIMOMEnvironment*>(this), rref, context));
 }
 //////////////////////////////////////////////////////////////////////////////
 WQLIFCRef
