@@ -171,7 +171,7 @@ public:
 			String testDir = in[0].getValue().toString();
 			// the tests rely on the current working directory to place the syncronization files. By default OOP providers have the cwd set to /. 
 			// It needs to be set to the test stage dir so it can be written to.
-			::chdir(testDir.c_str());
+			FileSystem::changeDirectory(testDir);
 			ProviderEnvCIMOMHandleSource chs(env);
 			const char* const cppNS = "root/methodLockingTest-cpp";
 			const char* const oopNS = "root/methodLockingTest-oop";
