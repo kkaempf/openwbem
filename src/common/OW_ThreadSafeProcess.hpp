@@ -42,6 +42,7 @@
 #include "OW_Process.hpp"
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
+#include "OW_UnnamedPipe.hpp"
 
 namespace OW_NAMESPACE
 {
