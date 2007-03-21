@@ -625,7 +625,8 @@ int main()
 }
 EOS
 	echo "Compiling..."
-    g++ -o testInstalledHeaders.o -c $OUTFILE -I$HEADERDIR -I/usr/local/ssl/include || ExitWithFail "Failed to compile headers" 
+	@CXX@ @DEFS@ @CPPFLAGS@ -I$HEADERDIR @CXXFLAGS@ -o testInstalledHeaders.o -c $OUTFILE || ExitWithFail "Failed to compile headers" 
+	#g++ -o testInstalledHeaders.o -c $OUTFILE -I$HEADERDIR -I/usr/local/ssl/include || ExitWithFail "Failed to compile headers" 
 #	echo "Linking..."
 #	g++ -L$STAGEDIR/$OWLIBDIR -lopenwbem -lowserver -o testInstalledHeaders \
 #		testInstalledHeaders.o || ExitWithFail "Failed to link header test"
@@ -668,7 +669,7 @@ int main(int argc, char* argv[])
 }
 EOS
 		echo "$EXECFILE:."
-		g++ -o $EXECFILE.o -I$HEADERDIR -I/usr/local/ssl/include -c $OUTFILE \
+		@CXX@ @DEFS@ @CPPFLAGS@ -I$HEADERDIR @CXXFLAGS@ -o $EXECFILE.o -c $OUTFILE \
 			|| ExitWithFail "Failed to compile header test"
 		echo "."
 
