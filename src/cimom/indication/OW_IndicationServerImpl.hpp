@@ -53,6 +53,7 @@
 #include "OW_Mutex.hpp"
 #include "OW_Thread.hpp"
 #include "OW_Logger.hpp"
+#include "OW_IndicationProviderIFC.hpp"
 
 namespace OW_NAMESPACE
 {
