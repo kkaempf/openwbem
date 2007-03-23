@@ -98,10 +98,10 @@ public:
 
 	/**
 	 * In start(), a service should start doing whatever it does, such as starting a new thread or adding
-	 * selectables to the environment.
-	 * A service can't rely on the order of initalization, so if it needs to communicate with another one,
-	 * that works hould be done in started()
-	 * start() should not return until the service is actually started, but it must return.
+	 * selectables to the environment. The order of initalization is determined by the dependencies, so if
+	 * a service needs to communicate with another one, either that work should be done in started() or
+	 * else the dependencies must be correctly stated. start() should not return until the service is
+	 * actually started, but it must return.
 	 */
 	virtual void start();
 
@@ -114,15 +114,16 @@ public:
 	/**
 	 * shuttingdown() will be called before shutdown() is called on all services. This gives a service the
 	 * chance to communicate with any other services before they are shutdown.  After shuttingDown() is called
-	 * the services will begin to be shutdown.
-	 * The default implementation does nothing.
+	 * the services will begin to be shutdown. A service should still respond after shuttingDown() has been
+	 * called, as other services may still access it during their shutdown(), but before this service's
+	 * shutdown() has been called. The default implementation does nothing.
 	 */
 	virtual void shuttingDown();
 
 	/**
-	 * The service must shutdown completely before returning from this function.
-	 * All copies of the service environment or objects obtained from it should be set to 0 to avoid
-	 * circular reference counts.
+	 * The service must shutdown completely before returning from this function. Other services can
+	 * be used as long as they are specified as dependencies. All copies of the service environment
+	 * or objects obtained from it should be set to 0 to avoid circular reference counts.
 	 */
 	virtual void shutdown() = 0;
 };
