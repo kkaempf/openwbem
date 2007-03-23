@@ -91,12 +91,12 @@ LocalAuthentication::LocalAuthentication()
 	if (useHelper())
 	{
 		initializeHelper();
+		m_localAuthDir = FileSystem::Path::realPath(m_localAuthDir);
 	}
 	else
 	{
-		LocalAuthenticationCommon::initializeDir(m_localAuthDir);
+		m_localAuthDir = LocalAuthenticationCommon::initializeDir(m_localAuthDir);
 	}
-	m_localAuthDir = FileSystem::Path::realPath(m_localAuthDir);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -440,7 +440,7 @@ LocalAuthentication::processHelperCommand(const String& inputCmd, const String& 
 			size_t idx = details.indexOf(' ');
 			if (idx != String::npos)
 			{
-				OW_THROW_ERR(LocalAuthenticationException, details.substring(idx).c_str(), details.substring(0, idx).toInt32());
+				OW_THROW_ERR(LocalAuthenticationException, details.substring(idx).c_str(), details.substring(1, idx - 1).toInt32());
 			}
 			else
 			{

@@ -40,6 +40,7 @@
 #include "OW_Types.hpp"
 #include "OW_LocalAuthenticationCommon.hpp"
 #include "OW_Exception.hpp"
+#include "blocxx/GlobalString.hpp"
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -91,7 +92,7 @@ const int ERR_MISSING_LOCAL_AUTH_DIR_ARG = 7;
 OW_DECLARE_EXCEPTION(LocalHelper);
 OW_DEFINE_EXCEPTION(LocalHelper);
 
-const char* local_auth_dir = 0; // assigned in main()
+GlobalString local_auth_dir = BLOCXX_GLOBAL_STRING_INIT(""); // assigned in main()
 
 // returns true if a line was successfully read
 void getLineFromStdin(String& line)
@@ -135,6 +136,9 @@ void processRemove()
 	String filename;
 	getLineFromStdin(filename);
 
+	String cookie;
+	getLineFromStdin(cookie);
+
 	if (filename.indexOf(OW_FILENAME_SEPARATOR) != String::npos)
 	{
 		OW_THROW_ERR(LocalHelperException, Format("owlocalhelper::processRemove(): filename cannot contain %1", OW_FILENAME_SEPARATOR).c_str(), ERR_INVALID_INPUT);
@@ -162,9 +166,6 @@ void processRemove()
 	{
 		OW_THROW_ERR(LocalHelperException, Format("owlocalhelper::processRemove(): real path is not equal. no symlinks allowed in \"%1\"", fullPath).c_str(), ERR_INVALID_INPUT);
 	}
-
-	String cookie;
-	getLineFromStdin(cookie);
 
 	String realCookie = FileSystem::getFileContents(realPath);
 
@@ -206,7 +207,7 @@ void processStdin(String& output)
 	}
 	else if (curLine == INITIALIZE_CMD)
 	{
-		initializeDir(local_auth_dir);
+		local_auth_dir = initializeDir(local_auth_dir);
 		output = "S\n";
 	}
 	else if (curLine == CREATE_CMD)

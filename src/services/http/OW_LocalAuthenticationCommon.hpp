@@ -46,9 +46,16 @@ namespace LocalAuthenticationCommon
 
 OW_DECLARE_EXCEPTION(LocalAuthentication);
 
-void initializeDir(String const & local_auth_dir);
-String createFile(
-	String const & local_auth_dir, const String& uid, const String& cookie);
+/**
+ * Initialize the local auth directory. This creates any directories necessary, assigns the necessary permissions, and
+ * if any old authentication files are present, they are erased.
+ * 
+ * @param local_auth_dir The directory to initialize.
+ * 
+ * @return String The real path to the directory that was created.
+ */
+String initializeDir(String const & localAuthDir);
+String createFile(String const & localAuthDir, const String& uid, const String& cookie);
 
 static const char* const REMOVE_CMD = "remove";
 static const char* const INITIALIZE_CMD = "initialize";
