@@ -189,5 +189,38 @@ WQLOperand::writeObject(std::streambuf & ostrm) const
 
 }
 
+#if defined(__HP_aCC)
+// aCC has a bug where the union does not get copied properly in the
+// compiler-provided assignment operator.  This operator is provided to work
+// around that bug.
+WQLOperand& WQLOperand::operator=(const WQLOperand& o)
+{
+	_string = o._string;
+	switch(o.getType())
+	{
+	case INTEGER_VALUE:
+		setIntegerValue(o.getIntegerValue());
+		break;
+	case DOUBLE_VALUE:
+		setDoubleValue(o.getDoubleValue());
+		break;
+	case BOOLEAN_VALUE:
+		setBoolValue(o.getBooleanValue());
+		break;
+	case NULL_VALUE:
+		setIntegerValue(0xBADF00D);
+		_type = NULL_VALUE;
+		break;
+	case STRING_VALUE:
+		setStringValue(o.getStringValue());
+		break;
+	case PROPERTY_NAME:
+		setPropertyName(o.getPropertyName());
+		break;
+	}
+	return *this;
+}
+#endif /* aCC */
+
 } // end namespace OW_NAMESPACE
 
