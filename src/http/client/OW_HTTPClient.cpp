@@ -1036,6 +1036,9 @@ HTTPClient::processHeaders(String& reasonPhrase)
 						reasonPhrase = "Request method not supported";
 					}
 					break;
+				case SC_SERVICE_UNAVAILABLE:
+					rt = E_RESPONSE_RETRY;
+					break;
 				default:
 					rt = E_RESPONSE_FATAL;
 					reasonPhrase = "Unknown status code";
@@ -1043,7 +1046,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 			} // switch (m_statusCode)
 			break;
 		default:
-			rt = E_RESPONSE_RETRY; // shouln't happen
+			rt = E_RESPONSE_RETRY; // shouldn't happen
 			break;
 	} // switch (sc[0])
 
