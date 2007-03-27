@@ -1476,12 +1476,22 @@ namespace
 	}
 }
 
+extern int openwbem_privconfig_debug;
+
+
 // argv[1]: config_dir; must have already been verified as secure and must
 //   be in canonical form as described for FileSystem::Path::realPath.
 // argv[2]: app_name; name of config file for the application we are monitoring.
 //
 int main(int argc, char * * argv)
 {
+#ifdef OW_DEBUG
+	if( getenv("yydebug") != NULL )
+	{
+		openwbem_privconfig_debug = 1;
+	}
+#endif
+
 	try
 	{
 		int ec = aux_main(argc, argv);
