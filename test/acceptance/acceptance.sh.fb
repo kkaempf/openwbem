@@ -342,6 +342,23 @@ WaitForLogResults()
 }
 
 #############################################################################
+WaitForProcessTermination()
+{
+	# $1 = pid
+	# $2 = seconds to wait.
+	wait_test_pid=$1
+	wait_time_left=$2
+	while [ ${wait_time_left} -gt 0 ] && kill -0 ${wait_test_pid} 2>/dev/null; do
+		sleep 1
+		wait_time_left=`expr ${wait_time_left} - 1`
+	done
+	if kill -0 ${wait_test_pid} 2>/dev/null; then
+		return 1
+	fi
+	return 0
+}
+
+#############################################################################
 StartDaemon()
 {
 	echo "Starting owcimomd..."
@@ -465,15 +482,18 @@ StopDaemon()
 	fi
 	kill -15 $PID # TERM
 	WaitForLogResults 'owcimomd has shutdown' 60 5
-	if kill -0 $PID 2>/dev/null; then
+
+	rm -f $PIDFILE
+	# Give the OS time to reap the process... 10 seconds should be more than enough.
+	if [ ${WAIT_RESULTS} = 0 ] && WaitForProcessTermination ${PID} 10; then
+		:
+	else
 		kill -9 $PID # KILL
 		echo "** Daemon failed to terminate!!!  Check"
 		echo "** $STAGEDIR/results/logfile "
 		echo "** for clues."
-		rm -f $PIDFILE
 		Exit 1
 	fi
-	rm -f $PIDFILE
 }
 
 
