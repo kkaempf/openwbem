@@ -53,15 +53,6 @@ namespace OW_NAMESPACE
 ////////////////////////////////////////////////////////////////////////////////
 bool XMLParserCore::next(XMLToken& entry)
 {
-	IstreamBufIterator iterEOF;
-	if (m_current == iterEOF || *m_current == 0)
-	{
-		if (!m_stack.empty())
-		{
-			OW_THROWXMLLINE(XMLParseException::UNCLOSED_TAGS, m_line);
-		}
-		return false;
-	}
 	// if the last tag was a <.../> then set the next token to END_TAG so that
 	// the caller doesn't need to worry about <.../>, it will look like
 	// <...></...>
@@ -71,6 +62,15 @@ bool XMLParserCore::next(XMLToken& entry)
 		entry.type = XMLToken::END_TAG;
 		entry.attributes.clear();
 		return true;
+	}
+	IstreamBufIterator iterEOF;
+	if (m_current == iterEOF || *m_current == 0)
+	{
+		if (!m_stack.empty())
+		{
+			OW_THROWXMLLINE(XMLParseException::UNCLOSED_TAGS, m_line);
+		}
+		return false;
 	}
 	// Either a "<...>" or content begins next:
 	if (*m_current == '<')
