@@ -49,6 +49,7 @@ static const char* _xmlMessages[] =
 {
 	"Bad opening element",
 	"Bad closing element",
+	"Bad XML declaration",
 	"Bad attribute name",
 	"Exepected equal sign",
 	"Bad attribute value",
@@ -74,6 +75,7 @@ XMLParseException::XMLParseException(
 	unsigned int xmlline)
 : Exception(file, line, Format("Line %1: %2: %3", xmlline, _xmlMessages[code - 1],
 	msg != 0 ? msg : "", 0, ExceptionIds::XMLParseExceptionId).c_str(), code)
+, _code(code)
 {
 }
 

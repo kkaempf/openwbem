@@ -33,8 +33,12 @@
 #include "TestCaller.hpp"
 #include "XMLParserCoreTestCases.hpp"
 #include "OW_XMLParserCore.hpp"
+#include "OW_XMLParseException.hpp"
 #include "OW_StringStream.hpp"
+#include <blocxx/String.hpp>
 #include <cstring>
+
+#include <iostream> // DEBUG
 
 using namespace OpenWBEM;
 using namespace std;
@@ -45,6 +49,13 @@ void XMLParserCoreTestCases::setUp()
 
 void XMLParserCoreTestCases::tearDown()
 {
+}
+
+namespace {
+	bool messageContains(Exception const & e, String const & s)
+	{
+		return String(e.getMessage()).indexOf(s) != String::npos;
+	}
 }
 
 void XMLParserCoreTestCases::testEmptyElement()
@@ -88,6 +99,23 @@ void XMLParserCoreTestCases::testXmlDeclaration()
 	unitAssert( !has_token );
 }
 
+void XMLParserCoreTestCases::testBadXmlDeclarationName()
+{
+	String input("<?37 ?>");
+	IStringStream is(input);
+	XMLParserCore parser(is);
+	XMLToken token;
+
+	try {
+		parser.next(token);
+		unitAssert( false );
+	}
+	catch (XMLParseException & e) {
+		unitAssert( e.getCode() == XMLParseException::BAD_XML_DECLARATION );
+		unitAssert( messageContains(e, "Bad XML declaration") );
+	}
+}
+
 void XMLParserCoreTestCases::testStartTag()
 {
 	String input("<a foo=\"up\" bar=\"down\"></a>");
@@ -105,8 +133,28 @@ void XMLParserCoreTestCases::testStartTag()
 	unitAssert( strcmp(token.attributes[1].name.c_str(), "bar") == 0);
 	unitAssert( strcmp(token.attributes[1].value.c_str(), "down") == 0);
 
-	has_token = parser.next(token);
+	has_token = parser.next(token); // "</a>"
+	unitAssert( has_token );
+
+	has_token = parser.next(token); // end of input
 	unitAssert( !has_token );
+}
+
+void XMLParserCoreTestCases::testBadStartTagName()
+{
+	String input("<(></O>");
+	IStringStream is(input);
+	XMLParserCore parser(is);
+	XMLToken token;
+
+	try {
+		parser.next(token);
+		unitAssert( false );
+	}
+	catch (XMLParseException & e) {
+		unitAssert( e.getCode() == XMLParseException::BAD_START_TAG );
+		unitAssert( messageContains(e, "Bad opening element") );
+	}
 }
 
 void XMLParserCoreTestCases::testEndTag()
@@ -127,12 +175,59 @@ void XMLParserCoreTestCases::testEndTag()
 	unitAssert( !has_token );
 }
 
+void XMLParserCoreTestCases::testBadEndTagName()
+{
+	String input("<a></37>");
+	IStringStream is(input);
+	XMLParserCore parser(is);
+	XMLToken token;
+
+	bool has_token = parser.next(token);  // "<a>"
+	unitAssert( has_token );
+
+	try {
+		parser.next(token);       // "</37>"
+		unitAssert( false );
+	}
+	catch (XMLParseException & e) {
+		unitAssert( e.getCode() == XMLParseException::BAD_END_TAG );
+		unitAssert( messageContains(e, "Bad closing element") );
+	}
+}
+
+void XMLParserCoreTestCases::testMismatchedStartEndTags()
+{
+	String input("<a></b>");
+	IStringStream is(input);
+	XMLParserCore parser(is);
+	XMLToken token;
+
+	bool has_token = parser.next(token);  // "<a>"
+	unitAssert( has_token );
+
+	try {
+		parser.next(token);  // "</b>"
+		unitAssert( false );
+	}
+	catch (XMLParseException & e) {
+		unitAssert( e.getCode() == XMLParseException::START_END_MISMATCH );
+		char const * s = "Closing element does not match opening element";
+		unitAssert( messageContains(e, s) );
+	}
+}
 
 Test* XMLParserCoreTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("XMLParserCore");
 
 	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testEmptyElement);
+	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testXmlDeclaration);
+	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testBadXmlDeclarationName);
+	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testStartTag);
+	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testBadStartTagName);
+	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testEndTag);
+	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testBadEndTagName);
+	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testMismatchedStartEndTags);
 
 	return testSuite;
 }

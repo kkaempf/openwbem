@@ -143,11 +143,12 @@ inline bool isNameChar(char c)
 			 c == ':' || c == '.';
 }
 
-bool XMLParserCore::getElementName(XMLToken& entry)
+bool XMLParserCore::getElementName(
+	XMLToken& entry, XMLParseException::Code errorCode)
 {
 	if (!isalpha(*m_current) && *m_current != '_')
 	{
-		OW_THROWXMLLINE(XMLParseException::BAD_START_TAG, m_line);
+		OW_THROWXMLLINE(errorCode, m_line);
 	}
 	entry.text.reset();
 	while (isNameChar(*m_current))
@@ -168,7 +169,7 @@ bool XMLParserCore::getElementName(XMLToken& entry)
 bool XMLParserCore::getOpenElementName(XMLToken& entry, bool& openCloseElement)
 {
 	openCloseElement = false;
-	if (getElementName(entry))
+	if (getElementName(entry, XMLParseException::BAD_START_TAG))
 	{
 		return true;
 	}
@@ -338,7 +339,7 @@ void XMLParserCore::getElement(XMLToken& entry)
 	{
 		entry.type = XMLToken::XML_DECLARATION;
 		++m_current;
-		if (getElementName(entry))
+		if (getElementName(entry, XMLParseException::BAD_XML_DECLARATION))
 		{
 			return;
 		}
@@ -396,7 +397,7 @@ void XMLParserCore::getElement(XMLToken& entry)
 	{
 		entry.type = XMLToken::END_TAG;
 		++m_current;
-		if (!getElementName(entry))
+		if (!getElementName(entry, XMLParseException::BAD_END_TAG))
 		{
 			OW_THROWXMLLINE(XMLParseException::BAD_END_TAG, m_line);
 		}

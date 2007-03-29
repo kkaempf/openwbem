@@ -47,8 +47,12 @@ public:
 private:
 	void testEmptyElement();
 	void testXmlDeclaration();
+	void testBadXmlDeclarationName();
 	void testStartTag();
+	void testBadStartTagName();
 	void testEndTag();
+	void testBadEndTagName();
+	void testMismatchedStartEndTags();
 };
 
 #endif
