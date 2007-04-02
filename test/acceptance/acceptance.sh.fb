@@ -1318,7 +1318,7 @@ BasicACLTestCase()
 		'insert into OpenWBEM_UserACL (nspace, username, capability) values ("root/acltest/sub1", "test2", "R")'
 	CREDS="test2:pass2"
 	ACLURL="http://$CREDS@localhost:$OWIPC"
-	$ACLPROG $ACLURL "$1$2" || ExitWithFail "ACL test case failed."
+	$ACLPROG $ACLURL "$1$2" || ExitWithFail "Basic ACL test case failed."
 }
 
 BasicACLTestNoACLs()
@@ -1331,7 +1331,7 @@ BasicACLTestNoACLs()
 	RemoveBasicACLs
 	CREDS="test2:pass2"
 	ACLURL="http://$CREDS@localhost:$OWIPC"
-	$ACLPROG $ACLURL '' || ExitWithFail "ACL test case failed."
+	$ACLPROG $ACLURL '' || ExitWithFail "Basic ACL test case failed."
 }
 
 TestACLBasic()
@@ -1348,7 +1348,7 @@ TestACLBasic()
 
 	StopDaemon
 
-	echo "Setting up ACL test..."
+	echo "Setting up Basic ACL test..."
 
 	# turn on the authorizer
 	EditConfig 's!^;\(owcimomd.authorization_lib = .*/libowbasicauthorizer\..*\)!\1!g'
@@ -1361,35 +1361,35 @@ TestACLBasic()
 	echo "Importing MOF to enable ACLs..."
 
 	$OWMOFC -c -d $DATADIR -n root $TOP_SRCDIR/mof/OpenWBEM_Acl1.0.mof ||
-		ExitWithFail "ACL test: MOF compiler exited with error"
+		ExitWithFail "Basic ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root \
 		$TOP_SRCDIR/test/acceptance/testfiles/ACLTestPerms.mof || \
-		ExitWithFail "ACL test: MOF compiler exited with error"
+		ExitWithFail "Basic ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
 		$TOP_SRCDIR/schemas/cim28/CIM_Core28.mof || \
-		ExitWithFail "ACL test: MOF compiler exited with error"
+		ExitWithFail "Basic ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
 		$TOP_SRCDIR/schemas/cim28/CIM_Interop28.mof || \
-		ExitWithFail "ACL test: MOF compiler exited with error"
+		ExitWithFail "Basic ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
 		$TOP_SRCDIR/schemas/cim28/Physical28_Package.mof || \
-		ExitWithFail "ACL test: MOF compiler exited with error"
+		ExitWithFail "Basic ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
 		$TOP_SRCDIR/schemas/cim28/System28_SystemElements.mof || \
-		ExitWithFail "ACL test: MOF compiler exited with error"
+		ExitWithFail "Basic ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
 		$TOP_SRCDIR/mof/OpenWBEM_Interop.mof || \
-		ExitWithFail "ACL test: MOF compiler exited with error"
+		ExitWithFail "Basic ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
 		$TOP_SRCDIR/test/acceptance/testfiles/ACLTestBasic.mof || \
-		ExitWithFail "ACL test: MOF compiler exited with error"
+		ExitWithFail "Basic ACL test: MOF compiler exited with error"
 	# Create namespace root/acltest/sub0; we don't care what's in it
 	$OWMOFC -c -d $DATADIR -n root/acltest/sub0 \
 		$TOP_SRCDIR/schemas/cim28/Core28_Qualifiers.mof || \
-		ExitWithFail "ACL test: MOF compiler exited with error"
+		ExitWithFail "Basic ACL test: MOF compiler exited with error"
 	$OWMOFC -c -d $DATADIR -n root/acltest \
 		$TOP_SRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
-		ExitWithFail "ACL test: MOF compiler exited with error"
+		ExitWithFail "Basic ACL test: MOF compiler exited with error"
 	StartDaemon
 
 	# The following test cases were chosen using an orthogonal
