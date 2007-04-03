@@ -432,6 +432,11 @@
 /* Define to `uint8_t' if <sys/types.h> does not define. */
 /* #undef u_int8_t */
 
+#ifndef OW_PACKAGE_PREFIX
+#define OW_PACKAGE_PREFIX  ""
+#endif
+
+
 // end of autoconf set vars
 
 /**
