@@ -1,0 +1,31 @@
+--- local.slnenv is required to have the local build machine paths
+--- Specifically, $(BuildRoot), $(OpenSSL), $(Zlib), $(Flex), $(Bison), $(Sed)
+--- must be defined.  BuildRoot may eventually be taken out
+
+--- forceinclude $(SolutionDir)\local
+
+BuildRoot=D:\Projects\utilistor\CIMOM_prj\cvs_data_openwbem
+OpenSSL=D:\Projects\utilistor\CIMOM_prj\cvs_data\openssl
+Zlib=D:\Projects\utilistor\CIMOM_prj\cvs_data\zlib
+Flex="C:\Program Files\GnuWin32\bin\flex.exe"
+Bison="C:\Program Files\GnuWin32\bin\bison.exe"
+Sed="C:\Program Files\GnuWin32\bin\sed.exe"
+
+FlexInclude="C:\Program Files\GnuWin32\include"
+
+BloCxx=D:\Projects\utilistor\CIMOM_prj\cvs_data_blocxx\trunk
+BloCxxWinIncl=$(BloCxx)\build\vc2005
+BloCxxIncl=$(BloCxx)\src
+BloCxxLib=$(BloCxx)\build\vc2005\blocxx
+
+OpenWBEM=$(BuildRoot)\openwbem
+OWStage=$(BuildRoot)\owstage
+OWBin=$(OWStage)\Program Files\Vintela\OpenWBEM
+OWProviders=$(OWBin)\c++providers
+OWRequesthandlers=$(OWBin)\requesthandlers
+OWServices=$(OWBin)\services
+OWProvifcs=$(OWBin)\provifcs
+
+OWExtraDir=$(OpenWBEM)\build\vc2005\OpenWBEM
+OWSrcDir=$(OpenWBEM)\src
+OWDbDir=$(OpenWBEM)\db

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8,00"
+	Name="libowmonitor2"
+	ProjectGUID="{9C65B69C-57EB-4207-8EED-2ADB576BA417}"
+	RootNamespace="libowmonitor2"
+	Keyword="Win32Proj"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug Static|Win32"
+			OutputDirectory="Debug Static"
+			IntermediateDirectory="Debug Static"
+			ConfigurationType="4"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;OW_STATIC_BUILD"
+				StringPooling="true"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="0"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)/libowmonitor2.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release Static|Win32"
+			OutputDirectory="Release Static"
+			IntermediateDirectory="Release Static"
+			ConfigurationType="4"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;OW_STATIC_BUILD"
+				StringPooling="true"
+				RuntimeLibrary="2"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="0"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)/libowmonitor2.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			>
+			<File
+				RelativePath=".\blank.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\src\monitor\OW_PrivilegeLexer.ll"
+				>
+				<FileConfiguration
+					Name="Debug Static|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="@del ..\OW_PrivilegeLexer.cpp 2&gt;nul&#x0D;&#x0A;@echo #define YY_NEVER_INTERACTIVE 1 &gt; ..\OW_PrivilegeLexer.cpp&#x0D;&#x0A;$(Flex) -it -Cfe $(InputDir)\OW_PrivilegeLexer.ll | $(Sed) &quot;/unistd/d&quot; &gt;&gt; ..\OW_PrivilegeLexer.cpp&#x0D;&#x0A;"
+						Outputs="..\OW_PrivilegeLexer.cpp"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Static|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="@del ..\OW_PrivilegeLexer.cpp 2&gt;nul&#x0D;&#x0A;@echo #define YY_NEVER_INTERACTIVE 1 &gt; ..\OW_PrivilegeLexer.cpp&#x0D;&#x0A;$(Flex) -it -Cfe $(InputDir)\OW_PrivilegeLexer.ll | $(Sed) &quot;/unistd/d&quot; &gt;&gt; ..\OW_PrivilegeLexer.cpp&#x0D;&#x0A;"
+						Outputs="..\OW_PrivilegeLexer.cpp"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\src\monitor\OW_PrivilegeParser.yy"
+				>
+				<FileConfiguration
+					Name="Debug Static|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="@del ..\OW_PrivilegeParser.cpp 2&gt;nul&#x0D;&#x0A;@del ..\OW_PrivilegeParser.h 2&gt;nul&#x0D;&#x0A;$(Bison) -y -d $(InputDir)\OW_PrivilegeParser.yy&#x0D;&#x0A;$(Sed) &quot;/\#line/d&quot; y.tab.c &gt;&gt; ..\OW_PrivilegeParser.cpp&#x0D;&#x0A;@move y.tab.h ..\OW_PrivilegeParser.h&#x0D;&#x0A;@del y.tab.c 2&gt;nul&#x0D;&#x0A;"
+						Outputs="..\OW_PrivilegeParser.cpp;..\OW_PrivilegeParser.h"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Static|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="@del ..\OW_PrivilegeParser.cpp 2&gt;nul&#x0D;&#x0A;@del ..\OW_PrivilegeParser.h 2&gt;nul&#x0D;&#x0A;$(Bison) -y -d $(InputDir)\OW_PrivilegeParser.yy&#x0D;&#x0A;$(Sed) &quot;/\#line/d&quot; y.tab.c &gt;&gt; ..\OW_PrivilegeParser.cpp&#x0D;&#x0A;@move y.tab.h ..\OW_PrivilegeParser.h&#x0D;&#x0A;@del y.tab.c 2&gt;nul&#x0D;&#x0A;"
+						Outputs="..\OW_PrivilegeParser.cpp;..\OW_PrivilegeParser.h"
+					/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			>
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
