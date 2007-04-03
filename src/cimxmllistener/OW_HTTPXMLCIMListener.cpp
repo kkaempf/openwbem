@@ -102,6 +102,11 @@ public:
 		return st;
 	}
 
+	Select_t getReadSelectObj() const
+	{
+		return getSelectObj();
+	}
+
 	void setEvent()
 	{
 		if(m_event)
