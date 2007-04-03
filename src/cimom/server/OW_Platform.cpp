@@ -889,7 +889,7 @@ BOOL WINAPI CtrlHandlerRoutine(DWORD dwCtrlType)
 	return TRUE;
 }
 
-#error "Figure out somewhere else to call this code"
+#pragma message(Reminder "TODO: Figure out somewhere else to call this code")
 void installFatalSignalHandlers()
 {
 	::SetConsoleCtrlHandler(CtrlHandlerRoutine, TRUE);

@@ -39,8 +39,10 @@
 #include <cstdlib>
 #include <cstring>
 #include <cerrno>
+#ifndef OW_WIN32
 #include <sys/socket.h>
 #include <unistd.h>
+#endif
 
 namespace OW_NAMESPACE
 {
@@ -93,8 +95,12 @@ void spawn_monitor(
 	CHECK(!std::strchr(app_name, '/'), "app_name must not contain '/'");
 
 	int sockfds[2];
+#ifdef BLOCXX_WIN32
+#pragma message(Reminder "TODO: implement it for Win!")
+#else
 	CHECK_ERRNO(::socketpair(AF_UNIX, SOCK_STREAM, 0, sockfds) == 0,
 		"socketpair");
+#endif
 	AutoDescriptor parent_desc(sockfds[0]);
 	AutoDescriptor child_desc(sockfds[1]);
 	OW_ASSERT(parent_desc.get() >= 3);

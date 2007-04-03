@@ -53,9 +53,14 @@
 
 #include <cstdlib>
 #include <cstring>
+
+#ifndef OW_WIN32
 #include <pwd.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#else
+#include <io.h> // for dup()
+#endif
 
 using namespace OpenWBEM;
 using PrivilegeConfig::Privileges;
@@ -405,6 +410,10 @@ namespace
 
 	char const * SMPolicy::check_config_dir(char const * config_dir)
 	{
+#ifdef BLOCXX_WIN32
+#pragma message(Reminder "TODO: implement it for Win in BloCxx!")
+		return "";
+#else
 		CHECK(config_dir, Format("%1: config_dir must be non-null", CTOR));
 		CHECK(config_dir[0] == '/', Format("%1: config_dir: %2 must be an absolute path", CTOR, config_dir));
 
@@ -414,6 +423,7 @@ namespace
 		CHECK(x.first == E_SECURE_DIR, Format("%1: config_dir: %2 is not a directory", CTOR, config_dir));
 		m_config_dir = x.second;  // real path
 		return m_config_dir.c_str();
+#endif
 	}
 
 	void SMPolicy::spawn(
@@ -421,6 +431,9 @@ namespace
 		char const * config_dir, char const * app_name
 	)
 	{
+#ifdef BLOCXX_WIN32
+#pragma message(Reminder "TODO: implement it for Win in BloCxx!")
+#else
 		PrivMonPreExec pre_exec(child_desc); 
 		String exec_path = 
 			ConfigOpts::installed_owlibexec_dir + "/owprivilegemonitor" + String(OW_OPENWBEM_LIBRARY_VERSION);
@@ -437,6 +450,7 @@ namespace
 
 		// Caller owns parent_desc, so object makes own copy.
 		m_pmgr.reset(new PrivilegeManagerImpl(AutoDescriptor(::dup(parent_desc)), p_monitor));
+#endif
 	}
 
 }
@@ -487,10 +501,14 @@ PrivilegeManager::init(
 		CHECK(user_name && *user_name,
 			"PrivilegeManager: no privilege config file and no user name");
 		// only root can setuid() to another user
+#ifdef BLOCXX_WIN32
+#pragma message(Reminder "TODO: implement it for Win!")
+#else
 		if (::getuid() == ROOT_UID)
 		{
 			Secure::runAs(user_name);
 		}
+#endif
 		return 0; // no privileges
 	}
 	SMPolicy policy;
@@ -576,8 +594,14 @@ AutoDescriptor PrivilegeManager::open(
 		conn.get_sync();
 		if (flags & ate)
 		{
+#ifdef BLOCXX_WIN32
+#pragma message(Reminder "TODO: for Win retval.get() should return FileHandle so after correct porting 'reinterpret_cast' need to be removed !")
+			CHECK(FileSystem::seek(reinterpret_cast<FileHandle>(retval.get()), 0, SEEK_END) >= 0,
+				"Seek to end failed");
+#else
 			CHECK(FileSystem::seek(retval.get(), 0, SEEK_END) >= 0,
 				"Seek to end failed");
+#endif
 		}
 		return retval;
 	}

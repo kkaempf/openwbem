@@ -239,111 +239,111 @@ namespace ConfigOpts
 {
 	// Initial value is OW_DEFAULT_OWLIBEXECDIR, but may be set to other
 	// values for testing.
-	extern String installed_owlibexec_dir;
+	OW_COMMON_API extern String installed_owlibexec_dir;
 
 	// Initial value is OW_DEFAULT_STATE_DIR/openwbem, but may be set to other
 	// values for testing.
-	extern String installed_owdata_dir;
+	OW_COMMON_API extern String installed_owdata_dir;
 
 	// Initial value is OW_DEFAULT_OWLIBDIR, but may be set to other values
 	// for testing.
-	extern String installed_owlib_dir;
+	OW_COMMON_API extern String installed_owlib_dir;
 
 	// Naming rule: if the option begins with owcimomd, name is the same text all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.
 	// If the option has a default, the default macro is named OW_DEFAULT_<all caps name>
-	extern const char* const DEBUGFLAG_opt;
-	extern const char* const CONFIG_FILE_opt;
-	extern const char* const LOG_LOCATION_opt;
-	extern const char* const LOG_LEVEL_opt;
-	extern const char* const PROVIDER_IFC_LIBS_opt;
-	extern const char* const ONLYHELP_opt;
-	extern const char* const LIBEXECDIR_opt;
-	extern const char* const OWLIBDIR_opt;
-	extern const char* const DATADIR_opt;
-	extern const char* const ALLOW_ANONYMOUS_opt;
-	extern const char* const PAM_ALLOWED_USERS_opt;
-	extern const char* const SIMPLE_AUTH_PASSWORD_FILE_opt;
-	extern const char* const AUTHENTICATION_MODULE_opt;
-	extern const char* const DUMP_SOCKET_IO_opt;
-	extern const char* const CPPPROVIFC_PROV_LOCATION_opt;
-	extern const char* const DISABLE_INDICATIONS_opt;
-	extern const char* const WQL_LIB_opt;
-	extern const char* const ACL_SUPERUSER_opt;
+	OW_COMMON_API extern const char* const DEBUGFLAG_opt;
+	OW_COMMON_API extern const char* const CONFIG_FILE_opt;
+	OW_COMMON_API extern const char* const LOG_LOCATION_opt;
+	OW_COMMON_API extern const char* const LOG_LEVEL_opt;
+	OW_COMMON_API extern const char* const PROVIDER_IFC_LIBS_opt;
+	OW_COMMON_API extern const char* const ONLYHELP_opt;
+	OW_COMMON_API extern const char* const LIBEXECDIR_opt;
+	OW_COMMON_API extern const char* const OWLIBDIR_opt;
+	OW_COMMON_API extern const char* const DATADIR_opt;
+	OW_COMMON_API extern const char* const ALLOW_ANONYMOUS_opt;
+	OW_COMMON_API extern const char* const PAM_ALLOWED_USERS_opt;
+	OW_COMMON_API extern const char* const SIMPLE_AUTH_PASSWORD_FILE_opt;
+	OW_COMMON_API extern const char* const AUTHENTICATION_MODULE_opt;
+	OW_COMMON_API extern const char* const DUMP_SOCKET_IO_opt;
+	OW_COMMON_API extern const char* const CPPPROVIFC_PROV_LOCATION_opt;
+	OW_COMMON_API extern const char* const DISABLE_INDICATIONS_opt;
+	OW_COMMON_API extern const char* const WQL_LIB_opt;
+	OW_COMMON_API extern const char* const ACL_SUPERUSER_opt;
 	// 2.0 additions
-	extern const char* const SERVICES_PATH_opt;
-	extern const char* const REQUEST_HANDLER_PATH_opt;
-	extern const char* const SLP_ENABLE_ADVERTISEMENT_opt;
-	extern const char* const HTTP_SERVER_USE_UDS_opt;
-	extern const char* const NPIPROVIFC_PROV_LOCATION_opt;
-	extern const char* const HTTP_SERVER_SINGLE_THREAD_opt;
-	extern const char* const HTTP_SERVER_HTTP_PORT_opt;
-	extern const char* const HTTP_SERVER_HTTPS_PORT_opt;
-	extern const char* const HTTP_SERVER_ENABLE_DEFLATE_opt;
-	extern const char* const HTTP_SERVER_USE_DIGEST_opt;
+	OW_COMMON_API extern const char* const SERVICES_PATH_opt;
+	OW_COMMON_API extern const char* const REQUEST_HANDLER_PATH_opt;
+	OW_COMMON_API extern const char* const SLP_ENABLE_ADVERTISEMENT_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_USE_UDS_opt;
+	OW_COMMON_API extern const char* const NPIPROVIFC_PROV_LOCATION_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_SINGLE_THREAD_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_HTTP_PORT_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_HTTPS_PORT_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_ENABLE_DEFLATE_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_USE_DIGEST_opt;
 #ifndef OW_DISABLE_DIGEST
-	extern const char* const HTTP_SERVER_DIGEST_PASSWORD_FILE_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_DIGEST_PASSWORD_FILE_opt;
 #endif
-	extern const char* const HTTP_SERVER_MAX_CONNECTIONS_opt;
-	extern const char* const HTTP_SERVER_SSL_CERT_opt;
-	extern const char* const HTTP_SERVER_SSL_KEY_opt;
-	extern const char* const CPPPROVIFC_PROV_TTL_opt;
-	extern const char* const REQUEST_HANDLER_TTL_opt;
-	extern const char* const MAX_CLASS_CACHE_SIZE_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_MAX_CONNECTIONS_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_SSL_CERT_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_SSL_KEY_opt;
+	OW_COMMON_API extern const char* const CPPPROVIFC_PROV_TTL_opt;
+	OW_COMMON_API extern const char* const REQUEST_HANDLER_TTL_opt;
+	OW_COMMON_API extern const char* const MAX_CLASS_CACHE_SIZE_opt;
 	// 3.0 additions
-	extern const char* const HTTP_SERVER_REUSE_ADDR_opt;
-	extern const char* const CMPIPROVIFC_PROV_LOCATION_opt;
-	extern const char* const CMPIPROVIFC_PROV_TTL_opt;
-	extern const char* const PERLPROVIFC_PROV_LOCATION_opt;
-	extern const char* const CHECK_REFERENTIAL_INTEGRITY_opt;
-	extern const char* const POLLING_MANAGER_MAX_THREADS_opt;
-	extern const char* const HTTP_SERVER_TIMEOUT_opt;
-	extern const char* const MAX_INDICATION_EXPORT_THREADS_opt;
-	extern const char* const RESTART_ON_ERROR_opt;
-	extern const char* const AUTHORIZATION_LIB_opt;
-	extern const char* const AUTHORIZATION2_LIB_opt;
-	extern const char* const HTTP_SERVER_LISTEN_ADDRESSES_opt;
-	extern const char* const INTEROP_SCHEMA_NAMESPACE_opt;
-	extern const char* const HTTP_SERVER_UDS_FILENAME_opt;
-	extern const char* const HTTP_SERVER_ALLOW_LOCAL_AUTHENTICATION_opt;
-	extern const char* const REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL_opt;
-	extern const char* const ALLOWED_USERS_opt;
-	extern const char* const HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_REUSE_ADDR_opt;
+	OW_COMMON_API extern const char* const CMPIPROVIFC_PROV_LOCATION_opt;
+	OW_COMMON_API extern const char* const CMPIPROVIFC_PROV_TTL_opt;
+	OW_COMMON_API extern const char* const PERLPROVIFC_PROV_LOCATION_opt;
+	OW_COMMON_API extern const char* const CHECK_REFERENTIAL_INTEGRITY_opt;
+	OW_COMMON_API extern const char* const POLLING_MANAGER_MAX_THREADS_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_TIMEOUT_opt;
+	OW_COMMON_API extern const char* const MAX_INDICATION_EXPORT_THREADS_opt;
+	OW_COMMON_API extern const char* const RESTART_ON_ERROR_opt;
+	OW_COMMON_API extern const char* const AUTHORIZATION_LIB_opt;
+	OW_COMMON_API extern const char* const AUTHORIZATION2_LIB_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_LISTEN_ADDRESSES_opt;
+	OW_COMMON_API extern const char* const INTEROP_SCHEMA_NAMESPACE_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_UDS_FILENAME_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_ALLOW_LOCAL_AUTHENTICATION_opt;
+	OW_COMMON_API extern const char* const REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL_opt;
+	OW_COMMON_API extern const char* const ALLOWED_USERS_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt;
 	// 3.1 additions.
-	extern const char* const HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt;
-	extern const char* const HTTP_SERVER_SSL_TRUST_STORE;
-	extern const char* const ADDITIONAL_LOGS_opt;
-	extern const char* const DISABLE_CPP_PROVIDER_INTERFACE_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_SSL_TRUST_STORE;
+	OW_COMMON_API extern const char* const ADDITIONAL_LOGS_opt;
+	OW_COMMON_API extern const char* const DISABLE_CPP_PROVIDER_INTERFACE_opt;
 	// These aren't a whole config option, but log names, which are substituted as part of the log options
-	extern const char* const LOG_DEBUG_LOG_NAME;
-	extern const char* const LOG_MAIN_LOG_NAME;
+	OW_COMMON_API extern const char* const LOG_DEBUG_LOG_NAME;
+	OW_COMMON_API extern const char* const LOG_MAIN_LOG_NAME;
 	// These log options aren't usable as is, the log name has to be substituted in using Format()
-	extern const char* const LOG_1_TYPE_opt;
-	extern const char* const LOG_1_COMPONENTS_opt;
-	extern const char* const LOG_1_CATEGORIES_opt;
-	extern const char* const LOG_1_LEVEL_opt;
-	extern const char* const LOG_1_FORMAT_opt;
-	extern const char* const LOG_1_LOCATION_opt;
-	extern const char* const LOG_1_MAX_FILE_SIZE_opt;
-	extern const char* const LOG_1_MAX_BACKUP_INDEX_opt;
+	OW_COMMON_API extern const char* const LOG_1_TYPE_opt;
+	OW_COMMON_API extern const char* const LOG_1_COMPONENTS_opt;
+	OW_COMMON_API extern const char* const LOG_1_CATEGORIES_opt;
+	OW_COMMON_API extern const char* const LOG_1_LEVEL_opt;
+	OW_COMMON_API extern const char* const LOG_1_FORMAT_opt;
+	OW_COMMON_API extern const char* const LOG_1_LOCATION_opt;
+	OW_COMMON_API extern const char* const LOG_1_MAX_FILE_SIZE_opt;
+	OW_COMMON_API extern const char* const LOG_1_MAX_BACKUP_INDEX_opt;
 	// 3.2 additions.
-	extern const char* const OWBI1IFC_PROV_LOCATION_opt;
-	extern const char* const OWBI1IFC_PROV_TTL_opt;
-	extern const char* const LOG_1_FLUSH_opt;
+	OW_COMMON_API extern const char* const OWBI1IFC_PROV_LOCATION_opt;
+	OW_COMMON_API extern const char* const OWBI1IFC_PROV_TTL_opt;
+	OW_COMMON_API extern const char* const LOG_1_FLUSH_opt;
 
-	extern const char* const PIDFILE_opt;
-	extern const char* const ADDITIONAL_CONFIG_FILES_DIRS_opt;
+	OW_COMMON_API extern const char* const PIDFILE_opt;
+	OW_COMMON_API extern const char* const ADDITIONAL_CONFIG_FILES_DIRS_opt;
 
-	extern const char* const EXPLICIT_REGISTRATION_NAMESPACES_opt;
-	extern const char* const PRIVILEGES_CONFIG_DIR_opt;
-	extern const char* const INSTALLED_DEST_DIR_opt;
-	extern const char* const PRIVILEGE_MONITOR_USE_LIB_PATH_opt;
-	extern const char* const HTTP_SERVER_DEFAULT_AUTH_CHALLENGE_opt;
-	extern const char* const HTTP_SERVER_ALLOW_DIGEST_AUTHENTICATION_opt;
-	extern const char* const HTTP_SERVER_ALLOW_BASIC_AUTHENTICATION_opt;
-	extern const char* const HTTP_SERVER_ALLOW_SPNEGO_AUTHENTICATION_opt;
-	extern const char* const HTTP_SERVER_AUTHENTICATION_REALM_opt;
-	extern const char* const READ_WRITE_LOCK_TIMEOUT_opt;
+	OW_COMMON_API extern const char* const EXPLICIT_REGISTRATION_NAMESPACES_opt;
+	OW_COMMON_API extern const char* const PRIVILEGES_CONFIG_DIR_opt;
+	OW_COMMON_API extern const char* const INSTALLED_DEST_DIR_opt;
+	OW_COMMON_API extern const char* const PRIVILEGE_MONITOR_USE_LIB_PATH_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_DEFAULT_AUTH_CHALLENGE_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_ALLOW_DIGEST_AUTHENTICATION_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_ALLOW_BASIC_AUTHENTICATION_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_ALLOW_SPNEGO_AUTHENTICATION_opt;
+	OW_COMMON_API extern const char* const HTTP_SERVER_AUTHENTICATION_REALM_opt;
+	OW_COMMON_API extern const char* const READ_WRITE_LOCK_TIMEOUT_opt;
 
 	// Naming rule: if the option begins with owcimomd, name is the same text all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.

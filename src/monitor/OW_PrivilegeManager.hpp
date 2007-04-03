@@ -78,7 +78,7 @@ OW_DECLARE_EXCEPTION2(InsufficientPrivileges, FatalPrivilegeManagerException);
 * one PrivilegeManagerImpl instance, which all PrivilegeManager instances
 * share.
 */
-class PrivilegeManager : private RefCountedPimpl<PrivilegeManagerImpl>
+class OW_MONITOR_API PrivilegeManager : private RefCountedPimpl<PrivilegeManagerImpl>
 {
 public:
 	// Whether or not to pass LD_LIBRARY_PATH (or platform's equivalent)

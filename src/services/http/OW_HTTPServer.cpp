@@ -67,6 +67,7 @@
 #include "OW_Thread.hpp" // for ThreadException
 #include "OW_SPNEGOAuthentication.hpp"
 #include "OW_PrivilegeManager.hpp"
+#include "OW_Logger.hpp"
 
 namespace OW_NAMESPACE
 {
