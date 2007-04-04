@@ -51,6 +51,8 @@
 
 #include <cstdio> // for SEEK_END
 #include <algorithm> // for std::find and sort
+#include <climits> // for CHAR_BIT
+#include <map>
 
 namespace OW_NAMESPACE
 {
@@ -653,7 +655,13 @@ AssocDb::deleteEntry(const CIMObjectPath& objectName,
 	if (ie)
 	{
 		dbentry = readEntry(ie.offset, hdl);
-		
+
+		if (!dbentry.makeKey().equals(key))
+		{
+			Logger lgr(COMPONENT_NAME);
+			OW_LOG_ERROR(lgr, Format("key = %1,  generated key = %2", key, dbentry.makeKey()));
+		}
+
 		OW_ASSERT(dbentry.makeKey().equals(key));
 		AssocDbEntry::entry e;
 		e.m_assocClass = assocClassName;
@@ -680,7 +688,8 @@ AssocDb::deleteEntry(const CIMObjectPath& objectName,
 	}
 	else
 	{
-		// TODO: Log this OW_ASSERT(0 == "AssocDb::deleteEntry failed to find key.  Database may be corrupt");
+		Logger lgr(COMPONENT_NAME);
+		OW_LOG_ERROR(lgr, "AssocDb::deleteEntry failed to find key.  Database may be corrupt");
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -716,18 +725,35 @@ AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 	MutexLock l = getDbLock();
 	DataOStreamBuf ostrm;
 	nentry.writeObject(ostrm);
-	UInt32 blkSize = ostrm.length() + sizeof(AssocDbRecHeader);
+	UInt32 headerAndDataLen = ostrm.length() + sizeof(AssocDbRecHeader);
 	Int32 offset;
-	AssocDbRecHeader rh = getNewBlock(offset, blkSize, hdl);
+	AssocDbRecHeader rh = getNewBlock(offset, headerAndDataLen, hdl);
 	rh.dataSize = ostrm.length();
 	File f = hdl.getFile();
 	writeRecHeader(rh, offset, f);
-	
-	if (f.write(ostrm.getData(), ostrm.length()) !=	size_t(ostrm.length()))
+
+	if (f.write(ostrm.getData(), rh.dataSize) != size_t(rh.dataSize))
 	{
 		OW_THROW_ERRNO_MSG(IOException, "Failed to write data assoc db");
 	}
-	
+
+	UInt32 recordBlkSize = rh.blkSize;
+	if (recordBlkSize > headerAndDataLen)
+	{
+		// need to write a byte at the end of the block, in case this block is at the end of the file, it needs to expand.
+		if (f.seek(static_cast<Int32>(recordBlkSize - headerAndDataLen) - 1, SEEK_CUR) == -1)
+		{
+			OW_THROW_ERRNO_MSG(IOException, Format("Failed to seek (SEEK_CUR) data assoc db to offset: %1", recordBlkSize - headerAndDataLen - 1).c_str());
+		}
+
+		char zero = '\0';
+		if (f.write(&zero, sizeof(zero)) != sizeof(zero))
+		{
+			OW_THROW_ERRNO_MSG(IOException, "Failed to write data assoc db");
+		}
+
+	}
+
 	if (!m_pIndex->add(nentry.makeKey().c_str(), offset))
 	{
 		Logger logger(COMPONENT_NAME);
@@ -769,11 +795,16 @@ AssocDb::addEntry(const CIMObjectPath& objectName,
 void
 AssocDb::addToFreeList(Int32 offset, AssocDbHandle& hdl)
 {
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, Format("AssocDb::addToFreeList offset = %1", offset));
 	AssocDbRecHeader rh;
-	readRecHeader(rh, offset, hdl.getFile());
-	rh.nextFree = m_hdrBlock.firstFree;
-	OW_ASSERT(rh.nextFree != offset);
 	File f = hdl.getFile();
+	readRecHeader(rh, offset, f);
+	rh.nextFree = m_hdrBlock.firstFree;
+	OW_ASSERT((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_ALLOCATED || (rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_ALLOC_UNKNOWN);
+	rh.flags &= ~AssocDbRecHeader::E_BLK_ALLOC_MASK;
+	rh.flags |= AssocDbRecHeader::E_BLK_FREE;
+	OW_ASSERT(rh.nextFree != offset);
 	writeRecHeader(rh, offset, f);
 	m_hdrBlock.firstFree = offset;
 	if (f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) !=
@@ -781,78 +812,328 @@ AssocDb::addToFreeList(Int32 offset, AssocDbHandle& hdl)
 	{
 		OW_THROW_ERRNO_MSG(IOException, "Failed write file header on deletion");
 	}
+	OW_ASSERT(checkFreeList());
 }
+//////////////////////////////////////////////////////////////////////////////
+bool
+AssocDb::check()
+{
+	bool rv = true;
+	rv &= checkFreeList();
+	return rv;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 bool AssocDb::checkFreeList()
 {
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "AssocDb::checkFreeList");
 	AssocDbHandle hdl = this->getHandle();
 	AssocDbRecHeader rh;
 	Int32 coffset = m_hdrBlock.firstFree;
+	File f = hdl.getFile();
 	while (coffset != -1)
 	{
-		readRecHeader(rh, coffset, hdl.getFile());
+		readRecHeader(rh, coffset, f);
 		if (rh.nextFree == coffset)
 		{
+			OW_LOG_ERROR(lgr, Format("AssocDb::checkFreeList failed because nextFree==coffset!, rh.nextFree = %1", rh.nextFree));
 			return false;
+		}
+		if ((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) != AssocDbRecHeader::E_BLK_FREE)
+		{
+			if ((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_ALLOC_UNKNOWN)
+			{
+				OW_LOG_DEBUG(lgr, Format("AssocDb::checkFreeList block in the free list with unknown status, coffset = %1", coffset));
+			}
+			else
+			{
+				OW_LOG_ERROR(lgr, Format("AssocDb::checkFreeList failed because the block flags are marked as allocated, coffset = %1", coffset));
+				return false;
+			}
 		}
 		coffset = rh.nextFree;
 	}
+	OW_LOG_DEBUG(lgr, "AssocDb::checkFreeList successful");
 	return true;
 }
+
+namespace
+{
+	UInt32 nextHighestPowerOfTwo(UInt32 n)
+	{
+		// http://en.wikipedia.org/wiki/Power_of_two
+		--n;
+		for (size_t i = 1; i <= sizeof(n) * CHAR_BIT; ++i)
+		{
+			n |= (n >> i);
+		}
+		++n;
+		return n;
+	}
+} // end unnamed namespace
+
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
 AssocDbRecHeader
-AssocDb::getNewBlock(Int32& offset, UInt32 blkSize,
+AssocDb::getNewBlock(Int32& offset, UInt32 blkSize_,
 	AssocDbHandle& hdl)
 {
+start:
+	OW_ASSERT(checkFreeList());
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock blkSize_ = %1", blkSize_));
 	AssocDbRecHeader rh;
 	AssocDbRecHeader lh;
 	Int32 lastOffset = -1L;
 	Int32 coffset = m_hdrBlock.firstFree;
+	File f = hdl.getFile();
+	// round the block size up to the nearest power of 2 to help prevent fragmentation.
+	UInt32 blkSize = nextHighestPowerOfTwo(blkSize_);
+	OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock blkSize = %1", blkSize));
+	typedef std::map<Int32, UInt32> AdjacentHeaderMap;
+	AdjacentHeaderMap adjacentHeaderMap;
+
+	typedef std::map<Int32, Int32> PrecedingBlockMap;
+	PrecedingBlockMap precedingBlockMap;
+
 	while (coffset != -1)
 	{
-		readRecHeader(rh, coffset, hdl.getFile());
+		OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock reading block %1", coffset));
+		readRecHeader(rh, coffset, f);
 		OW_ASSERT(rh.nextFree != coffset);
-		if (rh.blkSize >= blkSize)
+		OW_ASSERT((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_FREE);
+
+		OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock inserting into precedingBlockMap %1, %2", coffset, lastOffset));
+		precedingBlockMap.insert(std::make_pair(coffset, lastOffset));
+
+		// consolidate
+		bool foundAdjacentBlock = false;
+		do
 		{
+			foundAdjacentBlock = false;
+			OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock inserting into adjacentHeaderMap %1, %2", coffset, rh.blkSize));
+			std::pair<AdjacentHeaderMap::iterator, bool> irv = adjacentHeaderMap.insert(std::make_pair(coffset, rh.blkSize));
+			if (!irv.second)
+			{
+				// a previous entry was merged, so we need to update the size.
+				adjacentHeaderMap[coffset] = rh.blkSize;
+			}
+
+			// look at the previous block
+			if (irv.first != adjacentHeaderMap.begin())
+			{
+				AdjacentHeaderMap::iterator prevBlockIter = irv.first;
+				--prevBlockIter;
+				OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock previous free block: %1, length: %2", prevBlockIter->first, prevBlockIter->second));
+				if (prevBlockIter->first + prevBlockIter->second == UInt32(coffset))
+				{
+					// it's an adjacent block, so now combine it.
+					// add the current block's size to the previous block
+					AssocDbRecHeader prevHeader;
+					readRecHeader(prevHeader, prevBlockIter->first, f);
+					prevHeader.blkSize += rh.blkSize;
+					adjacentHeaderMap[prevBlockIter->first] = prevHeader.blkSize;
+					prevBlockIter->second = prevHeader.blkSize;
+					OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock setting previous free block: %1, length: %2", prevBlockIter->first, prevBlockIter->second));
+					writeRecHeader(prevHeader, prevBlockIter->first, f);
+					// splice the current block out of the list by updating the block at lastOffset to point to the next block.
+					if (lastOffset != -1L)
+					{
+						lh.nextFree = rh.nextFree;
+						precedingBlockMap[lh.nextFree] = lastOffset;
+						OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock removing free block from list. Updating predecessor free block: %1, nextFree: %2", lastOffset, lh.nextFree));
+						writeRecHeader(lh, lastOffset, f);
+					}
+					if (m_hdrBlock.firstFree == coffset)
+					{
+						m_hdrBlock.firstFree = rh.nextFree;
+						precedingBlockMap[rh.nextFree] = -1;
+						if (f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) != sizeof(m_hdrBlock))
+						{
+							OW_THROW_ERRNO_MSG(IOException, "failed to write file header while updating free list");
+						}
+						OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock removing free block from list. Updating main header block firstFree: %1", m_hdrBlock.firstFree));
+					}
+					// make the current block the new larger block.
+					coffset = prevBlockIter->first;
+					PrecedingBlockMap::iterator lastIter = precedingBlockMap.find(coffset);
+					if (lastIter == precedingBlockMap.end())
+					{
+						OW_THROW(HDBException, "Internal error. Did not expect to get a failure to find coffset in precedingBlockMap");
+					}
+					lastOffset = lastIter->second;
+					readRecHeader(rh, coffset, f);
+					// this statement invalidates all iterators to adjacentHeaderMap
+					OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock removing %1 (current block) from adjacentHeaderMap", irv.first->first));
+					adjacentHeaderMap.erase(irv.first);
+					foundAdjacentBlock = true;
+					goto start;
+				}
+				else
+				{
+					OW_LOG_DEBUG(lgr, Format("Previous block is not adjacent %1 != %2", prevBlockIter->first + prevBlockIter->second, UInt32(coffset)));
+				}
+
+			}
+
+			// look at the next block
+			OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock looking for free block at: %1", coffset + rh.blkSize));
+			AdjacentHeaderMap::iterator nextBlockIter = adjacentHeaderMap.find(coffset + rh.blkSize);
+			if (nextBlockIter != adjacentHeaderMap.end())
+			{
+				OW_LOG_DEBUG(lgr, Format("Found a following free block: %1, size: %2", nextBlockIter->first, nextBlockIter->second));
+
+				// remove the next block from the list
+				PrecedingBlockMap::iterator precedingBlockIter = precedingBlockMap.find(nextBlockIter->first);
+				if (precedingBlockIter == precedingBlockMap.end())
+				{
+					OW_THROW_ERRNO_MSG(HDBException, Format("failed to find predecessor for %1", nextBlockIter->first).c_str());
+				}
+				AssocDbRecHeader nextBlockHeader;
+				readRecHeader(nextBlockHeader, nextBlockIter->first, f);
+
+				Int32 precedingBlock = precedingBlockIter->second;
+				if (precedingBlock == -1)
+				{
+					m_hdrBlock.firstFree = nextBlockHeader.nextFree;
+					if (m_hdrBlock.firstFree == coffset)
+					{
+						lastOffset = -1;
+					}
+					precedingBlockMap[m_hdrBlock.firstFree] = -1;
+					OW_LOG_DEBUG(lgr, Format("Setting m_hdrBlock.firstFree to: %1", m_hdrBlock.firstFree));
+					if (f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) != sizeof(m_hdrBlock))
+					{
+						OW_THROW_ERRNO_MSG(IOException, "failed to write file header while updating free list");
+					}
+				}
+				else
+				{
+					AssocDbRecHeader precedingBlockHeader;
+					readRecHeader(precedingBlockHeader, precedingBlock, f);
+					precedingBlockHeader.nextFree = nextBlockHeader.nextFree;
+					if (precedingBlock == coffset)
+					{
+						//precedingBlockHeader.nextFree = rh.nextFree;
+						rh.nextFree = precedingBlockHeader.nextFree;
+					}
+					precedingBlockMap[precedingBlockHeader.nextFree] = precedingBlock;
+					OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock removing free block from list. Updating predecessor free block: %1, nextFree: %2", precedingBlock, precedingBlockHeader.nextFree));
+					writeRecHeader(precedingBlockHeader, precedingBlock, f);
+				}
+
+				// add the next block's size to the current block
+				rh.blkSize += nextBlockIter->second;
+				adjacentHeaderMap[coffset] = rh.blkSize;
+				OW_LOG_DEBUG(lgr, "AssocDb::getNewBlock adding next block's size to the current block");
+				writeRecHeader(rh, coffset, f);
+
+				if (lastOffset == nextBlockIter->first)
+				{
+					lastOffset = precedingBlock;
+					readRecHeader(lh, precedingBlock, f);
+				}
+
+				// this statement invalidates all iterators to adjacentHeaderMap
+				OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock removing %1 (next block) from adjacentHeaderMap", nextBlockIter->first));
+				adjacentHeaderMap.erase(nextBlockIter);
+
+				foundAdjacentBlock = true;
+				goto start;
+			}
+			else
+			{
+				OW_LOG_DEBUG(lgr, "Did not find an free block after the current block");
+			}
+
+		} while (foundAdjacentBlock);
+
+		// If the current block is larger than necessary, break it into two.
+		if (rh.blkSize > blkSize)
+		{
+			OW_LOG_DEBUG(lgr, Format("Current block size (%1) is larger than necessary (%2)", rh.blkSize, blkSize));
+			Int32 prevBlockSize = rh.blkSize;
+			AssocDbRecHeader newFreeBlock;
+			newFreeBlock.blkSize = prevBlockSize - blkSize;
+			newFreeBlock.nextFree = rh.nextFree;
+			newFreeBlock.flags |= AssocDbRecHeader::E_BLK_FREE;
+			Int32 newOffset = coffset + blkSize;
+			OW_LOG_DEBUG(lgr, Format("newOffset = %1, newFreeBlock.blkSize = %2, newFreeBlock.nextFree = %3", newOffset, newFreeBlock.blkSize, newFreeBlock.nextFree));
+			writeRecHeader(newFreeBlock, newOffset, f);
+			rh.blkSize = blkSize;
+			rh.nextFree = newOffset;
+			OW_LOG_DEBUG(lgr, "AddocDb::getNewBlock setting current block to point to new free block");
+			writeRecHeader(rh, coffset, f);
+		}
+
+
+		if (rh.blkSize == blkSize)
+		{
+			OW_LOG_DEBUG(lgr, Format("Current block size (%1) is sufficient, coffset = %2, lastOffset = %3, m_hdrBlock.firstFree = %4", rh.blkSize, coffset, lastOffset, m_hdrBlock.firstFree));
 			if (lastOffset != -1L)
 			{
 				lh.nextFree = rh.nextFree;
-				File f = hdl.getFile();
+				OW_LOG_DEBUG(lgr, Format("updating lh to point to next free block. lh.nextFree = %1", lh.nextFree));
 				writeRecHeader(lh, lastOffset, f);
 			}
-			if (m_hdrBlock.firstFree == coffset)
+			else if (m_hdrBlock.firstFree == coffset)
 			{
 				m_hdrBlock.firstFree = rh.nextFree;
-				if (hdl.getFile().write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) !=
-					sizeof(m_hdrBlock))
+				OW_LOG_DEBUG(lgr, Format("updating m_hdrBlock to point to next free block. m_hdrBlock.firstFree = %1", m_hdrBlock.firstFree));
+				if (f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) != sizeof(m_hdrBlock))
 				{
 					OW_THROW_ERRNO_MSG(IOException,
 						"failed to write file header while updating free list");
 				}
 			}
+			else
+			{
+				OW_ASSERTMSG(0, "Failed to update the free list even though a node was removed!");
+			}
 			rh.nextFree = 0L;
-			File f = hdl.getFile();
+			rh.flags &= ~AssocDbRecHeader::E_BLK_ALLOC_MASK;
+			rh.flags |= AssocDbRecHeader::E_BLK_ALLOCATED;
+			OW_LOG_DEBUG(lgr, "Found a block, marking nextFree to 0");
 			writeRecHeader(rh, coffset, f);
 			offset = coffset;
+			OW_LOG_DEBUG(lgr, "AssocDb::getNewBlock finished with a re-used block.");
+			OW_ASSERT(checkFreeList());
 			return rh;
+		}
+		else
+		{
+			OW_LOG_DEBUG(lgr, Format("Current block size (%1) is not sufficient (%2)", rh.blkSize, blkSize));
 		}
 		lastOffset = coffset;
 		lh = rh;
 		coffset = rh.nextFree;
 	}
-	hdl.getFile().seek(0L, SEEK_END);
-	offset = hdl.getFile().tell();
+	OW_LOG_DEBUG(lgr, "AssocDb::getNewBlock() Did not find a free block. Expanding and returning a block at the end.");
+	f.seek(0L, SEEK_END);
+	Int64 offset64 = f.tell();
+	offset = static_cast<Int32>(offset64);
+	if (Int64(offset) != offset64)
+	{
+		OW_THROW(HDBException, "file size > 2GB. Overflow.");
+	}
+	OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock() new block offset: %1", offset));
 	memset(&rh, 0, sizeof(rh));
 	rh.blkSize = blkSize;
+	rh.flags &= ~AssocDbRecHeader::E_BLK_ALLOC_MASK;
+	rh.flags |= AssocDbRecHeader::E_BLK_ALLOCATED;
+	OW_ASSERT(checkFreeList());
 	return rh;
 }
 //////////////////////////////////////////////////////////////////////////////
 static void
 writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File& file)
 {
+	Logger lgr(COMPONENT_NAME);
 	rh.chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&rh.nextFree),
 		sizeof(rh) - sizeof(rh.chkSum));
+	OW_LOG_DEBUG(lgr, Format("writeRecHeader writing header to offset %1, chksum: %2, nextFree: %3, blkSize: %4", offset, rh.chkSum, rh.nextFree, rh.blkSize));
+	OW_ASSERT(rh.nextFree != offset);
 	if (file.write(&rh, sizeof(rh), offset) != sizeof(rh))
 	{
 		OW_THROW_ERRNO_MSG(IOException, "Failed to write record to assoc db");
@@ -862,6 +1143,8 @@ writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File& file)
 static void
 readRecHeader(AssocDbRecHeader& rh, Int32 offset, const File& file)
 {
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, Format("readRecHeader read header from offset %1", offset));
 	if (file.read(&rh, sizeof(rh), offset) != sizeof(rh))
 	{
 		OW_THROW_ERRNO_MSG(IOException, "Failed to read record from assoc db");

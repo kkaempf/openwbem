@@ -71,7 +71,8 @@ const int HDBSIGLEN = 16;
 // 9/01/2005 - 4000000. Changed key format to use : instead of / to fix a bug.
 // 10/12/2005 - 4000001. Fixed association and instance key format wrt associations.
 // 4/17/2006 - 4000002. Added namespace field to CIMInstance.
-const UInt32 HDBVERSION = 4000002;
+// 4/04/2007 - 4000003. Added code to use flags in AssocDbRecHeader.
+const UInt32 HDBVERSION = 4000003;
 
 // This is the oldest version the code can handle.
 const UInt32 MinHDBVERSION = 4000001;
