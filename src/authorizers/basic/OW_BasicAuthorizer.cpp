@@ -204,6 +204,11 @@ void BasicAccessMgr::checkAccess(
 	char const * op, char const * required,
 	String const * pns, OperationContext & context, ECheckOperationContextFlag checkOperationContext)
 {
+	// Access levels:
+	// rw = read, write (instances)
+	// RW = read, write (schema)
+	// N = namespace manipulation (create, delete)
+
 	UserInfo userInfo = context.getUserInfo();
 	if (userInfo.getInternal())
 	{
@@ -227,6 +232,7 @@ void BasicAccessMgr::checkAccess(
 		Format("UserName is: \"%1\" Operation is : %2", username, op));
 
 	String permissions = this->userPermissions(pns, username, context);
+	OW_LOG_DEBUG(lgr, Format("User has permissions: \"%1\"  Required permissions: \"%2\"", permissions, required));
 	if (subset(required, permissions))
 	{
 		Format fmt(
