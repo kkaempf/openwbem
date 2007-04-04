@@ -131,6 +131,7 @@ RPATH_LINK_FLAG_REQUIRED=0
 RPATH_DEFAULT_PATH=
 REALTIME_LIBS=
 ICONV_LIB=
+RPATH_PREFERS_FIRST_OPTION=0
 
 # 64-bit flags are not needed on most platforms.  These will be added to the
 # C*FLAGS if --enable-64-bit-build is used.
@@ -311,7 +312,11 @@ case "$target" in
 			RPATH_DEFAULT_PATH="${libdir}:/usr/lib/hpux32:"
 			RPATH_DEFAULT_PATH_64="${libdir}:/usr/lib/hpux64:"
 		;;
-		*) LIB_EXT="sl" ;;
+		*)
+			LIB_EXT="sl"
+			# On parisc hpux, putting multiple +b options on the link line ends up using only the first.
+			RPATH_PREFERS_FIRST_OPTION=1
+			;;
 	esac
 	;;
 #*-*-irix5*)
@@ -441,6 +446,8 @@ s390x-*-*|s390x-*-*-*)
 	;;
 esac
 
+AM_CONDITIONAL(RPATH_PREFERS_FIRST_OPTION, test "x${RPATH_PREFERS_FIRST_OPTION}" = x1)
+
 # This figures out which compiler is invoked
 OW_COMPILER=`basename $CXX`
 case $OW_COMPILER in 
@@ -546,8 +553,7 @@ OW_HELP_STRING(--with-runtime-link-path=PATH,enable the encoding of the specifie
 [
 	if test "x$RPATH_LINK_FLAG" != "x"; then
 		if test "x${with_runtime_link_path}" != "xyes" -a "x${with_runtime_link_path}" != "xno"; then
-			RPATH_LINK_FLAG_WITH_PATH=$RPATH_LINK_FLAG${with_runtime_link_path}
-			LDFLAGS="$LDFLAGS $RPATH_LINK_FLAG_WITH_PATH"
+			RPATH_LINK_FLAG_WITH_PATH=${RPATH_LINK_FLAG_WITH_PATH:-${RPATH_LINK_FLAG}}${RPATH_LINK_FLAG_WITH_PATH:+:}${with_runtime_link_path}
 		elif test "x${with_runtime_link_path}" = "xyes"; then
 			AC_MSG_WARN(***************************************************************************)
 			AC_MSG_WARN(A runtime path must be specified when using --runtime-link-path            )
@@ -1356,7 +1362,7 @@ OW_SET_DEFAULT_DIRS
 # installed to.
 
 if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
-	LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}${RPATH_DEFAULT_PATH}$libdir"
+	LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG_WITH_PATH}:${libdir}"
 fi
 
 CXXSHAREDLIBLINKFLAGS="$CXXCOMMONLINKFLAGS $CXXSHAREDLIBLINKFLAGS $LDFLAGS"

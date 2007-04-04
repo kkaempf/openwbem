@@ -103,10 +103,10 @@ vas3_rpath_flag=
 endif
 
 # Override any rpath flags that exist for every other binary.
-if HPUX
-# HPUX, unlike every most other platforms, uses only the first occurance of the
-# rpath flags on the link line.  The others all seem to take the last
-# occurance.
+if RPATH_PREFERS_FIRST_OPTION
+# HPUX (at least on parisc), unlike every most other platforms, uses only the
+# first occurance of the rpath flags on the link line.  The others all seem to
+# take the last occurance.
 vas2_link_flags=$(vas2_rpath_flag) $(CXXBINLINKFLAGS)
 vas3_link_flags=$(vas3_rpath_flag) $(CXXBINLINKFLAGS)
 else
