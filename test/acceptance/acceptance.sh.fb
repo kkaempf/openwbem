@@ -30,7 +30,6 @@
 #		multiReq
 #		cimexceptions
 #		namespaces
-#		interop
 #		misc
 #		hammer
 #		SecondaryInstance
@@ -1487,12 +1486,6 @@ TestMof()
 #############################################################################
 SetupInteropSchema()
 {
-	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
-		interop >/dev/null 2>&1
-	then
-		return
-	fi
-
 	echo "SetupInteropSchema"
 
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:30926/ -n root \
