@@ -553,7 +553,11 @@ OW_HELP_STRING(--with-runtime-link-path=PATH,enable the encoding of the specifie
 [
 	if test "x$RPATH_LINK_FLAG" != "x"; then
 		if test "x${with_runtime_link_path}" != "xyes" -a "x${with_runtime_link_path}" != "xno"; then
-			RPATH_LINK_FLAG_WITH_PATH=${RPATH_LINK_FLAG_WITH_PATH:-${RPATH_LINK_FLAG}}${RPATH_LINK_FLAG_WITH_PATH:+:}${with_runtime_link_path}
+			if test "x${RPATH_LINK_FLAG_WITH_PATH}" != x; then
+				RPATH_LINK_FLAG_WITH_PATH=${RPATH_LINK_FLAG_WITH_PATH}:${with_runtime_link_path}
+			else
+				RPATH_LINK_FLAG_WITH_PATH=${RPATH_LINK_FLAG}${RPATH_DEFAULT_PATH}${with_runtime_link_path}
+			fi
 		elif test "x${with_runtime_link_path}" = "xyes"; then
 			AC_MSG_WARN(***************************************************************************)
 			AC_MSG_WARN(A runtime path must be specified when using --runtime-link-path            )
@@ -1362,7 +1366,17 @@ OW_SET_DEFAULT_DIRS
 # installed to.
 
 if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
-	LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG_WITH_PATH}:${libdir}"
+	# If the user supplied one, use it and add our libdir, otherwise use the
+	# default path as specified somewhere above with our libdir.
+	if test "x${RPATH_LINK_FLAG_WITH_PATH}" != x; then
+		LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG_WITH_PATH}:${libdir}"
+	else
+		# Note: Our $libdir may appear in here more than once if the default path
+		# has it ordered in such a way.  This is fine and won't break anything.
+		# The alternative, potentially having a trailing ":", is wrong and
+		# could be a security risk.
+		LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}${RPATH_DEFAULT_PATH}${libdir}"
+	fi
 fi
 
 CXXSHAREDLIBLINKFLAGS="$CXXCOMMONLINKFLAGS $CXXSHAREDLIBLINKFLAGS $LDFLAGS"
