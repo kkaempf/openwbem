@@ -229,6 +229,7 @@ namespace
 void
 daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool restartOnFatalError, const String& loggerComponentName)
 {
+	Logger logger(loggerComponentName);
 	initDaemonizePipe();
 
 	int pid = -1;
@@ -294,7 +295,15 @@ daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool res
 				_exit(0);
 		}
 
-		chdir("/");
+		if( !getenv("OWNOCHDIR") )
+		{
+			OW_LOG_DEBUG(logger, "Changing directories to / ...");
+			chdir("/");
+		}
+		else
+		{
+			OW_LOG_DEBUG(logger, "Not changing directories...");
+		}
 
 		// reattach stdin, stdout, stderr
 		close(0);
