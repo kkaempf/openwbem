@@ -356,12 +356,12 @@ namespace
 						if (entry.direction == OutputEntry::E_INPUT)
 						{
 							OW_LOG_DEBUG(logger, Format("doSelected() attempting to pass a input descriptor: %1", entry.pipe->getInputDescriptor()));
-							m_outputPipe->passDescriptor(entry.pipe->getInputDescriptor());
+							m_outputPipe->passDescriptor(entry.pipe->getInputDescriptor(), m_inputPipe);
 						}
 						else
 						{
 							OW_LOG_DEBUG(logger, Format("doSelected() attempting to pass a output descriptor: %1", entry.pipe->getOutputDescriptor()));
-							m_outputPipe->passDescriptor(entry.pipe->getOutputDescriptor());
+							m_outputPipe->passDescriptor(entry.pipe->getOutputDescriptor(), m_inputPipe);
 						}
 						m_outputEntries.erase(m_outputEntries.begin());
 					}

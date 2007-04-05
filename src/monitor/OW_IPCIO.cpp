@@ -161,7 +161,7 @@ void IPCIO::put_handle(FileHandle descr)
 
 	try
 	{
-		m_pipe->passDescriptor(descr);
+		m_pipe->passDescriptor(descr, m_pipe);
 	}
 	catch(IOException& e)
 	{
@@ -178,7 +178,7 @@ AutoDescriptor IPCIO::get_handle()
 
 	try
 	{
-		return m_pipe->receiveDescriptor();
+		return m_pipe->receiveDescriptor(m_pipe);
 	}
 	RETHROW_IOEXCEPTION("IPCIO::get_handle")
 }

@@ -274,7 +274,7 @@ public:
 					if (entry.direction == OutputEntry::E_INPUT)
 					{
 						//OW_LOG_DEBUG(logger, Format("doSelected() attempting to pass a input descriptor: %1", entry.pipe->getInputDescriptor()));
-						m_conn->passDescriptor(entry.pipe->getInputDescriptor());
+						m_conn->passDescriptor(entry.pipe->getInputDescriptor(), m_conn);
 					}
 					else
 					{

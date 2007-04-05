@@ -51,9 +51,9 @@ void UnnamedPipeTestCases::testDescriptorPassing()
 	UnnamedPipeRef up2, up3;
 	UnnamedPipe::createConnectedPipes(up2, up3);
 	up1->passDescriptor(up3->getInputDescriptor());
-	AutoDescriptor d1 = up1->receiveDescriptor();
+	AutoDescriptor d1 = up1->receiveDescriptor(up1);
 	up1->passDescriptor(up3->getOutputDescriptor());
-	AutoDescriptor d2 = up1->receiveDescriptor();
+	AutoDescriptor d2 = up1->receiveDescriptor(up1);
 
 	UnnamedPipeRef upPassed = UnnamedPipe::createUnnamedPipeFromDescriptor(d2, d1);
 

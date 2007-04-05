@@ -459,9 +459,9 @@ public:
 		if (op == BinarySerialization::BIN_OK)
 		{
 			//OW_LOG_DEBUG(logger, "OOPProviderEnvironment::commonGetCIMOMHandle() got BIN_OK");
-			AutoDescriptor inputDescriptor = m_inpipe->receiveDescriptor();
+			AutoDescriptor inputDescriptor = m_inpipe->receiveDescriptor(m_inpipe);
 			//OW_LOG_DEBUG(logger, Format("OOPProviderEnvironment::commonGetCIMOMHandle() got input descriptor: %1", inputDescriptor));
-			AutoDescriptor outputDescriptor = m_inpipe->receiveDescriptor();
+			AutoDescriptor outputDescriptor = m_inpipe->receiveDescriptor(m_inpipe);
 			//OW_LOG_DEBUG(logger, Format("OOPProviderEnvironment::commonGetCIMOMHandle() got output descriptor: %1", outputDescriptor));
 			UnnamedPipeRef newConn = UnnamedPipe::createUnnamedPipeFromDescriptor(inputDescriptor, outputDescriptor);
 			// Setting the timeouts to be infinite won't cause a problem here.  The OOP interface enforces a timeout for each operation and
@@ -568,8 +568,8 @@ public:
 		//OW_LOG_DEBUG(logger, "OOPProviderEnvironment::clone(). Got file descriptors from CIMOM");
 
 		// Read file descriptors for new ProviderEnvironment
-		AutoDescriptor infd = m_inpipe->receiveDescriptor();
-		AutoDescriptor outfd = m_inpipe->receiveDescriptor();
+		AutoDescriptor infd = m_inpipe->receiveDescriptor(m_inpipe);
+		AutoDescriptor outfd = m_inpipe->receiveDescriptor(m_inpipe);
 		UnnamedPipeRef newConn = UnnamedPipe::createUnnamedPipeFromDescriptor(infd, outfd);
 		newConn->setTimeouts(Timeout::infinite);
 		//OW_LOG_DEBUG(logger, "OOPProviderEnvironment::clone(). returning new ProviderEnvironmentIFCRef");
