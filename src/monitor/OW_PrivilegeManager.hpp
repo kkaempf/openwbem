@@ -48,7 +48,6 @@
 #include "OW_LoggerSpec.hpp"
 #include "OW_PrivManOpenFlags.h"
 #include "OW_Process.hpp"
-#include "OW_RefCountedPimpl.hpp"
 #include "OW_Types.hpp"
 #include "OW_AutoDescriptor.hpp"
 
@@ -78,7 +77,7 @@ OW_DECLARE_EXCEPTION2(InsufficientPrivileges, FatalPrivilegeManagerException);
 * one PrivilegeManagerImpl instance, which all PrivilegeManager instances
 * share.
 */
-class OW_MONITOR_API PrivilegeManager : private RefCountedPimpl<PrivilegeManagerImpl>
+class OW_MONITOR_API PrivilegeManager
 {
 public:
 	// Whether or not to pass LD_LIBRARY_PATH (or platform's equivalent)
@@ -90,9 +89,9 @@ public:
 	/**
 	* Null PrivilegeManager object suitable only for reassigning.
 	*/
-	PrivilegeManager()
-	{
-	}
+	PrivilegeManager();
+	PrivilegeManager(const PrivilegeManager& x);
+	PrivilegeManager& operator=(const PrivilegeManager& x);
 
 	bool isNull() const;
 
@@ -631,6 +630,8 @@ private:
 		LoggerSpec const * plogspec);
 
 	PrivilegeManager(PrivilegeManagerImpl * p_impl);
+	IntrusiveReference<PrivilegeManagerImpl> m_impl;
+	PrivilegeManagerImpl *pimpl() const;
 };
 
 } // namespace OW_NAMESPACE

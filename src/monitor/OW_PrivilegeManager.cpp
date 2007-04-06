@@ -269,9 +269,25 @@ namespace
 }
 
 PrivilegeManager::PrivilegeManager(PrivilegeManagerImpl * p_impl)
-: RefCountedPimpl<PrivilegeManagerImpl>(p_impl)
+: m_impl(p_impl)
 {
 	OW_ASSERT(g_pmImpl.getPtr() == p_impl);
+}
+
+PrivilegeManager::PrivilegeManager()
+{
+}
+
+PrivilegeManager::PrivilegeManager(const PrivilegeManager& x)
+: m_impl(x.m_impl)
+{
+}
+
+PrivilegeManager& 
+PrivilegeManager::operator=(const PrivilegeManager& x)
+{
+	m_impl = x.m_impl;
+	return *this;
 }
 
 PrivilegeManager::~PrivilegeManager()
@@ -1023,6 +1039,12 @@ bool
 PrivilegeManager::isNull() const
 {
 	return pimpl() == 0;
+}
+
+PrivilegeManagerImpl*
+PrivilegeManager::pimpl() const
+{
+	return m_impl.getPtr();
 }
 
 // static 
