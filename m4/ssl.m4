@@ -1,3 +1,26 @@
+# An internal portion of the OW_SSL_SUPPORT macro that is used multiple times.
+AC_DEFUN([OW_SSL_INTERNAL_DIRCHECK],
+[
+	ssldir="$1"
+	if test ! -z "$ssldir" -a "x$ssldir" != "x/usr"; then
+		# Try to use $ssldir/lib if it exists, otherwise
+		# $ssldir
+		ssl_libdir="$ssldir"
+		if test -d "$ssldir/lib" ; then
+			ssldir="$ssldir/lib"
+		fi
+		LDFLAGS="$saved_LDFLAGS -L$ssl_libdir"
+
+		# Try to use $ssldir/include if it exists, otherwise
+		# $ssldir
+		ssl_include_dir="$ssldir"
+		if test -d "$ssldir/include" ; then
+			ssl_include_dir="$ssldir/include"
+		fi
+		CPPFLAGS="$saved_CPPFLAGS -I$ssl_include_dir"
+	fi
+])
+
 AC_DEFUN(
 	[OW_SSL_SUPPORT],
 	[
@@ -29,29 +52,7 @@ AC_DEFUN(
 				if test ! -z "$ssldir" -a ! -d "$ssldir" ; then
 					continue;
 				fi
-				if test ! -z "$ssldir" -a "x$ssldir" != "x/usr"; then
-					# Try to use $ssldir/lib if it exists, otherwise
-					# $ssldir
-					if test -d "$ssldir/lib" ; then
-						LDFLAGS="$saved_LDFLAGS -L$ssldir/lib"
-						if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
-							LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}$ssldir/lib"
-						fi
-					else
-						LDFLAGS="$saved_LDFLAGS -L$ssldir"
-						if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
-							LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}$ssldir"
-						fi
-					fi
-					# Try to use $ssldir/include if it exists, otherwise
-					# $ssldir
-					if test -d "$ssldir/include" ; then
-						CPPFLAGS="$saved_CPPFLAGS -I$ssldir/include"
-					else
-						CPPFLAGS="$saved_CPPFLAGS -I$ssldir"
-					fi
-				fi
-
+				OW_SSL_INTERNAL_DIRCHECK($ssldir)
 				# Basic test to check for compatible version and correct linking
 				# *does not* test for RSA - that comes later.
 				AC_TRY_COMPILE(
@@ -82,6 +83,8 @@ AC_DEFUN(
 			if test -z "$found_crypto" ; then
 				#AC_MSG_ERROR([Could not find working OpenSSL library, please install or check config.log])
 				ssldir=""
+				ssl_lib_dir=""
+				ssl_include_dir=""
 			fi
 			if test -z "$ssldir" && test ! -z "$found_crypto"; then
 				ssldir="(system)"
@@ -101,30 +104,33 @@ AC_DEFUN(
 		if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ; then
 			dnl Need to recover ssldir - test above runs in subshell
 			ssldir=$ac_cv_openssldir
-			if test ! -z "$ssldir" -a "x$ssldir" != "x/usr"; then
-				# Try to use $ssldir/lib if it exists, otherwise
-				# $ssldir
-				if test -d "$ssldir/lib" ; then
-					LDFLAGS="$saved_LDFLAGS -L$ssldir/lib"
-					if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
-						LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}$ssldir/lib"
-					fi
-				else
-					LDFLAGS="$saved_LDFLAGS -L$ssldir"
-					if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
-						LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}$ssldir"
-					fi
-				fi
-				# Try to use $ssldir/include if it exists, otherwise
-				# $ssldir
-				if test -d "$ssldir/include" ; then
-					CPPFLAGS="$saved_CPPFLAGS -I$ssldir/include"
-				else
-					CPPFLAGS="$saved_CPPFLAGS -I$ssldir"
-				fi
-			fi
+
+			OW_SSL_INTERNAL_DIRCHECK($ssldir)
 			SSL_LIBS="-lssl -lcrypto"
 		fi
+
+		AC_ARG_WITH(ssl-rpath,
+			OW_HELP_STRING(--with-ssl-rpath=PATH,add the OpenSSL directory to the runtime link path),
+		[
+			if test "x$withval" != "xno" ; then
+				use_ssl_rpath_dir=$withval
+				if test "x$withval" = "xyes" ; then
+					# Use the path we have already located.
+					use_ssl_rpath_dir="${ssl_lib_dir}"
+				fi
+				# If the rpath link flags have already been set, append to them.
+				if test "x$RPATH_LINK_FLAG_WITH_PATH" != "x"; then
+					RPATH_LINK_FLAG_WITH_PATH="${RPATH_LINK_FLAG_WITH_PATH}${RPATH_SEPARATOR}${use_ssl_rpath_dir}"
+				fi
+				# Alter the default rpath.
+				if test "x${RPATH_DEFAULT_PATH}" != "x" ; then
+					RPATH_DEFAULT_PATH="${use_ssl_rpath_dir}${RPATH_SEPARATOR}${RPATH_DEFAULT_PATH}"
+				else
+					RPATH_DEFAULT_PATH="${use_ssl_rpath_dir}"
+				fi
+			fi
+		]
+		)
 
 		AC_SUBST(SSL_LIBS)
 
