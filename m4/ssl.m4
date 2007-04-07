@@ -7,7 +7,7 @@ AC_DEFUN([OW_SSL_INTERNAL_DIRCHECK],
 		# $ssldir
 		ssl_libdir="$ssldir"
 		if test -d "$ssldir/lib" ; then
-			ssldir="$ssldir/lib"
+			ssl_libdir="$ssldir/lib"
 		fi
 		LDFLAGS="$saved_LDFLAGS -L$ssl_libdir"
 
