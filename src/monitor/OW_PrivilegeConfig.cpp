@@ -41,7 +41,7 @@ OW_DEFINE_EXCEPTION(UnescapeString)
 
 namespace
 {
-	String unescape_path(char const * s, std::size_t n)
+	String unescapePath(char const * s, std::size_t n)
 	{
 		StringBuffer sbuf;
 		for (std::size_t i = 0; i < n; ++i)
@@ -63,17 +63,17 @@ namespace
 
 	// REQUIRE: path contains at least one '/'
 	//
-	std::pair<String, String> split_path(String const & path)
+	std::pair<String, String> splitPath(String const & path)
 	{
 		std::size_t n = path.lastIndexOf('/');
 		return std::make_pair(path.substring(0, n + 1), path.substring(n + 1));
 	}
 
-	enum EPatternsType { // numeric assignments are significant (convert_pattern)
+	enum EPatternsType { // numeric assignments are significant (convertPattern)
 		E_PATH = 0, E_WILDCARD = 1, E_SUBTREE = 2
 	};
 
-	std::pair<String, EPatternsType> convert_pattern(char const * s)
+	std::pair<String, EPatternsType> convertPattern(char const * s)
 	{
 		std::size_t n = std::strlen(s);
 		OW_ASSERT(n > 0);
@@ -86,10 +86,10 @@ namespace
 			E_PATH
 		);
 		n -= std::size_t(pattern_type);
-		return std::make_pair(unescape_path(s, n), pattern_type);
+		return std::make_pair(unescapePath(s, n), pattern_type);
 	}
 
-	bool isoctal(int c)
+	bool isOctal(int c)
 	{
 		switch (c)
 		{
@@ -108,9 +108,9 @@ namespace
 	}
 } // end unnamed namespace
 
-String unescape_path(char const * epath)
+String unescapePath(char const * epath)
 {
-	return unescape_path(epath, std::strlen(epath));
+	return unescapePath(epath, std::strlen(epath));
 }
 
 String unescapeString(char const * str)
@@ -213,7 +213,7 @@ String unescapeString(char const * str)
 						for (; j < 3; ++j)
 						{
 							char c = str[i+j];
-							if (isoctal(c))
+							if (isOctal(c))
 							{
 								oct <<= 3;
 								oct |= c - '0';
@@ -250,7 +250,7 @@ PathPatterns::PathPatterns()
 {
 }
 
-void PathPatterns::add_case(
+void PathPatterns::addCase(
 	String const & dir_path, String const & fname_prefix, bool can_extend)
 {
 	FileNameCase c;
@@ -259,25 +259,25 @@ void PathPatterns::add_case(
 	m_map[dir_path].push_back(c);
 }
 
-void PathPatterns::add_subtree(String const & dir_path)
+void PathPatterns::addSubtree(String const & dir_path)
 {
-	subtrees.push_back(dir_path);
+	m_subtrees.push_back(dir_path);
 }
 
-void PathPatterns::add_pattern(char const * pattern)
+void PathPatterns::addPattern(char const * pattern)
 {
-	std::pair<String, EPatternsType> x = convert_pattern(pattern);
+	std::pair<String, EPatternsType> x = convertPattern(pattern);
 	String const & path = x.first;
 	OW_ASSERT(path.startsWith("/"));
 	EPatternsType pat_type = x.second;
 	if (pat_type == E_SUBTREE) {
 		OW_ASSERT(path.endsWith("/"));
-		this->add_subtree(path);
+		this->addSubtree(path);
 	}
 	else {
 		bool ext = (pat_type == E_WILDCARD);
-		std::pair<String, String> dir_and_name = split_path(path);
-		this->add_case(dir_and_name.first, dir_and_name.second, ext);
+		std::pair<String, String> dir_and_name = splitPath(path);
+		this->addCase(dir_and_name.first, dir_and_name.second, ext);
 	}
 }
 
@@ -287,7 +287,7 @@ bool PathPatterns::match(String const & path) const
 	{
 		return false;
 	}
-	std::pair<String, String> x = split_path(path);
+	std::pair<String, String> x = splitPath(path);
 	String const & fname = x.second;
 	if (fname == "." || fname == "..")
 	{
@@ -295,8 +295,8 @@ bool PathPatterns::match(String const & path) const
 	}
 	String const & dirname = x.first;
 	// First, see if any subtree pattern is matched
-	for (size_t i = 0; i < subtrees.size(); ++i) {
-		if (dirname.startsWith(subtrees[i])) {
+	for (size_t i = 0; i < m_subtrees.size(); ++i) {
+		if (dirname.startsWith(m_subtrees[i])) {
 			return true;
 		}
 	}
@@ -319,12 +319,12 @@ bool PathPatterns::match(String const & path) const
 	return false;
 }
 
-void DirPatterns::add_dir(String const & dirpath)
+void DirPatterns::addDir(String const & dirpath)
 {
 	dirs.insert(dirpath);
 }
 
-void DirPatterns::add_subtree(String const & dirpath)
+void DirPatterns::addSubtree(String const & dirpath)
 {
 	subtrees.push_back(dirpath);
 }
@@ -347,10 +347,10 @@ bool DirPatterns::match(String const & dirpath) const
 
 
 void
-ExecArgsPatterns::add_pattern(char const * exec_path_pattern, const Array<ExecArgsPatterns::Arg>& args, String const & ident)
+ExecArgsPatterns::addPattern(char const * exec_path_pattern, const Array<ExecArgsPatterns::Arg>& args, String const & ident)
 {
 	PathPatterns pp;
-	pp.add_pattern(exec_path_pattern);
+	pp.addPattern(exec_path_pattern);
 	m[ident].push_back(std::make_pair(pp, args));
 }
 
@@ -401,7 +401,7 @@ ExecArgsPatterns::match(String const & exec_path, Array<String> const & args, St
 				else if (argsPattern[j].argType == E_PATH_PATTERN_ARG)
 				{
 					PathPatterns tmppp;
-					tmppp.add_pattern(argsPattern[j].arg.c_str());
+					tmppp.addPattern(argsPattern[j].arg.c_str());
 					if (!tmppp.match(argsWithoutExecPath[j]))
 					{
 						argsMatch = false;

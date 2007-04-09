@@ -42,8 +42,8 @@
 #include <vector>
 
 /**
- * @author ???
- * @ Bart Whiteley
+ * @author Kevin Van Horn
+ * @author Bart Whiteley
  */
 
 namespace OW_NAMESPACE
@@ -51,7 +51,7 @@ namespace OW_NAMESPACE
 namespace PrivilegeConfig
 {
 
-String unescape_path(char const * epath);
+String unescapePath(char const * epath);
 
 OW_DECLARE_EXCEPTION(UnescapeString);
 /**
@@ -75,7 +75,7 @@ public:
 	// pattern that matches.
 	// REQUIRE: pattern matches the FILEPATH, FPATHWC, or FPATHRWC tokens.
 	//
-	void add_pattern(char const * pattern);
+	void addPattern(char const * pattern);
 
 	// RETURNS: does path match any of the patterns specified with
 	// add_pattern?
@@ -89,13 +89,13 @@ private:
 	// REQUIRE: dir_path starts and ends with '/'.
 	// REQUIRE: fname_prefix has no '/' characters.
 	//
-	void add_case(
+	void addCase(
 		String const & dir_path, String const & fname_prefix, bool can_extend);
 
 	// Add another matching case: any absolute path that is in the subtree
 	// rooted at dir_path.
 	// REQUIRE: dir_path starts and ends with '/'.
-	void add_subtree(String const & dir_path);
+	void addSubtree(String const & dir_path);
 
 	struct FileNameCase
 	{
@@ -105,15 +105,15 @@ private:
 	typedef std::vector<FileNameCase> dir_cases_t;
 	typedef std::map<String, dir_cases_t> dir_map_t;
 	dir_map_t m_map;
-	std::vector<String> subtrees;
+	std::vector<String> m_subtrees;
 };
 
 class ExecPatterns
 {
 public:
-	void add_pattern(char const * exec_path_pattern, String const & ident)
+	void addPattern(char const * exec_path_pattern, String const & ident)
 	{
-		m[ident].add_pattern(exec_path_pattern);
+		m[ident].addPattern(exec_path_pattern);
 	}
 
 	bool match(String const & exec_path, String const & ident) const
@@ -137,10 +137,10 @@ private:
 class MonitoredUserExecPatterns
 {
 public:
-	void add_pattern(char const * exec_path_pattern, String const & ident, 
+	void addPattern(char const * exec_path_pattern, String const & ident, 
 					 String const & user_name)
 	{
-		m[user_name].add_pattern(exec_path_pattern, ident); 
+		m[user_name].addPattern(exec_path_pattern, ident); 
 	}
 	bool match(String const & exec_path, String const & ident, String const & user_name) const
 	{
@@ -179,7 +179,7 @@ public:
 		EArgType argType;
 	};
 
-	void add_pattern(char const * exec_path_pattern, const Array<Arg>& args, String const & ident);
+	void addPattern(char const * exec_path_pattern, const Array<Arg>& args, String const & ident);
 
 	bool match(String const & exec_path, Array<String> const & args, String const & ident) const;
 
@@ -193,9 +193,9 @@ private:
 class MonitoredUserExecArgsPatterns
 {
 public: 
-	void add_pattern(char const * exec_path_pattern, const Array<ExecArgsPatterns::Arg>& args, String const & ident, String const & user_name)
+	void addPattern(char const * exec_path_pattern, const Array<ExecArgsPatterns::Arg>& args, String const & ident, String const & user_name)
 	{
-		m[user_name].add_pattern(exec_path_pattern, args, ident);
+		m[user_name].addPattern(exec_path_pattern, args, ident);
 	}
 	bool match(String const & exec_path, Array<String> const & args, String const & ident, String const & user_name) const
 	{
@@ -217,8 +217,8 @@ private:
 class DirPatterns
 {
 public:
-	void add_dir(String const & dirpath);
-	void add_subtree(String const & dirpath);
+	void addDir(String const & dirpath);
+	void addSubtree(String const & dirpath);
 	bool match(String const & dirpath) const;
 private:
 	std::set<String> dirs;

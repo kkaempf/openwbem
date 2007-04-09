@@ -53,13 +53,13 @@ using OpenWBEM::PrivilegeConfig::ParseError;
 
 namespace
 {
-	void add_pattern(PathPatterns & pp, char * consumed_c_str);
-	void add_pattern(PathPatterns & pp1, PathPatterns & pp2, char * consumed_c_str);
-	void add_pattern(ExecPatterns & ep, char * consumed_exec_path, char * consumed_ident);
-	void add_pattern(MonitoredUserExecPatterns & ep, char * consumed_exec_path, char * consumed_app_name, char * consumed_user_name);
-	void add_pattern(ExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_ident);
-	void add_pattern(MonitoredUserExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_app_name, char * consumed_user_name);
-	String make_name_or_path(char * consumed_c_str);
+	void addPattern(PathPatterns & pp, char * consumed_c_str);
+	void addPattern(PathPatterns & pp1, PathPatterns & pp2, char * consumed_c_str);
+	void addPattern(ExecPatterns & ep, char * consumed_exec_path, char * consumed_ident);
+	void addPattern(MonitoredUserExecPatterns & ep, char * consumed_exec_path, char * consumed_app_name, char * consumed_user_name);
+	void addPattern(ExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_ident);
+	void addPattern(MonitoredUserExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_app_name, char * consumed_user_name);
+	String makeNameOrPath(char * consumed_c_str);
 	String makeString(char * consumedStr);
 }
 
@@ -156,106 +156,106 @@ config_stmt:
 
 open_r_args:
 	/* empty */
-|	open_r_args path_pattern { add_pattern(p_priv->open_read, $2); }
+|	open_r_args path_pattern { addPattern(p_priv->open_read, $2); }
 ;
 
 open_w_args:
 	/* empty */
-|	open_w_args path_pattern { add_pattern(p_priv->open_write, $2); }
+|	open_w_args path_pattern { addPattern(p_priv->open_write, $2); }
 ;
 
 open_rw_args:
 	/* empty */
 | 	open_rw_args path_pattern {
-		add_pattern(p_priv->open_read, p_priv->open_write, $2);
+		addPattern(p_priv->open_read, p_priv->open_write, $2);
 	}
 ;
 
 open_a_args:
 	/* empty */
-|	open_a_args path_pattern { add_pattern(p_priv->open_append, $2); }
+|	open_a_args path_pattern { addPattern(p_priv->open_append, $2); }
 ;
 
 read_dir_args:
 	/* empty */
-|	read_dir_args DIRPATH { p_priv->read_dir.add_dir(make_name_or_path($2)); }
+|	read_dir_args DIRPATH { p_priv->read_dir.addDir(makeNameOrPath($2)); }
 |	read_dir_args SUBTREE {
-		OpenWBEM::String s = make_name_or_path($2);
-		p_priv->read_dir.add_subtree(s.substring(0, s.lastIndexOf('/')));
+		OpenWBEM::String s = makeNameOrPath($2);
+		p_priv->read_dir.addSubtree(s.substring(0, s.lastIndexOf('/')));
 	}
 ;
 
 read_link_args:
 	/* empty */
-|	read_link_args path_pattern { add_pattern(p_priv->read_link, $2); }
+|	read_link_args path_pattern { addPattern(p_priv->read_link, $2); }
 ;
 
 check_path_args:
 	/* empty */
-|	check_path_args path_pattern { add_pattern(p_priv->check_path, $2); }
+|	check_path_args path_pattern { addPattern(p_priv->check_path, $2); }
 ;
 
 rename_from_args:
 	/* empty */
-|	rename_from_args path_pattern { add_pattern(p_priv->rename_from, $2); }
+|	rename_from_args path_pattern { addPattern(p_priv->rename_from, $2); }
 ;
 
 rename_to_args:
 	/* empty */
-|	rename_to_args path_pattern { add_pattern(p_priv->rename_to, $2); }
+|	rename_to_args path_pattern { addPattern(p_priv->rename_to, $2); }
 ;
 
 rename_from_to_args:
 	/* empty */
 |	rename_from_to_args path_pattern {
-		add_pattern(p_priv->rename_from, p_priv->rename_to, $2);
+		addPattern(p_priv->rename_from, p_priv->rename_to, $2);
 	}
 ;
 
 unlink_args:
 	/* empty */
-|	unlink_args path_pattern { add_pattern(p_priv->unlink, $2); }
+|	unlink_args path_pattern { addPattern(p_priv->unlink, $2); }
 ;
 
 monitored_exec_args:
 	/* empty */
 |	monitored_exec_args exec_path_pattern AT NAME {
-		add_pattern(p_priv->monitored_exec, $2, $4);
+		addPattern(p_priv->monitored_exec, $2, $4);
 	}
 ;
 
 monitored_user_exec_args:
 	/* empty */
 |	monitored_user_exec_args exec_path_pattern AT NAME AT user_name{
-		add_pattern(p_priv->monitored_user_exec, $2, $4, $6);
+		addPattern(p_priv->monitored_user_exec, $2, $4, $6);
 	}
 ;
 
 user_exec_args:
 	/* empty */
 |	user_exec_args exec_path_pattern AT user_name {
-		add_pattern(p_priv->user_exec, $2, $4);
+		addPattern(p_priv->user_exec, $2, $4);
 	}
 ;
 
 monitored_exec_check_args_args:
 	/* empty */
 |	monitored_exec_check_args_args exec_path_pattern exec_arg_list AT NAME {
-		add_pattern(p_priv->monitored_exec_check_args, $2, $3, $5);
+		addPattern(p_priv->monitored_exec_check_args, $2, $3, $5);
 	}
 ;
 
 monitored_user_exec_check_args_args:
 	/* empty */
 |	monitored_user_exec_check_args_args exec_path_pattern exec_arg_list AT NAME AT user_name {
-		add_pattern(p_priv->monitored_user_exec_check_args, $2, $3, $5, $7);
+		addPattern(p_priv->monitored_user_exec_check_args, $2, $3, $5, $7);
 	}
 ;
 
 user_exec_check_args_args:
 	/* empty */
 |	user_exec_check_args_args exec_path_pattern exec_arg_list AT user_name {
-		add_pattern(p_priv->user_exec_check_args, $2, $3, $5);
+		addPattern(p_priv->user_exec_check_args, $2, $3, $5);
 	}
 ;
 
@@ -264,7 +264,7 @@ user_name:
 | NAME     { $$ = $1; }
 ; 
 
-unpriv_user_arg: NAME { p_priv->unpriv_user = make_name_or_path($1); }
+unpriv_user_arg: NAME { p_priv->unpriv_user = makeNameOrPath($1); }
 ;
 
 include_args:
@@ -298,57 +298,57 @@ exec_arg_list:
 
 namespace
 {
-	void add_pattern(PathPatterns & pp, char * consumed_c_str)
+	void addPattern(PathPatterns & pp, char * consumed_c_str)
 	{
 		OpenWBEM::AutoPtrVec<char> s(consumed_c_str);
-		pp.add_pattern(consumed_c_str);
+		pp.addPattern(consumed_c_str);
 	}
 
-	void add_pattern(PathPatterns & pp1, PathPatterns & pp2, char * consumed_c_str)
+	void addPattern(PathPatterns & pp1, PathPatterns & pp2, char * consumed_c_str)
 	{
 		OpenWBEM::AutoPtrVec<char> s(consumed_c_str);
-		pp1.add_pattern(consumed_c_str);
-		pp2.add_pattern(consumed_c_str);
+		pp1.addPattern(consumed_c_str);
+		pp2.addPattern(consumed_c_str);
 	}
 
-	void add_pattern(
+	void addPattern(
 		ExecPatterns & ep, char * consumed_exec_path, char * consumed_ident)
 	{
 		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
-		String ident(make_name_or_path(consumed_ident));
-		ep.add_pattern(consumed_exec_path, ident);
+		String ident(makeNameOrPath(consumed_ident));
+		ep.addPattern(consumed_exec_path, ident);
 	}
 
-	void add_pattern(
+	void addPattern(
 		MonitoredUserExecPatterns & ep, char * consumed_exec_path, char * consumed_app_name, char * consumed_user_name)
 	{
 		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
-		String app_name(make_name_or_path(consumed_app_name));
-		String user_name(make_name_or_path(consumed_user_name));
-		ep.add_pattern(consumed_exec_path, app_name, user_name);
+		String app_name(makeNameOrPath(consumed_app_name));
+		String user_name(makeNameOrPath(consumed_user_name));
+		ep.addPattern(consumed_exec_path, app_name, user_name);
 	}
 
-	void add_pattern(ExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_ident)
+	void addPattern(ExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_ident)
 	{
 		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
-		String ident(make_name_or_path(consumed_ident));
+		String ident(makeNameOrPath(consumed_ident));
 		OpenWBEM::AutoPtr<Array<ExecArgsPatterns::Arg> > args(consumed_args);
-		ep.add_pattern(consumed_exec_path, *consumed_args, ident);
+		ep.addPattern(consumed_exec_path, *consumed_args, ident);
 	}
 
-	void add_pattern(MonitoredUserExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_app_name, char * consumed_user_name)
+	void addPattern(MonitoredUserExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_app_name, char * consumed_user_name)
 	{
 		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
-		String app_name(make_name_or_path(consumed_app_name));
-		String user_name(make_name_or_path(consumed_user_name));
+		String app_name(makeNameOrPath(consumed_app_name));
+		String user_name(makeNameOrPath(consumed_user_name));
 		OpenWBEM::AutoPtr<Array<ExecArgsPatterns::Arg> > args(consumed_args);
-		ep.add_pattern(consumed_exec_path, *consumed_args, app_name, user_name);
+		ep.addPattern(consumed_exec_path, *consumed_args, app_name, user_name);
 	}
 
-	String make_name_or_path(char * consumed_c_str)
+	String makeNameOrPath(char * consumed_c_str)
 	{
 		OpenWBEM::AutoPtrVec<char> s(consumed_c_str);
-		return OpenWBEM::PrivilegeConfig::unescape_path(consumed_c_str);
+		return OpenWBEM::PrivilegeConfig::unescapePath(consumed_c_str);
 	}
 
 	String makeString(char * consumedStr)
