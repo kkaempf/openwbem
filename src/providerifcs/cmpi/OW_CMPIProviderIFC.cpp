@@ -837,11 +837,11 @@ CMPIProviderIFC::doUnloadProviders(
 
 			if (unload)
 			{
+				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format(
+					"Unloading CMPI Provider %1", it->first));
 				it->second.setNull();
-			}
-			else
-			{
-				it->second->lastAccessTime.setToCurrent(); 
+				m_provs.erase(it++);
+				continue;
 			}
 		}
 		it++;
