@@ -35,6 +35,7 @@
 #include "OW_config.h"
 #ifdef OW_THREADS_RUN_AS_USER
 
+#include "OW_Exception.hpp"
 #include "OW_ProviderProxies.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_CIMValue.hpp"
@@ -63,6 +64,8 @@
 	#ifdef OW_HAVE_SYS_TYPES_H
 	#include <sys/types.h>
 	#endif
+	#include <sys/fsuid.h>
+	#include <grp.h>
 #endif
 
 namespace OW_NAMESPACE
@@ -83,6 +86,81 @@ using namespace WBEMFlags;
 namespace
 {
 #if defined (OW_GNU_LINUX)
+	OW_DECLARE_EXCEPTION(UIDManager);
+	OW_DEFINE_EXCEPTION(UIDManager);
+	OW_DECLARE_EXCEPTION(RUIDManager);
+	OW_DEFINE_EXCEPTION(RUIDManager);
+
+	long g_maxGroups = ::sysconf(_SC_NGROUPS_MAX);
+	size_t g_maxBufSize = ::sysconf(_SC_GETPW_R_SIZE_MAX);
+
+	bool SetPrivileges(uid_t uid)
+	{
+		bool			error = false;
+		struct passwd	*pwEnt = NULL;
+		struct passwd	*pwEnt2 = NULL;
+		char			*buf = NULL;
+		size_t			numberGroups = g_maxGroups;
+		gid_t			*tempGids = NULL;
+
+		pwEnt = (struct passwd*)::malloc(sizeof(struct passwd));
+		buf = (char*)::malloc(g_maxBufSize);
+		tempGids = (gid_t*)::malloc(sizeof(gid_t)*g_maxGroups);
+
+		if (NULL == pwEnt || NULL == buf || NULL == tempGids)
+		{
+			error = true;
+			goto out;
+		}
+
+		if (0 != ::getpwuid_r(uid, pwEnt, buf, g_maxBufSize, &pwEnt2)
+			|| pwEnt2 != pwEnt)
+		{
+			error = true;
+			goto out;
+		}
+
+		if (-1 == ::getgrouplist(
+			pwEnt->pw_name,
+			pwEnt->pw_gid,
+			tempGids,
+			(int*)&numberGroups))
+		{
+			error = true;
+			goto out;
+		}
+
+		if (-1 == ::setgroups(numberGroups, tempGids))
+		{
+			error = true;
+			goto out;
+		}
+
+		// The gid might not always be different than the previous.
+		::setfsgid(pwEnt->pw_gid);
+
+		// The uid should always be different than the previous.
+		if (uid == ::setfsuid(uid))
+		{
+			error = true;
+			goto out;
+		}
+out:
+		if (NULL != pwEnt)
+		{
+			::free(pwEnt);
+		}
+		if (NULL != buf)
+		{
+			::free(buf);
+		}
+		if (NULL != tempGids)
+		{
+			::free(tempGids);
+		}
+		return(!error);
+	}
+
 	class UIDManager
 	{
 	public:
@@ -92,7 +170,10 @@ namespace
 		{
 			if (m_uidsDiffer)
 			{
-				::seteuid(tempUid);
+				if (!SetPrivileges(tempUid))
+				{
+					OW_THROW(UIDManagerException, "Failed to set privileges.");
+				}
 			}
 		}
 
@@ -100,7 +181,10 @@ namespace
 		{
 			if (m_uidsDiffer)
 			{
-				::setuid(m_resetUid);
+				if (!SetPrivileges(m_resetUid))
+				{
+				    OW_THROW(UIDManagerException, "Failed to restore privileges.");
+				}
 			}
 		}
 		
@@ -118,7 +202,10 @@ namespace
 		{
 			if (m_uidsDiffer)
 			{
-				::setuid(tempUid);
+				if (!SetPrivileges(tempUid))
+				{
+					OW_THROW(RUIDManagerException, "Failed to set privileges.");
+				}
 			}
 		}
 
@@ -126,7 +213,10 @@ namespace
 		{
 			if (m_uidsDiffer)
 			{
-				::seteuid(m_resetUid);
+				if (!SetPrivileges(m_resetUid))
+				{
+					OW_THROW(RUIDManagerException, "Failed to restore privileges.");
+				}
 			}
 		}
 		
