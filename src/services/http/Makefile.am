@@ -95,8 +95,8 @@ $(BINLINKAPPENDFLAGS)
 # Putting them here instead of spreading them out among the two conditional
 # tests makes it easier to see what is going on.
 if USE_RPATH
-vas2_rpath_flag=$(RPATH_LINK_FLAG_WITH_PATH):$(VAS2_RPATH)
-vas3_rpath_flag=$(RPATH_LINK_FLAG_WITH_PATH):$(VAS3_RPATH)
+vas2_rpath_flag=$(RPATH_LINK_FLAG_WITH_PATH)@RPATH_SEPARATOR@$(VAS2_RPATH)
+vas3_rpath_flag=$(RPATH_LINK_FLAG_WITH_PATH)@RPATH_SEPARATOR@$(VAS3_RPATH)
 else
 vas2_rpath_flag=
 vas3_rpath_flag=
@@ -127,8 +127,8 @@ owspnegovashelper_main.cpp
 
 owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_LDFLAGS = \
 -L$(VAS2_LIB_DIR) \
-$(vas3_link_flags) \
--o owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT) 
+$(vas2_link_flags) \
+-o owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT)
 
 owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
@@ -152,7 +152,7 @@ owspnegovashelper_main.cpp
 owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@_LDFLAGS = \
 -L$(VAS3_LIB_DIR) \
 $(vas3_link_flags) \
--o owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT) 
+-o owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT)
 
 owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
