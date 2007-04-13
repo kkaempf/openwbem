@@ -32,7 +32,7 @@ OW_INCLUDE_M4(m4/ssl.m4)                  dnl Macros for ssl
 OW_INCLUDE_M4(m4/pthread.m4)              dnl Macros for threading
 OW_INCLUDE_M4(m4/vas.m4)                  dnl Macros for vas
 OW_INCLUDE_M4(m4/blocxx.m4)               dnl Macros for blocxx
-OW_INCLUDE_M4(m4/dirs.m4)                 dnl Macros for setting default directories
+OW_INCLUDE_M4(m4/dirs.m4)                 dnl Macros for setting default directories and directory name manipulation.
 OW_INCLUDE_M4(m4/replacement.m4)          dnl Macros for creating replacement scripts
 
 # A hack to alter autoconf to always treat all files as obsolete, and rebuild
@@ -128,6 +128,7 @@ DYNAMIC_LINK_FLAGS=
 DYNAMIC_EXPORT_FLAG=
 RPATH_LINK_FLAG=
 RPATH_LINK_FLAG_REQUIRED=0
+RPATH_SEPARATOR=
 RPATH_DEFAULT_PATH=
 REALTIME_LIBS=
 ICONV_LIB=
@@ -157,6 +158,7 @@ case "$target" in
 	AIX_COMMON_CFLAGS="-D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -D_XOPEN_SOURCE=500 -D_ALL_SOURCE=1"
 	AIX_COMMON_LFLAGS="-L/usr/lib/threads"
 	RPATH_DEFAULT_PATH="/usr/lib:"
+	RPATH_SEPARATOR=":"
 
 	# This figures out which compiler is invoked, and sets the default flags based on that.
 	AIX_COMPILER=`basename $CXX`
@@ -294,6 +296,7 @@ case "$target" in
 	PLAT_OPTFLAGS="+O2"
 	PIDFILE_DIR="/var/run"
 	RPATH_LINK_FLAG="-Wl,+s -Wl,+b"
+	RPATH_SEPARATOR=":"
 
 	# These 64-bit flags work with both parisc 2.0 and ia64.
 	CFLAG_ADD_64_BIT="+DD64"
@@ -341,6 +344,7 @@ case "$target" in
 	DYNAMIC_LINK_FLAGS="-Wl,-Bdynamic"
 	DYNAMIC_EXPORT_FLAG=-Wl,--export-dynamic
 	RPATH_LINK_FLAG="-Wl,-rpath="
+	RPATH_SEPARATOR=" ${RPATH_LINK_FLAG}"
 	;;
 *-*-netware*)
 	AC_DEFINE(NETWARE, 1, Target OS is NetWare)
@@ -389,6 +393,7 @@ case "$target" in
 	PLAT_OPTFLAGS="-O3"
 	PIDFILE_DIR="/var/run"
 	RPATH_LINK_FLAG="-R"
+	RPATH_SEPARATOR=":"
 	LIB_EXT="so"
 	REALTIME_LIBS="-lrt"
 	;;
@@ -553,10 +558,20 @@ OW_HELP_STRING(--with-runtime-link-path=PATH,enable the encoding of the specifie
 [
 	if test "x$RPATH_LINK_FLAG" != "x"; then
 		if test "x${with_runtime_link_path}" != "xyes" -a "x${with_runtime_link_path}" != "xno"; then
+			# Remove dots (foo/../bar --> bar) double slashes, etc.
+			OW_CLEANUP_DIRECTORY_NAME(with_runtime_link_path)
+
+			# Change any ':' in the requested path with the rpath separator for this platform.
+			if test "x$RPATH_SEPARATOR" != "x:"; then
+				with_runtime_link_path=`echo "${with_runtime_link_path}" | sed "s/:/$RPATH_SEPARATOR/g"`
+			fi
+
 			if test "x${RPATH_LINK_FLAG_WITH_PATH}" != x; then
-				RPATH_LINK_FLAG_WITH_PATH=${RPATH_LINK_FLAG_WITH_PATH}:${with_runtime_link_path}
+				RPATH_LINK_FLAG_WITH_PATH=${RPATH_LINK_FLAG_WITH_PATH}${RPATH_SEPARATOR}${with_runtime_link_path}
+				AC_MSG_NOTICE([Changing rpath flag to ${RPATH_LINK_FLAG_WITH_PATH}])
 			else
 				RPATH_LINK_FLAG_WITH_PATH=${RPATH_LINK_FLAG}${RPATH_DEFAULT_PATH}${with_runtime_link_path}
+				AC_MSG_NOTICE([Changing rpath flag to "${RPATH_LINK_FLAG_WITH_PATH}"])
 			fi
 		elif test "x${with_runtime_link_path}" = "xyes"; then
 			AC_MSG_WARN(***************************************************************************)
@@ -576,6 +591,7 @@ OW_HELP_STRING(--with-runtime-link-path=PATH,enable the encoding of the specifie
 AM_CONDITIONAL(USE_RPATH, test "x${RPATH_LINK_FLAG_REQUIRED}" = "x1" -a "x${RPATH_LINK_FLAG}" != "x")
 AC_SUBST(RPATH_LINK_FLAG)
 AC_SUBST(RPATH_LINK_FLAG_WITH_PATH)
+AC_SUBST(RPATH_SEPARATOR)
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -1369,7 +1385,7 @@ if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
 	# If the user supplied one, use it and add our libdir, otherwise use the
 	# default path as specified somewhere above with our libdir.
 	if test "x${RPATH_LINK_FLAG_WITH_PATH}" != x; then
-		LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG_WITH_PATH}:${libdir}"
+		LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG_WITH_PATH}${RPATH_SEPARATOR}${libdir}"
 	else
 		# Note: Our $libdir may appear in here more than once if the default path
 		# has it ordered in such a way.  This is fine and won't break anything.
