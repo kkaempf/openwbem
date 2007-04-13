@@ -1,3 +1,28 @@
+dnl @synopsis OW_CLEANUP_DIRECTORY_NAME(output_variable, [input])
+dnl @author Kevin Harris
+dnl
+dnl Example:
+dnl foo="///foo/bar/../baz/quux/../ick"
+dnl OW_CLEANUP_DIRECTORY_NAME(cleaned,$foo)
+dnl
+dnl The variable "cleaned" would then contain "/foo/baz/ick"
+AC_DEFUN([OW_CLEANUP_DIRECTORY_NAME],
+	[
+		if test "x$2" != "x"; then
+			$1="$2"
+		fi
+		cdn_dir_name="`echo \"[$]$1\" | sed -e 's~/\./~/~g' -e 's~//~/~g'`"
+		cdn_temp_dir=""
+		until test "${cdn_temp_dir}" = "${cdn_dir_name}"; do
+			cdn_temp_dir="${cdn_dir_name}"
+			cdn_dir_name="`echo \"${cdn_dir_name}\" | sed -e 's~/[[^/]]*/\.\.~~'`"
+		done
+		$1="${cdn_dir_name}"
+		unset cdn_dir_name
+		unset cdn_temp_dir
+	]
+)
+
 AC_DEFUN(
 	[OW_SET_DEFAULT_DIRS],
 	[
