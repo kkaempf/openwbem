@@ -45,6 +45,7 @@
 #include "OW_Exception.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_IOException.hpp"
+#include "OW_Secure.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -203,7 +204,7 @@ SPNEGOAuthentication::checkProcess()
 	helperArgv.push_back("server");
 	m_spnegoHelper = privman.userSpawn(helperPath,
 	                                   helperArgv,
-	                                   Exec::currentEnvironment,
+	                                   Secure::minimalEnvironment(),
 	                                   "root");
 
 	if (!m_spnegoHelper->processStatus().running())

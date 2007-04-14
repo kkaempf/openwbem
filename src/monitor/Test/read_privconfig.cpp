@@ -49,7 +49,7 @@ void print_matches(
 
 template <typename ContainerI, typename ContainerP>
 void print_exec_matches(
-	char const * name, ExecPatterns const & ep, ContainerI const & idents,
+	char const * name, ExecPatterns const & ep, ContainerI const & idents, const StringArray& envVars,
 	ContainerP const & paths
 )
 {
@@ -61,7 +61,7 @@ void print_exec_matches(
 		typename ContainerI::const_iterator j, jend = idents.end();
 		for (j = idents.begin(); j != jend; ++j)
 		{
-			cout << (ep.match(*i, *j) ? '1' : '.');
+			cout << (ep.match(*i, envVars, *j) ? '1' : '.');
 		}
 		cout << '\n';
 	}
@@ -70,7 +70,7 @@ void print_exec_matches(
 template <typename ContainerI, typename ContainerP>
 void print_mon_exec_matches(
 	char const * name, MonitoredUserExecPatterns const & ep, 
-	ContainerI const & idents, ContainerP const & paths
+	ContainerI const & idents, const StringArray& envVars, ContainerP const & paths
 )
 {
 	cout << name << ":\n";
@@ -85,7 +85,7 @@ void print_mon_exec_matches(
 			typename ContainerI::const_iterator j, jend = idents.end();
 			for (j = idents.begin(); j != jend; ++j)
 			{
-				cout << (ep.match(*i, *j, *k) ? '1' : '.');
+				cout << (ep.match(*i, envVars, *j, *k) ? '1' : '.');
 			}
 			cout << '\n';
 		}
@@ -94,7 +94,7 @@ void print_mon_exec_matches(
 
 template <typename ContainerI, typename ContainerP>
 void print_exec_args_matches(
-	char const * name, ExecArgsPatterns const & ep, ContainerI const & idents,
+	char const * name, ExecArgsPatterns const & ep, const StringArray& envVars, ContainerI const & idents,
 	ContainerP const & paths)
 {
 	cout << name << ":\n";
@@ -106,7 +106,7 @@ void print_exec_args_matches(
 		{
 			StringArray tok(paths[i].tokenize(" "));
 			StringArray args(tok.begin(), tok.end());
-			cout << (ep.match(tok[0], args, *j) ? '1' : '.');
+			cout << (ep.match(tok[0], args, envVars, *j) ? '1' : '.');
 		}
 		cout << '\n';
 	}
@@ -114,7 +114,7 @@ void print_exec_args_matches(
 
 template <typename ContainerI, typename ContainerP>
 void print_mon_exec_args_matches(
-	char const * name, MonitoredUserExecArgsPatterns const & ep, 
+	char const * name, MonitoredUserExecArgsPatterns const & ep, const StringArray& envVars,
 	ContainerI const & idents, ContainerP const & paths)
 {
 	cout << name << ":\n";
@@ -130,7 +130,7 @@ void print_mon_exec_args_matches(
 			{
 				StringArray tok(paths[i].tokenize(" "));
 				StringArray args(tok.begin(), tok.end());
-				cout << (ep.match(tok[0], args, *j, *k) ? '1' : '.');
+				cout << (ep.match(tok[0], args, envVars, *j, *k) ? '1' : '.');
 			}
 			cout << '\n';
 		}
@@ -184,6 +184,8 @@ int main_(int argc, char * * argv)
 		idents.push_back(argv[i]);
 	}
 
+	StringArray envVars; // TODO: fill this in somehow
+
 	TestIncludeHandler tih;
 	openwbem_privconfig_Lexer lex(is_cfg, tih, argv[1]);
 	OpenWBEM::PrivilegeConfig::Privileges priv;
@@ -199,10 +201,10 @@ int main_(int argc, char * * argv)
 	{
 		cout << "unpriv_user: " << priv.unpriv_user << ";\n";
 		print_matches("read_dir", priv.read_dir, path_vec);
-		print_exec_matches("monitored_exec", priv.monitored_exec, idents, path_vec);
-		print_exec_matches("user_exec", priv.user_exec, idents, path_vec);
-		print_exec_args_matches("monitored_exec_check_args", priv.monitored_exec_check_args, idents, exec_vec);
-		print_exec_args_matches("user_exec_check_args", priv.user_exec_check_args, idents, exec_vec);
+		print_exec_matches("monitored_exec", priv.monitored_exec, idents, envVars, path_vec);
+		print_exec_matches("user_exec", priv.user_exec, idents, envVars, path_vec);
+		print_exec_args_matches("monitored_exec_check_args", priv.monitored_exec_check_args, envVars, idents, exec_vec);
+		print_exec_args_matches("user_exec_check_args", priv.user_exec_check_args, envVars, idents, exec_vec);
 		print_matches("open_read", priv.open_read, path_vec);
 		print_matches("open_write", priv.open_write, path_vec);
 		print_matches("open_append", priv.open_append, path_vec);
@@ -210,8 +212,8 @@ int main_(int argc, char * * argv)
 		print_matches("rename_from", priv.rename_from, path_vec);
 		print_matches("rename_to", priv.rename_to, path_vec);
 		print_matches("unlink", priv.unlink, path_vec);
-		print_mon_exec_matches("monitored_user_exec", priv.monitored_user_exec, idents, path_vec);
-		print_mon_exec_args_matches("monitored_user_exec_check_args", priv.monitored_user_exec_check_args, idents, exec_vec);
+		print_mon_exec_matches("monitored_user_exec", priv.monitored_user_exec, idents, envVars, path_vec);
+		print_mon_exec_args_matches("monitored_user_exec_check_args", priv.monitored_user_exec_check_args, envVars, idents, exec_vec);
 	}
 	return 0;
 }

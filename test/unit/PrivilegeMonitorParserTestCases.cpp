@@ -264,6 +264,7 @@ unpriv_user { %1%1%1 }",
 
 void PrivilegeMonitorParserTestCases::parseValidUserExec()
 {
+	StringArray emptyEnv;
 	// Test the user_exec section...
 	{
 		String cmd1("/bin/foo");
@@ -286,16 +287,16 @@ user_exec                                       \n\
 		OpenWBEM::PrivilegeConfig::ParseError error;
 		unitAssert(parsePrivilegeString(input, privileges, error));
 		// All of the commands should match when executed as the correct user.
-		unitAssert(privileges.user_exec.match(cmd1, user));
-		unitAssert(privileges.user_exec.match(cmd2, user));
-		unitAssert(privileges.user_exec.match(cmd3, user));
-		unitAssert(!privileges.user_exec.match(bad_cmd, user));
+		unitAssert(privileges.user_exec.match(cmd1, emptyEnv, user));
+		unitAssert(privileges.user_exec.match(cmd2, emptyEnv, user));
+		unitAssert(privileges.user_exec.match(cmd3, emptyEnv, user));
+		unitAssert(!privileges.user_exec.match(bad_cmd, emptyEnv, user));
 
 		// All of the commands should fail to match when executed as an invalid (unspecified) user.
-		unitAssert(!privileges.user_exec.match(cmd1, bad_user));
-		unitAssert(!privileges.user_exec.match(cmd2, bad_user));
-		unitAssert(!privileges.user_exec.match(cmd3, bad_user));
-		unitAssert(!privileges.user_exec.match(bad_cmd, bad_user));
+		unitAssert(!privileges.user_exec.match(cmd1, emptyEnv, bad_user));
+		unitAssert(!privileges.user_exec.match(cmd2, emptyEnv, bad_user));
+		unitAssert(!privileges.user_exec.match(cmd3, emptyEnv, bad_user));
+		unitAssert(!privileges.user_exec.match(bad_cmd, emptyEnv, bad_user));
 	}
 	// Test the user_exec_check_args section
 	{
@@ -334,9 +335,9 @@ user_exec_check_args	                        \n\
 		unitAssert(parsePrivilegeString(input, privileges, error));
 
 #define CHECKCOMMAND(cmd, user)														\
-		privileges.user_exec_check_args.match(getExecutable(cmd), getArguments(cmd), user)
+		privileges.user_exec_check_args.match(getExecutable(cmd), getArguments(cmd), emptyEnv, user)
 #define CHECKCOMMAND2(cmd, args, user)														\
-		privileges.user_exec_check_args.match(cmd, getArguments(args), user)
+		privileges.user_exec_check_args.match(cmd, getArguments(args), emptyEnv, user)
 
 		// All of the commands should match when executed as the correct user.
 		unitAssert(CHECKCOMMAND(cmd1, user));
@@ -379,11 +380,13 @@ user_exec_check_args	                        \n\
 
 void PrivilegeMonitorParserTestCases::parseValidMonitoredUserExec()
 {
-	// Test the user_exec section...
+	StringArray emptyEnv;
+	// Test the monitored_user_exec section...
 	{
 		String cmd1("/bin/foo");
 		String cmd2("/bin/bar");
 		String cmd3("/bin/baz");
+		String cmd4("/bin/cmd4");
 		String bad_cmd("/bin/quux");
 		String user("id");
 		String ident("ego");
@@ -395,23 +398,28 @@ monitored_user_exec                             \n\
   %4 @ %1 @ %2                                  \n\
   %5 @ %1 @ %2                                  \n\
   # Note the lack of /bin/quux                  \n\
+  %6 @ %1 @ %2 allowed_environment_variables { }\n\
+  %6 @ %1 @ %2 allowed_environment_variables { FOO }\n\
+  %6 @ %1 @ %2 allowed_environment_variables { FOO = \"BAR\"}\n\
+  %6 @ %1 @ %2 allowed_environment_variables { FOO = /a/dir }\n\
+  %6 @ %1 @ %2 allowed_environment_variables { FOO FOO = \"BAR\" FOO = /a/dir }\n\
 }                                                 \
 ",
-				user, ident, cmd1, cmd2, cmd3));
+				user, ident, cmd1, cmd2, cmd3, cmd4));
 		OpenWBEM::PrivilegeConfig::Privileges privileges;
 		OpenWBEM::PrivilegeConfig::ParseError error;
 		unitAssert(parsePrivilegeString(input, privileges, error));
 		// All of the commands should match when executed as the correct user.
-		unitAssert(privileges.monitored_user_exec.match(cmd1, user, ident));
-		unitAssert(privileges.monitored_user_exec.match(cmd2, user, ident));
-		unitAssert(privileges.monitored_user_exec.match(cmd3, user, ident));
-		unitAssert(!privileges.monitored_user_exec.match(bad_cmd, user, ident));
+		unitAssert(privileges.monitored_user_exec.match(cmd1, emptyEnv, user, ident));
+		unitAssert(privileges.monitored_user_exec.match(cmd2, emptyEnv, user, ident));
+		unitAssert(privileges.monitored_user_exec.match(cmd3, emptyEnv, user, ident));
+		unitAssert(!privileges.monitored_user_exec.match(bad_cmd, emptyEnv, user, ident));
 
 		// All of the commands should fail to match when executed as an invalid (unspecified) user.
-		unitAssert(!privileges.monitored_user_exec.match(cmd1, bad_user, ident));
-		unitAssert(!privileges.monitored_user_exec.match(cmd2, bad_user, ident));
-		unitAssert(!privileges.monitored_user_exec.match(cmd3, bad_user, ident));
-		unitAssert(!privileges.monitored_user_exec.match(bad_cmd, bad_user, ident));
+		unitAssert(!privileges.monitored_user_exec.match(cmd1, emptyEnv, bad_user, ident));
+		unitAssert(!privileges.monitored_user_exec.match(cmd2, emptyEnv, bad_user, ident));
+		unitAssert(!privileges.monitored_user_exec.match(cmd3, emptyEnv, bad_user, ident));
+		unitAssert(!privileges.monitored_user_exec.match(bad_cmd, emptyEnv, bad_user, ident));
 	}
 	// Test the monitored_user_exec_check_args section
 	{
@@ -447,7 +455,7 @@ monitored_user_exec_check_args	               \n\
 		unitAssert(parsePrivilegeString(input, privileges, error));
 
 #define CHECKCOMMAND(cmd, user)														\
-		privileges.monitored_user_exec_check_args.match(getExecutable(cmd), getArguments(cmd), user, ident)
+		privileges.monitored_user_exec_check_args.match(getExecutable(cmd), getArguments(cmd), emptyEnv, user, ident)
 
 		// All of the commands should match when executed as the correct user.
 		unitAssert(CHECKCOMMAND(cmd1, user));
@@ -484,6 +492,7 @@ monitored_user_exec_check_args	               \n\
 
 void PrivilegeMonitorParserTestCases::parseValidMonitoredExec()
 {
+	StringArray emptyEnv;
 	// Test the user_exec section...
 	{
 		String cmd1("/bin/foo");
@@ -507,16 +516,16 @@ monitored_exec                                  \n\
 		OpenWBEM::PrivilegeConfig::ParseError error;
 		unitAssert(parsePrivilegeString(input, privileges, error));
 		// All of the commands should match when executed as the correct user.
-		unitAssert(privileges.monitored_exec.match(cmd1, user));
-		unitAssert(privileges.monitored_exec.match(cmd2, user));
-		unitAssert(privileges.monitored_exec.match(cmd3, user));
-		unitAssert(!privileges.monitored_exec.match(bad_cmd, user));
+		unitAssert(privileges.monitored_exec.match(cmd1, emptyEnv, user));
+		unitAssert(privileges.monitored_exec.match(cmd2, emptyEnv, user));
+		unitAssert(privileges.monitored_exec.match(cmd3, emptyEnv, user));
+		unitAssert(!privileges.monitored_exec.match(bad_cmd, emptyEnv, user));
 
 		// All of the commands should fail to match when executed as an invalid (unspecified) user.
-		unitAssert(!privileges.monitored_exec.match(cmd1, bad_user));
-		unitAssert(!privileges.monitored_exec.match(cmd2, bad_user));
-		unitAssert(!privileges.monitored_exec.match(cmd3, bad_user));
-		unitAssert(!privileges.monitored_exec.match(bad_cmd, bad_user));
+		unitAssert(!privileges.monitored_exec.match(cmd1, emptyEnv, bad_user));
+		unitAssert(!privileges.monitored_exec.match(cmd2, emptyEnv, bad_user));
+		unitAssert(!privileges.monitored_exec.match(cmd3, emptyEnv, bad_user));
+		unitAssert(!privileges.monitored_exec.match(bad_cmd, emptyEnv, bad_user));
 	}
 	// Test the monitored_exec_check_args section
 	{
@@ -553,7 +562,7 @@ monitored_exec_check_args	                     \n\
 		unitAssert(parsePrivilegeString(input, privileges, error));
 
 #define CHECKCOMMAND(cmd, user)														\
-		privileges.monitored_exec_check_args.match(getExecutable(cmd), getArguments(cmd), user)
+		privileges.monitored_exec_check_args.match(getExecutable(cmd), getArguments(cmd), emptyEnv, user)
 
 		// All of the commands should match when executed as the correct user.
 		unitAssert(CHECKCOMMAND(cmd1, user));
@@ -590,6 +599,7 @@ monitored_exec_check_args	                     \n\
 void
 PrivilegeMonitorParserTestCases::parseInclude()
 {
+	StringArray emptyEnv;
 	{	// include at the end
 		String cmd1("/bin/foo");
 		String cmd2("/bin/bar");
@@ -612,8 +622,8 @@ user_exec                                       \n\
 		OpenWBEM::PrivilegeConfig::Privileges privileges;
 		OpenWBEM::PrivilegeConfig::ParseError error;
 		unitAssert(parsePrivilegeStringInclude(input1, input2, privileges, error));
-		unitAssert(privileges.user_exec.match(cmd1, user));
-		unitAssert(privileges.user_exec.match(cmd2, user));
+		unitAssert(privileges.user_exec.match(cmd1, emptyEnv, user));
+		unitAssert(privileges.user_exec.match(cmd2, emptyEnv, user));
 	}
 
 	{	// include at the beginning
@@ -638,8 +648,8 @@ user_exec                                       \n\
 		OpenWBEM::PrivilegeConfig::Privileges privileges;
 		OpenWBEM::PrivilegeConfig::ParseError error;
 		unitAssert(parsePrivilegeStringInclude(input1, input2, privileges, error));
-		unitAssert(privileges.user_exec.match(cmd1, user));
-		unitAssert(privileges.user_exec.match(cmd2, user));
+		unitAssert(privileges.user_exec.match(cmd1, emptyEnv, user));
+		unitAssert(privileges.user_exec.match(cmd2, emptyEnv, user));
 	}
 
 	{	// include in the middle
@@ -669,9 +679,9 @@ user_exec                                       \n\
 		OpenWBEM::PrivilegeConfig::Privileges privileges;
 		OpenWBEM::PrivilegeConfig::ParseError error;
 		unitAssert(parsePrivilegeStringInclude(input1, input2, privileges, error));
-		unitAssert(privileges.user_exec.match(cmd1, user));
-		unitAssert(privileges.user_exec.match(cmd2, user));
-		unitAssert(privileges.user_exec.match(cmd3, user));
+		unitAssert(privileges.user_exec.match(cmd1, emptyEnv, user));
+		unitAssert(privileges.user_exec.match(cmd2, emptyEnv, user));
+		unitAssert(privileges.user_exec.match(cmd3, emptyEnv, user));
 	}
 
 	{	// recursive include
@@ -743,11 +753,72 @@ user_exec                                       \n\
 		includes.push_back(input4);
 		TestIncludeHandler tih(names, includes);
 		unitAssert(parsePrivilegeStringInclude(input1, tih, privileges, error));
-		unitAssert(privileges.user_exec.match(cmd1, user));
-		unitAssert(privileges.user_exec.match(cmdbar1, user));
-		unitAssert(privileges.user_exec.match(cmdbar2, user));
-		unitAssert(privileges.user_exec.match(cmdbar3, user));
+		unitAssert(privileges.user_exec.match(cmd1, emptyEnv, user));
+		unitAssert(privileges.user_exec.match(cmdbar1, emptyEnv, user));
+		unitAssert(privileges.user_exec.match(cmdbar2, emptyEnv, user));
+		unitAssert(privileges.user_exec.match(cmdbar3, emptyEnv, user));
 	}
+}
+
+void PrivilegeMonitorParserTestCases::testAllowedEnvironmentVariables()
+{
+	StringArray emptyEnv;
+	StringArray badEnv(String("BAD=bad").tokenize());
+	StringArray fooEnv(String("FOO=BAR").tokenize());
+	StringArray fooPathEnv(String("FOO=/a/dir").tokenize());
+	StringArray foo123Env(String("FOO1=FLUMP FOO2=BAR FOO3=/a/dir").tokenize());
+	String cmd1("/bin/foo");
+	StringArray noArgs(cmd1.tokenize());
+	String user("id");
+	String ident("ego");
+	String input(Format("\
+monitored_user_exec\n\
+{\n\
+  %3 @ %1 @ %2 allowed_environment_variables { }\n\
+}\n\
+monitored_exec\n\
+{\n\
+  %3 @ %2 allowed_environment_variables { FOO }\n\
+}\n\
+user_exec\n\
+{\n\
+  %3 @ %1 allowed_environment_variables { FOO = \"BAR\"}\n\
+}\n\
+monitored_exec_check_args\n\
+{\n\
+  %3 @ %1 allowed_environment_variables { FOO = /a/dir }\n\
+}\n\
+monitored_user_exec_check_args\n\
+{\n\
+  %3 @ %2 @ %1 allowed_environment_variables { FOO FOO = \"BAR\" FOO = /a/dir }\n\
+}\n\
+user_exec_check_args\n\
+{\n\
+  %3 @ %1 allowed_environment_variables { FOO1 FOO2 = \"BAR\" FOO3 = /a/dir }\n\
+}\n\
+",
+			user, ident, cmd1));
+	OpenWBEM::PrivilegeConfig::Privileges privileges;
+	OpenWBEM::PrivilegeConfig::ParseError error;
+	unitAssert(parsePrivilegeString(input, privileges, error));
+	unitAssert(privileges.monitored_user_exec.match(cmd1, emptyEnv, user, ident));
+	unitAssert(!privileges.monitored_user_exec.match(cmd1, badEnv, user, ident));
+	unitAssert(privileges.monitored_exec.match(cmd1, emptyEnv, ident));
+	unitAssert(privileges.monitored_exec.match(cmd1, fooEnv, ident));
+	unitAssert(!privileges.monitored_exec.match(cmd1, badEnv, ident));
+	unitAssert(privileges.user_exec.match(cmd1, emptyEnv, user));
+	unitAssert(privileges.user_exec.match(cmd1, fooEnv, user));
+	unitAssert(!privileges.user_exec.match(cmd1, badEnv, user));
+	unitAssert(privileges.monitored_exec_check_args.match(cmd1, noArgs, emptyEnv, user));
+	unitAssert(privileges.monitored_exec_check_args.match(cmd1, noArgs, fooPathEnv, user));
+	unitAssert(!privileges.monitored_exec_check_args.match(cmd1, noArgs, badEnv, user));
+	unitAssert(privileges.monitored_user_exec_check_args.match(cmd1, noArgs, emptyEnv, ident, user));
+	unitAssert(privileges.monitored_user_exec_check_args.match(cmd1, noArgs, fooEnv, ident, user));
+	unitAssert(privileges.monitored_user_exec_check_args.match(cmd1, noArgs, fooPathEnv, ident, user));
+	unitAssert(!privileges.monitored_user_exec_check_args.match(cmd1, noArgs, badEnv, ident, user));
+	unitAssert(privileges.user_exec_check_args.match(cmd1, noArgs, emptyEnv, user));
+	unitAssert(privileges.user_exec_check_args.match(cmd1, noArgs, foo123Env, user));
+	unitAssert(!privileges.user_exec_check_args.match(cmd1, noArgs, badEnv, user));
 }
 
 Test* PrivilegeMonitorParserTestCases::suite()
@@ -761,6 +832,7 @@ Test* PrivilegeMonitorParserTestCases::suite()
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseValidMonitoredExec);
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseValidMonitoredUserExec);
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseInclude);
+	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, testAllowedEnvironmentVariables);
 
 	return testSuite;
 }

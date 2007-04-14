@@ -80,7 +80,7 @@ public:
 	// RETURNS: does path match any of the patterns specified with
 	// add_pattern?
 	//
-	bool match(String const & path) const;
+	bool match(const String& path) const;
 
 private:
 	// Add another matching case: any absolute path that has dir_path as
@@ -90,12 +90,12 @@ private:
 	// REQUIRE: fname_prefix has no '/' characters.
 	//
 	void addCase(
-		String const & dir_path, String const & fname_prefix, bool can_extend);
+		const String& dir_path, const String& fname_prefix, bool can_extend);
 
 	// Add another matching case: any absolute path that is in the subtree
 	// rooted at dir_path.
 	// REQUIRE: dir_path starts and ends with '/'.
-	void addSubtree(String const & dir_path);
+	void addSubtree(const String& dir_path);
 
 	struct FileNameCase
 	{
@@ -108,53 +108,88 @@ private:
 	std::vector<String> m_subtrees;
 };
 
+class EnvironmentVariablePatterns
+{
+public:
+	enum EPatternType
+	{
+		E_PATH_PATTERN,
+		E_LITERAL_PATTERN,
+		E_ANYTHING_PATTERN
+	};
+	void addPattern(const char* name, const char* pattern, EPatternType type);
+	bool match(const StringArray& env) const;
+
+private:
+	struct Pattern
+	{
+		Pattern(const String& pattern, EPatternType type)
+		: m_pattern(pattern)
+		, m_type(type)
+		{
+		}
+
+		String m_pattern;
+		EPatternType m_type;
+	};
+	typedef std::map<String, std::vector<Pattern> > PatternMap_t;
+	PatternMap_t m_patterns;
+
+	bool matchPatterns(const String& var, const String& val) const;
+};
+
 class ExecPatterns
 {
 public:
-	void addPattern(char const * exec_path_pattern, String const & ident)
+	void addPattern(char const * execPathPattern, const EnvironmentVariablePatterns& environmentVariablePatterns, const String& ident)
 	{
-		m[ident].addPattern(exec_path_pattern);
+		m[ident].pathPatterns.addPattern(execPathPattern);
+		m[ident].environmentVariablePatterns = environmentVariablePatterns;
 	}
 
-	bool match(String const & exec_path, String const & ident) const
+	bool match(const String& execPath, const StringArray& envVars, const String& ident) const
 	{
 		map_t::const_iterator it = m.find(ident);
-		bool rv = it != m.end() && it->second.match(exec_path);
+		bool rv = it != m.end() && it->second.pathPatterns.match(execPath) && it->second.environmentVariablePatterns.match(envVars);
 		if (!rv)
 		{
 			it = m.find("*"); 
-			rv = it != m.end() && it->second.match(exec_path);
+			rv = it != m.end() && it->second.pathPatterns.match(execPath) && it->second.environmentVariablePatterns.match(envVars);
 		}
 		return rv; 
 	}
 
 private:
 	// Key is the user (for user_exec) or app name (for monitored exec)
-	typedef std::map<String, PathPatterns> map_t;
+	struct Pattern
+	{
+		PathPatterns pathPatterns;
+		EnvironmentVariablePatterns environmentVariablePatterns;
+	};
+	typedef std::map<String, Pattern> map_t;
 	map_t m;
 };
 
 class MonitoredUserExecPatterns
 {
 public:
-	void addPattern(char const * exec_path_pattern, String const & ident, 
-					 String const & user_name)
+	void addPattern(char const * execPathPattern, const EnvironmentVariablePatterns& envVarPatterns, const String& ident, const String& userName)
 	{
-		m[user_name].addPattern(exec_path_pattern, ident); 
+		m[userName].addPattern(execPathPattern, envVarPatterns, ident); 
 	}
-	bool match(String const & exec_path, String const & ident, String const & user_name) const
+	bool match(const String& execPath, const StringArray& envVars, const String& ident, const String& userName) const
 	{
-		map_t::const_iterator it = m.find(user_name); 
-		bool rv = it != m.end() && it->second.match(exec_path, ident); 
+		map_t::const_iterator it = m.find(userName); 
+		bool rv = it != m.end() && it->second.match(execPath, envVars, ident); 
 		if (!rv)
 		{
 			it = m.find("*"); 
-			rv = it != m.end() && it->second.match(exec_path, ident); 
+			rv = it != m.end() && it->second.match(execPath, envVars, ident); 
 		}
 		return rv; 
 	}
 private: 
-	// Key is the user_name
+	// Key is the userName
 	typedef std::map<String, ExecPatterns> map_t; 
 	map_t m; 
 }; 
@@ -179,37 +214,50 @@ public:
 		EArgType argType;
 	};
 
-	void addPattern(char const * exec_path_pattern, const Array<Arg>& args, String const & ident);
+	void addPattern(char const * execPathPattern, const Array<Arg>& args, const EnvironmentVariablePatterns& envVarPatterns, const String& ident);
 
-	bool match(String const & exec_path, Array<String> const & args, String const & ident) const;
+	bool match(const String& execPath, Array<String> const & args, const StringArray& envVars, const String& ident) const;
 
 private:
+	struct Pattern
+	{
+		Pattern(const PathPatterns& pathPatterns_, const Array<Arg>& args_, const EnvironmentVariablePatterns& environmentVariablePatterns_)
+		: pathPatterns(pathPatterns_)
+		, args(args_)
+		, environmentVariablePatterns(environmentVariablePatterns_)
+		{
+		}
+
+		PathPatterns pathPatterns;
+		Array<Arg> args;
+		EnvironmentVariablePatterns environmentVariablePatterns;
+	};
 	// Key is the user (for user_exec) or app name (for monitored exec)
 	// Value is an Array with one entry for each executable and args
-	typedef std::map<String, Array<std::pair<PathPatterns, Array<Arg> > > > map_t;
+	typedef std::map<String, Array<Pattern> > map_t;
 	map_t m;
 };
 
 class MonitoredUserExecArgsPatterns
 {
 public: 
-	void addPattern(char const * exec_path_pattern, const Array<ExecArgsPatterns::Arg>& args, String const & ident, String const & user_name)
+	void addPattern(char const * execPathPattern, const Array<ExecArgsPatterns::Arg>& args, const EnvironmentVariablePatterns& envVarPatterns, const String& ident, const String& userName)
 	{
-		m[user_name].addPattern(exec_path_pattern, args, ident);
+		m[userName].addPattern(execPathPattern, args, envVarPatterns, ident);
 	}
-	bool match(String const & exec_path, Array<String> const & args, String const & ident, String const & user_name) const
+	bool match(const String& execPath, Array<String> const & args, const StringArray& envVars, const String& ident, const String& userName) const
 	{
-		map_t::const_iterator it = m.find(user_name); 
-		bool rv = it != m.end() && it->second.match(exec_path, args, ident); 
+		map_t::const_iterator it = m.find(userName); 
+		bool rv = it != m.end() && it->second.match(execPath, args, envVars, ident); 
 		if (!rv)
 		{
 			it = m.find("*"); 
-			rv = it != m.end() && it->second.match(exec_path, args, ident); 
+			rv = it != m.end() && it->second.match(execPath, args, envVars, ident); 
 		}
 		return rv; 
 	}
 private: 
-	// Key is user_name
+	// Key is userName
 	typedef std::map<String, ExecArgsPatterns> map_t; 
 	map_t m; 
 }; 
@@ -217,9 +265,9 @@ private:
 class DirPatterns
 {
 public:
-	void addDir(String const & dirpath);
-	void addSubtree(String const & dirpath);
-	bool match(String const & dirpath) const;
+	void addDir(const String& dirpath);
+	void addSubtree(const String& dirpath);
+	bool match(const String& dirpath) const;
 private:
 	std::set<String> dirs;
 	std::vector<String> subtrees;

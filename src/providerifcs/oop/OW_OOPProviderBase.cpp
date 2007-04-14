@@ -285,7 +285,7 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 			}
 			else // the user is different
 			{
-				proc = privMan.userSpawn(m_provInfo.process, argv, Exec::currentEnvironment, procUserName);
+				proc = privMan.userSpawn(m_provInfo.process, argv, Secure::minimalEnvironment(), procUserName);
 			}
 
 		}
@@ -294,7 +294,7 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 		{
 			proc = privMan.monitoredSpawn(
 				m_provInfo.process, m_provInfo.monitorPrivilegesFile, argv,
-				Exec::currentEnvironment
+				Secure::minimalEnvironment()
 			);
 		}
 		break;
@@ -302,7 +302,7 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 		{
 			proc = privMan.monitoredUserSpawn(
 				m_provInfo.process, m_provInfo.monitorPrivilegesFile, argv,
-				Exec::currentEnvironment, procUserName); 
+				Secure::minimalEnvironment(), procUserName); 
 		}
 		break;
 	}

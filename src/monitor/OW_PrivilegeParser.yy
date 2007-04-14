@@ -31,6 +31,7 @@
 /**
 * @author Kevin S. Van Horn
 * @author Bart Whiteley
+* @author Dan Nuffer
 */
 
 #include "OW_config.h"
@@ -43,6 +44,7 @@
 
 using OpenWBEM::PrivilegeConfig::Privileges;
 using OpenWBEM::PrivilegeConfig::PathPatterns;
+using OpenWBEM::PrivilegeConfig::EnvironmentVariablePatterns;
 using OpenWBEM::PrivilegeConfig::ExecPatterns;
 using OpenWBEM::PrivilegeConfig::MonitoredUserExecPatterns;
 using OpenWBEM::PrivilegeConfig::ExecArgsPatterns;
@@ -55,10 +57,14 @@ namespace
 {
 	void addPattern(PathPatterns & pp, char * consumed_c_str);
 	void addPattern(PathPatterns & pp1, PathPatterns & pp2, char * consumed_c_str);
-	void addPattern(ExecPatterns & ep, char * consumed_exec_path, char * consumed_ident);
-	void addPattern(MonitoredUserExecPatterns & ep, char * consumed_exec_path, char * consumed_app_name, char * consumed_user_name);
-	void addPattern(ExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_ident);
-	void addPattern(MonitoredUserExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_app_name, char * consumed_user_name);
+	void addPattern(ExecPatterns & ep, char * consumed_exec_path, char * consumed_ident, EnvironmentVariablePatterns* consumedEnvVars);
+	//void addPattern(ExecPatterns & ep, char * consumed_exec_path, char * consumed_ident);
+	void addPattern(MonitoredUserExecPatterns & ep, char * consumed_exec_path, char * consumed_app_name, char * consumed_user_name, EnvironmentVariablePatterns* consumedEnvVars);
+	//void addPattern(MonitoredUserExecPatterns & ep, char * consumed_exec_path, char * consumed_app_name, char * consumed_user_name);
+	void addPattern(ExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_ident, EnvironmentVariablePatterns* consumedEnvVars);
+	//void addPattern(ExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_ident);
+	void addPattern(MonitoredUserExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_app_name, char * consumed_user_name, EnvironmentVariablePatterns* consumedEnvVars);
+	//void addPattern(MonitoredUserExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_app_name, char * consumed_user_name);
 	String makeNameOrPath(char * consumed_c_str);
 	String makeString(char * consumedStr);
 }
@@ -88,6 +94,7 @@ void openwbem_privconfig_error(
 	char * s;
 	::OpenWBEM::Array< ::OpenWBEM::PrivilegeConfig::ExecArgsPatterns::Arg>* ArgArray;
 	::OpenWBEM::Array< ::OpenWBEM::String>* StringArray;
+	::OpenWBEM::PrivilegeConfig::EnvironmentVariablePatterns* EnvironmentVariablePatterns;
 }
 
 %{
@@ -102,17 +109,19 @@ int yylex(YYSTYPE * lvalp, YYLTYPE * llocp, openwbem_privconfig_Lexer * lexerp);
 %token K_UNLINK K_MONITORED_EXEC K_USER_EXEC K_UNPRIV_USER
 %token K_MONITORED_EXEC_CHECK_ARGS K_USER_EXEC_CHECK_ARGS
 %token K_MONITORED_USER_EXEC_CHECK_ARGS K_MONITORED_USER_EXEC
-%token K_INCLUDE
+%token K_INCLUDE K_ALLOWED_ENVIRONMENT_VARIABLES
 %token AT
 %token SCANNER_ERROR
 
 %type <s>   path_pattern exec_path_pattern user_name
 %type <ArgArray>	exec_arg_list
 %type <StringArray> include_args
+%type <EnvironmentVariablePatterns> env_specification allowed_environment_variables_args
 
 %destructor { delete [] $$; } path_pattern NAME DIRPATH SUBTREE FILEPATH FPATHWC SPLAT
 %destructor { delete $$; } exec_arg_list
 %destructor { delete $$; } include_args
+%destructor { delete $$; } env_specification allowed_environment_variables_args
 
 %%
 
@@ -219,43 +228,43 @@ unlink_args:
 
 monitored_exec_args:
 	/* empty */
-|	monitored_exec_args exec_path_pattern AT NAME {
-		addPattern(p_priv->monitored_exec, $2, $4);
+|	monitored_exec_args exec_path_pattern AT NAME env_specification {
+		addPattern(p_priv->monitored_exec, $2, $4, $5);
 	}
 ;
 
 monitored_user_exec_args:
 	/* empty */
-|	monitored_user_exec_args exec_path_pattern AT NAME AT user_name{
-		addPattern(p_priv->monitored_user_exec, $2, $4, $6);
+|	monitored_user_exec_args exec_path_pattern AT NAME AT user_name env_specification {
+		addPattern(p_priv->monitored_user_exec, $2, $4, $6, $7);
 	}
 ;
 
 user_exec_args:
 	/* empty */
-|	user_exec_args exec_path_pattern AT user_name {
-		addPattern(p_priv->user_exec, $2, $4);
+|	user_exec_args exec_path_pattern AT user_name env_specification {
+		addPattern(p_priv->user_exec, $2, $4, $5);
 	}
 ;
 
 monitored_exec_check_args_args:
 	/* empty */
-|	monitored_exec_check_args_args exec_path_pattern exec_arg_list AT NAME {
-		addPattern(p_priv->monitored_exec_check_args, $2, $3, $5);
+|	monitored_exec_check_args_args exec_path_pattern exec_arg_list AT NAME env_specification {
+		addPattern(p_priv->monitored_exec_check_args, $2, $3, $5, $6);
 	}
 ;
 
 monitored_user_exec_check_args_args:
 	/* empty */
-|	monitored_user_exec_check_args_args exec_path_pattern exec_arg_list AT NAME AT user_name {
-		addPattern(p_priv->monitored_user_exec_check_args, $2, $3, $5, $7);
+|	monitored_user_exec_check_args_args exec_path_pattern exec_arg_list AT NAME AT user_name env_specification {
+		addPattern(p_priv->monitored_user_exec_check_args, $2, $3, $5, $7, $8);
 	}
 ;
 
 user_exec_check_args_args:
 	/* empty */
-|	user_exec_check_args_args exec_path_pattern exec_arg_list AT user_name {
-		addPattern(p_priv->user_exec_check_args, $2, $3, $5);
+|	user_exec_check_args_args exec_path_pattern exec_arg_list AT user_name env_specification {
+		addPattern(p_priv->user_exec_check_args, $2, $3, $5, $6);
 	}
 ;
 
@@ -294,6 +303,19 @@ exec_arg_list:
 | exec_arg_list SPLAT { $1->push_back(ExecArgsPatterns::Arg($2, ExecArgsPatterns::E_ANYTHING_ARG)); $$ = $1; }
 ;
 
+env_specification:
+	/* empty */ { $$ = 0; }
+|	K_ALLOWED_ENVIRONMENT_VARIABLES '{' allowed_environment_variables_args '}' { $$ = $3; }
+;
+
+allowed_environment_variables_args:
+	/* empty */ { $$ = new EnvironmentVariablePatterns; }
+|	allowed_environment_variables_args NAME                  { $1->addPattern($2, 0, EnvironmentVariablePatterns::E_ANYTHING_PATTERN); $$ = $1; }
+|	allowed_environment_variables_args NAME '=' path_pattern { $1->addPattern($2, $4, EnvironmentVariablePatterns::E_PATH_PATTERN); $$ = $1; }
+|	allowed_environment_variables_args NAME '=' STRING_VALUE { $1->addPattern($2, makeString($4).c_str(), EnvironmentVariablePatterns::E_LITERAL_PATTERN); $$ = $1; }
+;
+
+
 %%
 
 namespace
@@ -312,37 +334,65 @@ namespace
 	}
 
 	void addPattern(
-		ExecPatterns & ep, char * consumed_exec_path, char * consumed_ident)
+		ExecPatterns & ep, char * consumed_exec_path, char * consumed_ident, EnvironmentVariablePatterns* consumedEnvVars)
 	{
 		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
 		String ident(makeNameOrPath(consumed_ident));
-		ep.addPattern(consumed_exec_path, ident);
+		if (consumedEnvVars)
+		{
+			ep.addPattern(consumed_exec_path, *consumedEnvVars, ident);
+		}
+		else
+		{
+			ep.addPattern(consumed_exec_path, EnvironmentVariablePatterns(), ident);
+		}
 	}
 
 	void addPattern(
-		MonitoredUserExecPatterns & ep, char * consumed_exec_path, char * consumed_app_name, char * consumed_user_name)
+		MonitoredUserExecPatterns & ep, char * consumed_exec_path, char * consumed_app_name, char * consumed_user_name, EnvironmentVariablePatterns* consumedEnvVars)
 	{
 		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
 		String app_name(makeNameOrPath(consumed_app_name));
 		String user_name(makeNameOrPath(consumed_user_name));
-		ep.addPattern(consumed_exec_path, app_name, user_name);
+		if (consumedEnvVars)
+		{
+			ep.addPattern(consumed_exec_path, *consumedEnvVars, app_name, user_name);
+		}
+		else
+		{
+			ep.addPattern(consumed_exec_path, EnvironmentVariablePatterns(), app_name, user_name);
+		}
 	}
 
-	void addPattern(ExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_ident)
+	void addPattern(ExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_ident, EnvironmentVariablePatterns* consumedEnvVars)
 	{
 		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
 		String ident(makeNameOrPath(consumed_ident));
 		OpenWBEM::AutoPtr<Array<ExecArgsPatterns::Arg> > args(consumed_args);
-		ep.addPattern(consumed_exec_path, *consumed_args, ident);
+		if (consumedEnvVars)
+		{
+			ep.addPattern(consumed_exec_path, *consumed_args, *consumedEnvVars, ident);
+		}
+		else
+		{
+			ep.addPattern(consumed_exec_path, *consumed_args, EnvironmentVariablePatterns(), ident);
+		}
 	}
 
-	void addPattern(MonitoredUserExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_app_name, char * consumed_user_name)
+	void addPattern(MonitoredUserExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_app_name, char * consumed_user_name, EnvironmentVariablePatterns* consumedEnvVars)
 	{
 		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
 		String app_name(makeNameOrPath(consumed_app_name));
 		String user_name(makeNameOrPath(consumed_user_name));
 		OpenWBEM::AutoPtr<Array<ExecArgsPatterns::Arg> > args(consumed_args);
-		ep.addPattern(consumed_exec_path, *consumed_args, app_name, user_name);
+		if (consumedEnvVars)
+		{
+			ep.addPattern(consumed_exec_path, *consumed_args, *consumedEnvVars, app_name, user_name);
+		}
+		else
+		{
+			ep.addPattern(consumed_exec_path, *consumed_args, EnvironmentVariablePatterns(), app_name, user_name);
+		}
 	}
 
 	String makeNameOrPath(char * consumed_c_str)

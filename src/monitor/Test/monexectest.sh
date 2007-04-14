@@ -62,13 +62,13 @@ cp $cfgpath $config_dir
 
 
 if [ "x$MUE" = "x1" ]; then
-  priv_OK="monitored_user_exec { $base_dir/safebin/montest @ $cfgfname @ owcimomd }"
-  priv_BAD_EXEC="monitored_user_exec { $base_dir/safebin/nonesuch @ $cfgfname @ owcimomd }"
-  priv_BAD_CFG="monitored_user_exec { $base_dir/safebin/montest @ nonesuch @ owcimomd }"
+  priv_OK="monitored_user_exec { $base_dir/safebin/montest @ $cfgfname @ owcimomd allowed_environment_variables { IFS PATH foo OW_PRIVMAN_NO_ABORT LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH } }"
+  priv_BAD_EXEC="monitored_user_exec { $base_dir/safebin/nonesuch @ $cfgfname @ owcimomd allowed_environment_variables { IFS PATH foo OW_PRIVMAN_NO_ABORT LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH } }"
+  priv_BAD_CFG="monitored_user_exec { $base_dir/safebin/montest @ nonesuch @ owcimomd allowed_environment_variables { IFS PATH foo OW_PRIVMAN_NO_ABORT LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH } }"
 else
-  priv_OK="monitored_exec { $base_dir/safebin/montest @ $cfgfname }"
-  priv_BAD_EXEC="monitored_exec { $base_dir/safebin/nonesuch @ $cfgfname }"
-  priv_BAD_CFG="monitored_exec { $base_dir/safebin/montest @ nonesuch }"
+  priv_OK="monitored_exec { $base_dir/safebin/montest @ $cfgfname allowed_environment_variables { IFS PATH foo OW_PRIVMAN_NO_ABORT LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH } }"
+  priv_BAD_EXEC="monitored_exec { $base_dir/safebin/nonesuch @ $cfgfname allowed_environment_variables { IFS PATH foo OW_PRIVMAN_NO_ABORT LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH } }"
+  priv_BAD_CFG="monitored_exec { $base_dir/safebin/montest @ nonesuch allowed_environment_variables { IFS PATH foo OW_PRIVMAN_NO_ABORT LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH } }"
 fi
 
 if [ $MXTPRIV = OK ]; then

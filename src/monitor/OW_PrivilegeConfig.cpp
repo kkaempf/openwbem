@@ -31,6 +31,10 @@
 #include "OW_Assertion.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_Format.hpp"
+#include "OW_Secure.hpp"
+#include "OW_Environ.hpp"
+#include "blocxx/LazyGlobal.hpp"
+#include "blocxx/SortedVectorMap.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -63,7 +67,7 @@ namespace
 
 	// REQUIRE: path contains at least one '/'
 	//
-	std::pair<String, String> splitPath(String const & path)
+	std::pair<String, String> splitPath(const String& path)
 	{
 		std::size_t n = path.lastIndexOf('/');
 		return std::make_pair(path.substring(0, n + 1), path.substring(n + 1));
@@ -251,7 +255,7 @@ PathPatterns::PathPatterns()
 }
 
 void PathPatterns::addCase(
-	String const & dir_path, String const & fname_prefix, bool can_extend)
+	const String& dir_path, const String& fname_prefix, bool can_extend)
 {
 	FileNameCase c;
 	c.prefix = fname_prefix;
@@ -259,7 +263,7 @@ void PathPatterns::addCase(
 	m_map[dir_path].push_back(c);
 }
 
-void PathPatterns::addSubtree(String const & dir_path)
+void PathPatterns::addSubtree(const String& dir_path)
 {
 	m_subtrees.push_back(dir_path);
 }
@@ -267,7 +271,7 @@ void PathPatterns::addSubtree(String const & dir_path)
 void PathPatterns::addPattern(char const * pattern)
 {
 	std::pair<String, EPatternsType> x = convertPattern(pattern);
-	String const & path = x.first;
+	const String& path = x.first;
 	OW_ASSERT(path.startsWith("/"));
 	EPatternsType pat_type = x.second;
 	if (pat_type == E_SUBTREE) {
@@ -281,19 +285,19 @@ void PathPatterns::addPattern(char const * pattern)
 	}
 }
 
-bool PathPatterns::match(String const & path) const
+bool PathPatterns::match(const String& path) const
 {
 	if (!path.startsWith("/") || path.endsWith("/"))
 	{
 		return false;
 	}
 	std::pair<String, String> x = splitPath(path);
-	String const & fname = x.second;
+	const String& fname = x.second;
 	if (fname == "." || fname == "..")
 	{
 		return false;
 	}
-	String const & dirname = x.first;
+	const String& dirname = x.first;
 	// First, see if any subtree pattern is matched
 	for (size_t i = 0; i < m_subtrees.size(); ++i) {
 		if (dirname.startsWith(m_subtrees[i])) {
@@ -319,17 +323,17 @@ bool PathPatterns::match(String const & path) const
 	return false;
 }
 
-void DirPatterns::addDir(String const & dirpath)
+void DirPatterns::addDir(const String& dirpath)
 {
 	dirs.insert(dirpath);
 }
 
-void DirPatterns::addSubtree(String const & dirpath)
+void DirPatterns::addSubtree(const String& dirpath)
 {
 	subtrees.push_back(dirpath);
 }
 
-bool DirPatterns::match(String const & dirpath) const
+bool DirPatterns::match(const String& dirpath) const
 {
 	String dirp = dirpath.endsWith("/") ? dirpath : dirpath + "/";
 	if (dirs.find(dirp) != dirs.end()) {
@@ -347,15 +351,15 @@ bool DirPatterns::match(String const & dirpath) const
 
 
 void
-ExecArgsPatterns::addPattern(char const * exec_path_pattern, const Array<ExecArgsPatterns::Arg>& args, String const & ident)
+ExecArgsPatterns::addPattern(char const * exec_path_pattern, const Array<ExecArgsPatterns::Arg>& args, const EnvironmentVariablePatterns& envVarPatterns, const String& ident)
 {
 	PathPatterns pp;
 	pp.addPattern(exec_path_pattern);
-	m[ident].push_back(std::make_pair(pp, args));
+	m[ident].push_back(Pattern(pp, args, envVarPatterns));
 }
 
 bool 
-ExecArgsPatterns::match(String const & exec_path, Array<String> const & args, String const & ident) const
+ExecArgsPatterns::match(const String& exec_path, Array<String> const & args, const StringArray& envVars, const String& ident) const
 {
 	StringArray users; 
 	users.push_back(ident); 
@@ -371,21 +375,21 @@ ExecArgsPatterns::match(String const & exec_path, Array<String> const & args, St
 
 		for (size_t i = 0; i < it->second.size(); ++i)
 		{
-			if (!it->second[i].first.match(exec_path))
+			if (!it->second[i].pathPatterns.match(exec_path))
 			{
 				continue;
 			}
 
 			// executable matched, now check the args.
 			// argv[0] is special, being the name of the executable
-			if (args[0] != exec_path)
+			if (args.size() > 0 && args[0] != exec_path)
 			{
 				continue;
 			}
 
 			// For the time being, we will treat the args as a string or a path. In the future this will be evaluated as a regular expression
 			StringArray argsWithoutExecPath(args.size() != 0 ? args.begin()+1 : args.begin(), args.end());
-			const Array<Arg>& argsPattern(it->second[i].second);
+			const Array<Arg>& argsPattern(it->second[i].args);
 			if (argsPattern.size() != argsWithoutExecPath.size())
 			{
 				continue;
@@ -420,6 +424,10 @@ ExecArgsPatterns::match(String const & exec_path, Array<String> const & args, St
 
 			if (argsMatch)
 			{
+				if (!it->second[i].environmentVariablePatterns.match(envVars))
+				{
+					continue;
+				}
 				return true;
 			}
 		}
@@ -430,6 +438,171 @@ ExecArgsPatterns::match(String const & exec_path, Array<String> const & args, St
 IncludeHandler::~IncludeHandler()
 {
 }
+
+void
+EnvironmentVariablePatterns::addPattern(const char* name, const char* pattern, EPatternType type)
+{
+	m_patterns[name].push_back(Pattern(pattern, type));
+}
+
+namespace
+{
+	bool parseVarAndVal(const String& varAndVal, String& var, String& val)
+	{
+		size_t idx = varAndVal.indexOf('=');
+		if (idx == String::npos)
+		{
+			return false;
+		}
+		var = varAndVal.substring(0, idx);
+		val = varAndVal.substring(idx + 1);
+		return true;
+	}
+
+	bool
+	matchEnvironment(const SortedVectorMap<String, String>& env, const String& var, const String& val)
+	{
+		SortedVectorMap<String, String>::const_iterator i = env.find(var);
+		if (i != env.end())
+		{
+			if (i->second == val)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	struct CurrentEnvironmentConstructor
+	{
+		static SortedVectorMap<String, String>* create(int dummy)
+		{
+			AutoPtr<SortedVectorMap<String, String> > retval(new SortedVectorMap<String, String>);
+			for (char** p = environ; *p; ++p)
+			{
+				String var;
+				String val;
+				if (parseVarAndVal(*p, var, val))
+				{
+					retval->insert(std::make_pair(var, val));
+				}
+			}
+			return retval.release();
+		}
+	};
+
+	LazyGlobal<SortedVectorMap<String, String>, int, CurrentEnvironmentConstructor> g_currEnvironment = BLOCXX_LAZY_GLOBAL_INIT(0);
+
+	struct SecureMinimalEnvironmentConstructor
+	{
+		static SortedVectorMap<String, String>* create(int dummy)
+		{
+			AutoPtr<SortedVectorMap<String, String> > retval(new SortedVectorMap<String, String>);
+			StringArray minEnv = Secure::minimalEnvironment();
+			for (StringArray::const_iterator i = minEnv.begin(); i != minEnv.end(); ++i)
+			{
+				String var;
+				String val;
+				if (parseVarAndVal(*i, var, val))
+				{
+					retval->insert(std::make_pair(var, val));
+				}
+			}
+			return retval.release();
+		}
+	};
+
+	LazyGlobal<SortedVectorMap<String, String>, int, SecureMinimalEnvironmentConstructor> g_secureMinimalEnvironment = BLOCXX_LAZY_GLOBAL_INIT(0);
+
+	bool
+	matchSecureMinimalEnvironment(const String& var, const String& val)
+	{
+		return matchEnvironment(g_secureMinimalEnvironment, var, val);
+	}
+	
+	bool
+	matchCurrentEnvironment(const String& var, const String& val)
+	{
+		return matchEnvironment(g_currEnvironment, var, val);
+	}
+
+} // end unnamed namespace
+
+bool
+EnvironmentVariablePatterns::match(const StringArray& env) const
+{
+	for (size_t i = 0; i < env.size(); ++i)
+	{
+		const String& curEnvVarAndVal(env[i]);
+		String var;
+		String val;
+		if (!parseVarAndVal(curEnvVarAndVal, var, val))
+		{
+			return false;
+		}
+
+		// first see if the variable is allowed in m_patterns
+		if (matchPatterns(var, val))
+		{
+			continue;
+		}
+
+		if (matchSecureMinimalEnvironment(var, val))
+		{
+			continue;
+		}
+
+		if (matchCurrentEnvironment(var, val))
+		{
+			continue;
+		}
+
+		return false;
+	}
+	return true;
+}
+
+bool
+EnvironmentVariablePatterns::matchPatterns(const String& var, const String& val) const
+{
+	// first see if the variable is allowed in m_patterns
+	PatternMap_t::const_iterator patternIter = m_patterns.find(var);
+	if (patternIter == m_patterns.end())
+	{
+		return false;
+	}
+
+	bool foundMatch = false;
+	for (size_t j = 0; j < patternIter->second.size() && !foundMatch; ++j)
+	{
+		const Pattern& curPattern(patternIter->second[j]);
+		switch (curPattern.m_type)
+		{
+			case E_ANYTHING_PATTERN:
+				foundMatch = true;
+				break;
+			case E_LITERAL_PATTERN:
+				if (val == curPattern.m_pattern)
+				{
+					foundMatch = true;
+				}
+				break;
+			case E_PATH_PATTERN:
+				{
+					PathPatterns tmppp;
+					tmppp.addPattern(curPattern.m_pattern.c_str());
+					if (tmppp.match(val))
+					{
+						foundMatch = true;
+					}
+				}
+				break;
+		}
+	}
+	return foundMatch;
+}
+
+
 
 } // namespace PrivilegeConfig	
 } // namespace OW_NAMESPACE

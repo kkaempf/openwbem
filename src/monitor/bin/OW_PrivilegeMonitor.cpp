@@ -124,12 +124,6 @@ namespace
 	std::size_t const MAX_FORMAT_LENGTH = 1024;
 	std::size_t const MAX_CATEGORIES = 1024;
 
-	char const * val_LIBPATH = std::getenv(OW_ENV_VAR_LIBPATH);
-	bool have_LIBPATH = (val_LIBPATH != 0);
-	String entry_LIBPATH(
-		have_LIBPATH ? String(OW_ENV_VAR_LIBPATH "=") + val_LIBPATH : String()
-	);
-
 	OW_DECLARE_EXCEPTION(Check);
 	OW_DEFINE_EXCEPTION(Check);
 
@@ -952,33 +946,11 @@ namespace
 		return std::find_if(env.begin(), env.end(), bad_env_entry) != env.end();
 	}
 
-	bool env_var_libpath_entry(String const & s)
-	{
-		return s.startsWith(OW_ENV_VAR_LIBPATH "=");
-	}
-
 	bool filter_env(StringArray & env)
 	{
 		if (reserved_env_var_present(env))
 		{
 			return false;
-		}
-		StringArray::iterator i =
-			std::find_if(env.begin(), env.end(), env_var_libpath_entry);
-		if (have_LIBPATH)
-		{
-			if (i == env.end())
-			{
-				env.push_back(entry_LIBPATH);
-			}
-			else
-			{
-				*i = entry_LIBPATH;
-			}
-		}
-		else if (i != env.end())
-		{
-			env.erase(i);
 		}
 		return true;
 	}
@@ -1021,15 +993,15 @@ namespace
 			this->check_valid_path(exec_path, "monitoredSpawn");
 			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredSpawn: app name too long", PrivilegeManager::E_INVALID_SIZE);
 			CHECKARGS(xargv.second, "monitoredSpawn: argv too large", PrivilegeManager::E_INVALID_SIZE);
-			CHECKARGS(priv().monitored_exec.match(exec_path, app_name)
-				|| priv().monitored_exec_check_args.match(exec_path, xargv.first, app_name),
-				Format("monitoredSpawn: insufficient privileges: path=\"%1\" app=\"%2\" args={%3}", exec_path, app_name, simpleUntokenize(xargv.first)).c_str(),
-				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 			CHECKARGS(xenvp.second,	"monitoredSpawn: envp too large", PrivilegeManager::E_INVALID_SIZE);
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
 				"monitoredSpawn: reserved env var set in environment argument",
 				PrivilegeManager::E_INVALID_PARAMETER);
+			CHECKARGS(priv().monitored_exec.match(exec_path, xenvp.first, app_name)
+				|| priv().monitored_exec_check_args.match(exec_path, xargv.first, xenvp.first, app_name),
+				Format("monitoredSpawn: insufficient privileges: path=\"%1\" app=\"%2\" args={%3}, env={%4}", exec_path, app_name, simpleUntokenize(xargv.first), simpleUntokenize(xenvp.first)).c_str(),
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 			CHECK(m_secure_paths.is_secure(exec_path),
 				"monitoredSpawn: exec path " + exec_path + " is insecure",
 				PrivilegeManager::E_INVALID_SECURITY);
@@ -1071,16 +1043,16 @@ namespace
 				PrivilegeManager::E_INVALID_SIZE);
 			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredUserSpawn: app name too long", PrivilegeManager::E_INVALID_SIZE);
 			CHECKARGS(xargv.second, "monitoredUserSpawn: argv too large", PrivilegeManager::E_INVALID_SIZE);
-			CHECKARGS(priv().monitored_user_exec.match(exec_path, app_name, user_name)
-				|| priv().monitored_user_exec_check_args.match(exec_path, xargv.first, app_name, user_name),
-				Format("monitoredUserSpawn: insufficient privileges: user=%1 path=\"%2\" app=\"%3\" args={%4}", user_name, exec_path, app_name, simpleUntokenize(xargv.first)).c_str(),
-				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 			CHECKARGS(xenvp.second, "monitoredUserSpawn: envp too large", PrivilegeManager::E_INVALID_SIZE);
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
 				"monitoredUserSpawn: reserved env var set in environment argument",
 				PrivilegeManager::E_INVALID_PARAMETER
 			);
+			CHECKARGS(priv().monitored_user_exec.match(exec_path, xenvp.first, app_name, user_name)
+				|| priv().monitored_user_exec_check_args.match(exec_path, xargv.first, xenvp.first, app_name, user_name),
+				Format("monitoredUserSpawn: insufficient privileges: user=%1 path=\"%2\" app=\"%3\" args={%4} env={%5}", user_name, exec_path, app_name, simpleUntokenize(xargv.first), simpleUntokenize(xenvp.first)).c_str(),
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 			CHECK(m_secure_paths.is_secure(exec_path),
 				"monitoredUserSpawn: exec path " + exec_path + " is insecure",
 				PrivilegeManager::E_INVALID_SECURITY);
@@ -1232,15 +1204,15 @@ namespace
 				"userSpawn: working dir too long",
 				PrivilegeManager::E_INVALID_SIZE);
 			CHECKARGS(xargv.second, "userSpawn: argv too large", PrivilegeManager::E_INVALID_SIZE);
-			CHECKARGS(priv().user_exec.match(exec_path, user_name)
-				|| priv().user_exec_check_args.match(exec_path, xargv.first, user_name),
-				Format("userSpawn: insufficient privileges: user=%1 path=\"%2\" dir=\"%3\" args={%4}", user_name, exec_path, working_dir, simpleUntokenize(xargv.first)).c_str(),
-				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 			CHECKARGS(xenvp.second, "userSpawn: envp too large", PrivilegeManager::E_INVALID_SIZE);
 			bool reserved_env_var_absent = filter_env(xenvp.first);
 			CHECKARGS(reserved_env_var_absent,
 				"userSpawn: reserved env var set in environment argument",
 				PrivilegeManager::E_INVALID_PARAMETER);
+			CHECKARGS(priv().user_exec.match(exec_path, xenvp.first, user_name)
+				|| priv().user_exec_check_args.match(exec_path, xargv.first, xenvp.first, user_name),
+				Format("userSpawn: insufficient privileges: user=%1 path=\"%2\" dir=\"%3\" args={%4} env={%5}", user_name, exec_path, working_dir, simpleUntokenize(xargv.first), simpleUntokenize(xenvp.first)).c_str(),
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 			CHECK(m_secure_paths.is_secure(exec_path),
 				"userSpawn: exec path " + exec_path + " is insecure",
 				PrivilegeManager::E_INVALID_SECURITY);

@@ -28,16 +28,16 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_PrivilegeMonitorParser_TEST_CASES_HPP_
-#define OW_PrivilegeMonitorParser_TEST_CASES_HPP_
+#ifndef OW_EnvironmentVariablePatterns_TEST_CASES_HPP_
+#define OW_EnvironmentVariablePatterns_TEST_CASES_HPP_
 
 #include "OW_config.h"
 #include "TestCase.hpp"
 
-class PrivilegeMonitorParserTestCases : public TestCase
+class EnvironmentVariablePatternsTestCases : public TestCase
 {
 public:
-	PrivilegeMonitorParserTestCases( const char* name )
+	EnvironmentVariablePatternsTestCases( const char* name )
 		: TestCase( name ) {}
 
 	void setUp();
@@ -46,14 +46,8 @@ public:
 
 private:
 	// test methods
-	void parseEmpty();
-	void parseInvalid();
-	void parseValidSimple();
-	void parseValidUserExec();
-	void parseValidMonitoredUserExec();
-	void parseValidMonitoredExec();
-	void parseInclude();
-	void testAllowedEnvironmentVariables();
+	void testaddPattern();
+	void testmatch();
 };
 
 #endif

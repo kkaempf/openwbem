@@ -75,15 +75,16 @@ sChar [^"\\\n\r]|{escapeSequence}
 
 STRING_VALUE \"{sChar}*\"
 
-
-%x NOKEYWORDS
+%x ARGSECTION ENVVARSECTION
 
 %%
 
-#.*$          	        ;
-<NOKEYWORDS>#.*$        ;
-[[:space:]]+            ;
-<NOKEYWORDS>[[:space:]]+ ;
+#.*$          	            ;
+<ARGSECTION>#.*$            ;
+<ENVVARSECTION>#.*$         ;
+[[:space:]]+                ;
+<ARGSECTION>[[:space:]]+    ;
+<ENVVARSECTION>[[:space:]]+ ;
 
 open_r                  { return K_OPEN_R; }
 open_w                  { return K_OPEN_W; }
@@ -106,20 +107,31 @@ user_exec_check_args               { return K_USER_EXEC_CHECK_ARGS; }
 unpriv_user             { return K_UNPRIV_USER; }
 include			{ return K_INCLUDE; }
 
-\{                      { BEGIN(NOKEYWORDS); return yytext[0]; }
+\{                      { BEGIN(ARGSECTION); return yytext[0]; }
 .                       { return yytext[0]; }
 
-<NOKEYWORDS>\}          { BEGIN(INITIAL); return yytext[0]; }
-<NOKEYWORDS>{AT}			{ return AT; }
-<NOKEYWORDS>{SPLAT}	   { m_has_value = true; return(SPLAT); }
-<NOKEYWORDS>{DIRPATH}   { m_has_value = true; return(DIRPATH); }
-<NOKEYWORDS>{SUBTREE}   { m_has_value = true; return(SUBTREE); }
-<NOKEYWORDS>{NAME}      { m_has_value = true; return(NAME); }
-<NOKEYWORDS>{FILEPATH}  { m_has_value = true; return(FILEPATH); }
-<NOKEYWORDS>{FPATHWC}   { m_has_value = true; return(FPATHWC); }
-<NOKEYWORDS>{STRING_VALUE}   { m_has_value = true; return(STRING_VALUE); }
-<NOKEYWORDS>.           { return yytext[0]; }
+<ARGSECTION>\}          { BEGIN(INITIAL); return yytext[0]; }
+<ARGSECTION>{AT}        { return AT; }
+<ARGSECTION>{SPLAT}     { m_has_value = true; return(SPLAT); }
+<ARGSECTION>allowed_environment_variables { BEGIN(ENVVARSECTION); return (K_ALLOWED_ENVIRONMENT_VARIABLES); }
+<ARGSECTION>{DIRPATH}   { m_has_value = true; return(DIRPATH); }
+<ARGSECTION>{SUBTREE}   { m_has_value = true; return(SUBTREE); }
+<ARGSECTION>{NAME}      { m_has_value = true; return(NAME); }
+<ARGSECTION>{FILEPATH}  { m_has_value = true; return(FILEPATH); }
+<ARGSECTION>{FPATHWC}   { m_has_value = true; return(FPATHWC); }
+<ARGSECTION>{STRING_VALUE}   { m_has_value = true; return(STRING_VALUE); }
+<ARGSECTION>.           { return yytext[0]; }
 
+<ENVVARSECTION>\{		{ return yytext[0]; }
+<ENVVARSECTION>\}		{ BEGIN(ARGSECTION); return yytext[0]; }
+<ENVVARSECTION>=                { return yytext[0]; }
+<ENVVARSECTION>{DIRPATH}        { m_has_value = true; return(DIRPATH); }
+<ENVVARSECTION>{SUBTREE}        { m_has_value = true; return(SUBTREE); }
+<ENVVARSECTION>{NAME}           { m_has_value = true; return(NAME); }
+<ENVVARSECTION>{FILEPATH}       { m_has_value = true; return(FILEPATH); }
+<ENVVARSECTION>{FPATHWC}        { m_has_value = true; return(FPATHWC); }
+<ENVVARSECTION>{STRING_VALUE}   { m_has_value = true; return(STRING_VALUE); }
+<ENVVARSECTION>.                { return yytext[0]; }
 
 <<EOF>> {
 	if (!endInclude())

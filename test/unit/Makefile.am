@@ -49,6 +49,8 @@ runMultiProcessLogger.cpp
 check_PROGRAMS = unitMain
 # Note: Do not change the following line, unless you also update the newtest.sh script
 unitMain_SOURCES = \
+EnvironmentVariablePatternsTestCases.cpp \
+EnvironmentVariablePatternsTestCases.hpp \
 XMLParserCoreTestCases.cpp \
 XMLParserCoreTestCases.hpp \
 PrivilegeConfigTestCases.cpp \
