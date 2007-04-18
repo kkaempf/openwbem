@@ -413,6 +413,7 @@ wait_for_signal:
 						if (pidrv == -1)
 						{
 							perror("parent: waitpid()");
+							PidFile::removePid(pidFile.c_str());
 							exit(1);
 						}
 
@@ -425,6 +426,7 @@ wait_for_signal:
 							}
 							else if (WIFEXITED(status))
 							{
+								PidFile::removePid(pidFile.c_str());
 								exit(WEXITSTATUS(status));
 							}
 							else if (WIFSIGNALED(status))
@@ -444,10 +446,14 @@ wait_for_signal:
 										}
 										else
 										{
+											PidFile::removePid(pidFile.c_str());
 											exit(1);
 										}
 									default:
-										exit(1);
+										{
+											PidFile::removePid(pidFile.c_str());
+											exit(1);
+										}
 								}
 							}
 							else
@@ -470,6 +476,7 @@ wait_for_signal:
 						if (kill(pid, siginfo.si_signo) == -1)
 						{
 							perror("Platform::daemonize(): kill()");
+							PidFile::removePid(pidFile.c_str());
 							exit(1);
 						}
 
@@ -498,6 +505,7 @@ wait_for_signal:
 								if (kill(pid, SIGKILL) == -1)
 								{
 									perror("Platform::daemonize(): kill()");
+									PidFile::removePid(pidFile.c_str());
 									exit(1);
 								}
 								cleanupChild(pid, childStatus);
@@ -523,6 +531,7 @@ wait_for_signal:
 						}
 						else
 						{
+							PidFile::removePid(pidFile.c_str());
 							// if the child exited, return the same value
 							if (WIFEXITED(childStatus))
 							{
@@ -580,7 +589,6 @@ wait_for_signal:
 int
 daemonShutdown(const String& daemonName, const String& pidFile)
 {
-#ifndef WIN32
 #if defined(OW_NETWARE)
 	(void)daemonName;
 	{
@@ -593,9 +601,6 @@ daemonShutdown(const String& daemonName, const String& pidFile)
 	{
 		UnRegisterEventNotification(DownEvent);
 	}
-#else
-	PidFile::removePid(pidFile.c_str());
-#endif
 #endif
 	shutdownSig();
 	return 0;
