@@ -107,8 +107,8 @@ $(PAM_FILES) \
 $(AIX_AUTH_FILES) \
 $(top_builddir)/src/authenticators/simple/libsimpleauthentication.a \
 \
-$(top_builddir)/src/cimom/indication/libowindicationserver.a \
-$(top_builddir)/src/cimom/indication/libowindicationreplayer.a \
+$(top_builddir)/src/cimom/indicationserver/libowindicationserver.a \
+$(top_builddir)/src/cimom/indicationreplayer/libowindicationreplayer.a \
 $(top_builddir)/src/providers/cpp/indication/IndicationRepLayer/libowprovindIndicationRepLayer.a \
 \
 $(CIMXMLLISTENER_FILES) \

@@ -8,7 +8,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-noinst_LIBRARIES = libowindicationserver.a libowindicationreplayer.a
+noinst_LIBRARIES = libowindicationserver.a
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/cimom/common -lowcimomcommon \
@@ -18,7 +18,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb
 
-OW_SHARED_LIBS = libowindicationserver.$(LIB_EXT) libowindicationreplayer.$(LIB_EXT)
+OW_SHARED_LIBS = libowindicationserver.$(LIB_EXT)
 thelibdir = $(libdir)/openwbem
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
@@ -30,10 +30,6 @@ OW_IndicationServerImpl.hpp \
 OW_IndicationServerImpl.cpp \
 OW_LifecycleIndicationPoller.hpp \
 OW_LifecycleIndicationPoller.cpp
-
-libowindicationreplayer_a_SOURCES = \
-OW_IndicationRepLayerImpl.hpp \
-OW_IndicationRepLayerImpl.cpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/cim \

@@ -1441,7 +1441,8 @@ src/cim/Makefile
 src/cimom/Makefile
 src/cimom/common/Makefile
 src/cimom/server/Makefile
-src/cimom/indication/Makefile
+src/cimom/indicationreplayer/Makefile
+src/cimom/indicationserver/Makefile
 src/cimom/embedded/Makefile
 src/cimxmllistener/Makefile
 src/client/Makefile
