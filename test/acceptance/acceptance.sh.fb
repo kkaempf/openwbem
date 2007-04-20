@@ -2225,9 +2225,7 @@ main()
 
 	if [ "z$OWLONGTEST" = "z1" ]; then
 		TestInstalledHeaders $STAGEDIR/$OWINCLUDEDIR/openwbem/
-		TestInstalledHeaders $STAGEDIR/$OWINCLUDEDIR/owbi1/
 		TestInstalledHeadersOneByOne $STAGEDIR/$OWINCLUDEDIR/openwbem/ OW_config.h
-		TestInstalledHeadersOneByOne $STAGEDIR/$OWINCLUDEDIR/owbi1/ OWBI1_config.h
 	fi
 
 	CoreCheck
