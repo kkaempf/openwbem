@@ -36,11 +36,7 @@
 #ifndef OW_SERVICE_ENVIRONMENTIFC_HPP_INCLUDE_GUARD_
 #define OW_SERVICE_ENVIRONMENTIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
-#include "OW_SelectableIFC.hpp"
-#include "OW_SelectableCallbackIFC.hpp"
-#include "OW_SharedLibraryReference.hpp"
 #include "OW_ArrayFwd.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_IfcsFwd.hpp"

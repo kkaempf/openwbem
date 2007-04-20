@@ -56,6 +56,8 @@
 #include "OW_Thread.hpp"
 #include "OW_LocalOperationContext.hpp"
 #include "OW_Timeout.hpp"
+#include "OW_SelectableIFC.hpp"
+#include "OW_SelectableCallbackIFC.hpp"
 
 #include <algorithm> // for std::find
 
