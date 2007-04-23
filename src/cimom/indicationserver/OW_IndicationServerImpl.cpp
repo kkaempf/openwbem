@@ -158,9 +158,9 @@ IndicationServerImpl::startModifySubscription(const String& ns, const CIMInstanc
 	
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::modifyFilter(const String& ns, const CIMInstance& filterInst, const String& userName)
+IndicationServerImpl::modifyFilter(OperationContext& context, const String& ns, const CIMInstance& filterInst, const String& userName)
 {
-	m_indicationServerThread->modifyFilter(ns, filterInst, userName);
+	m_indicationServerThread->modifyFilter(context, ns, filterInst, userName);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1472,7 +1472,7 @@ IndicationServerImplThread::modifySubscription(const String& ns, const CIMInstan
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImplThread::modifyFilter(const String& ns, const CIMInstance& filterInst, const String& userName)
+IndicationServerImplThread::modifyFilter(OperationContext& context, const String& ns, const CIMInstance& filterInst, const String& userName)
 {
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	// Implementation note: This depends on the fact that the indication subscription creation/deletion events are
@@ -1480,7 +1480,6 @@ IndicationServerImplThread::modifyFilter(const String& ns, const CIMInstance& fi
 	// before the creation.
 	try
 	{
-		LocalOperationContext context;
 		CIMOMHandleIFCRef hdl(m_env->getRepositoryCIMOMHandle(context));
 		// get all the CIM_IndicationSubscription instances referencing the filter
 		CIMObjectPath filterPath(ns, filterInst);

@@ -51,7 +51,6 @@
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_LocalOperationContext.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_UserInfo.hpp"
 #include "OW_ResultHandlers.hpp"
