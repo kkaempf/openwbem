@@ -58,7 +58,7 @@ ProviderIFCBaseIFCRef
 ProviderIFCLoaderBase::createProviderIFCFromLib(const String& libname) const
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib loading library %1", libname));
+	OW_LOG_DEBUG3(lgr, Format("ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib loading library %1", libname));
 	SharedLibraryRef sl = m_sll->loadSharedLibrary(libname);
 	ProviderIFCBaseIFC* ptr = 0;
 	if ( sl )
@@ -121,8 +121,7 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 			}
 		}
 	}
-	OW_LOG_DEBUG(lgr, Format("Number of provider interfaces loaded: %1",
-		ifcCount));
+	OW_LOG_DEBUG(lgr, Format("Number of provider interfaces loaded: %1", ifcCount));
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC

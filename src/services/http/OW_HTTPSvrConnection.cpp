@@ -92,6 +92,8 @@ namespace
 	}
 }
 
+#define OW_LOGDEBUG3(x) OW_LOG_DEBUG3(logger, x)
+#define OW_LOGDEBUG2(x) OW_LOG_DEBUG2(logger, x)
 #define OW_LOGDEBUG(x) OW_LOG_DEBUG(logger, x)
 #define OW_LOGERROR(x) OW_LOG_ERROR(logger, x)
 #define OW_LOGCUSTINFO(x) OW_LOG_INFO(logger, x)
@@ -180,7 +182,7 @@ HTTPSvrConnection::run()
 		LocalOperationContext context;
 		while (m_istr.good())
 		{
-			OW_LOGDEBUG("HTTPSvrConnection::run() beginning loop");
+			OW_LOGDEBUG2("HTTPSvrConnection::run() beginning loop");
 
 			//m_isAuthenticated = false;
 			m_errDetails.erase();
@@ -290,19 +292,19 @@ HTTPSvrConnection::run()
 				}
 				catch (std::ios::failure& e)
 				{
-					OW_LOGDEBUG("failed to read input");
+					OW_LOGDEBUG2("failed to read input");
 					return;
 				}
 				// if authorization needs another round, leave the connection open.
 				if (m_resCode == SC_UNAUTHORIZED)
 				{
-					OW_LOGDEBUG("unauthorized, continue");
+					OW_LOGDEBUG2("unauthorized, continue");
 					m_socket.setTimeouts(m_options.timeout);
 					continue;
 				}
 				else
 				{
-					OW_LOGDEBUG("other error, returning");
+					OW_LOGDEBUG2("other error, returning");
 					return;
 				}
 			}
@@ -376,7 +378,7 @@ HTTPSvrConnection::run()
 	catch (std::ios_base::failure& e)
 	{
 		// This happens if the socket is closed, so we don't have to do anything.
-		OW_LOGDEBUG("Caught std::ios_base::failure, client has closed the connection");
+		OW_LOGDEBUG2("Caught std::ios_base::failure, client has closed the connection");
 	}
 #endif
 	catch (std::exception& e)
@@ -597,8 +599,7 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 			clientSpecified);
 		if (setByProvider || clientSpecified)
 		{
-			OW_LOGDEBUG(Format("HTTPSvrConnection::sendPostResponse (chunk)"
-				" setting Content-Language to %1", clang).c_str());
+			OW_LOGDEBUG3(Format("HTTPSvrConnection::sendPostResponse (chunk) setting Content-Language to %1", clang).c_str());
 
 			addTrailer("Content-Language", clang);
 		}

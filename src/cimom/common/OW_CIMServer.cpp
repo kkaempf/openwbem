@@ -512,7 +512,7 @@ namespace
 	protected:
 		virtual void doHandle(const CIMClass &cc)
 		{
-			OW_LOG_DEBUG(m_lgr, Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
+			OW_LOG_DEBUG3(m_lgr, Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
 				cc.getName()));
 			server->_getCIMInstanceNames(ns, cc.getName(), cc, result, context);
 		}
@@ -609,8 +609,7 @@ namespace
 	protected:
 		virtual void doHandle(const CIMClass &cc)
 		{
-			OW_LOG_DEBUG(m_lgr, Format("CIMServer InstEnumerator Enumerating"
-				" derived instance names: %1:%2", ns, cc.getName()));
+			OW_LOG_DEBUG2(m_lgr, Format("CIMServer InstEnumerator Enumerating derived instance names: %1:%2", ns, cc.getName()));
 			server->_getCIMInstances(ns, cc.getName(), theTopClass, cc,
 				result, localOnly, deep, includeQualifiers,
 				includeClassOrigin, propertyList, pwss, pwc, context);
@@ -913,7 +912,7 @@ CIMServer::_getCIMInstances(
 	if (!m_authorizerMgr->allowReadInstance(m_env, ns, className.toString(),
 		propertyList, authorizedPropertyList, context))
 	{
-		OW_LOG_DEBUG(m_logger, Format("Authorizer did NOT authorize reading of %1"
+		OW_LOG_INFO(m_logger, Format("Authorizer did NOT authorize reading of %1"
 			" instances from namespace %2", className, ns));
 		return;
 	}
@@ -923,7 +922,7 @@ CIMServer::_getCIMInstances(
 	if (authorizedPropertyList.size() > 0)
 	{
 		propertyList = &authorizedPropertyList;
-		OW_LOG_DEBUG(m_logger, Format("Authorizer modified property list for reading"
+		OW_LOG_INFO(m_logger, Format("Authorizer modified property list for reading"
 			" of %1 instances from namespace %2", className, ns));
 	}
 
@@ -972,6 +971,7 @@ CIMServer::_getCIMInstances(
 	}
 	else
 	{
+		OW_LOG_DEBUG(m_logger, Format("CIMServer calling repository to enumerate instances: %1:%2", ns, className));
 		HandleLocalOnlyAndDeep handler(*presult, theTopClass, localOnly, deep);
 		// don't pass along deep and localOnly flags, because the handler has
 		// to take care of it.  m_cimRepository can't do it right, because we
@@ -1026,7 +1026,7 @@ CIMServer::getInstance(
 	if (!m_authorizerMgr->allowReadInstance(m_env, ns, className.toString(), propertyList,
 		authorizedPropertyList, context))
 	{
-		OW_LOG_DEBUG(m_logger, Format("Authorizer did NOT authorize reading of %1"
+		OW_LOG_INFO(m_logger, Format("Authorizer did NOT authorize reading of %1"
 			" instances from namespace %2", className, ns));
 
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
@@ -1095,8 +1095,6 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 
 	CIMObjectPath cop(cop_);
 	cop.setNameSpace(ns);
-	OW_LOG_DEBUG(m_logger, Format("CIMServer::deleteInstance.  cop = %1",
-		cop.toString()));
 
 	AuthorizerEnabler ae(m_authorizerMgr, context, true);
 	CIMClass theClass(CIMNULL);
@@ -1126,7 +1124,7 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
 		Authorizer2IFC::E_DELETE, context))
 	{
-		OW_LOG_DEBUG(m_logger, Format("Authorizer did NOT authorize deletion of %1"
+		OW_LOG_INFO(m_logger, Format("Authorizer did NOT authorize deletion of %1"
 			" instances from namespace %2", theClass.getName(), ns));
 
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
@@ -1184,7 +1182,7 @@ CIMServer::createInstance(
 	// Make sure instance jives with class definition
 	CIMInstance lci(ci);
 	lci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS);
-	OW_LOG_DEBUG(m_logger, Format("CIMServer::createInstance.  ns = %1, "
+	OW_LOG_DEBUG3(m_logger, Format("CIMServer::createInstance.  ns = %1, "
 		"instance = %2", ns, lci.toMOF()));
 	CIMObjectPath rval(CIMNULL);
 	InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass, context);
@@ -1208,8 +1206,8 @@ CIMServer::createInstance(
 		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
 		Authorizer2IFC::E_CREATE, context))
 	{
-		OW_LOG_DEBUG(m_logger, Format("Authorizer did NOT authorize creation of %1"
-			" instances	 in namespace %2", lci.getClassName(), ns));
+		OW_LOG_INFO(m_logger, Format("Authorizer did NOT authorize creation of %1"
+			" instances	in namespace %2", lci.getClassName(), ns));
 
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("You are not authorized to create %1 instances in"
@@ -1284,7 +1282,7 @@ CIMServer::modifyInstance(
 		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
 		Authorizer2IFC::E_MODIFY, context))
 	{
-		OW_LOG_DEBUG(m_logger, Format("Authorizer did NOT authorize modification of %1"
+		OW_LOG_INFO(m_logger, Format("Authorizer did NOT authorize modification of %1"
 			" instances in namespace %2", lci.getClassName(), ns));
 
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
@@ -1468,7 +1466,7 @@ CIMServer::invokeMethod(
 	if (!m_authorizerMgr->allowMethodInvocation(m_env, ns, path_, methodName,
 		context))
 	{
-		OW_LOG_DEBUG(m_logger, Format("Authorizer did NOT authorize invocation of"
+		OW_LOG_INFO(m_logger, Format("Authorizer did NOT authorize invocation of"
 			" method %1 on object path %2", methodName, path_.toString()));
 
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
@@ -2094,12 +2092,12 @@ namespace
 			if (server._isDynamicAssoc(ns, cc, context))
 			{
 				dynamicAssocs.push_back(cc);
-				OW_LOG_DEBUG(logger, "Found dynamic assoc class: " + cc.getName());
+				OW_LOG_DEBUG3(logger, "Found dynamic assoc class: " + cc.getName());
 			}
 			else if (staticAssocs)
 			{
 				staticAssocs->push_back(cc.getName());
-				OW_LOG_DEBUG(logger, "Found static assoc class: " + cc.getName());
+				OW_LOG_DEBUG3(logger, "Found static assoc class: " + cc.getName());
 			}
 		}
 	private:

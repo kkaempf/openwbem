@@ -285,7 +285,7 @@ BinaryRequestHandler::doProcess(std::streambuf * istrm, std::streambuf * ostrm,
 					}
 					break;
 				default:
-					OW_LOG_DEBUG(lgr, Format("BinaryRequestHandler: Received invalid function number: %1", static_cast<int>(funcNo)));
+					OW_LOG_INFO(lgr, Format("BinaryRequestHandler: Received invalid function number: %1", static_cast<int>(funcNo)));
 					writeError(*ostrError, "Invalid function number");
 					break;
 			}

@@ -207,7 +207,7 @@ GenericHDBRepository::createNameSpace(const String& ns)
 		hdl->turnFlagsOn(node, HDBNSNODE_FLAG);
 		hdl->addRootNode(node);
 		Logger lgr(COMPONENT_NAME);
-		OW_LOG_DEBUG(lgr, Format("created namespace %1", ns));
+		OW_LOG_DEBUG2(lgr, Format("created namespace %1", ns));
 	}
 	else
 	{

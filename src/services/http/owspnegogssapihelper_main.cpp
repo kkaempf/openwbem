@@ -325,9 +325,9 @@ gssapi_spnego_accept(gss_buffer_desc &input_token,
 	                                      NULL,
 	                                      &delegated_cred);
 
-	OW_LOG_DEBUG(logger, Format("Length of output_token: %1",
+	OW_LOG_DEBUG3(logger, Format("Length of output_token: %1",
 	                            output_token.length));
-	OW_LOG_DEBUG(logger, Format("Value of output_token: %1",
+	OW_LOG_DEBUG3(logger, Format("Value of output_token: %1",
 	                            static_cast<char*>(output_token.value)));
 	
 	if (GSS_ERROR(major_status))
@@ -412,10 +412,10 @@ gssapi_spnego_init(gss_buffer_desc &input_token,
 	                                    NULL
 	                                    );
 	
-	OW_LOG_DEBUG(logger, Format("Length of client output token %1",
+	OW_LOG_DEBUG3(logger, Format("Length of client output token %1",
 	                            output_token.length));
 
-	OW_LOG_DEBUG(logger, Format("Value of client output token %1",
+	OW_LOG_DEBUG3(logger, Format("Value of client output token %1",
 	                            static_cast<char*>(output_token.value)));
 	if (GSS_ERROR(major_status))
 	{

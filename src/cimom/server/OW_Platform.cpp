@@ -297,12 +297,12 @@ daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool res
 
 		if( !getenv("OWNOCHDIR") )
 		{
-			OW_LOG_DEBUG(logger, "Changing directories to / ...");
+			OW_LOG_DEBUG3(logger, "Changing directories to / ...");
 			chdir("/");
 		}
 		else
 		{
-			OW_LOG_DEBUG(logger, "Not changing directories...");
+			OW_LOG_DEBUG(logger, "Not changing directories because the OWNOCHDIR environment variable is set.");
 		}
 
 		// reattach stdin, stdout, stderr

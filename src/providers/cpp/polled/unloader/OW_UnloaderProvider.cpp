@@ -67,7 +67,7 @@ UnloaderProvider::~UnloaderProvider()
 Int32
 UnloaderProvider::poll(const ProviderEnvironmentIFCRef &/*env*/)
 {
-	//OW_LOG_DEBUG(Logger(COMPONENT_NAME), "Polling UnloaderProvider");
+	OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "Polling UnloaderProvider");
 	CIMOMEnvironment::instance()->unloadProviders();
 	return -1;
 }
@@ -79,7 +79,7 @@ Int32
 UnloaderProvider::getInitialPollingInterval(const
 		ProviderEnvironmentIFCRef &env)
 {
-	OW_LOG_DEBUG(Logger(COMPONENT_NAME), Format(
+	OW_LOG_DEBUG3(Logger(COMPONENT_NAME), Format(
 		"Calling getInitialPollingInterval in ProviderUnloader; returning %1",
 		OW_POLLING_INTERVAL));
 	return OW_POLLING_INTERVAL;

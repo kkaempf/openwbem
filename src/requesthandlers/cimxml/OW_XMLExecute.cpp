@@ -252,8 +252,7 @@ XMLExecute::executeIntrinsic(ostream& ostr,
 	String functionNameLC = m_functionName;
 	functionNameLC.toLowerCase();
 	Logger logger(COMPONENT_NAME);
-	OW_LOGDEBUG(Format("Got function name. calling function %1",
-		functionNameLC));
+	OW_LOGDEBUG(Format("XMLExecute got function name. calling function %1",	m_functionName));
 	FuncEntry fe = { 0, 0 };
 	fe.name = functionNameLC.c_str();
 	FuncEntry* i = std::lower_bound(g_funcs, g_funcsEnd, fe, funcEntryCompare);
@@ -1581,7 +1580,7 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		}
 		m_commMechPath = hdl->createInstance(interopNS, commMech);
 		m_commMechPath.setNameSpace(interopNS);
-		OW_LOG_DEBUG(logger, Format("Sucessfully created instance of CIM_CIMXMLCommunicationMechanism. Saving path: %1", m_commMechPath.toString()));
+		OW_LOG_DEBUG3(logger, Format("Sucessfully created instance of CIM_CIMXMLCommunicationMechanism. Saving path: %1", m_commMechPath.toString()));
 
 		
 		// now create the instance of HostedAccessPoint that associates the commMech with the system
@@ -1608,7 +1607,7 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		}
 		m_hostedAccessPointPath = hdl->createInstance(interopNS, hostedAccessPoint);
 		m_hostedAccessPointPath.setNameSpace(interopNS);
-		OW_LOG_DEBUG(logger, Format("Sucessfully created instance of CIM_HostedAccessPoint. Saving path: %1", m_hostedAccessPointPath.toString()));
+		OW_LOG_DEBUG3(logger, Format("Sucessfully created instance of CIM_HostedAccessPoint. Saving path: %1", m_hostedAccessPointPath.toString()));
 	
 		
 		// now create the instance of OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager that associates the commMech with the OpenWBEM_ObjectManager
@@ -1629,7 +1628,7 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		}
 		m_commMechForManager = hdl->createInstance(interopNS, commMechForManager);
 		m_commMechForManager.setNameSpace(interopNS);
-		OW_LOG_DEBUG(logger, Format("Sucessfully created instance of OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager. Saving path: %1",
+		OW_LOG_DEBUG3(logger, Format("Sucessfully created instance of OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager. Saving path: %1",
 			m_commMechForManager.toString()));
 	}
 	catch (CIMException& e)
@@ -1651,7 +1650,7 @@ void cleanupInteropInstance(const CIMObjectPath& path, const ServiceEnvironmentI
 	if (path)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "XMLExecute::shutdown() cleaning up CIM_HostedAccessPoint instance");
+		OW_LOG_DEBUG3(logger, "XMLExecute::shutdown() cleaning up CIM_HostedAccessPoint instance");
 
 		try
 		{

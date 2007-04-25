@@ -227,12 +227,11 @@ void BasicAccessMgr::checkAccess(
 	String const & ns = pns ? *pns : String("<none>");
 	String username = userInfo.getUserName();
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("Checking access to namespace: \"%1\"", ns));
-	OW_LOG_DEBUG(lgr,
-		Format("UserName is: \"%1\" Operation is : %2", username, op));
+	OW_LOG_DEBUG2(lgr, Format("Checking access to namespace: \"%1\"", ns));
+	OW_LOG_DEBUG2(lgr, Format("UserName is: \"%1\" Operation is : %2", username, op));
 
 	String permissions = this->userPermissions(pns, username, context);
-	OW_LOG_DEBUG(lgr, Format("User has permissions: \"%1\"  Required permissions: \"%2\"", permissions, required));
+	OW_LOG_DEBUG3(lgr, Format("User has permissions: \"%1\"  Required permissions: \"%2\"", permissions, required));
 	if (subset(required, permissions))
 	{
 		Format fmt(

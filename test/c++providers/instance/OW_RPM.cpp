@@ -168,7 +168,7 @@ public:
 		const CIMClass& cimClass )
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "in RPM::enumInstances");
+		OW_LOG_DEBUG3(logger, "in RPM::enumInstances");
 		String cmd = "/usr/bin/apt-cache search .*";
 		ProcessRef proc = Exec::spawn(cmd.tokenize());
 

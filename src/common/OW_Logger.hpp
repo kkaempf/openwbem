@@ -47,6 +47,22 @@
 
 
 /**
+ * Log message to logger with the Debug3 level.  message is only evaluated if logger->getLogLevel() >=
+ * E_DEBUG3_LEVEL __FILE__ and __LINE__ are logged.
+ * @param logger The logger to use.
+ * @param message An expression that evaluates to a String which will be logged.
+ */
+#define OW_LOG_DEBUG3(logger, message) BLOCXX_LOG_DEBUG3(logger, message)
+
+/**
+ * Log message to logger with the Debug2 level.  message is only evaluated if logger->getLogLevel() >=
+ * E_DEBUG2_LEVEL __FILE__ and __LINE__ are logged.
+ * @param logger The logger to use.
+ * @param message An expression that evaluates to a String which will be logged.
+ */
+#define OW_LOG_DEBUG2(logger, message) BLOCXX_LOG_DEBUG2(logger, message)
+
+/**
  * Log message to logger with the Debug level.  message is only evaluated if logger->getLogLevel() >= E_DEBUG_LEVEL
  * __FILE__ and __LINE__ are logged.
  * @param logger The logger to use.

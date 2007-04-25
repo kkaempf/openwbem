@@ -591,7 +591,7 @@ AutoDescriptor PrivilegeManager::open(
 {
 	Logger logger("PrivilegeManager.open");
 
-	OW_LOG_DEBUG(logger, Format("Attempting to open: %1", pathname));
+	OW_LOG_DEBUG3(logger, Format("Attempting to open: %1", pathname));
 	CHECK(pimpl(), "open: process has no privileges");
 	pimpl()->verifyValidConnection("open: no connection to the monitor");
 	try

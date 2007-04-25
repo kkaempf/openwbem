@@ -100,7 +100,7 @@ OOPIndicationProvider::activateFilter(
 	bool firstActivation
 	)
 {
-	OW_LOG_DEBUG(Logger("OOPIndicationProvider"), "OOPIndicationProvider::activateFilter");
+	OW_LOG_DEBUG3(Logger("OOPIndicationProvider"), "OOPIndicationProvider::activateFilter");
 	ActivateCallback filterCallback(filter, eventType, nameSpace, classes, firstActivation);
 	startProcessAndCallFunction(env, filterCallback, "OOPMethodProvider::activateFilter");
 }
@@ -151,7 +151,7 @@ OOPIndicationProvider::authorizeFilter(
 	const String& owner
 	)
 {
-	OW_LOG_DEBUG(Logger("OOPIndicationProvider"), "OOPIndicationProvider::authorizeFilter");
+	OW_LOG_DEBUG3(Logger("OOPIndicationProvider"), "OOPIndicationProvider::authorizeFilter");
 	AuthorizeFilterCallback filterCallback(filter, eventType, nameSpace, classes, owner);
 	startProcessAndCallFunction(env, filterCallback, "OOPMethodProvider::authorizeFilter");
 }
@@ -202,7 +202,7 @@ OOPIndicationProvider::deActivateFilter(
 	bool lastActivation
 	)
 {
-	OW_LOG_DEBUG(Logger("OOPIndicationProvider"), "OOPIndicationProvider::deActivateFilter");
+	OW_LOG_DEBUG3(Logger("OOPIndicationProvider"), "OOPIndicationProvider::deActivateFilter");
 	DeActivateCallback filterCallback(filter, eventType, nameSpace, classes, lastActivation);
 	startProcessAndCallFunction(env, filterCallback, "OOPIndicationProvider::deActivateFilter");
 }

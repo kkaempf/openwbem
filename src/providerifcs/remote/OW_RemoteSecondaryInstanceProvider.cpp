@@ -83,14 +83,14 @@ RemoteSecondaryInstanceProvider::modifyInstance(const ProviderEnvironmentIFCRef 
 	const CIMInstance &previousInstance, EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteSecondaryInstanceProvider::modifyInstance ns = %1, modifiedInstance = %2", ns, modifiedInstance));
+	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::modifyInstance ns = %1, modifiedInstance = %2", ns, modifiedInstance));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteSecondaryInstanceProvider::modifyInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::modifyInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteSecondaryInstanceProvider::modifyInstance calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteSecondaryInstanceProvider::modifyInstance calling remote WBEM server");
 
 	try
 	{
@@ -114,14 +114,14 @@ void
 RemoteSecondaryInstanceProvider::deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteSecondaryInstanceProvider::deleteInstance ns = %1, cop = %2", ns, cop));
+	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::deleteInstance ns = %1, cop = %2", ns, cop));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteSecondaryInstanceProvider::deleteInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::deleteInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteSecondaryInstanceProvider::deleteInstance calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteSecondaryInstanceProvider::deleteInstance calling remote WBEM server");
 
 	try
 	{
@@ -151,14 +151,14 @@ RemoteSecondaryInstanceProvider::filterInstances(const ProviderEnvironmentIFCRef
 	const StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteSecondaryInstanceProvider::filterInstances ns = %1, className = %2", ns, className));
+	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::filterInstances ns = %1, className = %2", ns, className));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteSecondaryInstanceProvider::filterInstances got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::filterInstances got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteSecondaryInstanceProvider::filterInstances calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteSecondaryInstanceProvider::filterInstances calling remote WBEM server");
 
 	for (size_t i = 0; i < instances.size(); ++i)
 	{
@@ -215,14 +215,14 @@ void
 RemoteSecondaryInstanceProvider::createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteSecondaryInstanceProvider::createInstance ns = %1, cimInstance = %2", ns, cimInstance));
+	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::createInstance ns = %1, cimInstance = %2", ns, cimInstance));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteSecondaryInstanceProvider::createInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::createInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteSecondaryInstanceProvider::createInstance calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteSecondaryInstanceProvider::createInstance calling remote WBEM server");
 
 	try
 	{

@@ -518,7 +518,7 @@ void HTTPClient::copyStreams(std::ostream& ostr, std::istream& istr)
 	std::vector<char> buffer(curbufsize);
 	while (curbufsize != -1)
 	{
-// From rfc 2626:
+// From RFC 2616:
 //8.2.2 Monitoring Connections for Error Status Messages
 
 //   An HTTP/1.1 (or later) client sending a message-body SHOULD monitor

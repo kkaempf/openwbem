@@ -65,7 +65,7 @@ void CMPIAssociatorProviderProxy::associatorNames(
 	const String& resultRole)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIAssociatorProviderProxy::associatorNames()");
+	OW_LOG_DEBUG3(lgr, "CMPIAssociatorProviderProxy::associatorNames()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -128,7 +128,7 @@ void CMPIAssociatorProviderProxy::associators(
 	const StringArray *propertyList)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIAssociatorProviderProxy::associators()");
+	OW_LOG_DEBUG3(lgr, "CMPIAssociatorProviderProxy::associators()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -207,7 +207,7 @@ void CMPIAssociatorProviderProxy::references(
 	const StringArray *propertyList)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIAssociatorProviderProxy::references()");
+	OW_LOG_DEBUG3(lgr, "CMPIAssociatorProviderProxy::references()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -279,7 +279,7 @@ void CMPIAssociatorProviderProxy::referenceNames(
 	const String& role)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIAssociatorProviderProxy::referenceNames()");
+	OW_LOG_DEBUG3(lgr, "CMPIAssociatorProviderProxy::referenceNames()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 

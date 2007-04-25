@@ -114,7 +114,7 @@ int clonedEnvProcess(Array<unsigned char>& in,
 	ThreadPool& threadPool,
 	OOPProviderBase* pprov)
 {
-	//OW_LOG_DEBUG(logger, Format("in clonedEnvProcess(). in.size() = %1", in.size()));
+	OW_LOG_DEBUG3(logger, Format("in clonedEnvProcess(). in.size() = %1", in.size()));
 	if (in.size() == 0)
 	{
 		return FINISHED;
@@ -134,12 +134,12 @@ int clonedEnvProcess(Array<unsigned char>& in,
 			processrv = clonedEvnProcessOneRequest(inbuf, outbuf, outputEntries, env, threadPool, pprov);
 			if (!out.empty())
 			{
-				//OW_LOG_DEBUG(logger, Format("clonedEvnProcessOneRequest() found %1 bytes of out. Adding to outputEntries.", out.size()));
+				OW_LOG_DEBUG3(logger, Format("clonedEvnProcessOneRequest() found %1 bytes of out. Adding to outputEntries.", out.size()));
 				outputEntries.push_back(OutputEntry(out));
 			}
 			// successful request, store how much was read so it can be removed when we're done.
 			numRead = inbuf.pubseekoff(0, std::ios::cur);
-			//OW_LOG_DEBUG(logger, Format("clonedEvnProcessOneRequest() done. numRead = %1", numRead));
+			OW_LOG_DEBUG3(logger, Format("clonedEvnProcessOneRequest() done. numRead = %1", numRead));
 		}
 
 		// if the loop finished by returning FINISHED
@@ -151,7 +151,7 @@ int clonedEnvProcess(Array<unsigned char>& in,
 	}
 	catch (IOException& e)
 	{
-		OW_LOG_DEBUG(logger, Format("clonedEvnProcessOneRequest() threw IOException: %1", e));
+		OW_LOG_DEBUG2(logger, Format("clonedEvnProcessOneRequest() threw IOException: %1", e));
 
 		// check that the exception happened because of reaching the end of the stream.
 		// Otherwise, re-throw. This will happen if something is corrupted and we can't parse the input.
@@ -200,7 +200,7 @@ public:
 		Logger logger(COMPONENT_NAME);
 		if (eventType == E_READ_EVENT)
 		{
-			//OW_LOG_DEBUG(logger, "doSelected() got a read event");
+			OW_LOG_DEBUG3(logger, "doSelected() got a read event");
 			// read all the data out of the pipe and append it to m_inputBuf
 			size_t oldSize = m_inputBuf.size();
 			const unsigned int INCREMENT = 1024;
@@ -208,17 +208,17 @@ public:
 			while (moreDataToRead)
 			{
 				m_inputBuf.resize(oldSize + INCREMENT, 0xFA);
-				//OW_LOG_DEBUG(logger, Format("reading some data into offset %1", oldSize));
+				OW_LOG_DEBUG3(logger, Format("reading some data into offset %1", oldSize));
 				ssize_t numRead = m_conn->read(&m_inputBuf[oldSize], INCREMENT, IOIFC::E_RETURN_ON_ERROR);
 				int lerrno = errno;
-				//OW_LOG_DEBUG(logger, Format("read() returned %1" , numRead));
+				OW_LOG_DEBUG3(logger, Format("read() returned %1" , numRead));
 				if (numRead == -1)
 				{
 					m_inputBuf.resize(oldSize, 0xFB);
 					if (lerrno == ETIMEDOUT)
 					{
 						 moreDataToRead = false; // end the loop
-						 //OW_LOG_DEBUG(logger, "Detected ETIMEDOUT");
+						 OW_LOG_DEBUG3(logger, "Detected ETIMEDOUT");
 					}
 					else
 					{
@@ -242,13 +242,13 @@ public:
 			// now that we've read the data, see if we can do anything with it.
 			if (clonedEnvProcess(m_inputBuf, m_outputEntries, m_env, logger, m_threadPool, m_pprov) == FINISHED)
 			{
-				OW_LOG_DEBUG(logger, "clonedEnvProcess() returned FINISHED, telling the select engine to stop");
+				OW_LOG_DEBUG2(logger, "clonedEnvProcess() returned FINISHED, telling the select engine to stop");
 				m_selectEngine.stop();
 				m_finishedSuccessfully = true;
 			}
 			else
 			{
-				//OW_LOG_DEBUG(logger, Format("doSelected(): clonedEnvProcess() returned CONTINUE. m_outputEntries.size() = %1", m_outputEntries.size()));
+				OW_LOG_DEBUG3(logger, Format("doSelected(): clonedEnvProcess() returned CONTINUE. m_outputEntries.size() = %1", m_outputEntries.size()));
 				if (!m_outputEntries.empty())
 				{
 					// add it
@@ -258,10 +258,10 @@ public:
 		}
 		else if (eventType == E_WRITE_EVENT)
 		{
-			//OW_LOG_DEBUG(logger, "doSelected() got a write event");
+			OW_LOG_DEBUG3(logger, "doSelected() got a write event");
 			if (m_outputEntries.empty())
 			{
-				//OW_LOG_DEBUG(logger, "m_outputEntries.empty(), removing from select engine");
+				OW_LOG_DEBUG3(logger, "m_outputEntries.empty(), removing from select engine");
 				m_selectEngine.removeSelectableObject(m_conn->getWriteSelectObj(), SelectableCallbackIFC::E_WRITE_EVENT);
 				return;
 			}
@@ -273,19 +273,19 @@ public:
 				{
 					if (entry.direction == OutputEntry::E_INPUT)
 					{
-						//OW_LOG_DEBUG(logger, Format("doSelected() attempting to pass a input descriptor: %1", entry.pipe->getInputDescriptor()));
+						OW_LOG_DEBUG3(logger, Format("doSelected() attempting to pass a input descriptor: %1", entry.pipe->getInputDescriptor()));
 						m_conn->passDescriptor(entry.pipe->getInputDescriptor(), m_conn);
 					}
 					else
 					{
-						//OW_LOG_DEBUG(logger, Format("doSelected() attempting to pass a output descriptor: %1", entry.pipe->getOutputDescriptor()));
+						OW_LOG_DEBUG3(logger, Format("doSelected() attempting to pass a output descriptor: %1", entry.pipe->getOutputDescriptor()));
 						m_conn->passDescriptor(entry.pipe->getOutputDescriptor());
 					}
 					m_outputEntries.erase(m_outputEntries.begin());
 				}
 				else // entry.type == E_BUFFER
 				{
-					//OW_LOG_DEBUG(logger, Format("doSelected() attempting to write %1 bytes", entry.buf.size()));
+					OW_LOG_DEBUG3(logger, Format("doSelected() attempting to write %1 bytes", entry.buf.size()));
 					OW_ASSERT(entry.buf.size() > 0);
 					ssize_t numWrote = 0;
 					try
@@ -299,9 +299,9 @@ public:
 						{
 							throw;
 						}
-						//OW_LOG_DEBUG(logger, "doSelected() got EAGAIN while attempting to write.");
+						OW_LOG_DEBUG3(logger, "doSelected() got EAGAIN while attempting to write.");
 					}
-					//OW_LOG_DEBUG(logger, Format("write returned %1", numWrote));
+					OW_LOG_DEBUG3(logger, Format("write returned %1", numWrote));
 					if (static_cast<size_t>(numWrote) == entry.buf.size())
 					{
 						m_outputEntries.erase(m_outputEntries.begin());
@@ -400,33 +400,30 @@ public:
 			BinarySerialization::read(*m_instr.rdbuf(), op);
 			if (op == BinarySerialization::BIN_END)
 			{
-				//OW_LOG_DEBUG(logger, "CloneCIMOMHandleConnectionRunner::run() "
-				//	"received BIN_END request. shutting down cimom handle");
+				OW_LOG_DEBUG3(logger, "CloneCIMOMHandleConnectionRunner::run() received BIN_END request. shutting down cimom handle");
 				return;
 			}
 			else if (op != BinarySerialization::BIN_OK)
 			{
-				//OW_LOG_ERROR(logger, "CloneCIMOMHandleConnectionRunner::run() "
-				//	"invalid byte received from client");
 				return;
 			}
 
 			HTTPChunkedIStream operationIstr(m_instr);
 			HTTPChunkedOStream operationOstr(m_outstr);
 			TempFileStream operationErrstr;
-			OW_LOG_DEBUG(logger, "CloneCIMOMHandleConnectionRunner::run() calling m_binaryRH->process");
+			OW_LOG_DEBUG2(logger, "CloneCIMOMHandleConnectionRunner::run() calling m_binaryRH->process");
 			m_binaryRH->process(&operationIstr, &operationOstr, &operationErrstr, m_env->getOperationContext());
 			HTTPUtils::eatEntity(operationIstr);
 			if (m_binaryRH->hasError())
 			{
-				OW_LOG_DEBUG(logger, "CloneCIMOMHandleConnectionRunner::run() m_binaryRH->hasError()");
+				OW_LOG_DEBUG2(logger, "CloneCIMOMHandleConnectionRunner::run() m_binaryRH->hasError()");
 				operationOstr.termOutput(HTTPChunkedOStream::E_DISCARD_LAST_CHUNK);
 				operationErrstr.rewind();
 				m_outstr << operationErrstr.rdbuf();
 			}
 			else
 			{
-				OW_LOG_DEBUG(logger, "CloneCIMOMHandleConnectionRunner::run() sending result and BIN_OK");
+				OW_LOG_DEBUG2(logger, "CloneCIMOMHandleConnectionRunner::run() sending result and BIN_OK");
 				operationOstr.termOutput(HTTPChunkedOStream::E_SEND_LAST_CHUNK);
 				BinarySerialization::write(m_outbuf, BinarySerialization::BIN_OK);
 			}
@@ -434,7 +431,7 @@ public:
 			if (m_outbuf.pubsync() == -1)
 				OW_LOG_ERROR(logger, "CloneCIMOMHandleConnectionRunner::run() failed to flush output");
 		}
-		OW_LOG_DEBUG(logger, "CloneCIMOMHandleConnectionRunner::run() finished");
+		OW_LOG_DEBUG2(logger, "CloneCIMOMHandleConnectionRunner::run() finished");
 	}
 	bool cancelled()
 	{
@@ -475,20 +472,20 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 	//std::istream instr(in);
 	//instr.tie(&outstr);
 	UInt8 op = 0xFE;
-	//OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest about to read the code.");
+	OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest about to read the code.");
 	BinarySerialization::read(inbuf, op);
-	//OW_LOG_DEBUG(logger, Format("clonedEvnProcessOneRequest read code: %1", static_cast<int>(op)));
+	OW_LOG_DEBUG3(logger, Format("clonedEvnProcessOneRequest read code: %1", static_cast<int>(op)));
 	switch (op)
 	{
 		case BinarySerialization::BIN_OK:
 		{
-			OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest got BIN_OK. Not implemented");
+			OW_LOG_DEBUG2(logger, "clonedEvnProcessOneRequest got BIN_OK. Not implemented");
 		}
 		break;
 
 		case BinarySerialization::BIN_ERROR:
 		{
-			OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest got BIN_ERROR");
+			OW_LOG_DEBUG2(logger, "clonedEvnProcessOneRequest got BIN_ERROR");
 			String msg;
 			BinarySerialization::read(inbuf, msg);
 			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
@@ -497,13 +494,13 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::BIN_END:
 		{
-			OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest got BIN_END");
+			OW_LOG_DEBUG2(logger, "clonedEvnProcessOneRequest got BIN_END");
 			return FINISHED;
 		}
 
 		case BinarySerialization::BIN_LOG_MESSAGE:
 		{
-			OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest got BIN_LOG_MESSAGE");
+			OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest got BIN_LOG_MESSAGE");
 			String component = BinarySerialization::readString(inbuf);
 			String category = BinarySerialization::readString(inbuf);
 			String message = BinarySerialization::readString(inbuf);
@@ -518,19 +515,19 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::OPERATION_CONTEXT_GET_DATA:
 		{
-			OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest got OPERATION_CONTEXT_GET_DATA");
+			OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest got OPERATION_CONTEXT_GET_DATA");
 			String key = BinarySerialization::readString(inbuf);
-			//OW_LOG_DEBUG(logger, Format("clonedEvnProcessOneRequest read key: %1", key));
+			OW_LOG_DEBUG3(logger, Format("clonedEvnProcessOneRequest read key: %1", key));
 			OperationContext::DataRef data = env->getOperationContext().getData(key);
 			if (data)
 			{
-				OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest found it, writing true");
+				OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest found it, writing true");
 				BinarySerialization::writeBool(outbuf, true);
 				data->writeObject(outbuf);
 			}
 			else
 			{
-				OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest didn't find it, writing false");
+				OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest didn't find it, writing false");
 				BinarySerialization::writeBool(outbuf, false);
 			}
 			if (outbuf.pubsync() == -1)
@@ -543,11 +540,11 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::OPERATION_CONTEXT_SET_DATA:
 		{
-			OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest got OPERATION_CONTEXT_SET_DATA");
+			OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest got OPERATION_CONTEXT_SET_DATA");
 			String key = BinarySerialization::readString(inbuf);
-			//OW_LOG_DEBUG(logger, Format("clonedEvnProcessOneRequest read key: %1", key));
+			OW_LOG_DEBUG3(logger, Format("clonedEvnProcessOneRequest read key: %1", key));
 			String type = BinarySerialization::readString(inbuf);
-			//OW_LOG_DEBUG(logger, Format("clonedEvnProcessOneRequest read type: %1", type));
+			OW_LOG_DEBUG3(logger, Format("clonedEvnProcessOneRequest read type: %1", type));
 			std::istream instr(&inbuf);
 			HTTPChunkedIStreamBuffer chunkedIBuf(instr);
 			OperationContext::DataRef data = env->getOperationContext().getData(key);
@@ -556,7 +553,7 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 				// replace the existing object
 				data->readObject(chunkedIBuf);
 
-				OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest found it, writing true");
+				OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest found it, writing true");
 				BinarySerialization::writeBool(outbuf, true);
 			}
 			else if (type == OperationContext::StringData().getType())
@@ -564,12 +561,12 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 				OperationContext::DataRef data(new OperationContext::StringData());
 				data->readObject(chunkedIBuf);
 				env->getOperationContext().setData(key, data);
-				OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest didn't find it, but it was a string type, writing true");
+				OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest didn't find it, but it was a string type, writing true");
 				BinarySerialization::writeBool(outbuf, true);
 			}
 			else
 			{
-				OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest didn't find it, writing false");
+				OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest didn't find it, writing false");
 				BinarySerialization::writeBool(outbuf, false);
 			}
 			
@@ -580,12 +577,12 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::OPERATION_CONTEXT_REMOVE_DATA:
 		{
-			OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest got OPERATION_CONTEXT_REMOVE_DATA");
+			OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest got OPERATION_CONTEXT_REMOVE_DATA");
 			String key = BinarySerialization::readString(inbuf);
-			//OW_LOG_DEBUG(logger, Format("clonedEvnProcessOneRequest read key: %1", key));
+			OW_LOG_DEBUG3(logger, Format("clonedEvnProcessOneRequest read key: %1", key));
 			if (env->getOperationContext().keyHasData(key))
 			{
-				OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest found it, writing true");
+				OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest found it, writing true");
 				BinarySerialization::writeBool(outbuf, true);
 				if (outbuf.pubsync() == -1)
 				{
@@ -596,7 +593,7 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 			}
 			else
 			{
-				OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest didn't find it, writing false");
+				OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest didn't find it, writing false");
 				BinarySerialization::writeBool(outbuf, false);
 			}
 		}
@@ -604,14 +601,14 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::OPERATION_CONTEXT_KEY_HAS_DATA:
 		{
-			OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest got OPERATION_CONTEXT_KEY_HAS_DATA");
+			OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest got OPERATION_CONTEXT_KEY_HAS_DATA");
 			String key = BinarySerialization::readString(inbuf);
-			//OW_LOG_DEBUG(logger, Format("clonedEvnProcessOneRequest read key: %1", key));
+			OW_LOG_DEBUG3(logger, Format("clonedEvnProcessOneRequest read key: %1", key));
 			BinarySerialization::writeBool(
 				outbuf, env->getOperationContext().keyHasData(key));
 			if (outbuf.pubsync() == -1)
 			{
-				OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest flush failed!");
+				OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest flush failed!");
 				OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
 			}
 		}
@@ -619,11 +616,11 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::OPERATION_CONTEXT_GET_OPERATION_ID:
 		{
-			OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest got OPERATION_CONTEXT_GET_OPERATION_ID");
+			OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest got OPERATION_CONTEXT_GET_OPERATION_ID");
 			BinarySerialization::write(outbuf, env->getOperationContext().getOperationId());
 			if (outbuf.pubsync() == -1)
 			{
-				OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest flush failed!");
+				OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest flush failed!");
 				OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
 			}
 		}
@@ -631,7 +628,7 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::PROVIDER_ENVIRONMENT_REQUEST:
 		{
-			OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest got PROVIDER_ENVIRONMENT_REQUEST");
+			OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest got PROVIDER_ENVIRONMENT_REQUEST");
 			UnnamedPipeRef envconn = pprov->startClonedProviderEnv(env);
 			if (envconn)
 			{
@@ -644,7 +641,7 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 			else
 			{
 				// Assume OOPProviderBase was unable to start the thread
-				OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest PROVIDER_ENVIRONMENT_REQUEST returning BIN_ERROR");
+				OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest PROVIDER_ENVIRONMENT_REQUEST returning BIN_ERROR");
 				BinarySerialization::write(outbuf, BinarySerialization::BIN_ERROR);
 				BinarySerialization::write(outbuf, String("thread limit reached"));
 			}
@@ -654,7 +651,7 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 		case BinarySerialization::CIMOM_HANDLE_REQUEST:
 		case BinarySerialization::REPOSITORY_CIMOM_HANDLE_REQUEST:
 		{
-			OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest got CIMOM_HANDLE_REQUEST or REPOSITORY_CIMOM_HANDLE_REQUEST");
+			OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest got CIMOM_HANDLE_REQUEST or REPOSITORY_CIMOM_HANDLE_REQUEST");
 			UnnamedPipeRef connToKeep;
 			UnnamedPipeRef connToSend;
 			UnnamedPipe::createConnectedPipes(connToKeep, connToSend);
@@ -681,7 +678,7 @@ int clonedEvnProcessOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::GET_CONFIG_ITEM:
 		{
-			OW_LOG_DEBUG(logger, "clonedEvnProcessOneRequest got GET_CONFIG_ITEM");
+			OW_LOG_DEBUG3(logger, "clonedEvnProcessOneRequest got GET_CONFIG_ITEM");
 			String name = BinarySerialization::readString(inbuf);
 			String defRetVal = BinarySerialization::readString(inbuf);
 			String rv = env->getConfigItem(name, defRetVal);
@@ -745,28 +742,26 @@ OOPClonedProviderEnv::run()
 	selectEngine.addSelectableObject(m_conn->getReadSelectObj(), callback, 
 		SelectableCallbackIFC::E_READ_EVENT);
 
-	OW_LOG_DEBUG(logger, "OOPClonedProviderEnv::run() about to run the select engine");
+	OW_LOG_DEBUG3(logger, "OOPClonedProviderEnv::run() about to run the select engine");
 	try
 	{
 		selectEngine.go(Timeout::infinite);
 	}
 	catch (Exception& e)
 	{
-		OW_LOG_DEBUG(logger, Format("OOPClonedProviderEnv::run() caught "
-			"select exception: %1", e));
+		OW_LOG_DEBUG(logger, Format("OOPClonedProviderEnv::run() caught select exception: %1", e));
 	}
 	catch(...)
 	{
-		OW_LOG_DEBUG(logger, "OOPClonedProviderEnv::run() caught "
-			"UNKNOWN exception");
+		OW_LOG_DEBUG(logger, "OOPClonedProviderEnv::run() caught UNKNOWN exception");
 	}
 
 	if (!finishedSuccessfully)
 	{
-		OW_LOG_DEBUG(logger, "ClonedProvEnv::run pipe closed without sending a BIN_END");
+		OW_LOG_DEBUG3(logger, "ClonedProvEnv::run pipe closed without sending a BIN_END");
 	}
 
-	OW_LOG_DEBUG(logger, "OOPClonedProviderEnv::run returning");
+	OW_LOG_DEBUG3(logger, "OOPClonedProviderEnv::run returning");
 }
 
 //////////////////////////////////////////////////////////////////////////////

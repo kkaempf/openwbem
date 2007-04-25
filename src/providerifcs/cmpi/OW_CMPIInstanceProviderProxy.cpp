@@ -70,7 +70,7 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 	const CIMClass& cimClass )
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::enumInstanceNames()");
+	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::enumInstanceNames()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -120,7 +120,7 @@ CMPIInstanceProviderProxy::enumInstances(
 	const CIMClass& cimClass )
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::enumInstances()");
+	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::enumInstances()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -182,7 +182,7 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 {
 	CIMInstance rval;
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::getInstance()");
+	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::getInstance()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -248,7 +248,7 @@ CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 	const String& ns, const CIMObjectPath& cop)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::deleteInstance()");
+	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::deleteInstance()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -290,7 +290,7 @@ CIMObjectPath
 {
 	CIMObjectPath rval;
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
+	OW_LOG_DEBUG3(lgr, Format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -339,7 +339,7 @@ void
 	const CIMClass& theClass)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::modifyInstance()");
+	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::modifyInstance()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 

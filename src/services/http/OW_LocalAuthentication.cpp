@@ -325,7 +325,7 @@ LocalAuthentication::createNewChallenge(const String& uid, const String& userNam
 void
 LocalAuthentication::cleanupEntry(const AuthEntry& entry)
 {
-	OW_LOG_DEBUG(m_logger, Format("LocalAuthentication::cleanupEntry(): cleaning up %1 for %2", entry.fileName, entry.userName));
+	OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::cleanupEntry(): cleaning up %1 for %2", entry.fileName, entry.userName));
 	if (useHelper())
 	{
 		cleanupEntryHelper(entry.fileName, entry.cookie);
@@ -425,13 +425,13 @@ LocalAuthentication::processHelperCommand(const String& inputCmd, const String& 
 		istr.tie(&ostr);
 		ostr << inputCmd << '\n';
 		ostr << extraInput << std::flush;
-		OW_LOG_DEBUG(m_logger, Format("LocalAuthentication::processHelperCommand() got request, sending to helper: %1", inputCmd));
+		OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got request, sending to helper: %1", inputCmd));
 		String result = String::getLine(istr);
-		OW_LOG_DEBUG(m_logger, Format("LocalAuthentication::processHelperCommand() got response: %1", result));
+		OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got response: %1", result));
 		if (result == "S")
 		{
 			output = String::getLine(istr);
-			OW_LOG_DEBUG(m_logger, Format("LocalAuthentication::processHelperCommand() got success. output: %1", output));
+			OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got success. output: %1", output));
 		}
 		else if (result == "F")
 		{
@@ -478,7 +478,7 @@ LocalAuthentication::cleanupEntryHelper(const String& pathToFile, const String& 
 	}
 	String fileName = pathToFile.substring(begin + 1);
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, Format("cleanupEntryHelper: pathToFile = %1, fileName = %2", pathToFile, fileName));
+	OW_LOG_DEBUG3(logger, Format("cleanupEntryHelper: pathToFile = %1, fileName = %2", pathToFile, fileName));
 	processHelperCommand(REMOVE_CMD, fileName + "\n" + cookie + "\n");
 }
 

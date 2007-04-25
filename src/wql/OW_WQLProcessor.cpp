@@ -2414,20 +2414,20 @@ void WQLProcessor::populateInstances()
 		WQLSelectStatementGen p;
 		try
 		{
-			OW_LOG_DEBUG(lgr, "WQLProcessor::populateInstances() attempting to compile statement for use with enumInstancesWQL");
+			OW_LOG_DEBUG3(lgr, "WQLProcessor::populateInstances() attempting to compile statement for use with enumInstancesWQL");
 			m_astRoot->acceptInterface(&p);
 			WQLSelectStatement wss(p.getSelectStatement());
 			WQLCompile wc;
 			wss.compileWhereClause(0, wc);
 			statementIsCompilable = true;
-			OW_LOG_DEBUG(lgr, "WQLProcessor::populateInstances() compiled statement. Calling m_repos->enumInstancesWQL()");
+			OW_LOG_DEBUG3(lgr, "WQLProcessor::populateInstances() compiled statement. Calling m_repos->enumInstancesWQL()");
 			m_repos->enumInstancesWQL(m_ns, m_tableRef, handler, wss, wc, *m_operationContext);
 		}
 		catch (Exception& e)
 		{
 			if (statementIsCompilable)
 			{
-				OW_LOG_DEBUG(lgr, Format("WQLProcessor::populateInstances() caught exception (will rethrow): %1", e));
+				OW_LOG_DEBUG3(lgr, Format("WQLProcessor::populateInstances() caught exception (will rethrow): %1", e));
 				throw;
 			}
 		}
@@ -2440,7 +2440,7 @@ void WQLProcessor::populateInstances()
 		{
 			properties = &m_propertyArray;
 		}
-		OW_LOG_DEBUG(lgr, "WQLProcessor::populateInstances() statement is not compilable. Resorting to enumInstances().");
+		OW_LOG_DEBUG3(lgr, "WQLProcessor::populateInstances() statement is not compilable. Resorting to enumInstances().");
 		m_hdl->enumInstances(m_ns, m_tableRef, handler, E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, properties);
 	}
 }

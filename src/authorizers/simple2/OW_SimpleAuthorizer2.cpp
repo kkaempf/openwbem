@@ -99,7 +99,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 			env->getConfigItem(ConfigOpts::ACL_SUPERUSER_opt);
 		if (superUser.equalsIgnoreCase(userInfo.getUserName()))
 		{
-			OW_LOG_DEBUG(lgr, "User is SuperUser: checkAccess returning.");
+			OW_LOG_DEBUG2(lgr, "User is SuperUser: checkAccess returning.");
 			return true;
 		}
 	}
@@ -122,8 +122,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 			}
 			catch(CIMException&)
 			{
-				OW_LOG_DEBUG(lgr, "OpenWBEM_UserACL class non-existent in"
-					" /root/security. ACLs disabled");
+				OW_LOG_DEBUG2(lgr, "OpenWBEM_UserACL class non-existent in /root/security. ACLs disabled");
 				return true;
 			}
 			
@@ -200,8 +199,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 		}
 		catch(const CIMException& ce)
 		{
-			OW_LOG_DEBUG(lgr, Format("Caught exception: %1 in"
-				" AccessMgr::checkAccess. line=%2", ce, __LINE__));
+			OW_LOG_DEBUG(lgr, Format("Caught exception: %1 in AccessMgr::checkAccess.", ce));
 			ci.setNull();
 		}
 	

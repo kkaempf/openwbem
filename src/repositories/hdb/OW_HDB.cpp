@@ -56,8 +56,8 @@ namespace OW_NAMESPACE
 
 namespace
 {
-#define OW_HDB_LOG_DEBUG(lgr, msg)
-// #define OW_HDBE_LOG_DEBUG(lgr, msg) OW_LOG_DEBUG(lgr, msg)
+#define OW_HDB_LOG_DEBUG3(lgr, msg)
+// #define OW_HDBE_LOG_DEBUG3(lgr, msg) OW_LOG_DEBUG3(lgr, msg)
 // const String COMPONENT_NAME("ow.repository.hdb");
 }
 static UInt32 calcCheckSum(unsigned char* src, Int32 len);
@@ -452,8 +452,7 @@ HDB::writeBlock(HDBBlock& fblk, File& file, Int32 offset)
 	fblk.chkSum = 0;
 	UInt32 chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&fblk), sizeof(fblk));
 	fblk.chkSum = chkSum;
-	//Logger lgr(COMPONENT_NAME);
-	OW_HDB_LOG_DEBUG(lgr, Format("HDB::writeBlock writing\n(%1)\nto offset %2", HDBBlockDebugString(fblk), offset));
+	OW_HDB_LOG_DEBUG3(lgr, Format("HDB::writeBlock writing\n(%1)\nto offset %2", HDBBlockDebugString(fblk), offset));
 	int cc = file.write(&fblk, sizeof(fblk), offset);
 	if (cc != sizeof(fblk))
 	{

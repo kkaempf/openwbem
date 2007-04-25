@@ -95,7 +95,7 @@ CMPIPrepareContext(
 	}
 
 
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME),
+	OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME),
 		Format("CMPIPrepareContext. User: %1 Flgs: %2",
 			user, flgs));
 }
@@ -227,7 +227,7 @@ CMPIProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 		// provider
 		if (pProv->miVector.instMI)
 		{
-			OW_LOG_DEBUG(lgr, Format("CMPIProviderIFC found instance"
+			OW_LOG_DEBUG2(lgr, Format("CMPIProviderIFC found instance"
 				" provider %1", provIdString));
 			return InstanceProviderIFCRef(new CMPIInstanceProviderProxy(pProv));
 		}
@@ -292,7 +292,7 @@ CMPIProviderIFC::doGetMethodProvider(const ProviderEnvironmentIFCRef& env,
 		// NULL
 		if (pProv->miVector.methMI)
 		{
-			OW_LOG_DEBUG(lgr, Format("CMPIProviderIFC found method provider %1",
+			OW_LOG_DEBUG2(lgr, Format("CMPIProviderIFC found method provider %1",
 				provIdString));
 			return MethodProviderIFCRef(new CMPIMethodProviderProxy(pProv));
 		}
@@ -316,7 +316,7 @@ CMPIProviderIFC::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 		// associator provider
 		if (pProv->miVector.assocMI)
 		{
-			OW_LOG_DEBUG(lgr, Format("CMPIProviderIFC found associator provider %1",
+			OW_LOG_DEBUG2(lgr, Format("CMPIProviderIFC found associator provider %1",
 				provIdString));
 			return AssociatorProviderIFCRef(new
 				CMPIAssociatorProviderProxy(pProv));
@@ -342,7 +342,7 @@ CMPIProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 		// indication provider
 		if (pProv->miVector.indMI)
 		{
-			OW_LOG_DEBUG(lgr, Format("CMPIProviderIFC found indication provider %1",
+			OW_LOG_DEBUG2(lgr, Format("CMPIProviderIFC found indication provider %1",
 				provIdString));
 			return IndicationProviderIFCRef(new
 				CMPIIndicationProviderProxy(pProv));
@@ -677,7 +677,7 @@ CMPIProviderIFC::loadProvider(
 		}
 	}
 
-	OW_LOG_DEBUG(lgr, Format("CMPI provider ifc: provider %1 loaded and initialized",
+	OW_LOG_DEBUG2(lgr, Format("CMPI provider ifc: provider %1 loaded and initialized",
 		provId));
 	CMPIFTABLERef completeMI(theLib, new CompleteMI);
 	completeMI->miVector = miVector;
@@ -727,7 +727,7 @@ CMPIProviderIFC::getProvider(
 		libName += "lib";
 		libName += provId;
 		libName += OW_SHAREDLIB_EXTENSION;
-		OW_LOG_DEBUG(lgr, Format("CMPIProviderIFC::getProvider loading library: %1",
+		OW_LOG_DEBUG3(lgr, Format("CMPIProviderIFC::getProvider loading library: %1",
 			libName));
 	
 		if (!FileSystem::exists(libName))
@@ -860,7 +860,7 @@ CMPIProviderIFC::doUnloadProviders(
 
 			if (unload)
 			{
-				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format(
+				OW_LOG_DEBUG2(env->getLogger(COMPONENT_NAME), Format(
 						"Unloading CMPI Provider %1", it->first));
 				it->second.setNull();
 				m_provs.erase(it++);

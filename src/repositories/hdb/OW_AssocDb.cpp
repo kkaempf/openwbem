@@ -474,6 +474,7 @@ AssocDb::~AssocDb()
 {
 	try
 	{
+		OW_ASSERT(m_hdlCount == 0);
 		if (m_hdlCount > 0)
 		{
 			Logger logger(COMPONENT_NAME);
@@ -796,7 +797,7 @@ void
 AssocDb::addToFreeList(Int32 offset, AssocDbHandle& hdl)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("AssocDb::addToFreeList offset = %1", offset));
+	OW_LOG_DEBUG3(lgr, Format("AssocDb::addToFreeList offset = %1", offset));
 	AssocDbRecHeader rh;
 	File f = hdl.getFile();
 	readRecHeader(rh, offset, f);
@@ -827,7 +828,7 @@ AssocDb::check()
 bool AssocDb::checkFreeList()
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "AssocDb::checkFreeList");
+	OW_LOG_DEBUG3(lgr, "AssocDb::checkFreeList");
 	AssocDbHandle hdl = this->getHandle();
 	AssocDbRecHeader rh;
 	Int32 coffset = m_hdrBlock.firstFree;
@@ -844,7 +845,7 @@ bool AssocDb::checkFreeList()
 		{
 			if ((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_ALLOC_UNKNOWN)
 			{
-				OW_LOG_DEBUG(lgr, Format("AssocDb::checkFreeList block in the free list with unknown status, coffset = %1", coffset));
+				OW_LOG_DEBUG3(lgr, Format("AssocDb::checkFreeList block in the free list with unknown status, coffset = %1", coffset));
 			}
 			else
 			{
@@ -882,7 +883,7 @@ AssocDb::getNewBlock(Int32& offset, UInt32 blkSize_,
 start:
 	OW_ASSERT(checkFreeList());
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock blkSize_ = %1", blkSize_));
+	OW_LOG_DEBUG2(lgr, Format("AssocDb::getNewBlock blkSize_ = %1", blkSize_));
 	AssocDbRecHeader rh;
 	AssocDbRecHeader lh;
 	Int32 lastOffset = -1L;
@@ -890,7 +891,7 @@ start:
 	File f = hdl.getFile();
 	// round the block size up to the nearest power of 2 to help prevent fragmentation.
 	UInt32 blkSize = nextHighestPowerOfTwo(blkSize_);
-	OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock blkSize = %1", blkSize));
+	OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock blkSize = %1", blkSize));
 	typedef std::map<Int32, UInt32> AdjacentHeaderMap;
 	AdjacentHeaderMap adjacentHeaderMap;
 
@@ -899,12 +900,12 @@ start:
 
 	while (coffset != -1)
 	{
-		OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock reading block %1", coffset));
+		OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock reading block %1", coffset));
 		readRecHeader(rh, coffset, f);
 		OW_ASSERT(rh.nextFree != coffset);
 		OW_ASSERT((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_FREE);
 
-		OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock inserting into precedingBlockMap %1, %2", coffset, lastOffset));
+		OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock inserting into precedingBlockMap %1, %2", coffset, lastOffset));
 		precedingBlockMap.insert(std::make_pair(coffset, lastOffset));
 
 		// consolidate
@@ -912,7 +913,7 @@ start:
 		do
 		{
 			foundAdjacentBlock = false;
-			OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock inserting into adjacentHeaderMap %1, %2", coffset, rh.blkSize));
+			OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock inserting into adjacentHeaderMap %1, %2", coffset, rh.blkSize));
 			std::pair<AdjacentHeaderMap::iterator, bool> irv = adjacentHeaderMap.insert(std::make_pair(coffset, rh.blkSize));
 			if (!irv.second)
 			{
@@ -925,7 +926,7 @@ start:
 			{
 				AdjacentHeaderMap::iterator prevBlockIter = irv.first;
 				--prevBlockIter;
-				OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock previous free block: %1, length: %2", prevBlockIter->first, prevBlockIter->second));
+				OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock previous free block: %1, length: %2", prevBlockIter->first, prevBlockIter->second));
 				if (prevBlockIter->first + prevBlockIter->second == UInt32(coffset))
 				{
 					// it's an adjacent block, so now combine it.
@@ -935,14 +936,14 @@ start:
 					prevHeader.blkSize += rh.blkSize;
 					adjacentHeaderMap[prevBlockIter->first] = prevHeader.blkSize;
 					prevBlockIter->second = prevHeader.blkSize;
-					OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock setting previous free block: %1, length: %2", prevBlockIter->first, prevBlockIter->second));
+					OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock setting previous free block: %1, length: %2", prevBlockIter->first, prevBlockIter->second));
 					writeRecHeader(prevHeader, prevBlockIter->first, f);
 					// splice the current block out of the list by updating the block at lastOffset to point to the next block.
 					if (lastOffset != -1L)
 					{
 						lh.nextFree = rh.nextFree;
 						precedingBlockMap[lh.nextFree] = lastOffset;
-						OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock removing free block from list. Updating predecessor free block: %1, nextFree: %2", lastOffset, lh.nextFree));
+						OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock removing free block from list. Updating predecessor free block: %1, nextFree: %2", lastOffset, lh.nextFree));
 						writeRecHeader(lh, lastOffset, f);
 					}
 					if (m_hdrBlock.firstFree == coffset)
@@ -953,7 +954,7 @@ start:
 						{
 							OW_THROW_ERRNO_MSG(IOException, "failed to write file header while updating free list");
 						}
-						OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock removing free block from list. Updating main header block firstFree: %1", m_hdrBlock.firstFree));
+						OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock removing free block from list. Updating main header block firstFree: %1", m_hdrBlock.firstFree));
 					}
 					// make the current block the new larger block.
 					coffset = prevBlockIter->first;
@@ -965,24 +966,24 @@ start:
 					lastOffset = lastIter->second;
 					readRecHeader(rh, coffset, f);
 					// this statement invalidates all iterators to adjacentHeaderMap
-					OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock removing %1 (current block) from adjacentHeaderMap", irv.first->first));
+					OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock removing %1 (current block) from adjacentHeaderMap", irv.first->first));
 					adjacentHeaderMap.erase(irv.first);
 					foundAdjacentBlock = true;
 					goto start;
 				}
 				else
 				{
-					OW_LOG_DEBUG(lgr, Format("Previous block is not adjacent %1 != %2", prevBlockIter->first + prevBlockIter->second, UInt32(coffset)));
+					OW_LOG_DEBUG3(lgr, Format("Previous block is not adjacent %1 != %2", prevBlockIter->first + prevBlockIter->second, UInt32(coffset)));
 				}
 
 			}
 
 			// look at the next block
-			OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock looking for free block at: %1", coffset + rh.blkSize));
+			OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock looking for free block at: %1", coffset + rh.blkSize));
 			AdjacentHeaderMap::iterator nextBlockIter = adjacentHeaderMap.find(coffset + rh.blkSize);
 			if (nextBlockIter != adjacentHeaderMap.end())
 			{
-				OW_LOG_DEBUG(lgr, Format("Found a following free block: %1, size: %2", nextBlockIter->first, nextBlockIter->second));
+				OW_LOG_DEBUG3(lgr, Format("Found a following free block: %1, size: %2", nextBlockIter->first, nextBlockIter->second));
 
 				// remove the next block from the list
 				PrecedingBlockMap::iterator precedingBlockIter = precedingBlockMap.find(nextBlockIter->first);
@@ -1002,7 +1003,7 @@ start:
 						lastOffset = -1;
 					}
 					precedingBlockMap[m_hdrBlock.firstFree] = -1;
-					OW_LOG_DEBUG(lgr, Format("Setting m_hdrBlock.firstFree to: %1", m_hdrBlock.firstFree));
+					OW_LOG_DEBUG3(lgr, Format("Setting m_hdrBlock.firstFree to: %1", m_hdrBlock.firstFree));
 					if (f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) != sizeof(m_hdrBlock))
 					{
 						OW_THROW_ERRNO_MSG(IOException, "failed to write file header while updating free list");
@@ -1019,14 +1020,14 @@ start:
 						rh.nextFree = precedingBlockHeader.nextFree;
 					}
 					precedingBlockMap[precedingBlockHeader.nextFree] = precedingBlock;
-					OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock removing free block from list. Updating predecessor free block: %1, nextFree: %2", precedingBlock, precedingBlockHeader.nextFree));
+					OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock removing free block from list. Updating predecessor free block: %1, nextFree: %2", precedingBlock, precedingBlockHeader.nextFree));
 					writeRecHeader(precedingBlockHeader, precedingBlock, f);
 				}
 
 				// add the next block's size to the current block
 				rh.blkSize += nextBlockIter->second;
 				adjacentHeaderMap[coffset] = rh.blkSize;
-				OW_LOG_DEBUG(lgr, "AssocDb::getNewBlock adding next block's size to the current block");
+				OW_LOG_DEBUG3(lgr, "AssocDb::getNewBlock adding next block's size to the current block");
 				writeRecHeader(rh, coffset, f);
 
 				if (lastOffset == nextBlockIter->first)
@@ -1036,7 +1037,7 @@ start:
 				}
 
 				// this statement invalidates all iterators to adjacentHeaderMap
-				OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock removing %1 (next block) from adjacentHeaderMap", nextBlockIter->first));
+				OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock removing %1 (next block) from adjacentHeaderMap", nextBlockIter->first));
 				adjacentHeaderMap.erase(nextBlockIter);
 
 				foundAdjacentBlock = true;
@@ -1044,7 +1045,7 @@ start:
 			}
 			else
 			{
-				OW_LOG_DEBUG(lgr, "Did not find an free block after the current block");
+				OW_LOG_DEBUG3(lgr, "Did not find an free block after the current block");
 			}
 
 		} while (foundAdjacentBlock);
@@ -1052,35 +1053,35 @@ start:
 		// If the current block is larger than necessary, break it into two.
 		if (rh.blkSize > blkSize)
 		{
-			OW_LOG_DEBUG(lgr, Format("Current block size (%1) is larger than necessary (%2)", rh.blkSize, blkSize));
+			OW_LOG_DEBUG3(lgr, Format("Current block size (%1) is larger than necessary (%2)", rh.blkSize, blkSize));
 			Int32 prevBlockSize = rh.blkSize;
 			AssocDbRecHeader newFreeBlock;
 			newFreeBlock.blkSize = prevBlockSize - blkSize;
 			newFreeBlock.nextFree = rh.nextFree;
 			newFreeBlock.flags |= AssocDbRecHeader::E_BLK_FREE;
 			Int32 newOffset = coffset + blkSize;
-			OW_LOG_DEBUG(lgr, Format("newOffset = %1, newFreeBlock.blkSize = %2, newFreeBlock.nextFree = %3", newOffset, newFreeBlock.blkSize, newFreeBlock.nextFree));
+			OW_LOG_DEBUG3(lgr, Format("newOffset = %1, newFreeBlock.blkSize = %2, newFreeBlock.nextFree = %3", newOffset, newFreeBlock.blkSize, newFreeBlock.nextFree));
 			writeRecHeader(newFreeBlock, newOffset, f);
 			rh.blkSize = blkSize;
 			rh.nextFree = newOffset;
-			OW_LOG_DEBUG(lgr, "AddocDb::getNewBlock setting current block to point to new free block");
+			OW_LOG_DEBUG3(lgr, "AddocDb::getNewBlock setting current block to point to new free block");
 			writeRecHeader(rh, coffset, f);
 		}
 
 
 		if (rh.blkSize == blkSize)
 		{
-			OW_LOG_DEBUG(lgr, Format("Current block size (%1) is sufficient, coffset = %2, lastOffset = %3, m_hdrBlock.firstFree = %4", rh.blkSize, coffset, lastOffset, m_hdrBlock.firstFree));
+			OW_LOG_DEBUG3(lgr, Format("Current block size (%1) is sufficient, coffset = %2, lastOffset = %3, m_hdrBlock.firstFree = %4", rh.blkSize, coffset, lastOffset, m_hdrBlock.firstFree));
 			if (lastOffset != -1L)
 			{
 				lh.nextFree = rh.nextFree;
-				OW_LOG_DEBUG(lgr, Format("updating lh to point to next free block. lh.nextFree = %1", lh.nextFree));
+				OW_LOG_DEBUG3(lgr, Format("updating lh to point to next free block. lh.nextFree = %1", lh.nextFree));
 				writeRecHeader(lh, lastOffset, f);
 			}
 			else if (m_hdrBlock.firstFree == coffset)
 			{
 				m_hdrBlock.firstFree = rh.nextFree;
-				OW_LOG_DEBUG(lgr, Format("updating m_hdrBlock to point to next free block. m_hdrBlock.firstFree = %1", m_hdrBlock.firstFree));
+				OW_LOG_DEBUG3(lgr, Format("updating m_hdrBlock to point to next free block. m_hdrBlock.firstFree = %1", m_hdrBlock.firstFree));
 				if (f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) != sizeof(m_hdrBlock))
 				{
 					OW_THROW_ERRNO_MSG(IOException,
@@ -1094,7 +1095,7 @@ start:
 			rh.nextFree = 0L;
 			rh.flags &= ~AssocDbRecHeader::E_BLK_ALLOC_MASK;
 			rh.flags |= AssocDbRecHeader::E_BLK_ALLOCATED;
-			OW_LOG_DEBUG(lgr, "Found a block, marking nextFree to 0");
+			OW_LOG_DEBUG3(lgr, "Found a block, marking nextFree to 0");
 			writeRecHeader(rh, coffset, f);
 			offset = coffset;
 			OW_LOG_DEBUG(lgr, "AssocDb::getNewBlock finished with a re-used block.");
@@ -1103,7 +1104,7 @@ start:
 		}
 		else
 		{
-			OW_LOG_DEBUG(lgr, Format("Current block size (%1) is not sufficient (%2)", rh.blkSize, blkSize));
+			OW_LOG_DEBUG3(lgr, Format("Current block size (%1) is not sufficient (%2)", rh.blkSize, blkSize));
 		}
 		lastOffset = coffset;
 		lh = rh;
@@ -1117,7 +1118,7 @@ start:
 	{
 		OW_THROW(HDBException, "file size > 2GB. Overflow.");
 	}
-	OW_LOG_DEBUG(lgr, Format("AssocDb::getNewBlock() new block offset: %1", offset));
+	OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock() new block offset: %1", offset));
 	memset(&rh, 0, sizeof(rh));
 	rh.blkSize = blkSize;
 	rh.flags &= ~AssocDbRecHeader::E_BLK_ALLOC_MASK;
@@ -1132,7 +1133,7 @@ writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File& file)
 	Logger lgr(COMPONENT_NAME);
 	rh.chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&rh.nextFree),
 		sizeof(rh) - sizeof(rh.chkSum));
-	OW_LOG_DEBUG(lgr, Format("writeRecHeader writing header to offset %1, chksum: %2, nextFree: %3, blkSize: %4", offset, rh.chkSum, rh.nextFree, rh.blkSize));
+	OW_LOG_DEBUG3(lgr, Format("writeRecHeader writing header to offset %1, chksum: %2, nextFree: %3, blkSize: %4", offset, rh.chkSum, rh.nextFree, rh.blkSize));
 	OW_ASSERT(rh.nextFree != offset);
 	if (file.write(&rh, sizeof(rh), offset) != sizeof(rh))
 	{
@@ -1144,7 +1145,7 @@ static void
 readRecHeader(AssocDbRecHeader& rh, Int32 offset, const File& file)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("readRecHeader read header from offset %1", offset));
+	OW_LOG_DEBUG3(lgr, Format("readRecHeader read header from offset %1", offset));
 	if (file.read(&rh, sizeof(rh), offset) != sizeof(rh))
 	{
 		OW_THROW_ERRNO_MSG(IOException, "Failed to read record from assoc db");

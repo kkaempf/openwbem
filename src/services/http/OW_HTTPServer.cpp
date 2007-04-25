@@ -307,7 +307,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	}
 	else
 	{
-		OW_LOG_DEBUG(logger, "HTTPServer::authenticate: sending default challenge");
+		OW_LOG_DEBUG2(logger, "HTTPServer::authenticate: sending default challenge");
 		// We don't handle whatever they sent, so send the default challenge
 		pconn->setErrorDetails("You must authenticate to access this"
 			" resource");
@@ -330,7 +330,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			default:
 				OW_ASSERT("Internal implementation error! m_options.defaultAuthChallenge is invalid!" == 0);
 		}
-		OW_LOG_DEBUG(logger, Format("HTTPServer::authenticate: Returning WWW-Authenticate: %1", authChallenge));
+		OW_LOG_DEBUG3(logger, Format("HTTPServer::authenticate: Returning WWW-Authenticate: %1", authChallenge));
 		pconn->addHeader("WWW-Authenticate", authChallenge);
 		return E_AUTHENTICATE_CONTINUE;
 	}
@@ -625,7 +625,7 @@ HTTPServer::start()
 {
 	ServiceEnvironmentIFCRef env = m_options.env;
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "HTTP Service is starting...");
+	OW_LOG_DEBUG2(lgr, "HTTP Service is starting...");
 	if (m_options.httpPort < 0 && m_options.httpsPort < 0 && !m_options.useUDS)
 	{
 		OW_THROW(SocketException, "No ports to listen on and use_UDS set to false");

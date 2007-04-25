@@ -176,11 +176,11 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 		return 1; // have poll called again in 1 second.
 	}
 
-	OW_LOG_DEBUG(logger, Format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
+	OW_LOG_DEBUG3(logger, Format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
 	if (!willPoll())
 	{
 		// nothing to do, so return 0 to stop polling.
-		OW_LOG_DEBUG(logger, "LifecycleIndicationPoller::poll nothing to do, returning 0");
+		OW_LOG_DEBUG2(logger, "LifecycleIndicationPoller::poll nothing to do, returning 0");
 		return 0;
 	}
 	
@@ -198,7 +198,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 		return 0;
 	}
 	
-	OW_LOG_DEBUG(logger, Format("LifecycleIndicationPoller::poll got %1 instances", curInstances.size()));
+	OW_LOG_DEBUG2(logger, Format("LifecycleIndicationPoller::poll got %1 instances", curInstances.size()));
 	// Compare the new instances with the previous instances
 	// and send any indications that may be necessary.
 	typedef SortedVectorSet<CIMInstance, sortByInstancePath> instSet_t;

@@ -98,9 +98,7 @@ SPNEGOAuthentication::authenticate(String& userName,
 	{
 		htcon->setErrorDetails("Internal error. !info.startsWith"
 		                       "(\"Negotiate: \")");
-		OW_LOG_DEBUG(m_logger, Format("Error, expected info to begin with "
-		                              "\"Negotiate \", but it is: \"%1\"",
-		                              info));
+		OW_LOG_INFO(m_logger, Format("Error, expected info to begin with \"Negotiate \", but it is: \"%1\"", info));
 		return E_AUTHENTICATE_FAIL;
 	}
 
@@ -118,17 +116,17 @@ SPNEGOAuthentication::authenticate(String& userName,
 		std::ostream ostr(&outbuf);
 		istr.tie(&ostr);
 		ostr << info2 << '\n';
-		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got request, sending to helper: %1", info2));
+		OW_LOG_DEBUG3(m_logger, Format("SPNEGOAuthentication got request, sending to helper: %1", info2));
 		ostr << htcon->getConnectionId() << std::endl;
-		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication sending connection id: %1", htcon->getConnectionId()));
+		OW_LOG_DEBUG3(m_logger, Format("SPNEGOAuthentication sending connection id: %1", htcon->getConnectionId()));
 		String result = String::getLine(istr);
-		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got response: %1", result));
+		OW_LOG_DEBUG3(m_logger, Format("SPNEGOAuthentication got response: %1", result));
 		if (result == "S")
 		{
 			userName = String::getLine(istr);
 			String challenge = String::getLine(istr);
 			htcon->addHeader("WWW-Authenticate", "Negotiate " + challenge);
-			OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got success. username: %1", userName));
+			OW_LOG_DEBUG2(m_logger, Format("SPNEGOAuthentication got success. username: %1", userName));
 			return E_AUTHENTICATE_SUCCESS;
 		}
 		else if (result == "F")

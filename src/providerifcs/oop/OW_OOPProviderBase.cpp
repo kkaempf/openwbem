@@ -105,7 +105,7 @@ namespace
 
 		// still running, so shut it down. 0 for second parameter because we don't want
 		// to close the pipes. Later we try to read stderr if the process failed.
-		OW_LOG_DEBUG(lgr, Format("Cleaning up process \"%1\" (%2)", procName, proc->pid()));
+		OW_LOG_DEBUG2(lgr, Format("Cleaning up process \"%1\" (%2)", procName, proc->pid()));
 		proc->waitCloseTerm(Timeout::relative(10.0), Timeout::relative(0), Timeout::relative(10.1));
 		status = proc->processStatus();
 
@@ -256,10 +256,10 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 
 
 	// launch the process
-	OW_LOG_DEBUG(lgr, Format("%1 about to spawn %2", fname, m_provInfo.process));
+	OW_LOG_DEBUG2(lgr, Format("%1 about to spawn %2", fname, m_provInfo.process));
 	for (size_t i = 0; i < m_provInfo.args.size(); ++i)
 	{
-		OW_LOG_DEBUG(lgr, Format("param %1=\"%2\"", i, m_provInfo.args[i]));
+		OW_LOG_DEBUG2(lgr, Format("param %1=\"%2\"", i, m_provInfo.args[i]));
 	}
 	// argv array has to start with the process
 	StringArray argv(m_provInfo.args);
@@ -382,7 +382,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 		}
 		catch (Exception& e)
 		{
-			OW_LOG_DEBUG(lgr, Format("%1 caught %2", fname, e));
+			OW_LOG_DEBUG3(lgr, Format("%1 caught %2", fname, e));
 			// If we got a CIMException, it was thrown by the provider, so we don't want to terminate a persistent process.
 			// If we got any other exception, something bad happened, so terminate it.
 			if (e.getSubClassId() == ExceptionIds::CIMExceptionId && usePersistentProcess == E_USE_PERSISTENT_PROCESS)
@@ -393,7 +393,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 			}
 			else
 			{
-				OW_LOG_DEBUG(lgr, Format("Forcing process \"%1\" (%2) to finish: Not a persistent process (func threw exception)", m_provInfo.process, proc->pid()));
+				OW_LOG_DEBUG2(lgr, Format("Forcing process \"%1\" (%2) to finish: Not a persistent process (func threw exception)", m_provInfo.process, proc->pid()));
 				processFinish(proc, fname, m_provInfo.process);
 				throw;
 			}
@@ -406,7 +406,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 		}
 		else
 		{
-			OW_LOG_DEBUG(lgr, Format("Forcing process \"%1\" (%2) to finish: Not a persistent process (func finished)", m_provInfo.process, proc->pid()));
+			OW_LOG_DEBUG2(lgr, Format("Forcing process \"%1\" (%2) to finish: Not a persistent process (func finished)", m_provInfo.process, proc->pid()));
 			processFinish(proc, fname, m_provInfo.process);
 		}
 	}

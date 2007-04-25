@@ -228,14 +228,14 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 	}
 	catch (CIMException& e)
 	{
-		OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while enumerating instances of "
+		OW_LOG_INFO(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while enumerating instances of "
 			"OpenWBEM_OOPProviderRegistration in namespace %2", e, interopNs));
 	}
-	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderRegistration", registrations.size()));
+	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderRegistration", registrations.size()));
 	for (size_t i = 0; i < registrations.size(); ++i)
 	{
 		OpenWBEM::OOPProviderRegistration curReg(registrations[i]);
-		OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() processing registration %1: %2", i, curReg.toString()));
+		OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doInit() processing registration %1: %2", i, curReg.toString()));
 		try
 		{
 			String instanceID = curReg.getInstanceID();
@@ -264,7 +264,7 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 				(timeout.getMinutes() + 60 * 
 				 (timeout.getHours() + 24 * static_cast<float>(timeout.getDays())));
 
-			OW_LOG_DEBUG(lgr, Format("timeoutSecs = %1", timeoutSecs));
+			OW_LOG_DEBUG3(lgr, Format("timeoutSecs = %1", timeoutSecs));
 
 			if (timeoutSecs == INFINITY)
 			{
@@ -384,7 +384,7 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 					(unloadTimeout.getMinutes() + 60 * 
 					 (unloadTimeout.getHours() + 24 * static_cast<float>(unloadTimeout.getDays())));
 
-				OW_LOG_DEBUG(lgr, Format("unload timeoutSecs = %1", timeoutSecs));
+				OW_LOG_DEBUG3(lgr, Format("unload timeoutSecs = %1", timeoutSecs));
 
 				if (timeoutSecs == INFINITY)
 				{
@@ -576,10 +576,10 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 	}
 	catch (CIMException& e)
 	{
-		OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while enumerating instances of "
+		OW_LOG_INFO(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while enumerating instances of "
 			"OpenWBEM_OOPProviderProcess in namespace %2", e, interopNs));
 	}
-	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderProcess", providerProcesses.size()));
+	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderProcess", providerProcesses.size()));
 	for (size_t i = 0; i < providerProcesses.size(); ++i)
 	{
 		OpenWBEM::OOPProviderProcess curProvProc(providerProcesses[i]);
@@ -608,7 +608,7 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 				(timeout.getMinutes() + 60 * 
 				 (timeout.getHours() + 24 * static_cast<float>(timeout.getDays())));
 
-			OW_LOG_DEBUG(lgr, Format("timeoutSecs = %1", timeoutSecs));
+			OW_LOG_DEBUG3(lgr, Format("timeoutSecs = %1", timeoutSecs));
 
 			if (timeoutSecs == INFINITY)
 			{
@@ -670,7 +670,7 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 					(unloadTimeout.getMinutes() + 60 * 
 					 (unloadTimeout.getHours() + 24 * static_cast<float>(unloadTimeout.getDays())));
 
-				OW_LOG_DEBUG(lgr, Format("unload timeoutSecs = %1", timeoutSecs));
+				OW_LOG_DEBUG3(lgr, Format("unload timeoutSecs = %1", timeoutSecs));
 
 				if (timeoutSecs == INFINITY)
 				{
@@ -690,10 +690,10 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 			}
 			catch (CIMException& e)
 			{
-				OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while getting associations of "
+				OW_LOG_INFO(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while getting associations of "
 					"OpenWBEM_OOPProviderCapabilities in namespace %2", e, interopNs));
 			}
-			OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderCapabilities", providerCapabilities.size()));
+			OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderCapabilities", providerCapabilities.size()));
 
 			for (size_t j = 0; j < providerCapabilities.size(); ++j)
 			{
@@ -938,7 +938,7 @@ InstanceProviderIFCRef
 OOPProviderInterface::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doGetInstanceProvider, provIdString = %1", provIdString));
+	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetInstanceProvider, provIdString = %1", provIdString));
 	ProvRegMap_t::const_iterator iter = m_instanceProvReg.find(provIdString);
 	if (iter == m_instanceProvReg.end())
 	{
@@ -955,7 +955,7 @@ SecondaryInstanceProviderIFCRef
 OOPProviderInterface::doGetSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doGetSecondaryInstanceProvider, provIdString = %1", provIdString));
+	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetSecondaryInstanceProvider, provIdString = %1", provIdString));
 	ProvRegMap_t::const_iterator iter = m_secondaryInstanceProvReg.find(provIdString);
 	if (iter == m_secondaryInstanceProvReg.end())
 	{
@@ -972,7 +972,7 @@ MethodProviderIFCRef
 OOPProviderInterface::doGetMethodProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doGetMethodProvider, provIdString = %1", provIdString));
+	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetMethodProvider, provIdString = %1", provIdString));
 	ProvRegMap_t::const_iterator iter = m_methodProvReg.find(provIdString);
 	if (iter == m_methodProvReg.end())
 	{
@@ -989,7 +989,7 @@ AssociatorProviderIFCRef
 OOPProviderInterface::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doGetAssociatorProvider, provIdString = %1", provIdString));
+	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetAssociatorProvider, provIdString = %1", provIdString));
 	ProvRegMap_t::const_iterator iter = m_associatorProvReg.find(provIdString);
 	if (iter == m_associatorProvReg.end())
 	{
@@ -1007,7 +1007,7 @@ OOPProviderInterface::doGetIndicationExportProviders(const ProviderEnvironmentIF
 {
 	IndicationExportProviderIFCRefArray rval;
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "OOPProviderInterface::doGetIndicationexportProviders");
+	OW_LOG_DEBUG3(lgr, "OOPProviderInterface::doGetIndicationexportProviders");
 	
 	MutexLock lock(m_persistentProvsGuard);
 	ProvRegMap_t::const_iterator iter = m_indicationExportProvReg.begin();
@@ -1046,7 +1046,7 @@ OOPProviderInterface::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 {
 	PolledProviderIFCRefArray rval;
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "OOPProviderInterface::doGetPolledProviders");
+	OW_LOG_DEBUG3(lgr, "OOPProviderInterface::doGetPolledProviders");
 	
 	MutexLock lock(m_persistentProvsGuard);
 	ProvRegMap_t::const_iterator iter = m_polledProvReg.begin();
@@ -1084,7 +1084,7 @@ IndicationProviderIFCRef
 OOPProviderInterface::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doGetIndicationProvider, provIdString = %1", provIdString));
+	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetIndicationProvider, provIdString = %1", provIdString));
 	ProvRegMap_t::const_iterator iter = m_indicationProvReg.find(provIdString);
 	if (iter == m_indicationProvReg.end())
 	{
@@ -1103,7 +1103,7 @@ QueryProviderIFCRef
 OOPProviderInterface::doGetQueryProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doGetQueryProvider, provIdString = %1", provIdString));
+	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetQueryProvider, provIdString = %1", provIdString));
 	ProvRegMap_t::const_iterator iter = m_queryProvReg.find(provIdString);
 	if (iter == m_queryProvReg.end())
 	{

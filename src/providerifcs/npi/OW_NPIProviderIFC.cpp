@@ -120,7 +120,7 @@ NPIProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 		// provider
 		if (pProv->fp_createInstance)
 		{
-			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found instance"
+			OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found instance"
 				" provider %1", provIdString));
 			return InstanceProviderIFCRef(new NPIInstanceProviderProxy(
 				pProv));
@@ -169,7 +169,7 @@ NPIProviderIFC::doGetMethodProvider(const ProviderEnvironmentIFCRef& env,
 		// NULL
 		if (pProv->fp_invokeMethod)
 		{
-			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found method provider %1",
+			OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found method provider %1",
 				provIdString));
 			return MethodProviderIFCRef(
 				new NPIMethodProviderProxy(pProv));
@@ -192,7 +192,7 @@ NPIProviderIFC::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 		// associator provider
 		if (pProv->fp_associatorNames)
 		{
-			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found associator provider %1",
+			OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found associator provider %1",
 				provIdString));
 			return AssociatorProviderIFCRef(new
 				NPIAssociatorProviderProxy(pProv));
@@ -215,7 +215,7 @@ NPIProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 		// indication provider
 		if (pProv->fp_activateFilter)
 		{
-			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found indication provider %1",
+			OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found indication provider %1",
 				provIdString));
 			return IndicationProviderIFCRef(new
 				NPIIndicationProviderProxy(pProv));
@@ -299,7 +299,7 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		if (!fTable_.fp_activateFilter) continue;
 		//
 			// else it must be a polled provider - initialize it
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Calling initialize"
+		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Calling initialize"
 			" for provider %2", libName, guessProvId));
 		::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
 		// nothing the provider can do with it, so we'll just pass in 0
@@ -314,12 +314,12 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		// take care of the errorOccurred field - buggy provider or perl script
 		if (_npiHandle.errorOccurred)
 		{
-			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Initialize failed"
+			OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Initialize failed"
 			" for provider %2", libName, guessProvId));
 			delete ((NPIContext *)fTable.npicontext);
 			continue;
 		}
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: provider %1 loaded and initialized",
+		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: provider %1 loaded and initialized",
 			guessProvId));
 		//::NPIFTABLE * nf = new ::NPIFTABLE();
 		//* nf = fTable;
@@ -359,7 +359,7 @@ NPIProviderIFC::getProvider(
 		libName += "lib";
 		libName += provId;
 		libName += OW_SHAREDLIB_EXTENSION;
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC::getProvider loading library: %1",
+		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC::getProvider loading library: %1",
 			libName));
 
 		if (!FileSystem::exists(libName))
@@ -395,7 +395,7 @@ NPIProviderIFC::getProvider(
 			delete ((NPIContext *)fTable.npicontext);
 			return FTABLERef();
 		}
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Calling initialize"
+		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Calling initialize"
 			" for provider %2", libName, provId));
 		::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
 		// nothing the provider can do with it, so we'll just pass in 0
@@ -406,12 +406,12 @@ NPIProviderIFC::getProvider(
 		// that might indicate a buggy provider
 		if (_npiHandle.errorOccurred)
 		{
-			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Initialize failed"
+			OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Initialize failed"
 				" for provider %2", libName, provId));
 			delete ((NPIContext *)fTable.npicontext);
 			return FTABLERef();
 		}
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: provider %1 loaded and initialized",
+		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: provider %1 loaded and initialized",
 			provId));
 		m_provs[provId] = FTABLERef(theLib, new NPIFTABLE(fTable));
 
