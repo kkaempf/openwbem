@@ -66,9 +66,24 @@ namespace
 	{
 		// This will have to be made configurable if we want to run
 		// all of the monitor tests on HPUX.
-		return "LD_PRELOAD=/usr/lib/libpthread.sl:" OW_DEFAULT_LIB_DIR "/libopenwbem" OW_SHAREDLIB_EXTENSION;
+		Logger logger("ld_preload");
+
+#if defined(OW_ARCH_IA64)
+		String preloads("LD_PRELOAD=/usr/lib/hpux64/libpthread" OW_SHAREDLIB_EXTENSION
+			":" OW_DEFAULT_LIB_DIR "/libopenwbem" OW_SHAREDLIB_EXTENSION);
+		OW_LOG_DEBUG(logger, Format("returning itanium preloads: %1", preloads));
+#else
+
+		String preloads("LD_PRELOAD=/usr/lib/libCsup_v2" OW_SHAREDLIB_EXTENSION
+			":/usr/lib/libstd_v2" OW_SHAREDLIB_EXTENSION
+			":/usr/lib/libpthread" OW_SHAREDLIB_EXTENSION
+			":" OW_DEFAULT_LIB_DIR "/libopenwbem" OW_SHAREDLIB_EXTENSION);
+		OW_LOG_DEBUG(logger, Format("returning parisc preloads.", preloads));
+#endif
+		return preloads;
 	}
 #endif
+
 
 	class CstrArrStorage
 	{
