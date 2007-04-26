@@ -408,6 +408,19 @@ public:
 
 			return CIMValue(true);
 		}
+		else if (methodName == "testLogging")
+		{
+			String component = in[0].getValue().toString();
+			String category = in[1].getValue().toString();
+			String message = in[2].getValue().toString();
+			String filename = in[3].getValue().toString();
+			int fileline = in[4].getValue().toInt32();
+			String methodname = in[5].getValue().toString();
+			Logger logger(COMPONENT_NAME);
+			// void logMessage(const String& component, const String& category, const String& message, const char* filename, int fileline, const char* methodname) const;
+			logger.logMessage(component, category, message, filename.c_str(), fileline, methodname.c_str());
+			return CIMValue(true);
+		}
 
 		OW_THROWCIMMSG(CIMException::METHOD_NOT_AVAILABLE, Format("Provider hasn't implemented %1", methodName).c_str());
 	}

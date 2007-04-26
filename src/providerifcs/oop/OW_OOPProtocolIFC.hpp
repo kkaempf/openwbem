@@ -43,6 +43,7 @@
 #include "OW_IfcsFwd.hpp"
 #include "OW_WBEMFlags.hpp"
 #include "OW_WQLSelectStatement.hpp"
+#include "OW_LogLevel.hpp"
 
 #include <iosfwd>
 
@@ -212,6 +213,13 @@ public:
 		const Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		bool persistent) = 0;
+
+	virtual void setLogLevel(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		ELogLevel logLevel) = 0;
 
 	virtual void activateFilter(
 		const UnnamedPipeRef& in,

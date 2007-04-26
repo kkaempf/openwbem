@@ -238,7 +238,7 @@ enum
 	E_PROVIDER_OPT,
 	E_LOG_FILE_OPT,
 	E_MONITOR_OPT,
-	E_LOG_LEVEL_OPT
+	E_LOG_CATEGORIES_OPT
 };
 
 const CmdLineParser::Option g_options[] =
@@ -249,13 +249,13 @@ const CmdLineParser::Option g_options[] =
 	{E_PROVIDER_OPT, 'p', "provider", CmdLineParser::E_REQUIRED_ARG, 0, "Load and call <arg>"},
 	{E_LOG_FILE_OPT, 0, "logfile", CmdLineParser::E_REQUIRED_ARG, 0, "Debug log file"},
 	{E_MONITOR_OPT, 'm', "monitor", CmdLineParser::E_NO_ARG, 0, "Connect to monitor before loading provider library"},
-	{E_LOG_LEVEL_OPT, 0, "loglevel", CmdLineParser::E_REQUIRED_ARG, 0,
-	 "Lowest category to log"},
+	{E_LOG_CATEGORIES_OPT, 0, "logcategories", CmdLineParser::E_REQUIRED_ARG, 0,
+	 "Comma separated list of categories to log"},
 	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
 };
 
 int processCommandLine(
-	int argc, char* argv[], String& provider, String& logfile, String& loglevel
+	int argc, char* argv[], String& provider, String& logfile, String& logCategories
 );
 void printUsage();
 
@@ -300,8 +300,8 @@ int main(int argc, char* argv[])
 {
     int rval = 0;
 
-	String providerLib, logfile, loglevel;
-	int pclrv = processCommandLine(argc, argv, providerLib, logfile, loglevel);
+	String providerLib, logfile, logCategories;
+	int pclrv = processCommandLine(argc, argv, providerLib, logfile, logCategories);
 	if (pclrv == -1)
 	{
 		return 0;
@@ -309,10 +309,6 @@ int main(int argc, char* argv[])
 	else if (pclrv != 0)
 	{
 		return pclrv;
-	}
-	if (loglevel.empty())
-	{
-		loglevel = "*";
 	}
 
 	AutoDescriptor infd(::dup(0));
@@ -349,7 +345,7 @@ int main(int argc, char* argv[])
 	}
 
 	UnnamedPipeRef iopipe = UnnamedPipe::createUnnamedPipeFromDescriptor(infd, outfd);
-	OOPCpp1ProviderRunner provrunner(iopipe, logfile, loglevel);
+	OOPCpp1ProviderRunner provrunner(iopipe, logfile, logCategories);
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
 	ProviderEnvironmentIFCRef penv = provrunner.getProviderEnvironment();
 /*
@@ -420,7 +416,7 @@ processCommandLine(
 	char* argv[],
 	String& providerLib,
 	String& logfile,
-	String & loglevel)
+	String & logCategories)
 {
 	try
 	{
@@ -452,9 +448,9 @@ processCommandLine(
 		{
 			PrivilegeManager::connectToMonitor();
 		}
-		if (parser.isSet(E_LOG_LEVEL_OPT))
+		if (parser.isSet(E_LOG_CATEGORIES_OPT))
 		{
-			loglevel = parser.getOptionValue(E_LOG_LEVEL_OPT);
+			logCategories = parser.getOptionValue(E_LOG_CATEGORIES_OPT);
 		}
 	}
 	catch (const CmdLineParserException& e)

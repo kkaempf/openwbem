@@ -70,6 +70,11 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
+#define OW_OOP_LOG_DEBUG4(logger, message)
+
+// use this version if you need to debug this code
+//#define OW_OOP_LOG_DEBUG4(logger, message) OW_LOG_DEBUG(logger, message)
+
 namespace OW_NAMESPACE
 {
 
@@ -217,7 +222,7 @@ namespace
 				}
 				// successful request, store how much was read so it can be removed when we're done.
 				numRead = inbuf.pubseekoff(0, std::ios::cur);
-				OW_LOG_DEBUG3(logger, Format("processOneRequest() done. numRead = %1", numRead));
+				OW_OOP_LOG_DEBUG4(logger, Format("processOneRequest() done. numRead = %1", numRead));
 			}
 
 			// if the loop finished by returning FINISHED
@@ -290,17 +295,17 @@ namespace
 				while (moreDataToRead)
 				{
 					m_inputBuf.resize(oldSize + INCREMENT, 0xFA);
-					OW_LOG_DEBUG3(logger, Format("reading some data into offset %1", oldSize));
+					OW_OOP_LOG_DEBUG4(logger, Format("reading some data into offset %1", oldSize));
 					ssize_t numRead = m_inputPipe->read(&m_inputBuf[oldSize], INCREMENT, IOIFC::E_RETURN_ON_ERROR);
 					int lerrno = errno;
-					OW_LOG_DEBUG3(logger, Format("read() returned %1" , numRead));
+					OW_OOP_LOG_DEBUG4(logger, Format("read() returned %1" , numRead));
 					if (numRead == -1)
 					{
 						m_inputBuf.resize(oldSize, 0xFB);
 						if (lerrno == ETIMEDOUT)
 						{
 							 moreDataToRead = false; // end the loop
-							 OW_LOG_DEBUG3(logger, "Detected ETIMEDOUT");
+							 OW_OOP_LOG_DEBUG4(logger, "Detected ETIMEDOUT");
 						}
 						else
 						{
@@ -330,7 +335,7 @@ namespace
 				}
 				else
 				{
-					OW_LOG_DEBUG3(logger, Format("doSelected(): process() returned CONTINUE. m_outputEntries.size() = %1", m_outputEntries.size()));
+					OW_OOP_LOG_DEBUG4(logger, Format("doSelected(): process() returned CONTINUE. m_outputEntries.size() = %1", m_outputEntries.size()));
 					if (!m_outputEntries.empty())
 					{
 						// add it
@@ -595,9 +600,9 @@ namespace
 		//std::istream instr(in);
 		//instr.tie(&outstr);
 		UInt8 op = 0xFE;
-		OW_LOG_DEBUG3(logger, "processOneRequest about to read the code.");
+		OW_OOP_LOG_DEBUG4(logger, "processOneRequest about to read the code.");
 		BinarySerialization::read(inbuf, op);
-		OW_LOG_DEBUG3(logger, Format("processOneRequest read code: %1", static_cast<int>(op)));
+		OW_OOP_LOG_DEBUG4(logger, Format("processOneRequest read code: %1", static_cast<int>(op)));
 		switch (op)
 		{
 			case BinarySerialization::BIN_OK:
@@ -642,7 +647,7 @@ namespace
 
 			case BinarySerialization::BIN_LOG_MESSAGE:
 			{
-				OW_LOG_DEBUG3(logger, "processOneRequest got BIN_LOG_MESSAGE");
+				OW_OOP_LOG_DEBUG4(logger, "processOneRequest got BIN_LOG_MESSAGE");
 				String component = BinarySerialization::readString(inbuf);
 				String category = BinarySerialization::readString(inbuf);
 				String message = BinarySerialization::readString(inbuf);
@@ -1490,6 +1495,29 @@ OOPProtocolCPP1::setPersistent(
 	BinarySerialization::writeBool(obuf, persistent);
 
 	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::setPersistent finished writing.");
+
+	NoResultHandler noResultHandler;
+	end(buf, in, out, timeout, env, noResultHandler, m_pprov, E_WRITE_ONLY);
+}
+
+void
+OOPProtocolCPP1::setLogLevel(
+	const UnnamedPipeRef& in,
+	const UnnamedPipeRef& out,
+	const Timeout& timeout,
+	const ProviderEnvironmentIFCRef& env,
+	ELogLevel logLevel)
+{
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG3(logger, Format("OOPProtocolCPP1::setLogLevel about to start writing: %1", static_cast<int>(logLevel)));
+
+	Array<unsigned char> buf;
+	OOPDataOStreamBuf obuf(buf);
+	BinarySerialization::write(obuf, BinarySerialization::BinaryProtocolVersion);
+	BinarySerialization::write(obuf, BinarySerialization::SET_LOG_LEVEL);
+	BinarySerialization::write(obuf, static_cast<UInt8>(logLevel));
+
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::setLogLevel finished writing.");
 
 	NoResultHandler noResultHandler;
 	end(buf, in, out, timeout, env, noResultHandler, m_pprov, E_WRITE_ONLY);

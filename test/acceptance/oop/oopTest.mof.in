@@ -33,6 +33,7 @@ class ooptest
 	boolean testCIMOMHandle();
 	boolean testRepositoryCIMOMHandle();
 	boolean testGetConfig();
+	boolean testLogging([in, required] string component, [in, required] string category, [in, required] string message, [in, required] string filename, sint32 fileline, [in, required] string methodname);
 };
 
 class ooptestInst1

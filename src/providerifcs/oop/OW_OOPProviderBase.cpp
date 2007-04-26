@@ -318,6 +318,8 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 		m_protocol->setPersistent(proc->out(), proc->in(), m_provInfo.timeout, env, true);
 	}
 
+	m_protocol->setLogLevel(proc->out(), proc->in(), m_provInfo.timeout, env, lgr.getLogLevel());
+
 	return ThreadSafeProcessRef(new ThreadSafeProcess(proc));
 }
 

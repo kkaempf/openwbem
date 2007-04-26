@@ -80,7 +80,14 @@ public:
 		bool m_initialized;
 	};
 
-	OOPCpp1ProviderRunner(const UnnamedPipeRef& IOPipe, const String& logFile, const String& logLevel);
+	/**
+	 * 
+	 * @param IOPipe
+	 * @param logFile If not empty, log messages will be directed to the file in addition to the CIMOM.
+	 * @param logCategories If set to the empty string, then the CIMOM's level will be used, otherwise this must be a
+	 *                      comma separated list of log categories.
+	 */
+	OOPCpp1ProviderRunner(const UnnamedPipeRef& IOPipe, const String& logFile, const String& logCategories);
 	int runProvider(ProviderBaseIFCRef& provider, const String& sourceLib,
 		InitializeCallback& initializeCallback);
 

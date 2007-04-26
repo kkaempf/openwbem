@@ -182,8 +182,8 @@ log.main.format = [%t %-5p %c] %m
 # If owcimomd is run in debug mode, then the debug log will be active.
 log.debug.type = stderr
 log.debug.components = *
-log.debug.categories = *
-;log.debug.level = *
+;log.debug.categories = *
+log.debug.level = DEBUG
 log.debug.format = [%-5r %t %-5p %c %F:%L] %m
 
 # Color version using ascii escape codes

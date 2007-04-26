@@ -200,6 +200,13 @@ public:
 		const ProviderEnvironmentIFCRef& env,
 		bool persistent);
 
+	virtual void setLogLevel(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		ELogLevel logLevel);
+
 	virtual void activateFilter(
 		const UnnamedPipeRef& in,
 		const UnnamedPipeRef& out,
