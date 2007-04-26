@@ -295,12 +295,27 @@ void XMLParserCore::getCData(XMLToken& entry)
 }
 void XMLParserCore::getDocType()
 {
-	// Just ignore the DOCTYPE command for now:
-	for (; *m_current && *m_current != '>'; ++m_current)
+	// Just ignore the DOCTYPE command for now.
+	// !DOCTYPE can have nested !ELEMENTs and !ATTLISTs.  These need to be
+	// skipped when searching for the closing '>'.
+	int closing_symbols_required = 1;
+	for (; *m_current; ++m_current)
 	{
 		if (*m_current == '\n')
 		{
 			++m_line;
+		}
+		else if (*m_current == '<')
+		{
+			++closing_symbols_required;
+		}
+		else if (*m_current == '>')
+		{
+			--closing_symbols_required;
+			if (closing_symbols_required == 0)
+			{
+				break;
+			}
 		}
 	}
 	if (*m_current != '>')
