@@ -99,6 +99,70 @@ void XMLParserCoreTestCases::testXmlDeclaration()
 	unitAssert( !has_token );
 }
 
+void XMLParserCoreTestCases::testDocTypeTag()
+{
+	String input(
+		"<?xml version=\"1.0\"?>"
+		"<!DOCTYPE foo ["
+		"<!ELEMENT foo (bar)>"
+		"<!ATTLIST foo quux (flurp|blarp) \"flurp\">"
+		"<!ELEMENT bar (#PCDATA)>"
+		"]>"
+		"<foo quux=\"flurp\">"
+		"<bar>"
+		"baz"
+		"</bar>"
+		"</foo>"
+	);
+	IStringStream is(input);
+	XMLParserCore parser(is);
+	XMLToken token;
+
+	//<?xml>
+	bool has_token = parser.next(token);
+	unitAssert( has_token );
+	unitAssertEquals( XMLToken::XML_DECLARATION, token.type );
+
+	//<!DOCTYPE>
+	has_token = parser.next(token);
+	unitAssert( has_token );
+	unitAssertEquals( XMLToken::DOCTYPE, token.type );
+
+	//<foo>
+	has_token = parser.next(token);
+	unitAssert( has_token );
+	unitAssertEquals( XMLToken::START_TAG, token.type );
+	unitAssertEquals( "foo", token.text.toString() );
+	// quux="flurp"
+	unitAssert( !token.attributes.empty() );
+
+	//<bar>
+	has_token = parser.next(token);
+	unitAssert( has_token );
+	unitAssertEquals( XMLToken::START_TAG, token.type );
+	unitAssertEquals( "bar", token.text.toString() );
+
+	//baz
+	has_token = parser.next(token);
+	unitAssert( has_token );
+	unitAssertEquals( XMLToken::CONTENT, token.type );
+
+	//</bar>
+	has_token = parser.next(token);
+	unitAssert( has_token );
+	unitAssertEquals( "bar", token.text.toString() );
+	unitAssertEquals( XMLToken::END_TAG, token.type );
+
+	//</foo>
+	has_token = parser.next(token);
+	unitAssert( has_token );
+	unitAssertEquals( "foo", token.text.toString() );
+	unitAssertEquals( XMLToken::END_TAG, token.type );
+
+	has_token = parser.next(token);
+	unitAssert( !has_token );
+}
+
 void XMLParserCoreTestCases::testBadXmlDeclarationName()
 {
 	String input("<?37 ?>");
@@ -222,6 +286,7 @@ Test* XMLParserCoreTestCases::suite()
 
 	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testEmptyElement);
 	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testXmlDeclaration);
+	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testDocTypeTag);
 	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testBadXmlDeclarationName);
 	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testStartTag);
 	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testBadStartTagName);

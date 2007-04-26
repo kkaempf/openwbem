@@ -47,6 +47,7 @@ public:
 private:
 	void testEmptyElement();
 	void testXmlDeclaration();
+	void testDocTypeTag();
 	void testBadXmlDeclarationName();
 	void testStartTag();
 	void testBadStartTagName();
