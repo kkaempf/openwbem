@@ -953,6 +953,7 @@ CIMServer::_getCIMInstances(
 		{
 			OW_LOG_DEBUG(m_logger, Format("CIMServer calling query provider to enumerate instances: %1:%2", ns, className));
 			queryp->queryInstances(createProvEnvRef(context, m_env), ns, *pwss, *pwc, *presult, theClass);
+			return;
 		}
 	}
 
