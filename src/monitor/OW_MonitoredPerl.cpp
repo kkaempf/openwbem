@@ -36,6 +36,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_MonitoredPerl.hpp"
 #include "OW_PrivilegeManager.hpp"
+#include "OW_Logger.hpp"
 
 #include <vector>
 
