@@ -483,8 +483,10 @@ public:
 
 	CIMOMHandleIFCRef commonGetCIMOMHandle() const
 	{
+		// NOTE: This function CANNOT log anything or call any functions that may log until *after* the m_inpipe->receiveDescriptor() calls.
+		// This is because on OS X receiveDescriptor() has to write an ACK synchronously, and if a log message happens first, that will
+		// throw a wrench in the works.
 		LoggerRef logger = getLogger(OOPCpp1ProviderRunner::COMPONENT_NAME);
-		OW_LOG_DEBUG3(logger, "OOPProviderEnvironment::commonGetCIMOMHandle called. doing pubsync()");
 		if (m_outbuf.pubsync() == -1)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED, "sync failed");
@@ -497,10 +499,9 @@ public:
 		}
 		if (op == BinarySerialization::BIN_OK)
 		{
-			OW_LOG_DEBUG3(logger, "OOPProviderEnvironment::commonGetCIMOMHandle() got BIN_OK");
 			AutoDescriptor inputDescriptor = m_inpipe->receiveDescriptor(m_inpipe);
-			OW_LOG_DEBUG3(logger, Format("OOPProviderEnvironment::commonGetCIMOMHandle() got input descriptor: %1", inputDescriptor));
 			AutoDescriptor outputDescriptor = m_inpipe->receiveDescriptor(m_inpipe);
+			OW_LOG_DEBUG3(logger, Format("OOPProviderEnvironment::commonGetCIMOMHandle() got input descriptor: %1", inputDescriptor));
 			OW_LOG_DEBUG3(logger, Format("OOPProviderEnvironment::commonGetCIMOMHandle() got output descriptor: %1", outputDescriptor));
 			UnnamedPipeRef newConn = UnnamedPipe::createUnnamedPipeFromDescriptor(inputDescriptor, outputDescriptor);
 			// Setting the timeouts to be infinite won't cause a problem here.  The OOP interface enforces a timeout for each operation and
