@@ -46,6 +46,7 @@
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
+#include "OW_QueryProviderIFC.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_InstanceProviderInfo.hpp"
 #include "OW_SecondaryInstanceProviderInfo.hpp"
@@ -54,6 +55,7 @@
 #endif
 #include "OW_MethodProviderInfo.hpp"
 #include "OW_IndicationProviderInfo.hpp"
+#include "OW_QueryProviderInfo.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
@@ -105,7 +107,8 @@ public:
 		AssociatorProviderInfoArray& a,
 #endif
 		MethodProviderInfoArray& m,
-		IndicationProviderInfoArray& ind);
+		IndicationProviderInfoArray& ind,
+		QueryProviderInfoArray& q);
 	/**
 	 * Locate an Instance provider.
 	 *
@@ -168,6 +171,18 @@ public:
 	 */
 	PolledProviderIFCRefArray getPolledProviders(const ProviderEnvironmentIFCRef& env);
 	/**
+	 * Locate a Query provider.
+	 *
+	 * @param provIdString	The provider interface specific string. The provider
+	 *								interface will use this to identify the provider
+	 *								being requested.
+	 *
+	 * @returns A ref counted QueryProvider. If the provider is not found,
+	 * then an NoSuchProviderException is thrown.
+	 */
+	QueryProviderIFCRef getQueryProvider(const ProviderEnvironmentIFCRef& env,
+		const char* provIdString);
+	/**
 	 * Unload providers in memory that haven't been used for a while
 	 */
 	void unloadProviders(const ProviderEnvironmentIFCRef& env);
@@ -203,7 +218,8 @@ protected:
 		AssociatorProviderInfoArray& a,
 #endif
 		MethodProviderInfoArray& m,
-		IndicationProviderInfoArray& ind) = 0;
+		IndicationProviderInfoArray& ind,
+		QueryProviderInfoArray& q) = 0;
 	virtual InstanceProviderIFCRef doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 	virtual SecondaryInstanceProviderIFCRef doGetSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env,
@@ -223,6 +239,8 @@ protected:
 		);
 	virtual IndicationProviderIFCRef doGetIndicationProvider(
 		const ProviderEnvironmentIFCRef& env,
+		const char* provIdString);
+	virtual QueryProviderIFCRef doGetQueryProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
 	virtual void doShuttingDown(const ProviderEnvironmentIFCRef& env);

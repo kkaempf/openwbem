@@ -1,0 +1,15 @@
+#pragma namespace("root")
+
+instance of OpenWBEM_OOPProviderRegistration
+{
+        InstanceID = "1";
+        NamespaceNames = {"root/testsuite"};
+        ClassName = "wqlTestClass2";
+        ProviderTypes = {9}; // query
+        Process = "@libexecdir@/openwbem/owoopcpp1pr";
+        Args = { "--provider=@provdir@/libtestWQLProv.@LIB_EXT@", "--logfile=" };
+        Protocol = "owcpp1";
+        Timeout = "00000000000010.000000:000";
+	Persistent = true;
+};
+

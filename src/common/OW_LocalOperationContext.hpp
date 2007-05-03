@@ -78,6 +78,11 @@ private:
 	 */
 	virtual bool doKeyHasData(const String& key) const;
 
+	/**
+	 * @return The operation id. Each operation has a unique id.
+	 */
+	virtual UInt64 doGetOperationId() const;
+
 #ifdef OW_WIN32
 #pragma warning (push)
 #pragma warning (disable: 4251)
@@ -88,6 +93,8 @@ private:
 #ifdef OW_WIN32
 #pragma warning (pop)
 #endif
+
+	UInt64 m_operationId;
 
 	// non-copyable
 	LocalOperationContext(const LocalOperationContext&);

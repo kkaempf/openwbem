@@ -17,15 +17,19 @@ uninstall-local : uninstall-ow-shared-libs
 noinst_LIBRARIES = libcmpiprovifc.a
 OW_SHARED_LIBS = libcmpiprovifc.$(LIB_EXT)
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cmpi/common -lcmpisupport
 
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
-thelibdir = $(pkglibdir)/provifcs
+# This needs to be placed in the libdir because the
+# oop provider runner needs it.
+thelibdir = $(libdir)
 
+# create links here
+OW_EXTRA_LINK_DIRS=$(pkglibdir)/provifcs
 
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_PROVIDER_S=

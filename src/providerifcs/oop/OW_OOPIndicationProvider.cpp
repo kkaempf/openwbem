@@ -35,6 +35,7 @@
 #include "OW_config.h"
 #include "OW_OOPIndicationProvider.hpp"
 #include "OW_Logger.hpp"
+#include "OW_OOPShuttingDownCallback.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -43,10 +44,8 @@ namespace OW_NAMESPACE
 {
 
 OOPIndicationProvider::OOPIndicationProvider(const OOPProviderInterface::ProvRegInfo& info,
-	const Reference<Mutex>& guardRef,
-	const Reference<ProcessRef>& persistentProcessRef
-	)
-	: OOPProviderBase(info, guardRef, persistentProcessRef)
+	const OOPProcessState& processState)
+	: OOPProviderBase(info, processState)
 {
 
 }
@@ -101,9 +100,9 @@ OOPIndicationProvider::activateFilter(
 	bool firstActivation
 	)
 {
-	OW_LOG_DEBUG(Logger("OOPIndicationProvider"), "OOPIndicationProvider::activateFilter");
+	OW_LOG_DEBUG3(Logger("OOPIndicationProvider"), "OOPIndicationProvider::activateFilter");
 	ActivateCallback filterCallback(filter, eventType, nameSpace, classes, firstActivation);
-	startProcessAndCallFunction(env, filterCallback, "OOPMethodProvider::activateFilter", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, filterCallback, "OOPMethodProvider::activateFilter");
 }
 
 namespace
@@ -152,9 +151,9 @@ OOPIndicationProvider::authorizeFilter(
 	const String& owner
 	)
 {
-	OW_LOG_DEBUG(Logger("OOPIndicationProvider"), "OOPIndicationProvider::authorizeFilter");
+	OW_LOG_DEBUG3(Logger("OOPIndicationProvider"), "OOPIndicationProvider::authorizeFilter");
 	AuthorizeFilterCallback filterCallback(filter, eventType, nameSpace, classes, owner);
-	startProcessAndCallFunction(env, filterCallback, "OOPMethodProvider::authorizeFilter", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, filterCallback, "OOPMethodProvider::authorizeFilter");
 }
 
 namespace
@@ -203,9 +202,9 @@ OOPIndicationProvider::deActivateFilter(
 	bool lastActivation
 	)
 {
-	OW_LOG_DEBUG(Logger("OOPIndicationProvider"), "OOPIndicationProvider::deActivateFilter");
+	OW_LOG_DEBUG3(Logger("OOPIndicationProvider"), "OOPIndicationProvider::deActivateFilter");
 	DeActivateCallback filterCallback(filter, eventType, nameSpace, classes, lastActivation);
-	startProcessAndCallFunction(env, filterCallback, "OOPIndicationProvider::deActivateFilter", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, filterCallback, "OOPIndicationProvider::deActivateFilter");
 }
 
 namespace
@@ -256,8 +255,16 @@ OOPIndicationProvider::mustPoll(
 {
 	int retval;
 	MustPollCallback mustPollCallback(retval, filter, eventType, nameSpace, classes);
-	startProcessAndCallFunction(env, mustPollCallback, "OOPMethodProvider::mustPoll", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, mustPollCallback, "OOPMethodProvider::mustPoll");
 	return retval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OOPIndicationProvider::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	OOPShuttingDownCallback shuttingDownCallback;
+	startProcessAndCallFunction(env, shuttingDownCallback, "OOPIndicationProvider::shuttingDown");
 }
 
 

@@ -74,6 +74,42 @@ XMLNodeImpl::XMLNodeImpl() :
 }
 
 //////////////////////////////////////////////////////////////////////////////
+XMLNodeImpl::~XMLNodeImpl()
+{
+	// Attempt to avoid a huge chain of destructors being called.  We can do
+	// this by enforcing a copy of each XML node, setting the first and last to
+	// NULL, and then letting the children be destroyed one at a time as the
+	// array destructor is called.
+	//
+	// Background as to why I'm trying this: Large (wide, not deep) xml tree
+	// structures would have chained destructors.  That is, at every level,
+	// calling the destructor for one node would chain to all of its siblings.
+	// This has been shown to crash on some systems (AIX 5.1 that has been
+	// "patched" to AIX 5.3) with large trees (a node with over 4500 siblings)
+	//
+	// With this modification, at any level, there will still be a reference to
+	// the siblings from a parent node (in the arr local variable), so they
+	// won't chain delete.  This causes the tree to be deleted in (almost) a
+	// depth-first way.  If the top level node has many siblings, this chain
+	// cannot be avoided due to the way these XML nodes have been implemented.
+	//
+	// In general, this is very hackish, and could be bad if an out-of-memory
+	// condition occurred.
+	XMLNodeArray arr(getChildren());
+
+	// This could cause all of the siblings to chain delete if the parent node
+	// is not being deleted.  Since the XMLNode structure isn't intended to be
+	// easily mutable (no delete functions other than the "setNext" function),
+	// there isn't likely to be a huge chain that is chain deleted.
+	m_nextNode = XMLNodeImplRef();
+
+	// These do not cause the destructors of the children to fire because there
+	// is still a reference to them in the above array.
+	m_childNode = XMLNodeImplRef();
+	m_lastChildNode = XMLNodeImplRef();
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 XMLNodeImpl::assignText(const String& text)
 {

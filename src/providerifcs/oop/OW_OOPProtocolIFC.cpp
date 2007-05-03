@@ -38,7 +38,8 @@
 namespace OW_NAMESPACE
 {
 
-OOPProtocolIFC::OOPProtocolIFC()
+OOPProtocolIFC::OOPProtocolIFC(OOPProviderBase* pprov)
+	: m_pprov(pprov)
 {
 }
 

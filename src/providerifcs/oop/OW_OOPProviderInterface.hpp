@@ -36,13 +36,17 @@
 #define OW_OOP_PROVIDER_INTERFACE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
+#include "OW_OOPFwd.hpp"
 #include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_String.hpp"
 #include "OW_SortedVectorMap.hpp"
 #include "OW_Timeout.hpp"
 #include "OW_Mutex.hpp"
+#include "OW_RWLocker.hpp"
 #include "OW_Reference.hpp"
 #include "OW_OpenWBEM_OOPProviderRegistration.hpp"
+#include "OW_OpenWBEM_OOPMethodProviderCapabilities.hpp"
+#include "OW_OOPProcessState.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -62,6 +66,8 @@ public:
 			: timeout(Timeout::infinite)
 			, isPersistent(false)
 			, userContext(OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_UNPRIVILEGED)
+			, unloadTimeout(Timeout::relativeWithReset(0)) // the default is to not leave the provider loaded
+			, methodLockType(OpenWBEM::OOPMethodProviderCapabilities::E_LOCKTYPE_WRITE_LOCK)
 		{
 		}
 		String process;
@@ -72,6 +78,13 @@ public:
 		UInt16 userContext;
 		String monitorPrivilegesFile;
 		StringArray indicationExportHandlerClassNames;
+		Timeout unloadTimeout;
+		UInt16 methodLockType;
+
+		bool providerNeedsNewProcessForEveryInvocation() const
+		{
+			return (isPersistent == false) && (unloadTimeout == Timeout::relativeWithReset(0));
+		}
 	};
 
 	typedef IntrusiveReference<ProvRegInfo> ProvRegInfoRef;
@@ -83,7 +96,8 @@ private:
 		SecondaryInstanceProviderInfoArray& si,
 		AssociatorProviderInfoArray& a,
 		MethodProviderInfoArray& m,
-		IndicationProviderInfoArray& ind);
+		IndicationProviderInfoArray& ind,
+		QueryProviderInfoArray& q);
 	virtual InstanceProviderIFCRef doGetInstanceProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString);
 	virtual SecondaryInstanceProviderIFCRef doGetSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString);
 	virtual MethodProviderIFCRef doGetMethodProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString);
@@ -91,8 +105,26 @@ private:
 	virtual IndicationExportProviderIFCRefArray doGetIndicationExportProviders(const ProviderEnvironmentIFCRef& env);
 	virtual PolledProviderIFCRefArray doGetPolledProviders(const ProviderEnvironmentIFCRef& env);
 	virtual IndicationProviderIFCRef doGetIndicationProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString);
+	virtual QueryProviderIFCRef doGetQueryProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString);
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
 	virtual void doShuttingDown(const ProviderEnvironmentIFCRef& env);
+
+	template <typename T, typename RT, typename DMP>
+	RT getProvider(const char* provIdString, DMP dmp, const OOPProviderInterface::ProvRegInfo& info);
+	virtual void processOOPProviderRegistrationInstances(const ProviderEnvironmentIFCRef& env,
+		InstanceProviderInfoArray& i,
+		SecondaryInstanceProviderInfoArray& si,
+		AssociatorProviderInfoArray& a,
+		MethodProviderInfoArray& m,
+		IndicationProviderInfoArray& ind,
+		QueryProviderInfoArray& q);
+	virtual void processOOPProviderProcessCapabilitiesInstances(const ProviderEnvironmentIFCRef& env,
+		InstanceProviderInfoArray& i,
+		SecondaryInstanceProviderInfoArray& si,
+		AssociatorProviderInfoArray& a,
+		MethodProviderInfoArray& m,
+		IndicationProviderInfoArray& ind,
+		QueryProviderInfoArray& q);
 
 	// These variables are only modified in doInit() and are accessed read only by 
 	// other functions, thus they aren't mutex protected.
@@ -105,42 +137,67 @@ private:
 	ProvRegMap_t m_indicationProvReg;
 	ProvRegMap_t m_polledProvReg;
 	ProvRegMap_t m_indicationExportProvReg;
+	ProvRegMap_t m_queryProvReg;
 
 	struct SavedProviders
 	{
 		SavedProviders()
-			: guard(new Mutex)
-			, process(new ProcessRef)
+		{
+		}
+
+		SavedProviders(const InstanceProviderIFCRef& ipir)
+			: instanceProv(ipir)
+		{
+		}
+
+		SavedProviders(const SecondaryInstanceProviderIFCRef& sipir)
+			: secondaryInstanceProv(sipir)
+		{
+		}
+
+		SavedProviders(const AssociatorProviderIFCRef& apir)
+			: associatorProv(apir)
+		{
+		}
+
+		SavedProviders(const MethodProviderIFCRef& mpir)
+			: methodProv(mpir)
 		{
 		}
 
 		SavedProviders(const IndicationProviderIFCRef& ipir)
 			: indProv(ipir)
-			, guard(new Mutex)
-			, process(new ProcessRef)
 		{
 		}
 
 		SavedProviders(const PolledProviderIFCRef& ppir)
 			: polledProv(ppir)
-			, guard(new Mutex)
-			, process(new ProcessRef)
 		{
 		}
 
 		SavedProviders(const IndicationExportProviderIFCRef& iepir)
 			: indicationExportProv(iepir)
-			, guard(new Mutex)
-			, process(new ProcessRef)
 		{
 		}
 
+		SavedProviders(const QueryProviderIFCRef& qpir)
+			: queryProv(qpir)
+		{
+		}
+
+		InstanceProviderIFCRef instanceProv;
+		SecondaryInstanceProviderIFCRef secondaryInstanceProv;
+		AssociatorProviderIFCRef associatorProv;
+		MethodProviderIFCRef methodProv;
 		IndicationProviderIFCRef indProv;
 		PolledProviderIFCRef polledProv;
 		IndicationExportProviderIFCRef indicationExportProv;
-		Reference<Mutex> guard;
-		Reference<ProcessRef> process;
+		QueryProviderIFCRef queryProv;
+		OOPProcessState processState;
 
+		const ProvRegInfo& getInfo() const;
+
+		OOPProviderBase* getOOPProviderBase() const;
 	};
 
 	// key is the provider id

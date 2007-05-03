@@ -12,6 +12,9 @@
 # that are processed by tools that do not understand shell expansion (eg. the
 # openwbem config file).
 
+# The replacement script will now be generated at the end of the configure
+# script.  If it is deleted, the configure script will need to be executed again.
+
 # Note: Additional substitutions beyond those defined by the configure process
 # can be included by defining one of two things:
 # (1) <NAME>_extra_substitutions
@@ -23,10 +26,6 @@
 #   foo_extra_substitions=-e 's~trash~garbage~g'
 # or
 #   global_subtitutions=-e 's~trash~garbage~g'
-
-
-$(top_builddir)/replacement_script.sed: $(top_builddir)/config.status
-	$(top_srcdir)/create_replacement_script.sh $@ $<
 
 % : %.in $(top_builddir)/replacement_script.sed
 	rm -f $@ $@.partial

@@ -10,7 +10,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 owstatlib_LIBRARIES = libowembeddedcimom.a
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \

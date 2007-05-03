@@ -127,6 +127,9 @@ public:
 	virtual void deleteInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &)
 	{
 	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef &)
+	{
+	}
 };
 
 class TestMethodProvider : public MethodProviderIFC
@@ -135,6 +138,9 @@ public:
 	virtual CIMValue invokeMethod(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &, const String &, const CIMParamValueArray &, CIMParamValueArray &)
 	{
 		return CIMValue(CIMNULL);
+	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef &)
+	{
 	}
 };
 
@@ -188,6 +194,9 @@ public:
 		const StringArray* propertyList)
 	{
 	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef &)
+	{
+	}
 };
 #endif
 
@@ -207,6 +216,9 @@ public:
 	{
 		return 0;
 	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef &)
+	{
+	}
 };
 
 class testProviderMux: public ProviderIFCBaseIFC
@@ -222,7 +234,8 @@ class testProviderMux: public ProviderIFCBaseIFC
 			AssociatorProviderInfoArray& aa,
 #endif
 			MethodProviderInfoArray& ma,
-			IndicationProviderInfoArray& inda)
+			IndicationProviderInfoArray& inda,
+			QueryProviderInfoArray& qpia)
 		{
 			if (m_name == "lib1")
 			{

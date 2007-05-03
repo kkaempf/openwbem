@@ -62,7 +62,8 @@ protected:
 		AssociatorProviderInfoArray& a,
 #endif
 		MethodProviderInfoArray& m,
-		IndicationProviderInfoArray& ind);
+		IndicationProviderInfoArray& ind,
+		QueryProviderInfoArray& q);
 	virtual InstanceProviderIFCRef doGetInstanceProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString);
 	virtual SecondaryInstanceProviderIFCRef doGetSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString);
 	virtual MethodProviderIFCRef doGetMethodProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString);

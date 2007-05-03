@@ -42,7 +42,7 @@ AM_CPPFLAGS = -I$(srcdir)/.. -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/ifcs
 
 DFLT_LDADD = \
-../libowprivman.a -L$(top_builddir)/src/common -lopenwbem -lblocxx \
+../libowprivman.a -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS) 
 
@@ -57,7 +57,9 @@ read_priv_config_test.0.sh \
 read_priv_config_test.1.sh \
 read_priv_config_test.2.sh \
 read_priv_config_test.3.sh \
-read_priv_config_test.4.sh
+read_priv_config_test.4.sh \
+read_priv_config_test.5.sh \
+read_priv_config_test.6.sh
 
 monitor_test_scripts = \
 monitor_test.0.sh \
@@ -79,7 +81,7 @@ user_exec_test.2.sh
 # This may be hackish, but the old stuff was hard to read and difficult to modify.
 monitor_test_nopriv_numbers = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
 monitor_test_nopriv_data = \
-$(foreach testnum,$(monitor_test_nopriv_numbers),monitor_test_nopriv.$(testnum).inp monitor_test_nopriv.$(testnum).gold.out)
+$(foreach testnum,$(monitor_test_nopriv_numbers),monitor_test_nopriv.$(testnum).inp monitor_test_nopriv.$(testnum).exceptions)
 
 monitor_test_extensions = cfg inp gold.out test.tgz gold.tgz
 monitor_exec_test_data = \
@@ -101,7 +103,7 @@ $(PERL_CHECK_S)
 TESTS = $(check_SCRIPTS)
 
 EXTRA_DIST = \
-set_environment.sh \
+set_environment.sh.in \
 $(priv_config_test_scripts:%.sh=%.gold) \
 montest.sh \
 monperltest.sh \
@@ -149,7 +151,7 @@ userexectest.expected userexectest.out
 # read priv config tests
 #
 
-# $(1) = whitespace seperated list of identifiers
+# $(1) = whitespace seperated list of user identifiers (no need to actually exist)
 define read_priv_config_template
 	echo "#!/bin/bash" > $@
 	echo 'echo Running $$0 $$@' >> $@
@@ -174,6 +176,11 @@ read_priv_config_test.3.sh: Makefile
 read_priv_config_test.4.sh: Makefile
 	$(call read_priv_config_template,app1 app2 app3 app4)
 
+read_priv_config_test.5.sh: Makefile
+	$(call read_priv_config_template,app1 app2 app3 app4)
+
+read_priv_config_test.6.sh: Makefile
+	$(call read_priv_config_template,none you me fred bob joe sam)
 
 #
 # monitor tests
@@ -186,7 +193,7 @@ read_priv_config_test.4.sh: Makefile
 define monitor_test_template
 	echo "#!/bin/bash" > $@
 	echo 'echo Running $$0 $$@' >> $@
-	echo "$(srcdir)/montest.sh $(srcdir)/monitor_test.0.cfg $(1) $(2) $(srcdir)/monitor_test.0.test.tgz $(srcdir)/monitor_test.0.inp $(srcdir)/$(@:%.sh=%.gold.out) $(srcdir)/monitor_test.0.$(4).tgz $(3)" >> $@
+	echo "$(srcdir)/montest.sh $(srcdir)/monitor_test.0.cfg $(1) $(2) $(srcdir)/monitor_test.0.test.tgz $(srcdir)/monitor_test.0.inp $(srcdir)/$(@:%.sh=%.exceptions) $(srcdir)/monitor_test.0.$(4).tgz $(3)" >> $@
 	chmod +x $@
 endef
 
@@ -223,8 +230,11 @@ monitor_test_username.0.sh: Makefile
 # This uses the target name as a base for the cfg and "gold" output files.
 define monitor_exec_test_template
 	echo "#!/bin/bash" > $@
+	echo "set -e" >> $@
 	echo 'echo Running $$0 $$@' >> $@
-	echo "MXTPRIV=$(1) $(srcdir)/monexectest.sh $(srcdir)/$(2) root 700 $(srcdir)/monitor_exec_test.0.test.tgz $(srcdir)/monitor_exec_test.0.inp $(srcdir)/$(@:%.sh=%.gold.out) $(srcdir)/monitor_exec_test.0.$(3).tgz" >> $@
+	echo 'for i in 0 1; do' >> $@
+	echo 'MUE=$$i MXTPRIV=$(1) $(srcdir)/monexectest.sh $(srcdir)/$(2) root 700 $(srcdir)/monitor_exec_test.0.test.tgz $(srcdir)/monitor_exec_test.0.inp $(srcdir)/$(@:%.sh=%.exceptions) $(srcdir)/monitor_exec_test.0.$(3).tgz' >> $@
+	echo 'done' >> $@
 	chmod +x $@
 endef
 
@@ -240,7 +250,6 @@ monitor_exec_test.nopriv.1.sh: Makefile
 
 monitor_exec_test.nopriv.2.sh: Makefile
 	$(call monitor_exec_test_template,BAD_CFG,monitor_exec_test.0.cfg,test)
-
 
 
 #
@@ -279,6 +288,15 @@ monitor_test_nopriv.0.sh: Makefile
 # mt.0.gold.tgz instead of mt.0.basic.gold.tgz
 monitor_perl_test.0.sh: Makefile
 	echo "#!/bin/bash" > $@
-	echo "PERL_PATH=$(PERL) $(srcdir)/monperltest.sh $(srcdir)/$(@:%.sh=%.cfg) $(srcdir)/monitor_test.0.test.tgz $(srcdir)/$(@:%.sh=%.inp) $(srcdir)/$(@:%.sh=%.basic.gold.out) $(srcdir)/monitor_test.0.basic.gold.tgz" >> $@
+	echo "PERL_PATH=$(PERL) $(srcdir)/monperltest.sh $(srcdir)/$(@:%.sh=%.cfg) $(srcdir)/monitor_test.0.test.tgz $(srcdir)/$(@:%.sh=%.inp) $(srcdir)/$(@:%.sh=%.exceptions) $(srcdir)/monitor_test.0.basic.gold.tgz" >> $@
 	chmod +x $@
 
+helper_scripts = set_environment.sh
+BUILT_SOURCES = $(helper_scripts)
+
+local-scripts: $(helper_scripts)
+	chmod +x $^
+
+all-local: local-scripts
+
+include $(top_srcdir)/Makefile-replacement.inc

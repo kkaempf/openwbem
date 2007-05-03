@@ -1,0 +1,41 @@
+#!/bin/sh
+
+ulimit -c unlimited
+
+STAGEDIR=`dirname $0`/stage
+
+. `dirname $0`/env.sh
+
+if [ "$1" = "vg" ]; then
+  valgrind \
+	--tool=memcheck \
+	--leak-check=yes \
+	--track-fds=yes \
+	--show-reachable=yes \
+	--error-limit=no \
+	--num-callers=99 \
+	--log-file=valgrind.out \
+	--suppressions=OpenSSL.supp \
+	$STAGEDIR@sbindir@/owcimomd -d \
+	-c $STAGEDIR@sysconfdir@/openwbem/openwbem.conf-t 
+elif [ "x$1" = "xgdb" ]; then
+#	gdb $STAGEDIR@sbindir@/owcimomd << EOS
+	gdb $STAGEDIR@sbindir@/owcimomd 
+#b main
+#r -d -c $STAGEDIR@sysconfdir@/openwbem/openwbem.conf-t
+#EOS
+elif [ "x$1" = "xinsight" ]; then
+	insight $STAGEDIR@sbindir@/owcimomd << EOS
+b main
+r -d -c $STAGEDIR@sysconfdir@/openwbem/openwbem.conf-t
+EOS
+elif [ "x$1" = "xstrace" ]; then
+  strace -f -o /tmp/strace.out \
+    $STAGEDIR@sbindir@/owcimomd -d \
+	  -c $STAGEDIR@sysconfdir@/openwbem/openwbem.conf-t
+else
+  $STAGEDIR@sbindir@/owcimomd -d \
+	-c $STAGEDIR@sysconfdir@/openwbem/openwbem.conf-t
+fi
+
+

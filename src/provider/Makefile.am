@@ -12,7 +12,7 @@ OW_SHARED_LIBS = libowprovider.$(LIB_EXT)
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 owstatlib_LIBRARIES = libowprovider.a
-SHAREDLIBADD = -L$(top_builddir)/src/common/ -lopenwbem -lblocxx
+SHAREDLIBADD = -L$(top_builddir)/src/common/ -lopenwbem $(BLOCXX_LIBS)
 
 thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)
@@ -28,6 +28,7 @@ libowprovider_a_SOURCES = \
 $(ASSOCIATION_PROVIDER_S) \
 OW_IndicationExportProviderIFC.cpp \
 OW_InstanceProviderIFC.cpp \
+OW_QueryProviderIFC.cpp \
 OW_SecondaryInstanceProviderIFC.cpp \
 OW_MethodProviderIFC.cpp \
 OW_PolledProviderIFC.cpp \
@@ -52,6 +53,7 @@ pkginclude_HEADERS = \
 $(ASSOCIATION_PROVIDER_H) \
 OW_IndicationExportProviderIFC.hpp \
 OW_InstanceProviderIFC.hpp \
+OW_QueryProviderIFC.hpp \
 OW_SecondaryInstanceProviderIFC.hpp \
 OW_MethodProviderIFC.hpp \
 OW_PolledProviderIFC.hpp \
@@ -60,6 +62,7 @@ OW_ProviderEnvironmentIFC.hpp \
 OW_ProviderRegistrationEnvironmentIFC.hpp \
 OW_ProviderIFCBaseIFC.hpp \
 OW_InstanceProviderInfo.hpp \
+OW_QueryProviderInfo.hpp \
 OW_SecondaryInstanceProviderInfo.hpp \
 OW_MethodProviderInfo.hpp \
 OW_IndicationProviderIFC.hpp \

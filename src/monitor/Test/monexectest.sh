@@ -12,7 +12,7 @@ config_dir_owner=$2
 config_dir_perms=$3
 testtgz=$4
 inpf=$5
-goldout=$6
+exception_list=$6
 goldtgz=$7
 
 
@@ -34,6 +34,10 @@ fi
 
 root_group=`grep '^root' /etc/passwd | head -n 1 | cut -f3 -d':'`
 extended_sed_flag=-r
+privileged_user_group="root:${root_group}"
+if [ "x$MUE" = "x1" ]; then
+  privileged_user_group="owcimomd:owcimomd"
+fi
 
 if [ "x`uname`" = "xDarwin" ]; then
 	extended_sed_flag=-E
@@ -55,20 +59,32 @@ chmod og-w $owlibexec_dir/owprivilegemonitor*
 rm -rf $config_dir
 mkdir -p $config_dir
 cp $cfgpath $config_dir
+
+
+if [ "x$MUE" = "x1" ]; then
+  priv_OK="monitored_user_exec { $base_dir/safebin/montest @ $cfgfname @ owcimomd allowed_environment_variables { IFS PATH foo OW_PRIVMAN_NO_ABORT LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH } }"
+  priv_BAD_EXEC="monitored_user_exec { $base_dir/safebin/nonesuch @ $cfgfname @ owcimomd allowed_environment_variables { IFS PATH foo OW_PRIVMAN_NO_ABORT LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH } }"
+  priv_BAD_CFG="monitored_user_exec { $base_dir/safebin/montest @ nonesuch @ owcimomd allowed_environment_variables { IFS PATH foo OW_PRIVMAN_NO_ABORT LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH } }"
+else
+  priv_OK="monitored_exec { $base_dir/safebin/montest @ $cfgfname allowed_environment_variables { IFS PATH foo OW_PRIVMAN_NO_ABORT LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH } }"
+  priv_BAD_EXEC="monitored_exec { $base_dir/safebin/nonesuch @ $cfgfname allowed_environment_variables { IFS PATH foo OW_PRIVMAN_NO_ABORT LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH } }"
+  priv_BAD_CFG="monitored_exec { $base_dir/safebin/montest @ nonesuch allowed_environment_variables { IFS PATH foo OW_PRIVMAN_NO_ABORT LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH } }"
+fi
+
 if [ $MXTPRIV = OK ]; then
 cat > $config_dir/$monexectest_cfgfname <<EOF
   unpriv_user { owprovdr }
-  monitored_exec { $base_dir/safebin/montest @ $cfgfname }
+  $priv_OK
 EOF
 elif [ $MXTPRIV = BAD_EXEC ]; then
 cat > $config_dir/$monexectest_cfgfname <<EOF
   unpriv_user { owprovdr }
-  monitored_exec { $base_dir/safebin/nonesuch @ $cfgfname }
+  $priv_BAD_EXEC
 EOF
 elif [ $MXTPRIV = BAD_CFG ]; then
 cat > $config_dir/$monexectest_cfgfname <<EOF
   unpriv_user { owprovdr }
-  monitored_exec { $base_dir/safebin/montest @ nonesuch }
+  $priv_BAD_CFG
 EOF
 else
 echo "MXTPRIV set to unrecognized value"
@@ -85,7 +101,7 @@ chmod og-rwx $config_dir/$monexectest_cfgfname
 rm -rf $test_dir
 mkdir -p $test_dir
 gunzip -c $testtgz | tar -C $test_dir -xf -
-chown -R root:${root_group} $test_dir
+chown -R ${privileged_user_group} $test_dir
 chmod -R og-rwx $test_dir
 
 cat > monexectest.inp <<EOF
@@ -95,18 +111,18 @@ user_name null
 EOF
 cat $inpf >> monexectest.inp
 ./monexectest $config_dir/ $monexectest_cfgfname $safe_bin/montest $cfgfname \
-  montest+arg1+arg2 'IFS= +PATH=/bin+foo=bar' \
+  montest+arg1+arg2 'IFS= +PATH=/bin+foo=bar+OW_PRIVMAN_NO_ABORT=1' $MUE \
   < monexectest.inp > monexectest.out.tmp
 
 sed ${extended_sed_flag} -e 's/^  OW_PRIVILEGE_MONITOR_DESCRIPTOR=[0-9]+;$/  OW_PRIVILEGE_MONITOR_DESCRIPTOR=XXX;/' \
 	-e 's/^  .+PATH=.*;$/  XPATH=XXX;/' \
   < monexectest.out.tmp > monexectest.out
-diff $goldout monexectest.out
+`dirname $0`/check_for_exceptions.sh $exception_list monexectest.out || exit $?
 
 rm -rf $gold_dir
 mkdir -p $gold_dir
 gunzip -c $goldtgz | tar -C $gold_dir -xf -
-chown -R root:${root_group} $gold_dir
+chown -R ${privileged_user_group} $gold_dir
 diff -r $gold_dir $test_dir
 pushd $gold_dir > /dev/null
 ls -lR | sed ${extended_sed_flag} -e 's|(^[^ ]+) .* ([^ ]+)$|\1 \2|' -e '/^total.*/d' > $thisdir/monexectest.gold.ls

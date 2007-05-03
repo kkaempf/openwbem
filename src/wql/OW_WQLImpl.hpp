@@ -59,6 +59,11 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		const String& query, const String& queryLanguage,
 		const CIMOMHandleIFCRef& hdl);
+	virtual void evaluate(const String& nameSpace,
+		CIMInstanceResultHandlerIFC& result,
+		const String& query, const String& queryLanguage,
+		const RepositoryIFCRef& hdl,
+		OperationContext& oc);
 	virtual WQLSelectStatement createSelectStatement(const String& query);
 	virtual bool supportsQueryLanguage(const String& lang);
 

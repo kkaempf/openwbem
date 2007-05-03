@@ -72,7 +72,7 @@ public:
 	 *		read/write lock on the CIMServer.
 	 */
 	LocalEmbeddedCIMOMHandle(EmbeddedCIMOMEnvironmentRef env, RepositoryIFCRef pRepos,
-		OperationContext& context, ELockingFlag lock = E_LOCKING);
+		OperationContext& context);
 	
 	/**
 	 * @return A reference to the CIMOMEnvironment used by this object.

@@ -197,6 +197,16 @@ void SharedLibraryRepository::enumClassNames(
 {
 	m_ref->enumClassNames(ns, className, result, deep, context);
 }
+RepositoryIFC::ELockType
+SharedLibraryRepository::getLockTypeForMethod(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& in, 
+	OperationContext& context)
+{
+	return m_ref->getLockTypeForMethod(ns, path, methodName, in, context);
+}
 CIMValue SharedLibraryRepository::invokeMethod(
 	const String& ns,
 	const CIMObjectPath& path,
@@ -313,6 +323,16 @@ void SharedLibraryRepository::execQuery(
 	OperationContext& context)
 {
 	m_ref->execQuery(ns, result, query, queryLanguage, context);
+}
+void SharedLibraryRepository::enumInstancesWQL(
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result,
+	const WQLSelectStatement& wss,
+	const WQLCompile& wc,
+	OperationContext& context)
+{
+	m_ref->enumInstancesWQL(ns, className, result, wss, wc, context);
 }
 void SharedLibraryRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
 {

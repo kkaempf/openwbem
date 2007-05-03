@@ -19,7 +19,7 @@ fi
 
 if [ $BISON_MAJOR_VERSION -lt 2 ] || [ $BISON_MINOR_VERSION -lt 1 ]; then
 	echo "ERROR: bison version is < 2.1"
-	exit 1
+#	exit 1
 fi
 
 aclocal \

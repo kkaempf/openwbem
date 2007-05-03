@@ -1,3 +1,8 @@
+MAKEBUNDLE=1
+include $(top_srcdir)/Makefile-shared-lib.inc
+all-local : all-ow-shared-libs
+clean-local : clean-ow-shared-libs
+
 SUBDIRS=
 
 if DISABLE_INSTANCE_MANIPULATION
@@ -20,6 +25,7 @@ PROGS=
 else
 PROGS= \
 owcimclientcl \
+testOOPAssoc \
 testCIMExceptions \
 testinstprov \
 aclTest \
@@ -43,6 +49,7 @@ noinst_PROGRAMS = \
 $(PROGS) \
 wqlTest1 \
 wqlTest2 \
+wqlTest3 \
 CIMOMLocator \
 fakeclient \
 infiniteClient \
@@ -51,6 +58,12 @@ socketCat \
 testListener \
 testSPNEGO \
 testSPNEGOGSSAPI
+
+noinst_LIBRARIES = \
+libtestWQLProv.a
+
+OW_SHARED_LIBS = \
+libtestWQLProv.$(LIB_EXT)
 
 testProviderAgent_SOURCES = \
 testProviderAgent.cpp
@@ -66,7 +79,7 @@ testProviderAgent_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -86,7 +99,7 @@ CIMOMLocator_LDADD = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -106,7 +119,7 @@ cimlistener_LDADD = \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -120,7 +133,7 @@ wqlTest1_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/wql -lowwql \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -134,7 +147,7 @@ wqlTest1.cpp
 #wqlTest2
 wqlTest2_LDADD = \
 -L$(top_builddir)/src/wql -lowwql \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -145,13 +158,31 @@ $(CXXBINLINKFLAGS) \
 wqlTest2_SOURCES = \
 wqlTest2.cpp
 
+#wqlTest3
+wqlTest3_LDADD = \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/wql -lowwql \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+wqlTest3_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o wqlTest3$(EXEEXT)
+
+wqlTest3_SOURCES = \
+wqlTest3.cpp
+
 #aclTest
 aclTest_LDADD = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -168,7 +199,7 @@ aclTestBasic_LDADD = \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -185,7 +216,7 @@ infiniteClient_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -204,7 +235,7 @@ owcimclientcl_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -216,13 +247,31 @@ $(SSL_LIBS) \
 owcimclientcl_SOURCES = \
 OW_CIMClientCL.cpp
 
+#testOOPAssoc
+testOOPAssoc_LDADD = \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+testOOPAssoc_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+$(SSL_LIBS) \
+-o testOOPAssoc$(EXEEXT)
+
+testOOPAssoc_SOURCES = \
+testOOPAssoc.cpp
+
 #testinstprov
 testinstprov_LDADD = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -240,7 +289,7 @@ fakeclient_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -258,7 +307,7 @@ testCIMExceptions_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -275,7 +324,7 @@ testNamespaces_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -292,7 +341,7 @@ testMisc_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -309,7 +358,7 @@ hammerClient_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -326,7 +375,7 @@ testSecondaryInstanceProviders_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -343,7 +392,7 @@ testLargeRequest_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -361,7 +410,7 @@ testClientTimeout_LDADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -384,7 +433,7 @@ testEmbeddedCIMOM_LDADD = \
 -L$(top_builddir)/src/cimom/common -lowcimomcommon \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/db/db -lowdb \
 $(REALTIME_LIBS) \
 $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
@@ -395,7 +444,7 @@ $(CXXBINLINKFLAGS) \
 
 #socketCat
 socketCat_LDADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -418,7 +467,7 @@ testListener_LDADD = \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -438,7 +487,7 @@ testSPNEGO_LDADD = \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -458,13 +507,37 @@ testSPNEGOGSSAPI_LDADD = \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
 testSPNEGOGSSAPI_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o testSPNEGOGSSAPI$(EXEEXT)
+
+### testWQLProv
+libtestWQLProv_a_SOURCES = \
+testWQLProv.cpp
+
+EXTRA_DIST = \
+wqlTestReg.mof.in
+
+BUILT_SOURCES = \
+wqlTestReg.mof
+
+
+include ${top_srcdir}/Makefile-replacement.inc
+
+global_substitutions = \
+-e 's!@provdir@!${libdir}/openwbem/oopproviders!g'
+
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+-L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
+-L$(top_builddir)/src/mof -lowmofc
+
+LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 INCLUDES = \
 -I$(top_srcdir)/src/ifcs \
@@ -485,8 +558,8 @@ INCLUDES = \
 -I$(top_srcdir)/src/services/http \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/monitor \
--I$(top_srcdir)/src/requesthandlers/cimxml
+-I$(top_srcdir)/src/requesthandlers/cimxml \
+-I$(top_srcdir)/src/mof
 
 
-#
 

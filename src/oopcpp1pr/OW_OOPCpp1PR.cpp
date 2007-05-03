@@ -53,6 +53,7 @@
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
+#include "OW_QueryProviderIFC.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_UserInfo.hpp"
@@ -66,6 +67,8 @@
 #include "OW_FileAppender.hpp"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_Timeout.hpp"
+#include "OW_WQLSelectStatement.hpp"
+#include "OW_WQLCompile.hpp"
 
 #include <iostream>
 #include <csignal>
@@ -126,7 +129,7 @@ class OOPcpp1LogAppender : public LogAppender
 {
 public:
 	OOPcpp1LogAppender(std::streambuf & obuf_, StringArray const & loglevels)
-		: LogAppender(ALL_COMPONENTS, loglevels, "") // TODO: propagate the categories & components down from the caller?
+		: LogAppender(ALL_COMPONENTS, loglevels, "")
 		, obuf(obuf_)
 	{
 	}
@@ -140,6 +143,7 @@ public:
 		BinarySerialization::writeString(obuf, message.filename);
 		BinarySerialization::write(obuf, message.fileline);
 		BinarySerialization::writeString(obuf, message.methodname);
+		obuf.pubsync(); // if it fails, we can't log anything, throw an exception or do much of anything :-(
 	}
 private:
 	std::streambuf & obuf;
@@ -208,6 +212,14 @@ private:
 		return BinarySerialization::readBool(m_inbuf);
 	}
 
+	virtual UInt64 doGetOperationId() const
+	{
+		BinarySerialization::write(m_outbuf, BinarySerialization::OPERATION_CONTEXT_GET_OPERATION_ID);
+		UInt64 operationId;
+		BinarySerialization::read(m_inbuf, operationId);
+		return operationId;
+	}
+
 	std::streambuf & m_inbuf;
 	std::streambuf & m_outbuf;
 };
@@ -228,12 +240,13 @@ public:
 
 	virtual ~OOPProtocol()
 	{
+		close();
 	}
 
 	virtual Reference<std::ostream> beginRequest(
 			const String& methodName, const String& nameSpace)
 	{
-
+		BinarySerialization::write(*m_ostr.rdbuf(), UInt8(BinarySerialization::BIN_OK));
 		return Reference<std::ostream>(new HTTPChunkedOStream(m_ostr));
 	}
 
@@ -307,7 +320,8 @@ public:
 
 	virtual void close()
 	{
-
+		BinarySerialization::write(*m_ostr.rdbuf(), UInt8(BinarySerialization::BIN_END));
+		m_ostr.flush();
 	}
 
 	virtual void setReceiveTimeout(const Timeout&)
@@ -348,18 +362,131 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////////////
+LogAppenderRef
+createLogAppender(std::streambuf& obuf, const String& logFile,
+	const String& logCategories)
+{
+	Array<LogAppenderRef> appenders;
+	StringArray categories = logCategories.tokenize(",");
+	appenders.push_back(new OOPcpp1LogAppender(obuf, categories));
+	const char LOG_FORMAT[] = "%-3r [%t] %-5p %F:%L %c - %m";
+	if (!logFile.empty())
+	{
+		appenders.push_back(new FileAppender(LogAppender::ALL_COMPONENTS,
+			LogAppender::ALL_CATEGORIES, logFile.c_str(),
+				LOG_FORMAT, FileAppender::NO_MAX_LOG_SIZE, 9999));
+	}
+	return LogAppenderRef(new MultiAppender(appenders));
+}
+
+//////////////////////////////////////////////////////////////////////////////
 class OOPProviderEnvironment : public ProviderEnvironmentIFC
 {
 public:
-	OOPProviderEnvironment(std::streambuf& ibuf, std::streambuf& obuf, const UnnamedPipeRef& inpipe)
-		: m_context(ibuf, obuf)
+	OOPProviderEnvironment(std::streambuf& ibuf, std::streambuf& obuf, const UnnamedPipeRef& inpipe,
+		const String& logFile, const String& logCategories)
+		: ProviderEnvironmentIFC()
+		, m_inpipe(inpipe)
+		, m_prinbuf(0)
+		, m_proutbuf(0)
 		, m_inbuf(ibuf)
 		, m_outbuf(obuf)
-		, m_inpipe(inpipe)
+		, m_context(ibuf, obuf)
+		, m_logFile(logFile)
+		, m_logCategories(logCategories)
+		, m_logAppender(createLogAppender(m_outbuf, logFile, logCategories))
 	{}
 
-	virtual CIMOMHandleIFCRef commonGetCIMOMHandle() const
+protected:
+
+	// This CTOR is used for the clone operation
+	OOPProviderEnvironment(const UnnamedPipeRef& inpipe, const String& logFile, const String& logCategories)
+		: ProviderEnvironmentIFC()
+		, m_inpipe(inpipe)
+		, m_prinbuf(new IOIFCStreamBuffer(m_inpipe.getPtr()))
+		, m_proutbuf(new IOIFCStreamBuffer(m_inpipe.getPtr()))
+		, m_inbuf(*m_prinbuf)
+		, m_outbuf(*m_proutbuf)
+		, m_context(m_inbuf, m_outbuf)
+		, m_logFile(logFile)
+		, m_logCategories(logCategories)
+		, m_logAppender(createLogAppender(m_outbuf, logFile, logCategories))
 	{
+		m_prinbuf->tie(m_proutbuf);
+	}
+
+public:
+	~OOPProviderEnvironment()
+	{
+		if (m_proutbuf)	// "Cloned" != NULL
+		{
+			BinarySerialization::write(m_outbuf, BinarySerialization::BIN_END);
+			delete m_prinbuf;
+			delete m_proutbuf;
+		}
+	}
+
+	LogAppenderRef setLogAppenderLevel(ELogLevel logLevel)
+	{
+		// only override the constructor parameter if it wasn't set.
+		if (m_logCategories.empty())
+		{
+			switch (logLevel)
+			{
+				case E_ALL_LEVEL:
+					m_logAppender = createLogAppender(m_outbuf, m_logFile, "*");
+					break;
+				case E_DEBUG3_LEVEL:
+					m_logAppender = createLogAppender(m_outbuf, m_logFile, "FATAL,ERROR,INFO,WARNING,DEBUG,DEBUG2,DEBUG3");
+					break;
+				case E_DEBUG2_LEVEL:
+					m_logAppender = createLogAppender(m_outbuf, m_logFile, "FATAL,ERROR,INFO,WARNING,DEBUG,DEBUG2");
+					break;
+				case E_DEBUG_LEVEL:
+					m_logAppender = createLogAppender(m_outbuf, m_logFile, "FATAL,ERROR,INFO,WARNING,DEBUG");
+					break;
+				case E_WARNING_LEVEL:
+					m_logAppender = createLogAppender(m_outbuf, m_logFile, "FATAL,ERROR,INFO,WARNING");
+					break;
+				case E_INFO_LEVEL:
+					m_logAppender = createLogAppender(m_outbuf, m_logFile, "FATAL,ERROR,INFO");
+					break;
+				case E_ERROR_LEVEL:
+					m_logAppender = createLogAppender(m_outbuf, m_logFile, "FATAL,ERROR");
+					break;
+				case E_FATAL_ERROR_LEVEL:
+					m_logAppender = createLogAppender(m_outbuf, m_logFile, "FATAL");
+					break;
+				case E_NONE_LEVEL:
+					m_logAppender = createLogAppender(m_outbuf, m_logFile, "");
+					break;
+			}
+		}
+		return m_logAppender;
+	}
+
+	LogAppenderRef getLogAppender() const
+	{
+		return m_logAppender;
+	}
+
+	virtual LoggerRef getLogger() const
+	{
+		return LoggerRef(new Logger(Logger::STR_DEFAULT_COMPONENT, m_logAppender));
+	}
+
+	virtual LoggerRef getLogger(const String& componentName) const
+	{
+		return LoggerRef(new Logger(componentName, m_logAppender));
+	}
+
+
+	CIMOMHandleIFCRef commonGetCIMOMHandle() const
+	{
+		// NOTE: This function CANNOT log anything or call any functions that may log until *after* the m_inpipe->receiveDescriptor() calls.
+		// This is because on OS X receiveDescriptor() has to write an ACK synchronously, and if a log message happens first, that will
+		// throw a wrench in the works.
+		LoggerRef logger = getLogger(OOPCpp1ProviderRunner::COMPONENT_NAME);
 		if (m_outbuf.pubsync() == -1)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED, "sync failed");
@@ -367,32 +494,37 @@ public:
 		UInt8 op;
 		if (m_inpipe->read(&op, sizeof(op)) != sizeof(op))
 		{
+			OW_LOG_DEBUG3(logger, "OOPProviderEnvironment::commonGetCIMOMHandle  failed reading op");
 			OW_THROW_ERRNO_MSG(IOException, "OOPProviderEnvironment::commonGetCIMOMHandle() reading op failed");
 		}
 		if (op == BinarySerialization::BIN_OK)
 		{
-			//OW_LOG_DEBUG(m_logger, "OOPProviderEnvironment::commonGetCIMOMHandle() got BIN_OK");
-			AutoDescriptor inputDescriptor = m_inpipe->receiveDescriptor();
-			//OW_LOG_DEBUG(m_logger, Format("OOPProviderEnvironment::commonGetCIMOMHandle() got input descriptor: %1", inputDescriptor));
-			AutoDescriptor outputDescriptor = m_inpipe->receiveDescriptor();
-			//OW_LOG_DEBUG(m_logger, Format("OOPProviderEnvironment::commonGetCIMOMHandle() got output descriptor: %1", outputDescriptor));
+			AutoDescriptor inputDescriptor = m_inpipe->receiveDescriptor(m_inpipe);
+			AutoDescriptor outputDescriptor = m_inpipe->receiveDescriptor(m_inpipe);
+			OW_LOG_DEBUG3(logger, Format("OOPProviderEnvironment::commonGetCIMOMHandle() got input descriptor: %1", inputDescriptor));
+			OW_LOG_DEBUG3(logger, Format("OOPProviderEnvironment::commonGetCIMOMHandle() got output descriptor: %1", outputDescriptor));
 			UnnamedPipeRef newConn = UnnamedPipe::createUnnamedPipeFromDescriptor(inputDescriptor, outputDescriptor);
 			// Setting the timeouts to be infinite won't cause a problem here.  The OOP interface enforces a timeout for each operation and
 			// will kill us if we exceed it.
 			newConn->setTimeouts(Timeout::infinite);
-			//OW_LOG_DEBUG(m_logger, "OOPProviderEnvironment::commonGetCIMOMHandle() received descriptors, returning a BinaryCIMOMHandle");
+			OW_LOG_DEBUG3(logger, "OOPProviderEnvironment::commonGetCIMOMHandle() received descriptors, returning a BinaryCIMOMHandle");
 
 			return CIMOMHandleIFCRef(new BinaryCIMOMHandle(CIMProtocolIFCRef(new OOPProtocol(newConn))));
 		}
 		else if (op == BinarySerialization::BIN_ERROR)
 		{
-			Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
-			OW_LOG_DEBUG(logger, "OOPProviderEnvironment::commonGetCIMOMHandle() got BIN_ERROR");
 			String msg;
 			BinarySerialization::read(m_inbuf, msg);
+			OW_LOG_DEBUG3(logger, Format("OOPProviderEnvironment::commonGetCIMOMHandle() got BIN_ERROR. Msg: %1", msg));
 			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 		}
-		OW_THROWCIMMSG(CIMException::FAILED, Format("Received unknown value from CIMOMHandle request: %1", static_cast<unsigned>(op)).c_str());
+
+		OW_LOG_DEBUG3(logger, Format("OOPProviderEnvironment::commonGetCIMOMHandle() received unknown value from CIMOMHandle request: %1", static_cast<unsigned>(op)));
+
+		OW_THROWCIMMSG(CIMException::FAILED,
+			Format("Received unknown value from CIMOMHandle request: %1",
+			static_cast<unsigned>(op)).c_str());
+		return CIMOMHandleIFCRef();
 	}
 
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const
@@ -404,7 +536,6 @@ public:
 	{
 		BinarySerialization::write(m_outbuf, BinarySerialization::REPOSITORY_CIMOM_HANDLE_REQUEST);
 		return commonGetCIMOMHandle();
-
 	}
 	virtual RepositoryIFCRef getRepository() const
 	{
@@ -442,26 +573,67 @@ public:
 	{
 		return m_context;
 	}
+
 	virtual ProviderEnvironmentIFCRef clone() const
 	{
-		// don't actually implement this, because we don't support threads in providers, which is basically the only reason someone would call clone().
-		return ProviderEnvironmentIFCRef();
-		//return ProviderEnvironmentIFCRef(new OOPProviderEnvironment(m_logger, m_inbuf, m_outbuf, m_inpipe));
+		LoggerRef logger = getLogger(OOPCpp1ProviderRunner::COMPONENT_NAME);
+		OW_LOG_DEBUG3(logger, "OOPProviderEnvironment::clone() called");
+
+		BinarySerialization::write(m_outbuf, BinarySerialization::PROVIDER_ENVIRONMENT_REQUEST);
+		if (m_outbuf.pubsync() == -1)
+		{
+			OW_LOG_ERROR(logger, "OOPProviderEnvironment::clone() got BIN_ERROR");
+			OW_THROWCIMMSG(CIMException::FAILED, "OOPProviderEnvironment::clone failed writing to cimom");
+		}
+		UInt8 op;
+		if (m_inpipe->read(&op, sizeof(op)) != sizeof(op))
+		{
+			OW_LOG_ERROR(logger, "OOPProviderEnvironment::clone() failed reading CIMOM reply");
+			OW_THROW_ERRNO_MSG(IOException, "OOPProviderEnvironment::clone() reading op failed");
+		}
+
+		if (op == BinarySerialization::BIN_ERROR)
+		{
+			OW_LOG_ERROR(logger, "OOPProviderEnvironment::clone() received BIN_ERROR from CIMOM");
+			String msg;
+			BinarySerialization::read(m_inbuf, msg);
+			OW_THROWCIMMSG(CIMException::FAILED,
+				Format("OOPProviderEnvironment::clone failed getting resources "
+					"from cimom: %1", msg).c_str());
+		}
+
+		OW_LOG_DEBUG3(logger, "OOPProviderEnvironment::clone(). Got file descriptors from CIMOM");
+
+		// Read file descriptors for new ProviderEnvironment
+		AutoDescriptor infd = m_inpipe->receiveDescriptor(m_inpipe);
+		AutoDescriptor outfd = m_inpipe->receiveDescriptor(m_inpipe);
+		UnnamedPipeRef newConn = UnnamedPipe::createUnnamedPipeFromDescriptor(infd, outfd);
+		newConn->setTimeouts(Timeout::infinite);
+		OW_LOG_DEBUG3(logger, "OOPProviderEnvironment::clone(). returning new ProviderEnvironmentIFCRef");
+		return ProviderEnvironmentIFCRef(new OOPProviderEnvironment(newConn, m_logFile, m_logCategories));
 	}
+
 private:
-	OOPOperationContext m_context;
+	UnnamedPipeRef m_inpipe;
+	IOIFCStreamBuffer* m_prinbuf;
+	IOIFCStreamBuffer* m_proutbuf;
 	std::streambuf& m_inbuf;
 	std::streambuf& m_outbuf;
-	UnnamedPipeRef m_inpipe;
+	OOPOperationContext m_context;
+	String m_logFile;
+	String m_logCategories;
+	LogAppenderRef m_logAppender;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 int callInstanceProvider(
 	UInt8 op, 
 	ProviderBaseIFCRef provider,
+	ProviderEnvironmentIFCRef& provenv,
 	std::streambuf& inbuf,
 	std::streambuf& outbuf,
-	const UnnamedPipeRef& stdinout)
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
 {
 	InstanceProviderIFC* instProvider = provider->getInstanceProvider();
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
@@ -470,7 +642,7 @@ int callInstanceProvider(
 		OW_LOG_ERROR(logger, "provider is not an instance provider");
 		return 3;
 	}
-	ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
+	//ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
 
 	switch (op)
 	{
@@ -494,6 +666,7 @@ int callInstanceProvider(
 			CIMClass cimClass = BinarySerialization::readClass(inbuf);
 
 			BinaryCIMInstanceWriter handler(outbuf);
+			initializeCallback.init(provenv);
 			instProvider->enumInstances(provenv, ns, className, handler, localOnly, deep,
 				includeQualifiers, includeClassOrigin, propertyListPtr, requestedClass, cimClass);
 		}
@@ -507,6 +680,7 @@ int callInstanceProvider(
 			CIMClass cimClass = BinarySerialization::readClass(inbuf);
 
 			BinaryCIMObjectPathWriter handler(outbuf);
+			initializeCallback.init(provenv);
 			instProvider->enumInstanceNames(provenv, ns, className, handler, cimClass);
 		}
 		break;
@@ -527,6 +701,7 @@ int callInstanceProvider(
 			BinarySerialization::readPropertyList(inbuf, propertyList, propertyListPtr);
 			CIMClass cimClass = BinarySerialization::readClass(inbuf);
 
+			initializeCallback.init(provenv);
 			CIMInstance rval = instProvider->getInstance(provenv, ns, instanceName, localOnly,
 				includeQualifiers, includeClassOrigin, propertyListPtr, cimClass);
 
@@ -542,6 +717,7 @@ int callInstanceProvider(
 			String ns = BinarySerialization::readString(inbuf);
 			CIMInstance instance = BinarySerialization::readInstance(inbuf);
 
+			initializeCallback.init(provenv);
 			CIMObjectPath rval = instProvider->createInstance(provenv, ns, instance);
 			if (!rval)
 			{
@@ -566,6 +742,7 @@ int callInstanceProvider(
 			BinarySerialization::readPropertyList(inbuf, propertyList, propertyListPtr);
 			CIMClass cimClass = BinarySerialization::readClass(inbuf);
 
+			initializeCallback.init(provenv);
 			instProvider->modifyInstance(provenv, ns, modifiedInstance, previousInstance,
 				includeQualifiers, propertyListPtr, cimClass);
 
@@ -579,6 +756,7 @@ int callInstanceProvider(
 			String ns = BinarySerialization::readString(inbuf);
 			CIMObjectPath cop = BinarySerialization::readObjectPath(inbuf);
 
+			initializeCallback.init(provenv);
 			instProvider->deleteInstance(provenv, ns, cop);
 
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
@@ -592,9 +770,11 @@ int callInstanceProvider(
 int callAssociatorProvider(
 	UInt8 op,
 	ProviderBaseIFCRef provider,
+	ProviderEnvironmentIFCRef& provenv,
 	std::streambuf& inbuf,
 	std::streambuf& outbuf,
-	const UnnamedPipeRef& stdinout)
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
 {
 	AssociatorProviderIFC* assocProvider = provider->getAssociatorProvider();
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
@@ -603,7 +783,7 @@ int callAssociatorProvider(
 		OW_LOG_ERROR(logger, "provider is not an associator provider");
 		return 3;
 	}
-	ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
+	//ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
 
 	switch (op)
 	{
@@ -617,6 +797,7 @@ int callAssociatorProvider(
 			String resultRole = BinarySerialization::readString(inbuf);
 
 			BinaryCIMObjectPathWriter handler(outbuf);
+			initializeCallback.init(provenv);
 			assocProvider->associatorNames(provenv, handler, ns, instanceName, assocClass,
 				resultClass, role, resultRole);
 		}
@@ -638,6 +819,7 @@ int callAssociatorProvider(
 			BinarySerialization::readPropertyList(inbuf, propertyList, propertyListPtr);
 
 			BinaryCIMInstanceWriter handler(outbuf);
+			initializeCallback.init(provenv);
 			assocProvider->associators(provenv, handler, ns, instanceName, assocClass, resultClass,
 				role, resultRole, includeQualifiers, includeClassOrigin, propertyListPtr);
 		}
@@ -650,6 +832,7 @@ int callAssociatorProvider(
 			String role = BinarySerialization::readString(inbuf);
 
 			BinaryCIMObjectPathWriter handler(outbuf);
+			initializeCallback.init(provenv);
 			assocProvider->referenceNames(provenv, handler, ns, instanceName,
 				resultClass, role);
 		}
@@ -669,6 +852,7 @@ int callAssociatorProvider(
 			BinarySerialization::readPropertyList(inbuf, propertyList, propertyListPtr);
 			
 			BinaryCIMInstanceWriter handler(outbuf);
+			initializeCallback.init(provenv);
 			assocProvider->references(provenv, handler, ns, instanceName, resultClass, role,
 				includeQualifiers, includeClassOrigin, propertyListPtr);
 		}
@@ -680,9 +864,11 @@ int callAssociatorProvider(
 //////////////////////////////////////////////////////////////////////////////
 int callPolledProvider(UInt8 op,
 	ProviderBaseIFCRef provider,
+	ProviderEnvironmentIFCRef& provenv,
 	std::streambuf& inbuf,
 	std::streambuf& outbuf,
-	const UnnamedPipeRef& stdinout)
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
 {
 	PolledProviderIFC* polledProvider = provider->getPolledProvider();
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
@@ -692,13 +878,14 @@ int callPolledProvider(UInt8 op,
 		return 3;
 	}
 
-	ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
+	//ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
 
 	switch (op)
 	{
 		case BinarySerialization::POLL:
 		{
 			//OW_LOG_DEBUG(logger, "owoopcpp1pr Got POLL command");
+			initializeCallback.init(provenv);
 			Int32 rval = polledProvider->poll(provenv);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 			BinarySerialization::write(outbuf, rval);
@@ -708,6 +895,7 @@ int callPolledProvider(UInt8 op,
 		case BinarySerialization::GET_INITIAL_POLLING_INTERVAL:
 		{
 			//OW_LOG_DEBUG(logger, "owoopcpp1pr Got GET_INITIAL_POLLING_INTERVAL command");
+			initializeCallback.init(provenv);
 			Int32 rval = polledProvider->getInitialPollingInterval(provenv);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 			BinarySerialization::write(outbuf, rval);
@@ -722,9 +910,11 @@ int callPolledProvider(UInt8 op,
 int callIndicationProvider(
 	UInt8 op,
 	ProviderBaseIFCRef provider,
+	ProviderEnvironmentIFCRef& provenv,
 	std::streambuf& inbuf,
 	std::streambuf& outbuf,
-	const UnnamedPipeRef& stdinout)
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
 {
 	IndicationProviderIFC* indicationProvider = provider->getIndicationProvider();
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
@@ -734,7 +924,7 @@ int callIndicationProvider(
 		return 3;
 	}
 
-	ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
+	//ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
 
 	switch (op)
 	{
@@ -745,6 +935,7 @@ int callIndicationProvider(
 			String eventType = BinarySerialization::readString(inbuf);
 			String nameSpace = BinarySerialization::readString(inbuf);
 			StringArray classes = BinarySerialization::readStringArray(inbuf);
+			initializeCallback.init(provenv);
 			Int32 rval = indicationProvider->mustPoll(provenv, filter, eventType, nameSpace, classes);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 			BinarySerialization::write(outbuf, rval);
@@ -759,6 +950,7 @@ int callIndicationProvider(
 			String nameSpace = BinarySerialization::readString(inbuf);
 			StringArray classes = BinarySerialization::readStringArray(inbuf);
 			String owner = BinarySerialization::readString(inbuf);
+			initializeCallback.init(provenv);
 			indicationProvider->authorizeFilter(provenv, filter, eventType, nameSpace, classes, owner);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 		}
@@ -773,6 +965,7 @@ int callIndicationProvider(
 			StringArray classes = BinarySerialization::readStringArray(inbuf);
 			Bool firstActivation;
 			firstActivation.readObject(inbuf);
+			initializeCallback.init(provenv);
 			indicationProvider->activateFilter(provenv, filter, eventType, nameSpace, classes, firstActivation);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 		}
@@ -787,6 +980,7 @@ int callIndicationProvider(
 			StringArray classes = BinarySerialization::readStringArray(inbuf);
 			Bool lastActivation;
 			lastActivation.readObject(inbuf);
+			initializeCallback.init(provenv);
 			indicationProvider->deActivateFilter(provenv, filter, eventType, nameSpace, classes, lastActivation);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 		}
@@ -800,9 +994,11 @@ int callIndicationProvider(
 int callIndicationExportProvider(
 	UInt8 op,
 	ProviderBaseIFCRef provider,
+	ProviderEnvironmentIFCRef& provenv,
 	std::streambuf& inbuf,
 	std::streambuf& outbuf, 
-	const UnnamedPipeRef& stdinout)
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
 {
 	IndicationExportProviderIFC* indicationExportProvider = provider->getIndicationExportProvider();
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
@@ -812,8 +1008,6 @@ int callIndicationExportProvider(
 		return 3;
 	}
 
-	ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
-
 	switch (op)
 	{
 		case BinarySerialization::EXPORT_INDICATION:
@@ -822,6 +1016,7 @@ int callIndicationExportProvider(
 			String ns = BinarySerialization::readString(inbuf);
 			CIMInstance indHandlerInst = BinarySerialization::readInstance(inbuf);
 			CIMInstance indicationInst = BinarySerialization::readInstance(inbuf);
+			initializeCallback.init(provenv);
 			indicationExportProvider->exportIndication(provenv, ns, indHandlerInst, indicationInst);
 			BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 		}
@@ -835,9 +1030,11 @@ int callIndicationExportProvider(
 int callMethodProvider(
 	UInt8 op,
 	ProviderBaseIFCRef provider,
+	ProviderEnvironmentIFCRef& provenv,
 	std::streambuf& inbuf,
 	std::streambuf& outbuf,
-	const UnnamedPipeRef& stdinout)
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
 {
 	//OW_LOG_DEBUG(logger, "owoopcpp1pr Got BIN_INVMETH command");
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
@@ -856,10 +1053,13 @@ int callMethodProvider(
 	BinarySerialization::verifySignature(inbuf, BinarySerialization::BINSIG_PARAMVALUEARRAY);
 	BinarySerialization::readArray(inbuf, inparms);
 
-	ProviderEnvironmentIFCRef provenv(new OOPProviderEnvironment(inbuf, outbuf, stdinout));
 	CIMParamValueArray outparms;
+	// Get output params
+	BinarySerialization::verifySignature(inbuf, BinarySerialization::BINSIG_PARAMVALUEARRAY);
+	BinarySerialization::readArray(inbuf, outparms);
+
+	initializeCallback.init(provenv);
 	CIMValue cv = methProvider->invokeMethod(provenv, ns, path, methodName, inparms, outparms);
-	//OW_LOG_DEBUG(logger, "invokeMethod done");
 	BinarySerialization::write(outbuf, BinarySerialization::BIN_OK);
 	BinarySerialization::writeValue(outbuf, cv);
 	BinarySerialization::write(outbuf, BinarySerialization::BINSIG_PARAMVALUEARRAY);
@@ -869,9 +1069,46 @@ int callMethodProvider(
 }
 
 //////////////////////////////////////////////////////////////////////////////
+int callQueryProvider(
+	UInt8 op, 
+	ProviderBaseIFCRef provider,
+	ProviderEnvironmentIFCRef& provenv,
+	std::streambuf& inbuf,
+	std::streambuf& outbuf,
+	const UnnamedPipeRef& stdinout,
+	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
+{
+	QueryProviderIFC* queryProvider = provider->getQueryProvider();
+	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
+	if (!queryProvider)
+	{
+		OW_LOG_ERROR(logger, "provider is not a query provider");
+		return 3;
+	}
+
+	switch (op)
+	{
+		case BinarySerialization::QUERY_INSTANCES:
+		{
+			String ns = BinarySerialization::readString(inbuf);
+			WQLSelectStatement wss = BinarySerialization::readWQLSelectStatement(inbuf);
+			WQLCompile wc(wss);
+			CIMClass cimClass = BinarySerialization::readClass(inbuf);
+
+			BinaryCIMInstanceWriter handler(outbuf);
+			initializeCallback.init(provenv);
+			queryProvider->queryInstances(provenv, ns, wss, wc, handler, cimClass);
+		}
+		break;
+
+	}
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 bool opRequiresEndReply(UInt8 op)
 {
-	return op != BinarySerialization::SET_PERSISTENT;
+	return op != BinarySerialization::SET_PERSISTENT && op != BinarySerialization::SET_LOG_LEVEL;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -900,10 +1137,11 @@ String where(String const & provider_lib, UInt8 op, bool got_op)
 OOPCpp1ProviderRunner::OOPCpp1ProviderRunner(
 	const UnnamedPipeRef& IOPipe,
 	const String& logFile,
-	const String& logLevel)
+	const String& logCategories)
 	: m_IOPipe(IOPipe)
 	, m_inbuf(m_IOPipe.getPtr())
 	, m_outbuf(m_IOPipe.getPtr())
+	, m_penv()
 {
 	m_inbuf.tie(&m_outbuf);
 	String msg;
@@ -912,35 +1150,26 @@ OOPCpp1ProviderRunner::OOPCpp1ProviderRunner(
 		OW_THROW(OOPCpp1Exception, msg.c_str());
 	}
 
-	// set up a file log as well so we can see what happened even if the 
-	// communication back to the provider interface is broken.
-	Array<LogAppenderRef> appenders;
-	StringArray categories = logLevel.tokenize(",");
-	appenders.push_back(new OOPcpp1LogAppender(m_outbuf, categories));
-
-	const char LOG_FORMAT[] = "%-3r [%t] %-5p %F:%L %c - %m";
-	if (!logFile.empty())
-	{
-		appenders.push_back(new FileAppender(LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES, logFile.c_str(),
-			LOG_FORMAT, FileAppender::NO_MAX_LOG_SIZE, 9999));
-	}
-	LogAppender::setDefaultLogAppender(LogAppenderRef(new MultiAppender(appenders)));
-
+	OOPProviderEnvironment* penv = new OOPProviderEnvironment(m_inbuf, m_outbuf, m_IOPipe, logFile, logCategories);
+	m_penv = ProviderEnvironmentIFCRef(penv);
+	LogAppender::setDefaultLogAppender(penv->getLogAppender());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 ProviderEnvironmentIFCRef 
 OOPCpp1ProviderRunner::getProviderEnvironment()
 {
-	return ProviderEnvironmentIFCRef(new OOPProviderEnvironment(m_inbuf,
-		m_outbuf, m_IOPipe));
+	return m_penv;
+	//return ProviderEnvironmentIFCRef(new OOPProviderEnvironment(m_inbuf,
+	//	m_outbuf, m_IOPipe));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 int
 OOPCpp1ProviderRunner::runProvider(
 	ProviderBaseIFCRef& provider,
-	const String& sourceLib)
+	const String& sourceLib,
+	InitializeCallback& initializeCallback)
 {
 	int rval = 0;
 	Logger logger(COMPONENT_NAME);
@@ -950,12 +1179,12 @@ OOPCpp1ProviderRunner::runProvider(
 	try
 	{
 		bool persistent = false;
+		bool receivedShuttingDown = false;
 		do
 		{
 			got_op = false;
 			UInt32 binaryProtocolVersion = 0;
 			BinarySerialization::read(m_inbuf, binaryProtocolVersion);
-			//OW_LOG_DEBUG(logger, Format("Read protocol version %1", binaryProtocolVersion));
 			if (binaryProtocolVersion < BinarySerialization::MinBinaryProtocolVersion
 				|| binaryProtocolVersion > BinarySerialization::BinaryProtocolVersion)
 			{
@@ -966,6 +1195,7 @@ OOPCpp1ProviderRunner::runProvider(
 			}
 
 			BinarySerialization::read(m_inbuf, op);
+			//OW_LOG_DEBUG3(logger, Format("Read operation %1", static_cast<UInt32>(op)));
 			got_op = true;
 			switch (op)
 			{
@@ -976,13 +1206,13 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::BIN_MODIFYINST:
 				case BinarySerialization::BIN_DELETEINST:
 				{
-					rval = callInstanceProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
+					rval = callInstanceProvider(op, provider, m_penv, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
 				}
 				break;
 
 				case BinarySerialization::BIN_INVMETH:
 				{
-					rval = callMethodProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
+					rval = callMethodProvider(op, provider, m_penv, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
 				}
 				break;
 
@@ -991,13 +1221,12 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::BIN_REFNAMES:
 				case BinarySerialization::BIN_REFERENCES:
 				{
-					rval = callAssociatorProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
+					rval = callAssociatorProvider(op, provider, m_penv, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
 				}
 				break;
 
 				case BinarySerialization::SET_PERSISTENT:
 				{
-					//OW_LOG_DEBUG(logger, "owoopcpp1pr Got SET_PERSISTENT command");
 					persistent = BinarySerialization::readBool(m_inbuf);
 					if (persistent)
 					{
@@ -1007,13 +1236,54 @@ OOPCpp1ProviderRunner::runProvider(
 					{
 						m_IOPipe->setTimeouts(Timeout::relative(60 * 10.0));
 					}
+					if (!persistent)
+					{
+						// Pesistent being set to false.
+						// If polled/indication export, then call doShutdown.
+						// shuttingDown/cleanup will be called by the provider runner.
+						PolledProviderIFC* polledProvider = provider->getPolledProvider();
+						if (polledProvider)
+						{
+							OW_LOG_DEBUG3(logger, "owoopcpp1pr Got SET_PERSISTENT shutting down polled provider");
+							polledProvider->doShutdown();
+						}
+						else
+						{
+							IndicationExportProviderIFC* indicationExportProvider = provider->getIndicationExportProvider();
+							if (indicationExportProvider)
+							{
+								OW_LOG_DEBUG3(logger, "owoopcpp1pr Got SET_PERSISTENT shutting down indication export provider");
+								indicationExportProvider->doShutdown();
+							}
+						}
+					}
+				}
+				break;
+
+				case BinarySerialization::SET_LOG_LEVEL:
+				{
+					UInt8 level;
+					BinarySerialization::read(m_inbuf, level);
+					ELogLevel logLevel = static_cast<ELogLevel>(level);
+					logger.setLogLevel(logLevel);
+					IntrusiveReference<OOPProviderEnvironment> oopenv(m_penv.cast_to<OOPProviderEnvironment>());
+					LogAppender::setDefaultLogAppender(oopenv->setLogAppenderLevel(logLevel));
+					OW_LOG_DEBUG3(logger, Format("Set log level to %1", Logger::logLevelToString(logLevel)));
+				}
+				break;
+
+				case BinarySerialization::SHUTTING_DOWN:
+				{
+					provider->shuttingDown(m_penv);
+					BinarySerialization::write(m_outbuf, BinarySerialization::BIN_OK);
+					receivedShuttingDown = true;
 				}
 				break;
 
 				case BinarySerialization::POLL:
 				case BinarySerialization::GET_INITIAL_POLLING_INTERVAL:
 				{
-					rval = callPolledProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
+					rval = callPolledProvider(op, provider, m_penv, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
 				}
 				break;
 
@@ -1022,13 +1292,19 @@ OOPCpp1ProviderRunner::runProvider(
 				case BinarySerialization::ACTIVATE_FILTER:
 				case BinarySerialization::DEACTIVATE_FILTER:
 				{
-					rval = callIndicationProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
+					rval = callIndicationProvider(op, provider, m_penv, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
 				}
 				break;
 
 				case BinarySerialization::EXPORT_INDICATION:
 				{
-					rval = callIndicationExportProvider(op, provider, m_inbuf, m_outbuf, m_IOPipe);
+					rval = callIndicationExportProvider(op, provider, m_penv, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
+				}
+				break;
+
+				case BinarySerialization::QUERY_INSTANCES:
+				{
+					rval = callQueryProvider(op, provider, m_penv, m_inbuf, m_outbuf, m_IOPipe, initializeCallback);
 				}
 				break;
 
@@ -1049,7 +1325,12 @@ OOPCpp1ProviderRunner::runProvider(
 				}
 
 			}
-		} while (persistent);
+		} while (persistent || op == BinarySerialization::SET_LOG_LEVEL);
+
+		if (!receivedShuttingDown)
+		{
+			provider->shuttingDown(m_penv);
+		}
 	}
 	catch (CIMException& e)
 	{
@@ -1108,6 +1389,8 @@ main_end:
 		cerr << "owoopcpp1pr main() m_outbuf.pubsync() failed" << endl;
 		rval = 7;
 	}
+
+	OW_LOG_DEBUG3(logger, "OOPCpp1ProviderRunner::runProvider() finished");
 	return rval;
 }
 

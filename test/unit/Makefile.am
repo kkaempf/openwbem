@@ -21,8 +21,8 @@ noinst_PROGRAMS = $(PROGS)
 
 
 MemTracerTest_LDADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
--L$(top_builddir)/src/ -lopenwbem -lblocxx  \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+-L$(top_builddir)/src/ -lopenwbem $(BLOCXX_LIBS)  \
 $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -34,8 +34,8 @@ MemTracerTest_SOURCES = \
 MemTracerTest.cpp
 
 runMultiProcessLogger_LDADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
--L$(top_builddir)/src/ -lopenwbem -lblocxx  \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+-L$(top_builddir)/src/ -lopenwbem $(BLOCXX_LIBS)  \
 $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -49,6 +49,14 @@ runMultiProcessLogger.cpp
 check_PROGRAMS = unitMain
 # Note: Do not change the following line, unless you also update the newtest.sh script
 unitMain_SOURCES = \
+EnvironmentVariablePatternsTestCases.cpp \
+EnvironmentVariablePatternsTestCases.hpp \
+XMLParserCoreTestCases.cpp \
+XMLParserCoreTestCases.hpp \
+PrivilegeConfigTestCases.cpp \
+PrivilegeConfigTestCases.hpp \
+PrivilegeMonitorParserTestCases.cpp \
+PrivilegeMonitorParserTestCases.hpp \
 OW_LazyGlobalTestCases.cpp \
 OW_LazyGlobalTestCases.hpp \
 LogAppenderTestCases.cpp \
@@ -85,8 +93,6 @@ MOFCompilerTestCases.cpp \
 MOFCompilerTestCases.hpp \
 OperationContextTestCases.cpp \
 OperationContextTestCases.hpp \
-OW_Base64TestCases.cpp \
-OW_Base64TestCases.hpp \
 OW_BinarySerializationTestCases.cpp \
 OW_BinarySerializationTestCases.hpp \
 OW_CIMClassTestCases.cpp \
@@ -219,7 +225,7 @@ unitMain_LDADD = \
 $(REPLIBFLAGS) \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(REALTIME_LIBS) \
 $(BINLINKAPPENDFLAGS)
@@ -230,7 +236,8 @@ $(CXXBINLINKFLAGS) \
 -o unitMain$(EXEEXT)
 
 check_SCRIPTS = run_make_check.sh
-EXTRA_DIST = $(check_SCRIPTS)
+EXTRA_DIST = run_make_check.sh.in
+BUILT_SOURCES = $(check_SCRIPTS)
 
 TESTS = run_make_check.sh
 
@@ -261,11 +268,15 @@ MAKEBUNDLE=1
 OW_SHARED_LIBS = libLazyGlobalTestLibrary.$(LIB_EXT)
 
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
-SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem -lblocxx
+SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
 
 noinst_LIBRARIES = libLazyGlobalTestLibrary.a
 libLazyGlobalTestLibrary_a_SOURCES = OW_LazyGlobalTestLibrary.cpp
 
-all-local: all-ow-shared-libs
+local-scripts: $(check_SCRIPTS)
+	chmod +x $^
+
+all-local: all-ow-shared-libs local-scripts
 clean-local: clean-ow-shared-libs
 
+include $(top_srcdir)/Makefile-replacement.inc

@@ -85,7 +85,8 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 		AssociatorProviderInfoArray& apia,
 #endif
 		MethodProviderInfoArray& mpia,
-		IndicationProviderInfoArray& indpia)
+		IndicationProviderInfoArray& indpia,
+		QueryProviderInfoArray& qpia)
 {
 	unsigned maxConnectionsPerUrl = 5;
 	try
@@ -106,10 +107,10 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 	}
 	catch (CIMException& e)
 	{
-		OW_LOG_DEBUG(lgr, Format("RemoteProviderInterface::doInit() caught exception (%1) while enumerating instances of "
+		OW_LOG_INFO(lgr, Format("RemoteProviderInterface::doInit() caught exception (%1) while enumerating instances of "
 			"OpenWBEM_RemoteProviderRegistration in namespace %2", e, interopNs));
 	}
-	OW_LOG_DEBUG(lgr, Format("RemoteProviderInterface::doInit() found %1 registrations", registrations.size()));
+	OW_LOG_DEBUG3(lgr, Format("RemoteProviderInterface::doInit() found %1 registrations", registrations.size()));
 	for (size_t i = 0; i < registrations.size(); ++i)
 	{
 		CIMInstance& curReg = registrations[i];

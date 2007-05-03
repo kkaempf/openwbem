@@ -70,7 +70,7 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 	const CIMClass& cimClass )
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::enumInstanceNames()");
+	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::enumInstanceNames()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -86,9 +86,7 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 		CIMObjectPath cop(className, ns);
 		CMPI_ObjectPathOnStack eRef(cop);
 		CMPI_ResultOnStack eRes(result);
-		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx, const_cast<char*>(CMPIInvocationFlags),
-			(CMPIValue*)&flgs,CMPI_uint32);
+		CMPIPrepareContext(env, eCtx);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 		rc = m_ftable->miVector.instMI->ft->enumInstanceNames(
 			mi, &eCtx, &eRes, &eRef);
@@ -122,7 +120,7 @@ CMPIInstanceProviderProxy::enumInstances(
 	const CIMClass& cimClass )
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::enumInstances()");
+	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::enumInstances()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -154,16 +152,8 @@ CMPIInstanceProviderProxy::enumInstances(
 				props[pCount]=NULL;
 			}
 		}
-		CMPIFlags flgs = 0;
-
-		if (includeQualifiers)
-			flgs |= CMPI_FLAG_IncludeQualifiers;
-
-		if (includeClassOrigin)
-			flgs |= CMPI_FLAG_IncludeClassOrigin;
-
-		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags), (CMPIValue*)&flgs,
-			CMPI_uint32);
+		CMPIPrepareContext(env, eCtx, localOnly, deep, includeQualifiers,
+			includeClassOrigin);
 
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 		rc = m_ftable->miVector.instMI->ft->enumInstances(
@@ -192,7 +182,7 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 {
 	CIMInstance rval;
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::getInstance()");
+	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::getInstance()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -226,16 +216,9 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 				props[pCount] = NULL;
 			}
 		}
-		CMPIFlags flgs=0;
 
-		if (includeQualifiers)
-			flgs |= CMPI_FLAG_IncludeQualifiers;
-
-		if (includeClassOrigin)
-			flgs |= CMPI_FLAG_IncludeClassOrigin;
-
-		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags), (CMPIValue*)&flgs,
-			CMPI_uint32);
+		CMPIPrepareContext(env, eCtx, localOnly, E_SHALLOW, includeQualifiers,
+			includeClassOrigin);
 
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 
@@ -265,7 +248,7 @@ CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 	const String& ns, const CIMObjectPath& cop)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::deleteInstance()");
+	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::deleteInstance()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -282,9 +265,7 @@ CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 		copWithNS.setNameSpace(ns);
 		CMPI_ObjectPathOnStack eRef(copWithNS);
 		CMPI_ResultOnStack eRes;
-		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags),
-			(CMPIValue*)&flgs,CMPI_uint32);
+		CMPIPrepareContext(env, eCtx);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 
 		rc = m_ftable->miVector.instMI->ft->deleteInstance(
@@ -309,7 +290,7 @@ CIMObjectPath
 {
 	CIMObjectPath rval;
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
+	OW_LOG_DEBUG3(lgr, Format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -327,9 +308,7 @@ CIMObjectPath
 		CMPI_InstanceOnStack eInst(cimInstance);
 		CMPIObjectPathValueResultHandler coprh;
 		CMPI_ResultOnStack eRes(coprh);
-		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags),
-			(CMPIValue*)&flgs,CMPI_uint32);
+		CMPIPrepareContext(env, eCtx);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 // Cheating
 		rc = m_ftable->miVector.instMI->ft->createInstance(
@@ -360,7 +339,7 @@ void
 	const CIMClass& theClass)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "CMPIInstanceProviderProxy::modifyInstance()");
+	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::modifyInstance()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -380,10 +359,8 @@ void
 		CMPI_InstanceOnStack eInst(modifiedInstance);
 		//CMPI_ResultOnStack eRes(result);
 		CMPI_ResultOnStack eRes;
-		CMPIFlags flgs=0;
-		//if (includeQualifier) flgs|=CMPI_FLAG_IncludeQualifiers;
-		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags),
-			(CMPIValue*)&flgs,CMPI_uint32);
+		CMPIPrepareContext(env, eCtx, E_NOT_LOCAL_ONLY, E_SHALLOW,
+			includeQualifiers);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 		rc = m_ftable->miVector.instMI->ft->modifyInstance(
 			mi, &eCtx, &eRes, &eRef, &eInst, props);
@@ -401,6 +378,22 @@ void
 	}
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+void 
+CMPIInstanceProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	if (m_ftable->miVector.instMI)
+	{
+		::CMPIOperationContext context;
+		CMPI_ContextOnStack eCtx(context);
+		ProviderEnvironmentIFCRef env2(env);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
+		m_ftable->miVector.instMI->ft->cleanup(m_ftable->miVector.instMI,
+			&eCtx, true);
+	}
+}
 
 } // end namespace OW_NAMESPACE
 

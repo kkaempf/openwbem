@@ -36,11 +36,7 @@
 #ifndef OW_SERVICE_ENVIRONMENTIFC_HPP_INCLUDE_GUARD_
 #define OW_SERVICE_ENVIRONMENTIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
-#include "OW_SelectableIFC.hpp"
-#include "OW_SelectableCallbackIFC.hpp"
-#include "OW_SharedLibraryReference.hpp"
 #include "OW_ArrayFwd.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_IfcsFwd.hpp"
@@ -89,17 +85,11 @@ public:
 		E_USE_PROVIDERS,
 		E_BYPASS_PROVIDERS
 	};
-	enum ELockingFlag
-	{
-		E_NO_LOCKING,
-		E_LOCKING
-	};
 	/**
 	 * WARNING: The return value is valid only for the lifetime of context.
 	 */
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
-		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS,
-		ELockingFlag locking = E_LOCKING) const;
+		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS) const;
 	
 	CIMOMHandleIFCRef getRepositoryCIMOMHandle(OperationContext& context) const;
 	

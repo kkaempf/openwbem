@@ -55,6 +55,9 @@ public:
 	virtual void associators(const ProviderEnvironmentIFCRef &env, CIMInstanceResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, const String &assocClass, const String &resultClass, const String &role, const String &resultRole, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList);
 	virtual void associatorNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, const String &assocClass, const String &resultClass, const String &role, const String &resultRole);
 	virtual void referenceNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, const String &resultClass, const String &role);
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	{
+	}
 
 private:
 	ClientCIMOMHandleConnectionPoolRef m_pool;

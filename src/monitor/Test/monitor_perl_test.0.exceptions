@@ -1,0 +1,2 @@
+PrivilegeManagerException   PrivilegeManager::readDirectory: could not read /dir/doesnt/exist/
+

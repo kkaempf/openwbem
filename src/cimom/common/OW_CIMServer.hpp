@@ -69,7 +69,8 @@ public:
 	CIMServer(const ServiceEnvironmentIFCRef& env,
 		const ProviderManagerRef& providerManager,
 		const RepositoryIFCRef& repository,
-		const AuthorizerManagerRef& authorizerMgr);
+		const AuthorizerManagerRef& authorizerMgr,
+		const AuthorizerIFCRef& authorizer);
 	/**
 	 * Destroy this CIMServer object.
 	 */
@@ -511,6 +512,12 @@ public:
 		const CIMObjectPath& path,
 		const String& methodName, const CIMParamValueArray& inParams,
 		CIMParamValueArray& outParams, OperationContext& context);
+	virtual RepositoryIFC::ELockType getLockTypeForMethod(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in, 
+		OperationContext& context);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associatorNames(
 		const String& ns,
@@ -591,7 +598,9 @@ public:
 		const CIMClass& theTopClass,
 		const CIMClass& theClass, CIMInstanceResultHandlerIFC& result,
 		WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EDeepFlag deep, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,	
+		const WQLSelectStatement* pwss,
+		const WQLCompile* pwc,
 		OperationContext& context);
 private:
 	/**
@@ -653,11 +662,21 @@ private:
 	CIMClass _getNameSpaceClass(const CIMName& className);
 	InstanceProviderIFCRef _getInstanceProvider(const String& ns,
 		const CIMClass& cls, OperationContext& context);
+	QueryProviderIFCRef _getQueryProvider(const String& ns, const CIMClass& cc, OperationContext& context);
 	SecondaryInstanceProviderIFCRefArray _getSecondaryInstanceProviders(const String& ns, const CIMName& className, OperationContext& context);
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	AssociatorProviderIFCRef _getAssociatorProvider(const String& ns, const CIMClass& cls, OperationContext& context);
 #endif
+
+	virtual void enumInstancesWQL(
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
+		const WQLSelectStatement& wss,
+		const WQLCompile& wc,
+		OperationContext& context);
+
 private:
 	CIMClass _instGetClass(const String& ns, const CIMName& className,
 		WBEMFlags::ELocalOnlyFlag localOnly,
@@ -678,6 +697,7 @@ private:
 	RepositoryIFCRef m_cimRepository;
 	IntrusiveReference<CIMRepository> m_realRepository;
 	AuthorizerManagerRef m_authorizerMgr;
+	AuthorizerIFCRef m_authorizer;
 	Logger m_logger;
 };
 

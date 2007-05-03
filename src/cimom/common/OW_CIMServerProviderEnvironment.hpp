@@ -61,14 +61,9 @@ public:
 	virtual OperationContext& getOperationContext();
 	virtual ProviderEnvironmentIFCRef clone() const;
 
-	void setLockingMode(ServiceEnvironmentIFC::ELockingFlag lockingFlag)
-	{
-		m_lockingMode = lockingFlag;
-	}
 private:
 	OperationContext& m_context;
 	ServiceEnvironmentIFCRef m_env;
-	ServiceEnvironmentIFC::ELockingFlag m_lockingMode;
 };
 
 class ClonedCIMServerProviderEnvironment : public CIMServerProviderEnvironment

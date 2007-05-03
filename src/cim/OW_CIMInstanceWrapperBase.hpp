@@ -44,6 +44,7 @@
 #include "OW_CIMDateTime.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMClass.hpp"
+#include "OW_Bool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -54,6 +55,7 @@ class CIMInstanceWrapperBase
 {
 public:
 	String toString();
+	const CIMInstance& instance();
 
 protected:
 	/**
@@ -66,7 +68,7 @@ protected:
 
 	// getters
 	String getStringProperty(const char* name) const;
-	Bool getBoolProperty(const char* name) const;
+	bool getBoolProperty(const char* name) const;
 	Char16 getChar16Property(const char* name) const;
 	UInt8 getUInt8Property(const char* name) const;
 	Int8 getInt8Property(const char* name) const;
@@ -102,7 +104,7 @@ protected:
 
 	// setters
 	void setStringProperty(const char* name, const String& val);
-	void setBoolProperty(const char* name, Bool val);
+	void setBoolProperty(const char* name, bool val);
 	void setChar16Property(const char* name, Char16 val);
 	void setUInt8Property(const char* name, UInt8 val);
 	void setInt8Property(const char* name, Int8 val);

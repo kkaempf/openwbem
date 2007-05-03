@@ -111,6 +111,7 @@ public:
 		rephdl->modifyInstance(ns, modifiedInstance, includeQualifiers, propertyList);
 		// Tell the indication server about the modified subscription.
 		CIMOMEnvironment::instance()->getIndicationServer()->modifyFilter(
+			env->getOperationContext(),
 			ns,
 			modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass),
 			env->getUserName());

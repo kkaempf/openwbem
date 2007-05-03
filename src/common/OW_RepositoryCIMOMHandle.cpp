@@ -48,10 +48,9 @@ namespace OW_NAMESPACE
 
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-RepositoryCIMOMHandle::RepositoryCIMOMHandle(const RepositoryIFCRef& pRepos, OperationContext& context, ELockingFlag lock)
+RepositoryCIMOMHandle::RepositoryCIMOMHandle(const RepositoryIFCRef& pRepos, OperationContext& context)
 	: CIMOMHandleIFC()
 	, m_pServer(pRepos)
-	, m_lock(lock)
 	, m_context(context)
 {
 }
@@ -246,7 +245,21 @@ RepositoryCIMOMHandle::invokeMethod(
 	const String& methodName, const CIMParamValueArray& inParams,
 	CIMParamValueArray& outParams)
 {
-	OperationScope os(this, E_INVOKE_METHOD, m_context);
+	EOperationFlag operation = E_INVOKE_METHOD_WRITE_LOCK;
+	RepositoryIFC::ELockType methodLockType = m_pServer->getLockTypeForMethod(ns, path, methodName, inParams, m_context);
+	switch (methodLockType)
+	{
+		case RepositoryIFC::E_NO_LOCK:
+			operation = E_INVOKE_METHOD_NO_LOCK;
+			break;
+		case RepositoryIFC::E_READ_LOCK:
+			operation = E_INVOKE_METHOD_READ_LOCK;
+			break;
+		case RepositoryIFC::E_WRITE_LOCK:
+			operation = E_INVOKE_METHOD_WRITE_LOCK;
+			break;
+	}
+	OperationScope os(this, operation, m_context);
 	CIMValue rval = m_pServer->invokeMethod(ns, path, methodName, inParams, outParams,
 		m_context);
 	os.completedSuccessfully();
@@ -455,20 +468,14 @@ RepositoryCIMOMHandle::execQuery(
 void
 RepositoryCIMOMHandle::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& m_context)
 {
-	if (m_lock)
-	{
-		m_pServer->beginOperation(op, m_context);
-	}
+	m_pServer->beginOperation(op, m_context);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 RepositoryCIMOMHandle::endOperation(WBEMFlags::EOperationFlag op, OperationContext& m_context, WBEMFlags::EOperationResultFlag result)
 {
-	if (m_lock)
-	{
-		m_pServer->endOperation(op, m_context, result);
-	}
+	m_pServer->endOperation(op, m_context, result);
 }
 
 } // end namespace OW_NAMESPACE

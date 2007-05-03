@@ -229,6 +229,7 @@ namespace
 void
 daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool restartOnFatalError, const String& loggerComponentName)
 {
+	Logger logger(loggerComponentName);
 	initDaemonizePipe();
 
 	int pid = -1;
@@ -257,7 +258,13 @@ daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool res
 				if (daemonize_upipe->readInt(&status) < 1
 						|| status != DAEMONIZE_SUCCESS)
 				{
-					cerr << "Error starting CIMOM.  Check the log files." << endl;
+					// This object is being used for several different executables now.
+					String displayName(daemonName);
+					if (daemonName.equals("owcimomd"))
+					{
+						displayName = "CIMOM";
+					}
+					cerr << "Error starting " << displayName.c_str() << ".  Check the log files." << endl;
 					_exit(1);
 				}
 				_exit(0); // exit the original process
@@ -288,7 +295,15 @@ daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool res
 				_exit(0);
 		}
 
-		chdir("/");
+		if( !getenv("OWNOCHDIR") )
+		{
+			OW_LOG_DEBUG3(logger, "Changing directories to / ...");
+			chdir("/");
+		}
+		else
+		{
+			OW_LOG_DEBUG(logger, "Not changing directories because the OWNOCHDIR environment variable is set.");
+		}
 
 		// reattach stdin, stdout, stderr
 		close(0);
@@ -398,6 +413,7 @@ wait_for_signal:
 						if (pidrv == -1)
 						{
 							perror("parent: waitpid()");
+							PidFile::removePid(pidFile.c_str());
 							exit(1);
 						}
 
@@ -410,6 +426,7 @@ wait_for_signal:
 							}
 							else if (WIFEXITED(status))
 							{
+								PidFile::removePid(pidFile.c_str());
 								exit(WEXITSTATUS(status));
 							}
 							else if (WIFSIGNALED(status))
@@ -429,10 +446,14 @@ wait_for_signal:
 										}
 										else
 										{
+											PidFile::removePid(pidFile.c_str());
 											exit(1);
 										}
 									default:
-										exit(1);
+										{
+											PidFile::removePid(pidFile.c_str());
+											exit(1);
+										}
 								}
 							}
 							else
@@ -455,6 +476,7 @@ wait_for_signal:
 						if (kill(pid, siginfo.si_signo) == -1)
 						{
 							perror("Platform::daemonize(): kill()");
+							PidFile::removePid(pidFile.c_str());
 							exit(1);
 						}
 
@@ -483,6 +505,7 @@ wait_for_signal:
 								if (kill(pid, SIGKILL) == -1)
 								{
 									perror("Platform::daemonize(): kill()");
+									PidFile::removePid(pidFile.c_str());
 									exit(1);
 								}
 								cleanupChild(pid, childStatus);
@@ -508,6 +531,7 @@ wait_for_signal:
 						}
 						else
 						{
+							PidFile::removePid(pidFile.c_str());
 							// if the child exited, return the same value
 							if (WIFEXITED(childStatus))
 							{
@@ -565,7 +589,6 @@ wait_for_signal:
 int
 daemonShutdown(const String& daemonName, const String& pidFile)
 {
-#ifndef WIN32
 #if defined(OW_NETWARE)
 	(void)daemonName;
 	{
@@ -578,9 +601,6 @@ daemonShutdown(const String& daemonName, const String& pidFile)
 	{
 		UnRegisterEventNotification(DownEvent);
 	}
-#else
-	PidFile::removePid(pidFile.c_str());
-#endif
 #endif
 	shutdownSig();
 	return 0;
@@ -883,7 +903,7 @@ BOOL WINAPI CtrlHandlerRoutine(DWORD dwCtrlType)
 	return TRUE;
 }
 
-#error "Figure out somewhere else to call this code"
+#pragma message(Reminder "TODO: Figure out somewhere else to call this code")
 void installFatalSignalHandlers()
 {
 	::SetConsoleCtrlHandler(CtrlHandlerRoutine, TRUE);

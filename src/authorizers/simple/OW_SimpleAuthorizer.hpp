@@ -319,6 +319,13 @@ public:
 		const StringArray* propertyList,
 		WBEMFlags::EEnumSubclassesFlag enumSubclasses,
 		OperationContext& context);
+	virtual void enumInstancesWQL(
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
+		const WQLSelectStatement& wss,
+		const WQLCompile& wc,
+		OperationContext& context);
 	/**
 	 * Retrieve an enumeration of instances object paths (CIMObjectPath)
 	 * for a particular class
@@ -481,6 +488,12 @@ public:
 		const CIMObjectPath& path,
 		const String& methodName, const CIMParamValueArray& inParams,
 		CIMParamValueArray& outParams, OperationContext& context);
+	virtual RepositoryIFC::ELockType getLockTypeForMethod(
+			const String& ns,
+			const CIMObjectPath& path,
+			const String& methodName,
+			const CIMParamValueArray& in, 
+			OperationContext& context);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associatorNames(
 		const String& ns,

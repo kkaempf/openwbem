@@ -15,7 +15,7 @@ thelibdir = $(pkglibdir)/c++providers
 
 OW_SHARED_LIBS = libowprovpollUnloader.$(LIB_EXT)
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/cimom/server -lowserver \

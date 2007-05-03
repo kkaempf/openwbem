@@ -22,7 +22,7 @@ libowprovinstOpenWBEM_ObjectManager_a_SOURCES = \
 OW_provinstOpenWBEM_ObjectManager.cpp
 
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
 

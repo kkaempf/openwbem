@@ -76,14 +76,14 @@ RemoteInstanceProvider::enumInstanceNames(
 		const CIMClass& cimClass )
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::enumInstanceNames ns = %1, className = %2", ns, className));
+	OW_LOG_DEBUG3(lgr, Format("RemoteInstanceProvider::enumInstanceNames ns = %1, className = %2", ns, className));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::enumInstanceNames got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteInstanceProvider::enumInstanceNames got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteInstanceProvider::enumInstanceNames calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteInstanceProvider::enumInstanceNames calling remote WBEM server");
 
 	try
 	{
@@ -118,14 +118,14 @@ RemoteInstanceProvider::enumInstances(
 		const CIMClass& cimClass )
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::enumInstances ns = %1, className = %2", ns, className));
+	OW_LOG_DEBUG3(lgr, Format("RemoteInstanceProvider::enumInstances ns = %1, className = %2", ns, className));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::enumInstances got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteInstanceProvider::enumInstances got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteInstanceProvider::enumInstances calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteInstanceProvider::enumInstances calling remote WBEM server");
 
 	try
 	{
@@ -157,14 +157,14 @@ RemoteInstanceProvider::getInstance(
 		const CIMClass& cimClass )
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::getInstance ns = %1, instanceName = %2", ns, instanceName));
+	OW_LOG_DEBUG3(lgr, Format("RemoteInstanceProvider::getInstance ns = %1, instanceName = %2", ns, instanceName));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::getInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteInstanceProvider::getInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteInstanceProvider::getInstance calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteInstanceProvider::getInstance calling remote WBEM server");
 
 	CIMInstance rval(CIMNULL);
 	try
@@ -198,14 +198,14 @@ RemoteInstanceProvider::createInstance(
 		const CIMInstance& cimInstance )
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::createInstance ns = %1", ns));
+	OW_LOG_DEBUG3(lgr, Format("RemoteInstanceProvider::createInstance ns = %1", ns));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::createInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteInstanceProvider::createInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteInstanceProvider::createInstance calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteInstanceProvider::createInstance calling remote WBEM server");
 
 	CIMObjectPath rval(CIMNULL);
 	try
@@ -238,14 +238,14 @@ RemoteInstanceProvider::modifyInstance(
 		const CIMClass& theClass)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::modifyInstance ns = %1", ns));
+	OW_LOG_DEBUG3(lgr, Format("RemoteInstanceProvider::modifyInstance ns = %1", ns));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::modifyInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteInstanceProvider::modifyInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteInstanceProvider::modifyInstance calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteInstanceProvider::modifyInstance calling remote WBEM server");
 
 	try
 	{
@@ -272,14 +272,14 @@ RemoteInstanceProvider::deleteInstance(
 		const CIMObjectPath& cop)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::deleteInstance ns = %1, cop = %2", ns, cop));
+	OW_LOG_DEBUG3(lgr, Format("RemoteInstanceProvider::deleteInstance ns = %1, cop = %2", ns, cop));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::deleteInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteInstanceProvider::deleteInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteInstanceProvider::deleteInstance calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteInstanceProvider::deleteInstance calling remote WBEM server");
 
 	try
 	{

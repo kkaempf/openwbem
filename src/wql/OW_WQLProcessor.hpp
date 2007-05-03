@@ -45,6 +45,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Array.hpp"
 #include "OW_Bool.hpp"
+#include "OW_RepositoryIFC.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -56,6 +57,7 @@ class OW_WQL_API WQLProcessor : public WQLVisitor
 {
 public:
 	WQLProcessor(const CIMOMHandleIFCRef& hdl, const String& ns);
+	WQLProcessor(const RepositoryIFCRef& repos, OperationContext* operationContext, stmt* astRoot, const String& ns);
 	virtual ~WQLProcessor()
 	{
 	}
@@ -752,11 +754,14 @@ private:
 	DataType m_exprValue;
 	Array<DataType> m_valueArray;
 	CIMOMHandleIFCRef m_hdl;
+	RepositoryIFCRef m_repos;
+	OperationContext* m_operationContext;
 	String m_ns;
 	String m_tableRef;
 	bool m_doingSelect;
 	bool m_isSchemaQuery;
 	StringArray m_propertyArray;
+	stmt* m_astRoot;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

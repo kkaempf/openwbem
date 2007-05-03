@@ -46,7 +46,6 @@ CIMServerProviderEnvironment::CIMServerProviderEnvironment(OperationContext& con
 	const ServiceEnvironmentIFCRef& env)
 	: m_context(context)
 	, m_env(env)
-	, m_lockingMode(ServiceEnvironmentIFC::E_LOCKING)
 {}
 
 String
@@ -66,16 +65,14 @@ CIMOMHandleIFCRef
 CIMServerProviderEnvironment::getCIMOMHandle() const
 {
 	return m_env->getCIMOMHandle(m_context,
-		ServiceEnvironmentIFC::E_USE_PROVIDERS,
-		m_lockingMode);
+		ServiceEnvironmentIFC::E_USE_PROVIDERS);
 }
 
 CIMOMHandleIFCRef
 CIMServerProviderEnvironment::getRepositoryCIMOMHandle() const
 {
 	return m_env->getCIMOMHandle(m_context,
-		ServiceEnvironmentIFC::E_BYPASS_PROVIDERS,
-		m_lockingMode);
+		ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
 }
 
 RepositoryIFCRef

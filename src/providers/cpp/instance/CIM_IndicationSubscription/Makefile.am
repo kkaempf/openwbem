@@ -22,7 +22,7 @@ libowprovCIM_IndicationSubscription_a_SOURCES = \
 OW_provCIM_IndicationSubscription.cpp
 
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/cimom/common -lowcimomcommon \

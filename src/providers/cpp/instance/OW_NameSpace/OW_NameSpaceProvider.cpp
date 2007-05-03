@@ -367,7 +367,7 @@ NameSpaceProvider::modifyInstance(
 void
 NameSpaceProvider::initialize(const ProviderEnvironmentIFCRef& env)
 {
-	OW_LOG_DEBUG(Logger(COMPONENT_NAME), "NameSpaceProvider initialize called");
+	OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "NameSpaceProvider initialize called");
 }
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -141,6 +141,8 @@ public:
 	 */
 	HDBNode getNameSpaceNode(HDBHandleLock& hdl, String key);
 
+	bool checkFreeList();
+	
 	static const String COMPONENT_NAME;
 
 protected:

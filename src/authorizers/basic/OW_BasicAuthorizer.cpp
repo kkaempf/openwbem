@@ -61,6 +61,12 @@ class BasicAccessMgr : public IntrusiveCountableBase
 public:
 	static const String COMPONENT_NAME;
 	BasicAccessMgr(const RepositoryIFCRef& pServer);
+
+	enum ECheckOperationContextFlag
+	{
+		E_SKIP_OPERATION_CONTEXT_CHECK,
+		E_CHECK_OPERATION_CONTEXT
+	};
 	/**
 	 * checkAccess will check that access is granted through the ACL. If
 	 * Access is not granted, a CIMException will be thrown.
@@ -71,7 +77,7 @@ public:
 	 */
 	void checkAccess(
 		char const * op, char const * required,
-		String const * pns, OperationContext & context);
+		String const * pns, OperationContext & context, ECheckOperationContextFlag = E_CHECK_OPERATION_CONTEXT);
 
 	void setEnv(ServiceEnvironmentIFCRef const & env)
 	{
@@ -94,23 +100,31 @@ BasicAccessMgr::BasicAccessMgr(RepositoryIFCRef const & pServer)
 
 namespace
 {
-	struct InternalDataRemover
+	struct OperationContextDataRestorer
 	{
-		OperationContext & m_context;
-		String m_key;
-
-		InternalDataRemover(OperationContext & context, char const * key)
-		: m_context(context)
+		OperationContextDataRestorer(OperationContext& oc, const String& key)
+		: m_oc(oc)
 		, m_key(key)
+		, m_prevValue(oc.getData(key))
 		{
 		}
-		~InternalDataRemover()
+		~OperationContextDataRestorer()
 		{
-			m_context.removeData(m_key);
+			if (!m_prevValue)
+			{
+				m_oc.removeData(m_key);
+			}
+			else
+			{
+				m_oc.setData(m_key, m_prevValue);
+			}
 		}
+		OperationContext& m_oc;
+		String m_key;
+		OperationContext::DataRef m_prevValue;
 	};
 
-	char const ACCESS_MSG_INTERNAL_CALL[] = "ACCESS_MSG_INTERNAL_CALL";
+	char const DISABLE_AUTHENTICATION_FLAG[] = "BasicAuthorizer::disableAuthenticationFlag";
 
 	CIMInstance ACLInstance(
 		CIMObjectPath const & cop, RepositoryIFC & server,
@@ -188,29 +202,36 @@ String BasicAccessMgr::userPermissions(
 
 void BasicAccessMgr::checkAccess(
 	char const * op, char const * required,
-	String const * pns, OperationContext & context
-)
+	String const * pns, OperationContext & context, ECheckOperationContextFlag checkOperationContext)
 {
+	// Access levels:
+	// rw = read, write (instances)
+	// RW = read, write (schema)
+	// N = namespace manipulation (create, delete)
+
 	UserInfo userInfo = context.getUserInfo();
-	if (userInfo.getInternal() ||
-		context.getStringDataWithDefault(ACCESS_MSG_INTERNAL_CALL) == "1")
+	if (userInfo.getInternal())
+	{
+		return;
+	}
+	if (checkOperationContext == E_CHECK_OPERATION_CONTEXT && context.getStringDataWithDefault(DISABLE_AUTHENTICATION_FLAG) == "1")
 	{
 		return;
 	}
 
-	// now set the value so that we won't cause an infinite recursion loop
-	context.setStringData(ACCESS_MSG_INTERNAL_CALL, "1");
-	// and set up an object to remove it when this function returns
-	InternalDataRemover internalDataRemover(context, ACCESS_MSG_INTERNAL_CALL);
+	// Set up an object to remove it when this function returns
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	// Now set the value so that we won't cause an infinite recursion loop
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 
 	String const & ns = pns ? *pns : String("<none>");
 	String username = userInfo.getUserName();
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("Checking access to namespace: \"%1\"", ns));
-	OW_LOG_DEBUG(lgr,
-		Format("UserName is: \"%1\" Operation is : %2", username, op));
+	OW_LOG_DEBUG2(lgr, Format("Checking access to namespace: \"%1\"", ns));
+	OW_LOG_DEBUG2(lgr, Format("UserName is: \"%1\" Operation is : %2", username, op));
 
 	String permissions = this->userPermissions(pns, username, context);
+	OW_LOG_DEBUG3(lgr, Format("User has permissions: \"%1\"  Required permissions: \"%2\"", permissions, required));
 	if (subset(required, permissions))
 	{
 		Format fmt(
@@ -282,7 +303,9 @@ void
 BasicAuthorizer::createNameSpace(const String& ns,
 	OperationContext& context)
 {
-	m_accessMgr->checkAccess("createNameSpace", "N", 0, context);
+	m_accessMgr->checkAccess("createNameSpace", "N", 0, context, BasicAccessMgr::E_SKIP_OPERATION_CONTEXT_CHECK);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->createNameSpace(ns,context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -290,7 +313,9 @@ void
 BasicAuthorizer::deleteNameSpace(const String& ns,
 	OperationContext& context)
 {
-	m_accessMgr->checkAccess("deleteNameSpace", "N", 0, context);
+	m_accessMgr->checkAccess("deleteNameSpace", "N", 0, context, BasicAccessMgr::E_SKIP_OPERATION_CONTEXT_CHECK);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->deleteNameSpace(ns,context);
 }
 #endif // #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
@@ -308,6 +333,8 @@ BasicAuthorizer::getQualifierType(const String& ns,
 	OperationContext& context)
 {
 	m_accessMgr->checkAccess("getQualifierType", "R", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	return m_cimRepository->getQualifierType(ns,qualifierName,context);
 }
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
@@ -319,6 +346,8 @@ BasicAuthorizer::enumQualifierTypes(
 	OperationContext& context)
 {
 	m_accessMgr->checkAccess("enumQualifierTypes", "R", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->enumQualifierTypes(ns,result,context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -327,6 +356,8 @@ BasicAuthorizer::deleteQualifierType(const String& ns, const String& qualName,
 	OperationContext& context)
 {
 	m_accessMgr->checkAccess("deleteQualifierType", "W", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->deleteQualifierType(ns,qualName,context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -336,6 +367,8 @@ BasicAuthorizer::setQualifierType(
 	const CIMQualifierType& qt, OperationContext& context)
 {
 	m_accessMgr->checkAccess("setQualifierType", "W", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->setQualifierType(ns,qt,context);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
@@ -347,6 +380,8 @@ BasicAuthorizer::getClass(
 	const StringArray* propertyList, OperationContext& context)
 {
 	m_accessMgr->checkAccess("getClass", "R", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	return m_cimRepository->getClass(ns, className, localOnly, includeQualifiers, includeClassOrigin, propertyList, context);
 }
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
@@ -356,6 +391,8 @@ BasicAuthorizer::deleteClass(const String& ns, const String& className,
 	OperationContext& context)
 {
 	m_accessMgr->checkAccess("deleteClass", "W", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	return m_cimRepository->deleteClass(ns,className,context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -364,6 +401,8 @@ BasicAuthorizer::createClass(const String& ns, const CIMClass& cimClass,
 	OperationContext& context)
 {
 	m_accessMgr->checkAccess("createClass", "W", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->createClass(ns,cimClass,context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -374,6 +413,8 @@ BasicAuthorizer::modifyClass(
 	OperationContext& context)
 {
 	m_accessMgr->checkAccess("modifyClass", "W", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	return m_cimRepository->modifyClass(ns,cc,context);
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
@@ -386,6 +427,8 @@ BasicAuthorizer::enumClasses(const String& ns,
 		EIncludeClassOriginFlag includeClassOrigin, OperationContext& context)
 {
 	m_accessMgr->checkAccess("enumClasses", "R", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->enumClasses(ns,className,result,deep,localOnly,
 		includeQualifiers,includeClassOrigin,context);
 }
@@ -398,6 +441,8 @@ BasicAuthorizer::enumClassNames(
 	EDeepFlag deep, OperationContext& context)
 {
 	m_accessMgr->checkAccess("enumClassNames", "R", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->enumClassNames(ns,className,result,deep,context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -410,6 +455,8 @@ BasicAuthorizer::enumInstanceNames(
 	OperationContext& context)
 {
 	m_accessMgr->checkAccess("enumInstanceNames", "r", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->enumInstanceNames(ns, className, result, deep, context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -423,7 +470,24 @@ BasicAuthorizer::enumInstances(
 	OperationContext& context)
 {
 	m_accessMgr->checkAccess("enumInstances", "r", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->enumInstances(ns, className, result, deep, localOnly, includeQualifiers, includeClassOrigin, propertyList, enumSubclasses, context);
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+BasicAuthorizer::enumInstancesWQL(
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result,
+	const WQLSelectStatement& wss,
+	const WQLCompile& wc,
+	OperationContext& context)
+{
+	m_accessMgr->checkAccess("enumInstances", "r", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
+	m_cimRepository->enumInstancesWQL(ns, className, result, wss, wc, context);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance
@@ -435,6 +499,8 @@ BasicAuthorizer::getInstance(
 	const StringArray* propertyList, OperationContext& context)
 {
 	m_accessMgr->checkAccess("getInstance", "r", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	return m_cimRepository->getInstance(ns, instanceName, localOnly, includeQualifiers, includeClassOrigin,
 		propertyList, context);
 }
@@ -445,6 +511,8 @@ BasicAuthorizer::deleteInstance(const String& ns, const CIMObjectPath& cop,
 	OperationContext& context)
 {
 	m_accessMgr->checkAccess("deleteInstance", "w", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	return m_cimRepository->deleteInstance(ns, cop, context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -456,6 +524,8 @@ BasicAuthorizer::createInstance(
 {
 	// Check to see if user has rights to create the instance
 	m_accessMgr->checkAccess("createInstance", "w", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	return m_cimRepository->createInstance(ns, ci, context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -468,6 +538,8 @@ BasicAuthorizer::modifyInstance(
 	OperationContext& context)
 {
 	m_accessMgr->checkAccess("modifyInstance", "w", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	return m_cimRepository->modifyInstance(ns, modifiedInstance,
 			includeQualifiers, propertyList, context);
 }
@@ -483,6 +555,8 @@ BasicAuthorizer::getProperty(
 {
 	// Check to see if user has rights to get the property
 	m_accessMgr->checkAccess("getProperty", "r", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	return m_cimRepository->getProperty(ns, name, propertyName, context);
 }
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
@@ -498,6 +572,8 @@ BasicAuthorizer::setProperty(
 	OperationContext& context)
 {
 	m_accessMgr->checkAccess("setProperty", "w", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->setProperty(ns, name, propertyName, valueArg, context);
 }
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
@@ -512,7 +588,20 @@ BasicAuthorizer::invokeMethod(
 	CIMParamValueArray& outParams, OperationContext& context)
 {
 	m_accessMgr->checkAccess("invokeMethod", "rw", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	return m_cimRepository->invokeMethod(ns, path, methodName, inParams, outParams, context);
+}
+//////////////////////////////////////////////////////////////////////
+RepositoryIFC::ELockType
+BasicAuthorizer::getLockTypeForMethod(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& in, 
+	OperationContext& context)
+{
+	return m_cimRepository->getLockTypeForMethod(ns, path, methodName, in, context);
 }
 //////////////////////////////////////////////////////////////////////
 void
@@ -539,6 +628,8 @@ BasicAuthorizer::associators(
 {
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess("associators", "r", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->associators(ns, path, result, assocClass, resultClass, role, resultRole, includeQualifiers, includeClassOrigin, propertyList, context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -554,6 +645,8 @@ BasicAuthorizer::associatorsClasses(
 {
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess("associatorsClasses", "R", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->associatorsClasses(ns, path, result, assocClass, resultClass, role, resultRole, includeQualifiers, includeClassOrigin, propertyList, context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -568,6 +661,8 @@ BasicAuthorizer::associatorNames(
 {
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess("associatorNames", "r", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->associatorNames(ns, path, result, assocClass, resultClass, role, resultRole, context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -582,6 +677,8 @@ BasicAuthorizer::references(
 {
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess("references", "r", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->references(ns, path, result, resultClass, role, includeQualifiers, includeClassOrigin, propertyList, context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -596,6 +693,8 @@ BasicAuthorizer::referencesClasses(
 {
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess("referencesClasses", "R", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->referencesClasses(ns, path, result, resultClass, role, includeQualifiers, includeClassOrigin, propertyList, context);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -609,6 +708,8 @@ BasicAuthorizer::referenceNames(
 {
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess("referenceNames", "r", &ns, context);
+	OperationContextDataRestorer OperationContextDataRestorer(context, DISABLE_AUTHENTICATION_FLAG);
+	context.setStringData(DISABLE_AUTHENTICATION_FLAG, "1");
 	m_cimRepository->referenceNames(ns, path, result, resultClass, role, context);
 }
 #endif

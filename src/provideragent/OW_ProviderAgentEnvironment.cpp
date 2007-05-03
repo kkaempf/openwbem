@@ -56,6 +56,8 @@
 #include "OW_Thread.hpp"
 #include "OW_LocalOperationContext.hpp"
 #include "OW_Timeout.hpp"
+#include "OW_SelectableIFC.hpp"
+#include "OW_SelectableCallbackIFC.hpp"
 
 #include <algorithm> // for std::find
 
@@ -432,8 +434,7 @@ ProviderAgentEnvironment::getRequestHandler(const String& ct) const
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 ProviderAgentEnvironment::getCIMOMHandle(OperationContext& context,
-		EBypassProvidersFlag bypassProviders,
-		ELockingFlag locking) const
+		EBypassProvidersFlag bypassProviders) const
 {
 	ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(
 		m_configItems, context, m_callbackURL, m_connectionPool, m_useConnectionCredentials));

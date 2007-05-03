@@ -103,6 +103,12 @@ void OW_HTTPUtilsTestCases::testbase64Encode()
 	unitAssert( HTTPUtils::base64Encode(reinterpret_cast<const UInt8*>("abc"), 2) == "YWI=");
 	unitAssert( HTTPUtils::base64Encode(reinterpret_cast<const UInt8*>("a\0"), 2) == "YQA=");
 	unitAssert( HTTPUtils::base64Encode(reinterpret_cast<const UInt8*>("a\0\0"), 3) == "YQAA");
+
+	// Empty source on encode
+	// String version
+	unitAssert(0 == HTTPUtils::base64Encode(String("")).length());
+	// Length version
+	unitAssert(0 == HTTPUtils::base64Encode(reinterpret_cast<const UInt8*>(""), 0).length());
 }
 
 void OW_HTTPUtilsTestCases::testbase64Decode()
@@ -111,16 +117,63 @@ void OW_HTTPUtilsTestCases::testbase64Decode()
 	unitAssert( HTTPUtils::base64Decode(String("YQ==")) == "a");
 	unitAssert( HTTPUtils::base64Decode(String("YWI=")) == "ab");
 	unitAssert( HTTPUtils::base64Decode(String("YWJj")) == "abc");
-	unitAssert( HTTPUtils::base64Decode("YQ==").size() == 1);
-	unitAssert( HTTPUtils::base64Decode("YWI=").size() == 2);
-	unitAssert( HTTPUtils::base64Decode("YWJj").size() == 3);
-	unitAssert( HTTPUtils::base64Decode("YWJjYQ==").size() == 4);
-	unitAssert( HTTPUtils::base64Decode("YWJjYWI=").size() == 5);
-	unitAssert( HTTPUtils::base64Decode("YWJjYWJj").size() == 6);
+	unitAssert( HTTPUtils::base64Decode(String("YWJjYQ==")) == "abca");
+	unitAssert( HTTPUtils::base64Decode(String("YWJjYWI=")) == "abcab");
+	unitAssert( HTTPUtils::base64Decode(String("YWJjYWJj")) == "abcabc");
 	unitAssert( HTTPUtils::base64Decode(
 		String("YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxMjM0NTY3ODkhQCMwXiYqKCk7Ojw+LC4gW117fQ==")) ==
 		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#0^&*();:<>,. []{}");
 
+	// test array version
+	String www_python_org("www.python.org");
+	String abc("abcabc");
+	String lotsOfChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#0^&*();:<>,. []{}");
+	unitAssert( HTTPUtils::base64Decode("d3d3LnB5dGhvbi5vcmc=") ==
+		Array<char>(www_python_org.c_str(), www_python_org.c_str() + www_python_org.length()));
+	unitAssert( HTTPUtils::base64Decode("YQ==") == Array<char>(abc.c_str(), abc.c_str() + 1));
+	unitAssert( HTTPUtils::base64Decode("YWI=") == Array<char>(abc.c_str(), abc.c_str() + 2));
+	unitAssert( HTTPUtils::base64Decode("YWJj") == Array<char>(abc.c_str(), abc.c_str() + 3));
+	unitAssert( HTTPUtils::base64Decode("YWJjYQ==") == Array<char>(abc.c_str(), abc.c_str() + 4));
+	unitAssert( HTTPUtils::base64Decode("YWJjYWI=") == Array<char>(abc.c_str(), abc.c_str() + 5));
+	unitAssert( HTTPUtils::base64Decode("YWJjYWJj") == Array<char>(abc.c_str(), abc.c_str() + 6));
+	unitAssert( HTTPUtils::base64Decode(
+		"YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxMjM0NTY3ODkhQCMwXiYqKCk7Ojw+LC4gW117fQ==") ==
+		Array<char>(lotsOfChars.c_str(), lotsOfChars.c_str() + lotsOfChars.length()));
+
+	// test binary string w/ nulls
+	char binstring[] = "a\0\0";
+	unitAssert( HTTPUtils::base64Decode("YQA=") == Array<char>(binstring, binstring + 2));
+	unitAssert( HTTPUtils::base64Decode("YQAA") == Array<char>(binstring, binstring + 3));
+
+
+	// Empty source on decode
+	// String version
+	unitAssert(0 == HTTPUtils::base64Decode(String("")).length());
+	// Array version
+	unitAssert(0 == HTTPUtils::base64Decode("").size());
+}
+
+void OW_HTTPUtilsTestCases::testbase64EncodeDecode()
+{
+	// Tests moved from the old OW_Base64TestCases file.  HTTP Credentials and the like
+	String info("Aladdin:open sesame");
+	String encoded = HTTPUtils::base64Encode(info);
+	unitAssert(encoded.equals("QWxhZGRpbjpvcGVuIHNlc2FtZQ=="));
+	unitAssert(HTTPUtils::base64Decode(encoded).equals(info));
+	encoded = "Og==";
+	info = HTTPUtils::base64Decode(encoded);
+	unitAssert(info.equals(":"));
+	unitAssert(HTTPUtils::base64Encode(info).equals(encoded));
+
+	// Test the other flavors of encode and decode
+	info = "Aladdin:open sesame";
+	encoded = HTTPUtils::base64Encode(reinterpret_cast<const UInt8*>(info.c_str()), info.length());
+	unitAssert(encoded.equals("QWxhZGRpbjpvcGVuIHNlc2FtZQ=="));
+	unitAssert(HTTPUtils::base64Decode(encoded.c_str()) == Array<char>(info.c_str(), info.c_str() + info.length()));
+	encoded = "Og==";
+	Array<char> decoded = HTTPUtils::base64Decode(encoded.c_str());
+	unitAssert(decoded == Array<char>(1, ':'));
+	unitAssert(HTTPUtils::base64Encode(reinterpret_cast<const UInt8*>(&decoded[0]), decoded.size()).equals(encoded.c_str()));
 }
 
 Test* OW_HTTPUtilsTestCases::suite()
@@ -133,6 +186,7 @@ Test* OW_HTTPUtilsTestCases::suite()
 	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testunescapeForURL);
 	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testbase64Encode);
 	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testbase64Decode);
+	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testbase64EncodeDecode);
 
 	return testSuite;
 }

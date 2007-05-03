@@ -13,7 +13,7 @@ noinst_LIBRARIES = libcppindicationexportxmlhttpprovider.a
 
 OW_SHARED_LIBS = libcppindicationexportxmlhttpprovider.$(LIB_EXT)
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \

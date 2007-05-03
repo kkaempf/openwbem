@@ -49,7 +49,8 @@ namespace OW_NAMESPACE
 class OOPInstanceProvider : public InstanceProviderIFC, public OOPProviderBase
 {
 public:
-	OOPInstanceProvider(const OOPProviderInterface::ProvRegInfo& info);
+	OOPInstanceProvider(const OOPProviderInterface::ProvRegInfo& info,
+		const OOPProcessState& processState);
 	virtual ~OOPInstanceProvider();
 	
 	virtual void enumInstanceNames(
@@ -100,6 +101,8 @@ public:
 			const ProviderEnvironmentIFCRef& env,
 			const String& ns,
 			const CIMObjectPath& cop);
+
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 
 };
 

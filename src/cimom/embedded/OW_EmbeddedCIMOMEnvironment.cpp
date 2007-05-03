@@ -237,7 +237,7 @@ EmbeddedCIMOMEnvironment::startServices()
 	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_cimRepository));
 
 	m_cimServer = RepositoryIFCRef(new CIMServer(this,
-		m_providerManager, m_cimRepository, m_authorizerManager));
+		m_providerManager, m_cimRepository, m_authorizerManager, m_authorizer));
 	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_cimServer));
 
 	//_loadAuthorizer();  // old stuff
@@ -465,19 +465,24 @@ EmbeddedCIMOMEnvironment::_createLogger()
 			String logMainLevel = getConfigItem(Format(LOG_1_LEVEL_opt, logName), OW_DEFAULT_LOG_1_LEVEL);
 			if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
 			{
-				logMainCategories = Logger::STR_DEBUG_CATEGORY + " " + Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+				logMainCategories = String(Logger::STR_DEBUG_CATEGORY)
+					+ " " + String(Logger::STR_INFO_CATEGORY) 
+					+ " " + String(Logger::STR_ERROR_CATEGORY) 
+					+ " " + String(Logger::STR_FATAL_CATEGORY);
 			}
 			else if (logMainLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
 			{
-				logMainCategories = Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+				logMainCategories = String(Logger::STR_INFO_CATEGORY) 
+					+ " " + String(Logger::STR_ERROR_CATEGORY)
+					+ " " + String(Logger::STR_FATAL_CATEGORY);
 			}
 			else if (logMainLevel.equalsIgnoreCase(Logger::STR_ERROR_CATEGORY))
 			{
-				logMainCategories = Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+				logMainCategories = String(Logger::STR_ERROR_CATEGORY) + " " + String(Logger::STR_FATAL_CATEGORY);
 			}
 			else if (logMainLevel.equalsIgnoreCase(Logger::STR_FATAL_CATEGORY))
 			{
-				logMainCategories = Logger::STR_FATAL_CATEGORY;
+				logMainCategories = String(Logger::STR_FATAL_CATEGORY);
 			}
 		}
 		String logMainFormat = getConfigItem(Format(LOG_1_FORMAT_opt, logName), OW_DEFAULT_LOG_1_FORMAT);
@@ -545,19 +550,24 @@ EmbeddedCIMOMEnvironment::_createLogger()
 		String logMainLevel = getConfigItem(Format(LOG_1_LEVEL_opt, logName), OW_DEFAULT_LOG_1_LEVEL);
 		if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
 		{
-			logMainCategories = Logger::STR_DEBUG_CATEGORY + " " + Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+			logMainCategories = String(Logger::STR_DEBUG_CATEGORY)
+				+ " " + String(Logger::STR_INFO_CATEGORY) 
+				+ " " + String(Logger::STR_ERROR_CATEGORY) 
+				+ " " + String(Logger::STR_FATAL_CATEGORY);
 		}
 		else if (logMainLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
 		{
-			logMainCategories = Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+			logMainCategories = String(Logger::STR_INFO_CATEGORY)
+				+ " " + String(Logger::STR_ERROR_CATEGORY) 
+				+ " " + String(Logger::STR_FATAL_CATEGORY);
 		}
 		else if (logMainLevel.equalsIgnoreCase(Logger::STR_ERROR_CATEGORY))
 		{
-			logMainCategories = Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+			logMainCategories = String(Logger::STR_ERROR_CATEGORY) + " " + String(Logger::STR_FATAL_CATEGORY);
 		}
 		else if (logMainLevel.equalsIgnoreCase(Logger::STR_FATAL_CATEGORY))
 		{
-			logMainCategories = Logger::STR_FATAL_CATEGORY;
+			logMainCategories = String(Logger::STR_FATAL_CATEGORY);
 		}
 	}
 
@@ -617,18 +627,16 @@ EmbeddedCIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 EmbeddedCIMOMEnvironment::getCIMOMHandle(OperationContext& context,
-	EBypassProvidersFlag bypassProviders,
-	ELockingFlag locking) const
+	EBypassProvidersFlag bypassProviders) const
 {
-	return getCIMOMHandle(context, E_SEND_INDICATIONS, bypassProviders, locking);
+	return getCIMOMHandle(context, E_SEND_INDICATIONS, bypassProviders);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 EmbeddedCIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 	ESendIndicationsFlag sendIndications,
-	EBypassProvidersFlag bypassProviders,
-	ELockingFlag locking) const
+	EBypassProvidersFlag bypassProviders) const
 {
 	{
 		MutexLock l(m_stateGuard);
@@ -655,7 +663,7 @@ EmbeddedCIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 
 
 	return CIMOMHandleIFCRef(new LocalEmbeddedCIMOMHandle(const_cast<EmbeddedCIMOMEnvironment*>(this), rref,
-		context, locking == E_LOCKING ? LocalEmbeddedCIMOMHandle::E_LOCKING : LocalEmbeddedCIMOMHandle::E_NO_LOCKING));
+		context));
 }
 //////////////////////////////////////////////////////////////////////////////
 WQLIFCRef

@@ -49,7 +49,8 @@ namespace OW_NAMESPACE
 class OOPAssociatorProvider : public AssociatorProviderIFC, public OOPProviderBase
 {
 public:
-	OOPAssociatorProvider(const OOPProviderInterface::ProvRegInfo& info);
+	OOPAssociatorProvider(const OOPProviderInterface::ProvRegInfo& info,
+		const OOPProcessState& processState);
 	virtual ~OOPAssociatorProvider();
 	
 
@@ -94,6 +95,8 @@ public:
 			const CIMObjectPath& objectName,
 			const String& resultClass,
 			const String& role );
+
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 };
 
 

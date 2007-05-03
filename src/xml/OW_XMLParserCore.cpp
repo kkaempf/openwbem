@@ -53,15 +53,6 @@ namespace OW_NAMESPACE
 ////////////////////////////////////////////////////////////////////////////////
 bool XMLParserCore::next(XMLToken& entry)
 {
-	IstreamBufIterator iterEOF;
-	if (m_current == iterEOF || *m_current == 0)
-	{
-		if (!m_stack.empty())
-		{
-			OW_THROWXMLLINE(XMLParseException::UNCLOSED_TAGS, m_line);
-		}
-		return false;
-	}
 	// if the last tag was a <.../> then set the next token to END_TAG so that
 	// the caller doesn't need to worry about <.../>, it will look like
 	// <...></...>
@@ -71,6 +62,15 @@ bool XMLParserCore::next(XMLToken& entry)
 		entry.type = XMLToken::END_TAG;
 		entry.attributes.clear();
 		return true;
+	}
+	IstreamBufIterator iterEOF;
+	if (m_current == iterEOF || *m_current == 0)
+	{
+		if (!m_stack.empty())
+		{
+			OW_THROWXMLLINE(XMLParseException::UNCLOSED_TAGS, m_line);
+		}
+		return false;
 	}
 	// Either a "<...>" or content begins next:
 	if (*m_current == '<')
@@ -143,11 +143,12 @@ inline bool isNameChar(char c)
 			 c == ':' || c == '.';
 }
 
-bool XMLParserCore::getElementName(XMLToken& entry)
+bool XMLParserCore::getElementName(
+	XMLToken& entry, XMLParseException::Code errorCode)
 {
 	if (!isalpha(*m_current) && *m_current != '_')
 	{
-		OW_THROWXMLLINE(XMLParseException::BAD_START_TAG, m_line);
+		OW_THROWXMLLINE(errorCode, m_line);
 	}
 	entry.text.reset();
 	while (isNameChar(*m_current))
@@ -168,7 +169,7 @@ bool XMLParserCore::getElementName(XMLToken& entry)
 bool XMLParserCore::getOpenElementName(XMLToken& entry, bool& openCloseElement)
 {
 	openCloseElement = false;
-	if (getElementName(entry))
+	if (getElementName(entry, XMLParseException::BAD_START_TAG))
 	{
 		return true;
 	}
@@ -294,12 +295,27 @@ void XMLParserCore::getCData(XMLToken& entry)
 }
 void XMLParserCore::getDocType()
 {
-	// Just ignore the DOCTYPE command for now:
-	for (; *m_current && *m_current != '>'; ++m_current)
+	// Just ignore the DOCTYPE command for now.
+	// !DOCTYPE can have nested !ELEMENTs and !ATTLISTs.  These need to be
+	// skipped when searching for the closing '>'.
+	int closing_symbols_required = 1;
+	for (; *m_current; ++m_current)
 	{
 		if (*m_current == '\n')
 		{
 			++m_line;
+		}
+		else if (*m_current == '<')
+		{
+			++closing_symbols_required;
+		}
+		else if (*m_current == '>')
+		{
+			--closing_symbols_required;
+			if (closing_symbols_required == 0)
+			{
+				break;
+			}
 		}
 	}
 	if (*m_current != '>')
@@ -338,7 +354,7 @@ void XMLParserCore::getElement(XMLToken& entry)
 	{
 		entry.type = XMLToken::XML_DECLARATION;
 		++m_current;
-		if (getElementName(entry))
+		if (getElementName(entry, XMLParseException::BAD_XML_DECLARATION))
 		{
 			return;
 		}
@@ -396,7 +412,7 @@ void XMLParserCore::getElement(XMLToken& entry)
 	{
 		entry.type = XMLToken::END_TAG;
 		++m_current;
-		if (!getElementName(entry))
+		if (!getElementName(entry, XMLParseException::BAD_END_TAG))
 		{
 			OW_THROWXMLLINE(XMLParseException::BAD_END_TAG, m_line);
 		}

@@ -34,15 +34,14 @@
 
 #include "OW_config.h"
 #include "OW_OOPIndicationExportProvider.hpp"
+#include "OW_OOPShuttingDownCallback.hpp"
 
 namespace OW_NAMESPACE
 {
 
 OOPIndicationExportProvider::OOPIndicationExportProvider(const OOPProviderInterface::ProvRegInfo& info,
-	const Reference<Mutex>& guardRef,
-	const Reference<ProcessRef>& persistentProcessRef
-	)
-	: OOPProviderBase(info, guardRef, persistentProcessRef)
+	const OOPProcessState& processState)
+	: OOPProviderBase(info, processState)
 {
 
 }
@@ -91,7 +90,7 @@ OOPIndicationExportProvider::exportIndication(const ProviderEnvironmentIFCRef& e
 	const CIMInstance& indHandlerInst, const CIMInstance& indicationInst)
 {
 	ExportIndicationCallback exportIndicationCallback(ns, indHandlerInst, indicationInst);
-	startProcessAndCallFunction(env, exportIndicationCallback, "OOPIndicationExportProvider::exportIndication", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, exportIndicationCallback, "OOPIndicationExportProvider::exportIndication");
 }
 
 void
@@ -110,6 +109,12 @@ OOPIndicationExportProvider::doDefinitiveCancel()
 {
 }
 
+void 
+OOPIndicationExportProvider::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	OOPShuttingDownCallback shuttingDownCallback;
+	startProcessAndCallFunction(env, shuttingDownCallback, "OOPIndicationExportProvider::shuttingDown");
+}
 
 } // end namespace OW_NAMESPACE
 

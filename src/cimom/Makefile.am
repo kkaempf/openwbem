@@ -1,4 +1,4 @@
-SUBDIRS = server common indication embedded 
+SUBDIRS = server common indicationserver indicationreplayer embedded 
 
 # This causes automake to prepend $(PACKAGE_PREFIX_D) to the beginning of owcimomd when it's installed
 #transform = s,owcimomd,$(PACKAGE_PREFIX_D)owcimomd,
@@ -17,7 +17,7 @@ owcimomd_LDADD = \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/db/db -lowdb \
 $(REALTIME_LIBS) \
 $(SSL_LIBS) $(BINLINKAPPENDFLAGS)

@@ -49,7 +49,8 @@ namespace OW_NAMESPACE
 class OOPMethodProvider : public MethodProviderIFC, public OOPProviderBase
 {
 public:
-	OOPMethodProvider(const OOPProviderInterface::ProvRegInfo& info);
+	OOPMethodProvider(const OOPProviderInterface::ProvRegInfo& info,
+		const OOPProcessState& processState);
 	virtual ~OOPMethodProvider();
 	
 
@@ -60,6 +61,16 @@ public:
 			const String& methodName,
 			const CIMParamValueArray& in,
 			CIMParamValueArray& out);
+
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
+
+	virtual ELockType getLockTypeForMethod(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in);
+
 
 };
 

@@ -47,6 +47,10 @@
 #include "OW_WQLScanUtils.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_ResultHandlerIFC.hpp"
+#include "OW_RepositoryCIMOMHandle.hpp"
+#include "OW_WQLSelectStatementGen.hpp"
+#include "OW_WQLCompile.hpp"
+#include "blocxx/GlobalString.hpp"
 
 #include <errno.h>
 #include <iterator> // for back_inserter
@@ -67,6 +71,8 @@ using namespace WBEMFlags;
 
 namespace
 {
+	GlobalString COMPONENT_NAME = BLOCXX_GLOBAL_STRING_INIT("ow.wql.processor");
+
 	CIMInstance embedClassInInstance(CIMClass const& x)
 	{
 		OW_WQL_LOG_DEBUG(Format("Embedding %1 .", x.getName()));
@@ -160,9 +166,26 @@ WQLProcessor::WQLProcessor(
 	const CIMOMHandleIFCRef& hdl,
 	const String& ns)
 	: m_hdl(hdl)
+	, m_operationContext(0)
 	, m_ns(ns)
 	, m_doingSelect(false)
 	, m_isSchemaQuery(false)
+	, m_astRoot(0)
+{
+}
+
+WQLProcessor::WQLProcessor(
+	const RepositoryIFCRef& repos,
+	OperationContext* operationContext,
+	stmt* astRoot,
+	const String& ns)
+	: m_hdl(new RepositoryCIMOMHandle(repos, *operationContext))
+	, m_repos(repos)
+	, m_operationContext(operationContext)
+	, m_ns(ns)
+	, m_doingSelect(false)
+	, m_isSchemaQuery(false)
+	, m_astRoot(astRoot)
 {
 }
 void WQLProcessor::visit_stmt_selectStmt_optSemicolon(
@@ -2382,9 +2405,44 @@ namespace
 }
 void WQLProcessor::populateInstances()
 {
-	OW_WQL_LOG_DEBUG("");
+	Logger lgr(COMPONENT_NAME);
 	InstanceArrayBuilder handler(m_instances);
-	m_hdl->enumInstances(m_ns, m_tableRef, handler, E_DEEP);
+
+	bool statementIsCompilable = false;
+	if (m_repos)
+	{
+		WQLSelectStatementGen p;
+		try
+		{
+			OW_LOG_DEBUG3(lgr, "WQLProcessor::populateInstances() attempting to compile statement for use with enumInstancesWQL");
+			m_astRoot->acceptInterface(&p);
+			WQLSelectStatement wss(p.getSelectStatement());
+			WQLCompile wc;
+			wss.compileWhereClause(0, wc);
+			statementIsCompilable = true;
+			OW_LOG_DEBUG3(lgr, "WQLProcessor::populateInstances() compiled statement. Calling m_repos->enumInstancesWQL()");
+			m_repos->enumInstancesWQL(m_ns, m_tableRef, handler, wss, wc, *m_operationContext);
+		}
+		catch (Exception& e)
+		{
+			if (statementIsCompilable)
+			{
+				OW_LOG_DEBUG3(lgr, Format("WQLProcessor::populateInstances() caught exception (will rethrow): %1", e));
+				throw;
+			}
+		}
+	}
+
+	if (!statementIsCompilable)
+	{
+		StringArray* properties = 0;
+		if (m_propertyArray.size() > 1 || (m_propertyArray.size() > 0 && m_propertyArray[0] != "*"))
+		{
+			properties = &m_propertyArray;
+		}
+		OW_LOG_DEBUG3(lgr, "WQLProcessor::populateInstances() statement is not compilable. Resorting to enumInstances().");
+		m_hdl->enumInstances(m_ns, m_tableRef, handler, E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, properties);
+	}
 }
 
 } // end namespace OW_NAMESPACE

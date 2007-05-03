@@ -6,6 +6,8 @@ endif
 
 SUBDIRS = . bin $(MPDIRS) Test
 
+YFLAGS = -t -v
+
 MAKEDYLIB=1
 include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs
@@ -16,7 +18,7 @@ install-exec-local: install-ow-shared-libs
 uninstall-local: uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libowprivman.$(LIB_EXT)
-SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem -lblocxx
+SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)

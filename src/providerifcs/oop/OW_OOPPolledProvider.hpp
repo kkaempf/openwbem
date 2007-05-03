@@ -50,9 +50,7 @@ class OOPPolledProvider : public PolledProviderIFC, public OOPProviderBase
 {
 public:
 	OOPPolledProvider(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<Mutex>& guardRef,
-		const Reference<ProcessRef>& persistentProcessRef
-		);
+		const OOPProcessState& processState);
 	virtual ~OOPPolledProvider();
 	
 	virtual Int32 poll(const ProviderEnvironmentIFCRef& env);
@@ -60,6 +58,7 @@ public:
 	virtual void doShutdown();
 	virtual void doCooperativeCancel();
 	virtual void doDefinitiveCancel();
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 };
 
 

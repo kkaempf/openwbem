@@ -58,6 +58,15 @@ These are the kinds of configuration statements allowed:
   <config_dir>/<privileges_file>, where <config_dir> is the corresponding 
   directory path previously passed to PrivilegeManager::createMonitor().
 
+- 'monitored_user_exec_check_args' '{' <exec_path_pattern> <exec_arg_list> '@' 
+    <privileges_file> '@' <user_name>'}'
+  The client can run (using PrivilegeManager::monitoredUserSpawn()) any program
+  matching <exec_path_pattern>, with args matching <exec_arg_list>.  This 
+  program is run with its own attached monitor and privileges file 
+  <config_dir>/<privileges_file>, where <config_dir> is the corresponding 
+  directory path previously passed to PrivilegeManager::createMonitor().
+  The attached monitor runs as the specified user <user_name>. 
+
 - 'monitored_exec' '{' <exec_path_pattern> '@' <privileges_file> '}'
   The client can run (using PrivilegeManager::monitoredSpawn()) any program
   matching <exec_path_pattern>.  This program is run with its own
@@ -65,6 +74,17 @@ These are the kinds of configuration statements allowed:
   <config_dir> is the corresponding directory path previously passed to
   PrivilegeManager::createMonitor(). Any command line arguments are valid, so do
   not grant this privilege if monitored_exec_check_args is sufficient.
+
+- 'monitored_user_exec' '{' <exec_path_pattern> '@' <privileges_file> 
+    '@' <user_name> '}'
+  The client can run (using PrivilegeManager::monitoredUserSpawn()) any program
+  matching <exec_path_pattern>.  This program is run with its own
+  attached monitor and privileges file <config_dir>/<privileges_file>, where
+  <config_dir> is the corresponding directory path previously passed to
+  PrivilegeManager::createMonitor().  The attached monitor runs as the 
+  specified user <user_name>.  PrivilegeManager::createMonitor(). Any command 
+  line arguments are valid, so do not grant this privilege if 
+  monitored_exec_check_args is sufficient.
 
 - 'user_exec_check_args' '{' <exec_path_pattern> <exec_arg_list> '@' <user_name> '}'
   The client can run (using PrivilegeManager::userSpawn()) any program matching
@@ -78,12 +98,17 @@ These are the kinds of configuration statements allowed:
 - 'unpriv_user' '{' <name> '}'
   The client runs as the user with the indicated name.
 
+- 'include' '{' <include_file>* '}'
+  The file(s) <config_dir>/<include_file> are included as part of the set of
+  privileges. <config_dir> is the directory path previously passed to 
+  PrivilegeManager::createMonitor(). The include files must be secure.
+
 A path component is a nonempty sequence of characters, with the following
 restrictions:
 - no control characters, whitespace characters, nor '/' character;
 - not equal to '.' or '..';
-- no occurrence of the characters \, ?, or *, except when escaped as
-  \\, \?, and \*.
+- no occurrence of the characters \, ?, *, or ", except when escaped as
+  \\, \?, \*, and \".
 
 A dir_path is an absolute path, ending in '/'.  Its components must satisfy
 the restrictions given above for path components.
@@ -118,6 +143,15 @@ A name has the same lexical restrictions as a path component.
 
 A privileges_file has the same lexical restrictions as a path component.
 
-A user_name has the same lexical restrictions as a path component.
+A user_name can be a specific user name with the same lexical restrictions 
+as a path component, or it can be '*', indicating that any user can execute
+the command. 
 
-A exec_arg_list is a list of path_patterns and names.
+A exec_arg_list is a list of path_patterns, strings and *. A * means that any
+value will be accepted for that particular argument.
+
+A string has the same lexical conventions as a C-style string and supports
+hex, octal and character (\t, \n, etc.) escapes.
+
+An include_file is a string.
+

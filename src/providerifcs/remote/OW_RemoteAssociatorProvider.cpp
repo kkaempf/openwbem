@@ -82,14 +82,14 @@ RemoteAssociatorProvider::references(
 	const StringArray *propertyList)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteAssociatorProvider::references ns = %1, objectName = %2, resultClass = %3, role = %4", ns, objectName, resultClass, role));
+	OW_LOG_DEBUG3(lgr, Format("RemoteAssociatorProvider::references ns = %1, objectName = %2, resultClass = %3, role = %4", ns, objectName, resultClass, role));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteAssociatorProvider::references got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteAssociatorProvider::references got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteAssociatorProvider::references calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteAssociatorProvider::references calling remote WBEM server");
 
 	try
 	{
@@ -118,15 +118,15 @@ RemoteAssociatorProvider::associators(const ProviderEnvironmentIFCRef &env, CIMI
 	WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteAssociatorProvider::associators ns = %1, objectName = %2, assocClass = %3, resultClass = %4, role = %5, resultRole = %6",
+	OW_LOG_DEBUG3(lgr, Format("RemoteAssociatorProvider::associators ns = %1, objectName = %2, assocClass = %3, resultClass = %4, role = %5, resultRole = %6",
 		ns, objectName, assocClass, resultClass, role, resultRole));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteAssociatorProvider::associators got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteAssociatorProvider::associators got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteAssociatorProvider::associators calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteAssociatorProvider::associators calling remote WBEM server");
 
 	try
 	{
@@ -153,15 +153,15 @@ RemoteAssociatorProvider::associatorNames(const ProviderEnvironmentIFCRef &env, 
 	const String &assocClass, const String &resultClass, const String &role, const String &resultRole)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteAssociatorProvider::associatorNames ns = %1, objectName = %2, assocClass = %3, resultClass = %4, role = %5, resultRole = %6",
+	OW_LOG_DEBUG3(lgr, Format("RemoteAssociatorProvider::associatorNames ns = %1, objectName = %2, assocClass = %3, resultClass = %4, role = %5, resultRole = %6",
 		ns, objectName, assocClass, resultClass, role, resultRole));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteAssociatorProvider::associatorNames got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteAssociatorProvider::associatorNames got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteAssociatorProvider::associatorNames calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteAssociatorProvider::associatorNames calling remote WBEM server");
 
 	try
 	{
@@ -187,14 +187,14 @@ RemoteAssociatorProvider::referenceNames(const ProviderEnvironmentIFCRef &env, C
 	const String &resultClass, const String &role)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteAssociatorProvider::referenceNames ns = %1, objectName = %2, resultClass = %3, role = %4", ns, objectName, resultClass, role));
+	OW_LOG_DEBUG3(lgr, Format("RemoteAssociatorProvider::referenceNames ns = %1, objectName = %2, resultClass = %3, role = %4", ns, objectName, resultClass, role));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteAssociatorProvider::referenceNames got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteAssociatorProvider::referenceNames got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteAssociatorProvider::referenceNames calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteAssociatorProvider::referenceNames calling remote WBEM server");
 
 	try
 	{

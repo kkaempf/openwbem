@@ -46,7 +46,7 @@ using namespace WBEMFlags;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////		
 CppAssociatorProviderProxy::CppAssociatorProviderProxy(
-	CppAssociatorProviderIFCRef pProv) :
+	const CppAssociatorProviderIFCRef& pProv) :
 	AssociatorProviderIFC(), m_pProv(pProv)
 {
 }
@@ -115,10 +115,17 @@ CppAssociatorProviderProxy::referenceNames(
 	m_pProv->updateAccessTime();
 	m_pProv->referenceNames(env, result, ns, objectName, resultClass, role);
 }
+//////////////////////////////////////////////////////////////////////////////		
+void
+CppAssociatorProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	m_pProv->shuttingDown(env);
+}
+
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////		
 CppInstanceProviderProxy::CppInstanceProviderProxy(
-		CppInstanceProviderIFCRef pProv) :
+		const CppInstanceProviderIFCRef& pProv) :
 	InstanceProviderIFC(), m_pProv(pProv)
 {
 }
@@ -209,7 +216,14 @@ CppInstanceProviderProxy::deleteInstance(
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////		
-CppSecondaryInstanceProviderProxy::CppSecondaryInstanceProviderProxy(CppSecondaryInstanceProviderIFCRef pProv)
+void
+CppInstanceProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	m_pProv->shuttingDown(env);
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+CppSecondaryInstanceProviderProxy::CppSecondaryInstanceProviderProxy(const CppSecondaryInstanceProviderIFCRef& pProv)
 	: SecondaryInstanceProviderIFC()
 	, m_pProv(pProv)
 {
@@ -254,7 +268,14 @@ CppSecondaryInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRe
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////		
-CppMethodProviderProxy::CppMethodProviderProxy(CppMethodProviderIFCRef pProv) :
+void
+CppSecondaryInstanceProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	m_pProv->shuttingDown(env);
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+CppMethodProviderProxy::CppMethodProviderProxy(const CppMethodProviderIFCRef& pProv) :
 	MethodProviderIFC(), m_pProv(pProv)
 {
 }
@@ -270,6 +291,36 @@ CppMethodProviderProxy::invokeMethod(
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->invokeMethod(env, ns, path, methodName, in, out);
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+void
+CppMethodProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	m_pProv->shuttingDown(env);
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+MethodProviderIFC::ELockType
+CppMethodProviderProxy::getLockTypeForMethod(
+	const ProviderEnvironmentIFCRef& env,
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& in)
+{
+	CppMethodProviderIFC::ELockType lt = m_pProv->getLockTypeForMethod(env, ns, path, methodName, in);
+	switch (lt)
+	{
+		case CppMethodProviderIFC::E_NO_LOCK:
+			return MethodProviderIFC::E_NO_LOCK;
+		case CppMethodProviderIFC::E_READ_LOCK:
+			return MethodProviderIFC::E_READ_LOCK;
+		case CppMethodProviderIFC::E_WRITE_LOCK:
+			return MethodProviderIFC::E_WRITE_LOCK;
+	}
+	// If a provider returns an invalid enum value...
+	return MethodProviderIFC::E_WRITE_LOCK;
 }
 
 } // end namespace OW_NAMESPACE

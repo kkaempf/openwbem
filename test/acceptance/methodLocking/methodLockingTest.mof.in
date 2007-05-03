@@ -1,0 +1,152 @@
+#pragma namespace("root/methodLockingTest-cpp")
+
+Qualifier Key : boolean = false, Scope(property, reference),
+	Flavor(DisableOverride);
+
+Qualifier In : boolean = true,
+	Scope(parameter),
+	Flavor(DisableOverride);
+
+Qualifier Required : boolean = false, 
+	Scope(property, reference, parameter),
+	Flavor(DisableOverride);
+
+Qualifier Association : boolean = false,
+	Scope(association),
+	Flavor(DisableOverride);
+
+class methodLockingBase
+{
+	[key] string id;
+
+	boolean wait([in, required] string startedFile, [in, required] string waitForFile);
+	boolean test();
+};
+
+class no : methodLockingBase
+{
+};
+
+class read : methodLockingBase
+{
+};
+
+class write : methodLockingBase
+{
+};
+
+
+#pragma namespace("root/methodLockingTest-oop")
+
+Qualifier Key : boolean = false, Scope(property, reference),
+	Flavor(DisableOverride);
+
+Qualifier In : boolean = true,
+	Scope(parameter),
+	Flavor(DisableOverride);
+
+Qualifier Required : boolean = false, 
+	Scope(property, reference, parameter),
+	Flavor(DisableOverride);
+
+Qualifier Association : boolean = false,
+	Scope(association),
+	Flavor(DisableOverride);
+
+class methodLockingBase
+{
+	[key] string id;
+
+	boolean wait([in, required] string startedFile, [in, required] string waitForFile);
+	boolean test();
+};
+
+class no : methodLockingBase
+{
+};
+
+class no2 : methodLockingBase
+{
+};
+
+class read : methodLockingBase
+{
+};
+
+class write : methodLockingBase
+{
+};
+
+class testInProv
+{
+	boolean runAllTestsInProvider([in, required] string testdir);
+};
+
+
+#pragma namespace("root")
+
+instance of OpenWBEM_OOPProviderRegistration
+{
+	InstanceID = "methodLockingTest-oop:no";
+	NamespaceNames = {"root/methodLockingTest-oop"};
+	ClassName = "no";
+	ProviderTypes = { 6 }; // method
+	Process = "@libexecdir@/openwbem/owoopcpp1pr";
+	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=" };
+	Protocol = "owcpp1";
+	Timeout = "00000000000010.000000:000";
+	MethodProviderLockType = 0;
+};
+
+instance of OpenWBEM_OOPProviderRegistration
+{
+	InstanceID = "methodLockingTest-oop:no2";
+	NamespaceNames = {"root/methodLockingTest-oop"};
+	ClassName = "no2";
+	ProviderTypes = { 6 }; // method
+	Process = "@libexecdir@/openwbem/owoopcpp1pr";
+	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=" };
+	Protocol = "owcpp1";
+	Timeout = "00000000000010.000000:000";
+	MethodProviderLockType = 0;
+};
+
+instance of OpenWBEM_OOPProviderRegistration
+{
+	InstanceID = "methodLockingTest-oop:read";
+	NamespaceNames = {"root/methodLockingTest-oop"};
+	ClassName = "read";
+	ProviderTypes = { 6 }; // method
+	Process = "@libexecdir@/openwbem/owoopcpp1pr";
+	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=" };
+	Protocol = "owcpp1";
+	Timeout = "00000000000010.000000:000";
+	MethodProviderLockType = 1;
+};
+
+instance of OpenWBEM_OOPProviderRegistration
+{
+	InstanceID = "methodLockingTest-oop:write";
+	NamespaceNames = {"root/methodLockingTest-oop"};
+	ClassName = "write";
+	ProviderTypes = { 6 }; // method
+	Process = "@libexecdir@/openwbem/owoopcpp1pr";
+	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=" };
+	Protocol = "owcpp1";
+	Timeout = "00000000000010.000000:000";
+	MethodProviderLockType = 2;
+};
+
+instance of OpenWBEM_OOPProviderRegistration
+{
+	InstanceID = "methodLockingTest-oop:testInProv";
+	NamespaceNames = {"root/methodLockingTest-oop"};
+	ClassName = "testInProv";
+	ProviderTypes = { 6 }; // method
+	Process = "@libexecdir@/openwbem/owoopcpp1pr";
+	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=" };
+	Protocol = "owcpp1";
+	Timeout = "00000000000010.000000:000";
+	MethodProviderLockType = 0;
+};
+

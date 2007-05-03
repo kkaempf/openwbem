@@ -61,7 +61,8 @@ owenuminstancenames \
 owgetclass \
 owgetinstance \
 owdeleteinstance \
-owinvokemethod
+owinvokemethod \
+owcheckrepository
 
 
 ### owdigestgenpass
@@ -70,7 +71,7 @@ OW_DigestPasswdGen.cpp
 
 owdigestgenpass_LDADD = \
 libtoolscommon.a \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 $(Z_LIBS) $(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
@@ -89,7 +90,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
 
@@ -107,7 +108,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -125,13 +126,28 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
 owdeletenamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owdeletenamespace$(EXEEXT)
+
+### owcheckrepository
+owcheckrepository_SOURCES = owcheckrepository.cpp
+
+owcheckrepository_LDADD = \
+libtoolscommon.a \
+-L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
+-L$(top_builddir)/db/db -lowdb \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+$(SSL_LIBS)\
+$(BINLINKAPPENDFLAGS)
+
+owcheckrepository_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owcheckrepository$(EXEEXT)
 
 ### owenumnamespace
 owenumnamespace_SOURCES = \
@@ -143,7 +159,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -161,7 +177,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -179,7 +195,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -197,7 +213,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -215,7 +231,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -233,7 +249,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -254,7 +270,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -270,7 +286,7 @@ owrepositorydump_LDADD = \
 libtoolscommon.a \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
 
@@ -288,7 +304,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -307,7 +323,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -326,7 +342,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -345,7 +361,7 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 

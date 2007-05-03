@@ -43,6 +43,8 @@ namespace OW_NAMESPACE
 class OOPProtocolIFC;
 typedef IntrusiveReference<OOPProtocolIFC> OOPProtocolIFCRef;
 
+class OOPProviderBase;
+
 } // end namespace OW_NAMESPACE
 
 #endif

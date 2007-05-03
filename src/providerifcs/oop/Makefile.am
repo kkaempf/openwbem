@@ -13,7 +13,7 @@ EXPORT_PREFIX=createProviderIFC
 noinst_LIBRARIES = libowoopprovifc.a
 OW_SHARED_LIBS = libowoopprovifc.$(LIB_EXT)
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
@@ -42,6 +42,8 @@ OW_OOPProtocolCPP1.hpp \
 OW_OOPProtocolCPP1.cpp \
 OW_OOPProtocolIFC.hpp \
 OW_OOPProtocolIFC.cpp \
+OW_OOPProviderBase.hpp \
+OW_OOPProviderBase.cpp \
 OW_OOPAssociatorProvider.hpp \
 OW_OOPAssociatorProvider.cpp \
 OW_OOPInstanceProvider.hpp \
@@ -56,12 +58,34 @@ OW_OOPPolledProvider.hpp \
 OW_OOPPolledProvider.cpp \
 OW_OOPIndicationExportProvider.hpp \
 OW_OOPIndicationExportProvider.cpp \
+OW_OOPQueryProvider.hpp \
+OW_OOPQueryProvider.cpp \
 OW_OOPProviderInterface.hpp \
 OW_OOPProviderInterface.cpp \
-OW_OOPProviderBase.hpp \
-OW_OOPProviderBase.cpp \
+OW_OOPShuttingDownCallback.hpp \
+OW_OOPShuttingDownCallback.cpp \
+OW_OOPClonedProviderEnv.hpp \
+OW_OOPClonedProviderEnv.cpp \
 OW_OOPFwd.hpp \
-OW_OpenWBEM_OOPProviderRegistration.hpp
+OW_OOPDataOStreamBuf.hpp \
+OW_OOPDataOStreamBuf.cpp \
+OW_OOPProcessState.hpp
+
+pkginclude_HEADERS = \
+OW_OpenWBEM_OOPProviderRegistration.hpp \
+OW_OpenWBEM_OOPAlertIndicationProviderCapabilities.hpp \
+OW_OpenWBEM_OOPAssociationProviderCapabilities.hpp \
+OW_OpenWBEM_OOPIndicationExportProviderCapabilities.hpp \
+OW_OpenWBEM_OOPInstanceProviderCapabilities.hpp \
+OW_OpenWBEM_OOPLifecycleIndicationProviderCapabilities.hpp \
+OW_OpenWBEM_OOPMethodProviderCapabilities.hpp \
+OW_OpenWBEM_OOPPolledProviderCapabilities.hpp \
+OW_OpenWBEM_OOPProviderCapabilities.hpp \
+OW_OpenWBEM_OOPProviderProcess.hpp \
+OW_OpenWBEM_OOPProviderProcessCapabilities.hpp \
+OW_OpenWBEM_OOPQueryProviderCapabilities.hpp \
+OW_OpenWBEM_OOPSecondaryInstanceProviderCapabilities.hpp
+
 
 #OW_OOPAssociatorProvider.hpp \
 #OW_OOPAssociatorProvider.cpp \

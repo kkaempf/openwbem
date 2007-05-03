@@ -54,11 +54,6 @@ class OW_COMMON_API RepositoryCIMOMHandle : public CIMOMHandleIFC
 {
 public:
 
-	enum ELockingFlag
-	{
-		E_NO_LOCKING,
-		E_LOCKING
-	};
 	/**
 	 * Create a new RepositoryCIMOMHandle with a given repository interface
 	 * and user access contol information.
@@ -73,7 +68,7 @@ public:
 	 *  in use and has begun a transaction.
 	 */
 	RepositoryCIMOMHandle(const RepositoryIFCRef& pRepos,
-		OperationContext& context, ELockingFlag lock = E_LOCKING);
+		OperationContext& context);
 	
 	virtual void close();
 
@@ -242,11 +237,6 @@ private:
 #pragma warning (pop)
 #endif
 
-	/**
-	 * If m_lock is E_NO_LOCKING, then this RepositoryCIMOMHandle will never attempt
-	 * to acquire a read/write lock on the cim server, or begin a new transaction.
-	 */
-	ELockingFlag m_lock;
 	OperationContext& m_context;
 };
 OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, RepositoryCIMOMHandle);

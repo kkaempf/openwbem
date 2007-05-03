@@ -125,6 +125,14 @@ public:
 		: _type(NULL_VALUE) 
 	{
 	}
+
+#if defined(__HP_aCC)
+	// aCC has a bug where the union does not get copied properly in the
+	// compiler-provided assignment operator.  This operator is provided to work
+	// around that bug.
+	WQLOperand& operator=(const WQLOperand& o);
+#endif
+
 	/** Initializes object as INTEGER_VALUE.
 	 */
 	WQLOperand(Int64 x, WQLIntegerValueTag)

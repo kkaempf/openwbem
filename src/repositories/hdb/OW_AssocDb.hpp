@@ -249,9 +249,22 @@ struct OW_HDB_API AssocDbRecHeader
 	UInt32 chkSum;
 	Int32 nextFree;
 	UInt32 blkSize;
+
+	enum
+	{
+		// use 2 bits for the allocation status, because 0 is for backward compat.
+		E_BLK_ALLOC_UNKNOWN = 0,
+		E_BLK_ALLOCATED = 1,
+		E_BLK_FREE = E_BLK_ALLOCATED << 1,
+		E_BLK_ALLOC_MASK = E_BLK_ALLOCATED | E_BLK_FREE
+	};
+
 	UInt32 flags;
 	size_t dataSize;
 };
+
+
+
 #define OW_ASSOCSIGNATURE "OWASSOCIATORFI2"
 #define OW_ASSOCSIGLEN 16
 // The following structure represents the file header for the
@@ -286,6 +299,9 @@ public:
 	 * @exception HDBException if this HDB is not opened.
 	 */
 	AssocDbHandle getHandle();
+
+	bool check();
+	bool checkFreeList();
 
 	typedef bool AssocDb::*safe_bool;
 	/**

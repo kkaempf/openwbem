@@ -45,6 +45,7 @@
 #include "OW_Exception.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_IOException.hpp"
+#include "OW_Secure.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -97,9 +98,7 @@ SPNEGOAuthentication::authenticate(String& userName,
 	{
 		htcon->setErrorDetails("Internal error. !info.startsWith"
 		                       "(\"Negotiate: \")");
-		OW_LOG_DEBUG(m_logger, Format("Error, expected info to begin with "
-		                              "\"Negotiate \", but it is: \"%1\"",
-		                              info));
+		OW_LOG_INFO(m_logger, Format("Error, expected info to begin with \"Negotiate \", but it is: \"%1\"", info));
 		return E_AUTHENTICATE_FAIL;
 	}
 
@@ -117,20 +116,17 @@ SPNEGOAuthentication::authenticate(String& userName,
 		std::ostream ostr(&outbuf);
 		istr.tie(&ostr);
 		ostr << info2 << '\n';
-		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got request, "
-		                              "sending to helper: %1", info2));
+		OW_LOG_DEBUG3(m_logger, Format("SPNEGOAuthentication got request, sending to helper: %1", info2));
 		ostr << htcon->getConnectionId() << std::endl;
-		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication sending connection "
-		                              "id: %1", htcon->getConnectionId()));
+		OW_LOG_DEBUG3(m_logger, Format("SPNEGOAuthentication sending connection id: %1", htcon->getConnectionId()));
 		String result = String::getLine(istr);
-		OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got response: %1",
-		                              result));
+		OW_LOG_DEBUG3(m_logger, Format("SPNEGOAuthentication got response: %1", result));
 		if (result == "S")
 		{
 			userName = String::getLine(istr);
 			String challenge = String::getLine(istr);
 			htcon->addHeader("WWW-Authenticate", "Negotiate " + challenge);
-			OW_LOG_DEBUG(m_logger, Format("SPNEGOAuthentication got success. username: %1", userName));
+			OW_LOG_DEBUG2(m_logger, Format("SPNEGOAuthentication got success. username: %1", userName));
 			return E_AUTHENTICATE_SUCCESS;
 		}
 		else if (result == "F")
@@ -150,20 +146,14 @@ SPNEGOAuthentication::authenticate(String& userName,
 		{
 			// something has gone horribly wrong. This shouldn't ever happen
 			// unless there is a bug.
-			OW_LOG_ERROR(m_logger, Format("SPNEGOAuthentication received "
-			                              "unknown response (%1) from %2. "
-			                              "Terminating.",
-			                              result,
-			                              spnegoHelperPath()));
-			m_spnegoHelper->waitCloseTerm(Timeout::relative(0),
-			                              Timeout::relative(0.01),
-			                              Timeout::relative(0.02));
+			OW_LOG_ERROR(m_logger, Format("SPNEGOAuthentication received unknown response (%1) from %2. Terminating.",
+			                              result, spnegoHelperPath()));
+			m_spnegoHelper->waitCloseTerm(Timeout::relative(0), Timeout::relative(0.01), Timeout::relative(0.02));
 		}
 	}
 	catch (IOException& e)
 	{
-		htcon->setErrorDetails(Format("Error communicating with %1: %2",
-		                              spnegoHelperPath(), e));
+		htcon->setErrorDetails(Format("Error communicating with %1: %2", spnegoHelperPath(), e));
 	}
 	
 	return E_AUTHENTICATE_FAIL;
@@ -212,7 +202,7 @@ SPNEGOAuthentication::checkProcess()
 	helperArgv.push_back("server");
 	m_spnegoHelper = privman.userSpawn(helperPath,
 	                                   helperArgv,
-	                                   Exec::currentEnvironment,
+	                                   Secure::minimalEnvironment(),
 	                                   "root");
 
 	if (!m_spnegoHelper->processStatus().running())
@@ -236,18 +226,18 @@ SPNEGOAuthentication::spnegoHelperPath()
 {
 	if (FileSystem::exists("/opt/quest/lib/libvas.so.4"))
 	{
-		return ConfigOpts::installed_owlibexec_dir + "/owspnegovas4helper";
+		return ConfigOpts::installed_owlibexec_dir + "/owspnegovas4helper" + String(OW_OPENWBEM_LIBRARY_VERSION);
 	}
 	else if (FileSystem::exists("/opt/vas/lib/libvas.so.3"))
 	{
-		return ConfigOpts::installed_owlibexec_dir + "/owspnegovas3helper";
+		return ConfigOpts::installed_owlibexec_dir + "/owspnegovas3helper" + String(OW_OPENWBEM_LIBRARY_VERSION);
 	}
 	else
 	// As libkrb5.so is installed by MIT Kerberos AND Heimdal Kerberos, we can
 	// use this to check if one of these is installed
 #ifdef OW_KRB5
 	{
-		return ConfigOpts::installed_owlibexec_dir + "/owspnegogssapihelper";
+		return ConfigOpts::installed_owlibexec_dir + "/owspnegogssapihelper" + String(OW_OPENWBEM_LIBRARY_VERSION);
 	}
 #else
 	{

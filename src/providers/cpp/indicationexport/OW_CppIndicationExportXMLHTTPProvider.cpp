@@ -99,8 +99,7 @@ CppIndicationExportXMLHTTPProvider::exportIndication(
 	CIMInstance indicationInst(indicationInst_.clone(E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN));
 
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, Format("CppIndicationExportXMLHTTPProvider "
-		"exporting indication.  Handler = %1, Indication = %2",
+	OW_LOG_DEBUG(logger, Format("CppIndicationExportXMLHTTPProvider exporting indication.  Handler = %1, Indication = %2",
 		indHandlerInst.toString(), indicationInst.toString()));
 
 	String listenerUrl;

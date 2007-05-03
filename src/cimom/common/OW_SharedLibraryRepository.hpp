@@ -128,6 +128,12 @@ public:
 		const String& className,
 		StringResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep, OperationContext& context);
+	virtual RepositoryIFC::ELockType getLockTypeForMethod(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in, 
+		OperationContext& context);
 	virtual CIMValue invokeMethod(
 		const String& ns,
 		const CIMObjectPath& path,
@@ -201,6 +207,13 @@ public:
 		const String& ns,
 		CIMInstanceResultHandlerIFC& result,
 		const String &query, const String &queryLanguage,
+		OperationContext& context);
+	virtual void enumInstancesWQL(
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
+		const WQLSelectStatement& wss,
+		const WQLCompile& wc,
 		OperationContext& context);
 	
 	virtual void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);

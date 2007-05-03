@@ -65,3 +65,34 @@ check_path:
 rename_from:
 rename_to:
 unlink:
+monitored_user_exec:
+ user: foo
+  /a .
+  /a/a .
+  /abba .
+  /b .
+  /bubba .
+  /cee/dee .
+  /cee/deep .
+  /ee/eff .
+  /ee/effigy .
+  /gi/aich/eye/ .
+  /jay .
+  /jaywalker .
+  /kay/ell .
+  /kay/ello .
+  /emm/enn/oh .
+  /emm/enn/ohno .
+  /pea/queue .
+  /pea/queu .
+  /are/ess/tea .
+  /are/ess/tea/toast .
+  /ewe-vee .
+  /double/hew .
+  why .
+  /sbin/zee .
+monitored_user_exec_check_args:
+ user: foo
+  /bin/foo .
+  /bin/foo a .
+  /bin/foo a b c .

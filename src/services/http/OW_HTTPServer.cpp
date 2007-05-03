@@ -66,6 +66,8 @@
 #include "OW_ServiceIFCNames.hpp"
 #include "OW_Thread.hpp" // for ThreadException
 #include "OW_SPNEGOAuthentication.hpp"
+#include "OW_PrivilegeManager.hpp"
+#include "OW_Logger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -305,7 +307,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	}
 	else
 	{
-		OW_LOG_DEBUG(logger, "HTTPServer::authenticate: sending default challenge");
+		OW_LOG_DEBUG2(logger, "HTTPServer::authenticate: sending default challenge");
 		// We don't handle whatever they sent, so send the default challenge
 		pconn->setErrorDetails("You must authenticate to access this"
 			" resource");
@@ -328,7 +330,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			default:
 				OW_ASSERT("Internal implementation error! m_options.defaultAuthChallenge is invalid!" == 0);
 		}
-		OW_LOG_DEBUG(logger, Format("HTTPServer::authenticate: Returning WWW-Authenticate: %1", authChallenge));
+		OW_LOG_DEBUG3(logger, Format("HTTPServer::authenticate: Returning WWW-Authenticate: %1", authChallenge));
 		pconn->addHeader("WWW-Authenticate", authChallenge);
 		return E_AUTHENTICATE_CONTINUE;
 	}
@@ -623,7 +625,7 @@ HTTPServer::start()
 {
 	ServiceEnvironmentIFCRef env = m_options.env;
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "HTTP Service is starting...");
+	OW_LOG_DEBUG2(lgr, "HTTP Service is starting...");
 	if (m_options.httpPort < 0 && m_options.httpsPort < 0 && !m_options.useUDS)
 	{
 		OW_THROW(SocketException, "No ports to listen on and use_UDS set to false");
@@ -743,6 +745,33 @@ HTTPServer::start()
 														 ConfigOpts::HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt).c_str());
 				}
 				//SSLCtxMgr::initServer(certfile, keyfile);
+				
+				if (! FileSystem::canRead(m_sslopts.keyfile))
+				{
+					PrivilegeManager privmgr = PrivilegeManager::getPrivilegeManager();
+					if (privmgr.isNull())
+					{
+						OW_THROW(HTTPServerException, "HTTP Service: Unable to get privilege manager"); 
+					}
+					AutoDescriptor fd = privmgr.open(m_sslopts.keyfile, PrivilegeManager::in); 
+					FILE* fp = fdopen(fd.get(), "r"); 
+					if (fp == NULL)
+					{
+						OW_THROW(HTTPServerException, Format("Unable to read key file %1: %2", m_sslopts.keyfile, strerror(errno)).c_str()); 
+					}
+					BIO* in = BIO_new_fp(fp, BIO_NOCLOSE); 
+					if (in == NULL)
+					{
+						OW_THROW(HTTPServerException, Format("Unable to read key file %1: %2", m_sslopts.keyfile, SSLCtxMgr::getOpenSSLErrorDescription()).c_str()); 
+					}
+					m_sslopts.pkey = PEM_read_bio_PrivateKey(in, NULL, NULL, NULL); 
+					if (m_sslopts.pkey == NULL)
+					{
+						BIO_free(in); 
+						OW_THROW(HTTPServerException, Format("Unable to read key file %1: %2", m_sslopts.keyfile, SSLCtxMgr::getOpenSSLErrorDescription()).c_str()); 
+					}
+					BIO_free(in); 
+				}
 				m_sslCtx = SSLServerCtxRef(new SSLServerCtx(m_sslopts));
 				if (m_sslopts.verifyMode != SSLOpts::MODE_DISABLED)
 				{

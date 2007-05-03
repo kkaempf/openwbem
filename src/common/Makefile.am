@@ -8,7 +8,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libopenwbem.$(LIB_EXT)
-SHAREDLIBADD = $(DL_LIB) $(SSL_LIBS) -lblocxx
+SHAREDLIBADD = $(DL_LIB) $(SSL_LIBS) $(BLOCXX_LIBS)
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 MAKEDYLIB=1
@@ -41,6 +41,7 @@ OW_NoSuchProviderException.cpp \
 OW_NoSuchQualifierException.cpp \
 OW_NULLValueException.cpp \
 OW_OperationContext.cpp \
+OW_OperationRWLock.cpp \
 OW_RepositoryCIMOMHandle.cpp \
 OW_ResultHandlers.cpp \
 OW_SafeLibCreate.cpp \
@@ -146,6 +147,7 @@ OW_NullAppender.hpp \
 OW_NullLogger.hpp \
 OW_NULLValueException.hpp \
 OW_OperationContext.hpp \
+OW_OperationRWLock.hpp \
 OW_Paths.hpp \
 OW_PosixUnnamedPipe.hpp \
 OW_Process.hpp \
@@ -231,7 +233,8 @@ OW_SSLException.hpp \
 OW_SocketException.hpp \
 OW_SocketStreamBuffer.hpp \
 OW_SocketUtils.hpp \
-OW_SocketFlags.hpp
+OW_SocketFlags.hpp \
+OW_ThreadSafeProcess.hpp
 
 libopenwbem_a_LIBADD = \
 ../cim/libOW_cim.a \

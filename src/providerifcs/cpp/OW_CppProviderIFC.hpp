@@ -75,7 +75,8 @@ protected:
 		AssociatorProviderInfoArray& a,
 #endif
 		MethodProviderInfoArray& m,
-		IndicationProviderInfoArray& ind);
+		IndicationProviderInfoArray& ind,
+		QueryProviderInfoArray& q);
 	virtual InstanceProviderIFCRef doGetInstanceProvider(
 		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
@@ -99,6 +100,9 @@ protected:
 	virtual PolledProviderIFCRefArray doGetPolledProviders(
 		const ProviderEnvironmentIFCRef& env
 		);
+	virtual QueryProviderIFCRef doGetQueryProvider(
+		const ProviderEnvironmentIFCRef& env,
+		const char* provIdString);
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
 	virtual void doShuttingDown(const ProviderEnvironmentIFCRef& env);
 private:
@@ -133,7 +137,8 @@ private:
 		AssociatorProviderInfoArray& a,
 #endif
 		MethodProviderInfoArray& m,
-		IndicationProviderInfoArray& ind);
+		IndicationProviderInfoArray& ind,
+		QueryProviderInfoArray& q);
 	ProviderMap m_provs;
 	IndicationProviderMap m_indicationProviders;
 	Mutex m_guard;

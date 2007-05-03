@@ -43,6 +43,7 @@
 #include "OW_IfcsFwd.hpp"
 #include "OW_WBEMFlags.hpp"
 #include "OW_WQLSelectStatement.hpp"
+#include "OW_LogLevel.hpp"
 
 #include <iosfwd>
 
@@ -52,10 +53,12 @@
 namespace OW_NAMESPACE
 {
 
+class OOPProviderBase;
+
 class OOPProtocolIFC : public IntrusiveCountableBase
 {
 public:
-	OOPProtocolIFC();
+	OOPProtocolIFC(OOPProviderBase* pprov);
 	virtual ~OOPProtocolIFC();
 	
 	virtual void enumInstanceNames(
@@ -66,7 +69,8 @@ public:
 		const String& ns,
 		const String& className,
 		CIMObjectPathResultHandlerIFC& result,
-		const CIMClass& cimClass ) = 0;
+		const CIMClass& cimClass) = 0;
+
 	
 	virtual void enumInstances(
 		const UnnamedPipeRef& in,
@@ -82,7 +86,8 @@ public:
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
 		const CIMClass& requestedClass,
-		const CIMClass& cimClass ) = 0;
+		const CIMClass& cimClass) = 0;
+
 	
 	virtual CIMInstance getInstance(
 		const UnnamedPipeRef& in,
@@ -95,7 +100,7 @@ public:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, 
-		const CIMClass& cimClass ) = 0;
+		const CIMClass& cimClass) = 0;
 
 	virtual CIMObjectPath createInstance(
 		const UnnamedPipeRef& in,
@@ -103,7 +108,7 @@ public:
 		const Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
-		const CIMInstance& cimInstance ) = 0;
+		const CIMInstance& cimInstance) = 0;
 	
 	virtual void modifyInstance(
 		const UnnamedPipeRef& in,
@@ -152,7 +157,7 @@ public:
 		const String& assocClass,
 		const String& resultClass,
 		const String& role,
-		const String& resultRole ) = 0;
+		const String& resultRole) = 0;
 
 	virtual void references(
 		const UnnamedPipeRef& in,
@@ -177,7 +182,7 @@ public:
 		const String& ns,
 		const CIMObjectPath& objectName,
 		const String& resultClass,
-		const String& role ) = 0;
+		const String& role) = 0;
 
 	virtual CIMValue invokeMethod(
 		const UnnamedPipeRef& in,
@@ -209,6 +214,13 @@ public:
 		const ProviderEnvironmentIFCRef& env,
 		bool persistent) = 0;
 
+	virtual void setLogLevel(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		ELogLevel logLevel) = 0;
+
 	virtual void activateFilter(
 		const UnnamedPipeRef& in,
 		const UnnamedPipeRef& out,
@@ -218,8 +230,7 @@ public:
 		const String& eventType,
 		const String& nameSpace,
 		const StringArray& classes,
-		bool firstActivation
-		) = 0;
+		bool firstActivation) = 0;
 	
 	virtual void authorizeFilter(
 		const UnnamedPipeRef& in,
@@ -230,8 +241,7 @@ public:
 		const String& eventType,
 		const String& nameSpace,
 		const StringArray& classes,
-		const String& owner
-		) = 0;
+		const String& owner) = 0;
 	
 	virtual void deActivateFilter(
 		const UnnamedPipeRef& in,
@@ -242,8 +252,7 @@ public:
 		const String& eventType,
 		const String& nameSpace,
 		const StringArray& classes,
-		bool lastActivation
-		) = 0;
+		bool lastActivation) = 0;
 	
 	virtual int mustPoll(
 		const UnnamedPipeRef& in,
@@ -253,8 +262,7 @@ public:
 		const WQLSelectStatement& filter,
 		const String& eventType,
 		const String& nameSpace,
-		const StringArray& classes
-		) = 0;
+		const StringArray& classes) = 0;
 
 	virtual void exportIndication(
 		const UnnamedPipeRef& in,
@@ -263,9 +271,26 @@ public:
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
 		const CIMInstance& indHandlerInst, 
-		const CIMInstance& indicationInst
-		) = 0;
+		const CIMInstance& indicationInst) = 0;
 
+	virtual void shuttingDown(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env) = 0;
+
+	virtual void queryInstances(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const WQLSelectStatement& query,
+		CIMInstanceResultHandlerIFC& result,
+		const CIMClass& cimClass) = 0;
+
+protected:
+	OOPProviderBase* m_pprov;		// Pointer to avoid circular reference
 };
 
 

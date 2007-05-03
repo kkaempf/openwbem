@@ -10,7 +10,10 @@ lib*so*
 lib*dylib*
 *.exp
 *.imp
-*.nlm
+*.inpf
+*.expected
+*.out.tmp
+*.out
 *.nlm.*
 montest
 read_privconfig
@@ -29,3 +32,4 @@ monitor_exec_test.*.sh
 user_exec_test.*.sh
 monitor_test_nopriv.*.sh
 monitor_perl_test.*.sh
+set_environment.sh

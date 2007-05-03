@@ -11,6 +11,10 @@ Qualifier Required : boolean = false,
     Scope(property, reference, parameter),
     Flavor(DisableOverride);
 
+Qualifier Association : boolean = false,
+    Scope(association),
+    Flavor(DisableOverride);
+
 class ooptest
 {
     [key] string id;
@@ -29,29 +33,112 @@ class ooptest
 	boolean testCIMOMHandle();
 	boolean testRepositoryCIMOMHandle();
 	boolean testGetConfig();
+	boolean testLogging([in, required] string component, [in, required] string category, [in, required] string message, [in, required] string filename, sint32 fileline, [in, required] string methodname);
 };
 
+class ooptestInst1
+{
+    [key] string id;
+	sint32 value;
+};
 
+class ooptestInst100
+{
+    [key] string id;
+	sint32 value;
+};
+
+[association]
+class ooptestAssoc
+{
+	[key] ooptestInst1 REF inst1;
+	[key] ooptestInst100 REF inst100;
+};
 
 #pragma namespace("root")
 
 instance of OpenWBEM_OOPProviderRegistration
 {
         InstanceID = "1";
-
         NamespaceNames = {"root/ooptest"};
-
         ClassName = "ooptest";
-
-        ProviderTypes = {1, 4, 6, 8}; // instance, lifecycle indication, method, polled
-
+        ProviderTypes = {4, 8}; // lifecycle indication, polled
         Process = "@libexecdir@/openwbem/owoopcpp1pr";
-
         Args = { "--provider=@provdir@/libooptest.@LIB_EXT@", "--logfile=" };
-
         Protocol = "owcpp1";
-
         Timeout = "00000000000010.000000:000";
 };
 
+// The instance/method provider is a separate registration so it can be a non-persistent provider
+instance of OpenWBEM_OOPProviderProcess as $pp1
+{
+        InstanceID = "proc1inst";
+        Process = "@libexecdir@/openwbem/owoopcpp1pr";
+        Args = { "--provider=@provdir@/libooptest.@LIB_EXT@", "--logfile=" };
+        Protocol = "owcpp1";
+        Timeout = "00000000000010.000000:000";
+	Persistent=false;
+};
+
+instance of OpenWBEM_OOPInstanceProviderCapabilities as $ipc1
+{
+	InstanceID = "1inst";
+        NamespaceNames = {"root/ooptest"};
+        ClassNames = {"ooptest"};
+};
+
+instance of OpenWBEM_OOPMethodProviderCapabilities as $mpc1
+{
+	InstanceID = "1meth";
+        NamespaceNames = {"root/ooptest"};
+        ClassNames = {"ooptest"};
+};
+
+instance of OpenWBEM_OOPProviderProcessCapabilities
+{
+	Process = $pp1;
+	Capabilities = $ipc1;
+};
+
+instance of OpenWBEM_OOPProviderProcessCapabilities
+{
+	Process = $pp1;
+	Capabilities = $mpc1;
+};
+
+instance of OpenWBEM_OOPProviderRegistration
+{
+        InstanceID = "2";
+        NamespaceNames = {"root/ooptest"};
+        ClassName = "ooptestInst1";
+        ProviderTypes = {1}; // instance
+        Process = "@libexecdir@/openwbem/owoopcpp1pr";
+        Args = { "--provider=@provdir@/liboopassoctest.@LIB_EXT@", "--logfile=" };
+        Protocol = "owcpp1";
+        Timeout = "00000000000010.000000:000";
+};
+
+instance of OpenWBEM_OOPProviderRegistration
+{
+        InstanceID = "3";
+        NamespaceNames = {"root/ooptest"};
+        ClassName = "ooptestInst100";
+        ProviderTypes = {1}; // instance
+        Process = "@libexecdir@/openwbem/owoopcpp1pr";
+        Args = { "--provider=@provdir@/liboopassoctest.@LIB_EXT@", "--logfile=" };
+        Protocol = "owcpp1";
+        Timeout = "00000000000010.000000:000";
+};
+
+instance of OpenWBEM_OOPProviderRegistration
+{
+        InstanceID = "4";
+        NamespaceNames = {"root/ooptest"};
+        ClassName = "ooptestAssoc";
+        ProviderTypes = {3}; // associator
+        Process = "@libexecdir@/openwbem/owoopcpp1pr";
+        Args = { "--provider=@provdir@/liboopassoctest.@LIB_EXT@", "--logfile=" };
+        Protocol = "owcpp1";
+        Timeout = "00000000000010.000000:000";
+};
 

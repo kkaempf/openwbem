@@ -18,10 +18,10 @@ $(CXXBINLINKFLAGS) \
 
 owpamauthbindir = $(libexecdir)/openwbem
 OW_PAMAuth_SOURCES = OW_PAMAuthSA.cpp
-OW_PAMAuth_LDADD = -lpam $(DL_LIB) $(SSL_LIBS) $(BINLINKAPPENDFLAGS) -L$(top_builddir)/src/common -lopenwbem -lblocxx
+OW_PAMAuth_LDADD = -lpam $(DL_LIB) $(SSL_LIBS) $(BINLINKAPPENDFLAGS) -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
 
 OW_SHARED_LIBS = libpamclauthentication.$(LIB_EXT)
-SHAREDLIBADD = -lpam -L$(top_builddir)/src/common/ -lopenwbem -lblocxx -L$(top_builddir)/src/monitor -lowprivman
+SHAREDLIBADD = -lpam -L$(top_builddir)/src/common/ -lopenwbem $(BLOCXX_LIBS) -L$(top_builddir)/src/monitor -lowprivman
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 

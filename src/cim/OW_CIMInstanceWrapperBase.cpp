@@ -50,6 +50,12 @@ CIMInstanceWrapperBase::toString()
 	return m_inst.toString();
 }
 
+const CIMInstance& 
+CIMInstanceWrapperBase::instance()
+{
+	return m_inst;
+}
+
 CIMInstanceWrapperBase::CIMInstanceWrapperBase(const CIMInstance& x, const char* name)
 	: m_inst(x)
 {
@@ -71,7 +77,7 @@ CIMInstanceWrapperBase::getStringProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toString();
 }
-Bool
+bool
 CIMInstanceWrapperBase::getBoolProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toBool();
@@ -244,7 +250,7 @@ CIMInstanceWrapperBase::setStringProperty(const char* name, const String& val)
 }
 
 void
-CIMInstanceWrapperBase::setBoolProperty(const char* name, Bool val)
+CIMInstanceWrapperBase::setBoolProperty(const char* name, bool val)
 {
 	m_inst.updatePropertyValue(name, CIMValue(val));
 }

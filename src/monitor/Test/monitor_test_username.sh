@@ -20,7 +20,7 @@ cd ..
 rm -rf $tmpdir
 
 inpf=mtusername.inpf
-goldout=mtusername.goldout
+exceptionlist=mtusername.exceptions
 thisdir=`/bin/pwd`
 cfgfname=mtusername.cfg
 
@@ -30,7 +30,7 @@ EOF
 
 function run_one_test {
   $srcdir/montest.sh $thisdir/$cfgfname:$1 root 700 \
-    $testtgz $inpf $goldout $testtgz $2
+    $testtgz $inpf $exceptionlist $testtgz $2
 }
 
 
@@ -43,22 +43,14 @@ read_dir {
 }
 EOF
 
-cat > $goldout <<EOF
-User: owprovdr
-
-readDirectory
-  alphard
-  bethe
-  gamow
+cat > $exceptionlist <<EOF
 EOF
 run_one_test null 1
 run_one_test empty 1
 run_one_test owprovdr 1
 
-cat > $goldout <<EOF
-Caught OpenWBEM::Exception:
-  type: PrivilegeManagerException
-  msg:  PrivilegeManager::init() failed to spawn monitor: creation of monitor failed: user name specified as both owprovdr and not_owprovdr
+cat > $exceptionlist <<EOF
+PrivilegeManagerException   PrivilegeManager::init() failed to spawn monitor: creation of monitor failed.*user name specified as both owprovdr and not_owprovdr
 EOF
 run_one_test not_owprovdr 0
 
@@ -71,24 +63,16 @@ read_dir {
 }
 EOF
 
-cat > $goldout <<EOF
-Caught OpenWBEM::Exception:
-  type: PrivilegeManagerException
-  msg:  PrivilegeManager::init() failed to spawn monitor: creation of monitor failed: must specify user name
+cat > $exceptionlist <<EOF
+PrivilegeManagerException   PrivilegeManager::init() failed to spawn monitor: creation of monitor failed.* must specify user name
 EOF
 run_one_test null 0
 run_one_test empty 0
 
-cat > $goldout <<EOF
-User: owprovdr
-
-readDirectory
-  alphard
-  bethe
-  gamow
+cat > $exceptionlist <<EOF
 EOF
 run_one_test owprovdr 1
 
 
 rm -rf $tmpdir
-rm -f $inpf $goldout $cfgfname $testtgz
+rm -f $inpf $exceptionlist $cfgfname $testtgz

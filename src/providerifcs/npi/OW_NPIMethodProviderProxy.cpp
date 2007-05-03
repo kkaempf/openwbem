@@ -61,7 +61,7 @@ NPIMethodProviderProxy::invokeMethod(
 	const CIMParamValueArray &in, CIMParamValueArray &out)
 {
 		CIMValue rval(CIMNULL);
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::invokeMethod()");
+		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::invokeMethod()");
 		if (m_ftable->fp_invokeMethod != NULL)
 		{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};

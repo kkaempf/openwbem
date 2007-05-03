@@ -57,6 +57,7 @@ private:
 	void testunescapeForURL();
 	void testbase64Encode();
 	void testbase64Decode();
+	void testbase64EncodeDecode();
 };
 
 #endif

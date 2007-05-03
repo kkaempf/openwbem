@@ -226,9 +226,12 @@ void
 read(std::streambuf & istrm, void * dataIn, size_t dataInLen)
 {
 	std::streamsize cnt = dataInLen;
-	if (istrm.sgetn(static_cast<char *>(dataIn), cnt) != cnt)
+	std::streamsize amtread = istrm.sgetn(static_cast<char *>(dataIn), cnt);
+
+	if (amtread != cnt)
 	{
-		OW_THROW(IOException, "Failed reading data");
+		OW_THROW(IOException,
+			Format("Failed reading data. expected: %1  got: %2", cnt, amtread).c_str());
 	}
 }
 

@@ -14,7 +14,7 @@ config_dir_owner=$2
 config_dir_perms=$3
 testtgz=$4
 inpf=$5
-goldout=$6
+exceptionlist=$6
 goldtgz=$7
 nofail=$8
 
@@ -91,6 +91,9 @@ if [ $config_dir != null -a $config_dir != empty ]; then
   mkdir -p $config_dir
   if [ $cfgfname != null -a $cfgfname != empty -a $cfgfname != noexist ]; then
     cp $cfgpath $config_dir
+    if [ -e $cfgpath.inc ]; then
+      cp $cfgpath.inc  $config_dir
+    fi
     chown root:${root_group} $config_dir/$cfgfname
     chmod og-rwx $config_dir/$cfgfname
   fi
@@ -146,13 +149,7 @@ fi
 # echo "No log file found"
 # fi
 
-if diff $goldout montest.out; then
-	:
-else
-	foo=$?
-	echo "Execution output did not match \"gold\" output." >&2
-	exit ${foo}
-fi
+`dirname $0`/check_for_exceptions.sh ${exceptionlist} montest.out || exit $?
 
 rm -rf $gold_dir
 mkdir -p $gold_dir

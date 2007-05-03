@@ -38,8 +38,9 @@
 namespace OW_NAMESPACE
 {
 
-OOPSecondaryInstanceProvider::OOPSecondaryInstanceProvider(const OOPProviderInterface::ProvRegInfo& info)
-	: OOPProviderBase(info)
+OOPSecondaryInstanceProvider::OOPSecondaryInstanceProvider(const OOPProviderInterface::ProvRegInfo& info,
+	const OOPProcessState& processState)
+	: OOPProviderBase(info, processState)
 {
 
 }

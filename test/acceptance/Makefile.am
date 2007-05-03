@@ -1,14 +1,16 @@
-SUBDIRS = testfiles progs oop
+SUBDIRS = testfiles progs oop methodLocking
 
 check_SCRIPTS = acceptance.sh
 
-EXTRA_DIST = acceptance.sh.fb
+BUILT_SOURCES = $(check_SCRIPTS) env.sh runCimom.sh
+
+EXTRA_DIST = acceptance.sh.fb env.sh.fb runCimom.sh.fb
 
 clean-local:
 	@echo "Cleanup Warning: There may be another stage directory: /ow_test"
 	rm -rf stage
 
-CLEANFILES = acceptance.sh
+CLEANFILES = acceptance.sh env.sh runCimom.sh
 SUFFIXES = .fb
 
 # Note that the top_srcdir and top_builddir are defined here instead as a
@@ -55,4 +57,4 @@ TESTS = acceptance.sh
 
 noinst_PROGRAMS = check_security
 check_security_SOURCES = check_security.cpp
-check_security_LDFLAGS = $(CXXBINLINKFLAGS) -o check_security$(EXEEXT) -L$(top_builddir)/src/common -lblocxx -lopenwbem $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
+check_security_LDFLAGS = $(CXXBINLINKFLAGS) -o check_security$(EXEEXT) -L$(top_builddir)/src/common $(BLOCXX_LIBS) -lopenwbem $(SSL_LIBS) $(BINLINKAPPENDFLAGS)

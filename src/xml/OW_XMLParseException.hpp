@@ -47,6 +47,7 @@ class OW_XML_API XMLParseException : public Exception
 		{
 			BAD_START_TAG = 1,
 			BAD_END_TAG,
+			BAD_XML_DECLARATION,
 			BAD_ATTRIBUTE_NAME,
 			EXPECTED_EQUAL_SIGN,
 			BAD_ATTRIBUTE_VALUE,

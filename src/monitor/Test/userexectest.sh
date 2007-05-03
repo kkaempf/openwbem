@@ -53,15 +53,13 @@ if [ $nofail -ne 0 ]; then
   stdin_string
 else
 cat > userexectest.expected <<EOF
-Caught OpenWBEM::Exception:
-  type: PrivilegeManagerException
-  msg:  CheckException: userSpawn: insufficient privileges
+InsufficientPrivilegesException  CheckException: userSpawn: insufficient privileges
 EOF
 ! ./userexectest $config_dir/ $cfgfname \
   $safe_bin/userexecprog \
   userexecprog+37+stderr_string 'IFS= +PATH=/bin+foo=bar' \
   stdin_string > userexectest.out
-diff userexectest.expected userexectest.out
+`dirname $0`/check_for_exceptions.sh userexectest.expected userexectest.out || exit $?
 rm -f userexectest.{expected,out}
 fi
 

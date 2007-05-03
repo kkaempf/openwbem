@@ -57,6 +57,9 @@ public:
 	virtual void createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual void filterInstances(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMInstanceArray &instances, WBEMFlags:: ELocalOnlyFlag localOnly, WBEMFlags:: EDeepFlag deep, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass);
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	{
+	}
 
 private:
 	ClientCIMOMHandleConnectionPoolRef m_pool;

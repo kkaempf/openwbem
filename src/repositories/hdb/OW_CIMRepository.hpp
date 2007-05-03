@@ -43,7 +43,7 @@
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssocDb.hpp"
 #endif
-#include "OW_RWLocker.hpp"
+#include "OW_OperationRWLock.hpp"
 #include "OW_Logger.hpp"
 
 namespace OW_NAMESPACE
@@ -474,6 +474,12 @@ public:
 		const CIMObjectPath& name,
 		const String& propertyName, OperationContext& context);
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+	virtual RepositoryIFC::ELockType getLockTypeForMethod(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in, 
+		OperationContext& context);
 	/**
 	 * Invokes a method
 	 *
@@ -559,11 +565,20 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		const String &query, const String& queryLanguage,
 		OperationContext& context);
+	virtual void enumInstancesWQL(
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
+		const WQLSelectStatement& wss,
+		const WQLCompile& wc,
+		OperationContext& context);
 	
 	virtual void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
 	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result);
 
 	ServiceEnvironmentIFCRef getEnvironment() const { return m_env; }
+
+	unsigned checkFreeLists();
 
 private:
 	CIMClass _getClass(const String& ns, const CIMName& className);
@@ -657,8 +672,9 @@ private:
 	ServiceEnvironmentIFCRef m_env;
 	Logger m_logger;
 	bool m_checkReferentialIntegrity;
-	RWLocker m_schemaLock;
-	RWLocker m_instanceLock;
+	OperationRWLock m_schemaLock;
+	OperationRWLock m_instanceLock;
+	Timeout m_lockTimeout;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

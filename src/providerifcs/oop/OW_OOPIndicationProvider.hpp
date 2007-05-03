@@ -50,9 +50,7 @@ class OOPIndicationProvider : public IndicationProviderIFC, public OOPProviderBa
 {
 public:
 	OOPIndicationProvider(const OOPProviderInterface::ProvRegInfo& info,
-		const Reference<Mutex>& guardRef,
-		const Reference<ProcessRef>& persistentProcessRef
-		);
+		const OOPProcessState& processState);
 	virtual ~OOPIndicationProvider();
 	
 	virtual void activateFilter(
@@ -86,6 +84,8 @@ public:
 		const String& nameSpace,
 		const StringArray& classes
 		);
+
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 
 private:
 };

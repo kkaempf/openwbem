@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# set -x
+#set -x
 set -e
 set -o nounset # treat undefined variables as errors, not as empty string
 
@@ -12,7 +12,7 @@ thisdir=`/bin/pwd`
 script_cfgpath=$1
 testtgz=$2
 inpf=$3
-goldout=$4
+exception_list=$4
 goldtgz=$5
 
 # Convert $inpf to an absolute path
@@ -47,7 +47,7 @@ if [ "x`uname`" = "xDarwin" ]; then
 fi
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$lib_dir
-export LIBPATH=$LD_LIBRARY_PATH            # AIX
+export LIBPATH=$LD_LIBRARY_PATH:$LIBPATH   # AIX
 export SHLIB_PATH=$LD_LIBRARY_PATH         # HPUX
 export DYLD_LIBRARY_PATH=$LD_LIBRARY_PATH  # DARWIN (OS X)
 
@@ -57,6 +57,7 @@ MPT=$srcdir/monperltest_basic.pl
 rm -rf $base_dir
 mkdir -p $base_dir
 cp $inpf $base_dir
+chmod go+r $base_dir/`basename $inpf`
 mkdir -p $safe_bin
 cp $MPT $safe_bin
 chmod o+r $MPT
@@ -103,7 +104,7 @@ chmod -R og-rwx $test_dir
 ./perl_launcher $config_dir $user $safe_bin $base_dir/`basename $inpf` \
 	> monperltest.out 2>&1
 
-diff $goldout monperltest.out
+`dirname $0`/check_for_exceptions.sh $exception_list monperltest.out || exit $?
 
 rm -rf $gold_dir
 mkdir -p $gold_dir

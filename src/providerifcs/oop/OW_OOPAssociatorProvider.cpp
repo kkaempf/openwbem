@@ -36,6 +36,7 @@
 
 #include "OW_config.h"
 #include "OW_OOPAssociatorProvider.hpp"
+#include "OW_OOPShuttingDownCallback.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -49,8 +50,9 @@ namespace
 }
 
 
-OOPAssociatorProvider::OOPAssociatorProvider(const OOPProviderInterface::ProvRegInfo& info)
-	: OOPProviderBase(info)
+OOPAssociatorProvider::OOPAssociatorProvider(const OOPProviderInterface::ProvRegInfo& info,
+	const OOPProcessState& processState)
+	: OOPProviderBase(info, processState)
 {
 }
 OOPAssociatorProvider::~OOPAssociatorProvider()
@@ -126,8 +128,7 @@ OOPAssociatorProvider::associators(
 	AssociatorsCallback associatorsCallback(result, ns, objectName, assocClass, resultClass,
 		role, resultRole, includeQualifiers, includeClassOrigin, propertyList);
 
-	startProcessAndCallFunction(env, associatorsCallback, "OOPInstanceProvider::associators", 
-			E_SPAWN_NEW_PROCESS);
+	startProcessAndCallFunction(env, associatorsCallback, "OOPInstanceProvider::associators");
 }
 
 namespace
@@ -184,8 +185,7 @@ OOPAssociatorProvider::associatorNames(
 {
 	AssociatorNamesCallback associatorNamesCallback(result, ns, objectName, assocClass,
 		resultClass, role, resultRole);
-	startProcessAndCallFunction(env, associatorNamesCallback, "OOPInstanceProvider::associatorNames", 
-		E_SPAWN_NEW_PROCESS);
+	startProcessAndCallFunction(env, associatorNamesCallback, "OOPInstanceProvider::associatorNames");
 }
 
 namespace
@@ -249,8 +249,7 @@ OOPAssociatorProvider::references(
 {
 	ReferencesCallback referencesCallback(result, ns, objectName, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList);
-	startProcessAndCallFunction(env, referencesCallback, "OOPInstanceProvider::references", 
-			E_SPAWN_NEW_PROCESS);
+	startProcessAndCallFunction(env, referencesCallback, "OOPInstanceProvider::references");
 }
 
 namespace
@@ -299,8 +298,15 @@ OOPAssociatorProvider::referenceNames(
 		const String& role )
 {
 	ReferenceNamesCallback referenceNamesCallback(result, ns, objectName, resultClass, role);
-	startProcessAndCallFunction(env, referenceNamesCallback, "OOPInstanceProvider::referenceNames",
-		E_SPAWN_NEW_PROCESS);
+	startProcessAndCallFunction(env, referenceNamesCallback, "OOPInstanceProvider::referenceNames");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OOPAssociatorProvider::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	OOPShuttingDownCallback shuttingDownCallback;
+	startProcessAndCallFunction(env, shuttingDownCallback, "OOPAssociatorProvider::shuttingDown");
 }
 
 

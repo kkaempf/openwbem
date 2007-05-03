@@ -53,14 +53,51 @@ class OOPCpp1ProviderRunner
 public:
 	static const char* const COMPONENT_NAME;
 
-	OOPCpp1ProviderRunner(const UnnamedPipeRef& IOPipe, const String& logFile, const String& logLevel);
-	int runProvider(ProviderBaseIFCRef& provider, const String& sourceLib);
+	class InitializeCallback
+	{
+	public:
+		InitializeCallback()
+			: m_initialized(false)
+		{
+		}
+
+		virtual ~InitializeCallback()
+		{
+		}
+	
+	public:
+		void init(const ProviderEnvironmentIFCRef& provenv)
+		{
+			if (!m_initialized)
+			{
+				doInit(provenv);
+				m_initialized = true;
+			}
+		}
+
+	private:
+		virtual void doInit(const ProviderEnvironmentIFCRef& provenv) = 0;
+		bool m_initialized;
+	};
+
+	/**
+	 * 
+	 * @param IOPipe
+	 * @param logFile If not empty, log messages will be directed to the file in addition to the CIMOM.
+	 * @param logCategories If set to the empty string, then the CIMOM's level will be used, otherwise this must be a
+	 *                      comma separated list of log categories.
+	 */
+	OOPCpp1ProviderRunner(const UnnamedPipeRef& IOPipe, const String& logFile, const String& logCategories);
+	int runProvider(ProviderBaseIFCRef& provider, const String& sourceLib,
+		InitializeCallback& initializeCallback);
+
 	ProviderEnvironmentIFCRef getProviderEnvironment();
 
 private:
 	UnnamedPipeRef m_IOPipe;
 	IOIFCStreamBuffer m_inbuf;
 	IOIFCStreamBuffer m_outbuf;
+	ProviderEnvironmentIFCRef m_penv;
 };
 
 } // end namespace OW_NAMESPACE

@@ -284,6 +284,7 @@ CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data)
 			switch(aType)
 			{
 				case CMPI_ref:      CopyFromEncArray(OpenWBEM::CIMObjectPath,CMPIObjectPath,ref,CMPI_ref); break;
+				case CMPI_instance: CopyFromEncArray(OpenWBEM::CIMInstance,CMPIInstance,inst,CMPI_instance); break;
 				case CMPI_dateTime: CopyFromEncArray(OpenWBEM::CIMDateTime,CMPIDateTime,dateTime,CMPI_dateTime); break;
 				case CMPI_boolean:  CopyFromArray(OpenWBEM::Bool,boolean,CMPI_boolean); break;
 				case CMPI_char16:   CopyFromArray(OpenWBEM::Char16,char16,CMPI_char16); break;
@@ -301,7 +302,13 @@ CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data)
 	{
 		switch(t)
 		{
-			case CMPI_sint32: v.get((OpenWBEM::Int32&)data->value.sint32); break;
+			case CMPI_sint32:
+			{
+				OpenWBEM::Int32 iv;
+				v.get(iv);
+				data->value.sint32 = (CMPISint32)iv;
+				break;
+			}
 			case CMPI_sint16: v.get((OpenWBEM::Int16&)data->value.sint16); break;
 			case CMPI_sint8:  v.get((OpenWBEM::Int8&)data->value.sint8);   break;
 			case CMPI_sint64: v.get((OpenWBEM::Int64&)data->value.sint64); break;
@@ -313,7 +320,13 @@ CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data)
 	{
 		switch(t)
 		{
-			case CMPI_uint32: v.get((OpenWBEM::UInt32&)data->value.uint32); break;
+			case CMPI_uint32:
+			{
+				OpenWBEM::UInt32 uv;
+				v.get(uv);
+				data->value.uint32 = (CMPIUint32)uv;
+				break;
+			}
 			case CMPI_uint16: v.get((OpenWBEM::UInt16&)data->value.uint16); break;
 			case CMPI_uint8:  v.get((OpenWBEM::UInt8&)data->value.uint8);   break;
 			case CMPI_uint64: v.get((OpenWBEM::UInt64&)data->value.uint64); break;
@@ -340,6 +353,18 @@ CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data)
 					v.get(ref);
 					data->value.ref =(CMPIObjectPath*)new CMPI_Object(
 						new OpenWBEM::CIMObjectPath(ref));
+				}
+				break;
+
+			//case CMPI_class:
+				// There is no CMPIClass!
+
+			case CMPI_instance:
+				{
+				    OpenWBEM::CIMInstance inst;
+				    v.get(inst);
+				    data->value.inst =(CMPIInstance*)new CMPI_Object(
+						new OpenWBEM::CIMInstance(inst));
 				}
 				break;
 
@@ -382,6 +407,8 @@ CMPIType type2CMPIType(OpenWBEM::CIMDataType pt, int array)
 		CMPI_dateTime,	 // DATETIME,
 		CMPI_char16,	 // CHAR16,
 		CMPI_ref,		 // REFERENCE
+    		CMPI_class, 	 // Embedded Class
+    		CMPI_instance	 // Embedded Instance
 	};
 
 	int t = types[pt.getType()];

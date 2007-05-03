@@ -11,7 +11,7 @@ uninstall-local : uninstall-ow-shared-libs
 owstatlib_LIBRARIES = libowcppprovifc.a
 OW_SHARED_LIBS = libowcppprovifc.$(LIB_EXT)
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/provider -lowprovider
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
@@ -32,14 +32,13 @@ $(ASSOCIATION_S) \
 OW_CppProviderBaseIFC.cpp \
 OW_CppProviderIFC.cpp \
 OW_CppProxyProvider.cpp \
-OW_CppProxyProvider.hpp \
-OW_CppProviderIFC.hpp \
 OW_CppIndicationExportProviderIFC.cpp \
 OW_CppIndicationProviderIFC.cpp \
 OW_CppMethodProviderIFC.cpp \
 OW_CppPolledProviderIFC.cpp \
 OW_CppSimpleInstanceProviderIFC.cpp \
 OW_CppInstanceProviderIFC.cpp \
+OW_CppQueryProviderIFC.cpp \
 OW_CppSecondaryInstanceProviderIFC.cpp \
 OW_CppReadOnlyInstanceProviderIFC.cpp
 
@@ -53,10 +52,13 @@ OW_CppAssociatorProviderIFC.hpp
 endif
 
 pkginclude_HEADERS = \
+OW_CppProxyProvider.hpp \
+OW_CppProviderIFC.hpp \
 OW_CppProviderBaseIFC.hpp \
 $(ASSOCIATION_H) \
 OW_CppIndicationExportProviderIFC.hpp \
 OW_CppInstanceProviderIFC.hpp \
+OW_CppQueryProviderIFC.hpp \
 OW_CppSecondaryInstanceProviderIFC.hpp \
 OW_CppMethodProviderIFC.hpp \
 OW_CppPolledProviderIFC.hpp \

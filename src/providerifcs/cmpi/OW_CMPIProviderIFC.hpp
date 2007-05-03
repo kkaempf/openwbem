@@ -56,6 +56,12 @@ public:
 	static const char * const CREATIONFUNC;
 	CMPIProviderIFC();
 	~CMPIProviderIFC();
+
+	static CMPIFTABLERef loadProvider(
+		const ProviderEnvironmentIFCRef& env,
+		const String& providerLib,
+		::CMPI_Broker& broker);
+
 		//static ::CMPIBroker * getBroker() { return &(_broker); }
 protected:
 	//static ::CMPIBroker _broker;
@@ -67,7 +73,8 @@ protected:
 		AssociatorProviderInfoArray& a,
 #endif
 		MethodProviderInfoArray& m,
-		IndicationProviderInfoArray& ind);
+		IndicationProviderInfoArray& ind,
+		QueryProviderInfoArray& qpi);
 	virtual InstanceProviderIFCRef doGetInstanceProvider(
 		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);

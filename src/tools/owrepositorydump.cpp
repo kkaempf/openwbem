@@ -95,7 +95,8 @@ enum
 	HELP_OPT,
 	VERSION_OPT,
 	REPOSITORY_DIR_OPT,
-	OUTPUT_OPT
+	OUTPUT_OPT,
+	NAMESPACE_SELECT_OPT
 };
 
 CmdLineParser::Option g_options[] =
@@ -103,6 +104,7 @@ CmdLineParser::Option g_options[] =
 	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
 	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
 	{REPOSITORY_DIR_OPT, 'd', "repository-dir", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the repository dir. Default is "OW_DEFAULT_DATADIR },
+	{NAMESPACE_SELECT_OPT, 'n', "namespace", CmdLineParser::E_REQUIRED_ARG, 0, "Selects a single namespace.  The default is to use every namespace." },
 	{OUTPUT_OPT, 'o', "output", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the output file. Default is stdout" },
 	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
 };
@@ -162,6 +164,39 @@ class InstancePrinter : public CIMInstanceResultHandlerIFC
 	}
 };
 
+void dumpNamespace(const String& ns, const RepositoryCIMOMHandleRef& hdl)
+{
+	g_output << "#pragma namespace(\"" << ns << "\")\n";
+
+	// qualifier types
+	QualifierTypePrinter qtPrinter;
+	hdl->enumQualifierTypes(ns, qtPrinter);
+
+	// classes
+	ClassPrinter classPrinter;
+	hdl->enumClass(ns, "", classPrinter,
+		E_DEEP,
+		E_LOCAL_ONLY,
+		E_INCLUDE_QUALIFIERS,
+		E_INCLUDE_CLASS_ORIGIN);
+
+	// instances
+	StringArray classNames;
+	StringArrayBuilder classNamesBuilder(classNames);
+	hdl->enumClassNames(ns, "", classNamesBuilder, E_DEEP);
+
+	InstancePrinter instancePrinter;
+	for (size_t clsNameIdx = 0; clsNameIdx < classNames.size(); ++clsNameIdx)
+	{
+		const String& curClsName(classNames[clsNameIdx]);
+		hdl->enumInstances(ns, curClsName, instancePrinter,
+			E_DEEP,
+			E_NOT_LOCAL_ONLY,
+			E_EXCLUDE_QUALIFIERS,
+			E_EXCLUDE_CLASS_ORIGIN);
+	}
+}
+
 
 void dumpRepository(const RepositoryCIMOMHandleRef& hdl)
 {
@@ -171,35 +206,8 @@ void dumpRepository(const RepositoryCIMOMHandleRef& hdl)
 	for (size_t curNamespace = 0; curNamespace < namespaces.size(); ++curNamespace)
 	{
 		const String ns(namespaces[curNamespace]);
-		g_output << "#pragma namespace(\"" << namespaces[curNamespace] << "\")\n";
 
-		// qualifier types
-		QualifierTypePrinter qtPrinter;
-		hdl->enumQualifierTypes(ns, qtPrinter);
-
-		// classes
-		ClassPrinter classPrinter;
-		hdl->enumClass(ns, "", classPrinter, 		
-			E_DEEP,
-			E_LOCAL_ONLY,
-			E_INCLUDE_QUALIFIERS,
-			E_INCLUDE_CLASS_ORIGIN);
-
-		// instances
-		StringArray classNames;
-		StringArrayBuilder classNamesBuilder(classNames);
-		hdl->enumClassNames(ns, "", classNamesBuilder, E_DEEP);
-
-		InstancePrinter instancePrinter;
-		for (size_t clsNameIdx = 0; clsNameIdx < classNames.size(); ++clsNameIdx)
-		{
-			const String& curClsName(classNames[clsNameIdx]);
-			hdl->enumInstances(ns, curClsName, instancePrinter,
-				E_DEEP,
-				E_NOT_LOCAL_ONLY,
-				E_EXCLUDE_QUALIFIERS,
-				E_EXCLUDE_CLASS_ORIGIN);
-		}
+		dumpNamespace(ns, hdl);
 	}
 }
 
@@ -263,7 +271,15 @@ int main(int argc, char** argv)
 		RepositoryIFCRef cimRepository = new CIMRepository;
 		cimRepository->init(new TheServiceEnvironment(repositoryDir));
 		RepositoryCIMOMHandleRef repositoryCIMOMHandle(new RepositoryCIMOMHandle(cimRepository, context));
-		dumpRepository(repositoryCIMOMHandle);
+
+		if( parser.isSet(NAMESPACE_SELECT_OPT) )
+		{
+			dumpNamespace(parser.getOptionValue(NAMESPACE_SELECT_OPT), repositoryCIMOMHandle);
+		}
+		else
+		{
+			dumpRepository(repositoryCIMOMHandle);
+		}
 
 		return 0;
 	}

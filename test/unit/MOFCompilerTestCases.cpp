@@ -149,12 +149,28 @@ void MOFCompilerTestCases::testCrossNamespaceAssociations()
 	unitAssert(insts[2].getProperty("Dependent").getValue().toCIMObjectPath().getNameSpace() == "test2");
 }
 
+void MOFCompilerTestCases::testfixParsedString()
+{
+	unitAssertEquals( MOF::Compiler::fixParsedString("\"\\b\\t\\n\\f\\r\\\"\\'\\\\\""), "\b\t\n\f\r\"\'\\" );
+	unitAssertEquals( MOF::Compiler::fixParsedString("\"\\x1\\XA\\X3\\X0F\\x7F\""), "\x1\xA\x3\x0F\x7F" );
+	unitAssertEquals( MOF::Compiler::fixParsedString("\"only one escape\\n\""), "only one escape\n" );
+	unitAssertEquals( MOF::Compiler::fixParsedString("\"\\nescape at the beginning\""), "\nescape at the beginning" );
+	unitAssertEquals( MOF::Compiler::fixParsedString("\"\\nescape at the beginning and end\\n\""), "\nescape at the beginning and end\n" );
+
+	if (CHAR_MAX == SCHAR_MAX)
+	{
+		// test too large hex
+		unitAssertThrows(MOF::Compiler::fixParsedString("\"\\xFF\""));
+	}
+}
+
 Test* MOFCompilerTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("MOFCompiler");
 
 	ADD_TEST_TO_SUITE(MOFCompilerTestCases, testcompileMOF);
 	ADD_TEST_TO_SUITE(MOFCompilerTestCases, testCrossNamespaceAssociations);
+	ADD_TEST_TO_SUITE(MOFCompilerTestCases, testfixParsedString);
 
 	return testSuite;
 }

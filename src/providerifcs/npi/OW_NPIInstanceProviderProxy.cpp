@@ -62,7 +62,7 @@ NPIInstanceProviderProxy::enumInstanceNames(
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 {
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::enumInstanceNames()");
+		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::enumInstanceNames()");
 		if (m_ftable->fp_enumInstanceNames!= NULL)
 		{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -112,7 +112,7 @@ NPIInstanceProviderProxy::enumInstances(
 	const CIMClass& requestedClass,
 	const CIMClass& cimClass )
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::enumInstances()");
+	OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::enumInstances()");
 	if (m_ftable->fp_enumInstances == NULL)
 	{
 		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support enumInstances");
@@ -161,7 +161,7 @@ NPIInstanceProviderProxy::getInstance(
 	const CIMClass& cimClass)
 {
 	CIMInstance rval(CIMNULL);
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::getInstance()");
+	OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::getInstance()");
 	if (m_ftable->fp_getInstance != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -204,7 +204,7 @@ NPIInstanceProviderProxy::createInstance(
 	const CIMInstance& cimInstance)
 {
 		CIMObjectPath rval(CIMNULL);
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::createInstance()");
+		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::createInstance()");
 		if (m_ftable->fp_createInstance != NULL)
 		{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -243,7 +243,7 @@ NPIInstanceProviderProxy::modifyInstance(
 	const StringArray* propertyList,
 	const CIMClass& theClass)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::modifyInstance()");
+	OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::modifyInstance()");
 	if (m_ftable->fp_setInstance != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -275,7 +275,7 @@ NPIInstanceProviderProxy::deleteInstance(
 	const ProviderEnvironmentIFCRef &env,
 	const String& ns, const CIMObjectPath& cop)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::deleteInstance()");
+	OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::deleteInstance()");
 	if (m_ftable->fp_deleteInstance!= NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};

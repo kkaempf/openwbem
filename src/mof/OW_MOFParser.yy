@@ -65,6 +65,7 @@ void yyerror( const char* );
 /* avoid non-reentrant global variables */
 %pure_parser
 
+%error-verbose
 
 /* List of tokens */
 %token ANY_TOK AS_TOK ASSOCIATION_TOK CLASS_TOK DISABLEOVERRIDE_TOK

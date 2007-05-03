@@ -62,10 +62,9 @@ public:
 	}
 
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext &context,
-		EBypassProvidersFlag bypassProviders,
-		ELockingFlag locking) const
+		EBypassProvidersFlag bypassProviders) const
 	{
-		return m_env->getCIMOMHandle(m_context, bypassProviders, locking);
+		return m_env->getCIMOMHandle(m_context, bypassProviders);
 	}
 
 	virtual bool authenticate(String &userName, const String &info,

@@ -252,18 +252,16 @@ PollingManagerThread::run()
 	// Get all of the indication trigger providers
 	PolledProviderIFCRefArray itpra = m_providerManager->getPolledProviders();
 
-	OW_LOG_DEBUG(m_logger, Format("PollingManager found %1 polled providers",
-		itpra.size()));
+	OW_LOG_DEBUG(m_logger, Format("PollingManager found %1 polled providers", itpra.size()));
+
 	{
 		// Get initial polling interval from all polled providers
 		NonRecursiveMutexLock ml(m_triggerGuard);
 		for (size_t i = 0; i < itpra.size(); ++i)
 		{
 			TriggerRunnerRef tr(new TriggerRunner(this, m_env));
-			tr->m_pollInterval =
-				itpra[i]->getInitialPollingInterval(createProvEnvRef(m_env));
-			OW_LOG_DEBUG(m_logger, Format("PollingManager poll interval for provider"
-				" %1: %2", i, tr->m_pollInterval));
+			tr->m_pollInterval = itpra[i]->getInitialPollingInterval(createProvEnvRef(m_env));
+			OW_LOG_DEBUG(m_logger, Format("PollingManager initial poll interval for provider %1: %2", i, tr->m_pollInterval));
 			if (!tr->m_pollInterval)
 			{
 				continue;
@@ -272,6 +270,7 @@ PollingManagerThread::run()
 			m_triggerRunners.append(tr);
 		}
 	}
+
 	{
 		NonRecursiveMutexLock l(m_triggerGuard);
 		while (!m_shuttingDown)
@@ -402,10 +401,8 @@ PollingManagerThread::addPolledProvider(const PolledProviderIFCRef& p)
 	if (m_shuttingDown)
 		return;
 	TriggerRunnerRef tr(new TriggerRunner(this, m_env));
-	tr->m_pollInterval = 
-		p->getInitialPollingInterval(createProvEnvRef(m_env));
-	OW_LOG_DEBUG(m_logger, Format("PollingManager poll interval for provider"
-		" %1", tr->m_pollInterval));
+	tr->m_pollInterval = p->getInitialPollingInterval(createProvEnvRef(m_env));
+	OW_LOG_DEBUG(m_logger, Format("PollingManager addPolledProvider(): initial poll interval for provider %1", tr->m_pollInterval));
 	if (!tr->m_pollInterval)
 	{
 		return;

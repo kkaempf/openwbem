@@ -55,6 +55,7 @@ class CppAssociatorProviderIFC;
 class CppIndicationExportProviderIFC;
 class CppPolledProviderIFC;
 class CppIndicationProviderIFC;
+class CppQueryProviderIFC;
 /**
  * This is the base class implemented by all providers that are loaded
  * by the C++ provider interface.
@@ -96,6 +97,10 @@ public:
 	 * Called by the CIMOM just before it starts shutting down services.
 	 * Providers should override this to do any portion of their
 	 * shutdown process that requires access to the CIMOM.
+	 * A provider must still be functional after this call is done, as
+	 * other providers or services may still access the provider.
+	 * For instance, indication providers will get deActivateFilter()
+	 * calls after shuttingDown() is called.
 	 */
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 
@@ -114,6 +119,7 @@ public:
 	virtual CppIndicationExportProviderIFC* getIndicationExportProvider();
 	virtual CppPolledProviderIFC* getPolledProvider();
 	virtual CppIndicationProviderIFC* getIndicationProvider();
+	virtual CppQueryProviderIFC* getQueryProvider();
 	DateTime getLastAccessTime() const;
 	void updateAccessTime();
 	

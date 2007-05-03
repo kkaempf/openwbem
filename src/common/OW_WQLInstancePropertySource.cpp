@@ -134,6 +134,11 @@ bool WQLInstancePropertySource::getValueAux(const CIMInstance& ci, const StringA
 		return false;
 	}
 	CIMValue v = p.getValue();
+	if (!v)
+	{
+		value = WQLOperand();
+		return true;
+	}
 	switch (v.getType())
 	{
 		case CIMDataType::DATETIME:

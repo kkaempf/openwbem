@@ -2,7 +2,7 @@ dnl AC_AS_DIRNAME (PATH)
 dnl this is the macro AS_DIRNAME from autoconf 2.4x
 dnl defined here for use in autoconf 2.1x, remove the AC_ when you use 2.4x 
 dnl
-dnl @version $Id: prefix_config.m4,v 1.1 2006-08-15 23:52:26 kpharris Exp $
+dnl @version $Id: prefix_config.m4,v 1.2 2007-02-21 23:27:37 nuffer Exp $
 dnl @author complain to <guidod@gmx.de>
 
 AC_DEFUN([AC_ECHO_MKFILE],
@@ -122,7 +122,7 @@ dnl   library (that has some headers) where some functionality is
 dnl   dependent on the OS-features detected at compile-time. No
 dnl   need to invent some "testpkg-confdefs.h.in" manually. :-)
 dnl
-dnl @version $Id: prefix_config.m4,v 1.1 2006-08-15 23:52:26 kpharris Exp $
+dnl @version $Id: prefix_config.m4,v 1.2 2007-02-21 23:27:37 nuffer Exp $
 dnl @author Guido Draheim <guidod@gmx.de>
 
 AC_DEFUN([AC_CREATE_PREFIX_CONFIG_H],
@@ -150,30 +150,25 @@ if test -z "$ac_prefix_conf_PKG" ; then
 else
   AC_MSG_RESULT(creating $ac_prefix_conf_OUT - prefix $ac_prefix_conf_UPP for $ac_prefix_conf_INP defines)
   if test -f $ac_prefix_conf_INP ; then
-#    AC_AS_DIRNAME([/* automatically generated */], $ac_prefix_conf_OUTTMP)
-    echo '/* automatically generated */' > $ac_prefix_conf_OUTTMP
+    printf "%s\n" '/* automatically generated */' > $ac_prefix_conf_OUTTMP
 changequote({, })dnl 
-    echo '#ifndef '$ac_prefix_conf_DEF >>$ac_prefix_conf_OUTTMP
-    echo '#define '$ac_prefix_conf_DEF' 1' >>$ac_prefix_conf_OUTTMP
-    echo ' ' >>$ac_prefix_conf_OUTTMP
-    echo /'*' $ac_prefix_conf_OUT. Generated automatically at end of configure. '*'/ >>$ac_prefix_conf_OUTTMP
+    printf "%s\n" '#ifndef '$ac_prefix_conf_DEF >>$ac_prefix_conf_OUTTMP
+    printf "%s\n" '#define '$ac_prefix_conf_DEF' 1' >>$ac_prefix_conf_OUTTMP
+    printf "%s\n" ' ' >>$ac_prefix_conf_OUTTMP
+    printf "%s\n" /'*' $ac_prefix_conf_OUT. Generated automatically at end of configure. '*'/ >>$ac_prefix_conf_OUTTMP
 
-    echo 's/#undef  *\([A-Z_]\)/#undef '$ac_prefix_conf_UPP'_\1/' >conftest.sed
-#    echo 's/#undef  *\([a-z]\)/#undef '$ac_prefix_conf_LOW'_\1/' >>conftest.sed
-    echo 's/#define  *\([A-Z_][A-Z0-9_]*\)\(.*\)/#ifndef '$ac_prefix_conf_UPP"_\\1 \\" >>conftest.sed
-    echo '#define '$ac_prefix_conf_UPP"_\\1\\2 \\" >>conftest.sed
-    echo '#endif/' >>conftest.sed
-#    echo 's/#define  *\([A-Z0-9_]*\)\(.*\)/#ifndef '$ac_prefix_conf_LOW"_\\1 \\" >>conftest.sed
-    echo '#define '$ac_prefix_conf_LOW"_\\1\\2 \\" >>conftest.sed
-    echo '#endif/' >>conftest.sed
+    printf "%s\n" 's/#undef  *\([A-Z_]\)/#undef '$ac_prefix_conf_UPP'_\1/' >conftest.sed
+    printf "%s\n" 's/#define  *\([A-Z_][A-Z0-9_]*\)\(.*\)/#ifndef '$ac_prefix_conf_UPP"_\\1 \\" >>conftest.sed
+    printf "%s\n" '#define '$ac_prefix_conf_UPP"_\\1\\2 \\" >>conftest.sed
+    printf "%s\n" '#endif/' >>conftest.sed
+    printf "%s\n" '#define '$ac_prefix_conf_LOW"_\\1\\2 \\" >>conftest.sed
+    printf "%s\n" '#endif/' >>conftest.sed
     sed -f conftest.sed $ac_prefix_conf_INP >>$ac_prefix_conf_OUTTMP
-    echo ' ' >>$ac_prefix_conf_OUTTMP
-    echo '/*' $ac_prefix_conf_DEF '*/' >>$ac_prefix_conf_OUTTMP
-    echo '#endif' >>$ac_prefix_conf_OUTTMP
+    printf "%s\n" ' ' >>$ac_prefix_conf_OUTTMP
+    printf "%s\n" '/*' $ac_prefix_conf_DEF '*/' >>$ac_prefix_conf_OUTTMP
+    printf "%s\n" '#endif' >>$ac_prefix_conf_OUTTMP
     if cmp -s $ac_prefix_conf_OUT $ac_prefix_conf_OUTTMP 2>/dev/null ; then
-#      AC_MSG_RESULT([$ac_prefix_conf_OUT is unchanged])
-#      doesn't work for some reason
-      echo "$ac_prefix_conf_OUT is unchanged" 
+      printf "%s\n" "$ac_prefix_conf_OUT is unchanged" 
       rm -f $ac_prefix_conf_OUTTMP
     else
       rm -f $ac_prefix_conf_OUT

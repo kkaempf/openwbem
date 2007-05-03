@@ -34,15 +34,14 @@
 
 #include "OW_config.h"
 #include "OW_OOPPolledProvider.hpp"
+#include "OW_OOPShuttingDownCallback.hpp"
 
 namespace OW_NAMESPACE
 {
 
 OOPPolledProvider::OOPPolledProvider(const OOPProviderInterface::ProvRegInfo& info,
-	const Reference<Mutex>& guardRef,
-	const Reference<ProcessRef>& persistentProcessRef
-	)
-	: OOPProviderBase(info, guardRef, persistentProcessRef)
+	const OOPProcessState& processState)
+	: OOPProviderBase(info, processState)
 {
 
 }
@@ -98,7 +97,7 @@ OOPPolledProvider::poll(const ProviderEnvironmentIFCRef& env)
 {
 	Int32 retval(-1);
 	PollCallback pollCallback(retval);
-	startProcessAndCallFunction(env, pollCallback, "OOPPolledProvider::poll", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, pollCallback, "OOPPolledProvider::poll");
 	return retval;
 }
 
@@ -107,7 +106,7 @@ OOPPolledProvider::getInitialPollingInterval(const ProviderEnvironmentIFCRef& en
 {
 	Int32 retval(-1);
 	GetInitialPollingIntervalCallback getInitialPollingIntervalCallback(retval);
-	startProcessAndCallFunction(env, getInitialPollingIntervalCallback, "OOPPolledProvider::getInitialPollingInterval", E_USE_PERSISTENT_PROCESS);
+	startProcessAndCallFunction(env, getInitialPollingIntervalCallback, "OOPPolledProvider::getInitialPollingInterval");
 	return retval;
 }
 
@@ -125,6 +124,13 @@ OOPPolledProvider::doCooperativeCancel()
 void
 OOPPolledProvider::doDefinitiveCancel()
 {
+}
+
+void
+OOPPolledProvider::shuttingDown(const ProviderEnvironmentIFCRef& env)
+{
+	OOPShuttingDownCallback shuttingDownCallback;
+	startProcessAndCallFunction(env, shuttingDownCallback, "OOPPolledProvider::shuttingDown");
 }
 
 

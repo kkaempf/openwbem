@@ -56,8 +56,8 @@ namespace OW_NAMESPACE
 
 namespace
 {
-#define OW_HDB_LOG_DEBUG(lgr, msg)
-// #define OW_HDBE_LOG_DEBUG(lgr, msg) OW_LOG_DEBUG(lgr, msg)
+#define OW_HDB_LOG_DEBUG3(lgr, msg)
+// #define OW_HDBE_LOG_DEBUG3(lgr, msg) OW_LOG_DEBUG3(lgr, msg)
 // const String COMPONENT_NAME("ow.repository.hdb");
 }
 static UInt32 calcCheckSum(unsigned char* src, Int32 len);
@@ -251,6 +251,24 @@ HDB::setFirstFreeOffSet(File& file, Int32 offset)
 	setOffsets(file, m_hdrBlock.firstRoot, m_hdrBlock.lastRoot, offset);
 }
 //////////////////////////////////////////////////////////////////////////////
+bool HDB::checkFreeList(File & file)
+{
+	MutexLock l(m_guard);
+	Int32 offset = -1;
+	HDBBlock fblk;
+	Int32 coffset = m_hdrBlock.firstFree;
+	while (coffset != -1L)
+	{
+		readBlock(fblk, file, coffset);
+		if (fblk.nextSib == coffset)
+		{
+			return false;
+		}
+		coffset = fblk.nextSib;
+	}
+	return true;
+}
+//////////////////////////////////////////////////////////////////////////////
 // Find a block in the free list that is large enough to hold the given
 // size. If no block in the free list is large enough or the free list
 // is empty, then the offset to the end of the file is returned
@@ -434,8 +452,7 @@ HDB::writeBlock(HDBBlock& fblk, File& file, Int32 offset)
 	fblk.chkSum = 0;
 	UInt32 chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&fblk), sizeof(fblk));
 	fblk.chkSum = chkSum;
-	//Logger lgr(COMPONENT_NAME);
-	OW_HDB_LOG_DEBUG(lgr, Format("HDB::writeBlock writing\n(%1)\nto offset %2", HDBBlockDebugString(fblk), offset));
+	OW_HDB_LOG_DEBUG3(lgr, Format("HDB::writeBlock writing\n(%1)\nto offset %2", HDBBlockDebugString(fblk), offset));
 	int cc = file.write(&fblk, sizeof(fblk), offset);
 	if (cc != sizeof(fblk))
 	{
@@ -582,6 +599,11 @@ HDBHandle::HDBHandle() :
 HDBHandle::HDBHandle(HDB* pdb, const File& file) :
 	m_pdata(new HDBHandleData(pdb, file))
 {
+}
+//////////////////////////////////////////////////////////////////////////////
+bool HDBHandle::checkFreeList()
+{
+	return m_pdata->m_pdb->checkFreeList(m_pdata->m_file);
 }
 //////////////////////////////////////////////////////////////////////////////
 Int32

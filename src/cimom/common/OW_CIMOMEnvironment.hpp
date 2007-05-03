@@ -77,8 +77,7 @@ public:
 	 * WARNING: The return value is valid only for the lifetime of context.
 	 */
 	CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
-		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS,
-		ELockingFlag locking = E_LOCKING) const;
+		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS) const;
 
 	enum ESendIndicationsFlag
 	{
@@ -91,8 +90,7 @@ public:
 	 */
 	CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
 		ESendIndicationsFlag sendIndications,
-		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS,
-		ELockingFlag locking = E_LOCKING) const;
+		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS) const;
 
 	/**
 	 * WARNING: The return value is valid only for the lifetime of context.

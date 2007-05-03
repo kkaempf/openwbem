@@ -57,7 +57,7 @@ public:
 	virtual void startDeleteSubscription(const String& ns, const CIMObjectPath& subPath) = 0;
 	virtual void startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username) = 0;
 	virtual void startModifySubscription(const String& ns, const CIMInstance& subInst) = 0;
-	virtual void modifyFilter(const String& ns, const CIMInstance& filterInst, const String& userName) = 0;
+	virtual void modifyFilter(OperationContext& context, const String& ns, const CIMInstance& filterInst, const String& userName) = 0;
 };
 
 } // end namespace OW_NAMESPACE

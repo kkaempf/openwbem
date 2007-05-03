@@ -39,6 +39,7 @@
 #include "OW_AssociatorProviderIFC.hpp"
 #endif
 #include "OW_InstanceProviderIFC.hpp"
+#include "OW_QueryProviderIFC.hpp"
 #include "OW_SecondaryInstanceProviderIFC.hpp"
 #include "OW_MethodProviderIFC.hpp"
 #include "OW_PolledProviderIFC.hpp"
@@ -48,6 +49,7 @@
 #include "OW_CppAssociatorProviderIFC.hpp"
 #endif
 #include "OW_CppInstanceProviderIFC.hpp"
+#include "OW_CppQueryProviderIFC.hpp"
 #include "OW_CppSecondaryInstanceProviderIFC.hpp"
 #include "OW_CppMethodProviderIFC.hpp"
 #include "OW_CppPolledProviderIFC.hpp"
@@ -65,7 +67,7 @@ namespace OW_NAMESPACE
 class OW_CPPPROVIFC_API CppAssociatorProviderProxy : public AssociatorProviderIFC
 {
 public:
-	CppAssociatorProviderProxy(CppAssociatorProviderIFCRef pProv);
+	CppAssociatorProviderProxy(const CppAssociatorProviderIFCRef& pProv);
 	
 	virtual void associators(
 			const ProviderEnvironmentIFCRef& env,
@@ -105,6 +107,7 @@ public:
 			const CIMObjectPath& objectName,
 			const String& resultClass,
 			const String& role);
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 private:
 	CppAssociatorProviderIFCRef m_pProv;
 };
@@ -113,7 +116,7 @@ private:
 class OW_CPPPROVIFC_API CppInstanceProviderProxy : public InstanceProviderIFC
 {
 public:
-	CppInstanceProviderProxy(CppInstanceProviderIFCRef pProv);
+	CppInstanceProviderProxy(const CppInstanceProviderIFCRef& pProv);
 	virtual void enumInstanceNames(
 			const ProviderEnvironmentIFCRef& env,
 			const String& ns,
@@ -159,6 +162,7 @@ public:
 			const String& ns,
 			const CIMObjectPath& cop);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 private:
 	CppInstanceProviderIFCRef m_pProv;
 };
@@ -166,13 +170,14 @@ private:
 class OW_CPPPROVIFC_API CppSecondaryInstanceProviderProxy : public SecondaryInstanceProviderIFC
 {
 public:
-	CppSecondaryInstanceProviderProxy(CppSecondaryInstanceProviderIFCRef pProv);
+	CppSecondaryInstanceProviderProxy(const CppSecondaryInstanceProviderIFCRef& pProv);
 	virtual void filterInstances(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMInstanceArray &instances, WBEMFlags:: ELocalOnlyFlag localOnly, WBEMFlags:: EDeepFlag deep, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual void createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance);
 	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass);
 	virtual void deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 private:
 	CppSecondaryInstanceProviderIFCRef m_pProv;
 };
@@ -180,7 +185,7 @@ private:
 class OW_CPPPROVIFC_API CppMethodProviderProxy : public MethodProviderIFC
 {
 public:
-	CppMethodProviderProxy(CppMethodProviderIFCRef pProv);
+	CppMethodProviderProxy(const CppMethodProviderIFCRef& pProv);
 	virtual CIMValue invokeMethod(
 			const ProviderEnvironmentIFCRef& env,
 			const String& ns,
@@ -188,13 +193,21 @@ public:
 			const String& methodName,
 			const CIMParamValueArray& in,
 			CIMParamValueArray& out);
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
+	virtual ELockType getLockTypeForMethod(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in);
+
 private:
 	CppMethodProviderIFCRef m_pProv;
 };
 class OW_CPPPROVIFC_API CppIndicationExportProviderProxy : public IndicationExportProviderIFC
 {
 public:
-	CppIndicationExportProviderProxy(CppIndicationExportProviderIFCRef pProv) :
+	CppIndicationExportProviderProxy(const CppIndicationExportProviderIFCRef& pProv) :
 		m_pProv(pProv) {}
 	virtual StringArray getHandlerClassNames()
 	{
@@ -220,13 +233,17 @@ public:
 	{
 		m_pProv->doDefinitiveCancel();
 	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	{
+		m_pProv->shuttingDown(env);
+	}
 private:
 	CppIndicationExportProviderIFCRef m_pProv;
 };
 class OW_CPPPROVIFC_API CppPolledProviderProxy : public PolledProviderIFC
 {
 public:
-	CppPolledProviderProxy(CppPolledProviderIFCRef pProv) :
+	CppPolledProviderProxy(const CppPolledProviderIFCRef& pProv) :
 		m_pProv(pProv) {}
 	virtual Int32 poll(const ProviderEnvironmentIFCRef& env )
 			{ return m_pProv->poll(env); }
@@ -244,13 +261,17 @@ public:
 	{
 		m_pProv->doDefinitiveCancel();
 	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	{
+		m_pProv->shuttingDown(env);
+	}
 private:
 	CppPolledProviderIFCRef m_pProv;
 };
 class OW_CPPPROVIFC_API CppIndicationProviderProxy : public IndicationProviderIFC
 {
 public:
-	CppIndicationProviderProxy(CppIndicationProviderIFCRef pProv)
+	CppIndicationProviderProxy(const CppIndicationProviderIFCRef& pProv)
 		: m_pProv(pProv) {}
 	virtual void deActivateFilter(
 		const ProviderEnvironmentIFCRef &env, 
@@ -292,10 +313,39 @@ public:
 	{
 		return m_pProv->mustPoll(env,filter,eventType,nameSpace,classes);
 	}
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	{
+		m_pProv->shuttingDown(env);
+	}
 private:
 	CppIndicationProviderIFCRef m_pProv;
 	
 	// note this doesn't need to be mutex protected because the indication server always [de]activates subscriptions serially.
+};
+
+class OW_CPPPROVIFC_API CppQueryProviderProxy : public QueryProviderIFC
+{
+public:
+	CppQueryProviderProxy(const CppQueryProviderIFCRef& pProv)
+		: m_pProv(pProv) {}
+
+	virtual void queryInstances(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const WQLSelectStatement& query,
+		const WQLCompile& compiledWhereClause,
+		CIMInstanceResultHandlerIFC& result,
+		const CIMClass& cimClass )
+	{
+		m_pProv->queryInstances(env, ns, query, compiledWhereClause, result, cimClass);
+	}
+
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	{
+		m_pProv->shuttingDown(env);
+	}
+private:
+	CppQueryProviderIFCRef m_pProv;
 };
 
 } // end namespace OW_NAMESPACE

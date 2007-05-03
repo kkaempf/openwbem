@@ -48,9 +48,11 @@
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Logger.hpp"
+#include "OW_CIMFlavor.hpp"
 
 #include <assert.h>
 #include <cctype>
+
 
 // forward declarations of some lex/yacc functions we need to call.
 void owmof_delete_buffer(YY_BUFFER_STATE b);
@@ -198,15 +200,15 @@ long Compiler::compileString( const String& mof )
 		}
 		catch (AssertionException& e)
 		{
-			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e).c_str(), LineInfo("(none)", 0));
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e).c_str(), theLineInfo);
 		}
 		catch (Exception& e)
 		{
-			theErrorHandler->fatalError(Format( "ERROR: %1", e).c_str(), LineInfo("(none)", 0));
+			theErrorHandler->fatalError(Format( "ERROR: %1", e).c_str(), theLineInfo);
 		}
 		catch (std::exception& e)
 		{
-			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), LineInfo("(none)", 0));
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), theLineInfo);
 		}
 		catch (ThreadCancelledException&)
 		{
@@ -215,7 +217,7 @@ long Compiler::compileString( const String& mof )
 		}
 		catch(...)
 		{
-			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", LineInfo("(none)", 0));
+			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", theLineInfo);
 		}
 	}
 	catch (const ParseFatalErrorException&)
@@ -271,16 +273,18 @@ String Compiler::fixParsedString(const String& s)
 						{
 							// The lexer guarantees that there will be from 1-4 hex chars.
 							UInt16 hex = 0;
-							for (size_t j = 0; j < 4; ++j)
+							size_t j = 1;
+							for (; j <= 4; ++j)
 							{
-								hex <<= 4;
 								char c = s[i+j];
 								if (isdigit(c))
 								{
+									hex <<= 4;
 									hex |= c - '0';
 								}
 								else if (isxdigit(c))
 								{
+									hex <<= 4;
 									c = toupper(c);
 									hex |= c - 'A' + 0xA;
 								}
@@ -294,6 +298,7 @@ String Compiler::fixParsedString(const String& s)
 								OW_THROW(MOFCompilerException, "Escape sequence larger than supported maximum");
 							}
 							unescaped += static_cast<char>(hex);
+							i += j - 1;
 						}
 						break;
 					default:
@@ -337,6 +342,8 @@ public:
 	virtual CIMObjectPath createInstance(const String &ns, const CIMInstance &instance)
 	{
 		m_instances.push_back(instance);
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::createInstance returning %1", CIMObjectPath(ns, instance).toString()));
 		return CIMObjectPath(ns, instance);
 	}
 	virtual CIMClass getClass(const String &ns, const String &className,
@@ -345,11 +352,13 @@ public:
 		WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_INCLUDE_CLASS_ORIGIN,
 		const StringArray *propertyList=0)
 	{
+		Logger logger(COMPONENT_NAME);
 		// first get back a class contained in the mof.
 		for (size_t i = 0; i < m_classes.size(); ++i)
 		{
 			if (m_classes[i].getName() == CIMName(className))
 			{
+				OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::getClass found %1 in m_classes", className));
 				return m_classes[i];
 			}
 		}
@@ -358,14 +367,17 @@ public:
 		{
 			try
 			{
+				OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::getClass attempting to get %1 from m_realhdl", className));
 				return m_realhdl->getClass(ns, className, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 			}
 			catch (CIMException& e)
 			{
+				OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::getClass failed to get %1 from m_realhdl: %2", className, e));
 				// ignore it.
 			}
 		}
 
+		OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::getClass returning a dummy class of %1", className));
 		// just give back an empty class, with just the name set.
 		return CIMClass(className);
 	}
@@ -393,8 +405,14 @@ public:
 		m_qualifierTypes.push_back(qualifierType);
 	}
 
-	virtual void createClass(const String &ns, const CIMClass &cimClass)
+	virtual void createClass(const String &ns, const CIMClass &cimClass_)
 	{
+		CIMClass cimClass(cimClass_);
+		Logger logger(COMPONENT_NAME);
+		OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::createClass() before adjustClass cimClass = %1",  cimClass.toMOF()));
+		adjustClass(ns, cimClass);
+		resolveClass(ns, cimClass);
+		OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::createClass() after adjustClass cimClass = %1",  cimClass.toMOF()));
 		m_classes.push_back(cimClass);
 	}
 
@@ -495,6 +513,301 @@ private:
 	{
 		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	void adjustClass(const String& ns, CIMClass& childClass)
+	{
+		Logger logger(COMPONENT_NAME);
+		CIMName childName = childClass.getName();
+		CIMName parentName = childClass.getSuperClass();
+		CIMClass parentClass(CIMNULL);
+		if (parentName != CIMName())
+		{
+            parentClass = this->getClass(ns, parentName.toString());
+		}
+		if (!parentClass)
+		{
+			// No parent class. Must be a base class
+			CIMQualifierArray qualArray = childClass.getQualifiers();
+			for (size_t i = 0; i < qualArray.size(); i++)
+			{
+				qualArray[i].setPropagated(false);
+			}
+			CIMPropertyArray propArray = childClass.getAllProperties();
+			for (size_t i = 0; i < propArray.size(); i++)
+			{
+				propArray[i].setPropagated(false);
+				propArray[i].setOriginClass(childName);
+			}
+			childClass.setProperties(propArray);
+			CIMMethodArray methArray = childClass.getAllMethods();
+			for (size_t i = 0; i < methArray.size(); i++)
+			{
+				methArray[i].setPropagated(false);
+				methArray[i].setOriginClass(childName);
+			}
+			childClass.setMethods(methArray);
+			return;
+		}
+		//////////
+		// At this point we know we have a parent class
+		CIMQualifierArray newQuals;
+		CIMQualifierArray qualArray = childClass.getQualifiers();
+		for (size_t i = 0; i < qualArray.size(); i++)
+		{
+			CIMQualifier qual = qualArray[i];
+			CIMQualifier pqual = parentClass.getQualifier(qual.getName());
+			if (pqual)
+			{
+				if (pqual.getValue().equal(qual.getValue()))
+				{
+					if (pqual.hasFlavor(CIMFlavor::RESTRICTED))
+					{
+						// NOT PROPAGATED.  qual.setPropagated(true);
+						newQuals.append(qual);
+					}
+				}
+				else
+				{
+					if (pqual.hasFlavor(CIMFlavor::DISABLEOVERRIDE))
+					{
+						OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+								Format("Parent class qualifier %1 has DISABLEOVERRIDE flavor. "
+									"Child cannot override it.", pqual.getName()).c_str());
+					}
+					newQuals.append(qual);
+				}
+			}
+			else
+			{
+				newQuals.push_back(qual);
+			}
+		}
+		childClass.setQualifiers(newQuals);
+		CIMPropertyArray propArray = childClass.getAllProperties();
+		for (size_t i = 0; i < propArray.size(); i++)
+		{
+			CIMProperty parentProp = parentClass.getProperty(propArray[i].getName());
+			if (parentProp)
+			{
+				if (propArray[i].getQualifier(CIMQualifier::CIM_QUAL_OVERRIDE))
+				{
+					if (propArray[i].getOriginClass().empty())
+					{
+						propArray[i].setOriginClass(childName);
+						propArray[i].setPropagated(false);
+					}
+					else
+					{
+						propArray[i].setPropagated(true);
+					}
+					// now make sure any qualifiers are properly set
+					CIMQualifierArray parentQuals = parentProp.getQualifiers();
+					for (size_t j = 0; j < parentQuals.size(); ++j)
+					{
+						CIMQualifier& qual = parentQuals[j];
+						// If the qualifier has DisableOverride flavor, the
+						// subclass can't change it.  (e.g. Key). It gets the
+						// parent qualifier.
+						if (qual.hasFlavor(CIMFlavor::DISABLEOVERRIDE))
+						{
+							if (!propArray[i].getQualifier(qual.getName()))
+							{
+								propArray[i].addQualifier(qual);
+							}
+							else
+							{
+								// TODO: look at this message, it seems the dmtf cim schema causes it quite often.
+								// maybe we should only output it if the value is different?
+								Logger lgr(COMPONENT_NAME);
+								OW_LOG_INFO(lgr, Format("Warning: %1.%2: qualifier %3 was "
+											"overridden, but the qualifier can't be "
+											"overridden because it has DisableOverride flavor",
+											childClass.getName(), propArray[i].getName(),
+											qual.getName()));
+								propArray[i].setQualifier(qual);
+							}
+						}
+						// If the qualifier has ToSubclass (not Restricted), then
+						// only propagate it down if it's not overridden in the
+						// subclass.
+						else if (!qual.hasFlavor(CIMFlavor::RESTRICTED))
+						{
+							if (!propArray[i].getQualifier(qual.getName()))
+							{
+								propArray[i].addQualifier(qual);
+							}
+						}
+					}
+				}
+				else
+				{
+					propArray[i].setOriginClass(parentProp.getOriginClass());
+					propArray[i].setPropagated(true);
+				}
+			}
+			else
+			{
+				// According to the 2.2 spec. If the parent class has key properties,
+				// the child class cannot declare additional key properties.
+				if (propArray[i].isKey())
+				{
+					// This is a key property, so the parent class better not be a
+					// keyed class.
+					if (parentClass.isKeyed())
+					{
+						OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+								Format("Parent class has keys. Child cannot have additional"
+									" key properties: %1: %2", childClass.getName(), propArray[i].toMOF()).c_str());
+					}
+				}
+				propArray[i].setOriginClass(childName);
+				propArray[i].setPropagated(false);
+			}
+		}
+		childClass.setProperties(propArray);
+		CIMMethodArray methArray = childClass.getAllMethods();
+		for (size_t i = 0; i < methArray.size(); i++)
+		{
+			if (parentClass.getMethod(methArray[i].getName()) &&
+					!methArray[i].getQualifier(CIMQualifier::CIM_QUAL_OVERRIDE))
+			{
+				methArray[i].setOriginClass(parentName);
+				methArray[i].setPropagated(true);
+			}
+			else
+			{
+				methArray[i].setOriginClass(childName);
+				methArray[i].setPropagated(false);
+			}
+		}
+		childClass.setMethods(methArray);
+		if (parentClass.isKeyed())
+		{
+			childClass.setIsKeyed();
+		}
+		// Don't allow the child class to be an association if the parent class isn't.
+		// This shouldn't normally happen, because the association qualifier has
+		// a DISABLEOVERRIDE flavor, so it will be caught in an earlier test.
+		if (childClass.isAssociation() && !parentClass.isAssociation())
+		{
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+					Format("Association class is derived from non-association class: %1",
+						childClass.getName()).c_str());
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	void resolveClass(const String& ns, CIMClass& child)
+	{
+		// Determine if any properties are keys
+		CIMPropertyArray propArray = child.getAllProperties();
+		for (size_t i = 0; i < propArray.size(); i++)
+		{
+			if (propArray[i].isKey())
+			{
+				child.setIsKeyed(true);
+				break;
+			}
+		}
+		CIMClass parentClass(CIMNULL);
+		CIMName superID = child.getSuperClass();
+		// If class doesn't have a super class - don't propagate anything
+		if (superID == CIMName())
+		{
+			return;
+		}
+		parentClass = this->getClass(ns, superID.toString());
+		if (parentClass.isKeyed())
+		{
+			child.setIsKeyed(true);
+		}
+		// Propagate appropriate class qualifiers
+		CIMQualifierArray qualArray = parentClass.getQualifiers();
+		for (size_t i = 0; i < qualArray.size(); i++)
+		{
+			CIMQualifier qual = qualArray[i];
+			if (!qual.hasFlavor(CIMFlavor::RESTRICTED))
+			//if (qual.hasFlavor(CIMFlavor::TOSUBCLASS))
+			{
+				if (!child.hasQualifier(qual))
+				{
+					qual.setPropagated(true);
+					child.addQualifier(qual);
+				}
+			}
+		}
+		// Propagate Properties from parent class.
+		//
+		// TODO: Regardless of whether there is an override
+		// this will perform override like behavior - probably
+		// need to add validation code...
+		//
+		propArray = parentClass.getAllProperties();
+		for (size_t i = 0; i < propArray.size(); i++)
+		{
+			CIMProperty parentProp = propArray[i];
+			CIMProperty childProp = child.getProperty(parentProp.getName());
+			if (!childProp)
+			{
+				parentProp.setPropagated(true);
+				child.addProperty(parentProp);
+			}
+			else if (!childProp.getQualifier(CIMQualifier::CIM_QUAL_OVERRIDE))
+			{
+				//
+				// Propagate any qualifiers that have not been
+				// re-defined
+				//
+				qualArray = parentProp.getQualifiers();
+				for (size_t qi = 0; qi < qualArray.size(); qi++)
+				{
+					CIMQualifier parentQual = qualArray[qi];
+					if (!childProp.getQualifier(parentQual.getName()))
+					{
+						//
+						// Qualifier not defined on child property
+						// so propagate it
+						//
+						parentQual.setPropagated(true);
+						childProp.addQualifier(parentQual);
+					}
+				}
+				child.setProperty(childProp);
+			}
+		}
+		// Propagate methods from parent class
+		CIMMethodArray methods = parentClass.getAllMethods();
+		for (size_t i = 0; i < methods.size(); i++)
+		{
+			CIMMethod cm = methods[i];
+			CIMMethod childMethod = child.getMethod(methods[i].getName());
+			if (!childMethod)
+			{
+				cm.setPropagated(true);
+				child.addMethod(cm);
+			}
+			else if (!childMethod.getQualifier(CIMQualifier::CIM_QUAL_OVERRIDE))
+			{
+				//
+				// Propagate any qualifiers that have not been
+				// re-defined by the method declaration
+				//
+				qualArray = cm.getQualifiers();
+				for (size_t mi = 0; mi < qualArray.size(); mi++)
+				{
+					CIMQualifier methQual = qualArray[mi];
+					if (!childMethod.getQualifier(methQual.getName()))
+					{
+						methQual.setPropagated(true);
+						childMethod.addQualifier(methQual);
+					}
+				}
+				child.setMethod(childMethod);
+			}
+		}
+	}
+
 };
 
 class LoggerErrHandler : public ParserErrorHandlerIFC
@@ -539,7 +852,6 @@ void compileMOF(const String& mof, const CIMOMHandleIFCRef& realhdl, const Strin
 	long errors = comp.compileString(mof);
 	if (errors > 0)
 	{
-		// just report the first message, since anything else is too complicated :-{
 		StringBuffer errorStrs;
 		for (size_t i = 0; i < errHandler->errors.size(); ++i)
 		{

@@ -69,6 +69,7 @@ using namespace WBEMFlags;
 CIMRepository::CIMRepository()
 	: m_logger(COMPONENT_NAME)
 	, m_checkReferentialIntegrity(false)
+	, m_lockTimeout(Timeout::relative(String(OW_DEFAULT_READ_WRITE_LOCK_TIMEOUT).toReal32()))
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -160,6 +161,19 @@ CIMRepository::init(const ServiceEnvironmentIFCRef& env)
 		m_checkReferentialIntegrity = true;
 	}
 
+	String readWriteLockTimeoutConfigItem = m_env->getConfigItem(ConfigOpts::READ_WRITE_LOCK_TIMEOUT_opt, OW_DEFAULT_READ_WRITE_LOCK_TIMEOUT);
+	try
+	{
+		Real32 r = readWriteLockTimeoutConfigItem.toReal32();
+		OW_LOG_DEBUG2(m_logger, Format("CIMRepository::init() set the read/write lock timeout: %1", r));
+		m_lockTimeout = Timeout::relative(r);
+	}
+	catch (StringConversionException& e)
+	{
+		OW_LOG_ERROR(m_logger, Format("Invalid value for %1: %2. The default of %3 will be used.", 
+			ConfigOpts::READ_WRITE_LOCK_TIMEOUT_opt, readWriteLockTimeoutConfigItem, OW_DEFAULT_READ_WRITE_LOCK_TIMEOUT));
+	}
+
 	this->open(m_env->getConfigItem(ConfigOpts::DATADIR_opt, OW_DEFAULT_DATADIR));
 }
 
@@ -208,7 +222,7 @@ CIMRepository::createNameSpace(const String& ns,
 		OW_THROWCIMMSG(CIMException::FAILED, Format("Failed to create namespace %1", ns).c_str());
 	}
 
-	OW_LOG_DEBUG(m_logger, Format("CIMRepository created namespace: %1", ns));
+	OW_LOG_DEBUG2(m_logger, Format("CIMRepository created namespace: %1", ns));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -224,7 +238,7 @@ CIMRepository::deleteNameSpace(const String& ns,
 	m_iStore.deleteNameSpace(ns);
 	m_mStore.deleteNameSpace(ns);
 	
-	OW_LOG_DEBUG(m_logger, Format("CIMRepository deleted namespace: %1", ns));
+	OW_LOG_DEBUG2(m_logger, Format("CIMRepository deleted namespace: %1", ns));
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
@@ -246,7 +260,7 @@ CIMRepository::enumNameSpace(StringResultHandlerIFC& result,
 		result.handle(nsNode.getKey());
 		nsNode = hdl->getNextSibling(nsNode);
 	}
-	OW_LOG_DEBUG(m_logger, "CIMRepository enumerated namespaces");
+	OW_LOG_DEBUG2(m_logger, "CIMRepository enumerated namespaces");
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifierType
@@ -254,7 +268,7 @@ CIMRepository::getQualifierType(const String& ns,
 	const String& qualifierName,
 	OperationContext&)
 {
-	OW_LOG_DEBUG(m_logger, Format("CIMRepository getting qualifier type: %1",
+	OW_LOG_DEBUG2(m_logger, Format("CIMRepository getting qualifier type: %1",
 		CIMObjectPath(qualifierName,ns).toString()));
 	return m_mStore.getQualifierType(ns, qualifierName);
 }
@@ -267,7 +281,7 @@ CIMRepository::enumQualifierTypes(
 	OperationContext&)
 {
 	m_mStore.enumQualifierTypes(ns, result);
-	OW_LOG_DEBUG(m_logger, Format("CIMRepository enumerated qualifiers in namespace: %1", ns));
+	OW_LOG_DEBUG2(m_logger, Format("CIMRepository enumerated qualifiers in namespace: %1", ns));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -289,7 +303,7 @@ CIMRepository::deleteQualifierType(const String& ns, const String& qualName,
 		}
 	}
 	
-	OW_LOG_DEBUG(m_logger, Format("CIMRepository deleted qualifier type: %1 in namespace: %2", qualName, ns));
+	OW_LOG_DEBUG2(m_logger, Format("CIMRepository deleted qualifier type: %1 in namespace: %2", qualName, ns));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -298,7 +312,7 @@ CIMRepository::setQualifierType(
 	const CIMQualifierType& qt, OperationContext&)
 {
 	m_mStore.setQualifierType(ns, qt);
-	OW_LOG_DEBUG(m_logger, Format("CIMRepository set qualifier type: %1 in "
+	OW_LOG_DEBUG2(m_logger, Format("CIMRepository set qualifier type: %1 in "
 		"namespace: %2", qt.toString(), ns));
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
@@ -317,7 +331,7 @@ CIMRepository::getClass(
 			localOnly, includeQualifiers, includeClassOrigin, propertyList,
 			theClass);
 		checkGetClassRvalAndThrow(rval, ns, className);
-		OW_LOG_DEBUG(m_logger, Format("CIMRepository got class: %1 from "
+		OW_LOG_DEBUG2(m_logger, Format("CIMRepository got class: %1 from "
 			"namespace: %2", theClass.getName(), ns));
 		return theClass;
 	}
@@ -429,7 +443,7 @@ CIMRepository::deleteClass(const String& ns, const String& className,
 			E_EXCLUDE_CLASS_ORIGIN,
 			acl);
 		ccd.handle(cc);
-		OW_LOG_DEBUG(m_logger, Format("CIMRepository deleted class: %1 in "
+		OW_LOG_DEBUG2(m_logger, Format("CIMRepository deleted class: %1 in "
 			"namespace: %2", className, ns));
 		return cc;
 	}
@@ -492,7 +506,8 @@ CIMRepository::createClass(const String& ns, const CIMClass& cimClass_,
 			hdl.addEntries(ns,cimClass);
 		}
 #endif
-		OW_LOG_DEBUG(m_logger, Format("Created class: %1:%2", ns, cimClass.toMOF()));
+		OW_LOG_DEBUG2(m_logger, Format("Created class: %1:%2", ns, cimClass.getName()));
+		OW_LOG_DEBUG3(m_logger, Format("class = %1", cimClass.toMOF()));
 	}
 	catch (HDBException& e)
 	{
@@ -522,8 +537,8 @@ CIMRepository::modifyClass(
 		//			CLASS_HAS_INSTANCES CIMException.
 		m_mStore.modifyClass(ns, cc);
 		OW_ASSERT(origClass);
-		OW_LOG_DEBUG(m_logger, Format("Modified class: %1:%2 from %3 to %4", ns,
-			cc.getName(), origClass.toMOF(), cc.toMOF()));
+		OW_LOG_DEBUG2(m_logger, Format("Modified class: %1:%2", ns, cc.getName()));
+		OW_LOG_DEBUG3(m_logger, Format(" old:\n%1\nnew:\n%2", origClass.toMOF(), cc.toMOF()));
 		return origClass;
 	}
 	catch (HDBException& e)
@@ -549,7 +564,7 @@ CIMRepository::enumClasses(const String& ns,
 		m_mStore.enumClass(ns, className,
 			result, deep,
 			localOnly, includeQualifiers, includeClassOrigin);
-		OW_LOG_DEBUG(m_logger, Format("CIMRepository enumerated classes: %1:%2", ns,
+		OW_LOG_DEBUG2(m_logger, Format("CIMRepository enumerated classes: %1:%2", ns,
 			className));
 	}
 	catch (HDBException& e)
@@ -572,7 +587,7 @@ CIMRepository::enumClassNames(
 	try
 	{
 		m_mStore.enumClassNames(ns, className, result, deep);
-		OW_LOG_DEBUG(m_logger, Format("CIMRepository enumerated class names: %1:%2", ns,
+		OW_LOG_DEBUG2(m_logger, Format("CIMRepository enumerated class names: %1:%2", ns,
 			className));
 	}
 	catch (HDBException& e)
@@ -625,7 +640,7 @@ public:
 protected:
 	virtual void doHandle(const CIMClass &cc)
 	{
-		OW_LOG_DEBUG(m_lgr, Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
+		OW_LOG_DEBUG3(m_lgr, Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
 			cc.getName()));
 		m_iStore.getInstanceNames(ns, cc, result);
 	}
@@ -705,7 +720,7 @@ public:
 		CIMClass theClass = rep._instGetClass(ns, className);
 		rep.m_iStore.getCIMInstances(ns, className, theTopClass, theClass, result,
 			deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
-		OW_LOG_DEBUG(rep.m_logger, Format("CIMRepository Enumerated derived instances: %1:%2", ns, className));
+		OW_LOG_DEBUG2(rep.m_logger, Format("CIMRepository Enumerated derived instances: %1:%2", ns, className));
 	}
 private:
 	CIMRepository& rep;
@@ -863,8 +878,8 @@ CIMRepository::createInstance(
 	CIMObjectPath rval(ns, ci);
 	try
 	{
-		OW_LOG_DEBUG(m_logger, Format("CIMRepository::createInstance.  ns = %1, "
-			"instance = %2", ns, ci.toMOF()));
+		OW_LOG_DEBUG(m_logger, Format("CIMRepository::createInstance. path = %1", CIMObjectPath(ns, ci)));
+		OW_LOG_DEBUG3(m_logger, Format("CIMRepository::createInstance. instance = %1", ci.toMOF()));
 		CIMClass theClass = _instGetClass(ns, ci.getClassName());
 		if (m_checkReferentialIntegrity)
 		{
@@ -1043,6 +1058,17 @@ CIMRepository::getProperty(
 	return prop.getValue();
 }
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+//////////////////////////////////////////////////////////////////////
+RepositoryIFC::ELockType
+CIMRepository::getLockTypeForMethod(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& in, 
+	OperationContext& context)
+{
+	OW_THROWCIM(CIMException::NOT_SUPPORTED);
+}
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 CIMRepository::invokeMethod(
@@ -1060,6 +1086,18 @@ CIMRepository::execQuery(
 	CIMInstanceResultHandlerIFC&,
 	const String&,
 	const String&, OperationContext&)
+{
+	OW_THROWCIM(CIMException::NOT_SUPPORTED);
+}
+//////////////////////////////////////////////////////////////////////
+void
+CIMRepository::enumInstancesWQL(
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result,
+	const WQLSelectStatement& wss,
+	const WQLCompile& wc,
+	OperationContext& context)
 {
 	OW_THROWCIM(CIMException::NOT_SUPPORTED);
 }
@@ -1609,7 +1647,7 @@ CIMRepository::_staticReferencesClass(const CIMObjectPath& path,
 	CIMObjectPath curPath = path;
 	while (curClsName != CIMName())
 	{
-		OW_LOG_DEBUG(m_logger, Format("curPath = %1", curPath.toString()));
+		OW_LOG_DEBUG3(m_logger, Format("curPath = %1", curPath.toString()));
 		if (popresult != 0)
 		{
 			staticReferencesObjectPathResultHandler handler(*popresult);
@@ -1825,7 +1863,7 @@ CIMRepository::_validatePropagatedKeys(OperationContext& context, const String& 
 		// since we don't know what class the keys refer to, we get all subclasses
 		// and try calling getInstance for each to see if we can find one with
 		// the matching keys.
-		OW_LOG_DEBUG(m_logger, Format("Getting class children of: %1", clsname));
+		OW_LOG_DEBUG3(m_logger, Format("Getting class children of: %1", clsname));
 		CIMNameArray classes = getClassChildren(m_mStore, ns,
 			clsname);
 		classes.push_back(clsname);
@@ -1834,7 +1872,7 @@ CIMRepository::_validatePropagatedKeys(OperationContext& context, const String& 
 		for (size_t i = 0; i < classes.size(); ++i)
 		{
 			op.setClassName(classes[i]);
-			OW_LOG_DEBUG(m_logger, Format("Trying getInstance of: %1", op.toString()));
+			OW_LOG_DEBUG3(m_logger, Format("Trying getInstance of: %1", op.toString()));
 			try
 			{
 				m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS)->getInstance(ns, op);
@@ -1856,12 +1894,6 @@ CIMRepository::_validatePropagatedKeys(OperationContext& context, const String& 
 	}
 }
 
-namespace
-{
-// TODO: Make this configurable?  Maybe even a parameter that can be specifed by the client on each request?
-const Timeout LockTimeout = Timeout::relative(300); // 5 mins.
-}
-
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
@@ -1874,10 +1906,10 @@ CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& co
 	case E_CREATE_INSTANCE:
 	case E_MODIFY_INSTANCE:
 	case E_SET_PROPERTY:
-	case E_INVOKE_METHOD:
+	case E_INVOKE_METHOD_WRITE_LOCK:
 	case E_EXEC_QUERY:
-		m_schemaLock.getWriteLock(LockTimeout);
-		m_instanceLock.getWriteLock(LockTimeout);
+		m_schemaLock.acquireWriteLock(context.getOperationId(), m_lockTimeout);
+		m_instanceLock.acquireWriteLock(context.getOperationId(), m_lockTimeout);
 		break;
 	case E_ENUM_NAMESPACE:
 	case E_GET_QUALIFIER_TYPE:
@@ -1887,14 +1919,14 @@ CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& co
 	case E_ENUM_CLASS_NAMES:
 	case E_ASSOCIATORS_CLASSES:
 	case E_REFERENCES_CLASSES:
-		m_schemaLock.getReadLock(LockTimeout);
+		m_schemaLock.acquireReadLock(context.getOperationId(), m_lockTimeout);
 		break;
 	case E_DELETE_QUALIFIER_TYPE:
 	case E_SET_QUALIFIER_TYPE:
 	case E_DELETE_CLASS:
 	case E_CREATE_CLASS:
 	case E_MODIFY_CLASS:
-		m_schemaLock.getWriteLock(LockTimeout);
+		m_schemaLock.acquireWriteLock(context.getOperationId(), m_lockTimeout);
 		break;
 	case E_ENUM_INSTANCES:
 	case E_ENUM_INSTANCE_NAMES:
@@ -1904,10 +1936,12 @@ CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& co
 	case E_ASSOCIATORS:
 	case E_REFERENCE_NAMES:
 	case E_REFERENCES:
-		m_schemaLock.getReadLock(LockTimeout);
-		m_instanceLock.getReadLock(LockTimeout);
+	case E_INVOKE_METHOD_READ_LOCK:
+		m_schemaLock.acquireReadLock(context.getOperationId(), m_lockTimeout);
+		m_instanceLock.acquireReadLock(context.getOperationId(), m_lockTimeout);
 		break;
 	case E_EXPORT_INDICATION:
+	case E_INVOKE_METHOD_NO_LOCK:
 	default:
 		break;
 	}
@@ -1925,10 +1959,10 @@ CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& cont
 	case E_CREATE_INSTANCE:
 	case E_MODIFY_INSTANCE:
 	case E_SET_PROPERTY:
-	case E_INVOKE_METHOD:
+	case E_INVOKE_METHOD_WRITE_LOCK:
 	case E_EXEC_QUERY:
-		m_instanceLock.releaseWriteLock();
-		m_schemaLock.releaseWriteLock();
+		m_instanceLock.releaseWriteLock(context.getOperationId());
+		m_schemaLock.releaseWriteLock(context.getOperationId());
 		break;
 	case E_ENUM_NAMESPACE:
 	case E_GET_QUALIFIER_TYPE:
@@ -1938,14 +1972,14 @@ CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& cont
 	case E_ENUM_CLASS_NAMES:
 	case E_ASSOCIATORS_CLASSES:
 	case E_REFERENCES_CLASSES:
-		m_schemaLock.releaseReadLock();
+		m_schemaLock.releaseReadLock(context.getOperationId());
 		break;
 	case E_DELETE_QUALIFIER_TYPE:
 	case E_SET_QUALIFIER_TYPE:
 	case E_DELETE_CLASS:
 	case E_CREATE_CLASS:
 	case E_MODIFY_CLASS:
-		m_schemaLock.releaseWriteLock();
+		m_schemaLock.releaseWriteLock(context.getOperationId());
 		break;
 	case E_ENUM_INSTANCES:
 	case E_ENUM_INSTANCE_NAMES:
@@ -1955,15 +1989,30 @@ CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& cont
 	case E_ASSOCIATORS:
 	case E_REFERENCE_NAMES:
 	case E_REFERENCES:
-		m_instanceLock.releaseReadLock();
-		m_schemaLock.releaseReadLock();
+	case E_INVOKE_METHOD_READ_LOCK:
+		m_instanceLock.releaseReadLock(context.getOperationId());
+		m_schemaLock.releaseReadLock(context.getOperationId());
 		break;
 	case E_EXPORT_INDICATION:
+	case E_INVOKE_METHOD_NO_LOCK:
 	default:
 		break;
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+unsigned CIMRepository::checkFreeLists()
+{
+	unsigned retval = 0;
+	retval |= static_cast<unsigned>(!m_nStore.checkFreeList()) << 0;
+	retval |= static_cast<unsigned>(!m_iStore.checkFreeList()) << 1;
+	retval |= static_cast<unsigned>(!m_mStore.checkFreeList()) << 2;
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+	retval |= static_cast<unsigned>(!m_classAssocDb.checkFreeList()) << 3;
+	retval |= static_cast<unsigned>(!m_instAssocDb.checkFreeList()) << 4;
+#endif
+	return retval;
+}
 
 const char* const CIMRepository::INST_REPOS_NAME = "instances";
 const char* const CIMRepository::META_REPOS_NAME = "schema";

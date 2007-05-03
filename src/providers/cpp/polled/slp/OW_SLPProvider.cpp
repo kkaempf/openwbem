@@ -112,9 +112,7 @@ public:
 			return 0;
 		}
 		Int32 rval = INITIAL_POLLING_INTERVAL;
-		OW_LOG_DEBUG(Logger(COMPONENT_NAME), Format(
-			"SLPProvider::getInitialPollingInterval returning %1",
-			INITIAL_POLLING_INTERVAL).c_str());
+		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), Format("SLPProvider::getInitialPollingInterval returning %1", INITIAL_POLLING_INTERVAL).c_str());
 		m_httpsPort = env->getConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, OW_DEFAULT_HTTP_SERVER_HTTPS_PORT);
 		m_httpPort = env->getConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, OW_DEFAULT_HTTP_SERVER_HTTP_PORT);
 		Int32 httpsPort = 0, httpPort = 0;
@@ -347,13 +345,11 @@ private:
 				0);						
 			if (err != SLP_OK)
 			{
-				OW_LOG_ERROR(lgr, Format("cimom failed to register url with SLP: %1",
-					urlString).c_str());
+				OW_LOG_ERROR(lgr, Format("cimom failed to register url with SLP: %1", urlString).c_str());
 			}
 			else
 			{
-				OW_LOG_DEBUG(lgr, Format("cimom registered service url with SLP: %1",
-					urlString).c_str());
+				OW_LOG_DEBUG(lgr, Format("cimom registered service url with SLP: %1", urlString).c_str());
 			}
 		}
 	}

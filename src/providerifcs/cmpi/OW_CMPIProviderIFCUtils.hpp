@@ -33,9 +33,19 @@
 #ifndef OW_CMPI_PROFIDER_IFC_UTILS_HPP_
 #define OW_CMPI_PROFIDER_IFC_UTILS_HPP_
 #include "OW_config.h"
+#include "OW_WBEMFlags.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 
 namespace OW_NAMESPACE
 {
+using namespace WBEMFlags;
+void CMPIPrepareContext(
+	const ProviderEnvironmentIFCRef& env,
+	CMPI_ContextOnStack& eCtx,
+	ELocalOnlyFlag localOnly=E_NOT_LOCAL_ONLY,
+	EDeepFlag deep=E_SHALLOW,
+	EIncludeQualifiersFlag includeQualifiers=E_EXCLUDE_QUALIFIERS,
+	EIncludeClassOriginFlag includeClassOrigin=E_EXCLUDE_CLASS_ORIGIN);
 
 //#include "CMPIExternal.hpp"
 #if 0

@@ -105,7 +105,12 @@ bool IPCIO::sgetn(
 		ssize_t n;
 		for (nr = 0; nr < count; nr += n)
 		{
+#ifdef BLOCXX_WIN32
+#pragma message(Reminder "TODO: It's necessary to implement for Win correctly to remove 'reinterpret_cast'!")
+			n = ::read(reinterpret_cast<int>(m_pipe->getInputDescriptor()), buf + nr, count - nr);
+#else
 			n = ::read(m_pipe->getInputDescriptor(), buf + nr, count - nr);
+#endif
 			if (n == 0)
 			{
 				break;
@@ -150,13 +155,13 @@ void IPCIO::sputn(char const * buf, std::streamsize count)
 // For Unix, FileHandle and int should be the same type.  The argument is
 // declared as an int here because the code assumes the argument is an int.
 //
-void IPCIO::put_handle(int descr)
+void IPCIO::put_handle(FileHandle descr)
 {
 	this->put_sync();
 
 	try
 	{
-		m_pipe->passDescriptor(descr);
+		m_pipe->passDescriptor(descr, m_pipe);
 	}
 	catch(IOException& e)
 	{
@@ -173,7 +178,7 @@ AutoDescriptor IPCIO::get_handle()
 
 	try
 	{
-		return m_pipe->receiveDescriptor();
+		return m_pipe->receiveDescriptor(m_pipe);
 	}
 	RETHROW_IOEXCEPTION("IPCIO::get_handle")
 }
@@ -234,7 +239,7 @@ bool ipcio_get(
 	{
 		return false;
 	}
-	std::size_t read_len = std::min(len, max_len);
+	std::size_t read_len = (std::min)(len, max_len);
 	AutoPtrVec<char> buf(new char[read_len + 1]);
 	io.sgetn(buf.get(), read_len, IPCIO::E_THROW_ON_EOF, eb);
 	buf[read_len] = '\0';
@@ -244,7 +249,7 @@ bool ipcio_get(
 	{
 		std::size_t const SKIPBUFSZ = 4096;
 		char skipbuf[SKIPBUFSZ];
-		read_len = std::min(len, SKIPBUFSZ);
+		read_len = (std::min)(len, SKIPBUFSZ);
 		io.sgetn(skipbuf, read_len, IPCIO::E_THROW_ON_EOF, eb);
 	}
 

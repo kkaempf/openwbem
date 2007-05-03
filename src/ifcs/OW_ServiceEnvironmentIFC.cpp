@@ -128,8 +128,7 @@ ServiceEnvironmentIFC::authenticate(String& userName, const String& info, String
 ///////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 ServiceEnvironmentIFC::getCIMOMHandle(OperationContext& context,
-	EBypassProvidersFlag bypassProviders,
-	ELockingFlag locking) const
+	EBypassProvidersFlag bypassProviders) const
 {
 	OW_ASSERTMSG(0, "getCIMOMHandle Not Implemented");
 	return CIMOMHandleIFCRef();

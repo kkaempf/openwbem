@@ -39,7 +39,7 @@ namespace
 static CMPIInstance* mbEncNewInstance(const CMPIBroker*, const CMPIObjectPath* eCop,
 						 CMPIStatus *rc)
 {
-	OW_LOG_DEBUG(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewInstance()");
+	OW_LOG_DEBUG3(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewInstance()");
 
 	OpenWBEM::CIMObjectPath * cop = static_cast<OpenWBEM::CIMObjectPath *>(eCop->hdl);
 
@@ -72,7 +72,7 @@ static CMPIInstance* mbEncNewInstance(const CMPIBroker*, const CMPIObjectPath* e
 static CMPIObjectPath* mbEncNewObjectPath(const CMPIBroker*, const char *ns, const char *cls,
 				  CMPIStatus *rc)
 {
-	OW_LOG_DEBUG(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewObjectPath()");
+	OW_LOG_DEBUG3(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewObjectPath()");
 	OpenWBEM::String className(cls);
 	OpenWBEM::String nameSpace(ns);
 	OpenWBEM::CIMObjectPath * cop = new OpenWBEM::CIMObjectPath(className,nameSpace);
@@ -101,7 +101,7 @@ CMPIString* mbIntNewString(char *s) {
 static CMPIArray* mbEncNewArray(const CMPIBroker*, CMPICount count, CMPIType type,
 								CMPIStatus *rc)
 {
-	OW_LOG_DEBUG(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewArray()");
+	OW_LOG_DEBUG3(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewArray()");
 	CMSetStatus(rc,CMPI_RC_OK);
 	CMPIData * dta = new CMPIData[count+1];
 	dta->type = type;
@@ -375,21 +375,53 @@ CMPIString* mbEncGetMessage(const CMPIBroker *, const char *msgId, const char *d
 
 CMPIStatus mbEncLogMessage(const CMPIBroker* mb, int severity, 
 						   const char* id, const char* text, 
-						   const CMPIString* string)
+						   const CMPIString* stringArg)
 {
-	// TODO
-	CMPIStatus rc; 
-	rc.rc = CMPI_RC_ERR_METHOD_NOT_AVAILABLE; 
+	CMPIStatus rc = {CMPI_RC_OK, NULL};
+	const char* pid = (id) ? id : "";
+	const char* msg = text;
+
+	if (!msg && stringArg)
+	{
+		msg = CMGetCharPtr(stringArg);
+		//msg = stringGetCharPtr(stringArg, &rc);
+	}
+
+	if (msg)
+	{
+		if (!id)
+		{
+			id = COMPONENT_NAME.c_str();
+		}
+
+		OpenWBEM::Logger lgr(id);
+		switch (severity)
+		{
+			case 1:		// Info
+				OW_LOG_INFO(lgr, msg);
+				break;
+			case 2:		// Warning (No WARNING in OW)
+				OW_LOG_ERROR(lgr, msg);
+				break;
+			case 3:		// Severe
+				OW_LOG_ERROR(lgr, msg);
+				break;
+			case 4:		// Fatal
+				OW_LOG_FATAL_ERROR(lgr, msg);
+				break;
+			default:
+				rc.rc = CMPI_RC_ERR_INVALID_PARAMETER;
+				break;
+		}
+	}
+
 	return rc; 
 }
 
 CMPIStatus mbEncTrace(const CMPIBroker* mb, int level, const char* component, 
-					  const char* text, const CMPIString* string)
+					  const char* text, const CMPIString* stringArg)
 {
-	// TODO
-	CMPIStatus rc; 
-	rc.rc = CMPI_RC_ERR_METHOD_NOT_AVAILABLE; 
-	return rc; 
+	return mbEncLogMessage(mb, level, component, text, stringArg);
 }
 
 

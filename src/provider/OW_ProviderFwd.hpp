@@ -75,6 +75,9 @@ class IndicationExportProviderIFC;
 typedef IntrusiveReference<IndicationExportProviderIFC> IndicationExportProviderIFCRef;
 typedef Array<IndicationExportProviderIFCRef> IndicationExportProviderIFCRefArray;
 
+class QueryProviderIFC;
+typedef IntrusiveReference<QueryProviderIFC> QueryProviderIFCRef;
+class QueryProviderInfo;
 
 } // end namespace OW_NAMESPACE
 

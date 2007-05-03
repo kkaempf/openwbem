@@ -53,8 +53,8 @@ namespace OW_NAMESPACE
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 LocalEmbeddedCIMOMHandle::LocalEmbeddedCIMOMHandle(EmbeddedCIMOMEnvironmentRef env,
-	RepositoryIFCRef pRepos, OperationContext& context, ELockingFlag lock)
-	: RepositoryCIMOMHandle(pRepos, context, lock)
+	RepositoryIFCRef pRepos, OperationContext& context)
+	: RepositoryCIMOMHandle(pRepos, context)
 	, m_env(env)
 {
 }

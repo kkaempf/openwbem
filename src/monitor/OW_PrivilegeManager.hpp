@@ -4,6 +4,7 @@
 /*******************************************************************************
 * Copyright (c) 2002, Networks Associates, Inc. All rights reserved.
 * Copyright (C) 2005, Quest Software, Inc. All rights reserved.
+* Copyright (C) 2006, Novell, Inc. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -13,7 +14,8 @@
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of the Network Associates, nor Quest Software, Inc., nor the
+*     * Neither the name of the Network Associates, 
+*       nor Quest Software, Inc., nor Novell, Inc., nor the
 *       names of its contributors or employees may be used to endorse or promote
 *       products derived from this software without specific prior written
 *       permission.
@@ -36,6 +38,7 @@
  * @author Douglas Kilpatrick (privman.h)
  * @author Lee Badger (privman.h)
  * @author Dan Nuffer
+ * @author Bart Whiteley
  */
 
 #include "OW_config.h"
@@ -45,7 +48,6 @@
 #include "OW_LoggerSpec.hpp"
 #include "OW_PrivManOpenFlags.h"
 #include "OW_Process.hpp"
-#include "OW_RefCountedPimpl.hpp"
 #include "OW_Types.hpp"
 #include "OW_AutoDescriptor.hpp"
 
@@ -55,6 +57,9 @@ namespace OW_NAMESPACE
 class PrivilegeManagerImpl;
 
 OW_DECLARE_EXCEPTION(PrivilegeManager);
+OW_DECLARE_EXCEPTION2(FatalPrivilegeManager, PrivilegeManagerException);
+OW_DECLARE_EXCEPTION2(MonitorCommunication, FatalPrivilegeManagerException);
+OW_DECLARE_EXCEPTION2(InsufficientPrivileges, FatalPrivilegeManagerException);
 
 /**
 * This class implements the privilege separation scheme described in these two
@@ -72,7 +77,7 @@ OW_DECLARE_EXCEPTION(PrivilegeManager);
 * one PrivilegeManagerImpl instance, which all PrivilegeManager instances
 * share.
 */
-class PrivilegeManager : private RefCountedPimpl<PrivilegeManagerImpl>
+class OW_MONITOR_API PrivilegeManager
 {
 public:
 	// Whether or not to pass LD_LIBRARY_PATH (or platform's equivalent)
@@ -84,9 +89,9 @@ public:
 	/**
 	* Null PrivilegeManager object suitable only for reassigning.
 	*/
-	PrivilegeManager()
-	{
-	}
+	PrivilegeManager();
+	PrivilegeManager(const PrivilegeManager& x);
+	PrivilegeManager& operator=(const PrivilegeManager& x);
 
 	bool isNull() const;
 
@@ -135,7 +140,7 @@ public:
 	static PrivilegeManager createMonitor(
 		char const * config_dir, char const * app_name,
 		char const * user_name = 0, LoggerSpec const * plogspec = 0
-	)
+		)
 	{
 		return setInstance(PrivilegeManager::init(config_dir, app_name, user_name, plogspec));
 	}
@@ -153,10 +158,10 @@ public:
 	{
 		return setInstance(
 			PrivilegeManager::init(
-				Cstr::to_char_ptr(config_dir),
-				Cstr::to_char_ptr(app_name),
-				Cstr::to_char_ptr(user_name),
-				plogspec));
+			Cstr::to_char_ptr(config_dir),
+			Cstr::to_char_ptr(app_name),
+			Cstr::to_char_ptr(user_name),
+			plogspec));
 	}
 
 	/**
@@ -200,7 +205,11 @@ public:
 		in_out       = in | out,
 		in_out_trunc = in | out | trunc,
 		in_out_app   = in | out | app,
-		iota         = in | out | trunc | app
+		iota         = in | out | trunc | app,
+
+		// These flags are used only with the posix open() function.  Their use
+		// should be considered non-portable.
+		posix_nonblock = 1 << 6
 	};
 
 	enum OpenPerms
@@ -218,9 +227,10 @@ public:
 		user_rx     = user_read | user_exec,
 		user_all    = user_read | user_write | user_exec,
 		other_rw    = other_read | other_write,
-        other_rx    = other_read | other_exec,
+		other_rx    = other_read | other_exec,
 		other_all   = other_read | other_write | other_exec
 	};
+
 
 	/**
 	* Used to access a file that requires special privileges to read or write.
@@ -274,6 +284,27 @@ public:
 	enum ReadDirOptions
 	{
 		E_KEEP_SPECIAL, E_OMIT_SPECIAL
+	};
+
+
+	// An enum that describes what type of error is stored in the error code.
+	// Any error with an error code less than MONITOR_ERROR_START can be assumed
+	// to be an errno.  Everything equal or greater to MONITOR_FATAL_ERROR_START
+	// should be assume to be a fatal monitor error, most likely due to errors
+	// in privileges or security.
+	enum ErrorCodes
+	{
+		MONITOR_ERROR_START = 65536,
+		E_UNKNOWN,
+		E_OPERATION_FAILED,
+		MONITOR_FATAL_ERROR_START = MONITOR_ERROR_START * 2,
+		E_INVALID_OPERATION,
+		E_INVALID_PATH,
+		E_INVALID_SIZE,
+		E_INVALID_PARAMETER,
+		E_INVALID_SECURITY,
+		E_INSUFFICIENT_PRIVILEGES,
+		E_ALREADY_INITIALIZED
 	};
 
 	/**
@@ -412,7 +443,7 @@ public:
 		char const * exec_path,
 		char const * app_name,
 		char const * const argv[], char const * const envp[]
-	);
+		);
 
 	/**
 	* Variant of @c monitoredSpawn for which @a exec_path and @a appname have
@@ -429,15 +460,85 @@ public:
 	ProcessRef monitoredSpawn(
 		S1 const & exec_path, S2 const & appname,
 		SA1 const & argv, SA2 const & envp
-	)
+		)
 	{
 		Cstr::CstrArr<SA1> sa_argv(argv);
 		Cstr::CstrArr<SA2> sa_envp(envp);
 		return this->monitoredSpawn(
 			Cstr::to_char_ptr(exec_path), Cstr::to_char_ptr(appname),
 			sa_argv.sarr, sa_envp.sarr
-		);
+			);
 	}
+
+	/**
+	* Spawns a monitored child process running as the same user as the calling
+	* process.  The monitor runs as the specified user.
+	*
+	* @return A @c Process object for the child process.
+	*
+	* @param exec_path Absolute path of the executable to run in the child
+	* process.
+	*
+	* @param app_name The name of the privilege configuration file or directory used by the
+	* child process.  This is looked for in the same configuration directory
+	* that was specified when the PrivilegeManager instance was created.
+	* 
+	* @param argv Null-terminated argument list for the child process.
+	* (@see Exec::spawn for details).
+	*
+	* @param envp The null-terminated environment for the child process.
+	* (@see Exec::spawn for details).
+	*
+	* @param user The monitor for the child process runs as this user.
+	* If @a user is null or empty, the monitor runs as the
+	* same user as the calling process. There must be an entry for
+	* @a user in the password file.
+	*
+	* @pre Caller must have @c monitored_user_spawn privilege for
+	* (@a exec_path, @a app_name).
+	*
+	* @pre The unprivileged user specified in file @a app_name must have
+	* execute permission on @a exec_path (including necessary permissions
+	* to traverse the path).
+	*
+	* @pre Both @a exec_path and the configuration file specified by
+	* @a app_name must be secure.
+	*
+	* @throw PrivilegeManagerException
+	* @throw IPCIOException
+	*/
+	ProcessRef monitoredUserSpawn(
+		char const * exec_path,
+		char const * app_name,
+		char const * const argv[], char const * const envp[],
+		char const * user
+		);
+
+	/**
+	* Variant of @c monitoredUserSpawn for which @a exec_path and @a
+	* appname have arbitrary string-like types, and @a argv and @a
+	* envp have arbitrary string-array-like types.
+	*
+	* @pre @a S1, S2, and S3 are types for which
+	* <tt>Cstr::to_char_ptr</tt> is defined.
+	*
+	* @pre Specializations of the <tt>Cstr::CstrArr</tt> class template are
+	* defined for types @a SA1 and @a SA2.
+	*/
+	template <typename S1, typename S2, typename SA1, typename SA2, typename S3>
+	ProcessRef monitoredUserSpawn(
+		S1 const & exec_path, S2 const & appname,
+		SA1 const & argv, SA2 const & envp, S3 const & user
+		)
+	{
+		Cstr::CstrArr<SA1> sa_argv(argv);
+		Cstr::CstrArr<SA2> sa_envp(envp);
+		return this->monitoredUserSpawn(
+			Cstr::to_char_ptr(exec_path), Cstr::to_char_ptr(appname),
+			sa_argv.sarr, sa_envp.sarr, Cstr::to_char_ptr(user)
+			);
+	}
+
 
 	/**
 	* Spawns a child process that has no monitor.
@@ -475,7 +576,7 @@ public:
 		char const * const argv[], char const * const envp[],
 		char const * user,
 		char const * working_dir = 0
-	);
+		);
 
 	/**
 	* A variant of @c userSpawn for which @a execpath and @a user
@@ -492,14 +593,14 @@ public:
 	ProcessRef userSpawn(
 		S1 const & execpath, SA1 const & argv, SA2 const & envp,
 		S2 const & user, S3 const & working_dir
-	)
+		)
 	{
 		Cstr::CstrArr<SA1> sa_argv(argv);
 		Cstr::CstrArr<SA2> sa_envp(envp);
 		return this->userSpawn(
 			Cstr::to_char_ptr(execpath), sa_argv.sarr, sa_envp.sarr,
 			Cstr::to_char_ptr(user), Cstr::to_char_ptr(working_dir)
-		);
+			);
 	}
 
 	// Default arguments don't work if type of default argument is a template
@@ -510,7 +611,7 @@ public:
 	inline ProcessRef userSpawn(
 		S1 const & execpath, SA1 const & argv, SA2 const & envp,
 		S2 const & user
-	)
+		)
 	{
 		return userSpawn(execpath, argv, envp, user, (char const *)0);
 	}
@@ -529,6 +630,8 @@ private:
 		LoggerSpec const * plogspec);
 
 	PrivilegeManager(PrivilegeManagerImpl * p_impl);
+	IntrusiveReference<PrivilegeManagerImpl> m_impl;
+	PrivilegeManagerImpl *pimpl() const;
 };
 
 } // namespace OW_NAMESPACE

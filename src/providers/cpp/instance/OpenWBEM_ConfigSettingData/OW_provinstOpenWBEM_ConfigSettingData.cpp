@@ -87,7 +87,7 @@ public:
 		const CIMClass& cimClass )
 	{
 		(void)cimClass;
-		OW_LOG_DEBUG(Logger(COMPONENT_NAME), "In OpenWBEM_ConfigSettingDataInstProv::enumInstanceNames");
+		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In OpenWBEM_ConfigSettingDataInstProv::enumInstanceNames");
 
 		if (mapNeedsLoad(getConfigFile(env)))
 		{
@@ -120,7 +120,7 @@ public:
 		const CIMClass& cimClass )
 	{
 		(void)ns;
-		OW_LOG_DEBUG(Logger(COMPONENT_NAME), "In OpenWBEM_ConfigSettingDataInstProv::getInstance");
+		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In OpenWBEM_ConfigSettingDataInstProv::getInstance");
 
 		if (mapNeedsLoad(getConfigFile(env)))
 		{
@@ -189,7 +189,7 @@ public:
 		(void)ns;
 		(void)includeQualifiers;
 		(void)theClass;
-		OW_LOG_DEBUG(Logger(COMPONENT_NAME), "In OpenWBEM_ConfigSettingDataInstProv::modifyInstance");
+		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In OpenWBEM_ConfigSettingDataInstProv::modifyInstance");
 
 		if (propertyList)
 		{

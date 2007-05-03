@@ -60,5 +60,6 @@ RepositoryIFC::exportIndication(const CIMInstance&, const String&)
 {
 }
 
+
 } // end namespace OW_NAMESPACE
 

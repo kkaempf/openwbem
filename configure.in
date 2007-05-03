@@ -1,5 +1,5 @@
 AC_PREREQ([2.57])
-AC_INIT(OpenWBEM, 4.0.1, openwbem-public@lists.sourceforge.net)
+AC_INIT(OpenWBEM, 4.0.2, openwbem-public@lists.sourceforge.net)
 dnl When we implement --help and --version for all installed binaries, use the std-options option
 dnl AM_INIT_AUTOMAKE([foreign dist-bzip2 std-options 1.6.3])
 
@@ -26,6 +26,14 @@ OW_INCLUDE_M4(m4/prefix_config.m4)        dnl Macros involved in prefixing all #
 OW_INCLUDE_M4(m4/type_checks.m4)          dnl Macros for checking various types.
 OW_INCLUDE_M4(m4/hacks.m4)
 OW_INCLUDE_M4(m4/pushpop.m4)              dnl Macros for stack operations -- pushing and popping variables.
+OW_INCLUDE_M4(m4/krb5.m4)                 dnl Macros for krb5
+OW_INCLUDE_M4(m4/gssapi.m4)               dnl Macros for detecting the presence and functionality of gssapi with spnego.
+OW_INCLUDE_M4(m4/ssl.m4)                  dnl Macros for ssl
+OW_INCLUDE_M4(m4/pthread.m4)              dnl Macros for threading
+OW_INCLUDE_M4(m4/vas.m4)                  dnl Macros for vas
+OW_INCLUDE_M4(m4/blocxx.m4)               dnl Macros for blocxx
+OW_INCLUDE_M4(m4/dirs.m4)                 dnl Macros for setting default directories and directory name manipulation.
+OW_INCLUDE_M4(m4/replacement.m4)          dnl Macros for creating replacement scripts
 
 # A hack to alter autoconf to always treat all files as obsolete, and rebuild
 # the configure script any time the dependencies are modified.
@@ -48,7 +56,6 @@ AC_SUBST(OPENWBEM_VERSION)
 AC_DEFINE_UNQUOTED(OPENWBEM_VERSION, ($OPENWBEM_MAJOR_VERSION*10000 + $OPENWBEM_MINOR_VERSION*100 + $OPENWBEM_MICRO_VERSION), [OpenWBEM Version])
 AC_SUBST(OPENWBEM_LIBRARY_VERSION)
 AC_DEFINE_UNQUOTED(OPENWBEM_LIBRARY_VERSION, $OPENWBEM_LIBRARY_VERSION, [OpenWBEM Library Version])
-
 
 AM_MAINTAINER_MODE
 
@@ -96,21 +103,6 @@ OW_SAVE_FLAGS
 CFLAGS="$CFLAGS $perl_embed_ccflags"
 LDFLAGS="$LDFLAGS $perl_embed_ldflags"
 
-ENABLE_PPIFC=no
-OW_VERIFY_ENABLE_SUPPORT(perl-providerifc,
-	AC_LANG_PROGRAM(
-		[
-			#include <EXTERN.h>
-			#include <perl.h>
-		],
-		[
-		]
-	),
-	ENABLE_PPIFC=yes,
-	ENABLE_PPIFC=yes
-)
-AM_CONDITIONAL([ENABLE_PERL_PROVIDERIFC],[test x$ENABLE_PPIFC = xyes])
-
 # This is a near duplicate of the above perl-providerifc test.  It is provided
 # here so that they can be enabled/disabled independently, like they were
 # before.
@@ -136,8 +128,16 @@ DYNAMIC_LINK_FLAGS=
 DYNAMIC_EXPORT_FLAG=
 RPATH_LINK_FLAG=
 RPATH_LINK_FLAG_REQUIRED=0
+RPATH_SEPARATOR=
 RPATH_DEFAULT_PATH=
 REALTIME_LIBS=
+ICONV_LIB=
+RPATH_PREFERS_FIRST_OPTION=0
+
+# 64-bit flags are not needed on most platforms.  These will be added to the
+# C*FLAGS if --enable-64-bit-build is used.
+CFLAG_ADD_64_BIT=
+LDFLAG_ADD_64_BIT=
 
 echo "Setting host specific flags..."
 
@@ -158,6 +158,7 @@ case "$target" in
 	AIX_COMMON_CFLAGS="-D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -D_XOPEN_SOURCE=500 -D_ALL_SOURCE=1"
 	AIX_COMMON_LFLAGS="-L/usr/lib/threads"
 	RPATH_DEFAULT_PATH="/usr/lib:"
+	RPATH_SEPARATOR=":"
 
 	# This figures out which compiler is invoked, and sets the default flags based on that.
 	AIX_COMPILER=`basename $CXX`
@@ -177,13 +178,12 @@ case "$target" in
 		PLAT_CXXFLAGS="$AIX_COMMON_CFLAGS -qrtti=all"
 		CBINLINKFLAGS="-brtl -Wl,-bh:5"
 		CXXCOMMONLINKFLAGS="-brtl"
-		CXXBINLINKFLAGS="-Wl,-bh:5"
-		STATIC_LINK_FLAGS="-bstatic"
-		DYNAMIC_LINK_FLAGS="-bdynamic"
+		STATIC_LINK_FLAGS="-Wl,-bstatic"
+		DYNAMIC_LINK_FLAGS="-Wl,-bdynamic"
+		CXXBINLINKFLAGS="$AIX_COMMON_LFLAGS $DYNAMIC_LINK_FLAGS -lpthread -qthreaded"
 		RPATH_LINK_FLAG="-blibpath:"
-		# This is a bad hack, as it includes an export using GNU make (others?)
-		# substitutions. 
-		CXXSHAREDLIBLINKFLAGS='-bdynamic -G -qmkshrobj -bnoentry  -Wl,-bso'
+		CXXSHAREDLIBLINKFLAGS='-qmkshrobj -G'
+		STATIC_SERVICES=""
 #-bexport:$(@:%.so=%.exp)
 		DO_NOT_USE_DASH_PTHREAD=1
 		DYNAMIC_EXPORT_FLAG=-bexpall
@@ -290,13 +290,37 @@ case "$target" in
 	PLAT_CFLAGS="+Z -mt -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1"
 	PLAT_CXXFLAGS="-AA +Z -mt +p -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1 -D__HPACC_THREAD_SAFE_RB_TREE"
 	CPPFLAGS="-AA $CPPFLAGS" # need this so the configure tests work right.
-	CXXCOMMONLINKFLAGS="-AA -mt +Z -Wl,+b${libdir}:/usr/lib -Wl,+s -z"
+	CXXCOMMONLINKFLAGS="-AA -mt +Z -Wl,+s -z"
 	CXXBINLINKFLAGS="-Wl,-B,immediate -Wl,-E $LDFLAGS"
 	CXXSHAREDLIBLINKFLAGS="-b -Wl,+h,\$@.\$(LIBRARY_BINARY_VERSION)"
 	PLAT_OPTFLAGS="+O2"
 	PIDFILE_DIR="/var/run"
-	LIB_EXT="sl"
 	RPATH_LINK_FLAG="-Wl,+s -Wl,+b"
+	RPATH_SEPARATOR=":"
+
+	# These 64-bit flags work with both parisc 2.0 and ia64.
+	CFLAG_ADD_64_BIT="+DD64"
+	LDFLAG_ADD_64_BIT="+DD64"
+
+	# This next line is wrong if --enable-64-bit-build is used.  It will be replaced later.
+	RPATH_DEFAULT_PATH="${libdir}:/usr/lib:"
+
+	# Normally, this would deserve another case statement, but very few things need to be modified on ia64.
+	case "$target" in
+		*ia64*)
+			LIB_EXT="so"
+			PLAT_CFLAGS="$PLAT_CFLAGS -D_INCLUDE_LONGLONG"
+			PLAT_CXXFLAGS="$PLAT_CXXFLAGS -D_INCLUDE_LONGLONG"
+			# Assume 32-bit unless told (later) to do otherwise.
+			RPATH_DEFAULT_PATH="${libdir}:/usr/lib/hpux32:"
+			RPATH_DEFAULT_PATH_64="${libdir}:/usr/lib/hpux64:"
+		;;
+		*)
+			LIB_EXT="sl"
+			# On parisc hpux, putting multiple +b options on the link line ends up using only the first.
+			RPATH_PREFERS_FIRST_OPTION=1
+			;;
+	esac
 	;;
 #*-*-irix5*)
 #	;;
@@ -320,6 +344,7 @@ case "$target" in
 	DYNAMIC_LINK_FLAGS="-Wl,-Bdynamic"
 	DYNAMIC_EXPORT_FLAG=-Wl,--export-dynamic
 	RPATH_LINK_FLAG="-Wl,-rpath="
+	RPATH_SEPARATOR=" ${RPATH_LINK_FLAG}"
 	;;
 *-*-netware*)
 	AC_DEFINE(NETWARE, 1, Target OS is NetWare)
@@ -368,6 +393,7 @@ case "$target" in
 	PLAT_OPTFLAGS="-O3"
 	PIDFILE_DIR="/var/run"
 	RPATH_LINK_FLAG="-R"
+	RPATH_SEPARATOR=":"
 	LIB_EXT="so"
 	REALTIME_LIBS="-lrt"
 	;;
@@ -396,8 +422,14 @@ case "$target" in
 i?86-*-*)
 	AC_DEFINE(ARCH_X86, 1, Intel x86 architecture)
 	;;
-powerpc-*-*)
+powerpc-*-*|powerpc-*-*-*|ppc-*-*)
 	AC_DEFINE(ARCH_PPC, 1, PowerPC architecture)
+	;;
+ia64-*-*|ia64-*-*-*)
+	AC_DEFINE(ARCH_IA64, 1, Itanium architecture)
+	;;
+powerpc64-*-*|powerpc64-*-*-*|ppc64-*-*)
+	AC_DEFINE(ARCH_PPC64, 1, PowerPC64 architecture)
 	;;
 sparc-*-*)
 	AC_DEFINE(ARCH_SPARC, 1, SPARC architecture)
@@ -408,10 +440,18 @@ hppa2.0*-*-*)
 x86_64-*-*)
 	AC_DEFINE(ARCH_X86_64, 1, x86-64 architecture)
 	;;
+s390-*-*|s390-*-*-*)
+	AC_DEFINE(ARCH_S390, 1, s390 architecture)
+	;;
+s390x-*-*|s390x-*-*-*)
+	AC_DEFINE(ARCH_S390X, 1, s390x architecture)
+	;;
 *)
 	AC_DEFINE(ARCH_UNKNOWN, 1, Unknown architecture)
 	;;
 esac
+
+AM_CONDITIONAL(RPATH_PREFERS_FIRST_OPTION, test "x${RPATH_PREFERS_FIRST_OPTION}" = x1)
 
 # This figures out which compiler is invoked
 OW_COMPILER=`basename $CXX`
@@ -461,6 +501,36 @@ AC_SUBST(REALTIME_LIBS)
 AC_SUBST(PIDFILE_DIR)
 AC_DEFINE_UNQUOTED(PIDFILE_DIR, "${PIDFILE_DIR}")
 
+AC_MSG_CHECKING(if special 64-bit flags should be added)
+AC_ARG_ENABLE(64-bit-build,
+OW_HELP_STRING(--enable-64-bit-build,enable building in 64-bit mode.  Only useful for platforms that support (or require) an option to enable 64-bit compilation.),
+[
+	if test "x$enable_64_bit_build" = xyes; then
+		AC_MSG_RESULT(yes)
+		# Yes, the user really did use --enable...
+		if test "x$CFLAG_ADD_64_BIT" != "x" ; then
+			# we even have something to add...
+			CFLAGS="$CFLAGS $CFLAG_ADD_64_BIT"
+			CXXFLAGS="$CXXFLAGS $CFLAG_ADD_64_BIT"
+			CPPFLAGS="$CPPFLAGS $CFLAG_ADD_64_BIT"
+			AC_MSG_NOTICE([Adding to C*FLAGS: $CFLAG_ADD_64_BIT])
+		fi
+		if test "x$LDFLAG_ADD_64_BIT" != "x" ; then
+			LDFLAGS="$LDFLAGS $LDFLAG_ADD_64_BIT"
+			AC_MSG_NOTICE([Adding to LDFLAGS: $LDFLAG_ADD_64_BIT])
+		fi
+		if test "x$RPATH_DEFAULT_PATH_64" != x ; then
+			RPATH_DEFAULT_PATH="$RPATH_DEFAULT_PATH_64"
+			AC_MSG_NOTICE([Replacing default rpath with: $RPATH_DEFAULT_PATH_64])
+		fi
+	else
+		AC_MSG_RESULT(no)
+	fi
+],
+[
+	AC_MSG_RESULT([not specified (no)])
+])
+
 AC_ARG_ENABLE(rpath-link,
 OW_HELP_STRING(--enable-rpath-link,enable the encoding of the destination library path into all executables for runtime linking),
 [
@@ -488,8 +558,21 @@ OW_HELP_STRING(--with-runtime-link-path=PATH,enable the encoding of the specifie
 [
 	if test "x$RPATH_LINK_FLAG" != "x"; then
 		if test "x${with_runtime_link_path}" != "xyes" -a "x${with_runtime_link_path}" != "xno"; then
-			RPATH_LINK_FLAG_WITH_PATH=$RPATH_LINK_FLAG${with_runtime_link_path}
-			LDFLAGS="$LDFLAGS $RPATH_LINK_FLAG_WITH_PATH"
+			# Remove dots (foo/../bar --> bar) double slashes, etc.
+			OW_CLEANUP_DIRECTORY_NAME(with_runtime_link_path)
+
+			# Change any ':' in the requested path with the rpath separator for this platform.
+			if test "x$RPATH_SEPARATOR" != "x:"; then
+				with_runtime_link_path=`echo "${with_runtime_link_path}" | sed "s/:/$RPATH_SEPARATOR/g"`
+			fi
+
+			if test "x${RPATH_LINK_FLAG_WITH_PATH}" != x; then
+				RPATH_LINK_FLAG_WITH_PATH=${RPATH_LINK_FLAG_WITH_PATH}${RPATH_SEPARATOR}${with_runtime_link_path}
+				AC_MSG_NOTICE([Changing rpath flag to ${RPATH_LINK_FLAG_WITH_PATH}])
+			else
+				RPATH_LINK_FLAG_WITH_PATH=${RPATH_LINK_FLAG}${RPATH_DEFAULT_PATH}${with_runtime_link_path}
+				AC_MSG_NOTICE([Changing rpath flag to "${RPATH_LINK_FLAG_WITH_PATH}"])
+			fi
 		elif test "x${with_runtime_link_path}" = "xyes"; then
 			AC_MSG_WARN(***************************************************************************)
 			AC_MSG_WARN(A runtime path must be specified when using --runtime-link-path            )
@@ -508,6 +591,7 @@ OW_HELP_STRING(--with-runtime-link-path=PATH,enable the encoding of the specifie
 AM_CONDITIONAL(USE_RPATH, test "x${RPATH_LINK_FLAG_REQUIRED}" = "x1" -a "x${RPATH_LINK_FLAG}" != "x")
 AC_SUBST(RPATH_LINK_FLAG)
 AC_SUBST(RPATH_LINK_FLAG_WITH_PATH)
+AC_SUBST(RPATH_SEPARATOR)
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -1218,286 +1302,29 @@ OW_HELP_STRING(--enable-db4-repository,enable (still in development) db4 reposit
 ])
 AM_CONDITIONAL(ENABLE_DB4_REPOSITORY, test x$OW_ENABLE_DB4_REPOSITORY = x1)
 
-AC_ARG_ENABLE(vas,
-OW_HELP_STRING(--enable-vas,enable VAS (Vintela Authentication Services) integration),
-[ 
-  USE_VAS=1
-  AC_DEFINE(USE_VAS, 1, VAS integration is enabled)
-])
-
-AC_ARG_WITH(vas2,
-    OW_HELP_STRING( --with-vas2=PATH,Specify the directory in which the vas 2
-    headers and libs reside),
-    [
-    # This fancy thing just erases ./ and foo/.. since aCC on HPUX doesn't work
-    # if include dirs have that!
-    # We use [[ and ]] because m4 eats [ and ]
-
-	 # Note that this is a loop instead of global substitution, because items
-	 # like "/foo/bar/baz/quux/../../.." don't convert correctly using the
-	 # simple sed expression.  It turns it into "foo/bar/baz" instead of "/foo".
-	 # This loop ensures left-to-right eating of one 'DIR/..' at a time.
-	 # After trying to come up with a functional (and portable) sed expression,
-	 # this loop looked very appetizing (less error prone and it actually
-	 # works).
-	 VAS2_DIR=`echo $withval | sed -e 's~/\\./~/~g'`
-	 temp_dir=""
-	 until [[ "$temp_dir" = "$VAS2_DIR" ]]; do
-		temp_dir="$VAS2_DIR"
-		VAS2_DIR=`echo $VAS2_DIR | sed -e 's~/[[^/]]*/\\.\\.~~'`
-	 done
-	VAS2_INCLUDE_DIR=$VAS2_DIR/include
-
-	if test -d "$VAS2_DIR/lib64" ; then
-		VAS2_LIB_DIR=$VAS2_DIR/lib64
-	else
-		VAS2_LIB_DIR=$VAS2_DIR/lib
-	fi
-    ]
-)
-AC_ARG_WITH(vas2-rpath,
-    OW_HELP_STRING(--with-vas2-rpath=PATH,Specify the directory in which the vas
-    2 runtime libs reside),
-    [
-	VAS2_RPATH=$withval
-    ]
-)
-AC_SUBST(VAS2_INCLUDE_DIR)
-AC_SUBST(VAS2_LIB_DIR)
-AC_SUBST(VAS2_RPATH)
-AM_CONDITIONAL(HAVE_VAS2, test x$VAS2_DIR != x)
-
-AC_ARG_WITH(vas3,
-    OW_HELP_STRING(--with-vas3=PATH,Specify the directory in which the vas 3
-    headers and libs reside),
-    [
-    # This fancy thing just erases ./ and foo/.. since aCC on HPUX doesn't work
-    # if include dirs have that!
-    # We use [[ and ]] because m4 eats [ and ]
-	 # See the comments for VAS2_DIR above.
-	 VAS3_DIR=`echo $withval | sed -e 's~/\\./~/~g'`
-	 temp_dir=""
-	 until [[ "$temp_dir" = "$VAS3_DIR" ]]; do
-		temp_dir="$VAS3_DIR"
-		VAS3_DIR=`echo $VAS3_DIR | sed -e 's~/[[^/]]*/\\.\\.~~'`
-	 done
-	VAS3_INCLUDE_DIR=$VAS3_DIR/include
-
-	if test -d "$VAS3_DIR/lib64" ; then
-		VAS3_LIB_DIR=$VAS3_DIR/lib64
-	else
-		VAS3_LIB_DIR=$VAS3_DIR/lib
-	fi
-    ]
-)
-AC_ARG_WITH(vas3-rpath,
-    OW_HELP_STRING(--with-vas3-rpath=PATH,Specify the directory in which the vas
-    3 runtime libs reside),
-    [
-	VAS3_RPATH=$withval
-    ]
-)
-AC_SUBST(VAS3_INCLUDE_DIR)
-AC_SUBST(VAS3_LIB_DIR)
-AC_SUBST(VAS3_RPATH)
-AM_CONDITIONAL(HAVE_VAS3, test x$VAS3_DIR != x)
-
-#
-# kerberos5 enviroment
-#
-krb5_config_command=krb5-config
-SPNEGO_SRCS=""
-
-AC_ARG_ENABLE(spnego,
-OW_HELP_STRING(--enable-spnego,enables SPNEGO support in OpenWBEM. If this option
-is not enabled OpenWBEM will anyway try to detect if SPNEGO is available on the
-system. But it won't print an error message.),
-[ 
-  USE_SPNEGO=1
-  AC_DEFINE(USE_SPNEGO, 1, SPNEGO support desired)
-]
-
-)
-
-AC_ARG_WITH(krb5,
-  AC_HELP_STRING([--with-krb5=dir],[use krb5 in dir]),
-  [ with_krb5="$withval" ])
-
-if test "x$with_krb5" != "xno" ; then
-  ac_save_CPPFLAGS="$CPPFLAGS"
-  ac_save_LDFLAGS="$LDFLAGS"
-  ac_save_LIBS="$LIBS"
-   
-  if test -n "$with_krb5"; then
-     if test -x "$with_krb5/bin/krb5-config"; then
-        krb5_config_command="$with_krb5/bin/krb5-config"
-     else
-        krb5_config_command=""
-     fi
-  fi
-
-  dnl
-  dnl find header files
-  dnl
-
-  if test -z "$KRB5_CPPFLAGS"; then
-     TMP_KRB5_CPPFLAGS=""
-     if test -n "$krb5_config_command"; then
-        TMP_KRB5_CPPFLAGS=`$krb5_config_command --cflags gssapi 2>/dev/null`
-     fi
-     if test -z "$TMP_KRB5_CPPFLAGS"; then
-        TMP_KRB5_CPPFLAGS="-I$with_krb5/include"
-     fi
-     CPPFLAGS="$CPPFLAGS $TMP_KRB5_CPPFLAGS"
-     AC_CHECK_HEADERS(gssapi.h, 
-                      [ KRB5_CPPFLAGS="$TMP_KRB5_CPPFLAGS" ])
-     if test -z "$KRB5_CPPFLAGS"; then
-        AC_CHECK_HEADERS(gssapi/gssapi.h, 
-                         [ KRB5_CPPFLAGS="$TMP_KRB5_CPPFLAGS" ])
-     fi
-     CPPFLAGS="$ac_save_CPPFLAGS" 
-  fi
-
-  dnl
-  dnl find libraries
-  dnl
-
-  if test -z "$KRB5_LDFLAGS" -a -n "$krb5_config_command"; then
-     TMP_KRB5_LDFLAGS=`$krb5_config_command --libs gssapi 2>/dev/null`
-     if test -n "$TMP_KRB5_LDFLAGS"; then
-        LIBS="$LIBS $TMP_KRB5_LDFLAGS $LIB_resolv"
-        AC_CHECK_LIB(krb5, krb5_init_context,
-                     [ KRB5_LDFLAGS="$TMP_KRB5_LDFLAGS" ])
-        LIBS="$ac_save_LIBS"
-     fi
-  fi
-
-  if test -z "$KRB5_LDFLAGS"; then
-     #try MIT
-     TMP_KRB5_LDFLAGS="-L$with_krb5/lib -lgssapi_krb5 -lkrb5 -lk5crypto -lcom_err"
-     LIBS="$LIBS $TMP_KRB5_LDFLAGS $LIB_resolv"
-     AC_CHECK_LIB(krb5, krb5_init_context, [ KRB5_LDFLAGS="$TMP_KRB5_LDFLAGS" ])
-     LIBS="$ac_save_LIBS"
-  fi
-
-  if test -z "$KRB5_LDFLAGS"; then
-     #Try Heimdal
-     TMP_KRB5_LDFLAGS="-L$with_krb5/lib -lgssapi -lkrb5 -lasn1 -lcrypto -lroken -lcrypt"
-     LIBS="$LIBS $TMP_KRB5_LDFLAGS $LIB_resolv"
-     AC_CHECK_LIB(krb5, krb5_init_context, [ KRB5_LDFLAGS="$TMP_KRB5_LDFLAGS" ])
-     LIBS="$ac_save_LIBS"
-  fi
-
-  if test -z "$KRB5_LDFLAGS"; then
-     #Try Heimdal on OpenBSD
-     TMP_KRB5_LDFLAGS="-L$with_krb5/lib -lgssapi -lkrb5 -lasn1 -ldes -lcrypto"
-     LIBS="$LIBS $TMP_KRB5_LDFLAGS $LIB_resolv"
-     AC_CHECK_LIB(krb5, krb5_init_context, [ KRB5_LDFLAGS="$TMP_KRB5_LDFLAGS" ])
-     LIBS="$ac_save_LIBS"
-  fi
-
-  if test -z "$KRB5_LDFLAGS"; then
-     with_krb5=no
-     if test x$USE_SPNEGO = x1; then
-       AC_MSG_ERROR([no Kerberos Libraries were found.])
-     fi
-  else
-     with_krb5=yes
-     AC_DEFINE([KRB5], TRUE, [KRB5])
-
-     # check for Heimdal
-     have_heimdal=""
-     AC_MSG_CHECKING(whether we are using Heimdal)
-     ac_save_CFLAGS="$CFLAGS"
-     CFLAGS="$KRB5_CPPFLAGS"
-     AC_TRY_COMPILE([#include <krb5.h>],
-		    [ char *tmp = heimdal_version; ],
-		    [ AC_MSG_RESULT(yes)
-		      AC_DEFINE([HEIMDAL], TRUE, [HEIMDAL])
-		      have_heimdal=yes ],
-		    [ AC_MSG_RESULT(no) ])
-     CFLAGS="$ac_save_CFLAGS"
-
-# SPNEGO is supported as of Heimdal 0.7, and MIT >= 1.5.
-     gssapi_supports_spnego=""
-     AC_MSG_CHECKING(whether the GSSAPI libraries support SPNEGO)
-     # Invent some better test, at the moment this works only if the mechanism
-     # has the same name
-     ac_save_CFLAGS="$CFLAGS"
-     CFLAGS="$KRB5_CPPFLAGS"
-     LDFLAGS="$KRB5_LDFLAGS"
-     AC_TRY_RUN([
-#include <string.h>
-#include <krb5.h>
-#ifdef HEIMDAL
-#include <gssapi.h>
-#else
-#include <gssapi/gssapi.h>
-#endif
-int main(int argc, char** argv)
-{
-	OM_uint32 major_status, minor_status;
-	gss_OID_set mech_set;
-	gss_OID_desc spnego_oid_desc = {6, (void *)"\x2b\x06\x01\x05\x05\x02"};
-	int SPNEGO = 0;
-										
-	major_status = gss_indicate_mechs(&minor_status, &mech_set);
-	if (GSS_ERROR(major_status))
-	{
-		return 1;
-	}
-	else
-	{
-		unsigned int i;
-		for (i=0; i < mech_set->count && !SPNEGO; i++)
-		{
-			gss_OID tmp_oid = &mech_set->elements[i];
-			if (tmp_oid->length == spnego_oid_desc.length &&
-			    !memcmp(tmp_oid->elements, spnego_oid_desc.elements, 
-			            tmp_oid->length))
-			{
-				SPNEGO = 1;
-				break;
-			}
-		}
-		gss_release_oid_set(&minor_status, &mech_set);
-		if (SPNEGO)
-		{
-			return 0;
-		} else {
-			return 1;
-		}
-	}
-}
- ],
- [ if test $? -eq 0; then 
-     AC_MSG_RESULT(yes)
-     AC_DEFINE([GSSAPI_SUPPORTS_SPNEGO], TRUE, [GSSAPI_SUPPORTS_SPNEGO])
-     gssapi_supports_spnego=yes 
-   else
-     AC_MSG_RESULT(no)
-     if test x$USE_SPNEGO = x1; then
-       AC_MSG_ERROR([no SPNEGO support aborting.])
-     fi     
-   fi],
- [ AC_MSG_RESULT(no) 
-   if test x$USE_SPNEGO = x1; then
-     AC_MSG_ERROR([no SPNEGO support aborting.])
-   fi],
- [ AC_MSG_RESULT(no)
-   if test x$USE_SPNEGO = x1; then
-     AC_MSG_ERROR([no SPNEGO support aborting.])
-   fi])
-     CFLAGS="$ac_save_CFLAGS"
-
-  fi
+if test "$enable_apparmor" != no; then
+  AC_CHECK_HEADERS(sys/apparmor.h, 
+  [
+    APPARMOR_LIBS=-lapparmor
+  ])
 fi
-AC_SUBST(KRB5_CPPFLAGS)
-AC_SUBST(KRB5_LDFLAGS)
-AC_SUBST(SPNEGO_SRCS)
-AM_CONDITIONAL(HAVE_KRB, test x"$with_krb5" == xyes || test x"$have_heimdal" == xyes || test x"$gssapi_supports_spnego" == xyes)
-AM_CONDITIONAL(HAVE_SPNEGO_SUPPORT, test x"$gssapi_supports_spnego" == xyes)
-AM_CONDITIONAL(HAVE_HEIMDAL, test -n "$have_heimdal")
+AC_SUBST(APPARMOR_LIBS)
+
+dnl
+dnl Check for vas support
+dnl
+OW_VAS_SUPPORT
+
+dnl
+dnl kerberos5 support
+dnl
+OW_KRB5_SUPPORT
+
+dnl
+dnl gssapi support
+dnl
+OW_GSSAPI_SUPPORT
+
 
 dnl for now everything that uses the configure script uses pthreads
 AC_DEFINE(USE_PTHREAD)
@@ -1507,254 +1334,19 @@ AC_ARG_WITH(search-dir,
 	[
 		if test "x$withval" != "xno" ; then
 			CPPFLAGS="$CPPFLAGS -I$withval/include" 
-			LDFLAGS="$LDFLAGS -L$withval/lib" 
+			LDFLAGS="$LDFLAGS -L$withval/lib -L$withval/lib64" 
 		fi
 	]
 )
 
 dnl Check for BloCxx
-AC_CHECK_HEADER([blocxx/BLOCXX_config.h], [], [echo "** ERROR: You must install BloCxx **"; exit 1])
+OW_BLOCXX_SUPPORT
 
 # The big search for OpenSSL.  Thanks to the openssh configure.in file!
-saved_LDFLAGS="$LDFLAGS"
-saved_CPPFLAGS="$CPPFLAGS"
-saved_LIBS="$LIBS"
+OW_SSL_SUPPORT
 
-AC_ARG_WITH(ssl-dir,
-	OW_HELP_STRING(--with-ssl-dir=PATH,specify path to OpenSSL installation),
-[
-	if test "x$withval" != "xno" ; then
-		tryssldir=$withval
-	fi
-]
-)
-
-if test "x$prefix" != "xNONE" ; then
-	tryssldir="$tryssldir $prefix"
-fi
-AC_CACHE_CHECK([for OpenSSL directory], ac_cv_openssldir, [
-	for ssldir in $tryssldir "" /usr/local/openssl /usr/lib/openssl /usr/local/ssl /usr/lib/ssl /usr/local /usr/pkg /opt /opt/openssl ; do
-		CPPFLAGS="$saved_CPPFLAGS"
-		LDFLAGS="$saved_LDFLAGS"
-		SSL_LIBS="-lssl -lcrypto"
-		LIBS="$saved_LIBS $SSL_LIBS"
- 
-		# Skip directories if they don't exist
-		if test ! -z "$ssldir" -a ! -d "$ssldir" ; then
-			continue;
-		fi
-		if test ! -z "$ssldir" -a "x$ssldir" != "x/usr"; then
-			# Try to use $ssldir/lib if it exists, otherwise
-			# $ssldir
-			if test -d "$ssldir/lib" ; then
-				LDFLAGS="$saved_LDFLAGS -L$ssldir/lib"
-				if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
-					LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}$ssldir/lib"
-				fi
-			else
-				LDFLAGS="$saved_LDFLAGS -L$ssldir"
-				if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
-					LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}$ssldir"
-				fi
-			fi
-			# Try to use $ssldir/include if it exists, otherwise
-			# $ssldir
-			if test -d "$ssldir/include" ; then
-				CPPFLAGS="$saved_CPPFLAGS -I$ssldir/include"
-			else
-				CPPFLAGS="$saved_CPPFLAGS -I$ssldir"
-			fi
-		fi
- 
-		# Basic test to check for compatible version and correct linking
-		# *does not* test for RSA - that comes later.
-		AC_TRY_COMPILE(
-		[
-#include <string.h>
-#include <openssl/rand.h>
-		],
-		[
-	char a[2048];
-	memset(a, 0, sizeof(a));
-	RAND_add(a, sizeof(a), sizeof(a));
-	return(RAND_status() <= 0);
-		],
-		[
-			found_crypto=1
-			break;
-		], 
-		[
-			did_not_find_crypt=0
-		] 
-		)
- 
-		if test ! -z "$found_crypto" ; then
-			break;
-		fi
-	done
- 
-	if test -z "$found_crypto" ; then
-		#AC_MSG_ERROR([Could not find working OpenSSL library, please install or check config.log])
-		ssldir=""
-	fi
-	if test -z "$ssldir" && test ! -z "$found_crypto"; then
-		ssldir="(system)"
-	fi
- 
-	ac_cv_openssldir=$ssldir
-])
-
-if (test ! -z "$ac_cv_openssldir") ; then
-	AC_DEFINE(HAVE_OPENSSL)
-	SSL_LIBS="-lssl -lcrypto"
-	LIBS="$saved_LIBS"
-else
-	AC_MSG_ERROR([OpenSSL not found])
-fi
-
-if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ; then
-	dnl Need to recover ssldir - test above runs in subshell
-	ssldir=$ac_cv_openssldir
-	if test ! -z "$ssldir" -a "x$ssldir" != "x/usr"; then
-		# Try to use $ssldir/lib if it exists, otherwise
-		# $ssldir
-		if test -d "$ssldir/lib" ; then
-			LDFLAGS="$saved_LDFLAGS -L$ssldir/lib"
-			if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
-				LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}$ssldir/lib"
-			fi
-		else
-			LDFLAGS="$saved_LDFLAGS -L$ssldir"
-			if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
-				LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}$ssldir"
-			fi
-		fi
-		# Try to use $ssldir/include if it exists, otherwise
-		# $ssldir
-		if test -d "$ssldir/include" ; then
-			CPPFLAGS="$saved_CPPFLAGS -I$ssldir/include"
-		else
-			CPPFLAGS="$saved_CPPFLAGS -I$ssldir"
-		fi
-	fi
-	SSL_LIBS="-lssl -lcrypto"
-fi
-
-dnl
-dnl   Fix this section, to make it more 'autoconfish', as this is just a chunk
-dnl   of a bourne-style shell script 
-dnl
-dnl   Note: This chunk of tests was added because Redhat includes dependencies
-dnl   to kerberos in their compilation of the openSSL libraries.  To allow
-dnl   things to compile happily, we need to include the proper directories and
-dnl   libraries (as is set in pkg-config openssl --cflags --libs)
-dnl
-dnl
-AC_MSG_CHECKING("For additional SSL dependencies")
-dnl Make sure that pkg-config exists.
-if `pkg-config --version &> /dev/null` 
-then
-  
-	if `pkg-config openssl`
-	then
-		EXTRA_SSL_LIBS=""
-		#EXTRA_SSL_LIBS=`pkg-config openssl --libs`
-		EXTRA_SSL_INCLUDES=`pkg-config openssl --cflags`
-		CPPFLAGS="$CPPFLAGS $EXTRA_SSL_INCLUDES"
-		SSL_LIBS="$SSL_LIBS $EXTRA_SSL_LIBS"
-		AC_MSG_RESULT("$EXTRA_SSL_INCLUDES $EXTRA_SSL_LIBS");
-	else
-		AC_MSG_RESULT("None")
-	fi
-else
-	AC_MSG_RESULT("None \(pkg-config not found\)")
-fi
-
-AC_SUBST(SSL_LIBS)
-
-dnl End of the ssl check
-
-dnl Now check for threading stuff
-OLD_LIBS=$LIBS
-if [[ "x$DO_NOT_USE_DASH_PTHREAD" = "x" ]]
-then
-  # Always link pthread dynamically.
-  LIBS="$DYNAMIC_LINK_FLAGS -pthread $CURRENT_LINK_MODE_FLAGS $LIBS"
-fi
-AC_MSG_CHECKING("pthread_mutexattr_settype")
-AC_TRY_COMPILE(
-	[
-#include <pthread.h>
-#include <assert.h>
-	],
-	[
-	pthread_mutexattr_t attr;
-	pthread_mutex_t mutex;
-	int res = 0;
-	res = pthread_mutexattr_init(&attr);
-	assert(res == 0);
-	res = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-	assert(res == 0);
-	res = pthread_mutex_init(&mutex, &attr);
-	assert(res == 0);
-	return 0;
-	],
-	[
-		AC_DEFINE(HAVE_PTHREAD_MUTEXATTR_SETTYPE)
-		AC_MSG_RESULT("yes")
-	],
-	[ AC_MSG_RESULT("no") ]
-)
-
-AC_MSG_CHECKING("pthread_spin_lock")
-AC_TRY_COMPILE(
-	[
-#include <pthread.h>
-#include <assert.h>
-	],
-	[
-	pthread_spinlock_t spinlock;
-	if (pthread_spin_init(&spinlock, 0) != 0)
-		return 1;
-	if (pthread_spin_lock(&spinlock) != 0)
-		return 1;
-	if (pthread_spin_unlock(&spinlock) != 0)
-		return 1;
-	return 0;
-	],
-	[
-		AC_DEFINE(HAVE_PTHREAD_SPIN_LOCK)
-		AC_MSG_RESULT("yes")
-	],
-	[ AC_MSG_RESULT("no") ]
-)
-
-AC_MSG_CHECKING("pthread_barrier_init")
-AC_TRY_COMPILE(
-	[
-#include <pthread.h>
-#include <assert.h>
-	],
-	[
-	pthread_barrier_t barrier;
-	assert(pthread_barrier_init(&barrier, NULL, 1) == 0);
-	assert(pthread_barrier_wait(&barrier) == PTHREAD_BARRIER_SERIAL_THREAD);
-	assert(pthread_barrier_destroy(&barrier) == 0);
-	return 0;
-	],
-	[
-		AC_DEFINE(HAVE_PTHREAD_BARRIER)
-		AC_MSG_RESULT("yes")
-	],
-	[ AC_MSG_RESULT("no") ]
-)
-
-AC_CHECK_FUNCS(pthread_kill_other_threads_np)
-
-# restore flags after pthread tests
-LIBS=$OLD_LIBS
-
-
+# Now check for threading stuff
+OW_PTHREAD_SUPPORT
 
 dnl ----- Check support for IPV6  ----------------
 OW_EXEC_VERIFY_ENABLE_SUPPORT(ipv6,
@@ -1778,71 +1370,9 @@ OW_EXEC_VERIFY_ENABLE_SUPPORT(ipv6,
 )
 dnl ----- End check support for IPv6  ------------
 
-pfx=$prefix
-if test "x$pfx" = "xNONE"; then
-	pfx=${ac_default_prefix}
-fi
-execpfx=$exec_prefix
-if test "x$execpfx" = "xNONE"; then
-	execpfx=$pfx
-fi
-
-#####################################################
-# Set the location of the state dir
-if test "x$localstatedir" != "x\${prefix}/var"; then
-	tempDir=$localstatedir
-else
-	tempDir=$pfx/var
-fi
-AC_DEFINE_UNQUOTED(DEFAULT_STATE_DIR, "${tempDir}")
-
-#####################################################
-# Set the location of the lib dir
-if test "x$libdir" != "x\${exec_prefix}/lib"; then
-	tempDir=$libdir
-else
-	tempDir=$execpfx/lib
-fi
-AC_DEFINE_UNQUOTED(DEFAULT_LIB_DIR, "${tempDir}")
-
-
-#####################################################
-# Set the location of the bin dir
-if test "x$bindir" != "x\${exec_prefix}/bin"; then
-	tempDir=$bindir
-else
-	tempDir=$execpfx/bin
-fi
-AC_DEFINE_UNQUOTED(DEFAULT_BIN_DIR, "${tempDir}", "The bin dir")
-
-
-#####################################################
-# Set the location of the sbin dir
-if test "x$sbindir" != "x\${exec_prefix}/sbin"; then
-	tempDir=$sbindir
-else
-	tempDir=$execpfx/sbin
-fi
-AC_DEFINE_UNQUOTED(DEFAULT_SBIN_DIR, "${tempDir}", "The sbin dir")
-
-
-#####################################################
-# Set the location of the libexec dir
-if test "x$libexecdir" != "x\${exec_prefix}/libexec"; then
-	tempDir=$libexecdir
-else
-	tempDir=$execpfx/libexec
-fi
-AC_DEFINE_UNQUOTED(DEFAULT_LIBEXEC_DIR, "${tempDir}")
-
-#####################################################
-# Set the location of the sysconf dir
-if test "x$sysconfdir" != "x\${prefix}/etc"; then
-	tempDir=$sysconfdir
-else
-	tempDir=$pfx/etc
-fi
-AC_DEFINE_UNQUOTED(DEFAULT_SYSCONF_DIR, "${tempDir}")
+# Set the state, lib, bin, sbin, libexec, sysconf, and other dirs to their
+# defaults (if they aren't already set).
+OW_SET_DEFAULT_DIRS
 
 # This is down at the bottom, because $libdir expands to
 # "${exec_prefix}/lib".  This variable won't be available until the
@@ -1852,7 +1382,17 @@ AC_DEFINE_UNQUOTED(DEFAULT_SYSCONF_DIR, "${tempDir}")
 # installed to.
 
 if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
-		LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}${RPATH_DEFAULT_PATH}$libdir"
+	# If the user supplied one, use it and add our libdir, otherwise use the
+	# default path as specified somewhere above with our libdir.
+	if test "x${RPATH_LINK_FLAG_WITH_PATH}" != x; then
+		LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG_WITH_PATH}${RPATH_SEPARATOR}${libdir}"
+	else
+		# Note: Our $libdir may appear in here more than once if the default path
+		# has it ordered in such a way.  This is fine and won't break anything.
+		# The alternative, potentially having a trailing ":", is wrong and
+		# could be a security risk.
+		LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}${RPATH_DEFAULT_PATH}${libdir}"
+	fi
 fi
 
 CXXSHAREDLIBLINKFLAGS="$CXXCOMMONLINKFLAGS $CXXSHAREDLIBLINKFLAGS $LDFLAGS"
@@ -1901,7 +1441,8 @@ src/cim/Makefile
 src/cimom/Makefile
 src/cimom/common/Makefile
 src/cimom/server/Makefile
-src/cimom/indication/Makefile
+src/cimom/indicationreplayer/Makefile
+src/cimom/indicationserver/Makefile
 src/cimom/embedded/Makefile
 src/cimxmllistener/Makefile
 src/client/Makefile
@@ -1927,10 +1468,6 @@ src/providerifcs/remote/Makefile
 src/providerifcs/oop/Makefile
 src/providerifcs/cmpi/Makefile
 src/providerifcs/cmpi/common/Makefile
-src/providerifcs/npi/Makefile
-src/providerifcs/npi/common/Makefile
-src/providerifcs/perl/Makefile
-src/providerifcs/perl/perlProvider/Makefile
 src/providers/Makefile
 src/providers/cpp/Makefile
 src/providers/cpp/indicationexport/Makefile
@@ -1967,6 +1504,7 @@ test/acceptance/Makefile
 test/acceptance/progs/Makefile
 test/acceptance/testfiles/Makefile
 test/acceptance/oop/Makefile
+test/acceptance/methodLocking/Makefile
 test/acceptance/testfiles/socketCat/Makefile
 test/acceptance/testfiles/xml_input/Makefile
 test/c++providers/Makefile
@@ -1982,3 +1520,5 @@ test/performance/Makefile
 AC_CREATE_PREFIX_CONFIG_H([${srcdir}/src/common/OW_config.h], OW, [config.h])
 dnl AC_CREATE_PREFIX_CONFIG_H([${srcdir}/src/providerifcs/owbi1/OWBI1_AuxConfig.h], OWBI1, [config.h])
 
+dnl Create a sed script to replace all of the substituted variables.
+OW_REPLACEMENT_SCRIPT(replacement_script.sed)

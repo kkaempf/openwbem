@@ -64,9 +64,9 @@ OW_DEFINE_EXCEPTION(LocalAuthentication);
 /**
  * @throws LocalAuthenticationException if something failed
  */
-void initializeDir(String const & local_auth_dir)
+String initializeDir(String const & localAuthDir)
 {
-	StringArray dirParts = local_auth_dir.tokenize(OW_FILENAME_SEPARATOR);
+	StringArray dirParts = localAuthDir.tokenize(OW_FILENAME_SEPARATOR);
 	String curDir;
 	for (size_t i = 0; i < dirParts.size(); ++i)
 	{
@@ -117,17 +117,18 @@ void initializeDir(String const & local_auth_dir)
 		}
 	}
 
+	String realLocalAuthDir = FileSystem::Path::realPath(localAuthDir);
 	// for each file in the dir, check it's creation time and delete it if its more than a day old or newer than the current time.
 	StringArray files;
-	if (!FileSystem::getDirectoryContents(local_auth_dir, files))
+	if (!FileSystem::getDirectoryContents(realLocalAuthDir, files))
 	{
-		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthentication::initializeDir(): getDirectoryContents(%1, ...) failed", curDir).c_str());
+		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthentication::initializeDir(): getDirectoryContents(%1, ...) failed", realLocalAuthDir).c_str());
 	}
 
 	for (size_t i = 0; i < files.size(); ++i)
 	{
 		struct stat statbuf;
-		String curFilePath = local_auth_dir + OW_FILENAME_SEPARATOR + files[i];
+		String curFilePath = localAuthDir + OW_FILENAME_SEPARATOR + files[i];
 		if (lstat(curFilePath.c_str(), &statbuf) == -1)
 		{
 			OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthentication::initializeDir(): lstat(%1, ...)", curFilePath).c_str());
@@ -146,6 +147,8 @@ void initializeDir(String const & local_auth_dir)
 			}
 		}
 	}
+
+	return realLocalAuthDir;
 }
 
 namespace
@@ -190,8 +193,7 @@ namespace
 	};
 }
 
-String createFile(
-	String const & local_auth_dir, const String& uid, const String& cookie)
+String createFile(String const & localAuthDir, const String& uid, const String& cookie)
 {
 	uid_t userid = uid_t(~0);
 	try
@@ -218,8 +220,8 @@ String createFile(
 
 	// Some old implementations of mkstemp() create a file with mode 0666.
 
-	String tfname = Format("%1/%2XXXXXX", local_auth_dir, ::getpid());
-	int authfd;
+	String tfname = Format("%1/%2XXXXXX", localAuthDir, ::getpid());
+	int authfd = -1;
 
 	{
 		// The fact that the umask is set to 0077 makes this safe from prying eyes.
@@ -232,7 +234,7 @@ String createFile(
 
 	if (authfd == -1)
 	{
-		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthenticationCommon::createFile(): mkstemp(%1)", tfname).c_str());
+		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthenticationCommon::createFile(): mkstemp(\"%1\")", tfname).c_str());
 	}
 
 	FileDeleter fileDeleter(tfname);
@@ -241,19 +243,27 @@ String createFile(
 	//-- Change file permission on temp file to read/write for user only
 	if (::fchmod(authfd, 0400) == -1)
 	{
-		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthenticationCommon::createFile(): fchmod on %1", tfname).c_str());
+		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthenticationCommon::createFile(): fchmod on \"%1\"", tfname).c_str());
 	}
 	
 	//-- Change file so the user connecting is the owner
 	if (::fchown(authfd, userid, static_cast<gid_t>(-1)) == -1)
 	{
-		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthenticationCommon::createFile(): fchown on %1 to %2", tfname, userid).c_str());
+		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthenticationCommon::createFile(): fchown on \"%1\" to %2", tfname, userid).c_str());
 	}
 	
 	// Write the servers random number to the temp file
 	if (file.write(cookie.c_str(), cookie.length()) != cookie.length())
 	{
-		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthenticationCommon::createFile(): failed to write() the cookie to %1", tfname).c_str());
+		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthenticationCommon::createFile(): failed to write() the cookie to \"%1\"", tfname).c_str());
+	}
+	if (file.flush() == -1)
+	{
+		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthenticationCommon::createFile(): failed to flush() \"%1\"", tfname).c_str());
+	}
+	if (file.close() == -1)
+	{
+		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthenticationCommon::createFile(): failed to close() \"%1\"", tfname).c_str());
 	}
 	
 	fileDeleter.dontDelete();

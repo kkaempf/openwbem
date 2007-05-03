@@ -101,6 +101,11 @@ public:
 			const String& ns,
 			const CIMObjectPath& cop);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	{
+	}
+
+
 
 private:
 	ClientCIMOMHandleConnectionPoolRef m_pool;

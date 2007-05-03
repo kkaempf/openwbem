@@ -60,7 +60,7 @@ CMPIIndicationProviderProxy::deActivateFilter(
 	bool lastActivation)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "deactivateFilter");
+	OW_LOG_DEBUG3(lgr, "deactivateFilter");
 	m_ftable->lastAccessTime.setToCurrent();
 	if (m_ftable->miVector.indMI->ft->deActivateFilter != NULL)
 	{
@@ -81,6 +81,7 @@ CMPIIndicationProviderProxy::deActivateFilter(
 		CMPI_ObjectPathOnStack eRef(mutablePath);
 		CMPISelectExp exp; // = {&mutableFilter};
 		//CMPIFlags flgs = 0;
+		CMPIPrepareContext(env, eCtx);
 		::CMPIIndicationMI *mi = m_ftable->miVector.indMI;
 		char* _eventType = const_cast<char*>(eventType.c_str());
 		rc = m_ftable->miVector.indMI->ft->deActivateFilter(mi, &eCtx,
@@ -108,7 +109,7 @@ CMPIIndicationProviderProxy::activateFilter(
 	bool firstActivation)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "activateFilter");
+	OW_LOG_DEBUG3(lgr, "activateFilter");
 	m_ftable->lastAccessTime.setToCurrent();
 	if (m_ftable->miVector.indMI->ft->activateFilter != NULL)
 	{
@@ -131,6 +132,7 @@ CMPIIndicationProviderProxy::activateFilter(
 		//CMPIFlags flgs = 0;
 		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
 		char* _eventType = const_cast<char*>(eventType.c_str());
+		CMPIPrepareContext(env, eCtx);
 
 		rc = m_ftable->miVector.indMI->ft->activateFilter(mi, &eCtx, 
 			&exp, _eventType, &eRef, firstActivation);
@@ -157,7 +159,7 @@ CMPIIndicationProviderProxy::authorizeFilter(
 	const String &owner)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "authorizeFilter");
+	OW_LOG_DEBUG3(lgr, "authorizeFilter");
 	m_ftable->lastAccessTime.setToCurrent();
 	if (m_ftable->miVector.indMI->ft->authorizeFilter != NULL)
 	{
@@ -181,6 +183,7 @@ CMPIIndicationProviderProxy::authorizeFilter(
 		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
 		char* _eventType = const_cast<char*>(eventType.c_str());
 		char* _owner = const_cast<char*>(owner.c_str());
+		CMPIPrepareContext(env, eCtx);
 		rc = m_ftable->miVector.indMI->ft->authorizeFilter(mi, &eCtx, 
 			&exp, _eventType, &eRef, _owner);
 		if (rc.rc != CMPI_RC_OK)
@@ -204,7 +207,7 @@ CMPIIndicationProviderProxy::mustPoll(
 	const StringArray &classes)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "mustPoll");
+	OW_LOG_DEBUG3(lgr, "mustPoll");
 	m_ftable->lastAccessTime.setToCurrent();
 	if (m_ftable->miVector.indMI->ft->mustPoll != NULL)
 	{
@@ -225,6 +228,7 @@ CMPIIndicationProviderProxy::mustPoll(
 		//CMPIFlags flgs = 0;
 		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
 		char* _eventType = const_cast<char*>(eventType.c_str());
+		CMPIPrepareContext(env, eCtx);
 		rc = m_ftable->miVector.indMI->ft->mustPoll(mi, &eCtx, 
 			&exp, _eventType, &eRef);
 

@@ -38,6 +38,7 @@
 #include "OW_String.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_IstreamBufIterator.hpp"
+#include "OW_XMLParseException.hpp"
 #include <vector>
 #include <stack>
 #include <iosfwd>
@@ -99,7 +100,7 @@ public:
 	}
 private:
 	void skipWhitespace();
-	bool getElementName(XMLToken& entry);
+	bool getElementName(XMLToken& entry, XMLParseException::Code errorCode);
 	bool getOpenElementName(XMLToken& entry, bool& openCloseElement);
 	void getAttributeNameAndEqual(XMLToken::Attribute& att);
 	void getAttributeValue(XMLToken::Attribute& att);

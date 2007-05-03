@@ -53,6 +53,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#ifdef OW_HAVE_SYS_APPARMOR_H
+#include <sys/apparmor.h>
+#include "OW_SecureRand.hpp"
+#endif
 
 using namespace std;
 using namespace OpenWBEM;
@@ -81,7 +85,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual InstanceProviderIFC* getInstanceProvider()
 	{
-		if (!m_instProv);
+		if (!m_instProv)
 		{
 			CppInstanceProviderIFC* pIP = m_prov->getInstanceProvider();
 			if (!pIP)
@@ -97,7 +101,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual SecondaryInstanceProviderIFC* getSecondaryInstanceProvider()
 	{
-		if (!m_sinstProv);
+		if (!m_sinstProv)
 		{
 			CppSecondaryInstanceProviderIFC* pIP = m_prov->getSecondaryInstanceProvider();
 			if (!pIP)
@@ -113,7 +117,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual MethodProviderIFC* getMethodProvider()
 	{
-		if (!m_methProv);
+		if (!m_methProv)
 		{
 			CppMethodProviderIFC* pIP = m_prov->getMethodProvider();
 			if (!pIP)
@@ -129,7 +133,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual IndicationExportProviderIFC* getIndicationExportProvider()
 	{
-		if (!m_iexpProv);
+		if (!m_iexpProv)
 		{
 			CppIndicationExportProviderIFC* pIP = m_prov->getIndicationExportProvider();
 			if (!pIP)
@@ -145,7 +149,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual IndicationProviderIFC* getIndicationProvider()
 	{
-		if (!m_indProv);
+		if (!m_indProv)
 		{
 			CppIndicationProviderIFC* pIP = m_prov->getIndicationProvider();
 			if (!pIP)
@@ -161,7 +165,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual PolledProviderIFC* getPolledProvider()
 	{
-		if (!m_polledProv);
+		if (!m_polledProv)
 		{
 			CppPolledProviderIFC* pIP = m_prov->getPolledProvider();
 			if (!pIP)
@@ -177,7 +181,7 @@ public:
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual AssociatorProviderIFC* getAssociatorProvider()
 	{
-		if (!m_assocProv);
+		if (!m_assocProv)
 		{
 			CppAssociatorProviderIFC* pIP = m_prov->getAssociatorProvider();
 			if (!pIP)
@@ -190,6 +194,28 @@ public:
 		return m_assocProv->getAssociatorProvider();
 	}
 #endif
+
+	///////////////////////////////////////////////////////////////////////////
+	virtual QueryProviderIFC* getQueryProvider()
+	{
+		if (!m_queryProv)
+		{
+			CppQueryProviderIFC* pIP = m_prov->getQueryProvider();
+			if (!pIP)
+			{
+				return 0;
+			}
+			CppQueryProviderIFCRef ipRef(m_prov.getLibRef(), pIP);
+			m_queryProv = QueryProviderIFCRef(new CppQueryProviderProxy(ipRef));
+		}
+		return m_queryProv->getQueryProvider();
+	}
+
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
+	{
+		m_prov->shuttingDown(env);
+	}
+
 private:
 	CppProviderBaseIFCRef m_prov;
 	InstanceProviderIFCRef m_instProv;
@@ -201,6 +227,7 @@ private:
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	AssociatorProviderIFCRef m_assocProv;
 #endif
+	QueryProviderIFCRef m_queryProv;
 };
 
 enum
@@ -211,7 +238,7 @@ enum
 	E_PROVIDER_OPT,
 	E_LOG_FILE_OPT,
 	E_MONITOR_OPT,
-	E_LOG_LEVEL_OPT
+	E_LOG_CATEGORIES_OPT
 };
 
 const CmdLineParser::Option g_options[] =
@@ -222,25 +249,59 @@ const CmdLineParser::Option g_options[] =
 	{E_PROVIDER_OPT, 'p', "provider", CmdLineParser::E_REQUIRED_ARG, 0, "Load and call <arg>"},
 	{E_LOG_FILE_OPT, 0, "logfile", CmdLineParser::E_REQUIRED_ARG, 0, "Debug log file"},
 	{E_MONITOR_OPT, 'm', "monitor", CmdLineParser::E_NO_ARG, 0, "Connect to monitor before loading provider library"},
-	{E_LOG_LEVEL_OPT, 0, "loglevel", CmdLineParser::E_REQUIRED_ARG, 0,
-	 "Lowest category to log"},
+	{E_LOG_CATEGORIES_OPT, 0, "logcategories", CmdLineParser::E_REQUIRED_ARG, 0,
+	 "Comma separated list of categories to log"},
 	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
 };
 
 int processCommandLine(
-	int argc, char* argv[], String& provider, String& logfile, String& loglevel
+	int argc, char* argv[], String& provider, String& logfile, String& logCategories
 );
 void printUsage();
 
-}
+class CPPProvInitializer : public OOPCpp1ProviderRunner::InitializeCallback
+{
+public:
+	CPPProvInitializer(const CppProviderBaseIFCRef& cppProv, const String& providerLib)
+	: m_cppProv(cppProv)
+	, m_providerLib(providerLib)
+	{
+	}
+
+private:
+	void doInit(const ProviderEnvironmentIFCRef& provenv)
+	{
+		try
+		{
+			m_cppProv->initialize(provenv);
+		}
+		catch(Exception& e)
+		{
+			Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
+			OW_LOG_ERROR(logger, Format("provider %1 failed to initialize: %2", m_providerLib, e));
+			throw;
+		}
+		catch(...)
+		{
+			Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
+			OW_LOG_ERROR(logger, Format("provider %1 failed to initialize", m_providerLib));
+			throw;
+		}
+	}
+
+	CppProviderBaseIFCRef m_cppProv;
+	String m_providerLib;
+};
+
+} // end anonymous namespace
 
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
     int rval = 0;
 
-	String providerLib, logfile, loglevel;
-	int pclrv = processCommandLine(argc, argv, providerLib, logfile, loglevel);
+	String providerLib, logfile, logCategories;
+	int pclrv = processCommandLine(argc, argv, providerLib, logfile, logCategories);
 	if (pclrv == -1)
 	{
 		return 0;
@@ -248,10 +309,6 @@ int main(int argc, char* argv[])
 	else if (pclrv != 0)
 	{
 		return pclrv;
-	}
-	if (loglevel.empty())
-	{
-		loglevel = "*";
 	}
 
 	AutoDescriptor infd(::dup(0));
@@ -288,7 +345,7 @@ int main(int argc, char* argv[])
 	}
 
 	UnnamedPipeRef iopipe = UnnamedPipe::createUnnamedPipeFromDescriptor(infd, outfd);
-	OOPCpp1ProviderRunner provrunner(iopipe, logfile, loglevel);
+	OOPCpp1ProviderRunner provrunner(iopipe, logfile, logCategories);
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
 	ProviderEnvironmentIFCRef penv = provrunner.getProviderEnvironment();
 /*
@@ -307,18 +364,46 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	try
-	{
-		cppprov->initialize(penv);
-	}
-	catch(...)
-	{
-		OW_LOG_ERROR(logger, Format("provider %1 failed to initialize", providerLib));
-		return 1;
-	}
+	CPPProvInitializer cppProvInitializer(cppprov, providerLib);
 
 	ProviderBaseIFCRef provider = ProviderBaseIFCRef(new LocalCppProvider(cppprov));
-	return provrunner.runProvider(provider, providerLib);
+
+#ifdef OW_HAVE_SYS_APPARMOR_H
+	unsigned int magtok = Secure::rand_uint<unsigned int>(); 
+   	String subprofile = FileSystem::Path::basename(providerLib);  
+	subprofile = subprofile.substring(3, subprofile.indexOf('.')-3); 
+	int aarv = change_hat(subprofile.c_str(), magtok); 
+	if (aarv != 0 && errno == EACCES)
+	{
+		OW_LOG_INFO(logger, Format("AppArmor: Subprofile does not exist: %1", subprofile));
+		subprofile = "default_provider_hat"; 
+		aarv = change_hat(subprofile.c_str(), magtok);
+	}
+	if (aarv == 0)
+	{
+		OW_LOG_INFO(logger, Format("AppArmor: Enforcing subprofile: %1", subprofile));
+	}
+	else 
+	{
+		switch (errno)
+		{
+		case EACCES:
+			OW_LOG_INFO(logger, Format("AppArmor: Subprofile does not exist: %1", subprofile));
+			break; 
+		case EFAULT:
+			OW_LOG_ERROR(logger, Format("AppArmor: Internal error while attempting to enforce subprofile: %1", subprofile));
+			break; 
+		case ENOMEM:
+			OW_LOG_ERROR(logger, Format("AppArmor: Insufficient kernel memory to enforce subprofile: %1", subprofile));
+			break; 
+		default:
+			OW_LOG_ERROR(logger, Format("AppArmor: Unknown error while attempting to enforce subprofile: %1: %2", subprofile, strerror(errno)));
+		}
+	}
+#endif
+
+	return provrunner.runProvider(provider, providerLib, cppProvInitializer);
+
 }
 
 namespace
@@ -331,7 +416,7 @@ processCommandLine(
 	char* argv[],
 	String& providerLib,
 	String& logfile,
-	String & loglevel)
+	String & logCategories)
 {
 	try
 	{
@@ -363,9 +448,9 @@ processCommandLine(
 		{
 			PrivilegeManager::connectToMonitor();
 		}
-		if (parser.isSet(E_LOG_LEVEL_OPT))
+		if (parser.isSet(E_LOG_CATEGORIES_OPT))
 		{
-			loglevel = parser.getOptionValue(E_LOG_LEVEL_OPT);
+			logCategories = parser.getOptionValue(E_LOG_CATEGORIES_OPT);
 		}
 	}
 	catch (const CmdLineParserException& e)

@@ -120,6 +120,7 @@ namespace
 		return g_conn;
 	}
 
+	// Directly copies the error message to the buffer, truncating if needed.
 	int copy_errmsg(char const * msg, char * errbuf, size_t bufsize)
 	{
 		strcpy_trunc(errbuf, bufsize, msg);
@@ -149,6 +150,22 @@ namespace
 	int copy_unimplemented_errmsg(char * errbuf, size_t bufsize)
 	{
 		return copy_errmsg("Unimplemented monitor function", errbuf, bufsize);
+	}
+
+	const char* const get_exception_for_code(int errcode)
+	{
+		if( errcode < PrivilegeManager::MONITOR_FATAL_ERROR_START )
+		{
+			return "PrivilegeManagerException";
+		}
+		else if( errcode == PrivilegeManager::E_INSUFFICIENT_PRIVILEGES )
+		{
+			return "InsufficientPrivilegesException";
+		}
+		else
+		{
+			return "FatalPrivilegeManagerException";
+		}
 	}
 
 	int check_result(
@@ -186,7 +203,20 @@ namespace
 					errbuf, bufsz);
 			}
 
-			copy_errmsg(&errmsg[0], errbuf, bufsz);
+			char* p = errbuf;
+			char* buf_end = errbuf + bufsz;
+			// All this does is formats the string similar to this:
+			// Format("%1: %2", get_exception_for_code(errcode), &errmsg[0])
+			p = strcpy_trunc(p, buf_end - p, get_exception_for_code(errcode));
+			if( p < buf_end )
+			{
+				p = strcpy_trunc(p, buf_end - p, ": ");
+				if( p < buf_end )
+				{
+					p = strcpy_trunc(p, buf_end - p, &errmsg[0]);
+				}
+			}
+
 			return errcode;
 		}
 		return 0;

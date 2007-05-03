@@ -56,14 +56,14 @@ Int32
 NPIPolledProviderProxy::getInitialPollingInterval(
 	  const ProviderEnvironmentIFCRef& env)
 {
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NPIPolledProviderIFC::getInitialPollingInterval()");
+		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "NPIPolledProviderIFC::getInitialPollingInterval()");
 	return 1;
 }
 Int32
 NPIPolledProviderProxy::poll(const ProviderEnvironmentIFCRef &env)
 {
 	CIMValue rval(CIMNULL);
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NPIPolledProviderIFC::poll()");
+	OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "NPIPolledProviderIFC::poll()");
 	if (m_ftable->fp_mustPoll != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -86,10 +86,10 @@ void NPIPolledProviderProxy::activateFilter(
 	const ProviderEnvironmentIFCRef& env, const String& query,
 	const String& Type)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "activateFilter");
+	OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "activateFilter2");
+		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "activateFilter2");
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
 		ProviderEnvironmentIFCRef env2(env);
@@ -112,12 +112,12 @@ void NPIPolledProviderProxy::deactivateFilter(
 	const ProviderEnvironmentIFCRef& env, const String& query,
 	const String& Type)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "deactivateFilter");
+	OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "deactivateFilter2");
+		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "deactivateFilter2");
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
 		char * expo = query.allocateCString();

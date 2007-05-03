@@ -46,7 +46,7 @@ namespace OW_NAMESPACE
 class OOPProtocolCPP1 : public OOPProtocolIFC
 {
 public:
-	OOPProtocolCPP1();
+	OOPProtocolCPP1(OOPProviderBase* pprov);
 	virtual ~OOPProtocolCPP1();
 	
 	virtual void enumInstanceNames(
@@ -57,7 +57,7 @@ public:
 		const String& ns,
 		const String& className,
 		CIMObjectPathResultHandlerIFC& result,
-		const CIMClass& cimClass );
+		const CIMClass& cimClass);
 	
 	virtual void enumInstances(
 		const UnnamedPipeRef& in,
@@ -73,7 +73,7 @@ public:
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
 		const CIMClass& requestedClass,
-		const CIMClass& cimClass );
+		const CIMClass& cimClass);
 	
 	virtual CIMInstance getInstance(
 		const UnnamedPipeRef& in,
@@ -86,7 +86,7 @@ public:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, 
-		const CIMClass& cimClass );
+		const CIMClass& cimClass);
 
 	virtual CIMObjectPath createInstance(
 		const UnnamedPipeRef& in,
@@ -94,7 +94,7 @@ public:
 		const Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
-		const CIMInstance& cimInstance );
+		const CIMInstance& cimInstance);
 	
 	virtual void modifyInstance(
 		const UnnamedPipeRef& in,
@@ -143,7 +143,7 @@ public:
 		const String& assocClass,
 		const String& resultClass,
 		const String& role,
-		const String& resultRole );
+		const String& resultRole);
 
 	virtual void references(
 		const UnnamedPipeRef& in,
@@ -168,7 +168,7 @@ public:
 		const String& ns,
 		const CIMObjectPath& objectName,
 		const String& resultClass,
-		const String& role );
+		const String& role);
 
 	virtual CIMValue invokeMethod(
 		const UnnamedPipeRef& in,
@@ -200,6 +200,13 @@ public:
 		const ProviderEnvironmentIFCRef& env,
 		bool persistent);
 
+	virtual void setLogLevel(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		ELogLevel logLevel);
+
 	virtual void activateFilter(
 		const UnnamedPipeRef& in,
 		const UnnamedPipeRef& out,
@@ -209,8 +216,7 @@ public:
 		const String& eventType,
 		const String& nameSpace,
 		const StringArray& classes,
-		bool firstActivation
-		);
+		bool firstActivation);
 	
 	virtual void authorizeFilter(
 		const UnnamedPipeRef& in,
@@ -221,8 +227,7 @@ public:
 		const String& eventType,
 		const String& nameSpace,
 		const StringArray& classes,
-		const String& owner
-		);
+		const String& owner);
 	
 	virtual void deActivateFilter(
 		const UnnamedPipeRef& in,
@@ -233,8 +238,7 @@ public:
 		const String& eventType,
 		const String& nameSpace,
 		const StringArray& classes,
-		bool lastActivation
-		);
+		bool lastActivation);
 	
 	virtual int mustPoll(
 		const UnnamedPipeRef& in,
@@ -244,8 +248,7 @@ public:
 		const WQLSelectStatement& filter,
 		const String& eventType,
 		const String& nameSpace,
-		const StringArray& classes
-		);
+		const StringArray& classes);
 
 	virtual void exportIndication(
 		const UnnamedPipeRef& in,
@@ -254,11 +257,25 @@ public:
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
 		const CIMInstance& indHandlerInst, 
-		const CIMInstance& indicationInst
-		);
+		const CIMInstance& indicationInst);
+
+	virtual void shuttingDown(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env);
+
+	virtual void queryInstances(
+		const UnnamedPipeRef& in,
+		const UnnamedPipeRef& out,
+		const Timeout& timeout,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const WQLSelectStatement& query,
+		CIMInstanceResultHandlerIFC& result,
+		const CIMClass& cimClass);
 
 };
-
 
 } // end namespace OW_NAMESPACE
 

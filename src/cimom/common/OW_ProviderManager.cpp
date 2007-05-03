@@ -91,6 +91,7 @@ void ProviderManager::shutdown()
 	m_registeredMethProvs.clear();
 	m_registeredPropProvs.clear();
 	m_registeredIndProvs.clear();
+	m_registeredQueryProvs.clear();
 	m_IFCArray.clear();
 
 	m_env = 0;
@@ -105,15 +106,21 @@ public:
 	ProviderEnvironmentServiceEnvironmentWrapper(ServiceEnvironmentIFCRef env_)
 		: env(env_)
 		, m_context()
+		, m_contextPtr(&m_context)
+	{}
+	ProviderEnvironmentServiceEnvironmentWrapper(ServiceEnvironmentIFCRef env_, OperationContext& context)
+		: env(env_)
+		, m_context()
+		, m_contextPtr(&context)
 	{}
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const
 	{
-		return env->getCIMOMHandle(m_context);
+		return env->getCIMOMHandle(*m_contextPtr);
 	}
 	
 	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 	{
-		return env->getCIMOMHandle(m_context, ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
+		return env->getCIMOMHandle(*m_contextPtr, ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
 	}
 	
 	virtual RepositoryIFCRef getRepository() const
@@ -139,7 +146,7 @@ public:
 	}
 	virtual OperationContext& getOperationContext()
 	{
-		return m_context;
+		return *m_contextPtr;
 	}
 	virtual ProviderEnvironmentIFCRef clone() const
 	{
@@ -148,6 +155,7 @@ public:
 private:
 	ServiceEnvironmentIFCRef env;
 	mutable LocalOperationContext m_context;
+	OperationContext* m_contextPtr;
 };
 
 } // end anonymous namespace
@@ -443,6 +451,7 @@ void ProviderManager::init(const ServiceEnvironmentIFCRef& env)
 
 		MethodProviderInfoArray methodProviderInfo;
 		IndicationProviderInfoArray indicationProviderInfo;
+		QueryProviderInfoArray queryProviderInfo;
 
 		m_IFCArray[i]->init(penv,
 			instanceProviderInfo,
@@ -451,7 +460,8 @@ void ProviderManager::init(const ServiceEnvironmentIFCRef& env)
 			associatorProviderInfo,
 #endif
 			methodProviderInfo,
-			indicationProviderInfo);
+			indicationProviderInfo,
+			queryProviderInfo);
 
 		processProviderInfo(penv, instanceProviderInfo, m_IFCArray[i], "instance", m_registeredInstProvs);
 		processProviderInfo(penv, secondaryInstanceProviderInfo, m_IFCArray[i], "secondary instance", m_registeredSecInstProvs);
@@ -462,6 +472,7 @@ void ProviderManager::init(const ServiceEnvironmentIFCRef& env)
 
 		processProviderInfo(penv, methodProviderInfo, m_IFCArray[i], "method", m_registeredMethProvs);
 		processProviderInfo(penv, indicationProviderInfo, m_IFCArray[i], "indication", m_registeredIndProvs);
+		processProviderInfo(penv, queryProviderInfo, m_IFCArray[i], "query", m_registeredQueryProvs);
 	}
 
 	StringArray restrictedNamespaces = m_env->getMultiConfigItem(ConfigOpts::EXPLICIT_REGISTRATION_NAMESPACES_opt, StringArray(), " \t");
@@ -480,19 +491,25 @@ ProviderManager::isRestrictedNamespace(const String& ns) const
 namespace
 {
 
-ProviderEnvironmentIFCRef createProvEnvRef(ServiceEnvironmentIFCRef const & env)
+ProviderEnvironmentIFCRef createProvEnvRefNoContext(ServiceEnvironmentIFCRef const & env)
 {
 	return ProviderEnvironmentIFCRef(
 		new ProviderEnvironmentServiceEnvironmentWrapper(env));
+}
+
+ProviderEnvironmentIFCRef createProvEnvRef(ServiceEnvironmentIFCRef const & env, OperationContext& context)
+{
+	return ProviderEnvironmentIFCRef(
+		new ProviderEnvironmentServiceEnvironmentWrapper(env, context));
 }
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 InstanceProviderIFCRef
-ProviderManager::getInstanceProvider(const String& ns, const CIMClass& cc) const
+ProviderManager::getInstanceProvider(const String& ns, const CIMClass& cc, OperationContext& context) const
 {
-	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env, context);
 	ProvRegMap_t::const_iterator ci;
 	if(!isRestrictedNamespace(ns) || cc.getName().equalsIgnoreCase("__Namespace"))
 	{
@@ -534,9 +551,9 @@ ProviderManager::getInstanceProvider(const String& ns, const CIMClass& cc) const
 //////////////////////////////////////////////////////////////////////////////
 SecondaryInstanceProviderIFCRefArray
 ProviderManager::getSecondaryInstanceProviders(
-	const String& ns, const CIMName& className) const
+	const String& ns, const CIMName& className, OperationContext& context) const
 {
-	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env, context);
 	String lowerName = className.toString();
 	lowerName.toLowerCase();
 	MultiProvRegMap_t::const_iterator lci;
@@ -580,9 +597,9 @@ ProviderManager::getSecondaryInstanceProviders(
 //////////////////////////////////////////////////////////////////////////////
 MethodProviderIFCRef
 ProviderManager::getMethodProvider(
-	const String& ns, const CIMClass& cc, const CIMMethod& method) const
+	const String& ns, const CIMClass& cc, const CIMMethod& method, OperationContext& context) const
 {
-	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env, context);
 	ProvRegMap_t::const_iterator ci;
 	CIMName methodName = method.getName();
 	
@@ -661,9 +678,9 @@ ProviderManager::getMethodProvider(
 //////////////////////////////////////////////////////////////////////////////
 AssociatorProviderIFCRef
 ProviderManager::getAssociatorProvider(
-	const String& ns, const CIMClass& cc) const
+	const String& ns, const CIMClass& cc, OperationContext& context) const
 {
-	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env, context);
 	ProvRegMap_t::const_iterator ci;
 	if(!isRestrictedNamespace(ns))
 	{
@@ -707,7 +724,7 @@ ProviderManager::getAssociatorProvider(
 IndicationExportProviderIFCRefArray
 ProviderManager::getIndicationExportProviders() const
 {
-	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
+	ProviderEnvironmentIFCRef env = createProvEnvRefNoContext(m_env);
 	IndicationExportProviderIFCRefArray rv;
 	for (size_t i = 0; i < m_IFCArray.size(); i++)
 	{
@@ -724,7 +741,7 @@ ProviderManager::getIndicationExportProviders() const
 PolledProviderIFCRefArray
 ProviderManager::getPolledProviders() const
 {
-	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
+	ProviderEnvironmentIFCRef env = createProvEnvRefNoContext(m_env);
 	PolledProviderIFCRefArray rv;
 	for (size_t i = 0; i < m_IFCArray.size(); i++)
 	{
@@ -778,9 +795,9 @@ ProviderManager::findIndicationProviders(
 IndicationProviderIFCRefArray
 ProviderManager::getIndicationProviders(
 	const String& ns, const CIMName& indicationClassName,
-	const CIMNameArray& monitoredClassNames) const
+	const CIMNameArray& monitoredClassNames, OperationContext& context) const
 {
-	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env);
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env, context);
 	IndicationProviderIFCRefArray providers;
 	String lowerName = indicationClassName.toString();
 	lowerName.toLowerCase();
@@ -812,6 +829,38 @@ ProviderManager::getIndicationProviders(
 
 	return providers;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+QueryProviderIFCRef
+ProviderManager::getQueryProvider(const String& ns, const CIMClass& cc, OperationContext& context) const
+{
+	ProviderEnvironmentIFCRef env = createProvEnvRef(m_env, context);
+	ProvRegMap_t::const_iterator ci;
+	if(!isRestrictedNamespace(ns) || cc.getName().equalsIgnoreCase("__Namespace"))
+	{
+		// lookup just the class name to see if a provider registered for the
+		// class in all namespaces.
+		ci = m_registeredQueryProvs.find(cc.getName().toLowerCase());
+		if (ci != m_registeredQueryProvs.end())
+		{
+			return ci->second.ifc->getQueryProvider(env,
+				ci->second.provName.c_str());
+		}
+	}
+
+	// next lookup namespace:classname to see if we've got one for the
+	// specific namespace
+	String nsAndClassName = ns + ':' + cc.getName();
+	nsAndClassName.toLowerCase();
+	ci = m_registeredQueryProvs.find(nsAndClassName);
+	if (ci != m_registeredQueryProvs.end())
+	{
+		return ci->second.ifc->getQueryProvider(env,
+			ci->second.provName.c_str());
+	}
+	return QueryProviderIFCRef(0);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 ProviderManager::unloadProviders(const ProviderEnvironmentIFCRef& env)

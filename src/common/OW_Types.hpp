@@ -90,7 +90,7 @@ namespace OW_NAMESPACE
 
 #if defined OW_DARWIN
 #define OW_SHAREDLIB_EXTENSION ".dylib.bundle"
-#elif defined OW_HPUX
+#elif defined OW_HPUX && !defined(OW_ARCH_IA64)
 #define OW_SHAREDLIB_EXTENSION ".sl"
 #elif defined OW_NETWARE
 #define OW_SHAREDLIB_EXTENSION ".nlm"

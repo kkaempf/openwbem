@@ -1,4 +1,4 @@
-
+// This class is handled by the repository.
 class wqlTestClass
 {
 	[key]
@@ -80,5 +80,19 @@ instance of wqlTestClass
 	name = "test10";
 
 	realData = 4567890123.0e18;
+};
+
+// This class has a QueryProvider (testWQLProv.cpp)
+class wqlTestClass2
+{
+	[key]
+	string name;
+
+	sint32 sint32Data;
+	boolean booleanData;
+	uint64 uint64Data;
+	string stringData;
+	real64 realData;
+
 };
 

@@ -114,7 +114,7 @@ public:
 			String const& version)
 	{
 		Logger logger("ow.SafeLibCreate");
-		OW_LOG_DEBUG(logger, Format("SafeLibCreate::create called.  createFuncName = %1", createFuncName).c_str());
+		OW_LOG_DEBUG3(logger, Format("SafeLibCreate::create called.  createFuncName = %1", createFuncName).c_str());
 		
 		OW_ASSERT(sl);
 		try

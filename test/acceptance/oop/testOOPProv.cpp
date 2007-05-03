@@ -311,6 +311,15 @@ public:
 		else if (methodName == "testCIMOMHandle")
 		{
 			CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+
+			// test a WQL query
+			CIMInstanceArray cia = hdl->execQueryA(ns, "select * from ooptest where id=\"1\"", "wql1");
+			if (cia.size() != 1)
+			{
+				OW_THROWCIMMSG(CIMException::FAILED, Format("Expected one instance from WQL. Got %1", cia.size()).c_str());
+			}
+
+			// test some methods
 			CIMParamValueArray inargs;
 			inargs.push_back(CIMParamValue("arg1", CIMValue("param1")));
 			CIMParamValueArray outargs;
@@ -397,6 +406,19 @@ public:
 				return CIMValue(false);
 			}
 
+			return CIMValue(true);
+		}
+		else if (methodName == "testLogging")
+		{
+			String component = in[0].getValue().toString();
+			String category = in[1].getValue().toString();
+			String message = in[2].getValue().toString();
+			String filename = in[3].getValue().toString();
+			int fileline = in[4].getValue().toInt32();
+			String methodname = in[5].getValue().toString();
+			Logger logger(COMPONENT_NAME);
+			// void logMessage(const String& component, const String& category, const String& message, const char* filename, int fileline, const char* methodname) const;
+			logger.logMessage(component, category, message, filename.c_str(), fileline, methodname.c_str());
 			return CIMValue(true);
 		}
 

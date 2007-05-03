@@ -231,7 +231,7 @@ CIMOMEnvironment::startServices()
 	Socket::createShutDownMechanism();
 
 	// load
-	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment loading services");
+	OW_LOG_DEBUG2(m_Logger, "CIMOMEnvironment loading services");
 
 	m_authorizerManager = new AuthorizerManager;
 	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_authorizerManager));
@@ -244,12 +244,13 @@ CIMOMEnvironment::startServices()
 	m_cimRepository = new CIMRepository;
 	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_cimRepository));
 
+	_loadAuthorizer();  // CIMServer constructor has a dependency on m_authorizer
+	_createAuthorizerManager();  // new stuff
+
 	m_cimServer = RepositoryIFCRef(new CIMServer(this,
-		m_providerManager, m_cimRepository, m_authorizerManager));
+		m_providerManager, m_cimRepository, m_authorizerManager, m_authorizer));
 	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_cimServer));
 
-	_loadAuthorizer();  // old stuff
-	_createAuthorizerManager();  // new stuff
 	_createAuthManager();
 	_loadRequestHandlers();
 	_loadServices();
@@ -265,7 +266,7 @@ CIMOMEnvironment::startServices()
 
 	// init
 
-	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment initializing services");
+	OW_LOG_DEBUG2(m_Logger, "CIMOMEnvironment initializing services");
 
 	{
 		MutexLock l(m_stateGuard);
@@ -274,7 +275,7 @@ CIMOMEnvironment::startServices()
 
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		OW_LOG_DEBUG(m_Logger, Format("CIMOM initializing service: %1", m_services[i]->getName()));
+		OW_LOG_DEBUG2(m_Logger, Format("CIMOM initializing service: %1", m_services[i]->getName()));
 		m_services[i]->init(this);
 	}
 	{
@@ -284,14 +285,14 @@ CIMOMEnvironment::startServices()
 	
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		OW_LOG_DEBUG(m_Logger, Format("CIMOM calling initialized() for service: %1", m_services[i]->getName()));
+		OW_LOG_DEBUG2(m_Logger, Format("CIMOM calling initialized() for service: %1", m_services[i]->getName()));
 		m_services[i]->initialized();
 	}
 
 	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment finished initializing services");
 
 	// start
-	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment starting services");
+	OW_LOG_DEBUG2(m_Logger, "CIMOMEnvironment starting services");
 	{
 		MutexLock l(m_stateGuard);
 		m_state = E_STATE_STARTING;
@@ -299,7 +300,7 @@ CIMOMEnvironment::startServices()
 
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		OW_LOG_DEBUG(m_Logger, Format("CIMOM starting service: %1", m_services[i]->getName()));
+		OW_LOG_DEBUG2(m_Logger, Format("CIMOM starting service: %1", m_services[i]->getName()));
 		m_services[i]->start();
 	}
 	{
@@ -309,7 +310,7 @@ CIMOMEnvironment::startServices()
 
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		OW_LOG_DEBUG(m_Logger, Format("CIMOM calling started() for service: %1", m_services[i]->getName()));
+		OW_LOG_DEBUG2(m_Logger, Format("CIMOM calling started() for service: %1", m_services[i]->getName()));
 		m_services[i]->started();
 	}
 
@@ -321,13 +322,13 @@ CIMOMEnvironment::shutdown()
 {
 
 	// notify all services of impending shutdown.
-	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment notifying services of shutdown");
+	OW_LOG_DEBUG2(m_Logger, "CIMOMEnvironment notifying services of shutdown");
 	// Do this in reverse order because of dependencies
 	for (int i = int(m_services.size())-1; i >= 0; i--)
 	{
 		try
 		{
-			OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment notifying service: %1", m_services[i]->getName()));
+			OW_LOG_DEBUG2(m_Logger, Format("CIMOMEnvironment notifying service: %1", m_services[i]->getName()));
 			m_services[i]->shuttingDown();
 		}
 		catch (Exception& e)
@@ -340,7 +341,7 @@ CIMOMEnvironment::shutdown()
 	}
 
 	// PHASE 1: SHUTDOWNS
-	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment beginning shutdown process");
+	OW_LOG_DEBUG2(m_Logger, "CIMOMEnvironment beginning shutdown process");
 	{
 		MutexLock l(m_stateGuard);
 		m_state = E_STATE_SHUTTING_DOWN;
@@ -351,19 +352,19 @@ CIMOMEnvironment::shutdown()
 	// stay open until we are done calling functions like deActivate and
 	// shuttingDown on them.
 #if 0
-	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment shutting down sockets");
+	OW_LOG_DEBUG2(m_Logger, "CIMOMEnvironment shutting down sockets");
 	// this is a global thing, so do it here
 	Socket::shutdownAllSockets();
 #endif
 
 	// Shutdown all services
-	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment shutting down services");
+	OW_LOG_DEBUG2(m_Logger, "CIMOMEnvironment shutting down services");
 	// Do this in reverse order because of dependencies
 	for (int i = int(m_services.size())-1; i >= 0; i--)
 	{
 		try
 		{
-			OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment shutting down service: %1", m_services[i]->getName()));
+			OW_LOG_DEBUG2(m_Logger, Format("CIMOMEnvironment shutting down service: %1", m_services[i]->getName()));
 			m_services[i]->shutdown();
 		}
 		catch (Exception& e)
@@ -375,6 +376,7 @@ CIMOMEnvironment::shutdown()
 		}
 	}
 
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment shut down services");
 	{
 		MutexLock l(m_stateGuard);
 		m_state = E_STATE_SHUTDOWN;
@@ -385,7 +387,7 @@ CIMOMEnvironment::shutdown()
 	// get this lock here so that we delete everything atomically
 	MutexLock ml(m_monitor);
 
-	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment unloading and deleting services");
+	OW_LOG_DEBUG2(m_Logger, "CIMOMEnvironment unloading and deleting services");
 
 	m_pollingManager = 0;
 	
@@ -683,17 +685,39 @@ CIMOMEnvironment::_createLogger()
 		{
 			// convert level into categories
 			String logMainLevel = getConfigItem(Format(LOG_1_LEVEL_opt, logName), OW_DEFAULT_LOG_1_LEVEL);
-			if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
+			if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG3_CATEGORY))
 			{
-				logMainCategories = Logger::STR_DEBUG_CATEGORY + " " + Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+				logMainCategories = String(Logger::STR_DEBUG3_CATEGORY) 
+					+ " " + String(Logger::STR_DEBUG2_CATEGORY) 
+					+ " " + String(Logger::STR_DEBUG_CATEGORY) 
+					+ " " + String(Logger::STR_INFO_CATEGORY) 
+					+ " " + String(Logger::STR_ERROR_CATEGORY) 
+					+ " " + String(Logger::STR_FATAL_CATEGORY);
+			}
+			else if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG2_CATEGORY))
+			{
+				logMainCategories = String(Logger::STR_DEBUG2_CATEGORY) 
+					+ " " + String(Logger::STR_DEBUG_CATEGORY) 
+					+ " " + String(Logger::STR_INFO_CATEGORY) 
+					+ " " + String(Logger::STR_ERROR_CATEGORY) 
+					+ " " + String(Logger::STR_FATAL_CATEGORY);
+			}
+			else if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
+			{
+				logMainCategories = String(Logger::STR_DEBUG_CATEGORY) 
+					+ " " + String(Logger::STR_INFO_CATEGORY) 
+					+ " " + String(Logger::STR_ERROR_CATEGORY) 
+					+ " " + String(Logger::STR_FATAL_CATEGORY);
 			}
 			else if (logMainLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
 			{
-				logMainCategories = Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+				logMainCategories = String(Logger::STR_INFO_CATEGORY) 
+					+ " " + String(Logger::STR_ERROR_CATEGORY)
+					+ " " + String(Logger::STR_FATAL_CATEGORY);
 			}
 			else if (logMainLevel.equalsIgnoreCase(Logger::STR_ERROR_CATEGORY))
 			{
-				logMainCategories = Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+				logMainCategories = String(Logger::STR_ERROR_CATEGORY) + " " + String(Logger::STR_FATAL_CATEGORY);
 			}
 			else if (logMainLevel.equalsIgnoreCase(Logger::STR_FATAL_CATEGORY))
 			{
@@ -765,15 +789,20 @@ CIMOMEnvironment::_createLogger()
 		String logMainLevel = getConfigItem(Format(LOG_1_LEVEL_opt, logName), OW_DEFAULT_LOG_1_LEVEL);
 		if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
 		{
-			logMainCategories = Logger::STR_DEBUG_CATEGORY + " " + Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+			logMainCategories = String(Logger::STR_DEBUG_CATEGORY)
+				+ " " + String(Logger::STR_INFO_CATEGORY) 
+				+ " " + String(Logger::STR_ERROR_CATEGORY) 
+				+ " " + String(Logger::STR_FATAL_CATEGORY);
 		}
 		else if (logMainLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
 		{
-			logMainCategories = Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+			logMainCategories = String(Logger::STR_INFO_CATEGORY) 
+				+ " " + String(Logger::STR_ERROR_CATEGORY) 
+				+ " " + String(Logger::STR_FATAL_CATEGORY);
 		}
 		else if (logMainLevel.equalsIgnoreCase(Logger::STR_ERROR_CATEGORY))
 		{
-			logMainCategories = Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+			logMainCategories = String(Logger::STR_ERROR_CATEGORY) + " " + String(Logger::STR_FATAL_CATEGORY);
 		}
 		else if (logMainLevel.equalsIgnoreCase(Logger::STR_FATAL_CATEGORY))
 		{
@@ -802,6 +831,7 @@ CIMOMEnvironment::_loadConfigItemsFromFile(const String& filename)
 		OW_PATHNAME_SEPARATOR);
 	for (size_t i = 0; i < configDirs.size(); ++i)
 	{
+		OW_LOG_DEBUG(m_Logger, Format("Searching %1 for additional config files (*.conf)", configDirs[i]));
 		String const & dir = configDirs[i];
 		StringArray dir_entries;
 		bool ok = FileSystem::getDirectoryContents(dir, dir_entries);
@@ -814,7 +844,9 @@ CIMOMEnvironment::_loadConfigItemsFromFile(const String& filename)
 			String const & fname = dir_entries[j];
 			if (fname.endsWith(".conf"))
 			{
-				ConfigFile::loadConfigFile(dir + "/" + fname, *m_configItems);
+				String confPath = dir + "/" + fname;
+				OW_LOG_DEBUG(m_Logger, Format("Loading additional config items from file: %1", confPath));
+				ConfigFile::loadConfigFile(confPath, *m_configItems);
 			}
 		}
 	}
@@ -855,9 +887,9 @@ CIMOMEnvironment::getMultiConfigItem(const String &itemName,
 
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
-CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
-		OperationContext& context) const
+CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst, OperationContext& context) const
 {
+	OW_LOG_DEBUG3(m_Logger, Format("CIMOMEnvironment::getWQLFilterCIMOMHandle(). context.getOperationId() = %1", context.getOperationId()));
 	{
 		MutexLock l(m_stateGuard);
 		if (!isLoaded(m_state))
@@ -874,19 +906,18 @@ CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
-	EBypassProvidersFlag bypassProviders,
-	ELockingFlag locking) const
+	EBypassProvidersFlag bypassProviders) const
 {
-	return getCIMOMHandle(context, E_SEND_INDICATIONS, bypassProviders, locking);
+	return getCIMOMHandle(context, E_SEND_INDICATIONS, bypassProviders);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 	ESendIndicationsFlag sendIndications,
-	EBypassProvidersFlag bypassProviders,
-	ELockingFlag locking) const
+	EBypassProvidersFlag bypassProviders) const
 {
+	OW_LOG_DEBUG3(m_Logger, Format("CIMOMEnvironment::getCIMOMHandle(). context.getOperationId() = %1", context.getOperationId()));
 	{
 		MutexLock l(m_stateGuard);
 		if (!isLoaded(m_state))
@@ -923,8 +954,7 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 		rref = authorizingRepository(rref, m_authorizer);
 	}
 
-	return CIMOMHandleIFCRef(new LocalCIMOMHandle(const_cast<CIMOMEnvironment*>(this), rref,
-		context, locking == E_LOCKING ? LocalCIMOMHandle::E_LOCKING : LocalCIMOMHandle::E_NO_LOCKING));
+	return CIMOMHandleIFCRef(new LocalCIMOMHandle(const_cast<CIMOMEnvironment*>(this), rref, context));
 }
 //////////////////////////////////////////////////////////////////////////////
 WQLIFCRef
@@ -1121,7 +1151,7 @@ CIMOMEnvironment::getRequestHandler(const String &id) const
 	{
 		ref = RequestHandlerIFCRef(iter->second->rqIFCRef.getLibRef(),
 			iter->second->rqIFCRef->clone());
-		OW_LOG_DEBUG(m_Logger, Format("handling request for content type %1", id));
+		OW_LOG_DEBUG3(m_Logger, Format("handling request for content type %1", id));
 	}
 	return ref;
 }
@@ -1206,11 +1236,10 @@ void
 CIMOMEnvironment::exportIndication(const CIMInstance& instance,
 	const String& instNS)
 {
-	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment::exportIndication");
+	OW_LOG_DEBUG3(m_Logger, "CIMOMEnvironment::exportIndication");
 	if (m_indicationServer && !m_indicationsDisabled)
 	{
-		OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment::exportIndication - calling indication"
-			" server");
+		OW_LOG_DEBUG3(m_Logger, "CIMOMEnvironment::exportIndication - calling indication server");
 		m_indicationServer->processIndication(instance, instNS);
 	}
 }
@@ -1400,11 +1429,11 @@ CIMOMEnvironment::_sortServicesForDependencies()
 		{
 			// no name == no depedency tracking, just do it at the beginning.
 			sortedServices.push_back(m_services[i]);
-			OW_LOG_DEBUG(m_Logger, "Found service with no name, adding to sortedServices");
+			OW_LOG_DEBUG3(m_Logger, "Found service with no name, adding to sortedServices");
 		}
 		else
 		{
-			OW_LOG_DEBUG(m_Logger, Format("Adding node for service %1", name));
+			OW_LOG_DEBUG3(m_Logger, Format("Adding node for service %1", name));
 			if (!depGraph.addNode(name, i))
 			{
 				OW_THROW(CIMOMEnvironmentException, Format("Invalid: 2 services with the same name: %1", name).c_str());
@@ -1422,7 +1451,7 @@ CIMOMEnvironment::_sortServicesForDependencies()
 			StringArray deps(m_services[i]->getDependencies());
 			for (size_t j = 0; j < deps.size(); ++j)
 			{
-				OW_LOG_DEBUG(m_Logger, Format("Adding dependency for service %1->%2", name, deps[j]));
+				OW_LOG_DEBUG2(m_Logger, Format("Adding dependency for service %1->%2", name, deps[j]));
 				if (!depGraph.addDependency(name, deps[j]))
 				{
 					OW_THROW(CIMOMEnvironmentException, Format("Invalid: service %1 has duplicate dependencies: %2", name, deps[j]).c_str());
@@ -1433,7 +1462,7 @@ CIMOMEnvironment::_sortServicesForDependencies()
 			StringArray dependentServices(m_services[i]->getDependentServices());
 			for (size_t j = 0; j < dependentServices.size(); ++j)
 			{
-				OW_LOG_DEBUG(m_Logger, Format("Adding dependency for service %1->%2", dependentServices[j], name));
+				OW_LOG_DEBUG2(m_Logger, Format("Adding dependency for service %1->%2", dependentServices[j], name));
 				if (!depGraph.addDependency(dependentServices[j], name))
 				{
 					OW_THROW(CIMOMEnvironmentException, Format("Invalid: service %1 has duplicate dependencies: %2", dependentServices[j], name).c_str());
@@ -1446,7 +1475,7 @@ CIMOMEnvironment::_sortServicesForDependencies()
 	Node curNode = depGraph.findIndependentNode();
 	while (curNode != INVALID_NODE)
 	{
-		OW_LOG_DEBUG(m_Logger, Format("Found service with satisfied dependencies: %1", curNode.name));
+		OW_LOG_DEBUG3(m_Logger, Format("Found service with satisfied dependencies: %1", curNode.name));
 		sortedServices.push_back(m_services[curNode.index]);
 		depGraph.removeNode(curNode.name);
 		curNode = depGraph.findIndependentNode();

@@ -195,8 +195,8 @@ AccessMgr::checkAccess(int op, const String& ns,
 
 
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("Checking access to namespace: \"%1\"", ns));
-	OW_LOG_DEBUG(lgr, Format("UserName is: \"%1\" Operation is : %2",
+	OW_LOG_DEBUG2(lgr, Format("Checking access to namespace: \"%1\"", ns));
+	OW_LOG_DEBUG2(lgr, Format("UserName is: \"%1\" Operation is : %2",
 		userInfo.getUserName(), op));
 	String lns(ns);
 	while (!lns.empty() && lns[0] == '/')
@@ -212,7 +212,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 				m_env->getConfigItem(ConfigOpts::ACL_SUPERUSER_opt);
 			if (superUser.equalsIgnoreCase(userInfo.getUserName()))
 			{
-				OW_LOG_DEBUG(lgr, "User is SuperUser: checkAccess returning.");
+				OW_LOG_DEBUG2(lgr, "User is SuperUser: checkAccess returning.");
 				return;
 			}
 			try
@@ -223,7 +223,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 			}
 			catch(CIMException&)
 			{
-				OW_LOG_DEBUG(lgr, "OpenWBEM_UserACL class non-existent in"
+				OW_LOG_DEBUG2(lgr, "OpenWBEM_UserACL class non-existent in"
 					" /root/security. ACLs disabled");
 				return;
 			}
@@ -290,7 +290,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 		}
 		catch(CIMException&)
 		{
-			OW_LOG_DEBUG(lgr, "OpenWBEM_NamespaceACL class non-existent in"
+			OW_LOG_DEBUG2(lgr, "OpenWBEM_NamespaceACL class non-existent in"
 				" /root/security. namespace ACLs disabled");
 			return;
 		}
@@ -304,8 +304,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 		}
 		catch(const CIMException& ce)
 		{
-			OW_LOG_DEBUG(lgr, Format("Caught exception: %1 in"
-				" AccessMgr::checkAccess", ce));
+			OW_LOG_DEBUG(lgr, Format("Caught exception: %1 in AccessMgr::checkAccess", ce));
 			ci.setNull();
 		}
 	
@@ -564,6 +563,19 @@ SimpleAuthorizer::enumInstances(
 	m_cimRepository->enumInstances(ns, className, result, deep, localOnly, includeQualifiers, includeClassOrigin, propertyList, enumSubclasses, context);
 }
 //////////////////////////////////////////////////////////////////////////////
+void
+SimpleAuthorizer::enumInstancesWQL(
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result,
+	const WQLSelectStatement& wss,
+	const WQLCompile& wc,
+	OperationContext& context)
+{
+	m_accessMgr->checkAccess(AccessMgr::ENUMERATEINSTANCES, ns, context);
+	m_cimRepository->enumInstancesWQL(ns, className, result, wss, wc, context);
+}
+//////////////////////////////////////////////////////////////////////////////
 CIMInstance
 SimpleAuthorizer::getInstance(
 	const String& ns,
@@ -651,6 +663,17 @@ SimpleAuthorizer::invokeMethod(
 {
 	m_accessMgr->checkAccess(AccessMgr::INVOKEMETHOD, ns, context);
 	return m_cimRepository->invokeMethod(ns, path, methodName, inParams, outParams, context);
+}
+//////////////////////////////////////////////////////////////////////
+RepositoryIFC::ELockType
+SimpleAuthorizer::getLockTypeForMethod(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& in, 
+	OperationContext& context)
+{
+	return m_cimRepository->getLockTypeForMethod(ns, path, methodName, in, context);
 }
 //////////////////////////////////////////////////////////////////////
 void

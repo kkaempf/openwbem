@@ -99,10 +99,10 @@ public:
 		}
 		CIMObjectPath rv = env->getRepositoryCIMOMHandle()->createInstance(ns, cimInstance);
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "Created instance in repository; now about to call startCreateSubscription");
+		OW_LOG_DEBUG3(logger, "Created instance in repository; now about to call startCreateSubscription");
 		// Tell the indication server about the new subscription.
 		CIMOMEnvironment::instance()->getIndicationServer()->startCreateSubscription(ns, cimInstance, username);
-		OW_LOG_DEBUG(logger, "Returned from startCreateSubscription");
+		OW_LOG_DEBUG3(logger, "Returned from startCreateSubscription");
 		return rv;
 	}
 	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance,

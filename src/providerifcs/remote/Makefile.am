@@ -11,7 +11,7 @@ uninstall-local : uninstall-ow-shared-libs
 noinst_LIBRARIES = libowremoteprovifc.a
 OW_SHARED_LIBS = libowremoteprovifc.$(LIB_EXT)
 SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem -lblocxx \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \

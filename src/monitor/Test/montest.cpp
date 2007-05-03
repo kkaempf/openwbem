@@ -38,6 +38,8 @@
 #include "OW_String.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_Format.hpp"
+#include "OW_CerrAppender.hpp"
+#include "OW_LogAppender.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -47,6 +49,8 @@
 #include <signal.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#include <fcntl.h>
 
 using namespace OpenWBEM;
 using std::cin;
@@ -111,6 +115,10 @@ OpenFlags get_open_flags()
 		else if (toks[i] == "binary")
 		{
 			flags |= PrivilegeManager::binary;
+		}
+		else if (toks[i] == "nonblock")
+		{
+			flags |= PrivilegeManager::posix_nonblock;
 		}
 		else
 		{
@@ -199,6 +207,8 @@ void copy_env_var(char const * varname, StringArray & env)
 
 int main_aux(int argc, char * * argv)
 {
+	// for debugging 
+	// LogAppender::setDefaultLogAppender(new CerrAppender(LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES, "[%-5r %t %-5p %c %F:%L] %m"));
 	std::size_t const BUFSZ = 1024;
 	char cwdbuf[BUFSZ + 1];
 	std::string config_dir, app_name, user_name, tmp;
@@ -275,6 +285,16 @@ int main_aux(int argc, char * * argv)
 // 					cerr << Format("Writing to file:\n%1", contents) << endl;
 // 				}
 				AutoDescriptor f = mgr.open(path.c_str(), flags, perms);
+
+
+				if( flags & PrivilegeManager::posix_nonblock )
+				{
+					// Verify the nonblocking status on the open file descriptor.
+					int fd_flags = ::fcntl(f.get(), F_GETFL);
+					check(fd_flags & O_NONBLOCK, Format("Nonblocking open did not set nonblocking status: set flags=%1", fd_flags));
+					cout << "--->Nonblocking status set properly<---" << endl;
+				}
+
 				if (flags & PrivilegeManager::out)
 				{
 					FileSystem::write(f.get(), contents.c_str(), contents.length());
@@ -347,6 +367,21 @@ int main_aux(int argc, char * * argv)
 				copy_env_var("DYLD_LIBRARY_PATH", envp); // DARWIN (OS X)
 				String user = get_string();
 				ProcessRef pproc(mgr.userSpawn(exec_path, argv, envp, user, ""));
+			}
+			else if (tmp == "monitoredUserSpawn")
+			{
+				// failure test only
+				String exec_path = get_string();
+				String app_name = get_string();
+				StringArray argv = get_string().tokenize("+");
+				StringArray envp = get_string().tokenize("+");
+				String user_name = get_string();
+				copy_env_var("LD_LIBRARY_PATH", envp);
+				copy_env_var("LIBPATH", envp); // AIX
+				copy_env_var("SHLIB_PATH", envp); // HPUX
+				copy_env_var("DYLD_LIBRARY_PATH", envp); // DARWIN (OS X)
+				ProcessRef pproc(
+					mgr.monitoredUserSpawn(exec_path, app_name, argv, envp, user_name));
 			}
 		}
 		catch (Exception & e)

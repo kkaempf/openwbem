@@ -76,14 +76,14 @@ CIMValue RemoteMethodProvider::invokeMethod(
 		CIMParamValueArray& out )
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("RemoteMethodProvider::invokeMethod ns = %1, path = %2, methodName = %3", ns, path, methodName));
+	OW_LOG_DEBUG3(lgr, Format("RemoteMethodProvider::invokeMethod ns = %1, path = %2, methodName = %3", ns, path, methodName));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG(lgr, Format("RemoteMethodProvider::invokeMethod got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG3(lgr, Format("RemoteMethodProvider::invokeMethod got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG(lgr, "RemoteMethodProvider::invokeMethod calling remote WBEM server");
+	OW_LOG_DEBUG3(lgr, "RemoteMethodProvider::invokeMethod calling remote WBEM server");
 
 	CIMValue rval(CIMNULL);
 	try

@@ -46,6 +46,16 @@ owcimomd.allow_anonymous = false
 log.main.type = syslog
 
 ################################################################################
+# log.main.identity specifies the syslog identity.
+# This option only is applicable if the log type == "syslog"
+log.main.identity = @PACKAGE_PREFIX@owcimomd
+
+################################################################################
+# log.main.facility specifies the syslog facility.
+# This option only is applicable if the log type == "syslog"
+log.main.facility = daemon
+
+################################################################################
 # log.main.location specifies the location of the log file
 # (if the type == "file".)
 ;log.main.location =
@@ -172,8 +182,8 @@ log.main.format = [%t %-5p %c] %m
 # If owcimomd is run in debug mode, then the debug log will be active.
 log.debug.type = stderr
 log.debug.components = *
-log.debug.categories = *
-;log.debug.level = *
+;log.debug.categories = *
+log.debug.level = DEBUG
 log.debug.format = [%-5r %t %-5p %c %F:%L] %m
 
 # Color version using ascii escape codes
@@ -255,7 +265,7 @@ owcimomd.wql_lib = @libdir@/libowwql.@LIB_EXT@
 # authentication.  This should be an absolute path to the shared library 
 # containing the authentication module.
 # If empty, Basic authentication will be disabled.
-owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthentication.@LIB_EXT@
+owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamclauthentication.@LIB_EXT@
 
 ################################################################################
 # The maximum number of classes that will be cached by the cimom.
@@ -613,23 +623,6 @@ owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 cppprovifc.prov_location = @libdir@/openwbem/c++providers
 
 ################################################################################
-# One of the provider interfaces provided with owcimomd is the OWBI1 provider
-# interface. The owbi1provifc.prov_location option specifies where the OWBI1
-# provider interface will load it's providers from.
-# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
-# The default is "@libdir@/openwbem/owbi1providers"
-owbi1provifc.prov_location = @libdir@/openwbem/owbi1providers
-
-################################################################################
-# owbi1provifc.prov_TTL specifies how many minutes the OWBI1 provider manager
-# will keep a provider in memory.  If a provider has not been accessed for
-# longer than this value, it will be unloaded and the memory associated with
-# it will be freed.  If the value of this option is -1, the providers will
-# never be unloaded.
-# The default is 5
-owbi1provifc.prov_TTL = 5
-
-################################################################################
 # http_server.uds_filename specifies the name of the unix domain socket the
 # http server will listen on.
 # The default is /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
@@ -678,6 +671,13 @@ owcimomd.disable_cpp_provider_interface = false
 # Specify the location of the owcimomd pidfile
 # The default is "@PIDFILE_DIR@/@PACKAGE_PREFIX@owcimomd.pid"
 owcimomd.pidfile = @PIDFILE_DIR@/@PACKAGE_PREFIX@owcimomd.pid
+
+################################################################################
+# Specify the time in seconds to use for the timeout when requests are waiting
+# to acquire the owcimomd read/write lock. The syntax for this value is a
+# floating point in the format accepted by ANSI C strtod().
+# The default is 300
+owcimomd.read_write_lock_timeout = 300
 
 ################################################################################
 # The following options are deprecated

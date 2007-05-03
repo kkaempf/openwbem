@@ -119,7 +119,7 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		EPropertiesFlag propertiesFlag)
 	{
-		OW_LOG_DEBUG(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::enumInstances");
+		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::enumInstances");
 		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 		CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
 		String sccn;
@@ -155,7 +155,7 @@ public:
 		const String& ns,
 		const CIMInstance& cimInstance )
 	{
-		OW_LOG_DEBUG(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::createInstance");
+		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::createInstance");
 #if !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
  		try
 		{
@@ -196,7 +196,7 @@ public:
 		const String& ns,
 		const CIMObjectPath& cop)
 	{
-		OW_LOG_DEBUG(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::deleteInstance");
+		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::deleteInstance");
 #if !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 		try
 		{

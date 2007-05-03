@@ -61,7 +61,8 @@
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_CIMServerProviderEnvironment.hpp"
+#include "OW_OOPProviderBase.hpp"
+#include "OW_OOPDataOStreamBuf.hpp"
 
 #include <deque>
 #include <iosfwd>
@@ -69,13 +70,19 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
+#define OW_OOP_LOG_DEBUG4(logger, message)
+
+// use this version if you need to debug this code
+//#define OW_OOP_LOG_DEBUG4(logger, message) OW_LOG_DEBUG(logger, message)
+
 namespace OW_NAMESPACE
 {
 
 OW_DECLARE_EXCEPTION(OOPProtocolCPP1);
 OW_DEFINE_EXCEPTION(OOPProtocolCPP1);
 
-OOPProtocolCPP1::OOPProtocolCPP1()
+OOPProtocolCPP1::OOPProtocolCPP1(OOPProviderBase* pprov)
+	: OOPProtocolIFC(pprov)
 {
 }
 
@@ -95,14 +102,6 @@ namespace
 			: m_type(type)
 			, m_provEnv(provEnv)
 		{
-			// We have to disable locking here if the call originated from the CIMServer because this will execute in 
-			// a separate thread from the original request, and re-acquiring will deadlock. This thread won't
-			// execute in parallel with the original thread, it will only execute when it is blocked and vise-verse.
-			IntrusiveReference<CIMServerProviderEnvironment> csEnv(provEnv.cast_to<CIMServerProviderEnvironment>());
-			if (csEnv)
-			{
-				csEnv->setLockingMode(ServiceEnvironmentIFC::E_NO_LOCKING);
-			}
 		}
 	
 		virtual String getConfigItem(const String& item, const String& defRetVal) const
@@ -111,8 +110,7 @@ namespace
 		}
 	
 		virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
-			EBypassProvidersFlag bypassProviders,
-			ELockingFlag locking) const
+			EBypassProvidersFlag bypassProviders) const
 		{
 			if (m_type == BinarySerialization::CIMOM_HANDLE_REQUEST)
 			{
@@ -143,42 +141,6 @@ namespace
 
 		virtual void handleResult(std::streambuf & instr, UInt8 op) = 0;
 	};
-
-	class OOPDataOStreamBuf : public std::streambuf
-	{
-	public:
-		OOPDataOStreamBuf(Array<unsigned char>& buf)
-			: m_bfr(buf)
-		{
-		}
-	protected:
-		virtual int overflow(int c);
-		virtual std::streamsize xsputn(const char* s, std::streamsize n);
-	private:
-	
-		Array<unsigned char>& m_bfr;
-	};
-
-	int
-	OOPDataOStreamBuf::overflow(int c)
-	{
-		if (c != std::char_traits<char>::eof())
-		{
-			m_bfr.push_back(c);
-			return c;
-		}
-		else
-		{
-			return 0; // anything other than EOF
-		}
-	}
-	
-	std::streamsize
-	OOPDataOStreamBuf::xsputn(const char* s, std::streamsize n)
-	{
-		m_bfr.insert(m_bfr.end(), s, s+n);
-		return n;
-	}
 
 	struct OutputEntry
 	{
@@ -225,16 +187,18 @@ namespace
 		std::deque<OutputEntry>& outputEntries,
 		const ProviderEnvironmentIFCRef& env,
 		OperationResultHandler& result,
-		ThreadPool& threadPool);
+		ThreadPool& threadPool,
+		OOPProviderBase* pprov);
 
 	int process(Array<unsigned char>& in,
 		std::deque<OutputEntry>& outputEntries,
 		const ProviderEnvironmentIFCRef& env,
 		const Logger& logger, 
 		OperationResultHandler& result,
-		ThreadPool& threadPool)
+		ThreadPool& threadPool,
+		OOPProviderBase* pprov)
 	{
-		//OW_LOG_DEBUG(logger, Format("in process(). in.size() = %1", in.size()));
+		OW_LOG_DEBUG3(logger, Format("in process(). in.size() = %1", in.size()));
 		if (in.size() == 0)
 		{
 			return FINISHED;
@@ -250,15 +214,15 @@ namespace
 			{
 				Array<unsigned char> out;
 				OOPDataOStreamBuf outbuf(out);
-				processrv = processOneRequest(inbuf, outbuf, outputEntries, env, result, threadPool);
+				processrv = processOneRequest(inbuf, outbuf, outputEntries, env, result, threadPool, pprov);
 				if (!out.empty())
 				{
-					//OW_LOG_DEBUG(logger, Format("processOneRequest() found %1 bytes of out. Adding to outputEntries.", out.size()));
+					OW_LOG_DEBUG3(logger, Format("processOneRequest() found %1 bytes of out. Adding to outputEntries.", out.size()));
 					outputEntries.push_back(OutputEntry(out));
 				}
 				// successful request, store how much was read so it can be removed when we're done.
 				numRead = inbuf.pubseekoff(0, std::ios::cur);
-				//OW_LOG_DEBUG(logger, Format("processOneRequest() done. numRead = %1", numRead));
+				OW_OOP_LOG_DEBUG4(logger, Format("processOneRequest() done. numRead = %1", numRead));
 			}
 
 			// if the loop finished by returning FINISHED
@@ -270,13 +234,13 @@ namespace
 		}
 		catch (IOException& e)
 		{
-			OW_LOG_DEBUG(logger, Format("processOneRequest() threw IOException: %1", e));
+			OW_LOG_DEBUG3(logger, Format("processOneRequest() threw IOException: %1", e));
 
 			// check that the exception happened because of reaching the end of the stream.
 			// Otherwise, re-throw. This will happen if something is corrupted and we can't parse the input.
 			if (static_cast<size_t>(inbuf.pubseekoff(0, std::ios::cur)) != in.size())
 			{
-				OW_LOG_DEBUG(logger, "IOException not caused by reaching end of input.  process() Re-throwing");
+				OW_LOG_INFO(logger, "IOException not caused by reaching end of input.  process() Re-throwing");
 				throw;
 			}
 
@@ -302,7 +266,8 @@ namespace
 			OperationResultHandler& result,
 			SelectEngine& selectEngine,
 			bool &finishedSuccessfully,
-			ThreadPool& threadPool
+			ThreadPool& threadPool,
+			OOPProviderBase* pprov
 			)
 			: m_inputBuf(inputBuf)
 			, m_outputEntries(outputEntries)
@@ -313,6 +278,7 @@ namespace
 			, m_selectEngine(selectEngine)
 			, m_finishedSuccessfully(finishedSuccessfully)
 			, m_threadPool(threadPool)
+			, m_pprov(pprov)
 		{
 
 		}
@@ -321,7 +287,7 @@ namespace
 			Logger logger(COMPONENT_NAME);
 			if (eventType == E_READ_EVENT)
 			{
-				//OW_LOG_DEBUG(logger, "doSelected() got a read event");
+				OW_LOG_DEBUG3(logger, "doSelected() got a read event");
 				// read all the data out of the pipe and append it to m_inputBuf
 				size_t oldSize = m_inputBuf.size();
 				const unsigned int INCREMENT = 1024;
@@ -329,17 +295,17 @@ namespace
 				while (moreDataToRead)
 				{
 					m_inputBuf.resize(oldSize + INCREMENT, 0xFA);
-					//OW_LOG_DEBUG(logger, Format("reading some data into offset %1", oldSize));
+					OW_OOP_LOG_DEBUG4(logger, Format("reading some data into offset %1", oldSize));
 					ssize_t numRead = m_inputPipe->read(&m_inputBuf[oldSize], INCREMENT, IOIFC::E_RETURN_ON_ERROR);
 					int lerrno = errno;
-					//OW_LOG_DEBUG(logger, Format("read() returned %1" , numRead));
+					OW_OOP_LOG_DEBUG4(logger, Format("read() returned %1" , numRead));
 					if (numRead == -1)
 					{
 						m_inputBuf.resize(oldSize, 0xFB);
 						if (lerrno == ETIMEDOUT)
 						{
 							 moreDataToRead = false; // end the loop
-							 //OW_LOG_DEBUG(logger, "Detected ETIMEDOUT");
+							 OW_OOP_LOG_DEBUG4(logger, "Detected ETIMEDOUT");
 						}
 						else
 						{
@@ -361,15 +327,15 @@ namespace
 					oldSize = m_inputBuf.size();
 				}
 				// now that we've read the data, see if we can do anything with it.
-				if (process(m_inputBuf, m_outputEntries, m_env, logger, m_result, m_threadPool) == FINISHED)
+				if (process(m_inputBuf, m_outputEntries, m_env, logger, m_result, m_threadPool, m_pprov) == FINISHED)
 				{
-					OW_LOG_DEBUG(logger, "process() returned FINISHED, telling the select engine to stop");
+					OW_LOG_DEBUG3(logger, "process() returned FINISHED, telling the select engine to stop");
 					m_selectEngine.stop();
 					m_finishedSuccessfully = true;
 				}
 				else
 				{
-					//OW_LOG_DEBUG(logger, Format("doSelected(): process() returned CONTINUE. m_outputEntries.size() = %1", m_outputEntries.size()));
+					OW_OOP_LOG_DEBUG4(logger, Format("doSelected(): process() returned CONTINUE. m_outputEntries.size() = %1", m_outputEntries.size()));
 					if (!m_outputEntries.empty())
 					{
 						// add it
@@ -379,10 +345,10 @@ namespace
 			}
 			else if (eventType == E_WRITE_EVENT)
 			{
-				//OW_LOG_DEBUG(logger, "doSelected() got a write event");
+				OW_LOG_DEBUG3(logger, "doSelected() got a write event");
 				if (m_outputEntries.empty())
 				{
-					//OW_LOG_DEBUG(logger, "m_outputEntries.empty(), removing from select engine");
+					OW_LOG_DEBUG3(logger, "m_outputEntries.empty(), removing from select engine");
 					m_selectEngine.removeSelectableObject(m_outputPipe->getWriteSelectObj(), SelectableCallbackIFC::E_WRITE_EVENT);
 					return;
 				}
@@ -394,19 +360,19 @@ namespace
 					{
 						if (entry.direction == OutputEntry::E_INPUT)
 						{
-							OW_LOG_DEBUG(logger, Format("doSelected() attempting to pass a input descriptor: %1", entry.pipe->getInputDescriptor()));
-							m_outputPipe->passDescriptor(entry.pipe->getInputDescriptor());
+							OW_LOG_DEBUG3(logger, Format("doSelected() attempting to pass a input descriptor: %1", entry.pipe->getInputDescriptor()));
+							m_outputPipe->passDescriptor(entry.pipe->getInputDescriptor(), m_inputPipe);
 						}
 						else
 						{
-							OW_LOG_DEBUG(logger, Format("doSelected() attempting to pass a output descriptor: %1", entry.pipe->getOutputDescriptor()));
-							m_outputPipe->passDescriptor(entry.pipe->getOutputDescriptor());
+							OW_LOG_DEBUG3(logger, Format("doSelected() attempting to pass a output descriptor: %1", entry.pipe->getOutputDescriptor()));
+							m_outputPipe->passDescriptor(entry.pipe->getOutputDescriptor(), m_inputPipe);
 						}
 						m_outputEntries.erase(m_outputEntries.begin());
 					}
 					else // entry.type == E_BUFFER
 					{
-						//OW_LOG_DEBUG(logger, Format("doSelected() attempting to write %1 bytes", entry.buf.size()));
+						OW_LOG_DEBUG3(logger, Format("doSelected() attempting to write %1 bytes", entry.buf.size()));
 						OW_ASSERT(entry.buf.size() > 0);
 						ssize_t numWrote = 0;
 						try
@@ -420,9 +386,9 @@ namespace
 							{
 								throw;
 							}
-							OW_LOG_DEBUG(logger, "doSelected() got EAGAIN while attempting to write.");
+							OW_LOG_DEBUG3(logger, "doSelected() got EAGAIN while attempting to write.");
 						}
-						//OW_LOG_DEBUG(logger, Format("write returned %1", numWrote));
+						OW_LOG_DEBUG3(logger, Format("write returned %1", numWrote));
 						if (static_cast<size_t>(numWrote) == entry.buf.size())
 						{
 							m_outputEntries.erase(m_outputEntries.begin());
@@ -459,6 +425,7 @@ namespace
 		SelectEngine& m_selectEngine;
 		bool& m_finishedSuccessfully;
 		ThreadPool& m_threadPool;
+		OOPProviderBase* m_pprov;
 	};
 
 	struct ShutdownThreadPool
@@ -484,6 +451,7 @@ namespace
 		const Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		OperationResultHandler& result,
+		OOPProviderBase* pprov,
 		EReadWriteFlag readWriteFlag = E_READ_WRITE_UNTIL_FINISHED)
 	{
 		const int MAX_CALLBACK_THREADS = 10;
@@ -499,7 +467,9 @@ namespace
 
 		SelectableCallbackIFCRef callback(new OOPSelectableCallback(
 			inputBuf, outputEntries, inputPipe, outputPipe, env, result, selectEngine, 
-			finishedSuccessfully, threadPool));
+			finishedSuccessfully, threadPool, pprov));
+
+		Logger logger(COMPONENT_NAME);
 
 		if (readWriteFlag == E_READ_WRITE_UNTIL_FINISHED)
 		{
@@ -512,7 +482,7 @@ namespace
 			selectEngine.addSelectableObject(outputPipe->getWriteSelectObj(), callback, SelectableCallbackIFC::E_WRITE_EVENT);
 		}
 
-		//OW_LOG_DEBUG(logger, "end() about to run the select engine");
+		OW_LOG_DEBUG3(logger, "end() about to run the select engine");
 		try
 		{
 			selectEngine.go(timeout);
@@ -551,22 +521,36 @@ namespace
 			Logger logger(COMPONENT_NAME);
 			while (m_instr.good() && !cancelled())
 			{
+				UInt8 op;
+				BinarySerialization::read(*m_instr.rdbuf(), op);
+				if (op == BinarySerialization::BIN_END)
+				{
+					OW_LOG_DEBUG3(logger, "CloneCIMOMHandleConnectionRunner::run() received BIN_END request. shutting down cimom handle");
+					return;
+				}
+				else if (op != BinarySerialization::BIN_OK)
+				{
+					//OW_LOG_ERROR(logger, "CloneCIMOMHandleConnectionRunner::run() "
+					//	"invalid byte received from client");
+					return;
+				}
+
 				HTTPChunkedIStream operationIstr(m_instr);
 				HTTPChunkedOStream operationOstr(m_outstr);
 				TempFileStream operationErrstr;
-				OW_LOG_DEBUG(logger, "CIMOMHandleConnectionRunner::run() calling m_binaryRH->process");
+				OW_LOG_DEBUG3(logger, "CIMOMHandleConnectionRunner::run() calling m_binaryRH->process");
 				m_binaryRH->process(&operationIstr, &operationOstr, &operationErrstr, m_env->getOperationContext());
 				HTTPUtils::eatEntity(operationIstr);
 				if (m_binaryRH->hasError())
 				{
-					OW_LOG_DEBUG(logger, "CIMOMHandleConnectionRunner::run() m_binaryRH->hasError()");
+					OW_LOG_DEBUG3(logger, "CIMOMHandleConnectionRunner::run() m_binaryRH->hasError()");
 					operationOstr.termOutput(HTTPChunkedOStream::E_DISCARD_LAST_CHUNK);
 					operationErrstr.rewind();
 					m_outstr << operationErrstr.rdbuf();
 				}
 				else
 				{
-					OW_LOG_DEBUG(logger, "CIMOMHandleConnectionRunner::run() sending result and BIN_OK");
+					OW_LOG_DEBUG3(logger, "CIMOMHandleConnectionRunner::run() sending result and BIN_OK");
 					operationOstr.termOutput(HTTPChunkedOStream::E_SEND_LAST_CHUNK);
 					BinarySerialization::write(m_outbuf, BinarySerialization::BIN_OK);
 				}
@@ -575,7 +559,7 @@ namespace
 					OW_LOG_ERROR(logger, "CIMOMHandleConnectionRunner::run() failed to flush output");
 				}
 			}
-			OW_LOG_DEBUG(logger, "CIMOMHandleConnectionRunner::run() finished");
+			OW_LOG_DEBUG3(logger, "CIMOMHandleConnectionRunner::run() finished");
 		}
 		bool cancelled()
 		{
@@ -605,7 +589,9 @@ namespace
 		std::deque<OutputEntry>& outputEntries,
 		const ProviderEnvironmentIFCRef& env,
 		OperationResultHandler& result,
-		ThreadPool& threadPool)
+		ThreadPool& threadPool,
+		OOPProviderBase* pprov)
+
 	{
 		Logger logger(COMPONENT_NAME);
 		// Either out or outputEntries can be used.  If both are used in the same call, the data inserted 
@@ -614,20 +600,20 @@ namespace
 		//std::istream instr(in);
 		//instr.tie(&outstr);
 		UInt8 op = 0xFE;
-		//OW_LOG_DEBUG(logger, "processOneRequest about to read the code.");
+		OW_OOP_LOG_DEBUG4(logger, "processOneRequest about to read the code.");
 		BinarySerialization::read(inbuf, op);
-		//OW_LOG_DEBUG(logger, Format("processOneRequest read code: %1", static_cast<int>(op)));
+		OW_OOP_LOG_DEBUG4(logger, Format("processOneRequest read code: %1", static_cast<int>(op)));
 		switch (op)
 		{
 			case BinarySerialization::BIN_OK:
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest got BIN_OK");
+				OW_LOG_DEBUG3(logger, "processOneRequest got BIN_OK");
 				result.handleResult(inbuf, op);
 			}
 			break;
 			case BinarySerialization::BIN_ERROR:
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest got BIN_ERROR");
+				OW_LOG_DEBUG3(logger, "processOneRequest got BIN_ERROR");
 				String msg;
 				BinarySerialization::read(inbuf, msg);
 				OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
@@ -636,7 +622,7 @@ namespace
 
 			case BinarySerialization::BIN_EXCEPTION:
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest got BIN_EXCEPTION");
+				OW_LOG_DEBUG3(logger, "processOneRequest got BIN_EXCEPTION");
 				UInt16 cimerrno;
 				String cimMsg;
 				BinarySerialization::read(inbuf, cimerrno);
@@ -648,20 +634,20 @@ namespace
 			case BinarySerialization::BINSIG_INST:
 			case BinarySerialization::BINSIG_OP:
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest got BINSIG_INST or BINSIG_OP");
+				OW_LOG_DEBUG3(logger, "processOneRequest got BINSIG_INST or BINSIG_OP");
 				result.handleResult(inbuf, op);
 			}
 			break;
 
 			case BinarySerialization::BIN_END:
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest got BIN_END");
+				OW_LOG_DEBUG3(logger, "processOneRequest got BIN_END");
 				return FINISHED;
 			}
 
 			case BinarySerialization::BIN_LOG_MESSAGE:
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest got BIN_LOG_MESSAGE");
+				OW_OOP_LOG_DEBUG4(logger, "processOneRequest got BIN_LOG_MESSAGE");
 				String component = BinarySerialization::readString(inbuf);
 				String category = BinarySerialization::readString(inbuf);
 				String message = BinarySerialization::readString(inbuf);
@@ -676,24 +662,24 @@ namespace
 
 			case BinarySerialization::OPERATION_CONTEXT_GET_DATA:
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest got OPERATION_CONTEXT_GET_DATA");
+				OW_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_GET_DATA");
 				String key = BinarySerialization::readString(inbuf);
-				//OW_LOG_DEBUG(logger, Format("processOneRequest read key: %1", key));
+				OW_LOG_DEBUG3(logger, Format("processOneRequest read key: %1", key));
 				OperationContext::DataRef data = env->getOperationContext().getData(key);
 				if (data)
 				{
-					OW_LOG_DEBUG(logger, "processOneRequest found it, writing true");
+					OW_LOG_DEBUG3(logger, "processOneRequest found it, writing true");
 					BinarySerialization::writeBool(outbuf, true);
 					data->writeObject(outbuf);
 				}
 				else
 				{
-					OW_LOG_DEBUG(logger, "processOneRequest didn't find it, writing false");
+					OW_LOG_DEBUG3(logger, "processOneRequest didn't find it, writing false");
 					BinarySerialization::writeBool(outbuf, false);
 				}
 				if (outbuf.pubsync() == -1)
 				{
-					OW_LOG_DEBUG(logger, "processOneRequest flush failed!");
+					OW_LOG_ERROR(logger, "processOneRequest flush failed!");
 					OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
 				}
 			}
@@ -701,11 +687,11 @@ namespace
 
 			case BinarySerialization::OPERATION_CONTEXT_SET_DATA:
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest got OPERATION_CONTEXT_SET_DATA");
+				OW_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_SET_DATA");
 				String key = BinarySerialization::readString(inbuf);
-				//OW_LOG_DEBUG(logger, Format("processOneRequest read key: %1", key));
+				OW_LOG_DEBUG3(logger, Format("processOneRequest read key: %1", key));
 				String type = BinarySerialization::readString(inbuf);
-				//OW_LOG_DEBUG(logger, Format("processOneRequest read type: %1", type));
+				OW_LOG_DEBUG3(logger, Format("processOneRequest read type: %1", type));
 				std::istream instr(&inbuf);
 				HTTPChunkedIStreamBuffer chunkedIBuf(instr);
 				OperationContext::DataRef data = env->getOperationContext().getData(key);
@@ -714,7 +700,7 @@ namespace
 					// replace the existing object
 					data->readObject(chunkedIBuf);
 
-					OW_LOG_DEBUG(logger, "processOneRequest found it, writing true");
+					OW_LOG_DEBUG3(logger, "processOneRequest found it, writing true");
 					BinarySerialization::writeBool(outbuf, true);
 				}
 				else if (type == OperationContext::StringData().getType())
@@ -722,12 +708,12 @@ namespace
 					OperationContext::DataRef data(new OperationContext::StringData());
 					data->readObject(chunkedIBuf);
 					env->getOperationContext().setData(key, data);
-					OW_LOG_DEBUG(logger, "processOneRequest didn't find it, but it was a string type, writing true");
+					OW_LOG_DEBUG3(logger, "processOneRequest didn't find it, but it was a string type, writing true");
 					BinarySerialization::writeBool(outbuf, true);
 				}
 				else
 				{
-					OW_LOG_DEBUG(logger, "processOneRequest didn't find it, writing false");
+					OW_LOG_DEBUG3(logger, "processOneRequest didn't find it, not a string type, writing false");
 					BinarySerialization::writeBool(outbuf, false);
 				}
 				
@@ -738,23 +724,23 @@ namespace
 
 			case BinarySerialization::OPERATION_CONTEXT_REMOVE_DATA:
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest got OPERATION_CONTEXT_REMOVE_DATA");
+				OW_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_REMOVE_DATA");
 				String key = BinarySerialization::readString(inbuf);
-				//OW_LOG_DEBUG(logger, Format("processOneRequest read key: %1", key));
+				OW_LOG_DEBUG3(logger, Format("processOneRequest read key: %1", key));
 				if (env->getOperationContext().keyHasData(key))
 				{
-					OW_LOG_DEBUG(logger, "processOneRequest found it, writing true");
+					OW_LOG_DEBUG3(logger, "processOneRequest found it, writing true");
 					BinarySerialization::writeBool(outbuf, true);
 					if (outbuf.pubsync() == -1)
 					{
-						OW_LOG_DEBUG(logger, "processOneRequest flush failed!");
+						OW_LOG_DEBUG3(logger, "processOneRequest flush failed!");
 						OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
 					}
 					env->getOperationContext().removeData(key);
 				}
 				else
 				{
-					OW_LOG_DEBUG(logger, "processOneRequest didn't find it, writing false");
+					OW_LOG_DEBUG3(logger, "processOneRequest didn't find it, writing false");
 					BinarySerialization::writeBool(outbuf, false);
 				}
 			}
@@ -762,9 +748,9 @@ namespace
 
 			case BinarySerialization::OPERATION_CONTEXT_KEY_HAS_DATA:
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest got OPERATION_CONTEXT_KEY_HAS_DATA");
+				OW_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_KEY_HAS_DATA");
 				String key = BinarySerialization::readString(inbuf);
-				//OW_LOG_DEBUG(logger, Format("processOneRequest read key: %1", key));
+				OW_LOG_DEBUG3(logger, Format("processOneRequest read key: %1", key));
 				BinarySerialization::writeBool(
 					outbuf, env->getOperationContext().keyHasData(key));
 				if (outbuf.pubsync() == -1)
@@ -773,12 +759,46 @@ namespace
 					OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
 				}
 			}
+			break; 
+
+			case BinarySerialization::OPERATION_CONTEXT_GET_OPERATION_ID:
+			{
+				OW_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_GET_OPERATION_ID");
+				BinarySerialization::write(outbuf, env->getOperationContext().getOperationId());
+				if (outbuf.pubsync() == -1)
+				{
+					OW_LOG_DEBUG(logger, "processOneRequest flush failed!");
+					OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
+				}
+			}
+			break; 
+
+			case BinarySerialization::PROVIDER_ENVIRONMENT_REQUEST:
+			{
+				OW_LOG_DEBUG3(logger, "processOneRequest got PROVIDER_ENVIRONMENT_REQUEST");
+				UnnamedPipeRef envconn = pprov->startClonedProviderEnv(env);
+				if (envconn)
+				{
+					// Provider environment thread is now running in the
+					// OOPProviderBase thread pool.
+					outputEntries.push_back(OutputEntry(Array<unsigned char>(1, BinarySerialization::BIN_OK)));
+					outputEntries.push_back(OutputEntry(OutputEntry::E_INPUT, envconn));
+					outputEntries.push_back(OutputEntry(OutputEntry::E_OUTPUT, envconn));
+				}
+				else
+				{
+					// Assume OOPProviderBase was unable to start the thread
+					OW_LOG_DEBUG(logger, "processOneRequest PROVIDER_ENVIRONMENT_REQUEST returning BIN_ERROR");
+					BinarySerialization::write(outbuf, BinarySerialization::BIN_ERROR);
+					BinarySerialization::write(outbuf, String("thread limit reached"));
+				}
+			}
 			break;
 
 			case BinarySerialization::CIMOM_HANDLE_REQUEST:
 			case BinarySerialization::REPOSITORY_CIMOM_HANDLE_REQUEST:
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest got CIMOM_HANDLE_REQUEST or REPOSITORY_CIMOM_HANDLE_REQUEST");
+				OW_LOG_DEBUG3(logger, "processOneRequest got CIMOM_HANDLE_REQUEST or REPOSITORY_CIMOM_HANDLE_REQUEST");
 				UnnamedPipeRef connToKeep;
 				UnnamedPipeRef connToSend;
 				UnnamedPipe::createConnectedPipes(connToKeep, connToSend);
@@ -804,7 +824,7 @@ namespace
 
 			case BinarySerialization::GET_CONFIG_ITEM:
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest got GET_CONFIG_ITEM");
+				OW_LOG_DEBUG3(logger, "processOneRequest got GET_CONFIG_ITEM");
 				String name = BinarySerialization::readString(inbuf);
 				String defRetVal = BinarySerialization::readString(inbuf);
 				String rv = env->getConfigItem(name, defRetVal);
@@ -1017,10 +1037,10 @@ OOPProtocolCPP1::enumInstanceNames(
 	const String& ns,
 	const String& className,
 	CIMObjectPathResultHandlerIFC& result,
-	const CIMClass& cimClass )
+	const CIMClass& cimClass)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::enumInstanceNames about to start filling request buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::enumInstanceNames about to start filling request buffer");
 	
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1030,10 +1050,10 @@ OOPProtocolCPP1::enumInstanceNames(
 	BinarySerialization::writeString(obuf, className);
 	BinarySerialization::writeClass(obuf, cimClass);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::enumInstanceNames finished filling buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::enumInstanceNames finished filling buffer");
 
 	CIMObjectPathOperationResultHandler operationResult(result);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 
 }
 
@@ -1052,10 +1072,10 @@ OOPProtocolCPP1::enumInstances(
 	WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList,
 	const CIMClass& requestedClass,
-	const CIMClass& cimClass )
+	const CIMClass& cimClass)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::enumInstances about to start filling request buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::enumInstances about to start filling request buffer");
 	
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1071,10 +1091,10 @@ OOPProtocolCPP1::enumInstances(
 	BinarySerialization::writeClass(obuf, requestedClass);
 	BinarySerialization::writeClass(obuf, cimClass);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::enumInstances finished filling buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::enumInstances finished filling buffer");
 
 	CIMInstanceOperationResultHandler operationResult(result);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 
 }
 
@@ -1090,10 +1110,10 @@ OOPProtocolCPP1::getInstance(
 	WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
 	WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, 
-	const CIMClass& cimClass )
+	const CIMClass& cimClass)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::getInstance about to start filling request buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::getInstance about to start filling request buffer");
 	
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1107,11 +1127,11 @@ OOPProtocolCPP1::getInstance(
 	BinarySerialization::writeStringArray(obuf, propertyList);
 	BinarySerialization::writeClass(obuf, cimClass);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::getInstance finished filling buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::getInstance finished filling buffer");
 
 	CIMInstance rval(CIMNULL);
 	GetInstanceOperationResultHandler operationResult(rval);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!rval)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to getInstance");
@@ -1126,10 +1146,10 @@ OOPProtocolCPP1::createInstance(
 	const Timeout& timeout,
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
-	const CIMInstance& cimInstance )
+	const CIMInstance& cimInstance)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::createInstance about to start filling request buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::createInstance about to start filling request buffer");
 	
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1138,11 +1158,11 @@ OOPProtocolCPP1::createInstance(
 	BinarySerialization::writeString(obuf, ns);
 	BinarySerialization::writeInstance(obuf, cimInstance);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::createInstance finished filling buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::createInstance finished filling buffer");
 
 	CIMObjectPath rval(CIMNULL);
 	CreateInstanceOperationResultHandler operationResult(rval);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!rval)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to createInstance");
@@ -1164,7 +1184,7 @@ OOPProtocolCPP1::modifyInstance(
 	const CIMClass& theClass)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::modifyInstance about to start filling request buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::modifyInstance about to start filling request buffer");
 	
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1177,11 +1197,11 @@ OOPProtocolCPP1::modifyInstance(
 	BinarySerialization::writeStringArray(obuf, propertyList);
 	BinarySerialization::writeClass(obuf, theClass);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::modifyInstance finished filling buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::modifyInstance finished filling buffer");
 
 	bool gotOK = false;
 	VoidOperationResultHandler operationResult(gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!gotOK)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to modifyInstance");
@@ -1198,7 +1218,7 @@ OOPProtocolCPP1::deleteInstance(
 	const CIMObjectPath& cop)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::deleteInstance about to start filling request buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::deleteInstance about to start filling request buffer");
 	
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1207,11 +1227,11 @@ OOPProtocolCPP1::deleteInstance(
 	BinarySerialization::writeString(obuf, ns);
 	BinarySerialization::writeObjectPath(obuf, cop);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::deleteInstance finished filling buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::deleteInstance finished filling buffer");
 
 	bool gotOK = false;
 	VoidOperationResultHandler operationResult(gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!gotOK)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to deleteInstance");
@@ -1236,7 +1256,7 @@ OOPProtocolCPP1::associators(
 	const StringArray* propertyList)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::associators about to start filling request buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::associators about to start filling request buffer");
 	
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1252,10 +1272,10 @@ OOPProtocolCPP1::associators(
 	BinarySerialization::writeBool(obuf, includeClassOrigin);
 	BinarySerialization::writeStringArray(obuf, propertyList);
 
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::associators finished filling buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::associators finished filling buffer");
 
 	CIMInstanceOperationResultHandler operationResult(result);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 }
 
 void
@@ -1270,10 +1290,10 @@ OOPProtocolCPP1::associatorNames(
 	const String& assocClass,
 	const String& resultClass,
 	const String& role,
-	const String& resultRole )
+	const String& resultRole)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::associatorNames about to start filling request buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::associatorNames about to start filling request buffer");
 	
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1286,10 +1306,10 @@ OOPProtocolCPP1::associatorNames(
 	BinarySerialization::writeString(obuf, role);
 	BinarySerialization::writeString(obuf, resultRole);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::associatorNames finished filling buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::associatorNames finished filling buffer");
 
 	CIMObjectPathOperationResultHandler operationResult(result);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 }
 
 void
@@ -1308,7 +1328,7 @@ OOPProtocolCPP1::references(
 	const StringArray* propertyList)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::references about to start filling request buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::references about to start filling request buffer");
 	
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1322,10 +1342,10 @@ OOPProtocolCPP1::references(
 	BinarySerialization::writeBool(obuf, includeClassOrigin);
 	BinarySerialization::writeStringArray(obuf, propertyList);
 
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::references finished filling buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::references finished filling buffer");
 
 	CIMInstanceOperationResultHandler operationResult(result);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 }
 
 void
@@ -1338,10 +1358,10 @@ OOPProtocolCPP1::referenceNames(
 	const String& ns,
 	const CIMObjectPath& objectName,
 	const String& resultClass,
-	const String& role )
+	const String& role)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::referenceNames about to start filling request buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::referenceNames about to start filling request buffer");
 	
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1352,10 +1372,10 @@ OOPProtocolCPP1::referenceNames(
 	BinarySerialization::writeString(obuf, resultClass);
 	BinarySerialization::writeString(obuf, role);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::referenceNames finished filling buffer");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::referenceNames finished filling buffer");
 
 	CIMObjectPathOperationResultHandler operationResult(result);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 }
 
 CIMValue
@@ -1371,7 +1391,7 @@ OOPProtocolCPP1::invokeMethod(
 	CIMParamValueArray& outparams)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::invokeMethod about to start writing");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::invokeMethod about to start writing");
 
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1382,13 +1402,15 @@ OOPProtocolCPP1::invokeMethod(
 	BinarySerialization::writeString(obuf, methodName);
 	BinarySerialization::write(obuf, BinarySerialization::BINSIG_PARAMVALUEARRAY);
 	BinarySerialization::writeArray(obuf, inparams);
+	BinarySerialization::write(obuf, BinarySerialization::BINSIG_PARAMVALUEARRAY);
+	BinarySerialization::writeArray(obuf, outparams);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::invokeMethod finished writing.");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::invokeMethod finished writing.");
 
 	CIMValue returnValue(CIMNULL);
 	bool gotOK = false;
 	InvokeMethodOperationResultHandler operationResult(returnValue, outparams, gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 
 	if (!gotOK)
 	{
@@ -1405,19 +1427,19 @@ OOPProtocolCPP1::poll(
 	const ProviderEnvironmentIFCRef& env)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::poll about to start writing");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::poll about to start writing");
 
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
 	BinarySerialization::write(obuf, BinarySerialization::BinaryProtocolVersion);
 	BinarySerialization::write(obuf, BinarySerialization::POLL);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::poll finished writing.");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::poll finished writing.");
 
 	Int32 returnValue(-1);
 	bool gotOK = false;
 	Int32OperationResultHandler operationResult(returnValue, gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 
 	if (!gotOK)
 	{
@@ -1434,19 +1456,19 @@ OOPProtocolCPP1::getInitialPollingInterval(
 	const ProviderEnvironmentIFCRef& env)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::getInitialPollingInterval about to start writing");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::getInitialPollingInterval about to start writing");
 
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
 	BinarySerialization::write(obuf, BinarySerialization::BinaryProtocolVersion);
 	BinarySerialization::write(obuf, BinarySerialization::GET_INITIAL_POLLING_INTERVAL);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::getInitialPollingInterval finished writing.");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::getInitialPollingInterval finished writing.");
 
 	Int32 returnValue(-1);
 	bool gotOK = false;
 	Int32OperationResultHandler operationResult(returnValue, gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 
 	if (!gotOK)
 	{
@@ -1461,11 +1483,10 @@ OOPProtocolCPP1::setPersistent(
 	const UnnamedPipeRef& out,
 	const Timeout& timeout,
 	const ProviderEnvironmentIFCRef& env,
-	bool persistent
-	)
+	bool persistent)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::setPersistent about to start writing");
+	OW_LOG_DEBUG3(logger, Format("OOPProtocolCPP1::setPersistent about to start writing: %1", persistent));
 
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1473,11 +1494,33 @@ OOPProtocolCPP1::setPersistent(
 	BinarySerialization::write(obuf, BinarySerialization::SET_PERSISTENT);
 	BinarySerialization::writeBool(obuf, persistent);
 
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::setPersistent finished writing.");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::setPersistent finished writing.");
 
 	NoResultHandler noResultHandler;
-	end(buf, in, out, timeout, env, noResultHandler, E_WRITE_ONLY);
+	end(buf, in, out, timeout, env, noResultHandler, m_pprov, E_WRITE_ONLY);
+}
 
+void
+OOPProtocolCPP1::setLogLevel(
+	const UnnamedPipeRef& in,
+	const UnnamedPipeRef& out,
+	const Timeout& timeout,
+	const ProviderEnvironmentIFCRef& env,
+	ELogLevel logLevel)
+{
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG3(logger, Format("OOPProtocolCPP1::setLogLevel about to start writing: %1", static_cast<int>(logLevel)));
+
+	Array<unsigned char> buf;
+	OOPDataOStreamBuf obuf(buf);
+	BinarySerialization::write(obuf, BinarySerialization::BinaryProtocolVersion);
+	BinarySerialization::write(obuf, BinarySerialization::SET_LOG_LEVEL);
+	BinarySerialization::write(obuf, static_cast<UInt8>(logLevel));
+
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::setLogLevel finished writing.");
+
+	NoResultHandler noResultHandler;
+	end(buf, in, out, timeout, env, noResultHandler, m_pprov, E_WRITE_ONLY);
 }
 
 void
@@ -1490,11 +1533,10 @@ OOPProtocolCPP1::activateFilter(
 	const String& eventType,
 	const String& nameSpace,
 	const StringArray& classes,
-	bool firstActivation
-	)
+	bool firstActivation)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::activateFilter about to start writing");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::activateFilter about to start writing");
 
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1506,11 +1548,11 @@ OOPProtocolCPP1::activateFilter(
 	BinarySerialization::writeStringArray(obuf, classes);
 	Bool(firstActivation).writeObject(obuf);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::activateFilter finished writing.");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::activateFilter finished writing.");
 
 	bool gotOK = false;
 	VoidOperationResultHandler operationResult(gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!gotOK)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to activateFilter");
@@ -1527,11 +1569,10 @@ OOPProtocolCPP1::authorizeFilter(
 	const String& eventType,
 	const String& nameSpace,
 	const StringArray& classes,
-	const String& owner
-	)
+	const String& owner)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::authorizeFilter about to start writing");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::authorizeFilter about to start writing");
 
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1543,11 +1584,11 @@ OOPProtocolCPP1::authorizeFilter(
 	BinarySerialization::writeStringArray(obuf, classes);
 	BinarySerialization::writeString(obuf, owner);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::authorizeFilter finished writing.");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::authorizeFilter finished writing.");
 
 	bool gotOK = false;
 	VoidOperationResultHandler operationResult(gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!gotOK)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to authorizeFilter");
@@ -1564,11 +1605,10 @@ OOPProtocolCPP1::deActivateFilter(
 	const String& eventType,
 	const String& nameSpace,
 	const StringArray& classes,
-	bool lastActivation
-	)
+	bool lastActivation)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::deActivateFilter about to start writing");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::deActivateFilter about to start writing");
 
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1580,11 +1620,11 @@ OOPProtocolCPP1::deActivateFilter(
 	BinarySerialization::writeStringArray(obuf, classes);
 	Bool(lastActivation).writeObject(obuf);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::deActivateFilter finished writing.");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::deActivateFilter finished writing.");
 
 	bool gotOK = false;
 	VoidOperationResultHandler operationResult(gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!gotOK)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to deActivateFilter");
@@ -1600,11 +1640,10 @@ OOPProtocolCPP1::mustPoll(
 	const WQLSelectStatement& filter,
 	const String& eventType,
 	const String& nameSpace,
-	const StringArray& classes
-	)
+	const StringArray& classes)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::mustPoll about to start writing");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::mustPoll about to start writing");
 
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1615,12 +1654,12 @@ OOPProtocolCPP1::mustPoll(
 	BinarySerialization::writeString(obuf, nameSpace);
 	BinarySerialization::writeStringArray(obuf, classes);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::mustPoll finished writing.");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::mustPoll finished writing.");
 
 	Int32 returnValue(-1);
 	bool gotOK = false;
 	Int32OperationResultHandler operationResult(returnValue, gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 
 	if (!gotOK)
 	{
@@ -1638,11 +1677,10 @@ OOPProtocolCPP1::exportIndication(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
 	const CIMInstance& indHandlerInst, 
-	const CIMInstance& indicationInst
-	)
+	const CIMInstance& indicationInst)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "OOPProtocolCPP1::exportIndication about to start writing");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::exportIndication about to start writing");
 
 	Array<unsigned char> buf;
 	OOPDataOStreamBuf obuf(buf);
@@ -1652,17 +1690,67 @@ OOPProtocolCPP1::exportIndication(
 	BinarySerialization::writeInstance(obuf, indHandlerInst);
 	BinarySerialization::writeInstance(obuf, indicationInst);
 	
-	//OW_LOG_DEBUG(logger, "OOPProtocolCPP1::exportIndication finished writing.");
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::exportIndication finished writing.");
 
 	bool gotOK = false;
 	VoidOperationResultHandler operationResult(gotOK);
-	end(buf, in, out, timeout, env, operationResult);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
 	if (!gotOK)
 	{
 		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to exportIndication");
 	}
 }
 
+void
+OOPProtocolCPP1::shuttingDown(
+	const UnnamedPipeRef& in,
+	const UnnamedPipeRef& out,
+	const Timeout& timeout,
+	const ProviderEnvironmentIFCRef& env)
+{
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::shuttingDown about to start writing");
+
+	Array<unsigned char> buf;
+	OOPDataOStreamBuf obuf(buf);
+	BinarySerialization::write(obuf, BinarySerialization::BinaryProtocolVersion);
+	BinarySerialization::write(obuf, BinarySerialization::SHUTTING_DOWN);
+
+	bool gotOK = false;
+	VoidOperationResultHandler operationResult(gotOK);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
+	if (!gotOK)
+	{
+		OW_THROW(OOPProtocolCPP1Exception, "OOPProtocolCPP1: No result from call to shuttingDown");
+	}
+}
+
+void
+OOPProtocolCPP1::queryInstances(
+	const UnnamedPipeRef& in,
+	const UnnamedPipeRef& out,
+	const Timeout& timeout,
+	const ProviderEnvironmentIFCRef& env,
+	const String& ns,
+	const WQLSelectStatement& query,
+	CIMInstanceResultHandlerIFC& result,
+	const CIMClass& cimClass)
+{
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG3(logger, "OOPProtocolCPP1::queryInstances about to start filling request buffer");
+
+	Array<unsigned char> buf;
+	OOPDataOStreamBuf obuf(buf);
+	BinarySerialization::write(obuf, BinarySerialization::BinaryProtocolVersion);
+	BinarySerialization::write(obuf, BinarySerialization::QUERY_INSTANCES);
+	BinarySerialization::writeString(obuf, ns);
+	BinarySerialization::writeWQLSelectStatement(obuf, query);
+	BinarySerialization::writeClass(obuf, cimClass);
+
+	CIMInstanceOperationResultHandler operationResult(result);
+	end(buf, in, out, timeout, env, operationResult, m_pprov);
+
+}
 
 } // end namespace OW_NAMESPACE
 

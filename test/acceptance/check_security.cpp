@@ -1,6 +1,7 @@
 #include "OW_config.h"
 #include "OW_FileSystem.hpp"
 #include "OW_String.hpp"
+#include "OW_Format.hpp"
 #include <iostream>
 
 
@@ -24,7 +25,7 @@ bool check_security(const OW::String& pathname)
 		}
 		else
 		{
-			std::cerr << "Insecure: " << results.second << std::endl;
+			std::cerr << OW::Format("Insecure (%1): %2", results.first, results.second) << std::endl;
 		}
 	}
 	catch(const OW::Exception& e)
