@@ -41,6 +41,8 @@
 #include "OW_LocalAuthenticationCommon.hpp"
 #include "OW_Exception.hpp"
 #include "blocxx/GlobalString.hpp"
+#include "OW_Logger.hpp"
+#include "OW_FileAppender.hpp"
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -245,6 +247,13 @@ int main(int argc, char* argv[])
 	}
 	local_auth_dir = argv[1];
 
+	// the optional second argument is for a debug log file
+	if (argc == 3)
+	{
+		LogAppender::setDefaultLogAppender(LogAppenderRef(new FileAppender(
+			LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES, argv[2], LogAppender::STR_TTCC_MESSAGE_FORMAT, 1000000, 10)));
+	}
+
 	// I want full control over file permissions
 	::umask(0);
 
@@ -281,6 +290,10 @@ int main(int argc, char* argv[])
 			removeNewlines(msg);
 
 			cout << msg << endl;
+			if (e.getErrorCode() == ERR_INVALID_INPUT)
+			{
+				return ERR_INVALID_INPUT;
+			}
 		}
 		catch (LocalAuthenticationException& e)
 		{
