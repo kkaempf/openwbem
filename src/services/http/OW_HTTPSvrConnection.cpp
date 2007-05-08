@@ -1331,7 +1331,6 @@ void
 HTTPSvrConnection::doShutdown()
 {
 	m_shutdown = true;
-	m_socket.disconnect();
 }
 
 ///////////////////////////////////////////////////////////////////////////
