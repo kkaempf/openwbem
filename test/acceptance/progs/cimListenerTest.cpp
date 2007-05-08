@@ -309,7 +309,7 @@ namespace
 				char buf[BUFSIZE];
 				if (watchStr.length() > BUFSIZE)
 				{
-					OW_THROW_ERRNO_MSG(ListenerTestException, "LogWatcher::waitForStr() - watchStr is too long, Increase BUFSIZE.");
+					OW_THROW(ListenerTestException, "LogWatcher::waitForStr() - watchStr is too long, Increase BUFSIZE.");
 				}
 
 				for (time_t currTime = getCurrTime(); currTime < endTime; currTime = getCurrTime())
