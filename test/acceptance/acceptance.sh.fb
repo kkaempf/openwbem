@@ -944,12 +944,12 @@ TestIndications()
 		ExitWithFail "indication test: owmofc exited with error."
 
 	echo "Executing indication test suite, saving output in " $RESULTDIR/indicationTest.out
-	$BUILDDIR/test/acceptance/progs/cimlistener http://test1:pass1@localhost:30926 $RESULTDIR/cimlistener \
+	$BUILDDIR/test/acceptance/progs/cimlistener http://test1:pass1@localhost:30926 $RESULTDIR/logfile $RESULTDIR/cimlistener \
 		> $RESULTDIR/indicationTest.out 2>&1 || \
 		ExitWithFail "Indication test: cimlistener exited with error"
 
 	echo "Executing indication test suite, saving output in " $RESULTDIR/indicationTest.out
-	$BUILDDIR/test/acceptance/progs/cimlistener owbinary.wbem://test1:pass1@localhost:$OWIPC $RESULTDIR/cimlistener \
+	$BUILDDIR/test/acceptance/progs/cimlistener owbinary.wbem://test1:pass1@localhost:$OWIPC $RESULTDIR/logfile $RESULTDIR/cimlistener \
 		> $RESULTDIR/indicationTest.out 2>&1 || \
 		ExitWithFail "Indication test: cimlistener exited with error"
 

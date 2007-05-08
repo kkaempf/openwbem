@@ -265,6 +265,136 @@ void deleteClass(CIMOMHandleIFC& hdl)
 	hdl.deleteClass("root/testsuite", delClass);
 }
 
+namespace
+{
+	time_t getCurrTime()
+	{
+		time_t currTime = ::time(NULL);
+		if(currTime == time_t(-1))
+		{
+			OW_THROW_ERRNO_MSG(ListenerTestException, "getCurrTime() - call to ::time() failed.");
+		}
+		return currTime;
+	}
+
+	class LogWatcher
+	{
+	public:
+		LogWatcher(const String& logPath)
+			: m_logPath(logPath)
+			, m_beginOffset(0)
+		{
+			m_logFile = FileSystem::openFile(logPath);
+		}
+
+		void openLog(const String& logPath)
+		{
+			m_logPath = logPath;
+			m_logFile = FileSystem::openFile(m_logPath);
+		}
+
+		void saveOffset()
+		{
+			m_beginOffset = m_logFile.size();
+		}
+		
+		void waitForStr(const String& watchStr, int timeout)
+		{
+			if (m_logPath != "")
+			{
+				time_t endTime = getCurrTime() + timeout;
+				UInt64 currOffset = m_beginOffset;
+
+				const unsigned int BUFSIZE = 65535;
+				char buf[BUFSIZE];
+				if (watchStr.length() > BUFSIZE)
+				{
+					OW_THROW_ERRNO_MSG(ListenerTestException, "LogWatcher::waitForStr() - watchStr is too long, Increase BUFSIZE.");
+				}
+
+				for (time_t currTime = getCurrTime(); currTime < endTime; currTime = getCurrTime())
+				{
+					// check if there is data to be read
+					UInt64 currFileSize = m_logFile.size();
+					if (currFileSize > currOffset)
+					{
+						// adjust the offset so we don't miss part of the string we are looking for.
+						currOffset = adjustOffset(currOffset, watchStr.length());
+
+						size_t sizeRead = m_logFile.read(buf, BUFSIZE, currOffset);
+						if (sizeRead == size_t(-1))
+						{
+							OW_THROW_ERRNO_MSG(ListenerTestException, "LogWatcher::waitForStr() - call to m_logFile.read() failed.");
+						}
+						else
+						{
+							String bufStr(buf, sizeRead);
+							size_t watchStrIndex = bufStr.indexOf(watchStr);
+
+							if (watchStrIndex != String::npos)
+							{
+								String logMessage = String("Found the string: \"") + watchStr + String("\" in the logfile.\n");
+								PRINT(logMessage.c_str());
+								return;
+							}
+						}
+
+						currOffset += sizeRead;
+
+					}
+
+					unsigned int usecs = 5000; // 5000 microseconds = 5 millisecond
+					int sleepRV = ::usleep(usecs);
+				}
+
+				OW_THROW(ListenerTestException, "Timeout reached before finding the IndicationServerImplThread::createSubscription completion log message");
+			}
+			else
+			{
+				OW_THROW(ListenerTestException, "LogWatcher::waitForStr() - m_logPath wasn't set.");
+			}
+		}
+
+	private:
+		String m_logPath;
+		UInt64 m_beginOffset;
+		File m_logFile;
+
+		UInt64 adjustOffset(const UInt64& currOffset, const int& searchStrSize) const
+		{
+			UInt64 newOffset = currOffset;
+
+			// we dont want to begin reading in the middle of the string we are seaching for
+			if (currOffset - searchStrSize > m_beginOffset)
+			{
+				newOffset = currOffset - searchStrSize;
+			}
+
+			return newOffset;
+		}
+	};
+}
+
+void registerTestIndication(
+	const String& cimomLogPath,
+	const String& cimClass, 
+	const String& url,
+	const String& ns,
+	const CIMListenerCallbackRef mcb,
+	HTTPXMLCIMListener& hxcl, 
+	StringArray& registrationHandles)
+{
+	LogWatcher logwatcher(cimomLogPath);	
+	logwatcher.saveOffset();
+
+	String wqlStr("select * from " + cimClass);
+	String handle = hxcl.registerForIndication(url, ns, wqlStr, "wql1", "root/testsuite", mcb);
+	registrationHandles.append(handle);
+
+	String searchStr = "Successfully completed IndicationServerImplThread::createSubscription";
+	logwatcher.waitForStr(searchStr, 30);
+}
+
 int main(int argc, char* argv[])
 {
 	// these need to be out of the try, so that a potential deadlock won't happen
@@ -276,18 +406,26 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		if (argc < 2 || argc > 3)
+		if (argc < 3 || argc > 4)
 		{
-			cerr << "Usage: " << argv[0] << " <URL> [dump file prefix]" << endl;
+			cerr << "Usage: " << argv[0] << " <URL> [dump file prefix] <path to CIMOM logfile>" << endl;
 			return 1;
 		}
 
 		String url(argv[1]);
+		String cimomLogPath;
 
-		if (argc == 3)
+		cimomLogPath = argv[2];
+		if(!FileSystem::exists(cimomLogPath))
 		{
-			String sockDumpOut = argv[2];
-			String sockDumpIn = argv[2];
+			cerr << "Invalid CIMOM log file: " << cimomLogPath << endl;
+			return 1;
+		}
+
+		if (argc == 4)
+		{
+			String sockDumpOut = argv[3];
+			String sockDumpIn = argv[3];
 			sockDumpOut += "SockDumpOut";
 			sockDumpIn += "SockDumpIn";
 			cerr << "argc = " << argc << " sockDumpOut = " << sockDumpOut << endl;
@@ -380,42 +518,15 @@ int main(int argc, char* argv[])
 		{
 			registrationHandles.clear();
 
-			handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassIndication", "wql1", "root/testsuite", mcb);
-			registrationHandles.append(handle);
-			sleep(1);
-
-			handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassCreation", "wql1", "root/testsuite", mcb);
-			registrationHandles.append(handle);
-			sleep(1);
-
-			handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassDeletion", "wql1", "root/testsuite", mcb);
-			registrationHandles.append(handle);
-			sleep(1);
-
-			handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassModification", "wql1", "root/testsuite", mcb);
-			registrationHandles.append(handle);
-			sleep(1);
-
-			handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstModification", "wql1", "root/testsuite", mcb);
-			registrationHandles.append(handle);
-			sleep(1);
-
-			handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstDeletion", "wql1", "root/testsuite", mcb);
-			registrationHandles.append(handle);
-			sleep(1);
-
-			handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstRead", "wql1", "root/testsuite", mcb);
-			registrationHandles.append(handle);
-			sleep(1);
-
-			handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstCreation", "wql1", "root/testsuite", mcb);
-			registrationHandles.append(handle);
-			sleep(1);
-
-			handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstIndication", "wql1", "root/testsuite", mcb);
-			registrationHandles.append(handle);
-			sleep(1);
-
+			registerTestIndication(cimomLogPath, "CIM_ClassIndication", url, ns, mcb, hxcl, registrationHandles);
+			registerTestIndication(cimomLogPath, "CIM_ClassCreation", url, ns, mcb, hxcl, registrationHandles);
+			registerTestIndication(cimomLogPath, "CIM_ClassDeletion", url, ns, mcb, hxcl, registrationHandles);
+			registerTestIndication(cimomLogPath, "CIM_ClassModification", url, ns, mcb, hxcl, registrationHandles);
+			registerTestIndication(cimomLogPath, "CIM_InstModification", url, ns, mcb, hxcl, registrationHandles);
+			registerTestIndication(cimomLogPath, "CIM_InstDeletion", url, ns, mcb, hxcl, registrationHandles);
+			registerTestIndication(cimomLogPath, "CIM_InstRead", url, ns, mcb, hxcl, registrationHandles);
+			registerTestIndication(cimomLogPath, "CIM_InstCreation", url, ns, mcb, hxcl, registrationHandles);
+			registerTestIndication(cimomLogPath, "CIM_InstIndication", url, ns, mcb, hxcl, registrationHandles);
 
 			//handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstMethodCall", "wql1", "root/testsuite", mcb);
 			//registrationHandles.append(handle);

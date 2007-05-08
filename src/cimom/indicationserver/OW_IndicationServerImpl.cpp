@@ -1444,6 +1444,8 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		}
 		OW_THROWCIMMSG(CIMException::FAILED, "activateFilter failed for all providers");
 	}
+
+	OW_LOG_DEBUG3(m_logger, "Successfully completed IndicationServerImplThread::createSubscription()");
 }
 //////////////////////////////////////////////////////////////////////////////
 void
