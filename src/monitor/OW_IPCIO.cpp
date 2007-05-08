@@ -39,6 +39,7 @@
 #include "OW_DescriptorUtils.hpp"
 #include "OW_Timeout.hpp"
 #include "OW_IOException.hpp"
+#include "OW_CommonFwd.hpp"
 
 #include <unistd.h>
 
