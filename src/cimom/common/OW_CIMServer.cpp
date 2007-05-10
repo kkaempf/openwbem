@@ -683,6 +683,16 @@ CIMServer::_getCIMInstanceNames(const String& ns, const CIMName& className,
 	OperationContext& context)
 {
 	InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass, context);
+	// See if the authorizer allows reading of these instance names
+	StringArray authorizedPropertyList;	// Will be ignored
+	if (!m_authorizerMgr->allowReadInstance(m_env, ns, className.toString(),
+		0, authorizedPropertyList, context))
+	{
+		OW_LOG_DEBUG(m_logger, Format("Authorizer did NOT authorize reading of %1"
+			" instance names from namespace %2", className, ns));
+		return;
+	}
+
 	if (instancep)
 	{
 		instancep->enumInstanceNames(createProvEnvRef(context, m_env),
