@@ -797,12 +797,12 @@ namespace
 
 	inline int output_handle(UnnamedPipeRef const & p)
 	{
-		return p.cast_to<PosixUnnamedPipe>()->getOutputHandle();
+		return p->getOutputDescriptor();
 	}
 
 	inline int input_handle(UnnamedPipeRef const & p)
 	{
-		return p.cast_to<PosixUnnamedPipe>()->getInputHandle();
+		return p->getInputDescriptor();
 	}
 
 	struct SMPolicy : public PrivilegeCommon::SpawnMonitorPolicy

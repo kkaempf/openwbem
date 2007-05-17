@@ -832,9 +832,9 @@ ProcessRef PrivilegeManager::monitoredSpawn(
 		conn.put_sync();
 
 		check_result(conn, IPCIO::E_UNBUFFERED);
-		UnnamedPipeRef in(new PosixUnnamedPipe(AutoDescriptor(), conn.get_handle()));
-		UnnamedPipeRef out(new PosixUnnamedPipe(conn.get_handle(), AutoDescriptor()));
-		UnnamedPipeRef err(new PosixUnnamedPipe(conn.get_handle(), AutoDescriptor()));
+		UnnamedPipeRef in = UnnamedPipe::createUnnamedPipeFromDescriptor(AutoDescriptor(), conn.get_handle());
+		UnnamedPipeRef out = UnnamedPipe::createUnnamedPipeFromDescriptor(conn.get_handle(), AutoDescriptor());
+		UnnamedPipeRef err = UnnamedPipe::createUnnamedPipeFromDescriptor(conn.get_handle(), AutoDescriptor());
 		ProcId pid;
 		ipcio_get(conn, pid);
 		conn.get_sync();
@@ -886,9 +886,9 @@ ProcessRef PrivilegeManager::monitoredUserSpawn(
 		conn.put_sync();
 
 		check_result(conn, IPCIO::E_UNBUFFERED);
-		UnnamedPipeRef in(new PosixUnnamedPipe(AutoDescriptor(), conn.get_handle()));
-		UnnamedPipeRef out(new PosixUnnamedPipe(conn.get_handle(), AutoDescriptor()));
-		UnnamedPipeRef err(new PosixUnnamedPipe(conn.get_handle(), AutoDescriptor()));
+		UnnamedPipeRef in = UnnamedPipe::createUnnamedPipeFromDescriptor(AutoDescriptor(), conn.get_handle());
+		UnnamedPipeRef out = UnnamedPipe::createUnnamedPipeFromDescriptor(conn.get_handle(), AutoDescriptor());
+		UnnamedPipeRef err = UnnamedPipe::createUnnamedPipeFromDescriptor(conn.get_handle(), AutoDescriptor());
 		ProcId pid;
 		ipcio_get(conn, pid);
 		conn.get_sync();
@@ -1015,9 +1015,9 @@ ProcessRef PrivilegeManager::userSpawn(
 		conn.put_sync();
 
 		check_result(conn, IPCIO::E_UNBUFFERED);
-		UnnamedPipeRef in(new PosixUnnamedPipe(AutoDescriptor(), conn.get_handle()));
-		UnnamedPipeRef out(new PosixUnnamedPipe(conn.get_handle(), AutoDescriptor()));
-		UnnamedPipeRef err(new PosixUnnamedPipe(conn.get_handle(), AutoDescriptor()));
+		UnnamedPipeRef in = UnnamedPipe::createUnnamedPipeFromDescriptor(AutoDescriptor(), conn.get_handle());
+		UnnamedPipeRef out = UnnamedPipe::createUnnamedPipeFromDescriptor(conn.get_handle(), AutoDescriptor());
+		UnnamedPipeRef err = UnnamedPipe::createUnnamedPipeFromDescriptor(conn.get_handle(), AutoDescriptor());
 		ProcId pid;
 		ipcio_get(conn, pid);
 		conn.get_sync();

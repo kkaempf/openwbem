@@ -60,11 +60,9 @@ namespace OW_NAMESPACE
 OW_DEFINE_EXCEPTION(IPCIO);
 
 IPCIO::IPCIO(AutoDescriptor peer_descriptor, Timeout const & timeout)
-: m_pipe(),
+: m_pipe(UnnamedPipe::createUnnamedPipeFromDescriptor(peer_descriptor)),
   m_streambuf()
 {
-	AutoDescriptor peerDup(::dup(peer_descriptor.get())); // This needs to happen *before* passing it to the PosixUnnamedPipe constructor.
-	m_pipe = new PosixUnnamedPipe(peer_descriptor, peerDup);
 	m_pipe->setTimeouts(timeout);
 	m_streambuf = new IOIFCStreamBuffer(m_pipe.getPtr(), IOIFCStreamBuffer::E_IN_OUT, IO_BUFFER_SIZE);
 	m_streambuf->setErrorAction(IOIFC::E_THROW_ON_ERROR);
