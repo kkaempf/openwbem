@@ -11,7 +11,8 @@ lib*dylib*
 *.exp
 *.nlm
 *.nlm.*
-owlocalhelper6
+owlocalhelper?
 lib*sl*
-owspnegovas4helper6
-owspnegovas3helper6
+owspnegovas4helper?
+owspnegovas3helper?
+owspnegogssapihelper?
