@@ -34,6 +34,7 @@
 #include "UnnamedPipeTestCases.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_String.hpp"
+#include "OW_Process.hpp"
 
 using namespace OpenWBEM;
 
