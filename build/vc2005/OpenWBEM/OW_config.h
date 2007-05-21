@@ -603,9 +603,6 @@ typedef long off_t;
 
 #define snprintf _snprintf
 
-// Including winsock2.h should also bring in windows.h
-#include <winsock2.h>
-
 #ifdef max
 #undef max
 #endif

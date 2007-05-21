@@ -301,6 +301,7 @@ PrivilegeManager::~PrivilegeManager()
 PrivilegeManager PrivilegeManager::connectToMonitor()
 {
 	PrivilegeCommon::DescriptorInfo x(PrivilegeCommon::monitor_descriptor());
+#ifndef OW_WIN32
 	switch (x.errnum)
 	{
 		case 0:
@@ -322,6 +323,7 @@ PrivilegeManager PrivilegeManager::connectToMonitor()
 		default:
 			OW_ASSERT(false);
 	}
+#endif
 	// Not reached, but we need a return value.
 	return PrivilegeManager();
 }
@@ -414,7 +416,7 @@ namespace
 	{
 		virtual char const * check_config_dir(char const * config_dir);
 		virtual void spawn(
-			int child_desc, int parent_desc,
+			Descriptor child_desc, Descriptor parent_desc,
 			char const * config_dir, char const * app_name
 		);
 		char const * m_user_name;
@@ -426,7 +428,7 @@ namespace
 
 	char const * SMPolicy::check_config_dir(char const * config_dir)
 	{
-#ifdef BLOCXX_WIN32
+#ifdef OW_WIN32
 #pragma message(Reminder "TODO: implement it for Win in BloCxx!")
 		return "";
 #else
@@ -443,11 +445,11 @@ namespace
 	}
 
 	void SMPolicy::spawn(
-		int child_desc, int parent_desc,
+		Descriptor child_desc, Descriptor parent_desc,
 		char const * config_dir, char const * app_name
 	)
 	{
-#ifdef BLOCXX_WIN32
+#ifdef OW_WIN32
 #pragma message(Reminder "TODO: implement it for Win in BloCxx!")
 #else
 		PrivMonPreExec pre_exec(child_desc); 
@@ -517,7 +519,7 @@ PrivilegeManager::init(
 		CHECK(user_name && *user_name,
 			"PrivilegeManager: no privilege config file and no user name");
 		// only root can setuid() to another user
-#ifdef BLOCXX_WIN32
+#ifdef OW_WIN32
 #pragma message(Reminder "TODO: implement it for Win!")
 #else
 		if (::getuid() == ROOT_UID)
@@ -610,7 +612,7 @@ AutoDescriptor PrivilegeManager::open(
 		conn.get_sync();
 		if (flags & ate)
 		{
-#ifdef BLOCXX_WIN32
+#ifdef OW_WIN32
 #pragma message(Reminder "TODO: for Win retval.get() should return FileHandle so after correct porting 'reinterpret_cast' need to be removed !")
 			CHECK(FileSystem::seek(reinterpret_cast<FileHandle>(retval.get()), 0, SEEK_END) >= 0,
 				"Seek to end failed");

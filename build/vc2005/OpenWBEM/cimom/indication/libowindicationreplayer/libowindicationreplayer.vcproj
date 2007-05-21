@@ -220,7 +220,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\..\..\..\src\cimom\indication\OW_IndicationRepLayerImpl.cpp"
+				RelativePath="..\..\..\..\..\..\src\cimom\indicationreplayer\OW_IndicationRepLayerImpl.cpp"
 				>
 			</File>
 		</Filter>
@@ -230,7 +230,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\..\..\..\src\cimom\indication\OW_IndicationRepLayerImpl.hpp"
+				RelativePath="..\..\..\..\..\..\src\cimom\indicationreplayer\OW_IndicationRepLayerImpl.hpp"
 				>
 			</File>
 		</Filter>

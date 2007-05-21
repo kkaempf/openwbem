@@ -238,7 +238,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\src\cimom\indication\OW_LifecycleIndicationPoller.cpp"
+				RelativePath="..\..\..\..\..\src\cimom\indicationserver\OW_LifecycleIndicationPoller.cpp"
 				>
 			</File>
 			<File
@@ -300,11 +300,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\src\cimom\indication\OW_IndicationServerImpl.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\src\cimom\indication\OW_LifecycleIndicationPoller.hpp"
+				RelativePath="..\..\..\..\..\src\cimom\indicationserver\OW_LifecycleIndicationPoller.hpp"
 				>
 			</File>
 			<File

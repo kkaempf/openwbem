@@ -94,18 +94,21 @@ void spawn_monitor(
 	CHECK(app_name, "app_name must be non-null");
 	CHECK(!std::strchr(app_name, '/'), "app_name must not contain '/'");
 
-	int sockfds[2];
-#ifdef BLOCXX_WIN32
+#ifdef OW_WIN32
 #pragma message(Reminder "TODO: implement it for Win!")
+	HANDLE sockfds[2];
+	AutoDescriptor parent_desc(sockfds[0]);
+	AutoDescriptor child_desc(sockfds[1]);
 #else
+	int sockfds[2];
 	CHECK_ERRNO(::socketpair(AF_UNIX, SOCK_STREAM, 0, sockfds) == 0,
 		"socketpair");
-#endif
+
 	AutoDescriptor parent_desc(sockfds[0]);
 	AutoDescriptor child_desc(sockfds[1]);
 	OW_ASSERT(parent_desc.get() >= 3);
 	OW_ASSERT(child_desc.get() >= 3);
-
+#endif
 	// This call may throw
 	policy.spawn(child_desc.get(), parent_desc.get(), config_dir, app_name);
 	child_desc.reset();

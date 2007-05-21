@@ -117,7 +117,7 @@ namespace PrivilegeCommon
 		virtual ~SpawnMonitorPolicy();
 		virtual char const * check_config_dir(char const * config_dir) = 0;
 		virtual void spawn(
-			int child_desc, int parent_desc,
+			Descriptor child_desc, Descriptor parent_desc,
 			char const * config_dir, char const * app_name
 		) = 0;
 	};

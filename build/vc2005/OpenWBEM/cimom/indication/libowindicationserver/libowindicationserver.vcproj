@@ -220,11 +220,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\..\..\..\src\cimom\indication\OW_IndicationServerImpl.cpp"
+				RelativePath="..\..\..\..\..\..\src\cimom\indicationserver\OW_IndicationServerImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\..\src\cimom\indication\OW_LifecycleIndicationPoller.cpp"
+				RelativePath="..\..\..\..\..\..\src\cimom\indicationserver\OW_LifecycleIndicationPoller.cpp"
 				>
 			</File>
 		</Filter>
@@ -234,11 +234,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\..\..\..\src\cimom\indication\OW_IndicationServerImpl.hpp"
+				RelativePath="..\..\..\..\..\..\src\cimom\indicationserver\OW_IndicationServerImpl.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\..\src\cimom\indication\OW_LifecycleIndicationPoller.hpp"
+				RelativePath="..\..\..\..\..\..\src\cimom\indicationserver\OW_LifecycleIndicationPoller.hpp"
 				>
 			</File>
 		</Filter>
