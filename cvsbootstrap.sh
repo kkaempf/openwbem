@@ -22,7 +22,7 @@ if [ $BISON_MAJOR_VERSION -lt 2 ] || [ $BISON_MINOR_VERSION -lt 1 ]; then
 #	exit 1
 fi
 
-aclocal \
+aclocal-1.9 \
 && autoconf \
 && autoheader \
 && automake-1.9 --foreign --add-missing 
