@@ -118,7 +118,7 @@ int yylex(YYSTYPE * lvalp, YYLTYPE * llocp, openwbem_privconfig_Lexer * lexerp);
 %type <StringArray> include_args
 %type <EnvironmentVariablePatterns> env_specification allowed_environment_variables_args
 
-%destructor { delete [] $$; } path_pattern NAME DIRPATH SUBTREE FILEPATH FPATHWC SPLAT
+%destructor { delete [] $$; } SPLAT NAME DIRPATH SUBTREE FILEPATH FPATHWC STRING_VALUE path_pattern exec_path_pattern user_name
 %destructor { delete $$; } exec_arg_list
 %destructor { delete $$; } include_args
 %destructor { delete $$; } env_specification allowed_environment_variables_args
