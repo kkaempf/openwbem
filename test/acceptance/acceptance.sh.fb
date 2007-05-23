@@ -948,10 +948,12 @@ TestIndications()
 		> $RESULTDIR/indicationTest.out 2>&1 || \
 		ExitWithFail "Indication test: cimlistener exited with error"
 
-	echo "Executing indication test suite, saving output in " $RESULTDIR/indicationTest-ipc.out
-	$BUILDDIR/test/acceptance/progs/cimlistener owbinary.wbem://test1:pass1@localhost:$OWIPC $RESULTDIR/logfile $RESULTDIR/cimlistener \
-		> $RESULTDIR/indicationTest-ipc.out 2>&1 || \
-		ExitWithFail "Indication test: cimlistener exited with error"
+	if [ "z$OWLONGTEST" = "z1" ]; then
+		echo "Executing indication test suite, saving output in " $RESULTDIR/indicationTest-ipc.out
+		$BUILDDIR/test/acceptance/progs/cimlistener owbinary.wbem://test1:pass1@localhost:$OWIPC $RESULTDIR/logfile $RESULTDIR/cimlistener \
+			> $RESULTDIR/indicationTest-ipc.out 2>&1 || \
+			ExitWithFail "Indication test: cimlistener exited with error"
+	fi
 
 	echo "Indication Testsuite Passed"
 
@@ -2185,13 +2187,19 @@ main()
 	TestSuite "owbinary.wbem://test1:pass1@localhost:$OWIPC/ " "testsuiteUDSBIN.out" "testsuite28.out"
 
 	TestCIMExceptions "http://test1:pass1@localhost:30926"
-	TestCIMExceptions "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+	if [ "z$OWLONGTEST" = "z1" ]; then
+		TestCIMExceptions "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+	fi
 
-	TestNamespaces "http://test1:pass1@localhost:30926"
+	if [ "z$OWLONGTEST" = "z1" ]; then
+		TestNamespaces "http://test1:pass1@localhost:30926"
+	fi
 	TestNamespaces "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 
 	TestMisc "http://test1:pass1@localhost:30926"
-	TestMisc "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+	if [ "z$OWLONGTEST" = "z1" ]; then
+		TestMisc "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+	fi
 
 	TestIndications
 
