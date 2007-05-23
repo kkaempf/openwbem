@@ -15,3 +15,4 @@ lib*sl*
 OW_PrivilegeLexer.cc
 OW_PrivilegeParser.cc
 OW_PrivilegeParser.h
+OW_PrivilegeParser.output
