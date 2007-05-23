@@ -46,11 +46,12 @@ namespace MOF
 struct OW_MOF_API LineInfo
 {
 	LineInfo()
-		: filename(), lineNum(1) {}
-	LineInfo( const String& _filename, const long _linenum )
-		: filename(_filename), lineNum(_linenum) {}
+		: filename(), lineNum(1), columnNum(1) {}
+	LineInfo( const String& _filename, const long _linenum, const long _columnNum )
+		: filename(_filename), lineNum(_linenum), columnNum(_columnNum) {}
 	String filename;
 	long lineNum;
+	long columnNum;
 };
 
 typedef LineInfo lineInfo OW_DEPRECATED;

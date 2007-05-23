@@ -77,7 +77,6 @@ String COMPONENT_NAME("ow.mof");
 
 Compiler::Compiler( const CIMOMHandleIFCRef& ch, const Options& opts, const ParserErrorHandlerIFCRef& mpeh )
 	: theErrorHandler(mpeh)
-	, include_stack_ptr(0)
 	, m_ch(ch)
 	, m_opts(opts)
 {
@@ -87,45 +86,39 @@ Compiler::~Compiler()
 }
 long Compiler::compile( const String& filename )
 {
-	include_stack_ptr = 0;
-	theLineInfo = LineInfo(filename,1);
+	CompilerState compilerState(theErrorHandler, filename);
 	try
 	{
 		try
 		{
-			size_t i = filename.lastIndexOf(OW_FILENAME_SEPARATOR);
-			if (i != String::npos)
-			{
-				basepath = filename.substring(0,i);
-			}
-			else
-			{
-				basepath = String();
-			}
 			if (filename != "-")
 			{
 				owmofin = fopen(filename.c_str(), "r");
 				if (!owmofin)
 				{
-					theErrorHandler->fatalError("Unable to open file", LineInfo(filename, 0));
+					theErrorHandler->fatalError("Unable to open file", LineInfo(filename, 0, 0));
 					return 1;
 				}
 			}
 			theErrorHandler->progressMessage("Starting parsing",
-					LineInfo(filename, 0));
+					LineInfo(filename, 0, 0));
 			
 			{
 				NonRecursiveMutexLock lock(g_guard);
 				#ifdef YYOW_DEBUG
 				owmofdebug = 1;
 				#endif
-				owmofparse(this);
+				ParseError parseError;
+				int parserv = owmofparse(&compilerState, &parseError);
+				if (parserv != 0)
+				{
+					OW_THROW(MOFCompilerException, Format("Parse error at: %1:%2 (%3)", parseError.column, parseError.line, parseError.message).c_str());
+				}
 			}
 
-			theErrorHandler->progressMessage("Finished parsing",
-					theLineInfo);
+			theErrorHandler->progressMessage("Finished parsing", compilerState.getLineInfo());
 			CIMOMVisitor v(m_ch, m_opts, theErrorHandler);
-			mofSpecification->Accept(&v);
+			compilerState.mofSpecification->Accept(&v);
 		}
 		catch (const ParseFatalErrorException&)
 		{
@@ -133,24 +126,24 @@ long Compiler::compile( const String& filename )
 		}
 		catch (AssertionException& e)
 		{
-			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e).c_str(), theLineInfo);
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e).c_str(), compilerState.getLineInfo());
 		}
 		catch (Exception& e)
 		{
-			theErrorHandler->fatalError(Format( "ERROR: %1", e).c_str(), theLineInfo);
+			theErrorHandler->fatalError(Format( "ERROR: %1", e).c_str(), compilerState.getLineInfo());
 		}
 		catch (std::exception& e)
 		{
-			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), theLineInfo);
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), compilerState.getLineInfo());
 		}
 		catch (ThreadCancelledException&)
 		{
-			theErrorHandler->fatalError("INTERNAL COMPILER ERROR: Thread cancelled", theLineInfo);
+			theErrorHandler->fatalError("INTERNAL COMPILER ERROR: Thread cancelled", compilerState.getLineInfo());
 			throw;
 		}
 		catch(...)
 		{
-			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", theLineInfo);
+			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", compilerState.getLineInfo());
 		}
 	}
 	catch (const ParseFatalErrorException&)
@@ -169,30 +162,33 @@ namespace {
 }
 long Compiler::compileString( const String& mof )
 {
-	include_stack_ptr = 0;
 	String filename = "string";
-	theLineInfo = LineInfo(filename,1);
+	CompilerState compilerState(theErrorHandler, filename);
 	try
 	{
 		try
 		{
-			NonRecursiveMutexLock lock(g_guard);
+			{
+				NonRecursiveMutexLock lock(g_guard);
 			
 				YY_BUFFER_STATE buf = owmof_scan_bytes(mof.c_str(), mof.length());
 				owmofBufferDeleter deleter(buf);
 				theErrorHandler->progressMessage("Starting parsing",
-						LineInfo(filename, 0));
+						LineInfo(filename, 0, 0));
 				#ifdef YYOW_DEBUG
 				owmofdebug = 1;
 				#endif
-				owmofparse(this);
-			
-			lock.release();
+				ParseError parseError;
+				int parserv = owmofparse(&compilerState, &parseError);
+				if (parserv != 0)
+				{
+					OW_THROW(MOFCompilerException, Format("Parse error at: %1:%2 (%3)", parseError.column, parseError.line, parseError.message).c_str());
+				}
+			}
 
-			theErrorHandler->progressMessage("Finished parsing",
-					theLineInfo);
+			theErrorHandler->progressMessage("Finished parsing", compilerState.getLineInfo());
 			CIMOMVisitor v(m_ch, m_opts, theErrorHandler);
-			mofSpecification->Accept(&v);
+			compilerState.mofSpecification->Accept(&v);
 		}
 		catch (const ParseFatalErrorException&)
 		{
@@ -200,24 +196,24 @@ long Compiler::compileString( const String& mof )
 		}
 		catch (AssertionException& e)
 		{
-			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e).c_str(), theLineInfo);
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e).c_str(), compilerState.getLineInfo());
 		}
 		catch (Exception& e)
 		{
-			theErrorHandler->fatalError(Format( "ERROR: %1", e).c_str(), theLineInfo);
+			theErrorHandler->fatalError(Format( "ERROR: %1", e).c_str(), compilerState.getLineInfo());
 		}
 		catch (std::exception& e)
 		{
-			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), theLineInfo);
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), compilerState.getLineInfo());
 		}
 		catch (ThreadCancelledException&)
 		{
-			theErrorHandler->fatalError("INTERNAL COMPILER ERROR: Thread cancelled", theLineInfo);
+			theErrorHandler->fatalError("INTERNAL COMPILER ERROR: Thread cancelled", compilerState.getLineInfo());
 			throw;
 		}
 		catch(...)
 		{
-			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", theLineInfo);
+			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", compilerState.getLineInfo());
 		}
 	}
 	catch (const ParseFatalErrorException&)
@@ -816,19 +812,19 @@ protected:
 	virtual void doProgressMessage(const char *message, const LineInfo &li)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, Format("MOF compilation progress: %1: line %2: %3", li.filename, li.lineNum, message));
+		OW_LOG_DEBUG(logger, Format("MOF compilation progress: %1: line %2:%3: %4", li.filename, li.lineNum, li.columnNum, message));
 		warnings.push_back(message);
 	}
 	virtual void doFatalError(const char *error, const LineInfo &li)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_ERROR(logger, Format("Fatal MOF compilation error: %1: line %2: %3", li.filename, li.lineNum, error));
+		OW_LOG_ERROR(logger, Format("Fatal MOF compilation error: %1: line %2:%3: %4", li.filename, li.lineNum, li.columnNum, error));
 		errors.push_back(error);
 	}
 	virtual EParserAction doRecoverableError(const char *error, const LineInfo &li)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_ERROR(logger, Format("MOF compilation error: %1: line %2: %3", li.filename, li.lineNum, error));
+		OW_LOG_ERROR(logger, Format("MOF compilation error: %1: line %2:%3: %4", li.filename, li.lineNum, li.columnNum, error));
 		errors.push_back(error);
 		return ParserErrorHandlerIFC::E_ABORT_ACTION;
 	}
@@ -863,6 +859,92 @@ void compileMOF(const String& mof, const CIMOMHandleIFCRef& realhdl, const Strin
 		}
 		OW_THROW(MOFCompilerException, errorStrs.c_str());
 	}
+}
+
+CompilerState::CompilerState(const ParserErrorHandlerIFCRef& mpeh, const String& initialFilename)
+	: m_firstColumn(0)
+	, m_firstLine(0)
+	, m_lastColumn(0)
+	, m_lastLine(0)
+	, m_nextColumn(1)
+	, m_nextLine(1)
+	, m_fileName(initialFilename)
+	, m_errorHandler(mpeh)
+{
+	size_t i = initialFilename.lastIndexOf(OW_FILENAME_SEPARATOR);
+	if (i != String::npos)
+	{
+		m_basepath = initialFilename.substring(0,i);
+	}
+}
+
+CompilerState::~CompilerState()
+{
+}
+
+void 
+CompilerState::updateLocation(const char* yytext, owmofltype* yylocp)
+{
+	m_firstLine = m_lastLine = m_nextLine;
+	m_firstColumn = m_nextColumn;
+	char c;
+	for (std::size_t i = 0; (c = yytext[i]) != '\0'; ++i)
+	{
+		m_lastColumn = m_nextColumn;
+		++m_nextColumn;
+		if (c == '\n')
+		{
+			m_lastLine = m_nextLine;
+			++m_nextLine;
+			m_nextColumn = 1;
+		}
+	}
+	yylocp->first_column = m_firstColumn;
+	yylocp->first_line = m_firstLine;
+	yylocp->last_column = m_lastColumn;
+	yylocp->last_line = m_lastLine;
+}
+
+LineInfo 
+CompilerState::getLineInfo() const
+{
+	return LineInfo(m_fileName, m_firstLine, m_firstColumn);
+}
+
+ParserErrorHandlerIFCRef 
+CompilerState::getErrorHandler() const
+{
+	return m_errorHandler;
+}
+
+void 
+CompilerState::startNewFile(const String& filenameWithPath)
+{
+	m_firstColumn = 0;
+	m_firstLine = 0;
+	m_lastColumn = 0;
+	m_lastLine = 0;
+	m_nextColumn = 1;
+	m_nextLine = 1;
+	m_fileName = filenameWithPath;
+}
+
+String
+CompilerState::getBasePath() const
+{
+	return m_basepath;
+}
+
+void
+CompilerState::setLineInfo(const CompilerState::include_t& x)
+{
+	m_firstColumn = x.m_firstColumn;
+	m_firstLine = x.m_firstLine;
+	m_lastColumn = x.m_lastColumn;
+	m_lastLine = x.m_lastLine;
+	m_nextColumn = x.m_nextColumn;
+	m_nextLine = x.m_nextLine;
+	m_fileName = x.m_fileName;
 }
 
 } // end namespace MOF

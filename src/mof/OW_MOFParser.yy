@@ -42,30 +42,28 @@
 #include "OW_Array.hpp"
 #include "OW_MOFCompiler.hpp"
 #include "OW_MOFParserDecls.hpp"
+#include "OW_Format.hpp"
 
 using namespace OpenWBEM;
 using namespace OpenWBEM::MOF;
 
-namespace OW_NAMESPACE
-{
-OW_DEFINE_EXCEPTION(MOFParser)
-}
-
-//#define YYDEBUG 1
-
 // Lexer functions
 void lexIncludeFile( void* context, const String& filename );
-void yyerror( const char* );
+void owmoferror( YYLTYPE * p_loc, CompilerState* MOF_COMPILER_STATE, ParseError * p_err, const char* );
 
-/* This is so we can avoid static variables and pass a pointer into yyparse */
-#define YYPARSE_PARAM context
-#define MOF_COMPILER (reinterpret_cast<Compiler*>(context))
 %}
 
+%defines
 /* avoid non-reentrant global variables */
 %pure_parser
+%parse-param {CompilerState * MOF_COMPILER_STATE}
+%parse-param {ParseError * p_err}
+%lex-param {CompilerState * MOF_COMPILER_STATE}
 
+%name-prefix="owmof"
 %error-verbose
+%locations
+%debug
 
 /* List of tokens */
 %token ANY_TOK AS_TOK ASSOCIATION_TOK CLASS_TOK DISABLEOVERRIDE_TOK
@@ -83,125 +81,176 @@ void yyerror( const char* );
 %token LBRACK_TOK RBRACK_TOK COMMA_TOK DOLLAR_TOK COLON_TOK EQUALS_TOK
 %token IDENTIFIER_TOK stringValue floatValue charValue
 %token binaryValue octalValue decimalValue hexValue
+%token SCANNER_ERROR
 
 /* here is the stuff to make our C++ AST work */
 %union {
-	MOFSpecification*				pMOFSpecification;
-	List<MOFProduction*>*		pMOFProductionList;
-	MOFProduction*					pMOFProduction;
-	IndicDeclaration*				pIndicDeclaration;
-	ClassDeclaration*				pClassDeclaration;
-	PropertyDeclaration*			pPropertyDeclaration;
-	ObjectRef*						pObjectRef;
-	Parameter*						pParameter;
-	::OpenWBEM::MOF::Array*							pArray;
-	CompilerDirective*			pCompilerDirective;
-	MetaElement*					pMetaElement;
-	List<MetaElement*>*			pMetaElementList;
-	Initializer*					pInitializer;
-	SuperClass*						pSuperClass;
-	AssociationFeature*			pAssociationFeature;
-	List<AssociationFeature*>*	pAssociationFeatureList;
-	QualifierParameter*			pQualifierParameter;
-	QualifierDeclaration*		pQualifierDeclaration;
-	PragmaParameter*				pPragmaParameter;
-	AssocDeclaration*				pAssocDeclaration;
-	DefaultValue*					pDefaultValue;
-	ClassFeature*					pClassFeature;
-	List<ClassFeature*>*			pClassFeatureList;
-	ReferenceInitializer*		pReferenceInitializer;
-	QualifierType*					pQualifierType;
-	DefaultFlavor*					pDefaultFlavor;
-	String*							pString;
-	IntegerValue*              pIntegerValue;
-	ConstantValue*             pConstantValue;
-	ArrayInitializer*				pArrayInitializer;
-	ValueInitializer*				pValueInitializer;
-	List<ValueInitializer*>*	pValueInitializerList;
-	Flavor*							pFlavor;
-	List<Flavor*>*					pFlavorList;
-	List<ConstantValue*>*				pConstantValueList;
-	Alias*							pAlias;
-	List<Qualifier*>*				pQualifierList;
-	ReferenceDeclaration*		pReferenceDeclaration;
-	MethodDeclaration*			pMethodDeclaration;
-	Qualifier*						pQualifier;
-	List<Parameter*>*				pParameterList;
-	Scope*							pScope;
-	InstanceDeclaration*			pInstanceDeclaration;
-	PragmaName*						pPragmaName;
-	ClassName*						pClassName;
-	AliasIdentifier*				pAliasIdentifier;
-	QualifierName*					pQualifierName;
-	PropertyName*					pPropertyName;
-	ReferenceName*					pReferenceName;
-	MethodName*						pMethodName;
-	ParameterName*					pParameterName;
-	DataType*						pDataType;
-	ObjectHandle*					pObjectHandle;
+	OpenWBEM::List<OpenWBEM::MOF::MOFProduction*>*          pMOFProductionList;
+	OpenWBEM::MOF::MOFProduction*                           pMOFProduction;
+	OpenWBEM::MOF::IndicDeclaration*                        pIndicDeclaration;
+	OpenWBEM::MOF::ClassDeclaration*                        pClassDeclaration;
+	OpenWBEM::MOF::PropertyDeclaration*                     pPropertyDeclaration;
+	OpenWBEM::MOF::ObjectRef*                               pObjectRef;
+	OpenWBEM::MOF::Parameter*                               pParameter;
+	OpenWBEM::MOF::Array*                                   pArray;
+	OpenWBEM::MOF::CompilerDirective*                       pCompilerDirective;
+	OpenWBEM::MOF::MetaElement*                             pMetaElement;
+	OpenWBEM::List<OpenWBEM::MOF::MetaElement*>*            pMetaElementList;
+	OpenWBEM::MOF::Initializer*                             pInitializer;
+	OpenWBEM::MOF::SuperClass*                              pSuperClass;
+	OpenWBEM::MOF::AssociationFeature*                      pAssociationFeature;
+	OpenWBEM::List<OpenWBEM::MOF::AssociationFeature*>*     pAssociationFeatureList;
+	OpenWBEM::MOF::QualifierParameter*                      pQualifierParameter;
+	OpenWBEM::MOF::QualifierDeclaration*                    pQualifierDeclaration;
+	OpenWBEM::MOF::PragmaParameter*                         pPragmaParameter;
+	OpenWBEM::MOF::AssocDeclaration*                        pAssocDeclaration;
+	OpenWBEM::MOF::DefaultValue*                            pDefaultValue;
+	OpenWBEM::MOF::ClassFeature*                            pClassFeature;
+	OpenWBEM::List<OpenWBEM::MOF::ClassFeature*>*           pClassFeatureList;
+	OpenWBEM::MOF::ReferenceInitializer*                    pReferenceInitializer;
+	OpenWBEM::MOF::QualifierType*                           pQualifierType;
+	OpenWBEM::MOF::DefaultFlavor*                           pDefaultFlavor;
+	OpenWBEM::String*                                       pString;
+	OpenWBEM::MOF::IntegerValue*                            pIntegerValue;
+	OpenWBEM::MOF::ConstantValue*                           pConstantValue;
+	OpenWBEM::MOF::ArrayInitializer*                        pArrayInitializer;
+	OpenWBEM::MOF::ValueInitializer*                        pValueInitializer;
+	OpenWBEM::List<OpenWBEM::MOF::ValueInitializer*>*       pValueInitializerList;
+	OpenWBEM::MOF::Flavor*                                  pFlavor;
+	OpenWBEM::List<OpenWBEM::MOF::Flavor*>*                 pFlavorList;
+	OpenWBEM::List<OpenWBEM::MOF::ConstantValue*>*          pConstantValueList;
+	OpenWBEM::MOF::Alias*                                   pAlias;
+	OpenWBEM::List<OpenWBEM::MOF::Qualifier*>*              pQualifierList;
+	OpenWBEM::MOF::ReferenceDeclaration*                    pReferenceDeclaration;
+	OpenWBEM::MOF::MethodDeclaration*                       pMethodDeclaration;
+	OpenWBEM::MOF::Qualifier*                               pQualifier;
+	OpenWBEM::List<OpenWBEM::MOF::Parameter*>*              pParameterList;
+	OpenWBEM::MOF::Scope*                                   pScope;
+	OpenWBEM::MOF::InstanceDeclaration*                     pInstanceDeclaration;
+	OpenWBEM::MOF::PragmaName*                              pPragmaName;
+	OpenWBEM::MOF::ClassName*                               pClassName;
+	OpenWBEM::MOF::AliasIdentifier*                         pAliasIdentifier;
+	OpenWBEM::MOF::QualifierName*                           pQualifierName;
+	OpenWBEM::MOF::PropertyName*                            pPropertyName;
+	OpenWBEM::MOF::ReferenceName*                           pReferenceName;
+	OpenWBEM::MOF::MethodName*                              pMethodName;
+	OpenWBEM::MOF::ParameterName*                           pParameterName;
+	OpenWBEM::MOF::DataType*                                pDataType;
+	OpenWBEM::MOF::ObjectHandle*                            pObjectHandle;
 }
 
 %{
-#define YYLEX_PARAM context
-int yylex(YYSTYPE *yylval, void* YYLEX_PARAM);
+#define YYLEX_PARAM MOF_COMPILER_STATE
+int yylex(YYSTYPE *yylval, YYLTYPE * llocp, void* YYLEX_PARAM);
 %}
 
-%type <pMOFSpecification>			mofSpecification
 %type <pMOFProductionList>			mofProductionList
+%destructor { delete $$; } mofProductionList
 %type <pMOFProduction>				mofProduction
+%destructor { delete $$; } mofProduction
 %type <pIndicDeclaration>			indicDeclaration
+%destructor { delete $$; } indicDeclaration
 %type <pClassDeclaration>			classDeclaration
+%destructor { delete $$; } classDeclaration
 %type <pPropertyDeclaration>		propertyDeclaration
+%destructor { delete $$; } propertyDeclaration
 %type <pObjectRef>					objectRef
+%destructor { delete $$; } objectRef
 %type <pParameter>					parameter
+%destructor { delete $$; } parameter
 %type <pArray>							array
+%destructor { delete $$; } array
 %type <pCompilerDirective>			compilerDirective
+%destructor { delete $$; } compilerDirective
 %type <pMetaElement>					metaElement
+%destructor { delete $$; } metaElement
 %type <pMetaElementList>			metaElementList
+%destructor { delete $$; } metaElementList
 %type <pInitializer>					initializer
+%destructor { delete $$; } initializer
 %type <pSuperClass>					superClass
+%destructor { delete $$; } superClass
 %type <pAssociationFeature>		associationFeature
+%destructor { delete $$; } associationFeature
 %type <pAssociationFeatureList>	associationFeatureList
+%destructor { delete $$; } associationFeatureList
 %type <pQualifierParameter>		qualifierParameter
+%destructor { delete $$; } qualifierParameter
 %type <pQualifierDeclaration>		qualifierDeclaration
+%destructor { delete $$; } qualifierDeclaration
 %type <pPragmaParameter>			pragmaParameter
+%destructor { delete $$; } pragmaParameter
 %type <pAssocDeclaration>			assocDeclaration
+%destructor { delete $$; } assocDeclaration
 %type <pDefaultValue>				defaultValue
+%destructor { delete $$; } defaultValue
 %type <pClassFeature>				classFeature
+%destructor { delete $$; } classFeature
 %type <pClassFeatureList>			classFeatureList
+%destructor { delete $$; } classFeatureList
 %type <pReferenceInitializer>		referenceInitializer
+%destructor { delete $$; } referenceInitializer
 %type <pQualifierType>				qualifierType
+%destructor { delete $$; } qualifierType
 %type <pDefaultFlavor>				defaultFlavor
+%destructor { delete $$; } defaultFlavor
 
 %type <pString>						IDENTIFIER stringValue stringValueList binaryValue octalValue decimalValue hexValue floatValue charValue booleanValue nullValue IDENTIFIER_TOK ANY_TOK AS_TOK CLASS_TOK FLAVOR_TOK INSTANCE_TOK METHOD_TOK OF_TOK PARAMETER_TOK PRAGMA_TOK PROPERTY_TOK QUALIFIER_TOK REFERENCE_TOK RESTRICTED_TOK SCHEMA_TOK SCOPE_TOK ENABLEOVERRIDE_TOK DISABLEOVERRIDE_TOK TOSUBCLASS_TOK TRANSLATABLE_TOK DT_UINT8_TOK DT_SINT8_TOK DT_UINT16_TOK DT_SINT16_TOK DT_UINT32_TOK DT_SINT32_TOK DT_UINT64_TOK DT_SINT64_TOK DT_REAL32_TOK DT_REAL64_TOK DT_CHAR16_TOK DT_STR_TOK DT_BOOL_TOK DT_DATETIME_TOK ASSOCIATION_TOK INDICATION_TOK LPAREN_TOK RPAREN_TOK LBRACE_TOK RBRACE_TOK SEMICOLON_TOK LBRACK_TOK RBRACK_TOK COMMA_TOK DOLLAR_TOK COLON_TOK EQUALS_TOK FALSE_TOK TRUE_TOK NULL_TOK REF_TOK
+%destructor { delete $$; } IDENTIFIER stringValue stringValueList binaryValue octalValue decimalValue hexValue floatValue charValue booleanValue nullValue IDENTIFIER_TOK ANY_TOK AS_TOK CLASS_TOK FLAVOR_TOK INSTANCE_TOK METHOD_TOK OF_TOK PARAMETER_TOK PRAGMA_TOK PROPERTY_TOK QUALIFIER_TOK REFERENCE_TOK RESTRICTED_TOK SCHEMA_TOK SCOPE_TOK ENABLEOVERRIDE_TOK DISABLEOVERRIDE_TOK TOSUBCLASS_TOK TRANSLATABLE_TOK DT_UINT8_TOK DT_SINT8_TOK DT_UINT16_TOK DT_SINT16_TOK DT_UINT32_TOK DT_SINT32_TOK DT_UINT64_TOK DT_SINT64_TOK DT_REAL32_TOK DT_REAL64_TOK DT_CHAR16_TOK DT_STR_TOK DT_BOOL_TOK DT_DATETIME_TOK ASSOCIATION_TOK INDICATION_TOK LPAREN_TOK RPAREN_TOK LBRACE_TOK RBRACE_TOK SEMICOLON_TOK LBRACK_TOK RBRACK_TOK COMMA_TOK DOLLAR_TOK COLON_TOK EQUALS_TOK FALSE_TOK TRUE_TOK NULL_TOK REF_TOK
 
 
 %type <pIntegerValue>                   integerValue
+%destructor { delete $$; } integerValue
 %type <pConstantValue>                  constantValue
+%destructor { delete $$; } constantValue
 %type <pPragmaName>					pragmaName
+%destructor { delete $$; } pragmaName
 %type <pClassName>					className
+%destructor { delete $$; } className
 %type <pQualifierName>				qualifierName
+%destructor { delete $$; } qualifierName
 %type <pPropertyName>				propertyName
+%destructor { delete $$; } propertyName
 %type <pReferenceName>				referenceName
+%destructor { delete $$; } referenceName
 %type <pMethodName>					methodName
+%destructor { delete $$; } methodName
 %type <pParameterName>				parameterName
+%destructor { delete $$; } parameterName
 %type <pAliasIdentifier>			aliasIdentifier
+%destructor { delete $$; } aliasIdentifier
 %type <pObjectHandle>				objectHandle
+%destructor { delete $$; } objectHandle
 %type <pDataType>						dataType
+%destructor { delete $$; } dataType
 %type <pArrayInitializer>			arrayInitializer
+%destructor { delete $$; } arrayInitializer
 %type <pValueInitializer>			valueInitializer
+%destructor { delete $$; } valueInitializer
 %type <pValueInitializerList>		valueInitializerList
+%destructor { delete $$; } valueInitializerList
 %type <pFlavor>						flavor
+%destructor { delete $$; } flavor
 %type <pFlavorList>					flavorList flavorListWithComma
+%destructor { delete $$; } flavorList flavorListWithComma
 %type <pConstantValueList>			constantValueList
+%destructor { delete $$; } constantValueList
 %type <pAlias>							alias
+%destructor { delete $$; } alias
 %type <pQualifierList>				qualifierList qualifierListEmpty
+%destructor { delete $$; } qualifierList qualifierListEmpty
 %type <pReferenceDeclaration>		referenceDeclaration
+%destructor { delete $$; } referenceDeclaration
 %type <pMethodDeclaration>			methodDeclaration
+%destructor { delete $$; } methodDeclaration
 %type <pQualifier>					qualifier
+%destructor { delete $$; } qualifier
 %type <pParameterList>				parameterList
+%destructor { delete $$; } parameterList
 %type <pScope>							scope
+%destructor { delete $$; } scope
 %type <pInstanceDeclaration>		instanceDeclaration
+%destructor { delete $$; } instanceDeclaration
 
 
 %start mofSpecification
@@ -211,12 +260,12 @@ int yylex(YYSTYPE *yylval, void* YYLEX_PARAM);
 /* rules */
 mofSpecification:
 	mofProductionList {
-		MOF_COMPILER->mofSpecification = new MOFSpecification($1);
+		MOF_COMPILER_STATE->mofSpecification = new MOFSpecification($1);
 		}
 	;
 
 mofProductionList: /* empty */ {$$ = new List<MOFProduction*>; }
-	| mofProductionList mofProduction {$1->push_back($2); $$ = $1;}
+	| mofProductionList mofProduction {$1->push_back($2); $$ = $1; }
 	;
 
 mofProduction:
@@ -231,10 +280,26 @@ mofProduction:
 compilerDirective:
 	PRAGMA_TOK pragmaName LPAREN_TOK pragmaParameter RPAREN_TOK
 		{
-			$$ = new CompilerDirective($2, $4, MOF_COMPILER->theLineInfo);
+			$$ = new CompilerDirective($2, $4, MOF_COMPILER_STATE->getLineInfo());
 			if ($2->pPragmaName->equalsIgnoreCase("include"))
 			{
-				lexIncludeFile(MOF_COMPILER, MOF_COMPILER->fixParsedString(*($4->pPragmaParameter)));
+				String includeFile;
+				try
+				{
+					// either fixParsedString or lexIncludeFile can throw, which we have to catch because bison isn't exception aware and can leak if an exception is thrown.
+					includeFile = OpenWBEM::MOF::Compiler::fixParsedString(*($4->pPragmaParameter));
+					lexIncludeFile(MOF_COMPILER_STATE, includeFile);
+				}
+				catch (Exception& e)
+				{
+					owmoferror(&yylloc, MOF_COMPILER_STATE, p_err, OpenWBEM::Format("Failed to process #pragma include %1: %2", includeFile, e).c_str());
+					YYERROR;
+				}
+				catch (...)
+				{
+					owmoferror(&yylloc, MOF_COMPILER_STATE, p_err, OpenWBEM::Format("Failed to process #pragma include %1", includeFile).c_str());
+					YYERROR;
+				}
 			}
                         delete $1;
                         delete $3;
@@ -253,7 +318,7 @@ pragmaParameter:
 classDeclaration:
 	CLASS_TOK className LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration(0, $2, 0, 0, $4, MOF_COMPILER->theLineInfo);
+                $$ = new ClassDeclaration(0, $2, 0, 0, $4, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
                 delete $3;
                 delete $5;
@@ -261,7 +326,7 @@ classDeclaration:
         }
 	| CLASS_TOK className superClass LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration(0, $2, 0, $3, $5, MOF_COMPILER->theLineInfo);
+                $$ = new ClassDeclaration(0, $2, 0, $3, $5, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
                 delete $4;
                 delete $6;
@@ -269,7 +334,7 @@ classDeclaration:
         }
 	| CLASS_TOK className alias LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration(0, $2, $3, 0, $5, MOF_COMPILER->theLineInfo);
+                $$ = new ClassDeclaration(0, $2, $3, 0, $5, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
                 delete $4;
                 delete $6;
@@ -277,7 +342,7 @@ classDeclaration:
         }
 	| CLASS_TOK className alias superClass LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration(0, $2, $3, $4, $6, MOF_COMPILER->theLineInfo);
+                $$ = new ClassDeclaration(0, $2, $3, $4, $6, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
                 delete $5;
                 delete $7;
@@ -285,7 +350,7 @@ classDeclaration:
         }
 	| qualifierList CLASS_TOK className LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration($1, $3, 0, 0, $5, MOF_COMPILER->theLineInfo);
+                $$ = new ClassDeclaration($1, $3, 0, 0, $5, MOF_COMPILER_STATE->getLineInfo());
                 delete $2;
                 delete $4;
                 delete $6;
@@ -293,7 +358,7 @@ classDeclaration:
         }
 	| qualifierList CLASS_TOK className superClass LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration($1, $3, 0, $4, $6, MOF_COMPILER->theLineInfo);
+                $$ = new ClassDeclaration($1, $3, 0, $4, $6, MOF_COMPILER_STATE->getLineInfo());
                 delete $2;
                 delete $5;
                 delete $7;
@@ -301,7 +366,7 @@ classDeclaration:
         }
 	| qualifierList CLASS_TOK className alias LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration($1, $3, $4, 0, $6, MOF_COMPILER->theLineInfo);
+                $$ = new ClassDeclaration($1, $3, $4, 0, $6, MOF_COMPILER_STATE->getLineInfo());
                 delete $2;
                 delete $5;
                 delete $7;
@@ -309,9 +374,9 @@ classDeclaration:
         }
 	| qualifierList CLASS_TOK className alias superClass LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration($1, $3, $4, $5, $7, MOF_COMPILER->theLineInfo);
+                $$ = new ClassDeclaration($1, $3, $4, $5, $7, MOF_COMPILER_STATE->getLineInfo());
                 delete $2;
-                delete $5;
+                delete $6;
                 delete $8;
                 delete $9;
         }
@@ -324,7 +389,7 @@ classFeatureList: /* empty */ {$$ = new List<ClassFeature*>; }
 assocDeclaration:
 	LBRACK_TOK ASSOCIATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className LBRACE_TOK associationFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new AssocDeclaration($3, $6, 0, 0, $8, MOF_COMPILER->theLineInfo);
+                $$ = new AssocDeclaration($3, $6, 0, 0, $8, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
                 delete $2;
                 delete $4;
@@ -335,7 +400,7 @@ assocDeclaration:
         }
 	| LBRACK_TOK ASSOCIATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className superClass LBRACE_TOK associationFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new AssocDeclaration($3, $6, 0, $7, $9, MOF_COMPILER->theLineInfo);
+                $$ = new AssocDeclaration($3, $6, 0, $7, $9, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
                 delete $2;
                 delete $4;
@@ -346,7 +411,7 @@ assocDeclaration:
         }
 	| LBRACK_TOK ASSOCIATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className alias LBRACE_TOK associationFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new AssocDeclaration($3, $6, $7, 0, $9, MOF_COMPILER->theLineInfo);
+                $$ = new AssocDeclaration($3, $6, $7, 0, $9, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
                 delete $2;
                 delete $4;
@@ -357,7 +422,7 @@ assocDeclaration:
         }
 	| LBRACK_TOK ASSOCIATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className alias superClass LBRACE_TOK associationFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new AssocDeclaration($3, $6, $7, $8, $10, MOF_COMPILER->theLineInfo);
+                $$ = new AssocDeclaration($3, $6, $7, $8, $10, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
                 delete $2;
                 delete $4;
@@ -380,7 +445,7 @@ associationFeatureList: /* empty */ {$$ = new List<AssociationFeature*>; }
 indicDeclaration:
 	LBRACK_TOK INDICATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new IndicDeclaration($3, $6, 0, 0, $8, MOF_COMPILER->theLineInfo);
+                $$ = new IndicDeclaration($3, $6, 0, 0, $8, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
                 delete $2;
                 delete $4;
@@ -391,7 +456,7 @@ indicDeclaration:
         }
 	| LBRACK_TOK INDICATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className superClass LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new IndicDeclaration($3, $6, 0, $7, $9, MOF_COMPILER->theLineInfo);
+                $$ = new IndicDeclaration($3, $6, 0, $7, $9, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
                 delete $2;
                 delete $4;
@@ -402,7 +467,7 @@ indicDeclaration:
         }
 	| LBRACK_TOK INDICATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className alias LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new IndicDeclaration($3, $6, $7, 0, $9, MOF_COMPILER->theLineInfo);
+                $$ = new IndicDeclaration($3, $6, $7, 0, $9, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
                 delete $2;
                 delete $4;
@@ -413,7 +478,7 @@ indicDeclaration:
         }
 	| LBRACK_TOK INDICATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className alias superClass LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new IndicDeclaration($3, $6, $7, $8, $10, MOF_COMPILER->theLineInfo);
+                $$ = new IndicDeclaration($3, $6, $7, $8, $10, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
                 delete $2;
                 delete $4;
@@ -435,7 +500,7 @@ alias:
 aliasIdentifier:
 	DOLLAR_TOK IDENTIFIER
         {
-                $$ = new AliasIdentifier($2, MOF_COMPILER->theLineInfo);
+                $$ = new AliasIdentifier($2, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
         }
 	;
@@ -461,16 +526,16 @@ qualifierList:
 	;
 
 qualifier:
-	qualifierName {$$ = new Qualifier($1, 0, 0, MOF_COMPILER->theLineInfo); }
+	qualifierName {$$ = new Qualifier($1, 0, 0, MOF_COMPILER_STATE->getLineInfo()); }
 	| qualifierName COLON_TOK flavorList
         {
-                $$ = new Qualifier($1, 0, $3, MOF_COMPILER->theLineInfo);
+                $$ = new Qualifier($1, 0, $3, MOF_COMPILER_STATE->getLineInfo());
                 delete $2;
         }
-	| qualifierName qualifierParameter{$$ = new Qualifier($1, $2, 0, MOF_COMPILER->theLineInfo); }
+	| qualifierName qualifierParameter{$$ = new Qualifier($1, $2, 0, MOF_COMPILER_STATE->getLineInfo()); }
 	| qualifierName qualifierParameter COLON_TOK flavorList
 	{
-                $$ = new Qualifier($1, $2, $4, MOF_COMPILER->theLineInfo);
+                $$ = new Qualifier($1, $2, $4, MOF_COMPILER_STATE->getLineInfo());
                 delete $3;
         }
 	;
@@ -483,60 +548,60 @@ flavorList:
 qualifierParameter:
 	LPAREN_TOK constantValue RPAREN_TOK
         {
-                $$ = new QualifierParameterConstantValue($2, MOF_COMPILER->theLineInfo);
+                $$ = new QualifierParameterConstantValue($2, MOF_COMPILER_STATE->getLineInfo());
                 delete $1;
                 delete $3;
         }
-	| arrayInitializer {$$ = new QualifierParameterArrayInitializer($1, MOF_COMPILER->theLineInfo); }
+	| arrayInitializer {$$ = new QualifierParameterArrayInitializer($1, MOF_COMPILER_STATE->getLineInfo()); }
 	;
 
 flavor:
-	ENABLEOVERRIDE_TOK {$$ = new Flavor($1, MOF_COMPILER->theLineInfo); }
-	| DISABLEOVERRIDE_TOK {$$ = new Flavor($1, MOF_COMPILER->theLineInfo); }
-	| RESTRICTED_TOK {$$ = new Flavor($1, MOF_COMPILER->theLineInfo); }
-	| TOSUBCLASS_TOK {$$ = new Flavor($1, MOF_COMPILER->theLineInfo); }
-	| TRANSLATABLE_TOK {$$ = new Flavor($1, MOF_COMPILER->theLineInfo); }
+	ENABLEOVERRIDE_TOK {$$ = new Flavor($1, MOF_COMPILER_STATE->getLineInfo()); }
+	| DISABLEOVERRIDE_TOK {$$ = new Flavor($1, MOF_COMPILER_STATE->getLineInfo()); }
+	| RESTRICTED_TOK {$$ = new Flavor($1, MOF_COMPILER_STATE->getLineInfo()); }
+	| TOSUBCLASS_TOK {$$ = new Flavor($1, MOF_COMPILER_STATE->getLineInfo()); }
+	| TRANSLATABLE_TOK {$$ = new Flavor($1, MOF_COMPILER_STATE->getLineInfo()); }
 	;
 
 propertyDeclaration:
 	dataType propertyName SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration(0, $1, $2, 0, 0, MOF_COMPILER->theLineInfo);
+		$$ = new PropertyDeclaration(0, $1, $2, 0, 0, MOF_COMPILER_STATE->getLineInfo());
 		delete $3;
 	}
 	| dataType propertyName defaultValue SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration(0, $1, $2, 0, $3, MOF_COMPILER->theLineInfo);
+		$$ = new PropertyDeclaration(0, $1, $2, 0, $3, MOF_COMPILER_STATE->getLineInfo());
 		delete $4;
 	}
 	| dataType propertyName array SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration(0, $1, $2, $3, 0, MOF_COMPILER->theLineInfo);
+		$$ = new PropertyDeclaration(0, $1, $2, $3, 0, MOF_COMPILER_STATE->getLineInfo());
 		delete $4;
 	}
 	| dataType propertyName array defaultValue SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration(0, $1, $2, $3, $4, MOF_COMPILER->theLineInfo);
+		$$ = new PropertyDeclaration(0, $1, $2, $3, $4, MOF_COMPILER_STATE->getLineInfo());
 		delete $5;
 	}
 	| qualifierList dataType propertyName SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration($1, $2, $3, 0, 0, MOF_COMPILER->theLineInfo);
+		$$ = new PropertyDeclaration($1, $2, $3, 0, 0, MOF_COMPILER_STATE->getLineInfo());
 		delete $4;
 	}
 	| qualifierList dataType propertyName defaultValue SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration($1, $2, $3, 0, $4, MOF_COMPILER->theLineInfo);
+		$$ = new PropertyDeclaration($1, $2, $3, 0, $4, MOF_COMPILER_STATE->getLineInfo());
 		delete $5;
 	}
 	| qualifierList dataType propertyName array SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration($1, $2, $3, $4, 0, MOF_COMPILER->theLineInfo);
+		$$ = new PropertyDeclaration($1, $2, $3, $4, 0, MOF_COMPILER_STATE->getLineInfo());
 		delete $5;
 	}
 	| qualifierList dataType propertyName array defaultValue SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration($1, $2, $3, $4, $5, MOF_COMPILER->theLineInfo);
+		$$ = new PropertyDeclaration($1, $2, $3, $4, $5, MOF_COMPILER_STATE->getLineInfo());
 		delete $6;
 	}
 	;
@@ -716,46 +781,17 @@ referenceInitializer:
 objectHandle:
 	IDENTIFIER {$$ = new ObjectHandle($1); }
 	;
-/*
-referenceInitializer:
-	objectHandle
-	| aliasIdentifier
-	;
 
-objectHandle:
-	"\"" modelPath "\""
-	| "\"" namespaceHandle COLON_TOK modelPath "\""
-	;
-
-namespaceHandle:
-	IDENTIFIER
-	;
-
-modelPath:
-	className DOT_TOK keyValuePairList
-	;
-
-
-keyValuePairList:
-	keyValuePair
-	| keyValuePairList COMMA_TOK keyValuePair
-	;
-
-keyValuePair:
-	IDENTIFIER EQUALS_TOK initializer
-	| IDENTIFIER EQUALS_TOK initializer
-	;
-*/
 qualifierDeclaration:
 	QUALIFIER_TOK qualifierName qualifierType scope SEMICOLON_TOK
 	{
-			$$= new QualifierDeclaration($2, $3, $4, 0, MOF_COMPILER->theLineInfo);
+			$$= new QualifierDeclaration($2, $3, $4, 0, MOF_COMPILER_STATE->getLineInfo());
 			delete $1;
 			delete $5;
 	}
 	| QUALIFIER_TOK qualifierName qualifierType scope defaultFlavor SEMICOLON_TOK
 	{
-			$$= new QualifierDeclaration($2, $3, $4, $5, MOF_COMPILER->theLineInfo);
+			$$= new QualifierDeclaration($2, $3, $4, $5, MOF_COMPILER_STATE->getLineInfo());
 			delete $1;
 			delete $6;
 	}
@@ -806,16 +842,16 @@ metaElementList:
 	;
 
 metaElement:
-	SCHEMA_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
-	| CLASS_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
-	| ASSOCIATION_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
-	| INDICATION_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
-	| QUALIFIER_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
-	| PROPERTY_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
-	| REFERENCE_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
-	| METHOD_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
-	| PARAMETER_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
-	| ANY_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
+	SCHEMA_TOK {$$ = new MetaElement($1, MOF_COMPILER_STATE->getLineInfo()); }
+	| CLASS_TOK {$$ = new MetaElement($1, MOF_COMPILER_STATE->getLineInfo()); }
+	| ASSOCIATION_TOK {$$ = new MetaElement($1, MOF_COMPILER_STATE->getLineInfo()); }
+	| INDICATION_TOK {$$ = new MetaElement($1, MOF_COMPILER_STATE->getLineInfo()); }
+	| QUALIFIER_TOK {$$ = new MetaElement($1, MOF_COMPILER_STATE->getLineInfo()); }
+	| PROPERTY_TOK {$$ = new MetaElement($1, MOF_COMPILER_STATE->getLineInfo()); }
+	| REFERENCE_TOK {$$ = new MetaElement($1, MOF_COMPILER_STATE->getLineInfo()); }
+	| METHOD_TOK {$$ = new MetaElement($1, MOF_COMPILER_STATE->getLineInfo()); }
+	| PARAMETER_TOK {$$ = new MetaElement($1, MOF_COMPILER_STATE->getLineInfo()); }
+	| ANY_TOK {$$ = new MetaElement($1, MOF_COMPILER_STATE->getLineInfo()); }
 	;
 
 defaultFlavor:
@@ -841,7 +877,7 @@ flavorListWithComma:
 instanceDeclaration:
 	INSTANCE_TOK OF_TOK className LBRACE_TOK valueInitializerList RBRACE_TOK SEMICOLON_TOK
 	{
-			$$ = new InstanceDeclaration(0, $3, 0, $5, MOF_COMPILER->theLineInfo);
+			$$ = new InstanceDeclaration(0, $3, 0, $5, MOF_COMPILER_STATE->getLineInfo());
 			delete $1;
 			delete $2;
 			delete $4;
@@ -850,7 +886,7 @@ instanceDeclaration:
 	}
 	| INSTANCE_TOK OF_TOK className alias LBRACE_TOK valueInitializerList RBRACE_TOK SEMICOLON_TOK
 	{
-			$$ = new InstanceDeclaration(0, $3, $4, $6, MOF_COMPILER->theLineInfo);
+			$$ = new InstanceDeclaration(0, $3, $4, $6, MOF_COMPILER_STATE->getLineInfo());
 			delete $1;
 			delete $2;
 			delete $5;
@@ -859,7 +895,7 @@ instanceDeclaration:
 	}
 	| qualifierList INSTANCE_TOK OF_TOK className LBRACE_TOK valueInitializerList RBRACE_TOK SEMICOLON_TOK
 	{
-			$$ = new InstanceDeclaration($1, $4, 0, $6, MOF_COMPILER->theLineInfo);
+			$$ = new InstanceDeclaration($1, $4, 0, $6, MOF_COMPILER_STATE->getLineInfo());
 			delete $2;
 			delete $3;
 			delete $5;
@@ -868,7 +904,7 @@ instanceDeclaration:
 	}
 	| qualifierList INSTANCE_TOK OF_TOK className alias LBRACE_TOK valueInitializerList RBRACE_TOK SEMICOLON_TOK
 	{
-			$$ = new InstanceDeclaration($1, $4, $5, $7, MOF_COMPILER->theLineInfo);
+			$$ = new InstanceDeclaration($1, $4, $5, $7, MOF_COMPILER_STATE->getLineInfo());
 			delete $2;
 			delete $3;
 			delete $6;
@@ -929,9 +965,11 @@ IDENTIFIER:
 	;
 
 %%
-void yyerror(const char* string)
+void owmoferror(YYLTYPE * p_loc, CompilerState* MOF_COMPILER_STATE, ParseError * p_err, const char* msg)
 {
-	OW_THROW(MOFParserException, string);
+	p_err->message = String(msg);
+	p_err->column = p_loc->first_column;
+	p_err->line = p_loc->first_line;
 }
 
 

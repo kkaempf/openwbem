@@ -100,16 +100,16 @@ public:
 protected:
 	virtual void doFatalError(const char *error, const LineInfo& li )
 	{
-		cerr << "Fatal error in file: " << li.filename << " on line: " << li.lineNum << ": " << error << endl;
+		cerr << "Fatal error in file: " << li.filename << " on line: " << li.lineNum << ':' << li.columnNum << ": " << error << endl;
 	}
 	virtual EParserAction doRecoverableError(const char *error, const LineInfo& li )
 	{
-		cerr << "Recoverable error in file: " << li.filename << " on line: " << li.lineNum << ": " << error << endl;
+		cerr << "Recoverable error in file: " << li.filename << " on line: " << li.lineNum << ':' << li.columnNum << ": " << error << endl;
 		return E_IGNORE_ACTION;
 	}
 	virtual void doProgressMessage( const char* message, const LineInfo& li )
 	{
-		cout << "File: " << li.filename << " Line: " << li.lineNum << ": " << message << endl;
+		cout << "File: " << li.filename << " Line: " << li.lineNum << ':' << li.columnNum << ": " << message << endl;
 	}
 };
 

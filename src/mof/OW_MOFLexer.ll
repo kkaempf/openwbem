@@ -40,23 +40,21 @@
 %{
 #include "OW_MOFGrammar.hpp"
 #include "OW_MOFCompiler.hpp"
+#include "OW_MOFParserDecls.hpp"
 #include "OW_Format.hpp"
 #include "OW_Exception.hpp"
+#include "OW_String.hpp"
 #include <errno.h>
 #include <string.h>
 
-// since OW_MOFParser.h is generated we can't control it.  We need to do something
-// bad, but we don't have a choice.  These using statements have to be before
-// the include or things will break!
-using namespace OpenWBEM;
-using namespace OpenWBEM::MOF;
 #include "OW_MOFParser.h"
+
 
 #define WHITE_RETURN(x) /* skip it */
 #define NEWLINE_RETURN() WHITE_RETURN('\n')
 
 #define RETURN_VAL(x) owmoflval->pString = 0; return(x);
-#define RETURN_STR(x) owmoflval->pString = new String(owmoftext); return(x);
+#define RETURN_STR(x) owmoflval->pString = new OpenWBEM::String(owmoftext); return(x);
 
 namespace OW_NAMESPACE
 {
@@ -69,8 +67,9 @@ OW_DEFINE_EXCEPTION(MOFLexer)
 	OW_THROW(OpenWBEM::MOFLexerException, msg);
 
 #define YYLEX_PARAM context
-#define YY_DECL int owmoflex(YYSTYPE *owmoflval, void* YYLEX_PARAM)
-#define MOF_COMPILER (reinterpret_cast<Compiler*>(context))
+#define YY_DECL int owmoflex(YYSTYPE *owmoflval, YYLTYPE * llocp, void* YYLEX_PARAM)
+#define MOF_COMPILER_STATE (static_cast<OpenWBEM::MOF::CompilerState*>(context))
+#define YY_USER_ACTION MOF_COMPILER_STATE->updateLocation(yytext, llocp);
 %}
 
 /* here are the definitions */
@@ -117,113 +116,113 @@ sChar [^"\\\n\r]|{escapeSequence}
 charValue \'{cChar}\'
 stringValue \"{sChar}*\"
 
-ws		[ \t]+
+ws [ \t]+
 
 
 %x Ccomment CPPcomment OnlyIdentifier
 %%
 
 
-"/*"							BEGIN(Ccomment);
-<Ccomment>[^*\n\r]*			/* eat anything that's not a '*' */
-<Ccomment>"*"+[^*/\n\r]*	/* eat up '*'s not followed by '/'s */
-<Ccomment>"\r\n"				++MOF_COMPILER->theLineInfo.lineNum;
-<Ccomment>\n				++MOF_COMPILER->theLineInfo.lineNum;
-<Ccomment>\r				++MOF_COMPILER->theLineInfo.lineNum;
-<Ccomment>"*"+"/"			BEGIN(INITIAL);
-<Ccomment><<EOF>>		{
-	MOF_COMPILER->theErrorHandler->fatalError("Unterminated Comment",
-		MOF_COMPILER->theLineInfo);
+"/*"                            BEGIN(Ccomment);
+<Ccomment>[^*\n\r]*             /* eat anything that's not a '*' */
+<Ccomment>"*"+[^*/\n\r]*        /* eat up '*'s not followed by '/'s */
+<Ccomment>"\r\n"                
+<Ccomment>\n                    
+<Ccomment>\r                    
+<Ccomment>"*"+"/"               BEGIN(INITIAL);
+<Ccomment><<EOF>>               {
+	MOF_COMPILER_STATE->getErrorHandler()->fatalError("Unterminated Comment",
+		MOF_COMPILER_STATE->getLineInfo());
 	yyterminate();
 }
 
-"//"							BEGIN(CPPcomment);
-<CPPcomment>[^\n\r]*		/* eat anything but newline */
-<CPPcomment>"\r\n"			++MOF_COMPILER->theLineInfo.lineNum; BEGIN(INITIAL);
-<CPPcomment>"\n"			++MOF_COMPILER->theLineInfo.lineNum; BEGIN(INITIAL);
-<CPPcomment>"\r"			++MOF_COMPILER->theLineInfo.lineNum; BEGIN(INITIAL);
+"//"                            BEGIN(CPPcomment);
+<CPPcomment>[^\n\r]*            /* eat anything but newline */
+<CPPcomment>"\r\n"              BEGIN(INITIAL);
+<CPPcomment>"\n"                BEGIN(INITIAL);
+<CPPcomment>"\r"                BEGIN(INITIAL);
 
 	/* Shame on whoever put special cases in the mof lexical specs and
 	didn't even document it! */
-<OnlyIdentifier>{ws}*			/* eat up whitespace */
-<OnlyIdentifier>{identifier} {BEGIN(INITIAL);RETURN_STR(IDENTIFIER_TOK);}
+<OnlyIdentifier>{ws}*           /* eat up whitespace */
+<OnlyIdentifier>{identifier}    {BEGIN(INITIAL);RETURN_STR(IDENTIFIER_TOK);}
 
-{ws}	/* skip blanks and tabs */
-"\r\n"	++MOF_COMPILER->theLineInfo.lineNum;
-"\n"	++MOF_COMPILER->theLineInfo.lineNum;
-"\r"	++MOF_COMPILER->theLineInfo.lineNum;
+{ws}                            /* skip blanks and tabs */
+"\r\n"                          
+"\n"                            
+"\r"                            
 
-any					{RETURN_STR(ANY_TOK);}
-as						{RETURN_STR(AS_TOK);}
-association			{RETURN_STR(ASSOCIATION_TOK);}
-class					{RETURN_STR(CLASS_TOK);}
-disableoverride	{RETURN_STR(DISABLEOVERRIDE_TOK);}
-boolean				{RETURN_STR(DT_BOOL_TOK);}
-char16				{RETURN_STR(DT_CHAR16_TOK);}
-datetime				{RETURN_STR(DT_DATETIME_TOK);}
-real32				{RETURN_STR(DT_REAL32_TOK);}
-real64				{RETURN_STR(DT_REAL64_TOK);}
-sint16				{RETURN_STR(DT_SINT16_TOK);}
-sint32				{RETURN_STR(DT_SINT32_TOK);}
-sint64				{RETURN_STR(DT_SINT64_TOK);}
-sint8					{RETURN_STR(DT_SINT8_TOK);}
-string				{RETURN_STR(DT_STR_TOK);}
-uint16				{RETURN_STR(DT_UINT16_TOK);}
-uint32				{RETURN_STR(DT_UINT32_TOK);}
-uint64				{RETURN_STR(DT_UINT64_TOK);}
-uint8					{RETURN_STR(DT_UINT8_TOK);}
-enableoverride		{RETURN_STR(ENABLEOVERRIDE_TOK);}
-false					{RETURN_STR(FALSE_TOK);}
-flavor				{RETURN_STR(FLAVOR_TOK);}
-indication			{RETURN_STR(INDICATION_TOK);}
-instance				{RETURN_STR(INSTANCE_TOK);}
-method				{RETURN_STR(METHOD_TOK);}
-null					{RETURN_STR(NULL_TOK);}
-of						{RETURN_STR(OF_TOK);}
-parameter			{RETURN_STR(PARAMETER_TOK);}
-#pragma				{RETURN_STR(PRAGMA_TOK);}
-property				{RETURN_STR(PROPERTY_TOK);}
-qualifier			{BEGIN(OnlyIdentifier); RETURN_STR(QUALIFIER_TOK);}
-ref					{RETURN_VAL(REF_TOK);}
-reference			{RETURN_STR(REFERENCE_TOK);}
-restricted			{RETURN_STR(RESTRICTED_TOK);}
-schema				{RETURN_STR(SCHEMA_TOK);}
-scope					{RETURN_STR(SCOPE_TOK);}
-tosubclass			{RETURN_STR(TOSUBCLASS_TOK);}
-translatable		{RETURN_STR(TRANSLATABLE_TOK);}
-true					{RETURN_STR(TRUE_TOK);}
-"("					{RETURN_VAL(LPAREN_TOK);}
-")"					{RETURN_VAL(RPAREN_TOK);}
-"{"					{RETURN_VAL(LBRACE_TOK);}
-"}"					{RETURN_VAL(RBRACE_TOK);}
-";"					{RETURN_VAL(SEMICOLON_TOK);}
-"["					{RETURN_VAL(LBRACK_TOK);}
-"]"					{RETURN_VAL(RBRACK_TOK);}
-","					{RETURN_VAL(COMMA_TOK);}
-"$"					{RETURN_VAL(DOLLAR_TOK);}
-":"					{RETURN_VAL(COLON_TOK);}
-"="					{RETURN_VAL(EQUALS_TOK);}
+any                 {RETURN_STR(ANY_TOK);}
+as                  {RETURN_STR(AS_TOK);}
+association         {RETURN_STR(ASSOCIATION_TOK);}
+class               {RETURN_STR(CLASS_TOK);}
+disableoverride     {RETURN_STR(DISABLEOVERRIDE_TOK);}
+boolean             {RETURN_STR(DT_BOOL_TOK);}
+char16              {RETURN_STR(DT_CHAR16_TOK);}
+datetime            {RETURN_STR(DT_DATETIME_TOK);}
+real32              {RETURN_STR(DT_REAL32_TOK);}
+real64              {RETURN_STR(DT_REAL64_TOK);}
+sint16              {RETURN_STR(DT_SINT16_TOK);}
+sint32              {RETURN_STR(DT_SINT32_TOK);}
+sint64              {RETURN_STR(DT_SINT64_TOK);}
+sint8               {RETURN_STR(DT_SINT8_TOK);}
+string              {RETURN_STR(DT_STR_TOK);}
+uint16              {RETURN_STR(DT_UINT16_TOK);}
+uint32              {RETURN_STR(DT_UINT32_TOK);}
+uint64              {RETURN_STR(DT_UINT64_TOK);}
+uint8               {RETURN_STR(DT_UINT8_TOK);}
+enableoverride      {RETURN_STR(ENABLEOVERRIDE_TOK);}
+false               {RETURN_STR(FALSE_TOK);}
+flavor              {RETURN_STR(FLAVOR_TOK);}
+indication          {RETURN_STR(INDICATION_TOK);}
+instance            {RETURN_STR(INSTANCE_TOK);}
+method              {RETURN_STR(METHOD_TOK);}
+null                {RETURN_STR(NULL_TOK);}
+of                  {RETURN_STR(OF_TOK);}
+parameter           {RETURN_STR(PARAMETER_TOK);}
+#pragma             {RETURN_STR(PRAGMA_TOK);}
+property            {RETURN_STR(PROPERTY_TOK);}
+qualifier           {BEGIN(OnlyIdentifier); RETURN_STR(QUALIFIER_TOK);}
+ref                 {RETURN_VAL(REF_TOK);}
+reference           {RETURN_STR(REFERENCE_TOK);}
+restricted          {RETURN_STR(RESTRICTED_TOK);}
+schema              {RETURN_STR(SCHEMA_TOK);}
+scope               {RETURN_STR(SCOPE_TOK);}
+tosubclass          {RETURN_STR(TOSUBCLASS_TOK);}
+translatable        {RETURN_STR(TRANSLATABLE_TOK);}
+true                {RETURN_STR(TRUE_TOK);}
+"("                 {RETURN_VAL(LPAREN_TOK);}
+")"                 {RETURN_VAL(RPAREN_TOK);}
+"{"                 {RETURN_VAL(LBRACE_TOK);}
+"}"                 {RETURN_VAL(RBRACE_TOK);}
+";"                 {RETURN_VAL(SEMICOLON_TOK);}
+"["                 {RETURN_VAL(LBRACK_TOK);}
+"]"                 {RETURN_VAL(RBRACK_TOK);}
+","                 {RETURN_VAL(COMMA_TOK);}
+"$"                 {RETURN_VAL(DOLLAR_TOK);}
+":"                 {RETURN_VAL(COLON_TOK);}
+"="                 {RETURN_VAL(EQUALS_TOK);}
 
 
 
-{binaryValue}		{RETURN_STR(binaryValue);}
+{binaryValue}       {RETURN_STR(binaryValue);}
 
-{octalValue}		{RETURN_STR(octalValue);}
+{octalValue}        {RETURN_STR(octalValue);}
 
-{decimalValue}		{RETURN_STR(decimalValue);}
+{decimalValue}      {RETURN_STR(decimalValue);}
 
-{hexValue}			{RETURN_STR(hexValue);}
+{hexValue}          {RETURN_STR(hexValue);}
 
-{floatValue}			{RETURN_STR(floatValue);}
+{floatValue}        {RETURN_STR(floatValue);}
 
-{charValue}			{RETURN_STR(charValue);}
+{charValue}         {RETURN_STR(charValue);}
 
-{stringValue}		{ RETURN_STR(stringValue);}
+{stringValue}       { RETURN_STR(stringValue);}
 
-{identifier}		{RETURN_STR(IDENTIFIER_TOK);}
+{identifier}        {RETURN_STR(IDENTIFIER_TOK);}
 
 <<EOF>> {
-	if ( --(MOF_COMPILER->include_stack_ptr) < 0 )
+	if (MOF_COMPILER_STATE->include_stack.empty() )
 	{
 		yyterminate();
 	}
@@ -235,29 +234,32 @@ true					{RETURN_STR(TRUE_TOK);}
 		{
 			fclose(owmofin);
 		}
-		MOF_COMPILER->theErrorHandler->progressMessage("Finished parsing.", MOF_COMPILER->theLineInfo);
-		MOF_COMPILER->theLineInfo = MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].theLineInfo;
-		owmof_switch_to_buffer(
-			MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].owmofBufferState );
+		MOF_COMPILER_STATE->getErrorHandler()->progressMessage("Finished parsing.", MOF_COMPILER_STATE->getLineInfo());
+		MOF_COMPILER_STATE->setLineInfo(MOF_COMPILER_STATE->include_stack.top());
+		owmof_switch_to_buffer(MOF_COMPILER_STATE->include_stack.top().owmofBufferState );
+		MOF_COMPILER_STATE->include_stack.pop();
 	}
 }
 
 %%
 /* here is the user code */
 
-void lexIncludeFile( void* context, const String& filename )
+void lexIncludeFile( void* context, const OpenWBEM::String& filename )
 {
-	if ( MOF_COMPILER->include_stack_ptr >= Compiler::E_MAX_INCLUDE_DEPTH )
+	using namespace OpenWBEM;
+	using namespace OpenWBEM::MOF;
+
+	if ( MOF_COMPILER_STATE->include_stack.size() >= CompilerState::E_MAX_INCLUDE_DEPTH )
 	{
 		// REPORT AN ERROR
-		MOF_COMPILER->theErrorHandler->fatalError(
-			Format("Includes nested too deep (Max of %1 levels)", (int)Compiler::E_MAX_INCLUDE_DEPTH).c_str(),
-			MOF_COMPILER->theLineInfo);
+		MOF_COMPILER_STATE->getErrorHandler()->fatalError(
+			Format("Includes nested too deep (Max of %1 levels)", (int)CompilerState::E_MAX_INCLUDE_DEPTH).c_str(),
+			MOF_COMPILER_STATE->getLineInfo());
 		return;
 	}
 
 	// first try to find the file in the same dir as our original file.
-	String filenameWithPath = MOF_COMPILER->basepath + "/" + filename;
+	String filenameWithPath = MOF_COMPILER_STATE->getBasePath() + "/" + filename;
 	FILE* newfile = fopen( filenameWithPath.c_str(), "r" );
 
 	if ( !newfile )
@@ -266,21 +268,21 @@ void lexIncludeFile( void* context, const String& filename )
 		newfile = fopen( filename.c_str(), "r" );
 		if ( !newfile )
 		{
-			MOF_COMPILER->theErrorHandler->fatalError(
-				Format("Could not open include file %1: %2(%3)", filename, errno, strerror(errno)).c_str(), MOF_COMPILER->theLineInfo);
+			MOF_COMPILER_STATE->getErrorHandler()->fatalError(
+				Format("Could not open include file %1: %2(%3)", filename, errno, strerror(errno)).c_str(), MOF_COMPILER_STATE->getLineInfo());
 			return;
 		}
 		filenameWithPath = filename;
 	}
 	
 	owmofin = newfile;
-	MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].owmofBufferState = YY_CURRENT_BUFFER;
-	MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].theLineInfo = MOF_COMPILER->theLineInfo;
-	MOF_COMPILER->theLineInfo.filename = filenameWithPath;
-	MOF_COMPILER->theLineInfo.lineNum = 1;
-	MOF_COMPILER->theErrorHandler->progressMessage("Starting parsing.", MOF_COMPILER->theLineInfo);
+	OpenWBEM::MOF::CompilerState::include_t newInclude;
+	newInclude.owmofBufferState = YY_CURRENT_BUFFER;
+	newInclude.setLineInfo(*MOF_COMPILER_STATE);
+	MOF_COMPILER_STATE->startNewFile(filenameWithPath);
+	MOF_COMPILER_STATE->getErrorHandler()->progressMessage("Starting parsing.", MOF_COMPILER_STATE->getLineInfo());
 	
-	++(MOF_COMPILER->include_stack_ptr);
+	MOF_COMPILER_STATE->include_stack.push(newInclude);
 
 	owmof_switch_to_buffer( owmof_create_buffer( owmofin, YY_BUF_SIZE ) );
 
