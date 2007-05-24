@@ -61,6 +61,7 @@ namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(MOFCompiler, OW_MOF_API);
+OW_DECLARE_APIEXCEPTION2(MOFParser, MOFCompilerException, OW_MOF_API);
 
 namespace MOF
 {
@@ -211,6 +212,7 @@ private:
 
 /**
  * @param realhdl If null, a dummy handle will be used which will supply "fake" CIMClasses and CIMQualifierTypes to the mof compiler
+ * @throws MOFCompilerException, MOFParserException if the compilation fails.
  */
 OW_MOF_API void compileMOF(const String& mof, const CIMOMHandleIFCRef& realhdl, const String& ns,
 	CIMInstanceArray& instances, CIMClassArray& classes, CIMQualifierTypeArray& qualifierTypes);

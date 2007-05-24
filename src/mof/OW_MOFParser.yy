@@ -48,7 +48,7 @@ using namespace OpenWBEM;
 using namespace OpenWBEM::MOF;
 
 // Lexer functions
-void lexIncludeFile( void* context, const String& filename );
+void lexIncludeFile( CompilerState* context, const String& filename );
 void owmoferror( YYLTYPE * p_loc, CompilerState* MOF_COMPILER_STATE, ParseError * p_err, const char* );
 
 %}
@@ -59,6 +59,7 @@ void owmoferror( YYLTYPE * p_loc, CompilerState* MOF_COMPILER_STATE, ParseError 
 %parse-param {CompilerState * MOF_COMPILER_STATE}
 %parse-param {ParseError * p_err}
 %lex-param {CompilerState * MOF_COMPILER_STATE}
+%lex-param {ParseError * p_err}
 
 %name-prefix="owmof"
 %error-verbose
@@ -140,8 +141,8 @@ void owmoferror( YYLTYPE * p_loc, CompilerState* MOF_COMPILER_STATE, ParseError 
 }
 
 %{
-#define YYLEX_PARAM MOF_COMPILER_STATE
-int yylex(YYSTYPE *yylval, YYLTYPE * llocp, void* YYLEX_PARAM);
+#define YYLEX_PARAM MOF_COMPILER_STATE, p_err
+int owmoflex(YYSTYPE *yylval, YYLTYPE * llocp, OpenWBEM::MOF::CompilerState* MOF_COMPILER_STATE, OpenWBEM::MOF::ParseError* p_err);
 %}
 
 %type <pMOFProductionList>			mofProductionList
@@ -967,9 +968,13 @@ IDENTIFIER:
 %%
 void owmoferror(YYLTYPE * p_loc, CompilerState* MOF_COMPILER_STATE, ParseError * p_err, const char* msg)
 {
-	p_err->message = String(msg);
-	p_err->column = p_loc->first_column;
-	p_err->line = p_loc->first_line;
+	// If it's not empty, then the lexer reported an error, and we don't want to overwrite it.
+	if (p_err->message.empty())
+	{
+		p_err->message = String(msg);
+		p_err->column = p_loc->first_column;
+		p_err->line = p_loc->first_line;
+	}
 }
 
 

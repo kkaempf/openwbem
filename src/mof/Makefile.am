@@ -39,7 +39,8 @@ OW_MOFParserErrorHandlerIFC.hpp \
 OW_MOFCIMOMVisitor.hpp \
 OW_MOFCompiler.hpp \
 OW_MOFParserDecls.hpp \
-OW_MOFLineInfo.hpp
+OW_MOFLineInfo.hpp \
+OW_MOFParseError.hpp
 
 
 EXTRA_DIST = \

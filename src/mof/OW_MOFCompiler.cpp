@@ -62,6 +62,7 @@ namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(MOFCompiler)
+OW_DEFINE_EXCEPTION2(MOFParser, MOFCompilerException)
 
 namespace MOF
 {
@@ -112,7 +113,7 @@ long Compiler::compile( const String& filename )
 				int parserv = owmofparse(&compilerState, &parseError);
 				if (parserv != 0)
 				{
-					OW_THROW(MOFCompilerException, Format("Parse error at: %1:%2 (%3)", parseError.column, parseError.line, parseError.message).c_str());
+					OW_THROW(MOFParserException, Format("Parse error at: %1:%2 (%3)", parseError.column, parseError.line, parseError.message).c_str());
 				}
 			}
 
@@ -182,7 +183,7 @@ long Compiler::compileString( const String& mof )
 				int parserv = owmofparse(&compilerState, &parseError);
 				if (parserv != 0)
 				{
-					OW_THROW(MOFCompilerException, Format("Parse error at: %1:%2 (%3)", parseError.column, parseError.line, parseError.message).c_str());
+					OW_THROW(MOFParserException, Format("Parse error at: %1:%2 (%3)", parseError.column, parseError.line, parseError.message).c_str());
 				}
 			}
 
@@ -291,7 +292,7 @@ String Compiler::fixParsedString(const String& s)
 							}
 							if (hex > CHAR_MAX)
 							{
-								OW_THROW(MOFCompilerException, "Escape sequence larger than supported maximum");
+								OW_THROW(MOFParserException, "Escape sequence larger than supported maximum");
 							}
 							unescaped += static_cast<char>(hex);
 							i += j - 1;

@@ -67,8 +67,8 @@ OW_DEFINE_EXCEPTION(MOFLexer)
 	OW_THROW(OpenWBEM::MOFLexerException, msg);
 
 #define YYLEX_PARAM context
-#define YY_DECL int owmoflex(YYSTYPE *owmoflval, YYLTYPE * llocp, void* YYLEX_PARAM)
-#define MOF_COMPILER_STATE (static_cast<OpenWBEM::MOF::CompilerState*>(context))
+#define YY_DECL static int owmoflex_impl(YYSTYPE *owmoflval, YYLTYPE * llocp, OpenWBEM::MOF::CompilerState* YYLEX_PARAM)
+#define MOF_COMPILER_STATE context
 #define YY_USER_ACTION MOF_COMPILER_STATE->updateLocation(yytext, llocp);
 %}
 
@@ -244,7 +244,7 @@ true                {RETURN_STR(TRUE_TOK);}
 %%
 /* here is the user code */
 
-void lexIncludeFile( void* context, const OpenWBEM::String& filename )
+void lexIncludeFile( OpenWBEM::MOF::CompilerState* context, const OpenWBEM::String& filename )
 {
 	using namespace OpenWBEM;
 	using namespace OpenWBEM::MOF;
@@ -286,5 +286,27 @@ void lexIncludeFile( void* context, const OpenWBEM::String& filename )
 
 	owmof_switch_to_buffer( owmof_create_buffer( owmofin, YY_BUF_SIZE ) );
 
+}
+
+/* Lexer entry point. The default YYLEX isn't used so that exceptions can be caught */
+int owmoflex(YYSTYPE *owmoflval, YYLTYPE * llocp, OpenWBEM::MOF::CompilerState* YYLEX_PARAM, OpenWBEM::MOF::ParseError * p_err)
+{
+	try
+	{
+		return owmoflex_impl(owmoflval, llocp, YYLEX_PARAM);
+	}
+	catch (std::exception& e)
+	{
+		p_err->message = e.what();
+		p_err->column = llocp->first_column;
+		p_err->line = llocp->first_line;
+	}
+	catch (...)
+	{
+		p_err->message = "Unknown exception";
+		p_err->column = llocp->first_column;
+		p_err->line = llocp->first_line;
+	}
+	return SCANNER_ERROR;
 }
 
