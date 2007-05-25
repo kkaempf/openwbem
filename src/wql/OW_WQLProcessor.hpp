@@ -52,6 +52,8 @@
 
 namespace OW_NAMESPACE
 {
+namespace WQL
+{
 
 class OW_WQL_API WQLProcessor : public WQLVisitor
 {
@@ -779,6 +781,7 @@ private:
 
 OW_WQL_API bool CIMInstanceSortCriterion( const CIMInstance& lhs, const CIMInstance& rhs);
 
+} // end namespace WQL
 } // end namespace OW_NAMESPACE
 
 #endif

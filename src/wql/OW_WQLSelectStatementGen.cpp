@@ -40,6 +40,8 @@
 
 namespace OW_NAMESPACE
 {
+namespace WQL
+{
 
 WQLSelectStatementGen::~WQLSelectStatementGen()
 {
@@ -1242,5 +1244,6 @@ void WQLSelectStatementGen::visit_aExprConst_NULLP(
 	m_stmt.appendOperand(WQLOperand());  // WQLOperand defaults to NULL
 }
 
+} // end namespace WQL
 } // end namespace OW_NAMESPACE
 

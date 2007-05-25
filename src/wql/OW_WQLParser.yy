@@ -51,15 +51,24 @@
 #include <stdlib.h>
 #include "OW_WQLAst.hpp"
 #include "OW_WQLImpl.hpp"
+#include "OW_WQLParseError.hpp"
 
-void owwqlerror( const char* s);
-extern "C" int owwqllex();
+void owwqlerror(OpenWBEM::WQL::ParseError* p_err, const char* s);
 
 using namespace OpenWBEM;
+using namespace OpenWBEM::WQL;
 
 %}
 
+%defines
 %error-verbose
+%parse-param {ParseError * p_err}
+%lex-param {ParseError* p_err}
+
+%{
+#define YYLEX_PARAM p_err
+int owwqllex(OpenWBEM::WQL::ParseError* p_err);
+%}
 
 %token ALL
 %token AND
@@ -165,6 +174,8 @@ using namespace OpenWBEM;
 %token YEARP
 %token ZONE
 
+%token SCANNER_ERROR
+
 /* precedence: lowest to highest */
 %left		UNION
 %left		JOIN UNIONJOIN CROSS LEFT FULL RIGHT INNERP NATURAL
@@ -195,106 +206,151 @@ using namespace OpenWBEM;
 
 
 %union {
-	stmt* pstmt;
-	optSemicolon* poptSemicolon;
-	insertStmt* pinsertStmt;
-	List<targetEl*>* ptargetList;
-	List<String*>* pcolumnList;
-	insertRest* pinsertRest;
-	deleteStmt* pdeleteStmt;
-	List<updateTargetEl*>* pupdateTargetList;
-	updateStmt* pupdateStmt;
-	selectStmt* pselectStmt;
-	exprSeq* pexprSeq;
-	optDistinct* poptDistinct;
-	List<sortby*>* psortbyList;
-	sortClause* psortClause;
-	optSortClause* poptSortClause;
-	sortby* psortby;
-	List<String*>* pnameList;
-	optGroupClause* poptGroupClause;
-	optHavingClause* poptHavingClause;
-	List<tableRef*>* pfromList;
-	optFromClause* poptFromClause;
-	tableRef* ptableRef;
-	joinedTable* pjoinedTable;
-	aliasClause* paliasClause;
-	joinType* pjoinType;
-	joinQual* pjoinQual;
-	relationExpr* prelationExpr;
-	optWhereClause* poptWhereClause;
-	rowExpr* prowExpr;
-	List<aExpr*>* prowList;
-	rowDescriptor* prowDescriptor;
-	aExpr* paExpr;
-	bExpr* pbExpr;
-	cExpr* pcExpr;
-	optIndirection* poptIndirection;
-	optExtract* poptExtract;
-	positionExpr* ppositionExpr;
-	optSubstrExpr* poptSubstrExpr;
-	substrFrom* psubstrFrom;
-	substrFor* psubstrFor;
-	trimExpr* ptrimExpr;
-	attr* pattr;
-	attrs* pattrs;
-	targetEl* ptargetEl;
-	updateTargetEl* pupdateTargetEl;
-	aExprConst* paExprConst;
-	String* pstring;
+	OpenWBEM::WQL::stmt* pstmt;
+	OpenWBEM::WQL::optSemicolon* poptSemicolon;
+	OpenWBEM::WQL::insertStmt* pinsertStmt;
+	OpenWBEM::List<OpenWBEM::WQL::targetEl*>* ptargetList;
+	OpenWBEM::List<OpenWBEM::String*>* pcolumnList;
+	OpenWBEM::WQL::insertRest* pinsertRest;
+	OpenWBEM::WQL::deleteStmt* pdeleteStmt;
+	OpenWBEM::List<OpenWBEM::WQL::updateTargetEl*>* pupdateTargetList;
+	OpenWBEM::WQL::updateStmt* pupdateStmt;
+	OpenWBEM::WQL::selectStmt* pselectStmt;
+	OpenWBEM::WQL::exprSeq* pexprSeq;
+	OpenWBEM::WQL::optDistinct* poptDistinct;
+	OpenWBEM::List<OpenWBEM::WQL::sortby*>* psortbyList;
+	OpenWBEM::WQL::sortClause* psortClause;
+	OpenWBEM::WQL::optSortClause* poptSortClause;
+	OpenWBEM::WQL::sortby* psortby;
+	OpenWBEM::List<OpenWBEM::String*>* pnameList;
+	OpenWBEM::WQL::optGroupClause* poptGroupClause;
+	OpenWBEM::WQL::optHavingClause* poptHavingClause;
+	OpenWBEM::List<OpenWBEM::WQL::tableRef*>* pfromList;
+	OpenWBEM::WQL::optFromClause* poptFromClause;
+	OpenWBEM::WQL::tableRef* ptableRef;
+	OpenWBEM::WQL::joinedTable* pjoinedTable;
+	OpenWBEM::WQL::aliasClause* paliasClause;
+	OpenWBEM::WQL::joinType* pjoinType;
+	OpenWBEM::WQL::joinQual* pjoinQual;
+	OpenWBEM::WQL::relationExpr* prelationExpr;
+	OpenWBEM::WQL::optWhereClause* poptWhereClause;
+	OpenWBEM::WQL::rowExpr* prowExpr;
+	OpenWBEM::List<OpenWBEM::WQL::aExpr*>* prowList;
+	OpenWBEM::WQL::rowDescriptor* prowDescriptor;
+	OpenWBEM::WQL::aExpr* paExpr;
+	OpenWBEM::WQL::bExpr* pbExpr;
+	OpenWBEM::WQL::cExpr* pcExpr;
+	OpenWBEM::WQL::optIndirection* poptIndirection;
+	OpenWBEM::WQL::optExtract* poptExtract;
+	OpenWBEM::WQL::positionExpr* ppositionExpr;
+	OpenWBEM::WQL::optSubstrExpr* poptSubstrExpr;
+	OpenWBEM::WQL::substrFrom* psubstrFrom;
+	OpenWBEM::WQL::substrFor* psubstrFor;
+	OpenWBEM::WQL::trimExpr* ptrimExpr;
+	OpenWBEM::WQL::attr* pattr;
+	OpenWBEM::WQL::attrs* pattrs;
+	OpenWBEM::WQL::targetEl* ptargetEl;
+	OpenWBEM::WQL::updateTargetEl* pupdateTargetEl;
+	OpenWBEM::WQL::aExprConst* paExprConst;
+	OpenWBEM::String* pstring;
 }
 
 %type <pstmt> stmt
 %type <poptSemicolon> optSemicolon
+%destructor { delete $$; } optSemicolon
 %type <pinsertStmt> insertStmt
+%destructor { delete $$; } insertStmt
 %type <ptargetList> targetList
+%destructor { delete $$; } targetList
 %type <pcolumnList> columnList
+%destructor { delete $$; } columnList
 %type <pinsertRest> insertRest
+%destructor { delete $$; } insertRest
 %type <pdeleteStmt> deleteStmt
+%destructor { delete $$; } deleteStmt
 %type <pupdateTargetList> updateTargetList
+%destructor { delete $$; } updateTargetList
 %type <pupdateStmt> updateStmt
+%destructor { delete $$; } updateStmt
 %type <pselectStmt> selectStmt
+%destructor { delete $$; } selectStmt
 %type <pexprSeq> exprSeq
+%destructor { delete $$; } exprSeq
 %type <poptDistinct> optDistinct
+%destructor { delete $$; } optDistinct
 %type <psortbyList> sortbyList
+%destructor { delete $$; } sortbyList
 %type <psortClause> sortClause
+%destructor { delete $$; } sortClause
 %type <poptSortClause> optSortClause
+%destructor { delete $$; } optSortClause
 %type <psortby> sortby
+%destructor { delete $$; } sortby
 %type <pnameList> nameList
+%destructor { delete $$; } nameList
 %type <poptGroupClause> optGroupClause
+%destructor { delete $$; } optGroupClause
 %type <poptHavingClause> optHavingClause
+%destructor { delete $$; } optHavingClause
 %type <pfromList> fromList
+%destructor { delete $$; } fromList
 %type <poptFromClause> optFromClause
+%destructor { delete $$; } optFromClause
 %type <ptableRef> tableRef
+%destructor { delete $$; } tableRef
 %type <pjoinedTable> joinedTable
+%destructor { delete $$; } joinedTable
 %type <paliasClause> aliasClause
+%destructor { delete $$; } aliasClause
 %type <pjoinType> joinType
+%destructor { delete $$; } joinType
 %type <pjoinQual> joinQual
+%destructor { delete $$; } joinQual
 %type <prelationExpr> relationExpr
+%destructor { delete $$; } relationExpr
 %type <poptWhereClause> optWhereClause
+%destructor { delete $$; } optWhereClause
 %type <prowExpr> rowExpr
+%destructor { delete $$; } rowExpr
 %type <prowList> rowList
+%destructor { delete $$; } rowList
 %type <prowDescriptor> rowDescriptor
+%destructor { delete $$; } rowDescriptor
 %type <paExpr> aExpr
+%destructor { delete $$; } aExpr
 %type <pbExpr> bExpr
+%destructor { delete $$; } bExpr
 %type <pcExpr> cExpr
+%destructor { delete $$; } cExpr
 %type <poptIndirection> optIndirection
+%destructor { delete $$; } optIndirection
 %type <poptExtract> optExtract
+%destructor { delete $$; } optExtract
 %type <ppositionExpr> positionExpr
+%destructor { delete $$; } positionExpr
 %type <poptSubstrExpr> optSubstrExpr
+%destructor { delete $$; } optSubstrExpr
 %type <psubstrFrom> substrFrom
+%destructor { delete $$; } substrFrom
 %type <psubstrFor> substrFor
+%destructor { delete $$; } substrFor
 %type <ptrimExpr> trimExpr
+%destructor { delete $$; } trimExpr
 %type <pattr> attr
+%destructor { delete $$; } attr
 %type <pattrs> attrs
+%destructor { delete $$; } attrs
 %type <ptargetEl> targetEl
+%destructor { delete $$; } targetEl
 %type <pupdateTargetEl> updateTargetEl
+%destructor { delete $$; } updateTargetEl
 %type <paExprConst> aExprConst
+%destructor { delete $$; } aExprConst
 %type <pstring> strColumnElem strOptOrderSpecification strOptJoinOuter strDatetime strAllOp strExtractArg strRelationName strName strAttrName strFuncName strColId strColLabel ALL AND AS ASC ASTERISK AT BITAND BITCONST BITINVERT BITOR BITSHIFTLEFT BITSHIFTRIGHT BY COLON COMMA CONCATENATION CROSS CURRENTDATE CURRENTTIME CURRENTTIMESTAMP CURRENTUSER DAYP DEFAULT DELETE DESC DISTINCT EQUALS ESCAPE EXTRACT FALSEP FCONST FOR FROM FULL GREATERTHAN GREATERTHANOREQUALS GROUP HAVING HEXCONST HOURP ICONST IDENT IN INNERP INSERT INTERVAL INTO IS ISA ISNULL JOIN LEADING LEFT LEFTBRACKET LEFTPAREN LESSTHAN LESSTHANOREQUALS LIKE MINUS MINUTEP MONTHP NATIONAL NATURAL NOT NOTEQUALS NOTNULL NULLP ON ONLY OR ORDER OUTERP PERCENT PERIOD PLUS POSITION RIGHT RIGHTBRACKET RIGHTPAREN SCONST SECONDP SELECT SEMICOLON SESSIONUSER SET SOLIDUS SUBSTRING TIME TIMESTAMP TIMEZONEHOUR TIMEZONEMINUTE TRAILING TRIM TRUEP UNION UNIONJOIN UPDATE USER USING VALUES WHERE YEARP ZONE
+%destructor { delete $$; } strColumnElem strOptOrderSpecification strOptJoinOuter strDatetime strAllOp strExtractArg strRelationName strName strAttrName strFuncName strColId strColLabel ALL AND AS ASC ASTERISK AT BITAND BITCONST BITINVERT BITOR BITSHIFTLEFT BITSHIFTRIGHT BY COLON COMMA CONCATENATION CROSS CURRENTDATE CURRENTTIME CURRENTTIMESTAMP CURRENTUSER DAYP DEFAULT DELETE DESC DISTINCT EQUALS ESCAPE EXTRACT FALSEP FCONST FOR FROM FULL GREATERTHAN GREATERTHANOREQUALS GROUP HAVING HEXCONST HOURP ICONST IDENT IN INNERP INSERT INTERVAL INTO IS ISA ISNULL JOIN LEADING LEFT LEFTBRACKET LEFTPAREN LESSTHAN LESSTHANOREQUALS LIKE MINUS MINUTEP MONTHP NATIONAL NATURAL NOT NOTEQUALS NOTNULL NULLP ON ONLY OR ORDER OUTERP PERCENT PERIOD PLUS POSITION RIGHT RIGHTBRACKET RIGHTPAREN SCONST SECONDP SELECT SEMICOLON SESSIONUSER SET SOLIDUS SUBSTRING TIME TIMESTAMP TIMEZONEHOUR TIMEZONEMINUTE TRAILING TRIM TRUEP UNION UNIONJOIN UPDATE USER USING VALUES WHERE YEARP ZONE
+
 
 %%
-
-
 
 stmt:
 	selectStmt optSemicolon
@@ -1123,5 +1179,14 @@ strColLabel:
 
 %%
 
+
+void owwqlerror(ParseError* p_err, const char* s)
+{
+	// If it's not empty, then the lexer reported an error, and we don't want to overwrite it.
+	if (p_err->message.empty())
+	{
+		p_err->message = String(s);
+	}
+}
 
 

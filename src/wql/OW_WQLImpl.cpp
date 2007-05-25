@@ -43,8 +43,11 @@
 #include "OW_ServiceIFCNames.hpp"
 #include "blocxx/GlobalString.hpp"
 #include "OW_Logger.hpp"
+#include "OW_WQLParseError.hpp"
 
 namespace OW_NAMESPACE
+{
+namespace WQL
 {
 
 namespace
@@ -81,10 +84,11 @@ void WQLImpl::evaluate(const String& nameSpace,
 	owwqldebug = 1;
 #endif
 	OW_LOG_DEBUG3(lgr, "Parsing: ");
-	int owwqlresult = owwqlparse();
+	ParseError parseError;
+	int owwqlresult = owwqlparse(&parseError);
 	if (owwqlresult)
 	{
-		OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Parse failed");
+		OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Parse failed: %1", parseError.message).c_str());
 	}
 	else
 	{
@@ -127,10 +131,11 @@ void WQLImpl::evaluate(const String& nameSpace,
 	owwqldebug = 1;
 #endif
 	OW_LOG_DEBUG3(lgr, "Parsing: ");
-	int owwqlresult = owwqlparse();
+	ParseError parseError;
+	int owwqlresult = owwqlparse(&parseError);
 	if (owwqlresult)
 	{
-		OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Parse failed");
+		OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Parse failed: %1", parseError.message).c_str());
 	}
 	else
 	{
@@ -168,10 +173,11 @@ WQLImpl::createSelectStatement(const String& query)
 #ifdef YYOW_DEBUG
 	owwqldebug = 1;
 #endif
-	int owwqlresult = owwqlparse();
+	ParseError parseError;
+	int owwqlresult = owwqlparse(&parseError);
 	if (owwqlresult)
 	{
-		OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Parse failed");
+		OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Parse failed: %1", parseError.message).c_str());
 	}
 	else
 	{
@@ -225,7 +231,8 @@ WQLImpl::shutdown()
 {
 }
 
+} // end namespace WQL
 } // end namespace OW_NAMESPACE
 
-OW_WQLFACTORY(OpenWBEM::WQLImpl,wqlimpl);
+OW_WQLFACTORY(OpenWBEM::WQL::WQLImpl,wqlimpl);
 

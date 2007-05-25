@@ -43,6 +43,8 @@
 
 namespace OW_NAMESPACE
 {
+namespace WQL
+{
 
 class OW_WQL_API WQLSelectStatementGen : public WQLVisitor
 {
@@ -584,6 +586,7 @@ private:
 	String m_attrName;
 };
 
+} // end namespace WQL
 } // end namespace OW_NAMESPACE
 
 #endif

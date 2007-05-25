@@ -32,68 +32,33 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_WQLIMPL_HPP_
-#define OW_WQLIMPL_HPP_
+#ifndef OW_WQL_PARSE_ERROR_HPP_INCLUDE_GUARD_
+#define OW_WQL_PARSE_ERROR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_WQLIFC.hpp"
-#include "OW_Mutex.hpp"
-#include <cstdio>
-
-// The classes and functions defined in this file are not meant for general
-// use, they are internal implementation details.  They may change at any time.
+#include "OW_String.hpp"
 
 namespace OW_NAMESPACE
 {
+
 namespace WQL
 {
-class stmt;
 
-class OW_WQL_API WQLImpl : public WQLIFC
+struct OW_WQL_API ParseError
 {
-public:
-	virtual ~WQLImpl();
-	
-	String getName() const;
-	virtual void init(const ServiceEnvironmentIFCRef& env);
-	virtual void shutdown();
-
-	virtual void evaluate(const String& nameSpace,
-		CIMInstanceResultHandlerIFC& result,
-		const String& query, const String& queryLanguage,
-		const CIMOMHandleIFCRef& hdl);
-	virtual void evaluate(const String& nameSpace,
-		CIMInstanceResultHandlerIFC& result,
-		const String& query, const String& queryLanguage,
-		const RepositoryIFCRef& hdl,
-		OperationContext& oc);
-	virtual WQLSelectStatement createSelectStatement(const String& query);
-	virtual bool supportsQueryLanguage(const String& lang);
-
-	static WQL::stmt* setStatement(WQL::stmt* statement)
+	ParseError()
+		: column(0)
+		, line(0)
 	{
-		s_statement = statement;
-		return statement;
 	}
 
-	static const char* getParserInput()
-	{
-		return s_parserInput;
-	}
-private:
-	static Mutex s_classLock;
-	static const char* s_parserInput;
-	static WQL::stmt* s_statement;
+	String message;
+	// column and line for start of token where error detected
+	unsigned column;
+	unsigned line;
+
 };
-
-class ParseError;
 
 } // end namespace WQL
 } // end namespace OW_NAMESPACE
-
-extern int owwqldebug;
-extern "C" int owwqlparse(OpenWBEM::WQL::ParseError* p_err);
-extern FILE* owwqlin;
-extern void WQLscanner_init();
-
 
 #endif

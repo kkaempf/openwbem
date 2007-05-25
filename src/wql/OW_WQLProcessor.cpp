@@ -66,6 +66,8 @@ do																														\
 
 namespace OW_NAMESPACE
 {
+namespace WQL
+{
 
 using namespace WBEMFlags;
 
@@ -2445,5 +2447,6 @@ void WQLProcessor::populateInstances()
 	}
 }
 
+} // end namespace WQL
 } // end namespace OW_NAMESPACE
 

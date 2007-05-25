@@ -51,14 +51,16 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_Format.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_WQLParseError.hpp"
 
 #include <string.h>
 #include <errno.h>
 #include <ctype.h>
 
-// this has to be before OW_WQLParser.h is included.
-using namespace OpenWBEM;
 #include "OW_WQLParser.h"
+
+using namespace OpenWBEM;
+using namespace OpenWBEM::WQL;
 
 static const char *parseCh;
 
@@ -79,7 +81,7 @@ static int myinput(char* buf, int max);
 		OW_THROWCIMMSG( CIMException::INVALID_QUERY, \
 			Format("Fatal Parser Error: %1", msg).c_str())
 
-#define YY_DECL extern "C" int yylex()        /* return the next token */ 
+#define YY_DECL static int owwqllex_impl()        /* return the next token */ 
 #else /* !FLEX_SCANNER */
 
 #undef input
@@ -518,12 +520,6 @@ ZONE { RETURN_VAL(ZONE); }
 
 %%
 
-void
-owwqlerror(const char *message)
-{
-	printf( "parser: %s at or near \"%s\"", message, owwqltext);
-}
-
 /*
  scanner_init:
 	called by postgres before any actual parsing is done
@@ -597,3 +593,22 @@ myinput(char* buf, int max)
 
 
 #endif /* FLEX_SCANNER */
+
+int owwqllex(OpenWBEM::WQL::ParseError* parseError)
+{
+	// bison parsers aren't exception safe, so no exceptions can propagate out.
+	try
+	{
+		return owwqllex_impl();
+	}
+	catch (std::exception& e)
+	{
+		parseError->message = e.what();
+	}
+	catch (...)
+	{
+		parseError->message = "Unknown exception";
+	}
+	return SCANNER_ERROR;
+}
+
