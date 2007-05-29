@@ -296,7 +296,6 @@ int openwbem_privconfig_lex(
 	}
 	catch (LexerException &)
 	{
-std::cout << "Caught LexerException. returning SCANNER_ERROR" << std::endl;
 		// Don''t let exception propagate out, as Bison code that calls this
 		// function is not exception-safe at all.
 		lvalp->s = 0;
