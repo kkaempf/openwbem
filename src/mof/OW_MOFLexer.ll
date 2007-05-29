@@ -44,10 +44,13 @@
 #include "OW_Format.hpp"
 #include "OW_Exception.hpp"
 #include "OW_String.hpp"
+#include "OW_MOFParseError.hpp"
 #include <errno.h>
 #include <string.h>
 
+// These files are last because they define non-prefixed macros.
 #include "OW_MOFParser.h"
+#include "OW_MOFLexerDecls.hpp"
 
 
 #define WHITE_RETURN(x) /* skip it */

@@ -49,6 +49,8 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Logger.hpp"
 #include "OW_CIMFlavor.hpp"
+#include "OW_MOFParseError.hpp"
+#include "OW_MOFLexerDecls.hpp"
 
 #include <assert.h>
 #include <cctype>

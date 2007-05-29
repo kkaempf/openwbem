@@ -32,20 +32,23 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_MOF_PARSER_DECLS_HPP_INCLUDE_GUARD_
-#define OW_MOF_PARSER_DECLS_HPP_INCLUDE_GUARD_
+#ifndef OW_MOF_LEXER_DECLS_HPP_INCLUDE_GUARD_
+#define OW_MOF_LEXER_DECLS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include "OW_String.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-namespace OW_NAMESPACE { namespace MOF {
-class CompilerState;
-class ParseError;
-}}
+struct owmofltype
+{
+	OpenWBEM::String msg;
+	unsigned first_column;
+	unsigned first_line;
+	unsigned last_column;
+	unsigned last_line;
+};
+#define YYLTYPE owmofltype
 
-extern int owmofdebug;
-extern int owmofparse(OpenWBEM::MOF::CompilerState *context, OpenWBEM::MOF::ParseError* error);
-extern FILE* owmofin;
+#endif
 
-#endif // MOF_PARSER_DECLS_HPP_

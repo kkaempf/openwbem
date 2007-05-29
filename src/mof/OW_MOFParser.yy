@@ -42,7 +42,9 @@
 #include "OW_Array.hpp"
 #include "OW_MOFCompiler.hpp"
 #include "OW_MOFParserDecls.hpp"
+#include "OW_MOFLexerDecls.hpp"
 #include "OW_Format.hpp"
+#include "OW_MOFParseError.hpp"
 
 using namespace OpenWBEM;
 using namespace OpenWBEM::MOF;
