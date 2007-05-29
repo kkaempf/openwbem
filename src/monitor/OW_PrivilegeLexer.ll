@@ -46,6 +46,7 @@
 
 #include "OW_PrivilegeParser.h"
 
+#define YYLTYPE openwbem_privconfig_yyltype
 
 #define YY_USER_ACTION this->pre_action();
 

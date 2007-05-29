@@ -42,6 +42,8 @@
 #include "OW_PrivilegeConfig.hpp"
 #include <cassert>
 
+#define YYLTYPE openwbem_privconfig_yyltype
+
 using OpenWBEM::PrivilegeConfig::Privileges;
 using OpenWBEM::PrivilegeConfig::PathPatterns;
 using OpenWBEM::PrivilegeConfig::EnvironmentVariablePatterns;

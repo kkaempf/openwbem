@@ -63,7 +63,6 @@ struct openwbem_privconfig_yyltype
 	unsigned last_line;
 };
 
-#define YYLTYPE openwbem_privconfig_yyltype
 
 namespace OW_NAMESPACE { namespace PrivilegeConfig { class IncludeHandler; } }
 
@@ -74,7 +73,7 @@ public:
 
 	virtual int yylex();
 
-	void get_location(YYLTYPE & loc) const;
+	void get_location(openwbem_privconfig_yyltype & loc) const;
 
 	bool has_value()
 	{
