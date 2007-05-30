@@ -255,16 +255,15 @@ daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool res
 					"FAILED TO DETACH FROM THE TERMINAL - First fork");
 			default:
 				int status = DAEMONIZE_FAIL;
-				if (daemonize_upipe->readInt(&status) < 1
-						|| status != DAEMONIZE_SUCCESS)
+
+				if (daemonize_upipe->readInt(&status) < 1)
 				{
-					// This object is being used for several different executables now.
-					String displayName(daemonName);
-					if (daemonName.equals("owcimomd"))
-					{
-						displayName = "CIMOM";
-					}
-					cerr << "Error starting " << displayName.c_str() << ".  Check the log files." << endl;
+					cerr << Format("Error reading status from child %1: %2", daemonName, strerror(errno)) << endl;
+					_exit(1);
+				}
+				else if (status != DAEMONIZE_SUCCESS)
+				{
+					cerr << Format("Error starting %1. Check the log files.", daemonName) << endl;
 					_exit(1);
 				}
 				_exit(0); // exit the original process
