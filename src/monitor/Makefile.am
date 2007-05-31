@@ -18,7 +18,7 @@ install-exec-local: install-ow-shared-libs
 uninstall-local: uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libowprivman.$(LIB_EXT)
-SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
+SHAREDLIBADD = $(BLOCXX_LIBS)
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)
@@ -60,8 +60,7 @@ OW_PrivilegeParser.h: OW_PrivilegeParser.cc
 	else :; fi
 
 
-AM_CPPFLAGS = \
--I$(top_srcdir)/src/common -I$(top_srcdir)/src/ifcs
+AM_CPPFLAGS = -I$(top_srcdir)/src/common
 
 AM_LFLAGS = -Cfe -olex.yy.c
 

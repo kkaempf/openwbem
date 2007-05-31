@@ -39,9 +39,9 @@
 
 #define  OW_PRIVILEGE_LEXER_LL
 #include "OW_PrivilegeLexer.hpp"
-#include "OW_SafeCString.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/SafeCString.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_PrivilegeConfig.hpp"
 
 #include "OW_PrivilegeParser.h"

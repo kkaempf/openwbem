@@ -42,8 +42,9 @@
 #include <FlexLexer.h>
 #endif
 #include "OW_config.h"
-#include "OW_CommonFwd.hpp"
-#include "OW_String.hpp"
+#include "blocxx/BLOCXX_config.h"
+#include "blocxx/CommonFwd.hpp"
+#include "blocxx/String.hpp"
 #include <deque>
 
 /**
