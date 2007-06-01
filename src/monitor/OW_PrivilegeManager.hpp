@@ -420,7 +420,10 @@ public:
 	* (@see Exec::spawn for details).
 	*
 	* @param envp The null-terminated environment for the child process.
-	* (@see Exec::spawn for details).
+	* (@see Exec::spawn for details). If envp != Secure::minimalEnvironment(),
+	* then the privilege configuration statement must include an
+	* <env_specification> that allows for all the variables and values
+	* designated by envp.
 	*
 	* @param app_name The name of the privilege configuration file or directory used by the
 	* child process.  This is looked for in the same configuration directory
@@ -487,7 +490,10 @@ public:
 	* (@see Exec::spawn for details).
 	*
 	* @param envp The null-terminated environment for the child process.
-	* (@see Exec::spawn for details).
+	* (@see Exec::spawn for details). If envp != Secure::minimalEnvironment(),
+	* then the privilege configuration statement must include an
+	* <env_specification> that allows for all the variables and values
+	* designated by envp.
 	*
 	* @param user The monitor for the child process runs as this user.
 	* If @a user is null or empty, the monitor runs as the
@@ -552,7 +558,10 @@ public:
 	* (@see Exec::spawn for details).
 	*
 	* @param envp Null-terminated environment for the child process.
-	* (@see Exec::spawn for details).
+	* (@see Exec::spawn for details). If envp != Secure::minimalEnvironment(),
+	* then the privilege configuration statement must include an
+	* <env_specification> that allows for all the variables and values
+	* designated by envp.
 	*
 	* @param user The child process runs as this user.  If @a user is null
 	* or empty, the child process runs as the same user as the calling process.
