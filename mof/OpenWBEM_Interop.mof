@@ -307,12 +307,12 @@ class OpenWBEM_OOPProviderRegistration
     uint16 UserContext = 3;
 
     [Description (
-      "If UserContext = 4 or 5 (monitored), a monitor will be created for the "
-      "provider process. The monitor can give the process special "
-      "permissions. This property must be set to the file name of the "
-      "provider's privileges configuration file. The file must be in the "
-      "directory identified by the owcimomd.privileges_config_dir config "
-      "item.")]
+      "If UserContext = 4 or 5 (monitored), a monitor will be created for "
+      "the provider process. The monitor can give the process special "
+      "permissions. This property must be set to the file or directory "
+      "name of the provider's privileges configuration file or directory. "
+      "The file or directory must be in the directory identified by the "
+      "owcimomd.privileges_config_dir config item.")]
     string MonitorPrivilegesFile;
 
     [Description (
@@ -420,12 +420,12 @@ class OpenWBEM_OOPProviderProcess
     uint16 UserContext = 3;
 
     [Description (
-      "If UserContext = 4 or 5 (monitored), a monitor will be created for the "
-      "provider process. The monitor can give the process special "
-      "permissions. This property must be set to the file name of the "
-      "provider's privileges configuration file. The file must be in the "
-      "directory identified by the owcimomd.privileges_config_dir config "
-      "item.")]
+      "If UserContext = 4 or 5 (monitored), a monitor will be created for "
+      "the provider process. The monitor can give the process special "
+      "permissions. This property must be set to the file or directory "
+      "name of the provider's privileges configuration file or directory. "
+      "The file or directory must be in the directory identified by the "
+      "owcimomd.privileges_config_dir config item.")]
     string MonitorPrivilegesFile;
 
     [Required, Description (
