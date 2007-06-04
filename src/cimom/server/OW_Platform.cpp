@@ -118,7 +118,6 @@ static void theSigHandler(int sig, siginfo_t* info, void* context);
 
 namespace
 {
-const Timeout DAEMONIZE_PIPE_TIMEOUT = Timeout::infinite;
 const int RESTART_RETURN_VALUE = 94; // this is just a random value and has no other meaning or significance.
 
 void handleSignal(int sig);
@@ -920,7 +919,7 @@ void removeFatalSignalHandlers()
 void initDaemonizePipe()
 {
 	daemonize_upipe = UnnamedPipe::createUnnamedPipe();
-	daemonize_upipe->setTimeouts(DAEMONIZE_PIPE_TIMEOUT);
+	daemonize_upipe->setTimeouts(Timeout::infinite);
 }
 
 //////////////////////////////////////////////////////////////////////////////
