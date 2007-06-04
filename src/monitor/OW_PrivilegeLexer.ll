@@ -1,8 +1,7 @@
 %option noyywrap
-%option yyclass="openwbem_privconfig_Lexer"
 %option prefix="openwbem_privconfig_"
 %option never-interactive
-%option c++
+%option warn
 
 %{
 /*******************************************************************************
@@ -37,17 +36,35 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#define  OW_PRIVILEGE_LEXER_LL
+#include "OW_config.h"
 #include "OW_PrivilegeLexer.hpp"
-#include "OW_SafeCString.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/SafeCString.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/Exception.hpp"
 #include "OW_PrivilegeConfig.hpp"
 
 #include "OW_PrivilegeParser.h"
+#include <vector>
+#include <iterator>
 
+/* Avoid exit() on fatal scanner errors (a bit ugly -- see yy_fatal_error) */
 
-#define YY_USER_ACTION this->pre_action();
+namespace OW_NAMESPACE
+{
+BLOCXX_DECLARE_EXCEPTION(PrivilegeLexer)
+BLOCXX_DEFINE_EXCEPTION(PrivilegeLexer)
+}
+#define YY_FATAL_ERROR(msg) \
+	BLOCXX_THROW(OpenWBEM::PrivilegeLexerException, msg);
+
+#define YY_DECL static int openwbem_privconfig_lex_impl(YYSTYPE * lvalp, YYLTYPE * llocp, OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer * lexerp)
+#define YYLTYPE openwbem_privconfig_yyltype
+
+#define YY_USER_ACTION lexerp->pre_action();
+
+#define RETURN_VAL(x) lvalp->s = 0; return(x);
+#define RETURN_STR(x) lvalp->s = OpenWBEM::SafeCString::str_dup(yytext); return(x);
 
 %}
 
@@ -86,55 +103,55 @@ STRING_VALUE \"{sChar}*\"
 <ARGSECTION>[[:space:]]+    ;
 <ENVVARSECTION>[[:space:]]+ ;
 
-open_r                  { return K_OPEN_R; }
-open_w                  { return K_OPEN_W; }
-open_rw                 { return K_OPEN_RW; }
-open_a                  { return K_OPEN_A; }
-read_dir                { return K_READ_DIR; }
-read_link               { return K_READ_LINK; }
-check_path              { return K_CHECK_PATH; }
-rename_from             { return K_RENAME_FROM; }
-rename_to               { return K_RENAME_TO; }
-rename_from_to          { return K_RENAME_FROM_TO; }
-unlink                  { return K_UNLINK; }
-monitored_exec          { return K_MONITORED_EXEC; }
-monitored_user_exec     { return K_MONITORED_USER_EXEC; }
-user_exec               { return K_USER_EXEC; }
-monitored_exec_check_args          { return K_MONITORED_EXEC_CHECK_ARGS; }
-monitored_user_exec_check_args     { return K_MONITORED_USER_EXEC_CHECK_ARGS; }
-user_exec_check_args               { return K_USER_EXEC_CHECK_ARGS; }
+open_r                  { RETURN_VAL(K_OPEN_R); }
+open_w                  { RETURN_VAL(K_OPEN_W); }
+open_rw                 { RETURN_VAL(K_OPEN_RW); }
+open_a                  { RETURN_VAL(K_OPEN_A); }
+read_dir                { RETURN_VAL(K_READ_DIR); }
+read_link               { RETURN_VAL(K_READ_LINK); }
+check_path              { RETURN_VAL(K_CHECK_PATH); }
+rename_from             { RETURN_VAL(K_RENAME_FROM); }
+rename_to               { RETURN_VAL(K_RENAME_TO); }
+rename_from_to          { RETURN_VAL(K_RENAME_FROM_TO); }
+unlink                  { RETURN_VAL(K_UNLINK); }
+monitored_exec          { RETURN_VAL(K_MONITORED_EXEC); }
+monitored_user_exec     { RETURN_VAL(K_MONITORED_USER_EXEC); }
+user_exec               { RETURN_VAL(K_USER_EXEC); }
+monitored_exec_check_args          { RETURN_VAL(K_MONITORED_EXEC_CHECK_ARGS); }
+monitored_user_exec_check_args     { RETURN_VAL(K_MONITORED_USER_EXEC_CHECK_ARGS); }
+user_exec_check_args               { RETURN_VAL(K_USER_EXEC_CHECK_ARGS); }
 
-unpriv_user             { return K_UNPRIV_USER; }
-include			{ return K_INCLUDE; }
+unpriv_user             { RETURN_VAL(K_UNPRIV_USER); }
+include			{ RETURN_VAL(K_INCLUDE); }
 
-\{                      { BEGIN(ARGSECTION); return yytext[0]; }
-.                       { return yytext[0]; }
+\{                      { BEGIN(ARGSECTION); RETURN_VAL(yytext[0]); }
+.                       { RETURN_VAL(yytext[0]); }
 
-<ARGSECTION>\}          { BEGIN(INITIAL); return yytext[0]; }
-<ARGSECTION>{AT}        { return AT; }
-<ARGSECTION>{SPLAT}     { m_has_value = true; return(SPLAT); }
-<ARGSECTION>allowed_environment_variables { BEGIN(ENVVARSECTION); return (K_ALLOWED_ENVIRONMENT_VARIABLES); }
-<ARGSECTION>{DIRPATH}   { m_has_value = true; return(DIRPATH); }
-<ARGSECTION>{SUBTREE}   { m_has_value = true; return(SUBTREE); }
-<ARGSECTION>{NAME}      { m_has_value = true; return(NAME); }
-<ARGSECTION>{FILEPATH}  { m_has_value = true; return(FILEPATH); }
-<ARGSECTION>{FPATHWC}   { m_has_value = true; return(FPATHWC); }
-<ARGSECTION>{STRING_VALUE}   { m_has_value = true; return(STRING_VALUE); }
-<ARGSECTION>.           { return yytext[0]; }
+<ARGSECTION>\}          { BEGIN(INITIAL); RETURN_VAL(yytext[0]); }
+<ARGSECTION>{AT}        { RETURN_VAL(AT); }
+<ARGSECTION>{SPLAT}     { RETURN_STR(SPLAT); }
+<ARGSECTION>allowed_environment_variables { BEGIN(ENVVARSECTION); RETURN_VAL(K_ALLOWED_ENVIRONMENT_VARIABLES); }
+<ARGSECTION>{DIRPATH}   { RETURN_STR(DIRPATH); }
+<ARGSECTION>{SUBTREE}   { RETURN_STR(SUBTREE); }
+<ARGSECTION>{NAME}      { RETURN_STR(NAME); }
+<ARGSECTION>{FILEPATH}  { RETURN_STR(FILEPATH); }
+<ARGSECTION>{FPATHWC}   { RETURN_STR(FPATHWC); }
+<ARGSECTION>{STRING_VALUE}   { RETURN_STR(STRING_VALUE); }
+<ARGSECTION>.           { RETURN_VAL(yytext[0]); }
 
-<ENVVARSECTION>\{		{ return yytext[0]; }
-<ENVVARSECTION>\}		{ BEGIN(ARGSECTION); return yytext[0]; }
-<ENVVARSECTION>=                { return yytext[0]; }
-<ENVVARSECTION>{DIRPATH}        { m_has_value = true; return(DIRPATH); }
-<ENVVARSECTION>{SUBTREE}        { m_has_value = true; return(SUBTREE); }
-<ENVVARSECTION>{NAME}           { m_has_value = true; return(NAME); }
-<ENVVARSECTION>{FILEPATH}       { m_has_value = true; return(FILEPATH); }
-<ENVVARSECTION>{FPATHWC}        { m_has_value = true; return(FPATHWC); }
-<ENVVARSECTION>{STRING_VALUE}   { m_has_value = true; return(STRING_VALUE); }
-<ENVVARSECTION>.                { return yytext[0]; }
+<ENVVARSECTION>\{		{ RETURN_VAL(yytext[0]); }
+<ENVVARSECTION>\}		{ BEGIN(ARGSECTION); RETURN_VAL(yytext[0]); }
+<ENVVARSECTION>=                { RETURN_VAL(yytext[0]); }
+<ENVVARSECTION>{DIRPATH}        { RETURN_STR(DIRPATH); }
+<ENVVARSECTION>{SUBTREE}        { RETURN_STR(SUBTREE); }
+<ENVVARSECTION>{NAME}           { RETURN_STR(NAME); }
+<ENVVARSECTION>{FILEPATH}       { RETURN_STR(FILEPATH); }
+<ENVVARSECTION>{FPATHWC}        { RETURN_STR(FPATHWC); }
+<ENVVARSECTION>{STRING_VALUE}   { RETURN_STR(STRING_VALUE); }
+<ENVVARSECTION>.                { RETURN_VAL(yytext[0]); }
 
 <<EOF>> {
-	if (!endInclude())
+	if (!lexerp->endInclude())
 	{
 		yyterminate();
 	}
@@ -143,9 +160,8 @@ include			{ return K_INCLUDE; }
 
 %%
 
-openwbem_privconfig_Lexer::openwbem_privconfig_Lexer(std::istream & arg_yyin, OpenWBEM::PrivilegeConfig::IncludeHandler& includeHandler, const OpenWBEM::String& bufferName)
-: yyFlexLexer(&arg_yyin, 0)
-, m_includeHandler(&includeHandler)
+OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer::openwbem_privconfig_Lexer(std::istream & arg_yyin, OpenWBEM::PrivilegeConfig::IncludeHandler& includeHandler, const OpenWBEM::String& bufferName)
+: m_includeHandler(&includeHandler)
 , m_has_value(false)
 , m_first_column(0)
 , m_first_line(0)
@@ -155,11 +171,31 @@ openwbem_privconfig_Lexer::openwbem_privconfig_Lexer(std::istream & arg_yyin, Op
 , m_next_line(1)
 , m_bufferName(bufferName)
 {
+	if (s_instanceCount == 1)
+	{
+		BLOCXX_THROW(OpenWBEM::PrivilegeLexerException, "Error, only one instance of openwbem_privconfig_Lexer can exist at a time");
+	}
+	++s_instanceCount;
+
+	std::vector<char> data = std::vector<char>(std::istreambuf_iterator<char>(arg_yyin.rdbuf()), std::istreambuf_iterator<char>());
+	if (data.size() > 0)
+	{
+		yy_switch_to_buffer(yy_scan_bytes(&data[0], data.size()));
+	}
+	else
+	{
+		yy_switch_to_buffer(yy_scan_string(""));
+	}
+}
+
+OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer::~openwbem_privconfig_Lexer()
+{
+	--s_instanceCount;
 }
 
 
 
-void openwbem_privconfig_Lexer::pre_action()
+void OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer::pre_action()
 {
 	m_has_value = false;
 	m_first_line = m_last_line = m_next_line;
@@ -178,7 +214,7 @@ void openwbem_privconfig_Lexer::pre_action()
 	}
 }
 
-void openwbem_privconfig_Lexer::get_location(YYLTYPE & loc) const
+void OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer::get_location(YYLTYPE & loc) const
 {
 	loc.first_column = m_first_column;
 	loc.first_line = m_first_line;
@@ -186,24 +222,7 @@ void openwbem_privconfig_Lexer::get_location(YYLTYPE & loc) const
 	loc.last_line = m_last_line;
 }
 
-void openwbem_privconfig_Lexer::LexerOutput(char const *, int)
-{
-	// Do nothing
-}
-
-namespace
-{
-	struct LexerException
-	{
-	};
-}
-
-void openwbem_privconfig_Lexer::LexerError(char const * msg)
-{
-	throw LexerException();
-}
-
-int openwbem_privconfig_Lexer::include(const OpenWBEM::String& includeParam)
+int OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer::include(const OpenWBEM::String& includeParam)
 {
 	// report an error if the include is recursive
 	for (std::deque<LexerState>::const_iterator i = m_includeStack.begin(); i != m_includeStack.end(); ++i)
@@ -217,7 +236,7 @@ int openwbem_privconfig_Lexer::include(const OpenWBEM::String& includeParam)
 	// first, get the new stream
 	if (!m_includeHandler)
 	{
-		throw LexerException();
+		BLOCXX_THROW(OpenWBEM::PrivilegeLexerException, "include not supported");
 	}
 
 	std::istream* newistr = m_includeHandler->getInclude(includeParam);
@@ -246,12 +265,20 @@ int openwbem_privconfig_Lexer::include(const OpenWBEM::String& includeParam)
 	m_next_line = 1;
 	m_bufferName = includeParam;
 
-	yy_switch_to_buffer( yy_create_buffer( newistr, YY_BUF_SIZE ) );
+	std::vector<char> data = std::vector<char>(std::istreambuf_iterator<char>(newistr->rdbuf()), std::istreambuf_iterator<char>());
+	if (data.size() > 0)
+	{
+		yy_switch_to_buffer(yy_scan_bytes(&data[0], data.size()));
+	}
+	else
+	{
+		yy_switch_to_buffer(yy_scan_string(""));
+	}
 
 	return 0;
 }
 
-bool openwbem_privconfig_Lexer::endInclude()
+bool OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer::endInclude()
 {
 	if (m_includeStack.size() == 0)
 	{
@@ -276,26 +303,23 @@ bool openwbem_privconfig_Lexer::endInclude()
 	return true;
 }
 
-int openwbem_privconfig_lex(
-	YYSTYPE * lvalp, YYLTYPE * llocp, openwbem_privconfig_Lexer * lexerp)
+// static
+int OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer::s_instanceCount = 0;
+
+
+int openwbem_privconfig_lex(YYSTYPE * lvalp, YYLTYPE * llocp, OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer * lexerp)
 {
 	try {
 		//lexerp->set_debug(1);
-		int retval = lexerp->yylex();
+		int retval = openwbem_privconfig_lex_impl(lvalp, llocp, lexerp);
 		if (retval)
 		{
 			lexerp->get_location(*llocp);
-			lvalp->s = 0;
-			if (lexerp->has_value())
-			{
-				lvalp->s = OpenWBEM::SafeCString::str_dup(lexerp->YYText());
-			}
 		}
 		return retval;
 	}
-	catch (LexerException &)
+	catch (OpenWBEM::PrivilegeLexerException &)
 	{
-std::cout << "Caught LexerException. returning SCANNER_ERROR" << std::endl;
 		// Don''t let exception propagate out, as Bison code that calls this
 		// function is not exception-safe at all.
 		lvalp->s = 0;
@@ -303,3 +327,7 @@ std::cout << "Caught LexerException. returning SCANNER_ERROR" << std::endl;
 		return SCANNER_ERROR;
 	}
 }
+
+
+
+

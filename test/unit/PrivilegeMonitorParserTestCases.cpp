@@ -131,13 +131,13 @@ namespace // anonymous
 	bool parsePrivilegeStream(std::istream& s, OpenWBEM::PrivilegeConfig::Privileges& privileges, OpenWBEM::PrivilegeConfig::ParseError error)
 	{
 		TestIncludeHandler tih;
-		openwbem_privconfig_Lexer lex(s, tih, FIRST_PRIV_BUFFER_NAME);
+		PrivilegeConfig::openwbem_privconfig_Lexer lex(s, tih, FIRST_PRIV_BUFFER_NAME);
 		return openwbem_privconfig_parse(&privileges, &error, &lex) == 0;
 	}
 
 	bool parsePrivilegeStreamInclude(std::istream& s, PrivilegeConfig::IncludeHandler& includeHandler, OpenWBEM::PrivilegeConfig::Privileges& privileges, OpenWBEM::PrivilegeConfig::ParseError error)
 	{
-		openwbem_privconfig_Lexer lex(s, includeHandler, FIRST_PRIV_BUFFER_NAME);
+		PrivilegeConfig::openwbem_privconfig_Lexer lex(s, includeHandler, FIRST_PRIV_BUFFER_NAME);
 		return openwbem_privconfig_parse(&privileges, &error, &lex) == 0;
 	}
 

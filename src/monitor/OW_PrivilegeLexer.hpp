@@ -30,25 +30,19 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-// Including FlexLexer.h multiple times with the same definition of the
-// yyFlexLexer symbol causes problems -- the yyFlexLexer class gets defined
-// multiple times.  When this header file is #include'd from O_PrivilegeLexer.ll
-// we omit the #include of FlexLexer.h, as the code flex generates from
-// OW_PrivilegeLexer.ll already already #includes FlexLexer.h.
-//  
-#ifndef OW_PRIVILEGE_LEXER_LL
-#undef yyFlexLexer
-#define yyFlexLexer openwbem_privconfig_FlexLexer
-#include <FlexLexer.h>
-#endif
 #include "OW_config.h"
 #include "OW_CommonFwd.hpp"
 #include "OW_String.hpp"
 #include <deque>
 
 /**
- * @author ???
+ * @author Kevin VanHorn
+ * @author Dan Nuffer
  */
+
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
 
 // these need to be at global scope because flex also declares them.
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
@@ -65,14 +59,21 @@ struct openwbem_privconfig_yyltype
 
 #define YYLTYPE openwbem_privconfig_yyltype
 
-namespace OW_NAMESPACE { namespace PrivilegeConfig { class IncludeHandler; } }
+namespace OW_NAMESPACE
+{
 
-class openwbem_privconfig_Lexer : public yyFlexLexer
+namespace PrivilegeConfig
+{ 
+
+class IncludeHandler;
+
+// This class does not store the entire lexer state. Flex has some global variables it uses to store state.
+// Thus if more than one instance of this class exist simultaneously, they will interfere with each other.
+class openwbem_privconfig_Lexer
 {
 public:
 	openwbem_privconfig_Lexer(std::istream & arg_yyin, OpenWBEM::PrivilegeConfig::IncludeHandler& includeHandler, const OpenWBEM::String& bufferName);
-
-	virtual int yylex();
+	~openwbem_privconfig_Lexer();
 
 	void get_location(YYLTYPE & loc) const;
 
@@ -86,7 +87,10 @@ public:
 	// returns false if no more include buffers are on the stack
 	bool endInclude();
 
-private:
+	// Everything following this comment is not part of the public API of this class, it
+	// should be treated as private, the reason it is public is so the flex generated
+	// lexer can access it.
+public:
 
 	struct LexerState
 	{
@@ -115,9 +119,6 @@ private:
 	std::deque<LexerState> m_includeStack;
 	OpenWBEM::PrivilegeConfig::IncludeHandler* m_includeHandler;
 
-	virtual void LexerOutput(char const *, int);
-	virtual void LexerError(char const * msg);
-
 	void pre_action();
 
 	bool m_has_value;
@@ -128,6 +129,11 @@ private:
 	unsigned m_next_column;
 	unsigned m_next_line;
 	OpenWBEM::String m_bufferName;
+
+	static int s_instanceCount;
 };
+
+}
+}
 
 #endif

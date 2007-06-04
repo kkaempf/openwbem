@@ -338,7 +338,7 @@ public:
 int openwbem_privconfig_parse(
 	OpenWBEM::PrivilegeConfig::Privileges * p_priv,
 	OpenWBEM::PrivilegeConfig::ParseError * p_err,
-	openwbem_privconfig_Lexer * p_lexer
+	OpenWBEM::PrivilegeConfig::openwbem_privconfig_Lexer * p_lexer
 );
 
 

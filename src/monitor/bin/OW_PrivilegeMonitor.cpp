@@ -1279,7 +1279,7 @@ namespace
 		OW_LOG_INFO(logger, Format("Reading privileges from %1(%2)", path, FileSystem::Path::realPath(path)));
 
 		MonitorIncludeHandler mih(configDir);
-		openwbem_privconfig_Lexer lexer(is, mih, path);
+		PrivilegeConfig::openwbem_privconfig_Lexer lexer(is, mih, path);
 		PrivilegeConfig::ParseError err;
 
 		int code = openwbem_privconfig_parse(&privs, &err, &lexer);

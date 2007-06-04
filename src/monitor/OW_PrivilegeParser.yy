@@ -49,6 +49,7 @@ using OpenWBEM::PrivilegeConfig::ExecPatterns;
 using OpenWBEM::PrivilegeConfig::MonitoredUserExecPatterns;
 using OpenWBEM::PrivilegeConfig::ExecArgsPatterns;
 using OpenWBEM::PrivilegeConfig::MonitoredUserExecArgsPatterns;
+using OpenWBEM::PrivilegeConfig::openwbem_privconfig_Lexer;
 using OpenWBEM::Array;
 using OpenWBEM::String;
 using OpenWBEM::PrivilegeConfig::ParseError;
