@@ -54,6 +54,7 @@ private:
 	void testEndTag();
 	void testBadEndTagName();
 	void testMismatchedStartEndTags();
+	void testEmptyDocument();
 };
 
 #endif
