@@ -1057,6 +1057,21 @@ esac
 
 AC_SUBST(DL_LIB)
 
+OW_CHECK_COMPILER_FLAG(Wall,[CXXFLAGS="$CXXFLAGS -Wall"])
+OW_CHECK_COMPILER_FLAG(W,[CXXFLAGS="$CXXFLAGS -W"])
+OW_CHECK_COMPILER_FLAG(Woverloaded-virtual,[CXXFLAGS="$CXXFLAGS -Woverloaded-virtual"])
+OW_CHECK_COMPILER_FLAG(Wno-unused,[CXXFLAGS="$CXXFLAGS -Wno-unused"])
+OW_CHECK_COMPILER_FLAG(Wno-unused-label,[CXXFLAGS="$CXXFLAGS -Wno-unused-label"])
+OW_CHECK_COMPILER_FLAG(Wno-unused-parameter,[CXXFLAGS="$CXXFLAGS -Wno-unused-parameter"])
+OW_CHECK_COMPILER_FLAG(Wno-long-long,[CXXFLAGS="$CXXFLAGS -Wno-long-long"])
+OW_CHECK_COMPILER_FLAG(Wwrite-strings,[CXXFLAGS="$CXXFLAGS -Wwrite-strings"])
+if test "x$OW_NO_WDEPRECATED" = "x1"; then
+	# For OS X which doesn't correctly handle __attribute__(deprecated), so we turn it off
+	OW_CHECK_COMPILER_FLAG(Wno-deprecated,[CXXFLAGS="$CXXFLAGS -Wno-deprecated"])
+fi
+dnl I wish we could enable this, but unfortunately network macros cause it to blow chunks.
+dnl	OW_CHECK_COMPILER_FLAG(Wold-style-cast,[CXXFLAGS="$CXXFLAGS -Wold-style-cast"])
+
 dnl now handle all the --enable configure arguments
 AC_ARG_ENABLE(debug-mode,
 OW_HELP_STRING(--enable-debug-mode,enable debugging mode),
@@ -1066,22 +1081,6 @@ OW_HELP_STRING(--enable-debug-mode,enable debugging mode),
 	CXXFLAGS="$CXXFLAGS -g -D_GLIBCXX_DEBUG"
    CXXBINLINKFLAGS="$CXXBINLINKFLAGS -g"
    CXXSHAREDLIBLINKFLAGS="$CXXSHAREDLIBLINKFLAGS -g"
-
-	OW_CHECK_COMPILER_FLAG(Werror,[CXXFLAGS="$CXXFLAGS -Werror"])
-	OW_CHECK_COMPILER_FLAG(Wall,[CXXFLAGS="$CXXFLAGS -Wall"])
-	OW_CHECK_COMPILER_FLAG(W,[CXXFLAGS="$CXXFLAGS -W"])
-	OW_CHECK_COMPILER_FLAG(Woverloaded-virtual,[CXXFLAGS="$CXXFLAGS -Woverloaded-virtual"])
-	OW_CHECK_COMPILER_FLAG(Wno-unused,[CXXFLAGS="$CXXFLAGS -Wno-unused"])
-	OW_CHECK_COMPILER_FLAG(Wno-unused-label,[CXXFLAGS="$CXXFLAGS -Wno-unused-label"])
-	OW_CHECK_COMPILER_FLAG(Wno-unused-parameter,[CXXFLAGS="$CXXFLAGS -Wno-unused-parameter"])
-	OW_CHECK_COMPILER_FLAG(Wno-long-long,[CXXFLAGS="$CXXFLAGS -Wno-long-long"])
-	OW_CHECK_COMPILER_FLAG(Wwrite-strings,[CXXFLAGS="$CXXFLAGS -Wwrite-strings"])
-	if test "x$OW_NO_WDEPRECATED" = "x1"; then
-		# For OS X which doesn't correctly handle __attribute__(deprecated), so we turn it off
-		OW_CHECK_COMPILER_FLAG(Wno-deprecated,[CXXFLAGS="$CXXFLAGS -Wno-deprecated"])
-	fi
-dnl I wish we could enable this, but unfortunately network macros cause it to blow chunks.
-dnl	OW_CHECK_COMPILER_FLAG(Wold-style-cast,[CXXFLAGS="$CXXFLAGS -Wold-style-cast"])
 ],[
 	CFLAGS="$CFLAGS -DNDEBUG $PLAT_OPTFLAGS"
 	CXXFLAGS="$CXXFLAGS -DNDEBUG $PLAT_OPTFLAGS"
@@ -1089,6 +1088,13 @@ dnl	OW_CHECK_COMPILER_FLAG(Wold-style-cast,[CXXFLAGS="$CXXFLAGS -Wold-style-cast
 	# at -O3 causes some of the libdb code (thus only CFLAGS are set) to be miscompiled.
 	OW_CHECK_COMPILER_FLAG(fno-web,[CFLAGS="$CFLAGS -fno-web"])
 ])
+
+AC_ARG_ENABLE(Werror,
+OW_HELP_STRING(--disable-Werror,disable -Werror flag))
+
+if test "$enable_Werror" != no; then
+	OW_CHECK_COMPILER_FLAG(Werror,[CXXFLAGS="$CXXFLAGS -Werror"])
+fi
 
 dnl Check to see if fake libraries and static services are requested.
 AC_ARG_ENABLE(fake-libs,
