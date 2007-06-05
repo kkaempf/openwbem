@@ -17,16 +17,17 @@ AC_DEFUN([OW_REPLACEMENT_SCRIPT],
 		rm -f $1
 		touch $1
 
-		replacement_makefile_expression='s/\$(\([[^)]]*\))/MAKEFILE_VARIABLE(\1)/g'
+		replacement_at_expression='s/[[$]]@/\\$\@/g'
+		replacement_makefile_expression='s/[[$]][[(]]/MAKEFILE_VARIABLE(/g'
 		replacement_backslash_expression='s/\\/\\\\/g'
 
 		for replacement_variable in ${ac_subst_vars}; do
 			# Evaluate (repeatedly) the variable value until it no longer changes.
 			replacement_value1=
-			replacement_value=`eval printf '%s' "\"\\\${$replacement_variable}\"" | sed -e "${replacement_makefile_expression}" -e "${replacement_backslash_expression}"`
+			replacement_value=`eval printf '%s' "\"\\\${$replacement_variable}\"" | sed -e "${replacement_makefile_expression}" -e "${replacement_backslash_expression}" -e "${replacement_at_expression}"`
 			while test "x${replacement_value1}" != "x${replacement_value}"; do
 				replacement_value1="${replacement_value}"
-				replacement_value=`eval printf '%s' "\"${replacement_value}\"" | sed -e "${replacement_makefile_expression}" -e "${replacement_backslash_expression}"`
+				replacement_value=`eval printf '%s' "\"${replacement_value}\"" | sed -e "${replacement_makefile_expression}" -e "${replacement_backslash_expression}" -e "${replacement_at_expression}"`
 			done
 			# Find a valid sed separator that is not present in the replacement expression.
 			replacement_separator=
