@@ -92,7 +92,7 @@ instance of OpenWBEM_OOPProviderRegistration
 	ClassName = "no";
 	ProviderTypes = { 6 }; // method
 	Process = "@libexecdir@/openwbem/owoopcpp1pr";
-	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=" };
+	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=", "--disable-provider-security-check" };
 	Protocol = "owcpp1";
 	Timeout = "00000000000010.000000:000";
 	MethodProviderLockType = 0;
@@ -105,7 +105,7 @@ instance of OpenWBEM_OOPProviderRegistration
 	ClassName = "no2";
 	ProviderTypes = { 6 }; // method
 	Process = "@libexecdir@/openwbem/owoopcpp1pr";
-	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=" };
+	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=", "--disable-provider-security-check" };
 	Protocol = "owcpp1";
 	Timeout = "00000000000010.000000:000";
 	MethodProviderLockType = 0;
@@ -118,7 +118,7 @@ instance of OpenWBEM_OOPProviderRegistration
 	ClassName = "read";
 	ProviderTypes = { 6 }; // method
 	Process = "@libexecdir@/openwbem/owoopcpp1pr";
-	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=" };
+	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=", "--disable-provider-security-check" };
 	Protocol = "owcpp1";
 	Timeout = "00000000000010.000000:000";
 	MethodProviderLockType = 1;
@@ -131,7 +131,7 @@ instance of OpenWBEM_OOPProviderRegistration
 	ClassName = "write";
 	ProviderTypes = { 6 }; // method
 	Process = "@libexecdir@/openwbem/owoopcpp1pr";
-	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=" };
+	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=", "--disable-provider-security-check" };
 	Protocol = "owcpp1";
 	Timeout = "00000000000010.000000:000";
 	MethodProviderLockType = 2;
@@ -144,7 +144,7 @@ instance of OpenWBEM_OOPProviderRegistration
 	ClassName = "testInProv";
 	ProviderTypes = { 6 }; // method
 	Process = "@libexecdir@/openwbem/owoopcpp1pr";
-	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=" };
+	Args = { "--provider=@provdir@/libmethodLockingTest.@LIB_EXT@", "--logfile=", "--disable-provider-security-check" };
 	Protocol = "owcpp1";
 	Timeout = "00000000000010.000000:000";
 	MethodProviderLockType = 0;

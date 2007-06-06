@@ -7,7 +7,7 @@ instance of OpenWBEM_OOPProviderRegistration
         ClassName = "wqlTestClass2";
         ProviderTypes = {9}; // query
         Process = "@libexecdir@/openwbem/owoopcpp1pr";
-        Args = { "--provider=@provdir@/libtestWQLProv.@LIB_EXT@", "--logfile=" };
+        Args = { "--provider=@provdir@/libtestWQLProv.@LIB_EXT@", "--logfile=", "--disable-provider-security-check" };
         Protocol = "owcpp1";
         Timeout = "00000000000010.000000:000";
 	Persistent = true;
