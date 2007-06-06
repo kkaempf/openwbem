@@ -82,9 +82,8 @@ owlocalhelper@OPENWBEM_LIBRARY_VERSION@_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owlocalhelper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT) 
 
-# Do things a bit differently and statically link to libopenwbem to avoid restrictions with LD_LIBRARY_PATH and setuid binaries.
 owlocalhelper@OPENWBEM_LIBRARY_VERSION@_LDADD = \
-$(top_builddir)/src/common/libopenwbem.a \
+-L$(top_builddir)/src/common -lopenwbem \
 $(Z_LIBS) $(SSL_LIBS) $(BLOCXX_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
