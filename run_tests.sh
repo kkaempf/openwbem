@@ -40,9 +40,24 @@ doATest()
 {
 # TODO: test make rpm in here.
 	CONFIGOPTS=$1
+	pushd $BLOCXX_LOCATION
+	make distclean
+	./bootstrap.sh
+	./configure $CONFIGOPTS --with-blocxx=$BLOCXX_LOCATION
+	make $MAKE_PARALLEL \
+		&& OWLONGTEST=1 make $MAKE_PARALLEL check \
+		&& make distcheck DISTCHECK_CONFIGURE_FLAGS="$CONFIGOPTS"
+	RVAL=$?
+	if [ $RVAL != 0 ]; then
+		echo "doATest failed!  CONFIGOPTS=$CONFIGOPTS"
+		return $RVAL
+	fi
+
+	popd
+
 	make distclean
 	./cvsbootstrap.sh
-	./configure $CONFIGOPTS
+	./configure $CONFIGOPTS --with-blocxx=$BLOCXX_LOCATION
 	killowcimomd
 	make $MAKE_PARALLEL \
 		&& OWLONGTEST=1 make $MAKE_PARALLEL check \
@@ -105,6 +120,7 @@ doTests()
 }
 
 ## MAIN ######################################################################
+BLOCXX_LOCATION=$1
 if doTests; then
 	echo "Success"
 	exit 0
