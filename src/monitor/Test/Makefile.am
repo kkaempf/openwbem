@@ -83,7 +83,7 @@ monitor_test_nopriv_numbers = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
 monitor_test_nopriv_data = \
 $(foreach testnum,$(monitor_test_nopriv_numbers),monitor_test_nopriv.$(testnum).inp monitor_test_nopriv.$(testnum).exceptions)
 
-monitor_test_extensions = cfg inp gold.out test.tgz gold.tgz
+monitor_test_extensions = cfg inp test.tgz gold.tgz
 monitor_exec_test_data = \
 $(foreach ext,$(monitor_test_extensions),monitor_exec_test.0.$(ext))
 monitor_test_data = \
@@ -118,16 +118,16 @@ $(priv_config_test_scripts:%.sh=%.cfg) \
 $(priv_config_test_scripts:%.sh=%.paths) \
 $(priv_config_test_scripts:%.sh=%.execpaths) \
 $(monitor_test_data) \
-$(monitor_test_scripts:%.sh=%.gold.out) \
 monitor_test.nopriv.cfg \
 monitor_test.nopriv.test.tgz \
 $(monitor_exec_test_data) \
-$(monitor_exec_test_scripts:%.sh=%.gold.out) \
 $(user_exec_test_scripts:%.sh=%.cfg) \
 monitor_perl_test.0.inp \
-monitor_perl_test.0.cfg \
-monitor_perl_test.0.gold.out 
+monitor_perl_test.0.cfg
 
+#monitor_perl_test.0.gold.out 
+#$(monitor_exec_test_scripts:%.sh=%.gold.out)
+#$(monitor_test_scripts:%.sh=%.gold.out)
 # $(monitor_test_nopriv_data) 
 # monitor_perl_test_mon.cfg
 
@@ -144,7 +144,8 @@ $(user_exec_test_scripts) \
 monitor_perl_test.0.sh \
 *.inpf \
 montest.inp montest.out \
-userexectest.expected userexectest.out
+userexectest.expected userexectest.out \
+set_environment.sh
 
 
 #
@@ -155,7 +156,7 @@ userexectest.expected userexectest.out
 define read_priv_config_template
 	echo "#!/bin/bash" > $@
 	echo 'echo Running $$0 $$@' >> $@
-	echo ". $(srcdir)/set_environment.sh" >> $@
+	echo ". ./set_environment.sh" >> $@
 	echo "./read_privconfig $(srcdir)/$(@:%.sh=%.cfg) $(srcdir)/$(@:%.sh=%.paths) $(srcdir)/$(@:%.sh=%.execpaths) $(1) > $(@:%.sh=%.out) 2>&1" >> $@
 	echo "/usr/bin/diff $(@:%.sh=%.out) $(srcdir)/$(@:%.sh=%.gold)" >> $@
 	chmod +x $@
@@ -300,3 +301,4 @@ local-scripts: $(helper_scripts)
 all-local: local-scripts
 
 include $(top_srcdir)/Makefile-replacement.inc
+

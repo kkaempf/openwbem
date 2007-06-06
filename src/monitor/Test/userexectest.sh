@@ -4,7 +4,7 @@
 set -e
 set -o nounset # treat undefined variables as errors, not as null
 
-. `dirname $0`/set_environment.sh
+. ./set_environment.sh
 thisdir=`pwd`
 
 cfgpath=$1

@@ -238,6 +238,7 @@ $(CXXBINLINKFLAGS) \
 check_SCRIPTS = run_make_check.sh
 EXTRA_DIST = run_make_check.sh.in
 BUILT_SOURCES = $(check_SCRIPTS)
+CLEANFILES = $(BUILT_SOURCES)
 
 TESTS = run_make_check.sh
 

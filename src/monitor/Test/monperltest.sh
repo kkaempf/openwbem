@@ -6,7 +6,7 @@ set -o nounset # treat undefined variables as errors, not as empty string
 
 ulimit -c unlimited
 
-. `dirname $0`/set_environment.sh
+. ./set_environment.sh
 thisdir=`/bin/pwd`
 
 script_cfgpath=$1

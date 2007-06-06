@@ -525,6 +525,8 @@ wqlTestReg.mof.in
 BUILT_SOURCES = \
 wqlTestReg.mof
 
+CLEANFILES = \
+$(BUILT_SOURCES)
 
 include ${top_srcdir}/Makefile-replacement.inc
 

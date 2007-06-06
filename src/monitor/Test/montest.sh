@@ -6,7 +6,7 @@ set -o nounset # treat undefined variables as errors, not as empty string
 
 umask 022
 
-. `dirname $0`/set_environment.sh
+. ./set_environment.sh
 thisdir=`pwd`
 
 cfgpath=$1

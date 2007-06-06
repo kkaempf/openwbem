@@ -15,11 +15,12 @@ Makefile-shared-lib-inst.inc \
 Makefile-replacement.inc \
 openwbem.spec \
 fake_library_creator.sh \
-create_replacement_script.sh \
 generic-company-openwbem.spec.in \
 $(m4_DATA)
 
-CLEANFILES = Doxyfile
+CLEANFILES = \
+Doxyfile \
+replacement_script.sed
 
 clean-local:
 	if [ -n "$(PACKAGE_PREFIX_D)" ]; then \
