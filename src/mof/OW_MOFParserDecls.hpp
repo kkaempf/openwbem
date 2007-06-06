@@ -35,6 +35,7 @@
 #ifndef OW_MOF_PARSER_DECLS_HPP_INCLUDE_GUARD_
 #define OW_MOF_PARSER_DECLS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include <cstdio>
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
