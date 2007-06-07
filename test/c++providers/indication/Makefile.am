@@ -24,9 +24,13 @@ INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/cpp \
 -I$(top_srcdir)/src/provider
 
-SHAREDLIBADD = \
+LOCAL_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/provider -lowprovider
+
+libindicationtest1_PROJECT_LIBS = $(LOCAL_LIBS)
+libindicationtest2_PROJECT_LIBS = $(LOCAL_LIBS)
+
 
 

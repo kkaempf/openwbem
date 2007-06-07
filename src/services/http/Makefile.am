@@ -15,11 +15,15 @@ uninstall-local : uninstall-ow-shared-libs
 EXPORT_PREFIX=createService
 
 OW_SHARED_LIBS = libowservicehttp.$(LIB_EXT)
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+
+libowservicehttp_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/monitor -lowprivman \
-$(SSL_LIBS)
+-L$(top_builddir)/src/monitor -lowprivman
+
+libowservicehttp_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS) \
+$(SSL_LIBS) $(Z_LIBS)
 
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
@@ -68,7 +72,6 @@ OW_ServicesHttpFwd.hpp \
 OW_SPNEGOAuthentication.hpp \
 $(DIGEST_HEADER_FILES)
 
-
 # owlocalhelper rules
 owlocalhelperbin_PROGRAMS = owlocalhelper@OPENWBEM_LIBRARY_VERSION@
 owlocalhelperbindir = $(libexecdir)/openwbem
@@ -78,15 +81,12 @@ owlocalhelper_main.cpp \
 OW_LocalAuthenticationCommon.cpp \
 OW_LocalAuthenticationCommon.hpp
 
-owlocalhelper@OPENWBEM_LIBRARY_VERSION@_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owlocalhelper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT) 
+# Do things a bit differently and statically link to libopenwbem to avoid
+# restrictions with LD_LIBRARY_PATH and setuid binaries.
+owlocalhelper@OPENWBEM_LIBRARY_VERSION@_EXTERNAL_LIBS = \
+$(STATIC_LINK_FLAGS) -L$(top_builddir)/src/common -lopenwbem $(CURRENT_LINK_MODE_FLAGS) \
+$(Z_LIBS) $(SSL_LIBS) $(BLOCXX_LIBS)
 
-# Do things a bit differently and statically link to libopenwbem to avoid restrictions with LD_LIBRARY_PATH and setuid binaries.
-owlocalhelper@OPENWBEM_LIBRARY_VERSION@_LDADD = \
-$(top_builddir)/src/common/libopenwbem.a \
-$(Z_LIBS) $(SSL_LIBS) $(BLOCXX_LIBS) \
-$(BINLINKAPPENDFLAGS)
 
 
 
@@ -107,11 +107,15 @@ if RPATH_PREFERS_FIRST_OPTION
 # HPUX (at least on parisc), unlike every most other platforms, uses only the
 # first occurance of the rpath flags on the link line.  The others all seem to
 # take the last occurance.
-vas2_link_flags=$(vas2_rpath_flag) $(CXXBINLINKFLAGS)
-vas3_link_flags=$(vas3_rpath_flag) $(CXXBINLINKFLAGS)
+vas2_early_flags=$(vas2_rpath_flag)
+vas2_late_flags=
+vas3_early_flags=$(vas3_rpath_flag)
+vas3_late_flags=
 else
-vas2_link_flags=$(CXXBINLINKFLAGS) $(vas2_rpath_flag)
-vas3_link_flags=$(CXXBINLINKFLAGS) $(vas3_rpath_flag)
+vas2_early_flags=
+vas2_late_flags=$(vas2_rpath_flag)
+vas3_early_flags=
+vas3_late_flags=$(vas3_rpath_flag)
 endif
 # ###########################################################################
 
@@ -125,17 +129,16 @@ owspnegovas3helperbindir = $(libexecdir)/openwbem
 owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_SOURCES = \
 owspnegovashelper_main.cpp
 
-owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_LDFLAGS = \
--L$(VAS2_LIB_DIR) \
-$(vas2_link_flags) \
--o owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT)
+owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_PROJECT_LIBS =
+$(vas2_early_flags) \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/http/common -lowhttpcommon
 
-owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_LDADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
--L$(top_builddir)/src/http/common -lowhttpcommon \
+owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_EXTERNAL_LIBS = \
+$(vas2_late_flags) \
+$(BLOCXX_LIBS) \
 -L$(VAS2_LIB_DIR) -lvas \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+$(Z_LIBS) $(SSL_LIBS)
 
 owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_CPPFLAGS = -I$(VAS2_INCLUDE_DIR) -DOW_USE_VAS2_API
 endif
@@ -149,17 +152,16 @@ owspnegovas4helperbindir = $(libexecdir)/openwbem
 owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@_SOURCES = \
 owspnegovashelper_main.cpp
 
-owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@_LDFLAGS = \
--L$(VAS3_LIB_DIR) \
-$(vas3_link_flags) \
--o owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT)
+owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@_PROJECT_LIBS = \
+$(vas3_early_flags) \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/http/common -lowhttpcommon
 
-owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@_LDADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
--L$(top_builddir)/src/http/common -lowhttpcommon \
+owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@_EXTERNAL_LIBS = \
+$(vas3_late_flags) \
+$(BLOCXX_LIBS) \
 -L$(VAS3_LIB_DIR) -lvas \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+$(Z_LIBS) $(SSL_LIBS)
 
 owspnegovas4helper@OPENWBEM_LIBRARY_VERSION@_CPPFLAGS = -I$(VAS3_INCLUDE_DIR) -DOW_USE_VAS3_API
 endif
@@ -172,15 +174,14 @@ owspnegogssapihelperbindir = $(libexecdir)/openwbem
 
 owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@_SOURCES = owspnegogssapihelper_main.cpp
 
-owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@_LDFLAGS = \
-$(KRB5_LDFLAGS) $(GSSAPI_LIBS) $(LIB_resolv) \
--o owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT)
+owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/http/common -lowhttpcommon
 
-owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@_LDADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
--L$(top_builddir)/src/http/common -lowhttpcommon \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@_EXTERNAL_LIBS = \
+$(KRB5_LDFLAGS) $(GSSAPI_LIBS) $(LIB_resolv) \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
 
 owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@_CPPFLAGS = -I$(srcdir) $(KRB5_CPPFLAGS) $(GSSAPI_CPPFLAGS) $(AM_CPPFLAGS) $(DEFS)
 endif
@@ -193,3 +194,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/client \
 -I$(top_srcdir)/src/http/common
+
+
+OW_EXECUTABLES = $(owlocalhelperbin_PROGRAMS) $(owspnegovas3helperbin_PROGRAMS) $(owspnegovas4helperbin_PROGRAMS) $(owspnegogssapihelperbin_PROGRAMS)
+include $(top_srcdir)/Makefile-executable.inc

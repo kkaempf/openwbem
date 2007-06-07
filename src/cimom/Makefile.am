@@ -6,21 +6,20 @@ SUBDIRS = server common indicationserver indicationreplayer embedded
 cimombin_PROGRAMS = owcimomd
 cimombindir = $(sbindir)
 
-owcimomd_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owcimomd$(EXEEXT)
-
-owcimomd_LDADD = \
+owcimomd_PROJECT_LIBS = \
 -L$(top_builddir)/src/cimom/common -lowcimomcommon \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
--L$(top_builddir)/db/db -lowdb \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/db/db -lowdb
+
+owcimomd_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS) \
 $(REALTIME_LIBS) \
-$(SSL_LIBS) $(BINLINKAPPENDFLAGS)
+$(SSL_LIBS)
 
 owcimomd_SOURCES = \
 owcimomd_main.cpp 
@@ -57,3 +56,6 @@ install-exec-local:
 clean-local:
 
 endif
+
+OW_EXECUTABLES = $(cimombin_PROGRAMS)
+include $(top_srcdir)/Makefile-executable.inc

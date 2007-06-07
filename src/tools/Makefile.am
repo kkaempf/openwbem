@@ -69,200 +69,186 @@ owcheckrepository
 owdigestgenpass_SOURCES = \
 OW_DigestPasswdGen.cpp
 
-owdigestgenpass_LDADD = \
-libtoolscommon.a \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
--L$(top_builddir)/src/http/common -lowhttpcommon \
-$(Z_LIBS) $(SSL_LIBS)\
-$(BINLINKAPPENDFLAGS)
+owdigestgenpass_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/http/common -lowhttpcommon
 
-owdigestgenpass_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owdigestgenpass$(EXEEXT)
+owdigestgenpass_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
+
 
 ### owexecwql
 owexecwql_SOURCES = \
 owexecwql.cpp
 
-owexecwql_LDADD = \
-libtoolscommon.a \
+owexecwql_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS)\
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owexecwql_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owexecwql$(EXEEXT)
+owexecwql_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
+
 
 ### owcreatenamespace
 owcreatenamespace_SOURCES = \
 owcreatenamespace.cpp
 
-owcreatenamespace_LDADD = \
-libtoolscommon.a \
+owcreatenamespace_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owcreatenamespace_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owcreatenamespace$(EXEEXT)
+owcreatenamespace_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
 
 ### owdeletenamespace
 owdeletenamespace_SOURCES = \
 owdeletenamespace.cpp
 
-owdeletenamespace_LDADD = \
-libtoolscommon.a \
+owdeletenamespace_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owdeletenamespace_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owdeletenamespace$(EXEEXT)
+owdeletenamespace_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
 
 ### owcheckrepository
 owcheckrepository_SOURCES = owcheckrepository.cpp
 
-owcheckrepository_LDADD = \
-libtoolscommon.a \
+owcheckrepository_PROJECT_LIBS = \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(SSL_LIBS)\
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owcheckrepository_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owcheckrepository$(EXEEXT)
+owcheckrepository_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(SSL_LIBS)
+
 
 ### owenumnamespace
 owenumnamespace_SOURCES = \
 owenumnamespace.cpp
 
-owenumnamespace_LDADD = \
-libtoolscommon.a \
+owenumnamespace_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owenumnamespace_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owenumnamespace$(EXEEXT)
+owenumnamespace_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
+
 
 ### owenumqualifiers
 owenumqualifiers_SOURCES = \
 owenumqualifiers.cpp
 
-owenumqualifiers_LDADD = \
-libtoolscommon.a \
+owenumqualifiers_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owenumqualifiers_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owenumqualifiers$(EXEEXT)
+owenumqualifiers_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
+
 
 ### owenumclassnames
 owenumclassnames_SOURCES = \
 owenumclassnames.cpp
 
-owenumclassnames_LDADD = \
-libtoolscommon.a \
+owenumclassnames_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owenumclassnames_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owenumclassnames$(EXEEXT)
+owenumclassnames_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
+
 
 ### owenumclasses
 owenumclasses_SOURCES = \
 owenumclasses.cpp
 
-owenumclasses_LDADD = \
-libtoolscommon.a \
+owenumclasses_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owenumclasses_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owenumclasses$(EXEEXT)
+owenumclasses_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
+
 
 ### owenuminstances
 owenuminstances_SOURCES = \
 owenuminstances.cpp
 
-owenuminstances_LDADD = \
-libtoolscommon.a \
+owenuminstances_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owenuminstances_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owenuminstances$(EXEEXT)
+owenuminstances_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
+
 
 ### owenuminstancenames
 owenuminstancenames_SOURCES = \
 owenuminstancenames.cpp
 
-owenuminstancenames_LDADD = \
-libtoolscommon.a \
+owenuminstancenames_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owenuminstancenames_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owenuminstancenames$(EXEEXT)
+owenuminstancenames_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
+
 
 ### owcimindicationlistener
 owcimindicationlistener_SOURCES = \
 owcimindicationlistener.cpp
 
-owcimindicationlistener_LDADD = \
-libtoolscommon.a \
+owcimindicationlistener_PROJECT_LIBS = \
 -L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/http/client -lowhttpclient \
@@ -270,105 +256,96 @@ libtoolscommon.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owcimindicationlistener_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owcimindicationlistener$(EXEEXT)
+owcimindicationlistener_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
+
 
 ### owrepositorydump
 owrepositorydump_SOURCES = \
 owrepositorydump.cpp
 
-owrepositorydump_LDADD = \
-libtoolscommon.a \
+owrepositorydump_PROJECT_LIBS = \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+-L$(top_builddir)/src/common -lopenwbem
+
+owrepositorydump_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
 
-owrepositorydump_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owrepositorydump$(EXEEXT)
 
 ### owgetclass
 owgetclass_SOURCES = \
 owgetclass.cpp
 
-owgetclass_LDADD = \
-libtoolscommon.a \
+owgetclass_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owgetclass_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owgetclass$(EXEEXT)
+owgetclass_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
 
 
 ### owgetinstance
 owgetinstance_SOURCES = \
 owgetinstance.cpp
 
-owgetinstance_LDADD = \
-libtoolscommon.a \
+owgetinstance_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owgetinstance_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owgetinstance$(EXEEXT)
+owgetinstance_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
 
 
 ### owdeleteinstance
 owdeleteinstance_SOURCES = \
 owdeleteinstance.cpp
 
-owdeleteinstance_LDADD = \
-libtoolscommon.a \
+owdeleteinstance_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owdeleteinstance_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owdeleteinstance$(EXEEXT)
+owdeleteinstance_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
 
 
 ### owinvokemethod
 owinvokemethod_SOURCES = \
 owinvokemethod.cpp
 
-owinvokemethod_LDADD = \
-libtoolscommon.a \
+owinvokemethod_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-owinvokemethod_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owinvokemethod$(EXEEXT)
-
+owinvokemethod_EXTERNAL_LIBS = \
+libtoolscommon.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
 
 
 INCLUDES = \
@@ -383,3 +360,5 @@ INCLUDES = \
 -I$(top_srcdir)/src/cimxmllistener \
 -I$(top_srcdir)/src/services/http \
 -I$(top_srcdir)/src/repositories/hdb
+
+include $(top_srcdir)/Makefile-executable.inc

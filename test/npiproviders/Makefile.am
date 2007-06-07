@@ -31,5 +31,6 @@ SampleProvider.c
 INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/npi/common 
 
-SHAREDLIBADD = \
+
+libsampleprovider_PROJECT_LIBS = \
 -L$(top_builddir)/src/providerifcs/npi/common -lnpisupport

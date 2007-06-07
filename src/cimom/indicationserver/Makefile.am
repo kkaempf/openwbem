@@ -9,14 +9,17 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 noinst_LIBRARIES = libowindicationserver.a
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+libowindicationserver_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/cimom/common -lowcimomcommon \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb
+
+libowindicationserver_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 OW_SHARED_LIBS = libowindicationserver.$(LIB_EXT)
 thelibdir = $(libdir)/openwbem

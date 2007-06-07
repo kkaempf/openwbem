@@ -21,10 +21,13 @@ LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 libowprovinstCIM_NamespaceInManager_a_SOURCES = \
 OW_provinstCIM_NamespaceInManager.cpp
 
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+libowprovinstCIM_NamespaceInManager_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
+
+libowprovinstCIM_NamespaceInManager_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

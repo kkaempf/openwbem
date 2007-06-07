@@ -11,12 +11,20 @@ uninstall-local : uninstall-ow-shared-libs
 EXPORT_PREFIX=createAuthenticator
 
 OW_SHARED_LIBS = libpamauthentication.$(LIB_EXT)
-SHAREDLIBADD = -lpam -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
+
+
+libpamauthentication_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem
+
+libpamauthentication_EXTERNAL_LIBS = \
+-lpam \
+$(BLOCXX_LIBS)
+
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 noinst_LIBRARIES = \
-	libpamauthentication.a 
+libpamauthentication.a
 
 #install to here
 thelibdir = $(libdir)

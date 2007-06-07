@@ -9,8 +9,8 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 owstatlib_LIBRARIES = libowembeddedcimom.a
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+libowembeddedcimom_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
@@ -18,6 +18,8 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/cimom/common -lowcimomcommon \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
 
+libowembeddedcimom_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

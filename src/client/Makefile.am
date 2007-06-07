@@ -9,11 +9,15 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-SHAREDLIBADD = \
--L$(top_builddir)/src/common/ -lopenwbem $(BLOCXX_LIBS) \
+libowclient_PROJECT_LIBS = \
+-L$(top_builddir)/src/common/ -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
--L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/xml -lowxml
+
+libowclient_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS) \
+$(SSL_LIBS) $(Z_LIBS) \
 $(SLP_LIB)
 
 owstatlib_LIBRARIES = libowclient.a

@@ -8,7 +8,9 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libopenwbem.$(LIB_EXT)
-SHAREDLIBADD = $(DL_LIB) $(SSL_LIBS) $(BLOCXX_LIBS)
+libopenwbem_EXTERNAL_LIBS = \
+$(DL_LIB) $(SSL_LIBS) $(BLOCXX_LIBS)
+
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 MAKEDYLIB=1
@@ -24,7 +26,7 @@ owstatlibdir = $(thelibdir)
 # Shouldn't depend on anything not in common. DON'T ADD ANYTHING TO THIS LIST!
 INCLUDES = \
 -I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/ifcs 
+-I$(top_srcdir)/src/ifcs
 
 
 libopenwbem_a_SOURCES =	\

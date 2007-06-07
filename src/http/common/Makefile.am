@@ -9,9 +9,13 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 owstatlib_LIBRARIES = libowhttpcommon.a
-SHAREDLIBADD = -L$(top_builddir)/src/common/ -lopenwbem $(BLOCXX_LIBS) $(Z_LIBS)
 
 OW_SHARED_LIBS = libowhttpcommon.$(LIB_EXT)
+
+libowhttpcommon_PROJECT_LIBS = \
+-L$(top_builddir)/src/common/ -lopenwbem
+libowhttpcommon_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS) $(SSL_LIBS) $(Z_LIBS)
 
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)

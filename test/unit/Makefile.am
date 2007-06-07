@@ -19,29 +19,22 @@ endif
 noinst_PROGRAMS = $(PROGS)
 #check_PROGRAMS = unitMain
 
-
-MemTracerTest_LDADD = \
+MemTracerTest_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
--L$(top_builddir)/src/ -lopenwbem $(BLOCXX_LIBS)  \
-$(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/ -lopenwbem $(BLOCXX_LIBS)
 
-MemTracerTest_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o MemTracerTest$(EXEEXT)
+MemTracerTest_EXTERNAL_LIBS = \
+$(SSL_LIBS)
 
 MemTracerTest_SOURCES = \
 MemTracerTest.cpp
 
-runMultiProcessLogger_LDADD = \
+runMultiProcessLogger_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
--L$(top_builddir)/src/ -lopenwbem $(BLOCXX_LIBS)  \
-$(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/ -lopenwbem $(BLOCXX_LIBS)
 
-runMultiProcessLogger_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o runMultiProcessLogger$(EXEEXT)
+runMultiProcessLogger_EXTERNAL_LIBS = \
+$(SSL_LIBS)
 
 runMultiProcessLogger_SOURCES = \
 runMultiProcessLogger.cpp
@@ -208,8 +201,7 @@ else
 REPLIBFLAGS=
 endif
 
-unitMain_LDADD = \
--L$(top_builddir)/test/CppUnit -lCppUnit \
+unitMain_PROJECT_LIBS = \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/client -lowclient \
@@ -225,15 +217,13 @@ unitMain_LDADD = \
 $(REPLIBFLAGS) \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
+
+# CppUnit is listed here because as a static object, it must occur *AFTER* the objects.
+unitMain_EXTERNAL_LIBS = \
+-L$(top_builddir)/test/CppUnit -lCppUnit \
 $(SSL_LIBS) $(Z_LIBS) \
-$(REALTIME_LIBS) \
-$(BINLINKAPPENDFLAGS)
-
-
-unitMain_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o unitMain$(EXEEXT)
+$(REALTIME_LIBS)
 
 check_SCRIPTS = run_make_check.sh
 EXTRA_DIST = run_make_check.sh.in
@@ -241,22 +231,8 @@ BUILT_SOURCES = $(check_SCRIPTS)
 
 TESTS = run_make_check.sh
 
-exitWithSignal_LDADD = \
-$(BINLINKAPPENDFLAGS)
-
-exitWithSignal_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o exitWithSignal$(EXEEXT)
-
 exitWithSignal_SOURCES = \
 exitWithSignal.cpp
-
-fillOutputBuffer_LDADD = \
-$(BINLINKAPPENDFLAGS)
-
-fillOutputBuffer_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o fillOutputBuffer$(EXEEXT)
 
 fillOutputBuffer_SOURCES = \
 fillOutputBuffer.cpp
@@ -268,7 +244,12 @@ MAKEBUNDLE=1
 OW_SHARED_LIBS = libLazyGlobalTestLibrary.$(LIB_EXT)
 
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
-SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
+
+libLazyGlobalTestLibrary_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem
+
+libLazyGlobalTestLibrary_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 noinst_LIBRARIES = libLazyGlobalTestLibrary.a
 libLazyGlobalTestLibrary_a_SOURCES = OW_LazyGlobalTestLibrary.cpp
@@ -280,3 +261,4 @@ all-local: all-ow-shared-libs local-scripts
 clean-local: clean-ow-shared-libs
 
 include $(top_srcdir)/Makefile-replacement.inc
+include $(top_srcdir)/Makefile-executable.inc

@@ -58,8 +58,8 @@ INCLUDES = \
 -I$(top_srcdir)/src/common/socket \
 -I$(top_srcdir)/src/cimom/common
 
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+LOCAL_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/provider -lowprovider \
@@ -67,3 +67,17 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient
+
+EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
+
+liblaptopbat_PROJECT_LIBS = $(LOCAL_LIBS)
+liblaptopbat_EXTERNAL_LIBS = $(EXTERNAL_LIBS)
+liblinuxprocess_PROJECT_LIBS = $(LOCAL_LIBS)
+liblinuxprocess_EXTERNAL_LIBS = $(EXTERNAL_LIBS)
+librpmip_PROJECT_LIBS = $(LOCAL_LIBS)
+librpmip_EXTERNAL_LIBS = $(EXTERNAL_LIBS)
+libtestinstance_PROJECT_LIBS = $(LOCAL_LIBS)
+libtestinstance_EXTERNAL_LIBS = $(EXTERNAL_LIBS)
+libinfiniteip_PROJECT_LIBS = $(LOCAL_LIBS)
+libinfiniteip_EXTERNAL_LIBS = $(EXTERNAL_LIBS)

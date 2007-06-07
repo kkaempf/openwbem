@@ -13,9 +13,8 @@ noinst_LIBRARIES = libowprovpollUnloader.a
 
 thelibdir = $(pkglibdir)/c++providers
 
-OW_SHARED_LIBS = libowprovpollUnloader.$(LIB_EXT)
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+libowprovpollUnloader_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/cimom/server -lowserver \
@@ -23,6 +22,11 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb
+
+libowprovpollUnloader_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
+
+OW_SHARED_LIBS = libowprovpollUnloader.$(LIB_EXT)
 
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)

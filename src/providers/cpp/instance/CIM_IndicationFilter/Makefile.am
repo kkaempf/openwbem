@@ -21,14 +21,17 @@ LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 libowprovinstCIM_IndicationFilter_a_SOURCES = \
 OW_provinstCIM_IndicationFilter.cpp
 
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+libowprovinstCIM_IndicationFilter_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/cimom/common -lowcimomcommon \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb
+
+libowprovinstCIM_IndicationFilter_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

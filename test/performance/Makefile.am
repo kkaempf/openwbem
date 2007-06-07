@@ -5,12 +5,10 @@ Time_pthread_once \
 TimeAtomicOps
 
 # TimeString
-TimeString_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o TimeString$(EXEEXT)
+TimeString_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
 
-TimeString_LDADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+TimeString_EXTERNAL_LIBS = \
 $(Z_LIBS) $(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
 
@@ -19,12 +17,10 @@ TimeString.cpp
 
 
 # TimeFile
-TimeFile_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o TimeFile$(EXEEXT)
+TimeFile_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
 
-TimeFile_LDADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+TimeFile_EXTERNAL_LIBS = \
 $(Z_LIBS) $(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
 
@@ -33,11 +29,7 @@ TimeFile.cpp
 
 
 # Time_pthread_once
-Time_pthread_once_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o Time_pthread_once$(EXEEXT)
-
-Time_pthread_once_LDADD = \
+Time_pthread_once_EXTERNAL_LIBS = \
 $(top_builddir)/src/common/libopenwbem.a \
 $(Z_LIBS) $(SSL_LIBS) $(BLOCXX_LIBS) \
 $(BINLINKAPPENDFLAGS)
@@ -47,11 +39,7 @@ Time_pthread_once.cpp \
 PerformanceCommon.hpp
 
 # TimeAtomicOps
-TimeAtomicOps_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o TimeAtomicOps$(EXEEXT)
-
-TimeAtomicOps_LDADD = \
+TimeAtomicOps_EXTERNAL_LIBS = \
 $(top_builddir)/src/common/libopenwbem.a \
 $(Z_LIBS) $(SSL_LIBS) $(BLOCXX_LIBS) \
 $(BINLINKAPPENDFLAGS)
@@ -66,3 +54,4 @@ INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/cim
 
+include $(top_srcdir)/Makefile-executable.inc

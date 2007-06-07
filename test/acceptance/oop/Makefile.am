@@ -41,7 +41,15 @@ INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/cpp \
 -I$(top_srcdir)/src/provider
 
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+LOCAL_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
+
+EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
+
+libooptest_PROJECT_LIBS = $(LOCAL_LIBS)
+libooptest_EXTERNAL_LIBS = $(EXTERNAL_LIBS)
+liboopassoctest_PROJECT_LIBS = $(LOCAL_LIBS)
+liboopassoctest_EXTERNAL_LIBS = $(EXTERNAL_LIBS)

@@ -35,19 +35,17 @@ testMethodLocking_SOURCES = \
 testMethodLocking_main.cpp \
 testMethodLocking.cpp
 
-testMethodLocking_LDADD = \
+testMethodLocking_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/wql -lowwql \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(SSL_LIBS) $(Z_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
-testMethodLocking_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o testMethodLocking$(EXEEXT)
+testMethodLocking_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS) \
+$(SSL_LIBS) $(Z_LIBS)
 
 CLEANFILES = methodLockingTest.mof
 
@@ -59,8 +57,12 @@ INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/cpp \
 -I$(top_srcdir)/src/provider
 
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+libmethodLockingTest_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
 
+libmethodLockingTest_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
+
+include $(top_srcdir)/Makefile-executable.inc

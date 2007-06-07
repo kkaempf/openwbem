@@ -21,10 +21,13 @@ LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 libowprovinstOpenWBEM_ConfigSettingData_a_SOURCES = \
 OW_provinstOpenWBEM_ConfigSettingData.cpp
 
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+libowprovinstOpenWBEM_ConfigSettingData_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
+
+libowprovinstOpenWBEM_ConfigSettingData_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

@@ -5,7 +5,8 @@ clean-local : clean-ow-shared-libs
 
 
 noinst_LIBRARIES = libassociatortest.a 
-SHAREDLIBADD = \
+
+libassociatortest_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc

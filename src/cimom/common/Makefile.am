@@ -9,14 +9,17 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 owstatlib_LIBRARIES = libowcimomcommon.a
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+
+libowcimomcommon_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
 
+libowcimomcommon_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

@@ -19,18 +19,13 @@ owmofc.cpp \
 OW_MOFCompCIMOMHandle.cpp \
 OW_MOFCompCIMOMHandle.hpp
 
-owmofc_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owmofc$(EXEEXT) 
-
 if ENABLE_DB4_REPOSITORY
 REPLIBFLAGS=-L$(top_builddir)/src/repositories/tdbcr -lowrepositorytdbcr
 else
 REPLIBFLAGS=-L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb
 endif
 
-
-owmofc_LDADD = \
+owmofc_PROJECT_LIBS = \
 -L$(top_builddir)/src/mof -lowmofc \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
@@ -38,7 +33,10 @@ owmofc_LDADD = \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 $(REPLIBFLAGS) \
 -L$(top_builddir)/db/db -lowdb \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/src/common -lopenwbem
 
+owmofc_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
+
+include $(top_srcdir)/Makefile-executable.inc

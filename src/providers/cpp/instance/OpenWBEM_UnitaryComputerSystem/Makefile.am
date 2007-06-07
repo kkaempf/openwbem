@@ -21,10 +21,13 @@ LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 libowprovinstOpenWBEM_UnitaryComputerSystem_a_SOURCES = \
 OW_provinstOpenWBEM_UnitaryComputerSystem.cpp
 
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+libowprovinstOpenWBEM_UnitaryComputerSystem_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
+
+libowprovinstOpenWBEM_UnitaryComputerSystem_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

@@ -57,4 +57,12 @@ TESTS = acceptance.sh
 
 noinst_PROGRAMS = check_security
 check_security_SOURCES = check_security.cpp
-check_security_LDFLAGS = $(CXXBINLINKFLAGS) -o check_security$(EXEEXT) -L$(top_builddir)/src/common $(BLOCXX_LIBS) -lopenwbem $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
+
+check_security_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem
+
+check_security_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS) \
+$(SSL_LIBS)
+
+include $(top_srcdir)/Makefile-executable.inc

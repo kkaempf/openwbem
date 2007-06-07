@@ -22,10 +22,13 @@ libowprovinstOW_NameSpace_a_SOURCES = \
 OW_NameSpaceProvider.hpp \
 OW_NameSpaceProvider.cpp
 
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+libowprovinstOW_NameSpace_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
+
+libowprovinstOW_NameSpace_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

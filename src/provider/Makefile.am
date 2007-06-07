@@ -12,7 +12,12 @@ OW_SHARED_LIBS = libowprovider.$(LIB_EXT)
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 owstatlib_LIBRARIES = libowprovider.a
-SHAREDLIBADD = -L$(top_builddir)/src/common/ -lopenwbem $(BLOCXX_LIBS)
+
+libowprovider_PROJECT_LIBS = \
+-L$(top_builddir)/src/common/ -lopenwbem
+
+libowprovider_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)

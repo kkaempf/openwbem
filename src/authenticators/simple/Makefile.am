@@ -10,7 +10,13 @@ uninstall-local : uninstall-ow-shared-libs
 EXPORT_PREFIX=createAuthenticator
 
 OW_SHARED_LIBS = libsimpleauthentication.$(LIB_EXT)
-SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
+
+libsimpleauthentication_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem
+
+libsimpleauthentication_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
+
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 

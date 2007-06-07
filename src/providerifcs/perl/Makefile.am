@@ -11,7 +11,8 @@ uninstall-local : uninstall-ow-shared-libs
 
 noinst_LIBRARIES = libperlprovifc.a
 OW_SHARED_LIBS = libperlprovifc.$(LIB_EXT)
-SHAREDLIBADD = \
+
+libperlprovifc_PROJECT_LIBS = \
 -L$(top_builddir)/src/providerifcs/npi/common -lnpisupport
 
 # increment this number every time a release breaks binary compatibility

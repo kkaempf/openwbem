@@ -22,7 +22,12 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 OW_SHARED_LIBS = libowrequesthandlercimxml.$(LIB_EXT)
-SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) -L$(top_builddir)/src/xml -lowxml 
+libowrequesthandlercimxml_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/xml -lowxml
+
+libowrequesthandlercimxml_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)

@@ -16,8 +16,8 @@ owstatlibdir = $(thelibdir)
 
 OW_SHARED_LIBS = libowoopcpp1pr.$(LIB_EXT)
 
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+libowoopcpp1pr_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
@@ -25,6 +25,9 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/requesthandlers/binary -lowrequesthandlerbinary
+
+libowoopcpp1pr_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)

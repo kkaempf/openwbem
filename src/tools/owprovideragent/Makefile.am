@@ -1,10 +1,6 @@
 sbin_PROGRAMS = owprovideragent
 
-owprovideragent_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owprovideragent$(EXEEXT)
-
-owprovideragent_LDADD = \
+owprovideragent_PROJECT_LIBS = \
 -L$(top_builddir)/src/provideragent -lowprovideragent \
 -L$(top_builddir)/src/requesthandlers/cimxml -lowrequesthandlercimxml \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
@@ -16,9 +12,12 @@ owprovideragent_LDADD = \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+-L$(top_builddir)/src/common -lopenwbem
+
+owprovideragent_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS) \
 $(REALTIME_LIBS) \
-$(SSL_LIBS) $(Z_LIBS) $(BINLINKAPPENDFLAGS)
+$(SSL_LIBS) $(Z_LIBS)
 
 owprovideragent_SOURCES = \
 owprovideragent_main.cpp 
@@ -34,3 +33,4 @@ INCLUDES = \
 -I$(top_srcdir)/src/services/http \
 -I$(top_srcdir)/src/provideragent
 
+include $(top_srcdir)/Makefile-executable.inc

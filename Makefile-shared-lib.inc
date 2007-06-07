@@ -40,13 +40,16 @@ if !OW_STATIC_LINKING
 endif # !OW_STATIC_LINKING
 endif # AIX
 
+project_libs_var = $($(basename $(@))_PROJECT_LIBS)
+external_libs_var = $($(basename $(@))_EXTERNAL_LIBS)
+
 %.so %.sl : %.a
 	rm -rf $(TMPLIBDIR)
 	mkdir $(TMPLIBDIR)
 	cd $(TMPLIBDIR) && \
 	$(AR) x ../$<
 	$(DO_CREATE_EXPORTS)
-	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
+	$(CXXLINK) -o $(SOFILENAME) $(CXXSHAREDLIBLINKFLAGS_START) $(TMPLIBDIR)/*.o $(project_libs_var) $(COMMON_LDFLAGS) $(external_libs_var) $(SHAREDLIBADD)
 	$(DO_SHARED_LIBRARY_FIXUP)
 	rm -rf $@ $(TMPLIBDIR) $(@:%.so=%.exp)
 	ln -s $(SOFILENAME) $@

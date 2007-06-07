@@ -9,14 +9,24 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 OW_SHARED_LIBS = libowhttpxmllistener.$(LIB_EXT) libowcimxmllistener.$(LIB_EXT)
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+
+common_project_libs = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/services/http -lowservicehttp
+
+common_external_libs = \
+$(BLOCXX_LIBS)
+
+libowhttpxmllistener_PROJECT_LIBS = $(common_project_libs)
+libowhttpxmllistener_EXTERNAL_LIBS = $(common_external_libs)
+libowcimxmllistener_PROJECT_LIBS = $(common_project_libs)
+libowcimxmllistener_EXTERNAL_LIBS = $(common_external_libs)
+
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 

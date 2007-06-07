@@ -7,16 +7,19 @@ include $(top_srcdir)/Makefile-shared-lib-inst.inc
 install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
-
-OW_SHARED_LIBS = owclient.$(LIB_EXT)
-SHAREDLIBADD = \
-$(LIBS) \
--L../common -lopenwbem $(BLOCXX_LIBS) \
+libowclient_PROJECT_LIBS =
+-L../common -lopenwbem \
 -L../client -lowclient \
 -L../xml -lowxml \
 -L../http/common -lowhttpcommon \
--L../http/client -lowhttpclient \
+-L../http/client -lowhttpclient
+
+libowclient_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS) \
+$(LIBS) \
 -lz -lslp -lssl -lcrypto
+
+OW_SHARED_LIBS = owclient.$(LIB_EXT)
 
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)

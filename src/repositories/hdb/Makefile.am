@@ -17,9 +17,12 @@ LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 owstatlib_LIBRARIES = \
 libowrepositoryhdb.a
 
-SHAREDLIBADD = \
--L$(top_builddir)/src/common/ -lopenwbem $(BLOCXX_LIBS) \
+libowrepositoryhdb_PROJECT_LIBS = \
+-L$(top_builddir)/src/common/ -lopenwbem \
 -L$(top_builddir)/db/db -lowdb
+
+libowrepositoryhdb_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)

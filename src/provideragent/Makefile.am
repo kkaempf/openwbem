@@ -9,8 +9,9 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 OW_SHARED_LIBS = libowprovideragent.$(LIB_EXT)
-SHAREDLIBADD = \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+
+libowprovideragent_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/provider -lowprovider \
@@ -18,6 +19,9 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/services/http -lowservicehttp
+
+libowprovideragent_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS)
 
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)

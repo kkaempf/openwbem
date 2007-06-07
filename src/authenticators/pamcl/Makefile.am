@@ -12,16 +12,17 @@ uninstall-local : uninstall-ow-shared-libs
 
 owpamauthbin_PROGRAMS = OW_PAMAuth
 
-OW_PAMAuth_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o OW_PAMAuth
-
 owpamauthbindir = $(libexecdir)/openwbem
 OW_PAMAuth_SOURCES = OW_PAMAuthSA.cpp
-OW_PAMAuth_LDADD = -lpam $(DL_LIB) $(SSL_LIBS) $(BINLINKAPPENDFLAGS) -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
+OW_PAMAuth_PROJECT_LIBS = -L$(top_builddir)/src/common -lopenwbem
+OW_PAMAuth_EXTERNAL_LIBS = -lpam $(DL_LIB) $(SSL_LIBS) $(BLOCXX_LIBS)
 
 OW_SHARED_LIBS = libpamclauthentication.$(LIB_EXT)
-SHAREDLIBADD = -lpam -L$(top_builddir)/src/common/ -lopenwbem $(BLOCXX_LIBS) -L$(top_builddir)/src/monitor -lowprivman
+libpamclauthentication_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/monitor -lowprivman
+
+libpamclauthentication_EXTERNAL_LIBS = -lpam  $(BLOCXX_LIBS)
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
@@ -54,3 +55,5 @@ EXTRA_DIST = \
 OW_PAMAuthSA.cpp \
 OW_LinuxPAMAuthenticationCL.cpp
 
+OW_EXECUTABLES=$(owpamauthbin_PROGRAMS)
+include $(top_srcdir)/Makefile-executable.inc

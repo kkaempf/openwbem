@@ -17,10 +17,6 @@ OW_SHARED_LIBS = libowcprivman.$(LIB_EXT)
 
 noinst_LIBRARIES = libowcprivman.a
 
-# SHAREDLIBADD = \
-# -L$(top_builddir)/src/monitor -lowprivman \
-# -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS)
-
 LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 libowcprivman_a_SOURCES = \

@@ -7,44 +7,49 @@ read_privconfig montest monexectest userexectest userexecprog \
 perl_launcher mpt_user mpt_mon
 
 read_privconfig_SOURCES = read_privconfig.cpp
-read_privconfig_LDFLAGS = $(CXXBINLINKFLAGS) -o read_privconfig$(EXEEXT)
-read_privconfig_LDADD = $(DFLT_LDADD)
+read_privconfig_PROJECT_LIBS = $(DEFAULT_PROJECT_LIBS)
+read_privconfig_EXTERNAL_LIBS = $(DEFAULT_EXTERNAL_LIBS)
 
 montest_SOURCES = montest.cpp
-montest_LDFLAGS = $(CXXBINLINKFLAGS) -o montest$(EXEEXT)
-montest_LDADD = $(DFLT_LDADD)
+montest_PROJECT_LIBS = $(DEFAULT_PROJECT_LIBS)
+montest_EXTERNAL_LIBS = $(DEFAULT_EXTERNAL_LIBS)
 
 monexectest_SOURCES = monexectest.cpp
-monexectest_LDFLAGS = $(CXXBINLINKFLAGS) -o monexectest$(EXEEXT)
-monexectest_LDADD = $(DFLT_LDADD)
+monexectest_PROJECT_LIBS = $(DEFAULT_PROJECT_LIBS)
+monexectest_EXTERNAL_LIBS = $(DEFAULT_EXTERNAL_LIBS)
 
 userexectest_SOURCES = userexectest.cpp
-userexectest_LDFLAGS = $(CXXBINLINKFLAGS) -o userexectest$(EXEEXT)
-userexectest_LDADD = $(DFLT_LDADD)
+userexectest_PROJECT_LIBS = $(DEFAULT_PROJECT_LIBS)
+userexectest_EXTERNAL_LIBS = $(DEFAULT_EXTERNAL_LIBS)
 
 userexecprog_SOURCES = userexecprog.cpp
-userexecprog_LDFLAGS = $(CXXBINLINKFLAGS) -o userexecprog$(EXEEXT)
-userexecprog_LDADD = $(DFLT_LDADD)
+userexecprog_PROJECT_LIBS = $(DEFAULT_PROJECT_LIBS)
+userexecprog_EXTERNAL_LIBS = $(DEFAULT_EXTERNAL_LIBS)
 
 perl_launcher_SOURCES = perl_launcher.cpp
-perl_launcher_LDFLAGS = $(CXXBINLINKFLAGS) -o perl_launcher$(EXEEXT)
-perl_launcher_LDADD = $(DFLT_LDADD)
+perl_launcher_PROJECT_LIBS = $(DEFAULT_PROJECT_LIBS)
+perl_launcher_EXTERNAL_LIBS = $(DEFAULT_EXTERNAL_LIBS)
 
 mpt_user_SOURCES = mpt_user.cpp
-mpt_user_LDFLAGS = $(CXXBINLINKFLAGS) -o mpt_user$(EXEEXT)
-mpt_user_LDADD = $(BINLINKAPPENDFLAGS)
+mpt_user_PROJECT_LIBS = $(DEFAULT_PROJECT_LIBS)
+mpt_user_EXTERNAL_LIBS =
 
 mpt_mon_SOURCES = mpt_mon.cpp
-mpt_mon_LDFLAGS = $(CXXBINLINKFLAGS) -o mpt_mon$(EXEEXT)
-mpt_mon_LDADD = $(DFLT_LDADD)
+mpt_mon_PROJECT_LIBS = $(DEFAULT_PROJECT_LIBS)
+mpt_mon_EXTERNAL_LIBS = $(DEFAULT_EXTERNAL_LIBS)
 
-AM_CPPFLAGS = -I$(srcdir)/.. -I$(top_srcdir)/src/common \
+AM_CPPFLAGS = \
+-I$(srcdir)/.. \
+-I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/ifcs
 
-DFLT_LDADD = \
-../libowprivman.a -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(Z_LIBS) $(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS) 
+DEFAULT_PROJECT_LIBS = \
+-L$(top_builddir)/src/common -lopenwbem
+
+DEFAULT_EXTERNAL_LIBS = \
+../libowprivman.a \
+$(BLOCXX_LIBS) \
+$(Z_LIBS) $(SSL_LIBS)
 
 if ENABLE_MONITORED_PERL_IFC
 PERL_CHECK_S = monitor_perl_test.0.sh
@@ -300,3 +305,4 @@ local-scripts: $(helper_scripts)
 all-local: local-scripts
 
 include $(top_srcdir)/Makefile-replacement.inc
+include $(top_srcdir)/Makefile-executable.inc

@@ -10,11 +10,7 @@ owoopcpp1pr
 
 owoopcpp1prbindir = $(libexecdir)/openwbem
 
-owoopcpp1pr_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owoopcpp1pr$(EXEEXT)
-
-owoopcpp1pr_LDADD = \
+owoopcpp1pr_PROJECT_LIBS = \
 -L$(top_builddir)/src/oopcpp1pr -lowoopcpp1pr \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/provider -lowprovider \
@@ -24,8 +20,11 @@ owoopcpp1pr_LDADD = \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/requesthandlers/binary -lowrequesthandlerbinary \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(SSL_LIBS) $(Z_LIBS) $(BINLINKAPPENDFLAGS) $(APPARMOR_LIBS)
+-L$(top_builddir)/src/common -lopenwbem
+
+owoopcpp1pr_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS) \
+$(SSL_LIBS) $(Z_LIBS) $(APPARMOR_LIBS)
 
 owoopcpp1pr_SOURCES = \
 owoopcpp1pr_main.cpp
@@ -35,11 +34,7 @@ if ENABLE_CMPI
 
 owoopcmpiprbindir = $(libexecdir)/openwbem
 
-owoopcmpipr_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owoopcmpipr$(EXEEXT)
-
-owoopcmpipr_LDADD = \
+owoopcmpipr_PROJECT_LIBS = \
 -L$(top_builddir)/src/oopcpp1pr -lowoopcpp1pr \
 -L$(top_builddir)/src/providerifcs/cmpi -lcmpiprovifc \
 -L$(top_builddir)/src/providerifcs/cmpi/common -lcmpisupport \
@@ -50,8 +45,11 @@ owoopcmpipr_LDADD = \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/monitor -lowprivman \
 -L$(top_builddir)/src/requesthandlers/binary -lowrequesthandlerbinary \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
-$(SSL_LIBS) $(Z_LIBS) $(BINLINKAPPENDFLAGS) $(APPARMOR_LIBS)
+-L$(top_builddir)/src/common -lopenwbem
+
+owoopcmpipr_EXTERNAL_LIBS = \
+$(BLOCXX_LIBS) \
+$(SSL_LIBS) $(Z_LIBS) $(APPARMOR_LIBS)
 
 owoopcmpipr_SOURCES = \
 owoopcmpipr_main.cpp
@@ -96,3 +94,6 @@ else
 clean-local:
 
 endif
+
+OW_EXECUTABLES = $(owoopcpp1prbin_PROGRAMS)
+include $(top_srcdir)/Makefile-executable.inc
