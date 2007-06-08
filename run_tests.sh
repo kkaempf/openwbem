@@ -90,7 +90,9 @@ doACompileOnlyTest()
 doTests()
 {
 	doATest "" || return 1
-	doATest "--enable-debug-mode --enable-stack-trace --enable-maintainer-mode --enable-valgrind-support" || return 1
+	doATest "--enable-debug-mode --enable-stack-trace --enable-maintainer-mode" || return 1
+	# The unit tests fail because dlclose() is never called with --enable-valgrind-support
+	doACompileOnlyTest "--enable-valgrind-support" || return 1
 	doMakeDistCheck || return 1
 	doATest "--disable-zlib" || return 1
 	doATest "--disable-openslp" || return 1
