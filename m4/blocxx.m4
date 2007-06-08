@@ -24,7 +24,7 @@ AC_DEFUN([OW_BLOCXX_SUPPORT],
 					if test -d ${BLOCXX_LOCATION}/include; then
 						CPPFLAGS="$CPPFLAGS -I$BLOCXX_LOCATION/include"
 					elif test -d ${BLOCXX_LOCATION}/src/blocxx; then
-						CPPFLAGS="$CPPFLAGS -I$BLOCXX_LOCATION/src"
+						CPPFLAGS="$CPPFLAGS -I$BLOCXX_LOCATION/src -I$BLOCXX_LOCATION"
 					else
 						AC_MSG_ERROR([Can't find blocxx include directory])
 					fi
