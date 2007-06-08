@@ -61,7 +61,7 @@ doATest()
 	killowcimomd
 	make $MAKE_PARALLEL \
 		&& OWLONGTEST=1 make $MAKE_PARALLEL check \
-		&& make $MAKE_PARALLEL distcheck DISTCHECK_CONFIGURE_FLAGS="$CONFIGOPTS"
+		&& make $MAKE_PARALLEL distcheck DISTCHECK_CONFIGURE_FLAGS="$CONFIGOPTS --with-blocxx=\"$BLOCXX_LOCATION\""
 
 	RVAL=$?
 	if [ $RVAL != 0 ]; then
