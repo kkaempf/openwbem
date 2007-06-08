@@ -43,10 +43,10 @@ doATest()
 	pushd $BLOCXX_LOCATION
 	make distclean
 	./bootstrap.sh
-	./configure $CONFIGOPTS --with-blocxx=$BLOCXX_LOCATION
+	./configure $CONFIGOPTS
 	make $MAKE_PARALLEL \
-		&& OWLONGTEST=1 make $MAKE_PARALLEL check \
-		&& make distcheck DISTCHECK_CONFIGURE_FLAGS="$CONFIGOPTS"
+		&& make $MAKE_PARALLEL check \
+		&& make $MAKE_PARALLEL distcheck DISTCHECK_CONFIGURE_FLAGS="$CONFIGOPTS"
 	RVAL=$?
 	if [ $RVAL != 0 ]; then
 		echo "doATest failed!  CONFIGOPTS=$CONFIGOPTS"
@@ -57,11 +57,11 @@ doATest()
 
 	make distclean
 	./cvsbootstrap.sh
-	./configure $CONFIGOPTS --with-blocxx=$BLOCXX_LOCATION
+	./configure $CONFIGOPTS --with-blocxx="$BLOCXX_LOCATION"
 	killowcimomd
 	make $MAKE_PARALLEL \
 		&& OWLONGTEST=1 make $MAKE_PARALLEL check \
-		&& make distcheck DISTCHECK_CONFIGURE_FLAGS="$CONFIGOPTS"
+		&& make $MAKE_PARALLEL distcheck DISTCHECK_CONFIGURE_FLAGS="$CONFIGOPTS"
 
 	RVAL=$?
 	if [ $RVAL != 0 ]; then
