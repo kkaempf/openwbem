@@ -49,7 +49,7 @@ doATest()
 		&& make $MAKE_PARALLEL distcheck DISTCHECK_CONFIGURE_FLAGS="$CONFIGOPTS"
 	RVAL=$?
 	if [ $RVAL != 0 ]; then
-		echo "doATest failed!  CONFIGOPTS=$CONFIGOPTS"
+		echo "doATest failed to test blocxx!  CONFIGOPTS=$CONFIGOPTS"
 		return $RVAL
 	fi
 
@@ -73,6 +73,19 @@ doATest()
 doACompileOnlyTest()
 {
 	CONFIGOPTS=$1
+	pushd $BLOCXX_LOCATION
+	make distclean
+	./bootstrap.sh
+	./configure $CONFIGOPTS
+	make $MAKE_PARALLEL
+	RVAL=$?
+	if [ $RVAL != 0 ]; then
+		echo "doACompileOnlyTest failed to build blocxx!  CONFIGOPTS=$CONFIGOPTS"
+		return $RVAL
+	fi
+
+	popd
+
 	make distclean
 	./cvsbootstrap.sh
 	./configure $CONFIGOPTS
