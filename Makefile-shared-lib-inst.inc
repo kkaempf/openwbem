@@ -117,9 +117,9 @@ endef
 install-create-libdir:
 	$(INSTALL_PROGRAM) -d $(DESTDIR)$(thelibdir)
 
-install-ow-shared-lib-%: %
-	@echo "Executing install rule for $^"
-	$(if $(shell test x$(STATIC_SERVICES) = x1 -a x$(NO_FAKE_LIB_INSTALL) = x && echo STATIC), $(call install-static-lib,$^), $(call install-lib-$(LIB_EXT),$^))
+install-ow-shared-lib-%: % install-create-libdir
+	@echo "Executing install rule for $(filter-out install-create-libdir, $^)"
+	$(if $(shell test x$(STATIC_SERVICES) = x1 -a x$(NO_FAKE_LIB_INSTALL) = x && echo STATIC), $(call install-static-lib,$(filter-out install-create-libdir, $^)), $(call install-lib-$(LIB_EXT),$(filter-out install-create-libdir, $^)))
 
 #
 # Install all shared libraries listed in $(OW_SHARED_LIBS) using the above install functions
@@ -128,7 +128,7 @@ install-ow-shared-lib-%: %
 # isn't well-suited to complex loops (individual commands would need trailing
 # semicolons or &&s).
 #
-install-ow-shared-libs: install-create-libdir $(OW_SHARED_LIBS:%=install-ow-shared-lib-%)
+install-ow-shared-libs: $(OW_SHARED_LIBS:%=install-ow-shared-lib-%)
 
 
 
