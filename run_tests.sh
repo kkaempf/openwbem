@@ -25,17 +25,6 @@ killowcimomd()
 	kill $(ps -C owcimomd -o pid=) || true
 }
 
-doMakeDistCheck()
-{
-	killowcimomd
-	make $MAKE_PARALLEL distcheck
-	RVAL=$?
-	if [ $RVAL != 0 ]; then
-		echo "doMakeDistCheck failed!"
-	fi
-	return $RVAL
-}
-
 doATest()
 {
 # TODO: test make rpm in here.
@@ -105,7 +94,6 @@ doTests()
 	doATest "--enable-debug-mode --enable-stack-trace --enable-maintainer-mode" || return 1
 	# The unit tests fail because dlclose() is never called with --enable-valgrind-support
 	doACompileOnlyTest "--enable-valgrind-support" || return 1
-	doMakeDistCheck || return 1
 	doATest "--disable-zlib" || return 1
 	doATest "--disable-openslp" || return 1
 	doACompileOnlyTest "--enable-memory-debug-mode" || return 1
