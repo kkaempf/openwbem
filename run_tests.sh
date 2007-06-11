@@ -88,10 +88,9 @@ doACompileOnlyTest()
 
 	make distclean
 	./cvsbootstrap.sh
-	./configure $CONFIGOPTS
+	./configure $CONFIGOPTS --with-blocxx="$BLOCXX_LOCATION"
 	killowcimomd
-	make $MAKE_PARALLEL \
-		&& make clean
+	make $MAKE_PARALLEL
 	RVAL=$?
 	if [ $RVAL != 0 ]; then
 		echo "doACompileOnlyTest failed!  CONFIGOPTS=$CONFIGOPTS"
