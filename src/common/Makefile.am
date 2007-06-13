@@ -79,7 +79,6 @@ OW_CommonFwd.hpp \
 OW_Condition.hpp \
 OW_ConfigException.hpp \
 OW_ConfigFile.hpp \
-OW_config.h \
 OW_ConfigOpts.hpp \
 OW_COWIntrusiveCountableBase.hpp \
 OW_COWIntrusiveReference.hpp \
