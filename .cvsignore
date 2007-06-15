@@ -15,6 +15,7 @@ stamp-h.in
 config.h.in
 stamp-h
 config.h
+OW_config.h
 conftest*
 openwbem-*.gz
 openwbem-*.bz2
