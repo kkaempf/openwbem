@@ -33,6 +33,7 @@ acceptance.sh_extra_substitutions = \
 	-e 's!@''absolute_srcdir''@!$(shell pwd)/$(top_srcdir)!g' \
 	-e 's!@''absolute_builddir''@!$(shell pwd)/$(top_builddir)!g' \
 	-e 's!@''pkglibdir''@!$(pkglibdir)!g' \
+	-e 's!@''pkgincludedir''@!$(pkgincludedir)!g' \
 	-e 's!@''lib_ext''@!$(LIB_EXT)!g'
 
 all-local: $(check_SCRIPTS)

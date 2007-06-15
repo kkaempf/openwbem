@@ -989,7 +989,7 @@ TestMultiReq()
 
 	echo "Multiple Operations Support Passed."
 
-	grep "define OW_NO_SSL" $TOP_SRCDIR/src/common/OW_config.h > /dev/null 2>&1
+	grep "define OW_NO_SSL" $STAGEDIR/@pkgincludedir@/OW_config.h > /dev/null 2>&1
 	if [ ! "$?" = "0" ]; then
 		echo "Testing HTTPS support..."
 
@@ -1076,7 +1076,7 @@ TestAuth()
 
 	echo "Simple Authentication module and GetFeatures Passed"
 	
-	if grep "define OW_DISABLE_DIGEST" $TOP_SRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
+	if grep "define OW_DISABLE_DIGEST" $STAGEDIR/@pkgincludedir@/OW_config.h > /dev/null 2>&1; then
 		echo "OpenWBEM was not build with Digest support"
 	else
 		EditConfig "s!http_server.allow_digest_authentication = false!http_server.allow_digest_authentication = true!g" 
@@ -1127,7 +1127,7 @@ TestAuth()
 		RestartDaemon
 	fi
 
-	if grep "define OW_HAVE_PAM" $TOP_SRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
+	if grep "define OW_HAVE_PAM" $STAGEDIR/@pkgincludedir@/OW_config.h > /dev/null 2>&1; then
 		# just start with the pam authentication module to make sure it can be loaded.
 		EditConfig "s!owcimomd.authentication_module\(.*\)simple\(.*\)!owcimomd.authentication_module\1pamcl\2!g"
 		RestartDaemon
