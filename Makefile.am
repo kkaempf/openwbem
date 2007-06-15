@@ -64,7 +64,7 @@ rpm: dist
 	rpmbuild --define="_topdir `pwd`/rpmbuild" -ta $(distdir).tar.gz
 
 install-data-local:
-	$(INSTALL_PROGRAM) OW_config.h "$(DESTDIR)$(pkgincludedir)/OW_config.h"
+	$(INSTALL_HEADER) OW_config.h "$(DESTDIR)$(pkgincludedir)/OW_config.h"
 
 uninstall-local:
 	rm -f "$(DESTDIR)$(pkgincludedir)/OW_config.h"
