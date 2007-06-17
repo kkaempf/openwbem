@@ -176,7 +176,7 @@ $(KRB5_LDFLAGS) $(GSSAPI_LIBS) $(LIB_resolv) \
 -o owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@$(EXEEXT)
 
 owspnegogssapihelper@OPENWBEM_LIBRARY_VERSION@_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 $(Z_LIBS) $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
