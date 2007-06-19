@@ -48,7 +48,7 @@ perlxsbuild: $(PERLXSBUILD_SOURCES) Makefile
 		-e 's|@owcprivman_build@|$(top_builddir)/src/monitor/Cifc|g' \
 		-e 's|@monitor_source@|$(top_srcdir)/src/monitor|g' \
 		-e 's|@monitor_build@|$(top_builddir)/src/monitor|g' \
-		-e 's|@owcommon@|$(top_srcdir)/src/common|g' \
+		-e 's|@owconfigdir@|$(top_builddir)|g' \
 		-e 's|@OWLDFLAGS@|$(LDFLAGS)|g' \
 		-e 's|@OWCC@|$(CC)|g' \
 		-e 's|@SSL_LIB_FLAGS@|$(SSL_LIBS)|g' \

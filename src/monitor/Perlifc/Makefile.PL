@@ -14,7 +14,7 @@ sub fix_if_relative_path($) {
 my $owcprivman_build = fix_if_relative_path('@owcprivman_build@');
 my $owcprivman_install = fix_if_relative_path('@owcprivman_install@');
 my $monitor_source = fix_if_relative_path('@monitor_source@');
-my $owcommon = fix_if_relative_path('@owcommon@');
+my $owconfigdir = fix_if_relative_path('@owconfigdir@');
 my $rpath = '@rpath@';
 my $extra_lddlflags = '';
 if ($rpath) {
@@ -36,7 +36,7 @@ WriteMakefile(
     DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
 	# -I$ow_common is needed ONLY because the coding guidelines for header
 	# files forces us to include OW_config.h in OW_PrivManOpenFlags.h
-    INC               => "-I. -I$monitor_source -I$monitor_source/Cifc -I$owcommon @OWCPPFLAGS@",
+    INC               => "-I. -I$monitor_source -I$monitor_source/Cifc -I$owconfigdir @OWCPPFLAGS@",
 	LDDLFLAGS         => $Config{lddlflags} . $extra_lddlflags,
 	# Un-comment this if you add C files to link with later:
 	# OBJECT            => '$(O_FILES)', # link all the C files too
