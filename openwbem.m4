@@ -35,7 +35,7 @@ dnl ------------------------------------------------------------------------
 dnl   Usage:   CHECK_OPENWBEM([REQUIRED-VERSION
 dnl                      [,ACTION-IF-FOUND[,ACTION-IF-NOT-FOUND]]])
 dnl
-AC_DEFUN(CHECK_OPENWBEM,
+AC_DEFUN([CHECK_OPENWBEM],
 [
 OPENWBEM_CLIENT_LIBS="-lopenwbem -lowclient -lowxml -lowhttpcommon -lowhttpclient"
 OPENWBEM_PROVIDER_LIBS="-lopenwbem -lowprovider -lowcppprovifc"
