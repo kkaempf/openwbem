@@ -1076,6 +1076,8 @@ OW_HELP_STRING(--enable-debug-mode,enable debugging mode),
 	OW_CHECK_COMPILER_FLAG(Wno-unused-parameter,[CXXFLAGS="$CXXFLAGS -Wno-unused-parameter"])
 	OW_CHECK_COMPILER_FLAG(Wno-long-long,[CXXFLAGS="$CXXFLAGS -Wno-long-long"])
 	OW_CHECK_COMPILER_FLAG(Wwrite-strings,[CXXFLAGS="$CXXFLAGS -Wwrite-strings"])
+	OW_CHECK_COMPILER_FLAG(Wextra,[CXXFLAGS="$CXXFLAGS -Wextra"])
+	OW_CHECK_COMPILER_FLAG(Wabi,[CXXFLAGS="$CXXFLAGS -Wabi"])
 	if test "x$OW_NO_WDEPRECATED" = "x1"; then
 		# For OS X which doesn't correctly handle __attribute__(deprecated), so we turn it off
 		OW_CHECK_COMPILER_FLAG(Wno-deprecated,[CXXFLAGS="$CXXFLAGS -Wno-deprecated"])
