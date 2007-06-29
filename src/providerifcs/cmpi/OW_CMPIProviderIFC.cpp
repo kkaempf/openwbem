@@ -510,10 +510,6 @@ CMPIProviderIFC::getProvider(
 			creationFuncName = provId + "_Create_InstanceMI";
 		}
 		
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME),
-			Format("CMPI provider ifc: Library %1 should contain %2",
-				provId, creationFuncName));
-	
 		if (theLib->getFunctionPointer(
 			creationFuncName, miVector.createInstMI))
 		{
