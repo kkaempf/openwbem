@@ -485,9 +485,6 @@ CMPIProviderIFC::loadProvider(
 		creationFuncName = provId + "_Create_InstanceMI";
 	}
 	
-	OW_LOG_ERROR(lgr, Format("CMPI provider ifc: Library %1 should contain %2",
-		provId, creationFuncName));
-
 	if (theLib->getFunctionPointer(creationFuncName, miVector.createInstMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Instance;
