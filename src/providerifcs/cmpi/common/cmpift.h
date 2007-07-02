@@ -2121,7 +2121,7 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*cleanup)
-            (CMPIInstanceMI* mi, const CMPIContext* ctx, CMPIBoolean terminating);
+            (CMPIInstanceMI* mi, CMPIContext* ctx, CMPIBoolean terminating);
 
        /** Enumerate ObjectPaths of Instances serviced by this provider.
 	 @param mi Provider this pointer.
@@ -2131,8 +2131,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*enumInstanceNames)
-             (CMPIInstanceMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
-              const CMPIObjectPath* op);
+             (CMPIInstanceMI* mi, CMPIContext* ctx, CMPIResult* rslt,
+              CMPIObjectPath* op);
 
        /** Enumerate the Instances serviced by this provider.
 	 @param mi Provider this pointer.
@@ -2145,8 +2145,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*enumInstances)
-             (CMPIInstanceMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
-              const CMPIObjectPath* op, const char** properties);
+             (CMPIInstanceMI* mi, CMPIContext* ctx, CMPIResult* rslt,
+              CMPIObjectPath* op, const char** properties);
 
        /** Get the Instances defined by <op>.
 	 @param mi Provider this pointer.
@@ -2159,8 +2159,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*getInstance)
-             (CMPIInstanceMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
-              const CMPIObjectPath* op, const char** properties);
+             (CMPIInstanceMI* mi, CMPIContext* ctx, CMPIResult* rslt,
+              CMPIObjectPath* op, const char** properties);
 
        /** Create Instance from <inst> using <op> as reference.
 	 @param mi Provider this pointer.
@@ -2171,8 +2171,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*createInstance)
-             (CMPIInstanceMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
-              const CMPIObjectPath* op, const CMPIInstance* inst);
+             (CMPIInstanceMI* mi, CMPIContext* ctx, CMPIResult* rslt,
+              CMPIObjectPath* op, CMPIInstance* inst);
 
        /** Replace an existing Instance from <inst> using <op> as reference.
 	 @param mi Provider this pointer.
@@ -2187,8 +2187,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*modifyInstance)
-             (CMPIInstanceMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
-              const CMPIObjectPath* op, const CMPIInstance* inst, const char** properties);
+             (CMPIInstanceMI* mi,  CMPIContext* ctx, CMPIResult* rslt,
+              CMPIObjectPath* op, CMPIInstance* inst, const char** properties);
 
        /** Delete an existing Instance defined by <op>.
 	 @param mi Provider this pointer.
@@ -2198,8 +2198,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*deleteInstance)
-             (CMPIInstanceMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
-              const CMPIObjectPath* op);
+             (CMPIInstanceMI* mi, CMPIContext* ctx, CMPIResult* rslt,
+              CMPIObjectPath* op);
 
       /** Query the enumeration of instances of the class (and subclasses) defined
          by <op> using <query> expression.
@@ -2212,8 +2212,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*execQuery)
-             (CMPIInstanceMI*,const CMPIContext*,const CMPIResult*,
-              const CMPIObjectPath*,const char*,const char*);
+             (CMPIInstanceMI*, CMPIContext*, CMPIResult*,
+              CMPIObjectPath*, char*, char*);
    };
 
 
@@ -2283,7 +2283,7 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*cleanup)
-             (CMPIAssociationMI* mi, const CMPIContext* ctx, CMPIBoolean terminating);
+             (CMPIAssociationMI* mi, CMPIContext* ctx, CMPIBoolean terminating);
 
       /** Enumerate ObjectPaths associated with the Instance defined by <op>.
 	 @param mi Provider this pointer.
@@ -2316,9 +2316,9 @@ extern "C" {
 	 @return Function return status.
      */
      CMPIStatus (*associators)
-             (CMPIAssociationMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
-              const CMPIObjectPath* op, const char* asscClass, const char* resultClass,
-              const char* role, const char* resultRole, const char** properties);
+             (CMPIAssociationMI* mi, CMPIContext* ctx, CMPIResult* rslt,
+              CMPIObjectPath* op, char* asscClass, char* resultClass,
+              char* role, char* resultRole, const char** properties);
 
       /** Enumerate ObjectPaths associated with the Instance defined by <op>.
 	 @param mi Provider this pointer.
@@ -2348,9 +2348,9 @@ extern "C" {
 	 @return Function return status.
      */
      CMPIStatus (*associatorNames)
-             (CMPIAssociationMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
-              const CMPIObjectPath* op, const char* assocClass, const char* resultClass,
-              const char* role, const char* resultRole);
+             (CMPIAssociationMI* mi, CMPIContext* ctx, CMPIResult* rslt,
+              CMPIObjectPath* op, char* assocClass, char* resultClass,
+              char* role, char* resultRole);
 
        /** Enumerates the association instances that refer to the instance defined by
            <op>.
@@ -2374,9 +2374,9 @@ extern "C" {
 	 @return Function return status.
      */
      CMPIStatus (*references)
-             (CMPIAssociationMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
-              const CMPIObjectPath* op, const char* resultClass, const char* role ,
-	      const char** properties);
+             (CMPIAssociationMI* mi, CMPIContext* ctx, CMPIResult* rslt,
+              CMPIObjectPath* op, char* resultClass, char* role ,
+			  const char** properties);
 
       /** Enumerates the association ObjectPaths that refer to the instance defined by
            <op>.
@@ -2397,8 +2397,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*referenceNames)
-             (CMPIAssociationMI*, const CMPIContext*, const CMPIResult*,
-              const CMPIObjectPath*, const char*, const char*);
+             (CMPIAssociationMI*, CMPIContext*, CMPIResult*,
+              CMPIObjectPath*, char*, char*);
    };
 
 
@@ -2468,7 +2468,7 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*cleanup)
-             (CMPIMethodMI* mi, const CMPIContext* ctx, CMPIBoolean terminating);
+             (CMPIMethodMI* mi, CMPIContext* ctx, CMPIBoolean terminating);
 
       /** Invoke a named, extrinsic method of an Instance
          defined by the <op> parameter.
@@ -2482,8 +2482,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*invokeMethod)
-             (CMPIMethodMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
-              const CMPIObjectPath* op, const char* method, const CMPIArgs* in, CMPIArgs* out);
+             (CMPIMethodMI* mi, CMPIContext* ctx, CMPIResult* rslt,
+              CMPIObjectPath* op, char* method, CMPIArgs* in, CMPIArgs* out);
    };
 
 
@@ -2548,7 +2548,7 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*cleanup)
-             (CMPIPropertyMI* mi, const CMPIContext* ctx, CMPIBoolean terminating);
+             (CMPIPropertyMI* mi, CMPIContext* ctx, CMPIBoolean terminating);
 
       /** Set the named property value of an Instance defined by the <op> parameter.
 	 @param mi Provider this pointer.
@@ -2560,8 +2560,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*setProperty)
-             (CMPIPropertyMI* mi, const CMPIContext* ctx, const CMPIResult* rslt,
-              const CMPIObjectPath* op, const char* name, const CMPIData data);
+             (CMPIPropertyMI* mi, CMPIContext* ctx, CMPIResult* rslt,
+              CMPIObjectPath* op, char* name, CMPIData data);
 
       /** Get the named property value of an Instance defined by the <op> parameter.
 	 @param mi Provider this pointer.
@@ -2572,8 +2572,8 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*getProperty)
-             (CMPIPropertyMI*,const CMPIContext*,const CMPIResult*,
-              const CMPIObjectPath*,const char*);
+             (CMPIPropertyMI*, CMPIContext*, CMPIResult*,
+              CMPIObjectPath*, char*);
    };
 
 
@@ -2643,23 +2643,23 @@ extern "C" {
 	 @return Function return status.
       */
      CMPIStatus (*cleanup)
-             (CMPIIndicationMI* mi, const CMPIContext* ctx, CMPIBoolean terminating);
+             (CMPIIndicationMI* mi, CMPIContext* ctx, CMPIBoolean terminating);
      CMPIStatus (*authorizeFilter)
-             (CMPIIndicationMI* mi, const CMPIContext* ctx, // CMPIResult* rslt,
-              const CMPISelectExp* se, const char* ns, const CMPIObjectPath* op, const char* user);
+             (CMPIIndicationMI* mi, CMPIContext* ctx, // CMPIResult* rslt,
+              CMPISelectExp* se, char* ns, CMPIObjectPath* op, char* user);
      CMPIStatus (*mustPoll)
-             (CMPIIndicationMI* mi, const CMPIContext* ctx, // CMPIResult* rslt,
-              const CMPISelectExp* se, const char* ns, const CMPIObjectPath* op);
+             (CMPIIndicationMI* mi, CMPIContext* ctx, // CMPIResult* rslt,
+              CMPISelectExp* se, char* ns, CMPIObjectPath* op);
      CMPIStatus (*activateFilter)
-            (CMPIIndicationMI* mi, const CMPIContext* ctx, // CMPIResult* rslt,
-             const CMPISelectExp* se, const char* ns, const CMPIObjectPath* op, CMPIBoolean first);
+            (CMPIIndicationMI* mi, CMPIContext* ctx, // CMPIResult* rslt,
+             CMPISelectExp* se, char* ns, CMPIObjectPath* op, CMPIBoolean first);
      CMPIStatus (*deActivateFilter)
-             (CMPIIndicationMI* mi, const CMPIContext* ctx, // CMPIResult* rslt,
-              const CMPISelectExp* se, const char* ns, const CMPIObjectPath* op, CMPIBoolean last);
+             (CMPIIndicationMI* mi, CMPIContext* ctx, // CMPIResult* rslt,
+              CMPISelectExp* se, char* ns, CMPIObjectPath* op, CMPIBoolean last);
 	 CMPIStatus (*enableIndications)
-	   		(CMPIIndicationMI* mi, const CMPIContext* ctx); 
+	   		(CMPIIndicationMI* mi, CMPIContext* ctx); 
 	 CMPIStatus (*disableIndications)
-	   		(CMPIIndicationMI* mi, const CMPIContext* ctx); 
+	   		(CMPIIndicationMI* mi, CMPIContext* ctx); 
    };
 
 

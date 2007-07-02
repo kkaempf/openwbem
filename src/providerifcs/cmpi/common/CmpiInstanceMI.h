@@ -47,16 +47,16 @@ class CmpiInstanceMI : public CmpiBaseMI {
        CMPIObjectPath* eCop);
    static CMPIStatus driveEnumInstances
       (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
-       CMPIObjectPath* eCop, char* *properties);
+       CMPIObjectPath* eCop, const char** properties);
    static CMPIStatus driveGetInstance
       (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
-       CMPIObjectPath* eCop, char* *properties);
+       CMPIObjectPath* eCop, const char** properties);
    static CMPIStatus driveCreateInstance
       (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
        CMPIObjectPath* eCop, CMPIInstance* eInst);
    static CMPIStatus driveSetInstance
       (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
-       CMPIObjectPath* eCop, CMPIInstance* eInst, char* *properties);
+       CMPIObjectPath* eCop, CMPIInstance* eInst, const char** properties);
    static CMPIStatus driveDeleteInstance
       (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
        CMPIObjectPath* eCop);

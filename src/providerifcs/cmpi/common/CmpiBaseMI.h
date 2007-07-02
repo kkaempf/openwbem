@@ -49,10 +49,10 @@ class CmpiBaseMI {
   static CMPIStatus doDriveBaseCleanup
       (void* mi, CMPIContext* eCtx);
   inline static CMPIStatus driveBaseCleanup
-      (CMPIInstanceMI* mi, CMPIContext* eCtx) {
-         if (CmpiProviderBase::testAndSetOneTime(1))
-	    return doDriveBaseCleanup(mi,eCtx);
-	 CMReturn(CMPI_RC_OK);
+      (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIBoolean terminating) {
+      if (CmpiProviderBase::testAndSetOneTime(1))
+    	  return doDriveBaseCleanup(mi,eCtx);
+      CMReturn(CMPI_RC_OK);
    }
 
    virtual CmpiStatus initialize(const CmpiContext& ctx);
