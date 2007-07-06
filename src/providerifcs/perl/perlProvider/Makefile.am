@@ -62,7 +62,7 @@ install-exec-local:
 		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
 		ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
 	done
-	$(MAKE) -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI install
+	$(MAKE) -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI install_vendor
 
 uninstall-local:
 	for i in $(OW_SHARED_LIBS); do \
