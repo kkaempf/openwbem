@@ -35,7 +35,7 @@ status_hackery_local_input_file="$2"
 # NOTE: This will only find the sed expressions that are located at the
 # BEGINNING of a line (that's how they are layed out in configure's
 # config.status output file).
-egrep '^s.@[A-Za-z0-9_]+@' ${status_hackery_local_input_file} | egrep -v '\$\(.*\)|\\,' | sed 's/\\/\\\\/g' > $status_hackery_local_temp_output_file
+egrep '^s,@[A-Za-z0-9_]+@' ${status_hackery_local_input_file} | egrep -v '\$\(.*\)|\\,' | sed 's/\\/\\\\/g' | sed 's/|#_!!_#|//g' > $status_hackery_local_temp_output_file
 
 # Get the delimiter character that was used for the sed expressions.
 status_hackery_local_delim_char=`tail -1 $status_hackery_local_temp_output_file | cut -c2`
