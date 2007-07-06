@@ -103,7 +103,7 @@ identifier ([a-zA-Z_]|{utf8Char})([0-9a-zA-Z_]|{utf8Char})*
 
 binaryValue [+-]?[01]+[bB]
 octalValue [+-]?"0"[0-7]+
-decimalValue [+-]?([1-9]|[0-9]*|"0")
+decimalValue [+-]?([1-9][0-9]*|"0")
 hexValue [+-]?"0"[xX][0-9a-fA-F]+
 floatValue [+-]?[0-9]*"."[0-9]+([eE][+-]?[0-9]+)?
 
