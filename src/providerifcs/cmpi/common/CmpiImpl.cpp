@@ -82,24 +82,24 @@ CMPIStatus CmpiInstanceMI::driveEnumInstanceNames
 
 CMPIStatus CmpiInstanceMI::driveEnumInstances
    (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
-    CMPIObjectPath* eCop, char* *properties)
+    CMPIObjectPath* eCop, const char** properties)
 {
    CmpiContext ctx(eCtx);
    CmpiResult rslt(eRslt);
    CmpiObjectPath cop(eCop);
    return ((CmpiInstanceMI*)mi->hdl)->enumInstances
-      (ctx,rslt,cop,(const char**)properties).status();
+      (ctx,rslt,cop,properties).status();
 }
 
 CMPIStatus CmpiInstanceMI::driveGetInstance
    (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
-    CMPIObjectPath* eCop, char* *properties)
+    CMPIObjectPath* eCop, const char** properties)
 {
    CmpiContext ctx(eCtx);
    CmpiResult rslt(eRslt);
    CmpiObjectPath cop(eCop);
    return ((CmpiInstanceMI*)mi->hdl)->getInstance
-      (ctx,rslt,cop,(const char**)properties).status();
+      (ctx,rslt,cop,properties).status();
 }
 
 CMPIStatus CmpiInstanceMI::driveCreateInstance
@@ -116,14 +116,14 @@ CMPIStatus CmpiInstanceMI::driveCreateInstance
 
 CMPIStatus CmpiInstanceMI::driveSetInstance
    (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
-    CMPIObjectPath* eCop, CMPIInstance* eInst, char* *properties)
+    CMPIObjectPath* eCop, CMPIInstance* eInst, const char** properties)
 {
    CmpiContext ctx(eCtx);
    CmpiResult rslt(eRslt);
    CmpiObjectPath cop(eCop);
    CmpiInstance inst(eInst);
    return ((CmpiInstanceMI*)mi->hdl)->setInstance
-      (ctx,rslt,cop,inst,(const char**)properties).status();
+      (ctx,rslt,cop,inst,properties).status();
 }
 
 CMPIStatus CmpiInstanceMI::driveDeleteInstance
@@ -205,14 +205,14 @@ CmpiStatus CmpiInstanceMI::execQuery
 CMPIStatus CmpiAssociationMI::driveAssociators
       (CMPIAssociationMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
        CMPIObjectPath* eOp, char* assocClass, char* resultClass,
-       char* role, char* resultRole, char** properties) {
+       char* role, char* resultRole, const char** properties) {
    CmpiContext ctx(eCtx);
    CmpiResult rslt(eRslt);
    CmpiObjectPath cop(eOp);
    return ((CmpiAssociationMI*)mi->hdl)->associators
       (ctx,rslt,cop,
        (const char*)assocClass,(const char*)resultClass,
-       (const char*)role,(const char*)resultRole,(const char**)properties).status();
+       (const char*)role,(const char*)resultRole,properties).status();
 }
 
 CMPIStatus CmpiAssociationMI::driveAssociatorNames
@@ -231,13 +231,13 @@ CMPIStatus CmpiAssociationMI::driveAssociatorNames
 CMPIStatus CmpiAssociationMI::driveReferences
       (CMPIAssociationMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
        CMPIObjectPath* eOp, char* resultClass, char* role ,
-       char** properties) {
+       const char** properties) {
    CmpiContext ctx(eCtx);
    CmpiResult rslt(eRslt);
    CmpiObjectPath cop(eOp);
    return ((CmpiAssociationMI*)mi->hdl)->references
       (ctx,rslt,cop,
-       (const char*)resultClass,(const char*)role,(const char**)properties).status();
+       (const char*)resultClass,(const char*)role,properties).status();
 }
 
 CMPIStatus CmpiAssociationMI::driveReferenceNames

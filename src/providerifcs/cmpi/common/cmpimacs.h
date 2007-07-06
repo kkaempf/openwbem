@@ -1951,7 +1951,7 @@ if ((st)) { \
     CMPICurrentVersion, \
     CMPICurrentVersion, \
     "instance" #pn, \
-    (CMPIStatus(*)(CMPIInstanceMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
+    CmpiBaseMI::driveBaseCleanup, \
     CmpiInstanceMI::driveEnumInstanceNames, \
     CmpiInstanceMI::driveEnumInstances, \
     CmpiInstanceMI::driveGetInstance, \
@@ -1996,7 +1996,7 @@ if ((st)) { \
     CMPICurrentVersion, \
     CMPICurrentVersion, \
     "association" #pn, \
-    (CMPIStatus(*)(CMPIAssociationMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
+    (CMPIStatus (*)(CMPIAssociationMI*, CMPIContext*, CMPIBoolean))CmpiBaseMI::driveBaseCleanup, \
     CmpiAssociationMI::driveAssociators, \
     CmpiAssociationMI::driveAssociatorNames, \
     CmpiAssociationMI::driveReferences, \
@@ -2038,7 +2038,7 @@ if ((st)) { \
     CMPICurrentVersion, \
     CMPICurrentVersion, \
     "method" #pn, \
-    (CMPIStatus(*)(CMPIMethodMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
+    (CMPIStatus (*)(CMPIMethodMI*, CMPIContext*, CMPIBoolean))CmpiBaseMI::driveBaseCleanup, \
     CmpiMethodMI::driveInvokeMethod, \
    }; \
    static CMPIMethodMI mi; \
@@ -2076,12 +2076,12 @@ if ((st)) { \
     CMPICurrentVersion, \
     CMPICurrentVersion, \
     "property" #pn, \
-    (CMPIStatus(*)(CMPIPropertyMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
+    (CMPIStatus (*)(CMPIPropertyMI*, CMPIContext*, CMPIBoolean))CmpiBaseMI::driveBaseCleanup, \
     CmpiPropertyMI::driveSetProperty, \
     CmpiPropertyMI::driveGetProperty, \
    }; \
    static CMPIPropertyMI mi; \
-   fprintf(stderr,"--- _Create_MethodMI() broker: %p\n",broker); \
+   fprintf(stderr,"--- _Create_PropertyMI() broker: %p\n",broker); \
    CmpiContext ctx(ctxp); \
    mi.ft=&propMIFT; \
    CmpiPropertyMI *provider=new cn(broker,ctx); \
@@ -2115,13 +2115,13 @@ if ((st)) { \
     CMPICurrentVersion, \
     CMPICurrentVersion, \
     "indication" #pn, \
-    (CMPIStatus(*)(CMPIPropertyMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
+    (CMPIStatus (*)(CMPIIndicationMI*, CMPIContext*, CMPIBoolean))CmpiBaseMI::driveBaseCleanup, \
     Indication::driveAuthorizeFilter, \
     Indication::driveMustPoll, \
     Indication::driveActivateFilter, \
     Indication::driveDeActivateFilter, \
    }; \
-   static CMPIPropertyMI mi; \
+   static CMPIIndicationMI mi; \
    fprintf(stderr,"--- _Create_IndicationMI() broker: %p\n",broker); \
    CmpiContext ctx(ctxp); \
    mi.ft=&indMIFT; \

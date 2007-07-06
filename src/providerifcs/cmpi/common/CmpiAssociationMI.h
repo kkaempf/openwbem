@@ -46,7 +46,7 @@ class CmpiAssociationMI : public CmpiBaseMI {
    static CMPIStatus driveAssociators
       (CMPIAssociationMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
        CMPIObjectPath* eOp, char* asscClass, char* resultClass,
-       char* role, char* resultRole, char** properties);
+       char* role, char* resultRole, const char** properties);
    static CMPIStatus driveAssociatorNames
       (CMPIAssociationMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
        CMPIObjectPath* eOp, char* assocClass, char* resultClass,
@@ -54,7 +54,7 @@ class CmpiAssociationMI : public CmpiBaseMI {
    static CMPIStatus driveReferences
       (CMPIAssociationMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
        CMPIObjectPath* eOp, char* resultClass, char* role ,
-       char** properties);
+       const char** properties);
    static CMPIStatus driveReferenceNames
       (CMPIAssociationMI*, CMPIContext* eCtx, CMPIResult* eRslt,
        CMPIObjectPath* eOp, char* resultClass, char* role);
