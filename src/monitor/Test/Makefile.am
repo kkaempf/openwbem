@@ -44,7 +44,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/ifcs
 
 DEFAULT_PROJECT_LIBS = \
--L$(top_builddir)/src/common -lopenwbem
+$(BLOCXX_LIBS) -L$(top_builddir)/src/common -lopenwbem
 
 DEFAULT_EXTERNAL_LIBS = \
 ../libowprivman.a \

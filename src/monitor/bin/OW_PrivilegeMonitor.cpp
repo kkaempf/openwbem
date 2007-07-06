@@ -1383,7 +1383,7 @@ namespace
 				std::auto_ptr<Privileges> p_priv;
 				char const * monitor_path = NULL;
 				exit_status = PrivilegeCommon::EXIT_FAILED_INIT;
-				UserId uid;
+				UserId uid = 0;
 				try
 				{
 					CHECK0(argc == 3 || argc == 4,
