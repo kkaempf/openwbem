@@ -388,7 +388,7 @@ int
 selectRWSelect(SelectObjectArray& selarray, UInt32 ms)
 {
 #if defined (OW_HAVE_SYS_SELECT_H)
-	int lerrno, rc = 0;
+	int lerrno = 0, rc = 0;
 	fd_set ifds;
 	fd_set ofds;
 

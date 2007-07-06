@@ -63,7 +63,7 @@ start:
 {
 	YYCTYPE yych;
 
-	if((YYLIMIT - YYCURSOR) < 6) YYFILL(6);
+	if((YYLIMIT - YYCURSOR) < 6) { YYFILL(6); }
 	yych = *YYCURSOR;
 	switch(yych) {
 	case 0x00:	goto yy5;
@@ -229,7 +229,7 @@ yy33:
 	}
 yy34:
 	++YYCURSOR;
-	if(YYLIMIT == YYCURSOR) YYFILL(1);
+	if(YYLIMIT == YYCURSOR) { YYFILL(1); }
 	yych = *YYCURSOR;
 	switch(yych) {
 	case '0':
@@ -261,7 +261,7 @@ yy36:
 #line 262 "OW_XMLUnescape.cpp"
 yy38:
 	++YYCURSOR;
-	if(YYLIMIT == YYCURSOR) YYFILL(1);
+	if(YYLIMIT == YYCURSOR) { YYFILL(1); }
 	yych = *YYCURSOR;
 yy39:
 	switch(yych) {
