@@ -35,19 +35,18 @@
 #ifndef OW_MOF_PARSER_DECLS_HPP_INCLUDE_GUARD_
 #define OW_MOF_PARSER_DECLS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Exception.hpp"
-#include <stdio.h>
+#include <cstdio>
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-extern int owmofdebug;
-extern int owmofparse(void *context);
-extern FILE* owmofin;
+namespace OW_NAMESPACE { namespace MOF {
+class CompilerState;
+class ParseError;
+}}
 
-namespace OW_NAMESPACE
-{
-OW_DECLARE_APIEXCEPTION(MOFParser, OW_MOF_API);
-}
+extern int owmofdebug;
+extern int owmofparse(OpenWBEM::MOF::CompilerState *context, OpenWBEM::MOF::ParseError* error);
+extern FILE* owmofin;
 
 #endif // MOF_PARSER_DECLS_HPP_

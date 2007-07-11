@@ -32,31 +32,23 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_MOF_LINE_INFO_HPP_INCLUDE_GUARD_
-#define OW_MOF_LINE_INFO_HPP_INCLUDE_GUARD_
+#ifndef OW_MOF_LEXER_DECLS_HPP_INCLUDE_GUARD_
+#define OW_MOF_LEXER_DECLS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_String.hpp"
 
-namespace OW_NAMESPACE
-{
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
 
-namespace MOF
+struct owmofltype
 {
-
-struct OW_MOF_API LineInfo
-{
-	LineInfo()
-		: filename(), lineNum(1), columnNum(1) {}
-	LineInfo( const String& _filename, const long _linenum, const long _columnNum )
-		: filename(_filename), lineNum(_linenum), columnNum(_columnNum) {}
-	String filename;
-	long lineNum;
-	long columnNum;
+	OpenWBEM::String msg;
+	unsigned first_column;
+	unsigned first_line;
+	unsigned last_column;
+	unsigned last_line;
 };
-
-typedef LineInfo lineInfo OW_DEPRECATED;
-
-} // end namespace MOF
-} // end namespace OW_NAMESPACE
+#define YYLTYPE owmofltype
 
 #endif
+

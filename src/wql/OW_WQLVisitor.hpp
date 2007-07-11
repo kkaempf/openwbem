@@ -42,6 +42,8 @@
 
 namespace OW_NAMESPACE
 {
+namespace WQL
+{
 
 class stmt;
 class stmt_selectStmt_optSemicolon;
@@ -772,6 +774,7 @@ class OW_WQL_API WQLVisitor
 			) = 0;
 };
 
+} // end namespace WQL
 } // end namespace OW_NAMESPACE
 
 #endif

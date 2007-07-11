@@ -44,8 +44,10 @@
 
 namespace OW_NAMESPACE
 {
-
+namespace WQL
+{
 class stmt;
+
 class OW_WQL_API WQLImpl : public WQLIFC
 {
 public:
@@ -67,7 +69,7 @@ public:
 	virtual WQLSelectStatement createSelectStatement(const String& query);
 	virtual bool supportsQueryLanguage(const String& lang);
 
-	static stmt* setStatement(stmt* statement)
+	static WQL::stmt* setStatement(WQL::stmt* statement)
 	{
 		s_statement = statement;
 		return statement;
@@ -80,13 +82,16 @@ public:
 private:
 	static Mutex s_classLock;
 	static const char* s_parserInput;
-	static stmt* s_statement;
+	static WQL::stmt* s_statement;
 };
-		
+
+class ParseError;
+
+} // end namespace WQL
 } // end namespace OW_NAMESPACE
 
 extern int owwqldebug;
-extern "C" int owwqlparse();
+extern "C" int owwqlparse(OpenWBEM::WQL::ParseError* p_err);
 extern FILE* owwqlin;
 extern void WQLscanner_init();
 

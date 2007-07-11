@@ -44,6 +44,8 @@
 #include "OW_MOFGrammar.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_Logger.hpp"
+#include <stack>
+
 
 #ifdef OW_WIN32
 #pragma warning (push)
@@ -53,10 +55,13 @@
 // this needs to be at global scope because flex also declares it.
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
+struct owmofltype;
+
 namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(MOFCompiler, OW_MOF_API);
+OW_DECLARE_APIEXCEPTION2(MOFParser, MOFCompilerException, OW_MOF_API);
 
 namespace MOF
 {
@@ -117,28 +122,6 @@ public:
 	static String fixParsedString(const String& s);
 
 	ParserErrorHandlerIFCRef theErrorHandler;
-	AutoPtr<MOFSpecification> mofSpecification;
-	String basepath;
-
-	// This variable is only for convenience for the lexer and parser.
-	// After parsing is complete, it should not be used.  The filename and
-	// line numbers are stored in the AST.
-	LineInfo theLineInfo;
-
-	// Needed by the code to implement includes
-	enum
-	{
-		E_MAX_INCLUDE_DEPTH = 100
-	};
-
-	struct include_t
-	{
-		YY_BUFFER_STATE owmofBufferState;
-		LineInfo theLineInfo;
-	};
-
-	include_t include_stack[E_MAX_INCLUDE_DEPTH];
-	int include_stack_ptr;
 
 private:
 	CIMOMHandleIFCRef m_ch;
@@ -149,9 +132,87 @@ private:
 
 };
 
+class OW_MOF_API CompilerState
+{
+public:
+
+	CompilerState(const ParserErrorHandlerIFCRef& mpeh, const String& initialFilename);
+	~CompilerState();
+
+	AutoPtr<MOFSpecification> mofSpecification;
+
+	// This function is only for use by the lexer and parser
+	void updateLocation(const char* yytext, owmofltype* yylocp);
+	LineInfo getLineInfo() const;
+	ParserErrorHandlerIFCRef getErrorHandler() const;
+	void startNewFile(const String& filenameWithPath);
+	String getBasePath() const;
+
+
+	// Needed by the code to implement includes
+	enum
+	{
+		E_MAX_INCLUDE_DEPTH = 100
+	};
+
+	friend struct include_t;
+	struct include_t
+	{
+		include_t()
+		: m_firstColumn(0)
+		, m_firstLine(0)
+		, m_lastColumn(0)
+		, m_lastLine(0)
+		, m_nextColumn(1)
+		, m_nextLine(1)
+		{
+		}
+		void setLineInfo(const CompilerState& s)
+		{
+			m_firstColumn = s.m_firstColumn;
+			m_firstLine = s.m_firstLine;
+			m_lastColumn = s.m_lastColumn;
+			m_lastLine = s.m_lastLine;
+			m_nextColumn = s.m_nextColumn;
+			m_nextLine = s.m_nextLine;
+			m_fileName = s.m_fileName;
+		}
+		YY_BUFFER_STATE owmofBufferState;
+		unsigned m_firstColumn;
+		unsigned m_firstLine;
+		unsigned m_lastColumn;
+		unsigned m_lastLine;
+		unsigned m_nextColumn;
+		unsigned m_nextLine;
+		String m_fileName;
+	};
+
+	void setLineInfo(const include_t& x);
+
+	std::stack<include_t> include_stack;
+
+private:
+
+	unsigned m_firstColumn;
+	unsigned m_firstLine;
+	unsigned m_lastColumn;
+	unsigned m_lastLine;
+	unsigned m_nextColumn;
+	unsigned m_nextLine;
+	String m_fileName;
+	String m_basepath;
+	ParserErrorHandlerIFCRef m_errorHandler;
+
+	// unimplemented
+	CompilerState(const CompilerState& x);
+	CompilerState& operator=(const CompilerState& x);
+
+};
+
 
 /**
  * @param realhdl If null, a dummy handle will be used which will supply "fake" CIMClasses and CIMQualifierTypes to the mof compiler
+ * @throws MOFCompilerException, MOFParserException if the compilation fails.
  */
 OW_MOF_API void compileMOF(const String& mof, const CIMOMHandleIFCRef& realhdl, const String& ns,
 	CIMInstanceArray& instances, CIMClassArray& classes, CIMQualifierTypeArray& qualifierTypes);

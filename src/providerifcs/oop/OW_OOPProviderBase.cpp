@@ -56,6 +56,7 @@
 #include "OW_OOPClonedProviderEnv.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ThreadSafeProcess.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -131,7 +132,8 @@ OOPProviderBase::OOPProviderBase(const OOPProviderInterface::ProvRegInfo& info,
 	, m_unloadTimer(info.unloadTimeout)
 {
 	// persistent provider instances must have non-null pointers.
-	if (!m_processState.m_guardRef || !m_processState.m_persistentProcessRef || !m_processState.m_persistentProcessUserNameRef)
+	//if (!m_processState.m_guardRef || !m_processState.m_persistentProcessRef || !m_processState.m_persistentProcessUserNameRef)
+	if (m_processState.isNull())
 	{
 		OW_ASSERT(m_provInfo.providerNeedsNewProcessForEveryInvocation() == true);
 		m_provInfo.isPersistent = false;
@@ -155,6 +157,7 @@ OOPProviderBase::~OOPProviderBase()
 
 inline void OOPProviderBase::resetUnloadTimer()
 {
+	NonRecursiveMutexLock l(m_unloadTimerGuard);
 	m_unloadTimer.resetOnLoop();
 }
 
@@ -236,21 +239,31 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 		break;
 	}
 
-	if (usePersistentProcess == E_USE_PERSISTENT_PROCESS && *m_processState.m_persistentProcessRef)
+	if (usePersistentProcess == E_USE_PERSISTENT_PROCESS && !m_processState.isNull())
 	{
 		// if the user of the persistent process has changed, we need to kill the old process and start a new one.
-		if ((*m_processState.m_persistentProcessRef)->processStatus().running() && procUserName == *m_processState.m_persistentProcessUserNameRef)
+		ThreadSafeProcessRef proc;
+		String processStateUserName;
+		m_processState.getProcessAndUserName(proc, processStateUserName);
+		if (proc)
 		{
-			OW_LOG_DEBUG(lgr, Format("Using persistent process %1", (*m_processState.m_persistentProcessRef)->pid()));
-			return *m_processState.m_persistentProcessRef;
+			if (proc->processStatus().running() && procUserName == processStateUserName)
+			{
+				OW_LOG_DEBUG(lgr, Format("Using persistent process %1", proc->pid()));
+				return proc;
+			}
+			else
+			{
+				String output = getStderr(proc);
+				OW_LOG_ERROR(lgr, Format("Detected that persistent provider process %1[%2] has terminated: %3, stderr output = %4", 
+					m_provInfo.process, proc->pid(), proc->processStatus().toString(), output));
+	
+				m_processState.clearProcess();
+			}
 		}
 		else
 		{
-			String output = getStderr(*m_processState.m_persistentProcessRef);
-			OW_LOG_ERROR(lgr, Format("Detected that persistent provider process %1[%2] has terminated: %3, stderr output = %4", 
-				m_provInfo.process, (*m_processState.m_persistentProcessRef)->pid(), (*m_processState.m_persistentProcessRef)->processStatus().toString(), output));
-
-			*m_processState.m_persistentProcessRef = ThreadSafeProcessRef();
+			OW_LOG_ERROR(lgr, "Detected that persistent provider process has terminated.");
 		}
 	}
 
@@ -327,19 +340,20 @@ void
 OOPProviderBase::terminate(const ProviderEnvironmentIFCRef& env, const String& providerID)
 {
 	Logger lgr(COMPONENT_NAME);
-	ProcessRef proc;
-	if (m_processState.m_persistentProcessRef && (*m_processState.m_persistentProcessRef))
+	if (!m_processState.isNull())
 	{
-		OW_LOG_DEBUG(lgr, Format("OOPProviderBase::terminate terminating provider: %1", providerID));
-		ThreadSafeProcessRef proc = *m_processState.m_persistentProcessRef;
-		m_protocol->setPersistent(proc->out(), proc->in(), m_provInfo.timeout, env, false);
-		proc->waitCloseTerm(Timeout::relative(10.0), Timeout::relative(0), Timeout::relative(10.1));
-		*m_processState.m_persistentProcessRef = ThreadSafeProcessRef();
-		*m_processState.m_persistentProcessUserNameRef = String();
-	}
-	else
-	{
-		OW_LOG_DEBUG(lgr, Format("OOPProviderBase::terminate provider: %1 is not running", providerID));
+		ThreadSafeProcessRef proc = m_processState.getProcess();
+		if (proc)
+		{
+			OW_LOG_DEBUG(lgr, Format("OOPProviderBase::terminate terminating provider: %1", providerID));
+			m_protocol->setPersistent(proc->out(), proc->in(), m_provInfo.timeout, env, false);
+			proc->waitCloseTerm(Timeout::relative(10.0), Timeout::relative(0), Timeout::relative(10.1));
+			m_processState.clearProcess();
+		}
+		else
+		{
+			OW_LOG_DEBUG(lgr, Format("OOPProviderBase::terminate provider: %1 is not running", providerID));
+		}
 	}
 
 	// Shutdown the clonedEnv threadPool
@@ -366,7 +380,8 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 		Reference<WriteLock> lock;
 		if (doLock)
 		{
-			lock = new WriteLock(*m_processState.m_guardRef, m_provInfo.timeout);
+			OW_ASSERT(!m_processState.isNull());
+			lock = new WriteLock(m_processState.getGuard(), m_provInfo.timeout);
 		}
 
 		resetUnloadTimer();
@@ -389,8 +404,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 			// If we got any other exception, something bad happened, so terminate it.
 			if (e.getSubClassId() == ExceptionIds::CIMExceptionId && usePersistentProcess == E_USE_PERSISTENT_PROCESS)
 			{
-				*m_processState.m_persistentProcessRef = proc;
-				*m_processState.m_persistentProcessUserNameRef = procUserName;
+				m_processState.setProcessAndUserName(proc, procUserName);
 				throw;
 			}
 			else
@@ -403,8 +417,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 
 		if (usePersistentProcess == E_USE_PERSISTENT_PROCESS)
 		{
-			*m_processState.m_persistentProcessRef = proc;
-			*m_processState.m_persistentProcessUserNameRef = procUserName;
+			m_processState.setProcessAndUserName(proc, procUserName);
 		}
 		else
 		{
@@ -422,8 +435,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 bool
 OOPProviderBase::unloadTimeoutExpired()
 {
-	OW_ASSERT(m_processState.m_guardRef);
-	WriteLock lock(*m_processState.m_guardRef, m_provInfo.timeout);
+	NonRecursiveMutexLock lock(m_unloadTimerGuard);
 	m_unloadTimer.loop();
 	return m_unloadTimer.expired();
 }

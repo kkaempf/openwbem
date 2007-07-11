@@ -38,7 +38,8 @@ pkginclude_HEADERS = \
 OW_WQLImpl.hpp \
 OW_WQLScanUtils.hpp \
 OW_WQLAst.hpp \
-OW_WQLVisitor.hpp 
+OW_WQLVisitor.hpp \
+OW_WQLParseError.hpp
 
 libowwql_a_SOURCES = \
 OW_WQLParser.yy \

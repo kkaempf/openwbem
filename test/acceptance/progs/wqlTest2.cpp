@@ -48,6 +48,7 @@ using std::cout;
 using std::endl;
 using std::cerr;
 using namespace OpenWBEM;
+using namespace OpenWBEM::WQL;
 
 
 namespace

@@ -168,13 +168,16 @@ OOPProviderInterface::~OOPProviderInterface()
 	{
 		try
 		{
-			if (proviter->second.processState.m_persistentProcessRef && *proviter->second.processState.m_persistentProcessRef && 
-				(*proviter->second.processState.m_persistentProcessRef)->processStatus().running())
+			if (!proviter->second.processState.isNull())
 			{
-				OOPProviderBase* prov = proviter->second.getOOPProviderBase();
-				OW_LOG_INFO(lgr, Format("terminating provider %1", proviter->first));
-				ProviderEnvironmentIFCRef env(new DoNothingProviderEnvironment);
-				prov->terminate(env, proviter->first);
+				ThreadSafeProcessRef proc = proviter->second.processState.getProcess();
+				if (proc && proc->processStatus().running())
+				{
+					OOPProviderBase* prov = proviter->second.getOOPProviderBase();
+					OW_LOG_INFO(lgr, Format("terminating provider %1", proviter->first));
+					ProviderEnvironmentIFCRef env(new DoNothingProviderEnvironment);
+					prov->terminate(env, proviter->first);
+				}
 			}
 		}
 		catch (Exception& e)
@@ -1127,18 +1130,21 @@ OOPProviderInterface::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 	while (proviter != persistentProvsCopy.end())
 	{
 		// If this is not a persistent provider, see if we can unload it.
-		if (!proviter->second.getInfo().isPersistent && proviter->second.processState.m_persistentProcessRef && *proviter->second.processState.m_persistentProcessRef && 
-			(*proviter->second.processState.m_persistentProcessRef)->processStatus().running())
+		if (!proviter->second.getInfo().isPersistent && !proviter->second.processState.isNull())
 		{
-			OOPProviderBase* prov = proviter->second.getOOPProviderBase();
-            if (prov->unloadTimeoutExpired())
+			ThreadSafeProcessRef proc = proviter->second.processState.getProcess();
+			if (proc && proc->processStatus().running())
 			{
-				Logger lgr(COMPONENT_NAME);
-				OW_LOG_INFO(lgr, Format("Shutting down and terminating provider %1", proviter->first));
-				dynamic_cast<ProviderBaseIFC&>(*prov).shuttingDown(env);
-				prov->terminate(env, proviter->first);
-				proviter = persistentProvsCopy.erase(proviter);
-				continue;
+				OOPProviderBase* prov = proviter->second.getOOPProviderBase();
+				if (prov->unloadTimeoutExpired())
+				{
+					Logger lgr(COMPONENT_NAME);
+					OW_LOG_INFO(lgr, Format("Shutting down and terminating provider %1", proviter->first));
+					dynamic_cast<ProviderBaseIFC&>(*prov).shuttingDown(env);
+					prov->terminate(env, proviter->first);
+					proviter = persistentProvsCopy.erase(proviter);
+					continue;
+				}
 			}
 		}
 
@@ -1162,27 +1168,27 @@ OOPProviderInterface::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 
 	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown, there are %1 persistent providers to shutdown", provsCopy.size()));
 
-	RWLocker mutexOnStack;
 	for (PersistentProvMap_t::iterator proviter = provsCopy.begin();
 		proviter != provsCopy.end(); proviter++)
 	{
-		if (!proviter->second.getInfo().isPersistent && proviter->second.processState.m_persistentProcessRef && *proviter->second.processState.m_persistentProcessRef && 
-			(*proviter->second.processState.m_persistentProcessRef)->processStatus().running())
+		if (!proviter->second.getInfo().isPersistent && !proviter->second.processState.isNull())
 		{
-			ProviderBaseIFC* pprov = dynamic_cast<ProviderBaseIFC*>(proviter->second.getOOPProviderBase());
-			OW_ASSERT(pprov);
-			if (pprov)
+			ThreadSafeProcessRef proc = proviter->second.processState.getProcess();
+			if (proc && proc->processStatus().running())
 			{
-				RWLocker* mutexToUse = proviter->second.processState.m_guardRef ? proviter->second.processState.m_guardRef.getPtr() : &mutexOnStack;
-				WriteLock pl(*mutexToUse, proviter->second.getInfo().timeout);
-				OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown terminating provider %1", proviter->first));
-				try
+				ProviderBaseIFC* pprov = dynamic_cast<ProviderBaseIFC*>(proviter->second.getOOPProviderBase());
+				OW_ASSERT(pprov);
+				if (pprov)
 				{
-					pprov->shuttingDown(env);
-				}
-				catch (Exception& e)
-				{
-					OW_LOG_ERROR(lgr, Format("OOPProviderInterface::doShuttingDown caught Exception: %1", e));
+					OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown terminating provider %1", proviter->first));
+					try
+					{
+						pprov->shuttingDown(env);
+					}
+					catch (Exception& e)
+					{
+						OW_LOG_ERROR(lgr, Format("OOPProviderInterface::doShuttingDown caught Exception: %1", e));
+					}
 				}
 			}
 		}

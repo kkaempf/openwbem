@@ -41,16 +41,27 @@
 #include "OW_RWLocker.hpp"
 #include "OW_Reference.hpp"
 #include "OW_ThreadSafeProcess.hpp"
+#include "OW_NonRecursiveMutex.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
 
 namespace OW_NAMESPACE
 {
 
-struct OOPProcessState
+class OOPProcessState
 {
+private:
+	struct Data : public IntrusiveCountableBase
+	{
+		RWLocker m_guard;
+		ThreadSafeProcessRef m_persistentProcess;
+		String m_persistentProcessUserName;
+
+		mutable NonRecursiveMutex m_objectLock;
+	};
+
+public:
 	OOPProcessState()
-	: m_guardRef(new RWLocker)
-	, m_persistentProcessRef(new ThreadSafeProcessRef)
-	, m_persistentProcessUserNameRef(new String)
+	: m_data(new Data)
 	{
 	}
 
@@ -63,10 +74,46 @@ struct OOPProcessState
 	{
 	}
 
+	bool isNull() const
+	{
+		return !m_data;
+	}
 
-	Reference<RWLocker> m_guardRef;
-	Reference<ThreadSafeProcessRef> m_persistentProcessRef;
-	Reference<String> m_persistentProcessUserNameRef;
+	ThreadSafeProcessRef getProcess() const
+	{
+		NonRecursiveMutexLock l(m_data->m_objectLock);
+		return m_data->m_persistentProcess;
+	}
+
+	void getProcessAndUserName(ThreadSafeProcessRef& proc, String& userName) const
+	{
+		NonRecursiveMutexLock l(m_data->m_objectLock);
+		proc = m_data->m_persistentProcess;
+		userName = m_data->m_persistentProcessUserName;
+	}
+
+	void setProcessAndUserName(const ThreadSafeProcessRef& persistentProcess, const String& userName)
+	{
+		NonRecursiveMutexLock l(m_data->m_objectLock);
+		m_data->m_persistentProcess = persistentProcess;
+		m_data->m_persistentProcessUserName = userName;
+	}
+
+	void clearProcess()
+	{
+		NonRecursiveMutexLock l(m_data->m_objectLock);
+		m_data->m_persistentProcess = ThreadSafeProcessRef();
+		m_data->m_persistentProcessUserName = String();
+	}
+
+	RWLocker& getGuard()
+	{
+		NonRecursiveMutexLock l(m_data->m_objectLock);
+		return m_data->m_guard;
+	}
+
+private:
+	IntrusiveReference<Data> m_data;
 };
 
 

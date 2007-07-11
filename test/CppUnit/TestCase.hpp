@@ -37,6 +37,7 @@
 #include "CppUnitException.hpp"
 #include <iostream>
 #include <sstream>
+#include <string.h>
 
 class TestResult;
 
@@ -199,43 +200,122 @@ private:
 #ifdef CPPUNIT_SOURCEANNOTATION
 
 	#undef unitAssert
-	#define unitAssert(condition)\
-	try{this->assertImplementation ((condition),(#condition),\
-		__LINE__, __FILE__);\
-		 } catch (const CppUnitException& e){throw e;} \
-			catch( const std::exception& e ){ throw CppUnitException( e.what(), __LINE__, __FILE__);} \
-		  catch (...) {throw CppUnitException((#condition), __LINE__, __FILE__);}
+	#define unitAssert(condition) \
+	try \
+	{ \
+		this->assertImplementation ((condition),(#condition), __LINE__, __FILE__); \
+	} \
+	catch (const CppUnitException& e) \
+	{ \
+		throw e; \
+	} \
+	catch( const std::exception& e ) \
+	{ \
+		throw CppUnitException( e.what(), __LINE__, __FILE__); \
+	} \
+	catch (...) \
+	{ \
+		throw CppUnitException((#condition), __LINE__, __FILE__); \
+	}
 
 	#undef unitAssertFail
-	#define unitAssertFail(condition)\
-	try{this->assertImplementation ((!(condition)),("!("#condition")"),\
-		__LINE__, __FILE__);\
-		 } catch (const CppUnitException& e){throw e;} \
-			catch( const std::exception& e ){ throw CppUnitException( e.what(), __LINE__, __FILE__);} \
-		  catch (...) {throw CppUnitException((#condition), __LINE__, __FILE__);}
+	#define unitAssertFail(condition) \
+	try \
+	{ \
+		this->assertImplementation ((!(condition)),("!("#condition")"),	__LINE__, __FILE__); \
+	} \
+	catch (const CppUnitException& e) \
+	{ \
+		throw e; \
+	} \
+	catch( const std::exception& e ) \
+	{ \
+		throw CppUnitException( e.what(), __LINE__, __FILE__); \
+	} \
+	catch (...) \
+	{ \
+		throw CppUnitException((#condition), __LINE__, __FILE__); \
+	}
 
 	#undef unitAssertThrows
-	#define unitAssertThrows(condition)\
-	try{condition;\
-		 this->assertImplementation (false, #condition,\
-				 __LINE__, __FILE__);\
-		 } catch (const CppUnitException& e){throw e;} \
-		  catch (...) {}
+	#define unitAssertThrows(condition) \
+	try \
+	{ \
+		condition; \
+		this->assertImplementation (false, #condition, __LINE__, __FILE__); \
+	} \
+	catch (const CppUnitException& e) \
+	{ \
+		throw e; \
+	} \
+	catch (...) \
+	{ \
+	}
+		
+	#undef unitAssertThrowsEx
+	#define unitAssertThrowsEx(condition, exceptionType) \
+	try \
+	{ \
+		condition; \
+		this->assertImplementation(false, #condition, __LINE__, __FILE__); \
+	} \
+	catch (const CppUnitException& e) \
+	{ \
+		throw e; \
+	} \
+	catch (const exceptionType& e) \
+	{ \
+	} \
+	catch (...) \
+	{ \
+		this->assertImplementation(false, #condition,__LINE__, __FILE__); \
+	}
+		
+	#undef unitAssertThrowsExWhat
+	#define unitAssertThrowsExWhat(condition, exceptionType, whatMsg) \
+	try \
+	{ \
+		condition; \
+		this->assertImplementation(false, #condition, __LINE__, __FILE__); \
+	} \
+	catch (const CppUnitException& e) \
+	{ \
+		throw e; \
+	} \
+	catch (const exceptionType& e) \
+	{ \
+		this->assertEquals((whatMsg), e.what(), __LINE__, __FILE__); \
+	} \
+	catch (...) \
+	{ \
+		this->assertImplementation(false, #condition, __LINE__, __FILE__); \
+	}
 		
 	#undef unitAssertNoThrow
-	#define unitAssertNoThrow(condition)\
-	try{condition;\
-	} catch (const CppUnitException& e){throw e;} \
-	catch( const std::exception& e ){ std::cout << "Caught exception " << e.what() << std::endl; this->assertImplementation( false, #condition, __LINE__, __FILE__);} \
-	catch (...) { this->assertImplementation( false, #condition,\
-			__LINE__, __FILE__);}
+	#define unitAssertNoThrow(condition) \
+	try \
+	{ \
+		condition;\
+	} \
+	catch (const CppUnitException& e) \
+	{ \
+		throw e; \
+	} \
+	catch (const std::exception& e) \
+	{ \
+		std::cout << "Caught exception " << e.what() << std::endl; \
+		this->assertImplementation( false, #condition, __LINE__, __FILE__); \
+	} \
+	catch (...) \
+	{ \
+		this->assertImplementation( false, #condition, __LINE__, __FILE__); \
+	}
 
 #else
 
 	#undef unitAssert
-	#define unitAssert(condition)\
-	(this->assertImplementation ((condition),"",\
-		__LINE__, __FILE__))
+	#define unitAssert(condition) \
+	(this->assertImplementation ((condition),"", __LINE__, __FILE__))
 
 #endif
 

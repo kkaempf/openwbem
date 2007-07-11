@@ -47,6 +47,7 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_TimeoutTimer.hpp"
 #include "OW_OOPProcessState.hpp"
+#include "OW_NonRecursiveMutex.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -75,7 +76,6 @@ public:
 		return m_provInfo;
 	}
 
-	/// Precondition: m_guardRef is not NULL.
 	bool unloadTimeoutExpired();
 
 protected:
@@ -95,7 +95,6 @@ protected:
 private:
 	ThreadSafeProcessRef getProcess(const char* fname, const ProviderEnvironmentIFCRef& env, EUsePersistentProcessFlag usePersistentProcess, String& procUserName);
 
-	/// Precondition: if m_guardRef != NULL, then *m_guardRef is locked.
 	void resetUnloadTimer();
 
 	OOPProviderInterface::ProvRegInfo m_provInfo;
@@ -103,6 +102,7 @@ private:
 
 	OOPProcessState m_processState;
 	ThreadPool m_threadPool;
+	NonRecursiveMutex m_unloadTimerGuard;
 	TimeoutTimer m_unloadTimer;
 };
 

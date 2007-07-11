@@ -15,11 +15,15 @@ Makefile-shared-lib-inst.inc \
 Makefile-replacement.inc \
 openwbem.spec \
 fake_library_creator.sh \
-create_replacement_script.sh \
 generic-company-openwbem.spec.in \
 $(m4_DATA)
 
-CLEANFILES = Doxyfile
+CLEANFILES = \
+Doxyfile
+
+DISTCLEANFILES = \
+replacement_script.sed \
+OW_config.h
 
 clean-local:
 	if [ -n "$(PACKAGE_PREFIX_D)" ]; then \
@@ -59,6 +63,11 @@ rpm: dist
 	mkdir -p rpmbuild/{SOURCES,SPECS,SRPMS,RPMS,BUILD}
 	rpmbuild --define="_topdir `pwd`/rpmbuild" -ta $(distdir).tar.gz
 
+install-data-local:
+	$(INSTALL_HEADER) OW_config.h "$(DESTDIR)$(pkgincludedir)/OW_config.h"
+
+uninstall-local:
+	rm -f "$(DESTDIR)$(pkgincludedir)/OW_config.h"
 
 # Since the replacement script is listed in BUILT_SOURCES, if we include this,
 # the replacement sed script will be generated before anything else (even

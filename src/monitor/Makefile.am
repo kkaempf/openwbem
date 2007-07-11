@@ -62,8 +62,7 @@ OW_PrivilegeParser.h: OW_PrivilegeParser.cc
 	else :; fi
 
 
-AM_CPPFLAGS = \
--I$(top_srcdir)/src/common -I$(top_srcdir)/src/ifcs
+AM_CPPFLAGS = -I$(top_srcdir)/src/common
 
 AM_LFLAGS = -Cfe -olex.yy.c
 

@@ -404,6 +404,14 @@ CIMOMEnvironment::shutdown()
 	{
 	}
 
+	// Shutdown indication processing.
+	// This has to happen before the services are cleared to prevent an invalid reference from causing a crash.
+	if (m_indicationServer)
+	{
+		m_indicationServer.setNull();
+		m_indicationRepLayerLib = 0;
+	}
+
 	// We need to unload these in the opposite order that
 	// they were loaded because of bugs in shared library
 	// handling on certain OSes.
@@ -416,12 +424,6 @@ CIMOMEnvironment::shutdown()
 	m_reqHandlers.clear();
 	// Unload the wql library if loaded
 	m_wqlLib = 0;
-	// Shutdown indication processing
-	if (m_indicationServer)
-	{
-		m_indicationServer.setNull();
-		m_indicationRepLayerLib = 0;
-	}
 	// Delete the authentication manager
 	m_authManager = 0;
 	// Delete the cim server

@@ -60,6 +60,7 @@ void MOFCompilerTestCases::testcompileMOF()
 	CIMInstanceArray insts;
 	CIMClassArray classes;
 	CIMQualifierTypeArray qualTypes;
+	
 	unitAssertNoThrow( MOF::compileMOF(
 		"INSTANCE OF fooClass {\n"
 		"  strprop=\"x\";\n"
@@ -72,7 +73,9 @@ void MOFCompilerTestCases::testcompileMOF()
 	// don't check the actual type, since it probably won't be right.
 	unitAssert(insts[0].getProperty("intprop").getValue().toString() == CIMValue(55).toString());
 	insts.clear();
-	unitAssertThrows(MOF::compileMOF("this is not good mof", CIMOMHandleIFCRef(), "", insts, classes, qualTypes));
+	
+	unitAssertThrowsEx(MOF::compileMOF("this", CIMOMHandleIFCRef(), "", insts, classes, qualTypes), MOFCompilerException);
+	unitAssertThrowsEx(MOF::compileMOF("this is not good mof", CIMOMHandleIFCRef(), "", insts, classes, qualTypes), MOFCompilerException);
 	insts.clear();
 	unitAssertNoThrow(MOF::compileMOF("instance of one{x=1;}; instance of two{x=2;};", CIMOMHandleIFCRef(), "", insts, classes, qualTypes));
 	unitAssert(insts.size() == 2);
@@ -160,7 +163,7 @@ void MOFCompilerTestCases::testfixParsedString()
 	if (CHAR_MAX == SCHAR_MAX)
 	{
 		// test too large hex
-		unitAssertThrows(MOF::Compiler::fixParsedString("\"\\xFF\""));
+		unitAssertThrowsEx(MOF::Compiler::fixParsedString("\"\\xFF\""), MOFCompilerException);
 	}
 }
 

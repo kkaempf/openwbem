@@ -49,6 +49,8 @@
 
 namespace OW_NAMESPACE
 {
+namespace WQL
+{
 
 class OW_WQL_API node
 {
@@ -3865,6 +3867,7 @@ class OW_WQL_API aExprConst_NULLP : public aExprConst
 		String* m_pNULLP1;
 };
 
+} // end namespace WQL
 } // end namespace OW_NAMESPACE
 
 #endif

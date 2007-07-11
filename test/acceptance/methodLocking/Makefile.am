@@ -26,14 +26,16 @@ LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 
 libmethodLockingTest_a_SOURCES = \
 testMethodLockingProv.cpp \
-testMethodLocking.cpp
+testMethodLocking.cpp \
+testMethodLocking.hpp
 
 noinst_PROGRAMS = \
 testMethodLocking
 
 testMethodLocking_SOURCES = \
 testMethodLocking_main.cpp \
-testMethodLocking.cpp
+testMethodLocking.cpp \
+testMethodLocking.hpp
 
 testMethodLocking_PROJECT_LIBS = \
 -L$(top_builddir)/src/client -lowclient \

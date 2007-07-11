@@ -48,7 +48,7 @@
 #include <vector>
 #include <iterator>
 
-/* Avoid exit() on fatal scanner errors (a bit ugly -- see yy_fatal_error) */
+#define YYLTYPE openwbem_privconfig_yyltype
 
 namespace OW_NAMESPACE
 {

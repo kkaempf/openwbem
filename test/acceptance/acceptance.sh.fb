@@ -199,7 +199,7 @@ $BUILDDIR/test/acceptance/oop/liboopassoctest.@lib_ext@ \
 			#-e "s!.*owcimomd.disable_indications =.*!owcimomd.disable_indications = true!g" \
 	cd $STAGEDIR
 
-	if grep "define OW_NO_SSL" $TOP_SRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
+	if grep "define OW_NO_SSL" $STAGEDIR/@pkgincludedir@/OW_config.h > /dev/null 2>&1; then
 		EditConfig 's!http_server.https_port = \(.*\)!http_server.https_port = -1!g'
 	fi
 
@@ -944,14 +944,16 @@ TestIndications()
 		ExitWithFail "indication test: owmofc exited with error."
 
 	echo "Executing indication test suite, saving output in " $RESULTDIR/indicationTest.out
-	$BUILDDIR/test/acceptance/progs/cimlistener http://test1:pass1@localhost:30926 $RESULTDIR/cimlistener \
+	$BUILDDIR/test/acceptance/progs/cimlistener http://test1:pass1@localhost:30926 $RESULTDIR/logfile $RESULTDIR/cimlistener \
 		> $RESULTDIR/indicationTest.out 2>&1 || \
 		ExitWithFail "Indication test: cimlistener exited with error"
 
-	echo "Executing indication test suite, saving output in " $RESULTDIR/indicationTest.out
-	$BUILDDIR/test/acceptance/progs/cimlistener owbinary.wbem://test1:pass1@localhost:$OWIPC $RESULTDIR/cimlistener \
-		> $RESULTDIR/indicationTest.out 2>&1 || \
-		ExitWithFail "Indication test: cimlistener exited with error"
+	if [ "z$OWLONGTEST" = "z1" ]; then
+		echo "Executing indication test suite, saving output in " $RESULTDIR/indicationTest-ipc.out
+		$BUILDDIR/test/acceptance/progs/cimlistener owbinary.wbem://test1:pass1@localhost:$OWIPC $RESULTDIR/logfile $RESULTDIR/cimlistener \
+			> $RESULTDIR/indicationTest-ipc.out 2>&1 || \
+			ExitWithFail "Indication test: cimlistener exited with error"
+	fi
 
 	echo "Indication Testsuite Passed"
 
@@ -987,7 +989,7 @@ TestMultiReq()
 
 	echo "Multiple Operations Support Passed."
 
-	grep "define OW_NO_SSL" $TOP_SRCDIR/src/common/OW_config.h > /dev/null 2>&1
+	grep "define OW_NO_SSL" $STAGEDIR/@pkgincludedir@/OW_config.h > /dev/null 2>&1
 	if [ ! "$?" = "0" ]; then
 		echo "Testing HTTPS support..."
 
@@ -1074,7 +1076,7 @@ TestAuth()
 
 	echo "Simple Authentication module and GetFeatures Passed"
 	
-	if grep "define OW_DISABLE_DIGEST" $TOP_SRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
+	if grep "define OW_DISABLE_DIGEST" $STAGEDIR/@pkgincludedir@/OW_config.h > /dev/null 2>&1; then
 		echo "OpenWBEM was not build with Digest support"
 	else
 		EditConfig "s!http_server.allow_digest_authentication = false!http_server.allow_digest_authentication = true!g" 
@@ -1125,7 +1127,7 @@ TestAuth()
 		RestartDaemon
 	fi
 
-	if grep "define OW_HAVE_PAM" $TOP_SRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
+	if grep "define OW_HAVE_PAM" $STAGEDIR/@pkgincludedir@/OW_config.h > /dev/null 2>&1; then
 		# just start with the pam authentication module to make sure it can be loaded.
 		EditConfig "s!owcimomd.authentication_module\(.*\)simple\(.*\)!owcimomd.authentication_module\1pamcl\2!g"
 		RestartDaemon
@@ -2185,13 +2187,19 @@ main()
 	TestSuite "owbinary.wbem://test1:pass1@localhost:$OWIPC/ " "testsuiteUDSBIN.out" "testsuite28.out"
 
 	TestCIMExceptions "http://test1:pass1@localhost:30926"
-	TestCIMExceptions "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+	if [ "z$OWLONGTEST" = "z1" ]; then
+		TestCIMExceptions "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+	fi
 
-	TestNamespaces "http://test1:pass1@localhost:30926"
+	if [ "z$OWLONGTEST" = "z1" ]; then
+		TestNamespaces "http://test1:pass1@localhost:30926"
+	fi
 	TestNamespaces "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
 
 	TestMisc "http://test1:pass1@localhost:30926"
-	TestMisc "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+	if [ "z$OWLONGTEST" = "z1" ]; then
+		TestMisc "owbinary.wbem://test1:pass1@localhost:$OWIPC/"
+	fi
 
 	TestIndications
 

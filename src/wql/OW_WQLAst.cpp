@@ -36,6 +36,8 @@
 
 namespace OW_NAMESPACE
 {
+namespace WQL
+{
 
 stmt_selectStmt_optSemicolon::~stmt_selectStmt_optSemicolon()
 {
@@ -1068,4 +1070,5 @@ aExprConst_NULLP::~aExprConst_NULLP()
 {
 	delete m_pNULLP1;
 }
+} // end namespace WQL
 } // end namespace OW_NAMESPACE

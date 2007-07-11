@@ -280,6 +280,16 @@ void XMLParserCoreTestCases::testMismatchedStartEndTags()
 	}
 }
 
+void XMLParserCoreTestCases::testEmptyDocument()
+{
+	String input;
+	IStringStream is(input);
+	XMLParserCore parser(is);
+	XMLToken token;
+
+	unitAssert(!parser.next(token));
+}
+
 Test* XMLParserCoreTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("XMLParserCore");
@@ -293,6 +303,7 @@ Test* XMLParserCoreTestCases::suite()
 	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testEndTag);
 	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testBadEndTagName);
 	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testMismatchedStartEndTags);
+	ADD_TEST_TO_SUITE(XMLParserCoreTestCases, testEmptyDocument);
 
 	return testSuite;
 }

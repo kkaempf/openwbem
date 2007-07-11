@@ -404,7 +404,7 @@ LocalAuthentication::checkProcess()
 		OW_THROW(LocalAuthenticationException, msg.c_str());
 	}
 
-	Timeout to(Timeout::relative(10.0));
+	Timeout to(Timeout::infinite);
 	m_owlocalhelper->in()->setTimeouts(to);
 	m_owlocalhelper->out()->setTimeouts(to);
 	m_owlocalhelper->err()->setTimeouts(to);
@@ -425,27 +425,44 @@ LocalAuthentication::processHelperCommand(const String& inputCmd, const String& 
 		istr.tie(&ostr);
 		ostr << inputCmd << '\n';
 		ostr << extraInput << std::flush;
-		OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got request, sending to helper: %1", inputCmd));
+		OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got request, sending to helper: \"%1\"", inputCmd));
 		String result = String::getLine(istr);
-		OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got response: %1", result));
+		OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got response: \"%1\"", result));
 		if (result == "S")
 		{
 			output = String::getLine(istr);
-			OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got success. output: %1", output));
+			OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got success. output: \"%1\"", output));
 		}
 		else if (result == "F")
 		{
 			String details = String::getLine(istr);
-			OW_LOG_ERROR(m_logger, Format("LocalAuthentication::processHelperCommand() got failure. details: %1", details));
+			details.trim();
+			OW_LOG_ERROR(m_logger, Format("LocalAuthentication::processHelperCommand() got failure. details: \"%1\"", details));
 			size_t idx = details.indexOf(' ');
 			if (idx != String::npos)
 			{
-				OW_THROW_ERR(LocalAuthenticationException, details.substring(idx).c_str(), details.substring(1, idx - 1).toInt32());
+				Int32 errCode = -1;
+				try
+				{
+					errCode = details.substring(0, idx).toInt32();
+				}
+				catch (StringConversionException&)
+				{
+				}
+				OW_THROW_ERR(LocalAuthenticationException, details.substring(idx + 1).c_str(), errCode);
 			}
 			else
 			{
 				OW_THROW(LocalAuthenticationException, details.c_str());
 			}
+		}
+		else
+		{
+			// something is messed up, just kill the process!
+			OW_LOG_ERROR(m_logger, Format("LocalAuthentication::processHelperCommand() got unexpected output: \"%1\"", result));
+			m_owlocalhelper->waitCloseTerm(0.00, 0.01, 0.02);
+			m_owlocalhelper = 0;
+			OW_THROW(LocalAuthenticationException, Format("LocalAuthentication::processHelperCommand() got unexpected output: \"%1\"", result).c_str());
 		}
 	}
 	catch (LocalAuthenticationException&)
@@ -454,6 +471,8 @@ LocalAuthentication::processHelperCommand(const String& inputCmd, const String& 
 	}
 	catch (Exception& e)
 	{
+		m_owlocalhelper->waitCloseTerm(0.00, 0.01, 0.02);
+		m_owlocalhelper = 0;
 		OW_THROW_SUBEX(LocalAuthenticationException, Format("Failed running %1. command = %2, output = \"%3\"", 
 			m_localHelperBinPath, inputCmd, output).c_str(), e);
 	}

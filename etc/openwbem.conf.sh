@@ -57,7 +57,9 @@ log.main.facility = daemon
 
 ################################################################################
 # log.main.location specifies the location of the log file
-# (if the type == "file".)
+# (if the type == "file".) The directory of the log must have write and
+# execute permissions set so that owcimomd (running as owcimomd:owcimomd)
+# can create and delete files.
 ;log.main.location =
 
 ################################################################################

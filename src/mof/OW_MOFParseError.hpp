@@ -32,8 +32,8 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_MOF_LINE_INFO_HPP_INCLUDE_GUARD_
-#define OW_MOF_LINE_INFO_HPP_INCLUDE_GUARD_
+#ifndef OW_MOF_PARSE_ERROR_HPP_INCLUDE_GUARD_
+#define OW_MOF_PARSE_ERROR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_String.hpp"
 
@@ -43,18 +43,20 @@ namespace OW_NAMESPACE
 namespace MOF
 {
 
-struct OW_MOF_API LineInfo
+struct OW_MOF_API ParseError
 {
-	LineInfo()
-		: filename(), lineNum(1), columnNum(1) {}
-	LineInfo( const String& _filename, const long _linenum, const long _columnNum )
-		: filename(_filename), lineNum(_linenum), columnNum(_columnNum) {}
-	String filename;
-	long lineNum;
-	long columnNum;
-};
+	ParseError()
+		: column(0)
+		, line(0)
+	{
+	}
 
-typedef LineInfo lineInfo OW_DEPRECATED;
+	String message;
+	// column and line for start of token where error detected
+	unsigned column;
+	unsigned line;
+
+};
 
 } // end namespace MOF
 } // end namespace OW_NAMESPACE

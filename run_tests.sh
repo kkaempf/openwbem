@@ -25,29 +25,33 @@ killowcimomd()
 	kill $(ps -C owcimomd -o pid=) || true
 }
 
-doMakeDistCheck()
-{
-	killowcimomd
-	make $MAKE_PARALLEL distcheck
-	RVAL=$?
-	if [ $RVAL != 0 ]; then
-		echo "doMakeDistCheck failed!"
-	fi
-	return $RVAL
-}
-
 doATest()
 {
 # TODO: test make rpm in here.
 	CONFIGOPTS=$1
+	pushd $BLOCXX_LOCATION
 	make distclean
-	./cvsbootstrap.sh
+	./bootstrap.sh
 	./configure $CONFIGOPTS
-	killowcimomd
 	make $MAKE_PARALLEL \
 		&& make $MAKE_PARALLEL check \
+		&& make $MAKE_PARALLEL distcheck DISTCHECK_CONFIGURE_FLAGS="$CONFIGOPTS"
+	RVAL=$?
+	if [ $RVAL != 0 ]; then
+		echo "doATest failed to test blocxx!  CONFIGOPTS=$CONFIGOPTS"
+		return $RVAL
+	fi
+
+	popd
+
+	make distclean
+	./cvsbootstrap.sh
+	./configure $CONFIGOPTS --with-blocxx="$BLOCXX_LOCATION"
+	killowcimomd
+	make $MAKE_PARALLEL \
 		&& OWLONGTEST=1 make $MAKE_PARALLEL check \
-		&& make clean
+		&& make $MAKE_PARALLEL distcheck DISTCHECK_CONFIGURE_FLAGS="$CONFIGOPTS --with-blocxx=\"$BLOCXX_LOCATION\""
+
 	RVAL=$?
 	if [ $RVAL != 0 ]; then
 		echo "doATest failed!  CONFIGOPTS=$CONFIGOPTS"
@@ -58,12 +62,24 @@ doATest()
 doACompileOnlyTest()
 {
 	CONFIGOPTS=$1
+	pushd $BLOCXX_LOCATION
+	make distclean
+	./bootstrap.sh
+	./configure $CONFIGOPTS
+	make $MAKE_PARALLEL
+	RVAL=$?
+	if [ $RVAL != 0 ]; then
+		echo "doACompileOnlyTest failed to build blocxx!  CONFIGOPTS=$CONFIGOPTS"
+		return $RVAL
+	fi
+
+	popd
+
 	make distclean
 	./cvsbootstrap.sh
-	./configure $CONFIGOPTS
+	./configure $CONFIGOPTS --with-blocxx="$BLOCXX_LOCATION"
 	killowcimomd
-	make $MAKE_PARALLEL \
-		&& make clean
+	make $MAKE_PARALLEL
 	RVAL=$?
 	if [ $RVAL != 0 ]; then
 		echo "doACompileOnlyTest failed!  CONFIGOPTS=$CONFIGOPTS"
@@ -75,19 +91,17 @@ doACompileOnlyTest()
 doTests()
 {
 	doATest "" || return 1
-	doATest "--enable-debug-mode --enable-stack-trace --enable-maintainer-mode --enable-valgrind-support" || return 1
-	doMakeDistCheck || return 1
+	doATest "--enable-debug-mode --enable-stack-trace --enable-maintainer-mode" || return 1
+	# The unit tests fail because dlclose() is never called with --enable-valgrind-support
+	doACompileOnlyTest "--enable-valgrind-support" || return 1
 	doATest "--disable-zlib" || return 1
 	doATest "--disable-openslp" || return 1
 	doACompileOnlyTest "--enable-memory-debug-mode" || return 1
 	doATest "--enable-func-name-debug-mode" || return 1
 	doATest "--disable-check-null-references --disable-check-array-indexing" || return 1
 	doATest "--disable-digest" || return 1
-	doATest "--disable-ssl" || return 1
 	doATest "--disable-pam" || return 1
 	doATest "--with-package-prefix=foo" || return 1
-	doACompileOnlyTest "--enable-perl-providerifc" || return 1
-	doACompileOnlyTest "--enable-debug-mode --enable-perl-providerifc" || return 1
 	doACompileOnlyTest "--disable-association-traversal" || return 1
 	doACompileOnlyTest "--disable-qualifier-declaration" || return 1
 	doACompileOnlyTest "--disable-schema-manipulation" || return 1
@@ -98,11 +112,17 @@ doTests()
 	doATest "--prefix=/opt/some/other/prefix --enable-rpath-link" || return 1
 	doATest "--prefix=/opt/some/other/prefix --with-runtime-link-path=/opt/some/other/prefix/some/other/lib/dir" || return 1
 	doATest "--enable-non-thread-safe-exception-handling-workaround" || return 1
-	doATest "--enable-threads-run-as-user" || return 1
 	doATest "--enable-static-services" || { echo "--enable-static-services failed"; }
+	doATest "--enable-monitored-perl-ifc" || return 1
+	doATest "--enable-64-bit-build" || return 1
+	doATest "--disable-cmpi" || return 1
+	doATest "--enable-vas" || return 1
+	doATest "--enable-ipv6" || return 1
+	doATest "--disable-ipv6" || return 1
 }
 
 ## MAIN ######################################################################
+BLOCXX_LOCATION=$1
 if doTests; then
 	echo "Success"
 	exit 0

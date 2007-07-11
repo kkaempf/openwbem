@@ -81,10 +81,8 @@ owlocalhelper_main.cpp \
 OW_LocalAuthenticationCommon.cpp \
 OW_LocalAuthenticationCommon.hpp
 
-# Do things a bit differently and statically link to libopenwbem to avoid
-# restrictions with LD_LIBRARY_PATH and setuid binaries.
 owlocalhelper@OPENWBEM_LIBRARY_VERSION@_EXTERNAL_LIBS = \
-$(STATIC_LINK_FLAGS) -L$(top_builddir)/src/common -lopenwbem $(CURRENT_LINK_MODE_FLAGS) \
+-L$(top_builddir)/src/common -lopenwbem \
 $(Z_LIBS) $(SSL_LIBS) $(BLOCXX_LIBS)
 
 

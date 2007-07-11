@@ -31,5 +31,8 @@ OW_IPCIO_noexcept.hpp \
 Cifc_AutoDescriptor.hpp \
 Cifc_DescriptorUtils_noexcept.hpp 
 
+pkginclude_HEADERS = \
+OW_privman.h
+
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/monitor -I$(top_srcdir)/src/common -DOW_NO_EXCEPTIONS

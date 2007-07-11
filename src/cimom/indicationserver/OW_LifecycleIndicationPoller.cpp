@@ -168,48 +168,94 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 {
 	Logger logger(COMPONENT_NAME);
 	// do enumInstances to populate m_prevInsts
-	if (!m_initializedInstances)
-	{
-		InstanceArrayBuilder iab(m_prevInsts);
-		env->getCIMOMHandle()->enumInstances(m_ns, m_classname.toString(), iab, E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
-		m_initializedInstances = true;
-		return 1; // have poll called again in 1 second.
-	}
-
-	OW_LOG_DEBUG3(logger, Format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
-	if (!willPoll())
-	{
-		// nothing to do, so return 0 to stop polling.
-		OW_LOG_DEBUG2(logger, "LifecycleIndicationPoller::poll nothing to do, returning 0");
-		return 0;
-	}
-	
-	// do enumInstances of the class
-	CIMInstanceArray curInstances;
-	InstanceArrayBuilder iab(curInstances);
-	CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 	try
 	{
-		hdl->enumInstances(m_ns, m_classname.toString(), iab, E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
-	}
-	catch (const CIMException& e)
-	{
-		OW_LOG_ERROR(logger, Format("LifecycleIndicationPoller::poll caught exception: %1", e));
-		return 0;
-	}
+		if (!m_initializedInstances)
+		{
+			InstanceArrayBuilder iab(m_prevInsts);
+			env->getCIMOMHandle()->enumInstances(m_ns, m_classname.toString(), iab, E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			m_initializedInstances = true;
+			return 1; // have poll called again in 1 second.
+		}
 	
-	OW_LOG_DEBUG2(logger, Format("LifecycleIndicationPoller::poll got %1 instances", curInstances.size()));
-	// Compare the new instances with the previous instances
-	// and send any indications that may be necessary.
-	typedef SortedVectorSet<CIMInstance, sortByInstancePath> instSet_t;
-	instSet_t prevSet(m_prevInsts.begin(), m_prevInsts.end());
-	instSet_t curSet(curInstances.begin(), curInstances.end());
-	typedef instSet_t::const_iterator iter_t;
-	iter_t pi = prevSet.begin();
-	iter_t ci = curSet.begin();
-	while (pi != prevSet.end() && ci != curSet.end())
-	{
-		if (sortByInstancePath()(*pi, *ci))
+		OW_LOG_DEBUG3(logger, Format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
+		if (!willPoll())
+		{
+			// nothing to do, so return 0 to stop polling.
+			OW_LOG_DEBUG2(logger, "LifecycleIndicationPoller::poll nothing to do, returning 0");
+			return 0;
+		}
+		
+		// do enumInstances of the class
+		CIMInstanceArray curInstances;
+		InstanceArrayBuilder iab(curInstances);
+		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+		try
+		{
+			hdl->enumInstances(m_ns, m_classname.toString(), iab, E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+		}
+		catch (const CIMException& e)
+		{
+			OW_LOG_ERROR(logger, Format("LifecycleIndicationPoller::poll caught exception: %1", e));
+			return 0;
+		}
+		
+		OW_LOG_DEBUG2(logger, Format("LifecycleIndicationPoller::poll got %1 instances", curInstances.size()));
+		// Compare the new instances with the previous instances
+		// and send any indications that may be necessary.
+		typedef SortedVectorSet<CIMInstance, sortByInstancePath> instSet_t;
+		instSet_t prevSet(m_prevInsts.begin(), m_prevInsts.end());
+		instSet_t curSet(curInstances.begin(), curInstances.end());
+		typedef instSet_t::const_iterator iter_t;
+		iter_t pi = prevSet.begin();
+		iter_t ci = curSet.begin();
+		while (pi != prevSet.end() && ci != curSet.end())
+		{
+			if (sortByInstancePath()(*pi, *ci))
+			{
+				// *pi has been deleted
+				if (m_pollDeletion)
+				{
+					CIMInstance expInst;
+					expInst.setClassName("CIM_InstDeletion");
+					expInst.setProperty("SourceInstance", CIMValue(*pi));
+					expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
+					hdl->exportIndication(expInst, m_ns);
+				}
+				++pi;
+			}
+			else if (sortByInstancePath()(*ci, *pi))
+			{
+				// *ci is new
+				if (m_pollCreation)
+				{
+					CIMInstance expInst;
+					expInst.setClassName("CIM_InstCreation");
+					expInst.setProperty("SourceInstance", CIMValue(*ci));
+					expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
+					hdl->exportIndication(expInst, m_ns);
+				}
+				++ci;
+			}
+			else // *pi == *ci
+			{
+				if (m_pollModification)
+				{
+					if (!pi->propertiesAreEqualTo(*ci))
+					{
+						CIMInstance expInst;
+						expInst.setClassName("CIM_InstModification");
+						expInst.setProperty("PreviousInstance", CIMValue(*pi));
+						expInst.setProperty("SourceInstance", CIMValue(*ci));
+						expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
+						hdl->exportIndication(expInst, m_ns);
+					}
+				}
+				++pi;
+				++ci;
+			}
+		}
+		while (pi != prevSet.end())
 		{
 			// *pi has been deleted
 			if (m_pollDeletion)
@@ -222,7 +268,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 			}
 			++pi;
 		}
-		else if (sortByInstancePath()(*ci, *pi))
+		while (ci != curSet.end())
 		{
 			// *ci is new
 			if (m_pollCreation)
@@ -235,53 +281,18 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 			}
 			++ci;
 		}
-		else // *pi == *ci
-		{
-			if (m_pollModification)
-			{
-				if (!pi->propertiesAreEqualTo(*ci))
-				{
-					CIMInstance expInst;
-					expInst.setClassName("CIM_InstModification");
-					expInst.setProperty("PreviousInstance", CIMValue(*pi));
-					expInst.setProperty("SourceInstance", CIMValue(*ci));
-					expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
-					hdl->exportIndication(expInst, m_ns);
-				}
-			}
-			++pi;
-			++ci;
-		}
+		
+		// save the current instances to m_prevInsts
+		m_prevInsts = curInstances;
 	}
-	while (pi != prevSet.end())
+	catch (Exception& e)
 	{
-		// *pi has been deleted
-		if (m_pollDeletion)
-		{
-			CIMInstance expInst;
-			expInst.setClassName("CIM_InstDeletion");
-			expInst.setProperty("SourceInstance", CIMValue(*pi));
-			expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
-			hdl->exportIndication(expInst, m_ns);
-		}
-		++pi;
+		OW_LOG_ERROR(logger, Format("LifecycleIndicationPoller::poll() caught Exception: %1", e));
 	}
-	while (ci != curSet.end())
+	catch (std::exception& e)
 	{
-		// *ci is new
-		if (m_pollCreation)
-		{
-			CIMInstance expInst;
-			expInst.setClassName("CIM_InstCreation");
-			expInst.setProperty("SourceInstance", CIMValue(*ci));
-			expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
-			hdl->exportIndication(expInst, m_ns);
-		}
-		++ci;
+		OW_LOG_ERROR(logger, Format("LifecycleIndicationPoller::poll() caught std::exception: %1", e.what()));
 	}
-	
-	// save the current instances to m_prevInsts
-	m_prevInsts = curInstances;
 	return getPollInterval();
 }
 

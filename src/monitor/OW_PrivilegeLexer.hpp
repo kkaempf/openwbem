@@ -31,8 +31,9 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_CommonFwd.hpp"
-#include "OW_String.hpp"
+#include "blocxx/BLOCXX_config.h"
+#include "blocxx/CommonFwd.hpp"
+#include "blocxx/String.hpp"
 #include <deque>
 
 /**
@@ -57,7 +58,6 @@ struct openwbem_privconfig_yyltype
 	unsigned last_line;
 };
 
-#define YYLTYPE openwbem_privconfig_yyltype
 
 namespace OW_NAMESPACE
 {
@@ -75,7 +75,7 @@ public:
 	openwbem_privconfig_Lexer(std::istream & arg_yyin, OpenWBEM::PrivilegeConfig::IncludeHandler& includeHandler, const OpenWBEM::String& bufferName);
 	~openwbem_privconfig_Lexer();
 
-	void get_location(YYLTYPE & loc) const;
+	void get_location(openwbem_privconfig_yyltype & loc) const;
 
 	bool has_value()
 	{

@@ -238,7 +238,8 @@ enum
 	E_PROVIDER_OPT,
 	E_LOG_FILE_OPT,
 	E_MONITOR_OPT,
-	E_LOG_CATEGORIES_OPT
+	E_LOG_CATEGORIES_OPT,
+	E_DISABLE_PROVIDER_SECURITY_CHECK
 };
 
 const CmdLineParser::Option g_options[] =
@@ -251,11 +252,12 @@ const CmdLineParser::Option g_options[] =
 	{E_MONITOR_OPT, 'm', "monitor", CmdLineParser::E_NO_ARG, 0, "Connect to monitor before loading provider library"},
 	{E_LOG_CATEGORIES_OPT, 0, "logcategories", CmdLineParser::E_REQUIRED_ARG, 0,
 	 "Comma separated list of categories to log"},
+	{E_DISABLE_PROVIDER_SECURITY_CHECK, 0, "disable-provider-security-check", CmdLineParser::E_NO_ARG, 0, "Disable the provider security check (this should only be used for testing)"},
 	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
 };
 
 int processCommandLine(
-	int argc, char* argv[], String& provider, String& logfile, String& logCategories
+	int argc, char* argv[], String& provider, String& logfile, String& logCategories, bool& disableProviderSecurityCheck
 );
 void printUsage();
 
@@ -301,9 +303,11 @@ int main(int argc, char* argv[])
     int rval = 0;
 
 	String providerLib, logfile, logCategories;
-	int pclrv = processCommandLine(argc, argv, providerLib, logfile, logCategories);
+	bool disableProviderSecurityCheck = false;
+	int pclrv = processCommandLine(argc, argv, providerLib, logfile, logCategories, disableProviderSecurityCheck);
 	if (pclrv == -1)
 	{
+		// -1 means nothing more to do because the command line has something like --help.
 		return 0;
 	}
 	else if (pclrv != 0)
@@ -312,51 +316,62 @@ int main(int argc, char* argv[])
 	}
 
 	AutoDescriptor infd(::dup(0));
-	if (infd.get() == -1)
-	{
-		OW_THROW_ERRNO_MSG(IOException, "Failed to dup stdin");
-	}
 	AutoDescriptor outfd(::dup(1));
-	if (outfd.get() == -1)
+	try
 	{
-		OW_THROW_ERRNO_MSG(IOException, "Failed to dup stdout");
-	}
+		if (infd.get() == -1)
+		{
+			OW_THROW_ERRNO_MSG(IOException, "Failed to dup stdin");
+		}
+		if (outfd.get() == -1)
+		{
+			OW_THROW_ERRNO_MSG(IOException, "Failed to dup stdout");
+		}
 
-	if (::close(0) == -1)
-	{
-		OW_THROW_ERRNO_MSG(IOException, "Failed to close stdin");
-	}
-	if (::close(1) == -1)
-	{
-		OW_THROW_ERRNO_MSG(IOException, "Failed to close stdout");
-	}
+		if (::close(0) == -1)
+		{
+			OW_THROW_ERRNO_MSG(IOException, "Failed to close stdin");
+		}
+		if (::close(1) == -1)
+		{
+			OW_THROW_ERRNO_MSG(IOException, "Failed to close stdout");
+		}
 
-	// Open stdin	== /dev/null
-	int fd = ::open("/dev/null", O_RDWR);
-	if (fd == -1)
-	{
-		OW_THROW_ERRNO_MSG(IOException, "Failed to open /dev/null for stdin");
-	}
+		// Open stdin	== /dev/null
+		int fd = ::open("/dev/null", O_RDWR);
+		if (fd == -1)
+		{
+			OW_THROW_ERRNO_MSG(IOException, "Failed to open /dev/null for stdin");
+		}
 
-	// Stdout == /dev/null
-	if (::dup(fd) == -1)
+		// Stdout == /dev/null
+		if (::dup(fd) == -1)
+		{
+			OW_THROW_ERRNO_MSG(IOException, "Failed to dup /dev/null for stdout");
+		}
+	}
+	catch (IOException& e)
 	{
-		OW_THROW_ERRNO_MSG(IOException, "Failed to dup /dev/null for stdout");
+		std::clog << e.getMessage() << std::endl;
+		return 1;
 	}
 
 	UnnamedPipeRef iopipe = UnnamedPipe::createUnnamedPipeFromDescriptor(infd, outfd);
 	OOPCpp1ProviderRunner provrunner(iopipe, logfile, logCategories);
 	Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
 	ProviderEnvironmentIFCRef penv = provrunner.getProviderEnvironment();
-/*
-	std::pair<FileSystem::Path::ESecurity, String> sec = FileSystem::Path::security(providerLib);
-	if (sec.first != FileSystem::Path::E_SECURE_FILE)
+
+	if (!disableProviderSecurityCheck)
 	{
-		OW_LOG_ERROR(logger, Format("ERROR: %1(%2) is not a secure file.", providerLib, sec.second));
-		return 1;
+		std::pair<FileSystem::Path::ESecurity, String> sec = FileSystem::Path::security(providerLib);
+		if (sec.first != FileSystem::Path::E_SECURE_FILE)
+		{
+			OW_LOG_ERROR(logger, Format("ERROR: %1(%2) is not a secure file.", providerLib, sec.second));
+			return 1;
+		}
+		providerLib = sec.second;
 	}
-	providerLib = sec.second;
-*/
+
 	CppProviderBaseIFCRef cppprov = CppProviderIFC::loadProvider(providerLib);
 	if (!cppprov)
 	{
@@ -416,7 +431,8 @@ processCommandLine(
 	char* argv[],
 	String& providerLib,
 	String& logfile,
-	String & logCategories)
+	String& logCategories,
+	bool& disableProviderSecurityCheck)
 {
 	try
 	{
@@ -452,6 +468,7 @@ processCommandLine(
 		{
 			logCategories = parser.getOptionValue(E_LOG_CATEGORIES_OPT);
 		}
+		disableProviderSecurityCheck = parser.isSet(E_DISABLE_PROVIDER_SECURITY_CHECK);
 	}
 	catch (const CmdLineParserException& e)
 	{

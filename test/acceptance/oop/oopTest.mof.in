@@ -64,7 +64,7 @@ instance of OpenWBEM_OOPProviderRegistration
         ClassName = "ooptest";
         ProviderTypes = {4, 8}; // lifecycle indication, polled
         Process = "@libexecdir@/openwbem/owoopcpp1pr";
-        Args = { "--provider=@provdir@/libooptest.@LIB_EXT@", "--logfile=" };
+        Args = { "--provider=@provdir@/libooptest.@LIB_EXT@", "--logfile=", "--disable-provider-security-check" };
         Protocol = "owcpp1";
         Timeout = "00000000000010.000000:000";
 };
@@ -74,7 +74,7 @@ instance of OpenWBEM_OOPProviderProcess as $pp1
 {
         InstanceID = "proc1inst";
         Process = "@libexecdir@/openwbem/owoopcpp1pr";
-        Args = { "--provider=@provdir@/libooptest.@LIB_EXT@", "--logfile=" };
+        Args = { "--provider=@provdir@/libooptest.@LIB_EXT@", "--logfile=", "--disable-provider-security-check" };
         Protocol = "owcpp1";
         Timeout = "00000000000010.000000:000";
 	Persistent=false;
@@ -113,7 +113,7 @@ instance of OpenWBEM_OOPProviderRegistration
         ClassName = "ooptestInst1";
         ProviderTypes = {1}; // instance
         Process = "@libexecdir@/openwbem/owoopcpp1pr";
-        Args = { "--provider=@provdir@/liboopassoctest.@LIB_EXT@", "--logfile=" };
+        Args = { "--provider=@provdir@/liboopassoctest.@LIB_EXT@", "--logfile=", "--disable-provider-security-check" };
         Protocol = "owcpp1";
         Timeout = "00000000000010.000000:000";
 };
@@ -125,7 +125,7 @@ instance of OpenWBEM_OOPProviderRegistration
         ClassName = "ooptestInst100";
         ProviderTypes = {1}; // instance
         Process = "@libexecdir@/openwbem/owoopcpp1pr";
-        Args = { "--provider=@provdir@/liboopassoctest.@LIB_EXT@", "--logfile=" };
+        Args = { "--provider=@provdir@/liboopassoctest.@LIB_EXT@", "--logfile=", "--disable-provider-security-check" };
         Protocol = "owcpp1";
         Timeout = "00000000000010.000000:000";
 };
@@ -137,7 +137,7 @@ instance of OpenWBEM_OOPProviderRegistration
         ClassName = "ooptestAssoc";
         ProviderTypes = {3}; // associator
         Process = "@libexecdir@/openwbem/owoopcpp1pr";
-        Args = { "--provider=@provdir@/liboopassoctest.@LIB_EXT@", "--logfile=" };
+        Args = { "--provider=@provdir@/liboopassoctest.@LIB_EXT@", "--logfile=", "--disable-provider-security-check" };
         Protocol = "owcpp1";
         Timeout = "00000000000010.000000:000";
 };
