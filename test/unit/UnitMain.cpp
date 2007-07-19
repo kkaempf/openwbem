@@ -49,7 +49,6 @@
 #include "OW_ScopeLoggerTestCases.hpp"
 #include "GlobalPtrTestCases.hpp"
 #include "IStringStreamTestCases.hpp"
-#include "UnnamedPipeTestCases.hpp"
 #include "ProcessTestCases.hpp"
 #include "ConditionTestCases.hpp"
 #include "TimeoutTimerTestCases.hpp"
@@ -126,7 +125,6 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_ScopeLogger", OW_ScopeLoggerTestCases::suite());
 	runner.addTest( "GlobalPtr", GlobalPtrTestCases::suite());
 	runner.addTest( "IStringStream", IStringStreamTestCases::suite());
-	runner.addTest( "UnnamedPipe", UnnamedPipeTestCases::suite());
 	runner.addTest( "Process", ProcessTestCases::suite());
 	runner.addTest( "Condition", ConditionTestCases::suite());
 	runner.addTest( "TimeoutTimer", TimeoutTimerTestCases::suite());

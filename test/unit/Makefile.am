@@ -69,8 +69,6 @@ GlobalPtrTestCases.cpp \
 GlobalPtrTestCases.hpp \
 IStringStreamTestCases.cpp \
 IStringStreamTestCases.hpp \
-UnnamedPipeTestCases.cpp \
-UnnamedPipeTestCases.hpp \
 ProcessTestCases.cpp \
 ProcessTestCases.hpp \
 ConditionTestCases.cpp \
