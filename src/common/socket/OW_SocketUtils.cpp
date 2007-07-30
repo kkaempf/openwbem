@@ -80,9 +80,12 @@ namespace SocketUtils
 String
 inetAddrToString(UInt64 addr)
 {
-	struct in_addr iaddr;
-	iaddr.s_addr = addr;
-	String s(inet_ntoa(iaddr));
+	sockaddr_in iaddr;
+	char buf[INET6_ADDRSTRLEN];
+	iaddr.sin_family = AF_INET;
+	iaddr.sin_addr.s_addr = addr;
+	iaddr.sin_port = 0;
+	String s(inet_ntop(iaddr.sin_family, &iaddr, buf, sizeof(buf)));
 	return s;
 }
 #ifndef MAX
@@ -368,7 +371,12 @@ String getFullyQualifiedHostName()
 	}
 	else
 	{
-		rv = inet_ntoa(*(struct in_addr*) (hostentp->h_addr_list[0]));
+		char buf[INET6_ADDRSTRLEN];
+		sockaddr_in     addr;
+		addr.sin_family = AF_INET;
+		addr.sin_port   = 0;
+		memcpy(&addr.sin_addr, hostentp->h_addr_list[0], sizeof(addr.sin_addr));
+		rv = inet_ntop(address->sin_family, address, buf, sizeof(buf));
 		iaHost.s_addr = inet_addr(rv.c_str());
 		if(iaHost.s_addr != INADDR_NONE)
 		{

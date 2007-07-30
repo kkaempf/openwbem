@@ -284,9 +284,11 @@ SocketAddress::getAnyLocalHost(UInt16 port)
 void SocketAddress::assignFromNativeForm(
 	const InetSocketAddress_t* address, size_t /*size*/)
 {
+	char    buf[INET6_ADDRSTRLEN];
 	m_type = INET;
 	memcpy(&m_inetNativeAddress, address, sizeof(m_inetNativeAddress));
-	m_address = inet_ntoa(m_inetNativeAddress.sin_addr);
+	m_address = inet_ntop(address->sin_family, address, buf, 
+                sizeof(buf));
 	m_nativeSize = sizeof(m_inetNativeAddress);
 }
 
