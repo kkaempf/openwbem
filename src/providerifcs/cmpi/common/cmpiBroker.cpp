@@ -47,6 +47,7 @@ namespace
 #define CM_Context(ctx) (((CMPI_Context*)ctx)->ctx)
 #define CM_Instance(ci) ((OpenWBEM::CIMInstance*)ci->hdl)
 #define CM_ObjectPath(cop) ((OpenWBEM::CIMObjectPath*)cop->hdl)
+#define CM_Args(args) ((OpenWBEM::CIMParamValueArray*)args->hdl)
 #define CM_LocalOnly(flgs) (((flgs) & CMPI_FLAG_LocalOnly)!=0)
 #define CM_ClassOrigin(flgs) \
 (((flgs) & CMPI_FLAG_IncludeClassOrigin)!=0)

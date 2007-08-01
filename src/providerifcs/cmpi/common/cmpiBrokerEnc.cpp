@@ -202,13 +202,29 @@ static CMPIString* mbEncToString(const CMPIBroker *, const void * o, CMPIStatus 
 static CMPIBoolean mbEncClassPathIsA(const CMPIBroker *, const CMPIObjectPath *eCp,
 					const char *type, CMPIStatus *rc)
 {
+	CMSetStatus(rc,CMPI_RC_OK);
 	OpenWBEM::CIMObjectPath* cop=static_cast<OpenWBEM::CIMObjectPath *>(eCp->hdl);
+	if (!cop)
+	{
+		CMSetStatus(rc,CMPI_RC_ERR_INVALID_HANDLE);
+		return 0;
+	}
+	if (cop->getNameSpace().empty())
+	{
+		CMSetStatus(rc,CMPI_RC_ERR_INVALID_NAMESPACE);
+		return 0;
+	}
 
 	OpenWBEM::String tcn(type);
 
 	if (tcn == cop->getClassName()) return 1;
 
 	OpenWBEM::AutoPtr<OpenWBEM::CIMClass> cc(mbGetClass(0,*cop));
+	if (!(cc.get()))
+	{
+		CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
+		return 0;
+	}
 	OpenWBEM::CIMObjectPath  scp(*cop);
 	scp.setClassName(cc->getSuperClass());
 																				
