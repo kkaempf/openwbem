@@ -88,7 +88,9 @@ public:
 	 */
 	void addURL(const URL& url);
 	SocketAddress getLocalHTTPAddress();
+	Array<SocketAddress> getLocalHTTPAddresses();
 	SocketAddress getLocalHTTPSAddress();
+	Array<SocketAddress> getLocalHTTPSAddresses();
 	
 	enum EAuthenticationChallengeMethod
 	{
@@ -99,8 +101,8 @@ public:
 	
 	struct Options
 	{
-		Int32 httpPort;
-		Int32 httpsPort;
+		Array<UInt16> httpPorts;
+		Array<UInt16> httpsPorts;
 		String UDSFilename;
 		Int32 maxConnections;
 		bool isSepThread;
@@ -132,8 +134,9 @@ private:
 	IntrusiveReference<UnnamedPipe> m_upipe;
 #endif
 	Array<URL> m_urls;
-	IntrusiveReference<ServerSocket> m_pHttpServerSocket;
-	IntrusiveReference<ServerSocket> m_pHttpsServerSocket;
+	typedef Array<IntrusiveReference<ServerSocket> > ServerSockArray_t; 
+	ServerSockArray_t m_pHttpServerSockets;
+	ServerSockArray_t m_pHttpsServerSockets;
 	IntrusiveReference<ServerSocket> m_pUDSServerSocket;
 #ifndef OW_DISABLE_DIGEST
 	IntrusiveReference<DigestAuthentication> m_digestAuthentication;

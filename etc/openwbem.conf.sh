@@ -396,6 +396,7 @@ http_server.listen_addresses = 0.0.0.0
 # Set this to -1 if you do not want to support HTTP connections (for
 # instance, you only want to support HTTPS connections).  If a value of 0
 # is given, a port will be dynamically assigned at run-time.
+# This is a multi-valued option. Whitespace is the separator.
 # The default is 5988
 http_server.http_port = 5988
 
@@ -404,6 +405,7 @@ http_server.http_port = 5988
 # for all HTTPS communications.
 # Set this to -1 if you do not want to support HTTPS connections.
 # If a value of 0 is given, a port will be dynamically assigned at run-time.
+# This is a multi-valued option. Whitespace is the separator.
 # The default is 5989
 http_server.https_port = 5989
 
