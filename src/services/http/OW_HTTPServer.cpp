@@ -368,38 +368,58 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 	try
 	{
 		Logger logger(COMPONENT_NAME);
-		String item = env->getConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, OW_DEFAULT_HTTP_SERVER_HTTP_PORT);
-		m_options.httpPort = item.toInt32();
-		
-		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, OW_DEFAULT_HTTP_SERVER_HTTPS_PORT);
-		m_options.httpsPort = item.toInt32();
+		StringArray items = env->getMultiConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, 
+				String(OW_DEFAULT_HTTP_SERVER_HTTP_PORT).tokenize(" \t"), 
+				" \t"); 
+		m_options.httpPorts.clear(); 
+		if (!items.empty() and items[0] != "-1")
+		{
+			for (StringArray::const_iterator iter = items.begin(); 
+					iter != items.end(); ++iter)
+			{
+				m_options.httpPorts.push_back(iter->toUInt16()); 
+			}
+		}
+
+		items = env->getMultiConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, 
+				String(OW_DEFAULT_HTTP_SERVER_HTTPS_PORT).tokenize(" \t"),
+				" \t");
+		m_options.httpsPorts.clear(); 
+		if (!items.empty() and items[0] != "-1")
+		{
+			for (StringArray::const_iterator iter = items.begin(); 
+					iter != items.end(); ++iter)
+			{
+				m_options.httpsPorts.push_back(iter->toUInt16()); 
+			}
+		}
 
 		m_options.defaultContentLanguage = env->getConfigItem(
-			ConfigOpts::HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt, OW_DEFAULT_HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE);
-	
+				ConfigOpts::HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt, OW_DEFAULT_HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE);
+
 #ifndef OW_WIN32
 		m_options.UDSFilename = env->getConfigItem(ConfigOpts::HTTP_SERVER_UDS_FILENAME_opt, OW_DEFAULT_HTTP_SERVER_UDS_FILENAME);
 #endif
-		
-		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_USE_UDS_opt, OW_DEFAULT_HTTP_SERVER_USE_UDS);
+
+		String item = env->getConfigItem(ConfigOpts::HTTP_SERVER_USE_UDS_opt, OW_DEFAULT_HTTP_SERVER_USE_UDS);
 		m_options.useUDS = item.equalsIgnoreCase("true");
-		
+
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_MAX_CONNECTIONS_opt, OW_DEFAULT_HTTP_SERVER_MAX_CONNECTIONS);
 		m_options.maxConnections = item.toInt32();
 		// TODO: Make the type of pool and the size of the queue be separate config options.
 		m_threadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, m_options.maxConnections, m_options.maxConnections * 100, 
-			Logger(COMPONENT_NAME), "HTTPServer"));
-		
+					Logger(COMPONENT_NAME), "HTTPServer"));
+
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_SINGLE_THREAD_opt, OW_DEFAULT_HTTP_SERVER_SINGLE_THREAD);
 		m_options.isSepThread = !item.equalsIgnoreCase("true");
-		
+
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_ENABLE_DEFLATE_opt, OW_DEFAULT_HTTP_SERVER_ENABLE_DEFLATE);
 		m_options.enableDeflate = !item.equalsIgnoreCase("false");
-		
+
 		item = env->getConfigItem(ConfigOpts::ALLOW_ANONYMOUS_opt, OW_DEFAULT_ALLOW_ANONYMOUS);
 		m_options.allowAnonymous = item.equalsIgnoreCase("true");
 		m_options.env = env;
-		
+
 		String allowDigest = env->getConfigItem(ConfigOpts::HTTP_SERVER_ALLOW_DIGEST_AUTHENTICATION_opt);
 		String allowBasic = env->getConfigItem(ConfigOpts::HTTP_SERVER_ALLOW_BASIC_AUTHENTICATION_opt);
 		m_options.authenticationRealm = env->getConfigItem(ConfigOpts::HTTP_SERVER_AUTHENTICATION_REALM_opt,SocketAddress::getAnyLocalHost().getName()); 
@@ -415,7 +435,7 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 				m_options.defaultAuthChallenge = E_DIGEST;
 #else
 				OW_THROW(HTTPServerException, "Unable to initialize HTTP Server because"
-					" digest is enabled in the config file, but the digest code has been disabled");
+						" digest is enabled in the config file, but the digest code has been disabled");
 #endif
 			}
 			else
@@ -446,7 +466,7 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 			else
 			{
 				OW_THROW(HTTPServerException, Format("Invalid value for %1: %2. Valid options are Digest, Basic or Negotiate", 
-					ConfigOpts::HTTP_SERVER_DEFAULT_AUTH_CHALLENGE_opt, item).c_str());
+							ConfigOpts::HTTP_SERVER_DEFAULT_AUTH_CHALLENGE_opt, item).c_str());
 			}
 		}
 
@@ -454,22 +474,22 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 		{
 #ifndef OW_DISABLE_DIGEST
 			String passwdFile = env->getConfigItem(
-				ConfigOpts::HTTP_SERVER_DIGEST_PASSWORD_FILE_opt, OW_DEFAULT_HTTP_SERVER_DIGEST_PASSWORD_FILE);
+					ConfigOpts::HTTP_SERVER_DIGEST_PASSWORD_FILE_opt, OW_DEFAULT_HTTP_SERVER_DIGEST_PASSWORD_FILE);
 			m_digestAuthentication = IntrusiveReference<DigestAuthentication>(
-				new DigestAuthentication(passwdFile));
+					new DigestAuthentication(passwdFile));
 #else
 			OW_THROW(HTTPServerException, "Unable to initialize HTTP Server because"
-				" digest is enabled in the config file, but the digest code has been disabled");
+					" digest is enabled in the config file, but the digest code has been disabled");
 #endif
 		}
-	
+
 #ifndef OW_WIN32
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_ALLOW_LOCAL_AUTHENTICATION_opt, OW_DEFAULT_HTTP_SERVER_ALLOW_LOCAL_AUTHENTICATION);
 		m_options.allowLocalAuthentication = !item.equalsIgnoreCase("false");
 		if (m_options.allowLocalAuthentication)
 		{
 			m_localAuthentication = IntrusiveReference<LocalAuthentication>(
-				new LocalAuthentication);
+					new LocalAuthentication);
 		}
 #endif
 
@@ -478,26 +498,26 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 		if (m_options.allowSPNEGOAuthentication)
 		{
 			m_SPNEGOAuthentication = IntrusiveReference<SPNEGOAuthentication>(
-				new SPNEGOAuthentication);
+					new SPNEGOAuthentication);
 		}
 
 		String dumpPrefix = env->getConfigItem(ConfigOpts::DUMP_SOCKET_IO_opt);
 		if (!dumpPrefix.empty())
 		{
 			SocketBaseImpl::setDumpFiles(
-				dumpPrefix + "/owHTTPSockDumpIn",
-				dumpPrefix + "/owHTTPSockDumpOut");
+					dumpPrefix + "/owHTTPSockDumpIn",
+					dumpPrefix + "/owHTTPSockDumpOut");
 		}
-		
+
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_REUSE_ADDR_opt, OW_DEFAULT_HTTP_SERVER_REUSE_ADDR);
 		m_options.reuseAddr = !item.equalsIgnoreCase("false");
-		
+
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_TIMEOUT_opt, OW_DEFAULT_HTTP_SERVER_TIMEOUT);
 		m_options.timeout = Timeout::relative(item.toInt32());
 
 		StringArray users = env->getMultiConfigItem(ConfigOpts::ALLOWED_USERS_opt, 
-			String(OW_DEFAULT_ALLOWED_USERS).tokenize(" \t"),
-			" \t");
+				String(OW_DEFAULT_ALLOWED_USERS).tokenize(" \t"),
+				" \t");
 		if (users.size() == 1 && users[0] == "*")
 		{
 			m_allowAllUsers = true;
@@ -519,11 +539,12 @@ class HTTPServerSelectableCallback : public SelectableCallbackIFC
 {
 public:
 	HTTPServerSelectableCallback(bool isHTTPS,
-		HTTPServer* httpServer, bool isIPC)
+		HTTPServer* httpServer, bool isIPC, size_t index = 0)
 		: SelectableCallbackIFC()
 		, m_isHTTPS(isHTTPS)
 		, m_HTTPServer(httpServer)
 		, m_isIPC(isIPC)
+		, m_index(index)
 	{
 	}
 	virtual ~HTTPServerSelectableCallback() {}
@@ -541,11 +562,11 @@ public:
 			}
 			else if (m_isHTTPS)
 			{
-				pServerSocket = m_HTTPServer->m_pHttpsServerSocket;
+				pServerSocket = m_HTTPServer->m_pHttpsServerSockets[m_index];
 			}
 			else
 			{
-				pServerSocket = m_HTTPServer->m_pHttpServerSocket;
+				pServerSocket = m_HTTPServer->m_pHttpServerSockets[m_index]; 
 			}
 			Socket socket = pServerSocket->accept(Timeout::relative(2));
 			OW_LOG_INFO(logger,
@@ -618,6 +639,7 @@ private:
 	bool m_isHTTPS;
 	HTTPServer* m_HTTPServer;
 	bool m_isIPC;
+	size_t m_index; 
 };
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -626,7 +648,8 @@ HTTPServer::start()
 	ServiceEnvironmentIFCRef env = m_options.env;
 	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG2(lgr, "HTTP Service is starting...");
-	if (m_options.httpPort < 0 && m_options.httpsPort < 0 && !m_options.useUDS)
+	if (m_options.httpPorts.empty() && m_options.httpsPorts.empty() && 
+		!m_options.useUDS)
 	{
 		OW_THROW(SocketException, "No ports to listen on and use_UDS set to false");
 	}
@@ -664,38 +687,43 @@ HTTPServer::start()
 	for (size_t i = 0; i < listenAddresses.size(); ++i)
 	{
 		const String& curAddress = listenAddresses[i];
-		if (m_options.httpPort >= 0)
+		if (!m_options.httpPorts.empty())
 		{
-			try
+			for (size_t i = 0; i < m_options.httpPorts.size(); ++i)
 			{
-				UInt16 lport = static_cast<UInt16>(m_options.httpPort);
-				m_pHttpServerSocket = new ServerSocket;
-				m_pHttpServerSocket->doListen(lport,
-					1000, curAddress,
-					m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
-				m_options.httpPort = m_pHttpServerSocket->getLocalAddress().getPort();
+				UInt16 lport = m_options.httpPorts[i]; 
+				try
+				{
+					IntrusiveReference<ServerSocket> lsock = new ServerSocket; 
+					lsock->doListen(lport,
+							1000, curAddress,
+							m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
+					m_options.httpPorts[i] = lport = lsock->getLocalAddress().getPort();
 
-				OW_LOG_INFO(lgr, Format("HTTP server listening on: %1:%2",
-				    m_pHttpServerSocket->getLocalAddress().getAddress(), m_options.httpPort));
+					OW_LOG_INFO(lgr, Format("HTTP server listening on: %1:%2",
+								lsock->getLocalAddress().getAddress(), lport));
 
-				String theURL = "http://" + SocketAddress::getAnyLocalHost().getName()
-					+ ":" + String(m_options.httpPort) + "/";
-				addURL(URL(theURL));
+					String theURL = "http://" + SocketAddress::getAnyLocalHost().getName()
+						+ ":" + String(lport) + "/";
+					addURL(URL(theURL));
 
-				SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
-					false, this, false));
-				env->addSelectable(m_pHttpServerSocket, cb);
-			}
-			catch (SocketException& e)
-			{
-				OW_LOG_ERROR(lgr, Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, m_options.httpPort, e));
-				throw;
+					m_pHttpServerSockets.push_back(lsock); 
+					SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
+								false, this, false, 
+								m_pHttpServerSockets.size()-1));
+					env->addSelectable(lsock, cb);
+				}
+				catch (SocketException& e)
+				{
+					OW_LOG_ERROR(lgr, Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, lport, e));
+					throw;
+				}
 			}
 		}
-		if (m_options.httpsPort >= 0)
+		if (!m_options.httpsPorts.empty())
 		{
 #ifdef OW_NO_SSL
-			if (m_options.httpPort < 0 && !m_options.useUDS)
+			if (m_options.httpPorts.empty() && !m_options.useUDS)
 			{
 				OW_THROW(HTTPServerException, "No ports to listen on.  "
 						"SSL unavailable (OpenWBEM not built with SSL support) "
@@ -703,8 +731,8 @@ HTTPServer::start()
 			}
 			else
 			{
-				String msg = Format("Unable to listen on %1:%2.  "
-						"OpenWBEM not built with SSL support.", curAddress, m_options.httpsPort);
+				String msg = Format("Unable to listen on HTTPS ports.  "
+						"OpenWBEM not built with SSL support.", curAddress); 
 				OW_LOG_ERROR(lgr, msg);
 				OW_THROW(HTTPServerException, msg.c_str());
 			}
@@ -785,47 +813,52 @@ HTTPServer::start()
 				throw;
 			}
 
-			UInt16 lport = static_cast<UInt16>(m_options.httpsPort);
 			//if (SSLCtxMgr::isServer())
 			if (m_sslCtx)
 			{
-				try
+				for (size_t i = 0; i < m_options.httpsPorts.size(); ++i)
 				{
-					m_pHttpsServerSocket = new ServerSocket(m_sslCtx);
-					m_pHttpsServerSocket->doListen(lport,
-						1000, curAddress,
-						m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
-					SocketAddress addr = m_pHttpsServerSocket->getLocalAddress();
-					String listenAddress = addr.getAddress().toString();
-					m_options.httpsPort = addr.getPort();
-					OW_LOG_INFO(lgr, Format("HTTPS server listening on: %1:%2",
-					   addr.getAddress(), m_options.httpsPort));
+					UInt16 lport = m_options.httpsPorts[i]; 
+					try
+					{
+						IntrusiveReference<ServerSocket> lsock = new ServerSocket(m_sslCtx); 
+						lsock->doListen(lport,
+								1000, curAddress,
+								m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
+						SocketAddress addr = lsock->getLocalAddress();
+						String listenAddress = addr.getAddress().toString();
+						m_options.httpsPorts[i] = lport = addr.getPort();
+						OW_LOG_INFO(lgr, Format("HTTPS server listening on: %1:%2",
+									addr.getAddress(), lport));
 
-					String theURL = "https://" +
-						SocketAddress::getAnyLocalHost().getName() + ":" +
-						String(m_options.httpsPort) + "/";
-					addURL(URL(theURL));
-					SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
-						true, this, false));
-					env->addSelectable(m_pHttpsServerSocket, cb);
-				}
-				catch (SocketException& e)
-				{
-					OW_LOG_ERROR(lgr, Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, m_options.httpPort, e));
-					throw;
+						String theURL = "https://" +
+							SocketAddress::getAnyLocalHost().getName() + ":" +
+							String(lport) + "/";
+						addURL(URL(theURL));
+						m_pHttpsServerSockets.push_back(lsock); 
+						SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
+									true, this, false, 
+									m_pHttpsServerSockets.size()-1));
+						env->addSelectable(lsock, cb);
+					}
+					catch (SocketException& e)
+					{
+						OW_LOG_ERROR(lgr, Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, lport, e));
+						throw;
+					}
 				}
 			}
 			else
 #endif // #ifndef OW_NO_SSL
 			{
-				if (m_options.httpPort < 0 && !m_options.useUDS)
+				if (m_options.httpPorts.empty() && !m_options.useUDS)
 				{
 					OW_THROW(HTTPServerException, "No ports to listen on.  "
 						"SSL unavailable (SSL not initialized in server mode) "
 						"and no http port defined.");
 				}
-				String msg = Format("Unable to listen on: %1:%2.  "
-					"SSL not initialized in server mode.", curAddress, m_options.httpsPort);
+				String msg = Format("Unable to listen HTTPS on: %1.  "
+					"SSL not initialized in server mode.", curAddress);
 				OW_LOG_ERROR(lgr, msg);
 				OW_THROW(HTTPServerException, msg.c_str());
 
@@ -850,27 +883,47 @@ HTTPServer::getURLs() const
 SocketAddress
 HTTPServer::getLocalHTTPAddress()
 {
-	if (m_pHttpServerSocket)
-	{
-		return m_pHttpServerSocket->getLocalAddress();
-	}
-	else
+	if (m_pHttpServerSockets.empty())
 	{
 		return SocketAddress::allocEmptyAddress(SocketAddress::INET);
 	}
+	return m_pHttpServerSockets[0]->getLocalAddress(); 
+}
+//////////////////////////////////////////////////////////////////////////////
+Array<SocketAddress>
+HTTPServer::getLocalHTTPAddresses()
+{
+	Array<SocketAddress> rval; 
+	for (ServerSockArray_t::const_iterator iter = 
+			m_pHttpsServerSockets.begin(); iter != m_pHttpServerSockets.end(); 
+			++iter)
+	{
+		rval.push_back((*iter)->getLocalAddress()); 
+	}
+	return rval; 
 }
 //////////////////////////////////////////////////////////////////////////////
 SocketAddress
 HTTPServer::getLocalHTTPSAddress()
 {
-	if (m_pHttpsServerSocket)
-	{
-		return m_pHttpsServerSocket->getLocalAddress();
-	}
-	else
+	if (m_pHttpsServerSockets.empty())
 	{
 		return SocketAddress::allocEmptyAddress(SocketAddress::INET);
 	}
+	return m_pHttpsServerSockets[0]->getLocalAddress(); 
+}
+//////////////////////////////////////////////////////////////////////////////
+Array<SocketAddress>
+HTTPServer::getLocalHTTPSAddresses()
+{
+	Array<SocketAddress> rval; 
+	for (ServerSockArray_t::const_iterator iter = 
+			m_pHttpsServerSockets.begin(); iter != m_pHttpsServerSockets.end(); 
+			++iter)
+	{
+		rval.push_back((*iter)->getLocalAddress()); 
+	}
+	return rval; 
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -890,8 +943,16 @@ HTTPServer::shutdown()
 	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, "HTTP Service is shutting down...");
 	// first stop all new connections
-	m_options.env->removeSelectable(m_pHttpServerSocket);
-	m_options.env->removeSelectable(m_pHttpsServerSocket);
+	for (ServerSockArray_t::const_iterator iter = m_pHttpServerSockets.begin(); 
+			iter != m_pHttpServerSockets.end(); ++iter)
+	{
+		m_options.env->removeSelectable(*iter); 
+	}
+	for (ServerSockArray_t::const_iterator iter = m_pHttpsServerSockets.begin(); 
+			iter != m_pHttpsServerSockets.end(); ++iter)
+	{
+		m_options.env->removeSelectable(*iter); 
+	}
 	m_options.env->removeSelectable(m_pUDSServerSocket);
 
 	// now stop all current connections
@@ -909,8 +970,8 @@ HTTPServer::shutdown()
 #endif
 	// not going to finish off what's in the queue, and we'll give the threads 60 seconds to exit before they're clobbered.
 	m_threadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(50), Timeout::relative(60));
-	m_pHttpServerSocket = 0;
-	m_pHttpsServerSocket = 0;
+	m_pHttpServerSockets.clear(); 
+	m_pHttpsServerSockets.clear(); 
 	m_pUDSServerSocket = 0;
 	OW_LOG_DEBUG(lgr, "HTTP Service has shut down");
 
