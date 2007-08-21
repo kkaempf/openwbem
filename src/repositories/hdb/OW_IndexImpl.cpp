@@ -39,6 +39,7 @@
 #include "OW_Exception.hpp"
 #include "OW_Format.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_Logger.hpp"
 
 extern "C"
 {
@@ -62,6 +63,11 @@ namespace OW_NAMESPACE
 
 OW_DECLARE_EXCEPTION(Index);
 OW_DEFINE_EXCEPTION_WITH_ID(Index);
+
+namespace
+{
+	String COMPONENT_NAME("ow.hdb.IndexImpl");
+}
 
 /////////////////////////////////////////////////////////////////////////////
 class IndexImpl : public Index
@@ -261,6 +267,8 @@ IndexImpl::find(const char* key)
 bool
 IndexImpl::add(const char* key, Int32 offset)
 {
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG3(logger, Format("IndexImpl::add: key \"%1\", offset %2 in %3", key, offset, m_dbFileName));
 	OpenCloser oc(this);
 	if (m_pDB == NULL)
 	{
@@ -271,12 +279,16 @@ IndexImpl::add(const char* key, Int32 offset)
 	theRec.size = sizeof(offset);
 	theKey.data = const_cast<void*>(static_cast<const void*>(key));
 	theKey.size = ::strlen(key)+1;
-	return (m_pDB->put(m_pDB, &theKey, &theRec, 0) == 0);
+	int rv = m_pDB->put(m_pDB, &theKey, &theRec, 0); 
+	OW_LOG_DEBUG3(logger, Format("IndexImpl::add result %1", rv));
+	return (rv == 0);
 }
 //////////////////////////////////////////////////////////////////////////////	
 bool
 IndexImpl::remove(const char* key, Int32 offset)
 {
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG3(logger, Format("IndexImpl::remove searching for key \"%1\", offset %2 in %3", key, offset, m_dbFileName));
 	OpenCloser oc(this);
 	if (m_pDB == NULL)
 	{
@@ -290,11 +302,15 @@ IndexImpl::remove(const char* key, Int32 offset)
 	{
 		if (!ientry.key.equals(key))
 		{
+			OW_LOG_DEBUG3(logger, Format("ientry.key = \"%1\", breaking", ientry.key));
 			break;
 		}
 		if (offset == -1L || ientry.offset == offset)
 		{
-			return (m_pDB->del(m_pDB, &theKey, R_CURSOR) == 0);
+			OW_LOG_DEBUG3(logger, Format("about to delete ientry.offset: %1", ientry.offset));
+			int rv = m_pDB->del(m_pDB, &theKey, R_CURSOR); 
+			OW_LOG_DEBUG3(logger, Format("del returned %1", rv));
+			return (rv == 0);
 		}
 		ientry = findNext();
 	}
@@ -324,6 +340,15 @@ IndexImpl::update(const char* key, Int32 newOffset)
 IndexEntry
 IndexImpl::findFirst(const char* key)
 {
+	Logger logger(COMPONENT_NAME);
+	if (key)
+	{
+		OW_LOG_DEBUG3(logger, Format("IndexImpl::findFirst searching for key \"%1\" in %2", key, m_dbFileName));
+	}
+	else
+	{
+		OW_LOG_DEBUG3(logger, Format("IndexImpl::findFirst got NULL key, searching for first record in %1", m_dbFileName));
+	}
 	openIfClosed();
 	if (m_pDB == NULL)
 	{
@@ -344,14 +369,18 @@ IndexImpl::findFirst(const char* key)
 	{
 		Int32 tmp;
 		memcpy(&tmp, theRec.data, sizeof(tmp));
+		OW_LOG_DEBUG3(logger, Format("IndexImpl::findFirst found \"%1\":%2", reinterpret_cast<const char*>(theKey.data), tmp));
 		return IndexEntry(reinterpret_cast<const char*>(theKey.data), tmp);
 	}
+	OW_LOG_DEBUG3(logger, "IndexImpl::findFirst did not find key");
 	return IndexEntry();
 }
 //////////////////////////////////////////////////////////////////////////////	
 IndexEntry
 IndexImpl::findNext()
 {
+	Logger logger(COMPONENT_NAME);
+	OW_LOG_DEBUG(logger, Format("IndexImpl::findNext in %1", m_dbFileName));
 	openIfClosed();
 	if (m_pDB == NULL)
 	{
@@ -362,8 +391,10 @@ IndexImpl::findNext()
 	{
 		Int32 tmp;
 		memcpy(&tmp, theRec.data, sizeof(tmp));
+		OW_LOG_DEBUG3(logger, Format("IndexImpl::findNext found \"%1\":%2", reinterpret_cast<const char*>(theKey.data), tmp));
 		return IndexEntry(reinterpret_cast<const char*>(theKey.data), tmp);
 	}
+	OW_LOG_DEBUG3(logger, "IndexImpl::findNext did not find key");
 	return IndexEntry();
 }
 //////////////////////////////////////////////////////////////////////////////	

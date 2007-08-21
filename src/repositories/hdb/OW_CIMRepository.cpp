@@ -535,6 +535,12 @@ CIMRepository::modifyClass(
 		// TODO: Need to update the instances of the class and any subclasses.
 		//			If that's not possible, then we need to throw a
 		//			CLASS_HAS_INSTANCES CIMException.
+
+		// Removing a superclass is not allowed.
+		if (cc.getSuperClass().empty() && !origClass.getSuperClass().empty())
+		{
+			OW_THROWCIMMSG(CIMException::FAILED, "Removing a superclass is not allowed");
+		}
 		m_mStore.modifyClass(ns, cc);
 		OW_ASSERT(origClass);
 		OW_LOG_DEBUG2(m_logger, Format("Modified class: %1:%2", ns, cc.getName()));
@@ -2008,8 +2014,8 @@ unsigned CIMRepository::checkFreeLists()
 	retval |= static_cast<unsigned>(!m_iStore.checkFreeList()) << 1;
 	retval |= static_cast<unsigned>(!m_mStore.checkFreeList()) << 2;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	retval |= static_cast<unsigned>(!m_classAssocDb.checkFreeList()) << 3;
-	retval |= static_cast<unsigned>(!m_instAssocDb.checkFreeList()) << 4;
+	retval |= static_cast<unsigned>(!m_classAssocDb.check()) << 3;
+	retval |= static_cast<unsigned>(!m_instAssocDb.check()) << 4;
 #endif
 	return retval;
 }

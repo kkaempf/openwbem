@@ -51,6 +51,8 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_SafeBool.hpp"
 
+#include <set>
+
 namespace OW_NAMESPACE
 {
 
@@ -260,7 +262,7 @@ struct OW_HDB_API AssocDbRecHeader
 	};
 
 	UInt32 flags;
-	size_t dataSize;
+	UInt32 dataSize;
 };
 
 
@@ -275,6 +277,19 @@ struct OW_HDB_API AssocDbHeader
 	Int32 firstFree;
 	UInt32 version;
 };
+
+bool operator==(AssocDbHeader& x, AssocDbHeader& y);
+bool operator!=(AssocDbHeader& x, AssocDbHeader& y);
+
+inline bool operator==(AssocDbHeader& x, AssocDbHeader& y)
+{
+	return ((memcmp(x.signature, y.signature, sizeof(x.signature)) == 0) && (x.firstFree == y.firstFree) && (x.version == y.version));
+}
+
+inline bool operator!=(AssocDbHeader& x, AssocDbHeader& y)
+{
+	return !(x == y);
+}
 
 class OW_HDB_API AssocDb
 {
@@ -302,6 +317,9 @@ public:
 
 	bool check();
 	bool checkFreeList();
+	bool checkFreeList(std::set<Int32>& freeBlocks);
+	bool checkIndex(std::set<Int32>& offsets);
+	bool checkDb(std::set<Int32>& freeBlocks, std::set<Int32>& offsets);
 
 	typedef bool AssocDb::*safe_bool;
 	/**

@@ -53,6 +53,7 @@
 #include <algorithm> // for std::find and sort
 #include <climits> // for CHAR_BIT
 #include <map>
+#include <set>
 
 namespace OW_NAMESPACE
 {
@@ -67,8 +68,8 @@ using std::ostream;
 using std::endl;
 //////////////////////////////////////////////////////////////////////////////
 // Local functions
-static UInt32 calcCheckSum(unsigned char* src, Int32 len);
-static void writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File& file);
+static UInt32 calcCheckSum(unsigned char* src, Int32 len); // throw()
+static void writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File& file); // throw(IOException)
 static void readRecHeader(AssocDbRecHeader& rh, Int32 offset, const File& file);
 //////////////////////////////////////////////////////////////////////////////
 AssocDbEntry::AssocDbEntry(streambuf & istrm)
@@ -265,8 +266,8 @@ AssocDbHandle::hasAssocEntries(const String& ns, const CIMObjectPath& instanceNa
 {
 	CIMObjectPath pathWithNS(instanceName);
 	pathWithNS.setNameSpace(ns);
-	String targetObject = pathWithNS.toString();
-	return (m_pdata->m_pdb->findEntry(targetObject, *this)) ? true : false;
+	String key = AssocDbEntry::makeKey(pathWithNS, String(), String());
+	return (m_pdata->m_pdb->findEntry(key, *this)) ? true : false;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -472,9 +473,9 @@ AssocDb::AssocDb()
 //////////////////////////////////////////////////////////////////////////////
 AssocDb::~AssocDb()
 {
+	OW_ASSERT(m_hdlCount == 0);
 	try
 	{
-		OW_ASSERT(m_hdlCount == 0);
 		if (m_hdlCount > 0)
 		{
 			Logger logger(COMPONENT_NAME);
@@ -508,6 +509,10 @@ AssocDb::open(const String& fileName)
 	String fname = m_fileName + ".dat";
 	createFile();
 	checkFile();
+	if (!check())
+	{
+		OW_THROW(HDBException, Format("Repository \"%1\" is corrupt.", fileName).c_str());
+	}
 	m_opened = true;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -527,7 +532,7 @@ AssocDb::createFile()
 	}
 	f.close();
 	m_pIndex = Index::createIndexObject();
-	m_pIndex->open(m_fileName.c_str(), Index::E_ALLDUPLICATES);
+	m_pIndex->open(m_fileName.c_str(), Index::E_NO_DUPLICATES);
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -630,11 +635,18 @@ AssocDb::readEntry(Int32 offset, AssocDbHandle& hdl)
 	AssocDbEntry dbentry;
 	AssocDbRecHeader rh;
 	readRecHeader(rh, offset, hdl.getFile());
+	if (((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) != AssocDbRecHeader::E_BLK_ALLOCATED) &&
+		((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) != AssocDbRecHeader::E_BLK_ALLOC_UNKNOWN))
+	{
+		OW_THROW(HDBException, "Internal Error! Attempting to read an entry from an unallocated block!");
+	}
+
 	AutoPtrVec<unsigned char> bfr(new unsigned char[rh.dataSize]);
 	if (hdl.getFile().read(bfr.get(), rh.dataSize) != rh.dataSize)
 	{
 		OW_THROW_ERRNO_MSG(IOException, "Failed to read data for rec on assoc db");
 	}
+
 	DataIStreamBuf istrm(rh.dataSize, bfr.get());
 	dbentry.readObject(istrm);
 	dbentry.setOffset(offset);
@@ -660,20 +672,24 @@ AssocDb::deleteEntry(const CIMObjectPath& objectName,
 		if (!dbentry.makeKey().equals(key))
 		{
 			Logger lgr(COMPONENT_NAME);
-			OW_LOG_ERROR(lgr, Format("key = %1,  generated key = %2", key, dbentry.makeKey()));
+			String msg = Format("entry key = %1, db entry key = %2", key, dbentry.makeKey());
+			OW_LOG_ERROR(lgr, msg);
+			OW_THROW(HDBException, msg.c_str());
 		}
 
-		OW_ASSERT(dbentry.makeKey().equals(key));
 		AssocDbEntry::entry e;
 		e.m_assocClass = assocClassName;
 		e.m_resultClass = resultClass;
 		e.m_associatedObject = associatedObject;
 		e.m_associationPath = assocClassPath;
 		Array<AssocDbEntry::entry>::iterator iter = std::find(dbentry.m_entries.begin(), dbentry.m_entries.end(), e);
-		OW_ASSERT(iter != dbentry.m_entries.end());
 		if (iter != dbentry.m_entries.end())
 		{
 			dbentry.m_entries.erase(iter);
+		}
+		else
+		{
+			OW_THROW(HDBException, "not found");
 		}
 		
 		if (dbentry.m_entries.size() == 0)
@@ -762,6 +778,7 @@ AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 			" association index: ", nentry.makeKey()));
 		OW_THROW_ERRNO_MSG(IOException, "Failed to add entry to association index");
 	}
+	OW_ASSERT(checkFreeList());
 }
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE - AssocDbHandle uses
@@ -793,6 +810,7 @@ AssocDb::addEntry(const CIMObjectPath& objectName,
 }
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
+// precondition: db mutex locked by this thread.
 void
 AssocDb::addToFreeList(Int32 offset, AssocDbHandle& hdl)
 {
@@ -802,10 +820,17 @@ AssocDb::addToFreeList(Int32 offset, AssocDbHandle& hdl)
 	File f = hdl.getFile();
 	readRecHeader(rh, offset, f);
 	rh.nextFree = m_hdrBlock.firstFree;
-	OW_ASSERT((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_ALLOCATED || (rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_ALLOC_UNKNOWN);
+	if (!((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_ALLOCATED || 
+		  (rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_ALLOC_UNKNOWN))
+	{
+		OW_THROW(HDBException, "Internal error!. !((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_ALLOCATED || (rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_ALLOC_UNKNOWN)");
+	}
 	rh.flags &= ~AssocDbRecHeader::E_BLK_ALLOC_MASK;
 	rh.flags |= AssocDbRecHeader::E_BLK_FREE;
-	OW_ASSERT(rh.nextFree != offset);
+	if (rh.nextFree == offset)
+	{
+		OW_THROW(HDBException, "Internal error!. rh.nextFree == offset");
+	}
 	writeRecHeader(rh, offset, f);
 	m_hdrBlock.firstFree = offset;
 	if (f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) !=
@@ -819,13 +844,27 @@ AssocDb::addToFreeList(Int32 offset, AssocDbHandle& hdl)
 bool
 AssocDb::check()
 {
+	MutexLock l = getDbLock();
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "AssocDb::check");
 	bool rv = true;
-	rv &= checkFreeList();
+	std::set<Int32> freeBlocks;
+	rv &= checkFreeList(freeBlocks);
+	std::set<Int32> offsets;
+	rv &= checkIndex(offsets);
+	rv &= checkDb(freeBlocks, offsets);
 	return rv;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 bool AssocDb::checkFreeList()
+{
+	std::set<Int32> freeBlocks;
+	return checkFreeList(freeBlocks);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool AssocDb::checkFreeList(std::set<Int32>& freeBlocks)
 {
 	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG3(lgr, "AssocDb::checkFreeList");
@@ -853,9 +892,113 @@ bool AssocDb::checkFreeList()
 				return false;
 			}
 		}
+		freeBlocks.insert(coffset);
 		coffset = rh.nextFree;
 	}
 	OW_LOG_DEBUG(lgr, "AssocDb::checkFreeList successful");
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool AssocDb::checkIndex(std::set<Int32>& offsets)
+{
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "AssocDb::checkIndex");
+	std::set<String> keys;
+	IndexEntry curEntry = m_pIndex->findFirst();
+	AssocDbHandle hdl = getHandle();
+	while (curEntry)
+	{
+		AssocDbEntry dbentry = readEntry(curEntry.offset, hdl);
+
+		if (!dbentry.makeKey().equals(curEntry.key))
+		{
+			OW_LOG_ERROR(lgr, Format("AssocDb::checkIndex() found invalid index entry index key = %1, db entry key = %2", curEntry.key, dbentry.makeKey()));
+			return false;
+		}
+
+		if (keys.count(curEntry.key) != 0)
+		{
+			OW_LOG_ERROR(lgr, Format("AssocDb::checkIndex() found duplicate key in index: %1", curEntry.key));
+			return false;
+		}
+		if (offsets.count(curEntry.offset) != 0)
+		{
+			OW_LOG_ERROR(lgr, Format("AssocDb::checkIndex() found duplicate offset in index: %1", curEntry.offset));
+			return false;
+		}
+		keys.insert(curEntry.key);
+		offsets.insert(curEntry.offset);
+		curEntry = m_pIndex->findNext();
+	}
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool AssocDb::checkDb(std::set<Int32>& freeList, std::set<Int32>& offsets)
+{
+	Logger lgr(COMPONENT_NAME);
+	OW_LOG_DEBUG(lgr, "AssocDb::checkDb");
+	AssocDbHandle hdl = getHandle();
+	File f = hdl.getFile();
+	Int32 curOffset = 0;
+
+	// first thing is the header
+	AssocDbHeader testHeader;
+	size_t sizeRead = f.read(&testHeader, sizeof(testHeader), 0);
+	if (testHeader != m_hdrBlock)
+	{
+		OW_LOG_ERROR(lgr, "AssocDb::checkDb() found header block does not match");
+		return false;
+	}
+
+	curOffset += sizeof(testHeader);
+
+	// next are blocks. The blocks either have to be free or pointed to by an offset in the index (the offsets parameter)
+	Int64 fileSize = f.size();
+	while (curOffset < fileSize)
+	{
+		AssocDbRecHeader curRecHeader;
+		readRecHeader(curRecHeader, curOffset, f);
+		if (curRecHeader.blkSize < (curRecHeader.dataSize + sizeof(AssocDbRecHeader)))
+		{
+			OW_LOG_ERROR(lgr, Format("AssocDb::checkDb() curRecHeader.blkSize(%1) < (curRecHeader.dataSize(%2) + sizeof(AssocDbRecHeader))(%3)", curRecHeader.blkSize, curRecHeader.dataSize, sizeof(AssocDbRecHeader)));
+			return false;
+		}
+
+		if ((curRecHeader.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_FREE)
+		{
+			if (freeList.count(curOffset) != 1)
+			{
+				OW_LOG_ERROR(lgr, Format("AssocDb::checkDb() free block is not in free list: %1", curOffset));
+				return false;
+			}
+		}
+		else if ((curRecHeader.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_ALLOCATED)
+		{
+			if (offsets.count(curOffset) != 1)
+			{
+				OW_LOG_ERROR(lgr, Format("AssocDb::checkDb() allocated block is not pointed to by an index entry: %1", curOffset));
+				return false;
+			}
+		}
+		else if ((curRecHeader.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_ALLOC_UNKNOWN)
+		{
+			if ((freeList.count(curOffset) != 1) && (offsets.count(curOffset) != 1))
+			{
+				OW_LOG_ERROR(lgr, Format("AssocDb::checkDb() free block is not in free list or pointed to by an index entry: %1", curOffset));
+				return false;
+			}
+		}
+		else
+		{
+			OW_LOG_ERROR(lgr, Format("AssocDb::checkDb() allocated block is not marked as unknown, allocated or freed: %1", curOffset));
+			return false;
+		}
+
+		curOffset += curRecHeader.blkSize;
+	}
+
 	return true;
 }
 
@@ -902,8 +1045,16 @@ start:
 	{
 		OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock reading block %1", coffset));
 		readRecHeader(rh, coffset, f);
-		OW_ASSERT(rh.nextFree != coffset);
-		OW_ASSERT((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) == AssocDbRecHeader::E_BLK_FREE);
+		if (rh.nextFree == coffset)
+		{
+			OW_THROW(HDBException, "Internal error!. rh.nextFree == offset");
+		}
+
+		if (((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) != AssocDbRecHeader::E_BLK_FREE) &&
+			((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) != AssocDbRecHeader::E_BLK_ALLOC_UNKNOWN))
+		{
+			OW_THROW(HDBException, "Internal error!. ((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) != AssocDbRecHeader::E_BLK_FREE) && ((rh.flags & AssocDbRecHeader::E_BLK_ALLOC_MASK) != AssocDbRecHeader::E_BLK_ALLOC_UNKNOWN)");
+		}
 
 		OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock inserting into precedingBlockMap %1, %2", coffset, lastOffset));
 		precedingBlockMap.insert(std::make_pair(coffset, lastOffset));
@@ -941,6 +1092,7 @@ start:
 					// splice the current block out of the list by updating the block at lastOffset to point to the next block.
 					if (lastOffset != -1L)
 					{
+						readRecHeader(lh, lastOffset, f); // lh may have been modified if it was at the same offset as prevHeader, so reload it.
 						lh.nextFree = rh.nextFree;
 						precedingBlockMap[lh.nextFree] = lastOffset;
 						OW_LOG_DEBUG3(lgr, Format("AssocDb::getNewBlock removing free block from list. Updating predecessor free block: %1, nextFree: %2", lastOffset, lh.nextFree));
@@ -1133,8 +1285,11 @@ writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File& file)
 	Logger lgr(COMPONENT_NAME);
 	rh.chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&rh.nextFree),
 		sizeof(rh) - sizeof(rh.chkSum));
-	OW_LOG_DEBUG3(lgr, Format("writeRecHeader writing header to offset %1, chksum: %2, nextFree: %3, blkSize: %4", offset, rh.chkSum, rh.nextFree, rh.blkSize));
-	OW_ASSERT(rh.nextFree != offset);
+	OW_LOG_DEBUG3(lgr, Format("writeRecHeader writing header to offset %1, chksum: %2, nextFree: %3, blkSize: %4, flags: %5", offset, rh.chkSum, rh.nextFree, rh.blkSize, rh.flags));
+	if (rh.nextFree == offset)
+	{
+		OW_THROW(HDBException, "Internal error!. rh.nextFree == offset");
+	}
 	if (file.write(&rh, sizeof(rh), offset) != sizeof(rh))
 	{
 		OW_THROW_ERRNO_MSG(IOException, "Failed to write record to assoc db");
@@ -1145,7 +1300,6 @@ static void
 readRecHeader(AssocDbRecHeader& rh, Int32 offset, const File& file)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("readRecHeader read header from offset %1", offset));
 	if (file.read(&rh, sizeof(rh), offset) != sizeof(rh))
 	{
 		OW_THROW_ERRNO_MSG(IOException, "Failed to read record from assoc db");
@@ -1154,8 +1308,9 @@ readRecHeader(AssocDbRecHeader& rh, Int32 offset, const File& file)
 		 sizeof(rh) - sizeof(rh.chkSum));
 	if (chkSum != rh.chkSum)
 	{
-		OW_THROW(IOException, "Check sum failed reading rec from assoc db");
+		OW_THROW(HDBException, Format("Check sum failed reading rec from assoc db. calculated = %1, expected = %2, offset = %3", chkSum, rh.chkSum, offset).c_str());
 	}
+	OW_LOG_DEBUG3(lgr, Format("readRecHeader read header from offset %1, chksum: %2, nextFree: %3, blkSize: %4, flags: %5", offset, rh.chkSum, rh.nextFree, rh.blkSize, rh.flags));
 }
 //////////////////////////////////////////////////////////////////////////////
 static UInt32
