@@ -90,6 +90,14 @@ doACompileOnlyTest()
 ##############################################################################
 doTests()
 {
+	doATest "--enable-static-services" || { echo "--enable-static-services failed"; }
+	doATest "--enable-monitored-perl-ifc" || return 1
+	doATest "--enable-64-bit-build" || return 1
+	doATest "--disable-cmpi" || return 1
+	doATest "--enable-vas" || return 1
+	doATest "--enable-ipv6" || return 1
+	doATest "--disable-ipv6" || return 1
+# These all work
 	doATest "" || return 1
 	doATest "--enable-debug-mode --enable-stack-trace --enable-maintainer-mode" || return 1
 	# The unit tests fail because dlclose() is never called with --enable-valgrind-support
@@ -102,23 +110,17 @@ doTests()
 	doATest "--disable-digest" || return 1
 	doATest "--disable-pam" || return 1
 	doATest "--with-package-prefix=foo" || return 1
-	doACompileOnlyTest "--disable-association-traversal" || return 1
-	doACompileOnlyTest "--disable-qualifier-declaration" || return 1
-	doACompileOnlyTest "--disable-schema-manipulation" || return 1
-	doACompileOnlyTest "--disable-instance-manipulation" || return 1
-	doACompileOnlyTest "--disable-property-operations" || return 1
-	doACompileOnlyTest "--disable-namespace-manipulation" || return 1
-	doACompileOnlyTest "--disable-association-traversal --disable-qualifier-declaration --disable-schema-manipulation --disable-instance-manipulation --disable-property-operations --disable-namespace-manipulation" || return 1
-	doATest "--prefix=/opt/some/other/prefix --enable-rpath-link" || return 1
-	doATest "--prefix=/opt/some/other/prefix --with-runtime-link-path=/opt/some/other/prefix/some/other/lib/dir" || return 1
-	doATest "--enable-non-thread-safe-exception-handling-workaround" || return 1
-	doATest "--enable-static-services" || { echo "--enable-static-services failed"; }
-	doATest "--enable-monitored-perl-ifc" || return 1
-	doATest "--enable-64-bit-build" || return 1
-	doATest "--disable-cmpi" || return 1
-	doATest "--enable-vas" || return 1
-	doATest "--enable-ipv6" || return 1
-	doATest "--disable-ipv6" || return 1
+#	doACompileOnlyTest "--disable-association-traversal" || return 1
+#	doACompileOnlyTest "--disable-qualifier-declaration" || return 1
+#	doACompileOnlyTest "--disable-schema-manipulation" || return 1
+#	doACompileOnlyTest "--disable-instance-manipulation" || return 1
+#	doACompileOnlyTest "--disable-property-operations" || return 1
+#	doACompileOnlyTest "--disable-namespace-manipulation" || return 1
+#	doACompileOnlyTest "--disable-association-traversal --disable-qualifier-declaration --disable-schema-manipulation --disable-instance-manipulation --disable-property-operations --disable-namespace-manipulation" || return 1
+	doACompileOnlyTest "--prefix=/opt/some/other/prefix --enable-rpath-link" || return 1
+	doATest "--enable-rpath-link" || return 1
+	doACompileOnlyTest "--prefix=/opt/some/other/prefix --with-runtime-link-path=/opt/some/other/prefix/some/other/lib/dir" || return 1
+#	doATest "--enable-non-thread-safe-exception-handling-workaround" || return 1
 }
 
 ## MAIN ######################################################################
