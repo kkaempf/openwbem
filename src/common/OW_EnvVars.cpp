@@ -172,7 +172,7 @@ EnvVars::getenvp() const
 			for(i = 0, it = m_envMap.begin(); it != m_envMap.end(); i++, it++)
 			{
 				m_envp[i] = new char[it->first.length() + 
-					it->second.length() + 1];
+					it->second.length() + 2];
 				::strcpy(m_envp[i], it->first.c_str());
 				m_envp[i][it->first.length()] = '=';
 				::strcpy(m_envp[i]+it->first.length()+1, it->second.c_str());
