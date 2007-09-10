@@ -47,6 +47,7 @@
 #include "OW_IOException.hpp"
 #include "OW_DateTime.hpp"
 #include "OW_OOPShuttingDownCallback.hpp"
+#include "OW_OOPProtocolIFC.hpp"
 
 namespace OW_NAMESPACE
 {

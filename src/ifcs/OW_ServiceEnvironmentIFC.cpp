@@ -134,6 +134,15 @@ ServiceEnvironmentIFC::getCIMOMHandle(OperationContext& context,
 	return CIMOMHandleIFCRef();
 }
 
+///////////////////////////////////////////////////////////////////////////////
+CIMOMHandleIFCRef
+ServiceEnvironmentIFC::getLockedCIMOMHandle(OperationContext& context,
+	EInitialLockFlag initialLock) const
+{
+	OW_ASSERTMSG(0, "getLockedCIMOMHandle Not Implemented");
+	return CIMOMHandleIFCRef();
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 WQLIFCRef

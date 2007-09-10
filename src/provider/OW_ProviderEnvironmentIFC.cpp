@@ -34,6 +34,7 @@
 
 #include "OW_config.h"
 #include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_ProviderEnvironmentException.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -55,6 +56,13 @@ LoggerRef
 ProviderEnvironmentIFC::getLogger(const String& componentName) const
 {
 	return LoggerRef(new Logger(componentName));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+CIMOMHandleIFCRef 
+ProviderEnvironmentIFC::getLockedCIMOMHandle(EInitialLockFlag initialLock) const
+{
+	OW_THROW(ProviderEnvironmentException, "Unimplemented");
 }
 
 } // end namespace OW_NAMESPACE

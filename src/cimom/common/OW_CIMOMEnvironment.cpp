@@ -902,7 +902,7 @@ CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst, OperationCont
 	OW_ASSERT(m_cimServer);
 	return CIMOMHandleIFCRef(new LocalCIMOMHandle(
 		const_cast<CIMOMEnvironment *>(this),
-		RepositoryIFCRef(new WQLFilterRep(inst, m_cimServer)), context));
+		RepositoryIFCRef(new WQLFilterRep(inst, m_cimServer)), context, LocalCIMOMHandle::E_NONE));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -914,10 +914,35 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+CIMOMHandleIFCRef 
+CIMOMEnvironment::getLockedCIMOMHandle(OperationContext& context, EInitialLockFlag initialLock) const
+{
+	return getCIMOMHandle(context, E_SEND_INDICATIONS, E_USE_PROVIDERS, initialLock);
+}
+
+namespace
+{
+	LocalCIMOMHandle::EInitialLockFlag convertInitialLockFlag(ServiceEnvironmentIFC::EInitialLockFlag initialLock)
+	{
+		switch (initialLock)
+		{
+			case ServiceEnvironmentIFC::E_NONE:
+				return LocalCIMOMHandle::E_NONE;
+			case ServiceEnvironmentIFC::E_READ:
+				return LocalCIMOMHandle::E_READ;
+			case ServiceEnvironmentIFC::E_WRITE:
+				return LocalCIMOMHandle::E_WRITE;
+		}
+		return LocalCIMOMHandle::E_NONE;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 	ESendIndicationsFlag sendIndications,
-	EBypassProvidersFlag bypassProviders) const
+	EBypassProvidersFlag bypassProviders,
+	EInitialLockFlag initialLock) const
 {
 	OW_LOG_DEBUG3(m_Logger, Format("CIMOMEnvironment::getCIMOMHandle(). context.getOperationId() = %1", context.getOperationId()));
 	{
@@ -956,7 +981,7 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 		rref = authorizingRepository(rref, m_authorizer);
 	}
 
-	return CIMOMHandleIFCRef(new LocalCIMOMHandle(const_cast<CIMOMEnvironment*>(this), rref, context));
+	return CIMOMHandleIFCRef(new LocalCIMOMHandle(const_cast<CIMOMEnvironment*>(this), rref, context, convertInitialLockFlag(initialLock)));
 }
 //////////////////////////////////////////////////////////////////////////////
 WQLIFCRef

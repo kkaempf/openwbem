@@ -39,7 +39,7 @@
 #include "OW_CommonFwd.hpp"
 #include "OW_String.hpp"
 #include "OW_RWLocker.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_ThreadSafeProcess.hpp"
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"

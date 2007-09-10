@@ -37,6 +37,7 @@
 #		OOPProvider
 #		EmbeddedCIMOM
 #		MethodLocking
+#		LockedCIMOMHandle
 
 set -x
 
@@ -1940,6 +1941,51 @@ TestMethodLocking()
 }
 
 #############################################################################
+TestLockedCIMOMHandle()
+{
+	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i LockedCIMOMHandle >/dev/null 2>&1
+	then
+		return
+	fi
+
+	StopDaemon
+	RestoreState
+
+	EditConfig "s!owcimomd.read_write_lock_timeout = \(.*\)!owcimomd.read_write_lock_timeout = 0.001!g"
+	InstallProvider $BUILDDIR/test/acceptance/lockedCIMOMHandle/liblockedCIMOMHandleTest.@lib_ext@
+	InstallOOPProvider $BUILDDIR/test/acceptance/lockedCIMOMHandle/liblockedCIMOMHandleTest.@lib_ext@
+	StartDaemon
+
+	# import the mof.  We have to change the path to the owoopcpp1pr command
+	# and tell owoopcpp1pr where to stick its log file
+	sed -e "s!${OWLIBEXECDIR}!${STAGEDIR}${OWLIBEXECDIR}!g" \
+		-e "s!${OWLIBDIR}/openwbem!${STAGEDIR}${OWLIBDIR}/openwbem!g" \
+		-e's!--logfile=!--logfile='"$RESULTDIR/owoopcpp1pr.log!g" \
+		$BUILDDIR/test/acceptance/lockedCIMOMHandle/lockedCIMOMHandleTest.mof | \
+		$STAGEDIR/$OWBINDIR/owmofc --url http://test1:pass1@localhost:30926/ --create-namespaces - || \
+		ExitWithFail "owmofc exited with error."
+
+	# have to restart for provider registration to take effect
+	RestartDaemon
+
+	# run the tests - first by initiating the calls externally
+	$BUILDDIR/test/acceptance/lockedCIMOMHandle/testLockedCIMOMHandle http://test1:pass1@localhost:30926/root > $RESULTDIR/testLockedCIMOMHandle.out 2>&1
+	RVAL=$?
+	if [ $RVAL != "0" ]; then
+		ExitWithFail "LockedCIMOMHandle test failed. Check $RESULTDIR/testLockedCIMOMHandle.out"
+	fi
+
+	# second - run the tests inside an oop provider to test that callbacks correctly lock.	
+	$STAGEDIR/$OWBINDIR/owinvokemethod --url http://test1:pass1@localhost:30926/root/lockedCIMOMHandleTest-oop --target testInProv --methodname runAllTestsInProvider --inparams "testdir=$STAGEDIR"> $RESULTDIR/owinvokemethod.testInProv 2>&1
+	RVAL=$?
+	OUTPUT=`cat $RESULTDIR/owinvokemethod.testInProv`
+	if [ $RVAL != "0" ] || [ "$OUTPUT" != "true" ]; then
+		ExitWithFail "LockedCIMOMHandle test in a provider failed. Check $RESULTDIR/owinvokemethod.testInProv"
+	fi
+
+}
+
+#############################################################################
 CoreCheck()
 {
 	CORES=`ls $STAGEDIR/core* /cores/core.* 2> /dev/null`
@@ -2218,6 +2264,8 @@ main()
 	TestOOPProvider
 
 	TestMethodLocking
+
+	TestLockedCIMOMHandle
 
 	if [ "z$OWLONGTEST" = "z1" ]; then
 		RunATest testClientTimeout "http://test1:pass1@localhost:30926"

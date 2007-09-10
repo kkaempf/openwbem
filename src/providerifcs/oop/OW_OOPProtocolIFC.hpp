@@ -42,7 +42,6 @@
 #include "OW_CommonFwd.hpp"
 #include "OW_IfcsFwd.hpp"
 #include "OW_WBEMFlags.hpp"
-#include "OW_WQLSelectStatement.hpp"
 #include "OW_LogLevel.hpp"
 
 #include <iosfwd>

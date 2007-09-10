@@ -37,6 +37,7 @@
 #include "OW_config.h"
 #include "OW_OOPAssociatorProvider.hpp"
 #include "OW_OOPShuttingDownCallback.hpp"
+#include "OW_OOPProtocolIFC.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.

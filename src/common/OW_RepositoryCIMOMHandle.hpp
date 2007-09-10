@@ -61,11 +61,6 @@ public:
 	 *		RepositoryCIMOMHandle.
 	 * @param context The operation context that will be associated with
 	 *		this RepositoryCIMOMHandle.
-	 * @param noLock If E_NO_LOCKING, the this object will never attempt to acquire a
-	 *  read/write lock on the CIMServer.  In a transaction based setting,
-	 *  It will not start a new transaction or end the current one.  Only use
-	 *  E_NO_LOCKING inside a context where another RepositoryCIMOMHandle is
-	 *  in use and has begun a transaction.
 	 */
 	RepositoryCIMOMHandle(const RepositoryIFCRef& pRepos,
 		OperationContext& context);
@@ -237,6 +232,7 @@ private:
 #pragma warning (pop)
 #endif
 
+protected:
 	OperationContext& m_context;
 };
 OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, RepositoryCIMOMHandle);

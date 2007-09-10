@@ -57,6 +57,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_ThreadSafeProcess.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
+#include "OW_Reference.hpp"
 
 namespace OW_NAMESPACE
 {
