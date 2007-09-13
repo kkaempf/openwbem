@@ -2,7 +2,7 @@ dnl @synopsis OW_COMPILER_TEST
 dnl @author Kevin Harris
 dnl Check for the compiler type and version.
 dnl
-dnl This will define one of (names after transform):
+dnl This will define one of (names before transform):
 dnl   USING_ACC
 dnl   USING_XLC
 dnl   USING_SUNC
@@ -139,7 +139,7 @@ AC_DEFUN([OW_COMPILER_TEST],
 				OW_COMPILER_MINOR=0
 			fi
 			AC_DEFINE_UNQUOTED(COMPILER_MAJOR, [$OW_COMPILER_MAJOR], [Major version of the compiler])
-			AC_DEFINE_UNQUOTED(COMPILER_MINOR, [$OW_COMPILER_MINOR], [Major version of the compiler])
+			AC_DEFINE_UNQUOTED(COMPILER_MINOR, [$OW_COMPILER_MINOR], [Minor version of the compiler])
 		fi
 	]
 )
