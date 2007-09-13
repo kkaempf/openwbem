@@ -25,7 +25,7 @@ else
 	exit 1
 fi
 
-./mgrep.awk '.*Exception:.*\n.*type:.*\n.*msg:.*' ${output_file} > ${output_file}.cfe1 || true
+awk -f ./mgrep.awk '.*Exception:.*\n.*type:.*\n.*msg:.*' ${output_file} > ${output_file}.cfe1 || true
 
 bn='\\n'
 
