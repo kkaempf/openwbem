@@ -85,7 +85,7 @@ inetAddrToString(UInt64 addr)
 	iaddr.sin_family = AF_INET;
 	iaddr.sin_addr.s_addr = addr;
 	iaddr.sin_port = 0;
-	String s(inet_ntop(iaddr.sin_family, &iaddr, buf, sizeof(buf)));
+	String s(inet_ntop(iaddr.sin_family, &(iaddr.sin_addr), buf, sizeof(buf)));
 	return s;
 }
 #ifndef MAX
@@ -376,7 +376,7 @@ String getFullyQualifiedHostName()
 		addr.sin_family = AF_INET;
 		addr.sin_port   = 0;
 		memcpy(&addr.sin_addr, hostentp->h_addr_list[0], sizeof(addr.sin_addr));
-		rv = inet_ntop(address->sin_family, address, buf, sizeof(buf));
+		rv = inet_ntop(address->sin_family, &(address->sin_addr), buf, sizeof(buf));
 		iaHost.s_addr = inet_addr(rv.c_str());
 		if(iaHost.s_addr != INADDR_NONE)
 		{

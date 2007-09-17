@@ -287,7 +287,7 @@ void SocketAddress::assignFromNativeForm(
 	char    buf[INET6_ADDRSTRLEN];
 	m_type = INET;
 	memcpy(&m_inetNativeAddress, address, sizeof(m_inetNativeAddress));
-	m_address = inet_ntop(address->sin_family, address, buf, 
+	m_address = inet_ntop(address->sin_family, &(address->sin_addr), buf, 
                 sizeof(buf));
 	m_nativeSize = sizeof(m_inetNativeAddress);
 }
