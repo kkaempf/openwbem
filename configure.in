@@ -3,7 +3,7 @@ AC_INIT(OpenWBEM, 4.0.2, openwbem-public@lists.sourceforge.net)
 dnl When we implement --help and --version for all installed binaries, use the std-options option
 dnl AM_INIT_AUTOMAKE([foreign dist-bzip2 std-options 1.6.3])
 
-dnl We are a "foreign" type distribution (i.e. don't require all the standard GNU files)
+dnl We are a "foreign" type distribution (i.e. do not require all the standard GNU files)
 dnl  And we want a dist-bzip2 rule to be able to create .tar.bz2 dist files.
 dnl  And we require automake >= 1.9 (because of the tar-ustar option)
 AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar 1.9])
@@ -34,6 +34,9 @@ OW_INCLUDE_M4(m4/vas.m4)                  dnl Macros for vas
 OW_INCLUDE_M4(m4/blocxx.m4)               dnl Macros for blocxx
 OW_INCLUDE_M4(m4/dirs.m4)                 dnl Macros for setting default directories and directory name manipulation.
 OW_INCLUDE_M4(m4/replacement.m4)          dnl Macros for creating replacement scripts
+OW_INCLUDE_M4(m4/check_macro.m4)          dnl Macros for checking preprocessor macros
+OW_INCLUDE_M4(m4/select_one.m4)           dnl Macros for creating tests involving multiple tests of the same variable with different actions
+OW_INCLUDE_M4(m4/compiler_test.m4)        dnl Macros for checking compiler type/version
 
 # A hack to alter autoconf to always treat all files as obsolete, and rebuild
 # the configure script any time the dependencies are modified.
@@ -77,6 +80,9 @@ AR="\$(shell pwd)/\$(top_srcdir)/ow_ar.sh $SAVED_AR --"
 AC_PATH_PROG(MV, mv, mv)
 AC_PATH_PROG(RM, rm, rm)
 AC_PATH_PROG(SED, sed, sed)
+
+# Set some variables for compiler type and version.
+OW_COMPILER_TEST
 
 dnl FreeBSD and darwin have true in /usr/bin/true, while most other systems
 dnl   (e.g. linux) have true in /bin/true . Similarly for false.
@@ -383,7 +389,14 @@ case "$target" in
 	SOLARIS=1
 	AC_DEFINE(SOLARIS)
 	AC_DEFINE(ENV_VAR_LIBPATH, "LD_LIBRARY_PATH", LD_LIBRARY_PATH env var gives path for finding shared libs)
-	AC_SUBST(ENV_VAR_LIBPATH)	
+	AC_SUBST(ENV_VAR_LIBPATH)
+
+	case $OW_COMPILER_TYPE-$OW_COMPILER_VERSION in
+		gcc-3*)
+			NO_WABI=1
+			;;
+	esac
+
 	LIBS="$LIBS -lsocket -lnsl"
 	PLAT_CFLAGS="-fPIC -pthreads -D_REENTRANT -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS"
 	PLAT_CXXFLAGS="-fPIC -pthreads -D_REENTRANT -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS"
@@ -1077,7 +1090,9 @@ OW_HELP_STRING(--enable-debug-mode,enable debugging mode),
 	OW_CHECK_COMPILER_FLAG(Wno-long-long,[CXXFLAGS="$CXXFLAGS -Wno-long-long"])
 	OW_CHECK_COMPILER_FLAG(Wwrite-strings,[CXXFLAGS="$CXXFLAGS -Wwrite-strings"])
 	OW_CHECK_COMPILER_FLAG(Wextra,[CXXFLAGS="$CXXFLAGS -Wextra"])
-	OW_CHECK_COMPILER_FLAG(Wabi,[CXXFLAGS="$CXXFLAGS -Wabi"])
+	if test "x$NO_WABI" != "x1"; then
+		OW_CHECK_COMPILER_FLAG(Wabi,[CXXFLAGS="$CXXFLAGS -Wabi"])
+	fi
 	if test "x$OW_NO_WDEPRECATED" = "x1"; then
 		# For OS X which doesn't correctly handle __attribute__(deprecated), so we turn it off
 		OW_CHECK_COMPILER_FLAG(Wno-deprecated,[CXXFLAGS="$CXXFLAGS -Wno-deprecated"])

@@ -72,9 +72,15 @@ else
   cfgfname=`basename $cfgpath`
 fi
 
-if [ `whoami` != root ]; then
-  echo "*** SKIPPED: You must be root to run this test"
-  exit 0
+if [ "${EUID:-EUID_NOT_SET}" = "0" ] || [ "${UID:-UID_NOT_SET}" = "0" ]; then
+	:
+else
+	if id | grep 'uid=0' >/dev/null 2>&1; then
+		:
+	else
+		echo "*** SKIPPED: You must run this test as root"
+		exit 0
+	fi
 fi
 
 cleanup

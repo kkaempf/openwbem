@@ -27,9 +27,15 @@ cfgfname=`basename $cfgpath`
 monexectest_path=$thisdir/monexectest
 monexectest_cfgfname=monexectest.cfg
 
-if [ `whoami` != root ]; then
-  echo "*** SKIPPED: You must run this test as root"
-  exit 0
+if [ "${EUID:-EUID_NOT_SET}" = "0" ] || [ "${UID:-UID_NOT_SET}" = "0" ]; then
+	:
+else
+	if id | grep 'uid=0' >/dev/null 2>&1; then
+		:
+	else
+		echo "*** SKIPPED: You must run this test as root"
+		exit 0
+	fi
 fi
 
 root_group=`grep '^root' /etc/passwd | head -n 1 | cut -f3 -d':'`

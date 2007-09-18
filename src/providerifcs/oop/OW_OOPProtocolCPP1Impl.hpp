@@ -42,6 +42,7 @@
 #include "OW_ProviderFwd.hpp"
 #include "OW_OOPFwd.hpp"
 #include "OW_SelectableCallbackIFC.hpp"
+#include "OW_UnnamedPipe.hpp"
 #include <deque>
 
 // The classes and functions defined in this file are not meant for general
