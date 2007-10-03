@@ -70,7 +70,15 @@ public:
 	virtual StringArray getDependencies() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void start();
-	void shutdown();
+	virtual void shutdown();
+
+	/**
+	* Called just prior to shutting down the CIMOM, to allow shutdown
+    * activities that still require access to the CIMOM.  See
+    * description in base class ServiceIFC.
+	*/
+	virtual void shuttingDown();
+
 	void processIndication(const CIMInstance& instance,
 		const String& instNS);
 	// these are called by the CIM_IndicationSubscription pass-thru provider.
