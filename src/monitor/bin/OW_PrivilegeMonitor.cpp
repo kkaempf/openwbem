@@ -159,9 +159,17 @@ namespace
 	// Report an exception.  If it is an ipcio exception, it will be rethrown,
 	// as these should not be hidden from main() because it returns different
 	// error codes for IPCIO problems.
-	void reportException(IPCIO & conn, const String& prefix, const Exception& e)
+	void reportExceptionAux(IPCIO & conn, const String& prefix, const Exception& e, bool logAsError)
 	{
-		OW_LOG_ERROR(logger, Format("%1%2", prefix, e));
+		if (logAsError)
+		{
+			OW_LOG_ERROR(logger, Format("%1%2", prefix, e));
+		}
+		else
+		{
+			OW_LOG_DEBUG(logger, Format("%1%2", prefix, e));
+		}
+		
 		sendError(conn, Format("%1%2: %3", prefix, e.type(), e.what()), e.getErrorCode());
 
 		if (dynamic_cast<const IPCIOException*>(&e))
@@ -394,6 +402,8 @@ namespace
 			Exec::PreExec & pre_exec
 		);
 
+		void reportException(const String& prefix, const Exception& e);
+
 		IPCIO & conn()
 		{
 			return *m_pconn;
@@ -598,7 +608,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "setLogger: ", e);
+			reportException("setLogger: ", e);
 		}
 		return true;
 	}
@@ -664,7 +674,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "open: ", e);
+			reportException("open: ", e);
 		}
 	}
 
@@ -706,7 +716,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "readDir: ", e);
+			reportException("readDir: ", e);
 		}
 	}
 
@@ -731,7 +741,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "readLink: ", e);
+			reportException("readLink: ", e);
 		}
 	}
 
@@ -765,7 +775,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "rename: ", e);
+			reportException("rename: ", e);
 		}
 	}
 
@@ -791,7 +801,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "unlink: ", e);
+			reportException("unlink: ", e);
 		}
 	}
 
@@ -1016,7 +1026,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "monitoredSpawn: ", e);
+			reportException("monitoredSpawn: ", e);
 		}
 	}
 	
@@ -1067,7 +1077,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "monitoredUserSpawn: ", e);
+			reportException("monitoredUserSpawn: ", e);
 		}
 	}
 
@@ -1091,7 +1101,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "kill: ", e);
+			reportException("kill: ", e);
 		}
 
 	}
@@ -1128,7 +1138,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "pollStatus: ", e);
+			reportException("pollStatus: ", e);
 		}
 	}
 
@@ -1228,8 +1238,18 @@ namespace
 		}
 		catch (Exception & e)
 		{
-			reportException(conn(), "userSpawn: ", e);
+			reportException("userSpawn: ", e);
 		}
+	}
+
+	void Monitor::reportException(const String& prefix, const Exception& e)
+	{
+		bool logAsError = false;
+		if (m_done)
+		{
+			logAsError = true;
+		}
+		reportExceptionAux(conn(), prefix, e, logAsError);
 	}
 
 #if 0
@@ -1406,7 +1426,7 @@ namespace
 				}
 				catch (CheckException & e)
 				{
-					reportException(*p_conn, "Setup Exception: ", e);
+					reportExceptionAux(*p_conn, "Setup Exception: ", e, true);
 				}
 				p_conn->put_sync();
 
