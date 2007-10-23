@@ -2418,7 +2418,7 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 				out = String(static_cast<Int32>(m_obj.m_sint8Value));
 				break;
 			case CIMDataType::CHAR16:
-				out = String(static_cast<char>(reinterpret_cast<const Char16*>(&m_obj)->getValue()));
+				out = reinterpret_cast<const Char16*>(&m_obj)->toString();
 				break;
 			case CIMDataType::UINT16:
 				out = String(static_cast<UInt32>(m_obj.m_uint16Value));
