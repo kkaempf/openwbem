@@ -837,7 +837,6 @@ void PrivilegeMonitorParserTestCases::testPathPatterns()
 	{
 		PathPatterns pp;
 		pp.addPattern("/");
-		// TODO: this needs to work.  First I need to build other tests. 
 		unitAssert(pp.match("/"));
 		unitAssert(!pp.match("/bar"));
 	}
