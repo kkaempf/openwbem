@@ -821,6 +821,66 @@ user_exec_check_args\n\
 	unitAssert(!privileges.user_exec_check_args.match(cmd1, noArgs, badEnv, user));
 }
 
+void PrivilegeMonitorParserTestCases::testPathPatterns()
+{
+	using namespace PrivilegeConfig;
+	{
+		PathPatterns pp;
+		pp.addPattern("/foo");
+		unitAssert(pp.match("/foo"));
+		unitAssert(!pp.match("foo"));
+		unitAssert(!pp.match("/foo/"));
+		unitAssert(!pp.match("/bar"));
+		unitAssert(!pp.match("/foo/."));
+		unitAssert(!pp.match("/foo/.."));
+	}
+	{
+		PathPatterns pp;
+		pp.addPattern("/");
+		// TODO: this needs to work.  First I need to build other tests. 
+		unitAssert(pp.match("/"));
+		unitAssert(!pp.match("/bar"));
+	}
+}
+
+void PrivilegeMonitorParserTestCases::parseValidOpenR()
+{
+	StringArray emptyEnv;
+	// Test the open_r section...
+	{
+		String input("\
+open_r                                          \n\
+{                                               \n\
+  /**                                           \n\
+}                                                 \
+");
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(parsePrivilegeString(input, privileges, error));
+		unitAssert(privileges.open_read.match("/"));
+		unitAssert(privileges.open_read.match("/bin"));
+		unitAssert(privileges.open_read.match("/bin/sh"));
+	}
+	// Test the open_r section...
+	{
+		String input("\
+open_r                                          \n\
+{                                               \n\
+  /var/opt/foo/**                               \n\
+}                                                 \
+");
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(parsePrivilegeString(input, privileges, error));
+		unitAssert(!privileges.open_read.match("/"));
+		unitAssert(!privileges.open_read.match("/var"));
+		unitAssert(!privileges.open_read.match("/var/opt"));
+		unitAssert(!privileges.open_read.match("/var/opt/foo"));
+		unitAssert(privileges.open_read.match("/var/opt/foo/bar"));
+		unitAssert(privileges.open_read.match("/var/opt/foo/bar/baz"));
+	}
+}
+
 Test* PrivilegeMonitorParserTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("PrivilegeMonitorParser");
@@ -833,6 +893,8 @@ Test* PrivilegeMonitorParserTestCases::suite()
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseValidMonitoredUserExec);
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseInclude);
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, testAllowedEnvironmentVariables);
+	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, testPathPatterns);
+	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseValidOpenR);
 
 	return testSuite;
 }

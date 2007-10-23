@@ -289,7 +289,11 @@ bool PathPatterns::match(const String& path) const
 {
 	if (!path.startsWith("/") || path.endsWith("/"))
 	{
-		return false;
+		// / is a special case that is allowed.
+		if (path != "/")
+		{
+			return false;
+		}
 	}
 	std::pair<String, String> x = splitPath(path);
 	const String& fname = x.second;
@@ -299,8 +303,10 @@ bool PathPatterns::match(const String& path) const
 	}
 	const String& dirname = x.first;
 	// First, see if any subtree pattern is matched
-	for (size_t i = 0; i < m_subtrees.size(); ++i) {
-		if (dirname.startsWith(m_subtrees[i])) {
+	for (size_t i = 0; i < m_subtrees.size(); ++i) 
+	{
+		if (dirname.startsWith(m_subtrees[i])) 
+		{
 			return true;
 		}
 	}

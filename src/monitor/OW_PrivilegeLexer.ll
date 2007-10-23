@@ -53,6 +53,7 @@
 %}
 
 ESCCH        \\[\\*?"]
+  /* PECH - Printable Escape Character */
 PECH_NO_DOT  ([^/.[:cntrl:][:space:]\\*?"]|{ESCCH})
 PECH         ({PECH_NO_DOT}|[.])
 PATHELM      (\.{0,2}{PECH_NO_DOT}|\.\.\.){PECH}*
