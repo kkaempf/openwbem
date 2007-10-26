@@ -173,7 +173,7 @@ public:
 	Type getType() const { return _type; }
 	/** Sets this object to an INTEGER_VALUE.
 	 */
-	void setIntegerValue(Int32 x)
+	void setIntegerValue(Int64 x)
 	{
 		_integerValue = x;
 		_type = INTEGER_VALUE;
