@@ -230,6 +230,17 @@ CIMProperty::setValue(const CIMValue& val)
 	}
 	else
 	{
+		if (!getDataType())
+		{
+			if (val)
+			{
+				setDataType(val.getCIMDataType());
+			}
+			else
+			{
+				setDataType(CIMDataType(CIMDataType::STRING));
+			}
+		}
 		m_pdata->m_cimValue = val;
 	}
 	return *this;
