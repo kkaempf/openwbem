@@ -36,6 +36,7 @@
 #include "OW_config.h"
 #include "OW_CppProviderIncludes.hpp"
 #include "OW_SessionLanguage.hpp"
+#include "OW_IOException.hpp"
 
 using namespace std;
 using namespace OpenWBEM;
@@ -348,6 +349,21 @@ public:
 				{
 					return CIMValue(false);
 				}
+			}
+
+			// test return of a non-CIMException
+			// This relies on the locking scheme to cause a deadlock. We have to clone the environment to get a new
+			// OperationContext in order for the rw mutex lock to be attempted (and fail)
+			ProviderEnvironmentIFCRef clonedEnv = env->clone();
+			CIMOMHandleIFCRef hdl2 = clonedEnv->getCIMOMHandle();
+			try
+			{
+				hdl2->getClass("badnamespace", "badclass");
+				return CIMValue(false);
+			}
+			catch (IOException& e)
+			{
+				OW_LOG_DEBUG(lgr, Format("testCIMOMHandle:test return of non-CIMException caught %1", e));
 			}
 
 			return CIMValue(true);

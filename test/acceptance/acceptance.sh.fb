@@ -1641,6 +1641,10 @@ TestOOPProvider()
 
 	RestoreState
 
+	# The getCIMOMHandle test causes a deadlock and tests that the exception is correctly propagated back.
+	# This sets the timeout very small so the test doesn't take forever.
+	EditConfig "s!owcimomd.read_write_lock_timeout = \(.*\)!owcimomd.read_write_lock_timeout = 0.001!g"
+
 	# import the mof.  We have to change the path to the owoopcpp1pr command
 	# and tell owoopcpp1pr where to stick its log file
 	sed -e "s!${OWLIBEXECDIR}!${STAGEDIR}${OWLIBEXECDIR}!g" \
@@ -1650,7 +1654,7 @@ TestOOPProvider()
 		$STAGEDIR/$OWBINDIR/owmofc --url http://test1:pass1@localhost:30926/ --create-namespaces - || \
 		ExitWithFail "owmofc exited with error."
 
-	# have to restart for provider registration to take effect
+	# have to restart for provider registration and config file changes to take effect
 	RestartDaemon
 
 	# run the tests
