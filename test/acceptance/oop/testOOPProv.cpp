@@ -331,7 +331,26 @@ public:
 			// hit it a second time.
 			inargs[0].setValue(CIMValue("param1-2"));
 			rv = hdl->invokeMethod(ns, path, "method1", inargs, outargs);
-			return CIMValue(rv.toString() == "method1:param1-2");
+			if (rv.toString() != "method1:param1-2")
+			{
+				return CIMValue(false);
+			}
+
+			// test return of a CIMException
+			try
+			{
+				hdl->getClass("badnamespace", "badclass");
+				return CIMValue(false);
+			}
+			catch (CIMException& e)
+			{
+				if (e.getErrNo() != CIMException::INVALID_NAMESPACE)
+				{
+					return CIMValue(false);
+				}
+			}
+
+			return CIMValue(true);
 		}
 		else if (methodName == "testRepositoryCIMOMHandle")
 		{
