@@ -163,7 +163,7 @@ case "$target" in
 	LIBS="$LIBS -lxnet"
 	AIX_COMMON_CFLAGS="-D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -D_XOPEN_SOURCE=500 -D_ALL_SOURCE=1"
 	AIX_COMMON_LFLAGS="-L/usr/lib/threads"
-	RPATH_DEFAULT_PATH="/usr/lib:"
+	RPATH_DEFAULT_PATH="/usr/lib"
 	RPATH_SEPARATOR=":"
 
 	# This figures out which compiler is invoked, and sets the default flags based on that.
@@ -309,7 +309,7 @@ case "$target" in
 	LDFLAG_ADD_64_BIT="+DD64"
 
 	# This next line is wrong if --enable-64-bit-build is used.  It will be replaced later.
-	RPATH_DEFAULT_PATH="${libdir}:/usr/lib:"
+	RPATH_DEFAULT_PATH="/usr/lib"
 
 	# Normally, this would deserve another case statement, but very few things need to be modified on ia64.
 	case "$target" in
@@ -318,8 +318,8 @@ case "$target" in
 			PLAT_CFLAGS="$PLAT_CFLAGS -D_INCLUDE_LONGLONG"
 			PLAT_CXXFLAGS="$PLAT_CXXFLAGS -D_INCLUDE_LONGLONG"
 			# Assume 32-bit unless told (later) to do otherwise.
-			RPATH_DEFAULT_PATH="${libdir}:/usr/lib/hpux32:"
-			RPATH_DEFAULT_PATH_64="${libdir}:/usr/lib/hpux64:"
+			RPATH_DEFAULT_PATH="/usr/lib/hpux32"
+			RPATH_DEFAULT_PATH_64="/usr/lib/hpux64"
 		;;
 		*)
 			LIB_EXT="sl"
@@ -569,31 +569,37 @@ RPATH_LINK_FLAG_WITH_PATH=
 AC_ARG_WITH(runtime-link-path,
 OW_HELP_STRING(--with-runtime-link-path=PATH,enable the encoding of the specified library search path into all executables for runtime linking),
 [
+	wrlp=${with_runtime_link_path}
 	if test "x$RPATH_LINK_FLAG" != "x"; then
-		if test "x${with_runtime_link_path}" != "xyes" -a "x${with_runtime_link_path}" != "xno"; then
+		if test "x${wrlp}" != "xyes" -a "x${wrlp}" != "xno"; then
 			# Remove dots (foo/../bar --> bar) double slashes, etc.
-			OW_CLEANUP_DIRECTORY_NAME(with_runtime_link_path)
+			OW_CLEANUP_DIRECTORY_NAME(wrlp)
 
 			# Change any ':' in the requested path with the rpath separator for this platform.
 			if test "x$RPATH_SEPARATOR" != "x:"; then
-				with_runtime_link_path=`echo "${with_runtime_link_path}" | sed "s/:/$RPATH_SEPARATOR/g"`
+				wrlp=`echo "${wrlp}" | sed "s/:/$RPATH_SEPARATOR/g"`
 			fi
 
-			if test "x${RPATH_LINK_FLAG_WITH_PATH}" != x; then
-				RPATH_LINK_FLAG_WITH_PATH=${RPATH_LINK_FLAG_WITH_PATH}${RPATH_SEPARATOR}${with_runtime_link_path}
-				AC_MSG_NOTICE([Changing rpath flag to ${RPATH_LINK_FLAG_WITH_PATH}])
+			# These *always* stick ${libdir} at the front no matter what the user
+			# requested.  This is for security reasons, to ensure that there is no
+			# chance that the /usr/local/lib directory or other insecure path
+			# will end up in the front of the rpath.
+			if test "x${RPATH_DEFAULT_PATH}" != "x" ; then
+				RPATH_DEFAULT_PATH="${libdir}${RPATH_SEPARATOR}${wrlp}${RPATH_SEPARATOR}${RPATH_DEFAULT_PATH}"
 			else
-				RPATH_LINK_FLAG_WITH_PATH=${RPATH_LINK_FLAG}${RPATH_DEFAULT_PATH}${with_runtime_link_path}
-				AC_MSG_NOTICE([Changing rpath flag to "${RPATH_LINK_FLAG_WITH_PATH}"])
+				RPATH_DEFAULT_PATH="${libdir}${RPATH_SEPARATOR}${wrlp}"
 			fi
-		elif test "x${with_runtime_link_path}" = "xyes"; then
+
+			RPATH_LINK_FLAG_WITH_PATH="${RPATH_LINK_FLAG}${RPATH_DEFAULT_PATH}"
+			AC_MSG_NOTICE([Changing rpath flag to "${RPATH_LINK_FLAG_WITH_PATH}"])
+		elif test "x${wrlp}" = "xyes"; then
 			AC_MSG_WARN(***************************************************************************)
 			AC_MSG_WARN(A runtime path must be specified when using --runtime-link-path            )
 			AC_MSG_WARN(***************************************************************************)
 			exit 1
 		fi
 	else
-		if test "x${with_runtime_link_path}" = "xyes"; then
+		if test "x${wrlp}" != "xno"; then
 			AC_MSG_WARN(***************************************************************************)
 			AC_MSG_WARN(The runtime link path flag is unknown on this platform -- ignored.         )
 			AC_MSG_WARN(***************************************************************************)
@@ -1399,17 +1405,14 @@ OW_SET_DEFAULT_DIRS
 # installed to.
 
 if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
-	# If the user supplied one, use it and add our libdir, otherwise use the
-	# default path as specified somewhere above with our libdir.
-	if test "x${RPATH_LINK_FLAG_WITH_PATH}" != x; then
-		LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG_WITH_PATH}${RPATH_SEPARATOR}${libdir}"
-	else
-		# Note: Our $libdir may appear in here more than once if the default path
-		# has it ordered in such a way.  This is fine and won't break anything.
-		# The alternative, potentially having a trailing ":", is wrong and
-		# could be a security risk.
-		LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}${RPATH_DEFAULT_PATH}${libdir}"
+	if test "x${RPATH_DEFAULT_PATH}" = "x" ; then
+		RPATH_DEFAULT_PATH="${libdir}"
 	fi
+	if test "x${RPATH_LINK_FLAG_WITH_PATH}" = "x" ; then
+		RPATH_LINK_FLAG_WITH_PATH="${RPATH_LINK_FLAG}${RPATH_DEFAULT_PATH}"
+	fi
+
+	LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG_WITH_PATH}"
 fi
 
 CXXSHAREDLIBLINKFLAGS="$CXXCOMMONLINKFLAGS $CXXSHAREDLIBLINKFLAGS $LDFLAGS"
