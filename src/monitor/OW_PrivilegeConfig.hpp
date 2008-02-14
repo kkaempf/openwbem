@@ -286,6 +286,7 @@ struct Privileges
 	PathPatterns rename_from;
 	PathPatterns rename_to;
 	PathPatterns unlink;
+	PathPatterns stat;
 	ExecPatterns monitored_exec;
 	ExecPatterns user_exec;
 	ExecArgsPatterns monitored_exec_check_args;

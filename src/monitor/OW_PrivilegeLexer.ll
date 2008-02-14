@@ -92,6 +92,7 @@ open_r                  { return K_OPEN_R; }
 open_w                  { return K_OPEN_W; }
 open_rw                 { return K_OPEN_RW; }
 open_a                  { return K_OPEN_A; }
+stat                    { return K_STAT; }
 read_dir                { return K_READ_DIR; }
 read_link               { return K_READ_LINK; }
 check_path              { return K_CHECK_PATH; }

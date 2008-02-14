@@ -51,6 +51,12 @@
 #include "OW_Logger.hpp"
 #include "blocxx/WaitpidThreadFix.hpp"
 
+#ifndef BLOCXX_WIN32
+#include "blocxx/PosixFileSystem.hpp"
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif
+
 #include <cstdlib>
 #include <cstring>
 
@@ -75,6 +81,7 @@ namespace
 {
 	::uid_t const ROOT_UID = 0;
 
+	template <typename extype>
 	void check_result(IPCIO & conn, IPCIO::EBuffering eb = IPCIO::E_BUFFERED)
 	{
 		PrivilegeCommon::EStatus status;
@@ -87,9 +94,16 @@ namespace
 			ipcio_get(conn, errmsg);
 			conn.get_sync();
 
-			if( errcode < PrivilegeManager::MONITOR_FATAL_ERROR_START )
+			if( errcode < PrivilegeManager::MONITOR_ERROR_START)
 			{
-				// Non-fatal errors and errno errors can just be forwarded on
+				// Anything with an error code should be rethrown as the desired
+				// exception type.
+				OW_THROW_ERR(extype, errmsg.c_str(), errcode);
+			}
+			else if( errcode < PrivilegeManager::MONITOR_FATAL_ERROR_START )
+			{
+				// Non-fatal errors and errno errors can just be forwarded on as a
+				// generic PrivilegeManagerException.
 				OW_THROW_ERR(PrivilegeManagerException, errmsg.c_str(), errcode);
 			}
 
@@ -123,6 +137,11 @@ namespace
 				}
 			}
 		}
+	}
+
+	void check_result(IPCIO & conn, IPCIO::EBuffering eb = IPCIO::E_BUFFERED)
+	{
+		check_result<PrivilegeManagerException>(conn, eb);
 	}
 
 	std::size_t cstr_arr_len(char const * const * arr)
@@ -631,6 +650,62 @@ AutoDescriptor PrivilegeManager::open(
 		pimpl()->invalidateConnection();
 		throw;
 	}
+}
+
+namespace // anonymous
+{
+	FileSystem::FileInformation statImpl(PrivilegeCommon::ECommand statcmd
+		, const String& statname
+		, PrivilegeManagerImpl* pimpl
+		, const char* pathname)
+	{
+		Logger logger("PrivilegeManager." + statname);
+
+		OW_LOG_DEBUG3(logger, Format("Attempting to %1: %2", statname, pathname));
+		CHECK(pimpl, Format("%1: process has no privileges", statname));
+		pimpl->verifyValidConnection(Format("%1: no connection to the monitor", statname).c_str());
+		try
+		{
+			NonRecursiveMutexLock lock(pimpl->m_mutex);
+
+			IPCIO & conn = pimpl->m_conn;
+			ipcio_put(conn, statcmd);
+			ipcio_put(conn, pathname);
+			conn.put_sync();
+
+			check_result<FileSystemException>(conn, IPCIO::E_UNBUFFERED);
+
+#ifdef BLOCXX_WIN32
+			OW_THROW(PrivilegeManagerException, Format("Not implemented: %1()", statname));
+#else
+			struct stat statbuf;
+			ipcio_get(conn, statbuf);
+			conn.get_sync();
+
+			return FileSystem::statToFileInfo(statbuf);
+#endif
+		}
+		catch(const IPCIOException& e)
+		{
+			pimpl->invalidateConnection();
+			OW_THROW_SUBEX(MonitorCommunicationException, Format("Communication error for %1 on file", statname).c_str(), e);
+		}
+		catch(const FatalPrivilegeManagerException& e)
+		{
+			pimpl->invalidateConnection();
+			throw;
+		}
+	}
+} // end anonymous namespace
+
+FileSystem::FileInformation PrivilegeManager::stat(const char* pathname)
+{
+	return statImpl(PrivilegeCommon::E_CMD_STAT, "stat", pimpl(), pathname);
+}
+
+FileSystem::FileInformation PrivilegeManager::lstat(const char* pathname)
+{
+	return statImpl(PrivilegeCommon::E_CMD_LSTAT, "lstat", pimpl(), pathname);
 }
 
 StringArray PrivilegeManager::readDirectory(

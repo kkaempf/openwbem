@@ -106,7 +106,7 @@ int yylex(YYSTYPE * lvalp, YYLTYPE * llocp, openwbem_privconfig_Lexer * lexerp);
 %token <s>  SPLAT NAME DIRPATH SUBTREE FILEPATH FPATHWC STRING_VALUE
 
 // These do not have values
-%token K_OPEN_R K_OPEN_W K_OPEN_RW K_OPEN_A K_READ_DIR K_READ_LINK
+%token K_OPEN_R K_OPEN_W K_OPEN_RW K_OPEN_A K_STAT K_READ_DIR K_READ_LINK
 %token K_CHECK_PATH K_RENAME_FROM K_RENAME_TO K_RENAME_FROM_TO
 %token K_UNLINK K_MONITORED_EXEC K_USER_EXEC K_UNPRIV_USER
 %token K_MONITORED_EXEC_CHECK_ARGS K_USER_EXEC_CHECK_ARGS
@@ -137,6 +137,7 @@ config_stmt:
 |	K_OPEN_W '{' open_w_args '}'
 |	K_OPEN_RW '{' open_rw_args '}'
 |	K_OPEN_A '{' open_a_args '}'
+|	K_STAT '{' stat_args '}'
 |	K_READ_DIR '{' read_dir_args '}'
 |	K_READ_LINK '{' read_link_args '}'
 |	K_CHECK_PATH '{' check_path_args '}'
@@ -185,6 +186,11 @@ open_rw_args:
 open_a_args:
 	/* empty */
 |	open_a_args path_pattern { addPattern(p_priv->open_append, $2); }
+;
+
+stat_args:
+	/* empty */
+|	stat_args path_pattern { addPattern(p_priv->stat, $2); }
 ;
 
 read_dir_args:

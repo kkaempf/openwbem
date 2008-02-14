@@ -56,6 +56,7 @@ private:
 	void testAllowedEnvironmentVariables();
 	void testPathPatterns();
 	void parseValidOpenR();
+	void parseValidStat();
 };
 
 #endif

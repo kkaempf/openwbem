@@ -50,6 +50,7 @@
 #include "OW_Process.hpp"
 #include "OW_Types.hpp"
 #include "OW_AutoDescriptor.hpp"
+#include "OW_FileSystem.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -279,6 +280,65 @@ public:
 		S const & pathname, OpenFlags flags, OpenPerms perms = no_perms)
 	{
 		return this->open(Cstr::to_char_ptr(pathname), flags, perms);
+	}
+
+	/**
+	 * Perform a stat() on the supplied pathname to obtain file information for
+	 * the supplied pathname (if a regular file or directory), or the file to
+	 * which it refers (for a symlink).
+	 *
+	 * @return a completed FileInformation structure.
+	 *
+	 * @pre Caller must have the stat privilege for the supplied pathname.
+	 *
+	 * @throw FileSystemException if the file did not exist, the pathname is a
+	 * dangling symlink, or anything else that could cause a stat() to fail.
+	 *
+	 * @throw IPCIOException if the monitor communication fails
+	 *
+	 * @throw PrivilegeManagerException for insufficient privileges or other
+	 * monitor errors
+	 */
+	FileSystem::FileInformation stat(const char* pathname);
+
+
+	/**
+	 * Variant of @c open that takes argument of arbitrary string-like type.
+	 * @pre @a S is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
+	 */
+	template <typename S>
+	FileSystem::FileInformation stat(const S& pathname)
+	{
+		return this->stat(Cstr::to_char_ptr(pathname));
+	}
+
+	/**
+	 * Perform an lstat() on a file to obtain file information for the supplied
+	 * pathname.  If the path is a link, information is obtained for the link
+	 * itself instead of the linked file.
+	 *
+	 * @return a completed FileInformation structure.
+	 *
+	 * @pre Caller must have the stat privilege for the supplied pathname.
+	 *
+	 * @throw FileSystemException if the file did not exist, the pathname is a
+	 * dangling symlink, or anything else that could cause a stat() to fail.
+	 *
+	 * @throw IPCIOException if the monitor communication fails
+	 *
+	 * @throw PrivilegeManagerException for insufficient privileges or other
+	 * monitor errors
+	 */
+	FileSystem::FileInformation lstat(const char* pathname);
+
+	/**
+	 * Variant of @c open that takes argument of arbitrary string-like type.
+	 * @pre @a S is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
+	 */
+	template <typename S>
+	FileSystem::FileInformation lstat(const S& pathname)
+	{
+		return this->lstat(Cstr::to_char_ptr(pathname));
 	}
 
 	enum ReadDirOptions

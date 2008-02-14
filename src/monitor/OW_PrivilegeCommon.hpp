@@ -89,6 +89,8 @@ namespace PrivilegeCommon
 		E_CMD_POLL_STATUS,
 		E_CMD_DONE,
 		E_CMD_MONITORED_USER_SPAWN,
+		E_CMD_STAT,
+		E_CMD_LSTAT,
 		E_NUM_MONITOR_CMDS // must be last
 	};
 

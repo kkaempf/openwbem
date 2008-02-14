@@ -42,6 +42,7 @@
 #include "OW_LogAppender.hpp"
 
 #include <algorithm>
+#include <ostream>
 #include <iostream>
 #include <string>
 
@@ -126,6 +127,42 @@ OpenFlags get_open_flags()
 		}
 	}
 	return static_cast<OpenFlags>(flags);
+}
+
+namespace BLOCXX_NAMESPACE
+{
+	namespace FileSystem
+	{
+		std::ostream& operator<<(std::ostream& o,
+			const FileInformation& info)
+		{
+			// Dumping timestamps is probably a bad thing because of time
+			// resolution problems that some filesystems have.
+			o << "  UID: " << info.owner << endl;
+			o << "  Permissions: " << std::oct << int(info.permissions) << endl;
+			o << "  Type: ";
+			switch(info.type)
+			{
+			case FileInformation::E_FILE_TYPE_UNKNOWN:
+				o << "unknown" << endl;
+				break;
+			case FileInformation::E_FILE_REGULAR:
+				o << "regular" << endl;
+				o << "  Size: " << info.size << endl;
+				break;
+			case FileInformation::E_FILE_DIRECTORY:
+				o << "directory" << endl;
+				break;
+			case FileInformation::E_FILE_SYMLINK:
+				o << "symlink" << endl;
+				break;
+			case FileInformation::E_FILE_SPECIAL:
+				o << "special" << endl;
+				break;
+			}
+			return o;
+		}
+	}
 }
 
 PrivilegeManager::OpenPerms get_perms()
@@ -328,6 +365,18 @@ int main_aux(int argc, char * * argv)
 			{
 				String s = mgr.readLink(get_string());
 				cout << "  " << s << endl;
+			}
+			else if (tmp == "stat")
+			{
+				String path = get_string();
+				cout << "  Name: " << path << endl;
+				cout << mgr.stat(path) << endl;
+			}
+			else if (tmp == "lstat")
+			{
+				String path = get_string();
+				cout << "  Name(lstat): " << path << endl;
+				cout << mgr.lstat(path) << endl;
 			}
 			else if (tmp == "rename")
 			{

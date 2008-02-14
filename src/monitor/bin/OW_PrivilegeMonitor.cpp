@@ -64,6 +64,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <limits>
 
 using namespace OpenWBEM;
 using OpenWBEM::PrivilegeConfig::Privileges;
@@ -112,12 +113,27 @@ namespace
 	int const NUM_CMDS = static_cast<int>(PrivilegeCommon::E_NUM_MONITOR_CMDS);
 	UserId const ROOT_USERID = 0;
 
-	std::size_t const MAX_PATH_LENGTH = 1024;
-	std::size_t const MAX_APPNAME_LENGTH = 1024;
-	std::size_t const MAX_ARGV_LENGTH = 1024;
-	std::size_t const MAX_ARG_LENGTH = 1024;
-	std::size_t const MAX_ENV_LENGTH = 1024;
-	std::size_t const MAX_ENVITEM_LENGTH = 1024;
+#ifndef PATH_MAX
+#define PATH_MAX 1024
+#endif
+#ifndef ARG_MAX
+#define ARG_MAX 1024
+#endif
+
+	/**
+	 * The intention of these values is to limit the maximum amount of memory
+	 * consumed by the monitor in the case bad values are provided.  The system
+	 * may impose further limits on the combined total size of environment,
+	 * path, and arguments, which would then be reported as an error when the
+	 * appropriate system call is attempted.
+	 */
+	std::size_t const MAX_PATH_LENGTH = PATH_MAX;
+	std::size_t const MAX_APPNAME_LENGTH = PATH_MAX;
+	// The maximum total length of all command-line arguments combined
+	// (including trailing nulls).
+	std::size_t const MAX_ARG_LENGTH = ARG_MAX;
+	// The total size of the environment (including trailing nulls).
+	std::size_t const MAX_ENV_LENGTH = ARG_MAX;
 	std::size_t const MAX_STATUS_MESSAGE_LENGTH = 1024;
 	std::size_t const MAX_USER_NAME_LENGTH = 1024;
 	std::size_t const MAX_CATEGORY_LENGTH = 128;
@@ -221,6 +237,11 @@ namespace
 		return true;
 	}
 
+	bool has_stat_priv(String const & path, Privileges const & priv)
+	{
+		return priv.stat.match(path);
+	}
+
 	using PrivilegeConfig::ExecPatterns;
 
 	inline bool is_special_direntry(String const & s)
@@ -228,22 +249,41 @@ namespace
 		return s == "." || s == "..";
 	}
 
+	/*
+	 * Get a string array from the monitor connection.
+	 *
+	 * @param max_len The maximum length of all arguments (including null
+	 * terminators).
+	 *
+	 * @returns The generated StringArray and true if all arguments were read
+	 * and less than the maximum length.  If the maximum size was exceeded, an
+	 * empty StringArray and false are returned.
+	 *
+	 * @throws IPCIOException if not all arguments could be read
+	 */
 	std::pair<StringArray, bool>
-	ipcio_get_strarr(IPCIO & conn, std::size_t max_len, std::size_t max_str_len)
+	ipcio_get_strarr(IPCIO & conn, std::size_t max_len)
 	{
 		bool size_ok = true;
 		std::size_t arrlen;
 		ipcio_get(conn, arrlen);
 		StringArray arr;
+		std::size_t size_available = max_len;
 		for (std::size_t i = 0; i < arrlen; ++i)
 		{
 			String s;
-			ipcio_get(conn, s, max_str_len + 1);
+			// A single string may consume the entire available size.  This is
+			// acceptable, but further arguments will cause the size to exceed the
+			// maximum.
+			ipcio_get(conn, s, max_len);
 			if (size_ok)
 			{
-				if (i < max_len && s.length() <= max_str_len)
+				// These sizes have one added because the trailing nul byte counts
+				// as part of the total length limit.
+				if( (s.length() + 1) < size_available )
 				{
 					arr.push_back(s);
+					size_available -= s.length() + 1;
 				}
 				else
 				{
@@ -380,6 +420,8 @@ namespace
 		void run_body();
 
 		void open();
+		void stat();
+		void lstat();
 		void read_dir();
 		void read_link();
 #if 0
@@ -466,6 +508,8 @@ namespace
 			switch (cmd)
 			{
 				case PrivilegeCommon::E_CMD_OPEN :                 this->open(); break;
+				case PrivilegeCommon::E_CMD_STAT :                 this->stat(); break;
+				case PrivilegeCommon::E_CMD_LSTAT :                this->lstat(); break;
 				case PrivilegeCommon::E_CMD_READ_DIR :             this->read_dir(); break;
 				case PrivilegeCommon::E_CMD_READ_LINK :            this->read_link(); break;
 #if 0
@@ -667,7 +711,7 @@ namespace
 				default:
 					CHECKARGS(false, Format("open: illegal flags parameter: %1", perms).c_str(), PrivilegeManager::E_INVALID_PARAMETER);
 			}
-			CHECK_ERRNO(d.get() >= 0, "open");
+			CHECK_ERRNO(d.get() >= 0, Format("open: \"%1\"", path));
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			conn().put_handle(d.get());
 			conn().put_sync();
@@ -675,6 +719,68 @@ namespace
 		catch (const Exception& e)
 		{
 			reportException("open: ", e);
+		}
+	}
+
+	void Monitor::stat()
+	{
+		String path;
+		ipcio_get(conn(), path, MAX_PATH_LENGTH + 1);
+		conn().get_sync();
+
+		OW_LOG_INFO(logger, Format("REQ stat, path=%1", path).toString());
+		try
+		{
+			this->check_valid_path(path, "stat");
+			CHECKARGS(has_stat_priv(path, priv()),
+				Format("stat: insufficient privileges: file=\"%1\"", path).c_str(),
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
+
+			char const * cpath = path.c_str();
+
+			struct stat statbuf;
+
+			int result = ::stat(cpath, &statbuf);
+
+			CHECK_ERRNO(result == 0, Format("stat: \"%1\"", path));
+			ipcio_put(conn(), PrivilegeCommon::E_OK);
+			ipcio_put(conn(), statbuf);
+			conn().put_sync();
+		}
+		catch (const Exception& e)
+		{
+			reportException("stat: ", e);
+		}
+	}
+
+	void Monitor::lstat()
+	{
+		String path;
+		ipcio_get(conn(), path, MAX_PATH_LENGTH + 1);
+		conn().get_sync();
+
+		OW_LOG_INFO(logger, Format("REQ lstat, path=%1", path).toString());
+		try
+		{
+			this->check_valid_path(path, "lstat");
+			CHECKARGS(has_stat_priv(path, priv()),
+				Format("lstat: insufficient privileges: file=\"%1\"", path).c_str(),
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
+
+			char const * cpath = path.c_str();
+
+			struct stat statbuf;
+
+			int result = ::lstat(cpath, &statbuf);
+
+			CHECK_ERRNO(result == 0, Format("lstat: \"%1\"", path));
+			ipcio_put(conn(), PrivilegeCommon::E_OK);
+			ipcio_put(conn(), statbuf);
+			conn().put_sync();
+		}
+		catch (const Exception& e)
+		{
+			reportException("lstat: ", e);
 		}
 	}
 
@@ -993,8 +1099,8 @@ namespace
 		std::pair<StringArray, bool> xargv, xenvp;
 		ipcio_get(conn(), exec_path, MAX_PATH_LENGTH + 1);
 		ipcio_get(conn(), app_name, MAX_APPNAME_LENGTH + 1);
-		xargv = ipcio_get_strarr(conn(), MAX_ARGV_LENGTH, MAX_ARG_LENGTH);
-		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH, MAX_ENVITEM_LENGTH);
+		xargv = ipcio_get_strarr(conn(), MAX_ARG_LENGTH);
+		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH);
 		conn().get_sync();
 
 		OW_LOG_INFO(logger, Format("REQ monitoredSpawn, exec_path=%1, app_name=%2", exec_path, app_name));
@@ -1038,8 +1144,8 @@ namespace
 		std::pair<StringArray, bool> xargv, xenvp;
 		ipcio_get(conn(), exec_path, MAX_PATH_LENGTH + 1);
 		ipcio_get(conn(), app_name, MAX_APPNAME_LENGTH + 1);
-		xargv = ipcio_get_strarr(conn(), MAX_ARGV_LENGTH, MAX_ARG_LENGTH);
-		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH, MAX_ENVITEM_LENGTH);
+		xargv = ipcio_get_strarr(conn(), MAX_ARG_LENGTH);
+		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH);
 		ipcio_get(conn(), user_name, MAX_USER_NAME_LENGTH + 1);
 		conn().get_sync();
 
@@ -1197,8 +1303,8 @@ namespace
 		std::pair<StringArray, bool> xargv, xenvp;
 
 		ipcio_get(conn(), exec_path, MAX_PATH_LENGTH + 1);
-		xargv = ipcio_get_strarr(conn(), MAX_ARGV_LENGTH, MAX_ARG_LENGTH);
-		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH, MAX_ENVITEM_LENGTH);
+		xargv = ipcio_get_strarr(conn(), MAX_ARG_LENGTH);
+		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH);
 		ipcio_get(conn(), user_name, MAX_USER_NAME_LENGTH + 1);
 		ipcio_get(conn(), working_dir, MAX_PATH_LENGTH + 1);
 		conn().get_sync();

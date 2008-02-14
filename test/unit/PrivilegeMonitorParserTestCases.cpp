@@ -202,6 +202,7 @@ open_r { }\n\
 open_w { }\n\
 open_a { }\n\
 read_dir { }\n\
+stat { }\n\
 check_path { }\n\
 rename_from { }\n\
 rename_to { }\n\
@@ -880,6 +881,51 @@ open_r                                          \n\
 	}
 }
 
+
+void PrivilegeMonitorParserTestCases::parseValidStat()
+{
+	StringArray emptyEnv;
+	// Test the stat section...
+	{
+		String input("\
+stat                                          \n\
+{                                               \n\
+  /**                                           \n\
+}                                                 \
+");
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(parsePrivilegeString(input, privileges, error));
+		unitAssert(privileges.stat.match("/"));
+		unitAssert(privileges.stat.match("/bin"));
+		unitAssert(privileges.stat.match("/bin/sh"));
+	}
+	// Test the stat section...
+	{
+		String input("stat { /var/opt/foo/** }");
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(parsePrivilegeString(input, privileges, error));
+		unitAssert(!privileges.stat.match("/"));
+		unitAssert(!privileges.stat.match("/var"));
+		unitAssert(!privileges.stat.match("/var/opt"));
+		unitAssert(!privileges.stat.match("/var/opt/foo"));
+		unitAssert(privileges.stat.match("/var/opt/foo/bar"));
+		unitAssert(privileges.stat.match("/var/opt/foo/bar/baz"));
+
+		// Non-matching paths because they are unacceptable as input.
+		unitAssert(!privileges.stat.match("/var/opt/foo/bar/"));
+		unitAssert(!privileges.stat.match("/var/opt/foo/bar/.."));
+		unitAssert(!privileges.stat.match("/var/opt/foo/bar/."));
+		unitAssert(!privileges.stat.match("/var/opt/bar/../foo/bar/baz"));
+
+		// This one should be illegal, but matches.
+		// unitAssert(!privileges.stat.match("/var/opt/foo/././../././bar/baz"));
+	}
+}
+
+
+
 Test* PrivilegeMonitorParserTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("PrivilegeMonitorParser");
@@ -894,6 +940,7 @@ Test* PrivilegeMonitorParserTestCases::suite()
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, testAllowedEnvironmentVariables);
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, testPathPatterns);
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseValidOpenR);
+	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseValidStat);
 
 	return testSuite;
 }
