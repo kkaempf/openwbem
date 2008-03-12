@@ -1,0 +1,6 @@
+# This test relies on the current behavior of checking the path before checking privileges.
+# This should fail because ".." is disallowed.
+remove_dir /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/link-exists/..
+
+# The monitor is gone, so this will fail too.
+remove_dir /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir

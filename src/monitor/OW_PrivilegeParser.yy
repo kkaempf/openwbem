@@ -108,7 +108,7 @@ int yylex(YYSTYPE * lvalp, YYLTYPE * llocp, openwbem_privconfig_Lexer * lexerp);
 // These do not have values
 %token K_OPEN_R K_OPEN_W K_OPEN_RW K_OPEN_A K_STAT K_READ_DIR K_READ_LINK
 %token K_CHECK_PATH K_RENAME_FROM K_RENAME_TO K_RENAME_FROM_TO
-%token K_UNLINK K_MONITORED_EXEC K_USER_EXEC K_UNPRIV_USER
+%token K_REMOVE_FILE K_REMOVE_DIR K_MONITORED_EXEC K_USER_EXEC K_UNPRIV_USER
 %token K_MONITORED_EXEC_CHECK_ARGS K_USER_EXEC_CHECK_ARGS
 %token K_MONITORED_USER_EXEC_CHECK_ARGS K_MONITORED_USER_EXEC
 %token K_INCLUDE K_ALLOWED_ENVIRONMENT_VARIABLES
@@ -144,7 +144,8 @@ config_stmt:
 |	K_RENAME_FROM '{' rename_from_args '}'
 |	K_RENAME_TO '{' rename_to_args '}'
 |	K_RENAME_FROM_TO '{' rename_from_to_args '}'
-|	K_UNLINK '{' unlink_args '}'
+|	K_REMOVE_FILE '{' remove_file_args '}'
+|	K_REMOVE_DIR '{' remove_dir_args '}'
 |	K_MONITORED_EXEC '{' monitored_exec_args '}'
 |	K_MONITORED_USER_EXEC '{' monitored_user_exec_args '}'
 |	K_USER_EXEC '{' user_exec_args '}'
@@ -229,9 +230,18 @@ rename_from_to_args:
 	}
 ;
 
-unlink_args:
+remove_file_args:
 	/* empty */
-|	unlink_args path_pattern { addPattern(p_priv->unlink, $2); }
+|	remove_file_args path_pattern { addPattern(p_priv->remove_file, $2); }
+;
+
+remove_dir_args:
+	/* empty */
+|	remove_dir_args DIRPATH { p_priv->remove_dir.addDir(makeNameOrPath($2)); }
+|	remove_dir_args SUBTREE {
+		OpenWBEM::String s = makeNameOrPath($2);
+		p_priv->remove_dir.addSubtree(s.substring(0, s.lastIndexOf('/')));
+	}
 ;
 
 monitored_exec_args:

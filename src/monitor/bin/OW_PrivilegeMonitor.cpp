@@ -428,7 +428,8 @@ namespace
 		void check_path();
 #endif
 		void rename();
-		void unlink();
+		void removeFile();
+		void removeDirectory();
 		void monitoredSpawn();
 		void monitoredUserSpawn();
 		void kill();
@@ -436,7 +437,10 @@ namespace
 		void userSpawn();
 		void done();
 
-		void check_valid_path(String const & path, char const * op);
+		// Check that the given path is valid.  This will clean the path if it
+		// needs it.  If the path is not valid for any reason, a CheckException
+		// is thrown with an error code of PrivilegeManager::E_INVALID_PATH
+		void force_valid_path(String& path, char const * op);
 
 		void spawn_and_return(
 			String const & exec_path,
@@ -516,7 +520,8 @@ namespace
 				case PrivilegeCommon::E_CMD_CHECK_PATH :           this->check_path(); break;
 #endif
 				case PrivilegeCommon::E_CMD_RENAME :               this->rename(); break;
-				case PrivilegeCommon::E_CMD_UNLINK :               this->unlink(); break;
+				case PrivilegeCommon::E_CMD_REMOVE_FILE :          this->removeFile(); break;
+				case PrivilegeCommon::E_CMD_REMOVE_DIR :           this->removeDirectory(); break;
 				case PrivilegeCommon::E_CMD_MONITORED_SPAWN :      this->monitoredSpawn(); break;
 				case PrivilegeCommon::E_CMD_MONITORED_USER_SPAWN : this->monitoredUserSpawn(); break;
 				case PrivilegeCommon::E_CMD_KILL :                 this->kill(); break;
@@ -546,13 +551,26 @@ namespace
 		}
 	}
 
-	void Monitor::check_valid_path(String const & path, char const * op)
+	void Monitor::force_valid_path(String& path, char const * op)
 	{
 		CHECKARGS(path.length() <= MAX_PATH_LENGTH,
-			String(op) + ": path argument too long",
+			Format("%1: path argument too long", op),
 			PrivilegeManager::E_INVALID_PATH);
 		CHECKARGS(path.startsWith("/"),
-			String(op) + ": path argument must be an absolute path",
+			Format("%1: path argument must be an absolute path.  path=\"%2\"", op, path),
+			PrivilegeManager::E_INVALID_PATH);
+
+		String temppath = PrivilegeConfig::normalizePath(path);
+
+		// If the path was altered, log it and use the altered version.
+		if( temppath != path )
+		{
+			OW_LOG_DEBUG3(logger, Format("Cleaned path provided to monitor. Original: \"%1\", cleaned: \"%2\"", path, temppath));
+			path = temppath;
+		}
+
+		CHECKARGS((path.indexOf("/../") == String::npos) && !path.endsWith("/.."),
+			Format("%1: path argument must not contain \"..\".  path=\"%2\"", op, path),
 			PrivilegeManager::E_INVALID_PATH);
 	}
 
@@ -637,7 +655,7 @@ namespace
 		{
 			CHECKARGS(!m_logger_set, "set_logger: logger already set", PrivilegeManager::E_ALREADY_INITIALIZED);
 			check_logger_spec(ls, m_done);
-			this->check_valid_path(ls.file_name, "set_logger");
+			this->force_valid_path(ls.file_name, "set_logger");
 			String dir_name = FileSystem::Path::dirname(ls.file_name);
 			CHECKARGS(m_secure_paths.is_secure(dir_name),
 				"set_logger: log file dir " + dir_name + " is insecure",
@@ -670,7 +688,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ open, path=%1, flags=%2, perms=%3", path, flags, perms).toString());
 		try
 		{
-			this->check_valid_path(path, "open");
+			this->force_valid_path(path, "open");
 			CHECKARGS(has_open_priv(path, flags, priv()),
 				Format("open: insufficient privileges: file=\"%1\" flags=%2, perms=%3", path, flags, perms).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
@@ -731,7 +749,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ stat, path=%1", path).toString());
 		try
 		{
-			this->check_valid_path(path, "stat");
+			this->force_valid_path(path, "stat");
 			CHECKARGS(has_stat_priv(path, priv()),
 				Format("stat: insufficient privileges: file=\"%1\"", path).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
@@ -762,7 +780,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ lstat, path=%1", path).toString());
 		try
 		{
-			this->check_valid_path(path, "lstat");
+			this->force_valid_path(path, "lstat");
 			CHECKARGS(has_stat_priv(path, priv()),
 				Format("lstat: insufficient privileges: file=\"%1\"", path).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
@@ -795,7 +813,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ readDirectory, path=%1, opt=%2", dirpath, opt).toString());
 		try
 		{
-			this->check_valid_path(dirpath, "readDirectory");
+			this->force_valid_path(dirpath, "readDirectory");
 			CHECKARGS(priv().read_dir.match(dirpath),
 				Format("readDirectory: insufficient privileges: dirpath=\"%1\" opt=%2", dirpath, opt).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
@@ -835,7 +853,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ readLink, path=%1", lpath).toString());
 		try
 		{
-			this->check_valid_path(lpath, "readLink");
+			this->force_valid_path(lpath, "readLink");
 			CHECKARGS(priv().read_link.match(lpath),
 				Format("readLink: insufficient privileges: path=\"%1\"", lpath).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
@@ -862,12 +880,12 @@ namespace
 
 		try
 		{
-			this->check_valid_path(old_path, "rename");
+			this->force_valid_path(old_path, "rename");
 			CHECKARGS(priv().rename_from.match(old_path),
 				Format("rename: insufficient privileges for source path: %1", old_path).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 
-			this->check_valid_path(new_path, "rename");
+			this->force_valid_path(new_path, "rename");
 			CHECKARGS(priv().rename_to.match(new_path),
 				Format("rename: insufficient privileges for dest path: %1", new_path).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
@@ -885,29 +903,58 @@ namespace
 		}
 	}
 
-	void Monitor::unlink()
+	void Monitor::removeFile()
 	{
 		String path;
 		ipcio_get(conn(), path, MAX_PATH_LENGTH + 1);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ unlink, path=%1", path).toString());
+		OW_LOG_INFO(logger, Format("REQ removeFile, path=%1", path).toString());
 		try
 		{
-			this->check_valid_path(path, "unlink");
-			CHECKARGS(priv().unlink.match(path),
-				Format("unlink: insufficient privileges: path=\"%1\"", path).c_str(),
+			this->force_valid_path(path, "removeFile");
+			CHECKARGS(priv().remove_file.match(path),
+				Format("removeFile: insufficient privileges: path=\"%1\"", path).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 
 			bool ok = FileSystem::removeFile(path);
 
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			ipcio_put(conn(), ok);
+			ipcio_put(conn(), errno);
 			conn().put_sync();
 		}
 		catch (const Exception& e)
 		{
-			reportException("unlink: ", e);
+			reportException("removeFile: ", e);
+		}
+	}
+
+	void Monitor::removeDirectory()
+	{
+		String path;
+		ipcio_get(conn(), path, MAX_PATH_LENGTH + 1);
+		conn().get_sync();
+
+		OW_LOG_INFO(logger, Format("REQ removeDirectory, path=%1", path).toString());
+		try
+		{
+			this->force_valid_path(path, "removeDirectory");
+			CHECKARGS(priv().remove_dir.match(path),
+				Format("removeDirectory: insufficient privileges: path=\"%1\"", path).c_str(),
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
+
+			bool ok = FileSystem::removeDirectory(path);
+			OW_LOG_INFO(logger, Format("removeDirectory: retval=%1", ok));
+
+			ipcio_put(conn(), PrivilegeCommon::E_OK);
+			ipcio_put(conn(), ok);
+			ipcio_put(conn(), errno);
+			conn().put_sync();
+		}
+		catch (const Exception& e)
+		{
+			reportException("removeDirectory: ", e);
 		}
 	}
 
@@ -1106,7 +1153,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ monitoredSpawn, exec_path=%1, app_name=%2", exec_path, app_name));
 		try
 		{
-			this->check_valid_path(exec_path, "monitoredSpawn");
+			this->force_valid_path(exec_path, "monitoredSpawn");
 			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredSpawn: app name too long", PrivilegeManager::E_INVALID_SIZE);
 			CHECKARGS(xargv.second, "monitoredSpawn: argv too large", PrivilegeManager::E_INVALID_SIZE);
 			CHECKARGS(xenvp.second,	"monitoredSpawn: envp too large", PrivilegeManager::E_INVALID_SIZE);
@@ -1153,7 +1200,7 @@ namespace
 								   exec_path, app_name, user_name));
 		try
 		{
-			this->check_valid_path(exec_path, "monitoredUserSpawn");
+			this->force_valid_path(exec_path, "monitoredUserSpawn");
 			CHECKARGS(user_name.length() <= MAX_USER_NAME_LENGTH,
 				"monitoredUserSpawn: user name too long",
 				PrivilegeManager::E_INVALID_SIZE);
@@ -1312,7 +1359,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ userSpawn, exec_path=%1, user=%2", exec_path, user_name));
 		try
 		{
-			this->check_valid_path(exec_path, "userSpawn");
+			this->force_valid_path(exec_path, "userSpawn");
 			CHECKARGS(user_name.length() <= MAX_USER_NAME_LENGTH,
 				"userSpawn: user name too long",
 				PrivilegeManager::E_INVALID_SIZE);

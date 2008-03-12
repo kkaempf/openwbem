@@ -64,6 +64,18 @@ BLOCXX_DECLARE_EXCEPTION(UnescapeString);
  */
 String unescapeString(char const * str);
 
+/**
+ * Normalize the given path by removing all "/./" and "//" patterns
+ * from it.  The patterns "/./" and "//" will both be treated as "/".
+ * Any trailing slash in the string will be preserved because some of the
+ * monitor functions will treat paths with trailing slashes differently.
+ *
+ * @param path The input path.
+ * @return The normalized (cleaned) path if the supplied path is absolute,
+ * 	otherwise the supplied path is returned.
+ */
+String normalizePath(const String& path);
+
 class PathPatterns
 {
 public:
@@ -285,7 +297,8 @@ struct Privileges
 	PathPatterns check_path;
 	PathPatterns rename_from;
 	PathPatterns rename_to;
-	PathPatterns unlink;
+	PathPatterns remove_file;
+	DirPatterns remove_dir;
 	PathPatterns stat;
 	ExecPatterns monitored_exec;
 	ExecPatterns user_exec;

@@ -129,7 +129,7 @@ void ConditionTestCases::testTimedWaitLong()
 	Thread::sleep(100);
 	th.my_cancel();
 	th.join();
-	unitAssert(th.timeout_count() == 0);
+	unitAssertEquals(0u, th.timeout_count());
 	// Allow for the possibility of one spurious wakeup, but no more
 	unitAssert(th.wait_count() <= 2);
 }

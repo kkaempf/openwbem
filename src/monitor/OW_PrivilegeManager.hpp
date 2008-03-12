@@ -448,23 +448,45 @@ public:
 	}
 
 	/**
-	* @post The file at @path no longer exists.
+	* @post The file at @path no longer exists (if successful), errno set.
+	* @pre Caller must have @c remove_file privilege for @a path.
 	*
-	* @return Whether there was anything to unlink.
+	* @return true if the file was successfully removed.
 	*
 	* @throw PrivilegeManagerException
 	* @throw IPCIOException
 	*/
-	bool unlink(char const * path);
+	bool removeFile(char const * path);
 
 	/**
-	* Variant of @c checkPath that takes argument of arbitrary string-like type.
+	* Variant of @c removeFile that takes argument of arbitrary string-like type.
 	* @pre @a S is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
 	*/
 	template <typename S>
-	bool unlink(S const & path)
+	bool removeFile(S const & path)
 	{
-		return this->unlink(Cstr::to_char_ptr(path));
+		return this->removeFile(Cstr::to_char_ptr(path));
+	}
+
+	/**
+	* @post The directory at @path no longer exists (if successful), errno set.
+	* @pre Caller must have @c remove_dir privilege for @a path.
+	*
+	* @return true if the directory was successfully removed.
+	*
+	* @throw PrivilegeManagerException
+	* @throw IPCIOException
+	*/
+	bool removeDirectory(char const * path);
+
+	/**
+	* Variant of @c removeDirectory that takes argument of arbitrary string-like type.
+	* @pre @a S is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
+	*/
+	template <typename S>
+	bool removeDirectory(S const & path)
+	{
+		return this->removeDirectory(Cstr::to_char_ptr(path));
 	}
 
 	/**

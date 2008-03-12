@@ -844,30 +844,74 @@ void PrivilegeManager::rename(char const * oldpath, char const * newpath)
 	}
 }
 
-bool PrivilegeManager::unlink(char const * path)
+bool PrivilegeManager::removeFile(char const * path)
 {
 	try
 	{
-		CHECK(pimpl(), "unlink: process has no privileges");
-		pimpl()->verifyValidConnection("unlink: no connection to the monitor");
+		CHECK(pimpl(), "removeFile: process has no privileges");
+		pimpl()->verifyValidConnection("removeFile: no connection to the monitor");
 		NonRecursiveMutexLock lock(pimpl()->m_mutex);
 
 		IPCIO & conn = pimpl()->m_conn;
-		ipcio_put(conn, PrivilegeCommon::E_CMD_UNLINK);
+		ipcio_put(conn, PrivilegeCommon::E_CMD_REMOVE_FILE);
 		ipcio_put(conn, path);
 		conn.put_sync();
 
 		check_result(conn);
 		bool retval;
 		ipcio_get(conn, retval);
+
+		int errorcode;
+		ipcio_get(conn, errorcode);
 		conn.get_sync();
+
+		// Reset errno with the value set by the monitor.
+		errno = errorcode;
 
 		return retval;
 	}
 	catch(const IPCIOException& e)
 	{
 		pimpl()->invalidateConnection();
-		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while unlinking file", e);
+		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while removing file", e);
+	}
+	catch(const FatalPrivilegeManagerException& e)
+	{
+		pimpl()->invalidateConnection();
+		throw;
+	}
+}
+
+bool PrivilegeManager::removeDirectory(char const * path)
+{
+	try
+	{
+		CHECK(pimpl(), "removeDirectory: process has no privileges");
+		pimpl()->verifyValidConnection("removeDirectory: no connection to the monitor");
+		NonRecursiveMutexLock lock(pimpl()->m_mutex);
+
+		IPCIO & conn = pimpl()->m_conn;
+		ipcio_put(conn, PrivilegeCommon::E_CMD_REMOVE_DIR);
+		ipcio_put(conn, path);
+		conn.put_sync();
+
+		check_result(conn);
+		bool retval;
+		ipcio_get(conn, retval);
+
+		int errorcode;
+		ipcio_get(conn, errorcode);
+		conn.get_sync();
+
+		// Reset errno with the value set by the monitor.
+		errno = errorcode;
+
+		return retval;
+	}
+	catch(const IPCIOException& e)
+	{
+		pimpl()->invalidateConnection();
+		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while removing directory", e);
 	}
 	catch(const FatalPrivilegeManagerException& e)
 	{

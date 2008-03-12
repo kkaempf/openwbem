@@ -1,2 +1,2 @@
-InsufficientPrivilegesException  CheckException: unlink: insufficient privileges
+InsufficientPrivilegesException  CheckException: removeFile: insufficient privileges
 PrivilegeManagerException  PrivilegeManager.* no connection to the monitor

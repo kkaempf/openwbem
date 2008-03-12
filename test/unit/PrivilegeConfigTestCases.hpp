@@ -47,6 +47,7 @@ public:
 private:
 	// test methods
 	void testunescapeString();
+	void testnormalizePath();
 };
 
 #endif

@@ -99,7 +99,8 @@ check_path              { return K_CHECK_PATH; }
 rename_from             { return K_RENAME_FROM; }
 rename_to               { return K_RENAME_TO; }
 rename_from_to          { return K_RENAME_FROM_TO; }
-unlink                  { return K_UNLINK; }
+remove_file             { return K_REMOVE_FILE; }
+remove_dir              { return K_REMOVE_DIR; }
 monitored_exec          { return K_MONITORED_EXEC; }
 monitored_user_exec     { return K_MONITORED_USER_EXEC; }
 user_exec               { return K_USER_EXEC; }

@@ -114,6 +114,8 @@ old_dir=`pwd`
 cd $test_dir
 gunzip -c $testtgz | tar -xf -
 cd ${old_dir}
+
+mkdir -p ${test_dir}/empty_dir ${test_dir}/full_dir/foo/bar
 chown -R root:${root_group} $test_dir
 chmod -R og-rwx $test_dir
 
@@ -171,6 +173,7 @@ cd ${old_dir}
 # Some of the evil tests use the original test structure for the gold
 # directory.  Hose it from there as well.
 rm -f $test_dir/dangling $gold_dir/dangling
+rm -rf ${test_dir}/empty_dir ${test_dir}/full_dir
 
 chown -R root:${root_group} $gold_dir
 diff -r $gold_dir $test_dir

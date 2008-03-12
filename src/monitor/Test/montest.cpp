@@ -309,6 +309,8 @@ int main_aux(int argc, char * * argv)
 				PrivilegeManager::OpenPerms perms = get_perms();
 				String path = get_string();
 
+				cout << "  path: " << path << endl;
+
 				//				cerr << std::oct << "Opening file " << path << " with flags " << flags << " and perms " << perms << std::dec << endl;
 				String contents;
 				if (flags & PrivilegeManager::out)
@@ -356,6 +358,8 @@ int main_aux(int argc, char * * argv)
 			else if (tmp == "readDirectory")
 			{
 				String dirpath = get_string();
+				cout << "  path: " << dirpath << endl;
+
 				PrivilegeManager::ReadDirOptions opt = get_read_dir_opt();
 				StringArray sa = mgr.readDirectory(dirpath.c_str(), opt);
 				std::sort(sa.begin(), sa.end());
@@ -363,32 +367,58 @@ int main_aux(int argc, char * * argv)
 			}
 			else if (tmp == "readLink")
 			{
-				String s = mgr.readLink(get_string());
+				String path = get_string();
+				cout << "  path: " << path << endl;
+
+				String s = mgr.readLink(path);
 				cout << "  " << s << endl;
 			}
 			else if (tmp == "stat")
 			{
 				String path = get_string();
-				cout << "  Name: " << path << endl;
+				cout << "  path: " << path << endl;
 				cout << mgr.stat(path) << endl;
 			}
 			else if (tmp == "lstat")
 			{
 				String path = get_string();
-				cout << "  Name(lstat): " << path << endl;
+				cout << "  path: " << path << endl;
 				cout << mgr.lstat(path) << endl;
 			}
 			else if (tmp == "rename")
 			{
 				String from = get_string();
 				String to = get_string();
+				cout << "  path: " << from << endl;
+				cout << "  dest: " << to << endl;
 				mgr.rename(from.c_str(), to.c_str());
 			}
-			else if (tmp == "unlink")
+			else if (tmp == "remove_file")
 			{
 				String path = get_string();
-				bool retval = mgr.unlink(path.c_str());
-				cout << retval << endl;
+				bool retval = mgr.removeFile(path.c_str());
+				int errorcode = errno;
+				cout << "  path: " << path << endl;
+				cout << retval << " " << errorcode << "(" << strerror(errorcode) <<  ")" << endl;
+				if( !retval )
+				{
+					// Yes, this is ugly, but it allows failures to be matched in the exception tests.
+					cout << "NonException:\n type: remove_file\n msg: Failed to remove file: " << path << endl;
+				}
+			}
+			else if (tmp == "remove_dir")
+			{
+				String path = get_string();
+				bool retval = mgr.removeDirectory(path.c_str());
+				int errorcode = errno;
+				cout << "  path: " << path << endl;
+				cout << retval << " " << errorcode << "(" << strerror(errorcode) <<  ")" << endl;
+
+				if( !retval )
+				{
+					// Yes, this is ugly, but it allows failures to be matched in the exception tests.
+					cout << "NonException:\n type: remove_dir\n msg: Failed to remove directory: " << path << endl;
+				}
 			}
 			else if (tmp == "monitoredSpawn")
 			{

@@ -57,6 +57,7 @@ private:
 	void testPathPatterns();
 	void parseValidOpenR();
 	void parseValidStat();
+	void parseValidRemoveDir();
 };
 
 #endif
