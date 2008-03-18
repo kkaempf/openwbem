@@ -59,6 +59,8 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Reference.hpp"
 
+#include <numeric>
+
 namespace OW_NAMESPACE
 {
 
@@ -120,6 +122,18 @@ namespace
 			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 		}
 	}
+
+	struct StringJoiner
+	{
+		StringJoiner(const String& joiner): m_joiner(joiner) { }
+
+		String operator()(const String& s1, const String& s2)
+		{
+			return s1 + m_joiner + s2;
+		}
+
+		String m_joiner;
+	};
 
 } // end unnamed namespace
 
@@ -193,6 +207,14 @@ OOPProviderBase::startClonedProviderEnv(
 	return UnnamedPipeRef();
 }
 
+bool OOPProviderBase::haveUnloadTimeout()
+{
+	// The default constructed value for the timeout sets it to 0.  If a
+	// non-null timeout is listed in the registration, it will be assigned
+	// something else.
+	return m_provInfo.timeout != Timeout::relative(0);
+}
+
 ThreadSafeProcessRef
 OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& env, EUsePersistentProcessFlag usePersistentProcess, String& procUserName)
 {
@@ -201,7 +223,7 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 	// figure out procUserName
 	switch (m_provInfo.userContext)
 	{
-		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_SUPER_USER:
+	case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_SUPER_USER:
 		{
 #if OW_WIN32
 			const char superUser[] = "SYSTEM";
@@ -211,8 +233,8 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 			procUserName = superUser;
 		}
 		break;
-		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION:
-		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_UNPRIVILEGED:
+	case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION:
+	case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_UNPRIVILEGED:
 		{
 			String currentUserName = UserUtils::getCurrentUserName();
 			procUserName = currentUserName;
@@ -227,7 +249,7 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 
 		}
 		break;
-		case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION_MONITORED:
+	case OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_OPERATION_MONITORED:
 		{
 			String currentUserName = UserUtils::getCurrentUserName();
 			procUserName = currentUserName;
@@ -242,6 +264,10 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 
 	if (usePersistentProcess == E_USE_PERSISTENT_PROCESS && !m_processState.isNull())
 	{
+		OW_LOG_DEBUG3(lgr, Format("OOPProviderBase::getProcess() should use existing process %1 (%2), if it has been started.",
+				m_provInfo.process,
+				std::accumulate(m_provInfo.args.begin(), m_provInfo.args.end(),
+					String("args:"), StringJoiner(" "))));
 		// if the user of the persistent process has changed, we need to kill the old process and start a new one.
 		ThreadSafeProcessRef proc;
 		String processStateUserName;
@@ -253,21 +279,27 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 				OW_LOG_DEBUG(lgr, Format("Using persistent process %1", proc->pid()));
 				return proc;
 			}
+			else if( haveUnloadTimeout() )
+			{
+				OW_LOG_DEBUG3(lgr, "Existing provider was terminated.  It likely reached timeout and was unloaded.  It will be reloaded.");
+			}
 			else
 			{
 				String output = getStderr(proc);
-				OW_LOG_ERROR(lgr, Format("Detected that persistent provider process %1[%2] has terminated: %3, stderr output = %4", 
+				OW_LOG_ERROR(lgr, Format("Detected that persistent provider process %1[%2] has terminated: %3, stderr output = %4",
 					m_provInfo.process, proc->pid(), proc->processStatus().toString(), output));
-	
 				m_processState.clearProcess();
 			}
 		}
 		else
 		{
-			OW_LOG_ERROR(lgr, "Detected that persistent provider process has terminated.");
+			OW_LOG_DEBUG3(lgr,
+				Format("Detected that persistent provider process %1 [%2] has not been started.",
+					m_provInfo.process,
+					std::accumulate(m_provInfo.args.begin(), m_provInfo.args.end(),
+						String("args:"), StringJoiner(" "))));
 		}
 	}
-
 
 	// launch the process
 	OW_LOG_DEBUG2(lgr, Format("%1 about to spawn %2", fname, m_provInfo.process));
@@ -316,7 +348,7 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 		{
 			proc = privMan.monitoredUserSpawn(
 				m_provInfo.process, m_provInfo.monitorPrivilegesFile, argv,
-				Secure::minimalEnvironment(), procUserName); 
+				Secure::minimalEnvironment(), procUserName);
 		}
 		break;
 	}
@@ -388,6 +420,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 		resetUnloadTimer();
 
 		String procUserName;
+
 		ThreadSafeProcessRef proc = getProcess(fname, env, usePersistentProcess, procUserName);
 
 		try

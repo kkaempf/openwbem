@@ -74,6 +74,8 @@ public:
 
 	bool unloadTimeoutExpired();
 
+	bool haveUnloadTimeout();
+
 protected:
 
 	const OOPProtocolIFCRef& getProtocol() const
