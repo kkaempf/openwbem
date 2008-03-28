@@ -57,6 +57,8 @@ PrivilegeConfigTestCases.cpp \
 PrivilegeConfigTestCases.hpp \
 PrivilegeMonitorParserTestCases.cpp \
 PrivilegeMonitorParserTestCases.hpp \
+PrivilegeManagerMockObjectTestCases.cpp \
+PrivilegeManagerMockObjectTestCases.hpp \
 OW_LazyGlobalTestCases.cpp \
 OW_LazyGlobalTestCases.hpp \
 LogAppenderTestCases.cpp \

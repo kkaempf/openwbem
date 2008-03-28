@@ -40,6 +40,7 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "PrivilegeManagerMockObjectTestCases.hpp"
 #include "EnvironmentVariablePatternsTestCases.hpp"
 #include "XMLParserCoreTestCases.hpp"
 #include "PrivilegeConfigTestCases.hpp"
@@ -116,6 +117,7 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "PrivilegeManagerMockObject", PrivilegeManagerMockObjectTestCases::suite());
 	runner.addTest( "EnvironmentVariablePatterns", EnvironmentVariablePatternsTestCases::suite());
 	runner.addTest( "XMLParserCore", XMLParserCoreTestCases::suite());
 	runner.addTest( "PrivilegeConfig", PrivilegeConfigTestCases::suite());

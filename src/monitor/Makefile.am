@@ -32,6 +32,8 @@ OW_IPCIO.cpp \
 OW_PrivilegeCommon.cpp \
 OW_PrivilegeConfig.cpp \
 OW_PrivilegeManager.cpp \
+OW_PrivilegeManagerMockObject.cpp \
+OW_PrivilegeManagerMockObjectScope.cpp \
 OW_MonitoredPerl.cpp \
 OW_IPCIO.hpp \
 OW_PrivilegeCommon.hpp
@@ -39,6 +41,8 @@ OW_PrivilegeCommon.hpp
 pkginclude_HEADERS = \
 OW_PrivManOpenFlags.h \
 OW_PrivilegeManager.hpp \
+OW_PrivilegeManagerMockObject.hpp \
+OW_PrivilegeManagerMockObjectScope.hpp \
 OW_LoggerSpec.hpp \
 OW_MonitoredPerl.hpp \
 OW_PrivilegeConfig.hpp \
