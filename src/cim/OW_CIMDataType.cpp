@@ -524,7 +524,7 @@ start:
 	goto yy0;
 	++YYCURSOR;
 yy0:
-	if ((YYLIMIT - YYCURSOR) < 10) YYFILL(10);
+	if ((YYLIMIT - YYCURSOR) < 10) { YYFILL(10); }
 	yych = *YYCURSOR;
 	switch (yych){
 	case 'B':	case 'b':	goto yy7;
