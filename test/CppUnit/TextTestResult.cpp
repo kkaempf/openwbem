@@ -59,6 +59,12 @@ void TextTestResult::startTest (Test *test)
 
 }
 
+void TextTestResult::testCondition (Test *test)
+{
+	TestResult::testCondition (test);
+	cerr << "+" << std::flush;
+}
+
 
 void TextTestResult::printErrors (ostream& stream)
 {
@@ -139,7 +145,7 @@ void TextTestResult::print (ostream& stream)
 void TextTestResult::printHeader (ostream& stream)
 {
 	if (wasSuccessful ())
-		stream << endl << "OK (" << runTests () << " tests)" << endl;
+		stream << endl << "OK (" << runTests () << " tests, " << testedConditions() << " conditions)" << endl;
 	else
 	{
 		stream << endl
@@ -147,6 +153,8 @@ void TextTestResult::printHeader (ostream& stream)
 			 << "Test Results:" << endl
 			 << "Run:  "
 			 << runTests ()
+			 << "   Conditions: "
+			 << testedConditions ()
 			 << "   Failures: "
 			 << testFailures ()
 			 << "   Errors: "

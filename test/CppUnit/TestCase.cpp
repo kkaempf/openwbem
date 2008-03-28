@@ -38,11 +38,14 @@
 #include <string>
 #include <math.h>
 
+#include "OW_Exception.hpp"
+
 using std::string;
 
 // Constructs a test case
 TestCase::TestCase (const char* name)
 		: m_name (name)
+		, m_testResult(NULL)
 {}
 
 
@@ -227,7 +230,11 @@ bool TestCase::runFuncAndCatchErrors( T func, const char* msg, TestResult* resul
 	{
 		CppUnitException *copy = new CppUnitException (e);
 		result->addFailure (this, copy);
-		
+	}
+	// Added special case to catch OW exceptions and properly report them.
+	catch (const OW_NAMESPACE::Exception& e)
+	{
+		result->addError (this, new CppUnitException (std::string(std::string(e.type()) + ": " + std::string(e.what())).c_str(), e.getLine(), e.getFile()));
 	}
 	catch (const std::exception& e)
 	{
@@ -248,9 +255,12 @@ void TestCase::run (TestResult *result)
 {
 	result->startTest (this);
 
+	m_testResult = result;
 	if (runFuncAndCatchErrors( &TestCase::setUp, "initialization of ", result ))
 		if (runFuncAndCatchErrors( &TestCase::runTest, "", result ))
 			runFuncAndCatchErrors( &TestCase::tearDown, "destruction of ", result );
+
+	m_testResult = NULL;
 
 	result->endTest (this);
 

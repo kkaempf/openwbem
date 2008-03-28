@@ -73,8 +73,10 @@ public:
 	virtual void                        addError       (Test *test, CppUnitException *e);
 	virtual void                        addFailure     (Test *test, CppUnitException *e);
 	virtual void                        startTest      (Test *test);
+	virtual void                        testCondition  (Test *test);
 	virtual void                        endTest        (Test *test);
 	virtual int                         runTests       ();
+	virtual int                         testedConditions();
 	virtual int                         testErrors     ();
 	virtual int                         testFailures   ();
 	virtual bool                        wasSuccessful  ();
@@ -114,6 +116,7 @@ protected:
 	std::vector<TestFailure *>  m_errors;
 	std::vector<TestFailure *>  m_failures;
 	int                         m_runTests;
+	int                         m_runConditions;
 	bool                        m_stop;
 	SynchronizationObject       *m_syncObject;
 
