@@ -380,7 +380,7 @@ IndexEntry
 IndexImpl::findNext()
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, Format("IndexImpl::findNext in %1", m_dbFileName));
+	OW_LOG_DEBUG3(logger, Format("IndexImpl::findNext in %1", m_dbFileName));
 	openIfClosed();
 	if (m_pDB == NULL)
 	{

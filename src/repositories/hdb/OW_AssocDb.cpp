@@ -846,7 +846,7 @@ AssocDb::check()
 {
 	MutexLock l = getDbLock();
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "AssocDb::check");
+	OW_LOG_DEBUG3(lgr, "AssocDb::check");
 	bool rv = true;
 	std::set<Int32> freeBlocks;
 	rv &= checkFreeList(freeBlocks);
@@ -895,7 +895,7 @@ bool AssocDb::checkFreeList(std::set<Int32>& freeBlocks)
 		freeBlocks.insert(coffset);
 		coffset = rh.nextFree;
 	}
-	OW_LOG_DEBUG(lgr, "AssocDb::checkFreeList successful");
+	OW_LOG_DEBUG3(lgr, "AssocDb::checkFreeList successful");
 	return true;
 }
 
@@ -903,7 +903,7 @@ bool AssocDb::checkFreeList(std::set<Int32>& freeBlocks)
 bool AssocDb::checkIndex(std::set<Int32>& offsets)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "AssocDb::checkIndex");
+	OW_LOG_DEBUG3(lgr, "AssocDb::checkIndex");
 	std::set<String> keys;
 	IndexEntry curEntry = m_pIndex->findFirst();
 	AssocDbHandle hdl = getHandle();
@@ -938,7 +938,7 @@ bool AssocDb::checkIndex(std::set<Int32>& offsets)
 bool AssocDb::checkDb(std::set<Int32>& freeList, std::set<Int32>& offsets)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "AssocDb::checkDb");
+	OW_LOG_DEBUG3(lgr, "AssocDb::checkDb");
 	AssocDbHandle hdl = getHandle();
 	File f = hdl.getFile();
 	Int32 curOffset = 0;
@@ -1250,7 +1250,7 @@ start:
 			OW_LOG_DEBUG3(lgr, "Found a block, marking nextFree to 0");
 			writeRecHeader(rh, coffset, f);
 			offset = coffset;
-			OW_LOG_DEBUG(lgr, "AssocDb::getNewBlock finished with a re-used block.");
+			OW_LOG_DEBUG3(lgr, "AssocDb::getNewBlock finished with a re-used block.");
 			OW_ASSERT(checkFreeList());
 			return rh;
 		}
@@ -1262,7 +1262,7 @@ start:
 		lh = rh;
 		coffset = rh.nextFree;
 	}
-	OW_LOG_DEBUG(lgr, "AssocDb::getNewBlock() Did not find a free block. Expanding and returning a block at the end.");
+	OW_LOG_DEBUG3(lgr, "AssocDb::getNewBlock() Did not find a free block. Expanding and returning a block at the end.");
 	f.seek(0L, SEEK_END);
 	Int64 offset64 = f.tell();
 	offset = static_cast<Int32>(offset64);
