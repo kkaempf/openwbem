@@ -1,22 +1,22 @@
 /*******************************************************************************
 * Copyright (C) 2005, Quest Software, Inc. All rights reserved.
 * Copyright (C) 2006, Novell, Inc. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
-* 
+*
 *     * Redistributions of source code must retain the above copyright notice,
 *       this list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of 
-*       Quest Software, Inc., 
-*       nor Novell, Inc., 
-*       nor the names of its contributors or employees may be used to 
-*       endorse or promote products derived from this software without 
+*     * Neither the name of
+*       Quest Software, Inc.,
+*       nor Novell, Inc.,
+*       nor the names of its contributors or employees may be used to
+*       endorse or promote products derived from this software without
 *       specific prior written permission.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -54,10 +54,7 @@ namespace OW_NAMESPACE
 class ThreadSafeProcess : public IntrusiveCountableBase
 {
 public:
-	ThreadSafeProcess(const ProcessRef& procToWrap)
-	: m_proc(procToWrap)
-	{
-	}
+	ThreadSafeProcess(const ProcessRef& procToWrap);
 
 	/**
 	* Releases ownership of the ProcId and UnnamedPipes held by this object.
@@ -66,61 +63,35 @@ public:
 	* the dtor does nothing.  Only the above-mentioned methods may be called
 	* on this object.
 	*/
-	void release()
-	{
-		NonRecursiveMutexLock lock(m_guard);
-		m_proc->release();
-	}
+	void release();
 
 	/**
 	* If @c release has been called on this object, does nothing.  Otherwise,
 	* closes pipes and waits for process to die, killing it if necessary,
 	*/
-	virtual ~ThreadSafeProcess()
-	{
-	}
+	virtual ~ThreadSafeProcess();
 
 	/// Stdin for the child process.
 	/// The default timeout is set to 10 minutes.
-	UnnamedPipeRef in() const
-	{
-		NonRecursiveMutexLock lock(m_guard);
-		return m_proc->in();
-	}
+	UnnamedPipeRef in() const;
 
 	/// Stdout for the child process.
 	/// The default timeout is set to 10 minutes.
-	UnnamedPipeRef out() const
-	{
-		NonRecursiveMutexLock lock(m_guard);
-		return m_proc->out();
-	}
+	UnnamedPipeRef out() const;
 
 	/// Stderr for the child process.
 	/// The default timeout is set to 10 minutes.
-	UnnamedPipeRef err() const
-	{
-		NonRecursiveMutexLock lock(m_guard);
-		return m_proc->err();
-	}
+	UnnamedPipeRef err() const;
 
 	/// Process ID for the child process.
-	ProcId pid() const
-	{
-		NonRecursiveMutexLock lock(m_guard);
-		return m_proc->pid();
-	}
+	ProcId pid() const;
 
 	/**
-	* @return Status of child process.  
+	* @return Status of child process.
 	* @note Does not wait for child to terminate.
 	* @throw ProcessErrorException
 	*/
-	Process::Status processStatus()
-	{
-		NonRecursiveMutexLock lock(m_guard);
-		return m_proc->processStatus();
-	}
+	Process::Status processStatus();
 
 	/**
 	* Waits for the child process to terminate, taking increasingly severe
@@ -134,25 +105,21 @@ public:
 	* -# If @a wait_term.getRelative() > 0, sends process a @c SIGTERM signal and waits
 	*    until @a wait_term expires for it to die.
 	* -# Sends the process a @c SIGKILL signal.
-	* 
+	*
 	* In steps 1-3 the function returns as soon as termination is detected.
 	* If this function is called a second time it is a no-op, because it
 	* immediately sees that the process has already terminated.
-	* 
+	*
 	* @note If @a wait_close <= 0 then the FileHandles are NOT closed, and
 	* if @a wait_term <= 0 then no @c SIGTERM signal is sent.
 	*
 	* @throw ProcessErrorException
 	*/
 	void waitCloseTerm(
-		const Timeout& wait_initial = Timeout::relative(5.0), 
-		const Timeout& wait_close =   Timeout::relative(10.0), 
+		const Timeout& wait_initial = Timeout::relative(5.0),
+		const Timeout& wait_close =   Timeout::relative(10.0),
 		const Timeout& wait_term =    Timeout::relative(15.0),
-		Process::ETerminationSelectionFlag terminationSelectionFlag = Process::E_TERMINATE_PROCESS_GROUP)
-	{
-		NonRecursiveMutexLock lock(m_guard);
-		return m_proc->waitCloseTerm(wait_initial, wait_close, wait_term, terminationSelectionFlag);
-	}
+		Process::ETerminationSelectionFlag terminationSelectionFlag = Process::E_TERMINATE_PROCESS_GROUP);
 
 	/**
 	 * Waits for the child process to terminate, taking increasingly severe
@@ -166,21 +133,17 @@ public:
 	 * -# If @a wait_term > 0, sends process a @c SIGTERM signal and waits
 	 *    until @a wait_term seconds have passed for it to die.
 	 * -# Sends the process a @c SIGKILL signal.
-	 * 
+	 *
 	 * In steps 1-3 the function returns as soon as termination is detected.
 	 * If this function is called a second time it is a no-op, because it
 	 * immediately sees that the process has already terminated.
-	 * 
+	 *
 	 * @note If @a wait_close <= 0 then the FileHandles are NOT closed, and
 	 * if @a wait_term <= 0 then no @c SIGTERM signal is sent.
 	 *
 	 * @throw ProcessErrorException
 	 */
-	void waitCloseTerm(float wait_initial, float wait_close, float wait_term)
-	{
-		NonRecursiveMutexLock lock(m_guard);
-		return m_proc->waitCloseTerm(wait_initial, wait_close, wait_term);
-	}
+	void waitCloseTerm(float wait_initial, float wait_close, float wait_term);
 
 private:
 
