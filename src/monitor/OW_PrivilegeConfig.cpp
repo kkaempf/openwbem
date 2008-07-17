@@ -36,6 +36,10 @@
 #include "blocxx/LazyGlobal.hpp"
 #include "blocxx/SortedVectorMap.hpp"
 
+#include <iterator> // for std::back_insert_iterator
+#include <algorithm> // for std::remove_copy_if
+#include <numeric> // for std::accumulate
+
 namespace OW_NAMESPACE
 {
 namespace PrivilegeConfig
@@ -65,6 +69,15 @@ namespace
 		return sbuf.releaseString();
 	}
 
+	bool containsDoubleDots(const String& path)
+	{
+		if((path.indexOf("/../") != String::npos) || path.endsWith("/.."))
+		{
+			return true;
+		}
+		return false;
+	}
+
 	// REQUIRE: path contains at least one '/'
 	//
 	std::pair<String, String> splitPath(const String& path)
@@ -90,7 +103,7 @@ namespace
 			E_PATH
 		);
 		n -= std::size_t(pattern_type);
-		return std::make_pair(unescapePath(s, n), pattern_type);
+		return std::make_pair(normalizePath(unescapePath(s, n)), pattern_type);
 	}
 
 	bool isOctal(int c)
@@ -110,7 +123,72 @@ namespace
 				return false;
 		}
 	}
+
+	// A helper function that returns if a path token is useless.
+	// Useless tokens are empty or single dots.
+	bool isUselessPathToken(const String& tok)
+	{
+		return tok.empty() || (tok == ".");
+	}
+
+	// Append a path to a base path.
+	String pathAppender(const String& base, const String& name)
+	{
+		return base + BLOCXX_FILENAME_SEPARATOR + name;
+	}
 } // end unnamed namespace
+
+String normalizePath(const String& path)
+{
+	// There are more efficient ways this function could be implemented.  This
+	// way was easy to implement and should be fairly easy to read.
+
+	// TODO: Normalize windows paths.  That is much trickier because "\\\\"
+	// has a special meaning and absolute paths start with drive letters.
+	if( !path.startsWith('/') )
+	{
+		// ERROR: non-absolute paths are not accepted.
+		return path;
+	}
+	StringArray pathPortions = path.tokenize("/", String::E_DISCARD_DELIMITERS, String::E_RETURN_EMPTY_TOKENS);
+
+	// Preallocate enough space for the entire path, should it be good.
+	StringArray adjustedPathTokens;
+	adjustedPathTokens.reserve(pathPortions.size());
+
+	// Useless tokens (from // and /./) are removed from the final string;
+	// everything else is copied.  This is begging for a lambda.
+	std::remove_copy_if(pathPortions.begin(), pathPortions.end(),
+		std::back_insert_iterator<StringArray>(adjustedPathTokens),
+		&isUselessPathToken);
+
+	// Combine the adjusted path tokens into a path string.  This is another
+	// spot where lambda would be very useful.
+	String retval = std::accumulate(adjustedPathTokens.begin(), adjustedPathTokens.end(),
+		String(), &pathAppender);
+
+	// The original was non-empty because it had at least a single slash.  If it
+	// is now empty, it was nothing but /(\./)* (in regex terms).
+	if( retval.empty() )
+	{
+		retval = "/";
+	}
+
+	// If the original path ends with a '/', or stripping the dots would make it
+	// so, make sure the adjusted path ends the same way; the result would need
+	// to be a directory and not a file.  This should preserve symlink semantics
+	// for trailing dots even after stripping the dots.
+	if( path.endsWith('/') || path.endsWith("/.") )
+	{
+		if( !retval.endsWith('/') )
+		{
+			retval.concat('/');
+		}
+	}
+
+	return retval;
+}
+
 
 String unescapePath(char const * epath)
 {
@@ -265,7 +343,7 @@ void PathPatterns::addCase(
 
 void PathPatterns::addSubtree(const String& dir_path)
 {
-	m_subtrees.push_back(dir_path);
+	m_subtrees.push_back(normalizePath(dir_path));
 }
 
 void PathPatterns::addPattern(char const * pattern)
@@ -287,20 +365,33 @@ void PathPatterns::addPattern(char const * pattern)
 
 bool PathPatterns::match(const String& path) const
 {
-	if (!path.startsWith("/") || path.endsWith("/"))
+	if ( !path.startsWith('/') )
 	{
+		// Relative paths are rejected.
 		return false;
 	}
-	std::pair<String, String> x = splitPath(path);
+	else if( containsDoubleDots(path) )
+	{
+		// Always reject /../ or /..
+		return false;
+	}
+
+	String cleaned = normalizePath(path);
+
+	if(cleaned.endsWith("/") && (cleaned != "/"))
+	{
+		// "/" is a special case that is allowed.  Any other path that ends with
+		// a trailing slash will be rejected.
+		return false;
+	}
+	std::pair<String, String> x = splitPath(cleaned);
 	const String& fname = x.second;
-	if (fname == "." || fname == "..")
-	{
-		return false;
-	}
 	const String& dirname = x.first;
 	// First, see if any subtree pattern is matched
-	for (size_t i = 0; i < m_subtrees.size(); ++i) {
-		if (dirname.startsWith(m_subtrees[i])) {
+	for (size_t i = 0; i < m_subtrees.size(); ++i) 
+	{
+		if (dirname.startsWith(m_subtrees[i])) 
+		{
 			return true;
 		}
 	}
@@ -325,17 +416,24 @@ bool PathPatterns::match(const String& path) const
 
 void DirPatterns::addDir(const String& dirpath)
 {
-	dirs.insert(dirpath);
+	dirs.insert(normalizePath(dirpath));
 }
 
 void DirPatterns::addSubtree(const String& dirpath)
 {
-	subtrees.push_back(dirpath);
+	subtrees.push_back(normalizePath(dirpath));
 }
 
 bool DirPatterns::match(const String& dirpath) const
 {
-	String dirp = dirpath.endsWith("/") ? dirpath : dirpath + "/";
+	String dirp = normalizePath(dirpath + "/");
+
+	if( containsDoubleDots(dirp) )
+	{
+		// Always reject /../ or /..
+		return false;
+	}
+
 	if (dirs.find(dirp) != dirs.end()) {
 		return true;
 	}
@@ -361,6 +459,14 @@ ExecArgsPatterns::addPattern(char const * exec_path_pattern, const Array<ExecArg
 bool 
 ExecArgsPatterns::match(const String& exec_path, Array<String> const & args, const StringArray& envVars, const String& ident) const
 {
+	String cleanedPath = normalizePath(exec_path);
+
+	if( containsDoubleDots(exec_path) )
+	{
+		// Always reject anything including /../ 
+		return false;
+	}
+
 	StringArray users; 
 	users.push_back(ident); 
 	users.push_back("*"); 
@@ -375,14 +481,14 @@ ExecArgsPatterns::match(const String& exec_path, Array<String> const & args, con
 
 		for (size_t i = 0; i < it->second.size(); ++i)
 		{
-			if (!it->second[i].pathPatterns.match(exec_path))
+			if (!it->second[i].pathPatterns.match(cleanedPath))
 			{
 				continue;
 			}
 
 			// executable matched, now check the args.
 			// argv[0] is special, being the name of the executable
-			if (args.size() > 0 && args[0] != exec_path)
+			if (args.size() > 0 && args[0] != cleanedPath)
 			{
 				continue;
 			}

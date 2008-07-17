@@ -1,4 +1,4 @@
-SUBDIRS = testfiles progs oop methodLocking
+SUBDIRS = testfiles progs oop methodLocking lockedCIMOMHandle
 
 check_SCRIPTS = acceptance.sh
 

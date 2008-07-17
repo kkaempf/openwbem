@@ -50,6 +50,8 @@ PrivilegeConfigTestCases.cpp \
 PrivilegeConfigTestCases.hpp \
 PrivilegeMonitorParserTestCases.cpp \
 PrivilegeMonitorParserTestCases.hpp \
+PrivilegeManagerMockObjectTestCases.cpp \
+PrivilegeManagerMockObjectTestCases.hpp \
 OW_LazyGlobalTestCases.cpp \
 OW_LazyGlobalTestCases.hpp \
 LogAppenderTestCases.cpp \
@@ -62,8 +64,6 @@ GlobalPtrTestCases.cpp \
 GlobalPtrTestCases.hpp \
 IStringStreamTestCases.cpp \
 IStringStreamTestCases.hpp \
-UnnamedPipeTestCases.cpp \
-UnnamedPipeTestCases.hpp \
 ProcessTestCases.cpp \
 ProcessTestCases.hpp \
 ConditionTestCases.cpp \

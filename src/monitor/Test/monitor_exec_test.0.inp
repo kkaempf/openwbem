@@ -10,9 +10,9 @@ rename /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename2 /dir/does
 rename /dir/doesnt/exist/rename /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename-to
 rename /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/no-such-file /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename-to
 
-unlink /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/unlink-exists
-unlink /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/unlink-doesnt-exist
-unlink /dir/doesnt/exist/unlink
+remove_file /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/unlink-exists
+remove_file /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/unlink-doesnt-exist
+remove_file /dir/doesnt/exist/unlink
 
 open in 0 /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/bar
 open out 604 /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/out-exists

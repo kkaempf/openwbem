@@ -54,6 +54,10 @@ private:
 	void parseValidMonitoredExec();
 	void parseInclude();
 	void testAllowedEnvironmentVariables();
+	void testPathPatterns();
+	void parseValidOpenR();
+	void parseValidStat();
+	void parseValidRemoveDir();
 };
 
 #endif

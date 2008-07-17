@@ -90,12 +90,14 @@ public:
 	 */
 	CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
 		ESendIndicationsFlag sendIndications,
-		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS) const;
+		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS,
+		EInitialLockFlag = E_NONE) const;
 
 	/**
 	 * WARNING: The return value is valid only for the lifetime of context.
 	 */
-	//virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle(OperationContext& context) const;
+	virtual CIMOMHandleIFCRef getLockedCIMOMHandle(OperationContext& context,
+		EInitialLockFlag initialLock) const;
 
 	/**
 	 * WARNING: The return value is valid only for the lifetime of context.

@@ -60,11 +60,40 @@ void PrivilegeConfigTestCases::testunescapeString()
 	}
 }
 
+void PrivilegeConfigTestCases::testnormalizePath()
+{
+	// Relative paths should return the original relative path.
+	unitAssertEquals( "", PrivilegeConfig::normalizePath("") );
+	unitAssertEquals( "./foo/bar/baz", PrivilegeConfig::normalizePath("./foo/bar/baz") );
+
+	// Absolute paths should be cleaned.  Double dots are passed on but single
+	// dots are cleaned.
+	unitAssertEquals( "/foo/bar/baz", PrivilegeConfig::normalizePath("/foo/bar/baz") );
+	unitAssertEquals( "/foo/bar/baz/../", PrivilegeConfig::normalizePath("/foo/bar/baz/../") );
+	unitAssertEquals( "/foo/bar/baz/..", PrivilegeConfig::normalizePath("/foo/bar/baz/..") );
+	unitAssertEquals( "/foo/bar/baz/../../../", PrivilegeConfig::normalizePath("/foo/bar/baz/../../../") );
+	unitAssertEquals( "/foo/bar/baz/../../..", PrivilegeConfig::normalizePath("/foo/bar/baz/../../..") );
+	unitAssertEquals( "/foo/bar/baz/../../../../../../../../../../../../../../..", PrivilegeConfig::normalizePath("/foo/bar/baz/../../../../../../../../../../../../../../..") );
+	unitAssertEquals( "/var/opt/foo/../bar/baz", PrivilegeConfig::normalizePath("/var/opt/foo/././../././bar/baz") );
+	unitAssertEquals( "/var/opt/foo/../bar/baz/quux/../", PrivilegeConfig::normalizePath("/var/opt/foo/././../././bar/baz/quux/././.././.") );
+	unitAssertEquals( "/../../", PrivilegeConfig::normalizePath("/.//.././/.././") );
+
+
+	// Multiple slashes should be a single slash.
+	unitAssertEquals( "/this/should/only/have/single/slashes", PrivilegeConfig::normalizePath("////this////should////only////have////single////slashes") );
+
+	unitAssertEquals( "/../../foo/", PrivilegeConfig::normalizePath("/.//.././/.././foo/.") );
+	unitAssertEquals( "/foo/", PrivilegeConfig::normalizePath("/foo/.") );
+	unitAssertEquals( "/foo/bar/../", PrivilegeConfig::normalizePath("/foo/bar/./../.") );
+	unitAssertEquals( "/foo/..", PrivilegeConfig::normalizePath("/foo/..") );
+}
+
 Test* PrivilegeConfigTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("PrivilegeConfig");
 
 	ADD_TEST_TO_SUITE(PrivilegeConfigTestCases, testunescapeString);
+	ADD_TEST_TO_SUITE(PrivilegeConfigTestCases, testnormalizePath);
 
 	return testSuite;
 }

@@ -211,7 +211,7 @@ int main_(int argc, char * * argv)
 		print_matches("check_path", priv.check_path, path_vec);
 		print_matches("rename_from", priv.rename_from, path_vec);
 		print_matches("rename_to", priv.rename_to, path_vec);
-		print_matches("unlink", priv.unlink, path_vec);
+		print_matches("remove_file", priv.remove_file, path_vec);
 		print_mon_exec_matches("monitored_user_exec", priv.monitored_user_exec, idents, envVars, path_vec);
 		print_mon_exec_args_matches("monitored_user_exec_check_args", priv.monitored_user_exec_check_args, envVars, idents, exec_vec);
 	}

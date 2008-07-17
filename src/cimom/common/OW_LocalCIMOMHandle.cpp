@@ -50,11 +50,42 @@ namespace OW_NAMESPACE
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 LocalCIMOMHandle::LocalCIMOMHandle(CIMOMEnvironmentRef env,
-	RepositoryIFCRef pRepos, OperationContext& context)
+	RepositoryIFCRef pRepos, OperationContext& context, EInitialLockFlag initialLock)
 	: RepositoryCIMOMHandle(pRepos, context)
 	, m_env(env)
+	, m_initialLock(initialLock)
 {
+	switch (m_initialLock)
+	{
+		case E_NONE:
+			// do nothing
+		break;
+		case E_READ:
+			beginOperation(WBEMFlags::E_INVOKE_METHOD_READ_LOCK, context);
+		break;
+		case E_WRITE:
+			beginOperation(WBEMFlags::E_INVOKE_METHOD_WRITE_LOCK, context);
+		break;
+	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+LocalCIMOMHandle::~LocalCIMOMHandle()
+{
+	switch (m_initialLock)
+	{
+		case E_NONE:
+			// do nothing
+		break;
+		case E_READ:
+			endOperation(WBEMFlags::E_INVOKE_METHOD_READ_LOCK, m_context, WBEMFlags::E_SUCCESS);
+		break;
+		case E_WRITE:
+			endOperation(WBEMFlags::E_INVOKE_METHOD_WRITE_LOCK, m_context, WBEMFlags::E_SUCCESS);
+		break;
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////
 CIMFeatures
 LocalCIMOMHandle::getServerFeatures()

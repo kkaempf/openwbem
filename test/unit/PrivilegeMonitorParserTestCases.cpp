@@ -41,7 +41,7 @@
   rename_from { }
   rename_to { }
   rename_from_to { }
-  unlink { }
+  remove_file { }
 
   ###########################################################################
   Tests covered here:
@@ -202,11 +202,13 @@ open_r { }\n\
 open_w { }\n\
 open_a { }\n\
 read_dir { }\n\
+stat { }\n\
 check_path { }\n\
 rename_from { }\n\
 rename_to { }\n\
 rename_from_to { }\n\
-unlink { }\n\
+remove_file { }\n\
+remove_dir { }\n\
 unpriv_user { me }\n\
 monitored_exec { }\n\
 monitored_user_exec { }\n\
@@ -355,7 +357,6 @@ user_exec_check_args	                        \n\
 		unitAssert(!CHECKCOMMAND(bad_cmd7, user));
 
 		unitAssert(CHECKCOMMAND("/opt/quest/bin/vastool -u host/ search (cn=SMS-Site-DAN) serviceBindingInformation", "root"));
-		unitAssert(!CHECKCOMMAND("/opt/quest/bin//vastool -u host/ search (cn=SMS-Site-DAN) serviceBindingInformation", "root"));
 		unitAssert(!CHECKCOMMAND2("/opt/quest/bin/vastool", "/opt/quest/bin//vastool -u host/ search (cn=SMS-Site-DAN) serviceBindingInformation", "root"));
 
 		// All of the commands should fail to match when executed as an invalid (unspecified) user.
@@ -821,6 +822,145 @@ user_exec_check_args\n\
 	unitAssert(!privileges.user_exec_check_args.match(cmd1, noArgs, badEnv, user));
 }
 
+void PrivilegeMonitorParserTestCases::testPathPatterns()
+{
+	using namespace PrivilegeConfig;
+	{
+		PathPatterns pp;
+		pp.addPattern("/foo");
+		unitAssert(pp.match("/foo"));
+		unitAssert(!pp.match("foo"));
+		unitAssert(!pp.match("/foo/"));
+		unitAssert(!pp.match("/bar"));
+		unitAssert(!pp.match("/foo/."));
+		unitAssert(!pp.match("/foo/.."));
+	}
+	{
+		PathPatterns pp;
+		pp.addPattern("/");
+		unitAssert(pp.match("/"));
+		unitAssert(!pp.match("/bar"));
+	}
+}
+
+void PrivilegeMonitorParserTestCases::parseValidOpenR()
+{
+	StringArray emptyEnv;
+	// Test the open_r section...
+	{
+		String input("\
+open_r                                          \n\
+{                                               \n\
+  /**                                           \n\
+}                                                 \
+");
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(parsePrivilegeString(input, privileges, error));
+		unitAssert(privileges.open_read.match("/"));
+		unitAssert(privileges.open_read.match("/bin"));
+		unitAssert(privileges.open_read.match("/bin/sh"));
+	}
+	// Test the open_r section...
+	{
+		String input("\
+open_r                                          \n\
+{                                               \n\
+  /var/opt/foo/**                               \n\
+}                                                 \
+");
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(parsePrivilegeString(input, privileges, error));
+		unitAssert(!privileges.open_read.match("/"));
+		unitAssert(!privileges.open_read.match("/var"));
+		unitAssert(!privileges.open_read.match("/var/opt"));
+		unitAssert(!privileges.open_read.match("/var/opt/foo"));
+		unitAssert(privileges.open_read.match("/var/opt/foo/bar"));
+		unitAssert(privileges.open_read.match("/var/opt/foo/bar/baz"));
+	}
+}
+
+
+void PrivilegeMonitorParserTestCases::parseValidStat()
+{
+	// Test the stat section...
+	{
+		String input("\
+stat                                          \n\
+{                                               \n\
+  /**                                           \n\
+}                                                 \
+");
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(parsePrivilegeString(input, privileges, error));
+		unitAssert(privileges.stat.match("/"));
+		unitAssert(privileges.stat.match("/bin"));
+		unitAssert(privileges.stat.match("/bin/sh"));
+	}
+	// Test the stat section...
+	{
+		String input("stat { /var/opt/foo/** }");
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(parsePrivilegeString(input, privileges, error));
+		unitAssert(!privileges.stat.match("/"));
+		unitAssert(!privileges.stat.match("/var"));
+		unitAssert(!privileges.stat.match("/var/opt"));
+		unitAssert(!privileges.stat.match("/var/opt/foo"));
+		unitAssert(privileges.stat.match("/var/opt/foo/bar"));
+		unitAssert(privileges.stat.match("/var/opt/foo/bar/baz"));
+
+		// Non-matching paths because they are unacceptable as input.
+		unitAssert(!privileges.stat.match("/var/opt/foo/bar/"));
+		unitAssert(!privileges.stat.match("/var/opt/foo/bar/."));
+
+		// Non-matching because they contain ".."
+		unitAssert(!privileges.stat.match("/var/opt/foo/bar/.."));
+		unitAssert(!privileges.stat.match("/var/opt/bar/../foo/bar/baz"));
+		unitAssert(!privileges.stat.match("/var/opt/foo/././../././bar/baz"));
+	}
+}
+
+void PrivilegeMonitorParserTestCases::parseValidRemoveDir()
+{
+	{
+		String input("\
+remove_dir                                          \n\
+{                                               \n\
+  /**                                           \n\
+}                                                 \
+");
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(parsePrivilegeString(input, privileges, error));
+		unitAssert(privileges.remove_dir.match("/"));
+		unitAssert(privileges.remove_dir.match("/foo"));
+		unitAssert(privileges.remove_dir.match("/foo/bar"));
+	}
+	{
+		String input("remove_dir { /var/opt/foo/** }");
+		OpenWBEM::PrivilegeConfig::Privileges privileges;
+		OpenWBEM::PrivilegeConfig::ParseError error;
+		unitAssert(parsePrivilegeString(input, privileges, error));
+		unitAssert(!privileges.remove_dir.match("/"));
+		unitAssert(!privileges.remove_dir.match("/var"));
+		unitAssert(!privileges.remove_dir.match("/var/opt"));
+		unitAssert(privileges.remove_dir.match("/var/opt/foo/bar"));
+		unitAssert(privileges.remove_dir.match("/var/opt/foo/bar/baz"));
+
+		// These have the trailing dots removed and remain valid.
+		unitAssert(privileges.remove_dir.match("/var/opt/foo/bar/."));
+
+		// ".." will always be rejected.
+		unitAssert(!privileges.remove_dir.match("/var/opt/foo/bar/.."));		
+		unitAssert(!privileges.remove_dir.match("/var/opt/bar/../foo/bar/baz"));
+		unitAssert(!privileges.remove_dir.match("/var/opt/foo/././../././bar/baz"));
+	}
+}
+
+
 Test* PrivilegeMonitorParserTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("PrivilegeMonitorParser");
@@ -833,6 +973,10 @@ Test* PrivilegeMonitorParserTestCases::suite()
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseValidMonitoredUserExec);
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseInclude);
 	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, testAllowedEnvironmentVariables);
+	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, testPathPatterns);
+	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseValidOpenR);
+	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseValidStat);
+	ADD_TEST_TO_SUITE(PrivilegeMonitorParserTestCases, parseValidRemoveDir);
 
 	return testSuite;
 }

@@ -961,7 +961,7 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 										Format(
 											"Instantiation error: %1.  "
 											"An error occurred converting to an EmbeddedObject: %2",
-											m_curProperty.getValue().toString(),
+											m_curProperty.getValue().toMOF(),
 											e
 										).c_str(),
 										pInstanceDeclaration->theLineInfo

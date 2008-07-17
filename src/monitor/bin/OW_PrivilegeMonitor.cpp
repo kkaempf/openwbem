@@ -64,6 +64,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <limits>
 
 using namespace OpenWBEM;
 using OpenWBEM::PrivilegeConfig::Privileges;
@@ -112,12 +113,27 @@ namespace
 	int const NUM_CMDS = static_cast<int>(PrivilegeCommon::E_NUM_MONITOR_CMDS);
 	UserId const ROOT_USERID = 0;
 
-	std::size_t const MAX_PATH_LENGTH = 1024;
-	std::size_t const MAX_APPNAME_LENGTH = 1024;
-	std::size_t const MAX_ARGV_LENGTH = 1024;
-	std::size_t const MAX_ARG_LENGTH = 1024;
-	std::size_t const MAX_ENV_LENGTH = 1024;
-	std::size_t const MAX_ENVITEM_LENGTH = 1024;
+#ifndef PATH_MAX
+#define PATH_MAX 1024
+#endif
+#ifndef ARG_MAX
+#define ARG_MAX 1024
+#endif
+
+	/**
+	 * The intention of these values is to limit the maximum amount of memory
+	 * consumed by the monitor in the case bad values are provided.  The system
+	 * may impose further limits on the combined total size of environment,
+	 * path, and arguments, which would then be reported as an error when the
+	 * appropriate system call is attempted.
+	 */
+	std::size_t const MAX_PATH_LENGTH = PATH_MAX;
+	std::size_t const MAX_APPNAME_LENGTH = PATH_MAX;
+	// The maximum total length of all command-line arguments combined
+	// (including trailing nulls).
+	std::size_t const MAX_ARG_LENGTH = ARG_MAX;
+	// The total size of the environment (including trailing nulls).
+	std::size_t const MAX_ENV_LENGTH = ARG_MAX;
 	std::size_t const MAX_STATUS_MESSAGE_LENGTH = 1024;
 	std::size_t const MAX_USER_NAME_LENGTH = 1024;
 	std::size_t const MAX_CATEGORY_LENGTH = 128;
@@ -159,9 +175,17 @@ namespace
 	// Report an exception.  If it is an ipcio exception, it will be rethrown,
 	// as these should not be hidden from main() because it returns different
 	// error codes for IPCIO problems.
-	void reportException(IPCIO & conn, const String& prefix, const Exception& e)
+	void reportExceptionAux(IPCIO & conn, const String& prefix, const Exception& e, bool logAsError)
 	{
-		OW_LOG_ERROR(logger, Format("%1%2", prefix, e));
+		if (logAsError)
+		{
+			OW_LOG_ERROR(logger, Format("%1%2", prefix, e));
+		}
+		else
+		{
+			OW_LOG_DEBUG(logger, Format("%1%2", prefix, e));
+		}
+		
 		sendError(conn, Format("%1%2: %3", prefix, e.type(), e.what()), e.getErrorCode());
 
 		if (dynamic_cast<const IPCIOException*>(&e))
@@ -213,6 +237,11 @@ namespace
 		return true;
 	}
 
+	bool has_stat_priv(String const & path, Privileges const & priv)
+	{
+		return priv.stat.match(path);
+	}
+
 	using PrivilegeConfig::ExecPatterns;
 
 	inline bool is_special_direntry(String const & s)
@@ -220,22 +249,41 @@ namespace
 		return s == "." || s == "..";
 	}
 
+	/*
+	 * Get a string array from the monitor connection.
+	 *
+	 * @param max_len The maximum length of all arguments (including null
+	 * terminators).
+	 *
+	 * @returns The generated StringArray and true if all arguments were read
+	 * and less than the maximum length.  If the maximum size was exceeded, an
+	 * empty StringArray and false are returned.
+	 *
+	 * @throws IPCIOException if not all arguments could be read
+	 */
 	std::pair<StringArray, bool>
-	ipcio_get_strarr(IPCIO & conn, std::size_t max_len, std::size_t max_str_len)
+	ipcio_get_strarr(IPCIO & conn, std::size_t max_len)
 	{
 		bool size_ok = true;
 		std::size_t arrlen;
 		ipcio_get(conn, arrlen);
 		StringArray arr;
+		std::size_t size_available = max_len;
 		for (std::size_t i = 0; i < arrlen; ++i)
 		{
 			String s;
-			ipcio_get(conn, s, max_str_len + 1);
+			// A single string may consume the entire available size.  This is
+			// acceptable, but further arguments will cause the size to exceed the
+			// maximum.
+			ipcio_get(conn, s, max_len);
 			if (size_ok)
 			{
-				if (i < max_len && s.length() <= max_str_len)
+				// These sizes have one added because the trailing nul byte counts
+				// as part of the total length limit.
+				if( (s.length() + 1) < size_available )
 				{
 					arr.push_back(s);
+					size_available -= s.length() + 1;
 				}
 				else
 				{
@@ -372,13 +420,16 @@ namespace
 		void run_body();
 
 		void open();
+		void stat();
+		void lstat();
 		void read_dir();
 		void read_link();
 #if 0
 		void check_path();
 #endif
 		void rename();
-		void unlink();
+		void removeFile();
+		void removeDirectory();
 		void monitoredSpawn();
 		void monitoredUserSpawn();
 		void kill();
@@ -386,13 +437,18 @@ namespace
 		void userSpawn();
 		void done();
 
-		void check_valid_path(String const & path, char const * op);
+		// Check that the given path is valid.  This will clean the path if it
+		// needs it.  If the path is not valid for any reason, a CheckException
+		// is thrown with an error code of PrivilegeManager::E_INVALID_PATH
+		void force_valid_path(String& path, char const * op);
 
 		void spawn_and_return(
 			String const & exec_path,
 			StringArray const & argv, StringArray const & envp,
 			Exec::PreExec & pre_exec
 		);
+
+		void reportException(const String& prefix, const Exception& e);
 
 		IPCIO & conn()
 		{
@@ -456,13 +512,16 @@ namespace
 			switch (cmd)
 			{
 				case PrivilegeCommon::E_CMD_OPEN :                 this->open(); break;
+				case PrivilegeCommon::E_CMD_STAT :                 this->stat(); break;
+				case PrivilegeCommon::E_CMD_LSTAT :                this->lstat(); break;
 				case PrivilegeCommon::E_CMD_READ_DIR :             this->read_dir(); break;
 				case PrivilegeCommon::E_CMD_READ_LINK :            this->read_link(); break;
 #if 0
 				case PrivilegeCommon::E_CMD_CHECK_PATH :           this->check_path(); break;
 #endif
 				case PrivilegeCommon::E_CMD_RENAME :               this->rename(); break;
-				case PrivilegeCommon::E_CMD_UNLINK :               this->unlink(); break;
+				case PrivilegeCommon::E_CMD_REMOVE_FILE :          this->removeFile(); break;
+				case PrivilegeCommon::E_CMD_REMOVE_DIR :           this->removeDirectory(); break;
 				case PrivilegeCommon::E_CMD_MONITORED_SPAWN :      this->monitoredSpawn(); break;
 				case PrivilegeCommon::E_CMD_MONITORED_USER_SPAWN : this->monitoredUserSpawn(); break;
 				case PrivilegeCommon::E_CMD_KILL :                 this->kill(); break;
@@ -492,13 +551,26 @@ namespace
 		}
 	}
 
-	void Monitor::check_valid_path(String const & path, char const * op)
+	void Monitor::force_valid_path(String& path, char const * op)
 	{
 		CHECKARGS(path.length() <= MAX_PATH_LENGTH,
-			String(op) + ": path argument too long",
+			Format("%1: path argument too long", op),
 			PrivilegeManager::E_INVALID_PATH);
 		CHECKARGS(path.startsWith("/"),
-			String(op) + ": path argument must be an absolute path",
+			Format("%1: path argument must be an absolute path.  path=\"%2\"", op, path),
+			PrivilegeManager::E_INVALID_PATH);
+
+		String temppath = PrivilegeConfig::normalizePath(path);
+
+		// If the path was altered, log it and use the altered version.
+		if( temppath != path )
+		{
+			OW_LOG_DEBUG3(logger, Format("Cleaned path provided to monitor. Original: \"%1\", cleaned: \"%2\"", path, temppath));
+			path = temppath;
+		}
+
+		CHECKARGS((path.indexOf("/../") == String::npos) && !path.endsWith("/.."),
+			Format("%1: path argument must not contain \"..\".  path=\"%2\"", op, path),
 			PrivilegeManager::E_INVALID_PATH);
 	}
 
@@ -583,7 +655,7 @@ namespace
 		{
 			CHECKARGS(!m_logger_set, "set_logger: logger already set", PrivilegeManager::E_ALREADY_INITIALIZED);
 			check_logger_spec(ls, m_done);
-			this->check_valid_path(ls.file_name, "set_logger");
+			this->force_valid_path(ls.file_name, "set_logger");
 			String dir_name = FileSystem::Path::dirname(ls.file_name);
 			CHECKARGS(m_secure_paths.is_secure(dir_name),
 				"set_logger: log file dir " + dir_name + " is insecure",
@@ -598,7 +670,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "setLogger: ", e);
+			reportException("setLogger: ", e);
 		}
 		return true;
 	}
@@ -616,7 +688,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ open, path=%1, flags=%2, perms=%3", path, flags, perms).toString());
 		try
 		{
-			this->check_valid_path(path, "open");
+			this->force_valid_path(path, "open");
 			CHECKARGS(has_open_priv(path, flags, priv()),
 				Format("open: insufficient privileges: file=\"%1\" flags=%2, perms=%3", path, flags, perms).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
@@ -657,14 +729,76 @@ namespace
 				default:
 					CHECKARGS(false, Format("open: illegal flags parameter: %1", perms).c_str(), PrivilegeManager::E_INVALID_PARAMETER);
 			}
-			CHECK_ERRNO(d.get() >= 0, "open");
+			CHECK_ERRNO(d.get() >= 0, Format("open: \"%1\"", path));
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			conn().put_handle(d.get());
 			conn().put_sync();
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "open: ", e);
+			reportException("open: ", e);
+		}
+	}
+
+	void Monitor::stat()
+	{
+		String path;
+		ipcio_get(conn(), path, MAX_PATH_LENGTH + 1);
+		conn().get_sync();
+
+		OW_LOG_INFO(logger, Format("REQ stat, path=%1", path).toString());
+		try
+		{
+			this->force_valid_path(path, "stat");
+			CHECKARGS(has_stat_priv(path, priv()),
+				Format("stat: insufficient privileges: file=\"%1\"", path).c_str(),
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
+
+			char const * cpath = path.c_str();
+
+			struct stat statbuf;
+
+			int result = ::stat(cpath, &statbuf);
+
+			CHECK_ERRNO(result == 0, Format("stat: \"%1\"", path));
+			ipcio_put(conn(), PrivilegeCommon::E_OK);
+			ipcio_put(conn(), statbuf);
+			conn().put_sync();
+		}
+		catch (const Exception& e)
+		{
+			reportException("stat: ", e);
+		}
+	}
+
+	void Monitor::lstat()
+	{
+		String path;
+		ipcio_get(conn(), path, MAX_PATH_LENGTH + 1);
+		conn().get_sync();
+
+		OW_LOG_INFO(logger, Format("REQ lstat, path=%1", path).toString());
+		try
+		{
+			this->force_valid_path(path, "lstat");
+			CHECKARGS(has_stat_priv(path, priv()),
+				Format("lstat: insufficient privileges: file=\"%1\"", path).c_str(),
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
+
+			char const * cpath = path.c_str();
+
+			struct stat statbuf;
+
+			int result = ::lstat(cpath, &statbuf);
+
+			CHECK_ERRNO(result == 0, Format("lstat: \"%1\"", path));
+			ipcio_put(conn(), PrivilegeCommon::E_OK);
+			ipcio_put(conn(), statbuf);
+			conn().put_sync();
+		}
+		catch (const Exception& e)
+		{
+			reportException("lstat: ", e);
 		}
 	}
 
@@ -679,7 +813,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ readDirectory, path=%1, opt=%2", dirpath, opt).toString());
 		try
 		{
-			this->check_valid_path(dirpath, "readDirectory");
+			this->force_valid_path(dirpath, "readDirectory");
 			CHECKARGS(priv().read_dir.match(dirpath),
 				Format("readDirectory: insufficient privileges: dirpath=\"%1\" opt=%2", dirpath, opt).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
@@ -706,7 +840,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "readDir: ", e);
+			reportException("readDir: ", e);
 		}
 	}
 
@@ -719,7 +853,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ readLink, path=%1", lpath).toString());
 		try
 		{
-			this->check_valid_path(lpath, "readLink");
+			this->force_valid_path(lpath, "readLink");
 			CHECKARGS(priv().read_link.match(lpath),
 				Format("readLink: insufficient privileges: path=\"%1\"", lpath).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
@@ -731,7 +865,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "readLink: ", e);
+			reportException("readLink: ", e);
 		}
 	}
 
@@ -746,12 +880,12 @@ namespace
 
 		try
 		{
-			this->check_valid_path(old_path, "rename");
+			this->force_valid_path(old_path, "rename");
 			CHECKARGS(priv().rename_from.match(old_path),
 				Format("rename: insufficient privileges for source path: %1", old_path).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 
-			this->check_valid_path(new_path, "rename");
+			this->force_valid_path(new_path, "rename");
 			CHECKARGS(priv().rename_to.match(new_path),
 				Format("rename: insufficient privileges for dest path: %1", new_path).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
@@ -765,33 +899,62 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "rename: ", e);
+			reportException("rename: ", e);
 		}
 	}
 
-	void Monitor::unlink()
+	void Monitor::removeFile()
 	{
 		String path;
 		ipcio_get(conn(), path, MAX_PATH_LENGTH + 1);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ unlink, path=%1", path).toString());
+		OW_LOG_INFO(logger, Format("REQ removeFile, path=%1", path).toString());
 		try
 		{
-			this->check_valid_path(path, "unlink");
-			CHECKARGS(priv().unlink.match(path),
-				Format("unlink: insufficient privileges: path=\"%1\"", path).c_str(),
+			this->force_valid_path(path, "removeFile");
+			CHECKARGS(priv().remove_file.match(path),
+				Format("removeFile: insufficient privileges: path=\"%1\"", path).c_str(),
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 
 			bool ok = FileSystem::removeFile(path);
 
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			ipcio_put(conn(), ok);
+			ipcio_put(conn(), errno);
 			conn().put_sync();
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "unlink: ", e);
+			reportException("removeFile: ", e);
+		}
+	}
+
+	void Monitor::removeDirectory()
+	{
+		String path;
+		ipcio_get(conn(), path, MAX_PATH_LENGTH + 1);
+		conn().get_sync();
+
+		OW_LOG_INFO(logger, Format("REQ removeDirectory, path=%1", path).toString());
+		try
+		{
+			this->force_valid_path(path, "removeDirectory");
+			CHECKARGS(priv().remove_dir.match(path),
+				Format("removeDirectory: insufficient privileges: path=\"%1\"", path).c_str(),
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
+
+			bool ok = FileSystem::removeDirectory(path);
+			OW_LOG_INFO(logger, Format("removeDirectory: retval=%1", ok));
+
+			ipcio_put(conn(), PrivilegeCommon::E_OK);
+			ipcio_put(conn(), ok);
+			ipcio_put(conn(), errno);
+			conn().put_sync();
+		}
+		catch (const Exception& e)
+		{
+			reportException("removeDirectory: ", e);
 		}
 	}
 
@@ -983,14 +1146,14 @@ namespace
 		std::pair<StringArray, bool> xargv, xenvp;
 		ipcio_get(conn(), exec_path, MAX_PATH_LENGTH + 1);
 		ipcio_get(conn(), app_name, MAX_APPNAME_LENGTH + 1);
-		xargv = ipcio_get_strarr(conn(), MAX_ARGV_LENGTH, MAX_ARG_LENGTH);
-		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH, MAX_ENVITEM_LENGTH);
+		xargv = ipcio_get_strarr(conn(), MAX_ARG_LENGTH);
+		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH);
 		conn().get_sync();
 
 		OW_LOG_INFO(logger, Format("REQ monitoredSpawn, exec_path=%1, app_name=%2", exec_path, app_name));
 		try
 		{
-			this->check_valid_path(exec_path, "monitoredSpawn");
+			this->force_valid_path(exec_path, "monitoredSpawn");
 			CHECKARGS(app_name.length() <= MAX_APPNAME_LENGTH, "monitoredSpawn: app name too long", PrivilegeManager::E_INVALID_SIZE);
 			CHECKARGS(xargv.second, "monitoredSpawn: argv too large", PrivilegeManager::E_INVALID_SIZE);
 			CHECKARGS(xenvp.second,	"monitoredSpawn: envp too large", PrivilegeManager::E_INVALID_SIZE);
@@ -1016,7 +1179,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "monitoredSpawn: ", e);
+			reportException("monitoredSpawn: ", e);
 		}
 	}
 	
@@ -1028,8 +1191,8 @@ namespace
 		std::pair<StringArray, bool> xargv, xenvp;
 		ipcio_get(conn(), exec_path, MAX_PATH_LENGTH + 1);
 		ipcio_get(conn(), app_name, MAX_APPNAME_LENGTH + 1);
-		xargv = ipcio_get_strarr(conn(), MAX_ARGV_LENGTH, MAX_ARG_LENGTH);
-		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH, MAX_ENVITEM_LENGTH);
+		xargv = ipcio_get_strarr(conn(), MAX_ARG_LENGTH);
+		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH);
 		ipcio_get(conn(), user_name, MAX_USER_NAME_LENGTH + 1);
 		conn().get_sync();
 
@@ -1037,7 +1200,7 @@ namespace
 								   exec_path, app_name, user_name));
 		try
 		{
-			this->check_valid_path(exec_path, "monitoredUserSpawn");
+			this->force_valid_path(exec_path, "monitoredUserSpawn");
 			CHECKARGS(user_name.length() <= MAX_USER_NAME_LENGTH,
 				"monitoredUserSpawn: user name too long",
 				PrivilegeManager::E_INVALID_SIZE);
@@ -1067,7 +1230,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "monitoredUserSpawn: ", e);
+			reportException("monitoredUserSpawn: ", e);
 		}
 	}
 
@@ -1091,7 +1254,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "kill: ", e);
+			reportException("kill: ", e);
 		}
 
 	}
@@ -1128,7 +1291,7 @@ namespace
 		}
 		catch (const Exception& e)
 		{
-			reportException(conn(), "pollStatus: ", e);
+			reportException("pollStatus: ", e);
 		}
 	}
 
@@ -1187,8 +1350,8 @@ namespace
 		std::pair<StringArray, bool> xargv, xenvp;
 
 		ipcio_get(conn(), exec_path, MAX_PATH_LENGTH + 1);
-		xargv = ipcio_get_strarr(conn(), MAX_ARGV_LENGTH, MAX_ARG_LENGTH);
-		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH, MAX_ENVITEM_LENGTH);
+		xargv = ipcio_get_strarr(conn(), MAX_ARG_LENGTH);
+		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH);
 		ipcio_get(conn(), user_name, MAX_USER_NAME_LENGTH + 1);
 		ipcio_get(conn(), working_dir, MAX_PATH_LENGTH + 1);
 		conn().get_sync();
@@ -1196,7 +1359,7 @@ namespace
 		OW_LOG_INFO(logger, Format("REQ userSpawn, exec_path=%1, user=%2", exec_path, user_name));
 		try
 		{
-			this->check_valid_path(exec_path, "userSpawn");
+			this->force_valid_path(exec_path, "userSpawn");
 			CHECKARGS(user_name.length() <= MAX_USER_NAME_LENGTH,
 				"userSpawn: user name too long",
 				PrivilegeManager::E_INVALID_SIZE);
@@ -1228,8 +1391,18 @@ namespace
 		}
 		catch (Exception & e)
 		{
-			reportException(conn(), "userSpawn: ", e);
+			reportException("userSpawn: ", e);
 		}
+	}
+
+	void Monitor::reportException(const String& prefix, const Exception& e)
+	{
+		bool logAsError = false;
+		if (m_done)
+		{
+			logAsError = true;
+		}
+		reportExceptionAux(conn(), prefix, e, logAsError);
 	}
 
 #if 0
@@ -1406,7 +1579,7 @@ namespace
 				}
 				catch (CheckException & e)
 				{
-					reportException(*p_conn, "Setup Exception: ", e);
+					reportExceptionAux(*p_conn, "Setup Exception: ", e, true);
 				}
 				p_conn->put_sync();
 

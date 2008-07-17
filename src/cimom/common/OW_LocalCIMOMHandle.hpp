@@ -54,6 +54,13 @@ class OW_CIMOMCOMMON_API LocalCIMOMHandle : public RepositoryCIMOMHandle
 {
 public:
 
+	enum EInitialLockFlag
+	{
+		E_NONE,
+		E_READ,
+		E_WRITE
+	};
+
 	/**
 	 * Create a new LocalCIMOMHandle with a given repository interface
 	 * and user access contol information.
@@ -62,11 +69,13 @@ public:
 	 *		LocalCIMOMHandle.
 	 * @param context The operation context that will be associated with
 	 *		this LocalCIMOMHandle.
-	 * @param noLock If true, the this object will never attempt to acquire a
-	 *		read/write lock on the CIMServer.
+	 * @param initialLock The type of lock to acquire in the constructor
+	 *              and release in the destructor.
 	 */
 	LocalCIMOMHandle(CIMOMEnvironmentRef env, RepositoryIFCRef pRepos,
-		OperationContext& context);
+		OperationContext& context, EInitialLockFlag initialLock = E_NONE);
+
+	virtual ~LocalCIMOMHandle();
 	
 	/**
 	 * @return A reference to the CIMOMEnvironment used by this object.
@@ -89,6 +98,7 @@ public:
 
 private:
 	CIMOMEnvironmentRef m_env;
+	EInitialLockFlag m_initialLock;
 };
 
 } // end namespace OW_NAMESPACE

@@ -48,7 +48,7 @@ TestResult::~TestResult ()
 // Construct a TestResult
 TestResult::TestResult ()
 : m_syncObject (new SynchronizationObject)
-{ m_runTests = 0; m_stop = false; }
+{ m_runTests = 0; m_runConditions = 0; m_stop = false; }
 
 
 // Adds an error to the list of errors. The passed in exception
@@ -70,7 +70,13 @@ void TestResult::startTest (Test *test)
 	m_runTests++;
 }
 
-  
+// Informs the result that a test will be started.
+void TestResult::testCondition (Test *test)
+{
+	ExclusiveZone zone (m_syncObject); 
+	m_runConditions++;
+}
+
 // Informs the result that a test was completed.
 void TestResult::endTest (Test *test)
 {
@@ -82,6 +88,9 @@ void TestResult::endTest (Test *test)
 int TestResult::runTests ()
 { ExclusiveZone zone (m_syncObject); return m_runTests; }
 
+// Gets the number of run tests.
+int TestResult::testedConditions ()
+{ ExclusiveZone zone (m_syncObject); return m_runConditions; }
 
 // Gets the number of detected errors.
 int TestResult::testErrors ()

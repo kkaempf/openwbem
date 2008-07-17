@@ -161,9 +161,9 @@ inline T
 readCIMObject(std::istream & istr, const CIMProtocolIFCRef& protocol)
 {
 	T rval;
+	checkError(istr, protocol);
 	try
 	{
-		checkError(istr, protocol);
 		readCIMObject(*istr.rdbuf(), rval);
 	}
 	catch (IOException& e)
@@ -179,9 +179,9 @@ template<class T>
 inline void
 readAndDeliver(std::istream & istr, T& result, const CIMProtocolIFCRef& protocol)
 {
+	checkError(istr, protocol);
 	try
 	{
-		checkError(istr, protocol);
 		readCIMObject(*istr.rdbuf(),result);
 	}
 	catch (IOException& e)

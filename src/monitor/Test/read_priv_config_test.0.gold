@@ -64,7 +64,7 @@ open_append:
 check_path:
 rename_from:
 rename_to:
-unlink:
+remove_file:
 monitored_user_exec:
  user: foo
   /a .

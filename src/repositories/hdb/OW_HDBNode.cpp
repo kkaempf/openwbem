@@ -51,7 +51,7 @@ namespace OW_NAMESPACE
 namespace
 {
 #define OW_HDBNODE_LOG_DEBUG(lgr, msg)
-// #define OW_HDBNODE_LOG_DEBUG(lgr, msg) OW_LOG_DEBUG(lgr, msg)
+// #define OW_HDBNODE_LOG_DEBUG(lgr, msg) OW_LOG_DEBUG3(lgr, msg)
 // const String COMPONENT_NAME("ow.repository.hdb");
 }
 

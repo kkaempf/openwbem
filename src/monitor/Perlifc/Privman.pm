@@ -17,7 +17,7 @@ our @ISA = qw(Exporter);
 # If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
 # will save memory.
 our %EXPORT_TAGS = ( 'all' => [ qw(
-	open_handle read_directory rename unlink monitored_spawn user_spawn
+	open_handle read_directory rename remove_file remove_dir monitored_spawn user_spawn
 	child_stdin child_stdout child_stderr child_status
 	running terminated exit_terminated exit_status
 	terminated_successfully signal_terminated term_signal
@@ -74,7 +74,7 @@ just as the PrivilegeManager class does for C++ programs.  The functions
 provided parallell those in the PrivilegeManager, Process and Process::Status 
 C++ classes:
 
-	open_handle read_directory rename unlink monitored_spawn user_spawn
+	open_handle read_directory rename remove_file remove_dir monitored_spawn user_spawn
 	child_stdin child_stdout child_stderr child_status
 	running terminated exit_terminated exit_status
 	terminated_successfully signal_terminated term_signal

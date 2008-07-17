@@ -39,7 +39,11 @@ int owprivman_rename(
 	char * errbuf, size_t bufsize
 );
 
-int owprivman_unlink(
+int owprivman_remove_file(
+	char const * path, int * retval, char * errbuf, size_t bufsize
+);
+
+int owprivman_remove_dir(
 	char const * path, int * retval, char * errbuf, size_t bufsize
 );
 

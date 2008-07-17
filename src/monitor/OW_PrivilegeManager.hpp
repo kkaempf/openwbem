@@ -5,21 +5,21 @@
 * Copyright (c) 2002, Networks Associates, Inc. All rights reserved.
 * Copyright (C) 2005, Quest Software, Inc. All rights reserved.
 * Copyright (C) 2006, Novell, Inc. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
-* 
+*
 *     * Redistributions of source code must retain the above copyright notice,
 *       this list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of the Network Associates, 
+*     * Neither the name of the Network Associates,
 *       nor Quest Software, Inc., nor Novell, Inc., nor the
 *       names of its contributors or employees may be used to endorse or promote
 *       products derived from this software without specific prior written
 *       permission.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -50,6 +50,8 @@
 #include "OW_Process.hpp"
 #include "OW_Types.hpp"
 #include "OW_AutoDescriptor.hpp"
+#include "OW_FileSystem.hpp"
+#include "OW_GlobalPtr.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -125,13 +127,13 @@ public:
 	* @a config_dir is null or empty, or if the privileges config files(s)
 	* could not be loaded, then this object denies all requests.
 	*
-	* @param config_dir Absolute path to a secure directory containing either 
+	* @param config_dir Absolute path to a secure directory containing either
 	* the privilege configuration file or directory identified by app_name.
 	*
 	* @param app_name Name of privilege configuration file or directory to use.
 	*  If a directory is specified, all the files in that directory will be
 	*  loaded.
-	* 
+	*
 	* @return A PrivilegeManager connected to the monitor.
 	*
 	* @see privconfig_syntax.txt for a description of the syntax of
@@ -166,10 +168,10 @@ public:
 
 	/**
 	 * Creates a PrivilegeManager connected to this process's monitor.
-	 * 
+	 *
 	 * @pre The process was created by a call to PrivilegeManager::monitoredSpawn().
 	 *  and createMonitor() has not been called.
-	 * 
+	 *
 	 * @return a null PrivilegeManager if a monitor does not exist.
 	 */
 	static PrivilegeManager connectToMonitor();
@@ -262,7 +264,7 @@ public:
 	* - If <tt>flags & app</tt>, then either @c open_write or @c open_append
 	*   privilege is required.
 	* - If <tt>flags & out</tt> but not <tt>flags & app</tt>, then @c open_write
-	*   privilege is required. 
+	*   privilege is required.
 	*
 	* @throw PrivilegeManagerException
 	* @throw IPCIOException
@@ -279,6 +281,65 @@ public:
 		S const & pathname, OpenFlags flags, OpenPerms perms = no_perms)
 	{
 		return this->open(Cstr::to_char_ptr(pathname), flags, perms);
+	}
+
+	/**
+	 * Perform a stat() on the supplied pathname to obtain file information for
+	 * the supplied pathname (if a regular file or directory), or the file to
+	 * which it refers (for a symlink).
+	 *
+	 * @return a completed FileInformation structure.
+	 *
+	 * @pre Caller must have the stat privilege for the supplied pathname.
+	 *
+	 * @throw FileSystemException if the file did not exist, the pathname is a
+	 * dangling symlink, or anything else that could cause a stat() to fail.
+	 *
+	 * @throw IPCIOException if the monitor communication fails
+	 *
+	 * @throw PrivilegeManagerException for insufficient privileges or other
+	 * monitor errors
+	 */
+	FileSystem::FileInformation stat(const char* pathname);
+
+
+	/**
+	 * Variant of @c open that takes argument of arbitrary string-like type.
+	 * @pre @a S is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
+	 */
+	template <typename S>
+	FileSystem::FileInformation stat(const S& pathname)
+	{
+		return this->stat(Cstr::to_char_ptr(pathname));
+	}
+
+	/**
+	 * Perform an lstat() on a file to obtain file information for the supplied
+	 * pathname.  If the path is a link, information is obtained for the link
+	 * itself instead of the linked file.
+	 *
+	 * @return a completed FileInformation structure.
+	 *
+	 * @pre Caller must have the stat privilege for the supplied pathname.
+	 *
+	 * @throw FileSystemException if the file did not exist, the pathname is a
+	 * dangling symlink, or anything else that could cause a stat() to fail.
+	 *
+	 * @throw IPCIOException if the monitor communication fails
+	 *
+	 * @throw PrivilegeManagerException for insufficient privileges or other
+	 * monitor errors
+	 */
+	FileSystem::FileInformation lstat(const char* pathname);
+
+	/**
+	 * Variant of @c open that takes argument of arbitrary string-like type.
+	 * @pre @a S is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
+	 */
+	template <typename S>
+	FileSystem::FileInformation lstat(const S& pathname)
+	{
+		return this->lstat(Cstr::to_char_ptr(pathname));
 	}
 
 	enum ReadDirOptions
@@ -343,7 +404,7 @@ public:
 
 #if 0
 	/**
-	* @return True iff only @c root or @a user have write permissions for 
+	* @return True iff only @c root or @a user have write permissions for
 	* @a path and all ancestor directories.
 	*
 	* @pre Caller must have @c checkPath privilege for @a path.
@@ -388,23 +449,45 @@ public:
 	}
 
 	/**
-	* @post The file at @path no longer exists.
+	* @post The file at @path no longer exists (if successful), errno set.
+	* @pre Caller must have @c remove_file privilege for @a path.
 	*
-	* @return Whether there was anything to unlink.
+	* @return true if the file was successfully removed.
 	*
 	* @throw PrivilegeManagerException
 	* @throw IPCIOException
 	*/
-	bool unlink(char const * path);
+	bool removeFile(char const * path);
 
 	/**
-	* Variant of @c checkPath that takes argument of arbitrary string-like type.
+	* Variant of @c removeFile that takes argument of arbitrary string-like type.
 	* @pre @a S is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
 	*/
 	template <typename S>
-	bool unlink(S const & path)
+	bool removeFile(S const & path)
 	{
-		return this->unlink(Cstr::to_char_ptr(path));
+		return this->removeFile(Cstr::to_char_ptr(path));
+	}
+
+	/**
+	* @post The directory at @path no longer exists (if successful), errno set.
+	* @pre Caller must have @c remove_dir privilege for @a path.
+	*
+	* @return true if the directory was successfully removed.
+	*
+	* @throw PrivilegeManagerException
+	* @throw IPCIOException
+	*/
+	bool removeDirectory(char const * path);
+
+	/**
+	* Variant of @c removeDirectory that takes argument of arbitrary string-like type.
+	* @pre @a S is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
+	*/
+	template <typename S>
+	bool removeDirectory(S const & path)
+	{
+		return this->removeDirectory(Cstr::to_char_ptr(path));
 	}
 
 	/**
@@ -485,7 +568,7 @@ public:
 	* @param app_name The name of the privilege configuration file or directory used by the
 	* child process.  This is looked for in the same configuration directory
 	* that was specified when the PrivilegeManager instance was created.
-	* 
+	*
 	* @param argv Null-terminated argument list for the child process.
 	* (@see Exec::spawn for details).
 	*
@@ -643,5 +726,24 @@ private:
 	PrivilegeManagerImpl *pimpl() const;
 };
 
+	struct NullPMFactory
+	{
+		static void* create()
+		{
+			return 0;
+		}
+	};
+
+	typedef GlobalPtr<PrivilegeManagerMockObject, NullPMFactory> PrivilegeManagerMockObject_t;
+	/**
+	 * If this object is non-null, the default functionality of the
+	 * PrivilegeManager class will be replaced by calls to
+	 * g_privilegeManagerMockObject's member functions. This is to be used
+	 * for unit tests. Not all functions may be
+	 * implemented, if you need one that isn't, then please implement it!
+	 * Modifying this variable will affect all
+	 * threads, it should not be used in a threaded program.
+	 */
+	extern PrivilegeManagerMockObject_t g_privilegeManagerMockObject;
 } // namespace OW_NAMESPACE
 #endif

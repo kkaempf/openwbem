@@ -69,6 +69,7 @@ BLOCXX_DEFINE_EXCEPTION(PrivilegeLexer)
 %}
 
 ESCCH        \\[\\*?"]
+  /* PECH - Printable Escape Character */
 PECH_NO_DOT  ([^/.[:cntrl:][:space:]\\*?"]|{ESCCH})
 PECH         ({PECH_NO_DOT}|[.])
 PATHELM      (\.{0,2}{PECH_NO_DOT}|\.\.\.){PECH}*
@@ -107,13 +108,15 @@ open_r                  { RETURN_VAL(K_OPEN_R); }
 open_w                  { RETURN_VAL(K_OPEN_W); }
 open_rw                 { RETURN_VAL(K_OPEN_RW); }
 open_a                  { RETURN_VAL(K_OPEN_A); }
+stat                    { RETURN_VAL(K_STAT); }
 read_dir                { RETURN_VAL(K_READ_DIR); }
 read_link               { RETURN_VAL(K_READ_LINK); }
 check_path              { RETURN_VAL(K_CHECK_PATH); }
 rename_from             { RETURN_VAL(K_RENAME_FROM); }
 rename_to               { RETURN_VAL(K_RENAME_TO); }
 rename_from_to          { RETURN_VAL(K_RENAME_FROM_TO); }
-unlink                  { RETURN_VAL(K_UNLINK); }
+remove_file             { RETURN_VAL(K_REMOVE_FILE); }
+remove_dir              { RETURN_VAL(K_REMOVE_DIR); }
 monitored_exec          { RETURN_VAL(K_MONITORED_EXEC); }
 monitored_user_exec     { RETURN_VAL(K_MONITORED_USER_EXEC); }
 user_exec               { RETURN_VAL(K_USER_EXEC); }

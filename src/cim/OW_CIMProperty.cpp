@@ -230,6 +230,21 @@ CIMProperty::setValue(const CIMValue& val)
 	}
 	else
 	{
+		if (!getDataType())
+		{
+			if (val)
+			{
+				setDataType(val.getCIMDataType());
+			}
+			else
+			{
+				// Setting the type to STRING here serves only to give the property
+				// a real type so that values like NULL can be assigned.  Casting
+				// to another type (possibly the real type, after the property has
+				// been fully resolved) should work as expected.
+				setDataType(CIMDataType(CIMDataType::STRING));
+			}
+		}
 		m_pdata->m_cimValue = val;
 	}
 	return *this;

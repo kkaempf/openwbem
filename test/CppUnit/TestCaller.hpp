@@ -82,7 +82,7 @@ public:
 
 protected:
 	void                    runTest () 
-							{ (m_fixture->*m_test)(); }  
+	{ m_fixture->setTestResult(m_testResult); (m_fixture->*m_test)(); m_fixture->setTestResult(NULL); }
 
 	void                    setUp ()
 							{ m_fixture->setUp (); }

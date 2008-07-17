@@ -57,6 +57,7 @@
 #include "OW_CmdLineParser.hpp"
 #include "OW_CerrLogger.hpp"
 #include "OW_ConfigOpts.hpp"
+#include "OW_CIMProtocolIFC.hpp"
 
 #include <iostream>
 
@@ -386,7 +387,9 @@ int main(int argc, char** argv)
 				return 1;
 			}
 			ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
-			handle = ClientCIMOMHandle::createFromURL(url.toString(), getLoginInfo);
+			ClientCIMOMHandleRef clientHandle = ClientCIMOMHandle::createFromURL(url.toString(), getLoginInfo);
+			clientHandle->getWBEMProtocolHandler()->setTimeouts(Timeout::infinite);
+			handle = clientHandle;
 		}
 		Compiler theCompiler(handle, g_opts, theErrorHandler);
 		for (size_t i = 0; i < g_filelist.size(); ++i)

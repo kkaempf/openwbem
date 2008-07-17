@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Vintela, Inc. All rights reserved.
+* Copyright (C) 2007 Quest Software. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -28,54 +28,28 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Dan Nuffer
+ */
+
+
 #include "OW_config.h"
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "UnnamedPipeTestCases.hpp"
-#include "OW_UnnamedPipe.hpp"
-#include "OW_String.hpp"
-#include "OW_Process.hpp"
+#include "OW_CommonFwd.hpp"
+#include "OW_IfcsFwd.hpp"
 
-using namespace OpenWBEM;
-
-void UnnamedPipeTestCases::setUp()
+namespace LockedCIMOMHandle
 {
-}
 
-void UnnamedPipeTestCases::tearDown()
+class CIMOMHandleSource
 {
-}
+public:
+	virtual ~CIMOMHandleSource();
+	virtual OpenWBEM::CIMOMHandleIFCRef getCIMOMHandle() const = 0;
+};
 
-void UnnamedPipeTestCases::testDescriptorPassing()
-{
-	UnnamedPipeRef up1 = UnnamedPipe::createUnnamedPipe();
-	UnnamedPipeRef up2, up3;
-	UnnamedPipe::createConnectedPipes(up2, up3);
-	up1->passDescriptor(up3->getInputDescriptor());
-	AutoDescriptor d1 = up1->receiveDescriptor(up1);
-	up1->passDescriptor(up3->getOutputDescriptor());
-	AutoDescriptor d2 = up1->receiveDescriptor(up1);
+bool test(const OpenWBEM::String& ns, const OpenWBEM::String& waitClass, const OpenWBEM::String& testClass, const CIMOMHandleSource& chs);
+bool test(const OpenWBEM::String& ns, const OpenWBEM::String& waitClass1, const OpenWBEM::String& waitClass2, const OpenWBEM::String& testClass, const CIMOMHandleSource& chs);
 
-	UnnamedPipeRef upPassed = UnnamedPipe::createUnnamedPipeFromDescriptor(d2, d1);
+} // end namespace LockedCIMOMHandle
 
-	String text = "abc";
-	up2->writeString(text);
-	String s;
-	upPassed->readString(s);
-	unitAssert(s == text);
-
-	text = "xyz";
-	upPassed->writeString(text);
-	up2->readString(s);
-	unitAssert(s == text);
-}
-
-Test* UnnamedPipeTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("UnnamedPipe");
-
-	ADD_TEST_TO_SUITE(UnnamedPipeTestCases, testDescriptorPassing);
-
-	return testSuite;
-}
 

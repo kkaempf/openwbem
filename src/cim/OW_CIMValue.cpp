@@ -887,6 +887,10 @@ String CIMValue::toString() const
 //////////////////////////////////////////////////////////////////////////////
 String CIMValue::toMOF() const
 {
+	if (!m_impl)
+	{
+		return "NULL";
+	}
 	return m_impl->toMOF();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -2243,20 +2247,20 @@ raToString(const Array<String>& ra, bool forMOF=false)
 }
 //////////////////////////////////////////////////////////////////////////////
 String
-raToString(const Array<CIMClass>& ra, bool forMOF=false)
+raToString(const Array<CIMClass>& ra, bool forMOF)
 {
 	StringBuffer out;
 	for (size_t i = 0; i < ra.size(); i++)
 	{
 		if (i > 0)
 		{
-			out += ',';
+			out += ",\n";
 		}
 		if (forMOF)
 		{
 			out += '"';
-			out += CIMObjectPath::escape(ra[i].toString());
-			out += '"';
+			out += CIMObjectPath::escape(ra[i].toMOF());
+			out += '\"';
 		}
 		else
 		{
@@ -2267,19 +2271,19 @@ raToString(const Array<CIMClass>& ra, bool forMOF=false)
 }
 //////////////////////////////////////////////////////////////////////////////
 String
-raToString(const Array<CIMInstance>& ra, bool forMOF=false)
+raToString(const Array<CIMInstance>& ra, bool forMOF)
 {
 	StringBuffer out;
 	for (size_t i = 0; i < ra.size(); i++)
 	{
 		if (i > 0)
 		{
-			out += ',';
+			out += ",\n";
 		}
 		if (forMOF)
 		{
 			out += '"';
-			out += CIMObjectPath::escape(ra[i].toString());
+			out += CIMObjectPath::escape(ra[i].toMOF());
 			out += '"';
 		}
 		else
@@ -2307,6 +2311,28 @@ raToString(const Array<Bool>& ra, bool isString=false)
 		if (isString)
 		{
 			out += '"';
+		}
+	}
+	return out.releaseString();
+}
+//////////////////////////////////////////////////////////////////////////////
+String
+raToString(const Array<CIMObjectPath>& ra, bool forMOF)
+{
+	StringBuffer out;
+	for (size_t i = 0; i < ra.size(); i++)
+	{
+		if (i > 0)
+		{
+			out += ',';
+		}
+		if (forMOF)
+		{
+			out += ra[i].toMOF();
+		}
+		else
+		{
+			out += ra[i].toString();
 		}
 	}
 	return out.releaseString();
@@ -2366,15 +2392,13 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 				out = raToString(*(reinterpret_cast<const CIMDateTimeArray*>(&m_obj)), forMOF);
 				break;
 			case CIMDataType::REFERENCE:
-				out = raToString(*(reinterpret_cast<const CIMObjectPathArray*>(&m_obj)));
+				out = raToString(*(reinterpret_cast<const CIMObjectPathArray*>(&m_obj)), forMOF);
 				break;
-			
 			case CIMDataType::EMBEDDEDCLASS:
-				out = raToString(*(reinterpret_cast<const CIMClassArray*>(&m_obj)));
+				out = raToString(*(reinterpret_cast<const CIMClassArray*>(&m_obj)), forMOF);
 				break;
-			
 			case CIMDataType::EMBEDDEDINSTANCE:
-				out = raToString(*(reinterpret_cast<const CIMInstanceArray*>(&m_obj)));
+				out = raToString(*(reinterpret_cast<const CIMInstanceArray*>(&m_obj)), forMOF);
 				break;
 			default:
 				OW_ASSERT(0);
@@ -2394,7 +2418,7 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 				out = String(static_cast<Int32>(m_obj.m_sint8Value));
 				break;
 			case CIMDataType::CHAR16:
-				out = String(static_cast<char>(reinterpret_cast<const Char16*>(&m_obj)->getValue()));
+				out = reinterpret_cast<const Char16*>(&m_obj)->toString();
 				break;
 			case CIMDataType::UINT16:
 				out = String(static_cast<UInt32>(m_obj.m_uint16Value));
@@ -2458,7 +2482,7 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 				if (forMOF)
 				{
 					out = "\"";
-					out += CIMObjectPath::escape((reinterpret_cast<const CIMClass*>(&m_obj))->toString());
+					out += CIMObjectPath::escape((reinterpret_cast<const CIMClass*>(&m_obj))->toMOF());
 					out += "\"";
 				}
 				else
@@ -2470,7 +2494,7 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 				if (forMOF)
 				{
 					out = "\"";
-					out += CIMObjectPath::escape((reinterpret_cast<const CIMInstance*>(&m_obj))->toString());
+					out += CIMObjectPath::escape((reinterpret_cast<const CIMInstance*>(&m_obj))->toMOF());
 					out += "\"";
 				}
 				else

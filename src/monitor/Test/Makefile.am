@@ -84,7 +84,7 @@ user_exec_test.2.sh
 
 
 # This may be hackish, but the old stuff was hard to read and difficult to modify.
-monitor_test_nopriv_numbers = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+monitor_test_nopriv_numbers = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
 monitor_test_nopriv_data = \
 $(foreach testnum,$(monitor_test_nopriv_numbers),monitor_test_nopriv.$(testnum).inp monitor_test_nopriv.$(testnum).exceptions)
 

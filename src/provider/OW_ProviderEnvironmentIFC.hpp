@@ -57,21 +57,26 @@ class OW_PROVIDER_API ProviderEnvironmentIFC : public IntrusiveCountableBase
 public:
 	virtual ~ProviderEnvironmentIFC();
 
-	/** This function returns a regular cimom handle that does access
+	/** 
+	 * This function returns a regular cimom handle that does access
 	 * checking and may call providers.  WARNING: The return value
 	 * is valid only as long as this object is valid (see class note).
+	 * Each operation done on the cimom handle does appropriate locking.
 	 */
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const = 0;
 
-	/** This function returns a cimom handle that directly accesses
+	/** 
+	 * This function returns a cimom handle that directly accesses
 	 * the repository (CIMServer is bypassed).  No providers will be
 	 * called.  This function should only be called if getCIMOMHandle()
 	 * is insufficent.  WARNING: The return value is valid only as long
 	 * as this object is valid (see class note).
+	 * Each operation done on the cimom handle does appropriate locking.
 	 */
 	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const = 0;
 
-	/** This function returns a reference to the repository.  This
+	/** 
+	 * This function returns a reference to the repository.  This
 	 * function should only be called if getCIMOMHandle() and
 	 * getRepositoryCIMOMHandle() are insufficient.
 	 * WARNING: The return value is valid only as long as this object
@@ -79,10 +84,33 @@ public:
 	 */
 	virtual RepositoryIFCRef getRepository() const = 0;
 
-	/** Like getRepository(), but all operations get checked to see if the
+	/** 
+	* Like getRepository(), but all operations get checked to see if the
 	* user is authorized to do the operation.
 	*/
 	virtual RepositoryIFCRef getAuthorizingRepository() const = 0;
+
+	enum EInitialLockFlag
+	{
+		E_READ,
+		E_WRITE
+	};
+	/** 
+	 * This function returns a regular cimom handle that does access
+	 * checking and may call providers.  WARNING: The return value
+	 * is valid only as long as this object is valid (see class note).
+	 * Each operation done on the cimom handle does appropriate locking.
+	 * In addition, the read/write lock is acquired before 
+	 * getLockedCIMOMHandle() returns. initialLock specifies whether the
+	 * read or write lock is acquired. The lock is released by the
+	 * destructor of the returned CIMOMHandleIFC, thus the caller should
+	 * take care to ensure that the lock is not held for too long.
+	 * 
+	 * @throws TimeoutException If the lock can't be acquired in time.
+	 * @throws ProviderEnvironmentException If this function is not
+	 *         implemented.
+	 */
+	virtual CIMOMHandleIFCRef getLockedCIMOMHandle(EInitialLockFlag initialLock) const;
 
 	virtual LoggerRef getLogger() const OW_DEPRECATED; // in 3.1.0
 	virtual LoggerRef getLogger(const String& componentName) const;

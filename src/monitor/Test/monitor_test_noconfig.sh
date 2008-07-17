@@ -48,12 +48,12 @@ EOF
 run_tests rename
 
 cat > $inpf <<EOF
-unlink /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/unlink-exists
+remove_file /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/unlink-exists
 EOF
 cat > $exceptionlist <<EOF
-PrivilegeManagerException   PrivilegeManager::unlink: process has no privileges
+PrivilegeManagerException   PrivilegeManager::removeFile: process has no privileges
 EOF
-run_tests unlink
+run_tests remove_file
 
 cat > $inpf <<EOF
 open in 0 /montest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/bar

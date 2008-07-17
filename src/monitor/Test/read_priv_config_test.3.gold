@@ -294,7 +294,7 @@ rename_to:
   /alt/exec/recov;
   /exp/immed;
   /exp/immediate;
-unlink:
+remove_file:
   /rmthis;
   /rmtheseones;
   /rmthese;

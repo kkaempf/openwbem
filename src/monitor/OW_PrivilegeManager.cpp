@@ -42,14 +42,22 @@
 #include "OW_PrivilegeCommon.hpp"
 #include "OW_PrivilegeConfig.hpp"
 #include "OW_PrivilegeManager.hpp"
+#include "OW_PrivilegeManagerMockObject.hpp"
 #include "OW_Process.hpp"
 #include "OW_Reference.hpp"
 #include "OW_Secure.hpp"
 #include "OW_String.hpp"
 #include "OW_Environ.hpp"
 #include "OW_Exec.hpp"
+#include "OW_File.hpp"
 #include "OW_Logger.hpp"
 #include "blocxx/WaitpidThreadFix.hpp"
+
+#ifndef BLOCXX_WIN32
+#include "blocxx/PosixFileSystem.hpp"
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif
 
 #include <cstdlib>
 #include <cstring>
@@ -75,7 +83,8 @@ namespace
 {
 	::uid_t const ROOT_UID = 0;
 
-	void check_result(IPCIO & conn, IPCIO::EBuffering eb = IPCIO::E_BUFFERED)
+	template <typename extype>
+	void check_result(IPCIO& conn, IPCIO::EBuffering eb = IPCIO::E_BUFFERED)
 	{
 		PrivilegeCommon::EStatus status;
 		ipcio_get(conn, status, IPCIO::E_THROW_ON_EOF, eb);
@@ -87,9 +96,16 @@ namespace
 			ipcio_get(conn, errmsg);
 			conn.get_sync();
 
-			if( errcode < PrivilegeManager::MONITOR_FATAL_ERROR_START )
+			if( errcode < PrivilegeManager::MONITOR_ERROR_START)
 			{
-				// Non-fatal errors and errno errors can just be forwarded on
+				// Anything with an error code should be rethrown as the desired
+				// exception type.
+				OW_THROW_ERR(extype, errmsg.c_str(), errcode);
+			}
+			else if( errcode < PrivilegeManager::MONITOR_FATAL_ERROR_START )
+			{
+				// Non-fatal errors and errno errors can just be forwarded on as a
+				// generic PrivilegeManagerException.
 				OW_THROW_ERR(PrivilegeManagerException, errmsg.c_str(), errcode);
 			}
 
@@ -125,6 +141,11 @@ namespace
 		}
 	}
 
+	void check_result(IPCIO& conn, IPCIO::EBuffering eb = IPCIO::E_BUFFERED)
+	{
+		check_result<PrivilegeManagerException>(conn, eb);
+	}
+
 	std::size_t cstr_arr_len(char const * const * arr)
 	{
 		char const * const * p;
@@ -134,7 +155,7 @@ namespace
 		return p - arr;
 	}
 
-	void ipcio_put_strarr(IPCIO & conn, char const * const * arr)
+	void ipcio_put_strarr(IPCIO& conn, char const * const * arr)
 	{
 		std::size_t arrlen = cstr_arr_len(arr);
 		ipcio_put(conn, arrlen);
@@ -157,24 +178,28 @@ OW_DEFINE_EXCEPTION2(FatalPrivilegeManager, PrivilegeManagerException);
 OW_DEFINE_EXCEPTION2(MonitorCommunication, FatalPrivilegeManagerException)
 OW_DEFINE_EXCEPTION2(InsufficientPrivileges, FatalPrivilegeManagerException);
 
+PrivilegeManagerMockObject_t g_privilegeManagerMockObject = OW_GLOBAL_PTR_INIT;
+
 bool PrivilegeManager::use_lib_path = false;
 
 struct PrivilegeManagerImpl : public IntrusiveCountableBase
 {
 	PrivilegeManagerImpl(AutoDescriptor peer_descriptor, ProcessRef const & pproc)
-	: m_conn(peer_descriptor, MONITOR_TIMEOUT),
-	  m_connectionValid(true),
-	  m_pproc(pproc)
+		: m_conn(new IPCIO(peer_descriptor, MONITOR_TIMEOUT))
+		, m_connectionValid(true)
+		, m_pproc(pproc)
 	{
 	}
 
 	PrivilegeManagerImpl(AutoDescriptor peer_descriptor);
 
+	PrivilegeManagerImpl();
+
 	void setLogger(LoggerSpec const * plogspec);
 
 	virtual ~PrivilegeManagerImpl();
 
-	IPCIO m_conn;
+	Reference<IPCIO> m_conn;
 	bool m_connectionValid;
 	ProcessRef m_pproc;
 	NonRecursiveMutex m_mutex;
@@ -195,15 +220,20 @@ void PrivilegeManagerImpl::invalidateConnection()
 	m_connectionValid = false;
 }
 
+PrivilegeManagerImpl::PrivilegeManagerImpl()
+	: m_connectionValid(false)
+{
+}
+
 PrivilegeManagerImpl::PrivilegeManagerImpl(AutoDescriptor peer_descriptor)
-	: m_conn(peer_descriptor, MONITOR_TIMEOUT),
+	: m_conn(new IPCIO(peer_descriptor, MONITOR_TIMEOUT)),
 	m_connectionValid(true)
 {
 	try
 	{
 		::pid_t monitor_pid;
-		ipcio_get(m_conn, monitor_pid);
-		m_conn.get_sync();
+		ipcio_get(*m_conn, monitor_pid);
+		m_conn->get_sync();
 
 		m_pproc = new Process(monitor_pid);
 	}
@@ -249,10 +279,10 @@ PrivilegeManagerImpl::~PrivilegeManagerImpl()
 	WaitpidThreadFixSettingRestorer restorer(prevSetting);
 	try
 	{
-		if (m_pproc->processStatus().running())
+		if (m_pproc && m_pproc->processStatus().running())
 		{
-			ipcio_put(m_conn, PrivilegeCommon::E_CMD_DONE);
-			m_conn.put_sync();
+			ipcio_put(*m_conn, PrivilegeCommon::E_CMD_DONE);
+			m_conn->put_sync();
 			m_pproc->waitCloseTerm(Timeout::relative(0.0), Timeout::relative(9.0), Timeout::relative(10.0));
 		}
 	}
@@ -271,7 +301,10 @@ namespace
 PrivilegeManager::PrivilegeManager(PrivilegeManagerImpl * p_impl)
 : m_impl(p_impl)
 {
-	OW_ASSERT(g_pmImpl.getPtr() == p_impl);
+	if( !g_privilegeManagerMockObject )
+	{
+		OW_ASSERT(g_pmImpl.getPtr() == p_impl);
+	}
 }
 
 PrivilegeManager::PrivilegeManager()
@@ -330,6 +363,11 @@ PrivilegeManager PrivilegeManager::connectToMonitor()
 
 PrivilegeManager PrivilegeManager::getPrivilegeManager()
 {
+	if( g_privilegeManagerMockObject )
+	{
+		return PrivilegeManager(new PrivilegeManagerImpl());
+	}
+
 	NonRecursiveMutexLock lock(g_pmImplGuard);
 	if (g_pmImpl)
 	{
@@ -340,7 +378,7 @@ PrivilegeManager PrivilegeManager::getPrivilegeManager()
 
 namespace
 {
-	
+
 	StringArray monitor_argv(
 		char const * exec_path,	char const * config_dir, char const * app_name,
 		char const * user_name
@@ -544,7 +582,7 @@ PrivilegeManager::init(
 	if (policy.m_pmgr.get())
 	{
 		::pid_t monitor_pid;
-		IPCIO & conn = policy.m_pmgr->m_conn;
+		IPCIO& conn = *policy.m_pmgr->m_conn;
 		ipcio_get(conn, monitor_pid);
 		CHECK(monitor_pid == policy.m_pmgr->m_pproc->pid(),
 			"inconsistent pid received from monitor");
@@ -562,23 +600,23 @@ void PrivilegeManagerImpl::setLogger(LoggerSpec const * pspec)
 	{
 		verifyValidConnection("setLogger: no connection to the monitor");
 
-		ipcio_put(m_conn, pspec != 0);
+		ipcio_put(*m_conn, pspec != 0);
 		if (pspec)
 		{
 			size_t n = pspec->categories.size();
-			ipcio_put(m_conn, n);
+			ipcio_put(*m_conn, n);
 			for (size_t i = 0; i < n; ++i)
 			{
-				ipcio_put(m_conn, pspec->categories[i]);
+				ipcio_put(*m_conn, pspec->categories[i]);
 			}
-			ipcio_put(m_conn, pspec->message_format);
-			ipcio_put(m_conn, pspec->file_name);
-			ipcio_put(m_conn, pspec->max_file_size);
-			ipcio_put(m_conn, pspec->max_backup_index);
-			m_conn.put_sync();
+			ipcio_put(*m_conn, pspec->message_format);
+			ipcio_put(*m_conn, pspec->file_name);
+			ipcio_put(*m_conn, pspec->max_file_size);
+			ipcio_put(*m_conn, pspec->max_backup_index);
+			m_conn->put_sync();
 
-			check_result(m_conn);
-			m_conn.get_sync();
+			check_result(*m_conn);
+			m_conn->get_sync();
 		}
 	}
 	catch(const IPCIOException& e)
@@ -591,6 +629,11 @@ AutoDescriptor PrivilegeManager::open(
 	char const * pathname, OpenFlags flags, OpenPerms perms
 )
 {
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->open(pathname, flags, perms);
+	}
+
 	Logger logger("PrivilegeManager.open");
 
 	OW_LOG_DEBUG3(logger, Format("Attempting to open: %1", pathname));
@@ -600,7 +643,7 @@ AutoDescriptor PrivilegeManager::open(
 	{
 		NonRecursiveMutexLock lock(pimpl()->m_mutex);
 
-		IPCIO & conn = pimpl()->m_conn;
+		IPCIO& conn = *pimpl()->m_conn;
 		ipcio_put(conn, PrivilegeCommon::E_CMD_OPEN);
 		ipcio_put(conn, pathname);
 		ipcio_put(conn, flags);
@@ -635,17 +678,88 @@ AutoDescriptor PrivilegeManager::open(
 	}
 }
 
+namespace // anonymous
+{
+	FileSystem::FileInformation statImpl(PrivilegeCommon::ECommand statcmd
+		, const String& statname
+		, PrivilegeManagerImpl* pimpl
+		, const char* pathname)
+	{
+		Logger logger("PrivilegeManager." + statname);
+
+		OW_LOG_DEBUG3(logger, Format("Attempting to %1: %2", statname, pathname));
+		CHECK(pimpl, Format("%1: process has no privileges", statname));
+		pimpl->verifyValidConnection(Format("%1: no connection to the monitor", statname).c_str());
+		try
+		{
+			NonRecursiveMutexLock lock(pimpl->m_mutex);
+
+			IPCIO& conn = *pimpl->m_conn;
+			ipcio_put(conn, statcmd);
+			ipcio_put(conn, pathname);
+			conn.put_sync();
+
+			check_result<FileSystemException>(conn, IPCIO::E_UNBUFFERED);
+
+#ifdef BLOCXX_WIN32
+			OW_THROW(PrivilegeManagerException, Format("Not implemented: %1()", statname));
+#else
+			struct stat statbuf;
+			ipcio_get(conn, statbuf);
+			conn.get_sync();
+
+			return FileSystem::statToFileInfo(statbuf);
+#endif
+		}
+		catch(const IPCIOException& e)
+		{
+			pimpl->invalidateConnection();
+			OW_THROW_SUBEX(MonitorCommunicationException, Format("Communication error for %1 on file", statname).c_str(), e);
+		}
+		catch(const FatalPrivilegeManagerException& e)
+		{
+			pimpl->invalidateConnection();
+			throw;
+		}
+	}
+} // end anonymous namespace
+
+FileSystem::FileInformation PrivilegeManager::stat(const char* pathname)
+{
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->stat(pathname);
+	}
+
+	return statImpl(PrivilegeCommon::E_CMD_STAT, "stat", pimpl(), pathname);
+}
+
+FileSystem::FileInformation PrivilegeManager::lstat(const char* pathname)
+{
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->lstat(pathname);
+	}
+
+	return statImpl(PrivilegeCommon::E_CMD_LSTAT, "lstat", pimpl(), pathname);
+}
+
 StringArray PrivilegeManager::readDirectory(
 	char const * pathname, ReadDirOptions opt
 )
 {
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->readDirectory(pathname, opt);
+	}
+
 	CHECK(pimpl(), "readDirectory: process has no privileges");
 	pimpl()->verifyValidConnection("readDirectory: no connection to the monitor");
 	try
 	{
 		NonRecursiveMutexLock lock(pimpl()->m_mutex);
 
-		IPCIO & conn = pimpl()->m_conn;
+		IPCIO& conn = *pimpl()->m_conn;
 		ipcio_put(conn, PrivilegeCommon::E_CMD_READ_DIR);
 		ipcio_put(conn, pathname);
 		ipcio_put(conn, opt);
@@ -679,13 +793,18 @@ StringArray PrivilegeManager::readDirectory(
 
 String PrivilegeManager::readLink(char const * pathname)
 {
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->readLink(pathname);
+	}
+
 	CHECK(pimpl(), "readLink: process has no privileges");
 	pimpl()->verifyValidConnection("readLink: no connection to the monitor");
 	try
 	{
 		NonRecursiveMutexLock lock(pimpl()->m_mutex);
 
-		IPCIO & conn = pimpl()->m_conn;
+		IPCIO& conn = *pimpl()->m_conn;
 		ipcio_put(conn, PrivilegeCommon::E_CMD_READ_LINK);
 		ipcio_put(conn, pathname);
 		conn.put_sync();
@@ -712,11 +831,16 @@ String PrivilegeManager::readLink(char const * pathname)
 #if 0
 bool PrivilegeManager::checkPath(char const * path, char const * user)
 {
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->check(path, user);
+	}
+
 	CHECK(pimpl(), "checkPath: process has no privileges");
 	pimpl()->verifyValidConnection("checkPath: no connection to the monitor");
 	try
 	{
-		IPCIO & conn = pimpl()->m_conn;
+		IPCIO& conn = *pimpl()->m_conn;
 		ipcio_put(conn, PrivilegeCommon::E_CMD_CHECK_PATH);
 		ipcio_put(conn, path);
 		ipcio_put(conn, user);
@@ -744,13 +868,18 @@ bool PrivilegeManager::checkPath(char const * path, char const * user)
 
 void PrivilegeManager::rename(char const * oldpath, char const * newpath)
 {
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->rename(oldpath, newpath);
+	}
+
 	CHECK(pimpl(), "rename: process has no privileges");
 	pimpl()->verifyValidConnection("rename: no connection to the monitor");
 	try
 	{
 		NonRecursiveMutexLock lock(pimpl()->m_mutex);
 
-		IPCIO & conn = pimpl()->m_conn;
+		IPCIO& conn = *pimpl()->m_conn;
 		ipcio_put(conn, PrivilegeCommon::E_CMD_RENAME);
 		ipcio_put(conn, oldpath);
 		ipcio_put(conn, newpath);
@@ -771,30 +900,84 @@ void PrivilegeManager::rename(char const * oldpath, char const * newpath)
 	}
 }
 
-bool PrivilegeManager::unlink(char const * path)
+bool PrivilegeManager::removeFile(char const * path)
 {
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->removeFile(path);
+	}
+
 	try
 	{
-		CHECK(pimpl(), "unlink: process has no privileges");
-		pimpl()->verifyValidConnection("unlink: no connection to the monitor");
+		CHECK(pimpl(), "removeFile: process has no privileges");
+		pimpl()->verifyValidConnection("removeFile: no connection to the monitor");
 		NonRecursiveMutexLock lock(pimpl()->m_mutex);
 
-		IPCIO & conn = pimpl()->m_conn;
-		ipcio_put(conn, PrivilegeCommon::E_CMD_UNLINK);
+		IPCIO& conn = *pimpl()->m_conn;
+		ipcio_put(conn, PrivilegeCommon::E_CMD_REMOVE_FILE);
 		ipcio_put(conn, path);
 		conn.put_sync();
 
 		check_result(conn);
 		bool retval;
 		ipcio_get(conn, retval);
+
+		int errorcode;
+		ipcio_get(conn, errorcode);
 		conn.get_sync();
+
+		// Reset errno with the value set by the monitor.
+		errno = errorcode;
 
 		return retval;
 	}
 	catch(const IPCIOException& e)
 	{
 		pimpl()->invalidateConnection();
-		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while unlinking file", e);
+		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while removing file", e);
+	}
+	catch(const FatalPrivilegeManagerException& e)
+	{
+		pimpl()->invalidateConnection();
+		throw;
+	}
+}
+
+bool PrivilegeManager::removeDirectory(char const * path)
+{
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->removeDirectory(path);
+	}
+
+	try
+	{
+		CHECK(pimpl(), "removeDirectory: process has no privileges");
+		pimpl()->verifyValidConnection("removeDirectory: no connection to the monitor");
+		NonRecursiveMutexLock lock(pimpl()->m_mutex);
+
+		IPCIO& conn = *pimpl()->m_conn;
+		ipcio_put(conn, PrivilegeCommon::E_CMD_REMOVE_DIR);
+		ipcio_put(conn, path);
+		conn.put_sync();
+
+		check_result(conn);
+		bool retval;
+		ipcio_get(conn, retval);
+
+		int errorcode;
+		ipcio_get(conn, errorcode);
+		conn.get_sync();
+
+		// Reset errno with the value set by the monitor.
+		errno = errorcode;
+
+		return retval;
+	}
+	catch(const IPCIOException& e)
+	{
+		pimpl()->invalidateConnection();
+		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while removing directory", e);
 	}
 	catch(const FatalPrivilegeManagerException& e)
 	{
@@ -809,8 +992,6 @@ ProcessRef PrivilegeManager::monitoredSpawn(
 	char const * const argv[], char const * const envp[]
 )
 {
-	CHECK(pimpl(), "monitoredSpawn: process has no privileges");
-	pimpl()->verifyValidConnection("monitoredSpawn: no connection to the monitor");
 	char const * default_argv[2] = { exec_path, 0 };
 	if (!argv || !*argv)
 	{
@@ -821,10 +1002,18 @@ ProcessRef PrivilegeManager::monitoredSpawn(
 		envp = environ;
 	}
 
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->monitoredSpawn(exec_path, app_name, argv, envp);
+	}
+
+	CHECK(pimpl(), "monitoredSpawn: process has no privileges");
+	pimpl()->verifyValidConnection("monitoredSpawn: no connection to the monitor");
+
 	try
 	{
 		NonRecursiveMutexLock lock(pimpl()->m_mutex);
-		IPCIO & conn = pimpl()->m_conn;
+		IPCIO& conn = *pimpl()->m_conn;
 
 		ipcio_put(conn, PrivilegeCommon::E_CMD_MONITORED_SPAWN);
 		ipcio_put(conn, exec_path);
@@ -861,9 +1050,6 @@ ProcessRef PrivilegeManager::monitoredUserSpawn(
 	char const * user
 )
 {
-	CHECK(pimpl(), "monitoredUserSpawn: process has no privileges");
-	pimpl()->verifyValidConnection("monitoredUserSpawn: no connection to the monitor");
-
 	char const * default_argv[2] = { exec_path, 0 };
 	if (!argv || !*argv)
 	{
@@ -874,10 +1060,18 @@ ProcessRef PrivilegeManager::monitoredUserSpawn(
 		envp = environ;
 	}
 
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->monitoredUserSpawn(exec_path, app_name, argv, envp, user);
+	}
+
+	CHECK(pimpl(), "monitoredUserSpawn: process has no privileges");
+	pimpl()->verifyValidConnection("monitoredUserSpawn: no connection to the monitor");
+
 	try
 	{
 		NonRecursiveMutexLock lock(pimpl()->m_mutex);
-		IPCIO & conn = pimpl()->m_conn;
+		IPCIO& conn = *pimpl()->m_conn;
 
 		ipcio_put(conn, PrivilegeCommon::E_CMD_MONITORED_USER_SPAWN);
 		ipcio_put(conn, exec_path);
@@ -910,13 +1104,18 @@ ProcessRef PrivilegeManager::monitoredUserSpawn(
 
 int PrivilegeManager::kill(ProcId pid, int sig)
 {
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->kill(pid, sig);
+	}
+
 	CHECK(pimpl(), "kill: process has no privileges");
 	pimpl()->verifyValidConnection("kill: no connection to the monitor");
 
 	try
 	{
 		NonRecursiveMutexLock lock(pimpl()->m_mutex);
-		IPCIO & conn = pimpl()->m_conn;
+		IPCIO& conn = *pimpl()->m_conn;
 
 		ipcio_put(conn, PrivilegeCommon::E_CMD_KILL);
 		ipcio_put(conn, pid);
@@ -943,13 +1142,18 @@ int PrivilegeManager::kill(ProcId pid, int sig)
 
 Process::Status PrivilegeManager::pollStatus(ProcId pid)
 {
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->pollStatus(pid);
+	}
+
 	CHECK(pimpl(), "pollStatus: process has no privileges");
 	pimpl()->verifyValidConnection("pollStatus: no connection to the monitor");
 
 	try
 	{
 		NonRecursiveMutexLock lock(pimpl()->m_mutex);
-		IPCIO & conn = pimpl()->m_conn;
+		IPCIO& conn = *pimpl()->m_conn;
 
 		ipcio_put(conn, PrivilegeCommon::E_CMD_POLL_STATUS);
 		ipcio_put(conn, pid);
@@ -981,9 +1185,6 @@ ProcessRef PrivilegeManager::userSpawn(
 	char const * user, char const * working_dir
 )
 {
-	CHECK(pimpl(), "userSpawn: process has no privileges");
-	pimpl()->verifyValidConnection("userSpawn: no connection to the monitor");
-
 	char const * default_argv[2] = { exec_path, 0 };
 	if (!argv || !argv[0])
 	{
@@ -1002,11 +1203,18 @@ ProcessRef PrivilegeManager::userSpawn(
 		working_dir = "";
 	}
 
+	if( g_privilegeManagerMockObject )
+	{
+		return g_privilegeManagerMockObject->userSpawn(exec_path, argv, envp, user, working_dir);
+	}
+
+	CHECK(pimpl(), "userSpawn: process has no privileges");
+	pimpl()->verifyValidConnection("userSpawn: no connection to the monitor");
 
 	try
 	{
 		NonRecursiveMutexLock lock(pimpl()->m_mutex);
-		IPCIO & conn = pimpl()->m_conn;
+		IPCIO& conn = *pimpl()->m_conn;
 
 		ipcio_put(conn, PrivilegeCommon::E_CMD_USER_SPAWN);
 		ipcio_put(conn, exec_path);

@@ -126,6 +126,10 @@ public:
 	virtual void        setUp            ();
 	virtual void        tearDown         ();
 
+	// Evil, but we need to propogate the TestResult down...  The
+	// design of this testing framework seems a little lacking.
+	void setTestResult(TestResult* foo) { m_testResult = foo; }
+
 protected:
 	virtual void        runTest          ();
 
@@ -183,7 +187,8 @@ protected:
 private:
 	const char*   m_name;
 
-
+protected:
+	TestResult* m_testResult;
 
 };
 
@@ -199,8 +204,12 @@ private:
 
 #ifdef CPPUNIT_SOURCEANNOTATION
 
+	#undef FlagTestCondition
+	#define FlagTestCondition() do { m_testResult->testCondition(this); } while(0)
+
 	#undef unitAssert
 	#define unitAssert(condition) \
+	FlagTestCondition(); \
 	try \
 	{ \
 		this->assertImplementation ((condition),(#condition), __LINE__, __FILE__); \
@@ -220,6 +229,7 @@ private:
 
 	#undef unitAssertFail
 	#define unitAssertFail(condition) \
+	FlagTestCondition(); \
 	try \
 	{ \
 		this->assertImplementation ((!(condition)),("!("#condition")"),	__LINE__, __FILE__); \
@@ -239,6 +249,7 @@ private:
 
 	#undef unitAssertThrows
 	#define unitAssertThrows(condition) \
+	FlagTestCondition(); \
 	try \
 	{ \
 		condition; \
@@ -254,6 +265,7 @@ private:
 		
 	#undef unitAssertThrowsEx
 	#define unitAssertThrowsEx(condition, exceptionType) \
+	FlagTestCondition(); \
 	try \
 	{ \
 		condition; \
@@ -273,6 +285,7 @@ private:
 		
 	#undef unitAssertThrowsExWhat
 	#define unitAssertThrowsExWhat(condition, exceptionType, whatMsg) \
+	FlagTestCondition(); \
 	try \
 	{ \
 		condition; \
@@ -293,6 +306,7 @@ private:
 		
 	#undef unitAssertNoThrow
 	#define unitAssertNoThrow(condition) \
+	FlagTestCondition(); \
 	try \
 	{ \
 		condition;\
@@ -315,6 +329,7 @@ private:
 
 	#undef unitAssert
 	#define unitAssert(condition) \
+	FlagTestCondition(); \
 	(this->assertImplementation ((condition),"", __LINE__, __FILE__))
 
 #endif
@@ -322,18 +337,22 @@ private:
 
 // Macros for primitive value comparisons
 #define unitAssertDoublesEqual(expected,actual,delta)\
+FlagTestCondition(); \
 (this->assertEquals ((expected),\
 		(actual),(delta),__LINE__,__FILE__))
 
 #define unitAssertLongsEqual(expected,actual)\
+FlagTestCondition(); \
 (this->assertEquals ((expected),\
 		(actual),__LINE__,__FILE__))
 
 #define unitAssertEquals(expected,actual)\
+FlagTestCondition(); \
 (this->assertEquals ((expected),\
 		(actual),__LINE__,__FILE__))
 
 #define unitAssertNotEquals(expected,actual)\
+FlagTestCondition(); \
 (this->assertNotEquals ((expected),\
 		(actual),__LINE__,__FILE__))
 

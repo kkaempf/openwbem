@@ -44,6 +44,7 @@
 #include "OW_DateTime.hpp"
 #include "OW_OOPShuttingDownCallback.hpp"
 #include "OW_OpenWBEM_OOPMethodProviderCapabilities.hpp"
+#include "OW_OOPProtocolIFC.hpp"
 
 namespace OW_NAMESPACE
 {

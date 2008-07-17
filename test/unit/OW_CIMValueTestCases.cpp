@@ -41,6 +41,8 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_Format.hpp"
 #include "OW_CIMDateTime.hpp"
+#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMProperty.hpp"
 
 using namespace OpenWBEM;
 
@@ -90,7 +92,8 @@ void OW_CIMValueTestCases::testInserterOp()
 
 void OW_CIMValueTestCases::testToMOF()
 {
-	unitAssert(CIMValue(CIMDateTime("00000000000000.000000:000")).toMOF() == "\"00000000000000.000000:000\"");
+	unitAssertEquals(CIMValue(CIMDateTime("00000000000000.000000:000")).toMOF(), "\"00000000000000.000000:000\"");
+	unitAssertEquals(CIMValue(CIMDateTimeArray(2, CIMDateTime("00000000000000.000000:000"))).toMOF(), "{\"00000000000000.000000:000\",\"00000000000000.000000:000\"}");
 
 	UInt8Array a(5);
 	for (size_t i = 0; i < a.size(); ++i)
@@ -98,7 +101,36 @@ void OW_CIMValueTestCases::testToMOF()
 		a[i] = i;
 	}
 	CIMValue v(a);
-	unitAssert(v.toString() == "0,1,2,3,4");
+	unitAssertEquals(v.toString(), "0,1,2,3,4");
+	unitAssertEquals(v.toMOF(), "{0,1,2,3,4}");
+
+	unitAssertEquals(CIMValue(CIMNULL).toMOF(), "NULL");
+	unitAssertEquals(CIMValue(true).toMOF(), "true");
+	unitAssertEquals(CIMValue(false).toMOF(), "false");
+	unitAssertEquals(CIMValue(BoolArray(2, false)).toMOF(), "{false,false}");
+	unitAssertEquals(CIMValue("s").toString(), "s");
+	unitAssertEquals(CIMValue("s").toMOF(), "\"s\"");
+	unitAssertEquals(CIMValue(StringArray(2, "s")).toString(), "s,s");
+	unitAssertEquals(CIMValue(StringArray(2, "s")).toMOF(), "{\"s\",\"s\"}");
+	unitAssertEquals(CIMValue(StringArray(2, "\"s\"")).toMOF(), "{\"\\\"s\\\"\",\"\\\"s\\\"\"}");
+	{
+		CIMObjectPath path("ns", "cls");
+		path.setKeyValue("p", CIMValue("v"));
+		unitAssertEquals(CIMValue(path).toMOF(), Format("%1", path.toMOF()).toString());
+		unitAssertEquals(CIMValue(CIMObjectPathArray(2, path)).toMOF(), Format("{%1,%1}", path.toMOF()).toString());
+	}
+	{
+		CIMClass c("c");
+		c.addProperty(CIMProperty("p", CIMDataType::STRING));
+		unitAssertEquals(CIMValue(c).toMOF(), Format("\"%1\"", CIMObjectPath::escape(c.toMOF())).toString());
+		unitAssertEquals(CIMValue(CIMClassArray(2, c)).toMOF(), Format("{\"%1\",\n\"%1\"}", CIMObjectPath::escape(c.toMOF())).toString());
+	}
+	{
+		CIMInstance i("i");
+		i.setProperty("p", CIMValue("s"));
+		unitAssertEquals(CIMValue(i).toMOF(), Format("\"%1\"", CIMObjectPath::escape(i.toMOF()).toString()));
+		unitAssertEquals(CIMValue(CIMInstanceArray(2, i)).toMOF(), Format("{\"%1\",\n\"%1\"}", CIMObjectPath::escape(i.toMOF())).toString());
+	}
 }
 
 void OW_CIMValueTestCases::testToString()

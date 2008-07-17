@@ -142,12 +142,22 @@ rename(old_path, new_path)
 		ERRCHK(owprivman_rename(old_path, new_path, errbuf, BUFSZ));
 
 int
-unlink(path)
+remove_file(path)
 	const char * path
 	INIT:
 		char errbuf[BUFSZ];
 	CODE:
-		ERRCHK(owprivman_unlink(path, &RETVAL, errbuf, BUFSIZ));
+		ERRCHK(owprivman_remove_file(path, &RETVAL, errbuf, BUFSIZ));
+	OUTPUT:
+		RETVAL
+
+int
+remove_dir(path)
+	const char * path
+	INIT:
+		char errbuf[BUFSZ];
+	CODE:
+		ERRCHK(owprivman_remove_dir(path, &RETVAL, errbuf, BUFSIZ));
 	OUTPUT:
 		RETVAL
 

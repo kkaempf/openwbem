@@ -35,6 +35,7 @@
 #include "Guards.hpp"
 
 #include "Test.hpp"
+#include "TestResult.hpp"
 
 #include <vector>
 

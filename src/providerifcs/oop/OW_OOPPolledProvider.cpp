@@ -35,6 +35,7 @@
 #include "OW_config.h"
 #include "OW_OOPPolledProvider.hpp"
 #include "OW_OOPShuttingDownCallback.hpp"
+#include "OW_OOPProtocolIFC.hpp"
 
 namespace OW_NAMESPACE
 {

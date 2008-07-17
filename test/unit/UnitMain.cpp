@@ -40,6 +40,7 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "PrivilegeManagerMockObjectTestCases.hpp"
 #include "EnvironmentVariablePatternsTestCases.hpp"
 #include "XMLParserCoreTestCases.hpp"
 #include "PrivilegeConfigTestCases.hpp"
@@ -49,7 +50,6 @@
 #include "OW_ScopeLoggerTestCases.hpp"
 #include "GlobalPtrTestCases.hpp"
 #include "IStringStreamTestCases.hpp"
-#include "UnnamedPipeTestCases.hpp"
 #include "ProcessTestCases.hpp"
 #include "ConditionTestCases.hpp"
 #include "TimeoutTimerTestCases.hpp"
@@ -117,6 +117,7 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "PrivilegeManagerMockObject", PrivilegeManagerMockObjectTestCases::suite());
 	runner.addTest( "EnvironmentVariablePatterns", EnvironmentVariablePatternsTestCases::suite());
 	runner.addTest( "XMLParserCore", XMLParserCoreTestCases::suite());
 	runner.addTest( "PrivilegeConfig", PrivilegeConfigTestCases::suite());
@@ -126,7 +127,6 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_ScopeLogger", OW_ScopeLoggerTestCases::suite());
 	runner.addTest( "GlobalPtr", GlobalPtrTestCases::suite());
 	runner.addTest( "IStringStream", IStringStreamTestCases::suite());
-	runner.addTest( "UnnamedPipe", UnnamedPipeTestCases::suite());
 	runner.addTest( "Process", ProcessTestCases::suite());
 	runner.addTest( "Condition", ConditionTestCases::suite());
 	runner.addTest( "TimeoutTimer", TimeoutTimerTestCases::suite());

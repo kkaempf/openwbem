@@ -64,6 +64,18 @@ BLOCXX_DECLARE_EXCEPTION(UnescapeString);
  */
 String unescapeString(char const * str);
 
+/**
+ * Normalize the given path by removing all "/./" and "//" patterns
+ * from it.  The patterns "/./" and "//" will both be treated as "/".
+ * Any trailing slash in the string will be preserved because some of the
+ * monitor functions will treat paths with trailing slashes differently.
+ *
+ * @param path The input path.
+ * @return The normalized (cleaned) path if the supplied path is absolute,
+ * 	otherwise the supplied path is returned.
+ */
+String normalizePath(const String& path);
+
 class PathPatterns
 {
 public:
@@ -78,7 +90,7 @@ public:
 	void addPattern(char const * pattern);
 
 	// RETURNS: does path match any of the patterns specified with
-	// add_pattern?
+	// addPattern?
 	//
 	bool match(const String& path) const;
 
@@ -285,7 +297,9 @@ struct Privileges
 	PathPatterns check_path;
 	PathPatterns rename_from;
 	PathPatterns rename_to;
-	PathPatterns unlink;
+	PathPatterns remove_file;
+	DirPatterns remove_dir;
+	PathPatterns stat;
 	ExecPatterns monitored_exec;
 	ExecPatterns user_exec;
 	ExecArgsPatterns monitored_exec_check_args;
@@ -313,19 +327,19 @@ class IncludeHandler
 public:
 	virtual ~IncludeHandler();
 	/**
-     * Return a pointer to the data to be parsed for an include. The caller does not take ownership and will not free
-     * the result.
-     * @param includeParam The include parameter. e.g. include { "foo" } would cause foo to be passed.
+	 * Return a pointer to the data to be parsed for an include. The caller does not take ownership and will not free
+	 * the result.
+	 * @param includeParam The include parameter. e.g. include { "foo" } would cause foo to be passed.
 	 * 
-     * @return std::istream* Must not return NULL.
-     * 
-     * @throws An exception derived from Exception indicating the reason for failure.
+	 * @return std::istream* Must not return NULL.
+	 * 
+	 * @throws An exception derived from Exception indicating the reason for failure.
 	 */
 	virtual std::istream* getInclude(const String& includeParam) = 0;
 
 	/**
-     * Called when the std::istream* from the last stacked call to getInclude() is no longer needed. The intention is
-     * that the derived class can then free it.
+	 * Called when the std::istream* from the last stacked call to getInclude() is no longer needed. The intention is
+	 * that the derived class can then free it.
 	 */
 	virtual void endInclude() = 0;
 };

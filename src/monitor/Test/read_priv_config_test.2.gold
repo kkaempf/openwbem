@@ -130,7 +130,7 @@ rename_to:
   /emm/enn/oh;
   /emm/enn/ohno;
   /pea/queue;
-unlink:
+remove_file:
   /are/ess/tea;
 monitored_user_exec:
  user: ewe-vee

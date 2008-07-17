@@ -3,3 +3,5 @@ PrivilegeManagerException   CheckException: PrivilegeManager::rename: could not 
 PrivilegeManagerException   CheckException: PrivilegeManager::rename: could not rename /dir/doesnt/exist/rename to /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename-to
 PrivilegeManagerException   CheckException: PrivilegeManager::rename: could not rename /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/no-such-file to /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/rename-to
 PrivilegeManagerException   CheckException: PrivilegeManager::open:
+remove_file  Failed to remove file: /monexectest-689acb0e1ec89f45-7085a2a1780f5f42/test_dir/unlink-doesnt-exist
+remove_file  Failed to remove file: /dir/doesnt/exist/unlink

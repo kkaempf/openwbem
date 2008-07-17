@@ -87,6 +87,12 @@ CIMServerProviderEnvironment::getAuthorizingRepository() const
 	return m_env->getAuthorizingRepository();
 }
 
+CIMOMHandleIFCRef 
+CIMServerProviderEnvironment::getLockedCIMOMHandle(EInitialLockFlag initialLock) const
+{
+	return m_env->getLockedCIMOMHandle(m_context, initialLock == E_READ ? ServiceEnvironmentIFC::E_READ : ServiceEnvironmentIFC::E_WRITE);
+}
+
 String
 CIMServerProviderEnvironment::getUserName() const
 {

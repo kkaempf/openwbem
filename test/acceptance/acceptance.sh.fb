@@ -37,6 +37,7 @@
 #		OOPProvider
 #		EmbeddedCIMOM
 #		MethodLocking
+#		LockedCIMOMHandle
 
 set -x
 
@@ -1640,6 +1641,10 @@ TestOOPProvider()
 
 	RestoreState
 
+	# The getCIMOMHandle test causes a deadlock and tests that the exception is correctly propagated back.
+	# This sets the timeout very small so the test doesn't take forever.
+	EditConfig "s!owcimomd.read_write_lock_timeout = \(.*\)!owcimomd.read_write_lock_timeout = 0.001!g"
+
 	# import the mof.  We have to change the path to the owoopcpp1pr command
 	# and tell owoopcpp1pr where to stick its log file
 	sed -e "s!${OWLIBEXECDIR}!${STAGEDIR}${OWLIBEXECDIR}!g" \
@@ -1649,7 +1654,7 @@ TestOOPProvider()
 		$STAGEDIR/$OWBINDIR/owmofc --url http://test1:pass1@localhost:30926/ --create-namespaces - || \
 		ExitWithFail "owmofc exited with error."
 
-	# have to restart for provider registration to take effect
+	# have to restart for provider registration and config file changes to take effect
 	RestartDaemon
 
 	# run the tests
@@ -1666,7 +1671,7 @@ TestOOPProvider()
 		ExitWithFail "testUnknownException failed"
 	fi
 
-	if echo "$OUTPUT" | grep -q "CIM_ERR_FAILED:\* UNKNOWN EXCEPTION CAUGHT IN owoopcpp1pr MAIN!"; then 
+	if echo "$OUTPUT" | grep "CIM_ERR_FAILED:\* UNKNOWN EXCEPTION CAUGHT IN owoopcpp1pr MAIN!" >/dev/null 2>&1; then
 		:
 	else
 		ExitWithFail "testUnknownException failed"
@@ -1679,7 +1684,7 @@ TestOOPProvider()
 		ExitWithFail "testStdException failed"
 	fi
 
-	if echo "$OUTPUT" | grep -q "CIM_ERR_FAILED:std::exception in owoopcpp1pr"; then 
+	if echo "$OUTPUT" | grep "CIM_ERR_FAILED:std::exception in owoopcpp1pr" >/dev/null 2>&1 ; then 
 		:
 	else
 		ExitWithFail "testStdException failed"
@@ -1692,7 +1697,7 @@ TestOOPProvider()
 		ExitWithFail "testOWException failed"
 	fi
 
-	if echo "$OUTPUT" | grep -q "CIM_ERR_FAILED:*Exception in owoopcpp1pr"; then 
+	if echo "$OUTPUT" | grep "CIM_ERR_FAILED:*Exception in owoopcpp1pr" >/dev/null 2>&1 ; then 
 		:
 	else
 		ExitWithFail "testOWException failed"
@@ -1705,7 +1710,7 @@ TestOOPProvider()
 		ExitWithFail "testCIMException failed"
 	fi
 
-	if echo "$OUTPUT" | grep -q "CIM_ERR_FAILED:*test"; then
+	if echo "$OUTPUT" | grep "CIM_ERR_FAILED:*test" >/dev/null 2>&1 ; then
 		:
 	else
 		ExitWithFail "testCIMException failed"
@@ -1718,9 +1723,9 @@ TestOOPProvider()
 		ExitWithFail "testExit failed"
 	fi
 
-	if echo "$OUTPUT" | grep -q "exitStatus = exited with status 11" ||
-	   echo "$OUTPUT" | grep -q "No result from call to invokeMethod" ||
-	   echo "$OUTPUT" | grep -q "sending a BIN_END"; then
+	if echo "$OUTPUT" | grep "exitStatus = exited with status 11" >/dev/null 2>&1 ||
+	   echo "$OUTPUT" | grep "No result from call to invokeMethod" >/dev/null 2>&1 ||
+	   echo "$OUTPUT" | grep "sending a BIN_END" >/dev/null 2>&1 ; then
 	   :
 	else
 		ExitWithFail "testExit failed"
@@ -1740,7 +1745,7 @@ TestOOPProvider()
 		ExitWithFail "testOperationContextGetStringData failed"
 	fi
 
-	if echo "$OUTPUT" | grep -q "CIM_ERR_FAILED:.*ContextDataNotFoundException.*"; then
+	if echo "$OUTPUT" | grep "CIM_ERR_FAILED:.*ContextDataNotFoundException.*" >/dev/null 2>&1 ; then
 		:
 	else
 		ExitWithFail "testOperationContextGetStringData failed"
@@ -1833,7 +1838,7 @@ TestOOPProvider()
 		ExitWithFail "owgetinstance got root/ooptest:ooptest.id=\"nonexistent\""
 	fi
 	
-	if echo "$OUTPUT" | grep -q "CIM_ERR_NOT_FOUND:.*"; then
+	if echo "$OUTPUT" | grep "CIM_ERR_NOT_FOUND:.*" >/dev/null 2>&1 ; then
 		:
 	else
 		ExitWithFail "owgetinstance got root/ooptest:ooptest.id=\"nonexistent\""
@@ -1878,7 +1883,7 @@ EOI
 		ExitWithFail "owdeleteinstance incorrectly failed"
 	fi
 
-	if echo "$OUTPUT" | grep -q "CIM_ERR_NOT_FOUND:.*"; then
+	if echo "$OUTPUT" | grep "CIM_ERR_NOT_FOUND:.*" >/dev/null 2>&1 ; then
 		:
 	else
 		ExitWithFail "owdeleteinstance incorrectly failed"
@@ -1940,6 +1945,51 @@ TestMethodLocking()
 }
 
 #############################################################################
+TestLockedCIMOMHandle()
+{
+	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i LockedCIMOMHandle >/dev/null 2>&1
+	then
+		return
+	fi
+
+	StopDaemon
+	RestoreState
+
+	EditConfig "s!owcimomd.read_write_lock_timeout = \(.*\)!owcimomd.read_write_lock_timeout = 0.001!g"
+	InstallProvider $BUILDDIR/test/acceptance/lockedCIMOMHandle/liblockedCIMOMHandleTest.@lib_ext@
+	InstallOOPProvider $BUILDDIR/test/acceptance/lockedCIMOMHandle/liblockedCIMOMHandleTest.@lib_ext@
+	StartDaemon
+
+	# import the mof.  We have to change the path to the owoopcpp1pr command
+	# and tell owoopcpp1pr where to stick its log file
+	sed -e "s!${OWLIBEXECDIR}!${STAGEDIR}${OWLIBEXECDIR}!g" \
+		-e "s!${OWLIBDIR}/openwbem!${STAGEDIR}${OWLIBDIR}/openwbem!g" \
+		-e's!--logfile=!--logfile='"$RESULTDIR/owoopcpp1pr.log!g" \
+		$BUILDDIR/test/acceptance/lockedCIMOMHandle/lockedCIMOMHandleTest.mof | \
+		$STAGEDIR/$OWBINDIR/owmofc --url http://test1:pass1@localhost:30926/ --create-namespaces - || \
+		ExitWithFail "owmofc exited with error."
+
+	# have to restart for provider registration to take effect
+	RestartDaemon
+
+	# run the tests - first by initiating the calls externally
+	$BUILDDIR/test/acceptance/lockedCIMOMHandle/testLockedCIMOMHandle http://test1:pass1@localhost:30926/root > $RESULTDIR/testLockedCIMOMHandle.out 2>&1
+	RVAL=$?
+	if [ $RVAL != "0" ]; then
+		ExitWithFail "LockedCIMOMHandle test failed. Check $RESULTDIR/testLockedCIMOMHandle.out"
+	fi
+
+	# second - run the tests inside an oop provider to test that callbacks correctly lock.	
+	$STAGEDIR/$OWBINDIR/owinvokemethod --url http://test1:pass1@localhost:30926/root/lockedCIMOMHandleTest-oop --target testInProv --methodname runAllTestsInProvider --inparams "testdir=$STAGEDIR"> $RESULTDIR/owinvokemethod.testInProv 2>&1
+	RVAL=$?
+	OUTPUT=`cat $RESULTDIR/owinvokemethod.testInProv`
+	if [ $RVAL != "0" ] || [ "$OUTPUT" != "true" ]; then
+		ExitWithFail "LockedCIMOMHandle test in a provider failed. Check $RESULTDIR/owinvokemethod.testInProv"
+	fi
+
+}
+
+#############################################################################
 CoreCheck()
 {
 	CORES=`ls $STAGEDIR/core* /cores/core.* 2> /dev/null`
@@ -1954,7 +2004,7 @@ Exit()
 {
 	CoreCheck
 
-	if [ ${CREATED_SECURE_STAGEDIR} = 1 ] || echo "${STAGEDIR}" | grep -q "^${SECURE_DIRECTORY}"; then
+	if [ ${CREATED_SECURE_STAGEDIR} = 1 ] || echo "${STAGEDIR}" | grep "^${SECURE_DIRECTORY}" >/dev/null 2>&1 ; then
 		echo "######################################################################"
 		echo "                             READ THIS"
 		echo "######################################################################"
@@ -2218,6 +2268,8 @@ main()
 	TestOOPProvider
 
 	TestMethodLocking
+
+	TestLockedCIMOMHandle
 
 	if [ "z$OWLONGTEST" = "z1" ]; then
 		RunATest testClientTimeout "http://test1:pass1@localhost:30926"

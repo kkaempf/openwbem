@@ -90,6 +90,18 @@ public:
 	 */
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
 		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS) const;
+
+	enum EInitialLockFlag
+	{
+		E_NONE,
+		E_READ,
+		E_WRITE
+	};
+	/**
+	 * WARNING: The return value is valid only for the lifetime of context.
+	 */
+	virtual CIMOMHandleIFCRef getLockedCIMOMHandle(OperationContext& context,
+		EInitialLockFlag initialLock) const;
 	
 	CIMOMHandleIFCRef getRepositoryCIMOMHandle(OperationContext& context) const;
 	

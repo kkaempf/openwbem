@@ -537,6 +537,13 @@ public:
 		BinarySerialization::write(m_outbuf, BinarySerialization::REPOSITORY_CIMOM_HANDLE_REQUEST);
 		return commonGetCIMOMHandle();
 	}
+	virtual CIMOMHandleIFCRef getLockedCIMOMHandle(ProviderEnvironmentIFC::EInitialLockFlag initialLock) const
+	{
+		BinarySerialization::write(m_outbuf, BinarySerialization::LOCKED_CIMOM_HANDLE_REQUEST);
+		UInt8 initialLockAsUInt8 = initialLock;
+		BinarySerialization::write(m_outbuf, initialLockAsUInt8);
+		return commonGetCIMOMHandle();
+	}
 	virtual RepositoryIFCRef getRepository() const
 	{
 		OW_ASSERTMSG(0, "Not supported");

@@ -57,6 +57,7 @@ public:
 	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const;
 	virtual RepositoryIFCRef getRepository() const;
 	virtual RepositoryIFCRef getAuthorizingRepository() const;
+	virtual CIMOMHandleIFCRef getLockedCIMOMHandle(EInitialLockFlag initialLock) const;
 	virtual String getUserName() const;
 	virtual OperationContext& getOperationContext();
 	virtual ProviderEnvironmentIFCRef clone() const;
