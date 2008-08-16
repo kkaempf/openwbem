@@ -28,33 +28,50 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Kevin S. Van Horn
+ */
+
+#ifndef OW_INDICATION_BURST_EXPORTER_HPP
+#define OW_INDICATION_BURST_EXPORTER_HPP
 #include "OW_config.h"
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "OW_Generic.hpp"
+#include "OW_CommonFwd.hpp"
+#include "OW_CIMFwd.hpp"
+#include "OW_Types.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
-using namespace OpenWBEM;
-
-void GenericTestCases::setUp()
+namespace OW_NAMESPACE
 {
-}
 
-void GenericTestCases::tearDown()
+struct IndicationBurstExporter : IntrusiveCountableBase
 {
-}
+	virtual ~IndicationBurstExporter();
 
-void GenericTestCases::testSomething()
+	virtual void initialize(UInt32 maxNumIoThreads) = 0;
+	virtual void sendBurst(
+		CIMInstance const & handler, Array<CIMInstance> const & indications)
+		= 0;
+	// Implementation must be thread safe.
+	virtual void shutdown() = 0;
+};
+
+typedef IntrusiveReference<IndicationBurstExporter> IndicationBurstExporterRef;
+
+struct IndicationBurstExporterImpl : public IndicationBurstExporter
 {
-	unitAssert( something( ) );
-}
+	IndicationBurstExporterImpl();
+	virtual ~IndicationBurstExporterImpl();
 
-Test* GenericTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("Generic");
+	virtual void initialize(UInt32 maxNumIoThreads);
+	virtual void sendBurst(
+		CIMInstance const & handler, Array<CIMInstance> const & indications);
+	virtual void shutdown();
 
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
+private:
+	LoggerRef m_logger;
+	ThreadPoolRef m_pool;
+};
 
-	return testSuite;
-}
+} // end namespace OW_NAMESPACE
 
+#endif

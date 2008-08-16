@@ -1,3 +1,5 @@
+#ifndef DUMMY_PROV_ENV_HPP_INCLUDE_GUARD
+#define DUMMY_PROV_ENV_HPP_INCLUDE_GUARD
 /*******************************************************************************
 * Copyright (C) 2008 Quest Software, Inc. All rights reserved.
 *
@@ -29,32 +31,25 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "OW_Generic.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 
-using namespace OpenWBEM;
-
-void GenericTestCases::setUp()
+struct DummyProvEnv : public OpenWBEM::ProviderEnvironmentIFC
 {
-}
+	virtual ~DummyProvEnv();
+	virtual OpenWBEM::CIMOMHandleIFCRef getCIMOMHandle() const;
+	virtual OpenWBEM::CIMOMHandleIFCRef getRepositoryCIMOMHandle() const;
+	virtual OpenWBEM::RepositoryIFCRef getRepository() const;
+	virtual OpenWBEM::RepositoryIFCRef getAuthorizingRepository() const;
+	virtual OpenWBEM::String getConfigItem(
+		const OpenWBEM::String &name, const OpenWBEM::String& defRetVal="")
+		const;
+	virtual OpenWBEM::StringArray getMultiConfigItem(
+		const OpenWBEM::String &itemName,
+		const OpenWBEM::StringArray& defRetVal,
+		const char* tokenizeSeparator = 0) const;
+	virtual OpenWBEM::String getUserName() const;
+	virtual OpenWBEM::OperationContext& getOperationContext();
+	virtual OpenWBEM::ProviderEnvironmentIFCRef clone() const;
+};
 
-void GenericTestCases::tearDown()
-{
-}
-
-void GenericTestCases::testSomething()
-{
-	unitAssert( something( ) );
-}
-
-Test* GenericTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("Generic");
-
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
-
-	return testSuite;
-}
-
+#endif

@@ -178,6 +178,22 @@ protected:
 		}
 	}
 
+	template <typename T1, typename T2>
+	void assertBooleanOperator (const T1& t1,
+		const T2& t2,
+		const char* op,
+		bool val,
+		long lineNumber,
+		const char* fileName)
+	{
+		if (!val)
+		{
+			std::ostringstream oss;
+			oss << "expected:\"" << t1 << "\" " << op << " \"" << t2 << "\" but it was not.";
+			assertImplementation (false, oss.str().c_str(), lineNumber, fileName);
+		}
+	}
+
 	const char*         notEqualsMessage (long         expected,
 										  long         actual);
 
@@ -355,5 +371,20 @@ FlagTestCondition(); \
 FlagTestCondition(); \
 (this->assertNotEquals ((expected),\
 		(actual),__LINE__,__FILE__))
+
+#define unitAssertOperator(v1,v2,op) \
+(this->assertBooleanOperator ((v1),(v2), #op, ((v1) op (v2)),__LINE__,__FILE__))
+
+#define unitAssertLess(v1,v2)\
+unitAssertOperator(v1,v2,<)
+
+#define unitAssertGreater(v1,v2)\
+unitAssertOperator(v1,v2,>)
+
+#define unitAssertLessOrEqual(v1,v2)\
+unitAssertOperator(v1,v2,<=)
+
+#define unitAssertGreaterOrEqual(v1,v2)\
+unitAssertOperator(v1,v2,>=)
 
 #endif

@@ -28,33 +28,30 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+#ifndef OW_CppIndicationExportXMLHTTPProvider_TEST_CASES_HPP_
+#define OW_CppIndicationExportXMLHTTPProvider_TEST_CASES_HPP_
+
 #include "OW_config.h"
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "OW_Generic.hpp"
+#include "TestCase.hpp"
+#include "OW_CppIndicationExportXMLHTTPProvider.hpp"
+#include <blocxx/Array.hpp>
+#include "MockClock.hpp"
+#include "MockIndicationExporter.hpp"
 
-using namespace OpenWBEM;
-
-void GenericTestCases::setUp()
+class CppIndicationExportXMLHTTPProviderTestCases : public TestCase
 {
-}
+public:
+	CppIndicationExportXMLHTTPProviderTestCases( const char* name )
+		: TestCase( name ) {}
 
-void GenericTestCases::tearDown()
-{
-}
+	virtual ~CppIndicationExportXMLHTTPProviderTestCases();
 
-void GenericTestCases::testSomething()
-{
-	unitAssert( something( ) );
-}
+	void setUp();
+	void tearDown();
+	static Test *suite();
 
-Test* GenericTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("Generic");
+	void testList();
+};
 
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
-
-	return testSuite;
-}
+#endif
 

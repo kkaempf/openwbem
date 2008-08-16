@@ -1,4 +1,5 @@
 MAKEBUNDLE=1
+MAKEDYLIB=1
 include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs
 clean-local : clean-ow-shared-libs
@@ -28,8 +29,14 @@ thelibdir = $(pkglibdir)/c++providers
 libcppindicationexportxmlhttpprovider_a_SOURCES = \
 OW_CppIndicationExportXMLHTTPProvider.cpp \
 OW_CppIndicationExportXMLHTTPProvider.hpp \
+OW_IndicationBufferingThread.cpp \
+OW_IndicationBufferingThread.hpp \
+OW_IndicationBurstExporter.cpp \
+OW_IndicationBurstExporter.hpp \
+OW_IndicationExporter.cpp \
 OW_IndicationExporter.hpp \
-OW_IndicationExporter.cpp
+OW_SendIndicationBurstTask.cpp \
+OW_SendIndicationBurstTask.hpp
 
 
 INCLUDES = \

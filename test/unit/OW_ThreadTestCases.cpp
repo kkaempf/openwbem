@@ -370,9 +370,8 @@ void OW_ThreadTestCases::testSleep()
 	DateTime a = DateTime::getCurrent();
 	Thread::sleep(Timeout::relative(0.01));
 	DateTime b = DateTime::getCurrent();
-	DateTime diff = b - a;
-	unitAssert(diff.get() == 0);
-	unitAssert(diff.getMicrosecond() >= 1000);
+	Time::TimeDuration diff = b - a;
+	unitAssert(diff.microseconds() >= 1000);
 }
 
 Test* OW_ThreadTestCases::suite()

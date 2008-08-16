@@ -1,3 +1,5 @@
+#ifndef OW_SEND_INDICATION_BURST_TASK_HPP
+#define OW_SEND_INDICATION_BURST_TASK_HPP
 /*******************************************************************************
 * Copyright (C) 2008 Quest Software, Inc. All rights reserved.
 *
@@ -28,33 +30,33 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Kevin S. Van Horn
+ */
+
 #include "OW_config.h"
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "OW_Generic.hpp"
+#include "OW_Runnable.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_IndicationExporter.hpp"
 
-using namespace OpenWBEM;
-
-void GenericTestCases::setUp()
+namespace OW_NAMESPACE
 {
-}
 
-void GenericTestCases::tearDown()
+struct SendIndicationBurstTask : public Runnable
 {
-}
+	SendIndicationBurstTask(
+		IndicationExporterRef const & indicationExporter,
+		CIMInstanceArray const & indications);
+ 
+	virtual ~SendIndicationBurstTask();
 
-void GenericTestCases::testSomething()
-{
-	unitAssert( something( ) );
-}
+	virtual void run();
 
-Test* GenericTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("Generic");
+private:
+	IndicationExporterRef m_indicationExporter;
+	CIMInstanceArray m_indications;
+};
 
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
+} // end namespace OW_NAMESPACE
 
-	return testSuite;
-}
-
+#endif

@@ -28,33 +28,32 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include "OW_config.h"
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "OW_Generic.hpp"
+/**
+ * @author Kevin S. Van Horn
+ */
+
+#include "OW_SendIndicationBurstTask.hpp"
 
 using namespace OpenWBEM;
 
-void GenericTestCases::setUp()
+SendIndicationBurstTask::SendIndicationBurstTask(
+	IndicationExporterRef const & indicationExporter,
+	CIMInstanceArray const & indications)
+: m_indicationExporter(indicationExporter),
+  m_indications(indications)
+{
+}
+ 
+SendIndicationBurstTask::~SendIndicationBurstTask()
 {
 }
 
-void GenericTestCases::tearDown()
+void SendIndicationBurstTask::run()
 {
+	m_indicationExporter->beginExport();
+	for (std::size_t i = 0; i < m_indications.size(); ++i)
+	{
+		m_indicationExporter->sendIndication(m_indications[i]);
+	}
+	m_indicationExporter->endExport();
 }
-
-void GenericTestCases::testSomething()
-{
-	unitAssert( something( ) );
-}
-
-Test* GenericTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("Generic");
-
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
-
-	return testSuite;
-}
-

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2008 QuestSoftware, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,7 +11,7 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
@@ -30,120 +30,84 @@
 
 /**
  * @author Dan Nuffer
+ * @author Kevin S. Van Horn
  */
 
 #include "OW_config.h"
 #include "OW_CppIndicationExportXMLHTTPProvider.hpp"
-#include "OW_HTTPClient.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_IndicationExporter.hpp"
 #include "OW_Format.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_CIMProperty.hpp"
-#include "OW_CIMValue.hpp"
-#include "OW_MutexLock.hpp"
 #include "OW_Logger.hpp"
+#include "OW_ConfigException.hpp"
+#include "OW_ClockImpl.hpp"
+#include "OW_Thread.hpp"
+#include "OW_Timeout.hpp"
+#include "OW_ConfigOpts.hpp"
+#include <cmath>
+#include <algorithm>
 
 namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace ConfigOpts;
 		
 namespace
 {
 	const String COMPONENT_NAME("ow.provider.CppIndicationExportXMLHTTP");
+}
 
-	class HTTPClientListJanitor
+#define Prov CppIndicationExportXMLHTTPProvider
+
+///////////////////////////////////////////////////////////////////////////////
+Prov::Prov()
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////
+Prov::~Prov()
+{
+	try
 	{
-	public:
-		HTTPClientListJanitor(std::list<HTTPClientRef>::iterator httpClient, std::list<HTTPClientRef>& list, Mutex& guard)
-			: m_httpClient(httpClient)
-			, m_list(list)
-			, m_guard(guard)
-		{
-		}
-
-		~HTTPClientListJanitor()
-		{
-			MutexLock lock(m_guard);
-			m_list.erase(m_httpClient);
-		}
-	private:
-		std::list<HTTPClientRef>::iterator m_httpClient;
-		std::list<HTTPClientRef>& m_list;
-		Mutex& m_guard;
-	};
-}
-
-///////////////////////////////////////////////////////////////////////////////
-CppIndicationExportXMLHTTPProvider::CppIndicationExportXMLHTTPProvider()
-	: m_cancelled(false)
-{
-}
-
-///////////////////////////////////////////////////////////////////////////////
-CppIndicationExportXMLHTTPProvider::~CppIndicationExportXMLHTTPProvider()
-{
+		doShutdown();
+		m_bufferingThread.join();
+	}
+	catch (...)
+	{
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Export the given indication
 void
-CppIndicationExportXMLHTTPProvider::exportIndication(
+Prov::exportIndication(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
 	const CIMInstance &indHandlerInst,
 	const CIMInstance &indicationInst_)
 {
 	// get rid of any qualifiers.
-	CIMInstance indicationInst(indicationInst_.clone(E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN));
+	CIMInstance indicationInst(
+		indicationInst_.clone(
+			E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN));
 
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, Format("CppIndicationExportXMLHTTPProvider exporting indication.  Handler = %1, Indication = %2",
-		indHandlerInst.toString(), indicationInst.toString()));
+	OW_LOG_DEBUG(logger,
+		Format(
+			"CppIndicationExportXMLHTTPProvider queueing up indication export."
+			"  Handler = %1, Indication = %2",
+			indHandlerInst.toString(), indicationInst.toString()));
 
-	String listenerUrl;
-	indHandlerInst.getProperty("Destination").getValue().get(listenerUrl);
-
-	// this guy parses it out.
-	URL url(listenerUrl);
-
-	if (indHandlerInst.getClassName().equalsIgnoreCase("CIM_IndicationHandlerXMLHTTPS"))
-	{
-		if (!url.scheme.equals(URL::CIMXML_WBEMS))
-		{
-			url.scheme = URL::CIMXML_WBEMS;
-			listenerUrl = url.toString();
-		}
-	}
-
-	HTTPClientRef httpClient = new HTTPClient(listenerUrl);
-	IndicationExporter exporter = IndicationExporter(httpClient);
-
-	// the OW 2.0 HTTPXMLCIMListener uses the HTTP path to differentiate different
-	// subscriptions.  This is stored in namespace name of the URL.
-	if (!url.namespaceName.empty())
-	{
-		httpClient->setHTTPPath('/' + url.namespaceName);
-	}
-
-	// now add httpClient to the list in case we get cancelled, also check for cancellation while we're at it.
-	MutexLock lock(m_guard);
-	if (m_cancelled)
-	{
-		return;
-	}
-	m_httpClients.push_back(httpClient);
-	HTTPClientListJanitor janitor(--m_httpClients.end(), m_httpClients, m_guard);
-	lock.release();
-
-	exporter.exportIndication(ns, indicationInst);
+	m_queue.pushBack(ExportIndicationArgs(indHandlerInst, indicationInst));
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 // @return The class names of all the CIM_IndicationHandler sub-classes
 // this IndicationExportProvider handles.
 StringArray
-CppIndicationExportXMLHTTPProvider::getHandlerClassNames()
+Prov::getHandlerClassNames()
 {
 	StringArray rv;
 	rv.append("CIM_IndicationHandlerXMLHTTP"); // name in the 2.5 schema
@@ -156,20 +120,122 @@ CppIndicationExportXMLHTTPProvider::getHandlerClassNames()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void
-CppIndicationExportXMLHTTPProvider::doShutdown()
+void Prov::initialize(
+	ProviderEnvironmentIFCRef const & env)
 {
-	MutexLock lock(m_guard);
-	m_cancelled = true;
-	for (std::list<HTTPClientRef>::iterator iter = m_httpClients.begin(); iter != m_httpClients.end(); ++iter)
+	Config cfg = configValues(env);
+	m_queue.setMaxQueueSize(cfg.maxQueueSize);
+	m_bufferingThread.initialize(cfg, m_queue);
+	m_bufferingThread.start();
+}
+
+
+
+namespace
+{
+	char const * const buffering_wait =
+		INDICATION_EXPORT_XML_HTTP_BUFFERING_WAIT_SECONDS_opt;
+	char const * const max_buffering_delay =
+		INDICATION_EXPORT_XML_HTTP_MAX_BUFFERING_DELAY_SECONDS_opt;
+	char const * const max_buffer_size =
+		INDICATION_EXPORT_XML_HTTP_MAX_BUFFER_SIZE_opt;
+	char const * const max_buffered_destinations =
+		INDICATION_EXPORT_XML_HTTP_MAX_BUFFERED_DESTINATIONS_opt;
+	char const * const max_num_io_threads =
+		INDICATION_EXPORT_XML_HTTP_MAX_NUM_IO_THREADS_opt;
+	char const * const error_prefix =
+		"Error configuring CppIndicationExportXMLHTTPProvider";
+
+	void checkConfig(Prov::Config const & config)
 	{
-		(*iter)->close();
+		if (config.bufferingWaitSeconds > config.maxBufferingDelaySeconds)
+		{
+			Format fmt("%1: %2 must not be greater than %3",
+				error_prefix, buffering_wait, max_buffering_delay);
+			BLOCXX_THROW(ConfigException, fmt.c_str());
+		}
+		if (config.maxBufferSize == 0)
+		{
+			Format fmt("%1: %2 must be greater than zero",
+				error_prefix, max_buffer_size);
+			BLOCXX_THROW(ConfigException, fmt.c_str());
+		}
+		if (config.maxNumIoThreads == 0)
+		{
+			Format fmt("%1: %2 must be greater than zero",
+				error_prefix, max_num_io_threads);
+			BLOCXX_THROW(ConfigException, fmt.c_str());
+		}
 	}
+}
+
+Prov::Config Prov::configValues(ProviderEnvironmentIFCRef const & env)
+{
+	String item;
+	try
+	{
+		Config config;
+
+		item = buffering_wait;
+		config.bufferingWaitSeconds =
+			env->getConfigItem(item, "0.125").toReal32();
+
+		item = max_buffering_delay;
+		config.maxBufferingDelaySeconds =
+			env->getConfigItem(item, "0.5").toReal32();
+
+		item = max_buffer_size;
+		config.maxBufferSize = env->getConfigItem(item, "1000").toUInt32();
+
+		item = max_buffered_destinations;
+		config.maxBufferedDestinations = 
+			env->getConfigItem(item, "10").toUInt32();
+
+		item = max_num_io_threads;
+		config.maxNumIoThreads = env->getConfigItem(item, "10").toUInt32();
+
+		config.maxQueueSize = config.maxNumIoThreads;
+
+		checkConfig(config);
+
+		return config;
+	}
+	catch (StringConversionException & e)
+	{
+		String errmsg = String(error_prefix) + ": bad value for " + item;
+		BLOCXX_THROW_SUBEX(ConfigException, errmsg.c_str(), e);
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+Prov::doShutdown()
+{
+	try
+	{
+		m_queue.shutdown();
+	}
+	catch (...)
+	{
+	}
+	try
+	{
+		m_bufferingThread.shutdownThreadPool();
+	}
+	catch (...)
+	{
+	}
+}
+
+void
+Prov::shuttingDown(ProviderEnvironmentIFCRef const &)
+{
+	doShutdown();
 }
 
 
 } // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
-OW_PROVIDERFACTORY(OpenWBEM::CppIndicationExportXMLHTTPProvider, cppindicationexportxmlhttpprovider);
+OW_PROVIDERFACTORY(OpenWBEM::Prov, cppindicationexportxmlhttpprovider);
 

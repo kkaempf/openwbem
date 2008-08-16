@@ -60,9 +60,9 @@ void ConditionTestCases::testTimedWait()
 	DateTime a = DateTime::getCurrent();
 	unitAssert(!cond.timedWait(lock, Timeout::relative(0.01)));
 	DateTime b = DateTime::getCurrent();
-	DateTime diff = b - a;
-	unitAssert(diff.get() == 0);
-	unitAssert(diff.getMicrosecond() >= 1000);
+	Time::TimeDuration diff = b - a;
+	unitAssert(diff.completeSeconds() == 0);
+	unitAssert(diff.microsecondInSecond() >= 1000);
 }
 
 namespace

@@ -354,8 +354,8 @@ void OW_ThreadPoolTestCases::testThreadPoolFull()
 	DateTime before(DateTime::getCurrent());
 	unitAssert(!thePool.tryAddWork(RunnableRef(new testRunner2(barrier)), Timeout::relative(0.1)));
 	DateTime after(DateTime::getCurrent());
-	DateTime diff = after - before;
-	unitAssert(diff.getMicrosecond() >= 100000);
+	Time::TimeDuration diff = after - before;
+	unitAssert(diff.microseconds() >= 100000);
 }
 
 Test* OW_ThreadPoolTestCases::suite()

@@ -1,3 +1,5 @@
+#ifndef OW_MTQUEUE_HPP_INCLUDE_GUARD
+#define OW_MTQUEUE_HPP_INCLUDE_GUARD
 /*******************************************************************************
 * Copyright (C) 2008 Quest Software, Inc. All rights reserved.
 *
@@ -27,34 +29,7 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "OW_Generic.hpp"
+#include <blocxx/MTQueue.hpp>
 
-using namespace OpenWBEM;
-
-void GenericTestCases::setUp()
-{
-}
-
-void GenericTestCases::tearDown()
-{
-}
-
-void GenericTestCases::testSomething()
-{
-	unitAssert( something( ) );
-}
-
-Test* GenericTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("Generic");
-
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
-
-	return testSuite;
-}
-
+#endif

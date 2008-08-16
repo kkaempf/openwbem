@@ -49,6 +49,14 @@ runMultiProcessLogger.cpp
 check_PROGRAMS = unitMain
 # Note: Do not change the following line, unless you also update the newtest.sh script
 unitMain_SOURCES = \
+IndicationBufferingThreadTestCases.cpp \
+IndicationBufferingThreadTestCases.hpp \
+SendIndicationBurstTaskTestCases.cpp \
+SendIndicationBurstTaskTestCases.hpp \
+CppIndicationExportXMLHTTPProviderTestCases.cpp \
+CppIndicationExportXMLHTTPProviderTestCases.hpp \
+ConfigureCppIndicationExportXMLHTTPProviderTestCases.cpp \
+ConfigureCppIndicationExportXMLHTTPProviderTestCases.hpp \
 EnvironmentVariablePatternsTestCases.cpp \
 EnvironmentVariablePatternsTestCases.hpp \
 XMLParserCoreTestCases.cpp \
@@ -89,6 +97,16 @@ CmdLineParserTestCases.cpp \
 CmdLineParserTestCases.hpp \
 COWIntrusiveReferenceTestCases.cpp \
 COWIntrusiveReferenceTestCases.hpp \
+CIMInstanceUtils.cpp \
+CIMInstanceUtils.hpp \
+DummyProvEnv.cpp \
+DummyProvEnv.hpp \
+MockClock.cpp \
+MockClock.hpp \
+MockIndicationExporter.cpp \
+MockIndicationExporter.hpp \
+MockObject.cpp \
+MockObject.hpp \
 MOFCompilerTestCases.cpp \
 MOFCompilerTestCases.hpp \
 OperationContextTestCases.cpp \
@@ -200,7 +218,8 @@ INCLUDES = \
 -I$(top_srcdir)/src/client \
 -I$(top_srcdir)/src/mof \
 -I$(top_srcdir)/src/repositories/tdbcr \
--I$(top_srcdir)/src/monitor
+-I$(top_srcdir)/src/monitor \
+-I$(top_srcdir)/src/providers/cpp/indicationexport
 
 if ENABLE_DB4_REPOSITORY
 REPLIBFLAGS=-L$(top_builddir)/src/repositories/tdbcr -lowrepositorytdbcr
@@ -225,7 +244,9 @@ unitMain_LDADD = \
 $(REPLIBFLAGS) \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/monitor -lowprivman \
--L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/providers/cpp/indicationexport -lcppindicationexportxmlhttpprovider \
+$(BLOCXX_LIBS) \
 $(SSL_LIBS) $(Z_LIBS) \
 $(REALTIME_LIBS) \
 $(BINLINKAPPENDFLAGS)

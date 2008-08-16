@@ -40,6 +40,10 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "IndicationBufferingThreadTestCases.hpp"
+#include "SendIndicationBurstTaskTestCases.hpp"
+#include "CppIndicationExportXMLHTTPProviderTestCases.hpp"
+#include "ConfigureCppIndicationExportXMLHTTPProviderTestCases.hpp"
 #include "PrivilegeManagerMockObjectTestCases.hpp"
 #include "EnvironmentVariablePatternsTestCases.hpp"
 #include "XMLParserCoreTestCases.hpp"
@@ -117,6 +121,10 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "IndicationBufferingThread", IndicationBufferingThreadTestCases::suite());
+	runner.addTest( "SendIndicationBurstTask", SendIndicationBurstTaskTestCases::suite());
+	runner.addTest( "CppIndicationExportXMLHTTPProvider", CppIndicationExportXMLHTTPProviderTestCases::suite());
+	runner.addTest( "ConfigureCppIndicationExportXMLHTTPProvider", ConfigureCppIndicationExportXMLHTTPProviderTestCases::suite());
 	runner.addTest( "PrivilegeManagerMockObject", PrivilegeManagerMockObjectTestCases::suite());
 	runner.addTest( "EnvironmentVariablePatterns", EnvironmentVariablePatternsTestCases::suite());
 	runner.addTest( "XMLParserCore", XMLParserCoreTestCases::suite());

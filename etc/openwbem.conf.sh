@@ -681,6 +681,41 @@ owcimomd.pidfile = @PIDFILE_DIR@/@PACKAGE_PREFIX@owcimomd.pid
 # The default is 300
 owcimomd.read_write_lock_timeout = 300
 
+
+###############################################################################
+#
+# These options control how the CppIndicationExportXMLHTTP provider buffers
+# indications before sending them to their destinations.  This buffering
+# occurs so that if a large burst of indications arrives for the same
+# destination, the provider can send them all at once.
+#
+# How long to wait for additional indications for the same destination
+# before sending off all buffered indications for that destination.
+# Default value is 0.125.
+indication_export_xml_http.buffering_wait_seconds = 0.125
+#
+# Maximum time to continue buffering indications for a destination before
+# sending off all the buffered indications, measured from the time that
+# the first indication in the burst arrives.  This number must not be
+# smaller than buffering_wait_seconds.  Default value is 0.5.
+indication_export_xml_http.max_buffering_delay_seconds = 0.5
+#
+# Maximum number of indications to buffer for a destination.  Once this many
+# indications are buffered for a destination, the provider sends them all.
+# Must be > 0.  Default value is 1000.
+indication_export_xml_http.max_buffer_size = 1000
+#
+# The provider will buffer indications for at most this many distinct
+# destinations at any one time.  Once this limit is reached, any indications
+# are immediately sent on without buffering.  Note that you can turn
+# off buffering entirely by setting this to 0.  Default value is 10.
+indication_export_xml_http.max_buffered_destinations = 10
+#
+# Max number of concurrent I/O threads for sending indications to their
+# destinations.  Must be > 0.  Default value is 10.
+indication_export_xml_http.max_num_io_threads = 10
+
+
 ################################################################################
 # The following options are deprecated
 ################################################################################
@@ -716,5 +751,4 @@ pam.allowed_users = *
 #   "error"    - All error and fatalerror messages are logged. This is the default.
 #   "fatalerror" - Only fatalerror messages are logged.
 ;owcimomd.log_level = error
-
 
