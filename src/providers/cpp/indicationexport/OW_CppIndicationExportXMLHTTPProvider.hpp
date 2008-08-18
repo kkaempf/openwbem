@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_CppIndicationExportProviderIFC.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_MTQueue.hpp"
+#include "blocxx/MTQueue.hpp"
 #include "OW_IndicationBufferingThread.hpp"
 
 namespace OW_NAMESPACE
@@ -92,7 +92,7 @@ private:
 	typedef IndicationBufferingThread::ExportIndicationArgs
 		ExportIndicationArgs;
 
-	MTQueue<ExportIndicationArgs> m_queue;
+	blocxx::MTQueue<ExportIndicationArgs> m_queue;
 	IndicationBufferingThread m_bufferingThread;
 };
 

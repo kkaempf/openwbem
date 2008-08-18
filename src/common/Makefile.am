@@ -75,8 +75,6 @@ OW_CerrLogger.hpp \
 OW_Char16.hpp \
 OW_CIMErrorException.hpp \
 OW_CIMFeatures.hpp \
-OW_Clock.hpp \
-OW_ClockImpl.hpp \
 OW_CmdLineParser.hpp \
 OW_CommonFwd.hpp \
 OW_Condition.hpp \
@@ -135,7 +133,6 @@ OW_Map.hpp \
 OW_MD5.hpp \
 OW_MemoryBarrier.hpp \
 OW_MemTracer.hpp \
-OW_MTQueue.hpp \
 OW_MultiAppender.hpp \
 OW_MultiProcessFileAppender.hpp \
 OW_Mutex.hpp \

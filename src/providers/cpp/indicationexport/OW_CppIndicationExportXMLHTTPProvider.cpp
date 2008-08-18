@@ -41,7 +41,6 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_Logger.hpp"
 #include "OW_ConfigException.hpp"
-#include "OW_ClockImpl.hpp"
 #include "OW_Thread.hpp"
 #include "OW_Timeout.hpp"
 #include "OW_ConfigOpts.hpp"

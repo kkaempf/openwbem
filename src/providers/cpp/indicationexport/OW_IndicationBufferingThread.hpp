@@ -37,8 +37,8 @@
 #include "OW_config.h"
 #include "OW_Thread.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_MTQueue.hpp"
-#include "OW_Clock.hpp"
+#include "blocxx/Clock.hpp"
+#include "blocxx/MTQueue.hpp"
 #include "OW_IndicationBurstExporter.hpp"
 
 namespace OW_NAMESPACE
@@ -93,11 +93,11 @@ public:
 	// For unit testing.
 	IndicationBufferingThread(
 		IndicationBurstExporterRef const & burstExporter,
-		ClockRef const & clock);
+		blocxx::ClockRef const & clock);
 
 	void initialize(
 		Config const & config,
-		MTSourceIfc<ExportIndicationArgs> & requestSource);
+		blocxx::MTSourceIfc<ExportIndicationArgs> & requestSource);
 
 	void shutdownThreadPool();
 
@@ -106,7 +106,7 @@ public:
 private:
 	void ctor(
 		IndicationBurstExporterRef const & burstExporter,
-		ClockRef const & clock);
+		blocxx::ClockRef const & clock);
 
 	void sendBurst(
 		CIMInstance const & handler, CIMInstanceArray const & indications);
@@ -117,8 +117,8 @@ private:
 		ExportIndicationArgs const &, BufferingMap &, DateTime now);
 
 	IndicationBurstExporterRef m_burstExporter;
-	ClockRef m_clock;
-	MTSourceIfc<ExportIndicationArgs> * m_requestSource; // reference
+	blocxx::ClockRef m_clock;
+	blocxx::MTSourceIfc<ExportIndicationArgs> * m_requestSource; // reference
 	Real32 m_bufferingWaitSeconds;
 	Real32 m_maxBufferingDelaySeconds;
 	UInt32 m_maxBufferSize;

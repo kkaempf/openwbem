@@ -34,11 +34,11 @@
 // @author Kevin S. Van Horn
 
 #include "OW_config.h"
-#include "OW_Clock.hpp"
-#include "OW_DateTime.hpp"
+#include "blocxx/Clock.hpp"
+#include "blocxx/DateTime.hpp"
 #include "OW_IntrusiveReference.hpp"
 
-struct MockClock : public OpenWBEM::Clock
+struct MockClock : public blocxx::Clock
 {
 	MockClock();
 

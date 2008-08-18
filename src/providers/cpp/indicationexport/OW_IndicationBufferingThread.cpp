@@ -33,7 +33,7 @@
  */
 
 #include "OW_IndicationBufferingThread.hpp"
-#include "OW_ClockImpl.hpp"
+#include "blocxx/ClockImpl.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_Logger.hpp"
@@ -68,19 +68,19 @@ IndicationBufferingThread::IndicationBufferingThread()
 {
 	this->ctor(
 		IndicationBurstExporterRef(new IndicationBurstExporterImpl()),
-		ClockRef(new ClockImpl()));
+		blocxx::ClockRef(new blocxx::ClockImpl()));
 }
 
 IndicationBufferingThread::IndicationBufferingThread(
 	IndicationBurstExporterRef const & burstExporter,
-	ClockRef const & clock)
+	blocxx::ClockRef const & clock)
 {
 	this->ctor(burstExporter, clock);
 }
 
 void IndicationBufferingThread::ctor(
 	IndicationBurstExporterRef const & burstExporter,
-	ClockRef const & clock)
+	blocxx::ClockRef const & clock)
 {
 	m_burstExporter = burstExporter;
 	m_clock = clock;
