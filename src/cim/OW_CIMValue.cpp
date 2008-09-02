@@ -93,7 +93,7 @@ public:
 	explicit CIMValueImpl(const CIMObjectPathArray& arg);
 	explicit CIMValueImpl(const CIMClassArray& arg);
 	explicit CIMValueImpl(const CIMInstanceArray& arg);
-	~CIMValueImpl();
+	virtual ~CIMValueImpl();
 	CIMValueImpl* clone() { return new CIMValueImpl(*this); }
 	void get(Bool& val) const;
 	void get(Char16& arg) const;

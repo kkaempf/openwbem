@@ -127,7 +127,7 @@ owspnegovas3helperbindir = $(libexecdir)/openwbem
 owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_SOURCES = \
 owspnegovashelper_main.cpp
 
-owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_PROJECT_LIBS =
+owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_PROJECT_LIBS = \
 $(vas2_early_flags) \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon
@@ -138,7 +138,7 @@ $(BLOCXX_LIBS) \
 -L$(VAS2_LIB_DIR) -lvas \
 $(Z_LIBS) $(SSL_LIBS)
 
-owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_CPPFLAGS = -I$(VAS2_INCLUDE_DIR) -DOW_USE_VAS2_API
+owspnegovas3helper@OPENWBEM_LIBRARY_VERSION@_CPPFLAGS = -I$(VAS2_INCLUDE_DIR) -DOW_USE_VAS2_API $(NO_STRICT_ALIASING_FLAG)
 endif
 
 # This version info is confusing. VAS 3 has libvas.so.4

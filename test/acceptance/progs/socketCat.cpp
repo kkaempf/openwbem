@@ -74,7 +74,7 @@ public:
 
 	Int32 run()
 	{
-		int rc;
+		int rc = 0;
 		vector<char> buff;
 		do
 		{

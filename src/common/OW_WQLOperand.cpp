@@ -37,6 +37,11 @@ namespace OW_NAMESPACE
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(TypeMismatch);
+
+WQLOperand::~WQLOperand()
+{
+}
+
 String WQLOperand::toString() const
 {
 	StringBuffer result;

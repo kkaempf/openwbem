@@ -206,6 +206,7 @@ public:
 			: m_type(OPERAND)
 			, m_operand(o)
 		{}
+		virtual ~OperandOrOperation();
 		Type m_type;
 		WQLOperation m_operation;
 		WQLOperand m_operand;

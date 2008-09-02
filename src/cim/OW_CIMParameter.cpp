@@ -50,11 +50,16 @@ using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMParameter::PARMData : public COWIntrusiveCountableBase
 {
+	virtual ~PARMData();
 	CIMName m_name;
 	CIMDataType m_dataType;
 	CIMQualifierArray m_qualifiers;
 	PARMData* clone() const { return new PARMData(*this); }
 };
+//////////////////////////////////////////////////////////////////////////////
+CIMParameter::PARMData::~PARMData()
+{
+}
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMParameter::PARMData& x, const CIMParameter::PARMData& y)
 {

@@ -269,7 +269,7 @@ try
 		OM_uint32 flags = GSS_C_MUTUAL_FLAG | GSS_C_REPLAY_FLAG | GSS_C_INTEG_FLAG;
 		gss_buffer_desc in_token = { input.length(), const_cast<void*>(static_cast<const void*>(input.c_str())) };
 		gss_buffer_desc out_token = { 0, 0 };
-		OM_uint32 rv;
+		OM_uint32 rv = 0;
 #ifdef OW_USE_VAS3_API
 		if (mode == E_SERVER)
 		{

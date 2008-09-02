@@ -63,6 +63,7 @@ struct CIMDateTime::DateTimeData : public COWIntrusiveCountableBase
 		m_year(0), m_month(0), m_days(0), m_hours(0),
 		m_minutes(0), m_seconds(0), m_microSeconds(0), m_utc(0),
 		m_isInterval(1) {}
+	virtual ~DateTimeData();
 
 	UInt16 m_year;
 	UInt8 m_month;
@@ -75,8 +76,13 @@ struct CIMDateTime::DateTimeData : public COWIntrusiveCountableBase
 	UInt8 m_isInterval;
 	DateTimeData* clone() const { return new DateTimeData(*this); }
 };
+//////////////////////////////////////////////////////////////////////////////
+CIMDateTime::DateTimeData::~DateTimeData()
+{
+}
 
 
+//////////////////////////////////////////////////////////////////////////////
 static void fillDateTimeData(CIMDateTime::DateTimeData& data, const char* str);
 //////////////////////////////////////////////////////////////////////////////
 CIMDateTime::CIMDateTime()

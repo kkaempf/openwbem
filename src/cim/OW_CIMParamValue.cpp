@@ -49,10 +49,15 @@ struct CIMParamValue::Data : public COWIntrusiveCountableBase
 	Data()
 		: m_val(CIMNULL)
 	{}
+	virtual ~Data();
 	CIMName m_name;
 	CIMValue m_val;
 	Data* clone() const { return new Data(*this); }
 };
+//////////////////////////////////////////////////////////////////////////////
+CIMParamValue::Data::~Data()
+{
+}
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMParamValue::Data& x, const CIMParamValue::Data& y)
 {

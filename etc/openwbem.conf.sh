@@ -683,7 +683,6 @@ owcimomd.pidfile = @PIDFILE_DIR@/@PACKAGE_PREFIX@owcimomd.pid
 # The default is 300
 owcimomd.read_write_lock_timeout = 300
 
-
 ###############################################################################
 #
 # These options control how the CppIndicationExportXMLHTTP provider buffers

@@ -385,6 +385,10 @@ WQLSelectStatement::writeObject(std::streambuf & ostrm) const
 	BinarySerialization::writeArray(ostrm, _operStack);
 }
 
+WQLSelectStatement::OperandOrOperation::~OperandOrOperation()
+{
+}
+
 void
 WQLSelectStatement::OperandOrOperation::readObject(std::streambuf & istrm)
 {

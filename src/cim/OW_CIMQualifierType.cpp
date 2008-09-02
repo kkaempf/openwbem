@@ -57,6 +57,7 @@ struct CIMQualifierType::QUALTData : public COWIntrusiveCountableBase
 	QUALTData()
 		: m_defaultValue(CIMNULL)
 	{}
+	virtual ~QUALTData();
 	CIMName m_name;
 	CIMDataType m_dataType;
 	CIMScopeArray m_scope;
@@ -64,6 +65,10 @@ struct CIMQualifierType::QUALTData : public COWIntrusiveCountableBase
 	CIMValue m_defaultValue;
 	QUALTData* clone() const { return new QUALTData(*this); }
 };
+//////////////////////////////////////////////////////////////////////////////
+CIMQualifierType::QUALTData::~QUALTData()
+{
+}
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMQualifierType::QUALTData& x, const CIMQualifierType::QUALTData& y)
 {

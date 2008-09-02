@@ -62,6 +62,7 @@ struct CIMClass::CLSData : public COWIntrusiveCountableBase
 {
 	CLSData() :
 		m_associationFlag(false), m_isKeyed(false){  }
+	virtual ~CLSData();
 	CIMName m_name;
 	CIMName m_parentClassName;
 	CIMQualifierArray m_qualifiers;
@@ -71,6 +72,12 @@ struct CIMClass::CLSData : public COWIntrusiveCountableBase
 	Bool m_isKeyed;
 	CLSData* clone() const { return new CLSData(*this); }
 };
+
+//////////////////////////////////////////////////////////////////////////////
+CIMClass::CLSData::~CLSData()
+{
+}
+
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMClass::CLSData& x, const CIMClass::CLSData& y)
 {

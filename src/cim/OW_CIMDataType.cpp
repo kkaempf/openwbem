@@ -51,12 +51,17 @@ struct CIMDataType::DTData : public COWIntrusiveCountableBase
 	DTData() :
 		m_type(CIMDataType::CIMNULL), m_numberOfElements(0), m_sizeRange(0)
 	{}
+	virtual ~DTData();
 	CIMDataType::Type m_type;
 	Int32 m_numberOfElements;
 	Int32 m_sizeRange;
 	CIMName m_reference;
 	DTData* clone() const { return new DTData(*this); }
 };
+//////////////////////////////////////////////////////////////////////////////
+CIMDataType::DTData::~DTData()
+{
+}
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMDataType::DTData& x, const CIMDataType::DTData& y)
 {

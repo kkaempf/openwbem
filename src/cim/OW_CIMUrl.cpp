@@ -51,6 +51,7 @@ struct CIMUrl::URLData : public COWIntrusiveCountableBase
 	URLData() :
 		m_port(0),
 		m_localHost(true) {}
+	virtual ~URLData();
 	String m_spec;
 	String m_protocol;
 	String m_host;
@@ -60,6 +61,10 @@ struct CIMUrl::URLData : public COWIntrusiveCountableBase
 	Bool m_localHost;
 	URLData* clone() { return new URLData(*this); }
 };
+//////////////////////////////////////////////////////////////////////////////
+CIMUrl::URLData::~URLData()
+{
+}
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMUrl::URLData& x, const CIMUrl::URLData& y)
 {

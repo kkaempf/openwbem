@@ -62,11 +62,17 @@ using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMObjectPath::OPData : public COWIntrusiveCountableBase
 {
+	virtual ~OPData();
 	CIMNameSpace m_nameSpace;
 	CIMName m_objectName;
 	CIMPropertyArray m_keys;
 	OPData* clone() const { return new OPData(*this); }
 };
+//////////////////////////////////////////////////////////////////////////////
+CIMObjectPath::OPData::~OPData()
+{
+}
+//////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMObjectPath::OPData& x, const CIMObjectPath::OPData& y)
 {
 	return StrictWeakOrdering(

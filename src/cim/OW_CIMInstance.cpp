@@ -56,6 +56,7 @@ using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMInstance::INSTData : public COWIntrusiveCountableBase
 {
+	virtual ~INSTData();
 	String m_namespace;
 	CIMName m_owningClassName;
 	CIMPropertyArray m_keys;
@@ -64,6 +65,11 @@ struct CIMInstance::INSTData : public COWIntrusiveCountableBase
 	String m_language;
 	INSTData* clone() const { return new INSTData(*this); }
 };
+//////////////////////////////////////////////////////////////////////////////
+CIMInstance::INSTData::~INSTData()
+{
+}
+//////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMInstance::INSTData& x, const CIMInstance::INSTData& y)
 {
 	return StrictWeakOrdering(

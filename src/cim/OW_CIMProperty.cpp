@@ -54,6 +54,7 @@ using namespace WBEMFlags;
 struct CIMProperty::PROPData : public COWIntrusiveCountableBase
 {
 	PROPData();
+	virtual ~PROPData();
 	CIMName m_name;
 	CIMQualifierArray m_qualifiers;
 	//
@@ -75,6 +76,9 @@ struct CIMProperty::PROPData : public COWIntrusiveCountableBase
 	Bool m_propagated;
 	PROPData* clone() const { return new PROPData(*this); }
 };
+CIMProperty::PROPData::~PROPData()
+{
+}
 CIMProperty::PROPData::PROPData() :
 	m_sizeDataType(-1), m_cimValue(CIMNULL), m_propagated(false)
 {

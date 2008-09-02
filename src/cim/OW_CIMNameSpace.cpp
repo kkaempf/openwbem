@@ -47,10 +47,17 @@ using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMNameSpace::NSData : public COWIntrusiveCountableBase
 {
+	virtual ~NSData();
 	String m_nameSpace;
 	CIMUrl m_url;
 	NSData* clone() const { return new NSData(*this); }
 };
+
+//////////////////////////////////////////////////////////////////////////////
+CIMNameSpace::NSData::~NSData()
+{
+}
+
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMNameSpace::NSData& x, const CIMNameSpace::NSData& y)
 {

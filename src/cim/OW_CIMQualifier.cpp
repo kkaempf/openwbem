@@ -56,6 +56,7 @@ struct CIMQualifier::QUALData : public COWIntrusiveCountableBase
 		: m_qualifierValue(CIMNULL)
 		, m_propagated(false) 
 	{}
+	virtual ~QUALData();
 	CIMName m_name;
 	CIMValue m_qualifierValue;
 	CIMQualifierType m_qualifierType;
@@ -64,6 +65,10 @@ struct CIMQualifier::QUALData : public COWIntrusiveCountableBase
 	String m_language;
 	QUALData* clone() const { return new QUALData(*this); }
 };
+//////////////////////////////////////////////////////////////////////////////
+CIMQualifier::QUALData::~QUALData()
+{
+}
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMQualifier::QUALData& x, const CIMQualifier::QUALData& y)
 {

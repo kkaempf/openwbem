@@ -57,6 +57,7 @@ struct CIMMethod::METHData : public COWIntrusiveCountableBase
 		: m_propagated(false)
 	{
 	}
+	virtual ~METHData();
 	CIMName m_name;
 	CIMDataType m_returnDatatype;
 	CIMQualifierArray m_qualifiers;
@@ -66,7 +67,12 @@ struct CIMMethod::METHData : public COWIntrusiveCountableBase
 	Bool m_propagated;
 	METHData* clone() const { return new METHData(*this); }
 };
-//////////////////////////////////////////////////////////////////////////////													
+//////////////////////////////////////////////////////////////////////////////
+CIMMethod::METHData::~METHData()
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMMethod::METHData& x, const CIMMethod::METHData& y)
 {
 	return StrictWeakOrdering(
