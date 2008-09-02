@@ -16,9 +16,9 @@ namespace OW_NAMESPACE
 namespace
 {
 
-const String AUTH_ACTIVE_KEY("_aUtHoRiZeR@aCtIvE@kEy_");
-const String DISABLED_KEY("__aUtH@mGr@DiSaBlEd__");
-const String COMPONENT_NAME("ow.authorizer.AuthorizerManager");
+const char* const AUTH_ACTIVE_KEY("_aUtHoRiZeR@aCtIvE@kEy_");
+const char* const DISABLED_KEY("__aUtH@mGr@DiSaBlEd__");
+const char* const COMPONENT_NAME("ow.authorizer.AuthorizerManager");
 
 class AuthorizerEnvironment : public ServiceEnvironmentIFC
 {

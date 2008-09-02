@@ -28,33 +28,17 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+#ifndef OW_IndicationBufferingThread_TEST_CASES_HPP_
+#define OW_IndicationBufferingThread_TEST_CASES_HPP_
+
 #include "OW_config.h"
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "OW_Generic.hpp"
+#include "TestCase.hpp"
 
-using namespace OpenWBEM;
-
-void GenericTestCases::setUp()
+class IndicationBufferingThreadTestCases
 {
-}
+public:
+	static Test *suite();
+};
 
-void GenericTestCases::tearDown()
-{
-}
-
-void GenericTestCases::testSomething()
-{
-	unitAssert( something( ) );
-}
-
-Test* GenericTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("Generic");
-
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
-
-	return testSuite;
-}
+#endif
 

@@ -13,7 +13,11 @@ uninstall-local : uninstall-ow-shared-libs
 
 thelibdir = $(libdir)
 
+if AIX
+OW_SHARED_LIBS =
+else
 OW_SHARED_LIBS = libowcprivman.$(LIB_EXT)
+endif
 
 noinst_LIBRARIES = libowcprivman.a
 

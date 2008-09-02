@@ -1,5 +1,7 @@
+#ifndef DUMMY_PROV_ENV_HPP_INCLUDE_GUARD
+#define DUMMY_PROV_ENV_HPP_INCLUDE_GUARD
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2008 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,7 +13,7 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
@@ -28,48 +30,26 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-/**
- * @author Dan Nuffer
- */
+#include "OW_config.h"
+#include "OW_ProviderEnvironmentIFC.hpp"
 
-
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "OW_SocketUtilsTestCases.hpp"
-#include "OW_SocketUtils.hpp"
-#include "OW_SocketException.hpp"
-#include "OW_String.hpp"
-
-using namespace OpenWBEM;
-
-void OW_SocketUtilsTestCases::setUp()
+struct DummyProvEnv : public OpenWBEM::ProviderEnvironmentIFC
 {
-}
+	virtual ~DummyProvEnv();
+	virtual OpenWBEM::CIMOMHandleIFCRef getCIMOMHandle() const;
+	virtual OpenWBEM::CIMOMHandleIFCRef getRepositoryCIMOMHandle() const;
+	virtual OpenWBEM::RepositoryIFCRef getRepository() const;
+	virtual OpenWBEM::RepositoryIFCRef getAuthorizingRepository() const;
+	virtual OpenWBEM::String getConfigItem(
+		const OpenWBEM::String &name, const OpenWBEM::String& defRetVal="")
+		const;
+	virtual OpenWBEM::StringArray getMultiConfigItem(
+		const OpenWBEM::String &itemName,
+		const OpenWBEM::StringArray& defRetVal,
+		const char* tokenizeSeparator = 0) const;
+	virtual OpenWBEM::String getUserName() const;
+	virtual OpenWBEM::OperationContext& getOperationContext();
+	virtual OpenWBEM::ProviderEnvironmentIFCRef clone() const;
+};
 
-void OW_SocketUtilsTestCases::tearDown()
-{
-}
-
-void OW_SocketUtilsTestCases::testGetFullyQualifiedHostName()
-{
-	// If this doesn't throw, then make sure it worked.
-	try
-	{
-		String hn = SocketUtils::getFullyQualifiedHostName();
-		unitAssert(!hn.empty());
-		unitAssert(hn.indexOf('.') != String::npos);
-	}
-	catch (const SocketException& e)
-	{
-	}
-}
-
-Test* OW_SocketUtilsTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("OW_SocketUtils");
-
-	ADD_TEST_TO_SUITE(OW_SocketUtilsTestCases, testGetFullyQualifiedHostName);
-
-	return testSuite;
-}
-
+#endif

@@ -133,6 +133,16 @@ namespace ConfigOpts
 	const char* const HTTP_SERVER_AUTHENTICATION_REALM_opt = "http_server.authentication_realm";
 	const char* const HTTP_SERVER_SSL_KEY_opt = "http_server.SSL_key";
 	const char* const READ_WRITE_LOCK_TIMEOUT_opt = "owcimomd.read_write_lock_timeout";
+	const char* const INDICATION_EXPORT_XML_HTTP_BUFFERING_WAIT_SECONDS_opt =
+		"indication_export_xml_http.buffering_wait_seconds";
+	const char* const INDICATION_EXPORT_XML_HTTP_MAX_BUFFERING_DELAY_SECONDS_opt =
+		"indication_export_xml_http.max_buffering_delay_seconds";
+	const char* const INDICATION_EXPORT_XML_HTTP_MAX_BUFFER_SIZE_opt =
+		"indication_export_xml_http.max_buffer_size";
+	const char* const INDICATION_EXPORT_XML_HTTP_MAX_BUFFERED_DESTINATIONS_opt =
+		"indication_export_xml_http.max_buffered_destinations";
+	const char* const INDICATION_EXPORT_XML_HTTP_MAX_NUM_IO_THREADS_opt =
+		"indication_export_xml_http.max_num_io_threads";
 
 	String installed_owlibexec_dir(OW_DEFAULT_OWLIBEXECDIR);
 	String installed_owdata_dir(OW_DEFAULT_STATE_DIR "/openwbem");

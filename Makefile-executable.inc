@@ -36,6 +36,11 @@ define $(1)_LDADD
 $$($(1)_EXTERNAL_LIBS) $$(BINLINKAPPENDFLAGS)
 endef
 
+# Define <foo>_DEPENCIES to be *.a files listed in _EXTERNAL_LIBS
+define $(1)_DEPENDENCIES
+$$(filter .a,$$($(1)_EXTERNAL_LIBS))
+endef
+
 # A simple makefile testing target.  Note that @ is replaced with $(1) or it
 # will not print properly outside of a real rule.
 showflags-$(1):

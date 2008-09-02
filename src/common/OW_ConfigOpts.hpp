@@ -344,6 +344,11 @@ namespace ConfigOpts
 	OW_COMMON_API extern const char* const HTTP_SERVER_ALLOW_SPNEGO_AUTHENTICATION_opt;
 	OW_COMMON_API extern const char* const HTTP_SERVER_AUTHENTICATION_REALM_opt;
 	OW_COMMON_API extern const char* const READ_WRITE_LOCK_TIMEOUT_opt;
+	OW_COMMON_API extern const char* const INDICATION_EXPORT_XML_HTTP_BUFFERING_WAIT_SECONDS_opt;
+	OW_COMMON_API extern const char* const INDICATION_EXPORT_XML_HTTP_MAX_BUFFERING_DELAY_SECONDS_opt;
+	OW_COMMON_API extern const char* const INDICATION_EXPORT_XML_HTTP_MAX_BUFFER_SIZE_opt;
+	OW_COMMON_API extern const char* const INDICATION_EXPORT_XML_HTTP_MAX_BUFFERED_DESTINATIONS_opt;
+	OW_COMMON_API extern const char* const INDICATION_EXPORT_XML_HTTP_MAX_NUM_IO_THREADS_opt;
 
 	// Naming rule: if the option begins with owcimomd, name is the same text all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.

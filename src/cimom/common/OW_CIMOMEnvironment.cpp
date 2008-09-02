@@ -72,6 +72,7 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ProviderManager.hpp"
 #include "OW_ProviderEnvironmentException.hpp"
+#include "OW_GlobalPtr.hpp"
 
 #include <iostream>
 #include <map>
@@ -88,23 +89,26 @@ using std::endl;
 
 namespace
 {
+struct CimomEnvironmentFactory
+{
+	static CIMOMEnvironmentRef* create()
+	{
+		return new CIMOMEnvironmentRef(new CIMOMEnvironment());
+	}
+};
 // the one and only
-CIMOMEnvironmentRef theCimomEnvironment;
+GlobalPtr<CIMOMEnvironmentRef, CimomEnvironmentFactory> theCimomEnvironment = OW_GLOBAL_PTR_INIT;
 }
 
 CIMOMEnvironmentRef&
 CIMOMEnvironment::instance()
 {
-	if (!theCimomEnvironment)
-	{
-		theCimomEnvironment = CIMOMEnvironmentRef(new CIMOMEnvironment);
-	}
-	return theCimomEnvironment;
+	return *theCimomEnvironment;
 }
 
 namespace
 {
-	String COMPONENT_NAME("ow.owcimomd");
+	const char* const COMPONENT_NAME("ow.owcimomd");
 
 	class CIMOMProviderEnvironment : public ProviderEnvironmentIFC
 	{
@@ -1337,7 +1341,10 @@ bool operator<(const Node& x, const Node& y)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-Node INVALID_NODE("", size_t(~0));
+Node INVALID_NODE()
+{
+	return Node("", size_t(~0));
+}
 
 //////////////////////////////////////////////////////////////////////////////
 class ServiceDependencyGraph
@@ -1385,7 +1392,7 @@ ServiceDependencyGraph::findIndependentNode() const
 	}
 	
 	// didn't find any :-(
-	return INVALID_NODE;
+	return INVALID_NODE();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1500,7 +1507,7 @@ CIMOMEnvironment::_sortServicesForDependencies()
 
 	// now do the topological sort
 	Node curNode = depGraph.findIndependentNode();
-	while (curNode != INVALID_NODE)
+	while (curNode != INVALID_NODE())
 	{
 		OW_LOG_DEBUG3(m_Logger, Format("Found service with satisfied dependencies: %1", curNode.name));
 		sortedServices.push_back(m_services[curNode.index]);

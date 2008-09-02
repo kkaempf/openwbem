@@ -73,19 +73,18 @@ public:
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void start();
 	void shutdown();
-	void processIndication(const CIMInstance& instance,
-		const String& instNS);
+	void processIndication(const CIMInstance& indication, const String& indicationNS);
 	// these are called by the CIM_IndicationSubscription pass-thru provider.
-	virtual void startDeleteSubscription(const String& ns, const CIMObjectPath& subPath);
-	virtual void startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username);
-	virtual void startModifySubscription(const String& ns, const CIMInstance& subInst);
+	virtual void startDeleteSubscription(const String& subNS, const CIMObjectPath& subPath);
+	virtual void startCreateSubscription(const String& subNS, const CIMInstance& subInst, const String& username);
+	virtual void startModifySubscription(const String& subNS, const CIMInstance& subInst);
 	
 	// these are called by the threads started by the previous functions
-	void deleteSubscription(const String& ns, const CIMObjectPath& subPath);
-	void createSubscription(const String& ns, const CIMInstance& subInst, const String& username);
-	void modifySubscription(const String& ns, const CIMInstance& subInst);
+	void deleteSubscription(const String& subNS, const CIMObjectPath& subPath);
+	void createSubscription(const String& subNS, const CIMInstance& subInst, const String& username);
+	void modifySubscription(const String& subNS, const CIMInstance& subInst);
 	
-	virtual void modifyFilter(OperationContext& context, const String& ns, const CIMInstance& filterInst, const String& userName);
+	virtual void modifyFilter(OperationContext& context, const String& filterNS, const CIMInstance& filterInst, const String& userName);
 
 private:
 	IntrusiveReference<IndicationServerImplThread> m_indicationServerThread;
@@ -160,6 +159,7 @@ private:
 	
 	void addTrans(const String& ns, const CIMInstance& indication,
 		const CIMInstance& handler,
+		const String& subscriptionNS,
 		const CIMInstance& subscription,
 		IndicationExportProviderIFCRef provider);
 	
@@ -172,12 +172,12 @@ private:
 
 	struct ProcIndicationTrans
 	{
-		ProcIndicationTrans(const CIMInstance& inst,
-			const String& ns)
-			: instance(inst)
-			, nameSpace(ns) {}
-		CIMInstance instance;
-		String nameSpace;
+		ProcIndicationTrans(const CIMInstance& indication_,
+			const String& indicationNS_)
+			: indication(indication_)
+			, indicationNS(indicationNS_) {}
+		CIMInstance indication;
+		String indicationNS;
 	};
 	typedef SortedVectorMap<CIMName, IndicationExportProviderIFCRef> provider_map_t;
 	provider_map_t m_providers;

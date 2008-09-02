@@ -107,11 +107,31 @@ void OW_DateTimeTestCases::testCreation()
 	// boundary conditions
 	// negative year
 	unitAssertThrows(DateTime d(String("-9980525133015.000000-300")));
-	// year < 1970 = time_t(-1)
-	unitAssertThrows(DateTime d(String("19691231235959.999999-000")));
-	unitAssertThrows(DateTime d(1969, 12, 31, 23, 59, 59, 999999, DateTime::E_UTC_TIME));
-	unitAssertThrows(DateTime d(String("00690101235959.999999-000")));
-	unitAssertThrows(DateTime d(69, 1, 1, 23, 59, 59, 999999, DateTime::E_UTC_TIME));
+
+	if( BLOCXX_DATETIME_MINIMUM_YEAR >= 1969 )
+	{
+		unitAssertThrows(DateTime d(String("19691231235959.999999-000")));
+		unitAssertThrows(DateTime d(1969, 12, 31, 23, 59, 59, 999999, DateTime::E_UTC_TIME));
+		unitAssertThrows(DateTime d(String("00690101235959.999999-000")));
+		unitAssertThrows(DateTime d(69, 1, 1, 23, 59, 59, 999999, DateTime::E_UTC_TIME));
+	}
+	else
+	{
+		unitAssertNoThrow(DateTime d(String("19691231235959.999999-000")));
+		unitAssertNoThrow(DateTime d(1969, 12, 31, 23, 59, 59, 999999, DateTime::E_UTC_TIME));
+	}
+
+	if( BLOCXX_DATETIME_MINIMUM_YEAR > 69 )
+	{
+		unitAssertThrows(DateTime d(String("00690101235959.999999-000")));
+		unitAssertThrows(DateTime d(69, 1, 1, 23, 59, 59, 999999, DateTime::E_UTC_TIME));
+	}
+	else
+	{
+		unitAssertNoThrow(DateTime d(String("00690101235959.999999-000")));
+		unitAssertNoThrow(DateTime d(69, 1, 1, 23, 59, 59, 999999, DateTime::E_UTC_TIME));
+	}
+
 	// 0 month
 	unitAssertThrows(DateTime d(String("19980025133015.000000-300")));
 	// 13 month

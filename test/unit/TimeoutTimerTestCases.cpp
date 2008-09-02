@@ -36,6 +36,7 @@
 #include "OW_TimeoutTimer.hpp"
 #include "OW_Thread.hpp"
 #include "OW_Infinity.hpp"
+#include "blocxx/TimeDuration.hpp"
 
 #include <iostream>
 using namespace std;
@@ -155,9 +156,9 @@ void TimeoutTimerTestCases::testAbsolute()
 			absoluteTimer.loop();
 		}
 		DateTime end = DateTime::getCurrent();
-		DateTime diff = end - begin;
-		unitAssert(diff.get() == 0);
-		unitAssert(diff.getMicrosecond() >= 10000); // timeout value
+		Time::TimeDuration diff = end - begin;
+		unitAssert(diff.completeSeconds() == 0);
+		unitAssert(diff.microsecondInSecond() >= 10000); // timeout value
 	}
 	// try again using resetOnLoop()
 	{
@@ -171,9 +172,9 @@ void TimeoutTimerTestCases::testAbsolute()
 			absoluteTimer.resetOnLoop();
 		}
 		DateTime end = DateTime::getCurrent();
-		DateTime diff = end - begin;
-		unitAssert(diff.get() == 0);
-		unitAssert(diff.getMicrosecond() >= 10000); // timeout value
+		Time::TimeDuration diff = end - begin;
+		unitAssert(diff.completeSeconds() == 0);
+		unitAssert(diff.microsecondInSecond() >= 10000); // timeout value
 	}
 }
 
@@ -192,8 +193,7 @@ Real64 calcDiff(const timespec& x, const timeval& y)
 
 Real64 calcDiff(const DateTime& x, const DateTime& y)
 {
-	DateTime diff = y - x;
-	return diff.get() + static_cast<Real64>(diff.getMicrosecond()) / 1000000.0;
+	return Time::timeBetween(x,y).realSeconds();
 }
 
 } // end unnamed namespace
@@ -328,8 +328,8 @@ void TimeoutTimerTestCases::testasAbsoluteTimeout()
 		DateTime now2 = DateTime::getCurrent();
 		Timeout abst = tt.asAbsoluteTimeout();
 		unitAssert(abst.getType() == Timeout::E_ABSOLUTE);
-		unitAssert(calcDiff(now1, abst.getAbsolute()) >= vals[i] - vals[i] * 0.01);
-		unitAssert(calcDiff(now2, abst.getAbsolute()) <= vals[i] + vals[i] * 0.01);
+		unitAssertGreaterOrEqual(calcDiff(now1, abst.getAbsolute()), vals[i] - vals[i] * 0.01);
+		unitAssertLessOrEqual(calcDiff(now2, abst.getAbsolute()), vals[i] + vals[i] * 0.01);
 	}
 	for (unsigned i = 0; i < sizeof(vals)/sizeof(vals[0]); ++i)
 	{
@@ -339,8 +339,8 @@ void TimeoutTimerTestCases::testasAbsoluteTimeout()
 		DateTime now2 = DateTime::getCurrent();
 		Timeout abst = tt.asAbsoluteTimeout();
 		unitAssert(abst.getType() == Timeout::E_ABSOLUTE);
-		unitAssert(calcDiff(now1, abst.getAbsolute()) >= vals[i] - vals[i] * 0.01);
-		unitAssert(calcDiff(now2, abst.getAbsolute()) <= vals[i] + vals[i] * 0.01);
+		unitAssertGreaterOrEqual(calcDiff(now1, abst.getAbsolute()), vals[i] - vals[i] * 0.01);
+		unitAssertLessOrEqual(calcDiff(now2, abst.getAbsolute()), vals[i] + vals[i] * 0.01);
 	}
 
 	{

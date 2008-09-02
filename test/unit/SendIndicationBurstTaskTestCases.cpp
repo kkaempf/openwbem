@@ -31,29 +31,71 @@
 #include "OW_config.h"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "OW_Generic.hpp"
+#include "SendIndicationBurstTaskTestCases.hpp"
+#include "OW_SendIndicationBurstTask.hpp"
+#include "CIMInstanceUtils.hpp"
 
 using namespace OpenWBEM;
+using namespace CIMInstanceUtils;
 
-void GenericTestCases::setUp()
+void SendIndicationBurstTaskTestCases::setUp()
 {
+	m_indicationExporter = new MockIndicationExporter();
 }
 
-void GenericTestCases::tearDown()
+void SendIndicationBurstTaskTestCases::tearDown()
 {
+	m_indicationExporter = 0;
 }
 
-void GenericTestCases::testSomething()
+namespace
 {
-	unitAssert( something( ) );
+	template <std::size_t n>
+	char const * s(char const (&arr)[n])
+	{
+		return arr;
+	}
+
+	CIMProperty props1[] = { cimProp("p1", s("v1")), cimProp("p2", 37) };
+	CIMInstance const inst1 = cimInst("c1", props1);
+
+	CIMProperty props2[] = { cimProp("prop", false) };
+	CIMInstance const inst2 = cimInst("c2", props2);
 }
 
-Test* GenericTestCases::suite()
+void SendIndicationBurstTaskTestCases::testSendOne()
 {
-	TestSuite *testSuite = new TestSuite ("Generic");
+	CIMInstance arr[1] = { inst1 };
+	Array<CIMInstance> indications(arr, arr + 1);
+	SendIndicationBurstTask task(m_indicationExporter, indications);
 
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
+	m_indicationExporter->expectIndication(inst1);
+
+	task.run();
+
+	m_indicationExporter->verify();
+}
+
+void SendIndicationBurstTaskTestCases::testSendTwo()
+{
+	CIMInstance arr[2] = { inst1, inst2 };
+	Array<CIMInstance> indications(arr, arr + 2);
+	SendIndicationBurstTask task(m_indicationExporter, indications);
+
+	m_indicationExporter->expectIndication(inst1);
+	m_indicationExporter->expectIndication(inst2);
+
+	task.run();
+
+	m_indicationExporter->verify();
+}
+
+Test* SendIndicationBurstTaskTestCases::suite()
+{
+	TestSuite *testSuite = new TestSuite ("SendIndicationBurstTask");
+
+	ADD_TEST_TO_SUITE(SendIndicationBurstTaskTestCases, testSendOne);
+	ADD_TEST_TO_SUITE(SendIndicationBurstTaskTestCases, testSendTwo);
 
 	return testSuite;
 }

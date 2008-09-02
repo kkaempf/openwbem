@@ -31,29 +31,49 @@
 #include "OW_config.h"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "OW_Generic.hpp"
+#include "CppIndicationExportXMLHTTPProviderTestCases.hpp"
+#include "OW_CppIndicationExportXMLHTTPProvider.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_CIMValue.hpp"
+#include <iostream>
 
 using namespace OpenWBEM;
+using namespace std;
 
-void GenericTestCases::setUp()
+CppIndicationExportXMLHTTPProviderTestCases::
+~CppIndicationExportXMLHTTPProviderTestCases()
 {
 }
 
-void GenericTestCases::tearDown()
+void CppIndicationExportXMLHTTPProviderTestCases::setUp()
 {
 }
 
-void GenericTestCases::testSomething()
+void CppIndicationExportXMLHTTPProviderTestCases::tearDown()
 {
-	unitAssert( something( ) );
 }
 
-Test* GenericTestCases::suite()
+void CppIndicationExportXMLHTTPProviderTestCases::testList()
 {
-	TestSuite *testSuite = new TestSuite ("Generic");
+	char const * msg =
+		"***\n"
+		"The unit tests relevant to CppIndicationExportXMLHTTPProvider\n"
+		"are in these tests:\n"
+		"  IndicationBufferingThread\n"
+		"  SendIndicationBurstTask\n"
+		"  MTQueue\n"
+		"  ConfigureCppIndicationExportXMLHTTPProvider\n"
+		"***";
+	cout << endl << msg << endl;
+}
 
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
+Test* CppIndicationExportXMLHTTPProviderTestCases::suite()
+{
+	TestSuite *testSuite =
+		new TestSuite ("CppIndicationExportXMLHTTPProvider");
+
+	ADD_TEST_TO_SUITE(CppIndicationExportXMLHTTPProviderTestCases, testList);
 
 	return testSuite;
 }

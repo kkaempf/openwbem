@@ -1,5 +1,7 @@
+#ifndef OW_SEND_INDICATION_BURST_TASK_HPP
+#define OW_SEND_INDICATION_BURST_TASK_HPP
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2008 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,7 +13,7 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
@@ -29,29 +31,32 @@
 *******************************************************************************/
 
 /**
- * @author Dan Nuffer
+ * @author Kevin S. Van Horn
  */
 
+#include "OW_config.h"
+#include "OW_Runnable.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_IndicationExporter.hpp"
 
-#ifndef OW_OW_SocketUtils_TEST_CASES_HPP_
-#define OW_OW_SocketUtils_TEST_CASES_HPP_
-
-#include "TestCase.hpp"
-
-class OW_SocketUtilsTestCases : public TestCase
+namespace OW_NAMESPACE
 {
-public:
-	OW_SocketUtilsTestCases( const char* name )
-		: TestCase( name ) {}
 
-	void setUp();
-	void tearDown();
-	static Test *suite();
+struct SendIndicationBurstTask : public Runnable
+{
+	SendIndicationBurstTask(
+		IndicationExporterRef const & indicationExporter,
+		CIMInstanceArray const & indications);
+ 
+	virtual ~SendIndicationBurstTask();
+
+	virtual void run();
 
 private:
-	// test methods
-	void testGetFullyQualifiedHostName();
+	IndicationExporterRef m_indicationExporter;
+	CIMInstanceArray m_indications;
 };
 
-#endif
+} // end namespace OW_NAMESPACE
 
+#endif

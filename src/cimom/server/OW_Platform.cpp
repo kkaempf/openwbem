@@ -43,6 +43,7 @@
 #include "OW_PlatformSignal.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_Logger.hpp"
+#include "OW_PosixUnnamedPipe.hpp"
 
 #ifdef OW_NETWARE
 #include "OW_Condition.hpp"
@@ -253,6 +254,9 @@ daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool res
 				OW_THROW_ERRNO_MSG(DaemonException,
 					"FAILED TO DETACH FROM THE TERMINAL - First fork");
 			default:
+				// The output handle needs to be closed so that if the child terminates, the 
+				// kernel will close the pipe, and the following readInt() will not hang forever.
+				daemonize_upipe.cast_to<PosixUnnamedPipe>()->closeOutputHandle();
 				int status = DAEMONIZE_FAIL;
 
 				if (daemonize_upipe->readInt(&status) < 1)

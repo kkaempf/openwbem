@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2008 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,7 +11,7 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
@@ -31,6 +31,7 @@
 /**
  * @author Bart Whiteley
  * @author Dan Nuffer
+ * @author Kevin S. Van Horn
  */
 
 #include "OW_config.h"
@@ -43,6 +44,9 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMXMLParser.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_CIMValue.hpp"
+#include "OW_HTTPClient.hpp"
+#include "OW_Thread.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -52,33 +56,61 @@ namespace OW_NAMESPACE
 namespace
 {
 const String PROTOCOL_VERSION_1_1("1.1");
+static const char* const commandName = "ExportIndication";
 }
 
 using std::ostream;
 using std::istream;
 using std::iostream;
-IndicationExporter::IndicationExporter( CIMProtocolIFCRef prot )
+
+IndicationExporter::~IndicationExporter()
+{
+}
+
+IndicationExporterImpl::~IndicationExporterImpl()
+{
+}
+
+IndicationExporterImpl::IndicationExporterImpl( CIMProtocolIFCRef prot )
 	: m_protocol(prot), m_iMessageID(0)
 {
 	m_protocol->setContentType("application/xml");
 }
+
 void
-IndicationExporter::exportIndication( const String& ns, const CIMInstance& ci )
+IndicationExporterImpl::beginExport()
 {
-	static const char* const commandName = "ExportIndication";
-	Array<Param> params;
-	
-	Reference<TempFileStream> iostr(new TempFileStream);
-	sendXMLHeader(*iostr, PROTOCOL_VERSION_1_1);
-	*iostr << "<EXPPARAMVALUE NAME=\"NewIndication\">";
-	CIMInstancetoXML(ci, *iostr);
-	*iostr << "</EXPPARAMVALUE>";
-	sendXMLTrailer(*iostr);
-	doSendRequest(iostr, commandName, ns, PROTOCOL_VERSION_1_1);
+	m_ostrm = m_protocol->beginRequest(commandName, "");
+	sendXMLHeader(PROTOCOL_VERSION_1_1);
+	*m_ostrm << "<MULTIEXPREQ>";
 }
+
 void
-IndicationExporter::sendXMLHeader(ostream& ostr, const String& cimProtocolVersion)
+IndicationExporterImpl::endExport()
 {
+	*m_ostrm << "</MULTIEXPREQ>";
+	sendXMLTrailer();
+	doSendRequest(commandName, PROTOCOL_VERSION_1_1);
+}
+
+void
+IndicationExporterImpl::sendIndication(CIMInstance const & ci)
+{
+	Thread::testCancel();
+	ostream & ostrm = *m_ostrm;
+	ostrm << "<SIMPLEEXPREQ>"
+	         "<EXPMETHODCALL NAME=\"ExportIndication\">"
+	         "<EXPPARAMVALUE NAME=\"NewIndication\">";
+	CIMInstancetoXML(ci, ostrm);
+	ostrm << "</EXPPARAMVALUE>"
+	         "</EXPMETHODCALL>" 
+	         "</SIMPLEEXPREQ>";
+}
+
+void
+IndicationExporterImpl::sendXMLHeader(const String& cimProtocolVersion)
+{
+	ostream & ostr = *m_ostrm;
 	// TODO: merge this with the code in CIMXMLCIMOMHandle.cpp
 	// TODO: WRT the versions, have a way of doing a fallback to older
 	// versions for the sake of compatibility.
@@ -86,44 +118,33 @@ IndicationExporter::sendXMLHeader(ostream& ostr, const String& cimProtocolVersio
 	{
 		m_iMessageID = 1;
 	}
-	ostr << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
-	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
-	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"" << cimProtocolVersion << "\">";
-	ostr << "<SIMPLEEXPREQ>";
-	ostr << "<EXPMETHODCALL NAME=\"ExportIndication\">";
+	ostr << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" 
+	        "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">" 
+	        "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"" << cimProtocolVersion << "\">";
 }
+
 void
-IndicationExporter::sendXMLTrailer(ostream& ostr)
+IndicationExporterImpl::sendXMLTrailer()
 {
-	ostr << "</EXPMETHODCALL>";
-	ostr << "</SIMPLEEXPREQ>";
-	ostr << "</MESSAGE>";
-	ostr << "</CIM>";
-	ostr << "\r\n";
+	ostream & ostr = *m_ostrm;
+	ostr << "</MESSAGE>" 
+	        "</CIM>" 
+	        "\r\n";
 }
 	
 void
-IndicationExporter::doSendRequest(Reference<iostream> ostr, const String& methodName,
-		const String& ns, const String& cimProtocolVersion)
+IndicationExporterImpl::doSendRequest(
+	const String& methodName, const String& cimProtocolVersion)
 {
+	Reference<ostream> ostr = m_ostrm;
 	Reference<std::istream> istr = m_protocol->endRequest(ostr, methodName,
-		ns, CIMProtocolIFC::E_CIM_EXPORT_REQUEST, cimProtocolVersion);
-	// Debug stuff
-	/*
-	TempFileStream buf;
-	buf << istr.rdbuf();
-	ofstream ofstr("/tmp/rchXMLDump", ios::app);
-	ofstr << "******* New dump ********" << endl;
-	ofstr << buf.rdbuf() << endl;
-	buf.rewind();
-	XMLParser parser(&buf);
-	*/
-	// end debug stuff
+		"", CIMProtocolIFC::E_CIM_BATCH_EXPORT_REQUEST, cimProtocolVersion);
 	CIMXMLParser parser(*istr);
 	return checkNodeForCIMError(parser, methodName);
 }
+
 void
-IndicationExporter::checkNodeForCIMError(CIMXMLParser& parser,
+IndicationExporterImpl::checkNodeForCIMError(CIMXMLParser& parser,
 		const String& operation)
 {
 // TODO: This code is the same as in CIMXMLCIMOMHandle.cpp.  Put it in a
@@ -136,21 +157,6 @@ IndicationExporter::checkNodeForCIMError(CIMXMLParser& parser,
 		OW_THROWCIMMSG(CIMException::FAILED, "Invalid XML");
 	}
 	String cimattr;
-// TODO: Decide if we really should check this or not.
-#if 0
-	cimattr = parser.mustGetAttribute(CIMXMLParser::A_CIMVERSION);
-	if (!cimattr.equals(CIMXMLParser::AV_CIMVERSION_VALUE))
-	{
-		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-							String("Return is for CIMVERSION " + cimattr).c_str());
-	}
-	cimattr = parser.mustGetAttribute(CIMXMLParser::A_DTDVERSION);
-	if (!cimattr.equals(CIMXMLParser::AV_DTDVERSION_VALUE))
-	{
-		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-							String("Return is for DTDVERSION " + cimattr).c_str());
-	}
-#endif
 	//
 	// Find <MESSAGE>
 	//
@@ -162,15 +168,6 @@ IndicationExporter::checkNodeForCIMError(CIMXMLParser& parser,
 							String("Return messageid="+cimattr+", expected="
 										 +String(m_iMessageID)).c_str());
 	}
-// TODO: Decide if we really should check this or not.
-#if 0
-	cimattr = parser.mustGetAttribute(CIMXMLParser::A_PROTOCOLVERSION);
-	if (!cimattr.equals(CIMXMLParser::AV_PROTOCOLVERSION_VALUE))
-	{
-		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-							String("Return is for PROTOCOLVERSION "+cimattr).c_str());
-	}
-#endif
 	// Find <SIMPLEEXPRSP>
 	//
 	// TODO-NICE: need to look for complex EXPRSPs!!
@@ -212,7 +209,47 @@ IndicationExporter::checkNodeForCIMError(CIMXMLParser& parser,
 		OW_THROWCIMMSG(CIMException::ErrNoType(errCode.toInt32()), description.c_str());
 	}
 }
-	
+
+namespace
+{
+
+HTTPClientRef createClient(const CIMInstance & indHandlerInst)
+{
+	String listenerUrl;
+	indHandlerInst.getProperty("Destination").getValue().get(listenerUrl);
+
+	// this guy parses it out.
+	URL url(listenerUrl);
+
+	if (indHandlerInst.getClassName().equalsIgnoreCase("CIM_IndicationHandlerXMLHTTPS"))
+	{
+		if (!url.scheme.equals(URL::CIMXML_WBEMS))
+		{
+			url.scheme = URL::CIMXML_WBEMS;
+			listenerUrl = url.toString();
+		}
+	}
+
+	HTTPClientRef httpClient = new HTTPClient(listenerUrl);
+
+	// the OW 2.0 HTTPXMLCIMListener uses the HTTP path to differentiate different
+	// subscriptions.  This is stored in namespace name of the URL.
+	if (!url.namespaceName.empty())
+	{
+		httpClient->setHTTPPath('/' + url.namespaceName);
+	}
+
+	return httpClient;
+}
+
+} // anon namespace
+
+IndicationExporterRef
+IndicationExporterImpl::create(const CIMInstance & indHandlerInst)
+{
+	HTTPClientRef httpClient(createClient(indHandlerInst));
+	return IndicationExporterRef(new IndicationExporterImpl(httpClient));
+}
 
 } // end namespace OW_NAMESPACE
 

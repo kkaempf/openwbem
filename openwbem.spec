@@ -4,7 +4,7 @@
 %define startnum 36
 %define killnum 64
 %define daemonname owcimomd
-%define owversion 4.0.4
+%define owversion 4.0.5
 
 Name        	: openwbem
 Version     	: %{owversion}

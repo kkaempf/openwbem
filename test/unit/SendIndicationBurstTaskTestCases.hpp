@@ -28,33 +28,30 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+#ifndef OW_SendIndicationBurstTask_TEST_CASES_HPP_
+#define OW_SendIndicationBurstTask_TEST_CASES_HPP_
+
 #include "OW_config.h"
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "OW_Generic.hpp"
+#include "TestCase.hpp"
+#include "MockIndicationExporter.hpp"
 
-using namespace OpenWBEM;
-
-void GenericTestCases::setUp()
+class SendIndicationBurstTaskTestCases : public TestCase
 {
-}
+public:
+	SendIndicationBurstTaskTestCases( const char* name )
+		: TestCase( name ) {}
 
-void GenericTestCases::tearDown()
-{
-}
+	void setUp();
+	void tearDown();
+	static Test *suite();
 
-void GenericTestCases::testSomething()
-{
-	unitAssert( something( ) );
-}
+private:
+	// test methods
+	void testSendOne();
+	void testSendTwo();
 
-Test* GenericTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("Generic");
+	MockIndExpRef m_indicationExporter;
+};
 
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
-
-	return testSuite;
-}
+#endif
 

@@ -28,33 +28,55 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+#ifndef OW_ConfigureCppIndicationExportXMLHTTPProvider_TEST_CASES_HPP_
+#define OW_ConfigureCppIndicationExportXMLHTTPProvider_TEST_CASES_HPP_
+
 #include "OW_config.h"
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "OW_Generic.hpp"
+#include "TestCase.hpp"
+#include "OW_CppIndicationExportXMLHTTPProvider.hpp"
+//#include <blocxx/CommonFwd.hpp>
 
-using namespace OpenWBEM;
-
-void GenericTestCases::setUp()
+class ConfigureCppIndicationExportXMLHTTPProviderTestCases : public TestCase
 {
-}
+public:
+	ConfigureCppIndicationExportXMLHTTPProviderTestCases( const char* name )
+		: TestCase( name ) {}
 
-void GenericTestCases::tearDown()
-{
-}
+	void setUp();
+	void tearDown();
+	static Test *suite();
 
-void GenericTestCases::testSomething()
-{
-	unitAssert( something( ) );
-}
+private:
+	// test methods
+	void testAllOK();
+	void testBufferingWaitSecondsMissing();
+	void testBufferingWaitSecondsBad();
 
-Test* GenericTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("Generic");
+	void testMaxBufferingDelaySecondsMissing();
+	void testMaxBufferingDelaySecondsBad();
 
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
+	void testMaxBufferSizeMissing();
+	void testMaxBufferSizeBad();
 
-	return testSuite;
-}
+	void testMaxBufferedDestinationsMissing();
+	void testMaxBufferedDestinationsBad();
+
+	void testMaxNumIoThreadsMissing();
+	void testMaxNumIoThreadsBad();
+
+	void testBufferingWaitIsGreaterThanMaxBufferingDelay();
+	void testMaxBufferSizeIsZero();
+	void testMaxNumIoThreadsIsZero();
+
+	void configureThrows(
+		char const *, char const *, char const *, char const *, char const *);
+	void configureReturns(
+		char const *, blocxx::Real32, char const *, blocxx::Real32,
+		char const *, blocxx::UInt32, char const *, blocxx::UInt32,
+		char const *, blocxx::UInt32);
+
+	OpenWBEM::CppIndicationExportXMLHTTPProviderRef m_provider;
+};
+
+#endif
 

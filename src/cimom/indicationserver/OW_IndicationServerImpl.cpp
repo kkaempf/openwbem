@@ -73,7 +73,9 @@ using namespace WBEMFlags;
 
 namespace
 {
-String COMPONENT_NAME("ow.owcimomd.indication.Server");
+const String COMPONENT_NAME("ow.owcimomd.indication.Server");
+const String PROP_OnFatalErrorPolicy("OnFatalErrorPolicy");
+const UInt16 PROP_OnFatalErrorPolicy_Remove = 4;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -130,52 +132,57 @@ IndicationServerImpl::shutdown()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::processIndication(const CIMInstance& instance,const String& instNS)
+IndicationServerImpl::processIndication(const CIMInstance& indication,const String& indicationNS)
 {
-	m_indicationServerThread->processIndication(instance, instNS);
+	m_indicationServerThread->processIndication(indication, indicationNS);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::startDeleteSubscription(const String& ns, const CIMObjectPath& subPath)
+IndicationServerImpl::startDeleteSubscription(const String& subNS, const CIMObjectPath& subPath)
 {
-	m_indicationServerThread->startDeleteSubscription(ns, subPath);
+	m_indicationServerThread->startDeleteSubscription(subNS, subPath);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username)
+IndicationServerImpl::startCreateSubscription(const String& subNS, const CIMInstance& subInst, const String& username)
 {
-	m_indicationServerThread->startCreateSubscription(ns, subInst, username);
+	m_indicationServerThread->startCreateSubscription(subNS, subInst, username);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::startModifySubscription(const String& ns, const CIMInstance& subInst)
+IndicationServerImpl::startModifySubscription(const String& subNS, const CIMInstance& subInst)
 {
-	m_indicationServerThread->startModifySubscription(ns, subInst);
+	m_indicationServerThread->startModifySubscription(subNS, subInst);
 }
 	
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::modifyFilter(OperationContext& context, const String& ns, const CIMInstance& filterInst, const String& userName)
+IndicationServerImpl::modifyFilter(OperationContext& context, const String& filterNS, const CIMInstance& filterInst, const String& userName)
 {
-	m_indicationServerThread->modifyFilter(context, ns, filterInst, userName);
+	m_indicationServerThread->modifyFilter(context, filterNS, filterInst, userName);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 struct NotifyTrans
 {
 	NotifyTrans(
-		const String& ns,
+		const String& indicationNS,
 		const CIMInstance& indication,
 		const CIMInstance& handler,
+		const String& subNS,
 		const CIMInstance& subscription,
 		const IndicationExportProviderIFCRef provider) :
-			m_ns(ns), m_indication(indication), m_handler(handler), m_subscription(subscription), m_provider(provider) {}
-	String m_ns;
+			m_indicationNS(indicationNS), m_indication(indication), m_handler(handler), m_subNS(subNS), m_subscription(subscription), m_provider(provider) 
+	{
+	}
+
+	String m_indicationNS;
 	CIMInstance m_indication;
 	CIMInstance m_handler;
+	String m_subNS;
 	CIMInstance m_subscription;
 	IndicationExportProviderIFCRef m_provider;
 };
@@ -193,6 +200,7 @@ private:
 	virtual void doShutdown();
 	virtual void doCooperativeCancel();
 	virtual void doDefinitiveCancel();
+	void handleDeliveryError();
 	IndicationServerImplThread* m_pmgr;
 	NotifyTrans m_trans;
 };
@@ -257,12 +265,12 @@ ProviderEnvironmentIFCRef createProvEnvRef(CIMOMEnvironmentRef env)
 void
 Notifier::run()
 {
-	// TODO: process the subscription error handling here
 	CIMOMEnvironmentRef env = m_pmgr->getEnvironment();
 	try
 	{
 		m_trans.m_provider->exportIndication(createProvEnvRef(env),
-			m_trans.m_ns, m_trans.m_handler, m_trans.m_indication);
+			m_trans.m_indicationNS, m_trans.m_handler, m_trans.m_indication);
+		return; // errors are handled after the catch blocks
 	}
 	catch(Exception& e)
 	{
@@ -277,6 +285,43 @@ Notifier::run()
 	{
 		Logger lgr(COMPONENT_NAME);
 		OW_LOG_ERROR(lgr, "Unknown exception caught while exporting indication");
+	}
+
+	handleDeliveryError();
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+Notifier::handleDeliveryError()
+{
+	Logger lgr(COMPONENT_NAME);
+	CIMOMEnvironmentRef env = m_pmgr->getEnvironment();
+	if (m_trans.m_subscription.propertyHasValue(PROP_OnFatalErrorPolicy))
+	{
+		// TODO: handle all the cases
+		UInt16 onFatalErrorPolicy = m_trans.m_subscription.getPropertyValue(PROP_OnFatalErrorPolicy).toUInt16();
+		switch (onFatalErrorPolicy)
+		{
+			case PROP_OnFatalErrorPolicy_Remove:
+				try
+				{
+					LocalOperationContext context;
+					CIMOMHandleIFCRef lch = env->getCIMOMHandle(context);
+					lch->deleteInstance(m_trans.m_subNS, CIMObjectPath(m_trans.m_subNS,m_trans.m_subscription));
+				}
+				catch (CIMException& e)
+				{
+					// NOT_FOUND means it was already deleted.
+					// If the exception was something else, log it.
+					if (e.getErrorCode() != CIMException::NOT_FOUND)
+					{
+						OW_LOG_ERROR(lgr, Format("Notifier::handleDeliveryError() failed to remove subscription. Error: %1", e));
+					}
+				}
+				break;
+			default:
+				OW_LOG_INFO(lgr, Format("Unimplemented value for OnFatalErrorPolicy: %1", onFatalErrorPolicy));
+				break;
+		}
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -518,7 +563,7 @@ IndicationServerImplThread::run()
 				l.release();
 				try
 				{
-					_processIndication(trans.instance, trans.nameSpace);
+					_processIndication(trans.indication, trans.indicationNS);
 					l.lock();
 					// sucessfully processed, so remove it from the queue.
 					m_procTrans.pop_front();
@@ -611,15 +656,15 @@ IndicationServerImplThread::shutdown()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImplThread::processIndication(const CIMInstance& instanceArg,
-	const String& instNS)
+IndicationServerImplThread::processIndication(const CIMInstance& indication,
+	const String& indicationNS)
 {
 	NonRecursiveMutexLock ml(m_mainLoopGuard);
 	if (m_shuttingDown)
 	{
 		return;
 	}
-	ProcIndicationTrans trans(instanceArg, instNS);
+	ProcIndicationTrans trans(indication, indicationNS);
 	m_procTrans.push_back(trans);
 	m_mainLoopCondition.notifyOne();
 }
@@ -879,7 +924,7 @@ IndicationServerImplThread::_processIndicationRange(
 			
 				continue;
 			}
-			addTrans(instNS, filteredInstance, handler, sub.m_sub, pref);
+			addTrans(instNS, filteredInstance, handler, sub.m_subPath.getNameSpace(), sub.m_sub, pref);
 		}
 		catch(Exception& e)
 		{
@@ -894,10 +939,11 @@ IndicationServerImplThread::addTrans(
 	const String& ns,
 	const CIMInstance& indication,
 	const CIMInstance& handler,
+	const String& subscriptionNS,
 	const CIMInstance& subscription,
 	IndicationExportProviderIFCRef provider)
 {
-	NotifyTrans trans(ns, indication, handler, subscription, provider);
+	NotifyTrans trans(ns, indication, handler, subscriptionNS, subscription, provider);
 	if (!m_notifierThreadPool->tryAddWork(RunnableRef(new Notifier(this, trans))))
 	{
 		OW_LOG_ERROR(m_logger, "Indication export notifier pool overloaded.  Dropping indication.");

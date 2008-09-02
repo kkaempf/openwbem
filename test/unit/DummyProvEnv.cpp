@@ -28,33 +28,61 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include "OW_config.h"
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "GenericTestCases.hpp"
-#include "OW_Generic.hpp"
+#include "DummyProvEnv.hpp"
+#include "OW_RepositoryIFC.hpp"
+
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
-void GenericTestCases::setUp()
+DummyProvEnv::~DummyProvEnv()
 {
 }
 
-void GenericTestCases::tearDown()
+CIMOMHandleIFCRef DummyProvEnv::getCIMOMHandle() const
 {
+	return 0;
 }
 
-void GenericTestCases::testSomething()
+CIMOMHandleIFCRef DummyProvEnv::getRepositoryCIMOMHandle() const
 {
-	unitAssert( something( ) );
+	return 0;
 }
 
-Test* GenericTestCases::suite()
+RepositoryIFCRef DummyProvEnv::getRepository() const
 {
-	TestSuite *testSuite = new TestSuite ("Generic");
-
-	ADD_TEST_TO_SUITE(GenericTestCases, testSomething);
-
-	return testSuite;
+	return 0;
 }
 
+RepositoryIFCRef DummyProvEnv::getAuthorizingRepository() const
+{
+	return 0;
+}
+
+String DummyProvEnv::getConfigItem(
+	const String &name, const String& defRetVal) const
+{
+	return defRetVal;
+}
+
+StringArray DummyProvEnv::getMultiConfigItem(
+	const String &itemName, const StringArray& defRetVal,
+	const char* tokenizeSeparator) const
+{
+	return defRetVal;
+}
+
+String DummyProvEnv::getUserName() const
+{
+	return String();
+}
+
+OperationContext& DummyProvEnv::getOperationContext()
+{
+	return *static_cast<OperationContext *>(0);
+}
+
+ProviderEnvironmentIFCRef DummyProvEnv::clone() const
+{
+	return new DummyProvEnv();
+}

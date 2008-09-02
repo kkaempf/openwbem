@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2008 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,7 +11,7 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
@@ -30,33 +30,48 @@
 
 /**
  * @author Dan Nuffer
+ * @author Kevin S. Van Horn
  */
 
 #ifndef OW_INDICATION_EXPORTER_HPP_
 #define OW_INDICATION_EXPORTER_HPP_
 #include "OW_config.h"
 #include "OW_CIMProtocolIFC.hpp"
-#include "OW_XMLQualifier.hpp"
-#include "OW_Param.hpp"
+#include "OW_XMLFwd.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OW_NAMESPACE
 {
 
-class IndicationExporter
+struct IndicationExporter : IntrusiveCountableBase
+{
+	virtual ~IndicationExporter();
+	virtual void beginExport() = 0;
+	virtual void endExport() = 0;
+	virtual void sendIndication(CIMInstance const & ci) = 0;
+};
+
+typedef IntrusiveReference<IndicationExporter> IndicationExporterRef;
+
+class IndicationExporterImpl : public IndicationExporter
 {
 public:
-	IndicationExporter( CIMProtocolIFCRef prot );
-	/**
-	 * Export the indication.
-	 * @param ci The indication to export.
-	 * @throws CIMException
-	 */
-	void exportIndication( const String& ns, const CIMInstance& ci );
+	IndicationExporterImpl( CIMProtocolIFCRef prot );
+	virtual ~IndicationExporterImpl();
+	virtual void beginExport();
+	virtual void endExport();
+
+	// PROMISE: calls Thread::testCancel() to ensure timely shutdown
+	// when a cooperative cancel has been requested.
+	virtual void sendIndication(CIMInstance const & ci);
+
+	static IndicationExporterRef create(const CIMInstance & indHandlerInst);
+
 private:
-	void sendXMLHeader(std::ostream& ostr, const String& cimProtocolVersion);
-	void sendXMLTrailer(std::ostream& ostr);
-	void doSendRequest(Reference<std::iostream> ostr, const String& methodName,
-		const String& ns, const String& cimProtocolVersion);
+	void sendXMLHeader(const String& cimProtocolVersion);
+	void sendXMLTrailer();
+	void doSendRequest(
+		const String& methodName, const String& cimProtocolVersion);
 	/**
 	 * @throws CIMException
 	 */
@@ -64,8 +79,10 @@ private:
 		const String& operation);
 	
 	CIMProtocolIFCRef m_protocol;
+	Reference<std::ostream> m_ostrm;
 	Int32 m_iMessageID;
 };
+
 
 } // end namespace OW_NAMESPACE
 

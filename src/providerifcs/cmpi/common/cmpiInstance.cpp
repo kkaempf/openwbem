@@ -225,10 +225,7 @@ static CMPIStatus instSetPropertyFilterIgnore(CMPIInstance* eInst,
 #if defined(CMPI_VER_100)
 static CMPIStatus instSetObjectPath(CMPIInstance* inst, const CMPIObjectPath* op)
 {
-	CMPIStatus rc; 
-	// TODO
-	rc.rc = CMPI_RC_ERR_METHOD_NOT_AVAILABLE; 
-	return rc; 
+	CMReturn(CMPI_RC_ERR_METHOD_NOT_AVAILABLE); 
 }
 #endif
 
