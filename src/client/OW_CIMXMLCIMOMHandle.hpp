@@ -72,6 +72,8 @@ public:
 	 * 	// the remote CIMOM handle can be used.
 	 */
 	CIMXMLCIMOMHandle( const CIMProtocolIFCRef& prot );
+
+	virtual ~CIMXMLCIMOMHandle();
 	
 	/**
 	 * Get a Reference to the WBEM protocol handler (HTTPClient)

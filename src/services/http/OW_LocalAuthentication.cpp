@@ -249,7 +249,7 @@ LocalAuthentication::authenticate(String& userName,
 		String sNonce = iter->second;
 	
 		bool nonceFound = false;
-		size_t i;
+		size_t i = 0;
 		if (!sNonce.empty())
 		{
 			for (i = 0; i < m_authEntries.size(); ++i)

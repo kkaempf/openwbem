@@ -371,7 +371,7 @@ try
 					err = vasErrStr;
 				}
 #elif defined(OW_USE_VAS2_API)
-                err = vas_error_str(vas);
+				err = vas_error_str(vas);
 #endif
 				// replace newlines with spaces.
 				size_t idx;

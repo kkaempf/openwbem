@@ -93,6 +93,7 @@ public:
 	 * @param ostr the original ostream
 	 */
 	HTTPDeflateOStream(std::ostream& ostr);
+	virtual ~HTTPDeflateOStream();
 	/**
 	 * Get the original ostream
 	 * @return the original ostream.

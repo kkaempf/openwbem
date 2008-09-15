@@ -111,6 +111,8 @@ public:
 	{
 	}
 
+	virtual ~CIMFlavor();
+
 	/**
 	 * @return true if this is a valid flavor
 	 */

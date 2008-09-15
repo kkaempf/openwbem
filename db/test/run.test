@@ -111,7 +111,7 @@ test3()
 {
 	echo "Test 3: btree: small key, big data pairs"
 	rm -f $TMP1
-	(find /bin -type f -perm +0044 -print | xargs cat) > $TMP1
+	find /bin -type f -perm +0044 -exec cat '{}' ';' > $TMP1
 	for psize in 512 16384 65536; do
 		echo "    page size $psize"
 		for type in btree; do

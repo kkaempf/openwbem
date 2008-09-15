@@ -256,7 +256,7 @@ daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool res
 			default:
 				// The output handle needs to be closed so that if the child terminates, the 
 				// kernel will close the pipe, and the following readInt() will not hang forever.
-				daemonize_upipe.cast_to<PosixUnnamedPipe>()->closeOutputHandle();
+				dynamic_pointer_cast<PosixUnnamedPipe>(daemonize_upipe)->closeOutputHandle();
 				int status = DAEMONIZE_FAIL;
 
 				if (daemonize_upipe->readInt(&status) < 1)

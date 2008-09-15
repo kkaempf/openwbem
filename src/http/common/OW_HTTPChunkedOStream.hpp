@@ -89,7 +89,7 @@ public:
 	 */
 	HTTPChunkedOStream(std::ostream& ostr);
 	
-	~HTTPChunkedOStream();
+	virtual ~HTTPChunkedOStream();
 
 	enum ESendLastChunkFlag
 	{

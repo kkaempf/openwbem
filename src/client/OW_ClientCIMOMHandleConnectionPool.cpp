@@ -48,6 +48,11 @@ ClientCIMOMHandleConnectionPool::ClientCIMOMHandleConnectionPool(unsigned maxCon
 }
 
 //////////////////////////////////////////////////////////////////////////////
+ClientCIMOMHandleConnectionPool::~ClientCIMOMHandleConnectionPool()
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
 ClientCIMOMHandleRef
 ClientCIMOMHandleConnectionPool::getConnection(const String& url)
 {

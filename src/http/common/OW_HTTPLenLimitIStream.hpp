@@ -92,6 +92,7 @@ public:
 	 * @param len the number of bytes to read before setting EOF.
 	 */
 	HTTPLenLimitIStream(std::istream& istr, UInt64 len);
+	virtual ~HTTPLenLimitIStream();
 	/**
 	 * Clear the EOF bit, and set the new length to len
 	 * @param len the new length to read before (re)setting EOF

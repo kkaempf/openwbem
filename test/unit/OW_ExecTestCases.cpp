@@ -29,6 +29,7 @@
 *******************************************************************************/
 /**
  * @author Dan Nuffer
+ * @author Kevin Harris
  */
 
 #include "TestSuite.hpp"
@@ -59,38 +60,104 @@ void OW_ExecTestCases::tearDown()
 {
 }
 
-bool OW_ExecTestCases::executeTestScript(const String& option1, const String& option2, const String& desiredOutput)
+namespace
 {
-	String output;
+	bool doesOutputContain(const StringArray& output, const String& text)
 	{
+		bool has_text = false;
+		for( StringArray::const_iterator iter = output.begin();
+			iter != output.end();
+			++iter)
+		{
+			if( iter->indexOf(text) != String::npos )
+			{
+				has_text = true;
+				break;
+			}
+		}
+		return has_text;
+	}
+
+	void dumpOutput(const StringArray& output)
+	{
+		std::cerr << "Output contains:" << std::endl;
+		std::cerr << "--->" << std::endl;
+		for( StringArray::const_iterator iter = output.begin();
+			  iter != output.end();
+			  ++iter)
+		{
+			std::cerr << Format("(%1): %2", std::distance(output.begin(), iter), *iter) << std::endl;
+		}
+		std::cerr << "<---" << std::endl;
+	}
+
+	bool outputContains(const StringArray& output, const String& text)
+	{
+		if( !doesOutputContain(output, text) )
+		{
+			std::cerr << Format("\nOutput does not contain desired text: %1", text) << std::endl;
+			dumpOutput(output);
+			return false;
+		}
+		return true;
+	}
+
+	bool outputDoesNotContain(const StringArray& output, const String& text)
+	{
+		if( doesOutputContain(output, text) )
+		{
+			std::cerr << Format("\nOutput contains forbidden text: %1", text) << std::endl;
+			dumpOutput(output);
+			return false;
+		}
+		return true;
+	}
+}
+
+
+bool OW_ExecTestCases::executeTestProgram(const String& parentArgs, const String& childArgs, StringArray& outputLines, int sleeptime)
+{
+	bool retval = true;
+	{
+		String output;
 		try
 		{
-			StringArray cmd;
-			cmd.push_back("./exec_test_script.sh");
-			cmd.push_back(option1);
-			cmd.push_back(option2);
+			String parentCommand = "./run_process.sh ./ExecTestProgram --program-name ParentProcess " + parentArgs;
+			String childCommand = "./ExecTestProgram --program-name ChildProcess " + childArgs;
+			StringArray cmd = parentCommand.tokenize();
+			cmd.push_back("--spawn-child");
+			cmd.push_back(childCommand);
+
 			Process::Status status = Exec::executeProcessAndGatherOutput(cmd, output, Timeout::relative(5));
-			unitAssert(0);
+			retval = false;
 		}
 		catch (const ExecTimeoutException& e)
 		{
 		}
 		String filename = output.trim();
-		unitAssert(FileSystem::exists(filename));
 		if( FileSystem::exists(filename) )
 		{
-			StringArray foo = FileSystem::getFileLines(filename);
-			FileSystem::removeFile(filename);
-			for( StringArray::const_iterator i = foo.begin(); i != foo.end(); ++i )
+			if( sleeptime != 0 )
 			{
-				if( i->indexOf(desiredOutput) != String::npos )
-				{
-					return true;
-				}
+				// Wait to allow more output to be written to the file.
+				sleep(sleeptime);
 			}
+
+			outputLines = FileSystem::getFileLines(filename);
+			FileSystem::removeFile(filename);
+		}
+		else
+		{
+			retval = false;
+			cerr << Format("Executing process failed: output=\"%1\"", output) << endl;
+
+			// Yes, we just tested this, but we want a full test failure and want
+			// to know what the output was.  An exception would probably be
+			// better.
+			unitAssert(FileSystem::exists(filename));
 		}
 	}
-	return false;
+	return retval;
 }
 
 void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
@@ -98,8 +165,8 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 	{
 		String output;
 		Process::Status status = Exec::executeProcessAndGatherOutput(String(OW_TRUE_PATHNAME).tokenize(), output);
-		unitAssert(output.empty());
 		unitAssert(status.terminatedSuccessfully());
+		unitAssert(output.empty());
 	}
 
 	{
@@ -130,12 +197,70 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 	// only do timeout tests if we're doing the long test, since it's slowwww
 	if (getenv("OWLONGTEST"))
 	{
-		// Test our child process which requires a signal, and NOT ignoring the term signal.
-		unitAssert(executeTestScript("wait_child", "noignore", "Parent received signal"));
-		// Test our child process which requires a signal, and ignoring the term signal.
-		unitAssert(executeTestScript("wait_child", "ignore", "Child received signal"));
-		// Test our child process which requires a kill signal, yet the child quits when the process group is signaled.
-		unitAssert(executeTestScript("sleep", "ignore", "Child sleep terminated"));
+		{
+			// Both the parent and child should quit normally.
+			StringArray output;
+			// This returns false because it didn't timeout.
+			unitAssert(!executeTestProgram("--sleep-time 3", "--sleep-time 2", output));
+			unitAssert(outputContains(output, "ChildProcess: Quitting"));
+			unitAssert(outputContains(output, "ParentProcess: Quitting"));
+		}
+
+		{
+			// The parent should timeout and get a sigterm (which it ignores).
+			// The child should quit normally.  The parent should quit before any
+			// forceful termination is attempted.
+			StringArray output;
+			unitAssert(executeTestProgram("--sleep-time 7 --block-signals term,chld", "--sleep-time 2", output, 10));
+			unitAssert(outputContains(output, "ChildProcess: Quitting"));
+			unitAssert(outputContains(output, "ParentProcess: Ignoring signal TERM"));
+			unitAssert(outputContains(output, "ParentProcess: Done sleeping"));
+			unitAssert(outputContains(output, "ParentProcess: Quitting"));
+		}
+
+		{
+			// The parent should timeout and get a sigterm (which it ignores).  It
+			// should then be forcefully terminated.
+			StringArray output;
+			unitAssert(executeTestProgram("--sleep-time 12 --block-signals term,chld", "--sleep-time 2", output, 14));
+			unitAssert(outputContains(output, "ChildProcess: Quitting"));
+			unitAssert(outputContains(output, "ParentProcess: Ignoring signal TERM"));
+			// The parent process should be terminated, so it shouldn't contain
+			// "Quitting" or "Done Sleeping".
+			unitAssert(outputDoesNotContain(output, "ParentProcess: Done sleeping"));
+			unitAssert(outputDoesNotContain(output, "ParentProcess: Quitting"));
+		}
+
+		{
+			// The parent ignores the term, but the child is terminated.
+			StringArray output;
+			unitAssert(executeTestProgram("--sleep-time 6 --block-signals term", "--sleep-time 12", output, 14));
+			unitAssert(outputContains(output, "ParentProcess: Done sleeping"));
+			unitAssert(outputContains(output, "ParentProcess: Ignoring signal TERM"));
+			unitAssert(outputDoesNotContain(output, "ChildProcess: Quitting")); // Because it was terminated...
+			unitAssert(outputContains(output, "ParentProcess: Rough child exit: TERM"));
+			unitAssert(outputContains(output, "ParentProcess: Quitting")); // Must exit cleanly.
+		}
+
+		// Note about this disabled test: This test will occasionally fail on
+		// MacOS (most frequently for x86).  It looks like the child fails to get
+		// the TERM signal about 12% of the time when it is sent to the process
+		// group created for the parent process.  This only seems to happen when
+		// running the tests, and never when running the ExecTestCases by
+		// themselves.  It is likely just a timing issue that cannot yet be
+		// explained.
+#if !defined(BLOCXX_DARWIN)
+		{
+			// Parent and child ignore the term.  Both will be killed forcefully.
+			StringArray output;
+			unitAssert(executeTestProgram("--sleep-time 6 --block-signals term", "--sleep-time 12 --block-signals term", output, 14));
+			unitAssert(outputContains(output, "ParentProcess: Done sleeping"));
+			unitAssert(outputContains(output, "ParentProcess: Ignoring signal TERM"));
+			unitAssert(outputContains(output, "ChildProcess: Ignoring signal TERM"));
+			unitAssert(outputDoesNotContain(output, "Process: Quitting"));
+			unitAssert(outputDoesNotContain(output, "ChildProcess: Quitting"));
+		}
+#endif
 	}
 
 	{
@@ -300,8 +425,19 @@ void OW_ExecTestCases::testgatherOutput()
 			}
 			else // these ones got killed
 			{
+#ifdef BLOCXX_SOLARIS
+				// The solaris shell eats SIGTERM and returns 143 because the sleep gets killed
+				unitAssert(status.exitTerminated());
+				unitAssertEquals(status.exitStatus(), 143);
+
+#else
 				unitAssert(status.signalTerminated());
+#ifdef BLOCXX_WIN32 //in Windows SIGPIPE doesn't exist
+				unitAssert(status.termSignal() == SIGTERM );
+#else
 				unitAssert(status.termSignal() == SIGTERM || status.termSignal() == SIGPIPE);
+#endif
+#endif
 			}
 			if (i * i + i < 2 + TEST_PROC_COUNT)
 			{

@@ -51,7 +51,7 @@ class OW_HTTP_API HTTPDeflateIStreamBuffer : public BaseStreamBuffer
 {
 public:
 	HTTPDeflateIStreamBuffer(std::istream& istr);
-	~HTTPDeflateIStreamBuffer();
+	virtual ~HTTPDeflateIStreamBuffer();
 protected:
 	virtual int buffer_from_device(char *, int);
 private:
@@ -84,6 +84,7 @@ public:
 	 * @param istr the original istream to wrap.
 	 */
 	HTTPDeflateIStream(const Reference<std::istream>& istr);
+	virtual ~HTTPDeflateIStream();
 	/**
 	 * Get the original istream
 	 * @return the original istream.

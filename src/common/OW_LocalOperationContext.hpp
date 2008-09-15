@@ -49,6 +49,7 @@ class OW_COMMON_API LocalOperationContext: public OperationContext
 public:
 	
 	LocalOperationContext();
+	virtual ~LocalOperationContext();
 
 private:
 

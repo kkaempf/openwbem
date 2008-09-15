@@ -47,6 +47,12 @@
 #include "OW_TimeoutTimer.hpp"
 #include "OW_RandomNumber.hpp"
 
+// for getrlimit()
+#include <sys/time.h>
+#include <sys/resource.h>
+// for sysconf()
+#include <unistd.h>
+
 using namespace OpenWBEM;
 using namespace std;
 
@@ -401,6 +407,38 @@ private:
 	RWLocker& m_locker;
 };
 
+namespace // anonymous
+{
+	// Get the maximum number of processes for the current user.
+	long getMaxProcs()
+	{
+#ifdef OW_WIN32
+#pragma message(Reminder "TODO: implement it for Win!")
+
+		long maxProcs = 0;
+#else
+		long sysconfValue = sysconf(_SC_CHILD_MAX);
+		long maxProcs = sysconfValue;
+		rlimit rl;
+		rl.rlim_cur = rlim_t(0);
+#ifdef RLIM_NPROC
+		if( getrlimit(RLIMIT_NPROC, &rl) != -1 )
+		{
+			if( sysconfValue < 0 )
+			{
+				maxProcs = rl.rlim_cur;
+			}
+			else
+			{
+				maxProcs = std::min<rlim_t>(rl.rlim_cur, sysconfValue);
+			}
+		}
+#endif
+#endif
+		return maxProcs;
+	}
+} // end anonymous namespace
+
 void OW_RWLockerTestCases::testReadAndWrite()
 {
 	Timeout timeout = Timeout::relative(0.01); // short test is 1/100 of a second
@@ -418,9 +456,15 @@ void OW_RWLockerTestCases::testReadAndWrite()
 		int NUM_WRITERS = 4;
 		if (getenv("OWLONGTEST"))
 		{
-			NUM_READERS = RandomNumber(0, 30).getNextNumber();
-			NUM_UPGRADERS = RandomNumber(0, 30).getNextNumber();
-			NUM_WRITERS = RandomNumber(1, 30).getNextNumber(); // have to have at least 1.
+			// We don't want to exceed 75% (3/4) of the maximum user processes.
+			// Going beyond this will cause thread creation to fail with EAGAIN on
+			// some platforms because "make" and any other processes will easily
+			// push it above the limit.
+			int maxthreads = std::min<int>(30, getMaxProcs() / 4);
+
+			NUM_READERS = RandomNumber(0, maxthreads).getNextNumber();
+			NUM_UPGRADERS = RandomNumber(0, maxthreads).getNextNumber();
+			NUM_WRITERS = RandomNumber(1, maxthreads).getNextNumber(); // have to have at least 1.
 		}
 
 		int TOTAL_THREADS = NUM_READERS + NUM_UPGRADERS + NUM_WRITERS;

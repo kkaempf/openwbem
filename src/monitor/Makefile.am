@@ -40,7 +40,7 @@ OW_MonitoredPerl.cpp \
 OW_IPCIO.hpp \
 OW_PrivilegeCommon.hpp
 
-# Some versions of flex generate sign comparison warning, so ignore them.
+# Some versions of flex generate sign comparison warnings, so ignore them.
 libowprivman_a_CXXFLAGS = $(AM_CXXFLAGS) $(WNO_SIGN_COMPARE)
 
 pkginclude_HEADERS = \

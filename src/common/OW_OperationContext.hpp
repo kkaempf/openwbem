@@ -76,6 +76,7 @@ public:
 	typedef IntrusiveReference<Data> DataRef;
 	
 	OperationContext();
+	virtual ~OperationContext();
 
 	/**
 	 * Caller creats a subclass of Data and passes it in.
@@ -152,6 +153,7 @@ public:
 	public:
 		StringData();
 		StringData(const String& str);
+		virtual ~StringData();
 		virtual void writeObject(std::streambuf& ostr) const;
 	
 		virtual void readObject(std::streambuf& istr);

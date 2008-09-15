@@ -67,6 +67,8 @@ public:
 	 */
 	ClientCIMOMHandleConnectionPool(unsigned maxConnectionsPerUrl);
 
+	virtual ~ClientCIMOMHandleConnectionPool();
+
 	/**
 	 * Get a new ClientCIMOMHandleRef connected to url. If there is one in the
 	 * pool, it will be retrieved, otherwise a new connection will be created.

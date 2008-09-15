@@ -94,6 +94,11 @@ LanguageTag::LanguageTag(const LanguageTag& arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+LanguageTag::~LanguageTag()
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
 LanguageTag& 
 LanguageTag::operator= (const LanguageTag& arg)
 {
@@ -349,6 +354,11 @@ SessionLanguage::SessionLanguage(const SessionLanguage& arg)
 	, m_langTags(arg.m_langTags)
 	, m_contentLanguage(arg.m_contentLanguage)
 	, m_acceptLanguageString(arg.m_acceptLanguageString)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+SessionLanguage::~SessionLanguage()
 {
 }
 

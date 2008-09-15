@@ -33,6 +33,9 @@ OW_MOFCompiler.cpp \
 OW_MOFParserErrorHandlerIFC.cpp \
 OW_MOFParseFatalErrorException.cpp
 
+# Some version of flex generate sign comparison warnings, so ignore them.
+libowmofc_a_CXXFLAGS = $(AM_CXXFLAGS) $(WNO_SIGN_COMPARE)
+
 pkginclude_HEADERS = \
 OW_MOFGrammar.hpp \
 OW_MOFVisitor.hpp \

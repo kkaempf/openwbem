@@ -10,7 +10,7 @@ else
 if DISABLE_NAMESPACE_MANIPULATION
 PROGS=
 else
-PROGS= MemTracerTest unitMain exitWithSignal fillOutputBuffer runMultiProcessLogger
+PROGS= MemTracerTest unitMain exitWithSignal fillOutputBuffer runMultiProcessLogger ExecTestProgram
 endif
 endif
 endif
@@ -28,6 +28,15 @@ $(SSL_LIBS)
 
 MemTracerTest_SOURCES = \
 MemTracerTest.cpp
+
+ExecTestProgram_PROJECT_LIBS = \
+$(BLOCXX_LIBS)
+
+ExecTestProgram_EXTERNAL_LIBS =  \
+$(SSL_LIBS) $(REALTIME_LIBS)
+
+ExecTestProgram_SOURCES = \
+ExecTestProgram.cpp
 
 runMultiProcessLogger_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem $(BLOCXX_LIBS) \

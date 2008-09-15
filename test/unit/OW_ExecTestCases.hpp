@@ -55,7 +55,7 @@ private:
 	void testgatherOutput();
 
 	// helper method
-	bool executeTestScript(const OpenWBEM::String& option1, const OpenWBEM::String& option2, const OpenWBEM::String& desiredOutput);
+	bool executeTestProgram(const OpenWBEM::String& option1, const OpenWBEM::String& option2, OpenWBEM::StringArray& desiredOutput, int sleeptime = 0);
 };
 
 #endif

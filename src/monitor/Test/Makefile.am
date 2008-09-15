@@ -32,7 +32,7 @@ perl_launcher_EXTERNAL_LIBS = $(DEFAULT_EXTERNAL_LIBS)
 
 mpt_user_SOURCES = mpt_user.cpp
 mpt_user_PROJECT_LIBS = $(DEFAULT_PROJECT_LIBS)
-mpt_user_EXTERNAL_LIBS =
+mpt_user_EXTERNAL_LIBS = $(DEFAULT_EXTERNAL_LIBS)
 
 mpt_mon_SOURCES = mpt_mon.cpp
 mpt_mon_PROJECT_LIBS = $(DEFAULT_PROJECT_LIBS)

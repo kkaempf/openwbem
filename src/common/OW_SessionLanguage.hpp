@@ -52,6 +52,7 @@ public:
 	LanguageTag();
 	LanguageTag(const char* languageTag);
 	LanguageTag(const LanguageTag& arg);
+	virtual ~LanguageTag();
 
 	bool invalid() const { return (m_subtag1[0] == 0); }
 	Int32 getWeight() const { return m_weight; }
@@ -125,6 +126,7 @@ public:
 	SessionLanguage(const char* acceptLangHdrValue);
 	SessionLanguage(const SessionLanguage& arg);
 	SessionLanguage& operator=(const SessionLanguage& arg);
+	virtual ~SessionLanguage();
 	
 	int langCount() const { return m_langTags.size(); }
 	String getAcceptLanguageString() const { return m_acceptLanguageString; }

@@ -37,13 +37,7 @@ owcimindicationlistener
 endif
 endif
 
-SUBDIRS = $(MOFC_DIR) owprovideragent
-
-noinst_LIBRARIES = libtoolscommon.a
-
-libtoolscommon_a_SOURCES = \
-OW_ToolsCommon.hpp \
-OW_ToolsCommon.cpp
+SUBDIRS = common $(MOFC_DIR) owprovideragent
 
 sbin_PROGRAMS = \
 $(OWREPOSITORYDUMP) \
@@ -74,7 +68,7 @@ owdigestgenpass_PROJECT_LIBS = \
 -L$(top_builddir)/src/http/common -lowhttpcommon
 
 owdigestgenpass_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -91,7 +85,7 @@ owexecwql_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owexecwql_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -108,7 +102,7 @@ owcreatenamespace_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owcreatenamespace_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -124,7 +118,7 @@ owdeletenamespace_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owdeletenamespace_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -137,7 +131,7 @@ owcheckrepository_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owcheckrepository_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(SSL_LIBS)
 
@@ -154,7 +148,7 @@ owenumnamespace_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owenumnamespace_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -171,7 +165,7 @@ owenumqualifiers_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owenumqualifiers_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -188,7 +182,7 @@ owenumclassnames_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owenumclassnames_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -205,7 +199,7 @@ owenumclasses_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owenumclasses_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -222,7 +216,7 @@ owenuminstances_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owenuminstances_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -239,7 +233,7 @@ owenuminstancenames_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owenuminstancenames_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -259,7 +253,7 @@ owcimindicationlistener_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owcimindicationlistener_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -274,7 +268,7 @@ owrepositorydump_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owrepositorydump_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
@@ -292,7 +286,7 @@ owgetclass_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owgetclass_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -309,7 +303,7 @@ owgetinstance_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owgetinstance_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -326,7 +320,7 @@ owdeleteinstance_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owdeleteinstance_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -343,7 +337,7 @@ owinvokemethod_PROJECT_LIBS = \
 -L$(top_builddir)/src/common -lopenwbem
 
 owinvokemethod_EXTERNAL_LIBS = \
-libtoolscommon.a \
+$(top_builddir)/src/tools/common/libtoolscommon.a \
 $(BLOCXX_LIBS) \
 $(Z_LIBS) $(SSL_LIBS)
 
@@ -359,6 +353,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/client \
 -I$(top_srcdir)/src/cimxmllistener \
 -I$(top_srcdir)/src/services/http \
--I$(top_srcdir)/src/repositories/hdb
+-I$(top_srcdir)/src/repositories/hdb \
+-I$(top_srcdir)/src/tools/common
 
 include $(top_srcdir)/Makefile-executable.inc

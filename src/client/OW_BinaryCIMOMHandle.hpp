@@ -58,6 +58,8 @@ public:
 	 * 	// the remote CIMOM handle can be used.
 	 */
 	BinaryCIMOMHandle( const CIMProtocolIFCRef& prot );
+
+	virtual ~BinaryCIMOMHandle();
 	
 	/**
 	 * Get a Reference to the WBEM protocol handler (HTTPClient)

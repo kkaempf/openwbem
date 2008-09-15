@@ -59,6 +59,10 @@ LocalOperationContext::LocalOperationContext()
 
 }
 
+LocalOperationContext::~LocalOperationContext()
+{
+}
+
 bool
 LocalOperationContext::doGetData(const String& key, DataRef& data) const
 {

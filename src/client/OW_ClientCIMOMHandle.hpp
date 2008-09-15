@@ -52,6 +52,8 @@ class OW_CLIENT_API ClientCIMOMHandle : public CIMOMHandleIFC
 {
 public:
 
+	virtual ~ClientCIMOMHandle();
+
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
 	virtual void createNameSpace(const String& ns) OW_DEPRECATED; // in 3.0.0

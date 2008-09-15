@@ -52,6 +52,11 @@ OperationContext::OperationContext()
 }
 
 /////////////////////////////////////////////////////////////////////////////
+OperationContext::~OperationContext()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
 UserInfo
 OperationContext::getUserInfo() const
 {
@@ -104,6 +109,11 @@ OperationContext::StringData::StringData(const String& str)
 }
 
 /////////////////////////////////////////////////////////////////////////////
+OperationContext::StringData::~StringData() 
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
 void
 OperationContext::StringData::writeObject(std::streambuf& ostr) const
 {
@@ -126,7 +136,7 @@ GlobalString g_StringDataType = BLOCXX_GLOBAL_STRING_INIT("StringData");
 String
 OperationContext::StringData::getType() const
 {
-	return g_StringDataType;
+	return static_cast<String>(g_StringDataType);
 }
 
 /////////////////////////////////////////////////////////////////////////////

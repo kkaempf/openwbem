@@ -87,6 +87,9 @@ public:
 	 */
 	CIMScope(const CIMScope& arg) :
 		CIMBase(), m_val(arg.m_val) {}
+
+	virtual ~CIMScope();
+	
 	/**
 	 * Set this to a null object.
 	 */

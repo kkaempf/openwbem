@@ -115,6 +115,7 @@ public:
 	CIMXMLParser(const String& str);
 	CIMXMLParser(std::istream& sb);
 	CIMXMLParser();
+	virtual ~CIMXMLParser();
 	void mustGetChildId(tokenId tId);
 	void getNextId(tokenId beginTok, bool throwIfError = false);
 	void mustGetNextId(tokenId beginTok)

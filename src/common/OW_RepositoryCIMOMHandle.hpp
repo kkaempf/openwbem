@@ -64,6 +64,8 @@ public:
 	 */
 	RepositoryCIMOMHandle(const RepositoryIFCRef& pRepos,
 		OperationContext& context);
+
+	virtual ~RepositoryCIMOMHandle();
 	
 	virtual void close();
 

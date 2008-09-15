@@ -98,6 +98,12 @@ CIMXMLCIMOMHandle::CIMXMLCIMOMHandle(const CIMProtocolIFCRef& prot)
 	m_iMessageID = 0;
 	m_protocol->setContentType("application/xml");
 }
+
+//////////////////////////////////////////////////////////////////////////////
+CIMXMLCIMOMHandle::~CIMXMLCIMOMHandle()
+{
+}
+
 //////////////////////////////////////////////////////////////////////////////
 CIMProtocolIFCRef
 CIMXMLCIMOMHandle::getWBEMProtocolHandler() const

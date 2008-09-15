@@ -60,6 +60,11 @@ CIMXMLParser::CIMXMLParser()
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
+CIMXMLParser::~CIMXMLParser()
+{
+}
+
 // This needs to be sorted alphabetically.
 CIMXMLParser::ElemEntry CIMXMLParser::g_elems[] =
 {

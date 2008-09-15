@@ -38,7 +38,7 @@ endef
 
 # Define <foo>_DEPENCIES to be *.a files listed in _EXTERNAL_LIBS
 define $(1)_DEPENDENCIES
-$$(filter .a,$$($(1)_EXTERNAL_LIBS))
+$$(filter %.a,$$($(1)_EXTERNAL_LIBS))
 endef
 
 # A simple makefile testing target.  Note that @ is replaced with $(1) or it
@@ -46,6 +46,10 @@ endef
 showflags-$(1):
 	@echo '$(1)_LDFLAGS=$$($(1)_LDFLAGS:@=$(1))'
 	@echo '$(1)_LDADD=$$($(1)_LDADD:@=$(1))'
+	@echo '$(1)_DEPENDENCIES=$$($(1)_DEPENDENCIES:@=$(1))'
+	@echo '$(1)_EXTERNAL_LIBS=$$($(1)_EXTERNAL_LIBS:@=$(1))'
+	@echo '$(1)_PROJECT_LIBS=$$($(1)_PROJECT_LIBS:@=$(1))'
+	@echo '$(1)_SOURCES=$$($(1)_SOURCES:@=$(1))'
 
 endef # end of EXECUTABLE_FLAG_TEMPLATE
 

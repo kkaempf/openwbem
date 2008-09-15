@@ -52,7 +52,7 @@ class OW_HTTP_API HTTPChunkedIStreamBuffer : public BaseStreamBuffer
 	public:
 		HTTPChunkedIStreamBuffer(std::istream& istr);
 		void resetInput();
-		~HTTPChunkedIStreamBuffer();
+		virtual ~HTTPChunkedIStreamBuffer();
 	private:
 		std::istream& m_istr;
 		unsigned int m_inLen;
@@ -83,7 +83,7 @@ class OW_HTTP_API HTTPChunkedIStream : private HTTPChunkedIStreamBase,
 		 * @param istr The istream& to be wrapped (de-chunked).
 		 */
 		HTTPChunkedIStream(std::istream& istr);
-		~HTTPChunkedIStream();
+		virtual ~HTTPChunkedIStream();
 		/**
 		 * Get the original istream&.
 		 * @return a istream& pointing to the original istream.

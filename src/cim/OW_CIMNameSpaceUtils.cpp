@@ -59,6 +59,7 @@ namespace
 		StringArrayBuilder(StringArray& a) : m_a(a)
 		{
 		}
+		virtual ~StringArrayBuilder() {}
 	protected:
 		virtual void doHandle(const String &s)
 		{
@@ -73,6 +74,7 @@ namespace
 		NamespaceObjectPathToStringHandler(StringResultHandlerIFC& result_)
 			: result(result_)
 		{}
+		virtual ~NamespaceObjectPathToStringHandler() {}
 		void doHandle(const CIMObjectPath& op)
 		{
 			result.handle(op.getKeyT("Name").getValueT().toString());

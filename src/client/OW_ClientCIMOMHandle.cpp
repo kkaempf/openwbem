@@ -48,6 +48,12 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+
+//////////////////////////////////////////////////////////////////////////////
+ClientCIMOMHandle::~ClientCIMOMHandle()
+{
+}
+
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -62,6 +68,7 @@ ClientCIMOMHandle::deleteNameSpace(const String& ns_)
 	CIMNameSpaceUtils::delete__Namespace(*this, ns_);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
 //////////////////////////////////////////////////////////////////////////////
 void
 ClientCIMOMHandle::enumNameSpace(const String& ns_,

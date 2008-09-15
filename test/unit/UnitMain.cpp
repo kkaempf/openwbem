@@ -206,6 +206,8 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_Format", OW_FormatTestCases::suite());
 	runner.addTest( "OW_LazyGlobal", OW_LazyGlobalTestCases::suite());
 
+	runner.addTest( "PrivilegeManagerMockObject", PrivilegeManagerMockObjectTestCases::suite());
+
 	if ( argc < 2 || ( argc == 2 && OpenWBEM::String("all") == argv[1] ) )
 	{
 		runner.runAll();
