@@ -59,13 +59,15 @@ private:
 			const CIMObjectPath::OPData& y);
 public:
 	/**
-	 * Escapes quotes and '/'
+	 * Escape the control and quote characters from inString to produce an
+	 * escaped string.  The escaped characters are \b, \t, \n, \f, \r, \", \',
+	 * and \\.
 	 * @param inString The string to escape
 	 * @return The escaped string
 	 */
 	static String escape(const String& inString);
 	/**
-	 * Unescapes quotes and '/'
+	 * Unescapes quotes as escaped by escape().
 	 * @param inString The string in an escaped form
 	 * @return The string with escape sequences removed
 	 */

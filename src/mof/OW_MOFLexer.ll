@@ -113,8 +113,8 @@ simpleEscape [bfnrt'"\\]
 hexEscape "x"[0-9a-fA-F]{1,4}
 
 escapeSequence [\\]({simpleEscape}|{hexEscape})
-cChar [^'\\\n\r]|{escapeSequence}
-sChar [^"\\\n\r]|{escapeSequence}
+cChar [^'\\]|{escapeSequence}
+sChar [^"\\]|{escapeSequence}
 
 charValue \'{cChar}\'
 stringValue \"{sChar}*\"

@@ -673,57 +673,126 @@ CIMObjectPath::escape(const String& inString)
 	const char* values = inString.c_str();
 	for (int i = 0; i < valuesLen; i++)
 	{
-		char ch = values[i];
-		if (ch == '\\')
+		switch(values[i])
 		{
-			rv += '\\';
-			rv += ch;
-		}
-		else if (ch == '"')
-		{
-			rv += '\\';
-			rv += '"';
-		}
-		else if (ch == '\n')
-		{
-			rv += "\\n";
-		}
-		else
-		{
-			rv += ch;
+		case '\b': rv += "\\b"; break;
+		case '\t': rv += "\\t"; break;
+		case '\n': rv += "\\n"; break;
+		case '\f': rv += "\\f"; break;
+		case '\r': rv += "\\r"; break;
+		case '\"': rv += "\\\""; break;
+		case '\\': rv += "\\\\"; break;
+		default:
+			rv += values[i];
 		}
 	}
 	return rv.releaseString();
 }
+
+namespace // anonymous
+{
+	// This is passed the xNNNN portion of a \xNNNN escape sequence at
+	// the supplied offset.  The offset is modified to point to the
+	// next character after the hex sequence.
+	String parseHexString(const char* ptr, size_t maxLen, size_t& offset)
+	{
+		String s;
+
+		UInt16 hex = 0;
+		size_t j = 1;
+		for (; (j <= 4) && (offset + j < maxLen) ; ++j)
+		{
+			char c = ptr[offset + j];
+			if (isdigit(c))
+			{
+				hex <<= 4;
+				hex |= c - '0';
+			}
+			else if (isxdigit(c))
+			{
+				hex <<= 4;
+				c = toupper(c);
+				hex |= c - 'A' + 0xA;
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		if( j <= 1 )
+		{
+			// No hex digits.  Ignore for now for compatbility, and lack of 
+			// a expectation for throwing exceptions.
+		}
+		else if (hex > CHAR_MAX)
+		{
+			// Out of range.  Use the UTF-8 version of the
+			// "replacement" character.
+			s += "\xef\xbf\xbd";
+		}
+		else
+		{
+			s += static_cast<char>(hex);
+		}
+		offset += j - 1;
+
+		return s;
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 String
 CIMObjectPath::unEscape(const String& inString)
 {
-	int valuesLen = static_cast<int>(inString.length());
-	if (valuesLen == 0)
+	if (inString.empty())
 	{
 		return inString;
 	}
-	StringBuffer rv(valuesLen);
+
+	const size_t valuesLen = inString.length();
 	const char* values = inString.c_str();
-	int i = 0;
-	while (i < valuesLen)
+
+	StringBuffer rv(valuesLen);
+
+	for( size_t i = 0; i < valuesLen; ++i )
 	{
-		char ch = values[i];
-		if (ch == '\\')
+		if ( values[i] == '\\' )
 		{
-			if (i+1 < valuesLen)
+			if ((i + 1) < valuesLen)
 			{
 				++i;
-				rv += values[i];
+				switch(values[i])
+				{
+				case 'b': rv += '\b'; break;
+				case 't': rv += '\t'; break;
+				case 'n': rv += '\n'; break;
+				case 'f': rv += '\f'; break;
+				case 'r': rv += '\r'; break;
+				case '\"': rv += '\"'; break;
+				case '\'': rv += '\''; break;
+				case '\\': rv += '\\'; break;
+				case 'x':
+				case 'X':
+					rv += parseHexString(values, valuesLen, i);
+					break;
+				default:
+					// Bad escape characters.
+					// NOTE: The old code dropped the escape here, which seems messed up.
+					rv += '\\';
+					rv += values[i];
+				}
+			}
+			else
+			{
+				// Trailing backslash...  The old code ignored this.
 			}
 		}
 		else
 		{
 			rv += values[i];
 		}
-		++i;
 	}
 	return rv.releaseString();
 }
