@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_UUIDTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_UUIDTestCases,"OW_UUID");
 #include "OW_UUID.hpp"
 #include "OW_Array.hpp"
 

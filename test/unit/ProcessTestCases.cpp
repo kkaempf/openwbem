@@ -29,9 +29,12 @@
 *******************************************************************************/
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "ProcessTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(ProcessTestCases,"Process");
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_Format.hpp"

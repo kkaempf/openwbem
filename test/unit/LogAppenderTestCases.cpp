@@ -29,9 +29,12 @@
 *******************************************************************************/
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "LogAppenderTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(LogAppenderTestCases,"LogAppender");
 #include "OW_LogAppender.hpp"
 #include "OW_NullAppender.hpp"
 

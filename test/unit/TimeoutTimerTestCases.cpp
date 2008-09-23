@@ -29,9 +29,12 @@
 *******************************************************************************/
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "TimeoutTimerTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(TimeoutTimerTestCases,"TimeoutTimer");
 #include "OW_Timeout.hpp"
 #include "OW_TimeoutTimer.hpp"
 #include "OW_Thread.hpp"

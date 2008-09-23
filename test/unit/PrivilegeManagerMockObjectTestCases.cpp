@@ -32,9 +32,12 @@
  */
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "PrivilegeManagerMockObjectTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(PrivilegeManagerMockObjectTestCases,"PrivilegeManagerMockObject");
 #include "OW_PrivilegeManagerMockObject.hpp"
 #include "OW_PrivilegeManagerMockObjectScope.hpp"
 #include "OW_PrivilegeManager.hpp"

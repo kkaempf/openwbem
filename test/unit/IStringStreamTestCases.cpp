@@ -29,9 +29,12 @@
 *******************************************************************************/
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "IStringStreamTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(IStringStreamTestCases,"IStringStream");
 #include "OW_StringStream.hpp"
 
 using namespace OpenWBEM;

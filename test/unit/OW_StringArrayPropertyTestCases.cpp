@@ -34,9 +34,12 @@
 
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_StringArrayPropertyTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_StringArrayPropertyTestCases,"OW_StringArrayProperty");
 #include "OW_String.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMValue.hpp"

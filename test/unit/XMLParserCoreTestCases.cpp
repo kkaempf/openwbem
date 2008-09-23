@@ -29,9 +29,12 @@
 *******************************************************************************/
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "XMLParserCoreTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(XMLParserCoreTestCases,"XMLParserCore");
 #include "OW_XMLParserCore.hpp"
 #include "OW_XMLParseException.hpp"
 #include "OW_StringStream.hpp"

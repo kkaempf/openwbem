@@ -35,9 +35,13 @@
 
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_MemTracerTestCases.hpp"
+
+AUTO_UNIT_TEST_SUITE_NAMED(OW_MemTracerTestCases,"OW_MemTracer");
 
 #include <iostream>
 
@@ -161,9 +165,12 @@ Test* OW_MemTracerTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_MemTracer");
 
-	testSuite->addTest (new TestCaller <OW_MemTracerTestCases> 
-			("testSomething", 
+#if !defined(OW_WIN32)
+
+	testSuite->addTest (new TestCaller <OW_MemTracerTestCases>
+			("testSomething",
 			&OW_MemTracerTestCases::testSomething));
+#endif
 
 	return testSuite;
 }

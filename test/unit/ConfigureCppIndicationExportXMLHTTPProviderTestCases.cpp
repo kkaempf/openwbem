@@ -28,9 +28,12 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "ConfigureCppIndicationExportXMLHTTPProviderTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(ConfigureCppIndicationExportXMLHTTPProviderTestCases,"ConfigureCppIndicationExportXMLHTTPProvider");
 #include "OW_CppIndicationExportXMLHTTPProvider.hpp"
 #include "DummyProvEnv.hpp"
 #include "OW_ConfigException.hpp"

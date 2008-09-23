@@ -33,10 +33,13 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_config.h"
 #include "OW_StringTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_StringTestCases,"OW_String");
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_Types.hpp"

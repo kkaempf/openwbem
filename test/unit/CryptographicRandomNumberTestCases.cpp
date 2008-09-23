@@ -29,9 +29,12 @@
 *******************************************************************************/
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "CryptographicRandomNumberTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(CryptographicRandomNumberTestCases,"CryptographicRandomNumber");
 #include "OW_SecureRand.hpp"
 #include "OW_Types.hpp"
 

@@ -32,9 +32,12 @@
  * @author Dan Nuffer
  */
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_LoggerTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_LoggerTestCases,"OW_Logger");
 #include "OW_Logger.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"

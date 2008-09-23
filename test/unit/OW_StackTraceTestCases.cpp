@@ -33,9 +33,14 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_StackTraceTestCases.hpp"
+
+AUTO_UNIT_TEST_SUITE_NAMED(OW_StackTraceTestCases,"OW_StackTrace");
+
 #include "OW_StackTrace.hpp"
 #include "OW_ConfigOpts.hpp"
 #include <fstream>
@@ -73,9 +78,12 @@ Test* OW_StackTraceTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_StackTrace");
 
+#ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
+
 	testSuite->addTest (new TestCaller <OW_StackTraceTestCases>
 			("testGetStackTrace",
 			&OW_StackTraceTestCases::testGetStackTrace));
+#endif
 
 	return testSuite;
 }

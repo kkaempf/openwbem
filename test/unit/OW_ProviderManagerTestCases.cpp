@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_ProviderManagerTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_ProviderManagerTestCases,"OW_ProviderManager");
 #include "OW_ProviderManager.hpp"
 #include "testSharedLibraryLoader.hpp"
 #include "OW_CIMQualifier.hpp"

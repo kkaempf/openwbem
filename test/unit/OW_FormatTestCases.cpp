@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_FormatTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_FormatTestCases,"OW_Format");
 #include "OW_Format.hpp"
 
 using namespace OpenWBEM;

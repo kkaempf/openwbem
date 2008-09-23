@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_RandomNumberTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_RandomNumberTestCases,"OW_RandomNumber");
 #include "OW_RandomNumber.hpp"
 
 using namespace OpenWBEM;

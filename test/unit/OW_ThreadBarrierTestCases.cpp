@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_ThreadBarrierTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_ThreadBarrierTestCases,"OW_ThreadBarrier");
 #include "OW_ThreadBarrier.hpp"
 #include "OW_Thread.hpp"
 

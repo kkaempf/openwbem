@@ -34,9 +34,12 @@
  */
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_InetAddressTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_InetAddressTestCases,"OW_SocketAddress");
 #include "OW_SocketAddress.hpp"
 
 using namespace OpenWBEM;

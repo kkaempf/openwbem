@@ -33,10 +33,13 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_config.h"
 #include "OW_ScopeLoggerTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_ScopeLoggerTestCases,"OW_ScopeLogger");
 #include "OW_ScopeLogger.hpp"
 #include "OW_LogAppenderScope.hpp"
 

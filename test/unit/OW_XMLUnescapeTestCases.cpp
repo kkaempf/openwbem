@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_XMLUnescapeTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_XMLUnescapeTestCases,"OW_XMLUnescape");
 #include "OW_XMLUnescape.hpp"
 #include <iostream>
 

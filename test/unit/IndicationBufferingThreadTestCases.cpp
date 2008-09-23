@@ -31,9 +31,12 @@
 #include <cassert>
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "IndicationBufferingThreadTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(IndicationBufferingThreadTestCases,"IndicationBufferingThread");
 #include "MockObject.hpp"
 #include "MockClock.hpp"
 #include "CIMInstanceUtils.hpp"

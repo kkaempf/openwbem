@@ -34,9 +34,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_HTTPUtilsTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_HTTPUtilsTestCases,"OW_HTTPUtils");
 #include "OW_HTTPUtils.hpp"
 
 using namespace OpenWBEM;

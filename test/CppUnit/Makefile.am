@@ -17,7 +17,10 @@ TextTestResult.hpp \
 Test.hpp \
 TestResult.hpp \
 TestCaller.hpp \
-TestRunner.hpp
+TestRunner.hpp \
+AutoTest.hpp \
+AutoTest.cpp
+
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

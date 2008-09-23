@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_ProviderMuxTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_ProviderMuxTestCases,"OW_ProviderMux");
 #include "OW_ProviderIFCBaseIFC.hpp"
 #include "testSharedLibraryLoader.hpp"
 #include "OW_SharedLibrary.hpp"

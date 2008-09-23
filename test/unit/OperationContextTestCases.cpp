@@ -34,9 +34,12 @@
 
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OperationContextTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OperationContextTestCases,"OperationContext");
 #include "OW_LocalOperationContext.hpp"
 
 using namespace OpenWBEM;

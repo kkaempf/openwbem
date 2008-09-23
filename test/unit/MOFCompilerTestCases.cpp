@@ -34,9 +34,12 @@
 
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "MOFCompilerTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(MOFCompilerTestCases,"MOFCompiler");
 #include "OW_MOFCompiler.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMProperty.hpp"

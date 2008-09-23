@@ -33,12 +33,15 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include <vector>
 #include <algorithm>
 #include <iostream>
 #include "OW_EnumerationTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_EnumerationTestCases,"OW_Enumeration");
 #include "OW_Enumeration.hpp"
 #include "OW_String.hpp"
 

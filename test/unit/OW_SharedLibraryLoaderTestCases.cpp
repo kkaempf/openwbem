@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_SharedLibraryLoaderTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_SharedLibraryLoaderTestCases,"OW_SharedLibraryLoader");
 #include "OW_SharedLibraryLoader.hpp"
 #include "OW_SharedLibrary.hpp"
 #include "testSharedLibraryLoader.hpp"

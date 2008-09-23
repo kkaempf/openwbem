@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_ThreadPoolTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_ThreadPoolTestCases,"OW_ThreadPool");
 #include "OW_ThreadPool.hpp"
 #include "OW_Thread.hpp"
 #include "OW_ThreadBarrier.hpp"

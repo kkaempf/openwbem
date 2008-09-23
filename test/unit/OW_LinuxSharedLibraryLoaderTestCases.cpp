@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_LinuxSharedLibraryLoaderTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_LinuxSharedLibraryLoaderTestCases,"OW_LinuxSharedLibraryLoader");
 #include "OW_SharedLibraryLoader.hpp"
 #include "UnitTestEnvironment.hpp"
 
@@ -82,12 +85,18 @@ Test* OW_LinuxSharedLibraryLoaderTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_LinuxSharedLibraryLoader");
 
+#if !defined(OW_STATIC_SERVICES) && !defined(OW_DARWIN)
+	// Don't run this test if things are static, as it opens a library that
+	// is statically linked to this executable.  On AIX, doing so causes a
+	// core dump. 	We can't load this library dynamically on MacOS either
+	// (it's not a real bundle).
 	testSuite->addTest (new TestCaller <OW_LinuxSharedLibraryLoaderTestCases>
 			("testLoadLibrary",
 			&OW_LinuxSharedLibraryLoaderTestCases::testLoadLibrary));
 	testSuite->addTest (new TestCaller <OW_LinuxSharedLibraryLoaderTestCases>
 			("testGetFunctionPointer",
 			&OW_LinuxSharedLibraryLoaderTestCases::testGetFunctionPointer));
+#endif /* !defined(OW_STATIC_SERVICES) */
 
 	return testSuite;
 }

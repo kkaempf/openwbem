@@ -28,12 +28,15 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_config.h"
 
 #ifdef OW_ENABLE_DB4_REPOSITORY
 #include "CIMRepository2TestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(CIMRepository2TestCases,"CIMRepository2");
 #include "OW_CIMRepository2.hpp"
 #include "OW_Logger.hpp"
 #include "OW_CIMOMHandleIFC.hpp"

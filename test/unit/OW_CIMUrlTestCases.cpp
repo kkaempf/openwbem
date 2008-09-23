@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_CIMUrlTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_CIMUrlTestCases,"OW_CIMUrl");
 #include "OW_CIMUrl.hpp"
 #include "OW_String.hpp"
 #include "OW_URL.hpp"

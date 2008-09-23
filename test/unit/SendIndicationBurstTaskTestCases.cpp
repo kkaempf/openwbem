@@ -29,9 +29,12 @@
 *******************************************************************************/
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "SendIndicationBurstTaskTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(SendIndicationBurstTaskTestCases,"SendIndicationBurstTask");
 #include "OW_SendIndicationBurstTask.hpp"
 #include "CIMInstanceUtils.hpp"
 

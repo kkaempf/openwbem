@@ -29,9 +29,12 @@
 *******************************************************************************/
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "CppIndicationExportXMLHTTPProviderTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(CppIndicationExportXMLHTTPProviderTestCases,"CppIndicationExportXMLHTTPProvider");
 #include "OW_CppIndicationExportXMLHTTPProvider.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMProperty.hpp"

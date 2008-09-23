@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_ExceptionTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_ExceptionTestCases,"OW_Exception");
 #include "OW_Semaphore.hpp"
 #include "OW_Exception.hpp"
 #include "OW_Thread.hpp"

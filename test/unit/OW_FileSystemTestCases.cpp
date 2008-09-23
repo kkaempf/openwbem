@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_FileSystemTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_FileSystemTestCases,"OW_FileSystem");
 #include "OW_FileSystem.hpp"
 #include "OW_File.hpp"
 #include "OW_String.hpp"

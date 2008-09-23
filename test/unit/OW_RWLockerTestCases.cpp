@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_RWLockerTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_RWLockerTestCases,"OW_RWLocker");
 #include "OW_RWLocker.hpp"
 #include "OW_Thread.hpp"
 #include "OW_ThreadBarrier.hpp"

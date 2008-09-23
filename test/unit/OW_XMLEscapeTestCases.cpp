@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_XMLEscapeTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_XMLEscapeTestCases,"OW_XMLEscape");
 #include "OW_XMLEscape.hpp"
 
 using namespace OpenWBEM;

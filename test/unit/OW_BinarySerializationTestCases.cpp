@@ -34,9 +34,12 @@
 
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_BinarySerializationTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_BinarySerializationTestCases,"OW_BinarySerialization");
 #include "OW_BinarySerialization.hpp"
 #include "OW_IOIFCStreamBuffer.hpp"
 #include "OW_UnnamedPipe.hpp"

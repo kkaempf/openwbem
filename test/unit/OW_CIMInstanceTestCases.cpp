@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_CIMInstanceTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_CIMInstanceTestCases,"OW_CIMInstance");
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMValue.hpp"
 

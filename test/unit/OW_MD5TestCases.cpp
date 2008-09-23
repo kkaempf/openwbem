@@ -34,9 +34,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_MD5TestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_MD5TestCases,"OW_MD5");
 #include "OW_MD5.hpp"
 #include "OW_MD5.hpp"
 #include "OW_HTTPUtils.hpp"

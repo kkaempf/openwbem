@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_ReferenceTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_ReferenceTestCases,"OW_Reference");
 #include "OW_Reference.hpp"
 
 using namespace OpenWBEM;

@@ -34,9 +34,12 @@
 
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "URLTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(URLTestCases,"URL");
 #include "OW_URL.hpp"
 
 using namespace OpenWBEM;

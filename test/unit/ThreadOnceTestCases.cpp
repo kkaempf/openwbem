@@ -29,9 +29,12 @@
 *******************************************************************************/
 
 #include "OW_config.h"
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "ThreadOnceTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(ThreadOnceTestCases,"ThreadOnce");
 #include "OW_ThreadOnce.hpp"
 #include "OW_ThreadPool.hpp"
 #include "OW_Runnable.hpp"
@@ -130,10 +133,16 @@ void ThreadOnceTestCases::testOnceRace()
 	{
 		timeout = Timeout::relative(5 * 60);
 	}
+
+	const int NUM_THREADS = 2;
+	// Set the number of threads which should run concurrently.  This is because on platforms with user-threads
+	// (like Solaris), the test threads which do busy-waiting may never get interrupted, causing this test to
+	// run forever.
+	pthread_setconcurrency(NUM_THREADS + 1);
+
 	TimeoutTimer timer(timeout);
 	while (!timer.expired())
 	{
-		const int NUM_THREADS = 2;
 		ThreadPool pool(ThreadPool::FIXED_SIZE, NUM_THREADS, ThreadPool::UNLIMITED_QUEUE_SIZE);
 		Atomic_t gate1(0);
 		Atomic_t gate2(0);

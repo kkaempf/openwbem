@@ -33,9 +33,12 @@
  */
 
 
+#define PROVIDE_AUTO_TEST_MAIN
+#include "AutoTest.hpp"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_UTF8UtilsTestCases.hpp"
+AUTO_UNIT_TEST_SUITE_NAMED(OW_UTF8UtilsTestCases,"OW_UTF8Utils");
 #include "OW_UTF8Utils.hpp"
 #include "OW_Char16.hpp"
 #include "OW_String.hpp"
