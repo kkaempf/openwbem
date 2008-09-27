@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2008 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -31,6 +31,7 @@
 /**
  * @author Bart Whiteley
  * @author Dan Nuffer
+ * @author Kevin Harris
  */
 
 #ifndef OW_XMLESCAPE_HPP_
@@ -40,13 +41,14 @@
 
 namespace OW_NAMESPACE
 {
-
 /**
- * Escape an XML string.
+ * Escape all special XML characters in a string.
  * @param unescapedText The text to be escaped
+ * @param len The length of the text
  * @return the escaped text.
  */
-OW_XML_API String XMLEscape(const char* escapedText, unsigned len);
+OW_XML_API String XMLEscape(const char* unescapedText, unsigned len);
+
 inline String XMLEscape(const String& str)
 {
 	return XMLEscape(str.c_str(), str.length());

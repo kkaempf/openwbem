@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2008 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -30,6 +30,7 @@
 
 /**
  * @author Dan Nuffer
+ * @author Kevin Harris
  */
 
 
@@ -38,26 +39,44 @@
 #include "OW_XMLEscape.hpp"
 #include "OW_StringBuffer.hpp"
 
-namespace OpenWBEM
+namespace OW_NAMESPACE
 {
 
-String XMLEscape(const String& escapedText)
+String XMLEscape(const char* unescapedText, unsigned len)
 {
-	StringBuffer rval(escapedText.length());
+	StringBuffer rval(len * 2);
 
-	const char* begin = escapedText.c_str();
-	const char* q;
+	const char* begin = unescapedText;
+	const char* end = unescapedText + len;
+	const char* current = begin;
+	// This is reset to be one-after the start for each "invalid" character
+	// sequence (multi-byte or not).
+	const char* marker = begin + 1;
+ start:
+	if( current >= end )
+	{
+		goto finish;
+	}
 
-	#define YYCTYPE char
-	#define YYCURSOR        begin
-	#define YYLIMIT         begin
-	#define YYMARKER        q
-	#define YYFILL(n)
+	// 0000-0008 is invalid
+	// 000b is invalid
+	// 000e-001f is invalid
+	// d800-dfff is invalid
+	// fffe-ffff is invalid
 
-start:
 	/*!re2c
-	END = [\000];
-	any = [\001-\377];
+   re2c:define:YYCTYPE = "unsigned char";
+	re2c:define:YYCURSOR = current;
+	re2c:define:YYLIMIT = end;
+	re2c:define:YYMARKER = marker;
+	re2c:yyfill:enable = 0;
+	re2c:yych:conversion = 1;
+	re2c:indent:top = 1;
+
+	d800dfff = ([\355](([\240][\200-\377])|([\241-\276].)|([\277][\000-\277])));
+	fffeffff = ([\357][\277][\276-\277]);
+	invalid = ([\000-\011]|[\013]|[\016-\037]|d800dfff|fffeffff);
+	any = [\000-\377];
 
 	">" { rval += "&gt;"; goto start; }
 	"<" { rval += "&lt;"; goto start; }
@@ -67,12 +86,25 @@ start:
 	"\r" { rval += "&#13;"; goto start; }
 	"\n" { rval += "&#10;"; goto start; }
 	"\t" { rval += "&#9;"; goto start; }
-	any { rval += *(YYCURSOR-1); goto start; }
-	END { return rval.toString(); }
+	invalid
+		{
+			// This replaces the character sequence from (marker - 1) to (current)
+			// with the UTF-8 replacement sequence.
+			rval += "\xef\xbf\xbd"; // UTF-8 replacement sequence.
+			goto start;
+		}
+	any
+		{
+			// Copy straight across.
+			rval += *(current-1);
+			marker = current + 1;
+			goto start;
+		}
 	*/
+ finish:
 
-	return rval.toString();
+	return rval.releaseString();
 }
 
-} // end namespace OpenWBEM
+} // end namespace OW_NAMESPACE
 

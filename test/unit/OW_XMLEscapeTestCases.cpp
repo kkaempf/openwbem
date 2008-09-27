@@ -40,6 +40,7 @@
 #include "OW_XMLEscapeTestCases.hpp"
 AUTO_UNIT_TEST_SUITE_NAMED(OW_XMLEscapeTestCases,"OW_XMLEscape");
 #include "OW_XMLEscape.hpp"
+#include "blocxx/UTF8Utils.hpp"
 
 using namespace OpenWBEM;
 
@@ -53,8 +54,9 @@ void OW_XMLEscapeTestCases::tearDown()
 
 void OW_XMLEscapeTestCases::test()
 {
-	unitAssert( XMLEscape("&\"<>\x9'\n\r") == "&amp;&quot;&lt;&gt;&#9;&apos;&#10;&#13;" );
-	unitAssert( XMLEscape("Minix (<=1.4a) | Linux | Microsoft") == "Minix (&lt;=1.4a) | Linux | Microsoft");
+	unitAssertEquals( "&amp;&quot;&lt;&gt;&#9;&apos;&#10;&#13;", XMLEscape("&\"<>\x9'\n\r") );
+	unitAssertEquals( "Minix (&lt;=1.4a) | Linux | Microsoft", XMLEscape("Minix (<=1.4a) | Linux | Microsoft") );
+	unitAssertEquals( "abcdefg", XMLEscape("abcdefg") );
 }
 
 Test* OW_XMLEscapeTestCases::suite()
@@ -68,3 +70,85 @@ Test* OW_XMLEscapeTestCases::suite()
 	return testSuite;
 }
 
+AUTO_UNIT_TEST(XMLOutOfRange)
+{
+	const String replacement = "\xef\xbf\xbd";
+
+	const String bad1 = UTF8Utils::UCS2toUTF8(0xffff);
+	const String bad2 = UTF8Utils::UCS2toUTF8(0xd800);
+	const String bad3 = UTF8Utils::UCS2toUTF8(0xdfff);
+	const String bad4 = UTF8Utils::UCS2toUTF8(0xdabc);
+	const String bad5 = "ab\x1f""cd\x08""ef\x0b";
+
+	unitAssertEquals( replacement, replacement );
+	unitAssertEquals( replacement, XMLEscape(replacement) );
+	unitAssertEquals( replacement, XMLEscape(bad1) );
+	unitAssertEquals( replacement, XMLEscape(bad2) );
+	unitAssertEquals( replacement, XMLEscape(bad3) );
+	unitAssertEquals( replacement, XMLEscape(bad4) );
+	unitAssertEquals( "ab" + replacement + "cd" + replacement + "ef" + replacement, XMLEscape(bad5) );
+	unitAssertEquals( "ab" + replacement + "cd" + replacement + "ef" + replacement + "gh", XMLEscape(bad5 + "gh") );
+	unitAssertEquals( replacement + replacement + replacement + replacement, XMLEscape(bad1 + bad2 + bad3 + bad4) );
+
+	// Check that the full range of invalid characters is replaced...
+	{
+		// 0000-0008 is invalid (0x0000 is interpreted as an empty string)
+		for( char i = 0x0001; i <= 0x0008; ++i )
+		{
+			unitAssertEquals(replacement, XMLEscape(String(i)));
+		}
+		// 000b is invalid
+		unitAssertEquals(replacement, XMLEscape(String(char(0x0b))));
+		// 000e-001f is invalid
+		for( char i = 0x000e; i <= 0x001f; ++i )
+		{
+			unitAssertEquals(replacement, XMLEscape(String(i)));
+		}
+		// d800-dfff is invalid
+		for( int i = 0xd800; i <= 0xdfff; ++i )
+		{
+			String utf8 = UTF8Utils::UCS2toUTF8(i);
+			unitAssertEquals(replacement, XMLEscape(utf8));
+		}
+		// fffe-ffff is invalid
+		for( int i = 0xfffe; i <= 0xffff; ++i )
+		{
+			String utf8 = UTF8Utils::UCS2toUTF8(i);
+			unitAssertEquals(replacement, XMLEscape(utf8));
+		}
+	}
+
+	// Check that the full range of valid characters is not replaced.
+	{
+		// 0000-0008 are invalid
+		// 0009-000a are valid, but they are '\t' and '\n' are replaced.
+		// 000b is invalid
+		// 000c is valid
+		unitAssertEquals(String(char(0x0c)), XMLEscape(String(char(0x0c))));
+		// 000d == '\r' and is replaced
+		// 000e-001f are invalid
+		// 0020-d7ff are valid, with some characters that are substituted for
+		// some non-invalid replacement sequence.
+		for( char i = 0x0020; i < CHAR_MAX; ++i )
+		{
+			if( (i == '\"') || (i == '\'') || (i == '<') || (i == '>') || (i == '&') )
+			{
+				continue;
+			}
+			unitAssertEquals(String(i), XMLEscape(String(i)));
+		}
+		for( int i = CHAR_MAX; i < 0xd800; ++i )
+		{
+			String utf8 = UTF8Utils::UCS2toUTF8(i);
+			unitAssertEquals(utf8, XMLEscape(utf8));
+		}
+		// d800-dfff are invalid
+		// e000-fffd are valid
+		for( int i = 0xe000; i < 0xfffe; ++i )
+		{
+			String utf8 = UTF8Utils::UCS2toUTF8(i);
+			unitAssertEquals(utf8, XMLEscape(utf8));
+		}
+		// fffe-ffff are invalid
+	}
+}
