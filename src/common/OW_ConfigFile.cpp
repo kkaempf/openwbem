@@ -31,12 +31,14 @@
 /**
  * @author Bart Whiteley
  * @author Dan Nuffer
+ * @author Kevin Harris
  */
 
 #include "OW_config.h"
 #include "OW_ConfigFile.hpp"
 #include "OW_ConfigException.hpp"
 #include "OW_Format.hpp"
+#include "blocxx/FileSystem.hpp"
 
 #include <fstream>
 
@@ -48,45 +50,54 @@ namespace ConfigFile
 /////////////////////////////////////////////////////////////////////////////
 void loadConfigFile(const String& filename, ConfigMap& rval)
 {
-	std::ifstream file(filename.c_str());
-	if (!file)
+	StringArray fileLines;
+
+	try
 	{
-		OW_THROW(ConfigException, Format("Unable to read config"
-					" file: %1", filename).c_str());
+		String plainContents = FileSystem::getFileContents(filename);
+
+		// Get all of the lines, including the empty ones.  Note that this
+		// tokenization does not include "\r", as the trim below will remove it.
+		// Also, including it here would skew the line numbers for platforms that
+		// use "\r\n" as a line ending.
+		fileLines = plainContents.tokenize("\n",
+			blocxx::String::E_DISCARD_DELIMITERS,
+			blocxx::String::E_RETURN_EMPTY_TOKENS);
 	}
-	
-	String line;
-	int lineNum = 0;
-	while (file)
+	catch( const FileSystemException& e)
 	{
-		lineNum++;
-		line = String::getLine(file);
-		if (!line.empty())
+		OW_THROW(ConfigException, Format("Unable to read config file \"%1\": %2", filename, e).c_str());
+	}
+
+	for( size_t lineNum = 0; lineNum < fileLines.size(); ++lineNum )
+	{
+		String& line = fileLines[lineNum].trim();
+
+		// Ignore empty and comment lines.
+		if ( line.empty() || (line[0] == '#') || (line[0] == ';') )
 		{
-			// If comment line, ignore
-			if (line[0] == '#' || line[0] == ';')
+			continue;
+		}
+
+		size_t idx = line.indexOf('=');
+		if (idx != String::npos)
+		{
+			String itemName = line.substring(0, idx).trim();
+
+			// Do not allow empty identifiers.
+			if( itemName.empty() )
 			{
-				continue;
+				OW_THROW(ConfigException, Format("Error in config file \"%1\" at line %2.  Item name is empty.\n  Line is %3",
+					filename, lineNum, line).c_str());
 			}
-			size_t idx = line.indexOf('=');
-			if (idx != String::npos)
-			{
-				if (idx + 1 < line.length())
-				{
-					String itemValue = line.substring(idx + 1).trim();
-					if (!itemValue.empty())
-					{
-						String item = line.substring(0, idx).trim();
-						rval[item].push_back(ItemData(filename, itemValue));
-					}
-				}
-			}
-			else
-			{
-				OW_THROW(ConfigException, Format("Error in config file:"
-					" %1 at line %2.\n  Line is %3", filename, lineNum,
-					line).c_str());
-			}
+
+			String itemValue = line.substring(idx + 1).trim();
+			rval[itemName].push_back(ItemData(filename, itemValue));
+		}
+		else
+		{
+			OW_THROW(ConfigException, Format("Error in config file \"%1\" at line %2.\n  Line is %3",
+					filename, lineNum, line).c_str());
 		}
 	}
 }

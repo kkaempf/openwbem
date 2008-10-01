@@ -30,6 +30,7 @@
 
 /**
  * @author Dan Nuffer
+ * @author Kevin Harris
  */
 
 #ifndef OW_CONFIG_FILE_HPP_INCLUDE_GUARD_
@@ -44,7 +45,7 @@
 
 namespace OW_NAMESPACE
 {
-									
+
 namespace ConfigFile
 {
 
@@ -63,7 +64,56 @@ namespace ConfigFile
 
 	/**
 	 * Loads a config file and stores the options in rval.
-	 * Items which already exist in rval will not be overwritten.
+	 *
+	 * Config file lines are formatted as (mixed bnf/regex):
+	 *
+	 *   ConfigFile:
+	 *     ConfigLine
+	 *     | ConfigFile ConfigLine
+	 *
+	 *   ConfigLine:
+	 *     CommentLine
+	 *     | ConfigValue
+	 *
+	 *   CommentLine:
+	 *     Whitespace ';' Anything '\n'
+	 *     | Whitespace '#' Anything '\n'
+	 *     | Whitespace '\n'
+	 *
+	 *   ConfigValue:
+	 *     Whitespace <ItemName> Whitespace '=' Whitespace [ItemValue] Whitespace '\n'
+	 *
+	 *   <ItemName>:
+	 *     [^=]+
+	 *
+	 *   [ItemValue]:
+	 *     Anything
+	 *
+	 *   Blank:
+	 *     (any character isspace() says is a space.  POSIX: [ \f\n\r\t\v])
+	 *
+	 *   Whitespace:
+	 *     ^$
+	 *     | Blank
+	 *     | Whitespace Blank
+	 *
+	 *   Anything:
+	 *     [^\n]*
+	 *
+	 * All leading and trailing whitespace is removed from <ItemName> and
+	 * [ItemValue].
+	 *
+	 * Each <ItemName> can appear in the config file more than once.  Each
+	 * occurance in the config file will cause a new value to be appended.
+	 *
+	 * <ItemName> must be non-empty.
+	 *
+	 * [ItemValue] may be empty, which will cause an empty String to be appended
+	 * to the map for that particular <ItemName>.
+	 *
+	 * Comment lines can begin with '#' or ';' and will be ignored and empty
+	 * lines are also ignored.
+	 *
 	 * @throws ConfigException if the file doesn't exist or is malformed
 	 */
 	OW_COMMON_API void loadConfigFile(const String& filename, ConfigMap& rval);
@@ -78,7 +128,7 @@ namespace ConfigFile
 	 * Retrieve itemName values from configItems. If it's not present, defRetVal will be returned.
 	 * @param tokenizeSeparator If non-null, then each item will be tokenized using the specified separator chars and returned as separate items.
 	 */
-	OW_COMMON_API StringArray getMultiConfigItem(const ConfigMap& configItems, const String &itemName, 
+	OW_COMMON_API StringArray getMultiConfigItem(const ConfigMap& configItems, const String &itemName,
 		const StringArray& defRetVal = StringArray(), const char* tokenizeSeparator = 0);
 
 	enum EOverwritePreviousFlag

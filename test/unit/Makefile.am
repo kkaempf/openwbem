@@ -64,6 +64,7 @@ TESTS_ENVIRONMENT = $(top_builddir)/test/unit/set_test_libpath.sh
 # The built test files.  Do not delete or change this next line.  The
 # newtest.sh script depends on it.
 BUILT_TESTS = \
+ConfigFileTestCases \
 PrivilegeManagerMockObjectTestCases \
 OW_LazyGlobalTestCases \
 OW_FormatTestCases \
@@ -161,6 +162,11 @@ CIMOM_LIBS = \
 
 
 # Test case definitions -- DO NOT EDIT THIS COMMENT
+ConfigFileTestCases_SOURCES = \
+	FileSystemMockObjectScope.hpp \
+	FileSystemMockObjectScope.cpp \
+	ConfigFileTestCases.cpp
+
 PrivilegeManagerMockObjectTestCases_SOURCES = \
 	PrivilegeManagerMockObjectTestCases.cpp \
 	MockObject.cpp \
