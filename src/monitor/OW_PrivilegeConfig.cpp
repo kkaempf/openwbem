@@ -39,6 +39,7 @@
 #include <iterator> // for std::back_insert_iterator
 #include <algorithm> // for std::remove_copy_if
 #include <numeric> // for std::accumulate
+#include <climits> // for CHAR_MAX
 
 namespace OW_NAMESPACE
 {

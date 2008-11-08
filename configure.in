@@ -725,7 +725,12 @@ istream.h \
 hash_map \
 ext/hash_map \
 cxxabi.h \
+memory \
 )
+
+# Check if C++0x features should be used.  For now, this only works with gcc
+# versions >= 4.3, and then (for now) only when -std=c++0x is supplied to g++.
+OW_CHECK_MACRO(__GXX_EXPERIMENTAL_CXX0X__, AC_DEFINE(USE_CXX_0X, 1, [C++0x features are available and should be used.]))
 
 dnl Needed for monitor
 AC_CHECK_FUNCS(setsid)

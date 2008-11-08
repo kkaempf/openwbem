@@ -209,7 +209,7 @@ String parseEscapedString(size_t& idx, const String& paramStr)
 					{
 						OW_THROW(ParameterParseException, "Expected 2 hex chars after \\x");
 					}
-					unescaped += decodeHex(first) << 4 + decodeHex(second);
+					unescaped += (decodeHex(first) << 4) + decodeHex(second);
 				}
 			}
 			++idx;

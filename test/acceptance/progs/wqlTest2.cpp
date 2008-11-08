@@ -43,6 +43,7 @@
 #include "OW_Bool.hpp"
 
 #include <iostream>
+#include <cstdlib>
 
 using std::cout;
 using std::endl;

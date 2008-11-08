@@ -150,7 +150,7 @@ namespace // anonymous
 	}
 
 	// Get a signal name for a signum
-	const char* const getNameForSignal(int signum)
+	const char* getNameForSignal(int signum)
 	{
 		for( const SignalNameMapping* mapping = signalMappings;
 			  mapping != (signalMappings + sizeof(signalMappings) / sizeof(*signalMappings));

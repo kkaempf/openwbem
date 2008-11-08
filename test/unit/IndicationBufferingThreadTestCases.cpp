@@ -45,6 +45,8 @@ AUTO_UNIT_TEST_SUITE_NAMED(IndicationBufferingThreadTestCases,"IndicationBufferi
 #include "OW_Reference.hpp"
 #include "OW_Format.hpp"
 
+#include <ctime>
+
 #define DEBUGIT 1
 #if DEBUGIT
 #include <iostream>

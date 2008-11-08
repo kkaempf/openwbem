@@ -442,7 +442,7 @@ AssocDbHandle::getAllEntries(const CIMObjectPath& objectName,
 		AssocDbEntryResultHandlerIFC& result)
 {
 	if ((passocClasses && passocClasses->size() == 0)
-		|| presultClasses && presultClasses->size() == 0)
+		|| (presultClasses && presultClasses->size() == 0))
 	{
 		return; // one of the filters will reject everything, so don't even bother
 	}

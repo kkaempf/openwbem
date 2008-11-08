@@ -61,6 +61,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <memory> // for auto_ptr
 
 #ifndef OW_WIN32
 #include <pwd.h>

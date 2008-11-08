@@ -44,6 +44,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_StackTraceTestCases,"OW_StackTrace");
 #include "OW_StackTrace.hpp"
 #include "OW_ConfigOpts.hpp"
 #include <fstream>
+#include <cstdlib>
 
 using std::ifstream;
 

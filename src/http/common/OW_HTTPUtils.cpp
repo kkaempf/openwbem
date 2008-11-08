@@ -510,7 +510,9 @@ String base64Encode(const UInt8* src, size_t len)
 		d = cp[2] & 0x3f;
 		cp +=3;
 		OW_ASSERT( dst + 5 - dest.get() <= szdest );
-		sprintf(dst, "%c%c%c%c",Base64[a],Base64[b],Base64[c],Base64[d]);
+		sprintf(dst, "%c%c%c%c"
+			, Base64[size_t(a)], Base64[size_t(b)]
+			, Base64[size_t(c)], Base64[size_t(d)]);
 		dst+=4;
 	}
 	if ( remlen == 1 )
@@ -518,7 +520,7 @@ String base64Encode(const UInt8* src, size_t len)
 		a = (cp[0] >> 2);
 		b = (cp[0] << 4) & 0x30;
 		OW_ASSERT( dst + 5 - dest.get() <= szdest );
-		sprintf(dst, "%c%c==",Base64[a],Base64[b]);
+		sprintf(dst, "%c%c==",Base64[size_t(a)],Base64[size_t(b)]);
 		dst+=4;
 	}
 	else if ( remlen == 2 )
@@ -528,7 +530,8 @@ String base64Encode(const UInt8* src, size_t len)
 		b |= (cp[1] >> 4);
 		c = (cp[1] << 2) & 0x3c;
 		OW_ASSERT( dst + 5 - dest.get() <= szdest );
-		sprintf(dst, "%c%c%c=",Base64[a],Base64[b],Base64[c]);
+		sprintf(dst, "%c%c%c=",Base64[size_t(a)]
+			, Base64[size_t(b)], Base64[size_t(c)]);
 		dst+=4;
 	}
 	String rval(String::E_TAKE_OWNERSHIP, dest.get(), dst-dest.get());

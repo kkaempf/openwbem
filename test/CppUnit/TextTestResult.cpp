@@ -36,6 +36,8 @@
 #include "Test.hpp"
 
 #include <iostream>
+#include <cstdlib>
+
 using namespace std;
 
 void TextTestResult::addError (Test *test, CppUnitException *e)

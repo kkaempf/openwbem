@@ -34,6 +34,7 @@
 #include "OW_IPCIO_noexcept.hpp"
 #include "Cifc_DescriptorUtils_noexcept.hpp"
 #include <cerrno>
+#include <cstring>
 #include <unistd.h>
 
 namespace OW_NAMESPACE

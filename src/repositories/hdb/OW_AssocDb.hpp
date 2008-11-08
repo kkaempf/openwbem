@@ -52,6 +52,7 @@
 #include "OW_SafeBool.hpp"
 
 #include <set>
+#include <cstring>
 
 namespace OW_NAMESPACE
 {

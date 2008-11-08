@@ -122,7 +122,7 @@ namespace
 		{
 			dst.push_back(*src);
 		}
-		dst.push_back(0);
+		dst.push_back(NULL);
 	}
 
 	class PerlArgs

@@ -65,6 +65,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <limits>
+#include <memory>
 
 using namespace OpenWBEM;
 using OpenWBEM::PrivilegeConfig::Privileges;

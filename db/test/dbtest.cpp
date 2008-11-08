@@ -507,7 +507,9 @@ setflags(char *s)
 {
 	char *p;
 
-	for (; isspace((int)*s); ++s);
+	for (; isspace((int)*s); ++s)
+	{
+	}
 	if (*s == '\n' || *s == '\0')
 		return (0);
 	if ((p = strchr(s, '\n')) != NULL)
@@ -662,7 +664,9 @@ rfile(char *name, size_t *lenp)
 	int fd;
 	char *np;
 
-	for (; isspace((int)*name); ++name);
+	for (; isspace((int)*name); ++name)
+	{
+	}
 	if ((np = strchr(name, '\n')) != NULL)
 		*np = '\0';
 	if ((fd = open(name, O_RDONLY, 0)) < 0 ||

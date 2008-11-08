@@ -412,7 +412,7 @@ void OW_ExecTestCases::testgatherOutput()
 		}
 		for (int i = 0; i < TEST_PROC_COUNT; ++i)
 		{
-			streams[i]->waitCloseTerm(Timeout::relative(0.0), Timeout::relative(0.0), Timeout::relative(0.001));
+			streams[i]->waitCloseTerm(Timeout::relative(0.0), Timeout::relative(0.0), Timeout::relative(0.1));
 		}
 		for (int i = 0; i < TEST_PROC_COUNT; ++i)
 		{

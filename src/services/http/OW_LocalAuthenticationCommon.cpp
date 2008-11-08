@@ -109,8 +109,8 @@ String initializeDir(String const & localAuthDir)
 			OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthentication::initializeDir(): lstat(%1, ...)", curDir).c_str());
 		}
 
-		int necessaryMask = S_IROTH | S_IXOTH;
-		if (statbuf.st_mode & necessaryMask != necessaryMask)
+		mode_t necessaryMask = S_IROTH | S_IXOTH;
+		if ((statbuf.st_mode & necessaryMask) != necessaryMask)
 		{
 			OW_THROW(LocalAuthenticationException, Format("LocalAuthentication::initializeDir(): directory permissions on %1"
 				" are %2. That is insufficient", curDir, statbuf.st_mode).c_str());

@@ -42,6 +42,8 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_XMLEscapeTestCases,"OW_XMLEscape");
 #include "OW_XMLEscape.hpp"
 #include "blocxx/UTF8Utils.hpp"
 
+#include <climits>
+
 using namespace OpenWBEM;
 
 void OW_XMLEscapeTestCases::setUp()

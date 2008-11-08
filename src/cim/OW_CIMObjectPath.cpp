@@ -54,6 +54,7 @@
 
 #include <cstring>
 #include <cctype>
+#include <climits>
 
 namespace OW_NAMESPACE
 {

@@ -51,6 +51,9 @@
 #include <iostream>
 #endif
 
+#include <cstring>
+#include <cstdlib>
+
 namespace OW_NAMESPACE
 {
 

@@ -1,6 +1,7 @@
 #include "OW_config.h"
 
 #include <cstdlib>
+#include <cstring>
 #include <vector>
 
 // Get ECommand, EStatus, DescriptorInfo
@@ -152,7 +153,7 @@ namespace
 		return copy_errmsg("Unimplemented monitor function", errbuf, bufsize);
 	}
 
-	const char* const get_exception_for_code(int errcode)
+	const char* get_exception_for_code(int errcode)
 	{
 		if( errcode < PrivilegeManager::MONITOR_FATAL_ERROR_START )
 		{

@@ -48,6 +48,8 @@ AUTO_UNIT_TEST_SUITE_NAMED(MOFCompilerTestCases,"MOFCompiler");
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMObjectPath.hpp"
 
+#include <climits>
+
 using namespace OpenWBEM;
 
 void MOFCompilerTestCases::setUp()
