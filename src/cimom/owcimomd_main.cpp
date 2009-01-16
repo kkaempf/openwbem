@@ -124,8 +124,12 @@ int main(int argc, char* argv[])
     int rval = 0;
 	CIMOMEnvironmentRef env = CIMOMEnvironment::instance();
 
-	// until the config file is read and parsed, just use a logger that prints everything to stderr.
-	LogAppender::setDefaultLogAppender(LogAppenderRef(new CerrAppender()));
+	// Until the config file is read and parsed, just use a logger that prints
+	// info and lower (no debug) messages to stderr.
+	LogAppender::setDefaultLogAppender(LogAppenderRef(new CerrAppender(
+				LogAppender::ALL_COMPONENTS,
+				LogAppender::getCategoriesForLevel(E_INFO_LEVEL),
+				LogAppender::STR_TTCC_MESSAGE_FORMAT)));
 	Logger logger(COMPONENT_NAME);
 
 	try
