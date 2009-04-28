@@ -15,6 +15,49 @@
 # description: OpenWBEM CIMOM Daemon
 # processname: owcimomd
 
+# To avoid problems with incompatible libraries being placed in the
+# LIBRARY_PATH or insecure PATH settings, replace them all with known good
+# (safe) values.  The out-of-process providers run in an even more restrictive
+# environment where the various library path variables are stripped.  Anyone
+# who builds OpenWBEM for and runs into library search path problems should try
+# to reconfigure with the proper directories set in the rpath and rebuild.
+PATH="/bin:/usr/bin:/usr/sbin"
+OW_DEFAULT_LIB_PATH=@libdir@:/lib:/usr/lib
+SHLIB_PATH=$OW_DEFAULT_LIB_PATH
+LIBPATH=$OW_DEFAULT_LIB_PATH
+DYLD_LIBRARY_PATH=$OW_DEFAULT_LIB_PATH
+DYLD_FALLBACK_LIBRARY_PATH=$OW_DEFAULT_LIB_PATH
+LD_LIBRARY_PATH=$OW_DEFAULT_LIB_PATH
+LD_FLAGS=
+LD_CONFIG=
+LD_PRELOAD=
+LD_LIBRARY_PATH_32=$OW_DEFAULT_LIB_PATH
+LD_FLAGS_32=
+LD_CONFIG_32=
+LD_PRELOAD_32=
+LD_LIBRARY_PATH_64=$OW_DEFAULT_LIB_PATH
+LD_FLAGS_64=
+LD_CONFIG_64=
+LD_PRELOAD_64=
+
+export PATH
+export SHLIB_PATH
+export LIBPATH
+export DYLD_LIBRARY_PATH
+export DYLD_FALLBACK_LIBRARY_PATH
+export LD_LIBRARY_PATH
+export LD_FLAGS
+export LD_CONFIG
+export LD_PRELOAD
+export LD_LIBRARY_PATH_32
+export LD_FLAGS_32
+export LD_CONFIG_32
+export LD_PRELOAD_32
+export LD_LIBRARY_PATH_64
+export LD_FLAGS_64
+export LD_CONFIG_64
+export LD_PRELOAD_64
+
 NAME=owcimomd
 SBINDIR=@sbindir@
 DAEMON=$SBINDIR/$NAME
@@ -34,9 +77,11 @@ RUN_@product_abbreviation@=1
 # The parameter to 'echo' that suppresses the newline.
 ECHO_NO_NEWLINE=-n
 OW_STATUS_RUNNING=0
+OW_FILE_LIMIT_REQUIRED=256
 USER=INVALID_USER
 QUIET_OPT=0
 STARTUP_DIR=`pwd`
+DAEMON_DISABLING_FILE=@sysconfdir@/@product_abbreviation@.nostartup
 
 CheckRootUser()
 {
@@ -92,7 +137,7 @@ OW_GetPlatformSettings()
 		LINUX)
 			FUNCTION_FILE=/etc/rc.d/init.d/functions
 			;;
-		HPUX)
+		HP-UX)
 			FUNCTION_FILE=/etc/rc.config.d/@PACKAGE_PREFIX@$NAME
 			# The echo command on HPUX doesn't support -n.
 			ECHO_NO_NEWLINE=
@@ -125,8 +170,10 @@ DisplayOutput()
 			if [ $# -gt 0 ] && [ "x$1" = "x$ECHO_NO_NEWLINE" ]; then
 				shift
 			fi
-			ConsoleMessage "$@"
-			return 0;
+			if [ -f "`which ConsoleMessage 2>/dev/null`" ]; then
+				ConsoleMessage "$@"
+				return 0
+			fi
 		fi
 	fi
 	echo "$@"
@@ -154,6 +201,32 @@ OW_IsNumeric()
 		fi
 	done
 	return 0
+}
+
+# Check the limit of file handles and change/warn the user that they are too low.
+OW_CheckUlimit()
+{
+	ulimit_max_files=0
+	if ulimit_max_files=`ulimit -n` ; then
+		if [ ${ulimit_max_files} != "unlimited" ]; then
+			if OW_IsNumeric ${ulimit_max_files}; then
+				if [ ${ulimit_max_files} -lt ${OW_FILE_LIMIT_REQUIRED} ]; then
+					DisplayOutput "WARNING: Limit on open files (${ulimit_max_files}) is too low.  Changing to ${OW_FILE_LIMIT_REQUIRED}."
+					if ulimit -n ${OW_FILE_LIMIT_REQUIRED}; then
+						if [ "`ulimit -n`" -lt ${OW_FILE_LIMIT_REQUIRED} ]; then
+							OW_FatalError "Failed to increase open file limit from ${ulimit_max_files} to ${OW_FILE_LIMIT_REQUIRED}."
+						fi
+					else
+						OW_FatalError "Failed to increase open file limit from ${ulimit_max_files} to ${OW_FILE_LIMIT_REQUIRED}."
+					fi
+				fi
+			else
+				DisplayOutput "WARNING: Could not interpret the results of ulimit.  The CIMOM can potentially fail."
+			fi
+		fi
+	else
+		DisplayOutput "WARNING: Received an error from ulimit. CIMOM can potentially fail."
+	fi
 }
 
 # This function exists because some Linux platforms have added broken
@@ -371,7 +444,7 @@ EOF
 			fi
 
 		else
-			# FIXME! What to do upon failure?
+			# Failure will be handled on the next iteration.
 			:
 		fi
 	done
@@ -468,6 +541,26 @@ OW_CreateCronEntry()
 	return $results
 }
 
+OW_HaveCronEntry()
+{
+	results=1
+
+	local_cron_pattern="GENERIC"
+
+	if [ $# -gt 1 ]; then
+		if [ "x$1" = "x--pattern" ]; then
+			local_cron_pattern="$2"
+			shift 2
+		fi
+	fi
+
+	crontab -l -u root 2>/dev/null | grep "BEGIN_OPENWBEM_INSTALLER_TAG_${local_cron_pattern}" >/dev/null 2>&1
+	results=$?
+
+	unset local_cron_pattern
+	return $results
+}
+
 # This reverses the operations done in the CreateCronEntry function.
 OW_RemoveCronEntry()
 {
@@ -512,6 +605,10 @@ OW_RemoveCronEntry()
 
 OW_CimomdEnabled()
 {
+	# If a nostartup file exists, we're disabled.
+	if [ -f ${DAEMON_DISABLING_FILE} ] && [ ${FORCE_DAEMON_STARTUP:-0} = 0 ]; then
+		return 1
+	fi
 	if [ $RUN_@product_abbreviation@ -ne 0 ] && [ "${@product_abbreviation@:=-NO-}" = "-YES-" ]; then
 		return 0
 	else
@@ -522,18 +619,21 @@ OW_CimomdEnabled()
 # Run 'ps' using the various commandlines needed (displays all process IDs for $NAME).
 OW_ExecutePS()
 {
-	# This works on:
-	# (args) AIX, Solaris, HPUX, Linux
-	# (-ax,command) Linux, MacOSX
-	correct_daemon_pattern="$DAEMON"
-	if [ "x$OSNAME" = "xDARWIN" ]; then
-		# On OSX, the daemon name is prepended with a '.' to avoid issues with
-		# DYLD_LIBRARY_PATH.
-		#
-		# BUG_LOCATION_POINT: If things fail to work in the future, this is a
-		# likely spot to check.
-		correct_daemon_pattern="$SBINDIR/\\.$NAME"
+	correct_daemon_pattern="`echo \"$DAEMON\" | sed 's?/?[/]?g'`"
+	# special case for solaris 10 which has zones and ps will print processes from all the zones.
+	if [ "$OSNAME" = "SUNOS" ] && [ `uname -r` = "5.10" ]; then
+		if local_pids=`ps -z \`zonename\` -o pid,args 2>/dev/null | grep $correct_daemon_pattern | grep -v grep | awk '{ print $1; }'` ; then
+			if [ -n "$local_pids" ]; then
+				echo $local_pids
+				return 0
+			fi
+		fi
+		return 1
 	fi
+
+	# This works on:
+	# (args) AIX, Solaris (<10), HPUX, Linux
+	# (-ax,command) Linux, MacOSX
 	for all_process_flag in "" -ax ; do
 		for command_type in args command; do
 			if UNIX95=1 ps $all_process_flag -eo pid,$command_type >/dev/null 2>&1; then
@@ -636,21 +736,29 @@ OW_Start()
 		DisplayOutput "Stale $NAME pid file ($PIDFILE) found. Removing."
 		rm -f $PIDFILE
 	fi
+	OW_CheckUlimit
 	if [ $CRON_EXECUTION_REQUIRED = "0" ] ; then
 		DisplayOutput $ECHO_NO_NEWLINE "Starting the $DESCRIPTIVE"
 		$DAEMON $OPTIONS
+		status_code=$?
+		if [ $status_code -ne 0 ]; then
+			return $status_code
+		fi
 		echo "."
 		OW_Status
 		return $?
 	else
 		if [ $EXECUTED_FROM_CRON != "0" ]; then
 			# We're really running from cron.  Remove the entry.
-			OW_RemoveCronEntry --pattern INIT_SCRIPT_@product_abbreviation@
 			$DAEMON $OPTIONS
-			sleep 3
+			status_code=$?
+			OW_RemoveCronEntry --pattern INIT_SCRIPT_@product_abbreviation@
+			echo "EXIT CODE:${status_code}"
+			if [ $status_code -ne 0 ]; then
+				return $status_code
+			fi
 			chmod +r $PIDFILE
-			OW_Status
-			return $?
+			return ${status_code}
 		else
 			# We need to start up this script with cron to ensure that the cimom
 			# (or providers contained therein) do not malfunction in horrible ways
@@ -661,29 +769,38 @@ OW_Start()
 				DisplayOutput "Failed to locate the script.  Cannot install cron entry."
 				return 1
 			fi
-			OW_CreateCronEntry --pattern INIT_SCRIPT_@product_abbreviation@ "$path_to_script" start
-			DisplayOutput "The cron entry should start up the cimom within 1 minute."
-			seconds_to_wait=70
-			cimom_status=1
+
+			CRON_LOGFILE=`OW_MakeTemp /tmp/${NAME}_cron_startup.log`
+			OW_CreateCronEntry --pattern INIT_SCRIPT_@product_abbreviation@ "$path_to_script" --logfile ${CRON_LOGFILE} start
+			DisplayOutput "The cron entry should start up the cimom within 1 minute (30 minute timeout)."
+			seconds_to_wait=1800
+			OW_HaveCronEntry --pattern INIT_SCRIPT_@product_abbreviation@
+			have_cron_entry=$?
 			dot_string="..."
-			while [ $seconds_to_wait -ge 0 ] && [ $cimom_status -ne 0 ]; do
+			while [ $seconds_to_wait -ge 0 ] && [ $have_cron_entry -eq 0 ]; do
 				seconds_to_wait=`echo $seconds_to_wait - 5 | bc`
 				echo -e -n "\rWaiting$dot_string"
 				dot_string="${dot_string}."
 				sleep 5
-				OW_Status --quiet
-				cimom_status=$?
+				OW_HaveCronEntry --pattern INIT_SCRIPT_@product_abbreviation@
+				have_cron_entry=$?
 			done
 			echo ""
-			OW_Status --quiet
-			cimom_status=$?
+			cimom_status=1
+			if grep 'EXIT CODE:' ${CRON_LOGFILE} >/dev/null 2>&1; then
+				cimom_status=`grep 'EXIT CODE:' ${CRON_LOGFILE} | cut -f2 -d':'`
+			else
+				echo "Failed to find exit code in cron output." >&2
+			fi
 			if [ $cimom_status -ne 0 ]; then
+				DisplayOutput "$DESCRIPTIVE failed to start from cron.  Attemping to remove crontab entry."
+				DisplayOutput "Ignore any errors here about missing crontab entries:"
 				OW_RemoveCronEntry --pattern INIT_SCRIPT_@product_abbreviation@
 			fi
-			# Noisily print the status now.
-			OW_Status
-			cimom_status=$?
-			if [ $cimom_status -ne 0 ]; then
+			if [ ${cimom_status} -eq 0 ]; then
+				# Noisily print the status now.
+				OW_Status
+			else
 				DisplayOutput "$DESCRIPTIVE did not start."
 			fi
 			return $cimom_status
@@ -815,7 +932,7 @@ RestartService()
 
 OW_UsageError()
 {
-	OW_FatalError "Usage: `basename $0` {[re]start|stop|reload|force-reload|status}"
+	OW_FatalError "Usage: `basename $0` {restart|[force-]start|[force-]stop|reload|force-reload|status}"
 }
 
 OW_Main()
@@ -856,6 +973,14 @@ OW_Main()
 	# This should *hopefully* be sufficient on every other platform (and for the
 	# options not handled in the specific cases listed above (eg. Darwin).
 	case "$1" in
+		force-start)
+			FORCE_DAEMON_STARTUP=1 OW_Start
+			return $?
+			;;
+		force-stop)
+			FORCE_DAEMON_STARTUP=1 OW_Stop
+			return $?
+			;;
 		start)
 			OW_Start
 			return $?
@@ -868,6 +993,18 @@ OW_Main()
 			OW_Stop
 			OW_Start
 			return $?
+			;;
+		try-restart)
+			if OW_Status >/dev/null 2>&1; then
+				OW_Stop
+				OW_Start
+				return $?
+			else
+				OW_Status
+
+				# LSB says that try-restart should return success if it is not running.
+				return 0
+			fi
 			;;
 		reload)
 			OW_Reload
@@ -897,18 +1034,13 @@ OW_Main()
 ###############################################################################
 OW_GetPlatformSettings
 
-# Eventually, this should be removed.  At least for now, it's useful.
-#
-# If this is removed, the DisplayOutput function must be fixed to not have any
-# output (cron doesn't like output to stdout or stderr.), or fds 1&2 need to be
-# closed.
-if [ $EXECUTED_FROM_CRON != "0" ]; then
-	set -x
-	CRON_STARTUP_LOG_NAME=`OW_MakeTemp /tmp/${NAME}_cron_startup.log`
-	if [ $? -eq 0 ]; then
-		exec 1>>$CRON_STARTUP_LOG_NAME
-		exec 2>&1
-	fi
+if [ $# -gt 0 ] && [ x$1 = x--logfile ]; then
+	LOGFILE_NAME="$2"
+	shift 2
+	exec 1>>"${LOGFILE_NAME}"
+	exec 2>&1
+	echo "Execution on: `date`"
+	echo "Parameters: $@"
 fi
 
 # Source function library.
@@ -916,5 +1048,14 @@ if [ -n "$FUNCTION_FILE" ] && [ -f $FUNCTION_FILE ]; then
 	. $FUNCTION_FILE
 fi
 
-OW_Main "$@"
-exit $?
+main_return_value=0
+OW_Main "$@" || main_return_value=$?
+
+if [ x${CRON_LOGFILE:+set} = xset ]; then
+	echo "=============================="
+	echo "Cron log file:"
+	cat ${CRON_LOGFILE}
+	echo "=============================="
+	rm -f ${CRON_LOGFILE}
+fi
+exit ${main_return_value}
