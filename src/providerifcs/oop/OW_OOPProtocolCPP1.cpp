@@ -114,7 +114,10 @@ namespace
 		EReadWriteFlag readWriteFlag = E_READ_WRITE_UNTIL_FINISHED)
 	{
 		const int MAX_CALLBACK_THREADS = 10;
-		ThreadPool threadPool(ThreadPool::DYNAMIC_SIZE_NO_QUEUE, MAX_CALLBACK_THREADS, MAX_CALLBACK_THREADS, "OOPProtocolCPP1");
+
+		Logger logger(COMPONENT_NAME);
+
+		ThreadPool threadPool(ThreadPool::DYNAMIC_SIZE_NO_QUEUE, MAX_CALLBACK_THREADS, MAX_CALLBACK_THREADS, logger, "OOPProtocolCPP1");
 		SelectEngine selectEngine;
 		Array<unsigned char> inputBuf;
 		std::deque<OutputEntry> outputEntries;
@@ -127,8 +130,6 @@ namespace
 		SelectableCallbackIFCRef callback(new OOPSelectableCallback(
 			inputBuf, outputEntries, inputPipe, outputPipe, env, result, selectEngine, 
 			finishedSuccessfully, threadPool, pprov));
-
-		Logger logger(COMPONENT_NAME);
 
 		if (readWriteFlag == E_READ_WRITE_UNTIL_FINISHED)
 		{

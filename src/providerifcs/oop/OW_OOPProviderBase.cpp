@@ -143,7 +143,7 @@ OOPProviderBase::OOPProviderBase(const OOPProviderInterface::ProvRegInfo& info,
 		const OOPProcessState& processState)
 	: m_provInfo(info)
 	, m_processState(processState)
-	, m_threadPool(ThreadPool::DYNAMIC_SIZE_NO_QUEUE, 10, 10, "OOPProviderBase")
+	, m_threadPool(ThreadPool::DYNAMIC_SIZE_NO_QUEUE, 10, 10, Logger(COMPONENT_NAME), "OOPProviderBase")
 	, m_unloadTimer(info.unloadTimeout)
 {
 	// persistent provider instances must have non-null pointers.

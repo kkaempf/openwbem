@@ -88,7 +88,7 @@ OOPClonedProviderEnv::run()
 {
 	Logger logger(COMPONENT_NAME);
 	const int MAX_CALLBACK_THREADS = 10;
-	ThreadPool threadPool(ThreadPool::DYNAMIC_SIZE_NO_QUEUE, 10, 10, "ClonedOOPProtocolCPP1");
+	ThreadPool threadPool(ThreadPool::DYNAMIC_SIZE_NO_QUEUE, 10, 10, logger, "ClonedOOPProtocolCPP1");
 	ShutdownThreadPool stp(threadPool);
 	SelectEngine selectEngine;
 	Array<unsigned char> inputBuf;
