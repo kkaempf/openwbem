@@ -36,6 +36,7 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <string>
+#include <cstring>  // for strncpy
 #include <math.h>
 
 #include "OW_Exception.hpp"

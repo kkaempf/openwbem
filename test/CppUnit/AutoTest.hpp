@@ -35,6 +35,10 @@
 #include "TestCase.hpp"
 #include "TestResult.hpp"
 
+/**
+ *@author Kevin Harris
+ */
+
 
 // The macro to create an auto unit test.  When using this macro, you must
 // define the body of your test.  This can be any number of times within a
@@ -56,10 +60,13 @@
 class AutoTest##name : public TestCase \
 { \
 public: \
-	AutoTest##name() : TestCase(#name) \
+	AutoTest##name() \
+		: TestCase(#name) \
+		, TEST_COMPONENT_NAME("AutoTest." # name) \
 	{ \
 	} \
 	~AutoTest##name() { } \
+	const char* const TEST_COMPONENT_NAME; \
 protected: \
 	virtual void runTest(); \
 }; \

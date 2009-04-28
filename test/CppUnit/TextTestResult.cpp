@@ -36,7 +36,7 @@
 #include "Test.hpp"
 
 #include <iostream>
-#include <cstdlib>
+#include <cstdlib>  // for exit
 
 using namespace std;
 
@@ -57,16 +57,25 @@ void TextTestResult::addFailure (Test *test, CppUnitException *e)
 void TextTestResult::startTest (Test *test)
 {
 	TestResult::startTest (test);
-	cerr << "." << std::flush;
-
+	if ( getenv("TEST_PRINT_NAMES") )
+	{
+		// TODO: Make this work with all of the unit test types.
+		cerr << test->toString() << std::endl;
+	}
+	else
+	{
+		cerr << "." << std::flush;
+	}
 }
 
 void TextTestResult::testCondition (Test *test)
 {
 	TestResult::testCondition (test);
-	cerr << "+" << std::flush;
+	if( getenv("TEST_CONDITION_INDICATORS") )
+	{
+		cerr << "+" << std::flush;
+	}
 }
-
 
 void TextTestResult::printErrors (ostream& stream)
 {
