@@ -3,7 +3,7 @@
 BLOCXX_LIB_DIR="@BLOCXX_LIB_DIR@"
 
 # The current directory needs to be in the path so dlopen() can find the test library for the LazyGlobal test.
-LD_LIBRARY_PATH="`pwd`:`pwd`/../../db/db:`pwd`/../../src/common:`pwd`/../../src/cimom/server:`pwd`/../../src/cimom/common:`pwd`/../../src/listener:`pwd`/../../src/services/http:`pwd`/../../src/http/common:`pwd`/../../src/http/client:`pwd`/../../src/client:`pwd`/../../src/xml:`pwd`/../../src/cimxmllistener:`pwd`/../../src/providerifcs/cpp:`pwd`/../../src/repositories/hdb:`pwd`/../../src/repositories/tdbcr:`pwd`/../../src/mof:`pwd`/../../src/provider:`pwd`/../../src/monitor:`pwd`/../../src/providers/cpp/indicationexport:${BLOCXX_LIB_DIR:-}${BLOCXX_LIB_DIR:+:}`pwd`:$LD_LIBRARY_PATH"
+LD_LIBRARY_PATH="`pwd`:`pwd`/../../db/db:`pwd`/../../src/common:`pwd`/../../src/cimom/server:`pwd`/../../src/cimom/common:`pwd`/../../src/listener:`pwd`/../../src/services/http:`pwd`/../../src/http/common:`pwd`/../../src/http/client:`pwd`/../../src/client:`pwd`/../../src/xml:`pwd`/../../src/cimxmllistener:`pwd`/../../src/providerifcs/cpp:`pwd`/../../src/repositories/hdb:`pwd`/../../src/repositories/tdbcr:`pwd`/../../src/mof:`pwd`/../../src/provider:`pwd`/../../src/monitor:`pwd`/../../src/providers/cpp/indicationexport:${BLOCXX_LIB_DIR:-}${BLOCXX_LIB_DIR:+:}`pwd`:$TEST_LIBRARY_PATH:$LD_LIBRARY_PATH"
 
 # AIX
 LIBPATH="$LD_LIBRARY_PATH:$LIBPATH"
