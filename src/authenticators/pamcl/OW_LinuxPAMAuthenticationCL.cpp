@@ -36,14 +36,14 @@
  */
 
 #include "OW_config.h"
-#include "OW_Exec.hpp"
+#include "blocxx/Exec.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_AuthenticatorIFC.hpp"
-#include "OW_Array.hpp"
-#include "OW_Array.hpp"
-#include "OW_UnnamedPipe.hpp"
-#include "OW_Secure.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/UnnamedPipe.hpp"
+#include "blocxx/Secure.hpp"
 #include "OW_PrivilegeManager.hpp"
 #if defined(OW_HAVE_SYS_WAIT_H) && defined(OW_WIFEXITED_NEEDS_WAIT_H)
 #include <sys/wait.h>

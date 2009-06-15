@@ -36,14 +36,14 @@
 #ifndef OW_AUTHENTICATORIFC_HPP_INCLUDE_GUARD_
 #define OW_AUTHENTICATORIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_Exception.hpp"
-#include "OW_MutexLock.hpp"
+#include "blocxx/MutexLock.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_SharedLibraryReference.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
 #include "OW_OperationContext.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveReference.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_IfcsFwd.hpp"
 
 namespace OW_NAMESPACE

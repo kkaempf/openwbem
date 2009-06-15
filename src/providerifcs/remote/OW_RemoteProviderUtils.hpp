@@ -35,7 +35,7 @@
 #ifndef OW_REMOTE_PROVIDER_UTILS_HPP_INCLUDE_GUARD_
 #define OW_REMOTE_PROVIDER_UTILS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_IntrusiveReference.hpp"
+#include "blocxx/IntrusiveReference.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_ClientFwd.hpp"
 #include "OW_ProviderFwd.hpp"

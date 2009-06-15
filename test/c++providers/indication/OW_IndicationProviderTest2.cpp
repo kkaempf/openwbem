@@ -37,12 +37,12 @@
 
 #include "OW_CppProviderIncludes.hpp"
 #include "OW_WQLSelectStatement.hpp"
-#include "OW_Thread.hpp"
-#include "OW_NonRecursiveMutex.hpp"
-#include "OW_NonRecursiveMutexLock.hpp"
-#include "OW_Condition.hpp"
+#include "blocxx/Thread.hpp"
+#include "blocxx/NonRecursiveMutex.hpp"
+#include "blocxx/NonRecursiveMutexLock.hpp"
+#include "blocxx/Condition.hpp"
 #include "OW_WQLCompile.hpp"
-#include "OW_Reference.hpp"
+#include "blocxx/Reference.hpp"
 
 #include <algorithm>
 

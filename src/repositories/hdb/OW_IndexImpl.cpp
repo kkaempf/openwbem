@@ -35,9 +35,9 @@
 
 #include "OW_config.h"
 #include "OW_Index.hpp"
-#include "OW_FileSystem.hpp"
+#include "blocxx/FileSystem.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_Logger.hpp"
 

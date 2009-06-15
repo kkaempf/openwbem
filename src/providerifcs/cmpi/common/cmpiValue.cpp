@@ -23,7 +23,7 @@
 
 #include <iostream>
 #include "cmpisrv.h"
-#include "OW_Char16.hpp"
+#include "blocxx/Char16.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMDateTime.hpp"
 

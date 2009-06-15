@@ -32,7 +32,7 @@
  * @author Dan Nuffer
  */
 
-#include "OW_Char16.hpp"
+#include "blocxx/Char16.hpp"
 #include "PyOW_Array.hpp"
 
 namespace OW_NAMESPACE

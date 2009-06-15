@@ -35,8 +35,8 @@
 #include "OW_config.h"
 #include "OW_CppProviderIncludes.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_UUID.hpp"
-#include "OW_Thread.hpp"
+#include "blocxx/UUID.hpp"
+#include "blocxx/Thread.hpp"
 
 namespace OW_NAMESPACE
 {

@@ -39,7 +39,7 @@
 #ifndef OW_CIMOM_SERVER_FWD_HPP_INCLUDE_GUARD_
 #define OW_CIMOM_SERVER_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_IntrusiveReference.hpp"
+#include "blocxx/IntrusiveReference.hpp"
 
 namespace OW_NAMESPACE
 {

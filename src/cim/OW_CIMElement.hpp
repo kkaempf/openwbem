@@ -40,7 +40,7 @@
 #include "OW_CIMFwd.hpp"
 
 // TODO: Remove this
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 
 namespace OW_NAMESPACE
 {

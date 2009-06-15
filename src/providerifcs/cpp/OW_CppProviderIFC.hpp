@@ -36,10 +36,10 @@
 #define OW_CPPPROVIDERIFC_HPP_
 #include "OW_config.h"
 #include "OW_ProviderIFCBaseIFC.hpp"
-#include "OW_Map.hpp"
-#include "OW_SharedLibrary.hpp"
+#include "blocxx/Map.hpp"
+#include "blocxx/SharedLibrary.hpp"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_MutexLock.hpp"
+#include "blocxx/MutexLock.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.

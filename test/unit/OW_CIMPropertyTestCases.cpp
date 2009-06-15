@@ -44,7 +44,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_CIMPropertyTestCases,"OW_CIMProperty");
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMtoXML.hpp"
-#include "OW_TempFileStream.hpp"
+#include "blocxx/TempFileStream.hpp"
 #include "OW_CIMtoXML.hpp"
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_CIMXMLParser.hpp"

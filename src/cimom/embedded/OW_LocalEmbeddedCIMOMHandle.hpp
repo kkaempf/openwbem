@@ -45,7 +45,7 @@
 #include "OW_Types.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
-#include "OW_RWLocker.hpp"
+#include "blocxx/RWLocker.hpp"
 #include "OW_EmbeddedCIMOMEnvironment.hpp"
 #include "OW_RepositoryCIMOMHandle.hpp"
 

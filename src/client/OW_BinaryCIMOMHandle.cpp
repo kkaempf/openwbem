@@ -33,9 +33,9 @@
  * @author Dan Nuffer
  */
 
-#include "OW_config.h"										
+#include "OW_config.h"
 #include "OW_BinaryCIMOMHandle.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"

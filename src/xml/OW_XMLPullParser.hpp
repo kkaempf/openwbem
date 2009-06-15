@@ -35,9 +35,9 @@
 #ifndef OW_XMLPULLPARSER_HPP_INCLUDE_GUARD_
 #define OW_XMLPULLPARSER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_AutoPtr.hpp"
-#include "OW_TempFileStream.hpp"
-#include "OW_String.hpp"
+#include "blocxx/AutoPtr.hpp"
+#include "blocxx/TempFileStream.hpp"
+#include "blocxx/String.hpp"
 #include "OW_XMLParserCore.hpp"
 
 #ifdef OW_HAVE_ISTREAM

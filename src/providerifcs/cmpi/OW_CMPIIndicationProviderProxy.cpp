@@ -33,7 +33,7 @@
 #include "OW_config.h"
 #include "OW_CMPIIndicationProviderProxy.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CMPIProviderIFCUtils.hpp"
 #include "OW_WQLSelectStatement.hpp"
 #include "OW_Logger.hpp"

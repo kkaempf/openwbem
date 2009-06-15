@@ -40,10 +40,10 @@
 #include "OW_OOPFwd.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_OOPFwd.hpp"
-#include "OW_ThreadPool.hpp"
-#include "OW_TimeoutTimer.hpp"
+#include "blocxx/ThreadPool.hpp"
+#include "blocxx/TimeoutTimer.hpp"
 #include "OW_OOPProcessState.hpp"
-#include "OW_NonRecursiveMutex.hpp"
+#include "blocxx/NonRecursiveMutex.hpp"
 
 namespace OW_NAMESPACE
 {

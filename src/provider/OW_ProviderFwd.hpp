@@ -35,8 +35,8 @@
 #ifndef OW_PROVIDER_FWD_HPP_INCLUDE_GUARD_
 #define OW_PROVIDER_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_ArrayFwd.hpp"
+#include "blocxx/IntrusiveReference.hpp"
+#include "blocxx/ArrayFwd.hpp"
 
 namespace OW_NAMESPACE
 {

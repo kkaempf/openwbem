@@ -35,8 +35,8 @@
 #ifndef OW_IFCS_FWD_HPP_INCLUDE_GUARD_
 #define OW_IFCS_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_SharedLibraryReference.hpp"
+#include "blocxx/IntrusiveReference.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_CIMFwd.hpp"
 

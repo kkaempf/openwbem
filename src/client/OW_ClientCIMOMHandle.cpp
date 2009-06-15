@@ -32,7 +32,7 @@
  * @author Dan Nuffer
  */
 
-#include "OW_config.h"										
+#include "OW_config.h"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_URL.hpp"
@@ -41,7 +41,7 @@
 #include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
-#include "OW_Enumeration.hpp"
+#include "blocxx/Enumeration.hpp"
 #include "OW_HTTPDeflateIStream.hpp"
 
 namespace OW_NAMESPACE

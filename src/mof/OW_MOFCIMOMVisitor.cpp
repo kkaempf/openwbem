@@ -36,14 +36,14 @@
 #include "OW_MOFGrammar.hpp"
 #include "OW_MOFCIMOMVisitor.hpp"
 #include "OW_CIMValueCast.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_MOFCompiler.hpp"
 #include "OW_CIMFlavor.hpp"
 #include "OW_CIMScope.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
-#include "OW_FileSystem.hpp"
+#include "blocxx/FileSystem.hpp"
 #include <assert.h>
 
 namespace OW_NAMESPACE

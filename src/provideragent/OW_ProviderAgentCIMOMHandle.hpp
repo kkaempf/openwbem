@@ -41,9 +41,9 @@
 #include "OW_CIMClass.hpp"
 
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_IntrusiveReference.hpp"
+#include "blocxx/IntrusiveReference.hpp"
 #include "OW_ProviderAgentEnvironment.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/Map.hpp"
 #include "OW_ProviderAgentLockerIFC.hpp"
 
 // The classes and functions defined in this file are not meant for general

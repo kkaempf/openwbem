@@ -35,10 +35,10 @@
 #ifndef OW_LIFE_CYCLE_INDICATION_POLLER_HPP_INCLUDE_GUARD_
 #define OW_LIFE_CYCLE_INDICATION_POLLER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CppPolledProviderIFC.hpp"
-#include "OW_Mutex.hpp"
+#include "blocxx/Mutex.hpp"
 
 namespace OW_NAMESPACE
 {

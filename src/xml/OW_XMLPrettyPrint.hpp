@@ -35,7 +35,7 @@
 #ifndef OW_XMLPRETTYPRINT_HPP_
 #define OW_XMLPRETTYPRINT_HPP_
 #include "OW_config.h"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include <iosfwd>
 
 namespace OW_NAMESPACE

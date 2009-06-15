@@ -35,9 +35,9 @@
 #ifndef OW_XMLPARSERCORE_HPP_INCLUDE_GUARD_
 #define OW_XMLPARSERCORE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_StringBuffer.hpp"
-#include "OW_IstreamBufIterator.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/StringBuffer.hpp"
+#include "blocxx/IstreamBufIterator.hpp"
 #include "OW_XMLParseException.hpp"
 #include <vector>
 #include <stack>

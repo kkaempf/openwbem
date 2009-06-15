@@ -36,7 +36,7 @@
 #define OW_SIMPLE_AUTHORIZER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_AuthorizerIFC.hpp"
-#include "OW_IntrusiveReference.hpp"
+#include "blocxx/IntrusiveReference.hpp"
 
 namespace OW_NAMESPACE
 {

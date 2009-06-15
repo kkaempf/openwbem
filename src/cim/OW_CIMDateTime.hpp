@@ -37,10 +37,10 @@
 #define OW_CIMDATETIME_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
-#include "OW_COWIntrusiveReference.hpp"
+#include "blocxx/COWIntrusiveReference.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMNULL.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_SafeBool.hpp"
 

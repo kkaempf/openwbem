@@ -48,16 +48,16 @@
 #include "OW_ConfigException.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_RWLocker.hpp"
-#include "OW_Mutex.hpp"
-#include "OW_NullLogger.hpp"
+#include "blocxx/RWLocker.hpp"
+#include "blocxx/Mutex.hpp"
+#include "blocxx/NullLogger.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_HTTPServer.hpp"
-#include "OW_Thread.hpp"
+#include "blocxx/Thread.hpp"
 #include "OW_LocalOperationContext.hpp"
-#include "OW_Timeout.hpp"
-#include "OW_SelectableIFC.hpp"
-#include "OW_SelectableCallbackIFC.hpp"
+#include "blocxx/Timeout.hpp"
+#include "blocxx/SelectableIFC.hpp"
+#include "blocxx/SelectableCallbackIFC.hpp"
 
 #include <algorithm> // for std::find
 

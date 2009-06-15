@@ -39,9 +39,9 @@
 #include "TestCaller.hpp"
 #include "OW_ExceptionTestCases.hpp"
 AUTO_UNIT_TEST_SUITE_NAMED(OW_ExceptionTestCases,"OW_Exception");
-#include "OW_Semaphore.hpp"
+#include "blocxx/Semaphore.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Thread.hpp"
+#include "blocxx/Thread.hpp"
 
 using namespace OpenWBEM;
 

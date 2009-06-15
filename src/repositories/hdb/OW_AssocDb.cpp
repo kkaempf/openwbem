@@ -35,10 +35,10 @@
 
 #include "OW_config.h"
 #include "OW_AssocDb.hpp"
-#include "OW_DataStreams.hpp"
+#include "blocxx/DataStreams.hpp"
 #include "OW_IOException.hpp"
-#include "OW_Format.hpp"
-#include "OW_AutoPtr.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/AutoPtr.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMProperty.hpp"

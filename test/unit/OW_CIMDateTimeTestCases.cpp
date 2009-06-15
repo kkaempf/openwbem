@@ -40,7 +40,7 @@
 #include "OW_CIMDateTimeTestCases.hpp"
 AUTO_UNIT_TEST_SUITE_NAMED(OW_CIMDateTimeTestCases,"OW_CIMDateTime");
 #include "OW_CIMDateTime.hpp"
-#include "OW_DateTime.hpp"
+#include "blocxx/DateTime.hpp"
 
 using namespace OpenWBEM;
 

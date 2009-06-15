@@ -37,14 +37,14 @@
 #define OW_HTTPCLIENT_HPP_
 #include "OW_config.h"
 #include "OW_Socket.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/AutoPtr.hpp"
+#include "blocxx/Map.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_CIMProtocolIFC.hpp"
 #include "OW_URL.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_ClientFwd.hpp"
-#include "OW_SSLCtxMgr.hpp"
+#include "blocxx/SSLCtxMgr.hpp"
 #include "OW_SPNEGOHandler.hpp"
 
 namespace OW_NAMESPACE

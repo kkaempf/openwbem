@@ -41,9 +41,9 @@
 #include "OW_MOFGrammar.hpp"
 #include "OW_MOFCompiler.hpp"
 #include "OW_MOFParserDecls.hpp"
-#include "OW_Format.hpp"
+#include <blocxx/Format.hpp>
 #include "OW_Exception.hpp"
-#include "OW_String.hpp"
+#include <blocxx/String.hpp>
 #include "OW_MOFParseError.hpp"
 #include <errno.h>
 #include <string.h>

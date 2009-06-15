@@ -47,14 +47,14 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMDataType.hpp"
-#include "OW_Format.hpp"
-#include "OW_GetPass.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/GetPass.hpp"
 #include "OW_CIMtoXML.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_XMLPrettyPrint.hpp"
 #include "OW_CIMParamValue.hpp"
-#include "OW_SocketBaseImpl.hpp"
+#include "blocxx/SocketBaseImpl.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 
 #include <iostream>

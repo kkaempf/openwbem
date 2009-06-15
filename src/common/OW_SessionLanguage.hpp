@@ -36,8 +36,8 @@
 #define OW_SESSIONLANGUAGE_HPP_INCLUDE_GUARD
 
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_SerializableIFC.hpp"

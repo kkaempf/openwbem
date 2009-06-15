@@ -36,7 +36,7 @@
 #ifndef OW_OOP_INSTANCE_PROVIDER_HPP_INCLUDE_GUARD_
 #define OW_OOP_INSTANCE_PROVIDER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 #include <streambuf>
 
 namespace OW_NAMESPACE

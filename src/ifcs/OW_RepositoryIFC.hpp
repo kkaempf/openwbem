@@ -37,7 +37,7 @@
 #define OW_REPOSITORYIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
-#include "OW_SharedLibraryReference.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_WBEMFlags.hpp"

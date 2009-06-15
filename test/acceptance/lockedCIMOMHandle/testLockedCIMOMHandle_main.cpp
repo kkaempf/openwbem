@@ -35,9 +35,9 @@
 #include "OW_config.h"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_SocketBaseImpl.hpp"
-#include "OW_LogAppender.hpp"
-#include "OW_CerrAppender.hpp"
+#include "blocxx/SocketBaseImpl.hpp"
+#include "blocxx/LogAppender.hpp"
+#include "blocxx/CerrAppender.hpp"
 #include "testLockedCIMOMHandle.hpp"
 
 #include <iostream>

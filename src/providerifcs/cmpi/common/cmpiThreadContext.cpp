@@ -22,10 +22,10 @@
 
 #include "cmpisrv.h"
 #include <pthread.h>
-#include "OW_NonRecursiveMutex.hpp"
-#include "OW_NonRecursiveMutexLock.hpp"
-#include "OW_Format.hpp"
-#include "OW_ThreadImpl.hpp"
+#include "blocxx/NonRecursiveMutex.hpp"
+#include "blocxx/NonRecursiveMutexLock.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/ThreadImpl.hpp"
 #include "OW_Exception.hpp"
 
 pthread_key_t CMPI_ThreadContext::theKey;

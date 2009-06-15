@@ -41,7 +41,7 @@
 AUTO_UNIT_TEST_SUITE_NAMED(OW_ProviderMuxTestCases,"OW_ProviderMux");
 #include "OW_ProviderIFCBaseIFC.hpp"
 #include "testSharedLibraryLoader.hpp"
-#include "OW_SharedLibrary.hpp"
+#include "blocxx/SharedLibrary.hpp"
 
 using namespace OpenWBEM;
 

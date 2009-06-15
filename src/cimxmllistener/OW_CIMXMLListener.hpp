@@ -37,16 +37,16 @@
 #ifndef OW_CIMXMLLISTENER_HPP_
 #define OW_CIMXMLLISTENER_HPP_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Map.hpp"
-#include "OW_IntrusiveReference.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Map.hpp"
+#include "blocxx/IntrusiveReference.hpp"
 #include "OW_CIMListenerCallback.hpp"
 #include "OW_URL.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_Logger.hpp"
 #ifndef OW_WIN32
-#include "OW_UnnamedPipe.hpp"
+#include "blocxx/UnnamedPipe.hpp"
 #endif
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_CommonFwd.hpp"

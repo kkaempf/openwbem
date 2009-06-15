@@ -34,7 +34,7 @@
 #include "OW_config.h"
 #include "TestCase.hpp"
 #include "OW_CppIndicationExportXMLHTTPProvider.hpp"
-#include <blocxx/Array.hpp>
+#include "blocxx/Array.hpp"
 #include "MockClock.hpp"
 #include "MockIndicationExporter.hpp"
 

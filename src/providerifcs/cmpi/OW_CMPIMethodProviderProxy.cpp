@@ -34,7 +34,7 @@
 #include "OW_CMPIMethodProviderProxy.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CMPIProviderIFCUtils.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"

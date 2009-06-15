@@ -40,7 +40,7 @@
 
 #if !defined(OW_NO_EXCEPTIONS)
 #include "OW_Logger.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #endif
 
 #include <unistd.h>

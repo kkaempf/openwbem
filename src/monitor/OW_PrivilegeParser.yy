@@ -36,9 +36,9 @@
 
 #include "OW_config.h"
 #include <cstring>
-#include "OW_Array.hpp"
-#include "OW_String.hpp"
-#include "OW_AutoPtr.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/AutoPtr.hpp"
 #include "OW_PrivilegeConfig.hpp"
 #include <cassert>
 

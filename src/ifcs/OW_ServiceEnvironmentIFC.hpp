@@ -36,8 +36,8 @@
 #ifndef OW_SERVICE_ENVIRONMENTIFC_HPP_INCLUDE_GUARD_
 #define OW_SERVICE_ENVIRONMENTIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_IntrusiveCountableBase.hpp"
-#include "OW_ArrayFwd.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
+#include "blocxx/ArrayFwd.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_IfcsFwd.hpp"
 #include "OW_CIMFwd.hpp"

@@ -35,8 +35,8 @@
 #include "OW_config.h"
 #include "OW_XMLPrettyPrint.hpp"
 #include "OW_XMLParserCore.hpp"
-#include "OW_TempFileStream.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/TempFileStream.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include "OW_Assertion.hpp"
 
 namespace OW_NAMESPACE

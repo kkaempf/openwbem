@@ -36,15 +36,15 @@
 #include "OW_config.h"
 #include "OW_DigestAuthentication.hpp"
 #include "OW_AuthenticationException.hpp"
-#include "OW_Array.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/Map.hpp"
 #include "OW_HTTPUtils.hpp"
-#include "OW_DateTime.hpp"
-#include "OW_Format.hpp"
-#include "OW_MD5.hpp"
+#include "blocxx/DateTime.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/MD5.hpp"
 #include "OW_HTTPSvrConnection.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_SecureRand.hpp"
+#include "blocxx/SecureRand.hpp"
 #include <fstream>
 
 namespace OW_NAMESPACE

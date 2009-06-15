@@ -38,12 +38,12 @@
 #include <stdio.h> /* for debugging */
 #include <assert.h>
 #include "OW_MOFGrammar.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_MOFCompiler.hpp"
 #include "OW_MOFParserDecls.hpp"
 #include "OW_MOFLexerDecls.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_MOFParseError.hpp"
 
 using namespace OpenWBEM;

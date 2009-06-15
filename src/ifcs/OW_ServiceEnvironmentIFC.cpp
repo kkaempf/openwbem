@@ -38,7 +38,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_Logger.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_WQLIFC.hpp"

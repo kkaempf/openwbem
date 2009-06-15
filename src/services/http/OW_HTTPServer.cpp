@@ -37,12 +37,12 @@
 #include "OW_config.h"
 #include "OW_HTTPServer.hpp"
 #include "OW_HTTPSvrConnection.hpp"
-#include "OW_ServerSocket.hpp"
+#include "blocxx/ServerSocket.hpp"
 #include "OW_IOException.hpp"
 #include "OW_Socket.hpp"
-#include "OW_Format.hpp"
-#include "OW_SelectableIFC.hpp"
-#include "OW_SelectableCallbackIFC.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/SelectableIFC.hpp"
+#include "blocxx/SelectableCallbackIFC.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_HTTPUtils.hpp"
@@ -50,21 +50,21 @@
 #include "OW_DigestAuthentication.hpp"
 #endif
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_SocketBaseImpl.hpp" // for setDumpFiles()
-#include "OW_Runnable.hpp"
-#include "OW_ThreadCancelledException.hpp"
-#include "OW_ThreadPool.hpp"
+#include "blocxx/SocketBaseImpl.hpp" // for setDumpFiles()
+#include "blocxx/Runnable.hpp"
+#include "blocxx/ThreadCancelledException.hpp"
+#include "blocxx/ThreadPool.hpp"
 #include "OW_ExceptionIds.hpp"
 #ifndef OW_WIN32
-#include "OW_UnnamedPipe.hpp"
+#include "blocxx/UnnamedPipe.hpp"
 #include "OW_LocalAuthentication.hpp"
 #endif
-#include "OW_SSLException.hpp"
-#include "OW_SSLCtxMgr.hpp"
+#include "blocxx/SSLException.hpp"
+#include "blocxx/SSLCtxMgr.hpp"
 #include "OW_AuthenticationException.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_ServiceIFCNames.hpp"
-#include "OW_Thread.hpp" // for ThreadException
+#include "blocxx/Thread.hpp" // for ThreadException
 #include "OW_SPNEGOAuthentication.hpp"
 #include "OW_PrivilegeManager.hpp"
 #include "OW_Logger.hpp"

@@ -30,9 +30,9 @@
 #ifndef OW_OOPCLONEDPROVIDERENV_CPP1_HPP_INCLUDE_GUARD_
 #define OW_OOPCLONEDPROVIDERENV_CPP1_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_UnnamedPipe.hpp"
+#include "blocxx/UnnamedPipe.hpp"
 #include "OW_ProviderFwd.hpp"
-#include "OW_Runnable.hpp"
+#include "blocxx/Runnable.hpp"
 
 namespace OW_NAMESPACE
 {

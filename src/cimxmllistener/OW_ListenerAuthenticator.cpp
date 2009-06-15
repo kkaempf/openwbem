@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_ListenerAuthenticator.hpp"
-#include "OW_SecureRand.hpp"
+#include "blocxx/SecureRand.hpp"
 
 namespace OW_NAMESPACE
 {

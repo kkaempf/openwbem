@@ -41,7 +41,7 @@
 #define OW_Exception_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include <blocxx/Exception.hpp>
+#include "blocxx/Exception.hpp"
 
 /**
  * Throw an exception using __FILE__ and __LINE__.  If applicable,

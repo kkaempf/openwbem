@@ -39,8 +39,8 @@
 #include "TestCaller.hpp"
 #include "OW_SharedLibraryLoaderTestCases.hpp"
 AUTO_UNIT_TEST_SUITE_NAMED(OW_SharedLibraryLoaderTestCases,"OW_SharedLibraryLoader");
-#include "OW_SharedLibraryLoader.hpp"
-#include "OW_SharedLibrary.hpp"
+#include "blocxx/SharedLibraryLoader.hpp"
+#include "blocxx/SharedLibrary.hpp"
 #include "testSharedLibraryLoader.hpp"
 
 using namespace OpenWBEM;

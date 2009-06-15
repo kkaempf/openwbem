@@ -30,10 +30,10 @@
 #ifndef OW_NPIPROVIDERIFC_HPP_
 #define OW_NPIPROVIDERIFC_HPP_
 #include "OW_config.h"
-#include "OW_SharedLibrary.hpp"
+#include "blocxx/SharedLibrary.hpp"
 #include "OW_ProviderIFCBaseIFC.hpp"
-#include "OW_Map.hpp"
-#include "OW_MutexLock.hpp"
+#include "blocxx/Map.hpp"
+#include "blocxx/MutexLock.hpp"
 #include "OW_FTABLERef.hpp"
 
 namespace OW_NAMESPACE

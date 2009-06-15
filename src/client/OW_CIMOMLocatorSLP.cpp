@@ -36,9 +36,9 @@
 #include "OW_config.h"
 #include "OW_CIMOMLocatorSLP.hpp"
 #include "OW_CIMOMInfo.hpp"
-#include "OW_Array.hpp"
-#include "OW_String.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Format.hpp"
 
 #ifdef OW_HAVE_SLP_H
 

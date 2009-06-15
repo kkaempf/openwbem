@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMClass.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMQualifierType.hpp"
@@ -46,8 +46,8 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMName.hpp"
 #include "OW_BinarySerialization.hpp"
-#include "OW_StrictWeakOrdering.hpp"
-#include "OW_COWIntrusiveCountableBase.hpp"
+#include "blocxx/StrictWeakOrdering.hpp"
+#include "blocxx/COWIntrusiveCountableBase.hpp"
 
 #include <algorithm>
 

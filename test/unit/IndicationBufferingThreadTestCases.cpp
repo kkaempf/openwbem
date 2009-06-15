@@ -42,8 +42,8 @@ AUTO_UNIT_TEST_SUITE_NAMED(IndicationBufferingThreadTestCases,"IndicationBufferi
 #include "CIMInstanceUtils.hpp"
 
 #include "OW_IndicationBufferingThread.hpp"
-#include "OW_Reference.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Reference.hpp"
+#include "blocxx/Format.hpp"
 
 #include <ctime>
 

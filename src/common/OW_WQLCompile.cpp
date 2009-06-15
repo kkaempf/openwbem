@@ -28,8 +28,8 @@
 #include "OW_WQLOperation.hpp"
 #include "OW_WQLOperand.hpp"
 #include "OW_WQLCompile.hpp"
-#include "OW_Format.hpp"
-#include "OW_Stack.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/Stack.hpp"
 #ifdef OW_HAVE_OSTREAM
 #include <ostream>
 #else

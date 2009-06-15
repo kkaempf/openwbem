@@ -38,8 +38,8 @@
 #define OW_XMLATTRIBUTE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
 
 namespace OW_NAMESPACE
 {

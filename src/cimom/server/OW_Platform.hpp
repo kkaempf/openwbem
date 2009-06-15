@@ -37,11 +37,11 @@
 #ifndef OW_PLATFORM_HPP_INCLUDE_GUARD_
 #define OW_PLATFORM_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_UnnamedPipe.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/UnnamedPipe.hpp"
 #include "OW_Exception.hpp"
 #include "OW_IOException.hpp"
-#include "OW_UserUtils.hpp"
+#include "blocxx/UserUtils.hpp"
 #include "OW_IfcsFwd.hpp"
 
 namespace OW_NAMESPACE

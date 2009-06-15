@@ -34,8 +34,8 @@
 
 #include "OW_config.h"
 #include "OW_ToolsCommon.hpp"
-#include "OW_CmdLineParser.hpp"
-#include "OW_GetPass.hpp"
+#include "blocxx/CmdLineParser.hpp"
+#include "blocxx/GetPass.hpp"
 
 #include <iostream>
 

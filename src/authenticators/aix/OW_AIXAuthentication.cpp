@@ -35,8 +35,8 @@
  */
 
 #include "OW_config.h"
-#include "OW_Array.hpp"
-#include "OW_String.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/String.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_Assertion.hpp"
@@ -50,7 +50,7 @@ extern "C"
 }
 #endif /* OW_AIX */
 
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 
 namespace OW_NAMESPACE
 {

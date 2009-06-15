@@ -43,7 +43,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_SocketBaseImpl.hpp"
+#include "blocxx/SocketBaseImpl.hpp"
 
 #include <iostream>
 #include <algorithm> // for std::find

@@ -7,7 +7,7 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_ServiceIFCNames.hpp"
 
 namespace OW_NAMESPACE

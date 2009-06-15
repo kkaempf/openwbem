@@ -41,7 +41,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(PrivilegeManagerMockObjectTestCases,"PrivilegeManager
 #include "OW_PrivilegeManagerMockObject.hpp"
 #include "OW_PrivilegeManagerMockObjectScope.hpp"
 #include "OW_PrivilegeManager.hpp"
-#include "OW_FileSystem.hpp"
+#include "blocxx/FileSystem.hpp"
 
 using namespace OpenWBEM;
 

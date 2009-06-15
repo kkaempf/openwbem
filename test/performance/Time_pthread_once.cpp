@@ -38,10 +38,10 @@
 #ifdef OW_USE_PTHREAD
 #include <pthread.h>
 #endif
-#include "OW_Mutex.hpp"
-#include "OW_MutexLock.hpp"
-#include "OW_ThreadImpl.hpp"
-#include "OW_ThreadOnce.hpp"
+#include "blocxx/Mutex.hpp"
+#include "blocxx/MutexLock.hpp"
+#include "blocxx/ThreadImpl.hpp"
+#include "blocxx/ThreadOnce.hpp"
 #include "blocxx/MemoryBarrier.hpp"
 
 using namespace OpenWBEM;

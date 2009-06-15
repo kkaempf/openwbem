@@ -41,7 +41,7 @@
 #define OW_ExceptionIds_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include <blocxx/ExceptionIds.hpp>
+#include "blocxx/ExceptionIds.hpp"
 #include "OW_Exception.hpp"
 
 // This is using BLOCXX_NAMESPACE instead of OW_NAMESPACE because the 

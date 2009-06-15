@@ -37,7 +37,7 @@
 #include "OW_XMLParserSAX.hpp"
 #include "OW_XMLParserCore.hpp"
 #include "OW_XMLParseException.hpp"
-#include "OW_StringStream.hpp"
+#include "blocxx/StringStream.hpp"
 #include "OW_XMLUnescape.hpp"
 
 #ifdef OW_HAVE_ISTREAM

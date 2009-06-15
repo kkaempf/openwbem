@@ -35,7 +35,7 @@
 #ifndef OW_COMMON_FWD_HPP_INCLUDE_GUARD_
 #define OW_COMMON_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include <blocxx/CommonFwd.hpp>
+#include "blocxx/CommonFwd.hpp"
 
 
 namespace OW_NAMESPACE

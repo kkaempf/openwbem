@@ -36,9 +36,9 @@
 #include "OW_config.h"
 #include "OW_ExceptionIds.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/StringBuffer.hpp"
 
 #include <cstring>
 #include <cstdlib>

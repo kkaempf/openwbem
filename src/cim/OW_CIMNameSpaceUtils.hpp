@@ -36,8 +36,8 @@
 #define OW_CIM_NAME_SPACE_UTILS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_ConfigOpts.hpp" // for OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE
 
 namespace OW_NAMESPACE

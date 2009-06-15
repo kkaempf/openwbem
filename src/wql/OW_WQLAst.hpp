@@ -35,9 +35,9 @@
 #ifndef OW_WQLAST_HPP_HPP_GUARD_
 #define OW_WQLAST_HPP_HPP_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Format.hpp"
-#include "OW_List.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/List.hpp"
 #include "OW_WQLVisitor.hpp"
 
 #include <typeinfo>

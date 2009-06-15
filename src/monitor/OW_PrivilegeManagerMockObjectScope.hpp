@@ -36,7 +36,7 @@
  */
 
 #include "OW_config.h"
-#include "OW_Reference.hpp"
+#include "blocxx/Reference.hpp"
 #include "OW_PrivilegeManagerMockObject.hpp"
 
 namespace OW_NAMESPACE

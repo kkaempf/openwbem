@@ -35,14 +35,14 @@
 #ifndef OW_PROVIDER_IFC_LOADER_HPP_
 #define OW_PROVIDER_IFC_LOADER_HPP_
 #include "OW_config.h"
-#include "OW_SharedLibraryLoader.hpp"
-#include "OW_SharedLibrary.hpp"
+#include "blocxx/SharedLibraryLoader.hpp"
+#include "blocxx/SharedLibrary.hpp"
 #include "OW_ProviderIFCBaseIFC.hpp"
-#include "OW_Array.hpp"
-#include "OW_String.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/String.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveReference.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_CimomCommonFwd.hpp"
 
 namespace OW_NAMESPACE

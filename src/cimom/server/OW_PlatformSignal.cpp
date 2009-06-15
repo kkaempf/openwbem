@@ -34,8 +34,8 @@
 
 #include "OW_Platform.hpp"
 #include "OW_PlatformSignal.hpp"
-#include "OW_UserUtils.hpp"
-#include "OW_SignalUtils.hpp"
+#include "blocxx/UserUtils.hpp"
+#include "blocxx/SignalUtils.hpp"
 
 #include <ostream>
 

@@ -43,7 +43,7 @@
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMValue.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_ResultHandlers.hpp"
 
 namespace OW_NAMESPACE

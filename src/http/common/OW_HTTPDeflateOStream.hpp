@@ -37,8 +37,8 @@
 #define OW_HTTPDEFLATEOSTREAM_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #ifdef OW_HAVE_ZLIB_H
-#include "OW_BaseStreamBuffer.hpp"
-#include "OW_AutoPtr.hpp"
+#include "blocxx/BaseStreamBuffer.hpp"
+#include "blocxx/AutoPtr.hpp"
 #include "OW_Types.hpp"
 
 #ifdef OW_HAVE_OSTREAM

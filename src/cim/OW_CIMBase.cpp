@@ -35,9 +35,8 @@
 
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_Assertion.hpp"
-//#include "OW_StringStream.hpp"
 #include "OW_IOException.hpp"
 #include "OW_BinarySerialization.hpp"
 #include <cstring>

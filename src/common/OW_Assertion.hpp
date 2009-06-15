@@ -41,7 +41,7 @@
 #define OW_Assertion_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include <blocxx/Assertion.hpp>
+#include "blocxx/Assertion.hpp"
 #include "OW_Exception.hpp"
 
 

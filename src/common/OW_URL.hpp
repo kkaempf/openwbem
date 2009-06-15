@@ -36,7 +36,7 @@
 #ifndef OW_URL_HPP_
 #define OW_URL_HPP_
 #include "OW_config.h"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_Exception.hpp"
 
 namespace OW_NAMESPACE

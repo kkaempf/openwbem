@@ -39,7 +39,7 @@
 /* a simple lexical scanner to escape xml */
 #include "OW_config.h"
 #include "OW_XMLEscape.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/StringBuffer.hpp"
 
 namespace OW_NAMESPACE
 {

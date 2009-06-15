@@ -35,9 +35,9 @@
 
 #include "OW_config.h"
 #include "OW_PidFile.hpp"
-#include "OW_File.hpp"
-#include "OW_FileSystem.hpp"
-#include "OW_String.hpp"
+#include "blocxx/File.hpp"
+#include "blocxx/FileSystem.hpp"
+#include "blocxx/String.hpp"
 
 #include <stdio.h>
 #include <unistd.h>

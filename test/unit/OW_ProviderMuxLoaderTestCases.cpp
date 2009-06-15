@@ -41,9 +41,9 @@
 AUTO_UNIT_TEST_SUITE_NAMED(OW_ProviderMuxLoaderTestCases,"OW_ProviderMuxLoader");
 #include "OW_ProviderIFCLoader.hpp"
 #include "OW_ProviderIFCBaseIFC.hpp"
-#include "OW_SharedLibraryLoader.hpp"
-#include "OW_SharedLibrary.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/SharedLibraryLoader.hpp"
+#include "blocxx/SharedLibrary.hpp"
+#include "blocxx/Array.hpp"
 #include "testSharedLibraryLoader.hpp"
 #include "OW_ConfigOpts.hpp"
 #include <iostream>

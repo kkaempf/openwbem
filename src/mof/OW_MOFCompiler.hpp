@@ -36,10 +36,10 @@
 #define OW_MOF_COMPILER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_MOFParserErrorHandlerIFC.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_MOFLineInfo.hpp"
 #include "OW_MOFGrammar.hpp"
 #include "OW_CIMFwd.hpp"

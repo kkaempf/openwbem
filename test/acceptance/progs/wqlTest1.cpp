@@ -33,7 +33,7 @@
  */
 
 #include "OW_ClientCIMOMHandle.hpp"
-#include "OW_AppenderLogger.hpp"
+#include "blocxx/AppenderLogger.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMName.hpp"
@@ -44,12 +44,12 @@
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_ConfigFile.hpp"
-#include "OW_Format.hpp"
-#include "OW_FileAppender.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/FileAppender.hpp"
 #include "OW_Logger.hpp"
-#include "OW_LogAppender.hpp"
+#include "blocxx/LogAppender.hpp"
 #include "OW_WQLImpl.hpp"
-#include "OW_Bool.hpp"
+#include "blocxx/Bool.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 
 #include <iostream>

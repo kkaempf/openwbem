@@ -37,9 +37,9 @@
 #define OW_CIMVALUE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
-#include "OW_COWIntrusiveReference.hpp"
+#include "blocxx/COWIntrusiveReference.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_SafeBool.hpp"

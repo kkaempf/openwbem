@@ -29,7 +29,7 @@
 //%/////////////////////////////////////////////////////////////////////////////
 #include "OW_config.h"
 #include "OW_WQLOperand.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_BinarySerialization.hpp"
 

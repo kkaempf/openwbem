@@ -36,7 +36,7 @@
 #ifndef OW_HTTTPCOUNTER_HPP_INCLUDE_GUARD_
 #define OW_HTTTPCOUNTER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_MutexLock.hpp"
+#include "blocxx/MutexLock.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.

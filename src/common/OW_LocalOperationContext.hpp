@@ -36,7 +36,7 @@
 #define OW_LOCAL_OPERATION_CONTEXT_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_OperationContext.hpp"
-#include "OW_SortedVectorMap.hpp"
+#include "blocxx/SortedVectorMap.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.

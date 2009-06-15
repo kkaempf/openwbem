@@ -36,7 +36,7 @@
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_CmdLineParser.hpp"
+#include "blocxx/CmdLineParser.hpp"
 #include "OW_ToolsCommon.hpp"
 #include "OW_URL.hpp"
 #include "OW_CIMException.hpp"

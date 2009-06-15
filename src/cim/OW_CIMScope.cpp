@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMScope.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_BinarySerialization.hpp"
 
 namespace OW_NAMESPACE

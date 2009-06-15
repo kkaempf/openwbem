@@ -36,11 +36,11 @@
 #ifndef OW_CIMCLASS_HPP_INCLUDE_GUARD_
 #define OW_CIMCLASS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_COWIntrusiveReference.hpp"
+#include "blocxx/COWIntrusiveReference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_WBEMFlags.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work

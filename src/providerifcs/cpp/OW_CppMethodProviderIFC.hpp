@@ -37,7 +37,7 @@
 #define OW_CPP_METHODPROVIDERIFC_HPP_
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_SharedLibraryReference.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
 #include "OW_MethodProviderInfo.hpp"
 
 namespace OW_NAMESPACE

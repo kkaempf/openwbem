@@ -37,7 +37,7 @@
 #define OW_CIMQUALIFIERTYPE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMElement.hpp"
-#include "OW_COWIntrusiveReference.hpp"
+#include "blocxx/COWIntrusiveReference.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMNULL.hpp"

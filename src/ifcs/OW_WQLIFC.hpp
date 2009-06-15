@@ -37,9 +37,9 @@
 #include "OW_config.h"
 #include "OW_CommonFwd.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_SharedLibraryReference.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_IntrusiveReference.hpp"
+#include "blocxx/IntrusiveReference.hpp"
 #include "OW_ServiceIFC.hpp"
 
 // The classes and functions defined in this file are not meant for general

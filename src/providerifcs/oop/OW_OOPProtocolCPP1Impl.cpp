@@ -34,21 +34,21 @@
 
 #include "OW_config.h"
 #include "OW_OOPProtocolCPP1Impl.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_Logger.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_LogMessage.hpp"
+#include "blocxx/LogMessage.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_OOPProviderBase.hpp"
 #include "OW_OOPCIMOMHandleConnectionRunner.hpp"
-#include "OW_DataStreams.hpp"
+#include "blocxx/DataStreams.hpp"
 #include "OW_OOPDataOStreamBuf.hpp"
 #include "OW_IOException.hpp"
-#include "OW_SelectEngine.hpp"
+#include "blocxx/SelectEngine.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.

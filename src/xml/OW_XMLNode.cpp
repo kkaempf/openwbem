@@ -38,8 +38,8 @@
 #include "OW_XMLNode.hpp"
 #include "OW_XMLAttribute.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_Format.hpp"
-#include "OW_StringStream.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/StringStream.hpp"
 #include "OW_XMLEscape.hpp"
 
 #ifdef OW_HAVE_OSTREAM

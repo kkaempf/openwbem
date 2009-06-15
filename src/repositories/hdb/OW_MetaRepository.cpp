@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_MetaRepository.hpp"
-#include "OW_DataStreams.hpp"
+#include "blocxx/DataStreams.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMFlavor.hpp"
@@ -44,9 +44,9 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMQualifier.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_ConfigOpts.hpp"
 
 namespace OW_NAMESPACE

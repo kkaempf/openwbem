@@ -32,11 +32,11 @@
  */
 
 #include "OW_config.h"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Exception.hpp"
 #include "OW_PrivilegeManager.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 
 #include <algorithm>
 #include <cstring>

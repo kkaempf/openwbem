@@ -36,10 +36,10 @@
 #ifndef OW_DIGEST_AUTHENTICATION_HPP_
 #define OW_DIGEST_AUTHENTICATION_HPP_
 #include "OW_config.h"
-#include "OW_Array.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/Map.hpp"
 #include "OW_HTTPSvrConnection.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 
 namespace OW_NAMESPACE
 {

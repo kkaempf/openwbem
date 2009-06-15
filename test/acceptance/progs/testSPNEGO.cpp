@@ -36,15 +36,15 @@
 
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
-#include "OW_TempFileStream.hpp"
+#include "blocxx/TempFileStream.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_HTTPException.hpp"
 #include "OW_SPNEGOHandler.hpp"
-#include "OW_Process.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Process.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_Exec.hpp"
-#include "OW_FileSystem.hpp"
+#include "blocxx/Exec.hpp"
+#include "blocxx/FileSystem.hpp"
 #include "OW_IOException.hpp"
 
 #include <fstream>

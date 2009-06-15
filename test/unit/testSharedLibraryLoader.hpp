@@ -36,8 +36,8 @@
 #ifndef testSharedLibraryLoader_HPP_
 #define testSharedLibraryLoader_HPP_
 
-#include "OW_SharedLibrary.hpp"
-#include "OW_SharedLibraryLoader.hpp"
+#include "blocxx/SharedLibrary.hpp"
+#include "blocxx/SharedLibraryLoader.hpp"
 #include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_ProviderIFCLoader.hpp"
 #include "OW_LocalCIMOMHandle.hpp"
@@ -48,7 +48,7 @@
 #include "OW_NoSuchProviderException.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_LocalOperationContext.hpp"
-#include "OW_CerrLogger.hpp"
+#include "blocxx/CerrLogger.hpp"
 
 using namespace OpenWBEM;
 

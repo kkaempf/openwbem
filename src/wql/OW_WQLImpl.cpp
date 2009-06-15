@@ -33,10 +33,10 @@
  */
 
 #include "OW_WQLImpl.hpp"
-#include "OW_MutexLock.hpp"
+#include "blocxx/MutexLock.hpp"
 #include "OW_WQLProcessor.hpp"
 #include "OW_WQLAst.hpp"
-#include "OW_AutoPtr.hpp"
+#include "blocxx/AutoPtr.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_WQLSelectStatementGen.hpp"
 #include "OW_ResultHandlerIFC.hpp"

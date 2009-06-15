@@ -34,7 +34,7 @@
 
 #include "OW_config.h"
 #include "OW_ConfigOpts.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include <cstring>
 
 namespace OW_NAMESPACE

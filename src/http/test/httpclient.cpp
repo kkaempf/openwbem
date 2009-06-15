@@ -30,7 +30,7 @@
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
 #include "OW_Exception.hpp"
-#include "OW_AutoPtr.hpp"
+#include "blocxx/AutoPtr.hpp"
 #include "OW_SSLCtxMgr.hpp"
 
 int main( int iArgC, char *asArgV[] )

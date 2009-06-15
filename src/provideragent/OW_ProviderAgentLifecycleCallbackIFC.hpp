@@ -35,7 +35,7 @@
 #ifndef OW_PROVIDER_AGENT_LIFECYCLE_CALLBACK_IFC_HPP_INCLUDE_GUARD_
 #define OW_PROVIDER_AGENT_LIFECYCLE_CALLBACK_IFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_CommonFwd.hpp"
 
 namespace OW_NAMESPACE

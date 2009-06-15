@@ -32,10 +32,10 @@
  * @author Dan Nuffer
  */
 
-#include <OW_String.hpp>
-#include <OW_Array.hpp>
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
 #include <OW_CIMDateTime.hpp>
-#include <OW_Char16.hpp>
+#include "blocxx/Char16.hpp"
 #include <OW_CIMObjectPath.hpp>
 // note this comes *after* the OpenWBEM headers, because it has a
 // #define ANY void

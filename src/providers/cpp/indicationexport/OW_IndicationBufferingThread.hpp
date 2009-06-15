@@ -35,7 +35,7 @@
  */
 
 #include "OW_config.h"
-#include "OW_Thread.hpp"
+#include "blocxx/Thread.hpp"
 #include "OW_CIMInstance.hpp"
 #include "blocxx/Clock.hpp"
 #include "blocxx/MTQueue.hpp"

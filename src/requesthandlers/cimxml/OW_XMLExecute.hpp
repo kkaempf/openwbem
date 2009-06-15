@@ -37,8 +37,8 @@
 #define OW_XMLEXECUTE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_String.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Map.hpp"
 #include "OW_XMLQualifier.hpp"
 #include "OW_RequestHandlerIFCXML.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"

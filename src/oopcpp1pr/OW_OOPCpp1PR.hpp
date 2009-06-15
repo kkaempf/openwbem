@@ -39,8 +39,8 @@
 #include "OW_config.h"
 #include "OW_CommonFwd.hpp"
 #include "OW_ProviderFwd.hpp"
-#include "OW_IOIFCStreamBuffer.hpp"
-#include "OW_UnnamedPipe.hpp"
+#include "blocxx/IOIFCStreamBuffer.hpp"
+#include "blocxx/UnnamedPipe.hpp"
 #include "OW_Exception.hpp"
 
 namespace OW_NAMESPACE

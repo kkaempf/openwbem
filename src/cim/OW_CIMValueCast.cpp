@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMValueCast.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMException.hpp"

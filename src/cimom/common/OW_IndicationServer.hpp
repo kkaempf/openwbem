@@ -36,7 +36,7 @@
 #define OW_INDICATION_SERVER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
-#include "OW_SharedLibraryReference.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
 #include "OW_ServiceIFC.hpp"
 #include "OW_CimomCommonFwd.hpp"
 

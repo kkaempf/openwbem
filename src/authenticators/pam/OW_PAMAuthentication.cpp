@@ -34,10 +34,10 @@
  */
 
 #include "OW_config.h"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_AuthenticatorIFC.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 
 #include <string.h>
 

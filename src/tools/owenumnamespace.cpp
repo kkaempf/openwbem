@@ -34,9 +34,9 @@
 
 #include "OW_config.h"
 #include "OW_CIMClient.hpp"
-#include "OW_CmdLineParser.hpp"
+#include "blocxx/CmdLineParser.hpp"
 #include "OW_URL.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_ClientCIMOMHandle.hpp"

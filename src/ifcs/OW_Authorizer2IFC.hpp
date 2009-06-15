@@ -38,9 +38,9 @@
 
 #include "OW_config.h"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_SharedLibraryReference.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
+#include "blocxx/IntrusiveReference.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_IfcsFwd.hpp"
 
 namespace OW_NAMESPACE

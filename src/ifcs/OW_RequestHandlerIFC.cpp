@@ -36,10 +36,10 @@
 #include "OW_config.h"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_SocketUtils.hpp"
-#include "OW_SocketException.hpp"
+#include "blocxx/SocketUtils.hpp"
+#include "blocxx/SocketException.hpp"
 // dumb aCC requires these to build
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 
 namespace OW_NAMESPACE
 {

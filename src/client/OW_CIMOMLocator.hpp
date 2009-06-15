@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_ClientFwd.hpp"
 #include "OW_CommonFwd.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_Exception.hpp"
 
 namespace OW_NAMESPACE

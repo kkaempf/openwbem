@@ -29,10 +29,10 @@
 
 #include "OW_PrivilegeConfig.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_StringBuffer.hpp"
-#include "OW_Format.hpp"
-#include "OW_Secure.hpp"
-#include "OW_Environ.hpp"
+#include "blocxx/StringBuffer.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/Secure.hpp"
+#include "blocxx/Environ.hpp"
 #include "blocxx/LazyGlobal.hpp"
 #include "blocxx/SortedVectorMap.hpp"
 

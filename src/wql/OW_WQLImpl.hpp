@@ -36,7 +36,7 @@
 #define OW_WQLIMPL_HPP_
 #include "OW_config.h"
 #include "OW_WQLIFC.hpp"
-#include "OW_Mutex.hpp"
+#include "blocxx/Mutex.hpp"
 #include <cstdio>
 
 // The classes and functions defined in this file are not meant for general

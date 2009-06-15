@@ -34,7 +34,7 @@
 
 #include "OW_config.h"
 #include "OW_XMLParserCore.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_XMLParseException.hpp"
 
 #include <cctype>

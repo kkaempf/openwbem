@@ -36,14 +36,14 @@
 #include "OW_config.h"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMValueCast.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include "OW_BinarySerialization.hpp"
-#include "OW_StrictWeakOrdering.hpp"
+#include "blocxx/StrictWeakOrdering.hpp"
 #include "OW_CIMScope.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMFlavor.hpp"
 #include "OW_CIMValue.hpp"
-#include "OW_COWIntrusiveCountableBase.hpp"
+#include "blocxx/COWIntrusiveCountableBase.hpp"
 
 #include <algorithm> // for std::sort
 

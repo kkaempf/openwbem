@@ -37,7 +37,7 @@
 #define OW_CIMOMHANDLE_IFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_WBEMFlags.hpp"
 #include "OW_IfcsFwd.hpp"
 

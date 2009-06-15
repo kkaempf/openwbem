@@ -36,7 +36,7 @@
 #define OW_PLATFORM_SIGNAL_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_UnnamedPipe.hpp"
+#include "blocxx/UnnamedPipe.hpp"
 
 #include <iosfwd>
 

@@ -31,7 +31,7 @@
 #include "OW_config.h"
 #include "OW_HDBCommon.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMUrl.hpp"
 

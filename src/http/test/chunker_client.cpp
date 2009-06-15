@@ -32,9 +32,9 @@
 #include <config.h>
 #endif
 #include "OW_Socket.hpp"
-#include "OW_SocketAddress.hpp"
+#include "blocxx/SocketAddress.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include <string>
 #include <fstream>
 #include <iostream>

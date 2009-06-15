@@ -42,7 +42,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_CIMValueTestCases,"OW_CIMValue");
 #include "OW_CIMValue.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMDateTime.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMProperty.hpp"

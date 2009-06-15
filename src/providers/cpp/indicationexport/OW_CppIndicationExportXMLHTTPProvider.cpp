@@ -37,12 +37,12 @@
 #include "OW_CppIndicationExportXMLHTTPProvider.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_IndicationExporter.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_Logger.hpp"
 #include "OW_ConfigException.hpp"
-#include "OW_Thread.hpp"
-#include "OW_Timeout.hpp"
+#include "blocxx/Thread.hpp"
+#include "blocxx/Timeout.hpp"
 #include "OW_ConfigOpts.hpp"
 #include <cmath>
 #include <algorithm>

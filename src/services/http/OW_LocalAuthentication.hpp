@@ -36,9 +36,9 @@
 #ifndef OW_LOCAL_AUTHENTICATION_HPP_INCLUDE_GUARD
 #define OW_LOCAL_AUTHENTICATION_HPP_INCLUDE_GUARD
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_DateTime.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/DateTime.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_ServicesHttpFwd.hpp"
 #include "OW_Logger.hpp"
 

@@ -44,9 +44,9 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_ConfigFile.hpp"
 #include "OW_ConfigException.hpp"
-#include "OW_Format.hpp"
-#include "OW_TempFileStream.hpp"
-#include "OW_FileSystem.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/TempFileStream.hpp"
+#include "blocxx/FileSystem.hpp"
 #include <fstream>
 #include <sys/types.h>
 #include <sys/stat.h>

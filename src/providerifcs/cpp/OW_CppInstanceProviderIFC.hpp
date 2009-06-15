@@ -37,7 +37,7 @@
 #define OW_CPP_INSTANCEPROVIDERIFC_HPP_
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_SharedLibraryReference.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
 #include "OW_InstanceProviderInfo.hpp"
 #include "OW_WBEMFlags.hpp"
 #include "OW_ResultHandlerIFC.hpp"

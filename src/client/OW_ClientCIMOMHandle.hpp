@@ -34,20 +34,20 @@
 
 #ifndef OW_CLIENTCIMOMHANDLE_HPP_
 #define OW_CLIENTCIMOMHANDLE_HPP_
-#include "OW_config.h"										
+#include "OW_config.h"
 #include "OW_IfcsFwd.hpp"
 #include "OW_ClientFwd.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/Map.hpp"
 #include "OW_ClientFwd.hpp"
-#include "OW_SSLCtxMgr.hpp"
+#include "blocxx/SSLCtxMgr.hpp"
 
 namespace OW_NAMESPACE
 {
 
 // This class is meant to hold common functionality in the client-side CIMOM
-// handles	
+// handles
 class OW_CLIENT_API ClientCIMOMHandle : public CIMOMHandleIFC
 {
 public:

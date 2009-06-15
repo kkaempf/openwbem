@@ -42,7 +42,7 @@
 #include "OW_CIMProtocolIFC.hpp"
 #include "OW_XMLQualifier.hpp"
 #include "OW_Param.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/Map.hpp"
 
 namespace OW_NAMESPACE
 {

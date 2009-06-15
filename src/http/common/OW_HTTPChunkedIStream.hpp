@@ -37,10 +37,10 @@
 #define OW_HTTPCHUNKEDISTREAM_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_HTTPChunkException.hpp"
-#include "OW_BaseStreamBuffer.hpp"
-#include "OW_String.hpp"
-#include "OW_Map.hpp"
-#include "OW_AutoPtr.hpp"
+#include "blocxx/BaseStreamBuffer.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Map.hpp"
+#include "blocxx/AutoPtr.hpp"
 #include "OW_HttpCommonFwd.hpp"
 #include <istream>
 

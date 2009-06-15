@@ -33,7 +33,8 @@
 /**
  * @author <see corresponding BloCxx header>
  */
-#include "OW_dlSharedLibrary.hpp"
+#include "OW_config.h"
+#include "blocxx/dlSharedLibrary.hpp"
 
 
 // NOTE: To make a fake library, create a text file with all functions that

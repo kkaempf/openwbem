@@ -39,7 +39,7 @@
 #include "OW_config.h"
 
 #include "OW_ProviderAgentFwd.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 
 namespace OW_NAMESPACE
 {

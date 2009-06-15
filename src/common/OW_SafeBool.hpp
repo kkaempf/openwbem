@@ -41,7 +41,7 @@
 #define OW_SafeBool_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include <blocxx/SafeBool.hpp>
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {

@@ -37,9 +37,9 @@
 /* a simple lexical scanner to escape xml */
 #include "OW_config.h"
 #include "OW_XMLUnescape.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include "OW_XMLParseException.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include <limits.h> // for CHAR_MAX
 #include <stdlib.h> // for strtol
 

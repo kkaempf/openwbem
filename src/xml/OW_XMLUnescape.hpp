@@ -35,7 +35,7 @@
 #ifndef OW_XMLUNESCAPE_HPP_
 #define OW_XMLUNESCAPE_HPP_
 #include "OW_config.h"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 
 namespace OW_NAMESPACE
 {

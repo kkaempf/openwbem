@@ -35,13 +35,13 @@
 
 #include "OW_config.h"
 #include "OW_CIMValue.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_CIMValueCast.hpp" // for OW_ValueCastException
 #include "OW_CIMDateTime.hpp"
-#include "OW_COWIntrusiveCountableBase.hpp"
+#include "blocxx/COWIntrusiveCountableBase.hpp"
 
 #include <new>
 #include <cassert>

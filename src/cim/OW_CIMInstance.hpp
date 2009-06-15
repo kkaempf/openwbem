@@ -36,14 +36,14 @@
 #ifndef OW_CIMINSTANCE_HPP_INCLUDE_GUARD_
 #define OW_CIMINSTANCE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_COWIntrusiveReference.hpp"
+#include "blocxx/COWIntrusiveReference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMDataType.hpp" // for OW_CIMDataType::INVALID
 #include "OW_WBEMFlags.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
-#include "OW_String.hpp" // for default parameter StringArray()
-#include "OW_Array.hpp"
+#include "blocxx/String.hpp" // for default parameter StringArray()
+#include "blocxx/Array.hpp"
 #include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE

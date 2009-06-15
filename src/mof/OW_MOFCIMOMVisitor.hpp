@@ -36,7 +36,7 @@
 #define OW_CIMOMVISITOR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/Map.hpp"
 #include "OW_MOFVisitor.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"

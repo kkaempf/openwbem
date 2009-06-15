@@ -34,10 +34,10 @@
 
 // The source of the Unicode data is: http://www.unicode.org/Public/UNIDATA/
 
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
-#include "OW_StringStream.hpp"
-#include "OW_UTF8Utils.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/StringStream.hpp"
+#include "blocxx/UTF8Utils.hpp"
 #include <fstream>
 #include <iostream>
 #include <map>

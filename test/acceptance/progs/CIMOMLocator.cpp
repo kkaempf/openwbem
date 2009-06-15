@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_CIMOMLocator.hpp"
 #include "OW_CIMOMInfo.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 
 #include <iostream>
 

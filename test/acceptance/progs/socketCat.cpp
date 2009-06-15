@@ -33,12 +33,12 @@
  */
 
 #include "OW_config.h"
-#include "OW_SocketAddress.hpp"
+#include "blocxx/SocketAddress.hpp"
 #include "OW_Socket.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Select.hpp"
-#include "OW_Thread.hpp"
+#include "blocxx/Select.hpp"
+#include "blocxx/Thread.hpp"
 
 #include <vector>
 

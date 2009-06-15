@@ -36,7 +36,7 @@
 
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
-#include "OW_TempFileStream.hpp"
+#include "blocxx/TempFileStream.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_HTTPException.hpp"
 
@@ -45,7 +45,7 @@
 
 #ifdef OW_HAVE_OPENSSL
 #include <openssl/ssl.h>
-#include "OW_SSLCtxMgr.hpp"
+#include "blocxx/SSLCtxMgr.hpp"
 #endif
 
 using std::cerr;

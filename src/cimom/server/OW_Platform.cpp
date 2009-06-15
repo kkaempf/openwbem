@@ -37,18 +37,18 @@
 #include "OW_config.h"
 #include "OW_Platform.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_PidFile.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_PlatformSignal.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_Logger.hpp"
-#include "OW_PosixUnnamedPipe.hpp"
+#include "blocxx/PosixUnnamedPipe.hpp"
 
 #ifdef OW_NETWARE
-#include "OW_Condition.hpp"
-#include "OW_NonRecursiveMutex.hpp"
-#include "OW_NonRecursiveMutexLock.hpp"
+#include "blocxx/Condition.hpp"
+#include "blocxx/NonRecursiveMutex.hpp"
+#include "blocxx/NonRecursiveMutexLock.hpp"
 #endif
 
 extern "C"

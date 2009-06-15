@@ -34,9 +34,9 @@
 
 #include "OW_config.h"
 #include "OW_ClientCIMOMHandleConnectionPool.hpp"
-#include "OW_MutexLock.hpp"
+#include "blocxx/MutexLock.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 
 namespace OW_NAMESPACE
 {

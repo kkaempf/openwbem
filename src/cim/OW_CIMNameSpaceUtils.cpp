@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"

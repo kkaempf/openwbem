@@ -35,7 +35,7 @@
 #ifndef OW_CIMCLASSENUMERATION_HPP_INCLUDE_GUARD_
 #define OW_CIMCLASSENUMERATION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Enumeration.hpp"
+#include "blocxx/Enumeration.hpp"
 #include "OW_CIMClass.hpp"
 
 namespace OW_NAMESPACE

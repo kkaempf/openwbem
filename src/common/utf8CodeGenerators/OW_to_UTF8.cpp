@@ -4,8 +4,8 @@
  * @author Dan Nuffer
  */
 
-#include "OW_UTF8Utils.hpp"
-#include "OW_String.hpp"
+#include "blocxx/UTF8Utils.hpp"
+#include "blocxx/String.hpp"
 #include <iostream>
 
 using namespace OpenWBEM;

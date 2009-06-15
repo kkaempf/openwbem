@@ -38,7 +38,7 @@
 #include "OW_UserInfo.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_Logger.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMValue.hpp"

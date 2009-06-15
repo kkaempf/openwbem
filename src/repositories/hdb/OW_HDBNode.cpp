@@ -36,11 +36,11 @@
 #include "OW_config.h"
 #include "OW_HDBNode.hpp"
 #include "OW_HDB.hpp"
-#include "OW_AutoPtr.hpp"
+#include "blocxx/AutoPtr.hpp"
 #include "OW_Logger.hpp"
-#include "OW_Format.hpp"
-#include "OW_String.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include <cstring>
 #include <cerrno>
 

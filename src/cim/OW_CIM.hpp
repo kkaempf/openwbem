@@ -36,9 +36,9 @@
 #ifndef OW_CIM_HPP_INCLUDE_GUARD_
 #define OW_CIM_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Array.hpp"
-#include "OW_Char16.hpp"
-#include "OW_String.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/Char16.hpp"
+#include "blocxx/String.hpp"
 #include "OW_Exception.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMFwd.hpp"

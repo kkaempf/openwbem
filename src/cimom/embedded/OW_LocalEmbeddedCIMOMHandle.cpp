@@ -45,7 +45,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_Enumeration.hpp"
+#include "blocxx/Enumeration.hpp"
 
 namespace OW_NAMESPACE
 {

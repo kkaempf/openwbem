@@ -35,7 +35,7 @@
 #include "easyserver.h"
 */
 #include "OW_ServerSocket.hpp"
-#include "OW_SocketAddress.hpp"
+#include "blocxx/SocketAddress.hpp"
 #include "OW_HTTPChunkedOStream.hpp"
 #include <iostream>
 #include <fstream.h>

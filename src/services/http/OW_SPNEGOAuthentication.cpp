@@ -34,18 +34,18 @@
 
 #include "OW_config.h"
 #include "OW_SPNEGOAuthentication.hpp"
-#include "OW_Process.hpp"
-#include "OW_Exec.hpp"
-#include "OW_MutexLock.hpp"
+#include "blocxx/Process.hpp"
+#include "blocxx/Exec.hpp"
+#include "blocxx/MutexLock.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_PrivilegeManager.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_Logger.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Exception.hpp"
-#include "OW_FileSystem.hpp"
+#include "blocxx/FileSystem.hpp"
 #include "OW_IOException.hpp"
-#include "OW_Secure.hpp"
+#include "blocxx/Secure.hpp"
 
 namespace OW_NAMESPACE
 {

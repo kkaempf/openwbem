@@ -37,9 +37,9 @@
 #include "OW_GenericHDBRepository.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_DataStreams.hpp"
+#include "blocxx/DataStreams.hpp"
 #include "OW_IOException.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 
 namespace OW_NAMESPACE
 {

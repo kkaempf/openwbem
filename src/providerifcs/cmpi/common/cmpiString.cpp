@@ -22,7 +22,7 @@
 
 
 #include "cmpisrv.h"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 
 CMPIString* string2CMPIString(const OpenWBEM::String &s)
 {

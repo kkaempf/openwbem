@@ -37,12 +37,12 @@
 #ifndef OW_PROVIDERAGENT_HPP_INCLUDE_GUARD_
 #define OW_PROVIDERAGENT_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_IntrusiveReference.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/IntrusiveReference.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_Logger.hpp"
 #include "OW_ConfigFile.hpp"
-#include "OW_UnnamedPipe.hpp"
+#include "blocxx/UnnamedPipe.hpp"
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_CommonFwd.hpp"
@@ -50,7 +50,7 @@
 #include "OW_ProviderAgentFwd.hpp"
 #include "OW_ProviderAgentLifecycleCallbackIFC.hpp"
 #include "OW_ProviderAgentLockerIFC.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 
 namespace OW_NAMESPACE
 {

@@ -45,13 +45,13 @@
 #include "OW_IndicationProviderIFC.hpp"
 #include "OW_SecondaryInstanceProviderIFC.hpp"
 #include "OW_ProviderIFCLoader.hpp"
-#include "OW_Mutex.hpp"
-#include "OW_HashMap.hpp"
-#include "OW_HashMultiMap.hpp"
+#include "blocxx/Mutex.hpp"
+#include "blocxx/HashMap.hpp"
+#include "blocxx/HashMultiMap.hpp"
 #include "OW_ServiceIFC.hpp"
 #include "OW_Logger.hpp"
 #include "OW_CimomCommonFwd.hpp"
-#include "OW_SortedVectorSet.hpp"
+#include "blocxx/SortedVectorSet.hpp"
 
 namespace OW_NAMESPACE
 {

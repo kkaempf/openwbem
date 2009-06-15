@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_ConfigFile.hpp"
 #include "OW_ConfigException.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "blocxx/FileSystem.hpp"
 
 #include <fstream>

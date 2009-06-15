@@ -39,7 +39,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_SocketBaseImpl.hpp"
+#include "blocxx/SocketBaseImpl.hpp"
 
 #include <iostream>
 #include <algorithm>

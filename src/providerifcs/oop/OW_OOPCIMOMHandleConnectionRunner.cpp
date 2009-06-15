@@ -34,16 +34,16 @@
 
 #include "OW_config.h"
 #include "OW_OOPCIMOMHandleConnectionRunner.hpp"
-#include "OW_UnnamedPipe.hpp"
+#include "blocxx/UnnamedPipe.hpp"
 #include "OW_OOPCallbackServiceEnv.hpp"
 #include "OW_Logger.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_HTTPChunkedOStream.hpp"
-#include "OW_TempFileStream.hpp"
+#include "blocxx/TempFileStream.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_HTTPUtils.hpp"
-#include "OW_NonRecursiveMutexLock.hpp"
+#include "blocxx/NonRecursiveMutexLock.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.

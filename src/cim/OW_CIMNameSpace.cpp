@@ -36,8 +36,8 @@
 #include "OW_config.h"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMUrl.hpp"
-#include "OW_StrictWeakOrdering.hpp"
-#include "OW_COWIntrusiveCountableBase.hpp"
+#include "blocxx/StrictWeakOrdering.hpp"
+#include "blocxx/COWIntrusiveCountableBase.hpp"
 #include <cctype>
 
 namespace OW_NAMESPACE

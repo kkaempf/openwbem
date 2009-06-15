@@ -33,8 +33,8 @@
 
 #include "OW_config.h"
 #include "OW_CIMInstance.hpp"
-#include <blocxx/Array.hpp>
-#include <blocxx/Reference.hpp>
+#include "blocxx/Array.hpp"
+#include "blocxx/Reference.hpp"
 #include "OW_IndicationExporter.hpp"
 #include "MockObject.hpp"
 

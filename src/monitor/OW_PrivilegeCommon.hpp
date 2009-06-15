@@ -33,7 +33,7 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_Cstr.hpp"
+#include "blocxx/Cstr.hpp"
 #include "OW_Exception.hpp"
 
 #define WRAP_STMT(stmt) \

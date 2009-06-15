@@ -35,16 +35,16 @@
 
 #include "OW_config.h"
 #include "OW_CIMProperty.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_NULLValueException.hpp"
-#include "OW_StrictWeakOrdering.hpp"
+#include "blocxx/StrictWeakOrdering.hpp"
 #include "OW_NoSuchQualifierException.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_COWIntrusiveCountableBase.hpp"
+#include "blocxx/COWIntrusiveCountableBase.hpp"
 
 namespace OW_NAMESPACE
 {

@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_XMLClass.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMProperty.hpp"
@@ -44,7 +44,7 @@
 #include "OW_CIMUrl.hpp"
 #include "OW_CIMXMLParser.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMException.hpp"
 
 namespace OW_NAMESPACE

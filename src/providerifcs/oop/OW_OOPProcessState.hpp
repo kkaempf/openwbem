@@ -37,12 +37,12 @@
 
 #include "OW_config.h"
 #include "OW_CommonFwd.hpp"
-#include "OW_String.hpp"
-#include "OW_RWLocker.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_ThreadSafeProcess.hpp"
-#include "OW_NonRecursiveMutex.hpp"
-#include "OW_NonRecursiveMutexLock.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/RWLocker.hpp"
+#include "blocxx/IntrusiveReference.hpp"
+#include "blocxx/ThreadSafeProcess.hpp"
+#include "blocxx/NonRecursiveMutex.hpp"
+#include "blocxx/NonRecursiveMutexLock.hpp"
 
 namespace OW_NAMESPACE
 {

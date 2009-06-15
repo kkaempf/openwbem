@@ -7,11 +7,11 @@
 
 #include "OW_config.h"
 #include "OW_Exception.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_PrivilegeManager.hpp"
 #include "OW_SafeCString.hpp"
-#include "OW_StringStream.hpp"
-#include "OW_UnnamedPipe.hpp"
+#include "blocxx/StringStream.hpp"
+#include "blocxx/UnnamedPipe.hpp"
 #include <map>
 
 extern "C"

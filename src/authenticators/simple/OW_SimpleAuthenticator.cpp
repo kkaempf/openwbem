@@ -36,10 +36,10 @@
 #include "OW_config.h"
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_AuthenticationException.hpp"
-#include "OW_String.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Map.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include <fstream>
 #include <iosfwd>
 

@@ -37,7 +37,7 @@
 #ifdef OW_HAVE_ZLIB_H
 #include "OW_HTTPDeflateOStream.hpp"
 #include "OW_HTTPException.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 
 namespace OW_NAMESPACE
 {

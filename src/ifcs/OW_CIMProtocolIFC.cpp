@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMProtocolIFC.hpp"
-#include "OW_Timeout.hpp"
+#include "blocxx/Timeout.hpp"
 
 namespace OW_NAMESPACE
 {

@@ -35,8 +35,8 @@
 
 #include "OW_config.h"
 #include "OW_ResultHandlers.hpp"
-#include "OW_Array.hpp"
-#include "OW_Enumeration.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/Enumeration.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMInstance.hpp"

@@ -34,10 +34,10 @@
 
 #include "OW_config.h"
 #include "OW_CIMParamValue.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include "OW_BinarySerialization.hpp"
-#include "OW_StrictWeakOrdering.hpp"
-#include "OW_COWIntrusiveCountableBase.hpp"
+#include "blocxx/StrictWeakOrdering.hpp"
+#include "blocxx/COWIntrusiveCountableBase.hpp"
 
 namespace OW_NAMESPACE
 {

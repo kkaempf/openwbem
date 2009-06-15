@@ -36,8 +36,8 @@
 #include "OW_CIMClient.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_SocketBaseImpl.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/SocketBaseImpl.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMInstance.hpp"
 

@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_URL.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include "OW_ExceptionIds.hpp"
 #include <algorithm>
 #include <functional>

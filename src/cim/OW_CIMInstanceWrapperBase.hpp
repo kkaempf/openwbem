@@ -39,12 +39,12 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_Types.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_CIMDateTime.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMClass.hpp"
-#include "OW_Bool.hpp"
+#include "blocxx/Bool.hpp"
 
 namespace OW_NAMESPACE
 {

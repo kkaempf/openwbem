@@ -36,10 +36,10 @@
 #ifndef OW_HTTPSVRCONNECTION_HPP_INCLUDE_GUARD_
 #define OW_HTTPSVRCONNECTION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Runnable.hpp"
-#include "OW_Mutex.hpp"
-#include "OW_MutexLock.hpp"
-#include "OW_String.hpp"
+#include "blocxx/Runnable.hpp"
+#include "blocxx/Mutex.hpp"
+#include "blocxx/MutexLock.hpp"
+#include "blocxx/String.hpp"
 #include "OW_HTTPServer.hpp"
 #include "OW_HTTPStatusCodes.hpp"
 #include "OW_Socket.hpp"
@@ -47,7 +47,7 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_HttpCommonFwd.hpp"
-#include "OW_Reference.hpp"
+#include "blocxx/Reference.hpp"
 #include <iosfwd>
 #include <fstream>
 

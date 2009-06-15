@@ -38,7 +38,7 @@
 #include "OW_HTTPException.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_SocketBaseImpl.hpp"
+#include "blocxx/SocketBaseImpl.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMParamValue.hpp"
 

@@ -36,7 +36,7 @@
 #define OW_CIMOBJECTPATHENUMERATION_HPP_
 #include "OW_config.h"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_Enumeration.hpp"
+#include "blocxx/Enumeration.hpp"
 
 namespace OW_NAMESPACE
 {

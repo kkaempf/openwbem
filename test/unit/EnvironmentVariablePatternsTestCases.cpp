@@ -36,8 +36,8 @@
 #include "EnvironmentVariablePatternsTestCases.hpp"
 AUTO_UNIT_TEST_SUITE_NAMED(EnvironmentVariablePatternsTestCases,"EnvironmentVariablePatterns");
 #include "OW_PrivilegeConfig.hpp"
-#include "OW_Secure.hpp"
-#include "OW_Environ.hpp"
+#include "blocxx/Secure.hpp"
+#include "blocxx/Environ.hpp"
 
 using namespace OpenWBEM;
 using namespace OpenWBEM::PrivilegeConfig;

@@ -35,13 +35,13 @@
 
 #include "OW_config.h"
 #include "OW_CppProviderIncludes.hpp"
-#include "OW_FileSystem.hpp"
-#include "OW_Thread.hpp" // for yield()
+#include "blocxx/FileSystem.hpp"
+#include "blocxx/Thread.hpp" // for yield()
 #include "OW_Assertion.hpp"
-#include "OW_Timeout.hpp"
-#include "OW_TimeoutTimer.hpp"
-#include "OW_NonRecursiveMutex.hpp"
-#include "OW_NonRecursiveMutexLock.hpp"
+#include "blocxx/Timeout.hpp"
+#include "blocxx/TimeoutTimer.hpp"
+#include "blocxx/NonRecursiveMutex.hpp"
+#include "blocxx/NonRecursiveMutexLock.hpp"
 #include "testMethodLocking.hpp"
 
 using namespace std;

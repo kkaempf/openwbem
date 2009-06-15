@@ -35,8 +35,8 @@
 
 #include "OW_config.h"
 #include "OW_HDB.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/AutoPtr.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_Logger.hpp"
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>

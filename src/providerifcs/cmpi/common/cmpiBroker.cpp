@@ -21,13 +21,13 @@
 
 #include <iostream>
 #include "cmpisrv.h"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ResultHandlers.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_Logger.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 

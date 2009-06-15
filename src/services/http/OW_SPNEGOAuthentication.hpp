@@ -37,8 +37,8 @@
 #include "OW_config.h"
 #include "OW_CommonFwd.hpp"
 #include "OW_HTTPSvrConnection.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
-#include "OW_Mutex.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
+#include "blocxx/Mutex.hpp"
 
 namespace OW_NAMESPACE
 {

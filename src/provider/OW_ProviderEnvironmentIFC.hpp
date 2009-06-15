@@ -35,7 +35,7 @@
 #ifndef OW_PROVIDER_ENVIRONMENT_HPP_
 #define OW_PROVIDER_ENVIRONMENT_HPP_
 #include "OW_config.h"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_ProviderFwd.hpp"
 #include "OW_IfcsFwd.hpp"
 #include "OW_CommonFwd.hpp"

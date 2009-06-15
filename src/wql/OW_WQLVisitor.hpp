@@ -35,7 +35,7 @@
 #ifndef OW_WQLVISITOR_HPP_HPP_GUARD_
 #define OW_WQLVISITOR_HPP_HPP_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.

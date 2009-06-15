@@ -33,9 +33,9 @@
  */
 
 #include "OW_IndicationBurstExporter.hpp"
-#include "OW_ThreadPool.hpp"
+#include "blocxx/ThreadPool.hpp"
 #include "OW_Logger.hpp"
-#include "OW_Timeout.hpp"
+#include "blocxx/Timeout.hpp"
 #include "OW_SendIndicationBurstTask.hpp"
 
 using namespace OpenWBEM;

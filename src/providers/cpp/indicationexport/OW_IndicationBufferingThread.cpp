@@ -37,7 +37,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_Logger.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_NoSuchPropertyException.hpp"
 #include <list>
 #include <cmath>

@@ -34,7 +34,7 @@
 
 
 #include "OW_config.h"
-#include "OW_AtomicOps.hpp"
+#include "blocxx/AtomicOps.hpp"
 #include "PerformanceCommon.hpp"
 
 #include <iostream>

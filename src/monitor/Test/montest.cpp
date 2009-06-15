@@ -29,17 +29,17 @@
 
 #include "OW_config.h"
 
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Exception.hpp"
-#include "OW_FileSystem.hpp"
+#include "blocxx/FileSystem.hpp"
 #include "OW_PrivilegeManager.hpp"
-#include "OW_String.hpp"
-#include "OW_StringBuffer.hpp"
-#include "OW_Format.hpp"
-#include "OW_CerrAppender.hpp"
-#include "OW_LogAppender.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/StringBuffer.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/CerrAppender.hpp"
+#include "blocxx/LogAppender.hpp"
 
 #include <algorithm>
 #include <ostream>

@@ -35,9 +35,9 @@
 
 #include "OW_CppProviderIncludes.hpp"
 
-#include "OW_Exec.hpp"
-#include "OW_UnnamedPipe.hpp"
-#include "OW_SocketAddress.hpp"
+#include "blocxx/Exec.hpp"
+#include "blocxx/UnnamedPipe.hpp"
+#include "blocxx/SocketAddress.hpp"
 
 #include <iostream> // for cerr
 #include <sys/types.h>

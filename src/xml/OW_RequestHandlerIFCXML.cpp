@@ -38,14 +38,14 @@
 #include "OW_Assertion.hpp"
 #include "OW_CIMErrorException.hpp"
 #include "OW_XMLOperationGeneric.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_ThreadCancelledException.hpp"
+#include "blocxx/ThreadCancelledException.hpp"
 #include "OW_XMLParseException.hpp"
 #include "OW_Logger.hpp"
 #include "OW_OperationContext.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 
 #define OW_LOGDEBUG(msg) OW_LOG_DEBUG(logger, msg)
 #define OW_LOGINFO(msg) OW_LOG_INFO(logger, msg)

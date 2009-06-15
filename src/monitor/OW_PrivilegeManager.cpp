@@ -31,25 +31,25 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_FileSystem.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/FileSystem.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_IPCIO.hpp"
-#include "OW_NonRecursiveMutex.hpp"
-#include "OW_NonRecursiveMutexLock.hpp"
+#include "blocxx/NonRecursiveMutex.hpp"
+#include "blocxx/NonRecursiveMutexLock.hpp"
 #include "OW_PrivilegeCommon.hpp"
 #include "OW_PrivilegeConfig.hpp"
 #include "OW_PrivilegeManager.hpp"
 #include "OW_PrivilegeManagerMockObject.hpp"
-#include "OW_Process.hpp"
-#include "OW_Reference.hpp"
-#include "OW_Secure.hpp"
-#include "OW_String.hpp"
-#include "OW_Environ.hpp"
-#include "OW_Exec.hpp"
-#include "OW_File.hpp"
+#include "blocxx/Process.hpp"
+#include "blocxx/Reference.hpp"
+#include "blocxx/Secure.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Environ.hpp"
+#include "blocxx/Exec.hpp"
+#include "blocxx/File.hpp"
 #include "OW_Logger.hpp"
 #include "blocxx/WaitpidThreadFix.hpp"
 
@@ -179,7 +179,7 @@ OW_DEFINE_EXCEPTION2(FatalPrivilegeManager, PrivilegeManagerException);
 OW_DEFINE_EXCEPTION2(MonitorCommunication, FatalPrivilegeManagerException)
 OW_DEFINE_EXCEPTION2(InsufficientPrivileges, FatalPrivilegeManagerException);
 
-PrivilegeManagerMockObject_t g_privilegeManagerMockObject = OW_GLOBAL_PTR_INIT;
+PrivilegeManagerMockObject_t g_privilegeManagerMockObject = BLOCXX_GLOBAL_PTR_INIT;
 
 bool PrivilegeManager::use_lib_path = false;
 

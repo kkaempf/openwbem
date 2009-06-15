@@ -38,7 +38,7 @@
 #include "OW_WQLPropertySource.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 
 namespace OW_NAMESPACE
 {

@@ -37,7 +37,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_SocketBaseImpl.hpp"
+#include "blocxx/SocketBaseImpl.hpp"
 
 #include <iostream>
 #include <algorithm> // for std::find

@@ -32,7 +32,7 @@
  * @author Dan Nuffer
  */
 
-#include "OW_Bool.hpp"
+#include "blocxx/Bool.hpp"
 #include "PyOW_Array.hpp"
 
 namespace OW_NAMESPACE

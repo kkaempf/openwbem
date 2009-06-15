@@ -41,7 +41,7 @@
 #define OW_IOException_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include <blocxx/IOException.hpp>
+#include "blocxx/IOException.hpp"
 #include "OW_Exception.hpp"
 
 namespace OW_NAMESPACE

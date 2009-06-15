@@ -33,12 +33,12 @@
  */
 
 #include "OW_config.h"
-#include "OW_SharedLibraryException.hpp"
+#include "blocxx/SharedLibraryException.hpp"
 #include "OW_ProviderIFCLoader.hpp"
-#include "OW_Format.hpp"
-#include "OW_SignalScope.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/SignalScope.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_FileSystem.hpp"
+#include "blocxx/FileSystem.hpp"
 #include "OW_SafeLibCreate.hpp"
 #include "OW_Exception.hpp"
 

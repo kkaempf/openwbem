@@ -40,7 +40,7 @@
 #include "OW_CIMUrlTestCases.hpp"
 AUTO_UNIT_TEST_SUITE_NAMED(OW_CIMUrlTestCases,"OW_CIMUrl");
 #include "OW_CIMUrl.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_URL.hpp"
 
 using namespace OpenWBEM;

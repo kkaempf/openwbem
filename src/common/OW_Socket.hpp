@@ -41,7 +41,7 @@
 #define OW_Socket_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include <blocxx/Socket.hpp>
+#include "blocxx/Socket.hpp"
 
 // TODO: This is duplicated in OW_ConfigOpts.hpp.  Figure out a way to merge the 2 without drastically increasing header dependencies.
 #ifdef OW_DEFAULT_HTTP_SERVER_UDS_FILENAME

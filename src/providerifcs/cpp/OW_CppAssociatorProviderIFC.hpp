@@ -39,7 +39,7 @@
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_CppInstanceProviderIFC.hpp"
-#include "OW_SharedLibraryReference.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
 #include "OW_AssociatorProviderInfo.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 

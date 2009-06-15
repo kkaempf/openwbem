@@ -34,11 +34,11 @@
  */
 
 #include "OW_config.h"
-#include "OW_MD5.hpp"
-#include "OW_String.hpp"
-#include "OW_GetPass.hpp"
-#include "OW_SocketAddress.hpp"
-#include "OW_CmdLineParser.hpp"
+#include "blocxx/MD5.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/GetPass.hpp"
+#include "blocxx/SocketAddress.hpp"
+#include "blocxx/CmdLineParser.hpp"
 #include "OW_ToolsCommon.hpp"
 
 #include <iostream>

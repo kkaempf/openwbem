@@ -40,8 +40,8 @@
  *-------------------------------------------------------------------------
  */
 #include "OW_WQLScanUtils.hpp"
-#include "OW_String.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/StringBuffer.hpp"
 
 namespace OW_NAMESPACE
 {

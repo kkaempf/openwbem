@@ -37,10 +37,10 @@
 #define OW_HTTPDEFLATEISTREAM_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #ifdef OW_HAVE_ZLIB_H
-#include "OW_BaseStreamBuffer.hpp"
-#include "OW_AutoPtr.hpp"
+#include "blocxx/BaseStreamBuffer.hpp"
+#include "blocxx/AutoPtr.hpp"
 #include "OW_IfcsFwd.hpp"
-#include "OW_Reference.hpp"
+#include "blocxx/Reference.hpp"
 #include <istream>
 #include <zlib.h>
 

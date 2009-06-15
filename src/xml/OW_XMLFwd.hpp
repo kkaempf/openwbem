@@ -35,7 +35,7 @@
 #ifndef OW_XML_FWD_HPP_INCLUDE_GUARD_
 #define OW_XML_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_ArrayFwd.hpp"
+#include "blocxx/ArrayFwd.hpp"
 
 namespace OW_NAMESPACE
 {

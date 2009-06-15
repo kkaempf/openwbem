@@ -36,7 +36,7 @@
 #ifndef OW_HTTPCHUNKEXCEPTION_H_INCLUDE_GUARD_
 #define OW_HTTPCHUNKEXCEPTION_H_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_SocketException.hpp"
+#include "blocxx/SocketException.hpp"
 
 namespace OW_NAMESPACE
 {

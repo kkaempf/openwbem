@@ -44,7 +44,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_CIMClassTestCases,"OW_CIMClass");
 #include "OW_CIMValue.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 
 using namespace OpenWBEM;
 

@@ -34,8 +34,8 @@
 
 #ifndef PYOW_ARRAY_HPP_
 #define PYOW_ARRAY_HPP_
-#include <OW_String.hpp>
-#include <OW_Array.hpp>
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
 // note this comes *after* the OpenWBEM headers, because it has a
 // #define ANY void
 // which really screws up OpenWBEM

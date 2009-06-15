@@ -48,7 +48,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_ProviderManagerTestCases,"OW_ProviderManager");
 #include "OW_CIMProperty.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_LocalOperationContext.hpp"
-#include "OW_CerrLogger.hpp"
+#include "blocxx/CerrLogger.hpp"
 
 using namespace OpenWBEM;
 

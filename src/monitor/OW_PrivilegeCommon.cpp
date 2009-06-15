@@ -29,13 +29,13 @@
 
 #include "OW_config.h"
 #include "OW_Assertion.hpp"
-#include "OW_AutoDescriptor.hpp"
+#include "blocxx/AutoDescriptor.hpp"
 #include "OW_IPCIO.hpp"
 #include "OW_PrivilegeCommon.hpp"
-#include "OW_Secure.hpp"
-#include "OW_String.hpp"
-#include "OW_Timeout.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Secure.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Timeout.hpp"
+#include "blocxx/Format.hpp"
 #include <cstdlib>
 #include <cstring>
 #include <cerrno>

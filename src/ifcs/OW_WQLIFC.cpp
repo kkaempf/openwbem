@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_WQLIFC.hpp"
 // dumb aCC requires these to build
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 
 namespace OW_NAMESPACE
 {

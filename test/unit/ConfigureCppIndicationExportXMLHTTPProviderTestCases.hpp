@@ -34,7 +34,6 @@
 #include "OW_config.h"
 #include "TestCase.hpp"
 #include "OW_CppIndicationExportXMLHTTPProvider.hpp"
-//#include <blocxx/CommonFwd.hpp>
 
 class ConfigureCppIndicationExportXMLHTTPProviderTestCases : public TestCase
 {

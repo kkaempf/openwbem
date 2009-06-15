@@ -39,10 +39,10 @@
 *******************************************************************************/
 
 #include "OW_CppProviderIncludes.hpp"
-#include "OW_SocketAddress.hpp"
+#include "blocxx/SocketAddress.hpp"
 // we're going to need these
-#include "OW_Exec.hpp"
-#include "OW_UnnamedPipe.hpp"
+#include "blocxx/Exec.hpp"
+#include "blocxx/UnnamedPipe.hpp"
 
 // we use these internally
 #include <sys/types.h>

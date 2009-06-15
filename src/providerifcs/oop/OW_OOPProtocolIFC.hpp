@@ -36,13 +36,13 @@
 #ifndef OW_OOP_PROTOCOL_IFC_HPP_INCLUDE_GUARD_
 #define OW_OOP_PROTOCOL_IFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_ProviderFwd.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_IfcsFwd.hpp"
 #include "OW_WBEMFlags.hpp"
-#include "OW_LogLevel.hpp"
+#include "blocxx/LogLevel.hpp"
 
 #include <iosfwd>
 

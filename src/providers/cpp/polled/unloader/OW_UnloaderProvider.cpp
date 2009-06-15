@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_UnloaderProvider.hpp"
 #include "OW_CIMOMEnvironment.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_Logger.hpp"
 
 #define OW_POLLING_INTERVAL 60 // 1 min is the smallest interval for unloading

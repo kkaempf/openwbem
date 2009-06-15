@@ -36,7 +36,7 @@
 #define OW_CPP_SECONDARY_INSTANCEPROVIDERIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_SharedLibraryReference.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
 #include "OW_SecondaryInstanceProviderInfo.hpp"
 #include "OW_WBEMFlags.hpp"
 

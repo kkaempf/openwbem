@@ -36,7 +36,7 @@
 #define OW_CPPINDICATIONEXPORTPROVIDERIFC_HPP_
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_SharedLibraryReference.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
 
 namespace OW_NAMESPACE
 {

@@ -37,8 +37,8 @@
 #include "OW_config.h"
 #include "OW_MOFLineInfo.hpp"
 #include "OW_Exception.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveReference.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 
 namespace OW_NAMESPACE
 {

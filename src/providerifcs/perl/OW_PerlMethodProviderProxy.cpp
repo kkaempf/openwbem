@@ -33,7 +33,7 @@
 #include "NPIExternal.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_NPIProviderIFCUtils.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"

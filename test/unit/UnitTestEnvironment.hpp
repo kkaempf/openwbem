@@ -39,10 +39,10 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Logger.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/Map.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_CerrLogger.hpp"
+#include "blocxx/CerrLogger.hpp"
 #include "OW_ConfigFile.hpp"
 #include <iostream>
 

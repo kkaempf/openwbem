@@ -35,10 +35,10 @@
 #ifndef OW_CACHE_INCLUDE_GUARD_HPP_
 #define OW_CACHE_INCLUDE_GUARD_HPP_
 #include "OW_config.h"
-#include "OW_HashMap.hpp"
-#include "OW_String.hpp"
-#include "OW_Mutex.hpp"
-#include "OW_MutexLock.hpp"
+#include "blocxx/HashMap.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Mutex.hpp"
+#include "blocxx/MutexLock.hpp"
 #include "OW_CIMNULL.hpp"
 #include <list>
 

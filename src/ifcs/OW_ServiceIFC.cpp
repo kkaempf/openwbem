@@ -34,8 +34,8 @@
 
 #include "OW_config.h"
 #include "OW_ServiceIFC.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
 
 namespace OW_NAMESPACE
 {

@@ -1,5 +1,6 @@
-#include "OW_Array.hpp"
-#include "OW_String.hpp"
+#include "OW_config.h"
+#include "blocxx/Array.hpp"
+#include "blocxx/String.hpp"
 #include <iostream>
 #include <cstdlib>
 #include <stdexcept>

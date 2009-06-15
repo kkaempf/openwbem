@@ -48,8 +48,8 @@
 
 #include "OW_WQLAst.hpp"
 #include "OW_WQLImpl.hpp"
-#include "OW_StringBuffer.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/StringBuffer.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_WQLParseError.hpp"
 

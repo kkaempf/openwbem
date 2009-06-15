@@ -35,9 +35,9 @@
 
 #include "OW_config.h"
 #include "OW_HTTPXMLCIMListener.hpp"
-#include "OW_Semaphore.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Semaphore.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMQualifier.hpp"
@@ -47,10 +47,10 @@
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_MutexLock.hpp"
-#include "OW_Bool.hpp"
-#include "OW_SocketBaseImpl.hpp"
-#include "OW_CerrAppender.hpp"
+#include "blocxx/MutexLock.hpp"
+#include "blocxx/Bool.hpp"
+#include "blocxx/SocketBaseImpl.hpp"
+#include "blocxx/CerrAppender.hpp"
 
 #include <iostream> // for cout and cerr
 

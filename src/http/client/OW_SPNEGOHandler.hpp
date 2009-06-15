@@ -36,7 +36,7 @@
 #define OW_SPNEGOHANDLER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CommonFwd.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 
 namespace OW_NAMESPACE
 {

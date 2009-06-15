@@ -38,10 +38,10 @@
 #include "OW_Exception.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_Types.hpp"
-#include "OW_UnnamedPipe.hpp"
-#include "OW_IOIFCStreamBuffer.hpp"
-#include "OW_AutoDescriptor.hpp"
-#include "OW_Reference.hpp"
+#include "blocxx/UnnamedPipe.hpp"
+#include "blocxx/IOIFCStreamBuffer.hpp"
+#include "blocxx/AutoDescriptor.hpp"
+#include "blocxx/Reference.hpp"
 
 namespace OW_NAMESPACE
 {

@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_NameSpaceProvider.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMProperty.hpp"

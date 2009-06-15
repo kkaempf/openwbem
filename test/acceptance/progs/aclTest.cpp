@@ -37,7 +37,7 @@
 
 #include "OW_config.h"
 #include "OW_ClientCIMOMHandle.hpp"
-#include "OW_SocketBaseImpl.hpp"
+#include "blocxx/SocketBaseImpl.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
@@ -54,7 +54,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMParamValue.hpp"
-#include "OW_Bool.hpp"
+#include "blocxx/Bool.hpp"
 
 #include <iostream>
 

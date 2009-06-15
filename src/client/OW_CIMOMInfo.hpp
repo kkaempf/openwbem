@@ -36,8 +36,8 @@
 #ifndef OW_CIMOMINFO_HPP_INCLUDE_GUARD_
 #define OW_CIMOMINFO_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Map.hpp"
 
 namespace OW_NAMESPACE
 {

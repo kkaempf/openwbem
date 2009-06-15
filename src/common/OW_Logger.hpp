@@ -41,7 +41,7 @@
 #define OW_Logger_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include <blocxx/Logger.hpp>
+#include "blocxx/Logger.hpp"
 
 #define OW_LOGGER_PRETTY_FUNCTION BLOCXX_LOGGER_PRETTY_FUNCTION 
 

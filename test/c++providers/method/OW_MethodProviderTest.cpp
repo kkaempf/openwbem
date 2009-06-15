@@ -37,13 +37,13 @@
 #include "OW_config.h"
 #include "OW_CppMethodProviderIFC.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_Logger.hpp"
-#include "OW_Thread.hpp"
+#include "blocxx/Thread.hpp"
 
 #include <fstream>
 

@@ -30,7 +30,7 @@
 #define OW_WQL_OPERAND_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_Exception.hpp"
 #include "OW_SerializableIFC.hpp"
 

@@ -34,8 +34,8 @@
  */
 
 #include "OW_config.h"
-#include "OW_UnnamedPipe.hpp"
-#include "OW_String.hpp"
+#include "blocxx/UnnamedPipe.hpp"
+#include "blocxx/String.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_CIMXMLParser.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_XMLUnescape.hpp"
 #include <algorithm> // for std::lower_bound

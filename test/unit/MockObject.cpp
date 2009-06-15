@@ -1,6 +1,6 @@
 #include "MockObject.hpp"
 #include "OW_Exception.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include <exception>
 
 using namespace OpenWBEM;

@@ -65,9 +65,9 @@
 AUTO_UNIT_TEST_SUITE_NAMED(PrivilegeMonitorParserTestCases,"PrivilegeMonitorParser");
 
 #include "OW_PrivilegeConfig.hpp"
-#include "OW_StringStream.hpp"
-#include "OW_Format.hpp"
-#include "OW_Reference.hpp"
+#include "blocxx/StringStream.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/Reference.hpp"
 #include <cassert>
 
 using namespace OpenWBEM;

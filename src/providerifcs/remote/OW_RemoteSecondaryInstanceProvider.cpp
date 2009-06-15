@@ -41,7 +41,7 @@
 #include "OW_RemoteSecondaryInstanceProvider.hpp"
 #include "OW_RemoteProviderUtils.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMClass.hpp"

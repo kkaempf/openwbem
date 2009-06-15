@@ -48,7 +48,6 @@ OW_RepositoryCIMOMHandle.cpp \
 OW_ResultHandlers.cpp \
 OW_SafeLibCreate.cpp \
 OW_SessionLanguage.cpp \
-OW_ThreadSafeProcess.cpp \
 OW_URL.cpp \
 OW_UserInfo.cpp \
 OW_WQLSelectStatement.cpp \

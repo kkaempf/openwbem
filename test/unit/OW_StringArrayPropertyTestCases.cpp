@@ -40,7 +40,7 @@
 #include "TestCaller.hpp"
 #include "OW_StringArrayPropertyTestCases.hpp"
 AUTO_UNIT_TEST_SUITE_NAMED(OW_StringArrayPropertyTestCases,"OW_StringArrayProperty");
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"

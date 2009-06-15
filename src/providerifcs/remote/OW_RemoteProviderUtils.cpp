@@ -38,7 +38,7 @@
 #include "OW_OperationContext.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ClientCIMOMHandleConnectionPool.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_HTTPClient.hpp"
 #include "OW_Assertion.hpp"

@@ -35,10 +35,10 @@
 
 #include "OW_config.h"
 #include "OW_XMLCIMFactory.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_XMLClass.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMValue.hpp"
@@ -51,9 +51,9 @@
 #include "OW_CIMFlavor.hpp"
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMValueCast.hpp"
-#include "OW_TempFileStream.hpp"
+#include "blocxx/TempFileStream.hpp"
 #include "OW_CIMXMLParser.hpp"
-#include "OW_Bool.hpp"
+#include "blocxx/Bool.hpp"
 #include "OW_XMLParseException.hpp"
 #include <algorithm> // for find_if
 

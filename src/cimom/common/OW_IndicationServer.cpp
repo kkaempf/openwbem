@@ -33,7 +33,7 @@
  */
 
 #include "OW_IndicationServer.hpp"
-#include "OW_Array.hpp" // dumb aCC.
+#include "blocxx/Array.hpp" // dumb aCC.
 
 namespace OW_NAMESPACE
 {

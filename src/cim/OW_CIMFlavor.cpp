@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_CIMFlavor.hpp"
 #include "OW_BinarySerialization.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 
 namespace OW_NAMESPACE
 {

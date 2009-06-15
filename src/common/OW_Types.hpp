@@ -36,7 +36,7 @@
 #ifndef OW_TYPES_HPP_INCLUDE_GUARD_
 #define OW_TYPES_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include <blocxx/Types.hpp>
+#include "blocxx/Types.hpp"
 
 #ifndef __cplusplus
 #error "OW_Types.hpp can only be included by c++ files"

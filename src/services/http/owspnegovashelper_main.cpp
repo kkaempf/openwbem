@@ -38,9 +38,9 @@
 #include "vas.h"
 #include "vas_gss.h"
 
-#include "OW_Format.hpp"
-#include "OW_String.hpp"
-#include "OW_DateTime.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/DateTime.hpp"
 #include "OW_HTTPUtils.hpp"
 
 #include <iostream>

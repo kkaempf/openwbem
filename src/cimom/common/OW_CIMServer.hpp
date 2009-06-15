@@ -43,7 +43,7 @@
 #include "OW_ProviderFwd.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_Mutex.hpp"
+#include "blocxx/Mutex.hpp"
 #include "OW_Logger.hpp"
 
 namespace OW_NAMESPACE

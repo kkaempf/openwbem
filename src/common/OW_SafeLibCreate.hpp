@@ -41,14 +41,14 @@
 
 
 #include "OW_config.h"
-#include "OW_SharedLibraryReference.hpp"
-#include "OW_SharedLibrary.hpp"
-#include "OW_SharedLibraryLoader.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
+#include "blocxx/SharedLibrary.hpp"
+#include "blocxx/SharedLibraryLoader.hpp"
 #include "OW_Logger.hpp"
-#include "OW_Format.hpp"
-#include "OW_SignalScope.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/SignalScope.hpp"
 #include "OW_Exception.hpp"
-#include "OW_IntrusiveReference.hpp"
+#include "blocxx/IntrusiveReference.hpp"
 #include "OW_Assertion.hpp"
 
 #include <utility> // for std::pair
@@ -120,12 +120,12 @@ public:
 		try
 		{
 			int sigtype;
-			SignalScope r1( OW_SIGFPE,  theSignalHandler );
-			SignalScope r3( OW_SIGSEGV, theSignalHandler );
+			SignalScope r1( BLOCXX_SIGFPE,  theSignalHandler );
+			SignalScope r3( BLOCXX_SIGSEGV, theSignalHandler );
 #ifdef SIGBUS // NetWare doesn't have this signal
-			SignalScope r4( OW_SIGBUS,  theSignalHandler );
+			SignalScope r4( BLOCXX_SIGBUS,  theSignalHandler );
 #endif
-			SignalScope r5( OW_SIGABRT, theSignalHandler );
+			SignalScope r5( BLOCXX_SIGABRT, theSignalHandler );
 #ifdef WIN32
 			sigtype = setjmp(theLoaderBuf);
 #else

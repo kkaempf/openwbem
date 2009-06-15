@@ -37,9 +37,9 @@
 #define OW_HDBNODE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_HDBCommon.hpp"
-#include "OW_String.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/IntrusiveReference.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_SafeBool.hpp"
 
 namespace OW_NAMESPACE

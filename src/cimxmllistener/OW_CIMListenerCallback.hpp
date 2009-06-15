@@ -35,8 +35,8 @@
 #ifndef OW_CIM_LISTENER_CALLBACK_HPP_
 #define OW_CIM_LISTENER_CALLBACK_HPP_
 #include "OW_config.h"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveReference.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMXMLListenerFwd.hpp"
 

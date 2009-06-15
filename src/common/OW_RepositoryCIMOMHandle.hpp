@@ -38,8 +38,8 @@
 #include "OW_Types.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
-#include "OW_RWLocker.hpp"
-#include "OW_IntrusiveReference.hpp"
+#include "blocxx/RWLocker.hpp"
+#include "blocxx/IntrusiveReference.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_SafeBool.hpp"
 

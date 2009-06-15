@@ -36,7 +36,7 @@
 #ifndef OW_CIM_FWD_HPP_INCLUDE_GUARD
 #define OW_CIM_FWD_HPP_INCLUDE_GUARD
 #include "OW_config.h"
-#include "OW_ArrayFwd.hpp"
+#include "blocxx/ArrayFwd.hpp"
 #include "OW_CommonFwd.hpp"	// for Enumeration<> and because this file used to contain forward declarations for some stuff in common.
 
 namespace OW_NAMESPACE

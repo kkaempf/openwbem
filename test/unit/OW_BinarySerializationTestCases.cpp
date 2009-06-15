@@ -41,14 +41,14 @@
 #include "OW_BinarySerializationTestCases.hpp"
 AUTO_UNIT_TEST_SUITE_NAMED(OW_BinarySerializationTestCases,"OW_BinarySerialization");
 #include "OW_BinarySerialization.hpp"
-#include "OW_IOIFCStreamBuffer.hpp"
-#include "OW_UnnamedPipe.hpp"
-#include "OW_Exec.hpp"
+#include "blocxx/IOIFCStreamBuffer.hpp"
+#include "blocxx/UnnamedPipe.hpp"
+#include "blocxx/Exec.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_String.hpp"
-#include "OW_DataStreams.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/DataStreams.hpp"
 #include "OW_CIMValue.hpp"
-#include "OW_Char16.hpp"
+#include "blocxx/Char16.hpp"
 #include "OW_CIMDateTime.hpp"
 
 #include <iostream>

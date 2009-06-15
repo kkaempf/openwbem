@@ -35,7 +35,7 @@
 #ifndef OW_CIMPARAMVALUE_HPP_INCLUDE_GUARD_
 #define OW_CIMPARAMVALUE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_COWIntrusiveReference.hpp"
+#include "blocxx/COWIntrusiveReference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"

@@ -38,10 +38,10 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_ConfigFile.hpp"
 #include "OW_ConfigException.hpp"
-#include "OW_Format.hpp"
-#include "OW_FileSystem.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/FileSystem.hpp"
 #include "OW_SafeLibCreate.hpp"
-#include "OW_SelectEngine.hpp"
+#include "blocxx/SelectEngine.hpp"
 #include "OW_CIMServer.hpp"
 #include "OW_CIMRepository.hpp"
 #include "OW_CIMInstance.hpp"
@@ -66,13 +66,13 @@
 #include "OW_AuthorizerManager.hpp"
 #include "OW_AuthorizerIFC.hpp"
 #include "OW_Socket.hpp"
-#include "OW_LogAppender.hpp"
-#include "OW_MultiAppender.hpp"
-#include "OW_CerrAppender.hpp"
+#include "blocxx/LogAppender.hpp"
+#include "blocxx/MultiAppender.hpp"
+#include "blocxx/CerrAppender.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ProviderManager.hpp"
 #include "OW_ProviderEnvironmentException.hpp"
-#include "OW_GlobalPtr.hpp"
+#include "blocxx/GlobalPtr.hpp"
 
 #include <iostream>
 #include <map>
@@ -97,7 +97,7 @@ struct CimomEnvironmentFactory
 	}
 };
 // the one and only
-GlobalPtr<CIMOMEnvironmentRef, CimomEnvironmentFactory> theCimomEnvironment = OW_GLOBAL_PTR_INIT;
+GlobalPtr<CIMOMEnvironmentRef, CimomEnvironmentFactory> theCimomEnvironment = BLOCXX_GLOBAL_PTR_INIT;
 }
 
 CIMOMEnvironmentRef&

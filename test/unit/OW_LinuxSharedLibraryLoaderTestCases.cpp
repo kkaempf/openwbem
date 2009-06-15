@@ -39,7 +39,7 @@
 #include "TestCaller.hpp"
 #include "OW_LinuxSharedLibraryLoaderTestCases.hpp"
 AUTO_UNIT_TEST_SUITE_NAMED(OW_LinuxSharedLibraryLoaderTestCases,"OW_LinuxSharedLibraryLoader");
-#include "OW_SharedLibraryLoader.hpp"
+#include "blocxx/SharedLibraryLoader.hpp"
 #include "UnitTestEnvironment.hpp"
 
 using namespace OpenWBEM;

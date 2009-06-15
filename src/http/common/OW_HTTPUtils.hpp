@@ -36,9 +36,9 @@
 #ifndef OW_HTTPUTILS_HPP_
 #define OW_HTTPUTILS_HPP_
 #include "OW_config.h"
-#include "OW_Array.hpp"
-#include "OW_Map.hpp"
-#include "OW_String.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/Map.hpp"
+#include "blocxx/String.hpp"
 #include "OW_Base64FormatException.hpp"
 #include <iosfwd>
 

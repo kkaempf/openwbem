@@ -37,14 +37,14 @@
 #include "OW_config.h"
 #include "OW_WQLVisitor.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveReference.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_Array.hpp"
-#include "OW_Bool.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/Bool.hpp"
 #include "OW_RepositoryIFC.hpp"
 
 // The classes and functions defined in this file are not meant for general

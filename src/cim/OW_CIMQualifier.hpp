@@ -37,7 +37,7 @@
 #define OW_CIMQUALIFIER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMElement.hpp"
-#include "OW_COWIntrusiveReference.hpp"
+#include "blocxx/COWIntrusiveReference.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work

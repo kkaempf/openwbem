@@ -35,9 +35,9 @@
 #ifndef OW_INDICATION_REP_LAYER_MEDIATOR_HPP_
 #define OW_INDICATION_REP_LAYER_MEDIATOR_HPP_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_AtomicOps.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/AtomicOps.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 
 namespace OW_NAMESPACE
 {

@@ -36,9 +36,9 @@
 #ifndef OW_CONFIG_FILE_HPP_INCLUDE_GUARD_
 #define OW_CONFIG_FILE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
-#include "OW_SortedVectorMap.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/SortedVectorMap.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.

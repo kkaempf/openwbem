@@ -33,7 +33,7 @@
 // @author Kevin S. Van Horn
 
 #include "OW_config.h"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include <exception>
 
 struct MockObject

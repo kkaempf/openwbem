@@ -40,10 +40,10 @@
 #include "OW_Platform.hpp"
 #include "OW_PlatformSignal.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_Logger.hpp"
-#include "OW_CerrAppender.hpp"
-#include "OW_CmdLineParser.hpp"
+#include "blocxx/CerrAppender.hpp"
+#include "blocxx/CmdLineParser.hpp"
 #include "OW_PrivilegeManager.hpp"
 
 #include <exception>
@@ -51,7 +51,7 @@
 #include <new> // for new handler stuff
 
 #ifdef OW_USE_DL
-#include "OW_dlSharedLibrary.hpp"
+#include "blocxx/dlSharedLibrary.hpp"
 #endif
 
 using namespace OpenWBEM;

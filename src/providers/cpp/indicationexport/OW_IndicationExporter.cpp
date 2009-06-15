@@ -38,15 +38,15 @@
 #include "OW_IndicationExporter.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_TempFileStream.hpp"
+#include "blocxx/TempFileStream.hpp"
 #include "OW_CIMtoXML.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMXMLParser.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_HTTPClient.hpp"
-#include "OW_Thread.hpp"
+#include "blocxx/Thread.hpp"
 
 namespace OW_NAMESPACE
 {

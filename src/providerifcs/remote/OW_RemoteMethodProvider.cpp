@@ -36,7 +36,7 @@
 #include "OW_RemoteMethodProvider.hpp"
 #include "OW_RemoteProviderUtils.hpp"
 #include "OW_CIMValue.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Logger.hpp"

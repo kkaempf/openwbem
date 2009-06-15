@@ -34,12 +34,12 @@
 #include "OW_config.h"
 #include "OW_IPCIO.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_Format.hpp"
-#include "OW_String.hpp"
-#include "OW_DescriptorUtils.hpp"
-#include "OW_Timeout.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/DescriptorUtils.hpp"
+#include "blocxx/Timeout.hpp"
 #include "OW_IOException.hpp"
-#include "OW_Process.hpp"
+#include "blocxx/Process.hpp"
 
 #include <unistd.h>
 

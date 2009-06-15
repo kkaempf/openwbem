@@ -38,9 +38,9 @@
 #include "OW_config.h"
 #include "OW_CommonFwd.hpp"
 #include "OW_ClientFwd.hpp"
-#include "OW_Mutex.hpp"
-#include "OW_String.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/Mutex.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 
 #include <map>
 

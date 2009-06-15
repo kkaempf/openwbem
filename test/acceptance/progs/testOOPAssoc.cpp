@@ -36,7 +36,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_SocketBaseImpl.hpp"
+#include "blocxx/SocketBaseImpl.hpp"
 
 #include <iostream>
 #include <algorithm>
@@ -60,7 +60,7 @@ usage(const char* name)
 {
 	cerr << "Usage: " << name << " <url> [dump file extension]" << endl;
 }
-		
+
 const char* const testNS = "root/ooptest";
 
 //////////////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ main(int argc, char* argv[])
 		}
 
 		String url(argv[1]);
-		
+
 		CIMOMHandleIFCRef chRef = ClientCIMOMHandle::createFromURL(url);
 		CIMInstanceArray insts = chRef->enumInstancesA(testNS, "ooptestInst1");
 
@@ -112,7 +112,7 @@ main(int argc, char* argv[])
 			v2.get(iv2);
 			TEST_ASSERT(iv2 == (iv1*100));
 		}
-			
+
 		return 0;
 
 	}

@@ -35,12 +35,12 @@
 #ifndef OW_OOP_CIMOM_HANDLE_CONNECTION_RUNNER_HPP_INCLUDE_GUARD_
 #define OW_OOP_CIMOM_HANDLE_CONNECTION_RUNNER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Runnable.hpp"
+#include "blocxx/Runnable.hpp"
 #include "OW_ProviderFwd.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_BinaryRequestHandler.hpp"
-#include "OW_IOIFCStreamBuffer.hpp"
-#include "OW_NonRecursiveMutex.hpp"
+#include "blocxx/IOIFCStreamBuffer.hpp"
+#include "blocxx/NonRecursiveMutex.hpp"
 #include <istream>
 #include <ostream>
 

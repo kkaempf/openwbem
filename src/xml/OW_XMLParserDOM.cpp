@@ -39,7 +39,7 @@
 #include "OW_XMLNode.hpp"
 #include "OW_XMLParserCore.hpp" // for XMLToken
 #include "OW_XMLParseException.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_ExceptionIds.hpp"
 
 namespace OW_NAMESPACE

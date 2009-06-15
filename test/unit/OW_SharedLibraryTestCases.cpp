@@ -39,7 +39,7 @@
 #include "TestCaller.hpp"
 #include "OW_SharedLibraryTestCases.hpp"
 AUTO_UNIT_TEST_SUITE_NAMED(OW_SharedLibraryTestCases,"OW_SharedLibrary");
-#include "OW_SharedLibrary.hpp"
+#include "blocxx/SharedLibrary.hpp"
 #include "testSharedLibraryLoader.hpp"
 
 

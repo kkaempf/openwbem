@@ -30,7 +30,7 @@
 #ifndef OW_WQL_PROPERTY_SOURCE_HPP_INCLUDE_GUARD_
 #define OW_WQL_PROPERTY_SOURCE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_WQLOperand.hpp"
 
 namespace OW_NAMESPACE

@@ -35,8 +35,8 @@
 
 #include "OW_config.h"
 #include "OW_InstanceRepository.hpp"
-#include "OW_DataStreams.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/DataStreams.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMInstance.hpp"
@@ -45,7 +45,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMFlavor.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_IOException.hpp"
 

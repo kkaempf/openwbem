@@ -35,22 +35,22 @@
 
 #include "OW_config.h"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/AutoPtr.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMUrl.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_NoSuchPropertyException.hpp"
-#include "OW_StrictWeakOrdering.hpp"
+#include "blocxx/StrictWeakOrdering.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMValueCast.hpp"
-#include "OW_COWIntrusiveCountableBase.hpp"
+#include "blocxx/COWIntrusiveCountableBase.hpp"
 
 #include <cstring>
 #include <cctype>

@@ -37,12 +37,12 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 #include "OW_CommonFwd.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ProviderFwd.hpp"
 #include "OW_OOPFwd.hpp"
-#include "OW_SelectableCallbackIFC.hpp"
-#include "OW_UnnamedPipe.hpp"
+#include "blocxx/SelectableCallbackIFC.hpp"
+#include "blocxx/UnnamedPipe.hpp"
 #include <deque>
 
 // The classes and functions defined in this file are not meant for general

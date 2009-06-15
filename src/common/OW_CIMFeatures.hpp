@@ -41,9 +41,9 @@
 #ifndef OW_CIMFEATURES_HPP_INCLUDE_GUARD_
 #define OW_CIMFEATURES_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
-#include "OW_Bool.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/Bool.hpp"
 
 namespace OW_NAMESPACE
 {

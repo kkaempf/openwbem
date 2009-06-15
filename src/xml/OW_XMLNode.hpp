@@ -39,8 +39,8 @@
 #define OW_XMLNODE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveReference.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_XMLAttribute.hpp"
 #include "OW_XMLFwd.hpp"
 #include "OW_SafeBool.hpp"

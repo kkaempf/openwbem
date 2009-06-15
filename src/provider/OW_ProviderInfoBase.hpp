@@ -35,8 +35,8 @@
 #ifndef OW_PROVIDER_INFO_BASE_HPP_INCLUDE_GUARD_
 #define OW_PROVIDER_INFO_BASE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.

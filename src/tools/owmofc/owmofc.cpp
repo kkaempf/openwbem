@@ -39,7 +39,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_MOFParserErrorHandlerIFC.hpp"
 #include "OW_MOFCompiler.hpp"
-#include "OW_GetPass.hpp"
+#include "blocxx/GetPass.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_MOFCompCIMOMHandle.hpp"
 
@@ -53,9 +53,9 @@
 #include "OW_LocalOperationContext.hpp"
 #include "OW_URL.hpp"
 #include "OW_Logger.hpp"
-#include "OW_Reference.hpp"
-#include "OW_CmdLineParser.hpp"
-#include "OW_CerrLogger.hpp"
+#include "blocxx/Reference.hpp"
+#include "blocxx/CmdLineParser.hpp"
+#include "blocxx/CerrLogger.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_CIMProtocolIFC.hpp"
 

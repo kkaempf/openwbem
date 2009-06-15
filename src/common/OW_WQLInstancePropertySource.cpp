@@ -38,7 +38,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMValueCast.hpp"
-#include "OW_Bool.hpp"
+#include "blocxx/Bool.hpp"
 
 namespace OW_NAMESPACE
 {

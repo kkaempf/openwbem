@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "blocxx/Clock.hpp"
 #include "blocxx/DateTime.hpp"
-#include "OW_IntrusiveReference.hpp"
+#include "blocxx/IntrusiveReference.hpp"
 
 struct MockClock : public blocxx::Clock
 {

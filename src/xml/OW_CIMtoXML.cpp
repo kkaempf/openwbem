@@ -35,10 +35,10 @@
 
 #include "OW_config.h"
 #include "OW_CIMtoXML.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_XMLEscape.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_StringStream.hpp"
+#include "blocxx/StringStream.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMException.hpp"

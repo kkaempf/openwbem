@@ -31,17 +31,17 @@
 
 #include "OW_config.h"
 #include "OW_OOPCpp1PR.hpp"
-#include "OW_CmdLineParser.hpp"
+#include "blocxx/CmdLineParser.hpp"
 #include "OW_PrivilegeManager.hpp"
-#include "OW_String.hpp"
-#include "OW_Format.hpp"
-#include "OW_FileSystem.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/FileSystem.hpp"
 #include "OW_IOException.hpp"
-#include "OW_AutoDescriptor.hpp"
-#include "OW_UnnamedPipe.hpp"
+#include "blocxx/AutoDescriptor.hpp"
+#include "blocxx/UnnamedPipe.hpp"
 #include "OW_CMPIProviderIFC.hpp"
-#include "OW_SharedLibraryException.hpp"
-#include "OW_SharedLibraryLoader.hpp"
+#include "blocxx/SharedLibraryException.hpp"
+#include "blocxx/SharedLibraryLoader.hpp"
 #include "OW_CMPIInstanceProviderProxy.hpp"
 #include "OW_CMPIMethodProviderProxy.hpp"
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -60,7 +60,7 @@ using std::endl;
 
 #ifdef OW_HAVE_SYS_APPARMOR_H
 #include <sys/apparmor.h>
-#include "OW_SecureRand.hpp"
+#include "blocxx/SecureRand.hpp"
 #endif
 
 

@@ -39,12 +39,12 @@
 #include "OW_HTTPServer.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_SelectEngine.hpp"
+#include "blocxx/SelectEngine.hpp"
 #include "OW_IOException.hpp"
-#include "OW_Thread.hpp"
+#include "blocxx/Thread.hpp"
 #include "OW_ProviderAgentEnvironment.hpp"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 
 #include <cerrno>
 

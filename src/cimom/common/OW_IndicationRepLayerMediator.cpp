@@ -34,7 +34,7 @@
 
 #include "OW_config.h"
 #include "OW_IndicationRepLayerMediator.hpp"
-#include "OW_MutexLock.hpp"
+#include "blocxx/MutexLock.hpp"
 
 namespace OW_NAMESPACE
 {

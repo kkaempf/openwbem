@@ -34,11 +34,11 @@
 
 #include "OW_config.h"
 #include "OW_LocalAuthenticationCommon.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
-#include "OW_FileSystem.hpp"
-#include "OW_File.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/FileSystem.hpp"
+#include "blocxx/File.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_Logger.hpp"
 #include "OW_Types.hpp"
 

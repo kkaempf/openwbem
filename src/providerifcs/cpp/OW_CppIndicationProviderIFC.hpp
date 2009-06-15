@@ -37,7 +37,7 @@
 #define OW_CPP_INDICATIONPROVIDERIFC_HPP_
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_SharedLibraryReference.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
 #include "OW_IndicationProviderInfo.hpp"
 
 namespace OW_NAMESPACE

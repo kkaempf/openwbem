@@ -28,9 +28,9 @@
 //
 //%/////////////////////////////////////////////////////////////////////////////
 #include "OW_config.h"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/StringBuffer.hpp"
 #include "OW_WQLSelectStatement.hpp"
-#include "OW_Stack.hpp"
+#include "blocxx/Stack.hpp"
 #include "OW_WQLCompile.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_BinarySerialization.hpp"

@@ -37,7 +37,7 @@
 
 #include "OW_config.h"
 #include "OW_OperationRWLock.hpp"
-#include "OW_ThreadImpl.hpp"
+#include "blocxx/ThreadImpl.hpp"
 #include "OW_ExceptionIds.hpp"
 
 namespace OW_NAMESPACE

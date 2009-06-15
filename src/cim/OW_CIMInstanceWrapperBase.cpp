@@ -34,8 +34,8 @@
 
 #include "OW_config.h"
 #include "OW_CIMInstanceWrapperBase.hpp"
-#include "OW_Format.hpp"
-#include "OW_String.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/String.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 

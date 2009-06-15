@@ -35,8 +35,8 @@
 #ifndef OW_PROVIDERIFC_HPP_
 #define OW_PROVIDERIFC_HPP_
 #include "OW_config.h"
-#include "OW_SharedLibraryReference.hpp"
-#include "OW_String.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
+#include "blocxx/String.hpp"
 #include "OW_MethodProviderIFC.hpp"
 #include "OW_InstanceProviderIFC.hpp"
 #include "OW_SecondaryInstanceProviderIFC.hpp"
@@ -56,8 +56,8 @@
 #include "OW_MethodProviderInfo.hpp"
 #include "OW_IndicationProviderInfo.hpp"
 #include "OW_QueryProviderInfo.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveReference.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 
 namespace OW_NAMESPACE
 {

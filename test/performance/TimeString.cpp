@@ -34,7 +34,7 @@
 
 
 #include "OW_config.h"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "PerformanceCommon.hpp"
 
 #include <iostream>

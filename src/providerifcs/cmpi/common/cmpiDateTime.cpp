@@ -27,7 +27,7 @@
 #include <sys/time.h>
 #include <string.h>
 #include "OW_CIMDateTime.hpp"
-#include "OW_DateTime.hpp"
+#include "blocxx/DateTime.hpp"
 #include "OW_CIMFwd.hpp"
 
 static OpenWBEM::CIMDateTime * makeCIMDateTime(

@@ -35,7 +35,7 @@
 #ifndef OW_MOF_LINE_INFO_HPP_INCLUDE_GUARD_
 #define OW_MOF_LINE_INFO_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 
 namespace OW_NAMESPACE
 {

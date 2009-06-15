@@ -33,11 +33,11 @@
  * @author Dan Nuffer
  */
 
-#include "OW_config.h"										
+#include "OW_config.h"
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_HTTPChunkedOStream.hpp"
 #include "OW_CIMXMLParser.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_XMLEscape.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMNameSpace.hpp"

@@ -36,7 +36,7 @@
 #define OW_CIMINSTANCEENUMERATION_HPP_
 #include "OW_config.h"
 #include "OW_CIMInstance.hpp"
-#include "OW_Enumeration.hpp"
+#include "blocxx/Enumeration.hpp"
 
 namespace OW_NAMESPACE
 {

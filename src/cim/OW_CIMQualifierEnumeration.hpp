@@ -36,7 +36,7 @@
 #ifndef OW_CIMQUALIFIERENUMERATION_HPP_INCLUDE_GUARD_
 #define OW_CIMQUALIFIERENUMERATION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Enumeration.hpp"
+#include "blocxx/Enumeration.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CommonFwd.hpp"

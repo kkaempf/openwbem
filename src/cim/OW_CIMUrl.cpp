@@ -35,11 +35,11 @@
 
 #include "OW_config.h"
 #include "OW_CIMUrl.hpp"
-#include "OW_String.hpp"
-#include "OW_StrictWeakOrdering.hpp"
-#include "OW_Bool.hpp"
-#include "OW_COWIntrusiveCountableBase.hpp"
-#include "OW_StringBuffer.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/StrictWeakOrdering.hpp"
+#include "blocxx/Bool.hpp"
+#include "blocxx/COWIntrusiveCountableBase.hpp"
+#include "blocxx/StringBuffer.hpp"
 
 namespace OW_NAMESPACE
 {

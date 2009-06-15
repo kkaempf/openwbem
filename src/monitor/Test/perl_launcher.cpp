@@ -32,14 +32,14 @@
 #include "OW_Assertion.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Exception.hpp"
-#include "OW_FileSystem.hpp"
+#include "blocxx/FileSystem.hpp"
 #include "OW_MonitoredPerl.hpp"
 #include "OW_PrivilegeManager.hpp"
-#include "OW_Process.hpp"
-#include "OW_Secure.hpp"
-#include "OW_StringBuffer.hpp"
-#include "OW_Thread.hpp"
-#include "OW_UnnamedPipe.hpp"
+#include "blocxx/Process.hpp"
+#include "blocxx/Secure.hpp"
+#include "blocxx/StringBuffer.hpp"
+#include "blocxx/Thread.hpp"
+#include "blocxx/UnnamedPipe.hpp"
 
 #include <iostream>
 

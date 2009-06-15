@@ -35,8 +35,8 @@
 #ifndef OW_QUERY_PROVIDER_INFO_HPP_INCLUDE_GUARD_
 #define OW_QUERY_PROVIDER_INFO_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_ProviderInfoBase.hpp"
 
 namespace OW_NAMESPACE

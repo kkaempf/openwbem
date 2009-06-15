@@ -37,8 +37,8 @@
 AUTO_UNIT_TEST_SUITE_NAMED(XMLParserCoreTestCases,"XMLParserCore");
 #include "OW_XMLParserCore.hpp"
 #include "OW_XMLParseException.hpp"
-#include "OW_StringStream.hpp"
-#include <blocxx/String.hpp>
+#include "blocxx/StringStream.hpp"
+#include "blocxx/String.hpp"
 #include <cstring>
 
 #include <iostream> // DEBUG

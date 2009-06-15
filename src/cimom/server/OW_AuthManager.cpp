@@ -35,16 +35,16 @@
 
 #include "OW_config.h"
 #include "OW_AuthManager.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_Logger.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_SafeLibCreate.hpp"
-#include "OW_ThreadCancelledException.hpp"
+#include "blocxx/ThreadCancelledException.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_ServiceIFCNames.hpp"
 // dumb aCC requires these to build
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 
 namespace OW_NAMESPACE
 {

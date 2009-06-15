@@ -41,13 +41,13 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_ConfigFile.hpp"
 #include "OW_AuthenticatorIFC.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/Map.hpp"
 #include "OW_ClientCIMOMHandleConnectionPool.hpp"
 #include "OW_Cache.hpp"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "blocxx/Reference.hpp"
 #include "OW_ProviderAgentLockerIFC.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.

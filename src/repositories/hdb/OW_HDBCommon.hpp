@@ -39,7 +39,7 @@
 #include "OW_Types.hpp"
 #include "OW_Exception.hpp"
 #include "OW_CIMProperty.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 
 #include <cstring>
 

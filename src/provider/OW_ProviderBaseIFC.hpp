@@ -36,7 +36,7 @@
 #ifndef OW_PROVIDERBASEIFC_HPP_
 #define OW_PROVIDERBASEIFC_HPP_
 #include "OW_config.h"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_ProviderFwd.hpp"
 
 namespace OW_NAMESPACE

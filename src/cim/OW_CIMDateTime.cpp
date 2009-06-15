@@ -35,11 +35,11 @@
 
 #include "OW_config.h"
 #include "OW_CIMDateTime.hpp"
-#include "OW_DateTime.hpp"
-#include "OW_String.hpp"
+#include "blocxx/DateTime.hpp"
+#include "blocxx/String.hpp"
 #include "OW_BinarySerialization.hpp"
-#include "OW_StrictWeakOrdering.hpp"
-#include "OW_COWIntrusiveCountableBase.hpp"
+#include "blocxx/StrictWeakOrdering.hpp"
+#include "blocxx/COWIntrusiveCountableBase.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_Assertion.hpp"
 

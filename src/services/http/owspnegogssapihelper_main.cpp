@@ -35,13 +35,13 @@
 
 #include "OW_config.h"
 
-#include "OW_Format.hpp"
-#include "OW_String.hpp"
-#include "OW_DateTime.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/DateTime.hpp"
 #include "OW_HTTPUtils.hpp"
 // Logger part here must be removed when finished
 #include "OW_Logger.hpp"
-#include "OW_LogAppender.hpp"
+#include "blocxx/LogAppender.hpp"
 #include "OW_SyslogAppender.hpp"
 
 #include <iostream>

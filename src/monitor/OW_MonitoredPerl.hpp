@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_CommonFwd.hpp"
-#include "OW_Cstr.hpp"
+#include "blocxx/Cstr.hpp"
 
 namespace OW_NAMESPACE
 {

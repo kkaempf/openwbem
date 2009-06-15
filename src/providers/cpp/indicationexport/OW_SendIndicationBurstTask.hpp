@@ -35,7 +35,7 @@
  */
 
 #include "OW_config.h"
-#include "OW_Runnable.hpp"
+#include "blocxx/Runnable.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_IndicationExporter.hpp"
 

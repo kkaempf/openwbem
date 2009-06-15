@@ -36,7 +36,7 @@
 #define OW_NONAUTHENTICATINGAUTHENTICATOR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_AuthenticatorIFC.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/Map.hpp"
 
 namespace OW_NAMESPACE
 {

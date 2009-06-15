@@ -36,18 +36,18 @@
 #ifndef OW_HTTPSERVER_HPP_INCLUDE_GUARD_
 #define OW_HTTPSERVER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Mutex.hpp"
-#include "OW_SocketAddress.hpp"
+#include "blocxx/Mutex.hpp"
+#include "blocxx/SocketAddress.hpp"
 #include "OW_Socket.hpp"
 #include "OW_ServiceIFC.hpp"
 #include "OW_URL.hpp"
-#include "OW_ThreadPool.hpp"
+#include "blocxx/ThreadPool.hpp"
 #include "OW_Exception.hpp"
-#include "OW_SortedVectorSet.hpp"
-#include "OW_SSLCtxMgr.hpp"
+#include "blocxx/SortedVectorSet.hpp"
+#include "blocxx/SSLCtxMgr.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_ServicesHttpFwd.hpp"
-#include "OW_Timeout.hpp"
+#include "blocxx/Timeout.hpp"
 
 namespace OW_NAMESPACE
 {

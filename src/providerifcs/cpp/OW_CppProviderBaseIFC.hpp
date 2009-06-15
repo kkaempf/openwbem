@@ -38,10 +38,10 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ProviderRegistrationEnvironmentIFC.hpp"
-#include "OW_SharedLibraryReference.hpp"
-#include "OW_DateTime.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "blocxx/SharedLibraryReference.hpp"
+#include "blocxx/DateTime.hpp"
+#include "blocxx/IntrusiveReference.hpp"
+#include "blocxx/IntrusiveCountableBase.hpp"
 
 namespace OW_NAMESPACE
 {

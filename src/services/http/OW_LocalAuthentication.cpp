@@ -37,20 +37,20 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_LocalAuthentication.hpp"
 #include "OW_HTTPSvrConnection.hpp"
-#include "OW_SecureRand.hpp"
-#include "OW_UUID.hpp"
-#include "OW_FileSystem.hpp"
-#include "OW_Format.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_UserUtils.hpp"
+#include "blocxx/SecureRand.hpp"
+#include "blocxx/UUID.hpp"
+#include "blocxx/FileSystem.hpp"
+#include "blocxx/Format.hpp"
+#include "blocxx/AutoPtr.hpp"
+#include "blocxx/UserUtils.hpp"
 #include "OW_AuthenticationException.hpp"
-#include "OW_Process.hpp"
-#include "OW_Exec.hpp"
+#include "blocxx/Process.hpp"
+#include "blocxx/Exec.hpp"
 #include "OW_LocalAuthenticationCommon.hpp"
-#include "OW_ThreadOnce.hpp"
+#include "blocxx/ThreadOnce.hpp"
 #include "OW_PrivilegeManager.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_Secure.hpp"
+#include "blocxx/Secure.hpp"
 
 #include <cerrno>
 
@@ -66,7 +66,7 @@ namespace
 	String COMPONENT_NAME("ow.LocalAuthentication");
 
 	bool g_useHelper = false;
-	OnceFlag g_useHelperOnceFlag = OW_ONCE_INIT;
+	OnceFlag g_useHelperOnceFlag = BLOCXX_ONCE_INIT;
 	void initUseHelper()
 	{
 		// only root can change file ownership, so unless we can, we'll have to rely on the privilege manager/owlocalhelper to do it.

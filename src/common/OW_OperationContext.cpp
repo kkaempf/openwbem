@@ -34,9 +34,9 @@
 
 #include "OW_config.h"
 #include "OW_OperationContext.hpp"
-#include "OW_String.hpp"
+#include "blocxx/String.hpp"
 #include "OW_UserInfo.hpp"
-#include "OW_Array.hpp"
+#include "blocxx/Array.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "blocxx/GlobalString.hpp"

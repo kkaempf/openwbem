@@ -36,7 +36,7 @@
 #define OW_LISTENERAUTHENTICATOR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_AuthenticatorIFC.hpp"
-#include "OW_Map.hpp"
+#include "blocxx/Map.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.

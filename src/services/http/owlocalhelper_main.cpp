@@ -33,16 +33,16 @@
  */
 
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
-#include "OW_FileSystem.hpp"
-#include "OW_Format.hpp"
+#include "blocxx/String.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/FileSystem.hpp"
+#include "blocxx/Format.hpp"
 #include "OW_Types.hpp"
 #include "OW_LocalAuthenticationCommon.hpp"
 #include "OW_Exception.hpp"
 #include "blocxx/GlobalString.hpp"
 #include "OW_Logger.hpp"
-#include "OW_FileAppender.hpp"
+#include "blocxx/FileAppender.hpp"
 
 #include <unistd.h>
 #include <sys/types.h>

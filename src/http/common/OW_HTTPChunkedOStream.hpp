@@ -36,10 +36,10 @@
 #ifndef OW_HTTPCHUNKEDOSTREAM_HPP_INCLUDE_GUARD_
 #define OW_HTTPCHUNKEDOSTREAM_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_BaseStreamBuffer.hpp"
-#include "OW_Array.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_String.hpp"
+#include "blocxx/BaseStreamBuffer.hpp"
+#include "blocxx/Array.hpp"
+#include "blocxx/AutoPtr.hpp"
+#include "blocxx/String.hpp"
 #ifdef OW_HAVE_OSTREAM
 #include <ostream>
 #elif defined(OW_HAVE_OSTREAM_H)

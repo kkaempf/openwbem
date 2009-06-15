@@ -43,15 +43,15 @@
 
 #include "OW_config.h"
 #include "OW_CommonFwd.hpp"
-#include "OW_Cstr.hpp"
+#include "blocxx/Cstr.hpp"
 #include "OW_Exception.hpp"
 #include "OW_LoggerSpec.hpp"
 #include "OW_PrivManOpenFlags.h"
-#include "OW_Process.hpp"
+#include "blocxx/Process.hpp"
 #include "OW_Types.hpp"
-#include "OW_AutoDescriptor.hpp"
-#include "OW_FileSystem.hpp"
-#include "OW_GlobalPtr.hpp"
+#include "blocxx/AutoDescriptor.hpp"
+#include "blocxx/FileSystem.hpp"
+#include "blocxx/GlobalPtr.hpp"
 
 namespace OW_NAMESPACE
 {
