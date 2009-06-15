@@ -63,9 +63,6 @@ typedef IntrusiveReference<SessionLanguage> SessionLanguageRef;
 class WQLSelectStatement;
 class WQLCompile;
 
-class ThreadSafeProcess;
-typedef IntrusiveReference<ThreadSafeProcess> ThreadSafeProcessRef;
-
 class PrivilegeManagerMockObject;
 
 } // end namespace OW_NAMESPACE
