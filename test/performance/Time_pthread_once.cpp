@@ -167,7 +167,7 @@ private:
 };
 
 OWTOFoo* volatile OWTOFoo::ptr = 0;
-OnceFlag OWTOFoo::onceCtl = OW_ONCE_INIT;
+OnceFlag OWTOFoo::onceCtl = BLOCXX_ONCE_INIT;
 
 /////////////////////////////////////////////////////////////////////////////
 struct Nothing
