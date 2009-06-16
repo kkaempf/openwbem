@@ -66,7 +66,7 @@ CmdLineParser::Option g_options[] =
 	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
 	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
 	{LOGIN_NAME_OPT, 'l', "login_name", CmdLineParser::E_REQUIRED_ARG, 0, "Set the user name. Required."},
-	{HOSTNAME_OPT, 'h', "hostname", CmdLineParser::E_REQUIRED_ARG, 0, "Set the hostname of the computer on which the password file will be used. "
+	{HOSTNAME_OPT, 'n', "hostname", CmdLineParser::E_REQUIRED_ARG, 0, "Set the hostname of the computer on which the password file will be used. "
 		"If omitted, the current system's hostname will be used."},
 	{PASSWORD_FILE_OPT, 'f', "password_file", CmdLineParser::E_REQUIRED_ARG, 0, "Set the path identifying the password file. Required."},
 	{PASSWORD_OPT, 'p', "password", CmdLineParser::E_REQUIRED_ARG, 0, "Set the password for the new user. If this option is omitted, you will be "
