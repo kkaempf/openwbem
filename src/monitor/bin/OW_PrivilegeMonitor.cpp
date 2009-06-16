@@ -117,6 +117,15 @@ namespace
 #ifndef PATH_MAX
 #define PATH_MAX 1024
 #endif
+
+// glibc >= 2.8 no longer defines ARG_MAX, instead they define _SC_ARG_MAX
+#ifdef _SC_ARG_MAX
+#ifdef ARG_MAX
+#undef ARG_MAX
+#endif
+#define ARG_MAX sysconf(_SC_ARG_MAX)
+#endif
+
 #ifndef ARG_MAX
 #define ARG_MAX 1024
 #endif
