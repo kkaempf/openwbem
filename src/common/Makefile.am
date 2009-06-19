@@ -234,8 +234,7 @@ OW_SSLException.hpp \
 OW_SocketException.hpp \
 OW_SocketStreamBuffer.hpp \
 OW_SocketUtils.hpp \
-OW_SocketFlags.hpp \
-OW_ThreadSafeProcess.hpp
+OW_SocketFlags.hpp
 
 libopenwbem_a_LIBADD = \
 ../cim/libOW_cim.a \
