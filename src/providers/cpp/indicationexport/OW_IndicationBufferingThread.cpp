@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2008 Quest Software, Inc. All rights reserved.
+* Copyright (C) 2009 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -152,44 +152,9 @@ public:
 	// THROWS: NoSuchPropertyException if handler lacks the
 	// "Destination" property.
 	//
-	DestBufferingRef findAndRemove(CIMInstance const & handler)
-	{
-		checkHasDestination(handler);
-		iterator end = m_destBuffers.end();
-		for (iterator it = m_destBuffers.begin(); it != end; ++it)
-		{
-			DestBufferingRef b = *it;
-			if (equalAsHandlers(handler, b->handler))
-			{
-				m_destBuffers.erase(it);
-				return b;
-			}
-		}
-		DestBufferingRef b(new DestBuffering());
-		b->handler = handler;
-		return b;
-	}
+	DestBufferingRef findAndRemove(CIMInstance const & handler);
 
-	void insert(DestBufferingRef b)
-	{
-		// NOTE: This is more efficient than it looks.  In practice,
-		// b is always inserted at the beginning or end of the list.
-		// The for loop is just there as defensive programming.
-		DateTime btimeout = b->timeout;
-		if (m_destBuffers.empty() || btimeout >= latest().timeout)
-		{
-			m_destBuffers.push_back(b);
-		}
-		else
-		{
-			iterator end = m_destBuffers.end();
-			iterator it = m_destBuffers.begin();
-			for ( ; it != end && (*it)->timeout < btimeout; ++it)
-			{
-			}
-			m_destBuffers.insert(it, b);
-		}
-	}
+	void insert(DestBufferingRef b);
 
 	bool empty() const
 	{
@@ -223,6 +188,45 @@ private:
 	//
 	List m_destBuffers;
 };
+
+DestBufferingRef IndicationBufferingThread::BufferingMap::findAndRemove(CIMInstance const & handler)
+{
+   checkHasDestination(handler);
+   iterator end = m_destBuffers.end();
+   for (iterator it = m_destBuffers.begin(); it != end; ++it)
+   {
+      DestBufferingRef b = *it;
+      if (equalAsHandlers(handler, b->handler))
+      {
+         m_destBuffers.erase(it);
+         return b;
+      }
+   }
+   DestBufferingRef b(new DestBuffering());
+   b->handler = handler;
+   return b;
+}
+
+void IndicationBufferingThread::BufferingMap::insert(DestBufferingRef b)
+{
+   // NOTE: This is more efficient than it looks.  In practice,
+   // b is always inserted at the beginning or end of the list.
+   // The for loop is just there as defensive programming.
+   DateTime btimeout = b->timeout;
+   if (m_destBuffers.empty() || btimeout >= latest().timeout)
+   {
+      m_destBuffers.push_back(b);
+   }
+   else
+   {
+      iterator end = m_destBuffers.end();
+      iterator it = m_destBuffers.begin();
+      for ( ; it != end && (*it)->timeout < btimeout; ++it)
+      {
+      }
+      m_destBuffers.insert(it, b);
+   }
+}
 
 void IndicationBufferingThread::sendBurst(
 	CIMInstance const & handler, CIMInstanceArray const & indications)
