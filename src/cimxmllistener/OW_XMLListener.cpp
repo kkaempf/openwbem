@@ -73,6 +73,29 @@ XMLListener::clone() const
 {
 	return new XMLListener(*this);
 }
+
+namespace
+{
+	bool currentTagMatches(const CIMXMLParser& parser, CIMXMLParser::tokenId id, XMLToken::XMLType type)
+	{
+		if( !parser )
+		{
+			return false;
+		}
+		return parser.tokenIsId(id) && (parser.getTokenType() == type);
+	}
+
+	bool currentTokenIsStartTag(const CIMXMLParser& parser, CIMXMLParser::tokenId id)
+	{
+		return currentTagMatches(parser, id, XMLToken::START_TAG);
+	}
+
+	bool currentTokenIsEndTag(const CIMXMLParser& parser, CIMXMLParser::tokenId id)
+	{
+		return currentTagMatches(parser, id, XMLToken::END_TAG);
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////
 int
 XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
@@ -86,14 +109,16 @@ XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 		OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 	}
 	makeXMLHeader(messageId, *ostrEntity);
-	if (parser.tokenIsId(CIMXMLParser::E_MULTIEXPREQ))
+
+	if (currentTokenIsStartTag(parser, CIMXMLParser::E_MULTIEXPREQ))
 	{
 		parser.getChild();
-		if (!parser)
+		if (!parser || !currentTokenIsStartTag(parser, CIMXMLParser::E_SIMPLEEXPREQ))
 		{
 			OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 		}
-		while (parser)
+
+		while (currentTokenIsStartTag(parser, CIMXMLParser::E_SIMPLEEXPREQ))
 		{
 			TempFileStream ostrEnt, ostrErr;
 			processSimpleExpReq(parser, ostrEnt, ostrErr, messageId, context);
@@ -107,7 +132,11 @@ XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 				(*ostrEntity) << ostrEnt.rdbuf();
 			}
 
-			parser.getNextId(CIMXMLParser::E_SIMPLEEXPREQ, true);
+			// If the connection is reused, this can eat WAY more xml nodes than
+			// would be intended.  It fulfills our needs for now, but will
+			// probably need to be fixed properly in the future so that it only
+			// eats as much as we need to and no more.
+			parser.getNextId(CIMXMLParser::E_SIMPLEEXPREQ, false);
 		}
 	}
 	else if (parser.tokenIsId(CIMXMLParser::E_SIMPLEEXPREQ))

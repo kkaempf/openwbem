@@ -329,7 +329,8 @@ void XMLParserCore::getContent(XMLToken& entry)
 {
 	entry.text.reset();
 	//isWhiteSpace = true;
-	while (*m_current && *m_current != '<')
+	IstreamBufIterator end;
+	while (m_current != end && *m_current && *m_current != '<')
 	{
 		if (*m_current == '\n')
 		{

@@ -248,7 +248,7 @@ XMLPullParser::skipData()
 //////////////////////////////////////////////////////////////////////////////
 std::ostream& operator<<(std::ostream& ostr, const XMLPullParser& p)
 {
-	ostr << "m_good = " << p.m_good << '\n';
+	ostr << "m_good = " << std::boolalpha << p.m_good << '\n';
 	switch (p.m_curTok.type)
 	{
 		case XMLToken::INVALID:

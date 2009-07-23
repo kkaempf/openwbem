@@ -132,6 +132,11 @@ public:
 		return getTokenFromName(m_curTok.text.c_str());
 	}
 
+	XMLToken::XMLType getTokenType() const
+	{
+		return m_curTok.type;
+	}
+
 	OW_SAFE_BOOL_IMPL(CIMXMLParser, bool, CIMXMLParser::m_good, m_good)
 
 	// naming convention:
