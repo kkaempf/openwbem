@@ -40,6 +40,7 @@
 #include "blocxx/Array.hpp"
 
 #include <string.h>
+#include <cstdlib>
 
 #ifdef OW_GNU_LINUX
 	#ifdef OW_HAVE_PWD_H

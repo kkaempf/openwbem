@@ -42,6 +42,7 @@
 #include "blocxx/GetPass.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_MOFCompCIMOMHandle.hpp"
+#include "blocxx/Format.hpp"
 
 #ifdef OW_ENABLE_DB4_REPOSITORY
 	#include "OW_CIMRepository2.hpp"
@@ -68,6 +69,23 @@ using std::cout;
 using std::cin;
 using std::cerr;
 using std::endl;
+
+Compiler::Options g_opts;
+bool g_enableDebug;
+bool g_useCimRepository;
+String g_repositoryDir;
+String g_url;
+String g_encoding;
+StringArray g_filelist;
+
+#define LOG_DEBUG(message) \
+do \
+{ \
+	if (g_enableDebug) \
+	{ \
+		cerr << message << endl; \
+	} \
+} while (0)
 
 namespace
 {
@@ -120,17 +138,11 @@ const char* const def_namespace_arg = "root/cimv2";
 const char* const def_encoding_arg = "cimxml";
 
 
-Compiler::Options g_opts;
-bool g_useCimRepository;
-String g_repositoryDir;
-String g_url;
-String g_encoding;
-StringArray g_filelist;
-
 enum
 {
 	E_OPThelp,
 	E_OPTversion,
+	E_OPTdebug,
 	E_OPTdirect,
 	E_OPTurl,
 	E_OPTnamespace,
@@ -154,6 +166,7 @@ CmdLineParser::Option options[] =
 {
 	{ E_OPThelp, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
 	{ E_OPTversion, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
+	{ E_OPTdebug, '\0', "debug", CmdLineParser::E_NO_ARG, "0", "Enable debug output"},
 	{ E_OPTdirect, 'd', "direct", CmdLineParser::E_REQUIRED_ARG, 0,
 		"Create a repository in the specified directory without connecting to a cimom. "
 		"Bypassing the cimom may incorrectly bypass providers and create instances which should not exist in the repository."},
@@ -237,6 +250,10 @@ processCommandLineOptions(int argc, char** argv)
 			cout << "owmofc (OpenWBEM) " << OW_VERSION << '\n';
 			cout << "Written by Dan Nuffer.\n";
 			return 0;
+		}
+		if (parser.isSet(E_OPTdebug))
+		{
+			g_enableDebug = true;
 		}
 		if (parser.isSet(E_OPTdirect))
 		{
@@ -347,19 +364,63 @@ int main(int argc, char** argv)
 			return 1;
 		}
 
+		if (g_enableDebug)
+		{
+			if (g_useCimRepository)
+			{
+				LOG_DEBUG(Format("Using direct repository access to repository at %1", g_repositoryDir));
+			}
+			else
+			{
+				LOG_DEBUG(Format("Connecting to CIMOM with url: %1", g_url));
+			}
+
+			LOG_DEBUG(Format("Using encoding: %1", g_encoding ));
+
+			LOG_DEBUG("Supplied Filenames:");
+			for (size_t i = 0; i < g_filelist.size(); ++i)
+			{
+				LOG_DEBUG(Format("\t%1", g_filelist[i] ));
+			}
+
+			LOG_DEBUG("Compiler Options:");
+			LOG_DEBUG(Format("\tNamespace: %1", g_opts.m_namespace ));
+			LOG_DEBUG(Format("\tCreate Namespaces: %1", g_opts.m_createNamespaces ));
+			LOG_DEBUG(Format("\tCheck Syntax Only: %1", g_opts.m_checkSyntaxOnly ));
+			LOG_DEBUG(Format("\tDump XML File Name: %1", g_opts.m_dumpXmlFile ));
+			LOG_DEBUG(Format("\tRemove: %1", g_opts.m_remove ));
+			LOG_DEBUG(Format("\tPreserve: %1", g_opts.m_preserve ));
+			LOG_DEBUG(Format("\tUpgrade: %1", g_opts.m_upgrade ));
+			LOG_DEBUG(Format("\tRemove Descriptions: %1", g_opts.m_removeDescriptions ));
+			LOG_DEBUG(Format("\tRemove Objects: %1", g_opts.m_removeObjects ));
+			LOG_DEBUG(Format("\tDependency Search Dir: %1", g_opts.m_depSearchDir ));
+			LOG_DEBUG(Format("\tIgnore Double Includes: %1", g_opts.m_ignoreDoubleIncludes ));
+			LOG_DEBUG("\tInclude Directories:");
+			for (size_t i = 0; i < g_opts.m_includeDirs.size(); ++i)
+			{
+				LOG_DEBUG(Format("\t%1", g_opts.m_includeDirs[i] ));
+			}
+		}
+
 		ParserErrorHandlerIFCRef theErrorHandler(new TheErrorHandler);
 		Reference<OperationContext> context;
 		CIMOMHandleIFCRef handle;
 		if (g_useCimRepository)
 		{
+			LOG_DEBUG("Creating MOF Comp Environment");
 			ServiceEnvironmentIFCRef mofCompEnvironment(new MOFCompEnvironment());
+
+			LOG_DEBUG("Creating CIM Repository Handle");
 #ifdef OW_ENABLE_DB4_REPOSITORY
 			RepositoryIFCRef cimRepository = RepositoryIFCRef(new CIMRepository2);
 #else
 			RepositoryIFCRef cimRepository = RepositoryIFCRef(new CIMRepository);
 #endif
+			LOG_DEBUG("Initializing Repository Handle");
 			cimRepository->init(mofCompEnvironment);
+			LOG_DEBUG("Creating Operation Context");
 			context = Reference<OperationContext>(new LocalOperationContext);
+			LOG_DEBUG("Creating CIMOM Handle");
 			handle = CIMOMHandleIFCRef(new MOFCompCIMOMHandle(cimRepository, *context));
 		}
 		else
@@ -386,14 +447,19 @@ int main(int argc, char** argv)
 				cerr << "Invalid encoding.  Valid encodings: cimxml, " << URL::OWBINARY << endl;
 				return 1;
 			}
+			LOG_DEBUG("Getting Login Info");
 			ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
+			LOG_DEBUG("Creating CIMOM Handle");
 			ClientCIMOMHandleRef clientHandle = ClientCIMOMHandle::createFromURL(url.toString(), getLoginInfo);
+			LOG_DEBUG("Setting WBEM Protocol Timeout to Infinity");
 			clientHandle->getWBEMProtocolHandler()->setTimeouts(Timeout::infinite);
 			handle = clientHandle;
 		}
+		LOG_DEBUG("Creating MOF Compiler");
 		Compiler theCompiler(handle, g_opts, theErrorHandler);
 		for (size_t i = 0; i < g_filelist.size(); ++i)
 		{
+			LOG_DEBUG("Compiling file: " << g_filelist[i]);
 			errors += theCompiler.compile(g_filelist[i]);
 		}
 		cout

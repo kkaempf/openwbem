@@ -42,6 +42,7 @@
 #include "OW_Assertion.hpp"
 
 #include <string.h>
+#include <cstdlib>
 
 #if defined(OW_AIX)
 extern "C"

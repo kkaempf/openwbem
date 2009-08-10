@@ -161,7 +161,7 @@ case "$target" in
 	AC_DEFINE(ENV_VAR_LIBPATH, "LIBPATH", LIBPATH env var gives path for finding shared libs)
 	AC_SUBST(ENV_VAR_LIBPATH)
 	LIBS="$LIBS -lxnet"
-	AIX_COMMON_CFLAGS="-D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -D_XOPEN_SOURCE=500 -D_ALL_SOURCE=1"
+	AIX_COMMON_CFLAGS="-D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -D_XOPEN_SOURCE=500 -D_ALL_SOURCE=1 -fPIC"
 	AIX_COMMON_LFLAGS="-L/usr/lib/threads"
 	RPATH_DEFAULT_PATH="/usr/lib"
 	RPATH_SEPARATOR=":"
@@ -190,7 +190,6 @@ case "$target" in
 		RPATH_LINK_FLAG="-blibpath:"
 		CXXSHAREDLIBLINKFLAGS='-qmkshrobj -G'
 		STATIC_SERVICES=""
-#-bexport:$(@:%.so=%.exp)
 		DO_NOT_USE_DASH_PTHREAD=1
 		DYNAMIC_EXPORT_FLAG=-bexpall
 		;;
@@ -226,9 +225,7 @@ case "$target" in
 		STATIC_LINK_FLAGS="-Wl,-bstatic"
 		DYNAMIC_LINK_FLAGS="-Wl,-bdynamic"
 		RPATH_LINK_FLAG="-Wl,-blibpath:"
-		# This is a bad hack, as it includes an export using GNU make (others?)
-		# substitutions.
-		CXXSHAREDLIBLINKFLAGS='-shared -Wl,-G -Wl,-bnoentry -Wl,-bexport:$(@:%.so=%.exp)'
+		CXXSHAREDLIBLINKFLAGS='-shared -Wl,-G -Wl,-bnoentry'
 		DYNAMIC_EXPORT_FLAG=-Wl,-bexpall
 		;;
 	*)
@@ -245,9 +242,7 @@ case "$target" in
 		STATIC_LINK_FLAGS="-Wl,-bstatic"
 		DYNAMIC_LINK_FLAGS="-Wl,-bdynamic"
 		RPATH_LINK_FLAG="-Wl,-blibpath:"
-		# This is a bad hack, as it includes an export using GNU make (others?)
-		# substitutions.
-		CXXSHAREDLIBLINKFLAGS='-shared -Wl,-G -Wl,-bnoentry -Wl,-bexport:$(@:%.so=%.exp)'
+		CXXSHAREDLIBLINKFLAGS='-shared -Wl,-G -Wl,-bnoentry'
 		DYNAMIC_EXPORT_FLAG=-Wl,-bexpall
 		;;
 	esac

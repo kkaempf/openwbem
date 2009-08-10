@@ -38,6 +38,7 @@
 #include "blocxx/SignalUtils.hpp"
 
 #include <ostream>
+#include <cstring>
 
 namespace OW_NAMESPACE
 {

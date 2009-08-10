@@ -102,7 +102,7 @@ private:
 };
 
 Foo* volatile Foo::ptr = 0;
-pthread_once_t Foo::onceCtl = PTHREAD_ONCE_INIT;
+pthread_once_t Foo::onceCtl = BLOCXX_THREAD_ONCE_INIT;
 #endif
 
 class DCLPFoo

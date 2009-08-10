@@ -316,8 +316,8 @@ protected:
 
 #else
 
-#undef unitAssert
-#define unitAssert(condition) \
+	#undef unitAssert
+	#define unitAssert(condition) \
 	FlagTestCondition(); \
 	(this->assertImplementation ((condition),"", __LINE__, __FILE__))
 

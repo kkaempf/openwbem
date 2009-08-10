@@ -8,38 +8,6 @@ DYFILENAME = $(patsubst %.$(SO_EXT).$(SO_EXT).dylib,%.$(SO_EXT).dylib,$(sort $(p
 TMPLIBDIR = .$@.libs
 
 
-# Here's what this does:  It finds all symbols in each object file that are one
-# of T,D,B (Global text symbol, Global data symbol, Global BSS symbol), where
-# the first character is not a '.', and puts them in a list, which is then
-# sorted (unique), and dumped in LIBNAME.exp 
-# 
-# The nm options are: Berleky style (3 column), no demangling, unsorted, global
-# symbols only. 
-CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
-			$(AWK) '{ if((($$2 == "T") || \
-				   ($$2 == "D") || \
-				   ($$2 == "B")) && \
-				  (substr($$3,1,1) != ".")) \
-				{ print $$3 } }' | \
-			sort -u > $(@:%.so=%.exp)
-
-
-# This exists to make the body of the shared library rule more readable.
-# Note the use of the override keyword to keep automake from barfing about redefining a value.
-DO_CREATE_EXPORTS=
-if AIX
-override DO_CREATE_EXPORTS=$(CREATE_EXPORTS)
-endif # AIX
-
-# Do shared library fixups for AIX if not static linking.
-DO_SHARED_LIBRARY_FIXUP=
-if AIX
-if !OW_STATIC_LINKING
-# rtl_enable doesn't appear to be necessary and only works with with the iy80079_52.060721 hotfix from IBM.
-#override DO_SHARED_LIBRARY_FIXUP=rtl_enable -l -R $(SOFILENAME)
-endif # !OW_STATIC_LINKING
-endif # AIX
-
 project_libs_var = $($(basename $(@))_PROJECT_LIBS)
 external_libs_var = $($(basename $(@))_EXTERNAL_LIBS)
 
@@ -48,9 +16,7 @@ external_libs_var = $($(basename $(@))_EXTERNAL_LIBS)
 	mkdir $(TMPLIBDIR)
 	cd $(TMPLIBDIR) && \
 	$(AR) x ../$<
-	$(DO_CREATE_EXPORTS)
-	$(CXXLINK) -o $(SOFILENAME) $(CXXSHAREDLIBLINKFLAGS_START) $(TMPLIBDIR)/*.o $(project_libs_var) $(COMMON_LDFLAGS) $(external_libs_var) $(SHAREDLIBADD)
-	$(DO_SHARED_LIBRARY_FIXUP)
+	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
 	rm -rf $@ $(TMPLIBDIR) $(@:%.so=%.exp)
 	ln -s $(SOFILENAME) $@
 	chmod +x $(SOFILENAME)
