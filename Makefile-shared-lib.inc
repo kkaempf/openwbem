@@ -8,6 +8,33 @@ DYFILENAME = $(patsubst %.$(SO_EXT).$(SO_EXT).dylib,%.$(SO_EXT).dylib,$(sort $(p
 TMPLIBDIR = .$@.libs
 
 
+# Here's what this does:  It finds all symbols in each object file that are one
+# of T,D,B (Global text symbol, Global data symbol, Global BSS symbol), where
+# the first character is not a '.', and puts them in a list, which is then
+# sorted (unique), and dumped in LIBNAME.exp 
+# 
+# The nm options are: Berleky style (3 column), no demangling, unsorted, global
+# symbols only. 
+CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
+			$(AWK) '{ if((($$2 == "T") || \
+				   ($$2 == "D") || \
+				   ($$2 == "B")) && \
+				  (substr($$3,1,1) != ".")) \
+				{ print $$3 } }' | \
+			sort -u > $(@:%.so=%.exp)
+
+
+# This exists to make the body of the shared library rule more readable.
+# Note the use of the override keyword to keep automake from barfing about redefining a value.
+DO_CREATE_EXPORTS=
+DO_INCLUDE_EXPORTS=
+if AIX
+if OW_STATIC_LINKING
+override DO_CREATE_EXPORTS=$(CREATE_EXPORTS)
+override DO_INCLUDE_EXPORTS=-Wl,-bexport:$(@:%.so=%.exp)
+endif # OW_STATIC_LINKING
+endif # AIX
+
 project_libs_var = $($(basename $(@))_PROJECT_LIBS)
 external_libs_var = $($(basename $(@))_EXTERNAL_LIBS)
 
@@ -16,7 +43,8 @@ external_libs_var = $($(basename $(@))_EXTERNAL_LIBS)
 	mkdir $(TMPLIBDIR)
 	cd $(TMPLIBDIR) && \
 	$(AR) x ../$<
-	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
+	$(DO_CREATE_EXPORTS)
+	$(CXXLINK) $(DO_INCLUDE_EXPORTS) -o $(SOFILENAME) $(CXXSHAREDLIBLINKFLAGS_START) $(TMPLIBDIR)/*.o $(project_libs_var) $(COMMON_LDFLAGS) $(external_libs_var) $(SHAREDLIBADD)
 	rm -rf $@ $(TMPLIBDIR) $(@:%.so=%.exp)
 	ln -s $(SOFILENAME) $@
 	chmod +x $(SOFILENAME)
