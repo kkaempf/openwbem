@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/ByteSwap.hpp>
 
+#warning OW_ByteSwap.hpp is deprecated, use "blocxx/ByteSwap.hpp" instead.
 #endif
 

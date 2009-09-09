@@ -40,4 +40,6 @@
 
 #define OW_THREAD_FLG_JOINABLE BLOCXX_THREAD_FLG_JOINABLE
 
+#warning OW_ThreadImpl.hpp is deprecated, use "blocxx/ThreadImpl.hpp" instead. \
+Replace all uses of OW_THREAD_FLG_JOINABLE with BLOCXX_THREAD_FLG_JOINABLE.
 #endif

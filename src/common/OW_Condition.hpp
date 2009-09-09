@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Condition.hpp>
 
+#warning OW_Condition.hpp is deprecated, use "blocxx/Condition.hpp" instead.
 #endif
 

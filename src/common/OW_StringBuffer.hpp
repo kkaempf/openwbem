@@ -37,4 +37,6 @@
 #define OW_STRINGBUFFER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/StringBuffer.hpp>
+
+#warning OW_StringBuffer.hpp is deprecated, use "blocxx/StringBuffer.hpp" instead.
 #endif

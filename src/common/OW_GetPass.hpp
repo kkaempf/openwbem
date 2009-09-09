@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/GetPass.hpp>
 
+#warning OW_GetPass.hpp is deprecated, use "blocxx/GetPass.hpp" instead.
 #endif
 

@@ -46,4 +46,6 @@
 #define OW_TEMPFILESTREAM_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/TempFileStream.hpp>
+
+#warning OW_TempFileStream.hpp is deprecated, use "blocxx/TempFileStream.hpp" instead.
 #endif

@@ -38,5 +38,8 @@
 #define OW_STATIC_ASSERT_CAT(a, b) BLOCXX_STATIC_ASSERT_CAT(a, b)
 #define OW_STATIC_ASSERT_AUX(a, b) BLOCXX_STATIC_ASSERT_AUX(a, b)
 #define OW_STATIC_ASSERT( B ) BLOCXX_STATIC_ASSERT( B )
+
+#warninfg OW_StaticAssert.hpp is deprecated, use "blocxx/StaticAssert.hpp" instead. \
+Replace all occurences of OW_STATIC_ASSERT(B) with BLOCXX_STATIC_ASSERT(B)
 #endif
 

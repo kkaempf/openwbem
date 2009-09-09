@@ -37,5 +37,6 @@
 #include "OW_config.h"
 #include <blocxx/vector.hpp>
 
+#warning OW_vector.hpp is deprecated, use "blocxx/vector.hpp" instead.
 #endif
 	

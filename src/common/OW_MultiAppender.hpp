@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/MultiAppender.hpp>
 
+#warning OW_MultiAppender.hpp is deprecated, use "blocxx/MultiAppender.hpp" instead.
 #endif
 

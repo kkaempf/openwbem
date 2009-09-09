@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/StrictWeakOrdering.hpp>
 
+#warning OW_StrictWeakOrdering.hpp is deprecated, use "blocxx/StrictWeakOrdering.hpp" instead.
 #endif
 

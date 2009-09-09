@@ -50,4 +50,11 @@ const int OW_SIGFPE = BLOCXX_SIGFPE;
 
 } // end namespace OW_NAMESPACE
 
+#warning OW_SignalScope.hpp is deprecated, use "blocxx/SignalScope.hpp" instead. \
+Replace all occurrences of: \
+OW_SIGSEGV with BLOCXX_SIGSEGV \
+OW_SIGABRT with BLOCXX_SIGABRT \
+OW_SIGBUS with BLOCXX_SIGBUS \
+OW_SIGFPE with BLOCXX_SIGFPE \
+
 #endif

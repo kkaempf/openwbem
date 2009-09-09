@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/SocketAddress.hpp>
 
+#warning OW_SocketAddress.hpp is deprecated, use "blocxx/SocketAddress.hpp" instead.
 #endif
 

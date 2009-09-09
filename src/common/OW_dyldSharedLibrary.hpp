@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/dyldSharedLibrary.hpp>
 
+#warning OW_dyldSharedLibrary.hpp is deprecated, use "blocxx/dyldSharedLibrary.hpp" instead.
 #endif
 

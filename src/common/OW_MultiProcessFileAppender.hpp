@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/MultiProcessFileAppender.hpp>
 
+#warning OW_MultiProcessFileAppender.hpp is deprecated, use "blocxx/MultiProcessFileAppender.hpp" instead.
 #endif
 

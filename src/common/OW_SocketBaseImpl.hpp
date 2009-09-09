@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/SocketBaseImpl.hpp>
 
+#warning OW_SocketBaseImpl.hpp is deprecated, use "blocxx/SocketBaseImpl.hpp" instead.
 #endif
 

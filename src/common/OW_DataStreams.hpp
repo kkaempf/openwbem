@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/DataStreams.hpp>
 
+#warning OW_DataStreams.hpp is deprecated, use "blocxx/DataStreams.hpp" instead.
 #endif
 

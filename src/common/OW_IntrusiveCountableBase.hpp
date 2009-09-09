@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/IntrusiveCountableBase.hpp>
 
+#warning OW_IntrusiveCountableBase.hpp is deprecated, use "blocxx/IntrusiveCountableBase.hpp" instead.
 #endif
 

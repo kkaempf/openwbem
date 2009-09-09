@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Process.hpp>
 
+#warning OW_Process.hpp is deprecated, use "blocxx/Process.hpp" instead.
 #endif
 

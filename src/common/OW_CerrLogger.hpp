@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/CerrLogger.hpp>
 
+#warning OW_CerrLogger.hpp is deprecated, use "blocxx/CerrLogger.hpp" instead.
 #endif
 

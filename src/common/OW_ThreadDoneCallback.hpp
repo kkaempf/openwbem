@@ -36,4 +36,6 @@
 #define OW_THREAD_DONE_CALLBACK_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/ThreadDoneCallback.hpp>
+
+#warning OW_ThreadDoneCallback.hpp is deprecated, use "blocxx/ThreadDoneCallback.hpp" instead.
 #endif

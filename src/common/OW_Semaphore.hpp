@@ -36,4 +36,6 @@
 #define OW_SEMAPHORE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/Semaphore.hpp>
+
+#warning OW_Semaphore.hpp is deprecated, use "blocxx/Semaphore.hpp" instead.
 #endif

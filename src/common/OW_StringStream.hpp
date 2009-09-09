@@ -37,4 +37,6 @@
 #define OW_STRINGSTREAM_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/StringStream.hpp>
+
+#warning OW_StringStream.hpp is deprecated, use "blocxx/StringStream.hpp" instead.
 #endif

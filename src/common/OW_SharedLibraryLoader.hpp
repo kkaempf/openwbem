@@ -36,4 +36,6 @@
 #define OW_SHARED_LIBRARY_LOADER_HPP_
 #include "OW_config.h"
 #include <blocxx/SharedLibraryLoader.hpp>
+
+#warning OW_SharedLibraryLoader.hpp is deprecated, use "blocxx/SharedLibraryLoader.hpp" instead.
 #endif

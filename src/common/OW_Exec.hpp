@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Exec.hpp>
 
+#warning OW_Exec.hpp is deprecated, use "blocxx/Exec.hpp" instead.
 #endif
 

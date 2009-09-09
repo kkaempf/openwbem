@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/DateTime.hpp>
 
+#warning OW_DateTime.hpp is deprecated, use "blocxx/DateTime.hpp" instead.
 #endif
 

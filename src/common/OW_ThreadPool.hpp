@@ -36,4 +36,6 @@
 #define OW_THREAD_POOL_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/ThreadPool.hpp>
+
+#warning OW_ThreadPool.hpp is deprecated, use "blocxx/ThreadPool.hpp" instead.
 #endif

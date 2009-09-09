@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/ExecMockObject.hpp>
 
+#warning OW_ExecMockObject.hpp is deprecated, use "blocxx/ExecMockObject.hpp" instead.
 #endif
 

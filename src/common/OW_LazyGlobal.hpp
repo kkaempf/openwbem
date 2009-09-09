@@ -47,4 +47,6 @@
 #define OW_LAZY_GLOBAL_INIT(...) \
 			BLOCXX_LAZY_GLOBAL_INIT(__VA_ARGS__) 
 
+#warning OW_LazyGlobal.hpp is deprecated, use "blocxx/LazyGlobal.hpp" instead. \
+Replace calls to OW_LAZY_GLOBAL_INIT(...) with BLOCXX_LAZY_GLOBAL_INIT(...)
 #endif

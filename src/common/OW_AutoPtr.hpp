@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/AutoPtr.hpp>
 
+#warning OW_AutoPtr.hpp is deprecated, use "blocxx/AutoPtr.hpp" instead.
 #endif
 

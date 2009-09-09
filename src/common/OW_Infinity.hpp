@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Infinity.hpp>
 
+#warning OW_Infinity.hpp is deprecated, use "blocxx/Infinity.hpp" instead.
 #endif
 

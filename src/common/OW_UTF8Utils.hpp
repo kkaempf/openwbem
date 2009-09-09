@@ -36,4 +36,6 @@
 #define OW_UTF8_UTILS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/UTF8Utils.hpp>
+
+#warning OW_UTF8Utils.hpp is deprecated, use "blocxx/UTF8Utils.hpp" instead.
 #endif

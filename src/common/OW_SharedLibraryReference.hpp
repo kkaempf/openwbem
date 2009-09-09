@@ -36,4 +36,6 @@
 #define OW_SHARED_LIBRARY_REFERENCE_HPP_
 #include "OW_config.h"
 #include <blocxx/SharedLibraryReference.hpp>
+
+#warning OW_SharedLibraryReference.hpp is deprecated, use "blocxx/SharedLibraryReference.hpp" instead.
 #endif

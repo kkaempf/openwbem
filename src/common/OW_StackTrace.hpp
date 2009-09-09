@@ -36,4 +36,6 @@
 #define OW_STACK_TRACE_HPP_
 #include "OW_config.h"
 #include <blocxx/StackTrace.hpp>
+
+#warning OW_StackTrace.hpp is deprecated, use "blocxx/StackTrace.hpp" instead.
 #endif

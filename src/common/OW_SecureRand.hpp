@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/SecureRand.hpp>
 
+#warning OW_SecureRand.hpp is deprecated, use "blocxx/SecureRand.hpp" instead.
 #endif
 

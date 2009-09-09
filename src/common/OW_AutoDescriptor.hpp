@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/AutoDescriptor.hpp>
 
+#warning OW_AutoDescriptor.hpp is deprecated, use "blocxx/AutoDescriptor.hpp" instead.
 #endif
 

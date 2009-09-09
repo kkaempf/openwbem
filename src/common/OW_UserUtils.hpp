@@ -36,6 +36,8 @@
 #define OW_USER_UTILS_HPP_INCLUDE_GUARD
 #include "OW_config.h"
 #include <blocxx/UserUtils.hpp>
+
+#warning OW_UserUtils.hpp is deprecated, use "blocxx/UserUtils.hpp" instead.
 #endif
 
 

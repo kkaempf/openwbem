@@ -36,8 +36,8 @@
 #ifndef OW_SelectableIFC_HPP_INCLUDE_GUARD_
 #define OW_SelectableIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include <blocxx/SelectableIFC.hpp> 
-#include "OW_SelectableCallbackIFC.hpp"
+#include <blocxx/SelectableIFC.hpp>
+#include <blocxx/SelectableCallbackIFC.hpp>
 
-
+#warning OW_SelectableIFC.hpp is deprecated, use "blocxx/SelectableIFC.hpp" instead.
 #endif

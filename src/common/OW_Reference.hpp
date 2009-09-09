@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Reference.hpp>
 
+#warning OW_Reference.hpp is deprecated, use "blocxx/Reference.hpp" instead.
 #endif
 

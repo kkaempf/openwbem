@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Mutex.hpp>
 
+#warning OW_Mutex.hpp is deprecated, use "blocxx/Mutex.hpp" instead.
 #endif
 

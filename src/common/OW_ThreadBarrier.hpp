@@ -36,4 +36,6 @@
 #define OW_THREAD_BARRIER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/ThreadBarrier.hpp>
+
+#warning OW_ThreadBarrier.hpp is deprecated, use "blocxx/ThreadBarrier.hpp" instead.
 #endif

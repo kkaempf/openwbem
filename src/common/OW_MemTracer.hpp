@@ -38,5 +38,6 @@
 #include "OW_config.h"
 #include <blocxx/MemTracer.hpp>
 
+#warning OW_MemTracer.hpp is deprecated, use "blocxx/MemTracer.hpp" instead.
 #endif
 

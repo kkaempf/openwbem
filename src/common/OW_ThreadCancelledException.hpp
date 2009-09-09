@@ -36,4 +36,6 @@
 #define OW_THREAD_CANCELLED_EXCEPTION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/ThreadCancelledException.hpp>
+
+#warning OW_ThreadCancelledException.hpp is deprecated, use "blocxx/ThreadCancelledException.hpp" instead.
 #endif

@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/HashMultiMap.hpp>
 
+#warning OW_HashMultiMap.hpp is deprecated, use "blocxx/HashMultiMap.hpp" instead.
 #endif
 

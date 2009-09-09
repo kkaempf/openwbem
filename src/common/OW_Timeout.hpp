@@ -38,6 +38,7 @@
 #include "OW_config.h"
 #include <blocxx/Timeout.hpp>
 
+#warning OW_Timeout.hpp is deprecated, use "blocxx/Timeout.hpp" instead.
 #endif
 
 

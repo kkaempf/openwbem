@@ -37,4 +37,6 @@
 #define OW_SCOPELOGGER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/ScopeLogger.hpp>
+
+#warning OW_ScopeLogger.hpp is deprecated, use "blocxx/ScopeLogger.hpp" instead.
 #endif

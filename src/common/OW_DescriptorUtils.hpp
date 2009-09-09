@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/DescriptorUtils.hpp>
 
+#warning OW_DescriptorUtils.hpp is deprecated, use "blocxx/DescriptorUtils.hpp" instead.
 #endif
 

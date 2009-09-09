@@ -36,4 +36,6 @@
 #define OW_SORTED_VECTOR_MAP_HPP_
 #include "OW_config.h"
 #include <blocxx/SortedVectorMap.hpp>
+
+#warning OW_SortedVectorMap.hpp is deprecated, use "blocxx/SortedVectorMap.hpp" instead.
 #endif

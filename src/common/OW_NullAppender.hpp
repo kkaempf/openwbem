@@ -42,6 +42,6 @@
 
 #include "OW_config.h"
 #include <blocxx/NullAppender.hpp>
-
+#warning OW_NullAppender.hpp is deprecated, use "blocxx/NullAppender.hpp" instead.
 #endif
 

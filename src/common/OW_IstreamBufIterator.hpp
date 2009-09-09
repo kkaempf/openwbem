@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/IstreamBufIterator.hpp>
 
+#warning OW_IstreamBufIterator.hpp is deprecated, use "blocxx/IstreamBufIterator.hpp" instead.
 #endif
 

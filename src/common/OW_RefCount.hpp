@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/RefCount.hpp>
 
+#warning OW_RefCount.hpp is deprecated, use "blocxx/RefCount.hpp" instead.
 #endif
 

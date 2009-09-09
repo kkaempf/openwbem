@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/LogMessagePatternFormatter.hpp>
 
+#warning OW_LogMessagePatternFormatter.hpp is deprecated, use "blocxx/LogMessagePatternFormatter.hpp" instead.
 #endif
 

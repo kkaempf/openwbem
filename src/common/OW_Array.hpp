@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Array.hpp>
 
+#warning OW_Array.hpp is deprecated, use "blocxx/Array.hpp" instead.
 #endif
 

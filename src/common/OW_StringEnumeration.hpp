@@ -36,4 +36,6 @@
 #define OW_STRINGENUMERATION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/StringEnumeration.hpp>
+
+#warning OW_StringEnumeration.hpp is deprecated, use "blocxx/StringEnumeration.hpp" instead.
 #endif

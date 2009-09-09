@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/FileBuf.hpp>
 
+#warning OW_FileBuf.hpp is deprecated, use "blocxx/FileBuf.hpp" instead.
 #endif
 

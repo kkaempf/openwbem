@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/DelayedFormat.hpp>
 
+#warning OW_DelayedFormat.hpp is deprecated, use "blocxx/DelayedFormat.hpp" instead.
 #endif
 

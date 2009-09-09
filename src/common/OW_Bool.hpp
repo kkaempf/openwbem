@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Bool.hpp>
 
+#warning OW_Bool.hpp is deprecated, use "blocxx/Bool.hpp" instead.
 #endif
 

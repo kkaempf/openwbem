@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/NullLogger.hpp>
 
+#warning OW_NullLogger.hpp is deprecated, use "blocxx/NullLogger.hpp" instead.
 #endif
 

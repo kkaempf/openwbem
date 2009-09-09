@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/IFileStream.hpp>
 
+#warning OW_IFileStream.hpp is deprecated, use "blocxx/IFileStream.hpp" instead.
 #endif
 

@@ -40,5 +40,6 @@
 #include "OW_config.h"
 #include <blocxx/SafeCStringIO.hpp>
 
+#warning OW_SafeCStringIO.hpp is deprecated, use "blocxx/SafeCStringIO.hpp" instead.
 #endif
 

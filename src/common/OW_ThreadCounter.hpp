@@ -36,4 +36,6 @@
 #define OW_THREAD_COUNTER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/ThreadCounter.hpp>
+
+#warning OW_ThreadCounter.hpp is deprecated, use "blocxx/ThreadCounter.hpp" instead.
 #endif

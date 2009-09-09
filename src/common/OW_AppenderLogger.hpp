@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/AppenderLogger.hpp>
 
+#warning OW_AppenderLogger.hpp is deprecated, use "blocxx/AppenderLogger.hpp" instead.
 #endif
 

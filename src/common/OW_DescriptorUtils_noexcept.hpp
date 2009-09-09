@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/DescriptorUtils_noexcept.hpp>
 
+#warning OW_DescriptorUtils_noexcept.hpp is deprecated, use "blocxx/DescriptorUtils_noexcept.hpp" instead.
 #endif
 

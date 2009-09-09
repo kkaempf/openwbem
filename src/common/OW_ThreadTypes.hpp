@@ -37,5 +37,7 @@
 #define OW_THREAD_TYPES_HPP_
 #include "OW_config.h"
 #include <blocxx/ThreadTypes.hpp>
+
+#warning OW_ThreadTypes.hpp is deprecated, use "blocxx/ThreadTypes.hpp" instead.
 #endif	// #ifndef OW_THREAD_TYPES_HPP_
 				

@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/BaseStreamBuffer.hpp>
 
+#warning OW_BaseStreamBuffer.hpp is deprecated, use "blocxx/BaseStreamBuffer.hpp" instead.
 #endif
 

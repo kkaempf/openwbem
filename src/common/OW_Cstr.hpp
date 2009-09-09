@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Cstr.hpp>
 
+#warning OW_Cstr.hpp is deprecated, use "blocxx/Cstr.hpp" instead.
 #endif
 

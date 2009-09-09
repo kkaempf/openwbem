@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/FileSystemMockObject.hpp>
 
+#warning OW_FileSystemMockObject.hpp is deprecated, use "blocxx/FileSystemMockObject.hpp" instead.
 #endif
 

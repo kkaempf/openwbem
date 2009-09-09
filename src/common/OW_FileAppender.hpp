@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/FileAppender.hpp>
 
+#warning OW_FileAppender.hpp is deprecated, use "blocxx/FileAppender.hpp" instead.
 #endif
 

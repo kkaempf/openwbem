@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/RWLocker.hpp>
 
+#warning OW_RWLocker.hpp is deprecated, use "blocxx/RWLocker.hpp" instead.
 #endif
 

@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/MD5.hpp>
 
+#warning OW_MD5.hpp is deprecated, use "blocxx/MD5.hpp" instead.
 #endif
 

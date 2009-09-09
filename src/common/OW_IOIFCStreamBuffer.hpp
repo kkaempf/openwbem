@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/IOIFCStreamBuffer.hpp>
 
+#warning OW_IOIFCStreamBuffer.hpp is deprecated, use "blocxx/IOIFCStreamBuffer.hpp" instead.
 #endif
 

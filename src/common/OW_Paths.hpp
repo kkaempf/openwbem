@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Paths.hpp>
 
+#warning OW_Paths.hpp is deprecated, use "blocxx/Paths.hpp" instead.
 #endif
 

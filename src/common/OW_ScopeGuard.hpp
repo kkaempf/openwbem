@@ -1,22 +1,22 @@
 /*******************************************************************************
 * Copyright (C) 2005, Vintela, Inc. All rights reserved.
 * Copyright (C) 2006, Novell, Inc. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
-* 
+*
 *     * Redistributions of source code must retain the above copyright notice,
 *       this list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of 
-*       Vintela, Inc., 
-*       nor Novell, Inc., 
-*       nor the names of its contributors or employees may be used to 
-*       endorse or promote products derived from this software without 
+*     * Neither the name of
+*       Vintela, Inc.,
+*       nor Novell, Inc.,
+*       nor the names of its contributors or employees may be used to
+*       endorse or promote products derived from this software without
 *       specific prior written permission.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,12 +35,12 @@
 // Copyright (c) 2000 Petru Marginean
 // Copyright (c) 2005 Joshua Lehrer
 //
-// Permission to use, copy, modify, distribute and sell this software for any 
-//     purpose is hereby granted without fee, provided that the above copyright 
-//     notice appear in all copies and that both that copyright notice and this 
+// Permission to use, copy, modify, distribute and sell this software for any
+//     purpose is hereby granted without fee, provided that the above copyright
+//     notice appear in all copies and that both that copyright notice and this
 //     permission notice appear in supporting documentation.
-// The author makes no representations about the 
-//     suitability of this software for any purpose. It is provided "as is" 
+// The author makes no representations about the
+//     suitability of this software for any purpose. It is provided "as is"
 //     without express or implied warranty.
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -50,14 +50,20 @@
 
 #include "OW_config.h"
 #include <blocxx/ScopeGuard.hpp>
-
+#warning OW_ScopeGuard.hpp is deprecated, use "blocxx/ScopeGuard.hpp" instead. \
+All uses of: \
+	OW_CONCATENATE_DIRECT(s1, s2) should be replaced by BLOCXX_CONCATENATE_DIRECT(s1, s2) \
+	OW_CONCATENATE(s1, s2)        should be replaced by BLOCXX_CONCATENATE(s1, s2) \
+	OW_ANONYMOUS_VARIABLE(str)    should be replaced by BLOCXX_ANONYMOUS_VARIABLE(str) \
+	OW_ON_BLOCK_EXIT should be replaced by BLOCXX_ON_BLOCK_EXIT				\
+	OW_ON_BLOCK_EXIT_OBJ should be replaced by BLOCXX_ON_BLOCK_EXIT_OBJ
 
 #define OW_CONCATENATE_DIRECT(s1, s2)  BLOCXX_CONCATENATE_DIRECT(s1, s2)
 #define OW_CONCATENATE(s1, s2)         BLOCXX_CONCATENATE(s1, s2)
 #define OW_ANONYMOUS_VARIABLE(str) BLOCXX_ANONYMOUS_VARIABLE(str)
 
-#define OW_ON_BLOCK_EXIT BLOCXX_ON_BLOCK_EXIT 
-#define OW_ON_BLOCK_EXIT_OBJ BLOCXX_ON_BLOCK_EXIT_OBJ  
+#define OW_ON_BLOCK_EXIT BLOCXX_ON_BLOCK_EXIT
+#define OW_ON_BLOCK_EXIT_OBJ BLOCXX_ON_BLOCK_EXIT_OBJ
 
 #endif
 

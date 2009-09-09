@@ -37,4 +37,6 @@
 #define OW_STACK_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/Stack.hpp>
+
+#warning OW_Stack.hpp is deprecated, use "blocxx/Stack.hpp" instead.
 #endif

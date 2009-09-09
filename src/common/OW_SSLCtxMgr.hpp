@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/SSLCtxMgr.hpp>
 
+#warning OW_SSLCtxMgr.hpp is deprecated, use "blocxx/SSLCtxMgr.hpp" instead.
 #endif
 

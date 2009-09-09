@@ -39,5 +39,7 @@
 
 #define OW_ONCE_INIT BLOCXX_ONCE_INIT
 
+#warning OW_ThreadOnce.hpp is deprecated, use "blocxx/ThreadOnce.hpp" instead. \
+Replace all uses of OW_ONCE_INIT with BLOCXX_ONCE_INIT.
 #endif
 

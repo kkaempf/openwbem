@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/PosixUnnamedPipe.hpp>
 
+#warning OW_PosixUnnamedPipe.hpp is deprecated, use "blocxx/PosixUnnamedPipe.hpp" instead.
 #endif
 

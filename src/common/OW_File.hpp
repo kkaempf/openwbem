@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/File.hpp>
 
+#warning OW_File.hpp is deprecated, use "blocxx/File.hpp" instead.
 #endif
 

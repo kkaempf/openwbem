@@ -41,5 +41,6 @@
 #include "OW_config.h"
 #include <blocxx/Secure.hpp>
 
+#warning OW_Secure.hpp is deprecated, use "blocxx/Secure.hpp" instead.
 #endif
 

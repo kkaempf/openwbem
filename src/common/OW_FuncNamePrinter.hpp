@@ -61,6 +61,8 @@
 #define PRINT_FUNC_NAME_ARGS9(a, b, c, d, e, f, g, h, i)
 #define PRINT_FUNC_NAME_ARGS10(a, b, c, d, e, f, g, h, i, j)
 #define PRINT_FUNC_NAME
+
+#warning OW_FuncNamePrinter.hpp is deprecated, use "blocxx/FuncNamePrinter.hpp" instead.
 #endif /* #ifdef OW_PRINT_FUNC_DEBUG */
 
 

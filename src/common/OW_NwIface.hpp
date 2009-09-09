@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/NwIface.hpp>
 
+#warning OW_NwIface.hpp is deprecated, use "blocxx/NwIface.hpp" instead.
 #endif
 

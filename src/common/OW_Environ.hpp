@@ -42,6 +42,6 @@
 
 #include "OW_config.h"
 #include <blocxx/Environ.hpp>
-
+#warning OW_Environ.hpp is deprecated, use "blocxx/Environ.hpp" instead.
 #endif
 

@@ -37,4 +37,6 @@
 #define OW_SELECT_ENGINE_HPP_
 #include "OW_config.h"
 #include <blocxx/SelectEngine.hpp>
+
+#warning OW_SelectEngine.hpp is deprecated, use "blocxx/SelectEngine.hpp" instead.
 #endif

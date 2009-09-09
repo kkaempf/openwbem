@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/SocketException.hpp>
 
+#warning OW_SocketException.hpp is deprecated, use "blocxx/SocketException.hpp" instead.
 #endif
 

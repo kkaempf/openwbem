@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Map.hpp>
 
+#warning OW_Map.hpp is deprecated, use "blocxx/Map.hpp" instead.
 #endif
 

@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/HashMap.hpp>
 
+#warning OW_HashMap.hpp is deprecated, use "blocxx/HashMap.hpp" instead.
 #endif
 

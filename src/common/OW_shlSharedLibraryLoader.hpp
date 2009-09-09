@@ -37,5 +37,7 @@
 #include "OW_config.h"
 #if defined(OW_USE_SHL)
 #include <blocxx/shlSharedLibraryLoader.hpp>
+
+#warning OW_shlSharedLibraryLoader.hpp is deprecated, use "blocxx/shlSharedLibraryLoader.hpp" instead.
 #endif // #if defined(OW_USE_SHL)
 #endif

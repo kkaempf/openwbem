@@ -36,5 +36,7 @@
 #define OW_SYSLOG_APPENDER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/SyslogAppender.hpp>
+
+#warning OW_SyslogAppender.hpp is deprecated, use "blocxx/SyslogAppender.hpp" instead.
 #endif
 

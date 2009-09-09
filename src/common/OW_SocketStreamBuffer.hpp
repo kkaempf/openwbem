@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/SocketStreamBuffer.hpp>
 
+#warning OW_SocketStreamBuffer.hpp is deprecated, use "blocxx/SocketStreamBuffer.hpp" instead.
 #endif
 

@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/LogMessage.hpp>
 
+#warning OW_LogMessage.hpp is deprecated, use "blocxx/LogMessage.hpp" instead.
 #endif
 

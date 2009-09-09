@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/MutexLock.hpp>
 
+#warning OW_MutexLock.hpp is deprecated, use "blocxx/MutexLock.hpp" instead.
 #endif
 

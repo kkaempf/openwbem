@@ -38,6 +38,7 @@
 #include "OW_config.h"
 #include <blocxx/SignalUtils.hpp>
 
+#warning OW_SignalUtils.hpp is deprecated, use "blocxx/SignalUtils.hpp" instead.
 #endif
 
 

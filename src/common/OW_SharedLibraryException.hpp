@@ -36,4 +36,6 @@
 #define OW_SHAREDLIBRARYEXCEPTION_HPP_
 #include "OW_config.h"
 #include <blocxx/SharedLibraryException.hpp>
+
+#warning OW_SharedLibraryException.hpp is deprecated, use "blocxx/SharedLibraryException.hpp" instead.
 #endif

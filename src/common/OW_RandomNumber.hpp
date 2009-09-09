@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/RandomNumber.hpp>
 
+#warning OW_RandomNumber.hpp is deprecated, use "blocxx/RandomNumber.hpp" instead.
 #endif
 

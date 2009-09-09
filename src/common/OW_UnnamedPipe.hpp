@@ -36,4 +36,6 @@
 #define OW_UNNAMEDPIPE_HPP_
 #include "OW_config.h"
 #include <blocxx/UnnamedPipe.hpp>
+
+#warning OW_UnnamedPipe.hpp is deprecated, use "blocxx/UnnamedPipe.hpp" instead.
 #endif	// OW_UNNAMEDPIPE_HPP_

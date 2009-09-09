@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/COWIntrusiveReference.hpp>
 
+#warning OW_COWIntrusiveReference.hpp is deprecated, use "blocxx/COWIntrusiveReference.hpp" instead.
 #endif
 

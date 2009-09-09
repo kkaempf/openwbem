@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/LogAppenderScope.hpp>
 
+#warning OW_LogAppenderScope.hpp is deprecated, use "blocxx/LogAppenderScope.hpp" instead.
 #endif
 

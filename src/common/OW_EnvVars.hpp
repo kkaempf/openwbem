@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/EnvVars.hpp>
 
+#warning OW_EnvVars.hpp is deprecated, use "blocxx/EnvVars.hpp" instead.
 #endif
 

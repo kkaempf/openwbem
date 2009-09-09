@@ -37,4 +37,6 @@
 #define OW_SELECT_HPP_
 #include "OW_config.h"
 #include <blocxx/Select.hpp>
+
+#warning OW_Select.hpp is deprecated, use "blocxx/Select.hpp" instead.
 #endif // OW_SELECT_HPP_

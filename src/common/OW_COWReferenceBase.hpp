@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/COWReferenceBase.hpp>
 
+#warning OW_COWReferenceBase.hpp is deprecated, use "blocxx/COWReferenceBase.hpp" instead.
 #endif
 

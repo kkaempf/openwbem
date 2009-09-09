@@ -55,4 +55,6 @@
 	*/
 #define OW_INTSTR(x) BLOCXX_INTSTR(x)
 
+#warning OW_SafeCString.hpp is deprecated, use "blocxx/SafeCString.hpp" instead. \
+Substitute all uses of OW_INTSTR(x) with BLOCXX_INTSTR(x)
 #endif

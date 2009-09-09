@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Format.hpp>
 
+#warning OW_Format.hpp is deprecated, use "blocxx/Format.hpp" instead.
 #endif
 

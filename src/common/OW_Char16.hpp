@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Char16.hpp>
 
+#warning OW_Char16.hpp is deprecated, use "blocxx/Char16.hpp" instead.
 #endif
 

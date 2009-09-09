@@ -36,4 +36,6 @@
 #define OW_SORTED_VECTOR_SET_HPP_
 #include "OW_config.h"
 #include <blocxx/SortedVectorSet.hpp>
+
+#warning OW_SortedVectorSet.hpp is deprecated, use "blocxx/SortedVectorSet.hpp" instead.
 #endif

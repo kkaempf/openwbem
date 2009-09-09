@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/Runnable.hpp>
 
+#warning OW_Runnable.hpp is deprecated, use "blocxx/Runnable.hpp" instead.
 #endif
 

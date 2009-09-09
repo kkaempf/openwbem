@@ -37,5 +37,7 @@
 #define OW_THREAD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/Thread.hpp>
+
+#warning OW_Thread.hpp is deprecated, use "blocxx/Thread.hpp" instead.
 #endif
 

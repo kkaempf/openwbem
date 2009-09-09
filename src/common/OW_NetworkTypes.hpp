@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/NetworkTypes.hpp>
 
+#warning OW_NetworkTypes.hpp is deprecated, use "blocxx/NetworkTypes.hpp" instead.
 #endif
 

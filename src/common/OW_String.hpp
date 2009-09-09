@@ -37,4 +37,6 @@
 #define OW_STRING_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include <blocxx/String.hpp>
+
+#warning OW_String.hpp is deprecated, use "blocxx/String.hpp" instead.
 #endif

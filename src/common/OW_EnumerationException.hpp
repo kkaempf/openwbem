@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/EnumerationException.hpp>
 
+#warning OW_EnumerationException.hpp is deprecated, use "blocxx/EnumerationException.hpp" instead.
 #endif
 

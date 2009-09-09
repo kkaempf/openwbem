@@ -43,5 +43,6 @@
 #include "OW_config.h"
 #include <blocxx/NonRecursiveMutexLock.hpp>
 
+#warning OW_NonRecursiveMutexLock.hpp is deprecated, use "blocxx/NonRecursiveMutexLock.hpp" instead.
 #endif
 
