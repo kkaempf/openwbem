@@ -43,7 +43,6 @@
 #include "OW_config.h"
 #include "blocxx/Socket.hpp"
 
-// TODO: This is duplicated in OW_ConfigOpts.hpp.  Figure out a way to merge the 2 without drastically increasing header dependencies.
 #ifdef OW_DEFAULT_HTTP_SERVER_UDS_FILENAME
 #define OW_DOMAIN_SOCKET_NAME OW_DEFAULT_HTTP_SERVER_UDS_FILENAME
 #endif
@@ -52,6 +51,8 @@
 #define OW_DOMAIN_SOCKET_NAME "/tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q"OW_PACKAGE_PREFIX
 #endif
 
-
+#warning OW_Socket.hpp is deprecated use "blocxx/Socket.hpp" instead. \
+Replace occurrences of OW_DOMAIN_SOCKET_NAME with OW_DEFAULT_HTTP_SERVER_UDS_FILENAME \
+and include "OW_ConfigOpts.hpp"
 #endif
 
