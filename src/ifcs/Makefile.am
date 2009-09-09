@@ -29,7 +29,6 @@ OW_IOIFC.hpp \
 OW_RepositoryIFC.hpp \
 OW_RequestHandlerIFC.hpp \
 OW_ResultHandlerIFC.hpp \
-OW_SelectableCallbackIFC.hpp \
 OW_SelectableIFC.hpp \
 OW_SerializableIFC.hpp \
 OW_ServiceEnvironmentIFC.hpp \
