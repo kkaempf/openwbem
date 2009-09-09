@@ -523,14 +523,6 @@ void CmpiArrayIdx::operator=(const CMPISint32 v) {
    if (rc.rc!=CMPI_RC_OK) throw rc.rc;
 }
 
-void CmpiArrayIdx::operator=(const int v) {
-   CMPIStatus rc;
-   if (ar.getEnc()->ft->getSimpleType(ar.getEnc(),&rc)!=CMPI_sint32)
-      throw CMPI_RC_ERR_TYPE_MISMATCH;
-   rc=ar.getEnc()->ft->setElementAt(ar.getEnc(),idx,(CMPIValue*)&v,CMPI_sint32);
-   if (rc.rc!=CMPI_RC_OK) throw rc.rc;
-}
-
 
 void CmpiArrayIdx::operator=(const CMPISint64 v) {
    CMPIStatus rc;
@@ -557,14 +549,6 @@ void CmpiArrayIdx::operator=(const CMPIUint16 v) {
 }
 
 void CmpiArrayIdx::operator=(const CMPIUint32 v) {
-   CMPIStatus rc;
-   if (ar.getEnc()->ft->getSimpleType(ar.getEnc(),&rc)!=CMPI_uint32)
-      throw CMPI_RC_ERR_TYPE_MISMATCH;
-   rc=ar.getEnc()->ft->setElementAt(ar.getEnc(),idx,(CMPIValue*)&v,CMPI_uint32);
-   if (rc.rc!=CMPI_RC_OK) throw rc.rc;
-}
-
-void CmpiArrayIdx::operator=(const unsigned int v) {
    CMPIStatus rc;
    if (ar.getEnc()->ft->getSimpleType(ar.getEnc(),&rc)!=CMPI_uint32)
       throw CMPI_RC_ERR_TYPE_MISMATCH;
@@ -621,16 +605,6 @@ void CmpiArrayIdx::operator>>(CMPISint32& v) {
    v=d.value.sint32;
 }
 
-void CmpiArrayIdx::operator>>(int& v) {
-   CMPIStatus rc;
-   CMPIData d;
-   if (ar.getEnc()->ft->getSimpleType(ar.getEnc(),&rc)!=CMPI_sint32)
-      throw CMPI_RC_ERR_TYPE_MISMATCH;
-   d=ar.getEnc()->ft->getElementAt(ar.getEnc(),idx,&rc);
-   if (rc.rc!=CMPI_RC_OK) throw rc.rc;
-   v=(int)d.value.sint32;
-}
-
 void CmpiArrayIdx::operator>>(CMPISint64& v) {
    CMPIStatus rc;
    CMPIData d;
@@ -669,16 +643,6 @@ void CmpiArrayIdx::operator>>(CMPIUint32& v) {
    d=ar.getEnc()->ft->getElementAt(ar.getEnc(),idx,&rc);
    if (rc.rc!=CMPI_RC_OK) throw rc.rc;
    v=d.value.uint32;
-}
-
-void CmpiArrayIdx::operator>>(unsigned int& v) {
-   CMPIStatus rc;
-   CMPIData d;
-   if (ar.getEnc()->ft->getSimpleType(ar.getEnc(),&rc)!=CMPI_uint32)
-      throw CMPI_RC_ERR_TYPE_MISMATCH;
-   d=ar.getEnc()->ft->getElementAt(ar.getEnc(),idx,&rc);
-   if (rc.rc!=CMPI_RC_OK) throw rc.rc;
-   v=(unsigned int)d.value.uint32;
 }
 
 void CmpiArrayIdx::operator>>(CMPIUint64& v) {

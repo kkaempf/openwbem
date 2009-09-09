@@ -186,17 +186,56 @@ extern "C" {
 
 
    typedef unsigned char              CMPIBoolean;
-   typedef unsigned short             CMPIChar16;
    typedef unsigned char              CMPIUint8;
-   typedef unsigned short             CMPIUint16;
-   typedef unsigned long              CMPIUint32;
-   typedef unsigned long long         CMPIUint64;
    typedef signed char                CMPISint8;
+
+#if BLOCXX_SIZEOF_SHORT_INT == 2
+   typedef unsigned short             CMPIChar16;
+   typedef unsigned short             CMPIUint16;
    typedef short                      CMPISint16;
+#elif BLOCXX_SIZEOF_INT == 2
+	typedef unsigned int               CMPIChar16;
+   typedef unsigned int               CMPIUint16;
+   typedef int                        CMPISint16;
+#else
+#error "Compiler must support 16-bit integer"
+#endif
+
+#if BLOCXX_SIZEOF_INT == 4
+	typedef unsigned int               CMPIUint32;
+   typedef int                        CMPISint32;
+#elif BLOCXX_SIZEOF_LONG_INT == 4
+   typedef unsigned long              CMPIUint32;
    typedef long                       CMPISint32;
+#else
+#error "Compiler must support 32-bit integer"
+#endif
+
+#if BLOCXX_SIZEOF_LONG_INT == 8
+	typedef unsigned long              CMPIUint64;
+   typedef long                       CMPISint64;
+#elif BLOCXX_SIZEOF_LONG_LONG_INT == 8
+   typedef unsigned long long         CMPIUint64;
    typedef long long                  CMPISint64;
+#else
+#error "Compiler must support 64-bit integer"
+#endif
+
+#if BLOCXX_SIZEOF_DOUBLE == 8
+	typedef double                     CMPIReal64;
+#elif BLOCXX_SIZEOF_LONG_DOUBLE == 8
+	typedef long double                CMPIReal64;
+#else
+#error "Compiler must support 64-bit real"
+#endif
+
+#if BLOCXX_SIZEOF_FLOAT == 4
    typedef float                      CMPIReal32;
-   typedef double                     CMPIReal64;
+#elif BLOCXX_SIZEOF_DOUBLE == 4
+	typedef double                     CMPIReal32;
+#else
+#error "Compiler must support 32-bit real"
+#endif
 
    typedef struct _CMPIValuePtr {
      void *ptr;

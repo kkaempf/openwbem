@@ -355,11 +355,13 @@ get(DB *dbp, DBT *kp)
 {
 	DBT data;
 
+	int returnValueIgnored; // Used for warning suppression.
+
 	switch (dbp->get(dbp, kp, &data, flags)) {
 	case 0:
-		(void)write(ofd, data.data, data.size);
+		returnValueIgnored = write(ofd, data.data, data.size);
 		if (ofd == STDOUT_FILENO)
-			(void)write(ofd, "\n", 1);
+			returnValueIgnored = write(ofd, "\n", 1);
 		break;
 	case -1:
 		err("line %lu: get: %s", lineno, strerror(errno));
@@ -367,13 +369,15 @@ get(DB *dbp, DBT *kp)
 	case 1:
 #define	NOSUCHKEY	"get failed, no such key\n"
 		if (ofd != STDOUT_FILENO)
-			(void)write(ofd, NOSUCHKEY, sizeof(NOSUCHKEY) - 1);
+			returnValueIgnored = write(ofd, NOSUCHKEY, sizeof(NOSUCHKEY) - 1);
 		else
 			(void)fprintf(stderr, "%lu: %.*s: %s",
 			    lineno, (int)MIN(kp->size, 20), (char*)kp->data, NOSUCHKEY);
 #undef	NOSUCHKEY
 		break;
 	}
+
+	(void) returnValueIgnored;
 }
 
 void
@@ -394,6 +398,8 @@ getdata(DB *dbp, DBT *kp, DBT *dp)
 void
 put(DB *dbp, DBT *kp, DBT *dp)
 {
+	int returnValueIgnored; // Used for warning suppression.
+
 	switch (dbp->put(dbp, kp, dp, flags)) {
 	case 0:
 		break;
@@ -401,14 +407,17 @@ put(DB *dbp, DBT *kp, DBT *dp)
 		err("line %lu: put: %s", lineno, strerror(errno));
 		/* NOTREACHED */
 	case 1:
-		(void)write(ofd, NOOVERWRITE, sizeof(NOOVERWRITE) - 1);
+		returnValueIgnored = write(ofd, NOOVERWRITE, sizeof(NOOVERWRITE) - 1);
 		break;
 	}
+	(void) returnValueIgnored;
 }
 
 void
 rem(DB *dbp, DBT *kp)
 {
+	int returnValueIgnored; // Used for warning suppression.
+
 	switch (dbp->del(dbp, kp, flags)) {
 	case 0:
 		break;
@@ -418,7 +427,7 @@ rem(DB *dbp, DBT *kp)
 	case 1:
 #define	NOSUCHKEY	"rem failed, no such key\n"
 		if (ofd != STDOUT_FILENO)
-			(void)write(ofd, NOSUCHKEY, sizeof(NOSUCHKEY) - 1);
+			returnValueIgnored = write(ofd, NOSUCHKEY, sizeof(NOSUCHKEY) - 1);
 		else if (flags != R_CURSOR)
 			(void)fprintf(stderr, "%lu: %.*s: %s", 
 			    lineno, (int)MIN(kp->size, 20), (char*)kp->data, NOSUCHKEY);
@@ -428,6 +437,7 @@ rem(DB *dbp, DBT *kp)
 #undef	NOSUCHKEY
 		break;
 	}
+	(void) returnValueIgnored;
 }
 
 void
@@ -447,11 +457,13 @@ seq(DB *dbp, DBT *kp)
 {
 	DBT data;
 
+	int returnValueIgnored; // Used for warning suppression.
+
 	switch (dbp->seq(dbp, kp, &data, flags)) {
 	case 0:
-		(void)write(ofd, data.data, data.size);
+		returnValueIgnored = write(ofd, data.data, data.size);
 		if (ofd == STDOUT_FILENO)
-			(void)write(ofd, "\n", 1);
+			returnValueIgnored = write(ofd, "\n", 1);
 		break;
 	case -1:
 		err("line %lu: seq: %s", lineno, strerror(errno));
@@ -459,7 +471,7 @@ seq(DB *dbp, DBT *kp)
 	case 1:
 #define	NOSUCHKEY	"seq failed, no such key\n"
 		if (ofd != STDOUT_FILENO)
-			(void)write(ofd, NOSUCHKEY, sizeof(NOSUCHKEY) - 1);
+			returnValueIgnored = write(ofd, NOSUCHKEY, sizeof(NOSUCHKEY) - 1);
 		else if (flags == R_CURSOR)
 			(void)fprintf(stderr, "%lu: %.*s: %s", 
 			    lineno, (int)MIN(kp->size, 20), (char*)kp->data, NOSUCHKEY);
@@ -469,6 +481,7 @@ seq(DB *dbp, DBT *kp)
 #undef	NOSUCHKEY
 		break;
 	}
+	(void) returnValueIgnored;
 }
 
 void
@@ -476,6 +489,8 @@ dump(DB *dbp, int rev)
 {
 	DBT key, data;
 	int flags, nflags;
+
+	int returnValueIgnored; // Used for warning suppression.
 
 	if (rev) {
 		flags = R_LAST;
@@ -485,23 +500,28 @@ dump(DB *dbp, int rev)
 		nflags = R_NEXT;
 	}
 	for (;; flags = nflags)
-		switch (dbp->seq(dbp, &key, &data, flags)) {
+	{
+		switch (dbp->seq(dbp, &key, &data, flags))
+		{
 		case 0:
-			(void)write(ofd, data.data, data.size);
+			returnValueIgnored = write(ofd, data.data, data.size);
 			if (ofd == STDOUT_FILENO)
-				(void)write(ofd, "\n", 1);
+				returnValueIgnored = write(ofd, "\n", 1);
 			break;
 		case 1:
 			goto done;
 		case -1:
 			err("line %lu: (dump) seq: %s",
-			    lineno, strerror(errno));
+				lineno, strerror(errno));
 			/* NOTREACHED */
 		}
+	}
+
+	(void) returnValueIgnored;
 done:	return;
+
 }
 
-	
 OW_UInt32
 setflags(char *s)
 {
@@ -664,6 +684,8 @@ rfile(char *name, size_t *lenp)
 	int fd;
 	char *np;
 
+	int returnValueIgnored; // Used for warning suppression
+
 	for (; isspace((int)*name); ++name)
 	{
 	}
@@ -678,9 +700,11 @@ rfile(char *name, size_t *lenp)
 #endif
 	if ((p = (void *)malloc((OW_UInt32)sb.st_size)) == NULL)
 		err("%s", strerror(errno));
-	(void)read(fd, p, (int)sb.st_size);
+
+	returnValueIgnored = read(fd, p, (int)sb.st_size);
 	*lenp = sb.st_size;
-	(void)close(fd);
+	(void) close(fd);
+	(void) returnValueIgnored;
 	return (p);
 }
 

@@ -1550,7 +1550,7 @@ namespace
 			return x.errnum;
 		}
 		int client_descriptor = x.descriptor;
-		int exit_status;
+		int exit_status = PrivilegeCommon::EXIT_FAILED_INIT;
 		String config_dir, app_name, user_name, mon_user_name;
 		LoggerSpec ls;
 		bool has_logger = false;

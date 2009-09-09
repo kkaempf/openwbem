@@ -245,6 +245,19 @@ daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool res
 
 	if (!dbgFlg)
 	{
+		if( !getenv("OWNOCHDIR") )
+		{
+			OW_LOG_DEBUG3(logger, "Changing directories to / ...");
+			if( chdir("/") == -1 )
+			{
+				OW_THROW_ERRNO_MSG(DaemonException, "Failed to change directories to /");
+			}
+		}
+		else
+		{
+			OW_LOG_DEBUG(logger, "Not changing directories because the OWNOCHDIR environment variable is set.");
+		}
+
 		pid = fork();
 		switch (pid)
 		{
@@ -297,23 +310,17 @@ daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool res
 				_exit(0);
 		}
 
-		if( !getenv("OWNOCHDIR") )
-		{
-			OW_LOG_DEBUG3(logger, "Changing directories to / ...");
-			chdir("/");
-		}
-		else
-		{
-			OW_LOG_DEBUG(logger, "Not changing directories because the OWNOCHDIR environment variable is set.");
-		}
-
 		// reattach stdin, stdout, stderr
 		close(0);
 		close(1);
 		close(2);
 		open("/dev/null", O_RDONLY);
 		open("/dev/null", O_WRONLY);
-		dup(1);
+
+		// dup() reports a warning if the return value is ignored.  We can't do
+		// anything about it failing, so we will just ignore it.
+		int returnValueIgnored = dup(1);
+		(void) returnValueIgnored;
 
 		// to prevent a race condition between parent and child, block the signals now!
 

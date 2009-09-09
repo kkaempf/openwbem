@@ -43,13 +43,11 @@ class CmpiArrayIdx {
    void operator=(const CMPISint8);
    void operator=(const CMPISint16);
    void operator=(const CMPISint32);
-   void operator=(const int);
    void operator=(const CMPISint64);
 
    void operator=(const CMPIUint8);
    void operator=(const CMPIUint16);
    void operator=(const CMPIUint32);
-   void operator=(const unsigned int);
    void operator=(const CMPIUint64);
 
    void operator>>(CmpiString&);
@@ -57,13 +55,11 @@ class CmpiArrayIdx {
    void operator>>(CMPISint8&);
    void operator>>(CMPISint16&);
    void operator>>(CMPISint32&);
-   void operator>>(int&);
    void operator>>(CMPISint64&);
 
    void operator>>(CMPIUint8&);
    void operator>>(CMPIUint16&);
    void operator>>(CMPIUint32&);
-   void operator>>(unsigned int&);
    void operator>>(CMPIUint64&);
 };
 

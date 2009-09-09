@@ -133,7 +133,8 @@ writePid(const char *pidfile)
 	if (OWf.tryLock() == -1)
 	{
 		lerrno = errno;
-		fscanf(f, "%d", &pid);
+		int ignored = fscanf(f, "%d", &pid);
+		(void) ignored;
 		fclose(f);
 		errno = lerrno;
 		return -1;

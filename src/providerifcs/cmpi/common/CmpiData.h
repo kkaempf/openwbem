@@ -88,10 +88,6 @@ class CmpiData {
    */
    inline CmpiData(CMPISint32 d)
       { data.value.sint32=d; data.type=CMPI_sint32;}
-   /** Constructor - singed 32 bit as input.
-   */
-   inline CmpiData(int d)
-      { data.value.sint32=d; data.type=CMPI_sint32;}
    /** Constructor - singed 64 bit as input.
    */
    inline CmpiData(CMPISint64 d)
@@ -108,10 +104,6 @@ class CmpiData {
    /** Constructor - unsinged 32 bit as input.
    */
    inline CmpiData(CMPIUint32 d)
-      { data.value.sint32=d; data.type=CMPI_uint32;}
-   /** Constructor - unsinged 32 bit as input.
-   */
-   inline CmpiData(unsigned int d)
       { data.value.sint32=d; data.type=CMPI_uint32;}
    /** Constructor - unsinged 64 bit as input.
    */
@@ -159,12 +151,6 @@ class CmpiData {
       { if (data.type!=CMPI_sint32) throw CMPI_RC_ERR_TYPE_MISMATCH;
         else v=data.value.sint32;
       }
-   /** Extracting signed 32 bit.
-   */
-   inline void operator>>(int& v)
-      { if (data.type!=CMPI_sint32) throw CMPI_RC_ERR_TYPE_MISMATCH;
-        else v=data.value.sint32;
-      }
    /** Extracting signed 64 bit.
    */
    inline void operator>>(CMPISint64& v)
@@ -187,12 +173,6 @@ class CmpiData {
    /** Extracting unsigned 32 bit.
    */
    inline void operator>>(CMPIUint32& v)
-      { if (data.type!=CMPI_uint32) throw CMPI_RC_ERR_TYPE_MISMATCH;
-        else v=data.value.uint32;
-      }
-   /** Extracting unsigned 32 bit.
-   */
-   inline void operator>>(unsigned int& v)
       { if (data.type!=CMPI_uint32) throw CMPI_RC_ERR_TYPE_MISMATCH;
         else v=data.value.uint32;
       }
