@@ -57,7 +57,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_XMLPrettyPrint.hpp"
 #include "OW_CIMParamValue.hpp"
-#include "OW_Socket.hpp"
+#include "blocxx/Socket.hpp"
 #include "OW_URL.hpp"
 #ifdef OW_HAVE_OPENSSL
 #include <openssl/ssl.h>

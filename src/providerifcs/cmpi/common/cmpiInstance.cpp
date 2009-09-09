@@ -22,6 +22,8 @@
 #include "cmpisrv.h"
 #include "OW_CIMInstance.hpp"
 
+#include <cstring>
+
 // TEST
 #include <iostream>
 using std::cout;
@@ -192,8 +194,15 @@ static CMPIStatus instSetPropertyFilter(CMPIInstance* eInst,
 		CMReturn(CMPI_RC_ERR_FAILED);
 	}
 
-	for(s = 0, i = 0; propertyList[i]; i++, s++);
-	for(i = 0; keys[i]; i++, s++);
+	for(s = 0, i = 0; propertyList[i]; i++, s++)
+	{
+		// Empty
+	}
+
+	for(i = 0; keys[i]; i++, s++)
+	{
+		// Empty
+	}
 
 	list = (char**) malloc( (s+2) * sizeof(char*));
 

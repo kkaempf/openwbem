@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "blocxx/Mutex.hpp"
 #include "blocxx/SocketAddress.hpp"
-#include "OW_Socket.hpp"
+#include "blocxx/Socket.hpp"
 #include "OW_ServiceIFC.hpp"
 #include "OW_URL.hpp"
 #include "blocxx/ThreadPool.hpp"

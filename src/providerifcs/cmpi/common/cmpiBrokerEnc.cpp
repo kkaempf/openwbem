@@ -26,6 +26,8 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_Logger.hpp"
 
+#include <cstring>
+
 namespace
 {
 	const OpenWBEM::String COMPONENT_NAME("ow.provider.cmpi.ifc");
@@ -227,7 +229,7 @@ static CMPIBoolean mbEncClassPathIsA(const CMPIBroker *, const CMPIObjectPath *e
 	}
 	OpenWBEM::CIMObjectPath  scp(*cop);
 	scp.setClassName(cc->getSuperClass());
-																				
+
 	for (; !scp.getClassName().empty(); )
 	{
 		cc=mbGetClass(0,scp);
@@ -246,7 +248,7 @@ CMPIBoolean mbEncIsOfType(const CMPIBroker *mb, const void *o, const char *type,
 		CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);
 		return 0;
 	}
-																				
+
 	CMSetStatus(rc,CMPI_RC_OK);
 
 	if (obj->ftab==(void*)CMPI_Instance_Ftab &&
@@ -266,7 +268,7 @@ CMPIBoolean mbEncIsOfType(const CMPIBroker *mb, const void *o, const char *type,
 	*/
 	 if (obj->ftab!=(void*)CMPI_Array_Ftab &&
 		strcmp(type,"CMPIArray")==0) return 1;
-																				
+
 	sprintf(msg,"** Object not recognized (%p) **",o);
 	CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);
 	return 0;
@@ -282,9 +284,9 @@ static CMPIString* mbEncGetType(const CMPIBroker *mb, const void *o, CMPIStatus 
 		CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);
 		return NULL;
 	}
-																				
+
 	CMSetStatus(rc,CMPI_RC_OK);
-																				
+
 	if (obj->ftab==(void*)CMPI_Instance_Ftab)
 		return mb->eft->newString(mb,const_cast<char*>("CMPIInstance"),rc);
 	if (obj->ftab!=(void*)CMPI_ObjectPath_Ftab)
@@ -302,7 +304,7 @@ static CMPIString* mbEncGetType(const CMPIBroker *mb, const void *o, CMPIStatus 
 	*/
 	if (obj->ftab!=(void*)CMPI_Array_Ftab)
 		return mb->eft->newString(mb,const_cast<char*>("CMPIArray"),rc);
-																				
+
 	sprintf(msg,"** Object not recognized (%p) **",o);
 	CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);
 	return NULL;
@@ -311,11 +313,11 @@ static CMPIString* mbEncGetType(const CMPIBroker *mb, const void *o, CMPIStatus 
 #if defined (CMPI_VER_85)
 #if 0 // need to port to OW
 static Formatter::Arg formatValue(va_list *argptr, CMPIStatus *rc) {
-																				
+
    CMPIValue *val=va_arg(*argptr,CMPIValue*);
    CMPIType type=va_arg(*argptr,int);
    CMSetStatus(rc,CMPI_RC_OK);
-																				
+
    if ((type & (CMPI_UINT|CMPI_SINT))==CMPI_UINT) {
 	 CMPIUint64 u64;
 	  switch (type) {
@@ -340,10 +342,10 @@ static Formatter::Arg formatValue(va_list *argptr, CMPIStatus *rc) {
    else if (type==CMPI_string)
 	  return Formatter::Arg((const char*)CMGetCharsPtr(val->string,NULL));
    else if (type==CMPI_real32)  return Formatter::Arg((CMPIReal64)val->real32);
-																				
+
    else if (type==CMPI_real64)  return Formatter::Arg(val->real64);
    else if (type==CMPI_boolean) return Formatter::Arg((Boolean)val->boolean);
-																				
+
    CMSetStatus(rc,CMPI_RC_ERR_INVALID_PARAMETER);
    return Formatter::Arg((Boolean)0);
 }
@@ -351,7 +353,7 @@ static Formatter::Arg formatValue(va_list *argptr, CMPIStatus *rc) {
 
 CMPIString* mbEncGetMessage(const CMPIBroker *, const char *msgId, const char *defMsg,
 			CMPIStatus* rc, unsigned int count, ...) {
-#if 0 
+#if 0
    MessageLoaderParms parms(msgId,defMsg);
    //cout<<"::: mbEncGetMessage() count: "<<count<<endl;
    if (count>0) {
@@ -383,14 +385,14 @@ CMPIString* mbEncGetMessage(const CMPIBroker *, const char *msgId, const char *d
    String nMsg=MessageLoader::getMessage(parms);
    return string2CMPIString(nMsg);
 #endif // #if 0
-   return string2CMPIString(OpenWBEM::String(defMsg)); 
+   return string2CMPIString(OpenWBEM::String(defMsg));
 }
 #endif
 
 // TODO logMessage() and trace()
 
-CMPIStatus mbEncLogMessage(const CMPIBroker* mb, int severity, 
-						   const char* id, const char* text, 
+CMPIStatus mbEncLogMessage(const CMPIBroker* mb, int severity,
+						   const char* id, const char* text,
 						   const CMPIString* stringArg)
 {
 	CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -431,10 +433,10 @@ CMPIStatus mbEncLogMessage(const CMPIBroker* mb, int severity,
 		}
 	}
 
-	return rc; 
+	return rc;
 }
 
-CMPIStatus mbEncTrace(const CMPIBroker* mb, int level, const char* component, 
+CMPIStatus mbEncTrace(const CMPIBroker* mb, int level, const char* component,
 					  const char* text, const CMPIString* stringArg)
 {
 	return mbEncLogMessage(mb, level, component, text, stringArg);
@@ -458,7 +460,7 @@ CMPICurrentVersion,
 	mbEncGetType,
 #if defined (CMPI_VER_85)
 	mbEncGetMessage,
-	mbEncLogMessage, 
+	mbEncLogMessage,
 	mbEncTrace
 #endif
 };

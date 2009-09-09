@@ -39,7 +39,7 @@
 #include "OW_HTTPSvrConnection.hpp"
 #include "blocxx/ServerSocket.hpp"
 #include "OW_IOException.hpp"
-#include "OW_Socket.hpp"
+#include "blocxx/Socket.hpp"
 #include "blocxx/Format.hpp"
 #include "blocxx/SelectableIFC.hpp"
 #include "blocxx/SelectableCallbackIFC.hpp"

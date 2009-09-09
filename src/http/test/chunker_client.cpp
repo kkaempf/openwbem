@@ -31,7 +31,7 @@
 #include "OW_config.h"
 #include <config.h>
 #endif
-#include "OW_Socket.hpp"
+#include "blocxx/Socket.hpp"
 #include "blocxx/SocketAddress.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "blocxx/String.hpp"

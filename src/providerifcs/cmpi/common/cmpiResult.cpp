@@ -32,7 +32,7 @@ static CMPIStatus resultReturnData(const CMPIResult* eRes, const CMPIValue* data
 	if(eRes->ft==CMPI_ResultMethOnStack_Ftab)
 	{
 		CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
-		if(((CMPI_Result*)eRes)->flags & RESULT_set==0)
+		if((((CMPI_Result*)eRes)->flags & RESULT_set) == 0)
 		{
 			((CMPI_Result*)eRes)->flags|=RESULT_set;
 		}
@@ -41,7 +41,7 @@ static CMPIStatus resultReturnData(const CMPIResult* eRes, const CMPIValue* data
 	else
 	{
 		CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
-		if(((CMPI_Result*)eRes)->flags & RESULT_set==0)
+		if((((CMPI_Result*)eRes)->flags & RESULT_set) == 0)
 		{
 			((CMPI_Result*)eRes)->flags|=RESULT_set;
 		}

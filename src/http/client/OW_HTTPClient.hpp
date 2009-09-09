@@ -36,7 +36,7 @@
 #ifndef OW_HTTPCLIENT_HPP_
 #define OW_HTTPCLIENT_HPP_
 #include "OW_config.h"
-#include "OW_Socket.hpp"
+#include "blocxx/Socket.hpp"
 #include "blocxx/AutoPtr.hpp"
 #include "blocxx/Map.hpp"
 #include "OW_HTTPUtils.hpp"

@@ -65,7 +65,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_AuthorizerManager.hpp"
 #include "OW_AuthorizerIFC.hpp"
-#include "OW_Socket.hpp"
+#include "blocxx/Socket.hpp"
 #include "blocxx/LogAppender.hpp"
 #include "blocxx/MultiAppender.hpp"
 #include "blocxx/CerrAppender.hpp"

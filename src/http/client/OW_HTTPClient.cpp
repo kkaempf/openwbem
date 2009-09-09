@@ -34,6 +34,7 @@
  */
 
 #include "OW_config.h"
+#include "OW_ConfigOpts.hpp"
 #include "OW_HTTPClient.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
@@ -51,6 +52,7 @@
 #include "blocxx/SSLCtxMgr.hpp"
 #include "OW_CIMErrorException.hpp"
 #include "OW_CIMException.hpp"
+
 
 #include <fstream>
 #include <cerrno>
@@ -233,7 +235,7 @@ void HTTPClient::setUrl()
 #ifdef OW_WIN32
 		OW_THROW(SocketException, "IPC Method not currently available on Win32");
 #else
-		m_serverAddress = SocketAddress::getUDS(OW_DOMAIN_SOCKET_NAME);
+		m_serverAddress = SocketAddress::getUDS(OW_DEFAULT_HTTP_SERVER_UDS_FILENAME);
 #endif
 	}
 	else if (isUInt16(m_url.port))

@@ -47,7 +47,7 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "blocxx/Mutex.hpp"
 #include "blocxx/MutexLock.hpp"
-#include "OW_Socket.hpp"
+#include "blocxx/Socket.hpp"
 #include "OW_CppProviderIFC.hpp"
 #include "OW_SafeLibCreate.hpp"
 #include "OW_ConfigFile.hpp"

@@ -34,7 +34,7 @@
 
 #include "OW_config.h"
 #include "blocxx/SocketAddress.hpp"
-#include "OW_Socket.hpp"
+#include "blocxx/Socket.hpp"
 #include "blocxx/String.hpp"
 #include "OW_Exception.hpp"
 #include "blocxx/Select.hpp"

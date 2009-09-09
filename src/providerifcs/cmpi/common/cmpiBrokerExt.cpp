@@ -33,18 +33,12 @@
  */
 
 #include "cmpisrv.h"
-//#include "OW_CIMException.hpp"
-//#include "OW_CIMProperty.hpp"
-//#include "OW_CIMObjectPath.hpp"
-//#include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_Logger.hpp"
 #include "blocxx/String.hpp"
 #include "blocxx/Thread.hpp"
-#include "OW_ThreadOnce.hpp"
 #include "blocxx/NonRecursiveMutex.hpp"
 #include "blocxx/NonRecursiveMutexLock.hpp"
-#include "OW_StaticAssert.hpp"
-#include "OW_MemoryBarrier.hpp"
+#include "blocxx/MemoryBarrier.hpp"
 #include <cstring>
 
 namespace

@@ -42,7 +42,7 @@
 #include "blocxx/String.hpp"
 #include "OW_HTTPServer.hpp"
 #include "OW_HTTPStatusCodes.hpp"
-#include "OW_Socket.hpp"
+#include "blocxx/Socket.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_CommonFwd.hpp"
