@@ -35,7 +35,6 @@
 #include "blocxx/SharedLibraryException.hpp"
 #include "blocxx/SharedLibraryLoader.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_SignalScope.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "blocxx/FileSystem.hpp"
 #include "OW_NoSuchProviderException.hpp"
@@ -88,10 +87,10 @@ CMPIPrepareContext(
 
 	OperationContext &ctx = env->getOperationContext();
 
-	String user = ctx.getStringDataWithDefault(OperationContext::USER_NAME); 
+	String user = ctx.getStringDataWithDefault(OperationContext::USER_NAME);
 	if (!user.empty())
 	{
-	    args->append(CIMParamValue("CMPIPrincipal", CIMValue(user))); 
+	    args->append(CIMParamValue("CMPIPrincipal", CIMValue(user)));
 	}
 
 
@@ -132,7 +131,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				CMPI_ThreadContext thr(&_broker, &eCtx); 
+				CMPI_ThreadContext thr(&_broker, &eCtx);
 				miVector.instMI->ft->cleanup(miVector.instMI, &eCtx, true);
 			}
 
@@ -141,7 +140,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				CMPI_ThreadContext thr(&_broker, &eCtx); 
+				CMPI_ThreadContext thr(&_broker, &eCtx);
 				miVector.assocMI->ft->cleanup(miVector.assocMI, &eCtx, true);
 			}
 
@@ -150,7 +149,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				CMPI_ThreadContext thr(&_broker, &eCtx); 
+				CMPI_ThreadContext thr(&_broker, &eCtx);
 				miVector.methMI->ft->cleanup(miVector.methMI, &eCtx, true);
 			}
 
@@ -159,8 +158,8 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				CMPI_ThreadContext thr(&_broker, &eCtx); 
-				miVector.propMI->ft->cleanup(miVector.propMI, &eCtx, true); 
+				CMPI_ThreadContext thr(&_broker, &eCtx);
+				miVector.propMI->ft->cleanup(miVector.propMI, &eCtx, true);
 			}
 
 			// If indication provider, allow indication prov cleanup to run
@@ -168,16 +167,16 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				CMPI_ThreadContext thr(&_broker, &eCtx); 
-				miVector.indMI->ft->cleanup(miVector.indMI, &eCtx, true); 
+				CMPI_ThreadContext thr(&_broker, &eCtx);
+				miVector.indMI->ft->cleanup(miVector.indMI, &eCtx, true);
 			}
 
 			it->second.setNull();
 			it++;
 		}
-	
+
 		m_provs.clear();
-	
+
 // BMMU: have to cleanup polled providers
 		for (size_t i = 0; i < m_noidProviders.size(); i++)
 		{
@@ -185,12 +184,12 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			CMPIInstanceMI * mi = m_noidProviders[i]->instMI;
 			::CMPIOperationContext context;
 			CMPI_ContextOnStack eCtx(context);
-			CMPI_ThreadContext thr(&_broker, &eCtx); 
+			CMPI_ThreadContext thr(&_broker, &eCtx);
 			mi->ft->cleanup(mi, &eCtx);
 			m_noidProviders[i].setNull();
 #endif
 		}
-	
+
 		m_noidProviders.clear();
 	}
 	catch (...)
@@ -379,7 +378,7 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
    }
 
    const StringArray libPaths = env->getMultiConfigItem(
-	   ConfigOpts::CMPIPROVIFC_PROV_LOCATION_opt, 
+	   ConfigOpts::CMPIPROVIFC_PROV_LOCATION_opt,
 	   String(OW_DEFAULT_CMPIPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
 	   OW_PATHNAME_SEPARATOR);
 
@@ -393,7 +392,7 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 			 "directory: %1", libPath));
 		  return;
 	   }
-	
+
 	   for (size_t i = 0; i < dirEntries.size(); i++)
 	   {
 			if (!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
@@ -411,7 +410,7 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 			libName += dirEntries[i];
 			SharedLibraryRef theLib = ldr->loadSharedLibrary(libName);
 			String guessProvId = dirEntries[i].substring(3,dirEntries[i].length()-6);
-			
+
 			if (!theLib)
 			{
 				 OW_LOG_ERROR(lgr, Format("CMPI provider %1 ifc failed to load library: %2", guessProvId, libName));
@@ -480,11 +479,11 @@ CMPIProviderIFC::loadProvider(
 	{
 		creationFuncName = provId.substring(4) + "_Create_InstanceMI";
 	}
-	else 
+	else
 	{
 		creationFuncName = provId + "_Create_InstanceMI";
 	}
-	
+
 	if (theLib->getFunctionPointer(creationFuncName, miVector.createInstMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Instance;
@@ -586,7 +585,7 @@ CMPIProviderIFC::loadProvider(
 		miVector.miTypes |= CMPI_MIType_Indication;
 		specificMode = 1;
 	}
-				
+
 	if (miVector.miTypes == 0)
 	{
 		OW_LOG_ERROR(lgr, Format("CMPI provider ifc: Library %1 does not contain"
@@ -613,7 +612,7 @@ CMPIProviderIFC::loadProvider(
 	broker.eft = CMPI_BrokerEnc_Ftab;
 	::CMPIOperationContext opc;
 	CMPI_ContextOnStack eCtx(opc);
-	CMPI_ThreadContext thr(&broker, &eCtx); 
+	CMPI_ThreadContext thr(&broker, &eCtx);
 
 	if (miVector.genericMode)
 	{
@@ -712,7 +711,7 @@ CMPIProviderIFC::getProvider(
 	}
 
 	const StringArray libPaths = env->getMultiConfigItem(
-		ConfigOpts::CMPIPROVIFC_PROV_LOCATION_opt, 
+		ConfigOpts::CMPIPROVIFC_PROV_LOCATION_opt,
 		String(OW_DEFAULT_CMPIPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
 		OW_PATHNAME_SEPARATOR);
 
@@ -726,12 +725,12 @@ CMPIProviderIFC::getProvider(
 		libName += OW_SHAREDLIB_EXTENSION;
 		OW_LOG_DEBUG3(lgr, Format("CMPIProviderIFC::getProvider loading library: %1",
 			libName));
-	
+
 		if (!FileSystem::exists(libName))
 		{
 			continue;
 		}
-		
+
 		CMPIFTABLERef prvtbl = loadProvider(env, libName, _broker);
 		if (!prvtbl)
 		{
@@ -745,7 +744,7 @@ CMPIProviderIFC::getProvider(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 CMPIProviderIFC::doUnloadProviders(
 	const ProviderEnvironmentIFCRef& env)
 {
@@ -767,7 +766,7 @@ CMPIProviderIFC::doUnloadProviders(
 
 	DateTime dt;
 	dt.setToCurrent();
-	CMPIStatus rc = {CMPI_RC_OK, NULL}; 
+	CMPIStatus rc = {CMPI_RC_OK, NULL};
 	MutexLock ml(m_guard);
 	ProviderMap::iterator it = m_provs.begin();
 	while (it != m_provs.end())
@@ -776,7 +775,7 @@ CMPIProviderIFC::doUnloadProviders(
 		provDt.addMinutes(iTimeWindow);
 		if(provDt < dt)
 		{
-			bool unload = true; 
+			bool unload = true;
 			//CMPIInstanceMI * mi = it->second->instMI;
 			MIs miVector = it->second->miVector;
 
@@ -785,13 +784,13 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				CMPI_ThreadContext thr(&_broker, &eCtx); 
+				CMPI_ThreadContext thr(&_broker, &eCtx);
 				rc=miVector.instMI->ft->cleanup(miVector.instMI, &eCtx, false);
 				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
 					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
 					|| rc.rc == CMPI_RC_NEVER_UNLOAD)
 				{
-					unload = false; 
+					unload = false;
 				}
 			}
 
@@ -800,13 +799,13 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				CMPI_ThreadContext thr(&_broker, &eCtx); 
+				CMPI_ThreadContext thr(&_broker, &eCtx);
 				rc=miVector.assocMI->ft->cleanup(miVector.assocMI, &eCtx, false);
 				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
 					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
 					|| rc.rc == CMPI_RC_NEVER_UNLOAD)
 				{
-					unload = false; 
+					unload = false;
 				}
 			}
 
@@ -815,13 +814,13 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				CMPI_ThreadContext thr(&_broker, &eCtx); 
-				rc=miVector.methMI->ft->cleanup(miVector.methMI, &eCtx, false); 
+				CMPI_ThreadContext thr(&_broker, &eCtx);
+				rc=miVector.methMI->ft->cleanup(miVector.methMI, &eCtx, false);
 				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
 					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
 					|| rc.rc == CMPI_RC_NEVER_UNLOAD)
 				{
-					unload = false; 
+					unload = false;
 				}
 			}
 
@@ -830,13 +829,13 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				CMPI_ThreadContext thr(&_broker, &eCtx); 
-				rc=miVector.propMI->ft->cleanup(miVector.propMI, &eCtx, false); 
+				CMPI_ThreadContext thr(&_broker, &eCtx);
+				rc=miVector.propMI->ft->cleanup(miVector.propMI, &eCtx, false);
 				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
 					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
 					|| rc.rc == CMPI_RC_NEVER_UNLOAD)
 				{
-					unload = false; 
+					unload = false;
 				}
 			}
 
@@ -845,13 +844,13 @@ CMPIProviderIFC::doUnloadProviders(
 			{
 				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
-				CMPI_ThreadContext thr(&_broker, &eCtx); 
-				rc=miVector.indMI->ft->cleanup(miVector.indMI, &eCtx, false); 
+				CMPI_ThreadContext thr(&_broker, &eCtx);
+				rc=miVector.indMI->ft->cleanup(miVector.indMI, &eCtx, false);
 				if (rc.rc == CMPI_RC_ERR_NOT_SUPPORTED
 					|| rc.rc == CMPI_RC_DO_NOT_UNLOAD
 					|| rc.rc == CMPI_RC_NEVER_UNLOAD)
 				{
-					unload = false; 
+					unload = false;
 				}
 			}
 
