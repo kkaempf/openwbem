@@ -88,7 +88,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual InstanceProviderIFC* getInstanceProvider()
 	{
-		if (!m_instProv);
+		if (!m_instProv)
 		{
 			if (!m_prov->miVector.instMI)
 			{
@@ -109,7 +109,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 	virtual MethodProviderIFC* getMethodProvider()
 	{
-		if (!m_methProv);
+		if (!m_methProv)
 		{
 			if (!m_prov->miVector.methMI)
 			{
@@ -145,7 +145,7 @@ public:
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual AssociatorProviderIFC* getAssociatorProvider()
 	{
-		if (!m_assocProv);
+		if (!m_assocProv)
 		{
 			if (!m_prov->miVector.assocMI)
 			{
