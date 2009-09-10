@@ -45,7 +45,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "blocxx/Exec.hpp"
 #include "blocxx/FileSystem.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 
 #include <fstream>
 #include <iostream>

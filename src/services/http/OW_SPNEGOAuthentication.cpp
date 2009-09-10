@@ -44,7 +44,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_Exception.hpp"
 #include "blocxx/FileSystem.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "blocxx/Secure.hpp"
 
 namespace OW_NAMESPACE

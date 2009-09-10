@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_CppProviderIncludes.hpp"
 #include "OW_SessionLanguage.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 
 using namespace std;
 using namespace OpenWBEM;

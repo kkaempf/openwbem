@@ -38,7 +38,6 @@
 #include "blocxx/AutoPtr.hpp"
 #include "blocxx/ByteSwap.hpp"
 #include "OW_CIMBase.hpp"
-#include "OW_IOException.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include <cerrno>

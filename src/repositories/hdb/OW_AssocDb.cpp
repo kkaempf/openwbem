@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_AssocDb.hpp"
 #include "blocxx/DataStreams.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "blocxx/Format.hpp"
 #include "blocxx/AutoPtr.hpp"
 #include "OW_CIMObjectPath.hpp"

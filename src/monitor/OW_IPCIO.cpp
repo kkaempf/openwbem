@@ -38,7 +38,7 @@
 #include "blocxx/String.hpp"
 #include "blocxx/DescriptorUtils.hpp"
 #include "blocxx/Timeout.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "blocxx/Process.hpp"
 
 #include <unistd.h>

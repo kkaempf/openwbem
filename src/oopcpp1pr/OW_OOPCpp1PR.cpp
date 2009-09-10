@@ -57,7 +57,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_UserInfo.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "OW_CIMProtocolIFC.hpp"
 #include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_HTTPChunkedIStream.hpp"

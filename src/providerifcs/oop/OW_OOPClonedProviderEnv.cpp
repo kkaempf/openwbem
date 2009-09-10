@@ -32,7 +32,7 @@
 #include "OW_config.h"
 #include "OW_OOPClonedProviderEnv.hpp"
 #include "OW_BinarySerialization.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "blocxx/Format.hpp"
 #include "blocxx/LogMessage.hpp"

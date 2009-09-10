@@ -44,7 +44,7 @@
 #include "blocxx/Exec.hpp"
 #include "blocxx/UnnamedPipe.hpp"
 #include "blocxx/IOIFCStreamBuffer.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "blocxx/DateTime.hpp"
 #include "OW_OOPShuttingDownCallback.hpp"
 #include "OW_OOPProtocolIFC.hpp"

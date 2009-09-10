@@ -47,7 +47,7 @@
 #include "OW_CIMFlavor.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_CIMValueCast.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 
 namespace OW_NAMESPACE
 {

@@ -38,7 +38,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_CIMException.hpp"
 #include "blocxx/DataStreams.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "blocxx/Format.hpp"
 
 namespace OW_NAMESPACE

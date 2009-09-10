@@ -39,10 +39,14 @@
 #include "OW_Types.hpp"
 #include "OW_SerializableIFC.hpp"
 #include "OW_CommonFwd.hpp"
+#include "OW_Exception.hpp"
+#include "blocxx/IOException.hpp"
 #include <iosfwd>
 
 namespace OW_NAMESPACE
 {
+
+OW_DECLARE_APIEXCEPTION2(BadCIMSignature, IOException, OW_COMMON_API)
 
 /**
  * The CIMBase class is used as the base class for all CIM related classes.

@@ -42,7 +42,7 @@
 #include "blocxx/Format.hpp"
 #include "OW_WQLIFC.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "blocxx/Map.hpp"

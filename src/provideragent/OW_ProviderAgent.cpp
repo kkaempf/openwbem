@@ -40,7 +40,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "blocxx/SelectEngine.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "blocxx/Thread.hpp"
 #include "OW_ProviderAgentEnvironment.hpp"
 #include "OW_CppProviderBaseIFC.hpp"

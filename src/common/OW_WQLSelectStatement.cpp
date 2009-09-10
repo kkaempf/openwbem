@@ -34,7 +34,7 @@
 #include "OW_WQLCompile.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_BinarySerialization.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 
 #if defined(OW_HAVE_OSTREAM)
 #include <ostream>

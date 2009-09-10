@@ -47,7 +47,7 @@
 #include "OW_OOPCIMOMHandleConnectionRunner.hpp"
 #include "blocxx/DataStreams.hpp"
 #include "OW_OOPDataOStreamBuf.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "blocxx/SelectEngine.hpp"
 
 // The classes and functions defined in this file are not meant for general

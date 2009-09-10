@@ -44,7 +44,7 @@
 #include "OW_CIMUrl.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_BinarySerialization.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"

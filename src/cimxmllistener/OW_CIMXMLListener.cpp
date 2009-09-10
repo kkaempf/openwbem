@@ -54,7 +54,7 @@
 #include "blocxx/SelectEngine.hpp"
 #include "blocxx/SelectableIFC.hpp"
 #include "blocxx/SelectableCallbackIFC.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "blocxx/Thread.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ClientCIMOMHandle.hpp"

@@ -48,7 +48,7 @@
 #include "blocxx/TimeoutTimer.hpp"
 #include "blocxx/Bool.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 
 using namespace std;
 using namespace OpenWBEM;

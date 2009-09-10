@@ -40,7 +40,7 @@
 #include "blocxx/String.hpp"
 #include "blocxx/UnnamedPipe.hpp"
 #include "OW_Exception.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "blocxx/UserUtils.hpp"
 #include "OW_IfcsFwd.hpp"
 

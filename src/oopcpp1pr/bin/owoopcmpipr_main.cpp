@@ -36,7 +36,7 @@
 #include "blocxx/String.hpp"
 #include "blocxx/Format.hpp"
 #include "blocxx/FileSystem.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "blocxx/AutoDescriptor.hpp"
 #include "blocxx/UnnamedPipe.hpp"
 #include "OW_CMPIProviderIFC.hpp"

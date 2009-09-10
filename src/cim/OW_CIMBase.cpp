@@ -37,12 +37,13 @@
 #include "OW_CIMBase.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_IOException.hpp"
+#include "OW_ExceptionIds.hpp"
 #include "OW_BinarySerialization.hpp"
 #include <cstring>
 
 namespace OW_NAMESPACE
 {
+OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID(BadCIMSignature, IOException);
 
 using std::streambuf;
 using std::ostream;

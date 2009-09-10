@@ -38,7 +38,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_BinarySerialization.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"

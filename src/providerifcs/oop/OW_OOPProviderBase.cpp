@@ -41,7 +41,7 @@
 #include "blocxx/Process.hpp"
 #include "blocxx/UnnamedPipe.hpp"
 #include "blocxx/ThreadCancelledException.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "blocxx/MutexLock.hpp"

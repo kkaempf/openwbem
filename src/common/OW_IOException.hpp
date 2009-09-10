@@ -44,10 +44,8 @@
 #include "blocxx/IOException.hpp"
 #include "OW_Exception.hpp"
 
-namespace OW_NAMESPACE
-{
-OW_DECLARE_APIEXCEPTION2(BadCIMSignature, IOException, OW_COMMON_API)
-}
+#error OW_IOException.hpp is deprecated include "blocxx/IOException.hpp" instead. The definition of BadCIMSignature has moved to \
+OW_CIMBase.hpp
 
 #endif
 

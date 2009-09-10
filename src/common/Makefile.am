@@ -36,7 +36,6 @@ OW_ConfigException.cpp \
 OW_ConfigFile.cpp \
 OW_ConfigOpts.cpp \
 OW_dlSharedLibrary.cpp \
-OW_IOException.cpp \
 OW_LocalOperationContext.cpp \
 OW_NoSuchPropertyException.cpp \
 OW_NoSuchProviderException.cpp \

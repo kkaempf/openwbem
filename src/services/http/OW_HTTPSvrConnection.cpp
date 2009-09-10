@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_HTTPSvrConnection.hpp"
-#include "OW_IOException.hpp"
+#include "blocxx/IOException.hpp"
 #include "OW_HTTPStatusCodes.hpp"
 #include "blocxx/TempFileStream.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
