@@ -26,7 +26,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/xml
 
 check_SCRIPTS = set_test_libpath.sh
-EXTRA_DIST = set_test_libpath.sh.in run_make_check.sh
+EXTRA_DIST = set_test_libpath.sh.in
 BUILT_SOURCES = $(check_SCRIPTS)
 CLEANFILES = $(BUILT_SOURCES)
 
@@ -106,6 +106,7 @@ ConfigFileTestCases_SOURCES = \
 
 PrivilegeManagerMockObjectTestCases_SOURCES = \
 	PrivilegeManagerMockObjectTestCases.cpp \
+	PrivilegeManagerMockObjectTestCases.hpp \
 	MockObject.cpp \
 	MockObject.hpp
 PrivilegeManagerMockObjectTestCases_PROJECT_LIBS = \
@@ -115,6 +116,7 @@ PrivilegeManagerMockObjectTestCases_PROJECT_LIBS = \
 
 OW_HTTPChunkerTestCases_SOURCES = \
 	OW_HTTPChunkerTestCases.cpp
+	OW_HTTPChunkerTestCases.hpp
 OW_HTTPChunkerTestCases_PROJECT_LIBS = \
 	$(COMMON_PROJECT_LIBS) \
 	-L$(top_builddir)/src/http/common -lowhttpcommon \
@@ -123,6 +125,7 @@ OW_HTTPChunkerTestCases_PROJECT_LIBS = \
 
 OW_ProviderManagerTestCases_SOURCES = \
 	OW_ProviderManagerTestCases.cpp \
+	OW_ProviderManagerTestCases.hpp \
 	UnitTestEnvironment.cpp \
 	UnitTestEnvironment.hpp \
 	testSharedLibraryLoader.hpp
@@ -136,6 +139,7 @@ OW_ProviderManagerTestCases_PROJECT_LIBS = \
 
 OW_SharedLibraryTestCases_SOURCES = \
 	OW_SharedLibraryTestCases.cpp \
+	OW_SharedLibraryTestCases.hpp \
 	UnitTestEnvironment.cpp \
 	UnitTestEnvironment.hpp
 OW_SharedLibraryTestCases_INCLUDES = $(PROVIDER_INCLUDES)
@@ -144,8 +148,10 @@ OW_SharedLibraryTestCases_PROJECT_LIBS = \
 	$(PROVIDER_LIBS) \
 	$(CIMOM_LIBS)
 
+
 OW_SharedLibraryLoaderTestCases_SOURCES = \
 	OW_SharedLibraryLoaderTestCases.cpp \
+	OW_SharedLibraryLoaderTestCases.hpp \
 	UnitTestEnvironment.cpp \
 	UnitTestEnvironment.hpp
 OW_SharedLibraryLoaderTestCases_INCLUDES = \
@@ -158,6 +164,7 @@ OW_SharedLibraryLoaderTestCases_PROJECT_LIBS = \
 
 OW_ProviderMuxLoaderTestCases_SOURCES = \
 	OW_ProviderMuxLoaderTestCases.cpp \
+	OW_ProviderMuxLoaderTestCases.hpp \
 	UnitTestEnvironment.cpp \
 	UnitTestEnvironment.hpp \
 	testSharedLibraryLoader.hpp
@@ -171,6 +178,7 @@ OW_ProviderMuxLoaderTestCases_PROJECT_LIBS = \
 
 OW_ProviderMuxTestCases_SOURCES = \
 	OW_ProviderMuxTestCases.cpp \
+	OW_ProviderMuxTestCases.hpp \
 	UnitTestEnvironment.cpp \
 	UnitTestEnvironment.hpp
 OW_ProviderMuxTestCases_INCLUDES = \
@@ -183,16 +191,24 @@ OW_ProviderMuxTestCases_PROJECT_LIBS = \
 
 OW_LinuxSharedLibraryLoaderTestCases_SOURCES = \
 	OW_LinuxSharedLibraryLoaderTestCases.cpp \
+	OW_LinuxSharedLibraryLoaderTestCases.hpp \
 	testSharedLibraryLoader.hpp
 
-
-OW_XMLUnescapeTestCases_SOURCES = OW_XMLUnescapeTestCases.cpp
+OW_XMLUnescapeTestCases_SOURCES = \
+	OW_XMLUnescapeTestCases.cpp \
+	OW_XMLUnescapeTestCases.hpp
 OW_XMLUnescapeTestCases_PROJECT_LIBS = $(COMMON_PROJECT_LIBS) $(XML_LIBS)
 
-OW_XMLEscapeTestCases_SOURCES = OW_XMLEscapeTestCases.cpp
+
+OW_XMLEscapeTestCases_SOURCES = \
+	OW_XMLEscapeTestCases.cpp \
+	OW_XMLEscapeTestCases.hpp
 OW_XMLEscapeTestCases_PROJECT_LIBS = $(COMMON_PROJECT_LIBS) $(XML_LIBS)
 
-OW_ListenerAuthenticatorTestCases_SOURCES = OW_ListenerAuthenticatorTestCases.cpp
+
+OW_ListenerAuthenticatorTestCases_SOURCES = \
+	OW_ListenerAuthenticatorTestCases.cpp \
+	OW_ListenerAuthenticatorTestCases.hpp
 OW_ListenerAuthenticatorTestCases_INCLUDES = -I$(top_srcdir)/src/cimxmllistener
 OW_ListenerAuthenticatorTestCases_PROJECT_LIBS = \
 	$(COMMON_PROJECT_LIBS) \
@@ -203,60 +219,103 @@ OW_ListenerAuthenticatorTestCases_PROJECT_LIBS = \
 	-L$(top_builddir)/src/client -lowclient \
 	-L$(top_builddir)/src/services/http -lowservicehttp
 
-OW_CIMUrlTestCases_SOURCES = OW_CIMUrlTestCases.cpp
 
-OW_CIMClassTestCases_SOURCES = OW_CIMClassTestCases.cpp
+OW_CIMUrlTestCases_SOURCES = \
+	OW_CIMUrlTestCases.cpp \
+	OW_CIMUrlTestCases.hpp
 
-OW_CIMValueTestCases_SOURCES = OW_CIMValueTestCases.cpp
+OW_CIMClassTestCases_SOURCES = \
+	OW_CIMClassTestCases.cpp \
+	OW_CIMClassTestCases.hpp
 
-OW_StringArrayPropertyTestCases_SOURCES = OW_StringArrayPropertyTestCases.cpp
+OW_CIMValueTestCases_SOURCES = \
+	OW_CIMValueTestCases.cpp \
+	OW_CIMValueTestCases.hpp
 
-OW_CIMInstanceTestCases_SOURCES = OW_CIMInstanceTestCases.cpp
+OW_StringArrayPropertyTestCases_SOURCES = \
+	OW_StringArrayPropertyTestCases.cpp \
+	OW_StringArrayPropertyTestCases.hpp
 
-OW_CIMPropertyTestCases_SOURCES = OW_CIMPropertyTestCases.cpp
+OW_CIMInstanceTestCases_SOURCES = \
+	OW_CIMInstanceTestCases.cpp \
+	OW_CIMInstanceTestCases.hpp
+
+OW_CIMPropertyTestCases_SOURCES = \
+	OW_CIMPropertyTestCases.cpp \
+	OW_CIMPropertyTestCases.hpp
 OW_CIMPropertyTestCases_PROJECT_LIBS = $(COMMON_PROJECT_LIBS) $(XML_LIBS)
 
-OW_CIMDateTimeTestCases_SOURCES = OW_CIMDateTimeTestCases.cpp
 
-OW_HTTPUtilsTestCases_SOURCES = OW_HTTPUtilsTestCases.cpp
+OW_CIMDateTimeTestCases_SOURCES = \
+	OW_CIMDateTimeTestCases.cpp \
+	OW_CIMDateTimeTestCases.hpp
+
+OW_HTTPUtilsTestCases_SOURCES = \
+	OW_HTTPUtilsTestCases.cpp \
+	OW_HTTPUtilsTestCases.hpp
 OW_HTTPUtilsTestCases_PROJECT_LIBS = \
 	$(COMMON_PROJECT_LIBS) \
 	-L$(top_builddir)/src/http/common -lowhttpcommon \
 	$(Z_LIBS)
 
-CIMRepository2TestCases_SOURCES = CIMRepository2TestCases.cpp
 
-MOFCompilerTestCases_SOURCES = MOFCompilerTestCases.cpp
+CIMRepository2TestCases_SOURCES =  \
+	CIMRepository2TestCases.cpp
+	CIMRepository2TestCases.hpp
+
+MOFCompilerTestCases_SOURCES = \
+	MOFCompilerTestCases.cpp \
+	MOFCompilerTestCases.hpp
 MOFCompilerTestCases_INCLUDES = -I$(top_srcdir)/src/mof
 MOFCompilerTestCases_PROJECT_LIBS = \
 	$(COMMON_PROJECT_LIBS) \
 	-L$(top_builddir)/src/mof -lowmofc
 
-OperationContextTestCases_SOURCES = OperationContextTestCases.cpp
 
-OW_BinarySerializationTestCases_SOURCES = OW_BinarySerializationTestCases.cpp
+OperationContextTestCases_SOURCES = \
+	OperationContextTestCases.cpp \
+	OperationContextTestCases.hpp
 
-URLTestCases_SOURCES = URLTestCases.cpp
+OW_BinarySerializationTestCases_SOURCES = \
+	OW_BinarySerializationTestCases.cpp \
+	OW_BinarySerializationTestCases.hpp
 
-PrivilegeMonitorParserTestCases_SOURCES = PrivilegeMonitorParserTestCases.cpp
+URLTestCases_SOURCES = \
+	URLTestCases.cpp \
+	URLTestCases.hpp
+
+PrivilegeMonitorParserTestCases_SOURCES = \
+	PrivilegeMonitorParserTestCases.cpp \
+	PrivilegeMonitorParserTestCases.hpp
 PrivilegeMonitorParserTestCases_PROJECT_LIBS = \
 	$(COMMON_PROJECT_LIBS) $(PRIVMAN_LIBS)
 
-PrivilegeConfigTestCases_SOURCES = PrivilegeConfigTestCases.cpp
+
+PrivilegeConfigTestCases_SOURCES = \
+	PrivilegeConfigTestCases.cpp \
+	PrivilegeConfigTestCases.hpp
 PrivilegeConfigTestCases_PROJECT_LIBS = \
 	$(COMMON_PROJECT_LIBS) $(PRIVMAN_LIBS)
 
-XMLParserCoreTestCases_SOURCES = XMLParserCoreTestCases.cpp
+
+XMLParserCoreTestCases_SOURCES = \
+	XMLParserCoreTestCases.cpp \
+	XMLParserCoreTestCases.hpp
 XMLParserCoreTestCases_PROJECT_LIBS = $(COMMON_PROJECT_LIBS) $(XML_LIBS)
 
-EnvironmentVariablePatternsTestCases_SOURCES = EnvironmentVariablePatternsTestCases.cpp
+
+EnvironmentVariablePatternsTestCases_SOURCES = \
+	EnvironmentVariablePatternsTestCases.cpp \
+	EnvironmentVariablePatternsTestCases.hpp
 EnvironmentVariablePatternsTestCases_PROJECT_LIBS = \
 	$(COMMON_PROJECT_LIBS) $(PRIVMAN_LIBS)
+
 
 DummyProvEnv_INCLUDES = $(PROVIDER_INCLUDES)
 
 ConfigureCppIndicationExportXMLHTTPProviderTestCases_SOURCES = \
 	ConfigureCppIndicationExportXMLHTTPProviderTestCases.cpp \
+	ConfigureCppIndicationExportXMLHTTPProviderTestCases.hpp \
 	DummyProvEnv.cpp \
 	DummyProvEnv.hpp
 ConfigureCppIndicationExportXMLHTTPProviderTestCases_INCLUDES = \
@@ -268,11 +327,16 @@ ConfigureCppIndicationExportXMLHTTPProviderTestCases_PROJECT_LIBS = \
 	$(HTTP_CLIENT_LIBS) \
 	$(XML_LIBS)
 
-CppIndicationExportXMLHTTPProviderTestCases_SOURCES = CppIndicationExportXMLHTTPProviderTestCases.cpp
+
+CppIndicationExportXMLHTTPProviderTestCases_SOURCES = \
+	CppIndicationExportXMLHTTPProviderTestCases.cpp \
+	CppIndicationExportXMLHTTPProviderTestCases.hpp
 CppIndicationExportXMLHTTPProviderTestCases_INCLUDES = $(PROVIDER_INCLUDES)
+
 
 SendIndicationBurstTaskTestCases_SOURCES = \
 	SendIndicationBurstTaskTestCases.cpp \
+	SendIndicationBurstTaskTestCases.hpp \
 	CIMInstanceUtils.cpp \
 	CIMInstanceUtils.hpp \
 	MockIndicationExporter.cpp \
@@ -286,8 +350,10 @@ SendIndicationBurstTaskTestCases_PROJECT_LIBS = \
 	$(HTTP_CLIENT_LIBS) \
 	$(XML_LIBS)
 
+
 IndicationBufferingThreadTestCases_SOURCES = \
 	IndicationBufferingThreadTestCases.cpp \
+	IndicationBufferingThreadTestCases.hpp \
 	CIMInstanceUtils.cpp \
 	CIMInstanceUtils.hpp \
 	MockIndicationExporter.cpp \
@@ -302,6 +368,7 @@ IndicationBufferingThreadTestCases_PROJECT_LIBS = \
 	$(PROVIDER_LIBS) \
 	$(HTTP_CLIENT_LIBS) \
 	$(XML_LIBS)
+
 
 CIMObjectPathTestCases_SOURCES = CIMObjectPathTestCases.cpp
 
