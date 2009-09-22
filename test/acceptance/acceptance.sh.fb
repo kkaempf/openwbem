@@ -288,7 +288,7 @@ SwitchToLinks()
 	for i in $LISTTOSWITCH; do
 		rm -f $i
 		BASENAME=`basename $i`
-		FNAME=`find $TOP_SRCDIR -name $BASENAME -perm -0100 ! -type d ! -type l`
+		FNAME=`find $TOP_SRCDIR -name $BASENAME -perm -0100 ! -type d ! -type l | sort -r | head -1`
 		echo "Creating symbolic link: $i -> $FNAME"
 		ln -sf $FNAME $i || ExitWithFail "Link creation failed.  Check that you don't have the remants of a failed '$MAKE distcheck'"
 	done

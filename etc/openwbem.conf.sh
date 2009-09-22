@@ -21,7 +21,7 @@
 # For each directory specified, all the files contained in the directory,
 # whose names end in ".conf", will be loaded and processed as additional config
 # files.
-# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
+# This is a multi-valued option. ';' (windows) or ':' (POSIX) is the separator.
 # This option will be evaluated after the main config file is parsed, and so
 # additional directories specified in additional config files will not be 
 # examined.
@@ -580,14 +580,14 @@ slp.enable_advertisement = true
 ################################################################################
 # owcimomd.services_path Specifies the directory containing the services
 # shared libraries to be loaded by the CIMOM.
-# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
+# This is a multi-valued option. ';' (windows) or ':' (POSIX) is the separator.
 # The default is "@libdir@/openwbem/services"
 owcimomd.services_path = @libdir@/openwbem/services
 
 ################################################################################
 # owcimomd.request_handler_path Specifies the directory containing the
 # request handler shared libraries to be loaded by the CIMOM.
-# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
+# This is a multi-valued option. ';' (windows) or ':' (POSIX) is the separator.
 # The default is "@libdir@/openwbem/requesthandlers"
 owcimomd.request_handler_path = @libdir@/openwbem/requesthandlers
 
@@ -614,7 +614,7 @@ owcimomd.datadir = @localstatedir@/openwbem/repository
 # interfaces will be loaded from. owcimomd assumes all shared libraries in
 # these directories are provider interfaces. If a shared library in this directory
 # does not support the provider interface api, it will be rejected.
-# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
+# This is a multi-valued option. ';' (windows) or ':' (POSIX) is the separator.
 # The default is "@libdir@/openwbem/provifcs"
 owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 
@@ -622,7 +622,7 @@ owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 # One of the provider interfaces provided with owcimomd is the C++ provider
 # interface. The cppprovifc.prov_location option specifies where the C++
 # provider interface will load it's providers from.
-# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
+# This is a multi-valued option. ';' (windows) or ':' (POSIX) is the separator.
 # The default is "@libdir@/openwbem/c++providers"
 cppprovifc.prov_location = @libdir@/openwbem/c++providers
 
@@ -636,7 +636,7 @@ http_server.uds_filename = /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAG
 # One of the provider interfaces provided with owcimomd is the NPI provider
 # interface. The npiprovifc.prov_location option specifies where the NPI
 # provider interface will load it's providers from.
-# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
+# This is a multi-valued option. ';' (windows) or ':' (POSIX) is the separator.
 # The default is "@libdir@/openwbem/npiproviders"
 npiprovifc.prov_location = @libdir@/openwbem/npiproviders
 
@@ -644,7 +644,7 @@ npiprovifc.prov_location = @libdir@/openwbem/npiproviders
 # One of the provider interfaces provided with owcimomd is the CMPI provider
 # interface. The cmpiprovifc.prov_location option specifies where the CMPI
 # provider interface will load it's providers from.
-# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
+# This is a multi-valued option. ';' (windows) or ':' (POSIX) is the separator.
 # The default is "@libdir@/openwbem/cmpiproviders"
 cmpiprovifc.prov_location = @libdir@/openwbem/cmpiproviders
 
@@ -661,7 +661,7 @@ cmpiprovifc.prov_TTL = -1
 # One of the provider interfaces provided with owcimomd is the perl provider
 # interface. The perlprovifc.prov_location option specifies where the perl
 # provider interface will load it's providers from.
-# This is a multi-valued option. ':' (windows) or ';' (POSIX) is the separator.
+# This is a multi-valued option. ';' (windows) or ':' (POSIX) is the separator.
 # The default is "@libdir@/openwbem/perlproviders"
 perlprovifc.prov_location = @libdir@/openwbem/perlproviders
 
