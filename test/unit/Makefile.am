@@ -115,7 +115,7 @@ PrivilegeManagerMockObjectTestCases_PROJECT_LIBS = \
 
 
 OW_HTTPChunkerTestCases_SOURCES = \
-	OW_HTTPChunkerTestCases.cpp
+	OW_HTTPChunkerTestCases.cpp \
 	OW_HTTPChunkerTestCases.hpp
 OW_HTTPChunkerTestCases_PROJECT_LIBS = \
 	$(COMMON_PROJECT_LIBS) \
@@ -260,7 +260,7 @@ OW_HTTPUtilsTestCases_PROJECT_LIBS = \
 
 
 CIMRepository2TestCases_SOURCES =  \
-	CIMRepository2TestCases.cpp
+	CIMRepository2TestCases.cpp \
 	CIMRepository2TestCases.hpp
 
 MOFCompilerTestCases_SOURCES = \
