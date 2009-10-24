@@ -26,7 +26,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/xml
 
 check_SCRIPTS = set_test_libpath.sh
-EXTRA_DIST = set_test_libpath.sh.in
+EXTRA_DIST = set_test_libpath.sh.in run_make_check.sh
 BUILT_SOURCES = $(check_SCRIPTS)
 CLEANFILES = $(BUILT_SOURCES)
 

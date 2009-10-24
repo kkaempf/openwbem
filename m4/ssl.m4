@@ -96,6 +96,7 @@ AC_DEFUN(
 		if (test ! -z "$ac_cv_openssldir") ; then
 			AC_DEFINE(HAVE_OPENSSL)
 			SSL_LIBS="-lssl -lcrypto"
+			SSL_LIB_DIR="$ssl_libdir"
 			LIBS="$saved_LIBS"
 		else
 			AC_MSG_ERROR([OpenSSL not found])
@@ -106,6 +107,7 @@ AC_DEFUN(
 			ssldir=$ac_cv_openssldir
 
 			OW_SSL_INTERNAL_DIRCHECK($ssldir)
+			SSL_LIB_DIR="$ssl_libdir"
 			SSL_LIBS="-lssl -lcrypto"
 		fi
 
@@ -133,6 +135,7 @@ AC_DEFUN(
 		)
 
 		AC_SUBST(SSL_LIBS)
+		AC_SUBST(SSL_LIB_DIR)
 
 		dnl End of the ssl check
 	]

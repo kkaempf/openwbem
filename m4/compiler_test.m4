@@ -16,6 +16,9 @@ dnl   OW_COMPILER_VERSION
 dnl   OW_COMPILER_MAJOR
 dnl   OW_COMPILER_MINOR
 dnl   OW_COMPILER_TYPE
+dnl   OW_COMPILER_LIBDIR
+dnl And will export to Makefiles:
+dnl   OW_COMPILER_LIBDIR
 dnl
 dnl Among the variables it sets, this could be used (in the future) to
 dnl store in the OW_config.h the compiler type that was used to build
@@ -24,6 +27,7 @@ dnl a binary-incompatible compiler.
 
 AC_DEFUN([OW_COMPILER_TEST],
 	[
+		OW_COMPILER_LIBDIR=
 		found_compiler_type=0
 		OW_SELECT_ONE([found_compiler_type],
 			# Check for aCC
@@ -125,6 +129,8 @@ AC_DEFUN([OW_COMPILER_TEST],
 				;;
 			gcc)
 				OW_COMPILER_VERSION=`$CXX --version 2>&1 | grep '[[0-9]][[0-9]]*\.[[0-9]][[0-9]]*' | sed -e 's/[[(]][[^)]]*[[)]]//g' -e 's/[[^0-9.]]//g'`
+				OW_COMPILER_LIBDIR=`$CXX --print-file libstdc++.so`
+				OW_CLEANUP_DIRECTORY_NAME(OW_COMPILER_LIBDIR, `dirname $OW_COMPILER_LIBDIR`)
 				;;
 			*)
 				AC_MSG_WARN(Unable to detect compiler version)
@@ -141,5 +147,6 @@ AC_DEFUN([OW_COMPILER_TEST],
 			AC_DEFINE_UNQUOTED(COMPILER_MAJOR, [$OW_COMPILER_MAJOR], [Major version of the compiler])
 			AC_DEFINE_UNQUOTED(COMPILER_MINOR, [$OW_COMPILER_MINOR], [Minor version of the compiler])
 		fi
+		AC_SUBST(OW_COMPILER_LIBDIR)
 	]
 )

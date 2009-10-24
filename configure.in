@@ -1397,7 +1397,13 @@ AC_ARG_WITH(search-dir,
 )
 
 dnl Check for BloCxx
-OW_BLOCXX_SUPPORT
+CHECK_BLOCXX
+
+# Use the blocxx locations, everything in openwbem depends on them
+CPPFLAGS="$CPPFLAGS $BLOCXX_INCLUDES"
+BLOCXX_LIBS="$BLOCXX_LDFLAGS"
+
+AC_SUBST(BLOCXX_LIBS)
 
 # The big search for OpenSSL.  Thanks to the openssh configure.in file!
 OW_SSL_SUPPORT

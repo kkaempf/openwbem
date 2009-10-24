@@ -133,7 +133,7 @@ CorrectInstallationPrivileges()
 	# The write bit shouldn't be set for g&o, but we'll make sure.
 	chmod -R go-w ${STAGEDIR}
 
-	for unprivileged_dir in ${OWLOCALSTATEDIR}/openwbem results; do
+	for unprivileged_dir in ${OWLOCALSTATEDIR}/openwbem results extra; do
 		mkdir -p ${STAGEDIR}/${unprivileged_dir}
 		chown -R owcimomd ${STAGEDIR}/${unprivileged_dir}
 	done
@@ -150,8 +150,9 @@ Install()
 
 	rm -rf ${STAGEDIR}
 	mkdir ${STAGEDIR}
-	mkdir $RESULTDIR
-	mkdir -p $STAGEDIR$OWSYSCONFDIR/openwbem/truststore
+	mkdir ${RESULTDIR}
+	mkdir -p ${STAGEDIR}${OWSYSCONFDIR}/openwbem/truststore
+	mkdir ${EXTRAFILEDIR}
 
 	cd ${TOP_BUILDDIR}
 	
@@ -286,9 +287,14 @@ SwitchToLinks()
 	cd $STAGEDIR
 	LISTTOSWITCH=`find . -perm -0111 ! -type d ! -type l`
 	for i in $LISTTOSWITCH; do
-		rm -f $i
 		BASENAME=`basename $i`
-		FNAME=`find $TOP_SRCDIR -name $BASENAME -perm -0100 ! -type d ! -type l`
+		FNAME=`find $TOP_BUILDDIR/src -name $BASENAME -perm -0100 ! -type d ! -type l`
+		# Anything the above find didn't find a replacement for should not have a new link created.
+		if [ x$FNAME = x ]; then
+			continue
+		fi
+
+		rm -f $i
 		echo "Creating symbolic link: $i -> $FNAME"
 		ln -sf $FNAME $i || ExitWithFail "Link creation failed.  Check that you don't have the remants of a failed '$MAKE distcheck'"
 	done
@@ -1846,6 +1852,7 @@ TestOOPProvider()
 
 	# CreateInstance
 	$STAGEDIR/$OWBINDIR/owmofc --url http://test1:pass1@localhost:30926/root/ooptest - << EOI
+#pragma namespace("root/ooptest")
 instance of ooptest
 {
 	id = "100";
@@ -1858,6 +1865,7 @@ EOI
 
 	# ModifyInstance
 	$STAGEDIR/$OWBINDIR/owmofc --url http://test1:pass1@localhost:30926/root/ooptest - << EOI
+#pragma namespace("root/ooptest")
 instance of ooptest
 {
 	id = "AlreadyExists";
@@ -2152,7 +2160,8 @@ IsSecure()
 	old_library_path="`GetLibraryPath`"
 
 	# The check_security program requires the library path to be set properly.
-	AddToLibraryPath ${TOP_BUILDDIR}/src/common
+	AddToLibraryPath "${TOP_BUILDDIR}/src/common:@BLOCXX_LIB_DIR@:@OW_COMPILER_LIBDIR@:@SSL_LIB_DIR@"
+
 	for file in "$@"; do
 		if ${ACCEPTANCE_DIR}/check_security "${file}"; then
 			:
@@ -2194,17 +2203,19 @@ main()
 	fi
 
 	RESULTDIR=$STAGEDIR/results
+	EXTRAFILEDIR=${STAGEDIR}/extra
+
 	BUILDDIR=${TOP_BUILDDIR}
 	PIDFILE=$STAGEDIR/owcimomd.pid
-	UDS_PATH="${STAGEDIR}/uds"
+	UDS_PATH="${EXTRAFILEDIR}/uds"
 	OWIPC=`echo ${UDS_PATH} | sed -e s'~/~%2F~g'`
 
 	# This is how the test method provider knows where to store it's state.
-	OW_METHOD_PROVIDER_TEST_FILENAME=$STAGEDIR/ow_MethodProviderTest.txt
-	export OW_METHOD_PROVIDER_TEST_FILENAME
+	OW_METHOD_PROVIDER_TEST_FILENAME=${EXTRAFILEDIR}/ow_MethodProviderTest.txt
+	export OW_METHOD_PROVIDER_TEST_FILENAME EXTRAFILEDIR
 
 
-	AddToLibraryPath "$STAGEDIR/$OWLIBDIR:$STAGEDIR/$OWLIBDIR/openwbem/services:@BLOCXX_LIB_DIR@"
+	AddToLibraryPath "$STAGEDIR/$OWLIBDIR:$STAGEDIR/$OWLIBDIR/openwbem/services:@BLOCXX_LIB_DIR@:@OW_COMPILER_LIBDIR@:@SSL_LIB_DIR@"
 
 	RANDFILE=$STAGEDIR/ssl_randfile
 	export RANDFILE

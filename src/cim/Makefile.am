@@ -1,5 +1,8 @@
 noinst_LIBRARIES = libOW_cim.a
 
+%.cpp: %.re
+	re2c -o $@ $<
+
 libOW_cim_a_SOURCES = \
 OW_CIMValue.cpp \
 OW_CIMValueCast.cpp \
