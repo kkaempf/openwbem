@@ -34,13 +34,13 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 
-#include <ctype.h>
-#include <errno.h>
+#include <cctype>
+#include <cerrno>
 #include <fcntl.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <climits>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <unistd.h>
 
 #include <db.h>
@@ -429,7 +429,7 @@ rem(DB *dbp, DBT *kp)
 		if (ofd != STDOUT_FILENO)
 			returnValueIgnored = write(ofd, NOSUCHKEY, sizeof(NOSUCHKEY) - 1);
 		else if (flags != R_CURSOR)
-			(void)fprintf(stderr, "%lu: %.*s: %s", 
+			(void)fprintf(stderr, "%lu: %.*s: %s",
 			    lineno, (int)MIN(kp->size, 20), (char*)kp->data, NOSUCHKEY);
 		else
 			(void)fprintf(stderr,
@@ -473,7 +473,7 @@ seq(DB *dbp, DBT *kp)
 		if (ofd != STDOUT_FILENO)
 			returnValueIgnored = write(ofd, NOSUCHKEY, sizeof(NOSUCHKEY) - 1);
 		else if (flags == R_CURSOR)
-			(void)fprintf(stderr, "%lu: %.*s: %s", 
+			(void)fprintf(stderr, "%lu: %.*s: %s",
 			    lineno, (int)MIN(kp->size, 20), (char*)kp->data, NOSUCHKEY);
 		else
 			(void)fprintf(stderr,
@@ -566,7 +566,7 @@ sflags(int flags)
 
 	return ("UNKNOWN!");
 }
-	
+
 DBTYPE
 dbtype(char *s)
 {
@@ -594,7 +594,7 @@ setinfo(DBTYPE type, char *s)
 	*eq++ = '\0';
 	if (!isdigit((int)*eq))
 		err("%s: structure set statement must be a number", s);
-		
+
 	switch (type) {
 	case DB_BTREE:
 		if (!strcmp("flags", s)) {

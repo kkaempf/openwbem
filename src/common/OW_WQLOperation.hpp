@@ -2,7 +2,7 @@
 //
 // Copyright (c) 2000, 2001, 2002 BMC Software, Hewlett-Packard Company, IBM,
 // The Open Group, Tivoli Systems
-// Portions Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+// Portions Copyright (C) 2003-2004 Quest Software, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -10,7 +10,7 @@
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // THE ABOVE COPYRIGHT NOTICE AND THIS PERMISSION NOTICE SHALL BE INCLUDED IN
 // ALL COPIES OR SUBSTANTIAL PORTIONS OF THE SOFTWARE. THE SOFTWARE IS PROVIDED
 // "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
@@ -70,14 +70,14 @@ namespace OW_NAMESPACE
 	</pre>
 	The IS operator is NOT treated as a binary operator (which would take
 	count and TRUE as its operands). Instead, the IS operator and TRUE operand
-	are combined to form a single unary operation called "IS_TRUE". In this 
+	are combined to form a single unary operation called "IS_TRUE". In this
 	way, evaluation may be implemented by more efficiently (the TRUE operand
 	is eliminated and therefore need not be handled). Conceptually, the above
 	expression is equivalent to the following psuedo expression:
 	<pre>
 		IS_TRUE(count)
 	</pre>
-	Note that this technique is applied the following operations (also 
+	Note that this technique is applied the following operations (also
 	combined to be unary operations).
 	<ul>
 	<li>WQL_IS_NULL</li>

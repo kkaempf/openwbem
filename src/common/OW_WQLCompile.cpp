@@ -1,5 +1,5 @@
 // Copyright (c) 2000, 2001 The Open group, BMC Software, Tivoli Systems, IBM
-// Copyright (c) 2002 Vintela, Inc..
+// Copyright (c) 2002 Quest Software, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -7,7 +7,7 @@
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // THE ABOVE COPYRIGHT NOTICE AND THIS PERMISSION NOTICE SHALL BE INCLUDED IN
 // ALL COPIES OR SUBSTANTIAL PORTIONS OF THE SOFTWARE. THE SOFTWARE IS PROVIDED
 // "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
@@ -16,7 +16,7 @@
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
 // ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//  
+//
 //==============================================================================//
 // Author: Markus Mueller (sedgewick_de@yahoo.de)
 //
@@ -41,7 +41,7 @@ namespace OW_NAMESPACE
 {
 
 //
-// Terminal element methods 
+// Terminal element methods
 //
 void WQLCompile::term_el::negate()
 {
@@ -65,7 +65,7 @@ bool operator!=(const WQLCompile::term_el& x, const WQLCompile::term_el& y)
 	return !(x == y);
 }
 //
-// Evaluation heap element methods 
+// Evaluation heap element methods
 //
 WQLCompile::stack_el
 WQLCompile::eval_el::getFirst()
@@ -121,23 +121,23 @@ void WQLCompile::eval_el::order()
 namespace {
 //
 // Helper function copied from WQLSelectStatement
-// 
+//
 template<class T, class U>
 inline bool _Compare(const T& x, const U& y, WQLOperation op)
 {
 	switch (op)
 	{
-		case WQL_EQ: 
+		case WQL_EQ:
 			return x == y;
-		case WQL_NE: 
+		case WQL_NE:
 			return x != y;
-		case WQL_LT: 
+		case WQL_LT:
 			return x < y;
-		case WQL_LE: 
+		case WQL_LE:
 			return x <= y;
-		case WQL_GT: 
+		case WQL_GT:
 			return x > y;
-		case WQL_GE: 
+		case WQL_GE:
 			return x >= y;
 		default:
 			OW_ASSERT(0);
@@ -146,8 +146,8 @@ inline bool _Compare(const T& x, const U& y, WQLOperation op)
 }
 template<class T>
 bool _EvaluateRHS(
-	const T& lhs, 
-	const WQLOperand& rhs, 
+	const T& lhs,
+	const WQLOperand& rhs,
 	WQLOperation op)
 {
 	switch (rhs.getType())
@@ -194,8 +194,8 @@ bool _EvaluateRHS(
 }
 } // end of namespace
 static bool _EvaluateRHS(
-	const String& lhs, 
-	const WQLOperand& rhs, 
+	const String& lhs,
+	const WQLOperand& rhs,
 	WQLOperation op)
 {
 	switch (rhs.getType())
@@ -241,8 +241,8 @@ static bool _EvaluateRHS(
 	return false;
 }
 static bool _Evaluate(
-const WQLOperand& lhs, 
-const WQLOperand& rhs, 
+const WQLOperand& lhs,
+const WQLOperand& rhs,
 WQLOperation op)
 {
 	switch (lhs.getType())
@@ -302,7 +302,7 @@ WQLCompile::~WQLCompile()
 }
 void WQLCompile::compile(const WQLSelectStatement * wqs)
 {
-	if (!wqs->hasWhereClause())	
+	if (!wqs->hasWhereClause())
 	{
 		return;
 	}
@@ -392,13 +392,13 @@ void WQLCompile::print(std::ostream& ostr)
 {
 	for (UInt32 i=0, n=eval_heap.size();i < n;i++)
 	{
-		WQLOperation wop = eval_heap[i].op; 
-		if (wop == WQL_DO_NOTHING)	
+		WQLOperation wop = eval_heap[i].op;
+		if (wop == WQL_DO_NOTHING)
 		{
 			continue;
 		}
-		ostr << "Eval element " << i << ": "; 
-		if (eval_heap[i].is_terminal1 == TERMINAL_HEAP) 
+		ostr << "Eval element " << i << ": ";
+		if (eval_heap[i].is_terminal1 == TERMINAL_HEAP)
 		{
 			ostr << "T(";
 		}
@@ -410,9 +410,9 @@ void WQLCompile::print(std::ostream& ostr)
 		{
 			ostr << "O(";
 		}
-		ostr << eval_heap[i].opn1 << ") "; 
-		ostr << WQLOperationToString(eval_heap[i].op); 
-		if (eval_heap[i].is_terminal2 == TERMINAL_HEAP) 
+		ostr << eval_heap[i].opn1 << ") ";
+		ostr << WQLOperationToString(eval_heap[i].op);
+		if (eval_heap[i].is_terminal2 == TERMINAL_HEAP)
 		{
 			ostr << " T(";
 		}
@@ -424,14 +424,14 @@ void WQLCompile::print(std::ostream& ostr)
 		{
 			ostr << "O(";
 		}
-		ostr << eval_heap[i].opn2 << ")" << std::endl; 
-	} 
+		ostr << eval_heap[i].opn2 << ")" << std::endl;
+	}
 	for (UInt32 i=0, n=terminal_heap.size();i < n;i++)
 	{
-		ostr << "Terminal expression " << i << ": "; 
-		ostr << terminal_heap[i].opn1.toString() << " "; 
-		ostr << WQLOperationToString(terminal_heap[i].op) << " " 
-			<< terminal_heap[i].opn2.toString() << std::endl; 
+		ostr << "Terminal expression " << i << ": ";
+		ostr << terminal_heap[i].opn1.toString() << " ";
+		ostr << WQLOperationToString(terminal_heap[i].op) << " "
+			<< terminal_heap[i].opn2.toString() << std::endl;
 	}
 }
 void WQLCompile::printTableau(std::ostream& ostr)
@@ -442,9 +442,9 @@ void WQLCompile::printTableau(std::ostream& ostr)
 		TableauRow tr = _tableau[i];
 		for (UInt32 j=0, m = tr.size(); j < m; j++)
 		{
-			ostr << tr[j].opn1.toString() << " "; 
-			ostr << WQLOperationToString(tr[j].op) << " " 
-				<< tr[j].opn2.toString() << std::endl; 
+			ostr << tr[j].opn1.toString() << " ";
+			ostr << WQLOperationToString(tr[j].op) << " "
+				<< tr[j].opn2.toString() << std::endl;
 		}
 	}
 }
@@ -462,25 +462,25 @@ void WQLCompile::_buildEvalHeap(const WQLSelectStatement * wqs)
 		else
 		{
 			WQLOperation op = curItem.m_operation;
-	
+
 			switch (op)
 			{
 				// unary
 				case WQL_NOT:
 					{
 						OW_ASSERT(stack.size() >= 1);
-	
+
 						stack_el op1 = stack.top();
-	
+
 						// generate Eval expression
 						eval_heap.append(eval_el(false, op, op1.opn, op1.type,
 							-1, TERMINAL_HEAP));
-	
+
 						stack.top() = stack_el(eval_heap.size()-1, EVAL_HEAP);
-	
+
 						break;
 					}
-	
+
 				// binary
 				case WQL_OR:
 				case WQL_AND:
@@ -493,10 +493,10 @@ void WQLCompile::_buildEvalHeap(const WQLSelectStatement * wqs)
 				case WQL_ISA:
 					{
 						OW_ASSERT(stack.size() >= 2);
-	
+
 						stack_el op2 = stack.top();
 						stack.pop();
-	
+
 						stack_el op1 = stack.top();
 						if (op1.type == OPERAND && op2.type == OPERAND)
 						{
@@ -516,7 +516,7 @@ void WQLCompile::_buildEvalHeap(const WQLSelectStatement * wqs)
 								op2.opn , op2.type));
 							stack.top() = stack_el(eval_heap.size()-1, EVAL_HEAP);
 						}
-	
+
 						break;
 					}
 				case WQL_DO_NOTHING:
@@ -574,11 +574,11 @@ void WQLCompile::_pushNOTDown()
 			// Remove the mark, indicate a pending NOT to be pushed down
 			// further and switch operators (AND / OR)
 			eval_heap[i].mark=false;
-			if (eval_heap[i].op == WQL_OR) 
+			if (eval_heap[i].op == WQL_OR)
 			{
 				eval_heap[i].op = WQL_AND;
 			}
-			else if (eval_heap[i].op == WQL_AND) 
+			else if (eval_heap[i].op == WQL_AND)
 			{
 				eval_heap[i].op = WQL_OR;
 			}
@@ -629,7 +629,7 @@ void WQLCompile::_factoring()
 			if (eval_heap[i].is_terminal1 == EVAL_HEAP)
 			{
 				index = eval_heap[i].opn1; // remember the index
-				if (eval_heap[index].op == WQL_OR) 
+				if (eval_heap[index].op == WQL_OR)
 				{
 					_found = 1;
 				}
@@ -637,7 +637,7 @@ void WQLCompile::_factoring()
 			if ((_found == 0) && (eval_heap[i].is_terminal2 == EVAL_HEAP))
 			{
 				index = eval_heap[i].opn2; // remember the index
-				if (eval_heap[index].op == WQL_OR) 
+				if (eval_heap[index].op == WQL_OR)
 				{
 					_found = 2;
 				}
@@ -713,7 +713,7 @@ void WQLCompile::_gather(Array<stack_el>& stk, stack_el sel, bool or_flag)
 {
 	UInt32 i = 0;
 	stk.empty();
-	if ((i = eval_heap.size()) == 0) 
+	if ((i = eval_heap.size()) == 0)
 	{
 		return;
 	}
@@ -721,7 +721,7 @@ void WQLCompile::_gather(Array<stack_el>& stk, stack_el sel, bool or_flag)
 	{
 		eval_heap.remove(i-1);
 		i--;
-		if (i == 0)	
+		if (i == 0)
 		{
 			return;
 		}
@@ -732,7 +732,7 @@ void WQLCompile::_gather(Array<stack_el>& stk, stack_el sel, bool or_flag)
 	}
 	else
 	{
-		if (sel.type != EVAL_HEAP) 
+		if (sel.type != EVAL_HEAP)
 		{
 			return;
 		}

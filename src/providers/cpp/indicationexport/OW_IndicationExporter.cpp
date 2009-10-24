@@ -18,7 +18,7 @@
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -103,7 +103,7 @@ IndicationExporterImpl::sendIndication(CIMInstance const & ci)
 	         "<EXPPARAMVALUE NAME=\"NewIndication\">";
 	CIMInstancetoXML(ci, ostrm);
 	ostrm << "</EXPPARAMVALUE>"
-	         "</EXPMETHODCALL>" 
+	         "</EXPMETHODCALL>"
 	         "</SIMPLEEXPREQ>";
 }
 
@@ -111,15 +111,15 @@ void
 IndicationExporterImpl::sendXMLHeader(const String& cimProtocolVersion)
 {
 	ostream & ostr = *m_ostrm;
-	// TODO: merge this with the code in CIMXMLCIMOMHandle.cpp
-	// TODO: WRT the versions, have a way of doing a fallback to older
-	// versions for the sake of compatibility.
+	/// @todo  merge this with the code in CIMXMLCIMOMHandle.cpp
+	/// @todo  WRT the versions, have a way of doing a fallback to older
+	/// versions for the sake of compatibility.
 	if (++m_iMessageID > 65535)
 	{
 		m_iMessageID = 1;
 	}
-	ostr << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" 
-	        "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">" 
+	ostr << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>"
+	        "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">"
 	        "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"" << cimProtocolVersion << "\">";
 }
 
@@ -127,11 +127,11 @@ void
 IndicationExporterImpl::sendXMLTrailer()
 {
 	ostream & ostr = *m_ostrm;
-	ostr << "</MESSAGE>" 
-	        "</CIM>" 
+	ostr << "</MESSAGE>"
+	        "</CIM>"
 	        "\r\n";
 }
-	
+
 void
 IndicationExporterImpl::doSendRequest(
 	const String& methodName, const String& cimProtocolVersion)
@@ -147,8 +147,8 @@ void
 IndicationExporterImpl::checkNodeForCIMError(CIMXMLParser& parser,
 		const String& operation)
 {
-// TODO: This code is the same as in CIMXMLCIMOMHandle.cpp.  Put it in a
-// common spot.
+/// @todo  This code is the same as in CIMXMLCIMOMHandle.cpp.  Put it in a
+/// common spot.
 	//
 	// Check for <CIM> element
 	//

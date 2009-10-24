@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2002-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2002-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -113,7 +113,7 @@ CIMRepository::open(const String& path)
 	{
 		fname += OW_FILENAME_SEPARATOR;
 	}
-	
+
 	m_nStore.open(fname + NS_REPOS_NAME);
 	m_iStore.open(fname + INST_REPOS_NAME);
 	m_mStore.open(fname + META_REPOS_NAME);
@@ -170,7 +170,7 @@ CIMRepository::init(const ServiceEnvironmentIFCRef& env)
 	}
 	catch (StringConversionException& e)
 	{
-		OW_LOG_ERROR(m_logger, Format("Invalid value for %1: %2. The default of %3 will be used.", 
+		OW_LOG_ERROR(m_logger, Format("Invalid value for %1: %2. The default of %3 will be used.",
 			ConfigOpts::READ_WRITE_LOCK_TIMEOUT_opt, readWriteLockTimeoutConfigItem, OW_DEFAULT_READ_WRITE_LOCK_TIMEOUT));
 	}
 
@@ -208,7 +208,7 @@ CIMRepository::createNameSpace(const String& ns,
 		OW_THROWCIMMSG(CIMException::ALREADY_EXISTS,
 			ns.c_str());
 	}
-	// TODO: Make this exception safe.
+	/// @todo  Make this exception safe.
 	if (m_iStore.createNameSpace(ns) == -1)
 	{
 		m_nStore.deleteNameSpace(ns);
@@ -233,11 +233,11 @@ CIMRepository::deleteNameSpace(const String& ns,
 	{
 		OW_THROWCIM(CIMException::INVALID_PARAMETER);
 	}
-	// TODO: Make this exception safe.
+	/// @todo  Make this exception safe.
 	m_nStore.deleteNameSpace(ns);
 	m_iStore.deleteNameSpace(ns);
 	m_mStore.deleteNameSpace(ns);
-	
+
 	OW_LOG_DEBUG2(m_logger, Format("CIMRepository deleted namespace: %1", ns));
 }
 #endif
@@ -246,7 +246,7 @@ void
 CIMRepository::enumNameSpace(StringResultHandlerIFC& result,
 	OperationContext&)
 {
-	// TODO: Move this into m_nStore
+	/// @todo  Move this into m_nStore
 	HDBHandleLock hdl(&m_nStore, m_nStore.getHandle());
 	HDBNode nsNode = hdl->getFirstRoot();
 	//HDBNode nsNode = m_nStore.getNameSpaceNode(hdl, nsName);
@@ -288,7 +288,7 @@ void
 CIMRepository::deleteQualifierType(const String& ns, const String& qualName,
 	OperationContext&)
 {
-	// TODO: What happens if the qualifier is being used???
+	/// @todo  What happens if the qualifier is being used???
 	if (!m_mStore.deleteQualifierType(ns, qualName))
 	{
 		if (m_nStore.nameSpaceExists(ns))
@@ -302,7 +302,7 @@ CIMRepository::deleteQualifierType(const String& ns, const String& qualName,
 				String(ns + "/" + qualName).c_str());
 		}
 	}
-	
+
 	OW_LOG_DEBUG2(m_logger, Format("CIMRepository deleted qualifier type: %1 in namespace: %2", qualName, ns));
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -390,11 +390,11 @@ namespace
 			{
 				OW_THROWCIM(CIMException::NOT_FOUND);
 			}
-			// TODO: this doesn't work quite right.  what about associations to
-			// the instances we delete?  If we fix deleteInstance to also delete
-			// associations, then we could just call enumInstances and then
-			// deleteInstance for all instances.
-			// delete any instances of the class
+			/// @todo  this doesn't work quite right.  what about associations to
+			/// the instances we delete?  If we fix deleteInstance to also delete
+			/// associations, then we could just call enumInstances and then
+			/// deleteInstance for all instances.
+			/// delete any instances of the class
 			m_iStore.deleteClass(ns, cname.toString());
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			// remove class from association index
@@ -423,7 +423,7 @@ CIMRepository::deleteClass(const String& ns, const String& className,
 	{
 		CIMClass cc = _getClass(ns, className);
 		OW_ASSERT(cc);
-		// TODO: this doesn't work quite right.  what about associations to
+		/// @todo  this doesn't work quite right.  what about associations to
 		// the instances we delete?
 		// should this operation be atomic?  If something fails, how can we
 		// undo so as to not leave things in a weird state?
@@ -529,10 +529,10 @@ CIMRepository::modifyClass(
 	try
 	{
 		CIMClass origClass = _getClass(ns, cc.getName());
-		// TODO: this needs to update the subclasses of the modified class.
+		/// @todo  this needs to update the subclasses of the modified class.
 		//			If that's not possible, then we need to throw a
 		//			CLASS_HAS_CHILDREN CIMException.
-		// TODO: Need to update the instances of the class and any subclasses.
+		/// @todo  Need to update the instances of the class and any subclasses.
 		//			If that's not possible, then we need to throw a
 		//			CLASS_HAS_INSTANCES CIMException.
 
@@ -679,8 +679,8 @@ CIMRepository::enumInstanceNames(
 		}
 		else
 		{
-			// TODO: measure whether it would be faster to use
-			// enumClassNames + getClass() here.
+			/// @todo  measure whether it would be faster to use
+			/// enumClassNames + getClass() here.
 			m_mStore.enumClass(ns,className,ie,deep,E_NOT_LOCAL_ONLY,
 				E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN);
 		}
@@ -759,7 +759,7 @@ CIMRepository::enumInstances(
 		CIMClass theTopClass = _instGetClass(ns, className);
 		m_iStore.getCIMInstances(ns, className, theTopClass, theTopClass, result,
 			deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
-		
+
 		OW_LOG_DEBUG(m_logger, Format("CIMRepository Enumerated instances: %1:%2", ns,
 			className));
 		if (enumSubclasses)
@@ -821,7 +821,7 @@ CIMRepository::getInstance(
 	{
 		*pOutClass = cc;
 	}
-	
+
 	return ci;
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -844,15 +844,15 @@ CIMRepository::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 		// Ensure no associations exist for this instance
 		if (hdl.hasAssocEntries(ns, cop))
 		{
-			// TODO: Revisit this.  Instead of throwing, it is allowed in the
-			// spec to to delete the associations that reference the instance.
+			/// @todo  Revisit this.  Instead of throwing, it is allowed in the
+			/// spec to to delete the associations that reference the instance.
 			// See http://dmtf.org/standards/documents/WBEM/DSP200.html
 			//   2.3.2.4. DeleteInstance
 			OW_THROWCIMMSG(CIMException::FAILED,
 				Format("Instance %1 has associations", cop.toString()).c_str());
 		}
-		// TODO: It would be good to check for Min(1) relationships to the
-		// instance.
+		/// @todo  It would be good to check for Min(1) relationships to the
+		/// instance.
 		// If we're deleting an association instance, then remove all
 		// traces of it in the association database.
 		if (theClass.isAssociation())
@@ -923,7 +923,7 @@ CIMRepository::createInstance(
 			}
 			_validatePropagatedKeys(context, ns, ci, theClass);
 		}
-		//TODO: _checkRequiredProperties(theClass, ci);
+		/// @todo  _checkRequiredProperties(theClass, ci);
 		m_iStore.createInstance(ns, theClass, ci);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		if (theClass.isAssociation())
@@ -959,10 +959,10 @@ CIMRepository::modifyInstance(
 		CIMObjectPath cop(ns, modifiedInstance);
 		CIMInstance oldInst = getInstance(ns, cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
 			&theClass, acl);
-		//TODO: _checkRequiredProperties(theClass, modifiedInstance);
+		/// @todo  _checkRequiredProperties(theClass, modifiedInstance);
 		m_iStore.modifyInstance(ns, cop, theClass, modifiedInstance, oldInst, includeQualifiers, propertyList);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		// TODO: Verify that this code is needed.  Aren't all references keys, and thus can't be changed?  So why update the assoc db?
+		/// @todo  Verify that this code is needed.  Aren't all references keys, and thus can't be changed?  So why update the assoc db?
 		// just create a test to try and break it.
 		if (theClass.isAssociation())
 		{
@@ -1070,7 +1070,7 @@ CIMRepository::getLockTypeForMethod(
 	const String& ns,
 	const CIMObjectPath& path,
 	const String& methodName,
-	const CIMParamValueArray& in, 
+	const CIMParamValueArray& in,
 	OperationContext& context)
 {
 	OW_THROWCIM(CIMException::NOT_SUPPORTED);
@@ -1290,7 +1290,7 @@ namespace
 	private:
 		CIMObjectPathResultHandlerIFC& result;
 	};
-	
+
 //////////////////////////////////////////////////////////////////////////////
 	class staticReferencesClassResultHandler : public AssocDbEntryResultHandlerIFC
 	{
@@ -1356,7 +1356,7 @@ namespace
 		{
 			CIMObjectPath op = e.m_associatedObject;
 			CIMInstance ci = hdl->getInstance(op.getNameSpace(), op, E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList);
-			ci.setNameSpace(op.getNameSpace()); 
+			ci.setNameSpace(op.getNameSpace());
 			result.handle(ci);
 		}
 	private:
@@ -1367,7 +1367,7 @@ namespace
 		EIncludeClassOriginFlag includeClassOrigin;
 		const StringArray* propertyList;
 	};
-	
+
 //////////////////////////////////////////////////////////////////////////////
 	class staticReferencesInstResultHandler : public AssocDbEntryResultHandlerIFC
 	{
@@ -1390,7 +1390,7 @@ namespace
 		{
 			CIMObjectPath op = e.m_associationPath;
 			CIMInstance ci = hdl->getInstance(op.getNameSpace(), op, E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList);
-			ci.setNameSpace(op.getNameSpace()); 
+			ci.setNameSpace(op.getNameSpace());
 			result.handle(ci);
 		}
 	private:
@@ -1515,7 +1515,7 @@ CIMRepository::_staticAssociators(const CIMObjectPath& path,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
 		passocClasses, presultClasses, role, resultRole, handler);
-		
+
 }
 namespace
 {
@@ -1535,7 +1535,7 @@ namespace
 	private:
 		CIMObjectPathResultHandlerIFC& result;
 	};
-	
+
 //////////////////////////////////////////////////////////////////////////////
 	class staticAssociatorsClassResultHandler : public AssocDbEntryResultHandlerIFC
 	{
@@ -1591,7 +1591,7 @@ CIMRepository::_staticAssociatorNames(const CIMObjectPath& path,
 	staticAssociatorsObjectPathResultHandler handler(result);
 	dbhdl.getAllEntries(path,
 		passocClasses, presultClasses, role, resultRole, handler);
-		
+
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1730,9 +1730,9 @@ CIMRepository::_getAssociationClasses(const String& ns,
 		// need to get all the assoc classes with dynamic providers
 		CIMObjectPath cop(className, ns);
 		_staticReferencesClass(cop,0,role,E_INCLUDE_QUALIFIERS,E_EXCLUDE_CLASS_ORIGIN,0,0,&result, context);
-		// TODO: test if this is faster
-		//assocHelper helper(result, m_mStore, ns);
-		//m_mStore.getTopLevelAssociations(ns, helper);
+		/// @todo  test if this is faster
+		///assocHelper helper(result, m_mStore, ns);
+		///m_mStore.getTopLevelAssociations(ns, helper);
 	}
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -1865,7 +1865,7 @@ CIMRepository::_validatePropagatedKeys(OperationContext& context, const String& 
 	while (it != theMap.end())
 	{
 		CIMName clsname = it->first;
-		
+
 		// since we don't know what class the keys refer to, we get all subclasses
 		// and try calling getInstance for each to see if we can find one with
 		// the matching keys.

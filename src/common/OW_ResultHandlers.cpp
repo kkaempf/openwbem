@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -46,7 +46,7 @@ namespace OW_NAMESPACE
 {
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMClassEnumBuilder::doHandle(const CIMClass &c)
 {
 	m_e.addElement(c);
@@ -58,7 +58,7 @@ CIMClassEnumBuilder::~CIMClassEnumBuilder()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMClassArrayBuilder::doHandle(const CIMClass &c)
 {
 	m_a.push_back(c);
@@ -70,7 +70,7 @@ CIMClassArrayBuilder::~CIMClassArrayBuilder()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 StringArrayBuilder::doHandle(const String &s)
 {
 	m_a.push_back(s);
@@ -82,7 +82,7 @@ StringArrayBuilder::~StringArrayBuilder()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 StringEnumBuilder::doHandle(const String &s)
 {
 	m_e.addElement(s);
@@ -94,7 +94,7 @@ StringEnumBuilder::~StringEnumBuilder()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMObjectPathEnumBuilder::doHandle(const CIMObjectPath &cop)
 {
 	m_e.addElement(cop);
@@ -106,7 +106,7 @@ CIMObjectPathEnumBuilder::~CIMObjectPathEnumBuilder()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMObjectPathArrayBuilder::doHandle(const CIMObjectPath &cop)
 {
 	m_a.push_back(cop);
@@ -118,7 +118,7 @@ CIMObjectPathArrayBuilder::~CIMObjectPathArrayBuilder()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMInstanceEnumBuilder::doHandle(const CIMInstance &i)
 {
 	m_e.addElement(i);
@@ -130,7 +130,7 @@ CIMInstanceEnumBuilder::~CIMInstanceEnumBuilder()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMInstanceArrayBuilder::doHandle(const CIMInstance &i)
 {
 	m_a.push_back(i);
@@ -142,7 +142,7 @@ CIMInstanceArrayBuilder::~CIMInstanceArrayBuilder()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMQualifierTypeEnumBuilder::doHandle(const CIMQualifierType &qt)
 {
 	m_e.addElement(qt);
@@ -154,7 +154,7 @@ CIMQualifierTypeEnumBuilder::~CIMQualifierTypeEnumBuilder()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMQualifierTypeArrayBuilder::doHandle(const CIMQualifierType &qt)
 {
 	m_a.push_back(qt);

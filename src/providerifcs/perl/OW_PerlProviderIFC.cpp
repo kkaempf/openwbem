@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -74,7 +74,7 @@ PerlProviderIFC::~PerlProviderIFC()
 	try
 	{
 		ProviderMap::iterator it = m_provs.begin();
-		//Reference<Perlenv> npiHandle(); // TODO: createEnv(...);
+		//Reference<Perlenv> npiHandle(); /// @todo  createEnv(...);
 
 		while (it != m_provs.end())
 		{
@@ -84,9 +84,9 @@ PerlProviderIFC::~PerlProviderIFC()
 			it->second.setNull();
 			it++;
 		}
-	
+
 		m_provs.clear();
-	
+
 		for (size_t i = 0; i < m_noidProviders.size(); i++)
 		{
 			::NPIHandle _npiHandle = { 0, 0, 0, 0,
@@ -94,7 +94,7 @@ PerlProviderIFC::~PerlProviderIFC()
 			m_noidProviders[i]->fp_cleanup(&_npiHandle);
 			m_noidProviders[i].setNull();
 		}
-	
+
 		m_noidProviders.clear();
 	}
 	catch (...)
@@ -262,7 +262,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		return;
 	}
 	m_loadDone = true;
-	
+
 	SharedLibraryLoaderRef ldr =
 		 SharedLibraryLoader::createSharedLibraryLoader();
 	if (!ldr)
@@ -272,7 +272,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 	}
 
 	const StringArray libPaths = env->getMultiConfigItem(
-		ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt, 
+		ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt,
 		String(OW_DEFAULT_PERLPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
 		OW_PATHNAME_SEPARATOR);
 
@@ -295,7 +295,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			String libName = libPath;
 			libName += OW_FILENAME_SEPARATOR;
 			libName += String("libperlProvider"OW_SHAREDLIB_EXTENSION);
-			SharedLibraryRef theLib = ldr->loadSharedLibrary(libName); 
+			SharedLibraryRef theLib = ldr->loadSharedLibrary(libName);
 			String guessProvId = dirEntries[i];
 			if (!theLib)
 			{
@@ -324,19 +324,19 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				delete ((NPIContext *)fTable.npicontext);
 				continue;
 			}
-	
+
 			::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
 					//NPIHandleFreer nhf(_npiHandle);
 			::CIMOMHandle ch;
-	
+
 			//char * classList = (* (fTable.fp_initialize))(
 			//	&_npiHandle, ch);
 			StringArray classList = String((* (fTable.fp_initialize))(
 				&_npiHandle, ch)).tokenize(",");
-	
+
 			// now register the perl script for every type
 			// without trying to call
-			// TODO: implement check for perl subroutines
+			/// @todo  implement check for perl subroutines
 			InstanceProviderInfo inst_info;
 			inst_info.setProviderName(guessProvId);
 			instanceProviderInfo.push_back(inst_info);
@@ -348,7 +348,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			MethodProviderInfo meth_info;
 			meth_info.setProviderName(guessProvId);
 			methodProviderInfo.push_back(meth_info);
-	
+
 			IndicationProviderInfo ind_info;
 			if (! classList.empty())
 			{
@@ -390,7 +390,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
    }
 
    const StringArray libPaths = env->getMultiConfigItem(
-	   ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt, 
+	   ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt,
 	   String(OW_DEFAULT_PERLPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
 	   OW_PATHNAME_SEPARATOR);
 
@@ -414,7 +414,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		  libName += OW_FILENAME_SEPARATOR;
 		  //libName += dirEntries[i];
 		  libName += String("libperlProvider"OW_SHAREDLIB_EXTENSION);
-		  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName); 
+		  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName);
 		  String guessProvId = dirEntries[i];
 		  if (!theLib)
 		  {
@@ -451,7 +451,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		}
 		NPIFTABLE fTable = (*createProvider)();
 		fTable.npicontext = new NPIContext;
-		
+
 		fTable.npicontext->scriptName = guessProvId.allocateCString();
 		if ((!fTable.fp_initialize)||(!fTable.fp_activateFilter))
 		{
@@ -506,7 +506,7 @@ PerlProviderIFC::getProvider(
 		return FTABLERef();
 	}
 	const StringArray libPaths = env->getMultiConfigItem(
-		ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt, 
+		ConfigOpts::PERLPROVIFC_PROV_LOCATION_opt,
 		String(OW_DEFAULT_PERLPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
 		OW_PATHNAME_SEPARATOR);
 
@@ -524,7 +524,7 @@ PerlProviderIFC::getProvider(
 			continue;
 		}
 
-		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName); 
+		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName);
 		if (!theLib)
 		{
 			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc failed to load library: %1 "
@@ -541,7 +541,7 @@ PerlProviderIFC::getProvider(
 		}
 		NPIFTABLE fTable = (*createProvider)();
 		fTable.npicontext = new NPIContext;
-		
+
 		fTable.npicontext->scriptName = provId.allocateCString();
 		if (!fTable.fp_initialize)
 		{
@@ -554,7 +554,7 @@ PerlProviderIFC::getProvider(
 			" for provider %2", libName, provId));
 		::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
 		// nothing the provider can do with it, so we'll just pass in 0
-		//Reference<PerlEnv> npiHandle(); // TODO: createEnv(...);
+		//Reference<PerlEnv> npiHandle(); /// @todo  createEnv(...);
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
 		fTable.fp_initialize(&_npiHandle, ch );	// Let provider initialize itself
 			// take care of the errorOccurred field
@@ -566,7 +566,7 @@ PerlProviderIFC::getProvider(
 				delete ((NPIContext *)fTable.npicontext);
 			return FTABLERef();
 			}
-		
+
 		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("Perl provider ifc: provider %1 loaded and initialized (script %2)",
 			provId, fTable.npicontext->scriptName));
 		m_provs[provId] = FTABLERef(theLib, new NPIFTABLE(fTable));

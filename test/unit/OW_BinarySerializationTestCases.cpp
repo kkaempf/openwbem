@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -55,7 +55,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_BinarySerializationTestCases,"OW_BinarySerializati
 #include <cstdlib>
 
 using namespace OpenWBEM;
-using namespace std; 
+using namespace std;
 
 void OW_BinarySerializationTestCases::setUp()
 {
@@ -67,22 +67,22 @@ void OW_BinarySerializationTestCases::tearDown()
 
 void OW_BinarySerializationTestCases::testObjectPath()
 {
-	StringArray cmd; 
-	cmd.push_back("/bin/cat"); 
-	CIMObjectPath origCop("ClassName", "ns"); 
-	ProcessRef rval = OpenWBEM::Exec::spawn(cmd); 
-	IOIFCStreamBuffer stdinbuf(rval->in().getPtr(), IOIFCStreamBuffer::E_OUT, 256); 
-	IOIFCStreamBuffer stdoutbuf(rval->out().getPtr(), IOIFCStreamBuffer::E_IN, 256); 
-	ostream stdinstr(&stdinbuf); 
-	istream stdoutstr(&stdoutbuf); 
-	OpenWBEM::BinarySerialization::writeObjectPath(stdinbuf, origCop); 
-	stdinstr.flush(); 
-	rval->in()->close(); 
+	StringArray cmd;
+	cmd.push_back("/bin/cat");
+	CIMObjectPath origCop("ClassName", "ns");
+	ProcessRef rval = OpenWBEM::Exec::spawn(cmd);
+	IOIFCStreamBuffer stdinbuf(rval->in().getPtr(), IOIFCStreamBuffer::E_OUT, 256);
+	IOIFCStreamBuffer stdoutbuf(rval->out().getPtr(), IOIFCStreamBuffer::E_IN, 256);
+	ostream stdinstr(&stdinbuf);
+	istream stdoutstr(&stdoutbuf);
+	OpenWBEM::BinarySerialization::writeObjectPath(stdinbuf, origCop);
+	stdinstr.flush();
+	rval->in()->close();
 	CIMObjectPath newCop = OpenWBEM::BinarySerialization::readObjectPath(stdoutbuf);
 	rval->waitCloseTerm(3.0, 3.0, 3.0);
-	unitAssert(rval->processStatus().terminatedSuccessfully()); 
-	unitAssert(newCop.getClassName() == "ClassName"); 
-	unitAssert(newCop.getNameSpace() == "ns"); 
+	unitAssert(rval->processStatus().terminatedSuccessfully());
+	unitAssert(newCop.getClassName() == "ClassName");
+	unitAssert(newCop.getNameSpace() == "ns");
 }
 
 void OW_BinarySerializationTestCases::testCIMValueSerialization()

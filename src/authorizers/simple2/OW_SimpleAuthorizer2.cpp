@@ -63,7 +63,7 @@ const String ACCESS_WRITE("w");
 const String ACCESS_READWRITE("rw");
 const String COMPONENT_NAME = "ow.authorizer.simple2";
 }
-	
+
 //////////////////////////////////////////////////////////////////////////////
 SimpleAuthorizer2::SimpleAuthorizer2()
 	: Authorizer2IFC()
@@ -125,7 +125,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 				OW_LOG_DEBUG2(lgr, "OpenWBEM_UserACL class non-existent in /root/security. ACLs disabled");
 				return true;
 			}
-			
+
 			CIMObjectPath cop("OpenWBEM_UserACL");
 			cop.setKeyValue("username", CIMValue(userInfo.getUserName()));
 			cop.setKeyValue("nspace", CIMValue(lns));
@@ -202,7 +202,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 			OW_LOG_DEBUG(lgr, Format("Caught exception: %1 in AccessMgr::checkAccess.", ce));
 			ci.setNull();
 		}
-	
+
 		if (ci)
 		{
 			String capability;

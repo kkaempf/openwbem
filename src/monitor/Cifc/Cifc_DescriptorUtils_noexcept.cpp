@@ -34,7 +34,7 @@
  */
 
 /**
- * If you make improvements to this file, consider making the same 
+ * If you make improvements to this file, consider making the same
  * improvements in DescriptorUtils_noexcept.cpp in BloCxx
  */
 

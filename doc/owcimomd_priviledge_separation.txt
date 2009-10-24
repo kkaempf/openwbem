@@ -1,3 +1,10 @@
+===========================================================================
+This text file is old.  It was created while desigining the privilege
+separation features.  Not everything listed here was implemented, nor do all
+the executable/class names match what was documented here.  For current
+details, see PrivilegeSeparation.HOWTO.
+===========================================================================
+
 Currently the owcimomd process runs as root.
 On Linux there is a "feature" of owcimomd that takes advantage of a non-standard Linux behavior that allows threads to switch euid (seteuid only affects one
 thread instead of the whole process). The thread sets it's euid to be that of the user who authenticated.

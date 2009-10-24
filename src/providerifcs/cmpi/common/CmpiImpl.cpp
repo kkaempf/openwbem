@@ -1243,7 +1243,7 @@ bool CmpiData::operator == (const CmpiData& d)
       {
          case CMPI_string:
          	return strcmp(CmpiString(data.value.string).charPtr(),CmpiString(d.data.value.string).charPtr()) == 0;
-         case CMPI_chars: 
+         case CMPI_chars:
          	return strcmp(data.value.chars,d.data.value.chars) == 0;
          case CMPI_sint8 : return data.value.sint8 ==d.data.value.sint8;
          case CMPI_sint16: return data.value.sint16==d.data.value.sint16;
@@ -1258,6 +1258,6 @@ bool CmpiData::operator == (const CmpiData& d)
       }
    }
    return false;
-} 
+}
 
 

@@ -71,7 +71,7 @@ OOPCIMOMHandleConnectionRunner::OOPCIMOMHandleConnectionRunner(const UnnamedPipe
 }
 
 
-void 
+void
 OOPCIMOMHandleConnectionRunner::run()
 {
 	Logger logger(COMPONENT_NAME);
@@ -118,14 +118,14 @@ OOPCIMOMHandleConnectionRunner::run()
 	OW_LOG_DEBUG3(logger, "CIMOMHandleConnectionRunner::run() finished");
 }
 
-bool 
+bool
 OOPCIMOMHandleConnectionRunner::cancelled()
 {
 	NonRecursiveMutexLock lock(m_guard);
 	return m_cancelled;
 }
 
-void 
+void
 OOPCIMOMHandleConnectionRunner::doShutdown()
 {
 	NonRecursiveMutexLock lock(m_guard);

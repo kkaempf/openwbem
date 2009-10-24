@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -93,7 +93,7 @@ CIMXMLCIMOMHandle::ClientOperation::~ClientOperation()
 CIMXMLCIMOMHandle::CIMXMLCIMOMHandle(const CIMProtocolIFCRef& prot)
 	: ClientCIMOMHandle()
 	, m_protocol(prot)
-	, m_performStrictChecks(true) // TODO: Make a way to set this to false.
+	, m_performStrictChecks(true) /// @todo  Make a way to set this to false.
 {
 	m_iMessageID = 0;
 	m_protocol->setContentType("application/xml");
@@ -342,7 +342,7 @@ instanceNameToKey(const CIMObjectPath& path,
 	const String& parameterName)
 {
 	StringBuffer text = "<IPARAMVALUE NAME=\"" + parameterName + "\">";
-	
+
 	OStringStream ss;
 	CIMInstanceNametoXML(path, ss);
 	text += ss.toString();
@@ -508,7 +508,7 @@ namespace
 {
 	struct enumInstancesOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-		enumInstancesOp(CIMInstanceResultHandlerIFC& result_, 
+		enumInstancesOp(CIMInstanceResultHandlerIFC& result_,
 			const String& ns_)
 			: result(result_)
 			, ns(ns_)
@@ -722,7 +722,7 @@ namespace
 				}
 				XMLCIMFactory::EEmbeddedObjectFlag embeddedObjectType = XMLCIMFactory::getEmbeddedObjectType(parser);
 				parser.getNextTag();
-				
+
 				if (outParams.size() <= outParamCount)
 				{
 					// make sure there's enough space in the vector
@@ -954,9 +954,9 @@ CIMXMLCIMOMHandle::modifyInstance(
 	CIMInstanceNameAndInstancetoXML(modifiedInstance, ostr,
 		CIMObjectPath(ns, modifiedInstance));
 	ostr << "</VALUE.NAMEDINSTANCE></IPARAMVALUE>";
-	
+
 	Array<Param> params;
-	
+
 	// check for 1.1 only stuff
 	String cimProtocolVersion(PROTOCOL_VERSION_1_0);
 
@@ -965,7 +965,7 @@ CIMXMLCIMOMHandle::modifyInstance(
 		params.push_back(Param(CIMXMLParser::P_IncludeQualifiers, includeQualifiers));
 		cimProtocolVersion = PROTOCOL_VERSION_1_1;
 	}
-	
+
 	if (propertyList != 0)
 	{
 		generatePropertyListXML(ostr, propertyList);

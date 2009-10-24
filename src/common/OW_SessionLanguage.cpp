@@ -48,7 +48,7 @@ namespace OW_NAMESPACE
 namespace
 {
 
-inline const char* 
+inline const char*
 skipWhite(const char* arg)
 {
 	while (*arg && isspace(*arg)) { arg++; }
@@ -99,7 +99,7 @@ LanguageTag::~LanguageTag()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-LanguageTag& 
+LanguageTag&
 LanguageTag::operator= (const LanguageTag& arg)
 {
 	return copy(arg);
@@ -123,7 +123,7 @@ LanguageTag::assign(const char* arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-LanguageTag& 
+LanguageTag&
 LanguageTag::copy(const LanguageTag& arg)
 {
 	::memcpy(m_subtag1, arg.m_subtag1, sizeof(m_subtag1));
@@ -135,7 +135,7 @@ LanguageTag::copy(const LanguageTag& arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int 
+int
 LanguageTag::compareWeight(const LanguageTag& arg) const
 {
 	int v = m_weight - arg.m_weight;
@@ -151,7 +151,7 @@ LanguageTag::compareWeight(const LanguageTag& arg) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-String 
+String
 LanguageTag::toString() const
 {
 	char tmpBuf[sizeof(m_subtag1)+sizeof(m_subtag2)+sizeof(m_subtag3)+10];
@@ -316,7 +316,7 @@ LanguageTag::setWeight(const char* arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 LanguageTag::readObject(std::streambuf & istrm)
 {
 	*this = LanguageTag(BinarySerialization::readString(istrm).c_str());
@@ -381,7 +381,7 @@ SessionLanguage::assign(const char* acceptLangHdrValue)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 SessionLanguage::buildLangTags(const char* acceptLangHdrValue)
 {
 	m_acceptLanguageString = acceptLangHdrValue;
@@ -414,14 +414,14 @@ SessionLanguage::buildLangTags(const char* acceptLangHdrValue)
 	}
 	else
 	{
-		std::sort(m_langTags.begin(), m_langTags.end(), 
+		std::sort(m_langTags.begin(), m_langTags.end(),
 			std::greater<LanguageTag>());
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-bool 
+bool
 SessionLanguage::langsMatch(const LanguageTag& t1, const LanguageTag& t2,
 	int level)
 {
@@ -438,7 +438,7 @@ SessionLanguage::langsMatch(const LanguageTag& t1, const LanguageTag& t2,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-String 
+String
 SessionLanguage::getBestLanguage(const StringArray& languages, const String& defaultLanguage) const
 {
 	if (languages.size() == 0)
@@ -479,7 +479,7 @@ SessionLanguage::getBestLanguage(const StringArray& languages, const String& def
 				}
 			}
 		}
-	}  
+	}
 
 	return (bestWeight > -1) ? languages[bestIndex] : defaultLanguage;
 }
@@ -501,14 +501,14 @@ SessionLanguage::addContentLanguage(const String& contentLanguage)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-String 
+String
 SessionLanguage::getContentLanguage() const
 {
 	return m_contentLanguage;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 SessionLanguage::readObject(std::streambuf & istrm)
 {
 	BinarySerialization::readArray(istrm, m_langTags);

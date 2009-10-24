@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2003-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -62,24 +62,24 @@ public:
 	 * @postconfition getFromCache(key) returns cc.
 	 */
 	void addToCache(const T& cc, const String& key);
-	
+
 	/** Get an item from the cache.  Average complexity is constant time. Worst case is linear in the size of the cache.
 	 * @param key The key for the item to retrieve.
 	 * @return The item if found, else the item constructed with CIMNULL parameter.
 	 */
 	T getFromCache(const String& key);
-	
+
 	/** Remove an item from the cache.  Average complexity is constant time. Worst case is linear in the size of the cache.
 	 * It does not matter if the item is not in the cache.
 	 * @postcondition getFromCache(key) will return T(CIMNULL)
 	 * @param key The key for the item to remove.
 	 */
 	void removeFromCache(const String& key);
-	
+
 	/** Remove all items from the cache.
 	 */
 	void clearCache();
-	
+
 	/** Set the maximum number of items the cache will hold.  This will shrink
 	 * the cache if necessary.
 	 */
@@ -95,7 +95,7 @@ private:
 	// into the list to be stable.  We can re-arrange items in the list
 	// without having to update the HashMap index.
 	typedef std::list<std::pair<T, String> > class_cache_t;
-	
+
 	// the index into the cache.  Speeds up finding an item when we need to.
 	typedef HashMap<String, typename class_cache_t::iterator> cache_index_t;
 	class_cache_t theCache;

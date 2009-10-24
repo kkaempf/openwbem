@@ -384,33 +384,33 @@ int main(int argc, char* argv[])
 	ProviderBaseIFCRef provider = ProviderBaseIFCRef(new LocalCppProvider(cppprov));
 
 #ifdef OW_HAVE_SYS_APPARMOR_H
-	unsigned int magtok = Secure::rand_uint<unsigned int>(); 
-   	String subprofile = FileSystem::Path::basename(providerLib);  
-	subprofile = subprofile.substring(3, subprofile.indexOf('.')-3); 
-	int aarv = change_hat(subprofile.c_str(), magtok); 
+	unsigned int magtok = Secure::rand_uint<unsigned int>();
+   	String subprofile = FileSystem::Path::basename(providerLib);
+	subprofile = subprofile.substring(3, subprofile.indexOf('.')-3);
+	int aarv = change_hat(subprofile.c_str(), magtok);
 	if (aarv != 0 && errno == EACCES)
 	{
 		OW_LOG_INFO(logger, Format("AppArmor: Subprofile does not exist: %1", subprofile));
-		subprofile = "default_provider_hat"; 
+		subprofile = "default_provider_hat";
 		aarv = change_hat(subprofile.c_str(), magtok);
 	}
 	if (aarv == 0)
 	{
 		OW_LOG_INFO(logger, Format("AppArmor: Enforcing subprofile: %1", subprofile));
 	}
-	else 
+	else
 	{
 		switch (errno)
 		{
 		case EACCES:
 			OW_LOG_INFO(logger, Format("AppArmor: Subprofile does not exist: %1", subprofile));
-			break; 
+			break;
 		case EFAULT:
 			OW_LOG_ERROR(logger, Format("AppArmor: Internal error while attempting to enforce subprofile: %1", subprofile));
-			break; 
+			break;
 		case ENOMEM:
 			OW_LOG_ERROR(logger, Format("AppArmor: Insufficient kernel memory to enforce subprofile: %1", subprofile));
-			break; 
+			break;
 		default:
 			OW_LOG_ERROR(logger, Format("AppArmor: Unknown error while attempting to enforce subprofile: %1: %2", subprofile, strerror(errno)));
 		}
@@ -455,7 +455,7 @@ processCommandLine(
 		}
 
 		providerLib = parser.mustGetOptionValue(E_PROVIDER_OPT, "-p, --provider");
-		
+
 		if (parser.isSet(E_LOG_FILE_OPT))
 		{
 			logfile = parser.getOptionValue(E_LOG_FILE_OPT);

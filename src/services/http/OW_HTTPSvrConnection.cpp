@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -308,7 +308,7 @@ HTTPSvrConnection::run()
 					return;
 				}
 			}
-			
+
 			//
 			// Set up input stream to read entity
 			//
@@ -736,7 +736,7 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 	if (m_httpVersion != HTTP_VER_11)
 	{
 		m_isClose = true;	 // pre 1.1 version, no persistent connections.
-		// TODO what's up with Keep-Alive in 1.0?
+		/// @todo what's up with Keep-Alive in 1.0?
 	}
 	else
 	{
@@ -776,7 +776,7 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 				m_contentLength = cLen.toInt64();
 				if (m_contentLength < 0)
 				{
-					m_errDetails = "Bad (negative) Content-Length"; 
+					m_errDetails = "Bad (negative) Content-Length";
 					return SC_BAD_REQUEST;
 				}
 			}
@@ -912,8 +912,8 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 				m_deflateCompressionOut = m_options.enableDeflate;
 #endif
 			}
-			
-			// TODO I should really look to q != 0 after deflate as well...
+
+			/// @todo I should really look to q != 0 after deflate as well...
 			/*   // SNIA has Accept-Encoding with no "identity", so this is commented out...
 			if (getHeaderValue("Accept-Encoding").indexOf("identity") < 0)
 			{
@@ -990,7 +990,7 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 	// TODO
 //
 // Content-Type
-//	
+//
 	if (m_method == M_POST || m_method == POST)
 	{
 		if (headerHasKey("Content-Type"))
@@ -998,8 +998,8 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 			String ct = getHeaderValue("Content-Type");
 			// strip off the parameters from the content type
 			ct = ct.substring(0, ct.indexOf(';'));
-			
-			// TODO: parse and handle the parameters we may possibly care about.
+
+			/// @todo  parse and handle the parameters we may possibly care about.
 			m_requestHandler = m_options.env->getRequestHandler(ct);
 			if (!m_requestHandler)
 			{
@@ -1107,15 +1107,15 @@ HTTPSvrConnection::options(OperationContext& context)
 #endif
 	String hp = HTTPUtils::getCounterStr();
 	CIMFeatures cf;
-	
+
 	m_requestHandler = m_options.env->getRequestHandler("application/xml");
 	if (!m_requestHandler)
 	{
 		OW_HTTP_THROW(HTTPException, "OPTIONS is only implemented for XML requests", SC_NOT_IMPLEMENTED);
 	}
-	
+
 	m_requestHandler->options(cf, context);
-	
+
 	addHeader("Opt", cf.extURL + " ; ns=" + hp);
 	hp += "-";
 	addHeader(hp + "CIMProtocolVersion", cf.protocolVersion);
@@ -1205,7 +1205,7 @@ HTTPSvrConnection::sendError(int resCode)
 		reqProtocol = "HTTP/1.0";
 	}
 	m_ostr << reqProtocol << " " << resCode << " " << resMessage << "\r\n";
-	// TODO more headers (date and such)
+	/// @todo more headers (date and such)
 
 	// don't want to close the connection on unauthorized.
 	if (resCode != SC_UNAUTHORIZED)
@@ -1287,7 +1287,7 @@ HTTPSvrConnection::convertToFiniteStream(istream& istr)
 	if (m_deflateCompressionIn)
 	{
 //#ifdef OW_HAVE_ZLIB_H
-		// TODO: Fix this! we have to keep the HTTPDeflateIStream ctor argument alive for the duration.
+		/// @todo  Fix this! we have to keep the HTTPDeflateIStream ctor argument alive for the duration.
 		//rval = new HTTPDeflateIStream(rval);
 //#else
 		OW_THROW(HTTPException, "Attempting to deflate request, but "

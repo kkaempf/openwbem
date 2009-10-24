@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
 		// This needs to happen as early as possible to minimize unused, but allocated, memory in the "child watcher" parent process.
 		try
 		{
-			Platform::daemonize(debugMode, OW_DAEMON_NAME, 
+			Platform::daemonize(debugMode, OW_DAEMON_NAME,
 				env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE), restartOnFatalError,
 				COMPONENT_NAME);
 		}
@@ -187,7 +187,7 @@ int main(int argc, char* argv[])
 		// Initializing PrivilegeManager (and subsequently dropping privileges) has to happen *after* daemonizing.
 		// This also has to happen *before* any threads are created or we start listening for requests.
 		// From a security point of view, this should happend as soon as possible.
-		PrivilegeManager::use_lib_path = 
+		PrivilegeManager::use_lib_path =
 			("true" == env->getConfigItem(ConfigOpts::PRIVILEGE_MONITOR_USE_LIB_PATH_opt, "false"));
 		String privConfigDir =
 			env->getConfigItem(ConfigOpts::PRIVILEGES_CONFIG_DIR_opt);
@@ -216,7 +216,7 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				OW_LOG_INFO(logger, 				
+				OW_LOG_INFO(logger,
 					"WARNING: even though the owcimomd.restart_on_error config option = true, it\n"
 					"is not enabled because owcimomd is running in debug mode (-d)");
 			}
@@ -311,7 +311,7 @@ int main(int argc, char* argv[])
 	Platform::daemonShutdown(OW_DAEMON_NAME, env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE));
 
 	CIMOMEnvironment::instance() = env = 0;
-	
+
 	OW_LOG_INFO(logger, "owcimomd has shutdown");
 	return rval;
 }

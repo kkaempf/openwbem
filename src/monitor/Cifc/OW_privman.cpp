@@ -58,7 +58,7 @@ namespace
 	inline Process::Status procstat(int rep1, int rep2)
 	{
 		return Process::Status(rep1, rep2, Process::Status::Repr());
-	}	
+	}
 }
 
 #define BEGIN \

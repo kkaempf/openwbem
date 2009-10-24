@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -101,7 +101,7 @@ public:
 	void swap(CIMException& x);
 	CIMException(const CIMException& x);
 	CIMException& operator=(const CIMException& x);
-	
+
 	ErrNoType getErrNo() const { return ErrNoType(getErrorCode()); }
 	void setErrNo(ErrNoType e) { setErrorCode(e); }
 	/**
@@ -142,7 +142,7 @@ OW_COMMON_API std::ostream& operator<<(std::ostream& ostr, const CIMException& e
  */
 #define OW_THROWCIM(errval) \
 	throw CIMException(__FILE__, __LINE__, (errval))
-	
+
 /**
  * Throw a CIMException with error code errval, and a subexception.
  * subex.getMessage() will be used as the message for this exception
@@ -152,7 +152,7 @@ OW_COMMON_API std::ostream& operator<<(std::ostream& ostr, const CIMException& e
  */
 #define OW_THROWCIM_SUBEX(errval, subex) \
 	throw CIMException(__FILE__, __LINE__, (errval), (subex).getMessage(), &(subex))
-	
+
 /**
  * Throw a CIMException with error code errval and a message
  * @param errval One of the CIMException::ErrNoType enumerated values
@@ -170,7 +170,7 @@ OW_COMMON_API std::ostream& operator<<(std::ostream& ostr, const CIMException& e
  */
 #define OW_THROWCIMMSG_SUBEX(errval, msg, subex) \
 	throw CIMException(__FILE__, __LINE__, (errval), (msg), &(subex))
-	
+
 } // end namespace OW_NAMESPACE
 
 #endif

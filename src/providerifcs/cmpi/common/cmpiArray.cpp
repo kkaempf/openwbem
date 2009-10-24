@@ -13,7 +13,7 @@
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
  * Author:        Adrian Schuur <schuur@de.ibm.com>
- *               
+ *
  * Contributor:   Markus Mueller <sedgewick_de@yahoo.de>
  *
  * Description: CMPIArray support

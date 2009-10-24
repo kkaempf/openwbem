@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 * Copyright (C) 2005-2006 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -12,14 +12,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -86,11 +86,11 @@ public:
 	 * virtual.
 	 */
 	virtual void getMethodProviderInfo(MethodProviderInfo&);
-	
+
 	/**
 	 * The CIMOM calls this method when the method specified in the parameters
 	 * is to be invoked.
-	 * 
+	 *
 	 * @param ns The namespace of the target object.
 	 * @param path Contains the path to the instance whose method must be
 	 * 	invoked.
@@ -123,38 +123,38 @@ public:
 	/**
 	 * Return the type of lock necessary for the method invocation. If this method is not overridden, then the default
 	 * implementation will return E_WRITE_LOCK.
-	 * 
+	 *
 	 * If a method does callbacks via a CIMOMHandleRef obtained from env, you as a developer must carefully consider how
 	 * your method provider is written and what guarantees the method provider needs from the cimom.
-	 * 
+	 *
 	 * If getLockTypeForMethod() returns E_NO_LOCK, then the read-write mutex will not be locked by the provider's
 	 * calling thread. This has the following implications for the method provider:
 	 *  - It must be fully thread safe.
 	 *  - No isolation guarantees about the CIMOM can be made. Other threads may be simultaneously modifying the
 	 *    repository or other providers. Any callback operations will acquire the necessary lock, but it is only held
 	 *    for one operation. Multiple operations are not atomic.
-	 * 
+	 *
 	 * If getLockTypeForMethod() returns E_READ_LOCK, then the read-write mutex will be read locked by the provider's
 	 * calling thread. This has the following implications for the method provider:
 	 *  - It must be fully thread safe.
 	 *  - No other write operations will occur in the CIMOM, so the provider can assume that the repository and other
 	 *    providers will not change state during the execution of invokeMethod().
-	 * 
+	 *
 	 * If getLockTypeForMethod() returns E_WRITE_LOCK, then the read-write mutex will be write locked by the provider's
 	 * calling thread. This has the following implications for the method provider:
 	 *  - It does not have to be thread safe, only one thread will execute invokeMethod() at a time.
 	 *  - No other write or read operations will occur in the CIMOM, so the provider can assume that the repository and
 	 *     other providers will not change state during the execution of invokeMethod().
-	 * 
+	 *
 	 * @param ns The namespace of the target object.
 	 * @param path Contains the path to the instance whose method must be
 	 * 	invoked.
 	 * @param methodName The name of the method.
 	 * @param inParams An array of CIMValues which are the input parameters
 	 *  for this method.
-	 * 
+	 *
 	 * @return The necessary locking type.
-	 * 
+	 *
 	 * @throws CIMException
 	 */
 	virtual ELockType getLockTypeForMethod(
@@ -171,4 +171,4 @@ typedef SharedLibraryReference< IntrusiveReference<CppMethodProviderIFC> > CppMe
 } // end namespace OW_NAMESPACE
 
 #endif
-								
+

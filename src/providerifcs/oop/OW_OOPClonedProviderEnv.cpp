@@ -1,6 +1,6 @@
 /*******************************************************************************
 * Copyright (C) 2006 Novell, Inc. All rights reserved.
-* Copyright (C) 2005 Vintela, Inc. All rights reserved.
+* Copyright (C) 2005 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -70,7 +70,7 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 OOPClonedProviderEnv::OOPClonedProviderEnv(
-	OOPProviderBase* pprov, 
+	OOPProviderBase* pprov,
 	const UnnamedPipeRef& conn,
 	const ProviderEnvironmentIFCRef& provEnv)
 	: Runnable()
@@ -83,7 +83,7 @@ OOPClonedProviderEnv::OOPClonedProviderEnv(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OOPClonedProviderEnv::run()
 {
 	Logger logger(COMPONENT_NAME);
@@ -102,7 +102,7 @@ OOPClonedProviderEnv::run()
 		inputBuf, outputEntries, m_conn, m_conn, m_env, dummyResultHandler, selectEngine,
 		finishedSuccessfully, threadPool, m_pprov));
 
-	selectEngine.addSelectableObject(m_conn->getReadSelectObj(), callback, 
+	selectEngine.addSelectableObject(m_conn->getReadSelectObj(), callback,
 		SelectableCallbackIFC::E_READ_EVENT);
 
 	OW_LOG_DEBUG3(logger, "OOPClonedProviderEnv::run() about to run the select engine");

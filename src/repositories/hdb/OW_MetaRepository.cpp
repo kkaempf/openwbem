@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -470,9 +470,9 @@ MetaRepository::_resolveClass(CIMClass& child, HDBNode& node,
 	}
 	// Propagate Properties from parent class.
 	//
-	// TODO: Regardless of whether there is an override
-	// this will perform override like behavior - probably
-	// need to add validation code...
+	/// @todo  Regardless of whether there is an override
+	/// this will perform override like behavior - probably
+	/// need to add validation code...
 	//
 	propArray = parentClass.getAllProperties();
 	for (size_t i = 0; i < propArray.size(); i++)
@@ -598,7 +598,7 @@ MetaRepository::modifyClass(const String& ns,
 	HDBHandleLock hdl(this, getHandle());
 	CIMClass cimClass(cimClass_);
 	HDBNode parentNode = adjustClass(ns, cimClass, hdl.getHandle());
-	// adjustClass() returns a null parentNode is there isn't a base class. For the call to updateCIMObject below, 
+	// adjustClass() returns a null parentNode is there isn't a base class. For the call to updateCIMObject below,
 	// we want to set the parent node to the namespace.
 	if (!parentNode)
 	{
@@ -745,8 +745,8 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 						}
 						else
 						{
-							// TODO: look at this message, it seems the dmtf cim schema causes it quite often.
-							// maybe we should only output it if the value is different?
+							/// @todo  look at this message, it seems the dmtf cim schema causes it quite often.
+							/// maybe we should only output it if the value is different?
 							Logger lgr(COMPONENT_NAME);
 							OW_LOG_INFO(lgr, Format("Warning: %1.%2: qualifier %3 was "
 										"overridden, but the qualifier can't be "
@@ -935,7 +935,7 @@ MetaRepository::_getClassNodes(const String& ns, CIMClassResultHandlerIFC& resul
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin)
 {
 	CIMClass cimCls = _getClassFromNode(node, hdl, ns);
-	// TODO: Check cimCls for NULL?
+	/// @todo  Check cimCls for NULL?
 	result.handle(cimCls.clone(localOnly, includeQualifiers,
 		includeClassOrigin));
 	if (deep)
@@ -1039,7 +1039,7 @@ MetaRepository::createNameSpace(const String& ns)
 		return -1;
 	}
 	// Now create the same name space in the qualifier container.
-	// TODO: If the second create fails, we need to undo the first one.
+	/// @todo  If the second create fails, we need to undo the first one.
 	return GenericHDBRepository::createNameSpace(QUAL_CONTAINER + NS_SEPARATOR_C + ns);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION

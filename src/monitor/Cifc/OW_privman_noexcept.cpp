@@ -41,7 +41,7 @@ namespace
 	{
 		return static_cast<char const *>(std::memchr(s, '\0', n));
 	}
- 
+
 	// PROMISE: Copies first m = min(n, strlen(src) + 1) chars of src to dst.
 	// RETURNS: dst + strlen(src) if strlen(src) < n, NULL otherwise.
 	//
@@ -367,7 +367,7 @@ int owprivman_child_stdin(int pid, int * retval, char * errbuf, size_t bufsize)
 }
 
 int owprivman_child_stdout(int pid, int * retval, char * errbuf, size_t bufsize)
-{	
+{
 	return copy_unimplemented_errmsg(errbuf, bufsize);
 }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 * Copyright (C) 2004 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -12,14 +12,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -57,14 +57,14 @@ using namespace WBEMFlags;
 class OW_PROVIDERAGENT_API ProviderAgentCIMOMHandle : public CIMOMHandleIFC
 {
 public:
-	ProviderAgentCIMOMHandle(const Map<String, CppProviderBaseIFCRef>& assocProvs, 
-							 const Map<String, CppProviderBaseIFCRef>& instProvs, 
-							 const Map<String, CppProviderBaseIFCRef>& secondaryInstProvs, 
-							 const Map<String, CppProviderBaseIFCRef>& methodProvs, 
-							 Cache<CIMClass>& cimClasses, 
+	ProviderAgentCIMOMHandle(const Map<String, CppProviderBaseIFCRef>& assocProvs,
+							 const Map<String, CppProviderBaseIFCRef>& instProvs,
+							 const Map<String, CppProviderBaseIFCRef>& secondaryInstProvs,
+							 const Map<String, CppProviderBaseIFCRef>& methodProvs,
+							 Cache<CIMClass>& cimClasses,
 							 const ProviderEnvironmentIFCRef& env,
-							 ProviderAgentEnvironment::EClassRetrievalFlag classRetrieval, 
-							 const ProviderAgentLockerIFCRef& locker); 
+							 ProviderAgentEnvironment::EClassRetrievalFlag classRetrieval,
+							 const ProviderAgentLockerIFCRef& locker);
 	/**
 	 * Gets the CIM instance for the specified CIM object path.
 	 *
@@ -93,12 +93,12 @@ public:
 	 * @return The CIMInstance identified by the CIMObjectPath.
 	 * @exception CIMException If the specified CIMObjectPath cannot be found.
 	 */
-	virtual CIMInstance getInstance(const String &ns, 
-									const CIMObjectPath &instanceName, 
-									WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY, 
-									WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS, 
-									WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN, 
-									const StringArray *propertyList=0); 
+	virtual CIMInstance getInstance(const String &ns,
+									const CIMObjectPath &instanceName,
+									WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY,
+									WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS,
+									WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN,
+									const StringArray *propertyList=0);
 	/**
 	 * Enumerates the qualifiers defined in a namespace.
 	 * @param ns The namespace whose qualifier definitions are to be
@@ -106,8 +106,8 @@ public:
 	 * @param result A callback object that will handle the qualifier types
 	 * 	as they are received.
 	 */
-	virtual void enumQualifierTypes(const String &ns, 
-									CIMQualifierTypeResultHandlerIFC &result); 
+	virtual void enumQualifierTypes(const String &ns,
+									CIMQualifierTypeResultHandlerIFC &result);
 	/**
 	 * Executes the specified method on the specified object. A method is a
 	 * declaration containing the method name, return type, and parameters
@@ -121,11 +121,11 @@ public:
 	 * @return A non-null CIMValue on success. Otherwise a null CIMValue.
 	 * @exception CIMException If the specified method cannot be found.
 	 */
-	virtual CIMValue invokeMethod(const String &ns, 
-								  const CIMObjectPath &path, 
-								  const String &methodName, 
-								  const CIMParamValueArray &inParams, 
-								  CIMParamValueArray &outParams); 
+	virtual CIMValue invokeMethod(const String &ns,
+								  const CIMObjectPath &path,
+								  const String &methodName,
+								  const CIMParamValueArray &inParams,
+								  CIMParamValueArray &outParams);
 	/**
 	 * Gets the CIM qualifier type specified in the CIM object path.
 	 * @param ns The namespace
@@ -133,21 +133,21 @@ public:
 	 * @return An CIMQualifierType identified by name.
 	 * @exception CIMException If the CIM qualifier type cannot be found.
 	 */
-	virtual CIMQualifierType getQualifierType(const String &ns, const String &qualifierName); 
+	virtual CIMQualifierType getQualifierType(const String &ns, const String &qualifierName);
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace
 	 * if it exists. If it doesn't exist, it will be added.
 	 * @param ns The namespace
 	 * @param qualifierType The CIM qualifier type to be updated or added.
 	 */
-	virtual void setQualifierType(const String &ns, const CIMQualifierType &qualifierType); 
+	virtual void setQualifierType(const String &ns, const CIMQualifierType &qualifierType);
 	/**
 	 * Deletes a CIM qualfier type.
 	 * @param ns The namespace containing the qualifier type
 	 * @param qualName The qualifier type to delete.
 	 * @exception CIMException If the qualifier type does not exist.
 	 */
-	virtual void deleteQualifierType(const String &ns, const String &qualName); 
+	virtual void deleteQualifierType(const String &ns, const String &qualName);
 	/**
 	 * Adds the CIM class to the specified namespace.
 	 * @param ns The namespace
@@ -155,21 +155,21 @@ public:
 	 * @exception CIMException If the CIM class already exists in the
 	 *	namespace.
 	 */
-	virtual void createClass(const String &ns, const CIMClass &cimClass); 
+	virtual void createClass(const String &ns, const CIMClass &cimClass);
 	/**
 	 * Deletes the CIM class specified by className from namespace ns.
 	 * @param ns The namespace containing the class to delete.
 	 * @param className The class to delete.
 	 * @exception CIMException If the object does not exist
 	 */
-	virtual void deleteClass(const String &ns, const String &className); 
+	virtual void deleteClass(const String &ns, const String &className);
 	/**
 	 * Updates the CIM class within the specified namespace.
 	 * @param ns The namespace
 	 * @param cimClass The CIMClass to be updated
 	 * @exception CIMException If the class does not exists
 	 */
-	virtual void modifyClass(const String &ns, const CIMClass &cimClass); 
+	virtual void modifyClass(const String &ns, const CIMClass &cimClass);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Deletes the CIM instance specified by path from namespace ns.
@@ -177,7 +177,7 @@ public:
 	 * @param path The CIMObjectPath identifying the instance to delete.
 	 * @exception CIMException If the instance does not exist.
 	 */
-	virtual void deleteInstance(const String &ns, const CIMObjectPath &path); 
+	virtual void deleteInstance(const String &ns, const CIMObjectPath &path);
 	/**
 	 * Set the specified CIM instance property.
 	 * @param ns The namespace containing the instance to modify.
@@ -187,8 +187,8 @@ public:
 	 * @param newValue The new value for property propertyName.
 	 * @exception CIMException
 	 */
-	virtual void setProperty(const String &ns, const CIMObjectPath &instanceName, 
-							 const String &propertyName, const CIMValue &newValue); 
+	virtual void setProperty(const String &ns, const CIMObjectPath &instanceName,
+							 const String &propertyName, const CIMValue &newValue);
 	/**
 	 * Update the specified CIM instance within the specified namespace.
 	 * @param ns The namespace
@@ -198,10 +198,10 @@ public:
 	 * @param propertyList The properties to modify.  0 means all properties.
 	 * @exception CIMException
 	 */
-	virtual void modifyInstance(const String &ns, 
-								const CIMInstance &modifiedInstance, 
-								WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_INCLUDE_QUALIFIERS, 
-								const StringArray *propertyList=0); 
+	virtual void modifyInstance(const String &ns,
+								const CIMInstance &modifiedInstance,
+								WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_INCLUDE_QUALIFIERS,
+								const StringArray *propertyList=0);
 	/**
 	 * Add the specified CIM instance to the specified namespace.
 	 * @param ns The namespace
@@ -210,8 +210,8 @@ public:
 	 * @exception CIMException If the CIM instance already exists in the
 	 *	namespace
 	 */
-	virtual CIMObjectPath createInstance(const String &ns, 
-										 const CIMInstance &instance); 
+	virtual CIMObjectPath createInstance(const String &ns,
+										 const CIMInstance &instance);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Get the specified CIM instance property.
@@ -222,9 +222,9 @@ public:
 	 * @return The CIMvalue for property identified by propertyName.
 	 * @exception CIMException
 	 */
-	virtual CIMValue getProperty(const String &ns, 
-								 const CIMObjectPath &instanceName, 
-								 const String &propertyName); 
+	virtual CIMValue getProperty(const String &ns,
+								 const CIMObjectPath &instanceName,
+								 const String &propertyName);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * This method is used to enumerate the names of CIM Objects (Classes
@@ -263,13 +263,13 @@ public:
 	 *
 	 * @exception CIMException - as defined in the associator method
 	 */
-	virtual void associatorNames(const String &ns, 
-								 const CIMObjectPath &objectName, 
-								 CIMObjectPathResultHandlerIFC &result, 
-								 const String &assocClass=String(), 
-								 const String &resultClass=String(), 
-								 const String &role=String(), 
-								 const String &resultRole=String()); 
+	virtual void associatorNames(const String &ns,
+								 const CIMObjectPath &objectName,
+								 CIMObjectPathResultHandlerIFC &result,
+								 const String &assocClass=String(),
+								 const String &resultClass=String(),
+								 const String &role=String(),
+								 const String &resultRole=String());
 	/**
 	 * This operation is used to enumerate CIMClasses that are associated
 	 * to a particular source CIM Object.
@@ -351,15 +351,15 @@ public:
 	 *	parameters), CIM_ERR_FAILED (some other unspecified error
 	 *	occurred)
 	 */
-	virtual void associatorsClasses(const String &ns, const CIMObjectPath &path, 
-									CIMClassResultHandlerIFC &result, 
-									const String &assocClass=String(), 
-									const String &resultClass=String(), 
-									const String &role=String(), 
-									const String &resultRole=String(), 
-									WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS, 
-									WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN, 
-									const StringArray *propertyList=0); 
+	virtual void associatorsClasses(const String &ns, const CIMObjectPath &path,
+									CIMClassResultHandlerIFC &result,
+									const String &assocClass=String(),
+									const String &resultClass=String(),
+									const String &role=String(),
+									const String &resultRole=String(),
+									WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS,
+									WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN,
+									const StringArray *propertyList=0);
 	/**
 	 * This operation is used to enumerate CIM Objects (Classes or
 	 * Instances) that are associated to a particular source CIM Object.
@@ -438,16 +438,16 @@ public:
 	 *	parameters), CIM_ERR_FAILED (some other unspecified error
 	 *	occurred).
 	 */
-	virtual void associators(const String &ns, const CIMObjectPath &path, 
-							 CIMInstanceResultHandlerIFC &result, 
-							 const String &assocClass=String(), 
-							 const String &resultClass=String(), 
-							 const String &role=String(), 
-							 const String &resultRole=String(), 
-							 WBEMFlags:: EIncludeQualifiersFlag 
-							 includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS, 
-							 WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN, 
-							 const StringArray *propertyList=0); 
+	virtual void associators(const String &ns, const CIMObjectPath &path,
+							 CIMInstanceResultHandlerIFC &result,
+							 const String &assocClass=String(),
+							 const String &resultClass=String(),
+							 const String &role=String(),
+							 const String &resultRole=String(),
+							 WBEMFlags:: EIncludeQualifiersFlag
+							 includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS,
+							 WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN,
+							 const StringArray *propertyList=0);
 	/**
 	 * This operation is used to enumerate the association objects that
 	 * refer to a particular target CIM Object (Class or Instance).
@@ -473,10 +473,10 @@ public:
 	 *
 	 * @exception CIMException As defined for associators method.
 	 */
-	virtual void referenceNames(const String &ns, const CIMObjectPath &path, 
-								CIMObjectPathResultHandlerIFC &result, 
-								const String &resultClass=String(), 
-								const String &role=String()); 
+	virtual void referenceNames(const String &ns, const CIMObjectPath &path,
+								CIMObjectPathResultHandlerIFC &result,
+								const String &resultClass=String(),
+								const String &role=String());
 	/**
 	 * This operation is used to enumerate the association objects that
 	 * refer to a particular target CIM Object (Class or Instance).
@@ -511,13 +511,13 @@ public:
 	 *
 	 * @exception CIMException - as defined for associators method.
 	 */
-	virtual void references(const String &ns, const CIMObjectPath &path, 
-							CIMInstanceResultHandlerIFC &result, 
-							const String &resultClass=String(), 
-							const String &role=String(), 
-							WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS, 
-							WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN, 
-							const StringArray *propertyList=0); 
+	virtual void references(const String &ns, const CIMObjectPath &path,
+							CIMInstanceResultHandlerIFC &result,
+							const String &resultClass=String(),
+							const String &role=String(),
+							WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS,
+							WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN,
+							const StringArray *propertyList=0);
 	/**
 	 * This operation is used to enumerate the association objects that
 	 * refer to a particular target CIM Class.
@@ -526,19 +526,19 @@ public:
 	 *
 	 * @exception CIMException - as defined for associators method.
 	 */
-	virtual void referencesClasses(const String &ns, const CIMObjectPath &path, 
-								   CIMClassResultHandlerIFC &result, 
-								   const String &resultClass=String(), 
-								   const String &role=String(), 
-								   WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS, 
-								   WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN, 
-								   const StringArray *propertyList=0); 
+	virtual void referencesClasses(const String &ns, const CIMObjectPath &path,
+								   CIMClassResultHandlerIFC &result,
+								   const String &resultClass=String(),
+								   const String &role=String(),
+								   WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS,
+								   WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN,
+								   const StringArray *propertyList=0);
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * Close the connetion to the CIMOM. This will free resources used for the
 	 * client session. The destructor will call close().
 	 */
-	virtual void close(); 
+	virtual void close();
 	/**
 	 * Enumerates the child classes of className.
 	 * @param ns The namespace.
@@ -553,9 +553,9 @@ public:
 	 * @exception CIMException If the specified CIMObjectPath object cannot
 	 *	be found.
 	 */
-	virtual void enumClassNames(const String &ns, const String &className, 
-								StringResultHandlerIFC &result, 
-								WBEMFlags:: EDeepFlag deep=WBEMFlags:: E_DEEP); 
+	virtual void enumClassNames(const String &ns, const String &className,
+								StringResultHandlerIFC &result,
+								WBEMFlags:: EDeepFlag deep=WBEMFlags:: E_DEEP);
 	/**
 	 * Enumerates the class specified by the CIMObjectPath.
 	 * @param ns The namespace.
@@ -576,12 +576,12 @@ public:
 	 * 	of each class.
 	 * @exception CIMException If the specified class cannot be found
 	 */
-	virtual void enumClass(const String &ns, const String &className, 
-						   CIMClassResultHandlerIFC &result, 
-						   WBEMFlags:: EDeepFlag deep=WBEMFlags:: E_SHALLOW, 
-						   WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY, 
-						   WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_INCLUDE_QUALIFIERS, 
-						   WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_INCLUDE_CLASS_ORIGIN); 
+	virtual void enumClass(const String &ns, const String &className,
+						   CIMClassResultHandlerIFC &result,
+						   WBEMFlags:: EDeepFlag deep=WBEMFlags:: E_SHALLOW,
+						   WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY,
+						   WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_INCLUDE_QUALIFIERS,
+						   WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_INCLUDE_CLASS_ORIGIN);
 	/**
 	 * Gathers all instances (the whole instance and not just the names)
 	 * belonging to the class specified in the path. This could include
@@ -617,13 +617,13 @@ public:
 	 *
 	 * @exception CIMException If the object cannot be found.
 	 */
-	virtual void enumInstances(const String &ns, const String &className, 
-							   CIMInstanceResultHandlerIFC &result, 
-							   WBEMFlags:: EDeepFlag deep=WBEMFlags:: E_DEEP, 
-							   WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY, 
-							   WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS, 
-							   WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN, 
-							   const StringArray *propertyList=0); 
+	virtual void enumInstances(const String &ns, const String &className,
+							   CIMInstanceResultHandlerIFC &result,
+							   WBEMFlags:: EDeepFlag deep=WBEMFlags:: E_DEEP,
+							   WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY,
+							   WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS,
+							   WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN,
+							   const StringArray *propertyList=0);
 	/**
 	 * Gathers all instance names belonging to the class specified in the
 	 * path. This could include instances of all the classes in the
@@ -636,8 +636,8 @@ public:
 	 *
 	 * @exception CIMException If the object cannot be found.
 	 */
-	virtual void enumInstanceNames(const String &ns, const String &className, 
-								   CIMObjectPathResultHandlerIFC &result); 
+	virtual void enumInstanceNames(const String &ns, const String &className,
+								   CIMObjectPathResultHandlerIFC &result);
 	/**
 	 * Gets the CIM class for the specified CIM object path.
 	 * @param ns The namespace
@@ -657,11 +657,11 @@ public:
 	 * @exception CIMException If the namespace or the model path
 	 * 	identifying the object cannot be found.
 	 */
-	virtual CIMClass getClass(const String &ns, const String &className, 
-							  WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY, 
-							  WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_INCLUDE_QUALIFIERS, 
-							  WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_INCLUDE_CLASS_ORIGIN, 
-							  const StringArray *propertyList=0); 
+	virtual CIMClass getClass(const String &ns, const String &className,
+							  WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY,
+							  WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_INCLUDE_QUALIFIERS,
+							  WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_INCLUDE_CLASS_ORIGIN,
+							  const StringArray *propertyList=0);
 	/**
 	 * Executes a query to retrieve or modify objects.
 	 *
@@ -683,49 +683,49 @@ public:
 	 *	The requested query language is not supported.
 	 *	The query specifies a class that does not exist.
 	 */
-	virtual void execQuery(const String &ns, 
-						   CIMInstanceResultHandlerIFC &result, 
-						   const String &query, const String &queryLanguage); 
+	virtual void execQuery(const String &ns,
+						   CIMInstanceResultHandlerIFC &result,
+						   const String &query, const String &queryLanguage);
 
-private: 
+private:
 
 	class PAReadLock
 	{
-	public: 
-		PAReadLock(const ProviderAgentLockerIFCRef& pl); 
-		~PAReadLock(); 
-	private: 
-		ProviderAgentLockerIFCRef m_locker; 
-	}; 
+	public:
+		PAReadLock(const ProviderAgentLockerIFCRef& pl);
+		~PAReadLock();
+	private:
+		ProviderAgentLockerIFCRef m_locker;
+	};
 	class PAWriteLock
 	{
-	public: 
-		PAWriteLock(const ProviderAgentLockerIFCRef& pl); 
-		~PAWriteLock(); 
-	private: 
-		ProviderAgentLockerIFCRef m_locker; 
-	}; 
-	Map<String, CppProviderBaseIFCRef> m_assocProvs; 
-	Map<String, CppProviderBaseIFCRef> m_instProvs; 
-	Map<String, CppProviderBaseIFCRef> m_secondaryInstProvs; 
-	Map<String, CppProviderBaseIFCRef> m_methodProvs; 
-	Cache<CIMClass>& m_cimClasses; 
-	ProviderEnvironmentIFCRef m_PAEnv; 
-	ProviderAgentLockerIFCRef m_locker; 
-	ProviderAgentEnvironment::EClassRetrievalFlag m_classRetrieval; 
+	public:
+		PAWriteLock(const ProviderAgentLockerIFCRef& pl);
+		~PAWriteLock();
+	private:
+		ProviderAgentLockerIFCRef m_locker;
+	};
+	Map<String, CppProviderBaseIFCRef> m_assocProvs;
+	Map<String, CppProviderBaseIFCRef> m_instProvs;
+	Map<String, CppProviderBaseIFCRef> m_secondaryInstProvs;
+	Map<String, CppProviderBaseIFCRef> m_methodProvs;
+	Cache<CIMClass>& m_cimClasses;
+	ProviderEnvironmentIFCRef m_PAEnv;
+	ProviderAgentLockerIFCRef m_locker;
+	ProviderAgentEnvironment::EClassRetrievalFlag m_classRetrieval;
 
-	CppInstanceProviderIFC* getInstanceProvider(const String& ns, 
-												const String& className) const; 
-	CppSecondaryInstanceProviderIFC* getSecondaryInstanceProvider(const String& ns, 
-												const String& className) const; 
+	CppInstanceProviderIFC* getInstanceProvider(const String& ns,
+												const String& className) const;
+	CppSecondaryInstanceProviderIFC* getSecondaryInstanceProvider(const String& ns,
+												const String& className) const;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	CppAssociatorProviderIFC* getAssociatorProvider(const String& ns, 
-												const String& className) const; 
+	CppAssociatorProviderIFC* getAssociatorProvider(const String& ns,
+												const String& className) const;
 #endif
-	CppMethodProviderIFC* getMethodProvider(const String& ns, 
-											const String& className, 
-											const String& methodName) const; 
-	CIMClass helperGetClass(const String& ns, const String& className); 
+	CppMethodProviderIFC* getMethodProvider(const String& ns,
+											const String& className,
+											const String& methodName) const;
+	CIMClass helperGetClass(const String& ns, const String& className);
 
 };
 

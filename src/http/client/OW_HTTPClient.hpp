@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -50,7 +50,7 @@
 namespace OW_NAMESPACE
 {
 
-// TODO: Rewrite this class. It's way too big and convoluted. 
+/// @todo  Rewrite this class. It's way too big and convoluted.
 // Take a look at Apache's HttpClient library: http://jakarta.apache.org/commons/httpclient/index.html
 
 /**
@@ -237,10 +237,10 @@ private:
 #pragma warning (push)
 #pragma warning (disable: 4251)
 #endif
-	
+
 	String m_sAuthorization;
 	String m_sRealm;
-	
+
 #ifndef OW_DISABLE_DIGEST
 	String m_sDigestNonce;
 	String m_sDigestCNonce;
@@ -287,7 +287,7 @@ private:
 	bool m_closeConnection;
 	String m_spnegoData;
 	SPNEGOHandlerRef m_spnegoHandler;
-	int m_statusCode; 
+	int m_statusCode;
 
 #ifdef OW_WIN32
 #pragma warning (pop)
@@ -358,7 +358,7 @@ private:
 	 * to look at the header to know if we should keep sending data.
 	 * This function doesn't block, it just looks to see if there is a http status
 	 * line on the incoming socket, and if so it reads it and examines the status
-	 * code.  If there is no input or If the status code < 300, E_STATUS_GOOD is 
+	 * code.  If there is no input or If the status code < 300, E_STATUS_GOOD is
 	 * returned, else E_STATUS_ERROR.
 	 */
 	enum EStatusLineSummary

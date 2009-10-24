@@ -18,7 +18,7 @@
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -389,7 +389,7 @@ struct MockMTSource :
 			"Unexpected call to MockMTSource::popFront()");
 		Format timeout_msg(
 			"Unexpected timeout arg in MockMTSource::popFront() call: "
-			"expected %1, got %2", 
+			"expected %1, got %2",
 			toString(m_timeouts[m_call_index]),
 			toString(timeout));
 		mockAssert(timeout == m_timeouts[m_call_index],
@@ -439,7 +439,7 @@ struct TC : public TestCase
 		m_clock = new MockClock();
 		m_burstExporter = new MockIndicationBurstExporter();
 		m_requestSource = new MockMTSource(m_clock, m_burstExporter);
-		m_bufferingThread = 
+		m_bufferingThread =
 			new IndicationBufferingThread(m_burstExporter, m_clock);
 	}
 
@@ -960,7 +960,7 @@ struct TC : public TestCase
 		givenTimeIs(
 			dt(T0, 0));
 		wait(0.1).delay(1.0).bufsz(3).dests(10).thrds(10).init();
-		
+
 		// shutdownThreadPool is called from the indication server thread,
 		// not from the IndicationBufferingThread thread itself, hence
 		// no call to runThread() here.
@@ -984,7 +984,7 @@ struct TC : public TestCase
 		processesIsolatedShutdown(
 			dt(T0+10000, 0));
 		runThread();
-		verify();		
+		verify();
 	}
 
 private:

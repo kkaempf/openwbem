@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -416,7 +416,7 @@ testDynInstances(CIMClient& hdl)
 		TEST_ASSERT(hdl.getHTTPResponseHeader("Content-Language", cl));
 		TEST_ASSERT(cl == "x-testinst");
 		TEST_ASSERT(ci.getLanguage() == "x-owtest");
-		
+
 		TempFileStream tfs;
 		tfs << "<CIM>";
 		CIMInstancePathAndInstancetoXML(ci, tfs, cop1);
@@ -471,7 +471,7 @@ testDynInstances(CIMClient& hdl)
 		hdl.deleteInstance( cop2);
 		enu = hdl.enumInstancesE( "testinstance");
 		TEST_ASSERT(enu.numberOfElements() == 0);
-		
+
 	}
 	catch (CIMException& e)
 	{
@@ -516,7 +516,7 @@ testModifyProviderQualifier(CIMClient& hdl)
 		hdl.deleteInstance( cop1);
 		enu = hdl.enumInstancesE( "testinstance");
 		TEST_ASSERT(enu.numberOfElements() == 0);
-		
+
 
 		// now test the old behavior.  Create a new class that the provider
 		// didn't register for, but we'll have the qualifier point to the
@@ -561,7 +561,7 @@ testModifyProviderQualifier(CIMClient& hdl)
 		enu = hdl.enumInstancesE( "testinstance");
 		TEST_ASSERT(enu.numberOfElements() == 0);
 		hdl.deleteClass("testinstance2");
-		
+
 	}
 	catch (CIMException& e)
 	{
@@ -637,7 +637,7 @@ enumerateInstances(CIMClient& hdl, String ofClass, EDeepFlag deep, ELocalOnlyFla
 	pstr = Format("ofClass = %1, deep = %2, localOnly = %3, includeQualifiers = %4, "
 			"includeClassOrigin = %5, propertyList? %6",
 			ofClass, deep, localOnly, includeQualifiers, includeClassOrigin, propertyList != 0);
-		
+
 	testStart("enumInstances", pstr.c_str());
 
 	try
@@ -884,7 +884,7 @@ void createAssociation(CIMClient& hdl, const String& assocName,
 
 		CIMClass cc = hdl.getClass( assocName);
 		CIMInstance inst = cc.newInstance();
-			
+
 		inst.setProperty(propName1, CIMValue(cop1));
 
 		inst.setProperty(propName2, CIMValue(cop2));
@@ -987,7 +987,7 @@ associatorNamesClass(CIMClient& hdl, const String& assocClass,
 	try
 	{
 		CIMObjectPath cop("EXP_BionicComputerSystem");
-		
+
 		CIMObjectPathEnumeration enu = hdl.associatorNamesE(
 			 cop, assocClass, resultClass, role, resultRole);
 
@@ -1626,7 +1626,7 @@ testSingleton(CIMClient& hdl)
 		newInst.setProperty("OptionalArg", CIMValue(false));
 
 		hdl.modifyInstance(newInst);
-		
+
 		got = hdl.getInstance(cop);
 
 		TEST_ASSERT(got.getPropertyT("Name").getValueT() == CIMValue("singleton2"));
@@ -1728,8 +1728,8 @@ main(int argc, char* argv[])
 #ifdef OW_HAVE_OPENSSL
 		//SSLCtxMgr::setCertVerifyCallback(ssl_verifycert_callback);
 #endif
-		
-		
+
+
 		/**********************************************************************
 		 * Create an instance of our authentication callback class.
 		 **********************************************************************/
@@ -1786,7 +1786,7 @@ main(int argc, char* argv[])
 		createInstance(rch, "EXP_BionicComputerSystem2", "SevenMillion");
 		enumerateInstanceNames(rch);
 		// non-deep, non-localOnly, no qualifiers, no classOrigin, all props
-		enumerateInstances(rch, "CIM_System", E_SHALLOW, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);	
+		enumerateInstances(rch, "CIM_System", E_SHALLOW, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 		// deep, non-localOnly, no qualifiers, no classOrigin, all props
 		enumerateInstances(rch, "CIM_System", E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 		// deep, localOnly, no qualifiers, no classOrigin, all props
@@ -1850,7 +1850,7 @@ main(int argc, char* argv[])
 		// includeQualifier = true, don't add qualifier or property, qual and prop should be gone.
 		modifyInstance(rch, "SixMillion", E_INCLUDE_QUALIFIERS, 0, false, false);
 		getInstance(rch, "SixMillion", E_LOCAL_ONLY, E_INCLUDE_QUALIFIERS);
-		
+
 		// add the property, but it shouldn't appear, because the prop list is empty.
 		sa.clear();
 		modifyInstance(rch, "SixMillion", E_INCLUDE_QUALIFIERS, &sa, true, false);

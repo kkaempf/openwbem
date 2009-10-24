@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -67,8 +67,8 @@ namespace HTTPUtils
 using std::istream;
 
 ///////////////////////////////////////////////////////////////////////////////
-const char* const HeaderValue_true = "true"; 
-const char* const HeaderValue_false = "false"; 
+const char* const HeaderValue_true = "true";
+const char* const HeaderValue_false = "false";
 ///////////////////////////////////////////////////////////////////////////////
 bool
 parseHeader(HTTPHeaderMap& map, Array<String>& array, istream& istr)
@@ -83,7 +83,7 @@ parseHeader(HTTPHeaderMap& map, Array<String>& array, istream& istr)
 	{
 		return false;
 	}
-	
+
 	array = line.tokenize();
 	return buildMap(map, istr);
 }
@@ -119,7 +119,7 @@ buildMap(HTTPHeaderMap& map, istream& istr)
 			else
 			{
 				return false; // continuation expected, but no previous key.
-				// TODO maybe we should silently ignore bad header
+				/// @todo maybe we should silently ignore bad header
 				// data instead
 			}
 		}
@@ -659,7 +659,7 @@ addHeader(Array<String>& headers, const String& key, const String& value)
 		String newHeader = key + ": " + value;
 		if (std::find(headers.begin(), headers.end(), newHeader) == headers.end())
 		{
-			headers.push_back(newHeader); 
+			headers.push_back(newHeader);
 		}
 	}
 	else
@@ -672,7 +672,7 @@ addHeader(Array<String>& headers, const String& key, const String& value)
 void
 eatEntity(istream& istr)
 {
-	while ( istr )	
+	while ( istr )
 	{
 		istr.get();
 	}
@@ -768,12 +768,12 @@ String escapeForURL(const String& input)
 		case 'e': case 'f': case 'g': case 'h': case 'i': case 'j':
 		case 'k': case 'l': case 'm': case 'n': case 'o': case 'p':
 		case 'q': case 'r': case 's': case 't': case 'u': case 'v':
-		case 'w': case 'x': case 'y': case 'z': 
-		
+		case 'w': case 'x': case 'y': case 'z':
+
 		case '0': case '1': case '2': case '3': case '4': case '5':
 		case '6': case '7': case '8': case '9':
-		
-		case '-': case '_': case '.': case '!': case '~': 
+
+		case '-': case '_': case '.': case '!': case '~':
 		case '*': case '\'': case '(': case ')':
 			rval += input[i];
 			break;
@@ -805,7 +805,7 @@ String unescapeForURL(const String& input)
 	}
 	return rval.releaseString();
 }
-	
+
 
 } // end namespace HTTPUtils
 } // end namespace OW_NAMESPACE

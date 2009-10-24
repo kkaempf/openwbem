@@ -187,7 +187,7 @@ void processCreate(String& filepath)
 	// Read the uid from stdin
 	String uid;
 	getLineFromStdin(uid);
-	
+
 	// Read a random number from stdin to put in file for client to read
 	String cookie;
 	getLineFromStdin(cookie);

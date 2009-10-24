@@ -68,7 +68,7 @@ OOPQueryProvider::OOPQueryProvider(const OOPProviderInterface::ProvRegInfo& info
 OOPQueryProvider::~OOPQueryProvider()
 {
 }
-	
+
 namespace
 {
 	class QueryInstancesCallback : public OOPProviderBase::MethodCallback
@@ -86,7 +86,7 @@ namespace
 		{
 		}
 
-		virtual void call(const OOPProtocolIFCRef& protocol, const UnnamedPipeRef& out, const UnnamedPipeRef& in, 
+		virtual void call(const OOPProtocolIFCRef& protocol, const UnnamedPipeRef& out, const UnnamedPipeRef& in,
 			const Timeout& timeout, const ProviderEnvironmentIFCRef& env) const
 		{
 			protocol->queryInstances(out, in, timeout, env, m_ns, m_query, m_result, m_cimClass);

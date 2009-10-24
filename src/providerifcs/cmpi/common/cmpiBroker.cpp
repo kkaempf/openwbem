@@ -202,7 +202,7 @@ static CMPIObjectPath* mbCreateInstance(const CMPIBroker *, const CMPIContext *c
 static CMPIStatus mbModifyInstance(const CMPIBroker *, const CMPIContext *ctx,
 	const CMPIObjectPath *cop, const CMPIInstance *ci, const char**)
 {
-	// TODO handle propertylist
+	/// @todo handle propertylist
 	OW_LOG_DEBUG3(CM_LOGGER(), "CMPIBroker: mbSetInstance()");
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION

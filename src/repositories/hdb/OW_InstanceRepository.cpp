@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -111,7 +111,7 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			Format("Model path is missing keys: %1", cop.toString()).c_str());
 	}
-	// TODO: Is this necessary?
+	/// @todo  Is this necessary?
 	if (pra.size() == 1)
 	{
 		// If only one key property in object path, ensure it is
@@ -139,7 +139,7 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 		rv += cv.toString();
 		return rv.releaseString();
 	}
-	// TODO: Is this necessary?
+	/// @todo  Is this necessary?
 	// Ensure no non-key properties were specified in the path
 	for (size_t i = 0; i < pra.size(); i++)
 	{
@@ -270,7 +270,7 @@ InstanceRepository::getCIMInstance(
 	CIMInstance ci(CIMNULL);
 	nodeToCIMObject(ci, node);
 	ci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS);
-	
+
 	// only filter if we need to
 	if (propertyList
 		|| localOnly == E_LOCAL_ONLY
@@ -280,8 +280,8 @@ InstanceRepository::getCIMInstance(
 		ci = ci.clone(localOnly, includeQualifiers, includeClassOrigin,
 			propertyList);
 	}
-	
-	ci.setNameSpace(ns); 
+
+	ci.setNameSpace(ns);
 	return ci;
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -336,7 +336,7 @@ InstanceRepository::createInstance(const String& ns,
 	hdl.getHandle().addChild(clsNode, node);
 }
 //////////////////////////////////////////////////////////////////////////////
-// TODO: Is this function actually used?
+/// @todo  Is this function actually used?
 bool
 InstanceRepository::classHasInstances(const CIMObjectPath& classPath)
 {

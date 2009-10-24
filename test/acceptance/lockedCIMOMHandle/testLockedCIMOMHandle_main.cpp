@@ -64,7 +64,7 @@ usage(const char* name)
 {
 	cerr << "Usage: " << name << " <url> [dump file extension]" << endl;
 }
-		
+
 
 class ClientCIMOMHandleSource : public LockedCIMOMHandle::CIMOMHandleSource
 {
@@ -111,7 +111,7 @@ main(int argc, char* argv[])
 
 		LogAppender::setDefaultLogAppender(LogAppenderRef(new CerrAppender()));
 		String url(argv[1]);
-		
+
 		ClientCIMOMHandleSource chs(url);
 		const char* const cppNS = "root/lockedCIMOMHandleTest-cpp";
 		const char* const oopNS = "root/lockedCIMOMHandleTest-oop";
@@ -130,7 +130,7 @@ main(int argc, char* argv[])
 		TEST_ASSERT(LockedCIMOMHandle::test(oopNS, write, no, chs));
 		TEST_ASSERT(!LockedCIMOMHandle::test(oopNS, write, no, read, chs));
 		TEST_ASSERT(!LockedCIMOMHandle::test(oopNS, read, write, chs));
-			
+
 		return 0;
 
 	}

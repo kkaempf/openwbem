@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *	this list of conditions and the following disclaimer in the documentation
 *	and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *	contributors may be used to endorse or promote products derived from this
 *	software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -105,7 +105,7 @@ long Compiler::compile( const String& filename )
 			}
 			theErrorHandler->progressMessage("Starting parsing",
 					LineInfo(filename, 0, 0));
-			
+
 			{
 				NonRecursiveMutexLock lock(g_guard);
 				#ifdef YYOW_DEBUG
@@ -173,7 +173,7 @@ long Compiler::compileString( const String& mof )
 		{
 			{
 				NonRecursiveMutexLock lock(g_guard);
-			
+
 				YY_BUFFER_STATE buf = owmof_scan_bytes(mof.c_str(), mof.length());
 				owmofBufferDeleter deleter(buf);
 				theErrorHandler->progressMessage("Starting parsing",
@@ -616,7 +616,7 @@ private:
 							}
 							else
 							{
-								// TODO: look at this message, it seems the dmtf cim schema causes it quite often.
+								/// @todo  look at this message, it seems the dmtf cim schema causes it quite often.
 								// maybe we should only output it if the value is different?
 								Logger lgr(COMPONENT_NAME);
 								OW_LOG_INFO(lgr, Format("Warning: %1.%2: qualifier %3 was "
@@ -738,9 +738,9 @@ private:
 		}
 		// Propagate Properties from parent class.
 		//
-		// TODO: Regardless of whether there is an override
-		// this will perform override like behavior - probably
-		// need to add validation code...
+		/// @todo  Regardless of whether there is an override
+		/// this will perform override like behavior - probably
+		/// need to add validation code...
 		//
 		propArray = parentClass.getAllProperties();
 		for (size_t i = 0; i < propArray.size(); i++)
@@ -885,7 +885,7 @@ CompilerState::~CompilerState()
 {
 }
 
-void 
+void
 CompilerState::updateLocation(const char* yytext, owmofltype* yylocp)
 {
 	m_firstLine = m_lastLine = m_nextLine;
@@ -908,19 +908,19 @@ CompilerState::updateLocation(const char* yytext, owmofltype* yylocp)
 	yylocp->last_line = m_lastLine;
 }
 
-LineInfo 
+LineInfo
 CompilerState::getLineInfo() const
 {
 	return LineInfo(m_fileName, m_firstLine, m_firstColumn);
 }
 
-ParserErrorHandlerIFCRef 
+ParserErrorHandlerIFCRef
 CompilerState::getErrorHandler() const
 {
 	return m_errorHandler;
 }
 
-void 
+void
 CompilerState::startNewFile(const String& filenameWithPath)
 {
 	m_firstColumn = 0;

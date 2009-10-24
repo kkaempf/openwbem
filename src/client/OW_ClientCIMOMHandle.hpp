@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -86,11 +86,11 @@ public:
 	 *
 	 * @param authCb If authentication is necessary, and authCb != NULL, then
 	 * authCb->getCredentials() will be called to obtain credentials.
-	 * 
+	 *
 	 * @param sslCtx A SSLClientCtx can optionally be provided.  This is useful
-	 * in the case where a client SSL certificate is used for client SSL 
-	 * authentication.  It is not necessary to provide this parameter to use 
-	 * SSL.  If it is not provided, a default SSLClientCtx will be used. 
+	 * in the case where a client SSL certificate is used for client SSL
+	 * authentication.  It is not necessary to provide this parameter to use
+	 * SSL.  If it is not provided, a default SSLClientCtx will be used.
 	 *
 	 * @return a ClientCIMOMHandleRef suitable for connecting to the given url.
 	 *
@@ -98,7 +98,7 @@ public:
 	 * @throws std::bad_alloc
 	 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
 	 */
-	static ClientCIMOMHandleRef createFromURL(const String& url, 
+	static ClientCIMOMHandleRef createFromURL(const String& url,
 											  const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef(),
 											  const SSLClientCtxRef& sslCtx = SSLClientCtxRef());
 
@@ -107,4 +107,3 @@ public:
 } // end namespace OW_NAMESPACE
 
 #endif
-	

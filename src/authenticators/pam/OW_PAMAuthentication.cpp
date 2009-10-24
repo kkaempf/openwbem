@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -104,7 +104,7 @@ class LinuxPAMAuthentication : public AuthenticatorIFC
 private:
 	virtual bool doAuthenticate(String &userName, const String &info,
 		String &details, OperationContext& context);
-	
+
 	virtual void doInit(ServiceEnvironmentIFCRef env);
 	String m_allowedUsers;
 };
@@ -200,7 +200,7 @@ do {                             \
 
 //////////////////////////////////////////////////////////////////////////////
 // Static
-// TODO clean up, remove all stuff we don't support.
+/// @todo clean up, remove all stuff we don't support.
 #if defined(OW_HPUX) || defined(OW_SOLARIS) || defined(OW_AIX)
 int
 PAM_conv(int num_msg, struct pam_message **msgm, struct pam_response **response, void *appdata_ptr)
@@ -260,7 +260,7 @@ PAM_conv(int num_msg, const struct pam_message **msgm, struct pam_response **res
 					{
 						void *pack_out=NULL;
 						const void *pack_in = msgm[count]->msg;
-	
+
 						if (!pam_binary_handler_fn
 								|| pam_binary_handler_fn(pack_in, &pack_out) != PAM_SUCCESS
 								|| pack_out == NULL) {
@@ -268,7 +268,7 @@ PAM_conv(int num_msg, const struct pam_message **msgm, struct pam_response **res
 						}
 						string = (char *) pack_out;
 						pack_out = NULL;
-	
+
 						break;
 					}*/
 			default:

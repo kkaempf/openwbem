@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -75,7 +75,7 @@ getLocalNameSpacePathAndSet(CIMObjectPath& cop, CIMXMLParser& parser)
 	// <!ELEMENT NAMESPACE EMPTY>
 	// <!ATTLIST NAMESPACE %CIMName;>
 	String ns;
-	while (parser.tokenIsId(CIMXMLParser::E_NAMESPACE))	
+	while (parser.tokenIsId(CIMXMLParser::E_NAMESPACE))
 	{
 		String nscomp = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 		if (!nscomp.empty())
@@ -280,12 +280,12 @@ createClass(CIMXMLParser& parser)
 {
 	CIMClass rval;
 	CIMName superClassName;
-	
+
 	if (!parser.tokenIsId(CIMXMLParser::E_CLASS))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Not class XML");
 	}
-	
+
 	String inClassName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 	rval.setName(inClassName);
 	superClassName = parser.getAttribute(CIMXMLParser::A_SUPERCLASS);
@@ -339,7 +339,7 @@ createInstance(CIMXMLParser& parser)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Not instance XML");
 	}
-		
+
 	rval.setClassName(parser.mustGetAttribute(CIMXMLParser::A_CLASSNAME));
 
 	String language = parser.getAttribute(CIMXMLParser::A_XML_LANG, false);
@@ -547,9 +547,9 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 	CIMValue rval(CIMNULL);
 	try
 	{
-	
+
 		int token = parser.getToken();
-	
+
 		switch (token)
 		{
 			// <VALUE> elements
@@ -569,7 +569,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 					parser.mustGetEndTag(); // get </VALUE>
 					break;
 				}
-	
+
 			// <VALUE.ARRAY> elements
 			case CIMXMLParser::E_VALUE_ARRAY:
 				{
@@ -580,7 +580,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 							"Invalid data type on node");
 					}
 					parser.mustGetNextTag();
-	
+
 					switch (type)
 					{
 						case CIMDataType::UINT8:
@@ -590,7 +590,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 							rval = CIMValue(ra);
 							break;
 						}
-	
+
 						case CIMDataType::SINT8:
 							{
 								Int8Array ra;
@@ -598,7 +598,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 								rval = CIMValue(ra);
 								break;
 							}
-	
+
 						case CIMDataType::UINT16:
 							{
 								UInt16Array ra;
@@ -606,7 +606,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 								rval = CIMValue(ra);
 								break;
 							}
-	
+
 						case CIMDataType::SINT16:
 							{
 								Int16Array ra;
@@ -614,7 +614,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 								rval = CIMValue(ra);
 								break;
 							}
-	
+
 						case CIMDataType::UINT32:
 							{
 								UInt32Array ra;
@@ -622,7 +622,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 								rval = CIMValue(ra);
 								break;
 							}
-	
+
 						case CIMDataType::SINT32:
 							{
 								Int32Array ra;
@@ -630,7 +630,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 								rval = CIMValue(ra);
 								break;
 							}
-	
+
 						case CIMDataType::UINT64:
 							{
 								UInt64Array ra;
@@ -638,7 +638,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 								rval = CIMValue(ra);
 								break;
 							}
-	
+
 						case CIMDataType::SINT64:
 							{
 								Int64Array ra;
@@ -646,7 +646,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 								rval = CIMValue(ra);
 								break;
 							}
-	
+
 						case CIMDataType::BOOLEAN:
 							{
 								BoolArray ra;
@@ -657,11 +657,11 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 									Bool bv = sra[i].equalsIgnoreCase("TRUE");
 									ra.append(bv);
 								}
-	
+
 								rval = CIMValue(ra);
 								break;
 							}
-	
+
 						case CIMDataType::REAL32:
 							{
 								Real32Array ra;
@@ -669,7 +669,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 								rval = CIMValue(ra);
 								break;
 							}
-	
+
 						case CIMDataType::REAL64:
 							{
 								Real64Array ra;
@@ -677,7 +677,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 								rval = CIMValue(ra);
 								break;
 							}
-	
+
 						case CIMDataType::CHAR16:
 							{
 								Char16Array ra;
@@ -685,7 +685,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 								rval = CIMValue(ra);
 								break;
 							}
-	
+
 						case CIMDataType::DATETIME:
 							{
 								CIMDateTimeArray ra;
@@ -693,7 +693,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 								rval = CIMValue(ra);
 								break;
 							}
-	
+
 						case CIMDataType::STRING:
 							{
 								StringArray ra;
@@ -701,35 +701,35 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 								rval = CIMValue(ra);
 								break;
 							}
-	
+
 						default:
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 								"Invalid data type on node");
 					}
-	
+
 					parser.mustGetEndTag(); // pass </VALUE.ARRAY>
 					break;
 				}
-	
+
 			case CIMXMLParser::E_VALUE_REFARRAY:
 				{
 					CIMObjectPathArray opArray;
 					parser.getNextTag();
-	
+
 					while (parser.tokenIsId(CIMXMLParser::E_VALUE_REFERENCE))
 					{
 						CIMObjectPath cop(CIMNULL);
 						CIMValue v = createValue(parser, valueType, E_VALUE_NOT_EMBEDDED_OBJECT);
 						v.get(cop);
-	
+
 						opArray.append(cop);
 					}
-	
+
 					rval = CIMValue(opArray);
 					parser.mustGetEndTag(); // pass <VALUE.REFARRAY>
 					break;
 				}
-	
+
 			case CIMXMLParser::E_VALUE_REFERENCE:
 				{
 					parser.mustGetChild();
@@ -738,7 +738,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 					rval = CIMValue(cop);
 					break;
 				}
-	
+
 			default:
 				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 					"Not value XML");
@@ -810,7 +810,7 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 			}
 		}
 
-	
+
 	}
 	catch (const StringConversionException& e)
 	{
@@ -873,7 +873,7 @@ createQualifier(CIMXMLParser& parser)
 	CIMQualifierType cqt;
 	cqt.setDataType(dt);
 	cqt.setName(name);
-	
+
 	CIMQualifier rval(cqt);
 	if (overridable.equalsIgnoreCase("false"))
 	{
@@ -900,7 +900,7 @@ createQualifier(CIMXMLParser& parser)
 		rval.addFlavor(CIMFlavor(CIMFlavor::TRANSLATE));
 	}
 	rval.setPropagated(propagate.equalsIgnoreCase("true"));
-	
+
 	if (!language.empty())
 	{
 		rval.setLanguage(language);
@@ -1004,7 +1004,7 @@ createProperty(CIMXMLParser& parser)
 	String classOrigin = parser.getAttribute(
 		CIMXMLParser::A_CLASSORIGIN);
 	String propagate = parser.getAttribute(CIMXMLParser::A_PROPAGATED);
-	
+
 	EEmbeddedObjectFlag embeddedObjectType = getEmbeddedObjectType(parser);
 
 	CIMProperty rval(propName);
@@ -1111,7 +1111,7 @@ CIMParameter
 createParameter(CIMXMLParser& parser)
 {
 	int paramToken = parser.getToken();
-	
+
 	if (paramToken != CIMXMLParser::E_PARAMETER
 		&& paramToken != CIMXMLParser::E_PARAMETER_REFERENCE
 		&& paramToken != CIMXMLParser::E_PARAMETER_ARRAY
@@ -1119,12 +1119,12 @@ createParameter(CIMXMLParser& parser)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Not parameter XML");
 	}
-	
+
 	//
 	// Fetch name
 	//
 	CIMParameter rval(parser.mustGetAttribute(CIMXMLParser::A_NAME));
-	
+
 	//
 	// Get parameter type
 	//
@@ -1136,25 +1136,25 @@ createParameter(CIMXMLParser& parser)
 				parser.mustGetAttribute(CIMXMLParser::A_TYPE)));
 			break;
 		}
-	
+
 		case CIMXMLParser::E_PARAMETER_REFERENCE:
 		{
 			rval.setDataType(CIMDataType(
 				parser.getAttribute(CIMXMLParser::A_REFERENCECLASS)));
 			break;
 		}
-	
+
 		case CIMXMLParser::E_PARAMETER_ARRAY:
 		{
 			CIMDataType dt = CIMDataType::getDataType(
 				parser.mustGetAttribute(CIMXMLParser::A_TYPE));
-	
+
 			if (!dt)
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 					"invalid parameter data type");
 			}
-	
+
 			try
 			{
 				dt.setToArrayType(
@@ -1167,12 +1167,12 @@ createParameter(CIMXMLParser& parser)
 			rval.setDataType(dt);
 			break;
 		}
-	
+
 		case CIMXMLParser::E_PARAMETER_REFARRAY:
 		{
 			CIMDataType dt = CIMDataType(
 				parser.getAttribute(CIMXMLParser::A_REFERENCECLASS));
-	
+
 			try
 			{
 				dt.setToArrayType(
@@ -1185,12 +1185,12 @@ createParameter(CIMXMLParser& parser)
 			rval.setDataType(dt);
 			break;
 		}
-	
+
 		default:
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				"could not decode parameter XML");
 	}
-	
+
 	//
 	// See if there are qualifiers
 	//

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -54,7 +54,7 @@
 #include "blocxx/MutexLock.hpp"
 #include "OW_UserInfo.hpp"
 #include "OW_ResultHandlers.hpp"
-#include "OW_AuthorizerManager.hpp"	
+#include "OW_AuthorizerManager.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ProviderManager.hpp"
 #include "OW_ServiceIFCNames.hpp"
@@ -549,7 +549,7 @@ CIMServer::enumInstanceNames(
 	}
 	else
 	{
-		// TODO: measure whether it would be faster to use
+		/// @todo  measure whether it would be faster to use
 		// enumClassNames + getClass() here.
 		m_cimRepository->enumClasses(ns,className,ie,deep,E_NOT_LOCAL_ONLY,
 			E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,context);
@@ -642,7 +642,7 @@ namespace
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMServer::enumInstancesWQL(
 	const String& ns,
 	const String& className,
@@ -694,7 +694,7 @@ CIMServer::enumInstances(
 	}
 	else
 	{
-		// TODO: measure whether it would be faster to use
+		/// @todo  measure whether it would be faster to use
 		// enumClassNames + getClass() here.
 		// do subclasses
 		m_cimRepository->enumClasses(ns, className, ie, E_DEEP,
@@ -805,36 +805,36 @@ namespace
 	{
 		E_DO_NOT_OVERWRITE_NS,
 		E_OVERWRITE_NS
-	}; 
+	};
 
 	class HandleNamespace : public CIMInstanceResultHandlerIFC
 	{
 	public:
-		HandleNamespace(CIMInstanceResultHandlerIFC& result_, 
+		HandleNamespace(CIMInstanceResultHandlerIFC& result_,
 			const String& ns_, EOverwriteNS overwrite_ = E_OVERWRITE_NS)
 		: result(result_)
 		, ns(ns_)
 		, overwrite(overwrite_)
 		{}
-	protected: 
+	protected:
 		virtual void doHandle(const CIMInstance& inst)
 		{
 			if (overwrite == E_OVERWRITE_NS || inst.getNameSpace().empty())
 			{
 				CIMInstance newInst(inst);
-				newInst.setNameSpace(ns); 
-				result.handle(newInst); 
+				newInst.setNameSpace(ns);
+				result.handle(newInst);
 			}
 			else
 			{
-				result.handle(inst); 
+				result.handle(inst);
 			}
 		}
-	private: 
-		CIMInstanceResultHandlerIFC& result; 
-		const String& ns; 
-		EOverwriteNS overwrite; 
-	}; 
+	private:
+		CIMInstanceResultHandlerIFC& result;
+		const String& ns;
+		EOverwriteNS overwrite;
+	};
 
 	class SecondaryInstanceProviderHandler : public CIMInstanceResultHandlerIFC
 	{
@@ -943,7 +943,7 @@ CIMServer::_getCIMInstances(
 	SecondaryInstanceProviderIFCRefArray secProvs =
 		_getSecondaryInstanceProviders(ns, className, context);
 
-	HandleNamespace nsresult(result, ns); 
+	HandleNamespace nsresult(result, ns);
 
 	SecondaryInstanceProviderHandler secondaryHandler(context, m_env, ns,
 		className, localOnly, deep, includeQualifiers, includeClassOrigin,
@@ -1074,7 +1074,7 @@ CIMServer::getInstance(
 			includeQualifiers, includeClassOrigin, propertyList, context);
 	}
 	OW_ASSERT(ci);
-	
+
 	SecondaryInstanceProviderIFCRefArray secProvs = _getSecondaryInstanceProviders(ns, className, context);
 	if (!secProvs.empty())
 	{
@@ -1089,9 +1089,9 @@ CIMServer::getInstance(
 		OW_ASSERT(cia.size() == 1); // providers shouldn't add/remove from the array.
 		ci = cia[0];
 	}
-	
+
 	// make sure instance has namespace set
-	ci.setNameSpace(ns); 
+	ci.setNameSpace(ns);
 	return ci;
 }
 
@@ -1118,7 +1118,7 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 	m_authorizerMgr->turnOn(context);
 
 #ifndef OW_DISABLE_NAMESPACE_MANIPULATION
-	// TODO: This is broken!!!  Not only is __Namespace deprecated, but requests for CIM_Namespace won't be checked!
+	/// @todo  This is broken!!!  Not only is __Namespace deprecated, but requests for CIM_Namespace won't be checked!
 	if (theClass.getName().equalsIgnoreCase(DEPRECATED__NamespaceClassName))
 	{
 		if (!m_authorizerMgr->allowDeleteNameSpace(m_env, ns, context))
@@ -1155,14 +1155,14 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 		m_cimRepository->deleteInstance(ns, cop, context);
 	}
 	OW_ASSERT(oldInst);
-	
+
 	SecondaryInstanceProviderIFCRefArray secProvs = _getSecondaryInstanceProviders(ns, cop.getClassName(), context);
 	// now let all the secondary providers know about the delete
 	for (size_t i = 0; i < secProvs.size(); ++i)
 	{
 		secProvs[i]->deleteInstance(createProvEnvRef(context, m_env), ns, cop);
 	}
-	
+
 	return oldInst;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1202,7 +1202,7 @@ CIMServer::createInstance(
 	CIMObjectPath cop(ns, lci);
 
 #ifndef OW_DISABLE_NAMESPACE_MANIPULATION
-	// TODO: This is broken!!!  Not only is __Namespace deprecated, but requests for CIM_Namespace won't be checked!
+	/// @todo  This is broken!!!  Not only is __Namespace deprecated, but requests for CIM_Namespace won't be checked!
 	if (theClass.getName().equalsIgnoreCase(DEPRECATED__NamespaceClassName))
 	{
 		if (!m_authorizerMgr->allowCreateNameSpace(m_env, ns, context))
@@ -1332,7 +1332,7 @@ CIMServer::modifyInstance(
 			lci, oldInst, includeQualifiers, propertyList, theClass);
 	}
 	OW_ASSERT(oldInst);
-	
+
 	SecondaryInstanceProviderIFCRefArray secProvs = _getSecondaryInstanceProviders(ns, modifiedInstance.getClassName(), context);
 	// now let all the secondary providers know about the modify
 	for (size_t i = 0; i < secProvs.size(); ++i)
@@ -1448,7 +1448,7 @@ CIMServer::setProperty(
 		msg += cp.getName();
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
-	
+
 	OW_LOG_INFO(m_logger, Format("SetProperty previous value was: %1", cp.getValue()));
 
 	cp.setValue(cv);
@@ -1636,7 +1636,7 @@ CIMServer::invokeMethod(
 	cv = methodp->invokeMethod(
 		createProvEnvRef(context, m_env),
 			ns, path, methodName, orderedParams, outParams);
-	
+
 	// make sure the type is right on the outParams
 	for (size_t i = 0; i < methodOutParams.size(); ++i)
 	{
@@ -1686,7 +1686,7 @@ CIMServer::getLockTypeForMethod(
 	const String& ns,
 	const CIMObjectPath& path_,
 	const String& methodName,
-	const CIMParamValueArray& in, 
+	const CIMParamValueArray& in,
 	OperationContext& context)
 {
 	CIMObjectPath path(path_);
@@ -1974,7 +1974,7 @@ CIMServer::associators(
 
 	// Allow authorizer to intercept instances that will be returned
 	InstanceAuthorizer ia(m_env, m_authorizerMgr, result, ns, includeQualifiers,
-		includeClassOrigin, propertyList, context);                             	
+		includeClassOrigin, propertyList, context);
 
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList, &ia, 0, 0,
@@ -2010,9 +2010,9 @@ CIMServer::associatorNames(
 	OperationContext& context)
 {
 	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
-	
+
 	logOperation(m_logger, context, "AssociatorNames", ns, path.toString());
-	
+
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, 0, &result, 0, context);
 }
@@ -2029,7 +2029,7 @@ CIMServer::references(
 	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 
 	logOperation(m_logger, context, "References", ns, path.toString());
-	
+
 	// Allow authorizer to intercept instances that will be returned
 		InstanceAuthorizer ia(m_env, m_authorizerMgr, result, ns, includeQualifiers,
 		includeClassOrigin, propertyList, context);
@@ -2048,9 +2048,9 @@ CIMServer::referencesClasses(
 	const StringArray* propertyList, OperationContext& context)
 {
 	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
-	
+
 	logOperation(m_logger, context, "ReferencesClasses", ns, path.toString());
-	
+
 	_commonReferences(ns, path, resultClass, role, includeQualifiers,
 		includeClassOrigin, propertyList, 0, 0, &result, context);
 }
@@ -2064,9 +2064,9 @@ CIMServer::referenceNames(
 	OperationContext& context)
 {
 	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
-	
+
 	logOperation(m_logger, context, "ReferenceNames", ns, path.toString());
-	
+
 	_commonReferences(ns, path, resultClass, role, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, 0, &result, 0,
 		context);
 }
@@ -2455,8 +2455,8 @@ CIMServer::_dynamicAssociators(const CIMObjectPath& path,
 		CIMName assocClass(assocClasses[i].getName());
 		if (piresult != 0)
 		{
-			String ns = path.getNameSpace(); 
-			HandleNamespace nsiresult(*piresult, ns, E_DO_NOT_OVERWRITE_NS); 
+			String ns = path.getNameSpace();
+			HandleNamespace nsiresult(*piresult, ns, E_DO_NOT_OVERWRITE_NS);
 			OW_LOG_DEBUG(m_logger, "Calling associators on associator provider for class: " + cc.getName());
 			assocP->associators(createProvEnvRef(context, m_env), nsiresult, path.getNameSpace(),
 				path, assocClass.toString(), resultClass.toString(), role.toString(), resultRole.toString(),
@@ -2486,7 +2486,7 @@ CIMServer::_getAssociationClasses(const String& ns,
 		// to only look at the ones that could provide associations
 		CIMClass cc = getClass(ns,assocClassName.toString(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
 		result.handle(cc);
-		// TODO: measure whether it would be faster to use
+		/// @todo  measure whether it would be faster to use
 		// enumClassNames + getClass() here.
 		enumClasses(ns,assocClassName.toString(),result,E_DEEP,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN, context);
 	}
@@ -2502,7 +2502,7 @@ CIMServer::_getAssociationClasses(const String& ns,
 		{
 			m_cimRepository->referencesClasses(ns,cop,result,assocClassName.toString(),role.toString(),E_INCLUDE_QUALIFIERS,E_EXCLUDE_CLASS_ORIGIN,0,context);
 		}
-		// TODO: test if this is faster
+		/// @todo  test if this is faster
 		//assocHelper helper(result, m_mStore, ns);
 		//m_mStore.getTopLevelAssociations(ns, helper);
 	}

@@ -17,7 +17,8 @@ CONTENTS
       2.5 - Indications and CIM Listener support
       2.6 - WQL Level 2 support
       2.7 - Access Control Lists for tiered management
-      
+      2.8 - Privilege Separation
+
    3.0 - Additional Software
       3.1 - C++ Client API library
       3.2 - MOF Compiler
@@ -72,9 +73,16 @@ and developers add more components to the suite.
          2.3.3 Digest Authentication Module
                This authentication module implements a digest authentication
                scheme (see RFC 2617).  A tool (owdigestgenpass) is provided
-               to create a MD5 password file for use with the digest 
+               to create a MD5 password file for use with the digest
                authentication module.  The location of the password file
-               is specified in openwbem.conf. 
+               is specified in openwbem.conf.
+
+         2.3.3 Local Authentication Module
+               This authentication module relies on the enforcement system
+               permissions.  It acts as a challenge authentication where only
+               users with specific system privileges (for the user whom
+               request claims to be) can read the challenge and send back the
+               appropriate response.
 
    2.4   Extensible Provider Interface through Provider Interface plug-in
          modules. Providers are an extension mechanism for all CIMOMs. When a
@@ -94,7 +102,7 @@ and developers add more components to the suite.
          shared library that can create an OW_ProviderIFC object and placing it
          in the directory the CIMOM loads it's provider interfaces from (this
          is specified in the CIMOM's configuration file). The format of the
-         provider qualifier that the CIMOM understands is 
+         provider qualifier that the CIMOM understands is
          "[interface id]::[interface specific text]". The "interface id" is
          used  by the provider interface multiplexor to identify the provider
          interface that can supply the provider. The "interface specific text"
@@ -106,7 +114,7 @@ and developers add more components to the suite.
 
          2.4.1 C++ Provider Interface
             This is a relatively simple interface that is similar to the
-            provider interface found on Sun's and SNIA's Java CIMOM 
+            provider interface found on Sun's and SNIA's Java CIMOM
             implementation. No mapping of the CIM objects is required.
             The format of the provider qualifier would be "c++::provider id".
             The C++ provider interface would use the provider id string to
@@ -124,7 +132,7 @@ and developers add more components to the suite.
             interface multiplexor doesn't know the difference between this
             provider and one that was loaded from a shared library. The format
             of the provider qualifier for the compiled in interface would be
-            "cimom::provider id". The provider id string would have to 
+            "cimom::provider id". The provider id string would have to
             identifying a provider that is compiled into the cimom. For example,
             the compiled in namespace provider is identified by the provider
             qualifier "cimom::namespace".
@@ -147,7 +155,12 @@ and developers add more components to the suite.
       OpenWBEM has ACLs implemented at namespace granularity.  Read
       the file ACL.HOWTO for more information about this feature.
 
-                  
+    2.8 - Privilege Separation
+      OpenWBEM implements privilege separation to greatly reduce the
+      opportunities for any providers (or the CIMOM itself) to be used in a
+      way which can lead to privilege escallation.  Read the file
+      PrivilegeSeparation.HOWTO for more information about this feature.
+
 -------------------------------------------------------------------------------
 3.0 Additional Software
 
@@ -171,8 +184,6 @@ and developers add more components to the suite.
       If the CIMOM is set up to allow anonymous access, you can omit the
       username and password when specifying the url such as:
       http://localhost:5988
- 
-      
 
 
 

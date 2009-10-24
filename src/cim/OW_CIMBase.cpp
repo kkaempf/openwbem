@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -47,7 +47,7 @@ OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID(BadCIMSignature, IOException);
 
 using std::streambuf;
 using std::ostream;
-//////////////////////////////////////////////////////////////////////////////		
+//////////////////////////////////////////////////////////////////////////////
 // static
 void
 CIMBase::readSig( streambuf & istr, char const * const sig )
@@ -64,7 +64,7 @@ CIMBase::readSig( streambuf & istr, char const * const sig )
 				int(read), sig).c_str(), E_UNEXPECTED_SIGNATURE);
 	}
 }
-//////////////////////////////////////////////////////////////////////////////		
+//////////////////////////////////////////////////////////////////////////////
 // static
 UInt32
 CIMBase::readSig(
@@ -101,7 +101,7 @@ CIMBase::readSig(
 	return version;
 }
 
-//////////////////////////////////////////////////////////////////////////////		
+//////////////////////////////////////////////////////////////////////////////
 // static
 void
 CIMBase::writeSig( streambuf & ostr, char const * const sig )
@@ -109,7 +109,7 @@ CIMBase::writeSig( streambuf & ostr, char const * const sig )
 	OW_ASSERT(strlen(sig) == 1);
 	BinarySerialization::write(ostr, sig, 1);
 }
-//////////////////////////////////////////////////////////////////////////////		
+//////////////////////////////////////////////////////////////////////////////
 // static
 void
 CIMBase::writeSig(streambuf & ostr, char const * const sig, UInt32 version)
@@ -120,13 +120,13 @@ CIMBase::writeSig(streambuf & ostr, char const * const sig, UInt32 version)
 	BinarySerialization::writeLen(ostr, version);
 }
 
-//////////////////////////////////////////////////////////////////////////////		
+//////////////////////////////////////////////////////////////////////////////
 ostream & operator<<(ostream & ostr, const CIMBase & cb)
 {
 	ostr << cb.toString();
 	return ostr;
 }
-//////////////////////////////////////////////////////////////////////////////		
+//////////////////////////////////////////////////////////////////////////////
 CIMBase::~CIMBase()
 {
 }

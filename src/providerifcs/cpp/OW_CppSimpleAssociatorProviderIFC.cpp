@@ -134,9 +134,9 @@ namespace
                               cop, WBEMFlags::E_NOT_LOCAL_ONLY,
                               _includeQualifiers, _includeClassOrigin,
                               _propertyList);
-            if (inst.getNameSpace().empty()) 
+            if (inst.getNameSpace().empty())
             {
-                inst.setNameSpace(cop.getFullNameSpace().getNameSpace()); 
+                inst.setNameSpace(cop.getFullNameSpace().getNameSpace());
             }
             _realHandler.handle(inst);
         }

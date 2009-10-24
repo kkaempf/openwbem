@@ -1,22 +1,22 @@
 /*******************************************************************************
-* Copyright (C) 2005, Vintela, Inc. All rights reserved.
+* Copyright (C) 2005, Quest Software, Inc. All rights reserved.
 * Copyright (C) 2006, Novell, Inc. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
-* 
+*
 *     * Redistributions of source code must retain the above copyright notice,
 *       this list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of 
-*       Vintela, Inc., 
-*       nor Novell, Inc., 
-*       nor the names of its contributors or employees may be used to 
-*       endorse or promote products derived from this software without 
+*     * Neither the name of
+*       Quest Software, Inc.,
+*       nor Novell, Inc.,
+*       nor the names of its contributors or employees may be used to
+*       endorse or promote products derived from this software without
 *       specific prior written permission.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -43,7 +43,7 @@
 #include "OW_config.h"
 #include "blocxx/Logger.hpp"
 
-#define OW_LOGGER_PRETTY_FUNCTION BLOCXX_LOGGER_PRETTY_FUNCTION 
+#define OW_LOGGER_PRETTY_FUNCTION BLOCXX_LOGGER_PRETTY_FUNCTION
 
 
 /**
@@ -77,7 +77,7 @@
  * @param message An expression that evaluates to a String which will be logged.
  */
 #define OW_LOG_INFO(logger, message) \
-			BLOCXX_LOG_INFO(logger, message) 
+			BLOCXX_LOG_INFO(logger, message)
 
 /**
  * Log message to logger with the Error level.  message is only evaluated if logger->getLogLevel() >= E_ERROR_LEVEL
@@ -86,7 +86,7 @@
  * @param message An expression that evaluates to a String which will be logged.
  */
 #define OW_LOG_ERROR(logger, message) \
-			BLOCXX_LOG_ERROR(logger, message) 
+			BLOCXX_LOG_ERROR(logger, message)
 
 /**
  * Log message to logger with the FatalError level.  message is always evaluated.
@@ -95,7 +95,7 @@
  * @param message An expression that evaluates to a String which will be logged.
  */
 #define OW_LOG_FATAL_ERROR(logger, message) \
-			BLOCXX_LOG_FATAL_ERROR(logger, message) 
+			BLOCXX_LOG_FATAL_ERROR(logger, message)
 
 /**
  * Log message to logger with the specified category.  message is only evaluated if logger->categoryIsEnabled(category) == true
@@ -105,7 +105,7 @@
  * @param message An expression that evaluates to a String which will be logged.
  */
 #define OW_LOG(logger, category, message) \
-			BLOCXX_LOG(logger, category, message) 
+			BLOCXX_LOG(logger, category, message)
 
 
 

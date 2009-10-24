@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -33,14 +33,14 @@
 #define CPPUNIT_TESTCALLER_H
 
 #include "TestCase.hpp"
-/* 
- * A test caller provides access to a test case method 
- * on a test case class.  Test callers are useful when 
- * you want to run an individual test or add it to a 
+/*
+ * A test caller provides access to a test case method
+ * on a test case class.  Test callers are useful when
+ * you want to run an individual test or add it to a
  * suite.
- * 
+ *
  * Here is an example:
- * 
+ *
  * class MathTest : public TestCase {
  *         ...
  *     public:
@@ -60,17 +60,17 @@
  *
  * You can use a TestCaller to bind any test method on a TestCase
  * class, as long as it returns accepts void and returns void.
- * 
+ *
  * See TestCase
  */
 
 
 template <class Fixture> class TestCaller : public TestCase
-{ 
+{
    REFERENCEOBJECT (TestCaller)
 
    typedef void             (Fixture::*TestMethod)();
-	
+
 public:
 							TestCaller (const char* name, TestMethod test)
 							: TestCase (name), m_fixture (new Fixture (name)), m_test (test)
@@ -81,7 +81,7 @@ public:
 									 }
 
 protected:
-	void                    runTest () 
+	void                    runTest ()
 	{ m_fixture->setTestResult(m_testResult); (m_fixture->*m_test)(); m_fixture->setTestResult(NULL); }
 
 	void                    setUp ()

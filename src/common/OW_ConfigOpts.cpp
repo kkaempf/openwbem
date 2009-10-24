@@ -148,7 +148,7 @@ namespace ConfigOpts
 	String installed_owdata_dir(OW_DEFAULT_STATE_DIR "/openwbem");
 	String installed_owlib_dir(OW_DEFAULT_OWLIBDIR);
 
-const NameAndDefault g_defaults[] = 
+const NameAndDefault g_defaults[] =
 {
 	{ ACL_SUPERUSER_opt ,  "" },
 	{ ADDITIONAL_CONFIG_FILES_DIRS_opt, OW_DEFAULT_ADDITIONAL_CONFIG_FILES_DIRS },
@@ -180,7 +180,7 @@ const NameAndDefault g_defaults[] =
 	{ HTTP_SERVER_ALLOW_DIGEST_AUTHENTICATION_opt ,  "" },
 	{ HTTP_SERVER_ALLOW_BASIC_AUTHENTICATION_opt ,  "" },
 	{ HTTP_SERVER_ALLOW_SPNEGO_AUTHENTICATION_opt, "" },
-	{ HTTP_SERVER_AUTHENTICATION_REALM_opt, "" }, 
+	{ HTTP_SERVER_AUTHENTICATION_REALM_opt, "" },
 	{ HTTP_SERVER_HTTP_PORT_opt ,  OW_DEFAULT_HTTP_SERVER_HTTP_PORT },
 	{ HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt ,  OW_DEFAULT_HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE },
 	{ HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt ,  OW_DEFAULT_HTTP_SERVER_SSL_CLIENT_VERIFICATION },
@@ -233,10 +233,10 @@ const NameAndDefault g_defaults[] =
 	{ PRIVILEGES_CONFIG_DIR_opt, "" },
 	{ READ_WRITE_LOCK_TIMEOUT_opt, OW_DEFAULT_READ_WRITE_LOCK_TIMEOUT},
 	{ "zz_end" , "garbage" }
-}; 
+};
 
-const NameAndDefault* const g_defaultsEnd = &g_defaults[0] + 
-	(sizeof(g_defaults)/sizeof(*g_defaults)) - 1; 
+const NameAndDefault* const g_defaultsEnd = &g_defaults[0] +
+	(sizeof(g_defaults)/sizeof(*g_defaults)) - 1;
 
 
 

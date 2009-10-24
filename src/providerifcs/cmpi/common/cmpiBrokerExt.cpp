@@ -50,14 +50,14 @@ namespace
 Logger(COMPONENT_NAME)
 
 
-using namespace OW_NAMESPACE; 
+using namespace OW_NAMESPACE;
 
 // Factory section
 static char*  mbExtResolveFileName(const char* libName)
 {
 	try
 	{
-		String slibName(libName); 
+		String slibName(libName);
 		String fileName;
 	#if defined(OW_WIN32)
 		fileName = slibName + String(".dll");
@@ -69,17 +69,17 @@ static char*  mbExtResolveFileName(const char* libName)
 		fileName = String("lib") + slibName + String(".so");
 	#endif
 
-		return strdup(fileName.c_str()); 
+		return strdup(fileName.c_str());
 	}
 	catch(...)
 	{
-		return 0; 
+		return 0;
 	}
 }
 
 class CMPIThread : public OpenWBEM::Thread
 {
-public: 
+public:
 	CMPIThread(CMPI_THREAD_RETURN (CMPI_THREAD_CDECL *start)(void *),
 			   void *param)
 		: m_start(start)
@@ -89,75 +89,75 @@ public:
 	}
 	CMPI_THREAD_RETURN getReturnValue() const { return m_rval; }
 
-protected: 
+protected:
 	virtual Int32 run()
 	{
-		m_rval = m_start(m_param); 
-		return 0; 
+		m_rval = m_start(m_param);
+		return 0;
 	}
 
-private: 
-	CMPI_THREAD_RETURN (CMPI_THREAD_CDECL *m_start)(void*); 
-	void* m_param; 
-	CMPI_THREAD_RETURN m_rval; 
+private:
+	CMPI_THREAD_RETURN (CMPI_THREAD_CDECL *m_start)(void*);
+	void* m_param;
+	CMPI_THREAD_RETURN m_rval;
 };
 
-CMPI_THREAD_TYPE mbExtNewThread (CMPI_THREAD_RETURN (CMPI_THREAD_CDECL *start)(void *), 
+CMPI_THREAD_TYPE mbExtNewThread (CMPI_THREAD_RETURN (CMPI_THREAD_CDECL *start)(void *),
 								 void *parm, int detached)
 {
-	(void)detached; // detached arg not supported. 
-	CMPIThread* newThread = new CMPIThread(start, parm); 
-	newThread->start(); 
-	CMPI_THREAD_TYPE rval = (CMPI_THREAD_TYPE)newThread; 
-	return rval; 
+	(void)detached; // detached arg not supported.
+	CMPIThread* newThread = new CMPIThread(start, parm);
+	newThread->start();
+	CMPI_THREAD_TYPE rval = (CMPI_THREAD_TYPE)newThread;
+	return rval;
 }
 
 int mbExtJoinThread (CMPI_THREAD_TYPE thread, CMPI_THREAD_RETURN *retval )
 {
 	try
 	{
-		CMPIThread* theThread = (CMPIThread*)thread; 
-		theThread->join(); 
-		(*retval) = theThread->getReturnValue(); 
-		delete theThread; 
+		CMPIThread* theThread = (CMPIThread*)thread;
+		theThread->join();
+		(*retval) = theThread->getReturnValue();
+		delete theThread;
 	}
 	catch(...)
 	{
-		return 1; 
+		return 1;
 	}
-	return 0; 
+	return 0;
 }
 
 int mbExtExitThread (CMPI_THREAD_RETURN return_code)
 {
-	return -1; 
+	return -1;
 }
 
 int mbExtCancelThread (CMPI_THREAD_TYPE thread)
 {
 	try
 	{
-		CMPIThread* theThread = (CMPIThread*)thread; 
-		theThread->cancel(); 
+		CMPIThread* theThread = (CMPIThread*)thread;
+		theThread->cancel();
 	}
 	catch(...)
 	{
-		return 1; 
+		return 1;
 	}
-	return 0; 
+	return 0;
 }
 
 int mbExtThreadSleep (CMPIUint32 msec)
 {
 	try
 	{
-		OpenWBEM::Thread::sleep(msec); 
+		OpenWBEM::Thread::sleep(msec);
 	}
 	catch(...)
 	{
-		return 1; 
+		return 1;
 	}
-	return 0; 
+	return 0;
 }
 
 namespace
@@ -182,124 +182,124 @@ int mbExtThreadOnce (int *once, void (*init)(void))
 	}
 	catch(...)
 	{
-		return 1; 
+		return 1;
 	}
-	return 0; 
+	return 0;
 }
 
 int mbExtCreateThreadKey (CMPI_THREAD_KEY_TYPE *key, void (*cleanup)(void*))
 {
-	return -1; 
+	return -1;
 }
 
 int mbExtDestroyThreadKey (CMPI_THREAD_KEY_TYPE key)
 {
-	return -1; 
+	return -1;
 }
 
 void *mbExtGetThreadSpecific (CMPI_THREAD_KEY_TYPE key)
 {
-	return 0; 
+	return 0;
 }
 
 int mbExtSetThreadSpecific (CMPI_THREAD_KEY_TYPE key, void * value)
 {
-	return -1; 
+	return -1;
 }
 
 CMPI_MUTEX_TYPE mbExtNewMutex (int opt)
 {
-	(void) opt; // spec says none defined yet. 
-	OpenWBEM::Mutex* mux = new OpenWBEM::Mutex; 
-	CMPI_MUTEX_TYPE rval = (CMPI_MUTEX_TYPE)mux; 
-	return rval; 
+	(void) opt; // spec says none defined yet.
+	OpenWBEM::Mutex* mux = new OpenWBEM::Mutex;
+	CMPI_MUTEX_TYPE rval = (CMPI_MUTEX_TYPE)mux;
+	return rval;
 }
 
 void mbExtDestroyMutex (CMPI_MUTEX_TYPE arg)
 {
-	OpenWBEM::Mutex* mux = (OpenWBEM::Mutex*)arg; 
-	delete mux; 
+	OpenWBEM::Mutex* mux = (OpenWBEM::Mutex*)arg;
+	delete mux;
 }
 
 void mbExtLockMutex (CMPI_MUTEX_TYPE arg)
 {
-	OpenWBEM::Mutex* mux = (OpenWBEM::Mutex*)arg; 
-	mux->acquire(); 
+	OpenWBEM::Mutex* mux = (OpenWBEM::Mutex*)arg;
+	mux->acquire();
 }
 
 void mbExtUnlockMutex (CMPI_MUTEX_TYPE arg)
 {
-	OpenWBEM::Mutex* mux = (OpenWBEM::Mutex*)arg; 
-	mux->release(); 
+	OpenWBEM::Mutex* mux = (OpenWBEM::Mutex*)arg;
+	mux->release();
 }
 
 CMPI_COND_TYPE mbExtNewCondition (int opt)
 {
-	OpenWBEM::Condition* cond = new OpenWBEM::Condition; 
-	CMPI_COND_TYPE rval = (CMPI_COND_TYPE)cond; 
-	return rval; 
+	OpenWBEM::Condition* cond = new OpenWBEM::Condition;
+	CMPI_COND_TYPE rval = (CMPI_COND_TYPE)cond;
+	return rval;
 }
 
 void mbExtDestroyCondition (CMPI_COND_TYPE arg)
 {
-	OpenWBEM::Condition* cond = (OpenWBEM::Condition*)arg; 
-	delete cond; 
+	OpenWBEM::Condition* cond = (OpenWBEM::Condition*)arg;
+	delete cond;
 }
 
-int mbExtCondWait (CMPI_COND_TYPE cond, 
+int mbExtCondWait (CMPI_COND_TYPE cond,
 				   CMPI_MUTEX_TYPE mutex)
 {
 	/*
 	try
 	{
-		OpenWBEM::Condition* lcond = (OpenWBEM::Condition*)cond; 
-		OpenWBEM::Mutex* mux = (OpenWBEM::Mutex*) mutex; 
-		OpenWBEM::NonRecursiveMutexLock lock(mux); 
-		lcond->wait(*mux); 
+		OpenWBEM::Condition* lcond = (OpenWBEM::Condition*)cond;
+		OpenWBEM::Mutex* mux = (OpenWBEM::Mutex*) mutex;
+		OpenWBEM::NonRecursiveMutexLock lock(mux);
+		lcond->wait(*mux);
 	}
 	catch(...)
 	{
-		return 1; 
+		return 1;
 	}
 
 */
-	return 0; 
+	return 0;
 }
 
-int mbExtTimedCondWait (CMPI_COND_TYPE cond, 
+int mbExtTimedCondWait (CMPI_COND_TYPE cond,
 						CMPI_MUTEX_TYPE mutex, struct timespec *wait)
 {
-	return 0; 
+	return 0;
 }
 
 int mbExtSignalCondition (CMPI_COND_TYPE cond)
 {
-	return 0; 
+	return 0;
 }
 
 
 static CMPIBrokerExtFT brokerExt_FT={
 	CMPICurrentVersion,
-	mbExtResolveFileName, 
-	mbExtNewThread, 
-	mbExtJoinThread, 
-	NULL,  // mbExtExitThread, 
-	mbExtCancelThread, 
-	mbExtThreadSleep, 
-	mbExtThreadOnce, 
-	NULL, // mbExtCreateThreadKey, 
-	NULL, // mbExtDestroyThreadKey, 
-	NULL, // mbExtGetThreadSpecific, 
-	NULL, // mbExtSetThreadSpecific, 
-	mbExtNewMutex, 
-	mbExtDestroyMutex, 
+	mbExtResolveFileName,
+	mbExtNewThread,
+	mbExtJoinThread,
+	NULL,  // mbExtExitThread,
+	mbExtCancelThread,
+	mbExtThreadSleep,
+	mbExtThreadOnce,
+	NULL, // mbExtCreateThreadKey,
+	NULL, // mbExtDestroyThreadKey,
+	NULL, // mbExtGetThreadSpecific,
+	NULL, // mbExtSetThreadSpecific,
+	mbExtNewMutex,
+	mbExtDestroyMutex,
 	mbExtLockMutex,
-	mbExtUnlockMutex, 
-	NULL, // mbExtNewCondition, 
-	NULL, // mbExtDestroyCondition, 
-	NULL, // mbExtCondWait, 
-	NULL, // mbExtTimedCondWait, 
-	NULL, // mbExtSignalCondition 
+	mbExtUnlockMutex,
+	NULL, // mbExtNewCondition,
+	NULL, // mbExtDestroyCondition,
+	NULL, // mbExtCondWait,
+	NULL, // mbExtTimedCondWait,
+	NULL, // mbExtSignalCondition
 };
 
 CMPIBrokerExtFT *CMPI_BrokerExt_Ftab=&brokerExt_FT;

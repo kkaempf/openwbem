@@ -39,8 +39,8 @@
 #include "OW_CIMInstanceWrapperBase.hpp"
 
 namespace OW_NAMESPACE
-{ 
-namespace OpenWBEM 
+{
+namespace OpenWBEM
 {
 
 class OOPProviderProcessCapabilities : public CIMInstanceWrapperBase
@@ -57,8 +57,8 @@ public:
 
 
 	/**
-	 * This function returns the OpenWBEM_OOPProviderProcessCapabilities.Process property value. 
-	 * 
+	 * This function returns the OpenWBEM_OOPProviderProcessCapabilities.Process property value.
+	 *
 	 * @return CIMObjectPath current Process property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
@@ -69,7 +69,7 @@ public:
 
 	/**
 	 * This function sets the OpenWBEM_OOPProviderProcessCapabilities.Process property value.
-	 * 
+	 *
 	 * @param CIMObjectPath new Process property value
 	 */
 	void setProcess(const CIMObjectPath v)
@@ -89,8 +89,8 @@ public:
 
 
 	/**
-	 * This function returns the OpenWBEM_OOPProviderProcessCapabilities.Capabilities property value. 
-	 * 
+	 * This function returns the OpenWBEM_OOPProviderProcessCapabilities.Capabilities property value.
+	 *
 	 * @return CIMObjectPath current Capabilities property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
@@ -101,7 +101,7 @@ public:
 
 	/**
 	 * This function sets the OpenWBEM_OOPProviderProcessCapabilities.Capabilities property value.
-	 * 
+	 *
 	 * @param CIMObjectPath new Capabilities property value
 	 */
 	void setCapabilities(const CIMObjectPath v)

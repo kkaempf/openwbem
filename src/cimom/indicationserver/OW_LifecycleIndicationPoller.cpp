@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -160,7 +160,7 @@ struct sortByInstancePath
 };
 
 const String COMPONENT_NAME("ow.owcimomd.indication.LifecyclePoller");
-	
+
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 Int32
@@ -177,7 +177,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 			m_initializedInstances = true;
 			return 1; // have poll called again in 1 second.
 		}
-	
+
 		OW_LOG_DEBUG3(logger, Format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
 		if (!willPoll())
 		{
@@ -185,7 +185,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 			OW_LOG_DEBUG2(logger, "LifecycleIndicationPoller::poll nothing to do, returning 0");
 			return 0;
 		}
-		
+
 		// do enumInstances of the class
 		CIMInstanceArray curInstances;
 		InstanceArrayBuilder iab(curInstances);
@@ -199,7 +199,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 			OW_LOG_ERROR(logger, Format("LifecycleIndicationPoller::poll caught exception: %1", e));
 			return 0;
 		}
-		
+
 		OW_LOG_DEBUG2(logger, Format("LifecycleIndicationPoller::poll got %1 instances", curInstances.size()));
 		// Compare the new instances with the previous instances
 		// and send any indications that may be necessary.
@@ -281,7 +281,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 			}
 			++ci;
 		}
-		
+
 		// save the current instances to m_prevInsts
 		m_prevInsts = curInstances;
 	}

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000, 2001, 2002 BMC Software, Hewlett-Packard Company, IBM,
-// The Open Group, Tivoli Systems, Vintela, Inc..
+// The Open Group, Tivoli Systems, Quest Software, Inc..
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -9,7 +9,7 @@
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // THE ABOVE COPYRIGHT NOTICE AND THIS PERMISSION NOTICE SHALL BE INCLUDED IN
 // ALL COPIES OR SUBSTANTIAL PORTIONS OF THE SOFTWARE. THE SOFTWARE IS PROVIDED
 // "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
@@ -41,37 +41,37 @@ OW_DECLARE_APIEXCEPTION(TypeMismatch, OW_COMMON_API)
 /** Tag used to force invocation of the integer value form of the WQLOperand
   Constructor.
  */
-enum WQLIntegerValueTag 
-{ 
-	WQL_INTEGER_VALUE_TAG 
+enum WQLIntegerValueTag
+{
+	WQL_INTEGER_VALUE_TAG
 };
 /** Tag used to force invocation of the double value form of the WQLOperand
   Constructor.
  */
-enum WQLDoubleValueTag 
-{ 
-	WQL_DOUBLE_VALUE_TAG 
+enum WQLDoubleValueTag
+{
+	WQL_DOUBLE_VALUE_TAG
 };
 /** Tag used to force invocation of the boolean value form of the WQLOperand
   Constructor.
  */
-enum WQLBoolValueTag 
-{ 
-	WQL_BOOLEAN_VALUE_TAG 
+enum WQLBoolValueTag
+{
+	WQL_BOOLEAN_VALUE_TAG
 };
 /** Tag used to force invocation of the string value form of the WQLOperand
   Constructor.
  */
-enum WQLStringValueTag 
-{ 
-	WQL_STRING_VALUE_TAG 
+enum WQLStringValueTag
+{
+	WQL_STRING_VALUE_TAG
 };
 /** Tag used to force invocation of the property name form of the WQLOperand
   Constructor.
  */
-enum WQLPropertyNameTag 
-{ 
-	WQL_PROPERTY_NAME_TAG 
+enum WQLPropertyNameTag
+{
+	WQL_PROPERTY_NAME_TAG
 };
 /** Used to represent SQL where clause operands.
   Instances of WQLOperand are used to represent the operands of the
@@ -122,7 +122,7 @@ public:
 	/** Desfault constructor. Initializes to null value.
 	 */
 	WQLOperand()
-		: _type(NULL_VALUE) 
+		: _type(NULL_VALUE)
 	{
 	}
 
@@ -258,7 +258,7 @@ public:
 
 	virtual void readObject(std::streambuf & istrm);
 	virtual void writeObject(std::streambuf & ostrm) const;
-	
+
 private:
 	union
 	{

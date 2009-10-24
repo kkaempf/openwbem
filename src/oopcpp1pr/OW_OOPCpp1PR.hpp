@@ -64,7 +64,7 @@ public:
 		virtual ~InitializeCallback()
 		{
 		}
-	
+
 	public:
 		void init(const ProviderEnvironmentIFCRef& provenv)
 		{
@@ -81,7 +81,7 @@ public:
 	};
 
 	/**
-	 * 
+	 *
 	 * @param IOPipe
 	 * @param logFile If not empty, log messages will be directed to the file in addition to the CIMOM.
 	 * @param logCategories If set to the empty string, then the CIMOM's level will be used, otherwise this must be a

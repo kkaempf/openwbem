@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -135,7 +135,7 @@ public:
 		else
 		{
 			// something has gone horribly wrong. This shouldn't ever happen unless there is a bug.
-			errMessage = Format("SPNEGOAuthentication received unknown response (%1) from spnego helper process. Terminating. status = %2", 
+			errMessage = Format("SPNEGOAuthentication received unknown response (%1) from spnego helper process. Terminating. status = %2",
 				result, m_vasHelper->processStatus().toString());
 			m_vasHelper->waitCloseTerm(Timeout::relative(0.01), Timeout::relative(0), Timeout::relative(0.02));
 			errMessage += Format(" stderr = %1. status = %2", getStderr(m_vasHelper), m_vasHelper->processStatus().toString());
@@ -154,16 +154,16 @@ private:
 			const char* msg = "SPNEGOAuthentication unable to locate libvas";
 			OW_THROW(VASHelperSPNEGOHandlerException, msg);
 		}
-	
+
 		StringArray helperArgv(1, helperPath);
 		helperArgv.push_back("client");
 		helperArgv.push_back(serverName);
 		helperArgv.push_back("host/"); // we'll use the host's id.
 		m_vasHelper = Exec::spawn(helperArgv, Exec::currentEnvironment);
-	
+
 		if (!m_vasHelper->processStatus().running())
 		{
-			String msg = Format("SPNEGOAuthentication failed to start %1. status = %2, stderr = %3", vasHelperPath(), 
+			String msg = Format("SPNEGOAuthentication failed to start %1. status = %2, stderr = %3", vasHelperPath(),
 				m_vasHelper->processStatus().toString(), m_vasHelper->err()->readAll());
 			OW_THROW(VASHelperSPNEGOHandlerException, msg.c_str());
 		}
@@ -210,7 +210,7 @@ int main(int argc, char* argv[])
 	{
 		HTTPClient hc(url);
 		hc.setSPNEGOHandler(SPNEGOHandlerRef(new VASHelperSPNEGOHandler(parsedUrl.host)));
-	
+
 		CIMFeatures cf = hc.getFeatures();
 		cout << "CIMProtocolVersion = " << cf.protocolVersion << endl;
 		cout << "CIMProduct = " << ((cf.cimProduct == CIMFeatures::SERVER)?
@@ -241,7 +241,7 @@ int main(int argc, char* argv[])
 
 		cout << "CIMOM path = " << cf.cimom << endl;
 		cout << "HTTP Ext URL = " << cf.extURL << endl;
-	
+
 	}
 	catch(HTTPException& he)
 	{

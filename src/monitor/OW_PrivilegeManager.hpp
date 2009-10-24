@@ -394,6 +394,15 @@ public:
 		return this->readDirectory(Cstr::to_char_ptr(pathname), opt);
 	}
 
+	/**
+	 * Return the contents of the symlink specified by @a pathname.
+	 *
+	 * @pre @pathname is a valid symlink path
+	 * @pre Caller has @c read_link privilege for @a pathname.
+	 *
+	 * @throw PrivilegeManagerException
+	 * @throw IPCIOException
+	 */
 	String readLink(char const * pathname);
 
 	template <typename S>

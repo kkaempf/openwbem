@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -215,8 +215,8 @@ public:
 		return ConfigFile::getConfigItem(m_configItems, name, defRetVal);
 	}
 
-	StringArray getMultiConfigItem(const String &itemName, 
-		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const 
+	StringArray getMultiConfigItem(const String &itemName,
+		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const
 	{
 		return ConfigFile::getMultiConfigItem(m_configItems, itemName, defRetVal, tokenizeSeparator);
 	}
@@ -291,8 +291,8 @@ private:
 	{
 		// TODO: Use a different config item.
 		StringArray paths = getMultiConfigItem(
-			ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt, 
-			String(OW_DEFAULT_CPPPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR), 
+			ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt,
+			String(OW_DEFAULT_CPPPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
 			OW_PATHNAME_SEPARATOR);
 		for (size_t i = 0; i < paths.size(); ++i)
 		{
@@ -345,9 +345,9 @@ private:
 	{
 		using namespace ConfigOpts;
 		Array<LogAppenderRef> appenders;
-		
+
 		StringArray additionalLogs = getMultiConfigItem(ADDITIONAL_LOGS_opt, StringArray(), " \t");
-	
+
 		bool debugFlag = getConfigItem(DEBUGFLAG_opt, OW_DEFAULT_DEBUGFLAG).equalsIgnoreCase("true");
 		if ( debugFlag )
 		{
@@ -358,7 +358,7 @@ private:
 		for (size_t i = 0; i < additionalLogs.size(); ++i)
 		{
 			const String& logName(additionalLogs[i]);
-	
+
 			String logType = getConfigItem(Format(LOG_1_TYPE_opt, logName), OW_DEFAULT_LOG_1_TYPE);
 			String logComponents = getConfigItem(Format(LOG_1_COMPONENTS_opt, logName), OW_DEFAULT_LOG_1_COMPONENTS);
 			String logCategories = getConfigItem(Format(LOG_1_CATEGORIES_opt, logName), "");
@@ -369,14 +369,14 @@ private:
 				if (logLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
 				{
 					logCategories = String(Logger::STR_DEBUG_CATEGORY)
-						+ " " + String(Logger::STR_INFO_CATEGORY) 
-						+ " " + String(Logger::STR_ERROR_CATEGORY) 
+						+ " " + String(Logger::STR_INFO_CATEGORY)
+						+ " " + String(Logger::STR_ERROR_CATEGORY)
 						+ " " + String(Logger::STR_FATAL_CATEGORY);
 				}
 				else if (logLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
 				{
-					logCategories = String(Logger::STR_INFO_CATEGORY) 
-						+ " " + String(Logger::STR_ERROR_CATEGORY) 
+					logCategories = String(Logger::STR_INFO_CATEGORY)
+						+ " " + String(Logger::STR_ERROR_CATEGORY)
 						+ " " + String(Logger::STR_FATAL_CATEGORY);
 				}
 				else if (logLevel.equalsIgnoreCase(Logger::STR_ERROR_CATEGORY))
@@ -389,11 +389,11 @@ private:
 				}
 			}
 			String logFormat = getConfigItem(Format(LOG_1_FORMAT_opt, logName), OW_DEFAULT_LOG_1_FORMAT);
-	
+
 			appenders.push_back(LogAppender::createLogAppender(logName, logComponents.tokenize(), logCategories.tokenize(),
 				logFormat, logType, getAppenderConfig(m_configItems)));
 		}
-	
+
 		LogAppender::setDefaultLogAppender(new MultiAppender(appenders));
 	}
 
@@ -416,7 +416,7 @@ int main(int argc, char* argv[])
 {
     int rval = 0;
 	MyServiceEnvironmentRef env = new MyServiceEnvironment();
-	
+
 	// until the config file is read and parsed, just use a logger that prints everything to stderr.
 	Logger logger(COMPONENT_NAME, LogAppenderRef(new CerrAppender()));
 
@@ -444,7 +444,7 @@ int main(int argc, char* argv[])
 		// This needs to happen as early as possible to minimize unused, but allocated, memory in the "child watcher" parent process.
 		try
 		{
-			Platform::daemonize(debugMode, "owprovideragent", 
+			Platform::daemonize(debugMode, "owprovideragent",
 				env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE), restartOnFatalError,
 				COMPONENT_NAME);
 		}
@@ -481,7 +481,7 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				OW_LOG_INFO(logger, 				
+				OW_LOG_INFO(logger,
 					"WARNING: even though the owcimomd.restart_on_error config option = true, it\n"
 					"is not enabled because owprovideragent is running in debug mode (-d)");
 			}
@@ -571,7 +571,7 @@ int main(int argc, char* argv[])
 	Platform::daemonShutdown(DAEMON_NAME, env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE));
 
 	env = 0;
-	
+
 	OW_LOG_INFO(logger, "owprovideragent has shutdown");
 	return rval;
 }

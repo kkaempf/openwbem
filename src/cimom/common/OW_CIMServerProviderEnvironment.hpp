@@ -51,7 +51,7 @@ public:
 		const ServiceEnvironmentIFCRef& env);
 	virtual String getConfigItem(const String &name,
 		const String& defRetVal="") const;
-	virtual StringArray getMultiConfigItem(const String &itemName, 
+	virtual StringArray getMultiConfigItem(const String &itemName,
 		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const;
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const;
 	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const;

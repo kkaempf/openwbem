@@ -31,7 +31,7 @@ CMPI_Object::CMPI_Object(CMPI_Object *obj)
 {
 }
 
-CMPI_Object::CMPI_Object(void* obj, void *fTab) 
+CMPI_Object::CMPI_Object(void* obj, void *fTab)
 {
    hdl=obj;
    ftab=fTab;

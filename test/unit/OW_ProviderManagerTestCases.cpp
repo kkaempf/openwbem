@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -115,7 +115,7 @@ void OW_ProviderManagerTestCases::testGetInstanceProvider()
 	unitAssert(provRef);
 	provRef = mgr.getInstanceProvider("root/foo", c3, context);
 	unitAssert(provRef);
-	
+
 	// self-registering provider two namespaces
 	CIMClass c4("SelfRegTwoNamespaces");
 	provRef = mgr.getInstanceProvider("root", c4, context);
@@ -124,7 +124,7 @@ void OW_ProviderManagerTestCases::testGetInstanceProvider()
 	unitAssert(!provRef);
 	provRef = mgr.getInstanceProvider("root/good", c4, context);
 	unitAssert(provRef);
-	
+
 	// nothing
 	CIMClass c5("Nothing");
 	provRef = mgr.getInstanceProvider("root", c5, context);
@@ -136,7 +136,7 @@ void OW_ProviderManagerTestCases::testGetInstanceProvider()
 	unitAssert(provRef);
 	provRef = mgr.getInstanceProvider("rooT/fOo", c6, context);
 	unitAssert(provRef);
-	
+
 
 }
 
@@ -177,7 +177,7 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 	unitAssert(provRef);
 	provRef = mgr.getMethodProvider("root/foo", c3, m, context);
 	unitAssert(provRef);
-	
+
 	// self-registering provider two namespaces
 	CIMClass c4("SelfRegTwoNamespaces");
 	provRef = mgr.getMethodProvider("root", c4, m, context);
@@ -190,7 +190,7 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 	unitAssert(provRef);
 	provRef = mgr.getMethodProvider("ROOT/GOOD", c4, m, context);
 	unitAssert(provRef);
-	
+
 	// nothing
 	CIMClass c5("Nothing");
 	provRef = mgr.getMethodProvider("root", c5, m, context);
@@ -202,7 +202,7 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 	unitAssert(provRef);
 	provRef = mgr.getMethodProvider("rooT/fOo", c6, m, context);
 	unitAssert(provRef);
-	
+
 	// self-registering provider all namespaces - one method
 	CIMClass c7("SelfRegOneMethod");
 	provRef = mgr.getMethodProvider("root", c7, m, context);
@@ -211,7 +211,7 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 	unitAssert(provRef);
 	provRef = mgr.getMethodProvider("root/foo", c7, CIMMethod("BadMethod"), context);
 	unitAssert(!provRef);
-	
+
 	// self-registering provider one namespaces - one method
 	CIMClass c8("SelfRegOneNamespaceOneMethod");
 	provRef = mgr.getMethodProvider("root", c8, m, context);
@@ -224,7 +224,7 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 	unitAssert(!provRef);
 	provRef = mgr.getMethodProvider("root/foo", c8, CIMMethod("BadMethod"), context);
 	unitAssert(!provRef);
-	
+
 }
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -256,7 +256,7 @@ void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 	unitAssert(provRef);
 	provRef = mgr.getAssociatorProvider("root/foo", c3, context);
 	unitAssert(provRef);
-	
+
 	// self-registering provider two namespaces
 	CIMClass c4("SelfRegTwoNamespaces");
 	provRef = mgr.getAssociatorProvider("root", c4, context);
@@ -265,7 +265,7 @@ void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 	unitAssert(!provRef);
 	provRef = mgr.getAssociatorProvider("root/good", c4, context);
 	unitAssert(provRef);
-	
+
 	// nothing
 	CIMClass c5("Nothing");
 	provRef = mgr.getAssociatorProvider("root", c5, context);
@@ -296,14 +296,14 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 	provRefs = mgr.getIndicationProviders(
 		"root/foo", "SelfReg", noLifeCycleClasses, context);
 	unitAssert(provRefs.size() == 1);
-	
+
 	provRefs = mgr.getIndicationProviders(
 		"root", "SelfReg2", noLifeCycleClasses, context);
 	unitAssert(provRefs.size() == 2);
 	provRefs = mgr.getIndicationProviders(
 		"root/foo", "SelfReg2", noLifeCycleClasses, context);
 	unitAssert(provRefs.size() == 2);
-	
+
 	// self-registering provider two namespaces
 	String c4("SelfRegTwoNamespaces");
 	provRefs = mgr.getIndicationProviders(
@@ -315,7 +315,7 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 	provRefs = mgr.getIndicationProviders(
 		"root/good", c4, noLifeCycleClasses, context);
 	unitAssert(provRefs.size() == 1);
-	
+
 	// nothing
 	String c5("Nothing");
 	provRefs = mgr.getIndicationProviders(
@@ -337,12 +337,12 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 	provRefs = mgr.getIndicationProviders(
 		"root/cimv2", "CIM_InstCreation", lifeCycleClasses, context);
 	unitAssert(provRefs.size() == 1);
-	
+
 	lifeCycleClasses[0] = "TestClass2";
 	provRefs = mgr.getIndicationProviders(
 		"root/cimv2", "CIM_InstModification", lifeCycleClasses, context);
 	unitAssert(provRefs.size() == 1);
-	
+
 	lifeCycleClasses[0] = "TestClass3";
 	provRefs = mgr.getIndicationProviders(
 		"root/cimv2", "CIM_InstDeletion", lifeCycleClasses, context);

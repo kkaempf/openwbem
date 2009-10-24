@@ -13,7 +13,7 @@
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
  * Author:        Adrian Schuur <schuur@de.ibm.com>
- * 
+ *
  * Contributor:   Markus Mueller <sedgewick_de@yahoo.de>
  *
  * Description: CMPIEnumeration support
@@ -26,7 +26,7 @@ static CMPIStatus enumRelease(CMPIEnumeration* eEnum)
 {
 	if (eEnum->hdl)
 	{
-	   if ((void*)eEnum->ft==(void*)CMPI_OpEnumeration_Ftab) 
+	   if ((void*)eEnum->ft==(void*)CMPI_OpEnumeration_Ftab)
          delete (OpenWBEM::Array<OpenWBEM::CIMObjectPath>*)eEnum->hdl;
       else
          delete (OpenWBEM::Array<OpenWBEM::CIMInstance>*)eEnum->hdl;

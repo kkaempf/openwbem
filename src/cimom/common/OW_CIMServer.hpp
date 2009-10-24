@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -270,7 +270,7 @@ public:
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 *		be returned on all appropriate components.
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception CIMException  	
+	 * @exception CIMException
 	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
 	 *		CIM_ERR_INVALID_NAMESPACE
@@ -294,7 +294,7 @@ public:
 	 *						children of the enumerated class.
 	 * @param localOnly Only include properties
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception CIMException  	
+	 * @exception CIMException
 	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
 	 *		CIM_ERR_INVALID_NAMESPACE
@@ -478,7 +478,7 @@ public:
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	
+
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	/**
 	 * Get the specified CIM instance property.
@@ -516,7 +516,7 @@ public:
 		const String& ns,
 		const CIMObjectPath& path,
 		const String& methodName,
-		const CIMParamValueArray& in, 
+		const CIMParamValueArray& in,
 		OperationContext& context);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associatorNames(
@@ -558,7 +558,7 @@ public:
 		const String& role, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
 		OperationContext& context);
-	
+
 	virtual void referencesClasses(
 		const String& ns,
 		const CIMObjectPath& path,
@@ -568,7 +568,7 @@ public:
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
 		OperationContext& context);
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	
+
 	/**
 	 *
 	 * @exception CIMException
@@ -598,7 +598,7 @@ public:
 		const CIMClass& theTopClass,
 		const CIMClass& theClass, CIMInstanceResultHandlerIFC& result,
 		WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EDeepFlag deep, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,	
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
 		const WQLSelectStatement* pwss,
 		const WQLCompile* pwc,
 		OperationContext& context);

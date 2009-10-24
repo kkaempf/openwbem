@@ -103,7 +103,7 @@ static CMPIData argsGetArgAt(const CMPIArgs* eArg, CMPICount pos, CMPIString** n
 		CMSetStatus(rc,CMPI_RC_OK);
 		return data;
 	}
-	
+
 	OpenWBEM::CIMDataType pType=v.getType();
 	CMPIType t=type2CMPIType(pType,v.isArray());
 

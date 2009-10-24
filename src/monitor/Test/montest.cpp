@@ -1,9 +1,9 @@
 /*******************************************************************************
 * Copyright (C) 2005, Quest Software, Inc. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
-* 
+*
 *     * Redistributions of source code must retain the above copyright notice,
 *       this list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
 *       names of its contributors or employees may be used to endorse or promote
 *       products derived from this software without specific prior written
 *       permission.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -244,7 +244,7 @@ void copy_env_var(char const * varname, StringArray & env)
 
 int main_aux(int argc, char * * argv)
 {
-	// for debugging 
+	// for debugging
 	// LogAppender::setDefaultLogAppender(new CerrAppender(LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES, "[%-5r %t %-5p %c %F:%L] %m"));
 	std::size_t const BUFSZ = 1024;
 	char cwdbuf[BUFSZ + 1];
@@ -259,7 +259,7 @@ int main_aux(int argc, char * * argv)
 	OW_ASSERT(cin);
 	OW_ASSERT(tmp == "user_name");
 
-	ConfigOpts::installed_owlibexec_dir = 
+	ConfigOpts::installed_owlibexec_dir =
 		"/montest-689acb0e1ec89f45-7085a2a1780f5f42/libexec/openwbem";
 	PrivilegeManager::use_lib_path = true;
 	PrivilegeManager mgr;
@@ -483,7 +483,7 @@ int main_aux(int argc, char * * argv)
 		cout.flush();
 		cerr << "err output" << endl;
 	}
-	
+
 	return 0;
 }
 

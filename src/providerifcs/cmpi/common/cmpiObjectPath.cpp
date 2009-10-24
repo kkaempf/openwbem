@@ -199,10 +199,10 @@ static CMPIBoolean refClassPathIsA(CMPIObjectPath *eRef,
       */
 static      CMPIString *refToString(const CMPIObjectPath* op, CMPIStatus *rc)
 {
-	rc->rc = CMPI_RC_ERR_METHOD_NOT_AVAILABLE; 
-	CMPIString* rval = new CMPIString; 
+	rc->rc = CMPI_RC_ERR_METHOD_NOT_AVAILABLE;
+	CMPIString* rval = new CMPIString;
 	//TODO
-	return rval; 
+	return rval;
 }
 #endif
 

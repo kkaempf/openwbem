@@ -2,7 +2,7 @@
 //
 // Copyright (c) 2000, 2001, 2002 BMC Software, Hewlett-Packard Company, IBM,
 // The Open Group, Tivoli Systems
-// Portions Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+// Portions Copyright (C) 2003-2004 Quest Software, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -10,7 +10,7 @@
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // THE ABOVE COPYRIGHT NOTICE AND THIS PERMISSION NOTICE SHALL BE INCLUDED IN
 // ALL COPIES OR SUBSTANTIAL PORTIONS OF THE SOFTWARE. THE SOFTWARE IS PROVIDED
 // "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
@@ -64,7 +64,7 @@ public:
 		@return true if such a property was found and false otherwise.
 	*/
 	virtual bool getValue(
-		const String& propertyName, 
+		const String& propertyName,
 		WQLOperand& value) const = 0;
 	/** Returns true if the property identified by propertyName is an
 		EmbeddedObject instance or class that is either className or
@@ -77,7 +77,7 @@ public:
 		  propertyName.embeddedPropertyName1
 		  propertyName.embeddedPropertyName1.embeddedPropertyName2
 		  className.propertyName.embeddedPropertyName1
-		@param className The name of the class against which the property is 
+		@param className The name of the class against which the property is
 		  to be checked.
 		@return true or false
 	*/

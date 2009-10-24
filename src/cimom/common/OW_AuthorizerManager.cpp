@@ -36,7 +36,7 @@ public:
 	{
 		return m_env->getConfigItem(name, defRetVal);
 	}
-	virtual StringArray getMultiConfigItem(const String &itemName, 
+	virtual StringArray getMultiConfigItem(const String &itemName,
 		const StringArray& defRetVal, const char* tokenizeSeparator) const
 	{
 		return m_env->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
@@ -101,7 +101,7 @@ struct AuthorizerMarker
 	{
 		m_context.removeData(AUTH_ACTIVE_KEY);
 	}
-	
+
 	static bool active(OperationContext& context)
 	{
 		return context.getStringDataWithDefault(AUTH_ACTIVE_KEY) == "1";

@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
 {
     int rval = 1;
 	EmbeddedCIMOMEnvironmentRef env = EmbeddedCIMOMEnvironment::instance();
-	
+
 	// until the config file is read and parsed, just use a logger that prints everything to stderr.
 	Logger logger(COMPONENT_NAME, new CerrAppender());
 
@@ -118,58 +118,58 @@ int main(int argc, char* argv[])
 		env->startServices();
 		OW_LOG_INFO(logger, "owcimomd is now running!");
 
-		LocalOperationContext oc; 
+		LocalOperationContext oc;
 
-		CIMOMHandleIFCRef ch = env->getCIMOMHandle(oc); 
+		CIMOMHandleIFCRef ch = env->getCIMOMHandle(oc);
 
 		std::cout << "Running!" << std::endl;
-		CIMClass cc = ch->getClass("root/testsuite", "TestInstance"); 
-		CIMInstance inst = cc.newInstance(); 
-		inst.updatePropertyValue("Name", CIMValue(String("one"))); 
-		StringArray props; 
-		props.push_back(String("one.one")); 
-		props.push_back(String("one.two")); 
-		inst.updatePropertyValue("Params", CIMValue(props)); 
-		ch->createInstance("root/testsuite", inst); 
+		CIMClass cc = ch->getClass("root/testsuite", "TestInstance");
+		CIMInstance inst = cc.newInstance();
+		inst.updatePropertyValue("Name", CIMValue(String("one")));
+		StringArray props;
+		props.push_back(String("one.one"));
+		props.push_back(String("one.two"));
+		inst.updatePropertyValue("Params", CIMValue(props));
+		ch->createInstance("root/testsuite", inst);
 
-		inst.updatePropertyValue("Name", CIMValue(String("two"))); 
-		props.clear(); 
-		props.push_back(String("two.one")); 
-		props.push_back(String("two.two")); 
-		inst.updatePropertyValue("Params", CIMValue(props)); 
-		ch->createInstance("root/testsuite", inst); 
-		
-		CIMInstanceArray cia = ch->enumInstancesA("root/testsuite", "TestInstance"); 
+		inst.updatePropertyValue("Name", CIMValue(String("two")));
+		props.clear();
+		props.push_back(String("two.one"));
+		props.push_back(String("two.two"));
+		inst.updatePropertyValue("Params", CIMValue(props));
+		ch->createInstance("root/testsuite", inst);
 
-		OW_ASSERT(cia.size() == 2); 
-		OW_ASSERT(cia[0].getPropertyValue("Name").toString() == "one"); 
-		OW_ASSERT(cia[1].getPropertyValue("Name").toString() == "two"); 
-		props.clear(); 
-		cia[0].getPropertyValue("Params").get(props); 
-		OW_ASSERT(props.size() == 2); 
-		OW_ASSERT(props[0] == "one.one"); 
-		OW_ASSERT(props[1] == "one.two"); 
-		props.clear(); 
-		cia[1].getPropertyValue("Params").get(props); 
-		OW_ASSERT(props.size() == 2); 
-		OW_ASSERT(props[0] == "two.one"); 
-		OW_ASSERT(props[1] == "two.two"); 
-		
+		CIMInstanceArray cia = ch->enumInstancesA("root/testsuite", "TestInstance");
 
-		for (CIMInstanceArray::const_iterator iter = cia.begin(); 
+		OW_ASSERT(cia.size() == 2);
+		OW_ASSERT(cia[0].getPropertyValue("Name").toString() == "one");
+		OW_ASSERT(cia[1].getPropertyValue("Name").toString() == "two");
+		props.clear();
+		cia[0].getPropertyValue("Params").get(props);
+		OW_ASSERT(props.size() == 2);
+		OW_ASSERT(props[0] == "one.one");
+		OW_ASSERT(props[1] == "one.two");
+		props.clear();
+		cia[1].getPropertyValue("Params").get(props);
+		OW_ASSERT(props.size() == 2);
+		OW_ASSERT(props[0] == "two.one");
+		OW_ASSERT(props[1] == "two.two");
+
+
+		for (CIMInstanceArray::const_iterator iter = cia.begin();
 			  iter != cia.end(); ++iter)
 		{
 			std::cout << iter->toMOF() << std::endl;
 		}
-		
-		StringArray classnames = ch->enumClassNamesA("root/testsuite", ""); 
-		for (StringArray::const_iterator iter = classnames.begin(); 
+
+		StringArray classnames = ch->enumClassNamesA("root/testsuite", "");
+		for (StringArray::const_iterator iter = classnames.begin();
 			  iter != classnames.end(); ++iter)
 		{
 			std::cout << *iter << std::endl;
 		}
 
-		rval = 0; 
+		rval = 0;
 
 	}
 	catch (AssertionException& e)
@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
 	// Call platform specific shutdown routine
 
 	EmbeddedCIMOMEnvironment::instance() = env = 0;
-	
+
 	OW_LOG_INFO(logger, "owcimomd has shutdown");
 	return rval;
 }

@@ -164,7 +164,7 @@ int main_aux(int argc, char * * argv)
 	int expected_exit_status = exec_argv[1].toInt();
 	String err_str = exec_argv[2];
 
-	ConfigOpts::installed_owlibexec_dir = 
+	ConfigOpts::installed_owlibexec_dir =
 		"/userexectest-689acb0e1ec89f45-7085a2a1780f5f42/libexec/openwbem";
 	PrivilegeManager::use_lib_path = true;
 	PrivilegeManager mgr = PrivilegeManager::createMonitor(config_dir, app_name);

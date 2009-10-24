@@ -1,22 +1,22 @@
 /*******************************************************************************
-* Copyright (C) 2005, Vintela, Inc. All rights reserved.
+* Copyright (C) 2005, Quest Software, Inc. All rights reserved.
 * Copyright (C) 2006, Novell, Inc. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
-* 
+*
 *     * Redistributions of source code must retain the above copyright notice,
 *       this list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of 
-*       Vintela, Inc., 
-*       nor Novell, Inc., 
-*       nor the names of its contributors or employees may be used to 
-*       endorse or promote products derived from this software without 
+*     * Neither the name of
+*       Quest Software, Inc.,
+*       nor Novell, Inc.,
+*       nor the names of its contributors or employees may be used to
+*       endorse or promote products derived from this software without
 *       specific prior written permission.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -57,7 +57,7 @@
  * This macro is deprecated in 3.1.0.
  */
 #define OW_THROWL(exType, line, msg) \
-			BLOCXX_THROWL(exType, line, msg) 
+			BLOCXX_THROWL(exType, line, msg)
 
 /**
  * Throw an exception using __FILE__ and __LINE__.
@@ -67,7 +67,7 @@
  *   exception constructor, which should clone() it.
  */
 #define OW_THROW_SUBEX(exType, msg, subex) \
-		BLOCXX_THROW_SUBEX(exType, msg, subex) 
+		BLOCXX_THROW_SUBEX(exType, msg, subex)
 
 /**
  * Throw an exception using __FILE__ and __LINE__.
@@ -76,7 +76,7 @@
  * @param err The error code.
  */
 #define OW_THROW_ERR(exType, msg, err) \
-		BLOCXX_THROW_ERR(exType, msg, err) 
+		BLOCXX_THROW_ERR(exType, msg, err)
 
 /**
  * Throw an exception using __FILE__, __LINE__, errno and strerror(errno)
@@ -84,7 +84,7 @@
  *               message, and error code.
  */
 #define OW_THROW_ERRNO(exType) \
-			BLOCXX_THROW_ERRNO(exType) 
+			BLOCXX_THROW_ERRNO(exType)
 
 /**
  * Throw an exception using __FILE__, __LINE__, errnum and strerror(errnum)
@@ -92,7 +92,7 @@
  *               message, and error code.
  */
 #define OW_THROW_ERRNO1(exType, errnum) \
-			BLOCXX_THROW_ERRNO1(exType, errnum) 
+			BLOCXX_THROW_ERRNO1(exType, errnum)
 
 /**
  * Throw an exception using __FILE__, __LINE__, errno and strerror(errno)
@@ -100,7 +100,7 @@
  *               message, and error code.
  */
 #define OW_THROW_ERRNO_MSG(exType, msg) \
-			BLOCXX_THROW_ERRNO_MSG(exType, msg) 
+			BLOCXX_THROW_ERRNO_MSG(exType, msg)
 
 /**
  * Throw an exception using __FILE__, __LINE__, errnum and strerror(errnum)
@@ -108,7 +108,7 @@
  *               message, and error code.
  */
 #define OW_THROW_ERRNO_MSG1(exType, msg, errnum) \
-			BLOCXX_THROW_ERRNO_MSG1(exType, msg, errnum) 
+			BLOCXX_THROW_ERRNO_MSG1(exType, msg, errnum)
 
 /**
  * Throw an exception using __FILE__ and __LINE__.
@@ -119,7 +119,7 @@
  *   exception constructor, which should clone() it.
  */
 #define OW_THROW_ERR_SUBEX(exType, msg, err, subex) \
-			BLOCXX_THROW_ERR_SUBEX(exType, msg, err, subex) 
+			BLOCXX_THROW_ERR_SUBEX(exType, msg, err, subex)
 
 /**
  * Declare a new exception class named <NAME>Exception that derives from <BASE>.
@@ -129,7 +129,7 @@
  * @param BASE The base class.
  */
 #define OW_DECLARE_EXCEPTION2(NAME, BASE) \
-			BLOCXX_DECLARE_EXCEPTION2(NAME, BASE) 
+			BLOCXX_DECLARE_EXCEPTION2(NAME, BASE)
 
 /**
  * Declare a new exception class named <NAME>Exception that derives from <BASE>.
@@ -143,7 +143,7 @@
  * @param LINKAGE_SPEC The linkage specifier for the exception class.
  */
 #define OW_DECLARE_APIEXCEPTION2(NAME, BASE, LINKAGE_SPEC) \
-		BLOCXX_DECLARE_APIEXCEPTION2(NAME, BASE, LINKAGE_SPEC) 
+		BLOCXX_DECLARE_APIEXCEPTION2(NAME, BASE, LINKAGE_SPEC)
 
 
 
@@ -154,7 +154,7 @@
  * @param NAME The name of the new class (Exception will be postfixed)
  */
 #define OW_DECLARE_EXCEPTION(NAME) \
-			BLOCXX_DECLARE_EXCEPTION(NAME) 
+			BLOCXX_DECLARE_EXCEPTION(NAME)
 
 /**
  * Declare a new exception class named <NAME>Exception that derives from Exception
@@ -176,7 +176,7 @@
  * @param BASE The base class.
  */
 #define OW_DEFINE_EXCEPTION2(NAME, BASE) \
-			BLOCXX_DEFINE_EXCEPTION2(NAME, BASE) 
+			BLOCXX_DEFINE_EXCEPTION2(NAME, BASE)
 
 /**
  * Define a new exception class named <NAME>Exception that derives from <BASE>.
@@ -188,7 +188,7 @@
  * @param SUB_CLASS_ID The subclass id.
  */
 #define OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, BASE, SUB_CLASS_ID) \
-		BLOCXX_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, BASE, SUB_CLASS_ID) 
+		BLOCXX_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, BASE, SUB_CLASS_ID)
 
 /**
  * Define a new exception class named <NAME>Exception that derives from Exception.
@@ -199,7 +199,7 @@
  * @param NAME The name of the new class (Exception will be postfixed)
  */
 #define OW_DEFINE_EXCEPTION(NAME) \
-			BLOCXX_DEFINE_EXCEPTION(NAME) 
+			BLOCXX_DEFINE_EXCEPTION(NAME)
 
 /**
  * Define a new exception class named <NAME>Exception that derives from Exception.
@@ -210,7 +210,7 @@
  * @param NAME The name of the new class (Exception will be postfixed)
  */
 #define OW_DEFINE_EXCEPTION_WITH_ID(NAME) \
-			BLOCXX_DEFINE_EXCEPTION_WITH_ID(NAME) 
+			BLOCXX_DEFINE_EXCEPTION_WITH_ID(NAME)
 
 /**
  * Define a new exception class named <NAME>Exception that derives from <BASE>.
@@ -222,8 +222,8 @@
  * @param BASE The base class.
  */
 #define OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID(NAME, BASE) \
-			BLOCXX_DEFINE_EXCEPTION_WITH_BASE_AND_ID(NAME, BASE) 
-			
+			BLOCXX_DEFINE_EXCEPTION_WITH_BASE_AND_ID(NAME, BASE)
+
 
 
 #endif

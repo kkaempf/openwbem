@@ -49,7 +49,7 @@ public:
 
 	AuthorizerManager();
 	AuthorizerManager(const Authorizer2IFCRef& authorizerRef);
-	
+
 	~AuthorizerManager();
 
 	virtual String getName() const;

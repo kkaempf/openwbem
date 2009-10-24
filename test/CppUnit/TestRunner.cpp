@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -36,7 +36,7 @@
  * TestRunner prints out a trace as the tests are executed followed by a
  * summary at the end.
  *
- * You can add to the tests that the TestRunner knows about by 
+ * You can add to the tests that the TestRunner knows about by
  * making additional calls to "addTest (...)" in main.
  *
  * Here is the synopsis:
@@ -86,7 +86,7 @@ void TestRunner::run (int ac, char **av)
 
 	if (numberOfTests == 0) {
 		printBanner ();
-		return;        
+		return;
 	}
 
 	if (m_wait) {
@@ -124,7 +124,7 @@ void TestRunner::run (string testCase)
 			cout << "Test " << testCase << " not found." << endl;
 			return;
 
-		} 
+		}
 
 }
 
@@ -138,7 +138,7 @@ void TestRunner::runAll ()
 
 	for (mappings::iterator it = m_mappings.begin ();
 			it != m_mappings.end ();
-			++it) 
+			++it)
 	{
 		cout << (*it).first << std::flush;
 		testToRun = (*it).second;
@@ -150,7 +150,7 @@ void TestRunner::runAll ()
 
 	if (numberOfTests == 0) {
 		printBanner ();
-		return;        
+		return;
 	}
 
 }

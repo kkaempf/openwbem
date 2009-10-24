@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -92,7 +92,7 @@ public:
 		return m_env->getConfigItem(name, defRetVal);
 	}
 
-	virtual StringArray getMultiConfigItem(const String &itemName, 
+	virtual StringArray getMultiConfigItem(const String &itemName,
 		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const
 	{
 		return m_env->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
@@ -140,7 +140,7 @@ public:
 		}
 		return !m_initializeFailed;
 	}
-	
+
 	void initialize(const ProviderEnvironmentIFCRef& env)
 	{
 		try
@@ -192,14 +192,14 @@ CppProviderIFC::~CppProviderIFC()
 			it->second = 0;
 			it++;
 		}
-	
+
 		m_provs.clear();
-	
+
 		for (size_t i = 0; i < m_noUnloadProviders.size(); i++)
 		{
 			m_noUnloadProviders[i].setNull();
 		}
-	
+
 		m_noUnloadProviders.clear();
 	}
 	catch (...)
@@ -388,7 +388,7 @@ CppProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 //			apRef.useRefCountOf(pProv);
 			IndicationProviderIFCRef rv(new
 				CppIndicationProviderProxy(apRef));
-			
+
 			m_indicationProviders.insert(IndicationProviderMap::value_type(provIdString, rv));
 
 			return rv;
@@ -451,8 +451,8 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 	}
 
 	StringArray paths = env->getMultiConfigItem(
-		ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt, 
-		String(OW_DEFAULT_CPPPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR), 
+		ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt,
+		String(OW_DEFAULT_CPPPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
 		OW_PATHNAME_SEPARATOR);
 	for (StringArray::size_type i1 = 0; i1 < paths.size(); i1++)
 	{
@@ -461,7 +461,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		{
 			String msg(Format("C++ provider ifc failed getting contents of directory: %1", paths[i1]));
 			OW_LOG_INFO(env->getLogger(COMPONENT_NAME), msg);
-			continue; 
+			continue;
 		}
 		for (size_t i = 0; i < dirEntries.size(); i++)
 		{
@@ -479,7 +479,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				continue;
 			}
 #endif // OW_DARWIN
-	
+
 			SharedLibraryRef theLib = ldr->loadSharedLibrary(libName);
 			if (!theLib)
 			{
@@ -497,7 +497,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 					" library: %1", libName));
 				OW_LOG_INFO(lgr, msg);
 				// This isn't treated as a fatal error, since the library isn't an OW library.
-				// On Windows, providers that link to auxiliary dlls, must have those dlls in the same directory 
+				// On Windows, providers that link to auxiliary dlls, must have those dlls in the same directory
 				// as the provider.
 				continue;
 			}
@@ -690,7 +690,7 @@ CppProviderIFC::loadProvider(const String& libName)
 	// Trim it at the first '.' to handle cases where loadProvider was requested
 	// on something that may have trailing garbage after (such as libraries on
 	// MacOS X, where the version number is before the library extension.
-	provId = provId.substring(0, provId.indexOf('.')); 
+	provId = provId.substring(0, provId.indexOf('.'));
 
 	OW_LOG_DEBUG3(logger, Format("Provider ID is \"%1\"", provId));
 
@@ -787,8 +787,8 @@ CppProviderIFC::getProvider(
 	Logger lgr(COMPONENT_NAME);
 
 	StringArray paths = env->getMultiConfigItem(
-		ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt, 
-		String(OW_DEFAULT_CPPPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR), 
+		ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt,
+		String(OW_DEFAULT_CPPPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
 		OW_PATHNAME_SEPARATOR);
 	for (StringArray::size_type i = 0; i < paths.size(); i++)
 	{
@@ -823,7 +823,7 @@ CppProviderIFC::getProvider(
 		CppProviderInitializationHelperRef provInitHelper(new CppProviderInitializationHelper(rval));
 
 		m_provs[provId] = provInitHelper;
-		
+
 		// now it's in the map, we can unlock the mutex protecting the map
 		ml.release();
 

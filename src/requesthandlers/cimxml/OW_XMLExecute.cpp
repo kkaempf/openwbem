@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -288,7 +288,7 @@ XMLExecute::doInvokeMethod(ostream& ostr, CIMXMLParser& parser,
 	CIMParamValueArray inParams;
 	CIMParamValueArray outParams;
 	CIMObjectPath path = XMLCIMFactory::createObjectPath(parser);
-	
+
 	getParameters(parser, inParams);
 	CIMValue cv = hdl.invokeMethod(path.getNameSpace(), path, methodName,
 		inParams, outParams);
@@ -467,7 +467,7 @@ namespace
 				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 					Format("Parameter %1 is not a valid parameter", name).c_str());
 			}
-			
+
 			parser.getNextTag();
 			if (parser.tokenIsId(CIMXMLParser::E_IPARAMVALUE))
 			{
@@ -603,7 +603,7 @@ namespace
 					case param::CLASSNAME:
 						params[i].val = CIMValue("");
 						break;
-					
+
 					default:
 						break;
 				}
@@ -672,7 +672,7 @@ namespace
 			CIMInstancePathAndInstancetoXML(ci, ostr, cop);
 			ostr << "</VALUE.OBJECTWITHPATH>\n";
 			checkStream(ostr);
-		
+
 		}
 		std::ostream& ostr;
 		String ns;
@@ -696,7 +696,7 @@ namespace
 			CIMtoXML(cc, ostr);
 			ostr << "</VALUE.OBJECTWITHPATH>\n";
 			checkStream(ostr);
-		
+
 		}
 		std::ostream& ostr;
 		const String& ns;
@@ -734,7 +734,7 @@ void XMLExecute::associators(ostream& ostr,
 		propertyList = params[7].val.toStringArray();
 		pPropList = &propertyList;
 	}
-	
+
 	bool includeQualifiers = params[5].val.toBool();
 	bool includeClassOrigin = params[6].val.toBool();
 	String role = params[3].val.toString();
@@ -844,9 +844,9 @@ XMLExecute::modifyInstance(ostream&	/*ostr*/, CIMXMLParser& parser,
 	params.push_back(param(CIMXMLParser::P_ModifiedInstance, false, param::NAMEDINSTANCE));
 	params.push_back(param(CIMXMLParser::P_IncludeQualifiers, true, param::BOOLEAN, CIMValue(true)));
 	params.push_back(param(CIMXMLParser::P_PropertyList, true, param::STRINGARRAY, CIMValue(CIMNULL)));
-	
+
 	getParameterValues(parser, params);
-	
+
 	StringArray propertyList;
 	StringArray* pPropList = 0;
 	if (params[2].isSet)
@@ -854,7 +854,7 @@ XMLExecute::modifyInstance(ostream&	/*ostr*/, CIMXMLParser& parser,
 		propertyList = params[2].val.toStringArray();
 		pPropList = &propertyList;
 	}
-	
+
 	bool includeQualifiers = params[1].val.toBool();
 	CIMInstance modifiedInstance(CIMNULL);
 	params[0].val.get(modifiedInstance);
@@ -907,7 +907,7 @@ XMLExecute::setQualifier(ostream& /*ostr*/, CIMXMLParser& parser,
 	}
 	parser.mustGetChildId(
 		CIMXMLParser::E_QUALIFIER_DECLARATION);
-	
+
 	CIMQualifierType cimQualifier;
 	XMLQualifier::processQualifierDecl(parser, cimQualifier);
 	hdl.setQualifierType(ns, cimQualifier);
@@ -1063,7 +1063,7 @@ XMLExecute::enumerateInstanceNames(ostream& ostr, CIMXMLParser& parser,
 	params.push_back(param(CIMXMLParser::P_ClassName, false, param::CLASSNAME));
 	getParameterValues(parser, params);
 	String className = params[0].val.toString();
-	
+
 	ostr << "<IRETURNVALUE>";
 	CIMInstanceNameXMLOutputter handler(ostr);
 	hdl.enumInstanceNames(ns, className, handler);
@@ -1159,7 +1159,7 @@ XMLExecute::getClass(ostream& ostr, CIMXMLParser& parser,
 		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
 		includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 		pPropList);
-	
+
 	CIMtoXML(cimClass, ostr);
 	ostr << "</IRETURNVALUE>";
 }
@@ -1274,11 +1274,11 @@ XMLExecute::references(ostream& ostr, CIMXMLParser& parser,
 		propertyList = params[5].val.toStringArray();
 		pPropList = &propertyList;
 	}
-	
+
 	bool includeQualifiers = params[3].val.toBool();
 	bool includeClassOrigin = params[4].val.toBool();
 	String role = params[2].val.toString();
-	
+
 	ostr << "<IRETURNVALUE>";
 	if (path.isClassPath())
 	{
@@ -1357,7 +1357,7 @@ XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
 	try
 	{
 		ostrEntity << "<SIMPLERSP>";
-		
+
 		// start out pointing to SIMPLEREQ
 		OW_ASSERT(parser.tokenIsId(CIMXMLParser::E_SIMPLEREQ));
 		// <!ELEMENT SIMPLEREQ (IMETHODCALL|METHODCALL)>
@@ -1388,7 +1388,7 @@ XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
 			// <!ELEMENT LOCALNAMESPACEPATH (NAMESPACE+)>
 			parser.mustGetChildId(CIMXMLParser::E_NAMESPACE);
 			String nameSpace = XMLClass::getNameSpace(parser);
-			
+
 			// move past LOCALNAMESPACEPATH to IPARAMVALUE*
 			parser.mustGetEndTag();
 			executeIntrinsic(ostrEntity, parser, *hdl, nameSpace);
@@ -1465,7 +1465,7 @@ void
 XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 {
 	setEnvironment(env);
-// TODO: Move this stuff into some other class
+/// @todo  Move this stuff into some other class
 #if 0
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	Logger logger(COMPONENT_NAME);
@@ -1477,7 +1477,7 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		String interopNS = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 		LocalOperationContext context;
 		CIMOMHandleIFCRef hdl(env->getCIMOMHandle(context));
-		
+
 		CIMClass CIM_CIMXMLCommunicationMechanism(hdl->getClass(interopNS, "CIM_CIMXMLCommunicationMechanism"));
 
 		CIMInstance commMech(CIM_CIMXMLCommunicationMechanism.newInstance());
@@ -1500,7 +1500,7 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		commMech.updatePropertyValue("CIMValidated", CIMValue(true));
 		commMech.updatePropertyValue("CIMXMLProtocolVersion", CIMValue(UInt16(1))); // 1 means 1.0
 		commMech.updatePropertyValue("Version", CIMValue("1.1"));
-		
+
 		// CIM_ObjectManagerCommunicationMechanism properties
 		enum
 		{
@@ -1582,7 +1582,7 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		m_commMechPath.setNameSpace(interopNS);
 		OW_LOG_DEBUG3(logger, Format("Sucessfully created instance of CIM_CIMXMLCommunicationMechanism. Saving path: %1", m_commMechPath.toString()));
 
-		
+
 		// now create the instance of HostedAccessPoint that associates the commMech with the system
 		CIMClass CIM_HostedAccessPoint(hdl->getClass(interopNS, "CIM_HostedAccessPoint"));
 		CIMInstance hostedAccessPoint(CIM_HostedAccessPoint.newInstance());
@@ -1608,8 +1608,8 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		m_hostedAccessPointPath = hdl->createInstance(interopNS, hostedAccessPoint);
 		m_hostedAccessPointPath.setNameSpace(interopNS);
 		OW_LOG_DEBUG3(logger, Format("Sucessfully created instance of CIM_HostedAccessPoint. Saving path: %1", m_hostedAccessPointPath.toString()));
-	
-		
+
+
 		// now create the instance of OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager that associates the commMech with the OpenWBEM_ObjectManager
 		CIMClass OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager(hdl->getClass(interopNS, "OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager"));
 		CIMInstance commMechForManager(OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager.newInstance());

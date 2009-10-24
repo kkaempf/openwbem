@@ -2,21 +2,21 @@
 * Copyright © 2002  Networks Associates Technology, Inc.  All rights reserved.
 * Copyright (C) 2005, Quest Software, Inc. All rights reserved.
 * Copyright (C) 2006, Novell, Inc. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
-* 
+*
 *     * Redistributions of source code must retain the above copyright notice,
 *       this list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of the Network Associates, 
+*     * Neither the name of the Network Associates,
 *       nor Quest Software, Inc., nor Novell, Inc., nor the
 *       names of its contributors or employees may be used to endorse or promote
 *       products derived from this software without specific prior written
 *       permission.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -249,23 +249,23 @@ namespace
 	class WaitpidThreadFixSettingRestorer
 	{
 	public:
-		WaitpidThreadFixSettingRestorer(bool setting) 
+		WaitpidThreadFixSettingRestorer(bool setting)
 		: m_setting(setting)
-		, m_restored(false) 
+		, m_restored(false)
 		{
 		}
 
-		~WaitpidThreadFixSettingRestorer() 
-		{ 
+		~WaitpidThreadFixSettingRestorer()
+		{
 			if (!m_restored)
 			{
-				WaitpidThreadFix::setWaitpidThreadFixEnabled(m_setting); 
+				WaitpidThreadFix::setWaitpidThreadFixEnabled(m_setting);
 			}
 		}
 
 		void restore()
 		{
-			WaitpidThreadFix::setWaitpidThreadFixEnabled(m_setting); 
+			WaitpidThreadFix::setWaitpidThreadFixEnabled(m_setting);
 			m_restored = true;
 		}
 	private:
@@ -317,7 +317,7 @@ PrivilegeManager::PrivilegeManager(const PrivilegeManager& x)
 {
 }
 
-PrivilegeManager& 
+PrivilegeManager&
 PrivilegeManager::operator=(const PrivilegeManager& x)
 {
 	m_impl = x.m_impl;
@@ -424,7 +424,7 @@ namespace
 	{
 	public:
 		// REQUIRE: child_desc >= 3
-		PrivMonPreExec(int child_desc); 
+		PrivMonPreExec(int child_desc);
 		virtual bool keepStd(int d) const;
 		virtual void call(pipe_pointer_t const pparr[]);
 
@@ -463,7 +463,7 @@ namespace
 		std::auto_ptr<PrivilegeManagerImpl> m_pmgr;
 	};
 
-#define CTOR "PrivilegeManager"	
+#define CTOR "PrivilegeManager"
 
 	char const * SMPolicy::check_config_dir(char const * config_dir)
 	{
@@ -491,13 +491,13 @@ namespace
 #ifdef OW_WIN32
 #pragma message(Reminder "TODO: implement it for Win in BloCxx!")
 #else
-		PrivMonPreExec pre_exec(child_desc); 
-		String exec_path = 
+		PrivMonPreExec pre_exec(child_desc);
+		String exec_path =
 			ConfigOpts::installed_owlibexec_dir + "/owprivilegemonitor" + String(OW_OPENWBEM_LIBRARY_VERSION);
 		using namespace FileSystem::Path;
 		std::pair<ESecurity, String> x = security(exec_path, ROOT_UID);
 		CHECK(x.first != E_INSECURE, CTOR ": monitor executable is insecure");
-		StringArray argv = 
+		StringArray argv =
 			monitor_argv(exec_path.c_str(), config_dir, app_name, m_user_name);
 		StringArray envp = monitor_envp(child_desc);
 		bool prevSetting = WaitpidThreadFix::setWaitpidThreadFixEnabled(false);
@@ -1258,7 +1258,7 @@ PrivilegeManager::pimpl() const
 	return m_impl.getPtr();
 }
 
-// static 
+// static
 PrivilegeManager PrivilegeManager::setInstance(IntrusiveCountableBase * p_impl)
 {
 	NonRecursiveMutexLock lock(g_pmImplGuard);

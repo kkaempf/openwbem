@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -92,7 +92,7 @@ namespace
 
 	protected:
 		virtual void doHandle(CIMClass const& x);
-		
+
 	private:
 		//Don't support copying this class.
 		ClassesEmbeddedInInstancesResultHandler
@@ -148,7 +148,7 @@ namespace
 		"Null",
 		"Invalid"
 	};
-	
+
 	char const* typeName(WQLProcessor::DataType::Type type)
 	{
 		size_t index(type);
@@ -161,7 +161,7 @@ namespace
 			return typeStrings[index];
 		}
 	}
-	
+
 }
 
 WQLProcessor::WQLProcessor(
@@ -269,7 +269,7 @@ void WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 		(*i)->acceptInterface(this);
 		// Fill out the properties on the instance
 		CIMProperty cp = *curProperty;
-		
+
 		CIMValue newVal(CIMNULL);
 		switch (m_exprValue.type)
 		{
@@ -302,7 +302,7 @@ void WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 		cp.setValue(newVal);
 		ci.setProperty(cp);
 	}
-	
+
 	// create the instance
 	//OW_WQL_LOG_DEBUG(Format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
 	m_hdl->createInstance(m_ns, ci);
@@ -433,7 +433,7 @@ void WQLProcessor::visit_updateStmt(
 	{
 		(*i)->acceptInterface(this);
 	}
-	
+
 	// loop through the m_instances
 	for (CIMInstanceArray::iterator curInstance = m_instances.begin();
 		 curInstance != m_instances.end();
@@ -496,7 +496,7 @@ void WQLProcessor::visit_updateStmt(
 #else
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	
+
 }
 /*********************************************************
  * SELECT statement
@@ -556,8 +556,8 @@ void WQLProcessor::visit_selectStmt(
 	{
 		for (size_t i = 0; i < m_instances.size(); ++i)
 		{
-			// TODO: Use the filterInstance function from IndicationServerImpl
-			// TODO: Handle __Path here
+			/// @todo  Use the filterInstance function from IndicationServerImpl
+			/// @todo  Handle __Path here
 			m_instances[i] = m_instances[i].filterProperties(m_propertyArray, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN);
 		}
 	}
@@ -1027,7 +1027,7 @@ void WQLProcessor::visit_aExpr_aExpr_LESSTHAN_aExpr(
 	DataType lhs = m_exprValue;
 	paExpr_aExpr_LESSTHAN_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
-	
+
 	doComparison(lhs, rhs, Compare(Compare::LessThanType));
 }
 void WQLProcessor::visit_aExpr_aExpr_LESSTHANOREQUALS_aExpr(
@@ -1036,10 +1036,10 @@ void WQLProcessor::visit_aExpr_aExpr_LESSTHANOREQUALS_aExpr(
 {
 	paExpr_aExpr_LESSTHANOREQUALS_aExpr->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
-	
+
 	paExpr_aExpr_LESSTHANOREQUALS_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
-	
+
 	doComparison(lhs, rhs, Compare(Compare::LessThanOrEqualsType));
 }
 void WQLProcessor::visit_aExpr_aExpr_GREATERTHAN_aExpr(
@@ -1048,10 +1048,10 @@ void WQLProcessor::visit_aExpr_aExpr_GREATERTHAN_aExpr(
 {
 	paExpr_aExpr_GREATERTHAN_aExpr->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
-	
+
 	paExpr_aExpr_GREATERTHAN_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
-	
+
 	doComparison(lhs, rhs, Compare(Compare::GreaterThanType));
 }
 void WQLProcessor::visit_aExpr_aExpr_GREATERTHANOREQUALS_aExpr(
@@ -1060,7 +1060,7 @@ void WQLProcessor::visit_aExpr_aExpr_GREATERTHANOREQUALS_aExpr(
 {
 	paExpr_aExpr_GREATERTHANOREQUALS_aExpr->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
-	
+
 	paExpr_aExpr_GREATERTHANOREQUALS_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
 	doComparison(lhs, rhs, Compare(Compare::GreaterThanOrEqualsType));
@@ -1176,7 +1176,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, const 
 					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(lhs.str), Compare(compare).reverseOrder()));
 				}
 				break;
-				
+
 				default:
 				{
 					OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeName(lhs.type), typeName(rhs.type)).c_str());
@@ -1194,7 +1194,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, const 
 					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(lhs.i), Compare(compare).reverseOrder()));
 				}
 				break;
-				
+
 				default:
 				{
 					OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeName(lhs.type), typeName(rhs.type)).c_str());
@@ -1212,7 +1212,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, const 
 					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(lhs.b), Compare(compare).reverseOrder()));
 				}
 				break;
-				
+
 				default:
 				{
 					OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeName(lhs.type), typeName(rhs.type)).c_str());
@@ -1221,7 +1221,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, const 
 			}
 		}
 		break;
-		
+
 		case DataType::RealType:
 		{
 			switch (rhs.type)
@@ -1231,7 +1231,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, const 
 					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(lhs.r), Compare(compare).reverseOrder()));
 				}
 				break;
-				
+
 				default:
 				{
 					OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeName(lhs.type), typeName(rhs.type)).c_str());
@@ -1240,7 +1240,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, const 
 			}
 		}
 		break;
-		
+
 		case DataType::NullType:
 		{
 			switch (rhs.type)
@@ -1250,7 +1250,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, const 
 					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(CIMNULL), Compare(compare).reverseOrder()));
 				}
 				break;
-				
+
 				default:
 				{
 					OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeName(lhs.type), typeName(rhs.type)).c_str());
@@ -1259,7 +1259,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, const 
 			}
 		}
 		break;
-		
+
 		default:
 		{
 			OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Unsupported comparison");
@@ -1287,14 +1287,14 @@ void WQLProcessor::visit_aExpr_aExpr_AND_aExpr(
 	{
 		OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "invalid OR argument");
 	}
-	
+
 	paExpr_aExpr_AND_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
 	if (rhs.type != DataType::CIMInstanceArrayType)
 	{
 		OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "invalid OR argument");
 	}
-	
+
 	// set_union requires sorted containers
 	//OW_WQL_LOG_DEBUG("Beginning first sort");
 	std::sort(lhs.cia.begin(), lhs.cia.end(), CIMInstanceSortCriterion);
@@ -1318,7 +1318,7 @@ void WQLProcessor::visit_aExpr_aExpr_OR_aExpr(
 	{
 		OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "invalid OR argument");
 	}
-	
+
 	paExpr_aExpr_OR_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
 	if (rhs.type != DataType::CIMInstanceArrayType)
@@ -1745,7 +1745,7 @@ void WQLProcessor::visit_cExpr_strColId_optIndirection(
 	)
 {
 	m_exprValue = DataType(*pcExpr_strColId_optIndirection->m_pstrColId1, DataType::ColumnNameType);
-	// TODO: What does indirection do? Array index
+	/// @todo  What does indirection do? Array index
 	if (pcExpr_strColId_optIndirection->m_poptIndirection2)
 	{
 		pcExpr_strColId_optIndirection->m_poptIndirection2->acceptInterface(this);
@@ -2033,7 +2033,7 @@ void WQLProcessor::visit_attr(
 {
 	m_exprValue = DataType(*pattr->m_pstrRelationName1, DataType::ColumnNameType);
 	pattr->m_pattrs3->acceptInterface(this);
-	// TODO: What does indirection mean? Array index
+	/// @todo  What does indirection mean? Array index
 	if (pattr->m_poptIndirection4)
 	{
 		pattr->m_poptIndirection4->acceptInterface(this);
@@ -2108,7 +2108,7 @@ void WQLProcessor::visit_updateTargetEl(
 	)
 {
 	m_propertyArray.push_back(*pupdateTargetEl->m_pstrColId1);
-	
+
 	if (pupdateTargetEl->m_poptIndirection2)
 	{
 		OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
@@ -2162,7 +2162,7 @@ void WQLProcessor::visit_aExprConst_BITCONST(
 		OW_WQL_THROWCIMMSG( CIMException::INVALID_QUERY, Format( "Bad bitstring integer input '%1'",
 			 p).c_str() );
 	}
-	
+
 	m_exprValue = DataType(val);
 }
 void WQLProcessor::visit_aExprConst_HEXCONST(
@@ -2178,7 +2178,7 @@ void WQLProcessor::visit_aExprConst_HEXCONST(
 		OW_WQL_THROWCIMMSG( CIMException::INVALID_QUERY, Format( "Bad bitstring integer input '%1'",
 			 p).c_str() );
 	}
-	
+
 	m_exprValue = DataType(val);
 }
 void WQLProcessor::visit_aExprConst_TRUEP(
@@ -2223,7 +2223,7 @@ WQLProcessor::filterInstancesOnPropertyValue(const String& propName, const CIMVa
 					{
 						rval.push_back(ci);
 					}
-					
+
 				}
 				else
 				{
@@ -2245,7 +2245,7 @@ WQLProcessor::filterInstancesOnPropertyValue(const String& propName, const CIMVa
 						cp = curci.getProperty(propNames[i]);
 						if (cp)
 						{
-	
+
 							if (i < propNames.size() - 1)
 							{
 								CIMValue v(cp.getValue());
@@ -2266,7 +2266,7 @@ WQLProcessor::filterInstancesOnPropertyValue(const String& propName, const CIMVa
 				{
 					cp = ci.getProperty(propName);
 				}
-				
+
 				if (cp)
 				{
 					CIMValue cv = cp.getValue();

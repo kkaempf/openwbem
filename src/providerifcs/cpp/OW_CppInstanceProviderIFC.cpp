@@ -106,7 +106,7 @@ namespace OW_NAMESPACE
     }
 
 ///////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 	CppInstanceProviderIFC::getInstanceProviderInfoWithEnv(
 		const ProviderRegistrationEnvironmentIFCRef& env,
 		InstanceProviderInfo& info)

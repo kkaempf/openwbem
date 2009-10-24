@@ -64,7 +64,7 @@ SPNEGOAuthentication::SPNEGOAuthentication()
 
 }
 
-SPNEGOAuthentication::~SPNEGOAuthentication() 
+SPNEGOAuthentication::~SPNEGOAuthentication()
 {
 	try
 	{
@@ -83,7 +83,7 @@ SPNEGOAuthentication::~SPNEGOAuthentication()
 
 const String NegotiateSTR("Negotiate ");
 
-EAuthenticateResult 
+EAuthenticateResult
 SPNEGOAuthentication::authenticate(String& userName,
 	const String& info, HTTPSvrConnection* htcon)
 {
@@ -106,7 +106,7 @@ SPNEGOAuthentication::authenticate(String& userName,
 
 	MutexLock lock(m_guard);
 	checkProcess();
-	
+
 	try
 	{
 
@@ -155,7 +155,7 @@ SPNEGOAuthentication::authenticate(String& userName,
 	{
 		htcon->setErrorDetails(Format("Error communicating with %1: %2", spnegoHelperPath(), e));
 	}
-	
+
 	return E_AUTHENTICATE_FAIL;
 }
 
@@ -179,15 +179,15 @@ SPNEGOAuthentication::checkProcess()
 	{
 		// must have died
 		OW_LOG_ERROR(m_logger, Format("SPNEGOAuthentication Detected that %1 is"
-		                              "not running. Status: %2", 
-		                              spnegoHelperPath(), 
+		                              "not running. Status: %2",
+		                              spnegoHelperPath(),
 		                              m_spnegoHelper->processStatus().toString()
 		                             )
 		             );
 		m_spnegoHelper->waitCloseTerm(0.00, 0.01, 0.02);
 		m_spnegoHelper = 0;
 	}
-	
+
 	PrivilegeManager privman = PrivilegeManager::getPrivilegeManager();
 	OW_ASSERT(!privman.isNull());
 	String helperPath(spnegoHelperPath());
@@ -208,7 +208,7 @@ SPNEGOAuthentication::checkProcess()
 	if (!m_spnegoHelper->processStatus().running())
 	{
 		String msg = Format("SPNEGOAuthentication failed to start %1. status = "
-		                    "%2, stderr = %3", spnegoHelperPath(), 
+		                    "%2, stderr = %3", spnegoHelperPath(),
 		                    m_spnegoHelper->processStatus().toString(),
 		                    m_spnegoHelper->err()->readAll());
 		OW_LOG_ERROR(m_logger, msg);
@@ -221,7 +221,7 @@ SPNEGOAuthentication::checkProcess()
 	m_spnegoHelper->err()->setTimeouts(to);
 }
 
-String 
+String
 SPNEGOAuthentication::spnegoHelperPath()
 {
 	if (FileSystem::exists("/opt/quest/lib/libvas.so.4"))

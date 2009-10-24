@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2003-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -47,7 +47,7 @@ namespace CIMNameSpaceUtils
 {
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
-	 * Create a cim namespace by creating an instance of the CIM_Namespace 
+	 * Create a cim namespace by creating an instance of the CIM_Namespace
 	 * class.
 	 * @param hdl The cimom handle that will be used.
 	 * @param ns 	The namespace name to be created.
@@ -66,23 +66,23 @@ namespace CIMNameSpaceUtils
 	 *   "classification in ClassInfo) for the object hierarchy of "
 	 *   "the Namespace."),
 	 *   ModelCorrespondence {"CIM_Namespace.ClassInfo"} ]
-	 * @param interopNS The interop namespace which contains the CIM_Namespace 
-	 *  class & instances.  The default is root because the CIM Ops. spec says: 
+	 * @param interopNS The interop namespace which contains the CIM_Namespace
+	 *  class & instances.  The default is root because the CIM Ops. spec says:
 	 *  "It is the common practice proposed by this document that instances of
 	 *  CIM_Namespace be created in root unless there is a specific reason to
 	 *  define them in another namespace."
 	 * @exception CIMException If the namespace already exists.
 	 */
-	OW_COMMON_API void createCIM_Namespace(CIMOMHandleIFC& hdl, const String& ns, 
+	OW_COMMON_API void createCIM_Namespace(CIMOMHandleIFC& hdl, const String& ns,
 		UInt16 classInfo = 0, const String& descriptionOfClassInfo = "", const String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 	/**
-	 * Delete a specified namespace by deleting an instance of the 
+	 * Delete a specified namespace by deleting an instance of the
 	 * CIM_Namespace class. The namespace must be empty of all classes and
 	 * instances before it can be deleted.
 	 * @param hdl The cimom handle that will be used.
 	 * @param ns	The namespace to delete.
-	 * @param interopNS The interop namespace which contains the CIM_Namespace 
-	 *  class & instances.  The default is root because the CIM Ops. spec says: 
+	 * @param interopNS The interop namespace which contains the CIM_Namespace
+	 *  class & instances.  The default is root because the CIM Ops. spec says:
 	 *  "It is the common practice proposed by this document that instances of
 	 *  CIM_Namespace be created in root unless there is a specific reason to
 	 *  define them in another namespace."
@@ -94,8 +94,8 @@ namespace CIMNameSpaceUtils
 	 * Gets a list of the namespaces by enumerating the instances of the
 	 * CIM_Namespace class.
 	 * @param hdl The cimom handle that will be used.
-	 * @param interopNS The interop namespace which contains the CIM_Namespace 
-	 *  class & instances.  The default is root because the CIM Ops. spec says: 
+	 * @param interopNS The interop namespace which contains the CIM_Namespace
+	 *  class & instances.  The default is root because the CIM Ops. spec says:
 	 *  "It is the common practice proposed by this document that instances of
 	 *  CIM_Namespace be created in root unless there is a specific reason to
 	 *  define them in another namespace."
@@ -110,8 +110,8 @@ namespace CIMNameSpaceUtils
 	 * @param hdl The cimom handle that will be used.
 	 * @param result result.handle will be called once for each enumerated
 	 *  namespace.
-	 * @param interopNS The interop namespace which contains the CIM_Namespace 
-	 *  class & instances.  The default is root because the CIM Ops. spec says: 
+	 * @param interopNS The interop namespace which contains the CIM_Namespace
+	 *  class & instances.  The default is root because the CIM Ops. spec says:
 	 *  "It is the common practice proposed by this document that instances of
 	 *  CIM_Namespace be created in root unless there is a specific reason to
 	 *  define them in another namespace."
@@ -122,7 +122,7 @@ namespace CIMNameSpaceUtils
 		StringResultHandlerIFC& result, const String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
-	 * Create a cim namespace by creating an instance of the __Namespace 
+	 * Create a cim namespace by creating an instance of the __Namespace
 	 * class.  This method has been deprecated in the CIM Ops spec.
 	 * This implementation assumes that __Namespace presents a hierarcial view
 	 * of the namespaces.
@@ -132,7 +132,7 @@ namespace CIMNameSpaceUtils
 	 */
 	OW_COMMON_API void create__Namespace(CIMOMHandleIFC& hdl, const String& ns);
 	/**
-	 * Delete a specified namespace by deleting an instance of the 
+	 * Delete a specified namespace by deleting an instance of the
 	 * __Namespace class.  This method has been deprecated in the CIM Ops spec.
 	 * This implementation assumes that __Namespace presents a hierarcial view
 	 * of the namespaces.
@@ -177,7 +177,7 @@ namespace CIMNameSpaceUtils
 	OW_COMMON_API void enum__Namespace(CIMOMHandleIFC& hdl, const String& ns,
 		StringResultHandlerIFC& result, WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
 	/**
-	 * This function creates a "normalized" namespace.  Because of differing 
+	 * This function creates a "normalized" namespace.  Because of differing
 	 * WBEM implementations, it's expected that the following all refer to the
 	 * same namespace: root, /root, and \root.  As far as the openwbem cimom
 	 * is concerned, they are all different, so this function translates all

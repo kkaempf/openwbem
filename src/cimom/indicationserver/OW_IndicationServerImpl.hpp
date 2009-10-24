@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -78,12 +78,12 @@ public:
 	virtual void startDeleteSubscription(const String& subNS, const CIMObjectPath& subPath);
 	virtual void startCreateSubscription(const String& subNS, const CIMInstance& subInst, const String& username);
 	virtual void startModifySubscription(const String& subNS, const CIMInstance& subInst);
-	
+
 	// these are called by the threads started by the previous functions
 	void deleteSubscription(const String& subNS, const CIMObjectPath& subPath);
 	void createSubscription(const String& subNS, const CIMInstance& subInst, const String& username);
 	void modifySubscription(const String& subNS, const CIMInstance& subInst);
-	
+
 	virtual void modifyFilter(OperationContext& context, const String& filterNS, const CIMInstance& filterInst, const String& userName);
 
 private:
@@ -107,12 +107,12 @@ public:
 	virtual void startDeleteSubscription(const String& ns, const CIMObjectPath& subPath);
 	virtual void startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username);
 	virtual void startModifySubscription(const String& ns, const CIMInstance& subInst);
-	
+
 	// these are called by the threads started by the previous functions
 	void deleteSubscription(const String& ns, const CIMObjectPath& subPath);
 	void createSubscription(const String& ns, const CIMInstance& subInst, const String& username);
 	void modifySubscription(const String& ns, const CIMInstance& subInst);
-	
+
 	virtual void modifyFilter(OperationContext& context, const String& ns, const CIMInstance& filterInst, const String& userName);
 
 	virtual void doShutdown();
@@ -137,7 +137,7 @@ private:
 	};
 	typedef IntrusiveReference<Subscription> SubscriptionRef;
 
-	// They key is indicationname:sourceinstanceclassname. All lower case. SourceInstanceClassName will only be used if 
+	// They key is indicationname:sourceinstanceclassname. All lower case. SourceInstanceClassName will only be used if
 	// the WQL filter contains "SourceInstance ISA ClassName".  A given SubscriptionRef may be inserted multiple times
 	// for the same subscription, but only one Subscription instance will exist. The SubscriptionRef will never be null.
 	typedef HashMultiMap<String, SubscriptionRef> subscriptions_t;
@@ -152,22 +152,22 @@ private:
 
 	void _processIndication(const CIMInstance& instance,
 		const String& instNS);
-	
+
 	void _processIndicationRange(
 		const CIMInstance& instanceArg, const String instNS,
 		subscriptions_iterator first, subscriptions_iterator last);
-	
+
 	void addTrans(const String& ns, const CIMInstance& indication,
 		const CIMInstance& handler,
 		const String& subscriptionNS,
 		const CIMInstance& subscription,
 		IndicationExportProviderIFCRef provider);
-	
+
 	IndicationExportProviderIFCRef getProvider(const CIMName& className);
 
 	UInt32 activateFilterOnProvider(IndicationProviderIFCRef& prov);
 	UInt32 deActivateFilterOnProvider(IndicationProviderIFCRef& prov);
-	
+
 	void deactivateAllSubscriptions();
 
 	struct ProcIndicationTrans
@@ -184,7 +184,7 @@ private:
 
 	typedef SortedVectorMap<IndicationProviderIFCRef, UInt32> activatecount_map_t;
 	activatecount_map_t m_activations;
-	
+
 	// m_procTrans is where new indications to be delivered are put.
 	// Both m_procTrans and m_shuttingDown are protected by the same condition
 	List<ProcIndicationTrans> m_procTrans;

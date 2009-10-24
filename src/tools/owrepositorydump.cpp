@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -217,9 +217,9 @@ int main(int argc, char** argv)
 {
 	try
 	{
-		
+
 		CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
-	
+
 		if (parser.isSet(HELP_OPT))
 		{
 			usage();
@@ -231,7 +231,7 @@ int main(int argc, char** argv)
 			cout << "Written by Dan Nuffer.\n";
 			return 0;
 		}
-	
+
 		String repositoryDir = parser.getOptionValue(REPOSITORY_DIR_OPT, OW_DEFAULT_DATADIR);
 		if (!FileSystem::exists(repositoryDir))
 		{
@@ -243,13 +243,13 @@ int main(int argc, char** argv)
 			cerr << "Specified repository dir isn't a directory\n";
 			return 1;
 		}
-		if (!FileSystem::exists(repositoryDir + OW_FILENAME_SEPARATOR + "schema.dat") || 
+		if (!FileSystem::exists(repositoryDir + OW_FILENAME_SEPARATOR + "schema.dat") ||
 			!FileSystem::exists(repositoryDir + OW_FILENAME_SEPARATOR + "instances.dat"))
 		{
 			cerr << "Specified repository dir doesn't contain an OpenWBEM CIM repository\n";
 			return 1;
 		}
-	
+
 		std::filebuf* fb = 0;
 		FbCleanuper fbCleanuper(fb);
 		// g_output is default initialized to use cout
@@ -264,7 +264,7 @@ int main(int argc, char** argv)
 			}
 			g_output.rdbuf(fb);
 		}
-	
+
 		LogAppender::setDefaultLogAppender(new CerrAppender());
 
 		LocalOperationContext context;

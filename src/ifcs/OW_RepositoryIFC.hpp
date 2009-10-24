@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -418,7 +418,7 @@ public:
 		OperationContext& context) = 0;
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	
+
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	/**
 	 * Get the specified CIM instance property.
@@ -444,14 +444,14 @@ public:
 	};
 	/**
 	 * Return the type of lock necessary for the method invocation.
-	 * 
+	 *
 	 * @throws CIMException on failure or if not implemented.
 	 */
 	virtual ELockType getLockTypeForMethod(
 		const String& ns,
 		const CIMObjectPath& path,
 		const String& methodName,
-		const CIMParamValueArray& in, 
+		const CIMParamValueArray& in,
 		OperationContext& context) = 0;
 
 	/**
@@ -676,7 +676,7 @@ public:
 	 *
 	 *	Clients SHOULD NOT explicitly specify properties in the
 	 *	PropertyList parameter unless they have specified a non-empty
-	 *	("") value for the ResultClass parameter. 	
+	 *	("") value for the ResultClass parameter.
 	 *
 	 *
 	 * @exception CIMException. The following IDs can be expected:
@@ -742,7 +742,7 @@ public:
 	 * 	(""), MUST be a valid CIM Class name. It acts as a filter on
 	 * 	the returned set of Objects by mandating that each returned
 	 * 	Object MUST be an Instance of this Class (or one of its
-	 * 	subclasses), or this Class (or one of its subclasses).	
+	 * 	subclasses), or this Class (or one of its subclasses).
 	 *
 	 * @param role The Role input parameter, if not empty (""), MUST be a
 	 * 	valid Property name. It acts as a filter on the returned set of
@@ -775,7 +775,7 @@ public:
 	 * @see references
 	 *
 	 * @exception CIMException - as defined for associators method.
-	 */	
+	 */
 	virtual void referencesClasses(
 		const String& ns,
 		const CIMObjectPath& path,
@@ -805,7 +805,7 @@ public:
 	 *	The user does not have permission to view the result.
 	 *	The requested query language is not supported.
 	 *	The query specifies a class that does not exist.
-	 */	
+	 */
 	virtual void execQuery(
 		const String& ns,
 		CIMInstanceResultHandlerIFC& result,

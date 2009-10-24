@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2003-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -79,7 +79,7 @@ public:
 		, m_haveSubscriptions(false)
 	{
 	}
-	
+
 	////////////////////////////////////////////////////////////////////////////
 	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
@@ -187,15 +187,15 @@ public:
 					omName = "OpenWBEM:";
 				}
 				omName += UUID().toString();
-				
+
 				// now save it
 				CIMClass OpenWBEM_InternalData(rephdl->getClass(interopNS, CLASS_OpenWBEM_InternalData));
 				CIMInstance newData(OpenWBEM_InternalData.newInstance());
 				newData.updatePropertyValue(PROP_Name, CIMValue(dataKey));
 				newData.updatePropertyValue("Value", CIMValue(omName));
-				// TODO: FIX THIS. The provider could get loaded and initialized
-				// as the result of a read operation, with only the read lock
-				// acquired, but here we are doing a write operation.
+				/// @todo  FIX THIS. The provider could get loaded and initialized
+				/// as the result of a read operation, with only the read lock
+				/// acquired, but here we are doing a write operation.
 				rephdl->createInstance(interopNS, newData);
 #else
 				throw;
@@ -238,7 +238,7 @@ public:
 			{
 				OW_LOG_ERROR(Logger(COMPONENT_NAME), Format("OpenWBEM_ObjectManager caught exception while exporting indication in shuttingDown(): %1", e));
 			}
-				
+
 		}
 	}
 
@@ -247,7 +247,7 @@ public:
 	{
 		String interopNS = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 		CIMOMHandleIFCRef hdl(env->getCIMOMHandle());
-		
+
 		CIMClass OpenWBEM_ObjectManager(hdl->getClass(interopNS, CLASS_OpenWBEM_ObjectManager));
 
 		CIMInstance newInst(OpenWBEM_ObjectManager.newInstance());
@@ -256,14 +256,14 @@ public:
 		CIMObjectPathArray computerSystems(hdl->enumInstanceNamesA(interopNS, Class_OpenWBEM_ComputerSystem));
 		if (computerSystems.size() != 1)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, Format("Expected 1 instance of %1, got %2", 
+			OW_THROWCIMMSG(CIMException::FAILED, Format("Expected 1 instance of %1, got %2",
 				Class_OpenWBEM_ComputerSystem, computerSystems.size()).c_str());
 		}
 
 		CIMObjectPath& computerSystem(computerSystems[0]);
 
 		newInst.updatePropertyValue("Version", CIMValue(OW_VERSION));
-		
+
 		// This property is a KEY, it must be filled out
 		newInst.updatePropertyValue(PROP_SystemCreationClassName, computerSystem.getKeyValue(PROP_CreationClassName));
 		// This property is a KEY, it must be filled out
@@ -323,7 +323,7 @@ public:
 	    if (
 		(objectName.getClassName().equalsIgnoreCase(Class_OpenWBEM_ComputerSystem)
 		 && (resultClass.empty() || resultClass.equalsIgnoreCase(CLASS_OpenWBEM_ObjectManager)))
-		|| 
+		||
 		(objectName.getClassName().equalsIgnoreCase(CLASS_OpenWBEM_ObjectManager)
 		 && (resultClass.empty() || resultClass.equalsIgnoreCase(Class_OpenWBEM_ComputerSystem)))
 		)

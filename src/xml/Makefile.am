@@ -7,6 +7,8 @@ include $(top_srcdir)/Makefile-shared-lib-inst.inc
 install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
+%.cpp: %.re
+	re2c -o $@ $<
 
 owstatlib_LIBRARIES = libowxml.a
 
@@ -69,4 +71,3 @@ INCLUDES = \
 -I$(top_srcdir)/src/common/socket \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/ifcs
-

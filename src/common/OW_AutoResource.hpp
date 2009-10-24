@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright (C) 2004, 2005, Vintela, Inc. All rights reserved.
+* Copyright (C) 2004, 2005, Quest Software, Inc. All rights reserved.
 * Copyright (C) 2006, Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of the Network Associates, nor Vintela, Inc., nor the
+*     * Neither the name of the Network Associates, nor Quest Software, Inc., nor the
 *       names of its contributors or employees may be used to endorse or promote
 *       products derived from this software without specific prior written
 *       permission.

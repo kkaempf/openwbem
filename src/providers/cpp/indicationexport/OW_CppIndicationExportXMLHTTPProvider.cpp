@@ -18,7 +18,7 @@
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -52,7 +52,7 @@ namespace OW_NAMESPACE
 
 using namespace WBEMFlags;
 using namespace ConfigOpts;
-		
+
 namespace
 {
 	const String COMPONENT_NAME("ow.provider.CppIndicationExportXMLHTTP");
@@ -192,7 +192,7 @@ Prov::Config Prov::configValues(ProviderEnvironmentIFCRef const & env)
 		config.maxBufferSize = env->getConfigItem(item, "1000").toUInt32();
 
 		item = max_buffered_destinations;
-		config.maxBufferedDestinations = 
+		config.maxBufferedDestinations =
 			env->getConfigItem(item, "10").toUInt32();
 
 		item = max_num_io_threads;

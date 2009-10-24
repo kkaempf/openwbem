@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -74,7 +74,7 @@ bool operator<(const CIMDataType::DTData& x, const CIMDataType::DTData& y)
 //////////////////////////////////////////////////////////////////////////////
 bool operator ==(const CIMDataType::DTData& x, const CIMDataType::DTData& y)
 {
-	return 
+	return
 		x.m_type == y.m_type &&
 		x.m_numberOfElements == y.m_numberOfElements &&
 		x.m_sizeRange == y.m_sizeRange &&
@@ -294,71 +294,71 @@ CIMDataType::toString() const
 {
 	switch (m_pdata->m_type)
 	{
-		case UINT8: 
-		return "uint8"; 
+		case UINT8:
+		return "uint8";
 		break;
-		
-		case SINT8: 
-		return "sint8"; 
+
+		case SINT8:
+		return "sint8";
 		break;
-		
-		case UINT16: 
-		return "uint16"; 
+
+		case UINT16:
+		return "uint16";
 		break;
-		
-		case SINT16: 
-		return "sint16"; 
+
+		case SINT16:
+		return "sint16";
 		break;
-		
-		case UINT32: 
-		return "uint32"; 
+
+		case UINT32:
+		return "uint32";
 		break;
-		
-		case SINT32: 
-		return "sint32"; 
+
+		case SINT32:
+		return "sint32";
 		break;
-		
-		case UINT64: 
-		return "uint64"; 
+
+		case UINT64:
+		return "uint64";
 		break;
-		
-		case SINT64: 
-		return "sint64"; 
+
+		case SINT64:
+		return "sint64";
 		break;
-		
-		case REAL64: 
-		return "real64"; 
+
+		case REAL64:
+		return "real64";
 		break;
-		
-		case REAL32: 
-		return "real32"; 
+
+		case REAL32:
+		return "real32";
 		break;
-		
-		case CHAR16: 
-		return "char16"; 
+
+		case CHAR16:
+		return "char16";
 		break;
-		
-		case STRING: 
-		return "string"; 
+
+		case STRING:
+		return "string";
 		break;
-		
-		case BOOLEAN: 
-		return "boolean"; 
+
+		case BOOLEAN:
+		return "boolean";
 		break;
-		
-		case DATETIME: 
-		return "datetime"; 
+
+		case DATETIME:
+		return "datetime";
 		break;
-		
-		case REFERENCE: 
-		return "REF"; 
+
+		case REFERENCE:
+		return "REF";
 		break;
-		
-		case EMBEDDEDCLASS: 
-		case EMBEDDEDINSTANCE: 
-		return "string"; 
+
+		case EMBEDDEDCLASS:
+		case EMBEDDEDINSTANCE:
+		return "string";
 		break;
-		
+
 		default:
 		return "** INVALID DATA TYPE IN CIMDATATYPE - toString **";
 	}

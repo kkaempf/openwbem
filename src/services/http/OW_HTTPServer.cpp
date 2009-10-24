@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 * Copyright (C) 2004 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -12,14 +12,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc., Novell, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc., Novell, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -156,11 +156,11 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	const Socket& socket)
 {
 	MutexLock lock(m_authGuard);
-	String scheme; 
+	String scheme;
 	if (!info.empty())
 	{
-		scheme = info.tokenize()[0]; 
-		scheme.toLowerCase(); 
+		scheme = info.tokenize()[0];
+		scheme.toLowerCase();
 	}
 
 	Logger logger(COMPONENT_NAME);
@@ -368,29 +368,29 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 	try
 	{
 		Logger logger(COMPONENT_NAME);
-		StringArray items = env->getMultiConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, 
-				String(OW_DEFAULT_HTTP_SERVER_HTTP_PORT).tokenize(" \t"), 
-				" \t"); 
-		m_options.httpPorts.clear(); 
+		StringArray items = env->getMultiConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt,
+				String(OW_DEFAULT_HTTP_SERVER_HTTP_PORT).tokenize(" \t"),
+				" \t");
+		m_options.httpPorts.clear();
 		if (!items.empty() and items[0] != "-1")
 		{
-			for (StringArray::const_iterator iter = items.begin(); 
+			for (StringArray::const_iterator iter = items.begin();
 					iter != items.end(); ++iter)
 			{
-				m_options.httpPorts.push_back(iter->toUInt16()); 
+				m_options.httpPorts.push_back(iter->toUInt16());
 			}
 		}
 
-		items = env->getMultiConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, 
+		items = env->getMultiConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt,
 				String(OW_DEFAULT_HTTP_SERVER_HTTPS_PORT).tokenize(" \t"),
 				" \t");
-		m_options.httpsPorts.clear(); 
+		m_options.httpsPorts.clear();
 		if (!items.empty() and items[0] != "-1")
 		{
-			for (StringArray::const_iterator iter = items.begin(); 
+			for (StringArray::const_iterator iter = items.begin();
 					iter != items.end(); ++iter)
 			{
-				m_options.httpsPorts.push_back(iter->toUInt16()); 
+				m_options.httpsPorts.push_back(iter->toUInt16());
 			}
 		}
 
@@ -406,8 +406,8 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_MAX_CONNECTIONS_opt, OW_DEFAULT_HTTP_SERVER_MAX_CONNECTIONS);
 		m_options.maxConnections = item.toInt32();
-		// TODO: Make the type of pool and the size of the queue be separate config options.
-		m_threadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, m_options.maxConnections, m_options.maxConnections * 100, 
+		/// @todo  Make the type of pool and the size of the queue be separate config options.
+		m_threadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, m_options.maxConnections, m_options.maxConnections * 100,
 					Logger(COMPONENT_NAME), "HTTPServer"));
 
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_SINGLE_THREAD_opt, OW_DEFAULT_HTTP_SERVER_SINGLE_THREAD);
@@ -422,7 +422,7 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 
 		String allowDigest = env->getConfigItem(ConfigOpts::HTTP_SERVER_ALLOW_DIGEST_AUTHENTICATION_opt);
 		String allowBasic = env->getConfigItem(ConfigOpts::HTTP_SERVER_ALLOW_BASIC_AUTHENTICATION_opt);
-		m_options.authenticationRealm = env->getConfigItem(ConfigOpts::HTTP_SERVER_AUTHENTICATION_REALM_opt,SocketAddress::getAnyLocalHost().getName()); 
+		m_options.authenticationRealm = env->getConfigItem(ConfigOpts::HTTP_SERVER_AUTHENTICATION_REALM_opt,SocketAddress::getAnyLocalHost().getName());
 		if (allowDigest.empty() && allowBasic.empty())
 		{
 			// handle old configs
@@ -465,7 +465,7 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 			}
 			else
 			{
-				OW_THROW(HTTPServerException, Format("Invalid value for %1: %2. Valid options are Digest, Basic or Negotiate", 
+				OW_THROW(HTTPServerException, Format("Invalid value for %1: %2. Valid options are Digest, Basic or Negotiate",
 							ConfigOpts::HTTP_SERVER_DEFAULT_AUTH_CHALLENGE_opt, item).c_str());
 			}
 		}
@@ -515,7 +515,7 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 		item = env->getConfigItem(ConfigOpts::HTTP_SERVER_TIMEOUT_opt, OW_DEFAULT_HTTP_SERVER_TIMEOUT);
 		m_options.timeout = Timeout::relative(item.toInt32());
 
-		StringArray users = env->getMultiConfigItem(ConfigOpts::ALLOWED_USERS_opt, 
+		StringArray users = env->getMultiConfigItem(ConfigOpts::ALLOWED_USERS_opt,
 				String(OW_DEFAULT_ALLOWED_USERS).tokenize(" \t"),
 				" \t");
 		if (users.size() == 1 && users[0] == "*")
@@ -566,7 +566,7 @@ public:
 			}
 			else
 			{
-				pServerSocket = m_HTTPServer->m_pHttpServerSockets[m_index]; 
+				pServerSocket = m_HTTPServer->m_pHttpServerSockets[m_index];
 			}
 			Socket socket = pServerSocket->accept(Timeout::relative(2));
 			OW_LOG_INFO(logger,
@@ -639,7 +639,7 @@ private:
 	bool m_isHTTPS;
 	HTTPServer* m_HTTPServer;
 	bool m_isIPC;
-	size_t m_index; 
+	size_t m_index;
 };
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -648,7 +648,7 @@ HTTPServer::start()
 	ServiceEnvironmentIFCRef env = m_options.env;
 	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG2(lgr, "HTTP Service is starting...");
-	if (m_options.httpPorts.empty() && m_options.httpsPorts.empty() && 
+	if (m_options.httpPorts.empty() && m_options.httpsPorts.empty() &&
 		!m_options.useUDS)
 	{
 		OW_THROW(SocketException, "No ports to listen on and use_UDS set to false");
@@ -663,7 +663,7 @@ HTTPServer::start()
 			OW_LOG_INFO(lgr, Format("HTTP server listening on Unix Domain Socket: %1", m_options.UDSFilename));
 			String theURL = "owbinary.wbem://localhost:" + HTTPUtils::escapeForURL(m_options.UDSFilename) + "/";
 			addURL(URL(theURL));
-			
+
 			SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
 				false, this, true));
 			env->addSelectable(m_pUDSServerSocket, cb);
@@ -676,7 +676,7 @@ HTTPServer::start()
 	}
 #endif
 	StringArray listenAddresses = env->getMultiConfigItem(
-		ConfigOpts::HTTP_SERVER_LISTEN_ADDRESSES_opt, 
+		ConfigOpts::HTTP_SERVER_LISTEN_ADDRESSES_opt,
 		String(OW_DEFAULT_HTTP_SERVER_LISTEN_ADDRESSES).tokenize(" \t"),
 		" \t");
 
@@ -691,10 +691,10 @@ HTTPServer::start()
 		{
 			for (size_t i = 0; i < m_options.httpPorts.size(); ++i)
 			{
-				UInt16 lport = m_options.httpPorts[i]; 
+				UInt16 lport = m_options.httpPorts[i];
 				try
 				{
-					IntrusiveReference<ServerSocket> lsock = new ServerSocket; 
+					IntrusiveReference<ServerSocket> lsock = new ServerSocket;
 					lsock->doListen(lport,
 							1000, curAddress,
 							m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
@@ -707,9 +707,9 @@ HTTPServer::start()
 						+ ":" + String(lport) + "/";
 					addURL(URL(theURL));
 
-					m_pHttpServerSockets.push_back(lsock); 
+					m_pHttpServerSockets.push_back(lsock);
 					SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
-								false, this, false, 
+								false, this, false,
 								m_pHttpServerSockets.size()-1));
 					env->addSelectable(lsock, cb);
 				}
@@ -732,7 +732,7 @@ HTTPServer::start()
 			else
 			{
 				String msg = Format("Unable to listen on HTTPS ports.  "
-						"OpenWBEM not built with SSL support.", curAddress); 
+						"OpenWBEM not built with SSL support.", curAddress);
 				OW_LOG_ERROR(lgr, msg);
 				OW_THROW(HTTPServerException, msg.c_str());
 			}
@@ -773,32 +773,32 @@ HTTPServer::start()
 														 ConfigOpts::HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt).c_str());
 				}
 				//SSLCtxMgr::initServer(certfile, keyfile);
-				
+
 				if (! FileSystem::canRead(m_sslopts.keyfile))
 				{
 					PrivilegeManager privmgr = PrivilegeManager::getPrivilegeManager();
 					if (privmgr.isNull())
 					{
-						OW_THROW(HTTPServerException, "HTTP Service: Unable to get privilege manager"); 
+						OW_THROW(HTTPServerException, "HTTP Service: Unable to get privilege manager");
 					}
-					AutoDescriptor fd = privmgr.open(m_sslopts.keyfile, PrivilegeManager::in); 
-					FILE* fp = fdopen(fd.get(), "r"); 
+					AutoDescriptor fd = privmgr.open(m_sslopts.keyfile, PrivilegeManager::in);
+					FILE* fp = fdopen(fd.get(), "r");
 					if (fp == NULL)
 					{
-						OW_THROW(HTTPServerException, Format("Unable to read key file %1: %2", m_sslopts.keyfile, strerror(errno)).c_str()); 
+						OW_THROW(HTTPServerException, Format("Unable to read key file %1: %2", m_sslopts.keyfile, strerror(errno)).c_str());
 					}
-					BIO* in = BIO_new_fp(fp, BIO_NOCLOSE); 
+					BIO* in = BIO_new_fp(fp, BIO_NOCLOSE);
 					if (in == NULL)
 					{
-						OW_THROW(HTTPServerException, Format("Unable to read key file %1: %2", m_sslopts.keyfile, SSLCtxMgr::getOpenSSLErrorDescription()).c_str()); 
+						OW_THROW(HTTPServerException, Format("Unable to read key file %1: %2", m_sslopts.keyfile, SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
 					}
-					m_sslopts.pkey = PEM_read_bio_PrivateKey(in, NULL, NULL, NULL); 
+					m_sslopts.pkey = PEM_read_bio_PrivateKey(in, NULL, NULL, NULL);
 					if (m_sslopts.pkey == NULL)
 					{
-						BIO_free(in); 
-						OW_THROW(HTTPServerException, Format("Unable to read key file %1: %2", m_sslopts.keyfile, SSLCtxMgr::getOpenSSLErrorDescription()).c_str()); 
+						BIO_free(in);
+						OW_THROW(HTTPServerException, Format("Unable to read key file %1: %2", m_sslopts.keyfile, SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
 					}
-					BIO_free(in); 
+					BIO_free(in);
 				}
 				m_sslCtx = SSLServerCtxRef(new SSLServerCtx(m_sslopts));
 				if (m_sslopts.verifyMode != SSLOpts::MODE_DISABLED)
@@ -818,10 +818,10 @@ HTTPServer::start()
 			{
 				for (size_t i = 0; i < m_options.httpsPorts.size(); ++i)
 				{
-					UInt16 lport = m_options.httpsPorts[i]; 
+					UInt16 lport = m_options.httpsPorts[i];
 					try
 					{
-						IntrusiveReference<ServerSocket> lsock = new ServerSocket(m_sslCtx); 
+						IntrusiveReference<ServerSocket> lsock = new ServerSocket(m_sslCtx);
 						lsock->doListen(lport,
 								1000, curAddress,
 								m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
@@ -835,9 +835,9 @@ HTTPServer::start()
 							SocketAddress::getAnyLocalHost().getName() + ":" +
 							String(lport) + "/";
 						addURL(URL(theURL));
-						m_pHttpsServerSockets.push_back(lsock); 
+						m_pHttpsServerSockets.push_back(lsock);
 						SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
-									true, this, false, 
+									true, this, false,
 									m_pHttpsServerSockets.size()-1));
 						env->addSelectable(lsock, cb);
 					}
@@ -887,20 +887,20 @@ HTTPServer::getLocalHTTPAddress()
 	{
 		return SocketAddress::allocEmptyAddress(SocketAddress::INET);
 	}
-	return m_pHttpServerSockets[0]->getLocalAddress(); 
+	return m_pHttpServerSockets[0]->getLocalAddress();
 }
 //////////////////////////////////////////////////////////////////////////////
 Array<SocketAddress>
 HTTPServer::getLocalHTTPAddresses()
 {
-	Array<SocketAddress> rval; 
-	for (ServerSockArray_t::const_iterator iter = 
-			m_pHttpsServerSockets.begin(); iter != m_pHttpServerSockets.end(); 
+	Array<SocketAddress> rval;
+	for (ServerSockArray_t::const_iterator iter =
+			m_pHttpsServerSockets.begin(); iter != m_pHttpServerSockets.end();
 			++iter)
 	{
-		rval.push_back((*iter)->getLocalAddress()); 
+		rval.push_back((*iter)->getLocalAddress());
 	}
-	return rval; 
+	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
 SocketAddress
@@ -910,20 +910,20 @@ HTTPServer::getLocalHTTPSAddress()
 	{
 		return SocketAddress::allocEmptyAddress(SocketAddress::INET);
 	}
-	return m_pHttpsServerSockets[0]->getLocalAddress(); 
+	return m_pHttpsServerSockets[0]->getLocalAddress();
 }
 //////////////////////////////////////////////////////////////////////////////
 Array<SocketAddress>
 HTTPServer::getLocalHTTPSAddresses()
 {
-	Array<SocketAddress> rval; 
-	for (ServerSockArray_t::const_iterator iter = 
-			m_pHttpsServerSockets.begin(); iter != m_pHttpsServerSockets.end(); 
+	Array<SocketAddress> rval;
+	for (ServerSockArray_t::const_iterator iter =
+			m_pHttpsServerSockets.begin(); iter != m_pHttpsServerSockets.end();
 			++iter)
 	{
-		rval.push_back((*iter)->getLocalAddress()); 
+		rval.push_back((*iter)->getLocalAddress());
 	}
-	return rval; 
+	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -943,15 +943,15 @@ HTTPServer::shutdown()
 	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG(lgr, "HTTP Service is shutting down...");
 	// first stop all new connections
-	for (ServerSockArray_t::const_iterator iter = m_pHttpServerSockets.begin(); 
+	for (ServerSockArray_t::const_iterator iter = m_pHttpServerSockets.begin();
 			iter != m_pHttpServerSockets.end(); ++iter)
 	{
-		m_options.env->removeSelectable(*iter); 
+		m_options.env->removeSelectable(*iter);
 	}
-	for (ServerSockArray_t::const_iterator iter = m_pHttpsServerSockets.begin(); 
+	for (ServerSockArray_t::const_iterator iter = m_pHttpsServerSockets.begin();
 			iter != m_pHttpsServerSockets.end(); ++iter)
 	{
-		m_options.env->removeSelectable(*iter); 
+		m_options.env->removeSelectable(*iter);
 	}
 	m_options.env->removeSelectable(m_pUDSServerSocket);
 
@@ -970,8 +970,8 @@ HTTPServer::shutdown()
 #endif
 	// not going to finish off what's in the queue, and we'll give the threads 60 seconds to exit before they're clobbered.
 	m_threadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(50), Timeout::relative(60));
-	m_pHttpServerSockets.clear(); 
-	m_pHttpsServerSockets.clear(); 
+	m_pHttpServerSockets.clear();
+	m_pHttpsServerSockets.clear();
 	m_pUDSServerSocket = 0;
 	OW_LOG_DEBUG(lgr, "HTTP Service has shut down");
 

@@ -2,7 +2,7 @@
 //
 // Copyright (c) 2000, 2001, 2002 BMC Software, Hewlett-Packard Company, IBM,
 // The Open Group, Tivoli Systems
-// Portions Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+// Portions Copyright (C) 2003-2004 Quest Software, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -10,7 +10,7 @@
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // THE ABOVE COPYRIGHT NOTICE AND THIS PERMISSION NOTICE SHALL BE INCLUDED IN
 // ALL COPIES OR SUBSTANTIAL PORTIONS OF THE SOFTWARE. THE SOFTWARE IS PROVIDED
 // "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
@@ -45,7 +45,7 @@
 namespace OW_NAMESPACE
 {
 
-// TODO: Merge this code with WQLCompile.cpp, it's all duplicated.
+/// @todo  Merge this code with WQLCompile.cpp, it's all duplicated.
 //     Worse, it's an ODR violation, for which no diagnostic is
 //     required, and which has undefined behavoir.
 template<class T>
@@ -53,17 +53,17 @@ inline static bool _Compare(const T& x, const T& y, WQLOperation op)
 {
 	switch (op)
 	{
-		case WQL_EQ: 
+		case WQL_EQ:
 			return x == y;
-		case WQL_NE: 
+		case WQL_NE:
 			return x != y;
-		case WQL_LT: 
+		case WQL_LT:
 			return x < y;
-		case WQL_LE: 
+		case WQL_LE:
 			return x <= y;
-		case WQL_GT: 
+		case WQL_GT:
 			return x > y;
-		case WQL_GE: 
+		case WQL_GE:
 			return x >= y;
 		default:
 			OW_ASSERT(0);
@@ -71,8 +71,8 @@ inline static bool _Compare(const T& x, const T& y, WQLOperation op)
 	return false;
 }
 static bool _Evaluate(
-		const WQLOperand& lhs, 
-		const WQLOperand& rhs, 
+		const WQLOperand& lhs,
+		const WQLOperand& rhs,
 		WQLOperation op)
 {
 	switch (lhs.getType())
@@ -413,7 +413,7 @@ WQLSelectStatement::OperandOrOperation::readObject(std::streambuf & istrm)
 	m_type = Type(type);
 }
 
-void 
+void
 WQLSelectStatement::OperandOrOperation::writeObject(std::streambuf & ostrm) const
 {
 	UInt8 typeAsUInt8 = m_type;

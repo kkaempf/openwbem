@@ -47,7 +47,7 @@ OOPShuttingDownCallback::~OOPShuttingDownCallback()
 }
 
 void
-OOPShuttingDownCallback::call(const OOPProtocolIFCRef& protocol, const UnnamedPipeRef& out, const UnnamedPipeRef& in, 
+OOPShuttingDownCallback::call(const OOPProtocolIFCRef& protocol, const UnnamedPipeRef& out, const UnnamedPipeRef& in,
 		const Timeout& timeout, const ProviderEnvironmentIFCRef& env) const
 {
 	protocol->shuttingDown(out, in, timeout, env);

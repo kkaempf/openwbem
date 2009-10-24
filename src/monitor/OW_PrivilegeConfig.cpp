@@ -1,19 +1,19 @@
 /*******************************************************************************
-* Copyright (C) 2005, Vintela, Inc. All rights reserved.
-* 
+* Copyright (C) 2005, Quest Software, Inc. All rights reserved.
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
-* 
+*
 *     * Redistributions of source code must retain the above copyright notice,
 *       this list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of the Network Associates, nor Vintela, Inc., nor the
+*     * Neither the name of the Network Associates, nor Quest Software, Inc., nor the
 *       names of its contributors or employees may be used to endorse or promote
 *       products derived from this software without specific prior written
 *       permission.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -144,7 +144,7 @@ String normalizePath(const String& path)
 	// There are more efficient ways this function could be implemented.  This
 	// way was easy to implement and should be fairly easy to read.
 
-	// TODO: Normalize windows paths.  That is much trickier because "\\\\"
+	/// @todo  Normalize windows paths.  That is much trickier because "\\\\"
 	// has a special meaning and absolute paths start with drive letters.
 	if( !path.startsWith('/') )
 	{
@@ -389,9 +389,9 @@ bool PathPatterns::match(const String& path) const
 	const String& fname = x.second;
 	const String& dirname = x.first;
 	// First, see if any subtree pattern is matched
-	for (size_t i = 0; i < m_subtrees.size(); ++i) 
+	for (size_t i = 0; i < m_subtrees.size(); ++i)
 	{
-		if (dirname.startsWith(m_subtrees[i])) 
+		if (dirname.startsWith(m_subtrees[i]))
 		{
 			return true;
 		}
@@ -457,27 +457,27 @@ ExecArgsPatterns::addPattern(char const * exec_path_pattern, const Array<ExecArg
 	m[ident].push_back(Pattern(pp, args, envVarPatterns));
 }
 
-bool 
+bool
 ExecArgsPatterns::match(const String& exec_path, Array<String> const & args, const StringArray& envVars, const String& ident) const
 {
 	String cleanedPath = normalizePath(exec_path);
 
 	if( containsDoubleDots(exec_path) )
 	{
-		// Always reject anything including /../ 
+		// Always reject anything including /../
 		return false;
 	}
 
-	StringArray users; 
-	users.push_back(ident); 
-	users.push_back("*"); 
-	for (StringArray::const_iterator user_it = users.begin(); 
+	StringArray users;
+	users.push_back(ident);
+	users.push_back("*");
+	for (StringArray::const_iterator user_it = users.begin();
 			user_it != users.end(); ++user_it)
 	{
 		map_t::const_iterator it = m.find(*user_it);
 		if (it == m.end())
 		{
-			continue; 
+			continue;
 		}
 
 		for (size_t i = 0; i < it->second.size(); ++i)
@@ -579,7 +579,7 @@ namespace
 		}
 		return false;
 	}
-	
+
 	struct CurrentEnvironmentConstructor
 	{
 		static SortedVectorMap<String, String>* create(int dummy)
@@ -626,7 +626,7 @@ namespace
 	{
 		return matchEnvironment(g_secureMinimalEnvironment, var, val);
 	}
-	
+
 	bool
 	matchCurrentEnvironment(const String& var, const String& val)
 	{
@@ -711,5 +711,5 @@ EnvironmentVariablePatterns::matchPatterns(const String& var, const String& val)
 
 
 
-} // namespace PrivilegeConfig	
+} // namespace PrivilegeConfig
 } // namespace OW_NAMESPACE

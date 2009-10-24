@@ -29,7 +29,7 @@
 #include "OW_Exception.hpp"
 
 pthread_key_t CMPI_ThreadContext::theKey;
-namespace 
+namespace
 {
 
 //////////////////////////////////////////////////////////////////////

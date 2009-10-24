@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2005 Vintela, Inc. All rights reserved.
+* Copyright (C) 2005 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -50,7 +50,7 @@ CIMInstanceWrapperBase::toString()
 	return m_inst.toString();
 }
 
-const CIMInstance& 
+const CIMInstance&
 CIMInstanceWrapperBase::instance()
 {
 	return m_inst;
@@ -61,12 +61,12 @@ CIMInstanceWrapperBase::CIMInstanceWrapperBase(const CIMInstance& x, const char*
 {
 	if (x.getClassName() != name)
 	{
-		OW_THROW(CIMInstanceWrapperException, 
+		OW_THROW(CIMInstanceWrapperException,
 			Format("CIMInstanceWrapperBase::CIMInstanceWrapperBase expected an instance of %1, but got %2", name, x.getClassName()).c_str());
 	}
 }
 
-bool 
+bool
 CIMInstanceWrapperBase::propertyIsNULL(const char* name) const
 {
 	return !m_inst.propertyHasValue(name);
@@ -82,162 +82,162 @@ CIMInstanceWrapperBase::getBoolProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toBool();
 }
-Char16 
+Char16
 CIMInstanceWrapperBase::getChar16Property(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toChar16();
 }
-UInt8 
+UInt8
 CIMInstanceWrapperBase::getUInt8Property(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toUInt8();
 }
-Int8 
+Int8
 CIMInstanceWrapperBase::getInt8Property(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toInt8();
 }
-UInt16 
+UInt16
 CIMInstanceWrapperBase::getUInt16Property(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toUInt16();
 }
-Int16 
+Int16
 CIMInstanceWrapperBase::getInt16Property(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toInt16();
 }
-UInt32 
+UInt32
 CIMInstanceWrapperBase::getUInt32Property(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toUInt32();
 }
-Int32 
+Int32
 CIMInstanceWrapperBase::getInt32Property(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toInt32();
 }
-UInt64 
+UInt64
 CIMInstanceWrapperBase::getUInt64Property(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toUInt64();
 }
-Int64 
+Int64
 CIMInstanceWrapperBase::getInt64Property(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toInt64();
 }
-Real32 
+Real32
 CIMInstanceWrapperBase::getReal32Property(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toReal32();
 }
-Real64 
+Real64
 CIMInstanceWrapperBase::getReal64Property(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toReal64();
 }
-CIMDateTime 
+CIMDateTime
 CIMInstanceWrapperBase::getCIMDateTimeProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toCIMDateTime();
 }
-CIMObjectPath 
+CIMObjectPath
 CIMInstanceWrapperBase::getCIMObjectPathProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toCIMObjectPath();
 }
-CIMClass 
+CIMClass
 CIMInstanceWrapperBase::getCIMClassProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toCIMClass();
 }
-CIMInstance 
+CIMInstance
 CIMInstanceWrapperBase::getCIMInstanceProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toCIMInstance();
 }
-CIMObjectPathArray 
+CIMObjectPathArray
 CIMInstanceWrapperBase::getCIMObjectPathArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toCIMObjectPathArray();
 }
-Char16Array 
+Char16Array
 CIMInstanceWrapperBase::getChar16ArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toChar16Array();
 }
-UInt8Array 
+UInt8Array
 CIMInstanceWrapperBase::getUInt8ArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toUInt8Array();
 }
-Int8Array 
+Int8Array
 CIMInstanceWrapperBase::getInt8ArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toInt8Array();
 }
-UInt16Array 
+UInt16Array
 CIMInstanceWrapperBase::getUInt16ArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toUInt16Array();
 }
-Int16Array 
+Int16Array
 CIMInstanceWrapperBase::getInt16ArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toInt16Array();
 }
-UInt32Array 
+UInt32Array
 CIMInstanceWrapperBase::getUInt32ArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toUInt32Array();
 }
-Int32Array 
+Int32Array
 CIMInstanceWrapperBase::getInt32ArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toInt32Array();
 }
-UInt64Array 
+UInt64Array
 CIMInstanceWrapperBase::getUInt64ArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toUInt64Array();
 }
-Int64Array 
+Int64Array
 CIMInstanceWrapperBase::getInt64ArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toInt64Array();
 }
-Real64Array 
+Real64Array
 CIMInstanceWrapperBase::getReal64ArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toReal64Array();
 }
-Real32Array 
+Real32Array
 CIMInstanceWrapperBase::getReal32ArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toReal32Array();
 }
-StringArray 
+StringArray
 CIMInstanceWrapperBase::getStringArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toStringArray();
 }
-BoolArray 
+BoolArray
 CIMInstanceWrapperBase::getBoolArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toBoolArray();
 }
-CIMDateTimeArray 
+CIMDateTimeArray
 CIMInstanceWrapperBase::getCIMDateTimeArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toCIMDateTimeArray();
 }
-CIMClassArray 
+CIMClassArray
 CIMInstanceWrapperBase::getCIMClassArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toCIMClassArray();
 }
-CIMInstanceArray 
+CIMInstanceArray
 CIMInstanceWrapperBase::getCIMInstanceArrayProperty(const char* name) const
 {
 	return m_inst.getPropertyT(name).getValueT().toCIMInstanceArray();

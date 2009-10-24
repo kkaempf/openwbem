@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2003-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -106,13 +106,13 @@ main(int argc, char* argv[])
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace")) != namespaces.end());
 		namespaces = CIMNameSpaceUtils::enum__Namespace(*chRef, "root", E_DEEP);
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace")) != namespaces.end());
-		
+
 		CIMNameSpaceUtils::create__Namespace(*chRef,"root/testnamespace/deep");
 		namespaces = CIMNameSpaceUtils::enum__Namespace(*chRef, "root", E_SHALLOW);
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep")) == namespaces.end());
 		namespaces = CIMNameSpaceUtils::enum__Namespace(*chRef, "root", E_DEEP);
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep")) != namespaces.end());
-		
+
 		CIMNameSpaceUtils::create__Namespace(*chRef,"root/testnamespace/deep/deep2");
 		namespaces = CIMNameSpaceUtils::enum__Namespace(*chRef, "root", E_SHALLOW);
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep/deep2")) == namespaces.end());
@@ -129,7 +129,7 @@ main(int argc, char* argv[])
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep/deep2")) == namespaces.end());
 		namespaces = CIMNameSpaceUtils::enum__Namespace(*chRef, "root", E_DEEP);
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep/deep2")) == namespaces.end());
-		
+
 		CIMNameSpaceUtils::delete__Namespace(*chRef,"root/testnamespace");
 		namespaces = CIMNameSpaceUtils::enum__Namespace(*chRef, "root", E_SHALLOW);
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace")) == namespaces.end());
@@ -143,11 +143,11 @@ main(int argc, char* argv[])
 		CIMNameSpaceUtils::createCIM_Namespace(*chRef,"root/testnamespace");
 		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(*chRef);
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace")) != namespaces.end());
-		
+
 		CIMNameSpaceUtils::createCIM_Namespace(*chRef,"root/testnamespace/deep");
 		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(*chRef);
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep")) != namespaces.end());
-		
+
 		CIMNameSpaceUtils::createCIM_Namespace(*chRef,"root/testnamespace/deep/deep2");
 		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(*chRef);
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep/deep2")) != namespaces.end());
@@ -158,7 +158,7 @@ main(int argc, char* argv[])
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep")) == namespaces.end());
 		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(*chRef);
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep/deep2")) != namespaces.end());
-		
+
 		CIMNameSpaceUtils::deleteCIM_Namespace(*chRef,"root/testnamespace");
 		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(*chRef);
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace")) == namespaces.end());

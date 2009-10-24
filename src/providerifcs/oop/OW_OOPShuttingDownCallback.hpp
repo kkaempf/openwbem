@@ -52,7 +52,7 @@ public:
 	virtual ~OOPShuttingDownCallback();
 
 private:
-	virtual void call(const OOPProtocolIFCRef& protocol, const UnnamedPipeRef& out, const UnnamedPipeRef& in, 
+	virtual void call(const OOPProtocolIFCRef& protocol, const UnnamedPipeRef& out, const UnnamedPipeRef& in,
 		const Timeout& timeout, const ProviderEnvironmentIFCRef& env) const;
 
 };

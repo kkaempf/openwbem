@@ -70,7 +70,7 @@ public:
 
 	void initialize(const ProviderEnvironmentIFCRef& env)
 	{
-		loadConfigMap(env); 
+		loadConfigMap(env);
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -91,17 +91,17 @@ public:
 
 		if (mapNeedsLoad(getConfigFile(env)))
 		{
-			loadConfigMap(env); 
+			loadConfigMap(env);
 		}
 
 		CIMObjectPath newCop(className, ns);
 
 
-		for (ConfigItemsMap::const_iterator iter = m_configItems.begin(); 
+		for (ConfigItemsMap::const_iterator iter = m_configItems.begin();
 			  iter != m_configItems.end(); ++iter)
 		{
-			String id = makeID(iter->first); 
-			newCop.setKeyValue("InstanceID", CIMValue(id)); 
+			String id = makeID(iter->first);
+			newCop.setKeyValue("InstanceID", CIMValue(id));
 			result.handle(newCop);
 		}
 
@@ -124,42 +124,42 @@ public:
 
 		if (mapNeedsLoad(getConfigFile(env)))
 		{
-			loadConfigMap(env); 
+			loadConfigMap(env);
 		}
 
 		CIMInstance newInst = cimClass.newInstance();
 		newInst.updatePropertyValues(instanceName.getKeys());
 
-		String id; 
-		CIMValue cv = instanceName.getKeyValue("InstanceID"); 
+		String id;
+		CIMValue cv = instanceName.getKeyValue("InstanceID");
 		if (!cv || cv.getType() != CIMDataType::STRING || cv.isArray())
 		{
-			OW_THROWCIM(CIMException::INVALID_PARAMETER); 
+			OW_THROWCIM(CIMException::INVALID_PARAMETER);
 		}
-		cv.get(id); 
+		cv.get(id);
 
-		StringArray sa = id.tokenize(":"); 
+		StringArray sa = id.tokenize(":");
 		if (sa.size() != 3)
 		{
-			OW_THROWCIM(CIMException::INVALID_PARAMETER); 
+			OW_THROWCIM(CIMException::INVALID_PARAMETER);
 		}
 
-		String& configName = sa[2]; 
+		String& configName = sa[2];
 
-		ConfigItemsMap::const_iterator iter = m_configItems.find(configName); 
+		ConfigItemsMap::const_iterator iter = m_configItems.find(configName);
 		if (iter == m_configItems.end())
 		{
-			OW_THROWCIM(CIMException::NOT_FOUND); 
+			OW_THROWCIM(CIMException::NOT_FOUND);
 		}
 
-		const ConfigData& cd = iter->second; 
+		const ConfigData& cd = iter->second;
 
-		newInst.setProperty("Value", CIMValue(cd.Value)); 
+		newInst.setProperty("Value", CIMValue(cd.Value));
 		newInst.setProperty("CurrentEffectiveValue", CIMValue(cd.CurrentEffectiveValue));
 		// This property is Required
-		newInst.setProperty("ElementName", CIMValue(configName)); 
-		newInst.setProperty("Caption", CIMValue(cd.Caption)); 
-		newInst.setProperty("Description", CIMValue(cd.Description)); 
+		newInst.setProperty("ElementName", CIMValue(configName));
+		newInst.setProperty("Caption", CIMValue(cd.Caption));
+		newInst.setProperty("Description", CIMValue(cd.Description));
 
 		return newInst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}
@@ -195,42 +195,42 @@ public:
 		{
 			if (propertyList->size() == 0)
 			{
-				return; 
+				return;
 			}
-			if (propertyList->size() > 1 
+			if (propertyList->size() > 1
 				|| !(*propertyList)[0].equalsIgnoreCase("value"))
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-							   "Only the \"Value\" parameter can be modified"); 
+							   "Only the \"Value\" parameter can be modified");
 			}
 		}
 
-		String oldvalue; 
-		CIMValue cv = previousInstance.getPropertyValue("Value"); 
+		String oldvalue;
+		CIMValue cv = previousInstance.getPropertyValue("Value");
 		if (!cv || cv.getType() != CIMDataType::STRING || cv.isArray())
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-						   "Bad or Missing \"Value\" property"); 
+						   "Bad or Missing \"Value\" property");
 		}
-		cv.get(oldvalue); 
+		cv.get(oldvalue);
 
-		String newvalue; 
+		String newvalue;
 
-		cv = modifiedInstance.getPropertyValue("Value"); 
+		cv = modifiedInstance.getPropertyValue("Value");
 		if (!cv || cv.getType() != CIMDataType::STRING || cv.isArray())
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-						   "Bad or Missing \"Value\" property"); 
+						   "Bad or Missing \"Value\" property");
 		}
-		cv.get(newvalue); 
+		cv.get(newvalue);
 
 		if (oldvalue == newvalue)
 		{
-			// nothing to do 
-			return; 
+			// nothing to do
+			return;
 		}
 
-		String configfile = getConfigFile(env); 
+		String configfile = getConfigFile(env);
 
 		std::ifstream file(configfile.c_str());
 		if (!file)
@@ -239,36 +239,36 @@ public:
 						" file: %1", configfile).c_str());
 		}
 
-		cv = modifiedInstance.getPropertyValue("InstanceID"); 
+		cv = modifiedInstance.getPropertyValue("InstanceID");
 		if (!cv || cv.getType() != CIMDataType::STRING || cv.isArray())
 		{
-			OW_THROWCIM(CIMException::INVALID_PARAMETER); 
+			OW_THROWCIM(CIMException::INVALID_PARAMETER);
 		}
-		String id; 
-		cv.get(id); 
+		String id;
+		cv.get(id);
 
-		StringArray sa = id.tokenize(":"); 
+		StringArray sa = id.tokenize(":");
 		if (sa.size() != 3)
 		{
-			OW_THROWCIM(CIMException::INVALID_PARAMETER); 
+			OW_THROWCIM(CIMException::INVALID_PARAMETER);
 		}
 
-		String configName = sa[2]; 
+		String configName = sa[2];
 
 
-		TempFileStream tfs; 
+		TempFileStream tfs;
 
 		String line;
-		bool foundItem = false; 
+		bool foundItem = false;
 		while (file)
 		{
 			line = String::getLine(file);
-			String tline = line; 
+			String tline = line;
 			if (!tline.empty() && tline[0] == ';')
 			{
 				do
 				{
-					tline = tline.substring(1); 
+					tline = tline.substring(1);
 				} while (!tline.empty() && tline[0] == ';');
 			}
 			size_t idx = tline.indexOf('=');
@@ -279,52 +279,52 @@ public:
 				{
 					if (foundItem)
 					{
-						// We've already written this config item.  
-						// omit remaining lines that resemble it. 
-						continue; 
+						// We've already written this config item.
+						// omit remaining lines that resemble it.
+						continue;
 					}
-					line = configName + " = " + newvalue; 
-					foundItem = true; 
+					line = configName + " = " + newvalue;
+					foundItem = true;
 				}
 			}
-			tfs << line << "\n"; 
+			tfs << line << "\n";
 		}
 		if (!foundItem)
 		{
-			tfs << "\n" << configName << " = " << newvalue << "\n"; 
+			tfs << "\n" << configName << " = " << newvalue << "\n";
 		}
-		file.close(); 
-		tfs.rewind(); 
+		file.close();
+		tfs.rewind();
 
-		// we can't use FileSystem::rename() because it only works if 
-		// src and dest are on the same device. 
-		String bkpfilename = configfile + ".bkp"; 
-		std::ofstream bkpfile(bkpfilename.c_str()); 
+		// we can't use FileSystem::rename() because it only works if
+		// src and dest are on the same device.
+		String bkpfilename = configfile + ".bkp";
+		std::ofstream bkpfile(bkpfilename.c_str());
 		if (!bkpfile)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, Format("Error opening %1 for writing", 
-														bkpfilename).c_str()); 
+			OW_THROWCIMMSG(CIMException::FAILED, Format("Error opening %1 for writing",
+														bkpfilename).c_str());
 		}
-		std::ifstream ifile(configfile.c_str()); 
+		std::ifstream ifile(configfile.c_str());
 		if (!ifile)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, Format("Error opening %1 for reading", 
-														ifile).c_str()); 
+			OW_THROWCIMMSG(CIMException::FAILED, Format("Error opening %1 for reading",
+														ifile).c_str());
 		}
-		bkpfile << ifile.rdbuf(); 
-		bkpfile.close(); 
-		ifile.close(); 
+		bkpfile << ifile.rdbuf();
+		bkpfile.close();
+		ifile.close();
 
-		std::ofstream ofile(configfile.c_str()); 
+		std::ofstream ofile(configfile.c_str());
 		if (!ofile)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, Format("Error opening %1 for writing", 
-														ofile).c_str()); 
+			OW_THROWCIMMSG(CIMException::FAILED, Format("Error opening %1 for writing",
+														ofile).c_str());
 		}
-		ofile << tfs.rdbuf(); 
-		ofile.close(); 
-		// no need to reload configMap here.  It will automatically be done 
-		// on the next read operation (if there is one). 
+		ofile << tfs.rdbuf();
+		ofile.close();
+		// no need to reload configMap here.  It will automatically be done
+		// on the next read operation (if there is one).
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -347,43 +347,43 @@ public:
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	////////////////////////////////////////////////////////////////////////////
-    virtual void doReferences(const ProviderEnvironmentIFCRef &env, 
-                                  CIMInstanceResultHandlerIFC &result, 
-                                  const String &ns, 
-                                  const CIMObjectPath &objectName, 
-                                  const CIMClass &assocClass, 
-                                  const String &resultClass, 
-                                  const String &role, 
-                                  const String &resultRole) 
+    virtual void doReferences(const ProviderEnvironmentIFCRef &env,
+                                  CIMInstanceResultHandlerIFC &result,
+                                  const String &ns,
+                                  const CIMObjectPath &objectName,
+                                  const CIMClass &assocClass,
+                                  const String &resultClass,
+                                  const String &role,
+                                  const String &resultRole)
 		{
-			CIMInstance newInst = assocClass.newInstance(); 
-			String lcname = objectName.getClassName(); 
-			lcname.toLowerCase(); 
-			String lrole = role; 
-			lrole.toLowerCase(); 
-			String lresultRole = resultRole; 
-			lresultRole.toLowerCase(); 
+			CIMInstance newInst = assocClass.newInstance();
+			String lcname = objectName.getClassName();
+			lcname.toLowerCase();
+			String lrole = role;
+			lrole.toLowerCase();
+			String lresultRole = resultRole;
+			lresultRole.toLowerCase();
 			if (lcname == "openwbem_objectmanager")
 			{
 				if ((!lrole.empty() && lrole != "managedelement")
 					|| (!lresultRole.empty() && lresultRole != "settingdata"))
 				{
-					OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, 
-								   "Bad Role or ResultRole"); 
+					OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+								   "Bad Role or ResultRole");
 				}
-				lrole = "ManagedElement"; 
-				lresultRole = "SettingData"; 
+				lrole = "ManagedElement";
+				lresultRole = "SettingData";
 
-				newInst.setProperty(lrole, CIMValue(objectName)); 
-				CIMObjectPath settingCOP("OpenWBEM_ConfigSettingData", ns); 
+				newInst.setProperty(lrole, CIMValue(objectName));
+				CIMObjectPath settingCOP("OpenWBEM_ConfigSettingData", ns);
 
-				for (ConfigItemsMap::const_iterator iter = m_configItems.begin(); 
+				for (ConfigItemsMap::const_iterator iter = m_configItems.begin();
 					  iter != m_configItems.end(); ++iter)
 				{
-					settingCOP.setKeyValue("InstanceID", 
-										   CIMValue(makeID(iter->first))); 
-					newInst.setProperty(lresultRole, CIMValue(settingCOP)); 
-					result.handle(newInst); 
+					settingCOP.setKeyValue("InstanceID",
+										   CIMValue(makeID(iter->first)));
+					newInst.setProperty(lresultRole, CIMValue(settingCOP));
+					result.handle(newInst);
 				}
 			}
 			else if (lcname == "openwbem_configsettingdata")
@@ -391,21 +391,21 @@ public:
 				if ((!lrole.empty() && lrole != "settingdata")
 					|| (!lresultRole.empty() && lresultRole != "managedelement"))
 				{
-					OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, 
-								   "Bad Role or ResultRole"); 
+					OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+								   "Bad Role or ResultRole");
 				}
-				lrole = "SettingData"; 
-				lresultRole = "ManagedElement"; 
+				lrole = "SettingData";
+				lresultRole = "ManagedElement";
 
-				CIMObjectPathArray cpa = env->getCIMOMHandle()->enumInstanceNamesA(ns, "OpenWBEM_ObjectManager"); 
+				CIMObjectPathArray cpa = env->getCIMOMHandle()->enumInstanceNamesA(ns, "OpenWBEM_ObjectManager");
 				if (cpa.size() != 1)
 				{
-					OW_THROWCIMMSG(CIMException::FAILED, 
-								   "Unable to retrieve a single instance of OpenWBEM_ObjectManager"); 
+					OW_THROWCIMMSG(CIMException::FAILED,
+								   "Unable to retrieve a single instance of OpenWBEM_ObjectManager");
 				}
-				newInst.setProperty(lrole, CIMValue(objectName)); 
-				newInst.setProperty(lresultRole, CIMValue(cpa[0])); 
-				result.handle(newInst); 
+				newInst.setProperty(lrole, CIMValue(objectName));
+				newInst.setProperty(lresultRole, CIMValue(cpa[0]));
+				result.handle(newInst);
 			}
 		}
 
@@ -416,75 +416,75 @@ public:
 		}
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
-private: 
+private:
 	struct ConfigData
 	{
-		String Value; 
-		String CurrentEffectiveValue; 
-		String Caption; 
-		String Description; 
-		//String InstanceID; 
-		//String ElementName; 
+		String Value;
+		String CurrentEffectiveValue;
+		String Caption;
+		String Description;
+		//String InstanceID;
+		//String ElementName;
 	};
 
-	typedef SortedVectorMap<String, ConfigData> ConfigItemsMap; 
+	typedef SortedVectorMap<String, ConfigData> ConfigItemsMap;
 
-	SortedVectorMap<String, ConfigData> m_configItems; 
+	SortedVectorMap<String, ConfigData> m_configItems;
 	////////////////////////////////////////////////////////////////////////////
 
-	time_t m_fileMTime; 
+	time_t m_fileMTime;
 	////////////////////////////////////////////////////////////////////////////
 	String makeID(const String& confName)
 	{
-		String rval = "OpenWBEM:ConfigItem:"; 
-		rval += confName; 
-		return rval; 
+		String rval = "OpenWBEM:ConfigItem:";
+		rval += confName;
+		return rval;
 	}
 	////////////////////////////////////////////////////////////////////////////
 	bool mapNeedsLoad(const String& filename)
 	{
-		struct stat st; 
+		struct stat st;
 
         if (stat(filename.c_str(), &st) != 0)
         {
 			OW_THROWCIMMSG(CIMException::FAILED, Format("Cannot stat %1: %2",
-						   filename, strerror(errno)).c_str()); 
+						   filename, strerror(errno)).c_str());
         }
-		
+
 		if (st.st_mtime != m_fileMTime)
 		{
 			return true;
 		}
-		return false; 
+		return false;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 	String getConfigFile(const ProviderEnvironmentIFCRef& env)
 	{
-		String filename = env->getConfigItem("owcimomd.config_file"); 
+		String filename = env->getConfigItem("owcimomd.config_file");
 
 		if (filename.empty())
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, "Cannot determine config file"); 
+			OW_THROWCIMMSG(CIMException::FAILED, "Cannot determine config file");
 		}
 
-		return filename; 
+		return filename;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 	void loadConfigMap(const ProviderEnvironmentIFCRef& env)
 	{
-		String filename = getConfigFile(env); 
-		m_configItems.clear(); 
+		String filename = getConfigFile(env);
+		m_configItems.clear();
 
-		struct stat st; 
+		struct stat st;
         if (stat(filename.c_str(), &st) != 0)
         {
 			OW_THROWCIMMSG(CIMException::FAILED, Format("Cannot stat %1: %2",
-						   filename, strerror(errno)).c_str()); 
+						   filename, strerror(errno)).c_str());
         }
-		
-		m_fileMTime = st.st_mtime; 
+
+		m_fileMTime = st.st_mtime;
 
 		std::ifstream file(filename.c_str());
 		if (!file)
@@ -518,9 +518,9 @@ private:
 							ConfigItemsMap::iterator it = m_configItems.find(item);
 							if (it == m_configItems.end())
 							{
-								ConfigData cd; 
-								cd.Value = itemValue; 
-								cd.CurrentEffectiveValue = env->getConfigItem(item); 
+								ConfigData cd;
+								cd.Value = itemValue;
+								cd.CurrentEffectiveValue = env->getConfigItem(item);
 								m_configItems.insert(std::make_pair(item, cd));
 							}
 						}
@@ -534,22 +534,22 @@ private:
 				}
 			}
 		}
-		file.close(); 
+		file.close();
 
-		for(const ConfigOpts::NameAndDefault* niter = &ConfigOpts::g_defaults[0]; 
+		for(const ConfigOpts::NameAndDefault* niter = &ConfigOpts::g_defaults[0];
 			 niter != ConfigOpts::g_defaultsEnd; ++niter)
 		{
 			String curValue = env->getConfigItem(niter->name, String(niter->defaultValue));
-			ConfigItemsMap::iterator it = m_configItems.find(niter->name); 
+			ConfigItemsMap::iterator it = m_configItems.find(niter->name);
 			if (it == m_configItems.end())
 			{
-				ConfigData cd; 
-				cd.CurrentEffectiveValue = curValue; 
+				ConfigData cd;
+				cd.CurrentEffectiveValue = curValue;
 				m_configItems.insert(std::make_pair(niter->name, cd));
 			}
 			else
 			{
-				it->second.CurrentEffectiveValue = curValue; 
+				it->second.CurrentEffectiveValue = curValue;
 			}
 		}
 
@@ -568,5 +568,5 @@ OW_PROVIDERFACTORY(OpenWBEM::OpenWBEM_ConfigSettingDataInstProv, owprovinstOpenW
 
 
 
-	
+
 

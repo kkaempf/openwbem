@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -53,7 +53,7 @@ namespace MOF
 {
 
 using namespace WBEMFlags;
-CIMOMVisitor::CIMOMVisitor(const CIMOMHandleIFCRef& handle, 
+CIMOMVisitor::CIMOMVisitor(const CIMOMHandleIFCRef& handle,
 	const Compiler::Options& opts,
 	const ParserErrorHandlerIFCRef& _theErrorHandler)
 : m_curValue(CIMNULL)
@@ -259,7 +259,7 @@ void CIMOMVisitor::VisitAssocDeclaration( const AssocDeclaration *pAssocDeclarat
 void CIMOMVisitor::VisitIndicDeclaration( const IndicDeclaration *pIndicDeclaration )
 {
 	m_curClass = CIMClass(*pIndicDeclaration->pClassName->pClassName);
-	
+
 	CIMQualifierType qt = getQualifierType(CIMQualifier::CIM_QUAL_INDICATION, pIndicDeclaration->theLineInfo);
 	CIMQualifier q(qt);
 	q.setValue(CIMValue(Bool(true)));
@@ -587,7 +587,7 @@ void CIMOMVisitor::VisitParameterObjectRef( const ParameterObjectRef *pParameter
 	if ( pParameterObjectRef->pQualifier.get() != 0 )
 	{
 		CIMQualifierArray quals;
-		
+
 		for ( List<Qualifier *>::const_iterator i = pParameterObjectRef->pQualifier->begin();
 			  i != pParameterObjectRef->pQualifier->end(); ++i )
 		{
@@ -748,7 +748,7 @@ void CIMOMVisitor::VisitObjectHandle( const ObjectHandle *pObjectHandle )
 void CIMOMVisitor::VisitQualifierDeclaration( const QualifierDeclaration *pQualifierDeclaration )
 {
 	m_curQualifierType = CIMQualifierType(*pQualifierDeclaration->pQualifierName->pQualifierName);
-	
+
 	pQualifierDeclaration->pQualifierType->Accept( this );
 	pQualifierDeclaration->pScope->Accept( this );
 	if ( pQualifierDeclaration->pDefaultFlavor.get() != 0 )
@@ -839,7 +839,7 @@ void CIMOMVisitor::VisitScope( const Scope *pScope )
 				Format("Invalid scope: %1", *(*i)->pMetaElement).c_str(),
 				(*i)->theLineInfo );
 		}
-		
+
 		m_curQualifierType.addScope(scope);
 	}
 }
@@ -933,7 +933,7 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 							{
 								castValue = CIMValue(CIMNULL);
 								theErrorHandler->recoverableError(
-									Format("Value is not the correct type: %1  The type for an EmbeddedObject should be: %2", m_curProperty.getValue().toString(), 
+									Format("Value is not the correct type: %1  The type for an EmbeddedObject should be: %2", m_curProperty.getValue().toString(),
 										CIMDataType(CIMDataType::STRING).toString()).c_str(), pInstanceDeclaration->theLineInfo);
 							}
 							else
@@ -968,10 +968,10 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 									);
 								}
 							}
-							
+
 							bool bHaveInstances = instances.size() > 0;
 							bool bHaveClasses = classes.size() > 0;
-							
+
 							if( bHaveInstances && bHaveClasses )
 							{
 								castValue = CIMValue(CIMNULL);
@@ -1049,11 +1049,11 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 			}
 		}
 	}
-	
+
 	if ( pInstanceDeclaration->pAlias.get() != 0 )
 	{
 		CIMObjectPath cop(m_namespace, m_curInstance);
-		
+
 		m_aliasMap[*(pInstanceDeclaration->pAlias->pAliasIdentifier->pAliasIdentifier)] =
 			m_namespace + ":" + cop.modelPath();
 	}
@@ -1140,12 +1140,12 @@ CIMQualifierType CIMOMVisitor::getQualifierType(const String& qualName, const Li
 {
 	String lcqualName = qualName;
 	lcqualName.toLowerCase();
-	// TODO: Fix this to include the namespace in the key
+	/// @todo  Fix this to include the namespace in the key
 	CIMQualifierType qt = m_dataTypeCache.getFromCache(lcqualName);
 	if (!qt)
 	{
 		qt = CIMOMgetQualifierType(qualName, li);
-		// TODO: Fix this to include the namespace in the key
+		/// @todo  Fix this to include the namespace in the key
 		m_dataTypeCache.addToCache(qt, lcqualName);
 	}
 	return qt;
@@ -1154,12 +1154,12 @@ CIMClass CIMOMVisitor::getClass(const String& className, const LineInfo& li)
 {
 	String lcclassName = className;
 	lcclassName.toLowerCase();
-	// TODO: Fix this to include the namespace in the key
+	/// @todo  Fix this to include the namespace in the key
 	CIMClass c = m_classCache.getFromCache(lcclassName);
 	if (!c)
 	{
 		c = CIMOMgetClass(className, li);
-		// TODO: Fix this to include the namespace in the key
+		/// @todo  Fix this to include the namespace in the key
 		m_classCache.addToCache(c, lcclassName);
 	}
 	return c;
@@ -1190,67 +1190,67 @@ void CIMOMVisitor::CIMOMprocessClassAux(const LineInfo& li)
 	}
 }
 
-static 
+static
 String findMOF(const String& path, const String& file)
 {
-	StringArray contents; 
-	String rval; 
+	StringArray contents;
+	String rval;
 	if (!FileSystem::getDirectoryContents(path, contents))
 	{
-		return rval; 
+		return rval;
 	}
-	for (StringArray::const_iterator iter = contents.begin(); 
+	for (StringArray::const_iterator iter = contents.begin();
 		  iter != contents.end(); ++iter)
 	{
 		if (iter->equals("..") || iter->equals("."))
 		{
-			continue; 
+			continue;
 		}
 		String curFile = path + OW_FILENAME_SEPARATOR + *iter;
-		if (FileSystem::isDirectory(curFile)) 
+		if (FileSystem::isDirectory(curFile))
 		{
-			rval = findMOF(curFile,file); 
+			rval = findMOF(curFile,file);
 			if (!rval.empty())
 			{
-				return rval; 
+				return rval;
 			}
 		}
 		else if (iter->equalsIgnoreCase(file))
 		{
-			return curFile; 
+			return curFile;
 		}
 	}
-	return rval; 
+	return rval;
 }
 
 void CIMOMVisitor::compileDep(const String& className, const LineInfo& li)
 {
-	String basename = className + ".mof"; 
-	basename.toLowerCase(); 
-	String filename = findMOF(m_opts.m_depSearchDir, 
-							  basename); 
+	String basename = className + ".mof";
+	basename.toLowerCase();
+	String filename = findMOF(m_opts.m_depSearchDir,
+							  basename);
 	if (filename.empty())
 	{
-		theErrorHandler->fatalError(Format("Unable to find file for class %1", className).c_str(), li); 
+		theErrorHandler->fatalError(Format("Unable to find file for class %1", className).c_str(), li);
 	}
 	theErrorHandler->progressMessage(Format("Found file %1 for class %2",
 											filename, className).c_str(), li);
-	Compiler theCompiler(m_hdl, m_opts, theErrorHandler); 
-	theCompiler.compile(filename); 
+	Compiler theCompiler(m_hdl, m_opts, theErrorHandler);
+	theCompiler.compile(filename);
 }
 
 void CIMOMVisitor::compileQuals(const LineInfo& li)
 {
-	String basename = "qualifiers.mof"; 
-	String filename = findMOF(m_opts.m_depSearchDir, basename); 
+	String basename = "qualifiers.mof";
+	String filename = findMOF(m_opts.m_depSearchDir, basename);
 	if (filename.empty())
 	{
-		theErrorHandler->fatalError(Format("Unable to find file ", basename).c_str(), li); 
+		theErrorHandler->fatalError(Format("Unable to find file ", basename).c_str(), li);
 	}
 	theErrorHandler->progressMessage(Format("Found file %1 for Qualifiers",
 											filename).c_str(), li);
-	Compiler theCompiler(m_hdl, m_opts, theErrorHandler); 
-	theCompiler.compile(filename); 
+	Compiler theCompiler(m_hdl, m_opts, theErrorHandler);
+	theCompiler.compile(filename);
 }
 
 
@@ -1260,8 +1260,8 @@ void CIMOMVisitor::CIMOMprocessClass(const LineInfo& li)
 
 	try
 	{
-		bool fixedNS, fixedRefs, fixedSuper; 
-		for(fixedNS = fixedRefs = fixedSuper = false; 
+		bool fixedNS, fixedRefs, fixedSuper;
+		for(fixedNS = fixedRefs = fixedSuper = false;
 			 !fixedNS || !fixedRefs || !fixedSuper ; )
 		{
 			try
@@ -1269,11 +1269,11 @@ void CIMOMVisitor::CIMOMprocessClass(const LineInfo& li)
 				CIMOMprocessClassAux(li);
 				const char* const msg = m_opts.m_removeObjects ? "Deleted Class: %1" : "Created Class: %1";
 				theErrorHandler->progressMessage(Format(msg, m_curClass.getName()).c_str(), li);
-				break; 
-				// Note we won't add the class to the cache, since mof usually 
-				// is just creating classes, it'll be mostly a waste of time.  
-				// getClass will put classes in the cache, in the case that 
-				// there are lots of instances, each class will only have to 
+				break;
+				// Note we won't add the class to the cache, since mof usually
+				// is just creating classes, it'll be mostly a waste of time.
+				// getClass will put classes in the cache, in the case that
+				// there are lots of instances, each class will only have to
 				// be fetched once.
 			}
 			catch (CIMException& e)
@@ -1284,66 +1284,66 @@ void CIMOMVisitor::CIMOMprocessClass(const LineInfo& li)
 				{
 					if (fixedNS || !m_opts.m_createNamespaces)
 					{
-						throw; 
+						throw;
 					}
 					CIMOMcreateNamespace(li);
-					fixedNS = true; 
-					break; 
+					fixedNS = true;
+					break;
 				}
 				case CIMException::INVALID_PARAMETER:
 				{
 					if (fixedRefs || m_opts.m_depSearchDir.empty())
 					{
-						throw; 
+						throw;
 					}
-					CIMPropertyArray cpa = m_curClass.getAllProperties(); 
-					for (CIMPropertyArray::const_iterator iter = cpa.begin(); 
+					CIMPropertyArray cpa = m_curClass.getAllProperties();
+					for (CIMPropertyArray::const_iterator iter = cpa.begin();
 						  iter != cpa.end(); ++iter)
 					{
-						const CIMProperty& prop = *iter; 
+						const CIMProperty& prop = *iter;
 						if (prop.isReference())
 						{
-							CIMDataType cdt = prop.getDataType(); 
-							String classToFind = cdt.getRefClassName(); 
-							StringArray emptyProps; 
+							CIMDataType cdt = prop.getDataType();
+							String classToFind = cdt.getRefClassName();
+							StringArray emptyProps;
 							try
 							{
-								m_hdl->getClass(m_namespace, classToFind, 
-												E_LOCAL_ONLY, 
-												E_EXCLUDE_QUALIFIERS, 
-												E_EXCLUDE_CLASS_ORIGIN, 
-												&emptyProps); 
+								m_hdl->getClass(m_namespace, classToFind,
+												E_LOCAL_ONLY,
+												E_EXCLUDE_QUALIFIERS,
+												E_EXCLUDE_CLASS_ORIGIN,
+												&emptyProps);
 							}
 							catch (CIMException& ce)
 							{
 								theErrorHandler->progressMessage(
-									Format("Class %1 referenced by reference property %2 doesn't exist in namespace %3, searching...", 
+									Format("Class %1 referenced by reference property %2 doesn't exist in namespace %3, searching...",
 										   classToFind, prop.getName(), m_namespace).c_str(), li);
 								if (ce.getErrNo() == CIMException::NOT_FOUND)
 								{
-									compileDep(classToFind, li); 
+									compileDep(classToFind, li);
 								}
 							}
 						}
 					}
-					fixedRefs = true; 
-					break; 
+					fixedRefs = true;
+					break;
 				}
 				case CIMException::INVALID_SUPERCLASS:
 				{
 					if (fixedSuper || m_opts.m_depSearchDir.empty())
 					{
-						throw; 
+						throw;
 					}
-					String classToFind = m_curClass.getSuperClass(); 
-					theErrorHandler->progressMessage(Format("Superclass %1 does not exist in namespace %2, searching...", 
+					String classToFind = m_curClass.getSuperClass();
+					theErrorHandler->progressMessage(Format("Superclass %1 does not exist in namespace %2, searching...",
 													   classToFind, m_namespace).c_str(), li);
-					compileDep(classToFind, li); 
-					fixedSuper = true; 
-					break; 
+					compileDep(classToFind, li);
+					fixedSuper = true;
+					break;
 				}
-				default: 
-					throw; 
+				default:
+					throw;
 				}
 			}
 		}
@@ -1371,7 +1371,7 @@ void CIMOMVisitor::CIMOMprocessClass(const LineInfo& li)
 
 void CIMOMVisitor::CIMOMprocessQualifierTypeAux()
 {
-	// we don't delete qualifers.  Easier and safer to just leave them be. 
+	// we don't delete qualifers.  Easier and safer to just leave them be.
 	if (!m_opts.m_removeObjects)
 	{
 		m_hdl->setQualifierType(m_namespace, m_curQualifierType);
@@ -1401,7 +1401,7 @@ void CIMOMVisitor::CIMOMprocessQualifierType(const LineInfo& li)
 		// save it in the cache
 		String lcqualName = m_curQualifierType.getName();
 		lcqualName.toLowerCase();
-		// TODO: Fix this to include the namespace in the key
+		/// @todo  Fix this to include the namespace in the key
 		m_dataTypeCache.addToCache(m_curQualifierType, lcqualName);
 
 		const char* const msg = m_opts.m_removeObjects ? "Not Deleting Qualifier Type: %1" : "Created Qualifier Type: %1";
@@ -1498,14 +1498,14 @@ CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const String& qualName, con
 				CIMOMcreateNamespace(li);
 				if (!m_opts.m_depSearchDir.empty())
 				{
-					compileQuals(li); 
+					compileQuals(li);
 				}
 				return m_hdl->getQualifierType(m_namespace, qualName);
 			}
-			else if (e.getErrNo() == CIMException::NOT_FOUND 
+			else if (e.getErrNo() == CIMException::NOT_FOUND
 						&& !m_opts.m_depSearchDir.empty())
 			{
-				compileQuals(li); 
+				compileQuals(li);
 				return m_hdl->getQualifierType(m_namespace, qualName);
 			}
 			else

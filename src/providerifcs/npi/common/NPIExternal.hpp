@@ -21,7 +21,7 @@
 namespace OW_NAMESPACE
 {
 
-extern "C" 
+extern "C"
 void _NPIGarbageCan(NPIHandle * nh, void * object, NPIGarbageType type);
 extern "C"  CIMClass NPI_getmyClass(
 	NPIHandle* npiHandle,
@@ -105,7 +105,7 @@ extern "C"
 	void CIMInstanceSetRefProperty( NPIHandle* npiHandle, ::CIMInstance ci,
 									 const char* name, ::CIMObjectPath value);
 
-extern "C" 
+extern "C"
 	void CIMInstanceAddStringArrayPropertyValue(NPIHandle* npiHandle, ::CIMInstance ci,
 									const char* name, const char* value);
 
@@ -117,7 +117,7 @@ extern "C" void
 CIMInstanceAddStringArrayPropertyValue(NPIHandle* npiHandle, ::CIMInstance ci,
 	const char* name, const char* value);
 
-								 
+
 extern "C"
 char* CIMInstanceGetStringValue(NPIHandle* npiHandle,
 								 ::CIMInstance ci, const char* name);

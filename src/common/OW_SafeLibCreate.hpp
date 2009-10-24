@@ -1,22 +1,22 @@
 /*******************************************************************************
-* Copyright (C) 2005, Vintela, Inc. All rights reserved.
+* Copyright (C) 2005, Quest Software, Inc. All rights reserved.
 * Copyright (C) 2006, Novell, Inc. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
-* 
+*
 *     * Redistributions of source code must retain the above copyright notice,
 *       this list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of 
-*       Vintela, Inc., 
-*       nor Novell, Inc., 
-*       nor the names of its contributors or employees may be used to 
-*       endorse or promote products derived from this software without 
+*     * Neither the name of
+*       Quest Software, Inc.,
+*       nor Novell, Inc.,
+*       nor the names of its contributors or employees may be used to
+*       endorse or promote products derived from this software without
 *       specific prior written permission.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -71,7 +71,7 @@ class SafeLibCreate
 public:
 	typedef std::pair<IntrusiveReference<T>, SharedLibraryRef> return_type;
 	typedef SharedLibraryReference<IntrusiveReference<T> > return_obj;
-	
+
 	static return_type
 	loadAndCreate(String const& libname, String const& createFuncName, String const& version)
 	{
@@ -110,12 +110,12 @@ public:
 	}
 
 	static T*
-	create(SharedLibraryRef sl, String const& createFuncName, 
+	create(SharedLibraryRef sl, String const& createFuncName,
 			String const& version)
 	{
 		Logger logger("ow.SafeLibCreate");
 		OW_LOG_DEBUG3(logger, Format("SafeLibCreate::create called.  createFuncName = %1", createFuncName).c_str());
-		
+
 		OW_ASSERT(sl);
 		try
 		{
@@ -137,15 +137,15 @@ public:
 				if (!sl->getFunctionPointer( "getOWVersion", versFunc))
 				{
 					OW_LOG_ERROR(logger, "SafeLibCreate::create failed getting function pointer to \"getOWVersion\" from library");
-	
+
 					return 0;
 				}
-	
+
 				const char* strVer = 0;
 				strVer = (*versFunc)();
 				if (!strVer || version != strVer)
 				{
-					OW_LOG_INFO(logger, Format("SafeLibCreate::create - Warning: version returned from \"getOWVersion\" (%1) does not match (%2)", 
+					OW_LOG_INFO(logger, Format("SafeLibCreate::create - Warning: version returned from \"getOWVersion\" (%1) does not match (%2)",
 						strVer ? strVer : "", version));
 				}
 
@@ -163,9 +163,9 @@ public:
 			}
 			else
 			{
-				OW_LOG_ERROR(logger, Format("SafeLibCreate::create sigsetjmp call returned %1, we caught a segfault.  getOWVersion() or %2() is misbehaving", 
+				OW_LOG_ERROR(logger, Format("SafeLibCreate::create sigsetjmp call returned %1, we caught a segfault.  getOWVersion() or %2() is misbehaving",
 					sigtype, createFuncName));
-	
+
 				return 0;
 			}
 		}
@@ -180,17 +180,17 @@ public:
 		{
 			OW_LOG_ERROR(logger, "SafeLibCreate::create caught unknown exception");
 		}
-	
+
 		return 0;
 	}
-	
+
 private:
 #ifdef WIN32
 	static jmp_buf theLoaderBuf;
 #else
 	static sigjmp_buf theLoaderBuf;
 #endif
-	
+
 	// this is commented out because it won't compile.  As it is, it may
 	// invoke undefined behavior if the C calling convention is different
 	// from the C++ calling convention.  Fortunately that's not the case
@@ -204,9 +204,9 @@ private:
 		siglongjmp(theLoaderBuf, sig);
 #endif
 	}
-	
+
 	//} // extern "C"
-	
+
 };
 template <typename T>
 #ifdef WIN32
@@ -216,7 +216,7 @@ sigjmp_buf
 #endif
 SafeLibCreate<T>::theLoaderBuf;
 
-	
+
 } // end namespace OW_NAMESPACE
 
 #endif

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -66,7 +66,7 @@ typedef IntrusiveReference<XMLNodeImpl> XMLNodeImplRef;
 class OW_XML_API XMLNode
 {
 public:
-	
+
 	/**
 	 * Constructor taking the XML tag name and the attributes
 	 * object from the SAX parser
@@ -77,7 +77,7 @@ public:
 	 *                 associated with this node (XML Tag)
 	 */
 	XMLNode(const String& name, const XMLAttributeArray& attrArray);
-	
+
 	/**
 	 * Constructor taking the XML tag name
 	 * object from the SAX parser
@@ -121,7 +121,7 @@ public:
 	 * @return Returns an String object containing the name of the node
 	 */
 	String getName() const;
-	
+
 	/**
 	 * Sets the text value for the XMLNode
 	 *
@@ -133,7 +133,7 @@ public:
 	 * Add the given text to the existing text of the node.
 	 */
 	void appendText(const String& text) const;
-	
+
 	/**
 	 * Searches the attributes of the current node for the
 	 * attribute name and returns the value
@@ -142,14 +142,14 @@ public:
 	 * @return String containing the value of the attribute
 	 */
 	String getAttribute(const String& name) const;
-	
+
 	/**
 	 * Adds the argument attribute to the Node's attribute array.
 	 *
 	 * @param attr   XMLAttribute to add.
 	 */
 	void addAttribute(const XMLAttribute& attr) const;
-	
+
 	/**
 	 * Same as getAttribute but if the attribute is not found
 	 * a CIMException will be thrown.
@@ -160,7 +160,7 @@ public:
 	 *                   thrown if the attribute name is not found
 	 */
 	String mustGetAttribute(const String& name) const;
-	
+
 	/**
 	 * Gets the attribute array for the currrent node
 	 *
@@ -168,7 +168,7 @@ public:
 	 *         node
 	 */
 	XMLAttributeArray getAttrs() const;
-	
+
 	/**
 	 * Returns the XML value of the current node
 	 *
@@ -178,7 +178,7 @@ public:
 	 * @return String holding the XML value of the current node
 	 */
 	String getText() const;
-	
+
 	/**
 	 * Compares the elementToken to the current node and to all
 	 * of the current node's siblings and returns the node that
@@ -189,7 +189,7 @@ public:
 	 * @return XMLNode which has a token matching elementToken
 	 */
 	XMLNode findElement(const char* elementName) const;
-	
+
 	/**
 	 * Same as findElement but will throw an exception if the
 	 * elementToken is not matched.
@@ -204,7 +204,7 @@ public:
 	 *                   Thrown if the elementToken is not matched
 	 */
 	XMLNode mustFindElement(const char* elementName) const;
-	
+
 	/**
 	 * Gets the next XMLNode unless it does not exist or the
 	 * elementToken does not match.
@@ -215,7 +215,7 @@ public:
 	 *         elementToken
 	 */
 	XMLNode nextElement(const char* elementName);
-	
+
 	/**
 	 * Same as nextElement but it throws and exception if either
 	 * the next node is NULL or it does not match elementToken.
@@ -229,7 +229,7 @@ public:
 	 *                   does not match
 	 */
 	XMLNode mustNextElement(const char* elementName) const;
-	
+
 	/**
 	 * Matches elementToken with the current node or throws an
 	 * exception
@@ -239,7 +239,7 @@ public:
 	 * @exception CIMException
 	 */
 	void mustElement(const char* elementName) const;
-	
+
 	/**
 	 * Same as mustElement but returns the child of the current
 	 * node after matching elementToken.  Throws and exception if
@@ -253,7 +253,7 @@ public:
 	 *                   node or the child node is NULL.
 	 */
 	XMLNode mustElementChild(const char* elementName) const;
-	
+
 	/**
 	 * Returns the child node of the current node if the child
 	 * node matches the elementToken
@@ -268,7 +268,7 @@ public:
 	 *                   the child of the current node does not match the elementToken
 	 */
 	XMLNode mustChildElement(const char* elementName) const;
-	
+
 	/**
 	 * Returns the current node's child's child if the current
 	 * node's child matches the elementToken
@@ -284,7 +284,7 @@ public:
 	 *                   The child of the child of the current node is NULL
 	 */
 	XMLNode mustChildElementChild(const char* elementName) const;
-	
+
 	/**
 	 * Gets the child of the current node and search the child
 	 * and the child's siblings to match the elementToken
@@ -300,7 +300,7 @@ public:
 	 *                   the elementToken is not matched
 	 */
 	XMLNode mustChildFindElement(const char* elementName) const;
-	
+
 	/**
 	 * Same as findElement but it returns the child of the
 	 * matched node
@@ -310,7 +310,7 @@ public:
 	 * @return XMLNode which is the child of the matched node
 	 */
 	XMLNode findElementChild(const char* elementName) const;
-	
+
 	/**
 	 * Same as findElementChild but it throws an exception if
 	 * anything goes wrong
@@ -323,7 +323,7 @@ public:
 	 *                   matched the elementToken
 	 */
 	XMLNode mustFindElementChild(const char* elementName) const;
-	
+
 	/**
 	 * Same as mustFindElementChild but it starts the search
 	 * at the child of current node
@@ -336,7 +336,7 @@ public:
 	 *                   matched the elementToken
 	 */
 	XMLNode mustChildFindElementChild(const char* elementName) const;
-	
+
 	/**
 	 * Sets the current node's next sibling to node
 	 *
@@ -345,14 +345,14 @@ public:
 	 *               will be removed and deleted and replaced by node.
 	 */
 	void setNext(const XMLNode& node) const;
-	
+
 	/**
 	 * Gets the current node's next sibling
 	 *
 	 * @return XMLNode holding the next sibling of the current node
 	 */
 	XMLNode getNext() const;
-	
+
 	/**
 	 * Adds the node as a child of the current node
 	 *
@@ -361,7 +361,7 @@ public:
 	 *				 next sibling to the node added
 	 */
 	void addChild(const XMLNode& node) const;
-	
+
 	/**
 	 * Gets the current node's child
 	 *
@@ -445,7 +445,7 @@ public:
 	XMLAttributeArray getAttrs() const;
 	String getText() const;
 	String getName() const;
-	
+
 	void mustElement(const char* elementName) const;
 	XMLNodeImplRef findElement(const char* elementName, bool throwException = false) const;
 	XMLNodeImplRef nextElement(const char* elementName, bool throwException = false) const;
@@ -456,7 +456,7 @@ public:
 	XMLNodeImplRef mustChildElementChild(const char* elementName) const;
 	XMLNodeImplRef mustChildFindElement(const char* elementName) const;
 	XMLNodeImplRef mustChildFindElementChild(const char* elementName) const;
-	
+
 	void setNext(const XMLNodeImplRef& node);
 
 	XMLNodeImplRef getNext() const;

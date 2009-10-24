@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2003-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -65,7 +65,7 @@ OW_DECLARE_APIEXCEPTION(ContextDataNotFound, OW_COMMON_API);
 class OW_COMMON_API OperationContext : public IntrusiveCountableBase
 {
 public:
-	
+
 	class OW_COMMON_API Data : public IntrusiveCountableBase, public SerializableIFC
 	{
 	public:
@@ -74,16 +74,16 @@ public:
 	};
 
 	typedef IntrusiveReference<Data> DataRef;
-	
+
 	OperationContext();
 	virtual ~OperationContext();
 
 	/**
 	 * Caller creats a subclass of Data and passes it in.
 	 * In an out of process provider, only an existing key can be updated.  A new key cannot be added.
-	 * 
+	 *
 	 * @param key
-	 * 
+	 *
 	 * @throws ContextDataNotFound
 	 */
 	void setData(const String& key, const DataRef& data);
@@ -94,7 +94,7 @@ public:
 	 * @param key Identifies the data to remove.
 	 */
 	void removeData(const String& key);
-	
+
 	/**
 	 * In an out of process provider, changes to the returned object will not be
 	 * propagated back to the main process. Call setData() to do that.
@@ -117,7 +117,7 @@ public:
 	 * @return true if there is data for the key.
 	 */
 	bool keyHasData(const String& key) const;
-	
+
 	/**
 	 * These are for convenience, and are implemented in terms of
 	 * the first 2 functions.
@@ -133,7 +133,7 @@ public:
 	 * @returns def if key is not found
 	 */
 	String getStringDataWithDefault(const String& key, const String& def = String() ) const;
-	
+
 	// Keys values we use.
 	static const char* const USER_NAME;
 	static const char* const USER_PASSWD;
@@ -155,11 +155,11 @@ public:
 		StringData(const String& str);
 		virtual ~StringData();
 		virtual void writeObject(std::streambuf& ostr) const;
-	
+
 		virtual void readObject(std::streambuf& istr);
-	
+
 		virtual String getType() const;
-		
+
 		String getString() const
 		{
 			return m_str;
@@ -189,7 +189,7 @@ private:
 	 * @param key Identifies the data to remove.
 	 */
 	virtual void doRemoveData(const String& key) = 0;
-	
+
 	/**
 	 * Test whether there is data for the key.
 	 * @param key The key to test.

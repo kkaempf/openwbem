@@ -247,7 +247,7 @@ public:
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 *		be returned on all appropriate components.
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception CIMException  	
+	 * @exception CIMException
 	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
 	 *		CIM_ERR_INVALID_NAMESPACE
@@ -271,7 +271,7 @@ public:
 	 *						children of the enumerated class.
 	 * @param localOnly Only include properties
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception CIMException  	
+	 * @exception CIMException
 	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
 	 *		CIM_ERR_INVALID_NAMESPACE
@@ -494,7 +494,7 @@ public:
 			const String& ns,
 			const CIMObjectPath& path,
 			const String& methodName,
-			const CIMParamValueArray& in, 
+			const CIMParamValueArray& in,
 			OperationContext& context);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associatorNames(
@@ -536,7 +536,7 @@ public:
 		const String& role, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
 		OperationContext& context);
-	
+
 	virtual void referencesClasses(
 		const String& ns,
 		const CIMObjectPath& path,
@@ -546,7 +546,7 @@ public:
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
 		OperationContext& context);
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	
+
 	/**
 	 *
 	 * @exception CIMException
@@ -571,7 +571,7 @@ private:
 	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result);
 
 	IntrusiveReference<BasicAccessMgr> m_accessMgr;
-	
+
 	RepositoryIFCRef m_cimRepository;
 };
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2005 Vintela, Inc. All rights reserved.
+* Copyright (C) 2005 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -80,14 +80,14 @@ String initializeDir(String const & localAuthDir)
 		}
 		if (rv == 0)
 		{
-			// if we actually created the directory, remove the set-group-id bit & fix any permissions removed by the current umask 
+			// if we actually created the directory, remove the set-group-id bit & fix any permissions removed by the current umask
 			// and change the file & group ownership to the real user/group id
 			struct stat statbuf;
 			if (lstat(curDir.c_str(), &statbuf) == -1)
 			{
 				OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthentication::initializeDir(): lstat(%1, ...)", curDir).c_str());
 			}
-			
+
 			::mode_t newmode(statbuf.st_mode);
 			newmode &= ~S_ISGID;
 			newmode |= S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
@@ -156,8 +156,8 @@ namespace
 	class UmaskRestorer
 	{
 	public:
-		UmaskRestorer(::mode_t oldumask) 
-			: m_oldumask(oldumask) 
+		UmaskRestorer(::mode_t oldumask)
+			: m_oldumask(oldumask)
 		{
 		}
 		~UmaskRestorer()
@@ -245,13 +245,13 @@ String createFile(String const & localAuthDir, const String& uid, const String& 
 	{
 		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthenticationCommon::createFile(): fchmod on \"%1\"", tfname).c_str());
 	}
-	
+
 	//-- Change file so the user connecting is the owner
 	if (::fchown(authfd, userid, static_cast<gid_t>(-1)) == -1)
 	{
 		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthenticationCommon::createFile(): fchown on \"%1\" to %2", tfname, userid).c_str());
 	}
-	
+
 	// Write the servers random number to the temp file
 	if (file.write(cookie.c_str(), cookie.length()) != cookie.length())
 	{
@@ -265,7 +265,7 @@ String createFile(String const & localAuthDir, const String& uid, const String& 
 	{
 		OW_THROW_ERRNO_MSG(LocalAuthenticationException, Format("LocalAuthenticationCommon::createFile(): failed to close() \"%1\"", tfname).c_str());
 	}
-	
+
 	fileDeleter.dontDelete();
 
 	return tfname;

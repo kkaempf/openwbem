@@ -8,8 +8,8 @@ logger
 	A C++ instance of a class derived from Logger, which is used by the OW code to output log messages.
 
 component
-	A string identifying the logical grouping of code within OW that generated a log message. 
-	It is useful to organize components hierarchially, using a "." to separate ancestor and descendent. 
+	A string identifying the logical grouping of code within OW that generated a log message.
+	It is useful to organize components hierarchially, using a "." to separate ancestor and descendent.
 	The hierarchy is meaningless to OW from a configuration or API point of view, but it is helpful for log processing.
 	The component "*" is reserved for configuration to mean all possible components.
 	Examples include "owcimomd", "owcimomd.http_server", "owcimomd.http_server.local_auth", "vintela.computer_system_provider".
@@ -19,7 +19,7 @@ category
 	Also commonly refered to as log levels.
 	The category "*" is reserved for configuration to mean all possible categories.
 	Examples include Debug, Info, Warn, Error, FatalError, Trace, AuthenticationFailure, etc.
-	The 4 categories "Debug", "Info", "Error", "FatalError" are treated as levels for configuration purposes. 
+	The 4 categories "Debug", "Info", "Error", "FatalError" are treated as levels for configuration purposes.
 	If a log is configured for Debug, all 4 categories will be output.
 	Otherwise there is no relationship between categories.
 
@@ -62,7 +62,7 @@ Each log message will have an associated component, category, source filename, s
 
 A log is configured with a name, components, categories, format, type and any specific logger information such as a filename. If a component == "*", then it will match all components.  If a category == "*", then it will match all message categories.
 
-For owcimomd, there is a predefined log named "main". The owcimomd.log_level and owcimomd.log_location config items will be deprecated but still supported, and they will affect this log if set.
+For owcimomd, there is a predefined log named "main".
 
 For owcimomd, there is a predefined log named "debug". This log will be
 enabled when owcimomd is run with a -d.  The default will be all categories
@@ -101,7 +101,7 @@ An unsigned integer. Determines how many backup files are kept before the oldest
 
 
 Components are organized hierarchically using a '.' as the ancestor/child
-separator. In the code, all component namess are represented by a local 
+separator. In the code, all component namess are represented by a local
 variable COMPONENT_NAME.
 
 -----------------------------------------------------------------------------
@@ -144,22 +144,22 @@ Log message format
 Text mixed with printf() style conversion specifiers.
 Available conversion specifiers:
 %c - The component (e.g. owcimomd)
-%d - The date. May be followed by a date format specifier enclosed between 
-     braces. For example, %d{%H:%M:%S} or %d{%d %b %Y %H:%M:%S}. If no date 
-     format specifier is given then ISO8601 format is assumed. 
-     For more information of the date format specifiers, lookup the 
+%d - The date. May be followed by a date format specifier enclosed between
+     braces. For example, %d{%H:%M:%S} or %d{%d %b %Y %H:%M:%S}. If no date
+     format specifier is given then ISO8601 format is assumed.
+     For more information of the date format specifiers, lookup the
      documentation for the strftime() function found in the <ctime> header.
      The only addition is %Q, which is the number of milliseconds.
 %F - The file name
 %l - The filename and line number. e.g. file.cpp(100)
 %L - The line number
-%M - The method name where the logging request was issued (only works on 
+%M - The method name where the logging request was issued (only works on
      C++ compilers which support __PRETTY_FUNCTION__ or C99's __func__)
 %m - The message
 %e - The message as XML CDATA. This includes the "<![CDATA[" and ending "]]>"
 %n - The platform dependent line separator character (\n) or characters (\r\n)
 %p - category, aka level, aka priority
-%r - The number of milliseconds elapsed since the start of the application 
+%r - The number of milliseconds elapsed since the start of the application
      until the creation of the logging event
 %t - Thread id
 %% - %
@@ -169,20 +169,20 @@ Available conversion specifiers:
 \\ - \
 \x<hexDigits> - The character represented in hexadecimal.
 
-  It is possible to change the minimum field width, the maximum field width 
-and justification. The optional format modifier is placed between the 
+  It is possible to change the minimum field width, the maximum field width
+and justification. The optional format modifier is placed between the
 percent sign and the conversion character.
-  The first optional format modifier is the left justification flag which is 
-the minus (-) character. The optional minimum field width modifier follows. 
-It is an integer that represents the minimum number of characters to 
-output. If the data item requires fewer characters, it is padded with 
-spaces on either the left or the right, according to the justification 
-flag. If the data item is larger than the minimum field width, the field 
+  The first optional format modifier is the left justification flag which is
+the minus (-) character. The optional minimum field width modifier follows.
+It is an integer that represents the minimum number of characters to
+output. If the data item requires fewer characters, it is padded with
+spaces on either the left or the right, according to the justification
+flag. If the data item is larger than the minimum field width, the field
 is expanded to accommodate the data.
-  The maximum field width modifier is designated by a period followed by a 
-decimal constant. If the data item is longer than the maximum field, then 
-the extra characters are removed from the beginning of the data item 
-(by default), or from the end if the left justification flag was specified. 
+  The maximum field width modifier is designated by a period followed by a
+decimal constant. If the data item is longer than the maximum field, then
+the extra characters are removed from the beginning of the data item
+(by default), or from the end if the left justification flag was specified.
 
 Examples:
   Log4j TTCC layout:
@@ -196,7 +196,7 @@ Examples:
   "<log4j:event logger="%c" timestamp="%d" level="%p" thread="%t">
    <log4j:message>%e</log4j:message>
    <log4j:locationInfo file="%F" line="%L"/>
-   </log4j:event>" 
+   </log4j:event>"
 
 A Color version using ascii escape codes
 log.debug.format = \x1b[1;37;40m[\x1b[1;31;40m%-.6t\x1b[1;37;40m]\x1b[1;32;40m %m\x1b[0;37;40m
@@ -235,4 +235,4 @@ Error      -> LOG_ERR
 Info       -> LOG_INFO
 Debug      -> LOG_DEBUG
 *          -> LOG_INFO
- 
+

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -110,7 +110,7 @@ HTTPClient::HTTPClient( const String &sURL, const SSLClientCtxRef& sslCtx)
 	m_ostr.exceptions(std::ios::goodbit);
 
 #ifndef OW_WIN32
-	// TODO: figure out a better way to do this.
+	/// @todo  figure out a better way to do this.
 	signal(SIGPIPE, SIG_IGN);
 #endif
 
@@ -275,11 +275,11 @@ void
 HTTPClient::receiveAuthentication()
 {
 	String authInfo = getHeaderValue("www-authenticate");
-	String scheme; 
+	String scheme;
 	if (!authInfo.empty())
 	{
-		scheme = authInfo.tokenize()[0]; 
-		scheme.toLowerCase(); 
+		scheme = authInfo.tokenize()[0];
+		scheme.toLowerCase();
 	}
 	m_sRealm = getAuthParam("realm", authInfo);
 #ifndef OW_DISABLE_DIGEST
@@ -289,7 +289,7 @@ HTTPClient::receiveAuthentication()
 		Secure::rand_uint<UInt32>(), Secure::rand_uint<UInt32>(),
 		Secure::rand_uint<UInt32>()
 	);
-	
+
 	if (headerHasKey("authentication-info") && m_sAuthorization=="Digest" )
 	{
 		String authInfo = getHeaderValue("authentication-info");
@@ -417,7 +417,7 @@ void HTTPClient::sendAuthorization()
 			ostr << "realm=\"" << m_sRealm << "\", ";
 			ostr << "nonce=\"" << m_sDigestNonce << "\", ";
 			ostr << "uri=\"" + m_httpPath + ", ";
-			ostr << "qop=\"auth\", ";	
+			ostr << "qop=\"auth\", ";
 			ostr << "nc=" << sNonceCount << ", ";
 			ostr << "cnonce=\"" << m_sDigestCNonce << "\", ";
 			ostr << "response=\"" << m_sDigestResponse << "\"";
@@ -547,7 +547,7 @@ void HTTPClient::copyStreams(std::ostream& ostr, std::istream& istr)
 
 		streamsize charsRead = inbuf->sgetn(&buffer[0], bytesToRead);
 		bytesWritten = outbuf->sputn(&buffer[0], charsRead);
-		
+
 		rv += bytesWritten;
 		if (bytesWritten != charsRead)
 			break;
@@ -615,7 +615,7 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 		addHeaderNew("Transfer-Encoding", "chunked");
 		addHeaderNew("Content-Encoding", "deflate");
 	}
-	
+
 	// clear out previous status, this may be set if the server sends us something while we're sending.
 	m_statusLine.erase();
 
@@ -623,7 +623,7 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 	sendHeaders(m_requestMethod, "HTTP/1.1");
 
 	// send entity
-	tfs->rewind();				
+	tfs->rewind();
 	if (m_doDeflateOut)
 	{
 #ifdef OW_HAVE_ZLIB_H
@@ -790,7 +790,7 @@ HTTPClient::endResponse(std::istream & /*istr*/)
 CIMFeatures
 HTTPClient::getFeatures()
 {
-	m_statusCode = -1; 
+	m_statusCode = -1;
 	String methodOrig = m_requestMethod;
 	m_requestMethod = "OPTIONS";
 	prepareHeaders();
@@ -994,7 +994,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					{
 						rt = E_RESPONSE_FATAL; // already tried authorization once.
 						reasonPhrase = "Authentication failure";
-						
+
 					}
 					break;
 				case SC_METHOD_NOT_ALLOWED:
@@ -1123,8 +1123,8 @@ HTTPClient::convertToFiniteStream()
 	}
 	else if (headerHasKey("Content-Length"))
 	{
-		UInt64 clen = getHeaderValue("Content-Length").toUInt64(); 
-		rval = new HTTPLenLimitIStream(m_istr,clen); 
+		UInt64 clen = getHeaderValue("Content-Length").toUInt64();
+		rval = new HTTPLenLimitIStream(m_istr,clen);
 	}
 	if (getHeaderValue("Content-Encoding").equalsIgnoreCase("deflate"))
 	{
@@ -1167,7 +1167,7 @@ HTTPClient::getStatusLine()
 	{
 		m_statusLine = String::getLine(m_istr);
 	}
-	m_statusCode = -1; 
+	m_statusCode = -1;
 }
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -1177,7 +1177,7 @@ HTTPClient::checkResponse(Resp_t& rt)
 	do
 	{
 		getStatusLine();
-		
+
 		if (!m_istr)
 		{
 			if (m_socket.receiveTimeOutExpired())
@@ -1324,7 +1324,7 @@ HTTPClient::setTimeouts(const Timeout& timeout)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 HTTPClient::assumeSPNEGOAuth()
 {
 	close();

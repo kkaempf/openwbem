@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 * Copyright (C) 2005 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -12,14 +12,14 @@
 *	this list of conditions and the following disclaimer in the documentation
 *	and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc., Novell, Inc., nor the names of its
+*  - Neither the name of Quest Software, Inc., Novell, Inc., nor the names of its
 *	contributors may be used to endorse or promote products derived from this
 *	software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc., Novell, Inc., OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc., Novell, Inc., OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -73,9 +73,9 @@ public:
 	~EmbeddedCIMOMEnvironment();
 	void init();
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const;
-	virtual StringArray getMultiConfigItem(const String &itemName, 
+	virtual StringArray getMultiConfigItem(const String &itemName,
 		const StringArray& defRetVal, const char* tokenizeSeparator) const;
-	
+
 	// from ServiceEnvironmentIFC
 	/**
 	 * WARNING: The return value is valid only for the lifetime of context.
@@ -155,7 +155,6 @@ private:
 	AuthorizerIFCRef m_authorizer;
 
 	AuthorizerManagerRef m_authorizerManager;
-	//AuthorizerIFCRef m_authorizer;
 
 	Logger m_Logger;
 	ConfigMapRef m_configItems;
@@ -173,7 +172,7 @@ private:
 	mutable Mutex m_indicationLock;
 	mutable bool m_indicationRepLayerDisabled;
 	mutable Mutex m_selectableLock;
-	
+
 	enum EEnvState
 	{
 		E_STATE_INVALID,

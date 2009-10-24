@@ -205,10 +205,10 @@
 #define OW_DEFAULT_DISABLE_CPP_PROVIDER_INTERFACE "false"
 #endif
 #ifndef OW_DEFAULT_HTTP_SERVER_ALLOW_LOCAL_AUTHENTICATION
-#define OW_DEFAULT_HTTP_SERVER_ALLOW_LOCAL_AUTHENTICATION "false" 
+#define OW_DEFAULT_HTTP_SERVER_ALLOW_LOCAL_AUTHENTICATION "false"
 #endif
 #ifndef OW_DEFAULT_HTTP_SERVER_REUSE_ADDR
-#define OW_DEFAULT_HTTP_SERVER_REUSE_ADDR "true" 
+#define OW_DEFAULT_HTTP_SERVER_REUSE_ADDR "true"
 #endif
 #ifndef OW_DEFAULT_OWBI1IFC_PROV_LOCATION
 #define OW_DEFAULT_OWBI1IFC_PROV_LOCATION OW_DEFAULT_OWLIBDIR"/owbi1providers"
@@ -356,9 +356,9 @@ namespace ConfigOpts
 
 
 	struct NameAndDefault {
-		const char* name; 
-		const char* defaultValue; 
-	}; 
+		const char* name;
+		const char* defaultValue;
+	};
 	extern const NameAndDefault g_defaults[];
 	extern const NameAndDefault* const g_defaultsEnd;
 

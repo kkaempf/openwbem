@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003-2004 Vintela, Inc., IBM Corp.  All rights reserved.
+* Copyright (C) 2003-2004 Quest Software, Inc., IBM Corp.  All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -149,40 +149,40 @@ void CMPIAssociatorProviderProxy::associators(
 		objectNameWithNS.setNameSpace(ns);
 		CMPI_ObjectPathOnStack eRef(objectNameWithNS);
 		CMPI_ResultOnStack eRes(result);
-	
+
 		char* aClass = const_cast<char*>(assocClass.c_str());
-	
+
 		if (propertyList && propertyList->size() > 0)
 		{
 			pCount = propertyList->size();
 			props = reinterpret_cast<const char **>
 				(alloca(1+pCount*sizeof(char *)));
-	
+
 			for (int i = 0; i < pCount; i++)
 			{
 				props[i]= const_cast<char*>((*propertyList)[i].c_str());
 			}
-	
+
 			props[pCount]=NULL;
 		}
-	
+
 		char *_resultClass = const_cast<char*>(resultClass.empty() ? 0 :
 			resultClass.c_str());
-	
+
 		char *_role = const_cast<char*>(role.empty() ? 0 : role.c_str());
-	
+
 		char * _resultRole = const_cast<char*>(resultRole.empty() ? 0 :
 			resultRole.c_str());
 
 		CMPIPrepareContext(env, eCtx, E_NOT_LOCAL_ONLY, E_SHALLOW,
 			includeQualifiers, includeClassOrigin);
-	
+
 		::CMPIAssociationMI * mi = m_ftable->miVector.assocMI;
-	
+
 		rc=m_ftable->miVector.assocMI->ft->associators(
 			mi,&eCtx,&eRes,&eRef, aClass,
 			_resultClass, _role, _resultRole, props);
-	
+
 		if (rc.rc != CMPI_RC_OK)
 		{
 			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ? CMGetCharPtr(rc.msg) : "");
@@ -321,7 +321,7 @@ void CMPIAssociatorProviderProxy::referenceNames(
 	}
 }
 
-void 
+void
 CMPIAssociatorProviderProxy::shuttingDown(const ProviderEnvironmentIFCRef& env)
 {
 	if (m_ftable->miVector.assocMI)

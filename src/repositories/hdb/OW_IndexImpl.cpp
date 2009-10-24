@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2003-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -91,19 +91,19 @@ private:
 	DB* m_pDB;
 	String m_dbFileName;
 };
-//////////////////////////////////////////////////////////////////////////////	
+//////////////////////////////////////////////////////////////////////////////
 // STATIC
 IndexRef
 Index::createIndexObject()
 {
 	return IndexRef(new IndexImpl);
 }
-//////////////////////////////////////////////////////////////////////////////	
+//////////////////////////////////////////////////////////////////////////////
 IndexImpl::IndexImpl() :
 	m_pDB(NULL), m_dbFileName()
 {
 }
-//////////////////////////////////////////////////////////////////////////////	
+//////////////////////////////////////////////////////////////////////////////
 IndexImpl::~IndexImpl()
 {
 	try
@@ -212,7 +212,7 @@ IndexImpl::close()
 		m_pDB = NULL;
 	}
 }
-//////////////////////////////////////////////////////////////////////////////	
+//////////////////////////////////////////////////////////////////////////////
 void
 IndexImpl::flush()
 {
@@ -227,7 +227,7 @@ namespace
 class OpenCloser
 {
 public:
-	OpenCloser(IndexImpl* pIndex) : m_pIndex(pIndex) 
+	OpenCloser(IndexImpl* pIndex) : m_pIndex(pIndex)
 	{
 		m_pIndex->openIfClosed();
 	}
@@ -239,7 +239,7 @@ private:
 	IndexImpl* m_pIndex;
 };
 }
-//////////////////////////////////////////////////////////////////////////////	
+//////////////////////////////////////////////////////////////////////////////
 // Find exact
 IndexEntry
 IndexImpl::find(const char* key)
@@ -263,7 +263,7 @@ IndexImpl::find(const char* key)
 	}
 	return IndexEntry();
 }
-//////////////////////////////////////////////////////////////////////////////	
+//////////////////////////////////////////////////////////////////////////////
 bool
 IndexImpl::add(const char* key, Int32 offset)
 {
@@ -279,11 +279,11 @@ IndexImpl::add(const char* key, Int32 offset)
 	theRec.size = sizeof(offset);
 	theKey.data = const_cast<void*>(static_cast<const void*>(key));
 	theKey.size = ::strlen(key)+1;
-	int rv = m_pDB->put(m_pDB, &theKey, &theRec, 0); 
+	int rv = m_pDB->put(m_pDB, &theKey, &theRec, 0);
 	OW_LOG_DEBUG3(logger, Format("IndexImpl::add result %1", rv));
 	return (rv == 0);
 }
-//////////////////////////////////////////////////////////////////////////////	
+//////////////////////////////////////////////////////////////////////////////
 bool
 IndexImpl::remove(const char* key, Int32 offset)
 {
@@ -308,7 +308,7 @@ IndexImpl::remove(const char* key, Int32 offset)
 		if (offset == -1L || ientry.offset == offset)
 		{
 			OW_LOG_DEBUG3(logger, Format("about to delete ientry.offset: %1", ientry.offset));
-			int rv = m_pDB->del(m_pDB, &theKey, R_CURSOR); 
+			int rv = m_pDB->del(m_pDB, &theKey, R_CURSOR);
 			OW_LOG_DEBUG3(logger, Format("del returned %1", rv));
 			return (rv == 0);
 		}
@@ -316,7 +316,7 @@ IndexImpl::remove(const char* key, Int32 offset)
 	}
 	return false;
 }
-//////////////////////////////////////////////////////////////////////////////	
+//////////////////////////////////////////////////////////////////////////////
 bool
 IndexImpl::update(const char* key, Int32 newOffset)
 {
@@ -336,7 +336,7 @@ IndexImpl::update(const char* key, Int32 newOffset)
 	theKey.size = ::strlen(key)+1;
 	return (m_pDB->put(m_pDB, &theKey, &theRec, R_CURSOR) == 0);
 }
-//////////////////////////////////////////////////////////////////////////////	
+//////////////////////////////////////////////////////////////////////////////
 IndexEntry
 IndexImpl::findFirst(const char* key)
 {
@@ -375,7 +375,7 @@ IndexImpl::findFirst(const char* key)
 	OW_LOG_DEBUG3(logger, "IndexImpl::findFirst did not find key");
 	return IndexEntry();
 }
-//////////////////////////////////////////////////////////////////////////////	
+//////////////////////////////////////////////////////////////////////////////
 IndexEntry
 IndexImpl::findNext()
 {
@@ -397,7 +397,7 @@ IndexImpl::findNext()
 	OW_LOG_DEBUG3(logger, "IndexImpl::findNext did not find key");
 	return IndexEntry();
 }
-//////////////////////////////////////////////////////////////////////////////	
+//////////////////////////////////////////////////////////////////////////////
 IndexEntry
 IndexImpl::findPrev()
 {
@@ -418,14 +418,14 @@ IndexImpl::findPrev()
 
 } // end namespace OW_NAMESPACE
 
-//////////////////////////////////////////////////////////////////////////////	
+//////////////////////////////////////////////////////////////////////////////
 extern "C" {
 static int
 recCompare(const DBT* key1, const DBT* key2)
 {
 	if (key1->data && key2->data)
 	{
-		return strcmp(reinterpret_cast<const char*>(key1->data), 
+		return strcmp(reinterpret_cast<const char*>(key1->data),
 			reinterpret_cast<const char*>(key2->data));
 	}
 	else if (key1->data && !key2->data)

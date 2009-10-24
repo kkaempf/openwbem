@@ -127,13 +127,13 @@ public:
 	SessionLanguage(const SessionLanguage& arg);
 	SessionLanguage& operator=(const SessionLanguage& arg);
 	virtual ~SessionLanguage();
-	
+
 	int langCount() const { return m_langTags.size(); }
 	String getAcceptLanguageString() const { return m_acceptLanguageString; }
 	SessionLanguage& assign(const char* acceptLangHdrValue);
 
 	/**
-	 * Evaluate the best language to use, based upon what the http client specified, 
+	 * Evaluate the best language to use, based upon what the http client specified,
 	 * as represented by this SessionLanguage object, and what the caller supports.
 	 * @param languages The set of languages the caller supports.
 	 * @param defaultLanguage The default language returned if no match is made.

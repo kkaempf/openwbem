@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -55,7 +55,7 @@ class OW_PROVIDER_API AssociatorProviderIFC: public ProviderBaseIFC
 {
 	public:
 		virtual ~AssociatorProviderIFC();
-		
+
 		/**
 		 * This method is invoked in order to do the Associators operation as
 		 * defined by the CIM operations over HTTP spec at
@@ -71,7 +71,7 @@ class OW_PROVIDER_API AssociatorProviderIFC: public ProviderBaseIFC
 		 * 	information to identify which association must be
 		 * 	traversed in case it supports more than one
 		 * 	association.
-		 * 	
+		 *
 		 * @param objectName Defines the source CIM Object whose associated
 		 * 	Objects are to be returned.  This is an instance name.
 		 * 	Instance name (modelpath).
@@ -89,7 +89,7 @@ class OW_PROVIDER_API AssociatorProviderIFC: public ProviderBaseIFC
 		 * 	plays the specified role (i.e. the name of the Property in the
 		 * 	Association Class that refers to the source Object MUST match the
 		 * 	value of this parameter).
-		 * 	
+		 *
 		 * @param resultRole The resultRole input parameter if not empty (""),
 		 * 	MUST be a valid Property name.  It acts as a filter on the returned
 		 * 	set of Objects by mandating that each returned Object MUST be

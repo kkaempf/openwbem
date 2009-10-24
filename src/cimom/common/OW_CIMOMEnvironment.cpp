@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *	this list of conditions and the following disclaimer in the documentation
 *	and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *	contributors may be used to endorse or promote products derived from this
 *	software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -121,7 +121,7 @@ namespace
 		{
 			return m_pCenv->getConfigItem(name, defRetVal);
 		}
-		virtual StringArray getMultiConfigItem(const String &itemName, 
+		virtual StringArray getMultiConfigItem(const String &itemName,
 			const StringArray& defRetVal, const char* tokenizeSeparator) const
 		{
 			return m_pCenv->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
@@ -131,21 +131,21 @@ namespace
 			OW_ASSERT("Cannot call CIMOMProviderEnvironment::getCIMOMHandle()" == 0);
 			return CIMOMHandleIFCRef();
 		}
-		
+
 		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
 			OW_ASSERT("Cannot call CIMOMProviderEnvironment::getRepositoryCIMOMHandle()" == 0);
 			return CIMOMHandleIFCRef();
 		}
-		
+
 		virtual RepositoryIFCRef getRepository() const
 		{
 			return m_pCenv->getRepository();
-		}		
+		}
 		virtual RepositoryIFCRef getAuthorizingRepository() const
 		{
 			return m_pCenv->getAuthorizingRepository();
-		}		
+		}
 		virtual String getUserName() const
 		{
 			return Platform::getCurrentUserName();
@@ -286,7 +286,7 @@ CIMOMEnvironment::startServices()
 		MutexLock l(m_stateGuard);
 		m_state = E_STATE_INITIALIZED;
 	}
-	
+
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
 		OW_LOG_DEBUG2(m_Logger, Format("CIMOM calling initialized() for service: %1", m_services[i]->getName()));
@@ -394,7 +394,7 @@ CIMOMEnvironment::shutdown()
 	OW_LOG_DEBUG2(m_Logger, "CIMOMEnvironment unloading and deleting services");
 
 	m_pollingManager = 0;
-	
+
 	// Clear selectable objects
 	try
 	{
@@ -510,7 +510,7 @@ CIMOMEnvironment::_loadRequestHandlers()
 	m_reqHandlers.clear();
 	int reqHandlerCount = 0;
 	const StringArray libPaths = getMultiConfigItem(
-		ConfigOpts::REQUEST_HANDLER_PATH_opt, 
+		ConfigOpts::REQUEST_HANDLER_PATH_opt,
 		String(OW_DEFAULT_REQUEST_HANDLER_PATH).tokenize(OW_PATHNAME_SEPARATOR),
 		OW_PATHNAME_SEPARATOR);
 	for (size_t i = 0; i < libPaths.size(); ++i)
@@ -552,7 +552,7 @@ CIMOMEnvironment::_loadRequestHandlers()
 				StringArray supportedContentTypes = rh->getSupportedContentTypes();
 				OW_LOG_INFO(m_Logger, Format("CIMOM loaded request handler from file: %1",
 					libName));
-	
+
 				ReqHandlerDataRef rqData(new ReqHandlerData);
 				rqData->rqIFCRef = rh;
 				for (StringArray::const_iterator iter = supportedContentTypes.begin();
@@ -669,7 +669,7 @@ CIMOMEnvironment::_createLogger()
 {
 	using namespace ConfigOpts;
 	Array<LogAppenderRef> appenders;
-	
+
 	StringArray additionalLogs = getMultiConfigItem(ADDITIONAL_LOGS_opt, StringArray(), " \t");
 
 	// this also gets set if owcimomd is run with -d
@@ -693,31 +693,31 @@ CIMOMEnvironment::_createLogger()
 			String logMainLevel = getConfigItem(Format(LOG_1_LEVEL_opt, logName), OW_DEFAULT_LOG_1_LEVEL);
 			if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG3_CATEGORY))
 			{
-				logMainCategories = String(Logger::STR_DEBUG3_CATEGORY) 
-					+ " " + String(Logger::STR_DEBUG2_CATEGORY) 
-					+ " " + String(Logger::STR_DEBUG_CATEGORY) 
-					+ " " + String(Logger::STR_INFO_CATEGORY) 
-					+ " " + String(Logger::STR_ERROR_CATEGORY) 
+				logMainCategories = String(Logger::STR_DEBUG3_CATEGORY)
+					+ " " + String(Logger::STR_DEBUG2_CATEGORY)
+					+ " " + String(Logger::STR_DEBUG_CATEGORY)
+					+ " " + String(Logger::STR_INFO_CATEGORY)
+					+ " " + String(Logger::STR_ERROR_CATEGORY)
 					+ " " + String(Logger::STR_FATAL_CATEGORY);
 			}
 			else if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG2_CATEGORY))
 			{
-				logMainCategories = String(Logger::STR_DEBUG2_CATEGORY) 
-					+ " " + String(Logger::STR_DEBUG_CATEGORY) 
-					+ " " + String(Logger::STR_INFO_CATEGORY) 
-					+ " " + String(Logger::STR_ERROR_CATEGORY) 
+				logMainCategories = String(Logger::STR_DEBUG2_CATEGORY)
+					+ " " + String(Logger::STR_DEBUG_CATEGORY)
+					+ " " + String(Logger::STR_INFO_CATEGORY)
+					+ " " + String(Logger::STR_ERROR_CATEGORY)
 					+ " " + String(Logger::STR_FATAL_CATEGORY);
 			}
 			else if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
 			{
-				logMainCategories = String(Logger::STR_DEBUG_CATEGORY) 
-					+ " " + String(Logger::STR_INFO_CATEGORY) 
-					+ " " + String(Logger::STR_ERROR_CATEGORY) 
+				logMainCategories = String(Logger::STR_DEBUG_CATEGORY)
+					+ " " + String(Logger::STR_INFO_CATEGORY)
+					+ " " + String(Logger::STR_ERROR_CATEGORY)
 					+ " " + String(Logger::STR_FATAL_CATEGORY);
 			}
 			else if (logMainLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
 			{
-				logMainCategories = String(Logger::STR_INFO_CATEGORY) 
+				logMainCategories = String(Logger::STR_INFO_CATEGORY)
 					+ " " + String(Logger::STR_ERROR_CATEGORY)
 					+ " " + String(Logger::STR_FATAL_CATEGORY);
 			}
@@ -787,7 +787,7 @@ CIMOMEnvironment::_createLogger()
 			}
 		}
 	}
-	
+
 	// convert level into categories
 	if (logMainCategories.empty())
 	{
@@ -796,14 +796,14 @@ CIMOMEnvironment::_createLogger()
 		if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
 		{
 			logMainCategories = String(Logger::STR_DEBUG_CATEGORY)
-				+ " " + String(Logger::STR_INFO_CATEGORY) 
-				+ " " + String(Logger::STR_ERROR_CATEGORY) 
+				+ " " + String(Logger::STR_INFO_CATEGORY)
+				+ " " + String(Logger::STR_ERROR_CATEGORY)
 				+ " " + String(Logger::STR_FATAL_CATEGORY);
 		}
 		else if (logMainLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
 		{
-			logMainCategories = String(Logger::STR_INFO_CATEGORY) 
-				+ " " + String(Logger::STR_ERROR_CATEGORY) 
+			logMainCategories = String(Logger::STR_INFO_CATEGORY)
+				+ " " + String(Logger::STR_ERROR_CATEGORY)
 				+ " " + String(Logger::STR_FATAL_CATEGORY);
 		}
 		else if (logMainLevel.equalsIgnoreCase(Logger::STR_ERROR_CATEGORY))
@@ -831,9 +831,9 @@ CIMOMEnvironment::_loadConfigItemsFromFile(const String& filename)
 	ConfigFile::loadConfigFile(filename, *m_configItems);
 
 	// Now load in additional config files
-	StringArray configDirs = ConfigFile::getMultiConfigItem(*m_configItems, 
-		ConfigOpts::ADDITIONAL_CONFIG_FILES_DIRS_opt, 
-		String(OW_DEFAULT_ADDITIONAL_CONFIG_FILES_DIRS).tokenize(OW_PATHNAME_SEPARATOR), 
+	StringArray configDirs = ConfigFile::getMultiConfigItem(*m_configItems,
+		ConfigOpts::ADDITIONAL_CONFIG_FILES_DIRS_opt,
+		String(OW_DEFAULT_ADDITIONAL_CONFIG_FILES_DIRS).tokenize(OW_PATHNAME_SEPARATOR),
 		OW_PATHNAME_SEPARATOR);
 	for (size_t i = 0; i < configDirs.size(); ++i)
 	{
@@ -885,7 +885,7 @@ CIMOMEnvironment::getConfigItem(const String &name, const String& defRetVal) con
 
 //////////////////////////////////////////////////////////////////////////////
 StringArray
-CIMOMEnvironment::getMultiConfigItem(const String &itemName, 
+CIMOMEnvironment::getMultiConfigItem(const String &itemName,
 	const StringArray& defRetVal, const char* tokenizeSeparator) const
 {
 	return ConfigFile::getMultiConfigItem(*m_configItems, itemName, defRetVal, tokenizeSeparator);
@@ -918,7 +918,7 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-CIMOMHandleIFCRef 
+CIMOMHandleIFCRef
 CIMOMEnvironment::getLockedCIMOMHandle(OperationContext& context, EInitialLockFlag initialLock) const
 {
 	return getCIMOMHandle(context, E_SEND_INDICATIONS, E_USE_PROVIDERS, initialLock);
@@ -1209,7 +1209,7 @@ void
 CIMOMEnvironment::setConfigItem(const String &item,
 	const String &value, EOverwritePreviousFlag overwritePrevious)
 {
-	ConfigFile::setConfigItem(*m_configItems, item, value, 
+	ConfigFile::setConfigItem(*m_configItems, item, value,
 		overwritePrevious == E_OVERWRITE_PREVIOUS ? ConfigFile::E_OVERWRITE_PREVIOUS : ConfigFile::E_PRESERVE_PREVIOUS);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1222,7 +1222,7 @@ CIMOMEnvironment::runSelectEngine() const
 	engine.addSelectableObject(Platform::getSigSelectable(),
 		SelectableCallbackIFCRef(new SelectEngineStopper(engine)),
 		SelectableCallbackIFC::E_READ_EVENT);
-	
+
 	for (size_t i = 0; i < m_selectables.size(); ++i)
 	{
 		engine.addSelectableObject(m_selectables[i]->getSelectObj(), m_selectableCallbacks[i], SelectableCallbackIFC::E_ACCEPT_EVENT);
@@ -1390,7 +1390,7 @@ ServiceDependencyGraph::findIndependentNode() const
 			return nodeiter->first;
 		}
 	}
-	
+
 	// didn't find any :-(
 	return INVALID_NODE();
 }
@@ -1450,7 +1450,7 @@ CIMOMEnvironment::_sortServicesForDependencies()
 	//    the graph contains a cycle
 	// else
 	//    success
-	
+
 	Array<ServiceIFCRef> sortedServices;
 
 	// first build the graph
@@ -1472,7 +1472,7 @@ CIMOMEnvironment::_sortServicesForDependencies()
 			{
 				OW_THROW(CIMOMEnvironmentException, Format("Invalid: 2 services with the same name: %1", name).c_str());
 			}
-			
+
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -258,7 +258,7 @@ CIMValue::createSimpleValue(const String& cimtype,
 	return cv;
 }
 //////////////////////////////////////////////////////////////////////////////
-void				
+void
 CIMValue::readObject(streambuf & istrm)
 {
 	m_impl = CIMValueImpl::readObject(istrm);
@@ -910,7 +910,7 @@ CIMValue::CIMValueImpl::createSimpleValue(CIMDataType::Type type,
 		case CIMDataType::UINT8:
 			return CIMValueImpl(value.toUInt8());
 			break;
-			
+
 		case CIMDataType::SINT8:
 			return CIMValueImpl(value.toInt8());
 			break;
@@ -2470,14 +2470,14 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 			case CIMDataType::REFERENCE:
 				if (forMOF)
 				{
-					out = reinterpret_cast<const CIMObjectPath*>(&m_obj)->toMOF(); 
+					out = reinterpret_cast<const CIMObjectPath*>(&m_obj)->toMOF();
 				}
 				else
 				{
 					out = (reinterpret_cast<const CIMObjectPath*>(&m_obj))->toString();
 				}
 				break;
-			
+
 			case CIMDataType::EMBEDDEDCLASS:
 				if (forMOF)
 				{
@@ -2595,7 +2595,7 @@ readArray(streambuf & istrm, T & ra, int convType)
 			case 2:
 			v = static_cast<typename T::value_type>(ntoh32(v));
 			break;
-			
+
 			case 1:
 			v = static_cast<typename T::value_type>(ntoh16(v));
 			break;
@@ -2810,15 +2810,15 @@ writeValue(streambuf & ostrm, T val, int convType)
 		case 3:
 		v = static_cast<T>(hton64(val));
 		break;
-		
+
 		case 2:
 		v = static_cast<T>(hton32(val));
 		break;
-		
+
 		case 1:
 		v = static_cast<T>(hton16(val));
 		break;
-		
+
 		default:
 		v = val;
 		break;
@@ -2850,15 +2850,15 @@ writeArray(streambuf & ostrm, const T & ra, int convType)
 			case 3:
 			v = static_cast<typename T::value_type>(hton64(ra[i]));
 			break;
-			
+
 			case 2:
 			v = static_cast<typename T::value_type>(hton32(ra[i]));
 			break;
-			
+
 			case 1:
 			v = static_cast<typename T::value_type>(hton16(ra[i]));
 			break;
-			
+
 			default:
 			v = static_cast<typename T::value_type>(ra[i]);
 			break;

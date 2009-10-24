@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -197,7 +197,7 @@ OOPProviderInterface::getName() const
 {
 	return "OOP";
 }
-	
+
 //////////////////////////////////////////////////////////////////////////////
 void
 OOPProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
@@ -251,7 +251,7 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 				OW_LOG_ERROR(lgr, Format("Unknown protocol: %1. Skipping registration: %2", info->protocol, curReg.toString()));
 				continue;
 			}
-			
+
 			StringArray namespaceNames;
 			if (!curReg.NamespaceNamesIsNULL())
 				namespaceNames = curReg.getNamespaceNames();
@@ -263,8 +263,8 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 				continue;
 			}
 
-			float timeoutSecs = timeout.getSeconds() + 60 * 
-				(timeout.getMinutes() + 60 * 
+			float timeoutSecs = timeout.getSeconds() + 60 *
+				(timeout.getMinutes() + 60 *
 				 (timeout.getHours() + 24 * static_cast<float>(timeout.getDays())));
 
 			OW_LOG_DEBUG3(lgr, Format("timeoutSecs = %1", timeoutSecs));
@@ -307,7 +307,7 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 			String className;
 			try
 			{
-				// This can throw a NullValueException. This is fine if this 
+				// This can throw a NullValueException. This is fine if this
 				// is a polled provider or an indication export provider, otherwise
 				// the class name must be known.
 				className = curReg.getClassName();
@@ -362,14 +362,14 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 			}
 			if (userContextIsOperationDependent(curReg) && info->isPersistent)
 			{
-				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have a UserContext that depends on the operation user (\"Operation\" or \"OperationMonitored\")", 
+				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have a UserContext that depends on the operation user (\"Operation\" or \"OperationMonitored\")",
 					instanceID));
 				continue;
 			}
 
 			if (info->isPersistent && !curReg.UnloadTimeoutIsNULL())
 			{
-				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have an UnloadTimeout value", 
+				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have an UnloadTimeout value",
 					instanceID));
 				continue;
 			}
@@ -383,8 +383,8 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 					continue;
 				}
 
-				float timeoutSecs = unloadTimeout.getSeconds() + 60 * 
-					(unloadTimeout.getMinutes() + 60 * 
+				float timeoutSecs = unloadTimeout.getSeconds() + 60 *
+					(unloadTimeout.getMinutes() + 60 *
 					 (unloadTimeout.getHours() + 24 * static_cast<float>(unloadTimeout.getDays())));
 
 				OW_LOG_DEBUG3(lgr, Format("unload timeoutSecs = %1", timeoutSecs));
@@ -599,7 +599,7 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 				OW_LOG_ERROR(lgr, Format("Unknown protocol: %1. Skipping registration: %2", info->protocol, curProvProc.toString()));
 				continue;
 			}
-			
+
 			CIMDateTime timeout = curProvProc.getTimeout();
 			if (!timeout.isInterval())
 			{
@@ -607,8 +607,8 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 				continue;
 			}
 
-			float timeoutSecs = timeout.getSeconds() + 60 * 
-				(timeout.getMinutes() + 60 * 
+			float timeoutSecs = timeout.getSeconds() + 60 *
+				(timeout.getMinutes() + 60 *
 				 (timeout.getHours() + 24 * static_cast<float>(timeout.getDays())));
 
 			OW_LOG_DEBUG3(lgr, Format("timeoutSecs = %1", timeoutSecs));
@@ -648,14 +648,14 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 
 			if (userContextIsOperationDependent(curProvProc) && info->isPersistent)
 			{
-				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have a UserContext that depends on the operation user (\"Operation\" or \"OperationMonitored\")", 
+				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have a UserContext that depends on the operation user (\"Operation\" or \"OperationMonitored\")",
 					instanceID));
 				continue;
 			}
 
 			if (info->isPersistent && !curProvProc.UnloadTimeoutIsNULL())
 			{
-				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have an UnloadTimeout value", 
+				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have an UnloadTimeout value",
 					instanceID));
 				continue;
 			}
@@ -669,8 +669,8 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 					continue;
 				}
 
-				float timeoutSecs = unloadTimeout.getSeconds() + 60 * 
-					(unloadTimeout.getMinutes() + 60 * 
+				float timeoutSecs = unloadTimeout.getSeconds() + 60 *
+					(unloadTimeout.getMinutes() + 60 *
 					 (unloadTimeout.getHours() + 24 * static_cast<float>(unloadTimeout.getDays())));
 
 				OW_LOG_DEBUG3(lgr, Format("unload timeoutSecs = %1", timeoutSecs));
@@ -1005,13 +1005,13 @@ OOPProviderInterface::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& e
 }
 
 //////////////////////////////////////////////////////////////////////////////
-IndicationExportProviderIFCRefArray 
+IndicationExportProviderIFCRefArray
 OOPProviderInterface::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef& env)
 {
 	IndicationExportProviderIFCRefArray rval;
 	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG3(lgr, "OOPProviderInterface::doGetIndicationexportProviders");
-	
+
 	MutexLock lock(m_persistentProvsGuard);
 	ProvRegMap_t::const_iterator iter = m_indicationExportProvReg.begin();
 	while (iter != m_indicationExportProvReg.end())
@@ -1044,13 +1044,13 @@ OOPProviderInterface::doGetIndicationExportProviders(const ProviderEnvironmentIF
 }
 
 //////////////////////////////////////////////////////////////////////////////
-PolledProviderIFCRefArray 
+PolledProviderIFCRefArray
 OOPProviderInterface::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 {
 	PolledProviderIFCRefArray rval;
 	Logger lgr(COMPONENT_NAME);
 	OW_LOG_DEBUG3(lgr, "OOPProviderInterface::doGetPolledProviders");
-	
+
 	MutexLock lock(m_persistentProvsGuard);
 	ProvRegMap_t::const_iterator iter = m_polledProvReg.begin();
 	while (iter != m_polledProvReg.end())
@@ -1083,7 +1083,7 @@ OOPProviderInterface::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-IndicationProviderIFCRef 
+IndicationProviderIFCRef
 OOPProviderInterface::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	Logger lgr(COMPONENT_NAME);
@@ -1119,7 +1119,7 @@ OOPProviderInterface::doGetQueryProvider(const ProviderEnvironmentIFCRef& env, c
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OOPProviderInterface::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 {
 	MutexLock l(m_persistentProvsGuard);
@@ -1153,10 +1153,10 @@ OOPProviderInterface::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OOPProviderInterface::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 {
-	// This should not call terminate(). At this point, providers are still expected to work and can be called after shuttingDown. 
+	// This should not call terminate(). At this point, providers are still expected to work and can be called after shuttingDown.
 	// The providers get terminated in ~OOPProviderInterface.
 
 	Logger lgr(COMPONENT_NAME);
@@ -1204,7 +1204,7 @@ OOPProviderInterface::SavedProviders::getInfo() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OOPProviderBase* 
+OOPProviderBase*
 OOPProviderInterface::SavedProviders::getOOPProviderBase() const
 {
 	if (instanceProv)

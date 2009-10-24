@@ -46,23 +46,23 @@ namespace OW_NAMESPACE
 {
 /**
  * class CppSimpleAssociatorProviderIFC
- * The intent of this class is to simplify the writing of Associator 
- * Providers.  Instead of implementing four functions (referneceNames, 
+ * The intent of this class is to simplify the writing of Associator
+ * Providers.  Instead of implementing four functions (referneceNames,
  * references, associators, associatorNames), you just have to implement
- * one: doReferences().  doReferences() is a modified version of references. 
- * This base class does the work of providing the CIMOM with the four 
- * original functions based on what is returned from doReferences. 
- */ 
+ * one: doReferences().  doReferences() is a modified version of references.
+ * This base class does the work of providing the CIMOM with the four
+ * original functions based on what is returned from doReferences.
+ */
     class OW_CPPPROVIFC_API CppSimpleAssociatorProviderIFC : public CppAssociatorProviderIFC
     {
     protected:
 
 /**
- * This method is invoked in order to do the Associators, AssociatorNames, 
+ * This method is invoked in order to do the Associators, AssociatorNames,
  * References, and ReferenceNames operation as
  * defined by the CIM operations over HTTP spec at
  * http://www.dmtf.org/download/spec/xmls/CIM_HTTP_Mapping10.htm#SecAssociators
- * This operation is used to enumerate CIM Instances of a particular 
+ * This operation is used to enumerate CIM Instances of a particular
  * Association class
  *
  * @param assocClass Defines the association that the objectName
@@ -77,9 +77,9 @@ namespace OW_NAMESPACE
  *
  * @param resultClass The resultClass input parameter, if not empty (""),
  * 	MUST be a valid CIM Class name.  It acts as a filter on the
- * 	returned set of Objects by mandating that the resultRole of each 
- *      returned Object MUST be an ObjectPath to either an Instance of this 
- *      Class (or one of its subclasses) or be this Class (or one of its 
+ * 	returned set of Objects by mandating that the resultRole of each
+ *      returned Object MUST be an ObjectPath to either an Instance of this
+ *      Class (or one of its subclasses) or be this Class (or one of its
  *      subclasses).
  *
  * @param role The role input parameter, if not empty (""), MUST be a
@@ -93,7 +93,7 @@ namespace OW_NAMESPACE
  * @param resultRole The resultRole input parameter if not empty (""),
  * 	MUST be a valid Property name.  It acts as a filter on the returned
  * 	set of Objects by mandating that each returned Object MUST contain
- *      a reference (ObjectPath) to an Instance or Class which is 
+ *      a reference (ObjectPath) to an Instance or Class which is
  * 	associated to the source Object via an Association in which the
  * 	Associated Object plays the specified role (i.e. the name of the
  * 	Property in the Association Class that refers to the Associated
@@ -109,9 +109,9 @@ namespace OW_NAMESPACE
  * 	CIM_ERR_INVALID_PARAMETER (including missing, duplicate,
  * 	unrecognized or otherwise incorrect parameters)
  * 	CIM_ERR_FAILED (some other unspecifed error occurred)
- * 
- * 
- * 
+ *
+ *
+ *
  *  +------------------+                               +-----------------+
  *  | ObjectNameClass  |                               |  ResultClass    |
  *  | ~~~~~~~~~~~~~~~  |                               |  ~~~~~~~~~~~    |
@@ -124,52 +124,52 @@ namespace OW_NAMESPACE
  *                      |                            |  (CIMObjectPath)
  *                      +----------------------------+
  */
-        virtual void doReferences(const ProviderEnvironmentIFCRef &env, 
-                                  CIMInstanceResultHandlerIFC &result, 
-                                  const String &ns, 
-                                  const CIMObjectPath &objectName, 
-                                  const CIMClass &assocClass, 
-                                  const String &resultClass, 
-                                  const String &role, 
-                                  const String &resultRole) = 0; 
+        virtual void doReferences(const ProviderEnvironmentIFCRef &env,
+                                  CIMInstanceResultHandlerIFC &result,
+                                  const String &ns,
+                                  const CIMObjectPath &objectName,
+                                  const CIMClass &assocClass,
+                                  const String &resultClass,
+                                  const String &role,
+                                  const String &resultRole) = 0;
 
     public:
-        virtual void associators(const ProviderEnvironmentIFCRef &env, 
-                                 CIMInstanceResultHandlerIFC &result, 
-                                 const String &ns, 
-                                 const CIMObjectPath &objectName, 
-                                 const String &assocClass, 
-                                 const String &resultClass, 
-                                 const String &role, 
-                                 const String &resultRole, 
-                                 WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, 
-                                 WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, 
-                                 const StringArray *propertyList); 
-        virtual void associatorNames(const ProviderEnvironmentIFCRef &env, 
-                                     CIMObjectPathResultHandlerIFC &result, 
-                                     const String &ns, 
-                                     const CIMObjectPath &objectName, 
-                                     const String &assocClass, 
-                                     const String &resultClass, 
-                                     const String &role, 
-                                     const String &resultRole); 
-        virtual void references(const ProviderEnvironmentIFCRef 
-                                &env, CIMInstanceResultHandlerIFC &result, 
-                                const String &ns, 
-                                const CIMObjectPath &objectName, 
-                                const String &resultClass, 
-                                const String &role, 
-                                WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, 
-                                WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, 
-                                const StringArray *propertyList); 
-        virtual void referenceNames(const ProviderEnvironmentIFCRef &env, 
-                                    CIMObjectPathResultHandlerIFC &result, 
-                                    const String &ns, 
-                                    const CIMObjectPath &objectName, 
-                                    const String &resultClass, 
-                                    const String &role); 
+        virtual void associators(const ProviderEnvironmentIFCRef &env,
+                                 CIMInstanceResultHandlerIFC &result,
+                                 const String &ns,
+                                 const CIMObjectPath &objectName,
+                                 const String &assocClass,
+                                 const String &resultClass,
+                                 const String &role,
+                                 const String &resultRole,
+                                 WBEMFlags:: EIncludeQualifiersFlag includeQualifiers,
+                                 WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin,
+                                 const StringArray *propertyList);
+        virtual void associatorNames(const ProviderEnvironmentIFCRef &env,
+                                     CIMObjectPathResultHandlerIFC &result,
+                                     const String &ns,
+                                     const CIMObjectPath &objectName,
+                                     const String &assocClass,
+                                     const String &resultClass,
+                                     const String &role,
+                                     const String &resultRole);
+        virtual void references(const ProviderEnvironmentIFCRef
+                                &env, CIMInstanceResultHandlerIFC &result,
+                                const String &ns,
+                                const CIMObjectPath &objectName,
+                                const String &resultClass,
+                                const String &role,
+                                WBEMFlags:: EIncludeQualifiersFlag includeQualifiers,
+                                WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin,
+                                const StringArray *propertyList);
+        virtual void referenceNames(const ProviderEnvironmentIFCRef &env,
+                                    CIMObjectPathResultHandlerIFC &result,
+                                    const String &ns,
+                                    const CIMObjectPath &objectName,
+                                    const String &resultClass,
+                                    const String &role);
     };
-} // end namespace OW_NAMESPACE. 
+} // end namespace OW_NAMESPACE.
 
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 

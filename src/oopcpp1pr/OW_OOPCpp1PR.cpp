@@ -634,7 +634,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////////////
 int callInstanceProvider(
-	UInt8 op, 
+	UInt8 op,
 	ProviderBaseIFCRef provider,
 	ProviderEnvironmentIFCRef& provenv,
 	std::streambuf& inbuf,
@@ -857,7 +857,7 @@ int callAssociatorProvider(
 			StringArray propertyList;
 			StringArray* propertyListPtr;
 			BinarySerialization::readPropertyList(inbuf, propertyList, propertyListPtr);
-			
+
 			BinaryCIMInstanceWriter handler(outbuf);
 			initializeCallback.init(provenv);
 			assocProvider->references(provenv, handler, ns, instanceName, resultClass, role,
@@ -1003,7 +1003,7 @@ int callIndicationExportProvider(
 	ProviderBaseIFCRef provider,
 	ProviderEnvironmentIFCRef& provenv,
 	std::streambuf& inbuf,
-	std::streambuf& outbuf, 
+	std::streambuf& outbuf,
 	const UnnamedPipeRef& stdinout,
 	OOPCpp1ProviderRunner::InitializeCallback& initializeCallback)
 {
@@ -1077,7 +1077,7 @@ int callMethodProvider(
 
 //////////////////////////////////////////////////////////////////////////////
 int callQueryProvider(
-	UInt8 op, 
+	UInt8 op,
 	ProviderBaseIFCRef provider,
 	ProviderEnvironmentIFCRef& provenv,
 	std::streambuf& inbuf,
@@ -1163,7 +1163,7 @@ OOPCpp1ProviderRunner::OOPCpp1ProviderRunner(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-ProviderEnvironmentIFCRef 
+ProviderEnvironmentIFCRef
 OOPCpp1ProviderRunner::getProviderEnvironment()
 {
 	return m_penv;

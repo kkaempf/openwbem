@@ -53,7 +53,7 @@ NPI_getmyClass(NPIHandle* npiHandle, const String& nameSpace,
 	catch (...)
 	{
 		// cerr << "Class or Namespace do not exist\n";
-		// TODO: log this, and catch the correct exception.
+		/// @todo  log this, and catch the correct exception.
 		raiseError(npiHandle,"Class or Namespace does not exist");
 	}
 	return cc;
@@ -74,7 +74,7 @@ NPI_enumeratemyInstanceNames(NPIHandle* npiHandle,
 	catch (...)
 	{
 		// cerr << "Class or Namespace do not exist\n";
-		// TODO: log this, and catch the correct exception.
+		/// @todo  log this, and catch the correct exception.
 		npiHandle->errorOccurred = 1;
 		raiseError(npiHandle,"Class or Namespace does not exist");
 	}
@@ -100,7 +100,7 @@ NPI_enumeratemyInstances(NPIHandle* npiHandle, const String& nameSpace,
 	catch (...)
 	{
 		// cerr << "Class or Namespace do not exist\n";
-		// TODO: log this, and catch the correct exception.
+		/// @todo  log this, and catch the correct exception.
 		raiseError(npiHandle,"Class or Namespace does not exist");
 	}
 	return cinsts;
@@ -121,7 +121,7 @@ NPI_getmyInstance(NPIHandle* npiHandle, const CIMObjectPath& owcop,
 	catch (...)
 	{
 		// cerr << "Instance does not exist\n";
-		// TODO: log this, and catch the correct exception.
+		/// @todo  log this, and catch the correct exception.
 		raiseError(npiHandle,"Class or Namespace does not exist");
 	}
 	return ci;
@@ -370,7 +370,7 @@ CIMParameterGetString(NPIHandle* npiHandle, ::CIMParameter cp)
 		raiseError(npiHandle, "Retrieving string parameter failed. Possible attemt to retrieve non-string parameter");
 
 		return NULL;
-	}	
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" int
@@ -383,7 +383,7 @@ CIMParameterGetIntegerValue(NPIHandle* npiHandle, ::CIMParameter cp)
 	} catch (...) {
 		raiseError(npiHandle, "Retrieving integer parameter failed. Possible attemt to retrieve non-integer parameter");
 
-	}	
+	}
 	return value;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -402,7 +402,7 @@ CIMParameterGetRefValue(NPIHandle* npiHandle, ::CIMParameter cp)
 	} catch (...) {
 		raiseError(npiHandle, "Retrieving ref parameter failed. Possible attemt to retrieve non-ref parameter");
 
-	}	
+	}
 	return cop;
 }
 // Instance functions
@@ -465,7 +465,7 @@ CIMInstanceSetIntegerProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 {
 	// Sanity check
 	if (name == NULL) return;
-	
+
 	try {
 		if (strlen(name) == 0) return;
 		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
@@ -510,7 +510,7 @@ CIMInstanceSetBooleanProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 } catch (...) {
 		raiseError(npiHandle,"Error setting boolean property");
 		return;
-	}		
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void
@@ -641,7 +641,7 @@ CIMInstanceGetStringValue(NPIHandle* npiHandle, ::CIMInstance ci,
 {
 	// Sanity check
 	if (name == NULL) return NULL;
-	try {	
+	try {
 		if (strlen(name) == 0) return NULL;
 		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
 		String Key(name);
@@ -686,7 +686,7 @@ CIMInstanceGetIntegerValue(NPIHandle* npiHandle, ::CIMInstance ci,
 			default: return 0;
 		}
 	} catch (...) {
-		raiseError(npiHandle, "Error getting integer property");	
+		raiseError(npiHandle, "Error getting integer property");
 	}
 	return 0;
 }
@@ -698,7 +698,7 @@ CIMInstanceGetRefValue(NPIHandle* npiHandle, ::CIMInstance ci, const char* name)
 	// Sanity check
 	if (name == NULL) return cop;
 	if (strlen(name) == 0) return cop;
-	try {	
+	try {
 		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
 		String Key(name);
 		CIMProperty prop = owci->getProperty(Key);
@@ -718,7 +718,7 @@ CIMInstanceGetRefValue(NPIHandle* npiHandle, ::CIMInstance ci, const char* name)
 extern "C" ::CIMObjectPath
 CIMObjectPathNew(NPIHandle* npiHandle, const char* classname)
 {
-	::CIMObjectPath cop = {NULL};	
+	::CIMObjectPath cop = {NULL};
 	try {
 		String className(classname);
 		OpenWBEM::CIMObjectPath * ref = new OpenWBEM::CIMObjectPath(className);
@@ -777,14 +777,14 @@ extern "C" void
 CIMObjectPathSetNameSpace(NPIHandle* npiHandle, ::CIMObjectPath cop,
 	const char* str)
 {
-	try {	
+	try {
 		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
 		ref->setNameSpace(String(str));
 	} catch (...) {
 		raiseError(npiHandle, "Error getting string property");
 		return;
 	}
-	
+
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void CIMObjectPathSetNameSpaceFromCIMObjectPath(
@@ -1104,7 +1104,7 @@ CIMOMDeliverProcessEvent(NPIHandle* npiHandle, char * ns,
 	catch (...)
 	{
 		// cerr << "Whatever the cause it went wrong\n";
-		// TODO: log this, and catch the correct exception.
+		/// @todo  log this, and catch the correct exception.
 		npiHandle->errorOccurred = 1;
 	}
 }
@@ -1124,7 +1124,7 @@ CIMOMDeliverInstanceEvent(NPIHandle* npiHandle, char * ns,
 		OpenWBEM::CIMValue src_val(* ow_source);
 		OpenWBEM::CIMValue prev_val(* ow_previous);
 	ow_indication->setProperty(String("SourceInstance"), src_val);
-		
+
 	ow_indication->setProperty(String("PreviousInstance"), prev_val);
 	try
 	{
@@ -1134,7 +1134,7 @@ CIMOMDeliverInstanceEvent(NPIHandle* npiHandle, char * ns,
 	catch (...)
 	{
 		// cerr << "Whatever the cause it went wrong\n";
-		// TODO: log this, and catch the correct exception.
+		/// @todo  log this, and catch the correct exception.
 		npiHandle->errorOccurred = 1;
 	}
 	OW_LOG_DEBUG3((*provenv)->getLogger(COMPONENT_NAME), Format("NPIExternal: Deliver %1", npiHandle->errorOccurred));
@@ -1165,7 +1165,7 @@ CIMOMCancelAttach(NPIHandle* npiHandle)
 	delete static_cast<ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 	if (npiHandle->providerError != NULL)
 		free((void *)(npiHandle->providerError));
-	// TODO delete NPIContext
+	/// @todo delete NPIContext
 	free(npiHandle);
 }
 //////////////////////////////////////////////////////////////////////////////

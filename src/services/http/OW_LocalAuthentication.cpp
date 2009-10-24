@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -59,7 +59,7 @@ namespace OW_NAMESPACE
 
 using namespace LocalAuthenticationCommon;
 
-// TODO: For efficiency's sake get rid of owlocalhelper and use the monitor do perform all the necessary work.
+/// @todo  For efficiency's sake get rid of owlocalhelper and use the monitor do perform all the necessary work.
 
 namespace
 {
@@ -187,7 +187,7 @@ LocalAuthentication::authenticate(String& userName,
 	{
 
 		cleanupStaleEntries();
-	
+
 		OW_ASSERT(!info.empty());
 
 		if (info.empty())
@@ -196,18 +196,18 @@ LocalAuthentication::authenticate(String& userName,
 			htcon->setErrorDetails("You must authenticate to access this resource");
 			return E_AUTHENTICATE_CONTINUE;
 		}
-		
+
 		typedef SortedVectorMap<String, String> map_t;
 		map_t infoMap;
-	
+
 		parseInfo(info, infoMap);
-	
+
 		// look for an initial connection where the client specifies their uid
 		map_t::const_iterator iter = infoMap.find("uid");
 		if (iter != infoMap.end() && !iter->second.empty())
 		{
 			String uidStr = iter->second;
-		
+
 			// Lookup the username given the uid
 			uid_t uid;
 			try
@@ -219,7 +219,7 @@ LocalAuthentication::authenticate(String& userName,
 				htcon->setErrorDetails("Invalid uid");
 				return E_AUTHENTICATE_FAIL;
 			}
-			
+
 			bool ok;
 			String uname(UserUtils::getUserName(uid, ok));
 			if (ok)
@@ -231,13 +231,13 @@ LocalAuthentication::authenticate(String& userName,
 				htcon->setErrorDetails("Invalid uid");
 				return E_AUTHENTICATE_FAIL;
 			}
-	
+
 			// give them back the challenge
 			htcon->addHeader("WWW-Authenticate", createNewChallenge(uidStr, userName));
 			htcon->setErrorDetails("OWLocal:2");
 			return E_AUTHENTICATE_CONTINUE;
 		}
-	
+
 		// it's not an initial connection, so it's phase 2, look for the nonce and cookie
 		iter = infoMap.find("nonce");
 		if (iter == infoMap.end() || iter->second.empty())
@@ -245,9 +245,9 @@ LocalAuthentication::authenticate(String& userName,
 			htcon->setErrorDetails("No nonce was provided");
 			return E_AUTHENTICATE_FAIL;
 		}
-	
+
 		String sNonce = iter->second;
-	
+
 		bool nonceFound = false;
 		size_t i = 0;
 		if (!sNonce.empty())
@@ -266,9 +266,9 @@ LocalAuthentication::authenticate(String& userName,
 			htcon->setErrorDetails("invalid nonce");
 			return E_AUTHENTICATE_FAIL;
 		}
-	
+
 		userName = m_authEntries[i].userName;
-	
+
 		iter = infoMap.find("cookie");
 		if (iter == infoMap.end() || iter->second.empty())
 		{
@@ -290,7 +290,7 @@ LocalAuthentication::authenticate(String& userName,
 			m_authEntries.erase(m_authEntries.begin() + i);
 			return E_AUTHENTICATE_SUCCESS;
 		}
-	
+
 		htcon->setErrorDetails("invalid cookie");
 		return E_AUTHENTICATE_FAIL;
 	}
@@ -343,7 +343,7 @@ LocalAuthentication::cleanupEntry(const AuthEntry& entry)
 void
 LocalAuthentication::cleanupStaleEntries()
 {
-	DateTime oneMinuteAgo; 
+	DateTime oneMinuteAgo;
 	oneMinuteAgo.setToCurrent();
 	oneMinuteAgo.addMinutes(-1);
 
@@ -376,12 +376,12 @@ LocalAuthentication::checkProcess()
 	if (m_owlocalhelper)
 	{
 		// must have died
-		OW_LOG_ERROR(m_logger, Format("LocalAuthentication detected that \"%1\" is not running. Status: %2", 
+		OW_LOG_ERROR(m_logger, Format("LocalAuthentication detected that \"%1\" is not running. Status: %2",
 			m_localHelperBinPath, m_owlocalhelper->processStatus().toString()));
 		m_owlocalhelper->waitCloseTerm(0.00, 0.01, 0.02);
 		m_owlocalhelper = 0;
 	}
-	
+
 	PrivilegeManager privMan(PrivilegeManager::getPrivilegeManager());
 	OW_ASSERT(!privMan.isNull());
 
@@ -398,7 +398,7 @@ LocalAuthentication::checkProcess()
 
 	if (!m_owlocalhelper->processStatus().running())
 	{
-		String msg = Format("LocalAuthentication failed to start %1. status = %2, stderr = %3", 
+		String msg = Format("LocalAuthentication failed to start %1. status = %2, stderr = %3",
 			m_localHelperBinPath, m_owlocalhelper->processStatus().toString(), m_owlocalhelper->err()->readAll());
 		OW_LOG_ERROR(m_logger, msg);
 		OW_THROW(LocalAuthenticationException, msg.c_str());
@@ -473,7 +473,7 @@ LocalAuthentication::processHelperCommand(const String& inputCmd, const String& 
 	{
 		m_owlocalhelper->waitCloseTerm(0.00, 0.01, 0.02);
 		m_owlocalhelper = 0;
-		OW_THROW_SUBEX(LocalAuthenticationException, Format("Failed running %1. command = %2, output = \"%3\"", 
+		OW_THROW_SUBEX(LocalAuthenticationException, Format("Failed running %1. command = %2, output = \"%3\"",
 			m_localHelperBinPath, inputCmd, output).c_str(), e);
 	}
 	return output;
@@ -514,7 +514,7 @@ LocalAuthentication::createFileHelper(const String& uid, const String& cookie)
 	}
 	if (filename.empty())
 	{
-		OW_THROW(LocalAuthenticationException, 
+		OW_THROW(LocalAuthenticationException,
 			"createFileHelper: got back empty filename from owlocalhelper!");
 	}
 	return filename;

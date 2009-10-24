@@ -39,12 +39,12 @@ namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-CppQueryProviderIFC::CppQueryProviderIFC() 
+CppQueryProviderIFC::CppQueryProviderIFC()
 {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-CppQueryProviderIFC::~CppQueryProviderIFC() 
+CppQueryProviderIFC::~CppQueryProviderIFC()
 {
 }
 
@@ -56,7 +56,7 @@ CppQueryProviderIFC::getQueryProvider()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 CppQueryProviderIFC::getQueryProviderInfoWithEnv(
 	const ProviderRegistrationEnvironmentIFCRef& env,
 	QueryProviderInfo& info)

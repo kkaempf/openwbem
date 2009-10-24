@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2002-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2002-2004 Quest Software, Inc. All rights reserved.
 * Copyright (C) 2005-2006 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -12,14 +12,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -56,7 +56,7 @@ public:
 	 * A provider should override this method to report which classes in
 	 * which namespaces it instruments.
 	 * It should insert an entry for each class it is responsible for.
-	 * It should also insert one entry for each base class of the classes 
+	 * It should also insert one entry for each base class of the classes
 	 * of indications the provider may generate.  Note that this base class
 	 * requirement is unique to indication providers and doesn't apply to
 	 * other types of providers.
@@ -78,7 +78,7 @@ public:
 	 * A provider should override this method to report which classes in
 	 * which namespaces it instruments.
 	 * It should insert an entry for each class it is responsible for.
-	 * It should also insert one entry for each base class of the classes 
+	 * It should also insert one entry for each base class of the classes
 	 * of indications the provider may generate.  Note that this base class
 	 * requirement is unique to indication providers and doesn't apply to
 	 * other types of providers.
@@ -93,29 +93,29 @@ public:
 	 * virtual.
 	 */
 	virtual void getIndicationProviderInfo(IndicationProviderInfo& info);
-	
+
 	virtual void activateFilter(
 		const ProviderEnvironmentIFCRef& env,
-		const WQLSelectStatement& filter, 
-		const String& eventType, 
+		const WQLSelectStatement& filter,
+		const String& eventType,
 		const String& nameSpace,
-		const StringArray& classes, 
+		const StringArray& classes,
 		bool firstActivation
 		);
 	virtual void authorizeFilter(
 		const ProviderEnvironmentIFCRef& env,
-		const WQLSelectStatement& filter, 
-		const String& eventType, 
+		const WQLSelectStatement& filter,
+		const String& eventType,
 		const String& nameSpace,
-		const StringArray& classes, 
+		const StringArray& classes,
 		const String& owner
 		);
 	virtual void deActivateFilter(
 		const ProviderEnvironmentIFCRef& env,
-		const WQLSelectStatement& filter, 
-		const String& eventType, 
+		const WQLSelectStatement& filter,
+		const String& eventType,
 		const String& nameSpace,
-		const StringArray& classes, 
+		const StringArray& classes,
 		bool lastActivation
 		);
 	/**
@@ -131,18 +131,18 @@ public:
 	 * If the provider is going to start a thread that will wait for some
 	 * external event, it should do it the first time activateFilter is called
 	 * firstActivation will == true.
-	 * If a provider may take a long time to generate all instances in 
+	 * If a provider may take a long time to generate all instances in
 	 * enumInstances, it should either not be polled or it should have a large
 	 * poll interval.
 	 * Also, a provider that is polled can only do lifecycle indications.
 	 * If the provider doesn't do lifecycle indications, then it must return
 	 * 0 from mustPoll, and has to generate indications by another means.
-	 * @param env 
+	 * @param env
 	 */
 	virtual int mustPoll(
 		const ProviderEnvironmentIFCRef& env,
-		const WQLSelectStatement& filter, 
-		const String& eventType, 
+		const WQLSelectStatement& filter,
+		const String& eventType,
 		const String& nameSpace,
 		const StringArray& classes
 		);
@@ -153,4 +153,4 @@ typedef SharedLibraryReference< IntrusiveReference<CppIndicationProviderIFC> > C
 } // end namespace OW_NAMESPACE
 
 #endif
-								
+

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -200,17 +200,17 @@ public:
 	{
 		return ConfigFile::getConfigItem(m_configItems, name, defRetVal);
 	}
-	virtual StringArray getMultiConfigItem(const String &itemName, 
+	virtual StringArray getMultiConfigItem(const String &itemName,
 		const StringArray& defRetVal, const char* tokenizeSeparator) const
 	{
 		return ConfigFile::getMultiConfigItem(m_configItems, itemName, defRetVal, tokenizeSeparator);
 	}
 	virtual void setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious)
 	{
-		ConfigFile::setConfigItem(m_configItems, item, value, 
+		ConfigFile::setConfigItem(m_configItems, item, value,
 			overwritePrevious == E_OVERWRITE_PREVIOUS ? ConfigFile::E_OVERWRITE_PREVIOUS : ConfigFile::E_PRESERVE_PREVIOUS);
 	}
-	
+
 	virtual RequestHandlerIFCRef getRequestHandler(const String&) const
 	{
 		RequestHandlerIFCRef ref(m_XMLListener.getLibRef(),
@@ -290,9 +290,9 @@ private:
 
 class HTTPXMLCIMListenerCallback : public CIMListenerCallback
 {
-private: 
+private:
 	IntrusiveReference<ListenerAuthenticator> m_pLAuthenticator;
-	Bool m_useHTTPS; 
+	Bool m_useHTTPS;
 public:
 	/**
 	 * @param logger If a logger specified then it will receive log messages, otherwise
@@ -301,7 +301,7 @@ public:
 	HTTPXMLCIMListenerCallback(IntrusiveReference<ListenerAuthenticator> authenticator,
 		Bool useHTTPS = false)
 		: m_pLAuthenticator(authenticator)
-		, m_useHTTPS(useHTTPS) 
+		, m_useHTTPS(useHTTPS)
 	{
 	}
 	~HTTPXMLCIMListenerCallback()
@@ -313,7 +313,7 @@ public:
 				i != m_callbacks.end(); ++i)
 			{
 				registrationInfo reg = i->second;
-		
+
 				try
 				{
 					deleteRegistrationObjects(reg);
@@ -360,7 +360,7 @@ public:
 			const String& sourceNamespace,
 			const CIMListenerCallbackRef& cb,
 			const ClientAuthCBIFCRef& authCb,
-			UInt16 httpPort, 
+			UInt16 httpPort,
 			UInt16 httpsPort)
 	{
 		registrationInfo reg;
@@ -570,7 +570,7 @@ HTTPXMLCIMListener::HTTPXMLCIMListener(
 	{
 		if(!FileSystem::canRead(certFileName))
 		{
-			OW_THROW_ERRNO_MSG(IOException, 
+			OW_THROW_ERRNO_MSG(IOException,
 				Format("Unable to open certificate file %1",
 					certFileName).c_str());
 		}
@@ -579,7 +579,7 @@ HTTPXMLCIMListener::HTTPXMLCIMListener(
 	{
 		if(!FileSystem::canRead(keyFileName))
 		{
-			OW_THROW(IOException, 
+			OW_THROW(IOException,
 				Format("Unable to open key file %1",
 					keyFileName).c_str());
 		}
@@ -644,13 +644,13 @@ HTTPXMLCIMListener::registerForIndication(
 {
 	return m_callback->registerForIndication(url,ns,filter,querylanguage,
 									  sourceNamespace,cb,authCb,
-									  m_httpListenPort,m_httpsListenPort); 
+									  m_httpListenPort,m_httpsListenPort);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 HTTPXMLCIMListener::deregisterForIndication( const String& handle )
 {
-	m_callback->deregisterForIndication(handle); 
+	m_callback->deregisterForIndication(handle);
 }
 
 } // end namespace OW_NAMESPACE

@@ -64,7 +64,7 @@ usage(const char* name)
 {
 	cerr << "Usage: " << name << " <url> [dump file extension]" << endl;
 }
-		
+
 
 class ClientCIMOMHandleSource : public MethodLocking::CIMOMHandleSource
 {
@@ -111,7 +111,7 @@ main(int argc, char* argv[])
 
 		LogAppender::setDefaultLogAppender(LogAppenderRef(new CerrAppender()));
 		String url(argv[1]);
-		
+
 		ClientCIMOMHandleSource chs(url);
 		const char* const cppNS = "root/methodLockingTest-cpp";
 		const char* const oopNS = "root/methodLockingTest-oop";
@@ -130,7 +130,7 @@ main(int argc, char* argv[])
 		TEST_ASSERT(MethodLocking::test(oopNS, write, no, chs));
 		TEST_ASSERT(!MethodLocking::test(oopNS, write, no, read, chs));
 		TEST_ASSERT(!MethodLocking::test(oopNS, read, write, chs));
-			
+
 		return 0;
 
 	}

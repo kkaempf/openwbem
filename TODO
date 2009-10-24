@@ -21,7 +21,7 @@ Testing:
     - review CIM operations over HTTP v1.2 and see where we deviate.
     - Test case insensitivity (eg. try to add a disk and DISK class)
     - Test storing 1 million instances.
-    - Test that failed OW_ASSERT(foo) comes across the wire correctly.
+    - Test that failed BLOCXX_ASSERT(foo) comes across the wire correctly.
     - Capture XML and run it through xmllint with the dtd.
     - Create a test that does a createInstance with a class that has an 
       infinite number of properties (to try and simulate a DNS attack)

@@ -1,6 +1,6 @@
 /*******************************************************************************
 * Copyright (C) 2005 Novell, Inc. All rights reserved.
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -12,14 +12,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc., Novell, Inc., nor the names of its
+*  - Neither the name of Quest Software, Inc., Novell, Inc., nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc., Novell, Inc., OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc., Novell, Inc., OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -137,7 +137,7 @@ class CIMXMLListenerServiceEnvironment : public ServiceEnvironmentIFC
 {
 public:
 	CIMXMLListenerServiceEnvironment(
-		const ConfigFile::ConfigMap& configItems, 
+		const ConfigFile::ConfigMap& configItems,
 		const AuthenticatorIFCRef& authenticator,
 		RequestHandlerIFCRef listener,
 		Reference<Array<SelectablePair_t> > selectables)
@@ -159,10 +159,10 @@ public:
 	virtual bool authenticate(String &userName,
 		const String &info, String &details, OperationContext& context) const
 	{
-		// TODO what if m_authenticator == 0?  or should this even be allowed...
+		/// @todo what if m_authenticator == 0?  or should this even be allowed...
 		if (!m_authenticator)
 		{
-			return false; 
+			return false;
 		}
 		return m_authenticator->authenticate(userName, info, details, context);
 	}
@@ -192,17 +192,17 @@ public:
 	{
 		return ConfigFile::getConfigItem(m_configItems, name, defRetVal);
 	}
-	virtual StringArray getMultiConfigItem(const String &itemName, 
+	virtual StringArray getMultiConfigItem(const String &itemName,
 		const StringArray& defRetVal, const char* tokenizeSeparator) const
 	{
 		return ConfigFile::getMultiConfigItem(m_configItems, itemName, defRetVal, tokenizeSeparator);
 	}
 	virtual void setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious)
 	{
-		ConfigFile::setConfigItem(m_configItems, item, value, 
+		ConfigFile::setConfigItem(m_configItems, item, value,
 			overwritePrevious == E_OVERWRITE_PREVIOUS ? ConfigFile::E_OVERWRITE_PREVIOUS : ConfigFile::E_PRESERVE_PREVIOUS);
 	}
-	
+
 	virtual RequestHandlerIFCRef getRequestHandler(const String&) const
 	{
 		RequestHandlerIFCRef ref(m_XMLListener.getLibRef(),
@@ -244,7 +244,7 @@ public:
 			engine.addSelectableObject((*m_selectables)[i].first->getSelectObj(),
 				(*m_selectables)[i].second, SelectableCallbackIFC::E_ACCEPT_EVENT);
 		}
-		engine.addSelectableObject(m_stopObject->getReadSelectObj(), 
+		engine.addSelectableObject(m_stopObject->getReadSelectObj(),
 			SelectableCallbackIFCRef(new SelectEngineStopper(engine)),
 			SelectableCallbackIFC::E_READ_EVENT);
 
@@ -277,10 +277,10 @@ private:
 };
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
-CIMXMLListener::CIMXMLListener(const ConfigFile::ConfigMap& configItems, 
-							   const CIMListenerCallbackRef& callback, 
+CIMXMLListener::CIMXMLListener(const ConfigFile::ConfigMap& configItems,
+							   const CIMListenerCallbackRef& callback,
 							   const AuthenticatorIFCRef& authenticator)
-	: m_XMLListener(SharedLibraryRef(0), new XMLListener(callback)) 
+	: m_XMLListener(SharedLibraryRef(0), new XMLListener(callback))
 	//, m_pLAuthenticator(new ListenerAuthenticator)
 	, m_httpServer(new HTTPServer)
 	, m_httpListenPort(0)
@@ -289,7 +289,7 @@ CIMXMLListener::CIMXMLListener(const ConfigFile::ConfigMap& configItems,
 	Reference<Array<SelectablePair_t> >
 		selectables(new Array<SelectablePair_t>);
 	ServiceEnvironmentIFCRef env(new CIMXMLListenerServiceEnvironment(
-		configItems, authenticator, m_XMLListener, selectables)); 
+		configItems, authenticator, m_XMLListener, selectables));
 	m_httpServer->init(env);
 	m_httpServer->start();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really
@@ -314,7 +314,7 @@ CIMXMLListener::~CIMXMLListener()
 			i != m_callbacks.end(); ++i)
 		{
 			registrationInfo reg = i->second;
-	
+
 			try
 			{
 				deleteRegistrationObjects(reg);

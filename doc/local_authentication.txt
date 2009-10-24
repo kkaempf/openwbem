@@ -6,7 +6,7 @@ HTTP OWLocal Authentication Scheme
 Copyright Notice
 
    Copyright (C) The Internet Society (1999).  All Rights Reserved.
-   Copyright (C) Vintela, Inc (2004).  All Rights Reserved.
+   Copyright (C) Quest Software, Inc.(2004).  All Rights Reserved.
 
 
 Abstract
@@ -21,7 +21,7 @@ Abstract
    client's credentials.
 
    The "OWLocal" authentication scheme is based on the model that the
-   client must authenticate itself by reading data from a file on the 
+   client must authenticate itself by reading data from a file on the
    filesystem.
 
    There are no optional authentication parameters.
@@ -37,12 +37,12 @@ Purpose
 
 Overall Operation
 
-   The OWLocal scheme is based on a double challenge-response paradigm. 
-   First the OWLocal scheme challenges without any parameters. This 
-   first step is optional. A client can initiate the process at the 
-   second step. In response to the initial challenge, the client sends 
-   the user id. The server then replies with the second challenge and 
-   provides a nonce value and a cookie file name. A valid response 
+   The OWLocal scheme is based on a double challenge-response paradigm.
+   First the OWLocal scheme challenges without any parameters. This
+   first step is optional. A client can initiate the process at the
+   second step. In response to the initial challenge, the client sends
+   the user id. The server then replies with the second challenge and
+   provides a nonce value and a cookie file name. A valid response
    contains the nonce value and the cookie contained in the cookie file.
    The file is created in a manner that only the user identified by the
    initial user id can read the contents.
@@ -110,8 +110,8 @@ follows:
      address spoofing is not that hard.)
 
      An implementation might choose not to accept a previously used
-     nonce, in order to protect against a replay attack. Or, an 
-     implementation might choose to use one-time nonces for POST or 
+     nonce, in order to protect against a replay attack. Or, an
+     implementation might choose to use one-time nonces for POST or
      PUT requests and a time-stamp for GET requests.
 
      The nonce is opaque to the client.
@@ -121,12 +121,12 @@ follows:
      uniquely generated each time a 401 request is made. The file contains
      the cookie the client will supply to the server for authentication.
      The permissions on the file will be set such that only the user
-     identified by the initial user id provided by the client can read the 
+     identified by the initial user id provided by the client can read the
      contents of the file.
 
    cookie
      A client-specified string. This is the value that the server stored
-     in the cookie-file. It is recommended that the server create a high 
+     in the cookie-file. It is recommended that the server create a high
      quality random string of data at least 16 bytes long.
 
 
@@ -138,7 +138,7 @@ the following:
 
 To receive the challenge2, the client sends the userid.
 
-If the user agent wishes to send the userid "0" it would use the 
+If the user agent wishes to send the userid "0" it would use the
 following header field:
 
   Authorization: OWLocal uid="0"
@@ -196,7 +196,7 @@ Limited Use Nonce Values
 Full Copyright Statement
 
    Copyright (C) The Internet Society (1999).  All Rights Reserved.
-   Copyright (C) Vintela, Inc (2004).  All Rights Reserved.
+   Copyright (C) Quest Software, Inc.(2004).  All Rights Reserved.
 
    This document and translations of it may be copied and furnished to
    others, and derivative works that comment on or otherwise explain it

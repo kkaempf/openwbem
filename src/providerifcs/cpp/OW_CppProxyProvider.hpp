@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -68,7 +68,7 @@ class OW_CPPPROVIFC_API CppAssociatorProviderProxy : public AssociatorProviderIF
 {
 public:
 	CppAssociatorProviderProxy(const CppAssociatorProviderIFCRef& pProv);
-	
+
 	virtual void associators(
 			const ProviderEnvironmentIFCRef& env,
 			CIMInstanceResultHandlerIFC& result,
@@ -128,9 +128,9 @@ public:
 			const String& ns,
 			const String& className,
 			CIMInstanceResultHandlerIFC& result,
-			WBEMFlags::ELocalOnlyFlag localOnly, 
-			WBEMFlags::EDeepFlag deep, 
-			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::ELocalOnlyFlag localOnly,
+			WBEMFlags::EDeepFlag deep,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList,
 			const CIMClass& requestedClass,
@@ -140,9 +140,9 @@ public:
 			const String& ns,
 			const CIMObjectPath& instanceName,
 			WBEMFlags::ELocalOnlyFlag localOnly,
-			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList, 
+			const StringArray* propertyList,
 			const CIMClass& cimClass);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual CIMObjectPath createInstance(
@@ -213,7 +213,7 @@ public:
 	{
 		return m_pProv->getHandlerClassNames();
 	}
-	
+
 	virtual void exportIndication(const ProviderEnvironmentIFCRef& env,
 		const String& ns,
 		const CIMInstance& indHandlerInst, const CIMInstance& indicationInst)
@@ -274,9 +274,9 @@ public:
 	CppIndicationProviderProxy(const CppIndicationProviderIFCRef& pProv)
 		: m_pProv(pProv) {}
 	virtual void deActivateFilter(
-		const ProviderEnvironmentIFCRef &env, 
-		const WQLSelectStatement &filter, 
-		const String &eventType, 
+		const ProviderEnvironmentIFCRef &env,
+		const WQLSelectStatement &filter,
+		const String &eventType,
 		const String& nameSpace,
 		const StringArray& classes,
 		bool lastActivation)
@@ -284,9 +284,9 @@ public:
 		m_pProv->deActivateFilter(env,filter,eventType,nameSpace, classes,lastActivation);
 	}
 	virtual void activateFilter(
-		const ProviderEnvironmentIFCRef &env, 
-		const WQLSelectStatement &filter, 
-		const String &eventType, 
+		const ProviderEnvironmentIFCRef &env,
+		const WQLSelectStatement &filter,
+		const String &eventType,
 		const String& nameSpace,
 		const StringArray& classes,
 		bool firstActivation)
@@ -294,19 +294,19 @@ public:
 		m_pProv->activateFilter(env,filter,eventType,nameSpace,classes,firstActivation);
 	}
 	virtual void authorizeFilter(
-		const ProviderEnvironmentIFCRef &env, 
-		const WQLSelectStatement &filter, 
-		const String &eventType, 
+		const ProviderEnvironmentIFCRef &env,
+		const WQLSelectStatement &filter,
+		const String &eventType,
 		const String& nameSpace,
-		const StringArray& classes, 
-		const String &owner) 
+		const StringArray& classes,
+		const String &owner)
 	{
 		m_pProv->authorizeFilter(env,filter,eventType,nameSpace,classes,owner);
 	}
 	virtual int mustPoll(
 		const ProviderEnvironmentIFCRef& env,
-		const WQLSelectStatement& filter, 
-		const String& eventType, 
+		const WQLSelectStatement& filter,
+		const String& eventType,
 		const String& nameSpace,
 		const StringArray& classes
 		)
@@ -319,7 +319,7 @@ public:
 	}
 private:
 	CppIndicationProviderIFCRef m_pProv;
-	
+
 	// note this doesn't need to be mutex protected because the indication server always [de]activates subscriptions serially.
 };
 

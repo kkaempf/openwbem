@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -70,14 +70,14 @@ public:
 		const ParserErrorHandlerIFCRef& _theErrorHandler);
 	~CIMOMVisitor();
 	void VisitMOFSpecification( const MOFSpecification * );
-	
+
 	void VisitMOFProductionCompilerDirective( const MOFProductionCompilerDirective * );
 	void VisitMOFProductionClassDeclaration( const MOFProductionClassDeclaration * );
 	void VisitMOFProductionAssocDeclaration( const MOFProductionAssocDeclaration * );
 	void VisitMOFProductionIndicDeclaration( const MOFProductionIndicDeclaration * );
 	void VisitMOFProductionQualifierDeclaration( const MOFProductionQualifierDeclaration * );
 	void VisitMOFProductionInstanceDeclaration( const MOFProductionInstanceDeclaration * );
-	
+
 	void VisitCompilerDirective( const CompilerDirective * );
 	void VisitPragmaName( const PragmaName * );
 	void VisitPragmaParameter( const PragmaParameter * );
@@ -88,18 +88,18 @@ public:
 	void VisitAliasIdentifier( const AliasIdentifier * );
 	void VisitSuperClass( const SuperClass * );
 	void VisitClassName( const ClassName * );
-	
-	void VisitClassFeaturePropertyDeclaration( const ClassFeaturePropertyDeclaration * );	
-	void VisitClassFeatureMethodDeclaration( const ClassFeatureMethodDeclaration * );	
-	void VisitClassFeatureReferenceDeclaration( const ClassFeatureReferenceDeclaration * );	
-	
-	void VisitAssociationFeatureClassFeature( const AssociationFeatureClassFeature * );	
-	
+
+	void VisitClassFeaturePropertyDeclaration( const ClassFeaturePropertyDeclaration * );
+	void VisitClassFeatureMethodDeclaration( const ClassFeatureMethodDeclaration * );
+	void VisitClassFeatureReferenceDeclaration( const ClassFeatureReferenceDeclaration * );
+
+	void VisitAssociationFeatureClassFeature( const AssociationFeatureClassFeature * );
+
 	void VisitPropertyDeclaration( const PropertyDeclaration * );
 	void VisitReferenceDeclaration( const ReferenceDeclaration * );
 	void VisitMethodDeclaration( const MethodDeclaration * );
 	void VisitQualifier( const Qualifier * );
-	
+
 	void VisitQualifierParameterConstantValue( const QualifierParameterConstantValue * );
 	void VisitQualifierParameterArrayInitializer( const QualifierParameterArrayInitializer * );
 	void VisitFlavor( const Flavor * );
@@ -118,19 +118,19 @@ public:
 	void VisitConstantValueCharValue( const ConstantValueCharValue * );
 	void VisitConstantValueBooleanValue( const ConstantValueBooleanValue * );
 	void VisitConstantValueNullValue( const ConstantValueNullValue * );
-	
+
 	void VisitParameterDataType( const ParameterDataType * );
 	void VisitParameterObjectRef( const ParameterObjectRef * );
-	
+
 	void VisitParameterName( const ParameterName * );
 	void VisitArray( const Array * );
 	void VisitDefaultValue( const DefaultValue * );
-	
+
 	void VisitInitializerReferenceInitializer( const InitializerReferenceInitializer * );
 	void VisitInitializerArrayInitializer( const InitializerArrayInitializer * );
 	void VisitInitializerConstantValue( const InitializerConstantValue * );
 	void VisitArrayInitializer( const ArrayInitializer * );
-	
+
 	void VisitReferenceInitializerAliasIdentifier( const ReferenceInitializerAliasIdentifier * );
 	void VisitReferenceInitializerObjectHandle( const ReferenceInitializerObjectHandle * );
 	void VisitObjectHandle( const ObjectHandle * );
@@ -169,7 +169,7 @@ private:
 
 	// config
 	Compiler::Options m_opts;
-	
+
 	// used for current #pragma values
 	String m_namespace;
 	String m_instanceLocale;
@@ -178,7 +178,7 @@ private:
 	String m_nonLocalType;
 	String m_source;
 	String m_sourceType;
-	
+
 	Cache<CIMQualifierType> m_dataTypeCache;
 	CIMDataType getQualifierDataType(const String& qualName, const LineInfo& li);
 	CIMQualifierType getQualifierType(const String& qualName, const LineInfo& li);
@@ -190,12 +190,12 @@ private:
 #endif
 
 	CIMClass getClass(const String& className, const LineInfo& li);
-	
+
 	CIMValue convertValuesIntoValueArray( const CIMValueArray& values );
 
-	void compileDep(const String& className, const LineInfo& li); 
-	void compileQuals(const LineInfo& li); 
-	
+	void compileDep(const String& className, const LineInfo& li);
+	void compileQuals(const LineInfo& li);
+
 	// Functions that call into the remote cimom handle
 	CIMClass CIMOMgetClass(const String& className, const LineInfo& li);
 	void CIMOMprocessClass(const LineInfo& li);
@@ -206,7 +206,7 @@ private:
 	void CIMOMprocessInstanceAux();
 	CIMQualifierType CIMOMgetQualifierType(const String& qualName, const LineInfo& li);
 	void CIMOMcreateNamespace(const LineInfo& li);
-	
+
 };
 
 } // end namespace MOF

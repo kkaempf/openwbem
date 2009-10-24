@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -67,18 +67,18 @@ class Alias;
 class AliasIdentifier;
 class SuperClass;
 class ClassName;
-	
-class ClassFeaturePropertyDeclaration;	
-class ClassFeatureMethodDeclaration;	
-class ClassFeatureReferenceDeclaration;	
-	
-class AssociationFeatureClassFeature;	
+
+class ClassFeaturePropertyDeclaration;
+class ClassFeatureMethodDeclaration;
+class ClassFeatureReferenceDeclaration;
+
+class AssociationFeatureClassFeature;
 
 class PropertyDeclaration;
 class ReferenceDeclaration;
 class MethodDeclaration;
 class Qualifier;
-	
+
 class QualifierParameterConstantValue;
 class QualifierParameterArrayInitializer;
 
@@ -137,16 +137,16 @@ class OW_MOF_API Visitor {
 public:
 	Visitor();
 	virtual ~Visitor();
-	
+
 	virtual void VisitMOFSpecification( const MOFSpecification * ) = 0;
-	
+
 	virtual void VisitMOFProductionCompilerDirective( const MOFProductionCompilerDirective * ) = 0;
 	virtual void VisitMOFProductionClassDeclaration( const MOFProductionClassDeclaration * ) = 0;
 	virtual void VisitMOFProductionAssocDeclaration( const MOFProductionAssocDeclaration * ) = 0;
 	virtual void VisitMOFProductionIndicDeclaration( const MOFProductionIndicDeclaration * ) = 0;
 	virtual void VisitMOFProductionQualifierDeclaration( const MOFProductionQualifierDeclaration * ) = 0;
 	virtual void VisitMOFProductionInstanceDeclaration( const MOFProductionInstanceDeclaration * ) = 0;
-	
+
 	virtual void VisitCompilerDirective( const CompilerDirective * ) = 0;
 	virtual void VisitPragmaName( const PragmaName * ) = 0;
 	virtual void VisitPragmaParameter( const PragmaParameter * ) = 0;
@@ -157,18 +157,18 @@ public:
 	virtual void VisitAliasIdentifier( const AliasIdentifier * ) = 0;
 	virtual void VisitSuperClass( const SuperClass * ) = 0;
 	virtual void VisitClassName( const ClassName * ) = 0;
-	
-	virtual void VisitClassFeaturePropertyDeclaration( const ClassFeaturePropertyDeclaration * ) = 0;	
-	virtual void VisitClassFeatureMethodDeclaration( const ClassFeatureMethodDeclaration * ) = 0;	
-	virtual void VisitClassFeatureReferenceDeclaration( const ClassFeatureReferenceDeclaration * ) = 0;	
-	
-	virtual void VisitAssociationFeatureClassFeature( const AssociationFeatureClassFeature * ) = 0;	
-	
+
+	virtual void VisitClassFeaturePropertyDeclaration( const ClassFeaturePropertyDeclaration * ) = 0;
+	virtual void VisitClassFeatureMethodDeclaration( const ClassFeatureMethodDeclaration * ) = 0;
+	virtual void VisitClassFeatureReferenceDeclaration( const ClassFeatureReferenceDeclaration * ) = 0;
+
+	virtual void VisitAssociationFeatureClassFeature( const AssociationFeatureClassFeature * ) = 0;
+
 	virtual void VisitPropertyDeclaration( const PropertyDeclaration * ) = 0;
 	virtual void VisitReferenceDeclaration( const ReferenceDeclaration * ) = 0;
 	virtual void VisitMethodDeclaration( const MethodDeclaration * ) = 0;
 	virtual void VisitQualifier( const Qualifier * ) = 0;
-	
+
 	virtual void VisitQualifierParameterConstantValue( const QualifierParameterConstantValue * ) = 0;
 	virtual void VisitQualifierParameterArrayInitializer( const QualifierParameterArrayInitializer * ) = 0;
 
@@ -190,24 +190,24 @@ public:
 	virtual void VisitConstantValueCharValue( const ConstantValueCharValue * ) = 0;
 	virtual void VisitConstantValueBooleanValue( const ConstantValueBooleanValue * ) = 0;
 	virtual void VisitConstantValueNullValue( const ConstantValueNullValue * ) = 0;
-	
+
 	virtual void VisitParameterDataType( const ParameterDataType * ) = 0;
 	virtual void VisitParameterObjectRef( const ParameterObjectRef * ) = 0;
-	
+
 	virtual void VisitParameterName( const ParameterName * ) = 0;
 	virtual void VisitArray( const Array * ) = 0;
 	virtual void VisitDefaultValue( const DefaultValue * ) = 0;
-	
+
 	virtual void VisitInitializerReferenceInitializer( const InitializerReferenceInitializer * ) = 0;
 	virtual void VisitInitializerArrayInitializer( const InitializerArrayInitializer * ) = 0;
 	virtual void VisitInitializerConstantValue( const InitializerConstantValue * ) = 0;
 
 	virtual void VisitArrayInitializer( const ArrayInitializer * ) = 0;
-	
+
 	virtual void VisitReferenceInitializerAliasIdentifier( const ReferenceInitializerAliasIdentifier * ) = 0;
 	virtual void VisitReferenceInitializerObjectHandle( const ReferenceInitializerObjectHandle * ) = 0;
 	virtual void VisitObjectHandle( const ObjectHandle * ) = 0;
-	
+
 	virtual void VisitQualifierDeclaration( const QualifierDeclaration * ) = 0;
 	virtual void VisitQualifierName( const QualifierName * ) = 0;
 	virtual void VisitQualifierType( const QualifierType * ) = 0;

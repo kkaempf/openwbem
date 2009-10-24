@@ -110,7 +110,7 @@ struct Entry
 typedef std::map<String, Entry> map_t;
 map_t g_connections;
 
-gss_ctx_id_t* 
+gss_ctx_id_t*
 getGssCtx(const String& connectionId)
 {
 	map_t::iterator i = g_connections.find(connectionId);
@@ -277,7 +277,7 @@ try
 		}
 		else if (mode == E_CLIENT)
 		{
-			rv = vas_gss_spnego_initiate(vas_ctx, vas_id, 0, pgss_ctx_id, serverPrincipalName, GSS_C_MUTUAL_FLAG, 
+			rv = vas_gss_spnego_initiate(vas_ctx, vas_id, 0, pgss_ctx_id, serverPrincipalName, GSS_C_MUTUAL_FLAG,
 				VAS_GSS_SPNEGO_ENCODING_BASE64, &in_token, &out_token);
 		}
 #elif defined(OW_USE_VAS2_API)
@@ -291,15 +291,15 @@ try
 		}
 		if (mode == E_SERVER)
 		{
-			rv = vas_gss_spnego_accept(vas, pgss_ctx_id, 0, /*VAS_GSS_SPNEGO_ENCODING_BASE64*/ VAS_GSS_SPNEGO_ENCODING_DER, 
-				static_cast<const unsigned char*>(in_token.value), in_token.length, 
+			rv = vas_gss_spnego_accept(vas, pgss_ctx_id, 0, /*VAS_GSS_SPNEGO_ENCODING_BASE64*/ VAS_GSS_SPNEGO_ENCODING_DER,
+				static_cast<const unsigned char*>(in_token.value), in_token.length,
 				reinterpret_cast<unsigned char**>(&out_token.value), &out_token.length, 0);
 		}
 		else if (mode == E_CLIENT)
 		{
-			rv = vas_gss_spnego_initiate(vas, pgss_ctx_id, serverPrincipalName, flags, 
-				/*VAS_GSS_SPNEGO_ENCODING_BASE64*/ VAS_GSS_SPNEGO_ENCODING_DER, 
-				static_cast<const unsigned char*>(in_token.value), in_token.length, 
+			rv = vas_gss_spnego_initiate(vas, pgss_ctx_id, serverPrincipalName, flags,
+				/*VAS_GSS_SPNEGO_ENCODING_BASE64*/ VAS_GSS_SPNEGO_ENCODING_DER,
+				static_cast<const unsigned char*>(in_token.value), in_token.length,
 				reinterpret_cast<unsigned char**>(&out_token.value), &out_token.length);
 		}
 		if (out_token.value != 0)
@@ -326,35 +326,35 @@ try
 				OM_uint32 minor_status = 0;
 				gss_name_t clientName;
 				OM_uint32 err = gss_inquire_context(&minor_status, *pgss_ctx_id, &clientName, 0, 0, 0, 0, 0, 0);
-				if (err != GSS_S_COMPLETE) 
+				if (err != GSS_S_COMPLETE)
 				{
 					cout << "F\n";
 					cout << getGssError("gss_inquire_context", err, minor_status) << endl;
 					continue;
 				}
-		
+
 				// Convert the client's name into a visible string
 				gss_buffer_desc buf = GSS_C_EMPTY_BUFFER;
 				err = gss_display_name(&minor_status, clientName, &buf, 0);
-				if (err != GSS_S_COMPLETE) 
+				if (err != GSS_S_COMPLETE)
 				{
 					cout << "F\n";
 					cout << getGssError("gss_display_name", err, minor_status) << endl;
 					continue;
 				}
-		
+
 				String username(static_cast<const char*>(buf.value), buf.length);
 
 				cout << "S\n";
 				cout << username << endl;
 				cout << String(static_cast<char*>(out_token.value), out_token.length) << endl;
-				
+
 				gss_release_buffer(&minor_status, &buf);
 				gss_release_name(&minor_status, &clientName);
 				cleanGssCtx(connectionId);
 			}
 			break;
-			
+
 			case GSS_S_CONTINUE_NEEDED:
 				cout << "C\n";
 				// hmm, vas_gss_spnego_accept doesn't say the out_token data will be null terminated...

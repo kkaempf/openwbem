@@ -1,22 +1,22 @@
 /*******************************************************************************
-* Copyright (C) 2005, Vintela, Inc. All rights reserved.
+* Copyright (C) 2005, Quest Software, Inc. All rights reserved.
 * Copyright (C) 2006, Novell, Inc. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
-* 
+*
 *     * Redistributions of source code must retain the above copyright notice,
 *       this list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of 
-*       Vintela, Inc., 
-*       nor Novell, Inc., 
-*       nor the names of its contributors or employees may be used to 
-*       endorse or promote products derived from this software without 
+*     * Neither the name of
+*       Quest Software, Inc.,
+*       nor Novell, Inc.,
+*       nor the names of its contributors or employees may be used to
+*       endorse or promote products derived from this software without
 *       specific prior written permission.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -44,17 +44,17 @@
 #include "blocxx/ExceptionIds.hpp"
 #include "OW_Exception.hpp"
 
-// This is using BLOCXX_NAMESPACE instead of OW_NAMESPACE because the 
-// macros in blocxx/Exception.hpp expect the ExceptionIds to be in 
+// This is using BLOCXX_NAMESPACE instead of OW_NAMESPACE because the
+// macros in blocxx/Exception.hpp expect the ExceptionIds to be in
 // BLOCXX_NAMESPACE
 namespace BLOCXX_NAMESPACE
 {
 	namespace ExceptionIds
 	{
-		// The purpose of this file/namespace is to centralize all 
+		// The purpose of this file/namespace is to centralize all
 		// the exception subclass id numbers,
 		// in order to to prevent id conflicts.  Numbering starts from 1.
-		// All numbers must be positive (BloCxx uses negative numbers). 
+		// All numbers must be positive (BloCxx uses negative numbers).
 
 		// common library
 		static const int CIMExceptionId = 1;
@@ -92,7 +92,7 @@ namespace BLOCXX_NAMESPACE
 		static const int DaemonExceptionId = 8002;
 		static const int CIMOMEnvironmentExceptionId = 8003;
 		static const int IndicationServerExceptionId = 8004;
-		static const int EmbeddedCIMOMEnvironmentExceptionId = 8005; 
+		static const int EmbeddedCIMOMEnvironmentExceptionId = 8005;
 
 		// mof compiler lib
 		static const int MOFCompilerExceptionId = 9001;

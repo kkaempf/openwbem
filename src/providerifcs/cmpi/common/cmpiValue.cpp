@@ -52,7 +52,7 @@ OpenWBEM::CIMValue value2CIMValue(const CMPIValue* data, const CMPIType type, CM
 	{
 	  return v;
 	}
-	
+
 	if(type & CMPI_ARRAY)
 	{
 		CMPIArray *ar=data->array;
@@ -83,7 +83,7 @@ OpenWBEM::CIMValue value2CIMValue(const CMPIValue* data, const CMPIType type, CM
 		//else if (aType==CMPI_string) CopyToStringArray(OpenWBEM::String,string->hdl)
 		else if(aType == CMPI_charsA || aType == CMPI_chars)
 		{
-			OpenWBEM::Array<OpenWBEM::String> helper(aSize); 
+			OpenWBEM::Array<OpenWBEM::String> helper(aSize);
 			for(int i = 0; i < aSize; i++)
 			{
 				helper[i] = OpenWBEM::String( (char *)(aData[i].value.chars));
@@ -93,7 +93,7 @@ OpenWBEM::CIMValue value2CIMValue(const CMPIValue* data, const CMPIType type, CM
 
 		else if(aType == CMPI_string)
 		{
-			OpenWBEM::Array<OpenWBEM::String> helper(aSize); 
+			OpenWBEM::Array<OpenWBEM::String> helper(aSize);
 			for(int i = 0; i < aSize; i++)
 			{
 				helper[i]=OpenWBEM::String((char *)(aData[i].value.string->hdl));
@@ -315,7 +315,7 @@ CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data)
 			default: ;
 		}
 	}
-   
+
 	else if((t & (CMPI_UINT | CMPI_SINT)) == CMPI_UINT)
 	{
 		switch(t)

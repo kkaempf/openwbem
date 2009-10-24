@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003-2004 Vintela, Inc All rights reserved.
+* Copyright (C) 2003-2004 Quest Software, Inc.All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -131,7 +131,7 @@ public:
 			}
 		}
 	}
-	
+
 	// transitions, and whether state applies to str1 or str2
 	struct transition_t
 	{
@@ -151,7 +151,7 @@ public:
 
 	struct state_t
 	{
-		state_t() 
+		state_t()
 		: transitions()
 		, acceptState(false)
 		{
@@ -280,7 +280,7 @@ struct isForInput : public unary_function<StateMachine::transition_t, bool>
 void outputHeader()
 {
 	cout << "/*******************************************************************************\n";
-	cout << "* Copyright (C) 2003-2004 Vintela, Inc All rights reserved.\n";
+	cout << "* Copyright (C) 2003-2004 Quest Software, Inc.All rights reserved.\n";
 	cout << "*\n";
 	cout << "* Redistribution and use in source and binary forms, with or without\n";
 	cout << "* modification, are permitted provided that the following conditions are met:\n";
@@ -292,14 +292,14 @@ void outputHeader()
 	cout << "*    this list of conditions and the following disclaimer in the documentation\n";
 	cout << "*    and/or other materials provided with the distribution.\n";
 	cout << "*\n";
-	cout << "*  - Neither the name of Vintela, Inc nor the names of its\n";
+	cout << "*  - Neither the name of Quest Software, Inc.nor the names of its\n";
 	cout << "*    contributors may be used to endorse or promote products derived from this\n";
 	cout << "*    software without specific prior written permission.\n";
 	cout << "*\n";
 	cout << "* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''\n";
 	cout << "* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\n";
 	cout << "* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\n";
-	cout << "* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc OR THE CONTRIBUTORS\n";
+	cout << "* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc.OR THE CONTRIBUTORS\n";
 	cout << "* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR\n";
 	cout << "* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF\n";
 	cout << "* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS\n";
@@ -383,7 +383,7 @@ void outputCode()
 		else
 		{
 			// we're in an accept state with outgoing transitions, we need to save our position
-			if ((c1 || c2) && stateMachine.m_states[i].acceptState) 
+			if ((c1 || c2) && stateMachine.m_states[i].acceptState)
 			{
 				cout << "\tstr1marker = str1;\n";
 				cout << "\tstr2marker = str2;\n";
@@ -441,7 +441,7 @@ bool findDuplicateStates(int& state1, int& state2)
 
 void minimizeStateMachine()
 {
-	// this is a horribly inefficient way of doing this, but it works, was 
+	// this is a horribly inefficient way of doing this, but it works, was
 	// simple to code, and it only needs to be run once.
 	DEBUG("minimizing state machine\n");
 	int state1 = StateMachine::invalid;

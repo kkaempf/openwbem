@@ -12,7 +12,7 @@
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
  * Author:        Adrian Schuur <schuur@de.ibm.com>
- * 
+ *
  * Contributor:   Markus Mueller <sedgewick_de@yahoo.de>
  *
  * Description: CMPIObjectPath support
@@ -91,7 +91,7 @@ static CMPIStatus resultReturnObject(const CMPIResult* eRes, const CMPIInstance*
 	try
 	{
 		//std::cout << "inst to handle " << inst.toMOF() << std::endl;
-		// TODO - turn instance into object
+		/// @todo - turn instance into object
 		res->handle(inst);
 
 	}
@@ -132,7 +132,7 @@ static CMPIStatus resultReturnObjectPath(const CMPIResult* eRes,
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnInstDone(const CMPIResult* eRes) 
+static CMPIStatus resultReturnInstDone(const CMPIResult* eRes)
 {
 	(void) eRes;
 	CMReturn(CMPI_RC_OK);

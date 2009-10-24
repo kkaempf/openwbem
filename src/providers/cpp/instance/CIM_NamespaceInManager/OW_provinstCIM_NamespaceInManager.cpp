@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2003-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -93,7 +93,7 @@ public:
 		{
 			return;
 		}
-		
+
 		// should only be one ObjectManager
 		CIMObjectPath omPath = objectManagers.nextElement();
 		while (namespaces.hasMoreElements())
@@ -126,7 +126,7 @@ public:
 		{
 			return;
 		}
-		
+
 		// should only be one ObjectManager
 		CIMObjectPath omPath = objectManagers.nextElement();
 		while (namespaces.hasMoreElements())
@@ -161,25 +161,25 @@ public:
 			{
 				omNs = ns;
 			}
-	
+
 			// This will throw if it doesn't exist
 			env->getCIMOMHandle()->getInstance(omNs, objectManagerPath);
-	
+
 			CIMObjectPath nsPath(instanceName.getKeyT("Dependent").getValueT().toCIMObjectPath());
 			String nsNs = nsPath.getNameSpace();
 			if (nsNs.empty())
 			{
 				nsNs = ns;
 			}
-	
+
 			// This will throw if it doesn't exist
 			env->getCIMOMHandle()->getInstance(nsNs, nsPath);
-	
-	
+
+
 			inst = cimClass.newInstance();
 			inst.setProperty("Antecedent", CIMValue(objectManagerPath));
 			inst.setProperty("Dependent", CIMValue(nsPath));
-	
+
 		}
 		catch (const CIMException& e)
 		{
@@ -269,7 +269,7 @@ public:
 		const String &role)
 	{
 		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::referenceNames");
-		
+
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
 		OW_ASSERT(resultClass.equalsIgnoreCase("CIM_NamespaceInManager"));
@@ -279,7 +279,7 @@ public:
 	class AssociatorFilter : public CIMInstanceResultHandlerIFC
 	{
 	public:
-		AssociatorFilter(const CIMObjectPath& objectName_, CIMInstanceResultHandlerIFC& result_, 		
+		AssociatorFilter(const CIMObjectPath& objectName_, CIMInstanceResultHandlerIFC& result_,
 			CIMOMHandleIFCRef hdl_,
 			const String& ns_,
 			EIncludeQualifiersFlag includeQualifiers_,

@@ -142,7 +142,7 @@ int main_aux(int argc, char * * argv)
 	char const * exec_app_name = argv[4];
 	StringArray exec_argv = String(argv[5]).tokenize("+");
 	StringArray exec_envp = String(argv[6]).tokenize("+");
-	Int8 monitored_user_exec = String(argv[7]).toInt8(); 
+	Int8 monitored_user_exec = String(argv[7]).toInt8();
 	copy_env_var("LD_LIBRARY_PATH", exec_envp);
 	copy_env_var("LIBPATH", exec_envp); // AIX
 	copy_env_var("SHLIB_PATH", exec_envp); // HPUX
@@ -152,11 +152,11 @@ int main_aux(int argc, char * * argv)
 		"/monexectest-689acb0e1ec89f45-7085a2a1780f5f42/libexec/openwbem";
 	PrivilegeManager::use_lib_path = true;
 	PrivilegeManager mgr = PrivilegeManager::createMonitor(config_dir, app_name);
-	ProcessRef p_proc; 
+	ProcessRef p_proc;
 	if (monitored_user_exec)
 	{
 		p_proc =
-			mgr.monitoredUserSpawn(exec_path, exec_app_name, exec_argv, 
+			mgr.monitoredUserSpawn(exec_path, exec_app_name, exec_argv,
 			exec_envp, "owcimomd");
 	}
 	else

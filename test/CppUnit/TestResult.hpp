@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -43,7 +43,7 @@ class TestFailure;
 
 
 /*
- * A TestResult collects the results of executing a test case. It is an 
+ * A TestResult collects the results of executing a test case. It is an
  * instance of the Collecting Parameter pattern.
  *
  * The test framework distinguishes between failures and errors.
@@ -54,9 +54,9 @@ class TestFailure;
  * TestResult supplies a template method 'setSynchronizationObject ()'
  * so that subclasses can provide mutual exclusion in the face of multiple
  * threads.  This can be useful when tests execute in one thread and
- * they fill a subclass of TestResult which effects change in another 
+ * they fill a subclass of TestResult which effects change in another
  * thread.  To have mutual exclusion, override setSynchronizationObject ()
- * and make sure that you create an instance of ExclusiveZone at the 
+ * and make sure that you create an instance of ExclusiveZone at the
  * beginning of each method.
  *
  * see Test
@@ -102,11 +102,11 @@ public:
 		SynchronizationObject   *m_syncObject;
 
 	public:
-								ExclusiveZone (SynchronizationObject *syncObject) 
-								: m_syncObject (syncObject) 
+								ExclusiveZone (SynchronizationObject *syncObject)
+								: m_syncObject (syncObject)
 								{ m_syncObject->lock (); }
 
-								~ExclusiveZone () 
+								~ExclusiveZone ()
 								{ m_syncObject->unlock (); }
 	};
 

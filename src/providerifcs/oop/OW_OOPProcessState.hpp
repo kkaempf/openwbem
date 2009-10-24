@@ -65,7 +65,7 @@ public:
 	{
 	}
 
-	enum PSNULL 
+	enum PSNULL
 	{
 		E_PSNULL
 	};

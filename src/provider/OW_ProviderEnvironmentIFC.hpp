@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -40,8 +40,8 @@
 #include "OW_IfcsFwd.hpp"
 #include "OW_CommonFwd.hpp"
 
-#include "OW_Logger.hpp" // TODO: Remove this once everybody has been warned to use OW_CppProviderIncludes.hpp instead.
-#include "OW_CIMOMHandleIFC.hpp" // TODO: Remove this once everybody has been warned to use OW_CppProviderIncludes.hpp instead.
+#include "OW_Logger.hpp" /// @todo  Remove this once everybody has been warned to use OW_CppProviderIncludes.hpp instead.
+#include "OW_CIMOMHandleIFC.hpp" /// @todo  Remove this once everybody has been warned to use OW_CppProviderIncludes.hpp instead.
 
 namespace OW_NAMESPACE
 {
@@ -57,7 +57,7 @@ class OW_PROVIDER_API ProviderEnvironmentIFC : public IntrusiveCountableBase
 public:
 	virtual ~ProviderEnvironmentIFC();
 
-	/** 
+	/**
 	 * This function returns a regular cimom handle that does access
 	 * checking and may call providers.  WARNING: The return value
 	 * is valid only as long as this object is valid (see class note).
@@ -65,7 +65,7 @@ public:
 	 */
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const = 0;
 
-	/** 
+	/**
 	 * This function returns a cimom handle that directly accesses
 	 * the repository (CIMServer is bypassed).  No providers will be
 	 * called.  This function should only be called if getCIMOMHandle()
@@ -75,7 +75,7 @@ public:
 	 */
 	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const = 0;
 
-	/** 
+	/**
 	 * This function returns a reference to the repository.  This
 	 * function should only be called if getCIMOMHandle() and
 	 * getRepositoryCIMOMHandle() are insufficient.
@@ -84,7 +84,7 @@ public:
 	 */
 	virtual RepositoryIFCRef getRepository() const = 0;
 
-	/** 
+	/**
 	* Like getRepository(), but all operations get checked to see if the
 	* user is authorized to do the operation.
 	*/
@@ -95,17 +95,17 @@ public:
 		E_READ,
 		E_WRITE
 	};
-	/** 
+	/**
 	 * This function returns a regular cimom handle that does access
 	 * checking and may call providers.  WARNING: The return value
 	 * is valid only as long as this object is valid (see class note).
 	 * Each operation done on the cimom handle does appropriate locking.
-	 * In addition, the read/write lock is acquired before 
+	 * In addition, the read/write lock is acquired before
 	 * getLockedCIMOMHandle() returns. initialLock specifies whether the
 	 * read or write lock is acquired. The lock is released by the
 	 * destructor of the returned CIMOMHandleIFC, thus the caller should
 	 * take care to ensure that the lock is not held for too long.
-	 * 
+	 *
 	 * @throws TimeoutException If the lock can't be acquired in time.
 	 * @throws ProviderEnvironmentException If this function is not
 	 *         implemented.
@@ -115,7 +115,7 @@ public:
 	virtual LoggerRef getLogger() const OW_DEPRECATED; // in 3.1.0
 	virtual LoggerRef getLogger(const String& componentName) const;
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const = 0;
-	virtual StringArray getMultiConfigItem(const String &itemName, 
+	virtual StringArray getMultiConfigItem(const String &itemName,
 		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const = 0;
 
 	virtual String getUserName() const = 0;
@@ -128,8 +128,8 @@ public:
 	 */
 	virtual ProviderEnvironmentIFCRef clone() const = 0;
 };
-									
+
 
 } // end namespace OW_NAMESPACE
 
-#endif									
+#endif

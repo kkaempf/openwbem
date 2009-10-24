@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -69,7 +69,7 @@ public:
 	, theLineInfo(li)
 	{}
 	virtual ~Flavor(){}
-	
+
 	void Accept( Visitor *pV ) const { pV->VisitFlavor( this ); }
 
 	AutoPtr< const String > pFlavor;
@@ -118,7 +118,7 @@ public:
 	{
 		pV->VisitQualifierParameterArrayInitializer( this );
 	}
-	
+
 	AutoPtr< const ArrayInitializer > pArrayInitializer;
 	LineInfo theLineInfo;
 };
@@ -135,7 +135,7 @@ public:
 	{
 		pV->VisitQualifierParameterConstantValue( this );
 	}
-	
+
 	AutoPtr< const ConstantValue > pConstantValue;
 	LineInfo theLineInfo;
 };
@@ -170,7 +170,7 @@ public:
 		}
 	}
 	void Accept( Visitor *pV ) const { pV->VisitQualifier( this ); }
-	
+
 	AutoPtr< const QualifierName > pQualifierName;
 	AutoPtr< const QualifierParameter > pQualifierParameter;
 	AutoPtr< List< Flavor * > > pFlavor;
@@ -280,7 +280,7 @@ public:
 		}
 	}
 	void Accept( Visitor *pV ) const { pV->VisitInstanceDeclaration( this ); }
-	
+
 	AutoPtr< List< Qualifier * > > pQualifier;
 	AutoPtr< const ClassName > pClassName;
 	AutoPtr< const Alias > pAlias;
@@ -302,7 +302,7 @@ public:
 		}
 	}
 	void Accept( Visitor *pV ) const { pV->VisitDefaultFlavor( this ); }
-	
+
 	AutoPtr< List< Flavor * > > pFlavor;
 };
 class OW_MOF_API MetaElement
@@ -332,7 +332,7 @@ public:
 		}
 	}
 	void Accept( Visitor *pV ) const { pV->VisitScope( this ); }
-	
+
 	AutoPtr< List< MetaElement * > > pMetaElement;
 };
 class OW_MOF_API DataType
@@ -373,12 +373,12 @@ public:
 	{}
 	virtual ~QualifierType(){}
 	void Accept( Visitor *pV ) const { pV->VisitQualifierType( this ); }
-	
+
 	AutoPtr< const DataType > pDataType;
 	AutoPtr< const Array > pArray;
 	AutoPtr< const DefaultValue > pDefaultValue;
 };
-	
+
 class OW_MOF_API QualifierDeclaration
 {
 public:
@@ -570,7 +570,7 @@ public:
 	{
 		pV->VisitReferenceInitializerAliasIdentifier( this );
 	}
-	
+
 	AutoPtr< const AliasIdentifier > pAliasIdentifier;
 };
 class OW_MOF_API ReferenceInitializerObjectHandle : public ReferenceInitializer
@@ -599,7 +599,7 @@ public:
 		pV->VisitInitializerReferenceInitializer( this );
 	}
 	AutoPtr< const ReferenceInitializer > pReferenceInitializer;
-};		
+};
 class OW_MOF_API InitializerArrayInitializer : public Initializer
 {
 public:
@@ -612,7 +612,7 @@ public:
 		pV->VisitInitializerArrayInitializer( this );
 	}
 	AutoPtr< const ArrayInitializer > pArrayInitializer;
-};		
+};
 class OW_MOF_API InitializerConstantValue : public Initializer
 {
 public:
@@ -625,7 +625,7 @@ public:
 		pV->VisitInitializerConstantValue( this );
 	}
 	AutoPtr< const ConstantValue > pConstantValue;
-};		
+};
 class OW_MOF_API ParameterName
 {
 public:
@@ -677,7 +677,7 @@ public:
 	AutoPtr< List< Qualifier * > > pQualifier;
 	AutoPtr< const ObjectRef > pObjectRef;
 	AutoPtr< const ParameterName > pParameterName;
-	AutoPtr< const Array > pArray;	
+	AutoPtr< const Array > pArray;
 };
 class OW_MOF_API ParameterDataType : public Parameter
 {
@@ -704,7 +704,7 @@ public:
 	AutoPtr< List< Qualifier * > > pQualifier;
 	AutoPtr< const DataType > pDataType;
 	AutoPtr< const ParameterName > pParameterName;
-	AutoPtr< const Array > pArray;	
+	AutoPtr< const Array > pArray;
 };
 class OW_MOF_API MethodName
 {
@@ -743,7 +743,7 @@ public:
 		}
 	}
 	void Accept( Visitor *pV ) const { pV->VisitMethodDeclaration( this ); }
-	
+
 	AutoPtr< List< Qualifier * > > pQualifier;
 	AutoPtr< const DataType > pDataType;
 	AutoPtr< const MethodName > pMethodName;
@@ -771,7 +771,7 @@ public:
 		}
 	}
 	void Accept( Visitor *pV ) const { pV->VisitReferenceDeclaration( this ); }
-	
+
 	AutoPtr< List< Qualifier * > > pQualifier;
 	AutoPtr< const ObjectRef > pObjectRef;
 	AutoPtr< const ReferenceName > pReferenceName;
@@ -833,7 +833,7 @@ public:
 	{
 		pV->VisitAssociationFeatureClassFeature( this );
 	}
-	
+
 	AutoPtr< const ClassFeature > pClassFeature;
 };
 class OW_MOF_API ClassFeatureMethodDeclaration : public ClassFeature
@@ -848,7 +848,7 @@ public:
 	{
 		pV->VisitClassFeatureMethodDeclaration( this );
 	}
-	
+
 	AutoPtr< const MethodDeclaration > pMethodDeclaration;
 };
 class OW_MOF_API ClassFeaturePropertyDeclaration : public ClassFeature
@@ -863,7 +863,7 @@ public:
 	{
 		pV->VisitClassFeaturePropertyDeclaration( this );
 	}
-	
+
 	AutoPtr< const PropertyDeclaration > pPropertyDeclaration;
 };
 /* Note: This should be in AssociationFeature, but I found some MOF files
@@ -880,7 +880,7 @@ public:
 	{
 		pV->VisitClassFeatureReferenceDeclaration( this );
 	}
-	
+
 	AutoPtr< const ReferenceDeclaration > pReferenceDeclaration;
 };
 class OW_MOF_API SuperClass
@@ -891,7 +891,7 @@ public:
 	{}
 	virtual ~SuperClass(){}
 	void Accept( Visitor *pV ) const { pV->VisitSuperClass( this ); }
-	
+
 	AutoPtr< const ClassName > pClassName;
 };
 class OW_MOF_API IndicDeclaration
@@ -925,7 +925,7 @@ public:
 		}
 	}
 	void Accept( Visitor *pV ) const { pV->VisitIndicDeclaration( this ); }
-	
+
 	AutoPtr< List< Qualifier * > > pQualifier;
 	AutoPtr< const ClassName > pClassName;
 	AutoPtr< const Alias > pAlias;
@@ -964,7 +964,7 @@ public:
 		}
 	}
 	void Accept( Visitor *pV ) const { pV->VisitAssocDeclaration( this ); }
-	
+
 	AutoPtr< List< Qualifier * > > pQualifier;
 	AutoPtr< const ClassName > pClassName;
 	AutoPtr< const Alias > pAlias;
@@ -1003,7 +1003,7 @@ public:
 		}
 	}
 	void Accept( Visitor *pV ) const { pV->VisitClassDeclaration( this ); }
-	
+
 	AutoPtr< List< Qualifier * > > pQualifier;
 	AutoPtr< const ClassName > pClassName;
 	AutoPtr< const Alias > pAlias;
@@ -1044,7 +1044,7 @@ public:
 	{}
 	virtual ~CompilerDirective(){}
 	void Accept( Visitor *pV ) const { pV->VisitCompilerDirective( this ); }
-	
+
 	AutoPtr< const PragmaName > pPragmaName;
 	AutoPtr< const PragmaParameter > pPragmaParameter;
 	LineInfo theLineInfo;
@@ -1066,7 +1066,7 @@ public:
 	{
 		pV->VisitMOFProductionInstanceDeclaration( this );
 	}
-	
+
 	AutoPtr< const InstanceDeclaration > pInstanceDeclaration;
 };
 class OW_MOF_API MOFProductionQualifierDeclaration : public MOFProduction
@@ -1081,7 +1081,7 @@ public:
 	{
 		pV->VisitMOFProductionQualifierDeclaration( this );
 	}
-	
+
 	AutoPtr< const QualifierDeclaration > pQualifierDeclaration;
 };
 class OW_MOF_API MOFProductionIndicDeclaration : public MOFProduction
@@ -1096,7 +1096,7 @@ public:
 	{
 		pV->VisitMOFProductionIndicDeclaration( this );
 	}
-	
+
 	AutoPtr< const IndicDeclaration > pIndicDeclaration;
 };
 class OW_MOF_API MOFProductionAssocDeclaration : public MOFProduction
@@ -1111,7 +1111,7 @@ public:
 	{
 		pV->VisitMOFProductionAssocDeclaration( this );
 	}
-	
+
 	AutoPtr< const AssocDeclaration > pAssocDeclaration;
 };
 class OW_MOF_API MOFProductionClassDeclaration : public MOFProduction
@@ -1126,7 +1126,7 @@ public:
 	{
 		pV->VisitMOFProductionClassDeclaration( this );
 	}
-	
+
 	AutoPtr< const ClassDeclaration > pClassDeclaration;
 };
 class OW_MOF_API MOFProductionCompilerDirective : public MOFProduction
@@ -1157,7 +1157,7 @@ public:
 		}
 	}
 	void Accept( Visitor *pV ) const { pV->VisitMOFSpecification( this ); }
-	
+
 	AutoPtr< List< MOFProduction * > > pMOFProduction;
 };
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 	try
 	{
 		CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
-	
+
 		if (parser.isSet(HELP_OPT))
 		{
 			Usage();
@@ -99,12 +99,12 @@ int main(int argc, char* argv[])
 			cout << "Written by Bart Whiteley and Dan Nuffer.\n";
 			return 0;
 		}
-	
+
 		String name = parser.mustGetOptionValue(LOGIN_NAME_OPT, "-l, --login_name");
 		String hostname = parser.getOptionValue(HOSTNAME_OPT);
 		String filename = parser.mustGetOptionValue(PASSWORD_FILE_OPT, "-f, --password_file");
 		String passwd = parser.getOptionValue(PASSWORD_OPT);
-	
+
 		if (hostname.empty())
 		{
 			SocketAddress iaddr = SocketAddress::getAnyLocalHost();
@@ -112,13 +112,13 @@ int main(int argc, char* argv[])
 		}
 
 		ofstream outfile(filename.c_str(), std::ios::app);
-		
+
 		if (!outfile)
 		{
 			cerr << "Unable to open password file " << filename << endl;
 			return 1;
 		}
-		
+
 		if (passwd.empty())
 		{
 			for (;;)
@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
 				}
 			}
 		}
-		
+
 		MD5 md5;
 		md5.update(name);
 		md5.update(":");
@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
 		md5.update(":");
 		md5.update(passwd);
 		outfile << name << ":" << hostname << ":" << md5.toString() << endl;
-		
+
 		return 0;
 
 	}

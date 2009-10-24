@@ -52,7 +52,7 @@ public:
 	OOPQueryProvider(const OOPProviderInterface::ProvRegInfo& info,
 		const OOPProcessState& processState);
 	virtual ~OOPQueryProvider();
-	
+
 	virtual void queryInstances(
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,

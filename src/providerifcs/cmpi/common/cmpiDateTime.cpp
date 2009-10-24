@@ -4,7 +4,7 @@
  * cmpiDateTime.cpp
  *
  * Copyright (c) 2002, International Business Machines
- * 
+ *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
  * CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
@@ -13,7 +13,7 @@
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
  * Author:        Adrian Schuur <schuur@de.ibm.com>
- * 
+ *
  * Contributor:   Markus Mueller <sedgewick_de@yahoo.de>
  *
  * Description: CMPIClass support
@@ -31,8 +31,8 @@
 #include "OW_CIMFwd.hpp"
 
 static OpenWBEM::CIMDateTime * makeCIMDateTime(
-	time_t inTime, 
-	unsigned long usec, 
+	time_t inTime,
+	unsigned long usec,
 	CMPIBoolean interval)
 {
 	if (interval)
@@ -52,13 +52,13 @@ static OpenWBEM::CIMDateTime * makeCIMDateTime(
 	struct tm tmTime;
 
 	localtime_r(&inTime,&tmTime);
-	if (strftime(strTime,256,"%Y%m%d%H%M%S.",&tmTime)) 
+	if (strftime(strTime,256,"%Y%m%d%H%M%S.",&tmTime))
 	{
 		snprintf(usTime,32,"%6.6ld",usec);
 		strcat(strTime,usTime);
-		if (interval) 
+		if (interval)
 			strcpy(utcOffset,":000");
-		else 
+		else
 		{
 #if defined (OW_GNU_LINUX)
 			snprintf(utcOffset,20,"%+4.3ld",tmTime.tm_gmtoff/60);
@@ -74,7 +74,7 @@ static OpenWBEM::CIMDateTime * makeCIMDateTime(
 */
 }
 
-CMPIDateTime *newDateTime() 
+CMPIDateTime *newDateTime()
 {
 	struct timeval tv;
 	struct timezone tz;
@@ -83,23 +83,23 @@ CMPIDateTime *newDateTime()
 		new CMPI_Object(makeCIMDateTime(tv.tv_sec,tv.tv_usec,0));
 }
 
-CMPIDateTime *newDateTime(CMPIUint64 tim, CMPIBoolean interval) 
+CMPIDateTime *newDateTime(CMPIUint64 tim, CMPIBoolean interval)
 {
 	return (CMPIDateTime*)
 		new CMPI_Object(makeCIMDateTime(tim/1000000,tim%1000000,interval));
 }
 
-CMPIDateTime *newDateTime(const char *strTime) 
+CMPIDateTime *newDateTime(const char *strTime)
 {
 	OpenWBEM::CIMDateTime *dt=new OpenWBEM::CIMDateTime(OpenWBEM::String(strTime));
 	return (CMPIDateTime*)new CMPI_Object(dt);
 }
 
-static CMPIStatus dtRelease(CMPIDateTime* eDt) 
+static CMPIStatus dtRelease(CMPIDateTime* eDt)
 {
 	//cout<<"--- dtRelease()"<<endl;
 	OpenWBEM::CIMDateTime* dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
-	if (dt) 
+	if (dt)
 	{
 		delete dt;
 		((CMPI_Object*)eDt)->unlinkAndDelete();
@@ -107,7 +107,7 @@ static CMPIStatus dtRelease(CMPIDateTime* eDt)
 	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIDateTime* dtClone(const CMPIDateTime* eDt, CMPIStatus* rc) 
+static CMPIDateTime* dtClone(const CMPIDateTime* eDt, CMPIStatus* rc)
 {
 	OpenWBEM::CIMDateTime * dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
 	//OpenWBEM::CIMDateTime * cDt=new OpenWBEM::CIMDateTime(dt->toString());
@@ -118,14 +118,14 @@ static CMPIDateTime* dtClone(const CMPIDateTime* eDt, CMPIStatus* rc)
 	return neDt;
 }
 
-static CMPIBoolean dtIsInterval(const CMPIDateTime* eDt, CMPIStatus* rc) 
+static CMPIBoolean dtIsInterval(const CMPIDateTime* eDt, CMPIStatus* rc)
 {
 	OpenWBEM::CIMDateTime* dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
 	CMSetStatus(rc,CMPI_RC_OK);
 	return dt->isInterval();
 }
 
-static CMPIString *dtGetStringFormat(const CMPIDateTime* eDt, CMPIStatus* rc) 
+static CMPIString *dtGetStringFormat(const CMPIDateTime* eDt, CMPIStatus* rc)
 {
 	OpenWBEM::CIMDateTime* dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
 	CMPIString *str=(CMPIString*)new CMPI_Object(dt->toString());
@@ -133,7 +133,7 @@ static CMPIString *dtGetStringFormat(const CMPIDateTime* eDt, CMPIStatus* rc)
 	return str;
 }
 
-static CMPIUint64 dtGetBinaryFormat(const CMPIDateTime* eDt, CMPIStatus* rc) 
+static CMPIUint64 dtGetBinaryFormat(const CMPIDateTime* eDt, CMPIStatus* rc)
 {
 	OpenWBEM::CIMDateTime* dt = (OpenWBEM::CIMDateTime*)eDt->hdl;
 	CMPIUint64 days,hours,mins,secs,usecs,utc,lTime;
@@ -142,7 +142,7 @@ static CMPIUint64 dtGetBinaryFormat(const CMPIDateTime* eDt, CMPIStatus* rc)
 	//const char * tStr=dt->toString().c_str();
 	//char *cStr=strdup((const char*)tStr);
 
-	if (dt->isInterval()) 
+	if (dt->isInterval())
 	{
 		usecs = dt->getMicroSeconds();
 		secs = dt->getSeconds();
@@ -154,7 +154,7 @@ static CMPIUint64 dtGetBinaryFormat(const CMPIDateTime* eDt, CMPIStatus* rc)
 			(hours*(OpenWBEM::UInt64)(3600000000LL))+
 			(mins*60000000)+(secs*1000000)+usecs;
 	}
-	else 
+	else
 	{
 		time_t tt = time(NULL);
 		localtime_r(&tt, &tmt);
@@ -177,7 +177,7 @@ static CMPIUint64 dtGetBinaryFormat(const CMPIDateTime* eDt, CMPIStatus* rc)
 	return lTime;
 }
 
-static CMPIDateTimeFT dateTime_FT = 
+static CMPIDateTimeFT dateTime_FT =
 {
 	CMPICurrentVersion,
 	dtRelease,

@@ -51,14 +51,14 @@ OOPCallbackServiceEnv::OOPCallbackServiceEnv(UInt8 type, UInt8 lockTypeArg, cons
 	}
 }
 
-String 
+String
 OOPCallbackServiceEnv::getConfigItem(const String& item, const String& defRetVal) const
 {
 	return m_provEnv->getConfigItem(item, defRetVal);
 }
 
 
-CIMOMHandleIFCRef 
+CIMOMHandleIFCRef
 OOPCallbackServiceEnv::getCIMOMHandle(OperationContext& context,
 	ServiceEnvironmentIFC::EBypassProvidersFlag bypassProviders) const
 {
@@ -81,7 +81,7 @@ OOPCallbackServiceEnv::getCIMOMHandle(OperationContext& context,
 	return CIMOMHandleIFCRef();
 }
 
-		
+
 
 } // end namespace OW_NAMESPACE
 

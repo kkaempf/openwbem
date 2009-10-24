@@ -39,7 +39,7 @@ namespace OW_NAMESPACE
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-QueryProviderIFC::~QueryProviderIFC() 
+QueryProviderIFC::~QueryProviderIFC()
 {
 }
 

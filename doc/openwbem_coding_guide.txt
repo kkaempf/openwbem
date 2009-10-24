@@ -236,7 +236,7 @@ should do 1 thing.
 Define a class's invariant.  Only functions that maintain or check the
 invariant belong in a class.  Other functions belong outside the class as
 utility/helper functions.
-Use OW_ASSERT macros to validate invariants and function pre-conditions.
+Use BLOCXX_ASSERT macros to validate invariants and function pre-conditions.
 -----------------------------------------------------------------------------
 Don't use spaces to indent the code.  This is so you can set your tab
 spacing to your own liking in your editor.  If it's all spaces, you're stuck

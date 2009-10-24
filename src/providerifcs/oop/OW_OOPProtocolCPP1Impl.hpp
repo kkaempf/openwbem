@@ -108,9 +108,9 @@ public:
 	virtual void handleResult(std:: streambuf &instr, UInt8 op);
 };
 
-enum 
-{ 
-	CONTINUE = 0, 
+enum
+{
+	CONTINUE = 0,
 	FINISHED = 1
 };
 
@@ -132,7 +132,7 @@ struct ShutdownThreadPool
 int process(Array<unsigned char>& in,
 	std::deque<OutputEntry>& outputEntries,
 	const ProviderEnvironmentIFCRef& env,
-	const Logger& logger, 
+	const Logger& logger,
 	OperationResultHandler& result,
 	ThreadPool& threadPool,
 	OOPProviderBase* pprov);

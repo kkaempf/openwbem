@@ -49,12 +49,12 @@ namespace OW_NAMESPACE
 	{
 	public:
 		OOPCallbackServiceEnv(UInt8 type, UInt8 lockTypeArg, const ProviderEnvironmentIFCRef& provEnv);
-	
+
 		virtual String getConfigItem(const String& item, const String& defRetVal) const;
-	
+
 		virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
 			EBypassProvidersFlag bypassProviders) const;
-		
+
 	private:
 		UInt8 m_type;
 		ProviderEnvironmentIFCRef m_provEnv;

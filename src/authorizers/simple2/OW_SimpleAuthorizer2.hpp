@@ -99,8 +99,8 @@ public:
 	 */
 	virtual bool doAllowWriteInstance(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns, 
-		const CIMObjectPath& instanceName, 
+		const String& ns,
+		const CIMObjectPath& instanceName,
 		EDynamicFlag dynamic,
 		EWriteFlag flag,
 		OperationContext& context);
@@ -181,18 +181,18 @@ public:
 		OperationContext& context);
 
 	/**
-	 * Determine if a method may be invoked. 
+	 * Determine if a method may be invoked.
 	 * @param env A reference to a provider environment.
-	 * @param ns The namespace containing the instance or class. 
+	 * @param ns The namespace containing the instance or class.
 	 * @param path The name of the instance or class containing
-	 * 		the method. 
-	 * @param MethodName The name of the method. 
+	 * 		the method.
+	 * @param MethodName The name of the method.
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowMethodInvocation(
-		const ServiceEnvironmentIFCRef& env, 
-		const String& ns, 
-		const CIMObjectPath& path, 
+		const ServiceEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& path,
 		const String& MethodName,
 		OperationContext& context);
 

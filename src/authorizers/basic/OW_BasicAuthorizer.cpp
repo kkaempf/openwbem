@@ -90,7 +90,7 @@ private:
 	RepositoryIFCRef m_pServer;
 	ServiceEnvironmentIFCRef m_env;
 };
-	
+
 String const BasicAccessMgr::COMPONENT_NAME("ow.authorizer.basic");
 
 BasicAccessMgr::BasicAccessMgr(RepositoryIFCRef const & pServer)
@@ -598,7 +598,7 @@ BasicAuthorizer::getLockTypeForMethod(
 	const String& ns,
 	const CIMObjectPath& path,
 	const String& methodName,
-	const CIMParamValueArray& in, 
+	const CIMParamValueArray& in,
 	OperationContext& context)
 {
 	return m_cimRepository->getLockTypeForMethod(ns, path, methodName, in, context);

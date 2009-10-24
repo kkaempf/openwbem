@@ -2,7 +2,7 @@
 //
 // Copyright (c) 2000, 2001, 2002 BMC Software, Hewlett-Packard Company, IBM,
 // The Open Group, Tivoli Systems
-// Portions Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+// Portions Copyright (C) 2003-2004 Quest Software, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -10,7 +10,7 @@
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // THE ABOVE COPYRIGHT NOTICE AND THIS PERMISSION NOTICE SHALL BE INCLUDED IN
 // ALL COPIES OR SUBSTANTIAL PORTIONS OF THE SOFTWARE. THE SOFTWARE IS PROVIDED
 // "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
@@ -40,12 +40,12 @@
 namespace OW_NAMESPACE
 {
 
-/** This class represents a compiled WQL select statement. 
+/** This class represents a compiled WQL select statement.
 	See the wql spec for details on the select statement.
-	
+
 	There are methods for obtaining the various elements of the select
 	statement.
-	
+
 	The components of the where clause are stored in two arrays: one for
 	operands and one for operators (these are placed in proper order by the
 	YACC parser). Evaluation is performed using a Boolean stack. See the
@@ -109,7 +109,7 @@ public:
 	{
 		return _wherePropertyNames[i];
 	}
-	/** Appends a property name to the where property name list. This user 
+	/** Appends a property name to the where property name list. This user
 	  should not call this method; it should only be called by the parser.
 	  @param x name of the property.
 	  @return false if a property with that name already exists.
@@ -137,7 +137,7 @@ public:
 	}
 	/** Evalautes the where clause using the symbol table to resolve symbols.
 	 * @return true or false if the source passes the query
-	 * @throws NoSuchPropertyException if the where clause references a 
+	 * @throws NoSuchPropertyException if the where clause references a
 	 *		property that is unknown to source.
 	 * @throws TypeMismatchException if the there is a type error in
 	 *		the where clause or if the property type of the source property
@@ -158,7 +158,7 @@ private:
 	//
 	// The name of the target class. For example:
 	//
-	//	 SELECT * 
+	//	 SELECT *
 	//	 FROM TargetClass
 	//	 WHERE ...
 	//
@@ -167,7 +167,7 @@ private:
 	// The list of property names being selected. For example, see "firstName",
 	// and "lastName" below.
 	//
-	//	 SELECT firstName, lastName 
+	//	 SELECT firstName, lastName
 	//	 FROM TargetClass
 	//	 WHERE ...
 	//

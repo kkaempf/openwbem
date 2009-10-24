@@ -101,7 +101,7 @@ namespace
 		if (!status.running() && !status.terminatedSuccessfully())
 		{
 			String output = getStderr(proc);
-			String msg = Format("%1 failed. exitStatus = %2, stderr output = %3", 
+			String msg = Format("%1 failed. exitStatus = %2, stderr output = %3",
 				procName, status.toString(), output);
 			OW_LOG_ERROR(lgr, msg);
 			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
@@ -116,7 +116,7 @@ namespace
 		if (!status.terminatedSuccessfully())
 		{
 			String output = getStderr(proc);
-			String msg = Format("%1 failed. exitStatus = %2, stderr output = %3", 
+			String msg = Format("%1 failed. exitStatus = %2, stderr output = %3",
 				procName, status.toString(), output);
 			OW_LOG_ERROR(lgr, msg);
 			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
@@ -393,8 +393,8 @@ OOPProviderBase::terminate(const ProviderEnvironmentIFCRef& env, const String& p
 	m_threadPool.shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(0.1), Timeout::infinite);
 }
 
-void 
-OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& env, const OOPProviderBase::MethodCallback& func, 
+void
+OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& env, const OOPProviderBase::MethodCallback& func,
 	const char* fname)
 {
 	Logger lgr(COMPONENT_NAME);
@@ -408,7 +408,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 		}
 
 		bool doLock = (usePersistentProcess == E_USE_PERSISTENT_PROCESS);
-		// This lock guards modification of m_persistentProcess as well as serializing 
+		// This lock guards modification of m_persistentProcess as well as serializing
 		// communication requests to it.
 		Reference<WriteLock> lock;
 		if (doLock)

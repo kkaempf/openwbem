@@ -162,7 +162,7 @@ struct Entry
 typedef std::map<String, Entry> map_t;
 map_t g_connections;
 
-gss_ctx_id_t* 
+gss_ctx_id_t*
 getGssCtx(const String& connectionId)
 {
 	map_t::iterator i = g_connections.find(connectionId);
@@ -235,20 +235,20 @@ get_gss_creds(gss_cred_id_t &server_creds,
 	OM_uint32 major_status, minor_status, minor_status2;
 	gss_name_t server_name = GSS_C_NO_NAME;
 	String servicename(getServicename());
-	
+
 	token.value = (void *)servicename.allocateCString();
 	token.length = servicename.length();
 
-	major_status = gss_import_name(&minor_status, &token, 
+	major_status = gss_import_name(&minor_status, &token,
 	                               GSS_C_NT_HOSTBASED_SERVICE,
 	                               &server_name);
-	
+
 	// Better override the date inside the token
 	memset(&token, 0, sizeof(token));
 
 	if (GSS_ERROR(major_status))
 	{
-		errormsg = "gss_import_name() failed: " + 
+		errormsg = "gss_import_name() failed: " +
 		           getGssError(major_status, minor_status);
 		return 1;
 	}
@@ -264,7 +264,7 @@ get_gss_creds(gss_cred_id_t &server_creds,
 		OW_LOG_DEBUG(logger, Format("IMPORTANT: gss_display_name() failed: "
 		             "%1", getGssError(major_status, minor_status)));
 
-		errormsg = "gss_display_name() failed: " + 
+		errormsg = "gss_display_name() failed: " +
 		           getGssError(major_status, minor_status);
 		return 1;
 	}
@@ -292,11 +292,11 @@ get_gss_creds(gss_cred_id_t &server_creds,
 		           getGssError(major_status, minor_status);
 		return 1;
 	}
-   
+
 	return 0;
 }
 
-/* 
+/*
  * Despite input_token is just an input parameter we can't declare it const,
  * because gss_accept_sec_context accepts this input parameter only without
  * const
@@ -329,14 +329,14 @@ gssapi_spnego_accept(gss_buffer_desc &input_token,
 	                            output_token.length));
 	OW_LOG_DEBUG3(logger, Format("Value of output_token: %1",
 	                            static_cast<char*>(output_token.value)));
-	
+
 	if (GSS_ERROR(major_status))
 	{
 		errormsg = Format("gss_accept_sec_context() failed %1",
 		                  getGssError(major_status, minor_status));
 		return major_status;
 	}
-	
+
 	if (delegated_cred != GSS_C_NO_CREDENTIAL)
 	{
 		// The client side send us a ticket with a credential which should be
@@ -359,7 +359,7 @@ gssapi_spnego_accept(gss_buffer_desc &input_token,
  * errormessage, because here I have the ability, to give also feedback which
  * function has failed
  */
-/* 
+/*
  * Despite input_token is just an input parameter we can't declare it const,
  * because gss_accept_sec_context accepts this input parameter only without
  * const
@@ -396,7 +396,7 @@ gssapi_spnego_init(gss_buffer_desc &input_token,
 	// Here we decide which version to take
 	// The call of one of this methods will block the client for about 25
 	// seconds if no KDC can be reached
-	
+
 	major_status = gss_init_sec_context(&minor_status,
 	                                    GSS_C_NO_CREDENTIAL,
 	                                    &context,
@@ -411,7 +411,7 @@ gssapi_spnego_init(gss_buffer_desc &input_token,
 	                                    NULL,
 	                                    NULL
 	                                    );
-	
+
 	OW_LOG_DEBUG3(logger, Format("Length of client output token %1",
 	                            output_token.length));
 
@@ -442,7 +442,7 @@ EModeFlag mode;
 int main(int argc, char** argv)
 try
 {
-	
+
 	if (argc != 2 && argc != 4)
 	{
 		cerr << "usage: server|client servername clientname" << endl;
@@ -499,12 +499,12 @@ try
 
 		gss_buffer_desc input_token = GSS_C_EMPTY_BUFFER;
 		gss_buffer_desc output_token = GSS_C_EMPTY_BUFFER;
-		
+
 		gss_ctx_id_t* pcontext = getGssCtx(connectionId);
 		String errormsg;
 
 		/* Here we set the flags for the security context. Available are:
-		 * 
+		 *
 		 * GSS_C_DELEG_FLAG - Delegate credentials to the remote peer.
 		 * GSS_C_MUTUAL_FLAG - Request that the remote peer authenticate
 		 *                     itself.
@@ -537,7 +537,7 @@ try
 			input_token.value = &rawData[0];
 			input_token.length = rawData.size();
 		}
-		
+
 		OM_uint32 rv;
 
 		if (mode == E_SERVER)
@@ -629,25 +629,25 @@ try
 				                                    0,
 				                                    0,
 				                                    0);
-				if (err != GSS_S_COMPLETE) 
+				if (err != GSS_S_COMPLETE)
 				{
 					cout << "F\n";
 					cout << getGssError(err, minor_status,"gss_inquire_context")
 					     << endl;
 					continue;
 				}
-		
+
 				// Convert the client's name into a visible string
 				gss_buffer_desc buf = GSS_C_EMPTY_BUFFER;
 				err = gss_display_name(&minor_status, clientName, &buf, 0);
-				if (err != GSS_S_COMPLETE) 
+				if (err != GSS_S_COMPLETE)
 				{
 					cout << "F\n";
 					cout << getGssError(err, minor_status, "gss_display_name")
 					     << endl;
 					continue;
 				}
-		
+
 				String username(static_cast<const char*>(buf.value), buf.length);
 
 				cout << "S\n";
@@ -658,13 +658,13 @@ try
 				OW_LOG_DEBUG(logger, Format("Value of output token in success: %1",
 				                            String(static_cast<char*>(output_token.value),
 				                                   output_token.length)));
-				
+
 				gss_release_buffer(&minor_status, &buf);
 				gss_release_name(&minor_status, &clientName);
 				cleanGssCtx(connectionId);
 			}
 			break;
-			
+
 			case GSS_S_CONTINUE_NEEDED:
 				cout << "C\n";
 				/* The case that the output_token is != 0 for the server part is
@@ -690,7 +690,7 @@ try
 			free(output_token.value);
 		}
 	}
-	
+
 	return 0;
 }
 catch (const exception &e)

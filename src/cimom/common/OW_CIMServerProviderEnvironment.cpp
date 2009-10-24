@@ -55,7 +55,7 @@ CIMServerProviderEnvironment::getConfigItem(const String &name,	const String& de
 }
 
 StringArray
-CIMServerProviderEnvironment::getMultiConfigItem(const String &itemName, 
+CIMServerProviderEnvironment::getMultiConfigItem(const String &itemName,
 	const StringArray& defRetVal, const char* tokenizeSeparator) const
 {
 	return m_env->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator);
@@ -87,7 +87,7 @@ CIMServerProviderEnvironment::getAuthorizingRepository() const
 	return m_env->getAuthorizingRepository();
 }
 
-CIMOMHandleIFCRef 
+CIMOMHandleIFCRef
 CIMServerProviderEnvironment::getLockedCIMOMHandle(EInitialLockFlag initialLock) const
 {
 	return m_env->getLockedCIMOMHandle(m_context, initialLock == E_READ ? ServiceEnvironmentIFC::E_READ : ServiceEnvironmentIFC::E_WRITE);
@@ -99,7 +99,7 @@ CIMServerProviderEnvironment::getUserName() const
 	return m_context.getUserInfo().getUserName();
 }
 
-OperationContext& 
+OperationContext&
 CIMServerProviderEnvironment::getOperationContext()
 {
 	return m_context;

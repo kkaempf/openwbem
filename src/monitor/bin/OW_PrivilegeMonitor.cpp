@@ -2,21 +2,21 @@
 * Copyright (c) 2002, Networks Associates, Inc. All rights reserved.
 * Copyright (C) 2005, Quest Software, Inc. All rights reserved.
 * Copyright (C) 2006, Novell, Inc. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
-* 
+*
 *     * Redistributions of source code must retain the above copyright notice,
 *       this list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
 *       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
-*     * Neither the name of the Network Associates, 
+*     * Neither the name of the Network Associates,
 *       nor Quest Software, Inc., nor Novell, Inc., nor the
 *       names of its contributors or employees may be used to endorse or promote
 *       products derived from this software without specific prior written
 *       permission.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -97,9 +97,9 @@ namespace
 {
 	LogAppenderRef getSyslogAppender()
 	{
-		LogAppenderRef logappender = 
+		LogAppenderRef logappender =
 			new SyslogAppender(
-				LogAppender::ALL_COMPONENTS, 
+				LogAppender::ALL_COMPONENTS,
 				LogAppender::ALL_CATEGORIES,
 				SyslogAppender::STR_DEFAULT_MESSAGE_PATTERN,
 				"ow.mon.tempsyslogger", "daemon"
@@ -195,7 +195,7 @@ namespace
 		{
 			OW_LOG_DEBUG(logger, Format("%1%2", prefix, e));
 		}
-		
+
 		sendError(conn, Format("%1%2: %3", prefix, e.type(), e.what()), e.getErrorCode());
 
 		if (dynamic_cast<const IPCIOException*>(&e))
@@ -423,7 +423,7 @@ namespace
 			int errnum;
 			int monitor_desc;
 			String app_name;
-			String user_name; 
+			String user_name;
 		};
 
 	private:
@@ -988,7 +988,7 @@ namespace
 			int child_desc, int parent_desc,
 			char const * config_dir, char const * app_name
 		);
-        char const * m_user_name; 
+        char const * m_user_name;
 		int m_monitor_desc;
 	};
 
@@ -1012,7 +1012,7 @@ namespace
 			r.errnum = ::dup2(child_desc, m_monitor_desc) >= 0 ? 0 : errno;
 			r.monitor_desc = m_monitor_desc;
 			r.app_name = app_name;
-			r.user_name = m_user_name; 
+			r.user_name = m_user_name;
 			throw r;
 		}
 		else // parent (monitored process)
@@ -1042,7 +1042,7 @@ namespace
 	private:
 		char const * m_config_dir;
 		char const * m_app_name;
-		char const * m_user_name; 
+		char const * m_user_name;
 		Monitor * m_p_monitor;
 		AutoDescriptor m_monitor_desc;
 	};
@@ -1090,7 +1090,7 @@ namespace
 		// Create new monitor process
 		SMPolicy policy(m_user_name);
 		policy.m_monitor_desc = m_monitor_desc.release();
-		PrivilegeCommon::spawn_monitor(m_config_dir, m_app_name, policy); 
+		PrivilegeCommon::spawn_monitor(m_config_dir, m_app_name, policy);
 
 		// Signals already set to defaults
 
@@ -1192,12 +1192,12 @@ namespace
 			reportException("monitoredSpawn: ", e);
 		}
 	}
-	
+
 	void Monitor::monitoredUserSpawn()
 	{
 		String exec_path;
 		String app_name;
-		String user_name; 
+		String user_name;
 		std::pair<StringArray, bool> xargv, xenvp;
 		ipcio_get(conn(), exec_path, MAX_PATH_LENGTH + 1);
 		ipcio_get(conn(), app_name, MAX_APPNAME_LENGTH + 1);
@@ -1206,7 +1206,7 @@ namespace
 		ipcio_get(conn(), user_name, MAX_USER_NAME_LENGTH + 1);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ monitoredUserSpawn, exec_path=%1, app_name=%2, user=%3", 
+		OW_LOG_INFO(logger, Format("REQ monitoredUserSpawn, exec_path=%1, app_name=%2, user=%3",
 								   exec_path, app_name, user_name));
 		try
 		{
@@ -1533,8 +1533,10 @@ namespace
 	{
 		::umask(0);
 
-		// Create a new process group so that any signals sent by the shell to owcimomd will not be sent to owprivilegemonitor as well.
-		// This is useful when running owcimomd in debug mode and using Ctrl-C to shut it down.
+		// Create a new process group so that any signals sent by the shell to
+		// owcimomd will not be sent to owprivilegemonitor as well.  This is
+		// useful when running owcimomd in debug mode and using Ctrl-C to shut it
+		// down.
 		::setpgid(0, 0);
 
 		// until the real logger is created we will log all errors to syslog
@@ -1542,8 +1544,7 @@ namespace
 
 		WaitpidThreadFix::setWaitpidThreadFixEnabled(false);
 
-		PrivilegeCommon::DescriptorInfo x
-			= PrivilegeCommon::monitor_descriptor();
+		PrivilegeCommon::DescriptorInfo x = PrivilegeCommon::monitor_descriptor();
 		if (x.errnum != 0)
 		{
 			OW_LOG_ERROR(logger, Format("monitor_descriptor() returned an error: %1", x.errnum));
@@ -1607,7 +1608,7 @@ namespace
 					}
 					if (iteration == E_REPEAT && !mon_user_name.empty())
 					{
-						Secure::runAs(mon_user_name.c_str()); 
+						Secure::runAs(mon_user_name.c_str());
 					}
 					mon.run();
 				}
@@ -1622,7 +1623,7 @@ namespace
 				}
 				client_descriptor = e.monitor_desc;
 				app_name = e.app_name;
-				mon_user_name = e.user_name; 
+				mon_user_name = e.user_name;
 				iteration = E_REPEAT;
 			}
 		}

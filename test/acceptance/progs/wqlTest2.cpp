@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2003-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -78,12 +78,12 @@ public:
 		: ci(ci_)
 	{
 	}
-	virtual bool evaluateISA(const String &propertyName, const String &className) const 
+	virtual bool evaluateISA(const String &propertyName, const String &className) const
 	{
 		// TODO
 		return false;
 	}
-	virtual bool getValue(const String &propertyName, WQLOperand &value) const 
+	virtual bool getValue(const String &propertyName, WQLOperand &value) const
 	{
 		StringArray propNames = propertyName.tokenize(".");
 		if (propNames[0] == ci.getClassName())
@@ -249,7 +249,7 @@ int main(int , char**)
 		testQuery("select * from wqlTestClass where NULL <> realData");
 		testQuery("select * from wqlTestClass where __Path <> \"wqlTestClass.name=\\\"test5\\\"\"");
 		testQuery("select * from wqlTestClass where \"wqlTestClass.name=\\\"test5\\\"\" <> __Path");
-		
+
 		// test greater than or equals on the where clause
 		testQuery("select * from wqlTestClass where name >= \"test1\"");
 		testQuery("select * from wqlTestClass where \"test1\" >= name");
@@ -344,7 +344,7 @@ int main(int , char**)
 		testQuery("select * from wqltestClass where name IS NOT NULL and realData IS NOT NULL");
 		testQuery("select * from wqltestClass where (name IS NOT NULL and realData IS NOT NULL) or (name = \"test5\" or booleanData IS true)");
 		testQuery("select * from wqltestClass where (name = \"test4\" or name = \"test2\") and (sint32Data = 1 or booleanData = true)");
-		
+
 		// test ISA and embedded properties
 		testQuery("select * from wqlTestClass where embed ISA fooClass");
 		testQuery("select * from wqlTestClass where embed ISA \"fooClass\"");

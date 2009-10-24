@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Quest Software, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Quest Software, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Quest Software, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -218,7 +218,7 @@ BinaryCIMOMHandle::getWBEMProtocolHandler() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void BinaryCIMOMHandle::close() 
+void BinaryCIMOMHandle::close()
 {
 	m_protocol->close();
 }
@@ -414,7 +414,7 @@ BinaryCIMOMHandle::getQualifierType(const String& ns_,
 	BinarySerialization::write(strm, BinarySerialization::BIN_GETQUAL);
 	BinarySerialization::writeString(strm, ns);
 	BinarySerialization::writeString(strm, qualifierName);
-	
+
 	Reference<std::istream> in = m_protocol->endRequest(strmRef,
 		"GetQualifier", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	return readCIMObject<CIMQualifierType>(*in, m_protocol);
@@ -547,7 +547,7 @@ BinaryCIMOMHandle::modifyInstance(
 	BinarySerialization::writeInstance(strm, modifiedInstance);
 	BinarySerialization::writeBool(strm, includeQualifiers);
 	BinarySerialization::writeStringArray(strm, propertyList);
-	
+
 	Reference<std::istream> in = m_protocol->endRequest(strmRef,
 		"ModifyInstance", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_1);
 	checkError(*in, m_protocol);
@@ -566,7 +566,7 @@ BinaryCIMOMHandle::createInstance(const String& ns_,
 	BinarySerialization::write(strm, BinarySerialization::BIN_CREATEINST);
 	BinarySerialization::writeString(strm, ns);
 	BinarySerialization::writeInstance(strm, ci);
-	
+
 	Reference<std::istream> in = m_protocol->endRequest(strmRef,
 		"CreateInstance", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	CIMObjectPath rval = readCIMObject<CIMObjectPath>(*in, m_protocol);
@@ -765,7 +765,7 @@ BinaryCIMOMHandle::referenceNames(
 	BinarySerialization::writeObjectPath(strm, path);
 	BinarySerialization::writeString(strm, resultClass);
 	BinarySerialization::writeString(strm, role);
-	
+
 	Reference<std::istream> in = m_protocol->endRequest(strmRef,
 		"ReferenceNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	readAndDeliver(*in, result, m_protocol);

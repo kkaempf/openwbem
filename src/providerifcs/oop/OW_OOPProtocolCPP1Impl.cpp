@@ -80,7 +80,7 @@ int processOneRequest(std::streambuf & inbuf,
 
 {
 	Logger logger(COMPONENT_NAME);
-	// Either out or outputEntries can be used.  If both are used in the same call, the data inserted 
+	// Either out or outputEntries can be used.  If both are used in the same call, the data inserted
 	// into out will be appended to outputEntries after the call returns.
 	//std::ostream outstr(out);
 	//std::istream instr(in);
@@ -202,7 +202,7 @@ int processOneRequest(std::streambuf & inbuf,
 				OW_LOG_DEBUG3(logger, "processOneRequest didn't find it, not a string type, writing false");
 				BinarySerialization::writeBool(outbuf, false);
 			}
-			
+
 			// need to consume all the chunking
 			HTTPUtils::eatEntity(chunkedIBuf);
 		}
@@ -245,7 +245,7 @@ int processOneRequest(std::streambuf & inbuf,
 				OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
 			}
 		}
-		break; 
+		break;
 
 		case BinarySerialization::OPERATION_CONTEXT_GET_OPERATION_ID:
 		{
@@ -257,7 +257,7 @@ int processOneRequest(std::streambuf & inbuf,
 				OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
 			}
 		}
-		break; 
+		break;
 
 		case BinarySerialization::PROVIDER_ENVIRONMENT_REQUEST:
 		{
@@ -340,7 +340,7 @@ int processOneRequest(std::streambuf & inbuf,
 			String tokenizeSeparator = BinarySerialization::readString(inbuf);
 			StringArray rv = env->getMultiConfigItem(itemName, defRetVal, tokenizeSeparator.c_str());
 			BinarySerialization::writeStringArray(outbuf, rv);
-		} 
+		}
 		break;
 
 		default:
@@ -356,8 +356,8 @@ NoResultHandler::handleResult(std:: streambuf &instr, UInt8 op)
 	OW_THROW(OOPProtocolCPP1Exception, Format("Invalid op, expected nothing, got: %1", static_cast<int>(op)).c_str());
 }
 
-ShutdownThreadPool::ShutdownThreadPool(ThreadPool& tp) 
-	: m_tp(tp) 
+ShutdownThreadPool::ShutdownThreadPool(ThreadPool& tp)
+	: m_tp(tp)
 {
 }
 
@@ -370,7 +370,7 @@ ShutdownThreadPool::~ShutdownThreadPool()
 int process(Array<unsigned char>& in,
 	std::deque<OutputEntry>& outputEntries,
 	const ProviderEnvironmentIFCRef& env,
-	const Logger& logger, 
+	const Logger& logger,
 	OperationResultHandler& result,
 	ThreadPool& threadPool,
 	OOPProviderBase* pprov)
@@ -456,7 +456,7 @@ OOPSelectableCallback::OOPSelectableCallback(
 
 }
 
-void 
+void
 OOPSelectableCallback::doSelected(Select_t& selectedObject, EEventType eventType)
 {
 	Logger logger(COMPONENT_NAME);

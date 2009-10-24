@@ -12,7 +12,7 @@
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
  * Author:        Adrian Schuur <schuur@de.ibm.com>
- * 
+ *
  * Contributor:   Markus Mueller <sedgewick_de@yahoo.de>
  *
  * Description: CMPIInstance support
@@ -109,7 +109,7 @@ static CMPIData instGetProperty(const CMPIInstance* eInst, const char* name, CMP
         {
             OpenWBEM::CIMDataType pType=v.getType();
             CMPIType t=type2CMPIType(pType,v.isArray());
-           
+
             CMPIrc rrc=value2CMPIData(v,t,&data);
             CMSetStatus(rc,rrc);
             return data;
@@ -234,7 +234,7 @@ static CMPIStatus instSetPropertyFilterIgnore(CMPIInstance* eInst,
 #if defined(CMPI_VER_100)
 static CMPIStatus instSetObjectPath(CMPIInstance* inst, const CMPIObjectPath* op)
 {
-	CMReturn(CMPI_RC_ERR_METHOD_NOT_AVAILABLE); 
+	CMReturn(CMPI_RC_ERR_METHOD_NOT_AVAILABLE);
 }
 #endif
 
@@ -252,7 +252,7 @@ static CMPIInstanceFT instance_FT={
 #if defined(CMPI_VER_100)
 	instSetObjectPath,
 #endif
-	// TODO setObjectPath
+	/// @todo setObjectPath
 };
 
 static CMPIInstanceFT instanceOnStack_FT={
@@ -268,7 +268,7 @@ static CMPIInstanceFT instanceOnStack_FT={
 #if defined(CMPI_VER_100)
      instSetObjectPath,
 #endif
-	// TODO setObjectPath
+	/// @todo setObjectPath
 };
 
 CMPIInstanceFT *CMPI_Instance_Ftab=&instance_FT;

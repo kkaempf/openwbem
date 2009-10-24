@@ -35,7 +35,7 @@
 */
 
 /**
- * If you make improvements to this file, consider making the same 
+ * If you make improvements to this file, consider making the same
  * improvements in AutoDescriptor.hpp in BloCxx
  */
 

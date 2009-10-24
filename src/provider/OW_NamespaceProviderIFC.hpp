@@ -70,7 +70,7 @@ public:
 
 	virtual void deleteQualifierType(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns, 
+		const String& ns,
 		const String& qualName) = 0;
 
 	virtual void setQualifierType(
@@ -84,21 +84,21 @@ public:
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
 		const String& className,
-		WBEMFlags::ELocalOnlyFlag localOnly, 
+		WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, 
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList) = 0;
 
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 	virtual CIMClass deleteClass(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns, 
+		const String& ns,
 		const String& className) = 0;
 
 	virtual void createClass(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns, 
+		const String& ns,
 		const CIMClass& cimClass) = 0;
 
 	virtual CIMClass modifyClass(
@@ -107,14 +107,14 @@ public:
 		const CIMClass& cc) = 0;
 
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-	
+
 	virtual void enumClasses(
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
 		const String& className,
 		CIMClassResultHandlerIFC& result,
-		WBEMFlags::EDeepFlag deep, 
-		WBEMFlags::ELocalOnlyFlag localOnly, 
+		WBEMFlags::EDeepFlag deep,
+		WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin) = 0;
 
@@ -148,16 +148,16 @@ public:
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
 		const CIMObjectPath& instanceName,
-		WBEMFlags::ELocalOnlyFlag localOnly, 
+		WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, 
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList) = 0;
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	virtual CIMInstance deleteInstance(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns, 
+		const String& ns,
 		const CIMObjectPath& cop) = 0;
 
 	virtual CIMObjectPath createInstance(
@@ -177,14 +177,14 @@ public:
 	virtual void setProperty(
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
-		const CIMObjectPath& name, 
+		const CIMObjectPath& name,
 		const String& propertyName,
 		const CIMValue& cv) = 0;
 
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	
+
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 
 	virtual CIMValue getProperty(
@@ -199,7 +199,7 @@ public:
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
 		const CIMObjectPath& path,
-		const String& methodName, 
+		const String& methodName,
 		const CIMParamValueArray& inParams,
 		CIMParamValueArray& outParams) = 0;
 
@@ -211,7 +211,7 @@ public:
 		const CIMObjectPath& path,
 		CIMObjectPathResultHandlerIFC& result,
 		const String& assocClass,
-		const String& resultClass, 
+		const String& resultClass,
 		const String& role,
 		const String& resultRole) = 0;
 
@@ -221,11 +221,11 @@ public:
 		const CIMObjectPath& path,
 		CIMInstanceResultHandlerIFC& result,
 		const String& assocClass,
-		const String& resultClass, 
+		const String& resultClass,
 		const String& role,
-		const String& resultRole,  
+		const String& resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, 
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList) = 0;
 
 	virtual void associatorsClasses(
@@ -234,11 +234,11 @@ public:
 		const CIMObjectPath& path,
 		CIMClassResultHandlerIFC& result,
 		const String& assocClass,
-		const String& resultClass, 
+		const String& resultClass,
 		const String& role,
-		const String& resultRole,  
+		const String& resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, 
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList) = 0;
 
 	virtual void referenceNames(
@@ -255,29 +255,29 @@ public:
 		const CIMObjectPath& path,
 		CIMInstanceResultHandlerIFC& result,
 		const String& resultClass,
-		const String& role, 
+		const String& role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, 
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList) = 0;
-	
+
 	virtual void referencesClasses(
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
 		const CIMObjectPath& path,
 		CIMClassResultHandlerIFC& result,
 		const String& resultClass,
-		const String& role, 
+		const String& role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, 
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList) = 0;
 
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	
+
 	virtual void execQuery(
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
 		CIMInstanceResultHandlerIFC& result,
-		const String &query, 
+		const String &query,
 		const String& queryLanguage) = 0;
 };
 

@@ -69,12 +69,12 @@ void print_exec_matches(
 
 template <typename ContainerI, typename ContainerP>
 void print_mon_exec_matches(
-	char const * name, MonitoredUserExecPatterns const & ep, 
+	char const * name, MonitoredUserExecPatterns const & ep,
 	ContainerI const & idents, const StringArray& envVars, ContainerP const & paths
 )
 {
 	cout << name << ":\n";
-	typename ContainerI::const_iterator k, kend = idents.end(); 
+	typename ContainerI::const_iterator k, kend = idents.end();
 	for (k = idents.begin(); k != kend; ++k)
 	{
 		cout << " user: " << *k << '\n';
@@ -184,7 +184,7 @@ int main_(int argc, char * * argv)
 		idents.push_back(argv[i]);
 	}
 
-	StringArray envVars; // TODO: fill this in somehow
+	StringArray envVars; /// @todo  fill this in somehow
 
 	TestIncludeHandler tih;
 	openwbem_privconfig_Lexer lex(is_cfg, tih, argv[1]);
