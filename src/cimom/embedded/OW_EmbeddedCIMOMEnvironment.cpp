@@ -40,7 +40,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_ConfigException.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/FileSystem.hpp"
 #include "OW_SafeLibCreate.hpp"
 #include "blocxx/SelectEngine.hpp"
@@ -52,7 +52,7 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_IndicationServer.hpp"
 #include "OW_PollingManager.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_LocalEmbeddedCIMOMHandle.hpp"
 #include "OW_WQLFilterRep.hpp"
 #include "OW_IndicationRepLayer.hpp"
@@ -83,6 +83,7 @@ OW_DEFINE_EXCEPTION_WITH_ID(EmbeddedCIMOMEnvironment)
 
 using std::cerr;
 using std::endl;
+using namespace blocxx;
 
 namespace
 {
@@ -122,13 +123,13 @@ namespace
 		}
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{
-			OW_ASSERT("Cannot call CIMOMProviderEnvironment::getCIMOMHandle()" == 0);
+			BLOCXX_ASSERT("Cannot call CIMOMProviderEnvironment::getCIMOMHandle()" == 0);
 			return CIMOMHandleIFCRef();
 		}
 
 		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
-			OW_ASSERT("Cannot call CIMOMProviderEnvironment::getRepositoryCIMOMHandle()" == 0);
+			BLOCXX_ASSERT("Cannot call CIMOMProviderEnvironment::getRepositoryCIMOMHandle()" == 0);
 			return CIMOMHandleIFCRef();
 		}
 
@@ -194,7 +195,7 @@ EmbeddedCIMOMEnvironment::~EmbeddedCIMOMEnvironment()
 	}
 	catch (Exception& e)
 	{
-		OW_LOG_ERROR(m_Logger, Format("Caught exception in EmbeddedCIMOMEnvironment::~EmbeddedCIMOMEnvironment(): %1", e));
+		BLOCXX_LOG_ERROR(m_Logger, Format("Caught exception in EmbeddedCIMOMEnvironment::~EmbeddedCIMOMEnvironment(): %1", e));
 	}
 	catch (...)
 	{
@@ -223,7 +224,7 @@ EmbeddedCIMOMEnvironment::startServices()
 	// We start out single-threaded.  The start phase is when threads enter the picture.
 
 	// load
-	OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment loading services");
+	BLOCXX_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment loading services");
 
 	m_authorizerManager = new AuthorizerManager;
 	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_authorizerManager));
@@ -246,13 +247,13 @@ EmbeddedCIMOMEnvironment::startServices()
 	//_loadRequestHandlers();
 	//_loadServices();
 
-	OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment finished loading services");
+	BLOCXX_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment finished loading services");
 
 	_sortServicesForDependencies();
 
 	// init
 
-	OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment initializing services");
+	BLOCXX_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment initializing services");
 
 	{
 		MutexLock l(m_stateGuard);
@@ -261,7 +262,7 @@ EmbeddedCIMOMEnvironment::startServices()
 
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		OW_LOG_DEBUG(m_Logger, Format("CIMOM initializing service: %1", m_services[i]->getName()));
+		BLOCXX_LOG_DEBUG(m_Logger, Format("CIMOM initializing service: %1", m_services[i]->getName()));
 		m_services[i]->init(this);
 	}
 	{
@@ -271,14 +272,14 @@ EmbeddedCIMOMEnvironment::startServices()
 
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		OW_LOG_DEBUG(m_Logger, Format("CIMOM calling initialized() for service: %1", m_services[i]->getName()));
+		BLOCXX_LOG_DEBUG(m_Logger, Format("CIMOM calling initialized() for service: %1", m_services[i]->getName()));
 		m_services[i]->initialized();
 	}
 
-	OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment finished initializing services");
+	BLOCXX_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment finished initializing services");
 
 	// start
-	OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment starting services");
+	BLOCXX_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment starting services");
 	{
 		MutexLock l(m_stateGuard);
 		m_state = E_STATE_STARTING;
@@ -286,7 +287,7 @@ EmbeddedCIMOMEnvironment::startServices()
 
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		OW_LOG_DEBUG(m_Logger, Format("CIMOM starting service: %1", m_services[i]->getName()));
+		BLOCXX_LOG_DEBUG(m_Logger, Format("CIMOM starting service: %1", m_services[i]->getName()));
 		m_services[i]->start();
 	}
 	{
@@ -296,11 +297,11 @@ EmbeddedCIMOMEnvironment::startServices()
 
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		OW_LOG_DEBUG(m_Logger, Format("CIMOM calling started() for service: %1", m_services[i]->getName()));
+		BLOCXX_LOG_DEBUG(m_Logger, Format("CIMOM calling started() for service: %1", m_services[i]->getName()));
 		m_services[i]->started();
 	}
 
-	OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment finished starting services");
+	BLOCXX_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment finished starting services");
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -308,18 +309,18 @@ EmbeddedCIMOMEnvironment::shutdown()
 {
 
 	// notify all services of impending shutdown.
-	OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment notifying services of shutdown");
+	BLOCXX_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment notifying services of shutdown");
 	// Do this in reverse order because of dependencies
 	for (int i = int(m_services.size())-1; i >= 0; i--)
 	{
 		try
 		{
-			OW_LOG_DEBUG(m_Logger, Format("EmbeddedCIMOMEnvironment notifying service: %1", m_services[i]->getName()));
+			BLOCXX_LOG_DEBUG(m_Logger, Format("EmbeddedCIMOMEnvironment notifying service: %1", m_services[i]->getName()));
 			m_services[i]->shuttingDown();
 		}
 		catch (Exception& e)
 		{
-			OW_LOG_ERROR(m_Logger, Format("Caught exception while calling shuttingDown(): %1", e));
+			BLOCXX_LOG_ERROR(m_Logger, Format("Caught exception while calling shuttingDown(): %1", e));
 		}
 		catch (...)
 		{
@@ -327,27 +328,27 @@ EmbeddedCIMOMEnvironment::shutdown()
 	}
 
 	// PHASE 1: SHUTDOWNS
-	OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment beginning shutdown process");
+	BLOCXX_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment beginning shutdown process");
 	{
 		MutexLock l(m_stateGuard);
 		m_state = E_STATE_SHUTTING_DOWN;
 	}
 
-	OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment shutting down sockets");
+	BLOCXX_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment shutting down sockets");
 
 	// Shutdown all services
-	OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment shutting down services");
+	BLOCXX_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment shutting down services");
 	// Do this in reverse order because of dependencies
 	for (int i = int(m_services.size())-1; i >= 0; i--)
 	{
 		try
 		{
-			OW_LOG_DEBUG(m_Logger, Format("EmbeddedCIMOMEnvironment shutting down service: %1", m_services[i]->getName()));
+			BLOCXX_LOG_DEBUG(m_Logger, Format("EmbeddedCIMOMEnvironment shutting down service: %1", m_services[i]->getName()));
 			m_services[i]->shutdown();
 		}
 		catch (Exception& e)
 		{
-			OW_LOG_ERROR(m_Logger, Format("Caught exception while calling shutdown(): %1", e));
+			BLOCXX_LOG_ERROR(m_Logger, Format("Caught exception while calling shutdown(): %1", e));
 		}
 		catch (...)
 		{
@@ -364,7 +365,7 @@ EmbeddedCIMOMEnvironment::shutdown()
 	// get this lock here so that we delete everything atomically
 	MutexLock ml(m_monitor);
 
-	OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment unloading and deleting services");
+	BLOCXX_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment unloading and deleting services");
 
 	m_pollingManager = 0;
 
@@ -400,7 +401,7 @@ EmbeddedCIMOMEnvironment::shutdown()
 		m_state = E_STATE_UNLOADED;
 	}
 
-	OW_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment has shut down");
+	BLOCXX_LOG_DEBUG(m_Logger, "EmbeddedCIMOMEnvironment has shut down");
 }
 //////////////////////////////////////////////////////////////////////////////
 ProviderManagerRef
@@ -413,7 +414,7 @@ EmbeddedCIMOMEnvironment::getProviderManager() const
 			OW_THROW(EmbeddedCIMOMEnvironmentException, "EmbeddedCIMOMEnvironment::getProviderManager() called when state is not constructed");
 		}
 	}
-	OW_ASSERT(m_providerManager);
+	BLOCXX_ASSERT(m_providerManager);
 	return m_providerManager;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -491,90 +492,6 @@ EmbeddedCIMOMEnvironment::_createLogger()
 			logMainFormat, logMainType, getAppenderConfig(*m_configItems)));
 	}
 
-
-	// This one will eventually be handled the same as all other logs by just sticking "main" in the additionalLogs array
-	// but we need to handle deprecated options for now, so it needs special treatment.
-	String logName(LOG_MAIN_LOG_NAME);
-	String logMainType = getConfigItem(Format(LOG_1_TYPE_opt, logName));
-	String logMainComponents = getConfigItem(Format(LOG_1_COMPONENTS_opt, logName), OW_DEFAULT_LOG_1_COMPONENTS);
-	String logMainCategories = getConfigItem(Format(LOG_1_CATEGORIES_opt, logName));
-	String logMainLevel = getConfigItem(Format(LOG_1_LEVEL_opt, logName));
-	String logMainFormat = getConfigItem(Format(LOG_1_FORMAT_opt, logName), OW_DEFAULT_LOG_1_FORMAT);
-
-	// map the old log_location onto log.main.type and log.main.location if necessary
-	if (logMainType.empty())
-	{
-		String deprecatedLogLocation = getConfigItem(ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_LOCATION);
-		if (deprecatedLogLocation.empty() || deprecatedLogLocation.equalsIgnoreCase("syslog"))
-		{
-			logMainType = "syslog";
-		}
-		else if (deprecatedLogLocation.equalsIgnoreCase("null"))
-		{
-			logMainType = "null";
-		}
-		else
-		{
-			logMainType = "file";
-			setConfigItem(Format(LOG_1_LOCATION_opt, logName), deprecatedLogLocation);
-		}
-	}
-
-	// map the old log_level onto log.main.level if necessary
-	if (logMainCategories.empty() && logMainLevel.empty())
-	{
-		String deprecatedLogLevel = getConfigItem(ConfigOpts::LOG_LEVEL_opt);
-		if (deprecatedLogLevel.empty())
-		{
-			logMainLevel = OW_DEFAULT_LOG_1_LEVEL;
-		}
-		else
-		{
-			// old used "fatalerror", now we just use FATAL
-			if (deprecatedLogLevel.equalsIgnoreCase("fatalerror"))
-			{
-				logMainLevel = Logger::STR_FATAL_CATEGORY;
-			}
-			else
-			{
-				deprecatedLogLevel.toUpperCase();
-				logMainLevel = deprecatedLogLevel;
-			}
-		}
-	}
-
-	// convert level into categories
-	if (logMainCategories.empty())
-	{
-		// convert level into categories
-		String logMainLevel = getConfigItem(Format(LOG_1_LEVEL_opt, logName), OW_DEFAULT_LOG_1_LEVEL);
-		if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
-		{
-			logMainCategories = String(Logger::STR_DEBUG_CATEGORY)
-				+ " " + String(Logger::STR_INFO_CATEGORY)
-				+ " " + String(Logger::STR_ERROR_CATEGORY)
-				+ " " + String(Logger::STR_FATAL_CATEGORY);
-		}
-		else if (logMainLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
-		{
-			logMainCategories = String(Logger::STR_INFO_CATEGORY)
-				+ " " + String(Logger::STR_ERROR_CATEGORY)
-				+ " " + String(Logger::STR_FATAL_CATEGORY);
-		}
-		else if (logMainLevel.equalsIgnoreCase(Logger::STR_ERROR_CATEGORY))
-		{
-			logMainCategories = String(Logger::STR_ERROR_CATEGORY) + " " + String(Logger::STR_FATAL_CATEGORY);
-		}
-		else if (logMainLevel.equalsIgnoreCase(Logger::STR_FATAL_CATEGORY))
-		{
-			logMainCategories = String(Logger::STR_FATAL_CATEGORY);
-		}
-	}
-
-	appenders.push_back(LogAppender::createLogAppender(logName, logMainComponents.tokenize(), logMainCategories.tokenize(),
-		logMainFormat, logMainType, getAppenderConfig(*m_configItems)));
-
-
 	LogAppender::setDefaultLogAppender(new MultiAppender(appenders));
 
 	m_Logger = Logger(COMPONENT_NAME);
@@ -583,7 +500,7 @@ EmbeddedCIMOMEnvironment::_createLogger()
 void
 EmbeddedCIMOMEnvironment::_loadConfigItemsFromFile(const String& filename)
 {
-	OW_LOG_DEBUG(m_Logger, "\nUsing config file: " + filename);
+	BLOCXX_LOG_DEBUG(m_Logger, "\nUsing config file: " + filename);
 	ConfigFile::loadConfigFile(filename, *m_configItems);
 	StringArray configDirs = ConfigFile::getMultiConfigItem(*m_configItems,
 		ConfigOpts::ADDITIONAL_CONFIG_FILES_DIRS_opt,
@@ -618,7 +535,7 @@ EmbeddedCIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
 			OW_THROW(EmbeddedCIMOMEnvironmentException, "EmbeddedCIMOMEnvironment::getWQLFilterCIMOMHandle() called when state is not initialized");
 		}
 	}
-	OW_ASSERT(m_cimServer);
+	BLOCXX_ASSERT(m_cimServer);
 	return CIMOMHandleIFCRef(new LocalEmbeddedCIMOMHandle(
 		const_cast<EmbeddedCIMOMEnvironment *>(this),
 		RepositoryIFCRef(new WQLFilterRep(inst, m_cimServer)), context));
@@ -646,7 +563,7 @@ EmbeddedCIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 		}
 	}
 	MutexLock ml(m_monitor);
-	OW_ASSERT(m_cimServer);
+	BLOCXX_ASSERT(m_cimServer);
 
 	// Here we construct a pipeline.  Currently it looks like:
 	// LocalEmbeddedCIMOMHandle -> [ Authorizer -> ] [Indication Rep Layer -> ] [ CIM Server -> ] CIM Repository
@@ -680,13 +597,13 @@ EmbeddedCIMOMEnvironment::getWQLRef() const
 	if (!m_wqlLib)
 	{
 		String libname = getConfigItem(ConfigOpts::WQL_LIB_opt, OW_DEFAULT_WQL_LIB);
-		OW_LOG_DEBUG(m_Logger, Format("CIMOM loading wql library %1", libname));
+		BLOCXX_LOG_DEBUG(m_Logger, Format("CIMOM loading wql library %1", libname));
 		SharedLibraryLoaderRef sll =
 			SharedLibraryLoader::createSharedLibraryLoader();
 		m_wqlLib = sll->loadSharedLibrary(libname);
 		if (!m_wqlLib)
 		{
-			OW_LOG_ERROR(m_Logger, Format("CIMOM Failed to load WQL Libary: %1", libname));
+			BLOCXX_LOG_ERROR(m_Logger, Format("CIMOM Failed to load WQL Libary: %1", libname));
 			return WQLIFCRef();
 		}
 	}
@@ -877,11 +794,11 @@ EmbeddedCIMOMEnvironment::_sortServicesForDependencies()
 		{
 			// no name == no depedency tracking, just do it at the beginning.
 			sortedServices.push_back(m_services[i]);
-			OW_LOG_DEBUG(m_Logger, "Found service with no name, adding to sortedServices");
+			BLOCXX_LOG_DEBUG(m_Logger, "Found service with no name, adding to sortedServices");
 		}
 		else
 		{
-			OW_LOG_DEBUG(m_Logger, Format("Adding node for service %1", name));
+			BLOCXX_LOG_DEBUG(m_Logger, Format("Adding node for service %1", name));
 			if (!depGraph.addNode(name, i))
 			{
 				OW_THROW(EmbeddedCIMOMEnvironmentException, Format("Invalid: 2 services with the same name: %1", name).c_str());
@@ -899,7 +816,7 @@ EmbeddedCIMOMEnvironment::_sortServicesForDependencies()
 			StringArray deps(m_services[i]->getDependencies());
 			for (size_t j = 0; j < deps.size(); ++j)
 			{
-				OW_LOG_DEBUG(m_Logger, Format("Adding dependency for service %1->%2", name, deps[j]));
+				BLOCXX_LOG_DEBUG(m_Logger, Format("Adding dependency for service %1->%2", name, deps[j]));
 				if (!depGraph.addDependency(name, deps[j]))
 				{
 					OW_THROW(EmbeddedCIMOMEnvironmentException, Format("Invalid: service %1 has duplicate dependencies: %2", name, deps[j]).c_str());
@@ -910,7 +827,7 @@ EmbeddedCIMOMEnvironment::_sortServicesForDependencies()
 			StringArray dependentServices(m_services[i]->getDependentServices());
 			for (size_t j = 0; j < dependentServices.size(); ++j)
 			{
-				OW_LOG_DEBUG(m_Logger, Format("Adding dependency for service %1->%2", dependentServices[j], name));
+				BLOCXX_LOG_DEBUG(m_Logger, Format("Adding dependency for service %1->%2", dependentServices[j], name));
 				if (!depGraph.addDependency(dependentServices[j], name))
 				{
 					OW_THROW(EmbeddedCIMOMEnvironmentException, Format("Invalid: service %1 has duplicate dependencies: %2", dependentServices[j], name).c_str());
@@ -923,7 +840,7 @@ EmbeddedCIMOMEnvironment::_sortServicesForDependencies()
 	Node curNode = depGraph.findIndependentNode();
 	while (curNode != INVALID_NODE)
 	{
-		OW_LOG_DEBUG(m_Logger, Format("Found service with satisfied dependencies: %1", curNode.name));
+		BLOCXX_LOG_DEBUG(m_Logger, Format("Found service with satisfied dependencies: %1", curNode.name));
 		sortedServices.push_back(m_services[curNode.index]);
 		depGraph.removeNode(curNode.name);
 		curNode = depGraph.findIndependentNode();
@@ -931,11 +848,11 @@ EmbeddedCIMOMEnvironment::_sortServicesForDependencies()
 
 	if (!depGraph.empty())
 	{
-		OW_LOG_FATAL_ERROR(m_Logger, "Service dependency graph contains a cycle:");
+		BLOCXX_LOG_FATAL_ERROR(m_Logger, "Service dependency graph contains a cycle:");
 		Array<Node> nodes(depGraph.getNodes());
 		for (size_t i = 0; i < nodes.size(); ++i)
 		{
-			OW_LOG_FATAL_ERROR(m_Logger, Format("Service: %1", nodes[i].name));
+			BLOCXX_LOG_FATAL_ERROR(m_Logger, Format("Service: %1", nodes[i].name));
 		}
 		OW_THROW(EmbeddedCIMOMEnvironmentException, "Service dependency graph contains a cycle");
 	}

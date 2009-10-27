@@ -82,153 +82,153 @@ namespace BinarySerialization
 // 9/01/2005 - only HDB version to 4000000. Changed key format to use : instead of / to fix a bug.
 // 10/12/2005 - only HDB version to 4000001. Fixed association and instance key format wrt associations.
 // 4/17/2006 - 4000002. Added namespace field to CIMInstance.
-const UInt32 BinaryProtocolVersion = 4000002;
+const blocxx::UInt32 BinaryProtocolVersion = 4000002;
 
 // This is the oldest version the code can handle.
-const UInt32 MinBinaryProtocolVersion = 3000007;
+const blocxx::UInt32 MinBinaryProtocolVersion = 3000007;
 
 // These values are all used by the binary protocol
-const UInt8 BIN_OK =				0;		// Success returned from server
-const UInt8 BIN_ERROR =			1;		// Error returned from server
-const UInt8 BIN_EXCEPTION =		2;		// CIM Exception returned from server
-const UInt8 BIN_END =			3;	// Final sentinel
+const blocxx::UInt8 BIN_OK =				0;		// Success returned from server
+const blocxx::UInt8 BIN_ERROR =			1;		// Error returned from server
+const blocxx::UInt8 BIN_EXCEPTION =		2;		// CIM Exception returned from server
+const blocxx::UInt8 BIN_END =			3;	// Final sentinel
 
-const UInt8 IPC_AUTHENTICATE =	10;	// Authenticate
-const UInt8 IPC_FUNCTIONCALL =	11;	// Regular function call
-const UInt8 IPC_CLOSECONN =		12;	// Close connection
-const UInt8 BIN_DELETECLS =		20;		// Delete class
-const UInt8 BIN_DELETEINST =		21;		// Delete instance
-const UInt8 BIN_DELETEQUAL =		22;		// Delete qualifier type
-const UInt8 BIN_ENUMCLSS =		23;		// Enum class
-const UInt8 BIN_ENUMCLSNAMES =	24;		// Enum class names
-const UInt8 BIN_ENUMINSTS =		25;		// Enum instances
-const UInt8 BIN_ENUMINSTNAMES =	26;		// Enum instance names
-const UInt8 BIN_ENUMQUALS =		27;		// Enum qualifiers types
-const UInt8 BIN_GETCLS =			28;		// Get class
-const UInt8 BIN_GETINST =			29;		// Get instance
-const UInt8 BIN_INVMETH =			30;		// Invoke method
-const UInt8 BIN_GETQUAL =			31;		// Get qualifier type
-const UInt8 BIN_SETQUAL =			32;		// Set qualifier type
-const UInt8 BIN_MODIFYCLS =		33;		// Modify class
-const UInt8 BIN_CREATECLS =		34;		// Create class
-const UInt8 BIN_MODIFYINST =		35;		// Modify instances
-const UInt8 BIN_CREATEINST =		36;		// Create instance
-const UInt8 BIN_GETPROP =			37;		// Get property
-const UInt8 BIN_SETPROP =			38;		// Set property
+const blocxx::UInt8 IPC_AUTHENTICATE =	10;	// Authenticate
+const blocxx::UInt8 IPC_FUNCTIONCALL =	11;	// Regular function call
+const blocxx::UInt8 IPC_CLOSECONN =		12;	// Close connection
+const blocxx::UInt8 BIN_DELETECLS =		20;		// Delete class
+const blocxx::UInt8 BIN_DELETEINST =		21;		// Delete instance
+const blocxx::UInt8 BIN_DELETEQUAL =		22;		// Delete qualifier type
+const blocxx::UInt8 BIN_ENUMCLSS =		23;		// Enum class
+const blocxx::UInt8 BIN_ENUMCLSNAMES =	24;		// Enum class names
+const blocxx::UInt8 BIN_ENUMINSTS =		25;		// Enum instances
+const blocxx::UInt8 BIN_ENUMINSTNAMES =	26;		// Enum instance names
+const blocxx::UInt8 BIN_ENUMQUALS =		27;		// Enum qualifiers types
+const blocxx::UInt8 BIN_GETCLS =			28;		// Get class
+const blocxx::UInt8 BIN_GETINST =			29;		// Get instance
+const blocxx::UInt8 BIN_INVMETH =			30;		// Invoke method
+const blocxx::UInt8 BIN_GETQUAL =			31;		// Get qualifier type
+const blocxx::UInt8 BIN_SETQUAL =			32;		// Set qualifier type
+const blocxx::UInt8 BIN_MODIFYCLS =		33;		// Modify class
+const blocxx::UInt8 BIN_CREATECLS =		34;		// Create class
+const blocxx::UInt8 BIN_MODIFYINST =		35;		// Modify instances
+const blocxx::UInt8 BIN_CREATEINST =		36;		// Create instance
+const blocxx::UInt8 BIN_GETPROP =			37;		// Get property
+const blocxx::UInt8 BIN_SETPROP =			38;		// Set property
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-const UInt8 BIN_ASSOCNAMES =		39;		// Associator names
-const UInt8 BIN_ASSOCIATORS =		40;		// Associators
-const UInt8 BIN_REFNAMES =		41;		// Reference names
-const UInt8 BIN_REFERENCES =		42;		// References
+const blocxx::UInt8 BIN_ASSOCNAMES =		39;		// Associator names
+const blocxx::UInt8 BIN_ASSOCIATORS =		40;		// Associators
+const blocxx::UInt8 BIN_REFNAMES =		41;		// Reference names
+const blocxx::UInt8 BIN_REFERENCES =		42;		// References
 #endif
-const UInt8 BIN_EXECQUERY =		43;		// Execute query
-const UInt8 BIN_GETSVRFEATURES =	44;		// Get Server Features
-const UInt8 BIN_LOG_MESSAGE =		45;		// log message
-const UInt8 OPERATION_CONTEXT_GET_DATA = 46;
-const UInt8 OPERATION_CONTEXT_SET_DATA = 47;
-const UInt8 OPERATION_CONTEXT_REMOVE_DATA = 48;
-const UInt8 OPERATION_CONTEXT_KEY_HAS_DATA = 49;
-const UInt8 CIMOM_HANDLE_REQUEST = 50;
-const UInt8 REPOSITORY_CIMOM_HANDLE_REQUEST = 51;
-const UInt8 GET_CONFIG_ITEM = 52;
-const UInt8 GET_MULTI_CONFIG_ITEM = 53;
-const UInt8 POLL = 54;
-const UInt8 GET_INITIAL_POLLING_INTERVAL = 55;
-const UInt8 SET_PERSISTENT = 56;
-const UInt8 MUST_POLL = 57;
-const UInt8 AUTHORIZE_FILTER = 58;
-const UInt8 ACTIVATE_FILTER = 59;
-const UInt8 DEACTIVATE_FILTER = 60;
-const UInt8 EXPORT_INDICATION = 61;
-const UInt8 PROVIDER_ENVIRONMENT_REQUEST = 62;
-const UInt8 SHUTTING_DOWN = 63;
-const UInt8 QUERY_INSTANCES = 64;
-const UInt8 OPERATION_CONTEXT_GET_OPERATION_ID = 65;
-const UInt8 SET_LOG_LEVEL = 66;
-const UInt8 LOCKED_CIMOM_HANDLE_REQUEST = 67;
+const blocxx::UInt8 BIN_EXECQUERY =		43;		// Execute query
+const blocxx::UInt8 BIN_GETSVRFEATURES =	44;		// Get Server Features
+const blocxx::UInt8 BIN_LOG_MESSAGE =		45;		// log message
+const blocxx::UInt8 OPERATION_CONTEXT_GET_DATA = 46;
+const blocxx::UInt8 OPERATION_CONTEXT_SET_DATA = 47;
+const blocxx::UInt8 OPERATION_CONTEXT_REMOVE_DATA = 48;
+const blocxx::UInt8 OPERATION_CONTEXT_KEY_HAS_DATA = 49;
+const blocxx::UInt8 CIMOM_HANDLE_REQUEST = 50;
+const blocxx::UInt8 REPOSITORY_CIMOM_HANDLE_REQUEST = 51;
+const blocxx::UInt8 GET_CONFIG_ITEM = 52;
+const blocxx::UInt8 GET_MULTI_CONFIG_ITEM = 53;
+const blocxx::UInt8 POLL = 54;
+const blocxx::UInt8 GET_INITIAL_POLLING_INTERVAL = 55;
+const blocxx::UInt8 SET_PERSISTENT = 56;
+const blocxx::UInt8 MUST_POLL = 57;
+const blocxx::UInt8 AUTHORIZE_FILTER = 58;
+const blocxx::UInt8 ACTIVATE_FILTER = 59;
+const blocxx::UInt8 DEACTIVATE_FILTER = 60;
+const blocxx::UInt8 EXPORT_INDICATION = 61;
+const blocxx::UInt8 PROVIDER_ENVIRONMENT_REQUEST = 62;
+const blocxx::UInt8 SHUTTING_DOWN = 63;
+const blocxx::UInt8 QUERY_INSTANCES = 64;
+const blocxx::UInt8 OPERATION_CONTEXT_GET_OPERATION_ID = 65;
+const blocxx::UInt8 SET_LOG_LEVEL = 66;
+const blocxx::UInt8 LOCKED_CIMOM_HANDLE_REQUEST = 67;
 
 
-const UInt8 BINSIG_NS	=			100;
-const UInt8 BINSIG_OP =			101;
-const UInt8 BINSIG_CLS =			102;
-const UInt8 BINSIG_INST =			103;
-const UInt8 BINSIG_BOOL =			104;
-const UInt8 BINSIG_CLSENUM =		105;
-const UInt8 BINSIG_STR =			106;
-const UInt8 BINSIG_STRARRAY =		107;
-const UInt8 BINSIG_QUAL_TYPE =			108;
-const UInt8 BINSIG_VALUE =		109;
-const UInt8 BINSIG_OPENUM =		110;
-const UInt8 BINSIG_INSTENUM =		111;
-const UInt8 BINSIG_QUAL_TYPEENUM =		112;
-const UInt8 BINSIG_VALUEARRAY =	113;
-const UInt8 BINSIG_PARAMVALUEARRAY =	114;
-const UInt8 BINSIG_STRINGENUM =	115;
-const UInt8 BINSIG_WQL_SELECT_STATEMENT = 116;
+const blocxx::UInt8 BINSIG_NS	=			100;
+const blocxx::UInt8 BINSIG_OP =			101;
+const blocxx::UInt8 BINSIG_CLS =			102;
+const blocxx::UInt8 BINSIG_INST =			103;
+const blocxx::UInt8 BINSIG_BOOL =			104;
+const blocxx::UInt8 BINSIG_CLSENUM =		105;
+const blocxx::UInt8 BINSIG_STR =			106;
+const blocxx::UInt8 BINSIG_STRARRAY =		107;
+const blocxx::UInt8 BINSIG_QUAL_TYPE =			108;
+const blocxx::UInt8 BINSIG_VALUE =		109;
+const blocxx::UInt8 BINSIG_OPENUM =		110;
+const blocxx::UInt8 BINSIG_INSTENUM =		111;
+const blocxx::UInt8 BINSIG_QUAL_TYPEENUM =		112;
+const blocxx::UInt8 BINSIG_VALUEARRAY =	113;
+const blocxx::UInt8 BINSIG_PARAMVALUEARRAY =	114;
+const blocxx::UInt8 BINSIG_STRINGENUM =	115;
+const blocxx::UInt8 BINSIG_WQL_SELECT_STATEMENT = 116;
 
-const UInt8 END_CLSENUM =			150;
-const UInt8 END_OPENUM =			151;
-const UInt8 END_INSTENUM =		152;
-const UInt8 END_QUALENUM =		153;
-const UInt8 END_STRINGENUM =		154;
+const blocxx::UInt8 END_CLSENUM =			150;
+const blocxx::UInt8 END_OPENUM =			151;
+const blocxx::UInt8 END_INSTENUM =		152;
+const blocxx::UInt8 END_QUALENUM =		153;
+const blocxx::UInt8 END_STRINGENUM =		154;
 
 //////////////////////////////////////////////////////////////////////////////
 	OW_COMMON_API void write(
 		std::streambuf & ostrm, const void * dataOut, size_t dataOutLen
 	);
 
-	OW_COMMON_API void verifySignature(std::streambuf & istrm, UInt8 validSig);
+	OW_COMMON_API void verifySignature(std::streambuf & istrm, blocxx::UInt8 validSig);
 
-	inline void write(std::streambuf & ostrm, Int32 val)
+	inline void write(std::streambuf & ostrm, blocxx::Int32 val)
 	{
-		val = hton32(val);
+		val = blocxx::hton32(val);
 		BinarySerialization::write(ostrm, &val, sizeof(val));
 	}
 
-	inline void write(std::streambuf & ostrm, UInt32 val)
+	inline void write(std::streambuf & ostrm, blocxx::UInt32 val)
 	{
-		val = hton32(val);
+		val = blocxx::hton32(val);
 		BinarySerialization::write(ostrm, &val, sizeof(val));
 	}
 
-	OW_COMMON_API void writeLen(std::streambuf & ostrm, UInt32 len);
+	OW_COMMON_API void writeLen(std::streambuf & ostrm, blocxx::UInt32 len);
 
-	inline void write(std::streambuf & ostrm, UInt8 val)
+	inline void write(std::streambuf & ostrm, blocxx::UInt8 val)
 	{
 		BinarySerialization::write(ostrm, &val, sizeof(val));
 	}
 
-	inline void write(std::streambuf & ostrm, UInt16 val)
+	inline void write(std::streambuf & ostrm, blocxx::UInt16 val)
 	{
-		val = hton16(val);
+		val = blocxx::hton16(val);
 		BinarySerialization::write(ostrm, &val, sizeof(val));
 	}
 
-	inline void write(std::streambuf & ostrm, Int16 val)
+	inline void write(std::streambuf & ostrm, blocxx::Int16 val)
 	{
-		val = hton16(val);
+		val = blocxx::hton16(val);
 		BinarySerialization::write(ostrm, &val, sizeof(val));
 	}
 
-	inline void write(std::streambuf & ostrm, UInt64 val)
+	inline void write(std::streambuf & ostrm, blocxx::UInt64 val)
 	{
-		val = hton64(val);
+		val = blocxx::hton64(val);
 		BinarySerialization::write(ostrm, &val, sizeof(val));
 	}
 
-	inline void write(std::streambuf & ostrm, Int64 val)
+	inline void write(std::streambuf & ostrm, blocxx::Int64 val)
 	{
-		val = hton64(val);
+		val = blocxx::hton64(val);
 		BinarySerialization::write(ostrm, &val, sizeof(val));
 	}
 
-	inline void write(std::streambuf & ostrm, const String & str)
+	inline void write(std::streambuf & ostrm, const blocxx::String & str)
 	{
 		str.writeObject(ostrm);
 	}
 
 	inline void writeObject(
-		std::streambuf & ostrm, UInt8 sig, const CIMBase & obj
+		std::streambuf & ostrm, blocxx::UInt8 sig, const CIMBase & obj
 	)
 	{
 		obj.writeObject(ostrm);
@@ -244,7 +244,7 @@ const UInt8 END_STRINGENUM =		154;
 		BinarySerialization::writeObject(ostrm, BINSIG_NS, ns);
 	}
 
-	inline void writeBool(std::streambuf & ostrm, Bool arg)
+	inline void writeBool(std::streambuf & ostrm, blocxx::Bool arg)
 	{
 		BinarySerialization::write(ostrm, BINSIG_BOOL);
 		arg.writeObject(ostrm);
@@ -269,7 +269,7 @@ const UInt8 END_STRINGENUM =		154;
 
 	inline void writeValue(std::streambuf & ostrm, const CIMValue & value)
 	{
-		Bool isValue = value ? true : false;
+		blocxx::Bool isValue = value ? true : false;
 		BinarySerialization::writeBool(ostrm, isValue);
 		if (isValue)
 		{
@@ -277,7 +277,7 @@ const UInt8 END_STRINGENUM =		154;
 		}
 	}
 
-	inline void writeString(std::streambuf & ostrm, const String & str)
+	inline void writeString(std::streambuf & ostrm, const blocxx::String & str)
 	{
 		BinarySerialization::write(ostrm, BINSIG_STR);
 		str.writeObject(ostrm);
@@ -289,7 +289,7 @@ const UInt8 END_STRINGENUM =		154;
 		wss.writeObject(ostrm);
 	}
 
-	OW_COMMON_API void readLen(std::streambuf & istrm, UInt32 & len);
+	OW_COMMON_API void readLen(std::streambuf & istrm, blocxx::UInt32 & len);
 
 	/////////////////////////////////////////////////////////////////////////////
 	template <typename T>
@@ -297,11 +297,11 @@ const UInt8 END_STRINGENUM =		154;
 	readArray(std::streambuf & istr, T & a)
 	{
 		a.clear();
-		UInt32 len;
+		blocxx::UInt32 len;
 		BinarySerialization::readLen(istr, len);
 
 		a.reserve(len);
-		for (UInt32 i = 0; i < len; i++)
+		for (blocxx::UInt32 i = 0; i < len; i++)
 		{
 			typename T::value_type x;
 			x.readObject(istr);
@@ -314,16 +314,16 @@ const UInt8 END_STRINGENUM =		154;
 	inline void
 	writeArray(std::streambuf & ostrm, const T & a)
 	{
-		UInt32 len = static_cast<UInt32>(a.size());
+		blocxx::UInt32 len = static_cast<blocxx::UInt32>(a.size());
 		BinarySerialization::writeLen(ostrm, len);
-		for (UInt32 i = 0; i < len; i++)
+		for (blocxx::UInt32 i = 0; i < len; i++)
 		{
 			a.operator[](i).writeObject(ostrm);
 		}
 	}
 
 	inline void writeStringArray(
-		std::streambuf & ostrm, const StringArray & stra
+		std::streambuf & ostrm, const blocxx::StringArray & stra
 	)
 	{
 		BinarySerialization::write(ostrm, BINSIG_STRARRAY);
@@ -331,7 +331,7 @@ const UInt8 END_STRINGENUM =		154;
 	}
 
 	OW_COMMON_API void writeStringArray(
-		std::streambuf & ostrm, const StringArray * propertyList
+		std::streambuf & ostrm, const blocxx::StringArray * propertyList
 	);
 
 
@@ -339,54 +339,54 @@ const UInt8 END_STRINGENUM =		154;
 		std::streambuf & istrm, void * dataIn, size_t dataInLen
 	);
 
-	inline void read(std::streambuf & istrm, String & arg)
+	inline void read(std::streambuf & istrm, blocxx::String & arg)
 	{
 		arg.readObject(istrm);
 	}
 
-	inline void read(std::streambuf & istrm, UInt64 & val)
+	inline void read(std::streambuf & istrm, blocxx::UInt64 & val)
 	{
 		BinarySerialization::read(istrm, &val, sizeof(val));
-		val = ntoh64(val);
+		val = blocxx::ntoh64(val);
 	}
 
-	inline void read(std::streambuf & istrm, Int64 & val)
+	inline void read(std::streambuf & istrm, blocxx::Int64 & val)
 	{
 		BinarySerialization::read(istrm, &val, sizeof(val));
-		val = ntoh64(val);
+		val = blocxx::ntoh64(val);
 	}
 
-	inline void read(std::streambuf & istrm, Int32 & val)
+	inline void read(std::streambuf & istrm, blocxx::Int32 & val)
 	{
 		BinarySerialization::read(istrm, &val, sizeof(val));
-		val = ntoh32(val);
+		val = blocxx::ntoh32(val);
 	}
 
-	inline void read(std::streambuf & istrm, UInt32 & val)
+	inline void read(std::streambuf & istrm, blocxx::UInt32 & val)
 	{
 		BinarySerialization::read(istrm, &val, sizeof(val));
-		val = ntoh32(val);
+		val = blocxx::ntoh32(val);
 	}
 
-	inline void read(std::streambuf & istrm, UInt16 & val)
+	inline void read(std::streambuf & istrm, blocxx::UInt16 & val)
 	{
 		BinarySerialization::read(istrm, &val, sizeof(val));
-		val = ntoh16(val);
+		val = blocxx::ntoh16(val);
 	}
 
-	inline void read(std::streambuf & istrm, Int16 & val)
+	inline void read(std::streambuf & istrm, blocxx::Int16 & val)
 	{
 		BinarySerialization::read(istrm, &val, sizeof(val));
-		val = ntoh16(val);
+		val = blocxx::ntoh16(val);
 	}
 
-	inline void read(std::streambuf & istrm, UInt8 & val)
+	inline void read(std::streambuf & istrm, blocxx::UInt8 & val)
 	{
 		BinarySerialization::read(istrm, &val, sizeof(val));
 	}
 
 	inline void readObject(
-		std::streambuf & istrm, UInt8 validSig, CIMBase & obj
+		std::streambuf & istrm, blocxx::UInt8 validSig, CIMBase & obj
 	)
 	{
 		obj.readObject(istrm);
@@ -406,10 +406,10 @@ const UInt8 END_STRINGENUM =		154;
 		return ci;
 	}
 
-	inline Bool readBool(std::streambuf & istrm)
+	inline blocxx::Bool readBool(std::streambuf & istrm)
 	{
 		BinarySerialization::verifySignature(istrm, BINSIG_BOOL);
-		Bool b;
+		blocxx::Bool b;
 		b.readObject(istrm);
 		return b;
 	}
@@ -428,10 +428,10 @@ const UInt8 END_STRINGENUM =		154;
 		return cc;
 	}
 
-	inline String readString(std::streambuf & istrm)
+	inline blocxx::String readString(std::streambuf & istrm)
 	{
 		BinarySerialization::verifySignature(istrm, BINSIG_STR);
-		String rv;
+		blocxx::String rv;
 		rv.readObject(istrm);
 		return rv;
 	}
@@ -446,7 +446,7 @@ const UInt8 END_STRINGENUM =		154;
 	inline CIMValue readValue(std::streambuf & istrm)
 	{
 		CIMValue value(CIMNULL);
-		Bool isValue(BinarySerialization::readBool(istrm));
+		blocxx::Bool isValue(BinarySerialization::readBool(istrm));
 		if (isValue)
 		{
 			BinarySerialization::readObject(istrm, BINSIG_VALUE, value);
@@ -462,10 +462,10 @@ const UInt8 END_STRINGENUM =		154;
 		return rv;
 	}
 
-	inline StringArray readStringArray(std::streambuf & istrm)
+	inline blocxx::StringArray readStringArray(std::streambuf & istrm)
 	{
 		BinarySerialization::verifySignature(istrm, BINSIG_STRARRAY);
-		StringArray stra;
+		blocxx::StringArray stra;
 		readArray(istrm, stra);
 		return stra;
 	}
@@ -491,8 +491,8 @@ const UInt8 END_STRINGENUM =		154;
 	);
 
 	OW_COMMON_API void readPropertyList(
-		std::streambuf & istrm, StringArray & propList,
-		StringArray * & propListPtr
+		std::streambuf & istrm, blocxx::StringArray & propList,
+		blocxx::StringArray * & propListPtr
 	);
 } // end namespace BinarySerialization
 

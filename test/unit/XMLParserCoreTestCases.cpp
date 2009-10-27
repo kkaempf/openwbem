@@ -44,6 +44,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(XMLParserCoreTestCases,"XMLParserCore");
 #include <iostream> // DEBUG
 
 using namespace OpenWBEM;
+using namespace blocxx;
 using namespace std;
 
 void XMLParserCoreTestCases::setUp()

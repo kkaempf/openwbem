@@ -35,6 +35,8 @@
 
 #include "OW_CIMErrorException.hpp"
 
+using namespace blocxx;
+
 namespace OW_NAMESPACE
 {
 

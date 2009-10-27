@@ -66,6 +66,7 @@ using std::ostream;
 using std::iostream;
 using std::istream;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace // anonymous
 {

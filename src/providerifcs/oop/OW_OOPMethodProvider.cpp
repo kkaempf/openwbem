@@ -38,7 +38,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_CIMValue.hpp"
 #include "blocxx/DateTime.hpp"
@@ -49,6 +49,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 OOPMethodProvider::OOPMethodProvider(const OOPProviderInterface::ProvRegInfo& info,
 	const OOPProcessState& processState)

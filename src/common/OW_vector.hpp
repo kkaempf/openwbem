@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/vector.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_vector.hpp is deprecated, use "blocxx/vector.hpp" instead.
 #endif

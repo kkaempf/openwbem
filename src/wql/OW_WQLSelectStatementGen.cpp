@@ -43,6 +43,8 @@ namespace OW_NAMESPACE
 namespace WQL
 {
 
+using namespace blocxx;
+
 WQLSelectStatementGen::~WQLSelectStatementGen()
 {
 }

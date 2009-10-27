@@ -41,8 +41,8 @@
 namespace OW_NAMESPACE
 {
 
-OW_XML_API String XMLPrettyPrint(const String& xml);
-OW_XML_API String XMLPrettyPrint(std::istream& xml);
+OW_XML_API blocxx::String XMLPrettyPrint(const blocxx::String& xml);
+OW_XML_API blocxx::String XMLPrettyPrint(std::istream& xml);
 
 } // end namespace OW_NAMESPACE
 

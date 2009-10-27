@@ -55,14 +55,14 @@ public:
 	 * Export the given indication
 	 */
 	virtual void exportIndication(const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMInstance &indHandlerInst, const CIMInstance &indicationInst);
 
 	/**
 	 * @return The class names of all the CIM_CppIndicationHandler sub-classes
 	 * this IndicationExportProvider handles.
 	 */
-	virtual StringArray getHandlerClassNames();
+	virtual blocxx::StringArray getHandlerClassNames();
 
 	/**
 	 * Called by the CIMOM when the provider is initialized

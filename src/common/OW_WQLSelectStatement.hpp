@@ -60,52 +60,52 @@ public:
 	/** Clears all data members of this object.
 	*/
 	void clear();
-	const String& getClassName() const
+	const blocxx::String& getClassName() const
 	{
 		return _className;
 	}
 	/** Modifier. This method should not be called by the user (only by the
 	  parser).
 	 */
-	void setClassName(const String& className)
+	void setClassName(const blocxx::String& className)
 	{
 		_className = className;
 	}
 	/** Returns the number of property names which were indicated in the
 	  selection list.
 	 */
-	UInt32 getSelectPropertyNameCount() const
+	blocxx::UInt32 getSelectPropertyNameCount() const
 	{
 		return _selectPropertyNames.size();
 	}
 	/** Gets the i-th selected property name in the list.
 	 */
-	const String& getSelectPropertyName(UInt32 i) const
+	const blocxx::String& getSelectPropertyName(blocxx::UInt32 i) const
 	{
 		return _selectPropertyNames[i];
 	}
 	/** Gets the selected property names in the list.
 	 */
-	const StringArray& getSelectPropertyNames() const
+	const blocxx::StringArray& getSelectPropertyNames() const
 	{
 		return _selectPropertyNames;
 	}
 	/** Appends a property name to the property name list. This user should
 	  not call this method; it should only be called by the parser.
 	 */
-	void appendSelectPropertyName(const String& x)
+	void appendSelectPropertyName(const blocxx::String& x)
 	{
 		_selectPropertyNames.append(x);
 	}
 	/** Returns the number of unique property names from the where clause.
 	 */
-	UInt32 getWherePropertyNameCount() const
+	blocxx::UInt32 getWherePropertyNameCount() const
 	{
 		return _wherePropertyNames.size();
 	}
 	/** Gets the i-th unique property appearing in the where clause.
 	 */
-	const String& getWherePropertyName(UInt32 i) const
+	const blocxx::String& getWherePropertyName(blocxx::UInt32 i) const
 	{
 		return _wherePropertyNames[i];
 	}
@@ -114,7 +114,7 @@ public:
 	  @param x name of the property.
 	  @return false if a property with that name already exists.
 	 */
-	bool appendWherePropertyName(const String& x);
+	bool appendWherePropertyName(const blocxx::String& x);
 	/** Appends an operation to the operation array. This method should only
 	  be called by the parser itself.
 	 */
@@ -147,7 +147,7 @@ public:
 	/** Prints out the members of this class.
 	*/
 	void print(std::ostream& ostr) const;
-	String toString() const;
+	blocxx::String toString() const;
 	void compileWhereClause(const WQLPropertySource* source, WQLCompile& wcl);
 
 	virtual void readObject(std::streambuf & istrm);
@@ -162,7 +162,7 @@ private:
 	//	 FROM TargetClass
 	//	 WHERE ...
 	//
-	String _className;
+	blocxx::String _className;
 	//
 	// The list of property names being selected. For example, see "firstName",
 	// and "lastName" below.
@@ -171,13 +171,13 @@ private:
 	//	 FROM TargetClass
 	//	 WHERE ...
 	//
-	Array<String> _selectPropertyNames;
+	blocxx::Array<blocxx::String> _selectPropertyNames;
 	//
 	// The unique list of property names appearing in the WHERE clause.
 	// Although a property may occur many times in the WHERE clause, it will
 	// only appear once in this list.
 	//
-	Array<String> _wherePropertyNames;
+	blocxx::Array<blocxx::String> _wherePropertyNames;
 	//
 	// The list of operations and operands encountered while parsing the WHERE clause.
 	// Consider this query:
@@ -210,7 +210,7 @@ public:
 		Type m_type;
 		WQLOperation m_operation;
 		WQLOperand m_operand;
-		String toString() const
+		blocxx::String toString() const
 		{
 			if (m_type == OPERATION)
 			{
@@ -226,7 +226,7 @@ public:
 		virtual void writeObject(std::streambuf & ostrm) const;
 	};
 private:
-	Array<OperandOrOperation> _operStack;
+	blocxx::Array<OperandOrOperation> _operStack;
 	friend class WQLCompile;
 
 };

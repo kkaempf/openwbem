@@ -59,10 +59,10 @@ public:
 	XMLListener(const CIMListenerCallbackRef& callback);
 	virtual ~XMLListener();
 	virtual RequestHandlerIFC* clone() const;
-	virtual StringArray getSupportedContentTypes() const;
-	virtual String getContentType() const;
+	virtual blocxx::StringArray getSupportedContentTypes() const;
+	virtual blocxx::String getContentType() const;
 
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void shutdown();
 protected:
@@ -84,11 +84,11 @@ protected:
 	 */
 	virtual void doOptions(CIMFeatures &cf, OperationContext& context);
 	virtual void outputError(CIMException::ErrNoType errorCode,
-		const String& msg, std::ostream& ostr);
+		const blocxx::String& msg, std::ostream& ostr);
 private:
 	CIMListenerCallbackRef m_callback;
 	void processSimpleExpReq(CIMXMLParser& parser, std::ostream& ostrEntity,
-		std::ostream& ostrError, const String& messageId, OperationContext& context);
+		std::ostream& ostrError, const blocxx::String& messageId, OperationContext& context);
 };
 
 } // end namespace OW_NAMESPACE

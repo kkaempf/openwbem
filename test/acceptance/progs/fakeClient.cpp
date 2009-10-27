@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
 #include "blocxx/TempFileStream.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_HTTPException.hpp"
 
 #include <fstream>
@@ -55,6 +55,7 @@ using std::cin;
 using std::ifstream;
 using std::istream;
 using namespace OpenWBEM;
+using namespace blocxx;
 
 // certificate verify callback.
 #ifdef OW_HAVE_OPENSSL
@@ -72,8 +73,6 @@ int main(int argc, char* argv[])
 	}
 
 	String url(argv[1]);
-
-
 
 	try
 	{

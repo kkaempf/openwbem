@@ -57,10 +57,10 @@ namespace OW_NAMESPACE
 typedef struct {
 	::MIs miVector;
 	::CMPI_Broker broker;
-	OpenWBEM::DateTime lastAccessTime;
+	blocxx::DateTime lastAccessTime;
 } CompleteMI;
 
-typedef SharedLibraryReference< Reference<CompleteMI> > CMPIFTABLERef;
+	typedef blocxx::SharedLibraryReference< blocxx::Reference<CompleteMI> > CMPIFTABLERef;
 
 } // end namespace OW_NAMESPACE
 

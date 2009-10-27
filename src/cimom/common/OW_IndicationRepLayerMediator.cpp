@@ -39,6 +39,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 ///////////////////////////////////////////////////////////////////////////////
 UInt32
 IndicationRepLayerMediator::getClassCreationSubscriptionCount()

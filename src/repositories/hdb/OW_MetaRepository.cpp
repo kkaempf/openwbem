@@ -45,14 +45,16 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/Array.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ConfigOpts.hpp"
 
 namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
@@ -83,7 +85,7 @@ MetaRepository::open(const String& path)
 {
 	GenericHDBRepository::open(path);
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_INFO(lgr, Format("Using MetaRepository: %1", path));
+	BLOCXX_LOG_INFO(lgr, Format("Using MetaRepository: %1", path));
 
 	// Create root qualifier container
 	HDBHandleLock hdl(this, getHandle());
@@ -748,7 +750,7 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 							/// @todo  look at this message, it seems the dmtf cim schema causes it quite often.
 							/// maybe we should only output it if the value is different?
 							Logger lgr(COMPONENT_NAME);
-							OW_LOG_INFO(lgr, Format("Warning: %1.%2: qualifier %3 was "
+							BLOCXX_LOG_INFO(lgr, Format("Warning: %1.%2: qualifier %3 was "
 										"overridden, but the qualifier can't be "
 										"overridden because it has DisableOverride flavor",
 										childClass.getName(), propArray[i].getName(),
@@ -845,7 +847,7 @@ MetaRepository::_resolveQualifiers(const String& ns,
 		else
 		{
 			Logger lgr(COMPONENT_NAME);
-			OW_LOG_ERROR(lgr, Format("Unable to find qualifier: %1",
+			BLOCXX_LOG_ERROR(lgr, Format("Unable to find qualifier: %1",
 				quals[i].getName()));
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				Format("Unable to find qualifier: %1",
@@ -875,7 +877,7 @@ MetaRepository::getTopLevelAssociations(const String& ns,
 		{
 			CIMClass cc(CIMNULL);
 			nodeToCIMObject(cc, node);
-			OW_ASSERT(cc.isAssociation());
+			BLOCXX_ASSERT(cc.isAssociation());
 			result.handle(cc);
 		}
 		node = hdl->getNextSibling(node);

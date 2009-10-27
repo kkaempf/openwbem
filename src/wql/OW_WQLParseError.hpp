@@ -51,7 +51,7 @@ struct OW_WQL_API ParseError
 	{
 	}
 
-	String message;
+	blocxx::String message;
 	// column and line for start of token where error detected
 	unsigned column;
 	unsigned line;

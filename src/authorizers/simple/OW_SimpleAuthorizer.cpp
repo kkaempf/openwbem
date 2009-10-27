@@ -34,10 +34,10 @@
 
 #include "OW_config.h"
 #include "OW_SimpleAuthorizer.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_UserInfo.hpp"
 #include "OW_OperationContext.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_CIMClass.hpp"
@@ -54,6 +54,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 
 class AccessMgr : public IntrusiveCountableBase
 {
@@ -151,7 +152,7 @@ AccessMgr::getMethodType(int op)
 		case INVOKEMETHOD:
 			return String("rw");
 		default:
-			OW_ASSERT("Unknown operation type passed to "
+			BLOCXX_ASSERT("Unknown operation type passed to "
 				"AccessMgr.  This shouldn't happen" == 0);
 	}
 	return "";
@@ -195,8 +196,8 @@ AccessMgr::checkAccess(int op, const String& ns,
 
 
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG2(lgr, Format("Checking access to namespace: \"%1\"", ns));
-	OW_LOG_DEBUG2(lgr, Format("UserName is: \"%1\" Operation is : %2",
+	BLOCXX_LOG_DEBUG2(lgr, Format("Checking access to namespace: \"%1\"", ns));
+	BLOCXX_LOG_DEBUG2(lgr, Format("UserName is: \"%1\" Operation is : %2",
 		userInfo.getUserName(), op));
 	String lns(ns);
 	while (!lns.empty() && lns[0] == '/')
@@ -212,7 +213,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 				m_env->getConfigItem(ConfigOpts::ACL_SUPERUSER_opt);
 			if (superUser.equalsIgnoreCase(userInfo.getUserName()))
 			{
-				OW_LOG_DEBUG2(lgr, "User is SuperUser: checkAccess returning.");
+				BLOCXX_LOG_DEBUG2(lgr, "User is SuperUser: checkAccess returning.");
 				return;
 			}
 			try
@@ -223,7 +224,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 			}
 			catch(CIMException&)
 			{
-				OW_LOG_DEBUG2(lgr, "OpenWBEM_UserACL class non-existent in"
+				BLOCXX_LOG_DEBUG2(lgr, "OpenWBEM_UserACL class non-existent in"
 					" /root/security. ACLs disabled");
 				return;
 			}
@@ -259,7 +260,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 				{
 					if (capability.indexOf(opType) == String::npos)
 					{
-						OW_LOG_INFO(lgr, Format(
+						BLOCXX_LOG_INFO(lgr, Format(
 							"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 							userInfo.m_userName, lns));
 						OW_THROWCIM(CIMException::ACCESS_DENIED);
@@ -269,13 +270,13 @@ AccessMgr::checkAccess(int op, const String& ns,
 				{
 					if (!capability.equals("rw") && !capability.equals("wr"))
 					{
-						OW_LOG_INFO(lgr, Format(
+						BLOCXX_LOG_INFO(lgr, Format(
 							"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 							userInfo.m_userName, lns));
 						OW_THROWCIM(CIMException::ACCESS_DENIED);
 					}
 				}
-				OW_LOG_INFO(lgr, Format(
+				BLOCXX_LOG_INFO(lgr, Format(
 					"ACCESS GRANTED to user \"%1\" for namespace \"%2\"",
 					userInfo.m_userName, lns));
 				return;
@@ -290,7 +291,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 		}
 		catch(CIMException&)
 		{
-			OW_LOG_DEBUG2(lgr, "OpenWBEM_NamespaceACL class non-existent in"
+			BLOCXX_LOG_DEBUG2(lgr, "OpenWBEM_NamespaceACL class non-existent in"
 				" /root/security. namespace ACLs disabled");
 			return;
 		}
@@ -304,7 +305,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 		}
 		catch(const CIMException& ce)
 		{
-			OW_LOG_DEBUG(lgr, Format("Caught exception: %1 in AccessMgr::checkAccess", ce));
+			BLOCXX_LOG_DEBUG(lgr, Format("Caught exception: %1 in AccessMgr::checkAccess", ce));
 			ci.setNull();
 		}
 
@@ -326,7 +327,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 			{
 				if (capability.indexOf(opType) == String::npos)
 				{
-					OW_LOG_INFO(lgr, Format(
+					BLOCXX_LOG_INFO(lgr, Format(
 						"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 						userInfo.m_userName, lns));
 					OW_THROWCIM(CIMException::ACCESS_DENIED);
@@ -336,13 +337,13 @@ AccessMgr::checkAccess(int op, const String& ns,
 			{
 				if (!capability.equals("rw") && !capability.equals("wr"))
 				{
-					OW_LOG_INFO(lgr, Format(
+					BLOCXX_LOG_INFO(lgr, Format(
 						"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 						userInfo.m_userName, lns));
 					OW_THROWCIM(CIMException::ACCESS_DENIED);
 				}
 			}
-			OW_LOG_INFO(lgr, Format(
+			BLOCXX_LOG_INFO(lgr, Format(
 				"ACCESS GRANTED to user \"%1\" for namespace \"%2\"",
 				userInfo.m_userName, lns));
 			return;
@@ -354,7 +355,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 		}
 		lns = lns.substring(0, idx);
 	}
-	OW_LOG_INFO(lgr, Format(
+	BLOCXX_LOG_INFO(lgr, Format(
 		"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 		userInfo.m_userName, lns));
 	OW_THROWCIM(CIMException::ACCESS_DENIED);

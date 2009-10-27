@@ -38,6 +38,7 @@
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "blocxx/COWIntrusiveReference.hpp"
+#include "blocxx/SafeBool.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_Types.hpp"
@@ -107,7 +108,7 @@ public:
 	 *	Pass 0 if the size is unlimited.
 	 * @exception CIMException if the type is invalid for this method.
 	 */
-	CIMDataType(Type type, Int32 size);
+	CIMDataType(Type type, blocxx::Int32 size);
 	/**
 	 * Create a new CIMDataType object that represents a REFERENCE data type.
 	 * @param refClassName	The name of the reference class.
@@ -147,7 +148,7 @@ public:
 	 *		Otherwise the size is set at the given size.
 	 * @return true on success. Otherwise false.
 	 */
-	bool setToArrayType(Int32 size);
+	bool setToArrayType(blocxx::Int32 size);
 	/**
 	 * @return true if this data type represents an array type.
 	 */
@@ -171,16 +172,16 @@ public:
 	/**
 	 * @return the number of elements for this CIMDataType
 	 */
-	Int32 getSize() const;
+	blocxx::Int32 getSize() const;
 	/**
 	 * @return the class name for reference if this is a REFERENCE type.
 	 */
-	String getRefClassName() const;
+	blocxx::String getRefClassName() const;
 
 	/**
 	 * @return true if this CIMDataType is a valid CIM data type
 	 */
-	OW_SAFE_BOOL_IMPL(CIMDataType, COWIntrusiveReference<DTData>, CIMDataType::m_pdata, (m_pdata && (getType() != CIMNULL) && (getType() != INVALID)))
+	BLOCXX_SAFE_BOOL_IMPL(CIMDataType, blocxx::COWIntrusiveReference<DTData>, CIMDataType::m_pdata, (m_pdata && (getType() != CIMNULL) && (getType() != INVALID)))
 
 	/**
 	 * Create an CIMDataType object represented by a given string.
@@ -188,7 +189,7 @@ public:
 	 *		(i.e. "uint8", "sint8", "real32", etc...)
 	 * @return The CIMDataType represented by the given string.
 	 */
-	static CIMDataType getDataType(const String& strType);
+	static CIMDataType getDataType(const blocxx::String& strType);
 	/**
 	 * Determine the int data type associated with a name of a data type.
 	 * @param strType	An String that contains a valid name of a CIM data type.
@@ -196,7 +197,7 @@ public:
 	 * @return An integer representation of the data type (i.e. UINT8, SINT8,
 	 * REAL32, etc...)
 	 */
-	static Type strToSimpleType(const String& strType);
+	static Type strToSimpleType(const blocxx::String& strType);
 	/**
 	 * Check a given CIMDataType with this one for equality.
 	 * @param arg The CIMDataType to compare with this one.
@@ -216,11 +217,11 @@ public:
 	/**
 	 * @return The string representation of this CIMDataType object.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 	/**
 	 * @return The MOF representation of this CIMDataType as an String.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 	/**
 	 * @return The MOF representation of the array element.  This can be either:
 	 * ""
@@ -228,7 +229,7 @@ public:
 	 * "[<size>]"
 	 * This is mainly used by CIMProperty::toMOF()
 	 */
-	String getArrayMOF() const;
+	blocxx::String getArrayMOF() const;
 	/**
 	 * Determine if a given data type is numeric.
 	 * @param type The data type to check
@@ -242,7 +243,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<DTData> m_pdata;
+	blocxx::COWIntrusiveReference<DTData> m_pdata;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

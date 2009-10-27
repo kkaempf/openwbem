@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/HashMap.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_HashMap.hpp is deprecated, use "blocxx/HashMap.hpp" instead.
 #endif
 

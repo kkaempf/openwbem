@@ -37,6 +37,11 @@
 #include "OW_config.h"
 #include <blocxx/SyslogAppender.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SyslogAppender.hpp is deprecated, use "blocxx/SyslogAppender.hpp" instead.
 #endif
 

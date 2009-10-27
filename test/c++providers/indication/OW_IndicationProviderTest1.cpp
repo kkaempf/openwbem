@@ -37,9 +37,11 @@
 
 #include "OW_CppProviderIncludes.hpp"
 #include "OW_WQLSelectStatement.hpp"
+#include "blocxx/Logger.hpp"
 
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 // anonymous namespace to prevent symbol conflicts
 namespace
@@ -63,7 +65,7 @@ public:
 	virtual int mustPoll(const ProviderEnvironmentIFCRef &env, const WQLSelectStatement &, const String &, const String&, const StringArray&)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "IndicationProviderTest1::mustPoll");
+		BLOCXX_LOG_DEBUG(logger, "IndicationProviderTest1::mustPoll");
 		// going to be lazy and make the cimom poll
 		return 1;
 	}
@@ -148,7 +150,7 @@ public:
 		const CIMClass &cimClass)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "IndicationProviderTest1::getInstance");
+		BLOCXX_LOG_DEBUG(logger, "IndicationProviderTest1::getInstance");
 		Int32 id = 0;
 		try
 		{
@@ -180,7 +182,7 @@ public:
 		const CIMClass &cimClass)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "IndicationProviderTest1::enumInstances");
+		BLOCXX_LOG_DEBUG(logger, "IndicationProviderTest1::enumInstances");
 		// we will simulate changing external conditions by calling updateInstances() every time enumInstances is called.
 		// the changes will cause the cimom to send lifecycle indications.
 		updateInstances(cimClass);
@@ -198,7 +200,7 @@ public:
 		const CIMClass &cimClass)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "IndicationProviderTest1::enumInstanceNames");
+		BLOCXX_LOG_DEBUG(logger, "IndicationProviderTest1::enumInstanceNames");
 		// we will simulate changing external conditions by calling updateInstances() every time enumInstances is called.
 		// the changes will cause the cimom to send lifecycle indications.
 		updateInstances(cimClass);

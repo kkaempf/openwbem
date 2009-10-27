@@ -160,10 +160,10 @@ struct CMPI_Object {
    CMPI_Object(OpenWBEM::CIMInstance*);
    CMPI_Object(OpenWBEM::CIMObjectPath*);
    CMPI_Object(OpenWBEM::CIMDateTime*);
-   CMPI_Object(const OpenWBEM::String&);
+   CMPI_Object(const blocxx::String&);
    CMPI_Object(char*);
    CMPI_Object(void*,void*);
-   CMPI_Object(OpenWBEM::Array<OpenWBEM::CIMParamValue>*);
+   CMPI_Object(blocxx::Array<OpenWBEM::CIMParamValue>*);
    CMPI_Object(CMPIData*);
    CMPI_Object(CMPI_Object*);
    ~CMPI_Object();
@@ -248,7 +248,7 @@ struct CMPI_ObjectPathOnStack : CMPIObjectPath {
 
 struct CMPI_ArgsOnStack : CMPIArgs {
    CMPI_Object *next,*prev;
-   CMPI_ArgsOnStack(const OpenWBEM::Array<OpenWBEM::CIMParamValue>& args);
+   CMPI_ArgsOnStack(const blocxx::Array<OpenWBEM::CIMParamValue>& args);
 };
 
 
@@ -263,20 +263,20 @@ struct CMPI_DateTime : CMPIDateTime {
 struct CMPI_ObjEnumeration : CMPIEnumeration {
    CMPI_Object *next,*prev;
    int max,cursor;
-   /* CMPI_ObjEnumeration(OpenWBEM::Array<OpenWBEM::CIMBase>* ia); */
-   CMPI_ObjEnumeration(OpenWBEM::Array<OpenWBEM::CIMInstance>* ia);
+   /* CMPI_ObjEnumeration(blocxx::Array<OpenWBEM::CIMBase>* ia); */
+   CMPI_ObjEnumeration(blocxx::Array<OpenWBEM::CIMInstance>* ia);
 };
 
 struct CMPI_InstEnumeration : CMPIEnumeration {
    CMPI_Object *next,*prev;
    int max,cursor;
-   CMPI_InstEnumeration(OpenWBEM::Array<OpenWBEM::CIMInstance>* ia);
+   CMPI_InstEnumeration(blocxx::Array<OpenWBEM::CIMInstance>* ia);
 };
 
 struct CMPI_OpEnumeration : CMPIEnumeration {
    CMPI_Object *next,*prev;
    int max,cursor;
-   CMPI_OpEnumeration(OpenWBEM::Array<OpenWBEM::CIMObjectPath>* opa);
+   CMPI_OpEnumeration(blocxx::Array<OpenWBEM::CIMObjectPath>* opa);
 };
 
 /*
@@ -293,11 +293,11 @@ struct CMPI_Broker : CMPIBroker {
 
 #include "cmpiThreadContext.h"
 
-CMPIString* string2CMPIString(const OpenWBEM::String &s);
+CMPIString* string2CMPIString(const blocxx::String &s);
 CMPIType type2CMPIType(OpenWBEM::CIMDataType pt, int array);
 OpenWBEM::CIMValue value2CIMValue(const CMPIValue* data, const CMPIType type, CMPIrc *rc);
-CMPIrc key2CMPIData(const OpenWBEM::String& v, OpenWBEM::CIMDataType t, CMPIData *data);
-/* CMPIrc key2CMPIData(const OpenWBEM::String& v, KeyBinding::Type t, CMPIData *data); */
+CMPIrc key2CMPIData(const blocxx::String& v, OpenWBEM::CIMDataType t, CMPIData *data);
+/* CMPIrc key2CMPIData(const blocxx::String& v, KeyBinding::Type t, CMPIData *data); */
 CMPIrc value2CMPIData(const OpenWBEM::CIMValue&,CMPIType,CMPIData *data);
 
 OpenWBEM::CIMClass *mbGetClass(const CMPIBroker *mb, const OpenWBEM::CIMObjectPath &cop);

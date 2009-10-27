@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/GlobalPtr.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 
 #define OW_GLOBAL_PTR_INIT BLOCXX_GLOBAL_PTR_INIT
 

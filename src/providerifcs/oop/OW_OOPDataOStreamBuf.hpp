@@ -46,7 +46,7 @@ namespace OW_NAMESPACE
 class OOPDataOStreamBuf : public std::streambuf
 {
 public:
-	OOPDataOStreamBuf(Array<unsigned char>& buf)
+	OOPDataOStreamBuf(blocxx::Array<unsigned char>& buf)
 		: m_bfr(buf)
 	{
 	}
@@ -55,7 +55,7 @@ protected:
 	virtual std::streamsize xsputn(const char* s, std::streamsize n);
 private:
 
-	Array<unsigned char>& m_bfr;
+	blocxx::Array<unsigned char>& m_bfr;
 };
 
 } // end namespace OW_NAMESPACE

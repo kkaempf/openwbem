@@ -35,9 +35,10 @@
 #include "OW_config.h"
 #include "OW_CppProviderIncludes.hpp"
 #include "OW_MOFCompiler.hpp"
+#include "blocxx/Logger.hpp"
 
 using namespace OpenWBEM;
-
+using namespace blocxx;
 
 namespace
 {
@@ -51,15 +52,15 @@ public:
 	virtual void queryInstances(const ProviderEnvironmentIFCRef& env, const String& ns, const WQLSelectStatement& query, const WQLCompile& compiledWhereClause, CIMInstanceResultHandlerIFC& result, const CIMClass& cimClass)
 	{
 		Logger lgr("testWQLProvider");
-		OW_LOG_DEBUG(lgr, Format("testWQLProvider::queryInstances. ns = %1, query = %2", ns, query.toString()));
+		BLOCXX_LOG_DEBUG(lgr, Format("testWQLProvider::queryInstances. ns = %1, query = %2", ns, query.toString()));
 		CIMOMHandleIFCRef hdl(env->getCIMOMHandle());
 		CIMInstanceArray ia(testWQLProvider::getInstances(hdl, ns));
 		for (size_t i = 0; i < ia.size(); ++i)
 		{
-			OW_LOG_DEBUG(lgr, Format("evaluating instance for match:\n%1", ia[i]));
+			BLOCXX_LOG_DEBUG(lgr, Format("evaluating instance for match:\n%1", ia[i]));
 			if (compiledWhereClause.evaluate(WQLInstancePropertySource(ia[i], hdl, ns)))
 			{
-				OW_LOG_DEBUG(lgr, "it was a match");
+				BLOCXX_LOG_DEBUG(lgr, "it was a match");
 				result.handle(ia[i]);
 			}
 		}

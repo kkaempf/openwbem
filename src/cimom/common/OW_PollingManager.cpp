@@ -39,6 +39,7 @@
 #include "blocxx/DateTime.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "blocxx/Format.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_ProviderManager.hpp"
@@ -51,11 +52,12 @@
 //#include <climits>
 #include <limits>
 
+using namespace blocxx;
+
 namespace
 {
 	template <bool b> struct compile_time_assert;
 	template <> struct compile_time_assert<true> { };
-	using OpenWBEM::Int32;
 
 	// RETURNS: max(x, min(x+y, TIME_T_MAX)) where TIME_T_MAX is largest time_t
 	time_t safe_add(time_t x, Int32 y)
@@ -252,7 +254,7 @@ PollingManagerThread::run()
 	// Get all of the indication trigger providers
 	PolledProviderIFCRefArray itpra = m_providerManager->getPolledProviders();
 
-	OW_LOG_DEBUG(m_logger, Format("PollingManager found %1 polled providers", itpra.size()));
+	BLOCXX_LOG_DEBUG(m_logger, Format("PollingManager found %1 polled providers", itpra.size()));
 
 	{
 		// Get initial polling interval from all polled providers
@@ -261,7 +263,7 @@ PollingManagerThread::run()
 		{
 			TriggerRunnerRef tr(new TriggerRunner(this, m_env));
 			tr->m_pollInterval = itpra[i]->getInitialPollingInterval(createProvEnvRef(m_env));
-			OW_LOG_DEBUG(m_logger, Format("PollingManager initial poll interval for provider %1: %2", i, tr->m_pollInterval));
+			BLOCXX_LOG_DEBUG(m_logger, Format("PollingManager initial poll interval for provider %1: %2", i, tr->m_pollInterval));
 			if (!tr->m_pollInterval)
 			{
 				continue;
@@ -369,7 +371,7 @@ PollingManagerThread::processTriggers()
 			m_triggerRunners[i]->m_isRunning = true;
 			if (!m_triggerRunnerThreadPool->tryAddWork(m_triggerRunners[i]))
 			{
-				OW_LOG_INFO(m_logger, "Failed to run polled provider, because there are too many already running!");
+				BLOCXX_LOG_INFO(m_logger, "Failed to run polled provider, because there are too many already running!");
 			}
 		}
 	}
@@ -402,7 +404,7 @@ PollingManagerThread::addPolledProvider(const PolledProviderIFCRef& p)
 		return;
 	TriggerRunnerRef tr(new TriggerRunner(this, m_env));
 	tr->m_pollInterval = p->getInitialPollingInterval(createProvEnvRef(m_env));
-	OW_LOG_DEBUG(m_logger, Format("PollingManager addPolledProvider(): initial poll interval for provider %1", tr->m_pollInterval));
+	BLOCXX_LOG_DEBUG(m_logger, Format("PollingManager addPolledProvider(): initial poll interval for provider %1", tr->m_pollInterval));
 	if (!tr->m_pollInterval)
 	{
 		return;
@@ -487,12 +489,12 @@ PollingManagerThread::TriggerRunner::run()
 	}
 	catch (Exception & e)
 	{
-		OW_LOG_ERROR(m_logger,
+		BLOCXX_LOG_ERROR(m_logger,
 			Format("Caught Exception while running poll: %1", e));
 	}
 	catch(std::exception& e)
 	{
-		OW_LOG_ERROR(m_logger,
+		BLOCXX_LOG_ERROR(m_logger,
 			Format("Caught standard exception while running poll: %1", e.what()));
 	}
 	catch(ThreadCancelledException& e)
@@ -501,7 +503,7 @@ PollingManagerThread::TriggerRunner::run()
 	}
 	catch(...)
 	{
-		OW_LOG_ERROR(m_logger, "Caught Unknown Exception while running poll");
+		BLOCXX_LOG_ERROR(m_logger, "Caught Unknown Exception while running poll");
 	}
 	NonRecursiveMutexLock l(m_pollMan->m_triggerGuard);
 	if (nextInterval == 0 || m_pollInterval == 0) // m_pollInterval == 0 means this poller has been instructed to stop

@@ -50,6 +50,7 @@ namespace OW_NAMESPACE
 
 using std::streambuf;
 using namespace WBEMFlags;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMMethod::METHData : public COWIntrusiveCountableBase
 {

@@ -38,7 +38,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "blocxx/Exec.hpp"
@@ -51,6 +51,7 @@
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 namespace
 {

@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/COWIntrusiveReference.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_COWIntrusiveReference.hpp is deprecated, use "blocxx/COWIntrusiveReference.hpp" instead.
 #endif
 

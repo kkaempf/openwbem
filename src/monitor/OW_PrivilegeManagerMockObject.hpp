@@ -56,29 +56,29 @@ namespace OW_NAMESPACE
 		PrivilegeManagerMockObject();
 		virtual ~PrivilegeManagerMockObject();
 
-		virtual AutoDescriptor open(const char* pathname, PrivilegeManager::OpenFlags flags, PrivilegeManager::OpenPerms perms);
-		virtual FileSystem::FileInformation stat(const char* pathname);
-		virtual FileSystem::FileInformation lstat(const char* pathname);
-		virtual StringArray readDirectory(const char* pathname, PrivilegeManager::ReadDirOptions opt);
-		virtual String readLink(const char* pathname);
+		virtual blocxx::AutoDescriptor open(const char* pathname, PrivilegeManager::OpenFlags flags, PrivilegeManager::OpenPerms perms);
+		virtual blocxx::FileSystem::FileInformation stat(const char* pathname);
+		virtual blocxx::FileSystem::FileInformation lstat(const char* pathname);
+		virtual blocxx::StringArray readDirectory(const char* pathname, PrivilegeManager::ReadDirOptions opt);
+		virtual blocxx::String readLink(const char* pathname);
 		virtual void rename(const char* oldpath, const char* newpath);
 		virtual bool removeFile(const char* path);
 		virtual bool removeDirectory(const char* path);
-		virtual ProcessRef monitoredSpawn(
+		virtual blocxx::ProcessRef monitoredSpawn(
 			const char* exec_path, const char* app_name,
 			const char* const argv[], const char* const envp[]);
-		virtual ProcessRef monitoredUserSpawn(
+		virtual blocxx::ProcessRef monitoredUserSpawn(
 			const char* exec_path, const char* app_name,
 			const char* const argv[], const char* const envp[],
 			const char* user);
-		virtual ProcessRef userSpawn(
+		virtual blocxx::ProcessRef userSpawn(
 			const char* execpath,
 			const char* const argv[], const char* const envp[],
 			const char* user,
 			const char* working_dir);
 
-		virtual int kill(ProcId pid, int sig);
-		virtual Process::Status pollStatus(ProcId pid);
+		virtual int kill(blocxx::ProcId pid, int sig);
+		virtual blocxx::Process::Status pollStatus(blocxx::ProcId pid);
 	};
 
 } // namespace OW_NAMESPACE

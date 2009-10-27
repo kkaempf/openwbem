@@ -61,20 +61,20 @@ public:
 	 * @precondition cc is not already in the cache.  Adding duplicate items into the cache will waste space.
 	 * @postconfition getFromCache(key) returns cc.
 	 */
-	void addToCache(const T& cc, const String& key);
+	void addToCache(const T& cc, const blocxx::String& key);
 
 	/** Get an item from the cache.  Average complexity is constant time. Worst case is linear in the size of the cache.
 	 * @param key The key for the item to retrieve.
 	 * @return The item if found, else the item constructed with CIMNULL parameter.
 	 */
-	T getFromCache(const String& key);
+	T getFromCache(const blocxx::String& key);
 
 	/** Remove an item from the cache.  Average complexity is constant time. Worst case is linear in the size of the cache.
 	 * It does not matter if the item is not in the cache.
 	 * @postcondition getFromCache(key) will return T(CIMNULL)
 	 * @param key The key for the item to remove.
 	 */
-	void removeFromCache(const String& key);
+	void removeFromCache(const blocxx::String& key);
 
 	/** Remove all items from the cache.
 	 */
@@ -83,7 +83,7 @@ public:
 	/** Set the maximum number of items the cache will hold.  This will shrink
 	 * the cache if necessary.
 	 */
-	void setMaxCacheSize(UInt32);
+	void setMaxCacheSize(blocxx::UInt32);
 
 private:
 	// a list of items that are cached.  The list is sorted by lru.  The least
@@ -94,14 +94,14 @@ private:
 	// to the end of the list when they're accessed. Also we need iterators
 	// into the list to be stable.  We can re-arrange items in the list
 	// without having to update the HashMap index.
-	typedef std::list<std::pair<T, String> > class_cache_t;
+	typedef std::list<std::pair<T, blocxx::String> > class_cache_t;
 
 	// the index into the cache.  Speeds up finding an item when we need to.
-	typedef HashMap<String, typename class_cache_t::iterator> cache_index_t;
+	typedef HashMap<blocxx::String, typename class_cache_t::iterator> cache_index_t;
 	class_cache_t theCache;
 	cache_index_t theCacheIndex;
-	Mutex cacheGuard;
-	UInt32 maxCacheSize;
+	blocxx::Mutex cacheGuard;
+	blocxx::UInt32 maxCacheSize;
 };
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
@@ -112,14 +112,14 @@ Cache<T>::Cache()
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 void
-Cache<T>::addToCache(const T& cc, const String& key)
+Cache<T>::addToCache(const T& cc, const blocxx::String& key)
 {
-	MutexLock l(cacheGuard);
+	blocxx::MutexLock l(cacheGuard);
 	if (theCacheIndex.size() >= maxCacheSize)
 	{
 		if (!theCache.empty())
 		{
-			String key = theCache.begin()->second;
+			blocxx::String key = theCache.begin()->second;
 			theCache.pop_front();
 			theCacheIndex.erase(key);
 		}
@@ -131,9 +131,9 @@ Cache<T>::addToCache(const T& cc, const String& key)
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 T
-Cache<T>::getFromCache(const String& key)
+Cache<T>::getFromCache(const blocxx::String& key)
 {
-	MutexLock l(cacheGuard);
+	blocxx::MutexLock l(cacheGuard);
 	T cc(CIMNULL);
 	// look up key in the index
 	typename cache_index_t::iterator ii = theCacheIndex.find(key);
@@ -153,9 +153,9 @@ Cache<T>::getFromCache(const String& key)
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 void
-Cache<T>::removeFromCache(const String& key)
+Cache<T>::removeFromCache(const blocxx::String& key)
 {
-	MutexLock l(cacheGuard);
+	blocxx::MutexLock l(cacheGuard);
 	typename cache_index_t::iterator i = theCacheIndex.find(key);
 	if (i != theCacheIndex.end())
 	{
@@ -169,16 +169,16 @@ template <typename T>
 void
 Cache<T>::clearCache()
 {
-	MutexLock l(cacheGuard);
+	blocxx::MutexLock l(cacheGuard);
 	theCache.clear();
 	theCacheIndex.clear();
 }
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 void
-Cache<T>::setMaxCacheSize(UInt32 max)
+Cache<T>::setMaxCacheSize(blocxx::UInt32 max)
 {
-	MutexLock l(cacheGuard);
+	blocxx::MutexLock l(cacheGuard);
 	maxCacheSize = max;
 	if (max != 0)
 	{
@@ -186,7 +186,7 @@ Cache<T>::setMaxCacheSize(UInt32 max)
 		{
 			if (!theCache.empty())
 			{
-				String key = theCache.begin()->second;
+				blocxx::String key = theCache.begin()->second;
 				theCache.pop_front();
 				theCacheIndex.erase(key);
 			}

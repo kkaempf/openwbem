@@ -5,6 +5,7 @@
 
 using namespace OpenWBEM;
 using namespace std;
+using namespace blocxx;
 
 int main(int argc, char * * argv)
 {

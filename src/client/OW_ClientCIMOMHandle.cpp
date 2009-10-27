@@ -48,33 +48,10 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
-
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 ClientCIMOMHandle::~ClientCIMOMHandle()
 {
-}
-
-#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
-//////////////////////////////////////////////////////////////////////////////
-void
-ClientCIMOMHandle::createNameSpace(const String& ns)
-{
-	CIMNameSpaceUtils::create__Namespace(*this, ns);
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-ClientCIMOMHandle::deleteNameSpace(const String& ns_)
-{
-	CIMNameSpaceUtils::delete__Namespace(*this, ns_);
-}
-#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
-//////////////////////////////////////////////////////////////////////////////
-void
-ClientCIMOMHandle::enumNameSpace(const String& ns_,
-	StringResultHandlerIFC &result, EDeepFlag deep)
-{
-	CIMNameSpaceUtils::enum__Namespace(*this, ns_, result, deep);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -88,8 +65,7 @@ ClientCIMOMHandle::createFromURL(const String& url,
 	CIMProtocolIFCRef client(new HTTPClient(url, sslCtx));
 	client->setLoginCallBack(authCb);
 
-	if (owurl.scheme.startsWith(URL::OWBINARY)
-		|| owurl.namespaceName.equals(URL::OWBINARY)) // the /owbinary is deprecated in 3.0.0 and may be removed!
+	if (owurl.scheme.startsWith(URL::OWBINARY))
 	{
 		return ClientCIMOMHandleRef(new BinaryCIMOMHandle(client));
 	}

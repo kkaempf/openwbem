@@ -38,9 +38,9 @@
 #include "OW_EmbeddedCIMOMEnvironment.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/CerrAppender.hpp"
 #include "OW_LocalOperationContext.hpp"
 #include "OW_CIMClass.hpp"
@@ -59,6 +59,7 @@
 #endif
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 namespace
 {
@@ -110,13 +111,13 @@ int main(int argc, char* argv[])
 
 		// logger's not set up according to the config file until after init()
 		logger = Logger(COMPONENT_NAME);
-		OW_LOG_INFO(logger, "owcimomd (" OW_VERSION ") beginning startup");
+		BLOCXX_LOG_INFO(logger, "owcimomd (" OW_VERSION ") beginning startup");
 
 		env->setConfigItem(ConfigOpts::AUTHORIZATION_LIB_opt, "");
 		env->setConfigItem(ConfigOpts::AUTHORIZATION2_LIB_opt, "");
 
 		env->startServices();
-		OW_LOG_INFO(logger, "owcimomd is now running!");
+		BLOCXX_LOG_INFO(logger, "owcimomd is now running!");
 
 		LocalOperationContext oc;
 
@@ -141,19 +142,19 @@ int main(int argc, char* argv[])
 
 		CIMInstanceArray cia = ch->enumInstancesA("root/testsuite", "TestInstance");
 
-		OW_ASSERT(cia.size() == 2);
-		OW_ASSERT(cia[0].getPropertyValue("Name").toString() == "one");
-		OW_ASSERT(cia[1].getPropertyValue("Name").toString() == "two");
+		BLOCXX_ASSERT(cia.size() == 2);
+		BLOCXX_ASSERT(cia[0].getPropertyValue("Name").toString() == "one");
+		BLOCXX_ASSERT(cia[1].getPropertyValue("Name").toString() == "two");
 		props.clear();
 		cia[0].getPropertyValue("Params").get(props);
-		OW_ASSERT(props.size() == 2);
-		OW_ASSERT(props[0] == "one.one");
-		OW_ASSERT(props[1] == "one.two");
+		BLOCXX_ASSERT(props.size() == 2);
+		BLOCXX_ASSERT(props[0] == "one.one");
+		BLOCXX_ASSERT(props[1] == "one.two");
 		props.clear();
 		cia[1].getPropertyValue("Params").get(props);
-		OW_ASSERT(props.size() == 2);
-		OW_ASSERT(props[0] == "two.one");
-		OW_ASSERT(props[1] == "two.two");
+		BLOCXX_ASSERT(props.size() == 2);
+		BLOCXX_ASSERT(props[0] == "two.one");
+		BLOCXX_ASSERT(props[1] == "two.two");
 
 
 		for (CIMInstanceArray::const_iterator iter = cia.begin();
@@ -174,32 +175,32 @@ int main(int argc, char* argv[])
 	}
 	catch (AssertionException& e)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* ASSERTION EXCEPTION CAUGHT IN owcimomd MAIN!");
-		OW_LOG_FATAL_ERROR(logger, Format("* %1", e));
+		BLOCXX_LOG_FATAL_ERROR(logger, "* ASSERTION EXCEPTION CAUGHT IN owcimomd MAIN!");
+		BLOCXX_LOG_FATAL_ERROR(logger, Format("* %1", e));
 		rval = 1;
 	}
 	catch (Exception& e)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* EXCEPTION CAUGHT IN owcimomd MAIN!");
-		OW_LOG_FATAL_ERROR(logger, Format("* %1", e));
+		BLOCXX_LOG_FATAL_ERROR(logger, "* EXCEPTION CAUGHT IN owcimomd MAIN!");
+		BLOCXX_LOG_FATAL_ERROR(logger, Format("* %1", e));
 		rval = 1;
 	}
 	catch (std::exception& se)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* std::exception CAUGHT IN owcimomd MAIN!");
-		OW_LOG_FATAL_ERROR(logger, Format("* Message: %1", se.what()));
+		BLOCXX_LOG_FATAL_ERROR(logger, "* std::exception CAUGHT IN owcimomd MAIN!");
+		BLOCXX_LOG_FATAL_ERROR(logger, Format("* Message: %1", se.what()));
 		rval = 1;
 	}
 	catch(...)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT IN owcimomd MAIN!");
+		BLOCXX_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT IN owcimomd MAIN!");
 		rval = 1;
 	}
 	// Call platform specific shutdown routine
 
 	EmbeddedCIMOMEnvironment::instance() = env = 0;
 
-	OW_LOG_INFO(logger, "owcimomd has shutdown");
+	BLOCXX_LOG_INFO(logger, "owcimomd has shutdown");
 	return rval;
 }
 
@@ -226,7 +227,6 @@ processCommandLine(int argc, char* argv[], EmbeddedCIMOMEnvironmentRef env)
 	if (opts.debug)
 	{
 		env->setConfigItem(ConfigOpts::DEBUGFLAG_opt, "true", ServiceEnvironmentIFC::E_PRESERVE_PREVIOUS);
-		env->setConfigItem(ConfigOpts::LOG_LEVEL_opt, "debug");
 	}
 	if (opts.configFile)
 	{

@@ -38,6 +38,11 @@
 #if defined(OW_USE_SHL)
 #include <blocxx/shlSharedLibraryLoader.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_shlSharedLibraryLoader.hpp is deprecated, use "blocxx/shlSharedLibraryLoader.hpp" instead.
 #endif // #if defined(OW_USE_SHL)
 #endif

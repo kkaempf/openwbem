@@ -55,7 +55,7 @@ namespace XMLQualifier
 	/**
 	 * @throws CIMException
 	 */
-	OW_XML_API String getQualifierName(CIMXMLParser& node);
+	OW_XML_API blocxx::String getQualifierName(CIMXMLParser& node);
 
 	/**
 	 * @throws CIMException

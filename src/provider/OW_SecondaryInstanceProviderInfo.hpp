@@ -50,7 +50,7 @@ public:
 	using ProviderInfoBase<InstClassInfo>::ClassInfoArray;
 };
 
-typedef Array<SecondaryInstanceProviderInfo> SecondaryInstanceProviderInfoArray;
+typedef blocxx::Array<SecondaryInstanceProviderInfo> SecondaryInstanceProviderInfoArray;
 
 } // end namespace OW_NAMESPACE
 

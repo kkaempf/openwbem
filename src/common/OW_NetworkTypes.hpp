@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/NetworkTypes.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_NetworkTypes.hpp is deprecated, use "blocxx/NetworkTypes.hpp" instead.
 #endif
 

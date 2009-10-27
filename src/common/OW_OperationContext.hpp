@@ -62,18 +62,18 @@ OW_DECLARE_APIEXCEPTION(ContextDataNotFound, OW_COMMON_API);
  * Thread safety: None
  * Copy Semantics: Non-copyable
  */
-class OW_COMMON_API OperationContext : public IntrusiveCountableBase
+class OW_COMMON_API OperationContext : public blocxx::IntrusiveCountableBase
 {
 public:
 
-	class OW_COMMON_API Data : public IntrusiveCountableBase, public SerializableIFC
+	class OW_COMMON_API Data : public blocxx::IntrusiveCountableBase, public SerializableIFC
 	{
 	public:
 		virtual ~Data();
-		virtual String getType() const = 0;
+		virtual blocxx::String getType() const = 0;
 	};
 
-	typedef IntrusiveReference<Data> DataRef;
+	typedef blocxx::IntrusiveReference<Data> DataRef;
 
 	OperationContext();
 	virtual ~OperationContext();
@@ -86,14 +86,14 @@ public:
 	 *
 	 * @throws ContextDataNotFound
 	 */
-	void setData(const String& key, const DataRef& data);
+	void setData(const blocxx::String& key, const DataRef& data);
 
 	/**
 	 * Remove the data identified by key.  It is not an error if key has not
 	 * already been added to the context with setData().
 	 * @param key Identifies the data to remove.
 	 */
-	void removeData(const String& key);
+	void removeData(const blocxx::String& key);
 
 	/**
 	 * In an out of process provider, changes to the returned object will not be
@@ -102,37 +102,37 @@ public:
 	 *  A NULL DataRef if key is not valid.
 	 */
 	template <typename T>
-	IntrusiveReference<T> getDataAs(const String& key) const;
+	blocxx::IntrusiveReference<T> getDataAs(const blocxx::String& key) const;
 
 	/**
 	 * In an out of process provider, this function will always fail and return NULL. Use getDataAs() instead.
 	 * @return The same DataRef associated with key that was passed to setData().
 	 *  A NULL DataRef if key is not valid.
 	 */
-	DataRef getData(const String& key) const;
+	DataRef getData(const blocxx::String& key) const;
 
 	/**
 	 * Test whether there is data for the key.
 	 * @param key The key to test.
 	 * @return true if there is data for the key.
 	 */
-	bool keyHasData(const String& key) const;
+	bool keyHasData(const blocxx::String& key) const;
 
 	/**
 	 * These are for convenience, and are implemented in terms of
 	 * the first 2 functions.
 	 */
-	void setStringData(const String& key, const String& str);
+	void setStringData(const blocxx::String& key, const blocxx::String& str);
 
 	/**
 	 * @throws ContextDataNotFoundException if key is not found
 	 */
-	String getStringData(const String& key) const;
+	blocxx::String getStringData(const blocxx::String& key) const;
 
 	/**
 	 * @returns def if key is not found
 	 */
-	String getStringDataWithDefault(const String& key, const String& def = String() ) const;
+	blocxx::String getStringDataWithDefault(const blocxx::String& key, const blocxx::String& def = blocxx::String() ) const;
 
 	// Keys values we use.
 	static const char* const USER_NAME;
@@ -146,26 +146,26 @@ public:
 
 	UserInfo getUserInfo() const;
 
-	UInt64 getOperationId() const;
+	blocxx::UInt64 getOperationId() const;
 
 	class StringData : public OperationContext::Data
 	{
 	public:
 		StringData();
-		StringData(const String& str);
+		StringData(const blocxx::String& str);
 		virtual ~StringData();
 		virtual void writeObject(std::streambuf& ostr) const;
 
 		virtual void readObject(std::streambuf& istr);
 
-		virtual String getType() const;
+		virtual blocxx::String getType() const;
 
-		String getString() const
+		blocxx::String getString() const
 		{
 			return m_str;
 		}
 	private:
-		String m_str;
+		blocxx::String m_str;
 	};
 
 private:
@@ -175,32 +175,32 @@ private:
 	 * If key is found, assign to data and return true, else return false.
 	 * @param data in: may be null or a default constructed instance. out: will contain the data, if found.
 	 */
-	virtual bool doGetData(const String& key, DataRef& data) const = 0;
+	virtual bool doGetData(const blocxx::String& key, DataRef& data) const = 0;
 	/**
 	 * Caller creats a subclass of Data and passes it in.
 	 * @param key
 	 * @throws ContextDataNotFound if the data cannot be set.
 	 */
-	virtual void doSetData(const String& key, const DataRef& data) = 0;
+	virtual void doSetData(const blocxx::String& key, const DataRef& data) = 0;
 
 	/**
 	 * Remove the data identified by key.  It is not an error if key has not
 	 * already been added to the context with setData().
 	 * @param key Identifies the data to remove.
 	 */
-	virtual void doRemoveData(const String& key) = 0;
+	virtual void doRemoveData(const blocxx::String& key) = 0;
 
 	/**
 	 * Test whether there is data for the key.
 	 * @param key The key to test.
 	 * @return true if there is data for the key.
 	 */
-	virtual bool doKeyHasData(const String& key) const = 0;
+	virtual bool doKeyHasData(const blocxx::String& key) const = 0;
 
 	/**
      * @return The operation id. Each operation has a unique id.
 	 */
-	virtual UInt64 doGetOperationId() const = 0;
+	virtual blocxx::UInt64 doGetOperationId() const = 0;
 
 	// non-copyable
 	OperationContext(const OperationContext&);
@@ -209,8 +209,8 @@ private:
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-IntrusiveReference<T>
-OperationContext::getDataAs(const String& key) const
+blocxx::IntrusiveReference<T>
+OperationContext::getDataAs(const blocxx::String& key) const
 {
 	DataRef rval = new T();
 	if (doGetData(key, rval))
@@ -219,7 +219,7 @@ OperationContext::getDataAs(const String& key) const
 	}
 	else
 	{
-		return IntrusiveReference<T>();
+		return blocxx::IntrusiveReference<T>();
 	}
 }
 

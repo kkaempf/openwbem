@@ -47,7 +47,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_HTTP_API HTTPDeflateIStreamBuffer : public BaseStreamBuffer
+class OW_HTTP_API HTTPDeflateIStreamBuffer : public blocxx::BaseStreamBuffer
 {
 public:
 	HTTPDeflateIStreamBuffer(std::istream& istr);
@@ -57,7 +57,7 @@ protected:
 private:
 	std::istream& m_istr;
 	z_stream m_zstr;
-	enum { m_inBufSize = HTTP_BUF_SIZE };
+	enum { m_inBufSize = blocxx::HTTP_BUF_SIZE };
 
 	Bytef m_inBuf[m_inBufSize];
 	// don't allow copying and assigning
@@ -83,13 +83,13 @@ public:
 	 * the original istream, and then inflated.
 	 * @param istr the original istream to wrap.
 	 */
-	HTTPDeflateIStream(const Reference<std::istream>& istr);
+	HTTPDeflateIStream(const blocxx::Reference<std::istream>& istr);
 	virtual ~HTTPDeflateIStream();
 	/**
 	 * Get the original istream
 	 * @return the original istream.
 	 */
-	Reference<std::istream> getInputStreamOrig();
+	blocxx::Reference<std::istream> getInputStreamOrig();
 private:
 
 #ifdef OW_WIN32
@@ -97,7 +97,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	Reference<std::istream> m_istr;
+	blocxx::Reference<std::istream> m_istr;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

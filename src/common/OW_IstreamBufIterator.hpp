@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/IstreamBufIterator.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_IstreamBufIterator.hpp is deprecated, use "blocxx/IstreamBufIterator.hpp" instead.
 #endif
 

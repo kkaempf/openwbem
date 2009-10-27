@@ -35,6 +35,7 @@
 #include "blocxx/SharedLibraryException.hpp"
 #include "blocxx/SharedLibraryLoader.hpp"
 #include "blocxx/Format.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "blocxx/FileSystem.hpp"
 #include "OW_NoSuchProviderException.hpp"
@@ -53,6 +54,8 @@ using std::fill_n;
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace
 {
@@ -94,7 +97,7 @@ CMPIPrepareContext(
 	}
 
 
-	OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME),
+	BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME),
 		Format("CMPIPrepareContext. User: %1 Flgs: %2",
 			user, flgs));
 }
@@ -226,11 +229,11 @@ CMPIProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 		// provider
 		if (pProv->miVector.instMI)
 		{
-			OW_LOG_DEBUG2(lgr, Format("CMPIProviderIFC found instance"
+			BLOCXX_LOG_DEBUG2(lgr, Format("CMPIProviderIFC found instance"
 				" provider %1", provIdString));
 			return InstanceProviderIFCRef(new CMPIInstanceProviderProxy(pProv));
 		}
-		OW_LOG_ERROR(lgr, Format("Provider %1 is not an instance provider",
+		BLOCXX_LOG_ERROR(lgr, Format("Provider %1 is not an instance provider",
 			provIdString));
 	}
 	OW_THROW(NoSuchProviderException, provIdString);
@@ -291,11 +294,11 @@ CMPIProviderIFC::doGetMethodProvider(const ProviderEnvironmentIFCRef& env,
 		// NULL
 		if (pProv->miVector.methMI)
 		{
-			OW_LOG_DEBUG2(lgr, Format("CMPIProviderIFC found method provider %1",
+			BLOCXX_LOG_DEBUG2(lgr, Format("CMPIProviderIFC found method provider %1",
 				provIdString));
 			return MethodProviderIFCRef(new CMPIMethodProviderProxy(pProv));
 		}
-		OW_LOG_ERROR(lgr, Format("Provider %1 is not a method provider",
+		BLOCXX_LOG_ERROR(lgr, Format("Provider %1 is not a method provider",
 			provIdString));
 	}
 	OW_THROW(NoSuchProviderException, provIdString);
@@ -315,12 +318,12 @@ CMPIProviderIFC::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 		// associator provider
 		if (pProv->miVector.assocMI)
 		{
-			OW_LOG_DEBUG2(lgr, Format("CMPIProviderIFC found associator provider %1",
+			BLOCXX_LOG_DEBUG2(lgr, Format("CMPIProviderIFC found associator provider %1",
 				provIdString));
 			return AssociatorProviderIFCRef(new
 				CMPIAssociatorProviderProxy(pProv));
 		}
-		OW_LOG_ERROR(lgr, Format("Provider %1 is not an associator provider",
+		BLOCXX_LOG_ERROR(lgr, Format("Provider %1 is not an associator provider",
 			provIdString));
 	}
 	OW_THROW(NoSuchProviderException, provIdString);
@@ -341,12 +344,12 @@ CMPIProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 		// indication provider
 		if (pProv->miVector.indMI)
 		{
-			OW_LOG_DEBUG2(lgr, Format("CMPIProviderIFC found indication provider %1",
+			BLOCXX_LOG_DEBUG2(lgr, Format("CMPIProviderIFC found indication provider %1",
 				provIdString));
 			return IndicationProviderIFCRef(new
 				CMPIIndicationProviderProxy(pProv));
 		}
-		OW_LOG_ERROR(lgr, Format("Provider %1 is not an indication provider",
+		BLOCXX_LOG_ERROR(lgr, Format("Provider %1 is not an indication provider",
 			provIdString));
 	}
 #endif
@@ -373,7 +376,7 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 
    if (!ldr)
    {
-	  OW_LOG_ERROR(lgr, "CMPI provider ifc failed to get shared lib loader");
+	  BLOCXX_LOG_ERROR(lgr, "CMPI provider ifc failed to get shared lib loader");
 	  return;
    }
 
@@ -388,7 +391,7 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	   StringArray dirEntries;
 	   if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 	   {
-		  OW_LOG_ERROR(lgr, Format("CMPI provider ifc failed getting contents of "
+		  BLOCXX_LOG_ERROR(lgr, Format("CMPI provider ifc failed getting contents of "
 			 "directory: %1", libPath));
 		  return;
 	   }
@@ -413,7 +416,7 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 
 			if (!theLib)
 			{
-				 OW_LOG_ERROR(lgr, Format("CMPI provider %1 ifc failed to load library: %2", guessProvId, libName));
+				 BLOCXX_LOG_ERROR(lgr, Format("CMPI provider %1 ifc failed to load library: %2", guessProvId, libName));
 				 continue;
 			}
 	   }
@@ -448,14 +451,14 @@ CMPIProviderIFC::loadProvider(
 
 	if (!ldr)
 	{
-		OW_LOG_ERROR(lgr, "CMPI: provider ifc failed to get shared lib loader");
+		BLOCXX_LOG_ERROR(lgr, "CMPI: provider ifc failed to get shared lib loader");
 		return CMPIFTABLERef();
 	}
 
 	SharedLibraryRef theLib = ldr->loadSharedLibrary(providerLib);
 	if (!theLib)
 	{
-		OW_LOG_ERROR(lgr, Format("CMPI provider ifc failed to load library: %1 "
+		BLOCXX_LOG_ERROR(lgr, Format("CMPI provider ifc failed to load library: %1 "
 			"for provider id %2", providerLib, provId));
 		return CMPIFTABLERef();
 	}
@@ -588,14 +591,14 @@ CMPIProviderIFC::loadProvider(
 
 	if (miVector.miTypes == 0)
 	{
-		OW_LOG_ERROR(lgr, Format("CMPI provider ifc: Library %1 does not contain"
+		BLOCXX_LOG_ERROR(lgr, Format("CMPI provider ifc: Library %1 does not contain"
 			" any CMPI function", providerLib));
 		return CMPIFTABLERef();
 	}
 
 	if (miVector.genericMode && specificMode)
 	{
-		OW_LOG_ERROR(lgr, Format("CMPI provider ifc: Library %1 mixes generic/specific"
+		BLOCXX_LOG_ERROR(lgr, Format("CMPI provider ifc: Library %1 mixes generic/specific"
 			" CMPI style provider functions", providerLib));
 		return CMPIFTABLERef();
 	}
@@ -673,7 +676,7 @@ CMPIProviderIFC::loadProvider(
 		}
 	}
 
-	OW_LOG_DEBUG2(lgr, Format("CMPI provider ifc: provider %1 loaded and initialized",
+	BLOCXX_LOG_DEBUG2(lgr, Format("CMPI provider ifc: provider %1 loaded and initialized",
 		provId));
 	CMPIFTABLERef completeMI(theLib, new CompleteMI);
 	completeMI->miVector = miVector;
@@ -681,7 +684,7 @@ CMPIProviderIFC::loadProvider(
 	//MIs * _miVector = new MIs(miVector);
 	if (completeMI->miVector.instMI != miVector.instMI)
 	{
-		OW_LOG_DEBUG(lgr, "CMPI provider ifc: WARNING Vector mismatch");
+		BLOCXX_LOG_DEBUG(lgr, "CMPI provider ifc: WARNING Vector mismatch");
 	}
 	return completeMI;
 }
@@ -706,7 +709,7 @@ CMPIProviderIFC::getProvider(
 
 	if (!ldr)
 	{
-		OW_LOG_ERROR(lgr, "CMPI: provider ifc failed to get shared lib loader");
+		BLOCXX_LOG_ERROR(lgr, "CMPI: provider ifc failed to get shared lib loader");
 		return CMPIFTABLERef();
 	}
 
@@ -723,7 +726,7 @@ CMPIProviderIFC::getProvider(
 		libName += "lib";
 		libName += provId;
 		libName += OW_SHAREDLIB_EXTENSION;
-		OW_LOG_DEBUG3(lgr, Format("CMPIProviderIFC::getProvider loading library: %1",
+		BLOCXX_LOG_DEBUG3(lgr, Format("CMPIProviderIFC::getProvider loading library: %1",
 			libName));
 
 		if (!FileSystem::exists(libName))
@@ -856,7 +859,7 @@ CMPIProviderIFC::doUnloadProviders(
 
 			if (unload)
 			{
-				OW_LOG_DEBUG2(env->getLogger(COMPONENT_NAME), Format(
+				BLOCXX_LOG_DEBUG2(env->getLogger(COMPONENT_NAME), Format(
 						"Unloading CMPI Provider %1", it->first));
 				it->second.setNull();
 				m_provs.erase(it++);

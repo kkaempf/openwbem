@@ -48,15 +48,15 @@ namespace OW_NAMESPACE
 	class OOPCallbackServiceEnv : public ServiceEnvironmentIFC
 	{
 	public:
-		OOPCallbackServiceEnv(UInt8 type, UInt8 lockTypeArg, const ProviderEnvironmentIFCRef& provEnv);
+		OOPCallbackServiceEnv(blocxx::UInt8 type, blocxx::UInt8 lockTypeArg, const ProviderEnvironmentIFCRef& provEnv);
 
-		virtual String getConfigItem(const String& item, const String& defRetVal) const;
+		virtual blocxx::String getConfigItem(const blocxx::String& item, const blocxx::String& defRetVal) const;
 
 		virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
 			EBypassProvidersFlag bypassProviders) const;
 
 	private:
-		UInt8 m_type;
+		blocxx::UInt8 m_type;
 		ProviderEnvironmentIFCRef m_provEnv;
 		CIMOMHandleIFCRef m_hdl;
 	};

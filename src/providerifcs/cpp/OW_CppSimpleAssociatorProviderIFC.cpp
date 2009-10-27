@@ -47,6 +47,8 @@
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 namespace
 {
     class AssocHelperResultHandlerIFC : public CIMInstanceResultHandlerIFC

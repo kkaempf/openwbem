@@ -44,7 +44,7 @@ namespace OW_NAMESPACE
 /**
  * The implementation must be thread safe.
  */
-class OW_PROVIDERAGENT_API ProviderAgentLifecycleCallbackIFC : public IntrusiveCountableBase
+class OW_PROVIDERAGENT_API ProviderAgentLifecycleCallbackIFC : public blocxx::IntrusiveCountableBase
 {
 public:
 	ProviderAgentLifecycleCallbackIFC();
@@ -55,7 +55,7 @@ public:
 	// will be called when the provider agent is beginning the process of shutting down.
 	virtual void shuttingDown();
 	// will be called if the provider agent has encountered an unrecoverable error and has stopped functioning.
-	virtual void fatalError(const String& errorDescription);
+	virtual void fatalError(const blocxx::String& errorDescription);
 };
 
 } // end namespace OW_NAMESPACE

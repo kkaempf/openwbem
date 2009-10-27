@@ -44,6 +44,7 @@ namespace OW_NAMESPACE
 {
 
 using std::istream;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 HTTPChunkedIStreamBuffer::HTTPChunkedIStreamBuffer(istream& istr)
 	: BaseStreamBuffer(BaseStreamBuffer::E_IN, HTTP_BUF_SIZE), m_istr(istr),

@@ -28,7 +28,8 @@
 *******************************************************************************/
 
 #include "OW_PrivilegeConfig.hpp"
-#include "OW_Assertion.hpp"
+#include "OW_Exception.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/StringBuffer.hpp"
 #include "blocxx/Format.hpp"
 #include "blocxx/Secure.hpp"
@@ -43,6 +44,9 @@
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
+
 namespace PrivilegeConfig
 {
 
@@ -59,7 +63,7 @@ namespace
 			if (c == '\\')
 			{
 				++i;
-				OW_ASSERT(i < n);
+				BLOCXX_ASSERT(i < n);
 				sbuf += s[i];
 			}
 			else
@@ -94,8 +98,8 @@ namespace
 	std::pair<String, EPatternsType> convertPattern(char const * s)
 	{
 		std::size_t n = std::strlen(s);
-		OW_ASSERT(n > 0);
-		OW_ASSERT(s[0] == '/');
+		BLOCXX_ASSERT(n > 0);
+		BLOCXX_ASSERT(s[0] == '/');
 		EPatternsType pattern_type = (
 			s[n-1] == '*' ? // then n > 1, since s[0] == '/'
 				(s[n-2] == '*' ? // then n > 2, since s[0] == '/'
@@ -207,7 +211,7 @@ String unescapeString(char const * str)
 			++i;
 
 			/* this can never happen, unless someone messes up the lexer */
-			OW_ASSERT(i < len);
+			BLOCXX_ASSERT(i < len);
 
 			switch (str[i])
 			{
@@ -316,7 +320,7 @@ String unescapeString(char const * str)
 					break;
 				default:
 					// this could never happen unless someone messes up the lexer
-					OW_ASSERTMSG(0, "Invalid escape sequence");
+					BLOCXX_ASSERTMSG(0, "Invalid escape sequence");
 					break;
 			}
 		}
@@ -351,10 +355,10 @@ void PathPatterns::addPattern(char const * pattern)
 {
 	std::pair<String, EPatternsType> x = convertPattern(pattern);
 	const String& path = x.first;
-	OW_ASSERT(path.startsWith("/"));
+	BLOCXX_ASSERT(path.startsWith("/"));
 	EPatternsType pat_type = x.second;
 	if (pat_type == E_SUBTREE) {
-		OW_ASSERT(path.endsWith("/"));
+		BLOCXX_ASSERT(path.endsWith("/"));
 		this->addSubtree(path);
 	}
 	else {

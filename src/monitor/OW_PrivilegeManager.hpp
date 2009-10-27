@@ -52,11 +52,13 @@
 #include "blocxx/AutoDescriptor.hpp"
 #include "blocxx/FileSystem.hpp"
 #include "blocxx/GlobalPtr.hpp"
+#include "blocxx/Reference.hpp"
 
 namespace OW_NAMESPACE
 {
 
 class PrivilegeManagerImpl;
+typedef blocxx::Reference<PrivilegeManagerImpl> PrivilegeManagerImplRef;
 
 OW_DECLARE_EXCEPTION(PrivilegeManager);
 OW_DECLARE_EXCEPTION2(FatalPrivilegeManager, PrivilegeManagerException);
@@ -141,11 +143,7 @@ public:
 	*/
 	static PrivilegeManager createMonitor(
 		char const * config_dir, char const * app_name,
-		char const * user_name = 0, LoggerSpec const * plogspec = 0
-		)
-	{
-		return setInstance(PrivilegeManager::init(config_dir, app_name, user_name, plogspec));
-	}
+		char const * user_name = 0, LoggerSpec const * plogspec = 0 );
 
 	/**
 	* A variant of that takes arguments of arbitrary string-like types.
@@ -158,12 +156,11 @@ public:
 		S1 const & config_dir, S2 const & app_name, S3 const & user_name = S3(),
 		LoggerSpec const * plogspec = 0)
 	{
-		return setInstance(
-			PrivilegeManager::init(
-			Cstr::to_char_ptr(config_dir),
-			Cstr::to_char_ptr(app_name),
-			Cstr::to_char_ptr(user_name),
-			plogspec));
+		return createMonitor(
+			blocxx::Cstr::to_char_ptr(config_dir),
+			blocxx::Cstr::to_char_ptr(app_name),
+			blocxx::Cstr::to_char_ptr(user_name),
+			plogspec);
 	}
 
 	/**
@@ -269,7 +266,7 @@ public:
 	* @throw PrivilegeManagerException
 	* @throw IPCIOException
 	*/
-	AutoDescriptor open(
+	blocxx::AutoDescriptor open(
 		char const * pathname, OpenFlags flags, OpenPerms perms = no_perms);
 
 	/**
@@ -277,10 +274,10 @@ public:
 	* @pre @a S is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
 	*/
 	template <typename S>
-	AutoDescriptor open(
+	blocxx::AutoDescriptor open(
 		S const & pathname, OpenFlags flags, OpenPerms perms = no_perms)
 	{
-		return this->open(Cstr::to_char_ptr(pathname), flags, perms);
+		return this->open(blocxx::Cstr::to_char_ptr(pathname), flags, perms);
 	}
 
 	/**
@@ -300,7 +297,7 @@ public:
 	 * @throw PrivilegeManagerException for insufficient privileges or other
 	 * monitor errors
 	 */
-	FileSystem::FileInformation stat(const char* pathname);
+	blocxx::FileSystem::FileInformation stat(const char* pathname);
 
 
 	/**
@@ -308,9 +305,9 @@ public:
 	 * @pre @a S is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
 	 */
 	template <typename S>
-	FileSystem::FileInformation stat(const S& pathname)
+	blocxx::FileSystem::FileInformation stat(const S& pathname)
 	{
-		return this->stat(Cstr::to_char_ptr(pathname));
+		return this->stat(blocxx::Cstr::to_char_ptr(pathname));
 	}
 
 	/**
@@ -330,16 +327,16 @@ public:
 	 * @throw PrivilegeManagerException for insufficient privileges or other
 	 * monitor errors
 	 */
-	FileSystem::FileInformation lstat(const char* pathname);
+	blocxx::FileSystem::FileInformation lstat(const char* pathname);
 
 	/**
 	 * Variant of @c open that takes argument of arbitrary string-like type.
 	 * @pre @a S is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
 	 */
 	template <typename S>
-	FileSystem::FileInformation lstat(const S& pathname)
+	blocxx::FileSystem::FileInformation lstat(const S& pathname)
 	{
-		return this->lstat(Cstr::to_char_ptr(pathname));
+		return this->lstat(blocxx::Cstr::to_char_ptr(pathname));
 	}
 
 	enum ReadDirOptions
@@ -381,7 +378,7 @@ public:
 	* @throw PrivilegeManagerException
 	* @throw IPCIOException
 	*/
-	StringArray readDirectory(char const * pathname, ReadDirOptions opt);
+	blocxx::StringArray readDirectory(char const * pathname, ReadDirOptions opt);
 
 	/**
 	* Variant of @c readDirectory that takes argument of arbitrary string-like
@@ -389,9 +386,9 @@ public:
 	* @pre @a S is a type for which <tt>Cstr::to_char_ptr</tt> is defined.
 	*/
 	template <typename S>
-	StringArray readDirectory(S const & pathname, ReadDirOptions opt)
+	blocxx::StringArray readDirectory(S const & pathname, ReadDirOptions opt)
 	{
-		return this->readDirectory(Cstr::to_char_ptr(pathname), opt);
+		return this->readDirectory(blocxx::Cstr::to_char_ptr(pathname), opt);
 	}
 
 	/**
@@ -403,12 +400,12 @@ public:
 	 * @throw PrivilegeManagerException
 	 * @throw IPCIOException
 	 */
-	String readLink(char const * pathname);
+	blocxx::String readLink(char const * pathname);
 
 	template <typename S>
-	String readLink(S const & pathname)
+	blocxx::String readLink(S const & pathname)
 	{
-		return this->readLink(Cstr::to_char_ptr(pathname));
+		return this->readLink(blocxx::Cstr::to_char_ptr(pathname));
 	}
 
 #if 0
@@ -454,7 +451,7 @@ public:
 	template <typename S1, typename S2>
 	void rename(S1 const & oldpath, S2 const & newpath)
 	{
-		this->rename(Cstr::to_char_ptr(oldpath), Cstr::to_char_ptr(newpath));
+		this->rename(blocxx::Cstr::to_char_ptr(oldpath), blocxx::Cstr::to_char_ptr(newpath));
 	}
 
 	/**
@@ -475,7 +472,7 @@ public:
 	template <typename S>
 	bool removeFile(S const & path)
 	{
-		return this->removeFile(Cstr::to_char_ptr(path));
+		return this->removeFile(blocxx::Cstr::to_char_ptr(path));
 	}
 
 	/**
@@ -496,7 +493,7 @@ public:
 	template <typename S>
 	bool removeDirectory(S const & path)
 	{
-		return this->removeDirectory(Cstr::to_char_ptr(path));
+		return this->removeDirectory(blocxx::Cstr::to_char_ptr(path));
 	}
 
 	/**
@@ -534,7 +531,7 @@ public:
 	* @throw PrivilegeManagerException
 	* @throw IPCIOException
 	*/
-	ProcessRef monitoredSpawn(
+	blocxx::ProcessRef monitoredSpawn(
 		char const * exec_path,
 		char const * app_name,
 		char const * const argv[], char const * const envp[]
@@ -552,15 +549,15 @@ public:
 	* defined for types @a SA1 and @a SA2.
 	*/
 	template <typename S1, typename S2, typename SA1, typename SA2>
-	ProcessRef monitoredSpawn(
+	blocxx::ProcessRef monitoredSpawn(
 		S1 const & exec_path, S2 const & appname,
 		SA1 const & argv, SA2 const & envp
 		)
 	{
-		Cstr::CstrArr<SA1> sa_argv(argv);
-		Cstr::CstrArr<SA2> sa_envp(envp);
+		blocxx::Cstr::CstrArr<SA1> sa_argv(argv);
+		blocxx::Cstr::CstrArr<SA2> sa_envp(envp);
 		return this->monitoredSpawn(
-			Cstr::to_char_ptr(exec_path), Cstr::to_char_ptr(appname),
+			blocxx::Cstr::to_char_ptr(exec_path), blocxx::Cstr::to_char_ptr(appname),
 			sa_argv.sarr, sa_envp.sarr
 			);
 	}
@@ -605,7 +602,7 @@ public:
 	* @throw PrivilegeManagerException
 	* @throw IPCIOException
 	*/
-	ProcessRef monitoredUserSpawn(
+	blocxx::ProcessRef monitoredUserSpawn(
 		char const * exec_path,
 		char const * app_name,
 		char const * const argv[], char const * const envp[],
@@ -624,16 +621,16 @@ public:
 	* defined for types @a SA1 and @a SA2.
 	*/
 	template <typename S1, typename S2, typename SA1, typename SA2, typename S3>
-	ProcessRef monitoredUserSpawn(
+	blocxx::ProcessRef monitoredUserSpawn(
 		S1 const & exec_path, S2 const & appname,
 		SA1 const & argv, SA2 const & envp, S3 const & user
 		)
 	{
-		Cstr::CstrArr<SA1> sa_argv(argv);
-		Cstr::CstrArr<SA2> sa_envp(envp);
+		blocxx::Cstr::CstrArr<SA1> sa_argv(argv);
+		blocxx::Cstr::CstrArr<SA2> sa_envp(envp);
 		return this->monitoredUserSpawn(
-			Cstr::to_char_ptr(exec_path), Cstr::to_char_ptr(appname),
-			sa_argv.sarr, sa_envp.sarr, Cstr::to_char_ptr(user)
+			blocxx::Cstr::to_char_ptr(exec_path), blocxx::Cstr::to_char_ptr(appname),
+			sa_argv.sarr, sa_envp.sarr, blocxx::Cstr::to_char_ptr(user)
 			);
 	}
 
@@ -672,7 +669,7 @@ public:
 	* @throw PrivilegeManagerException
 	* @throw IPCIOException
 	*/
-	ProcessRef userSpawn(
+	blocxx::ProcessRef userSpawn(
 		char const * execpath,
 		char const * const argv[], char const * const envp[],
 		char const * user,
@@ -691,16 +688,16 @@ public:
 	* defined for types @a SA1 and @a SA2.
 	*/
 	template <typename S1, typename S2, typename S3, typename SA1, typename SA2>
-	ProcessRef userSpawn(
+	blocxx::ProcessRef userSpawn(
 		S1 const & execpath, SA1 const & argv, SA2 const & envp,
 		S2 const & user, S3 const & working_dir
 		)
 	{
-		Cstr::CstrArr<SA1> sa_argv(argv);
-		Cstr::CstrArr<SA2> sa_envp(envp);
+		blocxx::Cstr::CstrArr<SA1> sa_argv(argv);
+		blocxx::Cstr::CstrArr<SA2> sa_envp(envp);
 		return this->userSpawn(
-			Cstr::to_char_ptr(execpath), sa_argv.sarr, sa_envp.sarr,
-			Cstr::to_char_ptr(user), Cstr::to_char_ptr(working_dir)
+			blocxx::Cstr::to_char_ptr(execpath), sa_argv.sarr, sa_envp.sarr,
+			blocxx::Cstr::to_char_ptr(user), blocxx::Cstr::to_char_ptr(working_dir)
 			);
 	}
 
@@ -709,7 +706,7 @@ public:
 	// define another function with one less argument.
 	//
 	template <typename S1, typename S2, typename SA1, typename SA2>
-	inline ProcessRef userSpawn(
+	inline blocxx::ProcessRef userSpawn(
 		S1 const & execpath, SA1 const & argv, SA2 const & envp,
 		S2 const & user
 		)
@@ -718,21 +715,21 @@ public:
 	}
 
 private:
-	int kill(ProcId pid, int sig);
+	int kill(blocxx::ProcId pid, int sig);
 
-	Process::Status pollStatus(ProcId pid);
+	blocxx::Process::Status pollStatus(blocxx::ProcId pid);
 
 	friend class MonitorChildImpl;
 
-	static PrivilegeManager setInstance(IntrusiveCountableBase * p_impl);
+	static PrivilegeManager setInstance(const PrivilegeManagerImplRef& p_impl);
 
-	static IntrusiveCountableBase * init(
+	static PrivilegeManagerImplRef init(
 		char const * config_dir, char const * app_name, char const * user_name,
 		LoggerSpec const * plogspec);
 
-	PrivilegeManager(PrivilegeManagerImpl * p_impl);
-	IntrusiveReference<PrivilegeManagerImpl> m_impl;
-	PrivilegeManagerImpl *pimpl() const;
+	PrivilegeManager(PrivilegeManagerImplRef p_impl);
+	PrivilegeManagerImplRef m_impl;
+	PrivilegeManagerImplRef pimpl() const;
 };
 
 	struct NullPMFactory
@@ -743,7 +740,7 @@ private:
 		}
 	};
 
-	typedef GlobalPtr<PrivilegeManagerMockObject, NullPMFactory> PrivilegeManagerMockObject_t;
+	typedef blocxx::GlobalPtr<PrivilegeManagerMockObject, NullPMFactory> PrivilegeManagerMockObject_t;
 	/**
 	 * If this object is non-null, the default functionality of the
 	 * PrivilegeManager class will be replaced by calls to

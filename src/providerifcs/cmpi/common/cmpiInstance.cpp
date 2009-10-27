@@ -87,7 +87,7 @@ static CMPIData instGetPropertyAt(const CMPIInstance* eInst, CMPICount pos, CMPI
 	}
 	if(name)
 	{
-		OpenWBEM::String str=p[pos].getName();
+		blocxx::String str = p[pos].getName();
 		*name=string2CMPIString(str);
 	}
 
@@ -100,7 +100,7 @@ static CMPIData instGetProperty(const CMPIInstance* eInst, const char* name, CMP
 	OpenWBEM::CIMInstance* inst=(OpenWBEM::CIMInstance*)eInst->hdl;
 	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
 
-	const OpenWBEM::CIMProperty& p = inst->getProperty(OpenWBEM::String(name));
+	const OpenWBEM::CIMProperty& p = inst->getProperty(blocxx::String(name));
 
 	if(p)
 	{
@@ -151,7 +151,7 @@ static CMPIStatus instSetProperty(const CMPIInstance* eInst, const char* name,
 	ok:
 
 	OpenWBEM::CIMValue v = value2CIMValue(data, type, &rc);
-	OpenWBEM::String sName(name);
+	blocxx::String sName(name);
 	inst->setProperty(sName, v);
 	CMReturn(CMPI_RC_OK);
 }

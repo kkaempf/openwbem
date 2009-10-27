@@ -34,7 +34,6 @@
 
 #include "OW_config.h"
 #include "OW_ClientCIMOMHandle.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "blocxx/CmdLineParser.hpp"
 #include "OW_ToolsCommon.hpp"
@@ -45,6 +44,7 @@
 
 using namespace OpenWBEM;
 using namespace OpenWBEM::Tools;
+using namespace blocxx;
 
 using std::cout;
 using std::cin;
@@ -87,41 +87,29 @@ int main(int argc, char* argv[])
 		String url;
 		String ns;
 		String query;
-		// handle backwards compatible options, which was <URL> <namespace> <WQL statement>
-		// TODO: This is deprecated in 3.1.0, remove it post 3.1
-		if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
-		{
-			url = argv[1];
-			ns = argv[2];
-			query = argv[3];
-			cerr << "This cmd line usage is deprecated!\n";
-		}
-		else
-		{
-			CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
+		CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
 
-			if (parser.isSet(HELP_OPT))
-			{
-				Usage();
-				return 0;
-			}
-			else if (parser.isSet(VERSION_OPT))
-			{
-				cout << "owexecwql (OpenWBEM) " << OW_VERSION << '\n';
-				cout << "Written by Dan Nuffer.\n";
-				return 0;
-			}
-
-			url = parser.getOptionValue(URL_OPT, "http://localhost/root/cimv2");
-			ns = URL(url).namespaceName;
-			if (ns.empty())
-			{
-				cerr << "No namespace given as part of the url." << endl;
-				Usage();
-				return 1;
-			}
-			query = parser.mustGetOptionValue(WQL_STATEMENT_OPT, "-w, --wql_statement");
+		if (parser.isSet(HELP_OPT))
+		{
+			Usage();
+			return 0;
 		}
+		else if (parser.isSet(VERSION_OPT))
+		{
+			cout << "owexecwql (OpenWBEM) " << OW_VERSION << '\n';
+			cout << "Written by Dan Nuffer.\n";
+			return 0;
+		}
+
+		url = parser.getOptionValue(URL_OPT, "http://localhost/root/cimv2");
+		ns = URL(url).namespaceName;
+		if (ns.empty())
+		{
+			cerr << "No namespace given as part of the url." << endl;
+			Usage();
+			return 1;
+		}
+		query = parser.mustGetOptionValue(WQL_STATEMENT_OPT, "-w, --wql_statement");
 
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		ClientCIMOMHandleRef rch = ClientCIMOMHandle::createFromURL(url, getLoginInfo);

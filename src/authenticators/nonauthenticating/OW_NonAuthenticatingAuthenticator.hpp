@@ -51,8 +51,8 @@ public:
 	NonAuthenticatingAuthenticator();
 	virtual ~NonAuthenticatingAuthenticator();
 protected:
-	virtual bool doAuthenticate(String& userName,
-		const String& info, String& details, OperationContext& context);
+	virtual bool doAuthenticate(blocxx::String& userName,
+		const blocxx::String& info, blocxx::String& details, OperationContext& context);
 	/**
 	 * Called when authenticator is loaded
 	 * Exception is thrown because other classes which derive

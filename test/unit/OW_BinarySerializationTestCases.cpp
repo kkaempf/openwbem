@@ -56,6 +56,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_BinarySerializationTestCases,"OW_BinarySerializati
 
 using namespace OpenWBEM;
 using namespace std;
+using namespace blocxx;
 
 void OW_BinarySerializationTestCases::setUp()
 {
@@ -70,7 +71,7 @@ void OW_BinarySerializationTestCases::testObjectPath()
 	StringArray cmd;
 	cmd.push_back("/bin/cat");
 	CIMObjectPath origCop("ClassName", "ns");
-	ProcessRef rval = OpenWBEM::Exec::spawn(cmd);
+	ProcessRef rval = Exec::spawn(cmd);
 	IOIFCStreamBuffer stdinbuf(rval->in().getPtr(), IOIFCStreamBuffer::E_OUT, 256);
 	IOIFCStreamBuffer stdoutbuf(rval->out().getPtr(), IOIFCStreamBuffer::E_IN, 256);
 	ostream stdinstr(&stdinbuf);

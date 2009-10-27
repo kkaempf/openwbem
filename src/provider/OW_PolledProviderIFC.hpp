@@ -57,12 +57,12 @@ public:
 	 * method returns -1 then the last polling interval will be used. If it
 	 * returns 0 then the poll method will never be called again.
 	 */
-	virtual Int32 poll(const ProviderEnvironmentIFCRef& env) = 0;
+	virtual blocxx::Int32 poll(const ProviderEnvironmentIFCRef& env) = 0;
 	/**
 	 * @return The amount of seconds before the first call to the poll method.
 	 * If this method returns zero, then the poll method is never called.
 	 */
-	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env) = 0;
+	virtual blocxx::Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env) = 0;
 
 	/**
 	 * This function is available for subclasses to override if they
@@ -96,8 +96,8 @@ public:
 	virtual PolledProviderIFC* getPolledProvider();
 };
 
-typedef IntrusiveReference<PolledProviderIFC> PolledProviderIFCRef;
-typedef Array<PolledProviderIFCRef>  PolledProviderIFCRefArray;
+typedef blocxx::IntrusiveReference<PolledProviderIFC> PolledProviderIFCRef;
+typedef blocxx::Array<PolledProviderIFCRef>  PolledProviderIFCRefArray;
 
 } // end namespace OW_NAMESPACE
 

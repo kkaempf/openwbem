@@ -40,6 +40,7 @@
 #include "OW_MOFGrammar.hpp"
 #include "blocxx/String.hpp"
 #include "blocxx/Array.hpp"
+#include "blocxx/List.hpp"
 #include "OW_MOFCompiler.hpp"
 #include "OW_MOFParserDecls.hpp"
 #include "OW_MOFLexerDecls.hpp"
@@ -48,6 +49,7 @@
 
 using namespace OpenWBEM;
 using namespace OpenWBEM::MOF;
+using namespace blocxx;
 
 // Lexer functions
 void lexIncludeFile( CompilerState* context, const String& filename );
@@ -88,7 +90,7 @@ void owmoferror( YYLTYPE * p_loc, CompilerState* MOF_COMPILER_STATE, ParseError 
 
 /* here is the stuff to make our C++ AST work */
 %union {
-	OpenWBEM::List<OpenWBEM::MOF::MOFProduction*>*          pMOFProductionList;
+	blocxx::List<OpenWBEM::MOF::MOFProduction*>*            pMOFProductionList;
 	OpenWBEM::MOF::MOFProduction*                           pMOFProduction;
 	OpenWBEM::MOF::IndicDeclaration*                        pIndicDeclaration;
 	OpenWBEM::MOF::ClassDeclaration*                        pClassDeclaration;
@@ -98,36 +100,36 @@ void owmoferror( YYLTYPE * p_loc, CompilerState* MOF_COMPILER_STATE, ParseError 
 	OpenWBEM::MOF::Array*                                   pArray;
 	OpenWBEM::MOF::CompilerDirective*                       pCompilerDirective;
 	OpenWBEM::MOF::MetaElement*                             pMetaElement;
-	OpenWBEM::List<OpenWBEM::MOF::MetaElement*>*            pMetaElementList;
+	blocxx::List<OpenWBEM::MOF::MetaElement*>*              pMetaElementList;
 	OpenWBEM::MOF::Initializer*                             pInitializer;
 	OpenWBEM::MOF::SuperClass*                              pSuperClass;
 	OpenWBEM::MOF::AssociationFeature*                      pAssociationFeature;
-	OpenWBEM::List<OpenWBEM::MOF::AssociationFeature*>*     pAssociationFeatureList;
+	blocxx::List<OpenWBEM::MOF::AssociationFeature*>*       pAssociationFeatureList;
 	OpenWBEM::MOF::QualifierParameter*                      pQualifierParameter;
 	OpenWBEM::MOF::QualifierDeclaration*                    pQualifierDeclaration;
 	OpenWBEM::MOF::PragmaParameter*                         pPragmaParameter;
 	OpenWBEM::MOF::AssocDeclaration*                        pAssocDeclaration;
 	OpenWBEM::MOF::DefaultValue*                            pDefaultValue;
 	OpenWBEM::MOF::ClassFeature*                            pClassFeature;
-	OpenWBEM::List<OpenWBEM::MOF::ClassFeature*>*           pClassFeatureList;
+	blocxx::List<OpenWBEM::MOF::ClassFeature*>*             pClassFeatureList;
 	OpenWBEM::MOF::ReferenceInitializer*                    pReferenceInitializer;
 	OpenWBEM::MOF::QualifierType*                           pQualifierType;
 	OpenWBEM::MOF::DefaultFlavor*                           pDefaultFlavor;
-	OpenWBEM::String*                                       pString;
+	blocxx::String*                                         pString;
 	OpenWBEM::MOF::IntegerValue*                            pIntegerValue;
 	OpenWBEM::MOF::ConstantValue*                           pConstantValue;
 	OpenWBEM::MOF::ArrayInitializer*                        pArrayInitializer;
 	OpenWBEM::MOF::ValueInitializer*                        pValueInitializer;
-	OpenWBEM::List<OpenWBEM::MOF::ValueInitializer*>*       pValueInitializerList;
+	blocxx::List<OpenWBEM::MOF::ValueInitializer*>*         pValueInitializerList;
 	OpenWBEM::MOF::Flavor*                                  pFlavor;
-	OpenWBEM::List<OpenWBEM::MOF::Flavor*>*                 pFlavorList;
-	OpenWBEM::List<OpenWBEM::MOF::ConstantValue*>*          pConstantValueList;
+	blocxx::List<OpenWBEM::MOF::Flavor*>*                   pFlavorList;
+	blocxx::List<OpenWBEM::MOF::ConstantValue*>*            pConstantValueList;
 	OpenWBEM::MOF::Alias*                                   pAlias;
-	OpenWBEM::List<OpenWBEM::MOF::Qualifier*>*              pQualifierList;
+	blocxx::List<OpenWBEM::MOF::Qualifier*>*                pQualifierList;
 	OpenWBEM::MOF::ReferenceDeclaration*                    pReferenceDeclaration;
 	OpenWBEM::MOF::MethodDeclaration*                       pMethodDeclaration;
 	OpenWBEM::MOF::Qualifier*                               pQualifier;
-	OpenWBEM::List<OpenWBEM::MOF::Parameter*>*              pParameterList;
+	blocxx::List<OpenWBEM::MOF::Parameter*>*                pParameterList;
 	OpenWBEM::MOF::Scope*                                   pScope;
 	OpenWBEM::MOF::InstanceDeclaration*                     pInstanceDeclaration;
 	OpenWBEM::MOF::PragmaName*                              pPragmaName;
@@ -295,12 +297,12 @@ compilerDirective:
 				}
 				catch (Exception& e)
 				{
-					owmoferror(&yylloc, MOF_COMPILER_STATE, p_err, OpenWBEM::Format("Failed to process #pragma include %1: %2", includeFile, e).c_str());
+					owmoferror(&yylloc, MOF_COMPILER_STATE, p_err, Format("Failed to process #pragma include %1: %2", includeFile, e).c_str());
 					YYERROR;
 				}
 				catch (...)
 				{
-					owmoferror(&yylloc, MOF_COMPILER_STATE, p_err, OpenWBEM::Format("Failed to process #pragma include %1", includeFile).c_str());
+					owmoferror(&yylloc, MOF_COMPILER_STATE, p_err, Format("Failed to process #pragma include %1", includeFile).c_str());
 					YYERROR;
 				}
 			}

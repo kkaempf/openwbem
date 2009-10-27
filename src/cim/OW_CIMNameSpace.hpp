@@ -41,7 +41,7 @@
 #include "OW_CIMFwd.hpp"
 #include "blocxx/String.hpp"
 #include "OW_CIMNULL.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -75,14 +75,14 @@ public:
 	 *		CIMNameSpace object.
 	 */
 	CIMNameSpace(const CIMUrl& hostUrl,
-		const String& nameSpace);
+		const blocxx::String& nameSpace);
 	/**
 	 * Create a new CIMNameSpace object.
 	 * @param hostUrl The url component of this CIMNameSpace object.
 	 * @param nameSpace The namespace (e.g. "root/cimv2") component of this
 	 *		CIMNameSpace object.
 	 */
-	explicit CIMNameSpace(const String& nameSpace);
+	explicit CIMNameSpace(const blocxx::String& nameSpace);
 	/**
 	 * Create a new CIMNameSpace object.
 	 * @param hostUrl The url component of this CIMNameSpace object.
@@ -110,16 +110,16 @@ public:
 	 */
 	CIMNameSpace& operator= (const CIMNameSpace& arg);
 
-	OW_SAFE_BOOL_IMPL(CIMNameSpace, COWIntrusiveReference<NSData>, CIMNameSpace::m_pdata, m_pdata)
+	BLOCXX_SAFE_BOOL_IMPL(CIMNameSpace, blocxx::COWIntrusiveReference<NSData>, CIMNameSpace::m_pdata, m_pdata)
 
 	/**
 	 * @return The namespace component of this CIMNameSpace object.
 	 */
-	String getNameSpace() const;
+	blocxx::String getNameSpace() const;
 	/**
 	 * @return The host component of this CIMNameSpace object.
 	 */
-	String getHost() const;
+	blocxx::String getHost() const;
 	/**
 	 * @return The host URL component of this CIMNameSpace object.
 	 */
@@ -127,15 +127,15 @@ public:
 	/**
 	 * @return The port number from the URL component of this CIMNameSpace.
 	 */
-	Int32 getPortNumber() const;
+	blocxx::Int32 getPortNumber() const;
 	/**
 	 * @return The protocol from the URL component of this CIMNameSpace.
 	 */
-	String getProtocol() const;
+	blocxx::String getProtocol() const;
 	/**
 	 * @return The file name from the URL component of this CIMNameSpace.
 	 */
-	String getFileName() const;
+	blocxx::String getFileName() const;
 	/**
 	 * @return true if this namespace refers to a namespace hosted by the local
 	 * CIMOM.
@@ -146,7 +146,7 @@ public:
 	 * @param nameSpace The namespace for this object as an String
 	 * @return a reference to *this
 	 */
-	CIMNameSpace& setNameSpace(const String& nameSpace);
+	CIMNameSpace& setNameSpace(const blocxx::String& nameSpace);
 	/**
 	 * Set the host url component of this CIMNameSpace object.
 	 * @param hostUrl The new host url for this CIMNameSpace.
@@ -158,13 +158,13 @@ public:
 	 * @param host The new host for the url component of this object.
 	 * @return a reference to *this
 	 */
-	CIMNameSpace& setHost(const String& host);
+	CIMNameSpace& setHost(const blocxx::String& host);
 	/**
 	 * Set the protocol
 	 * @param protocol The protocol component of the url for the name space
 	 * @return a reference to *this
 	 */
-	CIMNameSpace& setProtocol(const String& protocol);
+	CIMNameSpace& setProtocol(const blocxx::String& protocol);
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
@@ -178,12 +178,12 @@ public:
 	/**
 	 * @return The string representation of this CIMNameSpace object.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 	/**
 	 * @return The MOF representation of this CIMNameSpace object.
 	 * Currently unimplemented.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 private:
 
 #ifdef OW_WIN32
@@ -191,7 +191,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<NSData> m_pdata;
+	blocxx::COWIntrusiveReference<NSData> m_pdata;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

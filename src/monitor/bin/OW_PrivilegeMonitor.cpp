@@ -33,14 +33,14 @@
 #include "OW_config.h"
 #include "blocxx/AppenderLogger.hpp"
 #include "blocxx/Array.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/AutoDescriptor.hpp"
 #include "OW_Exception.hpp"
 #include "blocxx/Exec.hpp"
 #include "blocxx/FileSystem.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_IPCIO.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_LoggerSpec.hpp"
 #include "blocxx/MultiProcessFileAppender.hpp"
 #include "blocxx/NullAppender.hpp"
@@ -68,6 +68,7 @@
 #include <memory>
 
 using namespace OpenWBEM;
+using namespace blocxx;
 using OpenWBEM::PrivilegeConfig::Privileges;
 typedef PrivilegeCommon::ECommand ECommand;
 
@@ -178,7 +179,7 @@ namespace
 
 	void reportError(IPCIO& conn, const String& msg, int errorCode)
 	{
-		OW_LOG_ERROR(logger, Format("Error (code %2): %1", msg, errorCode));
+		BLOCXX_LOG_ERROR(logger, Format("Error (code %2): %1", msg, errorCode));
 		sendError(conn, msg, errorCode);
 	}
 
@@ -189,11 +190,11 @@ namespace
 	{
 		if (logAsError)
 		{
-			OW_LOG_ERROR(logger, Format("%1%2", prefix, e));
+			BLOCXX_LOG_ERROR(logger, Format("%1%2", prefix, e));
 		}
 		else
 		{
-			OW_LOG_DEBUG(logger, Format("%1%2", prefix, e));
+			BLOCXX_LOG_DEBUG(logger, Format("%1%2", prefix, e));
 		}
 
 		sendError(conn, Format("%1%2: %3", prefix, e.type(), e.what()), e.getErrorCode());
@@ -375,7 +376,7 @@ namespace
 			return true;
 		}
 		std::size_t pos = path.lastIndexOf('/');
-		OW_ASSERT(pos != String::npos);
+		BLOCXX_ASSERT(pos != String::npos);
 		String dir_name = path.substring(0, pos == 0 ? 1 : pos);
 		ESecurity sec;
 		if (m_secure_dirs.has(dir_name))
@@ -542,22 +543,22 @@ namespace
 			default:
 				reportError(conn(), "Unknown operation requested", PrivilegeManager::E_INVALID_OPERATION);
 				m_done = true;
-				OW_LOG_FATAL_ERROR(logger, "Unknown operation requested; monitor exiting");
+				BLOCXX_LOG_FATAL_ERROR(logger, "Unknown operation requested; monitor exiting");
 			}
 		}
-		OW_LOG_INFO(logger, Format("Exiting Monitor::run_body, m_done = %1", m_done));
+		BLOCXX_LOG_INFO(logger, Format("Exiting Monitor::run_body, m_done = %1", m_done));
 	}
 
 	void Monitor::run()
 	{
-		OW_LOG_INFO(logger, "Entering Monitor::run");
+		BLOCXX_LOG_INFO(logger, "Entering Monitor::run");
 		try
 		{
 			this->run_body();
 		}
 		catch (Exception & e)
 		{
-			OW_LOG_FATAL_ERROR(logger, Format("Uncaught exception: %1", e).toString());
+			BLOCXX_LOG_FATAL_ERROR(logger, Format("Uncaught exception: %1", e).toString());
 		}
 	}
 
@@ -575,7 +576,7 @@ namespace
 		// If the path was altered, log it and use the altered version.
 		if( temppath != path )
 		{
-			OW_LOG_DEBUG3(logger, Format("Cleaned path provided to monitor. Original: \"%1\", cleaned: \"%2\"", path, temppath));
+			BLOCXX_LOG_DEBUG3(logger, Format("Cleaned path provided to monitor. Original: \"%1\", cleaned: \"%2\"", path, temppath));
 			path = temppath;
 		}
 
@@ -586,7 +587,7 @@ namespace
 
 	void Monitor::done()
 	{
-		OW_LOG_INFO(logger, "REQ done");
+		BLOCXX_LOG_INFO(logger, "REQ done");
 		m_done = true;
 	}
 
@@ -695,7 +696,7 @@ namespace
 		ipcio_get(conn(), perms);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ open, path=%1, flags=%2, perms=%3", path, flags, perms).toString());
+		BLOCXX_LOG_INFO(logger, Format("REQ open, path=%1, flags=%2, perms=%3", path, flags, perms).toString());
 		try
 		{
 			this->force_valid_path(path, "open");
@@ -756,7 +757,7 @@ namespace
 		ipcio_get(conn(), path, MAX_PATH_LENGTH + 1);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ stat, path=%1", path).toString());
+		BLOCXX_LOG_INFO(logger, Format("REQ stat, path=%1", path).toString());
 		try
 		{
 			this->force_valid_path(path, "stat");
@@ -787,7 +788,7 @@ namespace
 		ipcio_get(conn(), path, MAX_PATH_LENGTH + 1);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ lstat, path=%1", path).toString());
+		BLOCXX_LOG_INFO(logger, Format("REQ lstat, path=%1", path).toString());
 		try
 		{
 			this->force_valid_path(path, "lstat");
@@ -820,7 +821,7 @@ namespace
 		ipcio_get(conn(), opt);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ readDirectory, path=%1, opt=%2", dirpath, opt).toString());
+		BLOCXX_LOG_INFO(logger, Format("REQ readDirectory, path=%1, opt=%2", dirpath, opt).toString());
 		try
 		{
 			this->force_valid_path(dirpath, "readDirectory");
@@ -860,7 +861,7 @@ namespace
 		ipcio_get(conn(), lpath, MAX_PATH_LENGTH + 1);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ readLink, path=%1", lpath).toString());
+		BLOCXX_LOG_INFO(logger, Format("REQ readLink, path=%1", lpath).toString());
 		try
 		{
 			this->force_valid_path(lpath, "readLink");
@@ -886,7 +887,7 @@ namespace
 		ipcio_get(conn(), new_path, MAX_PATH_LENGTH + 1);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ rename, oldpath=%1, newpath=%2", old_path, new_path).toString());
+		BLOCXX_LOG_INFO(logger, Format("REQ rename, oldpath=%1, newpath=%2", old_path, new_path).toString());
 
 		try
 		{
@@ -919,7 +920,7 @@ namespace
 		ipcio_get(conn(), path, MAX_PATH_LENGTH + 1);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ removeFile, path=%1", path).toString());
+		BLOCXX_LOG_INFO(logger, Format("REQ removeFile, path=%1", path).toString());
 		try
 		{
 			this->force_valid_path(path, "removeFile");
@@ -946,7 +947,7 @@ namespace
 		ipcio_get(conn(), path, MAX_PATH_LENGTH + 1);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ removeDirectory, path=%1", path).toString());
+		BLOCXX_LOG_INFO(logger, Format("REQ removeDirectory, path=%1", path).toString());
 		try
 		{
 			this->force_valid_path(path, "removeDirectory");
@@ -955,7 +956,7 @@ namespace
 				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
 
 			bool ok = FileSystem::removeDirectory(path);
-			OW_LOG_INFO(logger, Format("removeDirectory: retval=%1", ok));
+			BLOCXX_LOG_INFO(logger, Format("removeDirectory: retval=%1", ok));
 
 			ipcio_put(conn(), PrivilegeCommon::E_OK);
 			ipcio_put(conn(), ok);
@@ -1136,7 +1137,7 @@ namespace
 	{
 		ProcessRef p_proc =	Exec::spawn(exec_path, argv, envp, pre_exec);
 		::pid_t child_pid = p_proc->pid();
-		OW_LOG_INFO(logger, Format("Spawned child pid: %1", child_pid));
+		BLOCXX_LOG_INFO(logger, Format("Spawned child pid: %1", child_pid));
 		m_proc_map.insert(std::make_pair(child_pid, p_proc));
 
 		ipcio_put(conn(), PrivilegeCommon::E_OK);
@@ -1160,7 +1161,7 @@ namespace
 		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ monitoredSpawn, exec_path=%1, app_name=%2", exec_path, app_name));
+		BLOCXX_LOG_INFO(logger, Format("REQ monitoredSpawn, exec_path=%1, app_name=%2", exec_path, app_name));
 		try
 		{
 			this->force_valid_path(exec_path, "monitoredSpawn");
@@ -1206,7 +1207,7 @@ namespace
 		ipcio_get(conn(), user_name, MAX_USER_NAME_LENGTH + 1);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ monitoredUserSpawn, exec_path=%1, app_name=%2, user=%3",
+		BLOCXX_LOG_INFO(logger, Format("REQ monitoredUserSpawn, exec_path=%1, app_name=%2, user=%3",
 								   exec_path, app_name, user_name));
 		try
 		{
@@ -1252,7 +1253,7 @@ namespace
 		ipcio_get(conn(), sig);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ kill, pid=%1, sig=%2", pid, sig).toString());
+		BLOCXX_LOG_INFO(logger, Format("REQ kill, pid=%1, sig=%2", pid, sig).toString());
 		try
 		{
 			// allow either a process or a process group (-pid)
@@ -1275,7 +1276,7 @@ namespace
 		ipcio_get(conn(), pid);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ pollStatus, pid=%1", pid).toString());
+		BLOCXX_LOG_INFO(logger, Format("REQ pollStatus, pid=%1", pid).toString());
 		try
 		{
 			CHECKARGS(has(m_proc_map, pid), Format("pollStatus: unknown process: %1", pid), PrivilegeManager::E_INVALID_PARAMETER);
@@ -1366,7 +1367,7 @@ namespace
 		ipcio_get(conn(), working_dir, MAX_PATH_LENGTH + 1);
 		conn().get_sync();
 
-		OW_LOG_INFO(logger, Format("REQ userSpawn, exec_path=%1, user=%2", exec_path, user_name));
+		BLOCXX_LOG_INFO(logger, Format("REQ userSpawn, exec_path=%1, user=%2", exec_path, user_name));
 		try
 		{
 			this->force_valid_path(exec_path, "userSpawn");
@@ -1459,7 +1460,7 @@ namespace
 		std::ifstream is(path.c_str());
 		CHECK0(is, "Could not open privilege config file " + path);
 
-		OW_LOG_INFO(logger, Format("Reading privileges from %1(%2)", path, FileSystem::Path::realPath(path)));
+		BLOCXX_LOG_INFO(logger, Format("Reading privileges from %1(%2)", path, FileSystem::Path::realPath(path)));
 
 		MonitorIncludeHandler mih(configDir);
 		PrivilegeConfig::openwbem_privconfig_Lexer lexer(is, mih, path);
@@ -1547,7 +1548,7 @@ namespace
 		PrivilegeCommon::DescriptorInfo x = PrivilegeCommon::monitor_descriptor();
 		if (x.errnum != 0)
 		{
-			OW_LOG_ERROR(logger, Format("monitor_descriptor() returned an error: %1", x.errnum));
+			BLOCXX_LOG_ERROR(logger, Format("monitor_descriptor() returned an error: %1", x.errnum));
 			return x.errnum;
 		}
 		int client_descriptor = x.descriptor;
@@ -1618,7 +1619,7 @@ namespace
 			{
 				if (e.errnum != 0)
 				{
-					OW_LOG_ERROR(logger, Format("Monitor restart failed, errnum=%1", e.errnum));
+					BLOCXX_LOG_ERROR(logger, Format("Monitor restart failed, errnum=%1", e.errnum));
 					return PrivilegeCommon::EXIT_FAILED_INIT;
 				}
 				client_descriptor = e.monitor_desc;
@@ -1653,27 +1654,27 @@ int main(int argc, char * * argv)
 		int ec = aux_main(argc, argv);
 		if (ec != 0)
 		{
-			OW_LOG_ERROR(logger, Format("Monitor exited with error code %1", ec));
+			BLOCXX_LOG_ERROR(logger, Format("Monitor exited with error code %1", ec));
 		}
 		else
 		{
-			OW_LOG_INFO(logger, "Monitor exited normally");
+			BLOCXX_LOG_INFO(logger, "Monitor exited normally");
 		}
 		return ec;
 	}
 	catch (IPCIOException & e)
 	{
-		OW_LOG_ERROR(logger, Format("Monitor threw exception: %1", e));
+		BLOCXX_LOG_ERROR(logger, Format("Monitor threw exception: %1", e));
 		return PrivilegeCommon::EXIT_IPCIO_ERROR;
 	}
 	catch (Exception & e)
 	{
-		OW_LOG_ERROR(logger, Format("Monitor threw exception: %1", e));
+		BLOCXX_LOG_ERROR(logger, Format("Monitor threw exception: %1", e));
 		return PrivilegeCommon::EXIT_UNCAUGHT_EXCEPTION;
 	}
 	catch (...)
 	{
-		OW_LOG_ERROR(logger, "Monitor threw unknown exception");
+		BLOCXX_LOG_ERROR(logger, "Monitor threw unknown exception");
 		return PrivilegeCommon::EXIT_UNCAUGHT_EXCEPTION;
 	}
 }

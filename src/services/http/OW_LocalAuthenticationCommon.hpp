@@ -54,8 +54,8 @@ OW_DECLARE_EXCEPTION(LocalAuthentication);
  *
  * @return String The real path to the directory that was created.
  */
-String initializeDir(String const & localAuthDir);
-String createFile(String const & localAuthDir, const String& uid, const String& cookie);
+blocxx::String initializeDir(blocxx::String const & localAuthDir);
+blocxx::String createFile(blocxx::String const & localAuthDir, const blocxx::String& uid, const blocxx::String& cookie);
 
 static const char* const REMOVE_CMD = "remove";
 static const char* const INITIALIZE_CMD = "initialize";

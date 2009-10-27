@@ -39,14 +39,14 @@
 #include "blocxx/String.hpp"
 #include "blocxx/IntrusiveReference.hpp"
 #include "blocxx/IntrusiveCountableBase.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
 
 struct IndexEntry;
 class Index;
-typedef IntrusiveReference<Index> IndexRef;
+typedef blocxx::IntrusiveReference<Index> IndexRef;
 
 /**
  * The Index class is simply an interface class that helps facilitate a
@@ -59,7 +59,7 @@ typedef IntrusiveReference<Index> IndexRef;
  * The intention is  for the implementor to create a sub-class of Index and
  * have createIndexObject be the factory for those object.
  */
-class OW_HDB_API Index : public IntrusiveCountableBase
+class OW_HDB_API Index : public blocxx::IntrusiveCountableBase
 {
 public:
 	/**
@@ -131,7 +131,7 @@ public:
 	 * the index entry was already on file.
 	 * @exception IndexException If the index file hasn't been opened.
 	 */
-	virtual bool add(const char* key, Int32 offset) = 0;
+	virtual bool add(const char* key, blocxx::Int32 offset) = 0;
 	/**
 	 * Remove an entry from the index.
 	 * @param key	The key of the index entry to remove.
@@ -142,7 +142,7 @@ public:
 	 * the index entry could not be found.
 	 * @exception IndexException If the index file hasn't been opened.
 	 */
-	virtual bool remove(const char* key, Int32 offset=-1L) = 0;
+	virtual bool remove(const char* key, blocxx::Int32 offset=-1L) = 0;
 	/**
 	 * Update an index entry.
 	 * @param key			The key of the index entry to update.
@@ -151,7 +151,7 @@ public:
 	 * found.
 	 * @exception IndexException If the index file hasn't been opened.
 	 */
-	virtual bool update(const char* key, Int32 newOffset) = 0;
+	virtual bool update(const char* key, blocxx::Int32 newOffset) = 0;
 	/**
 	 * Flush all changes to the underlying index file.
 	 */
@@ -176,24 +176,24 @@ struct OW_HDB_API IndexEntry
 	 * @param k	The key for this index entry.
 	 * @param o	The offset associated with the given key.
 	 */
-	IndexEntry(const String& k, Int32 o) :
+	IndexEntry(const blocxx::String& k, blocxx::Int32 o) :
 		key(k), offset(o) {}
 
 	/**
 	 * @return true if this IndexEntry contains a value.
 	 */
-	OW_SAFE_BOOL_IMPL(IndexEntry, Int32, IndexEntry::offset, (offset != -1 && !key.empty()))
+	BLOCXX_SAFE_BOOL_IMPL(IndexEntry, blocxx::Int32, IndexEntry::offset, (offset != -1 && !key.empty()))
 
 	/**
 	 * The key associated with this index entry. If it has a zero length, this
 	 * should be considered an invalid IndexEntry.
 	 */
-	String key;
+	blocxx::String key;
 	/**
 	 * The offset associated with this index entry. If this is -1L, this should
 	 * be considered an invalid IndexEntry.
 	 */
-	Int32 offset;
+	blocxx::Int32 offset;
 };
 
 } // end namespace OW_NAMESPACE

@@ -50,6 +50,12 @@
 
 #include "OW_config.h"
 #include <blocxx/ScopeGuard.hpp>
+
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_ScopeGuard.hpp is deprecated, use "blocxx/ScopeGuard.hpp" instead. \
 All uses of: \
 	OW_CONCATENATE_DIRECT(s1, s2) should be replaced by BLOCXX_CONCATENATE_DIRECT(s1, s2) \

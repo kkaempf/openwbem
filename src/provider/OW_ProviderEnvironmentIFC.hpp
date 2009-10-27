@@ -40,7 +40,7 @@
 #include "OW_IfcsFwd.hpp"
 #include "OW_CommonFwd.hpp"
 
-#include "OW_Logger.hpp" /// @todo  Remove this once everybody has been warned to use OW_CppProviderIncludes.hpp instead.
+#include "blocxx/Logger.hpp" /// @todo  Remove this once everybody has been warned to use OW_CppProviderIncludes.hpp instead.
 #include "OW_CIMOMHandleIFC.hpp" /// @todo  Remove this once everybody has been warned to use OW_CppProviderIncludes.hpp instead.
 
 namespace OW_NAMESPACE
@@ -52,7 +52,7 @@ namespace OW_NAMESPACE
  * ProviderEnvironmentIFC object is valid only for the lifetime of the
  * referenced OperationContext.
  */
-class OW_PROVIDER_API ProviderEnvironmentIFC : public IntrusiveCountableBase
+class OW_PROVIDER_API ProviderEnvironmentIFC : public blocxx::IntrusiveCountableBase
 {
 public:
 	virtual ~ProviderEnvironmentIFC();
@@ -112,13 +112,13 @@ public:
 	 */
 	virtual CIMOMHandleIFCRef getLockedCIMOMHandle(EInitialLockFlag initialLock) const;
 
-	virtual LoggerRef getLogger() const OW_DEPRECATED; // in 3.1.0
-	virtual LoggerRef getLogger(const String& componentName) const;
-	virtual String getConfigItem(const String &name, const String& defRetVal="") const = 0;
-	virtual StringArray getMultiConfigItem(const String &itemName,
-		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const = 0;
+	virtual blocxx::LoggerRef getLogger() const OW_DEPRECATED; // in 3.1.0
+	virtual blocxx::LoggerRef getLogger(const blocxx::String& componentName) const;
+	virtual blocxx::String getConfigItem(const blocxx::String &name, const blocxx::String& defRetVal="") const = 0;
+	virtual blocxx::StringArray getMultiConfigItem(const blocxx::String &itemName,
+		const blocxx::StringArray& defRetVal, const char* tokenizeSeparator = 0) const = 0;
 
-	virtual String getUserName() const = 0;
+	virtual blocxx::String getUserName() const = 0;
 	virtual OperationContext& getOperationContext() = 0;
 
 	/**

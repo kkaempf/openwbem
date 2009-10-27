@@ -52,7 +52,7 @@ namespace OW_NAMESPACE
 
 using std::endl;
 using std::ifstream;
-using blocxx::MD5;  // needed to compile on OSX.  not sure why
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 DigestAuthentication::DigestAuthentication(const String& passwdFile)
 	: m_asNonces()
@@ -101,7 +101,7 @@ DigestAuthentication::generateNewNonce( void )
 		Secure::rand_uint<UInt32>()
 	);
 
-	MD5 md5;
+	blocxx::MD5 md5;
 	md5.update(sDateTime);
 	md5.update(":");
 	md5.update("ETag");	/// @todo  This should be a real ETag

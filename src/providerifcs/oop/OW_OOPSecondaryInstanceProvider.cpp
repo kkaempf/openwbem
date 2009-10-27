@@ -37,6 +37,7 @@
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 OOPSecondaryInstanceProvider::OOPSecondaryInstanceProvider(const OOPProviderInterface::ProvRegInfo& info,
 	const OOPProcessState& processState)

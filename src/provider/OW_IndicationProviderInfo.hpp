@@ -42,17 +42,17 @@ namespace OW_NAMESPACE
 
 struct OW_PROVIDER_API IndicationProviderInfoEntry
 {
-	explicit IndicationProviderInfoEntry(String const& indicationName_)
+	explicit IndicationProviderInfoEntry(blocxx::String const& indicationName_)
 		: indicationName(indicationName_)
 	{}
-	IndicationProviderInfoEntry(String const& indicationName_, StringArray const& namespaces_, StringArray const& classes_ = StringArray())
+	IndicationProviderInfoEntry(blocxx::String const& indicationName_, blocxx::StringArray const& namespaces_, blocxx::StringArray const& classes_ = blocxx::StringArray())
 		: indicationName(indicationName_)
 		, namespaces(namespaces_)
 		, classes(classes_)
 	{}
-	String indicationName;
-	StringArray namespaces;
-	StringArray classes;
+	blocxx::String indicationName;
+	blocxx::StringArray namespaces;
+	blocxx::StringArray classes;
 };
 
 class OW_PROVIDER_API IndicationProviderInfo : public ProviderInfoBase<IndicationProviderInfoEntry>
@@ -63,7 +63,7 @@ public:
 	using ProviderInfoBase<IndicationProviderInfoEntry>::ClassInfoArray;
 };
 
-typedef Array<IndicationProviderInfo> IndicationProviderInfoArray;
+typedef blocxx::Array<IndicationProviderInfo> IndicationProviderInfoArray;
 
 
 #if defined(__GNUC__) || defined(__GNUG__)

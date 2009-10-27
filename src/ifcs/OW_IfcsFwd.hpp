@@ -44,45 +44,45 @@ namespace OW_NAMESPACE
 {
 
 class CIMOMHandleIFC;
-typedef IntrusiveReference<CIMOMHandleIFC> CIMOMHandleIFCRef;
+typedef blocxx::IntrusiveReference<CIMOMHandleIFC> CIMOMHandleIFCRef;
 
 class RequestHandlerIFC;
-typedef SharedLibraryReference<IntrusiveReference<RequestHandlerIFC> > RequestHandlerIFCRef;
+typedef blocxx::SharedLibraryReference<blocxx::IntrusiveReference<RequestHandlerIFC> > RequestHandlerIFCRef;
 
 class ServiceIFC;
-typedef SharedLibraryReference<IntrusiveReference<ServiceIFC> > ServiceIFCRef;
+typedef blocxx::SharedLibraryReference<blocxx::IntrusiveReference<ServiceIFC> > ServiceIFCRef;
 
 class WQLIFC;
-typedef SharedLibraryReference<IntrusiveReference<WQLIFC> > WQLIFCRef;
+typedef blocxx::SharedLibraryReference<blocxx::IntrusiveReference<WQLIFC> > WQLIFCRef;
 
 class RepositoryIFC;
-typedef IntrusiveReference<RepositoryIFC> RepositoryIFCRef;
-typedef SharedLibraryReference<RepositoryIFCRef> SharedLibraryRepositoryIFCRef;
+typedef blocxx::IntrusiveReference<RepositoryIFC> RepositoryIFCRef;
+typedef blocxx::SharedLibraryReference<RepositoryIFCRef> SharedLibraryRepositoryIFCRef;
 
 class AuthorizerIFC;
-typedef SharedLibraryReference<IntrusiveReference<AuthorizerIFC> > AuthorizerIFCRef;
+typedef blocxx::SharedLibraryReference<blocxx::IntrusiveReference<AuthorizerIFC> > AuthorizerIFCRef;
 
 class Authorizer2IFC;
-typedef SharedLibraryReference<IntrusiveReference<Authorizer2IFC> > Authorizer2IFCRef;
+typedef blocxx::SharedLibraryReference<blocxx::IntrusiveReference<Authorizer2IFC> > Authorizer2IFCRef;
 
 class AuthenticatorIFC;
-typedef SharedLibraryReference<IntrusiveReference<AuthenticatorIFC> > AuthenticatorIFCRef;
+typedef blocxx::SharedLibraryReference<blocxx::IntrusiveReference<AuthenticatorIFC> > AuthenticatorIFCRef;
 
 class ServiceEnvironmentIFC;
-typedef IntrusiveReference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
+typedef blocxx::IntrusiveReference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
 
 template <typename T> class ResultHandlerIFC;
 typedef ResultHandlerIFC<CIMClass> CIMClassResultHandlerIFC;
 typedef ResultHandlerIFC<CIMInstance> CIMInstanceResultHandlerIFC;
 typedef ResultHandlerIFC<CIMObjectPath> CIMObjectPathResultHandlerIFC;
-typedef ResultHandlerIFC<String> StringResultHandlerIFC;
+typedef ResultHandlerIFC<blocxx::String> StringResultHandlerIFC;
 typedef ResultHandlerIFC<CIMQualifierType> CIMQualifierTypeResultHandlerIFC;
 
 class CIMProtocolIFC;
-typedef IntrusiveReference<CIMProtocolIFC> CIMProtocolIFCRef;
+typedef blocxx::IntrusiveReference<CIMProtocolIFC> CIMProtocolIFCRef;
 
 class ClientAuthCBIFC;
-typedef IntrusiveReference<ClientAuthCBIFC> ClientAuthCBIFCRef;
+typedef blocxx::IntrusiveReference<ClientAuthCBIFC> ClientAuthCBIFCRef;
 
 
 } // end namespace OW_NAMESPACE

@@ -45,9 +45,9 @@
 #include "OW_HTTPLenLimitIStream.hpp"
 #include "blocxx/Select.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/TempFileStream.hpp"
 #include "OW_CIMErrorException.hpp"
 #include "OW_CIMFeatures.hpp"
@@ -78,6 +78,7 @@ using std::flush;
 using std::cout;
 using std::cerr;
 using std::endl;
+using namespace blocxx;
 
 namespace
 {
@@ -92,12 +93,12 @@ namespace
 	}
 }
 
-#define OW_LOGDEBUG3(x) OW_LOG_DEBUG3(logger, x)
-#define OW_LOGDEBUG2(x) OW_LOG_DEBUG2(logger, x)
-#define OW_LOGDEBUG(x) OW_LOG_DEBUG(logger, x)
-#define OW_LOGERROR(x) OW_LOG_ERROR(logger, x)
-#define OW_LOGCUSTINFO(x) OW_LOG_INFO(logger, x)
-#define OW_LOGFATALERROR(x) OW_LOG_FATAL_ERROR(logger, x)
+#define BLOCXX_LOGDEBUG3(x) BLOCXX_LOG_DEBUG3(logger, x)
+#define BLOCXX_LOGDEBUG2(x) BLOCXX_LOG_DEBUG2(logger, x)
+#define BLOCXX_LOGDEBUG(x) BLOCXX_LOG_DEBUG(logger, x)
+#define BLOCXX_LOGERROR(x) BLOCXX_LOG_ERROR(logger, x)
+#define BLOCXX_LOGCUSTINFO(x) BLOCXX_LOG_INFO(logger, x)
+#define BLOCXX_LOGFATALERROR(x) BLOCXX_LOG_FATAL_ERROR(logger, x)
 
 //////////////////////////////////////////////////////////////////////////////
 #ifdef OW_WIN32
@@ -182,7 +183,7 @@ HTTPSvrConnection::run()
 		LocalOperationContext context;
 		while (m_istr.good())
 		{
-			OW_LOGDEBUG2("HTTPSvrConnection::run() beginning loop");
+			BLOCXX_LOGDEBUG2("HTTPSvrConnection::run() beginning loop");
 
 			//m_isAuthenticated = false;
 			m_errDetails.erase();
@@ -292,19 +293,19 @@ HTTPSvrConnection::run()
 				}
 				catch (std::ios::failure& e)
 				{
-					OW_LOGDEBUG2("failed to read input");
+					BLOCXX_LOGDEBUG2("failed to read input");
 					return;
 				}
 				// if authorization needs another round, leave the connection open.
 				if (m_resCode == SC_UNAUTHORIZED)
 				{
-					OW_LOGDEBUG2("unauthorized, continue");
+					BLOCXX_LOGDEBUG2("unauthorized, continue");
 					m_socket.setTimeouts(m_options.timeout);
 					continue;
 				}
 				else
 				{
-					OW_LOGDEBUG2("other error, returning");
+					BLOCXX_LOGDEBUG2("other error, returning");
 					return;
 				}
 			}
@@ -368,7 +369,7 @@ HTTPSvrConnection::run()
 	}
 	catch (Exception& e)
 	{
-		OW_LOGERROR(Format("%1", e));
+		BLOCXX_LOGERROR(Format("%1", e));
 		m_errDetails = e.getMessage();
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);
@@ -378,19 +379,19 @@ HTTPSvrConnection::run()
 	catch (std::ios_base::failure& e)
 	{
 		// This happens if the socket is closed, so we don't have to do anything.
-		OW_LOGDEBUG2("Caught std::ios_base::failure, client has closed the connection");
+		BLOCXX_LOGDEBUG2("Caught std::ios_base::failure, client has closed the connection");
 	}
 #endif
 	catch (std::exception& e)
 	{
 		m_errDetails = Format("Caught std::exception (%1) in HTTPSvrConnection::run()", e.what());
-		OW_LOGERROR(m_errDetails);
+		BLOCXX_LOGERROR(m_errDetails);
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);
 	}
 	catch (ThreadCancelledException&)
 	{
-		OW_LOGERROR("Got Thread Cancelled Exception in HTTPSvrConnection::run()");
+		BLOCXX_LOGERROR("Got Thread Cancelled Exception in HTTPSvrConnection::run()");
 		m_errDetails = "HTTP Server thread cancelled";
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);
@@ -398,7 +399,7 @@ HTTPSvrConnection::run()
 	}
 	catch (...)
 	{
-		OW_LOGERROR("Got Unknown Exception in HTTPSvrConnection::run()");
+		BLOCXX_LOGERROR("Got Unknown Exception in HTTPSvrConnection::run()");
 		m_errDetails = "HTTP Server caught unknown exception";
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);
@@ -455,7 +456,7 @@ HTTPSvrConnection::beginPostResponse()
 void
 HTTPSvrConnection::initRespStream(ostream*& ostrEntity)
 {
-	OW_ASSERT(ostrEntity == 0);
+	BLOCXX_ASSERT(ostrEntity == 0);
 
 	// Clear out any previous instance. The order is important, since Deflate may hold a pointer to Chunked,
 	// and it's destructor may call functions on Chunked. Yeah, this is a BAD design!
@@ -574,10 +575,10 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		if (m_deflateCompressionOut)
 		{
 #ifdef OW_HAVE_ZLIB_H
-			OW_ASSERT(dynamic_cast<HTTPDeflateOStream*>(ostrEntity));
+			BLOCXX_ASSERT(dynamic_cast<HTTPDeflateOStream*>(ostrEntity));
 			HTTPDeflateOStream* deflateostr = static_cast<HTTPDeflateOStream*>(ostrEntity);
 			deflateostr->termOutput();
-			OW_ASSERT(dynamic_cast<HTTPChunkedOStream*>(&deflateostr->getOutputStreamOrig()));
+			BLOCXX_ASSERT(dynamic_cast<HTTPChunkedOStream*>(&deflateostr->getOutputStreamOrig()));
 			ostrChunk = static_cast<HTTPChunkedOStream*>(&deflateostr->getOutputStreamOrig());
 #else
 			OW_THROW(HTTPException, "Attempting to deflate response "
@@ -586,10 +587,10 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		}
 		else
 		{
-			OW_ASSERT(dynamic_cast<HTTPChunkedOStream*>(ostrEntity));
+			BLOCXX_ASSERT(dynamic_cast<HTTPChunkedOStream*>(ostrEntity));
 			ostrChunk = static_cast<HTTPChunkedOStream*>(ostrEntity);
 		}
-		OW_ASSERT(ostrChunk);
+		BLOCXX_ASSERT(ostrChunk);
 
 		//
 		// Add trailer for content-language
@@ -599,7 +600,7 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 			clientSpecified);
 		if (setByProvider || clientSpecified)
 		{
-			OW_LOGDEBUG3(Format("HTTPSvrConnection::sendPostResponse (chunk) setting Content-Language to %1", clang).c_str());
+			BLOCXX_LOGDEBUG3(Format("HTTPSvrConnection::sendPostResponse (chunk) setting Content-Language to %1", clang).c_str());
 
 			addTrailer("Content-Language", clang);
 		}
@@ -1084,7 +1085,7 @@ HTTPSvrConnection::post(istream& istr, OperationContext& context)
 {
 	ostream* ostrEntity = NULL;
 	initRespStream(ostrEntity);
-	OW_ASSERT(ostrEntity);
+	BLOCXX_ASSERT(ostrEntity);
 	TempFileStream ostrError(400);
 
 	beginPostResponse();
@@ -1137,7 +1138,7 @@ HTTPSvrConnection::options(OperationContext& context)
 			headerKey = hp + "CIMSupportedExportGroups";
 			break;
 		default:
-			OW_ASSERT( "Attempting OPTIONS on a CIMProductIFC "
+			BLOCXX_ASSERT( "Attempting OPTIONS on a CIMProductIFC "
 				"that is not a LISTENER or SERVER" == 0);
 	}
 	String headerVal;

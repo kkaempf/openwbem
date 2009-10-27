@@ -38,6 +38,11 @@
 #include "OW_config.h"
 #include <blocxx/MemTracer.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_MemTracer.hpp is deprecated, use "blocxx/MemTracer.hpp" instead.
 #endif
 

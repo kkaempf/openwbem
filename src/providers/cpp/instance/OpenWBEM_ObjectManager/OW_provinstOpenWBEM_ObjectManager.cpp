@@ -41,6 +41,8 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
+
 namespace
 {
 	const String COMPONENT_NAME("ow.provider.OpenWBEM_ObjectManager");
@@ -236,7 +238,7 @@ public:
 			}
 			catch (Exception& e)
 			{
-				OW_LOG_ERROR(Logger(COMPONENT_NAME), Format("OpenWBEM_ObjectManager caught exception while exporting indication in shuttingDown(): %1", e));
+				BLOCXX_LOG_ERROR(Logger(COMPONENT_NAME), Format("OpenWBEM_ObjectManager caught exception while exporting indication in shuttingDown(): %1", e));
 			}
 
 		}

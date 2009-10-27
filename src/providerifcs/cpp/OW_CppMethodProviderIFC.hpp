@@ -107,9 +107,9 @@ public:
 	 */
 	virtual CIMValue invokeMethod(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMObjectPath& path,
-			const String& methodName,
+			const blocxx::String& methodName,
 			const CIMParamValueArray& in,
 			CIMParamValueArray& out ) = 0;
 
@@ -159,14 +159,14 @@ public:
 	 */
 	virtual ELockType getLockTypeForMethod(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& path,
-		const String& methodName,
+		const blocxx::String& methodName,
 		const CIMParamValueArray& in);
 
 	virtual CppMethodProviderIFC* getMethodProvider();
 };
-typedef SharedLibraryReference< IntrusiveReference<CppMethodProviderIFC> > CppMethodProviderIFCRef;
+typedef blocxx::SharedLibraryReference< blocxx::IntrusiveReference<CppMethodProviderIFC> > CppMethodProviderIFCRef;
 
 } // end namespace OW_NAMESPACE
 

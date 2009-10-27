@@ -42,8 +42,11 @@
 
 #include "OW_config.h"
 #include "blocxx/Assertion.hpp"
-#include "OW_Exception.hpp"
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
 
 namespace OW_NAMESPACE
 {
@@ -64,5 +67,10 @@ namespace OW_NAMESPACE
 #define OW_ASSERTMSG(CON, MSG) BLOCXX_ASSERTMSG(CON, MSG)
 
 } // end namespace OW_NAMESPACE
+
+#warning OW_Assertion.hpp is deprecated, use "blocxx/Assertion.hpp" instead. Replace all usages of \
+OW_ASSERT and OW_ASSERTMSG with BLOCXX_ASSERT and BLOCXX_ASSERTMSG respectivly. \
+The following bash command should do it for you. \
+for file in `grep -IHrl "OW_Assertion.hpp" *`; do sed -i -e 's/OW_ASSERT/BLOCXX_ASSERT/g' -e 's!OW_Assertion.hpp!blocxx/Assertion.hpp!g' $file; done
 
 #endif

@@ -34,18 +34,19 @@
 
 #include "OW_config.h"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_CIMInstance.hpp"
 #include "blocxx/Array.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_WQLIFC.hpp"
 
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 ///////////////////////////////////////////////////////////////////////////////
 ServiceEnvironmentIFC::~ServiceEnvironmentIFC()
 {
@@ -55,7 +56,7 @@ ServiceEnvironmentIFC::~ServiceEnvironmentIFC()
 RepositoryIFCRef
 ServiceEnvironmentIFC::getRepository() const
 {
-	OW_ASSERTMSG(0, "getRepository Not Implemented");
+	BLOCXX_ASSERTMSG(0, "getRepository Not Implemented");
 	return RepositoryIFCRef();
 }
 
@@ -63,7 +64,7 @@ ServiceEnvironmentIFC::getRepository() const
 RepositoryIFCRef
 ServiceEnvironmentIFC::getAuthorizingRepository() const
 {
-	OW_ASSERTMSG(0, "getAuthorizingRepository Not Implemented");
+	BLOCXX_ASSERTMSG(0, "getAuthorizingRepository Not Implemented");
 	return RepositoryIFCRef();
 }
 
@@ -78,14 +79,14 @@ ServiceEnvironmentIFC::getRepositoryCIMOMHandle(OperationContext& context) const
 void
 ServiceEnvironmentIFC::addSelectable(const SelectableIFCRef& obj, const SelectableCallbackIFCRef& cb)
 {
-	OW_ASSERTMSG(0, "addSelectable Not Implemented");
+	BLOCXX_ASSERTMSG(0, "addSelectable Not Implemented");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void
 ServiceEnvironmentIFC::removeSelectable(const SelectableIFCRef& obj)
 {
-	OW_ASSERTMSG(0, "removeSelectable Not Implemented");
+	BLOCXX_ASSERTMSG(0, "removeSelectable Not Implemented");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -106,14 +107,14 @@ ServiceEnvironmentIFC::getMultiConfigItem(const String &itemName,
 void
 ServiceEnvironmentIFC::setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious)
 {
-	OW_ASSERTMSG(0, "setConfigItem Not Implemented");
+	BLOCXX_ASSERTMSG(0, "setConfigItem Not Implemented");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFCRef
 ServiceEnvironmentIFC::getRequestHandler(const String& id) const
 {
-	OW_ASSERTMSG(0, "getRequestHandler Not Implemented");
+	BLOCXX_ASSERTMSG(0, "getRequestHandler Not Implemented");
 	return RequestHandlerIFCRef();
 }
 
@@ -121,7 +122,7 @@ ServiceEnvironmentIFC::getRequestHandler(const String& id) const
 bool
 ServiceEnvironmentIFC::authenticate(String& userName, const String& info, String& details, OperationContext& context) const
 {
-	OW_ASSERTMSG(0, "authenticate Not Implemented");
+	BLOCXX_ASSERTMSG(0, "authenticate Not Implemented");
 	return true;
 }
 
@@ -130,7 +131,7 @@ CIMOMHandleIFCRef
 ServiceEnvironmentIFC::getCIMOMHandle(OperationContext& context,
 	EBypassProvidersFlag bypassProviders) const
 {
-	OW_ASSERTMSG(0, "getCIMOMHandle Not Implemented");
+	BLOCXX_ASSERTMSG(0, "getCIMOMHandle Not Implemented");
 	return CIMOMHandleIFCRef();
 }
 
@@ -139,7 +140,7 @@ CIMOMHandleIFCRef
 ServiceEnvironmentIFC::getLockedCIMOMHandle(OperationContext& context,
 	EInitialLockFlag initialLock) const
 {
-	OW_ASSERTMSG(0, "getLockedCIMOMHandle Not Implemented");
+	BLOCXX_ASSERTMSG(0, "getLockedCIMOMHandle Not Implemented");
 	return CIMOMHandleIFCRef();
 }
 
@@ -148,7 +149,7 @@ ServiceEnvironmentIFC::getLockedCIMOMHandle(OperationContext& context,
 WQLIFCRef
 ServiceEnvironmentIFC::getWQLRef() const
 {
-	OW_ASSERTMSG(0, "getWQLRef Not Implemented");
+	BLOCXX_ASSERTMSG(0, "getWQLRef Not Implemented");
 	return WQLIFCRef();
 }
 

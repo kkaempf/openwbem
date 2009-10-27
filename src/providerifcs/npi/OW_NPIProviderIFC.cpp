@@ -120,12 +120,12 @@ NPIProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 		// provider
 		if (pProv->fp_createInstance)
 		{
-			OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found instance"
+			BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found instance"
 				" provider %1", provIdString));
 			return InstanceProviderIFCRef(new NPIInstanceProviderProxy(
 				pProv));
 		}
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Provider %1 is not an instance provider",
+		BLOCXX_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Provider %1 is not an instance provider",
 			provIdString));
 	}
 	OW_THROW(NoSuchProviderException, provIdString);
@@ -169,12 +169,12 @@ NPIProviderIFC::doGetMethodProvider(const ProviderEnvironmentIFCRef& env,
 		// NULL
 		if (pProv->fp_invokeMethod)
 		{
-			OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found method provider %1",
+			BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found method provider %1",
 				provIdString));
 			return MethodProviderIFCRef(
 				new NPIMethodProviderProxy(pProv));
 		}
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Provider %1 is not a method provider",
+		BLOCXX_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Provider %1 is not a method provider",
 			provIdString));
 	}
 	OW_THROW(NoSuchProviderException, provIdString);
@@ -192,12 +192,12 @@ NPIProviderIFC::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 		// associator provider
 		if (pProv->fp_associatorNames)
 		{
-			OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found associator provider %1",
+			BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found associator provider %1",
 				provIdString));
 			return AssociatorProviderIFCRef(new
 				NPIAssociatorProviderProxy(pProv));
 		}
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Provider %1 is not an associator provider",
+		BLOCXX_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Provider %1 is not an associator provider",
 			provIdString));
 	}
 	OW_THROW(NoSuchProviderException, provIdString);
@@ -215,12 +215,12 @@ NPIProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 		// indication provider
 		if (pProv->fp_activateFilter)
 		{
-			OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found indication provider %1",
+			BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC found indication provider %1",
 				provIdString));
 			return IndicationProviderIFCRef(new
 				NPIIndicationProviderProxy(pProv));
 		}
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Provider %1 is not an indication provider",
+		BLOCXX_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Provider %1 is not an indication provider",
 			provIdString));
 	}
 	OW_THROW(NoSuchProviderException, provIdString);
@@ -246,13 +246,13 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		  SharedLibraryLoader::createSharedLibraryLoader();
 	   if (!ldr)
 	   {
-		  OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "NPI provider ifc failed to get shared lib loader");
+		  BLOCXX_LOG_ERROR(env->getLogger(COMPONENT_NAME), "NPI provider ifc failed to get shared lib loader");
 		  return;
 	   }
 	   StringArray dirEntries;
 	   if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 	   {
-		  OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc failed getting contents of "
+		  BLOCXX_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc failed getting contents of "
 			 "directory: %1", libPath));
 		  return;
 	   }
@@ -275,7 +275,7 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		  String guessProvId = dirEntries[i].substring(3, dirEntries[i].length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
 		  if (!theLib)
 		  {
-			 OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider %1 ifc failed to load"
+			 BLOCXX_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider %1 ifc failed to load"
 					   " library: %2", guessProvId, libName));
 			 continue;
 		  }
@@ -283,14 +283,14 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		String creationFuncName = guessProvId + "_initFunctionTable";
 		if (!theLib->getFunctionPointer(creationFuncName, createProvider))
 		{
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 does not contain"
+			BLOCXX_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 does not contain"
 				" %2 function", libName, creationFuncName));
 			continue;
 		}
 		::FTABLE fTable_ = (*createProvider)();
 		if (!fTable_.fp_initialize)
 		{
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 - %2 returned null"
+			BLOCXX_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 - %2 returned null"
 				" initialize function pointer in function table", libName, creationFuncName));
 			continue;
 		}
@@ -299,7 +299,7 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		if (!fTable_.fp_activateFilter) continue;
 		//
 			// else it must be a polled provider - initialize it
-		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Calling initialize"
+		BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Calling initialize"
 			" for provider %2", libName, guessProvId));
 		::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
 		// nothing the provider can do with it, so we'll just pass in 0
@@ -314,12 +314,12 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		// take care of the errorOccurred field - buggy provider or perl script
 		if (_npiHandle.errorOccurred)
 		{
-			OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Initialize failed"
+			BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Initialize failed"
 			" for provider %2", libName, guessProvId));
 			delete ((NPIContext *)fTable.npicontext);
 			continue;
 		}
-		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: provider %1 loaded and initialized",
+		BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: provider %1 loaded and initialized",
 			guessProvId));
 		//::NPIFTABLE * nf = new ::NPIFTABLE();
 		//* nf = fTable;
@@ -351,7 +351,7 @@ NPIProviderIFC::getProvider(
 			SharedLibraryLoader::createSharedLibraryLoader();
 		if (!ldr)
 		{
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "NPI: provider ifc failed to get shared lib loader");
+			BLOCXX_LOG_ERROR(env->getLogger(COMPONENT_NAME), "NPI: provider ifc failed to get shared lib loader");
 			return FTABLERef();
 		}
 		String libName(libPath);
@@ -359,7 +359,7 @@ NPIProviderIFC::getProvider(
 		libName += "lib";
 		libName += provId;
 		libName += OW_SHAREDLIB_EXTENSION;
-		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC::getProvider loading library: %1",
+		BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPIProviderIFC::getProvider loading library: %1",
 			libName));
 
 		if (!FileSystem::exists(libName))
@@ -370,7 +370,7 @@ NPIProviderIFC::getProvider(
 		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName);
 		if (!theLib)
 		{
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc failed to load library: %1 "
+			BLOCXX_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc failed to load library: %1 "
 				"for provider id %2", libName, provId));
 			return FTABLERef();
 		}
@@ -378,7 +378,7 @@ NPIProviderIFC::getProvider(
 		String creationFuncName = provId + "_initFunctionTable";
 		if (!theLib->getFunctionPointer(creationFuncName, createProvider))
 		{
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 does not contain"
+			BLOCXX_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 does not contain"
 				" %2 function", libName, creationFuncName));
 			return FTABLERef();
 		}
@@ -390,12 +390,12 @@ NPIProviderIFC::getProvider(
 		fTable.npicontext->scriptName = NULL;
 		if (!fTable.fp_initialize)
 		{
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 - %2 returned null"
+			BLOCXX_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: Libary %1 - %2 returned null"
 				" initialize function pointer in function table", libName, creationFuncName));
 			delete ((NPIContext *)fTable.npicontext);
 			return FTABLERef();
 		}
-		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Calling initialize"
+		BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Calling initialize"
 			" for provider %2", libName, provId));
 		::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
 		// nothing the provider can do with it, so we'll just pass in 0
@@ -406,12 +406,12 @@ NPIProviderIFC::getProvider(
 		// that might indicate a buggy provider
 		if (_npiHandle.errorOccurred)
 		{
-			OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Initialize failed"
+			BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc loaded library %1. Initialize failed"
 				" for provider %2", libName, provId));
 			delete ((NPIContext *)fTable.npicontext);
 			return FTABLERef();
 		}
-		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: provider %1 loaded and initialized",
+		BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), Format("NPI provider ifc: provider %1 loaded and initialized",
 			provId));
 		m_provs[provId] = FTABLERef(theLib, new NPIFTABLE(fTable));
 

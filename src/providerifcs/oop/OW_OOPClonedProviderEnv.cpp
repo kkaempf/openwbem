@@ -36,9 +36,9 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "blocxx/Format.hpp"
 #include "blocxx/LogMessage.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_BinaryRequestHandler.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_HTTPChunkedOStream.hpp"
 #include "blocxx/TempFileStream.hpp"
@@ -59,6 +59,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace OOPProtocolCPP1Impl;
+using namespace blocxx;
 
 OW_DECLARE_EXCEPTION(ClonedOOPProtocolCPP1);
 OW_DEFINE_EXCEPTION(ClonedOOPProtocolCPP1);
@@ -105,26 +106,26 @@ OOPClonedProviderEnv::run()
 	selectEngine.addSelectableObject(m_conn->getReadSelectObj(), callback,
 		SelectableCallbackIFC::E_READ_EVENT);
 
-	OW_LOG_DEBUG3(logger, "OOPClonedProviderEnv::run() about to run the select engine");
+	BLOCXX_LOG_DEBUG3(logger, "OOPClonedProviderEnv::run() about to run the select engine");
 	try
 	{
 		selectEngine.go(Timeout::infinite);
 	}
 	catch (Exception& e)
 	{
-		OW_LOG_DEBUG(logger, Format("OOPClonedProviderEnv::run() caught select exception: %1", e));
+		BLOCXX_LOG_DEBUG(logger, Format("OOPClonedProviderEnv::run() caught select exception: %1", e));
 	}
 	catch(...)
 	{
-		OW_LOG_DEBUG(logger, "OOPClonedProviderEnv::run() caught UNKNOWN exception");
+		BLOCXX_LOG_DEBUG(logger, "OOPClonedProviderEnv::run() caught UNKNOWN exception");
 	}
 
 	if (!finishedSuccessfully)
 	{
-		OW_LOG_DEBUG3(logger, "ClonedProvEnv::run pipe closed without sending a BIN_END");
+		BLOCXX_LOG_DEBUG3(logger, "ClonedProvEnv::run pipe closed without sending a BIN_END");
 	}
 
-	OW_LOG_DEBUG3(logger, "OOPClonedProviderEnv::run returning");
+	BLOCXX_LOG_DEBUG3(logger, "OOPClonedProviderEnv::run returning");
 }
 
 //////////////////////////////////////////////////////////////////////////////

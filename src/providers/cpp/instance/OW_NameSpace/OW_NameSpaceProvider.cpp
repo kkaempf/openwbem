@@ -47,17 +47,19 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 
 namespace OW_NAMESPACE
 {
+using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
 	const String COMPONENT_NAME("ow.provider.__Namespace");
 }
 
-using namespace WBEMFlags;
+
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
@@ -342,7 +344,7 @@ NameSpaceProvider::createInstance(
 	String newNameSpace = ns;
 	newNameSpace += "/";
 	newNameSpace += newName;
-	OW_LOG_DEBUG(Logger(COMPONENT_NAME), Format("NameSpaceProvider::createInstance calling"
+	BLOCXX_LOG_DEBUG(Logger(COMPONENT_NAME), Format("NameSpaceProvider::createInstance calling"
 			" createNameSpace with %1", newNameSpace));
 	env->getAuthorizingRepository()->createNameSpace(
 		newNameSpace, env->getOperationContext()
@@ -367,7 +369,7 @@ NameSpaceProvider::modifyInstance(
 void
 NameSpaceProvider::initialize(const ProviderEnvironmentIFCRef& env)
 {
-	OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "NameSpaceProvider initialize called");
+	BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), "NameSpaceProvider initialize called");
 }
 //////////////////////////////////////////////////////////////////////////////
 void

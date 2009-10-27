@@ -75,19 +75,19 @@ struct OW_COMMON_API URL
 	 * @param sUrl The URL such as "https://jdd:test@myhost.com:5989/interop/:CIM_Namespace.Name=unknown,CreationClassName=CIM_ComputerSystem"
 	 * @throws MalformedURLException
 	 */
-	URL(const String& sUrl);
-	String scheme;
-	String principal;
-	String credential;
-	String host;
-	String port;
-	String namespaceName;
-	String modelPath;
+	URL(const blocxx::String& sUrl);
+	blocxx::String scheme;
+	blocxx::String principal;
+	blocxx::String credential;
+	blocxx::String host;
+	blocxx::String port;
+	blocxx::String namespaceName;
+	blocxx::String modelPath;
 	bool ipv6Address;
 	/**
 	 * Return a string based on the data in the member variables.
 	 */
-	String toString() const;
+	blocxx::String toString() const;
 
 	// known schemes
 	static const char* const CIMXML_WBEM;

@@ -33,7 +33,6 @@
 
 #include "OW_config.h"
 #include "blocxx/Array.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_Exception.hpp"
 #include "OW_PrivilegeManager.hpp"
 #include "blocxx/String.hpp"
@@ -49,6 +48,7 @@
 
 using namespace std;
 using namespace OpenWBEM;
+using namespace blocxx;
 
 extern char * * environ;
 

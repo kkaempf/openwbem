@@ -50,7 +50,7 @@
 
 namespace OW_NAMESPACE
 {
-
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 XMLNodeImpl::XMLNodeImpl(const String& name,
 	const XMLAttributeArray& attrArray) :

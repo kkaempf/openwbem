@@ -48,6 +48,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 namespace CIMNameSpaceUtils
 {
 namespace

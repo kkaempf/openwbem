@@ -72,41 +72,41 @@ public:
 	virtual void associators(
 			const ProviderEnvironmentIFCRef& env,
 			CIMInstanceResultHandlerIFC& result,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMObjectPath& objectName,
-			const String& assocClass,
-			const String& resultClass,
-			const String& role,
-			const String& resultRole,
+			const blocxx::String& assocClass,
+			const blocxx::String& resultClass,
+			const blocxx::String& role,
+			const blocxx::String& resultRole,
 			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList);
+			const blocxx::StringArray* propertyList);
 	virtual void associatorNames(
 			const ProviderEnvironmentIFCRef& env,
 			CIMObjectPathResultHandlerIFC& result,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMObjectPath& objectName,
-			const String& assocClass,
-			const String& resultClass,
-			const String& role,
-			const String& resultRole);
+			const blocxx::String& assocClass,
+			const blocxx::String& resultClass,
+			const blocxx::String& role,
+			const blocxx::String& resultRole);
 	virtual void references(
 			const ProviderEnvironmentIFCRef& env,
 			CIMInstanceResultHandlerIFC& result,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMObjectPath& objectName,
-			const String& resultClass,
-			const String& role,
+			const blocxx::String& resultClass,
+			const blocxx::String& role,
 			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList);
+			const blocxx::StringArray* propertyList);
 	virtual void referenceNames(
 			const ProviderEnvironmentIFCRef& env,
 			CIMObjectPathResultHandlerIFC& result,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMObjectPath& objectName,
-			const String& resultClass,
-			const String& role);
+			const blocxx::String& resultClass,
+			const blocxx::String& role);
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 private:
 	CppAssociatorProviderIFCRef m_pProv;
@@ -119,47 +119,47 @@ public:
 	CppInstanceProviderProxy(const CppInstanceProviderIFCRef& pProv);
 	virtual void enumInstanceNames(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
-			const String& className,
+			const blocxx::String& ns,
+			const blocxx::String& className,
 			CIMObjectPathResultHandlerIFC& result,
 			const CIMClass& cimClass);
 	virtual void enumInstances(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
-			const String& className,
+			const blocxx::String& ns,
+			const blocxx::String& className,
 			CIMInstanceResultHandlerIFC& result,
 			WBEMFlags::ELocalOnlyFlag localOnly,
 			WBEMFlags::EDeepFlag deep,
 			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList,
+			const blocxx::StringArray* propertyList,
 			const CIMClass& requestedClass,
 			const CIMClass& cimClass);
 	virtual CIMInstance getInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMObjectPath& instanceName,
 			WBEMFlags::ELocalOnlyFlag localOnly,
 			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList,
+			const blocxx::StringArray* propertyList,
 			const CIMClass& cimClass);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual CIMObjectPath createInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMInstance& cimInstance);
 	virtual void modifyInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMInstance& modifiedInstance,
 			const CIMInstance& previousInstance,
 			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-			const StringArray* propertyList,
+			const blocxx::StringArray* propertyList,
 			const CIMClass& theClass);
 	virtual void deleteInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMObjectPath& cop);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
@@ -171,11 +171,18 @@ class OW_CPPPROVIFC_API CppSecondaryInstanceProviderProxy : public SecondaryInst
 {
 public:
 	CppSecondaryInstanceProviderProxy(const CppSecondaryInstanceProviderIFCRef& pProv);
-	virtual void filterInstances(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMInstanceArray &instances, WBEMFlags:: ELocalOnlyFlag localOnly, WBEMFlags:: EDeepFlag deep, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass);
+	virtual void filterInstances(
+		const ProviderEnvironmentIFCRef &env, const blocxx::String &ns, const blocxx::String &className,
+		CIMInstanceArray &instances, WBEMFlags:: ELocalOnlyFlag localOnly, WBEMFlags:: EDeepFlag deep,
+		WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin,
+		const blocxx::StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	virtual void createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance);
-	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass);
-	virtual void deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop);
+	virtual void createInstance(const ProviderEnvironmentIFCRef &env, const blocxx::String &ns, const CIMInstance &cimInstance);
+	virtual void modifyInstance(
+		const ProviderEnvironmentIFCRef &env, const blocxx::String &ns, const CIMInstance &modifiedInstance,
+		const CIMInstance &previousInstance, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers,
+		const blocxx::StringArray *propertyList, const CIMClass &theClass);
+	virtual void deleteInstance(const ProviderEnvironmentIFCRef &env, const blocxx::String &ns, const CIMObjectPath &cop);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 private:
@@ -188,17 +195,17 @@ public:
 	CppMethodProviderProxy(const CppMethodProviderIFCRef& pProv);
 	virtual CIMValue invokeMethod(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMObjectPath& path,
-			const String& methodName,
+			const blocxx::String& methodName,
 			const CIMParamValueArray& in,
 			CIMParamValueArray& out);
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 	virtual ELockType getLockTypeForMethod(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& path,
-		const String& methodName,
+		const blocxx::String& methodName,
 		const CIMParamValueArray& in);
 
 private:
@@ -209,13 +216,14 @@ class OW_CPPPROVIFC_API CppIndicationExportProviderProxy : public IndicationExpo
 public:
 	CppIndicationExportProviderProxy(const CppIndicationExportProviderIFCRef& pProv) :
 		m_pProv(pProv) {}
-	virtual StringArray getHandlerClassNames()
+
+	virtual blocxx::StringArray getHandlerClassNames()
 	{
 		return m_pProv->getHandlerClassNames();
 	}
 
 	virtual void exportIndication(const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMInstance& indHandlerInst, const CIMInstance& indicationInst)
 	{
 		m_pProv->exportIndication(env, ns, indHandlerInst, indicationInst);
@@ -245,9 +253,9 @@ class OW_CPPPROVIFC_API CppPolledProviderProxy : public PolledProviderIFC
 public:
 	CppPolledProviderProxy(const CppPolledProviderIFCRef& pProv) :
 		m_pProv(pProv) {}
-	virtual Int32 poll(const ProviderEnvironmentIFCRef& env )
+	virtual blocxx::Int32 poll(const ProviderEnvironmentIFCRef& env )
 			{ return m_pProv->poll(env); }
-	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env )
+	virtual blocxx::Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env )
 			{ return m_pProv->getInitialPollingInterval(env); }
 	virtual void doShutdown()
 	{
@@ -276,9 +284,9 @@ public:
 	virtual void deActivateFilter(
 		const ProviderEnvironmentIFCRef &env,
 		const WQLSelectStatement &filter,
-		const String &eventType,
-		const String& nameSpace,
-		const StringArray& classes,
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
 		bool lastActivation)
 	{
 		m_pProv->deActivateFilter(env,filter,eventType,nameSpace, classes,lastActivation);
@@ -286,9 +294,9 @@ public:
 	virtual void activateFilter(
 		const ProviderEnvironmentIFCRef &env,
 		const WQLSelectStatement &filter,
-		const String &eventType,
-		const String& nameSpace,
-		const StringArray& classes,
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
 		bool firstActivation)
 	{
 		m_pProv->activateFilter(env,filter,eventType,nameSpace,classes,firstActivation);
@@ -296,19 +304,19 @@ public:
 	virtual void authorizeFilter(
 		const ProviderEnvironmentIFCRef &env,
 		const WQLSelectStatement &filter,
-		const String &eventType,
-		const String& nameSpace,
-		const StringArray& classes,
-		const String &owner)
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
+		const blocxx::String &owner)
 	{
 		m_pProv->authorizeFilter(env,filter,eventType,nameSpace,classes,owner);
 	}
 	virtual int mustPoll(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes
 		)
 	{
 		return m_pProv->mustPoll(env,filter,eventType,nameSpace,classes);
@@ -331,7 +339,7 @@ public:
 
 	virtual void queryInstances(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const WQLSelectStatement& query,
 		const WQLCompile& compiledWhereClause,
 		CIMInstanceResultHandlerIFC& result,

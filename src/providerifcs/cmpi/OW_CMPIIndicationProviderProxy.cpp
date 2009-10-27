@@ -36,13 +36,15 @@
 #include "blocxx/Format.hpp"
 #include "OW_CMPIProviderIFCUtils.hpp"
 #include "OW_WQLSelectStatement.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "cmpisrv.h"
 
 #define CMPI_POLLING_INTERVAL (5*60)
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace
 {
@@ -60,7 +62,7 @@ CMPIIndicationProviderProxy::deActivateFilter(
 	bool lastActivation)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "deactivateFilter");
+	BLOCXX_LOG_DEBUG3(lgr, "deactivateFilter");
 	m_ftable->lastAccessTime.setToCurrent();
 	if (m_ftable->miVector.indMI->ft->deActivateFilter != NULL)
 	{
@@ -109,7 +111,7 @@ CMPIIndicationProviderProxy::activateFilter(
 	bool firstActivation)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "activateFilter");
+	BLOCXX_LOG_DEBUG3(lgr, "activateFilter");
 	m_ftable->lastAccessTime.setToCurrent();
 	if (m_ftable->miVector.indMI->ft->activateFilter != NULL)
 	{
@@ -159,7 +161,7 @@ CMPIIndicationProviderProxy::authorizeFilter(
 	const String &owner)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "authorizeFilter");
+	BLOCXX_LOG_DEBUG3(lgr, "authorizeFilter");
 	m_ftable->lastAccessTime.setToCurrent();
 	if (m_ftable->miVector.indMI->ft->authorizeFilter != NULL)
 	{
@@ -207,7 +209,7 @@ CMPIIndicationProviderProxy::mustPoll(
 	const StringArray &classes)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "mustPoll");
+	BLOCXX_LOG_DEBUG3(lgr, "mustPoll");
 	m_ftable->lastAccessTime.setToCurrent();
 	if (m_ftable->miVector.indMI->ft->mustPoll != NULL)
 	{

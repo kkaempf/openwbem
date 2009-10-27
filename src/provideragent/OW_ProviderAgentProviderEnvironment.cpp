@@ -36,16 +36,17 @@
 
 #include "OW_config.h"
 #include "OW_ProviderAgentProviderEnvironment.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_HTTPClient.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_ProviderEnvironmentException.hpp"
 
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgentProviderEnvironment::ProviderAgentProviderEnvironment(
 	const ConfigFile::ConfigMap& configMap,
@@ -123,7 +124,7 @@ ProviderAgentProviderEnvironment::getMultiConfigItem(const String &itemName,
 CIMOMHandleIFCRef
 ProviderAgentProviderEnvironment::getRepositoryCIMOMHandle() const
 {
-	OW_ASSERTMSG(0, "not implemented");
+	BLOCXX_ASSERTMSG(0, "not implemented");
 	return CIMOMHandleIFCRef();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -132,20 +133,20 @@ ProviderAgentProviderEnvironment::getRepositoryCIMOMHandle() const
 RepositoryIFCRef
 ProviderAgentProviderEnvironment::getRepository() const
 {
-	OW_ASSERTMSG(0, "not implemented");
+	BLOCXX_ASSERTMSG(0, "not implemented");
 	return RepositoryIFCRef();
 }
 RepositoryIFCRef
 ProviderAgentProviderEnvironment::getAuthorizingRepository() const
 {
-	OW_ASSERTMSG(0, "not implemented");
+	BLOCXX_ASSERTMSG(0, "not implemented");
 	return RepositoryIFCRef();
 }
 //////////////////////////////////////////////////////////////////////////////
 String
 ProviderAgentProviderEnvironment::getUserName() const
 {
-	OW_ASSERTMSG(0, "not implemented");
+	BLOCXX_ASSERTMSG(0, "not implemented");
 	return String();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -159,7 +160,7 @@ ProviderAgentProviderEnvironment::getOperationContext()
 ProviderEnvironmentIFCRef
 ProviderAgentProviderEnvironment::clone() const
 {
-	OW_ASSERTMSG(0, "not implemented");
+	BLOCXX_ASSERTMSG(0, "not implemented");
 	return ProviderEnvironmentIFCRef();
 }
 

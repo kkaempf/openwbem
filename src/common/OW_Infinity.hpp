@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/Infinity.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Infinity.hpp is deprecated, use "blocxx/Infinity.hpp" instead.
 #endif
 

@@ -57,7 +57,7 @@
 #define NEWLINE_RETURN() WHITE_RETURN('\n')
 
 #define RETURN_VAL(x) owmoflval->pString = 0; return(x);
-#define RETURN_STR(x) owmoflval->pString = new OpenWBEM::String(owmoftext); return(x);
+#define RETURN_STR(x) owmoflval->pString = new blocxx::String(owmoftext); return(x);
 
 namespace OW_NAMESPACE
 {
@@ -247,10 +247,11 @@ true                {RETURN_STR(TRUE_TOK);}
 %%
 /* here is the user code */
 
-void lexIncludeFile( OpenWBEM::MOF::CompilerState* context, const OpenWBEM::String& filename )
+void lexIncludeFile( OpenWBEM::MOF::CompilerState* context, const blocxx::String& filename )
 {
 	using namespace OpenWBEM;
 	using namespace OpenWBEM::MOF;
+	using namespace blocxx;
 
 	if ( MOF_COMPILER_STATE->include_stack.size() >= CompilerState::E_MAX_INCLUDE_DEPTH )
 	{

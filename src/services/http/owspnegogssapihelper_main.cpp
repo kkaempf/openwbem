@@ -40,7 +40,7 @@
 #include "blocxx/DateTime.hpp"
 #include "OW_HTTPUtils.hpp"
 // Logger part here must be removed when finished
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/LogAppender.hpp"
 #include "OW_SyslogAppender.hpp"
 
@@ -261,7 +261,7 @@ get_gss_creds(gss_cred_id_t &server_creds,
 		// Comment from mod_auth_kerb
 		/* Perhaps we could just ignore this error but it's safer to give
 		 * up now, I think */
-		OW_LOG_DEBUG(logger, Format("IMPORTANT: gss_display_name() failed: "
+		BLOCXX_LOG_DEBUG(logger, Format("IMPORTANT: gss_display_name() failed: "
 		             "%1", getGssError(major_status, minor_status)));
 
 		errormsg = "gss_display_name() failed: " +
@@ -270,7 +270,7 @@ get_gss_creds(gss_cred_id_t &server_creds,
 	}
 
 	String temp(static_cast<char*>(token.value));
-	OW_LOG_DEBUG(logger, Format("IMPORTANT: get_gss_creds Acquiring creds "
+	BLOCXX_LOG_DEBUG(logger, Format("IMPORTANT: get_gss_creds Acquiring creds "
 	             "for : %1", temp));
 
 	gss_release_buffer(&minor_status, &token);
@@ -325,9 +325,9 @@ gssapi_spnego_accept(gss_buffer_desc &input_token,
 	                                      NULL,
 	                                      &delegated_cred);
 
-	OW_LOG_DEBUG3(logger, Format("Length of output_token: %1",
+	BLOCXX_LOG_DEBUG3(logger, Format("Length of output_token: %1",
 	                            output_token.length));
-	OW_LOG_DEBUG3(logger, Format("Value of output_token: %1",
+	BLOCXX_LOG_DEBUG3(logger, Format("Value of output_token: %1",
 	                            static_cast<char*>(output_token.value)));
 
 	if (GSS_ERROR(major_status))
@@ -412,10 +412,10 @@ gssapi_spnego_init(gss_buffer_desc &input_token,
 	                                    NULL
 	                                    );
 
-	OW_LOG_DEBUG3(logger, Format("Length of client output token %1",
+	BLOCXX_LOG_DEBUG3(logger, Format("Length of client output token %1",
 	                            output_token.length));
 
-	OW_LOG_DEBUG3(logger, Format("Value of client output token %1",
+	BLOCXX_LOG_DEBUG3(logger, Format("Value of client output token %1",
 	                            static_cast<char*>(output_token.value)));
 	if (GSS_ERROR(major_status))
 	{
@@ -526,7 +526,7 @@ try
 
 		if (input.length() == 0 && mode == E_SERVER)
 		{
-			OW_LOG_DEBUG(logger, "IMPORTANT: Token empty");
+			BLOCXX_LOG_DEBUG(logger, "IMPORTANT: Token empty");
 			cerr << "Token empty" << endl;
 			return 1;
 		}
@@ -544,7 +544,7 @@ try
 		{
 			if (get_gss_creds(server_creds, errormsg) != 0)
 			{
-				OW_LOG_DEBUG(logger,
+				BLOCXX_LOG_DEBUG(logger,
 				             Format("IMPORTANT: server-part: "
 					            "An Error occured in "
 				                    "get_gss_creds: %1", errormsg));
@@ -555,7 +555,7 @@ try
 			}
 			else
 			{
-				OW_LOG_DEBUG(logger, "Server started");
+				BLOCXX_LOG_DEBUG(logger, "Server started");
 				rv = gssapi_spnego_accept(input_token,
 				                          *pcontext,
 				                          flags,
@@ -566,11 +566,11 @@ try
 				if (GSS_ERROR(gss_release_cred(&minor_status,
 				                               &server_creds)))
 				{
-					OW_LOG_DEBUG(logger, "Could not delete "
+					BLOCXX_LOG_DEBUG(logger, "Could not delete "
 					                     "server "
 					                     "credentials");
 				}
-				OW_LOG_DEBUG(logger, Format("Server finished "
+				BLOCXX_LOG_DEBUG(logger, Format("Server finished "
 				                            "with %1", rv));
 			}
 		}
@@ -581,18 +581,18 @@ try
 			servPrinc.erase(servPrinc.length()-1);
 			String principal(servPrinc + "@" +
 			                        String(serverPrincipalName));
-			OW_LOG_DEBUG(logger, Format("Client Input: %1",
+			BLOCXX_LOG_DEBUG(logger, Format("Client Input: %1",
 			                            String(static_cast<char*>
 			                                   (input_token.value),
 			                                   input_token.length)));
-			OW_LOG_DEBUG(logger, "Client started");
+			BLOCXX_LOG_DEBUG(logger, "Client started");
 			rv = gssapi_spnego_init(input_token,
 			                        *pcontext,
 			                        flags,
 			                        output_token,
 						principal,
 			                        errormsg);
-			OW_LOG_DEBUG(logger, Format("Client finished with %1", rv));
+			BLOCXX_LOG_DEBUG(logger, Format("Client finished with %1", rv));
 		}
 		if (output_token.value != 0)
 		{
@@ -655,7 +655,7 @@ try
 				cout << String(static_cast<char*>(output_token.value),
 				               output_token.length)
 				     << endl;
-				OW_LOG_DEBUG(logger, Format("Value of output token in success: %1",
+				BLOCXX_LOG_DEBUG(logger, Format("Value of output token in success: %1",
 				                            String(static_cast<char*>(output_token.value),
 				                                   output_token.length)));
 
@@ -695,6 +695,6 @@ try
 }
 catch (const exception &e)
 {
-	OW_LOG_DEBUG(logger, Format("An exception occured. Message is %1",e.what()));
+	BLOCXX_LOG_DEBUG(logger, Format("An exception occured. Message is %1",e.what()));
 	return 1;
 }

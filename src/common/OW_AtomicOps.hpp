@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/AtomicOps.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_AtomicOps.hpp is deprecated, use "blocxx/AtomicOps.hpp" instead.
 #endif
 

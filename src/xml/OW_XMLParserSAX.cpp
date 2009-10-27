@@ -47,6 +47,7 @@
 #endif
 
 using std::istream;
+using namespace blocxx;
 
 namespace OW_NAMESPACE
 {

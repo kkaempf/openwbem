@@ -97,14 +97,14 @@ public:
 	 */
 	virtual void filterInstances(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
-			const String& className,
+			const blocxx::String& ns,
+			const blocxx::String& className,
 			CIMInstanceArray& instances,
 			WBEMFlags::ELocalOnlyFlag localOnly,
 			WBEMFlags::EDeepFlag deep,
 			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList,
+			const blocxx::StringArray* propertyList,
 			const CIMClass& requestedClass,
 			const CIMClass& cimClass );
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -122,7 +122,7 @@ public:
 	 */
 	virtual void createInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMInstance& cimInstance );
 	/**
 	 * This method is called when the instance specified by previousInstance is
@@ -137,11 +137,11 @@ public:
 	 */
 	virtual void modifyInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMInstance& modifiedInstance,
 			const CIMInstance& previousInstance,
 			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-			const StringArray* propertyList,
+			const blocxx::StringArray* propertyList,
 			const CIMClass& theClass);
 	/**
 	 * This method is called when the instance specified by cop is
@@ -157,15 +157,15 @@ public:
 	 */
 	virtual void deleteInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMObjectPath& cop);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual CppSecondaryInstanceProviderIFC* getSecondaryInstanceProvider();
 
 };
 
-typedef SharedLibraryReference< IntrusiveReference<CppSecondaryInstanceProviderIFC> > CppSecondaryInstanceProviderIFCRef;
-typedef Array<CppSecondaryInstanceProviderIFCRef> CppSeconaryInstanceProviderIFCRefArray;
+typedef blocxx::SharedLibraryReference< blocxx::IntrusiveReference<CppSecondaryInstanceProviderIFC> > CppSecondaryInstanceProviderIFCRef;
+typedef blocxx::Array<CppSecondaryInstanceProviderIFCRef> CppSeconaryInstanceProviderIFCRefArray;
 
 } // end namespace OW_NAMESPACE
 

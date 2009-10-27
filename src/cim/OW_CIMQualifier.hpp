@@ -41,7 +41,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -214,7 +214,7 @@ public:
 	 * 	qualifier.
 	 * @return a reference to *this
 	 */
-	CIMQualifier& removeFlavor(Int32 flavor);
+	CIMQualifier& removeFlavor(blocxx::Int32 flavor);
 	/**
 	 * @return true if this qualifier has a value. Otherwise false.
 	 */
@@ -248,18 +248,18 @@ public:
 	 * @param language The language
 	 * @return a reference to *this
 	 */
-	CIMQualifier& setLanguage(const String& language);
+	CIMQualifier& setLanguage(const blocxx::String& language);
 	/**
 	 * @return The qualifier's language
 	 */
-	String getLanguage() const;
+	blocxx::String getLanguage() const;
 
-	OW_SAFE_BOOL_IMPL(CIMQualifier, COWIntrusiveReference<QUALData>, CIMQualifier::m_pdata, m_pdata)
+	BLOCXX_SAFE_BOOL_IMPL(CIMQualifier, blocxx::COWIntrusiveReference<QUALData>, CIMQualifier::m_pdata, m_pdata)
 
 	/**
 	 * @return The name of this qualifier as an String.
 	 */
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 	/**
 	 * Set the name of this qualifier.
 	 * @param name The new name of this qualifier as an String.
@@ -279,11 +279,11 @@ public:
 	/**
 	 * @return The MOF representation of this qualifier as an String.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 	/**
 	 * @return The string representation of this qualifier.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 	/**
 	 * Create a key qualifier
 	 */
@@ -302,7 +302,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<QUALData> m_pdata;
+	blocxx::COWIntrusiveReference<QUALData> m_pdata;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

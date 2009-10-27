@@ -58,7 +58,7 @@ public:
 	/**
 	 * @throws TimeoutException if the lock isn't acquired within the timeout.
 	 */
-	void acquireReadLock(UInt64 operationId, const Timeout& timeout);
+	void acquireReadLock(blocxx::UInt64 operationId, const blocxx::Timeout& timeout);
 
 	/**
 	 * @throws TimeoutException if the lock isn't acquired within the timeout.
@@ -66,21 +66,21 @@ public:
 	 *   and another thread is already waiting to upgrade. If this happens, the calling
 	 *   thread must release it's read lock in order for forward progress to be made.
 	 */
-	void acquireWriteLock(UInt64 operationId, const Timeout& timeout);
+	void acquireWriteLock(blocxx::UInt64 operationId, const blocxx::Timeout& timeout);
 
 	/**
 	 * @throws OperationRWLockException if a read lock hasn't been acquired.
 	 */
-	void releaseReadLock(UInt64 operationId);
+	void releaseReadLock(blocxx::UInt64 operationId);
 
 	/**
 	 * @throws OperationRWLockException if a write lock hasn't been acquired.
 	 */
-	void releaseWriteLock(UInt64 operationId);
+	void releaseWriteLock(blocxx::UInt64 operationId);
 
 private:
 
-	GenericRWLockImpl<UInt64, std::less<UInt64> > m_impl;
+	blocxx::GenericRWLockImpl<blocxx::UInt64, std::less<blocxx::UInt64> > m_impl;
 
 	// unimplemented
 	OperationRWLock(const OperationRWLock&);
@@ -90,7 +90,7 @@ private:
 class OW_COMMON_API OperationReadLock
 {
 public:
-	OperationReadLock(OperationRWLock& locker, UInt64 operationId, const Timeout& timeout)
+	OperationReadLock(OperationRWLock& locker, blocxx::UInt64 operationId, const blocxx::Timeout& timeout)
 		: m_locker(&locker)
 		, m_released(false)
 		, m_operationId(operationId)
@@ -101,7 +101,7 @@ public:
 	{
 		release();
 	}
-	void lock(UInt64 operationId, const Timeout& timeout)
+	void lock(blocxx::UInt64 operationId, const blocxx::Timeout& timeout)
 	{
 		if (m_released)
 		{
@@ -120,7 +120,7 @@ public:
 private:
 	OperationRWLock* m_locker;
 	bool m_released;
-	UInt64 m_operationId;
+	blocxx::UInt64 m_operationId;
 
 	// noncopyable
 	OperationReadLock(const OperationReadLock&);
@@ -131,7 +131,7 @@ private:
 class OW_COMMON_API OperationWriteLock
 {
 public:
-	OperationWriteLock(OperationRWLock& locker, UInt64 operationId, const Timeout& timeout)
+	OperationWriteLock(OperationRWLock& locker, blocxx::UInt64 operationId, const blocxx::Timeout& timeout)
 		: m_locker(&locker)
 		, m_released(false)
 		, m_operationId(operationId)
@@ -142,7 +142,7 @@ public:
 	{
 		release();
 	}
-	void lock(UInt64 operationId, const Timeout& timeout)
+	void lock(blocxx::UInt64 operationId, const blocxx::Timeout& timeout)
 	{
 		if (m_released)
 		{
@@ -161,7 +161,7 @@ public:
 private:
 	OperationRWLock* m_locker;
 	bool m_released;
-	UInt64 m_operationId;
+	blocxx::UInt64 m_operationId;
 
 	// noncopyable
 	OperationWriteLock(const OperationWriteLock&);

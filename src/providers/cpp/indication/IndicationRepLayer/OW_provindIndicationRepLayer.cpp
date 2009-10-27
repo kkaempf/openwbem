@@ -39,6 +39,7 @@
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 // This class is responsible for coordinating with IndicationRepLayer when
 // subscriptions are created.  IndicationReplayer creates lifecycle indications

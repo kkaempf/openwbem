@@ -54,7 +54,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_HTTP_API HTTPDeflateOStreamBuffer : public BaseStreamBuffer
+class OW_HTTP_API HTTPDeflateOStreamBuffer : public blocxx::BaseStreamBuffer
 {
 public:
 	HTTPDeflateOStreamBuffer(std::ostream& ostr);
@@ -66,7 +66,7 @@ protected:
 private:
 	std::ostream& m_ostr;
 	z_stream m_zstr;
-	enum { m_outBufSize = HTTP_BUF_SIZE };
+	enum { m_outBufSize = blocxx::HTTP_BUF_SIZE };
 	Bytef m_outBuf[m_outBufSize];
 	int flushOutBuf(int flush = 0);
 	int writeToStream();

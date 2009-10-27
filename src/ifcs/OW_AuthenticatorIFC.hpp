@@ -49,7 +49,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_COMMON_API AuthenticatorIFC : virtual public IntrusiveCountableBase
+class OW_COMMON_API AuthenticatorIFC : virtual public blocxx::IntrusiveCountableBase
 {
 public:
 	AuthenticatorIFC()
@@ -81,14 +81,14 @@ public:
 	 * @return
 	 *	True if user is authenticated
 	 */
-	bool authenticate(String& userName, const String& info,
-		String& details, OperationContext& context)
+	bool authenticate(blocxx::String& userName, const blocxx::String& info,
+		blocxx::String& details, OperationContext& context)
 	{
-		MutexLock lock(m_mutex);
+		blocxx::MutexLock lock(m_mutex);
 		return doAuthenticate(userName, info, details, context);
 	}
 private:
-	UInt32 signature;
+	blocxx::UInt32 signature;
 protected:
 	/**
 	 * Authenticates a user
@@ -105,15 +105,15 @@ protected:
 	 * @return
 	 *	True if user is authenticated
 	 */
-	virtual bool doAuthenticate(String& userName,
-		const String& info, String& details, OperationContext& context) = 0;
+	virtual bool doAuthenticate(blocxx::String& userName,
+		const blocxx::String& info, blocxx::String& details, OperationContext& context) = 0;
 	/**
 	 * Called when authenticator is loaded
 	 * @exception Any exception may be thrown because other classes which
 	 *	derive from this may need to throw exceptions in init()
 	 */
 	virtual void doInit(ServiceEnvironmentIFCRef);
-	Mutex m_mutex;
+	blocxx::Mutex m_mutex;
 };
 
 #if !defined(OW_STATIC_SERVICES)

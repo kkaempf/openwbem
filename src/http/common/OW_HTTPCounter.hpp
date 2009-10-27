@@ -61,7 +61,7 @@ private:
 #else
 	static const int m_maxValue = 99;
 #endif // OW_AIX
-	Mutex m_mutex;
+	blocxx::Mutex m_mutex;
 };
 
 } // end namespace OW_NAMESPACE

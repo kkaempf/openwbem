@@ -29,7 +29,7 @@
 
 #include "OW_config.h"
 
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Exception.hpp"
 #include "blocxx/FileSystem.hpp"
@@ -49,6 +49,7 @@
 
 using namespace OpenWBEM;
 using namespace std;
+using namespace blocxx;
 
 OW_DECLARE_EXCEPTION(MonPerlTest);
 OW_DEFINE_EXCEPTION(MonPerlTest);
@@ -129,7 +130,7 @@ void prepend(String const & prefix, String & s)
 
 int main_aux(int argc, char * * argv)
 {
-	OW_ASSERT(argc >= 5);
+	BLOCXX_ASSERT(argc >= 5);
 	char const * config_dir = argv[1];
 	char const * launcher_privconfig = "perl_launcher.cfg";
 	char const * user_name = argv[2];

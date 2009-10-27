@@ -99,8 +99,8 @@ namespace OW_NAMESPACE
 			 * @returns true iff the structures could be flattened or unflattened.
 			 *
 			 */
-			bool OW_CIMOMSERVER_API flattenSignalInformation(const SignalInformation& source, UnnamedPipeRef& destPipe);
-			bool OW_CIMOMSERVER_API unflattenSignalInformation(SignalInformation& dest, UnnamedPipeRef& sourcePipe);
+			bool OW_CIMOMSERVER_API flattenSignalInformation(const SignalInformation& source, blocxx::UnnamedPipeRef& destPipe);
+			bool OW_CIMOMSERVER_API unflattenSignalInformation(SignalInformation& dest, blocxx::UnnamedPipeRef& sourcePipe);
 
 			/**
 			 * A function to dump a signal to a stream.  Mostly useful for

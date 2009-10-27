@@ -40,7 +40,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 #include <iosfwd>
 
 namespace OW_NAMESPACE
@@ -85,7 +85,7 @@ public:
 	 * @return A reference to this CIMParamValue object.
 	 */
 	CIMParamValue& operator = (const CIMParamValue& arg);
-	String getName() const;
+	blocxx::String getName() const;
 	CIMParamValue& setName(const CIMName& name);
 	CIMValue getValue() const;
 	CIMParamValue& setValue(const CIMValue& val);
@@ -93,7 +93,7 @@ public:
 	/**
 	 * @return true if this CIMParamValue is a valid CIM data type
 	 */
-	OW_SAFE_BOOL_IMPL(CIMParamValue, COWIntrusiveReference<Data>, CIMParamValue::m_pdata, m_pdata)
+	BLOCXX_SAFE_BOOL_IMPL(CIMParamValue, blocxx::COWIntrusiveReference<Data>, CIMParamValue::m_pdata, m_pdata)
 
 	/**
 	 * Read this CIMParamValue from an inputstream.
@@ -109,11 +109,11 @@ public:
 	/**
 	 * @return The string representation of this CIMParamValue object.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 	/**
 	 * @return The MOF representation of this CIMParamValue as an String.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 private:
 
 #ifdef OW_WIN32
@@ -121,7 +121,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<Data> m_pdata;
+	blocxx::COWIntrusiveReference<Data> m_pdata;
 
 #ifdef OW_WIN32
 #pragma warning (pop)
@@ -135,7 +135,7 @@ private:
  * an element with paranName name isn't found, a CIMValue(CIMNULL) will be
  * returned.
  */
-CIMValue getParamValue(const String& paramName, const CIMParamValueArray& params);
+CIMValue getParamValue(const blocxx::String& paramName, const CIMParamValueArray& params);
 
 
 

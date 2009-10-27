@@ -51,6 +51,8 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
+
 // We always send the lowest possible version. If 1.0 and 1.1 are the same, we send 1.0 so that 1.0 only clients will accept the request.
 // If we're using a 1.1 only feature, then we have to send 1.1.
 namespace

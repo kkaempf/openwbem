@@ -47,11 +47,11 @@ namespace OW_NAMESPACE
 ///////////////////////////////////////////////////////////////////////////////
 struct OW_PROVIDER_API InstClassInfo
 {
-	explicit InstClassInfo(String const& className_);
-	InstClassInfo(String const& className_, StringArray const& namespaces_);
+	explicit InstClassInfo(blocxx::String const& className_);
+	InstClassInfo(blocxx::String const& className_, blocxx::StringArray const& namespaces_);
 	~InstClassInfo();
-	String className;
-	StringArray namespaces;
+	blocxx::String className;
+	blocxx::StringArray namespaces;
 };
 ///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
@@ -59,7 +59,7 @@ class ProviderInfoBase
 {
 public:
 	typedef ClassInfoT ClassInfo;
-	typedef Array<ClassInfoT> ClassInfoArray;
+	typedef blocxx::Array<ClassInfoT> ClassInfoArray;
 	virtual ~ProviderInfoBase();
 	/**
 	 * Add a class name to the list of instrumented classes for the provider.
@@ -67,14 +67,14 @@ public:
 	 * associated to all namespaces.
 	 * @param className The class name.
 	 */
-	void addInstrumentedClass(String const& className);
+	void addInstrumentedClass(blocxx::String const& className);
 	void addInstrumentedClass(ClassInfoT const& classInfo);
 	const ClassInfoArray& getClassInfo() const;
-	void setProviderName(String const& name);
-	String getProviderName() const;
+	void setProviderName(blocxx::String const& name);
+	blocxx::String getProviderName() const;
 private:
 	ClassInfoArray m_instrumentedClasses;
-	String m_name;
+	blocxx::String m_name;
 };
 ///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
@@ -84,7 +84,7 @@ ProviderInfoBase<ClassInfoT>::~ProviderInfoBase()
 ///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
 void
-ProviderInfoBase<ClassInfoT>::addInstrumentedClass(String const& className)
+ProviderInfoBase<ClassInfoT>::addInstrumentedClass(blocxx::String const& className)
 {
 	m_instrumentedClasses.push_back(ClassInfoT(className));
 }
@@ -105,13 +105,13 @@ ProviderInfoBase<ClassInfoT>::getClassInfo() const
 ///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
 void
-ProviderInfoBase<ClassInfoT>::setProviderName(String const& name)
+ProviderInfoBase<ClassInfoT>::setProviderName(blocxx::String const& name)
 {
 	m_name = name;
 }
 ///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
-String
+blocxx::String
 ProviderInfoBase<ClassInfoT>::getProviderName() const
 {
 	return m_name;

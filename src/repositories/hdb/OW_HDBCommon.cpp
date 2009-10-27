@@ -40,6 +40,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 
 HDBUtilKeyArray::HDBUtilKeyArray(const CIMPropertyArray& props)
 	: m_props(props)

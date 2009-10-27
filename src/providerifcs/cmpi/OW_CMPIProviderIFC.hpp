@@ -59,7 +59,7 @@ public:
 
 	static CMPIFTABLERef loadProvider(
 		const ProviderEnvironmentIFCRef& env,
-		const String& providerLib,
+		const blocxx::String& providerLib,
 		::CMPI_Broker& broker);
 
 		//static ::CMPIBroker * getBroker() { return &(_broker); }
@@ -97,21 +97,21 @@ protected:
 		);
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
 private:
-	typedef Map<String, CMPIFTABLERef> ProviderMap;
+	typedef blocxx::Map<blocxx::String, CMPIFTABLERef> ProviderMap;
 	//typedef Array<SharedLibraryObject<CMPIFTABLERef> > LoadedProviderArray;
-	typedef Array<CMPIFTABLERef > LoadedProviderArray;
+	typedef blocxx::Array<CMPIFTABLERef > LoadedProviderArray;
 	CMPIFTABLERef getProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 	void loadNoIdProviders(const ProviderEnvironmentIFCRef& env);
 	ProviderMap m_provs;
-	Mutex m_guard;
+	blocxx::Mutex m_guard;
 	LoadedProviderArray m_noidProviders;
 	bool m_loadDone;
 // BMMU
 	MIs miVector;
 	::CMPI_Broker _broker;
 };
-typedef SharedLibraryReference<Reference<CMPIProviderIFC> > CMPIProviderIFCRef;
+typedef blocxx::SharedLibraryReference<blocxx::Reference<CMPIProviderIFC> > CMPIProviderIFCRef;
 
 } // end namespace OW_NAMESPACE
 

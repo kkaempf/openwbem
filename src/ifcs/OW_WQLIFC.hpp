@@ -52,17 +52,17 @@ class OW_COMMON_API WQLIFC : virtual public ServiceIFC
 {
 public:
 	virtual ~WQLIFC();
-	virtual void evaluate(const String& nameSpace,
+	virtual void evaluate(const blocxx::String& nameSpace,
 		CIMInstanceResultHandlerIFC& result,
-		const String& query, const String& queryLanguage,
+		const blocxx::String& query, const blocxx::String& queryLanguage,
 		const CIMOMHandleIFCRef& hdl) = 0;
-	virtual void evaluate(const String& nameSpace,
+	virtual void evaluate(const blocxx::String& nameSpace,
 		CIMInstanceResultHandlerIFC& result,
-		const String& query, const String& queryLanguage,
+		const blocxx::String& query, const blocxx::String& queryLanguage,
 		const RepositoryIFCRef& hdl,
 		OperationContext& oc) = 0;
-	virtual WQLSelectStatement createSelectStatement(const String& query) = 0;
-	virtual bool supportsQueryLanguage(const String& lang) = 0;
+	virtual WQLSelectStatement createSelectStatement(const blocxx::String& query) = 0;
+	virtual bool supportsQueryLanguage(const blocxx::String& lang) = 0;
 };
 
 #if !defined(OW_STATIC_SERVICES)

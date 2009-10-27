@@ -37,12 +37,14 @@
 #include "OW_config.h"
 #include "OW_CppProviderIncludes.hpp"
 #include "OW_SessionLanguage.hpp"
+#include "blocxx/Logger.hpp"
 
 #include <unistd.h>
 
 using std::endl;
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
@@ -195,7 +197,7 @@ public:
 		const CIMClass& theClass)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "TestInstance::modifyInstance");
+		BLOCXX_LOG_DEBUG(logger, "TestInstance::modifyInstance");
 		String name;
 		StringArray params;
 		modifiedInstance.getProperty("Name").getValue().get(name);
@@ -242,7 +244,7 @@ public:
 	procAcceptLanguage(const ProviderEnvironmentIFCRef& env)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "TestInstance::procAcceptLanguage");
+		BLOCXX_LOG_DEBUG(logger, "TestInstance::procAcceptLanguage");
 
 		String al;
 		OperationContext& oc(env->getOperationContext());
@@ -251,16 +253,16 @@ public:
 		{
 			al = slref->getAcceptLanguageString();
 			slref->addContentLanguage("x-testinst");
-			OW_LOG_DEBUG(logger, "TestInstance::procAcceptLanguage"
+			BLOCXX_LOG_DEBUG(logger, "TestInstance::procAcceptLanguage"
 				" setting content-language in SessionLanguage object");
 			String cl = slref->getContentLanguage();
-			OW_LOG_DEBUG(logger, Format(
+			BLOCXX_LOG_DEBUG(logger, Format(
 				"TestInstance::procAcceptLanguage content-language"
 				" now is %1", cl).c_str());
 		}
 		else
 		{
-			OW_LOG_DEBUG(logger, "TestInstance::procAcceptLanguage"
+			BLOCXX_LOG_DEBUG(logger, "TestInstance::procAcceptLanguage"
 				" didn't find SessionLanguage object in opctx");
 		}
 

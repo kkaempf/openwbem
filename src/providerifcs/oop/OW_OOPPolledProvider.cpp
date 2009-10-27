@@ -40,6 +40,8 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
+
 OOPPolledProvider::OOPPolledProvider(const OOPProviderInterface::ProvRegInfo& info,
 	const OOPProcessState& processState)
 	: OOPProviderBase(info, processState)

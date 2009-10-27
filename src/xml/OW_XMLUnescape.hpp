@@ -45,7 +45,7 @@ namespace OW_NAMESPACE
  * @param escapedText The text to be unescaped
  * @return the unescaped text.
  */
-OW_XML_API String XMLUnescape(const char* escapedText, unsigned len);
+OW_XML_API blocxx::String XMLUnescape(const char* escapedText, unsigned len);
 
 } // end namespace OW_NAMESPACE
 

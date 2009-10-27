@@ -42,7 +42,7 @@ namespace OW_NAMESPACE
 
 class CIMXMLParser;
 class XMLNode;
-typedef Array<XMLNode> XMLNodeArray;
+typedef blocxx::Array<XMLNode> XMLNodeArray;
 struct XMLToken;
 class XMLParseException;
 

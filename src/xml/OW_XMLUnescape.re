@@ -43,6 +43,7 @@
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 String XMLUnescape(const char* escapedText, unsigned len)
 {
@@ -54,7 +55,7 @@ String XMLUnescape(const char* escapedText, unsigned len)
 	#define YYCURSOR        begin
 	#define YYLIMIT         begin
 	#define YYMARKER        q
-	#define YYFILL(n)
+	#define YYFILL(n) (void) true
 start:
 	/*!re2c
 	END = [\000];

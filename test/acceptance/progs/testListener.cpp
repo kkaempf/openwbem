@@ -52,6 +52,7 @@
 #include <csignal>
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 using std::cout;
 using std::cin;

@@ -59,7 +59,7 @@ void TextTestResult::startTest (Test *test)
 	TestResult::startTest (test);
 	if ( getenv("TEST_PRINT_NAMES") )
 	{
-		// TODO: Make this work with all of the unit test types.
+		/// @todo  Make this work with all of the unit test types.
 		cerr << test->toString() << std::endl;
 	}
 	else

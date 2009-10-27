@@ -41,7 +41,7 @@
 namespace OW_NAMESPACE
 {
 
-typedef Enumeration<CIMInstance> CIMInstanceEnumeration;
+typedef blocxx::Enumeration<CIMInstance> CIMInstanceEnumeration;
 
 } // end namespace OW_NAMESPACE
 

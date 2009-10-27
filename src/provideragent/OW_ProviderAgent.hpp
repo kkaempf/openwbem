@@ -40,7 +40,7 @@
 #include "blocxx/String.hpp"
 #include "blocxx/IntrusiveReference.hpp"
 #include "OW_RequestHandlerIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ConfigFile.hpp"
 #include "blocxx/UnnamedPipe.hpp"
 #include "OW_CppProviderBaseIFC.hpp"
@@ -56,7 +56,7 @@ namespace OW_NAMESPACE
 {
 
 
-class OW_PROVIDERAGENT_API ProviderAgent : public IntrusiveCountableBase
+class OW_PROVIDERAGENT_API ProviderAgent : public blocxx::IntrusiveCountableBase
 {
 public:
 	// option which specifies the locking strategy.
@@ -147,11 +147,11 @@ public:
 	 */
 	ProviderAgent(
 		const ConfigFile::ConfigMap& configMap,
-		const Array<CppProviderBaseIFCRef>& providers,
-		const Array<CIMClass>& classes,
-		const Array<RequestHandlerIFCRef>& requestHandlers,
+		const blocxx::Array<CppProviderBaseIFCRef>& providers,
+		const blocxx::Array<CIMClass>& classes,
+		const blocxx::Array<RequestHandlerIFCRef>& requestHandlers,
 		const AuthenticatorIFCRef& authenticator,
-		const String& callbackURL = String(""),
+		const blocxx::String& callbackURL = blocxx::String(""),
 		const ProviderAgentLockerIFCRef& locker = ProviderAgentLockerIFCRef(),
 		const ProviderAgentLifecycleCallbackIFCRef& lifecycleCB = ProviderAgentLifecycleCallbackIFCRef());
 	virtual ~ProviderAgent();
@@ -163,8 +163,8 @@ public:
 	void shutdownHttpServer();
 private:
 	HTTPServerRef m_httpServer;
-	ThreadRef m_httpThread;
-	UnnamedPipeRef m_stopHttpPipe;
+	blocxx::ThreadRef m_httpThread;
+	blocxx::UnnamedPipeRef m_stopHttpPipe;
 	ProviderAgentLifecycleCallbackIFCRef m_lifecycleCB;
 };
 

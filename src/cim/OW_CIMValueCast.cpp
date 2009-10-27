@@ -43,6 +43,8 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ExceptionIds.hpp"
 
+using namespace blocxx;
+
 namespace OW_NAMESPACE
 {
 

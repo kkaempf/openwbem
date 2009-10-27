@@ -49,13 +49,13 @@ public:
 	 * @return The class names of all the CIM_CppIndicationHandler sub-classes
 	 * this IndicationExportProvider handles.
 	 */
-	virtual StringArray getHandlerClassNames() = 0;
+	virtual blocxx::StringArray getHandlerClassNames() = 0;
 
 	/**
 	 * Export the given indication
 	 */
 	virtual void exportIndication(const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMInstance& indHandlerInst, const CIMInstance& indicationInst) = 0;
 
 	/**
@@ -96,7 +96,7 @@ public:
 
 	virtual CppIndicationExportProviderIFC* getIndicationExportProvider();
 };
-typedef SharedLibraryReference<IntrusiveReference<CppIndicationExportProviderIFC> >
+typedef blocxx::SharedLibraryReference<blocxx::IntrusiveReference<CppIndicationExportProviderIFC> >
 	CppIndicationExportProviderIFCRef;
 
 } // end namespace OW_NAMESPACE

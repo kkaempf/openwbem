@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/StackTrace.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_StackTrace.hpp is deprecated, use "blocxx/StackTrace.hpp" instead.
 #endif

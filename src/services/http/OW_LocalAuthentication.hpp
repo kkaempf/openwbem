@@ -40,48 +40,48 @@
 #include "blocxx/DateTime.hpp"
 #include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_ServicesHttpFwd.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 
 #include <vector>
 
 namespace OW_NAMESPACE
 {
 
-class OW_HTTP_API LocalAuthentication : public IntrusiveCountableBase
+class OW_HTTP_API LocalAuthentication : public blocxx::IntrusiveCountableBase
 {
 public:
 	LocalAuthentication();
 	~LocalAuthentication();
 
-	EAuthenticateResult authenticate(String& userName,
-		const String& info, HTTPSvrConnection* htcon);
+	EAuthenticateResult authenticate(blocxx::String& userName,
+		const blocxx::String& info, HTTPSvrConnection* htcon);
 
 private:
 	struct AuthEntry
 	{
-		String fileName;
-		String cookie;
-		String nonce;
-		DateTime creationTime;
-		String userName;
+		blocxx::String fileName;
+		blocxx::String cookie;
+		blocxx::String nonce;
+		blocxx::DateTime creationTime;
+		blocxx::String userName;
 	};
 
-	String createNewChallenge(const String& uid, const String& userName);
+	blocxx::String createNewChallenge(const blocxx::String& uid, const blocxx::String& userName);
 	void cleanupEntry(const AuthEntry& entry);
 	void cleanupStaleEntries();
 	void checkProcess();
-	String processHelperCommand(const String& inputCmd, const String& extraInput = String());
+	blocxx::String processHelperCommand(const blocxx::String& inputCmd, const blocxx::String& extraInput = blocxx::String());
 	void initializeHelper();
-	void cleanupEntryHelper(const String& pathToFile, const String& cookie);
-	String createFileHelper(const String& uid, const String& cookie);
-	void generateNewCookieFile(const String& uid, String& cookieFileName, String& cookie);
+	void cleanupEntryHelper(const blocxx::String& pathToFile, const blocxx::String& cookie);
+	blocxx::String createFileHelper(const blocxx::String& uid, const blocxx::String& cookie);
+	void generateNewCookieFile(const blocxx::String& uid, blocxx::String& cookieFileName, blocxx::String& cookie);
 
 
 	std::vector<AuthEntry> m_authEntries;
-	Logger m_logger;
-	String m_localAuthDir;
-	String m_localHelperBinPath;
-	ProcessRef m_owlocalhelper;
+	blocxx::Logger m_logger;
+	blocxx::String m_localAuthDir;
+	blocxx::String m_localHelperBinPath;
+	blocxx::ProcessRef m_owlocalhelper;
 
 	// unimplemented
 	LocalAuthentication(const LocalAuthentication&);

@@ -48,20 +48,29 @@ namespace OW_NAMESPACE
 class RemoteAssociatorProvider : public AssociatorProviderIFC
 {
 public:
-	RemoteAssociatorProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
+	RemoteAssociatorProvider(const ProviderEnvironmentIFCRef& env, const blocxx::String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
 		bool alwaysSendCredentials, bool useConnectionCredentials);
 	virtual ~RemoteAssociatorProvider();
-	virtual void references(const ProviderEnvironmentIFCRef &env, CIMInstanceResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, const String &resultClass, const String &role, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList);
-	virtual void associators(const ProviderEnvironmentIFCRef &env, CIMInstanceResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, const String &assocClass, const String &resultClass, const String &role, const String &resultRole, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList);
-	virtual void associatorNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, const String &assocClass, const String &resultClass, const String &role, const String &resultRole);
-	virtual void referenceNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, const String &resultClass, const String &role);
+	virtual void references(const ProviderEnvironmentIFCRef &env, CIMInstanceResultHandlerIFC &result,
+		const blocxx::String &ns, const CIMObjectPath &objectName, const blocxx::String &resultClass,
+		const blocxx::String &role, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const blocxx::StringArray *propertyList);
+	virtual void associators(const ProviderEnvironmentIFCRef &env, CIMInstanceResultHandlerIFC &result,
+		const blocxx::String &ns, const CIMObjectPath &objectName, const blocxx::String &assocClass,
+		const blocxx::String &resultClass, const blocxx::String &role, const blocxx::String &resultRole,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const blocxx::StringArray *propertyList);
+	virtual void associatorNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result,
+		const blocxx::String &ns, const CIMObjectPath &objectName, const blocxx::String &assocClass,
+		const blocxx::String &resultClass, const blocxx::String &role, const blocxx::String &resultRole);
+	virtual void referenceNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result,
+		const blocxx::String &ns, const CIMObjectPath &objectName, const blocxx::String &resultClass, const blocxx::String &role);
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
 	{
 	}
 
 private:
 	ClientCIMOMHandleConnectionPoolRef m_pool;
-	String m_url;
+	blocxx::String m_url;
 	bool m_alwaysSendCredentials;
 	bool m_useConnectionCredentials;
 };

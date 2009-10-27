@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
 #include "blocxx/TempFileStream.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_HTTPException.hpp"
 #include "OW_SPNEGOHandler.hpp"
 #include "blocxx/Process.hpp"
@@ -57,6 +57,7 @@ using std::cin;
 using std::ifstream;
 using std::istream;
 using namespace OpenWBEM;
+using namespace blocxx;
 
 namespace
 {

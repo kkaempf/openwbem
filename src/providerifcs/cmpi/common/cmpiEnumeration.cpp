@@ -22,14 +22,16 @@
 
 #include "cmpisrv.h"
 
+using blocxx::Array;
+
 static CMPIStatus enumRelease(CMPIEnumeration* eEnum)
 {
 	if (eEnum->hdl)
 	{
 	   if ((void*)eEnum->ft==(void*)CMPI_OpEnumeration_Ftab)
-         delete (OpenWBEM::Array<OpenWBEM::CIMObjectPath>*)eEnum->hdl;
+         delete (Array<OpenWBEM::CIMObjectPath>*)eEnum->hdl;
       else
-         delete (OpenWBEM::Array<OpenWBEM::CIMInstance>*)eEnum->hdl;
+         delete (Array<OpenWBEM::CIMInstance>*)eEnum->hdl;
 
 		((CMPI_Object*)eEnum)->unlinkAndDelete();
 	}
@@ -58,7 +60,7 @@ CMPIData enumGetNext(const CMPIEnumeration* eEnum, CMPIStatus* rc)
 	{
 		CMPI_ObjEnumeration* ie=(CMPI_ObjEnumeration*)eEnum;
 		data.type=CMPI_instance;
-		OpenWBEM::Array<OpenWBEM::CIMInstance>* ia=(OpenWBEM::Array<OpenWBEM::CIMInstance>*)ie->hdl;
+		Array<OpenWBEM::CIMInstance>* ia = (Array<OpenWBEM::CIMInstance>*)ie->hdl;
 		if (ie->cursor<ie->max)
 		{
 			data.value.inst=(CMPIInstance*)
@@ -75,7 +77,7 @@ CMPIData enumGetNext(const CMPIEnumeration* eEnum, CMPIStatus* rc)
 	{
 		CMPI_InstEnumeration* ie=(CMPI_InstEnumeration*)eEnum;
 		data.type=CMPI_instance;
-		OpenWBEM::Array<OpenWBEM::CIMInstance>* ia=(OpenWBEM::Array<OpenWBEM::CIMInstance>*)ie->hdl;
+		Array<OpenWBEM::CIMInstance>* ia = (Array<OpenWBEM::CIMInstance>*)ie->hdl;
 		if (ie->cursor<ie->max)
 		{
 			data.value.inst=(CMPIInstance*)
@@ -92,7 +94,7 @@ CMPIData enumGetNext(const CMPIEnumeration* eEnum, CMPIStatus* rc)
 	{
 		CMPI_OpEnumeration* oe=(CMPI_OpEnumeration*)eEnum;
 		data.type=CMPI_ref;
-		OpenWBEM::Array<OpenWBEM::CIMObjectPath>* opa=(OpenWBEM::Array<OpenWBEM::CIMObjectPath>*)oe->hdl;
+		Array<OpenWBEM::CIMObjectPath>* opa = (Array<OpenWBEM::CIMObjectPath>*)oe->hdl;
 		if (oe->cursor<oe->max)
 		{
 			data.value.ref=(CMPIObjectPath*)
@@ -166,7 +168,7 @@ CMPIEnumerationFT *CMPI_ObjEnumeration_Ftab=&objEnumeration_FT;
 CMPIEnumerationFT *CMPI_InstEnumeration_Ftab=&instEnumeration_FT;
 CMPIEnumerationFT *CMPI_OpEnumeration_Ftab=&opEnumeration_FT;
 
-CMPI_ObjEnumeration::CMPI_ObjEnumeration(OpenWBEM::Array<OpenWBEM::CIMInstance>* oa)
+CMPI_ObjEnumeration::CMPI_ObjEnumeration(Array<OpenWBEM::CIMInstance>* oa)
 {
    CMPI_ThreadContext::addObject((CMPI_Object*)(this));
 	cursor=0;
@@ -174,7 +176,7 @@ CMPI_ObjEnumeration::CMPI_ObjEnumeration(OpenWBEM::Array<OpenWBEM::CIMInstance>*
 	hdl=(void*)oa;
 	ft=CMPI_ObjEnumeration_Ftab;
 }
-CMPI_InstEnumeration::CMPI_InstEnumeration(OpenWBEM::Array<OpenWBEM::CIMInstance>* ia)
+CMPI_InstEnumeration::CMPI_InstEnumeration(Array<OpenWBEM::CIMInstance>* ia)
 {
    CMPI_ThreadContext::addObject((CMPI_Object*)(this));
 	cursor=0;
@@ -183,7 +185,7 @@ CMPI_InstEnumeration::CMPI_InstEnumeration(OpenWBEM::Array<OpenWBEM::CIMInstance
 	ft=CMPI_InstEnumeration_Ftab;
 }
 
-CMPI_OpEnumeration::CMPI_OpEnumeration(OpenWBEM::Array<OpenWBEM::CIMObjectPath>* opa)
+CMPI_OpEnumeration::CMPI_OpEnumeration(Array<OpenWBEM::CIMObjectPath>* opa)
 {
    CMPI_ThreadContext::addObject((CMPI_Object*)(this));
    cursor=0;

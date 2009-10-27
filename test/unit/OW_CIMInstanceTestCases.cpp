@@ -43,6 +43,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_CIMInstanceTestCases,"OW_CIMInstance");
 #include "OW_CIMValue.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void OW_CIMInstanceTestCases::setUp()
 {

@@ -45,6 +45,7 @@
 #include <sys/time.h>
 
 using namespace OpenWBEM;
+using namespace blocxx;
 using namespace std;
 
 struct Nothing

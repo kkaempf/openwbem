@@ -51,6 +51,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_ProviderManagerTestCases,"OW_ProviderManager");
 #include "blocxx/CerrLogger.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void OW_ProviderManagerTestCases::setUp()
 {

@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_SerializableIFC.hpp"
 #include "blocxx/String.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 #include <iosfwd>
 
@@ -62,7 +62,7 @@ public:
 	 * This constructor is not explicit in order to facilitate conversions and comparisons
 	 * @param name The name for this CIMName specified as an String.
 	 */
-	CIMName(const String& name);
+	CIMName(const blocxx::String& name);
 
 	/**
 	 * Create an CIMName object with the given name.
@@ -74,13 +74,13 @@ public:
 
 	~CIMName();
 
-	CIMName& operator=(const String& name);
+	CIMName& operator=(const blocxx::String& name);
 	CIMName& operator=(const char* name);
 
 	/**
 	 * Get the String representation of the CIM Name
 	 */
-	String toString() const;
+	blocxx::String toString() const;
 
 	/**
 	 * Read the object from an input stream.
@@ -101,13 +101,13 @@ public:
 	 */
 	bool isValid() const;
 
-	OW_SAFE_BOOL_IMPL(CIMName, String, CIMName::m_name, isValid())
+	BLOCXX_SAFE_BOOL_IMPL(CIMName, blocxx::String, CIMName::m_name, isValid())
 
 	friend OW_COMMON_API bool operator<(const CIMName& x, const CIMName& y);
 	friend OW_COMMON_API bool operator==(const CIMName& x, const CIMName& y);
 
 private:
-	String m_name;
+	blocxx::String m_name;
 
 };
 

@@ -71,6 +71,8 @@ AUTO_UNIT_TEST_SUITE_NAMED(PrivilegeMonitorParserTestCases,"PrivilegeMonitorPars
 #include <cassert>
 
 using namespace OpenWBEM;
+using namespace blocxx;
+
 
 // set this to 1 to enable parser debugging
 //extern int openwbem_privconfig_debug;

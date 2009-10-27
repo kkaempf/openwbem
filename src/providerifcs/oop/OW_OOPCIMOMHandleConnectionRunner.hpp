@@ -50,25 +50,25 @@
 namespace OW_NAMESPACE
 {
 
-class OOPCIMOMHandleConnectionRunner : public Runnable
+class OOPCIMOMHandleConnectionRunner : public blocxx::Runnable
 {
 public:
-	OOPCIMOMHandleConnectionRunner(const UnnamedPipeRef& conn, UInt8 op, UInt8 lockTypeArg, const ProviderEnvironmentIFCRef& provEnv);
+	OOPCIMOMHandleConnectionRunner(const blocxx::UnnamedPipeRef& conn, blocxx::UInt8 op, blocxx::UInt8 lockTypeArg, const ProviderEnvironmentIFCRef& provEnv);
 
 	virtual void run();
 	bool cancelled();
 	virtual void doShutdown();
 
 private:
-	UnnamedPipeRef m_conn;
-	IntrusiveReference<BinaryRequestHandler> m_binaryRH;
-	IOIFCStreamBuffer m_inbuf;
+	blocxx::UnnamedPipeRef m_conn;
+	blocxx::IntrusiveReference<BinaryRequestHandler> m_binaryRH;
+	blocxx::IOIFCStreamBuffer m_inbuf;
 	std::istream m_instr;
-	IOIFCStreamBuffer m_outbuf;
+	blocxx::IOIFCStreamBuffer m_outbuf;
 	std::ostream m_outstr;
 	ProviderEnvironmentIFCRef m_env;
 	bool m_cancelled;
-	NonRecursiveMutex m_guard;
+	blocxx::NonRecursiveMutex m_guard;
 };
 
 

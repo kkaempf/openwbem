@@ -39,7 +39,7 @@
 #include "blocxx/FileSystem.hpp"
 #include "blocxx/File.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_Types.hpp"
 
 #include <unistd.h>
@@ -55,7 +55,7 @@
 
 namespace OW_NAMESPACE
 {
-
+using namespace blocxx;
 namespace LocalAuthenticationCommon
 {
 

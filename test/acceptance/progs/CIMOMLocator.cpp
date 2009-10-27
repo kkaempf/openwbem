@@ -46,7 +46,7 @@ using std::cout;
 using std::endl;
 using std::cerr;
 using namespace OpenWBEM;
-
+using namespace blocxx;
 
 int main(int argc, char* argv[])
 {

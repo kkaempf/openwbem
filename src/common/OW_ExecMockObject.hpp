@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/ExecMockObject.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_ExecMockObject.hpp is deprecated, use "blocxx/ExecMockObject.hpp" instead.
 #endif
 

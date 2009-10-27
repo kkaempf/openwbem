@@ -64,7 +64,7 @@ public:
 		@return true if such a property was found and false otherwise.
 	*/
 	virtual bool getValue(
-		const String& propertyName,
+		const blocxx::String& propertyName,
 		WQLOperand& value) const = 0;
 	/** Returns true if the property identified by propertyName is an
 		EmbeddedObject instance or class that is either className or
@@ -82,8 +82,8 @@ public:
 		@return true or false
 	*/
 	virtual bool evaluateISA(
-		const String& propertyName,
-		const String& className) const = 0;
+		const blocxx::String& propertyName,
+		const blocxx::String& className) const = 0;
 };
 
 } // end namespace OW_NAMESPACE

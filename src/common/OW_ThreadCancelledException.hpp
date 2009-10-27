@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/ThreadCancelledException.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_ThreadCancelledException.hpp is deprecated, use "blocxx/ThreadCancelledException.hpp" instead.
 #endif

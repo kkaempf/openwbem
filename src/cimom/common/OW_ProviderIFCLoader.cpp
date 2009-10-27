@@ -37,6 +37,7 @@
 #include "OW_ProviderIFCLoader.hpp"
 #include "blocxx/Format.hpp"
 #include "blocxx/SignalScope.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "blocxx/FileSystem.hpp"
 #include "OW_SafeLibCreate.hpp"
@@ -44,6 +45,7 @@
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 namespace
 {
@@ -58,7 +60,7 @@ ProviderIFCBaseIFCRef
 ProviderIFCLoaderBase::createProviderIFCFromLib(const String& libname) const
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib loading library %1", libname));
+	BLOCXX_LOG_DEBUG3(lgr, Format("ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib loading library %1", libname));
 	SharedLibraryRef sl = m_sll->loadSharedLibrary(libname);
 	ProviderIFCBaseIFC* ptr = 0;
 	if ( sl )
@@ -85,7 +87,7 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 	for (size_t i = 0; i < libdirs.size(); ++i)
 	{
 		const String libdir(libdirs[i]);
-		OW_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider interfaces from: %1", libdir));
+		BLOCXX_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider interfaces from: %1", libdir));
 		StringArray libs;
 		if (!FileSystem::getDirectoryContents(libdir, libs))
 		{
@@ -117,11 +119,11 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 			}
 			else
 			{
-				OW_LOG_ERROR(lgr, Format("Unable to load ProviderIFC library %1", libs[i]));
+				BLOCXX_LOG_ERROR(lgr, Format("Unable to load ProviderIFC library %1", libs[i]));
 			}
 		}
 	}
-	OW_LOG_DEBUG(lgr, Format("Number of provider interfaces loaded: %1", ifcCount));
+	BLOCXX_LOG_DEBUG(lgr, Format("Number of provider interfaces loaded: %1", ifcCount));
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC

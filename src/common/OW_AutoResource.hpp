@@ -37,5 +37,11 @@
 
 #include "OW_config.h"
 #include <blocxx/AutoResource.hpp>
+
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_AutoResource.hpp is deprecated, use "blocxx/AutoResource.hpp" instead.
 #endif

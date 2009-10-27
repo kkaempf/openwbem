@@ -40,8 +40,8 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_PrivilegeManager.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Logger.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_Exception.hpp"
 #include "blocxx/FileSystem.hpp"
 #include "blocxx/IOException.hpp"
@@ -49,6 +49,8 @@
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 OW_DECLARE_EXCEPTION(SPNEGOAuthentication)
 OW_DEFINE_EXCEPTION(SPNEGOAuthentication)
@@ -98,7 +100,7 @@ SPNEGOAuthentication::authenticate(String& userName,
 	{
 		htcon->setErrorDetails("Internal error. !info.startsWith"
 		                       "(\"Negotiate: \")");
-		OW_LOG_INFO(m_logger, Format("Error, expected info to begin with \"Negotiate \", but it is: \"%1\"", info));
+		BLOCXX_LOG_INFO(m_logger, Format("Error, expected info to begin with \"Negotiate \", but it is: \"%1\"", info));
 		return E_AUTHENTICATE_FAIL;
 	}
 
@@ -116,17 +118,17 @@ SPNEGOAuthentication::authenticate(String& userName,
 		std::ostream ostr(&outbuf);
 		istr.tie(&ostr);
 		ostr << info2 << '\n';
-		OW_LOG_DEBUG3(m_logger, Format("SPNEGOAuthentication got request, sending to helper: %1", info2));
+		BLOCXX_LOG_DEBUG3(m_logger, Format("SPNEGOAuthentication got request, sending to helper: %1", info2));
 		ostr << htcon->getConnectionId() << std::endl;
-		OW_LOG_DEBUG3(m_logger, Format("SPNEGOAuthentication sending connection id: %1", htcon->getConnectionId()));
+		BLOCXX_LOG_DEBUG3(m_logger, Format("SPNEGOAuthentication sending connection id: %1", htcon->getConnectionId()));
 		String result = String::getLine(istr);
-		OW_LOG_DEBUG3(m_logger, Format("SPNEGOAuthentication got response: %1", result));
+		BLOCXX_LOG_DEBUG3(m_logger, Format("SPNEGOAuthentication got response: %1", result));
 		if (result == "S")
 		{
 			userName = String::getLine(istr);
 			String challenge = String::getLine(istr);
 			htcon->addHeader("WWW-Authenticate", "Negotiate " + challenge);
-			OW_LOG_DEBUG2(m_logger, Format("SPNEGOAuthentication got success. username: %1", userName));
+			BLOCXX_LOG_DEBUG2(m_logger, Format("SPNEGOAuthentication got success. username: %1", userName));
 			return E_AUTHENTICATE_SUCCESS;
 		}
 		else if (result == "F")
@@ -146,7 +148,7 @@ SPNEGOAuthentication::authenticate(String& userName,
 		{
 			// something has gone horribly wrong. This shouldn't ever happen
 			// unless there is a bug.
-			OW_LOG_ERROR(m_logger, Format("SPNEGOAuthentication received unknown response (%1) from %2. Terminating.",
+			BLOCXX_LOG_ERROR(m_logger, Format("SPNEGOAuthentication received unknown response (%1) from %2. Terminating.",
 			                              result, spnegoHelperPath()));
 			m_spnegoHelper->waitCloseTerm(Timeout::relative(0), Timeout::relative(0.01), Timeout::relative(0.02));
 		}
@@ -178,7 +180,7 @@ SPNEGOAuthentication::checkProcess()
 	if (m_spnegoHelper)
 	{
 		// must have died
-		OW_LOG_ERROR(m_logger, Format("SPNEGOAuthentication Detected that %1 is"
+		BLOCXX_LOG_ERROR(m_logger, Format("SPNEGOAuthentication Detected that %1 is"
 		                              "not running. Status: %2",
 		                              spnegoHelperPath(),
 		                              m_spnegoHelper->processStatus().toString()
@@ -189,12 +191,12 @@ SPNEGOAuthentication::checkProcess()
 	}
 
 	PrivilegeManager privman = PrivilegeManager::getPrivilegeManager();
-	OW_ASSERT(!privman.isNull());
+	BLOCXX_ASSERT(!privman.isNull());
 	String helperPath(spnegoHelperPath());
 	if (helperPath.empty())
 	{
 		const char* msg = "SPNEGOAuthentication unable to locate helper binary";
-		OW_LOG_ERROR(m_logger, msg);
+		BLOCXX_LOG_ERROR(m_logger, msg);
 		OW_THROW(SPNEGOAuthenticationException, msg);
 	}
 
@@ -211,7 +213,7 @@ SPNEGOAuthentication::checkProcess()
 		                    "%2, stderr = %3", spnegoHelperPath(),
 		                    m_spnegoHelper->processStatus().toString(),
 		                    m_spnegoHelper->err()->readAll());
-		OW_LOG_ERROR(m_logger, msg);
+		BLOCXX_LOG_ERROR(m_logger, msg);
 		OW_THROW(SPNEGOAuthenticationException, msg.c_str());
 	}
 

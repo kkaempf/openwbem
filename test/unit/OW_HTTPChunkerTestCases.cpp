@@ -44,6 +44,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_HTTPChunkerTestCases,"OW_HTTPChunker");
 #include "blocxx/StringStream.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void OW_HTTPChunkerTestCases::setUp()
 {

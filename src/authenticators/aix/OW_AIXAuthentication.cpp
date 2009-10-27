@@ -39,7 +39,7 @@
 #include "blocxx/String.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_AuthenticatorIFC.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 
 #include <string.h>
 #include <cstdlib>
@@ -122,8 +122,8 @@ bool AIXAuthentication::doAuthenticate(String &userName, const String &info,
 	char* pPasswd = strdup(info.c_str());
 	char* pUserName = strdup(userName.c_str());
 	// Just a test to make sure things won't go horribly wrong in the below loop.
-	OW_ASSERT(pPasswd != NULL);
-	OW_ASSERT(pUserName != NULL);
+	BLOCXX_ASSERT(pPasswd != NULL);
+	BLOCXX_ASSERT(pUserName != NULL);
 
 	do
 	{
@@ -167,7 +167,7 @@ bool AIXAuthentication::doAuthenticate(String &userName, const String &info,
 
 void AIXAuthentication::doInit(ServiceEnvironmentIFCRef env)
 {
-	m_allowedUsers = env->getConfigItem(ConfigOpts::PAM_ALLOWED_USERS_opt);
+	m_allowedUsers = env->getConfigItem(ConfigOpts::ALLOWED_USERS_opt);
 }
 
 } // end namespace OW_NAMESPACE

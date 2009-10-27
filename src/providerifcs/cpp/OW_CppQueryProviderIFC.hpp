@@ -85,7 +85,7 @@ public:
 
 	virtual void queryInstances(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const WQLSelectStatement& query,
 		const WQLCompile& compiledWhereClause,
 		CIMInstanceResultHandlerIFC& result,
@@ -94,7 +94,7 @@ public:
 	virtual CppQueryProviderIFC* getQueryProvider();
 };
 
-typedef SharedLibraryReference< IntrusiveReference<CppQueryProviderIFC> > CppQueryProviderIFCRef;
+typedef blocxx::SharedLibraryReference< blocxx::IntrusiveReference<CppQueryProviderIFC> > CppQueryProviderIFCRef;
 
 
 } // end namespace OW_NAMESPACE

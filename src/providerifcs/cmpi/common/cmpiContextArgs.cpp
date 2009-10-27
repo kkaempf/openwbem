@@ -24,6 +24,8 @@
 
 // CMPIArgs section
 
+using namespace blocxx;
+
 static CMPIStatus argsRelease(CMPIArgs* eArg)
 {
 	CMReturn(CMPI_RC_OK);
@@ -40,7 +42,7 @@ static CMPIArgs* argsClone(const CMPIArgs* eArg, CMPIStatus* rc)
 	OpenWBEM::CIMParamValueArray * cArg = new OpenWBEM::CIMParamValueArray();
 	for (long i=0,s=arg->size(); i<s; i++)
 	{
-		OpenWBEM::String name = (*arg)[i].getName();
+		String name = (*arg)[i].getName();
 		OpenWBEM::CIMValue value = (*arg)[i].getValue();
 		OpenWBEM::CIMParamValue pv(name,value);
 		cArg->append(pv);
@@ -50,11 +52,11 @@ static CMPIArgs* argsClone(const CMPIArgs* eArg, CMPIStatus* rc)
 	return neArg;
 }
 
-static long locateArg(const OpenWBEM::CIMParamValueArray &a, const OpenWBEM::String &eName)
+static long locateArg(const OpenWBEM::CIMParamValueArray &a, const String &eName)
 {
 	for (long i = 0, s = a.size(); i < s; i++)
 	{
-		const OpenWBEM::String &n = a[i].getName();
+		const String &n = a[i].getName();
 		if (n.compareToIgnoreCase(eName) == 0)
 		{
 			return i;
@@ -70,7 +72,7 @@ static CMPIStatus argsAddArg(CMPIArgs* eArg, const char* name,
 	OpenWBEM::CIMParamValueArray* arg = (OpenWBEM::CIMParamValueArray *)eArg->hdl;
 	CMPIrc rc;
 	OpenWBEM::CIMValue v = value2CIMValue(data, type, &rc);
-	OpenWBEM::String sName(name);
+	String sName(name);
 
 	long i = locateArg(*arg, sName);
 	if (i >= 0)
@@ -111,7 +113,7 @@ static CMPIData argsGetArgAt(const CMPIArgs* eArg, CMPICount pos, CMPIString** n
 
 	if (name)
 	{
-		OpenWBEM::String n=(*arg)[pos].getName();
+		String n=(*arg)[pos].getName();
 		*name=string2CMPIString(n);
 	}
 
@@ -122,7 +124,7 @@ static CMPIData argsGetArgAt(const CMPIArgs* eArg, CMPICount pos, CMPIString** n
 static CMPIData argsGetArg(const CMPIArgs* eArg, const char* name, CMPIStatus* rc)
 {
 	OpenWBEM::CIMParamValueArray *arg = (OpenWBEM::CIMParamValueArray *)eArg->hdl;
-	OpenWBEM::String eName(name);
+	String eName(name);
 	long i = locateArg(*arg, eName);
 
 	if (i >= 0)

@@ -37,10 +37,12 @@
 #include "OW_CppProviderIncludes.hpp"
 #include "OW_SessionLanguage.hpp"
 #include "blocxx/IOException.hpp"
+#include "blocxx/Logger.hpp"
 
 using namespace std;
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
@@ -76,7 +78,7 @@ public:
 		const CIMClass& cimClass )
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "testOOPProv::enumInstanceNames() start");
+		BLOCXX_LOG_DEBUG(logger, "testOOPProv::enumInstanceNames() start");
 
 		for (size_t i = 0; i < 10; ++i)
 		{
@@ -104,11 +106,11 @@ public:
 		const CIMClass& cimClass )
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "testOOPProv::enumInstances() start");
-		OW_LOG_DEBUG(logger, Format("env->getUserName() = %1" , env->getUserName()));
+		BLOCXX_LOG_DEBUG(logger, "testOOPProv::enumInstances() start");
+		BLOCXX_LOG_DEBUG(logger, Format("env->getUserName() = %1" , env->getUserName()));
 		if (env->getUserName() != "test1")
 		{
-			OW_LOG_DEBUG(logger, "aborting!");
+			BLOCXX_LOG_DEBUG(logger, "aborting!");
 			abort();
 		}
 
@@ -136,7 +138,7 @@ public:
 		const CIMClass& cimClass )
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "testOOPProv::getInstance() start");
+		BLOCXX_LOG_DEBUG(logger, "testOOPProv::getInstance() start");
 		if (!idExists(instanceName.getKeyValue("id").toString()))
 		{
 			OW_THROWCIMMSG(CIMException::NOT_FOUND, Format("id = %1", instanceName.getKeyValue("id").toString()).c_str());
@@ -177,7 +179,7 @@ public:
 		const CIMInstance& cimInstance )
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "testOOPProv::createInstance() start");
+		BLOCXX_LOG_DEBUG(logger, "testOOPProv::createInstance() start");
 
 		// special case so we can cause the mof compiler to call modifyInstance
 		if (idExists(cimInstance.getPropertyValue("id").toString()))
@@ -198,7 +200,7 @@ public:
 		const CIMClass& theClass)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "testOOPProv::modifyInstance");
+		BLOCXX_LOG_DEBUG(logger, "testOOPProv::modifyInstance");
 
 		if (!idExists(previousInstance.getPropertyValue("id").toString()))
 		{
@@ -214,7 +216,7 @@ public:
 		const CIMObjectPath& cop)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "testOOPProv::deleteInstance");
+		BLOCXX_LOG_DEBUG(logger, "testOOPProv::deleteInstance");
 		if (!idExists(cop.getKeyValue("id").toString()))
 		{
 			OW_THROWCIM(CIMException::NOT_FOUND);
@@ -236,7 +238,7 @@ public:
 		CIMParamValueArray &out)
 	{
 		Logger lgr(COMPONENT_NAME);
-		OW_LOG_DEBUG(lgr, Format("testOOPProv::invokeMethod() methodName = %1", methodName));
+		BLOCXX_LOG_DEBUG(lgr, Format("testOOPProv::invokeMethod() methodName = %1", methodName));
 		if (methodName == "method1")
 		{
 			return CIMValue(String(Format("%1:%2", methodName, in[0].getValue())));
@@ -251,7 +253,7 @@ public:
 		}
 		else if (methodName == "testOWException")
 		{
-			OW_LOG_DEBUG(lgr, "About to throw TestException");
+			BLOCXX_LOG_DEBUG(lgr, "About to throw TestException");
 			OW_THROW(TestException, "test");
 		}
 		else if (methodName == "testCIMException")
@@ -363,7 +365,7 @@ public:
 			}
 			catch (IOException& e)
 			{
-				OW_LOG_DEBUG(lgr, Format("testCIMOMHandle:test return of non-CIMException caught %1", e));
+				BLOCXX_LOG_DEBUG(lgr, Format("testCIMOMHandle:test return of non-CIMException caught %1", e));
 			}
 
 			return CIMValue(true);
@@ -371,20 +373,20 @@ public:
 		else if (methodName == "testRepositoryCIMOMHandle")
 		{
 			CIMOMHandleIFCRef hdl = env->getRepositoryCIMOMHandle();
-			OW_LOG_DEBUG(lgr, "env->getRepositoryCIMOMHandle() returned");
+			BLOCXX_LOG_DEBUG(lgr, "env->getRepositoryCIMOMHandle() returned");
 			CIMParamValueArray inargs;
 			inargs.push_back(CIMParamValue("arg1", CIMValue("param1")));
 			CIMParamValueArray outargs;
 			try
 			{
 				CIMValue rv = hdl->invokeMethod(ns, path, "method1", inargs, outargs);
-				OW_LOG_DEBUG(lgr, Format("invokeMethod returned (incorrectly): %1", rv));
+				BLOCXX_LOG_DEBUG(lgr, Format("invokeMethod returned (incorrectly): %1", rv));
 				// should only reach this if the expected throw doesn't happen
 				return CIMValue(false);
 			}
 			catch (CIMException& e)
 			{
-				OW_LOG_DEBUG(lgr, Format("Caught CIMException: %1", e));
+				BLOCXX_LOG_DEBUG(lgr, Format("Caught CIMException: %1", e));
 				if (e.getErrNo() != CIMException::NOT_SUPPORTED)
 				{
 					return CIMValue(false);
@@ -392,52 +394,52 @@ public:
 			}
 
 			// hit it a second time.
-			OW_LOG_DEBUG(lgr, Format("calling getClass(%1, %2)", ns, path.getClassName()));
+			BLOCXX_LOG_DEBUG(lgr, Format("calling getClass(%1, %2)", ns, path.getClassName()));
 			CIMClass c = hdl->getClass(ns, path.getClassName());
-			OW_LOG_DEBUG(lgr, Format("Retrieved class: %1", c.toString()));
+			BLOCXX_LOG_DEBUG(lgr, Format("Retrieved class: %1", c.toString()));
 			return CIMValue(true);
 		}
 		else if (methodName == "testGetConfig")
 		{
 			if (env->getConfigItem("log.main.type") != "file")
 			{
-				OW_LOG_DEBUG(lgr, Format("failed because log.main.type: %1", env->getConfigItem("log.main.type")));
+				BLOCXX_LOG_DEBUG(lgr, Format("failed because log.main.type: %1", env->getConfigItem("log.main.type")));
 				return CIMValue(false);
 			}
 
 			if (env->getConfigItem("nonexistent") != "")
 			{
-				OW_LOG_DEBUG(lgr, Format("failed because nonexistent: %1", env->getConfigItem("nonexistent")));
+				BLOCXX_LOG_DEBUG(lgr, Format("failed because nonexistent: %1", env->getConfigItem("nonexistent")));
 				return CIMValue(false);
 			}
 
 			if (env->getConfigItem("nonexistent", "a default") != "a default")
 			{
-				OW_LOG_DEBUG(lgr, Format("failed because nonexistent: %1", env->getConfigItem("nonexistent", "a default")));
+				BLOCXX_LOG_DEBUG(lgr, Format("failed because nonexistent: %1", env->getConfigItem("nonexistent", "a default")));
 				return CIMValue(false);
 			}
 
 			StringArray vals = env->getMultiConfigItem("owcimomd.allowed_users", StringArray());
 			if (vals.size() != 1)
 			{
-				OW_LOG_DEBUG(lgr, Format("failed because vals.size(): %1", vals.size()));
+				BLOCXX_LOG_DEBUG(lgr, Format("failed because vals.size(): %1", vals.size()));
 				return CIMValue(false);
 			}
 			if (!vals[0].startsWith("test test1 test2 test3"))
 			{
-				OW_LOG_DEBUG(lgr, Format("failed because vals[0]: %1", vals[0]));
+				BLOCXX_LOG_DEBUG(lgr, Format("failed because vals[0]: %1", vals[0]));
 				return CIMValue(false);
 			}
 
 			vals = env->getMultiConfigItem("owcimomd.allowed_users", StringArray(), " ");
 			if (vals.size() != 6)
 			{
-				OW_LOG_DEBUG(lgr, Format("failed because vals.size(): %1", vals.size()));
+				BLOCXX_LOG_DEBUG(lgr, Format("failed because vals.size(): %1", vals.size()));
 				return CIMValue(false);
 			}
 			if (vals[0] != "test")
 			{
-				OW_LOG_DEBUG(lgr, Format("failed because vals[0]: %1", vals[0]));
+				BLOCXX_LOG_DEBUG(lgr, Format("failed because vals[0]: %1", vals[0]));
 				return CIMValue(false);
 			}
 
@@ -464,7 +466,7 @@ public:
 	procAcceptLanguage(const ProviderEnvironmentIFCRef& env)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "TestInstance::procAcceptLanguage");
+		BLOCXX_LOG_DEBUG(logger, "TestInstance::procAcceptLanguage");
 
 		String al;
 		OperationContext& oc(env->getOperationContext());
@@ -472,18 +474,18 @@ public:
 		if (slref)
 		{
 			al = slref->getAcceptLanguageString();
-			OW_LOG_DEBUG(logger, "testOOPProv::procAcceptLanguage"
+			BLOCXX_LOG_DEBUG(logger, "testOOPProv::procAcceptLanguage"
 				" setting content-language in SessionLanguage object");
 			String cl = slref->getContentLanguage();
-			OW_LOG_DEBUG(logger, Format(
+			BLOCXX_LOG_DEBUG(logger, Format(
 				"TestInstance::procAcceptLanguage content-language now is %1", cl));
 			slref->addContentLanguage("x-testinst");
-			OW_LOG_DEBUG(logger, "setting session language");
+			BLOCXX_LOG_DEBUG(logger, "setting session language");
 			env->getOperationContext().setData(OperationContext::SESSION_LANGUAGE_KEY, slref);
 		}
 		else
 		{
-			OW_LOG_DEBUG(logger, "testOOPProv::procAcceptLanguage"
+			BLOCXX_LOG_DEBUG(logger, "testOOPProv::procAcceptLanguage"
 				" didn't find SessionLanguage object in opctx");
 		}
 
@@ -546,7 +548,7 @@ public:
 	Int32 poll(const ProviderEnvironmentIFCRef& env)
 	{
 		Logger lgr(COMPONENT_NAME);
-		OW_LOG_DEBUG(lgr, Format("testOOPProv m_indicationsActive = %1", m_indicationsActive));
+		BLOCXX_LOG_DEBUG(lgr, Format("testOOPProv m_indicationsActive = %1", m_indicationsActive));
 		if (m_indicationsActive)
 		{
 			// export some indications
@@ -569,13 +571,13 @@ public:
 			CIMInstanceArray insts = hdl->enumInstancesA("root/ooptest", "ooptest");
 			/**/
 
-			OW_LOG_DEBUG(lgr, "testOOPProv got class ooptest");
+			BLOCXX_LOG_DEBUG(lgr, "testOOPProv got class ooptest");
 			inst.updatePropertyValue("id", CIMValue("indication"));
 			CIMInstance expInst("CIM_InstCreation");
 			expInst.setProperty("SourceInstance", CIMValue(inst));
 			expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 			hdl->exportIndication(expInst, "root/ooptest");
-			OW_LOG_DEBUG(lgr, "testOOPProv exported indication");
+			BLOCXX_LOG_DEBUG(lgr, "testOOPProv exported indication");
 
 			return 1;
 		}

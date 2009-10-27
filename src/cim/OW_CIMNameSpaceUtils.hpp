@@ -73,8 +73,8 @@ namespace CIMNameSpaceUtils
 	 *  define them in another namespace."
 	 * @exception CIMException If the namespace already exists.
 	 */
-	OW_COMMON_API void createCIM_Namespace(CIMOMHandleIFC& hdl, const String& ns,
-		UInt16 classInfo = 0, const String& descriptionOfClassInfo = "", const String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
+	OW_COMMON_API void createCIM_Namespace(CIMOMHandleIFC& hdl, const blocxx::String& ns,
+		blocxx::UInt16 classInfo = 0, const blocxx::String& descriptionOfClassInfo = "", const blocxx::String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 	/**
 	 * Delete a specified namespace by deleting an instance of the
 	 * CIM_Namespace class. The namespace must be empty of all classes and
@@ -88,7 +88,7 @@ namespace CIMNameSpaceUtils
 	 *  define them in another namespace."
 	 * @exception CIMException If the namespace does not exist.
 	 */
-	OW_COMMON_API void deleteCIM_Namespace(CIMOMHandleIFC& hdl, const String& ns, const String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
+	OW_COMMON_API void deleteCIM_Namespace(CIMOMHandleIFC& hdl, const blocxx::String& ns, const blocxx::String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
@@ -103,7 +103,7 @@ namespace CIMNameSpaceUtils
 	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	OW_COMMON_API StringArray enumCIM_Namespace(CIMOMHandleIFC& hdl, const String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
+	OW_COMMON_API blocxx::StringArray enumCIM_Namespace(CIMOMHandleIFC& hdl, const blocxx::String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
 	 * CIM_Namespace class.
@@ -119,7 +119,7 @@ namespace CIMNameSpaceUtils
 	 *		cannot be found in the specified namespace.
 	 */
 	OW_COMMON_API void enumCIM_Namespace(CIMOMHandleIFC& hdl,
-		StringResultHandlerIFC& result, const String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
+		StringResultHandlerIFC& result, const blocxx::String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace by creating an instance of the __Namespace
@@ -130,7 +130,7 @@ namespace CIMNameSpaceUtils
 	 * @param ns 	The namespace name to be created.
 	 * @exception CIMException If the namespace already exists.
 	 */
-	OW_COMMON_API void create__Namespace(CIMOMHandleIFC& hdl, const String& ns);
+	OW_COMMON_API void create__Namespace(CIMOMHandleIFC& hdl, const blocxx::String& ns);
 	/**
 	 * Delete a specified namespace by deleting an instance of the
 	 * __Namespace class.  This method has been deprecated in the CIM Ops spec.
@@ -140,7 +140,7 @@ namespace CIMNameSpaceUtils
 	 * @param ns	The namespace to delete.
 	 * @exception CIMException If the namespace does not exist.
 	 */
-	OW_COMMON_API void delete__Namespace(CIMOMHandleIFC& hdl, const String& ns);
+	OW_COMMON_API void delete__Namespace(CIMOMHandleIFC& hdl, const blocxx::String& ns);
 #endif
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
@@ -157,7 +157,7 @@ namespace CIMNameSpaceUtils
 	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	OW_COMMON_API StringArray enum__Namespace(CIMOMHandleIFC& hdl, const String& ns, WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
+	OW_COMMON_API blocxx::StringArray enum__Namespace(CIMOMHandleIFC& hdl, const blocxx::String& ns, WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
 	 * __Namespace class.  This method has been deprecated in the CIM Ops spec.
@@ -174,7 +174,7 @@ namespace CIMNameSpaceUtils
 	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	OW_COMMON_API void enum__Namespace(CIMOMHandleIFC& hdl, const String& ns,
+	OW_COMMON_API void enum__Namespace(CIMOMHandleIFC& hdl, const blocxx::String& ns,
 		StringResultHandlerIFC& result, WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
 	/**
 	 * This function creates a "normalized" namespace.  Because of differing
@@ -186,7 +186,7 @@ namespace CIMNameSpaceUtils
 	 * @param ns The namespace name.
 	 * @return ns The normalized version of ns.
 	 */
-	OW_COMMON_API String prepareNamespace(const String& ns);
+	OW_COMMON_API blocxx::String prepareNamespace(const blocxx::String& ns);
 }
 
 } // end namespace OW_NAMESPACE

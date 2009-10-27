@@ -41,7 +41,7 @@
 namespace OW_NAMESPACE
 {
 
-class SPNEGOHandler : virtual public IntrusiveCountableBase
+class SPNEGOHandler : virtual public blocxx::IntrusiveCountableBase
 {
 public:
 	virtual ~SPNEGOHandler();
@@ -52,10 +52,10 @@ public:
 		E_SUCCESS
 	};
 
-	virtual EResult handshake(const String& inData, String& outData, String& errMessage) = 0;
+	virtual EResult handshake(const blocxx::String& inData, blocxx::String& outData, blocxx::String& errMessage) = 0;
 };
 
-typedef IntrusiveReference<SPNEGOHandler> SPNEGOHandlerRef;
+typedef blocxx::IntrusiveReference<SPNEGOHandler> SPNEGOHandlerRef;
 
 } // end namespace OW_NAMESPACE
 

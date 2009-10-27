@@ -43,21 +43,21 @@
 namespace OW_NAMESPACE
 {
 
-class SPNEGOAuthentication : public IntrusiveCountableBase
+class SPNEGOAuthentication : public blocxx::IntrusiveCountableBase
 {
 public:
 	SPNEGOAuthentication();
 	~SPNEGOAuthentication();
-	EAuthenticateResult authenticate(String& userName,
-		const String& info, HTTPSvrConnection* htcon);
-	String getChallenge();
+	EAuthenticateResult authenticate(blocxx::String& userName,
+		const blocxx::String& info, HTTPSvrConnection* htcon);
+	blocxx::String getChallenge();
 private:
-	ProcessRef m_spnegoHelper;
-	Mutex m_guard;
-	Logger m_logger;
+	blocxx::ProcessRef m_spnegoHelper;
+	blocxx::Mutex m_guard;
+	blocxx::Logger m_logger;
 
 	void checkProcess();
-	static String spnegoHelperPath();
+	static blocxx::String spnegoHelperPath();
 };
 
 } // end namespace OW_NAMESPACE

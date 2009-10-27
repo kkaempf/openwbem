@@ -46,7 +46,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_COMMON_API Authorizer2IFC : virtual public IntrusiveCountableBase
+class OW_COMMON_API Authorizer2IFC : virtual public blocxx::IntrusiveCountableBase
 {
 public:
 
@@ -84,10 +84,10 @@ public:
 	 */
 	virtual bool doAllowReadInstance(
 		const ServiceEnvironmentIFCRef& env,
-        const String& ns,
-		const String& className,
-		const StringArray* clientPropertyList,
-		StringArray& authorizedPropertyList,
+      const blocxx::String& ns,
+		const blocxx::String& className,
+		const blocxx::StringArray* clientPropertyList,
+		blocxx::StringArray& authorizedPropertyList,
 		OperationContext& context) = 0;
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -106,7 +106,7 @@ public:
 	 */
 	virtual bool doAllowWriteInstance(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& instanceName,
 		EDynamicFlag dynamic,
 		EWriteFlag flag,
@@ -122,7 +122,7 @@ public:
 	 */
 	virtual bool doAllowReadSchema(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		OperationContext& context) = 0;
 
 #if !defined(OW_DISABLE_SCHEMA_MANIPULATION) || !defined(OW_DISABLE_QUALIFIER_DECLARATION)
@@ -136,7 +136,7 @@ public:
 	 */
 	virtual bool doAllowWriteSchema(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		EWriteFlag flag,
 		OperationContext& context) = 0;
 #endif
@@ -151,7 +151,7 @@ public:
 	 */
 	virtual bool doAllowAccessToNameSpace(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		EAccessType accessType,
 		OperationContext& context) = 0;
 
@@ -165,7 +165,7 @@ public:
 	 */
 	virtual bool doAllowCreateNameSpace(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		OperationContext& context) = 0;
 
 	/**
@@ -177,7 +177,7 @@ public:
 	 */
 	virtual bool doAllowDeleteNameSpace(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		OperationContext& context) = 0;
 #endif
 
@@ -203,9 +203,9 @@ public:
 	 */
 	virtual bool doAllowMethodInvocation(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& path,
-		const String& methodName,
+		const blocxx::String& methodName,
 		OperationContext& context) = 0;
 
 	virtual void init(ServiceEnvironmentIFCRef&);

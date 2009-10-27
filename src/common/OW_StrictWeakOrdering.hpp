@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/StrictWeakOrdering.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_StrictWeakOrdering.hpp is deprecated, use "blocxx/StrictWeakOrdering.hpp" instead.
 #endif
 

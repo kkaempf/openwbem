@@ -33,7 +33,7 @@
  */
 
 #include "cmpisrv.h"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/String.hpp"
 #include "blocxx/Thread.hpp"
 #include "blocxx/NonRecursiveMutex.hpp"
@@ -41,16 +41,18 @@
 #include "blocxx/MemoryBarrier.hpp"
 #include <cstring>
 
+
+using namespace OW_NAMESPACE;
+using namespace blocxx;
+
 namespace
 {
-	const OpenWBEM::String COMPONENT_NAME("ow.provider.cmpi.ifc");
+	const blocxx::String COMPONENT_NAME("ow.provider.cmpi.ifc");
 }
 
 #define CM_LOGGER() \
 Logger(COMPONENT_NAME)
 
-
-using namespace OW_NAMESPACE;
 
 // Factory section
 static char*  mbExtResolveFileName(const char* libName)
@@ -77,7 +79,7 @@ static char*  mbExtResolveFileName(const char* libName)
 	}
 }
 
-class CMPIThread : public OpenWBEM::Thread
+class CMPIThread : public Thread
 {
 public:
 	CMPIThread(CMPI_THREAD_RETURN (CMPI_THREAD_CDECL *start)(void *),
@@ -151,7 +153,7 @@ int mbExtThreadSleep (CMPIUint32 msec)
 {
 	try
 	{
-		OpenWBEM::Thread::sleep(msec);
+		Thread::sleep(msec);
 	}
 	catch(...)
 	{
@@ -210,39 +212,39 @@ int mbExtSetThreadSpecific (CMPI_THREAD_KEY_TYPE key, void * value)
 CMPI_MUTEX_TYPE mbExtNewMutex (int opt)
 {
 	(void) opt; // spec says none defined yet.
-	OpenWBEM::Mutex* mux = new OpenWBEM::Mutex;
+	Mutex* mux = new Mutex;
 	CMPI_MUTEX_TYPE rval = (CMPI_MUTEX_TYPE)mux;
 	return rval;
 }
 
 void mbExtDestroyMutex (CMPI_MUTEX_TYPE arg)
 {
-	OpenWBEM::Mutex* mux = (OpenWBEM::Mutex*)arg;
+	Mutex* mux = (Mutex*)arg;
 	delete mux;
 }
 
 void mbExtLockMutex (CMPI_MUTEX_TYPE arg)
 {
-	OpenWBEM::Mutex* mux = (OpenWBEM::Mutex*)arg;
+	Mutex* mux = (Mutex*)arg;
 	mux->acquire();
 }
 
 void mbExtUnlockMutex (CMPI_MUTEX_TYPE arg)
 {
-	OpenWBEM::Mutex* mux = (OpenWBEM::Mutex*)arg;
+	Mutex* mux = (Mutex*)arg;
 	mux->release();
 }
 
 CMPI_COND_TYPE mbExtNewCondition (int opt)
 {
-	OpenWBEM::Condition* cond = new OpenWBEM::Condition;
+	Condition* cond = new Condition;
 	CMPI_COND_TYPE rval = (CMPI_COND_TYPE)cond;
 	return rval;
 }
 
 void mbExtDestroyCondition (CMPI_COND_TYPE arg)
 {
-	OpenWBEM::Condition* cond = (OpenWBEM::Condition*)arg;
+	Condition* cond = (Condition*)arg;
 	delete cond;
 }
 
@@ -252,9 +254,9 @@ int mbExtCondWait (CMPI_COND_TYPE cond,
 	/*
 	try
 	{
-		OpenWBEM::Condition* lcond = (OpenWBEM::Condition*)cond;
-		OpenWBEM::Mutex* mux = (OpenWBEM::Mutex*) mutex;
-		OpenWBEM::NonRecursiveMutexLock lock(mux);
+		Condition* lcond = (Condition*)cond;
+		Mutex* mux = (Mutex*) mutex;
+		NonRecursiveMutexLock lock(mux);
 		lcond->wait(*mux);
 	}
 	catch(...)

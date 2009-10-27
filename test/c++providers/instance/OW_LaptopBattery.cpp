@@ -47,6 +47,7 @@
 
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {

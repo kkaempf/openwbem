@@ -47,6 +47,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 RepositoryCIMOMHandle::RepositoryCIMOMHandle(const RepositoryIFCRef& pRepos, OperationContext& context)
 	: CIMOMHandleIFC()

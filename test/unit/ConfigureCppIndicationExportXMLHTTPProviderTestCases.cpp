@@ -39,6 +39,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(ConfigureCppIndicationExportXMLHTTPProviderTestCases,
 #include "OW_ConfigException.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 namespace
 {

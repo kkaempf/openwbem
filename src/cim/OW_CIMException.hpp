@@ -41,7 +41,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_COMMON_API CIMException : public Exception
+class OW_COMMON_API CIMException : public blocxx::Exception
 {
 public:
 	enum ErrNoType

@@ -51,12 +51,12 @@ public:
 	 * Open this RepositoryIFC.
 	 * @exception IOException
 	 */
-	virtual void open(const String &/*path*/) {}
+	virtual void open(const blocxx::String &/*path*/) {}
 	/**
 	 * Close this GenericHDBRepository.
 	 */
 	virtual void close() {}
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env) {}
 	virtual void shutdown() {}
 	/**
@@ -78,7 +78,7 @@ public:
 	 * @param ns 	The namespace to be created.
 	 * @exception CIMException If the namespace already exists.
 	 */
-	virtual void createNameSpace(const String& ns,
+	virtual void createNameSpace(const blocxx::String& ns,
 		OperationContext& context);
 	/**
 	 * Delete a specified namespace.
@@ -86,7 +86,7 @@ public:
 	 * @param aclInfo ACL object describing user making request.
 	 * @exception CIMException If the namespace does not exist.
 	 */
-	virtual void deleteNameSpace(const String& ns,
+	virtual void deleteNameSpace(const blocxx::String& ns,
 		OperationContext& context);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
@@ -99,8 +99,8 @@ public:
 	 * @exception IOException
 	 */
 	virtual CIMQualifierType getQualifierType(
-		const String& ns,
-		const String& qualifierName, OperationContext& context);
+		const blocxx::String& ns,
+		const blocxx::String& qualifierName, OperationContext& context);
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace.
@@ -111,7 +111,7 @@ public:
 	 *										user does not have write permission to the
 	 *										namespace.
 	 */
-	virtual void setQualifierType(const String& ns,
+	virtual void setQualifierType(const blocxx::String& ns,
 		const CIMQualifierType &qt, OperationContext& context);
 	/**
 	 * Enumerate the qualifier types in a name space.
@@ -121,7 +121,7 @@ public:
 	 * @exception	CIMException
 	 */
 	virtual void enumQualifierTypes(
-		const String& ns,
+		const blocxx::String& ns,
 		CIMQualifierTypeResultHandlerIFC& result, OperationContext& context);
 	/**
 	 * Delete an existing qualifier type from the repository
@@ -129,7 +129,7 @@ public:
 	 * @param aclInfo ACL object describing user making request.
 	 * @exception CIMException
 	 */
-	virtual void deleteQualifierType(const String& ns, const String& qualName,
+	virtual void deleteQualifierType(const blocxx::String& ns, const blocxx::String& qualName,
 		OperationContext& context);
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
@@ -144,7 +144,7 @@ public:
 	 * @exception HDBException An error occurred in the database.
 	 * @exception IOException Couldn't write class object to file.
 	 */
-	virtual void createClass(const String& ns, const CIMClass &cimClass,
+	virtual void createClass(const blocxx::String& ns, const CIMClass &cimClass,
 		OperationContext& context);
 	/**
 	 * set a class in the store - note children are not affected
@@ -157,7 +157,7 @@ public:
 	 *		CIM_ClassModification indications.
 	 * @exception CIMException if the class already exists
 	 */
-	virtual CIMClass modifyClass(const String &ns,
+	virtual CIMClass modifyClass(const blocxx::String &ns,
 		const CIMClass &cc, OperationContext& context);
 	/**
 	 * Delete an existing class from the store
@@ -169,7 +169,7 @@ public:
 	 *		This is likely usefull only for creating CIM_ClassCreation incidations.
 	 * @exception CIMException if class does not exist
 	 */
-	virtual CIMClass deleteClass(const String& ns, const String& className,
+	virtual CIMClass deleteClass(const blocxx::String& ns, const blocxx::String& className,
 		OperationContext& context);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
@@ -193,10 +193,10 @@ public:
 	 * @exception IOException Couldn't read class object from file.
 	 */
 	virtual CIMClass getClass(
-		const String& ns,
-		const String& className,
+		const blocxx::String& ns,
+		const blocxx::String& className,
 		WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const blocxx::StringArray* propertyList,
 		OperationContext& context);
 	/**
 	 * Retrieve a specific instance
@@ -218,10 +218,10 @@ public:
 	 * @exception IOException
 	 */
 	virtual CIMInstance getInstance(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& instanceName,
 		WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const blocxx::StringArray* propertyList,
 		OperationContext& context);
 	/**
 	 * Enumerates the class specified by the CIMObjectPath.
@@ -240,8 +240,8 @@ public:
 	 * @exception CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
-	virtual void enumClasses(const String& ns,
-		const String& className,
+	virtual void enumClasses(const blocxx::String& ns,
+		const blocxx::String& className,
 		CIMClassResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep, WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, OperationContext& context);
@@ -259,8 +259,8 @@ public:
 	 *											cannot be foundl
 	 */
 	virtual void enumClassNames(
-		const String& ns,
-		const String& className,
+		const blocxx::String& ns,
+		const blocxx::String& className,
 		StringResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep, OperationContext& context);
 	/**
@@ -289,12 +289,12 @@ public:
 	 * @exception IOException
 	 */
 	virtual void enumInstances(
-		const String& ns,
-		const String& className,
+		const blocxx::String& ns,
+		const blocxx::String& className,
 		CIMInstanceResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep, WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList,
+		const blocxx::StringArray* propertyList,
 		WBEMFlags::EEnumSubclassesFlag enumSubclasses,
 		OperationContext& context);
 	/**
@@ -314,8 +314,8 @@ public:
 	 * @exception IOException
 	 */
 	virtual void enumInstanceNames(
-		const String& ns,
-		const String& className,
+		const blocxx::String& ns,
+		const blocxx::String& className,
 		CIMObjectPathResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep, OperationContext& context);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -329,7 +329,7 @@ public:
 	 * @exception CIMException
 	 * @exception IOException
 	 */
-	virtual CIMObjectPath createInstance(const String& ns,
+	virtual CIMObjectPath createInstance(const blocxx::String& ns,
 		const CIMInstance &ci,
 		OperationContext& context);
 	/**
@@ -346,10 +346,10 @@ public:
 	 * @exception IOException
 	 */
 	virtual CIMInstance modifyInstance(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMInstance& modifiedInstance,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const StringArray* propertyList,
+		const blocxx::StringArray* propertyList,
 		OperationContext& context);
 	/**
 	 * Delete an existing instance from the store
@@ -362,7 +362,7 @@ public:
 	 * @return an CIMInstance representing the Instance just deleted.
 	 *		This is likely usefull only for creating CIM_InstDeletion indications;
 	 */
-	virtual CIMInstance deleteInstance(const String& ns, const CIMObjectPath &cop,
+	virtual CIMInstance deleteInstance(const blocxx::String& ns, const CIMObjectPath &cop,
 		OperationContext& context);
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	/**
@@ -374,9 +374,9 @@ public:
 	 * @exception CIMException
 	 */
 	virtual void setProperty(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &name,
-		const String &propertyName, const CIMValue &cv,
+		const blocxx::String &propertyName, const CIMValue &cv,
 		OperationContext& context);
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -391,14 +391,14 @@ public:
 	 * @exception CIMException
 	 */
 	virtual CIMValue getProperty(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &name,
-		const String &propertyName, OperationContext& context);
+		const blocxx::String &propertyName, OperationContext& context);
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	virtual RepositoryIFC::ELockType getLockTypeForMethod(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& path,
-		const String& methodName,
+		const blocxx::String& methodName,
 		const CIMParamValueArray& in,
 		OperationContext& context);
 	/**
@@ -415,63 +415,63 @@ public:
 	 * @exception CIMException
 	 */
 	virtual CIMValue invokeMethod(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& path,
-		const String &methodName, const CIMParamValueArray &inParams,
+		const blocxx::String &methodName, const CIMParamValueArray &inParams,
 		CIMParamValueArray &outParams, OperationContext& context);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associators(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &path,
 		CIMInstanceResultHandlerIFC& result,
-		const String &assocClass, const String &resultClass,
-		const String &role, const String &resultRole,
+		const blocxx::String &assocClass, const blocxx::String &resultClass,
+		const blocxx::String &role, const blocxx::String &resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray *propertyList, OperationContext& context);
+		const blocxx::StringArray *propertyList, OperationContext& context);
 	virtual void associatorsClasses(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &path,
 		CIMClassResultHandlerIFC& result,
-		const String &assocClass, const String &resultClass,
-		const String &role, const String &resultRole,
+		const blocxx::String &assocClass, const blocxx::String &resultClass,
+		const blocxx::String &role, const blocxx::String &resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray *propertyList, OperationContext& context);
+		const blocxx::StringArray *propertyList, OperationContext& context);
 	virtual void referenceNames(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &path,
 		CIMObjectPathResultHandlerIFC& result,
-		const String &resultClass,
-		const String &role, OperationContext& context);
+		const blocxx::String &resultClass,
+		const blocxx::String &role, OperationContext& context);
 	virtual void associatorNames(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &path,
 		CIMObjectPathResultHandlerIFC& result,
-		const String &assocClass,
-		const String &resultClass, const String &role,
-		const String &resultRole, OperationContext& context);
+		const blocxx::String &assocClass,
+		const blocxx::String &resultClass, const blocxx::String &role,
+		const blocxx::String &resultRole, OperationContext& context);
 	virtual void references(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &path,
 		CIMInstanceResultHandlerIFC& result,
-		const String &resultClass, const String &role,
+		const blocxx::String &resultClass, const blocxx::String &role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray *propertyList, OperationContext& context);
+		const blocxx::StringArray *propertyList, OperationContext& context);
 	virtual void referencesClasses(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &path,
 		CIMClassResultHandlerIFC& result,
-		const String &resultClass, const String &role,
+		const blocxx::String &resultClass, const blocxx::String &role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray *propertyList, OperationContext& context);
+		const blocxx::StringArray *propertyList, OperationContext& context);
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void execQuery(
-		const String& ns,
+		const blocxx::String& ns,
 		CIMInstanceResultHandlerIFC& result,
-		const String &query, const String &queryLanguage,
+		const blocxx::String &query, const blocxx::String &queryLanguage,
 		OperationContext& context);
 	virtual void enumInstancesWQL(
-		const String& ns,
-		const String& className,
+		const blocxx::String& ns,
+		const blocxx::String& className,
 		CIMInstanceResultHandlerIFC& result,
 		const WQLSelectStatement& wss,
 		const WQLCompile& wc,

@@ -50,7 +50,7 @@ using std::endl;
 using std::cerr;
 using namespace OpenWBEM;
 using namespace OpenWBEM::WQL;
-
+using namespace blocxx;
 
 namespace
 {

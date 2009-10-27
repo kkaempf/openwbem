@@ -58,44 +58,44 @@ private:
 	/**
 	 * overwrite data and return true if key is found, else return false.
 	 */
-	virtual bool doGetData(const String& key, DataRef& data) const;
+	virtual bool doGetData(const blocxx::String& key, DataRef& data) const;
 	/**
 	 * Caller creats a subclass of Data and passes it in.
 	 * @param key
 	 */
-	virtual void doSetData(const String& key, const DataRef& data);
+	virtual void doSetData(const blocxx::String& key, const DataRef& data);
 
 	/**
 	 * Remove the data identified by key.  It is not an error if key has not
 	 * already been added to the context with setData().
 	 * @param key Identifies the data to remove.
 	 */
-	virtual void doRemoveData(const String& key);
+	virtual void doRemoveData(const blocxx::String& key);
 
 	/**
 	 * Test whether there is data for the key.
 	 * @param key The key to test.
 	 * @return true if there is data for the key.
 	 */
-	virtual bool doKeyHasData(const String& key) const;
+	virtual bool doKeyHasData(const blocxx::String& key) const;
 
 	/**
 	 * @return The operation id. Each operation has a unique id.
 	 */
-	virtual UInt64 doGetOperationId() const;
+	virtual blocxx::UInt64 doGetOperationId() const;
 
 #ifdef OW_WIN32
 #pragma warning (push)
 #pragma warning (disable: 4251)
 #endif
 
-	SortedVectorMap<String, DataRef> m_data;
+	blocxx::SortedVectorMap<blocxx::String, DataRef> m_data;
 
 #ifdef OW_WIN32
 #pragma warning (pop)
 #endif
 
-	UInt64 m_operationId;
+	blocxx::UInt64 m_operationId;
 
 	// non-copyable
 	LocalOperationContext(const LocalOperationContext&);

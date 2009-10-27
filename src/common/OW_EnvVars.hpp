@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/EnvVars.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_EnvVars.hpp is deprecated, use "blocxx/EnvVars.hpp" instead.
 #endif
 

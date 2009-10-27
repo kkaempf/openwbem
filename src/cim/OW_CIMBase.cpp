@@ -36,10 +36,12 @@
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_BinarySerialization.hpp"
 #include <cstring>
+
+using namespace blocxx;
 
 namespace OW_NAMESPACE
 {
@@ -53,7 +55,7 @@ void
 CIMBase::readSig( streambuf & istr, char const * const sig )
 {
 	char expected, read;
-	OW_ASSERT( strlen(sig) == 1 );
+	BLOCXX_ASSERT( strlen(sig) == 1 );
 	expected = sig[0];
 	BinarySerialization::read(istr, &read, sizeof(read));
 	if (expected != read)
@@ -74,8 +76,8 @@ CIMBase::readSig(
 {
 	UInt32 version = 0;
 	char ch;
-	OW_ASSERT( strlen(sig) == 1);
-	OW_ASSERT( strlen(verSig) == 1);
+	BLOCXX_ASSERT( strlen(sig) == 1);
+	BLOCXX_ASSERT( strlen(verSig) == 1);
 
 	BinarySerialization::read(istr, &ch, sizeof(ch));
 	if (sig[0] != ch)
@@ -106,7 +108,7 @@ CIMBase::readSig(
 void
 CIMBase::writeSig( streambuf & ostr, char const * const sig )
 {
-	OW_ASSERT(strlen(sig) == 1);
+	BLOCXX_ASSERT(strlen(sig) == 1);
 	BinarySerialization::write(ostr, sig, 1);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -114,7 +116,7 @@ CIMBase::writeSig( streambuf & ostr, char const * const sig )
 void
 CIMBase::writeSig(streambuf & ostr, char const * const sig, UInt32 version)
 {
-	OW_ASSERT(strlen(sig) == 1);
+	BLOCXX_ASSERT(strlen(sig) == 1);
 	BinarySerialization::write(ostr, sig, 1);
 	// Use ASN.1 length encoding for version
 	BinarySerialization::writeLen(ostr, version);

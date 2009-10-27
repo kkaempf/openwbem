@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/Array.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Array.hpp is deprecated, use "blocxx/Array.hpp" instead.
 #endif
 

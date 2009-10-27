@@ -44,20 +44,20 @@
 namespace OW_NAMESPACE
 {
 
-class DigestAuthentication : public IntrusiveCountableBase
+class DigestAuthentication : public blocxx::IntrusiveCountableBase
 {
 public:
-	DigestAuthentication(const String& passwdFile);
+	DigestAuthentication(const blocxx::String& passwdFile);
 	~DigestAuthentication() {}
-	EAuthenticateResult authenticate(String& userName,
-		const String& info, HTTPSvrConnection* htcon);
-	String getChallenge(const String& realm);
+	EAuthenticateResult authenticate(blocxx::String& userName,
+		const blocxx::String& info, HTTPSvrConnection* htcon);
+	blocxx::String getChallenge(const blocxx::String& realm);
 private:
-	String getHash( const String &sUserName, const String &sRealm );
-	String generateNewNonce( void );
-	Array< String > m_asNonces;
-	Array< time_t > m_aDateTimes;
-	Map<String, String> m_passwdMap;
+	blocxx::String getHash( const blocxx::String &sUserName, const blocxx::String &sRealm );
+	blocxx::String generateNewNonce( void );
+	blocxx::Array<blocxx::String> m_asNonces;
+	blocxx::Array<time_t> m_aDateTimes;
+	blocxx::Map<blocxx::String, blocxx::String> m_passwdMap;
 };
 
 } // end namespace OW_NAMESPACE

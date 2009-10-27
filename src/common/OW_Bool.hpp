@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/Bool.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Bool.hpp is deprecated, use "blocxx/Bool.hpp" instead.
 #endif
 

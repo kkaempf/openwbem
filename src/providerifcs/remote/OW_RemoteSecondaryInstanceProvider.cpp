@@ -47,7 +47,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 
@@ -55,6 +55,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
@@ -83,14 +84,14 @@ RemoteSecondaryInstanceProvider::modifyInstance(const ProviderEnvironmentIFCRef 
 	const CIMInstance &previousInstance, EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::modifyInstance ns = %1, modifiedInstance = %2", ns, modifiedInstance));
+	BLOCXX_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::modifyInstance ns = %1, modifiedInstance = %2", ns, modifiedInstance));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::modifyInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	BLOCXX_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::modifyInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG3(lgr, "RemoteSecondaryInstanceProvider::modifyInstance calling remote WBEM server");
+	BLOCXX_LOG_DEBUG3(lgr, "RemoteSecondaryInstanceProvider::modifyInstance calling remote WBEM server");
 
 	try
 	{
@@ -98,13 +99,13 @@ RemoteSecondaryInstanceProvider::modifyInstance(const ProviderEnvironmentIFCRef 
 	}
 	catch (CIMException& e)
 	{
-		OW_LOG_INFO(lgr, Format("RemoteSecondaryInstanceProvider::modifyInstance remote WBEM server threw: %1", e));
+		BLOCXX_LOG_INFO(lgr, Format("RemoteSecondaryInstanceProvider::modifyInstance remote WBEM server threw: %1", e));
 		// dont: throw;
 	}
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteSecondaryInstanceProvider::modifyInstance failed calling remote WBEM server: %1", e);
-		OW_LOG_ERROR(lgr, msg);
+		BLOCXX_LOG_ERROR(lgr, msg);
 		// dont: OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 }
@@ -114,14 +115,14 @@ void
 RemoteSecondaryInstanceProvider::deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::deleteInstance ns = %1, cop = %2", ns, cop));
+	BLOCXX_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::deleteInstance ns = %1, cop = %2", ns, cop));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::deleteInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	BLOCXX_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::deleteInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG3(lgr, "RemoteSecondaryInstanceProvider::deleteInstance calling remote WBEM server");
+	BLOCXX_LOG_DEBUG3(lgr, "RemoteSecondaryInstanceProvider::deleteInstance calling remote WBEM server");
 
 	try
 	{
@@ -129,13 +130,13 @@ RemoteSecondaryInstanceProvider::deleteInstance(const ProviderEnvironmentIFCRef 
 	}
 	catch (CIMException& e)
 	{
-		OW_LOG_INFO(lgr, Format("RemoteSecondaryInstanceProvider::deleteInstance remote WBEM server threw: %1", e));
+		BLOCXX_LOG_INFO(lgr, Format("RemoteSecondaryInstanceProvider::deleteInstance remote WBEM server threw: %1", e));
 		// dont: throw;
 	}
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteSecondaryInstanceProvider::deleteInstance failed calling remote WBEM server: %1", e);
-		OW_LOG_ERROR(lgr, msg);
+		BLOCXX_LOG_ERROR(lgr, msg);
 		// dont: OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 }
@@ -151,14 +152,14 @@ RemoteSecondaryInstanceProvider::filterInstances(const ProviderEnvironmentIFCRef
 	const StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::filterInstances ns = %1, className = %2", ns, className));
+	BLOCXX_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::filterInstances ns = %1, className = %2", ns, className));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::filterInstances got ClientCIMOMHandleRef for url: %1", lUrl));
+	BLOCXX_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::filterInstances got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG3(lgr, "RemoteSecondaryInstanceProvider::filterInstances calling remote WBEM server");
+	BLOCXX_LOG_DEBUG3(lgr, "RemoteSecondaryInstanceProvider::filterInstances calling remote WBEM server");
 
 	for (size_t i = 0; i < instances.size(); ++i)
 	{
@@ -195,14 +196,14 @@ RemoteSecondaryInstanceProvider::filterInstances(const ProviderEnvironmentIFCRef
 			{
 				e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED from getInstance.
 			}
-			OW_LOG_INFO(lgr, Format("RemoteSecondaryInstanceProvider::filterInstances remote WBEM server threw: %1", e));
+			BLOCXX_LOG_INFO(lgr, Format("RemoteSecondaryInstanceProvider::filterInstances remote WBEM server threw: %1", e));
 			// we do want to throw here if something went wrong
 			throw;
 		}
 		catch (const Exception& e)
 		{
 			String msg = Format("RemoteSecondaryInstanceProvider::filterInstances failed calling remote WBEM server: %1", e);
-			OW_LOG_ERROR(lgr, msg);
+			BLOCXX_LOG_ERROR(lgr, msg);
 			// we do want to throw here if something went wrong
 			OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 		}
@@ -215,14 +216,14 @@ void
 RemoteSecondaryInstanceProvider::createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::createInstance ns = %1, cimInstance = %2", ns, cimInstance));
+	BLOCXX_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::createInstance ns = %1, cimInstance = %2", ns, cimInstance));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::createInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	BLOCXX_LOG_DEBUG3(lgr, Format("RemoteSecondaryInstanceProvider::createInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG3(lgr, "RemoteSecondaryInstanceProvider::createInstance calling remote WBEM server");
+	BLOCXX_LOG_DEBUG3(lgr, "RemoteSecondaryInstanceProvider::createInstance calling remote WBEM server");
 
 	try
 	{
@@ -230,13 +231,13 @@ RemoteSecondaryInstanceProvider::createInstance(const ProviderEnvironmentIFCRef 
 	}
 	catch (CIMException& e)
 	{
-		OW_LOG_INFO(lgr, Format("RemoteSecondaryInstanceProvider::createInstance remote WBEM server threw: %1", e));
+		BLOCXX_LOG_INFO(lgr, Format("RemoteSecondaryInstanceProvider::createInstance remote WBEM server threw: %1", e));
 		// dont: throw;
 	}
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteSecondaryInstanceProvider::createInstance failed calling remote WBEM server: %1", e);
-		OW_LOG_ERROR(lgr, msg);
+		BLOCXX_LOG_ERROR(lgr, msg);
 		// dont: OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 }

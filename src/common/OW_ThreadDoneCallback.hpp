@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/ThreadDoneCallback.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_ThreadDoneCallback.hpp is deprecated, use "blocxx/ThreadDoneCallback.hpp" instead.
 #endif

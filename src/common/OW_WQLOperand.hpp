@@ -137,14 +137,14 @@ public:
 
 	/** Initializes object as INTEGER_VALUE.
 	 */
-	WQLOperand(Int64 x, WQLIntegerValueTag)
+	WQLOperand(blocxx::Int64 x, WQLIntegerValueTag)
 		: _integerValue(x)
 		, _type(INTEGER_VALUE)
 	{
 	}
 	/** Initializes object as DOUBLE_VALUE.
 	 */
-	WQLOperand(Real64 x, WQLDoubleValueTag)
+	WQLOperand(blocxx::Real64 x, WQLDoubleValueTag)
 		: _doubleValue(x)
 		, _type(DOUBLE_VALUE)
 	{
@@ -158,14 +158,14 @@ public:
 	}
 	/** Initializes object as STRING_VALUE.
 	 */
-	WQLOperand(const String& x, WQLStringValueTag)
+	WQLOperand(const blocxx::String& x, WQLStringValueTag)
 		: _string(x)
 		, _type(STRING_VALUE)
 	{
 	}
 	/** Initializes object as PROPERTY_NAME.
 	 */
-	WQLOperand(const String& x, WQLPropertyNameTag)
+	WQLOperand(const blocxx::String& x, WQLPropertyNameTag)
 		: _string(x)
 		, _type(PROPERTY_NAME)
 	{
@@ -175,14 +175,14 @@ public:
 	Type getType() const { return _type; }
 	/** Sets this object to an INTEGER_VALUE.
 	 */
-	void setIntegerValue(Int64 x)
+	void setIntegerValue(blocxx::Int64 x)
 	{
 		_integerValue = x;
 		_type = INTEGER_VALUE;
 	}
 	/** Sets this object to an DOUBLE_VALUE.
 	 */
-	void setDoubleValue(Real64 x)
+	void setDoubleValue(blocxx::Real64 x)
 	{
 		_doubleValue = x;
 		_type = DOUBLE_VALUE;
@@ -196,21 +196,21 @@ public:
 	}
 	/** Sets this object to a STRING_VALUE.
 	 */
-	void setStringValue(const String& x)
+	void setStringValue(const blocxx::String& x)
 	{
 		_string = x;
 		_type = STRING_VALUE;
 	}
 	/** Sets this object to a PROPERTY_NAME.
 	 */
-	void setPropertyName(const String& x)
+	void setPropertyName(const blocxx::String& x)
 	{
 		_string = x;
 		_type = PROPERTY_NAME;
 	}
 	/** Gets this object as an INTEGER_VALUE.
 	 */
-	Int64 getIntegerValue() const
+	blocxx::Int64 getIntegerValue() const
 	{
 		if (_type != INTEGER_VALUE)
 			OW_THROW(TypeMismatchException, "Type mismatch");
@@ -219,7 +219,7 @@ public:
 	/** Gets this object as an DOUBLE_VALUE.
 	  @exception TypeMismatchException is not the expected type.
 	 */
-	Real64 getDoubleValue() const
+	blocxx::Real64 getDoubleValue() const
 	{
 		if (_type != DOUBLE_VALUE)
 			OW_THROW(TypeMismatchException, "Type mismatch");
@@ -237,7 +237,7 @@ public:
 	/** Gets this object as a STRING_VALUE.
 	  @exception TypeMismatchException is not the expected type.
 	 */
-	const String& getStringValue() const
+	const blocxx::String& getStringValue() const
 	{
 		if (_type != STRING_VALUE)
 			OW_THROW(TypeMismatchException, "Type mismatch");
@@ -246,7 +246,7 @@ public:
 	/** Gets this object as a PROPERTY_NAME.
 	  @exception TypeMismatchException is not the expected type.
 	 */
-	const String& getPropertyName() const
+	const blocxx::String& getPropertyName() const
 	{
 		if (_type != PROPERTY_NAME)
 			OW_THROW(TypeMismatchException, "Type mismatch");
@@ -254,7 +254,7 @@ public:
 	}
 	/** Converts this object to a string for output purposes.
 	 */
-	String toString() const;
+	blocxx::String toString() const;
 
 	virtual void readObject(std::streambuf & istrm);
 	virtual void writeObject(std::streambuf & ostrm) const;
@@ -262,11 +262,11 @@ public:
 private:
 	union
 	{
-		Int64 _integerValue;
-		Real64 _doubleValue;
+		blocxx::Int64 _integerValue;
+		blocxx::Real64 _doubleValue;
 		bool _booleanValue;
 	};
-	String _string;
+	blocxx::String _string;
 	Type _type;
 };
 OW_COMMON_API bool operator==(const WQLOperand& x, const WQLOperand& y);

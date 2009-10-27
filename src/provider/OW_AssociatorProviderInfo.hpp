@@ -47,7 +47,7 @@ public:
 	using ProviderInfoBase<InstClassInfo>::ClassInfo;
 	using ProviderInfoBase<InstClassInfo>::ClassInfoArray;
 };
-typedef Array<AssociatorProviderInfo> AssociatorProviderInfoArray;
+typedef blocxx::Array<AssociatorProviderInfo> AssociatorProviderInfoArray;
 
 } // end namespace OW_NAMESPACE
 

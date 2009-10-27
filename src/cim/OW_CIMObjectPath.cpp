@@ -48,7 +48,7 @@
 #include "OW_BinarySerialization.hpp"
 #include "OW_NoSuchPropertyException.hpp"
 #include "blocxx/StrictWeakOrdering.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "blocxx/COWIntrusiveCountableBase.hpp"
 
@@ -60,6 +60,7 @@ namespace OW_NAMESPACE
 {
 
 using std::streambuf;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMObjectPath::OPData : public COWIntrusiveCountableBase
 {
@@ -153,29 +154,6 @@ CIMObjectPath::operator= (const CIMObjectPath& x)
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMObjectPath&
-CIMObjectPath::addKey(const CIMName& keyname, const CIMValue& value)
-{
-    if (value)
-    {
-        CIMProperty cp(keyname, value);
-        cp.setDataType(value.getCIMDataType());
-        m_pdata->m_keys.append(cp);
-    }
-    return *this;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMObjectPath&
-CIMObjectPath::addKey(const CIMProperty& key)
-{
-    OW_ASSERT(key);
-    OW_ASSERT(key.getValue());
-	CIMProperty key2(key);
-	key2.clearQualifiers();
-    m_pdata->m_keys.append(key2);
-    return *this;
-}
-//////////////////////////////////////////////////////////////////////////////
 CIMPropertyArray
 CIMObjectPath::getKeys() const
 {
@@ -250,7 +228,7 @@ CIMObjectPath::setKeys(const CIMPropertyArray& newKeys)
 CIMObjectPath&
 CIMObjectPath::setKeys(const CIMInstance& instance)
 {
-	OW_ASSERT(instance);
+	BLOCXX_ASSERT(instance);
 	setKeys(instance.getKeyValuePairs());
 	return *this;
 }
@@ -258,7 +236,7 @@ CIMObjectPath::setKeys(const CIMInstance& instance)
 CIMObjectPath&
 CIMObjectPath::setKeyValue(const CIMName& name, const CIMValue& value)
 {
-	OW_ASSERT(value);
+	BLOCXX_ASSERT(value);
 	for (size_t i = 0; i < m_pdata->m_keys.size(); ++i)
 	{
 		if (m_pdata->m_keys[i].getName() == name)
@@ -285,12 +263,6 @@ CIMObjectPath::getHost() const
 }
 //////////////////////////////////////////////////////////////////////////////
 String
-CIMObjectPath::getObjectName() const
-{
-	return getClassName();
-}
-//////////////////////////////////////////////////////////////////////////////
-String
 CIMObjectPath::getClassName() const
 {
 	return m_pdata->m_objectName.toString();
@@ -308,12 +280,6 @@ CIMObjectPath::setNameSpace(const String& ns)
 {
 	m_pdata->m_nameSpace.setNameSpace(ns);
 	return *this;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMObjectPath&
-CIMObjectPath::setObjectName(const CIMName& className)
-{
-	return setClassName(className);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath&

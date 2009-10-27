@@ -49,6 +49,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_StringArrayPropertyTestCases,"OW_StringArrayProper
 #include <iostream>
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void OW_StringArrayPropertyTestCases::setUp()
 {

@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/RWLocker.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_RWLocker.hpp is deprecated, use "blocxx/RWLocker.hpp" instead.
 #endif
 

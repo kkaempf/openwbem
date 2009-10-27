@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/IOIFCStreamBuffer.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_IOIFCStreamBuffer.hpp is deprecated, use "blocxx/IOIFCStreamBuffer.hpp" instead.
 #endif
 

@@ -43,6 +43,7 @@
 #include <sys/time.h>
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 struct Nothing
 {

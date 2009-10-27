@@ -43,6 +43,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(URLTestCases,"URL");
 #include "OW_URL.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void URLTestCases::setUp()
 {

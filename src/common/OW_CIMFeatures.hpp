@@ -65,13 +65,13 @@ struct CIMFeatures
 		LISTENER		// The listener interface (part of the client lib)
 	};
 	CIMProduct_t cimProduct;
-	String extURL;
-	Array<String> supportedGroups;
-	Bool supportsBatch;
-	Array<String> supportedQueryLanguages;
-	String validation;
-	String cimom;
-	String protocolVersion;
+	blocxx::String extURL;
+	blocxx::Array<blocxx::String> supportedGroups;
+	blocxx::Bool supportsBatch;
+	blocxx::Array<blocxx::String> supportedQueryLanguages;
+	blocxx::String validation;
+	blocxx::String cimom;
+	blocxx::String protocolVersion;
 };
 
 } // end namespace OW_NAMESPACE

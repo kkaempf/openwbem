@@ -36,11 +36,12 @@
 #include "OW_config.h"
 #include "OW_CppProviderIncludes.hpp"
 #include "OW_CIMValue.hpp"
-//#include "OW_SessionLanguage.hpp"
+#include "blocxx/Logger.hpp"
 
 using namespace std;
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
@@ -127,7 +128,7 @@ public:
 		const CIMClass& cimClass )
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "testOOPAssocProv::enumInstanceNames() start");
+		BLOCXX_LOG_DEBUG(logger, "testOOPAssocProv::enumInstanceNames() start");
 		CIMObjectPath cop(className, ns);
 		InstData* pInstData = (className.equalsIgnoreCase("ooptestInst1"))
 			?  Inst1s : Inst100s;
@@ -153,11 +154,11 @@ public:
 		const CIMClass& cimClass )
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "testOOPAssocProv::enumInstances() start");
-		OW_LOG_DEBUG(logger, Format("env->getUserName() = %1" , env->getUserName()));
+		BLOCXX_LOG_DEBUG(logger, "testOOPAssocProv::enumInstances() start");
+		BLOCXX_LOG_DEBUG(logger, Format("env->getUserName() = %1" , env->getUserName()));
 		if (env->getUserName() != "test1")
 		{
-			OW_LOG_DEBUG(logger, "aborting!");
+			BLOCXX_LOG_DEBUG(logger, "aborting!");
 			abort();
 		}
 
@@ -186,7 +187,7 @@ public:
 		const CIMClass& cimClass )
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "testOOPAssocProv::getInstance() start");
+		BLOCXX_LOG_DEBUG(logger, "testOOPAssocProv::getInstance() start");
 		String id;
 		CIMValue cv	= instanceName.getKeyValue("id");
 		if (cv)
@@ -217,7 +218,7 @@ public:
 		const CIMInstance& cimInstance )
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "testOOPAssocProv::createInstance() start");
+		BLOCXX_LOG_DEBUG(logger, "testOOPAssocProv::createInstance() start");
 		OW_THROWCIM(CIMException::NOT_SUPPORTED);
 	}
 
@@ -232,7 +233,7 @@ public:
 		const CIMClass& theClass)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "testOOPAssocProv::modifyInstance");
+		BLOCXX_LOG_DEBUG(logger, "testOOPAssocProv::modifyInstance");
 		OW_THROWCIM(CIMException::NOT_SUPPORTED);
 	}
 
@@ -243,7 +244,7 @@ public:
 		const CIMObjectPath& cop)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "testOOPAssocProv::deleteInstance");
+		BLOCXX_LOG_DEBUG(logger, "testOOPAssocProv::deleteInstance");
 		OW_THROWCIM(CIMException::NOT_SUPPORTED);
 	}
 

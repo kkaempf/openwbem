@@ -44,6 +44,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 ///////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFC::RequestHandlerIFC()
 	: m_cimError()

@@ -65,7 +65,7 @@ public:
 	 * @return String current InstanceID property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	String getInstanceID() const
+	blocxx::String getInstanceID() const
 	{
 		return getStringProperty("InstanceID");
 	}
@@ -76,9 +76,9 @@ public:
 	 *
 	 *  Within the scope of the instantiating Namespace, InstanceID opaquely and uniquely identifies an instance of this class. In order to ensure uniqueness within the NameSpace, the value of InstanceID SHOULD be constructed using the following 'preferred' algorithm: <OrgID>:<LocalID>Where <OrgID> and <LocalID> are separated by a colon ':', and where <OrgID> MUST include a copyrighted, trademarked or otherwise unique name that is owned by the business entity creating/defining the InstanceID, or is a registered ID that is assigned to the business entity by a recognized global authority. (This is similar to the <Schema Name>_<Class Name> structure of Schema class names.) In addition, to ensure uniqueness <OrgID> MUST NOT contain a colon (':'). When using this algorithm, the first colon to appear in InstanceID MUST appear between <OrgID> and <LocalID>. <LocalID> is chosen by the business entity and SHOULD not be re-used to identify different underlying (real-world) elements. If the above 'preferred' algorithm is not used, the defining entity MUST assure that the resultant InstanceID is not re-used across any InstanceIDs produced by this or other providers for this instance's NameSpace. For DMTF defined instances, the 'preferred' algorithm MUST be used with the <OrgID> set to 'CIM'.
 	 *
-	 * @param String new InstanceID property value
+	 * @param blocxx::String new InstanceID property value
 	 */
-	void setInstanceID(const String& v)
+	void setInstanceID(const blocxx::String& v)
 	{
 		setStringProperty("InstanceID", v);
 	}
@@ -100,10 +100,10 @@ public:
 	 *
 	 *  The namespaces for this provider registration. If this property is empty or NULL, all namespaces are implied.
 	 *
-	 * @return StringArray current NamespaceNames property value
+	 * @return blocxx::StringArray current NamespaceNames property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	StringArray getNamespaceNames() const
+	blocxx::StringArray getNamespaceNames() const
 	{
 		return getStringArrayProperty("NamespaceNames");
 	}
@@ -114,9 +114,9 @@ public:
 	 *
 	 *  The namespaces for this provider registration. If this property is empty or NULL, all namespaces are implied.
 	 *
-	 * @param StringArray new NamespaceNames property value
+	 * @param blocxx::StringArray new NamespaceNames property value
 	 */
-	void setNamespaceNames(const StringArray& v)
+	void setNamespaceNames(const blocxx::StringArray& v)
 	{
 		setStringArrayProperty("NamespaceNames", v);
 	}
@@ -138,10 +138,10 @@ public:
 	 *
 	 *  The CIM class name for the provider
 	 *
-	 * @return String current ClassName property value
+	 * @return blocxx::String current ClassName property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	String getClassName() const
+	blocxx::String getClassName() const
 	{
 		return getStringProperty("ClassName");
 	}
@@ -152,9 +152,9 @@ public:
 	 *
 	 *  The CIM class name for the provider
 	 *
-	 * @param String new ClassName property value
+	 * @param blocxx::String new ClassName property value
 	 */
-	void setClassName(const String& v)
+	void setClassName(const blocxx::String& v)
 	{
 		setStringProperty("ClassName", v);
 	}
@@ -194,7 +194,7 @@ public:
 	 * @return UInt16Array current ProviderTypes property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	UInt16Array getProviderTypes() const
+	blocxx::UInt16Array getProviderTypes() const
 	{
 		return getUInt16ArrayProperty("ProviderTypes");
 	}
@@ -207,7 +207,7 @@ public:
 	 *
 	 * @param UInt16Array new ProviderTypes property value
 	 */
-	void setProviderTypes(const UInt16Array& v)
+	void setProviderTypes(const blocxx::UInt16Array& v)
 	{
 		setUInt16ArrayProperty("ProviderTypes", v);
 	}
@@ -229,10 +229,10 @@ public:
 	 *
 	 *  Process to launch.
 	 *
-	 * @return String current Process property value
+	 * @return blocxx::String current Process property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	String getProcess() const
+	blocxx::String getProcess() const
 	{
 		return getStringProperty("Process");
 	}
@@ -243,9 +243,9 @@ public:
 	 *
 	 *  Process to launch.
 	 *
-	 * @param String new Process property value
+	 * @param blocxx::String new Process property value
 	 */
-	void setProcess(const String& v)
+	void setProcess(const blocxx::String& v)
 	{
 		setStringProperty("Process", v);
 	}
@@ -267,10 +267,10 @@ public:
 	 *
 	 *  Command line arguments to use when launching Process.
 	 *
-	 * @return StringArray current Args property value
+	 * @return blocxx::StringArray current Args property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	StringArray getArgs() const
+	blocxx::StringArray getArgs() const
 	{
 		return getStringArrayProperty("Args");
 	}
@@ -281,9 +281,9 @@ public:
 	 *
 	 *  Command line arguments to use when launching Process.
 	 *
-	 * @param StringArray new Args property value
+	 * @param blocxx::StringArray new Args property value
 	 */
-	void setArgs(const StringArray& v)
+	void setArgs(const blocxx::StringArray& v)
 	{
 		setStringArrayProperty("Args", v);
 	}
@@ -305,10 +305,10 @@ public:
 	 *
 	 *  Protocol to use.  Valid values are: owcpp1.
 	 *
-	 * @return String current Protocol property value
+	 * @return blocxx::String current Protocol property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	String getProtocol() const
+	blocxx::String getProtocol() const
 	{
 		return getStringProperty("Protocol");
 	}
@@ -319,9 +319,9 @@ public:
 	 *
 	 *  Protocol to use.  Valid values are: owcpp1.
 	 *
-	 * @param String new Protocol property value
+	 * @param blocxx::String new Protocol property value
 	 */
-	void setProtocol(const String& v)
+	void setProtocol(const blocxx::String& v)
 	{
 		setStringProperty("Protocol", v);
 	}
@@ -395,7 +395,7 @@ public:
 	 * @return UInt16 current UserContext property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	UInt16 getUserContext() const
+	blocxx::UInt16 getUserContext() const
 	{
 		return getUInt16Property("UserContext");
 	}
@@ -408,7 +408,7 @@ public:
 	 *
 	 * @param UInt16 new UserContext property value
 	 */
-	void setUserContext(const UInt16 v)
+	void setUserContext(const blocxx::UInt16 v)
 	{
 		setUInt16Property("UserContext", v);
 	}
@@ -430,10 +430,10 @@ public:
 	 *
 	 *  If UserContext = 4 or 5 (monitored), a monitor will be created for the provider process. The monitor can give the process special permissions. This property must be set to the file name of the provider's privileges configuration file. The file must be in the directory identified by the owcimomd.privileges_config_dir config item.
 	 *
-	 * @return String current MonitorPrivilegesFile property value
+	 * @return blocxx::String current MonitorPrivilegesFile property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	String getMonitorPrivilegesFile() const
+	blocxx::String getMonitorPrivilegesFile() const
 	{
 		return getStringProperty("MonitorPrivilegesFile");
 	}
@@ -444,9 +444,9 @@ public:
 	 *
 	 *  If UserContext = 4 or 5 (monitored), a monitor will be created for the provider process. The monitor can give the process special permissions. This property must be set to the file name of the provider's privileges configuration file. The file must be in the directory identified by the owcimomd.privileges_config_dir config item.
 	 *
-	 * @param String new MonitorPrivilegesFile property value
+	 * @param blocxx::String new MonitorPrivilegesFile property value
 	 */
-	void setMonitorPrivilegesFile(const String& v)
+	void setMonitorPrivilegesFile(const blocxx::String& v)
 	{
 		setStringProperty("MonitorPrivilegesFile", v);
 	}
@@ -468,10 +468,10 @@ public:
 	 *
 	 *  List of class names (subclasses of CIM_ListenerDestination) that the provider handles. Only applicable for Indication Export providers.
 	 *
-	 * @return StringArray current IndicationExportHandlerClassNames property value
+	 * @return blocxx::blocxx::StringArray current IndicationExportHandlerClassNames property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	StringArray getIndicationExportHandlerClassNames() const
+	blocxx::StringArray getIndicationExportHandlerClassNames() const
 	{
 		return getStringArrayProperty("IndicationExportHandlerClassNames");
 	}
@@ -482,9 +482,9 @@ public:
 	 *
 	 *  List of class names (subclasses of CIM_ListenerDestination) that the provider handles. Only applicable for Indication Export providers.
 	 *
-	 * @param StringArray new IndicationExportHandlerClassNames property value
+	 * @param blocxx::blocxx::StringArray new IndicationExportHandlerClassNames property value
 	 */
-	void setIndicationExportHandlerClassNames(const StringArray& v)
+	void setIndicationExportHandlerClassNames(const blocxx::StringArray& v)
 	{
 		setStringArrayProperty("IndicationExportHandlerClassNames", v);
 	}
@@ -595,7 +595,7 @@ public:
 	 * @return UInt16 current MethodProviderLockType property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	UInt16 getMethodProviderLockType() const
+	blocxx::UInt16 getMethodProviderLockType() const
 	{
 		return getUInt16Property("MethodProviderLockType");
 	}
@@ -608,7 +608,7 @@ public:
 	 *
 	 * @param UInt16 new MethodProviderLockType property value
 	 */
-	void setMethodProviderLockType(const UInt16 v)
+	void setMethodProviderLockType(const blocxx::UInt16 v)
 	{
 		setUInt16Property("MethodProviderLockType", v);
 	}

@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/NwIface.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_NwIface.hpp is deprecated, use "blocxx/NwIface.hpp" instead.
 #endif
 

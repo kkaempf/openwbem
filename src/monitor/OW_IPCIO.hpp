@@ -59,7 +59,7 @@ class IPCIO
 public:
 	/// @param peer_descriptor socket descriptor for communicating with peer
 	//
-	IPCIO(AutoDescriptor peer_descriptor, Timeout const & timeout);
+	IPCIO(blocxx::AutoDescriptor peer_descriptor, blocxx::Timeout const & timeout);
 
 	~IPCIO();
 
@@ -109,7 +109,7 @@ public:
 	* @post output buffer flushed.
 	* @throw IPCIOException on I/O error.
 	*/
-	void put_handle(FileHandle h);
+	void put_handle(blocxx::FileHandle h);
 
 	/**
 	* Gets a @c FileHandle from the peer.
@@ -121,7 +121,7 @@ public:
 	* @throw IPCIOException on I/O error or if the peer does not send a
 	* @c FileHandle or if there is data in the input buffer.
 	*/
-	AutoDescriptor get_handle();
+	blocxx::AutoDescriptor get_handle();
 
 	void close();
 
@@ -142,8 +142,8 @@ private:
 	IPCIO(IPCIO const &); // unimplemented
 	void operator=(IPCIO const &); // unimplemented
 
-	UnnamedPipeRef m_pipe;
-	Reference<IOIFCStreamBuffer> m_streambuf;
+	blocxx::UnnamedPipeRef m_pipe;
+	blocxx::Reference<blocxx::IOIFCStreamBuffer> m_streambuf;
 };
 
 /**
@@ -177,7 +177,7 @@ bool ipcio_get(
 * Writes a single @c String value to the peer.
 * @throw IPCIOException if the write fails.
 */
-void ipcio_put(IPCIO & io, String const & s);
+void ipcio_put(IPCIO & io, blocxx::String const & s);
 
 /**
 * Converts @a s to a @c String and writes it to the peer.  @c NULL is converted
@@ -211,7 +211,7 @@ void ipcio_put(IPCIO & io, char const * s, std::size_t len);
 * false).
 */
 bool ipcio_get(
-	IPCIO & io, String & s, std::size_t max_len = std::size_t(-1),
+	IPCIO & io, blocxx::String & s, std::size_t max_len = std::size_t(-1),
 	IPCIO::EOFAction eof_action = IPCIO::E_THROW_ON_EOF,
 	IPCIO::EBuffering eb = IPCIO::E_BUFFERED
 );

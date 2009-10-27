@@ -38,6 +38,7 @@
 #include "blocxx/CmdLineParser.hpp"
 #include "OW_PrivilegeManager.hpp"
 #include "blocxx/String.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_CppProviderIFC.hpp"
 #include "OW_CppProxyProvider.hpp"
 #include "blocxx/Format.hpp"
@@ -60,6 +61,7 @@
 
 using namespace std;
 using namespace OpenWBEM;
+using namespace blocxx;
 
 namespace
 {
@@ -280,13 +282,13 @@ private:
 		catch(Exception& e)
 		{
 			Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
-			OW_LOG_ERROR(logger, Format("provider %1 failed to initialize: %2", m_providerLib, e));
+			BLOCXX_LOG_ERROR(logger, Format("provider %1 failed to initialize: %2", m_providerLib, e));
 			throw;
 		}
 		catch(...)
 		{
 			Logger logger(OOPCpp1ProviderRunner::COMPONENT_NAME);
-			OW_LOG_ERROR(logger, Format("provider %1 failed to initialize", m_providerLib));
+			BLOCXX_LOG_ERROR(logger, Format("provider %1 failed to initialize", m_providerLib));
 			throw;
 		}
 	}
@@ -366,7 +368,7 @@ int main(int argc, char* argv[])
 		std::pair<FileSystem::Path::ESecurity, String> sec = FileSystem::Path::security(providerLib);
 		if (sec.first != FileSystem::Path::E_SECURE_FILE)
 		{
-			OW_LOG_ERROR(logger, Format("ERROR: %1(%2) is not a secure file.", providerLib, sec.second));
+			BLOCXX_LOG_ERROR(logger, Format("ERROR: %1(%2) is not a secure file.", providerLib, sec.second));
 			return 1;
 		}
 		providerLib = sec.second;
@@ -375,7 +377,7 @@ int main(int argc, char* argv[])
 	CppProviderBaseIFCRef cppprov = CppProviderIFC::loadProvider(providerLib);
 	if (!cppprov)
 	{
-		OW_LOG_ERROR(logger, Format("provider %1 did not load", providerLib));
+		BLOCXX_LOG_ERROR(logger, Format("provider %1 did not load", providerLib));
 		return 1;
 	}
 
@@ -390,29 +392,29 @@ int main(int argc, char* argv[])
 	int aarv = change_hat(subprofile.c_str(), magtok);
 	if (aarv != 0 && errno == EACCES)
 	{
-		OW_LOG_INFO(logger, Format("AppArmor: Subprofile does not exist: %1", subprofile));
+		BLOCXX_LOG_INFO(logger, Format("AppArmor: Subprofile does not exist: %1", subprofile));
 		subprofile = "default_provider_hat";
 		aarv = change_hat(subprofile.c_str(), magtok);
 	}
 	if (aarv == 0)
 	{
-		OW_LOG_INFO(logger, Format("AppArmor: Enforcing subprofile: %1", subprofile));
+		BLOCXX_LOG_INFO(logger, Format("AppArmor: Enforcing subprofile: %1", subprofile));
 	}
 	else
 	{
 		switch (errno)
 		{
 		case EACCES:
-			OW_LOG_INFO(logger, Format("AppArmor: Subprofile does not exist: %1", subprofile));
+			BLOCXX_LOG_INFO(logger, Format("AppArmor: Subprofile does not exist: %1", subprofile));
 			break;
 		case EFAULT:
-			OW_LOG_ERROR(logger, Format("AppArmor: Internal error while attempting to enforce subprofile: %1", subprofile));
+			BLOCXX_LOG_ERROR(logger, Format("AppArmor: Internal error while attempting to enforce subprofile: %1", subprofile));
 			break;
 		case ENOMEM:
-			OW_LOG_ERROR(logger, Format("AppArmor: Insufficient kernel memory to enforce subprofile: %1", subprofile));
+			BLOCXX_LOG_ERROR(logger, Format("AppArmor: Insufficient kernel memory to enforce subprofile: %1", subprofile));
 			break;
 		default:
-			OW_LOG_ERROR(logger, Format("AppArmor: Unknown error while attempting to enforce subprofile: %1: %2", subprofile, strerror(errno)));
+			BLOCXX_LOG_ERROR(logger, Format("AppArmor: Unknown error while attempting to enforce subprofile: %1: %2", subprofile, strerror(errno)));
 		}
 	}
 #endif

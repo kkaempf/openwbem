@@ -52,8 +52,8 @@ using OpenWBEM::PrivilegeConfig::MonitoredUserExecPatterns;
 using OpenWBEM::PrivilegeConfig::ExecArgsPatterns;
 using OpenWBEM::PrivilegeConfig::MonitoredUserExecArgsPatterns;
 using OpenWBEM::PrivilegeConfig::openwbem_privconfig_Lexer;
-using OpenWBEM::Array;
-using OpenWBEM::String;
+using blocxx::Array;
+using blocxx::String;
 using OpenWBEM::PrivilegeConfig::ParseError;
 
 namespace
@@ -95,8 +95,8 @@ void openwbem_privconfig_error(
 %union
 {
 	char * s;
-	::OpenWBEM::Array< ::OpenWBEM::PrivilegeConfig::ExecArgsPatterns::Arg>* ArgArray;
-	::OpenWBEM::Array< ::OpenWBEM::String>* StringArray;
+	::blocxx::Array< ::OpenWBEM::PrivilegeConfig::ExecArgsPatterns::Arg>* ArgArray;
+	::blocxx::Array< ::blocxx::String>* StringArray;
 	::OpenWBEM::PrivilegeConfig::EnvironmentVariablePatterns* EnvironmentVariablePatterns;
 }
 
@@ -157,7 +157,7 @@ config_stmt:
 |	K_INCLUDE '{' include_args '}'
 	{
 		// Process the list in reverse order because the include mechanism works on a stack (LIFO).
-		for (OpenWBEM::StringArray::reverse_iterator i = $3->rbegin(); i != $3->rend(); ++i)
+		for (blocxx::StringArray::reverse_iterator i = $3->rbegin(); i != $3->rend(); ++i)
 		{
 			if (p_lexer->include(*i) != 0)
 			{
@@ -199,7 +199,7 @@ read_dir_args:
 	/* empty */
 |	read_dir_args DIRPATH { p_priv->read_dir.addDir(makeNameOrPath($2)); }
 |	read_dir_args SUBTREE {
-		OpenWBEM::String s = makeNameOrPath($2);
+		blocxx::String s = makeNameOrPath($2);
 		p_priv->read_dir.addSubtree(s.substring(0, s.lastIndexOf('/')));
 	}
 ;
@@ -240,7 +240,7 @@ remove_dir_args:
 	/* empty */
 |	remove_dir_args DIRPATH { p_priv->remove_dir.addDir(makeNameOrPath($2)); }
 |	remove_dir_args SUBTREE {
-		OpenWBEM::String s = makeNameOrPath($2);
+		blocxx::String s = makeNameOrPath($2);
 		p_priv->remove_dir.addSubtree(s.substring(0, s.lastIndexOf('/')));
 	}
 ;
@@ -341,13 +341,13 @@ namespace
 {
 	void addPattern(PathPatterns & pp, char * consumed_c_str)
 	{
-		OpenWBEM::AutoPtrVec<char> s(consumed_c_str);
+		blocxx::AutoPtrVec<char> s(consumed_c_str);
 		pp.addPattern(consumed_c_str);
 	}
 
 	void addPattern(PathPatterns & pp1, PathPatterns & pp2, char * consumed_c_str)
 	{
-		OpenWBEM::AutoPtrVec<char> s(consumed_c_str);
+		blocxx::AutoPtrVec<char> s(consumed_c_str);
 		pp1.addPattern(consumed_c_str);
 		pp2.addPattern(consumed_c_str);
 	}
@@ -355,7 +355,7 @@ namespace
 	void addPattern(
 		ExecPatterns & ep, char * consumed_exec_path, char * consumed_ident, EnvironmentVariablePatterns* consumedEnvVars)
 	{
-		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
+		blocxx::AutoPtrVec<char> s(consumed_exec_path);
 		String ident(makeNameOrPath(consumed_ident));
 		if (consumedEnvVars)
 		{
@@ -370,7 +370,7 @@ namespace
 	void addPattern(
 		MonitoredUserExecPatterns & ep, char * consumed_exec_path, char * consumed_app_name, char * consumed_user_name, EnvironmentVariablePatterns* consumedEnvVars)
 	{
-		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
+		blocxx::AutoPtrVec<char> s(consumed_exec_path);
 		String app_name(makeNameOrPath(consumed_app_name));
 		String user_name(makeNameOrPath(consumed_user_name));
 		if (consumedEnvVars)
@@ -385,9 +385,9 @@ namespace
 
 	void addPattern(ExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_ident, EnvironmentVariablePatterns* consumedEnvVars)
 	{
-		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
+		blocxx::AutoPtrVec<char> s(consumed_exec_path);
 		String ident(makeNameOrPath(consumed_ident));
-		OpenWBEM::AutoPtr<Array<ExecArgsPatterns::Arg> > args(consumed_args);
+		blocxx::AutoPtr<Array<ExecArgsPatterns::Arg> > args(consumed_args);
 		if (consumedEnvVars)
 		{
 			ep.addPattern(consumed_exec_path, *consumed_args, *consumedEnvVars, ident);
@@ -400,10 +400,10 @@ namespace
 
 	void addPattern(MonitoredUserExecArgsPatterns & ep, char * consumed_exec_path, Array<ExecArgsPatterns::Arg>* consumed_args, char * consumed_app_name, char * consumed_user_name, EnvironmentVariablePatterns* consumedEnvVars)
 	{
-		OpenWBEM::AutoPtrVec<char> s(consumed_exec_path);
+		blocxx::AutoPtrVec<char> s(consumed_exec_path);
 		String app_name(makeNameOrPath(consumed_app_name));
 		String user_name(makeNameOrPath(consumed_user_name));
-		OpenWBEM::AutoPtr<Array<ExecArgsPatterns::Arg> > args(consumed_args);
+		blocxx::AutoPtr<Array<ExecArgsPatterns::Arg> > args(consumed_args);
 		if (consumedEnvVars)
 		{
 			ep.addPattern(consumed_exec_path, *consumed_args, *consumedEnvVars, app_name, user_name);
@@ -416,7 +416,7 @@ namespace
 
 	String makeNameOrPath(char * consumed_c_str)
 	{
-		OpenWBEM::AutoPtrVec<char> s(consumed_c_str);
+		blocxx::AutoPtrVec<char> s(consumed_c_str);
 		return OpenWBEM::PrivilegeConfig::unescapePath(consumed_c_str);
 	}
 

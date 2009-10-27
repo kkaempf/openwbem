@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/StringEnumeration.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_StringEnumeration.hpp is deprecated, use "blocxx/StringEnumeration.hpp" instead.
 #endif

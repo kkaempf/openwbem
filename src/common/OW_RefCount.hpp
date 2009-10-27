@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/RefCount.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_RefCount.hpp is deprecated, use "blocxx/RefCount.hpp" instead.
 #endif
 

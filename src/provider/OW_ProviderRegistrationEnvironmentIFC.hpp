@@ -49,7 +49,7 @@ namespace OW_NAMESPACE
  * The ProviderEnvironmentIFC object is valid only for the lifetime of the
  * referenced OperationContext.
  */
-class OW_PROVIDER_API ProviderRegistrationEnvironmentIFC : public IntrusiveCountableBase
+class OW_PROVIDER_API ProviderRegistrationEnvironmentIFC : public blocxx::IntrusiveCountableBase
 {
 public:
 	virtual ~ProviderRegistrationEnvironmentIFC();
@@ -60,10 +60,10 @@ public:
 	 */
 	virtual RepositoryIFCRef getRepository() const = 0;
 
-	virtual LoggerRef getLogger(const String& componentName) const = 0;
-	virtual String getConfigItem(const String &name, const String& defRetVal="") const = 0;
-	virtual StringArray getMultiConfigItem(const String &itemName,
-		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const = 0;
+	virtual blocxx::LoggerRef getLogger(const blocxx::String& componentName) const = 0;
+	virtual blocxx::String getConfigItem(const blocxx::String &name, const blocxx::String& defRetVal="") const = 0;
+	virtual blocxx::StringArray getMultiConfigItem(const blocxx::String &itemName,
+		const blocxx::StringArray& defRetVal, const char* tokenizeSeparator = 0) const = 0;
 
 	/**
 	 * When a provider is passed a ProviderEnvironmentIFCRef, the particular instance is only valid for the lifetime of the particular

@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/Cstr.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Cstr.hpp is deprecated, use "blocxx/Cstr.hpp" instead.
 #endif
 

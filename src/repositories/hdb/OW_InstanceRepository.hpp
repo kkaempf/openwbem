@@ -53,14 +53,14 @@ public:
 	InstanceRepository() {}
 
 	void getCIMInstances(
-		const String& ns,
-		const String& className,
+		const blocxx::String& ns,
+		const blocxx::String& className,
 		const CIMClass& requestedClass,
 		const CIMClass& theClass,
 		CIMInstanceResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep, WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList=NULL);
-	void getInstanceNames(const String& ns, const CIMClass& theClass,
+		const blocxx::StringArray* propertyList=NULL);
+	void getInstanceNames(const blocxx::String& ns, const CIMClass& theClass,
 		CIMObjectPathResultHandlerIFC& result);
 	/**
 	 * Retrieve a specific instance
@@ -73,11 +73,11 @@ public:
 	 * @exception CIMException
 	 * @exception IOException
 	 */
-	CIMInstance getCIMInstance(const String& ns,
+	CIMInstance getCIMInstance(const blocxx::String& ns,
 		const CIMObjectPath& instanceName,
 		const CIMClass& theClass, WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList);
+		const blocxx::StringArray* propertyList);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Delete an existing instance from the store
@@ -88,7 +88,7 @@ public:
 	 * @exception CIMException
 	 * @exception IOException
 	 */
-	void deleteInstance(const String& ns, const CIMObjectPath& cop,
+	void deleteInstance(const blocxx::String& ns, const CIMObjectPath& cop,
 		const CIMClass& theClass);
 	/**
 	 * Creates a instance in the store
@@ -101,7 +101,7 @@ public:
 	 * @exception CIMException
 	 * @exception IOException
 	 */
-	void createInstance(const String& ns, const CIMClass& theClass,
+	void createInstance(const blocxx::String& ns, const CIMClass& theClass,
 		const CIMInstance& ci);
 	/**
 	 * Update an instance
@@ -113,11 +113,11 @@ public:
 	 * @exception CIMException
 	 * @exception IOException
 	 */
-	void modifyInstance(const String& ns, const CIMObjectPath& cop,
+	void modifyInstance(const blocxx::String& ns, const CIMObjectPath& cop,
 		const CIMClass& theClass, const CIMInstance& ci,
 		const CIMInstance& oldInst,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const StringArray* propertyList);
+		const blocxx::StringArray* propertyList);
 	/**
 	 * Determin if a given class has instances.
 	 * @param classPath	The object path for the class to check.
@@ -131,7 +131,7 @@ public:
 	 * Delete the given namespace and all object contained within it.
 	 * @param nsName	The name of the namespace
 	 */
-	void deleteNameSpace(const String& nsName);
+	void deleteNameSpace(const blocxx::String& nsName);
 	/**
 	 * Create the necessary containers to make a valid path. Fail if the
 	 * last container already exists.
@@ -139,7 +139,7 @@ public:
 	 * @return 0 on success. Otherwise -1 if the bottom most container already
 	 * exists.
 	 */
-	virtual int createNameSpace(const String& ns);
+	virtual int createNameSpace(const blocxx::String& ns);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
@@ -148,17 +148,17 @@ public:
 	 * @param ns	The namespace for the class
 	 * @param cimClass	The class to create a container for
 	 */
-	void createClass(const String& ns, const CIMClass& cimClass);
+	void createClass(const blocxx::String& ns, const CIMClass& cimClass);
 	/**
 	 * Remove the class name container for a given class.
 	 * @param ns 			The namespace that contains the class
 	 * @param className	The name of the class container to remove.
 	 */
-	void deleteClass(const String& ns, const String& className);
+	void deleteClass(const blocxx::String& ns, const blocxx::String& className);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 private:
-	String makeClassKey(const String& ns, const String& className);
-	String makeInstanceKey(const String& ns, const CIMObjectPath& cop,
+	blocxx::String makeClassKey(const blocxx::String& ns, const blocxx::String& className);
+	blocxx::String makeInstanceKey(const blocxx::String& ns, const CIMObjectPath& cop,
 		const CIMClass& theClass);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	void _removeDuplicatedQualifiers(CIMInstance& inst, const CIMClass& theClass);

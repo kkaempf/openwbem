@@ -52,6 +52,6 @@ private:
 	blocxx::DateTime m_dateTime;
 };
 
-typedef OpenWBEM::IntrusiveReference<MockClock> MockClockRef;
+typedef blocxx::IntrusiveReference<MockClock> MockClockRef;
 
 #endif

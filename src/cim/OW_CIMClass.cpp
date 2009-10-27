@@ -36,7 +36,6 @@
 #include "OW_config.h"
 #include "OW_CIMClass.hpp"
 #include "blocxx/StringBuffer.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMProperty.hpp"
@@ -56,6 +55,7 @@ namespace OW_NAMESPACE
 
 using std::streambuf;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 //////////////////////////////////////////////////////////////////////////////
 struct CIMClass::CLSData : public COWIntrusiveCountableBase

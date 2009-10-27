@@ -36,7 +36,7 @@
 #include "OW_CIMException.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_CMPIProviderIFCUtils.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "cmpisrv.h"
 #ifdef OW_HAVE_ALLOCA_H
 #include <alloca.h>
@@ -49,6 +49,7 @@ namespace OW_NAMESPACE
 // debugging
 #define DDD(X) // X
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
@@ -70,7 +71,7 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 	const CIMClass& cimClass )
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::enumInstanceNames()");
+	BLOCXX_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::enumInstanceNames()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -120,7 +121,7 @@ CMPIInstanceProviderProxy::enumInstances(
 	const CIMClass& cimClass )
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::enumInstances()");
+	BLOCXX_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::enumInstances()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -182,7 +183,7 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 {
 	CIMInstance rval;
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::getInstance()");
+	BLOCXX_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::getInstance()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -248,7 +249,7 @@ CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 	const String& ns, const CIMObjectPath& cop)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::deleteInstance()");
+	BLOCXX_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::deleteInstance()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -290,7 +291,7 @@ CIMObjectPath
 {
 	CIMObjectPath rval;
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
+	BLOCXX_LOG_DEBUG3(lgr, Format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -339,7 +340,7 @@ void
 	const CIMClass& theClass)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::modifyInstance()");
+	BLOCXX_LOG_DEBUG3(lgr, "CMPIInstanceProviderProxy::modifyInstance()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 

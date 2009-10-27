@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/CerrLogger.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_CerrLogger.hpp is deprecated, use "blocxx/CerrLogger.hpp" instead.
 #endif
 

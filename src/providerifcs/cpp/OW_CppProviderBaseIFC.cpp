@@ -35,6 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
+#include "blocxx/DateTime.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -127,7 +128,7 @@ CppProviderBaseIFC::getQueryProvider()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-DateTime
+blocxx::DateTime
 CppProviderBaseIFC::getLastAccessTime() const
 {
 	return m_dt;

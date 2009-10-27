@@ -37,7 +37,7 @@
 #include "OW_CIMValue.hpp"
 #include "blocxx/StringBuffer.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_CIMValueCast.hpp" // for OW_ValueCastException
 #include "OW_CIMDateTime.hpp"
@@ -45,6 +45,8 @@
 
 #include <new>
 #include <cassert>
+
+using namespace blocxx;
 
 namespace OW_NAMESPACE
 {
@@ -954,7 +956,7 @@ CIMValue::CIMValueImpl::createSimpleValue(CIMDataType::Type type,
 			return CIMValueImpl(CIMObjectPath::parse(value));
 			break;
 		default:
-			OW_ASSERT(0);
+			BLOCXX_ASSERT(0);
 	}
 	return CIMValueImpl(value);
 }
@@ -963,7 +965,7 @@ CIMValue::CIMValueImpl::CIMValueImpl(const CIMValueImpl& arg) :
 	COWIntrusiveCountableBase(arg),
 	m_type(arg.m_type), m_isArray(arg.m_isArray)
 {
-	OW_ASSERT(arg.m_type > CIMDataType::CIMNULL && arg.m_type < CIMDataType::MAXDATATYPE);
+	BLOCXX_ASSERT(arg.m_type > CIMDataType::CIMNULL && arg.m_type < CIMDataType::MAXDATATYPE);
 
 	const CIMValueData& odata(arg.m_obj);
 
@@ -1023,7 +1025,7 @@ CIMValue::CIMValueImpl::CIMValueImpl(const CIMValueImpl& arg) :
 				new(&m_obj) CIMInstanceArray(*(reinterpret_cast<const CIMInstanceArray*>(&odata)));
 			break;
 			default:
-				OW_ASSERTMSG(false, "Invalid value for m_type");
+				BLOCXX_ASSERTMSG(false, "Invalid value for m_type");
 				break;
 		}
 	}
@@ -1063,7 +1065,7 @@ CIMValue::CIMValueImpl::CIMValueImpl(const CIMValueImpl& arg) :
 				new(&m_obj) CIMInstance(*(reinterpret_cast<const CIMInstance*>(&odata)));
 			break;
 			default:
-				OW_ASSERTMSG(0, "Invalid value for m_type");
+				BLOCXX_ASSERTMSG(0, "Invalid value for m_type");
 				break;
 		}
 	}
@@ -1536,7 +1538,7 @@ CIMValue::CIMValueImpl::equal(const CIMValueImpl& arg) const
 						*(reinterpret_cast<const CIMInstanceArray*>(&arg.m_obj));
 					break;
 				default:
-					OW_ASSERT(0);
+					BLOCXX_ASSERT(0);
 			}
 		}
 		else
@@ -1599,7 +1601,7 @@ CIMValue::CIMValueImpl::equal(const CIMValueImpl& arg) const
 						*(reinterpret_cast<const CIMInstance*>(&arg.m_obj));
 					break;
 				default:
-					OW_ASSERT(0);
+					BLOCXX_ASSERT(0);
 			}
 		}
 	}
@@ -1683,7 +1685,7 @@ CIMValue::CIMValueImpl::operator<(const CIMValueImpl& arg) const
 						*(reinterpret_cast<const CIMInstanceArray*>(&arg.m_obj));
 					break;
 				default:
-					OW_ASSERT(0);
+					BLOCXX_ASSERT(0);
 			}
 		}
 		else
@@ -1746,7 +1748,7 @@ CIMValue::CIMValueImpl::operator<(const CIMValueImpl& arg) const
 						*(reinterpret_cast<const CIMInstance*>(&arg.m_obj));
 					break;
 				default:
-					OW_ASSERT(0);
+					BLOCXX_ASSERT(0);
 			}
 		}
 	}
@@ -2401,7 +2403,7 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 				out = raToString(*(reinterpret_cast<const CIMInstanceArray*>(&m_obj)), forMOF);
 				break;
 			default:
-				OW_ASSERT(0);
+				BLOCXX_ASSERT(0);
 		}
 	}
 	else
@@ -2503,7 +2505,7 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 				}
 				break;
 			default:
-				OW_ASSERT(0);
+				BLOCXX_ASSERT(0);
 		}
 	}
 	return out.releaseString();
@@ -2725,7 +2727,7 @@ CIMValue::CIMValueImpl::readObject(streambuf & istrm)
 				readObjectArray(istrm, *(reinterpret_cast<CIMInstanceArray*>(&m_obj)));
 				break;
 			default:
-				OW_ASSERT(0);
+				BLOCXX_ASSERT(0);
 		}
 	}
 	else
@@ -2790,7 +2792,7 @@ CIMValue::CIMValueImpl::readObject(streambuf & istrm)
 				(reinterpret_cast<CIMInstance*>(&m_obj))->readObject(istrm);
 				break;
 			default:
-				OW_ASSERT(0);
+				BLOCXX_ASSERT(0);
 		}
 	}
 	return rval;
@@ -2962,7 +2964,7 @@ CIMValue::CIMValueImpl::writeObject(streambuf & ostrm) const
 				writeObjectArray(ostrm, *(reinterpret_cast<const CIMInstanceArray*>(&m_obj)));
 				break;
 			default:
-				OW_ASSERT(0);
+				BLOCXX_ASSERT(0);
 		}
 	}
 	else
@@ -3021,7 +3023,7 @@ CIMValue::CIMValueImpl::writeObject(streambuf & ostrm) const
 				(reinterpret_cast<const CIMInstance*>(&m_obj))->writeObject(ostrm);
 				break;
 			default:
-				OW_ASSERT(0);
+				BLOCXX_ASSERT(0);
 		}
 	}
 }

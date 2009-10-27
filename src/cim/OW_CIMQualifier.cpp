@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_CIMQualifier.hpp"
 #include "blocxx/StringBuffer.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "blocxx/StrictWeakOrdering.hpp"
 #include "OW_NULLValueException.hpp"
@@ -49,6 +49,7 @@ namespace OW_NAMESPACE
 {
 
 using std::streambuf;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMQualifier::QUALData : public COWIntrusiveCountableBase
 {
@@ -288,7 +289,7 @@ CIMQualifier::getPropagated() const
 CIMQualifier&
 CIMQualifier::setLanguage(const String& language)
 {
-	OW_ASSERT(hasFlavor(CIMFlavor::TRANSLATE));
+	BLOCXX_ASSERT(hasFlavor(CIMFlavor::TRANSLATE));
 	m_pdata->m_language = language;
 	return *this;
 }

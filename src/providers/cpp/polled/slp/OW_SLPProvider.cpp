@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_CIMOMLocatorSLP.hpp"
@@ -48,12 +48,14 @@
 #include "OW_CIMValue.hpp"
 
 /// @todo  Replace this with a string from uname
-#ifdef OW_GNU_LINUX
+#if defined(OW_GNU_LINUX)
 #define OW_STRPLATFORM "Linux"
-#endif
-#ifdef OW_SOLARIS
+#elif defined(OW_SOLARIS)
 #define OW_STRPLATFORM "Solaris"
+#elif defined(OW_HPUX)
+#define OW_STRPLATFORM "HP-UX"
 #endif
+
 #ifndef OW_STRPLATFORM
 #error "OW_STRPLATFORM is undefined"
 #endif
@@ -89,7 +91,7 @@ slpRegReport(SLPHandle hdl, SLPError errArg, void* cookie)
 	if (errArg < SLP_OK)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_ERROR(logger, Format("cimom received error durring SLP registration: %1",
+		BLOCXX_LOG_ERROR(logger, Format("cimom received error durring SLP registration: %1",
 			(int)errArg));
 	}
 }
@@ -112,7 +114,7 @@ public:
 			return 0;
 		}
 		Int32 rval = INITIAL_POLLING_INTERVAL;
-		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), Format("SLPProvider::getInitialPollingInterval returning %1", INITIAL_POLLING_INTERVAL).c_str());
+		BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), Format("SLPProvider::getInitialPollingInterval returning %1", INITIAL_POLLING_INTERVAL).c_str());
 		m_httpsPort = env->getConfigItem(ConfigOpts::HTTP_SERVER_HTTPS_PORT_opt, OW_DEFAULT_HTTP_SERVER_HTTPS_PORT);
 		m_httpPort = env->getConfigItem(ConfigOpts::HTTP_SERVER_HTTP_PORT_opt, OW_DEFAULT_HTTP_SERVER_HTTP_PORT);
 		Int32 httpsPort = 0, httpPort = 0;
@@ -155,8 +157,8 @@ public:
 		catch (CIMException& e)
 		{
 			Logger lgr(COMPONENT_NAME);
-			OW_LOG_ERROR(lgr, Format("SLP provider caught (%1) when executing enumInstanceNames(%2, \"CIM_ObjectManager\")", e, m_interopSchemaNamespace));
-			OW_LOG_ERROR(lgr, "SLP provider unable to determine service-id");
+			BLOCXX_LOG_ERROR(lgr, Format("SLP provider caught (%1) when executing enumInstanceNames(%2, \"CIM_ObjectManager\")", e, m_interopSchemaNamespace));
+			BLOCXX_LOG_ERROR(lgr, "SLP provider unable to determine service-id");
 		}
 
 		m_queryEnabled = !env->getConfigItem(ConfigOpts::WQL_LIB_opt, OW_DEFAULT_WQL_LIB).empty();
@@ -197,7 +199,7 @@ private:
 		if ((err = SLPOpen("en", SLP_FALSE, &slpHandle)) != SLP_OK)
 		{
 			Logger lgr(COMPONENT_NAME);
-			OW_LOG_ERROR(lgr, Format("SLPProvider::doSlpRegister - SLPOpenFailed: %1",
+			BLOCXX_LOG_ERROR(lgr, Format("SLPProvider::doSlpRegister - SLPOpenFailed: %1",
 				err).c_str());
 			return;
 		}
@@ -345,11 +347,11 @@ private:
 				0);
 			if (err != SLP_OK)
 			{
-				OW_LOG_ERROR(lgr, Format("cimom failed to register url with SLP: %1", urlString).c_str());
+				BLOCXX_LOG_ERROR(lgr, Format("cimom failed to register url with SLP: %1", urlString).c_str());
 			}
 			else
 			{
-				OW_LOG_DEBUG(lgr, Format("cimom registered service url with SLP: %1", urlString).c_str());
+				BLOCXX_LOG_DEBUG(lgr, Format("cimom registered service url with SLP: %1", urlString).c_str());
 			}
 		}
 	}

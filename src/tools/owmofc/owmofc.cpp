@@ -36,7 +36,6 @@
 #include "OW_MOFGrammar.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_MOFCIMOMVisitor.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_MOFParserErrorHandlerIFC.hpp"
 #include "OW_MOFCompiler.hpp"
 #include "blocxx/GetPass.hpp"
@@ -53,7 +52,7 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_LocalOperationContext.hpp"
 #include "OW_URL.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/Reference.hpp"
 #include "blocxx/CmdLineParser.hpp"
 #include "blocxx/CerrLogger.hpp"
@@ -64,6 +63,7 @@
 
 using namespace OpenWBEM;
 using namespace OpenWBEM::MOF;
+using namespace blocxx;
 
 using std::cout;
 using std::cin;
@@ -75,7 +75,6 @@ bool g_enableDebug;
 bool g_useCimRepository;
 String g_repositoryDir;
 String g_url;
-String g_encoding;
 StringArray g_filelist;
 
 #define LOG_DEBUG(message) \
@@ -135,8 +134,6 @@ protected:
 // If these are changed, don't forget to change the corresponding command usage description.
 const char* const def_url_arg = "http://localhost/root/cimv2";
 const char* const def_namespace_arg = "root/cimv2";
-const char* const def_encoding_arg = "cimxml";
-
 
 enum
 {
@@ -147,7 +144,6 @@ enum
 	E_OPTurl,
 	E_OPTnamespace,
 	E_OPTcreate_namespaces,
-	E_OPTencoding,
 	E_OPTcheck_syntax,
 	E_OPTdump_xml,
 	E_OPTremove,
@@ -184,10 +180,6 @@ CmdLineParser::Option options[] =
 	{ E_OPTnamespace, 'n', "namespace", CmdLineParser::E_REQUIRED_ARG, 0,
 		"This option is overridden by the URL namespace. The initial namespace "
 		"to use. Default is root/cimv2 if not specified via this option or in the URL."},
-	{ E_OPTencoding, 'e', "encoding", CmdLineParser::E_REQUIRED_ARG, 0,
-		"This option is deprecated (in 3.1.0) in favor of the URL scheme. "
-		"Specify the encoding, valid values are cimxml and owbinary. "
-		"This can also be specified by using the owbinary.wbem URI scheme."},
 #if 0
 	{ E_OPTcheck_syntax, 's', "check-syntax", CmdLineParser::E_NO_ARG, 0,
 		"Only parse the mof, don't actually do anything. <UNIMPLEMENTED>"},
@@ -223,19 +215,6 @@ processCommandLineOptions(int argc, char** argv)
 {
 	// Set defaults
 	g_url = def_url_arg;
-	g_encoding = def_encoding_arg;
-
-	// handle backwards compatible options, which was <URL> <namespace> <file>
-	// This has to be done after setting the defaults.
-	// TODO: This is deprecated in 3.0.0, remove it post 3.1
-	if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
-	{
-		g_url = argv[1];
-		g_opts.m_namespace = argv[2];
-		g_filelist.push_back(argv[3]);
-		cerr << "This cmd line usage is deprecated!\n";
-		return true;
-	}
 
 	try
 	{
@@ -267,10 +246,6 @@ processCommandLineOptions(int argc, char** argv)
 		if (parser.isSet(E_OPTnamespace))
 		{
 			g_opts.m_namespace = parser.getOptionValue(E_OPTnamespace);
-		}
-		if (parser.isSet(E_OPTencoding))
-		{
-			g_encoding = parser.getOptionValue(E_OPTencoding);
 		}
 		if (parser.isSet(E_OPTcreate_namespaces))
 		{
@@ -320,20 +295,6 @@ processCommandLineOptions(int argc, char** argv)
 		return false;
 	}
 
-	// Set default namespace, this is a bit strange to maintain backward compat.
-	// This was deprecated in 3.1.0, remove it later.
-	if (g_opts.m_namespace.empty())
-	{
-		URL url(g_url);
-		if (url.namespaceName.empty())
-		{
-			g_opts.m_namespace = def_namespace_arg;
-		}
-		else
-		{
-			g_opts.m_namespace = url.namespaceName;
-		}
-	}
 	return true;
 }
 
@@ -374,8 +335,6 @@ int main(int argc, char** argv)
 			{
 				LOG_DEBUG(Format("Connecting to CIMOM with url: %1", g_url));
 			}
-
-			LOG_DEBUG(Format("Using encoding: %1", g_encoding ));
 
 			LOG_DEBUG("Supplied Filenames:");
 			for (size_t i = 0; i < g_filelist.size(); ++i)
@@ -426,27 +385,6 @@ int main(int argc, char** argv)
 		else
 		{
 			URL url(g_url);
-			// override what was in the url - TODO: deprecated in 3.0.0. Remove this post 3.1.x
-			if (g_encoding == URL::OWBINARY)
-			{
-				if (url.scheme.endsWith('s'))
-				{
-					url.scheme == URL::OWBINARY_WBEMS;
-				}
-				else
-				{
-					url.scheme == URL::OWBINARY_WBEM;
-				}
-			}
-			else if (g_encoding == "cimxml")
-			{
-				; // don't do anything
-			}
-			else
-			{
-				cerr << "Invalid encoding.  Valid encodings: cimxml, " << URL::OWBINARY << endl;
-				return 1;
-			}
 			LOG_DEBUG("Getting Login Info");
 			ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 			LOG_DEBUG("Creating CIMOM Handle");

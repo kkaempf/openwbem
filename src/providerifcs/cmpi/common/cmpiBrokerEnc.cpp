@@ -24,28 +24,28 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 
 #include <cstring>
 
 namespace
 {
-	const OpenWBEM::String COMPONENT_NAME("ow.provider.cmpi.ifc");
+	const blocxx::String COMPONENT_NAME("ow.provider.cmpi.ifc");
 }
 
 #define CM_LOGGER() \
-::OpenWBEM::Logger(COMPONENT_NAME)
+::blocxx::Logger(COMPONENT_NAME)
 
 // Factory section
 
 static CMPIInstance* mbEncNewInstance(const CMPIBroker*, const CMPIObjectPath* eCop,
 						 CMPIStatus *rc)
 {
-	OW_LOG_DEBUG3(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewInstance()");
+	BLOCXX_LOG_DEBUG3(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewInstance()");
 
 	OpenWBEM::CIMObjectPath * cop = static_cast<OpenWBEM::CIMObjectPath *>(eCop->hdl);
 
-	OpenWBEM::AutoPtr<OpenWBEM::CIMClass> cls(mbGetClass(0,*cop));
+	blocxx::AutoPtr<OpenWBEM::CIMClass> cls(mbGetClass(0,*cop));
 
 	OpenWBEM::CIMInstance ci;
 
@@ -74,9 +74,9 @@ static CMPIInstance* mbEncNewInstance(const CMPIBroker*, const CMPIObjectPath* e
 static CMPIObjectPath* mbEncNewObjectPath(const CMPIBroker*, const char *ns, const char *cls,
 				  CMPIStatus *rc)
 {
-	OW_LOG_DEBUG3(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewObjectPath()");
-	OpenWBEM::String className(cls);
-	OpenWBEM::String nameSpace(ns);
+	BLOCXX_LOG_DEBUG3(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewObjectPath()");
+	blocxx::String className(cls);
+	blocxx::String nameSpace(ns);
 	OpenWBEM::CIMObjectPath * cop = new OpenWBEM::CIMObjectPath(className,nameSpace);
 
 	CMPIObjectPath * nePath = (CMPIObjectPath*)new CMPI_Object(cop);
@@ -87,7 +87,7 @@ static CMPIObjectPath* mbEncNewObjectPath(const CMPIBroker*, const char *ns, con
 static CMPIArgs* mbEncNewArgs(const CMPIBroker*, CMPIStatus *rc)
 {
 	CMSetStatus(rc,CMPI_RC_OK);
-	return (CMPIArgs*)new CMPI_Object(new OpenWBEM::Array<OpenWBEM::CIMParamValue>());
+	return (CMPIArgs*)new CMPI_Object(new blocxx::Array<OpenWBEM::CIMParamValue>());
 }
 
 static CMPIString* mbEncNewString(const CMPIBroker*, const char *cStr, CMPIStatus *rc)
@@ -103,7 +103,7 @@ CMPIString* mbIntNewString(char *s) {
 static CMPIArray* mbEncNewArray(const CMPIBroker*, CMPICount count, CMPIType type,
 								CMPIStatus *rc)
 {
-	OW_LOG_DEBUG3(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewArray()");
+	BLOCXX_LOG_DEBUG3(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewArray()");
 	CMSetStatus(rc,CMPI_RC_OK);
 	CMPIData * dta = new CMPIData[count+1];
 	dta->type = type;
@@ -147,7 +147,7 @@ static CMPIDateTime* mbEncNewDateTimeFromString(const CMPIBroker*,
 static CMPIString* mbEncToString(const CMPIBroker *, const void * o, CMPIStatus * rc)
 {
 	CMPI_Object *obj = (CMPI_Object*)o;
-	OpenWBEM::String str;
+	blocxx::String str;
 
 	if (obj == NULL)
 	{
@@ -177,7 +177,7 @@ static CMPIString* mbEncToString(const CMPIBroker *, const void * o, CMPIStatus 
 	}
 	else if (obj->ftab == (void*) CMPI_String_Ftab)
 	{
-		str = *((OpenWBEM::String*) obj->hdl);
+		str = *((blocxx::String*) obj->hdl);
 	}
 	/*
 	else if (obj->ftab==(void*)CMPI_SelectExp_Ftab ||
@@ -217,11 +217,11 @@ static CMPIBoolean mbEncClassPathIsA(const CMPIBroker *, const CMPIObjectPath *e
 		return 0;
 	}
 
-	OpenWBEM::String tcn(type);
+	blocxx::String tcn(type);
 
 	if (tcn == cop->getClassName()) return 1;
 
-	OpenWBEM::AutoPtr<OpenWBEM::CIMClass> cc(mbGetClass(0,*cop));
+	blocxx::AutoPtr<OpenWBEM::CIMClass> cc(mbGetClass(0,*cop));
 	if (!(cc.get()))
 	{
 		CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
@@ -385,11 +385,11 @@ CMPIString* mbEncGetMessage(const CMPIBroker *, const char *msgId, const char *d
    String nMsg=MessageLoader::getMessage(parms);
    return string2CMPIString(nMsg);
 #endif // #if 0
-   return string2CMPIString(OpenWBEM::String(defMsg));
+   return string2CMPIString(blocxx::String(defMsg));
 }
 #endif
 
-// TODO logMessage() and trace()
+/// @todo logMessage() and trace()
 
 CMPIStatus mbEncLogMessage(const CMPIBroker* mb, int severity,
 						   const char* id, const char* text,
@@ -412,20 +412,20 @@ CMPIStatus mbEncLogMessage(const CMPIBroker* mb, int severity,
 			id = COMPONENT_NAME.c_str();
 		}
 
-		OpenWBEM::Logger lgr(id);
+		blocxx::Logger lgr(id);
 		switch (severity)
 		{
 			case 1:		// Info
-				OW_LOG_INFO(lgr, msg);
+				BLOCXX_LOG_INFO(lgr, msg);
 				break;
 			case 2:		// Warning (No WARNING in OW)
-				OW_LOG_ERROR(lgr, msg);
+				BLOCXX_LOG_ERROR(lgr, msg);
 				break;
 			case 3:		// Severe
-				OW_LOG_ERROR(lgr, msg);
+				BLOCXX_LOG_ERROR(lgr, msg);
 				break;
 			case 4:		// Fatal
-				OW_LOG_FATAL_ERROR(lgr, msg);
+				BLOCXX_LOG_FATAL_ERROR(lgr, msg);
 				break;
 			default:
 				rc.rc = CMPI_RC_ERR_INVALID_PARAMETER;

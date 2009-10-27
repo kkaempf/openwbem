@@ -53,21 +53,21 @@ class OW_WQL_API WQLImpl : public WQLIFC
 public:
 	virtual ~WQLImpl();
 
-	String getName() const;
+	blocxx::String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void shutdown();
 
-	virtual void evaluate(const String& nameSpace,
+	virtual void evaluate(const blocxx::String& nameSpace,
 		CIMInstanceResultHandlerIFC& result,
-		const String& query, const String& queryLanguage,
+		const blocxx::String& query, const blocxx::String& queryLanguage,
 		const CIMOMHandleIFCRef& hdl);
-	virtual void evaluate(const String& nameSpace,
+	virtual void evaluate(const blocxx::String& nameSpace,
 		CIMInstanceResultHandlerIFC& result,
-		const String& query, const String& queryLanguage,
+		const blocxx::String& query, const blocxx::String& queryLanguage,
 		const RepositoryIFCRef& hdl,
 		OperationContext& oc);
-	virtual WQLSelectStatement createSelectStatement(const String& query);
-	virtual bool supportsQueryLanguage(const String& lang);
+	virtual WQLSelectStatement createSelectStatement(const blocxx::String& query);
+	virtual bool supportsQueryLanguage(const blocxx::String& lang);
 
 	static WQL::stmt* setStatement(WQL::stmt* statement)
 	{
@@ -80,7 +80,7 @@ public:
 		return s_parserInput;
 	}
 private:
-	static Mutex s_classLock;
+	static blocxx::Mutex s_classLock;
 	static const char* s_parserInput;
 	static WQL::stmt* s_statement;
 };

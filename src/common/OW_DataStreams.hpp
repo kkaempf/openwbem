@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/DataStreams.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_DataStreams.hpp is deprecated, use "blocxx/DataStreams.hpp" instead.
 #endif
 

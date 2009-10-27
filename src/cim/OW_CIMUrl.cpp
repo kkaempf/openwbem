@@ -45,6 +45,7 @@ namespace OW_NAMESPACE
 {
 
 using std::streambuf;
+using namespace blocxx;
 
 struct CIMUrl::URLData : public COWIntrusiveCountableBase
 {

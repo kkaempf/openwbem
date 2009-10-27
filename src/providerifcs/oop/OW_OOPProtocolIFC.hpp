@@ -54,236 +54,236 @@ namespace OW_NAMESPACE
 
 class OOPProviderBase;
 
-class OOPProtocolIFC : public IntrusiveCountableBase
+class OOPProtocolIFC : public blocxx::IntrusiveCountableBase
 {
 public:
 	OOPProtocolIFC(OOPProviderBase* pprov);
 	virtual ~OOPProtocolIFC();
 
 	virtual void enumInstanceNames(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const String& className,
+		const blocxx::String& ns,
+		const blocxx::String& className,
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass) = 0;
 
 
 	virtual void enumInstances(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const String& className,
+		const blocxx::String& ns,
+		const blocxx::String& className,
 		CIMInstanceResultHandlerIFC& result,
 		WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EDeepFlag deep,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList,
+		const blocxx::StringArray* propertyList,
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass) = 0;
 
 
 	virtual CIMInstance getInstance(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& instanceName,
 		WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList,
+		const blocxx::StringArray* propertyList,
 		const CIMClass& cimClass) = 0;
 
 	virtual CIMObjectPath createInstance(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMInstance& cimInstance) = 0;
 
 	virtual void modifyInstance(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMInstance& modifiedInstance,
 		const CIMInstance& previousInstance,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const StringArray* propertyList,
+		const blocxx::StringArray* propertyList,
 		const CIMClass& theClass) = 0;
 
 	virtual void deleteInstance(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& cop) = 0;
 
 	virtual void associators(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		CIMInstanceResultHandlerIFC& result,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& objectName,
-		const String& assocClass,
-		const String& resultClass,
-		const String& role,
-		const String& resultRole,
+		const blocxx::String& assocClass,
+		const blocxx::String& resultClass,
+		const blocxx::String& role,
+		const blocxx::String& resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList) = 0;
+		const blocxx::StringArray* propertyList) = 0;
 
 	virtual void associatorNames(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		CIMObjectPathResultHandlerIFC& result,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& objectName,
-		const String& assocClass,
-		const String& resultClass,
-		const String& role,
-		const String& resultRole) = 0;
+		const blocxx::String& assocClass,
+		const blocxx::String& resultClass,
+		const blocxx::String& role,
+		const blocxx::String& resultRole) = 0;
 
 	virtual void references(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		CIMInstanceResultHandlerIFC& result,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& objectName,
-		const String& resultClass,
-		const String& role,
+		const blocxx::String& resultClass,
+		const blocxx::String& role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList) = 0;
+		const blocxx::StringArray* propertyList) = 0;
 
 	virtual void referenceNames(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		CIMObjectPathResultHandlerIFC& result,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& objectName,
-		const String& resultClass,
-		const String& role) = 0;
+		const blocxx::String& resultClass,
+		const blocxx::String& role) = 0;
 
 	virtual CIMValue invokeMethod(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& path,
-		const String& methodName,
+		const blocxx::String& methodName,
 		const CIMParamValueArray& inparams,
 		CIMParamValueArray& outparams) = 0;
 
-	virtual Int32 poll(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+	virtual blocxx::Int32 poll(
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env) = 0;
 
-	virtual Int32 getInitialPollingInterval(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+	virtual blocxx::Int32 getInitialPollingInterval(
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env) = 0;
 
 	virtual void setPersistent(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		bool persistent) = 0;
 
 	virtual void setLogLevel(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
-		ELogLevel logLevel) = 0;
+		blocxx::ELogLevel logLevel) = 0;
 
 	virtual void activateFilter(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes,
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
 		bool firstActivation) = 0;
 
 	virtual void authorizeFilter(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes,
-		const String& owner) = 0;
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
+		const blocxx::String& owner) = 0;
 
 	virtual void deActivateFilter(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes,
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
 		bool lastActivation) = 0;
 
 	virtual int mustPoll(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes) = 0;
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes) = 0;
 
 	virtual void exportIndication(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMInstance& indHandlerInst,
 		const CIMInstance& indicationInst) = 0;
 
 	virtual void shuttingDown(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env) = 0;
 
 	virtual void queryInstances(
-		const UnnamedPipeRef& in,
-		const UnnamedPipeRef& out,
-		const Timeout& timeout,
+		const blocxx::UnnamedPipeRef& in,
+		const blocxx::UnnamedPipeRef& out,
+		const blocxx::Timeout& timeout,
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const WQLSelectStatement& query,
 		CIMInstanceResultHandlerIFC& result,
 		const CIMClass& cimClass) = 0;

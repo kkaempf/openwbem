@@ -51,6 +51,7 @@ using std::endl;
 using std::find;
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 // create our own TEST_ASSERT, because assert and ASSERT will be turned off
 // in non-debug mode.

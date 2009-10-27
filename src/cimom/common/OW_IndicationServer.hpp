@@ -51,13 +51,13 @@ public:
 	virtual ~IndicationServer();
 
 	virtual void processIndication(const CIMInstance& instance,
-		const String& instNS) = 0;
+		const blocxx::String& instNS) = 0;
 
 	// these functions are called by the CIM_IndicationSubscription pass-thru provider.
-	virtual void startDeleteSubscription(const String& ns, const CIMObjectPath& subPath) = 0;
-	virtual void startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username) = 0;
-	virtual void startModifySubscription(const String& ns, const CIMInstance& subInst) = 0;
-	virtual void modifyFilter(OperationContext& context, const String& ns, const CIMInstance& filterInst, const String& userName) = 0;
+	virtual void startDeleteSubscription(const blocxx::String& ns, const CIMObjectPath& subPath) = 0;
+	virtual void startCreateSubscription(const blocxx::String& ns, const CIMInstance& subInst, const blocxx::String& username) = 0;
+	virtual void startModifySubscription(const blocxx::String& ns, const CIMInstance& subInst) = 0;
+	virtual void modifyFilter(OperationContext& context, const blocxx::String& ns, const CIMInstance& filterInst, const blocxx::String& userName) = 0;
 };
 
 } // end namespace OW_NAMESPACE

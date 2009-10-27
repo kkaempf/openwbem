@@ -58,14 +58,14 @@ static CMPIObjectPath* refClone(const CMPIObjectPath* eRef, CMPIStatus* rc)
 static CMPIStatus refSetNameSpace(CMPIObjectPath* eRef, const char* ns)
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
-	ref->setNameSpace(OpenWBEM::String(ns));
+	ref->setNameSpace(blocxx::String(ns));
 	CMReturn(CMPI_RC_OK);
 }
 
 static CMPIString* refGetNameSpace(const CMPIObjectPath* eRef, CMPIStatus* rc)
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
-	const OpenWBEM::String &ns=ref->getNameSpace();
+	const blocxx::String &ns=ref->getNameSpace();
 	CMPIString *eNs=string2CMPIString(ns);
 	CMSetStatus(rc,CMPI_RC_OK);
 	return eNs;
@@ -74,25 +74,25 @@ static CMPIString* refGetNameSpace(const CMPIObjectPath* eRef, CMPIStatus* rc)
 static CMPIStatus refSetClassName(CMPIObjectPath * eRef,const char * cl)
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
-	ref->setClassName(OpenWBEM::String(cl));
+	ref->setClassName(blocxx::String(cl));
 	CMReturn(CMPI_RC_OK);
 }
 
 static CMPIString* refGetClassName(const CMPIObjectPath* eRef, CMPIStatus* rc)
 {
 	OpenWBEM::CIMObjectPath * ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
-	const OpenWBEM::String &cn=ref->getClassName();
+	const blocxx::String &cn=ref->getClassName();
 	CMPIString* eCn=string2CMPIString(cn);
 	CMSetStatus(rc,CMPI_RC_OK);
 	return eCn;
 }
 
 
-static long locateKey(const OpenWBEM::CIMPropertyArray &kb, const OpenWBEM::String& eName)
+static long locateKey(const OpenWBEM::CIMPropertyArray &kb, const blocxx::String& eName)
 {
 	for (unsigned long i=0,s=kb.size(); i<s; i++)
 	{
-		const OpenWBEM::String &n=kb[i].getName();
+		const blocxx::String &n=kb[i].getName();
 		if (n.equalsIgnoreCase(eName))
 		{
 			return i;
@@ -106,7 +106,7 @@ static CMPIStatus refAddKey(CMPIObjectPath* eRef, const char* name,
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
 	OpenWBEM::CIMPropertyArray keyBindings=ref->getKeys();
-	OpenWBEM::String key(name);
+	blocxx::String key(name);
 	CMPIrc rc;
 
 	long i = locateKey(keyBindings, key);
@@ -124,7 +124,7 @@ static CMPIStatus refAddKey(CMPIObjectPath* eRef, const char* name,
 static CMPIData refGetKey(const CMPIObjectPath* eRef, const char* name, CMPIStatus* rc)
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
-	const OpenWBEM::String eName(name);
+	const blocxx::String eName(name);
 	OpenWBEM::CIMProperty cpr = ref->getKey(eName);
 	CMPIData data = {(CMPIType) 0, CMPI_nullValue, {0} };
 
@@ -160,7 +160,7 @@ static CMPIData refGetKeyAt(const CMPIObjectPath* eRef, unsigned pos, CMPIString
 
 	if (name)
 	{
-		const OpenWBEM::String &n=akb[pos].getName();
+		const blocxx::String &n=akb[pos].getName();
 		*name=string2CMPIString(n);
 	}
 	return data;

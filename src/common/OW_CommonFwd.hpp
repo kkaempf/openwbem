@@ -44,8 +44,8 @@ namespace OW_NAMESPACE
 namespace ConfigFile
 {
 	struct ItemData;
-	typedef Array<ItemData> ItemDataArray;
-	typedef SortedVectorMap<String, ItemDataArray> ConfigMap;
+	typedef blocxx::Array<ItemData> ItemDataArray;
+	typedef blocxx::SortedVectorMap<blocxx::String, ItemDataArray> ConfigMap;
 }
 
 class OperationContext;
@@ -55,10 +55,10 @@ struct CIMFeatures;
 class UserInfo;
 
 class RepositoryCIMOMHandle;
-typedef IntrusiveReference<RepositoryCIMOMHandle> RepositoryCIMOMHandleRef;
+typedef blocxx::IntrusiveReference<RepositoryCIMOMHandle> RepositoryCIMOMHandleRef;
 
 class SessionLanguage;
-typedef IntrusiveReference<SessionLanguage> SessionLanguageRef;
+typedef blocxx::IntrusiveReference<SessionLanguage> SessionLanguageRef;
 
 class WQLSelectStatement;
 class WQLCompile;

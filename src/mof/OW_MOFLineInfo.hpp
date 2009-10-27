@@ -47,9 +47,9 @@ struct OW_MOF_API LineInfo
 {
 	LineInfo()
 		: filename(), lineNum(1), columnNum(1) {}
-	LineInfo( const String& _filename, const long _linenum, const long _columnNum )
+	LineInfo( const blocxx::String& _filename, const long _linenum, const long _columnNum )
 		: filename(_filename), lineNum(_linenum), columnNum(_columnNum) {}
-	String filename;
+	blocxx::String filename;
 	long lineNum;
 	long columnNum;
 };

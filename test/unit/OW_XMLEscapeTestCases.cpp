@@ -45,6 +45,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_XMLEscapeTestCases,"OW_XMLEscape");
 #include <climits>
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void OW_XMLEscapeTestCases::setUp()
 {

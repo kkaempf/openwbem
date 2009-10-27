@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/MemoryBarrier.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_MemoryBarrier.hpp is deprecated, use "blocxx/MemoryBarrier.hpp" instead.
 #endif
 

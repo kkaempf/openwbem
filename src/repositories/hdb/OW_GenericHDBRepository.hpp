@@ -42,7 +42,7 @@
 #include "blocxx/MutexLock.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -73,7 +73,7 @@ public:
 	 * @exception Exception
 	 * @exception HDBException
 	 */
-	virtual void open(const String& path);
+	virtual void open(const blocxx::String& path);
 	/**
 	 * Close this GenericHDBRepository.
 	 */
@@ -86,14 +86,14 @@ public:
 	 * @return 0 on success. Otherwise -1 if the bottom most container already
 	 * exists.
 	 */
-	virtual int createNameSpace(const String& ns);
+	virtual int createNameSpace(const blocxx::String& ns);
 	/**
 	 * Delete a container and all of its' children
 	 * @param key	The key to the container to remove
 	 * @exception IOException If the database is not opened.
 	 * @exception HDBException
 	 */
-	void deleteNameSpace(const String& key);
+	void deleteNameSpace(const blocxx::String& key);
 #endif
 	/**
 	 * Check whether a namespace exists
@@ -102,22 +102,22 @@ public:
 	 * @exception HDBException
 	 * @return Whether the namespace key exists.
 	 */
-	bool nameSpaceExists(const String& key);
+	bool nameSpaceExists(const blocxx::String& key);
 	/**
 	 * @return true if this repository is open. Otherwise false.
 	 */
 	bool isOpen() { return m_opened; }
 	void nodeToCIMObject(CIMBase& cimObj, const HDBNode& node);
-	void getCIMObject(CIMBase& cimObj, const String& key,
+	void getCIMObject(CIMBase& cimObj, const blocxx::String& key,
 		HDBHandle hdl);
 	void updateCIMObject(const CIMBase& cimObj, HDBNode& node,
 		HDBHandle hdl);
 	void updateCIMObject(const CIMBase& cimObj, HDBNode& node,
 		HDBNode& parentNode, HDBHandle hdl);
-	void addCIMObject(const CIMBase& cimObj, const String& key,
-		HDBNode& parentNode, HDBHandle hdl, UInt32 nodeFlags=0);
-	void addCIMObject(const CIMBase& cimObj, const String& key,
-		HDBHandle hdl, UInt32 nodeFlags=0);
+	void addCIMObject(const CIMBase& cimObj, const blocxx::String& key,
+		HDBNode& parentNode, HDBHandle hdl, blocxx::UInt32 nodeFlags=0);
+	void addCIMObject(const CIMBase& cimObj, const blocxx::String& key,
+		HDBHandle hdl, blocxx::UInt32 nodeFlags=0);
 	/**
 	 * @return An HDBHandle object from the underlying HDB object.
 	 * freeHandle must be called later on the handle that is returned from
@@ -139,11 +139,11 @@ public:
 	 * @return On success the HDBNode associated with the given key.
 	 * Otherwise a null HDBNode
 	 */
-	HDBNode getNameSpaceNode(HDBHandleLock& hdl, String key);
+	HDBNode getNameSpaceNode(HDBHandleLock& hdl, blocxx::String key);
 
 	bool checkFreeList();
 
-	static const String COMPONENT_NAME;
+	static const blocxx::String COMPONENT_NAME;
 
 protected:
 	/**
@@ -163,8 +163,8 @@ protected:
 
 	HDB m_hdb;
 	bool m_opened;
-	Mutex m_guard;
-	Array<HDBHandle> m_handles;
+	blocxx::Mutex m_guard;
+	blocxx::Array<HDBHandle> m_handles;
 	ServiceEnvironmentIFCRef m_env;
 	enum { MAXHANDLES = 10 };
 	friend class HDBHandleLock;
@@ -205,9 +205,9 @@ private:
 	GenericHDBRepository* m_pr;
 	HDBHandle m_hdl;
 };
-static const UInt32 HDBNSNODE_FLAG = 0x40000000;
-static const UInt32 HDBCLSNODE_FLAG = 0x20000000;
-static const UInt32 HDBCLSASSOCNODE_FLAG = 0x08000000;
+static const blocxx::UInt32 HDBNSNODE_FLAG = 0x40000000;
+static const blocxx::UInt32 HDBCLSNODE_FLAG = 0x20000000;
+static const blocxx::UInt32 HDBCLSASSOCNODE_FLAG = 0x08000000;
 
 } // end namespace OW_NAMESPACE
 

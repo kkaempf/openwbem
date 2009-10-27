@@ -57,18 +57,18 @@ class OW_XML_API Param
 public:
 	enum ParamValues { VALUENOTSET = 0, VALUESET = 1 };
 
-	Param(const String& argname, ParamValues mode, const String& value);
-	Param(const String& argname, const String& value);
-	Param(const String& argname, bool value);
+	Param(const blocxx::String& argname, ParamValues mode, const blocxx::String& value);
+	Param(const blocxx::String& argname, const blocxx::String& value);
+	Param(const blocxx::String& argname, bool value);
 
-	String getArgName() const;
-	String getArgValue() const;
+	blocxx::String getArgName() const;
+	blocxx::String getArgValue() const;
 private:
-	String m_argName;
-	String m_argValue;
+	blocxx::String m_argName;
+	blocxx::String m_argValue;
 	ParamValues m_argMode;
 };
-typedef Array<Param> ParamArray;
+typedef blocxx::Array<Param> ParamArray;
 
 } // end namespace OW_NAMESPACE
 

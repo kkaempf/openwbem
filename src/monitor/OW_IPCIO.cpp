@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_IPCIO.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/Format.hpp"
 #include "blocxx/String.hpp"
 #include "blocxx/DescriptorUtils.hpp"
@@ -56,6 +56,7 @@ namespace
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 OW_DEFINE_EXCEPTION(IPCIO);
 
@@ -94,7 +95,7 @@ bool IPCIO::sgetn(
 		try
 		{
 			nr = m_streambuf->sgetn(buf, count);
-			OW_ASSERT(nr <= count);
+			BLOCXX_ASSERT(nr <= count);
 		}
 		RETHROW_IOEXCEPTION("IPCIO::sgetn")
 	}
@@ -223,7 +224,7 @@ void ipcio_put(IPCIO & io, char const * s)
 
 void ipcio_put(IPCIO & io, char const * s, std::size_t len)
 {
-	OW_ASSERT(s != 0);
+	BLOCXX_ASSERT(s != 0);
 	ipcio_put(io, len);
 	io.sputn(s, len);
 }

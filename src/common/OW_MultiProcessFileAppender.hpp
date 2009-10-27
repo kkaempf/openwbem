@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/MultiProcessFileAppender.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_MultiProcessFileAppender.hpp is deprecated, use "blocxx/MultiProcessFileAppender.hpp" instead.
 #endif
 

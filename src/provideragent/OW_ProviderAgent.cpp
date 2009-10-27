@@ -52,6 +52,8 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
+
 namespace
 {
 // This anonymous namespace has the effect of giving this class internal

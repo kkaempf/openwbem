@@ -45,7 +45,7 @@
 
 namespace OW_NAMESPACE
 {
-
+using namespace blocxx;
 namespace
 {
 	// anonymous namespace is to prevent possible linkage problems or identifier

@@ -41,7 +41,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -65,13 +65,13 @@ public:
 	 * @param inString The string to escape
 	 * @return The escaped string
 	 */
-	static String escape(const String& inString);
+	static blocxx::String escape(const blocxx::String& inString);
 	/**
 	 * Unescapes quotes as escaped by escape().
 	 * @param inString The string in an escaped form
 	 * @return The string with escape sequences removed
 	 */
-	static String unEscape(const String& inString);
+	static blocxx::String unEscape(const blocxx::String& inString);
 	/**
 	 * Create a new CIMObjectPath object.
 	 */
@@ -98,7 +98,7 @@ public:
 	 * @param nspace The string representation of the name space
 	 *		(e.g. "root/cimv2")
 	 */
-	CIMObjectPath(const CIMName& className, const String& nspace);
+	CIMObjectPath(const CIMName& className, const blocxx::String& nspace);
 	/**
 	 * Create an CIMObjectPath for an instance.
 	 * @param className	The name of the class for the instance
@@ -112,7 +112,7 @@ public:
 	 * @param ns The namespace
 	 * @param inst An instance.
 	 */
-	CIMObjectPath(const String& ns,
+	CIMObjectPath(const blocxx::String& ns,
 		const CIMInstance& inst);
 	/**
 	 * Create a new CIMObject path from another.
@@ -133,18 +133,6 @@ public:
 	 * @return A reference to this object after the assignment has been made.
 	 */
 	CIMObjectPath& operator= (const CIMObjectPath& arg);
-	/**
-	 * This function is too error prone.  Use setKeyValue() instead.
-	 * It's just still here for backward compatibility. It's deprecated and will
-	 * be removed in the future.
-	 */
-	CIMObjectPath& addKey(const CIMName& keyname, const CIMValue& value) OW_DEPRECATED; // in 3.0.0
-	/**
-	 * This function is too error prone.  Use setKeyValue() instead.
-	 * It's just still here for backward compatibility. It's deprecated and will
-	 * be removed in the future.
-	 */
-	CIMObjectPath& addKey(const CIMProperty& key) OW_DEPRECATED; // in 3.0.0
 	/**
 	 * Get the keys for this object path
 	 * @return An CIMPropertyArray containing the keys for this object path.
@@ -202,7 +190,7 @@ public:
 	/**
 	 * @return The namespace component of the CIMNameSpace for this object path
 	 */
-	String getNameSpace() const;
+	blocxx::String getNameSpace() const;
 	/**
 	 * @return The URL component of the CIMNameSpace for this object path
 	 */
@@ -210,42 +198,30 @@ public:
 	/**
 	 * @return The host name from the name space for this object path.
 	 */
-	String getHost() const;
-	/**
-	 * This function is deprecated in favor of getClassName()
-	 * @return The class name for this object path
-	 */
-	String getObjectName() const OW_DEPRECATED; // in 3.0.0
+	blocxx::String getHost() const;
 	/**
 	 * @return The class name for this object path
 	 */
-	String getClassName() const;
+	blocxx::String getClassName() const;
 	/**
 	 * Convert a string representation of an object path to an CIMObjectPath.
 	 * @param instanceName	The object path to convert. Assumed to be an instance
 	 *		path.
 	 * @return An CIMObjectPath object on success.
 	 */
-	static CIMObjectPath parse(const String& instanceName);
+	static CIMObjectPath parse(const blocxx::String& instanceName);
 	/**
 	 * Set the host name on the name space for this object path.
 	 * @param host	The new name of the host to set on the underlying name space.
 	 * @return a reference to *this
 	 */
-	CIMObjectPath& setHost(const String& host);
+	CIMObjectPath& setHost(const blocxx::String& host);
 	/**
 	 * Set the namespace for this object path.
 	 * @param ns	The string representation of the namespace.
 	 * @return a reference to *this
 	 */
-	CIMObjectPath& setNameSpace(const String& ns);
-	/**
-	 * Assign a class name to this object path.
-	 * This function is deprecated in favor of setClassName()
-	 * @param className	The name of the class to assign to this object path.
-	 * @return a reference to *this
-	 */
-	CIMObjectPath& setObjectName(const CIMName& className) OW_DEPRECATED; // in 3.0.0
+	CIMObjectPath& setNameSpace(const blocxx::String& ns);
 	/**
 	 * Assign a class name to this object path.
 	 * @param className	The name of the class to assign to this object path.
@@ -262,7 +238,7 @@ public:
 	/**
 	 * @return true if this is not a null object.
 	 */
-	OW_SAFE_BOOL_IMPL(CIMObjectPath, COWIntrusiveReference<OPData>, CIMObjectPath::m_pdata, m_pdata)
+	BLOCXX_SAFE_BOOL_IMPL(CIMObjectPath, blocxx::COWIntrusiveReference<OPData>, CIMObjectPath::m_pdata, m_pdata)
 
 	/**
 	 * Equality operator
@@ -298,17 +274,17 @@ public:
 	/**
 	 * @return The string representation of this CIMObjectPath.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 	/**
 	 * @return The model path component of this CIMObjectPath as an
 	 * String
 	 */
-	virtual String modelPath() const;
+	virtual blocxx::String modelPath() const;
 	/**
 	 * @return The MOF representation of this CIMObjectPath as an
 	 * String
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
@@ -337,7 +313,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<OPData> m_pdata;
+	blocxx::COWIntrusiveReference<OPData> m_pdata;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

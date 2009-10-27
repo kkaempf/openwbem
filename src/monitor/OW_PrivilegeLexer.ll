@@ -64,7 +64,7 @@ BLOCXX_DEFINE_EXCEPTION(PrivilegeLexer)
 #define YY_USER_ACTION lexerp->pre_action();
 
 #define RETURN_VAL(x) lvalp->s = 0; return(x);
-#define RETURN_STR(x) lvalp->s = OpenWBEM::SafeCString::str_dup(yytext); return(x);
+#define RETURN_STR(x) lvalp->s = blocxx::SafeCString::str_dup(yytext); return(x);
 
 %}
 
@@ -163,7 +163,7 @@ include			{ RETURN_VAL(K_INCLUDE); }
 
 %%
 
-OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer::openwbem_privconfig_Lexer(std::istream & arg_yyin, OpenWBEM::PrivilegeConfig::IncludeHandler& includeHandler, const OpenWBEM::String& bufferName)
+OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer::openwbem_privconfig_Lexer(std::istream & arg_yyin, OpenWBEM::PrivilegeConfig::IncludeHandler& includeHandler, const blocxx::String& bufferName)
 : m_includeHandler(&includeHandler)
 , m_has_value(false)
 , m_first_column(0)
@@ -225,7 +225,7 @@ void OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer::get_location(YYLT
 	loc.last_line = m_last_line;
 }
 
-int OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer::include(const OpenWBEM::String& includeParam)
+int OW_NAMESPACE::PrivilegeConfig::openwbem_privconfig_Lexer::include(const blocxx::String& includeParam)
 {
 	// report an error if the include is recursive
 	for (std::deque<LexerState>::const_iterator i = m_includeStack.begin(); i != m_includeStack.end(); ++i)

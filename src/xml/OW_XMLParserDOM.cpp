@@ -48,6 +48,7 @@ namespace OW_NAMESPACE
 OW_DEFINE_EXCEPTION_WITH_ID(DOM);
 
 using std::istream;
+using namespace blocxx;
 
 namespace
 {

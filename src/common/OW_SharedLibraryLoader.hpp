@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/SharedLibraryLoader.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SharedLibraryLoader.hpp is deprecated, use "blocxx/SharedLibraryLoader.hpp" instead.
 #endif

@@ -172,7 +172,7 @@ class OW_WQL_API optSemicolon_SEMICOLON : public optSemicolon
 {
 	public:
 		optSemicolon_SEMICOLON(
-			String* pNewSEMICOLON1
+			blocxx::String* pNewSEMICOLON1
 		)
 			: optSemicolon()
 			, m_pSEMICOLON1(pNewSEMICOLON1)
@@ -182,15 +182,15 @@ class OW_WQL_API optSemicolon_SEMICOLON : public optSemicolon
 		{
 			v->visit_optSemicolon_SEMICOLON( this );
 		}
-		String* m_pSEMICOLON1;
+		blocxx::String* m_pSEMICOLON1;
 };
 class OW_WQL_API insertStmt : public node
 {
 	public:
 		insertStmt(
-			String* pNewINSERT1,
-			String* pNewINTO2,
-			String* pNewstrRelationName3,
+			blocxx::String* pNewINSERT1,
+			blocxx::String* pNewINTO2,
+			blocxx::String* pNewstrRelationName3,
 			insertRest* pNewinsertRest4
 		)
 			: m_pINSERT1(pNewINSERT1)
@@ -203,9 +203,9 @@ class OW_WQL_API insertStmt : public node
 		{
 			v->visit_insertStmt( this );
 		}
-		String* m_pINSERT1;
-		String* m_pINTO2;
-		String* m_pstrRelationName3;
+		blocxx::String* m_pINSERT1;
+		blocxx::String* m_pINTO2;
+		blocxx::String* m_pstrRelationName3;
 		insertRest* m_pinsertRest4;
 };
 class OW_WQL_API insertRest: public node
@@ -219,10 +219,10 @@ class OW_WQL_API insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN : public inse
 {
 	public:
 		insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
-			String* pNewVALUES1,
-			String* pNewLEFTPAREN2,
-			List< targetEl* >* pNewtargetList3,
-			String* pNewRIGHTPAREN4
+			blocxx::String* pNewVALUES1,
+			blocxx::String* pNewLEFTPAREN2,
+			blocxx::List< targetEl* >* pNewtargetList3,
+			blocxx::String* pNewRIGHTPAREN4
 		)
 			: insertRest()
 			, m_pVALUES1(pNewVALUES1)
@@ -235,17 +235,17 @@ class OW_WQL_API insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN : public inse
 		{
 			v->visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN( this );
 		}
-		String* m_pVALUES1;
-		String* m_pLEFTPAREN2;
-		List< targetEl* >* m_ptargetList3;
-		String* m_pRIGHTPAREN4;
+		blocxx::String* m_pVALUES1;
+		blocxx::String* m_pLEFTPAREN2;
+		blocxx::List< targetEl* >* m_ptargetList3;
+		blocxx::String* m_pRIGHTPAREN4;
 };
 class OW_WQL_API insertRest_DEFAULT_VALUES : public insertRest
 {
 	public:
 		insertRest_DEFAULT_VALUES(
-			String* pNewDEFAULT1,
-			String* pNewVALUES2
+			blocxx::String* pNewDEFAULT1,
+			blocxx::String* pNewVALUES2
 		)
 			: insertRest()
 			, m_pDEFAULT1(pNewDEFAULT1)
@@ -256,20 +256,20 @@ class OW_WQL_API insertRest_DEFAULT_VALUES : public insertRest
 		{
 			v->visit_insertRest_DEFAULT_VALUES( this );
 		}
-		String* m_pDEFAULT1;
-		String* m_pVALUES2;
+		blocxx::String* m_pDEFAULT1;
+		blocxx::String* m_pVALUES2;
 };
 class OW_WQL_API insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN : public insertRest
 {
 	public:
 		insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
-			String* pNewLEFTPAREN1,
-			List< String* >* pNewcolumnList2,
-			String* pNewRIGHTPAREN3,
-			String* pNewVALUES4,
-			String* pNewLEFTPAREN5,
-			List< targetEl* >* pNewtargetList6,
-			String* pNewRIGHTPAREN7
+			blocxx::String* pNewLEFTPAREN1,
+			blocxx::List< blocxx::String* >* pNewcolumnList2,
+			blocxx::String* pNewRIGHTPAREN3,
+			blocxx::String* pNewVALUES4,
+			blocxx::String* pNewLEFTPAREN5,
+			blocxx::List< targetEl* >* pNewtargetList6,
+			blocxx::String* pNewRIGHTPAREN7
 		)
 			: insertRest()
 			, m_pLEFTPAREN1(pNewLEFTPAREN1)
@@ -285,21 +285,21 @@ class OW_WQL_API insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_tar
 		{
 			v->visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN( this );
 		}
-		String* m_pLEFTPAREN1;
-		List< String* >* m_pcolumnList2;
-		String* m_pRIGHTPAREN3;
-		String* m_pVALUES4;
-		String* m_pLEFTPAREN5;
-		List< targetEl* >* m_ptargetList6;
-		String* m_pRIGHTPAREN7;
+		blocxx::String* m_pLEFTPAREN1;
+		blocxx::List< blocxx::String* >* m_pcolumnList2;
+		blocxx::String* m_pRIGHTPAREN3;
+		blocxx::String* m_pVALUES4;
+		blocxx::String* m_pLEFTPAREN5;
+		blocxx::List< targetEl* >* m_ptargetList6;
+		blocxx::String* m_pRIGHTPAREN7;
 };
 class OW_WQL_API deleteStmt : public node
 {
 	public:
 		deleteStmt(
-			String* pNewDELETE1,
-			String* pNewFROM2,
-			String* pNewstrRelationName3,
+			blocxx::String* pNewDELETE1,
+			blocxx::String* pNewFROM2,
+			blocxx::String* pNewstrRelationName3,
 			optWhereClause* pNewoptWhereClause4
 		)
 			: m_pDELETE1(pNewDELETE1)
@@ -312,19 +312,19 @@ class OW_WQL_API deleteStmt : public node
 		{
 			v->visit_deleteStmt( this );
 		}
-		String* m_pDELETE1;
-		String* m_pFROM2;
-		String* m_pstrRelationName3;
+		blocxx::String* m_pDELETE1;
+		blocxx::String* m_pFROM2;
+		blocxx::String* m_pstrRelationName3;
 		optWhereClause* m_poptWhereClause4;
 };
 class OW_WQL_API updateStmt : public node
 {
 	public:
 		updateStmt(
-			String* pNewUPDATE1,
-			String* pNewstrRelationName2,
-			String* pNewSET3,
-			List< updateTargetEl* >* pNewupdateTargetList4,
+			blocxx::String* pNewUPDATE1,
+			blocxx::String* pNewstrRelationName2,
+			blocxx::String* pNewSET3,
+			blocxx::List< updateTargetEl* >* pNewupdateTargetList4,
 			optWhereClause* pNewoptWhereClause5
 		)
 			: m_pUPDATE1(pNewUPDATE1)
@@ -338,19 +338,19 @@ class OW_WQL_API updateStmt : public node
 		{
 			v->visit_updateStmt( this );
 		}
-		String* m_pUPDATE1;
-		String* m_pstrRelationName2;
-		String* m_pSET3;
-		List< updateTargetEl* >* m_pupdateTargetList4;
+		blocxx::String* m_pUPDATE1;
+		blocxx::String* m_pstrRelationName2;
+		blocxx::String* m_pSET3;
+		blocxx::List< updateTargetEl* >* m_pupdateTargetList4;
 		optWhereClause* m_poptWhereClause5;
 };
 class OW_WQL_API selectStmt : public node
 {
 	public:
 		selectStmt(
-			String* pNewSELECT1,
+			blocxx::String* pNewSELECT1,
 			optDistinct* pNewoptDistinct2,
-			List< targetEl* >* pNewtargetList3,
+			blocxx::List< targetEl* >* pNewtargetList3,
 			optFromClause* pNewoptFromClause4,
 			optWhereClause* pNewoptWhereClause5,
 			optGroupClause* pNewoptGroupClause6,
@@ -371,9 +371,9 @@ class OW_WQL_API selectStmt : public node
 		{
 			v->visit_selectStmt( this );
 		}
-		String* m_pSELECT1;
+		blocxx::String* m_pSELECT1;
 		optDistinct* m_poptDistinct2;
-		List< targetEl* >* m_ptargetList3;
+		blocxx::List< targetEl* >* m_ptargetList3;
 		optFromClause* m_poptFromClause4;
 		optWhereClause* m_poptWhereClause5;
 		optGroupClause* m_poptGroupClause6;
@@ -408,7 +408,7 @@ class OW_WQL_API exprSeq_exprSeq_COMMA_aExpr : public exprSeq
 	public:
 		exprSeq_exprSeq_COMMA_aExpr(
 			exprSeq* pNewexprSeq1,
-			String* pNewCOMMA2,
+			blocxx::String* pNewCOMMA2,
 			aExpr* pNewaExpr3
 		)
 			: exprSeq()
@@ -422,7 +422,7 @@ class OW_WQL_API exprSeq_exprSeq_COMMA_aExpr : public exprSeq
 			v->visit_exprSeq_exprSeq_COMMA_aExpr( this );
 		}
 		exprSeq* m_pexprSeq1;
-		String* m_pCOMMA2;
+		blocxx::String* m_pCOMMA2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API exprSeq_exprSeq_USING_aExpr : public exprSeq
@@ -430,7 +430,7 @@ class OW_WQL_API exprSeq_exprSeq_USING_aExpr : public exprSeq
 	public:
 		exprSeq_exprSeq_USING_aExpr(
 			exprSeq* pNewexprSeq1,
-			String* pNewUSING2,
+			blocxx::String* pNewUSING2,
 			aExpr* pNewaExpr3
 		)
 			: exprSeq()
@@ -444,7 +444,7 @@ class OW_WQL_API exprSeq_exprSeq_USING_aExpr : public exprSeq
 			v->visit_exprSeq_exprSeq_USING_aExpr( this );
 		}
 		exprSeq* m_pexprSeq1;
-		String* m_pUSING2;
+		blocxx::String* m_pUSING2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API optDistinct: public node
@@ -471,7 +471,7 @@ class OW_WQL_API optDistinct_DISTINCT : public optDistinct
 {
 	public:
 		optDistinct_DISTINCT(
-			String* pNewDISTINCT1
+			blocxx::String* pNewDISTINCT1
 		)
 			: optDistinct()
 			, m_pDISTINCT1(pNewDISTINCT1)
@@ -481,17 +481,17 @@ class OW_WQL_API optDistinct_DISTINCT : public optDistinct
 		{
 			v->visit_optDistinct_DISTINCT( this );
 		}
-		String* m_pDISTINCT1;
+		blocxx::String* m_pDISTINCT1;
 };
 class OW_WQL_API optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN : public optDistinct
 {
 	public:
 		optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN(
-			String* pNewDISTINCT1,
-			String* pNewON2,
-			String* pNewLEFTPAREN3,
+			blocxx::String* pNewDISTINCT1,
+			blocxx::String* pNewON2,
+			blocxx::String* pNewLEFTPAREN3,
 			exprSeq* pNewexprSeq4,
-			String* pNewRIGHTPAREN5
+			blocxx::String* pNewRIGHTPAREN5
 		)
 			: optDistinct()
 			, m_pDISTINCT1(pNewDISTINCT1)
@@ -505,17 +505,17 @@ class OW_WQL_API optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN : public o
 		{
 			v->visit_optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN( this );
 		}
-		String* m_pDISTINCT1;
-		String* m_pON2;
-		String* m_pLEFTPAREN3;
+		blocxx::String* m_pDISTINCT1;
+		blocxx::String* m_pON2;
+		blocxx::String* m_pLEFTPAREN3;
 		exprSeq* m_pexprSeq4;
-		String* m_pRIGHTPAREN5;
+		blocxx::String* m_pRIGHTPAREN5;
 };
 class OW_WQL_API optDistinct_ALL : public optDistinct
 {
 	public:
 		optDistinct_ALL(
-			String* pNewALL1
+			blocxx::String* pNewALL1
 		)
 			: optDistinct()
 			, m_pALL1(pNewALL1)
@@ -525,15 +525,15 @@ class OW_WQL_API optDistinct_ALL : public optDistinct
 		{
 			v->visit_optDistinct_ALL( this );
 		}
-		String* m_pALL1;
+		blocxx::String* m_pALL1;
 };
 class OW_WQL_API sortClause : public node
 {
 	public:
 		sortClause(
-			String* pNewORDER1,
-			String* pNewBY2,
-			List< sortby* >* pNewsortbyList3
+			blocxx::String* pNewORDER1,
+			blocxx::String* pNewBY2,
+			blocxx::List< sortby* >* pNewsortbyList3
 		)
 			: m_pORDER1(pNewORDER1)
 			, m_pBY2(pNewBY2)
@@ -544,9 +544,9 @@ class OW_WQL_API sortClause : public node
 		{
 			v->visit_sortClause( this );
 		}
-		String* m_pORDER1;
-		String* m_pBY2;
-		List< sortby* >* m_psortbyList3;
+		blocxx::String* m_pORDER1;
+		blocxx::String* m_pBY2;
+		blocxx::List< sortby* >* m_psortbyList3;
 };
 class OW_WQL_API optSortClause: public node
 {
@@ -589,7 +589,7 @@ class OW_WQL_API sortby : public node
 	public:
 		sortby(
 			aExpr* pNewaExpr1,
-			String* pNewstrOptOrderSpecification2
+			blocxx::String* pNewstrOptOrderSpecification2
 		)
 			: m_paExpr1(pNewaExpr1)
 			, m_pstrOptOrderSpecification2(pNewstrOptOrderSpecification2)
@@ -600,7 +600,7 @@ class OW_WQL_API sortby : public node
 			v->visit_sortby( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pstrOptOrderSpecification2;
+		blocxx::String* m_pstrOptOrderSpecification2;
 };
 class OW_WQL_API optGroupClause: public node
 {
@@ -626,8 +626,8 @@ class OW_WQL_API optGroupClause_GROUP_BY_exprSeq : public optGroupClause
 {
 	public:
 		optGroupClause_GROUP_BY_exprSeq(
-			String* pNewGROUP1,
-			String* pNewBY2,
+			blocxx::String* pNewGROUP1,
+			blocxx::String* pNewBY2,
 			exprSeq* pNewexprSeq3
 		)
 			: optGroupClause()
@@ -640,8 +640,8 @@ class OW_WQL_API optGroupClause_GROUP_BY_exprSeq : public optGroupClause
 		{
 			v->visit_optGroupClause_GROUP_BY_exprSeq( this );
 		}
-		String* m_pGROUP1;
-		String* m_pBY2;
+		blocxx::String* m_pGROUP1;
+		blocxx::String* m_pBY2;
 		exprSeq* m_pexprSeq3;
 };
 class OW_WQL_API optHavingClause: public node
@@ -668,7 +668,7 @@ class OW_WQL_API optHavingClause_HAVING_aExpr : public optHavingClause
 {
 	public:
 		optHavingClause_HAVING_aExpr(
-			String* pNewHAVING1,
+			blocxx::String* pNewHAVING1,
 			aExpr* pNewaExpr2
 		)
 			: optHavingClause()
@@ -680,7 +680,7 @@ class OW_WQL_API optHavingClause_HAVING_aExpr : public optHavingClause
 		{
 			v->visit_optHavingClause_HAVING_aExpr( this );
 		}
-		String* m_pHAVING1;
+		blocxx::String* m_pHAVING1;
 		aExpr* m_paExpr2;
 };
 class OW_WQL_API optFromClause: public node
@@ -707,8 +707,8 @@ class OW_WQL_API optFromClause_FROM_fromList : public optFromClause
 {
 	public:
 		optFromClause_FROM_fromList(
-			String* pNewFROM1,
-			List< tableRef* >* pNewfromList2
+			blocxx::String* pNewFROM1,
+			blocxx::List< tableRef* >* pNewfromList2
 		)
 			: optFromClause()
 			, m_pFROM1(pNewFROM1)
@@ -719,8 +719,8 @@ class OW_WQL_API optFromClause_FROM_fromList : public optFromClause
 		{
 			v->visit_optFromClause_FROM_fromList( this );
 		}
-		String* m_pFROM1;
-		List< tableRef* >* m_pfromList2;
+		blocxx::String* m_pFROM1;
+		blocxx::List< tableRef* >* m_pfromList2;
 };
 class OW_WQL_API tableRef: public node
 {
@@ -784,9 +784,9 @@ class OW_WQL_API tableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause : public 
 {
 	public:
 		tableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause(
-			String* pNewLEFTPAREN1,
+			blocxx::String* pNewLEFTPAREN1,
 			joinedTable* pNewjoinedTable2,
-			String* pNewRIGHTPAREN3,
+			blocxx::String* pNewRIGHTPAREN3,
 			aliasClause* pNewaliasClause4
 		)
 			: tableRef()
@@ -800,9 +800,9 @@ class OW_WQL_API tableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause : public 
 		{
 			v->visit_tableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause( this );
 		}
-		String* m_pLEFTPAREN1;
+		blocxx::String* m_pLEFTPAREN1;
 		joinedTable* m_pjoinedTable2;
-		String* m_pRIGHTPAREN3;
+		blocxx::String* m_pRIGHTPAREN3;
 		aliasClause* m_paliasClause4;
 };
 class OW_WQL_API joinedTable: public node
@@ -816,9 +816,9 @@ class OW_WQL_API joinedTable_LEFTPAREN_joinedTable_RIGHTPAREN : public joinedTab
 {
 	public:
 		joinedTable_LEFTPAREN_joinedTable_RIGHTPAREN(
-			String* pNewLEFTPAREN1,
+			blocxx::String* pNewLEFTPAREN1,
 			joinedTable* pNewjoinedTable2,
-			String* pNewRIGHTPAREN3
+			blocxx::String* pNewRIGHTPAREN3
 		)
 			: joinedTable()
 			, m_pLEFTPAREN1(pNewLEFTPAREN1)
@@ -830,17 +830,17 @@ class OW_WQL_API joinedTable_LEFTPAREN_joinedTable_RIGHTPAREN : public joinedTab
 		{
 			v->visit_joinedTable_LEFTPAREN_joinedTable_RIGHTPAREN( this );
 		}
-		String* m_pLEFTPAREN1;
+		blocxx::String* m_pLEFTPAREN1;
 		joinedTable* m_pjoinedTable2;
-		String* m_pRIGHTPAREN3;
+		blocxx::String* m_pRIGHTPAREN3;
 };
 class OW_WQL_API joinedTable_tableRef_CROSS_JOIN_tableRef : public joinedTable
 {
 	public:
 		joinedTable_tableRef_CROSS_JOIN_tableRef(
 			tableRef* pNewtableRef1,
-			String* pNewCROSS2,
-			String* pNewJOIN3,
+			blocxx::String* pNewCROSS2,
+			blocxx::String* pNewJOIN3,
 			tableRef* pNewtableRef4
 		)
 			: joinedTable()
@@ -855,8 +855,8 @@ class OW_WQL_API joinedTable_tableRef_CROSS_JOIN_tableRef : public joinedTable
 			v->visit_joinedTable_tableRef_CROSS_JOIN_tableRef( this );
 		}
 		tableRef* m_ptableRef1;
-		String* m_pCROSS2;
-		String* m_pJOIN3;
+		blocxx::String* m_pCROSS2;
+		blocxx::String* m_pJOIN3;
 		tableRef* m_ptableRef4;
 };
 class OW_WQL_API joinedTable_tableRef_UNIONJOIN_tableRef : public joinedTable
@@ -864,7 +864,7 @@ class OW_WQL_API joinedTable_tableRef_UNIONJOIN_tableRef : public joinedTable
 	public:
 		joinedTable_tableRef_UNIONJOIN_tableRef(
 			tableRef* pNewtableRef1,
-			String* pNewUNIONJOIN2,
+			blocxx::String* pNewUNIONJOIN2,
 			tableRef* pNewtableRef3
 		)
 			: joinedTable()
@@ -878,7 +878,7 @@ class OW_WQL_API joinedTable_tableRef_UNIONJOIN_tableRef : public joinedTable
 			v->visit_joinedTable_tableRef_UNIONJOIN_tableRef( this );
 		}
 		tableRef* m_ptableRef1;
-		String* m_pUNIONJOIN2;
+		blocxx::String* m_pUNIONJOIN2;
 		tableRef* m_ptableRef3;
 };
 class OW_WQL_API joinedTable_tableRef_joinType_JOIN_tableRef_joinQual : public joinedTable
@@ -887,7 +887,7 @@ class OW_WQL_API joinedTable_tableRef_joinType_JOIN_tableRef_joinQual : public j
 		joinedTable_tableRef_joinType_JOIN_tableRef_joinQual(
 			tableRef* pNewtableRef1,
 			joinType* pNewjoinType2,
-			String* pNewJOIN3,
+			blocxx::String* pNewJOIN3,
 			tableRef* pNewtableRef4,
 			joinQual* pNewjoinQual5
 		)
@@ -905,7 +905,7 @@ class OW_WQL_API joinedTable_tableRef_joinType_JOIN_tableRef_joinQual : public j
 		}
 		tableRef* m_ptableRef1;
 		joinType* m_pjoinType2;
-		String* m_pJOIN3;
+		blocxx::String* m_pJOIN3;
 		tableRef* m_ptableRef4;
 		joinQual* m_pjoinQual5;
 };
@@ -914,7 +914,7 @@ class OW_WQL_API joinedTable_tableRef_JOIN_tableRef_joinQual : public joinedTabl
 	public:
 		joinedTable_tableRef_JOIN_tableRef_joinQual(
 			tableRef* pNewtableRef1,
-			String* pNewJOIN2,
+			blocxx::String* pNewJOIN2,
 			tableRef* pNewtableRef3,
 			joinQual* pNewjoinQual4
 		)
@@ -930,7 +930,7 @@ class OW_WQL_API joinedTable_tableRef_JOIN_tableRef_joinQual : public joinedTabl
 			v->visit_joinedTable_tableRef_JOIN_tableRef_joinQual( this );
 		}
 		tableRef* m_ptableRef1;
-		String* m_pJOIN2;
+		blocxx::String* m_pJOIN2;
 		tableRef* m_ptableRef3;
 		joinQual* m_pjoinQual4;
 };
@@ -939,9 +939,9 @@ class OW_WQL_API joinedTable_tableRef_NATURAL_joinType_JOIN_tableRef : public jo
 	public:
 		joinedTable_tableRef_NATURAL_joinType_JOIN_tableRef(
 			tableRef* pNewtableRef1,
-			String* pNewNATURAL2,
+			blocxx::String* pNewNATURAL2,
 			joinType* pNewjoinType3,
-			String* pNewJOIN4,
+			blocxx::String* pNewJOIN4,
 			tableRef* pNewtableRef5
 		)
 			: joinedTable()
@@ -957,9 +957,9 @@ class OW_WQL_API joinedTable_tableRef_NATURAL_joinType_JOIN_tableRef : public jo
 			v->visit_joinedTable_tableRef_NATURAL_joinType_JOIN_tableRef( this );
 		}
 		tableRef* m_ptableRef1;
-		String* m_pNATURAL2;
+		blocxx::String* m_pNATURAL2;
 		joinType* m_pjoinType3;
-		String* m_pJOIN4;
+		blocxx::String* m_pJOIN4;
 		tableRef* m_ptableRef5;
 };
 class OW_WQL_API joinedTable_tableRef_NATURAL_JOIN_tableRef : public joinedTable
@@ -967,8 +967,8 @@ class OW_WQL_API joinedTable_tableRef_NATURAL_JOIN_tableRef : public joinedTable
 	public:
 		joinedTable_tableRef_NATURAL_JOIN_tableRef(
 			tableRef* pNewtableRef1,
-			String* pNewNATURAL2,
-			String* pNewJOIN3,
+			blocxx::String* pNewNATURAL2,
+			blocxx::String* pNewJOIN3,
 			tableRef* pNewtableRef4
 		)
 			: joinedTable()
@@ -983,8 +983,8 @@ class OW_WQL_API joinedTable_tableRef_NATURAL_JOIN_tableRef : public joinedTable
 			v->visit_joinedTable_tableRef_NATURAL_JOIN_tableRef( this );
 		}
 		tableRef* m_ptableRef1;
-		String* m_pNATURAL2;
-		String* m_pJOIN3;
+		blocxx::String* m_pNATURAL2;
+		blocxx::String* m_pJOIN3;
 		tableRef* m_ptableRef4;
 };
 class OW_WQL_API aliasClause: public node
@@ -998,11 +998,11 @@ class OW_WQL_API aliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPAREN : public 
 {
 	public:
 		aliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPAREN(
-			String* pNewAS1,
-			String* pNewstrColId2,
-			String* pNewLEFTPAREN3,
-			List< String* >* pNewnameList4,
-			String* pNewRIGHTPAREN5
+			blocxx::String* pNewAS1,
+			blocxx::String* pNewstrColId2,
+			blocxx::String* pNewLEFTPAREN3,
+			blocxx::List< blocxx::String* >* pNewnameList4,
+			blocxx::String* pNewRIGHTPAREN5
 		)
 			: aliasClause()
 			, m_pAS1(pNewAS1)
@@ -1016,18 +1016,18 @@ class OW_WQL_API aliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPAREN : public 
 		{
 			v->visit_aliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPAREN( this );
 		}
-		String* m_pAS1;
-		String* m_pstrColId2;
-		String* m_pLEFTPAREN3;
-		List< String* >* m_pnameList4;
-		String* m_pRIGHTPAREN5;
+		blocxx::String* m_pAS1;
+		blocxx::String* m_pstrColId2;
+		blocxx::String* m_pLEFTPAREN3;
+		blocxx::List< blocxx::String* >* m_pnameList4;
+		blocxx::String* m_pRIGHTPAREN5;
 };
 class OW_WQL_API aliasClause_AS_strColId : public aliasClause
 {
 	public:
 		aliasClause_AS_strColId(
-			String* pNewAS1,
-			String* pNewstrColId2
+			blocxx::String* pNewAS1,
+			blocxx::String* pNewstrColId2
 		)
 			: aliasClause()
 			, m_pAS1(pNewAS1)
@@ -1038,17 +1038,17 @@ class OW_WQL_API aliasClause_AS_strColId : public aliasClause
 		{
 			v->visit_aliasClause_AS_strColId( this );
 		}
-		String* m_pAS1;
-		String* m_pstrColId2;
+		blocxx::String* m_pAS1;
+		blocxx::String* m_pstrColId2;
 };
 class OW_WQL_API aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN : public aliasClause
 {
 	public:
 		aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN(
-			String* pNewstrColId1,
-			String* pNewLEFTPAREN2,
-			List< String* >* pNewnameList3,
-			String* pNewRIGHTPAREN4
+			blocxx::String* pNewstrColId1,
+			blocxx::String* pNewLEFTPAREN2,
+			blocxx::List< blocxx::String* >* pNewnameList3,
+			blocxx::String* pNewRIGHTPAREN4
 		)
 			: aliasClause()
 			, m_pstrColId1(pNewstrColId1)
@@ -1061,16 +1061,16 @@ class OW_WQL_API aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN : public ali
 		{
 			v->visit_aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN( this );
 		}
-		String* m_pstrColId1;
-		String* m_pLEFTPAREN2;
-		List< String* >* m_pnameList3;
-		String* m_pRIGHTPAREN4;
+		blocxx::String* m_pstrColId1;
+		blocxx::String* m_pLEFTPAREN2;
+		blocxx::List< blocxx::String* >* m_pnameList3;
+		blocxx::String* m_pRIGHTPAREN4;
 };
 class OW_WQL_API aliasClause_strColId : public aliasClause
 {
 	public:
 		aliasClause_strColId(
-			String* pNewstrColId1
+			blocxx::String* pNewstrColId1
 		)
 			: aliasClause()
 			, m_pstrColId1(pNewstrColId1)
@@ -1080,7 +1080,7 @@ class OW_WQL_API aliasClause_strColId : public aliasClause
 		{
 			v->visit_aliasClause_strColId( this );
 		}
-		String* m_pstrColId1;
+		blocxx::String* m_pstrColId1;
 };
 class OW_WQL_API joinType: public node
 {
@@ -1093,8 +1093,8 @@ class OW_WQL_API joinType_FULL_strOptJoinOuter : public joinType
 {
 	public:
 		joinType_FULL_strOptJoinOuter(
-			String* pNewFULL1,
-			String* pNewstrOptJoinOuter2
+			blocxx::String* pNewFULL1,
+			blocxx::String* pNewstrOptJoinOuter2
 		)
 			: joinType()
 			, m_pFULL1(pNewFULL1)
@@ -1105,15 +1105,15 @@ class OW_WQL_API joinType_FULL_strOptJoinOuter : public joinType
 		{
 			v->visit_joinType_FULL_strOptJoinOuter( this );
 		}
-		String* m_pFULL1;
-		String* m_pstrOptJoinOuter2;
+		blocxx::String* m_pFULL1;
+		blocxx::String* m_pstrOptJoinOuter2;
 };
 class OW_WQL_API joinType_LEFT_strOptJoinOuter : public joinType
 {
 	public:
 		joinType_LEFT_strOptJoinOuter(
-			String* pNewLEFT1,
-			String* pNewstrOptJoinOuter2
+			blocxx::String* pNewLEFT1,
+			blocxx::String* pNewstrOptJoinOuter2
 		)
 			: joinType()
 			, m_pLEFT1(pNewLEFT1)
@@ -1124,15 +1124,15 @@ class OW_WQL_API joinType_LEFT_strOptJoinOuter : public joinType
 		{
 			v->visit_joinType_LEFT_strOptJoinOuter( this );
 		}
-		String* m_pLEFT1;
-		String* m_pstrOptJoinOuter2;
+		blocxx::String* m_pLEFT1;
+		blocxx::String* m_pstrOptJoinOuter2;
 };
 class OW_WQL_API joinType_RIGHT_strOptJoinOuter : public joinType
 {
 	public:
 		joinType_RIGHT_strOptJoinOuter(
-			String* pNewRIGHT1,
-			String* pNewstrOptJoinOuter2
+			blocxx::String* pNewRIGHT1,
+			blocxx::String* pNewstrOptJoinOuter2
 		)
 			: joinType()
 			, m_pRIGHT1(pNewRIGHT1)
@@ -1143,14 +1143,14 @@ class OW_WQL_API joinType_RIGHT_strOptJoinOuter : public joinType
 		{
 			v->visit_joinType_RIGHT_strOptJoinOuter( this );
 		}
-		String* m_pRIGHT1;
-		String* m_pstrOptJoinOuter2;
+		blocxx::String* m_pRIGHT1;
+		blocxx::String* m_pstrOptJoinOuter2;
 };
 class OW_WQL_API joinType_INNERP : public joinType
 {
 	public:
 		joinType_INNERP(
-			String* pNewINNERP1
+			blocxx::String* pNewINNERP1
 		)
 			: joinType()
 			, m_pINNERP1(pNewINNERP1)
@@ -1160,7 +1160,7 @@ class OW_WQL_API joinType_INNERP : public joinType
 		{
 			v->visit_joinType_INNERP( this );
 		}
-		String* m_pINNERP1;
+		blocxx::String* m_pINNERP1;
 };
 class OW_WQL_API joinQual: public node
 {
@@ -1173,10 +1173,10 @@ class OW_WQL_API joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN : public joinQual
 {
 	public:
 		joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN(
-			String* pNewUSING1,
-			String* pNewLEFTPAREN2,
-			List< String* >* pNewnameList3,
-			String* pNewRIGHTPAREN4
+			blocxx::String* pNewUSING1,
+			blocxx::String* pNewLEFTPAREN2,
+			blocxx::List< blocxx::String* >* pNewnameList3,
+			blocxx::String* pNewRIGHTPAREN4
 		)
 			: joinQual()
 			, m_pUSING1(pNewUSING1)
@@ -1189,16 +1189,16 @@ class OW_WQL_API joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN : public joinQual
 		{
 			v->visit_joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN( this );
 		}
-		String* m_pUSING1;
-		String* m_pLEFTPAREN2;
-		List< String* >* m_pnameList3;
-		String* m_pRIGHTPAREN4;
+		blocxx::String* m_pUSING1;
+		blocxx::String* m_pLEFTPAREN2;
+		blocxx::List< blocxx::String* >* m_pnameList3;
+		blocxx::String* m_pRIGHTPAREN4;
 };
 class OW_WQL_API joinQual_ON_aExpr : public joinQual
 {
 	public:
 		joinQual_ON_aExpr(
-			String* pNewON1,
+			blocxx::String* pNewON1,
 			aExpr* pNewaExpr2
 		)
 			: joinQual()
@@ -1210,7 +1210,7 @@ class OW_WQL_API joinQual_ON_aExpr : public joinQual
 		{
 			v->visit_joinQual_ON_aExpr( this );
 		}
-		String* m_pON1;
+		blocxx::String* m_pON1;
 		aExpr* m_paExpr2;
 };
 class OW_WQL_API relationExpr: public node
@@ -1224,7 +1224,7 @@ class OW_WQL_API relationExpr_strRelationName : public relationExpr
 {
 	public:
 		relationExpr_strRelationName(
-			String* pNewstrRelationName1
+			blocxx::String* pNewstrRelationName1
 		)
 			: relationExpr()
 			, m_pstrRelationName1(pNewstrRelationName1)
@@ -1234,14 +1234,14 @@ class OW_WQL_API relationExpr_strRelationName : public relationExpr
 		{
 			v->visit_relationExpr_strRelationName( this );
 		}
-		String* m_pstrRelationName1;
+		blocxx::String* m_pstrRelationName1;
 };
 class OW_WQL_API relationExpr_strRelationName_ASTERISK : public relationExpr
 {
 	public:
 		relationExpr_strRelationName_ASTERISK(
-			String* pNewstrRelationName1,
-			String* pNewASTERISK2
+			blocxx::String* pNewstrRelationName1,
+			blocxx::String* pNewASTERISK2
 		)
 			: relationExpr()
 			, m_pstrRelationName1(pNewstrRelationName1)
@@ -1252,15 +1252,15 @@ class OW_WQL_API relationExpr_strRelationName_ASTERISK : public relationExpr
 		{
 			v->visit_relationExpr_strRelationName_ASTERISK( this );
 		}
-		String* m_pstrRelationName1;
-		String* m_pASTERISK2;
+		blocxx::String* m_pstrRelationName1;
+		blocxx::String* m_pASTERISK2;
 };
 class OW_WQL_API relationExpr_ONLY_strRelationName : public relationExpr
 {
 	public:
 		relationExpr_ONLY_strRelationName(
-			String* pNewONLY1,
-			String* pNewstrRelationName2
+			blocxx::String* pNewONLY1,
+			blocxx::String* pNewstrRelationName2
 		)
 			: relationExpr()
 			, m_pONLY1(pNewONLY1)
@@ -1271,8 +1271,8 @@ class OW_WQL_API relationExpr_ONLY_strRelationName : public relationExpr
 		{
 			v->visit_relationExpr_ONLY_strRelationName( this );
 		}
-		String* m_pONLY1;
-		String* m_pstrRelationName2;
+		blocxx::String* m_pONLY1;
+		blocxx::String* m_pstrRelationName2;
 };
 class OW_WQL_API optWhereClause: public node
 {
@@ -1298,7 +1298,7 @@ class OW_WQL_API optWhereClause_WHERE_aExpr : public optWhereClause
 {
 	public:
 		optWhereClause_WHERE_aExpr(
-			String* pNewWHERE1,
+			blocxx::String* pNewWHERE1,
 			aExpr* pNewaExpr2
 		)
 			: optWhereClause()
@@ -1310,20 +1310,20 @@ class OW_WQL_API optWhereClause_WHERE_aExpr : public optWhereClause
 		{
 			v->visit_optWhereClause_WHERE_aExpr( this );
 		}
-		String* m_pWHERE1;
+		blocxx::String* m_pWHERE1;
 		aExpr* m_paExpr2;
 };
 class OW_WQL_API rowExpr : public node
 {
 	public:
 		rowExpr(
-			String* pNewLEFTPAREN1,
+			blocxx::String* pNewLEFTPAREN1,
 			rowDescriptor* pNewrowDescriptor2,
-			String* pNewRIGHTPAREN3,
-			String* pNewstrAllOp4,
-			String* pNewLEFTPAREN5,
+			blocxx::String* pNewRIGHTPAREN3,
+			blocxx::String* pNewstrAllOp4,
+			blocxx::String* pNewLEFTPAREN5,
 			rowDescriptor* pNewrowDescriptor6,
-			String* pNewRIGHTPAREN7
+			blocxx::String* pNewRIGHTPAREN7
 		)
 			: m_pLEFTPAREN1(pNewLEFTPAREN1)
 			, m_prowDescriptor2(pNewrowDescriptor2)
@@ -1338,20 +1338,20 @@ class OW_WQL_API rowExpr : public node
 		{
 			v->visit_rowExpr( this );
 		}
-		String* m_pLEFTPAREN1;
+		blocxx::String* m_pLEFTPAREN1;
 		rowDescriptor* m_prowDescriptor2;
-		String* m_pRIGHTPAREN3;
-		String* m_pstrAllOp4;
-		String* m_pLEFTPAREN5;
+		blocxx::String* m_pRIGHTPAREN3;
+		blocxx::String* m_pstrAllOp4;
+		blocxx::String* m_pLEFTPAREN5;
 		rowDescriptor* m_prowDescriptor6;
-		String* m_pRIGHTPAREN7;
+		blocxx::String* m_pRIGHTPAREN7;
 };
 class OW_WQL_API rowDescriptor : public node
 {
 	public:
 		rowDescriptor(
-			List< aExpr* >* pNewrowList1,
-			String* pNewCOMMA2,
+			blocxx::List< aExpr* >* pNewrowList1,
+			blocxx::String* pNewCOMMA2,
 			aExpr* pNewaExpr3
 		)
 			: m_prowList1(pNewrowList1)
@@ -1363,8 +1363,8 @@ class OW_WQL_API rowDescriptor : public node
 		{
 			v->visit_rowDescriptor( this );
 		}
-		List< aExpr* >* m_prowList1;
-		String* m_pCOMMA2;
+		blocxx::List< aExpr* >* m_prowList1;
+		blocxx::String* m_pCOMMA2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr: public node
@@ -1395,9 +1395,9 @@ class OW_WQL_API aExpr_aExpr_AT_TIME_ZONE_cExpr : public aExpr
 	public:
 		aExpr_aExpr_AT_TIME_ZONE_cExpr(
 			aExpr* pNewaExpr1,
-			String* pNewAT2,
-			String* pNewTIME3,
-			String* pNewZONE4,
+			blocxx::String* pNewAT2,
+			blocxx::String* pNewTIME3,
+			blocxx::String* pNewZONE4,
 			cExpr* pNewcExpr5
 		)
 			: aExpr()
@@ -1413,16 +1413,16 @@ class OW_WQL_API aExpr_aExpr_AT_TIME_ZONE_cExpr : public aExpr
 			v->visit_aExpr_aExpr_AT_TIME_ZONE_cExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pAT2;
-		String* m_pTIME3;
-		String* m_pZONE4;
+		blocxx::String* m_pAT2;
+		blocxx::String* m_pTIME3;
+		blocxx::String* m_pZONE4;
 		cExpr* m_pcExpr5;
 };
 class OW_WQL_API aExpr_PLUS_aExpr : public aExpr
 {
 	public:
 		aExpr_PLUS_aExpr(
-			String* pNewPLUS1,
+			blocxx::String* pNewPLUS1,
 			aExpr* pNewaExpr2
 		)
 			: aExpr()
@@ -1434,14 +1434,14 @@ class OW_WQL_API aExpr_PLUS_aExpr : public aExpr
 		{
 			v->visit_aExpr_PLUS_aExpr( this );
 		}
-		String* m_pPLUS1;
+		blocxx::String* m_pPLUS1;
 		aExpr* m_paExpr2;
 };
 class OW_WQL_API aExpr_MINUS_aExpr : public aExpr
 {
 	public:
 		aExpr_MINUS_aExpr(
-			String* pNewMINUS1,
+			blocxx::String* pNewMINUS1,
 			aExpr* pNewaExpr2
 		)
 			: aExpr()
@@ -1453,14 +1453,14 @@ class OW_WQL_API aExpr_MINUS_aExpr : public aExpr
 		{
 			v->visit_aExpr_MINUS_aExpr( this );
 		}
-		String* m_pMINUS1;
+		blocxx::String* m_pMINUS1;
 		aExpr* m_paExpr2;
 };
 class OW_WQL_API aExpr_BITINVERT_aExpr : public aExpr
 {
 	public:
 		aExpr_BITINVERT_aExpr(
-			String* pNewBITINVERT1,
+			blocxx::String* pNewBITINVERT1,
 			aExpr* pNewaExpr2
 		)
 			: aExpr()
@@ -1472,7 +1472,7 @@ class OW_WQL_API aExpr_BITINVERT_aExpr : public aExpr
 		{
 			v->visit_aExpr_BITINVERT_aExpr( this );
 		}
-		String* m_pBITINVERT1;
+		blocxx::String* m_pBITINVERT1;
 		aExpr* m_paExpr2;
 };
 class OW_WQL_API aExpr_aExpr_PLUS_aExpr : public aExpr
@@ -1480,7 +1480,7 @@ class OW_WQL_API aExpr_aExpr_PLUS_aExpr : public aExpr
 	public:
 		aExpr_aExpr_PLUS_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewPLUS2,
+			blocxx::String* pNewPLUS2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1494,7 +1494,7 @@ class OW_WQL_API aExpr_aExpr_PLUS_aExpr : public aExpr
 			v->visit_aExpr_aExpr_PLUS_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pPLUS2;
+		blocxx::String* m_pPLUS2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_MINUS_aExpr : public aExpr
@@ -1502,7 +1502,7 @@ class OW_WQL_API aExpr_aExpr_MINUS_aExpr : public aExpr
 	public:
 		aExpr_aExpr_MINUS_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewMINUS2,
+			blocxx::String* pNewMINUS2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1516,7 +1516,7 @@ class OW_WQL_API aExpr_aExpr_MINUS_aExpr : public aExpr
 			v->visit_aExpr_aExpr_MINUS_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pMINUS2;
+		blocxx::String* m_pMINUS2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_ASTERISK_aExpr : public aExpr
@@ -1524,7 +1524,7 @@ class OW_WQL_API aExpr_aExpr_ASTERISK_aExpr : public aExpr
 	public:
 		aExpr_aExpr_ASTERISK_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewASTERISK2,
+			blocxx::String* pNewASTERISK2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1538,7 +1538,7 @@ class OW_WQL_API aExpr_aExpr_ASTERISK_aExpr : public aExpr
 			v->visit_aExpr_aExpr_ASTERISK_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pASTERISK2;
+		blocxx::String* m_pASTERISK2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_SOLIDUS_aExpr : public aExpr
@@ -1546,7 +1546,7 @@ class OW_WQL_API aExpr_aExpr_SOLIDUS_aExpr : public aExpr
 	public:
 		aExpr_aExpr_SOLIDUS_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewSOLIDUS2,
+			blocxx::String* pNewSOLIDUS2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1560,7 +1560,7 @@ class OW_WQL_API aExpr_aExpr_SOLIDUS_aExpr : public aExpr
 			v->visit_aExpr_aExpr_SOLIDUS_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pSOLIDUS2;
+		blocxx::String* m_pSOLIDUS2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_PERCENT_aExpr : public aExpr
@@ -1568,7 +1568,7 @@ class OW_WQL_API aExpr_aExpr_PERCENT_aExpr : public aExpr
 	public:
 		aExpr_aExpr_PERCENT_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewPERCENT2,
+			blocxx::String* pNewPERCENT2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1582,7 +1582,7 @@ class OW_WQL_API aExpr_aExpr_PERCENT_aExpr : public aExpr
 			v->visit_aExpr_aExpr_PERCENT_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pPERCENT2;
+		blocxx::String* m_pPERCENT2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_BITAND_aExpr : public aExpr
@@ -1590,7 +1590,7 @@ class OW_WQL_API aExpr_aExpr_BITAND_aExpr : public aExpr
 	public:
 		aExpr_aExpr_BITAND_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewBITAND2,
+			blocxx::String* pNewBITAND2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1604,7 +1604,7 @@ class OW_WQL_API aExpr_aExpr_BITAND_aExpr : public aExpr
 			v->visit_aExpr_aExpr_BITAND_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pBITAND2;
+		blocxx::String* m_pBITAND2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_BITOR_aExpr : public aExpr
@@ -1612,7 +1612,7 @@ class OW_WQL_API aExpr_aExpr_BITOR_aExpr : public aExpr
 	public:
 		aExpr_aExpr_BITOR_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewBITOR2,
+			blocxx::String* pNewBITOR2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1626,7 +1626,7 @@ class OW_WQL_API aExpr_aExpr_BITOR_aExpr : public aExpr
 			v->visit_aExpr_aExpr_BITOR_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pBITOR2;
+		blocxx::String* m_pBITOR2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_BITSHIFTLEFT_aExpr : public aExpr
@@ -1634,7 +1634,7 @@ class OW_WQL_API aExpr_aExpr_BITSHIFTLEFT_aExpr : public aExpr
 	public:
 		aExpr_aExpr_BITSHIFTLEFT_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewBITSHIFTLEFT2,
+			blocxx::String* pNewBITSHIFTLEFT2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1648,7 +1648,7 @@ class OW_WQL_API aExpr_aExpr_BITSHIFTLEFT_aExpr : public aExpr
 			v->visit_aExpr_aExpr_BITSHIFTLEFT_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pBITSHIFTLEFT2;
+		blocxx::String* m_pBITSHIFTLEFT2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_BITSHIFTRIGHT_aExpr : public aExpr
@@ -1656,7 +1656,7 @@ class OW_WQL_API aExpr_aExpr_BITSHIFTRIGHT_aExpr : public aExpr
 	public:
 		aExpr_aExpr_BITSHIFTRIGHT_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewBITSHIFTRIGHT2,
+			blocxx::String* pNewBITSHIFTRIGHT2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1670,7 +1670,7 @@ class OW_WQL_API aExpr_aExpr_BITSHIFTRIGHT_aExpr : public aExpr
 			v->visit_aExpr_aExpr_BITSHIFTRIGHT_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pBITSHIFTRIGHT2;
+		blocxx::String* m_pBITSHIFTRIGHT2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_LESSTHAN_aExpr : public aExpr
@@ -1678,7 +1678,7 @@ class OW_WQL_API aExpr_aExpr_LESSTHAN_aExpr : public aExpr
 	public:
 		aExpr_aExpr_LESSTHAN_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewLESSTHAN2,
+			blocxx::String* pNewLESSTHAN2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1692,7 +1692,7 @@ class OW_WQL_API aExpr_aExpr_LESSTHAN_aExpr : public aExpr
 			v->visit_aExpr_aExpr_LESSTHAN_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pLESSTHAN2;
+		blocxx::String* m_pLESSTHAN2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_LESSTHANOREQUALS_aExpr : public aExpr
@@ -1700,7 +1700,7 @@ class OW_WQL_API aExpr_aExpr_LESSTHANOREQUALS_aExpr : public aExpr
 	public:
 		aExpr_aExpr_LESSTHANOREQUALS_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewLESSTHANOREQUALS2,
+			blocxx::String* pNewLESSTHANOREQUALS2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1714,7 +1714,7 @@ class OW_WQL_API aExpr_aExpr_LESSTHANOREQUALS_aExpr : public aExpr
 			v->visit_aExpr_aExpr_LESSTHANOREQUALS_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pLESSTHANOREQUALS2;
+		blocxx::String* m_pLESSTHANOREQUALS2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_GREATERTHAN_aExpr : public aExpr
@@ -1722,7 +1722,7 @@ class OW_WQL_API aExpr_aExpr_GREATERTHAN_aExpr : public aExpr
 	public:
 		aExpr_aExpr_GREATERTHAN_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewGREATERTHAN2,
+			blocxx::String* pNewGREATERTHAN2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1736,7 +1736,7 @@ class OW_WQL_API aExpr_aExpr_GREATERTHAN_aExpr : public aExpr
 			v->visit_aExpr_aExpr_GREATERTHAN_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pGREATERTHAN2;
+		blocxx::String* m_pGREATERTHAN2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_GREATERTHANOREQUALS_aExpr : public aExpr
@@ -1744,7 +1744,7 @@ class OW_WQL_API aExpr_aExpr_GREATERTHANOREQUALS_aExpr : public aExpr
 	public:
 		aExpr_aExpr_GREATERTHANOREQUALS_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewGREATERTHANOREQUALS2,
+			blocxx::String* pNewGREATERTHANOREQUALS2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1758,7 +1758,7 @@ class OW_WQL_API aExpr_aExpr_GREATERTHANOREQUALS_aExpr : public aExpr
 			v->visit_aExpr_aExpr_GREATERTHANOREQUALS_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pGREATERTHANOREQUALS2;
+		blocxx::String* m_pGREATERTHANOREQUALS2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_EQUALS_aExpr : public aExpr
@@ -1766,7 +1766,7 @@ class OW_WQL_API aExpr_aExpr_EQUALS_aExpr : public aExpr
 	public:
 		aExpr_aExpr_EQUALS_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewEQUALS2,
+			blocxx::String* pNewEQUALS2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1780,7 +1780,7 @@ class OW_WQL_API aExpr_aExpr_EQUALS_aExpr : public aExpr
 			v->visit_aExpr_aExpr_EQUALS_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pEQUALS2;
+		blocxx::String* m_pEQUALS2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_NOTEQUALS_aExpr : public aExpr
@@ -1788,7 +1788,7 @@ class OW_WQL_API aExpr_aExpr_NOTEQUALS_aExpr : public aExpr
 	public:
 		aExpr_aExpr_NOTEQUALS_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewNOTEQUALS2,
+			blocxx::String* pNewNOTEQUALS2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1802,7 +1802,7 @@ class OW_WQL_API aExpr_aExpr_NOTEQUALS_aExpr : public aExpr
 			v->visit_aExpr_aExpr_NOTEQUALS_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pNOTEQUALS2;
+		blocxx::String* m_pNOTEQUALS2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_AND_aExpr : public aExpr
@@ -1810,7 +1810,7 @@ class OW_WQL_API aExpr_aExpr_AND_aExpr : public aExpr
 	public:
 		aExpr_aExpr_AND_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewAND2,
+			blocxx::String* pNewAND2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1824,7 +1824,7 @@ class OW_WQL_API aExpr_aExpr_AND_aExpr : public aExpr
 			v->visit_aExpr_aExpr_AND_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pAND2;
+		blocxx::String* m_pAND2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_OR_aExpr : public aExpr
@@ -1832,7 +1832,7 @@ class OW_WQL_API aExpr_aExpr_OR_aExpr : public aExpr
 	public:
 		aExpr_aExpr_OR_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewOR2,
+			blocxx::String* pNewOR2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1846,14 +1846,14 @@ class OW_WQL_API aExpr_aExpr_OR_aExpr : public aExpr
 			v->visit_aExpr_aExpr_OR_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pOR2;
+		blocxx::String* m_pOR2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_NOT_aExpr : public aExpr
 {
 	public:
 		aExpr_NOT_aExpr(
-			String* pNewNOT1,
+			blocxx::String* pNewNOT1,
 			aExpr* pNewaExpr2
 		)
 			: aExpr()
@@ -1865,7 +1865,7 @@ class OW_WQL_API aExpr_NOT_aExpr : public aExpr
 		{
 			v->visit_aExpr_NOT_aExpr( this );
 		}
-		String* m_pNOT1;
+		blocxx::String* m_pNOT1;
 		aExpr* m_paExpr2;
 };
 class OW_WQL_API aExpr_aExpr_CONCATENATION_aExpr : public aExpr
@@ -1873,7 +1873,7 @@ class OW_WQL_API aExpr_aExpr_CONCATENATION_aExpr : public aExpr
 	public:
 		aExpr_aExpr_CONCATENATION_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewCONCATENATION2,
+			blocxx::String* pNewCONCATENATION2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1887,7 +1887,7 @@ class OW_WQL_API aExpr_aExpr_CONCATENATION_aExpr : public aExpr
 			v->visit_aExpr_aExpr_CONCATENATION_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pCONCATENATION2;
+		blocxx::String* m_pCONCATENATION2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_LIKE_aExpr : public aExpr
@@ -1895,7 +1895,7 @@ class OW_WQL_API aExpr_aExpr_LIKE_aExpr : public aExpr
 	public:
 		aExpr_aExpr_LIKE_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewLIKE2,
+			blocxx::String* pNewLIKE2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -1909,7 +1909,7 @@ class OW_WQL_API aExpr_aExpr_LIKE_aExpr : public aExpr
 			v->visit_aExpr_aExpr_LIKE_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pLIKE2;
+		blocxx::String* m_pLIKE2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr : public aExpr
@@ -1917,9 +1917,9 @@ class OW_WQL_API aExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr : public aExpr
 	public:
 		aExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewLIKE2,
+			blocxx::String* pNewLIKE2,
 			aExpr* pNewaExpr3,
-			String* pNewESCAPE4,
+			blocxx::String* pNewESCAPE4,
 			aExpr* pNewaExpr5
 		)
 			: aExpr()
@@ -1935,9 +1935,9 @@ class OW_WQL_API aExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr : public aExpr
 			v->visit_aExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pLIKE2;
+		blocxx::String* m_pLIKE2;
 		aExpr* m_paExpr3;
-		String* m_pESCAPE4;
+		blocxx::String* m_pESCAPE4;
 		aExpr* m_paExpr5;
 };
 class OW_WQL_API aExpr_aExpr_NOT_LIKE_aExpr : public aExpr
@@ -1945,8 +1945,8 @@ class OW_WQL_API aExpr_aExpr_NOT_LIKE_aExpr : public aExpr
 	public:
 		aExpr_aExpr_NOT_LIKE_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewNOT2,
-			String* pNewLIKE3,
+			blocxx::String* pNewNOT2,
+			blocxx::String* pNewLIKE3,
 			aExpr* pNewaExpr4
 		)
 			: aExpr()
@@ -1961,8 +1961,8 @@ class OW_WQL_API aExpr_aExpr_NOT_LIKE_aExpr : public aExpr
 			v->visit_aExpr_aExpr_NOT_LIKE_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pNOT2;
-		String* m_pLIKE3;
+		blocxx::String* m_pNOT2;
+		blocxx::String* m_pLIKE3;
 		aExpr* m_paExpr4;
 };
 class OW_WQL_API aExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr : public aExpr
@@ -1970,10 +1970,10 @@ class OW_WQL_API aExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr : public aExpr
 	public:
 		aExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewNOT2,
-			String* pNewLIKE3,
+			blocxx::String* pNewNOT2,
+			blocxx::String* pNewLIKE3,
 			aExpr* pNewaExpr4,
-			String* pNewESCAPE5,
+			blocxx::String* pNewESCAPE5,
 			aExpr* pNewaExpr6
 		)
 			: aExpr()
@@ -1990,10 +1990,10 @@ class OW_WQL_API aExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr : public aExpr
 			v->visit_aExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pNOT2;
-		String* m_pLIKE3;
+		blocxx::String* m_pNOT2;
+		blocxx::String* m_pLIKE3;
 		aExpr* m_paExpr4;
-		String* m_pESCAPE5;
+		blocxx::String* m_pESCAPE5;
 		aExpr* m_paExpr6;
 };
 class OW_WQL_API aExpr_aExpr_ISNULL : public aExpr
@@ -2001,7 +2001,7 @@ class OW_WQL_API aExpr_aExpr_ISNULL : public aExpr
 	public:
 		aExpr_aExpr_ISNULL(
 			aExpr* pNewaExpr1,
-			String* pNewISNULL2
+			blocxx::String* pNewISNULL2
 		)
 			: aExpr()
 			, m_paExpr1(pNewaExpr1)
@@ -2013,15 +2013,15 @@ class OW_WQL_API aExpr_aExpr_ISNULL : public aExpr
 			v->visit_aExpr_aExpr_ISNULL( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pISNULL2;
+		blocxx::String* m_pISNULL2;
 };
 class OW_WQL_API aExpr_aExpr_IS_NULLP : public aExpr
 {
 	public:
 		aExpr_aExpr_IS_NULLP(
 			aExpr* pNewaExpr1,
-			String* pNewIS2,
-			String* pNewNULLP3
+			blocxx::String* pNewIS2,
+			blocxx::String* pNewNULLP3
 		)
 			: aExpr()
 			, m_paExpr1(pNewaExpr1)
@@ -2034,15 +2034,15 @@ class OW_WQL_API aExpr_aExpr_IS_NULLP : public aExpr
 			v->visit_aExpr_aExpr_IS_NULLP( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pIS2;
-		String* m_pNULLP3;
+		blocxx::String* m_pIS2;
+		blocxx::String* m_pNULLP3;
 };
 class OW_WQL_API aExpr_aExpr_NOTNULL : public aExpr
 {
 	public:
 		aExpr_aExpr_NOTNULL(
 			aExpr* pNewaExpr1,
-			String* pNewNOTNULL2
+			blocxx::String* pNewNOTNULL2
 		)
 			: aExpr()
 			, m_paExpr1(pNewaExpr1)
@@ -2054,16 +2054,16 @@ class OW_WQL_API aExpr_aExpr_NOTNULL : public aExpr
 			v->visit_aExpr_aExpr_NOTNULL( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pNOTNULL2;
+		blocxx::String* m_pNOTNULL2;
 };
 class OW_WQL_API aExpr_aExpr_IS_NOT_NULLP : public aExpr
 {
 	public:
 		aExpr_aExpr_IS_NOT_NULLP(
 			aExpr* pNewaExpr1,
-			String* pNewIS2,
-			String* pNewNOT3,
-			String* pNewNULLP4
+			blocxx::String* pNewIS2,
+			blocxx::String* pNewNOT3,
+			blocxx::String* pNewNULLP4
 		)
 			: aExpr()
 			, m_paExpr1(pNewaExpr1)
@@ -2077,17 +2077,17 @@ class OW_WQL_API aExpr_aExpr_IS_NOT_NULLP : public aExpr
 			v->visit_aExpr_aExpr_IS_NOT_NULLP( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pIS2;
-		String* m_pNOT3;
-		String* m_pNULLP4;
+		blocxx::String* m_pIS2;
+		blocxx::String* m_pNOT3;
+		blocxx::String* m_pNULLP4;
 };
 class OW_WQL_API aExpr_aExpr_IS_TRUEP : public aExpr
 {
 	public:
 		aExpr_aExpr_IS_TRUEP(
 			aExpr* pNewaExpr1,
-			String* pNewIS2,
-			String* pNewTRUEP3
+			blocxx::String* pNewIS2,
+			blocxx::String* pNewTRUEP3
 		)
 			: aExpr()
 			, m_paExpr1(pNewaExpr1)
@@ -2100,17 +2100,17 @@ class OW_WQL_API aExpr_aExpr_IS_TRUEP : public aExpr
 			v->visit_aExpr_aExpr_IS_TRUEP( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pIS2;
-		String* m_pTRUEP3;
+		blocxx::String* m_pIS2;
+		blocxx::String* m_pTRUEP3;
 };
 class OW_WQL_API aExpr_aExpr_IS_NOT_FALSEP : public aExpr
 {
 	public:
 		aExpr_aExpr_IS_NOT_FALSEP(
 			aExpr* pNewaExpr1,
-			String* pNewIS2,
-			String* pNewNOT3,
-			String* pNewFALSEP4
+			blocxx::String* pNewIS2,
+			blocxx::String* pNewNOT3,
+			blocxx::String* pNewFALSEP4
 		)
 			: aExpr()
 			, m_paExpr1(pNewaExpr1)
@@ -2124,17 +2124,17 @@ class OW_WQL_API aExpr_aExpr_IS_NOT_FALSEP : public aExpr
 			v->visit_aExpr_aExpr_IS_NOT_FALSEP( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pIS2;
-		String* m_pNOT3;
-		String* m_pFALSEP4;
+		blocxx::String* m_pIS2;
+		blocxx::String* m_pNOT3;
+		blocxx::String* m_pFALSEP4;
 };
 class OW_WQL_API aExpr_aExpr_IS_FALSEP : public aExpr
 {
 	public:
 		aExpr_aExpr_IS_FALSEP(
 			aExpr* pNewaExpr1,
-			String* pNewIS2,
-			String* pNewFALSEP3
+			blocxx::String* pNewIS2,
+			blocxx::String* pNewFALSEP3
 		)
 			: aExpr()
 			, m_paExpr1(pNewaExpr1)
@@ -2147,17 +2147,17 @@ class OW_WQL_API aExpr_aExpr_IS_FALSEP : public aExpr
 			v->visit_aExpr_aExpr_IS_FALSEP( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pIS2;
-		String* m_pFALSEP3;
+		blocxx::String* m_pIS2;
+		blocxx::String* m_pFALSEP3;
 };
 class OW_WQL_API aExpr_aExpr_IS_NOT_TRUEP : public aExpr
 {
 	public:
 		aExpr_aExpr_IS_NOT_TRUEP(
 			aExpr* pNewaExpr1,
-			String* pNewIS2,
-			String* pNewNOT3,
-			String* pNewTRUEP4
+			blocxx::String* pNewIS2,
+			blocxx::String* pNewNOT3,
+			blocxx::String* pNewTRUEP4
 		)
 			: aExpr()
 			, m_paExpr1(pNewaExpr1)
@@ -2171,16 +2171,16 @@ class OW_WQL_API aExpr_aExpr_IS_NOT_TRUEP : public aExpr
 			v->visit_aExpr_aExpr_IS_NOT_TRUEP( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pIS2;
-		String* m_pNOT3;
-		String* m_pTRUEP4;
+		blocxx::String* m_pIS2;
+		blocxx::String* m_pNOT3;
+		blocxx::String* m_pTRUEP4;
 };
 class OW_WQL_API aExpr_aExpr_ISA_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_ISA_aExpr(
 			aExpr* pNewaExpr1,
-			String* pNewISA2,
+			blocxx::String* pNewISA2,
 			aExpr* pNewaExpr3
 		)
 			: aExpr()
@@ -2194,7 +2194,7 @@ class OW_WQL_API aExpr_aExpr_ISA_aExpr : public aExpr
 			v->visit_aExpr_aExpr_ISA_aExpr( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pISA2;
+		blocxx::String* m_pISA2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API aExpr_rowExpr : public aExpr
@@ -2240,7 +2240,7 @@ class OW_WQL_API bExpr_PLUS_bExpr : public bExpr
 {
 	public:
 		bExpr_PLUS_bExpr(
-			String* pNewPLUS1,
+			blocxx::String* pNewPLUS1,
 			bExpr* pNewbExpr2
 		)
 			: bExpr()
@@ -2252,14 +2252,14 @@ class OW_WQL_API bExpr_PLUS_bExpr : public bExpr
 		{
 			v->visit_bExpr_PLUS_bExpr( this );
 		}
-		String* m_pPLUS1;
+		blocxx::String* m_pPLUS1;
 		bExpr* m_pbExpr2;
 };
 class OW_WQL_API bExpr_MINUS_bExpr : public bExpr
 {
 	public:
 		bExpr_MINUS_bExpr(
-			String* pNewMINUS1,
+			blocxx::String* pNewMINUS1,
 			bExpr* pNewbExpr2
 		)
 			: bExpr()
@@ -2271,14 +2271,14 @@ class OW_WQL_API bExpr_MINUS_bExpr : public bExpr
 		{
 			v->visit_bExpr_MINUS_bExpr( this );
 		}
-		String* m_pMINUS1;
+		blocxx::String* m_pMINUS1;
 		bExpr* m_pbExpr2;
 };
 class OW_WQL_API bExpr_BITINVERT_bExpr : public bExpr
 {
 	public:
 		bExpr_BITINVERT_bExpr(
-			String* pNewBITINVERT1,
+			blocxx::String* pNewBITINVERT1,
 			bExpr* pNewbExpr2
 		)
 			: bExpr()
@@ -2290,7 +2290,7 @@ class OW_WQL_API bExpr_BITINVERT_bExpr : public bExpr
 		{
 			v->visit_bExpr_BITINVERT_bExpr( this );
 		}
-		String* m_pBITINVERT1;
+		blocxx::String* m_pBITINVERT1;
 		bExpr* m_pbExpr2;
 };
 class OW_WQL_API bExpr_bExpr_PLUS_bExpr : public bExpr
@@ -2298,7 +2298,7 @@ class OW_WQL_API bExpr_bExpr_PLUS_bExpr : public bExpr
 	public:
 		bExpr_bExpr_PLUS_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewPLUS2,
+			blocxx::String* pNewPLUS2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2312,7 +2312,7 @@ class OW_WQL_API bExpr_bExpr_PLUS_bExpr : public bExpr
 			v->visit_bExpr_bExpr_PLUS_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pPLUS2;
+		blocxx::String* m_pPLUS2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_MINUS_bExpr : public bExpr
@@ -2320,7 +2320,7 @@ class OW_WQL_API bExpr_bExpr_MINUS_bExpr : public bExpr
 	public:
 		bExpr_bExpr_MINUS_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewMINUS2,
+			blocxx::String* pNewMINUS2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2334,7 +2334,7 @@ class OW_WQL_API bExpr_bExpr_MINUS_bExpr : public bExpr
 			v->visit_bExpr_bExpr_MINUS_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pMINUS2;
+		blocxx::String* m_pMINUS2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_ASTERISK_bExpr : public bExpr
@@ -2342,7 +2342,7 @@ class OW_WQL_API bExpr_bExpr_ASTERISK_bExpr : public bExpr
 	public:
 		bExpr_bExpr_ASTERISK_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewASTERISK2,
+			blocxx::String* pNewASTERISK2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2356,7 +2356,7 @@ class OW_WQL_API bExpr_bExpr_ASTERISK_bExpr : public bExpr
 			v->visit_bExpr_bExpr_ASTERISK_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pASTERISK2;
+		blocxx::String* m_pASTERISK2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_SOLIDUS_bExpr : public bExpr
@@ -2364,7 +2364,7 @@ class OW_WQL_API bExpr_bExpr_SOLIDUS_bExpr : public bExpr
 	public:
 		bExpr_bExpr_SOLIDUS_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewSOLIDUS2,
+			blocxx::String* pNewSOLIDUS2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2378,7 +2378,7 @@ class OW_WQL_API bExpr_bExpr_SOLIDUS_bExpr : public bExpr
 			v->visit_bExpr_bExpr_SOLIDUS_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pSOLIDUS2;
+		blocxx::String* m_pSOLIDUS2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_PERCENT_bExpr : public bExpr
@@ -2386,7 +2386,7 @@ class OW_WQL_API bExpr_bExpr_PERCENT_bExpr : public bExpr
 	public:
 		bExpr_bExpr_PERCENT_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewPERCENT2,
+			blocxx::String* pNewPERCENT2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2400,7 +2400,7 @@ class OW_WQL_API bExpr_bExpr_PERCENT_bExpr : public bExpr
 			v->visit_bExpr_bExpr_PERCENT_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pPERCENT2;
+		blocxx::String* m_pPERCENT2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_BITAND_bExpr : public bExpr
@@ -2408,7 +2408,7 @@ class OW_WQL_API bExpr_bExpr_BITAND_bExpr : public bExpr
 	public:
 		bExpr_bExpr_BITAND_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewBITAND2,
+			blocxx::String* pNewBITAND2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2422,7 +2422,7 @@ class OW_WQL_API bExpr_bExpr_BITAND_bExpr : public bExpr
 			v->visit_bExpr_bExpr_BITAND_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pBITAND2;
+		blocxx::String* m_pBITAND2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_BITOR_bExpr : public bExpr
@@ -2430,7 +2430,7 @@ class OW_WQL_API bExpr_bExpr_BITOR_bExpr : public bExpr
 	public:
 		bExpr_bExpr_BITOR_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewBITOR2,
+			blocxx::String* pNewBITOR2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2444,7 +2444,7 @@ class OW_WQL_API bExpr_bExpr_BITOR_bExpr : public bExpr
 			v->visit_bExpr_bExpr_BITOR_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pBITOR2;
+		blocxx::String* m_pBITOR2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_BITSHIFTLEFT_bExpr : public bExpr
@@ -2452,7 +2452,7 @@ class OW_WQL_API bExpr_bExpr_BITSHIFTLEFT_bExpr : public bExpr
 	public:
 		bExpr_bExpr_BITSHIFTLEFT_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewBITSHIFTLEFT2,
+			blocxx::String* pNewBITSHIFTLEFT2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2466,7 +2466,7 @@ class OW_WQL_API bExpr_bExpr_BITSHIFTLEFT_bExpr : public bExpr
 			v->visit_bExpr_bExpr_BITSHIFTLEFT_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pBITSHIFTLEFT2;
+		blocxx::String* m_pBITSHIFTLEFT2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_BITSHIFTRIGHT_bExpr : public bExpr
@@ -2474,7 +2474,7 @@ class OW_WQL_API bExpr_bExpr_BITSHIFTRIGHT_bExpr : public bExpr
 	public:
 		bExpr_bExpr_BITSHIFTRIGHT_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewBITSHIFTRIGHT2,
+			blocxx::String* pNewBITSHIFTRIGHT2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2488,7 +2488,7 @@ class OW_WQL_API bExpr_bExpr_BITSHIFTRIGHT_bExpr : public bExpr
 			v->visit_bExpr_bExpr_BITSHIFTRIGHT_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pBITSHIFTRIGHT2;
+		blocxx::String* m_pBITSHIFTRIGHT2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_LESSTHAN_bExpr : public bExpr
@@ -2496,7 +2496,7 @@ class OW_WQL_API bExpr_bExpr_LESSTHAN_bExpr : public bExpr
 	public:
 		bExpr_bExpr_LESSTHAN_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewLESSTHAN2,
+			blocxx::String* pNewLESSTHAN2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2510,7 +2510,7 @@ class OW_WQL_API bExpr_bExpr_LESSTHAN_bExpr : public bExpr
 			v->visit_bExpr_bExpr_LESSTHAN_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pLESSTHAN2;
+		blocxx::String* m_pLESSTHAN2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_LESSTHANOREQUALS_bExpr : public bExpr
@@ -2518,7 +2518,7 @@ class OW_WQL_API bExpr_bExpr_LESSTHANOREQUALS_bExpr : public bExpr
 	public:
 		bExpr_bExpr_LESSTHANOREQUALS_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewLESSTHANOREQUALS2,
+			blocxx::String* pNewLESSTHANOREQUALS2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2532,7 +2532,7 @@ class OW_WQL_API bExpr_bExpr_LESSTHANOREQUALS_bExpr : public bExpr
 			v->visit_bExpr_bExpr_LESSTHANOREQUALS_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pLESSTHANOREQUALS2;
+		blocxx::String* m_pLESSTHANOREQUALS2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_GREATERTHAN_bExpr : public bExpr
@@ -2540,7 +2540,7 @@ class OW_WQL_API bExpr_bExpr_GREATERTHAN_bExpr : public bExpr
 	public:
 		bExpr_bExpr_GREATERTHAN_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewGREATERTHAN2,
+			blocxx::String* pNewGREATERTHAN2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2554,7 +2554,7 @@ class OW_WQL_API bExpr_bExpr_GREATERTHAN_bExpr : public bExpr
 			v->visit_bExpr_bExpr_GREATERTHAN_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pGREATERTHAN2;
+		blocxx::String* m_pGREATERTHAN2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_GREATERTHANOREQUALS_bExpr : public bExpr
@@ -2562,7 +2562,7 @@ class OW_WQL_API bExpr_bExpr_GREATERTHANOREQUALS_bExpr : public bExpr
 	public:
 		bExpr_bExpr_GREATERTHANOREQUALS_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewGREATERTHANOREQUALS2,
+			blocxx::String* pNewGREATERTHANOREQUALS2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2576,7 +2576,7 @@ class OW_WQL_API bExpr_bExpr_GREATERTHANOREQUALS_bExpr : public bExpr
 			v->visit_bExpr_bExpr_GREATERTHANOREQUALS_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pGREATERTHANOREQUALS2;
+		blocxx::String* m_pGREATERTHANOREQUALS2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_EQUALS_bExpr : public bExpr
@@ -2584,7 +2584,7 @@ class OW_WQL_API bExpr_bExpr_EQUALS_bExpr : public bExpr
 	public:
 		bExpr_bExpr_EQUALS_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewEQUALS2,
+			blocxx::String* pNewEQUALS2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2598,7 +2598,7 @@ class OW_WQL_API bExpr_bExpr_EQUALS_bExpr : public bExpr
 			v->visit_bExpr_bExpr_EQUALS_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pEQUALS2;
+		blocxx::String* m_pEQUALS2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_NOTEQUALS_bExpr : public bExpr
@@ -2606,7 +2606,7 @@ class OW_WQL_API bExpr_bExpr_NOTEQUALS_bExpr : public bExpr
 	public:
 		bExpr_bExpr_NOTEQUALS_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewNOTEQUALS2,
+			blocxx::String* pNewNOTEQUALS2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2620,7 +2620,7 @@ class OW_WQL_API bExpr_bExpr_NOTEQUALS_bExpr : public bExpr
 			v->visit_bExpr_bExpr_NOTEQUALS_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pNOTEQUALS2;
+		blocxx::String* m_pNOTEQUALS2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API bExpr_bExpr_CONCATENATION_bExpr : public bExpr
@@ -2628,7 +2628,7 @@ class OW_WQL_API bExpr_bExpr_CONCATENATION_bExpr : public bExpr
 	public:
 		bExpr_bExpr_CONCATENATION_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewCONCATENATION2,
+			blocxx::String* pNewCONCATENATION2,
 			bExpr* pNewbExpr3
 		)
 			: bExpr()
@@ -2642,7 +2642,7 @@ class OW_WQL_API bExpr_bExpr_CONCATENATION_bExpr : public bExpr
 			v->visit_bExpr_bExpr_CONCATENATION_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pCONCATENATION2;
+		blocxx::String* m_pCONCATENATION2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API cExpr: public node
@@ -2672,7 +2672,7 @@ class OW_WQL_API cExpr_strColId_optIndirection : public cExpr
 {
 	public:
 		cExpr_strColId_optIndirection(
-			String* pNewstrColId1,
+			blocxx::String* pNewstrColId1,
 			optIndirection* pNewoptIndirection2
 		)
 			: cExpr()
@@ -2684,7 +2684,7 @@ class OW_WQL_API cExpr_strColId_optIndirection : public cExpr
 		{
 			v->visit_cExpr_strColId_optIndirection( this );
 		}
-		String* m_pstrColId1;
+		blocxx::String* m_pstrColId1;
 		optIndirection* m_poptIndirection2;
 };
 class OW_WQL_API cExpr_aExprConst : public cExpr
@@ -2707,9 +2707,9 @@ class OW_WQL_API cExpr_LEFTPAREN_aExpr_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_LEFTPAREN_aExpr_RIGHTPAREN(
-			String* pNewLEFTPAREN1,
+			blocxx::String* pNewLEFTPAREN1,
 			aExpr* pNewaExpr2,
-			String* pNewRIGHTPAREN3
+			blocxx::String* pNewRIGHTPAREN3
 		)
 			: cExpr()
 			, m_pLEFTPAREN1(pNewLEFTPAREN1)
@@ -2721,17 +2721,17 @@ class OW_WQL_API cExpr_LEFTPAREN_aExpr_RIGHTPAREN : public cExpr
 		{
 			v->visit_cExpr_LEFTPAREN_aExpr_RIGHTPAREN( this );
 		}
-		String* m_pLEFTPAREN1;
+		blocxx::String* m_pLEFTPAREN1;
 		aExpr* m_paExpr2;
-		String* m_pRIGHTPAREN3;
+		blocxx::String* m_pRIGHTPAREN3;
 };
 class OW_WQL_API cExpr_strFuncName_LEFTPAREN_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_strFuncName_LEFTPAREN_RIGHTPAREN(
-			String* pNewstrFuncName1,
-			String* pNewLEFTPAREN2,
-			String* pNewRIGHTPAREN3
+			blocxx::String* pNewstrFuncName1,
+			blocxx::String* pNewLEFTPAREN2,
+			blocxx::String* pNewRIGHTPAREN3
 		)
 			: cExpr()
 			, m_pstrFuncName1(pNewstrFuncName1)
@@ -2743,18 +2743,18 @@ class OW_WQL_API cExpr_strFuncName_LEFTPAREN_RIGHTPAREN : public cExpr
 		{
 			v->visit_cExpr_strFuncName_LEFTPAREN_RIGHTPAREN( this );
 		}
-		String* m_pstrFuncName1;
-		String* m_pLEFTPAREN2;
-		String* m_pRIGHTPAREN3;
+		blocxx::String* m_pstrFuncName1;
+		blocxx::String* m_pLEFTPAREN2;
+		blocxx::String* m_pRIGHTPAREN3;
 };
 class OW_WQL_API cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN(
-			String* pNewstrFuncName1,
-			String* pNewLEFTPAREN2,
+			blocxx::String* pNewstrFuncName1,
+			blocxx::String* pNewLEFTPAREN2,
 			exprSeq* pNewexprSeq3,
-			String* pNewRIGHTPAREN4
+			blocxx::String* pNewRIGHTPAREN4
 		)
 			: cExpr()
 			, m_pstrFuncName1(pNewstrFuncName1)
@@ -2767,20 +2767,20 @@ class OW_WQL_API cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN : public cExpr
 		{
 			v->visit_cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN( this );
 		}
-		String* m_pstrFuncName1;
-		String* m_pLEFTPAREN2;
+		blocxx::String* m_pstrFuncName1;
+		blocxx::String* m_pLEFTPAREN2;
 		exprSeq* m_pexprSeq3;
-		String* m_pRIGHTPAREN4;
+		blocxx::String* m_pRIGHTPAREN4;
 };
 class OW_WQL_API cExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN(
-			String* pNewstrFuncName1,
-			String* pNewLEFTPAREN2,
-			String* pNewALL3,
+			blocxx::String* pNewstrFuncName1,
+			blocxx::String* pNewLEFTPAREN2,
+			blocxx::String* pNewALL3,
 			exprSeq* pNewexprSeq4,
-			String* pNewRIGHTPAREN5
+			blocxx::String* pNewRIGHTPAREN5
 		)
 			: cExpr()
 			, m_pstrFuncName1(pNewstrFuncName1)
@@ -2794,21 +2794,21 @@ class OW_WQL_API cExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN : public cEx
 		{
 			v->visit_cExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN( this );
 		}
-		String* m_pstrFuncName1;
-		String* m_pLEFTPAREN2;
-		String* m_pALL3;
+		blocxx::String* m_pstrFuncName1;
+		blocxx::String* m_pLEFTPAREN2;
+		blocxx::String* m_pALL3;
 		exprSeq* m_pexprSeq4;
-		String* m_pRIGHTPAREN5;
+		blocxx::String* m_pRIGHTPAREN5;
 };
 class OW_WQL_API cExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN(
-			String* pNewstrFuncName1,
-			String* pNewLEFTPAREN2,
-			String* pNewDISTINCT3,
+			blocxx::String* pNewstrFuncName1,
+			blocxx::String* pNewLEFTPAREN2,
+			blocxx::String* pNewDISTINCT3,
 			exprSeq* pNewexprSeq4,
-			String* pNewRIGHTPAREN5
+			blocxx::String* pNewRIGHTPAREN5
 		)
 			: cExpr()
 			, m_pstrFuncName1(pNewstrFuncName1)
@@ -2822,20 +2822,20 @@ class OW_WQL_API cExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN : publi
 		{
 			v->visit_cExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN( this );
 		}
-		String* m_pstrFuncName1;
-		String* m_pLEFTPAREN2;
-		String* m_pDISTINCT3;
+		blocxx::String* m_pstrFuncName1;
+		blocxx::String* m_pLEFTPAREN2;
+		blocxx::String* m_pDISTINCT3;
 		exprSeq* m_pexprSeq4;
-		String* m_pRIGHTPAREN5;
+		blocxx::String* m_pRIGHTPAREN5;
 };
 class OW_WQL_API cExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN(
-			String* pNewstrFuncName1,
-			String* pNewLEFTPAREN2,
-			String* pNewASTERISK3,
-			String* pNewRIGHTPAREN4
+			blocxx::String* pNewstrFuncName1,
+			blocxx::String* pNewLEFTPAREN2,
+			blocxx::String* pNewASTERISK3,
+			blocxx::String* pNewRIGHTPAREN4
 		)
 			: cExpr()
 			, m_pstrFuncName1(pNewstrFuncName1)
@@ -2848,16 +2848,16 @@ class OW_WQL_API cExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN : public cExpr
 		{
 			v->visit_cExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN( this );
 		}
-		String* m_pstrFuncName1;
-		String* m_pLEFTPAREN2;
-		String* m_pASTERISK3;
-		String* m_pRIGHTPAREN4;
+		blocxx::String* m_pstrFuncName1;
+		blocxx::String* m_pLEFTPAREN2;
+		blocxx::String* m_pASTERISK3;
+		blocxx::String* m_pRIGHTPAREN4;
 };
 class OW_WQL_API cExpr_CURRENTDATE : public cExpr
 {
 	public:
 		cExpr_CURRENTDATE(
-			String* pNewCURRENTDATE1
+			blocxx::String* pNewCURRENTDATE1
 		)
 			: cExpr()
 			, m_pCURRENTDATE1(pNewCURRENTDATE1)
@@ -2867,13 +2867,13 @@ class OW_WQL_API cExpr_CURRENTDATE : public cExpr
 		{
 			v->visit_cExpr_CURRENTDATE( this );
 		}
-		String* m_pCURRENTDATE1;
+		blocxx::String* m_pCURRENTDATE1;
 };
 class OW_WQL_API cExpr_CURRENTTIME : public cExpr
 {
 	public:
 		cExpr_CURRENTTIME(
-			String* pNewCURRENTTIME1
+			blocxx::String* pNewCURRENTTIME1
 		)
 			: cExpr()
 			, m_pCURRENTTIME1(pNewCURRENTTIME1)
@@ -2883,16 +2883,16 @@ class OW_WQL_API cExpr_CURRENTTIME : public cExpr
 		{
 			v->visit_cExpr_CURRENTTIME( this );
 		}
-		String* m_pCURRENTTIME1;
+		blocxx::String* m_pCURRENTTIME1;
 };
 class OW_WQL_API cExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN(
-			String* pNewCURRENTTIME1,
-			String* pNewLEFTPAREN2,
-			String* pNewICONST3,
-			String* pNewRIGHTPAREN4
+			blocxx::String* pNewCURRENTTIME1,
+			blocxx::String* pNewLEFTPAREN2,
+			blocxx::String* pNewICONST3,
+			blocxx::String* pNewRIGHTPAREN4
 		)
 			: cExpr()
 			, m_pCURRENTTIME1(pNewCURRENTTIME1)
@@ -2905,16 +2905,16 @@ class OW_WQL_API cExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN : public cExpr
 		{
 			v->visit_cExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN( this );
 		}
-		String* m_pCURRENTTIME1;
-		String* m_pLEFTPAREN2;
-		String* m_pICONST3;
-		String* m_pRIGHTPAREN4;
+		blocxx::String* m_pCURRENTTIME1;
+		blocxx::String* m_pLEFTPAREN2;
+		blocxx::String* m_pICONST3;
+		blocxx::String* m_pRIGHTPAREN4;
 };
 class OW_WQL_API cExpr_CURRENTTIMESTAMP : public cExpr
 {
 	public:
 		cExpr_CURRENTTIMESTAMP(
-			String* pNewCURRENTTIMESTAMP1
+			blocxx::String* pNewCURRENTTIMESTAMP1
 		)
 			: cExpr()
 			, m_pCURRENTTIMESTAMP1(pNewCURRENTTIMESTAMP1)
@@ -2924,16 +2924,16 @@ class OW_WQL_API cExpr_CURRENTTIMESTAMP : public cExpr
 		{
 			v->visit_cExpr_CURRENTTIMESTAMP( this );
 		}
-		String* m_pCURRENTTIMESTAMP1;
+		blocxx::String* m_pCURRENTTIMESTAMP1;
 };
 class OW_WQL_API cExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN(
-			String* pNewCURRENTTIMESTAMP1,
-			String* pNewLEFTPAREN2,
-			String* pNewICONST3,
-			String* pNewRIGHTPAREN4
+			blocxx::String* pNewCURRENTTIMESTAMP1,
+			blocxx::String* pNewLEFTPAREN2,
+			blocxx::String* pNewICONST3,
+			blocxx::String* pNewRIGHTPAREN4
 		)
 			: cExpr()
 			, m_pCURRENTTIMESTAMP1(pNewCURRENTTIMESTAMP1)
@@ -2946,16 +2946,16 @@ class OW_WQL_API cExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN : public cEx
 		{
 			v->visit_cExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN( this );
 		}
-		String* m_pCURRENTTIMESTAMP1;
-		String* m_pLEFTPAREN2;
-		String* m_pICONST3;
-		String* m_pRIGHTPAREN4;
+		blocxx::String* m_pCURRENTTIMESTAMP1;
+		blocxx::String* m_pLEFTPAREN2;
+		blocxx::String* m_pICONST3;
+		blocxx::String* m_pRIGHTPAREN4;
 };
 class OW_WQL_API cExpr_CURRENTUSER : public cExpr
 {
 	public:
 		cExpr_CURRENTUSER(
-			String* pNewCURRENTUSER1
+			blocxx::String* pNewCURRENTUSER1
 		)
 			: cExpr()
 			, m_pCURRENTUSER1(pNewCURRENTUSER1)
@@ -2965,13 +2965,13 @@ class OW_WQL_API cExpr_CURRENTUSER : public cExpr
 		{
 			v->visit_cExpr_CURRENTUSER( this );
 		}
-		String* m_pCURRENTUSER1;
+		blocxx::String* m_pCURRENTUSER1;
 };
 class OW_WQL_API cExpr_SESSIONUSER : public cExpr
 {
 	public:
 		cExpr_SESSIONUSER(
-			String* pNewSESSIONUSER1
+			blocxx::String* pNewSESSIONUSER1
 		)
 			: cExpr()
 			, m_pSESSIONUSER1(pNewSESSIONUSER1)
@@ -2981,13 +2981,13 @@ class OW_WQL_API cExpr_SESSIONUSER : public cExpr
 		{
 			v->visit_cExpr_SESSIONUSER( this );
 		}
-		String* m_pSESSIONUSER1;
+		blocxx::String* m_pSESSIONUSER1;
 };
 class OW_WQL_API cExpr_USER : public cExpr
 {
 	public:
 		cExpr_USER(
-			String* pNewUSER1
+			blocxx::String* pNewUSER1
 		)
 			: cExpr()
 			, m_pUSER1(pNewUSER1)
@@ -2997,16 +2997,16 @@ class OW_WQL_API cExpr_USER : public cExpr
 		{
 			v->visit_cExpr_USER( this );
 		}
-		String* m_pUSER1;
+		blocxx::String* m_pUSER1;
 };
 class OW_WQL_API cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN(
-			String* pNewEXTRACT1,
-			String* pNewLEFTPAREN2,
+			blocxx::String* pNewEXTRACT1,
+			blocxx::String* pNewLEFTPAREN2,
 			optExtract* pNewoptExtract3,
-			String* pNewRIGHTPAREN4
+			blocxx::String* pNewRIGHTPAREN4
 		)
 			: cExpr()
 			, m_pEXTRACT1(pNewEXTRACT1)
@@ -3019,19 +3019,19 @@ class OW_WQL_API cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN : public cExpr
 		{
 			v->visit_cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN( this );
 		}
-		String* m_pEXTRACT1;
-		String* m_pLEFTPAREN2;
+		blocxx::String* m_pEXTRACT1;
+		blocxx::String* m_pLEFTPAREN2;
 		optExtract* m_poptExtract3;
-		String* m_pRIGHTPAREN4;
+		blocxx::String* m_pRIGHTPAREN4;
 };
 class OW_WQL_API cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN(
-			String* pNewPOSITION1,
-			String* pNewLEFTPAREN2,
+			blocxx::String* pNewPOSITION1,
+			blocxx::String* pNewLEFTPAREN2,
 			positionExpr* pNewpositionExpr3,
-			String* pNewRIGHTPAREN4
+			blocxx::String* pNewRIGHTPAREN4
 		)
 			: cExpr()
 			, m_pPOSITION1(pNewPOSITION1)
@@ -3044,19 +3044,19 @@ class OW_WQL_API cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN : public cExpr
 		{
 			v->visit_cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN( this );
 		}
-		String* m_pPOSITION1;
-		String* m_pLEFTPAREN2;
+		blocxx::String* m_pPOSITION1;
+		blocxx::String* m_pLEFTPAREN2;
 		positionExpr* m_ppositionExpr3;
-		String* m_pRIGHTPAREN4;
+		blocxx::String* m_pRIGHTPAREN4;
 };
 class OW_WQL_API cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN(
-			String* pNewSUBSTRING1,
-			String* pNewLEFTPAREN2,
+			blocxx::String* pNewSUBSTRING1,
+			blocxx::String* pNewLEFTPAREN2,
 			optSubstrExpr* pNewoptSubstrExpr3,
-			String* pNewRIGHTPAREN4
+			blocxx::String* pNewRIGHTPAREN4
 		)
 			: cExpr()
 			, m_pSUBSTRING1(pNewSUBSTRING1)
@@ -3069,20 +3069,20 @@ class OW_WQL_API cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN : public cEx
 		{
 			v->visit_cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN( this );
 		}
-		String* m_pSUBSTRING1;
-		String* m_pLEFTPAREN2;
+		blocxx::String* m_pSUBSTRING1;
+		blocxx::String* m_pLEFTPAREN2;
 		optSubstrExpr* m_poptSubstrExpr3;
-		String* m_pRIGHTPAREN4;
+		blocxx::String* m_pRIGHTPAREN4;
 };
 class OW_WQL_API cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN(
-			String* pNewTRIM1,
-			String* pNewLEFTPAREN2,
-			String* pNewLEADING3,
+			blocxx::String* pNewTRIM1,
+			blocxx::String* pNewLEFTPAREN2,
+			blocxx::String* pNewLEADING3,
 			trimExpr* pNewtrimExpr4,
-			String* pNewRIGHTPAREN5
+			blocxx::String* pNewRIGHTPAREN5
 		)
 			: cExpr()
 			, m_pTRIM1(pNewTRIM1)
@@ -3096,21 +3096,21 @@ class OW_WQL_API cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN : public cExpr
 		{
 			v->visit_cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN( this );
 		}
-		String* m_pTRIM1;
-		String* m_pLEFTPAREN2;
-		String* m_pLEADING3;
+		blocxx::String* m_pTRIM1;
+		blocxx::String* m_pLEFTPAREN2;
+		blocxx::String* m_pLEADING3;
 		trimExpr* m_ptrimExpr4;
-		String* m_pRIGHTPAREN5;
+		blocxx::String* m_pRIGHTPAREN5;
 };
 class OW_WQL_API cExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN(
-			String* pNewTRIM1,
-			String* pNewLEFTPAREN2,
-			String* pNewTRAILING3,
+			blocxx::String* pNewTRIM1,
+			blocxx::String* pNewLEFTPAREN2,
+			blocxx::String* pNewTRAILING3,
 			trimExpr* pNewtrimExpr4,
-			String* pNewRIGHTPAREN5
+			blocxx::String* pNewRIGHTPAREN5
 		)
 			: cExpr()
 			, m_pTRIM1(pNewTRIM1)
@@ -3124,20 +3124,20 @@ class OW_WQL_API cExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN : public cExp
 		{
 			v->visit_cExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN( this );
 		}
-		String* m_pTRIM1;
-		String* m_pLEFTPAREN2;
-		String* m_pTRAILING3;
+		blocxx::String* m_pTRIM1;
+		blocxx::String* m_pLEFTPAREN2;
+		blocxx::String* m_pTRAILING3;
 		trimExpr* m_ptrimExpr4;
-		String* m_pRIGHTPAREN5;
+		blocxx::String* m_pRIGHTPAREN5;
 };
 class OW_WQL_API cExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN(
-			String* pNewTRIM1,
-			String* pNewLEFTPAREN2,
+			blocxx::String* pNewTRIM1,
+			blocxx::String* pNewLEFTPAREN2,
 			trimExpr* pNewtrimExpr3,
-			String* pNewRIGHTPAREN4
+			blocxx::String* pNewRIGHTPAREN4
 		)
 			: cExpr()
 			, m_pTRIM1(pNewTRIM1)
@@ -3150,10 +3150,10 @@ class OW_WQL_API cExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN : public cExpr
 		{
 			v->visit_cExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN( this );
 		}
-		String* m_pTRIM1;
-		String* m_pLEFTPAREN2;
+		blocxx::String* m_pTRIM1;
+		blocxx::String* m_pLEFTPAREN2;
 		trimExpr* m_ptrimExpr3;
-		String* m_pRIGHTPAREN4;
+		blocxx::String* m_pRIGHTPAREN4;
 };
 class OW_WQL_API optIndirection: public node
 {
@@ -3180,9 +3180,9 @@ class OW_WQL_API optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET : 
 	public:
 		optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET(
 			optIndirection* pNewoptIndirection1,
-			String* pNewLEFTBRACKET2,
+			blocxx::String* pNewLEFTBRACKET2,
 			aExpr* pNewaExpr3,
-			String* pNewRIGHTBRACKET4
+			blocxx::String* pNewRIGHTBRACKET4
 		)
 			: optIndirection()
 			, m_poptIndirection1(pNewoptIndirection1)
@@ -3196,20 +3196,20 @@ class OW_WQL_API optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET : 
 			v->visit_optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET( this );
 		}
 		optIndirection* m_poptIndirection1;
-		String* m_pLEFTBRACKET2;
+		blocxx::String* m_pLEFTBRACKET2;
 		aExpr* m_paExpr3;
-		String* m_pRIGHTBRACKET4;
+		blocxx::String* m_pRIGHTBRACKET4;
 };
 class OW_WQL_API optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET : public optIndirection
 {
 	public:
 		optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET(
 			optIndirection* pNewoptIndirection1,
-			String* pNewLEFTBRACKET2,
+			blocxx::String* pNewLEFTBRACKET2,
 			aExpr* pNewaExpr3,
-			String* pNewCOLON4,
+			blocxx::String* pNewCOLON4,
 			aExpr* pNewaExpr5,
-			String* pNewRIGHTBRACKET6
+			blocxx::String* pNewRIGHTBRACKET6
 		)
 			: optIndirection()
 			, m_poptIndirection1(pNewoptIndirection1)
@@ -3225,11 +3225,11 @@ class OW_WQL_API optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIG
 			v->visit_optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET( this );
 		}
 		optIndirection* m_poptIndirection1;
-		String* m_pLEFTBRACKET2;
+		blocxx::String* m_pLEFTBRACKET2;
 		aExpr* m_paExpr3;
-		String* m_pCOLON4;
+		blocxx::String* m_pCOLON4;
 		aExpr* m_paExpr5;
-		String* m_pRIGHTBRACKET6;
+		blocxx::String* m_pRIGHTBRACKET6;
 };
 class OW_WQL_API optExtract: public node
 {
@@ -3255,8 +3255,8 @@ class OW_WQL_API optExtract_strExtractArg_FROM_aExpr : public optExtract
 {
 	public:
 		optExtract_strExtractArg_FROM_aExpr(
-			String* pNewstrExtractArg1,
-			String* pNewFROM2,
+			blocxx::String* pNewstrExtractArg1,
+			blocxx::String* pNewFROM2,
 			aExpr* pNewaExpr3
 		)
 			: optExtract()
@@ -3269,8 +3269,8 @@ class OW_WQL_API optExtract_strExtractArg_FROM_aExpr : public optExtract
 		{
 			v->visit_optExtract_strExtractArg_FROM_aExpr( this );
 		}
-		String* m_pstrExtractArg1;
-		String* m_pFROM2;
+		blocxx::String* m_pstrExtractArg1;
+		blocxx::String* m_pFROM2;
 		aExpr* m_paExpr3;
 };
 class OW_WQL_API positionExpr: public node
@@ -3285,7 +3285,7 @@ class OW_WQL_API positionExpr_bExpr_IN_bExpr : public positionExpr
 	public:
 		positionExpr_bExpr_IN_bExpr(
 			bExpr* pNewbExpr1,
-			String* pNewIN2,
+			blocxx::String* pNewIN2,
 			bExpr* pNewbExpr3
 		)
 			: positionExpr()
@@ -3299,7 +3299,7 @@ class OW_WQL_API positionExpr_bExpr_IN_bExpr : public positionExpr
 			v->visit_positionExpr_bExpr_IN_bExpr( this );
 		}
 		bExpr* m_pbExpr1;
-		String* m_pIN2;
+		blocxx::String* m_pIN2;
 		bExpr* m_pbExpr3;
 };
 class OW_WQL_API positionExpr_empty : public positionExpr
@@ -3437,7 +3437,7 @@ class OW_WQL_API substrFrom : public node
 {
 	public:
 		substrFrom(
-			String* pNewFROM1,
+			blocxx::String* pNewFROM1,
 			aExpr* pNewaExpr2
 		)
 			: m_pFROM1(pNewFROM1)
@@ -3448,14 +3448,14 @@ class OW_WQL_API substrFrom : public node
 		{
 			v->visit_substrFrom( this );
 		}
-		String* m_pFROM1;
+		blocxx::String* m_pFROM1;
 		aExpr* m_paExpr2;
 };
 class OW_WQL_API substrFor : public node
 {
 	public:
 		substrFor(
-			String* pNewFOR1,
+			blocxx::String* pNewFOR1,
 			aExpr* pNewaExpr2
 		)
 			: m_pFOR1(pNewFOR1)
@@ -3466,7 +3466,7 @@ class OW_WQL_API substrFor : public node
 		{
 			v->visit_substrFor( this );
 		}
-		String* m_pFOR1;
+		blocxx::String* m_pFOR1;
 		aExpr* m_paExpr2;
 };
 class OW_WQL_API trimExpr: public node
@@ -3481,7 +3481,7 @@ class OW_WQL_API trimExpr_aExpr_FROM_exprSeq : public trimExpr
 	public:
 		trimExpr_aExpr_FROM_exprSeq(
 			aExpr* pNewaExpr1,
-			String* pNewFROM2,
+			blocxx::String* pNewFROM2,
 			exprSeq* pNewexprSeq3
 		)
 			: trimExpr()
@@ -3495,14 +3495,14 @@ class OW_WQL_API trimExpr_aExpr_FROM_exprSeq : public trimExpr
 			v->visit_trimExpr_aExpr_FROM_exprSeq( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pFROM2;
+		blocxx::String* m_pFROM2;
 		exprSeq* m_pexprSeq3;
 };
 class OW_WQL_API trimExpr_FROM_exprSeq : public trimExpr
 {
 	public:
 		trimExpr_FROM_exprSeq(
-			String* pNewFROM1,
+			blocxx::String* pNewFROM1,
 			exprSeq* pNewexprSeq2
 		)
 			: trimExpr()
@@ -3514,7 +3514,7 @@ class OW_WQL_API trimExpr_FROM_exprSeq : public trimExpr
 		{
 			v->visit_trimExpr_FROM_exprSeq( this );
 		}
-		String* m_pFROM1;
+		blocxx::String* m_pFROM1;
 		exprSeq* m_pexprSeq2;
 };
 class OW_WQL_API trimExpr_exprSeq : public trimExpr
@@ -3537,8 +3537,8 @@ class OW_WQL_API attr : public node
 {
 	public:
 		attr(
-			String* pNewstrRelationName1,
-			String* pNewPERIOD2,
+			blocxx::String* pNewstrRelationName1,
+			blocxx::String* pNewPERIOD2,
 			attrs* pNewattrs3,
 			optIndirection* pNewoptIndirection4
 		)
@@ -3552,8 +3552,8 @@ class OW_WQL_API attr : public node
 		{
 			v->visit_attr( this );
 		}
-		String* m_pstrRelationName1;
-		String* m_pPERIOD2;
+		blocxx::String* m_pstrRelationName1;
+		blocxx::String* m_pPERIOD2;
 		attrs* m_pattrs3;
 		optIndirection* m_poptIndirection4;
 };
@@ -3568,7 +3568,7 @@ class OW_WQL_API attrs_strAttrName : public attrs
 {
 	public:
 		attrs_strAttrName(
-			String* pNewstrAttrName1
+			blocxx::String* pNewstrAttrName1
 		)
 			: attrs()
 			, m_pstrAttrName1(pNewstrAttrName1)
@@ -3578,15 +3578,15 @@ class OW_WQL_API attrs_strAttrName : public attrs
 		{
 			v->visit_attrs_strAttrName( this );
 		}
-		String* m_pstrAttrName1;
+		blocxx::String* m_pstrAttrName1;
 };
 class OW_WQL_API attrs_attrs_PERIOD_strAttrName : public attrs
 {
 	public:
 		attrs_attrs_PERIOD_strAttrName(
 			attrs* pNewattrs1,
-			String* pNewPERIOD2,
-			String* pNewstrAttrName3
+			blocxx::String* pNewPERIOD2,
+			blocxx::String* pNewstrAttrName3
 		)
 			: attrs()
 			, m_pattrs1(pNewattrs1)
@@ -3599,16 +3599,16 @@ class OW_WQL_API attrs_attrs_PERIOD_strAttrName : public attrs
 			v->visit_attrs_attrs_PERIOD_strAttrName( this );
 		}
 		attrs* m_pattrs1;
-		String* m_pPERIOD2;
-		String* m_pstrAttrName3;
+		blocxx::String* m_pPERIOD2;
+		blocxx::String* m_pstrAttrName3;
 };
 class OW_WQL_API attrs_attrs_PERIOD_ASTERISK : public attrs
 {
 	public:
 		attrs_attrs_PERIOD_ASTERISK(
 			attrs* pNewattrs1,
-			String* pNewPERIOD2,
-			String* pNewASTERISK3
+			blocxx::String* pNewPERIOD2,
+			blocxx::String* pNewASTERISK3
 		)
 			: attrs()
 			, m_pattrs1(pNewattrs1)
@@ -3621,8 +3621,8 @@ class OW_WQL_API attrs_attrs_PERIOD_ASTERISK : public attrs
 			v->visit_attrs_attrs_PERIOD_ASTERISK( this );
 		}
 		attrs* m_pattrs1;
-		String* m_pPERIOD2;
-		String* m_pASTERISK3;
+		blocxx::String* m_pPERIOD2;
+		blocxx::String* m_pASTERISK3;
 };
 class OW_WQL_API targetEl: public node
 {
@@ -3636,8 +3636,8 @@ class OW_WQL_API targetEl_aExpr_AS_strColLabel : public targetEl
 	public:
 		targetEl_aExpr_AS_strColLabel(
 			aExpr* pNewaExpr1,
-			String* pNewAS2,
-			String* pNewstrColLabel3
+			blocxx::String* pNewAS2,
+			blocxx::String* pNewstrColLabel3
 		)
 			: targetEl()
 			, m_paExpr1(pNewaExpr1)
@@ -3650,8 +3650,8 @@ class OW_WQL_API targetEl_aExpr_AS_strColLabel : public targetEl
 			v->visit_targetEl_aExpr_AS_strColLabel( this );
 		}
 		aExpr* m_paExpr1;
-		String* m_pAS2;
-		String* m_pstrColLabel3;
+		blocxx::String* m_pAS2;
+		blocxx::String* m_pstrColLabel3;
 };
 class OW_WQL_API targetEl_aExpr : public targetEl
 {
@@ -3673,9 +3673,9 @@ class OW_WQL_API targetEl_strRelationName_PERIOD_ASTERISK : public targetEl
 {
 	public:
 		targetEl_strRelationName_PERIOD_ASTERISK(
-			String* pNewstrRelationName1,
-			String* pNewPERIOD2,
-			String* pNewASTERISK3
+			blocxx::String* pNewstrRelationName1,
+			blocxx::String* pNewPERIOD2,
+			blocxx::String* pNewASTERISK3
 		)
 			: targetEl()
 			, m_pstrRelationName1(pNewstrRelationName1)
@@ -3687,15 +3687,15 @@ class OW_WQL_API targetEl_strRelationName_PERIOD_ASTERISK : public targetEl
 		{
 			v->visit_targetEl_strRelationName_PERIOD_ASTERISK( this );
 		}
-		String* m_pstrRelationName1;
-		String* m_pPERIOD2;
-		String* m_pASTERISK3;
+		blocxx::String* m_pstrRelationName1;
+		blocxx::String* m_pPERIOD2;
+		blocxx::String* m_pASTERISK3;
 };
 class OW_WQL_API targetEl_ASTERISK : public targetEl
 {
 	public:
 		targetEl_ASTERISK(
-			String* pNewASTERISK1
+			blocxx::String* pNewASTERISK1
 		)
 			: targetEl()
 			, m_pASTERISK1(pNewASTERISK1)
@@ -3705,15 +3705,15 @@ class OW_WQL_API targetEl_ASTERISK : public targetEl
 		{
 			v->visit_targetEl_ASTERISK( this );
 		}
-		String* m_pASTERISK1;
+		blocxx::String* m_pASTERISK1;
 };
 class OW_WQL_API updateTargetEl : public node
 {
 	public:
 		updateTargetEl(
-			String* pNewstrColId1,
+			blocxx::String* pNewstrColId1,
 			optIndirection* pNewoptIndirection2,
-			String* pNewEQUALS3,
+			blocxx::String* pNewEQUALS3,
 			aExpr* pNewaExpr4
 		)
 			: m_pstrColId1(pNewstrColId1)
@@ -3726,9 +3726,9 @@ class OW_WQL_API updateTargetEl : public node
 		{
 			v->visit_updateTargetEl( this );
 		}
-		String* m_pstrColId1;
+		blocxx::String* m_pstrColId1;
 		optIndirection* m_poptIndirection2;
-		String* m_pEQUALS3;
+		blocxx::String* m_pEQUALS3;
 		aExpr* m_paExpr4;
 };
 class OW_WQL_API aExprConst: public node
@@ -3742,7 +3742,7 @@ class OW_WQL_API aExprConst_ICONST : public aExprConst
 {
 	public:
 		aExprConst_ICONST(
-			String* pNewICONST1
+			blocxx::String* pNewICONST1
 		)
 			: aExprConst()
 			, m_pICONST1(pNewICONST1)
@@ -3752,13 +3752,13 @@ class OW_WQL_API aExprConst_ICONST : public aExprConst
 		{
 			v->visit_aExprConst_ICONST( this );
 		}
-		String* m_pICONST1;
+		blocxx::String* m_pICONST1;
 };
 class OW_WQL_API aExprConst_FCONST : public aExprConst
 {
 	public:
 		aExprConst_FCONST(
-			String* pNewFCONST1
+			blocxx::String* pNewFCONST1
 		)
 			: aExprConst()
 			, m_pFCONST1(pNewFCONST1)
@@ -3768,13 +3768,13 @@ class OW_WQL_API aExprConst_FCONST : public aExprConst
 		{
 			v->visit_aExprConst_FCONST( this );
 		}
-		String* m_pFCONST1;
+		blocxx::String* m_pFCONST1;
 };
 class OW_WQL_API aExprConst_SCONST : public aExprConst
 {
 	public:
 		aExprConst_SCONST(
-			String* pNewSCONST1
+			blocxx::String* pNewSCONST1
 		)
 			: aExprConst()
 			, m_pSCONST1(pNewSCONST1)
@@ -3784,13 +3784,13 @@ class OW_WQL_API aExprConst_SCONST : public aExprConst
 		{
 			v->visit_aExprConst_SCONST( this );
 		}
-		String* m_pSCONST1;
+		blocxx::String* m_pSCONST1;
 };
 class OW_WQL_API aExprConst_BITCONST : public aExprConst
 {
 	public:
 		aExprConst_BITCONST(
-			String* pNewBITCONST1
+			blocxx::String* pNewBITCONST1
 		)
 			: aExprConst()
 			, m_pBITCONST1(pNewBITCONST1)
@@ -3800,13 +3800,13 @@ class OW_WQL_API aExprConst_BITCONST : public aExprConst
 		{
 			v->visit_aExprConst_BITCONST( this );
 		}
-		String* m_pBITCONST1;
+		blocxx::String* m_pBITCONST1;
 };
 class OW_WQL_API aExprConst_HEXCONST : public aExprConst
 {
 	public:
 		aExprConst_HEXCONST(
-			String* pNewHEXCONST1
+			blocxx::String* pNewHEXCONST1
 		)
 			: aExprConst()
 			, m_pHEXCONST1(pNewHEXCONST1)
@@ -3816,13 +3816,13 @@ class OW_WQL_API aExprConst_HEXCONST : public aExprConst
 		{
 			v->visit_aExprConst_HEXCONST( this );
 		}
-		String* m_pHEXCONST1;
+		blocxx::String* m_pHEXCONST1;
 };
 class OW_WQL_API aExprConst_TRUEP : public aExprConst
 {
 	public:
 		aExprConst_TRUEP(
-			String* pNewTRUEP1
+			blocxx::String* pNewTRUEP1
 		)
 			: aExprConst()
 			, m_pTRUEP1(pNewTRUEP1)
@@ -3832,13 +3832,13 @@ class OW_WQL_API aExprConst_TRUEP : public aExprConst
 		{
 			v->visit_aExprConst_TRUEP( this );
 		}
-		String* m_pTRUEP1;
+		blocxx::String* m_pTRUEP1;
 };
 class OW_WQL_API aExprConst_FALSEP : public aExprConst
 {
 	public:
 		aExprConst_FALSEP(
-			String* pNewFALSEP1
+			blocxx::String* pNewFALSEP1
 		)
 			: aExprConst()
 			, m_pFALSEP1(pNewFALSEP1)
@@ -3848,13 +3848,13 @@ class OW_WQL_API aExprConst_FALSEP : public aExprConst
 		{
 			v->visit_aExprConst_FALSEP( this );
 		}
-		String* m_pFALSEP1;
+		blocxx::String* m_pFALSEP1;
 };
 class OW_WQL_API aExprConst_NULLP : public aExprConst
 {
 	public:
 		aExprConst_NULLP(
-			String* pNewNULLP1
+			blocxx::String* pNewNULLP1
 		)
 			: aExprConst()
 			, m_pNULLP1(pNewNULLP1)
@@ -3864,7 +3864,7 @@ class OW_WQL_API aExprConst_NULLP : public aExprConst
 		{
 			v->visit_aExprConst_NULLP( this );
 		}
-		String* m_pNULLP1;
+		blocxx::String* m_pNULLP1;
 };
 
 } // end namespace WQL

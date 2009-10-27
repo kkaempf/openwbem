@@ -44,6 +44,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_SharedLibraryLoaderTestCases,"OW_SharedLibraryLoad
 #include "testSharedLibraryLoader.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 namespace
 {

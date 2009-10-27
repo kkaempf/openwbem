@@ -40,7 +40,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_XML_API XMLParseException : public Exception
+class OW_XML_API XMLParseException : public blocxx::Exception
 {
 	public:
 		enum Code

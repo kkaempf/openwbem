@@ -45,7 +45,7 @@ namespace OW_NAMESPACE
 {
 
 	class AuthManager;
-	typedef IntrusiveReference<AuthManager> AuthManagerRef;
+	typedef blocxx::IntrusiveReference<AuthManager> AuthManagerRef;
 
 } // end namespace OW_NAMESPACE
 

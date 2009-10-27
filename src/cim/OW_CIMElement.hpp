@@ -59,7 +59,7 @@ public:
 	 * In the future, this function will be changed to return a CIMName
 	 * @return The name of this CIMElement object as an String.
 	 */
-	virtual String getName() const = 0;
+	virtual blocxx::String getName() const = 0;
 	/**
 	 * Set the name of this CIMElement object.
 	 * @param name The new name of this CIMElement object.
@@ -68,7 +68,7 @@ public:
 	/**
 	 * @return An String representing this CIMElement.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 
 	/// @todo  Deprecate these
 	int compare(const CIMElement& arg)

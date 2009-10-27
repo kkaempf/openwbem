@@ -51,7 +51,7 @@ namespace OW_NAMESPACE
 namespace PrivilegeConfig
 {
 
-String unescapePath(char const * epath);
+blocxx::String unescapePath(char const * epath);
 
 BLOCXX_DECLARE_EXCEPTION(UnescapeString);
 /**
@@ -62,7 +62,7 @@ BLOCXX_DECLARE_EXCEPTION(UnescapeString);
  *
  * @throws UnescapeStringException if an invalid escape sequence is encountered.
  */
-String unescapeString(char const * str);
+blocxx::String unescapeString(char const * str);
 
 /**
  * Normalize the given path by removing all "/./" and "//" patterns
@@ -74,7 +74,7 @@ String unescapeString(char const * str);
  * @return The normalized (cleaned) path if the supplied path is absolute,
  * 	otherwise the supplied path is returned.
  */
-String normalizePath(const String& path);
+blocxx::String normalizePath(const blocxx::String& path);
 
 class PathPatterns
 {
@@ -92,7 +92,7 @@ public:
 	// RETURNS: does path match any of the patterns specified with
 	// addPattern?
 	//
-	bool match(const String& path) const;
+	bool match(const blocxx::String& path) const;
 
 private:
 	// Add another matching case: any absolute path that has dir_path as
@@ -102,22 +102,22 @@ private:
 	// REQUIRE: fname_prefix has no '/' characters.
 	//
 	void addCase(
-		const String& dir_path, const String& fname_prefix, bool can_extend);
+		const blocxx::String& dir_path, const blocxx::String& fname_prefix, bool can_extend);
 
 	// Add another matching case: any absolute path that is in the subtree
 	// rooted at dir_path.
 	// REQUIRE: dir_path starts and ends with '/'.
-	void addSubtree(const String& dir_path);
+	void addSubtree(const blocxx::String& dir_path);
 
 	struct FileNameCase
 	{
-		String prefix;
+		blocxx::String prefix;
 		bool can_extend;
 	};
 	typedef std::vector<FileNameCase> dir_cases_t;
-	typedef std::map<String, dir_cases_t> dir_map_t;
+	typedef std::map<blocxx::String, dir_cases_t> dir_map_t;
 	dir_map_t m_map;
-	std::vector<String> m_subtrees;
+	std::vector<blocxx::String> m_subtrees;
 };
 
 class EnvironmentVariablePatterns
@@ -130,36 +130,36 @@ public:
 		E_ANYTHING_PATTERN
 	};
 	void addPattern(const char* name, const char* pattern, EPatternType type);
-	bool match(const StringArray& env) const;
+	bool match(const blocxx::StringArray& env) const;
 
 private:
 	struct Pattern
 	{
-		Pattern(const String& pattern, EPatternType type)
+		Pattern(const blocxx::String& pattern, EPatternType type)
 		: m_pattern(pattern)
 		, m_type(type)
 		{
 		}
 
-		String m_pattern;
+		blocxx::String m_pattern;
 		EPatternType m_type;
 	};
-	typedef std::map<String, std::vector<Pattern> > PatternMap_t;
+	typedef std::map<blocxx::String, std::vector<Pattern> > PatternMap_t;
 	PatternMap_t m_patterns;
 
-	bool matchPatterns(const String& var, const String& val) const;
+	bool matchPatterns(const blocxx::String& var, const blocxx::String& val) const;
 };
 
 class ExecPatterns
 {
 public:
-	void addPattern(char const * execPathPattern, const EnvironmentVariablePatterns& environmentVariablePatterns, const String& ident)
+	void addPattern(char const * execPathPattern, const EnvironmentVariablePatterns& environmentVariablePatterns, const blocxx::String& ident)
 	{
 		m[ident].pathPatterns.addPattern(execPathPattern);
 		m[ident].environmentVariablePatterns = environmentVariablePatterns;
 	}
 
-	bool match(const String& execPath, const StringArray& envVars, const String& ident) const
+	bool match(const blocxx::String& execPath, const blocxx::StringArray& envVars, const blocxx::String& ident) const
 	{
 		map_t::const_iterator it = m.find(ident);
 		bool rv = it != m.end() && it->second.pathPatterns.match(execPath) && it->second.environmentVariablePatterns.match(envVars);
@@ -178,18 +178,18 @@ private:
 		PathPatterns pathPatterns;
 		EnvironmentVariablePatterns environmentVariablePatterns;
 	};
-	typedef std::map<String, Pattern> map_t;
+	typedef std::map<blocxx::String, Pattern> map_t;
 	map_t m;
 };
 
 class MonitoredUserExecPatterns
 {
 public:
-	void addPattern(char const * execPathPattern, const EnvironmentVariablePatterns& envVarPatterns, const String& ident, const String& userName)
+	void addPattern(char const * execPathPattern, const EnvironmentVariablePatterns& envVarPatterns, const blocxx::String& ident, const blocxx::String& userName)
 	{
 		m[userName].addPattern(execPathPattern, envVarPatterns, ident);
 	}
-	bool match(const String& execPath, const StringArray& envVars, const String& ident, const String& userName) const
+	bool match(const blocxx::String& execPath, const blocxx::StringArray& envVars, const blocxx::String& ident, const blocxx::String& userName) const
 	{
 		map_t::const_iterator it = m.find(userName);
 		bool rv = it != m.end() && it->second.match(execPath, envVars, ident);
@@ -202,7 +202,7 @@ public:
 	}
 private:
 	// Key is the userName
-	typedef std::map<String, ExecPatterns> map_t;
+	typedef std::map<blocxx::String, ExecPatterns> map_t;
 	map_t m;
 };
 
@@ -217,23 +217,23 @@ public:
 	};
 	struct Arg
 	{
-		Arg(const String& arg_, EArgType argType_)
+		Arg(const blocxx::String& arg_, EArgType argType_)
 			: arg(arg_)
 			, argType(argType_)
 		{
 		}
-		String arg;
+		blocxx::String arg;
 		EArgType argType;
 	};
 
-	void addPattern(char const * execPathPattern, const Array<Arg>& args, const EnvironmentVariablePatterns& envVarPatterns, const String& ident);
+	void addPattern(char const * execPathPattern, const blocxx::Array<Arg>& args, const EnvironmentVariablePatterns& envVarPatterns, const blocxx::String& ident);
 
-	bool match(const String& execPath, Array<String> const & args, const StringArray& envVars, const String& ident) const;
+	bool match(const blocxx::String& execPath, blocxx::Array<blocxx::String> const & args, const blocxx::StringArray& envVars, const blocxx::String& ident) const;
 
 private:
 	struct Pattern
 	{
-		Pattern(const PathPatterns& pathPatterns_, const Array<Arg>& args_, const EnvironmentVariablePatterns& environmentVariablePatterns_)
+		Pattern(const PathPatterns& pathPatterns_, const blocxx::Array<Arg>& args_, const EnvironmentVariablePatterns& environmentVariablePatterns_)
 		: pathPatterns(pathPatterns_)
 		, args(args_)
 		, environmentVariablePatterns(environmentVariablePatterns_)
@@ -241,23 +241,23 @@ private:
 		}
 
 		PathPatterns pathPatterns;
-		Array<Arg> args;
+		blocxx::Array<Arg> args;
 		EnvironmentVariablePatterns environmentVariablePatterns;
 	};
 	// Key is the user (for user_exec) or app name (for monitored exec)
 	// Value is an Array with one entry for each executable and args
-	typedef std::map<String, Array<Pattern> > map_t;
+	typedef std::map<blocxx::String, blocxx::Array<Pattern> > map_t;
 	map_t m;
 };
 
 class MonitoredUserExecArgsPatterns
 {
 public:
-	void addPattern(char const * execPathPattern, const Array<ExecArgsPatterns::Arg>& args, const EnvironmentVariablePatterns& envVarPatterns, const String& ident, const String& userName)
+	void addPattern(char const * execPathPattern, const blocxx::Array<ExecArgsPatterns::Arg>& args, const EnvironmentVariablePatterns& envVarPatterns, const blocxx::String& ident, const blocxx::String& userName)
 	{
 		m[userName].addPattern(execPathPattern, args, envVarPatterns, ident);
 	}
-	bool match(const String& execPath, Array<String> const & args, const StringArray& envVars, const String& ident, const String& userName) const
+	bool match(const blocxx::String& execPath, blocxx::Array<blocxx::String> const & args, const blocxx::StringArray& envVars, const blocxx::String& ident, const blocxx::String& userName) const
 	{
 		map_t::const_iterator it = m.find(userName);
 		bool rv = it != m.end() && it->second.match(execPath, args, envVars, ident);
@@ -270,24 +270,24 @@ public:
 	}
 private:
 	// Key is userName
-	typedef std::map<String, ExecArgsPatterns> map_t;
+	typedef std::map<blocxx::String, ExecArgsPatterns> map_t;
 	map_t m;
 };
 
 class DirPatterns
 {
 public:
-	void addDir(const String& dirpath);
-	void addSubtree(const String& dirpath);
-	bool match(const String& dirpath) const;
+	void addDir(const blocxx::String& dirpath);
+	void addSubtree(const blocxx::String& dirpath);
+	bool match(const blocxx::String& dirpath) const;
 private:
-	std::set<String> dirs;
-	std::vector<String> subtrees;
+	std::set<blocxx::String> dirs;
+	std::vector<blocxx::String> subtrees;
 };
 
 struct Privileges
 {
-	String unpriv_user;
+	blocxx::String unpriv_user;
 
 	PathPatterns open_read;
 	PathPatterns open_write;
@@ -316,7 +316,7 @@ struct ParseError
 	{
 	}
 
-	String message;
+	blocxx::String message;
 	// column and line for start of token where error detected
 	unsigned column;
 	unsigned line;
@@ -335,7 +335,7 @@ public:
 	 *
 	 * @throws An exception derived from Exception indicating the reason for failure.
 	 */
-	virtual std::istream* getInclude(const String& includeParam) = 0;
+	virtual std::istream* getInclude(const blocxx::String& includeParam) = 0;
 
 	/**
 	 * Called when the std::istream* from the last stacked call to getInclude() is no longer needed. The intention is

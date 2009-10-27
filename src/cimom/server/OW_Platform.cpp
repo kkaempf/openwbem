@@ -42,7 +42,7 @@
 #include "OW_ExceptionIds.hpp"
 #include "OW_PlatformSignal.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/PosixUnnamedPipe.hpp"
 
 #ifdef OW_NETWARE
@@ -107,6 +107,7 @@ namespace OW_NAMESPACE
 
 using std::ostream;
 using std::endl;
+using namespace blocxx;
 
 OW_DEFINE_EXCEPTION_WITH_ID(Daemon);
 
@@ -192,7 +193,7 @@ daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool res
 	}
 	umask(0077); // ensure all files we create are only accessible by us.
 	Logger lgr(loggerComponentName);
-	OW_LOG_INFO(lgr, Format("Platform::daemonize() pid = %1", ::getpid()));
+	BLOCXX_LOG_INFO(lgr, Format("Platform::daemonize() pid = %1", ::getpid()));
 	initSig();
 	setupSigHandler(dbgFlg);
 
@@ -247,7 +248,7 @@ daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool res
 	{
 		if( !getenv("OWNOCHDIR") )
 		{
-			OW_LOG_DEBUG3(logger, "Changing directories to / ...");
+			BLOCXX_LOG_DEBUG3(logger, "Changing directories to / ...");
 			if( chdir("/") == -1 )
 			{
 				OW_THROW_ERRNO_MSG(DaemonException, "Failed to change directories to /");
@@ -255,7 +256,7 @@ daemonize(bool dbgFlg, const String& daemonName, const String& pidFile, bool res
 		}
 		else
 		{
-			OW_LOG_DEBUG(logger, "Not changing directories because the OWNOCHDIR environment variable is set.");
+			BLOCXX_LOG_DEBUG(logger, "Not changing directories because the OWNOCHDIR environment variable is set.");
 		}
 
 		pid = fork();
@@ -579,7 +580,7 @@ wait_for_signal:
 	// PidFile::writePid used to be here...
 
 	Logger lgr(loggerComponentName);
-	OW_LOG_INFO(lgr, Format("Platform::daemonize() pid = %1", ::getpid()));
+	BLOCXX_LOG_INFO(lgr, Format("Platform::daemonize() pid = %1", ::getpid()));
 
 	initSig();
 

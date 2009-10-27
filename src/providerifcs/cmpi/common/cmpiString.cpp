@@ -24,7 +24,7 @@
 #include "cmpisrv.h"
 #include "blocxx/String.hpp"
 
-CMPIString* string2CMPIString(const OpenWBEM::String &s)
+CMPIString* string2CMPIString(const blocxx::String &s)
 {
 	return (CMPIString*) new CMPI_Object(s);
 }

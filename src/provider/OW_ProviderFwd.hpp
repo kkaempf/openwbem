@@ -42,41 +42,41 @@ namespace OW_NAMESPACE
 {
 
 class ProviderEnvironmentIFC;
-typedef IntrusiveReference<ProviderEnvironmentIFC> ProviderEnvironmentIFCRef;
+typedef blocxx::IntrusiveReference<ProviderEnvironmentIFC> ProviderEnvironmentIFCRef;
 
 class ProviderRegistrationEnvironmentIFC;
-typedef IntrusiveReference<ProviderRegistrationEnvironmentIFC> ProviderRegistrationEnvironmentIFCRef;
+typedef blocxx::IntrusiveReference<ProviderRegistrationEnvironmentIFC> ProviderRegistrationEnvironmentIFCRef;
 
 class InstanceProviderIFC;
-typedef IntrusiveReference<InstanceProviderIFC> InstanceProviderIFCRef;
+typedef blocxx::IntrusiveReference<InstanceProviderIFC> InstanceProviderIFCRef;
 
 class SecondaryInstanceProviderIFC;
-typedef IntrusiveReference<SecondaryInstanceProviderIFC> SecondaryInstanceProviderIFCRef;
-typedef Array<SecondaryInstanceProviderIFCRef> SecondaryInstanceProviderIFCRefArray;
+typedef blocxx::IntrusiveReference<SecondaryInstanceProviderIFC> SecondaryInstanceProviderIFCRef;
+typedef blocxx::Array<SecondaryInstanceProviderIFCRef> SecondaryInstanceProviderIFCRefArray;
 
 class MethodProviderIFC;
-typedef IntrusiveReference<MethodProviderIFC> MethodProviderIFCRef;
+typedef blocxx::IntrusiveReference<MethodProviderIFC> MethodProviderIFCRef;
 
 class PolledProviderIFC;
-typedef IntrusiveReference<PolledProviderIFC> PolledProviderIFCRef;
+typedef blocxx::IntrusiveReference<PolledProviderIFC> PolledProviderIFCRef;
 
 class ProviderBaseIFC;
-typedef IntrusiveReference<ProviderBaseIFC> ProviderBaseIFCRef;
-typedef Array<ProviderBaseIFCRef> ProviderBaseIFCRefArray;
+typedef blocxx::IntrusiveReference<ProviderBaseIFC> ProviderBaseIFCRef;
+typedef blocxx::Array<ProviderBaseIFCRef> ProviderBaseIFCRefArray;
 
 class AssociatorProviderIFC;
-typedef IntrusiveReference< AssociatorProviderIFC > AssociatorProviderIFCRef;
+typedef blocxx::IntrusiveReference< AssociatorProviderIFC > AssociatorProviderIFCRef;
 
 class IndicationProviderIFC;
-typedef IntrusiveReference< IndicationProviderIFC > IndicationProviderIFCRef;
-typedef Array<IndicationProviderIFCRef> IndicationProviderIFCRefArray;
+typedef blocxx::IntrusiveReference< IndicationProviderIFC > IndicationProviderIFCRef;
+typedef blocxx::Array<IndicationProviderIFCRef> IndicationProviderIFCRefArray;
 
 class IndicationExportProviderIFC;
-typedef IntrusiveReference<IndicationExportProviderIFC> IndicationExportProviderIFCRef;
-typedef Array<IndicationExportProviderIFCRef> IndicationExportProviderIFCRefArray;
+typedef blocxx::IntrusiveReference<IndicationExportProviderIFC> IndicationExportProviderIFCRef;
+typedef blocxx::Array<IndicationExportProviderIFCRef> IndicationExportProviderIFCRefArray;
 
 class QueryProviderIFC;
-typedef IntrusiveReference<QueryProviderIFC> QueryProviderIFCRef;
+typedef blocxx::IntrusiveReference<QueryProviderIFC> QueryProviderIFCRef;
 class QueryProviderInfo;
 
 } // end namespace OW_NAMESPACE

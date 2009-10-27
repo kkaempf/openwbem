@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/LogMessagePatternFormatter.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_LogMessagePatternFormatter.hpp is deprecated, use "blocxx/LogMessagePatternFormatter.hpp" instead.
 #endif
 

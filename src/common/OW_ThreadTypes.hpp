@@ -38,5 +38,10 @@
 #include "OW_config.h"
 #include <blocxx/ThreadTypes.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_ThreadTypes.hpp is deprecated, use "blocxx/ThreadTypes.hpp" instead.
 #endif	// #ifndef OW_THREAD_TYPES_HPP_

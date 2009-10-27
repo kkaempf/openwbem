@@ -36,12 +36,12 @@
 #include "OW_OOPCallbackServiceEnv.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 
 namespace OW_NAMESPACE
 {
 
-OOPCallbackServiceEnv::OOPCallbackServiceEnv(UInt8 type, UInt8 lockTypeArg, const ProviderEnvironmentIFCRef& provEnv)
+OOPCallbackServiceEnv::OOPCallbackServiceEnv(blocxx::UInt8 type, blocxx::UInt8 lockTypeArg, const ProviderEnvironmentIFCRef& provEnv)
 	: m_type(type)
 	, m_provEnv(provEnv)
 {
@@ -51,8 +51,8 @@ OOPCallbackServiceEnv::OOPCallbackServiceEnv(UInt8 type, UInt8 lockTypeArg, cons
 	}
 }
 
-String
-OOPCallbackServiceEnv::getConfigItem(const String& item, const String& defRetVal) const
+blocxx::String
+OOPCallbackServiceEnv::getConfigItem(const blocxx::String& item, const blocxx::String& defRetVal) const
 {
 	return m_provEnv->getConfigItem(item, defRetVal);
 }
@@ -76,7 +76,7 @@ OOPCallbackServiceEnv::getCIMOMHandle(OperationContext& context,
 	}
 	else
 	{
-		OW_ASSERT(0);
+		BLOCXX_ASSERT(0);
 	}
 	return CIMOMHandleIFCRef();
 }

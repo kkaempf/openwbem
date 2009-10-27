@@ -46,7 +46,7 @@
 namespace OW_NAMESPACE
 {
 
-OW_DECLARE_APIEXCEPTION2(BadCIMSignature, IOException, OW_COMMON_API)
+OW_DECLARE_APIEXCEPTION2(BadCIMSignature, blocxx::IOException, OW_COMMON_API)
 
 /**
  * The CIMBase class is used as the base class for all CIM related classes.
@@ -65,11 +65,11 @@ public:
 	/**
 	 * @return The String representation of this object.
 	 */
-	virtual String toString() const = 0;
+	virtual blocxx::String toString() const = 0;
 	/**
 	 * @return The MOF representation of this object as an String.
 	 */
-	virtual String toMOF() const = 0;
+	virtual blocxx::String toMOF() const = 0;
 
 	enum EErrorCodes
 	{
@@ -119,9 +119,9 @@ public:
 	 * @throws BadCIMSignatureException If the signature doesn't match sig or
 	 *  verSig, or if the version read is > maxVersion.
 	 */
-	static UInt32 readSig(
+	static blocxx::UInt32 readSig(
 		std::streambuf & istrm, char const * const sig,
-		char const * const verSig, UInt32 maxVersion
+		char const * const verSig, blocxx::UInt32 maxVersion
 	);
 
 	/**
@@ -142,7 +142,7 @@ public:
 	 * @param version The version value to write to the output stream.
 	 */
 	static void writeSig(
-		std::streambuf & ostrm, char const * const sig, UInt32 version
+		std::streambuf & ostrm, char const * const sig, blocxx::UInt32 version
 	);
 
 };

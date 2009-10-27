@@ -47,23 +47,28 @@ namespace OW_NAMESPACE
 class RemoteSecondaryInstanceProvider : public SecondaryInstanceProviderIFC
 {
 public:
-	RemoteSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
+	RemoteSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env, const blocxx::String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
 		bool alwaysSendCredentials, bool useConnectionCredentials);
 	virtual ~RemoteSecondaryInstanceProvider();
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass);
-	virtual void deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop);
-	virtual void createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance);
+	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const blocxx::String& ns,
+		const CIMInstance &modifiedInstance, const CIMInstance &previousInstance,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, const blocxx::StringArray *propertyList, const CIMClass &theClass);
+	virtual void deleteInstance(const ProviderEnvironmentIFCRef &env, const blocxx::String& ns, const CIMObjectPath &cop);
+	virtual void createInstance(const ProviderEnvironmentIFCRef &env, const blocxx::String &ns, const CIMInstance &cimInstance);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	virtual void filterInstances(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMInstanceArray &instances, WBEMFlags:: ELocalOnlyFlag localOnly, WBEMFlags:: EDeepFlag deep, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass);
+	virtual void filterInstances(const ProviderEnvironmentIFCRef &env, const blocxx::String &ns, const blocxx::String &className,
+		CIMInstanceArray &instances, WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EDeepFlag deep,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const blocxx::StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass);
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
 	{
 	}
 
 private:
 	ClientCIMOMHandleConnectionPoolRef m_pool;
-	String m_url;
+	blocxx::String m_url;
 	bool m_alwaysSendCredentials;
 	bool m_useConnectionCredentials;
 };
@@ -72,5 +77,4 @@ private:
 } // end namespace OW_NAMESPACE
 
 #endif
-
 

@@ -30,6 +30,8 @@
 #include "blocxx/DateTime.hpp"
 #include "OW_CIMFwd.hpp"
 
+using namespace blocxx;
+
 static OpenWBEM::CIMDateTime * makeCIMDateTime(
 	time_t inTime,
 	unsigned long usec,
@@ -37,12 +39,12 @@ static OpenWBEM::CIMDateTime * makeCIMDateTime(
 {
 	if (interval)
 	{
-		OpenWBEM::UInt64 microsecs = inTime * 1000000;
+		UInt64 microsecs = inTime * 1000000;
 		microsecs += usec;
 		return new OpenWBEM::CIMDateTime(microsecs);
 	}
 
-	OpenWBEM::DateTime dt(inTime, OpenWBEM::UInt32(usec));
+	DateTime dt(inTime, UInt32(usec));
 	return new OpenWBEM::CIMDateTime(dt);
 /*
 	OpenWBEM::CIMDateTime * dt;
@@ -67,7 +69,7 @@ static OpenWBEM::CIMDateTime * makeCIMDateTime(
 #endif
 		}
 		strncat(strTime,utcOffset,256);
-		dt = new OpenWBEM::CIMDateTime(OpenWBEM::String(strTime));
+		dt = new OpenWBEM::CIMDateTime(String(strTime));
 		//cout<<"dt = " <<dt->toString()<<endl;
 	}
 	return dt;
@@ -91,14 +93,14 @@ CMPIDateTime *newDateTime(CMPIUint64 tim, CMPIBoolean interval)
 
 CMPIDateTime *newDateTime(const char *strTime)
 {
-	OpenWBEM::CIMDateTime *dt=new OpenWBEM::CIMDateTime(OpenWBEM::String(strTime));
+	OpenWBEM::CIMDateTime *dt = new OpenWBEM::CIMDateTime(String(strTime));
 	return (CMPIDateTime*)new CMPI_Object(dt);
 }
 
 static CMPIStatus dtRelease(CMPIDateTime* eDt)
 {
 	//cout<<"--- dtRelease()"<<endl;
-	OpenWBEM::CIMDateTime* dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
+	OpenWBEM::CIMDateTime* dt = (OpenWBEM::CIMDateTime*)eDt->hdl;
 	if (dt)
 	{
 		delete dt;
@@ -109,8 +111,8 @@ static CMPIStatus dtRelease(CMPIDateTime* eDt)
 
 static CMPIDateTime* dtClone(const CMPIDateTime* eDt, CMPIStatus* rc)
 {
-	OpenWBEM::CIMDateTime * dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
-	//OpenWBEM::CIMDateTime * cDt=new OpenWBEM::CIMDateTime(dt->toString());
+	OpenWBEM::CIMDateTime * dt = (OpenWBEM::CIMDateTime*)eDt->hdl;
+	//OpenWBEM::CIMDateTime * cDt = new OpenWBEM::CIMDateTime(dt->toString());
 	OpenWBEM::CIMDateTime * cDt = new OpenWBEM::CIMDateTime(*dt);
 
 	CMPIDateTime* neDt=(CMPIDateTime*)new CMPI_Object(cDt,CMPI_DateTime_Ftab);
@@ -150,9 +152,9 @@ static CMPIUint64 dtGetBinaryFormat(const CMPIDateTime* eDt, CMPIStatus* rc)
 		hours = dt->getHours();
 		days = dt->getDays();
 
-		lTime = (days*(OpenWBEM::UInt64)(86400000000LL))+
-			(hours*(OpenWBEM::UInt64)(3600000000LL))+
-			(mins*60000000)+(secs*1000000)+usecs;
+		lTime = (days * UInt64(86400000000LL)) +
+			(hours * UInt64(3600000000LL)) +
+			(mins * 60000000) + (secs * 1000000)+usecs;
 	}
 	else
 	{

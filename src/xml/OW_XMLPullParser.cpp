@@ -36,14 +36,14 @@
 #include "OW_config.h"
 #include "OW_XMLPullParser.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_XMLUnescape.hpp"
 #include "OW_XMLParseException.hpp"
 #include <algorithm> // for std::lower_bound
 
 namespace OW_NAMESPACE
 {
-
+using namespace blocxx;
 ///////////////////////////////////////////////////////////////////////////////
 XMLPullParser::~XMLPullParser()
 {
@@ -104,7 +104,7 @@ XMLPullParser::XMLPullParser()
 String
 XMLPullParser::getAttribute(const char* const attrId, bool throwIfError) const
 {
-	OW_ASSERT(m_curTok.type == XMLToken::START_TAG);
+	BLOCXX_ASSERT(m_curTok.type == XMLToken::START_TAG);
 	for (unsigned i = 0; i < m_curTok.attributes.size(); i++)
 	{
 		const XMLToken::Attribute& attr = m_curTok.attributes[i];
@@ -211,14 +211,14 @@ XMLPullParser::mustGetEndTag()
 String
 XMLPullParser::getName() const
 {
-	OW_ASSERT(m_curTok.type == XMLToken::START_TAG || m_curTok.type == XMLToken::END_TAG);
+	BLOCXX_ASSERT(m_curTok.type == XMLToken::START_TAG || m_curTok.type == XMLToken::END_TAG);
 	return XMLUnescape(m_curTok.text.c_str(), m_curTok.text.length());
 }
 //////////////////////////////////////////////////////////////////////////////
 String
 XMLPullParser::getData() const
 {
-	OW_ASSERT(m_curTok.type == XMLToken::CONTENT || m_curTok.type == XMLToken::CDATA);
+	BLOCXX_ASSERT(m_curTok.type == XMLToken::CONTENT || m_curTok.type == XMLToken::CDATA);
 	return XMLUnescape(m_curTok.text.c_str(), m_curTok.text.length());
 }
 //////////////////////////////////////////////////////////////////////////////

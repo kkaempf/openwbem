@@ -46,14 +46,14 @@
 namespace OW_NAMESPACE
 {
 
-String
-WQLRemoveStringEscapes(const String& s)
+blocxx::String
+WQLRemoveStringEscapes(const blocxx::String& s)
 {
 	if (s.empty())
 	{
 		return s;
 	}
-	StringBuffer newStr(s.length());
+	blocxx::StringBuffer newStr(s.length());
 	int len = s.length();
 	for (int i = 0; i < len; i++)
 	{

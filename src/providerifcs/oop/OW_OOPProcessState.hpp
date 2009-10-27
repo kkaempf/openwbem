@@ -50,13 +50,13 @@ namespace OW_NAMESPACE
 class OOPProcessState
 {
 private:
-	struct Data : public IntrusiveCountableBase
+	struct Data : public blocxx::IntrusiveCountableBase
 	{
-		RWLocker m_guard;
-		ThreadSafeProcessRef m_persistentProcess;
-		String m_persistentProcessUserName;
+		blocxx::RWLocker m_guard;
+		blocxx::ThreadSafeProcessRef m_persistentProcess;
+		blocxx::String m_persistentProcessUserName;
 
-		mutable NonRecursiveMutex m_objectLock;
+		mutable blocxx::NonRecursiveMutex m_objectLock;
 	};
 
 public:
@@ -79,41 +79,41 @@ public:
 		return !m_data;
 	}
 
-	ThreadSafeProcessRef getProcess() const
+	blocxx::ThreadSafeProcessRef getProcess() const
 	{
-		NonRecursiveMutexLock l(m_data->m_objectLock);
+		blocxx::NonRecursiveMutexLock l(m_data->m_objectLock);
 		return m_data->m_persistentProcess;
 	}
 
-	void getProcessAndUserName(ThreadSafeProcessRef& proc, String& userName) const
+	void getProcessAndUserName(blocxx::ThreadSafeProcessRef& proc, blocxx::String& userName) const
 	{
-		NonRecursiveMutexLock l(m_data->m_objectLock);
+		blocxx::NonRecursiveMutexLock l(m_data->m_objectLock);
 		proc = m_data->m_persistentProcess;
 		userName = m_data->m_persistentProcessUserName;
 	}
 
-	void setProcessAndUserName(const ThreadSafeProcessRef& persistentProcess, const String& userName)
+	void setProcessAndUserName(const blocxx::ThreadSafeProcessRef& persistentProcess, const blocxx::String& userName)
 	{
-		NonRecursiveMutexLock l(m_data->m_objectLock);
+		blocxx::NonRecursiveMutexLock l(m_data->m_objectLock);
 		m_data->m_persistentProcess = persistentProcess;
 		m_data->m_persistentProcessUserName = userName;
 	}
 
 	void clearProcess()
 	{
-		NonRecursiveMutexLock l(m_data->m_objectLock);
-		m_data->m_persistentProcess = ThreadSafeProcessRef();
-		m_data->m_persistentProcessUserName = String();
+		blocxx::NonRecursiveMutexLock l(m_data->m_objectLock);
+		m_data->m_persistentProcess = blocxx::ThreadSafeProcessRef();
+		m_data->m_persistentProcessUserName = blocxx::String();
 	}
 
-	RWLocker& getGuard()
+	blocxx::RWLocker& getGuard()
 	{
-		NonRecursiveMutexLock l(m_data->m_objectLock);
+		blocxx::NonRecursiveMutexLock l(m_data->m_objectLock);
 		return m_data->m_guard;
 	}
 
 private:
-	IntrusiveReference<Data> m_data;
+	blocxx::IntrusiveReference<Data> m_data;
 };
 
 

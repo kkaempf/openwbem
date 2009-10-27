@@ -3,7 +3,7 @@
 #include "OW_LocalOperationContext.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_CIMInstance.hpp"
@@ -12,6 +12,8 @@
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace
 {

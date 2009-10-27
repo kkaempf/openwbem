@@ -44,7 +44,7 @@
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
 #include "blocxx/String.hpp" // for default parameter StringArray()
 #include "blocxx/Array.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -134,7 +134,7 @@ public:
 	/**
 	 * @return The name of the class for this instance.
 	 */
-	String getClassName() const;
+	blocxx::String getClassName() const;
 	/**
 	 * Set the keys for this instance
 	 * @return a reference to *this
@@ -149,13 +149,13 @@ public:
 	/**
 	 * @return the language this CIMClass is using
 	 */
-	String getLanguage() const;
+	blocxx::String getLanguage() const;
 	/**
 	 * Set the language this CIMClass is using
 	 * @param language The new language for this CIMClass
 	 * @return a reference to *this
 	 */
-	CIMInstance& setLanguage(const String& language);
+	CIMInstance& setLanguage(const blocxx::String& language);
 	/**
 	 * @return The qualifiers for this instance as an array of CIMQualifiers.
 	 */
@@ -196,7 +196,7 @@ public:
 	 * that have a data type specified by the valueDataType parameter.
 	 */
 	CIMPropertyArray getProperties(
-		Int32 valueDataType = CIMDataType::INVALID) const;
+		blocxx::Int32 valueDataType = CIMDataType::INVALID) const;
 	/**
 	 * Set the properties associated with this instance.
 	 * Note: this will clobber qualifiers associated with the
@@ -314,7 +314,7 @@ public:
 	 * instance based on the filtering criteria. All properties and qualifiers
 	 * that designate keys will be retained.
 	 */
-	CIMInstance filterProperties(const StringArray& propertyList,
+	CIMInstance filterProperties(const blocxx::StringArray& propertyList,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		bool ignorePropertyList=false) const;
 	/**
@@ -334,7 +334,7 @@ public:
 	 */
 	CIMInstance clone(WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray& propertyList=StringArray(),
+		const blocxx::StringArray& propertyList = blocxx::StringArray(),
 		bool noProps=false) const;
 	/**
 	 * Create a new CIMInstance from this CIMInstance using the specified
@@ -353,7 +353,7 @@ public:
 	 *		to the specified criteria.
 	 */
 	CIMInstance clone(WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList) const;
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const blocxx::StringArray* propertyList) const;
 	/**
 	 * Create a new CIMInstance from this CIMInstance using the specified
 	 * criteria.  This is useful for implementing enumInstances correctly
@@ -377,7 +377,7 @@ public:
 	 *		to the specified criteria.
 	 */
 	CIMInstance clone(WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EDeepFlag deep, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const blocxx::StringArray* propertyList,
 		const CIMClass& requestedClass, const CIMClass& cimClass) const;
 	/**
 	 * Synchronize this instance with the given class. This will ensure that
@@ -416,12 +416,12 @@ public:
 	CIMInstance createModifiedInstance(
 		const CIMInstance& previousInstance,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const StringArray* propertyList,
+		const blocxx::StringArray* propertyList,
 		const CIMClass& theClass) const;
 	/**
 	 * @return The name of the class for this instance.
 	 */
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 	/**
 	 * Sets the class name for this instance.
 	 * @param name	The new class name for this instance.
@@ -437,14 +437,14 @@ public:
 	 * @param ns Specifies the namespace this instance is from.
 	 * @return a reference to *this
 	 */
-	CIMInstance& setNameSpace(const String& ns);
+	CIMInstance& setNameSpace(const blocxx::String& ns);
 	/**
 	 * @return the Namespace this instance was retrieved from.
 	 * If this is an empty string, the namespace is assumed to
 	 * be from the namespace that was specified on the client
 	 * request.
 	 */
-	String getNameSpace() const;
+	blocxx::String getNameSpace() const;
 	/**
 	 * Read this CIMInstance from an input stream.
 	 * @param istrm The input stream to read this object from.
@@ -458,11 +458,11 @@ public:
 	/**
 	 * @return The MOF representation of this CIMInstance as an String.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 	/**
 	 * @return The string representation of the CIMInstance object.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 	/**
 	 * This compares the properties of the instances, and returns true
 	 * if they are equal.  It will sort the properties before comparing,
@@ -472,7 +472,7 @@ public:
 	 */
 	bool propertiesAreEqualTo(const CIMInstance& other) const;
 
-	OW_SAFE_BOOL_IMPL(CIMInstance, COWIntrusiveReference<INSTData>, CIMInstance::m_pdata, m_pdata)
+	BLOCXX_SAFE_BOOL_IMPL(CIMInstance, blocxx::COWIntrusiveReference<INSTData>, CIMInstance::m_pdata, m_pdata)
 
 protected:
 	void _buildKeys();
@@ -482,7 +482,7 @@ protected:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<INSTData> m_pdata;
+	blocxx::COWIntrusiveReference<INSTData> m_pdata;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

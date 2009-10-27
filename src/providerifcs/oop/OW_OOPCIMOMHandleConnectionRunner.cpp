@@ -36,7 +36,7 @@
 #include "OW_OOPCIMOMHandleConnectionRunner.hpp"
 #include "blocxx/UnnamedPipe.hpp"
 #include "OW_OOPCallbackServiceEnv.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_HTTPChunkedOStream.hpp"
@@ -50,6 +50,8 @@
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace
 {
@@ -81,12 +83,12 @@ OOPCIMOMHandleConnectionRunner::run()
 		BinarySerialization::read(*m_instr.rdbuf(), op);
 		if (op == BinarySerialization::BIN_END)
 		{
-			OW_LOG_DEBUG3(logger, "CloneCIMOMHandleConnectionRunner::run() received BIN_END request. shutting down cimom handle");
+			BLOCXX_LOG_DEBUG3(logger, "CloneCIMOMHandleConnectionRunner::run() received BIN_END request. shutting down cimom handle");
 			return;
 		}
 		else if (op != BinarySerialization::BIN_OK)
 		{
-			//OW_LOG_ERROR(logger, "CloneCIMOMHandleConnectionRunner::run() "
+			//BLOCXX_LOG_ERROR(logger, "CloneCIMOMHandleConnectionRunner::run() "
 			//	"invalid byte received from client");
 			return;
 		}
@@ -94,28 +96,28 @@ OOPCIMOMHandleConnectionRunner::run()
 		HTTPChunkedIStream operationIstr(m_instr);
 		HTTPChunkedOStream operationOstr(m_outstr);
 		TempFileStream operationErrstr;
-		OW_LOG_DEBUG3(logger, "CIMOMHandleConnectionRunner::run() calling m_binaryRH->process");
+		BLOCXX_LOG_DEBUG3(logger, "CIMOMHandleConnectionRunner::run() calling m_binaryRH->process");
 		m_binaryRH->process(&operationIstr, &operationOstr, &operationErrstr, m_env->getOperationContext());
 		HTTPUtils::eatEntity(operationIstr);
 		if (m_binaryRH->hasError())
 		{
-			OW_LOG_DEBUG3(logger, "CIMOMHandleConnectionRunner::run() m_binaryRH->hasError()");
+			BLOCXX_LOG_DEBUG3(logger, "CIMOMHandleConnectionRunner::run() m_binaryRH->hasError()");
 			operationOstr.termOutput(HTTPChunkedOStream::E_DISCARD_LAST_CHUNK);
 			operationErrstr.rewind();
 			m_outstr << operationErrstr.rdbuf();
 		}
 		else
 		{
-			OW_LOG_DEBUG3(logger, "CIMOMHandleConnectionRunner::run() sending result and BIN_OK");
+			BLOCXX_LOG_DEBUG3(logger, "CIMOMHandleConnectionRunner::run() sending result and BIN_OK");
 			operationOstr.termOutput(HTTPChunkedOStream::E_SEND_LAST_CHUNK);
 			BinarySerialization::write(m_outbuf, BinarySerialization::BIN_OK);
 		}
 		if (m_outbuf.pubsync() == -1)
 		{
-			OW_LOG_ERROR(logger, "CIMOMHandleConnectionRunner::run() failed to flush output");
+			BLOCXX_LOG_ERROR(logger, "CIMOMHandleConnectionRunner::run() failed to flush output");
 		}
 	}
-	OW_LOG_DEBUG3(logger, "CIMOMHandleConnectionRunner::run() finished");
+	BLOCXX_LOG_DEBUG3(logger, "CIMOMHandleConnectionRunner::run() finished");
 }
 
 bool

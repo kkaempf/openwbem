@@ -62,10 +62,10 @@ public:
 	 *
 	 *  Within the scope of the instantiating Namespace, InstanceID opaquely and uniquely identifies an instance of this class. In order to ensure uniqueness within the NameSpace, the value of InstanceID SHOULD be constructed using the following 'preferred' algorithm: <OrgID>:<LocalID>Where <OrgID> and <LocalID> are separated by a colon ':', and where <OrgID> MUST include a copyrighted, trademarked or otherwise unique name that is owned by the business entity creating/defining the InstanceID, or is a registered ID that is assigned to the business entity by a recognized global authority. (This is similar to the <Schema Name>_<Class Name> structure of Schema class names.) In addition, to ensure uniqueness <OrgID> MUST NOT contain a colon (':'). When using this algorithm, the first colon to appear in InstanceID MUST appear between <OrgID> and <LocalID>. <LocalID> is chosen by the business entity and SHOULD not be re-used to identify different underlying (real-world) elements. If the above 'preferred' algorithm is not used, the defining entity MUST assure that the resultant InstanceID is not re-used across any InstanceIDs produced by this or other providers for this instance's NameSpace. For DMTF defined instances, the 'preferred' algorithm MUST be used with the <OrgID> set to 'CIM'.
 	 *
-	 * @return String current InstanceID property value
+	 * @return blocxx::String current InstanceID property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	String getInstanceID() const
+	blocxx::String getInstanceID() const
 	{
 		return getStringProperty("InstanceID");
 	}
@@ -76,9 +76,9 @@ public:
 	 *
 	 *  Within the scope of the instantiating Namespace, InstanceID opaquely and uniquely identifies an instance of this class. In order to ensure uniqueness within the NameSpace, the value of InstanceID SHOULD be constructed using the following 'preferred' algorithm: <OrgID>:<LocalID>Where <OrgID> and <LocalID> are separated by a colon ':', and where <OrgID> MUST include a copyrighted, trademarked or otherwise unique name that is owned by the business entity creating/defining the InstanceID, or is a registered ID that is assigned to the business entity by a recognized global authority. (This is similar to the <Schema Name>_<Class Name> structure of Schema class names.) In addition, to ensure uniqueness <OrgID> MUST NOT contain a colon (':'). When using this algorithm, the first colon to appear in InstanceID MUST appear between <OrgID> and <LocalID>. <LocalID> is chosen by the business entity and SHOULD not be re-used to identify different underlying (real-world) elements. If the above 'preferred' algorithm is not used, the defining entity MUST assure that the resultant InstanceID is not re-used across any InstanceIDs produced by this or other providers for this instance's NameSpace. For DMTF defined instances, the 'preferred' algorithm MUST be used with the <OrgID> set to 'CIM'.
 	 *
-	 * @param String new InstanceID property value
+	 * @param blocxx::String new InstanceID property value
 	 */
-	void setInstanceID(const String& v)
+	void setInstanceID(const blocxx::String& v)
 	{
 		setStringProperty("InstanceID", v);
 	}
@@ -100,10 +100,10 @@ public:
 	 *
 	 *  Process to launch.
 	 *
-	 * @return String current Process property value
+	 * @return blocxx::String current Process property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	String getProcess() const
+	blocxx::String getProcess() const
 	{
 		return getStringProperty("Process");
 	}
@@ -114,9 +114,9 @@ public:
 	 *
 	 *  Process to launch.
 	 *
-	 * @param String new Process property value
+	 * @param blocxx::String new Process property value
 	 */
-	void setProcess(const String& v)
+	void setProcess(const blocxx::String& v)
 	{
 		setStringProperty("Process", v);
 	}
@@ -138,10 +138,10 @@ public:
 	 *
 	 *  Command line arguments to use when launching Process.
 	 *
-	 * @return StringArray current Args property value
+	 * @return blocxx::StringArray current Args property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	StringArray getArgs() const
+	blocxx::StringArray getArgs() const
 	{
 		return getStringArrayProperty("Args");
 	}
@@ -152,9 +152,9 @@ public:
 	 *
 	 *  Command line arguments to use when launching Process.
 	 *
-	 * @param StringArray new Args property value
+	 * @param blocxx::StringArray new Args property value
 	 */
-	void setArgs(const StringArray& v)
+	void setArgs(const blocxx::StringArray& v)
 	{
 		setStringArrayProperty("Args", v);
 	}
@@ -176,10 +176,10 @@ public:
 	 *
 	 *  Protocol to use.  Valid values are: owcpp1.
 	 *
-	 * @return String current Protocol property value
+	 * @return blocxx::String current Protocol property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	String getProtocol() const
+	blocxx::String getProtocol() const
 	{
 		return getStringProperty("Protocol");
 	}
@@ -190,9 +190,9 @@ public:
 	 *
 	 *  Protocol to use.  Valid values are: owcpp1.
 	 *
-	 * @param String new Protocol property value
+	 * @param blocxx::String new Protocol property value
 	 */
-	void setProtocol(const String& v)
+	void setProtocol(const blocxx::String& v)
 	{
 		setStringProperty("Protocol", v);
 	}
@@ -263,10 +263,10 @@ public:
 	 *
 	 *  The user context that will be used to run the provider process super user means that the provider process will be run as root on POSIX systems, and as SYSTEM on win32. BE VERY CAUTIOUS WITH THIS SETTING!operation means that the provider process will be run as the authenticated username who initiated the operation.unprivileged means that the provider process will be run as an unprivileged user named owcimomd.monitored means that the provider process will be run as the user specified in the monitor privileges configuration file, and the monitor will run as root.  BE VERY CAUTIOUS WITH THIS SETTING!  Operation monitored is preferred to monitored because with monitored, non-root users can run code as root if the CIMOM is configured to allow non-root users to log in.  Monitored is similar to super user in this regard.operation monitored means that the provider process will be run as the user specified in the monitor privileges configuration file, and the monitor wil run as as the authenticated username who initiated the operation.If this setting is "monitored" or "operation monitored", MonitorPrivilegesFile must be set.
 	 *
-	 * @return UInt16 current UserContext property value
+	 * @return blocxx::UInt16 current UserContext property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	UInt16 getUserContext() const
+	blocxx::UInt16 getUserContext() const
 	{
 		return getUInt16Property("UserContext");
 	}
@@ -277,9 +277,9 @@ public:
 	 *
 	 *  The user context that will be used to run the provider process super user means that the provider process will be run as root on POSIX systems, and as SYSTEM on win32. BE VERY CAUTIOUS WITH THIS SETTING!operation means that the provider process will be run as the authenticated username who initiated the operation.unprivileged means that the provider process will be run as an unprivileged user named owcimomd.monitored means that the provider process will be run as the user specified in the monitor privileges configuration file, and the monitor will run as root.  BE VERY CAUTIOUS WITH THIS SETTING!  Operation monitored is preferred to monitored because with monitored, non-root users can run code as root if the CIMOM is configured to allow non-root users to log in.  Monitored is similar to super user in this regard.operation monitored means that the provider process will be run as the user specified in the monitor privileges configuration file, and the monitor wil run as as the authenticated username who initiated the operation.If this setting is "monitored" or "operation monitored", MonitorPrivilegesFile must be set.
 	 *
-	 * @param UInt16 new UserContext property value
+	 * @param blocxx::UInt16 new UserContext property value
 	 */
-	void setUserContext(const UInt16 v)
+	void setUserContext(const blocxx::UInt16 v)
 	{
 		setUInt16Property("UserContext", v);
 	}
@@ -301,10 +301,10 @@ public:
 	 *
 	 *  If UserContext = 4 or 5 (monitored), a monitor will be created for the provider process. The monitor can give the process special permissions. This property must be set to the file name of the provider's privileges configuration file. The file must be in the directory identified by the owcimomd.privileges_config_dir config item.
 	 *
-	 * @return String current MonitorPrivilegesFile property value
+	 * @return blocxx::String current MonitorPrivilegesFile property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	String getMonitorPrivilegesFile() const
+	blocxx::String getMonitorPrivilegesFile() const
 	{
 		return getStringProperty("MonitorPrivilegesFile");
 	}
@@ -315,9 +315,9 @@ public:
 	 *
 	 *  If UserContext = 4 or 5 (monitored), a monitor will be created for the provider process. The monitor can give the process special permissions. This property must be set to the file name of the provider's privileges configuration file. The file must be in the directory identified by the owcimomd.privileges_config_dir config item.
 	 *
-	 * @param String new MonitorPrivilegesFile property value
+	 * @param blocxx::String new MonitorPrivilegesFile property value
 	 */
-	void setMonitorPrivilegesFile(const String& v)
+	void setMonitorPrivilegesFile(const blocxx::String& v)
 	{
 		setStringProperty("MonitorPrivilegesFile", v);
 	}

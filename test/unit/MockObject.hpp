@@ -46,14 +46,14 @@ struct MockObject
 	void verify();
 
 protected:
-	void mockAssert(bool test, OpenWBEM::String const & message);
+	void mockAssert(bool test, blocxx::String const & message);
 
 private:
 	// Subclasses should put any final verification code in this method.
 	virtual void doVerify();
 
 	bool m_assertFailed;
-	OpenWBEM::String m_failureMessage;
+	blocxx::String m_failureMessage;
 };
 
 #endif

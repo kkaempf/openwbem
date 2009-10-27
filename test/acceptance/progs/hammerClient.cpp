@@ -59,7 +59,7 @@
 #include <algorithm>
 #include <typeinfo>
 
-// TODO list:
+/// @todo list:
 // cover *all* read operations
 // GetClass - Done
 // GetInstance - Done
@@ -105,6 +105,7 @@ using std::cout;
 using std::endl;
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 
 //////////////////////////////////////////////////////////////////////////////

@@ -35,14 +35,16 @@
 
 #include "OW_config.h"
 #include "OW_GenericHDBRepository.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_CIMException.hpp"
 #include "blocxx/DataStreams.hpp"
 #include "blocxx/IOException.hpp"
 #include "blocxx/Format.hpp"
+#include "blocxx/Logger.hpp"
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace
 {
@@ -207,7 +209,7 @@ GenericHDBRepository::createNameSpace(const String& ns)
 		hdl->turnFlagsOn(node, HDBNSNODE_FLAG);
 		hdl->addRootNode(node);
 		Logger lgr(COMPONENT_NAME);
-		OW_LOG_DEBUG2(lgr, Format("created namespace %1", ns));
+		BLOCXX_LOG_DEBUG2(lgr, Format("created namespace %1", ns));
 	}
 	else
 	{

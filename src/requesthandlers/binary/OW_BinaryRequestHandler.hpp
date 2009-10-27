@@ -64,10 +64,10 @@ public:
 	void doProcess(std::streambuf * istr, std::streambuf * ostrEntity,
 			std::streambuf * ostrError, OperationContext& context);
 	virtual void doOptions(CIMFeatures &cf, OperationContext& context);
-	virtual StringArray getSupportedContentTypes() const;
-	virtual String getContentType() const;
+	virtual blocxx::StringArray getSupportedContentTypes() const;
+	virtual blocxx::String getContentType() const;
 
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void shutdown();
 private:

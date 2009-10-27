@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/LogLevel.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_LogLevel.hpp is deprecated, use "blocxx/LogLevel.hpp" instead.
 #endif
 

@@ -41,6 +41,7 @@
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 CIMServerProviderEnvironment::CIMServerProviderEnvironment(OperationContext& context,
 	const ServiceEnvironmentIFCRef& env)

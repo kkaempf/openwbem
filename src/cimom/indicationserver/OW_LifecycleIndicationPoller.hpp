@@ -46,10 +46,10 @@ namespace OW_NAMESPACE
 class LifecycleIndicationPoller : public CppPolledProviderIFC
 {
 public:
-	LifecycleIndicationPoller(const String& ns, const CIMName& className,
-		UInt32 pollInterval);
-	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef &env);
-	virtual Int32 poll(const ProviderEnvironmentIFCRef &env);
+	LifecycleIndicationPoller(const blocxx::String& ns, const CIMName& className,
+		blocxx::UInt32 pollInterval);
+	virtual blocxx::Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef &env);
+	virtual blocxx::Int32 poll(const ProviderEnvironmentIFCRef &env);
 	// used to determine what types of indications to create
 	enum PollOp
 	{
@@ -69,16 +69,16 @@ public:
 	// a new poll interval will be considered.  The new interval will be the
 	// min of newPollInterval and the current poll interval.  The new interval
 	// is returned.
-	UInt32 addPollInterval(UInt32 newPollInterval);
+	blocxx::UInt32 addPollInterval(blocxx::UInt32 newPollInterval);
 private:
-	UInt32 getPollInterval() const;
-	String m_ns;
+	blocxx::UInt32 getPollInterval() const;
+	blocxx::String m_ns;
 	CIMName m_classname;
-	UInt32 m_pollInterval;
-	UInt32 m_pollCreation;
-	UInt32 m_pollModification;
-	UInt32 m_pollDeletion;
-	mutable Mutex m_guard;
+	blocxx::UInt32 m_pollInterval;
+	blocxx::UInt32 m_pollCreation;
+	blocxx::UInt32 m_pollModification;
+	blocxx::UInt32 m_pollDeletion;
+	mutable blocxx::Mutex m_guard;
 	CIMInstanceArray m_prevInsts;
 	bool m_initializedInstances;
 };

@@ -38,5 +38,10 @@
 #include "OW_config.h"
 #include <blocxx/String.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_String.hpp is deprecated, use "blocxx/String.hpp" instead.
 #endif

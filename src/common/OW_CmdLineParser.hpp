@@ -42,7 +42,12 @@
 
 #include "OW_config.h"
 #include <blocxx/CmdLineParser.hpp>
-#warning OW_CmdLineParser.hpp is deprecated, use "blocxx/CmdLineParser.hpp" instead.
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
+#warning OW_CmdLineParser.hpp is deprecated, use "blocxx/CmdLineParser.hpp" instead.
 #endif
 

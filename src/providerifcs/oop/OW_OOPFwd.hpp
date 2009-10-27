@@ -41,7 +41,7 @@ namespace OW_NAMESPACE
 {
 
 class OOPProtocolIFC;
-typedef IntrusiveReference<OOPProtocolIFC> OOPProtocolIFCRef;
+typedef blocxx::IntrusiveReference<OOPProtocolIFC> OOPProtocolIFCRef;
 
 class OOPProviderBase;
 

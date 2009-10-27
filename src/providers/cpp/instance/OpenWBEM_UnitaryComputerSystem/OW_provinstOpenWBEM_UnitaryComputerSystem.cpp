@@ -42,6 +42,7 @@ namespace OW_NAMESPACE
 
 	using namespace WBEMFlags;
 	using namespace std;
+	using namespace blocxx;
 
 	namespace
 	{

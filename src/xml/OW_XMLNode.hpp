@@ -43,7 +43,7 @@
 #include "blocxx/IntrusiveCountableBase.hpp"
 #include "OW_XMLAttribute.hpp"
 #include "OW_XMLFwd.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 #include <iosfwd>
 
@@ -52,7 +52,7 @@ namespace OW_NAMESPACE
 
 class XMLNodeImpl;
 
-typedef IntrusiveReference<XMLNodeImpl> XMLNodeImplRef;
+typedef blocxx::IntrusiveReference<XMLNodeImpl> XMLNodeImplRef;
 
 /**
  * Base class used to represent an XML tag such as <name> and
@@ -76,7 +76,7 @@ public:
 	 * @param attrArray XMLAttributeArray containing the XML attributes that were
 	 *                 associated with this node (XML Tag)
 	 */
-	XMLNode(const String& name, const XMLAttributeArray& attrArray);
+	XMLNode(const blocxx::String& name, const XMLAttributeArray& attrArray);
 
 	/**
 	 * Constructor taking the XML tag name
@@ -85,7 +85,7 @@ public:
 	 * @param name       The XML tag name.  If the XML tag were <foo> then name
 	 *                   would contain the string "foo"
 	 */
-	XMLNode(const String& name);
+	XMLNode(const blocxx::String& name);
 
 	/**
 	 * Constructs an empty XMLNode.
@@ -120,19 +120,19 @@ public:
 	 *
 	 * @return Returns an String object containing the name of the node
 	 */
-	String getName() const;
+	blocxx::String getName() const;
 
 	/**
 	 * Sets the text value for the XMLNode
 	 *
 	 * @param text   String containing the value to be set
 	 */
-	void assignText(const String& text) const;
+	void assignText(const blocxx::String& text) const;
 
 	/**
 	 * Add the given text to the existing text of the node.
 	 */
-	void appendText(const String& text) const;
+	void appendText(const blocxx::String& text) const;
 
 	/**
 	 * Searches the attributes of the current node for the
@@ -141,7 +141,7 @@ public:
 	 * @param name   String containing the attribute name to search for
 	 * @return String containing the value of the attribute
 	 */
-	String getAttribute(const String& name) const;
+	blocxx::String getAttribute(const blocxx::String& name) const;
 
 	/**
 	 * Adds the argument attribute to the Node's attribute array.
@@ -159,7 +159,7 @@ public:
 	 * @exception CIMException
 	 *                   thrown if the attribute name is not found
 	 */
-	String mustGetAttribute(const String& name) const;
+	blocxx::String mustGetAttribute(const blocxx::String& name) const;
 
 	/**
 	 * Gets the attribute array for the currrent node
@@ -177,7 +177,7 @@ public:
 	 *
 	 * @return String holding the XML value of the current node
 	 */
-	String getText() const;
+	blocxx::String getText() const;
 
 	/**
 	 * Compares the elementToken to the current node and to all
@@ -401,9 +401,9 @@ public:
 	 *
 	 * @returns String containing formatted xml
 	 */
-	String toString() const;
+	blocxx::String toString() const;
 
-	OW_SAFE_BOOL_IMPL(XMLNode, XMLNodeImplRef, XMLNode::m_impl, m_impl)
+	BLOCXX_SAFE_BOOL_IMPL(XMLNode, XMLNodeImplRef, XMLNode::m_impl, m_impl)
 
 private:
 
@@ -430,21 +430,21 @@ OW_XML_API std::ostream& operator<<(std::ostream& ostr, const XMLNode& node);
 #pragma warning (disable: 4251)
 #endif
 
-class OW_XML_API XMLNodeImpl : public IntrusiveCountableBase
+class OW_XML_API XMLNodeImpl : public blocxx::IntrusiveCountableBase
 {
 public:
-	XMLNodeImpl(const String& name, const XMLAttributeArray& attrArray);
-	XMLNodeImpl(const String& name);
+	XMLNodeImpl(const blocxx::String& name, const XMLAttributeArray& attrArray);
+	XMLNodeImpl(const blocxx::String& name);
 	XMLNodeImpl();
 	~XMLNodeImpl();
-	String getNodeName() const;
-	void assignText(const String& text);
-	void appendText(const String& text);
-	String getAttribute(const String& name, bool throwException = false) const;
+	blocxx::String getNodeName() const;
+	void assignText(const blocxx::String& text);
+	void appendText(const blocxx::String& text);
+	blocxx::String getAttribute(const blocxx::String& name, bool throwException = false) const;
 	void addAttribute(const XMLAttribute& attr);
 	XMLAttributeArray getAttrs() const;
-	String getText() const;
-	String getName() const;
+	blocxx::String getText() const;
+	blocxx::String getName() const;
 
 	void mustElement(const char* elementName) const;
 	XMLNodeImplRef findElement(const char* elementName, bool throwException = false) const;
@@ -466,7 +466,7 @@ public:
 	XMLNodeImplRef getChild() const;
 	XMLNodeArray getChildren() const;
 	void printNode( std::ostream& ostr ) const;
-	String toString() const;
+	blocxx::String toString() const;
 
 protected:
 	XMLNodeImplRef m_nextNode;
@@ -474,8 +474,8 @@ protected:
 	XMLNodeImplRef m_lastChildNode;
 
 	XMLAttributeArray m_XMLAttributeArray;
-	String m_strName;
-	String m_strText;
+	blocxx::String m_strName;
+	blocxx::String m_strText;
 };
 
 #ifdef OW_WIN32

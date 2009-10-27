@@ -63,7 +63,7 @@ namespace RemoteProviderUtils
  *  this is helpful to avoid an extra round trip for the client to discover what the
  *  server supports.
  */
-ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl,
+ClientCIMOMHandleRef getRemoteClientCIMOMHandle(blocxx::String& remoteUrl,
 	bool useConnectionCredentials, const ProviderEnvironmentIFCRef &env,
 	const ClientCIMOMHandleConnectionPoolRef& pool, bool alwaysSendCredentials);
 

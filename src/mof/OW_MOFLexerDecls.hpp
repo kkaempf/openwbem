@@ -42,7 +42,7 @@
 
 struct owmofltype
 {
-	OpenWBEM::String msg;
+	blocxx::String msg;
 	unsigned first_column;
 	unsigned first_line;
 	unsigned last_column;

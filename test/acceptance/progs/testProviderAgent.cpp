@@ -47,7 +47,7 @@
 #include "blocxx/Format.hpp"
 #include "blocxx/CmdLineParser.hpp"
 #include "OW_CppProviderIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/LogAppender.hpp"
 #include "blocxx/MultiAppender.hpp"
 #include "OW_ConfigFile.hpp"
@@ -61,6 +61,7 @@
 using namespace OpenWBEM;
 using namespace WBEMFlags;
 using namespace std;
+using namespace blocxx;
 
 UnnamedPipeRef sigPipe;
 extern "C"
@@ -212,7 +213,7 @@ int main(int argc, char* argv[])
 
 		LogAppender::setDefaultLogAppender(new MultiAppender(appenders));
 
-		// TODO: set the http server timeout
+		/// @todo  set the http server timeout
 
 		AuthenticatorIFCRef authenticator;
 		RequestHandlerIFCRef rh(SharedLibraryRef(0), new XMLExecute);

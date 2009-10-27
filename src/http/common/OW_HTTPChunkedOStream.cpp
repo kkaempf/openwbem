@@ -40,6 +40,7 @@ namespace OW_NAMESPACE
 {
 
 using std::ostream;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 HTTPChunkedOStreamBuffer::HTTPChunkedOStreamBuffer(ostream& ostr)
 	: BaseStreamBuffer(BaseStreamBuffer::E_OUT, HTTP_BUF_SIZE), m_ostr(ostr)

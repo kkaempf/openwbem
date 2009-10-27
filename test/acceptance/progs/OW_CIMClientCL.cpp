@@ -34,7 +34,6 @@
  */
 
 #include "OW_config.h"
-#include "OW_Assertion.hpp"
 #include "OW_CIMClient.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
@@ -50,6 +49,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMDataType.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/Format.hpp"
 #include "blocxx/GetPass.hpp"
 #include "OW_CIMtoXML.hpp"
@@ -74,6 +74,7 @@ using std::cout;
 using std::endl;
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 //////////////////////////////////////////////////////////////////////////////
 void

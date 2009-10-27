@@ -46,7 +46,7 @@ namespace OW_NAMESPACE
 /**
  * An abstract base class for CIM Listener callbacks.
  */
-class OW_LISTENER_API CIMListenerCallback : public IntrusiveCountableBase
+class OW_LISTENER_API CIMListenerCallback : public blocxx::IntrusiveCountableBase
 {
 public:
 	virtual ~CIMListenerCallback();
@@ -58,7 +58,7 @@ public:
 	 * 	listerners on a single http server.  This lets you know which
 	 * 	one was triggered.
 	 */
-	void indicationOccurred( CIMInstance& ci, const String& listenerPath )
+	void indicationOccurred( CIMInstance& ci, const blocxx::String& listenerPath )
 	{
 		doIndicationOccurred( ci, listenerPath );
 	}
@@ -75,7 +75,7 @@ protected:
 	 *                      indication.
 	 */
 	virtual void doIndicationOccurred( CIMInstance& ci,
-		const String& listenerPath ) = 0;
+		const blocxx::String& listenerPath ) = 0;
 };
 
 } // end namespace OW_NAMESPACE

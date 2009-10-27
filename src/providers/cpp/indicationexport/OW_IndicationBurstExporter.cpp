@@ -34,11 +34,12 @@
 
 #include "OW_IndicationBurstExporter.hpp"
 #include "blocxx/ThreadPool.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/Timeout.hpp"
 #include "OW_SendIndicationBurstTask.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 namespace
 {

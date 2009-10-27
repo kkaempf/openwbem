@@ -57,6 +57,7 @@ using std::endl;
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 class LinuxPAMAuthenticationCL : public AuthenticatorIFC
 {
@@ -219,7 +220,7 @@ LinuxPAMAuthenticationCL::doAuthenticate(String &userName,
 void
 LinuxPAMAuthenticationCL::doInit(ServiceEnvironmentIFCRef env)
 {
-	String allowedUsersLine = env->getConfigItem(ConfigOpts::PAM_ALLOWED_USERS_opt);
+	String allowedUsersLine = env->getConfigItem(ConfigOpts::ALLOWED_USERS_opt);
 	m_allowedUsers = allowedUsersLine.tokenize();
 	m_libexecdir = env->getConfigItem(ConfigOpts::LIBEXECDIR_opt, OW_DEFAULT_OWLIBEXECDIR);
 

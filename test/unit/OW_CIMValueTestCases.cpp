@@ -48,6 +48,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_CIMValueTestCases,"OW_CIMValue");
 #include "OW_CIMProperty.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void OW_CIMValueTestCases::setUp()
 {

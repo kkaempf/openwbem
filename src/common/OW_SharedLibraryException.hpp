@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/SharedLibraryException.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SharedLibraryException.hpp is deprecated, use "blocxx/SharedLibraryException.hpp" instead.
 #endif

@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/Semaphore.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Semaphore.hpp is deprecated, use "blocxx/Semaphore.hpp" instead.
 #endif

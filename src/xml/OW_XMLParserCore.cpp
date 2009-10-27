@@ -42,6 +42,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 // Note that we don't use the OW_THROW macro in this file to throw
 // an XMLParseException.  This is because it needs extra information not
 // available with OW_THROW.

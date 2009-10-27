@@ -41,6 +41,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(EnvironmentVariablePatternsTestCases,"EnvironmentVari
 
 using namespace OpenWBEM;
 using namespace OpenWBEM::PrivilegeConfig;
+using namespace blocxx;
 
 void EnvironmentVariablePatternsTestCases::setUp()
 {

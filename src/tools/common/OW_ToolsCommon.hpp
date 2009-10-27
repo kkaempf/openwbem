@@ -43,13 +43,13 @@ namespace OW_NAMESPACE
 namespace Tools
 {
 
-void printCmdLineParserExceptionMessage(const CmdLineParserException& e);
+void printCmdLineParserExceptionMessage(const blocxx::CmdLineParserException& e);
 
 /////////////////////////////////////////////////////////////////////////////
 class GetLoginInfo : public ClientAuthCBIFC
 {
 public:
-	bool getCredentials(const String& realm, String& name, String& passwd, const String& details);
+	bool getCredentials(const blocxx::String& realm, blocxx::String& name, blocxx::String& passwd, const blocxx::String& details);
 };
 
 

@@ -52,8 +52,8 @@ public:
 	virtual ~OOPShuttingDownCallback();
 
 private:
-	virtual void call(const OOPProtocolIFCRef& protocol, const UnnamedPipeRef& out, const UnnamedPipeRef& in,
-		const Timeout& timeout, const ProviderEnvironmentIFCRef& env) const;
+	virtual void call(const OOPProtocolIFCRef& protocol, const blocxx::UnnamedPipeRef& out, const blocxx::UnnamedPipeRef& in,
+		const blocxx::Timeout& timeout, const ProviderEnvironmentIFCRef& env) const;
 
 };
 

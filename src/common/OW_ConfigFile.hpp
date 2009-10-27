@@ -51,16 +51,16 @@ namespace ConfigFile
 
 	struct ItemData
 	{
-		ItemData(const String& source_, const String& value_)
+		ItemData(const blocxx::String& source_, const blocxx::String& value_)
 			: source(source_)
 			, value(value_)
 		{}
-		String source; // e.g. the filename or empty if from an internal set.
-		String value;
+		blocxx::String source; // e.g. the filename or empty if from an internal set.
+		blocxx::String value;
 	};
-	typedef Array<ItemData> ItemDataArray;
+	typedef blocxx::Array<ItemData> ItemDataArray;
 
-	typedef SortedVectorMap<String, ItemDataArray> ConfigMap;
+	typedef blocxx::SortedVectorMap<blocxx::String, ItemDataArray> ConfigMap;
 
 	/**
 	 * Loads a config file and stores the options in rval.
@@ -116,20 +116,20 @@ namespace ConfigFile
 	 *
 	 * @throws ConfigException if the file doesn't exist or is malformed
 	 */
-	OW_COMMON_API void loadConfigFile(const String& filename, ConfigMap& rval);
+	OW_COMMON_API void loadConfigFile(const blocxx::String& filename, ConfigMap& rval);
 
 	/**
 	 * Retrieve itemName item from configItems. If it's not present, defRetVal will be returned.
 	 * If the item has multiple values, only the last value will be returned.
 	 */
-	OW_COMMON_API String getConfigItem(const ConfigMap& configItems, const String &itemName, const String& defRetVal = String());
+	OW_COMMON_API blocxx::String getConfigItem(const ConfigMap& configItems, const blocxx::String &itemName, const blocxx::String& defRetVal = blocxx::String());
 
 	/**
 	 * Retrieve itemName values from configItems. If it's not present, defRetVal will be returned.
 	 * @param tokenizeSeparator If non-null, then each item will be tokenized using the specified separator chars and returned as separate items.
 	 */
-	OW_COMMON_API StringArray getMultiConfigItem(const ConfigMap& configItems, const String &itemName,
-		const StringArray& defRetVal = StringArray(), const char* tokenizeSeparator = 0);
+	OW_COMMON_API blocxx::StringArray getMultiConfigItem(const ConfigMap& configItems, const blocxx::String &itemName,
+		const blocxx::StringArray& defRetVal = blocxx::StringArray(), const char* tokenizeSeparator = 0);
 
 	enum EOverwritePreviousFlag
 	{
@@ -142,8 +142,8 @@ namespace ConfigFile
 	 * @param overwritePrevious E_PRESERVE_PREVIOUS - If itemName already exists in configItems, will not be changed.
 	 *   E_OVERWRITE_PREVIOUS - If itemName already exists, it's value will be set to value.
 	 */
-	OW_COMMON_API void setConfigItem(ConfigMap& configItems, const String& itemName,
-		const String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS);
+	OW_COMMON_API void setConfigItem(ConfigMap& configItems, const blocxx::String& itemName,
+		const blocxx::String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS);
 
 
 

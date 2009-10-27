@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/SSLCtxMgr.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SSLCtxMgr.hpp is deprecated, use "blocxx/SSLCtxMgr.hpp" instead.
 #endif
 

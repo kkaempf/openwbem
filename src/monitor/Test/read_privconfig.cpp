@@ -28,6 +28,7 @@
 
 using std::cout;
 using std::endl;
+using namespace blocxx;
 using namespace OpenWBEM;
 using namespace OpenWBEM::PrivilegeConfig;
 

@@ -39,7 +39,7 @@
 #include "Cifc_AutoDescriptor.hpp"
 
 #if !defined(OW_NO_EXCEPTIONS)
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/Format.hpp"
 #endif
 
@@ -62,7 +62,7 @@ void AutoDescriptorPolicy::free(handle_type h)
 #if !defined(OW_NO_EXCEPTIONS)
 			int lerrno = errno;
 			Logger lgr("ow.common");
-			OW_LOG_ERROR(lgr, Format("Closing file handle %1 failed: %2", h, lerrno));
+			BLOCXX_LOG_ERROR(lgr, Format("Closing file handle %1 failed: %2", h, lerrno));
 #else
 			// We can't do any logging without the possibility of throwing an exception.
 #endif

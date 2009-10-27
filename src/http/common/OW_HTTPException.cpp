@@ -39,6 +39,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 /////////////////////////////////////////////////////////////////////////////
 HTTPException::HTTPException(const char* file, int line, const char* msg)
 	: Exception(file, line, msg, Exception::UNKNOWN_ERROR_CODE, 0, ExceptionIds::HTTPExceptionId), m_response(-1)

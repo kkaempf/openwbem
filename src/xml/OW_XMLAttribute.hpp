@@ -52,17 +52,17 @@ public:
 	{
 	}
 
-	XMLAttribute(const String& name, const String& value)
+	XMLAttribute(const blocxx::String& name, const blocxx::String& value)
 		: m_name(name)
 		, m_value(value)
 	{
 	}
 
-	String getName() const
+	blocxx::String getName() const
 	{
 		return m_name;
 	}
-	String getValue() const
+	blocxx::String getValue() const
 	{
 		return m_value;
 	}
@@ -72,11 +72,11 @@ public:
 	}
 
 private:
-	String m_name;
-	String m_value;
+	blocxx::String m_name;
+	blocxx::String m_value;
 };
 
-typedef Array<XMLAttribute> XMLAttributeArray;
+typedef blocxx::Array<XMLAttribute> XMLAttributeArray;
 
 } // end namespace OW_NAMESPACE
 

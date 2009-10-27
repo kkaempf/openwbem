@@ -46,6 +46,8 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
+
 SharedLibraryRepository::SharedLibraryRepository(SharedLibraryRepositoryIFCRef ref)
 	: RepositoryIFC()
 	, m_ref(ref) {}

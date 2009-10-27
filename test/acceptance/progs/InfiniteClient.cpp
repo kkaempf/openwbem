@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_ClientCIMOMHandle.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMValueCast.hpp"
@@ -66,6 +66,7 @@ using std::cin;
 using std::cout;
 using std::endl;
 using namespace OpenWBEM;
+using namespace blocxx;
 
 //////////////////////////////////////////////////////////////////////////////
 

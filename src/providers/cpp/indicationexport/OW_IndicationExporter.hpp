@@ -43,7 +43,7 @@
 namespace OW_NAMESPACE
 {
 
-struct IndicationExporter : IntrusiveCountableBase
+struct IndicationExporter : blocxx::IntrusiveCountableBase
 {
 	virtual ~IndicationExporter();
 	virtual void beginExport() = 0;
@@ -51,7 +51,7 @@ struct IndicationExporter : IntrusiveCountableBase
 	virtual void sendIndication(CIMInstance const & ci) = 0;
 };
 
-typedef IntrusiveReference<IndicationExporter> IndicationExporterRef;
+typedef blocxx::IntrusiveReference<IndicationExporter> IndicationExporterRef;
 
 class IndicationExporterImpl : public IndicationExporter
 {
@@ -68,19 +68,19 @@ public:
 	static IndicationExporterRef create(const CIMInstance & indHandlerInst);
 
 private:
-	void sendXMLHeader(const String& cimProtocolVersion);
+	void sendXMLHeader(const blocxx::String& cimProtocolVersion);
 	void sendXMLTrailer();
 	void doSendRequest(
-		const String& methodName, const String& cimProtocolVersion);
+		const blocxx::String& methodName, const blocxx::String& cimProtocolVersion);
 	/**
 	 * @throws CIMException
 	 */
 	void checkNodeForCIMError(CIMXMLParser& parser,
-		const String& operation);
+		const blocxx::String& operation);
 
 	CIMProtocolIFCRef m_protocol;
-	Reference<std::ostream> m_ostrm;
-	Int32 m_iMessageID;
+	blocxx::Reference<std::ostream> m_ostrm;
+	blocxx::Int32 m_iMessageID;
 };
 
 

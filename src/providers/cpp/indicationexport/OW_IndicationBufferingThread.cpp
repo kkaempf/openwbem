@@ -36,7 +36,7 @@
 #include "blocxx/ClockImpl.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_NoSuchPropertyException.hpp"
 #include <list>
@@ -46,7 +46,8 @@
 
 using namespace std;
 using namespace OpenWBEM;
-using namespace OpenWBEM::MTQueueEnum;
+using namespace blocxx;
+using namespace blocxx::MTQueueEnum;
 
 namespace
 {
@@ -238,7 +239,7 @@ void IndicationBufferingThread::sendBurst(
 	catch (std::exception & e)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_ERROR(logger,
+		BLOCXX_LOG_ERROR(logger,
 			Format("Exception caught when sending an indication burst: %1",
 				e.what()));
 	}
@@ -265,7 +266,7 @@ void IndicationBufferingThread::processIndication(
 	catch (NoSuchPropertyException & e)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_ERROR(logger,
+		BLOCXX_LOG_ERROR(logger,
 			"Indication handler instance lacks required property");
 	}
 }

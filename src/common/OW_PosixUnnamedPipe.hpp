@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/PosixUnnamedPipe.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_PosixUnnamedPipe.hpp is deprecated, use "blocxx/PosixUnnamedPipe.hpp" instead.
 #endif
 

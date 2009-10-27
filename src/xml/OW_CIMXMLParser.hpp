@@ -37,7 +37,7 @@
 #define OW_CIMXMLPARSER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_XMLPullParser.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -112,7 +112,7 @@ public:
 		E_VALUE_REFERENCE				,
 		E_UNKNOWN
 	};
-	CIMXMLParser(const String& str);
+	CIMXMLParser(const blocxx::String& str);
 	CIMXMLParser(std::istream& sb);
 	CIMXMLParser();
 	virtual ~CIMXMLParser();
@@ -137,7 +137,7 @@ public:
 		return m_curTok.type;
 	}
 
-	OW_SAFE_BOOL_IMPL(CIMXMLParser, bool, CIMXMLParser::m_good, m_good)
+	BLOCXX_SAFE_BOOL_IMPL(CIMXMLParser, bool, CIMXMLParser::m_good, m_good)
 
 	// naming convention:
 	// A_ for attribute name

@@ -38,6 +38,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 ///////////////////////////////////////////////////////////////////////////////
 MethodProviderInfo::ClassInfo::ClassInfo(String const& className_)
 	: className(className_)

@@ -38,5 +38,10 @@
 #include "OW_config.h"
 #include <blocxx/StringBuffer.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_StringBuffer.hpp is deprecated, use "blocxx/StringBuffer.hpp" instead.
 #endif

@@ -38,9 +38,8 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_Platform.hpp"
 #include "OW_PlatformSignal.hpp"
-#include "OW_Assertion.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/CerrLogger.hpp"
 
 // necessary for the environment class
@@ -67,6 +66,7 @@
 #include <new> // for new handler stuff
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 namespace
 {
@@ -111,7 +111,7 @@ public:
 	virtual void fatalError(const String& errorDescription)
 	{
 		Logger lgr(COMPONENT_NAME);
-		OW_LOG_FATAL_ERROR(lgr, errorDescription);
+		BLOCXX_LOG_FATAL_ERROR(lgr, errorDescription);
 		Platform::restartDaemon();
 	}
 };
@@ -143,7 +143,7 @@ public:
 		// The config file config item may be set before init() is called.
 		String filename = getConfigItem(ConfigOpts::CONFIG_FILE_opt, OW_PA_DEFAULT_CONFIG_FILE);
 		Logger lgr(COMPONENT_NAME);
-		OW_LOG_DEBUG(lgr, "\nUsing config file: " + filename);
+		BLOCXX_LOG_DEBUG(lgr, "\nUsing config file: " + filename);
 		ConfigFile::loadConfigFile(filename, m_configItems);
 
 		// logger is treated special, so it goes in init() not startServices()
@@ -159,17 +159,17 @@ public:
 
 		// load
 		Logger lgr(COMPONENT_NAME);
-		OW_LOG_DEBUG(lgr, "loading services");
+		BLOCXX_LOG_DEBUG(lgr, "loading services");
 
 		_loadAuthenticator();
 		_loadRequestHandlers();
 		_loadProviders();
 
-		OW_LOG_DEBUG(lgr, "finished loading services");
+		BLOCXX_LOG_DEBUG(lgr, "finished loading services");
 
 		// start
 
-		// TODO: get the url from a config item
+		/// @todo  get the url from a config item
 		String url;
 
 		m_providerAgent = new ProviderAgent(
@@ -182,7 +182,7 @@ public:
 			ProviderAgentLockerIFCRef(),
 			ProviderAgentLifecycleCallbackIFCRef(new MyLifecycleCallback()));
 
-		OW_LOG_DEBUG(lgr, "finished starting services");
+		BLOCXX_LOG_DEBUG(lgr, "finished starting services");
 	}
 	void shutdown()
 	{
@@ -195,14 +195,14 @@ public:
 		// PHASE 2: unload/delete
 
 		Logger lgr(COMPONENT_NAME);
-		OW_LOG_DEBUG(lgr, "unloading and deleting services");
+		BLOCXX_LOG_DEBUG(lgr, "unloading and deleting services");
 
 		m_providerAgent = 0;
 		m_providers.clear();
 		m_reqHandlers.clear();
 		m_authenticator.setNull();
 
-		OW_LOG_DEBUG(lgr, "owprovideragent has shut down");
+		BLOCXX_LOG_DEBUG(lgr, "owprovideragent has shut down");
 	}
 
 	void setConfigItem(const String &item, const String &value, EOverwritePreviousFlag overwritePrevious)
@@ -228,16 +228,16 @@ private:
 		Logger logger(COMPONENT_NAME);
 		if (!authLib.empty())
 		{
-			OW_LOG_INFO(logger, Format("Authentication Manager: Loading authentication module %1", authLib));
+			BLOCXX_LOG_INFO(logger, Format("Authentication Manager: Loading authentication module %1", authLib));
 			m_authenticator = SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib, "createAuthenticator", OW_VERSION);
 			if (m_authenticator)
 			{
 				m_authenticator->init(this);
-				OW_LOG_INFO(logger, Format("Authentication module %1 is now being used for authentication", authLib));
+				BLOCXX_LOG_INFO(logger, Format("Authentication module %1 is now being used for authentication", authLib));
 			}
 			else
 			{
-				OW_LOG_FATAL_ERROR(logger, Format("Authentication Module %1 failed"
+				BLOCXX_LOG_FATAL_ERROR(logger, Format("Authentication Module %1 failed"
 					" to produce authentication module"
 					" [No Authentication Mechanism Available!]", authLib));
 				OW_THROW(PAException, "No Authentication Mechanism Available");
@@ -253,11 +253,11 @@ private:
 			libPath += OW_FILENAME_SEPARATOR;
 		}
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_INFO(logger, Format("owprovideragent loading request handlers from directory %1", libPath));
+		BLOCXX_LOG_INFO(logger, Format("owprovideragent loading request handlers from directory %1", libPath));
 		StringArray dirEntries;
 		if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 		{
-			OW_LOG_FATAL_ERROR(logger, Format("owprovideragent failed getting the contents of the request handler directory: %1", libPath));
+			BLOCXX_LOG_FATAL_ERROR(logger, Format("owprovideragent failed getting the contents of the request handler directory: %1", libPath));
 			OW_THROW(PAException, "No RequestHandlers");
 		}
 		for (size_t i = 0; i < dirEntries.size(); i++)
@@ -281,7 +281,7 @@ private:
 			}
 			else
 			{
-				OW_LOG_FATAL_ERROR(logger, Format("owprovideragent failed to load request handler from file: %1", libName));
+				BLOCXX_LOG_FATAL_ERROR(logger, Format("owprovideragent failed to load request handler from file: %1", libName));
 				OW_THROW(PAException, "Invalid request handler");
 			}
 		}
@@ -289,7 +289,7 @@ private:
 
 	void _loadProviders()
 	{
-		// TODO: Use a different config item.
+		/// @todo  Use a different config item.
 		StringArray paths = getMultiConfigItem(
 			ConfigOpts::CPPPROVIFC_PROV_LOCATION_opt,
 			String(OW_DEFAULT_CPPPROVIFC_PROV_LOCATION).tokenize(OW_PATHNAME_SEPARATOR),
@@ -298,11 +298,11 @@ private:
 		{
 			const String libPath(paths[i]);
 			Logger logger(COMPONENT_NAME);
-			OW_LOG_INFO(logger, Format("owprovideragent loading providers from directory %1", libPath));
+			BLOCXX_LOG_INFO(logger, Format("owprovideragent loading providers from directory %1", libPath));
 			StringArray dirEntries;
 			if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 			{
-				OW_LOG_FATAL_ERROR(logger, Format("owprovideragent failed getting the contents of the provider directory: %1", libPath));
+				BLOCXX_LOG_FATAL_ERROR(logger, Format("owprovideragent failed getting the contents of the provider directory: %1", libPath));
 				OW_THROW(PAException, "No Providers");
 			}
 			for (size_t i = 0; i < dirEntries.size(); i++)
@@ -322,7 +322,7 @@ private:
 				CppProviderBaseIFCRef provider = CppProviderIFC::loadProvider(libName);
 				if (!provider)
 				{
-					OW_LOG_FATAL_ERROR(logger, Format("provider %1 did not load", libName));
+					BLOCXX_LOG_FATAL_ERROR(logger, Format("provider %1 did not load", libName));
 					OW_THROW(PAException, "Invalid provider");
 				}
 				if (!provider->getInstanceProvider()
@@ -332,7 +332,7 @@ private:
 #endif
 					&& !provider->getMethodProvider())
 				{
-					OW_LOG_FATAL_ERROR(logger, Format("provider %1 is not a supported (instance, secondary instance, associator, method) type", libName));
+					BLOCXX_LOG_FATAL_ERROR(logger, Format("provider %1 is not a supported (instance, secondary instance, associator, method) type", libName));
 					OW_THROW(PAException, "Invalid provider");
 				}
 				m_providers.push_back(provider);
@@ -432,7 +432,7 @@ int main(int argc, char* argv[])
 
 		// The global log appender is not set up according to the config file until after init()
 		logger = Logger(COMPONENT_NAME);
-		OW_LOG_INFO(logger, "owprovideragent (" OW_VERSION ") beginning startup");
+		BLOCXX_LOG_INFO(logger, "owprovideragent (" OW_VERSION ") beginning startup");
 
 		bool restartOnFatalError = env->getConfigItem(ConfigOpts::RESTART_ON_ERROR_opt, OW_DEFAULT_RESTART_ON_ERROR).equalsIgnoreCase("true")
 			&& debugMode == false;
@@ -450,8 +450,8 @@ int main(int argc, char* argv[])
 		}
 		catch (const DaemonException& e)
 		{
-			OW_LOG_FATAL_ERROR(logger, e.getMessage());
-			OW_LOG_FATAL_ERROR(logger, "owprovideragent failed to initialize. Aborting...");
+			BLOCXX_LOG_FATAL_ERROR(logger, e.getMessage());
+			BLOCXX_LOG_FATAL_ERROR(logger, "owprovideragent failed to initialize. Aborting...");
 			return 1;
 		}
 
@@ -463,7 +463,7 @@ int main(int argc, char* argv[])
 
 		// Start all of the cimom services
 		env->startServices();
-		OW_LOG_INFO(logger, "owprovideragent is now running!");
+		BLOCXX_LOG_INFO(logger, "owprovideragent is now running!");
 
 		// Do this after initialization to prevent an infinite loop.
 		std::unexpected_handler oldUnexpectedHandler = 0;
@@ -481,12 +481,12 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				OW_LOG_INFO(logger,
+				BLOCXX_LOG_INFO(logger,
 					"WARNING: even though the owcimomd.restart_on_error config option = true, it\n"
 					"is not enabled because owprovideragent is running in debug mode (-d)");
 			}
 #else
-			OW_LOG_INFO(logger,
+			BLOCXX_LOG_INFO(logger,
 				"WARNING: even though the owcimomd.restart_on_error config option = true, it\n"
 				"is not enabled because OpenWBEM is built in debug mode");
 #endif
@@ -505,9 +505,9 @@ int main(int argc, char* argv[])
 			{
 				case Platform::SHUTDOWN:
 
-					OW_LOG_INFO(logger, "owprovideragent received shutdown notification."
+					BLOCXX_LOG_INFO(logger, "owprovideragent received shutdown notification."
 						" Initiating shutdown");
-					OW_LOG_INFO(logger, Format("signal details:\n%1", signalInfo));
+					BLOCXX_LOG_INFO(logger, Format("signal details:\n%1", signalInfo));
 					shuttingDown = true;
 
 
@@ -526,9 +526,9 @@ int main(int argc, char* argv[])
 					env->shutdown();
 					break;
 				case Platform::REINIT:
-					OW_LOG_INFO(logger, "owprovideragent received restart notification."
+					BLOCXX_LOG_INFO(logger, "owprovideragent received restart notification."
 						" Initiating restart");
-					OW_LOG_INFO(logger, Format("signal details: %1", signalInfo));
+					BLOCXX_LOG_INFO(logger, Format("signal details: %1", signalInfo));
 					env->shutdown();
 					env = 0;
 					// don't try to catch the DeamonException, because if it's thrown, stuff is so whacked, we should just exit!
@@ -542,28 +542,28 @@ int main(int argc, char* argv[])
 					env->startServices();
 					break;
 				default:
-					OW_LOG_INFO(logger, Format("Ignoring signal. Details: %1", signalInfo));
+					BLOCXX_LOG_INFO(logger, Format("Ignoring signal. Details: %1", signalInfo));
 					break;
 			}
 		}
 	}
 	catch (Exception& e)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* EXCEPTION CAUGHT IN owprovideragent MAIN!");
-		OW_LOG_FATAL_ERROR(logger, Format("* %1", e));
+		BLOCXX_LOG_FATAL_ERROR(logger, "* EXCEPTION CAUGHT IN owprovideragent MAIN!");
+		BLOCXX_LOG_FATAL_ERROR(logger, Format("* %1", e));
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
 	catch (std::exception& se)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* std::exception CAUGHT IN owprovideragent MAIN!");
-		OW_LOG_FATAL_ERROR(logger, Format("* Message: %1", se.what()));
+		BLOCXX_LOG_FATAL_ERROR(logger, "* std::exception CAUGHT IN owprovideragent MAIN!");
+		BLOCXX_LOG_FATAL_ERROR(logger, Format("* Message: %1", se.what()));
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
 	catch(...)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT IN owprovideragent MAIN!");
+		BLOCXX_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT IN owprovideragent MAIN!");
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
@@ -572,7 +572,7 @@ int main(int argc, char* argv[])
 
 	env = 0;
 
-	OW_LOG_INFO(logger, "owprovideragent has shutdown");
+	BLOCXX_LOG_INFO(logger, "owprovideragent has shutdown");
 	return rval;
 }
 
@@ -619,7 +619,6 @@ processCommandLine(int argc, char* argv[], const ServiceEnvironmentIFCRef& env)
 		if (parser.isSet(E_DEBUG_MODE_OPT))
 		{
 			env->setConfigItem(ConfigOpts::DEBUGFLAG_opt, "true", ServiceEnvironmentIFC::E_PRESERVE_PREVIOUS);
-			env->setConfigItem(ConfigOpts::LOG_LEVEL_opt, "debug");
 		}
 		if (parser.isSet(E_CONFIG_FILE_OPT))
 		{

@@ -55,7 +55,7 @@
 namespace OW_NAMESPACE
 {
 
-typedef std::pair<SelectableIFCRef, SelectableCallbackIFCRef> SelectablePair_t;
+typedef std::pair<blocxx::SelectableIFCRef, blocxx::SelectableCallbackIFCRef> SelectablePair_t;
 
 class ProviderAgentEnvironment : public ServiceEnvironmentIFC
 {
@@ -73,50 +73,50 @@ public:
 	};
 
 	ProviderAgentEnvironment(const ConfigFile::ConfigMap& configMap,
-		const Array<CppProviderBaseIFCRef>& providers,
-		const Array<CIMClass>& cimClasses,
+		const blocxx::Array<CppProviderBaseIFCRef>& providers,
+		const blocxx::Array<CIMClass>& cimClasses,
 		const AuthenticatorIFCRef& authenticator,
-		const Array<RequestHandlerIFCRef>& requestHandlers,
-        const String& callbackURL,
-		const Reference<Array<SelectablePair_t> >& selectables,
+		const blocxx::Array<RequestHandlerIFCRef>& requestHandlers,
+		const blocxx::String& callbackURL,
+		const blocxx::Reference<blocxx::Array<SelectablePair_t> >& selectables,
 		const ProviderAgentLockerIFCRef& locker);
 	virtual ~ProviderAgentEnvironment();
-	virtual bool authenticate(String &userName,
-		const String &info, String &details, OperationContext& context) const;
-	virtual void addSelectable(const SelectableIFCRef& obj,
-		const SelectableCallbackIFCRef& cb);
+	virtual bool authenticate(blocxx::String &userName,
+		const blocxx::String &info, blocxx::String &details, OperationContext& context) const;
+	virtual void addSelectable(const blocxx::SelectableIFCRef& obj,
+		const blocxx::SelectableCallbackIFCRef& cb);
 
 	struct selectableFinder
 	{
-		selectableFinder(const SelectableIFCRef& obj) : m_obj(obj) {}
+		selectableFinder(const blocxx::SelectableIFCRef& obj) : m_obj(obj) {}
 		template <typename T>
 		bool operator()(const T& x)
 		{
 			return x.first == m_obj;
 		}
-		const SelectableIFCRef& m_obj;
+		const blocxx::SelectableIFCRef& m_obj;
 	};
 
-	virtual void removeSelectable(const SelectableIFCRef& obj);
-	virtual String getConfigItem(const String &name, const String& defRetVal) const;
-	virtual StringArray getMultiConfigItem(const String &itemName,
-		const StringArray& defRetVal, const char* tokenizeSeparator) const;
-	virtual void setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious);
+	virtual void removeSelectable(const blocxx::SelectableIFCRef& obj);
+	virtual blocxx::String getConfigItem(const blocxx::String &name, const blocxx::String& defRetVal) const;
+	virtual blocxx::StringArray getMultiConfigItem(const blocxx::String &itemName,
+		const blocxx::StringArray& defRetVal, const char* tokenizeSeparator) const;
+	virtual void setConfigItem(const blocxx::String& item, const blocxx::String& value, EOverwritePreviousFlag overwritePrevious);
 
-	virtual RequestHandlerIFCRef getRequestHandler(const String& ct) const;
+	virtual RequestHandlerIFCRef getRequestHandler(const blocxx::String& ct) const;
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&,
 		EBypassProvidersFlag bypassProviders) const;
 
 private:
 	ConfigFile::ConfigMap m_configItems;
 	AuthenticatorIFCRef m_authenticator;
-	String m_callbackURL;
-	Array<RequestHandlerIFCRef> m_requestHandlers;
-	Reference<Array<SelectablePair_t> > m_selectables;
-	Map<String, CppProviderBaseIFCRef> m_assocProvs;
-	Map<String, CppProviderBaseIFCRef> m_instProvs;
-	Map<String, CppProviderBaseIFCRef> m_secondaryInstProvs;
-	Map<String, CppProviderBaseIFCRef> m_methodProvs;
+	blocxx::String m_callbackURL;
+	blocxx::Array<RequestHandlerIFCRef> m_requestHandlers;
+	blocxx::Reference<blocxx::Array<SelectablePair_t> > m_selectables;
+	blocxx::Map<blocxx::String, CppProviderBaseIFCRef> m_assocProvs;
+	blocxx::Map<blocxx::String, CppProviderBaseIFCRef> m_instProvs;
+	blocxx::Map<blocxx::String, CppProviderBaseIFCRef> m_secondaryInstProvs;
+	blocxx::Map<blocxx::String, CppProviderBaseIFCRef> m_methodProvs;
 	/// @todo Refactor me.  ProviderAgentCIMOMHandles get a reference
 	/// (&, not Reference) to m_cimClasses, and modify it.
 	mutable Cache<CIMClass> m_cimClasses;

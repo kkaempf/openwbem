@@ -57,7 +57,7 @@ ProviderAgentLifecycleCallbackIFC::shuttingDown()
 }
 
 void
-ProviderAgentLifecycleCallbackIFC::fatalError(const String& errorDescription)
+ProviderAgentLifecycleCallbackIFC::fatalError(const blocxx::String& errorDescription)
 {
 }
 

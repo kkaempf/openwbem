@@ -43,6 +43,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_HTTPUtilsTestCases,"OW_HTTPUtils");
 #include "OW_HTTPUtils.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void OW_HTTPUtilsTestCases::setUp()
 {

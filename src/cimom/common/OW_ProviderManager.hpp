@@ -49,7 +49,7 @@
 #include "blocxx/HashMap.hpp"
 #include "blocxx/HashMultiMap.hpp"
 #include "OW_ServiceIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_CimomCommonFwd.hpp"
 #include "blocxx/SortedVectorSet.hpp"
 
@@ -74,7 +74,7 @@ public:
 	 */
 	void load(const ProviderIFCLoaderRef& ifcLoader, const ServiceEnvironmentIFCRef& env);
 
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 	/**
 	 * Initialize the provider interfaces and providers.  This is called after
 	 * the CIM Server is up and running, so the providers can access the
@@ -113,7 +113,7 @@ public:
 	 * 	null is returned.
 	 */
 	InstanceProviderIFCRef getInstanceProvider(
-		const String& ns, const CIMClass& cc, OperationContext& context) const;
+		const blocxx::String& ns, const CIMClass& cc, OperationContext& context) const;
 
 	/**
 	 * Locate secondary Instance providers.
@@ -126,7 +126,7 @@ public:
 	 * for the class identified by the className argument.
 	 */
 	SecondaryInstanceProviderIFCRefArray getSecondaryInstanceProviders(
-		const String& ns, const CIMName& className, OperationContext& context) const;
+		const blocxx::String& ns, const CIMName& className, OperationContext& context) const;
 	/**
 	 * Locate a Method provider.
 	 *
@@ -143,7 +143,7 @@ public:
 	 *	null is returned.
 	 */
 	MethodProviderIFCRef getMethodProvider(
-		const String& ns, const CIMClass& cc, const CIMMethod& method, OperationContext& context) const;
+		const blocxx::String& ns, const CIMClass& cc, const CIMMethod& method, OperationContext& context) const;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * Locate an Associator provider.
@@ -163,7 +163,7 @@ public:
 	 * 	null is returned.
 	 */
 	AssociatorProviderIFCRef getAssociatorProvider(
-		const String& ns, const CIMClass& cc, OperationContext& context) const;
+		const blocxx::String& ns, const CIMClass& cc, OperationContext& context) const;
 #endif
 	/**
 	 * @return all available indication export providers from the available
@@ -185,7 +185,7 @@ public:
 	 */
 	IndicationProviderIFCRefArray
 		getIndicationProviders(
-			const String& ns, const CIMName& indicationClassName,
+			const blocxx::String& ns, const CIMName& indicationClassName,
 			const CIMNameArray& monitoredClassNames, OperationContext& context) const;
 
 	/**
@@ -197,7 +197,7 @@ public:
 	 *
 	 * @return A QueryProviderRef. If no provider is found then null is returned.
 	 */
-	QueryProviderIFCRef getQueryProvider(const String& ns, const CIMClass& cc, OperationContext& context) const;
+	QueryProviderIFCRef getQueryProvider(const blocxx::String& ns, const CIMClass& cc, OperationContext& context) const;
 
 	/**
 	 * Call into each ProviderIFC to unload providers which haven't been
@@ -207,27 +207,27 @@ public:
 private:
 	ProviderIFCBaseIFCRef getProviderIFC(const ProviderEnvironmentIFCRef& env,
 		const CIMQualifier& qual,
-		String& provStr) const;
-	bool isRestrictedNamespace(const String& ns) const;
-	Array<ProviderIFCBaseIFCRef> m_IFCArray;
-	Mutex m_guard;
+		blocxx::String& provStr) const;
+	bool isRestrictedNamespace(const blocxx::String& ns) const;
+	blocxx::Array<ProviderIFCBaseIFCRef> m_IFCArray;
+	blocxx::Mutex m_guard;
 public:	// so free functions in cpp file can access them.
 	struct ProvReg
 	{
-		String provName;
+		blocxx::String provName;
 		ProviderIFCBaseIFCRef ifc;
 	};
-	typedef HashMap<String, ProvReg> ProvRegMap_t;
-	typedef HashMultiMap<String, ProvReg> MultiProvRegMap_t;
-	typedef SortedVectorSet<String> NameSpaceSet_t;
+	typedef HashMap<blocxx::String, ProvReg> ProvRegMap_t;
+	typedef HashMultiMap<blocxx::String, ProvReg> MultiProvRegMap_t;
+	typedef blocxx::SortedVectorSet<blocxx::String> NameSpaceSet_t;
 
-	static String COMPONENT_NAME;
+	static blocxx::String COMPONENT_NAME;
 
 private:
 
 	void findIndicationProviders(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMName& className,
 		const ProviderManager::MultiProvRegMap_t& indProvs,
 		IndicationProviderIFCRefArray& rval) const;
@@ -256,7 +256,7 @@ private:
 	// or namespace:classname for a specific namespace.
 	ProvRegMap_t m_registeredQueryProvs;
 
-	Logger m_logger;
+	blocxx::Logger m_logger;
 	ServiceEnvironmentIFCRef m_env;
 	NameSpaceSet_t m_restrictedNamespaces;
 };

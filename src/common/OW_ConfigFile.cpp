@@ -42,6 +42,8 @@
 
 #include <fstream>
 
+using namespace blocxx;
+
 namespace OW_NAMESPACE
 {
 namespace ConfigFile

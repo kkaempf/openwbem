@@ -44,6 +44,7 @@ namespace OW_NAMESPACE
 {
 
 using std::streambuf;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMNameSpace::NSData : public COWIntrusiveCountableBase
 {

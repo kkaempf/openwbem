@@ -38,5 +38,10 @@
 #include "OW_config.h"
 #include <blocxx/IOIFC.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_IOIFC.hpp is deprecated, use "blocxx/IOIFC.hpp" instead.
 #endif

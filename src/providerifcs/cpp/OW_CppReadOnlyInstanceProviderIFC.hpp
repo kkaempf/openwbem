@@ -52,19 +52,19 @@ class OW_CPPPROVIFC_API CppReadOnlyInstanceProviderIFC : public virtual CppInsta
 {
 	virtual void deleteInstance(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& cop);
 	virtual CIMObjectPath createInstance(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMInstance& cimInstance );
 	virtual void modifyInstance(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMInstance& modifiedInstance,
 		const CIMInstance& previousInstance,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const StringArray* propertyList,
+		const blocxx::StringArray* propertyList,
 		const CIMClass& theClass);
 };
 

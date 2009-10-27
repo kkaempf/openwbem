@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/UnnamedPipe.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_UnnamedPipe.hpp is deprecated, use "blocxx/UnnamedPipe.hpp" instead.
 #endif	// OW_UNNAMEDPIPE_HPP_

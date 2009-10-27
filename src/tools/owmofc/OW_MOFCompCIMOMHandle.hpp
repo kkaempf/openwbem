@@ -60,7 +60,7 @@ public:
 		OperationContext& context);
 };
 
-typedef IntrusiveReference<MOFCompCIMOMHandle> MOFCompCIMOMHandleRef;
+typedef blocxx::IntrusiveReference<MOFCompCIMOMHandle> MOFCompCIMOMHandleRef;
 
 } // end namespace OW_NAMESPACE
 

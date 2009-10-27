@@ -54,16 +54,6 @@ public:
 
 	virtual ~ClientCIMOMHandle();
 
-#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
-	/** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
-	virtual void createNameSpace(const String& ns) OW_DEPRECATED; // in 3.0.0
-	/** This method is deprecated.  Use CIMNameSpaceUtils::deleteCIM_Namespace() instead. */
-	virtual void deleteNameSpace(const String& ns) OW_DEPRECATED; // in 3.0.0
-#endif
-	/** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
-	virtual void enumNameSpace(const String& ns,
-		StringResultHandlerIFC &result, WBEMFlags::EDeepFlag deep) OW_DEPRECATED; // in 3.0.0
-
 	/**
 	 * Get a Reference to the WBEM protocol handler (HTTPClient)
 	 */
@@ -98,9 +88,9 @@ public:
 	 * @throws std::bad_alloc
 	 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
 	 */
-	static ClientCIMOMHandleRef createFromURL(const String& url,
+	static ClientCIMOMHandleRef createFromURL(const blocxx::String& url,
 											  const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef(),
-											  const SSLClientCtxRef& sslCtx = SSLClientCtxRef());
+											  const blocxx::SSLClientCtxRef& sslCtx = blocxx::SSLClientCtxRef());
 
 };
 

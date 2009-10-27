@@ -91,7 +91,26 @@ const char* TestCase::toString ()
 	return buff;
 }
 
-
+const char* getOperatorText(BooleanOperatorType op)
+{
+	switch(op)
+	{
+	case OP_GREATER:
+		return ">";
+	case OP_GREATER_EQUAL:
+		return ">=";
+	case OP_LESS:
+		return "<";
+	case OP_LESS_EQUAL:
+		return "<=";
+	case OP_EQUAL:
+		return "==";
+	case OP_NOT_EQUAL:
+		return "!=";
+		// No default is provided so the compiler can emit a warning if the case is not complete.
+	}
+	return "ERROR";
+}
 
 
 // Create a default TestResult
@@ -233,7 +252,7 @@ bool TestCase::runFuncAndCatchErrors( T func, const char* msg, TestResult* resul
 		result->addFailure (this, copy);
 	}
 	// Added special case to catch OW exceptions and properly report them.
-	catch (const OW_NAMESPACE::Exception& e)
+	catch (const blocxx::Exception& e)
 	{
 		result->addError (this, new CppUnitException (std::string(std::string(e.type()) + ": " + std::string(e.what())).c_str(), e.getLine(), e.getFile()));
 	}

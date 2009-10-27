@@ -59,22 +59,22 @@ namespace MonitoredPerl
 	* ConfigOpts::installed_owlibexec_dir and <OWLIB> is
 	* ConfigOpts::installed_owlib_dir.
 	*/
-	ProcessRef monitoredPerl(
+	blocxx::ProcessRef monitoredPerl(
 		char const * script_path, char const * app_name,
 		char const * const script_args[],
 		char const * const envp[]
 	);
 
 	template <typename S1, typename S2, typename SA1, typename SA2>
-	ProcessRef monitoredPerl(
+	blocxx::ProcessRef monitoredPerl(
 		S1 const & script_path, S2 const & app_name,
 		SA1 const & script_args, SA2 const & envp
 	)
 	{
-		Cstr::CstrArr<SA1> sa_argv(script_args);
-		Cstr::CstrArr<SA2> sa_envp(envp);
+		blocxx::Cstr::CstrArr<SA1> sa_argv(script_args);
+		blocxx::Cstr::CstrArr<SA2> sa_envp(envp);
 		return monitoredPerl(
-			Cstr::to_char_ptr(script_path), Cstr::to_char_ptr(app_name),
+			blocxx::Cstr::to_char_ptr(script_path), blocxx::Cstr::to_char_ptr(app_name),
 			sa_argv.sarr, sa_envp.sarr
 		);
 	}

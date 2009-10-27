@@ -53,12 +53,12 @@ namespace OW_NAMESPACE
 {
 
 OW_DECLARE_APIEXCEPTION(CIMProtocol, OW_COMMON_API);
-class OW_COMMON_API CIMProtocolIFC : virtual public IntrusiveCountableBase
+class OW_COMMON_API CIMProtocolIFC : virtual public blocxx::IntrusiveCountableBase
 {
 public:
 	virtual ~CIMProtocolIFC();
-	virtual Reference<std::ostream> beginRequest(
-			const String& methodName, const String& nameSpace) = 0;
+	virtual blocxx::Reference<std::ostream> beginRequest(
+			const blocxx::String& methodName, const blocxx::String& nameSpace) = 0;
 
 	/**
 	 * These request types correspond to the various types of operations
@@ -93,12 +93,12 @@ public:
 	 * @exception SocketException
 	 *
 	 */
-	virtual Reference<std::istream> endRequest(
-		const Reference<std::ostream>& request,
-		const String& methodName,
-		const String& cimObject,
+	virtual blocxx::Reference<std::istream> endRequest(
+		const blocxx::Reference<std::ostream>& request,
+		const blocxx::String& methodName,
+		const blocxx::String& cimObject,
 		ERequestType requestType,
-		const String& cimProtocolVersion) = 0;
+		const blocxx::String& cimProtocolVersion) = 0;
 
 	/**
 	 * Called when the response stream (returned from endRequest) has been
@@ -123,18 +123,18 @@ public:
 	 */
 	void setLoginCallBack(const ClientAuthCBIFCRef& loginCB)
 		{ m_loginCB = loginCB; }
-	void setContentType(const String& ct)
+	void setContentType(const blocxx::String& ct)
 		{ m_contentType = ct; }
 	/**
 	 * Gets the address of the local machine
 	 * @return An SocketAddress corresponding to the local machine.
 	 */
-	virtual SocketAddress getLocalAddress() const = 0;
+	virtual blocxx::SocketAddress getLocalAddress() const = 0;
 	/**
 	 * Gets the address of the peer connection
 	 * @return An SocketAddress corresponding to the peer connection
 	 */
-	virtual SocketAddress getPeerAddress()  const = 0;
+	virtual blocxx::SocketAddress getPeerAddress()  const = 0;
 
 	/**
 	 * Close the connetion to the CIMOM. This will free resources used for the
@@ -148,40 +148,40 @@ public:
 	 * Set the receive timeout on the socket
 	 * @param timeout The timeout to use when waiting for data
 	 */
-	virtual void setReceiveTimeout(const Timeout& timeout) = 0;
+	virtual void setReceiveTimeout(const blocxx::Timeout& timeout) = 0;
 	void setReceiveTimeout(int seconds) OW_DEPRECATED; // in 4.0.0
 	/**
 	 * Get the receive timeout
 	 * @return The receive timeout
 	 */
-	virtual Timeout getReceiveTimeout() const = 0;
+	virtual blocxx::Timeout getReceiveTimeout() const = 0;
 	/**
 	 * Set the send timeout on the socket
 	 * @param timeout The timeout to use when waiting to send data
 	 */
-	virtual void setSendTimeout(const Timeout& timeout) = 0;
+	virtual void setSendTimeout(const blocxx::Timeout& timeout) = 0;
 	void setSendTimeout(int seconds) OW_DEPRECATED; // in 4.0.0
 	/**
 	 * Get the send timeout
 	 * @return The number of seconds of the send timeout
 	 */
-	virtual Timeout getSendTimeout() const = 0;
+	virtual blocxx::Timeout getSendTimeout() const = 0;
 	/**
 	 * Set the connect timeout on the socket
 	 * @param timeout The connect timeout
 	 */
-	virtual void setConnectTimeout(const Timeout& timeout) = 0;
+	virtual void setConnectTimeout(const blocxx::Timeout& timeout) = 0;
 	void setConnectTimeout(int seconds) OW_DEPRECATED; // in 4.0.0
 	/**
 	 * Get the connect timeout
 	 * @return The number of seconds of the connect timeout
 	 */
-	virtual Timeout getConnectTimeout() const = 0;
+	virtual blocxx::Timeout getConnectTimeout() const = 0;
 	/**
 	 * Set all timeouts (send, receive, connect)
 	 * @param timeout The timeouts.
 	 */
-	virtual void setTimeouts(const Timeout& timeout) = 0;
+	virtual void setTimeouts(const blocxx::Timeout& timeout) = 0;
 	void setTimeouts(int seconds) OW_DEPRECATED; // in 4.0.0
 
 protected:
@@ -197,7 +197,7 @@ protected:
 #pragma warning (pop)
 #endif
 
-	String m_contentType;
+	blocxx::String m_contentType;
 };
 
 } // end namespace OW_NAMESPACE

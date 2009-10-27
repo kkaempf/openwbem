@@ -44,12 +44,14 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 
 namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
+
 namespace
 {
 
@@ -99,10 +101,10 @@ public:
 		}
 		CIMObjectPath rv = env->getRepositoryCIMOMHandle()->createInstance(ns, cimInstance);
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG3(logger, "Created instance in repository; now about to call startCreateSubscription");
+		BLOCXX_LOG_DEBUG3(logger, "Created instance in repository; now about to call startCreateSubscription");
 		// Tell the indication server about the new subscription.
 		CIMOMEnvironment::instance()->getIndicationServer()->startCreateSubscription(ns, cimInstance, username);
-		OW_LOG_DEBUG3(logger, "Returned from startCreateSubscription");
+		BLOCXX_LOG_DEBUG3(logger, "Returned from startCreateSubscription");
 		return rv;
 	}
 	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance,

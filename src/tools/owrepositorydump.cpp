@@ -36,10 +36,9 @@
 #include "OW_LocalOperationContext.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "blocxx/CmdLineParser.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/String.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RequestHandlerIFC.hpp"
@@ -62,6 +61,7 @@ using std::endl;
 using namespace OpenWBEM;
 using namespace OpenWBEM::Tools;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {

@@ -42,7 +42,7 @@
 #include "OW_CIMNULL.hpp"
 #include "OW_WBEMFlags.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -136,7 +136,7 @@ public:
 	 * Get the origin class for this method.
 	 * @return The name of the origin class.
 	 */
-	String getOriginClass() const;
+	blocxx::String getOriginClass() const;
 	/**
 	 * Set thr origin class for this method.
 	 * @param originCls	The name of the origin class for this method.
@@ -188,7 +188,7 @@ public:
 	/**
 	 * @return The size of the return data type.
 	 */
-	Int32 getReturnDataSize() const;
+	blocxx::Int32 getReturnDataSize() const;
 	/**
 	 * Set name of overriding method.
 	 * @param omname The name of the overriding method.
@@ -198,7 +198,7 @@ public:
 	/**
 	 * @return The name of the overriding method.
 	 */
-	String getOverridingMethod() const;
+	blocxx::String getOverridingMethod() const;
 	/**
 	 * Set the propagated flag for this method.
 	 * @param propagated If true method is propagated. Otherwise false.
@@ -228,7 +228,7 @@ public:
 	/**
 	 * @return The name of this method as an String.
 	 */
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 	/**
 	 * Set the name of this method.
 	 * @param name The new name for this method.
@@ -247,13 +247,13 @@ public:
 	/**
 	 * @return The MOF representation of this object as an String.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 	/**
 	 * @return The string representation of this method as an String.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 
-	OW_SAFE_BOOL_IMPL(CIMMethod, COWIntrusiveReference<METHData>, CIMMethod::m_pdata, m_pdata)
+	BLOCXX_SAFE_BOOL_IMPL(CIMMethod, blocxx::COWIntrusiveReference<METHData>, CIMMethod::m_pdata, m_pdata)
 
 protected:
 
@@ -262,7 +262,7 @@ protected:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<METHData> m_pdata;
+	blocxx::COWIntrusiveReference<METHData> m_pdata;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

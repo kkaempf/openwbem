@@ -40,8 +40,9 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "blocxx/Format.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_WQLIFC.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/IOException.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_ConfigOpts.hpp"
@@ -58,6 +59,8 @@
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace
 {
@@ -165,12 +168,12 @@ CIMRepository::init(const ServiceEnvironmentIFCRef& env)
 	try
 	{
 		Real32 r = readWriteLockTimeoutConfigItem.toReal32();
-		OW_LOG_DEBUG2(m_logger, Format("CIMRepository::init() set the read/write lock timeout: %1", r));
+		BLOCXX_LOG_DEBUG2(m_logger, Format("CIMRepository::init() set the read/write lock timeout: %1", r));
 		m_lockTimeout = Timeout::relative(r);
 	}
 	catch (StringConversionException& e)
 	{
-		OW_LOG_ERROR(m_logger, Format("Invalid value for %1: %2. The default of %3 will be used.",
+		BLOCXX_LOG_ERROR(m_logger, Format("Invalid value for %1: %2. The default of %3 will be used.",
 			ConfigOpts::READ_WRITE_LOCK_TIMEOUT_opt, readWriteLockTimeoutConfigItem, OW_DEFAULT_READ_WRITE_LOCK_TIMEOUT));
 	}
 
@@ -222,7 +225,7 @@ CIMRepository::createNameSpace(const String& ns,
 		OW_THROWCIMMSG(CIMException::FAILED, Format("Failed to create namespace %1", ns).c_str());
 	}
 
-	OW_LOG_DEBUG2(m_logger, Format("CIMRepository created namespace: %1", ns));
+	BLOCXX_LOG_DEBUG2(m_logger, Format("CIMRepository created namespace: %1", ns));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -238,7 +241,7 @@ CIMRepository::deleteNameSpace(const String& ns,
 	m_iStore.deleteNameSpace(ns);
 	m_mStore.deleteNameSpace(ns);
 
-	OW_LOG_DEBUG2(m_logger, Format("CIMRepository deleted namespace: %1", ns));
+	BLOCXX_LOG_DEBUG2(m_logger, Format("CIMRepository deleted namespace: %1", ns));
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
@@ -260,7 +263,7 @@ CIMRepository::enumNameSpace(StringResultHandlerIFC& result,
 		result.handle(nsNode.getKey());
 		nsNode = hdl->getNextSibling(nsNode);
 	}
-	OW_LOG_DEBUG2(m_logger, "CIMRepository enumerated namespaces");
+	BLOCXX_LOG_DEBUG2(m_logger, "CIMRepository enumerated namespaces");
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifierType
@@ -268,7 +271,7 @@ CIMRepository::getQualifierType(const String& ns,
 	const String& qualifierName,
 	OperationContext&)
 {
-	OW_LOG_DEBUG2(m_logger, Format("CIMRepository getting qualifier type: %1",
+	BLOCXX_LOG_DEBUG2(m_logger, Format("CIMRepository getting qualifier type: %1",
 		CIMObjectPath(qualifierName,ns).toString()));
 	return m_mStore.getQualifierType(ns, qualifierName);
 }
@@ -281,7 +284,7 @@ CIMRepository::enumQualifierTypes(
 	OperationContext&)
 {
 	m_mStore.enumQualifierTypes(ns, result);
-	OW_LOG_DEBUG2(m_logger, Format("CIMRepository enumerated qualifiers in namespace: %1", ns));
+	BLOCXX_LOG_DEBUG2(m_logger, Format("CIMRepository enumerated qualifiers in namespace: %1", ns));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -303,7 +306,7 @@ CIMRepository::deleteQualifierType(const String& ns, const String& qualName,
 		}
 	}
 
-	OW_LOG_DEBUG2(m_logger, Format("CIMRepository deleted qualifier type: %1 in namespace: %2", qualName, ns));
+	BLOCXX_LOG_DEBUG2(m_logger, Format("CIMRepository deleted qualifier type: %1 in namespace: %2", qualName, ns));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -312,7 +315,7 @@ CIMRepository::setQualifierType(
 	const CIMQualifierType& qt, OperationContext&)
 {
 	m_mStore.setQualifierType(ns, qt);
-	OW_LOG_DEBUG2(m_logger, Format("CIMRepository set qualifier type: %1 in "
+	BLOCXX_LOG_DEBUG2(m_logger, Format("CIMRepository set qualifier type: %1 in "
 		"namespace: %2", qt.toString(), ns));
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
@@ -331,7 +334,7 @@ CIMRepository::getClass(
 			localOnly, includeQualifiers, includeClassOrigin, propertyList,
 			theClass);
 		checkGetClassRvalAndThrow(rval, ns, className);
-		OW_LOG_DEBUG2(m_logger, Format("CIMRepository got class: %1 from "
+		BLOCXX_LOG_DEBUG2(m_logger, Format("CIMRepository got class: %1 from "
 			"namespace: %2", theClass.getName(), ns));
 		return theClass;
 	}
@@ -422,7 +425,7 @@ CIMRepository::deleteClass(const String& ns, const String& className,
 	try
 	{
 		CIMClass cc = _getClass(ns, className);
-		OW_ASSERT(cc);
+		BLOCXX_ASSERT(cc);
 		/// @todo  this doesn't work quite right.  what about associations to
 		// the instances we delete?
 		// should this operation be atomic?  If something fails, how can we
@@ -443,7 +446,7 @@ CIMRepository::deleteClass(const String& ns, const String& className,
 			E_EXCLUDE_CLASS_ORIGIN,
 			acl);
 		ccd.handle(cc);
-		OW_LOG_DEBUG2(m_logger, Format("CIMRepository deleted class: %1 in "
+		BLOCXX_LOG_DEBUG2(m_logger, Format("CIMRepository deleted class: %1 in "
 			"namespace: %2", className, ns));
 		return cc;
 	}
@@ -506,8 +509,8 @@ CIMRepository::createClass(const String& ns, const CIMClass& cimClass_,
 			hdl.addEntries(ns,cimClass);
 		}
 #endif
-		OW_LOG_DEBUG2(m_logger, Format("Created class: %1:%2", ns, cimClass.getName()));
-		OW_LOG_DEBUG3(m_logger, Format("class = %1", cimClass.toMOF()));
+		BLOCXX_LOG_DEBUG2(m_logger, Format("Created class: %1:%2", ns, cimClass.getName()));
+		BLOCXX_LOG_DEBUG3(m_logger, Format("class = %1", cimClass.toMOF()));
 	}
 	catch (HDBException& e)
 	{
@@ -525,7 +528,7 @@ CIMRepository::modifyClass(
 	const CIMClass& cc,
 	OperationContext&)
 {
-	OW_ASSERT(cc);
+	BLOCXX_ASSERT(cc);
 	try
 	{
 		CIMClass origClass = _getClass(ns, cc.getName());
@@ -542,9 +545,9 @@ CIMRepository::modifyClass(
 			OW_THROWCIMMSG(CIMException::FAILED, "Removing a superclass is not allowed");
 		}
 		m_mStore.modifyClass(ns, cc);
-		OW_ASSERT(origClass);
-		OW_LOG_DEBUG2(m_logger, Format("Modified class: %1:%2", ns, cc.getName()));
-		OW_LOG_DEBUG3(m_logger, Format(" old:\n%1\nnew:\n%2", origClass.toMOF(), cc.toMOF()));
+		BLOCXX_ASSERT(origClass);
+		BLOCXX_LOG_DEBUG2(m_logger, Format("Modified class: %1:%2", ns, cc.getName()));
+		BLOCXX_LOG_DEBUG3(m_logger, Format(" old:\n%1\nnew:\n%2", origClass.toMOF(), cc.toMOF()));
 		return origClass;
 	}
 	catch (HDBException& e)
@@ -570,7 +573,7 @@ CIMRepository::enumClasses(const String& ns,
 		m_mStore.enumClass(ns, className,
 			result, deep,
 			localOnly, includeQualifiers, includeClassOrigin);
-		OW_LOG_DEBUG2(m_logger, Format("CIMRepository enumerated classes: %1:%2", ns,
+		BLOCXX_LOG_DEBUG2(m_logger, Format("CIMRepository enumerated classes: %1:%2", ns,
 			className));
 	}
 	catch (HDBException& e)
@@ -593,7 +596,7 @@ CIMRepository::enumClassNames(
 	try
 	{
 		m_mStore.enumClassNames(ns, className, result, deep);
-		OW_LOG_DEBUG2(m_logger, Format("CIMRepository enumerated class names: %1:%2", ns,
+		BLOCXX_LOG_DEBUG2(m_logger, Format("CIMRepository enumerated class names: %1:%2", ns,
 			className));
 	}
 	catch (HDBException& e)
@@ -646,7 +649,7 @@ public:
 protected:
 	virtual void doHandle(const CIMClass &cc)
 	{
-		OW_LOG_DEBUG3(m_lgr, Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
+		BLOCXX_LOG_DEBUG3(m_lgr, Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
 			cc.getName()));
 		m_iStore.getInstanceNames(ns, cc, result);
 	}
@@ -726,7 +729,7 @@ public:
 		CIMClass theClass = rep._instGetClass(ns, className);
 		rep.m_iStore.getCIMInstances(ns, className, theTopClass, theClass, result,
 			deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
-		OW_LOG_DEBUG2(rep.m_logger, Format("CIMRepository Enumerated derived instances: %1:%2", ns, className));
+		BLOCXX_LOG_DEBUG2(rep.m_logger, Format("CIMRepository Enumerated derived instances: %1:%2", ns, className));
 	}
 private:
 	CIMRepository& rep;
@@ -760,7 +763,7 @@ CIMRepository::enumInstances(
 		m_iStore.getCIMInstances(ns, className, theTopClass, theTopClass, result,
 			deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 
-		OW_LOG_DEBUG(m_logger, Format("CIMRepository Enumerated instances: %1:%2", ns,
+		BLOCXX_LOG_DEBUG(m_logger, Format("CIMRepository Enumerated instances: %1:%2", ns,
 			className));
 		if (enumSubclasses)
 		{
@@ -816,7 +819,7 @@ CIMRepository::getInstance(
 	{
 		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
-	OW_ASSERT(ci);
+	BLOCXX_ASSERT(ci);
 	if (pOutClass)
 	{
 		*pOutClass = cc;
@@ -832,7 +835,7 @@ CIMRepository::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 {
 	CIMObjectPath cop(cop_);
 	cop.setNameSpace(ns);
-	OW_LOG_DEBUG(m_logger, Format("CIMRepository::deleteInstance.  cop = %1",
+	BLOCXX_LOG_DEBUG(m_logger, Format("CIMRepository::deleteInstance.  cop = %1",
 		cop.toString()));
 	try
 	{
@@ -862,7 +865,7 @@ CIMRepository::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 #endif
 		// Delete the instance from the instance repository
 		m_iStore.deleteInstance(ns, cop, theClass);
-		OW_ASSERT(oldInst);
+		BLOCXX_ASSERT(oldInst);
 		return oldInst;
 	}
 	catch(IOException& e)
@@ -884,8 +887,8 @@ CIMRepository::createInstance(
 	CIMObjectPath rval(ns, ci);
 	try
 	{
-		OW_LOG_DEBUG(m_logger, Format("CIMRepository::createInstance. path = %1", CIMObjectPath(ns, ci)));
-		OW_LOG_DEBUG3(m_logger, Format("CIMRepository::createInstance. instance = %1", ci.toMOF()));
+		BLOCXX_LOG_DEBUG(m_logger, Format("CIMRepository::createInstance. path = %1", CIMObjectPath(ns, ci)));
+		BLOCXX_LOG_DEBUG3(m_logger, Format("CIMRepository::createInstance. instance = %1", ci.toMOF()));
 		CIMClass theClass = _instGetClass(ns, ci.getClassName());
 		if (m_checkReferentialIntegrity)
 		{
@@ -932,7 +935,7 @@ CIMRepository::createInstance(
 			hdl.addEntries(ns, ci);
 		}
 #endif
-		OW_ASSERT(rval);
+		BLOCXX_ASSERT(rval);
 		return rval;
 	}
 	catch (HDBException& e)
@@ -971,7 +974,7 @@ CIMRepository::modifyInstance(
 			adbHdl.addEntries(ns, modifiedInstance);
 		}
 #endif
-		OW_ASSERT(oldInst);
+		BLOCXX_ASSERT(oldInst);
 		return oldInst;
 	}
 	catch (HDBException& e)
@@ -1268,7 +1271,7 @@ CIMRepository::_commonReferences(
 		}
 		else
 		{
-			OW_ASSERT(0);
+			BLOCXX_ASSERT(0);
 		}
 	}
 }
@@ -1495,7 +1498,7 @@ CIMRepository::_commonAssociators(
 		}
 		else
 		{
-			OW_ASSERT(0);
+			BLOCXX_ASSERT(0);
 		}
 	}
 }
@@ -1628,7 +1631,7 @@ CIMRepository::_staticAssociatorsClass(
 		}
 		else
 		{
-			OW_ASSERT(0);
+			BLOCXX_ASSERT(0);
 		}
 		// get the current class so we can get the name of the superclass
 		CIMClass theClass = _getClass(curPath.getNameSpace(), curPath.getClassName());
@@ -1653,7 +1656,7 @@ CIMRepository::_staticReferencesClass(const CIMObjectPath& path,
 	CIMObjectPath curPath = path;
 	while (curClsName != CIMName())
 	{
-		OW_LOG_DEBUG3(m_logger, Format("curPath = %1", curPath.toString()));
+		BLOCXX_LOG_DEBUG3(m_logger, Format("curPath = %1", curPath.toString()));
 		if (popresult != 0)
 		{
 			staticReferencesObjectPathResultHandler handler(*popresult);
@@ -1671,7 +1674,7 @@ CIMRepository::_staticReferencesClass(const CIMObjectPath& path,
 		}
 		else
 		{
-			OW_ASSERT(0);
+			BLOCXX_ASSERT(0);
 		}
 		// get the current class so we can get the name of the superclass
 		CIMClass theClass = _getClass(curPath.getNameSpace(), curPath.getClassName());
@@ -1869,7 +1872,7 @@ CIMRepository::_validatePropagatedKeys(OperationContext& context, const String& 
 		// since we don't know what class the keys refer to, we get all subclasses
 		// and try calling getInstance for each to see if we can find one with
 		// the matching keys.
-		OW_LOG_DEBUG3(m_logger, Format("Getting class children of: %1", clsname));
+		BLOCXX_LOG_DEBUG3(m_logger, Format("Getting class children of: %1", clsname));
 		CIMNameArray classes = getClassChildren(m_mStore, ns,
 			clsname);
 		classes.push_back(clsname);
@@ -1878,7 +1881,7 @@ CIMRepository::_validatePropagatedKeys(OperationContext& context, const String& 
 		for (size_t i = 0; i < classes.size(); ++i)
 		{
 			op.setClassName(classes[i]);
-			OW_LOG_DEBUG3(m_logger, Format("Trying getInstance of: %1", op.toString()));
+			BLOCXX_LOG_DEBUG3(m_logger, Format("Trying getInstance of: %1", op.toString()));
 			try
 			{
 				m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS)->getInstance(ns, op);

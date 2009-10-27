@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "blocxx/SocketBaseImpl.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMScope.hpp"
@@ -66,6 +66,7 @@ using std::endl;
 using std::cout;
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 void usage(char const * const * argv)
 {

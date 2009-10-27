@@ -41,6 +41,8 @@
 #include "OW_BinarySerialization.hpp"
 #include "blocxx/GlobalString.hpp"
 
+using namespace blocxx;
+
 namespace OW_NAMESPACE
 {
 

@@ -39,6 +39,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 ///////////////////////////////////////////////////////////////////////////////
 InstClassInfo::InstClassInfo(String const& className_)
 	: className(className_)

@@ -48,21 +48,21 @@ class OW_COMMON_API WQLInstancePropertySource : public WQLPropertySource
 public:
 	WQLInstancePropertySource(const CIMInstance& ci_,
 		const CIMOMHandleIFCRef& hdl,
-		const String& ns)
+		const blocxx::String& ns)
 		: ci(ci_)
 		, m_hdl(hdl)
 		, m_ns(ns)
 	{
 	}
 	~WQLInstancePropertySource();
-	virtual bool evaluateISA(const String &propertyName, const String &className) const;
-	virtual bool getValue(const String &propertyName, WQLOperand &value) const;
+	virtual bool evaluateISA(const blocxx::String &propertyName, const blocxx::String &className) const;
+	virtual bool getValue(const blocxx::String &propertyName, WQLOperand &value) const;
 private:
 	// This is for recursion on embedded instances
-	bool evaluateISAAux(const CIMInstance& ci, StringArray propNames, const String &className) const;
-	bool classIsDerivedFrom(const String& cls, const String& className) const;
+	bool evaluateISAAux(const CIMInstance& ci, blocxx::StringArray propNames, const blocxx::String &className) const;
+	bool classIsDerivedFrom(const blocxx::String& cls, const blocxx::String& className) const;
 	// This is for recursion on embedded instances
-	static bool getValueAux(const CIMInstance& ci, const StringArray& propNames, WQLOperand& value);
+	static bool getValueAux(const CIMInstance& ci, const blocxx::StringArray& propNames, WQLOperand& value);
 private:
 	CIMInstance ci;
 
@@ -77,7 +77,7 @@ private:
 #pragma warning (pop)
 #endif
 
-	String m_ns;
+	blocxx::String m_ns;
 };
 
 } // end namespace OW_NAMESPACE

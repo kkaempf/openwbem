@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/Runnable.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Runnable.hpp is deprecated, use "blocxx/Runnable.hpp" instead.
 #endif
 

@@ -43,7 +43,7 @@
 namespace OW_NAMESPACE
 {
 
-OW_WQL_API String WQLRemoveStringEscapes(const String& str);
+OW_WQL_API blocxx::String WQLRemoveStringEscapes(const blocxx::String& str);
 
 } // end namespace OW_NAMESPACE
 

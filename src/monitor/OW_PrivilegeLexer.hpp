@@ -72,7 +72,7 @@ class IncludeHandler;
 class openwbem_privconfig_Lexer
 {
 public:
-	openwbem_privconfig_Lexer(std::istream & arg_yyin, OpenWBEM::PrivilegeConfig::IncludeHandler& includeHandler, const OpenWBEM::String& bufferName);
+	openwbem_privconfig_Lexer(std::istream & arg_yyin, OpenWBEM::PrivilegeConfig::IncludeHandler& includeHandler, const blocxx::String& bufferName);
 	~openwbem_privconfig_Lexer();
 
 	void get_location(openwbem_privconfig_yyltype & loc) const;
@@ -83,7 +83,7 @@ public:
 	}
 
 	// returns 0 on success. 1 if the include is recursive
-	int include(const OpenWBEM::String& includeParam);
+	int include(const blocxx::String& includeParam);
 	// returns false if no more include buffers are on the stack
 	bool endInclude();
 
@@ -113,7 +113,7 @@ public:
 		unsigned m_next_column;
 		unsigned m_next_line;
 		YY_BUFFER_STATE m_bufferState;
-		OpenWBEM::String m_bufferName;
+		blocxx::String m_bufferName;
 	};
 
 	std::deque<LexerState> m_includeStack;
@@ -128,7 +128,7 @@ public:
 	unsigned m_last_line;
 	unsigned m_next_column;
 	unsigned m_next_line;
-	OpenWBEM::String m_bufferName;
+	blocxx::String m_bufferName;
 
 	static int s_instanceCount;
 };

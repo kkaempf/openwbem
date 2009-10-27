@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/IFileStream.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_IFileStream.hpp is deprecated, use "blocxx/IFileStream.hpp" instead.
 #endif
 

@@ -34,7 +34,7 @@
 
 #include "OW_ClientCIMOMHandle.hpp"
 #include "blocxx/AppenderLogger.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMName.hpp"
 #include "OW_CIMProperty.hpp"
@@ -46,7 +46,7 @@
 #include "OW_ConfigFile.hpp"
 #include "blocxx/Format.hpp"
 #include "blocxx/FileAppender.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/LogAppender.hpp"
 #include "OW_WQLImpl.hpp"
 #include "blocxx/Bool.hpp"
@@ -59,6 +59,7 @@ using std::cout;
 using std::endl;
 using std::cerr;
 using namespace OpenWBEM;
+using namespace blocxx;
 
 #define TEST_ASSERT(CON) if (!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
 
@@ -74,7 +75,7 @@ do																								\
 {																									\
 	String messageWithFunction(message);						\
 	messageWithFunction+= String(" ") + String(OW_FUNCTION_NAME) + String(" "); \
-	OW_LOG_DEBUG(Logger("wqlTest1"), messageWithFunction);	\
+	BLOCXX_LOG_DEBUG(Logger("wqlTest1"), messageWithFunction);	\
 }while(0);
 
 

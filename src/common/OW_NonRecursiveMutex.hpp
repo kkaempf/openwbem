@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/NonRecursiveMutex.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_NonRecursiveMutex.hpp is deprecated, use "blocxx/NonRecursiveMutex.hpp" instead.
 #endif
 

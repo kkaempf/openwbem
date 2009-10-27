@@ -55,7 +55,7 @@
 #include "OW_CimomCommonFwd.hpp"
 #include "OW_CimomServerFwd.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -66,11 +66,11 @@ public:
 	CIMOMEnvironment();
 	~CIMOMEnvironment();
 	void init();
-	virtual bool authenticate(String &userName, const String &info,
-		String &details, OperationContext& context) const;
-	virtual String getConfigItem(const String &name, const String& defRetVal="") const;
-	virtual StringArray getMultiConfigItem(const String &itemName,
-		const StringArray& defRetVal, const char* tokenizeSeparator) const;
+	virtual bool authenticate(blocxx::String &userName, const blocxx::String &info,
+		blocxx::String &details, OperationContext& context) const;
+	virtual blocxx::String getConfigItem(const blocxx::String &name, const blocxx::String& defRetVal="") const;
+	virtual blocxx::StringArray getMultiConfigItem(const blocxx::String &itemName,
+		const blocxx::StringArray& defRetVal, const char* tokenizeSeparator) const;
 
 	// from ServiceEnvironmentIFC
 	/**
@@ -106,22 +106,22 @@ public:
 		OperationContext& context) const;
 
 	virtual WQLIFCRef getWQLRef() const;
-	virtual RequestHandlerIFCRef getRequestHandler(const String &id) const;
+	virtual RequestHandlerIFCRef getRequestHandler(const blocxx::String &id) const;
 	IndicationServerRef getIndicationServer() const;
 	PollingManagerRef getPollingManager() const;
 	void clearConfigItems();
-	virtual void setConfigItem(const String &item, const String &value,
+	virtual void setConfigItem(const blocxx::String &item, const blocxx::String &value,
 		EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS);
-	virtual void addSelectable(const SelectableIFCRef& obj,
-		const SelectableCallbackIFCRef& cb);
-	virtual void removeSelectable(const SelectableIFCRef& obj);
+	virtual void addSelectable(const blocxx::SelectableIFCRef& obj,
+		const blocxx::SelectableCallbackIFCRef& cb);
+	virtual void removeSelectable(const blocxx::SelectableIFCRef& obj);
 	void unloadProviders();
 	void startServices();
 	void shutdown();
 	ProviderManagerRef getProviderManager() const;
 	void runSelectEngine() const;
 	void exportIndication(const CIMInstance& instance,
-		const String& instNS);
+		const blocxx::String& instNS);
 	IndicationRepLayerMediatorRef getIndicationRepLayerMediator() const;
 	RepositoryIFCRef getRepository() const;
 	RepositoryIFCRef getAuthorizingRepository() const;
@@ -133,7 +133,7 @@ public:
 
 private:
 	void _createLogger();
-	void _loadConfigItemsFromFile(const String& filename);
+	void _loadConfigItemsFromFile(const blocxx::String& filename);
 	void _loadRequestHandlers();
 	void _loadServices();
 	void _createAuthManager();
@@ -147,14 +147,14 @@ private:
 
 	// Types
 	typedef ConfigFile::ConfigMap ConfigMap;
-	typedef Reference<ConfigMap> ConfigMapRef;
-	struct ReqHandlerData : public IntrusiveCountableBase
+	typedef blocxx::Reference<ConfigMap> ConfigMapRef;
+	struct ReqHandlerData : public blocxx::IntrusiveCountableBase
 	{
 		RequestHandlerIFCRef rqIFCRef;
 	};
-	typedef IntrusiveReference<ReqHandlerData> ReqHandlerDataRef;
-	typedef SortedVectorMap<String, ReqHandlerDataRef> ReqHandlerMap;
-	mutable Mutex m_monitor;
+	typedef blocxx::IntrusiveReference<ReqHandlerData> ReqHandlerDataRef;
+	typedef blocxx::SortedVectorMap<blocxx::String, ReqHandlerDataRef> ReqHandlerMap;
+	mutable blocxx::Mutex m_monitor;
 	RepositoryIFCRef m_cimRepository;
 	RepositoryIFCRef m_cimServer;
 	AuthorizerIFCRef m_authorizer;
@@ -163,22 +163,22 @@ private:
 	//AuthorizerIFCRef m_authorizer;
 
 	AuthManagerRef m_authManager;
-	Logger m_Logger;
+	blocxx::Logger m_Logger;
 	ConfigMapRef m_configItems;
 	ProviderManagerRef m_providerManager;
-	mutable SharedLibraryRef m_wqlLib;
-	mutable SharedLibraryRef m_indicationRepLayerLib;
+	mutable blocxx::SharedLibraryRef m_wqlLib;
+	mutable blocxx::SharedLibraryRef m_indicationRepLayerLib;
 	PollingManagerRef m_pollingManager;
 	IndicationServerRef m_indicationServer;
 	bool m_indicationsDisabled;
-	Array<SelectableIFCRef> m_selectables;
-	Array<SelectableCallbackIFCRef> m_selectableCallbacks;
-	mutable Array<ServiceIFCRef> m_services;
+	blocxx::Array<blocxx::SelectableIFCRef> m_selectables;
+	blocxx::Array<blocxx::SelectableCallbackIFCRef> m_selectableCallbacks;
+	mutable blocxx::Array<ServiceIFCRef> m_services;
 	mutable ReqHandlerMap m_reqHandlers;
-	mutable Mutex m_reqHandlersLock;
-	mutable Mutex m_indicationLock;
+	mutable blocxx::Mutex m_reqHandlersLock;
+	mutable blocxx::Mutex m_indicationLock;
 	mutable bool m_indicationRepLayerDisabled;
-	mutable Mutex m_selectableLock;
+	mutable blocxx::Mutex m_selectableLock;
 
 	enum EEnvState
 	{
@@ -202,7 +202,7 @@ private:
 	}
 
 	EEnvState m_state;
-	mutable Mutex m_stateGuard;
+	mutable blocxx::Mutex m_stateGuard;
 	IndicationRepLayerMediatorRef m_indicationRepLayerMediatorRef;
 
 };

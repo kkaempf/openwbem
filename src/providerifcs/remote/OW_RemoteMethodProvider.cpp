@@ -39,12 +39,14 @@
 #include "blocxx/Format.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace
 {
@@ -76,14 +78,14 @@ CIMValue RemoteMethodProvider::invokeMethod(
 		CIMParamValueArray& out )
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("RemoteMethodProvider::invokeMethod ns = %1, path = %2, methodName = %3", ns, path, methodName));
+	BLOCXX_LOG_DEBUG3(lgr, Format("RemoteMethodProvider::invokeMethod ns = %1, path = %2, methodName = %3", ns, path, methodName));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	OW_LOG_DEBUG3(lgr, Format("RemoteMethodProvider::invokeMethod got ClientCIMOMHandleRef for url: %1", lUrl));
+	BLOCXX_LOG_DEBUG3(lgr, Format("RemoteMethodProvider::invokeMethod got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	OW_LOG_DEBUG3(lgr, "RemoteMethodProvider::invokeMethod calling remote WBEM server");
+	BLOCXX_LOG_DEBUG3(lgr, "RemoteMethodProvider::invokeMethod calling remote WBEM server");
 
 	CIMValue rval(CIMNULL);
 	try
@@ -96,13 +98,13 @@ CIMValue RemoteMethodProvider::invokeMethod(
 		{
 			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED from InvokeMethod
 		}
-		OW_LOG_INFO(lgr, Format("RemoteMethodProvider::invokeMethod remote WBEM server threw: %1", e));
+		BLOCXX_LOG_INFO(lgr, Format("RemoteMethodProvider::invokeMethod remote WBEM server threw: %1", e));
 		throw;
 	}
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteMethodProvider::invokeMethod failed calling remote WBEM server: %1", e);
-		OW_LOG_ERROR(lgr, msg);
+		BLOCXX_LOG_ERROR(lgr, msg);
 		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 	return rval;

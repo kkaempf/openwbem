@@ -72,10 +72,10 @@ const int HDBSIGLEN = 16;
 // 10/12/2005 - 4000001. Fixed association and instance key format wrt associations.
 // 4/17/2006 - 4000002. Added namespace field to CIMInstance.
 // 4/04/2007 - 4000003. Added code to use flags in AssocDbRecHeader.
-const UInt32 HDBVERSION = 4000003;
+const blocxx::UInt32 HDBVERSION = 4000003;
 
 // This is the oldest version the code can handle.
-const UInt32 MinHDBVERSION = 4000001;
+const blocxx::UInt32 MinHDBVERSION = 4000001;
 
 /**
  * The HDBHeaderBlock structure represent the header information for
@@ -84,10 +84,10 @@ const UInt32 MinHDBVERSION = 4000001;
 struct OW_HDB_API HDBHeaderBlock
 {
 	char signature[HDBSIGLEN];
-	UInt32 version;
-	Int32 firstRoot;
-	Int32 lastRoot;
-	Int32 firstFree;
+	blocxx::UInt32 version;
+	blocxx::Int32 firstRoot;
+	blocxx::Int32 lastRoot;
+	blocxx::Int32 firstFree;
 };
 /**
  * The HDBBlock structure represents nodes within the database.
@@ -95,31 +95,31 @@ struct OW_HDB_API HDBHeaderBlock
 struct OW_HDB_API HDBBlock
 {
 	HDBBlock() { memset(this, 0, sizeof(HDBBlock)); }
-	UInt32 chkSum;		// The check sum of all following fields
+	blocxx::UInt32 chkSum;		// The check sum of all following fields
 	unsigned char isFree;	// Node is free block
-	UInt32 size;				// The size of this block (used in free list)
-	UInt32 flags;		// User defined flags
-	Int32 nextSib;				// offset of next sibling node in the file
-	Int32 prevSib;				// offset of prev sibling node in the file
-	Int32 parent;				// offset of the parent node in the file
-	Int32 firstChild;			// offset of the first child node for this node
-	Int32 lastChild;			// offset of the last child node for this node
-	UInt32 keyLength;			// length of the key component of the data
-	UInt32 dataLength;		// length of data not including key
+	blocxx::UInt32 size;				// The size of this block (used in free list)
+	blocxx::UInt32 flags;		// User defined flags
+	blocxx::Int32 nextSib;				// offset of next sibling node in the file
+	blocxx::Int32 prevSib;				// offset of prev sibling node in the file
+	blocxx::Int32 parent;				// offset of the parent node in the file
+	blocxx::Int32 firstChild;			// offset of the first child node for this node
+	blocxx::Int32 lastChild;			// offset of the last child node for this node
+	blocxx::UInt32 keyLength;			// length of the key component of the data
+	blocxx::UInt32 dataLength;		// length of data not including key
 	// Data follows
 	// The data starts with the key, which is a null terminated string.
 	// The length of the non-key data will be dataLength - keyLength;
 };
 #define OW_HDBLKSZ sizeof(HDBBlock);
 
-String HDBBlockDebugString(const HDBBlock& blk);
+blocxx::String HDBBlockDebugString(const HDBBlock& blk);
 
 //////////////////////////////////////////////////////////////////////////////
 class HDBUtilKeyArray
 {
 public:
 	HDBUtilKeyArray(const CIMPropertyArray& props);
-	void toString(StringBuffer& out);
+	void toString(blocxx::StringBuffer& out);
 private:
 	CIMPropertyArray m_props;
 };

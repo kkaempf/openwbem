@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/UTF8Utils.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_UTF8Utils.hpp is deprecated, use "blocxx/UTF8Utils.hpp" instead.
 #endif

@@ -41,7 +41,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_HTTP_API HTTPChunkException : public SocketException
+class OW_HTTP_API HTTPChunkException : public blocxx::SocketException
 {
 public:
 	HTTPChunkException(const char* file, int line, const char* msg);

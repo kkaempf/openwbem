@@ -58,16 +58,16 @@ public:
 	 * "<name>:<password>"
 	 * @return a new set of credentials.
 	 */
-	String getNewCredentials();
+	blocxx::String getNewCredentials();
 	/**
 	 * Remove a set of credentials from the name/password map.
 	 * @param creds the credentials to be removed.  They have the
 	 * 	form "<name>:<password>"
 	 */
-	void removeCredentials(const String& creds);
+	void removeCredentials(const blocxx::String& creds);
 protected:
-	virtual bool doAuthenticate(String& userName,
-		const String& info, String& details, OperationContext& context);
+	virtual bool doAuthenticate(blocxx::String& userName,
+		const blocxx::String& info, blocxx::String& details, OperationContext& context);
 	/**
 	 * Called when authenticator is loaded
 	 * Exception is thrown because other classes which derive
@@ -81,7 +81,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	Map<String, String> m_passwdMap;
+	blocxx::Map<blocxx::String, blocxx::String> m_passwdMap;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

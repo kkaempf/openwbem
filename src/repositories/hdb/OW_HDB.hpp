@@ -45,7 +45,7 @@
 #include "OW_HDBNode.hpp"
 #include "blocxx/RWLocker.hpp"
 #include "blocxx/MutexLock.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 #include <cstdio>
 
 namespace OW_NAMESPACE
@@ -56,9 +56,9 @@ class HDB;
 class OW_HDB_API HDBHandle
 {
 private:
-	struct HDBHandleData : public IntrusiveCountableBase
+	struct HDBHandleData : public blocxx::IntrusiveCountableBase
 	{
-		HDBHandleData(HDB* pdb, const File& file) :
+		HDBHandleData(HDB* pdb, const blocxx::File& file) :
 			m_pdb(pdb), m_file(file), m_writeDone(false),
 			m_userVal(0L) {}
 		HDBHandleData() :
@@ -67,11 +67,11 @@ private:
 		~HDBHandleData();
 
 		HDB* m_pdb;
-		File m_file;
+		blocxx::File m_file;
 		bool m_writeDone;
-		Int32 m_userVal;	// Handle user can store any long data here
+		blocxx::Int32 m_userVal;	// Handle user can store any long data here
 	};
-	typedef IntrusiveReference<HDBHandleData> HDBHandleDataRef;
+	typedef blocxx::IntrusiveReference<HDBHandleData> HDBHandleDataRef;
 public:
 	/**
 	 * Create a new HDBHandle object from another (copy ctor).
@@ -100,7 +100,7 @@ public:
 	 * a NULL HDBNode if the node doesn't exist.
 	 * @exception HDBException
 	 */
-	HDBNode getNode(const String& key);
+	HDBNode getNode(const blocxx::String& key);
 	/**
 	 * Get the HDBNode that is the parent of another HDBNode.
 	 * @param node	The node to get the parent HDBNode for.
@@ -169,7 +169,7 @@ public:
 	 * @return true if the child node was added to the parent. false if the
 	 * parent does not exist.
 	 */
-	bool addChild(const String& parentKey, HDBNode& childNode);
+	bool addChild(const blocxx::String& parentKey, HDBNode& childNode);
 	/**
 	 * Remove a node and all of its' children.
 	 * @param node	The node to remove.
@@ -183,7 +183,7 @@ public:
 	 * @return true if the node was removed. Otherwise false.
 	 * @exception HDBException
 	 */
-	bool removeNode(const String& key);
+	bool removeNode(const blocxx::String& key);
 	/**
 	 * Update the data associated with a node.
 	 * @param node		The node to update the data on.
@@ -193,19 +193,19 @@ public:
 	 * @return true if the update was successful. Otherwise false.
 	 * @exception HDBException
 	 */
-	bool updateNode(HDBNode& node, const HDBNode& parentNode, Int32 dataLen, const unsigned char* data);
+	bool updateNode(HDBNode& node, const HDBNode& parentNode, blocxx::Int32 dataLen, const unsigned char* data);
 	/**
 	 * Turn the user defined flags on in this node.
 	 * @param node		The node to turn the flags on in
 	 * @param flags	The flags to turn on in this node.
 	 */
-	void turnFlagsOn(HDBNode& node, UInt32 flags);
+	void turnFlagsOn(HDBNode& node, blocxx::UInt32 flags);
 	/**
 	 * Turn the user defined flags off in this node.
 	 * @param node		The node to turn the flags off in
 	 * @param flags	The flags to turn off in this node.
 	 */
-	void turnFlagsOff(HDBNode& node, UInt32 flags);
+	void turnFlagsOff(HDBNode& node, blocxx::UInt32 flags);
 	/**
 	 * Set the user value for this handle. The user value is not used by the
 	 * HDBHandle object. It allows the user to store any value for later
@@ -213,32 +213,32 @@ public:
 	 * HDBHandle object.
 	 * @param value	The new value for the user data field.
 	 */
-	void setUserValue(Int32 value) { m_pdata->m_userVal = value; }
+	void setUserValue(blocxx::Int32 value) { m_pdata->m_userVal = value; }
 	/**
 	 * @return The user value for this HDBHandle object.
 	 * @see setUserValue
 	 */
-	Int32 getUserValue() const { return m_pdata->m_userVal; }
+	blocxx::Int32 getUserValue() const { return m_pdata->m_userVal; }
 
 	bool checkFreeList();
 
 	/**
 	 * @return true if the is a valid HDBHandle. Otherwise false.
 	 */
-	OW_SAFE_BOOL_IMPL(HDBHandle, HDBHandleDataRef, HDBHandle::m_pdata, m_pdata)
+	BLOCXX_SAFE_BOOL_IMPL(HDBHandle, HDBHandleDataRef, HDBHandle::m_pdata, m_pdata)
 
 private:
-	HDBHandle(HDB* pdb, const File& file);
-	File getFile() { return m_pdata->m_file; }
+	HDBHandle(HDB* pdb, const blocxx::File& file);
+	blocxx::File getFile() { return m_pdata->m_file; }
 	HDB* getHDB() { return m_pdata->m_pdb; }
-	Int32 registerWrite();
+	blocxx::Int32 registerWrite();
 	IndexEntry findFirstIndexEntry(const char* key=NULL);
 	IndexEntry findNextIndexEntry();
 	IndexEntry findPrevIndexEntry();
 	IndexEntry findIndexEntry(const char* key);
-	bool addIndexEntry(const char* key, Int32 offset);
+	bool addIndexEntry(const char* key, blocxx::Int32 offset);
 	bool removeIndexEntry(const char* key);
-	bool updateIndexEntry(const char* key, Int32 newOffset);
+	bool updateIndexEntry(const char* key, blocxx::Int32 newOffset);
 	friend class HDB;
 	friend class HDBNode;
 
@@ -300,7 +300,7 @@ public:
 	/**
 	 * @return The file name for this HDB object
 	 */
-	String getFileName() const { return m_fileName; }
+	blocxx::String getFileName() const { return m_fileName; }
 	/**
 	 * Write the given HDBBlock.
 	 * @param fblk	The HDBBlock to write.
@@ -308,7 +308,7 @@ public:
 	 * @param offset	The offset to write the block to.
 	 * @return The number of bytes written on success. Otherwise -1
 	 */
-	static void writeBlock(HDBBlock& fblk, File& file, Int32 offset);
+	static void writeBlock(HDBBlock& fblk, blocxx::File& file, blocxx::Int32 offset);
 	/**
 	 * Read the given HDBBlock.
 	 * @param fblk	The HDBBlock to read.
@@ -317,34 +317,34 @@ public:
 	 * @return The number of bytes read on success. Otherwise -1
 	 * @exception HDBException
 	 */
-	static void readBlock(HDBBlock& fblk, const File& file, Int32 offset);
+	static void readBlock(HDBBlock& fblk, const blocxx::File& file, blocxx::Int32 offset);
 private:
-	bool checkFreeList(File & file);
+	bool checkFreeList(blocxx::File & file);
 	bool createFile();
 	void checkFile();
-	void setOffsets(File& file, Int32 firstRootOffset, Int32 lastRootOffset,
-		Int32 firstFreeOffset);
-	void setFirstRootOffSet(File& file, Int32 offset);
-	void setLastRootOffset(File& file, Int32 offset);
-	void setFirstFreeOffSet(File& file, Int32 offset);
-	Int32 getFirstRootOffSet() { return m_hdrBlock.firstRoot; }
-	Int32 getLastRootOffset() { return m_hdrBlock.lastRoot; }
-	Int32 getFirstFreeOffSet() { return m_hdrBlock.firstFree; }
-	Int32 findBlock(File& file, int size);
-	void removeBlockFromFreeList(File& file, HDBBlock& fblk);
-	void addRootNode(File& file, HDBBlock& fblk, Int32 offset);
-	void addBlockToFreeList(File& file, const HDBBlock& parmblk,
-		Int32 offset);
-	Int32 getVersion() { return m_version; }
-	Int32 incVersion();
+	void setOffsets(blocxx::File& file, blocxx::Int32 firstRootOffset, blocxx::Int32 lastRootOffset,
+		blocxx::Int32 firstFreeOffset);
+	void setFirstRootOffSet(blocxx::File& file, blocxx::Int32 offset);
+	void setLastRootOffset(blocxx::File& file, blocxx::Int32 offset);
+	void setFirstFreeOffSet(blocxx::File& file, blocxx::Int32 offset);
+	blocxx::Int32 getFirstRootOffSet() { return m_hdrBlock.firstRoot; }
+	blocxx::Int32 getLastRootOffset() { return m_hdrBlock.lastRoot; }
+	blocxx::Int32 getFirstFreeOffSet() { return m_hdrBlock.firstFree; }
+	blocxx::Int32 findBlock(blocxx::File& file, int size);
+	void removeBlockFromFreeList(blocxx::File& file, HDBBlock& fblk);
+	void addRootNode(blocxx::File& file, HDBBlock& fblk, blocxx::Int32 offset);
+	void addBlockToFreeList(blocxx::File& file, const HDBBlock& parmblk,
+		blocxx::Int32 offset);
+	blocxx::Int32 getVersion() { return m_version; }
+	blocxx::Int32 incVersion();
 	void decHandleCount();
 	IndexEntry findFirstIndexEntry(const char* key=NULL);
 	IndexEntry findNextIndexEntry();
 	IndexEntry findPrevIndexEntry();
 	IndexEntry findIndexEntry(const char* key);
-	bool addIndexEntry(const char* key, Int32 offset);
+	bool addIndexEntry(const char* key, blocxx::Int32 offset);
 	bool removeIndexEntry(const char* key);
-	bool updateIndexEntry(const char* key, Int32 newOffset);
+	bool updateIndexEntry(const char* key, blocxx::Int32 newOffset);
 	void flushIndex();
 
 #ifdef OW_WIN32
@@ -353,14 +353,14 @@ private:
 #endif
 
 	HDBHeaderBlock m_hdrBlock;
-	File m_lockFile;
-	String m_fileName;
-	Int32 m_version;
+	blocxx::File m_lockFile;
+	blocxx::String m_fileName;
+	blocxx::Int32 m_version;
 	int m_hdlCount;
 	bool m_opened;
 	IndexRef m_pindex;
-	Mutex m_indexGuard;
-	Mutex m_guard;
+	blocxx::Mutex m_indexGuard;
+	blocxx::Mutex m_guard;
 	friend class HDBNode;
 	friend class HDBHandle;
 	friend struct HDBHandle::HDBHandleData;

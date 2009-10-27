@@ -58,7 +58,7 @@ namespace OW_NAMESPACE
  * Copy semantics: Non-copyable
  * Exception safety: Strong
  */
-class OW_CLIENT_API ClientCIMOMHandleConnectionPool : public IntrusiveCountableBase
+class OW_CLIENT_API ClientCIMOMHandleConnectionPool : public blocxx::IntrusiveCountableBase
 {
 public:
 	/**
@@ -85,7 +85,7 @@ public:
 	 * @throws std::bad_alloc
 	 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
 	 */
-	ClientCIMOMHandleRef getConnection(const String& url);
+	ClientCIMOMHandleRef getConnection(const blocxx::String& url);
 
 	/**
 	 * Add a ClientCIMOMHandleRef back to the pool.  handle must be connected
@@ -96,7 +96,7 @@ public:
 	 * @param handle The ClientCIMOMHandleRef to add to the pool.
 	 * @param url The url handle is connected to.
 	 */
-	void addConnectionToPool(const ClientCIMOMHandleRef& handle, const String& url);
+	void addConnectionToPool(const ClientCIMOMHandleRef& handle, const blocxx::String& url);
 
 	/**
 	 * This class facilitates usage of RAII when using a ClientCIMOMHandleConnectionPool
@@ -104,7 +104,7 @@ public:
 	class HandleReturner
 	{
 	public:
-		HandleReturner(ClientCIMOMHandleRef& hdl, ClientCIMOMHandleConnectionPoolRef& pool, const String& url)
+		HandleReturner(ClientCIMOMHandleRef& hdl, ClientCIMOMHandleConnectionPoolRef& pool, const blocxx::String& url)
 			: m_hdl(hdl)
 			, m_pool(pool)
 			, m_url(url)
@@ -118,7 +118,7 @@ public:
 	private:
 		ClientCIMOMHandleRef& m_hdl;
 		ClientCIMOMHandleConnectionPoolRef& m_pool;
-		const String& m_url;
+		const blocxx::String& m_url;
 	};
 
 
@@ -129,14 +129,14 @@ private:
 	ClientCIMOMHandleConnectionPool& operator=(const ClientCIMOMHandleConnectionPool&);
 
 	unsigned m_maxConnectionsPerUrl;
-	Mutex m_guard;
+	blocxx::Mutex m_guard;
 
 #ifdef OW_WIN32
 #pragma warning (push)
 #pragma warning (disable: 4251)
 #endif
 
-	typedef std::multimap<String, ClientCIMOMHandleRef> pool_t;
+	typedef std::multimap<blocxx::String, ClientCIMOMHandleRef> pool_t;
 	pool_t m_pool;
 
 #ifdef OW_WIN32

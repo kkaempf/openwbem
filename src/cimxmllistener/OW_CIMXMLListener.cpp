@@ -56,7 +56,6 @@
 #include "blocxx/SelectableCallbackIFC.hpp"
 #include "blocxx/IOException.hpp"
 #include "blocxx/Thread.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMProtocolIFC.hpp"
 #include "blocxx/NullLogger.hpp"
@@ -70,6 +69,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 
 // This anonymous namespace has the effect of giving this class internal
 // linkage.  That means it won't cause a link error if another translation

@@ -44,6 +44,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_ProviderMuxTestCases,"OW_ProviderMux");
 #include "blocxx/SharedLibrary.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void OW_ProviderMuxTestCases::setUp()
 {

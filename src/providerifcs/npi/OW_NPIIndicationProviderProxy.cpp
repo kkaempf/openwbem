@@ -34,7 +34,7 @@
 #include "blocxx/Format.hpp"
 #include "OW_NPIProviderIFCUtils.hpp"
 #include "OW_WQLSelectStatement.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -54,12 +54,12 @@ NPIIndicationProviderProxy::deActivateFilter(
 	const StringArray& classes,
 	bool lastActivation)
 {
-	OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "deactivateFilter");
+	BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
 			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
-		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "deactivateFilter");
+		BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "deactivateFilter");
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
 		WQLSelectStatement mutableFilter(filter);
@@ -87,10 +87,10 @@ NPIIndicationProviderProxy::activateFilter(
 	const StringArray& classes,
 	bool firstActivation)
 {
-	OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "activateFilter");
+	BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{
-		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "activateFilter2");
+		BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "activateFilter2");
 			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
 		ProviderEnvironmentIFCRef env2(env);
@@ -121,12 +121,12 @@ NPIIndicationProviderProxy::authorizeFilter(
 	const StringArray& classes,
 	const String &owner)
 {
-	OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "authorizeFilter");
+	BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "authorizeFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
 			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
-		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "authorizeFilter2");
+		BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "authorizeFilter2");
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
 		WQLSelectStatement mutableFilter(filter);
@@ -154,12 +154,12 @@ NPIIndicationProviderProxy::mustPoll(
 	const String& nameSpace,
 	const StringArray& classes)
 {
-	OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "mustPoll");
+	BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "mustPoll");
 	if (m_ftable->fp_mustPoll != NULL)
 	{
-			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
-		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "mustPoll2");
+		BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "mustPoll2");
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
 		WQLSelectStatement mutableFilter(filter);

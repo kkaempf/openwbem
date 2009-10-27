@@ -55,16 +55,16 @@ public:
 	ProviderAgentProviderEnvironment(
 		const ConfigFile::ConfigMap& configMap,
 		OperationContext& operationContext,
-		const String& callbackURL,
+		const blocxx::String& callbackURL,
 		ClientCIMOMHandleConnectionPool& pool,
 		ProviderAgentEnvironment::EConnectionCredentialsUsageFlag useConnectionCredentials);
 
 	~ProviderAgentProviderEnvironment();
 		// This function returns a regular cimom handle that does access checking and may call providers.
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const;
-	virtual String getConfigItem(const String &name, const String &defRetVal="") const;
-	virtual StringArray getMultiConfigItem(const String &itemName,
-		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const;
+	virtual blocxx::String getConfigItem(const blocxx::String &name, const blocxx::String &defRetVal="") const;
+	virtual blocxx::StringArray getMultiConfigItem(const blocxx::String &itemName,
+		const blocxx::StringArray& defRetVal, const char* tokenizeSeparator = 0) const;
 	// This function returns a cimom handle that directly accesses the repository (CIMServer is bypassed).
 	// no providers will be called.  This function should only be called if getCIMOMHandle()
 	// is insufficent.
@@ -73,15 +73,15 @@ public:
 	// be called if getCIMOMHandle() and getRepositoryCIMOMHandle() are insufficient.
 	virtual RepositoryIFCRef getRepository() const;
 	virtual RepositoryIFCRef getAuthorizingRepository() const;
-	virtual String getUserName() const;
+	virtual blocxx::String getUserName() const;
 	virtual OperationContext& getOperationContext();
 	virtual ProviderEnvironmentIFCRef clone() const;
 private:
 	ConfigFile::ConfigMap m_configMap;
 	OperationContext& m_operationContext;
-	String m_callbackURL;
+	blocxx::String m_callbackURL;
 	ClientCIMOMHandleConnectionPool& m_connectionPool;
-	mutable Array<ClientCIMOMHandleRef>  m_CIMOMHandleRA;
+	mutable blocxx::Array<ClientCIMOMHandleRef>  m_CIMOMHandleRA;
 	ProviderAgentEnvironment::EConnectionCredentialsUsageFlag m_useConnectionCredentials;
 };
 

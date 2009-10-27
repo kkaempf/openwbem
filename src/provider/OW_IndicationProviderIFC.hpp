@@ -55,33 +55,33 @@ public:
 	virtual void activateFilter(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes,
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
 		bool firstActivation
 		) = 0;
 	virtual void authorizeFilter(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes,
-		const String& owner
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
+		const blocxx::String& owner
 		) = 0;
 	virtual void deActivateFilter(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes,
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
 		bool lastActivation
 		) = 0;
 	virtual int mustPoll(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes
 		) = 0;
 	virtual IndicationProviderIFC* getIndicationProvider();
 };

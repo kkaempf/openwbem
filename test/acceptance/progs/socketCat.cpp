@@ -51,7 +51,8 @@
 
 using namespace std;
 using namespace OpenWBEM;
-using namespace OpenWBEM::Select;
+using namespace blocxx;
+using namespace blocxx::Select;
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -62,7 +63,7 @@ usage(const char* name)
 
 
 //////////////////////////////////////////////////////////////////////////////
-// TODO: make this portable to windows... Maybe have a way to get an UnnamedPipe to stdin
+/// @todo  make this portable to windows... Maybe have a way to get an UnnamedPipe to stdin
 class DataTransfer : public Thread
 {
 public:
@@ -134,7 +135,7 @@ public:
 						if (buff.size() == 0 && m_inputfd == -1)
 						{
 							// by shutting down half the socket, the server can know to disconnect, but we could still read the response.
-							// TODO: make this portable to win32
+							/// @todo  make this portable to win32
 							::shutdown(so.s, SHUT_WR);
 							m_outputfd = -1;
 							return 0;

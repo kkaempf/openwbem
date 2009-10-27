@@ -126,48 +126,48 @@ namespace OW_NAMESPACE
  */
         virtual void doReferences(const ProviderEnvironmentIFCRef &env,
                                   CIMInstanceResultHandlerIFC &result,
-                                  const String &ns,
+                                  const blocxx::String &ns,
                                   const CIMObjectPath &objectName,
                                   const CIMClass &assocClass,
-                                  const String &resultClass,
-                                  const String &role,
-                                  const String &resultRole) = 0;
+                                  const blocxx::String &resultClass,
+                                  const blocxx::String &role,
+                                  const blocxx::String &resultRole) = 0;
 
     public:
         virtual void associators(const ProviderEnvironmentIFCRef &env,
                                  CIMInstanceResultHandlerIFC &result,
-                                 const String &ns,
+                                 const blocxx::String &ns,
                                  const CIMObjectPath &objectName,
-                                 const String &assocClass,
-                                 const String &resultClass,
-                                 const String &role,
-                                 const String &resultRole,
+                                 const blocxx::String &assocClass,
+                                 const blocxx::String &resultClass,
+                                 const blocxx::String &role,
+                                 const blocxx::String &resultRole,
                                  WBEMFlags:: EIncludeQualifiersFlag includeQualifiers,
                                  WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin,
-                                 const StringArray *propertyList);
+                                 const blocxx::StringArray *propertyList);
         virtual void associatorNames(const ProviderEnvironmentIFCRef &env,
                                      CIMObjectPathResultHandlerIFC &result,
-                                     const String &ns,
+                                     const blocxx::String &ns,
                                      const CIMObjectPath &objectName,
-                                     const String &assocClass,
-                                     const String &resultClass,
-                                     const String &role,
-                                     const String &resultRole);
+                                     const blocxx::String &assocClass,
+                                     const blocxx::String &resultClass,
+                                     const blocxx::String &role,
+                                     const blocxx::String &resultRole);
         virtual void references(const ProviderEnvironmentIFCRef
                                 &env, CIMInstanceResultHandlerIFC &result,
-                                const String &ns,
+                                const blocxx::String &ns,
                                 const CIMObjectPath &objectName,
-                                const String &resultClass,
-                                const String &role,
+                                const blocxx::String &resultClass,
+                                const blocxx::String &role,
                                 WBEMFlags:: EIncludeQualifiersFlag includeQualifiers,
                                 WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin,
-                                const StringArray *propertyList);
+                                const blocxx::StringArray *propertyList);
         virtual void referenceNames(const ProviderEnvironmentIFCRef &env,
                                     CIMObjectPathResultHandlerIFC &result,
-                                    const String &ns,
+                                    const blocxx::String &ns,
                                     const CIMObjectPath &objectName,
-                                    const String &resultClass,
-                                    const String &role);
+                                    const blocxx::String &resultClass,
+                                    const blocxx::String &role);
     };
 } // end namespace OW_NAMESPACE.
 

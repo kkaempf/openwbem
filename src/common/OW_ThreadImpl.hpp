@@ -38,6 +38,11 @@
 #include "OW_config.h"
 #include <blocxx/ThreadImpl.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #define OW_THREAD_FLG_JOINABLE BLOCXX_THREAD_FLG_JOINABLE
 
 #warning OW_ThreadImpl.hpp is deprecated, use "blocxx/ThreadImpl.hpp" instead. \

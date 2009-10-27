@@ -43,6 +43,7 @@ namespace OW_NAMESPACE
 {
 
 using std::streambuf;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMParamValue::Data : public COWIntrusiveCountableBase
 {

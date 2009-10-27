@@ -39,6 +39,7 @@
 
 namespace OW_NAMESPACE
 {
+   using namespace blocxx;
 
 const int OW_SIGSEGV = BLOCXX_SIGSEGV;
 const int OW_SIGABRT = BLOCXX_SIGABRT;

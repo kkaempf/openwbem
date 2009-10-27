@@ -59,8 +59,8 @@ public:
 	~CppProviderIFC();
 
 	// Making this public so other code can re-use it.
-	static CppProviderBaseIFCRef loadProvider(const String& libName, LoggerRef logger) OW_DEPRECATED; // in 4.0.0
-	static CppProviderBaseIFCRef loadProvider(const String& libName);
+	static CppProviderBaseIFCRef loadProvider(const blocxx::String& libName, blocxx::LoggerRef logger) OW_DEPRECATED; // in 4.0.0
+	static CppProviderBaseIFCRef loadProvider(const blocxx::String& libName);
 
 protected:
 	virtual const char* getName() const { return "c++"; }
@@ -110,11 +110,11 @@ private:
 	// However, that presents a race condition for initializing providers, so each CppProviderBaseIFCRef
 	// has an associated condition to address that. The details are handled by this class.
 	class CppProviderInitializationHelper;
-	typedef IntrusiveReference<CppProviderInitializationHelper> CppProviderInitializationHelperRef;
+	typedef blocxx::IntrusiveReference<CppProviderInitializationHelper> CppProviderInitializationHelperRef;
 
-	typedef Map<String, CppProviderInitializationHelperRef> ProviderMap;
-	typedef Map<String, IndicationProviderIFCRef> IndicationProviderMap;
-	typedef Array<CppProviderBaseIFCRef> LoadedProviderArray;
+	typedef blocxx::Map<blocxx::String, CppProviderInitializationHelperRef> ProviderMap;
+	typedef blocxx::Map<blocxx::String, IndicationProviderIFCRef> IndicationProviderMap;
+	typedef blocxx::Array<CppProviderBaseIFCRef> LoadedProviderArray;
 	enum StoreProviderFlag
 	{
 		dontStoreProvider,
@@ -141,11 +141,11 @@ private:
 		QueryProviderInfoArray& q);
 	ProviderMap m_provs;
 	IndicationProviderMap m_indicationProviders;
-	Mutex m_guard;
+	blocxx::Mutex m_guard;
 	LoadedProviderArray m_noUnloadProviders;
 	bool m_loadDone;
 };
-typedef SharedLibraryReference< IntrusiveReference<CppProviderIFC> > CppProviderIFCRef;
+typedef blocxx::SharedLibraryReference< blocxx::IntrusiveReference<CppProviderIFC> > CppProviderIFCRef;
 
 } // end namespace OW_NAMESPACE
 

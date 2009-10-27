@@ -47,9 +47,9 @@ namespace OW_NAMESPACE
  * @param len The length of the text
  * @return the escaped text.
  */
-OW_XML_API String XMLEscape(const char* unescapedText, unsigned len);
+OW_XML_API blocxx::String XMLEscape(const char* unescapedText, unsigned len);
 
-inline String XMLEscape(const String& str)
+inline blocxx::String XMLEscape(const blocxx::String& str)
 {
 	return XMLEscape(str.c_str(), str.length());
 }

@@ -39,9 +39,8 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_Platform.hpp"
 #include "OW_PlatformSignal.hpp"
-#include "OW_Assertion.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/CerrAppender.hpp"
 #include "blocxx/CmdLineParser.hpp"
 #include "OW_PrivilegeManager.hpp"
@@ -55,6 +54,7 @@
 #endif
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 namespace
 {
@@ -103,7 +103,7 @@ namespace
 		}
 		catch (Exception & e)
 		{
-			OW_LOG_ERROR(logger,
+			BLOCXX_LOG_ERROR(logger,
 				Format("Error processing config for monitor logger: %1", e));
 		}
 		return 0;
@@ -143,7 +143,7 @@ int main(int argc, char* argv[])
 
 		// The global log appender is not set up according to the config file until after init()
 		logger = Logger(COMPONENT_NAME);
-		OW_LOG_INFO(logger, "owcimomd (" OW_VERSION ") beginning startup");
+		BLOCXX_LOG_INFO(logger, "owcimomd (" OW_VERSION ") beginning startup");
 
 #ifdef OW_USE_DL
 		if (env->getConfigItem("owcimomd.dont_call_dlclose", "false").equalsIgnoreCase("true"))
@@ -168,8 +168,8 @@ int main(int argc, char* argv[])
 		}
 		catch (const DaemonException& e)
 		{
-			OW_LOG_FATAL_ERROR(logger, e.getMessage());
-			OW_LOG_FATAL_ERROR(logger, "owcimomd failed to initialize. Aborting...");
+			BLOCXX_LOG_FATAL_ERROR(logger, e.getMessage());
+			BLOCXX_LOG_FATAL_ERROR(logger, "owcimomd failed to initialize. Aborting...");
 			return 1;
 		}
 
@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
 
 		// Start all of the cimom services
 		env->startServices();
-		OW_LOG_INFO(logger, "owcimomd is now running!");
+		BLOCXX_LOG_INFO(logger, "owcimomd is now running!");
 
 		// Do this after initialization to prevent an infinite loop.
 		std::unexpected_handler oldUnexpectedHandler = 0;
@@ -216,12 +216,12 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				OW_LOG_INFO(logger,
+				BLOCXX_LOG_INFO(logger,
 					"WARNING: even though the owcimomd.restart_on_error config option = true, it\n"
 					"is not enabled because owcimomd is running in debug mode (-d)");
 			}
 #else
-			OW_LOG_INFO(logger,
+			BLOCXX_LOG_INFO(logger,
 				"WARNING: even though the owcimomd.restart_on_error config option = true, it\n"
 				"is not enabled because OpenWBEM is built in debug mode");
 #endif
@@ -243,9 +243,9 @@ int main(int argc, char* argv[])
 			{
 				case Platform::SHUTDOWN:
 
-					OW_LOG_INFO(logger, "owcimomd received shutdown notification."
+					BLOCXX_LOG_INFO(logger, "owcimomd received shutdown notification."
 						" Initiating shutdown");
-					OW_LOG_INFO(logger, Format("signal details:\n%1", signalInfo));
+					BLOCXX_LOG_INFO(logger, Format("signal details:\n%1", signalInfo));
 					shuttingDown = true;
 
 
@@ -264,9 +264,9 @@ int main(int argc, char* argv[])
 					env->shutdown();
 					break;
 				case Platform::REINIT:
-					OW_LOG_INFO(logger, "owcimomd received restart notification."
+					BLOCXX_LOG_INFO(logger, "owcimomd received restart notification."
 						" Initiating restart");
-					OW_LOG_INFO(logger, Format("signal details: %1", signalInfo));
+					BLOCXX_LOG_INFO(logger, Format("signal details: %1", signalInfo));
 					env->shutdown();
 					env->clearConfigItems();
 					env = CIMOMEnvironment::instance() = 0;
@@ -282,28 +282,28 @@ int main(int argc, char* argv[])
 					env->startServices();
 					break;
 				default:
-					OW_LOG_INFO(logger, Format("Ignoring signal. Details: %1", signalInfo));
+					BLOCXX_LOG_INFO(logger, Format("Ignoring signal. Details: %1", signalInfo));
 					break;
 			}
 		}
 	}
 	catch (Exception& e)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* EXCEPTION CAUGHT IN owcimomd MAIN!");
-		OW_LOG_FATAL_ERROR(logger, Format("* %1", e));
+		BLOCXX_LOG_FATAL_ERROR(logger, "* EXCEPTION CAUGHT IN owcimomd MAIN!");
+		BLOCXX_LOG_FATAL_ERROR(logger, Format("* %1", e));
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
 	catch (std::exception& se)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* std::exception CAUGHT IN owcimomd MAIN!");
-		OW_LOG_FATAL_ERROR(logger, Format("* Message: %1", se.what()));
+		BLOCXX_LOG_FATAL_ERROR(logger, "* std::exception CAUGHT IN owcimomd MAIN!");
+		BLOCXX_LOG_FATAL_ERROR(logger, Format("* Message: %1", se.what()));
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
 	catch(...)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT IN owcimomd MAIN!");
+		BLOCXX_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT IN owcimomd MAIN!");
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
@@ -312,7 +312,7 @@ int main(int argc, char* argv[])
 
 	CIMOMEnvironment::instance() = env = 0;
 
-	OW_LOG_INFO(logger, "owcimomd has shutdown");
+	BLOCXX_LOG_INFO(logger, "owcimomd has shutdown");
 	return rval;
 }
 
@@ -360,7 +360,6 @@ processCommandLine(int argc, char* argv[], CIMOMEnvironmentRef env)
 		if (parser.isSet(E_DEBUG_MODE_OPT))
 		{
 			env->setConfigItem(ConfigOpts::DEBUGFLAG_opt, "true", ServiceEnvironmentIFC::E_PRESERVE_PREVIOUS);
-			env->setConfigItem(ConfigOpts::LOG_LEVEL_opt, "debug");
 		}
 		if (parser.isSet(E_CONFIG_FILE_OPT))
 		{

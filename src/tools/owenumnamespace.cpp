@@ -50,6 +50,7 @@
 using namespace OpenWBEM;
 using namespace OpenWBEM::Tools;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 using std::cout;
 using std::cin;
@@ -100,33 +101,21 @@ int main(int argc, char* argv[])
 		String ns;
 		bool use__Namespace(false);
 
-		// handle backwards compatible options, which was <URL> <namespace>
-		// TODO: This is deprecated in 3.1.0, remove it post 3.1
-		if (argc == 3 && argv[1][0] != '-' && argv[2][0] != '-')
-		{
-			url = argv[1];
-			ns = argv[2];
-			use__Namespace = true;
-			cerr << "This cmd line usage is deprecated!\n";
-		}
-		else
-		{
-			CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
+		CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
 
-			if (parser.isSet(HELP_OPT))
-			{
-				Usage();
-				return 0;
-			}
-			else if (parser.isSet(VERSION_OPT))
-			{
-				cout << "owenumnamespace (OpenWBEM) " << OW_VERSION << '\n';
-				cout << "Written by Dan Nuffer.\n";
-				return 0;
-			}
-
-			url = parser.getOptionValue(URL_OPT, "http://localhost/");
+		if (parser.isSet(HELP_OPT))
+		{
+			Usage();
+			return 0;
 		}
+		else if (parser.isSet(VERSION_OPT))
+		{
+			cout << "owenumnamespace (OpenWBEM) " << OW_VERSION << '\n';
+			cout << "Written by Dan Nuffer.\n";
+			return 0;
+		}
+
+		url = parser.getOptionValue(URL_OPT, "http://localhost/");
 
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		if (use__Namespace)

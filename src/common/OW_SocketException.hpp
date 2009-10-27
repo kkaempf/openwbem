@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/SocketException.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SocketException.hpp is deprecated, use "blocxx/SocketException.hpp" instead.
 #endif
 

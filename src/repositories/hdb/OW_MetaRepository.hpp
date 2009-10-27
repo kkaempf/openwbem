@@ -58,7 +58,7 @@ public:
 	 * Open this MetaRepository.
 	 * @param the Fully qalified path to the database (minus extension)
 	 */
-	void open(const String& path);
+	void open(const blocxx::String& path);
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	/**
 	 * Get an existing qualifier type from the repository.
@@ -69,7 +69,7 @@ public:
 	 * @exception CIMException
 	 * @exception IOException
 	 */
-	CIMQualifierType getQualifierType(const String& ns,
+	CIMQualifierType getQualifierType(const blocxx::String& ns,
 		const CIMName& qualName, HDBHandle* hdl=0);
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
@@ -80,20 +80,20 @@ public:
 	 * the qualifier was not found.
 	 * @exception CIMException
 	 */
-	bool deleteQualifierType(const String& ns, const CIMName& qualName);
+	bool deleteQualifierType(const blocxx::String& ns, const CIMName& qualName);
 	/**
 	 * Update a qualifier type in the repository
 	 * @param ns	The namespace for the qualifier
 	 * @param qt	The qualifier type to update
 	 * @exception CIMException
 	 */
-	void setQualifierType(const String& ns, const CIMQualifierType& qt);
+	void setQualifierType(const blocxx::String& ns, const CIMQualifierType& qt);
 	/**
 	 * Enumerator the qualifiers in a given namespace
 	 * @param ns	The namespace to get the qualifiers from
 	 * @return An enumeration of the qualifier types in the namespace.
 	 */
-	void enumQualifierTypes(const String& ns,
+	void enumQualifierTypes(const blocxx::String& ns,
 		CIMQualifierTypeResultHandlerIFC& result);
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
@@ -106,10 +106,10 @@ public:
 	 * @exception HDBException An error occurred in the database.
 	 * @exception IOException Couldn't read class object from file.
 	 */
-	CIMException::ErrNoType getCIMClass(const String& ns,
+	CIMException::ErrNoType getCIMClass(const blocxx::String& ns,
 		const CIMName& className, WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList,
+		const blocxx::StringArray* propertyList,
 		CIMClass& cc);
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
@@ -119,7 +119,7 @@ public:
 	 * @return true if the class was deleted. false if class was not found.
 	 * @exception CIMException if class does not exist
 	 */
-	bool deleteClass(const String& ns, const CIMName& className);
+	bool deleteClass(const blocxx::String& ns, const CIMName& className);
 	/**
 	 * creates a class in the store
 	 *
@@ -130,7 +130,7 @@ public:
 	 * @exception HDBException An error occurred in the database.
 	 * @exception IOException Couldn't write class object to file.
 	 */
-	void createClass(const String& ns, CIMClass& cimClass);
+	void createClass(const blocxx::String& ns, CIMClass& cimClass);
 	/**
 	 * set a class in the store - note children are not affected
 	 *
@@ -138,7 +138,7 @@ public:
 	 * @param cimClass The class to update
 	 * @exception CIMException if the class already exists
 	 */
-	void modifyClass(const String& ns, const CIMClass& cimClass);
+	void modifyClass(const blocxx::String& ns, const CIMClass& cimClass);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
 	 * Enumerates the class specified by className.
@@ -157,7 +157,7 @@ public:
 	 * @exception CIMException  	If the specified CIMObjectPath object
 	 *		cannot be found.
 	 */
-	void enumClass(const String& ns,
+	void enumClass(const blocxx::String& ns,
 		const CIMName& className,
 		CIMClassResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep, WBEMFlags::ELocalOnlyFlag localOnly,
@@ -173,7 +173,7 @@ public:
 	 * @exception CIMException  	If the specified CIMObjectPath object
 	 *		cannot be found.
 	 */
-	void enumClassNames(const String& ns,
+	void enumClassNames(const blocxx::String& ns,
 		const CIMName& className,
 		StringResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep);
@@ -183,7 +183,7 @@ public:
 	 * @param ns	The namespace to enumerate
 	 * @return An enumeration of classes that are associations.
 	 */
-	void getTopLevelAssociations(const String& ns,
+	void getTopLevelAssociations(const blocxx::String& ns,
 		CIMClassResultHandlerIFC& result);
 #endif
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
@@ -191,7 +191,7 @@ public:
 	 * Delete the given namespace and all object contained within it.
 	 * @param nsName	The name of the namespace
 	 */
-	void deleteNameSpace(const String& nsName);
+	void deleteNameSpace(const blocxx::String& nsName);
 	/**
 	 * Create the necessary containers to make a valid path. Fail if the
 	 * last container already exists.
@@ -199,7 +199,7 @@ public:
 	 * @return 0 on success. Otherwise -1 if the bottom most container already
 	 * exists.
 	 */
-	virtual int createNameSpace(const String& ns);
+	virtual int createNameSpace(const blocxx::String& ns);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 private:
 	// unimplemented
@@ -212,21 +212,21 @@ private:
 	 * @param ns	The namespace
 	 * @return The HDBNode for the qualifier container.
 	 */
-	HDBNode _getQualContainer(HDBHandleLock& hdl, const String& ns);
+	HDBNode _getQualContainer(HDBHandleLock& hdl, const blocxx::String& ns);
 	/**
 	 * Make a path to a qualifier.
 	 * @param ns			The namespace for the qualifier.
 	 * @param qualName	The name of the qualifier
 	 * @return A string that can be used to locate the qualifier.
 	 */
-	String _makeQualPath(const String& ns, const CIMName& qualName);
+	blocxx::String _makeQualPath(const blocxx::String& ns, const CIMName& qualName);
 	/**
 	 * Make a path to a CIM class.
 	 * @param ns			The namespace for the class.
 	 * @param className	The name of the class.
 	 * @return A string that can be used to locate the class.
 	 */
-	String _makeClassPath(const String& ns, const CIMName& className);
+	blocxx::String _makeClassPath(const blocxx::String& ns, const CIMName& className);
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Add a qualifier type to the repository
@@ -234,10 +234,10 @@ private:
 	 * @param qt	The qualifier type to add to the repository
 	 * @exception CIMException
 	 */
-	void _addQualifierType(const String& ns, const CIMQualifierType& qt,
+	void _addQualifierType(const blocxx::String& ns, const CIMQualifierType& qt,
 		HDBHandle* phdl=0);
 #endif
-	void _getClassNodes(const String& ns, CIMClassResultHandlerIFC& result, HDBNode node,
+	void _getClassNodes(const blocxx::String& ns, CIMClassResultHandlerIFC& result, HDBNode node,
 		HDBHandle hdl,
 		WBEMFlags::EDeepFlag deep,
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
@@ -248,15 +248,15 @@ private:
 //	void _getClassChildNames(StringArray& ra, HDBNode node,
 //		HDBHandle hdl);
 	void _resolveClass(CIMClass& cls, HDBNode& node, HDBHandle& hdl,
-		const String& ns);
+		const blocxx::String& ns);
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-	HDBNode adjustClass(const String& ns, CIMClass& childClass,
+	HDBNode adjustClass(const blocxx::String& ns, CIMClass& childClass,
 		HDBHandle hdl);
-	void _resolveQualifiers(const String& ns, CIMQualifierArray& quals,
+	void _resolveQualifiers(const blocxx::String& ns, CIMQualifierArray& quals,
 		HDBHandle hdl);
 #endif
 	CIMClass _getClassFromNode(HDBNode& node, HDBHandle hdl,
-		const String& ns);
+		const blocxx::String& ns);
 	CIMName _getClassNameFromNode(HDBNode& node);
 	//void _throwIfBadClass(const CIMClass& cc, const CIMClass& parentClass);
 

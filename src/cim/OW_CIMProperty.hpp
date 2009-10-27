@@ -43,7 +43,7 @@
 #include "OW_CIMNULL.hpp"
 #include "OW_WBEMFlags.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -111,7 +111,7 @@ public:
 	/**
 	 * @return true If this CIMProperty has an implementation.
 	 */
-	OW_SAFE_BOOL_IMPL(CIMProperty, COWIntrusiveReference<PROPData>, CIMProperty::m_pdata, m_pdata)
+	BLOCXX_SAFE_BOOL_IMPL(CIMProperty, blocxx::COWIntrusiveReference<PROPData>, CIMProperty::m_pdata, m_pdata)
 
 	/**
 	 * @return A copy of this CIMProperty object.
@@ -141,7 +141,7 @@ public:
 	 * Get the origin class for this property.
 	 * @return The name of the origin class of this property.
 	 */
-	String getOriginClass() const;
+	blocxx::String getOriginClass() const;
 	/**
 	 * Set the origin class for this property.
 	 * @param originCls	The name of the origin class of this property.
@@ -182,13 +182,13 @@ public:
 	/**
 	 * @return The size of the data associated with this property
 	 */
-	Int32 getSize() const;
+	blocxx::Int32 getSize() const;
 	/**
 	 * Set the size of the data for this property.
 	 * @param size	The size of the data associated with property.
 	 * @return a reference to *this
 	 */
-	CIMProperty& setDataSize(Int32 size);
+	CIMProperty& setDataSize(blocxx::Int32 size);
 	/**
 	 * Set the overriding property name.
 	 * @param opname	The name of the overriding property.
@@ -198,7 +198,7 @@ public:
 	/**
 	 * @return The name of the overriding property.
 	 */
-	String getOverridingProperty() const;
+	blocxx::String getOverridingProperty() const;
 	/**
 	 * @return true if this property is a reference. Otherwise return false.
 	 */
@@ -272,7 +272,7 @@ public:
 	/**
 	 * @return The name of this CIMProperty
 	 */
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 	/**
 	 * Set the name of this CIMProperty object.
 	 * @param name	The new name for this CIMProperty object.
@@ -302,13 +302,13 @@ public:
 	/**
 	 * @return The string representation of this CIMProperty.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 
 	/**
 	 * @return An String that contains the MOF representation of this
 	 * CIMProperty object.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 
 	/**
 	 * Test if this property has a qualifier that is a boolean type with a
@@ -324,7 +324,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<PROPData> m_pdata;
+	blocxx::COWIntrusiveReference<PROPData> m_pdata;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

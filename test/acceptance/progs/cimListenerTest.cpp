@@ -58,6 +58,7 @@ using std::cout;
 using std::endl;
 using std::cerr;
 using namespace OpenWBEM;
+using namespace blocxx;
 
 OW_DECLARE_EXCEPTION(ListenerTest);
 OW_DEFINE_EXCEPTION(ListenerTest);
@@ -450,7 +451,7 @@ int main(int argc, char* argv[])
 
 		if (getenv("OWLONGTEST"))
 		{
-			// TODO: Add tests here for alert indications
+			/// @todo  Add tests here for alert indications
 
 			handle = hxcl.registerForIndication(url, ns,
 				"select * from CIM_Indication where SourceInstance ISA "

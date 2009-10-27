@@ -55,10 +55,10 @@ namespace OW_NAMESPACE
  * overridden, and then the createProviderIFCFromLib function can be used to
  * actually load the shared library.
  */
-class OW_CIMOMCOMMON_API ProviderIFCLoaderBase : public IntrusiveCountableBase
+class OW_CIMOMCOMMON_API ProviderIFCLoaderBase : public blocxx::IntrusiveCountableBase
 {
 public:
-	ProviderIFCLoaderBase(SharedLibraryLoaderRef sll,
+	ProviderIFCLoaderBase(blocxx::SharedLibraryLoaderRef sll,
 		ServiceEnvironmentIFCRef env)
 		: m_sll( sll )
 		, m_env(env)
@@ -101,7 +101,7 @@ public:
 	 *
 	 */
 	virtual void loadIFCs(
-		Array<ProviderIFCBaseIFCRef>& interfaces) const = 0;
+		blocxx::Array<ProviderIFCBaseIFCRef>& interfaces) const = 0;
 	ServiceEnvironmentIFCRef getEnvironment() const
 	{
 		return m_env;
@@ -118,22 +118,22 @@ protected:
 	 * 	SharedLibrary.  If loading the library fails, null is returned.
 	 * 	e.g. retval.first.isNull() == true and retval.second.isNull() == true.
 	 */
-	ProviderIFCBaseIFCRef createProviderIFCFromLib(const String& libname) const;
+	ProviderIFCBaseIFCRef createProviderIFCFromLib(const blocxx::String& libname) const;
 private:
 	//ProviderIFCBaseIFC* safeCreateIFC(SharedLibraryRef sl) const;
 
-	const SharedLibraryLoaderRef m_sll;
+	const blocxx::SharedLibraryLoaderRef m_sll;
 	ServiceEnvironmentIFCRef m_env;
 };
 
 class OW_CIMOMCOMMON_API ProviderIFCLoader : public ProviderIFCLoaderBase
 {
 public:
-	ProviderIFCLoader(SharedLibraryLoaderRef sll,
+	ProviderIFCLoader(blocxx::SharedLibraryLoaderRef sll,
 		ServiceEnvironmentIFCRef env)
 		: ProviderIFCLoaderBase(sll, env) {}
 	virtual ~ProviderIFCLoader();
-	virtual void loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const;
+	virtual void loadIFCs(blocxx::Array<ProviderIFCBaseIFCRef>& ifcs) const;
 
 	/// Factory function
 	static ProviderIFCLoaderRef createProviderIFCLoader(

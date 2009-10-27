@@ -30,7 +30,7 @@
 #include "OW_config.h"
 
 #include "blocxx/Array.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Exception.hpp"
 #include "blocxx/FileSystem.hpp"
@@ -58,6 +58,7 @@ using std::cin;
 using std::cout;
 using std::cerr;
 using std::endl;
+using namespace blocxx;
 
 typedef OpenWBEM::PrivilegeManager::OpenFlags OpenFlags;
 
@@ -82,7 +83,7 @@ String get_string()
 {
 	std::string tmp;
 	cin >> tmp;
-	OW_ASSERT(cin);
+	BLOCXX_ASSERT(cin);
 	return String(tmp.c_str());
 }
 
@@ -123,7 +124,7 @@ OpenFlags get_open_flags()
 		}
 		else
 		{
-			OW_ASSERT(false);
+			BLOCXX_ASSERT(false);
 		}
 	}
 	return static_cast<OpenFlags>(flags);
@@ -184,7 +185,7 @@ PrivilegeManager::ReadDirOptions get_read_dir_opt()
 	}
 	else
 	{
-		OW_ASSERT(false);
+		BLOCXX_ASSERT(false);
 		// Not normally reached.
 		return PrivilegeManager::E_KEEP_SPECIAL;
 	}
@@ -250,14 +251,14 @@ int main_aux(int argc, char * * argv)
 	char cwdbuf[BUFSZ + 1];
 	std::string config_dir, app_name, user_name, tmp;
 	cin >> tmp >> config_dir;
-	OW_ASSERT(cin);
-	OW_ASSERT(tmp == "config_dir");
+	BLOCXX_ASSERT(cin);
+	BLOCXX_ASSERT(tmp == "config_dir");
 	cin >> tmp >> app_name;
-	OW_ASSERT(cin);
-	OW_ASSERT(tmp == "app_name");
+	BLOCXX_ASSERT(cin);
+	BLOCXX_ASSERT(tmp == "app_name");
 	cin >> tmp >> user_name;
-	OW_ASSERT(cin);
-	OW_ASSERT(tmp == "user_name");
+	BLOCXX_ASSERT(cin);
+	BLOCXX_ASSERT(tmp == "user_name");
 
 	ConfigOpts::installed_owlibexec_dir =
 		"/montest-689acb0e1ec89f45-7085a2a1780f5f42/libexec/openwbem";

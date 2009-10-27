@@ -47,58 +47,58 @@ namespace OW_NAMESPACE
 class RemoteInstanceProvider : public InstanceProviderIFC
 {
 public:
-	RemoteInstanceProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
+	RemoteInstanceProvider(const ProviderEnvironmentIFCRef& env, const blocxx::String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
 		bool alwaysSendCredentials, bool useConnectionCredentials);
 	virtual ~RemoteInstanceProvider();
 
 	virtual void enumInstanceNames(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
-			const String& className,
+			const blocxx::String& ns,
+			const blocxx::String& className,
 			CIMObjectPathResultHandlerIFC& result,
 			const CIMClass& cimClass );
 
 	virtual void enumInstances(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
-			const String& className,
+			const blocxx::String& ns,
+			const blocxx::String& className,
 			CIMInstanceResultHandlerIFC& result,
 			WBEMFlags::ELocalOnlyFlag localOnly,
 			WBEMFlags::EDeepFlag deep,
 			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList,
+			const blocxx::StringArray* propertyList,
 			const CIMClass& requestedClass,
 			const CIMClass& cimClass );
 
 	virtual CIMInstance getInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMObjectPath& instanceName,
 			WBEMFlags::ELocalOnlyFlag localOnly,
 			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList,
+			const blocxx::StringArray* propertyList,
 			const CIMClass& cimClass );
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual CIMObjectPath createInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMInstance& cimInstance );
 
 	virtual void modifyInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMInstance& modifiedInstance,
 			const CIMInstance& previousInstance,
 			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-			const StringArray* propertyList,
+			const blocxx::StringArray* propertyList,
 			const CIMClass& theClass);
 
 	virtual void deleteInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMObjectPath& cop);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
@@ -109,7 +109,7 @@ public:
 
 private:
 	ClientCIMOMHandleConnectionPoolRef m_pool;
-	String m_url;
+	blocxx::String m_url;
 	bool m_alwaysSendCredentials;
 	bool m_useConnectionCredentials;
 };

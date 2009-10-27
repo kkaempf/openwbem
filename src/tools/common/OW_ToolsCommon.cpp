@@ -40,6 +40,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace blocxx;
 
 namespace OW_NAMESPACE
 {

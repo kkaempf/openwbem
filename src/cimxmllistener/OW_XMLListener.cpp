@@ -45,13 +45,13 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_ServiceIFCNames.hpp"
 
 namespace OW_NAMESPACE
 {
 
 using std::ostream;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 XMLListener::XMLListener(const CIMListenerCallbackRef& callback)
 : RequestHandlerIFCXML(),  m_callback(callback)

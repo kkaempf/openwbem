@@ -38,6 +38,11 @@
 #include "OW_config.h"
 #include <blocxx/System.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_System.hpp is deprecated, use "blocxx/System.hpp" instead.
 #endif	// _OW_SYSTEM_HPP_GUARD_
 

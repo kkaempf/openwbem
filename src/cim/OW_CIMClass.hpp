@@ -44,7 +44,7 @@
 #include "OW_CIMNULL.hpp"
 #include "OW_WBEMFlags.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -106,12 +106,12 @@ public:
 	 * In the future, this function will be changed to return a CIMName
 	 * @return The name of the parent CIM class of this CIMClass object.
 	 */
-	String getSuperClass() const;
+	blocxx::String getSuperClass() const;
 	/**
 	 * In the future, this function will be changed to return a CIMName
 	 * @return The name of the CIM class that declared the keys for this class.
 	 */
-	String getKeyClass() const;
+	blocxx::String getKeyClass() const;
 	/**
 	 * Set the name of the parent CIM class for this CIMClass object.
 	 * @param pname The name of the parent CIM class for this object.
@@ -324,7 +324,7 @@ public:
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_INCLUDE_CLASS_ORIGIN,
-		const StringArray& propertyList=StringArray(),
+		const blocxx::StringArray& propertyList = blocxx::StringArray(),
 		bool noProps=false) const;
 	/**
 	 * Create a CIMClass that contains properties from this CIMClass that
@@ -336,7 +336,7 @@ public:
 	 * @param includeClassOrigin	Include the class origin if this is true.
 	 * @return A new CIMClass constructed per the given parameters.
 	 */
-	CIMClass filterProperties(const StringArray& propertyList,
+	CIMClass filterProperties(const blocxx::StringArray& propertyList,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin) const;
 	/**
 	 * Return a list of all the properties that will be required to clone an
@@ -350,10 +350,10 @@ public:
 	 * @param requestedClass The class that was requested in enumInstances.
 	 * @return A list of properties that are requested based on the parameters.
 	 */
-	StringArray getCloneProps(
+	blocxx::StringArray getCloneProps(
 		WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EDeepFlag deep,
-		const StringArray* propertyList,
+		const blocxx::StringArray* propertyList,
 		const CIMClass& requestedClass) const;
 
 	/**
@@ -366,8 +366,8 @@ public:
 	 *		properties that can be returned.
 	 * @return A list of properties that are requested based on the parameters.
 	 */
-	StringArray getCloneProps(WBEMFlags::ELocalOnlyFlag localOnly,
-		const StringArray* propertyList) const;
+	blocxx::StringArray getCloneProps(WBEMFlags::ELocalOnlyFlag localOnly,
+		const blocxx::StringArray* propertyList) const;
 	//////////////////////////////////////////////////////////////////////
 	// CIMElement implementation
 	//////////////////////////////////////////////////////////////////////
@@ -376,7 +376,7 @@ public:
 	 * @return The name associated with this CIMClass object as an String
 	 * object.
 	 */
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 	/**
 	 * Set the name associated with this CIMClass object.
 	 * @param name	The new name for this CIMClass object.
@@ -396,17 +396,17 @@ public:
 	 * @return The MOF representation of this CIMClass object as an
 	 * String object.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 	/**
 	 * @return The string representation of this CIMClass. This yields the
 	 * same results as toMOF.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 
 	/**
 	 * @return true if this CIMClass in not a NULL object.
 	 */
-	OW_SAFE_BOOL_IMPL(CIMClass, COWIntrusiveReference<CLSData>, CIMClass::m_pdata, m_pdata)
+	BLOCXX_SAFE_BOOL_IMPL(CIMClass, blocxx::COWIntrusiveReference<CLSData>, CIMClass::m_pdata, m_pdata)
 
 private:
 
@@ -415,7 +415,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<CLSData> m_pdata;
+	blocxx::COWIntrusiveReference<CLSData> m_pdata;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

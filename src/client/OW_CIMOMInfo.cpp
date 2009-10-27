@@ -38,6 +38,7 @@
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 const String
 CIMOMInfo::operator[](const String& key) const

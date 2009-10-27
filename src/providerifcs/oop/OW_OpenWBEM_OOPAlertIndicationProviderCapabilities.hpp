@@ -62,10 +62,10 @@ public:
 	 *
 	 *  The namespaces for this provider registration. If this property is empty or NULL, all namespaces are implied. These are the source namespace for the indication, not the namespace of the registration.
 	 *
-	 * @return StringArray current NamespaceNames property value
+	 * @return blocxx::StringArray current NamespaceNames property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	StringArray getNamespaceNames() const
+	blocxx::StringArray getNamespaceNames() const
 	{
 		return getStringArrayProperty("NamespaceNames");
 	}
@@ -76,9 +76,9 @@ public:
 	 *
 	 *  The namespaces for this provider registration. If this property is empty or NULL, all namespaces are implied. These are the source namespace for the indication, not the namespace of the registration.
 	 *
-	 * @param StringArray new NamespaceNames property value
+	 * @param blocxx::StringArray new NamespaceNames property value
 	 */
-	void setNamespaceNames(const StringArray& v)
+	void setNamespaceNames(const blocxx::StringArray& v)
 	{
 		setStringArrayProperty("NamespaceNames", v);
 	}
@@ -100,10 +100,10 @@ public:
 	 *
 	 *  The CIM class names for the provider
 	 *
-	 * @return StringArray current ClassNames property value
+	 * @return blocxx::StringArray current ClassNames property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	StringArray getClassNames() const
+	blocxx::StringArray getClassNames() const
 	{
 		return getStringArrayProperty("ClassNames");
 	}
@@ -114,9 +114,9 @@ public:
 	 *
 	 *  The CIM class names for the provider
 	 *
-	 * @param StringArray new ClassNames property value
+	 * @param blocxx::StringArray new ClassNames property value
 	 */
-	void setClassNames(const StringArray& v)
+	void setClassNames(const blocxx::StringArray& v)
 	{
 		setStringArrayProperty("ClassNames", v);
 	}
@@ -141,7 +141,7 @@ public:
 	 * @return String current InstanceID property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	String getInstanceID() const
+	blocxx::String getInstanceID() const
 	{
 		return getStringProperty("InstanceID");
 	}
@@ -154,7 +154,7 @@ public:
 	 *
 	 * @param String new InstanceID property value
 	 */
-	void setInstanceID(const String& v)
+	void setInstanceID(const blocxx::String& v)
 	{
 		setStringProperty("InstanceID", v);
 	}

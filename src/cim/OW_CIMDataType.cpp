@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_CIMDataType.hpp"
 #include "blocxx/StringBuffer.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "blocxx/StrictWeakOrdering.hpp"
 #include "blocxx/COWIntrusiveCountableBase.hpp"
@@ -45,6 +45,8 @@ namespace OW_NAMESPACE
 {
 
 using std::streambuf;
+using namespace blocxx;
+
 //////////////////////////////////////////////////////////////////////////////
 struct CIMDataType::DTData : public COWIntrusiveCountableBase
 {
@@ -96,7 +98,7 @@ CIMDataType::CIMDataType(CIMNULL_t) :
 CIMDataType::CIMDataType(CIMDataType::Type type) :
 	CIMBase(), m_pdata(new DTData)
 {
-	OW_ASSERT(type >= CIMNULL && type < MAXDATATYPE);
+	BLOCXX_ASSERT(type >= CIMNULL && type < MAXDATATYPE);
 	m_pdata->m_type = type;
 	m_pdata->m_numberOfElements = 1;
 	m_pdata->m_sizeRange = SIZE_SINGLE;
@@ -105,7 +107,7 @@ CIMDataType::CIMDataType(CIMDataType::Type type) :
 CIMDataType::CIMDataType(CIMDataType::Type type, Int32 size) :
 	CIMBase(), m_pdata(new DTData)
 {
-	OW_ASSERT(type >= CIMNULL && type < MAXDATATYPE);
+	BLOCXX_ASSERT(type >= CIMNULL && type < MAXDATATYPE);
 	m_pdata->m_type = type;
 	m_pdata->m_numberOfElements = (size < 1) ? -1 : size;
 	m_pdata->m_sizeRange = m_pdata->m_numberOfElements >= 1 ? SIZE_LIMITED

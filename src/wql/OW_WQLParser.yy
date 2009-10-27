@@ -57,6 +57,7 @@ void owwqlerror(OpenWBEM::WQL::ParseError* p_err, const char* s);
 
 using namespace OpenWBEM;
 using namespace OpenWBEM::WQL;
+using namespace blocxx;
 
 %}
 
@@ -209,23 +210,23 @@ int owwqllex(OpenWBEM::WQL::ParseError* p_err);
 	OpenWBEM::WQL::stmt* pstmt;
 	OpenWBEM::WQL::optSemicolon* poptSemicolon;
 	OpenWBEM::WQL::insertStmt* pinsertStmt;
-	OpenWBEM::List<OpenWBEM::WQL::targetEl*>* ptargetList;
-	OpenWBEM::List<OpenWBEM::String*>* pcolumnList;
+	blocxx::List<OpenWBEM::WQL::targetEl*>* ptargetList;
+	blocxx::List<blocxx::String*>* pcolumnList;
 	OpenWBEM::WQL::insertRest* pinsertRest;
 	OpenWBEM::WQL::deleteStmt* pdeleteStmt;
-	OpenWBEM::List<OpenWBEM::WQL::updateTargetEl*>* pupdateTargetList;
+	blocxx::List<OpenWBEM::WQL::updateTargetEl*>* pupdateTargetList;
 	OpenWBEM::WQL::updateStmt* pupdateStmt;
 	OpenWBEM::WQL::selectStmt* pselectStmt;
 	OpenWBEM::WQL::exprSeq* pexprSeq;
 	OpenWBEM::WQL::optDistinct* poptDistinct;
-	OpenWBEM::List<OpenWBEM::WQL::sortby*>* psortbyList;
+	blocxx::List<OpenWBEM::WQL::sortby*>* psortbyList;
 	OpenWBEM::WQL::sortClause* psortClause;
 	OpenWBEM::WQL::optSortClause* poptSortClause;
 	OpenWBEM::WQL::sortby* psortby;
-	OpenWBEM::List<OpenWBEM::String*>* pnameList;
+	blocxx::List<blocxx::String*>* pnameList;
 	OpenWBEM::WQL::optGroupClause* poptGroupClause;
 	OpenWBEM::WQL::optHavingClause* poptHavingClause;
-	OpenWBEM::List<OpenWBEM::WQL::tableRef*>* pfromList;
+	blocxx::List<OpenWBEM::WQL::tableRef*>* pfromList;
 	OpenWBEM::WQL::optFromClause* poptFromClause;
 	OpenWBEM::WQL::tableRef* ptableRef;
 	OpenWBEM::WQL::joinedTable* pjoinedTable;
@@ -235,7 +236,7 @@ int owwqllex(OpenWBEM::WQL::ParseError* p_err);
 	OpenWBEM::WQL::relationExpr* prelationExpr;
 	OpenWBEM::WQL::optWhereClause* poptWhereClause;
 	OpenWBEM::WQL::rowExpr* prowExpr;
-	OpenWBEM::List<OpenWBEM::WQL::aExpr*>* prowList;
+	blocxx::List<OpenWBEM::WQL::aExpr*>* prowList;
 	OpenWBEM::WQL::rowDescriptor* prowDescriptor;
 	OpenWBEM::WQL::aExpr* paExpr;
 	OpenWBEM::WQL::bExpr* pbExpr;
@@ -252,7 +253,7 @@ int owwqllex(OpenWBEM::WQL::ParseError* p_err);
 	OpenWBEM::WQL::targetEl* ptargetEl;
 	OpenWBEM::WQL::updateTargetEl* pupdateTargetEl;
 	OpenWBEM::WQL::aExprConst* paExprConst;
-	OpenWBEM::String* pstring;
+	blocxx::String* pstring;
 }
 
 %type <pstmt> stmt

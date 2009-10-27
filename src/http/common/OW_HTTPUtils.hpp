@@ -45,7 +45,7 @@
 namespace OW_NAMESPACE
 {
 
-typedef Map<String, String> HTTPHeaderMap;
+typedef blocxx::Map<blocxx::String, blocxx::String> HTTPHeaderMap;
 namespace HTTPUtils
 {
 	extern OW_HTTP_API const char* const HeaderValue_true;
@@ -59,7 +59,7 @@ namespace HTTPUtils
 	 * @param istr A istream& to read the headers from
 	 * @return true if no errors occurred, false if an error occurred.
 	 */
-	OW_HTTP_API bool parseHeader(HTTPHeaderMap& map, Array<String>& array,
+	OW_HTTP_API bool parseHeader(HTTPHeaderMap& map, blocxx::Array<blocxx::String>& array,
 									std::istream& istr);
 	/**
 	 * Read from in input stream, parse HTTP headers into a <String,
@@ -73,66 +73,66 @@ namespace HTTPUtils
 	 * Get the date (for http headers)
 	 * @return a String representing the current date/time
 	 */
-	OW_HTTP_API String date( void );
+	OW_HTTP_API blocxx::String date( void );
 	/**
 	 * Return a descriptive string associated with a HTTP status code.
 	 * @param code the status code to interpret.
 	 * @return a String represetation of code
 	 */
-	OW_HTTP_API String status2String(int code);
+	OW_HTTP_API blocxx::String status2String(int code);
 	/**
 	 * Returns a two digit sequence for header counting.
 	 * @return String containing a two digit number
 	 */
-	OW_HTTP_API String getCounterStr();
+	OW_HTTP_API blocxx::String getCounterStr();
 	/**
 	 * Decode Base64 encoded arg
 	 * @throws (Base64FormatException)
 	 */
-	OW_HTTP_API String base64Decode(const String& arg);
+	OW_HTTP_API blocxx::String base64Decode(const blocxx::String& arg);
 	/**
 	 * Decode Base64 encoded arg
 	 * @param src NULL-terminated string to be encoded
 	 * @throws (Base64FormatException)
 	 */
-	OW_HTTP_API Array<char> base64Decode(const char* src);
+	OW_HTTP_API blocxx::Array<char> base64Decode(const char* src);
 	/**
 	 * Encode src in Base64
 	 */
-	OW_HTTP_API String base64Encode(const String& arg);
+	OW_HTTP_API blocxx::String base64Encode(const blocxx::String& arg);
 	/**
 	 * Encode src in Base64
 	 * @param src NULL-terminated string to be encoded
 	 */
-	OW_HTTP_API String base64Encode(const char* src);
+	OW_HTTP_API blocxx::String base64Encode(const char* src);
 	/**
 	 * @param src pointer to data to be encoded.  The data may contain any
 	 * value, including 0.
 	 * @param len The length of the data to be encoded.
 	 */
-	OW_HTTP_API String base64Encode(const UInt8* src, size_t len);
+	OW_HTTP_API blocxx::String base64Encode(const blocxx::UInt8* src, size_t len);
 #ifndef OW_DISABLE_DIGEST
 	/* calculate H(A1) as per HTTP Digest spec */
 	OW_HTTP_API void DigestCalcHA1(
-					const String &sAlg,
-					const String &sUserName,
-					const String &sRealm,
-					const String &sPassword,
-					const String &sNonce,
-					const String &sCNonce,
-					String &sSessionKey
+					const blocxx::String &sAlg,
+					const blocxx::String &sUserName,
+					const blocxx::String &sRealm,
+					const blocxx::String &sPassword,
+					const blocxx::String &sNonce,
+					const blocxx::String &sCNonce,
+					blocxx::String &sSessionKey
 					  );
 	/* calculate request-digest/response-digest as per HTTP Digest spec */
 	OW_HTTP_API void DigestCalcResponse(
-					const String &sHA1,			/* H(A1) */
-					const String &sNonce,		/* nonce from server */
-					const String &sNonceCount,	/* 8 hex digits */
-					const String &sCNonce,		/* client nonce */
-					const String &sQop,			/* qop-value: "", "auth", "auth-int" */
-					const String &sMethod,		/* method from the request */
-					const String &sDigestUri,	/* requested URL */
-					const String &sHEntity,		/* H(entity body) if qop="auth-int" */
-					String &Response
+					const blocxx::String &sHA1,			/* H(A1) */
+					const blocxx::String &sNonce,		/* nonce from server */
+					const blocxx::String &sNonceCount,	/* 8 hex digits */
+					const blocxx::String &sCNonce,		/* client nonce */
+					const blocxx::String &sQop,			/* qop-value: "", "auth", "auth-int" */
+					const blocxx::String &sMethod,		/* method from the request */
+					const blocxx::String &sDigestUri,	/* requested URL */
+					const blocxx::String &sHEntity,		/* H(entity body) if qop="auth-int" */
+					blocxx::String &Response
 						   );
 #endif
 	/**
@@ -142,23 +142,23 @@ namespace HTTPUtils
 	 * @return true if the headers contain the key
 	 */
 	OW_HTTP_API bool headerHasKey(const HTTPHeaderMap& headers,
-		const String& key);
+		const blocxx::String& key);
 	/**
 	 * Get a value (based on a key/value pair) from the http headers
 	 * @param headers A Map<String, String> containing the headers.
 	 * @param key The key to look for.
 	 * @return the value associated with the key
 	 */
-	OW_HTTP_API String getHeaderValue(const HTTPHeaderMap& headers,
-		const String& key);
+	OW_HTTP_API blocxx::String getHeaderValue(const HTTPHeaderMap& headers,
+		const blocxx::String& key);
 	/**
 	 * Add a HTTP header
 	 * @param headers a Array<String> containing the outgoing headers.
 	 * @param key the key for the header (left of the ':')
 	 * @param value the value for the header (right of the ':')
 	 */
-	OW_HTTP_API void addHeader(Array<String>& headers,
-		const String& key, const String& value);
+	OW_HTTP_API void addHeader(blocxx::Array<blocxx::String>& headers,
+		const blocxx::String& key, const blocxx::String& value);
 	/**
 	 * Read from an input stream, until the end of the entity is reached.
 	 * This is usefull when using a HTTPChunkedIStream or
@@ -184,8 +184,8 @@ namespace HTTPUtils
 	 * @param name The name gets assigned here.
 	 * @param password the password gets assigned here.
 	 */
-	OW_HTTP_API void decodeBasicCreds(const String& info, String& name,
-		String& password);
+	OW_HTTP_API void decodeBasicCreds(const blocxx::String& info, blocxx::String& name,
+		blocxx::String& password);
 
 	OW_HTTP_API bool buildMap(HTTPHeaderMap& map, std::istream& istr);
 	/**
@@ -194,7 +194,7 @@ namespace HTTPUtils
 	 * @param c The char to escape
 	 * @return The escaped char
 	 */
-	OW_HTTP_API String escapeCharForURL(char c);
+	OW_HTTP_API blocxx::String escapeCharForURL(char c);
 
 	OW_DECLARE_APIEXCEPTION(UnescapeCharForURL, OW_HTTP_API);
 	/**
@@ -213,14 +213,14 @@ namespace HTTPUtils
 	 * @param input The string to escape
 	 * @return The escaped string
 	 */
-	OW_HTTP_API String escapeForURL(const String& input);
+	OW_HTTP_API blocxx::String escapeForURL(const blocxx::String& input);
 	/**
 	 * Apply the standard URI [RFC 2396, section 2] unescaping mechanism to
 	 * the string input, using the ""%" HEX HEX" convention)
 	 * @param input The string to unescape
 	 * @return The unescaped string
 	 */
-	OW_HTTP_API String unescapeForURL(const String& input);
+	OW_HTTP_API blocxx::String unescapeForURL(const blocxx::String& input);
 };
 
 } // end namespace OW_NAMESPACE

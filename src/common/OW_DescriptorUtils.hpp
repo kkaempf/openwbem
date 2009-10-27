@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/DescriptorUtils.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_DescriptorUtils.hpp is deprecated, use "blocxx/DescriptorUtils.hpp" instead.
 #endif
 

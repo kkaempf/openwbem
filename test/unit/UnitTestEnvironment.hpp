@@ -38,9 +38,8 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/Map.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_CIMInstance.hpp"
 #include "blocxx/CerrLogger.hpp"
 #include "OW_ConfigFile.hpp"
@@ -51,17 +50,17 @@ using namespace OpenWBEM;
 class TestEnvironment : public ServiceEnvironmentIFC
 {
 public:
-	virtual String getConfigItem(const String &name, const String& defRetVal) const
+	virtual blocxx::String getConfigItem(const blocxx::String &name, const blocxx::String& defRetVal) const
 	{
 		return ConfigFile::getConfigItem(config, name, defRetVal);
 	}
-	virtual void setConfigItem(const String &item, const String &value, EOverwritePreviousFlag overwritePrevious)
+	virtual void setConfigItem(const blocxx::String &item, const blocxx::String &value, EOverwritePreviousFlag overwritePrevious)
 	{
 		ConfigFile::setConfigItem(config, item, value, ConfigFile::EOverwritePreviousFlag(overwritePrevious));
 	}
 
-	virtual StringArray getMultiConfigItem(const String &itemName,
-		const StringArray& defRetVal, const char* tokenizeSeparator) const
+	virtual blocxx::StringArray getMultiConfigItem(const blocxx::String &itemName,
+		const blocxx::StringArray& defRetVal, const char* tokenizeSeparator) const
 	{
 		return ConfigFile::getMultiConfigItem(config, itemName, defRetVal, tokenizeSeparator);
 	}

@@ -53,6 +53,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_CIMPropertyTestCases,"OW_CIMProperty");
 
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void OW_CIMPropertyTestCases::setUp()
 {

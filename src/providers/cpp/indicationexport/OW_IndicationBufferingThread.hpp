@@ -44,7 +44,7 @@
 namespace OW_NAMESPACE
 {
 
-class IndicationBufferingThread : public Thread
+class IndicationBufferingThread : public blocxx::Thread
 {
 public:
 	// Parameters that control how to buffer indications so that
@@ -101,7 +101,7 @@ public:
 
 	void shutdownThreadPool();
 
-	virtual Int32 run();
+	virtual blocxx::Int32 run();
 
 private:
 	void ctor(
@@ -114,15 +114,15 @@ private:
 	class BufferingMap;
 
 	void processIndication(
-		ExportIndicationArgs const &, BufferingMap &, DateTime now);
+		ExportIndicationArgs const &, BufferingMap &, blocxx::DateTime now);
 
 	IndicationBurstExporterRef m_burstExporter;
 	blocxx::ClockRef m_clock;
 	blocxx::MTSourceIfc<ExportIndicationArgs> * m_requestSource; // reference
-	Real32 m_bufferingWaitSeconds;
-	Real32 m_maxBufferingDelaySeconds;
-	UInt32 m_maxBufferSize;
-	UInt32 m_maxBufferedDestinations;
+	blocxx::Real32 m_bufferingWaitSeconds;
+	blocxx::Real32 m_maxBufferingDelaySeconds;
+	blocxx::UInt32 m_maxBufferSize;
+	blocxx::UInt32 m_maxBufferedDestinations;
 };
 
 } // namespace

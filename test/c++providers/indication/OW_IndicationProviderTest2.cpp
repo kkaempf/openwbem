@@ -43,6 +43,7 @@
 #include "blocxx/Condition.hpp"
 #include "OW_WQLCompile.hpp"
 #include "blocxx/Reference.hpp"
+#include "blocxx/Logger.hpp"
 
 #include <algorithm>
 
@@ -51,6 +52,7 @@
 
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 // anonymous namespace to prevent library symbol conflicts
 namespace
@@ -180,13 +182,13 @@ public:
 		bool firstActivation)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, Format("IndicationProviderTest2::activateFilter filter = %1, eventType = %2, nameSpace = %3, firstActivation = %4", filter.toString(), eventType, nameSpace, firstActivation));
+		BLOCXX_LOG_DEBUG(logger, Format("IndicationProviderTest2::activateFilter filter = %1, eventType = %2, nameSpace = %3, firstActivation = %4", filter.toString(), eventType, nameSpace, firstActivation));
 
 		NonRecursiveMutexLock l(m_mtx);
 		// create the thread now that someone is listening for our events.
 		if (m_threadStarted == false && !m_thread)
 		{
-			OW_LOG_DEBUG(logger, "IndicationProviderTest2::activateFilter creating helper thread");
+			BLOCXX_LOG_DEBUG(logger, "IndicationProviderTest2::activateFilter creating helper thread");
 			m_thread = new TestProviderThread(this, env->clone());
 		}
 		// eventType contains the name of the indication the listener subscribed to.
@@ -230,7 +232,7 @@ public:
 		// start the thread now that someone is listening for our events.
 		if (m_threadStarted == false)
 		{
-			OW_LOG_DEBUG(logger, "IndicationProviderTest2::activateFilter starting helper thread");
+			BLOCXX_LOG_DEBUG(logger, "IndicationProviderTest2::activateFilter starting helper thread");
 			m_thread->start();
 			m_threadStarted = true;
 		}
@@ -245,18 +247,18 @@ public:
 		bool lastActivation)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, Format("IndicationProviderTest2::deActivateFilter filter = %1, eventType = %2, nameSpace = %3, lastActivation = %4", filter.toString(), eventType, nameSpace, lastActivation));
+		BLOCXX_LOG_DEBUG(logger, Format("IndicationProviderTest2::deActivateFilter filter = %1, eventType = %2, nameSpace = %3, lastActivation = %4", filter.toString(), eventType, nameSpace, lastActivation));
 
 		NonRecursiveMutexLock l(m_mtx);
 		// terminate the thread if no one is listening for our events.
 		if (lastActivation && m_thread && m_threadStarted == true)
 		{
-			OW_LOG_DEBUG(logger, "IndicationProviderTest2::deActivateFilter stopping helper thread");
+			BLOCXX_LOG_DEBUG(logger, "IndicationProviderTest2::deActivateFilter stopping helper thread");
 			m_thread->shutdown();
 			m_thread->join();
 			m_thread = 0;
 			m_threadStarted = false;
-			OW_LOG_DEBUG(logger, "IndicationProviderTest2::deActivateFilter helper thread stopped");
+			BLOCXX_LOG_DEBUG(logger, "IndicationProviderTest2::deActivateFilter helper thread stopped");
 			return;
 		}
 
@@ -380,7 +382,7 @@ public:
 		const CIMClass &cimClass)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "IndicationProviderTest2::getInstance");
+		BLOCXX_LOG_DEBUG(logger, "IndicationProviderTest2::getInstance");
 		Int32 id = 0;
 		try
 		{
@@ -414,7 +416,7 @@ public:
 		const CIMClass &cimClass)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "IndicationProviderTest2::enumInstances");
+		BLOCXX_LOG_DEBUG(logger, "IndicationProviderTest2::enumInstances");
 		// m_insts could be accessed from multiple threads
 		NonRecursiveMutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
@@ -431,7 +433,7 @@ public:
 		const CIMClass &cimClass)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "IndicationProviderTest2::enumInstanceNames");
+		BLOCXX_LOG_DEBUG(logger, "IndicationProviderTest2::enumInstanceNames");
 		// m_insts could be accessed from multiple threads
 		NonRecursiveMutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
@@ -455,7 +457,7 @@ public:
 	virtual void initialize(const ProviderEnvironmentIFCRef& env)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "IndicationProviderTest2::initialize - creating the thread");
+		BLOCXX_LOG_DEBUG(logger, "IndicationProviderTest2::initialize - creating the thread");
 		NonRecursiveMutexLock l(m_mtx);
 		m_threadStarted = false;
 	}

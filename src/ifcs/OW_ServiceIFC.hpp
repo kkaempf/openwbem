@@ -48,7 +48,7 @@ namespace OW_NAMESPACE
 {
 
 // This class is a base interface for any services for Openwbem.
-class OW_COMMON_API ServiceIFC : virtual public IntrusiveCountableBase
+class OW_COMMON_API ServiceIFC : virtual public blocxx::IntrusiveCountableBase
 {
 public:
 	virtual ~ServiceIFC();
@@ -58,7 +58,7 @@ public:
 	 * all the services.
 	 * The default is to have no name, in that case, no other service can depend on it.
 	 */
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 
 	/**
 	 * Get the list of services this service depends on. The returned services will be started before and
@@ -66,7 +66,7 @@ public:
 	 * cimom startup will fail.
 	 * The default is to have no dependencies.
 	 */
-	virtual StringArray getDependencies() const;
+	virtual blocxx::StringArray getDependencies() const;
 
 	/**
 	 * Get the list of services that depend on this service which don't return this service's name from
@@ -78,7 +78,7 @@ public:
 	 * specify the name of this service as a dependency.
 	 * The default is to have no dependent services.
 	 */
-	virtual StringArray getDependentServices() const;
+	virtual blocxx::StringArray getDependentServices() const;
 
 	/**
 	 * init() will be called to give the derived class an opportunity to initialize itself.

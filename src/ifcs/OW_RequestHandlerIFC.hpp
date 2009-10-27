@@ -80,7 +80,7 @@ public:
 	 * be sent back, or osrtError?)
 	 * @return true if an error occurred.
 	 */
-	bool hasError(Int32& errCode, String& errDescr);
+	bool hasError(blocxx::Int32& errCode, blocxx::String& errDescr);
 	bool hasError() { return m_hasError; }
 	/**
 	 * What options are available for a particular path?
@@ -89,10 +89,10 @@ public:
 	void options(CIMFeatures& cf, OperationContext& context)
 		{  doOptions(cf, context); }
 	virtual RequestHandlerIFC* clone() const = 0;
-	virtual StringArray getSupportedContentTypes() const = 0;
-	virtual String getContentType() const = 0;
-	String getCIMError() const { return m_cimError; }
-	void setError(Int32 errorCode, const String& errorDescription)
+	virtual blocxx::StringArray getSupportedContentTypes() const = 0;
+	virtual blocxx::String getContentType() const = 0;
+	blocxx::String getCIMError() const { return m_cimError; }
+	void setError(blocxx::Int32 errorCode, const blocxx::String& errorDescription)
 	{
 		m_hasError = true;
 		m_errorCode = errorCode;
@@ -109,9 +109,9 @@ protected:
 
 	void setEnvironment(const ServiceEnvironmentIFCRef& env);
 	ServiceEnvironmentIFCRef getEnvironment() const;
-	String m_cimError;
-	String getHost();
-	String m_cachedHost;
+	blocxx::String m_cimError;
+	blocxx::String getHost();
+	blocxx::String m_cachedHost;
 
 private:
 
@@ -138,8 +138,8 @@ private:
 
 	// set these through setError() and clearError()
 	bool m_hasError;
-	Int32 m_errorCode;
-	String m_errorDescription;
+	blocxx::Int32 m_errorCode;
+	blocxx::String m_errorDescription;
 
 #ifdef OW_WIN32
 #pragma warning (push)

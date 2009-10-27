@@ -34,10 +34,10 @@
 
 #include "OW_config.h"
 #include "OW_SimpleAuthorizer2.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_UserInfo.hpp"
 #include "OW_OperationContext.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_CIMClass.hpp"
@@ -55,6 +55,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
@@ -79,7 +80,7 @@ bool
 SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 	const ServiceEnvironmentIFCRef& env, OperationContext& context)
 {
-	OW_ASSERT(opType == ACCESS_READ || opType == ACCESS_WRITE
+	BLOCXX_ASSERT(opType == ACCESS_READ || opType == ACCESS_WRITE
 		|| opType == ACCESS_READWRITE);
 
 	UserInfo userInfo = context.getUserInfo();
@@ -99,7 +100,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 			env->getConfigItem(ConfigOpts::ACL_SUPERUSER_opt);
 		if (superUser.equalsIgnoreCase(userInfo.getUserName()))
 		{
-			OW_LOG_DEBUG2(lgr, "User is SuperUser: checkAccess returning.");
+			BLOCXX_LOG_DEBUG2(lgr, "User is SuperUser: checkAccess returning.");
 			return true;
 		}
 	}
@@ -122,7 +123,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 			}
 			catch(CIMException&)
 			{
-				OW_LOG_DEBUG2(lgr, "OpenWBEM_UserACL class non-existent in /root/security. ACLs disabled");
+				BLOCXX_LOG_DEBUG2(lgr, "OpenWBEM_UserACL class non-existent in /root/security. ACLs disabled");
 				return true;
 			}
 
@@ -199,7 +200,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 		}
 		catch(const CIMException& ce)
 		{
-			OW_LOG_DEBUG(lgr, Format("Caught exception: %1 in AccessMgr::checkAccess.", ce));
+			BLOCXX_LOG_DEBUG(lgr, Format("Caught exception: %1 in AccessMgr::checkAccess.", ce));
 			ci.setNull();
 		}
 

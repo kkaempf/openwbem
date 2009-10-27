@@ -42,7 +42,7 @@
 #include "blocxx/Array.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMNULL.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -63,8 +63,8 @@ public:
 	 * @return An CIMValue object of the specified data type with the
 	 * specified value.
 	 */
-	static CIMValue createSimpleValue(const String& cimtype,
-		const String& value);
+	static CIMValue createSimpleValue(const blocxx::String& cimtype,
+		const blocxx::String& value);
 	/**
 	 * Create a new NULL CIMValue object without any data or implementation.
 	 */
@@ -78,7 +78,7 @@ public:
 	 * Create a new CIMValue that represents a boolean data type.
 	 * @param x The boolean value this object will contain.
 	 */
-	explicit CIMValue(Bool x);
+	explicit CIMValue(blocxx::Bool x);
 	/**
 	 * Create a new CIMValue that represents a boolean data type.
 	 * @param x The boolean value this object will contain.
@@ -88,62 +88,62 @@ public:
 	 * Create a new CIMValue that represents a uint8 data type.
 	 * @param x The uint8 value this object will contain.
 	 */
-	explicit CIMValue(UInt8 x);
+	explicit CIMValue(blocxx::UInt8 x);
 	/**
 	 * Create a new CIMValue that represents a sint8 data type.
 	 * @param x The sint8 value this object will contain.
 	 */
-	explicit CIMValue(Int8 x);
+	explicit CIMValue(blocxx::Int8 x);
 	/**
 	 * Create a new CIMValue that represents a uint16 data type.
 	 * @param x The uint16 value this object will contain.
 	 */
-	explicit CIMValue(UInt16 x);
+	explicit CIMValue(blocxx::UInt16 x);
 	/**
 	 * Create a new CIMValue that represents a sint16 data type.
 	 * @param x The sint16 value this object will contain.
 	 */
-	explicit CIMValue(Int16 x);
+	explicit CIMValue(blocxx::Int16 x);
 	/**
 	 * Create a new CIMValue that represents a uint32 data type.
 	 * @param x The uint32 value this object will contain.
 	 */
-	explicit CIMValue(UInt32 x);
+	explicit CIMValue(blocxx::UInt32 x);
 	/**
 	 * Create a new CIMValue that represents a sint32 data type.
 	 * @param x The sint32 value this object will contain.
 	 */
-	explicit CIMValue(Int32 x);
+	explicit CIMValue(blocxx::Int32 x);
 	/**
 	 * Create a new CIMValue that represents a uint64 data type.
 	 * @param x The uint64 value this object will contain.
 	 */
-	explicit CIMValue(UInt64 x);
+	explicit CIMValue(blocxx::UInt64 x);
 	/**
 	 * Create a new CIMValue that represents a sint64 data type.
 	 * @param x The sint64 value this object will contain.
 	 */
-	explicit CIMValue(Int64 x);
+	explicit CIMValue(blocxx::Int64 x);
 	/**
 	 * Create a new CIMValue that represents a real32 data type.
 	 * @param x The real32 value this object will contain.
 	 */
-	explicit CIMValue(Real32 x);
+	explicit CIMValue(blocxx::Real32 x);
 	/**
 	 * Create a new CIMValue that represents a real64 data type.
 	 * @param x The boolean value this object will contain.
 	 */
-	explicit CIMValue(Real64 x);
+	explicit CIMValue(blocxx::Real64 x);
 	/**
 	 * Create a new CIMValue that represents a char16 data type.
 	 * @param x The char16 value this object will contain.
 	 */
-	explicit CIMValue(const Char16& x);
+	explicit CIMValue(const blocxx::Char16& x);
 	/**
 	 * Create a new CIMValue that represents a string data type.
 	 * @param x The string value this object will contain.
 	 */
-	explicit CIMValue(const String& x);
+	explicit CIMValue(const blocxx::String& x);
 	/**
 	 * Create a new CIMValue that represents a string data type.
 	 * @param x The string value this object will contain.
@@ -173,67 +173,67 @@ public:
 	 * Create a new CIMValue that represents a boolean array data type.
 	 * @param x The boolean array this object will contain.
 	 */
-	explicit CIMValue(const BoolArray& x);
+	explicit CIMValue(const blocxx::BoolArray& x);
 	/**
 	 * Create a new CIMValue that represents a char16 array data type.
 	 * @param x The char16 array this object will contain.
 	 */
-	explicit CIMValue(const Char16Array& x);
+	explicit CIMValue(const blocxx::Char16Array& x);
 	/**
 	 * Create a new CIMValue that represents a uint8 array data type.
 	 * @param x The uint8 array this object will contain.
 	 */
-	explicit CIMValue(const UInt8Array& x);
+	explicit CIMValue(const blocxx::UInt8Array& x);
 	/**
 	 * Create a new CIMValue that represents a sint8 array data type.
 	 * @param x The sint8 array this object will contain.
 	 */
-	explicit CIMValue(const Int8Array& x);
+	explicit CIMValue(const blocxx::Int8Array& x);
 	/**
 	 * Create a new CIMValue that represents a uint16 array data type.
 	 * @param x The uint16 array this object will contain.
 	 */
-	explicit CIMValue(const UInt16Array& x);
+	explicit CIMValue(const blocxx::UInt16Array& x);
 	/**
 	 * Create a new CIMValue that represents a sint16 array data type.
 	 * @param x The sint16 array this object will contain.
 	 */
-	explicit CIMValue(const Int16Array& x);
+	explicit CIMValue(const blocxx::Int16Array& x);
 	/**
 	 * Create a new CIMValue that represents a uint32 array data type.
 	 * @param x The uint32 array this object will contain.
 	 */
-	explicit CIMValue(const UInt32Array& x);
+	explicit CIMValue(const blocxx::UInt32Array& x);
 	/**
 	 * Create a new CIMValue that represents a sint32 array data type.
 	 * @param x The sint32 array this object will contain.
 	 */
-	explicit CIMValue(const Int32Array& x);
+	explicit CIMValue(const blocxx::Int32Array& x);
 	/**
 	 * Create a new CIMValue that represents a uint64 array data type.
 	 * @param x The uint64 array this object will contain.
 	 */
-	explicit CIMValue(const UInt64Array& x);
+	explicit CIMValue(const blocxx::UInt64Array& x);
 	/**
 	 * Create a new CIMValue that represents a sint64 array data type.
 	 * @param x The sint64 array this object will contain.
 	 */
-	explicit CIMValue(const Int64Array& x);
+	explicit CIMValue(const blocxx::Int64Array& x);
 	/**
 	 * Create a new CIMValue that represents a real32 array data type.
 	 * @param x The real32 array this object will contain.
 	 */
-	explicit CIMValue(const Real64Array& x);
+	explicit CIMValue(const blocxx::Real64Array& x);
 	/**
 	 * Create a new CIMValue that represents a real64 array data type.
 	 * @param x The real64 array this object will contain.
 	 */
-	explicit CIMValue(const Real32Array& x);
+	explicit CIMValue(const blocxx::Real32Array& x);
 	/**
 	 * Create a new CIMValue that represents a string array data type.
 	 * @param x The string array this object will contain.
 	 */
-	explicit CIMValue(const StringArray& x);
+	explicit CIMValue(const blocxx::StringArray& x);
 	/**
 	 * Create a new CIMValue that represents a CIM datetime array data type.
 	 * @param x The datetime array this object will contain.
@@ -270,59 +270,59 @@ public:
 	 * @return The size of the array this CIMValue contains if it contains
 	 * an array.
 	 */
-	UInt32 getArraySize() const;
+	blocxx::UInt32 getArraySize() const;
 	/**
 	 * Get a boolean value from this CIMValue.
 	 */
-	void get(Bool& x) const;
+	void get(blocxx::Bool& x) const;
 	/**
 	 * Get a char16 value from this CIMValue.
 	 */
-	void get(Char16& x) const;
+	void get(blocxx::Char16& x) const;
 	/**
 	 * Get a uint8 value from this CIMValue.
 	 */
-	void get(UInt8& x) const;
+	void get(blocxx::UInt8& x) const;
 	/**
 	 * Get a sing8 value from this CIMValue.
 	 */
-	void get(Int8& x) const;
+	void get(blocxx::Int8& x) const;
 	/**
 	 * Get a uint16 value from this CIMValue.
 	 */
-	void get(UInt16& x) const;
+	void get(blocxx::UInt16& x) const;
 	/**
 	 * Get a sint16 value from this CIMValue.
 	 */
-	void get(Int16& x) const;
+	void get(blocxx::Int16& x) const;
 	/**
 	 * Get a uint32 value from this CIMValue.
 	 */
-	void get(UInt32& x) const;
+	void get(blocxx::UInt32& x) const;
 	/**
 	 * Get a sint32 value from this CIMValue.
 	 */
-	void get(Int32& x) const;
+	void get(blocxx::Int32& x) const;
 	/**
 	 * Get a uint64 value from this CIMValue.
 	 */
-	void get(UInt64& x) const;
+	void get(blocxx::UInt64& x) const;
 	/**
 	 * Get a sint64 value from this CIMValue.
 	 */
-	void get(Int64& x) const;
+	void get(blocxx::Int64& x) const;
 	/**
 	 * Get a real32 value from this CIMValue.
 	 */
-	void get(Real32& x) const;
+	void get(blocxx::Real32& x) const;
 	/**
 	 * Get a real64 value from this CIMValue.
 	 */
-	void get(Real64& x) const;
+	void get(blocxx::Real64& x) const;
 	/**
 	 * Get a string value from this CIMValue.
 	 */
-	void get(String& x) const;
+	void get(blocxx::String& x) const;
 	/**
 	 * Get a CIM datetime value from this CIMValue.
 	 */
@@ -346,55 +346,55 @@ public:
 	/**
 	 * Get a char16 array from this CIMValue.
 	 */
-	void get(Char16Array& x) const;
+	void get(blocxx::Char16Array& x) const;
 	/**
 	 * Get a uint8 array from this CIMValue.
 	 */
-	void get(UInt8Array& x) const;
+	void get(blocxx::UInt8Array& x) const;
 	/**
 	 * Get a sint8 array from this CIMValue.
 	 */
-	void get(Int8Array& x) const;
+	void get(blocxx::Int8Array& x) const;
 	/**
 	 * Get a uint16 array from this CIMValue.
 	 */
-	void get(UInt16Array& x) const;
+	void get(blocxx::UInt16Array& x) const;
 	/**
 	 * Get a sint16 array from this CIMValue.
 	 */
-	void get(Int16Array& x) const;
+	void get(blocxx::Int16Array& x) const;
 	/**
 	 * Get a uint32 array from this CIMValue.
 	 */
-	void get(UInt32Array& x) const;
+	void get(blocxx::UInt32Array& x) const;
 	/**
 	 * Get a sint32 array from this CIMValue.
 	 */
-	void get(Int32Array& x) const;
+	void get(blocxx::Int32Array& x) const;
 	/**
 	 * Get a uint64 array from this CIMValue.
 	 */
-	void get(UInt64Array& x) const;
+	void get(blocxx::UInt64Array& x) const;
 	/**
 	 * Get a sint64 array from this CIMValue.
 	 */
-	void get(Int64Array& x) const;
+	void get(blocxx::Int64Array& x) const;
 	/**
 	 * Get a real64 array from this CIMValue.
 	 */
-	void get(Real64Array& x) const;
+	void get(blocxx::Real64Array& x) const;
 	/**
 	 * Get a real32 array from this CIMValue.
 	 */
-	void get(Real32Array& x) const;
+	void get(blocxx::Real32Array& x) const;
 	/**
 	 * Get a string array from this CIMValue.
 	 */
-	void get(StringArray& x) const;
+	void get(blocxx::StringArray& x) const;
 	/**
 	 * Get a boolean array from this CIMValue.
 	 */
-	void get(BoolArray& x) const;
+	void get(blocxx::BoolArray& x) const;
 	/**
 	 * Get a CIM datetime array from this CIMValue.
 	 */
@@ -407,36 +407,36 @@ public:
 	 * Get a CIM instance array from this CIMValue.
 	 */
 	void get(CIMInstanceArray& x) const;
-	Bool toBool() const;
-	Char16 toChar16() const;
-	UInt8 toUInt8() const;
-	Int8 toInt8() const;
-	UInt16 toUInt16() const;
-	Int16 toInt16() const;
-	UInt32 toUInt32() const;
-	Int32 toInt32() const;
-	UInt64 toUInt64() const;
-	Int64 toInt64() const;
-	Real32 toReal32() const;
-	Real64 toReal64() const;
+	blocxx::Bool toBool() const;
+	blocxx::Char16 toChar16() const;
+	blocxx::UInt8 toUInt8() const;
+	blocxx::Int8 toInt8() const;
+	blocxx::UInt16 toUInt16() const;
+	blocxx::Int16 toInt16() const;
+	blocxx::UInt32 toUInt32() const;
+	blocxx::Int32 toInt32() const;
+	blocxx::UInt64 toUInt64() const;
+	blocxx::Int64 toInt64() const;
+	blocxx::Real32 toReal32() const;
+	blocxx::Real64 toReal64() const;
 	CIMDateTime toCIMDateTime() const;
 	CIMObjectPath toCIMObjectPath() const;
 	CIMClass toCIMClass() const;
 	CIMInstance toCIMInstance() const;
 	CIMObjectPathArray toCIMObjectPathArray() const;
-	Char16Array toChar16Array() const;
-	UInt8Array toUInt8Array() const;
-	Int8Array toInt8Array() const;
-	UInt16Array toUInt16Array() const;
-	Int16Array toInt16Array() const;
-	UInt32Array toUInt32Array() const;
-	Int32Array toInt32Array() const;
-	UInt64Array toUInt64Array() const;
-	Int64Array toInt64Array() const;
-	Real64Array toReal64Array() const;
-	Real32Array toReal32Array() const;
-	StringArray toStringArray() const;
-	BoolArray toBoolArray() const;
+	blocxx::Char16Array toChar16Array() const;
+	blocxx::UInt8Array toUInt8Array() const;
+	blocxx::Int8Array toInt8Array() const;
+	blocxx::UInt16Array toUInt16Array() const;
+	blocxx::Int16Array toInt16Array() const;
+	blocxx::UInt32Array toUInt32Array() const;
+	blocxx::Int32Array toInt32Array() const;
+	blocxx::UInt64Array toUInt64Array() const;
+	blocxx::Int64Array toInt64Array() const;
+	blocxx::Real64Array toReal64Array() const;
+	blocxx::Real32Array toReal32Array() const;
+	blocxx::StringArray toStringArray() const;
+	blocxx::BoolArray toBoolArray() const;
 	CIMDateTimeArray toCIMDateTimeArray() const;
 	CIMClassArray toCIMClassArray() const;
 	CIMInstanceArray toCIMInstanceArray() const;
@@ -446,7 +446,7 @@ public:
 	 */
 	virtual void setNull();
 
-	OW_SAFE_BOOL_IMPL(CIMValue, COWIntrusiveReference<CIMValueImpl>, CIMValue::m_impl, m_impl)
+	BLOCXX_SAFE_BOOL_IMPL(CIMValue, blocxx::COWIntrusiveReference<CIMValueImpl>, CIMValue::m_impl, m_impl)
 
 	/**
 	 * Assign another CIMValue to this one.
@@ -541,11 +541,11 @@ public:
 	/**
 	 * @return The string representation of this CIMValue object.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 	/**
 	 * @return The MOF representation of this CIMValue as an String.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 	/**
 	 * @return true if this CIMValue object contains a numeric type.
 	 */
@@ -557,7 +557,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<CIMValueImpl> m_impl;
+	blocxx::COWIntrusiveReference<CIMValueImpl> m_impl;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

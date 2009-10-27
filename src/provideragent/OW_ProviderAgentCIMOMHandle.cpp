@@ -49,7 +49,7 @@
 #include "OW_CppMethodProviderIFC.hpp"
 #include "OW_CppAssociatorProviderIFC.hpp"
 #include "OW_ProviderAgent.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_ConfigException.hpp"
 #include "blocxx/Enumeration.hpp"
 #include "OW_HTTPServer.hpp"
@@ -59,6 +59,7 @@ namespace OW_NAMESPACE
 {
 
 //using namespace WBEMFlags;
+using namespace blocxx;
 
 ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(
 	const Map<String, CppProviderBaseIFCRef>& assocProvs,
@@ -123,7 +124,7 @@ ProviderAgentCIMOMHandle::getInstance(const String &ns,
                                         ia,localOnly , WBEMFlags::E_SHALLOW,
 										includeQualifiers, includeClassOrigin,
 										propertyList, cc, cc); /// @todo should the classes be different?
-			OW_ASSERT(ia.size() == 1); // did the secondary instance provider do something horribly wrong?
+			BLOCXX_ASSERT(ia.size() == 1); // did the secondary instance provider do something horribly wrong?
 			rval = ia[0];
 		}
 	}
@@ -558,7 +559,7 @@ ProviderAgentCIMOMHandle::getInstanceProvider(const String& ns,
 	if (iter != m_instProvs.end())
 	{
 		rval = iter->second->getInstanceProvider();
-		OW_ASSERT(rval != 0);
+		BLOCXX_ASSERT(rval != 0);
 		return rval;
 	}
 	key = String("") + ":" + className;
@@ -567,14 +568,14 @@ ProviderAgentCIMOMHandle::getInstanceProvider(const String& ns,
 	if (iter != m_instProvs.end())
 	{
 		rval = iter->second->getInstanceProvider();
-		OW_ASSERT(rval != 0);
+		BLOCXX_ASSERT(rval != 0);
 		return rval;
 	}
 	iter = m_instProvs.find("*");
 	if (iter != m_instProvs.end())
 	{
 		rval = iter->second->getInstanceProvider();
-		OW_ASSERT(rval != 0);
+		BLOCXX_ASSERT(rval != 0);
 		return rval;
 	}
 	return rval;
@@ -592,7 +593,7 @@ ProviderAgentCIMOMHandle::getSecondaryInstanceProvider(const String& ns,
 	if (iter != m_secondaryInstProvs.end())
 	{
 		rval = iter->second->getSecondaryInstanceProvider();
-		OW_ASSERT(rval != 0);
+		BLOCXX_ASSERT(rval != 0);
 		return rval;
 	}
 	key = String("") + ":" + className;
@@ -601,14 +602,14 @@ ProviderAgentCIMOMHandle::getSecondaryInstanceProvider(const String& ns,
 	if (iter != m_secondaryInstProvs.end())
 	{
 		rval = iter->second->getSecondaryInstanceProvider();
-		OW_ASSERT(rval != 0);
+		BLOCXX_ASSERT(rval != 0);
 		return rval;
 	}
 	iter = m_secondaryInstProvs.find("*");
 	if (iter != m_secondaryInstProvs.end())
 	{
 		rval = iter->second->getSecondaryInstanceProvider();
-		OW_ASSERT(rval != 0);
+		BLOCXX_ASSERT(rval != 0);
 		return rval;
 	}
 	return rval;
@@ -627,7 +628,7 @@ ProviderAgentCIMOMHandle::getAssociatorProvider(const String& ns,
 	if (iter != m_assocProvs.end())
 	{
 		rval = iter->second->getAssociatorProvider();
-		OW_ASSERT(rval != 0);
+		BLOCXX_ASSERT(rval != 0);
 		return rval;
 	}
 	key = String("") + ":" + className;
@@ -636,14 +637,14 @@ ProviderAgentCIMOMHandle::getAssociatorProvider(const String& ns,
 	if (iter != m_assocProvs.end())
 	{
 		rval = iter->second->getAssociatorProvider();
-		OW_ASSERT(rval != 0);
+		BLOCXX_ASSERT(rval != 0);
 		return rval;
 	}
 	iter = m_assocProvs.find("*");
 	if (iter != m_assocProvs.end())
 	{
 		rval = iter->second->getAssociatorProvider();
-		OW_ASSERT(rval != 0);
+		BLOCXX_ASSERT(rval != 0);
 		return rval;
 	}
 	return rval;
@@ -663,7 +664,7 @@ ProviderAgentCIMOMHandle::getMethodProvider(const String& ns,
 	if (iter != m_methodProvs.end())
 	{
 		rval = iter->second->getMethodProvider();
-		OW_ASSERT(rval != 0);
+		BLOCXX_ASSERT(rval != 0);
 		return rval;
 	}
 	key = String("") + ":" + className + ":" + methodName;
@@ -672,14 +673,14 @@ ProviderAgentCIMOMHandle::getMethodProvider(const String& ns,
 	if (iter != m_methodProvs.end())
 	{
 		rval = iter->second->getMethodProvider();
-		OW_ASSERT(rval != 0);
+		BLOCXX_ASSERT(rval != 0);
 		return rval;
 	}
 	iter = m_methodProvs.find("*");
 	if (iter != m_methodProvs.end())
 	{
 		rval = iter->second->getMethodProvider();
-		OW_ASSERT(rval != 0);
+		BLOCXX_ASSERT(rval != 0);
 		return rval;
 	}
 	return rval;

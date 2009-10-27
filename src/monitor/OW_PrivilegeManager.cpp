@@ -32,11 +32,12 @@
 
 #include "OW_config.h"
 #include "blocxx/Array.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "blocxx/FileSystem.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_IPCIO.hpp"
+#include "blocxx/GlobalMutex.hpp"
 #include "blocxx/NonRecursiveMutex.hpp"
 #include "blocxx/NonRecursiveMutexLock.hpp"
 #include "OW_PrivilegeCommon.hpp"
@@ -50,7 +51,7 @@
 #include "blocxx/Environ.hpp"
 #include "blocxx/Exec.hpp"
 #include "blocxx/File.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/WaitpidThreadFix.hpp"
 
 #ifndef BLOCXX_WIN32
@@ -72,6 +73,7 @@
 #endif
 
 using namespace OpenWBEM;
+using namespace blocxx;
 using PrivilegeConfig::Privileges;
 
 #define CHECKPREFIX String("PrivilegeManager::")
@@ -120,7 +122,7 @@ namespace
 					if( !::getenv("OW_PRIVMAN_NO_ABORT") )
 					{
 						Logger logger("PrivilegeManager");
-						OW_LOG_FATAL_ERROR(logger, Format("check_result got an INSUFFICIENT_PRIVILEGES error: %1:%2, aborting", errcode, errmsg));
+						BLOCXX_LOG_FATAL_ERROR(logger, Format("check_result got an INSUFFICIENT_PRIVILEGES error: %1:%2, aborting", errcode, errmsg));
 						abort();
 					}
 #endif
@@ -132,7 +134,7 @@ namespace
 					if( !::getenv("OW_PRIVMAN_NO_ABORT") )
 					{
 						Logger logger("PrivilegeManager");
-						OW_LOG_FATAL_ERROR(logger, Format("check_result got an error: %1:%2, aborting", errcode, errmsg));
+						BLOCXX_LOG_FATAL_ERROR(logger, Format("check_result got an error: %1:%2, aborting", errcode, errmsg));
 						abort();
 					}
 #endif
@@ -183,7 +185,7 @@ PrivilegeManagerMockObject_t g_privilegeManagerMockObject = BLOCXX_GLOBAL_PTR_IN
 
 bool PrivilegeManager::use_lib_path = false;
 
-struct PrivilegeManagerImpl : public IntrusiveCountableBase
+struct PrivilegeManagerImpl
 {
 	PrivilegeManagerImpl(AutoDescriptor peer_descriptor, ProcessRef const & pproc)
 		: m_conn(new IPCIO(peer_descriptor, MONITOR_TIMEOUT))
@@ -295,16 +297,24 @@ PrivilegeManagerImpl::~PrivilegeManagerImpl()
 
 namespace
 {
-	IntrusiveReference<PrivilegeManagerImpl> g_pmImpl;
-	NonRecursiveMutex g_pmImplGuard;
+	// We need a global reference to a privilege manager impl and global
+	// non-recursive mutex.  Because a GlobalMutex and GlobalPtr are not
+	// equivalent, we need to define our own.  Since both of them have
+	// well-defined default constructors and we can use the
+	// DefaultConstructedLazyGlobal to create them.
+	typedef DefaultConstructedLazyGlobal<Reference<PrivilegeManagerImpl> >::type GlobalPMImplRef;
+	typedef DefaultConstructedLazyGlobal<NonRecursiveMutex>::type GlobalNonRecursiveMutex;
+
+	GlobalPMImplRef g_pmImpl = BLOCXX_LAZY_GLOBAL_DEFAULT_INIT;
+	GlobalNonRecursiveMutex g_pmImplGuard = BLOCXX_LAZY_GLOBAL_DEFAULT_INIT;
 }
 
-PrivilegeManager::PrivilegeManager(PrivilegeManagerImpl * p_impl)
+PrivilegeManager::PrivilegeManager(PrivilegeManagerImplRef p_impl)
 : m_impl(p_impl)
 {
 	if( !g_privilegeManagerMockObject )
 	{
-		OW_ASSERT(g_pmImpl.getPtr() == p_impl);
+		BLOCXX_ASSERT(g_pmImpl == p_impl);
 	}
 }
 
@@ -340,12 +350,12 @@ PrivilegeManager PrivilegeManager::connectToMonitor()
 	{
 		case 0:
 			{
-				NonRecursiveMutexLock lock(g_pmImplGuard);
-				if (!g_pmImpl)
+				NonRecursiveMutexLock lock(g_pmImplGuard.get());
+				if (!g_pmImpl.get())
 				{
 					g_pmImpl = new PrivilegeManagerImpl(AutoDescriptor(::dup(x.descriptor)));
 				}
-				return PrivilegeManager(g_pmImpl.getPtr());
+				return PrivilegeManager(g_pmImpl);
 			}
 		case PrivilegeCommon::EXIT_NO_DESCRIPTOR_STRING:
 			return PrivilegeManager(); // no monitor exists, so they get a NULL PrivilegeManager
@@ -355,7 +365,7 @@ PrivilegeManager PrivilegeManager::connectToMonitor()
 				"PrivilegeManager::get_privilege_manager: environment specifies bad monitor descriptor"
 			);
 		default:
-			OW_ASSERT(false);
+			BLOCXX_ASSERT(false);
 	}
 #endif
 	// Not reached, but we need a return value.
@@ -366,13 +376,13 @@ PrivilegeManager PrivilegeManager::getPrivilegeManager()
 {
 	if( g_privilegeManagerMockObject )
 	{
-		return PrivilegeManager(new PrivilegeManagerImpl());
+		return PrivilegeManager(PrivilegeManagerImplRef(new PrivilegeManagerImpl()));
 	}
 
 	NonRecursiveMutexLock lock(g_pmImplGuard);
-	if (g_pmImpl)
+	if (g_pmImpl.get())
 	{
-		return PrivilegeManager(g_pmImpl.getPtr());
+		return PrivilegeManager(g_pmImpl);
 	}
 	return PrivilegeManager();
 }
@@ -546,8 +556,7 @@ public:
 
 };
 
-IntrusiveCountableBase *
-PrivilegeManager::init(
+PrivilegeManagerImplRef PrivilegeManager::init(
 	char const * config_dir, char const * app_name, char const * user_name,
 	LoggerSpec const * plogspec)
 {
@@ -566,7 +575,7 @@ PrivilegeManager::init(
 			Secure::runAs(user_name);
 		}
 #endif
-		return 0; // no privileges
+		return PrivilegeManagerImplRef(); // no privileges
 	}
 	SMPolicy policy;
 	policy.m_user_name = user_name;
@@ -592,7 +601,7 @@ PrivilegeManager::init(
 		policy.m_pmgr->setLogger(plogspec);
 	}
 
-	return policy.m_pmgr.release();
+	return PrivilegeManagerImplRef(policy.m_pmgr.release());
 }
 
 void PrivilegeManagerImpl::setLogger(LoggerSpec const * pspec)
@@ -637,7 +646,7 @@ AutoDescriptor PrivilegeManager::open(
 
 	Logger logger("PrivilegeManager.open");
 
-	OW_LOG_DEBUG3(logger, Format("Attempting to open: %1", pathname));
+	BLOCXX_LOG_DEBUG3(logger, Format("Attempting to open: %1", pathname));
 	CHECK(pimpl(), "open: process has no privileges");
 	pimpl()->verifyValidConnection("open: no connection to the monitor");
 	try
@@ -683,12 +692,12 @@ namespace // anonymous
 {
 	FileSystem::FileInformation statImpl(PrivilegeCommon::ECommand statcmd
 		, const String& statname
-		, PrivilegeManagerImpl* pimpl
+		, PrivilegeManagerImplRef pimpl
 		, const char* pathname)
 	{
 		Logger logger("PrivilegeManager." + statname);
 
-		OW_LOG_DEBUG3(logger, Format("Attempting to %1: %2", statname, pathname));
+		BLOCXX_LOG_DEBUG3(logger, Format("Attempting to %1: %2", statname, pathname));
 		CHECK(pimpl, Format("%1: process has no privileges", statname));
 		pimpl->verifyValidConnection(Format("%1: no connection to the monitor", statname).c_str());
 		try
@@ -1252,19 +1261,27 @@ PrivilegeManager::isNull() const
 	return pimpl() == 0;
 }
 
-PrivilegeManagerImpl*
+PrivilegeManagerImplRef
 PrivilegeManager::pimpl() const
 {
-	return m_impl.getPtr();
+	return m_impl;
 }
 
 // static
-PrivilegeManager PrivilegeManager::setInstance(IntrusiveCountableBase * p_impl)
+PrivilegeManager PrivilegeManager::createMonitor(
+	char const * config_dir, char const * app_name,
+	char const * user_name, LoggerSpec const * plogspec)
+{
+	return setInstance(PrivilegeManager::init(config_dir, app_name, user_name, plogspec));
+}
+
+// static
+PrivilegeManager PrivilegeManager::setInstance(const PrivilegeManagerImplRef& p_impl)
 {
 	NonRecursiveMutexLock lock(g_pmImplGuard);
-	OW_ASSERT(!g_pmImpl);
-	g_pmImpl = static_cast<PrivilegeManagerImpl*>(p_impl);
-	return PrivilegeManager(g_pmImpl.getPtr());
+	BLOCXX_ASSERT(!g_pmImpl);
+	g_pmImpl = p_impl;
+	return PrivilegeManager(g_pmImpl);
 }
 
 } // namespace OW_NAMESPACE

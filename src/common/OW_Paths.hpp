@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/Paths.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Paths.hpp is deprecated, use "blocxx/Paths.hpp" instead.
 #endif
 

@@ -38,5 +38,10 @@
 #include "OW_config.h"
 #include <blocxx/SelectEngine.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SelectEngine.hpp is deprecated, use "blocxx/SelectEngine.hpp" instead.
 #endif

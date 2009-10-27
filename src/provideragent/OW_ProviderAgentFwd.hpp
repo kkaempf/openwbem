@@ -41,13 +41,13 @@ namespace OW_NAMESPACE
 {
 
 class OW_PROVIDERAGENT_API ProviderAgent;
-typedef IntrusiveReference<ProviderAgent> ProviderAgentRef;
+typedef blocxx::IntrusiveReference<ProviderAgent> ProviderAgentRef;
 
 class OW_PROVIDERAGENT_API ProviderAgentLockerIFC;
-typedef IntrusiveReference<ProviderAgentLockerIFC> ProviderAgentLockerIFCRef;
+typedef blocxx::IntrusiveReference<ProviderAgentLockerIFC> ProviderAgentLockerIFCRef;
 
 class OW_PROVIDERAGENT_API ProviderAgentLifecycleCallbackIFC;
-typedef IntrusiveReference<ProviderAgentLifecycleCallbackIFC> ProviderAgentLifecycleCallbackIFCRef;
+typedef blocxx::IntrusiveReference<ProviderAgentLifecycleCallbackIFC> ProviderAgentLifecycleCallbackIFCRef;
 
 
 } // end namespace OW_NAMESPACE

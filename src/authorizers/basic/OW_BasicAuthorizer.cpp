@@ -35,10 +35,9 @@
 
 #include "OW_config.h"
 #include "OW_BasicAuthorizer.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_UserInfo.hpp"
 #include "OW_OperationContext.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_CIMClass.hpp"
@@ -55,6 +54,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 
 class BasicAccessMgr : public IntrusiveCountableBase
 {
@@ -227,17 +227,17 @@ void BasicAccessMgr::checkAccess(
 	String const & ns = pns ? *pns : String("<none>");
 	String username = userInfo.getUserName();
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG2(lgr, Format("Checking access to namespace: \"%1\"", ns));
-	OW_LOG_DEBUG2(lgr, Format("UserName is: \"%1\" Operation is : %2", username, op));
+	BLOCXX_LOG_DEBUG2(lgr, Format("Checking access to namespace: \"%1\"", ns));
+	BLOCXX_LOG_DEBUG2(lgr, Format("UserName is: \"%1\" Operation is : %2", username, op));
 
 	String permissions = this->userPermissions(pns, username, context);
-	OW_LOG_DEBUG3(lgr, Format("User has permissions: \"%1\"  Required permissions: \"%2\"", permissions, required));
+	BLOCXX_LOG_DEBUG3(lgr, Format("User has permissions: \"%1\"  Required permissions: \"%2\"", permissions, required));
 	if (subset(required, permissions))
 	{
 		Format fmt(
 			"ACCESS GRANTED to user \"%1\" for namespace \"%2\"", username, ns
 		);
-		OW_LOG_INFO(lgr, fmt);
+		BLOCXX_LOG_INFO(lgr, fmt);
 		return;
 	}
 	else
@@ -245,7 +245,7 @@ void BasicAccessMgr::checkAccess(
 		Format fmt(
 			"ACCESS DENIED to user \"%1\" for namespace \"%2\"", username, ns
 		);
-		OW_LOG_INFO(lgr, fmt);
+		BLOCXX_LOG_INFO(lgr, fmt);
 		OW_THROWCIM(CIMException::ACCESS_DENIED);
 	}
 }

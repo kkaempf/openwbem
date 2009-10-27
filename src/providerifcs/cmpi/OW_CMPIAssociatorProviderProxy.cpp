@@ -36,7 +36,7 @@
 #include "OW_CIMException.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_CMPIProviderIFCUtils.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "cmpisrv.h"
 
 #ifdef OW_HAVE_ALLOCA_H
@@ -48,6 +48,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
@@ -65,7 +66,7 @@ void CMPIAssociatorProviderProxy::associatorNames(
 	const String& resultRole)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "CMPIAssociatorProviderProxy::associatorNames()");
+	BLOCXX_LOG_DEBUG3(lgr, "CMPIAssociatorProviderProxy::associatorNames()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -128,7 +129,7 @@ void CMPIAssociatorProviderProxy::associators(
 	const StringArray *propertyList)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "CMPIAssociatorProviderProxy::associators()");
+	BLOCXX_LOG_DEBUG3(lgr, "CMPIAssociatorProviderProxy::associators()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -207,7 +208,7 @@ void CMPIAssociatorProviderProxy::references(
 	const StringArray *propertyList)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "CMPIAssociatorProviderProxy::references()");
+	BLOCXX_LOG_DEBUG3(lgr, "CMPIAssociatorProviderProxy::references()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 
@@ -279,7 +280,7 @@ void CMPIAssociatorProviderProxy::referenceNames(
 	const String& role)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "CMPIAssociatorProviderProxy::referenceNames()");
+	BLOCXX_LOG_DEBUG3(lgr, "CMPIAssociatorProviderProxy::referenceNames()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 

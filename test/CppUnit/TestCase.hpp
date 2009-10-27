@@ -104,6 +104,85 @@ class TestResult;
  *
  */
 
+enum BooleanOperatorType
+{
+	OP_GREATER,
+	OP_GREATER_EQUAL,
+	OP_LESS,
+	OP_LESS_EQUAL,
+	OP_EQUAL,
+	OP_NOT_EQUAL
+};
+
+const char* getOperatorText(BooleanOperatorType op);
+
+// These specialized comparison operators are used instead of std::equal_to and
+// such because the standard versions require that there be a single templated
+// type.  For the test cases it is useful to compare differing types, so long
+// as a valid conversion exists.
+template <BooleanOperatorType op>
+struct ComparisonOperator
+{
+	template <typename T1, typename T2>
+	bool operator()(const T1& t1, const T2& t2)
+	{
+		return ComparisonOperator::ThisShouldNeverBeAccessed;
+	}
+};
+
+template<> struct ComparisonOperator<OP_EQUAL>
+{
+	template<typename T1, typename T2>
+	bool operator()(const T1& t1, const T2& t2)
+	{
+		return t1 == t2;
+	}
+};
+
+template<> struct ComparisonOperator<OP_NOT_EQUAL>
+{
+	template<typename T1, typename T2>
+	bool operator()(const T1& t1, const T2& t2)
+	{
+		return t1 != t2;
+	}
+};
+
+template<> struct ComparisonOperator<OP_GREATER>
+{
+	template<typename T1, typename T2>
+	bool operator()(const T1& t1, const T2& t2)
+	{
+		return t1 > t2;
+	}
+};
+
+template<> struct ComparisonOperator<OP_LESS>
+{
+	template<typename T1, typename T2>
+	bool operator()(const T1& t1, const T2& t2)
+	{
+		return t1 < t2;
+	}
+};
+
+template<> struct ComparisonOperator<OP_GREATER_EQUAL>
+{
+	template<typename T1, typename T2>
+	bool operator()(const T1& t1, const T2& t2)
+	{
+		return t1 >= t2;
+	}
+};
+
+template<> struct ComparisonOperator<OP_LESS_EQUAL>
+{
+	template<typename T1, typename T2>
+	bool operator()(const T1& t1, const T2& t2)
+	{
+		return t1 <= t2;
+	}
+};
 
 class TestCase : public Test
 {
@@ -159,13 +238,16 @@ protected:
 		}
 	}
 
-	template <typename T1, typename T2>
-	void assertBooleanOperator(const T1& t1, const T2& t2, const char* op, bool val,	long lineNumber, const char* fileName)
+	template <BooleanOperatorType op, typename T1, typename T2>
+	void assertBooleanOperator(const T1& t1, const T2& t2, const char* exp1, const char* exp2, long lineNumber, const char* fileName)
 	{
-		if (!val)
+		bool result = false;
+		const char* optext = getOperatorText(op);
+
+		if( !ComparisonOperator<op>()(t1, t2) )
 		{
 			std::ostringstream oss;
-			oss << "expected:\"" << t1 << "\" " << op << " \"" << t2 << "\" but it was not.";
+			oss << "expected: " << exp1 << " " << optext << " " << exp2 << " (" << t1 << " " << optext << " " << t2 << ") but it was not.";
 			assertImplementation(false, oss.str().c_str(), lineNumber, fileName);
 		}
 	}
@@ -332,16 +414,16 @@ protected:
 
 #define unitAssertOperator(v1,v2,op) \
 	FlagTestCondition(); \
-	(this->assertBooleanOperator ((v1),(v2), #op, ((v1) op (v2)),__LINE__,__FILE__))
+	(this->assertBooleanOperator<op>((v1),(v2), #v1, #v2, __LINE__, __FILE__))
 
-#define unitAssertLongsEqual(expected,actual) unitAssertOperator(expected, actual, ==)
-#define unitAssertEquals(expected,actual) unitAssertOperator(expected, actual, ==)
-#define unitAssertNotEquals(expected,actual) unitAssertOperator(expected, actual, !=)
+#define unitAssertLongsEqual(expected,actual) unitAssertOperator(expected, actual, OP_EQUAL)
+#define unitAssertEquals(expected,actual) unitAssertOperator(expected, actual, OP_EQUAL)
+#define unitAssertNotEquals(expected,actual) unitAssertOperator(expected, actual, OP_NOT_EQUAL)
 
-#define unitAssertLess(v1,v2) unitAssertOperator(v1,v2,<)
-#define unitAssertGreater(v1,v2)	unitAssertOperator(v1,v2,>)
-#define unitAssertLessOrEqual(v1,v2) unitAssertOperator(v1,v2,<=)
-#define unitAssertGreaterOrEqual(v1,v2) unitAssertOperator(v1,v2,>=)
+#define unitAssertLess(v1,v2) unitAssertOperator(v1,v2,OP_LESS)
+#define unitAssertGreater(v1,v2)	unitAssertOperator(v1,v2,OP_GREATER)
+#define unitAssertLessOrEqual(v1,v2) unitAssertOperator(v1,v2,OP_LESS_EQUAL)
+#define unitAssertGreaterOrEqual(v1,v2) unitAssertOperator(v1,v2,OP_GREATER_EQUAL)
 
 #define unitAssertEqualsOneOf_1(text, actual, expected1) \
 	do \

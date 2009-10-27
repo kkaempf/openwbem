@@ -37,7 +37,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMParamValue.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -61,7 +61,7 @@ NPIMethodProviderProxy::invokeMethod(
 	const CIMParamValueArray &in, CIMParamValueArray &out)
 {
 		CIMValue rval(CIMNULL);
-		OW_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::invokeMethod()");
+		BLOCXX_LOG_DEBUG3(env->getLogger(COMPONENT_NAME), "NPIInstanceProviderProxy::invokeMethod()");
 		if (m_ftable->fp_invokeMethod != NULL)
 		{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};

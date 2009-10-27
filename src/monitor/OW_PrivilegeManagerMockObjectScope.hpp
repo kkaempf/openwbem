@@ -49,14 +49,14 @@ namespace OW_NAMESPACE
 	class PrivilegeManagerMockObjectScope
 	{
 	public:
-		PrivilegeManagerMockObjectScope(Reference<PrivilegeManagerMockObject> mock);
+		PrivilegeManagerMockObjectScope(blocxx::Reference<PrivilegeManagerMockObject> mock);
 		virtual ~PrivilegeManagerMockObjectScope();
 
 	private:
 		// The old mock object.  This is a raw pointer because the global it
 		// is copied from object is also a raw pointer.
 		PrivilegeManagerMockObject* old_mock;
-		Reference<PrivilegeManagerMockObject> m_mock;
+		blocxx::Reference<PrivilegeManagerMockObject> m_mock;
 	};
 } // end namespace UMI
 

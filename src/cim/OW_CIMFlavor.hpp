@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
 #include "OW_Types.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 #include <iosfwd>
 
 namespace OW_NAMESPACE
@@ -74,7 +74,7 @@ public:
 	 * @return true if the given integral value is a valid flavor. Otherwise
 	 * false.
 	 */
-	static bool validFlavor(Int32 iflavor)
+	static bool validFlavor(blocxx::Int32 iflavor)
 	{
 		return(iflavor > INVALID && iflavor < LASTVALUE);
 	}
@@ -116,7 +116,7 @@ public:
 	/**
 	 * @return true if this is a valid flavor
 	 */
-	OW_SAFE_BOOL_IMPL(CIMFlavor, Int32, CIMFlavor::m_flavor, (validFlavor(m_flavor) == true))
+	BLOCXX_SAFE_BOOL_IMPL(CIMFlavor, blocxx::Int32, CIMFlavor::m_flavor, (validFlavor(m_flavor) == true))
 
 	/**
 	 * Set this to a null object.
@@ -184,18 +184,18 @@ public:
 	/**
 	 * @return An String object that represents this CIMFlavor.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 	/**
 	 * @return An String object that contains the MOF representation of this
 	 * CIMFlavor object.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 	/**
 	 * @return the integral value of this CIMFlavor object.
 	 */
-	Int32 getFlavor() const {  return m_flavor; }
+	blocxx::Int32 getFlavor() const {  return m_flavor; }
 private:
-	static bool validScope(Int32 iflavor)
+	static bool validScope(blocxx::Int32 iflavor)
 	{
 		//
 		// NOTE: has implicit knowledge of flavor values!
@@ -203,7 +203,7 @@ private:
 		return(iflavor >= ENABLEOVERRIDE && iflavor < LASTVALUE);
 	}
 	/** The integral representation of this flavor */
-	Int32 m_flavor;
+	blocxx::Int32 m_flavor;
 	friend bool operator<(const CIMFlavor& x, const CIMFlavor& y)
 	{
 		return x.m_flavor < y.m_flavor;

@@ -40,6 +40,8 @@ namespace OW_NAMESPACE
 {
 
 using std::istream;
+using namespace blocxx;
+
 HTTPLengthLimitStreamBuffer::HTTPLengthLimitStreamBuffer(
 		istream& istr, UInt64 length)
 	: BaseStreamBuffer(BaseStreamBuffer::E_IN, 2048), m_istr(istr),

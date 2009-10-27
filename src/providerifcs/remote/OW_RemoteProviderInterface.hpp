@@ -75,9 +75,9 @@ protected:
 
 	struct ProvRegInfo
 	{
-		String namespaceName;
-		String className;
-		String url;
+		blocxx::String namespaceName;
+		blocxx::String className;
+		blocxx::String url;
 		bool alwaysSendCredentials;
 		bool useConnectionCredentials;
 	};
@@ -90,7 +90,7 @@ protected:
 		E_METHOD = 5
 	};
 
-	typedef SortedVectorMap<String, ProvRegInfo> ProvRegMap_t;
+	typedef blocxx::SortedVectorMap<blocxx::String, ProvRegInfo> ProvRegMap_t;
 	ProvRegMap_t m_instanceProvReg;
 	ProvRegMap_t m_secondaryInstanceProvReg;
 	ProvRegMap_t m_associatorProvReg;

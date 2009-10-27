@@ -45,6 +45,7 @@
 
 namespace OW_NAMESPACE
 {
+   using namespace blocxx;
 
 #define OW_SAFE_BOOL_IMPL(classname, type, variable, test) \
 			BLOCXX_SAFE_BOOL_IMPL(classname, type, variable, test)
@@ -52,5 +53,9 @@ namespace OW_NAMESPACE
 
 } // end namespace OW_NAMESPACE
 
+#warning OW_SafeBool.hpp is deprecated, use "blocxx/SafeBool.hpp" instead. Replace all usages of \
+OW_SAFE_BOOL_IMPL with BLOCXX_SAFE_BOOL_IMPL. \
+The following bash command should do it for you. \
+for file in `grep -IHrl OW_SafeBool.hpp *`; do sed -i -e 's/OW_SAFE_BOOL_IMPL/BLOCXX_SAFE_BOOL_IMPL/g' -e 's!OW_SafeBool.hpp!blocxx/SafeBool.hpp!g' $file; done
 
 #endif

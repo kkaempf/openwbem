@@ -308,7 +308,8 @@ namespace OpenWBEM = OW_NAMESPACE;
 
 namespace OW_NAMESPACE
 {
-  using namespace blocxx; 
+	/* OW namespace polution is deprecated in 4.1.  Remove after 4.2. */
+	using namespace blocxx;
 }
 
 #ifdef OW_DEBUG_MEMORY

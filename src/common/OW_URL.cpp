@@ -43,6 +43,8 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
+
 OW_DEFINE_EXCEPTION_WITH_ID(MalformedURL);
 
 //////////////////////////////////////////////////////////////////////////////

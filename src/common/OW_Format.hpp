@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/Format.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Format.hpp is deprecated, use "blocxx/Format.hpp" instead.
 #endif
 

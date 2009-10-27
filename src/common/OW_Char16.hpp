@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/Char16.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Char16.hpp is deprecated, use "blocxx/Char16.hpp" instead.
 #endif
 

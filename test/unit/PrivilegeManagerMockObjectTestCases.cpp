@@ -44,6 +44,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(PrivilegeManagerMockObjectTestCases,"PrivilegeManager
 #include "blocxx/FileSystem.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void PrivilegeManagerMockObjectTestCases::setUp()
 {

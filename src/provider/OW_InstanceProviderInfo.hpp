@@ -49,7 +49,7 @@ public:
 	using ProviderInfoBase<InstClassInfo>::ClassInfo;
 	using ProviderInfoBase<InstClassInfo>::ClassInfoArray;
 };
-typedef Array<InstanceProviderInfo> InstanceProviderInfoArray;
+typedef blocxx::Array<InstanceProviderInfo> InstanceProviderInfoArray;
 
 } // end namespace OW_NAMESPACE
 

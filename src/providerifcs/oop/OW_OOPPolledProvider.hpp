@@ -53,8 +53,8 @@ public:
 		const OOPProcessState& processState);
 	virtual ~OOPPolledProvider();
 
-	virtual Int32 poll(const ProviderEnvironmentIFCRef& env);
-	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env);
+	virtual blocxx::Int32 poll(const ProviderEnvironmentIFCRef& env);
+	virtual blocxx::Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env);
 	virtual void doShutdown();
 	virtual void doCooperativeCancel();
 	virtual void doDefinitiveCancel();

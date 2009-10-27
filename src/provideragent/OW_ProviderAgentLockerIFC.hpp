@@ -44,7 +44,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_PROVIDERAGENT_API ProviderAgentLockerIFC : public IntrusiveCountableBase
+class OW_PROVIDERAGENT_API ProviderAgentLockerIFC : public blocxx::IntrusiveCountableBase
 {
 public:
 	ProviderAgentLockerIFC();

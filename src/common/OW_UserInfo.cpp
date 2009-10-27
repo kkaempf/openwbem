@@ -39,6 +39,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 UserInfo::UserInfo(const String& userName) :
 	m_userName(userName), m_internal(false) {}

@@ -38,16 +38,16 @@ namespace OW_NAMESPACE
 {
 class OOPProviderBase;
 
-class OOPClonedProviderEnv : public Runnable
+class OOPClonedProviderEnv : public blocxx::Runnable
 {
 public:
-	OOPClonedProviderEnv(OOPProviderBase* pprov, const UnnamedPipeRef& conn, const ProviderEnvironmentIFCRef& provEnv);
+	OOPClonedProviderEnv(OOPProviderBase* pprov, const blocxx::UnnamedPipeRef& conn, const ProviderEnvironmentIFCRef& provEnv);
 	virtual void run();
 	virtual void doShutdown();
 
 private:
 	OOPProviderBase* m_pprov;
-	UnnamedPipeRef m_conn;
+	blocxx::UnnamedPipeRef m_conn;
 	ProviderEnvironmentIFCRef m_env;
 };
 

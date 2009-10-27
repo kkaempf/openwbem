@@ -45,7 +45,7 @@
 #include "blocxx/AutoPtr.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_ExceptionIds.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 
 #include <algorithm> // for std::find
 #include <cctype>
@@ -65,6 +65,7 @@ OW_DEFINE_EXCEPTION_WITH_ID(Base64Format);
 namespace HTTPUtils
 {
 using std::istream;
+using namespace blocxx;
 
 ///////////////////////////////////////////////////////////////////////////////
 const char* const HeaderValue_true = "true";
@@ -509,7 +510,7 @@ String base64Encode(const UInt8* src, size_t len)
 		c |= (cp[2] >> 6);
 		d = cp[2] & 0x3f;
 		cp +=3;
-		OW_ASSERT( dst + 5 - dest.get() <= szdest );
+		BLOCXX_ASSERT( dst + 5 - dest.get() <= szdest );
 		sprintf(dst, "%c%c%c%c"
 			, Base64[size_t(a)], Base64[size_t(b)]
 			, Base64[size_t(c)], Base64[size_t(d)]);
@@ -519,7 +520,7 @@ String base64Encode(const UInt8* src, size_t len)
 	{
 		a = (cp[0] >> 2);
 		b = (cp[0] << 4) & 0x30;
-		OW_ASSERT( dst + 5 - dest.get() <= szdest );
+		BLOCXX_ASSERT( dst + 5 - dest.get() <= szdest );
 		sprintf(dst, "%c%c==",Base64[size_t(a)],Base64[size_t(b)]);
 		dst+=4;
 	}
@@ -529,7 +530,7 @@ String base64Encode(const UInt8* src, size_t len)
 		b = (cp[0] << 4) & 0x30 ;
 		b |= (cp[1] >> 4);
 		c = (cp[1] << 2) & 0x3c;
-		OW_ASSERT( dst + 5 - dest.get() <= szdest );
+		BLOCXX_ASSERT( dst + 5 - dest.get() <= szdest );
 		sprintf(dst, "%c%c%c=",Base64[size_t(a)]
 			, Base64[size_t(b)], Base64[size_t(c)]);
 		dst+=4;

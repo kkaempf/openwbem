@@ -54,7 +54,8 @@ AUTO_UNIT_TEST_SUITE_NAMED(IndicationBufferingThreadTestCases,"IndicationBufferi
 
 using namespace std;
 using namespace OpenWBEM;
-using namespace MTQueueEnum;
+using namespace blocxx;
+using namespace blocxx::MTQueueEnum;
 using namespace CIMInstanceUtils;
 typedef IndicationBufferingThread::ExportIndicationArgs ExportIndicationArgs;
 typedef IndicationBufferingThread::Config Config;

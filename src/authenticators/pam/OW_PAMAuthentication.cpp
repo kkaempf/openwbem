@@ -71,6 +71,7 @@ extern "C"
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 /**
  * This is the Linux-PAM "conversation" function.
@@ -327,7 +328,7 @@ PAM_conv(int num_msg, const struct pam_message **msgm, struct pam_response **res
 }
 void LinuxPAMAuthentication::doInit(ServiceEnvironmentIFCRef env)
 {
-	m_allowedUsers = env->getConfigItem(ConfigOpts::PAM_ALLOWED_USERS_opt);
+	m_allowedUsers = env->getConfigItem(ConfigOpts::ALLOWED_USERS_opt);
 }
 
 } // end namespace OW_NAMESPACE

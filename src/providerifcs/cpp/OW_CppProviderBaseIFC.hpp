@@ -71,7 +71,7 @@ class CppQueryProviderIFC;
  * DO NOT put inline functions in this class, they will be duplicated in
  * every provider and cause code bloat.
  */
-class OW_CPPPROVIFC_API CppProviderBaseIFC : public virtual IntrusiveCountableBase
+class OW_CPPPROVIFC_API CppProviderBaseIFC : public virtual blocxx::IntrusiveCountableBase
 {
 public:
 
@@ -120,7 +120,7 @@ public:
 	virtual CppPolledProviderIFC* getPolledProvider();
 	virtual CppIndicationProviderIFC* getIndicationProvider();
 	virtual CppQueryProviderIFC* getQueryProvider();
-	DateTime getLastAccessTime() const;
+	blocxx::DateTime getLastAccessTime() const;
 	void updateAccessTime();
 
 	virtual bool canUnload();
@@ -129,22 +129,16 @@ public:
 	void setPersist(bool persist=true);
 
 private:
-	DateTime m_dt;
+	blocxx::DateTime m_dt;
 	bool m_persist;
 };
 
-typedef SharedLibraryReference< IntrusiveReference<CppProviderBaseIFC> > CppProviderBaseIFCRef;
+typedef blocxx::SharedLibraryReference< blocxx::IntrusiveReference<CppProviderBaseIFC> > CppProviderBaseIFCRef;
 
 } // end namespace OW_NAMESPACE
 
 
-// This is here to prevent existing code from breaking.  New code should use OW_PROVIDERFACTORY.
-// deprecated in 3.0.0
-#define OW_NOIDPROVIDERFACTORY(prov) OW_PROVIDERFACTORY(prov, NO_ID)
-
 #if !defined(OW_STATIC_SERVICES)
-// This macro is deprecated in 3.2.0, use OW_PROVIDERFACTORY instead.
-#define OW_PROVIDERFACTORY_NOID(prov, name) OW_PROVIDERFACTORY(prov, NO_ID)
 #define OW_PROVIDERFACTORY(prov, name) \
 extern "C" OW_EXPORT const char* \
 getOWVersion() \
@@ -157,8 +151,6 @@ createProvider##name() \
 	return new prov; \
 }
 #else
-// This macro is deprecated in 3.2.0, use OW_PROVIDERFACTORY instead.
-#define OW_PROVIDERFACTORY_NOID(prov, name) OW_PROVIDERFACTORY(prov, NO_ID##name)
 #define OW_PROVIDERFACTORY(prov, name) \
 extern "C" OW_NAMESPACE::CppProviderBaseIFC* \
 createProvider##name() \

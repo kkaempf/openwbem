@@ -38,7 +38,7 @@
 #include "OW_Exception.hpp"
 #include "OW_CommonFwd.hpp"
 #include "blocxx/Array.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_ProviderFwd.hpp"
 #include "OW_OOPFwd.hpp"
 #include "blocxx/SelectableCallbackIFC.hpp"
@@ -70,14 +70,14 @@ struct OutputEntry
 	};
 
 
-	OutputEntry(const Array<unsigned char>& b)
+	OutputEntry(const blocxx::Array<unsigned char>& b)
 		: type(E_BUFF)
 		, buf(b)
 	{
-		OW_ASSERT(buf.size() > 0);
+		BLOCXX_ASSERT(buf.size() > 0);
 	}
 
-	OutputEntry(EDirectionIndicator d, const UnnamedPipeRef& p)
+	OutputEntry(EDirectionIndicator d, const blocxx::UnnamedPipeRef& p)
 		: type(E_PASS_PIPE)
 		, direction(d)
 		, pipe(p)
@@ -87,8 +87,8 @@ struct OutputEntry
 	EEntryType type;
 
 	EDirectionIndicator direction;
-	UnnamedPipeRef pipe;
-	Array<unsigned char> buf;
+	blocxx::UnnamedPipeRef pipe;
+	blocxx::Array<unsigned char> buf;
 
 };
 
@@ -99,13 +99,13 @@ public:
 	{
 	}
 
-	virtual void handleResult(std::streambuf & instr, UInt8 op) = 0;
+	virtual void handleResult(std::streambuf & instr, blocxx::UInt8 op) = 0;
 };
 
 class NoResultHandler : public OperationResultHandler
 {
 public:
-	virtual void handleResult(std:: streambuf &instr, UInt8 op);
+	virtual void handleResult(std:: streambuf &instr, blocxx::UInt8 op);
 };
 
 enum
@@ -119,50 +119,50 @@ int processOneRequest(std::streambuf & in,
 	std::deque<OutputEntry>& outputEntries,
 	const ProviderEnvironmentIFCRef& env,
 	OperationResultHandler& result,
-	ThreadPool& threadPool,
+	blocxx::ThreadPool& threadPool,
 	OOPProviderBase* pprov);
 
 struct ShutdownThreadPool
 {
-	ShutdownThreadPool(ThreadPool& tp);
+	ShutdownThreadPool(blocxx::ThreadPool& tp);
 	~ShutdownThreadPool();
-	ThreadPool& m_tp;
+	blocxx::ThreadPool& m_tp;
 };
 
-int process(Array<unsigned char>& in,
+int process(blocxx::Array<unsigned char>& in,
 	std::deque<OutputEntry>& outputEntries,
 	const ProviderEnvironmentIFCRef& env,
-	const Logger& logger,
+	const blocxx::Logger& logger,
 	OperationResultHandler& result,
-	ThreadPool& threadPool,
+	blocxx::ThreadPool& threadPool,
 	OOPProviderBase* pprov);
 
-class OOPSelectableCallback : public SelectableCallbackIFC
+class OOPSelectableCallback : public blocxx::SelectableCallbackIFC
 {
 public:
 	OOPSelectableCallback(
-		Array<unsigned char>& inputBuf,
+		blocxx::Array<unsigned char>& inputBuf,
 		std::deque<OutputEntry>& outputEntries,
-		const UnnamedPipeRef& inputPipe,
-		const UnnamedPipeRef& outputPipe,
+		const blocxx::UnnamedPipeRef& inputPipe,
+		const blocxx::UnnamedPipeRef& outputPipe,
 		const ProviderEnvironmentIFCRef& env,
 		OperationResultHandler& result,
-		SelectEngine& selectEngine,
+		blocxx::SelectEngine& selectEngine,
 		bool &finishedSuccessfully,
-		ThreadPool& threadPool,
+		blocxx::ThreadPool& threadPool,
 		OOPProviderBase* pprov
 		);
-	void doSelected(Select_t& selectedObject, EEventType eventType);
+	void doSelected(blocxx::Select_t& selectedObject, blocxx::SelectableCallbackIFC::EEventType eventType);
 private:
-	Array<unsigned char>& m_inputBuf;
+	blocxx::Array<unsigned char>& m_inputBuf;
 	std::deque<OutputEntry>& m_outputEntries;
-	UnnamedPipeRef m_inputPipe;
-	UnnamedPipeRef m_outputPipe;
+	blocxx::UnnamedPipeRef m_inputPipe;
+	blocxx::UnnamedPipeRef m_outputPipe;
 	ProviderEnvironmentIFCRef m_env;
 	OperationResultHandler& m_result;
-	SelectEngine& m_selectEngine;
+	blocxx::SelectEngine& m_selectEngine;
 	bool& m_finishedSuccessfully;
-	ThreadPool& m_threadPool;
+	blocxx::ThreadPool& m_threadPool;
 	OOPProviderBase* m_pprov;
 };
 

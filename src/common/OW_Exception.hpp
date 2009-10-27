@@ -54,12 +54,6 @@
 			BLOCXX_THROW(exType, msg)
 
 /**
- * This macro is deprecated in 3.1.0.
- */
-#define OW_THROWL(exType, line, msg) \
-			BLOCXX_THROWL(exType, line, msg)
-
-/**
  * Throw an exception using __FILE__ and __LINE__.
  * @param exType The type of the exception
  * @param msg The exception message.  A string that will be copied.

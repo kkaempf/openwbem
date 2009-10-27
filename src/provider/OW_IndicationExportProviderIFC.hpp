@@ -52,13 +52,13 @@ public:
 	 * @return The class names of all the CIM_IndicationHandler sub-classes
 	 * this IndicationExportProviderIFC handles.
 	 */
-	virtual StringArray getHandlerClassNames() = 0;
+	virtual blocxx::StringArray getHandlerClassNames() = 0;
 
 	/**
 	 * Export the given indication
 	 */
 	virtual void exportIndication(const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMInstance& indHandlerInst, const CIMInstance& indicationInst) = 0;
 
 	/**

@@ -54,7 +54,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_HTTPSVC_API HTTPSvrConnection: public Runnable
+class OW_HTTPSVC_API HTTPSvrConnection: public blocxx::Runnable
 {
 public:
 #ifdef OW_WIN32
@@ -66,7 +66,7 @@ public:
 	 # @param eventArg Handle to an event that gets signaled on shutdown
 	 * @param opts The configuration options struct (see HTTPServer.hpp)
 	 */
-	HTTPSvrConnection(const Socket& socket, HTTPServer* htin,
+	HTTPSvrConnection(const blocxx::Socket& socket, HTTPServer* htin,
 		HANDLE eventArg, const HTTPServer::Options& opts);
 #else
 	/**
@@ -77,8 +77,8 @@ public:
 	 * @param upipe a pipe to receive a shutdown signal from
 	 * @param opts The configuration options struct (see HTTPServer.hpp)
 	 */
-	HTTPSvrConnection(const Socket& socket, HTTPServer* htin,
-		UnnamedPipeRef& upipe,
+	HTTPSvrConnection(const blocxx::Socket& socket, HTTPServer* htin,
+		blocxx::UnnamedPipeRef& upipe,
 		const HTTPServer::Options& opts);
 #endif
 
@@ -93,7 +93,7 @@ public:
 	 * @param key the key to look for
 	 * @return true if the key is found in the request headers.
 	 */
-	bool headerHasKey(const String& key) const
+	bool headerHasKey(const blocxx::String& key) const
 	{
 		return HTTPUtils::headerHasKey(m_requestHeaders, key);
 	}
@@ -102,7 +102,7 @@ public:
 	 * @param key the key to look up
 	 * @return the value associated with the key in the request headers.
 	 */
-	String getHeaderValue(const String& key) const
+	blocxx::String getHeaderValue(const blocxx::String& key) const
 	{
 		return HTTPUtils::getHeaderValue(m_requestHeaders, key);
 	}
@@ -111,7 +111,7 @@ public:
 	 * @param key the key of the header (left of the ':')
 	 * @param value the value (right of the ':')
 	 */
-	void addHeader(const String& key, const String& value)
+	void addHeader(const blocxx::String& key, const blocxx::String& value)
 	{
 		HTTPUtils::addHeader(m_responseHeaders, key, value);
 	}
@@ -120,7 +120,7 @@ public:
 	 *  example: POST /cimom HTTP/1.1
 	 * @return a string array containing the tokenized request status line.
 	 */
-	StringArray getRequestLine() const { return m_requestLine; }
+	blocxx::StringArray getRequestLine() const { return m_requestLine; }
 	/**
 	 * Set the details of the error to be returned.  This is usefull for
 	 * auth modules to be able to describe why authentication failed.
@@ -131,17 +131,17 @@ public:
 	 * 	// and return 401, the response status line would look like this:
 	 * 	// HTTP/1.1 401 Unauthorized: foo
 	 */
-	void setErrorDetails(const String& details) { m_errDetails = details; }
+	void setErrorDetails(const blocxx::String& details) { m_errDetails = details; }
 
 	/**
 	 * Get the hostname of the server.
 	 */
-	String getHostName() const;
+	blocxx::String getHostName() const;
 
 	/**
 	 * Get a unique id for this connection.
 	 */
-	UInt64 getConnectionId() const;
+	blocxx::UInt64 getConnectionId() const;
 
 protected:
 private:
@@ -165,36 +165,36 @@ private:
 		HTTP_VER_10,
 		HTTP_VER_11
 	};
-	StringArray m_requestLine;
+	blocxx::StringArray m_requestLine;
 	HTTPHeaderMap m_requestHeaders;
 	HTTPServer* m_pHTTPServer;
 	std::istream* m_pIn;
 	std::ofstream m_tempFile;
-	Socket m_socket;
+	blocxx::Socket m_socket;
 	std::ostream& m_ostr;
 	int m_resCode;
 	bool m_needSendError;
-	Array<String> m_responseHeaders;
-	Array<String> m_trailers;
+	blocxx::Array<blocxx::String> m_responseHeaders;
+	blocxx::Array<blocxx::String> m_trailers;
 	httpVerFlag_t m_httpVersion;
 	requestMethod_t m_method;
 	std::istream& m_istr;
 	bool m_isClose;
-	Int64 m_contentLength;
+	blocxx::Int64 m_contentLength;
 	bool m_chunkedIn;
 	bool m_deflateCompressionIn;
 	bool m_deflateCompressionOut;
-	String m_errDetails;
-	String m_reqHeaderPrefix;
-	String m_respHeaderPrefix;
+	blocxx::String m_errDetails;
+	blocxx::String m_reqHeaderPrefix;
+	blocxx::String m_respHeaderPrefix;
 	bool m_isAuthenticated;
 #ifdef OW_WIN32
 	HANDLE m_event;
 #else
-	IntrusiveReference<UnnamedPipe> m_upipe;
+	blocxx::IntrusiveReference<blocxx::UnnamedPipe> m_upipe;
 #endif
 	bool m_chunkedOut;
-	String m_userName;
+	blocxx::String m_userName;
 	bool m_clientIsOpenWBEM2;
 
 	RequestHandlerIFCRef m_requestHandler;
@@ -203,14 +203,14 @@ private:
 
 	// Don't switch the order of the next 2 member vars. The order is important, since Deflate may hold a pointer to Chunked,
 	// and it's destructor may call functions on Chunked. Yeah, this is a BAD design!
-	Reference<HTTPChunkedOStream> m_HTTPChunkedOStreamRef;
+	blocxx::Reference<HTTPChunkedOStream> m_HTTPChunkedOStreamRef;
 #ifdef OW_HAVE_ZLIB_H
-	Reference<HTTPDeflateOStream> m_HTTPDeflateOStreamRef;
+	blocxx::Reference<HTTPDeflateOStream> m_HTTPDeflateOStreamRef;
 #endif
 
-	Reference<TempFileStream> m_TempFileStreamRef;
+	blocxx::Reference<blocxx::TempFileStream> m_TempFileStreamRef;
 
-	UInt64 m_connectionId;
+	blocxx::UInt64 m_connectionId;
 
 #ifdef OW_WIN32
 #pragma warning (pop)
@@ -225,13 +225,13 @@ private:
 	void beginPostResponse();
 	void initRespStream(std::ostream*& ostrEntity);
 	void sendPostResponse(std::ostream* ostrEntity,
-		TempFileStream& ostrError, OperationContext& context);
-	int performAuthentication(const String& info, OperationContext& context);
+		blocxx::TempFileStream& ostrError, OperationContext& context);
+	int performAuthentication(const blocxx::String& info, OperationContext& context);
 	void sendHeaders(int sc, int len = -1);
-	void cleanUpIStreams(const Reference<std::istream>& istrm);
-	Reference<std::istream> convertToFiniteStream(
+	void cleanUpIStreams(const blocxx::Reference<std::istream>& istrm);
+	blocxx::Reference<std::istream> convertToFiniteStream(
 			std::istream& istr);
-	String getContentLanguage(OperationContext& context, bool& setByProvider,
+	blocxx::String getContentLanguage(OperationContext& context, bool& setByProvider,
 		bool& clientSpecified);
 
 	void doShutdown();
@@ -241,7 +241,7 @@ private:
 	 * @param key the name of the trailer (left of the ':')
 	 * @param value the value of the trailer (right of the ':')
 	 */
-	void addTrailer(const String& key, const String& value);
+	void addTrailer(const blocxx::String& key, const blocxx::String& value);
 	void outputTrailers();
 };
 

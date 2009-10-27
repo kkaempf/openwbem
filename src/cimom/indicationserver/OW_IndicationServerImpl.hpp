@@ -52,7 +52,7 @@
 #include "blocxx/Map.hpp"
 #include "blocxx/Mutex.hpp"
 #include "blocxx/Thread.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_IndicationProviderIFC.hpp"
 
 namespace OW_NAMESPACE
@@ -68,52 +68,52 @@ class IndicationServerImpl : public IndicationServer
 public:
 	IndicationServerImpl();
 	~IndicationServerImpl();
-	virtual String getName() const;
-	virtual StringArray getDependencies() const;
+	virtual blocxx::String getName() const;
+	virtual blocxx::StringArray getDependencies() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void start();
 	void shutdown();
-	void processIndication(const CIMInstance& indication, const String& indicationNS);
+	void processIndication(const CIMInstance& indication, const blocxx::String& indicationNS);
 	// these are called by the CIM_IndicationSubscription pass-thru provider.
-	virtual void startDeleteSubscription(const String& subNS, const CIMObjectPath& subPath);
-	virtual void startCreateSubscription(const String& subNS, const CIMInstance& subInst, const String& username);
-	virtual void startModifySubscription(const String& subNS, const CIMInstance& subInst);
+	virtual void startDeleteSubscription(const blocxx::String& subNS, const CIMObjectPath& subPath);
+	virtual void startCreateSubscription(const blocxx::String& subNS, const CIMInstance& subInst, const blocxx::String& username);
+	virtual void startModifySubscription(const blocxx::String& subNS, const CIMInstance& subInst);
 
 	// these are called by the threads started by the previous functions
-	void deleteSubscription(const String& subNS, const CIMObjectPath& subPath);
-	void createSubscription(const String& subNS, const CIMInstance& subInst, const String& username);
-	void modifySubscription(const String& subNS, const CIMInstance& subInst);
+	void deleteSubscription(const blocxx::String& subNS, const CIMObjectPath& subPath);
+	void createSubscription(const blocxx::String& subNS, const CIMInstance& subInst, const blocxx::String& username);
+	void modifySubscription(const blocxx::String& subNS, const CIMInstance& subInst);
 
-	virtual void modifyFilter(OperationContext& context, const String& filterNS, const CIMInstance& filterInst, const String& userName);
+	virtual void modifyFilter(OperationContext& context, const blocxx::String& filterNS, const CIMInstance& filterInst, const blocxx::String& userName);
 
 private:
-	IntrusiveReference<IndicationServerImplThread> m_indicationServerThread;
+	blocxx::IntrusiveReference<IndicationServerImplThread> m_indicationServerThread;
 };
 
-class IndicationServerImplThread : public Thread
+class IndicationServerImplThread : public blocxx::Thread
 {
 public:
 	IndicationServerImplThread();
 	~IndicationServerImplThread();
 	virtual void init(const CIMOMEnvironmentRef& env);
 	virtual void waitUntilReady();
-	virtual Int32 run();
+	virtual blocxx::Int32 run();
 	void shutdown();
 	void processIndication(const CIMInstance& instance,
-		const String& instNS);
+		const blocxx::String& instNS);
 	CIMOMEnvironmentRef getEnvironment() const;
 	bool getNewTrans(NotifyTrans& outTrans);
 	// these are called by the CIM_IndicationSubscription pass-thru provider.
-	virtual void startDeleteSubscription(const String& ns, const CIMObjectPath& subPath);
-	virtual void startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username);
-	virtual void startModifySubscription(const String& ns, const CIMInstance& subInst);
+	virtual void startDeleteSubscription(const blocxx::String& ns, const CIMObjectPath& subPath);
+	virtual void startCreateSubscription(const blocxx::String& ns, const CIMInstance& subInst, const blocxx::String& username);
+	virtual void startModifySubscription(const blocxx::String& ns, const CIMInstance& subInst);
 
 	// these are called by the threads started by the previous functions
-	void deleteSubscription(const String& ns, const CIMObjectPath& subPath);
-	void createSubscription(const String& ns, const CIMInstance& subInst, const String& username);
-	void modifySubscription(const String& ns, const CIMInstance& subInst);
+	void deleteSubscription(const blocxx::String& ns, const CIMObjectPath& subPath);
+	void createSubscription(const blocxx::String& ns, const CIMInstance& subInst, const blocxx::String& username);
+	void modifySubscription(const blocxx::String& ns, const CIMInstance& subInst);
 
-	virtual void modifyFilter(OperationContext& context, const String& ns, const CIMInstance& filterInst, const String& userName);
+	virtual void modifyFilter(OperationContext& context, const blocxx::String& ns, const CIMInstance& filterInst, const blocxx::String& userName);
 
 	virtual void doShutdown();
 
@@ -131,16 +131,16 @@ private:
 		CIMInstance m_filter;
 		WQLSelectStatement m_selectStmt;
 		WQLCompile m_compiledStmt;
-		StringArray m_classes;
-		String m_filterSourceNameSpace;
-		Array<bool> m_isPolled; // each bool corresponds to a provider
+		blocxx::StringArray m_classes;
+		blocxx::String m_filterSourceNameSpace;
+		blocxx::Array<bool> m_isPolled; // each bool corresponds to a provider
 	};
-	typedef IntrusiveReference<Subscription> SubscriptionRef;
+	typedef blocxx::IntrusiveReference<Subscription> SubscriptionRef;
 
 	// They key is indicationname:sourceinstanceclassname. All lower case. SourceInstanceClassName will only be used if
 	// the WQL filter contains "SourceInstance ISA ClassName".  A given SubscriptionRef may be inserted multiple times
 	// for the same subscription, but only one Subscription instance will exist. The SubscriptionRef will never be null.
-	typedef HashMultiMap<String, SubscriptionRef> subscriptions_t;
+	typedef HashMultiMap<blocxx::String, SubscriptionRef> subscriptions_t;
 
 #if defined(OW_AIX)
 	typedef subscriptions_t subscriptions_copy_t;
@@ -151,60 +151,60 @@ private:
 	typedef subscriptions_copy_t::iterator subscriptions_iterator;
 
 	void _processIndication(const CIMInstance& instance,
-		const String& instNS);
+		const blocxx::String& instNS);
 
 	void _processIndicationRange(
-		const CIMInstance& instanceArg, const String instNS,
+		const CIMInstance& instanceArg, const blocxx::String instNS,
 		subscriptions_iterator first, subscriptions_iterator last);
 
-	void addTrans(const String& ns, const CIMInstance& indication,
+	void addTrans(const blocxx::String& ns, const CIMInstance& indication,
 		const CIMInstance& handler,
-		const String& subscriptionNS,
+		const blocxx::String& subscriptionNS,
 		const CIMInstance& subscription,
 		IndicationExportProviderIFCRef provider);
 
 	IndicationExportProviderIFCRef getProvider(const CIMName& className);
 
-	UInt32 activateFilterOnProvider(IndicationProviderIFCRef& prov);
-	UInt32 deActivateFilterOnProvider(IndicationProviderIFCRef& prov);
+	blocxx::UInt32 activateFilterOnProvider(IndicationProviderIFCRef& prov);
+	blocxx::UInt32 deActivateFilterOnProvider(IndicationProviderIFCRef& prov);
 
 	void deactivateAllSubscriptions();
 
 	struct ProcIndicationTrans
 	{
 		ProcIndicationTrans(const CIMInstance& indication_,
-			const String& indicationNS_)
+			const blocxx::String& indicationNS_)
 			: indication(indication_)
 			, indicationNS(indicationNS_) {}
 		CIMInstance indication;
-		String indicationNS;
+		blocxx::String indicationNS;
 	};
-	typedef SortedVectorMap<CIMName, IndicationExportProviderIFCRef> provider_map_t;
+	typedef blocxx::SortedVectorMap<CIMName, IndicationExportProviderIFCRef> provider_map_t;
 	provider_map_t m_providers;
 
-	typedef SortedVectorMap<IndicationProviderIFCRef, UInt32> activatecount_map_t;
+	typedef blocxx::SortedVectorMap<IndicationProviderIFCRef, blocxx::UInt32> activatecount_map_t;
 	activatecount_map_t m_activations;
 
 	// m_procTrans is where new indications to be delivered are put.
 	// Both m_procTrans and m_shuttingDown are protected by the same condition
-	List<ProcIndicationTrans> m_procTrans;
+	blocxx::List<ProcIndicationTrans> m_procTrans;
 	bool m_shuttingDown;
-	NonRecursiveMutex m_mainLoopGuard;
-	Condition m_mainLoopCondition;
+	blocxx::NonRecursiveMutex m_mainLoopGuard;
+	blocxx::Condition m_mainLoopCondition;
 	CIMOMEnvironmentRef m_env;
-	ThreadBarrier m_startedBarrier;
+	blocxx::ThreadBarrier m_startedBarrier;
 	subscriptions_t m_subscriptions;
-	Mutex m_subGuard;
-	Mutex m_actCountGuard;
-	typedef SharedLibraryReference< IntrusiveReference<LifecycleIndicationPoller> > LifecycleIndicationPollerRef;
+	blocxx::Mutex m_subGuard;
+	blocxx::Mutex m_actCountGuard;
+	typedef blocxx::SharedLibraryReference< blocxx::IntrusiveReference<LifecycleIndicationPoller> > LifecycleIndicationPollerRef;
 
 	// the key is <Source Namespace>:<Classname>
-	typedef Map<String, LifecycleIndicationPollerRef > poller_map_t;
+	typedef blocxx::Map<blocxx::String, LifecycleIndicationPollerRef > poller_map_t;
 	poller_map_t m_pollers;
-	ThreadPoolRef m_notifierThreadPool;
-	ThreadPoolRef m_subscriptionPool;
+	blocxx::ThreadPoolRef m_notifierThreadPool;
+	blocxx::ThreadPoolRef m_subscriptionPool;
 	WQLIFCRef m_wqlRef;
-	Logger m_logger;
+	blocxx::Logger m_logger;
 };
 
 } // end namespace OW_NAMESPACE

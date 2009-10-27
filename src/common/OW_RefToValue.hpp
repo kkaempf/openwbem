@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/RefToValue.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_RefToValue.hpp is deprecated, use "blocxx/RefToValue.hpp" instead.
 #endif
 

@@ -114,9 +114,9 @@ public:
 		void order();
 	};
 
-	typedef Array<term_el> TableauRow;
+	typedef blocxx::Array<term_el> TableauRow;
 
-	typedef Array<TableauRow> Tableau;
+	typedef blocxx::Array<TableauRow> Tableau;
 
 	WQLCompile();
 	// calls compile()
@@ -139,9 +139,9 @@ private:
 	void _buildEvalHeap(const WQLSelectStatement * wqs);
 	void _pushNOTDown();
 	void _factoring();
-	void _gatherDisj(Array<stack_el>& stk);
-	void _gatherConj(Array<stack_el>& stk, stack_el sel);
-	void _gather(Array<stack_el>& stk, stack_el sel, bool or_flag);
+	void _gatherDisj(blocxx::Array<stack_el>& stk);
+	void _gatherConj(blocxx::Array<stack_el>& stk, stack_el sel);
+	void _gather(blocxx::Array<stack_el>& stk, stack_el sel, bool or_flag);
 	void _sortTableau();
 	static inline void _ResolveProperty(
 		WQLOperand& op,
@@ -152,7 +152,7 @@ private:
 		//
 		if (op.getType() == WQLOperand::PROPERTY_NAME)
 		{
-			const String& propertyName = op.getPropertyName();
+			const blocxx::String& propertyName = op.getPropertyName();
 			if (!source.getValue(propertyName, op))
 				OW_THROW(NoSuchPropertyException, "No such property");
 		}
@@ -170,8 +170,8 @@ private:
 	// expressions, the term_heap structure the corresponding terminal
 	// expressions
 	//
-	Array<term_el> terminal_heap;
-	Array<eval_el> eval_heap;
+	blocxx::Array<term_el> terminal_heap;
+	blocxx::Array<eval_el> eval_heap;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

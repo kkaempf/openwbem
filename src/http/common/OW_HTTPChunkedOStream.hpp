@@ -51,7 +51,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_HTTP_API HTTPChunkedOStreamBuffer : public BaseStreamBuffer
+class OW_HTTP_API HTTPChunkedOStreamBuffer : public blocxx::BaseStreamBuffer
 {
 public:
 	HTTPChunkedOStreamBuffer(std::ostream& ostr);

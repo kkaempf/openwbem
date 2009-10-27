@@ -78,10 +78,10 @@ public:
 	 */
 	virtual bool doAllowReadInstance(
 		const ServiceEnvironmentIFCRef& env,
-        const String& ns,
-		const String& className,
-		const StringArray* clientPropertyList,
-		StringArray& authorizedPropertyList,
+        const blocxx::String& ns,
+		const blocxx::String& className,
+		const blocxx::StringArray* clientPropertyList,
+		blocxx::StringArray& authorizedPropertyList,
 		OperationContext& context);
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -99,7 +99,7 @@ public:
 	 */
 	virtual bool doAllowWriteInstance(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& instanceName,
 		EDynamicFlag dynamic,
 		EWriteFlag flag,
@@ -114,7 +114,7 @@ public:
 	 */
 	virtual bool doAllowReadSchema(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		OperationContext& context);
 
 #if !defined(OW_DISABLE_SCHEMA_MANIPULATION) || !defined(OW_DISABLE_QUALIFIER_DECLARATION)
@@ -128,7 +128,7 @@ public:
 	 */
 	virtual bool doAllowWriteSchema(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		EWriteFlag flag,
 		OperationContext& context);
 
@@ -143,7 +143,7 @@ public:
 	 */
 	virtual bool doAllowAccessToNameSpace(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		Authorizer2IFC::EAccessType actype,
 		OperationContext& context);
 
@@ -156,7 +156,7 @@ public:
 	 */
 	virtual bool doAllowCreateNameSpace(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		OperationContext& context);
 
 	/**
@@ -167,7 +167,7 @@ public:
 	 */
 	virtual bool doAllowDeleteNameSpace(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		OperationContext& context);
 #endif
 
@@ -191,14 +191,14 @@ public:
 	 */
 	virtual bool doAllowMethodInvocation(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& path,
-		const String& MethodName,
+		const blocxx::String& MethodName,
 		OperationContext& context);
 
 private:
 
-	bool checkAccess(const String& opType, const String& ns,
+	bool checkAccess(const blocxx::String& opType, const blocxx::String& ns,
 		const ServiceEnvironmentIFCRef& env,
 		OperationContext& context);
 };

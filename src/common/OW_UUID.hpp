@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/UUID.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_UUID.hpp is deprecated, use "blocxx/UUID.hpp" instead.
 #endif

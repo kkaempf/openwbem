@@ -61,10 +61,10 @@ public:
 protected:
 	virtual void doOptions(CIMFeatures& cf, OperationContext& context);
 	virtual void outputError(CIMException::ErrNoType errorCode,
-		const String& msg, std::ostream& ostr);
+		const blocxx::String& msg, std::ostream& ostr);
 
-	virtual String getName() const;
-	virtual StringArray getDependencies() const;
+	virtual blocxx::String getName() const;
+	virtual blocxx::StringArray getDependencies() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void shutdown();
 private:
@@ -73,82 +73,82 @@ private:
 	std::ostream* m_ostrEntity;
 	std::ostream* m_ostrError;
 	bool m_isIntrinsic;
-	String m_functionName;
+	blocxx::String m_functionName;
 	/**
 	 * @throws IOException
 	 */
 	void executeIntrinsic(std::ostream& osrt, CIMXMLParser& parser, CIMOMHandleIFC& hdl,
-			const String& ns);
+			const blocxx::String& ns);
 	void executeExtrinsic(std::ostream& ostr, CIMXMLParser& parser,
 		CIMOMHandleIFC& lch);
 	void doInvokeMethod(std::ostream& ostr, CIMXMLParser& parser,
-		const String& methodName, CIMOMHandleIFC& lch);
+		const blocxx::String& methodName, CIMOMHandleIFC& lch);
 	void processSimpleReq(CIMXMLParser& parser, std::ostream& ostrEntity,
 		std::ostream& ostrError, OperationContext& context);
 	static void getParameters(CIMXMLParser& parser,
 		CIMParamValueArray& params);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	void associatorNames(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 	void associators(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 #endif
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	void createClass(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 	void modifyClass(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 	void deleteClass(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 #endif
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	void createInstance(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 	void deleteInstance(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 	void modifyInstance(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	void setProperty(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif
 	void enumerateClassNames(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 	void enumerateClasses( std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl) ;
+		const blocxx::String& ns, CIMOMHandleIFC& hdl) ;
 	void enumerateInstanceNames(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 	void enumerateInstances(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl) ;
+		const blocxx::String& ns, CIMOMHandleIFC& hdl) ;
 	void getClass(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl) ;
+		const blocxx::String& ns, CIMOMHandleIFC& hdl) ;
 	void getInstance(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	void getProperty(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	void getQualifier(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	void referenceNames(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl) ;
+		const blocxx::String& ns, CIMOMHandleIFC& hdl) ;
 	void references(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl) ;
+		const blocxx::String& ns, CIMOMHandleIFC& hdl) ;
 #endif
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	void setQualifier(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 	void deleteQualifier(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 	void enumerateQualifiers(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 #endif
 	void execQuery(std::ostream& ostr, CIMXMLParser& parser,
-		const String& ns, CIMOMHandleIFC& hdl);
+		const blocxx::String& ns, CIMOMHandleIFC& hdl);
 	typedef void (XMLExecute::*execFuncPtr_t)(std::ostream& ostr,
-		CIMXMLParser& qualNode, const String& ns, CIMOMHandleIFC& hdl);
+		CIMXMLParser& qualNode, const blocxx::String& ns, CIMOMHandleIFC& hdl);
 	struct FuncEntry
 	{
 		const char* name;

@@ -44,7 +44,7 @@
 #include "OW_URL.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_RequestHandlerIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #ifndef OW_WIN32
 #include "blocxx/UnnamedPipe.hpp"
 #endif
@@ -58,7 +58,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_LISTENER_API CIMXMLListener : public IntrusiveCountableBase
+class OW_LISTENER_API CIMXMLListener : public blocxx::IntrusiveCountableBase
 {
 public:
 	/**
@@ -70,7 +70,7 @@ public:
 	 */
 	CIMXMLListener(const ConfigFile::ConfigMap& configItems,
 				   const CIMListenerCallbackRef& callback,
-				   const AuthenticatorIFCRef& authenticator = AuthenticatorIFCRef(SharedLibraryRef(0), 0));
+				   const AuthenticatorIFCRef& authenticator = AuthenticatorIFCRef(blocxx::SharedLibraryRef(0), 0));
 	virtual ~CIMXMLListener();
 
 	/**
@@ -92,12 +92,12 @@ private:
 #endif
 
 	RequestHandlerIFCRef m_XMLListener;
-	IntrusiveReference<HTTPServer> m_httpServer;
-	UInt16 m_httpListenPort;
-	UInt16 m_httpsListenPort;
-	IntrusiveReference<Thread> m_httpThread;
+	blocxx::IntrusiveReference<HTTPServer> m_httpServer;
+	blocxx::UInt16 m_httpListenPort;
+	blocxx::UInt16 m_httpsListenPort;
+	blocxx::IntrusiveReference<blocxx::Thread> m_httpThread;
 #ifndef OW_WIN32
-	UnnamedPipeRef m_stopHttpPipe;
+	blocxx::UnnamedPipeRef m_stopHttpPipe;
 #else
 #pragma warning (pop)
 #endif

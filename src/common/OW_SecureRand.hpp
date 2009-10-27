@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/SecureRand.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SecureRand.hpp is deprecated, use "blocxx/SecureRand.hpp" instead.
 #endif
 

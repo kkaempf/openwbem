@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/DescriptorUtils_noexcept.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_DescriptorUtils_noexcept.hpp is deprecated, use "blocxx/DescriptorUtils_noexcept.hpp" instead.
 #endif
 

@@ -38,6 +38,11 @@
 #include "OW_config.h"
 #include <blocxx/Thread.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Thread.hpp is deprecated, use "blocxx/Thread.hpp" instead.
 #endif
 

@@ -47,6 +47,7 @@
 using namespace OpenWBEM;
 using namespace OpenWBEM::Tools;
 using namespace std;
+using namespace blocxx;
 
 namespace
 {

@@ -43,7 +43,7 @@
 #include "OW_MOFLineInfo.hpp"
 #include "OW_MOFGrammar.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include <stack>
 
 
@@ -81,11 +81,11 @@ public:
 			, m_removeDescriptions(false)
 			, m_removeObjects(false)
 		{}
-		Options(const String& namespace_,
-			bool createNamespaces, bool checkSyntaxOnly, const String& dumpXmlFile,
-			bool remove, bool preserve, bool upgrade, const StringArray& includeDirs,
+		Options(const blocxx::String& namespace_,
+			bool createNamespaces, bool checkSyntaxOnly, const blocxx::String& dumpXmlFile,
+			bool remove, bool preserve, bool upgrade, const blocxx::StringArray& includeDirs,
 			bool ignoreDoubleIncludes, bool removeDescriptions, bool removeObjects,
-			const String& depSearchDir = "")
+			const blocxx::String& depSearchDir = "")
 			: m_namespace(namespace_)
 			, m_createNamespaces(createNamespaces)
 			, m_checkSyntaxOnly(checkSyntaxOnly)
@@ -101,25 +101,25 @@ public:
 		{
 		}
 
-		String m_namespace;
+		blocxx::String m_namespace;
 		bool m_createNamespaces;
 		bool m_checkSyntaxOnly;
-		String m_dumpXmlFile;
+		blocxx::String m_dumpXmlFile;
 		bool m_remove;
 		bool m_preserve;
 		bool m_upgrade;
-		StringArray m_includeDirs;
+		blocxx::StringArray m_includeDirs;
 		bool m_ignoreDoubleIncludes;
 		bool m_removeDescriptions;
 		bool m_removeObjects;
-		String m_depSearchDir;
+		blocxx::String m_depSearchDir;
 	};
 
 	Compiler( const CIMOMHandleIFCRef& ch, const Options& opts, const ParserErrorHandlerIFCRef& mpeh );
 	~Compiler();
-	long compile( const String& filename );
-	long compileString( const String& mof );
-	static String fixParsedString(const String& s);
+	long compile( const blocxx::String& filename );
+	long compileString( const blocxx::String& mof );
+	static blocxx::String fixParsedString(const blocxx::String& s);
 
 	ParserErrorHandlerIFCRef theErrorHandler;
 
@@ -136,17 +136,17 @@ class OW_MOF_API CompilerState
 {
 public:
 
-	CompilerState(const ParserErrorHandlerIFCRef& mpeh, const String& initialFilename);
+	CompilerState(const ParserErrorHandlerIFCRef& mpeh, const blocxx::String& initialFilename);
 	~CompilerState();
 
-	AutoPtr<MOFSpecification> mofSpecification;
+	blocxx::AutoPtr<MOFSpecification> mofSpecification;
 
 	// This function is only for use by the lexer and parser
 	void updateLocation(const char* yytext, owmofltype* yylocp);
 	LineInfo getLineInfo() const;
 	ParserErrorHandlerIFCRef getErrorHandler() const;
-	void startNewFile(const String& filenameWithPath);
-	String getBasePath() const;
+	void startNewFile(const blocxx::String& filenameWithPath);
+	blocxx::String getBasePath() const;
 
 
 	// Needed by the code to implement includes
@@ -184,7 +184,7 @@ public:
 		unsigned m_lastLine;
 		unsigned m_nextColumn;
 		unsigned m_nextLine;
-		String m_fileName;
+		blocxx::String m_fileName;
 	};
 
 	void setLineInfo(const include_t& x);
@@ -199,8 +199,8 @@ private:
 	unsigned m_lastLine;
 	unsigned m_nextColumn;
 	unsigned m_nextLine;
-	String m_fileName;
-	String m_basepath;
+	blocxx::String m_fileName;
+	blocxx::String m_basepath;
 	ParserErrorHandlerIFCRef m_errorHandler;
 
 	// unimplemented
@@ -214,7 +214,7 @@ private:
  * @param realhdl If null, a dummy handle will be used which will supply "fake" CIMClasses and CIMQualifierTypes to the mof compiler
  * @throws MOFCompilerException, MOFParserException if the compilation fails.
  */
-OW_MOF_API void compileMOF(const String& mof, const CIMOMHandleIFCRef& realhdl, const String& ns,
+OW_MOF_API void compileMOF(const blocxx::String& mof, const CIMOMHandleIFCRef& realhdl, const blocxx::String& ns,
 	CIMInstanceArray& instances, CIMClassArray& classes, CIMQualifierTypeArray& qualifierTypes);
 
 

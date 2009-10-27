@@ -45,6 +45,8 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
+
 namespace
 {
 	const String COMPONENT_NAME("ow.provider.OOP.ifc");

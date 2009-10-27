@@ -46,11 +46,11 @@ class OW_CIMOMSERVER_API AuthManager : public ServiceIFC
 public:
 	AuthManager();
 	~AuthManager();
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void shutdown();
-	bool authenticate(String& userName,
-		const String& info, String& details, OperationContext& context);
+	bool authenticate(blocxx::String& userName,
+		const blocxx::String& info, blocxx::String& details, OperationContext& context);
 private:
 	AuthenticatorIFCRef m_authenticator;
 };

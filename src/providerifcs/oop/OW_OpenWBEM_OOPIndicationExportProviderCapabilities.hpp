@@ -62,10 +62,10 @@ public:
 	 *
 	 *  The CIM class names for the provider
 	 *
-	 * @return StringArray current ClassNames property value
+	 * @return blocxx::StringArray current ClassNames property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	StringArray getClassNames() const
+	blocxx::StringArray getClassNames() const
 	{
 		return getStringArrayProperty("ClassNames");
 	}
@@ -76,9 +76,9 @@ public:
 	 *
 	 *  The CIM class names for the provider
 	 *
-	 * @param StringArray new ClassNames property value
+	 * @param blocxx::StringArray new ClassNames property value
 	 */
-	void setClassNames(const StringArray& v)
+	void setClassNames(const blocxx::StringArray& v)
 	{
 		setStringArrayProperty("ClassNames", v);
 	}
@@ -103,7 +103,7 @@ public:
 	 * @return String current InstanceID property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	String getInstanceID() const
+	blocxx::String getInstanceID() const
 	{
 		return getStringProperty("InstanceID");
 	}
@@ -116,7 +116,7 @@ public:
 	 *
 	 * @param String new InstanceID property value
 	 */
-	void setInstanceID(const String& v)
+	void setInstanceID(const blocxx::String& v)
 	{
 		setStringProperty("InstanceID", v);
 	}

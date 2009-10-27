@@ -52,29 +52,29 @@ class OW_CPPPROVIFC_API CppSimpleInstanceProviderIFC : public virtual CppInstanc
 public:
 	virtual CIMInstance getInstance(
 		const ProviderEnvironmentIFCRef &env,
-		const String &ns,
+		const blocxx::String &ns,
 		const CIMObjectPath &instanceName,
 		WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray *propertyList,
+		const blocxx::StringArray *propertyList,
 		const CIMClass &cimClass);
 	virtual void enumInstanceNames(
 		const ProviderEnvironmentIFCRef &env,
-		const String &ns,
-		const String &className,
+		const blocxx::String &ns,
+		const blocxx::String &className,
 		CIMObjectPathResultHandlerIFC &result,
 		const CIMClass &cimClass);
 	virtual void enumInstances(
 		const ProviderEnvironmentIFCRef &env,
-		const String &ns,
-		const String &className,
+		const blocxx::String &ns,
+		const blocxx::String &className,
 		CIMInstanceResultHandlerIFC &result,
 		WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EDeepFlag deep,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray *propertyList,
+		const blocxx::StringArray *propertyList,
 		const CIMClass &requestedClass,
 		const CIMClass &cimClass);
 	enum EPropertiesFlag
@@ -84,7 +84,7 @@ public:
 	};
 	virtual void doSimpleEnumInstances(
 		const ProviderEnvironmentIFCRef &env,
-		const String &ns,
+		const blocxx::String &ns,
 		const CIMClass &cimClass,
 		CIMInstanceResultHandlerIFC &result,
 		EPropertiesFlag propertiesFlag) = 0;

@@ -41,13 +41,13 @@
 
 
 #define THROW_MSG_E(exType, msg) \
-	OW_THROW(exType, ::OpenWBEM::Cstr::to_char_ptr(msg))
+	OW_THROW(exType, ::blocxx::Cstr::to_char_ptr(msg))
 
 #define THROW_MSG_ERR(exType, msg, err) \
-	OW_THROW_ERR(exType, ::OpenWBEM::Cstr::to_char_ptr(msg), err)
+	OW_THROW_ERR(exType, ::blocxx::Cstr::to_char_ptr(msg), err)
 
 #define THROW_ERRNO_MSG1_E(exType, msg, errnum) \
-	OW_THROW_ERRNO_MSG1(exType, ::OpenWBEM::Cstr::to_char_ptr(msg), errnum)
+	OW_THROW_ERRNO_MSG1(exType, ::blocxx::Cstr::to_char_ptr(msg), errnum)
 
 #define THROW_ERRNO_MSG_E(exType, msg) \
 	WRAP_STMT( \
@@ -120,7 +120,7 @@ namespace PrivilegeCommon
 		virtual ~SpawnMonitorPolicy();
 		virtual char const * check_config_dir(char const * config_dir) = 0;
 		virtual void spawn(
-			Descriptor child_desc, Descriptor parent_desc,
+			blocxx::Descriptor child_desc, blocxx::Descriptor parent_desc,
 			char const * config_dir, char const * app_name
 		) = 0;
 	};

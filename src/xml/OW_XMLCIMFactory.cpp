@@ -42,7 +42,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMValue.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMProperty.hpp"
@@ -59,6 +59,8 @@
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace XMLCIMFactory
 {
@@ -152,7 +154,7 @@ static void getInstanceName(CIMXMLParser& parser, CIMObjectPath& cimPath)
 	// <!ATTLIST INSTANCENAME %ClassName;>
 	CIMPropertyArray propertyArray;
 	CIMProperty cp(CIMNULL);
-	OW_ASSERT(parser.tokenIsId(CIMXMLParser::E_INSTANCENAME));
+	BLOCXX_ASSERT(parser.tokenIsId(CIMXMLParser::E_INSTANCENAME));
 	String thisClassName = parser.getAttribute(CIMXMLParser::A_CLASSNAME);
 	cimPath.setClassName(thisClassName);
 	//parser.getChild();

@@ -36,7 +36,7 @@
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/SocketBaseImpl.hpp"
 
 #include <iostream>
@@ -49,7 +49,7 @@ using std::endl;
 using std::find;
 using namespace OpenWBEM;
 using namespace WBEMFlags;
-
+using namespace blocxx;
 
 // create our own TEST_ASSERT, because assert and ASSERT will be turned off
 // in non-debug mode.

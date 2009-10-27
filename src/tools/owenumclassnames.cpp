@@ -34,7 +34,6 @@
 
 #include "OW_config.h"
 #include "OW_ClientCIMOMHandle.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "blocxx/CmdLineParser.hpp"
@@ -48,6 +47,7 @@
 
 using namespace OpenWBEM;
 using namespace OpenWBEM::Tools;
+using namespace blocxx;
 
 using std::cout;
 using std::cin;
@@ -127,45 +127,33 @@ int main(int argc, char* argv[])
 		bool printTree = false;
 		WBEMFlags::EDeepFlag deep = WBEMFlags::E_DEEP;
 
-		// handle backwards compatible options, which was <URL> <namespace> <classname>
-		// TODO: This is deprecated in 3.1.0, remove it post 3.1
-		if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
+		CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
+
+		if (parser.isSet(HELP_OPT))
 		{
-			url = argv[1];
-			ns = argv[2];
-			classname = argv[3];
-			cerr << "This cmd line usage is deprecated!\n";
+			Usage();
+			return 0;
 		}
-		else
+		else if (parser.isSet(VERSION_OPT))
 		{
-			CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
+			cout << "owenumclassnames (OpenWBEM) " << OW_VERSION << '\n';
+			cout << "Written by Dan Nuffer.\n";
+			return 0;
+		}
 
-			if (parser.isSet(HELP_OPT))
-			{
-				Usage();
-				return 0;
-			}
-			else if (parser.isSet(VERSION_OPT))
-			{
-				cout << "owenumclassnames (OpenWBEM) " << OW_VERSION << '\n';
-				cout << "Written by Dan Nuffer.\n";
-				return 0;
-			}
-
-			url = parser.getOptionValue(URL_OPT, "http://localhost/root/cimv2");
-			ns = URL(url).namespaceName;
-			if (ns.empty())
-			{
-				cerr << "No namespace given as part of the url." << endl;
-				Usage();
-				return 1;
-			}
-			classname = parser.getOptionValue(CLASSNAME_OPT);
-			printTree = parser.isSet(TREE_OPT);
-			if (parser.isSet(SHALLOW_OPT))
-			{
-				deep = WBEMFlags::E_SHALLOW;
-			}
+		url = parser.getOptionValue(URL_OPT, "http://localhost/root/cimv2");
+		ns = URL(url).namespaceName;
+		if (ns.empty())
+		{
+			cerr << "No namespace given as part of the url." << endl;
+			Usage();
+			return 1;
+		}
+		classname = parser.getOptionValue(CLASSNAME_OPT);
+		printTree = parser.isSet(TREE_OPT);
+		if (parser.isSet(SHALLOW_OPT))
+		{
+			deep = WBEMFlags::E_SHALLOW;
 		}
 
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);

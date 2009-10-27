@@ -28,7 +28,7 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/AutoDescriptor.hpp"
 #include "OW_IPCIO.hpp"
 #include "OW_PrivilegeCommon.hpp"
@@ -46,6 +46,8 @@
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
+
 namespace PrivilegeCommon
 {
 
@@ -106,8 +108,8 @@ void spawn_monitor(
 
 	AutoDescriptor parent_desc(sockfds[0]);
 	AutoDescriptor child_desc(sockfds[1]);
-	OW_ASSERT(parent_desc.get() >= 3);
-	OW_ASSERT(child_desc.get() >= 3);
+	BLOCXX_ASSERT(parent_desc.get() >= 3);
+	BLOCXX_ASSERT(child_desc.get() >= 3);
 #endif
 	// This call may throw
 	policy.spawn(child_desc.get(), parent_desc.get(), config_dir, app_name);

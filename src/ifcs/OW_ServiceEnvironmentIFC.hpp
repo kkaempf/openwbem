@@ -51,19 +51,19 @@ namespace OW_NAMESPACE
 /**
  * This is an internal interface which is used by the various OpenWBEM services to interface with their "environment"
  */
-class OW_COMMON_API ServiceEnvironmentIFC : virtual public IntrusiveCountableBase
+class OW_COMMON_API ServiceEnvironmentIFC : virtual public blocxx::IntrusiveCountableBase
 {
 public:
 	virtual ~ServiceEnvironmentIFC();
 
-	virtual String getConfigItem(const String& name, const String& defRetVal="") const;
+	virtual blocxx::String getConfigItem(const blocxx::String& name, const blocxx::String& defRetVal="") const;
 
 	/**
 	 * Retrieve itemName values from configItems. If it's not present, defRetVal will be returned.
 	 * @param tokenizeSeparator If non-null, then each item will be tokenized using the specified separator chars and returned as separate items.
 	 */
-	virtual StringArray getMultiConfigItem(const String &itemName,
-		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const;
+	virtual blocxx::StringArray getMultiConfigItem(const blocxx::String &itemName,
+		const blocxx::StringArray& defRetVal, const char* tokenizeSeparator = 0) const;
 
 	enum EOverwritePreviousFlag
 	{
@@ -71,14 +71,14 @@ public:
 		E_OVERWRITE_PREVIOUS
 	};
 
-	virtual void setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS);
+	virtual void setConfigItem(const blocxx::String& item, const blocxx::String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS);
 
-	virtual void addSelectable(const SelectableIFCRef& obj, const SelectableCallbackIFCRef& cb);
-	virtual void removeSelectable(const SelectableIFCRef& obj);
+	virtual void addSelectable(const blocxx::SelectableIFCRef& obj, const blocxx::SelectableCallbackIFCRef& cb);
+	virtual void removeSelectable(const blocxx::SelectableIFCRef& obj);
 
-	virtual RequestHandlerIFCRef getRequestHandler(const String& id) const;
+	virtual RequestHandlerIFCRef getRequestHandler(const blocxx::String& id) const;
 
-	virtual bool authenticate(String& userName, const String& info, String& details, OperationContext& context) const;
+	virtual bool authenticate(blocxx::String& userName, const blocxx::String& info, blocxx::String& details, OperationContext& context) const;
 
 	enum EBypassProvidersFlag
 	{

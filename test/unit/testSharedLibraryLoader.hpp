@@ -65,13 +65,13 @@ static const char* versionFunction()
 
 typedef int (*fptype)(int);
 
-class testSharedLibrary: public SharedLibrary
+class testSharedLibrary: public blocxx::SharedLibrary
 {
 	public:
 		virtual ~testSharedLibrary(){}
 
 	protected:
-		virtual bool doGetFunctionPointer( const String&, void** fp ) const
+		virtual bool doGetFunctionPointer( const blocxx::String&, void** fp ) const
 		{
 			*fp = (void*)(&testFunction);
 			return true;
@@ -83,48 +83,48 @@ class TestInstanceProvider : public InstanceProviderIFC
 public:
 	virtual void enumInstances(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
-			const String& className,
+			const blocxx::String& ns,
+			const blocxx::String& className,
 			CIMInstanceResultHandlerIFC& result,
 			WBEMFlags::ELocalOnlyFlag localOnly,
 			WBEMFlags::EDeepFlag deep,
 			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList,
+			const blocxx::StringArray* propertyList,
 			const CIMClass& requestedClass,
 			const CIMClass& cimClass )
 	{
 	}
-	virtual void enumInstanceNames(const ProviderEnvironmentIFCRef &, const String &, const String &, CIMObjectPathResultHandlerIFC &, const CIMClass &)
+	virtual void enumInstanceNames(const ProviderEnvironmentIFCRef &, const blocxx::String &, const blocxx::String &, CIMObjectPathResultHandlerIFC &, const CIMClass &)
 	{
 	}
 	virtual CIMInstance getInstance(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& instanceName,
 		WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList,
+		const blocxx::StringArray* propertyList,
 		const CIMClass& cimClass )
 	{
 		return CIMInstance(CIMNULL);
 	}
-	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMInstance &)
+	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &, const blocxx::String &, const CIMInstance &)
 	{
 		return CIMObjectPath(CIMNULL);
 	}
 	virtual void modifyInstance(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMInstance& modifiedInstance,
 		const CIMInstance& previousInstance,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const StringArray* propertyList,
+		const blocxx::StringArray* propertyList,
 		const CIMClass& theClass)
 	{
 	}
-	virtual void deleteInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &)
+	virtual void deleteInstance(const ProviderEnvironmentIFCRef &, const blocxx::String &, const CIMObjectPath &)
 	{
 	}
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef &)
@@ -135,7 +135,7 @@ public:
 class TestMethodProvider : public MethodProviderIFC
 {
 public:
-	virtual CIMValue invokeMethod(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &, const String &, const CIMParamValueArray &, CIMParamValueArray &)
+	virtual CIMValue invokeMethod(const ProviderEnvironmentIFCRef &, const blocxx::String &, const CIMObjectPath &, const blocxx::String &, const CIMParamValueArray &, CIMParamValueArray &)
 	{
 		return CIMValue(CIMNULL);
 	}
@@ -151,47 +151,47 @@ public:
 	virtual void associatorNames(
 		const ProviderEnvironmentIFCRef &,
 		CIMObjectPathResultHandlerIFC &,
-		const String &,
+		const blocxx::String &,
 		const CIMObjectPath &,
-		const String &,
-		const String &,
-		const String &,
-		const String &)
+		const blocxx::String &,
+		const blocxx::String &,
+		const blocxx::String &,
+		const blocxx::String &)
 	{
 	}
 	virtual void references(
 		const ProviderEnvironmentIFCRef& env,
 		CIMInstanceResultHandlerIFC& result,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& objectName,
-		const String& resultClass,
-		const String& role,
+		const blocxx::String& resultClass,
+		const blocxx::String& role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList)
+		const blocxx::StringArray* propertyList)
 	{
 	}
 	virtual void referenceNames(
 		const ProviderEnvironmentIFCRef &,
 		CIMObjectPathResultHandlerIFC &,
-		const String &,
+		const blocxx::String &,
 		const CIMObjectPath &,
-		const String &,
-		const String &)
+		const blocxx::String &,
+		const blocxx::String &)
 	{
 	}
 	virtual void associators(
 		const ProviderEnvironmentIFCRef& env,
 		CIMInstanceResultHandlerIFC& result,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& objectName,
-		const String& assocClass,
-		const String& resultClass,
-		const String& role,
-		const String& resultRole,
+		const blocxx::String& assocClass,
+		const blocxx::String& resultClass,
+		const blocxx::String& role,
+		const blocxx::String& resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList)
+		const blocxx::StringArray* propertyList)
 	{
 	}
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef &)
@@ -203,16 +203,16 @@ public:
 class TestIndicationProvider : public IndicationProviderIFC
 {
 public:
-	virtual void deActivateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray&, bool)
+	virtual void deActivateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const blocxx::String &, const blocxx::String&, const blocxx::StringArray&, bool)
 	{
 	}
-	virtual void activateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray&, bool)
+	virtual void activateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const blocxx::String &, const blocxx::String&, const blocxx::StringArray&, bool)
 	{
 	}
-	virtual void authorizeFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray&, const String &)
+	virtual void authorizeFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const blocxx::String &, const blocxx::String&, const blocxx::StringArray&, const blocxx::String &)
 	{
 	}
-	virtual int mustPoll(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray&)
+	virtual int mustPoll(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const blocxx::String &, const blocxx::String&, const blocxx::StringArray&)
 	{
 		return 0;
 	}
@@ -249,7 +249,7 @@ class testProviderMux: public ProviderIFCBaseIFC
 				{
 					InstanceProviderInfo ipi;
 					ipi.setProviderName("TestInstanceProvider");
-					StringArray namespaces;
+					blocxx::StringArray namespaces;
 					namespaces.push_back("root");
 					namespaces.push_back("root/good");
 					InstanceProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces);
@@ -266,10 +266,10 @@ class testProviderMux: public ProviderIFCBaseIFC
 				{
 					MethodProviderInfo mpi;
 					mpi.setProviderName("TestMethodProvider");
-					StringArray namespaces;
+					blocxx::StringArray namespaces;
 					namespaces.push_back("root");
 					namespaces.push_back("root/good");
-					StringArray methods;
+					blocxx::StringArray methods;
 					MethodProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces, methods);
 					mpi.addInstrumentedClass(ci);
 					ma.push_back(mpi);
@@ -277,8 +277,8 @@ class testProviderMux: public ProviderIFCBaseIFC
 				{
 					MethodProviderInfo mpi;
 					mpi.setProviderName("TestMethodProvider");
-					StringArray namespaces;
-					StringArray methods;
+					blocxx::StringArray namespaces;
+					blocxx::StringArray methods;
 					methods.push_back("TestMethod");
 					MethodProviderInfo::ClassInfo ci("SelfRegOneMethod", namespaces, methods);
 					mpi.addInstrumentedClass(ci);
@@ -287,9 +287,9 @@ class testProviderMux: public ProviderIFCBaseIFC
 				{
 					MethodProviderInfo mpi;
 					mpi.setProviderName("TestMethodProvider");
-					StringArray namespaces;
+					blocxx::StringArray namespaces;
 					namespaces.push_back("root");
-					StringArray methods;
+					blocxx::StringArray methods;
 					methods.push_back("TestMethod");
 					MethodProviderInfo::ClassInfo ci("SelfRegOneNamespaceOneMethod", namespaces, methods);
 					mpi.addInstrumentedClass(ci);
@@ -306,7 +306,7 @@ class testProviderMux: public ProviderIFCBaseIFC
 				{
 					AssociatorProviderInfo api;
 					api.setProviderName("TestAssociatorProvider");
-					StringArray namespaces;
+					blocxx::StringArray namespaces;
 					namespaces.push_back("root");
 					namespaces.push_back("root/good");
 					AssociatorProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces);
@@ -324,7 +324,7 @@ class testProviderMux: public ProviderIFCBaseIFC
 				{
 					IndicationProviderInfo indi;
 					indi.setProviderName("TestIndicationProvider");
-					StringArray namespaces;
+					blocxx::StringArray namespaces;
 					namespaces.push_back("root");
 					namespaces.push_back("root/good");
 					IndicationProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces);
@@ -347,8 +347,8 @@ class testProviderMux: public ProviderIFCBaseIFC
 					// life-cycle type indication
 					IndicationProviderInfo indi;
 					indi.setProviderName("TestIndicationProvider");
-					StringArray namespaces;
-					StringArray classes;
+					blocxx::StringArray namespaces;
+					blocxx::StringArray classes;
 					classes.push_back("TestClass1");
 					IndicationProviderInfo::ClassInfo ci1("CIM_InstCreation", namespaces, classes);
 					indi.addInstrumentedClass(ci1);
@@ -362,8 +362,8 @@ class testProviderMux: public ProviderIFCBaseIFC
 					// life-cycle type indication
 					IndicationProviderInfo indi;
 					indi.setProviderName("TestIndicationProvider2");
-					StringArray namespaces;
-					StringArray classes;
+					blocxx::StringArray namespaces;
+					blocxx::StringArray classes;
 					classes.push_back("TestClass2");
 					classes.push_back("TestClass3");
 					IndicationProviderInfo::ClassInfo ci1("CIM_InstCreation", namespaces, classes);
@@ -381,7 +381,7 @@ class testProviderMux: public ProviderIFCBaseIFC
 		virtual InstanceProviderIFCRef doGetInstanceProvider(
 			const ProviderEnvironmentIFCRef&, const char* provIdString)
 		{
-			if (String(provIdString) == "TestInstanceProvider")
+			if (blocxx::String(provIdString) == "TestInstanceProvider")
 			{
 				return InstanceProviderIFCRef(new TestInstanceProvider);
 			}
@@ -391,7 +391,7 @@ class testProviderMux: public ProviderIFCBaseIFC
 		virtual MethodProviderIFCRef doGetMethodProvider(
 			const ProviderEnvironmentIFCRef&, const char* provIdString)
 		{
-			if (String(provIdString) == "TestMethodProvider")
+			if (blocxx::String(provIdString) == "TestMethodProvider")
 			{
 				return MethodProviderIFCRef(new TestMethodProvider);
 			}
@@ -402,7 +402,7 @@ class testProviderMux: public ProviderIFCBaseIFC
 		virtual AssociatorProviderIFCRef doGetAssociatorProvider(
 			const ProviderEnvironmentIFCRef&, const char* provIdString)
 		{
-			if (String(provIdString) == "TestAssociatorProvider")
+			if (blocxx::String(provIdString) == "TestAssociatorProvider")
 			{
 				return AssociatorProviderIFCRef(new TestAssociatorProvider);
 			}
@@ -413,9 +413,9 @@ class testProviderMux: public ProviderIFCBaseIFC
 		virtual IndicationProviderIFCRef doGetIndicationProvider(
 			const ProviderEnvironmentIFCRef&, const char* provIdString)
 		{
-			if (String(provIdString) == "TestIndicationProvider"
-				|| String(provIdString) == "TestIndicationProvider1"
-				|| String(provIdString) == "TestIndicationProvider2")
+			if (blocxx::String(provIdString) == "TestIndicationProvider"
+				|| blocxx::String(provIdString) == "TestIndicationProvider1"
+				|| blocxx::String(provIdString) == "TestIndicationProvider2")
 			{
 				return IndicationProviderIFCRef(new TestIndicationProvider);
 			}
@@ -441,7 +441,7 @@ class testProviderMux: public ProviderIFCBaseIFC
 		}
 
 private:
-	String m_name;
+	blocxx::String m_name;
 
 };
 
@@ -460,13 +460,13 @@ static ProviderIFCBaseIFC* testCreateProviderMux3()
 	return new testProviderMux( "lib3" );
 }
 
-class testMuxSharedLibrary: public SharedLibrary
+class testMuxSharedLibrary: public blocxx::SharedLibrary
 {
 	public:
 		virtual ~testMuxSharedLibrary(){}
 
 	protected:
-		virtual bool doGetFunctionPointer( const String& name, void**fp ) const
+		virtual bool doGetFunctionPointer( const blocxx::String& name, void**fp ) const
 		{
 			if (name == "getOWVersion")
 				*fp = (void*)(&versionFunction);
@@ -476,13 +476,13 @@ class testMuxSharedLibrary: public SharedLibrary
 		}
 };
 
-class testMuxSharedLibrary2: public SharedLibrary
+class testMuxSharedLibrary2: public blocxx::SharedLibrary
 {
 	public:
 		virtual ~testMuxSharedLibrary2(){}
 
 	protected:
-		virtual bool doGetFunctionPointer( const String& name, void**fp ) const
+		virtual bool doGetFunctionPointer( const blocxx::String& name, void**fp ) const
 		{
 			if (name == "getOWVersion")
 				*fp = (void*)(&versionFunction);
@@ -492,13 +492,13 @@ class testMuxSharedLibrary2: public SharedLibrary
 		}
 };
 
-class testMuxSharedLibrary3: public SharedLibrary
+class testMuxSharedLibrary3: public blocxx::SharedLibrary
 {
 	public:
 		virtual ~testMuxSharedLibrary3(){}
 
 	protected:
-		virtual bool doGetFunctionPointer( const String& name, void**fp ) const
+		virtual bool doGetFunctionPointer( const blocxx::String& name, void**fp ) const
 		{
 			if (name == "getOWVersion")
 				*fp = (void*)(&versionFunction);
@@ -508,33 +508,33 @@ class testMuxSharedLibrary3: public SharedLibrary
 		}
 };
 
-class testSharedLibraryLoader: public SharedLibraryLoader
+class testSharedLibraryLoader: public blocxx::SharedLibraryLoader
 {
 	public:
 		virtual ~testSharedLibraryLoader(){}
 
-		virtual SharedLibraryRef loadSharedLibrary( const String& name ) const
+		virtual blocxx::SharedLibraryRef loadSharedLibrary( const blocxx::String& name ) const
 		{
 			if ( name == "lib1" )
-				return SharedLibraryRef( new testMuxSharedLibrary );
+				return blocxx::SharedLibraryRef( new testMuxSharedLibrary );
 			else if ( name == "lib2" )
-				return SharedLibraryRef( new testMuxSharedLibrary2 );
+				return blocxx::SharedLibraryRef( new testMuxSharedLibrary2 );
 			else if ( name == "lib3" )
-				return SharedLibraryRef( new testMuxSharedLibrary3 );
+				return blocxx::SharedLibraryRef( new testMuxSharedLibrary3 );
 			else
-				return SharedLibraryRef( new testSharedLibrary );
+				return blocxx::SharedLibraryRef( new testSharedLibrary );
 		}
 };
 
 class testMuxLoader: public ProviderIFCLoaderBase
 {
 	public:
-		testMuxLoader( SharedLibraryLoaderRef sll ) :
+		testMuxLoader( blocxx::SharedLibraryLoaderRef sll ) :
 			ProviderIFCLoaderBase(sll, g_testEnvironment)
 			{}
 		virtual ~testMuxLoader(){}
 		virtual void loadIFCs(
-				Array<ProviderIFCBaseIFCRef>& out) const
+				blocxx::Array<ProviderIFCBaseIFCRef>& out) const
 		{
 			ProviderIFCBaseIFCRef rval;
 			rval = createProviderIFCFromLib( "lib1" );
@@ -561,12 +561,12 @@ class testMuxLoader: public ProviderIFCLoaderBase
 class testMuxLoaderBad: public ProviderIFCLoaderBase
 {
 	public:
-		testMuxLoaderBad( SharedLibraryLoaderRef sll ) :
+		testMuxLoaderBad( blocxx::SharedLibraryLoaderRef sll ) :
 			ProviderIFCLoaderBase(sll, g_testEnvironment)
 			{}
 		virtual ~testMuxLoaderBad(){}
 		virtual void loadIFCs(
-				Array<ProviderIFCBaseIFCRef>& out) const
+				blocxx::Array<ProviderIFCBaseIFCRef>& out) const
 		{
 			ProviderIFCBaseIFCRef rval;
 			rval = createProviderIFCFromLib( "libbad" );
@@ -590,7 +590,7 @@ class testMuxLoaderBad: public ProviderIFCLoaderBase
 		}
 };
 
-static SharedLibraryLoaderRef testCreateSharedLibraryLoader();
+static blocxx::SharedLibraryLoaderRef testCreateSharedLibraryLoader();
 
 static ProviderIFCLoaderRef testCreateMuxLoader()
 {
@@ -598,9 +598,9 @@ static ProviderIFCLoaderRef testCreateMuxLoader()
 				testCreateSharedLibraryLoader() ) );
 }
 
-static SharedLibraryLoaderRef testCreateSharedLibraryLoader()
+static blocxx::SharedLibraryLoaderRef testCreateSharedLibraryLoader()
 {
-	return SharedLibraryLoaderRef( new testSharedLibraryLoader );
+	return blocxx::SharedLibraryLoaderRef( new testSharedLibraryLoader );
 }
 
 #endif

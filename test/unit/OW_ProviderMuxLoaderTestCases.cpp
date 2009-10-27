@@ -52,6 +52,7 @@ using std::cout;
 using std::endl;
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void OW_ProviderMuxLoaderTestCases::setUp()
 {

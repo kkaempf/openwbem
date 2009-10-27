@@ -44,16 +44,16 @@ namespace OW_NAMESPACE
 class BinaryCIMOMHandle;
 class CIMClient;
 class CIMOMInfo;
-typedef Array<CIMOMInfo> CIMOMInfoArray;
+typedef blocxx::Array<CIMOMInfo> CIMOMInfoArray;
 class CIMOMLocator;
-typedef IntrusiveReference<CIMOMLocator> CIMOMLocatorRef;
+typedef blocxx::IntrusiveReference<CIMOMLocator> CIMOMLocatorRef;
 class CIMXMLCIMOMHandle;
 class ClientCIMOMHandleConnectionPool;
-typedef IntrusiveReference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPoolRef;
+typedef blocxx::IntrusiveReference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPoolRef;
 class ClientCIMOMHandle;
-typedef IntrusiveReference<ClientCIMOMHandle> ClientCIMOMHandleRef;
+typedef blocxx::IntrusiveReference<ClientCIMOMHandle> ClientCIMOMHandleRef;
 class HTTPClient;
-typedef IntrusiveReference<HTTPClient> HTTPClientRef;
+typedef blocxx::IntrusiveReference<HTTPClient> HTTPClientRef;
 
 } // end namespace OW_NAMESPACE
 

@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/ByteSwap.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_ByteSwap.hpp is deprecated, use "blocxx/ByteSwap.hpp" instead.
 #endif
 

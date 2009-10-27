@@ -37,6 +37,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_LocalAuthentication.hpp"
 #include "OW_HTTPSvrConnection.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/SecureRand.hpp"
 #include "blocxx/UUID.hpp"
 #include "blocxx/FileSystem.hpp"
@@ -49,7 +50,7 @@
 #include "OW_LocalAuthenticationCommon.hpp"
 #include "blocxx/ThreadOnce.hpp"
 #include "OW_PrivilegeManager.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/Secure.hpp"
 
 #include <cerrno>
@@ -58,6 +59,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace LocalAuthenticationCommon;
+using namespace blocxx;
 
 /// @todo  For efficiency's sake get rid of owlocalhelper and use the monitor do perform all the necessary work.
 
@@ -112,7 +114,7 @@ LocalAuthentication::~LocalAuthentication()
 		{
 			try
 			{
-				OW_LOG_ERROR(m_logger, Format("LocalAuthentication::~LocalAuthentication() caught exception from cleanupEntry(): %1", e));
+				BLOCXX_LOG_ERROR(m_logger, Format("LocalAuthentication::~LocalAuthentication() caught exception from cleanupEntry(): %1", e));
 			}
 			catch (...)
 			{
@@ -188,7 +190,7 @@ LocalAuthentication::authenticate(String& userName,
 
 		cleanupStaleEntries();
 
-		OW_ASSERT(!info.empty());
+		BLOCXX_ASSERT(!info.empty());
 
 		if (info.empty())
 		{
@@ -285,7 +287,7 @@ LocalAuthentication::authenticate(String& userName,
 			}
 			catch (LocalAuthenticationException& e)
 			{
-				OW_LOG_ERROR(m_logger, Format("LocalAuthentication::authenticate() failed to clean up entry: %1", e));
+				BLOCXX_LOG_ERROR(m_logger, Format("LocalAuthentication::authenticate() failed to clean up entry: %1", e));
 			}
 			m_authEntries.erase(m_authEntries.begin() + i);
 			return E_AUTHENTICATE_SUCCESS;
@@ -296,7 +298,7 @@ LocalAuthentication::authenticate(String& userName,
 	}
 	catch(LocalAuthenticationException& e)
 	{
-		OW_LOG_ERROR(m_logger, Format("LocalAuthentication::authenticate(): %1", e));
+		BLOCXX_LOG_ERROR(m_logger, Format("LocalAuthentication::authenticate(): %1", e));
 		htcon->setErrorDetails(Format("%1", e));
 		return E_AUTHENTICATE_FAIL;
 	}
@@ -325,7 +327,7 @@ LocalAuthentication::createNewChallenge(const String& uid, const String& userNam
 void
 LocalAuthentication::cleanupEntry(const AuthEntry& entry)
 {
-	OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::cleanupEntry(): cleaning up %1 for %2", entry.fileName, entry.userName));
+	BLOCXX_LOG_DEBUG3(m_logger, Format("LocalAuthentication::cleanupEntry(): cleaning up %1 for %2", entry.fileName, entry.userName));
 	if (useHelper())
 	{
 		cleanupEntryHelper(entry.fileName, entry.cookie);
@@ -334,7 +336,7 @@ LocalAuthentication::cleanupEntry(const AuthEntry& entry)
 	{
 		if (!FileSystem::removeFile(entry.fileName))
 		{
-			OW_LOG_ERROR(m_logger, Format("LocalAuthentication::cleanupEntry(): Failed to remove %1: %2", entry.fileName, errno));
+			BLOCXX_LOG_ERROR(m_logger, Format("LocalAuthentication::cleanupEntry(): Failed to remove %1: %2", entry.fileName, errno));
 		}
 	}
 }
@@ -357,7 +359,7 @@ LocalAuthentication::cleanupStaleEntries()
 		}
 		catch (LocalAuthenticationException& e)
 		{
-			OW_LOG_ERROR(m_logger, Format("LocalAuthentication::cleanupStaleEntries() failed to remove entry: %1 for %2: %3",
+			BLOCXX_LOG_ERROR(m_logger, Format("LocalAuthentication::cleanupStaleEntries() failed to remove entry: %1 for %2: %3",
 				m_authEntries[0].fileName, m_authEntries[0].userName, e));
 		}
 		m_authEntries.erase(m_authEntries.begin());
@@ -376,14 +378,14 @@ LocalAuthentication::checkProcess()
 	if (m_owlocalhelper)
 	{
 		// must have died
-		OW_LOG_ERROR(m_logger, Format("LocalAuthentication detected that \"%1\" is not running. Status: %2",
+		BLOCXX_LOG_ERROR(m_logger, Format("LocalAuthentication detected that \"%1\" is not running. Status: %2",
 			m_localHelperBinPath, m_owlocalhelper->processStatus().toString()));
 		m_owlocalhelper->waitCloseTerm(0.00, 0.01, 0.02);
 		m_owlocalhelper = 0;
 	}
 
 	PrivilegeManager privMan(PrivilegeManager::getPrivilegeManager());
-	OW_ASSERT(!privMan.isNull());
+	BLOCXX_ASSERT(!privMan.isNull());
 
 	#ifdef OW_WIN32
 	static const char* const SUPERUSER = "SYSTEM";
@@ -400,7 +402,7 @@ LocalAuthentication::checkProcess()
 	{
 		String msg = Format("LocalAuthentication failed to start %1. status = %2, stderr = %3",
 			m_localHelperBinPath, m_owlocalhelper->processStatus().toString(), m_owlocalhelper->err()->readAll());
-		OW_LOG_ERROR(m_logger, msg);
+		BLOCXX_LOG_ERROR(m_logger, msg);
 		OW_THROW(LocalAuthenticationException, msg.c_str());
 	}
 
@@ -425,19 +427,19 @@ LocalAuthentication::processHelperCommand(const String& inputCmd, const String& 
 		istr.tie(&ostr);
 		ostr << inputCmd << '\n';
 		ostr << extraInput << std::flush;
-		OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got request, sending to helper: \"%1\"", inputCmd));
+		BLOCXX_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got request, sending to helper: \"%1\"", inputCmd));
 		String result = String::getLine(istr);
-		OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got response: \"%1\"", result));
+		BLOCXX_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got response: \"%1\"", result));
 		if (result == "S")
 		{
 			output = String::getLine(istr);
-			OW_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got success. output: \"%1\"", output));
+			BLOCXX_LOG_DEBUG3(m_logger, Format("LocalAuthentication::processHelperCommand() got success. output: \"%1\"", output));
 		}
 		else if (result == "F")
 		{
 			String details = String::getLine(istr);
 			details.trim();
-			OW_LOG_ERROR(m_logger, Format("LocalAuthentication::processHelperCommand() got failure. details: \"%1\"", details));
+			BLOCXX_LOG_ERROR(m_logger, Format("LocalAuthentication::processHelperCommand() got failure. details: \"%1\"", details));
 			size_t idx = details.indexOf(' ');
 			if (idx != String::npos)
 			{
@@ -459,7 +461,7 @@ LocalAuthentication::processHelperCommand(const String& inputCmd, const String& 
 		else
 		{
 			// something is messed up, just kill the process!
-			OW_LOG_ERROR(m_logger, Format("LocalAuthentication::processHelperCommand() got unexpected output: \"%1\"", result));
+			BLOCXX_LOG_ERROR(m_logger, Format("LocalAuthentication::processHelperCommand() got unexpected output: \"%1\"", result));
 			m_owlocalhelper->waitCloseTerm(0.00, 0.01, 0.02);
 			m_owlocalhelper = 0;
 			OW_THROW(LocalAuthenticationException, Format("LocalAuthentication::processHelperCommand() got unexpected output: \"%1\"", result).c_str());
@@ -497,7 +499,7 @@ LocalAuthentication::cleanupEntryHelper(const String& pathToFile, const String& 
 	}
 	String fileName = pathToFile.substring(begin + 1);
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG3(logger, Format("cleanupEntryHelper: pathToFile = %1, fileName = %2", pathToFile, fileName));
+	BLOCXX_LOG_DEBUG3(logger, Format("cleanupEntryHelper: pathToFile = %1, fileName = %2", pathToFile, fileName));
 	processHelperCommand(REMOVE_CMD, fileName + "\n" + cookie + "\n");
 }
 

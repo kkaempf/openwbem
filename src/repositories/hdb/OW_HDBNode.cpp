@@ -37,7 +37,7 @@
 #include "OW_HDBNode.hpp"
 #include "OW_HDB.hpp"
 #include "blocxx/AutoPtr.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/Format.hpp"
 #include "blocxx/String.hpp"
 #include "blocxx/StringBuffer.hpp"
@@ -47,6 +47,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 
 namespace
 {

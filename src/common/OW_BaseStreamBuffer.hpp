@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/BaseStreamBuffer.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_BaseStreamBuffer.hpp is deprecated, use "blocxx/BaseStreamBuffer.hpp" instead.
 #endif
 

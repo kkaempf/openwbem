@@ -48,6 +48,8 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
+
 namespace XMLQualifier
 {
 

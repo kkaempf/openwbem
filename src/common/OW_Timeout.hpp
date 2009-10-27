@@ -38,6 +38,11 @@
 #include "OW_config.h"
 #include <blocxx/Timeout.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Timeout.hpp is deprecated, use "blocxx/Timeout.hpp" instead.
 #endif
 

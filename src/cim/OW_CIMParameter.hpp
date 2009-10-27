@@ -41,7 +41,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -95,7 +95,7 @@ public:
 	/**
 	 * @return true if this a valid CIMParameter object.
 	 */
-	OW_SAFE_BOOL_IMPL(CIMParameter, COWIntrusiveReference<PARMData>, CIMParameter::m_pdata, m_pdata)
+	BLOCXX_SAFE_BOOL_IMPL(CIMParameter, blocxx::COWIntrusiveReference<PARMData>, CIMParameter::m_pdata, m_pdata)
 
 	/**
 	 * Set the qualifiers for this parameter
@@ -124,7 +124,7 @@ public:
 	/**
 	 * @return The size of the data for this parameter.
 	 */
-	Int32 getDataSize() const;
+	blocxx::Int32 getDataSize() const;
 	/**
 	 * Get a qualifier by name for this parameter.
 	 * @param name	The name of the qualifier to retrieve.
@@ -135,7 +135,7 @@ public:
 	/**
 	 * @return The name of this CIMParameter.
 	 */
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 	/**
 	 * Set the name of this CIMParameter.
 	 * @param name	The new name for this CIMParameter.
@@ -154,12 +154,12 @@ public:
 	/**
 	 * @return a string representation of this CIMParameter.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 	/**
 	 * @return An String that contains the MOF representation of this
 	 * CIMParameter object.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 
 	/**
 	 * Test if this property has a qualifier that is a boolean type with a
@@ -175,7 +175,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<PARMData> m_pdata;
+	blocxx::COWIntrusiveReference<PARMData> m_pdata;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

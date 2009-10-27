@@ -40,7 +40,7 @@
 #include "blocxx/String.hpp"
 #include "blocxx/IntrusiveReference.hpp"
 #include "blocxx/IntrusiveCountableBase.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -51,7 +51,7 @@ class HDB;
 class OW_HDB_API HDBNode
 {
 private:
-	struct HDBNodeData : public IntrusiveCountableBase
+	struct HDBNodeData : public blocxx::IntrusiveCountableBase
 	{
 		HDBNodeData();
 		HDBNodeData(const HDBNodeData& x);
@@ -59,13 +59,13 @@ private:
 		HDBNodeData& operator= (const HDBNodeData& x);
 
 		HDBBlock m_blk;
-		String m_key;
-		Int32 m_bfrLen;
+		blocxx::String m_key;
+		blocxx::Int32 m_bfrLen;
 		unsigned char* m_bfr;
-		Int32 m_offset;
-		Int32 m_version;
+		blocxx::Int32 m_offset;
+		blocxx::Int32 m_version;
 	};
-	typedef IntrusiveReference<HDBNodeData> HDBNodeDataRef;
+	typedef blocxx::IntrusiveReference<HDBNodeData> HDBNodeDataRef;
 
 public:
 	/**
@@ -79,7 +79,7 @@ public:
 	 * @param dataLen	The length of the data associated with the node.
 	 * @param data		The data associated with the node.
 	 */
-	HDBNode(const String& key, int dataLen, const unsigned char* data);
+	HDBNode(const blocxx::String& key, int dataLen, const unsigned char* data);
 	/**
 	 * Copy constructor
 	 * @param x		The HDBNode to copy this node from.
@@ -98,7 +98,7 @@ public:
 	/**
 	 * @return The value of the flags field on this HDBNode object.
 	 */
-	UInt32 getFlags()
+	blocxx::UInt32 getFlags()
 	{
 		return m_pdata->m_blk.flags;
 	}
@@ -107,7 +107,7 @@ public:
 	 * @param flags	The user defined flags to check.
 	 * @return true if all flags are on in this node. Othewise false.
 	 */
-	bool areAllFlagsOn(UInt32 flags) const
+	bool areAllFlagsOn(blocxx::UInt32 flags) const
 	{
 		return ((m_pdata->m_blk.flags & flags) == flags);
 	}
@@ -116,7 +116,7 @@ public:
 	 * @param flags	The user defined flags to check.
 	 * @return true if some flags are on in this node. Othewise false.
 	 */
-	bool areSomeFlagsOn(UInt32 flags) const
+	bool areSomeFlagsOn(blocxx::UInt32 flags) const
 	{
 		return ((m_pdata->m_blk.flags & flags) != 0);
 	}
@@ -127,7 +127,7 @@ public:
 	 * @return true if the flags were changed from this operation. Otherwise
 	 * false.
 	 */
-	bool turnFlagsOn(HDBHandle& hdl, UInt32 flags);
+	bool turnFlagsOn(HDBHandle& hdl, blocxx::UInt32 flags);
 	/**
 	 * Turn the user defined flags off in this node.
 	 * @param hdl
@@ -135,15 +135,15 @@ public:
 	 * @return true if the flags were changed from this operation. Otherwise
 	 * false.
 	 */
-	bool turnFlagsOff(HDBHandle& hdl, UInt32 flags);
+	bool turnFlagsOff(HDBHandle& hdl, blocxx::UInt32 flags);
 	/**
 	 * @return The key associated with this HDBNode.
 	 */
-	String getKey() const { return m_pdata->m_key; }
+	blocxx::String getKey() const { return m_pdata->m_key; }
 	/**
 	 * @return The length of the data associated with this HDBNode.
 	 */
-	Int32 getDataLen() const { return m_pdata->m_bfrLen; }
+	blocxx::Int32 getDataLen() const { return m_pdata->m_bfrLen; }
 	/**
 	 * @return A pointer to the data associated with this HDBNode.
 	 */
@@ -183,35 +183,35 @@ public:
 	/**
 	 * @return true if this HDBNode is valid.
 	 */
-	OW_SAFE_BOOL_IMPL(HDBNode, HDBNodeDataRef, HDBNode::m_pdata, m_pdata)
+	BLOCXX_SAFE_BOOL_IMPL(HDBNode, HDBNodeDataRef, HDBNode::m_pdata, m_pdata)
 
 private:
 	HDBNode(const char* key, HDBHandle& hdl);
-	HDBNode(Int32 offset, HDBHandle& hdl);
-	void read(Int32 offset, HDBHandle& hdl);
+	HDBNode(blocxx::Int32 offset, HDBHandle& hdl);
+	void read(blocxx::Int32 offset, HDBHandle& hdl);
 	bool reload(HDBHandle& hdl);
 	enum EWriteHeaderFlag
 	{
 		E_WRITE_ALL,
 		E_WRITE_ONLY_HEADER
 	};
-	Int32 write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader = E_WRITE_ALL);
-	void updateOffsets(HDBHandle& hdl, Int32 offset);
-	Int32 getParentOffset() const { return m_pdata->m_blk.parent; }
-	Int32 getFirstChildOffset() const { return m_pdata->m_blk.firstChild; }
-	Int32 getLastChildOffset() const { return m_pdata->m_blk.lastChild; }
-	Int32 getNextSiblingOffset() const { return m_pdata->m_blk.nextSib; }
-	Int32 getPrevSiblingOffset() const { return m_pdata->m_blk.prevSib; }
-	Int32 getOffset() const { return m_pdata->m_offset; }
+	blocxx::Int32 write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader = E_WRITE_ALL);
+	void updateOffsets(HDBHandle& hdl, blocxx::Int32 offset);
+	blocxx::Int32 getParentOffset() const { return m_pdata->m_blk.parent; }
+	blocxx::Int32 getFirstChildOffset() const { return m_pdata->m_blk.firstChild; }
+	blocxx::Int32 getLastChildOffset() const { return m_pdata->m_blk.lastChild; }
+	blocxx::Int32 getNextSiblingOffset() const { return m_pdata->m_blk.nextSib; }
+	blocxx::Int32 getPrevSiblingOffset() const { return m_pdata->m_blk.prevSib; }
+	blocxx::Int32 getOffset() const { return m_pdata->m_offset; }
 	bool remove(HDBHandle& hdl);
-	void removeBlock(HDBHandle& hdl, HDBBlock& fblk, Int32 offset);
+	void removeBlock(HDBHandle& hdl, HDBBlock& fblk, blocxx::Int32 offset);
 	void addChild(HDBHandle& hdl, HDBNode& arg);
 	bool updateData(HDBHandle& hdl, const HDBNode& parentNode, int dataLen, const unsigned char* data);
 	void updateParent(HDBHandle& hdl, const HDBNode& parentNode);
 	void detachFromParent(HDBHandle& hdl);
 	void addToNewParent(HDBHandle& hdl, HDBNode& parentNode);
 	void setNull() { m_pdata = 0; }
-	String debugString() const;
+	blocxx::String debugString() const;
 
 #ifdef OW_WIN32
 #pragma warning (push)

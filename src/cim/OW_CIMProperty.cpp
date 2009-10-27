@@ -51,6 +51,7 @@ namespace OW_NAMESPACE
 
 using std::streambuf;
 using namespace WBEMFlags;
+using namespace blocxx;
 struct CIMProperty::PROPData : public COWIntrusiveCountableBase
 {
 	PROPData();

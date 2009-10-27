@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "blocxx/SocketBaseImpl.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMScope.hpp"
@@ -61,6 +61,7 @@ using std::cin;
 using std::cout;
 using std::endl;
 using namespace OpenWBEM;
+using namespace blocxx;
 
 #define TEST_ASSERT(CON) if (!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
 //////////////////////////////////////////////////////////////////////////////

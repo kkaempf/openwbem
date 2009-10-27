@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_OOPProtocolCPP1Impl.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_CIMException.hpp"
 #include "blocxx/LogMessage.hpp"
@@ -56,10 +56,12 @@
 #define OW_OOP_LOG_DEBUG4(logger, message)
 
 // use this version if you need to debug this code
-//#define OW_OOP_LOG_DEBUG4(logger, message) OW_LOG_DEBUG(logger, message)
+//#define OW_OOP_LOG_DEBUG4(logger, message) BLOCXX_LOG_DEBUG(logger, message)
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace OOPProtocolCPP1Impl
 {
@@ -93,13 +95,13 @@ int processOneRequest(std::streambuf & inbuf,
 	{
 		case BinarySerialization::BIN_OK:
 		{
-			OW_LOG_DEBUG3(logger, "processOneRequest got BIN_OK");
+			BLOCXX_LOG_DEBUG3(logger, "processOneRequest got BIN_OK");
 			result.handleResult(inbuf, op);
 		}
 		break;
 		case BinarySerialization::BIN_ERROR:
 		{
-			OW_LOG_DEBUG3(logger, "processOneRequest got BIN_ERROR");
+			BLOCXX_LOG_DEBUG3(logger, "processOneRequest got BIN_ERROR");
 			String msg;
 			BinarySerialization::read(inbuf, msg);
 			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
@@ -108,7 +110,7 @@ int processOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::BIN_EXCEPTION:
 		{
-			OW_LOG_DEBUG3(logger, "processOneRequest got BIN_EXCEPTION");
+			BLOCXX_LOG_DEBUG3(logger, "processOneRequest got BIN_EXCEPTION");
 			UInt16 cimerrno;
 			String cimMsg;
 			BinarySerialization::read(inbuf, cimerrno);
@@ -120,14 +122,14 @@ int processOneRequest(std::streambuf & inbuf,
 		case BinarySerialization::BINSIG_INST:
 		case BinarySerialization::BINSIG_OP:
 		{
-			OW_LOG_DEBUG3(logger, "processOneRequest got BINSIG_INST or BINSIG_OP");
+			BLOCXX_LOG_DEBUG3(logger, "processOneRequest got BINSIG_INST or BINSIG_OP");
 			result.handleResult(inbuf, op);
 		}
 		break;
 
 		case BinarySerialization::BIN_END:
 		{
-			OW_LOG_DEBUG3(logger, "processOneRequest got BIN_END");
+			BLOCXX_LOG_DEBUG3(logger, "processOneRequest got BIN_END");
 			return FINISHED;
 		}
 
@@ -148,24 +150,24 @@ int processOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::OPERATION_CONTEXT_GET_DATA:
 		{
-			OW_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_GET_DATA");
+			BLOCXX_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_GET_DATA");
 			String key = BinarySerialization::readString(inbuf);
-			OW_LOG_DEBUG3(logger, Format("processOneRequest read key: %1", key));
+			BLOCXX_LOG_DEBUG3(logger, Format("processOneRequest read key: %1", key));
 			OperationContext::DataRef data = env->getOperationContext().getData(key);
 			if (data)
 			{
-				OW_LOG_DEBUG3(logger, "processOneRequest found it, writing true");
+				BLOCXX_LOG_DEBUG3(logger, "processOneRequest found it, writing true");
 				BinarySerialization::writeBool(outbuf, true);
 				data->writeObject(outbuf);
 			}
 			else
 			{
-				OW_LOG_DEBUG3(logger, "processOneRequest didn't find it, writing false");
+				BLOCXX_LOG_DEBUG3(logger, "processOneRequest didn't find it, writing false");
 				BinarySerialization::writeBool(outbuf, false);
 			}
 			if (outbuf.pubsync() == -1)
 			{
-				OW_LOG_ERROR(logger, "processOneRequest flush failed!");
+				BLOCXX_LOG_ERROR(logger, "processOneRequest flush failed!");
 				OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
 			}
 		}
@@ -173,11 +175,11 @@ int processOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::OPERATION_CONTEXT_SET_DATA:
 		{
-			OW_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_SET_DATA");
+			BLOCXX_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_SET_DATA");
 			String key = BinarySerialization::readString(inbuf);
-			OW_LOG_DEBUG3(logger, Format("processOneRequest read key: %1", key));
+			BLOCXX_LOG_DEBUG3(logger, Format("processOneRequest read key: %1", key));
 			String type = BinarySerialization::readString(inbuf);
-			OW_LOG_DEBUG3(logger, Format("processOneRequest read type: %1", type));
+			BLOCXX_LOG_DEBUG3(logger, Format("processOneRequest read type: %1", type));
 			std::istream instr(&inbuf);
 			HTTPChunkedIStreamBuffer chunkedIBuf(instr);
 			OperationContext::DataRef data = env->getOperationContext().getData(key);
@@ -186,7 +188,7 @@ int processOneRequest(std::streambuf & inbuf,
 				// replace the existing object
 				data->readObject(chunkedIBuf);
 
-				OW_LOG_DEBUG3(logger, "processOneRequest found it, writing true");
+				BLOCXX_LOG_DEBUG3(logger, "processOneRequest found it, writing true");
 				BinarySerialization::writeBool(outbuf, true);
 			}
 			else if (type == OperationContext::StringData().getType())
@@ -194,12 +196,12 @@ int processOneRequest(std::streambuf & inbuf,
 				OperationContext::DataRef data(new OperationContext::StringData());
 				data->readObject(chunkedIBuf);
 				env->getOperationContext().setData(key, data);
-				OW_LOG_DEBUG3(logger, "processOneRequest didn't find it, but it was a string type, writing true");
+				BLOCXX_LOG_DEBUG3(logger, "processOneRequest didn't find it, but it was a string type, writing true");
 				BinarySerialization::writeBool(outbuf, true);
 			}
 			else
 			{
-				OW_LOG_DEBUG3(logger, "processOneRequest didn't find it, not a string type, writing false");
+				BLOCXX_LOG_DEBUG3(logger, "processOneRequest didn't find it, not a string type, writing false");
 				BinarySerialization::writeBool(outbuf, false);
 			}
 
@@ -210,23 +212,23 @@ int processOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::OPERATION_CONTEXT_REMOVE_DATA:
 		{
-			OW_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_REMOVE_DATA");
+			BLOCXX_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_REMOVE_DATA");
 			String key = BinarySerialization::readString(inbuf);
-			OW_LOG_DEBUG3(logger, Format("processOneRequest read key: %1", key));
+			BLOCXX_LOG_DEBUG3(logger, Format("processOneRequest read key: %1", key));
 			if (env->getOperationContext().keyHasData(key))
 			{
-				OW_LOG_DEBUG3(logger, "processOneRequest found it, writing true");
+				BLOCXX_LOG_DEBUG3(logger, "processOneRequest found it, writing true");
 				BinarySerialization::writeBool(outbuf, true);
 				if (outbuf.pubsync() == -1)
 				{
-					OW_LOG_DEBUG3(logger, "processOneRequest flush failed!");
+					BLOCXX_LOG_DEBUG3(logger, "processOneRequest flush failed!");
 					OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
 				}
 				env->getOperationContext().removeData(key);
 			}
 			else
 			{
-				OW_LOG_DEBUG3(logger, "processOneRequest didn't find it, writing false");
+				BLOCXX_LOG_DEBUG3(logger, "processOneRequest didn't find it, writing false");
 				BinarySerialization::writeBool(outbuf, false);
 			}
 		}
@@ -234,14 +236,14 @@ int processOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::OPERATION_CONTEXT_KEY_HAS_DATA:
 		{
-			OW_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_KEY_HAS_DATA");
+			BLOCXX_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_KEY_HAS_DATA");
 			String key = BinarySerialization::readString(inbuf);
-			OW_LOG_DEBUG3(logger, Format("processOneRequest read key: %1", key));
+			BLOCXX_LOG_DEBUG3(logger, Format("processOneRequest read key: %1", key));
 			BinarySerialization::writeBool(
 				outbuf, env->getOperationContext().keyHasData(key));
 			if (outbuf.pubsync() == -1)
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest flush failed!");
+				BLOCXX_LOG_DEBUG(logger, "processOneRequest flush failed!");
 				OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
 			}
 		}
@@ -249,11 +251,11 @@ int processOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::OPERATION_CONTEXT_GET_OPERATION_ID:
 		{
-			OW_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_GET_OPERATION_ID");
+			BLOCXX_LOG_DEBUG3(logger, "processOneRequest got OPERATION_CONTEXT_GET_OPERATION_ID");
 			BinarySerialization::write(outbuf, env->getOperationContext().getOperationId());
 			if (outbuf.pubsync() == -1)
 			{
-				OW_LOG_DEBUG(logger, "processOneRequest flush failed!");
+				BLOCXX_LOG_DEBUG(logger, "processOneRequest flush failed!");
 				OW_THROWCIMMSG(CIMException::FAILED, "Writing to process failed");
 			}
 		}
@@ -261,7 +263,7 @@ int processOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::PROVIDER_ENVIRONMENT_REQUEST:
 		{
-			OW_LOG_DEBUG3(logger, "processOneRequest got PROVIDER_ENVIRONMENT_REQUEST");
+			BLOCXX_LOG_DEBUG3(logger, "processOneRequest got PROVIDER_ENVIRONMENT_REQUEST");
 			UnnamedPipeRef envconn = pprov->startClonedProviderEnv(env);
 			if (envconn)
 			{
@@ -274,7 +276,7 @@ int processOneRequest(std::streambuf & inbuf,
 			else
 			{
 				// Assume OOPProviderBase was unable to start the thread
-				OW_LOG_DEBUG(logger, "processOneRequest PROVIDER_ENVIRONMENT_REQUEST returning BIN_ERROR");
+				BLOCXX_LOG_DEBUG(logger, "processOneRequest PROVIDER_ENVIRONMENT_REQUEST returning BIN_ERROR");
 				BinarySerialization::write(outbuf, BinarySerialization::BIN_ERROR);
 				BinarySerialization::write(outbuf, String("thread limit reached"));
 			}
@@ -285,7 +287,7 @@ int processOneRequest(std::streambuf & inbuf,
 		case BinarySerialization::REPOSITORY_CIMOM_HANDLE_REQUEST:
 		case BinarySerialization::LOCKED_CIMOM_HANDLE_REQUEST:
 		{
-			OW_LOG_DEBUG3(logger, "processOneRequest got CIMOM_HANDLE_REQUEST, REPOSITORY_CIMOM_HANDLE_REQUEST or LOCKED_CIMOM_HANDLE_REQUEST");
+			BLOCXX_LOG_DEBUG3(logger, "processOneRequest got CIMOM_HANDLE_REQUEST, REPOSITORY_CIMOM_HANDLE_REQUEST or LOCKED_CIMOM_HANDLE_REQUEST");
 			UInt8 lockTypeArg = 0;
 			if (op == BinarySerialization::LOCKED_CIMOM_HANDLE_REQUEST)
 			{
@@ -325,7 +327,7 @@ int processOneRequest(std::streambuf & inbuf,
 
 		case BinarySerialization::GET_CONFIG_ITEM:
 		{
-			OW_LOG_DEBUG3(logger, "processOneRequest got GET_CONFIG_ITEM");
+			BLOCXX_LOG_DEBUG3(logger, "processOneRequest got GET_CONFIG_ITEM");
 			String name = BinarySerialization::readString(inbuf);
 			String defRetVal = BinarySerialization::readString(inbuf);
 			String rv = env->getConfigItem(name, defRetVal);
@@ -344,7 +346,7 @@ int processOneRequest(std::streambuf & inbuf,
 		break;
 
 		default:
-			OW_LOG_ERROR(logger, Format("Unexpected value received from provider: %1", static_cast<int>(op)));
+			BLOCXX_LOG_ERROR(logger, Format("Unexpected value received from provider: %1", static_cast<int>(op)));
 			OW_THROWCIMMSG(CIMException::FAILED, Format("Unexpected value received from provider: %1", static_cast<int>(op)).c_str());
 	}
 	return CONTINUE;
@@ -375,7 +377,7 @@ int process(Array<unsigned char>& in,
 	ThreadPool& threadPool,
 	OOPProviderBase* pprov)
 {
-	OW_LOG_DEBUG3(logger, Format("in process(). in.size() = %1", in.size()));
+	BLOCXX_LOG_DEBUG3(logger, Format("in process(). in.size() = %1", in.size()));
 	if (in.size() == 0)
 	{
 		return FINISHED;
@@ -394,7 +396,7 @@ int process(Array<unsigned char>& in,
 			processrv = processOneRequest(inbuf, outbuf, outputEntries, env, result, threadPool, pprov);
 			if (!out.empty())
 			{
-				OW_LOG_DEBUG3(logger, Format("processOneRequest() found %1 bytes of out. Adding to outputEntries.", out.size()));
+				BLOCXX_LOG_DEBUG3(logger, Format("processOneRequest() found %1 bytes of out. Adding to outputEntries.", out.size()));
 				outputEntries.push_back(OutputEntry(out));
 			}
 			// successful request, store how much was read so it can be removed when we're done.
@@ -411,13 +413,13 @@ int process(Array<unsigned char>& in,
 	}
 	catch (IOException& e)
 	{
-		OW_LOG_DEBUG3(logger, Format("processOneRequest() threw IOException: %1", e));
+		BLOCXX_LOG_DEBUG3(logger, Format("processOneRequest() threw IOException: %1", e));
 
 		// check that the exception happened because of reaching the end of the stream.
 		// Otherwise, re-throw. This will happen if something is corrupted and we can't parse the input.
 		if (static_cast<size_t>(inbuf.pubseekoff(0, std::ios::cur)) != in.size())
 		{
-			OW_LOG_INFO(logger, "IOException not caused by reaching end of input.  process() Re-throwing");
+			BLOCXX_LOG_INFO(logger, "IOException not caused by reaching end of input.  process() Re-throwing");
 			throw;
 		}
 
@@ -462,7 +464,7 @@ OOPSelectableCallback::doSelected(Select_t& selectedObject, EEventType eventType
 	Logger logger(COMPONENT_NAME);
 	if (eventType == E_READ_EVENT)
 	{
-		OW_LOG_DEBUG3(logger, "doSelected() got a read event");
+		BLOCXX_LOG_DEBUG3(logger, "doSelected() got a read event");
 		// read all the data out of the pipe and append it to m_inputBuf
 		size_t oldSize = m_inputBuf.size();
 		const unsigned int INCREMENT = 1024;
@@ -504,7 +506,7 @@ OOPSelectableCallback::doSelected(Select_t& selectedObject, EEventType eventType
 		// now that we've read the data, see if we can do anything with it.
 		if (process(m_inputBuf, m_outputEntries, m_env, logger, m_result, m_threadPool, m_pprov) == FINISHED)
 		{
-			OW_LOG_DEBUG3(logger, "process() returned FINISHED, telling the select engine to stop");
+			BLOCXX_LOG_DEBUG3(logger, "process() returned FINISHED, telling the select engine to stop");
 			m_selectEngine.stop();
 			m_finishedSuccessfully = true;
 		}
@@ -520,10 +522,10 @@ OOPSelectableCallback::doSelected(Select_t& selectedObject, EEventType eventType
 	}
 	else if (eventType == E_WRITE_EVENT)
 	{
-		OW_LOG_DEBUG3(logger, "doSelected() got a write event");
+		BLOCXX_LOG_DEBUG3(logger, "doSelected() got a write event");
 		if (m_outputEntries.empty())
 		{
-			OW_LOG_DEBUG3(logger, "m_outputEntries.empty(), removing from select engine");
+			BLOCXX_LOG_DEBUG3(logger, "m_outputEntries.empty(), removing from select engine");
 			m_selectEngine.removeSelectableObject(m_outputPipe->getWriteSelectObj(), SelectableCallbackIFC::E_WRITE_EVENT);
 			return;
 		}
@@ -535,20 +537,20 @@ OOPSelectableCallback::doSelected(Select_t& selectedObject, EEventType eventType
 			{
 				if (entry.direction == OutputEntry::E_INPUT)
 				{
-					OW_LOG_DEBUG3(logger, Format("doSelected() attempting to pass a input descriptor: %1", entry.pipe->getInputDescriptor()));
+					BLOCXX_LOG_DEBUG3(logger, Format("doSelected() attempting to pass a input descriptor: %1", entry.pipe->getInputDescriptor()));
 					m_outputPipe->passDescriptor(entry.pipe->getInputDescriptor(), m_inputPipe);
 				}
 				else
 				{
-					OW_LOG_DEBUG3(logger, Format("doSelected() attempting to pass a output descriptor: %1", entry.pipe->getOutputDescriptor()));
+					BLOCXX_LOG_DEBUG3(logger, Format("doSelected() attempting to pass a output descriptor: %1", entry.pipe->getOutputDescriptor()));
 					m_outputPipe->passDescriptor(entry.pipe->getOutputDescriptor(), m_inputPipe);
 				}
 				m_outputEntries.erase(m_outputEntries.begin());
 			}
 			else // entry.type == E_BUFFER
 			{
-				OW_LOG_DEBUG3(logger, Format("doSelected() attempting to write %1 bytes", entry.buf.size()));
-				OW_ASSERT(entry.buf.size() > 0);
+				BLOCXX_LOG_DEBUG3(logger, Format("doSelected() attempting to write %1 bytes", entry.buf.size()));
+				BLOCXX_ASSERT(entry.buf.size() > 0);
 				ssize_t numWrote = 0;
 				try
 				{
@@ -561,9 +563,9 @@ OOPSelectableCallback::doSelected(Select_t& selectedObject, EEventType eventType
 					{
 						throw;
 					}
-					OW_LOG_DEBUG3(logger, "doSelected() got EAGAIN while attempting to write.");
+					BLOCXX_LOG_DEBUG3(logger, "doSelected() got EAGAIN while attempting to write.");
 				}
-				OW_LOG_DEBUG3(logger, Format("write returned %1", numWrote));
+				BLOCXX_LOG_DEBUG3(logger, Format("write returned %1", numWrote));
 				if (static_cast<size_t>(numWrote) == entry.buf.size())
 				{
 					m_outputEntries.erase(m_outputEntries.begin());
@@ -576,7 +578,7 @@ OOPSelectableCallback::doSelected(Select_t& selectedObject, EEventType eventType
 		}
 		catch (IOException& e)
 		{
-			OW_LOG_ERROR(logger, Format("doSelected() error while writing: %1", e));
+			BLOCXX_LOG_ERROR(logger, Format("doSelected() error while writing: %1", e));
 			// Something went horribly wrong.  Just clear out the output queue, so we stop trying.
 			// Don't propagate the exception so that the select engine can keep going, so that
 			// log messages or other input from the provider can be processed.

@@ -37,6 +37,11 @@
 #include "OW_config.h"
 #include <blocxx/ThreadOnce.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #define OW_ONCE_INIT BLOCXX_ONCE_INIT
 
 #warning OW_ThreadOnce.hpp is deprecated, use "blocxx/ThreadOnce.hpp" instead. \

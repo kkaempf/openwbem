@@ -51,6 +51,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 LocalEmbeddedCIMOMHandle::LocalEmbeddedCIMOMHandle(EmbeddedCIMOMEnvironmentRef env,
 	RepositoryIFCRef pRepos, OperationContext& context)

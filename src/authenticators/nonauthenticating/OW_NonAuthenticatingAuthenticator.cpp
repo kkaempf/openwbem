@@ -38,7 +38,7 @@
 
 namespace OW_NAMESPACE
 {
-
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 NonAuthenticatingAuthenticator::NonAuthenticatingAuthenticator()
 	: AuthenticatorIFC()

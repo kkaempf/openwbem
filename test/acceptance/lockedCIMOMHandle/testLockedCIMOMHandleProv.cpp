@@ -37,16 +37,18 @@
 #include "OW_CppProviderIncludes.hpp"
 #include "blocxx/FileSystem.hpp"
 #include "blocxx/Thread.hpp" // for yield()
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/Timeout.hpp"
 #include "blocxx/TimeoutTimer.hpp"
 #include "blocxx/NonRecursiveMutex.hpp"
 #include "blocxx/NonRecursiveMutexLock.hpp"
+#include "blocxx/Logger.hpp"
 #include "testLockedCIMOMHandle.hpp"
 
 using namespace std;
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
@@ -116,22 +118,22 @@ public:
 		CIMOMHandleIFCRef hdl;
 		if (className == "no" || className == "no2")
 		{
-			OW_LOG_DEBUG(lgr, "got classname no (or no2), calling getCIMOMHandle()");
+			BLOCXX_LOG_DEBUG(lgr, "got classname no (or no2), calling getCIMOMHandle()");
 			return env->getCIMOMHandle();
 		}
 		else if (className == "read")
 		{
-			OW_LOG_DEBUG(lgr, "got classname read, calling getLockedCIMOMHandle(E_READ)");
+			BLOCXX_LOG_DEBUG(lgr, "got classname read, calling getLockedCIMOMHandle(E_READ)");
 			return env->getLockedCIMOMHandle(ProviderEnvironmentIFC::E_READ);
 		}
 		else if (className == "write")
 		{
-			OW_LOG_DEBUG(lgr, "got classname write, calling getLockedCIMOMHandle(E_WRITE)");
+			BLOCXX_LOG_DEBUG(lgr, "got classname write, calling getLockedCIMOMHandle(E_WRITE)");
 			return env->getLockedCIMOMHandle(ProviderEnvironmentIFC::E_WRITE);
 		}
 		else
 		{
-			OW_LOG_ERROR(lgr, Format("test error, unknown classname: %1", className));
+			BLOCXX_LOG_ERROR(lgr, Format("test error, unknown classname: %1", className));
 			abort();
 		}
 		return CIMOMHandleIFCRef();
@@ -146,18 +148,18 @@ public:
 		CIMParamValueArray &out)
 	{
 		Logger lgr(COMPONENT_NAME);
-		OW_LOG_DEBUG(lgr, Format("testLockedCIMOMHandleProv::invokeMethod() methodName = %1", methodName));
+		BLOCXX_LOG_DEBUG(lgr, Format("testLockedCIMOMHandleProv::invokeMethod() methodName = %1", methodName));
 		if (methodName == "wait")
 		{
 			CIMOMHandleIFCRef hdl = getCIMOMHandleForClass(env, path.getClassName());
 			String startedFile = in[0].getValue().toString();
 			String waitForFile = in[1].getValue().toString();
-			OW_LOG_DEBUG(lgr, Format("startedFile = \"%1\", waitForFile = \"%2\"", startedFile, waitForFile));
+			BLOCXX_LOG_DEBUG(lgr, Format("startedFile = \"%1\", waitForFile = \"%2\"", startedFile, waitForFile));
 			if (!FileSystem::createFile(startedFile)) // this is the signal to the caller that the method has started to wait
 			{
-				OW_LOG_ERROR(lgr, Format("Failed to create %1: %2", startedFile, strerror(errno)));
+				BLOCXX_LOG_ERROR(lgr, Format("Failed to create %1: %2", startedFile, strerror(errno)));
 			}
-			OW_LOG_DEBUG(lgr, "created startedFile, waiting for existence of waitForFile");
+			BLOCXX_LOG_DEBUG(lgr, "created startedFile, waiting for existence of waitForFile");
 			Timeout to = Timeout::relative(10.0);
 			TimeoutTimer timer(to);
 			do
@@ -167,10 +169,10 @@ public:
 			} while (!FileSystem::exists(waitForFile) && !timer.expired());
 			if (!FileSystem::exists(waitForFile))
 			{
-				OW_LOG_DEBUG(lgr, "timed out waiting for waitForFile. Exiting with failure.");
+				BLOCXX_LOG_DEBUG(lgr, "timed out waiting for waitForFile. Exiting with failure.");
 				return CIMValue(false);
 			}
-			OW_LOG_DEBUG(lgr, "waitForFile now exists. Exiting.");
+			BLOCXX_LOG_DEBUG(lgr, "waitForFile now exists. Exiting.");
 			return CIMValue(true);
 		}
 		else if (methodName == "test")
@@ -193,7 +195,7 @@ public:
 			const char* const read = "read";
 			const char* const write = "write";
 			int testCount = 1;
-#define TEST_ASSERT(CON) OW_LOG_DEBUG(lgr, Format("About to run test %1: %2", testCount++, #CON)); if (!(CON)) throw AssertionException(__FILE__, __LINE__, #CON); chs.clearClonedEnvs()
+#define TEST_ASSERT(CON) BLOCXX_LOG_DEBUG(lgr, Format("About to run test %1: %2", testCount++, #CON)); if (!(CON)) throw AssertionException(__FILE__, __LINE__, #CON); chs.clearClonedEnvs()
 			// first oop
 			TEST_ASSERT(LockedCIMOMHandle::test(oopNS, no, read, chs));
 			TEST_ASSERT(LockedCIMOMHandle::test(oopNS, no, read, read, chs));

@@ -4,31 +4,30 @@
 #include "blocxx/Format.hpp"
 #include <iostream>
 
+using namespace blocxx;
 
-namespace OW = OW_NAMESPACE;
-
-bool check_security(const OW::String& pathname)
+bool check_security(const String& pathname)
 {
 	try
 	{
-		std::pair<OW::FileSystem::Path::ESecurity, OW::String> results = OW::FileSystem::Path::security(pathname);
+		std::pair<FileSystem::Path::ESecurity, String> results = FileSystem::Path::security(pathname);
 
-		if( results.first == OW::FileSystem::Path::E_SECURE_DIR )
+		if( results.first == FileSystem::Path::E_SECURE_DIR )
 		{
 			std::cout << "Secure Directory: " << results.second << std::endl;
 			return true;
 		}
-		else if( results.first == OW::FileSystem::Path::E_SECURE_FILE )
+		else if( results.first == FileSystem::Path::E_SECURE_FILE )
 		{
 			std::cout << "Secure File: " << results.second << std::endl;
 			return true;
 		}
 		else
 		{
-			std::cerr << OW::Format("Insecure (%1): %2", results.first, results.second) << std::endl;
+			std::cerr << Format("Insecure (%1): %2", results.first, results.second) << std::endl;
 		}
 	}
-	catch(const OW::Exception& e)
+	catch(const Exception& e)
 	{
 		std::cerr << "Caught exception: " << e << std::endl;
 	}
@@ -44,11 +43,11 @@ int main(int argc, const char** argv)
 {
 	if( argc == 2 )
 	{
-		OW::String path = argv[1];
+		String path = argv[1];
 
-		if( !OW::FileSystem::exists(path) )
+		if( !FileSystem::exists(path) )
 		{
-			if( !check_security(OW::FileSystem::Path::dirname(path)) )
+			if( !check_security(FileSystem::Path::dirname(path)) )
 			{
 				std::cerr << "Path does not exist: " << path << std::endl;
 				return 2;

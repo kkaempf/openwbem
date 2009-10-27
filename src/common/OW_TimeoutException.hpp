@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/TimeoutException.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_TimeoutException.hpp is deprecated, use "blocxx/TimeoutException.hpp" instead.
 #endif

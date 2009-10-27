@@ -48,19 +48,20 @@
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifierType.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ServiceIFCNames.hpp"
 #include "OW_CIMDateTime.hpp"
 
 namespace OW_NAMESPACE
 {
+using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
 	const String COMPONENT_NAME("ow.owcimomd.indication.LifecycleCreator");
 }
 
-using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 IndicationRepLayer::~IndicationRepLayer()
 {
@@ -98,7 +99,7 @@ IndicationRepLayerImpl::getInstance(
 		catch (CIMException&)
 		{
 			Logger lgr(COMPONENT_NAME);
-			OW_LOG_DEBUG(lgr, "Unable to export indication for getInstance because CIM_InstRead does not exist");
+			BLOCXX_LOG_DEBUG(lgr, "Unable to export indication for getInstance because CIM_InstRead does not exist");
 		}
 	}
 	return theInst;
@@ -167,7 +168,7 @@ IndicationRepLayerImpl::invokeMethod(
 			catch (CIMException&)
 			{
 				Logger lgr(COMPONENT_NAME);
-				OW_LOG_DEBUG(lgr, "Unable to export indication for invokeMethod because CIM_InstMethodCall does not exist");
+				BLOCXX_LOG_DEBUG(lgr, "Unable to export indication for invokeMethod because CIM_InstMethodCall does not exist");
 			}
 		}
 	}
@@ -195,7 +196,7 @@ IndicationRepLayerImpl::modifyClass(const String &ns,
 		catch (CIMException&)
 		{
 			Logger lgr(COMPONENT_NAME);
-			OW_LOG_DEBUG(lgr, "Unable to export indication for modifyClass because CIM_ClassModification does not exist");
+			BLOCXX_LOG_DEBUG(lgr, "Unable to export indication for modifyClass because CIM_ClassModification does not exist");
 		}
 	}
 	return CCOrig;
@@ -219,7 +220,7 @@ IndicationRepLayerImpl::createClass(const String& ns,
 		catch(CIMException&)
 		{
 			Logger lgr(COMPONENT_NAME);
-			OW_LOG_DEBUG(lgr, "Unable to export indication for createClass because CIM_ClassCreation does not exist");
+			BLOCXX_LOG_DEBUG(lgr, "Unable to export indication for createClass because CIM_ClassCreation does not exist");
 		}
 	}
 }
@@ -241,7 +242,7 @@ IndicationRepLayerImpl::deleteClass(const String& ns, const String& className,
 		catch (CIMException&)
 		{
 			Logger lgr(COMPONENT_NAME);
-			OW_LOG_DEBUG(lgr, "Unable to export indication for deleteClass because CIM_ClassDeletion does not exist");
+			BLOCXX_LOG_DEBUG(lgr, "Unable to export indication for deleteClass because CIM_ClassDeletion does not exist");
 		}
 	}
 
@@ -275,7 +276,7 @@ IndicationRepLayerImpl::modifyInstance(
 		catch (CIMException&)
 		{
 			Logger lgr(COMPONENT_NAME);
-			OW_LOG_DEBUG(lgr, "Unable to export indication for modifyInstance because CIM_InstModification does not exist");
+			BLOCXX_LOG_DEBUG(lgr, "Unable to export indication for modifyInstance because CIM_InstModification does not exist");
 		}
 	}
 	return ciOrig;
@@ -298,7 +299,7 @@ IndicationRepLayerImpl::createInstance(const String& ns,
 		catch(CIMException&)
 		{
 			Logger lgr(COMPONENT_NAME);
-			OW_LOG_DEBUG(lgr, "Unable to export indication for createInstance because CIM_InstCreation does not exist");
+			BLOCXX_LOG_DEBUG(lgr, "Unable to export indication for createInstance because CIM_InstCreation does not exist");
 		}
 	}
 	return rval;
@@ -321,7 +322,7 @@ IndicationRepLayerImpl::deleteInstance(const String& ns, const CIMObjectPath& pa
 		catch (CIMException&)
 		{
 			Logger lgr(COMPONENT_NAME);
-			OW_LOG_DEBUG(lgr, "Unable to export indication for deleteInstance because CIM_InstDeletion does not exist");
+			BLOCXX_LOG_DEBUG(lgr, "Unable to export indication for deleteInstance because CIM_InstDeletion does not exist");
 		}
 	}
 	return instOrig;

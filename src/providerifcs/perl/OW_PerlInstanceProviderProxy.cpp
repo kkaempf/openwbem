@@ -34,7 +34,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMException.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_NPIProviderIFCUtils.hpp"
 
@@ -62,7 +62,7 @@ PerlInstanceProviderProxy::enumInstanceNames(
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 {
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::enumInstanceNames()");
+		BLOCXX_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::enumInstanceNames()");
 		if (m_ftable->fp_enumInstanceNames!= NULL)
 		{
 			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -115,7 +115,7 @@ PerlInstanceProviderProxy::enumInstances(
 	const CIMClass& requestedClass,
 	const CIMClass& cimClass )
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::enumInstances()");
+	BLOCXX_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::enumInstances()");
 	if (m_ftable->fp_enumInstances == NULL)
 	{
 		OW_THROWCIMMSG(CIMException::NOT_SUPPORTED, "Provider does not support enumInstances");
@@ -165,7 +165,7 @@ PerlInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 	const CIMClass& cimClass)
 {
 		CIMInstance rval;
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::getInstance()");
+		BLOCXX_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::getInstance()");
 		if (m_ftable->fp_getInstance != NULL)
 		{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -208,7 +208,7 @@ PerlInstanceProviderProxy::createInstance(
 	const CIMInstance& cimInstance)
 {
 		CIMObjectPath rval;
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::createInstance()");
+		BLOCXX_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::createInstance()");
 		if (m_ftable->fp_createInstance != NULL)
 		{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -246,7 +246,7 @@ PerlInstanceProviderProxy::modifyInstance(const ProviderEnvironmentIFCRef &env,
 	const StringArray* propertyList,
 	const CIMClass& theClass)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::modifyInstance()");
+	BLOCXX_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::modifyInstance()");
 	if (m_ftable->fp_setInstance != NULL)
 	{
 			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -277,7 +277,7 @@ void
 PerlInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 	const String& ns, const CIMObjectPath& cop)
 {
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::deleteInstance()");
+	BLOCXX_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::deleteInstance()");
 	if (m_ftable->fp_deleteInstance!= NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};

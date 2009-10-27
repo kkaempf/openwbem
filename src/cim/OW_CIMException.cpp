@@ -37,7 +37,7 @@
 #include "OW_ExceptionIds.hpp"
 #include "OW_CIMException.hpp"
 #include "blocxx/String.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/StringBuffer.hpp"
 
 #include <cstring>
@@ -47,6 +47,8 @@
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace
 {
@@ -167,7 +169,7 @@ CIMException::getCodeName(ErrNoType errCode)
 {
 	if (errCode >= SUCCESS && errCode <= METHOD_NOT_FOUND)
 	{
-		OW_ASSERT(names[errCode].errval == errCode);
+		BLOCXX_ASSERT(names[errCode].errval == errCode);
 		return names[errCode].msg;
 	}
 	return "CIM_ERR_UNKNOWN";
@@ -205,7 +207,7 @@ CIMException::getCodeDescription(ErrNoType errCode)
 {
 	if (errCode >= SUCCESS && errCode <= METHOD_NOT_FOUND)
 	{
-		OW_ASSERT(_pmsgs[errCode].errval == errCode);
+		BLOCXX_ASSERT(_pmsgs[errCode].errval == errCode);
 		return _pmsgs[errCode].msg;
 	}
 	return "unknown error";

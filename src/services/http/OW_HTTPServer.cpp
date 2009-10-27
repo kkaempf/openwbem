@@ -43,7 +43,7 @@
 #include "blocxx/Format.hpp"
 #include "blocxx/SelectableIFC.hpp"
 #include "blocxx/SelectableCallbackIFC.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_HTTPUtils.hpp"
 #ifndef OW_DISABLE_DIGEST
@@ -67,10 +67,11 @@
 #include "blocxx/Thread.hpp" // for ThreadException
 #include "OW_SPNEGOAuthentication.hpp"
 #include "OW_PrivilegeManager.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 OW_DEFINE_EXCEPTION_WITH_ID(HTTPServer)
 
@@ -168,7 +169,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 #ifndef OW_WIN32
 	if (m_options.allowLocalAuthentication && scheme.equals("owlocal"))
 	{
-		OW_LOG_DEBUG(logger, "HTTPServer::authenticate: processing OWLocal");
+		BLOCXX_LOG_DEBUG(logger, "HTTPServer::authenticate: processing OWLocal");
 		EAuthenticateResult rv = m_localAuthentication->authenticate(userName, info, pconn);
 		if (rv == E_AUTHENTICATE_SUCCESS && !isAllowedUser(userName))
 		{
@@ -177,15 +178,15 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 
 		if (rv == E_AUTHENTICATE_SUCCESS)
 		{
-			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
+			BLOCXX_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
 		}
 		else if (rv == E_AUTHENTICATE_FAIL)
 		{
-			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authentication failed for: %1", userName));
+			BLOCXX_LOG_INFO(logger, Format("HTTPServer::authenticate: authentication failed for: %1", userName));
 		}
 		else
 		{
-			OW_LOG_DEBUG(logger, Format("HTTPServer::authenticate: authentication continued for: %1", userName));
+			BLOCXX_LOG_DEBUG(logger, Format("HTTPServer::authenticate: authentication continued for: %1", userName));
 		}
 		return rv;
 	}
@@ -196,20 +197,20 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	{
 		if (socket.peerCertVerified())
 		{
-			OW_LOG_DEBUG(logger, "HTTPServer::authenticate: processing SSL auth");
+			BLOCXX_LOG_DEBUG(logger, "HTTPServer::authenticate: processing SSL auth");
 			SSL* ssl = socket.getSSL();
-			OW_ASSERT(ssl);
+			BLOCXX_ASSERT(ssl);
 			X509* cert = SSL_get_peer_certificate(ssl);
-			OW_ASSERT(cert);
+			BLOCXX_ASSERT(cert);
 			X509Freer x509Freer(cert);
 			String hash = SSLTrustStore::getCertMD5Fingerprint(cert);
 			String uid;
 			if (!m_trustStore->getUser(hash, userName, uid))
 			{
-				OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authentication failed for: %1.  (Cert verified, but unknown user)", userName));
+				BLOCXX_LOG_INFO(logger, Format("HTTPServer::authenticate: authentication failed for: %1.  (Cert verified, but unknown user)", userName));
 				return E_AUTHENTICATE_FAIL;
 			}
-			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
+			BLOCXX_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
 			if (!uid.empty())
 			{
 				context.setStringData(OperationContext::CURUSER_UIDKEY, uid);
@@ -222,7 +223,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	if (m_options.allowDigestAuthentication && scheme.equals("digest"))
 	{
 #ifndef OW_DISABLE_DIGEST
-		OW_LOG_DEBUG(logger, "HTTPServer::authenticate: processing Digest");
+		BLOCXX_LOG_DEBUG(logger, "HTTPServer::authenticate: processing Digest");
 		rv = m_digestAuthentication->authenticate(userName, info, pconn);
 		if (rv == E_AUTHENTICATE_SUCCESS && !isAllowedUser(userName))
 		{
@@ -231,21 +232,21 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 
 		if (rv == E_AUTHENTICATE_SUCCESS)
 		{
-			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
+			BLOCXX_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
 		}
 		else if (rv == E_AUTHENTICATE_FAIL)
 		{
-			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authentication failed for: %1", userName));
+			BLOCXX_LOG_INFO(logger, Format("HTTPServer::authenticate: authentication failed for: %1", userName));
 		}
 		else
 		{
-			OW_LOG_DEBUG(logger, Format("HTTPServer::authenticate: authentication continued for: %1", userName));
+			BLOCXX_LOG_DEBUG(logger, Format("HTTPServer::authenticate: authentication continued for: %1", userName));
 		}
 #endif
 	}
 	else if (m_options.allowBasicAuthentication && scheme.equals("basic"))
 	{
-		OW_LOG_DEBUG(logger, "HTTPServer::authenticate: processing Basic");
+		BLOCXX_LOG_DEBUG(logger, "HTTPServer::authenticate: processing Basic");
 		String authChallenge = "Basic realm=\"" + m_options.authenticationRealm + "\"";
 		String password;
 		// info is a username:password string that is base64 encoded. decode it.
@@ -258,7 +259,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			// decoding failed
 			pconn->setErrorDetails("Problem decoding credentials");
 			pconn->addHeader("WWW-Authenticate", authChallenge);
-			OW_LOG_DEBUG(logger, "HTTPServer::authenticate: Problem decoding credentials");
+			BLOCXX_LOG_DEBUG(logger, "HTTPServer::authenticate: Problem decoding credentials");
 			return E_AUTHENTICATE_FAIL;
 		}
 		String details;
@@ -272,20 +273,20 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		{
 			pconn->setErrorDetails(details);
 			pconn->addHeader("WWW-Authenticate", authChallenge);
-			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: failed: %1", details));
+			BLOCXX_LOG_INFO(logger, Format("HTTPServer::authenticate: failed: %1", details));
 		}
 		else if (rv == E_AUTHENTICATE_SUCCESS)
 		{
-			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
+			BLOCXX_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
 		}
 		else
 		{
-			OW_LOG_DEBUG(logger, Format("HTTPServer::authenticate: authentication continued for: %1", userName));
+			BLOCXX_LOG_DEBUG(logger, Format("HTTPServer::authenticate: authentication continued for: %1", userName));
 		}
 	}
 	else if (m_options.allowSPNEGOAuthentication && info.startsWith("Negotiate"))
 	{
-		OW_LOG_DEBUG(logger, "HTTPServer::authenticate: processing Negotiate");
+		BLOCXX_LOG_DEBUG(logger, "HTTPServer::authenticate: processing Negotiate");
 		rv = m_SPNEGOAuthentication->authenticate(userName, info, pconn);
 		if (rv == E_AUTHENTICATE_SUCCESS && !isAllowedUser(userName))
 		{
@@ -294,20 +295,20 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 
 		if (rv == E_AUTHENTICATE_SUCCESS)
 		{
-			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
+			BLOCXX_LOG_INFO(logger, Format("HTTPServer::authenticate: authenticated %1", userName));
 		}
 		else if (rv == E_AUTHENTICATE_FAIL)
 		{
-			OW_LOG_INFO(logger, Format("HTTPServer::authenticate: authentication failed for: %1", userName));
+			BLOCXX_LOG_INFO(logger, Format("HTTPServer::authenticate: authentication failed for: %1", userName));
 		}
 		else
 		{
-			OW_LOG_DEBUG(logger, Format("HTTPServer::authenticate: authentication continued for: %1", userName));
+			BLOCXX_LOG_DEBUG(logger, Format("HTTPServer::authenticate: authentication continued for: %1", userName));
 		}
 	}
 	else
 	{
-		OW_LOG_DEBUG2(logger, "HTTPServer::authenticate: sending default challenge");
+		BLOCXX_LOG_DEBUG2(logger, "HTTPServer::authenticate: sending default challenge");
 		// We don't handle whatever they sent, so send the default challenge
 		pconn->setErrorDetails("You must authenticate to access this"
 			" resource");
@@ -328,9 +329,9 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 				break;
 
 			default:
-				OW_ASSERT("Internal implementation error! m_options.defaultAuthChallenge is invalid!" == 0);
+				BLOCXX_ASSERT("Internal implementation error! m_options.defaultAuthChallenge is invalid!" == 0);
 		}
-		OW_LOG_DEBUG3(logger, Format("HTTPServer::authenticate: Returning WWW-Authenticate: %1", authChallenge));
+		BLOCXX_LOG_DEBUG3(logger, Format("HTTPServer::authenticate: Returning WWW-Authenticate: %1", authChallenge));
 		pconn->addHeader("WWW-Authenticate", authChallenge);
 		return E_AUTHENTICATE_CONTINUE;
 	}
@@ -352,7 +353,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 				}
 				catch (SSLException& e)
 				{
-					OW_LOG_ERROR(logger, e.getMessage());
+					BLOCXX_LOG_ERROR(logger, e.getMessage());
 				}
 			}
 		}
@@ -550,7 +551,7 @@ public:
 	virtual ~HTTPServerSelectableCallback() {}
 	virtual void doSelected(Select_t& selectedObject, EEventType eventType)
 	{
-		OW_ASSERT(eventType == E_ACCEPT_EVENT);
+		BLOCXX_ASSERT(eventType == E_ACCEPT_EVENT);
 
 		Logger logger(COMPONENT_NAME);
 		try
@@ -569,7 +570,7 @@ public:
 				pServerSocket = m_HTTPServer->m_pHttpServerSockets[m_index];
 			}
 			Socket socket = pServerSocket->accept(Timeout::relative(2));
-			OW_LOG_INFO(logger,
+			BLOCXX_LOG_INFO(logger,
 				 Format("Received connection on %1 from %2",
 				 socket.getLocalAddress().toString(),
 				 socket.getPeerAddress().toString()));
@@ -587,7 +588,7 @@ public:
 #endif
 			if (!m_HTTPServer->m_threadPool->tryAddWork(rref))
 			{
-				OW_LOG_INFO(logger, "Server too busy, closing connection");
+				BLOCXX_LOG_INFO(logger, "Server too busy, closing connection");
 				// main thread can't block, set the socket timeout to 0
 				socket.setTimeouts(Timeout::relative(0));
 				std::ostream& socketOstr(socket.getOutputStream());
@@ -600,27 +601,27 @@ public:
 		}
 		catch (SSLException& se)
 		{
-			OW_LOG_INFO(logger, Format("SSL Handshake failed: %1", se.getMessage()).c_str());
+			BLOCXX_LOG_INFO(logger, Format("SSL Handshake failed: %1", se.getMessage()).c_str());
 		}
 		catch (SocketTimeoutException &e)
 		{
-			OW_LOG_INFO(logger, Format("Socket TimeOut in HTTPServer: %1", e));
+			BLOCXX_LOG_INFO(logger, Format("Socket TimeOut in HTTPServer: %1", e));
 		}
 		catch (SocketException &e)
 		{
-			OW_LOG_INFO(logger, Format("Socket Exception in HTTPServer: %1", e));
+			BLOCXX_LOG_INFO(logger, Format("Socket Exception in HTTPServer: %1", e));
 		}
 		catch (IOException &e)
 		{
-			OW_LOG_ERROR(logger, Format("IO Exception in HTTPServer: %1", e));
+			BLOCXX_LOG_ERROR(logger, Format("IO Exception in HTTPServer: %1", e));
 		}
 		catch (ThreadException& e)
 		{
-			OW_LOG_ERROR(logger, Format("ThreadException in HTTPServer: %1", e));
+			BLOCXX_LOG_ERROR(logger, Format("ThreadException in HTTPServer: %1", e));
 		}
 		catch (Exception& e)
 		{
-			OW_LOG_ERROR(logger, Format("Exception in HTTPServer: %1", e));
+			BLOCXX_LOG_ERROR(logger, Format("Exception in HTTPServer: %1", e));
 			// since it's something we don't expect, it's probably a bad problem, and we'll
 			// just throw.
 			throw;
@@ -631,7 +632,7 @@ public:
 		}
 		catch (...)
 		{
-			OW_LOG_ERROR(logger, "Unknown exception in HTTPServer.");
+			BLOCXX_LOG_ERROR(logger, "Unknown exception in HTTPServer.");
 			throw;
 		}
 	}
@@ -647,7 +648,7 @@ HTTPServer::start()
 {
 	ServiceEnvironmentIFCRef env = m_options.env;
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG2(lgr, "HTTP Service is starting...");
+	BLOCXX_LOG_DEBUG2(lgr, "HTTP Service is starting...");
 	if (m_options.httpPorts.empty() && m_options.httpsPorts.empty() &&
 		!m_options.useUDS)
 	{
@@ -660,7 +661,7 @@ HTTPServer::start()
 		{
 			m_pUDSServerSocket = new ServerSocket;
 			m_pUDSServerSocket->doListen(m_options.UDSFilename, 1000, m_options.reuseAddr);
-			OW_LOG_INFO(lgr, Format("HTTP server listening on Unix Domain Socket: %1", m_options.UDSFilename));
+			BLOCXX_LOG_INFO(lgr, Format("HTTP server listening on Unix Domain Socket: %1", m_options.UDSFilename));
 			String theURL = "owbinary.wbem://localhost:" + HTTPUtils::escapeForURL(m_options.UDSFilename) + "/";
 			addURL(URL(theURL));
 
@@ -670,7 +671,7 @@ HTTPServer::start()
 		}
 		catch (SocketException& e)
 		{
-			OW_LOG_ERROR(lgr, Format("HTTP Server failed to listen on UDS: %1", e));
+			BLOCXX_LOG_ERROR(lgr, Format("HTTP Server failed to listen on UDS: %1", e));
 			throw;
 		}
 	}
@@ -700,7 +701,7 @@ HTTPServer::start()
 							m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
 					m_options.httpPorts[i] = lport = lsock->getLocalAddress().getPort();
 
-					OW_LOG_INFO(lgr, Format("HTTP server listening on: %1:%2",
+					BLOCXX_LOG_INFO(lgr, Format("HTTP server listening on: %1:%2",
 								lsock->getLocalAddress().getAddress(), lport));
 
 					String theURL = "http://" + SocketAddress::getAnyLocalHost().getName()
@@ -715,7 +716,7 @@ HTTPServer::start()
 				}
 				catch (SocketException& e)
 				{
-					OW_LOG_ERROR(lgr, Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, lport, e));
+					BLOCXX_LOG_ERROR(lgr, Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, lport, e));
 					throw;
 				}
 			}
@@ -733,7 +734,7 @@ HTTPServer::start()
 			{
 				String msg = Format("Unable to listen on HTTPS ports.  "
 						"OpenWBEM not built with SSL support.", curAddress);
-				OW_LOG_ERROR(lgr, msg);
+				BLOCXX_LOG_ERROR(lgr, msg);
 				OW_THROW(HTTPServerException, msg.c_str());
 			}
 #else
@@ -808,7 +809,7 @@ HTTPServer::start()
 			}
 			catch (SSLException& e)
 			{
-				OW_LOG_ERROR(lgr, Format("HTTP Service: Error initializing SSL: %1",
+				BLOCXX_LOG_ERROR(lgr, Format("HTTP Service: Error initializing SSL: %1",
 					e.getMessage()));
 				throw;
 			}
@@ -828,7 +829,7 @@ HTTPServer::start()
 						SocketAddress addr = lsock->getLocalAddress();
 						String listenAddress = addr.getAddress().toString();
 						m_options.httpsPorts[i] = lport = addr.getPort();
-						OW_LOG_INFO(lgr, Format("HTTPS server listening on: %1:%2",
+						BLOCXX_LOG_INFO(lgr, Format("HTTPS server listening on: %1:%2",
 									addr.getAddress(), lport));
 
 						String theURL = "https://" +
@@ -843,7 +844,7 @@ HTTPServer::start()
 					}
 					catch (SocketException& e)
 					{
-						OW_LOG_ERROR(lgr, Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, lport, e));
+						BLOCXX_LOG_ERROR(lgr, Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, lport, e));
 						throw;
 					}
 				}
@@ -859,13 +860,13 @@ HTTPServer::start()
 				}
 				String msg = Format("Unable to listen HTTPS on: %1.  "
 					"SSL not initialized in server mode.", curAddress);
-				OW_LOG_ERROR(lgr, msg);
+				BLOCXX_LOG_ERROR(lgr, msg);
 				OW_THROW(HTTPServerException, msg.c_str());
 
 			}
 		} // if (m_httpsPort > 0)
 	}
-	OW_LOG_DEBUG(lgr, "HTTP Service has started");
+	BLOCXX_LOG_DEBUG(lgr, "HTTP Service has started");
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -941,7 +942,7 @@ HTTPServer::shutdown()
 		m_shuttingDown = true;
 	}
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, "HTTP Service is shutting down...");
+	BLOCXX_LOG_DEBUG(lgr, "HTTP Service is shutting down...");
 	// first stop all new connections
 	for (ServerSockArray_t::const_iterator iter = m_pHttpServerSockets.begin();
 			iter != m_pHttpServerSockets.end(); ++iter)
@@ -973,7 +974,7 @@ HTTPServer::shutdown()
 	m_pHttpServerSockets.clear();
 	m_pHttpsServerSockets.clear();
 	m_pUDSServerSocket = 0;
-	OW_LOG_DEBUG(lgr, "HTTP Service has shut down");
+	BLOCXX_LOG_DEBUG(lgr, "HTTP Service has shut down");
 
 	// clear out variables to avoid circular reference counts.
 	m_options.env = 0;

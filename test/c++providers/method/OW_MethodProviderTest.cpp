@@ -36,13 +36,13 @@
 
 #include "OW_config.h"
 #include "OW_CppMethodProviderIFC.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMParamValue.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/Thread.hpp"
 
 #include <fstream>
@@ -51,6 +51,7 @@ using std::ifstream;
 using std::ofstream;
 using std::endl;
 using namespace OpenWBEM;
+using namespace blocxx;
 
 namespace
 {
@@ -95,13 +96,13 @@ void
 MethodProviderTest::initialize(const ProviderEnvironmentIFCRef& env)
 {
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger, "MethodProviderTest initialize called");
+	BLOCXX_LOG_DEBUG(logger, "MethodProviderTest initialize called");
 }
 
 
 String getFileName()
 {
-    const char* fNameEnv = getenv("OW_METHOD_PROVIDER_TEST_FILENAME");
+	const char* fNameEnv = getenv("OW_METHOD_PROVIDER_TEST_FILENAME");
 	if (fNameEnv)
 	{
 		return fNameEnv;
@@ -171,22 +172,22 @@ MethodProviderTest::invokeMethod(
 		//		[in, out] CIM_System REF paths[],
 		//		[in, out] datetime nullParam);
 
-		OW_ASSERT(in.size() == 5);
-		OW_ASSERT(out.size() == 6);
-		OW_ASSERT(in[0].getName() == "s");
-		OW_ASSERT(in[1].getName() == "uint8array");
-		OW_ASSERT(in[2].getName() == "io16");
-		OW_ASSERT(in[3].getName() == "paths");
-		OW_ASSERT(in[4].getName() == "nullParam");
-		OW_ASSERT(out[0].getName() == "b");
-		OW_ASSERT(out[1].getName() == "r64");
-		OW_ASSERT(out[2].getName() == "io16");
-		OW_ASSERT(out[2].getValue() == in[2].getValue());
-		OW_ASSERT(out[3].getName() == "msg");
-		OW_ASSERT(out[4].getName() == "paths");
-		OW_ASSERT(out[4].getValue() == in[3].getValue());
-		OW_ASSERT(out[5].getName() == "nullParam");
-		OW_ASSERT(out[5].getValue() == in[4].getValue());
+		BLOCXX_ASSERT(in.size() == 5);
+		BLOCXX_ASSERT(out.size() == 6);
+		BLOCXX_ASSERT(in[0].getName() == "s");
+		BLOCXX_ASSERT(in[1].getName() == "uint8array");
+		BLOCXX_ASSERT(in[2].getName() == "io16");
+		BLOCXX_ASSERT(in[3].getName() == "paths");
+		BLOCXX_ASSERT(in[4].getName() == "nullParam");
+		BLOCXX_ASSERT(out[0].getName() == "b");
+		BLOCXX_ASSERT(out[1].getName() == "r64");
+		BLOCXX_ASSERT(out[2].getName() == "io16");
+		BLOCXX_ASSERT(out[2].getValue() == in[2].getValue());
+		BLOCXX_ASSERT(out[3].getName() == "msg");
+		BLOCXX_ASSERT(out[4].getName() == "paths");
+		BLOCXX_ASSERT(out[4].getValue() == in[3].getValue());
+		BLOCXX_ASSERT(out[5].getName() == "nullParam");
+		BLOCXX_ASSERT(out[5].getValue() == in[4].getValue());
 		out[0].setValue(CIMValue(true));
 		out[1].setValue(CIMValue(Real64(9.87654321098765e32l)));
 		out[2].setValue(CIMValue(Int16(555)));
@@ -201,7 +202,7 @@ MethodProviderTest::invokeMethod(
 	}
 	else if (methodName.equalsIgnoreCase("setstate"))
 	{
-		OW_ASSERT(in.size() == 1);
+		BLOCXX_ASSERT(in.size() == 1);
 		String newState;
 		in[0].getValue().get(newState);
 		setState(newState);

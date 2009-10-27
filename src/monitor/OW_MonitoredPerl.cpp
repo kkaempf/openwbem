@@ -32,16 +32,17 @@
  */
 
 #include "OW_config.h"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_MonitoredPerl.hpp"
 #include "OW_PrivilegeManager.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/Format.hpp"
 
 #include <vector>
 
 using std::vector;
+using namespace blocxx;
 
 namespace OW_NAMESPACE
 {
@@ -73,14 +74,14 @@ namespace
 #if defined(OW_ARCH_IA64)
 		String preloads("LD_PRELOAD=/usr/lib/hpux64/libpthread" OW_SHAREDLIB_EXTENSION
 			":" OW_DEFAULT_LIB_DIR "/libopenwbem" OW_SHAREDLIB_EXTENSION);
-		OW_LOG_DEBUG(logger, Format("returning itanium preloads: %1", preloads));
+		BLOCXX_LOG_DEBUG(logger, Format("returning itanium preloads: %1", preloads));
 #else
 
 		String preloads("LD_PRELOAD=/usr/lib/libCsup_v2" OW_SHAREDLIB_EXTENSION
 			":/usr/lib/libstd_v2" OW_SHAREDLIB_EXTENSION
 			":/usr/lib/libpthread" OW_SHAREDLIB_EXTENSION
 			":" OW_DEFAULT_LIB_DIR "/libopenwbem" OW_SHAREDLIB_EXTENSION);
-		OW_LOG_DEBUG(logger, Format("returning parisc preloads.", preloads));
+		BLOCXX_LOG_DEBUG(logger, Format("returning parisc preloads.", preloads));
 #endif
 		return preloads;
 	}
@@ -92,7 +93,7 @@ namespace
 	public:
 		void push_back(String const & s)
 		{
-			OW_ASSERT(m_cstr_arr.empty());
+			BLOCXX_ASSERT(m_cstr_arr.empty());
 			m_str_arr.push_back(s);
 		}
 
@@ -100,7 +101,7 @@ namespace
 
 		char const * const * arr() const
 		{
-			OW_ASSERT(!m_cstr_arr.empty() && m_cstr_arr.back() == 0);
+			BLOCXX_ASSERT(!m_cstr_arr.empty() && m_cstr_arr.back() == 0);
 			return &m_cstr_arr[0];
 		}
 
@@ -111,7 +112,7 @@ namespace
 
 	void CstrArrStorage::append_final(char const * const * src)
 	{
-		OW_ASSERT(m_cstr_arr.empty());
+		BLOCXX_ASSERT(m_cstr_arr.empty());
 		vector<char const *> & dst = m_cstr_arr;
 		size_t n = m_str_arr.size();
 		for (size_t i = 0; i < n; ++i)

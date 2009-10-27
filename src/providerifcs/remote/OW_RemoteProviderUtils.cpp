@@ -41,13 +41,15 @@
 #include "blocxx/Format.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_HTTPClient.hpp"
-#include "OW_Assertion.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Assertion.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace RemoteProviderUtils
 {
@@ -83,7 +85,7 @@ ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl,
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteProviderUtils::getRemoteClientCIMOMHandle() failed to get a connection: %1", e);
-		OW_LOG_ERROR(Logger(COMPONENT_NAME), msg);
+		BLOCXX_LOG_ERROR(Logger(COMPONENT_NAME), msg);
 		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 
@@ -99,7 +101,7 @@ ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl,
 			}
 		}
 	}
-	OW_ASSERT(hdl);
+	BLOCXX_ASSERT(hdl);
 	return hdl;
 }
 

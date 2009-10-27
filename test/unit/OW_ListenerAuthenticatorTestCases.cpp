@@ -42,6 +42,7 @@
 AUTO_UNIT_TEST_SUITE_NAMED(OW_ListenerAuthenticatorTestCases,"OW_ListenerAuthenticator");
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void OW_ListenerAuthenticatorTestCases::setUp()
 {

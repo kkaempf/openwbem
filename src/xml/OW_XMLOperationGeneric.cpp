@@ -36,7 +36,6 @@
 #include "OW_config.h"
 #include "OW_Param.hpp"
 #include "OW_XMLOperationGeneric.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_CIMErrorException.hpp"
 #include "OW_CIMXMLParser.hpp"
 
@@ -45,6 +44,8 @@ namespace OW_NAMESPACE
 
 using std::istream;
 using std::ostream;
+using namespace blocxx;
+
 void
 XMLOperationGeneric::XMLGetCIMElement(CIMXMLParser& parser)
 {

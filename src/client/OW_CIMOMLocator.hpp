@@ -46,7 +46,7 @@ namespace OW_NAMESPACE
 
 OW_DECLARE_APIEXCEPTION(CIMOMLocator, OW_CLIENT_API);
 
-class OW_CLIENT_API CIMOMLocator : public IntrusiveCountableBase
+class OW_CLIENT_API CIMOMLocator : public blocxx::IntrusiveCountableBase
 {
 public:
 	virtual ~CIMOMLocator();
@@ -61,7 +61,7 @@ public:
 	 * 							"slp".
 	 * @returns An Reference<CIMOMLocator>.
 	 */
-	static CIMOMLocatorRef createCIMOMLocator(const String& locatorType);
+	static CIMOMLocatorRef createCIMOMLocator(const blocxx::String& locatorType);
 };
 
 } // end namespace OW_NAMESPACE

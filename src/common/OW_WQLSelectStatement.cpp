@@ -32,7 +32,7 @@
 #include "OW_WQLSelectStatement.hpp"
 #include "blocxx/Stack.hpp"
 #include "OW_WQLCompile.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "blocxx/IOException.hpp"
 
@@ -44,6 +44,8 @@
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 /// @todo  Merge this code with WQLCompile.cpp, it's all duplicated.
 //     Worse, it's an ODR violation, for which no diagnostic is
@@ -66,7 +68,7 @@ inline static bool _Compare(const T& x, const T& y, WQLOperation op)
 		case WQL_GE:
 			return x >= y;
 		default:
-			OW_ASSERT(0);
+			BLOCXX_ASSERT(0);
 	}
 	return false;
 }
@@ -113,7 +115,7 @@ static bool _Evaluate(
 						op);
 			}
 		default:
-			OW_ASSERT(0);
+			BLOCXX_ASSERT(0);
 	}
 	return false;
 }
@@ -191,7 +193,7 @@ bool WQLSelectStatement::evaluateWhereClause(
 			{
 				case WQL_OR:
 					{
-						OW_ASSERT(stack.size() >= 2);
+						BLOCXX_ASSERT(stack.size() >= 2);
 						WQLOperand op1 = stack.top();
 						stack.pop();
 						WQLOperand& op2 = stack.top();
@@ -202,7 +204,7 @@ bool WQLSelectStatement::evaluateWhereClause(
 					}
 				case WQL_AND:
 					{
-						OW_ASSERT(stack.size() >= 2);
+						BLOCXX_ASSERT(stack.size() >= 2);
 						WQLOperand op1 = stack.top();
 						stack.pop();
 						WQLOperand& op2 = stack.top();
@@ -213,7 +215,7 @@ bool WQLSelectStatement::evaluateWhereClause(
 					}
 				case WQL_NOT:
 					{
-						OW_ASSERT(stack.size() >= 1);
+						BLOCXX_ASSERT(stack.size() >= 1);
 						WQLOperand& op = stack.top();
 						bool b1 = op.getBooleanValue();
 						stack.top() = WQLOperand(!b1, WQL_BOOLEAN_VALUE_TAG);
@@ -226,7 +228,7 @@ bool WQLSelectStatement::evaluateWhereClause(
 				case WQL_GT:
 				case WQL_GE:
 					{
-						OW_ASSERT(stack.size() >= 2);
+						BLOCXX_ASSERT(stack.size() >= 2);
 						//
 						// Resolve the left-hand-side to a value (if not already
 						// a value).
@@ -256,7 +258,7 @@ bool WQLSelectStatement::evaluateWhereClause(
 					}
 				case WQL_ISA:
 					{
-						OW_ASSERT(stack.size() >= 2);
+						BLOCXX_ASSERT(stack.size() >= 2);
 						WQLOperand lhs = stack.top();
 						stack.pop();
 						if (lhs.getType() != WQLOperand::PROPERTY_NAME)
@@ -283,13 +285,13 @@ bool WQLSelectStatement::evaluateWhereClause(
 					}
 				case WQL_DO_NOTHING:
 					{
-						OW_ASSERT(0); // should never happen
+						BLOCXX_ASSERT(0); // should never happen
 						break;
 					}
 			}
 		}
 	}
-	OW_ASSERT(stack.size() == 1);
+	BLOCXX_ASSERT(stack.size() == 1);
 	return stack.top().getBooleanValue();
 }
 void WQLSelectStatement::print(std::ostream& ostr) const

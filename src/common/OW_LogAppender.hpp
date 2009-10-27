@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/LogAppender.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_LogAppender.hpp is deprecated, use "blocxx/LogAppender.hpp" instead.
 #endif
 

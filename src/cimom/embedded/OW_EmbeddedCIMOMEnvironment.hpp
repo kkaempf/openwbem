@@ -61,7 +61,7 @@
 #include "OW_CimomCommonFwd.hpp"
 #include "OW_CimomServerFwd.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -72,9 +72,9 @@ public:
 	EmbeddedCIMOMEnvironment();
 	~EmbeddedCIMOMEnvironment();
 	void init();
-	virtual String getConfigItem(const String &name, const String& defRetVal="") const;
-	virtual StringArray getMultiConfigItem(const String &itemName,
-		const StringArray& defRetVal, const char* tokenizeSeparator) const;
+	virtual blocxx::String getConfigItem(const blocxx::String &name, const blocxx::String& defRetVal="") const;
+	virtual blocxx::StringArray getMultiConfigItem(const blocxx::String &itemName,
+		const blocxx::StringArray& defRetVal, const char* tokenizeSeparator) const;
 
 	// from ServiceEnvironmentIFC
 	/**
@@ -111,7 +111,7 @@ public:
 	IndicationServerRef getIndicationServer() const;
 	PollingManagerRef getPollingManager() const;
 	void clearConfigItems();
-	virtual void setConfigItem(const String &item, const String &value,
+	virtual void setConfigItem(const blocxx::String &item, const blocxx::String &value,
 		EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS);
 	void unloadProviders();
 	void startServices();
@@ -129,7 +129,7 @@ public:
 
 private:
 	void _createLogger();
-	void _loadConfigItemsFromFile(const String& filename);
+	void _loadConfigItemsFromFile(const blocxx::String& filename);
 	void _loadRequestHandlers();
 	void _loadServices();
 	void _createPollingManager();
@@ -140,38 +140,38 @@ private:
 
 	// Types
 	typedef ConfigFile::ConfigMap ConfigMap;
-	typedef Reference<ConfigMap> ConfigMapRef;
+	typedef blocxx::Reference<ConfigMap> ConfigMapRef;
 	struct ReqHandlerData : public IntrusiveCountableBase
 	{
-		DateTime dt;
+		blocxx::DateTime dt;
 		RequestHandlerIFCRef rqIFCRef;
-		String filename;
+		blocxx::String filename;
 	};
-	typedef IntrusiveReference<ReqHandlerData> ReqHandlerDataRef;
-	typedef SortedVectorMap<String, ReqHandlerDataRef> ReqHandlerMap;
-	mutable Mutex m_monitor;
+	typedef blocxx::IntrusiveReference<ReqHandlerData> ReqHandlerDataRef;
+	typedef blocxx::SortedVectorMap<blocxx::String, ReqHandlerDataRef> ReqHandlerMap;
+	mutable blocxx::Mutex m_monitor;
 	RepositoryIFCRef m_cimRepository;
 	RepositoryIFCRef m_cimServer;
 	AuthorizerIFCRef m_authorizer;
 
 	AuthorizerManagerRef m_authorizerManager;
 
-	Logger m_Logger;
+	blocxx::Logger m_Logger;
 	ConfigMapRef m_configItems;
 	ProviderManagerRef m_providerManager;
-	mutable SharedLibraryRef m_wqlLib;
-	mutable SharedLibraryRef m_indicationRepLayerLib;
+	mutable blocxx::SharedLibraryRef m_wqlLib;
+	mutable blocxx::SharedLibraryRef m_indicationRepLayerLib;
 	PollingManagerRef m_pollingManager;
 	IndicationServerRef m_indicationServer;
 	bool m_indicationsDisabled;
-	Array<SelectableIFCRef> m_selectables;
-	Array<SelectableCallbackIFCRef> m_selectableCallbacks;
-	mutable Array<ServiceIFCRef> m_services;
+	blocxx::Array<blocxx::SelectableIFCRef> m_selectables;
+	blocxx::Array<blocxx::SelectableCallbackIFCRef> m_selectableCallbacks;
+	mutable blocxx::Array<ServiceIFCRef> m_services;
 	mutable ReqHandlerMap m_reqHandlers;
-	mutable Mutex m_reqHandlersLock;
-	mutable Mutex m_indicationLock;
+	mutable blocxx::Mutex m_reqHandlersLock;
+	mutable blocxx::Mutex m_indicationLock;
 	mutable bool m_indicationRepLayerDisabled;
-	mutable Mutex m_selectableLock;
+	mutable blocxx::Mutex m_selectableLock;
 
 	enum EEnvState
 	{
@@ -195,10 +195,10 @@ private:
 	}
 
 	EEnvState m_state;
-	mutable Mutex m_stateGuard;
+	mutable blocxx::Mutex m_stateGuard;
 	IndicationRepLayerMediatorRef m_indicationRepLayerMediatorRef;
 
-	static String COMPONENT_NAME;
+	static blocxx::String COMPONENT_NAME;
 };
 
 } // end namespace OW_NAMESPACE

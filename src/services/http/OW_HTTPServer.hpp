@@ -59,8 +59,8 @@ class OW_HTTPSVC_API HTTPServer : public ServiceIFC
 public:
 	HTTPServer();
 	virtual ~HTTPServer();
-	virtual String getName() const;
-	virtual StringArray getDependencies() const;
+	virtual blocxx::String getName() const;
+	virtual blocxx::StringArray getDependencies() const;
 
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void start();
@@ -81,17 +81,17 @@ public:
 	 * @return an array of URLs representing all urls that can be
 	 * 	used to access the HTTP server.
 	 */
-	Array<URL> getURLs() const;
+	blocxx::Array<URL> getURLs() const;
 	ServiceEnvironmentIFCRef getEnvironment() const { return m_options.env; }
 	/**
 	 * Add a new url (to be returned by getURLs())
 	 * @param url the URL to be added
 	 */
 	void addURL(const URL& url);
-	SocketAddress getLocalHTTPAddress();
-	Array<SocketAddress> getLocalHTTPAddresses();
-	SocketAddress getLocalHTTPSAddress();
-	Array<SocketAddress> getLocalHTTPSAddresses();
+	blocxx::SocketAddress getLocalHTTPAddress();
+	blocxx::Array<blocxx::SocketAddress> getLocalHTTPAddresses();
+	blocxx::SocketAddress getLocalHTTPSAddress();
+	blocxx::Array<blocxx::SocketAddress> getLocalHTTPSAddresses();
 
 	enum EAuthenticationChallengeMethod
 	{
@@ -119,16 +119,16 @@ public:
 			, useUDS(false)
 			, reuseAddr(false)
 			, env()
-			, timeout(Timeout::infinite)
+			, timeout(blocxx::Timeout::infinite)
 			, defaultContentLanguage()
 			, authenticationRealm()
 		{
 		}
 
-		Array<UInt16> httpPorts;
-		Array<UInt16> httpsPorts;
-		String UDSFilename;
-		Int32 maxConnections;
+		blocxx::Array<blocxx::UInt16> httpPorts;
+		blocxx::Array<blocxx::UInt16> httpsPorts;
+		blocxx::String UDSFilename;
+		blocxx::Int32 maxConnections;
 		bool isSepThread;
 		bool enableDeflate;
 		EAuthenticationChallengeMethod defaultAuthChallenge;
@@ -140,47 +140,47 @@ public:
 		bool useUDS;
 		bool reuseAddr;
 		ServiceEnvironmentIFCRef env;
-		Timeout timeout;
-		String defaultContentLanguage;
-		String authenticationRealm;
+		blocxx::Timeout timeout;
+		blocxx::String defaultContentLanguage;
+		blocxx::String authenticationRealm;
 	};
 private:
 	EAuthenticateResult authenticate(HTTPSvrConnection* pconn,
-		String& userName, const String& info, OperationContext& context,
-					  const Socket& socket);
-	bool isAllowedUser(const String& user) const;
+		blocxx::String& userName, const blocxx::String& info, OperationContext& context,
+					  const blocxx::Socket& socket);
+	bool isAllowedUser(const blocxx::String& user) const;
 
-	Mutex m_guard;
+	blocxx::Mutex m_guard;
 	Options m_options;
 #ifdef OW_WIN32
 #pragma warning (push)
 #pragma warning (disable: 4251)
 	HANDLE m_event;
 #else
-	IntrusiveReference<UnnamedPipe> m_upipe;
+	blocxx::IntrusiveReference<blocxx::UnnamedPipe> m_upipe;
 #endif
-	Array<URL> m_urls;
-	typedef Array<IntrusiveReference<ServerSocket> > ServerSockArray_t;
+	blocxx::Array<URL> m_urls;
+	typedef blocxx::Array<blocxx::IntrusiveReference<blocxx::ServerSocket> > ServerSockArray_t;
 	ServerSockArray_t m_pHttpServerSockets;
 	ServerSockArray_t m_pHttpsServerSockets;
-	IntrusiveReference<ServerSocket> m_pUDSServerSocket;
+	blocxx::IntrusiveReference<blocxx::ServerSocket> m_pUDSServerSocket;
 #ifndef OW_DISABLE_DIGEST
-	IntrusiveReference<DigestAuthentication> m_digestAuthentication;
+	blocxx::IntrusiveReference<DigestAuthentication> m_digestAuthentication;
 #endif
 #ifndef OW_WIN32
-	IntrusiveReference<LocalAuthentication> m_localAuthentication;
+	blocxx::IntrusiveReference<LocalAuthentication> m_localAuthentication;
 #endif
-	IntrusiveReference<SPNEGOAuthentication> m_SPNEGOAuthentication;
-	Mutex m_authGuard;
-	IntrusiveReference<ThreadPool> m_threadPool;
-	SortedVectorSet<String> m_allowedUsers;
+	blocxx::IntrusiveReference<SPNEGOAuthentication> m_SPNEGOAuthentication;
+	blocxx::Mutex m_authGuard;
+	blocxx::IntrusiveReference<blocxx::ThreadPool> m_threadPool;
+	blocxx::SortedVectorSet<blocxx::String> m_allowedUsers;
 	bool m_allowAllUsers;
-	SSLServerCtxRef m_sslCtx;
-	Mutex m_shutdownGuard;
+	blocxx::SSLServerCtxRef m_sslCtx;
+	blocxx::Mutex m_shutdownGuard;
 	bool m_shuttingDown;
 #ifndef OW_NO_SSL
-	SSLOpts m_sslopts;
-	SSLTrustStoreRef m_trustStore;
+	blocxx::SSLOpts m_sslopts;
+	blocxx::SSLTrustStoreRef m_trustStore;
 #endif //  OW_HAVE_SSL
 
 #ifdef OW_WIN32

@@ -44,11 +44,11 @@ namespace OW_NAMESPACE
 {
 	struct LoggerSpec
 	{
-		StringArray categories;
-		String message_format;
-		String file_name;
-		UInt64 max_file_size;
-		UInt32 max_backup_index;
+		blocxx::StringArray categories;
+		blocxx::String message_format;
+		blocxx::String file_name;
+		blocxx::UInt64 max_file_size;
+		blocxx::UInt32 max_backup_index;
 	};
 }
 

@@ -40,9 +40,11 @@
 
 #include "OW_CppProviderIncludes.hpp"
 #include "blocxx/SocketAddress.hpp"
+#include "blocxx/Logger.hpp"
 // we're going to need these
 #include "blocxx/Exec.hpp"
 #include "blocxx/UnnamedPipe.hpp"
+
 
 // we use these internally
 #include <sys/types.h>
@@ -52,6 +54,7 @@
 
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace{
 
@@ -168,7 +171,7 @@ public:
 		const CIMClass& cimClass )
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG3(logger, "in RPM::enumInstances");
+		BLOCXX_LOG_DEBUG3(logger, "in RPM::enumInstances");
 		String cmd = "/usr/bin/apt-cache search .*";
 		ProcessRef proc = Exec::spawn(cmd.tokenize());
 
@@ -333,7 +336,7 @@ public:
 		{
 			return false;
 		}
-		// TODO parse output and add properties
+		/// @todo parse output and add properties
 
 		bool hitPackage = false;
 		String curName, value;

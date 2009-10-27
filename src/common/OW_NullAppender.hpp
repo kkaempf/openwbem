@@ -42,6 +42,12 @@
 
 #include "OW_config.h"
 #include <blocxx/NullAppender.hpp>
+
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_NullAppender.hpp is deprecated, use "blocxx/NullAppender.hpp" instead.
 #endif
 

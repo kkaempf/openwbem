@@ -40,7 +40,7 @@
 
 namespace OW_NAMESPACE
 {
-
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 ClientCIMOMHandleConnectionPool::ClientCIMOMHandleConnectionPool(unsigned maxConnectionsPerUrl)
 	: m_maxConnectionsPerUrl(maxConnectionsPerUrl)

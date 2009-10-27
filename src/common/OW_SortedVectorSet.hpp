@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/SortedVectorSet.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SortedVectorSet.hpp is deprecated, use "blocxx/SortedVectorSet.hpp" instead.
 #endif

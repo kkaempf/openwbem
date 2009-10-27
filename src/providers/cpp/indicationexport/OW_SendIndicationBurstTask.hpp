@@ -42,7 +42,7 @@
 namespace OW_NAMESPACE
 {
 
-struct SendIndicationBurstTask : public Runnable
+struct SendIndicationBurstTask : public blocxx::Runnable
 {
 	SendIndicationBurstTask(
 		IndicationExporterRef const & indicationExporter,

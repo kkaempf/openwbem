@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/GetPass.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_GetPass.hpp is deprecated, use "blocxx/GetPass.hpp" instead.
 #endif
 

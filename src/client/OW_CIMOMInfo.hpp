@@ -54,23 +54,23 @@ public:
 	 * is suitable for passing to a HTTPClient ctor.
 	 * @return An String containing a URL to the CIMOM.
 	 */
-	String getURL() const { return m_url; }
-	void setURL(const String& url) { m_url = url; }
+	blocxx::String getURL() const { return m_url; }
+	void setURL(const blocxx::String& url) { m_url = url; }
 	/**
 	 * The subscript operator can be used to access the
 	 * various attributes associated with a CIMOM.
 	 */
-	const String operator[](const String& key) const;
-	String& operator[](const String& key);
+	const blocxx::String operator[](const blocxx::String& key) const;
+	blocxx::String& operator[](const blocxx::String& key);
 private:
-	String m_url;
+	blocxx::String m_url;
 
 #ifdef OW_WIN32
 #pragma warning (push)
 #pragma warning (disable: 4251)
 #endif
 
-	Map<String, String> m_attributes;
+	blocxx::Map<blocxx::String, blocxx::String> m_attributes;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

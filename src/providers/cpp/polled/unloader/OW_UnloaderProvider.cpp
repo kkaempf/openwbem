@@ -37,12 +37,13 @@
 #include "OW_UnloaderProvider.hpp"
 #include "OW_CIMOMEnvironment.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 
 #define OW_POLLING_INTERVAL 60 // 1 min is the smallest interval for unloading
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 namespace
 {
@@ -67,7 +68,7 @@ UnloaderProvider::~UnloaderProvider()
 Int32
 UnloaderProvider::poll(const ProviderEnvironmentIFCRef &/*env*/)
 {
-	OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "Polling UnloaderProvider");
+	BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), "Polling UnloaderProvider");
 	CIMOMEnvironment::instance()->unloadProviders();
 	return -1;
 }
@@ -79,7 +80,7 @@ Int32
 UnloaderProvider::getInitialPollingInterval(const
 		ProviderEnvironmentIFCRef &env)
 {
-	OW_LOG_DEBUG3(Logger(COMPONENT_NAME), Format(
+	BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), Format(
 		"Calling getInitialPollingInterval in ProviderUnloader; returning %1",
 		OW_POLLING_INTERVAL));
 	return OW_POLLING_INTERVAL;

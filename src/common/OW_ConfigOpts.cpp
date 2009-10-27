@@ -37,21 +37,20 @@
 #include "blocxx/String.hpp"
 #include <cstring>
 
+using namespace blocxx;
+
 namespace OW_NAMESPACE
 {
 namespace ConfigOpts
 {
 	const char* const DEBUGFLAG_opt = "owcimomd.debugflag";
 	const char* const CONFIG_FILE_opt = "owcimomd.config_file";
-	const char* const LOG_LOCATION_opt = "owcimomd.log_location";
-	const char* const LOG_LEVEL_opt = "owcimomd.log_level";
 	const char* const PROVIDER_IFC_LIBS_opt = "owcimomd.provider_ifc_libs";
 	const char* const ONLYHELP_opt = "owcimomd.onlyhelp";
 	const char* const LIBEXECDIR_opt = "owcimomd.libexecdir";
 	const char* const OWLIBDIR_opt = "owcimomd.owlibdir";
 	const char* const DATADIR_opt = "owcimomd.datadir";
 	const char* const ALLOW_ANONYMOUS_opt = "owcimomd.allow_anonymous";
-	const char* const PAM_ALLOWED_USERS_opt = "pam.allowed_users";
 	const char* const SIMPLE_AUTH_PASSWORD_FILE_opt = "simple_auth.password_file";
 	const char* const AUTHENTICATION_MODULE_opt = "owcimomd.authentication_module";
 	const char* const DUMP_SOCKET_IO_opt = "owcimomd.dump_socket_io";
@@ -202,8 +201,6 @@ const NameAndDefault g_defaults[] =
 	{ LOG_1_MAX_FILE_SIZE_opt ,  OW_DEFAULT_LOG_1_MAX_FILE_SIZE },
 	{ LOG_1_TYPE_opt ,  OW_DEFAULT_LOG_1_TYPE },
 	{ LOG_DEBUG_LOG_NAME ,  "" },
-	{ LOG_LEVEL_opt ,  OW_DEFAULT_LOG_LEVEL },
-	{ LOG_LOCATION_opt ,  OW_DEFAULT_LOG_LOCATION },
 	{ LOG_MAIN_LOG_NAME ,  "" },
 	{ MAX_CLASS_CACHE_SIZE_opt ,  OW_DEFAULT_MAX_CLASS_CACHE_SIZE },
 	{ HTTP_SERVER_MAX_CONNECTIONS_opt ,  OW_DEFAULT_HTTP_SERVER_MAX_CONNECTIONS },
@@ -213,7 +210,6 @@ const NameAndDefault g_defaults[] =
 	{ OWBI1IFC_PROV_LOCATION_opt, OW_DEFAULT_OWBI1IFC_PROV_LOCATION },
 	{ OWBI1IFC_PROV_TTL_opt, OW_DEFAULT_OWBI1IFC_PROV_TTL },
 	{ OWLIBDIR_opt ,  OW_DEFAULT_OWLIBDIR },
-	{ PAM_ALLOWED_USERS_opt ,  "" },
 	{ PERLPROVIFC_PROV_LOCATION_opt ,  OW_DEFAULT_PERLPROVIFC_PROV_LOCATION },
 	{ PIDFILE_opt, OW_DEFAULT_PIDFILE },
 	{ POLLING_MANAGER_MAX_THREADS_opt ,  OW_DEFAULT_POLLING_MANAGER_MAX_THREADS },

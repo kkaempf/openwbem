@@ -55,34 +55,34 @@ public:
 
 	virtual void filterInstances(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
-			const String& className,
+			const blocxx::String& ns,
+			const blocxx::String& className,
 			CIMInstanceArray& instances,
 			WBEMFlags::ELocalOnlyFlag localOnly,
 			WBEMFlags::EDeepFlag deep,
 			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList,
+			const blocxx::StringArray* propertyList,
 			const CIMClass& requestedClass,
 			const CIMClass& cimClass );
 
 	virtual void createInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMInstance& cimInstance );
 
 	virtual void modifyInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMInstance& modifiedInstance,
 			const CIMInstance& previousInstance,
 			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-			const StringArray* propertyList,
+			const blocxx::StringArray* propertyList,
 			const CIMClass& theClass);
 
 	virtual void deleteInstance(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMObjectPath& cop);
 
 };

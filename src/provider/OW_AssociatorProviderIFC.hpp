@@ -146,15 +146,15 @@ class OW_PROVIDER_API AssociatorProviderIFC: public ProviderBaseIFC
 		virtual void associators(
 				const ProviderEnvironmentIFCRef& env,
 				CIMInstanceResultHandlerIFC& result,
-				const String& ns,
+				const blocxx::String& ns,
 				const CIMObjectPath& objectName,
-				const String& assocClass,
-				const String& resultClass,
-				const String& role,
-				const String& resultRole,
+				const blocxx::String& assocClass,
+				const blocxx::String& resultClass,
+				const blocxx::String& role,
+				const blocxx::String& resultRole,
 				WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 				WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-				const StringArray* propertyList) = 0;
+				const blocxx::StringArray* propertyList) = 0;
 		/**
 		 * For the definition of this operation, refer to
 		 * http://www.dmtf.org/download/spec/xmls/CIM_HTTP_Mapping10.htm#SecAssociatorNames
@@ -183,12 +183,12 @@ class OW_PROVIDER_API AssociatorProviderIFC: public ProviderBaseIFC
 		virtual void associatorNames(
 				const ProviderEnvironmentIFCRef& env,
 				CIMObjectPathResultHandlerIFC& result,
-				const String& ns,
+				const blocxx::String& ns,
 				const CIMObjectPath& objectName,
-				const String& assocClass,
-				const String& resultClass,
-				const String& role,
-				const String& resultRole ) = 0;
+				const blocxx::String& assocClass,
+				const blocxx::String& resultClass,
+				const blocxx::String& role,
+				const blocxx::String& resultRole ) = 0;
 		/**
 		 * For definition of this operation, refer to
 		 * http://www.dmtf.org/download/spec/xmls/CIM_HTTP_Mapping10.htm#SecReferencesMethod
@@ -227,13 +227,13 @@ class OW_PROVIDER_API AssociatorProviderIFC: public ProviderBaseIFC
 		virtual void references(
 				const ProviderEnvironmentIFCRef& env,
 				CIMInstanceResultHandlerIFC& result,
-				const String& ns,
+				const blocxx::String& ns,
 				const CIMObjectPath& objectName,
-				const String& resultClass,
-				const String& role,
+				const blocxx::String& resultClass,
+				const blocxx::String& role,
 				WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 				WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-				const StringArray* propertyList) = 0;
+				const blocxx::StringArray* propertyList) = 0;
 		/**
 		 * For definition of this operation, refer to
 		 *  ttp://www.dmtf.org/download/spec/xmls/CIM_HTTP_Mapping10.htm#SecReferenceNames
@@ -256,10 +256,10 @@ class OW_PROVIDER_API AssociatorProviderIFC: public ProviderBaseIFC
 		virtual void referenceNames(
 				const ProviderEnvironmentIFCRef& env,
 				CIMObjectPathResultHandlerIFC& result,
-				const String& ns,
+				const blocxx::String& ns,
 				const CIMObjectPath& objectName,
-				const String& resultClass,
-				const String& role ) = 0;
+				const blocxx::String& resultClass,
+				const blocxx::String& role ) = 0;
 
 		virtual AssociatorProviderIFC* getAssociatorProvider();
 };

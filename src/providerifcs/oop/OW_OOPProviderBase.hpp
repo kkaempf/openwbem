@@ -56,15 +56,15 @@ public:
 
 	virtual ~OOPProviderBase();
 
-	UnnamedPipeRef startClonedProviderEnv(const ProviderEnvironmentIFCRef& env);
-	void terminate(const ProviderEnvironmentIFCRef& env, const String& providerID);
+	blocxx::UnnamedPipeRef startClonedProviderEnv(const ProviderEnvironmentIFCRef& env);
+	void terminate(const ProviderEnvironmentIFCRef& env, const blocxx::String& providerID);
 
 	class MethodCallback
 	{
 	public:
 		virtual ~MethodCallback();
-		virtual void call(const OOPProtocolIFCRef& protocol, const UnnamedPipeRef& out, const UnnamedPipeRef& in,
-			const Timeout& timeout, const ProviderEnvironmentIFCRef& env) const = 0;
+		virtual void call(const OOPProtocolIFCRef& protocol, const blocxx::UnnamedPipeRef& out, const blocxx::UnnamedPipeRef& in,
+			const blocxx::Timeout& timeout, const ProviderEnvironmentIFCRef& env) const = 0;
 	};
 
 	const OOPProviderInterface::ProvRegInfo& getProvInfo() const
@@ -91,7 +91,7 @@ protected:
 	void startProcessAndCallFunction(const ProviderEnvironmentIFCRef& env, const MethodCallback& func, const char* fname);
 
 private:
-	ThreadSafeProcessRef getProcess(const char* fname, const ProviderEnvironmentIFCRef& env, EUsePersistentProcessFlag usePersistentProcess, String& procUserName);
+	blocxx::ThreadSafeProcessRef getProcess(const char* fname, const ProviderEnvironmentIFCRef& env, EUsePersistentProcessFlag usePersistentProcess, blocxx::String& procUserName);
 
 	void resetUnloadTimer();
 
@@ -99,9 +99,9 @@ private:
 	OOPProtocolIFCRef m_protocol;
 
 	OOPProcessState m_processState;
-	ThreadPool m_threadPool;
-	NonRecursiveMutex m_unloadTimerGuard;
-	TimeoutTimer m_unloadTimer;
+	blocxx::ThreadPool m_threadPool;
+	blocxx::NonRecursiveMutex m_unloadTimerGuard;
+	blocxx::TimeoutTimer m_unloadTimer;
 };
 
 } // end namespace OW_NAMESPACE

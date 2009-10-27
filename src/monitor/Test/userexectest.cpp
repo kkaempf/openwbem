@@ -20,6 +20,7 @@ using namespace OpenWBEM;
 using std::cin;
 using std::cout;
 using std::endl;
+using namespace blocxx;
 
 OW_DECLARE_EXCEPTION(UserExecTest);
 OW_DEFINE_EXCEPTION(UserExecTest);

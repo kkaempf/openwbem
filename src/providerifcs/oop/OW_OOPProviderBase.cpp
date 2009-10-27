@@ -45,7 +45,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "blocxx/MutexLock.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_OpenWBEM_OOPProviderRegistration.hpp"
 #include "OW_PrivilegeManager.hpp"
 #include "blocxx/UserUtils.hpp"
@@ -54,7 +54,7 @@
 #include "OW_UserInfo.hpp"
 #include "blocxx/Exec.hpp"
 #include "OW_OOPClonedProviderEnv.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/ThreadSafeProcess.hpp"
 #include "blocxx/NonRecursiveMutexLock.hpp"
 #include "blocxx/Reference.hpp"
@@ -63,6 +63,8 @@
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace
 {
@@ -83,12 +85,12 @@ namespace
 		}
 		catch (IOException& e)
 		{
-			OW_LOG_ERROR(lgr, "Failed reading stderr");
+			BLOCXX_LOG_ERROR(lgr, "Failed reading stderr");
 			// ignore it
 		}
 		if (!output.empty())
 		{
-			OW_LOG_ERROR(lgr, Format("Communication with process failed.  error output = %1", output));
+			BLOCXX_LOG_ERROR(lgr, Format("Communication with process failed.  error output = %1", output));
 		}
 		return output;
 	}
@@ -97,19 +99,19 @@ namespace
 	{
 		Process::Status status = proc->processStatus();
 		Logger lgr(COMPONENT_NAME);
-		OW_LOG_DEBUG(lgr, Format("%1 got exit status: %2", fname, status.toString()));
+		BLOCXX_LOG_DEBUG(lgr, Format("%1 got exit status: %2", fname, status.toString()));
 		if (!status.running() && !status.terminatedSuccessfully())
 		{
 			String output = getStderr(proc);
 			String msg = Format("%1 failed. exitStatus = %2, stderr output = %3",
 				procName, status.toString(), output);
-			OW_LOG_ERROR(lgr, msg);
+			BLOCXX_LOG_ERROR(lgr, msg);
 			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 		}
 
 		// still running, so shut it down. 0 for second parameter because we don't want
 		// to close the pipes. Later we try to read stderr if the process failed.
-		OW_LOG_DEBUG2(lgr, Format("Cleaning up process \"%1\" (%2)", procName, proc->pid()));
+		BLOCXX_LOG_DEBUG2(lgr, Format("Cleaning up process \"%1\" (%2)", procName, proc->pid()));
 		proc->waitCloseTerm(Timeout::relative(10.0), Timeout::relative(0), Timeout::relative(10.1));
 		status = proc->processStatus();
 
@@ -118,7 +120,7 @@ namespace
 			String output = getStderr(proc);
 			String msg = Format("%1 failed. exitStatus = %2, stderr output = %3",
 				procName, status.toString(), output);
-			OW_LOG_ERROR(lgr, msg);
+			BLOCXX_LOG_ERROR(lgr, msg);
 			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 		}
 	}
@@ -150,7 +152,7 @@ OOPProviderBase::OOPProviderBase(const OOPProviderInterface::ProvRegInfo& info,
 	//if (!m_processState.m_guardRef || !m_processState.m_persistentProcessRef || !m_processState.m_persistentProcessUserNameRef)
 	if (m_processState.isNull())
 	{
-		OW_ASSERT(m_provInfo.providerNeedsNewProcessForEveryInvocation() == true);
+		BLOCXX_ASSERT(m_provInfo.providerNeedsNewProcessForEveryInvocation() == true);
 		m_provInfo.isPersistent = false;
 	}
 
@@ -264,7 +266,7 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 
 	if (usePersistentProcess == E_USE_PERSISTENT_PROCESS && !m_processState.isNull())
 	{
-		OW_LOG_DEBUG3(lgr, Format("OOPProviderBase::getProcess() should use existing process %1 (%2), if it has been started.",
+		BLOCXX_LOG_DEBUG3(lgr, Format("OOPProviderBase::getProcess() should use existing process %1 (%2), if it has been started.",
 				m_provInfo.process,
 				std::accumulate(m_provInfo.args.begin(), m_provInfo.args.end(),
 					String("args:"), StringJoiner(" "))));
@@ -276,24 +278,24 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 		{
 			if (proc->processStatus().running() && procUserName == processStateUserName)
 			{
-				OW_LOG_DEBUG(lgr, Format("Using persistent process %1", proc->pid()));
+				BLOCXX_LOG_DEBUG(lgr, Format("Using persistent process %1", proc->pid()));
 				return proc;
 			}
 			else if( haveUnloadTimeout() )
 			{
-				OW_LOG_DEBUG3(lgr, "Existing provider was terminated.  It likely reached timeout and was unloaded.  It will be reloaded.");
+				BLOCXX_LOG_DEBUG3(lgr, "Existing provider was terminated.  It likely reached timeout and was unloaded.  It will be reloaded.");
 			}
 			else
 			{
 				String output = getStderr(proc);
-				OW_LOG_ERROR(lgr, Format("Detected that persistent provider process %1[%2] has terminated: %3, stderr output = %4",
+				BLOCXX_LOG_ERROR(lgr, Format("Detected that persistent provider process %1[%2] has terminated: %3, stderr output = %4",
 					m_provInfo.process, proc->pid(), proc->processStatus().toString(), output));
 				m_processState.clearProcess();
 			}
 		}
 		else
 		{
-			OW_LOG_DEBUG3(lgr,
+			BLOCXX_LOG_DEBUG3(lgr,
 				Format("Detected that persistent provider process %1 [%2] has not been started.",
 					m_provInfo.process,
 					std::accumulate(m_provInfo.args.begin(), m_provInfo.args.end(),
@@ -302,10 +304,10 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 	}
 
 	// launch the process
-	OW_LOG_DEBUG2(lgr, Format("%1 about to spawn %2", fname, m_provInfo.process));
+	BLOCXX_LOG_DEBUG2(lgr, Format("%1 about to spawn %2", fname, m_provInfo.process));
 	for (size_t i = 0; i < m_provInfo.args.size(); ++i)
 	{
-		OW_LOG_DEBUG2(lgr, Format("param %1=\"%2\"", i, m_provInfo.args[i]));
+		BLOCXX_LOG_DEBUG2(lgr, Format("param %1=\"%2\"", i, m_provInfo.args[i]));
 	}
 	// argv array has to start with the process
 	StringArray argv(m_provInfo.args);
@@ -353,7 +355,7 @@ OOPProviderBase::getProcess(const char* fname, const ProviderEnvironmentIFCRef& 
 		break;
 	}
 
-	OW_LOG_DEBUG(lgr, Format("%1: %2 was spawned with pid %3", fname, m_provInfo.process, proc->pid()));
+	BLOCXX_LOG_DEBUG(lgr, Format("%1: %2 was spawned with pid %3", fname, m_provInfo.process, proc->pid()));
 
 	proc->in()->setTimeouts(m_provInfo.timeout);
 	proc->out()->setTimeouts(m_provInfo.timeout);
@@ -378,14 +380,14 @@ OOPProviderBase::terminate(const ProviderEnvironmentIFCRef& env, const String& p
 		ThreadSafeProcessRef proc = m_processState.getProcess();
 		if (proc)
 		{
-			OW_LOG_DEBUG(lgr, Format("OOPProviderBase::terminate terminating provider: %1", providerID));
+			BLOCXX_LOG_DEBUG(lgr, Format("OOPProviderBase::terminate terminating provider: %1", providerID));
 			m_protocol->setPersistent(proc->out(), proc->in(), m_provInfo.timeout, env, false);
 			proc->waitCloseTerm(Timeout::relative(10.0), Timeout::relative(0), Timeout::relative(10.1));
 			m_processState.clearProcess();
 		}
 		else
 		{
-			OW_LOG_DEBUG(lgr, Format("OOPProviderBase::terminate provider: %1 is not running", providerID));
+			BLOCXX_LOG_DEBUG(lgr, Format("OOPProviderBase::terminate provider: %1 is not running", providerID));
 		}
 	}
 
@@ -413,7 +415,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 		Reference<WriteLock> lock;
 		if (doLock)
 		{
-			OW_ASSERT(!m_processState.isNull());
+			BLOCXX_ASSERT(!m_processState.isNull());
 			lock = new WriteLock(m_processState.getGuard(), m_provInfo.timeout);
 		}
 
@@ -433,7 +435,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 		}
 		catch (Exception& e)
 		{
-			OW_LOG_DEBUG3(lgr, Format("%1 caught %2", fname, e));
+			BLOCXX_LOG_DEBUG3(lgr, Format("%1 caught %2", fname, e));
 			// If we got a CIMException, it was thrown by the provider, so we don't want to terminate a persistent process.
 			// If we got any other exception, something bad happened, so terminate it.
 			if (e.getSubClassId() == ExceptionIds::CIMExceptionId && usePersistentProcess == E_USE_PERSISTENT_PROCESS)
@@ -443,7 +445,7 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 			}
 			else
 			{
-				OW_LOG_DEBUG2(lgr, Format("Forcing process \"%1\" (%2) to finish: Not a persistent process (func threw exception)", m_provInfo.process, proc->pid()));
+				BLOCXX_LOG_DEBUG2(lgr, Format("Forcing process \"%1\" (%2) to finish: Not a persistent process (func threw exception)", m_provInfo.process, proc->pid()));
 				processFinish(proc, fname, m_provInfo.process);
 				throw;
 			}
@@ -455,13 +457,13 @@ OOPProviderBase::startProcessAndCallFunction(const ProviderEnvironmentIFCRef& en
 		}
 		else
 		{
-			OW_LOG_DEBUG2(lgr, Format("Forcing process \"%1\" (%2) to finish: Not a persistent process (func finished)", m_provInfo.process, proc->pid()));
+			BLOCXX_LOG_DEBUG2(lgr, Format("Forcing process \"%1\" (%2) to finish: Not a persistent process (func finished)", m_provInfo.process, proc->pid()));
 			processFinish(proc, fname, m_provInfo.process);
 		}
 	}
 	catch (ProcessErrorException& e)
 	{
-		OW_LOG_DEBUG(lgr, Format("%1 caught ProcessErrorException: %2", fname, e));
+		BLOCXX_LOG_DEBUG(lgr, Format("%1 caught ProcessErrorException: %2", fname, e));
 		OW_THROWCIMMSG(CIMException::FAILED, Format("Failed to run %1: %2", m_provInfo.process, e).c_str());
 	}
 }

@@ -45,6 +45,7 @@
 #include <map>
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 namespace BLOCXX_NAMESPACE
 {

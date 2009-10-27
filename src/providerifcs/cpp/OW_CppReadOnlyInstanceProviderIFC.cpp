@@ -43,6 +43,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 void
 CppReadOnlyInstanceProviderIFC::deleteInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &)

@@ -11,6 +11,7 @@
 
 using namespace std;
 using namespace OpenWBEM;
+using namespace blocxx;
 
 extern char * * environ;
 

@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/ThreadCounter.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_ThreadCounter.hpp is deprecated, use "blocxx/ThreadCounter.hpp" instead.
 #endif

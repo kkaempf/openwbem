@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMQualifier.hpp"
@@ -55,6 +55,7 @@ using std::endl;
 using std::find;
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 // create our own TEST_ASSERT, because assert and ASSERT will be turned off
 // in non-debug mode.

@@ -43,12 +43,14 @@
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_ResultHandlerIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace
 {
@@ -119,7 +121,7 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		EPropertiesFlag propertiesFlag)
 	{
-		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::enumInstances");
+		BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::enumInstances");
 		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 		CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
 		String sccn;
@@ -155,7 +157,7 @@ public:
 		const String& ns,
 		const CIMInstance& cimInstance )
 	{
-		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::createInstance");
+		BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::createInstance");
 #if !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
  		try
 		{
@@ -196,7 +198,7 @@ public:
 		const String& ns,
 		const CIMObjectPath& cop)
 	{
-		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::deleteInstance");
+		BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInstProv::deleteInstance");
 #if !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 		try
 		{

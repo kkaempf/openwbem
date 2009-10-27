@@ -37,10 +37,11 @@
 #include "OW_XMLParserCore.hpp"
 #include "blocxx/TempFileStream.hpp"
 #include "blocxx/StringBuffer.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 static void addIndent(StringBuffer& sb, int indent)
 {
@@ -87,7 +88,7 @@ String XMLPrettyPrint(std::istream& istr)
 				break;
 			case XMLToken::END_TAG:
 				--indent;
-				OW_ASSERT(indent >= 0);
+				BLOCXX_ASSERT(indent >= 0);
 				addIndent(rval, indent);
 				rval += "</";
 				rval += tok.text;
@@ -117,7 +118,7 @@ String XMLPrettyPrint(std::istream& istr)
 				rval += "\n";
 				break;
 			default:
-				OW_ASSERT(0);
+				BLOCXX_ASSERT(0);
 		}
 
 		good = p.next(tok);

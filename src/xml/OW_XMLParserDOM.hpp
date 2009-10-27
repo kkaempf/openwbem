@@ -58,7 +58,7 @@ namespace XMLParserDOM
 	 * Guaranteed to not be NULL.
 	 * @throws DOMException if xml is no good.
 	 */
-	OW_XML_API XMLNode parse(const String& xmlData);
+	OW_XML_API XMLNode parse(const blocxx::String& xmlData);
 
 	/**
 	 * Parse the XML document to be read from the std::istream data

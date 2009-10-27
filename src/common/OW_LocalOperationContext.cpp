@@ -37,6 +37,8 @@
 #include "blocxx/GlobalMutex.hpp"
 #include "blocxx/MutexLock.hpp"
 
+using namespace blocxx;
+
 namespace OW_NAMESPACE
 {
 

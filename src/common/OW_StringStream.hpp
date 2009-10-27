@@ -38,5 +38,10 @@
 #include "OW_config.h"
 #include <blocxx/StringStream.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_StringStream.hpp is deprecated, use "blocxx/StringStream.hpp" instead.
 #endif

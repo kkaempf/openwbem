@@ -36,7 +36,7 @@
 #include "blocxx/Format.hpp"
 #include "OW_MOFParserDecls.hpp"
 #include "OW_MOFCIMOMVisitor.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/ThreadCancelledException.hpp"
 #include "OW_MOFGrammar.hpp"
 
@@ -47,7 +47,7 @@
 #include "blocxx/Enumeration.hpp"
 #include "blocxx/NonRecursiveMutex.hpp"
 #include "blocxx/NonRecursiveMutexLock.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_CIMFlavor.hpp"
 #include "OW_MOFParseError.hpp"
 #include "OW_MOFLexerDecls.hpp"
@@ -62,6 +62,7 @@ YY_BUFFER_STATE owmof_scan_bytes( const char *bytes, int len );
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 OW_DEFINE_EXCEPTION_WITH_ID(MOFCompiler)
 OW_DEFINE_EXCEPTION2(MOFParser, MOFCompilerException)
@@ -239,7 +240,7 @@ String Compiler::fixParsedString(const String& s)
 				++i;
 
 				/* this can never happen, unless someone messes up the lexer */
-				OW_ASSERT(i < s.length());
+				BLOCXX_ASSERT(i < s.length());
 
 				switch (s[i])
 				{
@@ -302,7 +303,7 @@ String Compiler::fixParsedString(const String& s)
 						break;
 					default:
 						// this could never happen unless someone messes up the lexer
-						OW_ASSERTMSG(0, "Invalid escape sequence");
+						BLOCXX_ASSERTMSG(0, "Invalid escape sequence");
 						break;
 				}
 			}
@@ -342,7 +343,7 @@ public:
 	{
 		m_instances.push_back(instance);
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::createInstance returning %1", CIMObjectPath(ns, instance).toString()));
+		BLOCXX_LOG_DEBUG(logger, Format("StoreLocalDataHandle::createInstance returning %1", CIMObjectPath(ns, instance).toString()));
 		return CIMObjectPath(ns, instance);
 	}
 	virtual CIMClass getClass(const String &ns, const String &className,
@@ -357,7 +358,7 @@ public:
 		{
 			if (m_classes[i].getName() == CIMName(className))
 			{
-				OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::getClass found %1 in m_classes", className));
+				BLOCXX_LOG_DEBUG(logger, Format("StoreLocalDataHandle::getClass found %1 in m_classes", className));
 				return m_classes[i];
 			}
 		}
@@ -366,17 +367,17 @@ public:
 		{
 			try
 			{
-				OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::getClass attempting to get %1 from m_realhdl", className));
+				BLOCXX_LOG_DEBUG(logger, Format("StoreLocalDataHandle::getClass attempting to get %1 from m_realhdl", className));
 				return m_realhdl->getClass(ns, className, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 			}
 			catch (CIMException& e)
 			{
-				OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::getClass failed to get %1 from m_realhdl: %2", className, e));
+				BLOCXX_LOG_DEBUG(logger, Format("StoreLocalDataHandle::getClass failed to get %1 from m_realhdl: %2", className, e));
 				// ignore it.
 			}
 		}
 
-		OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::getClass returning a dummy class of %1", className));
+		BLOCXX_LOG_DEBUG(logger, Format("StoreLocalDataHandle::getClass returning a dummy class of %1", className));
 		// just give back an empty class, with just the name set.
 		return CIMClass(className);
 	}
@@ -408,10 +409,10 @@ public:
 	{
 		CIMClass cimClass(cimClass_);
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::createClass() before adjustClass cimClass = %1",  cimClass.toMOF()));
+		BLOCXX_LOG_DEBUG(logger, Format("StoreLocalDataHandle::createClass() before adjustClass cimClass = %1",  cimClass.toMOF()));
 		adjustClass(ns, cimClass);
 		resolveClass(ns, cimClass);
-		OW_LOG_DEBUG(logger, Format("StoreLocalDataHandle::createClass() after adjustClass cimClass = %1",  cimClass.toMOF()));
+		BLOCXX_LOG_DEBUG(logger, Format("StoreLocalDataHandle::createClass() after adjustClass cimClass = %1",  cimClass.toMOF()));
 		m_classes.push_back(cimClass);
 	}
 
@@ -422,7 +423,7 @@ private:
 	CIMQualifierTypeArray& m_qualifierTypes;
 
 #define THROW_ERROR_NOT_IMPLEMENTED(name) OW_THROWCIMMSG(CIMException::FAILED, Format("Not implemented: %1", (name)).c_str())
-#define THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME() THROW_ERROR_NOT_IMPLEMENTED(OW_LOGGER_PRETTY_FUNCTION)
+#define THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME() THROW_ERROR_NOT_IMPLEMENTED(BLOCXX_LOGGER_PRETTY_FUNCTION)
 	// all these throw FAILED
 	virtual void enumClassNames(const String &ns, const String &className, StringResultHandlerIFC &result, WBEMFlags:: EDeepFlag deep=WBEMFlags:: E_DEEP)
 	{
@@ -619,7 +620,7 @@ private:
 								/// @todo  look at this message, it seems the dmtf cim schema causes it quite often.
 								// maybe we should only output it if the value is different?
 								Logger lgr(COMPONENT_NAME);
-								OW_LOG_INFO(lgr, Format("Warning: %1.%2: qualifier %3 was "
+								BLOCXX_LOG_INFO(lgr, Format("Warning: %1.%2: qualifier %3 was "
 											"overridden, but the qualifier can't be "
 											"overridden because it has DisableOverride flavor",
 											childClass.getName(), propArray[i].getName(),
@@ -815,19 +816,19 @@ protected:
 	virtual void doProgressMessage(const char *message, const LineInfo &li)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, Format("MOF compilation progress: %1: line %2:%3: %4", li.filename, li.lineNum, li.columnNum, message));
+		BLOCXX_LOG_DEBUG(logger, Format("MOF compilation progress: %1: line %2:%3: %4", li.filename, li.lineNum, li.columnNum, message));
 		warnings.push_back(message);
 	}
 	virtual void doFatalError(const char *error, const LineInfo &li)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_ERROR(logger, Format("Fatal MOF compilation error: %1: line %2:%3: %4", li.filename, li.lineNum, li.columnNum, error));
+		BLOCXX_LOG_ERROR(logger, Format("Fatal MOF compilation error: %1: line %2:%3: %4", li.filename, li.lineNum, li.columnNum, error));
 		errors.push_back(error);
 	}
 	virtual EParserAction doRecoverableError(const char *error, const LineInfo &li)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_ERROR(logger, Format("MOF compilation error: %1: line %2:%3: %4", li.filename, li.lineNum, li.columnNum, error));
+		BLOCXX_LOG_ERROR(logger, Format("MOF compilation error: %1: line %2:%3: %4", li.filename, li.lineNum, li.columnNum, error));
 		errors.push_back(error);
 		return ParserErrorHandlerIFC::E_ABORT_ACTION;
 	}

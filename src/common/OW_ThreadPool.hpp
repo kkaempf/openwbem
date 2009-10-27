@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/ThreadPool.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_ThreadPool.hpp is deprecated, use "blocxx/ThreadPool.hpp" instead.
 #endif

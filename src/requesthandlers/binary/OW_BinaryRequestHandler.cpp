@@ -50,7 +50,7 @@
 #include "blocxx/MutexLock.hpp"
 #include "blocxx/SocketException.hpp"
 #include "blocxx/ThreadCancelledException.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_OperationContext.hpp"
 #include "blocxx/UserUtils.hpp"
 #include "OW_ServiceIFCNames.hpp"
@@ -61,12 +61,14 @@
 namespace OW_NAMESPACE
 {
 
+using namespace WBEMFlags;
+using namespace blocxx;
+
 namespace
 {
 	const String COMPONENT_NAME("ow.requesthandler.owbinary");
 }
 
-using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 BinaryRequestHandler::BinaryRequestHandler()
 	: RequestHandlerIFC()
@@ -137,78 +139,78 @@ BinaryRequestHandler::doProcess(std::streambuf * istrm, std::streambuf * ostrm,
 			switch (funcNo)
 			{
 				case BinarySerialization::BIN_GETQUAL:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get qualifier"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler get qualifier"
 						" request");
 					getQual(chdl, *ostrm, *istrm);
 					break;
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 				case BinarySerialization::BIN_SETQUAL:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler set qualifier"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler set qualifier"
 						" request");
 					setQual(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_DELETEQUAL:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler delete qualifier"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler delete qualifier"
 						" request");
 					deleteQual(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_ENUMQUALS:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum qualifiers"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler enum qualifiers"
 						" request");
 					enumQualifiers(chdl, *ostrm, *istrm);
 					break;
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 				case BinarySerialization::BIN_GETCLS:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get class"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler get class"
 						" request");
 					getClass(chdl, *ostrm, *istrm);
 					break;
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 				case BinarySerialization::BIN_CREATECLS:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler create class"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler create class"
 						" request");
 					createClass(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_MODIFYCLS:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler modify class"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler modify class"
 						" request");
 					modifyClass(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_DELETECLS:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler delete class"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler delete class"
 						" request");
 					deleteClass(chdl, *ostrm, *istrm);
 					break;
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 				case BinarySerialization::BIN_ENUMCLSS:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum classes"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler enum classes"
 						" request");
 					enumClasses(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_GETINST:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get instance"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler get instance"
 						" request");
 					getInstance(chdl, *ostrm, *istrm);
 					break;
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 				case BinarySerialization::BIN_CREATEINST:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler create instance"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler create instance"
 						" request");
 					createInstance(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_MODIFYINST:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get instance"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler get instance"
 						" request");
 					modifyInstance(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_DELETEINST:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler delete instance"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler delete instance"
 						" request");
 					deleteInstance(chdl, *ostrm, *istrm);
 					break;
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 				case BinarySerialization::BIN_SETPROP:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler set property"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler set property"
 						" request");
 					setProperty(chdl, *ostrm, *istrm);
 					break;
@@ -216,83 +218,83 @@ BinaryRequestHandler::doProcess(std::streambuf * istrm, std::streambuf * ostrm,
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 				case BinarySerialization::BIN_GETPROP:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get property"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler get property"
 						" request");
 					getProperty(chdl, *ostrm, *istrm);
 					break;
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 				case BinarySerialization::BIN_ENUMCLSNAMES:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum class names"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler enum class names"
 						" request");
 					enumClassNames(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_ENUMINSTS:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum instances"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler enum instances"
 						" request");
 					enumInstances(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_ENUMINSTNAMES:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum instance"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler enum instance"
 						" names request");
 					enumInstanceNames(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_INVMETH:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler invoke method"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler invoke method"
 						" request");
 					invokeMethod(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_EXECQUERY:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler exec query"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler exec query"
 						" request");
 					execQuery(chdl, *ostrm, *istrm);
 					break;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 				case BinarySerialization::BIN_ASSOCIATORS:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler associators"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler associators"
 						" request");
 					associators(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_ASSOCNAMES:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler associator names"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler associator names"
 						" request");
 					associatorNames(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_REFERENCES:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler references"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler references"
 						" request");
 					references(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::BIN_REFNAMES:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler reference names"
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler reference names"
 						" request");
 					referenceNames(chdl, *ostrm, *istrm);
 					break;
 #endif
 				case BinarySerialization::BIN_GETSVRFEATURES:
-					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get server features request");
+					BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler get server features request");
 					getServerFeatures(chdl, *ostrm, *istrm);
 					break;
 				case BinarySerialization::EXPORT_INDICATION:
 					if (m_supportExportIndication)
 					{
-						OW_LOG_DEBUG(lgr, "BinaryRequestHandler get export indication request");
+						BLOCXX_LOG_DEBUG(lgr, "BinaryRequestHandler get export indication request");
 						exportIndication(chdl, *ostrm, *istrm);
 					}
 					else
 					{
-						OW_LOG_DEBUG(lgr, "Ignoring export indication request");
+						BLOCXX_LOG_DEBUG(lgr, "Ignoring export indication request");
 						writeError(*ostrError, "Export indication not supported.");
 					}
 					break;
 				default:
-					OW_LOG_INFO(lgr, Format("BinaryRequestHandler: Received invalid function number: %1", static_cast<int>(funcNo)));
+					BLOCXX_LOG_INFO(lgr, Format("BinaryRequestHandler: Received invalid function number: %1", static_cast<int>(funcNo)));
 					writeError(*ostrError, "Invalid function number");
 					break;
 			}
 		}
 		catch(CIMException& e)
 		{
-			OW_LOG_INFO(lgr, Format("CIM Exception caught in"
+			BLOCXX_LOG_INFO(lgr, Format("CIM Exception caught in"
 				" BinaryRequestHandler: %1", e));
 			BinarySerialization::write(*ostrError, BinarySerialization::BIN_EXCEPTION);
 			BinarySerialization::write(*ostrError, UInt16(e.getErrNo()));
@@ -302,32 +304,32 @@ BinaryRequestHandler::doProcess(std::streambuf * istrm, std::streambuf * ostrm,
 	}
 	catch(Exception& e)
 	{
-		OW_LOG_INFO(lgr, "Exception caught in BinaryRequestHandler");
-		OW_LOG_INFO(lgr, Format("Type: %1", e.type()));
-		OW_LOG_INFO(lgr, Format("File: %1", e.getFile()));
-		OW_LOG_INFO(lgr, Format("Line: %1", e.getLine()));
-		OW_LOG_INFO(lgr, Format("Msg: %1", e.getMessage()));
+		BLOCXX_LOG_INFO(lgr, "Exception caught in BinaryRequestHandler");
+		BLOCXX_LOG_INFO(lgr, Format("Type: %1", e.type()));
+		BLOCXX_LOG_INFO(lgr, Format("File: %1", e.getFile()));
+		BLOCXX_LOG_INFO(lgr, Format("Line: %1", e.getLine()));
+		BLOCXX_LOG_INFO(lgr, Format("Msg: %1", e.getMessage()));
 		writeError(*ostrError, Format("BinaryRequestHandler caught exception: %1", e).c_str());
 		setError(CIMException::FAILED, e.getMessage());
 
 	}
 	catch(std::exception& e)
 	{
-		OW_LOG_INFO(lgr, Format("Caught %1 exception in BinaryRequestHandler",
+		BLOCXX_LOG_INFO(lgr, Format("Caught %1 exception in BinaryRequestHandler",
 			e.what()));
 		writeError(*ostrError, Format("BinaryRequestHandler caught exception: %1", e.what()).c_str());
 		setError(CIMException::FAILED, e.what());
 	}
 	catch (ThreadCancelledException&)
 	{
-		OW_LOG_INFO(lgr, "Thread cancelled in BinaryRequestHandler");
+		BLOCXX_LOG_INFO(lgr, "Thread cancelled in BinaryRequestHandler");
 		writeError(*ostrError, "Thread cancelled");
 		setError(CIMException::FAILED, "Thread cancelled");
 		throw;
 	}
 	catch(...)
 	{
-		OW_LOG_ERROR(lgr, "Unknown exception caught in BinaryRequestHandler");
+		BLOCXX_LOG_ERROR(lgr, "Unknown exception caught in BinaryRequestHandler");
 		writeError(*ostrError, "BinaryRequestHandler caught unknown exception");
 		setError(CIMException::FAILED, "Caught unknown exception");
 	}

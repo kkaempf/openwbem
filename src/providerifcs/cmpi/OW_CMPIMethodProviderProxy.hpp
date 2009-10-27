@@ -62,9 +62,9 @@ public:
 	 * @throws CIMException
 	 */
 	virtual CIMValue invokeMethod(const ProviderEnvironmentIFCRef &env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& path,
-		const String &methodName,
+		const blocxx::String &methodName,
 		const CIMParamValueArray &in, CIMParamValueArray &out);
 
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);

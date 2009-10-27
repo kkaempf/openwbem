@@ -56,8 +56,8 @@ class OW_XML_API RequestHandlerIFCXML : public RequestHandlerIFC
 public:
 	RequestHandlerIFCXML(): m_path() {}
 	virtual ~RequestHandlerIFCXML();
-	virtual StringArray getSupportedContentTypes() const;
-	virtual String getContentType() const;
+	virtual blocxx::StringArray getSupportedContentTypes() const;
+	virtual blocxx::String getContentType() const;
 protected:
 	/**
 	 * Process the input stream and generate appropriate output.
@@ -84,11 +84,11 @@ protected:
 	 * @param messageId the message ID
 	 * @param ostr the ostream to write the header to.
 	 */
-	void makeXMLHeader(const String& messageId, std::ostream& ostr);
-	void setPath(const String& id);
+	void makeXMLHeader(const blocxx::String& messageId, std::ostream& ostr);
+	void setPath(const blocxx::String& id);
 	virtual void outputError(CIMException::ErrNoType errorCode,
-		const String&, std::ostream& ostr) = 0;
-	String m_path;
+		const blocxx::String&, std::ostream& ostr) = 0;
+	blocxx::String m_path;
 };
 
 } // end namespace OW_NAMESPACE

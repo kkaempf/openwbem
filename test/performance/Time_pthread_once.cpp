@@ -45,6 +45,7 @@
 #include "blocxx/MemoryBarrier.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 using namespace std;
 
 

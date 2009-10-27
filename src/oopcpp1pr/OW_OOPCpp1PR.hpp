@@ -87,16 +87,16 @@ public:
 	 * @param logCategories If set to the empty string, then the CIMOM's level will be used, otherwise this must be a
 	 *                      comma separated list of log categories.
 	 */
-	OOPCpp1ProviderRunner(const UnnamedPipeRef& IOPipe, const String& logFile, const String& logCategories);
-	int runProvider(ProviderBaseIFCRef& provider, const String& sourceLib,
+	OOPCpp1ProviderRunner(const blocxx::UnnamedPipeRef& IOPipe, const blocxx::String& logFile, const blocxx::String& logCategories);
+	int runProvider(ProviderBaseIFCRef& provider, const blocxx::String& sourceLib,
 		InitializeCallback& initializeCallback);
 
 	ProviderEnvironmentIFCRef getProviderEnvironment();
 
 private:
-	UnnamedPipeRef m_IOPipe;
-	IOIFCStreamBuffer m_inbuf;
-	IOIFCStreamBuffer m_outbuf;
+	blocxx::UnnamedPipeRef m_IOPipe;
+	blocxx::IOIFCStreamBuffer m_inbuf;
+	blocxx::IOIFCStreamBuffer m_outbuf;
 	ProviderEnvironmentIFCRef m_penv;
 };
 

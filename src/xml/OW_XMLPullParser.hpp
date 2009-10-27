@@ -52,17 +52,17 @@ namespace OW_NAMESPACE
 class OW_XML_API XMLPullParser
 {
 public:
-	XMLPullParser(const String& str);
+	XMLPullParser(const blocxx::String& str);
 	XMLPullParser(std::istream& sb);
 	XMLPullParser();
 	virtual ~XMLPullParser();
 
-	String mustGetAttribute(const char* const attrName) const
+	blocxx::String mustGetAttribute(const char* const attrName) const
 	{
 		return getAttribute(attrName, true);
 	}
 	/// @todo  Get rid of all these bool parameters!
-	String getAttribute(const char* const attrName, bool throwIfError = false) const;
+	blocxx::String getAttribute(const char* const attrName, bool throwIfError = false) const;
 	void getChild();
 	void mustGetChild();
 	void getNextTag(bool throwIfError = false);
@@ -80,8 +80,8 @@ public:
 	{
 		return m_curTok.text.equals(arg);
 	}
-	String getName() const;
-	String getData() const;
+	blocxx::String getName() const;
+	blocxx::String getData() const;
 	bool isData() const;
 protected:
 
@@ -90,7 +90,7 @@ protected:
 #pragma warning (disable: 4251)
 #endif
 
-	AutoPtr<TempFileStream> m_ptfs;
+	blocxx::AutoPtr<blocxx::TempFileStream> m_ptfs;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

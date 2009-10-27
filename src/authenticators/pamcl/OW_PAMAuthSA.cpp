@@ -55,6 +55,7 @@ extern "C"
 }
 
 using namespace OW_NAMESPACE;
+using namespace blocxx;
 
 #if !defined(_pam_overwrite)
 #define _pam_overwrite(x)        \

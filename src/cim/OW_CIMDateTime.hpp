@@ -42,7 +42,7 @@
 #include "OW_CIMNULL.hpp"
 #include "blocxx/String.hpp"
 #include "OW_CommonFwd.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -146,7 +146,7 @@ public:
 	 * @throws CIMDateTimeException E_INVALID_DATE_TIME_FORMAT if arg
 	 *  isn't a valid CIM date time string.
 	 */
-	explicit CIMDateTime(const String& arg);
+	explicit CIMDateTime(const blocxx::String& arg);
 	/**
 	 * Create an CIMDateTime object from a regular DateTime object.
 	 * This constructor is *not* explicit so that a DateTime can be used
@@ -154,13 +154,13 @@ public:
 	 * @param arg The DateTime object to use in determining the value of
 	 *		this CIMDateTime object.
 	 */
-	CIMDateTime(const DateTime& arg);
+	CIMDateTime(const blocxx::DateTime& arg);
 	/**
 	 * Create an CIMDateTime object that represents an interval.
 	 * @param microSeconds The number of micro seconds that this interval
 	 *		represents.
 	 */
-	explicit CIMDateTime(UInt64 microSeconds);
+	explicit CIMDateTime(blocxx::UInt64 microSeconds);
 	/**
 	 * Assignment operation
 	 * @param arg	The CIMDateTime object to assign to this one.
@@ -172,50 +172,50 @@ public:
 	 * @return The year component of this CIMDateTime object as an UInt16.
 	 * Range (0-9999) for a date/time, 0 for an interval
 	 */
-	UInt16 getYear() const;
+	blocxx::UInt16 getYear() const;
 	/**
 	 * @return The month component of this CIMDateTime object as an UInt8.
 	 * Range (1-12) for a date/time, 0 for an interval
 	 */
-	UInt8 getMonth() const;
+	blocxx::UInt8 getMonth() const;
 	/**
 	 * @return The days component of this CIMDateTime object as an UInt32.
 	 * Range (1-31) for a date/time, (0-99999999) for an interval
 	 */
-	UInt32 getDays() const;
+	blocxx::UInt32 getDays() const;
 	/**
 	 * @return The day component of this CIMDateTime object as an UInt32.
 	 * Range (1-31) for a date/time, (0-99999999) for an interval
 	 */
-	UInt32 getDay() const;
+	blocxx::UInt32 getDay() const;
 	/**
 	 * @return The hours component of this CIMDateTime object as an UInt8.
 	 * Range (0-23)
 	 */
-	UInt8 getHours() const;
+	blocxx::UInt8 getHours() const;
 	/**
 	 * @return The minutes component of this CIMDateTime object as an
 	 * UInt8.
 	 * Range (0-59)
 	 */
-	UInt8 getMinutes() const;
+	blocxx::UInt8 getMinutes() const;
 	/**
 	 * @return The seconds component of this CIMDateTime object as an
 	 * UInt8.
 	 * Range (0-60) - 60 in the case of a leap second
 	 */
-	UInt8 getSeconds() const;
+	blocxx::UInt8 getSeconds() const;
 	/**
 	 * @return The microseconds component of this CIMDateTime object as an
 	 * UInt32.
 	 * Range (0-999999)
 	 */
-	UInt32 getMicroSeconds() const;
+	blocxx::UInt32 getMicroSeconds() const;
 	/**
 	 * @return The utc offset component of this CIMDateTime object as an
 	 * Int16
 	 */
-	Int16 getUtc() const;
+	blocxx::Int16 getUtc() const;
 	/**
 	 * Check if another CIMDateTime object is equal to this one.
 	 * @param arg The CIMDateTime object to check for equality with this one.
@@ -228,55 +228,55 @@ public:
 	 * @param arg The new year for this object. Valid values are 0-9999 for a date/time, 0 for an interval
 	 * @return a reference to *this
 	 */
-	CIMDateTime& setYear(UInt16 arg);
+	CIMDateTime& setYear(blocxx::UInt16 arg);
 	/**
 	 * Set the month component of the CIMDateTime object.
 	 * @param arg The new month for this object. Valid values are 1-12 for a date/time, 0 for an interval
 	 * @return a reference to *this
 	 */
-	CIMDateTime& setMonth(UInt8 arg);
+	CIMDateTime& setMonth(blocxx::UInt8 arg);
 	/**
 	 * Set the days component of the CIMDateTime object.
 	 * @param arg The new days value for this object. Valid values are 1-31 for a date/time, 0-99999999 for an interval
 	 * @return a reference to *this
 	 */
-	CIMDateTime& setDays(UInt32 arg);
+	CIMDateTime& setDays(blocxx::UInt32 arg);
 	/**
 	 * Set the day component of the CIMDateTime object.
 	 * @param arg The new day for this object. Valid values are 1-31 for a date/time, 0-99999999 for an interval
 	 * @return a reference to *this
 	 */
-	CIMDateTime& setDay(UInt32 arg);
+	CIMDateTime& setDay(blocxx::UInt32 arg);
 	/**
 	 * Set the hours component of the CIMDateTime object.
 	 * @param arg The new hours value for this object. Valid values are 0-23
 	 * @return a reference to *this
 	 */
-	CIMDateTime& setHours(UInt8 arg);
+	CIMDateTime& setHours(blocxx::UInt8 arg);
 	/**
 	 * Set the minutes component of the CIMDateTime object.
 	 * @param arg The new minutes value for this object. Valid values are 0-59
 	 * @return a reference to *this
 	 */
-	CIMDateTime& setMinutes(UInt8 arg);
+	CIMDateTime& setMinutes(blocxx::UInt8 arg);
 	/**
 	 * Set the seconds component of the CIMDateTime object.
 	 * @param arg The new seconds value for this object. Valid values are 0-60 (60 only for minutes that have leap seconds)
 	 * @return a reference to *this
 	 */
-	CIMDateTime& setSeconds(UInt8 arg);
+	CIMDateTime& setSeconds(blocxx::UInt8 arg);
 	/**
 	 * Set the microseconds component of the CIMDateTime object.
 	 * @param arg The new microseconds value for this object. Valid values are 0-999999
 	 * @return a reference to *this
 	 */
-	CIMDateTime& setMicroSeconds(UInt32 arg);
+	CIMDateTime& setMicroSeconds(blocxx::UInt32 arg);
 	/**
 	 * Set the utc offset component of the CIMDateTime object.
 	 * @param arg The new utc offset for this object. For an interval, the only valid value is 0.
 	 * @return a reference to *this
 	 */
-	CIMDateTime& setUtc(Int16 arg);
+	CIMDateTime& setUtc(blocxx::Int16 arg);
 	/**
 	 * @return true if this CIMDateTime object represents an interval type
 	 * of CIM date time.
@@ -300,16 +300,16 @@ public:
 	 * @return the string representation of this CIMDateTime object. (see
 	 * description of string format in documentation of class CIMDateTime)
 	 */
-	String toString() const;
+	blocxx::String toString() const;
 	/**
 	 * @return a DateTime object that corresponds to this CIMDateTime.
 	 */
-	DateTime toDateTime() const;
+	blocxx::DateTime toDateTime() const;
 
 	/**
 	 * @return true If this CIMDateTime is not comprised of zero values.
 	 */
-	OW_SAFE_BOOL_IMPL(CIMDateTime, COWIntrusiveReference<DateTimeData>, CIMDateTime::m_dptr, !isZero())
+	BLOCXX_SAFE_BOOL_IMPL(CIMDateTime, blocxx::COWIntrusiveReference<DateTimeData>, CIMDateTime::m_dptr, !isZero())
 
 	/**
 	 * @return true If this CIMDateTime is comprised of zero values.
@@ -322,7 +322,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<DateTimeData> m_dptr;
+	blocxx::COWIntrusiveReference<DateTimeData> m_dptr;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

@@ -49,7 +49,7 @@
 #include "OW_ResultHandlerIFC.hpp"
 #include "blocxx/IntrusiveReference.hpp"
 #include "blocxx/IntrusiveCountableBase.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 #include <set>
 #include <cstring>
@@ -89,15 +89,15 @@ struct OW_HDB_API AssocDbEntry
 
 	void writeObject(std::streambuf & ostrm) const;
 	void readObject(std::streambuf & istrm);
-	Int32 getOffset() const { return m_offset; }
-	void setOffset(Int32 offset) { m_offset = offset; }
+	blocxx::Int32 getOffset() const { return m_offset; }
+	void setOffset(blocxx::Int32 offset) { m_offset = offset; }
 
-	static String makeKey(const CIMObjectPath& objectName, const CIMName& role,
+	static blocxx::String makeKey(const CIMObjectPath& objectName, const CIMName& role,
 		const CIMName& resultRole);
 
-	String makeKey() const;
+	blocxx::String makeKey() const;
 
-	OW_SAFE_BOOL_IMPL(AssocDbEntry, CIMObjectPath, AssocDbEntry::m_objectName, m_objectName)
+	BLOCXX_SAFE_BOOL_IMPL(AssocDbEntry, CIMObjectPath, AssocDbEntry::m_objectName, m_objectName)
 
 #ifdef OW_WIN32
 #pragma warning (push)
@@ -107,8 +107,8 @@ struct OW_HDB_API AssocDbEntry
 	CIMObjectPath m_objectName; // part 1 of key
 	CIMName m_role; // part 2 of key
 	CIMName m_resultRole; // part 3 of key
-	Array<entry> m_entries;
-	Int32 m_offset;
+	blocxx::Array<entry> m_entries;
+	blocxx::Int32 m_offset;
 
 #ifdef OW_WIN32
 #pragma warning (pop)
@@ -116,7 +116,7 @@ struct OW_HDB_API AssocDbEntry
 
 };
 OW_HDB_API std::ostream& operator << (std::ostream& ostrm, const AssocDbEntry& arg);
-typedef Array<AssocDbEntry> AssocDbEntryArray;
+typedef blocxx::Array<AssocDbEntry> AssocDbEntryArray;
 OW_HDB_API bool operator==(const AssocDbEntry::entry& lhs, const AssocDbEntry::entry& rhs);
 //////////////////////////////////////////////////////////////////////////////
 class AssocDb;
@@ -125,17 +125,17 @@ typedef ResultHandlerIFC<AssocDbEntry::entry> AssocDbEntryResultHandlerIFC;
 class OW_HDB_API AssocDbHandle
 {
 private:
-	struct AssocDbHandleData : public IntrusiveCountableBase
+	struct AssocDbHandleData : public blocxx::IntrusiveCountableBase
 	{
 		AssocDbHandleData();
 		AssocDbHandleData(const AssocDbHandleData& arg);
-		AssocDbHandleData(AssocDb* pdb, const File& file);
+		AssocDbHandleData(AssocDb* pdb, const blocxx::File& file);
 		~AssocDbHandleData();
 		AssocDbHandleData& operator= (const AssocDbHandleData& arg);
 		AssocDb* m_pdb;
-		File m_file;
+		blocxx::File m_file;
 	};
-	typedef IntrusiveReference<AssocDbHandleData> AssocDbHandleDataRef;
+	typedef blocxx::IntrusiveReference<AssocDbHandleData> AssocDbHandleDataRef;
 
 public:
 	AssocDbHandle() : m_pdata(NULL) {}
@@ -149,7 +149,7 @@ public:
 	 * @return true if there are association entries in the association
 	 * database for the given target object.
 	 */
-	bool hasAssocEntries(const String& ns, const CIMObjectPath& instanceName);
+	bool hasAssocEntries(const blocxx::String& ns, const CIMObjectPath& instanceName);
 	/**
 	 * Add an AssocDbEntry& to the database.
 	 * @param newEntry	The AssocDbEntry to add to the database.
@@ -167,8 +167,8 @@ public:
 	 * @param 	assocInstance The instance of the association referenced by
 	 *				assocKey
 	 */
-	void addEntries(const String& ns, const CIMInstance& assocInstance);
-	void addEntries(const String& ns, const CIMClass& assocClass);
+	void addEntries(const blocxx::String& ns, const CIMInstance& assocInstance);
+	void addEntries(const blocxx::String& ns, const CIMClass& assocClass);
 	/**
 	 * Remove an AssocDbEntry& from the database.
 	 * @param entryToDelete	The AssocDbEntry to delete from the database.
@@ -191,8 +191,8 @@ public:
 	 * @param 	assocInstance The instance of the association referenced by
 	 *				assocKey
 	 */
-	void deleteEntries(const String& ns, const CIMInstance& assocInstance);
-	void deleteEntries(const String& ns, const CIMClass& assocClass);
+	void deleteEntries(const blocxx::String& ns, const CIMInstance& assocInstance);
+	void deleteEntries(const blocxx::String& ns, const CIMClass& assocClass);
 	/**
 	 * Delete all entries in the association database that referenct the
 	 * given target object name.
@@ -211,12 +211,12 @@ public:
 	 * meet the given criterion.
 	 */
 	void getAllEntries(const CIMObjectPath& objectName,
-		const SortedVectorSet<CIMName>* passocClasses,
-		const SortedVectorSet<CIMName>* presultClasses,
+		const blocxx::SortedVectorSet<CIMName>* passocClasses,
+		const blocxx::SortedVectorSet<CIMName>* presultClasses,
 		const CIMName& role,
 		const CIMName& resultRole,
 		AssocDbEntryResultHandlerIFC& result);
-	File getFile() const { return m_pdata->m_file; }
+	blocxx::File getFile() const { return m_pdata->m_file; }
 
 	typedef AssocDbHandleDataRef AssocDbHandle::*safe_bool;
 	operator safe_bool () const
@@ -225,15 +225,15 @@ public:
 		{  return !m_pdata; }
 private:
 
-	void addOrDeleteEntries(const String& ns, const CIMInstance& assocInstance, bool add);
-	void addOrDeleteEntries(const String& ns, const CIMClass& assocClass, bool add);
+	void addOrDeleteEntries(const blocxx::String& ns, const CIMInstance& assocInstance, bool add);
+	void addOrDeleteEntries(const blocxx::String& ns, const CIMClass& assocClass, bool add);
 
 #ifdef OW_WIN32
 #pragma warning (push)
 #pragma warning (disable: 4251)
 #endif
 
-	AssocDbHandle(AssocDb* pdb, const File& file) :
+	AssocDbHandle(AssocDb* pdb, const blocxx::File& file) :
 		m_pdata(new AssocDbHandleData(pdb, file)) {}
 	AssocDbHandleDataRef m_pdata;
 	friend class AssocDb;
@@ -249,9 +249,9 @@ private:
 struct OW_HDB_API AssocDbRecHeader
 {
 	AssocDbRecHeader() { memset(this, 0, sizeof(*this)); }
-	UInt32 chkSum;
-	Int32 nextFree;
-	UInt32 blkSize;
+	blocxx::UInt32 chkSum;
+	blocxx::Int32 nextFree;
+	blocxx::UInt32 blkSize;
 
 	enum
 	{
@@ -262,8 +262,8 @@ struct OW_HDB_API AssocDbRecHeader
 		E_BLK_ALLOC_MASK = E_BLK_ALLOCATED | E_BLK_FREE
 	};
 
-	UInt32 flags;
-	UInt32 dataSize;
+	blocxx::UInt32 flags;
+	blocxx::UInt32 dataSize;
 };
 
 
@@ -275,8 +275,8 @@ struct OW_HDB_API AssocDbRecHeader
 struct OW_HDB_API AssocDbHeader
 {
 	char signature[OW_ASSOCSIGLEN];
-	Int32 firstFree;
-	UInt32 version;
+	blocxx::Int32 firstFree;
+	blocxx::UInt32 version;
 };
 
 bool operator==(AssocDbHeader& x, AssocDbHeader& y);
@@ -302,7 +302,7 @@ public:
 	 * @param fileName	The file name associated with the database
 	 * @exception HDBException if an error occurs opening/creating files.
 	 */
-	void open(const String& fileName);
+	void open(const blocxx::String& fileName);
 	void init(const ServiceEnvironmentIFCRef& env);
 	/**
 	 * Close this AssocDb object
@@ -318,9 +318,9 @@ public:
 
 	bool check();
 	bool checkFreeList();
-	bool checkFreeList(std::set<Int32>& freeBlocks);
-	bool checkIndex(std::set<Int32>& offsets);
-	bool checkDb(std::set<Int32>& freeBlocks, std::set<Int32>& offsets);
+	bool checkFreeList(std::set<blocxx::Int32>& freeBlocks);
+	bool checkIndex(std::set<blocxx::Int32>& offsets);
+	bool checkDb(std::set<blocxx::Int32>& freeBlocks, std::set<blocxx::Int32>& offsets);
 
 	typedef bool AssocDb::*safe_bool;
 	/**
@@ -337,9 +337,9 @@ public:
 	/**
 	 * @return The file name for this HDB object
 	 */
-	String getFileName() const { return m_fileName; }
+	blocxx::String getFileName() const { return m_fileName; }
 private:
-	AssocDbEntry findEntry(const String& objectKey,
+	AssocDbEntry findEntry(const blocxx::String& objectKey,
 		AssocDbHandle& hdl);
 	AssocDbEntry nextEntry(AssocDbHandle& hdl);
 	void deleteEntry(const AssocDbEntry& entry, AssocDbHandle& hdl);
@@ -355,10 +355,10 @@ private:
 		const CIMObjectPath& associatedObject,
 		const CIMObjectPath& assocClassPath, AssocDbHandle& hdl);
 	void decHandleCount();
-	MutexLock getDbLock() { return MutexLock(m_guard); }
-	AssocDbEntry readEntry(Int32 offset, AssocDbHandle& hdl);
-	void addToFreeList(Int32 offset, AssocDbHandle& hdl);
-	AssocDbRecHeader getNewBlock(Int32& offset, UInt32 blkSize,
+	blocxx::MutexLock getDbLock() { return blocxx::MutexLock(m_guard); }
+	AssocDbEntry readEntry(blocxx::Int32 offset, AssocDbHandle& hdl);
+	void addToFreeList(blocxx::Int32 offset, AssocDbHandle& hdl);
+	AssocDbRecHeader getNewBlock(blocxx::Int32& offset, blocxx::UInt32 blkSize,
 		AssocDbHandle& hdl);
 	bool createFile();
 	void checkFile();
@@ -370,10 +370,10 @@ private:
 
 	AssocDbHeader m_hdrBlock;
 	IndexRef m_pIndex;
-	String m_fileName;
+	blocxx::String m_fileName;
 	int m_hdlCount;
 	bool m_opened;
-	Mutex m_guard;
+	blocxx::Mutex m_guard;
 	ServiceEnvironmentIFCRef m_env;
 	friend class AssocDbHandle;
 	friend struct AssocDbHandle::AssocDbHandleData;

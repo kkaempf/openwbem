@@ -55,7 +55,7 @@ public:
 	virtual ~LanguageTag();
 
 	bool invalid() const { return (m_subtag1[0] == 0); }
-	Int32 getWeight() const { return m_weight; }
+	blocxx::Int32 getWeight() const { return m_weight; }
 
 	LanguageTag& operator= (const LanguageTag& arg);
 	LanguageTag& operator= (const char* arg);
@@ -69,10 +69,10 @@ public:
 	bool operator != (const LanguageTag& arg) const { return (compareWeight(arg) != 0); }
 	const char* assign(const char* arg);
 	LanguageTag& copy(const LanguageTag& arg);
-	String toString() const;
-	String getSubtag1() const { return String(m_subtag1); }
-	String getSubtag2() const { return String(m_subtag2); }
-	String getSubtag3() const { return String(m_subtag3); }
+	blocxx::String toString() const;
+	blocxx::String getSubtag1() const { return blocxx::String(m_subtag1); }
+	blocxx::String getSubtag2() const { return blocxx::String(m_subtag2); }
+	blocxx::String getSubtag3() const { return blocxx::String(m_subtag3); }
 
 	virtual void readObject(std::streambuf & istrm);
 	virtual void writeObject(std::streambuf & ostrm) const;
@@ -107,14 +107,14 @@ private:
 	//	- Maximum length of 8 chars
 	char m_subtag3[9];
 
-	Int32 m_weight;
+	blocxx::Int32 m_weight;
 
 	bool m_explicitQualityValue;
 
 	friend class SessionLanguage;
 };
 
-typedef Array<LanguageTag> LanguageTagArray;
+typedef blocxx::Array<LanguageTag> LanguageTagArray;
 
 //////////////////////////////////////////////////////////////////////////////
 /// When getting a SessionLanguage instance from the OperationContext, use
@@ -129,7 +129,7 @@ public:
 	virtual ~SessionLanguage();
 
 	int langCount() const { return m_langTags.size(); }
-	String getAcceptLanguageString() const { return m_acceptLanguageString; }
+	blocxx::String getAcceptLanguageString() const { return m_acceptLanguageString; }
 	SessionLanguage& assign(const char* acceptLangHdrValue);
 
 	/**
@@ -138,13 +138,13 @@ public:
 	 * @param languages The set of languages the caller supports.
 	 * @param defaultLanguage The default language returned if no match is made.
 	 */
-	String getBestLanguage(const StringArray& languages, const String& defaultLanguage = String()) const;
-	void addContentLanguage(const String& contentLanguage);
-	String getContentLanguage() const;
+	blocxx::String getBestLanguage(const blocxx::StringArray& languages, const blocxx::String& defaultLanguage = blocxx::String()) const;
+	void addContentLanguage(const blocxx::String& contentLanguage);
+	blocxx::String getContentLanguage() const;
 
 	virtual void readObject(std::streambuf & istrm);
 	virtual void writeObject(std::streambuf & ostrm) const;
-	virtual String getType() const;
+	virtual blocxx::String getType() const;
 
 private:
 	void buildLangTags(const char* acceptLangHdrValue);
@@ -162,11 +162,11 @@ private:
 #pragma warning (pop)
 #endif
 
-	String m_contentLanguage;
-	String m_acceptLanguageString;
-	static const String s_type;
+	blocxx::String m_contentLanguage;
+	blocxx::String m_acceptLanguageString;
+	static const blocxx::String s_type;
 };
-OW_EXPORT_TEMPLATE(OW_COMMON_API, IntrusiveReference, SessionLanguage);
+OW_EXPORT_TEMPLATE(OW_COMMON_API, blocxx::IntrusiveReference, SessionLanguage);
 
 }	// End of namespace OW_NAMESPACE
 

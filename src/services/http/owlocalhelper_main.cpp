@@ -41,7 +41,7 @@
 #include "OW_LocalAuthenticationCommon.hpp"
 #include "OW_Exception.hpp"
 #include "blocxx/GlobalString.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/FileAppender.hpp"
 
 #include <unistd.h>
@@ -78,6 +78,7 @@ using std::cin;
 using std::cout;
 using namespace OpenWBEM;
 using namespace OpenWBEM::LocalAuthenticationCommon;
+using namespace blocxx;
 
 namespace
 {

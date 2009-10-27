@@ -40,6 +40,11 @@
 #include "OW_config.h"
 #include <blocxx/SafeCStringIO.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SafeCStringIO.hpp is deprecated, use "blocxx/SafeCStringIO.hpp" instead.
 #endif
 

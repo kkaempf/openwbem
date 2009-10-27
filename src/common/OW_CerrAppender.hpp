@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/CerrAppender.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_CerrAppender.hpp is deprecated, use "blocxx/CerrAppender.hpp" instead.
 #endif
 

@@ -38,5 +38,10 @@
 #include "OW_config.h"
 #include <blocxx/ScopeLogger.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_ScopeLogger.hpp is deprecated, use "blocxx/ScopeLogger.hpp" instead.
 #endif

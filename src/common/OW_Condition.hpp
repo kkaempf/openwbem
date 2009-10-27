@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/Condition.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Condition.hpp is deprecated, use "blocxx/Condition.hpp" instead.
 #endif
 

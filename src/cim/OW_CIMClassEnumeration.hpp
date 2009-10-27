@@ -41,7 +41,7 @@
 namespace OW_NAMESPACE
 {
 
-typedef Enumeration<CIMClass> CIMClassEnumeration;
+typedef blocxx::Enumeration<CIMClass> CIMClassEnumeration;
 
 } // end namespace OW_NAMESPACE
 

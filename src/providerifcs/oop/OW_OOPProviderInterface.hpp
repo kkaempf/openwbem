@@ -62,31 +62,31 @@ public:
 	struct ProvRegInfo : public IntrusiveCountableBase
 	{
 		ProvRegInfo()
-			: timeout(Timeout::infinite)
+			: timeout(blocxx::Timeout::infinite)
 			, isPersistent(false)
 			, userContext(OpenWBEM::OOPProviderRegistration::E_USERCONTEXT_UNPRIVILEGED)
-			, unloadTimeout(Timeout::relativeWithReset(0)) // the default is to not leave the provider loaded
+			, unloadTimeout(blocxx::Timeout::relativeWithReset(0)) // the default is to not leave the provider loaded
 			, methodLockType(OpenWBEM::OOPMethodProviderCapabilities::E_LOCKTYPE_WRITE_LOCK)
 		{
 		}
-		String process;
-		StringArray args;
-		String protocol;
-		Timeout timeout;
+		blocxx::String process;
+		blocxx::StringArray args;
+		blocxx::String protocol;
+		blocxx::Timeout timeout;
 		bool isPersistent;
-		UInt16 userContext;
-		String monitorPrivilegesFile;
-		StringArray indicationExportHandlerClassNames;
-		Timeout unloadTimeout;
-		UInt16 methodLockType;
+		blocxx::UInt16 userContext;
+		blocxx::String monitorPrivilegesFile;
+		blocxx::StringArray indicationExportHandlerClassNames;
+		blocxx::Timeout unloadTimeout;
+		blocxx::UInt16 methodLockType;
 
 		bool providerNeedsNewProcessForEveryInvocation() const
 		{
-			return (isPersistent == false) && (unloadTimeout == Timeout::relativeWithReset(0));
+			return (isPersistent == false) && (unloadTimeout == blocxx::Timeout::relativeWithReset(0));
 		}
 	};
 
-	typedef IntrusiveReference<ProvRegInfo> ProvRegInfoRef;
+	typedef blocxx::IntrusiveReference<ProvRegInfo> ProvRegInfoRef;
 
 private:
 	virtual const char* getName() const;
@@ -128,7 +128,7 @@ private:
 	// These variables are only modified in doInit() and are accessed read only by
 	// other functions, thus they aren't mutex protected.
 	// key is the provider id. the value may be shared between multiple maps.
-	typedef SortedVectorMap<String, ProvRegInfoRef> ProvRegMap_t;
+	typedef blocxx::SortedVectorMap<blocxx::String, ProvRegInfoRef> ProvRegMap_t;
 	ProvRegMap_t m_instanceProvReg;
 	ProvRegMap_t m_secondaryInstanceProvReg;
 	ProvRegMap_t m_associatorProvReg;
@@ -200,9 +200,9 @@ private:
 	};
 
 	// key is the provider id
-	typedef SortedVectorMap<String, SavedProviders> PersistentProvMap_t;
+	typedef blocxx::SortedVectorMap<blocxx::String, SavedProviders> PersistentProvMap_t;
 	PersistentProvMap_t m_persistentProvs;
-	Mutex m_persistentProvsGuard;
+	blocxx::Mutex m_persistentProvsGuard;
 };
 
 }

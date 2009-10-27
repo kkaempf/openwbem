@@ -40,6 +40,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 /////////////////////////////////////////////////////////////////////////////
 CppMethodProviderIFC::~CppMethodProviderIFC()
 {

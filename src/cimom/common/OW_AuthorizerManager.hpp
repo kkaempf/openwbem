@@ -52,7 +52,7 @@ public:
 
 	~AuthorizerManager();
 
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 
 	void setAuthorizer(const Authorizer2IFCRef& authorizerRef)
 	{
@@ -88,10 +88,10 @@ public:
 	 */
 	bool allowReadInstance(
 		const ServiceEnvironmentIFCRef& env,
-        const String& ns,
-		const String& className,
-		const StringArray* clientPropertyList,
-		StringArray& authorizedPropertyList,
+        const blocxx::String& ns,
+		const blocxx::String& className,
+		const blocxx::StringArray* clientPropertyList,
+		blocxx::StringArray& authorizedPropertyList,
 		OperationContext& context);
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -108,7 +108,7 @@ public:
 	 */
 	bool allowWriteInstance(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& op,
 		Authorizer2IFC::EDynamicFlag dynamic,
 		Authorizer2IFC::EWriteFlag flag,
@@ -123,7 +123,7 @@ public:
 	 */
 	bool allowReadSchema(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		OperationContext& context);
 
 #if !defined(OW_DISABLE_SCHEMA_MANIPULATION) || !defined(OW_DISABLE_QUALIFIER_DECLARATION)
@@ -136,7 +136,7 @@ public:
 	 */
 	bool allowWriteSchema(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		Authorizer2IFC::EWriteFlag flag,
 		OperationContext& context);
 #endif
@@ -149,7 +149,7 @@ public:
 	 */
 	bool allowAccessToNameSpace(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		Authorizer2IFC::EAccessType accessType,
 		OperationContext& context);
 
@@ -162,7 +162,7 @@ public:
 	 */
 	bool allowCreateNameSpace(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		OperationContext& context);
 
 	/**
@@ -173,7 +173,7 @@ public:
 	 */
 	bool allowDeleteNameSpace(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		OperationContext& context);
 #endif
 
@@ -197,9 +197,9 @@ public:
 	 */
 	bool allowMethodInvocation(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& path,
-		const String& methodName,
+		const blocxx::String& methodName,
 		OperationContext& context);
 
 	/**

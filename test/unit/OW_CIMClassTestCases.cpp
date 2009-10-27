@@ -47,6 +47,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OW_CIMClassTestCases,"OW_CIMClass");
 #include "blocxx/String.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void OW_CIMClassTestCases::setUp()
 {

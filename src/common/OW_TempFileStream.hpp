@@ -47,5 +47,10 @@
 #include "OW_config.h"
 #include <blocxx/TempFileStream.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_TempFileStream.hpp is deprecated, use "blocxx/TempFileStream.hpp" instead.
 #endif

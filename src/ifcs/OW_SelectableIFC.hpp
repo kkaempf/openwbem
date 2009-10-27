@@ -39,5 +39,10 @@
 #include <blocxx/SelectableIFC.hpp>
 #include <blocxx/SelectableCallbackIFC.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SelectableIFC.hpp is deprecated, use "blocxx/SelectableIFC.hpp" instead.
 #endif

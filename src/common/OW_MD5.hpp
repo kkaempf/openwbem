@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/MD5.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_MD5.hpp is deprecated, use "blocxx/MD5.hpp" instead.
 #endif
 

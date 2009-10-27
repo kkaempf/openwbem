@@ -39,6 +39,8 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
+
 #if defined(OW_AIX)
 const int HTTPCounter::m_maxValue = 99;
 #endif // OW_AIX

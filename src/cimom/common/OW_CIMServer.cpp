@@ -38,8 +38,9 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "blocxx/Format.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_WQLIFC.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_CIMRepository.hpp"
 #include "OW_NoSuchProviderException.hpp"
@@ -68,6 +69,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 
 /////////////////////////////////////////////////////////////////////////////
 namespace
@@ -121,7 +123,7 @@ namespace
 			{
 				optObjectName = ':' + objectName;
 			}
-			OW_LOG_INFO(lgr, Format("CIMServer doing operation: %1 on %2%3%4", operation, ns, optObjectName, userString));
+			BLOCXX_LOG_INFO(lgr, Format("CIMServer doing operation: %1 on %2%3%4", operation, ns, optObjectName, userString));
 		}
 	}
 }
@@ -512,7 +514,7 @@ namespace
 	protected:
 		virtual void doHandle(const CIMClass &cc)
 		{
-			OW_LOG_DEBUG3(m_lgr, Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
+			BLOCXX_LOG_DEBUG3(m_lgr, Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
 				cc.getName()));
 			server->_getCIMInstanceNames(ns, cc.getName(), cc, result, context);
 		}
@@ -568,7 +570,7 @@ CIMServer::_getCIMInstanceNames(const String& ns, const CIMName& className,
 	if (!m_authorizerMgr->allowReadInstance(m_env, ns, className.toString(),
 		0, authorizedPropertyList, context))
 	{
-		OW_LOG_DEBUG(m_logger, Format("Authorizer did NOT authorize reading of %1"
+		BLOCXX_LOG_DEBUG(m_logger, Format("Authorizer did NOT authorize reading of %1"
 			" instance names from namespace %2", className, ns));
 		return;
 	}
@@ -619,7 +621,7 @@ namespace
 	protected:
 		virtual void doHandle(const CIMClass &cc)
 		{
-			OW_LOG_DEBUG2(m_lgr, Format("CIMServer InstEnumerator Enumerating derived instance names: %1:%2", ns, cc.getName()));
+			BLOCXX_LOG_DEBUG2(m_lgr, Format("CIMServer InstEnumerator Enumerating derived instance names: %1:%2", ns, cc.getName()));
 			server->_getCIMInstances(ns, cc.getName(), theTopClass, cc,
 				result, localOnly, deep, includeQualifiers,
 				includeClassOrigin, propertyList, pwss, pwc, context);
@@ -922,7 +924,7 @@ CIMServer::_getCIMInstances(
 	if (!m_authorizerMgr->allowReadInstance(m_env, ns, className.toString(),
 		propertyList, authorizedPropertyList, context))
 	{
-		OW_LOG_INFO(m_logger, Format("Authorizer did NOT authorize reading of %1"
+		BLOCXX_LOG_INFO(m_logger, Format("Authorizer did NOT authorize reading of %1"
 			" instances from namespace %2", className, ns));
 		return;
 	}
@@ -932,7 +934,7 @@ CIMServer::_getCIMInstances(
 	if (authorizedPropertyList.size() > 0)
 	{
 		propertyList = &authorizedPropertyList;
-		OW_LOG_INFO(m_logger, Format("Authorizer modified property list for reading"
+		BLOCXX_LOG_INFO(m_logger, Format("Authorizer modified property list for reading"
 			" of %1 instances from namespace %2", className, ns));
 	}
 
@@ -957,11 +959,11 @@ CIMServer::_getCIMInstances(
 
 	if (pwss)
 	{
-		OW_ASSERT(pwc != 0);
+		BLOCXX_ASSERT(pwc != 0);
 		QueryProviderIFCRef queryp(_getQueryProvider(ns, theClass, context));
 		if (queryp)
 		{
-			OW_LOG_DEBUG(m_logger, Format("CIMServer calling query provider to enumerate instances: %1:%2", ns, className));
+			BLOCXX_LOG_DEBUG(m_logger, Format("CIMServer calling query provider to enumerate instances: %1:%2", ns, className));
 			queryp->queryInstances(createProvEnvRef(context, m_env), ns, *pwss, *pwc, *presult, theClass);
 			return;
 		}
@@ -969,7 +971,7 @@ CIMServer::_getCIMInstances(
 
 	if (instancep)
 	{
-		OW_LOG_DEBUG(m_logger, Format("CIMServer calling provider to enumerate instances: %1:%2", ns, className));
+		BLOCXX_LOG_DEBUG(m_logger, Format("CIMServer calling provider to enumerate instances: %1:%2", ns, className));
 
 		// not going to use these, the provider ifc/providers are now
 		// responsible for it.
@@ -982,7 +984,7 @@ CIMServer::_getCIMInstances(
 	}
 	else
 	{
-		OW_LOG_DEBUG(m_logger, Format("CIMServer calling repository to enumerate instances: %1:%2", ns, className));
+		BLOCXX_LOG_DEBUG(m_logger, Format("CIMServer calling repository to enumerate instances: %1:%2", ns, className));
 		HandleLocalOnlyAndDeep handler(*presult, theTopClass, localOnly, deep);
 		// don't pass along deep and localOnly flags, because the handler has
 		// to take care of it.  m_cimRepository can't do it right, because we
@@ -1037,7 +1039,7 @@ CIMServer::getInstance(
 	if (!m_authorizerMgr->allowReadInstance(m_env, ns, className.toString(), propertyList,
 		authorizedPropertyList, context))
 	{
-		OW_LOG_INFO(m_logger, Format("Authorizer did NOT authorize reading of %1"
+		BLOCXX_LOG_INFO(m_logger, Format("Authorizer did NOT authorize reading of %1"
 			" instances from namespace %2", className, ns));
 
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
@@ -1073,7 +1075,7 @@ CIMServer::getInstance(
 		ci = m_cimRepository->getInstance(ns, instanceName, localOnly,
 			includeQualifiers, includeClassOrigin, propertyList, context);
 	}
-	OW_ASSERT(ci);
+	BLOCXX_ASSERT(ci);
 
 	SecondaryInstanceProviderIFCRefArray secProvs = _getSecondaryInstanceProviders(ns, className, context);
 	if (!secProvs.empty())
@@ -1086,7 +1088,7 @@ CIMServer::getInstance(
 				className.toString(), cia, localOnly, E_DEEP, includeQualifiers,
 				includeClassOrigin, propertyList, cc, cc );
 		}
-		OW_ASSERT(cia.size() == 1); // providers shouldn't add/remove from the array.
+		BLOCXX_ASSERT(cia.size() == 1); // providers shouldn't add/remove from the array.
 		ci = cia[0];
 	}
 
@@ -1135,7 +1137,7 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
 		Authorizer2IFC::E_DELETE, context))
 	{
-		OW_LOG_INFO(m_logger, Format("Authorizer did NOT authorize deletion of %1"
+		BLOCXX_LOG_INFO(m_logger, Format("Authorizer did NOT authorize deletion of %1"
 			" instances from namespace %2", theClass.getName(), ns));
 
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
@@ -1154,7 +1156,7 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 		// Delete the instance from the instance repository
 		m_cimRepository->deleteInstance(ns, cop, context);
 	}
-	OW_ASSERT(oldInst);
+	BLOCXX_ASSERT(oldInst);
 
 	SecondaryInstanceProviderIFCRefArray secProvs = _getSecondaryInstanceProviders(ns, cop.getClassName(), context);
 	// now let all the secondary providers know about the delete
@@ -1193,7 +1195,7 @@ CIMServer::createInstance(
 	// Make sure instance jives with class definition
 	CIMInstance lci(ci);
 	lci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS);
-	OW_LOG_DEBUG3(m_logger, Format("CIMServer::createInstance.  ns = %1, "
+	BLOCXX_LOG_DEBUG3(m_logger, Format("CIMServer::createInstance.  ns = %1, "
 		"instance = %2", ns, lci.toMOF()));
 	CIMObjectPath rval(CIMNULL);
 	InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass, context);
@@ -1217,7 +1219,7 @@ CIMServer::createInstance(
 		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
 		Authorizer2IFC::E_CREATE, context))
 	{
-		OW_LOG_INFO(m_logger, Format("Authorizer did NOT authorize creation of %1"
+		BLOCXX_LOG_INFO(m_logger, Format("Authorizer did NOT authorize creation of %1"
 			" instances	in namespace %2", lci.getClassName(), ns));
 
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
@@ -1245,7 +1247,7 @@ CIMServer::createInstance(
 	// Prevent lazy providers from causing a problem.
 	if (!rval)
 	{
-		OW_LOG_INFO(m_logger, "Provider erroneously returned a NULL CIMObjectPath from createInstance! Will construct one.");
+		BLOCXX_LOG_INFO(m_logger, "Provider erroneously returned a NULL CIMObjectPath from createInstance! Will construct one.");
 		rval = CIMObjectPath(ns, lci);
 	}
 	return rval;
@@ -1293,7 +1295,7 @@ CIMServer::modifyInstance(
 		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
 		Authorizer2IFC::E_MODIFY, context))
 	{
-		OW_LOG_INFO(m_logger, Format("Authorizer did NOT authorize modification of %1"
+		BLOCXX_LOG_INFO(m_logger, Format("Authorizer did NOT authorize modification of %1"
 			" instances in namespace %2", lci.getClassName(), ns));
 
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
@@ -1304,13 +1306,13 @@ CIMServer::modifyInstance(
 	logOperation(m_logger, context, "ModifyInstance", ns, modifiedInstance.getClassName());
 	if (m_logger.levelIsEnabled(E_INFO_LEVEL))
 	{
-		OW_LOG_INFO(m_logger, Format("ModifyInstance: modified instance = %1", lci));
+		BLOCXX_LOG_INFO(m_logger, Format("ModifyInstance: modified instance = %1", lci));
 		if (propertyList && !propertyList->empty())
 		{
 			OStringStream ss;
 			ss << "PropertyList: ";
 			std::copy(propertyList->begin(), propertyList->end(), std::ostream_iterator<String>(ss, " "));
-			OW_LOG_INFO(m_logger, ss.releaseString());
+			BLOCXX_LOG_INFO(m_logger, ss.releaseString());
 		}
 	}
 
@@ -1326,12 +1328,12 @@ CIMServer::modifyInstance(
 		oldInst = getInstance(ns, cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS,
 			E_INCLUDE_CLASS_ORIGIN, NULL, NULL, context);
 
-		OW_LOG_INFO(m_logger, Format("ModifyInstance: previous instance = %1", oldInst));
+		BLOCXX_LOG_INFO(m_logger, Format("ModifyInstance: previous instance = %1", oldInst));
 
 		instancep->modifyInstance(createProvEnvRef(context, m_env), ns,
 			lci, oldInst, includeQualifiers, propertyList, theClass);
 	}
-	OW_ASSERT(oldInst);
+	BLOCXX_ASSERT(oldInst);
 
 	SecondaryInstanceProviderIFCRefArray secProvs = _getSecondaryInstanceProviders(ns, modifiedInstance.getClassName(), context);
 	// now let all the secondary providers know about the modify
@@ -1402,7 +1404,7 @@ CIMServer::setProperty(
 	AuthorizerEnabler ae(m_authorizerMgr, context, true);
 
 	logOperation(m_logger, context, "SetProperty", ns, name.toString());
-	OW_LOG_INFO(m_logger, Format("SetProperty: %1=%2", propertyName, valueArg));
+	BLOCXX_LOG_INFO(m_logger, Format("SetProperty: %1=%2", propertyName, valueArg));
 
 	CIMClass theClass = _instGetClass(ns, name.getClassName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
 
@@ -1449,7 +1451,7 @@ CIMServer::setProperty(
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 
-	OW_LOG_INFO(m_logger, Format("SetProperty previous value was: %1", cp.getValue()));
+	BLOCXX_LOG_INFO(m_logger, Format("SetProperty previous value was: %1", cp.getValue()));
 
 	cp.setValue(cv);
 	ci.setProperty(cp);
@@ -1477,7 +1479,7 @@ CIMServer::invokeMethod(
 	if (!m_authorizerMgr->allowMethodInvocation(m_env, ns, path_, methodName,
 		context))
 	{
-		OW_LOG_INFO(m_logger, Format("Authorizer did NOT authorize invocation of"
+		BLOCXX_LOG_INFO(m_logger, Format("Authorizer did NOT authorize invocation of"
 			" method %1 on object path %2", methodName, path_.toString()));
 
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
@@ -1599,7 +1601,7 @@ CIMServer::invokeMethod(
 			}
 			if (j == outParams.size())
 			{
-				OW_ASSERT(0);
+				BLOCXX_ASSERT(0);
 			}
 		}
 	}
@@ -1631,7 +1633,7 @@ CIMServer::invokeMethod(
 			}
 		}
 		methodStr += ')';
-		OW_LOG_DEBUG(m_logger, methodStr.toString());
+		BLOCXX_LOG_DEBUG(m_logger, methodStr.toString());
 	}
 	cv = methodp->invokeMethod(
 		createProvEnvRef(context, m_env),
@@ -1676,7 +1678,7 @@ CIMServer::invokeMethod(
 		}
 		methodStr += ") return value: ";
 		methodStr += cv.toString();
-		OW_LOG_DEBUG(m_logger, methodStr.toString());
+		BLOCXX_LOG_DEBUG(m_logger, methodStr.toString());
 	}
 	return cv;
 }
@@ -2103,12 +2105,12 @@ namespace
 			if (server._isDynamicAssoc(ns, cc, context))
 			{
 				dynamicAssocs.push_back(cc);
-				OW_LOG_DEBUG3(logger, "Found dynamic assoc class: " + cc.getName());
+				BLOCXX_LOG_DEBUG3(logger, "Found dynamic assoc class: " + cc.getName());
 			}
 			else if (staticAssocs)
 			{
 				staticAssocs->push_back(cc.getName());
-				OW_LOG_DEBUG3(logger, "Found static assoc class: " + cc.getName());
+				BLOCXX_LOG_DEBUG3(logger, "Found static assoc class: " + cc.getName());
 			}
 		}
 	private:
@@ -2184,7 +2186,7 @@ CIMServer::_commonReferences(
 			}
 			else
 			{
-				OW_ASSERT(0);
+				BLOCXX_ASSERT(0);
 			}
 		}
 	}
@@ -2239,7 +2241,7 @@ CIMServer::_commonReferences(
 		}
 		else
 		{
-			OW_ASSERT(0);
+			BLOCXX_ASSERT(0);
 		}
 
 		// we need to remove dups from dynamicAssocs
@@ -2289,7 +2291,7 @@ CIMServer::_dynamicReferences(const CIMObjectPath& path,
 		}
 		else
 		{
-			OW_ASSERT(0);
+			BLOCXX_ASSERT(0);
 		}
 	}
 }
@@ -2373,7 +2375,7 @@ CIMServer::_commonAssociators(
 			}
 			else
 			{
-				OW_ASSERT(0);
+				BLOCXX_ASSERT(0);
 			}
 		}
 	}
@@ -2418,7 +2420,7 @@ CIMServer::_commonAssociators(
 		}
 		else
 		{
-			OW_ASSERT(0);
+			BLOCXX_ASSERT(0);
 		}
 		// we need to remove dups from dynamicAssocs
 		std::sort(dynamicAssocs.begin(),  dynamicAssocs.end());
@@ -2449,7 +2451,7 @@ CIMServer::_dynamicAssociators(const CIMObjectPath& path,
 		AssociatorProviderIFCRef assocP = _getAssociatorProvider(path.getNameSpace(), cc, context);
 		if (!assocP)
 		{
-			OW_LOG_ERROR(m_logger, "Failed to get associator provider for class: " + cc.getName());
+			BLOCXX_LOG_ERROR(m_logger, "Failed to get associator provider for class: " + cc.getName());
 			continue;
 		}
 		CIMName assocClass(assocClasses[i].getName());
@@ -2457,20 +2459,20 @@ CIMServer::_dynamicAssociators(const CIMObjectPath& path,
 		{
 			String ns = path.getNameSpace();
 			HandleNamespace nsiresult(*piresult, ns, E_DO_NOT_OVERWRITE_NS);
-			OW_LOG_DEBUG(m_logger, "Calling associators on associator provider for class: " + cc.getName());
+			BLOCXX_LOG_DEBUG(m_logger, "Calling associators on associator provider for class: " + cc.getName());
 			assocP->associators(createProvEnvRef(context, m_env), nsiresult, path.getNameSpace(),
 				path, assocClass.toString(), resultClass.toString(), role.toString(), resultRole.toString(),
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
 		else if (popresult != 0)
 		{
-			OW_LOG_DEBUG(m_logger, "Calling associatorNames on associator provider for class: " + cc.getName());
+			BLOCXX_LOG_DEBUG(m_logger, "Calling associatorNames on associator provider for class: " + cc.getName());
 			assocP->associatorNames(createProvEnvRef(context, m_env), *popresult,
 				path.getNameSpace(), path, assocClass.toString(), resultClass.toString(), role.toString(), resultRole.toString());
 		}
 		else
 		{
-			OW_ASSERT(0);
+			BLOCXX_ASSERT(0);
 		}
 	}
 }

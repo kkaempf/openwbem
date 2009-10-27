@@ -37,7 +37,7 @@
 #include "OW_HDB.hpp"
 #include "blocxx/AutoPtr.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -53,6 +53,8 @@ extern "C"
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace
 {

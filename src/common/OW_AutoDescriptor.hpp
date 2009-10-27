@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/AutoDescriptor.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_AutoDescriptor.hpp is deprecated, use "blocxx/AutoDescriptor.hpp" instead.
 #endif
 

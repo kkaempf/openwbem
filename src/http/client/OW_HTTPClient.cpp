@@ -44,7 +44,7 @@
 #include "OW_HTTPLenLimitIStream.hpp"
 #include "blocxx/Format.hpp"
 #include "blocxx/TempFileStream.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/SecureRand.hpp"
 #include "OW_HTTPException.hpp"
 #include "blocxx/UserUtils.hpp"
@@ -69,6 +69,7 @@ namespace OW_NAMESPACE
 
 using std::flush;
 using std::istream;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 HTTPClient::HTTPClient( const String &sURL, const SSLClientCtxRef& sslCtx)
 #ifndef OW_DISABLE_DIGEST
@@ -229,8 +230,7 @@ void HTTPClient::setUrl()
 		OW_THROW(SocketException, "SSL not available");
 #endif // #ifdef OW_NO_SSL
 	}
-	if (m_url.port.equalsIgnoreCase(URL::OWIPC)
-		|| m_url.scheme.equals("ipc")) // the ipc:// scheme is deprecated in 3.0.0 and will be removed!
+	if (m_url.port.equalsIgnoreCase(URL::OWIPC))
 	{
 #ifdef OW_WIN32
 		OW_THROW(SocketException, "IPC Method not currently available on Win32");
@@ -317,7 +317,7 @@ HTTPClient::receiveAuthentication()
 	}
 	else if (m_spnegoHandler && authInfo.indexOf("Negotiate") != String::npos)
 	{
-		OW_ASSERT(m_spnegoData != "");
+		BLOCXX_ASSERT(m_spnegoData != "");
 		m_sAuthorization = "Negotiate";
 		m_uselocalAuthentication = false;
 	}
@@ -658,7 +658,7 @@ HTTPClient::endRequest(const Reference<std::ostream>& request, const String& met
 			const String& cimObject, ERequestType requestType, const String& cimProtocolVersion)
 {
 	Reference<TempFileStream> tfs = request.cast_to<TempFileStream>();
-	OW_ASSERT(tfs);
+	BLOCXX_ASSERT(tfs);
 	if (!tfs->good())
 	{
 		OW_THROW_ERR(HTTPException, "HTTPClient: TempFileStream is bad. Temp file creation failed.",m_statusCode);
@@ -667,7 +667,7 @@ HTTPClient::endRequest(const Reference<std::ostream>& request, const String& met
 	int len = tfs->getSize();
 	// add common headers
 	prepareHeaders();
-	OW_ASSERT(!m_contentType.empty());
+	BLOCXX_ASSERT(!m_contentType.empty());
 	addHeaderCommon("Content-Type", m_contentType + "; charset=\"utf-8\"");
 	if (!m_doDeflateOut)
 	{

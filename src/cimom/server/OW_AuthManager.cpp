@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_AuthManager.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_SafeLibCreate.hpp"
 #include "blocxx/ThreadCancelledException.hpp"
@@ -48,6 +48,8 @@
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 OW_DEFINE_EXCEPTION_WITH_ID(AuthManager)
 
@@ -79,11 +81,11 @@ AuthManager::init(const ServiceEnvironmentIFCRef& env)
 	String authLib = env->getConfigItem(ConfigOpts::AUTHENTICATION_MODULE_opt);
 	if (authLib.empty())
 	{
-		OW_LOG_INFO(logger, "Authentication Manager: No Basic Authentication module configured.");
+		BLOCXX_LOG_INFO(logger, "Authentication Manager: No Basic Authentication module configured.");
 		return;
 	}
 
-	OW_LOG_INFO(logger, Format("Authentication Manager: Loading"
+	BLOCXX_LOG_INFO(logger, Format("Authentication Manager: Loading"
 		" authentication module %1", authLib));
 	m_authenticator =
 		SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib, "createAuthenticator", OW_VERSION);
@@ -92,13 +94,13 @@ AuthManager::init(const ServiceEnvironmentIFCRef& env)
 		try
 		{
 			m_authenticator->init(env);
-			OW_LOG_INFO(logger, Format("Authentication module %1"
+			BLOCXX_LOG_INFO(logger, Format("Authentication module %1"
 				" is now being used for authentication to the CIMOM",
 				authLib));
 		}
 		catch(Exception& e)
 		{
-			OW_LOG_FATAL_ERROR(logger, Format("Basic Authentication Module %1 failed"
+			BLOCXX_LOG_FATAL_ERROR(logger, Format("Basic Authentication Module %1 failed"
 				" to initialize: %2 - %3"
 				" [No Basic Authentication Mechanism Available!]", authLib, e.type(),
 				e.getMessage()));
@@ -110,7 +112,7 @@ AuthManager::init(const ServiceEnvironmentIFCRef& env)
 		}
 		catch(...)
 		{
-			OW_LOG_FATAL_ERROR(logger, Format("Basic Authentication Module %1 failed"
+			BLOCXX_LOG_FATAL_ERROR(logger, Format("Basic Authentication Module %1 failed"
 				" to initialize: Unknown Exception Caught"
 				" [No Basic Authentication Mechanism Available!]", authLib));
 			OW_THROW(AuthManagerException, "No Basic Authentication Mechanism Available");
@@ -118,7 +120,7 @@ AuthManager::init(const ServiceEnvironmentIFCRef& env)
 	}
 	else
 	{
-		OW_LOG_FATAL_ERROR(logger, Format("Basic Authentication Module %1 failed"
+		BLOCXX_LOG_FATAL_ERROR(logger, Format("Basic Authentication Module %1 failed"
 			" to produce authentication module"
 			" [No Authentication Mechanism Available!]", authLib));
 		OW_THROW(AuthManagerException, "No Basic Authentication Mechanism Available");

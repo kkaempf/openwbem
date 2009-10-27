@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/SocketFlags.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SocketFlags.hpp is deprecated, use "blocxx/SocketFlags.hpp" instead.
 #endif
 

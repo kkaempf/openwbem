@@ -39,6 +39,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 ///////////////////////////////////////////////////////////////////////////////
 ProviderEnvironmentIFC::~ProviderEnvironmentIFC()
 {

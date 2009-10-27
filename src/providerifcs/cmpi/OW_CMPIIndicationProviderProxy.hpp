@@ -52,33 +52,33 @@ public:
 	virtual void deActivateFilter(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes,
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
 		bool lastActivation
 		);
 	virtual void activateFilter(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes,
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
 		bool firstActivation
 		);
 	virtual void authorizeFilter(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes,
-		const String& owner
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
+		const blocxx::String& owner
 		);
 	virtual int mustPoll(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes
 		);
 private:
 	CMPIFTABLERef m_ftable;

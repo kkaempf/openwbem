@@ -86,10 +86,10 @@ public:
 	 *
 	 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
 	 */
-	HTTPClient(const String& url, const SSLClientCtxRef& sslCtx = SSLClientCtxRef());
+	HTTPClient(const blocxx::String& url, const blocxx::SSLClientCtxRef& sslCtx = blocxx::SSLClientCtxRef());
 	virtual ~HTTPClient();
-	virtual Reference<std::ostream> beginRequest(
-			const String& methodName, const String& cimObject);
+	virtual blocxx::Reference<std::ostream> beginRequest(
+			const blocxx::String& methodName, const blocxx::String& cimObject);
 
 	/**
 	 * Establishes a connection (if not already connected) to the
@@ -110,12 +110,12 @@ public:
 	 * @exception SocketException
 	 *
 	 */
-	virtual Reference<std::istream> endRequest(
-		const Reference<std::ostream>& request,
-		const String& methodName,
-		const String& cimObject,
+	virtual blocxx::Reference<std::istream> endRequest(
+		const blocxx::Reference<std::ostream>& request,
+		const blocxx::String& methodName,
+		const blocxx::String& cimObject,
 		ERequestType requestType,
-		const String& cimProtocolVersion);
+		const blocxx::String& cimProtocolVersion);
 
 	virtual void endResponse(std::istream & istr);
 
@@ -129,12 +129,12 @@ public:
 	 * Gets the address of the local machine
 	 * @return An SocketAddress corresponding to the local machine.
 	 */
-	SocketAddress getLocalAddress() const;
+	blocxx::SocketAddress getLocalAddress() const;
 	/**
 	 * Gets the address of the peer connection
 	 * @return An SocketAddress corresponding to the peer connection
 	 */
-	SocketAddress getPeerAddress()  const;
+	blocxx::SocketAddress getPeerAddress()  const;
 	/**
 	 * Set the HTTP path to use.  Previously this was specified in the URL,
 	 * however now with the WBEM URI spec, that portion of the URL is
@@ -144,7 +144,7 @@ public:
 	 *
 	 * @param newPath The new HTTP path to use.
 	 */
-	void setHTTPPath(const String& newPath);
+	void setHTTPPath(const blocxx::String& newPath);
 
 	/**
 	 * After calling this function, the next request will (re)connect and
@@ -169,7 +169,7 @@ public:
 	 * @param name The header name
 	 * @param value The header value
 	 */
-	void addCustomHeader(const String& name, const String& value);
+	void addCustomHeader(const blocxx::String& name, const blocxx::String& value);
 
 	/**
 	 * Retrieve a given header value from the server response.
@@ -178,44 +178,44 @@ public:
 	 * @param Output param that will contain the value of the header.
 	 * @return true if the header exists. Otherwise false.
 	 */
-	bool getResponseHeader(const String& hdrName, String& valueOut) const;
+	bool getResponseHeader(const blocxx::String& hdrName, blocxx::String& valueOut) const;
 
 	static const int INFINITE_TIMEOUT OW_DEPRECATED = -1; // in 4.0.0
 	/**
 	 * Set the receive timeout on the socket
 	 * @param timeout The timeout to use when waiting for data
 	 */
-	virtual void setReceiveTimeout(const Timeout& timeout);
+	virtual void setReceiveTimeout(const blocxx::Timeout& timeout);
 	/**
 	 * Get the receive timeout
 	 * @return The receive timeout
 	 */
-	virtual Timeout getReceiveTimeout() const;
+	virtual blocxx::Timeout getReceiveTimeout() const;
 	/**
 	 * Set the send timeout on the socket
 	 * @param timeout The timeout to use when waiting to send data
 	 */
-	virtual void setSendTimeout(const Timeout& timeout);
+	virtual void setSendTimeout(const blocxx::Timeout& timeout);
 	/**
 	 * Get the send timeout
 	 * @return The number of seconds of the send timeout
 	 */
-	virtual Timeout getSendTimeout() const;
+	virtual blocxx::Timeout getSendTimeout() const;
 	/**
 	 * Set the connect timeout on the socket
 	 * @param timeout The connect timeout
 	 */
-	virtual void setConnectTimeout(const Timeout& timeout);
+	virtual void setConnectTimeout(const blocxx::Timeout& timeout);
 	/**
 	 * Get the connect timeout
 	 * @return The number of seconds of the connect timeout
 	 */
-	virtual Timeout getConnectTimeout() const;
+	virtual blocxx::Timeout getConnectTimeout() const;
 	/**
 	 * Set all timeouts (send, receive, connect)
 	 * @param timeout The timeouts.
 	 */
-	virtual void setTimeouts(const Timeout& timeout);
+	virtual void setTimeouts(const blocxx::Timeout& timeout);
 
 	/**
 	 * Set the SPNEGO handler.
@@ -238,15 +238,15 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	String m_sAuthorization;
-	String m_sRealm;
+	blocxx::String m_sAuthorization;
+	blocxx::String m_sRealm;
 
 #ifndef OW_DISABLE_DIGEST
-	String m_sDigestNonce;
-	String m_sDigestCNonce;
-	UInt8 m_iDigestNonceCount;
-	String m_sDigestSessionKey;
-	String m_sDigestResponse;
+	blocxx::String m_sDigestNonce;
+	blocxx::String m_sDigestCNonce;
+	blocxx::UInt8 m_iDigestNonceCount;
+	blocxx::String m_sDigestSessionKey;
+	blocxx::String m_sDigestResponse;
 #endif
 	enum Resp_t
 	{
@@ -255,37 +255,37 @@ private:
 		E_RESPONSE_GOOD,
 		E_RESPONSE_CONTINUE
 	};
-	SocketAddress m_serverAddress;
+	blocxx::SocketAddress m_serverAddress;
 	URL m_url;
 	HTTPHeaderMap m_responseHeaders;
 	// Persistant headers remain for the life of the
 	// HTTPClient.  They are included in each request
-	Array<String> m_requestHeadersPersistent;
+	blocxx::Array<blocxx::String> m_requestHeadersPersistent;
 	// Common headers are used for only a single request,
 	// but are reused if the request must be repeated (with
 	// new authentication credentials, for instance).
-	Array<String> m_requestHeadersCommon;
+	blocxx::Array<blocxx::String> m_requestHeadersCommon;
 	// New headers are replaced each time the client repeats
 	// a request (with new auth credentials, for instance).
-	Array<String> m_requestHeadersNew;
-	Reference<std::istream> m_pIstrReturn;
-	SSLClientCtxRef m_sslCtx;
-	mutable Socket m_socket;
-	String m_requestMethod;
+	blocxx::Array<blocxx::String> m_requestHeadersNew;
+	blocxx::Reference<std::istream> m_pIstrReturn;
+	blocxx::SSLClientCtxRef m_sslCtx;
+	mutable blocxx::Socket m_socket;
+	blocxx::String m_requestMethod;
 	bool m_authRequired;
 	std::istream& m_istr;
 	std::ostream& m_ostr;
 	bool m_doDeflateOut;
 	int m_retryCount;
-	String m_httpPath;
+	blocxx::String m_httpPath;
 	bool m_uselocalAuthentication;
-	String m_localNonce;
-	String m_localCookieFile;
-	String m_statusLine;
+	blocxx::String m_localNonce;
+	blocxx::String m_localCookieFile;
+	blocxx::String m_statusLine;
 	// stores the ns value of the Man header
-	String m_ns;
+	blocxx::String m_ns;
 	bool m_closeConnection;
-	String m_spnegoData;
+	blocxx::String m_spnegoData;
 	SPNEGOHandlerRef m_spnegoHandler;
 	int m_statusCode;
 
@@ -293,7 +293,7 @@ private:
 #pragma warning (pop)
 #endif
 
-	bool headerHasKey(const String& key)
+	bool headerHasKey(const blocxx::String& key)
 	{
 		if (!HTTPUtils::headerHasKey(m_responseHeaders, m_ns + "-" + key))
 		{
@@ -301,44 +301,44 @@ private:
 		}
 		return true;
 	}
-	String getHeaderValue(const String& key)
+	blocxx::String getHeaderValue(const blocxx::String& key)
 	{
-		String rval = HTTPUtils::getHeaderValue(m_responseHeaders, m_ns + "-" + key);
+		blocxx::String rval = HTTPUtils::getHeaderValue(m_responseHeaders, m_ns + "-" + key);
 		if (rval.empty())
 		{
 			return HTTPUtils::getHeaderValue(m_responseHeaders, key);
 		}
 		return rval;
 	}
-	void addHeaderCommon(const String& key, const String& value)
+	void addHeaderCommon(const blocxx::String& key, const blocxx::String& value)
 	{
 		HTTPUtils::addHeader(m_requestHeadersCommon, key, value);
 	}
-	void addHeaderPersistent(const String& key, const String& value)
+	void addHeaderPersistent(const blocxx::String& key, const blocxx::String& value)
 	{
 		HTTPUtils::addHeader(m_requestHeadersPersistent, key, value);
 	}
-	void addHeaderNew(const String& key, const String& value)
+	void addHeaderNew(const blocxx::String& key, const blocxx::String& value)
 	{
 		HTTPUtils::addHeader(m_requestHeadersNew, key, value);
 	}
-	void sendHeaders(const String& method,
-		const String& prot);
+	void sendHeaders(const blocxx::String& method,
+		const blocxx::String& prot);
 	/**
 	 * precondition: m_statusLine is set to the status line, and the headers have been read
 	 * @param reasonPhrase - out parameter that will contain the reason phrase portion of the HTTP status line.
 	 */
-	Resp_t processHeaders(String& reasonPhrase);
-	Reference<std::istream> convertToFiniteStream();
+	Resp_t processHeaders(blocxx::String& reasonPhrase);
+	blocxx::Reference<std::istream> convertToFiniteStream();
 	void prepareForRetry();
 	void handleAuth(); // process authorization
 	void checkConnection();
 	/**
 	 * @return The reason phrase from the HTTP status line of the response
 	 */
-	String checkResponse(Resp_t& rt);
+	blocxx::String checkResponse(Resp_t& rt);
 	void prepareHeaders();
-	void sendDataToServer( const Reference<TempFileStream>& tfs, const String& methodName, const String& cimObject, ERequestType requestType );
+	void sendDataToServer( const blocxx::Reference<blocxx::TempFileStream>& tfs, const blocxx::String& methodName, const blocxx::String& cimObject, ERequestType requestType );
 	/**
 	 * If no credentials were provided in the url to the constructor, but an authentication callback was given, then call the callback to get credentials.
 	 * @postcondition m_url.principal != ""

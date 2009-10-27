@@ -59,9 +59,9 @@ public:
 
 	virtual void endDocument() = 0;
 	// name is not unescaped (implementation has to do it if necessary)
-	virtual void endElement(const StringBuffer& name) = 0;
+	virtual void endElement(const blocxx::StringBuffer& name) = 0;
 	// chars is not unescaped (implementation has to do it if necessary)
-	virtual void characters(const StringBuffer& chars) = 0;
+	virtual void characters(const blocxx::StringBuffer& chars) = 0;
 	virtual void startDocument() = 0;
 	virtual void startElement(const XMLToken& entry) = 0;
 };
@@ -85,7 +85,7 @@ public:
  *
  * @param fileName The name of the file containing the XML document to parse
  */
-OW_XML_API void parse(const String& xmlData, SAXDocumentHandler& docHandler, SAXErrorHandler& errHandler);
+OW_XML_API void parse(const blocxx::String& xmlData, SAXDocumentHandler& docHandler, SAXErrorHandler& errHandler);
 
 /**
  * Parse the XML document to be read from the std::istream data

@@ -69,24 +69,24 @@ private:
 class OW_COMMON_API StringArrayBuilder : public StringResultHandlerIFC
 {
 public:
-	StringArrayBuilder(StringArray& a) : m_a(a) {}
+	StringArrayBuilder(blocxx::StringArray& a) : m_a(a) {}
 	virtual ~StringArrayBuilder();
 protected:
-	virtual void doHandle(const String &s);
+	virtual void doHandle(const blocxx::String &s);
 private:
-	StringArray& m_a;
+	blocxx::StringArray& m_a;
 };
 
 /////////////////////////////////////////////////////////////////////////////
 class OW_COMMON_API StringEnumBuilder : public StringResultHandlerIFC
 {
 public:
-	StringEnumBuilder(StringEnumeration& e) : m_e(e) {}
+	StringEnumBuilder(blocxx::StringEnumeration& e) : m_e(e) {}
 	virtual ~StringEnumBuilder();
 protected:
-	virtual void doHandle(const String &s);
+	virtual void doHandle(const blocxx::String &s);
 private:
-	StringEnumeration& m_e;
+	blocxx::StringEnumeration& m_e;
 };
 
 /////////////////////////////////////////////////////////////////////////////

@@ -102,7 +102,7 @@ enum WQLOperation
 	WQL_DO_NOTHING,
 	WQL_ISA
 };
-inline String WQLOperationToString(WQLOperation op)
+inline blocxx::String WQLOperationToString(WQLOperation op)
 {
 	switch (op)
 	{

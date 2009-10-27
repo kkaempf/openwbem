@@ -43,7 +43,12 @@
 #include "OW_config.h"
 #include "blocxx/Logger.hpp"
 
-#define OW_LOGGER_PRETTY_FUNCTION BLOCXX_LOGGER_PRETTY_FUNCTION
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
+#define BLOCXX_LOGGER_PRETTY_FUNCTION BLOCXX_LOGGER_PRETTY_FUNCTION
 
 
 /**
@@ -52,7 +57,7 @@
  * @param logger The logger to use.
  * @param message An expression that evaluates to a String which will be logged.
  */
-#define OW_LOG_DEBUG3(logger, message) BLOCXX_LOG_DEBUG3(logger, message)
+#define BLOCXX_LOG_DEBUG3(logger, message) BLOCXX_LOG_DEBUG3(logger, message)
 
 /**
  * Log message to logger with the Debug2 level.  message is only evaluated if logger->getLogLevel() >=
@@ -60,7 +65,7 @@
  * @param logger The logger to use.
  * @param message An expression that evaluates to a String which will be logged.
  */
-#define OW_LOG_DEBUG2(logger, message) BLOCXX_LOG_DEBUG2(logger, message)
+#define BLOCXX_LOG_DEBUG2(logger, message) BLOCXX_LOG_DEBUG2(logger, message)
 
 /**
  * Log message to logger with the Debug level.  message is only evaluated if logger->getLogLevel() >= E_DEBUG_LEVEL
@@ -68,7 +73,7 @@
  * @param logger The logger to use.
  * @param message An expression that evaluates to a String which will be logged.
  */
-#define OW_LOG_DEBUG(logger, message) BLOCXX_LOG_DEBUG(logger, message)
+#define BLOCXX_LOG_DEBUG(logger, message) BLOCXX_LOG_DEBUG(logger, message)
 
 /**
  * Log message to logger with the Info level.  message is only evaluated if logger->getLogLevel() >= E_INFO_LEVEL
@@ -76,7 +81,7 @@
  * @param logger The logger to use.
  * @param message An expression that evaluates to a String which will be logged.
  */
-#define OW_LOG_INFO(logger, message) \
+#define BLOCXX_LOG_INFO(logger, message) \
 			BLOCXX_LOG_INFO(logger, message)
 
 /**
@@ -85,7 +90,7 @@
  * @param logger The logger to use.
  * @param message An expression that evaluates to a String which will be logged.
  */
-#define OW_LOG_ERROR(logger, message) \
+#define BLOCXX_LOG_ERROR(logger, message) \
 			BLOCXX_LOG_ERROR(logger, message)
 
 /**
@@ -94,7 +99,7 @@
  * @param logger The logger to use.
  * @param message An expression that evaluates to a String which will be logged.
  */
-#define OW_LOG_FATAL_ERROR(logger, message) \
+#define BLOCXX_LOG_FATAL_ERROR(logger, message) \
 			BLOCXX_LOG_FATAL_ERROR(logger, message)
 
 /**
@@ -104,9 +109,13 @@
  * @param category The message category
  * @param message An expression that evaluates to a String which will be logged.
  */
-#define OW_LOG(logger, category, message) \
+#define BLOCXX_LOG(logger, category, message) \
 			BLOCXX_LOG(logger, category, message)
 
 
+#warning OW_Logger.hpp is deprecated, use "blocxx/Logger.hpp" instead. Replace all usages of \
+BLOCXX_LOG* with BLOCXX_LOG*. \
+The following bash command should do it for you. \
+for file in `grep -IHrl "OW_Logger.hpp" *`; do sed -i -e 's/BLOCXX_LOG/BLOCXX_LOG/g' -e 's!OW_Logger.hpp!blocxx/Logger.hpp!g' $file; done
 
 #endif

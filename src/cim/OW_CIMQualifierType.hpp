@@ -42,7 +42,7 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -104,7 +104,7 @@ public:
 	/**
 	 * @return The size of the data for CIMQualifierType object.
 	 */
-	Int32 getDataSize() const;
+	blocxx::Int32 getDataSize() const;
 	/**
 	 * @return The default value for this CIMQualifierType object.
 	 */
@@ -158,7 +158,7 @@ public:
 	 * @param flavor The integral value of the flavor to remove.
 	 * @return a reference to *this
 	 */
-	CIMQualifierType& removeFlavor(const Int32 flavor);
+	CIMQualifierType& removeFlavor(const blocxx::Int32 flavor);
 	/**
 	 * @return The flavors for this CIMQualifierType object.
 	 */
@@ -186,24 +186,24 @@ public:
 	/**
 	 * @return An String representing this CIMQualifierType.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 	/**
 	 * @return An String that contains the MOF representation of this
 	 * CIMQualifierType object.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 
 	/**
 	 * @return The name of this qualifier type.
 	 */
-	virtual String getName() const;
+	virtual blocxx::String getName() const;
 	/**
 	 * Set the name of this qualifier type.
 	 * @param name The new name for this qualifier type.
 	 */
 	virtual void setName(const CIMName& name);
 
-	OW_SAFE_BOOL_IMPL(CIMQualifierType, COWIntrusiveReference<QUALTData>, CIMQualifierType::m_pdata, m_pdata)
+	BLOCXX_SAFE_BOOL_IMPL(CIMQualifierType, blocxx::COWIntrusiveReference<QUALTData>, CIMQualifierType::m_pdata, m_pdata)
 
 	friend OW_COMMON_API bool operator<(const CIMQualifierType& x, const CIMQualifierType& y);
 private:
@@ -213,7 +213,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<QUALTData> m_pdata;
+	blocxx::COWIntrusiveReference<QUALTData> m_pdata;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

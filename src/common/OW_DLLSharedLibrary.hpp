@@ -38,6 +38,11 @@
 #include "OW_config.h"
 #include <blocxx/DLLSharedLibrary.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_DLLSharedLibrary.hpp is deprecated, use "blocxx/DLLSharedLibrary.hpp" instead.
 #endif
 

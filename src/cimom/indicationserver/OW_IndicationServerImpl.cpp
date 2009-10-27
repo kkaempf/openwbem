@@ -35,9 +35,9 @@
 #include "OW_config.h"
 #include "OW_IndicationServerImpl.hpp"
 #include "blocxx/DateTime.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ProviderManager.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_WQLIFC.hpp"
@@ -70,6 +70,7 @@ OW_DECLARE_EXCEPTION(IndicationServer);
 OW_DEFINE_EXCEPTION_WITH_ID(IndicationServer);
 
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
@@ -111,7 +112,7 @@ void
 IndicationServerImpl::init(const ServiceEnvironmentIFCRef& env)
 {
 	CIMOMEnvironmentRef cimomEnv(env.cast_to<CIMOMEnvironment>());
-	OW_ASSERT(cimomEnv);
+	BLOCXX_ASSERT(cimomEnv);
 	m_indicationServerThread->init(cimomEnv);
 }
 
@@ -275,7 +276,7 @@ Notifier::run()
 	catch(Exception& e)
 	{
 		Logger lgr(COMPONENT_NAME);
-		OW_LOG_ERROR(lgr, Format("Caught exception while exporting indication: %1", e));
+		BLOCXX_LOG_ERROR(lgr, Format("Caught exception while exporting indication: %1", e));
 	}
 	catch(ThreadCancelledException&)
 	{
@@ -284,7 +285,7 @@ Notifier::run()
 	catch(...)
 	{
 		Logger lgr(COMPONENT_NAME);
-		OW_LOG_ERROR(lgr, "Unknown exception caught while exporting indication");
+		BLOCXX_LOG_ERROR(lgr, "Unknown exception caught while exporting indication");
 	}
 
 	handleDeliveryError();
@@ -314,12 +315,12 @@ Notifier::handleDeliveryError()
 					// If the exception was something else, log it.
 					if (e.getErrorCode() != CIMException::NOT_FOUND)
 					{
-						OW_LOG_ERROR(lgr, Format("Notifier::handleDeliveryError() failed to remove subscription. Error: %1", e));
+						BLOCXX_LOG_ERROR(lgr, Format("Notifier::handleDeliveryError() failed to remove subscription. Error: %1", e));
 					}
 				}
 				break;
 			default:
-				OW_LOG_INFO(lgr, Format("Unimplemented value for OnFatalErrorPolicy: %1", onFatalErrorPolicy));
+				BLOCXX_LOG_INFO(lgr, Format("Unimplemented value for OnFatalErrorPolicy: %1", onFatalErrorPolicy));
 				break;
 		}
 	}
@@ -451,14 +452,14 @@ IndicationServerImplThread::init(const CIMOMEnvironmentRef& env)
 	ProviderManagerRef pProvMgr = m_env->getProviderManager();
 	IndicationExportProviderIFCRefArray pra =
 		pProvMgr->getIndicationExportProviders();
-	OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread: %1 export providers found", pra.size()));
+	BLOCXX_LOG_DEBUG(m_logger, Format("IndicationServerImplThread: %1 export providers found", pra.size()));
 	for (size_t i = 0; i < pra.size(); i++)
 	{
 		StringArray clsNames = pra[i]->getHandlerClassNames();
 		for (size_t j = 0; j < clsNames.size(); j++)
 		{
 			m_providers[clsNames[j]] = pra[i];
-			OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread: Handling indication type %1", clsNames[j]));
+			BLOCXX_LOG_DEBUG(m_logger, Format("IndicationServerImplThread: Handling indication type %1", clsNames[j]));
 		}
 	}
 
@@ -467,7 +468,7 @@ IndicationServerImplThread::init(const CIMOMEnvironmentRef& env)
 	if (!m_wqlRef)
 	{
 		const char* const strerr = "Cannot process indications, because there is no WQL library.";
-		OW_LOG_FATAL_ERROR(m_logger, strerr);
+		BLOCXX_LOG_FATAL_ERROR(m_logger, strerr);
 		OW_THROW(IndicationServerException, strerr);
 	}
 
@@ -570,7 +571,7 @@ IndicationServerImplThread::run()
 				}
 				catch (const Exception& e)
 				{
-					OW_LOG_ERROR(m_logger, Format("IndicationServerImplThread::run caught "
+					BLOCXX_LOG_ERROR(m_logger, Format("IndicationServerImplThread::run caught "
 						" exception %1", e));
 					l.lock();
 				}
@@ -580,7 +581,7 @@ IndicationServerImplThread::run()
 				}
 				catch(...)
 				{
-					OW_LOG_ERROR(m_logger, "IndicationServerImplThread::run caught unknown"
+					BLOCXX_LOG_ERROR(m_logger, "IndicationServerImplThread::run caught unknown"
 						" exception");
 					// Ignore?
 					l.lock();
@@ -588,7 +589,7 @@ IndicationServerImplThread::run()
 			}
 		}
 	}
-	OW_LOG_DEBUG3(m_logger, "IndicationServerImplThread::run shutting down");
+	BLOCXX_LOG_DEBUG3(m_logger, "IndicationServerImplThread::run shutting down");
 	m_subscriptionPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(5));
 	m_notifierThreadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, Timeout::relative(45), Timeout::relative(55));
 	return 0;
@@ -616,15 +617,15 @@ IndicationServerImplThread::deactivateAllSubscriptions()
 		{
 			try
 			{
-				OW_LOG_DEBUG(m_logger, Format("About to call deActivateFilter() for subscription %1, provider %2",
+				BLOCXX_LOG_DEBUG(m_logger, Format("About to call deActivateFilter() for subscription %1, provider %2",
 					sub.m_subPath.toString(), curProvider - providers.begin()));
 				(*curProvider)->deActivateFilter(createProvEnvRef(m_env), sub.m_selectStmt, sub.m_selectStmt.getClassName(),
 					sub.m_subPath.getNameSpace(), sub.m_classes, true);
-				OW_LOG_DEBUG3(m_logger, "deActivateFilter() done");
+				BLOCXX_LOG_DEBUG3(m_logger, "deActivateFilter() done");
 			}
 			catch (Exception& e)
 			{
-				OW_LOG_ERROR(m_logger, Format("Caught exception while calling deActivateFilter(): %1", e));
+				BLOCXX_LOG_ERROR(m_logger, Format("Caught exception while calling deActivateFilter(): %1", e));
 			}
 		}
 	}
@@ -784,8 +785,8 @@ void
 IndicationServerImplThread::_processIndication(const CIMInstance& instanceArg,
 	const String& instNS)
 {
-	OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread::_processIndication instanceArg.getClassName() = %1 instNS = %2", instanceArg.getClassName(), instNS));
-	OW_LOG_DEBUG3(m_logger, Format("IndicationServerImplThread::_processIndication instanceArg = %1", instanceArg.toString()));
+	BLOCXX_LOG_DEBUG(m_logger, Format("IndicationServerImplThread::_processIndication instanceArg.getClassName() = %1 instNS = %2", instanceArg.getClassName(), instNS));
+	BLOCXX_LOG_DEBUG3(m_logger, Format("IndicationServerImplThread::_processIndication instanceArg = %1", instanceArg.toString()));
 
 	// If the provider didn't set the IndicationTime property, then we'll set it.
 	// DN 01/25/2005: removing this, since not all indications may have the IndicationTime property, and it's not required anyway.
@@ -802,7 +803,7 @@ IndicationServerImplThread::_processIndication(const CIMInstance& instanceArg,
 	CIMName curClassName = instanceArg.getClassName();
 	if (curClassName == CIMName())
 	{
-		OW_LOG_ERROR(m_logger, "Cannot process indication, because it has no class name.");
+		BLOCXX_LOG_ERROR(m_logger, "Cannot process indication, because it has no class name.");
 	}
 	while (curClassName != CIMName())
 	{
@@ -810,10 +811,10 @@ IndicationServerImplThread::_processIndication(const CIMInstance& instanceArg,
 		key.toLowerCase();
 		{
 			MutexLock lock(m_subGuard);
-			OW_LOG_DEBUG3(m_logger, Format("searching for key %1", key));
+			BLOCXX_LOG_DEBUG3(m_logger, Format("searching for key %1", key));
 			std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range =
 				m_subscriptions.equal_range(key);
-			OW_LOG_DEBUG3(m_logger, Format("found %1 items", distance(range.first, range.second)));
+			BLOCXX_LOG_DEBUG3(m_logger, Format("found %1 items", distance(range.first, range.second)));
 
 			// make a copy so we can free the lock, otherwise we may cause a deadlock.
 			subscriptions_copy_t subs(range.first, range.second);
@@ -833,10 +834,10 @@ IndicationServerImplThread::_processIndication(const CIMInstance& instanceArg,
 				key.toLowerCase();
 				{
 					MutexLock lock(m_subGuard);
-					OW_LOG_DEBUG3(m_logger, Format("searching for key %1", key));
+					BLOCXX_LOG_DEBUG3(m_logger, Format("searching for key %1", key));
 					std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range =
 						m_subscriptions.equal_range(key);
-					OW_LOG_DEBUG3(m_logger, Format("found %1 items", distance(range.first, range.second)));
+					BLOCXX_LOG_DEBUG3(m_logger, Format("found %1 items", distance(range.first, range.second)));
 
 					// make a copy of the subscriptions so we can free the lock, otherwise we may cause a deadlock.
 					subscriptions_copy_t subs;
@@ -881,7 +882,7 @@ IndicationServerImplThread::_processIndicationRange(
 			String queryLanguage = sub.m_filter.getPropertyT("QueryLanguage").getValueT().toString();
 			if (!sub.m_filterSourceNameSpace.equalsIgnoreCase(instNS))
 			{
-				OW_LOG_DEBUG3(m_logger, Format("skipping sub because namespace doesn't match. Filter ns = %1, Sub ns = %2", sub.m_filterSourceNameSpace, instNS));
+				BLOCXX_LOG_DEBUG3(m_logger, Format("skipping sub because namespace doesn't match. Filter ns = %1, Sub ns = %2", sub.m_filterSourceNameSpace, instNS));
 				continue;
 			}
 			//-----------------------------------------------------------------
@@ -891,7 +892,7 @@ IndicationServerImplThread::_processIndicationRange(
 			WQLInstancePropertySource propSource(instanceArg, hdl, instNS);
 			if (!sub.m_compiledStmt.evaluate(propSource))
 			{
-				OW_LOG_DEBUG3(m_logger, "skipping sub because wql.evaluate doesn't match");
+				BLOCXX_LOG_DEBUG3(m_logger, "skipping sub because wql.evaluate doesn't match");
 				continue;
 			}
 			CIMInstance filteredInstance(filterInstance(instanceArg,
@@ -909,7 +910,7 @@ IndicationServerImplThread::_processIndicationRange(
 				handlerCOP);
 			if (!handler)
 			{
-				OW_LOG_ERROR(m_logger, Format("Handler does not exist: %1",
+				BLOCXX_LOG_ERROR(m_logger, Format("Handler does not exist: %1",
 					handlerCOP.toString()));
 				continue;
 			}
@@ -919,7 +920,7 @@ IndicationServerImplThread::_processIndicationRange(
 
 			if (!pref)
 			{
-				OW_LOG_ERROR(m_logger, Format("No indication handler for class name:"
+				BLOCXX_LOG_ERROR(m_logger, Format("No indication handler for class name:"
 					" %1", handler.getClassName()));
 
 				continue;
@@ -928,7 +929,7 @@ IndicationServerImplThread::_processIndicationRange(
 		}
 		catch(Exception& e)
 		{
-			OW_LOG_ERROR(m_logger, Format("Error occurred while exporting indications:"
+			BLOCXX_LOG_ERROR(m_logger, Format("Error occurred while exporting indications:"
 				" %1", e).c_str());
 		}
 	}
@@ -946,8 +947,8 @@ IndicationServerImplThread::addTrans(
 	NotifyTrans trans(ns, indication, handler, subscriptionNS, subscription, provider);
 	if (!m_notifierThreadPool->tryAddWork(RunnableRef(new Notifier(this, trans))))
 	{
-		OW_LOG_ERROR(m_logger, "Indication export notifier pool overloaded.  Dropping indication.");
-		OW_LOG_DEBUG3(m_logger, Format("Dropped indication: %1", indication.toMOF()));
+		BLOCXX_LOG_ERROR(m_logger, "Indication export notifier pool overloaded.  Dropping indication.");
+		BLOCXX_LOG_DEBUG3(m_logger, Format("Dropped indication: %1", indication.toMOF()));
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -967,10 +968,10 @@ IndicationServerImplThread::getProvider(const CIMName& className)
 void
 IndicationServerImplThread::deleteSubscription(const String& ns, const CIMObjectPath& subPath)
 {
-	OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread::deleteSubscription ns = %1, subPath = %2", ns, subPath.toString()));
+	BLOCXX_LOG_DEBUG(m_logger, Format("IndicationServerImplThread::deleteSubscription ns = %1, subPath = %2", ns, subPath.toString()));
 	CIMObjectPath cop(subPath);
 	cop.setNameSpace(ns);
-	OW_LOG_DEBUG3(m_logger, Format("cop = %1", cop));
+	BLOCXX_LOG_DEBUG3(m_logger, Format("cop = %1", cop));
 
 	typedef std::set<SubscriptionRef> SubSet;
 	SubSet uniqueSubscriptions;
@@ -982,10 +983,10 @@ IndicationServerImplThread::deleteSubscription(const String& ns, const CIMObject
 		subscriptions_t::iterator curSubscription = m_subscriptions.begin();
 		while (curSubscription != m_subscriptions.end())
 		{
-			OW_LOG_DEBUG3(m_logger, Format("subPath = %1", curSubscription->second->m_subPath));
+			BLOCXX_LOG_DEBUG3(m_logger, Format("subPath = %1", curSubscription->second->m_subPath));
 			if (cop.equals(curSubscription->second->m_subPath))
 			{
-				OW_LOG_DEBUG3(m_logger, "found a match");
+				BLOCXX_LOG_DEBUG3(m_logger, "found a match");
 				uniqueSubscriptions.insert(curSubscription->second);
 				m_subscriptions.erase(curSubscription++);
 			}
@@ -996,7 +997,7 @@ IndicationServerImplThread::deleteSubscription(const String& ns, const CIMObject
 		}
 	}
 
-	OW_ASSERT(uniqueSubscriptions.size() == 1);
+	BLOCXX_ASSERT(uniqueSubscriptions.size() == 1);
 
 	for (SubSet::iterator curSubscription = uniqueSubscriptions.begin(); curSubscription != uniqueSubscriptions.end(); ++curSubscription)
 	{
@@ -1057,7 +1058,7 @@ IndicationServerImplThread::deleteSubscription(const String& ns, const CIMObject
 			}
 			catch (const Exception& e)
 			{
-				OW_LOG_ERROR(m_logger, Format("Caught exception while calling deActivateFilter for provider: %1", e));
+				BLOCXX_LOG_ERROR(m_logger, Format("Caught exception while calling deActivateFilter for provider: %1", e));
 			}
 			catch(ThreadCancelledException&)
 			{
@@ -1065,7 +1066,7 @@ IndicationServerImplThread::deleteSubscription(const String& ns, const CIMObject
 			}
 			catch (...)
 			{
-				OW_LOG_ERROR(m_logger, "Caught unknown exception while calling deActivateFilter for provider");
+				BLOCXX_LOG_ERROR(m_logger, "Caught unknown exception while calling deActivateFilter for provider");
 			}
 		}
 	}
@@ -1151,11 +1152,11 @@ public:
 void
 IndicationServerImplThread::startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username)
 {
-	OW_LOG_DEBUG3(m_logger, "Entering IndicationServerImplThread::startCreateSubscription");
+	BLOCXX_LOG_DEBUG3(m_logger, "Entering IndicationServerImplThread::startCreateSubscription");
 	RunnableRef rr(new createSubscriptionRunnable(ns, subInst, username, this));
-	OW_LOG_DEBUG3(m_logger, "Created RunnableRef in IndicationServerImplThread::startCreateSubscription");
+	BLOCXX_LOG_DEBUG3(m_logger, "Created RunnableRef in IndicationServerImplThread::startCreateSubscription");
 	m_subscriptionPool->addWork(rr);
-	OW_LOG_DEBUG3(m_logger, "Leaving IndicationServerImplThread::startCreateSubscription");
+	BLOCXX_LOG_DEBUG3(m_logger, "Leaving IndicationServerImplThread::startCreateSubscription");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1178,8 +1179,8 @@ IndicationServerImplThread::startDeleteSubscription(const String& ns, const CIMO
 void
 IndicationServerImplThread::createSubscription(const String& ns, const CIMInstance& subInst, const String& username)
 {
-	OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread::createSubscription ns = %1, subInst.getClassName() = %2", ns, subInst.getClassName()));
-	OW_LOG_DEBUG3(m_logger, Format("IndicationServerImplThread::createSubscription subInst = %1", ns, subInst.toString()));
+	BLOCXX_LOG_DEBUG(m_logger, Format("IndicationServerImplThread::createSubscription ns = %1, subInst.getClassName() = %2", ns, subInst.getClassName()));
+	BLOCXX_LOG_DEBUG3(m_logger, Format("IndicationServerImplThread::createSubscription subInst = %1", ns, subInst.toString()));
 
 	// get the filter
 	LocalOperationContext context;
@@ -1197,7 +1198,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 	// parse the filter
 	// Get query language
 	String queryLanguage = filterInst.getPropertyT("QueryLanguage").getValueT().toString();
-	OW_LOG_DEBUG3(m_logger, Format("Got query statement (%1) in %2", filterQuery, queryLanguage));
+	BLOCXX_LOG_DEBUG3(m_logger, Format("Got query statement (%1) in %2", filterQuery, queryLanguage));
 	if (!m_wqlRef->supportsQueryLanguage(queryLanguage))
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, Format("Filter uses queryLanguage %1, which is"
@@ -1208,7 +1209,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 	WQLCompile compiledStmt(selectStmt);
 	const WQLCompile::Tableau& tableau(compiledStmt.getTableau());
 	CIMName indicationClassName = selectStmt.getClassName();
-	OW_LOG_DEBUG3(m_logger, Format("query is for indication class: %1", indicationClassName));
+	BLOCXX_LOG_DEBUG3(m_logger, Format("query is for indication class: %1", indicationClassName));
 
 	// collect up all the class names
 	CIMNameArray isaClassNames;
@@ -1225,12 +1226,12 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 					if (opn2.getType() == WQLOperand::PROPERTY_NAME)
 					{
 						isaClassNames.push_back(opn2.getPropertyName());
-						OW_LOG_DEBUG3(m_logger, Format("Found ISA class name: %1", opn2.getPropertyName()));
+						BLOCXX_LOG_DEBUG3(m_logger, Format("Found ISA class name: %1", opn2.getPropertyName()));
 					}
 					else if (opn2.getType() == WQLOperand::STRING_VALUE)
 					{
 						isaClassNames.push_back(opn2.getStringValue());
-						OW_LOG_DEBUG3(m_logger, Format("Found ISA class name: %1", opn2.getStringValue()));
+						BLOCXX_LOG_DEBUG3(m_logger, Format("Found ISA class name: %1", opn2.getStringValue()));
 					}
 				}
 			}
@@ -1254,14 +1255,14 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		try
 		{
 			StringArray tmp(hdl->enumClassNamesA(filterSourceNameSpace, isaClassNames[i].toString()));
-			OW_LOG_DEBUG3(m_logger, Format("enumClassNamesA(%1, %2) returned %3 class names", filterSourceNameSpace, isaClassNames[i].toString(), tmp.size()));
+			BLOCXX_LOG_DEBUG3(m_logger, Format("enumClassNamesA(%1, %2) returned %3 class names", filterSourceNameSpace, isaClassNames[i].toString(), tmp.size()));
 			subClasses.insert(subClasses.end(), tmp.begin(), tmp.end());
 		}
 		catch (CIMException& e)
 		{
 			String msg = Format("Indication Server (subscription creation): failed to get subclass names of %1:%2 because: %3",
 				filterSourceNameSpace, isaClassNames[i], e.getMessage());
-			OW_LOG_ERROR(m_logger, msg);
+			BLOCXX_LOG_ERROR(m_logger, msg);
 			OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 		}
 	}
@@ -1274,7 +1275,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 
 	OStringStream ss;
 	std::copy(isaClassNames.begin(), isaClassNames.end(), std::ostream_iterator<CIMName>(ss, ", "));
-	OW_LOG_DEBUG3(m_logger, Format("isaClassNames = %1", ss.toString()));
+	BLOCXX_LOG_DEBUG3(m_logger, Format("isaClassNames = %1", ss.toString()));
 
 	// we need to make a copy of this to pass to indication provider.  Darn backward compatibility :(
 	StringArray strIsaClassNames;
@@ -1290,20 +1291,20 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 
 	if (!isaClassNames.empty())
 	{
-		OW_LOG_DEBUG3(m_logger, Format("Querying ProviderManager for indication providers. filterSourceNameSpace = %1, indicationClassName = %2, isaClassNames = {%3}",
+		BLOCXX_LOG_DEBUG3(m_logger, Format("Querying ProviderManager for indication providers. filterSourceNameSpace = %1, indicationClassName = %2, isaClassNames = {%3}",
 			filterSourceNameSpace, indicationClassName, ss.toString()));
 		providers = pm->getIndicationProviders(
 			filterSourceNameSpace, indicationClassName, isaClassNames, context);
 	}
 	else
 	{
-		OW_LOG_DEBUG3(m_logger, Format("Querying ProviderManager for indication providers. filterSourceNameSpace = %1, indicationClassName = %2, isaClassNames = {}",
+		BLOCXX_LOG_DEBUG3(m_logger, Format("Querying ProviderManager for indication providers. filterSourceNameSpace = %1, indicationClassName = %2, isaClassNames = {}",
 			filterSourceNameSpace, indicationClassName));
 		providers = pm->getIndicationProviders(
 			filterSourceNameSpace, indicationClassName, CIMNameArray(), context);
 	}
 
-	OW_LOG_DEBUG(m_logger, Format("Found %1 providers for the subscription", providers.size()));
+	BLOCXX_LOG_DEBUG(m_logger, Format("Found %1 providers for the subscription", providers.size()));
 	if (providers.empty())
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "No indication provider found for this subscription");
@@ -1319,7 +1320,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 	// call authorizeFilter on all the indication providers
 	for (size_t i = 0; i < providers.size(); ++i)
 	{
-		OW_LOG_DEBUG2(m_logger, Format("Calling authorizeFilter for provider %1", i));
+		BLOCXX_LOG_DEBUG2(m_logger, Format("Calling authorizeFilter for provider %1", i));
 		providers[i]->authorizeFilter(createProvEnvRef(m_env),
 			selectStmt, indicationClassName.toString(), ns, strIsaClassNames, username);
 	}
@@ -1329,27 +1330,27 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 	{
 		try
 		{
-			OW_LOG_DEBUG2(m_logger, Format("Calling mustPoll for provider %1", i));
+			BLOCXX_LOG_DEBUG2(m_logger, Format("Calling mustPoll for provider %1", i));
 			int pollInterval = providers[i]->mustPoll(createProvEnvRef(m_env),
 				selectStmt, indicationClassName.toString(), ns, strIsaClassNames);
-			OW_LOG_DEBUG3(m_logger, Format("got pollInterval %1", pollInterval));
+			BLOCXX_LOG_DEBUG3(m_logger, Format("got pollInterval %1", pollInterval));
 			if (pollInterval > 0)
 			{
 				isPolled[i] = true;
 				for (size_t j = 0; j < isaClassNames.size(); ++j)
 				{
 					String key = makePollerMapKey(filterSourceNameSpace, isaClassNames[j]);
-					OW_LOG_DEBUG3(m_logger, Format("searching m_pollers on key %1", key));
+					BLOCXX_LOG_DEBUG3(m_logger, Format("searching m_pollers on key %1", key));
 					poller_map_t::iterator iter = m_pollers.find(key);
 					LifecycleIndicationPollerRef p;
 					if (iter != m_pollers.end())
 					{
-						OW_LOG_DEBUG3(m_logger, Format("found poller for key %1: %2", key, iter->first));
+						BLOCXX_LOG_DEBUG3(m_logger, Format("found poller for key %1: %2", key, iter->first));
 						p = iter->second;
 					}
 					else
 					{
-						OW_LOG_DEBUG3(m_logger, Format("not found on key %1", key));
+						BLOCXX_LOG_DEBUG3(m_logger, Format("not found on key %1", key));
 						p = LifecycleIndicationPollerRef(SharedLibraryRef(0),
 							LifecycleIndicationPollerRef::element_type(new LifecycleIndicationPoller(filterSourceNameSpace, isaClassNames[j], pollInterval)));
 					}
@@ -1375,7 +1376,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 					p->addPollInterval(pollInterval);
 					if (iter == m_pollers.end())
 					{
-						OW_LOG_DEBUG3(m_logger, Format("Inserting %1 into m_pollers", key));
+						BLOCXX_LOG_DEBUG3(m_logger, Format("Inserting %1 into m_pollers", key));
 						m_pollers.insert(std::make_pair(key, p));
 						m_env->getPollingManager()->addPolledProvider(
 							PolledProviderIFCRef(
@@ -1388,7 +1389,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		}
 		catch (Exception& e)
 		{
-			OW_LOG_ERROR(m_logger, Format("Caught exception while calling mustPoll for provider: %1", e));
+			BLOCXX_LOG_ERROR(m_logger, Format("Caught exception while calling mustPoll for provider: %1", e));
 		}
 		catch(ThreadCancelledException&)
 		{
@@ -1396,7 +1397,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		}
 		catch (...)
 		{
-			OW_LOG_ERROR(m_logger, "Caught unknown exception while calling mustPoll for provider");
+			BLOCXX_LOG_ERROR(m_logger, "Caught unknown exception while calling mustPoll for provider");
 		}
 	}
 
@@ -1457,7 +1458,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		}
 		catch (Exception& e)
 		{
-			OW_LOG_ERROR(m_logger, Format("Caught exception while calling activateFilter for provider %1: %2", i, e));
+			BLOCXX_LOG_ERROR(m_logger, Format("Caught exception while calling activateFilter for provider %1: %2", i, e));
 		}
 		catch(ThreadCancelledException&)
 		{
@@ -1465,7 +1466,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		}
 		catch (...)
 		{
-			OW_LOG_ERROR(m_logger, Format("Caught unknown exception while calling activateFilter for provider %1", i));
+			BLOCXX_LOG_ERROR(m_logger, Format("Caught unknown exception while calling activateFilter for provider %1", i));
 		}
 	}
 
@@ -1491,7 +1492,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		OW_THROWCIMMSG(CIMException::FAILED, "activateFilter failed for all providers");
 	}
 
-	OW_LOG_DEBUG3(m_logger, "Successfully completed IndicationServerImplThread::createSubscription()");
+	BLOCXX_LOG_DEBUG3(m_logger, "Successfully completed IndicationServerImplThread::createSubscription()");
 }
 //////////////////////////////////////////////////////////////////////////////
 void

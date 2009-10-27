@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/MutexLock.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_MutexLock.hpp is deprecated, use "blocxx/MutexLock.hpp" instead.
 #endif
 

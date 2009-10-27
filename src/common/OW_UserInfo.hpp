@@ -64,13 +64,13 @@ public:
 	 * @param userName	The user name to use when checking access rights for
 	 * 						read/write operations.
 	 */
-	UserInfo(const String& userName);
+	UserInfo(const blocxx::String& userName);
 	UserInfo(const UserInfo& arg);
 	UserInfo& operator= (const UserInfo& arg);
 	/**
 	 * @return The user name that is associated with this UserInfo object.
 	 */
-	String getUserName() const;
+	blocxx::String getUserName() const;
 	/**
 	 * @return true if access rights are not to be checked on this UserInfo
 	 * object. Otherwise false.
@@ -88,7 +88,7 @@ private:
 	 */
 	void setInternal();
 	/** The user name associated with this UserInfo object. */
-	String m_userName;
+	blocxx::String m_userName;
 	/** Internal flags. If true access rights are not checked. */
 	bool m_internal;
 	//--------------------------------------------------------------------------

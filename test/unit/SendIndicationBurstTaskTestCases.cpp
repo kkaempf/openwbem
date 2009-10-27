@@ -40,6 +40,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(SendIndicationBurstTaskTestCases,"SendIndicationBurst
 
 using namespace OpenWBEM;
 using namespace CIMInstanceUtils;
+using namespace blocxx;
 
 void SendIndicationBurstTaskTestCases::setUp()
 {

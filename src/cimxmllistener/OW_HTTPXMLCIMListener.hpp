@@ -42,7 +42,7 @@
 #include "OW_URL.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_RequestHandlerIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #ifndef OW_WIN32
 #include "blocxx/UnnamedPipe.hpp"
 #endif
@@ -55,7 +55,7 @@
 namespace OW_NAMESPACE
 {
 class HTTPXMLCIMListenerCallback;
-typedef IntrusiveReference<HTTPXMLCIMListenerCallback> HTTPXMLCIMListenerCallbackRef;
+typedef blocxx::IntrusiveReference<HTTPXMLCIMListenerCallback> HTTPXMLCIMListenerCallbackRef;
 
 class OW_LISTENER_API HTTPXMLCIMListener
 {
@@ -66,7 +66,7 @@ public:
 	 * @param keyFileName Filename of a private key to use for HTTPS. If none specified,
 	 *  will attempt to use a key found in the same file as the certificate.
 	 */
-	HTTPXMLCIMListener(const String& certFileName = String(), const String& keyFileName = String());
+	HTTPXMLCIMListener(const blocxx::String& certFileName = blocxx::String(), const blocxx::String& keyFileName = blocxx::String());
 	~HTTPXMLCIMListener();
 	/**
 	 * Register for an indication.  The destructor will attempt to deregister
@@ -87,10 +87,10 @@ public:
 	 * @return A unique handle identifying the indication subscription and callback.
 	 *		Use this handle to de-register the listener.
 	 */
-	String registerForIndication(const String& url,
-		const String& ns, const String& filter,
-		const String& querylanguage,
-		const String& sourceNamespace,
+	blocxx::String registerForIndication(const blocxx::String& url,
+		const blocxx::String& ns, const blocxx::String& filter,
+		const blocxx::String& querylanguage,
+		const blocxx::String& sourceNamespace,
 		const CIMListenerCallbackRef& cb,
 		const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef());
 
@@ -100,7 +100,7 @@ public:
 	 * @param authCb If authentication is necessary, and authCb != NULL, then
 	 *  authCb->getCredentials() will be called to obtain credentials.
 	 */
-	void deregisterForIndication( const String& handle );
+	void deregisterForIndication( const blocxx::String& handle );
 
 	/**
 	 * Shut down the http server that is listening for indications.
@@ -115,18 +115,18 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	IntrusiveReference<ListenerAuthenticator> m_pLAuthenticator;
-	IntrusiveReference<HTTPServer> m_httpServer;
-	UInt16 m_httpListenPort;
-	UInt16 m_httpsListenPort;
-	IntrusiveReference<Thread> m_httpThread;
+	blocxx::IntrusiveReference<ListenerAuthenticator> m_pLAuthenticator;
+	blocxx::IntrusiveReference<HTTPServer> m_httpServer;
+	blocxx::UInt16 m_httpListenPort;
+	blocxx::UInt16 m_httpsListenPort;
+	blocxx::IntrusiveReference<blocxx::Thread> m_httpThread;
 #ifndef OW_WIN32
-	UnnamedPipeRef m_stopHttpPipe;
+	blocxx::UnnamedPipeRef m_stopHttpPipe;
 #else
 #pragma warning (pop)
 #endif
-	String m_certFileName;
-	String m_keyFileName;
+	blocxx::String m_certFileName;
+	blocxx::String m_keyFileName;
 	HTTPXMLCIMListenerCallbackRef m_callback;
 	RequestHandlerIFCRef m_XMLListener;
 

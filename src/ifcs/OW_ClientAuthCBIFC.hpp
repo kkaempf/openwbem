@@ -50,7 +50,7 @@ namespace OW_NAMESPACE
  * URL, and the cimom returns a Unauthorized, this will be called
  * so the client can repeat the request with authentication credentials.
  */
-class OW_COMMON_API ClientAuthCBIFC : virtual public IntrusiveCountableBase
+class OW_COMMON_API ClientAuthCBIFC : virtual public blocxx::IntrusiveCountableBase
 {
 public:
 	/**
@@ -67,8 +67,8 @@ public:
 	 *	were not obtained by the callback, and to http client has no
 	 *	reason to retry the request.
 	 */
-	virtual bool getCredentials(const String& realm, String& name,
-			String& passwd, const String& details) = 0;
+	virtual bool getCredentials(const blocxx::String& realm, blocxx::String& name,
+			blocxx::String& passwd, const blocxx::String& details) = 0;
 	virtual ~ClientAuthCBIFC();
 };
 

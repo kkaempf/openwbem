@@ -53,10 +53,6 @@
 #ifndef OW_DEFAULT_LOG_LEVEL
 #define OW_DEFAULT_LOG_LEVEL "error"
 #endif
-// deprecated - use OW_DEFAULT_OWLIBDIR instead
-#ifndef OW_DEFAULT_OWLIB_DIR
-#define OW_DEFAULT_OWLIB_DIR OW_DEFAULT_LIB_DIR"/openwbem"
-#endif
 #ifndef OW_DEFAULT_OWLIBDIR
 #define OW_DEFAULT_OWLIBDIR OW_DEFAULT_LIB_DIR"/openwbem"
 #endif
@@ -239,30 +235,27 @@ namespace ConfigOpts
 {
 	// Initial value is OW_DEFAULT_OWLIBEXECDIR, but may be set to other
 	// values for testing.
-	OW_COMMON_API extern String installed_owlibexec_dir;
+	OW_COMMON_API extern blocxx::String installed_owlibexec_dir;
 
 	// Initial value is OW_DEFAULT_STATE_DIR/openwbem, but may be set to other
 	// values for testing.
-	OW_COMMON_API extern String installed_owdata_dir;
+	OW_COMMON_API extern blocxx::String installed_owdata_dir;
 
 	// Initial value is OW_DEFAULT_OWLIBDIR, but may be set to other values
 	// for testing.
-	OW_COMMON_API extern String installed_owlib_dir;
+	OW_COMMON_API extern blocxx::String installed_owlib_dir;
 
 	// Naming rule: if the option begins with owcimomd, name is the same text all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.
 	// If the option has a default, the default macro is named OW_DEFAULT_<all caps name>
 	OW_COMMON_API extern const char* const DEBUGFLAG_opt;
 	OW_COMMON_API extern const char* const CONFIG_FILE_opt;
-	OW_COMMON_API extern const char* const LOG_LOCATION_opt;
-	OW_COMMON_API extern const char* const LOG_LEVEL_opt;
 	OW_COMMON_API extern const char* const PROVIDER_IFC_LIBS_opt;
 	OW_COMMON_API extern const char* const ONLYHELP_opt;
 	OW_COMMON_API extern const char* const LIBEXECDIR_opt;
 	OW_COMMON_API extern const char* const OWLIBDIR_opt;
 	OW_COMMON_API extern const char* const DATADIR_opt;
 	OW_COMMON_API extern const char* const ALLOW_ANONYMOUS_opt;
-	OW_COMMON_API extern const char* const PAM_ALLOWED_USERS_opt;
 	OW_COMMON_API extern const char* const SIMPLE_AUTH_PASSWORD_FILE_opt;
 	OW_COMMON_API extern const char* const AUTHENTICATION_MODULE_opt;
 	OW_COMMON_API extern const char* const DUMP_SOCKET_IO_opt;

@@ -51,6 +51,8 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
+
 namespace PidFile
 {
 /**

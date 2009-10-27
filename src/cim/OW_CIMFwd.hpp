@@ -62,30 +62,30 @@ class CIMInstance;
 class CIMValue;
 class CIMName;
 
-typedef Enumeration<CIMObjectPath> CIMObjectPathEnumeration;
-typedef Enumeration<CIMQualifierType> CIMQualifierTypeEnumeration;
-typedef Enumeration<CIMClass> CIMClassEnumeration;
-typedef Enumeration<CIMInstance> CIMInstanceEnumeration;
+typedef blocxx::Enumeration<CIMObjectPath> CIMObjectPathEnumeration;
+typedef blocxx::Enumeration<CIMQualifierType> CIMQualifierTypeEnumeration;
+typedef blocxx::Enumeration<CIMClass> CIMClassEnumeration;
+typedef blocxx::Enumeration<CIMInstance> CIMInstanceEnumeration;
 
-typedef Array<CIMDateTime> 		CIMDateTimeArray;
-typedef Array<CIMBase> 				CIMBaseArray;
-typedef Array<CIMDataType> 		CIMDataTypeArray;
-typedef Array<CIMScope> 			CIMScopeArray;
-typedef Array<CIMUrl> 				CIMUrlArray;
-typedef Array<CIMNameSpace>		CIMNameSpaceArray;
-typedef Array<CIMElement> 			CIMElementArray;
-typedef Array<CIMFlavor> 			CIMFlavorArray;
-typedef Array<CIMProperty> 		CIMPropertyArray;
-typedef Array<CIMObjectPath> 		CIMObjectPathArray;
-typedef Array<CIMQualifierType> 	CIMQualifierTypeArray;
-typedef Array<CIMQualifier> 		CIMQualifierArray;
-typedef Array<CIMMethod> 			CIMMethodArray;
-typedef Array<CIMClass> 			CIMClassArray;
-typedef Array<CIMParameter> 		CIMParameterArray;
-typedef Array<CIMParamValue> 		CIMParamValueArray;
-typedef Array<CIMInstance> 		CIMInstanceArray;
-typedef Array<CIMValue> 			CIMValueArray;
-typedef Array<CIMName> 				CIMNameArray;
+typedef blocxx::Array<CIMDateTime> 			CIMDateTimeArray;
+typedef blocxx::Array<CIMBase> 				CIMBaseArray;
+typedef blocxx::Array<CIMDataType> 			CIMDataTypeArray;
+typedef blocxx::Array<CIMScope> 			CIMScopeArray;
+typedef blocxx::Array<CIMUrl> 				CIMUrlArray;
+typedef blocxx::Array<CIMNameSpace>			CIMNameSpaceArray;
+typedef blocxx::Array<CIMElement> 			CIMElementArray;
+typedef blocxx::Array<CIMFlavor> 			CIMFlavorArray;
+typedef blocxx::Array<CIMProperty> 			CIMPropertyArray;
+typedef blocxx::Array<CIMObjectPath> 		CIMObjectPathArray;
+typedef blocxx::Array<CIMQualifierType> 	CIMQualifierTypeArray;
+typedef blocxx::Array<CIMQualifier> 		CIMQualifierArray;
+typedef blocxx::Array<CIMMethod> 			CIMMethodArray;
+typedef blocxx::Array<CIMClass> 			CIMClassArray;
+typedef blocxx::Array<CIMParameter> 		CIMParameterArray;
+typedef blocxx::Array<CIMParamValue> 		CIMParamValueArray;
+typedef blocxx::Array<CIMInstance> 			CIMInstanceArray;
+typedef blocxx::Array<CIMValue> 			CIMValueArray;
+typedef blocxx::Array<CIMName> 				CIMNameArray;
 
 } // end namespace OW_NAMESPACE
 

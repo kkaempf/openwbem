@@ -42,6 +42,8 @@
 #include "OW_ResultHandlerIFC.hpp"
 #include <cerrno>
 
+using namespace blocxx;
+
 namespace OW_NAMESPACE
 {
 

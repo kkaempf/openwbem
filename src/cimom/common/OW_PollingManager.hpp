@@ -61,21 +61,21 @@ public:
 	PollingManager(const ProviderManagerRef& providerManager);
 	virtual ~PollingManager();
 
-	virtual String getName() const;
-	virtual StringArray getDependencies() const;
+	virtual blocxx::String getName() const;
+	virtual blocxx::StringArray getDependencies() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void start();
 	virtual void shutdown();
 
 	void addPolledProvider(const PolledProviderIFCRef& p);
-	void addPolledProvider(const PolledProviderIFCRef& p, Int32 initialPollingInterval);
+	void addPolledProvider(const PolledProviderIFCRef& p, blocxx::Int32 initialPollingInterval);
 	void removePolledProvider(const PolledProviderIFCRef& p);
 
 private:
-	IntrusiveReference<PollingManagerThread> m_pollingManagerThread;
+	blocxx::IntrusiveReference<PollingManagerThread> m_pollingManagerThread;
 };
 
-class OW_CIMOMCOMMON_API PollingManagerThread : public Thread
+class OW_CIMOMCOMMON_API PollingManagerThread : public blocxx::Thread
 {
 public:
 	PollingManagerThread(const ProviderManagerRef& providerManager);
@@ -87,12 +87,12 @@ public:
 		m_startedBarrier.wait();
 	}
 	void addPolledProvider(const PolledProviderIFCRef& p);
-	void addPolledProvider(const PolledProviderIFCRef& p, Int32 initialPollingInterval);
+	void addPolledProvider(const PolledProviderIFCRef& p, blocxx::Int32 initialPollingInterval);
 	void removePolledProvider(const PolledProviderIFCRef& p);
 protected:
-	virtual Int32 run();
+	virtual blocxx::Int32 run();
 private:
-	class TriggerRunner : public Runnable
+	class TriggerRunner : public blocxx::Runnable
 	{
 	public:
 		TriggerRunner(PollingManagerThread* svr,
@@ -101,28 +101,28 @@ private:
 		PolledProviderIFCRef m_itp;
 		time_t m_nextPoll;
 		bool m_isRunning;
-		Int32 m_pollInterval;
+		blocxx::Int32 m_pollInterval;
 		PollingManagerThread* m_pollMan;
 		ServiceEnvironmentIFCRef m_env;
-		Logger m_logger;
+		blocxx::Logger m_logger;
 	private:
 		void doShutdown();
 		void doCooperativeCancel();
 		void doDefinitiveCancel();
 	};
-	typedef IntrusiveReference<TriggerRunner> TriggerRunnerRef;
-	Array<TriggerRunnerRef> m_triggerRunners;
+	typedef blocxx::IntrusiveReference<TriggerRunner> TriggerRunnerRef;
+	blocxx::Array<TriggerRunnerRef> m_triggerRunners;
 	bool m_shuttingDown;
-	NonRecursiveMutex m_triggerGuard;
-	Condition m_triggerCondition;
+	blocxx::NonRecursiveMutex m_triggerGuard;
+	blocxx::Condition m_triggerCondition;
 	ServiceEnvironmentIFCRef m_env;
 	ProviderManagerRef m_providerManager;
-	Logger m_logger;
-	ThreadBarrier m_startedBarrier;
-	ThreadPoolRef m_triggerRunnerThreadPool;
+	blocxx::Logger m_logger;
+	blocxx::ThreadBarrier m_startedBarrier;
+	blocxx::ThreadPoolRef m_triggerRunnerThreadPool;
 
 	// m_triggerGuard must be locked before calling this function.
-	UInt32 calcSleepTime(bool& rightNow, bool doInit);
+	blocxx::UInt32 calcSleepTime(bool& rightNow, bool doInit);
 	// m_triggerGuard must be locked before calling this function.
 	void processTriggers();
 	friend class TriggerRunner;

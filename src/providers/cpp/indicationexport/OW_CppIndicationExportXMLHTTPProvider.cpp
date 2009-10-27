@@ -39,7 +39,7 @@
 #include "OW_IndicationExporter.hpp"
 #include "blocxx/Format.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_ConfigException.hpp"
 #include "blocxx/Thread.hpp"
 #include "blocxx/Timeout.hpp"
@@ -52,6 +52,7 @@ namespace OW_NAMESPACE
 
 using namespace WBEMFlags;
 using namespace ConfigOpts;
+using namespace blocxx;
 
 namespace
 {
@@ -97,7 +98,7 @@ Prov::exportIndication(
 			E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN));
 
 	Logger logger(COMPONENT_NAME);
-	OW_LOG_DEBUG(logger,
+	BLOCXX_LOG_DEBUG(logger,
 		Format(
 			"CppIndicationExportXMLHTTPProvider queueing up indication export."
 			"  Handler = %1, Indication = %2",

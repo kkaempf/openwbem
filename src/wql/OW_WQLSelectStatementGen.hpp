@@ -583,7 +583,7 @@ public:
 private:
 	WQLSelectStatement m_stmt;
 	bool m_isPropertyList;
-	String m_attrName;
+	blocxx::String m_attrName;
 };
 
 } // end namespace WQL

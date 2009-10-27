@@ -50,7 +50,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_NoSuchPropertyException.hpp"
 #include "OW_NULLValueException.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_NoSuchProviderException.hpp"
 #include "OW_OpenWBEM_OOPProviderRegistration.hpp"
 #include "OW_OpenWBEM_OOPAlertIndicationProviderCapabilities.hpp"
@@ -70,12 +70,14 @@
 #include "blocxx/MutexLock.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "blocxx/Infinity.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_LocalOperationContext.hpp"
 #include "OW_RepositoryIFC.hpp"
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace
 {
@@ -174,7 +176,7 @@ OOPProviderInterface::~OOPProviderInterface()
 				if (proc && proc->processStatus().running())
 				{
 					OOPProviderBase* prov = proviter->second.getOOPProviderBase();
-					OW_LOG_INFO(lgr, Format("terminating provider %1", proviter->first));
+					BLOCXX_LOG_INFO(lgr, Format("terminating provider %1", proviter->first));
 					ProviderEnvironmentIFCRef env(new DoNothingProviderEnvironment);
 					prov->terminate(env, proviter->first);
 				}
@@ -182,11 +184,11 @@ OOPProviderInterface::~OOPProviderInterface()
 		}
 		catch (Exception& e)
 		{
-			OW_LOG_ERROR(lgr, Format("Caught exception in OOPProviderInterface::~OOPProviderInterface(): %1", e));
+			BLOCXX_LOG_ERROR(lgr, Format("Caught exception in OOPProviderInterface::~OOPProviderInterface(): %1", e));
 		}
 		catch (...)
 		{
-			OW_LOG_ERROR(lgr, "Caught unknown exception in OOPProviderInterface::~OOPProviderInterface()");
+			BLOCXX_LOG_ERROR(lgr, "Caught unknown exception in OOPProviderInterface::~OOPProviderInterface()");
 		}
 	}
 }
@@ -231,14 +233,14 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 	}
 	catch (CIMException& e)
 	{
-		OW_LOG_INFO(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while enumerating instances of "
+		BLOCXX_LOG_INFO(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while enumerating instances of "
 			"OpenWBEM_OOPProviderRegistration in namespace %2", e, interopNs));
 	}
-	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderRegistration", registrations.size()));
+	BLOCXX_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderRegistration", registrations.size()));
 	for (size_t i = 0; i < registrations.size(); ++i)
 	{
 		OpenWBEM::OOPProviderRegistration curReg(registrations[i]);
-		OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doInit() processing registration %1: %2", i, curReg.toString()));
+		BLOCXX_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doInit() processing registration %1: %2", i, curReg.toString()));
 		try
 		{
 			String instanceID = curReg.getInstanceID();
@@ -248,7 +250,7 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 			info->protocol = curReg.getProtocol();
 			if (info->protocol != "owcpp1")
 			{
-				OW_LOG_ERROR(lgr, Format("Unknown protocol: %1. Skipping registration: %2", info->protocol, curReg.toString()));
+				BLOCXX_LOG_ERROR(lgr, Format("Unknown protocol: %1. Skipping registration: %2", info->protocol, curReg.toString()));
 				continue;
 			}
 
@@ -259,7 +261,7 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 			CIMDateTime timeout = curReg.getTimeout();
 			if (!timeout.isInterval())
 			{
-				OW_LOG_ERROR(lgr, Format("Timeout property value is not an interval: %1. Skipping registration: %2", timeout, curReg.toString()));
+				BLOCXX_LOG_ERROR(lgr, Format("Timeout property value is not an interval: %1. Skipping registration: %2", timeout, curReg.toString()));
 				continue;
 			}
 
@@ -267,7 +269,7 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 				(timeout.getMinutes() + 60 *
 				 (timeout.getHours() + 24 * static_cast<float>(timeout.getDays())));
 
-			OW_LOG_DEBUG3(lgr, Format("timeoutSecs = %1", timeoutSecs));
+			BLOCXX_LOG_DEBUG3(lgr, Format("timeoutSecs = %1", timeoutSecs));
 
 			if (timeoutSecs == INFINITY)
 			{
@@ -281,7 +283,7 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 			info->userContext = curReg.getUserContext();
 			if (info->userContext < 1 || info->userContext > 4)
 			{
-				OW_LOG_ERROR(lgr, Format("Invalid value for UserContext: %1", info->userContext));
+				BLOCXX_LOG_ERROR(lgr, Format("Invalid value for UserContext: %1", info->userContext));
 				continue;
 			}
 
@@ -292,7 +294,7 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 
 			if (userContextIsMonitorDependent(curReg) && info->monitorPrivilegesFile == "")
 			{
-				OW_LOG_ERROR(lgr, "MonitorPrivilegesFile property cannot be NULL if UserContext is \"Monitored\" or \"OperationMonitored\"");
+				BLOCXX_LOG_ERROR(lgr, "MonitorPrivilegesFile property cannot be NULL if UserContext is \"Monitored\" or \"OperationMonitored\"");
 				continue;
 			}
 
@@ -300,7 +302,7 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 
 			if (providerTypes.empty())
 			{
-				OW_LOG_ERROR(lgr, "ProviderTypes property value has no entries. Registration will be ignored.");
+				BLOCXX_LOG_ERROR(lgr, "ProviderTypes property value has no entries. Registration will be ignored.");
 				continue;
 			}
 
@@ -362,14 +364,14 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 			}
 			if (userContextIsOperationDependent(curReg) && info->isPersistent)
 			{
-				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have a UserContext that depends on the operation user (\"Operation\" or \"OperationMonitored\")",
+				BLOCXX_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have a UserContext that depends on the operation user (\"Operation\" or \"OperationMonitored\")",
 					instanceID));
 				continue;
 			}
 
 			if (info->isPersistent && !curReg.UnloadTimeoutIsNULL())
 			{
-				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have an UnloadTimeout value",
+				BLOCXX_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have an UnloadTimeout value",
 					instanceID));
 				continue;
 			}
@@ -379,7 +381,7 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 				CIMDateTime unloadTimeout = curReg.getUnloadTimeout();
 				if (!unloadTimeout.isInterval())
 				{
-					OW_LOG_ERROR(lgr, Format("UnloadTimeout property value is not an interval: %1. Skipping registration: %2", timeout, curReg.toString()));
+					BLOCXX_LOG_ERROR(lgr, Format("UnloadTimeout property value is not an interval: %1. Skipping registration: %2", timeout, curReg.toString()));
 					continue;
 				}
 
@@ -387,7 +389,7 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 					(unloadTimeout.getMinutes() + 60 *
 					 (unloadTimeout.getHours() + 24 * static_cast<float>(unloadTimeout.getDays())));
 
-				OW_LOG_DEBUG3(lgr, Format("unload timeoutSecs = %1", timeoutSecs));
+				BLOCXX_LOG_DEBUG3(lgr, Format("unload timeoutSecs = %1", timeoutSecs));
 
 				if (timeoutSecs == INFINITY)
 				{
@@ -516,7 +518,7 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 						// keep it for ourselves
 						if (curReg.IndicationExportHandlerClassNamesIsNULL())
 						{
-							OW_LOG_ERROR(lgr, "IndicationExportHandlerClassNames property value has no entries. Registration will be ignored.");
+							BLOCXX_LOG_ERROR(lgr, "IndicationExportHandlerClassNames property value has no entries. Registration will be ignored.");
 						}
 						else
 						{
@@ -540,19 +542,19 @@ OOPProviderInterface::processOOPProviderRegistrationInstances(const ProviderEnvi
 					break;
 
 					default:
-						OW_LOG_ERROR(lgr, Format("Invalid or unsupported value (%1) in ProviderTypes", providerTypes[j]));
+						BLOCXX_LOG_ERROR(lgr, Format("Invalid or unsupported value (%1) in ProviderTypes", providerTypes[j]));
 						break;
 				}
 			}
 		}
 		catch (NoSuchPropertyException& e)
 		{
-			OW_LOG_ERROR(lgr, Format("Registration instance: %1 has no property: %2", curReg.toString(), e.getMessage()));
+			BLOCXX_LOG_ERROR(lgr, Format("Registration instance: %1 has no property: %2", curReg.toString(), e.getMessage()));
 			throw;
 		}
 		catch (NULLValueException& e)
 		{
-			OW_LOG_ERROR(lgr, Format("Registration instance: %1 property has null value: %2", curReg.toString(), e.getMessage()));
+			BLOCXX_LOG_ERROR(lgr, Format("Registration instance: %1 property has null value: %2", curReg.toString(), e.getMessage()));
 			throw;
 		}
 	}
@@ -579,14 +581,14 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 	}
 	catch (CIMException& e)
 	{
-		OW_LOG_INFO(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while enumerating instances of "
+		BLOCXX_LOG_INFO(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while enumerating instances of "
 			"OpenWBEM_OOPProviderProcess in namespace %2", e, interopNs));
 	}
-	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderProcess", providerProcesses.size()));
+	BLOCXX_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderProcess", providerProcesses.size()));
 	for (size_t i = 0; i < providerProcesses.size(); ++i)
 	{
 		OpenWBEM::OOPProviderProcess curProvProc(providerProcesses[i]);
-		OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() processing OpenWBEM_OOPProviderProcess %1: %2", i, curProvProc.toString()));
+		BLOCXX_LOG_DEBUG(lgr, Format("OOPProviderInterface::doInit() processing OpenWBEM_OOPProviderProcess %1: %2", i, curProvProc.toString()));
 		try
 		{
 			String instanceID = curProvProc.getInstanceID();
@@ -596,14 +598,14 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 			info->protocol = curProvProc.getProtocol();
 			if (info->protocol != "owcpp1")
 			{
-				OW_LOG_ERROR(lgr, Format("Unknown protocol: %1. Skipping registration: %2", info->protocol, curProvProc.toString()));
+				BLOCXX_LOG_ERROR(lgr, Format("Unknown protocol: %1. Skipping registration: %2", info->protocol, curProvProc.toString()));
 				continue;
 			}
 
 			CIMDateTime timeout = curProvProc.getTimeout();
 			if (!timeout.isInterval())
 			{
-				OW_LOG_ERROR(lgr, Format("Timeout property value is not an interval: %1. Skipping registration: %2", timeout, curProvProc.toString()));
+				BLOCXX_LOG_ERROR(lgr, Format("Timeout property value is not an interval: %1. Skipping registration: %2", timeout, curProvProc.toString()));
 				continue;
 			}
 
@@ -611,7 +613,7 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 				(timeout.getMinutes() + 60 *
 				 (timeout.getHours() + 24 * static_cast<float>(timeout.getDays())));
 
-			OW_LOG_DEBUG3(lgr, Format("timeoutSecs = %1", timeoutSecs));
+			BLOCXX_LOG_DEBUG3(lgr, Format("timeoutSecs = %1", timeoutSecs));
 
 			if (timeoutSecs == INFINITY)
 			{
@@ -625,7 +627,7 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 			info->userContext = curProvProc.getUserContext();
 			if (info->userContext < 1 || info->userContext > 4)
 			{
-				OW_LOG_ERROR(lgr, Format("Invalid value for UserContext: %1", info->userContext));
+				BLOCXX_LOG_ERROR(lgr, Format("Invalid value for UserContext: %1", info->userContext));
 				continue;
 			}
 
@@ -636,7 +638,7 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 
 			if (userContextIsMonitorDependent(curProvProc) && info->monitorPrivilegesFile == "")
 			{
-				OW_LOG_ERROR(lgr, "MonitorPrivilegesFile property cannot be NULL if UserContext is \"Monitored\" or \"OperationMonitored\"");
+				BLOCXX_LOG_ERROR(lgr, "MonitorPrivilegesFile property cannot be NULL if UserContext is \"Monitored\" or \"OperationMonitored\"");
 				continue;
 			}
 
@@ -648,14 +650,14 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 
 			if (userContextIsOperationDependent(curProvProc) && info->isPersistent)
 			{
-				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have a UserContext that depends on the operation user (\"Operation\" or \"OperationMonitored\")",
+				BLOCXX_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have a UserContext that depends on the operation user (\"Operation\" or \"OperationMonitored\")",
 					instanceID));
 				continue;
 			}
 
 			if (info->isPersistent && !curProvProc.UnloadTimeoutIsNULL())
 			{
-				OW_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have an UnloadTimeout value",
+				BLOCXX_LOG_ERROR(lgr, Format("Invalid OOP provider registration (%1). A persistent provider cannot have an UnloadTimeout value",
 					instanceID));
 				continue;
 			}
@@ -665,7 +667,7 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 				CIMDateTime unloadTimeout = curProvProc.getUnloadTimeout();
 				if (!unloadTimeout.isInterval())
 				{
-					OW_LOG_ERROR(lgr, Format("UnloadTimeout property value is not an interval: %1. Skipping registration: %2", timeout, curProvProc.toString()));
+					BLOCXX_LOG_ERROR(lgr, Format("UnloadTimeout property value is not an interval: %1. Skipping registration: %2", timeout, curProvProc.toString()));
 					continue;
 				}
 
@@ -673,7 +675,7 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 					(unloadTimeout.getMinutes() + 60 *
 					 (unloadTimeout.getHours() + 24 * static_cast<float>(unloadTimeout.getDays())));
 
-				OW_LOG_DEBUG3(lgr, Format("unload timeoutSecs = %1", timeoutSecs));
+				BLOCXX_LOG_DEBUG3(lgr, Format("unload timeoutSecs = %1", timeoutSecs));
 
 				if (timeoutSecs == INFINITY)
 				{
@@ -693,10 +695,10 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 			}
 			catch (CIMException& e)
 			{
-				OW_LOG_INFO(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while getting associations of "
+				BLOCXX_LOG_INFO(lgr, Format("OOPProviderInterface::doInit() caught exception (%1) while getting associations of "
 					"OpenWBEM_OOPProviderCapabilities in namespace %2", e, interopNs));
 			}
-			OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderCapabilities", providerCapabilities.size()));
+			BLOCXX_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doInit() found %1 instances of OpenWBEM_OOPProviderCapabilities", providerCapabilities.size()));
 
 			for (size_t j = 0; j < providerCapabilities.size(); ++j)
 			{
@@ -883,18 +885,18 @@ OOPProviderInterface::processOOPProviderProcessCapabilitiesInstances(const Provi
 				}
 				else
 				{
-					OW_LOG_ERROR(lgr, Format("Invalid or unsupported registration instance: %1", curCapabilities.toString()));
+					BLOCXX_LOG_ERROR(lgr, Format("Invalid or unsupported registration instance: %1", curCapabilities.toString()));
 				}
 			}
 		}
 		catch (NoSuchPropertyException& e)
 		{
-			OW_LOG_ERROR(lgr, Format("Registration instance: %1 has no property: %2", curProvProc.toString(), e.getMessage()));
+			BLOCXX_LOG_ERROR(lgr, Format("Registration instance: %1 has no property: %2", curProvProc.toString(), e.getMessage()));
 			throw;
 		}
 		catch (NULLValueException& e)
 		{
-			OW_LOG_ERROR(lgr, Format("Registration instance: %1 property has null value: %2", curProvProc.toString(), e.getMessage()));
+			BLOCXX_LOG_ERROR(lgr, Format("Registration instance: %1 property has null value: %2", curProvProc.toString(), e.getMessage()));
 			throw;
 		}
 	}
@@ -941,7 +943,7 @@ InstanceProviderIFCRef
 OOPProviderInterface::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetInstanceProvider, provIdString = %1", provIdString));
+	BLOCXX_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetInstanceProvider, provIdString = %1", provIdString));
 	ProvRegMap_t::const_iterator iter = m_instanceProvReg.find(provIdString);
 	if (iter == m_instanceProvReg.end())
 	{
@@ -958,7 +960,7 @@ SecondaryInstanceProviderIFCRef
 OOPProviderInterface::doGetSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetSecondaryInstanceProvider, provIdString = %1", provIdString));
+	BLOCXX_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetSecondaryInstanceProvider, provIdString = %1", provIdString));
 	ProvRegMap_t::const_iterator iter = m_secondaryInstanceProvReg.find(provIdString);
 	if (iter == m_secondaryInstanceProvReg.end())
 	{
@@ -975,7 +977,7 @@ MethodProviderIFCRef
 OOPProviderInterface::doGetMethodProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetMethodProvider, provIdString = %1", provIdString));
+	BLOCXX_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetMethodProvider, provIdString = %1", provIdString));
 	ProvRegMap_t::const_iterator iter = m_methodProvReg.find(provIdString);
 	if (iter == m_methodProvReg.end())
 	{
@@ -992,7 +994,7 @@ AssociatorProviderIFCRef
 OOPProviderInterface::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetAssociatorProvider, provIdString = %1", provIdString));
+	BLOCXX_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetAssociatorProvider, provIdString = %1", provIdString));
 	ProvRegMap_t::const_iterator iter = m_associatorProvReg.find(provIdString);
 	if (iter == m_associatorProvReg.end())
 	{
@@ -1010,7 +1012,7 @@ OOPProviderInterface::doGetIndicationExportProviders(const ProviderEnvironmentIF
 {
 	IndicationExportProviderIFCRefArray rval;
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "OOPProviderInterface::doGetIndicationexportProviders");
+	BLOCXX_LOG_DEBUG3(lgr, "OOPProviderInterface::doGetIndicationexportProviders");
 
 	MutexLock lock(m_persistentProvsGuard);
 	ProvRegMap_t::const_iterator iter = m_indicationExportProvReg.begin();
@@ -1049,7 +1051,7 @@ OOPProviderInterface::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 {
 	PolledProviderIFCRefArray rval;
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "OOPProviderInterface::doGetPolledProviders");
+	BLOCXX_LOG_DEBUG3(lgr, "OOPProviderInterface::doGetPolledProviders");
 
 	MutexLock lock(m_persistentProvsGuard);
 	ProvRegMap_t::const_iterator iter = m_polledProvReg.begin();
@@ -1087,7 +1089,7 @@ IndicationProviderIFCRef
 OOPProviderInterface::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetIndicationProvider, provIdString = %1", provIdString));
+	BLOCXX_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetIndicationProvider, provIdString = %1", provIdString));
 	ProvRegMap_t::const_iterator iter = m_indicationProvReg.find(provIdString);
 	if (iter == m_indicationProvReg.end())
 	{
@@ -1106,7 +1108,7 @@ QueryProviderIFCRef
 OOPProviderInterface::doGetQueryProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetQueryProvider, provIdString = %1", provIdString));
+	BLOCXX_LOG_DEBUG3(lgr, Format("OOPProviderInterface::doGetQueryProvider, provIdString = %1", provIdString));
 	ProvRegMap_t::const_iterator iter = m_queryProvReg.find(provIdString);
 	if (iter == m_queryProvReg.end())
 	{
@@ -1139,7 +1141,7 @@ OOPProviderInterface::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 				if (prov->unloadTimeoutExpired())
 				{
 					Logger lgr(COMPONENT_NAME);
-					OW_LOG_INFO(lgr, Format("Shutting down and terminating provider %1", proviter->first));
+					BLOCXX_LOG_INFO(lgr, Format("Shutting down and terminating provider %1", proviter->first));
 					dynamic_cast<ProviderBaseIFC&>(*prov).shuttingDown(env);
 					prov->terminate(env, proviter->first);
 					proviter = persistentProvsCopy.erase(proviter);
@@ -1166,7 +1168,7 @@ OOPProviderInterface::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 	PersistentProvMap_t provsCopy(m_persistentProvs);
 	lock.release();
 
-	OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown, there are %1 persistent providers to shutdown", provsCopy.size()));
+	BLOCXX_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown, there are %1 persistent providers to shutdown", provsCopy.size()));
 
 	for (PersistentProvMap_t::iterator proviter = provsCopy.begin();
 		proviter != provsCopy.end(); proviter++)
@@ -1177,17 +1179,17 @@ OOPProviderInterface::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 			if (proc && proc->processStatus().running())
 			{
 				ProviderBaseIFC* pprov = dynamic_cast<ProviderBaseIFC*>(proviter->second.getOOPProviderBase());
-				OW_ASSERT(pprov);
+				BLOCXX_ASSERT(pprov);
 				if (pprov)
 				{
-					OW_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown terminating provider %1", proviter->first));
+					BLOCXX_LOG_DEBUG(lgr, Format("OOPProviderInterface::doShuttingDown terminating provider %1", proviter->first));
 					try
 					{
 						pprov->shuttingDown(env);
 					}
 					catch (Exception& e)
 					{
-						OW_LOG_ERROR(lgr, Format("OOPProviderInterface::doShuttingDown caught Exception: %1", e));
+						BLOCXX_LOG_ERROR(lgr, Format("OOPProviderInterface::doShuttingDown caught Exception: %1", e));
 					}
 				}
 			}
@@ -1241,7 +1243,7 @@ OOPProviderInterface::SavedProviders::getOOPProviderBase() const
 	}
 	else
 	{
-		OW_ASSERTMSG(0, "Error, no pointer was set!");
+		BLOCXX_ASSERTMSG(0, "Error, no pointer was set!");
 		return 0;
 	}
 }

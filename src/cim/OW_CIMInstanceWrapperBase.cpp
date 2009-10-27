@@ -41,6 +41,7 @@
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 OW_DEFINE_EXCEPTION(CIMInstanceWrapper);
 

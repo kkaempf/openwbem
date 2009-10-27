@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/MultiAppender.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_MultiAppender.hpp is deprecated, use "blocxx/MultiAppender.hpp" instead.
 #endif
 

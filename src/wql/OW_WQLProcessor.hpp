@@ -58,8 +58,8 @@ namespace WQL
 class OW_WQL_API WQLProcessor : public WQLVisitor
 {
 public:
-	WQLProcessor(const CIMOMHandleIFCRef& hdl, const String& ns);
-	WQLProcessor(const RepositoryIFCRef& repos, OperationContext* operationContext, stmt* astRoot, const String& ns);
+	WQLProcessor(const CIMOMHandleIFCRef& hdl, const blocxx::String& ns);
+	WQLProcessor(const RepositoryIFCRef& repos, OperationContext* operationContext, stmt* astRoot, const blocxx::String& ns);
 	virtual ~WQLProcessor()
 	{
 	}
@@ -609,7 +609,7 @@ public:
 		: type(t), cia(), str(), i(), r(), b()
 		{
 		}
-		DataType(const String& s, const Type t)
+		DataType(const blocxx::String& s, const Type t)
 		: type(t), cia(), str(s), i(), r(), b()
 		{
 		}
@@ -617,32 +617,32 @@ public:
 		: type(CIMInstanceArrayType), cia(c), str(), i(), r(), b()
 		{
 		}
-		DataType(const Int64& newInt)
+		DataType(const blocxx::Int64& newInt)
 		: type(IntType), cia(), str(), i(newInt), r(), b()
 		{
 		}
-		DataType(const Bool& newBool)
+		DataType(const blocxx::Bool& newBool)
 		: type (BoolType), cia(), str(), i(), r(), b(newBool)
 		{
 		}
-		DataType(const Real64& newReal)
+		DataType(const blocxx::Real64& newReal)
 		: type (RealType), cia(), str(), i(), r(newReal), b()
 		{
 		}
 		Type type;
 		CIMInstanceArray cia;
-		String str;
-		Int64 i;
-		Real64 r;
-		Bool b;
+		blocxx::String str;
+		blocxx::Int64 i;
+		blocxx::Real64 r;
+		blocxx::Bool b;
 	};
-	struct CompareImpl : public IntrusiveCountableBase
+	struct CompareImpl : public blocxx::IntrusiveCountableBase
 	{
 		virtual bool operator()(const CIMValue& lhs, const CIMValue& rhs) const = 0;
 		virtual const char* c_str() const = 0;
 		virtual CompareImpl* reverseOrder() const = 0;
 	};
-	typedef IntrusiveReference<CompareImpl> CompareImplRef;
+	typedef blocxx::IntrusiveReference<CompareImpl> CompareImplRef;
 
 	struct Equals : public CompareImpl
 	{
@@ -754,29 +754,29 @@ private:
 
 	CIMInstanceArray m_instances; // return value after processing is done.
 	DataType m_exprValue;
-	Array<DataType> m_valueArray;
+	blocxx::Array<DataType> m_valueArray;
 	CIMOMHandleIFCRef m_hdl;
 	RepositoryIFCRef m_repos;
 	OperationContext* m_operationContext;
-	String m_ns;
-	String m_tableRef;
+	blocxx::String m_ns;
+	blocxx::String m_tableRef;
 	bool m_doingSelect;
 	bool m_isSchemaQuery;
-	StringArray m_propertyArray;
+	blocxx::StringArray m_propertyArray;
 	stmt* m_astRoot;
 
 #ifdef OW_WIN32
 #pragma warning (pop)
 #endif
 
-	CIMInstanceArray filterInstancesOnPropertyValue(const String& propName, const CIMValue& val, const Compare& compare);
+	CIMInstanceArray filterInstancesOnPropertyValue(const blocxx::String& propName, const CIMValue& val, const Compare& compare);
 	void doComparison(const DataType& lhs, const DataType& rhs, const Compare& compare);
-	void populateInstances(const String& className);
+	void populateInstances(const blocxx::String& className);
 	void populateInstances();
 	bool instanceIsDerivedFrom(const CIMInstance& inst,
-		const String& className);
-	bool classIsDerivedFrom(const String& cls,
-		const String& className);
+		const blocxx::String& className);
+	bool classIsDerivedFrom(const blocxx::String& cls,
+		const blocxx::String& className);
 };
 
 OW_WQL_API bool CIMInstanceSortCriterion( const CIMInstance& lhs, const CIMInstance& rhs);

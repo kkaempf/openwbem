@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/FileAppender.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_FileAppender.hpp is deprecated, use "blocxx/FileAppender.hpp" instead.
 #endif
 

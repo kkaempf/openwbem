@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/LazyGlobal.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 
 #define OW_LAZY_GLOBAL_INIT(...) \
 			BLOCXX_LAZY_GLOBAL_INIT(__VA_ARGS__)

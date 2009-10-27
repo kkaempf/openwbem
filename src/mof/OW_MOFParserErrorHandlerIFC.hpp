@@ -48,7 +48,7 @@ namespace MOF
 
 OW_DECLARE_APIEXCEPTION(ParseFatalError, OW_MOF_API);
 // this is an abstract base class for create concrete error handlers for the mof parser
-class OW_MOF_API ParserErrorHandlerIFC : public IntrusiveCountableBase
+class OW_MOF_API ParserErrorHandlerIFC : public blocxx::IntrusiveCountableBase
 {
 public:
 
@@ -73,7 +73,7 @@ private:
 	long m_errorCount;
 };
 
-typedef IntrusiveReference<ParserErrorHandlerIFC> ParserErrorHandlerIFCRef;
+typedef blocxx::IntrusiveReference<ParserErrorHandlerIFC> ParserErrorHandlerIFCRef;
 
 } // end namespace MOF
 } // end namespace OW_NAMESPACE

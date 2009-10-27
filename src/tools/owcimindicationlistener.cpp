@@ -52,6 +52,7 @@
 
 using namespace OpenWBEM;
 using namespace OpenWBEM::Tools;
+using namespace blocxx;
 
 using std::cout;
 using std::cin;
@@ -131,46 +132,35 @@ int main(int argc, char* argv[])
 {
 	try
 	{
-		bool useHttps;
 		String url;
 		String ns;
 		String query;
 		String certfile;
-		if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
-		{
-			url = argv[1];
-			ns = argv[2];
-			query = argv[3];
-			cerr << "This command line usage is deprecated." << endl; // TODO: Remove this, it was deprecated in 3.1.0
-		}
-		else
-		{
-			CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
 
-			if (parser.isSet(HELP_OPT))
-			{
-				Usage();
-				return 0;
-			}
-			else if (parser.isSet(VERSION_OPT))
-			{
-				cout << "owcimindicationlistener (OpenWBEM) " << OW_VERSION << '\n';
-				cout << "Written by Dan Nuffer.\n";
-				return 0;
-			}
-			url = parser.getOptionValue(URL_OPT, "http://localhost/root/cimv2");
-			query = parser.mustGetOptionValue(FILTER_QUERY_OPT, "-f, --filter_query");
-			URL urlObj(url);
-			bool useHttps = urlObj.scheme.endsWith('s') || urlObj.scheme.endsWith('S');
-			ns = urlObj.namespaceName;
-			if (ns.empty())
-			{
-				cerr << "No namespace given as part of the url." << endl;
-				Usage();
-				return 1;
-			}
-			certfile = parser.getOptionValue(CERT_FILE_OPT);
+		CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
+
+		if (parser.isSet(HELP_OPT))
+		{
+			Usage();
+			return 0;
 		}
+		else if (parser.isSet(VERSION_OPT))
+		{
+			cout << "owcimindicationlistener (OpenWBEM) " << OW_VERSION << '\n';
+			cout << "Written by Dan Nuffer.\n";
+			return 0;
+		}
+		url = parser.getOptionValue(URL_OPT, "http://localhost/root/cimv2");
+		query = parser.mustGetOptionValue(FILTER_QUERY_OPT, "-f, --filter_query");
+		URL urlObj(url);
+		ns = urlObj.namespaceName;
+		if (ns.empty())
+		{
+			cerr << "No namespace given as part of the url." << endl;
+			Usage();
+			return 1;
+		}
+		certfile = parser.getOptionValue(CERT_FILE_OPT);
 
 #ifdef OW_WIN32
 		exitEvent = ::CreateEvent(NULL, TRUE, FALSE, NULL);

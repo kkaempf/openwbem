@@ -37,6 +37,11 @@
 #include "OW_config.h"
 #include <blocxx/UserUtils.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_UserUtils.hpp is deprecated, use "blocxx/UserUtils.hpp" instead.
 #endif
 

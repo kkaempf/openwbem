@@ -44,12 +44,12 @@
 #include "blocxx/SharedLibraryReference.hpp"
 #include "blocxx/SharedLibrary.hpp"
 #include "blocxx/SharedLibraryLoader.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "blocxx/Format.hpp"
 #include "blocxx/SignalScope.hpp"
 #include "OW_Exception.hpp"
 #include "blocxx/IntrusiveReference.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 
 #include <utility> // for std::pair
 #include <setjmp.h> // for sigsetjmp, siglongjmp and jmp_buf
@@ -69,11 +69,11 @@ class SafeLibCreate
 	typedef T* (*createFunc_t)();
 	typedef const char* (*versionFunc_t)();
 public:
-	typedef std::pair<IntrusiveReference<T>, SharedLibraryRef> return_type;
-	typedef SharedLibraryReference<IntrusiveReference<T> > return_obj;
+	typedef std::pair<blocxx::IntrusiveReference<T>, blocxx::SharedLibraryRef> return_type;
+	typedef blocxx::SharedLibraryReference<blocxx::IntrusiveReference<T> > return_obj;
 
 	static return_type
-	loadAndCreate(String const& libname, String const& createFuncName, String const& version)
+	loadAndCreate(blocxx::String const& libname, blocxx::String const& createFuncName, blocxx::String const& version)
 	{
 		SharedLibraryLoaderRef sll = SharedLibraryLoader::createSharedLibraryLoader();
 		SharedLibraryRef sl = sll->loadSharedLibrary(libname);
@@ -85,14 +85,14 @@ public:
 		else
 		{
 			Logger lgr("ow.SafeLibCreate");
-			OW_LOG_DEBUG(lgr, Format("SafeLibCreate::loadAndCreate FAILED loading library %1", libname));
+			BLOCXX_LOG_DEBUG(lgr, Format("SafeLibCreate::loadAndCreate FAILED loading library %1", libname));
 		}
 		return std::make_pair(IntrusiveReference<T>(ptr),sl);
 	}
 
 	static return_obj
-	loadAndCreateObject(String const& libname,
-		String const& createFuncName, String const& version)
+	loadAndCreateObject(blocxx::String const& libname,
+		blocxx::String const& createFuncName, blocxx::String const& version)
 	{
 		SharedLibraryLoaderRef sll = SharedLibraryLoader::createSharedLibraryLoader();
 		SharedLibraryRef sl = sll->loadSharedLibrary(libname);
@@ -104,19 +104,19 @@ public:
 		else
 		{
 			Logger lgr("ow.SafeLibCreate");
-			OW_LOG_DEBUG(lgr, Format("SafeLibCreate::loadAndCreate FAILED loading library %1", libname));
+			BLOCXX_LOG_DEBUG(lgr, Format("SafeLibCreate::loadAndCreate FAILED loading library %1", libname));
 		}
 		return return_obj(sl, ptr);
 	}
 
 	static T*
-	create(SharedLibraryRef sl, String const& createFuncName,
-			String const& version)
+	create(blocxx::SharedLibraryRef sl, blocxx::String const& createFuncName,
+			blocxx::String const& version)
 	{
 		Logger logger("ow.SafeLibCreate");
-		OW_LOG_DEBUG3(logger, Format("SafeLibCreate::create called.  createFuncName = %1", createFuncName).c_str());
+		BLOCXX_LOG_DEBUG3(logger, Format("SafeLibCreate::create called.  createFuncName = %1", createFuncName).c_str());
 
-		OW_ASSERT(sl);
+		BLOCXX_ASSERT(sl);
 		try
 		{
 			int sigtype;
@@ -136,7 +136,7 @@ public:
 				versionFunc_t versFunc;
 				if (!sl->getFunctionPointer( "getOWVersion", versFunc))
 				{
-					OW_LOG_ERROR(logger, "SafeLibCreate::create failed getting function pointer to \"getOWVersion\" from library");
+					BLOCXX_LOG_ERROR(logger, "SafeLibCreate::create failed getting function pointer to \"getOWVersion\" from library");
 
 					return 0;
 				}
@@ -145,14 +145,14 @@ public:
 				strVer = (*versFunc)();
 				if (!strVer || version != strVer)
 				{
-					OW_LOG_INFO(logger, Format("SafeLibCreate::create - Warning: version returned from \"getOWVersion\" (%1) does not match (%2)",
+					BLOCXX_LOG_INFO(logger, Format("SafeLibCreate::create - Warning: version returned from \"getOWVersion\" (%1) does not match (%2)",
 						strVer ? strVer : "", version));
 				}
 
 				createFunc_t createFunc;
 				if (!sl->getFunctionPointer( createFuncName, createFunc ))
 				{
-					OW_LOG_ERROR(logger, Format("SafeLibCreate::create failed getting function pointer to \"%1\" from library", createFuncName));
+					BLOCXX_LOG_ERROR(logger, Format("SafeLibCreate::create failed getting function pointer to \"%1\" from library", createFuncName));
 
 					return 0;
 				}
@@ -163,7 +163,7 @@ public:
 			}
 			else
 			{
-				OW_LOG_ERROR(logger, Format("SafeLibCreate::create sigsetjmp call returned %1, we caught a segfault.  getOWVersion() or %2() is misbehaving",
+				BLOCXX_LOG_ERROR(logger, Format("SafeLibCreate::create sigsetjmp call returned %1, we caught a segfault.  getOWVersion() or %2() is misbehaving",
 					sigtype, createFuncName));
 
 				return 0;
@@ -171,14 +171,14 @@ public:
 		}
 		catch(Exception& e)
 		{
-			OW_LOG_ERROR(logger, "SafeLibCreate::create");
-			OW_LOG_ERROR(logger, Format("File: %1", e.getFile()));
-			OW_LOG_ERROR(logger, Format("Line: %1", e.getLine()));
-			OW_LOG_ERROR(logger, Format("Msg: %1", e.getMessage()));
+			BLOCXX_LOG_ERROR(logger, "SafeLibCreate::create");
+			BLOCXX_LOG_ERROR(logger, Format("File: %1", e.getFile()));
+			BLOCXX_LOG_ERROR(logger, Format("Line: %1", e.getLine()));
+			BLOCXX_LOG_ERROR(logger, Format("Msg: %1", e.getMessage()));
 		}
 		catch (...)
 		{
-			OW_LOG_ERROR(logger, "SafeLibCreate::create caught unknown exception");
+			BLOCXX_LOG_ERROR(logger, "SafeLibCreate::create caught unknown exception");
 		}
 
 		return 0;

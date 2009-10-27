@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/SafeCString.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 
 	/*
 	 * Use the OW_INTSTR macro to insert symbolic constants into format strings.

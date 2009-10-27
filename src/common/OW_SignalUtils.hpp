@@ -38,6 +38,11 @@
 #include "OW_config.h"
 #include <blocxx/SignalUtils.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SignalUtils.hpp is deprecated, use "blocxx/SignalUtils.hpp" instead.
 #endif
 

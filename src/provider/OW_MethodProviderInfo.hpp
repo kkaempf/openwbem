@@ -46,13 +46,13 @@ class OW_PROVIDER_API MethodProviderInfo
 public:
 	struct OW_PROVIDER_API ClassInfo
 	{
-		explicit ClassInfo(String const& className_);
-		ClassInfo(String const& className_, StringArray const& namespaces_, StringArray const& methods_);
-		String className;
-		StringArray namespaces;
-		StringArray methods;
+		explicit ClassInfo(blocxx::String const& className_);
+		ClassInfo(blocxx::String const& className_, blocxx::StringArray const& namespaces_, blocxx::StringArray const& methods_);
+		blocxx::String className;
+		blocxx::StringArray namespaces;
+		blocxx::StringArray methods;
 	};
-	typedef Array<ClassInfo> ClassInfoArray;
+	typedef blocxx::Array<ClassInfo> ClassInfoArray;
 	/**
 	 * Add a class name to the list of instrumented classes for the provider.
 	 * This will not have a specific namespace associated with it, it will be
@@ -61,17 +61,17 @@ public:
 	 * the provider handles all the methods in the class
 	 * @param className The class name.
 	 */
-	void addInstrumentedClass(String const& className);
+	void addInstrumentedClass(blocxx::String const& className);
 	void addInstrumentedClass(ClassInfo const& classInfo);
 
 	const ClassInfoArray& getClassInfo() const;
-	void setProviderName(String const& name);
-	String getProviderName() const;
+	void setProviderName(blocxx::String const& name);
+	blocxx::String getProviderName() const;
 private:
 	ClassInfoArray m_instrumentedClasses;
-	String m_name;
+	blocxx::String m_name;
 };
-typedef Array<MethodProviderInfo> MethodProviderInfoArray;
+typedef blocxx::Array<MethodProviderInfo> MethodProviderInfoArray;
 
 } // end namespace OW_NAMESPACE
 

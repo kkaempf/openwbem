@@ -45,6 +45,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 /////////////////////////////////////////////////////////////////////////////
 void
 CIMClassEnumBuilder::doHandle(const CIMClass &c)

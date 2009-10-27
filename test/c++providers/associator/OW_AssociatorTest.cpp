@@ -36,11 +36,13 @@
 
 #include "OW_config.h"
 #include "OW_CppProviderIncludes.hpp"
+#include "blocxx/Logger.hpp"
 
 #include <fstream>
 
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
@@ -89,7 +91,7 @@ namespace
 			const StringArray* propertyList)
 		{
 			Logger logger(COMPONENT_NAME);
-			OW_LOG_DEBUG(logger, Format("AssociatorTest associators called "
+			BLOCXX_LOG_DEBUG(logger, Format("AssociatorTest associators called "
 				"ns = %1, objectName = %2, assocClass = %3, resultClass = %4, "
 				"role = %5, resultRole = %6, includeQualifiers = %7, "
 				"includeClassOrigin = %8, propertyList = %9",
@@ -113,7 +115,7 @@ namespace
 			{
 				CIMInstance ci = instances.nextElement();
 				ci.setProperty("producedByAssocTest", CIMValue(true));
-				OW_LOG_DEBUG(logger, Format("AssociatorTest producing: %1", ci));
+				BLOCXX_LOG_DEBUG(logger, Format("AssociatorTest producing: %1", ci));
 				result.handle(ci.clone(E_NOT_LOCAL_ONLY,includeQualifiers,includeClassOrigin,propertyList));
 			}
 
@@ -130,7 +132,7 @@ namespace
 			const String& resultRole )
 		{
 			Logger logger(COMPONENT_NAME);
-			OW_LOG_DEBUG(logger, Format("AssociatorTest associatorNames called "
+			BLOCXX_LOG_DEBUG(logger, Format("AssociatorTest associatorNames called "
 				"ns = %1, objectName = %2, assocClass = %3, resultClass = %4, "
 				"role = %4, resultRole = %6",
 				ns, objectName.toString(), assocClass, resultClass,
@@ -153,7 +155,7 @@ namespace
 			{
 				CIMInstance ci = instances.nextElement();
 				CIMObjectPath cop(ns, ci);
-				OW_LOG_DEBUG(logger, Format("AssociatorTest producing: %1", cop));
+				BLOCXX_LOG_DEBUG(logger, Format("AssociatorTest producing: %1", cop));
 				result.handle(cop);
 			}
 		}
@@ -170,7 +172,7 @@ namespace
 			const StringArray* propertyList )
 		{
 			Logger logger(COMPONENT_NAME);
-			OW_LOG_DEBUG(logger, Format("AssociatorTest references called "
+			BLOCXX_LOG_DEBUG(logger, Format("AssociatorTest references called "
 				"ns = %1, objectName = %2, resultClass = %3, role = %4, "
 				"includeQualifiers = %5, includeClassOrigin = %6, "
 				"propertyList = %7",
@@ -203,7 +205,7 @@ namespace
 				newInstance.setProperty("PartComponent", CIMValue(path));
 				newInstance.setProperty("producedByAssocTest", CIMValue(true));
 
-				OW_LOG_DEBUG(logger, Format("AssociatorTest producing: %1", newInstance));
+				BLOCXX_LOG_DEBUG(logger, Format("AssociatorTest producing: %1", newInstance));
 				result.handle(newInstance.clone(E_NOT_LOCAL_ONLY,includeQualifiers,includeClassOrigin,propertyList));
 			}
 		}
@@ -217,7 +219,7 @@ namespace
 			const String& role )
 		{
 			Logger logger(COMPONENT_NAME);
-			OW_LOG_DEBUG(logger, Format("AssociatorTest referenceNames called "
+			BLOCXX_LOG_DEBUG(logger, Format("AssociatorTest referenceNames called "
 				"ns = %1, objectName = %2, resultClass = %3, role = %4",
 				ns, objectName.toString(), resultClass, role));
 
@@ -247,7 +249,7 @@ namespace
 
 				CIMObjectPath newPath(ns, newInstance);
 
-				OW_LOG_DEBUG(logger, Format("AssociatorTest producing: %1", newPath));
+				BLOCXX_LOG_DEBUG(logger, Format("AssociatorTest producing: %1", newPath));
 				result.handle(newPath);
 			}
 		}
@@ -262,7 +264,7 @@ namespace
 			EPropertiesFlag propertiesFlag)
 		{
 			Logger logger(COMPONENT_NAME);
-			OW_LOG_DEBUG(logger, "AssociatorTest doSimpleEnumInstances called ");
+			BLOCXX_LOG_DEBUG(logger, "AssociatorTest doSimpleEnumInstances called ");
 
 			CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 
@@ -290,7 +292,7 @@ namespace
 						newInstance.setProperty("GroupComponent", CIMValue(CIMObjectPath(ns, insts1[i])));
 
 						newInstance.setProperty("PartComponent", CIMValue(CIMObjectPath(ns, insts2[j])));
-						OW_LOG_DEBUG(logger, Format("AssociatorTest producing: %1", newInstance.toMOF()));
+						BLOCXX_LOG_DEBUG(logger, Format("AssociatorTest producing: %1", newInstance.toMOF()));
 						result.handle(newInstance);
 					}
 				}
@@ -337,7 +339,7 @@ namespace
 		AssociatorTest::initialize(const ProviderEnvironmentIFCRef& env)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, "AssociatorTest initialize called");
+		BLOCXX_LOG_DEBUG(logger, "AssociatorTest initialize called");
 	}
 
 } // end anonymous namespace

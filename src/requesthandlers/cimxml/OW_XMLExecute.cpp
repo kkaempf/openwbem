@@ -39,7 +39,7 @@
 #include "OW_XMLClass.hpp"
 #include "OW_CIMXMLParser.hpp"
 #include "OW_XMLEscape.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_CIMErrorException.hpp"
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMParameter.hpp"
@@ -58,7 +58,7 @@
 #include "OW_CIMQualifier.hpp"
 #include "blocxx/SocketUtils.hpp"
 #include "blocxx/SocketException.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_LocalOperationContext.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_ResultHandlerIFC.hpp"
@@ -67,13 +67,16 @@
 
 #include <algorithm>
 
-#define OW_LOGDEBUG(msg) OW_LOG_DEBUG(logger, msg)
-#define OW_LOGINFO(msg) OW_LOG_INFO(logger, msg)
-#define OW_LOGERROR(msg) OW_LOG_ERROR(logger, msg)
-#define OW_LOGFATALERROR(msg) OW_LOG_FATAL_ERROR(logger, msg)
+#define LOG_DEBUG(msg) BLOCXX_LOG_DEBUG(logger, msg)
+#define LOG_INFO(msg) BLOCXX_LOG_INFO(logger, msg)
+#define LOG_ERROR(msg) BLOCXX_LOG_ERROR(logger, msg)
+#define LOG_FATAL_ERROR(msg) BLOCXX_LOG_FATAL_ERROR(logger, msg)
 
 namespace OW_NAMESPACE
 {
+using std::ostream;
+using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
@@ -82,8 +85,6 @@ namespace
 
 OW_DECLARE_EXCEPTION(BadStream)
 OW_DEFINE_EXCEPTION_WITH_ID(BadStream)
-using std::ostream;
-using namespace WBEMFlags;
 
 template<typename T> inline static void checkStream(T& str)
 {
@@ -252,7 +253,7 @@ XMLExecute::executeIntrinsic(ostream& ostr,
 	String functionNameLC = m_functionName;
 	functionNameLC.toLowerCase();
 	Logger logger(COMPONENT_NAME);
-	OW_LOGDEBUG(Format("XMLExecute got function name. calling function %1",	m_functionName));
+	LOG_DEBUG(Format("XMLExecute got function name. calling function %1",	m_functionName));
 	FuncEntry fe = { 0, 0 };
 	fe.name = functionNameLC.c_str();
 	FuncEntry* i = std::lower_bound(g_funcs, g_funcsEnd, fe, funcEntryCompare);
@@ -571,7 +572,7 @@ namespace
 						i->val = XMLCIMFactory::createValue(parser, "string", XMLCIMFactory::E_VALUE_NOT_EMBEDDED_OBJECT);
 						break;
 					default:
-						OW_ASSERT(0);
+						BLOCXX_ASSERT(0);
 						break;
 				}
 			}
@@ -1359,7 +1360,7 @@ XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
 		ostrEntity << "<SIMPLERSP>";
 
 		// start out pointing to SIMPLEREQ
-		OW_ASSERT(parser.tokenIsId(CIMXMLParser::E_SIMPLEREQ));
+		BLOCXX_ASSERT(parser.tokenIsId(CIMXMLParser::E_SIMPLEREQ));
 		// <!ELEMENT SIMPLEREQ (IMETHODCALL|METHODCALL)>
 		parser.mustGetChild();
 		if (parser.getToken() == CIMXMLParser::E_METHODCALL)
@@ -1401,7 +1402,7 @@ XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
 	}
 	catch (CIMException& ce)
 	{
-		OW_LOGDEBUG(Format("XMLExecute::processSimpleReq caught CIM "
+		LOG_DEBUG(Format("XMLExecute::processSimpleReq caught CIM "
 			"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4",
 			ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
 		outputError(ce.getErrNo(), ce.getDescription(), ostrError);
@@ -1418,8 +1419,8 @@ XMLExecute::doOptions(CIMFeatures& cf,
 RequestHandlerIFC*
 XMLExecute::clone() const
 {
-	OW_ASSERT(!m_ostrEntity);
-	OW_ASSERT(!m_ostrError);
+	BLOCXX_ASSERT(!m_ostrEntity);
+	BLOCXX_ASSERT(!m_ostrError);
 	return new XMLExecute(*this);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1580,7 +1581,7 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		}
 		m_commMechPath = hdl->createInstance(interopNS, commMech);
 		m_commMechPath.setNameSpace(interopNS);
-		OW_LOG_DEBUG3(logger, Format("Sucessfully created instance of CIM_CIMXMLCommunicationMechanism. Saving path: %1", m_commMechPath.toString()));
+		BLOCXX_LOG_DEBUG3(logger, Format("Sucessfully created instance of CIM_CIMXMLCommunicationMechanism. Saving path: %1", m_commMechPath.toString()));
 
 
 		// now create the instance of HostedAccessPoint that associates the commMech with the system
@@ -1607,7 +1608,7 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		}
 		m_hostedAccessPointPath = hdl->createInstance(interopNS, hostedAccessPoint);
 		m_hostedAccessPointPath.setNameSpace(interopNS);
-		OW_LOG_DEBUG3(logger, Format("Sucessfully created instance of CIM_HostedAccessPoint. Saving path: %1", m_hostedAccessPointPath.toString()));
+		BLOCXX_LOG_DEBUG3(logger, Format("Sucessfully created instance of CIM_HostedAccessPoint. Saving path: %1", m_hostedAccessPointPath.toString()));
 
 
 		// now create the instance of OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager that associates the commMech with the OpenWBEM_ObjectManager
@@ -1628,13 +1629,13 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		}
 		m_commMechForManager = hdl->createInstance(interopNS, commMechForManager);
 		m_commMechForManager.setNameSpace(interopNS);
-		OW_LOG_DEBUG3(logger, Format("Sucessfully created instance of OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager. Saving path: %1",
+		BLOCXX_LOG_DEBUG3(logger, Format("Sucessfully created instance of OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager. Saving path: %1",
 			m_commMechForManager.toString()));
 	}
 	catch (CIMException& e)
 	{
 		// Something's not set up right. oh well, just log it. It's not even an error, maybe they don't have or want the interop schema.
-		OW_LOG_DEBUG(logger, Format("Failed creating CIM_CIMXMLCommunicationMechanism: %1", e));
+		BLOCXX_LOG_DEBUG(logger, Format("Failed creating CIM_CIMXMLCommunicationMechanism: %1", e));
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 #endif // #if 0
@@ -1650,7 +1651,7 @@ void cleanupInteropInstance(const CIMObjectPath& path, const ServiceEnvironmentI
 	if (path)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG3(logger, "XMLExecute::shutdown() cleaning up CIM_HostedAccessPoint instance");
+		BLOCXX_LOG_DEBUG3(logger, "XMLExecute::shutdown() cleaning up CIM_HostedAccessPoint instance");
 
 		try
 		{
@@ -1662,7 +1663,7 @@ void cleanupInteropInstance(const CIMObjectPath& path, const ServiceEnvironmentI
 		catch (CIMException& e)
 		{
 			// Something's not set up right. oh well, just log it. It's not even an error, maybe they don't have or want the interop schema.
-			OW_LOG_DEBUG(logger, Format("Failed deleting: %1", e));
+			BLOCXX_LOG_DEBUG(logger, Format("Failed deleting: %1", e));
 		}
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -1676,7 +1677,7 @@ XMLExecute::shutdown()
 {
 	// clean up the instances we created in init()
 	ServiceEnvironmentIFCRef env(getEnvironment());
-	OW_ASSERT(env);
+	BLOCXX_ASSERT(env);
 	Logger logger(COMPONENT_NAME);
 
 	cleanupInteropInstance(m_commMechPath, env);

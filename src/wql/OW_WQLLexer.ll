@@ -61,6 +61,7 @@
 
 using namespace OpenWBEM;
 using namespace OpenWBEM::WQL;
+using namespace blocxx;
 
 static const char *parseCh;
 

@@ -36,7 +36,7 @@
 
 namespace OW_NAMESPACE
 {
-	PrivilegeManagerMockObjectScope::PrivilegeManagerMockObjectScope(Reference<PrivilegeManagerMockObject> mock)
+	PrivilegeManagerMockObjectScope::PrivilegeManagerMockObjectScope(blocxx::Reference<PrivilegeManagerMockObject> mock)
 		: m_mock(mock)
 	{
 		old_mock = g_privilegeManagerMockObject.set(&*mock);

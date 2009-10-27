@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/SharedLibraryReference.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SharedLibraryReference.hpp is deprecated, use "blocxx/SharedLibraryReference.hpp" instead.
 #endif

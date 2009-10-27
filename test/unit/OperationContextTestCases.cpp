@@ -43,6 +43,7 @@ AUTO_UNIT_TEST_SUITE_NAMED(OperationContextTestCases,"OperationContext");
 #include "OW_LocalOperationContext.hpp"
 
 using namespace OpenWBEM;
+using namespace blocxx;
 
 void OperationContextTestCases::setUp()
 {

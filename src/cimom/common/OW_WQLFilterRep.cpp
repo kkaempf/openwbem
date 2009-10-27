@@ -47,6 +47,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 ///////////////////////////////////////////////////////////////////////////////
 WQLFilterRep::WQLFilterRep(const CIMInstance& inst,
 	const RepositoryIFCRef& cimServer)

@@ -37,13 +37,13 @@
 #include "OW_CIMXMLParser.hpp"
 #include "OW_CIMException.hpp"
 #include "blocxx/Format.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_XMLUnescape.hpp"
 #include <algorithm> // for std::lower_bound
 
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 ///////////////////////////////////////////////////////////////////////////////
 CIMXMLParser::CIMXMLParser(const String& str)
 	: XMLPullParser(str)

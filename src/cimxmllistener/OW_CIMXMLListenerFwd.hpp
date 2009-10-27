@@ -41,11 +41,11 @@ namespace OW_NAMESPACE
 {
 
 class CIMListenerCallback;
-typedef IntrusiveReference<CIMListenerCallback> CIMListenerCallbackRef;
+typedef blocxx::IntrusiveReference<CIMListenerCallback> CIMListenerCallbackRef;
 class HTTPXMLCIMListener;
-typedef IntrusiveReference<HTTPXMLCIMListener> HTTPXMLCIMListenerRef;
+typedef blocxx::IntrusiveReference<HTTPXMLCIMListener> HTTPXMLCIMListenerRef;
 class CIMXMLListener;
-typedef IntrusiveReference<CIMXMLListener> CIMXMLListenerRef;
+typedef blocxx::IntrusiveReference<CIMXMLListener> CIMXMLListenerRef;
 class ListenerAuthenticator;
 class XMLListener;
 

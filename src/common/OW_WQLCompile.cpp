@@ -24,7 +24,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 #include "OW_config.h"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_WQLOperation.hpp"
 #include "OW_WQLOperand.hpp"
 #include "OW_WQLCompile.hpp"
@@ -40,6 +40,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 //
 // Terminal element methods
 //
@@ -140,7 +141,7 @@ inline bool _Compare(const T& x, const U& y, WQLOperation op)
 		case WQL_GE:
 			return x >= y;
 		default:
-			OW_ASSERT(0);
+			BLOCXX_ASSERT(0);
 	}
 	return false;
 }
@@ -188,7 +189,7 @@ bool _EvaluateRHS(
 			op);
 		}
 		default:
-		OW_ASSERT(0);
+		BLOCXX_ASSERT(0);
 	}
 	return false;
 }
@@ -236,7 +237,7 @@ static bool _EvaluateRHS(
 			op);
 		}
 		default:
-		OW_ASSERT(0);
+		BLOCXX_ASSERT(0);
 	}
 	return false;
 }
@@ -283,7 +284,7 @@ WQLOperation op)
 			op);
 		}
 		default:
-			OW_ASSERT(0);
+			BLOCXX_ASSERT(0);
 	}
 	return false;
 }
@@ -468,7 +469,7 @@ void WQLCompile::_buildEvalHeap(const WQLSelectStatement * wqs)
 				// unary
 				case WQL_NOT:
 					{
-						OW_ASSERT(stack.size() >= 1);
+						BLOCXX_ASSERT(stack.size() >= 1);
 
 						stack_el op1 = stack.top();
 
@@ -492,7 +493,7 @@ void WQLCompile::_buildEvalHeap(const WQLSelectStatement * wqs)
 				case WQL_GE:
 				case WQL_ISA:
 					{
-						OW_ASSERT(stack.size() >= 2);
+						BLOCXX_ASSERT(stack.size() >= 2);
 
 						stack_el op2 = stack.top();
 						stack.pop();
@@ -500,11 +501,11 @@ void WQLCompile::_buildEvalHeap(const WQLSelectStatement * wqs)
 						stack_el op1 = stack.top();
 						if (op1.type == OPERAND && op2.type == OPERAND)
 						{
-							OW_ASSERT(op1.type == OPERAND);
-							OW_ASSERT(wqs->_operStack[op1.opn].m_type == WQLSelectStatement::OperandOrOperation::OPERAND);
+							BLOCXX_ASSERT(op1.type == OPERAND);
+							BLOCXX_ASSERT(wqs->_operStack[op1.opn].m_type == WQLSelectStatement::OperandOrOperation::OPERAND);
 							WQLOperand lhs = wqs->_operStack[op1.opn].m_operand;
-							OW_ASSERT(op2.type == OPERAND);
-							OW_ASSERT(wqs->_operStack[op2.opn].m_type == WQLSelectStatement::OperandOrOperation::OPERAND);
+							BLOCXX_ASSERT(op2.type == OPERAND);
+							BLOCXX_ASSERT(wqs->_operStack[op2.opn].m_type == WQLSelectStatement::OperandOrOperation::OPERAND);
 							WQLOperand rhs = wqs->_operStack[op2.opn].m_operand;
 							terminal_heap.push_back(term_el(false, op, lhs, rhs));
 							stack.top() = stack_el(terminal_heap.size()-1, TERMINAL_HEAP);
@@ -521,13 +522,13 @@ void WQLCompile::_buildEvalHeap(const WQLSelectStatement * wqs)
 					}
 				case WQL_DO_NOTHING:
 					{
-						OW_ASSERT(0); // this should never happen
+						BLOCXX_ASSERT(0); // this should never happen
 						break;
 					}
 			}
 		}
 	}
-	OW_ASSERT(stack.size() == 1);
+	BLOCXX_ASSERT(stack.size() == 1);
 }
 void WQLCompile::_pushNOTDown()
 {

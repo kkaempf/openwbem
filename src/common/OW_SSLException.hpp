@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/SSLException.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SSLException.hpp is deprecated, use "blocxx/SSLException.hpp" instead.
 #endif
 

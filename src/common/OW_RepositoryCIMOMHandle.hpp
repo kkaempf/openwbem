@@ -41,7 +41,7 @@
 #include "blocxx/RWLocker.hpp"
 #include "blocxx/IntrusiveReference.hpp"
 #include "OW_CommonFwd.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -70,148 +70,148 @@ public:
 	virtual void close();
 
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
-	virtual void createNameSpace(const String& ns);
-	virtual void deleteNameSpace(const String& ns);
+	virtual void createNameSpace(const blocxx::String& ns);
+	virtual void deleteNameSpace(const blocxx::String& ns);
 #endif
 	virtual void enumNameSpace(StringResultHandlerIFC& result);
 	virtual void enumClass(
-		const String& ns,
-		const String& className,
+		const blocxx::String& ns,
+		const blocxx::String& className,
 		CIMClassResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW,
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
 	virtual void enumClassNames(
-		const String& ns,
-		const String& className,
+		const blocxx::String& ns,
+		const blocxx::String& className,
 		StringResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
-	virtual CIMQualifierType getQualifierType(const String& ns,
-		const String& qualifierName);
+	virtual CIMQualifierType getQualifierType(const blocxx::String& ns,
+		const blocxx::String& qualifierName);
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	virtual void enumQualifierTypes(
-		const String& ns,
+		const blocxx::String& ns,
 		CIMQualifierTypeResultHandlerIFC& result);
-	virtual void deleteQualifierType(const String& ns, const String& qualName);
-	virtual void setQualifierType(const String& ns,
+	virtual void deleteQualifierType(const blocxx::String& ns, const blocxx::String& qualName);
+	virtual void setQualifierType(const blocxx::String& ns,
 		const CIMQualifierType& qt);
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	virtual CIMInstance getInstance(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& instanceName,
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0);
+		const blocxx::StringArray* propertyList=0);
 	virtual void enumInstances(
-		const String& ns,
-		const String& className,
+		const blocxx::String& ns,
+		const blocxx::String& className,
 		CIMInstanceResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep = WBEMFlags::E_DEEP,
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0);
+		const blocxx::StringArray* propertyList=0);
 	virtual void enumInstanceNames(
-		const String& ns,
-		const String& className,
+		const blocxx::String& ns,
+		const blocxx::String& className,
 		CIMObjectPathResultHandlerIFC& result);
 	virtual CIMClass getClass(
-		const String& ns,
-		const String& className,
+		const blocxx::String& ns,
+		const blocxx::String& className,
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_INCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=NULL);
+		const blocxx::StringArray* propertyList=NULL);
 	virtual CIMValue invokeMethod(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& path,
-		const String &methodName, const CIMParamValueArray &inParams,
+		const blocxx::String &methodName, const CIMParamValueArray &inParams,
 		CIMParamValueArray &outParams);
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-	virtual void createClass(const String& ns,
+	virtual void createClass(const blocxx::String& ns,
 		const CIMClass &cc);
-	virtual void modifyClass(const String &ns, const CIMClass &cc);
-	virtual void deleteClass(const String& ns, const String& className);
+	virtual void modifyClass(const blocxx::String &ns, const CIMClass &cc);
+	virtual void deleteClass(const blocxx::String& ns, const blocxx::String& className);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	virtual CIMObjectPath createInstance(const String& ns,
+	virtual CIMObjectPath createInstance(const blocxx::String& ns,
 		const CIMInstance &ci);
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	virtual void setProperty(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &name,
-		const String &propertyName, const CIMValue &cv);
+		const blocxx::String &propertyName, const CIMValue &cv);
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	virtual void modifyInstance(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMInstance& modifiedInstance,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const StringArray* propertyList);
-	virtual void deleteInstance(const String& ns, const CIMObjectPath& path);
+		const blocxx::StringArray* propertyList);
+	virtual void deleteInstance(const blocxx::String& ns, const CIMObjectPath& path);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	virtual CIMValue getProperty(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &name,
-		const String &propertyName);
+		const blocxx::String &propertyName);
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associators(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &path,
 		CIMInstanceResultHandlerIFC& result,
-		const String &assocClass, const String &resultClass,
-		const String &role, const String &resultRole,
+		const blocxx::String &assocClass, const blocxx::String &resultClass,
+		const blocxx::String &role, const blocxx::String &resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList);
+		const blocxx::StringArray* propertyList);
 	virtual void associatorsClasses(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath& path,
 		CIMClassResultHandlerIFC& result,
-		const String& assocClass=String(),
-		const String& resultClass=String(),
-		const String& role=String(),
-		const String& resultRole=String(),
+		const blocxx::String& assocClass=blocxx::String(),
+		const blocxx::String& resultClass=blocxx::String(),
+		const blocxx::String& role=blocxx::String(),
+		const blocxx::String& resultRole=blocxx::String(),
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0);
+		const blocxx::StringArray* propertyList=0);
 virtual void references(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &path,
 		CIMInstanceResultHandlerIFC& result,
-		const String &resultClass, const String &role,
+		const blocxx::String &resultClass, const blocxx::String &role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList);
+		const blocxx::StringArray* propertyList);
 	virtual void referencesClasses(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &path,
 		CIMClassResultHandlerIFC& result,
-		const String &resultClass, const String &role,
+		const blocxx::String &resultClass, const blocxx::String &role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList);
+		const blocxx::StringArray* propertyList);
 	virtual void associatorNames(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &path,
 		CIMObjectPathResultHandlerIFC& result,
-		const String &assocClass,
-		const String &resultClass, const String &role,
-		const String &resultRole);
+		const blocxx::String &assocClass,
+		const blocxx::String &resultClass, const blocxx::String &role,
+		const blocxx::String &resultRole);
 	virtual void referenceNames(
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMObjectPath &path,
 		CIMObjectPathResultHandlerIFC& result,
-		const String &resultClass,
-		const String &role);
+		const blocxx::String &resultClass,
+		const blocxx::String &role);
 #endif
 
 	virtual void execQuery(
-		const String& ns,
+		const blocxx::String& ns,
 		CIMInstanceResultHandlerIFC& result,
-		const String &query, const String& queryLanguage);
+		const blocxx::String &query, const blocxx::String& queryLanguage);
 
-	OW_SAFE_BOOL_IMPL(RepositoryCIMOMHandle, RepositoryIFCRef, RepositoryCIMOMHandle::m_pServer, m_pServer)
+	BLOCXX_SAFE_BOOL_IMPL(RepositoryCIMOMHandle, RepositoryIFCRef, RepositoryCIMOMHandle::m_pServer, m_pServer)
 
 	void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
 	void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result);

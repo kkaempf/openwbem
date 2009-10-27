@@ -37,16 +37,18 @@
 #include "OW_CppProviderIncludes.hpp"
 #include "blocxx/FileSystem.hpp"
 #include "blocxx/Thread.hpp" // for yield()
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/Timeout.hpp"
 #include "blocxx/TimeoutTimer.hpp"
 #include "blocxx/NonRecursiveMutex.hpp"
 #include "blocxx/NonRecursiveMutexLock.hpp"
+#include "blocxx/Logger.hpp"
 #include "testMethodLocking.hpp"
 
 using namespace std;
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
@@ -108,17 +110,17 @@ public:
 		Logger logger(COMPONENT_NAME);
 		if (path.getClassName() == "no")
 		{
-			OW_LOG_DEBUG(logger, "got classname no, returning E_NO_LOCK");
+			BLOCXX_LOG_DEBUG(logger, "got classname no, returning E_NO_LOCK");
 			return CppMethodProviderIFC::E_NO_LOCK;
 		}
 		else if (path.getClassName() == "read")
 		{
-			OW_LOG_DEBUG(logger, "got classname read, returning E_READ_LOCK");
+			BLOCXX_LOG_DEBUG(logger, "got classname read, returning E_READ_LOCK");
 			return CppMethodProviderIFC::E_READ_LOCK;
 		}
 		else if (path.getClassName() == "write")
 		{
-			OW_LOG_DEBUG(logger, "got classname write, returning E_WRITE_LOCK");
+			BLOCXX_LOG_DEBUG(logger, "got classname write, returning E_WRITE_LOCK");
 			return CppMethodProviderIFC::E_WRITE_LOCK;
 		}
 		else
@@ -136,17 +138,17 @@ public:
 		CIMParamValueArray &out)
 	{
 		Logger lgr(COMPONENT_NAME);
-		OW_LOG_DEBUG(lgr, Format("testMethodLockingProv::invokeMethod() methodName = %1", methodName));
+		BLOCXX_LOG_DEBUG(lgr, Format("testMethodLockingProv::invokeMethod() methodName = %1", methodName));
 		if (methodName == "wait")
 		{
 			String startedFile = in[0].getValue().toString();
 			String waitForFile = in[1].getValue().toString();
-			OW_LOG_DEBUG(lgr, Format("startedFile = \"%1\", waitForFile = \"%2\"", startedFile, waitForFile));
+			BLOCXX_LOG_DEBUG(lgr, Format("startedFile = \"%1\", waitForFile = \"%2\"", startedFile, waitForFile));
 			if (!FileSystem::createFile(startedFile)) // this is the signal to the caller that the method has started to wait
 			{
-				OW_LOG_ERROR(lgr, Format("Failed to create %1: %2", startedFile, strerror(errno)));
+				BLOCXX_LOG_ERROR(lgr, Format("Failed to create %1: %2", startedFile, strerror(errno)));
 			}
-			OW_LOG_DEBUG(lgr, "created startedFile, waiting for existence of waitForFile");
+			BLOCXX_LOG_DEBUG(lgr, "created startedFile, waiting for existence of waitForFile");
 			Timeout to = Timeout::relative(10.0);
 			TimeoutTimer timer(to);
 			do
@@ -156,10 +158,10 @@ public:
 			} while (!FileSystem::exists(waitForFile) && !timer.expired());
 			if (!FileSystem::exists(waitForFile))
 			{
-				OW_LOG_DEBUG(lgr, "timed out waiting for waitForFile. Exiting with failure.");
+				BLOCXX_LOG_DEBUG(lgr, "timed out waiting for waitForFile. Exiting with failure.");
 				return CIMValue(false);
 			}
-			OW_LOG_DEBUG(lgr, "waitForFile now exists. Exiting.");
+			BLOCXX_LOG_DEBUG(lgr, "waitForFile now exists. Exiting.");
 			return CIMValue(true);
 		}
 		else if (methodName == "test")
@@ -180,7 +182,7 @@ public:
 			const char* const read = "read";
 			const char* const write = "write";
 			int testCount = 1;
-#define TEST_ASSERT(CON) OW_LOG_DEBUG(lgr, Format("About to run test %1: %2", testCount++, #CON)); if (!(CON)) throw AssertionException(__FILE__, __LINE__, #CON); chs.clearClonedEnvs()
+#define TEST_ASSERT(CON) BLOCXX_LOG_DEBUG(lgr, Format("About to run test %1: %2", testCount++, #CON)); if (!(CON)) throw AssertionException(__FILE__, __LINE__, #CON); chs.clearClonedEnvs()
 			// first oop
 			TEST_ASSERT(MethodLocking::test(oopNS, no, read, chs));
 			TEST_ASSERT(MethodLocking::test(oopNS, no, read, read, chs));

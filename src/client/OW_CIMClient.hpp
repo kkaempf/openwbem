@@ -70,15 +70,15 @@ public:
 	 *   to be thrown if authentication fails.  Note that the credentials can
 	 *   be specified in the url.
 	 */
-	CIMClient(const String& url, const String& ns,
+	CIMClient(const blocxx::String& url, const blocxx::String& ns,
 			const ClientAuthCBIFCRef& authCB = ClientAuthCBIFCRef());
 
 	~CIMClient();
 	CIMClient(const CIMClient& x);
 	CIMClient& operator=(const CIMClient& x);
 
-	void setNameSpace(const String& arg) { m_namespace = arg; }
-	String getNameSpace() const { return m_namespace; }
+	void setNameSpace(const blocxx::String& arg) { m_namespace = arg; }
+	blocxx::String getNameSpace() const { return m_namespace; }
 
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/**
@@ -86,35 +86,14 @@ public:
 	 * @param ns 	The namespace name to be created.
 	 * @exception CIMException If the namespace already exists.
 	 */
-	void createNameSpace(const String& ns);
+	void createNameSpace(const blocxx::String& ns);
 	/**
 	 * Delete a specified namespace.
 	 * @param ns	The namespace to delete.
 	 * @exception CIMException If the namespace does not exist.
 	 */
-	void deleteNameSpace(const String& ns);
+	void deleteNameSpace(const blocxx::String& ns);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	/**
-	 * Gets a list of the namespaces within the namespace specified by the CIM
-	 * object path.
-	 *
-	 * This is deprecated because namespaces are not hierarchial according to
-	 * the CIM Operations over HTTP 1.1, even though many implementations expose
-	 * namespaces hierarcially using __Namespace.  use enumCIM_NameSpace()
-	 * instead.
-	 *
-	 * @param deep If set to DEEP, the enumeration returned will contain the
-	 *		entire hierarchy of namespaces present under the enumerated
-	 *		namespace. If set to SHALLOW  the enuermation will return only the
-	 *		first level children of the enumerated namespace.
-	 * @return An Array of namespace names as strings.
-	 * @exception CIMException If the namespace does not exist or the object
-	 *		cannot be found in the specified namespace.
-	 */
-	StringArray enumNameSpaceE(WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP) OW_DEPRECATED; // in 3.1.0
-	void enumNameSpace(StringResultHandlerIFC& result,
-		WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP) OW_DEPRECATED; // in 3.1.0
-
 	/**
 	 * Gets a list of the namespaces. This will first try enumerating instances
 	 * of root/CIM_Namespace, and if that fails, then a recursive enumeration
@@ -124,7 +103,7 @@ public:
 	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	StringArray enumCIM_NamespaceE();
+	blocxx::StringArray enumCIM_NamespaceE();
 	void enumCIM_Namespace(StringResultHandlerIFC& result);
 
 	/**
@@ -143,13 +122,13 @@ public:
 	 * @exception CIMException If the specified CIMObjectPath object cannot
 	 *		be found
 	 */
-	void enumClass(const String& className,
+	void enumClass(const blocxx::String& className,
 		CIMClassResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW,
 		WBEMFlags::ELocalOnlyFlag localOnly=WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_INCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
-	CIMClassEnumeration enumClassE(const String& className,
+	CIMClassEnumeration enumClassE(const blocxx::String& className,
 		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW,
 		WBEMFlags::ELocalOnlyFlag localOnly =WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers =WBEMFlags::E_INCLUDE_QUALIFIERS,
@@ -164,11 +143,11 @@ public:
 	 * @exception CIMException  	If the specified CIMObjectPath object cannot be found.
 	 */
 	void enumClassNames(
-		const String& className,
+		const blocxx::String& className,
 		StringResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
-	StringEnumeration enumClassNamesE(
-		const String& className,
+	blocxx::StringEnumeration enumClassNamesE(
+		const blocxx::String& className,
 		WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
 	/**
 	 * Returns all instances (the whole instance and not just the names)
@@ -199,20 +178,20 @@ public:
 	 * @exception CIMException 	If the object cannot be found
 	 */
 	void enumInstances(
-		const String& className,
+		const blocxx::String& className,
 		CIMInstanceResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep = WBEMFlags::E_DEEP,
 		WBEMFlags::ELocalOnlyFlag localOnly =WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers =WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0);
+		const blocxx::StringArray* propertyList=0);
 	CIMInstanceEnumeration enumInstancesE(
-		const String& className,
+		const blocxx::String& className,
 		WBEMFlags::EDeepFlag deep =WBEMFlags::E_DEEP,
 		WBEMFlags::ELocalOnlyFlag localOnly =WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers =WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0);
+		const blocxx::StringArray* propertyList=0);
 	/**
 	 * Returns all instance names belonging to the class specified in the path.
 	 * This could include instances of all the classes in the specified class'
@@ -222,10 +201,10 @@ public:
 	 * @exception CIMException 	If the object cannot be found
 	 */
 	void enumInstanceNames(
-		const String& className,
+		const blocxx::String& className,
 		CIMObjectPathResultHandlerIFC& result);
 	CIMObjectPathEnumeration enumInstanceNamesE(
-		const String& className);
+		const blocxx::String& className);
 	/**
 	 * Gets the CIM class for the specified CIM object path.
 	 * @param classNname The CIM class
@@ -245,11 +224,11 @@ public:
 	 *										the object cannot be found
 	 */
 	CIMClass getClass(
-		const String& className,
+		const blocxx::String& className,
 		WBEMFlags::ELocalOnlyFlag localOnly =WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers =WBEMFlags::E_INCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =WBEMFlags::E_INCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList = 0);
+		const blocxx::StringArray* propertyList = 0);
 	/**
 	 * Gets the CIM instance for the specified CIM object path.
 	 *
@@ -280,7 +259,7 @@ public:
 		WBEMFlags::ELocalOnlyFlag localOnly =WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers =WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0) ;
+		const blocxx::StringArray* propertyList=0) ;
 	/**
 	 * Executes the specified method on the specified object. A method is a
 	 * declaration containing the method name, return type, and parameters in
@@ -295,7 +274,7 @@ public:
 	 */
 	CIMValue invokeMethod(
 		const CIMObjectPath& path,
-		const String& methodName,
+		const blocxx::String& methodName,
 		const CIMParamValueArray& inParams,
 		CIMParamValueArray& outParams);
 	/**
@@ -304,7 +283,7 @@ public:
 	 * @return An CIMQualifierType identified by name.
 	 * @exception CIMException If the CIM qualifier type cannot be found
 	 */
-	CIMQualifierType getQualifierType(const String& qualifierName);
+	CIMQualifierType getQualifierType(const blocxx::String& qualifierName);
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace if
@@ -317,7 +296,7 @@ public:
 	 * @param qualName The qualifier type to delete.
 	 * @exception CIMException If the qualifier type does not exist.
 	 */
-	void deleteQualifierType(const String& qualName);
+	void deleteQualifierType(const blocxx::String& qualName);
 	/**
 	 * Enumerates the qualifiers defined in a namespace.
 	 * @exception CIMException	If the specified CIMObjectPath cannot be
@@ -346,7 +325,7 @@ public:
 	 * @param className The class to delete
 	 * @exception CIMException If the object does not exist
 	 */
-	void deleteClass(const String& className);
+	void deleteClass(const blocxx::String& className);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
@@ -359,7 +338,7 @@ public:
 	 */
 	void modifyInstance(const CIMInstance& modifiedInstance,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers =WBEMFlags::E_INCLUDE_QUALIFIERS,
-		StringArray* propertyList = 0);
+		blocxx::StringArray* propertyList = 0);
 	/**
 	 * Add the specified CIM instance to the specified namespace.
 	 * @param instance the CIMInstance to be added
@@ -388,7 +367,7 @@ public:
 	 */
 	void setProperty(
 		const CIMObjectPath& instanceName,
-		const String& propertyName,
+		const blocxx::String& propertyName,
 		const CIMValue& newValue) ;
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -403,7 +382,7 @@ public:
 	 */
 	CIMValue getProperty(
 		const CIMObjectPath& instanceName,
-		const String& propertyName);
+		const blocxx::String& propertyName);
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
@@ -446,16 +425,16 @@ public:
 	void associatorNames(
 		const CIMObjectPath& objectName,
 		CIMObjectPathResultHandlerIFC& result,
-		const String& assocClass=String(),
-		const String& resultClass=String(),
-		const String& role=String(),
-		const String& resultRole=String()) ;
+		const blocxx::String& assocClass=blocxx::String(),
+		const blocxx::String& resultClass=blocxx::String(),
+		const blocxx::String& role=blocxx::String(),
+		const blocxx::String& resultRole=blocxx::String()) ;
 	CIMObjectPathEnumeration associatorNamesE(
 		const CIMObjectPath& objectName,
-		const String& assocClass=String(),
-		const String& resultClass=String(),
-		const String& role=String(),
-		const String& resultRole=String());
+		const blocxx::String& assocClass=blocxx::String(),
+		const blocxx::String& resultClass=blocxx::String(),
+		const blocxx::String& role=blocxx::String(),
+		const blocxx::String& resultRole=blocxx::String());
 	/**
 	 * This operation is used to enumerate CIMInstances
 	 * that are associated to a particular source CIM Instance.
@@ -532,22 +511,22 @@ public:
 	void associators(
 		const CIMObjectPath& path,
 		CIMInstanceResultHandlerIFC& result,
-		const String& assocClass=String(),
-		const String& resultClass=String(),
-		const String& role=String(),
-		const String& resultRole=String(),
+		const blocxx::String& assocClass=blocxx::String(),
+		const blocxx::String& resultClass=blocxx::String(),
+		const blocxx::String& role=blocxx::String(),
+		const blocxx::String& resultRole=blocxx::String(),
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0);
+		const blocxx::StringArray* propertyList=0);
 	CIMInstanceEnumeration associatorsE(
 		const CIMObjectPath& path,
-		const String& assocClass=String(),
-		const String& resultClass=String(),
-		const String& role=String(),
-		const String& resultRole=String(),
+		const blocxx::String& assocClass=blocxx::String(),
+		const blocxx::String& resultClass=blocxx::String(),
+		const blocxx::String& role=blocxx::String(),
+		const blocxx::String& resultRole=blocxx::String(),
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0);
+		const blocxx::StringArray* propertyList=0);
 	/**
 	 * This operation is used to enumerate CIMClasses
 	 * that are associated to a particular source CIM Object.
@@ -624,22 +603,22 @@ public:
 	void associatorsClasses(
 		const CIMObjectPath& path,
 		CIMClassResultHandlerIFC& result,
-		const String& assocClass=String(),
-		const String& resultClass=String(),
-		const String& role=String(),
-		const String& resultRole=String(),
+		const blocxx::String& assocClass=blocxx::String(),
+		const blocxx::String& resultClass=blocxx::String(),
+		const blocxx::String& role=blocxx::String(),
+		const blocxx::String& resultRole=blocxx::String(),
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0);
+		const blocxx::StringArray* propertyList=0);
 	CIMClassEnumeration associatorsClassesE(
 		const CIMObjectPath& path,
-		const String& assocClass=String(),
-		const String& resultClass=String(),
-		const String& role=String(),
-		const String& resultRole=String(),
+		const blocxx::String& assocClass=blocxx::String(),
+		const blocxx::String& resultClass=blocxx::String(),
+		const blocxx::String& role=blocxx::String(),
+		const blocxx::String& resultRole=blocxx::String(),
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0);
+		const blocxx::StringArray* propertyList=0);
 	/**
 	 * This operation is used to enumerate the association objects that refer to
 	 * a particular target CIM Object.
@@ -656,12 +635,12 @@ public:
 	void referenceNames(
 		const CIMObjectPath& path,
 		CIMObjectPathResultHandlerIFC& result,
-		const String& resultClass=String(),
-		const String& role=String()) ;
+		const blocxx::String& resultClass=blocxx::String(),
+		const blocxx::String& role=blocxx::String()) ;
 	CIMObjectPathEnumeration referenceNamesE(
 		const CIMObjectPath& path,
-		const String& resultClass=String(),
-		const String& role=String());
+		const blocxx::String& resultClass=blocxx::String(),
+		const blocxx::String& role=blocxx::String());
 	/**
 	 * This operation is used to enumerate the association objects that refer to
 	 * a particular target CIM Object (Class or Instance).
@@ -695,33 +674,33 @@ public:
 	void references(
 		const CIMObjectPath& path,
 		CIMInstanceResultHandlerIFC& result,
-		const String& resultClass=String(),
-		const String& role=String(),
+		const blocxx::String& resultClass=blocxx::String(),
+		const blocxx::String& role=blocxx::String(),
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0) ;
+		const blocxx::StringArray* propertyList=0) ;
 	CIMInstanceEnumeration referencesE(
 		const CIMObjectPath& path,
-		const String& resultClass=String(),
-		const String& role=String(),
+		const blocxx::String& resultClass=blocxx::String(),
+		const blocxx::String& role=blocxx::String(),
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0);
+		const blocxx::StringArray* propertyList=0);
 	void referencesClasses(
 		const CIMObjectPath& path,
 		CIMClassResultHandlerIFC& result,
-		const String& resultClass=String(),
-		const String& role=String(),
+		const blocxx::String& resultClass=blocxx::String(),
+		const blocxx::String& role=blocxx::String(),
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0) ;
+		const blocxx::StringArray* propertyList=0) ;
 	CIMClassEnumeration referencesClassesE(
 		const CIMObjectPath& path,
-		const String& resultClass=String(),
-		const String& role=String(),
+		const blocxx::String& resultClass=blocxx::String(),
+		const blocxx::String& role=blocxx::String(),
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const StringArray* propertyList=0);
+		const blocxx::StringArray* propertyList=0);
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * Executes a query to retrieve or modify objects.
@@ -743,11 +722,11 @@ public:
 	 */
 	void execQuery(
 		CIMInstanceResultHandlerIFC& result,
-		const String& query,
-		const String& queryLanguage);
+		const blocxx::String& query,
+		const blocxx::String& queryLanguage);
 	CIMInstanceEnumeration execQueryE(
-		const String& query,
-		const String& queryLanguage);
+		const blocxx::String& query,
+		const blocxx::String& queryLanguage);
 
 	/**
 	 * Set/Add an HTTP header and its associated value. This header will be
@@ -756,8 +735,8 @@ public:
 	 * @param hdrValue The value of the HTTP Header (e.g. "en-US, en")
 	 * @return true if successful. Otherwise false.
 	 */
-	bool setHTTPRequestHeader(const String& hdrName,
-		const String& hdrValue);
+	bool setHTTPRequestHeader(const blocxx::String& hdrName,
+		const blocxx::String& hdrValue);
 
 	/**
 	 * Get the value of an HTTP header that was returned in the CIMOM's
@@ -768,11 +747,11 @@ public:
 	 * 		on return.
 	 * @return true if the header exists. Otherwise false.
 	 */
-	bool getHTTPResponseHeader(const String& hdrName,
-		String& valueOut) const;
+	bool getHTTPResponseHeader(const blocxx::String& hdrName,
+		blocxx::String& valueOut) const;
 
 private:
-	String m_namespace;
+	blocxx::String m_namespace;
 
 	/// @todo  implement SLP integration to fetch the interop namespace so that namespace manipulation can be done correctly.
 

@@ -38,5 +38,10 @@
 #include "OW_config.h"
 #include <blocxx/Stack.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Stack.hpp is deprecated, use "blocxx/Stack.hpp" instead.
 #endif

@@ -43,6 +43,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 namespace {
 OW_DECLARE_EXCEPTION(FoundTheInst);
 OW_DEFINE_EXCEPTION(FoundTheInst);

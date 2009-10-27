@@ -40,14 +40,14 @@ struct DummyProvEnv : public OpenWBEM::ProviderEnvironmentIFC
 	virtual OpenWBEM::CIMOMHandleIFCRef getRepositoryCIMOMHandle() const;
 	virtual OpenWBEM::RepositoryIFCRef getRepository() const;
 	virtual OpenWBEM::RepositoryIFCRef getAuthorizingRepository() const;
-	virtual OpenWBEM::String getConfigItem(
-		const OpenWBEM::String &name, const OpenWBEM::String& defRetVal="")
+	virtual blocxx::String getConfigItem(
+		const blocxx::String &name, const blocxx::String& defRetVal="")
 		const;
-	virtual OpenWBEM::StringArray getMultiConfigItem(
-		const OpenWBEM::String &itemName,
-		const OpenWBEM::StringArray& defRetVal,
+	virtual blocxx::StringArray getMultiConfigItem(
+		const blocxx::String &itemName,
+		const blocxx::StringArray& defRetVal,
 		const char* tokenizeSeparator = 0) const;
-	virtual OpenWBEM::String getUserName() const;
+	virtual blocxx::String getUserName() const;
 	virtual OpenWBEM::OperationContext& getOperationContext();
 	virtual OpenWBEM::ProviderEnvironmentIFCRef clone() const;
 };

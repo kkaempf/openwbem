@@ -47,24 +47,24 @@ namespace OW_NAMESPACE
 
 class CIMServer;
 class ProviderManager;
-typedef IntrusiveReference<ProviderManager> ProviderManagerRef;
+typedef blocxx::IntrusiveReference<ProviderManager> ProviderManagerRef;
 class PollingManager;
-typedef IntrusiveReference<PollingManager> PollingManagerRef;
+typedef blocxx::IntrusiveReference<PollingManager> PollingManagerRef;
 class IndicationRepLayer;
 class IndicationServer;
-typedef SharedLibraryReference<IntrusiveReference<IndicationServer> > IndicationServerRef;
+typedef blocxx::SharedLibraryReference<blocxx::IntrusiveReference<IndicationServer> > IndicationServerRef;
 class AuthorizerManager;
-typedef IntrusiveReference<AuthorizerManager> AuthorizerManagerRef;
+typedef blocxx::IntrusiveReference<AuthorizerManager> AuthorizerManagerRef;
 class IndicationRepLayerMediator;
-typedef IntrusiveReference<IndicationRepLayerMediator> IndicationRepLayerMediatorRef;
+typedef blocxx::IntrusiveReference<IndicationRepLayerMediator> IndicationRepLayerMediatorRef;
 class EmbeddedCIMOMEnvironment;
-typedef IntrusiveReference<EmbeddedCIMOMEnvironment> EmbeddedCIMOMEnvironmentRef;
+typedef blocxx::IntrusiveReference<EmbeddedCIMOMEnvironment> EmbeddedCIMOMEnvironmentRef;
 class CIMOMEnvironment;
-typedef IntrusiveReference<CIMOMEnvironment> CIMOMEnvironmentRef;
+typedef blocxx::IntrusiveReference<CIMOMEnvironment> CIMOMEnvironmentRef;
 class LocalCIMOMHandle;
-typedef IntrusiveReference<LocalCIMOMHandle> LocalCIMOMHandleRef;
+typedef blocxx::IntrusiveReference<LocalCIMOMHandle> LocalCIMOMHandleRef;
 class ProviderIFCLoaderBase;
-typedef IntrusiveReference<ProviderIFCLoaderBase> ProviderIFCLoaderRef;
+typedef blocxx::IntrusiveReference<ProviderIFCLoaderBase> ProviderIFCLoaderRef;
 
 
 

@@ -58,7 +58,7 @@ void CMPI_ThreadContext::setContext()
 
 	int rc = pthread_setspecific(theKey,this);
 	if (rc != 0)
-		OW_THROW(OpenWBEM::CMPI_ThreadContextException, OpenWBEM::Format("pthread_setspecific failed. error = %1", rc).c_str());
+		OW_THROW(OpenWBEM::CMPI_ThreadContextException, blocxx::Format("pthread_setspecific failed. error = %1", rc).c_str());
 
 	//std::cout<<"--- setThreadContext(1) theKey: " << theKey << std::endl;
 }

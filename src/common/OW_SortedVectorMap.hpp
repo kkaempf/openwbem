@@ -37,5 +37,10 @@
 #include "OW_config.h"
 #include <blocxx/SortedVectorMap.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_SortedVectorMap.hpp is deprecated, use "blocxx/SortedVectorMap.hpp" instead.
 #endif

@@ -42,7 +42,7 @@
 #include "blocxx/MutexLock.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_CIMDateTime.hpp"
 
@@ -50,6 +50,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 LifecycleIndicationPoller::LifecycleIndicationPoller(
 	const String& ns, const CIMName& className,
@@ -178,11 +179,11 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 			return 1; // have poll called again in 1 second.
 		}
 
-		OW_LOG_DEBUG3(logger, Format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
+		BLOCXX_LOG_DEBUG3(logger, Format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
 		if (!willPoll())
 		{
 			// nothing to do, so return 0 to stop polling.
-			OW_LOG_DEBUG2(logger, "LifecycleIndicationPoller::poll nothing to do, returning 0");
+			BLOCXX_LOG_DEBUG2(logger, "LifecycleIndicationPoller::poll nothing to do, returning 0");
 			return 0;
 		}
 
@@ -196,11 +197,11 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 		}
 		catch (const CIMException& e)
 		{
-			OW_LOG_ERROR(logger, Format("LifecycleIndicationPoller::poll caught exception: %1", e));
+			BLOCXX_LOG_ERROR(logger, Format("LifecycleIndicationPoller::poll caught exception: %1", e));
 			return 0;
 		}
 
-		OW_LOG_DEBUG2(logger, Format("LifecycleIndicationPoller::poll got %1 instances", curInstances.size()));
+		BLOCXX_LOG_DEBUG2(logger, Format("LifecycleIndicationPoller::poll got %1 instances", curInstances.size()));
 		// Compare the new instances with the previous instances
 		// and send any indications that may be necessary.
 		typedef SortedVectorSet<CIMInstance, sortByInstancePath> instSet_t;
@@ -287,11 +288,11 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 	}
 	catch (Exception& e)
 	{
-		OW_LOG_ERROR(logger, Format("LifecycleIndicationPoller::poll() caught Exception: %1", e));
+		BLOCXX_LOG_ERROR(logger, Format("LifecycleIndicationPoller::poll() caught Exception: %1", e));
 	}
 	catch (std::exception& e)
 	{
-		OW_LOG_ERROR(logger, Format("LifecycleIndicationPoller::poll() caught std::exception: %1", e.what()));
+		BLOCXX_LOG_ERROR(logger, Format("LifecycleIndicationPoller::poll() caught std::exception: %1", e.what()));
 	}
 	return getPollInterval();
 }

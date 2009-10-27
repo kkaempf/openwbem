@@ -50,6 +50,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
 ///////////////////////////////////////////////////////////////////////////////
 CIMClient::CIMClient(const String& url, const String& ns, const ClientAuthCBIFCRef& authCB)
 	: m_namespace(ns)
@@ -110,19 +111,6 @@ void CIMClient::deleteNameSpace(const String& ns)
 	}
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-///////////////////////////////////////////////////////////////////////////////
-StringArray
-CIMClient::enumNameSpaceE(EDeepFlag deep)
-{
-	return CIMNameSpaceUtils::enum__Namespace(*m_ch, m_namespace, deep);
-}
-///////////////////////////////////////////////////////////////////////////////
-void
-CIMClient::enumNameSpace(StringResultHandlerIFC& result,
-	EDeepFlag deep)
-{
-	CIMNameSpaceUtils::enum__Namespace(*m_ch, m_namespace, result, deep);
-}
 ///////////////////////////////////////////////////////////////////////////////
 StringArray
 CIMClient::enumCIM_NamespaceE()

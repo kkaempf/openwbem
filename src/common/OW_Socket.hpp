@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include "blocxx/Socket.hpp"
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #ifdef OW_DEFAULT_HTTP_SERVER_UDS_FILENAME
 #define OW_DOMAIN_SOCKET_NAME OW_DEFAULT_HTTP_SERVER_UDS_FILENAME
 #endif

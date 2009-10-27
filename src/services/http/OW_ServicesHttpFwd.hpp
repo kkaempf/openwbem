@@ -41,7 +41,7 @@ namespace OW_NAMESPACE
 {
 
 class HTTPServer;
-typedef IntrusiveReference<HTTPServer> HTTPServerRef;
+typedef blocxx::IntrusiveReference<HTTPServer> HTTPServerRef;
 class HTTPSvrConnection;
 #ifndef OW_DISABLE_DIGEST
 class DigestAuthentication;

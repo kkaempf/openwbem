@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/DelayedFormat.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_DelayedFormat.hpp is deprecated, use "blocxx/DelayedFormat.hpp" instead.
 #endif
 

@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/Mutex.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_Mutex.hpp is deprecated, use "blocxx/Mutex.hpp" instead.
 #endif
 

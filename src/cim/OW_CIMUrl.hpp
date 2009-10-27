@@ -41,7 +41,7 @@
 #include "OW_CIMNULL.hpp"
 #include "OW_Types.hpp"
 #include "OW_CommonFwd.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -70,7 +70,7 @@ public:
 	 * (i.e. http://localhost:5988/cimom)
 	 * @param spec The string that contains the URL
 	 */
-	explicit CIMUrl(const String& spec);
+	explicit CIMUrl(const blocxx::String& spec);
 	/**
 	 * Create a new CIMUrl object.
 	 * @param protocol The protocol component of the url (i.e. http, https)
@@ -78,8 +78,8 @@ public:
 	 * @param file The file component of the URL
 	 * @param port The port component of the URL
 	 */
-	CIMUrl(const String& protocol, const String& host,
-		const String& file, Int32 port=0);
+	CIMUrl(const blocxx::String& protocol, const blocxx::String& host,
+		const blocxx::String& file, blocxx::Int32 port=0);
 	/**
 	 * Copy constructor
 	 * @param arg The CIMUrl object to make this object a copy of.
@@ -95,7 +95,7 @@ public:
 	 * @param context The CIMUrl that will provide the missing components
 	 * @param spec The String representation of the URL
 	 */
-	CIMUrl(const CIMUrl& context, const String& spec);
+	CIMUrl(const CIMUrl& context, const blocxx::String& spec);
 	/**
 	 * Destroy this CIMUrl object.
 	 */
@@ -111,7 +111,7 @@ public:
 	 */
 	CIMUrl& operator= (const CIMUrl& arg);
 
-	OW_SAFE_BOOL_IMPL(CIMUrl, COWIntrusiveReference<URLData>, CIMUrl::m_pdata, m_pdata)
+	BLOCXX_SAFE_BOOL_IMPL(CIMUrl, blocxx::COWIntrusiveReference<URLData>, CIMUrl::m_pdata, m_pdata)
 
 	/**
 	 * Check this CIMUrl object against another for equality.
@@ -137,39 +137,39 @@ public:
 	/**
 	 * @return The String representation of the entire URL
 	 */
-	String getSpec() const;
+	blocxx::String getSpec() const;
 	/**
 	 * @return The protocol component of the URL
 	 */
-	String getProtocol() const;
+	blocxx::String getProtocol() const;
 	/**
 	 * Set the protocol component of the url
 	 * @param protocol The new protocol component for the url
 	 * @return a reference to *this
 	 */
-	CIMUrl& setProtocol(const String& protocol);
+	CIMUrl& setProtocol(const blocxx::String& protocol);
 	/**
 	 * @return The host component of the URL
 	 */
-	String getHost() const;
+	blocxx::String getHost() const;
 	/**
 	 * Set the host component of the URL
 	 * @param host The new host component for this CIMUrl object.
 	 * @return a reference to *this
 	 */
-	CIMUrl& setHost(const String& host);
+	CIMUrl& setHost(const blocxx::String& host);
 	/**
 	 * @return The port component of the URL
 	 */
-	Int32 getPort() const;
+	blocxx::Int32 getPort() const;
 	/**
 	 * @return The file component of the URL
 	 */
-	String getFile() const;
+	blocxx::String getFile() const;
 	/**
 	 * @return The reference data portion of the URL
 	 */
-	String getRef() const;
+	blocxx::String getRef() const;
 	/**
 	 * Determine if the file component of this URL is the same as the file
 	 * component on another URL
@@ -194,11 +194,11 @@ public:
 	/**
 	 * @return The string representation of this CIMUrl object.
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 	/**
 	 * @return The MOF representation of this CIMUrl object as an String.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 private:
 	void setLocalHost();
 	void setComponents();
@@ -211,7 +211,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<URLData> m_pdata;
+	blocxx::COWIntrusiveReference<URLData> m_pdata;
 
 #ifdef OW_WIN32
 #pragma warning (pop)

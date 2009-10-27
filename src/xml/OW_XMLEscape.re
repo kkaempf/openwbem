@@ -41,6 +41,7 @@
 
 namespace OW_NAMESPACE
 {
+using namespace blocxx;
 
 String XMLEscape(const char* unescapedText, unsigned len)
 {

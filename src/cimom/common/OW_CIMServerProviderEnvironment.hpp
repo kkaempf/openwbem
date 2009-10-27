@@ -49,16 +49,16 @@ class CIMServerProviderEnvironment : public ProviderEnvironmentIFC
 public:
 	CIMServerProviderEnvironment(OperationContext& context,
 		const ServiceEnvironmentIFCRef& env);
-	virtual String getConfigItem(const String &name,
-		const String& defRetVal="") const;
-	virtual StringArray getMultiConfigItem(const String &itemName,
-		const StringArray& defRetVal, const char* tokenizeSeparator = 0) const;
+	virtual blocxx::String getConfigItem(const blocxx::String &name,
+		const blocxx::String& defRetVal="") const;
+	virtual blocxx::StringArray getMultiConfigItem(const blocxx::String &itemName,
+		const blocxx::StringArray& defRetVal, const char* tokenizeSeparator = 0) const;
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const;
 	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const;
 	virtual RepositoryIFCRef getRepository() const;
 	virtual RepositoryIFCRef getAuthorizingRepository() const;
 	virtual CIMOMHandleIFCRef getLockedCIMOMHandle(EInitialLockFlag initialLock) const;
-	virtual String getUserName() const;
+	virtual blocxx::String getUserName() const;
 	virtual OperationContext& getOperationContext();
 	virtual ProviderEnvironmentIFCRef clone() const;
 

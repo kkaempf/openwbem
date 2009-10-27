@@ -34,7 +34,6 @@
 
 #include "OW_config.h"
 #include "OW_CIMClient.hpp"
-#include "OW_Assertion.hpp"
 #include "blocxx/GetPass.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "blocxx/CmdLineParser.hpp"
@@ -54,12 +53,13 @@
 
 using namespace OpenWBEM;
 using namespace OpenWBEM::Tools;
+using namespace WBEMFlags;
+using namespace blocxx;
 
 using std::cout;
 using std::cin;
 using std::endl;
 using std::cerr;
-using namespace WBEMFlags;
 
 namespace
 {

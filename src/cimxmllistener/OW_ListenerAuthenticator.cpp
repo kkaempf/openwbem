@@ -40,6 +40,7 @@
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 ListenerAuthenticator::ListenerAuthenticator()
 	: AuthenticatorIFC(), m_passwdMap()

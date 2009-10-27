@@ -65,7 +65,7 @@ public:
 	 * @return StringArray current NamespaceNames property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	StringArray getNamespaceNames() const
+	blocxx::StringArray getNamespaceNames() const
 	{
 		return getStringArrayProperty("NamespaceNames");
 	}
@@ -78,7 +78,7 @@ public:
 	 *
 	 * @param StringArray new NamespaceNames property value
 	 */
-	void setNamespaceNames(const StringArray& v)
+	void setNamespaceNames(const blocxx::StringArray& v)
 	{
 		setStringArrayProperty("NamespaceNames", v);
 	}
@@ -103,7 +103,7 @@ public:
 	 * @return StringArray current ClassNames property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	StringArray getClassNames() const
+	blocxx::StringArray getClassNames() const
 	{
 		return getStringArrayProperty("ClassNames");
 	}
@@ -116,7 +116,7 @@ public:
 	 *
 	 * @param StringArray new ClassNames property value
 	 */
-	void setClassNames(const StringArray& v)
+	void setClassNames(const blocxx::StringArray& v)
 	{
 		setStringArrayProperty("ClassNames", v);
 	}
@@ -141,7 +141,7 @@ public:
 	 * @return StringArray current MethodNames property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	StringArray getMethodNames() const
+	blocxx::StringArray getMethodNames() const
 	{
 		return getStringArrayProperty("MethodNames");
 	}
@@ -154,7 +154,7 @@ public:
 	 *
 	 * @param StringArray new MethodNames property value
 	 */
-	void setMethodNames(const StringArray& v)
+	void setMethodNames(const blocxx::StringArray& v)
 	{
 		setStringArrayProperty("MethodNames", v);
 	}
@@ -179,7 +179,7 @@ public:
 	 * @return String current InstanceID property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	String getInstanceID() const
+	blocxx::String getInstanceID() const
 	{
 		return getStringProperty("InstanceID");
 	}
@@ -192,7 +192,7 @@ public:
 	 *
 	 * @param String new InstanceID property value
 	 */
-	void setInstanceID(const String& v)
+	void setInstanceID(const blocxx::String& v)
 	{
 		setStringProperty("InstanceID", v);
 	}
@@ -227,7 +227,7 @@ public:
 	 * @return UInt16 current LockType property value
 	 * @exception NullValueException if the property value is NULL (uninitialized)
 	 */
-	UInt16 getLockType() const
+	blocxx::UInt16 getLockType() const
 	{
 		return getUInt16Property("LockType");
 	}
@@ -240,7 +240,7 @@ public:
 	 *
 	 * @param UInt16 new LockType property value
 	 */
-	void setLockType(const UInt16 v)
+	void setLockType(const blocxx::UInt16 v)
 	{
 		setUInt16Property("LockType", v);
 	}

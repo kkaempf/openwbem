@@ -36,6 +36,8 @@
 
 namespace OW_NAMESPACE
 {
+	using namespace blocxx;
+
 	OW_DECLARE_EXCEPTION2(PrivilegeManagerMockObjectUnimplemented, PrivilegeManagerException);
 	OW_DEFINE_EXCEPTION2(PrivilegeManagerMockObjectUnimplemented, PrivilegeManagerException);
 

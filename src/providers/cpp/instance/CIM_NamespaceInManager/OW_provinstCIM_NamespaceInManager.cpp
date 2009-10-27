@@ -44,20 +44,20 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_ResultHandlerIFC.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 
 namespace OW_NAMESPACE
 {
+using namespace WBEMFlags;
+using namespace blocxx;
 
 namespace
 {
 	const String COMPONENT_NAME("ow.provider.CIM_NamespaceInManager");
 }
-
-using namespace WBEMFlags;
 
 class CIM_NamespaceInManagerInstProv :
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -84,7 +84,7 @@ public:
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 	{
-		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::enumInstanceNames");
+		BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::enumInstanceNames");
 		CIMObjectPath newCop(className, ns);
 		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 		CIMObjectPathEnumeration objectManagers = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
@@ -118,7 +118,7 @@ public:
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 	{
-		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::enumInstances");
+		BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::enumInstances");
 		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 		CIMObjectPathEnumeration objectManagers = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
 		CIMObjectPathEnumeration namespaces = hdl->enumInstanceNamesE(ns, "CIM_Namespace");
@@ -150,7 +150,7 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& cimClass )
 	{
-		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::getInstance");
+		BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::getInstance");
 		CIMInstance inst = cimClass.newInstance();
 		try
 		{
@@ -253,10 +253,10 @@ public:
 		const String &role,
 		const String &resultRole)
 	{
-		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::associatorNames");
+		BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::associatorNames");
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
-		OW_ASSERT(assocClass.equalsIgnoreCase("CIM_NamespaceInManager"));
+		BLOCXX_ASSERT(assocClass.equalsIgnoreCase("CIM_NamespaceInManager"));
 		InstanceToObjectPathHandler handler(result, ns);
 		associators(env, handler, ns, objectName, assocClass, resultClass, role, resultRole, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 	}
@@ -268,11 +268,11 @@ public:
 		const String &resultClass,
 		const String &role)
 	{
-		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::referenceNames");
+		BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::referenceNames");
 
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
-		OW_ASSERT(resultClass.equalsIgnoreCase("CIM_NamespaceInManager"));
+		BLOCXX_ASSERT(resultClass.equalsIgnoreCase("CIM_NamespaceInManager"));
 		InstanceToObjectPathHandler handler(result, ns);
 		references(env, handler, ns, objectName, resultClass, role, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 	}
@@ -339,10 +339,10 @@ public:
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 	{
-		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::associators");
+		BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::associators");
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
-		OW_ASSERT(assocClass.equalsIgnoreCase("CIM_NamespaceInManager"));
+		BLOCXX_ASSERT(assocClass.equalsIgnoreCase("CIM_NamespaceInManager"));
 		if (objectName.getClassName().equalsIgnoreCase("OpenWBEM_ObjectManager")
 			|| objectName.getClassName().equalsIgnoreCase("CIM_ObjectManager"))
 		{
@@ -406,10 +406,10 @@ public:
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 	{
-		OW_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::references");
+		BLOCXX_LOG_DEBUG3(Logger(COMPONENT_NAME), "In CIM_NamespaceInManagerInstProv::references");
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
-		OW_ASSERT(resultClass.equalsIgnoreCase("CIM_NamespaceInManager"));
+		BLOCXX_ASSERT(resultClass.equalsIgnoreCase("CIM_NamespaceInManager"));
 		if (objectName.getClassName().equalsIgnoreCase("OpenWBEM_ObjectManager")
 			|| objectName.getClassName().equalsIgnoreCase("CIM_ObjectManager"))
 		{

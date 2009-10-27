@@ -51,6 +51,7 @@ namespace OW_NAMESPACE
 {
 
 using std::streambuf;
+using namespace blocxx;
 
 struct CIMQualifierType::QUALTData : public COWIntrusiveCountableBase
 {

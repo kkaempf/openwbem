@@ -53,6 +53,8 @@ namespace MOF
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
+
 CIMOMVisitor::CIMOMVisitor(const CIMOMHandleIFCRef& handle,
 	const Compiler::Options& opts,
 	const ParserErrorHandlerIFCRef& _theErrorHandler)

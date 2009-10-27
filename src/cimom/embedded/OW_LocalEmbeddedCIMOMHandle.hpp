@@ -91,7 +91,7 @@ public:
 	 * @param instance	The indication instance to use in the notification.
 	 */
 	void exportIndication(const CIMInstance& instance,
-		const String& instNS);
+		const blocxx::String& instNS);
 
 private:
 	EmbeddedCIMOMEnvironmentRef m_env;

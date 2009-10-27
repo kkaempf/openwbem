@@ -46,31 +46,31 @@ namespace OW_NAMESPACE
  * The purpose of this class is to serve as an always present bridge between
  * IndicationRepLayerImpl and provIndicationRepLayer
  */
-class OW_CIMOMCOMMON_API IndicationRepLayerMediator : public IntrusiveCountableBase
+class OW_CIMOMCOMMON_API IndicationRepLayerMediator : public blocxx::IntrusiveCountableBase
 {
 public:
-	UInt32 getClassCreationSubscriptionCount();
-	UInt32 getClassModificationSubscriptionCount();
-	UInt32 getClassDeletionSubscriptionCount();
-	UInt32 getInstCreationSubscriptionCount();
-	UInt32 getInstModificationSubscriptionCount();
-	UInt32 getInstDeletionSubscriptionCount();
-	UInt32 getInstReadSubscriptionCount();
-	UInt32 getInstMethodCallSubscriptionCount();
-	void addSubscription(const String& subName);
-	void deleteSubscription(const String& subName);
+	blocxx::UInt32 getClassCreationSubscriptionCount();
+	blocxx::UInt32 getClassModificationSubscriptionCount();
+	blocxx::UInt32 getClassDeletionSubscriptionCount();
+	blocxx::UInt32 getInstCreationSubscriptionCount();
+	blocxx::UInt32 getInstModificationSubscriptionCount();
+	blocxx::UInt32 getInstDeletionSubscriptionCount();
+	blocxx::UInt32 getInstReadSubscriptionCount();
+	blocxx::UInt32 getInstMethodCallSubscriptionCount();
+	void addSubscription(const blocxx::String& subName);
+	void deleteSubscription(const blocxx::String& subName);
 private:
-	Atomic_t m_classCount;
-	Atomic_t m_classCreationCount;
-	Atomic_t m_classModificationCount;
-	Atomic_t m_classDeletionCount;
-	Atomic_t m_instCount;
-	Atomic_t m_instCreationCount;
-	Atomic_t m_instModificationCount;
-	Atomic_t m_instDeletionCount;
-	Atomic_t m_instReadCount;
-	Atomic_t m_instMethodCallCount;
-	Atomic_t m_indicationCount;
+	blocxx::Atomic_t m_classCount;
+	blocxx::Atomic_t m_classCreationCount;
+	blocxx::Atomic_t m_classModificationCount;
+	blocxx::Atomic_t m_classDeletionCount;
+	blocxx::Atomic_t m_instCount;
+	blocxx::Atomic_t m_instCreationCount;
+	blocxx::Atomic_t m_instModificationCount;
+	blocxx::Atomic_t m_instDeletionCount;
+	blocxx::Atomic_t m_instReadCount;
+	blocxx::Atomic_t m_instMethodCallCount;
+	blocxx::Atomic_t m_indicationCount;
 };
 
 } // end namespace OW_NAMESPACE

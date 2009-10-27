@@ -48,14 +48,14 @@ namespace OW_NAMESPACE
 class RemoteMethodProvider : public MethodProviderIFC
 {
 public:
-	RemoteMethodProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
+	RemoteMethodProvider(const ProviderEnvironmentIFCRef& env, const blocxx::String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
 		bool alwaysSendCredentials, bool useConnectionCredentials);
 	virtual ~RemoteMethodProvider();
 	virtual CIMValue invokeMethod(
 			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
+			const blocxx::String& ns,
 			const CIMObjectPath& path,
-			const String& methodName,
+			const blocxx::String& methodName,
 			const CIMParamValueArray& in,
 			CIMParamValueArray& out );
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env)
@@ -65,7 +65,7 @@ public:
 
 private:
 	ClientCIMOMHandleConnectionPoolRef m_pool;
-	String m_url;
+	blocxx::String m_url;
 	bool m_alwaysSendCredentials;
 	bool m_useConnectionCredentials;
 };

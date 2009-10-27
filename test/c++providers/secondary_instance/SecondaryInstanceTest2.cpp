@@ -43,10 +43,11 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMClass.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 
 using namespace OpenWBEM;
 using namespace WBEMFlags;
+using namespace blocxx;
 
 // anonymous namespace to prevent symbol conflicts
 namespace
@@ -84,7 +85,7 @@ public:
 	virtual void createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, Format("SecondaryInstanceTest2::createInstance ns = %1, cimInstance = %2", ns, cimInstance));
+		BLOCXX_LOG_DEBUG(logger, Format("SecondaryInstanceTest2::createInstance ns = %1, cimInstance = %2", ns, cimInstance));
 	}
 
 	/**
@@ -102,7 +103,7 @@ public:
 	virtual void deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, Format("SecondaryInstanceTest2::deleteInstance ns = %1, cop = %2", ns, cop));
+		BLOCXX_LOG_DEBUG(logger, Format("SecondaryInstanceTest2::deleteInstance ns = %1, cop = %2", ns, cop));
 	}
 
 	/**
@@ -147,17 +148,17 @@ public:
 		const CIMClass &cimClass)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, Format("SecondaryInstanceTest2::filterInstances"
+		BLOCXX_LOG_DEBUG(logger, Format("SecondaryInstanceTest2::filterInstances"
 			" ns = %1, className = %2, localOnly = %3, deep = %4,"
 			" includeQualifiers = %5, includeClassOrigin = %6,"
 			" propertyList = %7, requestedClass = %8, cimClass = %9",
 			ns, className, localOnly, deep, includeQualifiers,
 			includeClassOrigin, propertyList, requestedClass, cimClass));
-		OW_LOG_DEBUG(logger, Format("SecondaryInstanceTest2::filterInstances"
+		BLOCXX_LOG_DEBUG(logger, Format("SecondaryInstanceTest2::filterInstances"
 			" instances.size() = %1", instances.size()));
 		for (size_t i = 0; i < instances.size(); ++i)
 		{
-			OW_LOG_DEBUG(logger, Format("SecondaryInstanceTest2::filterInstances"
+			BLOCXX_LOG_DEBUG(logger, Format("SecondaryInstanceTest2::filterInstances"
 				" instances[%1] = %2", i, instances[i]));
 
 			instances[i].setProperty("prop4", CIMValue("from secondary prov 2"));
@@ -177,7 +178,7 @@ public:
 	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass)
 	{
 		Logger logger(COMPONENT_NAME);
-		OW_LOG_DEBUG(logger, Format("SecondaryInstanceTest2::modifyInstance ns = %1, modifiedInstance = %2, previousInstance = %3", ns, modifiedInstance, previousInstance));
+		BLOCXX_LOG_DEBUG(logger, Format("SecondaryInstanceTest2::modifyInstance ns = %1, modifiedInstance = %2, previousInstance = %3", ns, modifiedInstance, previousInstance));
 	}
 };
 

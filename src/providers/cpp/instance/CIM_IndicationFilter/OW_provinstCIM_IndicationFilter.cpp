@@ -49,6 +49,8 @@ namespace OW_NAMESPACE
 {
 
 using namespace WBEMFlags;
+using namespace blocxx;
+
 namespace
 {
 // This is a pass through provider.  The instances are really stored in the repository.  All CIM_IndicationFilter modifications are intercepted and passed to the indication

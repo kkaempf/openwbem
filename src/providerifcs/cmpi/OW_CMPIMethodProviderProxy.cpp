@@ -39,10 +39,12 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMParamValue.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 namespace
 {
@@ -67,7 +69,7 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 	const CIMParamValueArray &in, CIMParamValueArray &out)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG3(lgr, "CMPIMethodProviderProxy::invokeMethod()");
+	BLOCXX_LOG_DEBUG3(lgr, "CMPIMethodProviderProxy::invokeMethod()");
 
 	m_ftable->lastAccessTime.setToCurrent();
 

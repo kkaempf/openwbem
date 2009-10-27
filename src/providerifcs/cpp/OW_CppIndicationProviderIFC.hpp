@@ -97,25 +97,25 @@ public:
 	virtual void activateFilter(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes,
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
 		bool firstActivation
 		);
 	virtual void authorizeFilter(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes,
-		const String& owner
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
+		const blocxx::String& owner
 		);
 	virtual void deActivateFilter(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes,
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes,
 		bool lastActivation
 		);
 	/**
@@ -142,13 +142,13 @@ public:
 	virtual int mustPoll(
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter,
-		const String& eventType,
-		const String& nameSpace,
-		const StringArray& classes
+		const blocxx::String& eventType,
+		const blocxx::String& nameSpace,
+		const blocxx::StringArray& classes
 		);
 	virtual CppIndicationProviderIFC* getIndicationProvider();
 };
-typedef SharedLibraryReference< IntrusiveReference<CppIndicationProviderIFC> > CppIndicationProviderIFCRef;
+typedef blocxx::SharedLibraryReference< blocxx::IntrusiveReference<CppIndicationProviderIFC> > CppIndicationProviderIFCRef;
 
 } // end namespace OW_NAMESPACE
 

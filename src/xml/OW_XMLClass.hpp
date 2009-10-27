@@ -49,7 +49,7 @@ namespace OW_NAMESPACE
 
 namespace XMLClass
 {
-	OW_XML_API String getNameSpace(CIMXMLParser& parser);
+	OW_XML_API blocxx::String getNameSpace(CIMXMLParser& parser);
 	OW_XML_API CIMObjectPath getObjectWithPath(CIMXMLParser& parser,
 			CIMClass& c, CIMInstance& i);
 	OW_XML_API CIMClass readClass(CIMXMLParser& parser, CIMObjectPath& path);

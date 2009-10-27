@@ -54,10 +54,10 @@ public:
 		const OOPProcessState& processState);
 	virtual ~OOPIndicationExportProvider();
 
-	virtual StringArray getHandlerClassNames();
+	virtual blocxx::StringArray getHandlerClassNames();
 
 	virtual void exportIndication(const ProviderEnvironmentIFCRef& env,
-		const String& ns,
+		const blocxx::String& ns,
 		const CIMInstance& indHandlerInst, const CIMInstance& indicationInst);
 	virtual void doShutdown();
 	virtual void doCooperativeCancel();

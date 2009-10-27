@@ -36,7 +36,7 @@
 #define OW_CIMSCOPE_HPP_
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
-#include "OW_SafeBool.hpp"
+#include "blocxx/SafeBool.hpp"
 
 #if defined(BAD)
 #undef BAD
@@ -139,16 +139,16 @@ public:
 	/**
 	 * @return true if this is a valid flavor
 	 */
-	OW_SAFE_BOOL_IMPL(CIMScope, Scope, CIMScope::m_val, (validScope(m_val) == true))
+	BLOCXX_SAFE_BOOL_IMPL(CIMScope, Scope, CIMScope::m_val, (validScope(m_val) == true))
 
 	/**
 	 * @return The string representation of this scopy
 	 */
-	virtual String toString() const;
+	virtual blocxx::String toString() const;
 	/**
 	 * @return The MOF representation of this scope as an String.
 	 */
-	virtual String toMOF() const;
+	virtual blocxx::String toMOF() const;
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.

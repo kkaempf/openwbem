@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/COWReference.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_COWReference.hpp is deprecated, use "blocxx/COWReference.hpp" instead.
 #endif
 

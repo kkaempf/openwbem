@@ -38,7 +38,7 @@
 #include "blocxx/FileSystem.hpp"
 #include "blocxx/File.hpp"
 #include "blocxx/Thread.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
@@ -54,6 +54,7 @@ using namespace std;
 using namespace OpenWBEM;
 using namespace WBEMFlags;
 using namespace LockedCIMOMHandle;
+using namespace blocxx;
 
 namespace
 {
@@ -72,7 +73,7 @@ bool invoke(const CIMOMHandleSource& chs, const String& ns, const String& cls, c
 bool invoke(const CIMOMHandleSource& chs, const String& ns, const String& cls, const String& method, const String& startedFile, const String& waitForFile)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("invoke(..., %1, %2, %3, %4, %5)", ns, cls, method, startedFile, waitForFile));
+	BLOCXX_LOG_DEBUG(lgr, Format("invoke(..., %1, %2, %3, %4, %5)", ns, cls, method, startedFile, waitForFile));
 	CIMOMHandleIFCRef hdl = chs.getCIMOMHandle();
 	CIMParamValueArray inparams;
 	inparams.push_back(CIMParamValue("startedFile", CIMValue(startedFile)));
@@ -104,7 +105,7 @@ public:
 		catch (Exception& e)
 		{
 			Logger lgr(COMPONENT_NAME);
-			OW_LOG_ERROR(lgr, Format("WaitThread::run() caught exception: %1", e));
+			BLOCXX_LOG_ERROR(lgr, Format("WaitThread::run() caught exception: %1", e));
 			return 0;
 		}
 	}
@@ -137,7 +138,7 @@ public:
 			if (!FileSystem::createFile(m_waitForFile))
 			{
 				Logger lgr(COMPONENT_NAME);
-				OW_LOG_ERROR(lgr, Format("WaitReleaser::release() failed to create: %1, %2", m_waitForFile, strerror(errno)));
+				BLOCXX_LOG_ERROR(lgr, Format("WaitReleaser::release() failed to create: %1, %2", m_waitForFile, strerror(errno)));
 			}
 			bool rv = m_waitingThread.join() == 0 ? false : true;
 			m_released = true;
@@ -155,13 +156,23 @@ private:
 
 namespace LockedCIMOMHandle
 {
+String getDirName()
+{
+	const char* dirNameEnv = getenv("EXTRAFILEDIR");
+	if (dirNameEnv)
+	{
+		return dirNameEnv;
+	}
+	return "/tmp";
+}
 
 bool test(const String& ns, const String& waitClass, const String& testClass, const CIMOMHandleSource& chs)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("test(%1, %2, %3, ...)", ns, waitClass, testClass));
-	String startedFile = FileSystem::Path::getCurrentWorkingDirectory() + "/startedFile";
-	String waitForFile = FileSystem::Path::getCurrentWorkingDirectory() + "/waitForFile";
+	BLOCXX_LOG_DEBUG(lgr, Format("test(%1, %2, %3, ...)", ns, waitClass, testClass));
+	String dirName = getDirName();
+	String startedFile = dirName + "/startedFile";
+	String waitForFile = dirName + "/waitForFile";
 	FileSystem::removeFile(startedFile);
 	FileSystem::removeFile(waitForFile);
 	WaitThread waitThread(ns, waitClass, chs, startedFile, waitForFile);
@@ -175,7 +186,7 @@ bool test(const String& ns, const String& waitClass, const String& testClass, co
 	}
 	if (!FileSystem::exists(startedFile))
 	{
-		OW_LOG_ERROR(lgr, Format("test timed out waiting for creation of: %1", startedFile));
+		BLOCXX_LOG_ERROR(lgr, Format("test timed out waiting for creation of: %1", startedFile));
 		return false;
 	}
 	WaitReleaser waitReleaser(waitForFile, waitThread);
@@ -184,26 +195,26 @@ bool test(const String& ns, const String& waitClass, const String& testClass, co
 	{
 		if (!invoke(chs, ns, testClass, "test"))
 		{
-			OW_LOG_ERROR(lgr, "test invocation of test failed");
+			BLOCXX_LOG_ERROR(lgr, "test invocation of test failed");
 			return false;
 		}
 	}
 	catch (CIMException& e)
 	{
 		// this happens in a client
-		OW_LOG_ERROR(lgr, Format("test invocation of test got exception: %1", e));
+		BLOCXX_LOG_ERROR(lgr, Format("test invocation of test got exception: %1", e));
 		return false;
 	}
 	catch (IOException& e)
 	{
 		// this happens in a provider
-		OW_LOG_ERROR(lgr, Format("test invocation of test got exception: %1", e));
+		BLOCXX_LOG_ERROR(lgr, Format("test invocation of test got exception: %1", e));
 		return false;
 	}
 
 	if (!waitReleaser.release())
 	{
-		OW_LOG_ERROR(lgr, "test waitReleaser.release() failed");
+		BLOCXX_LOG_ERROR(lgr, "test waitReleaser.release() failed");
 		return false;
 	}
 	return true;
@@ -212,9 +223,10 @@ bool test(const String& ns, const String& waitClass, const String& testClass, co
 bool test(const String& ns, const String& waitClass1, const String& waitClass2, const String& testClass, const CIMOMHandleSource& chs)
 {
 	Logger lgr(COMPONENT_NAME);
-	OW_LOG_DEBUG(lgr, Format("test(%1, %2, %3, %4, ...)", ns, waitClass1, waitClass2, testClass));
-	String startedFile1 = FileSystem::Path::getCurrentWorkingDirectory() + "/startedFile1";
-	String waitForFile1 = FileSystem::Path::getCurrentWorkingDirectory() + "/waitForFile1";
+	BLOCXX_LOG_DEBUG(lgr, Format("test(%1, %2, %3, %4, ...)", ns, waitClass1, waitClass2, testClass));
+	String dirName = getDirName();
+	String startedFile1 = dirName + "/startedFile1";
+	String waitForFile1 = dirName + "/waitForFile1";
 	FileSystem::removeFile(startedFile1);
 	FileSystem::removeFile(waitForFile1);
 	WaitThread waitThread1(ns, waitClass1, chs, startedFile1, waitForFile1);
@@ -228,13 +240,13 @@ bool test(const String& ns, const String& waitClass1, const String& waitClass2, 
 	}
 	if (!FileSystem::exists(startedFile1))
 	{
-		OW_LOG_ERROR(lgr, Format("test timed out waiting for creation of: %1", startedFile1));
+		BLOCXX_LOG_ERROR(lgr, Format("test timed out waiting for creation of: %1", startedFile1));
 		return false;
 	}
 	WaitReleaser waitReleaser1(waitForFile1, waitThread1);
 
-	String startedFile2 = FileSystem::Path::getCurrentWorkingDirectory() + "/startedFile2";
-	String waitForFile2 = FileSystem::Path::getCurrentWorkingDirectory() + "/waitForFile2";
+	String startedFile2 = dirName + "/startedFile2";
+	String waitForFile2 = dirName + "/waitForFile2";
 	FileSystem::removeFile(startedFile2);
 	FileSystem::removeFile(waitForFile2);
 	WaitThread waitThread2(ns, waitClass2, chs, startedFile2, waitForFile2);
@@ -247,7 +259,7 @@ bool test(const String& ns, const String& waitClass1, const String& waitClass2, 
 	}
 	if (!FileSystem::exists(startedFile2))
 	{
-		OW_LOG_ERROR(lgr, Format("test timed out waiting for creation of: %1", startedFile2));
+		BLOCXX_LOG_ERROR(lgr, Format("test timed out waiting for creation of: %1", startedFile2));
 		return false;
 	}
 	WaitReleaser waitReleaser2(waitForFile2, waitThread2);
@@ -256,31 +268,31 @@ bool test(const String& ns, const String& waitClass1, const String& waitClass2, 
 	{
 		if (!invoke(chs, ns, testClass, "test"))
 		{
-			OW_LOG_ERROR(lgr, "test invocation of test failed");
+			BLOCXX_LOG_ERROR(lgr, "test invocation of test failed");
 			return false;
 		}
 	}
 	catch (CIMException& e)
 	{
 		// this happens in a client
-		OW_LOG_ERROR(lgr, Format("test invocation of test got exception: %1", e));
+		BLOCXX_LOG_ERROR(lgr, Format("test invocation of test got exception: %1", e));
 		return false;
 	}
 	catch (IOException& e)
 	{
 		// this happens in a provider
-		OW_LOG_ERROR(lgr, Format("test invocation of test got exception: %1", e));
+		BLOCXX_LOG_ERROR(lgr, Format("test invocation of test got exception: %1", e));
 		return false;
 	}
 
 	if (!waitReleaser2.release())
 	{
-		OW_LOG_ERROR(lgr, "test waitReleaser2.release() failed");
+		BLOCXX_LOG_ERROR(lgr, "test waitReleaser2.release() failed");
 		return false;
 	}
 	if (!waitReleaser1.release())
 	{
-		OW_LOG_ERROR(lgr, "test waitReleaser1.release() failed");
+		BLOCXX_LOG_ERROR(lgr, "test waitReleaser1.release() failed");
 		return false;
 	}
 	return true;

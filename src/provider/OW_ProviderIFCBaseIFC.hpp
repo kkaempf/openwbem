@@ -79,7 +79,7 @@ namespace OW_NAMESPACE
  * declared inside an anonymous namespace to prevent possible identifier
  * collisions between providers or the openwbem libraries.
  */
-class OW_PROVIDER_API ProviderIFCBaseIFC : public IntrusiveCountableBase
+class OW_PROVIDER_API ProviderIFCBaseIFC : public blocxx::IntrusiveCountableBase
 {
 public:
 	ProviderIFCBaseIFC();
@@ -96,7 +96,7 @@ public:
 	 * sure that the provider interface is valid.  Since it will be compiled into
 	 * a shared library, openwbem cannot trust the code it loads.
 	 */
-	const UInt32 signature;
+	const blocxx::UInt32 signature;
 	/**
 	 * Called when the provider manager loads the interface
 	 */
@@ -246,7 +246,7 @@ protected:
 	virtual void doShuttingDown(const ProviderEnvironmentIFCRef& env);
 };
 
-typedef SharedLibraryReference< IntrusiveReference<ProviderIFCBaseIFC> > ProviderIFCBaseIFCRef;
+typedef blocxx::SharedLibraryReference< blocxx::IntrusiveReference<ProviderIFCBaseIFC> > ProviderIFCBaseIFCRef;
 
 } // end namespace OW_NAMESPACE
 

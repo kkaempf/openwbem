@@ -59,7 +59,7 @@ CMPI_Object::CMPI_Object(OpenWBEM::CIMDateTime* cdt) {
    priv = 0;
 }
 
-CMPI_Object::CMPI_Object(const OpenWBEM::String& str) {
+CMPI_Object::CMPI_Object(const blocxx::String& str) {
    CMPI_ThreadContext::addObject(this);
    hdl=(void*)strdup(str.c_str());
    ftab=CMPI_String_Ftab;

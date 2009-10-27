@@ -41,7 +41,7 @@
 namespace OW_NAMESPACE
 {
 
-typedef Enumeration<CIMObjectPath> CIMObjectPathEnumeration;
+typedef blocxx::Enumeration<CIMObjectPath> CIMObjectPathEnumeration;
 
 } // end namespace OW_NAMESPACE
 

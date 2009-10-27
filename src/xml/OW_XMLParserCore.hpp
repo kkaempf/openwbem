@@ -67,11 +67,11 @@ struct OW_XML_API XMLToken
 		Attribute(): name(64), value(512)
 		{
 		}
-		StringBuffer name;
-		StringBuffer value;
+		blocxx::StringBuffer name;
+		blocxx::StringBuffer value;
 	};
 	XMLType type;
-	StringBuffer text;
+	blocxx::StringBuffer text;
 	std::vector<Attribute> attributes;
 };
 
@@ -91,7 +91,7 @@ public:
 	}
 	void setInput(std::istream& input)
 	{
-		m_current = IstreamBufIterator(input);
+		m_current = blocxx::IstreamBufIterator(input);
 	}
 	bool next(XMLToken& entry);
 	unsigned int getLine() const
@@ -116,11 +116,11 @@ private:
 #endif
 
 	unsigned int m_line;
-	IstreamBufIterator m_current;
+	blocxx::IstreamBufIterator m_current;
 
 
 	// used to verify elements' begin and end tags match.
-	std::stack<String> m_stack;
+	std::stack<blocxx::String> m_stack;
 	bool m_foundRoot;
 	bool m_tagIsEmpty;
 

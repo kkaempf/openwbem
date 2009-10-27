@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_RequestHandlerIFCXML.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "OW_CIMErrorException.hpp"
 #include "OW_XMLOperationGeneric.hpp"
 #include "blocxx/Format.hpp"
@@ -43,18 +43,19 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "blocxx/ThreadCancelledException.hpp"
 #include "OW_XMLParseException.hpp"
-#include "OW_Logger.hpp"
+#include "blocxx/Logger.hpp"
 #include "OW_OperationContext.hpp"
 #include "blocxx/Array.hpp"
 
-#define OW_LOGDEBUG(msg) OW_LOG_DEBUG(logger, msg)
-#define OW_LOGINFO(msg) OW_LOG_INFO(logger, msg)
-#define OW_LOGERROR(msg) OW_LOG_ERROR(logger, msg)
-#define OW_LOGFATALERROR(msg) OW_LOG_FATAL_ERROR(logger, msg)
+#define LOG_DEBUG(msg) BLOCXX_LOG_DEBUG(logger, msg)
+#define LOG_INFO(msg) BLOCXX_LOG_INFO(logger, msg)
+#define LOG_ERROR(msg) BLOCXX_LOG_ERROR(logger, msg)
+#define LOG_FATAL_ERROR(msg) BLOCXX_LOG_FATAL_ERROR(logger, msg)
 
 namespace OW_NAMESPACE
 {
 
+using namespace blocxx;
 namespace
 {
 	const String COMPONENT_NAME("ow.requesthandler.cimxml");
@@ -70,8 +71,8 @@ void
 RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 	ostream* ostrError, OperationContext& context)
 {
-	OW_ASSERT(ostrEntity);
-	OW_ASSERT(ostrError);
+	BLOCXX_ASSERT(ostrEntity);
+	BLOCXX_ASSERT(ostrError);
 	try
 	{
 		setPath(context.getStringData(OperationContext::HTTP_PATH));
@@ -104,14 +105,14 @@ RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 		}
 		catch (CIMException& ce)
 		{
-			OW_LOGINFO(Format("RequestHandlerIFCXML::doProcess caught CIM "
+			LOG_INFO(Format("RequestHandlerIFCXML::doProcess caught CIM "
 				"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4",
 				ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
 			outputError(ce.getErrNo(), ce.getDescription(), *ostrError);
 		}
 		catch (CIMErrorException& cee)
 		{
-			OW_LOGINFO(Format("RequestHandlerIFCXML::doProcess caught CIMError "
+			LOG_INFO(Format("RequestHandlerIFCXML::doProcess caught CIMError "
 				"exception:File: %1\n Line: %2\nMessage: %3",
 				cee.getFile(), cee.getLine(), cee.getMessage()));
 			m_cimError = cee.getMessage();
@@ -119,26 +120,26 @@ RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 		}
 		catch (Exception& e)
 		{
-			OW_LOGINFO(Format("RequestHandlerIFCXML::doProcess caught "
+			LOG_INFO(Format("RequestHandlerIFCXML::doProcess caught "
 				"Exception:%1",	e));
 			m_cimError = e.getMessage();
 			outputError(CIMException::FAILED, e.getMessage(), *ostrError);
 		}
 		catch (std::exception& e)
 		{
-			OW_LOGERROR(Format("RequestHandlerIFCXML::doProcess caught std exception: %1"
+			LOG_ERROR(Format("RequestHandlerIFCXML::doProcess caught std exception: %1"
 				, e.what()));
 			outputError(CIMException::FAILED, e.what(), *ostrError);
 		}
 		catch (ThreadCancelledException&)
 		{
-			OW_LOGDEBUG("RequestHandlerIFCXML::doProcess caught Thread Cancelled exception.");
+			LOG_DEBUG("RequestHandlerIFCXML::doProcess caught Thread Cancelled exception.");
 			outputError(CIMException::FAILED, "thread cancelled", *ostrError);
 			throw;
 		}
 		catch (...)
 		{
-			OW_LOGERROR("RequestHandlerIFCXML::doProcess caught unknown exception");
+			LOG_ERROR("RequestHandlerIFCXML::doProcess caught unknown exception");
 			outputError(CIMException::FAILED, "Unknown Exception", *ostrError);
 		}
 		if (hasError())

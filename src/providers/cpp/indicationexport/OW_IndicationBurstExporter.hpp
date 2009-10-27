@@ -43,33 +43,33 @@
 namespace OW_NAMESPACE
 {
 
-struct IndicationBurstExporter : IntrusiveCountableBase
+struct IndicationBurstExporter : blocxx::IntrusiveCountableBase
 {
 	virtual ~IndicationBurstExporter();
 
-	virtual void initialize(UInt32 maxNumIoThreads) = 0;
+	virtual void initialize(blocxx::UInt32 maxNumIoThreads) = 0;
 	virtual void sendBurst(
-		CIMInstance const & handler, Array<CIMInstance> const & indications)
+		CIMInstance const & handler, blocxx::Array<CIMInstance> const & indications)
 		= 0;
 	// Implementation must be thread safe.
 	virtual void shutdown() = 0;
 };
 
-typedef IntrusiveReference<IndicationBurstExporter> IndicationBurstExporterRef;
+typedef blocxx::IntrusiveReference<IndicationBurstExporter> IndicationBurstExporterRef;
 
 struct IndicationBurstExporterImpl : public IndicationBurstExporter
 {
 	IndicationBurstExporterImpl();
 	virtual ~IndicationBurstExporterImpl();
 
-	virtual void initialize(UInt32 maxNumIoThreads);
+	virtual void initialize(blocxx::UInt32 maxNumIoThreads);
 	virtual void sendBurst(
-		CIMInstance const & handler, Array<CIMInstance> const & indications);
+		CIMInstance const & handler, blocxx::Array<CIMInstance> const & indications);
 	virtual void shutdown();
 
 private:
-	LoggerRef m_logger;
-	ThreadPoolRef m_pool;
+	blocxx::LoggerRef m_logger;
+	blocxx::ThreadPoolRef m_pool;
 };
 
 } // end namespace OW_NAMESPACE

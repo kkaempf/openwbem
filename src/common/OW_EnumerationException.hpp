@@ -43,6 +43,11 @@
 #include "OW_config.h"
 #include <blocxx/EnumerationException.hpp>
 
+namespace OW_NAMESPACE
+{
+   using namespace blocxx;
+}
+
 #warning OW_EnumerationException.hpp is deprecated, use "blocxx/EnumerationException.hpp" instead.
 #endif
 

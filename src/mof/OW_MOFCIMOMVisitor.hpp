@@ -165,23 +165,23 @@ private:
 	ParserErrorHandlerIFCRef theErrorHandler;
 
 	// instance aliases
-	Map<String, String> m_aliasMap;
+	blocxx::Map<blocxx::String, blocxx::String> m_aliasMap;
 
 	// config
 	Compiler::Options m_opts;
 
 	// used for current #pragma values
-	String m_namespace;
-	String m_instanceLocale;
-	String m_locale;
-	String m_nonLocal;
-	String m_nonLocalType;
-	String m_source;
-	String m_sourceType;
+	blocxx::String m_namespace;
+	blocxx::String m_instanceLocale;
+	blocxx::String m_locale;
+	blocxx::String m_nonLocal;
+	blocxx::String m_nonLocalType;
+	blocxx::String m_source;
+	blocxx::String m_sourceType;
 
 	Cache<CIMQualifierType> m_dataTypeCache;
-	CIMDataType getQualifierDataType(const String& qualName, const LineInfo& li);
-	CIMQualifierType getQualifierType(const String& qualName, const LineInfo& li);
+	CIMDataType getQualifierDataType(const blocxx::String& qualName, const LineInfo& li);
+	CIMQualifierType getQualifierType(const blocxx::String& qualName, const LineInfo& li);
 
 	Cache<CIMClass> m_classCache;
 
@@ -189,22 +189,22 @@ private:
 #pragma warning (pop)
 #endif
 
-	CIMClass getClass(const String& className, const LineInfo& li);
+	CIMClass getClass(const blocxx::String& className, const LineInfo& li);
 
 	CIMValue convertValuesIntoValueArray( const CIMValueArray& values );
 
-	void compileDep(const String& className, const LineInfo& li);
+	void compileDep(const blocxx::String& className, const LineInfo& li);
 	void compileQuals(const LineInfo& li);
 
 	// Functions that call into the remote cimom handle
-	CIMClass CIMOMgetClass(const String& className, const LineInfo& li);
+	CIMClass CIMOMgetClass(const blocxx::String& className, const LineInfo& li);
 	void CIMOMprocessClass(const LineInfo& li);
 	void CIMOMprocessClassAux(const LineInfo& li);
 	void CIMOMprocessQualifierType(const LineInfo& li);
 	void CIMOMprocessQualifierTypeAux();
 	void CIMOMprocessInstance(const LineInfo& li);
 	void CIMOMprocessInstanceAux();
-	CIMQualifierType CIMOMgetQualifierType(const String& qualName, const LineInfo& li);
+	CIMQualifierType CIMOMgetQualifierType(const blocxx::String& qualName, const LineInfo& li);
 	void CIMOMcreateNamespace(const LineInfo& li);
 
 };

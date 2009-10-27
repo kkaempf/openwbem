@@ -41,7 +41,7 @@
 #include "blocxx/StrictWeakOrdering.hpp"
 #include "blocxx/COWIntrusiveCountableBase.hpp"
 #include "OW_ExceptionIds.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 
 #include <cstdio>
 #include <streambuf>
@@ -56,6 +56,8 @@
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 
 OW_DEFINE_EXCEPTION_WITH_ID(CIMDateTime);
 
@@ -434,7 +436,7 @@ namespace
 	// use in comparing dates.
 	Int64 getMagnitude(const CIMDateTime& dt)
 	{
-		OW_ASSERT(!dt.isInterval());
+		BLOCXX_ASSERT(!dt.isInterval());
 
 		// only check the month, we don't check the rest since it won't cause a crash...
 		if (dt.getMonth() > 12)

@@ -46,7 +46,6 @@
 #include "OW_MethodProviderInfo.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_ConfigException.hpp"
-#include "OW_Assertion.hpp"
 #include "OW_CIMInstance.hpp"
 #include "blocxx/RWLocker.hpp"
 #include "blocxx/Mutex.hpp"
@@ -63,6 +62,8 @@
 
 namespace OW_NAMESPACE
 {
+
+using namespace blocxx;
 namespace
 {
 

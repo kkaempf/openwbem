@@ -37,7 +37,7 @@
 #include "OW_CIMtoXML.hpp"
 #include "blocxx/String.hpp"
 #include "OW_XMLEscape.hpp"
-#include "OW_Assertion.hpp"
+#include "blocxx/Assertion.hpp"
 #include "blocxx/StringStream.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_CIMNameSpace.hpp"
@@ -74,6 +74,7 @@ namespace OW_NAMESPACE
 {
 
 using std::ostream;
+using namespace blocxx;
 //////////////////////////////////////////////////////////////////////////////
 void CIMNameSpacetoXML(CIMNameSpace const& ns, ostream& ostr)
 {
@@ -746,7 +747,7 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 				break;
 			}
 			default:
-				OW_ASSERT(0);
+				BLOCXX_ASSERT(0);
 		}
 	}
 	else if (cv.getType() == CIMDataType::REFERENCE)
@@ -849,7 +850,7 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 				break;
 			}
 			default:
-				OW_ASSERT(0);
+				BLOCXX_ASSERT(0);
 		}
 		out << "</VALUE>";
 	}
@@ -917,7 +918,7 @@ CIMtoXML(CIMQualifier const& cq, ostream& ostr)
 			dt = CIMDataType(cv.getType());
 		}
 	}
-	OW_ASSERT(dt);
+	BLOCXX_ASSERT(dt);
 	ostr
 		<< "<QUALIFIER NAME=\""
 		<< cq.getName()
