@@ -29,12 +29,19 @@ EXTRA_DIST = $(PERLXSBUILD_SOURCES)
 
 PMDIR = $(libdir)/openwbem
 
+
+if DARWIN
+if ARCH_PPC
 # The perlxsbuild process on MacOS will barf if
 # (${MACOSX_DEPLOYMENT_TARGET:-10.1} < 10.3).  Since Apple doesn't release
 # patches for 10.2 anymore, (nor do they for 10.3), we're probably safe in
 # assuming that people won't need the perlifc on any version of OSX earlier
 # than 10.3.
-SET_OSX_VARIABLES=MACOSX_DEPLOYMENT_TARGET=10.3; export MACOSX_DEPLOYMENT_TARGET
+#
+# TODO: Find out what, if anything, needs to be done to make the perl modules work in MacOS x86 and x86_64.
+export MACOSX_DEPLOYMENT_TARGET=10.3
+endif # ARCH_PPC
+endif DARWIN
 
 perlxsbuild: $(PERLXSBUILD_SOURCES) Makefile
 	$(RM) -rf $@
@@ -54,6 +61,6 @@ perlxsbuild: $(PERLXSBUILD_SOURCES) Makefile
 		-e 's|@SSL_LIB_FLAGS@|$(SSL_LIBS)|g' \
 		-e 's|@OWCPPFLAGS@|$(CPPFLAGS)|g' \
 		> $@/Makefile.PL
-	$(SET_OSX_VARIABLES); cd $@; $(PERL) Makefile.PL; $(MAKE)
+	cd $@; $(PERL) Makefile.PL; $(MAKE)
 
 endif

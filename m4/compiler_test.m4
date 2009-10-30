@@ -99,8 +99,10 @@ AC_DEFUN([OW_COMPILER_TEST],
 		# gcc:
 		# $ g++ --version
 		# g++ (GCC) 4.1.2 (Ubuntu 4.1.2-0ubuntu4)
+		# or
+		# i686-apple-darwin10-g++-4.2.1 (GCC) 4.2.1 (Apple Inc. build 5646)
 		# ...
-		# -->  g++ --version 2>&1 | grep '[0-9][0-9]*\.[0-9][0-9]*' | sed -e 's/[(][^)]*[)]//g' -e 's/[^0-9.]//g'
+		# -->  g++ --version 2>&1 | grep '[0-9][0-9]*\.[0-9][0-9]*' | sed -e 's/^[^(]*[(][^)]*[)]//g' -e 's/[(][^)]*[)]//g' -e 's/[^0-9.]//g'
 		#
 		# xlC_r:
 		# $ xlC_r -qversion
@@ -128,8 +130,9 @@ AC_DEFUN([OW_COMPILER_TEST],
 				OW_COMPILER_VERSION=`$CXX -V 2>&1 | grep 'Sun C++' | sed -e 's/.*C++[[ ]]*//' -e 's/ .*//'`
 				;;
 			gcc)
-				OW_COMPILER_VERSION=`$CXX --version 2>&1 | grep '[[0-9]][[0-9]]*\.[[0-9]][[0-9]]*' | sed -e 's/[[(]][[^)]]*[[)]]//g' -e 's/[[^0-9.]]//g'`
-				OW_COMPILER_LIBDIR=`$CXX --print-file libstdc++.so`
+				# Everything before the (gcc) needs to be removed.  Any suffixed vendor information (such as from apple) in parens also needs to be removed.  Then all non-numeric characters are stripped.
+				OW_COMPILER_VERSION=`$CXX --version 2>&1 | grep '[[0-9]][[0-9]]*\.[[0-9]][[0-9]]*' | sed -e 's/^[[^(]]*[[(]][[^)]]*[[)]]//g' -e 's/[[(]][[^)]]*[[)]]//g' -e 's/[[^0-9.]]//g'`
+				OW_COMPILER_LIBDIR=`$CXX --print-file libstdc++.$LIB_EXT`
 				OW_CLEANUP_DIRECTORY_NAME(OW_COMPILER_LIBDIR, `dirname $OW_COMPILER_LIBDIR`)
 				;;
 			*)

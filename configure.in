@@ -81,54 +81,6 @@ AC_PATH_PROG(MV, mv, mv)
 AC_PATH_PROG(RM, rm, rm)
 AC_PATH_PROG(SED, sed, sed)
 
-# Set some variables for compiler type and version.
-OW_COMPILER_TEST
-
-dnl FreeBSD and darwin have true in /usr/bin/true, while most other systems
-dnl   (e.g. linux) have true in /bin/true . Similarly for false.
-dnl
-dnl So here we find out where true and false are, and add #defines to the config
-dnl   headers. OW_ExecTestCases.cpp relies on these.
-dnl
-AC_PATH_PROG(TRUE_PATHNAME, true, [Error, true not found.])
-AC_DEFINE_UNQUOTED(TRUE_PATHNAME, "$TRUE_PATHNAME", [Where true is.])
-
-AC_PATH_PROG(FALSE_PATHNAME, false, [Error, false not found.])
-AC_DEFINE_UNQUOTED(FALSE_PATHNAME, "$FALSE_PATHNAME", [Where false is.])
-
-dnl Check to see if we have Perl development stuff
-dnl This needs to be before we set any CFLAGS since setting DEBUG screws up perl.h
-#PGAC_CHECK_PERL_CONFIGS([archlibexp,privlibexp,useshrplib])
-PGAC_CHECK_PERL_CONFIG(archlibexp)
-PGAC_CHECK_PERL_CONFIG(privlibexp)
-PGAC_CHECK_PERL_CONFIG(useshrplib)
-PGAC_CHECK_PERL_EMBED_CCFLAGS
-PGAC_CHECK_PERL_EMBED_LDFLAGS
-
-OW_SAVE_FLAGS
-CFLAGS="$CFLAGS $perl_embed_ccflags"
-LDFLAGS="$LDFLAGS $perl_embed_ldflags"
-
-# This is a near duplicate of the above perl-providerifc test.  It is provided
-# here so that they can be enabled/disabled independently, like they were
-# before.
-ENABLE_MPIFC=no
-OW_VERIFY_ENABLE_SUPPORT(monitored-perl-ifc,
-	AC_LANG_PROGRAM(
-		[
-			#include <EXTERN.h>
-			#include <perl.h>
-		],
-		[
-		]
-	),
-	ENABLE_MPIFC=yes,
-	ENABLE_MPIFC=yes
-)
-AM_CONDITIONAL([ENABLE_MONITORED_PERL_IFC],[test x$ENABLE_MPIFC = xyes])
-
-OW_RESTORE_FLAGS
-
 STATIC_LINK_FLAGS=
 DYNAMIC_LINK_FLAGS=
 DYNAMIC_EXPORT_FLAG=
@@ -386,12 +338,6 @@ case "$target" in
 	AC_DEFINE(ENV_VAR_LIBPATH, "LD_LIBRARY_PATH", LD_LIBRARY_PATH env var gives path for finding shared libs)
 	AC_SUBST(ENV_VAR_LIBPATH)
 
-	case $OW_COMPILER_TYPE-$OW_COMPILER_VERSION in
-		gcc-3*)
-			NO_WABI=1
-			;;
-	esac
-
 	LIBS="$LIBS -lsocket -lnsl"
 	PLAT_CFLAGS="-fPIC -pthreads -D_REENTRANT -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS"
 	PLAT_CXXFLAGS="-fPIC -pthreads -D_REENTRANT -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS"
@@ -425,52 +371,142 @@ case "$target" in
 	;;
 esac
 
+CFLAGS="$CFLAGS $PLAT_CFLAGS"
+CXXFLAGS="$CXXFLAGS $PLAT_CXXFLAGS"
+
 #Figure out the architecture of the target platform
 case "$target" in
 i?86-*-*)
-	AC_DEFINE(ARCH_X86, 1, Intel x86 architecture)
+	# Work around an autotools bug.  Primarily exposed on OS X with a 64-bit kernel.
+	case `uname -m` in
+		x86_64)
+			AC_DEFINE(ARCH_X86_64, 1, Intel x86-64 architecture)
+			ARCH_X86_64=1
+			;;
+		*)
+			AC_DEFINE(ARCH_X86, 1, Intel x86 architecture)
+			ARCH_X86=1
+			;;
+	esac
 	;;
 powerpc-*-*|powerpc-*-*-*|ppc-*-*)
 	AC_DEFINE(ARCH_PPC, 1, PowerPC architecture)
+	ARCH_PPC=1
 	;;
 ia64-*-*|ia64-*-*-*)
 	AC_DEFINE(ARCH_IA64, 1, Itanium architecture)
+	ARCH_IA64=1
 	;;
 powerpc64-*-*|powerpc64-*-*-*|ppc64-*-*)
 	AC_DEFINE(ARCH_PPC64, 1, PowerPC64 architecture)
+	ARCH_PPC64=1
 	;;
 sparc-*-*)
 	AC_DEFINE(ARCH_SPARC, 1, SPARC architecture)
+	ARCH_SPARC=1
 	;;
 hppa2.0*-*-*)
 	AC_DEFINE(ARCH_HPPA20, 1, HP PA-RISC 2.0 architecture)
+	ARCH_HPPA20=1
 	;;
 x86_64-*-*)
 	AC_DEFINE(ARCH_X86_64, 1, x86-64 architecture)
+	ARCH_X86_64=1
 	;;
 s390-*-*|s390-*-*-*)
 	AC_DEFINE(ARCH_S390, 1, s390 architecture)
+	ARCH_S390=1
 	;;
 s390x-*-*|s390x-*-*-*)
 	AC_DEFINE(ARCH_S390X, 1, s390x architecture)
+	ARCH_S390X=1
 	;;
 *)
 	AC_DEFINE(ARCH_UNKNOWN, 1, Unknown architecture)
+	ARCH_UNKNOWN=1
 	;;
 esac
+AM_CONDITIONAL(ARCH_X86, test "x$ARCH_X86" = x1)
+AM_CONDITIONAL(ARCH_X86_64, test "x$ARCH_X86_64" = x1)
+AM_CONDITIONAL(ARCH_PPC, test "x$ARCH_PPC" = x1)
+AM_CONDITIONAL(ARCH_PPC64, test "x$ARCH_PPC64" = x1)
+AM_CONDITIONAL(ARCH_HPPA20, test "x$ARCH_HPPA20" = x1)
+AM_CONDITIONAL(ARCH_IA64, test "x$ARCH_IA64" = x1)
+AM_CONDITIONAL(ARCH_UNKNOWN, test "x$ARCH_UNKNOWN" = x1)
+# TODO: Has anyone ever tested S390 or S390x?
+AM_CONDITIONAL(ARCH_S390, test "x$ARCH_S390" = x1)
+AM_CONDITIONAL(ARCH_S390X, test "x$ARCH_S390X" = x1)
 
 AM_CONDITIONAL(RPATH_PREFERS_FIRST_OPTION, test "x${RPATH_PREFERS_FIRST_OPTION}" = x1)
 
+
+# Set some variables for compiler type and version.
+OW_COMPILER_TEST
+
+# Work around some Apple breakage in the stl debugging of gcc 4.2.
+set -x
+GLIBCXX_DEBUG_WORKS=1
+if test x`uname` = xDarwin; then
+	case $OW_COMPILER_TYPE-$OW_COMPILER_VERSION in
+		gcc-4.2*)
+			GLIBCXX_DEBUG_WORKS=0
+			;;
+	esac
+fi
+set +x
+
+
+dnl FreeBSD and darwin have true in /usr/bin/true, while most other systems
+dnl   (e.g. linux) have true in /bin/true . Similarly for false.
+dnl
+dnl So here we find out where true and false are, and add #defines to the config
+dnl   headers. OW_ExecTestCases.cpp relies on these.
+dnl
+AC_PATH_PROG(TRUE_PATHNAME, true, [Error, true not found.])
+AC_DEFINE_UNQUOTED(TRUE_PATHNAME, "$TRUE_PATHNAME", [Where true is.])
+
+AC_PATH_PROG(FALSE_PATHNAME, false, [Error, false not found.])
+AC_DEFINE_UNQUOTED(FALSE_PATHNAME, "$FALSE_PATHNAME", [Where false is.])
+
+dnl Check to see if we have Perl development stuff
+dnl This needs to be before we set any CFLAGS since setting DEBUG screws up perl.h
+#PGAC_CHECK_PERL_CONFIGS([archlibexp,privlibexp,useshrplib])
+PGAC_CHECK_PERL_CONFIG(archlibexp)
+PGAC_CHECK_PERL_CONFIG(privlibexp)
+PGAC_CHECK_PERL_CONFIG(useshrplib)
+PGAC_CHECK_PERL_EMBED_CCFLAGS
+PGAC_CHECK_PERL_EMBED_LDFLAGS
+
+OW_SAVE_FLAGS
+CFLAGS="$CFLAGS $perl_embed_ccflags"
+LDFLAGS="$LDFLAGS $perl_embed_ldflags"
+
+# This is a near duplicate of the above perl-providerifc test.  It is provided
+# here so that they can be enabled/disabled independently, like they were
+# before.
+ENABLE_MPIFC=no
+OW_VERIFY_ENABLE_SUPPORT(monitored-perl-ifc,
+	AC_LANG_PROGRAM(
+		[
+			#include <EXTERN.h>
+			#include <perl.h>
+		],
+		[
+		]
+	),
+	ENABLE_MPIFC=yes,
+	ENABLE_MPIFC=yes
+)
+AM_CONDITIONAL([ENABLE_MONITORED_PERL_IFC],[test x$ENABLE_MPIFC = xyes])
+
+OW_RESTORE_FLAGS
+
 # This figures out which compiler is invoked
-OW_COMPILER=`basename $CXX`
-case $OW_COMPILER in
-g++* | c++*)
-	# Check for gcc versions which are known to be broken.
-	GCC_COMPILER_VERSION=`$CXX --version | head -n1 | cut -f3 -d' '`
-	case $GCC_COMPILER_VERSION in
+if test x$OW_COMPILER_TYPE = xgcc; then
+	case $OW_COMPILER_VERSION in
 	1.* | 2.* | 3.[012]*)
 		AC_MSG_WARN(***************************************************************************)
-		AC_MSG_WARN(This gcc compiler version ($GCC_COMPILER_VERSION) will fail.  Aborting now.)
+		AC_MSG_WARN(This gcc compiler version ($OW_COMPILER_VERSION) will fail.  Aborting now.)
 		AC_MSG_WARN(***************************************************************************)
 		exit 1;
 		;;
@@ -478,10 +514,7 @@ g++* | c++*)
 		# Let it pass.
 		;;
 	esac
-esac
-
-CFLAGS="$CFLAGS $PLAT_CFLAGS"
-CXXFLAGS="$CXXFLAGS $PLAT_CXXFLAGS"
+fi
 
 OW_CHECK_COMPILER_FLAG(fno-enforce-eh-specs,
 [
@@ -1128,8 +1161,14 @@ AC_ARG_ENABLE(debug-mode,
 OW_HELP_STRING(--enable-debug-mode,enable debugging mode),
 [
 	AC_DEFINE(DEBUG)
+	if test x${GLIBCXX_DEBUG_WORKS} = x1; then
+		AC_DEFINE(_GLIBCXX_DEBUG, 1, [turn on glibc debugging])
+		GLIBCXX_DEBUG_FLAG=-D_GLIBCXX_DEBUG
+	else
+		GLIBCXX_DEBUG_FLAG=
+	fi
 	CFLAGS="$CFLAGS -g"
-	CXXFLAGS="$CXXFLAGS -g -D_GLIBCXX_DEBUG"
+	CXXFLAGS="$CXXFLAGS -g ${GLIBCXX_DEBUG_FLAG}"
 	CXXBINLINKFLAGS="$CXXBINLINKFLAGS -g"
 	CXXSHAREDLIBLINKFLAGS="$CXXSHAREDLIBLINKFLAGS -g"
 ],[

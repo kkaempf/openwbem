@@ -314,7 +314,7 @@ PrivilegeManager::PrivilegeManager(PrivilegeManagerImplRef p_impl)
 {
 	if( !g_privilegeManagerMockObject )
 	{
-		BLOCXX_ASSERT(g_pmImpl == p_impl);
+		BLOCXX_ASSERT(g_pmImpl.get() == p_impl);
 	}
 }
 
@@ -1279,7 +1279,7 @@ PrivilegeManager PrivilegeManager::createMonitor(
 PrivilegeManager PrivilegeManager::setInstance(const PrivilegeManagerImplRef& p_impl)
 {
 	NonRecursiveMutexLock lock(g_pmImplGuard);
-	BLOCXX_ASSERT(!g_pmImpl);
+	BLOCXX_ASSERT(!g_pmImpl.get());
 	g_pmImpl = p_impl;
 	return PrivilegeManager(g_pmImpl);
 }

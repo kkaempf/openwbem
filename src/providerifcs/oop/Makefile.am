@@ -32,14 +32,18 @@ LIBRARY_BINARY_VERSION = $(OPENWBEM_LIBRARY_VERSION)
 thelibdir = $(pkglibdir)/provifcs
 
 if DARWIN
+if ARCH_PPC
 # This library has undefined symbols that are defined by the CIMOM.  Since
 # MacOS defaults to disallowing weak linking, we explicitly tell it to use
 # dynamic lookup for undefined symbols.  This library should never be used
 # outside of the location these symbols are used anyway (the CIMOM).  This is
 # probably not a good thing to do globally.
+#
+# TODO: Find out what, if anything, needs to be done to make the perl modules work in MacOS x86 and x86_64.
 export MACOSX_DEPLOYMENT_TARGET=10.3
 CXXBUNDLELIBLINKFLAGS += -undefined dynamic_lookup
-endif
+endif #ARCH_PPC
+endif #DARWIN
 
 libowoopprovifc_a_SOURCES = \
 OW_OOPProtocolCPP1.hpp \
