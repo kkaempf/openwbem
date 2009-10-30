@@ -42,7 +42,7 @@
 // Logger part here must be removed when finished
 #include "blocxx/Logger.hpp"
 #include "blocxx/LogAppender.hpp"
-#include "OW_SyslogAppender.hpp"
+#include "blocxx/SyslogAppender.hpp"
 
 #include <iostream>
 #include <map>
