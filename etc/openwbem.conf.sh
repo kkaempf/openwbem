@@ -282,7 +282,7 @@ owcimomd.max_class_cache_size = 128
 # owcimomd.allow_anonymous = true, it is not enforced.
 # This is a multi-valued option. Whitespace is the separator.
 # The default is *
-owcimomd.allowed_users = root
+owcimomd.allowed_users = *
 
 ################################################################################
 # If the simple authentication module is used, this needs to be the path to

@@ -192,6 +192,8 @@ LocalAuthentication::authenticate(String& userName,
 
 		BLOCXX_ASSERT(!info.empty());
 
+		BLOCXX_LOG_DEBUG3(m_logger, Format("LocalAuthentication::authenticate() called for user \"%1\"", userName));
+
 		if (info.empty())
 		{
 			// shouldn't ever happen, but just in case.
@@ -237,6 +239,9 @@ LocalAuthentication::authenticate(String& userName,
 			// give them back the challenge
 			htcon->addHeader("WWW-Authenticate", createNewChallenge(uidStr, userName));
 			htcon->setErrorDetails("OWLocal:2");
+
+			BLOCXX_LOG_DEBUG3(m_logger, Format("Have UID %1 (%2), asking to continue", uid, userName));
+
 			return E_AUTHENTICATE_CONTINUE;
 		}
 
@@ -278,8 +283,10 @@ LocalAuthentication::authenticate(String& userName,
 			return E_AUTHENTICATE_FAIL;
 		}
 		String cookie = iter->second;
+
 		if ( cookie == m_authEntries[i].cookie )
 		{
+			BLOCXX_LOG_DEBUG3(m_logger, "Cookie matched.  Authentication successful.  Cleaning up.");
 			// Match! Authenticated. Clean up.
 			try
 			{
@@ -290,8 +297,12 @@ LocalAuthentication::authenticate(String& userName,
 				BLOCXX_LOG_ERROR(m_logger, Format("LocalAuthentication::authenticate() failed to clean up entry: %1", e));
 			}
 			m_authEntries.erase(m_authEntries.begin() + i);
+
+			BLOCXX_LOG_DEBUG3(m_logger, "Successful authentication");
 			return E_AUTHENTICATE_SUCCESS;
 		}
+		BLOCXX_LOG_DEBUG3(m_logger, "Invalid cookie supplied");
+
 
 		htcon->setErrorDetails("invalid cookie");
 		return E_AUTHENTICATE_FAIL;

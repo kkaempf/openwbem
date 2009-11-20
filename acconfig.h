@@ -33,7 +33,7 @@
  */
 
 
-#include <blocxx/BLOCXX_config.h>
+#include "blocxx/BLOCXX_config.h"
 
 
 /* autoconf set variables here */

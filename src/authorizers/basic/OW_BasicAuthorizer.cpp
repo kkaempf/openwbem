@@ -168,6 +168,7 @@ String BasicAccessMgr::userPermissions(
 	String const * pns, String const & username, OperationContext & context
 )
 {
+	// If no namespace was specified, check for namespace creation/deletion rights.
 	if (!pns)
 	{
 		if (username.empty())
@@ -180,7 +181,7 @@ String BasicAccessMgr::userPermissions(
 		return ci ? "N" : "";
 	}
 
-	// Try to find user permissions
+	// Check for specific user permissions to the namespace.
 	if (!username.empty())
 	{
 		CIMObjectPath cop("OpenWBEM_UserACL");
@@ -193,7 +194,7 @@ String BasicAccessMgr::userPermissions(
 		}
 	}
 
-	// Now try default permissions
+	// Now try default permissions for that namespace
 	CIMObjectPath cop("OpenWBEM_NamespaceACL");
 	cop.setKeyValue("nspace", CIMValue(*pns));
 	CIMInstance ci = ACLInstance(cop, *m_pServer, context);

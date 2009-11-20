@@ -173,6 +173,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		EAuthenticateResult rv = m_localAuthentication->authenticate(userName, info, pconn);
 		if (rv == E_AUTHENTICATE_SUCCESS && !isAllowedUser(userName))
 		{
+			BLOCXX_LOG_DEBUG(logger, Format("User is not allowed access by current configuration: %1", userName));
 			rv = E_AUTHENTICATE_FAIL;
 		}
 
@@ -519,12 +520,17 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 		StringArray users = env->getMultiConfigItem(ConfigOpts::ALLOWED_USERS_opt,
 				String(OW_DEFAULT_ALLOWED_USERS).tokenize(" \t"),
 				" \t");
-		if (users.size() == 1 && users[0] == "*")
+		if (std::count(users.begin(), users.end(), String("*")) != 0)
 		{
+			BLOCXX_LOG_DEBUG3(logger, "Have allowed users option \"*\".  Allowing all users to connect.");
 			m_allowAllUsers = true;
 		}
 		else
 		{
+			for(StringArray::const_iterator iter = users.begin(); iter != users.end(); ++iter )
+			{
+				BLOCXX_LOG_DEBUG3(logger, Format("Have allowed users option \"%1\"", *iter));
+			}
 			m_allowAllUsers = false;
 			m_allowedUsers.insert(users.begin(), users.end());
 		}
