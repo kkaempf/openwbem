@@ -78,7 +78,7 @@ public:
 		SharedLibraryLoaderRef sll = SharedLibraryLoader::createSharedLibraryLoader();
 		SharedLibraryRef sl = sll->loadSharedLibrary(libname);
 		T* ptr = 0;
-		if ( !sl.isNull() )
+		if ( sl )
 		{
 			ptr = create(sl, createFuncName, version);
 		}
