@@ -142,14 +142,11 @@ public:
 	 */
 	virtual void close() = 0;
 
-	static const int INFINITE_TIMEOUT OW_DEPRECATED = -1; // in 4.0.0
-
 	/**
 	 * Set the receive timeout on the socket
 	 * @param timeout The timeout to use when waiting for data
 	 */
 	virtual void setReceiveTimeout(const blocxx::Timeout& timeout) = 0;
-	void setReceiveTimeout(int seconds) OW_DEPRECATED; // in 4.0.0
 	/**
 	 * Get the receive timeout
 	 * @return The receive timeout
@@ -160,7 +157,6 @@ public:
 	 * @param timeout The timeout to use when waiting to send data
 	 */
 	virtual void setSendTimeout(const blocxx::Timeout& timeout) = 0;
-	void setSendTimeout(int seconds) OW_DEPRECATED; // in 4.0.0
 	/**
 	 * Get the send timeout
 	 * @return The number of seconds of the send timeout
@@ -171,7 +167,6 @@ public:
 	 * @param timeout The connect timeout
 	 */
 	virtual void setConnectTimeout(const blocxx::Timeout& timeout) = 0;
-	void setConnectTimeout(int seconds) OW_DEPRECATED; // in 4.0.0
 	/**
 	 * Get the connect timeout
 	 * @return The number of seconds of the connect timeout
@@ -182,7 +177,6 @@ public:
 	 * @param timeout The timeouts.
 	 */
 	virtual void setTimeouts(const blocxx::Timeout& timeout) = 0;
-	void setTimeouts(int seconds) OW_DEPRECATED; // in 4.0.0
 
 protected:
 

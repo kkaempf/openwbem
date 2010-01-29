@@ -54,8 +54,6 @@ struct OW_MOF_API LineInfo
 	long columnNum;
 };
 
-typedef LineInfo lineInfo OW_DEPRECATED;
-
 } // end namespace MOF
 } // end namespace OW_NAMESPACE
 

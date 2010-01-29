@@ -91,7 +91,6 @@ public:
 		: m_timeout(timeout)
 	{
 	}
-	PALockerSWMR(UInt32 timeout) OW_DEPRECATED; // in 4.0.0
 	virtual ~PALockerSWMR() {}
 	virtual void doGetReadLock()
 	{
@@ -117,12 +116,6 @@ private:
 	RWLocker m_rwlocker;
 	Timeout m_timeout;
 };
-
-inline
-PALockerSWMR::PALockerSWMR(UInt32 timeout)
-	: m_timeout(Timeout::relative(timeout))
-{
-}
 
 class PALockerSingleThreaded : public ProviderAgentLockerIFC
 {

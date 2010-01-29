@@ -25,11 +25,9 @@ OW_CIMOMHandleIFC.hpp \
 OW_CIMProtocolIFC.hpp \
 OW_ClientAuthCBIFC.hpp \
 OW_IfcsFwd.hpp \
-OW_IOIFC.hpp \
 OW_RepositoryIFC.hpp \
 OW_RequestHandlerIFC.hpp \
 OW_ResultHandlerIFC.hpp \
-OW_SelectableIFC.hpp \
 OW_SerializableIFC.hpp \
 OW_ServiceEnvironmentIFC.hpp \
 OW_ServiceIFC.hpp \

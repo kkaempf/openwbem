@@ -60,8 +60,6 @@ class OW_COMMON_API CIMClass : public CIMElement
 {
 public:
 	struct CLSData;
-	/** Name of the internal namespace class */
-	static const char* const NAMESPACECLASS OW_DEPRECATED; // in 3.1.0
 
 	/**
 	 * Binary serialization version.

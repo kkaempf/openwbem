@@ -112,7 +112,6 @@ public:
 	 */
 	virtual CIMOMHandleIFCRef getLockedCIMOMHandle(EInitialLockFlag initialLock) const;
 
-	virtual blocxx::LoggerRef getLogger() const OW_DEPRECATED; // in 3.1.0
 	virtual blocxx::LoggerRef getLogger(const blocxx::String& componentName) const;
 	virtual blocxx::String getConfigItem(const blocxx::String &name, const blocxx::String& defRetVal="") const = 0;
 	virtual blocxx::StringArray getMultiConfigItem(const blocxx::String &itemName,

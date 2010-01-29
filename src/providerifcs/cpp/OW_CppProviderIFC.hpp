@@ -59,7 +59,6 @@ public:
 	~CppProviderIFC();
 
 	// Making this public so other code can re-use it.
-	static CppProviderBaseIFCRef loadProvider(const blocxx::String& libName, blocxx::LoggerRef logger) OW_DEPRECATED; // in 4.0.0
 	static CppProviderBaseIFCRef loadProvider(const blocxx::String& libName);
 
 protected:

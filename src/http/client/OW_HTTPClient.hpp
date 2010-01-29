@@ -180,7 +180,6 @@ public:
 	 */
 	bool getResponseHeader(const blocxx::String& hdrName, blocxx::String& valueOut) const;
 
-	static const int INFINITE_TIMEOUT OW_DEPRECATED = -1; // in 4.0.0
 	/**
 	 * Set the receive timeout on the socket
 	 * @param timeout The timeout to use when waiting for data

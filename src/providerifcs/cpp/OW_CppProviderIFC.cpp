@@ -668,14 +668,6 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 //////////////////////////////////////////////////////////////////////////////
 //static
 CppProviderBaseIFCRef
-CppProviderIFC::loadProvider(const String& libName, LoggerRef lgr)
-{
-	return loadProvider(libName);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//static
-CppProviderBaseIFCRef
 CppProviderIFC::loadProvider(const String& libName)
 {
 	Logger logger(COMPONENT_NAME);

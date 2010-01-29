@@ -1,5 +1,5 @@
 AC_PREREQ([2.57])
-AC_INIT(OpenWBEM, 4.1.0, openwbem-public@lists.sourceforge.net)
+AC_INIT(OpenWBEM, 4.2.0, openwbem-public@lists.sourceforge.net)
 dnl When we implement --help and --version for all installed binaries, use the std-options option
 dnl AM_INIT_AUTOMAKE([foreign dist-bzip2 std-options 1.6.3])
 
@@ -46,7 +46,7 @@ OPENWBEM_MAJOR_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\([[0-9]]*\)\.\([[0-9]]
 OPENWBEM_MINOR_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\([[0-9]]*\)\.\([[0-9]]*\)\.\([[0-9]]*\)/\2/g'`
 OPENWBEM_MICRO_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\([[0-9]]*\)\.\([[0-9]]*\)\.\([[0-9]]*\)/\3/g'`
 dnl This gets incremented every release that a header has changed.
-OPENWBEM_LIBRARY_VERSION=7
+OPENWBEM_LIBRARY_VERSION=8
 
 OPENWBEM_VERSION=$OPENWBEM_MAJOR_VERSION.$OPENWBEM_MINOR_VERSION.$OPENWBEM_MICRO_VERSION
 AC_SUBST(OPENWBEM_MAJOR_VERSION)

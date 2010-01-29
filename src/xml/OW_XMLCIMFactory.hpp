@@ -57,7 +57,6 @@ namespace XMLCIMFactory
 	 * parser must be positioned on a node that has the EmbeddedObject attribute
 	 */
 	OW_XML_API EEmbeddedObjectFlag getEmbeddedObjectType(const CIMXMLParser& parser);
-	OW_XML_API CIMValue createValue(CIMXMLParser& parser, blocxx::String const& type) OW_DEPRECATED;
 	OW_XML_API CIMValue createValue(CIMXMLParser& parser, blocxx::String const& type, EEmbeddedObjectFlag embeddedObjectFlag);
 	OW_XML_API CIMQualifier createQualifier(CIMXMLParser& parser);
 	OW_XML_API CIMMethod createMethod(CIMXMLParser& parser);

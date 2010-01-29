@@ -35,46 +35,13 @@
 
 #include "OW_config.h"
 #include "OW_CIMProtocolIFC.hpp"
-#include "blocxx/Timeout.hpp"
 
 namespace OW_NAMESPACE
 {
 
-using namespace blocxx;
 ///////////////////////////////////////////////////////////////////////////////
 CIMProtocolIFC::~CIMProtocolIFC()
 {
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-void
-CIMProtocolIFC::setReceiveTimeout(int seconds)
-{
-	this->setReceiveTimeout(Timeout::relative(seconds));
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void
-CIMProtocolIFC::setSendTimeout(int seconds)
-{
-	this->setSendTimeout(Timeout::relative(seconds));
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void
-CIMProtocolIFC::setConnectTimeout(int seconds)
-{
-	this->setConnectTimeout(Timeout::relative(seconds));
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void
-CIMProtocolIFC::setTimeouts(int seconds)
-{
-	this->setTimeouts(Timeout::relative(seconds));
-}
-
-
 } // end namespace OW_NAMESPACE
-

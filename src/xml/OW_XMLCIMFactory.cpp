@@ -458,12 +458,6 @@ convertCimType(Array<T>& ra, CIMXMLParser& parser)
 }
 
 ///////////////////////////////////
-CIMValue
-createValue(CIMXMLParser& parser, String const& valueType)
-{
-	return createValue(parser, valueType, E_VALUE_NOT_EMBEDDED_OBJECT);
-}
-
 namespace
 {
 

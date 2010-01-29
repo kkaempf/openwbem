@@ -855,8 +855,6 @@ bool operator!=(const CIMClass& x, const CIMClass& y)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-const char* const CIMClass::NAMESPACECLASS = "__Namespace";
-//////////////////////////////////////////////////////////////////////////////
 StringArray
 CIMClass::getCloneProps(ELocalOnlyFlag localOnly, EDeepFlag deep,
 	const StringArray* propertyList,
