@@ -38,6 +38,7 @@
 #include "OW_config.h"
 #include "blocxx/IntrusiveCountableBase.hpp"
 #include "blocxx/ArrayFwd.hpp"
+#include "blocxx/String.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_IfcsFwd.hpp"
 #include "OW_CIMFwd.hpp"
