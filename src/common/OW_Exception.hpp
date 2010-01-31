@@ -43,6 +43,13 @@
 #include "OW_config.h"
 #include "blocxx/Exception.hpp"
 
+namespace OW_NAMESPACE
+{
+
+	BLOCXX_DECLARE_EXCEPTION(OW);
+
+} // end namespace OW_NAMESPACE
+
 /**
  * Throw an exception using __FILE__ and __LINE__.  If applicable,
  * OW_THROW_ERR should be used instead of this macro.
@@ -148,7 +155,8 @@
  * @param NAME The name of the new class (Exception will be postfixed)
  */
 #define OW_DECLARE_EXCEPTION(NAME) \
-			BLOCXX_DECLARE_EXCEPTION(NAME)
+			BLOCXX_DECLARE_EXCEPTION2(NAME, ::OW_NAMESPACE::OWException)
+
 
 /**
  * Declare a new exception class named <NAME>Exception that derives from Exception
@@ -159,7 +167,7 @@
  *		of libopenwbem this would OW_COMMON_API...
  */
 #define OW_DECLARE_APIEXCEPTION(NAME, LINKAGE_SPEC) \
-			BLOCXX_DECLARE_APIEXCEPTION(NAME, LINKAGE_SPEC)
+			BLOCXX_DECLARE_APIEXCEPTION2(NAME, ::OW_NAMESPACE::OWException, LINKAGE_SPEC)
 
 /**
  * Define a new exception class named <NAME>Exception that derives from <BASE>.
@@ -193,7 +201,7 @@
  * @param NAME The name of the new class (Exception will be postfixed)
  */
 #define OW_DEFINE_EXCEPTION(NAME) \
-			BLOCXX_DEFINE_EXCEPTION(NAME)
+			BLOCXX_DEFINE_EXCEPTION2(NAME, ::OW_NAMESPACE::OWException)
 
 /**
  * Define a new exception class named <NAME>Exception that derives from Exception.
@@ -204,7 +212,7 @@
  * @param NAME The name of the new class (Exception will be postfixed)
  */
 #define OW_DEFINE_EXCEPTION_WITH_ID(NAME) \
-			BLOCXX_DEFINE_EXCEPTION_WITH_ID(NAME)
+			BLOCXX_DEFINE_EXCEPTION_WITH_BASE_AND_ID(NAME, ::OW_NAMESPACE::OWException)
 
 /**
  * Define a new exception class named <NAME>Exception that derives from <BASE>.

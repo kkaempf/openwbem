@@ -35,6 +35,7 @@ OW_CIMErrorException.cpp \
 OW_ConfigException.cpp \
 OW_ConfigFile.cpp \
 OW_ConfigOpts.cpp \
+OW_Exception.cpp \
 OW_LocalOperationContext.cpp \
 OW_NoSuchPropertyException.cpp \
 OW_NoSuchProviderException.cpp \
