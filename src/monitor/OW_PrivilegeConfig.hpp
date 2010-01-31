@@ -36,7 +36,7 @@
 #include "blocxx/Array.hpp"
 #include "blocxx/String.hpp"
 #include "OW_PrivilegeLexer.hpp"
-#include "blocxx/Exception.hpp"
+#include "OW_Exception.hpp"
 #include <set>
 #include <map>
 #include <vector>
@@ -53,7 +53,7 @@ namespace PrivilegeConfig
 
 blocxx::String unescapePath(char const * epath);
 
-BLOCXX_DECLARE_EXCEPTION(UnescapeString);
+OW_DECLARE_EXCEPTION(UnescapeString);
 /**
  * Unescape C-style escape sequences as accepted in the privilege files.
  * @param str The string to unescape. This string must contain valid escape sequences (as allowed by the lexer)
