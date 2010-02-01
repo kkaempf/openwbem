@@ -38,14 +38,13 @@
 
 namespace OW_NAMESPACE
 {
-using namespace WBEMFlags;
 void CMPIPrepareContext(
 	const ProviderEnvironmentIFCRef& env,
 	CMPI_ContextOnStack& eCtx,
-	ELocalOnlyFlag localOnly=E_NOT_LOCAL_ONLY,
-	EDeepFlag deep=E_SHALLOW,
-	EIncludeQualifiersFlag includeQualifiers=E_EXCLUDE_QUALIFIERS,
-	EIncludeClassOriginFlag includeClassOrigin=E_EXCLUDE_CLASS_ORIGIN);
+	WBEMFlags::ELocalOnlyFlag localOnly=WBEMFlags::E_NOT_LOCAL_ONLY,
+	WBEMFlags::EDeepFlag deep=WBEMFlags::E_SHALLOW,
+	WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
+	WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN);
 
 //#include "CMPIExternal.hpp"
 #if 0

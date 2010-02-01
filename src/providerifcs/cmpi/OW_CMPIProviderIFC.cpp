@@ -56,6 +56,7 @@ namespace OW_NAMESPACE
 {
 
 using namespace blocxx;
+using namespace WBEMFlags;
 
 namespace
 {
