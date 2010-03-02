@@ -42,6 +42,9 @@ OW_INCLUDE_M4(m4/compiler_test.m4)        dnl Macros for checking compiler type/
 # the configure script any time the dependencies are modified.
 OW_APPLY_AUTOCONF_REEXECUTION_HACK
 
+OW_APPLY_PREFIX_TO_CONFIG_H([OW_config.h], OW, [config.h])
+dnl OW_APPLY_PREFIX_TO_CONFIG_H([${srcdir}/src/providerifcs/owbi1/OWBI1_AuxConfig.h], OWBI1, [config.h])
+
 OPENWBEM_MAJOR_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\([[0-9]]*\)\.\([[0-9]]*\)\.\([[0-9]]*\)/\1/g'`
 OPENWBEM_MINOR_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\([[0-9]]*\)\.\([[0-9]]*\)\.\([[0-9]]*\)/\2/g'`
 OPENWBEM_MICRO_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\([[0-9]]*\)\.\([[0-9]]*\)\.\([[0-9]]*\)/\3/g'`
@@ -1439,7 +1442,7 @@ dnl Check for BloCxx
 CHECK_BLOCXX
 
 # Use the blocxx locations, everything in openwbem depends on them
-CPPFLAGS="$CPPFLAGS $BLOCXX_INCLUDES"
+CPPFLAGS="$CPPFLAGS $BLOCXX_INCLUDES $BLOCXX_CFLAGS"
 BLOCXX_LIBS="$BLOCXX_LDFLAGS"
 
 AC_SUBST(BLOCXX_LIBS)
@@ -1651,9 +1654,6 @@ test/c++providers/secondary_instance/Makefile
 test/unit/Makefile
 test/performance/Makefile
 )
-
-AC_CREATE_PREFIX_CONFIG_H([OW_config.h], OW, [config.h])
-dnl AC_CREATE_PREFIX_CONFIG_H([${srcdir}/src/providerifcs/owbi1/OWBI1_AuxConfig.h], OWBI1, [config.h])
 
 dnl Create a sed script to replace all of the substituted variables.
 OW_REPLACEMENT_SCRIPT(replacement_script.sed)

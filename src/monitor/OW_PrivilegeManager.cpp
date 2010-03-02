@@ -302,7 +302,7 @@ namespace
 	// equivalent, we need to define our own.  Since both of them have
 	// well-defined default constructors and we can use the
 	// DefaultConstructedLazyGlobal to create them.
-	typedef DefaultConstructedLazyGlobal<Reference<PrivilegeManagerImpl> >::type GlobalPMImplRef;
+	typedef DefaultConstructedLazyGlobal<PrivilegeManagerImplRef>::type GlobalPMImplRef;
 	typedef DefaultConstructedLazyGlobal<NonRecursiveMutex>::type GlobalNonRecursiveMutex;
 
 	GlobalPMImplRef g_pmImpl = BLOCXX_LAZY_GLOBAL_DEFAULT_INIT;
@@ -1242,6 +1242,66 @@ ProcessRef PrivilegeManager::userSpawn(
 		ipcio_get(conn, pid);
 		conn.get_sync();
 		return ProcessRef(new MonitorChild(in, out, err, pid, *this));
+	}
+	catch(const IPCIOException& e)
+	{
+		pimpl()->invalidateConnection();
+		OW_THROW_SUBEX(MonitorCommunicationException, "Communication error while executing user spawn", e);
+	}
+	catch(const FatalPrivilegeManagerException& e)
+	{
+		pimpl()->invalidateConnection();
+		throw;
+	}
+}
+
+void PrivilegeManager::userSpawnDaemon(
+	char const * exec_path,
+	char const * const argv[], char const * const envp[],
+	char const * user, char const * working_dir
+)
+{
+	char const * default_argv[2] = { exec_path, 0 };
+	if (!argv || !argv[0])
+	{
+		argv = default_argv;
+	}
+	if (!envp)
+	{
+		envp = environ;
+	}
+	if (!user)
+	{
+		user = "";
+	}
+	if (!working_dir)
+	{
+		working_dir = "";
+	}
+
+	if( g_privilegeManagerMockObject )
+	{
+		g_privilegeManagerMockObject->userSpawnDaemon(exec_path, argv, envp, user, working_dir);
+	}
+
+	CHECK(pimpl(), "userSpawnDaemon: process has no privileges");
+	pimpl()->verifyValidConnection("userSpawnDaemon: no connection to the monitor");
+
+	try
+	{
+		NonRecursiveMutexLock lock(pimpl()->m_mutex);
+		IPCIO& conn = *pimpl()->m_conn;
+
+		ipcio_put(conn, PrivilegeCommon::E_CMD_USER_SPAWN_DAEMON);
+		ipcio_put(conn, exec_path);
+		ipcio_put_strarr(conn, argv);
+		ipcio_put_strarr(conn, envp);
+		ipcio_put(conn, user);
+		ipcio_put(conn, working_dir);
+		conn.put_sync();
+
+		check_result(conn, IPCIO::E_UNBUFFERED);
+		conn.get_sync();
 	}
 	catch(const IPCIOException& e)
 	{

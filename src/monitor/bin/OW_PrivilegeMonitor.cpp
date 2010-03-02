@@ -446,12 +446,21 @@ namespace
 		void kill();
 		void pollStatus();
 		void userSpawn();
+		void userSpawnDaemon();
 		void done();
 
 		// Check that the given path is valid.  This will clean the path if it
 		// needs it.  If the path is not valid for any reason, a CheckException
 		// is thrown with an error code of PrivilegeManager::E_INVALID_PATH
 		void force_valid_path(String& path, char const * op);
+
+
+		void check_spawn_params(
+			char const * op,
+			String const & user_name, String & exec_path, String const & working_dir,
+			std::pair<StringArray, bool> const & xargv,
+			std::pair<StringArray, bool> const & xenvp
+		);
 
 		void spawn_and_return(
 			String const & exec_path,
@@ -538,6 +547,7 @@ namespace
 				case PrivilegeCommon::E_CMD_KILL :                 this->kill(); break;
 				case PrivilegeCommon::E_CMD_POLL_STATUS :          this->pollStatus(); break;
 				case PrivilegeCommon::E_CMD_USER_SPAWN :           this->userSpawn(); break;
+				case PrivilegeCommon::E_CMD_USER_SPAWN_DAEMON :    this->userSpawnDaemon(); break;
 				case PrivilegeCommon::E_CMD_DONE :                 this->done(); break;
 
 			default:
@@ -768,6 +778,7 @@ namespace
 			char const * cpath = path.c_str();
 
 			struct stat statbuf;
+			::memset(&statbuf, 0, sizeof(statbuf));
 
 			int result = ::stat(cpath, &statbuf);
 
@@ -799,7 +810,8 @@ namespace
 			char const * cpath = path.c_str();
 
 			struct stat statbuf;
-
+			::memset(&statbuf, 0, sizeof(statbuf));
+			
 			int result = ::lstat(cpath, &statbuf);
 
 			CHECK_ERRNO(result == 0, Format("lstat: \"%1\"", path));
@@ -1120,7 +1132,7 @@ namespace
 		return std::find_if(env.begin(), env.end(), bad_env_entry) != env.end();
 	}
 
-	bool filter_env(StringArray & env)
+	bool filter_env(StringArray const & env)
 	{
 		if (reserved_env_var_present(env))
 		{
@@ -1309,7 +1321,7 @@ namespace
 	class UE_PreExec : public Exec::PreExec
 	{
 	public:
-		UE_PreExec(String const & user_name, String const & working_dir);
+		UE_PreExec(String const & user_name, String const & working_dir, bool const & daemonize = false);
 		virtual bool keepStd(int d) const;
 		virtual void call(pipe_pointer_t const pparr[]);
 
@@ -1318,9 +1330,10 @@ namespace
 		String m_working_dir;
 	};
 
-	UE_PreExec::UE_PreExec(String const & user_name, String const & working_dir)
-	: m_user_name(user_name),
-	  m_working_dir(working_dir)
+	UE_PreExec::UE_PreExec(String const & user_name, String const & working_dir, bool const & daemonize)
+		: Exec::PreExec(false, daemonize)
+		, m_user_name(user_name)
+		, m_working_dir(working_dir)
 	{
 	}
 
@@ -1353,6 +1366,41 @@ namespace
 		}
 	}
 
+	void Monitor::check_spawn_params(
+		char const * op,
+		String const & user_name, String & exec_path, String const & working_dir,
+		std::pair<StringArray, bool> const & xargv,
+		std::pair<StringArray, bool> const & xenvp
+	)
+	{
+			this->force_valid_path(exec_path, op);
+			CHECKARGS(user_name.length() <= MAX_USER_NAME_LENGTH,
+				Format("%1: user name too long", op),
+				PrivilegeManager::E_INVALID_SIZE);
+			CHECKARGS(working_dir.length() <= MAX_PATH_LENGTH,
+				Format("%1: working dir too long", op),
+				PrivilegeManager::E_INVALID_SIZE);
+			CHECKARGS(xargv.second, Format("%1: argv too large",op), PrivilegeManager::E_INVALID_SIZE);
+			CHECKARGS(xenvp.second, Format("%1: envp too large",op), PrivilegeManager::E_INVALID_SIZE);
+			bool reserved_env_var_absent = filter_env(xenvp.first);
+			CHECKARGS(reserved_env_var_absent,
+				Format("%1: reserved env var set in environment argument", op),
+				PrivilegeManager::E_INVALID_PARAMETER);
+			CHECKARGS(priv().user_exec.match(exec_path, xenvp.first, user_name)
+				|| priv().user_exec_check_args.match(exec_path, xargv.first, xenvp.first, user_name),
+				Format("%6: insufficient privileges: user=%1 path=\"%2\" dir=\"%3\" args={%4} env={%5}",
+					user_name, exec_path, working_dir, simpleUntokenize(xargv.first),
+					simpleUntokenize(xenvp.first), op
+				),
+				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
+			CHECK(m_secure_paths.is_secure(exec_path),
+				Format("%1: exec path %2 is insecure", op, exec_path),
+				PrivilegeManager::E_INVALID_SECURITY);
+			CHECK(working_dir.empty() || working_dir.startsWith("/"),
+				Format("%1: working dir must be an absolute path", op),
+				PrivilegeManager::E_INVALID_PATH);
+	}
+
 	void Monitor::userSpawn()
 	{
 		String user_name;
@@ -1370,29 +1418,7 @@ namespace
 		BLOCXX_LOG_INFO(logger, Format("REQ userSpawn, exec_path=%1, user=%2", exec_path, user_name));
 		try
 		{
-			this->force_valid_path(exec_path, "userSpawn");
-			CHECKARGS(user_name.length() <= MAX_USER_NAME_LENGTH,
-				"userSpawn: user name too long",
-				PrivilegeManager::E_INVALID_SIZE);
-			CHECKARGS(working_dir.length() <= MAX_PATH_LENGTH,
-				"userSpawn: working dir too long",
-				PrivilegeManager::E_INVALID_SIZE);
-			CHECKARGS(xargv.second, "userSpawn: argv too large", PrivilegeManager::E_INVALID_SIZE);
-			CHECKARGS(xenvp.second, "userSpawn: envp too large", PrivilegeManager::E_INVALID_SIZE);
-			bool reserved_env_var_absent = filter_env(xenvp.first);
-			CHECKARGS(reserved_env_var_absent,
-				"userSpawn: reserved env var set in environment argument",
-				PrivilegeManager::E_INVALID_PARAMETER);
-			CHECKARGS(priv().user_exec.match(exec_path, xenvp.first, user_name)
-				|| priv().user_exec_check_args.match(exec_path, xargv.first, xenvp.first, user_name),
-				Format("userSpawn: insufficient privileges: user=%1 path=\"%2\" dir=\"%3\" args={%4} env={%5}", user_name, exec_path, working_dir, simpleUntokenize(xargv.first), simpleUntokenize(xenvp.first)).c_str(),
-				PrivilegeManager::E_INSUFFICIENT_PRIVILEGES);
-			CHECK(m_secure_paths.is_secure(exec_path),
-				"userSpawn: exec path " + exec_path + " is insecure",
-				PrivilegeManager::E_INVALID_SECURITY);
-			CHECK(working_dir.empty() || working_dir.startsWith("/"),
-				"userSpawn: working dir must be an absolute path",
-				PrivilegeManager::E_INVALID_PATH);
+			this->check_spawn_params("userSpawn", user_name, exec_path, working_dir, xargv, xenvp);
 
 			UE_PreExec pre_exec(user_name, working_dir);
 			this->spawn_and_return(
@@ -1403,6 +1429,42 @@ namespace
 		catch (Exception & e)
 		{
 			reportException("userSpawn: ", e);
+		}
+	}
+
+	void Monitor::userSpawnDaemon()
+	{
+		String user_name;
+		String exec_path;
+		String working_dir;
+		std::pair<StringArray, bool> xargv, xenvp;
+
+		ipcio_get(conn(), exec_path, MAX_PATH_LENGTH + 1);
+		xargv = ipcio_get_strarr(conn(), MAX_ARG_LENGTH);
+		xenvp = ipcio_get_strarr(conn(), MAX_ENV_LENGTH);
+		ipcio_get(conn(), user_name, MAX_USER_NAME_LENGTH + 1);
+		ipcio_get(conn(), working_dir, MAX_PATH_LENGTH + 1);
+		conn().get_sync();
+
+		BLOCXX_LOG_INFO(logger, Format("REQ userSpawnDaemon, exec_path=%1, user=%2", exec_path, user_name));
+		try
+		{
+			this->check_spawn_params("userSpawnDaemon", user_name, exec_path, working_dir, xargv, xenvp);
+
+			bool daemonize = true;
+			UE_PreExec pre_exec(user_name, working_dir, daemonize);
+
+			ProcessRef p_proc =	Exec::spawn(exec_path, xargv.first, xenvp.first, pre_exec);
+			::pid_t child_pid = p_proc->pid();
+
+			BLOCXX_LOG_INFO(logger, Format("Spawned child pid: %1 which should exit immediatly", child_pid));
+			ipcio_put(conn(), PrivilegeCommon::E_OK);
+
+			conn().put_sync();
+		}
+		catch (Exception & e)
+		{
+			reportException("userSpawnDaemon: ", e);
 		}
 	}
 

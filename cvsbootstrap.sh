@@ -1,5 +1,8 @@
 #! /bin/sh
 
+#set -x
+set -e
+
 rm -rf config.cache config.guess config.sub depcomp missing mkinstalldirs autom4te.cache
 
 if bison --version >/dev/null; then
@@ -22,7 +25,7 @@ if [ $BISON_MAJOR_VERSION -lt 2 ] || [ $BISON_MINOR_VERSION -lt 1 ]; then
 #	exit 1
 fi
 
-aclocal-1.9 \
-&& autoconf \
-&& autoheader \
-&& automake-1.9 --foreign --add-missing 
+aclocal-1.9
+autoconf
+autoheader
+automake-1.9 --foreign --add-missing

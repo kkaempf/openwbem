@@ -105,12 +105,21 @@ namespace OW_NAMESPACE
 	}
 
 	ProcessRef PrivilegeManagerMockObject::userSpawn(
-		const char* execpath,
+		const char* exec_path,
 		const char* const argv[], const char* const envp[],
 		const char* user,
 		const char* working_dir)
 	{
 		OW_THROW(PrivilegeManagerMockObjectUnimplementedException, "userSpawn");
+	}
+
+	void PrivilegeManagerMockObject::userSpawnDaemon(
+		const char* exec_path,
+		const char* const argv[], const char* const envp[],
+		const char* user,
+		const char* working_dir)
+	{
+		OW_THROW(PrivilegeManagerMockObjectUnimplementedException, "userSpawnDaemon");
 	}
 
 	int PrivilegeManagerMockObject::kill(ProcId pid, int sig)

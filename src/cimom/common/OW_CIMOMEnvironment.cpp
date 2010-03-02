@@ -130,14 +130,12 @@ namespace
 		}
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{
-			BLOCXX_ASSERT("Cannot call CIMOMProviderEnvironment::getCIMOMHandle()" == 0);
-			return CIMOMHandleIFCRef();
+			return m_pCenv->getCIMOMHandle(const_cast<LocalOperationContext&>(m_context), CIMOMEnvironment::E_USE_PROVIDERS);
 		}
 
 		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
-			BLOCXX_ASSERT("Cannot call CIMOMProviderEnvironment::getRepositoryCIMOMHandle()" == 0);
-			return CIMOMHandleIFCRef();
+			return m_pCenv->getRepositoryCIMOMHandle(const_cast<LocalOperationContext&>(m_context));
 		}
 
 		virtual RepositoryIFCRef getRepository() const

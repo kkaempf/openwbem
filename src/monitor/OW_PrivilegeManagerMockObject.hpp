@@ -72,10 +72,15 @@ namespace OW_NAMESPACE
 			const char* const argv[], const char* const envp[],
 			const char* user);
 		virtual blocxx::ProcessRef userSpawn(
-			const char* execpath,
+			const char* exec_path,
 			const char* const argv[], const char* const envp[],
 			const char* user,
 			const char* working_dir);
+		virtual void userSpawnDaemon(
+			char const * exec_path,
+			char const * const argv[], char const * const envp[],
+			char const * user,
+			char const * working_dir);
 
 		virtual int kill(blocxx::ProcId pid, int sig);
 		virtual blocxx::Process::Status pollStatus(blocxx::ProcId pid);

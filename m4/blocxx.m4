@@ -6,7 +6,8 @@ dnl                      [,ACTION-IF-FOUND[,ACTION-IF-NOT-FOUND]]])
 dnl
 AC_DEFUN([CHECK_BLOCXX],
 [AC_REQUIRE([AC_SYS_LARGEFILE])dnl
-ac_BLOCXX_includes=NO ac_BLOCXX_libraries=NO
+ac_BLOCXX_includes=NO
+ac_BLOCXX_libraries=NO
 BLOCXX_libraries=""
 BLOCXX_includes=""
 blocxx_error=""
@@ -64,8 +65,8 @@ if test $want_BLOCXX = yes; then
 
 	# Verify LFS support match
 	BLOCXX_SAVE_FLAGS
-	CXXFLAGS="-I $ac_BLOCXX_includes $CXXFLAGS"
-	CFLAGS="-I $ac_BLOCXX_includes $CFLAGS"
+	CXXFLAGS="-I$ac_BLOCXX_includes $CXXFLAGS"
+	CFLAGS="-I$ac_BLOCXX_includes $CFLAGS"
 	AC_COMPILE_IFELSE(
 	    [AC_LANG_PROGRAM([[#include <blocxx/BLOCXX_config.h>]],
 	                     [return BLOCXX_WITH_LARGEFILE])],
@@ -110,10 +111,39 @@ dnl pkg-config is mostly linux-specific.
 if test "x$ac_BLOCXX_libraries" != x && test -f "$ac_BLOCXX_libraries/pkgconfig/blocxx.pc"; then
 	BLOCXX_LDFLAGS="${BLOCXX_LDFLAGS} `cat $ac_BLOCXX_libraries/pkgconfig/blocxx.pc | grep -i \"^libs:\" | sed \"s/^[[^:]]*://g\"`"
 	BLOCXX_LIB_DIR="`echo ${BLOCXX_LDFLAGS} | sed -e \"s/-L\([[^ ]]*\) -l[[^ ]]*/\1/g\" | tr \" \" \":\"`"
+	BLOCXX_CFLAGS="${BLOCXX_CFLAGS} `cat $ac_BLOCXX_libraries/pkgconfig/blocxx.pc | grep -i \"^cflags:\" | sed \"s/^[[^:]]*://g\"`"
 fi
 
+# Find needed compilation flags
+if test "x$BLOCXX_CFLAGS" = "x"; then
+	BLOCXX_SAVE_FLAGS
+	CFLAGS="${CFLAGS} ${BLOCXX_INCLUDES}"
+	CXXFLAGS="${CXXFLAGS} ${BLOCXX_INCLUDES}"
+	# Some functions in blocxx depend on structures using the proper _FILE_OFFSET_BITS.  Set it if needed.
+	BLOCXX_GET_OUTPUT([required file offset bits],
+		[
+			#include "blocxx/BLOCXX_config.h"
+			#include <stdio.h>
+			int main()
+			{
+				#ifdef _FILE_OFFSET_BITS
+				printf("%d", _FILE_OFFSET_BITS);
+				return 0;
+				#else
+				return 1;
+				#endif
+			}
+		],
+		[BLOCXX_CFLAGS="${BLOCXX_CFLAGS} -D_FILE_OFFSET_BITS=$conftest_output"],
+		[]
+	)
+	BLOCXX_RESTORE_FLAGS
+fi
 dnl If we don't know the libs, we'll need to figure them out.
 if test "x$BLOCXX_LDFLAGS" = "x"; then
+	BLOCXX_SAVE_FLAGS
+	CFLAGS="${CFLAGS} ${BLOCXX_INCLUDES}"
+	CXXFLAGS="${CXXFLAGS} ${BLOCXX_INCLUDES}"
 	dnl Find out if blocxx was built with iconv support.
 	BLOCXX_USES_ICONV=0
 	AC_MSG_CHECKING(if blocxx has iconv support)
@@ -164,6 +194,7 @@ if test "x$BLOCXX_LDFLAGS" = "x"; then
 		ICONV_LIB=""
 	fi
 	BLOCXX_LDFLAGS="${BLOCXX_LDFLAGS} $ICONV_LIB"
+	BLOCXX_RESTORE_FLAGS
 fi
 
 dnl check REQUIRED-VERSION
@@ -229,6 +260,7 @@ else
 fi
 
 AC_SUBST(ICONV_LIB)
+AC_SUBST(BLOCXX_CFLAGS)
 AC_SUBST(BLOCXX_INCLUDES)
 AC_SUBST(BLOCXX_LDFLAGS)
 AC_SUBST(BLOCXX_LIB_DIR)
@@ -292,5 +324,33 @@ AC_DEFUN([BLOCXX_RESTORE_FLAGS],
 		BLOCXX_POP_VARIABLE(CXXFLAGS)
 		BLOCXX_POP_VARIABLE(AM_CXXFLAGS)
 		BLOCXX_POP_VARIABLE(CFLAGS)
+	]
+)
+
+dnl @synopsis BLOCXX_GET_OUTPUT(message, program, action_if_true, action_if_false)
+dnl Compile and run the program $2.  If successful run $3, otherwise run
+dnl $4.  In the true action ($3), the conftest_output variable will be
+dnl set to the output of the program.
+dnl
+dnl @author Kevin Harris
+AC_DEFUN([BLOCXX_GET_OUTPUT],
+	[
+		AC_MSG_CHECKING($1)
+		AC_RUN_IFELSE($2,
+			[
+				# This uses some internals of autoconf.  Too much goes into
+				# generating the executable command to repeat it.
+				(eval "$ac_try") > conftest.output 2>&5
+				conftest_output=[`]cat conftest.output[`]
+				AC_MSG_RESULT([]) # The output has already been dumped out.
+				$3
+				rm -f conftest.output
+				unset conftest_output
+			],
+			[
+				AC_MSG_RESULT([]) # Execution error.
+				$4
+			]
+		)
 	]
 )

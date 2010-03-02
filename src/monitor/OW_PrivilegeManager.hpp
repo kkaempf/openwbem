@@ -714,6 +714,84 @@ public:
 		return userSpawn(execpath, argv, envp, user, (char const *)0);
 	}
 
+
+	/**
+	* Spawns a daemonized child process that has no monitor.
+	*
+	* @param execpath The path of the executable the child is to run.  Must be
+	* an absolute path.
+	*
+	* @param argv Null-terminated argument list for the child process.
+	* (@see Exec::spawn for details).
+	*
+	* @param envp Null-terminated environment for the child process.
+	* (@see Exec::spawn for details). If envp != Secure::minimalEnvironment(),
+	* then the privilege configuration statement must include an
+	* <env_specification> that allows for all the variables and values
+	* designated by envp.
+	*
+	* @param user The child process runs as this user.  If @a user is null
+	* or empty, the child process runs as the same user as the calling process.
+	* There must be an entry for @a user in the password file.
+	*
+	* @param working_dir A directory to @c chdir to before running the
+	* program.  If empty or null, no @c chdir is done.
+	*
+	* @pre Caller must have @c user_spawn privilege for (@a execpath, @a user).
+	*
+	* @pre The user must have execute permission on @a exec_path (including
+	* necessary permissions to traverse the path).
+	*
+	* @pre @a exec_path must be secure.
+	*
+	* @throw PrivilegeManagerException
+	* @throw IPCIOException
+	*/
+	void userSpawnDaemon(
+		char const * execpath,
+		char const * const argv[], char const * const envp[],
+		char const * user,
+		char const * working_dir = 0
+		);
+
+	/**
+	* A variant of @c userSpawnDaemon for which @a execpath and @a user
+	* may have arbitrary string-like types, and @ argv and @a envp has arbitrary
+	* string-array-like types.
+	*
+	* @pre @a S1, @a S2, and @ S3 are types for which
+	* <tt>Cstr::to_char_ptr</tt> is defined.
+	*
+	* @pre Specializations of the <tt>Cstr::CstrArr</tt> class template are
+	* defined for types @a SA1 and @a SA2.
+	*/
+	template <typename S1, typename S2, typename S3, typename SA1, typename SA2>
+	void userSpawnDaemon(
+		S1 const & execpath, SA1 const & argv, SA2 const & envp,
+		S2 const & user, S3 const & working_dir
+		)
+	{
+		blocxx::Cstr::CstrArr<SA1> sa_argv(argv);
+		blocxx::Cstr::CstrArr<SA2> sa_envp(envp);
+		this->userSpawnDaemon(
+			blocxx::Cstr::to_char_ptr(execpath), sa_argv.sarr, sa_envp.sarr,
+			blocxx::Cstr::to_char_ptr(user), blocxx::Cstr::to_char_ptr(working_dir)
+			);
+	}
+
+	// Default arguments don't work if type of default argument is a template
+	// parameter, since you can't do type deduction.  Thus, we just
+	// define another function with one less argument.
+	//
+	template <typename S1, typename S2, typename SA1, typename SA2>
+	inline void userSpawnDaemon(
+		S1 const & execpath, SA1 const & argv, SA2 const & envp,
+		S2 const & user
+		)
+	{
+		userSpawnDaemon(execpath, argv, envp, user, (char const *)0);
+	}
+
 private:
 	int kill(blocxx::ProcId pid, int sig);
 
